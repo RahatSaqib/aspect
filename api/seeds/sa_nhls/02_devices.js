@@ -1,4 +1,4 @@
-module.exports = require('../utils').seed(seed)
+module.exports = require('../utils').seed(seed, __filename)
 
 const _ = require('lodash')
 const labClinic = require('./fixtures/labClinic.json')
@@ -98,6 +98,7 @@ async function seed(knex) {
       )
       const existingSite = await knex('Site')
         .where('externalId', clinic.externalId)
+        .orWhere('name', clinic.name)
         .first('id')
       let siteId = 0
       if (existingSite) {
@@ -111,8 +112,17 @@ async function seed(knex) {
         await Promise.all(
           _.map(clinic.devices, async device => {
             const existingDevice = await knex('Device')
-              .where({ siteId, serial: device.deviceSerial })
-              .first('id')
+              .where({ partnerId, serial: device.deviceSerial })
+              .first(
+                'id',
+                'geographyId',
+                'siteId',
+                'deviceTypeId',
+                'name',
+                'shortName',
+                'timezone'
+              )
+            const deviceTypeId = await deviceTypeToId(device.deviceTypeId)
             if (!existingDevice) {
               await knex('Device').insert(
                 Object.assign(
@@ -120,7 +130,7 @@ async function seed(knex) {
                     partnerId,
                     geographyId: clinicGeographyId,
                     siteId,
-                    deviceTypeId: await deviceTypeToId(device.deviceTypeId),
+                    deviceTypeId,
                     deviceStatusId: await deviceStatusToId('approved'),
                     name: `${siteData.shortName} ${device.deviceTypeId} ${device.deviceSerial}`,
                     shortName: `${device.deviceTypeId} ${device.deviceSerial}`,
@@ -132,6 +142,28 @@ async function seed(knex) {
                   auditFields
                 )
               )
+            } else if (
+              existingDevice.geographyId !== clinicGeographyId ||
+              existingDevice.siteId !== siteId ||
+              existingDevice.deviceTypeId !== deviceTypeId ||
+              existingDevice.name !==
+                `${siteData.shortName} ${device.deviceTypeId} ${device.deviceSerial}` ||
+              existingDevice.shortName !==
+                `${device.deviceTypeId} ${device.deviceSerial}` ||
+              existingDevice.timezone !== siteData.timezoneId
+            ) {
+              await knex('Device')
+                .where('id', existingDevice.id)
+                .update({
+                  geographyId: clinicGeographyId,
+                  siteId,
+                  deviceTypeId: await deviceTypeToId(device.deviceTypeId),
+                  name: `${siteData.shortName} ${device.deviceTypeId} ${device.deviceSerial}`,
+                  shortName: `${device.deviceTypeId} ${device.deviceSerial}`,
+                  timezone: siteData.timezoneId,
+                  updatedOn: now,
+                  updatedBy: adminId,
+                })
             }
           })
         )

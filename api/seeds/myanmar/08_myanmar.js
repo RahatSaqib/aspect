@@ -1,16 +1,14 @@
-module.exports = require('../utils').seed(seed)
+module.exports = require('../utils').seed(seed, __filename)
 
 const {
   rowsAsObject,
-  getDefaultMessageTypes,
   seedIssueEventTriggersForPartner,
   seedUnknownErrorsIssue,
 } = require('../utils')
 
 async function seed(knex) {
-  const [issueTypes, defaultMessageTypes] = await Promise.all([
+  const [issueTypes] = await Promise.all([
     rowsAsObject(knex, 'IssueType', 'externalId'),
-    getDefaultMessageTypes(knex),
   ])
 
   // check if this seed already ran
@@ -37,64 +35,6 @@ async function seed(knex) {
   const { id: partnerId } = await knex('Partner')
     .where({ name: 'Myanmar' })
     .first()
-
-  const { id: jobFunctionIdRegionalOfficer } = await knex('JobFunction')
-    .where({
-      name: 'Regional Officer',
-      partnerId,
-    })
-    .first()
-
-  await knex('NotificationType').insert([
-    Object.assign(
-      {
-        name: 'LU Stockout - RO View',
-        partnerId,
-        issueTypeId: issueTypes.InventoryStockout.id,
-        jobFunctionId: jobFunctionIdRegionalOfficer,
-        level: 1,
-        canAcknowledge: 0,
-        messageTypeId: defaultMessageTypes.InventoryStockout.id,
-      },
-      auditFields
-    ),
-    Object.assign(
-      {
-        name: 'LU Escalated Stockout - RO View',
-        partnerId,
-        issueTypeId: issueTypes.InventoryStockout.id,
-        jobFunctionId: jobFunctionIdRegionalOfficer,
-        level: 2,
-        canAcknowledge: 0,
-        messageTypeId: defaultMessageTypes.InventoryStockout.id,
-      },
-      auditFields
-    ),
-    Object.assign(
-      {
-        name: 'LU Stock Expiring - RO View',
-        partnerId,
-        issueTypeId: issueTypes.InventoryStockExpiring.id,
-        jobFunctionId: jobFunctionIdRegionalOfficer,
-        level: 1,
-        canAcknowledge: 0,
-        messageTypeId: defaultMessageTypes.InventoryStockExpiring.id,
-      },
-      auditFields
-    ),
-    Object.assign(
-      {
-        name: 'LU Escalated Stock Expiring - RO View',
-        partnerId,
-        issueTypeId: issueTypes.InventoryStockExpiring.id,
-        jobFunctionId: jobFunctionIdRegionalOfficer,
-        level: 2,
-        canAcknowledge: 0,
-        messageTypeId: defaultMessageTypes.InventoryStockExpiring.id,
-      },
-      auditFields
-    ),
-  ])
 
   // set up escalations
   await knex('IssueEscalationTrigger').insert([

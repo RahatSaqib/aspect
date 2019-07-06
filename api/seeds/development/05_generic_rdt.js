@@ -1,4 +1,5 @@
-module.exports = require('../utils').seed(seed)
+module.exports = require('../utils').seed(seed, __filename)
+
 const {
   assayTypeToId,
   deviceTypeCategoryToId,
@@ -13,7 +14,6 @@ async function seed(knex) {
   if (existingGenericRdtDeviceType) {
     return
   }
-
   const deviceTypeCategoryId = await deviceTypeCategoryToId('Lab')
   const assayTypeId = await assayTypeToId('Generic RDT')
   const resultSourceId = await resultSourceToId('DiagnosticDevice')

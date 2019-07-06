@@ -69,6 +69,10 @@ const messages = defineMessages({
     id: 'pages.ResultList.resultWorkflowStatus',
     defaultMessage: 'Result Workflow Status',
   },
+  resultTreatmentStatus: {
+    id: 'pages.ResultList.resultTreatmentStatus',
+    defaultMessage: 'Treatment',
+  },
   assayId: {
     id: 'pages.ResultList.assayId',
     defaultMessage: 'Assay',
@@ -108,6 +112,7 @@ const FILTERS_CONFIG = [
   },
   { sampleOriginSite: true, requiredPermissions: [] },
   { workflowStatus: true, requiredPermissions: [] },
+  { treatmentStatus: true, requiredPermissions: [] },
 ]
 
 const searchSanitizer = makeSearchParamsSanitizer({
@@ -323,6 +328,12 @@ export const ResultList = ({
               {
                 key: 'resultWorkflowStatus',
                 label: intl.formatMessage(messages.resultWorkflowStatus),
+                sortable: true,
+                hiddenOn: 'sm',
+              },
+              {
+                key: 'resultTreatmentStatus',
+                label: intl.formatMessage(messages.resultTreatmentStatus),
                 sortable: true,
                 hiddenOn: 'sm',
               },

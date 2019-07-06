@@ -1,6 +1,7 @@
 const Boom = require('boom')
 const _ = require('lodash')
 const dateFormat = require('date-fns/format')
+const { subDays } = require('date-fns')
 const Promise = require('bluebird')
 const {
   knex,
@@ -35,6 +36,11 @@ const SELECT_LIST_FIELDS = [
   'rc1.name as resultCategory1Name',
   'rc2.name as resultCategory2Name',
   'rs.name as resultWorkflowStatus',
+  'rts.externalId as resultTreatmentStatus',
+  knex.raw('ifnull(rts.name, "N/A") as resultTreatmentStatusName'),
+  knex.raw(
+    'GREATEST(rtas.requiresTreatment, rtas2.requiresTreatment) as requiresTreatment'
+  ),
   'so.name as sampleOriginSiteName',
   'sp.externalId as sampleId',
   'r.sampleGroup',
@@ -66,6 +72,7 @@ const SELECT_SHOW_FIELDS = [
   'rs.name as resultWorkflowStatus',
   'rs.externalId as resultWorkflowStatusExternalId',
   'rsl.changedOn as resultWorkflowChangedOn',
+  'rts.id as resultTreatmentStatusId',
   'r.resultData',
   'r.formData',
   'r.siteId',
@@ -114,6 +121,8 @@ const SORT_FIELDS = [
   'sampleGroup',
   'resultText',
   'resultWorkflowStatus',
+  'resultTreatmentStatus',
+  'requiresTreatment',
   'resultCategory1Name',
   'resultCategory2Name',
   'patientId',
@@ -193,6 +202,18 @@ async function getListResults(query, auth) {
     .leftJoin('Sample as sp', 'r.sampleId', 'sp.id')
     .leftJoin('SampleType as stp', 'sp.sampleTypeId', 'stp.id')
     .leftJoin('Site as so', 'sp.originSiteId', 'so.id')
+    .leftJoin('ResultCategoryAssay as rtas', function() {
+      this.on('r.assayId', 'rtas.assayId').andOn(
+        'r.resultCategory1',
+        'rtas.resultCategoryId'
+      )
+    })
+    .leftJoin('ResultCategoryAssay as rtas2', function() {
+      this.on('r.assayId', 'rtas2.assayId').andOn(
+        'r.resultCategory1',
+        'rtas2.resultCategoryId'
+      )
+    })
     .leftJoin(
       'ResultWorkflowLog as rsl',
       'r.resultWorkflowStatusLogId',
@@ -202,6 +223,16 @@ async function getListResults(query, auth) {
       'ResultWorkflowStatus as rs',
       'rsl.resultWorkflowStatusId',
       'rs.id'
+    )
+    .leftJoin(
+      'ResultTreatmentStatusLog as rtsl',
+      'r.treatmentStatusLogId',
+      'rtsl.id'
+    )
+    .leftJoin(
+      'ResultTreatmentStatus as rts',
+      'rtsl.resultTreatmentStatusId',
+      'rts.id'
     )
     .leftJoin('Site as si', 'r.siteId', 'si.id')
     .modify(filterDateRangeParams, query, 'r.endedOn')
@@ -218,6 +249,7 @@ async function getListResults(query, auth) {
       sampleOriginSite: 'so.name',
       sampleGroup: 'r.sampleGroup',
       workflowStatusId: 'rs.id',
+      treatmentStatusId: 'rts.id',
     })
     .modify((queryBuilder, params) => {
       if (params.patientOrResearchId) {
@@ -257,11 +289,31 @@ async function getListResults(query, auth) {
     })
   }
 
+  const lastThirtyDays = subDays(new Date(), 30)
+  let isPastThirtyDays = 0
+
+  const newData = _.map(data, v => {
+    isPastThirtyDays = lastThirtyDays <= v.endedOn
+
+    if (v.resultTreatmentStatus === 'OnTreatment') {
+      v.treatmentStatus = 'ok'
+    } else if (v.resultTreatmentStatus === 'NotPossible') {
+      v.treatmentStatus = 'na'
+    } else if (v.requiresTreatment === 1 && isPastThirtyDays) {
+      v.treatmentStatus = 'alert'
+    } else if (v.requiresTreatment === 1 && !isPastThirtyDays) {
+      v.treatmentStatus = 'warning'
+    } else {
+      v.treatmentStatus = 'na'
+    }
+    return v
+  })
+
   const result = {
     ok: true,
     total,
-    length: data.length,
-    data,
+    length: newData.length,
+    data: newData,
     extraColumns: assayColumns,
   }
 
@@ -690,6 +742,11 @@ async function getResultByResultId(request, fields = SELECT_SHOW_FIELDS) {
       'r.treatmentStatusLogId',
       'rtsl.id'
     )
+    .leftJoin(
+      'ResultTreatmentStatus as rts',
+      'rtsl.resultTreatmentStatusId',
+      'rts.id'
+    )
     .leftJoin('ResultForm as rf', function() {
       this.on('r.assayId', 'rf.assayId').andOn('r.partnerId', 'rf.partnerId')
     })
@@ -897,6 +954,29 @@ async function updateWorkflowStatus(request) {
 
   const response = await showResult(request)
   return response
+}
+
+async function listTreatmentStatusTypes() {
+  const resultQuery = knex('ResultTreatmentStatus as rsl')
+
+  // get total count for paging
+  const getCount = resultQuery
+    .clone()
+    .count('rsl.id as count')
+    .first()
+
+  // get rows
+  const getItems = resultQuery
+    .clone()
+    .orderBy('id', 'asc')
+    .select('id', 'name')
+
+  // return result when both queries are finished
+  const [{ count: total }, data] = await Promise.all([getCount, getItems])
+
+  const result = { ok: true, total, length: data.length, data }
+
+  return result
 }
 
 async function updateTreatmentStatus(request) {
@@ -1189,6 +1269,7 @@ module.exports = {
   listResultTypes,
   updateWorkflowStatus,
   updateTreatmentStatus,
+  listTreatmentStatusTypes,
 
   updateFormData,
   listWorkflowStatusTypes,

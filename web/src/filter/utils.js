@@ -185,6 +185,9 @@ export const reduceFiltersConfig = (configObject, userPermissions) => {
             case 'workflowStatus':
               result.workflowStatus = true
               break
+            case 'treatmentStatus':
+              result.treatmentStatus = true
+              break
             case 'contactNameOrEmail':
               result.contactNameOrEmail = true
               break

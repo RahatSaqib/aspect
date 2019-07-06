@@ -1,9 +1,8 @@
-module.exports = require('../utils').seed(seed)
+module.exports = require('../utils').seed(seed, __filename)
 
 const _ = require('lodash')
 const Promise = require('bluebird')
 const bcrypt = require('bcrypt')
-
 const config = require('../../src/config')
 const { getPermissionModules } = require('../utils')
 const geography = require('./fixtures/geography.json')

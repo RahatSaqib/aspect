@@ -303,7 +303,7 @@ describe('stringTemplate', () => {
       it('should map the value to something in the value map provided', async () => {
         const valueMap = {
           DNAH: 'D',
-          kalafong: 'K',
+          KPTH: 'K',
           CMJAH: 'J',
           RMMCH: 'R',
           CHBAH: 'B',
@@ -649,7 +649,7 @@ describe('stringTemplate', () => {
           `%22first_name%22%3A{{urlEncode (enclose (defaultTo result.formData.nameOfPatient '') with='"')}}%2C%20` +
           `%22surname%22%3A{{urlEncode (enclose (defaultTo result.formData.surnameOfPatient '') with='"')}}%2C%20` +
           `%22hospital_number%22%3A{{urlEncode (enclose (defaultTo result.formData.hospitalNumber '') with='"')}}%2C%20` +
-          `%22site_code%22%3A{{urlEncode (enclose (defaultTo (mapValue site.id '{"DNAH":"D","kalafong":"K","CMJAH":"J","RMMCH":"R","CHBAH":"B"}') '') with='"')}}%2C%20` +
+          `%22site_code%22%3A{{urlEncode (enclose (defaultTo (mapValue site.id '{"DNAH":"D","KPTH":"K","CMJAH":"J","RMMCH":"R","CHBAH":"B"}') '') with='"')}}%2C%20` +
           `%22ward_cubicle%22%3A{{urlEncode (enclose (defaultTo result.formData.ward '') with='"')}}%2C%20` +
           `%22sample_category%22%3A{{urlEncode (enclose (defaultTo result.formData.sampleType '') with='"')}}%2C%20` +
           `%22instrument_ca%22%3A{{urlEncode (enclose (defaultTo (mapValue device.deviceType '{"CepheidGeneXpert":"1","AlereQ":"2"}') '') with='"')}}%2C%20` +
@@ -704,7 +704,7 @@ describe('stringTemplate', () => {
         }
         const redCapSiteCodes = {
           DNAH: 'D',
-          kalafong: 'K',
+          KPTH: 'K',
           CMJAH: 'J',
           RMMCH: 'R',
           CHBAH: 'B',

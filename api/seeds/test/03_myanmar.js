@@ -1,4 +1,4 @@
-module.exports = require('../utils').seed(seed)
+module.exports = require('../utils').seed(seed, __filename)
 
 const bcrypt = require('bcrypt')
 const _ = require('lodash')
@@ -29,6 +29,7 @@ const millisInHour = 1000 * 60 * 60
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
 
 async function seed(knex) {
+  const pluginName = 'myanmar'
   // Skip this seed file if we already have an admin user
   const existingAdminUser = await knex('User')
     .where({ name: 'myanmar_admin' })
@@ -36,9 +37,6 @@ async function seed(knex) {
   if (existingAdminUser) {
     return
   }
-
-  const pluginName = 'myanmar'
-
   // Create admin user and audit fields
   const [adminId] = await knex('User').insert({
     name: 'myanmar_admin',
@@ -216,16 +214,31 @@ async function seed(knex) {
   await knex('JobFunctionPermission').insert([
     // Admin Permissions
     { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.demo.admin },
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.device.admin },
+    {
+      jobFunctionId: jobFunctionIdAdmin,
+      permissionId: modules.device.admin,
+    },
     {
       jobFunctionId: jobFunctionIdAdmin,
       permissionId: modules.deviceApiKey.admin,
     },
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.person.admin },
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.result.admin },
+    {
+      jobFunctionId: jobFunctionIdAdmin,
+      permissionId: modules.person.admin,
+    },
+    {
+      jobFunctionId: jobFunctionIdAdmin,
+      permissionId: modules.result.admin,
+    },
     { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.site.admin },
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.assay.admin },
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.issue.admin },
+    {
+      jobFunctionId: jobFunctionIdAdmin,
+      permissionId: modules.assay.admin,
+    },
+    {
+      jobFunctionId: jobFunctionIdAdmin,
+      permissionId: modules.issue.admin,
+    },
     {
       jobFunctionId: jobFunctionIdAdmin,
       permissionId: modules.inventory.admin,
@@ -269,7 +282,10 @@ async function seed(knex) {
       jobFunctionId: jobFunctionIdLabUser,
       permissionId: modules.site.admin,
     },
-    { jobFunctionId: jobFunctionIdLabUser, permissionId: modules.issue.admin },
+    {
+      jobFunctionId: jobFunctionIdLabUser,
+      permissionId: modules.issue.admin,
+    },
     {
       jobFunctionId: jobFunctionIdLabUser,
       permissionId: modules.inventory.admin,

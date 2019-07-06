@@ -2439,6 +2439,19 @@ eventemitter2@0.4.14, eventemitter2@~0.4.14:
   resolved "https://registry.yarnpkg.com/eventemitter2/-/eventemitter2-0.4.14.tgz#8f61b75cde012b2e9eb284d4545583b5643b61ab"
   integrity sha1-j2G3XN4BKy6esoTUVFWDtWQ7Yas=
 
+exceljs-node@^1.6.7:
+  version "1.6.7"
+  resolved "https://registry.yarnpkg.com/exceljs-node/-/exceljs-node-1.6.7.tgz#e6c33b93dedf84fef4330a8d37bbec48fabfe3ad"
+  integrity sha512-dO4EIbBR2BA0sE27xMVktJ1JXoyOHbhEEWzNF6SHDGwscd9wFTHomKvtaKYnj13ItSCIw4Untv+a6O8GaF9HOQ==
+  dependencies:
+    archiver "^1.3.0"
+    fast-csv "^2.4.0"
+    jszip "3.1.3"
+    moment ">=2.19.3"
+    node-unzip-2 "^0.2.7"
+    promish ">=5.0.2"
+    sax "^1.2.2"
+
 exceljs@^0.5.1:
   version "0.5.1"
   resolved "https://registry.yarnpkg.com/exceljs/-/exceljs-0.5.1.tgz#8e5f4bcbfce69318f52488294e4127a3f4ae7220"
@@ -2973,7 +2986,7 @@ fstream-ignore@^1.0.5:
     inherits "2"
     minimatch "^3.0.0"
 
-fstream@^1.0.0, fstream@^1.0.10, fstream@^1.0.12:
+fstream@^1.0.0, fstream@^1.0.10, fstream@^1.0.12, fstream@~1.0.12:
   version "1.0.12"
   resolved "https://registry.yarnpkg.com/fstream/-/fstream-1.0.12.tgz#4e8ba8ee2d48be4f7d0de505455548eae5932045"
   integrity sha512-WvJ193OHa0GHPEL+AycEJgxvBEwyfRkN1vhjca23OaPVMCaLCXTd5qAu82AjTcgP1UJmytkOKb63Ypde7raDIg==
@@ -5287,7 +5300,7 @@ module-not-found-error@^1.0.0:
   resolved "https://registry.yarnpkg.com/module-not-found-error/-/module-not-found-error-1.0.1.tgz#cf8b4ff4f29640674d6cdd02b0e3bc523c2bbdc0"
   integrity sha1-z4tP9PKWQGdNbN0CsOO8UjwrvcA=
 
-moment@2.x.x, moment@^2.17.1, moment@^2.24.0:
+moment@2.x.x, moment@>=2.19.3, moment@^2.17.1, moment@^2.24.0:
   version "2.24.0"
   resolved "https://registry.yarnpkg.com/moment/-/moment-2.24.0.tgz#0d055d53f5052aa653c9f6eb68bb5d12bf5c2b5b"
   integrity sha512-bV7f+6l2QigeBBZSM/6yTNq4P2fNpSWj/0e7jQcy87A8e7o2nAfP/34/2ky5Vw4B9S446EtIhodAzkFCcR4dQg==
@@ -5493,6 +5506,18 @@ node-pre-gyp@^0.12.0:
     rimraf "^2.6.1"
     semver "^5.3.0"
     tar "^4"
+
+node-unzip-2@^0.2.7:
+  version "0.2.8"
+  resolved "https://registry.yarnpkg.com/node-unzip-2/-/node-unzip-2-0.2.8.tgz#246f6c2ad30279aeb9d20d4de942a6fb94d81149"
+  integrity sha512-fmJi73zTRW7RSo/1wyrKc2srKMwb3L6Ppke/7elzQ0QRt6sUjfiIcVsWdrqO5uEHAdvRKXjoySuo4HYe5BB0rw==
+  dependencies:
+    binary "~0.3.0"
+    fstream "~1.0.12"
+    match-stream "~0.0.2"
+    pullstream "~0.4.0"
+    readable-stream "~1.0.0"
+    setimmediate "~1.0.1"
 
 node-uuid@^1.4.8:
   version "1.4.8"

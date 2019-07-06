@@ -1,4 +1,4 @@
-module.exports = require('../utils').seed(seed)
+module.exports = require('../utils').seed(seed, __filename)
 
 const ADMIN_PW = '8v5TMxkpzP'
 const RO_PW = 'u4W9wupFBA'

@@ -1,5 +1,4 @@
-module.exports = require('../utils').seed(seed)
-
+module.exports = require('../utils').seed(seed, __filename)
 const _ = require('lodash')
 const bcrypt = require('bcrypt')
 
@@ -25,7 +24,6 @@ async function seed(knex) {
   if (existingAdminUser) {
     return
   }
-
   // Create admin user and audit fields
   const now = new Date()
   const [adminId] = await knex('User').insert({
