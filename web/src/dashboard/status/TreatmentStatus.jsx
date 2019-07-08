@@ -1,6 +1,5 @@
 /* eslint-disable linebreak-style */
-// import _ from 'lodash'
-// import _fp from 'lodash/fp'
+import _ from 'lodash'
 import Immutable from 'immutable'
 import classnames from 'classnames/bind'
 import React from 'react'
@@ -26,6 +25,7 @@ import { ResponsiveBar } from '@nivo/bar'
 import { Unit } from '../../components/pureGrids'
 import requirePermissions from '../../components/shared/requirePermissions'
 import { fetchSitesForSelectList } from '../../site/SiteRedux'
+import { fetchTreatmentDashboard } from '../DashboardRedux'
 import Title from './Title'
 import messages from './messages'
 import StyledDropdown from '../../components/shared/StyledDropdown'
@@ -46,71 +46,62 @@ const enhance = compose(
     features: ['siteDashboard', 'deviceDashboard'],
   }),
   connect(
-    state => ({
-      sitesSelectList: state.site.selectList,
-    }),
+    state => {
+      const treatmentStatus = state.dashboard.treatmentStatus.toJS()
+      return {
+        sitesSelectList: state.site.selectList,
+        ..._.pick(treatmentStatus, ['siteId', 'startOn', 'finishOn', 'data']),
+      }
+    },
     bindActionCreators.bind(null, {
       fetchSitesForSelectList,
+      fetchTreatmentDashboard,
     })
   ),
   lifecycle({
     componentDidMount() {
       this.props.fetchSitesForSelectList()
+      this.props.fetchTreatmentDashboard()
     },
   }),
   withHandlers({
-    onChange: ({ history, location }) => ({ target: { value } }) => {
-console.log('------siteId', value)
+    onChange: ({ startOn, finishOn, fetchTreatmentDashboard }) => ({
+      target: { value },
+    }) => {
+      fetchTreatmentDashboard({
+        siteId: value || null,
+        startOn,
+        finishOn,
+      })
     },
   }),
-  withProps(({ intl, location, sitesSelectList, theme }) => {
-    const searchParams = new URLSearchParams(location.search)
-    const filtersParams = new URLSearchParams(searchParams.get('filters') || '')
-console.log('____sitesSelectList.items', sitesSelectList.items.toJS())
-    return {
-      theme,
-      isSingleSite:
-        sitesSelectList.items.size === 1 && !sitesSelectList.stateName,
-      source: sitesSelectList.items
-        .map(item => ({
-          value: item.get('id'),
-          label: item.get('name'),
-        }))
-        .insert(0, {
-          value: '',
-          label: intl.formatMessage(messages.treatmentAllSites, {
-            region: sitesSelectList.stateName || sitesSelectList.countryName,
-          }),
-        })
-        .toJS(),
-      value: sitesSelectList.items
-        .find(
-          it => it.get('id') === filtersParams.get('siteId'),
-          null,
-          Immutable.Map()
-        )
-        .get('id', ''),
-    }
-  })
+  withProps(({ intl, siteId, sitesSelectList, theme }) => ({
+    theme,
+    isSingleSite:
+      sitesSelectList.items.size === 1 && !sitesSelectList.stateName,
+    source: sitesSelectList.items
+      .map(item => ({
+        value: item.get('id'),
+        label: item.get('name'),
+      }))
+      .insert(0, {
+        value: '',
+        label: intl.formatMessage(messages.treatmentAllSites, {
+          region: sitesSelectList.stateName || sitesSelectList.countryName,
+        }),
+      })
+      .toJS(),
+    value: sitesSelectList.items
+      .find(it => it.get('id') === siteId, null, Immutable.Map())
+      .get('id', ''),
+  }))
 )
 
-const data = [
-  { period: 'January', confirmed: 50, unaccountable: 10 },
-  { period: 'February', confirmed: 20, unaccountable: 50 },
-  { period: 'March', confirmed: 90, unaccountable: 10 },
-  { period: 'April', confirmed: 50, unaccountable: 30 },
-  { period: 'May', confirmed: 38, unaccountable: 20 },
-  { period: 'June', confirmed: 40, unaccountable: 50 },
-]
-
 export const TreatmentStatus = ({
-  history,
-  location,
-  intl,
-
   className,
   title,
 
+  data = [],
   isSingleSite,
   source,
   ...restProps
@@ -197,38 +188,6 @@ export const TreatmentStatus = ({
               }}
               enableGridY={false}
               enableLabel={false}
-              // labelSkipWidth={12}
-              // labelSkipHeight={12}
-              // labelTextColor={{ from: 'color', modifiers: [['darker', 1.6]] }}
-              // legends={[
-              //   {
-              //     dataFrom: 'keys',
-              //     // dataFrom: d => {
-              //     //   console.log('____', { d })
-              //     //   return { label: 'aaaaaa', id: '1', color: 'red' }
-              //     // },
-              //     anchor: 'bottom-left',
-              //     direction: 'row',
-              //     justify: false,
-              //     translateX: 5,
-              //     translateY: 80,
-              //     itemsSpacing: 2,
-              //     itemWidth: 200,
-              //     itemHeight: 20,
-              //     itemDirection: 'left-to-right',
-              //     itemOpacity: 0.85,
-              //     symbolSize: 20,
-              //     effects: [
-              //       {
-              //         on: 'hover',
-              //         style: {
-              //           itemOpacity: 1,
-              //         },
-              //       },
-              //     ],
-              //     symbolShape: CustomSymbolShape,
-              //   },
-              // ]}
               animate
               motionStiffness={90}
               motionDamping={15}

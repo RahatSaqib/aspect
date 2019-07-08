@@ -1,7 +1,7 @@
 const Boom = require('boom')
 const _ = require('lodash')
 const dateFormat = require('date-fns/format')
-const { subDays } = require('date-fns')
+const { subDays, subMonths, addMonths, min } = require('date-fns')
 const Promise = require('bluebird')
 const {
   knex,
@@ -1262,6 +1262,106 @@ function createUniqueIdForResult(
   return uniqueId
 }
 
+async function confirmedTreatmentTracking(request) {
+  const { auth, payload } = request
+
+  const statusOnTreatmentId = await resultTreatmentStatusToId('OnTreatment')
+  const statusUnaccountableId = await resultTreatmentStatusToId('NotPossible')
+
+  // get data constraints
+  const dataConstraints = await getConstraints(auth.credentials)
+
+  const { siteId } = payload
+
+  // normalize and format 'startOn' and 'finishOn'
+  let { startOn, finishOn } = payload
+  if (!startOn && !finishOn) {
+    finishOn = new Date()
+    startOn = subMonths(finishOn, 6)
+  } else if (!startOn && finishOn) {
+    startOn = subMonths(finishOn, 6)
+  } else if (startOn && !finishOn) {
+    finishOn = min(new Date(), addMonths(startOn, 6))
+  }
+  startOn = dateFormat(startOn, 'YYYY-MM')
+  finishOn = dateFormat(finishOn, 'YYYY-MM')
+
+  //   const user = await getUser(auth.credentials.name)
+  // console.log('______1', { startOn, finishOn, siteId, user })
+  const data = await knex('Result as r')
+    // consider 100% as all results where requiresTreatment = 1 in the resultCategoryAssay table
+    .innerJoin('ResultCategoryAssay as rca', function() {
+      this.on('r.assayId', 'rca.assayId').andOn(
+        'r.resultCategory1',
+        'rca.resultCategoryId'
+      )
+    })
+    .where('rca.requiresTreatment', 1)
+    // join Assay table to filter by assayTypeId
+    .innerJoin('Assay as a', 'r.assayId', 'a.id')
+    // join ResultTreatmentStatusLog to count by 'OnTreatment' and 'NotPossible' statuses
+    .leftOuterJoin('ResultTreatmentStatusLog as rtslConfirmed', function() {
+      this.on('r.treatmentStatusLogId', 'rtslConfirmed.id')
+        .andOn('rtslConfirmed.resultTreatmentStatusId', statusOnTreatmentId)
+        .andOn('r.id', 'rtslConfirmed.resultId')
+    })
+    .leftOuterJoin('ResultTreatmentStatusLog as rtslUnaccountable', function() {
+      this.on('r.treatmentStatusLogId', 'rtslUnaccountable.id')
+        .andOn(
+          'rtslUnaccountable.resultTreatmentStatusId',
+          statusUnaccountableId
+        )
+        .andOn('r.id', 'rtslUnaccountable.resultId')
+    })
+    // filter by access level of current user
+    .leftOuterJoin('Site as s', 'r.siteId', 's.id')
+    .leftOuterJoin('Geography as g', 'r.geographyId', 'g.id')
+    .modify(addConstraints, dataConstraints, { site: 's', geography: 'g' })
+    // if 'siteId' specified - filter by siteId
+    .where(function() {
+      if (siteId) {
+        this.where('s.id', siteId)
+      }
+    })
+    // filter by date range, inclusive
+    .whereRaw(`date_format(r.endedOn, '%Y-%m') >= ?`, [startOn])
+    .whereRaw(`date_format(r.endedOn, '%Y-%m') <= ?`, [finishOn])
+    // .where('a.assayTypeId', 1) // ???
+    .select(
+      knex.raw('count(r.id) as total'),
+      knex.raw('count(rtslConfirmed.id) as cntConfirmed'),
+      knex.raw('count(rtslUnaccountable.id) as cntUnaccountable'),
+      knex.raw(`date_format(r.endedOn, '%Y-%m') AS month_tested`), // group by r.endedOn as 'YYYY-MM'
+      knex.raw(`date_format(r.endedOn, '%M %Y') AS period`), // to show in bottom axis as 'YYYY-MonthName'
+      knex.raw(`date_format(r.endedOn, '%Y') AS year`),
+      knex.raw(`date_format(r.endedOn, '%m') AS month`) // month number, to show i18n month name on FE
+    )
+    .groupBy('month_tested')
+    .orderBy('month_tested')
+    .map(d => {
+      // add percentages
+      const getPercentage = (total, value) => {
+        let pc = 0
+        if (total) {
+          pc = (value * 100) / total
+          // max 1 decimal point
+          pc = Math.round(10 * pc) / 10
+        }
+        return pc
+      }
+      d.confirmed = getPercentage(d.total, d.cntConfirmed)
+      d.unaccountable = getPercentage(d.total, d.cntUnaccountable)
+      return d
+    })
+
+  return {
+    siteId,
+    startOn, // 'YYYY-MM'
+    finishOn, // 'YYYY-MM'
+    data,
+  }
+}
+
 module.exports = {
   listResults,
   downloadResultsList,
@@ -1280,4 +1380,5 @@ module.exports = {
   downloadFile,
   downloadFirstImage,
   createUniqueIdForResult,
+  confirmedTreatmentTracking,
 }
