@@ -61,13 +61,12 @@ function setColumnsKeys(worksheet, placeHolderTag, rowsNext = 0) {
     worksheet.getRow(cell.rowNumber + rowsNext).eachCell((cell, colNumber) => {
       columns[colNumber - 1] = {
         key: cell.value.replace(new RegExp('[<|>]', 'g'), ''),
-        // header: cell.value.replace(new RegExp('[<|>]', 'g'), ''),
       }
-      // cell.value = ''
+      cell.value = ''
     })
-    console.log('lastRow', worksheet.lastRow.values)
+    console.log('columns', columns)
     worksheet.columns = columns
-    worksheet.spliceRows(cell.rowNumber + rowsNext + 1, 1)
+    worksheet.spliceRows(cell.rowNumber + rowsNext, 2)
   }
 }
 module.exports = {
