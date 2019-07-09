@@ -5,6 +5,7 @@ import classnames from 'classnames/bind'
 import { compose, mapProps } from 'recompose'
 import Card from '@material-ui/core/Card'
 import MdAssignment from 'react-icons/lib/md/assignment'
+import ResultTreatmentPanel from '../../../result/detail/ResultTreatmentPanel'
 import { formatDate, formatDateTime } from '../../../shared/utils/dateFormat'
 import CardTitle from '../../../components/shared/CardTitle'
 import ReadOnlyFields from '../../../components/shared/ReadOnlyFields'
@@ -15,6 +16,7 @@ import {
 } from '../../../components/shared/expansionPanel'
 
 const cssClasses = classnames.bind(require('./DetailPanel.css'))
+const styles = require('./DetailPanel.css')
 
 const EMPTY_MAP = Immutable.Map()
 
@@ -156,6 +158,9 @@ export const DetailPanel = ({ intl, data, schema, ...restProps }) => (
       icon={<MdAssignment className={cssClasses('Title__Icon')} />}
       className={cssClasses('Title')}
     />
+    {data && data.get('treatmentStatus') && (
+      <ResultTreatmentPanel styles={styles} data={data} restProps={restProps} />
+    )}
     {schema
       .get('groups')
       .sortBy(value => value.get('order'))

@@ -37,6 +37,7 @@ const SELECT_LIST_FIELDS = [
   'rc2.name as resultCategory2Name',
   'rs.name as resultWorkflowStatus',
   'rts.externalId as resultTreatmentStatus',
+  'rtsl.changedOn as resultTreatmentStatusChangedOn',
   knex.raw('ifnull(rts.name, "N/A") as resultTreatmentStatusName'),
   knex.raw(
     'GREATEST(rtas.requiresTreatment, rtas2.requiresTreatment) as requiresTreatment'
@@ -122,6 +123,7 @@ const SORT_FIELDS = [
   'resultText',
   'resultWorkflowStatus',
   'resultTreatmentStatus',
+  'resultTreatmentStatusChangedOn',
   'requiresTreatment',
   'resultCategory1Name',
   'resultCategory2Name',
@@ -984,6 +986,8 @@ async function updateTreatmentStatus(request) {
   const now = new Date()
   const { resultId } = params
   const { id: currentUserId } = await getUser(auth.credentials.name)
+  const { permissions } = auth.credentials
+
 
   // get the result so we can check access and if status changed
   const result = await getResultByResultId(request)
@@ -992,6 +996,18 @@ async function updateTreatmentStatus(request) {
   }
 
   const { resultTreatmentStatusId, data, method, changedOn = now } = payload
+
+  if (!permissions.includes('treatmentStatus:view')) {
+    return Boom.unauthorized('You are not authorised to view treatment status')
+  }
+
+  if (
+    !resultTreatmentStatusId &&
+    !permissions.includes('treatmentStatus:edit')
+  ) {
+    return Boom.unauthorized('You are not authorised to edit treatment status')
+  }
+
   let treatmentStatusId = null
   // check if a externalId is provided
   if (payload.externalId) {
@@ -1038,6 +1054,14 @@ async function updateTreatmentStatus(request) {
   }
   const response = await showResult(request)
   response.data.treatmentStatus = lastTreatment
+
+  if (lastTreatment.externalId === 'OnTreatment') {
+    response.data.treatmentStatus.treatmentStatusInfo = 'ok'
+  } else if (lastTreatment.externalId === 'NotPossible') {
+    response.data.treatmentStatus.treatmentStatusInfo = 'na'
+  }
+
+  response.data.treatmentStatus.resultTreatmentStatusChangedOn = changedOn
 
   return response
 }
