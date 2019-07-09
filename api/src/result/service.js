@@ -1277,17 +1277,16 @@ async function confirmedTreatmentTracking(request) {
   let { startOn, finishOn } = payload
   if (!startOn && !finishOn) {
     finishOn = new Date()
-    startOn = subMonths(finishOn, 6)
+    startOn = subMonths(finishOn, 5)
   } else if (!startOn && finishOn) {
-    startOn = subMonths(finishOn, 6)
+    startOn = subMonths(finishOn, 5)
   } else if (startOn && !finishOn) {
-    finishOn = min(new Date(), addMonths(startOn, 6))
+    finishOn = min(new Date(), addMonths(startOn, 5))
   }
-  startOn = dateFormat(startOn, 'YYYY-MM')
-  finishOn = dateFormat(finishOn, 'YYYY-MM')
+  startOn = dateFormat(startOn, 'yyyy-MM')
+  finishOn = dateFormat(finishOn, 'yyyy-MM')
+  const lastOn = dateFormat(new Date(), 'yyyy-MM')
 
-  //   const user = await getUser(auth.credentials.name)
-  // console.log('______1', { startOn, finishOn, siteId, user })
   const data = await knex('Result as r')
     // consider 100% as all results where requiresTreatment = 1 in the resultCategoryAssay table
     .innerJoin('ResultCategoryAssay as rca', function() {
@@ -1331,8 +1330,8 @@ async function confirmedTreatmentTracking(request) {
       knex.raw('count(r.id) as total'),
       knex.raw('count(rtslConfirmed.id) as cntConfirmed'),
       knex.raw('count(rtslUnaccountable.id) as cntUnaccountable'),
-      knex.raw(`date_format(r.endedOn, '%Y-%m') AS month_tested`), // group by r.endedOn as 'YYYY-MM'
-      knex.raw(`date_format(r.endedOn, '%M %Y') AS period`), // to show in bottom axis as 'YYYY-MonthName'
+      knex.raw(`date_format(r.endedOn, '%Y-%m') AS month_tested`), // group by r.endedOn as 'yyyy-MM'
+      knex.raw(`date_format(r.endedOn, '%M %Y') AS period`), // to show in bottom axis as 'yyyy-MonthName'
       knex.raw(`date_format(r.endedOn, '%Y') AS year`),
       knex.raw(`date_format(r.endedOn, '%m') AS month`) // month number, to show i18n month name on FE
     )
@@ -1356,8 +1355,9 @@ async function confirmedTreatmentTracking(request) {
 
   return {
     siteId,
-    startOn, // 'YYYY-MM'
-    finishOn, // 'YYYY-MM'
+    startOn, // 'yyyy-MM'
+    finishOn, // 'yyyy-MM'
+    lastOn, // 'yyyy-MM'
     data,
   }
 }

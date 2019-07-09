@@ -434,21 +434,23 @@
   }
 }
 .Treatment--arrow-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  text-align: center;
+  height: 245px;
+  padding-top: 105px;
+}
+.Treatment--arrow-container svg {
+  cursor: pointer;
+  border-radius: 50%;
+}
+.Treatment--arrow-container svg:hover {
+  border: 1px solid var(--aspect-color-grey-7);
+  background-color: var(--aspect-color-grey-8);
 }
 .Treatment--ArrowLeftContainer {
-  text-align: center;
-  height: 245px;
   border-right: 1px solid var(--aspect-color-grey-5);
-  padding-top: 105px;
 }
 .Treatment--ArrowRightContainer {
-  text-align: center;
-  height: 245px;
   border-left: 1px solid var(--aspect-color-grey-5);
-  padding-top: 105px;
 }
 .Treatment--graph-legend{
   display: flex;
@@ -463,7 +465,11 @@
   margin: 0 2px 0 5px;
   font-size: 1.1em;
 }
-
+.Treatment--graph-tooltip-help-icon svg {
+  margin-top: -10px;
+  cursor: pointer;
+  color: #34717c;
+}
 .Treatment--graph-tooltip-color {
   width: 15px;
   height: 15px;

@@ -275,8 +275,20 @@ export const messages = defineMessages({
     defaultMessage: 'Confirmed Treatment Tracking',
   },
   treatmentAllSites: {
-    id: 'pages.SiteDropdown.allSites',
+    id: 'pages.Status.treatmentAllSites',
     defaultMessage: 'All Sites',
+  },
+  treatmentGraphNotCompleteData: {
+    id: 'pages.Status.treatmentGraphNotCompleteData',
+    defaultMessage: 'Not Complete Data',
+  },
+  treatmentTooltipForConfirmed: {
+    id: 'pages.Status.treatmentTooltipForConfirmed',
+    defaultMessage: 'Explanation for percentage of "on treatment" results',
+  },
+  treatmentTooltipForUnaccountable: {
+    id: 'pages.Status.treatmentTooltipForUnaccountable',
+    defaultMessage: 'Explanation for percentage of "unaccountable" results',
   },
 })
 
