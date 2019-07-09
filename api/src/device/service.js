@@ -228,7 +228,7 @@ async function getListDevices(query, auth) {
 // ---------------------------------
 async function listDevices(request) {
   const { query, auth } = request
-
+  console.log(query, auth)
   // get dataset for current query params (sorting, filtering and pagination) and auth constraints
   const result = await getListDevices(query, auth)
 

@@ -6,19 +6,25 @@ function findContentInExcelRow(
   startColumnIndex = 0,
   endColumnIndex = 9999
 ) {
-  if (row != null && row.Cells != null) {
-    return row.eachCell((cell, colNumber) => {
+  let cellNumber = null
+  if (row != null) {
+    row.eachCell((cell, colNumber) => {
+      // console.log('la celda maxima', cell.value, placeHolderTag, colNumber)
       if (
         cell.value === placeHolderTag &&
         colNumber >= startColumnIndex &&
         colNumber <= endColumnIndex
       ) {
-        cell.colNumber = colNumber
-        return cell
+        console.log('match')
+        cellNumber = colNumber
+        return cellNumber
       }
     })
   }
-
+  if (cellNumber) {
+    console.log('celda encontrada', row.getCell(cellNumber).value)
+    return row.getCell(cellNumber)
+  }
   return null
 }
 function findContentInExcelSheet(
@@ -27,29 +33,42 @@ function findContentInExcelSheet(
   startColumnIndex = 0,
   endColumnIndex = 9999
 ) {
+  let rowCell = null
   worksheet.eachRow((row, rowNumber) => {
+    // console.log(row.values)
     const cell = findContentInExcelRow(
       row,
       placeHolderTag,
       startColumnIndex,
       endColumnIndex
     )
-    if (cell != null) cell.rowNumber = rowNumber
-    return cell
+    if (cell != null) {
+      rowCell = cell
+      rowCell.rowNumber = rowNumber
+    }
   })
-
+  if (rowCell) {
+    return rowCell
+  }
   return null
 }
 
 function setColumnsKeys(worksheet, placeHolderTag, rowsNext = 0) {
   const cell = findContentInExcelSheet(worksheet, placeHolderTag)
-  const columns = []
-  worksheet.getRow(cell.rowNumber + rowsNext).eachCell((cell, colNumber) => {
-    columns[colNumber] = {
-      key: cell.value.replace(new RegExp('[<|>]', 'g'), ''),
-    }
-  })
-  worksheet.columns = columns
+  if (cell) {
+    const columns = []
+    cell.value = ''
+    worksheet.getRow(cell.rowNumber + rowsNext).eachCell((cell, colNumber) => {
+      columns[colNumber - 1] = {
+        key: cell.value.replace(new RegExp('[<|>]', 'g'), ''),
+        // header: cell.value.replace(new RegExp('[<|>]', 'g'), ''),
+      }
+      // cell.value = ''
+    })
+    console.log('lastRow', worksheet.lastRow.values)
+    worksheet.columns = columns
+    worksheet.spliceRows(cell.rowNumber + rowsNext + 1, 1)
+  }
 }
 module.exports = {
   findContentInExcelRow,
