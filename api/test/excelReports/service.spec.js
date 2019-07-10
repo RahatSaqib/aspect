@@ -10,7 +10,12 @@ describe.only('Excel reports', () => {
   // shared.checkToken(server, path)
 
   it('should return a list of devices when using valid token', async () => {
-    await getDevicesReport()
+    const request = {
+      query: {},
+      auth: { credentials: { name: 'admin' } },
+      format: 'xlsx',
+    }
+    await getDevicesReport(request)
 
     assert.isTrue(true)
   })

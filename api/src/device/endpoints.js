@@ -13,11 +13,15 @@ const {
   listDevicesForSelectList,
   updateDeviceMaintenance,
 } = require('./service')
+const { getDevicesReport } = require('../excelReports/service')
 const {
   validateAllGeographyFilterParams,
 } = require('../geography/requestValidation')
 
 function listDevicesBaseConfig() {
+  return Object.assign({}, listDevicesBaseRequest(), listDevicesBaseResponse())
+}
+function listDevicesBaseRequest() {
   return {
     auth: { scope: ['device:view', 'device:edit'] },
     validate: {
@@ -88,6 +92,11 @@ function listDevicesBaseConfig() {
         )
       ),
     },
+  }
+}
+
+function listDevicesBaseResponse() {
+  return {
     response: {
       options: {
         allowUnknown: false,
@@ -509,6 +518,17 @@ const routes = [
         }),
       },
     },
+  },
+  {
+    method: 'GET',
+    path: '/deviceReport',
+    handler: asyncHandler(getDevicesReport),
+    config: Object.assign(
+      {
+        description: 'Device excel or csv report',
+      },
+      listDevicesBaseConfig()
+    ),
   },
 ]
 

@@ -1,5 +1,3 @@
-// const Excel = require('./exceljs')
-
 function findContentInExcelRow(
   row,
   placeHolderTag,
@@ -9,20 +7,17 @@ function findContentInExcelRow(
   let cellNumber = null
   if (row != null) {
     row.eachCell((cell, colNumber) => {
-      // console.log('la celda maxima', cell.value, placeHolderTag, colNumber)
       if (
         cell.value === placeHolderTag &&
         colNumber >= startColumnIndex &&
         colNumber <= endColumnIndex
       ) {
-        console.log('match')
         cellNumber = colNumber
         return cellNumber
       }
     })
   }
   if (cellNumber) {
-    console.log('celda encontrada', row.getCell(cellNumber).value)
     return row.getCell(cellNumber)
   }
   return null
@@ -53,6 +48,31 @@ function findContentInExcelSheet(
   return null
 }
 
+function replaceContentInExcelSheet(
+  worksheet,
+  placeHolderTag,
+  stringToReplace,
+  startColumnIndex = 0,
+  endColumnIndex = 9999
+) {
+  const cell = findContentInExcelSheet(
+    worksheet,
+    placeHolderTag,
+    startColumnIndex,
+    endColumnIndex
+  )
+  if (cell != null) cell.value = stringToReplace
+}
+function setColumnsKeysAndBindData(
+  worksheet,
+  placeHolderTag,
+  dataCollection,
+  rowsNext = 0
+) {
+  const indexRow = setColumnsKeys(worksheet, placeHolderTag, rowsNext)
+  worksheet.spliceRows(indexRow, 1, ...dataCollection)
+}
+// it set up the keys for the columns headers and return the row index where you are goint to add data rows
 function setColumnsKeys(worksheet, placeHolderTag, rowsNext = 0) {
   const cell = findContentInExcelSheet(worksheet, placeHolderTag)
   if (cell) {
@@ -61,16 +81,22 @@ function setColumnsKeys(worksheet, placeHolderTag, rowsNext = 0) {
     worksheet.getRow(cell.rowNumber + rowsNext).eachCell((cell, colNumber) => {
       columns[colNumber - 1] = {
         key: cell.value.replace(new RegExp('[<|>]', 'g'), ''),
+        style: worksheet.getColumn(colNumber).style,
+        width: worksheet.getColumn(colNumber).width,
       }
       cell.value = ''
     })
-    console.log('columns', columns)
+
     worksheet.columns = columns
-    worksheet.spliceRows(cell.rowNumber + rowsNext, 2)
+    // worksheet.spliceRows(cell.rowNumber + rowsNext, 2)
+    return cell.rowNumber + rowsNext
   }
 }
+
 module.exports = {
   findContentInExcelRow,
+  setColumnsKeysAndBindData,
   findContentInExcelSheet,
+  replaceContentInExcelSheet,
   setColumnsKeys,
 }
