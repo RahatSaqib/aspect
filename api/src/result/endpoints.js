@@ -634,11 +634,7 @@ const routes = [
           siteId: Joi.number()
             .integer()
             .allow(null),
-          startOn: Joi.date()
-            .iso()
-            .allow(null)
-            .description('Starting date'),
-          finishOn: Joi.date()
+          endedOn: Joi.date()
             .iso()
             .allow(null)
             .description('Ending date'),

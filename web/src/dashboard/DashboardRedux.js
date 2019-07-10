@@ -402,16 +402,14 @@ export function fetchActionDashboard(rawFiltersParams, sortCol, sortDir) {
 }
 
 // -------------------------------------------------------------------
-export function fetchTreatmentDashboard({ siteId, startOn, finishOn } = {}) {
+export function fetchTreatmentDashboard({ siteId, endedOn } = {}) {
   return dispatch => {
     const requestedAt = `treatment_${Date.now()}`
-    dispatch(
-      requestTreatmentDashboard({ siteId, startOn, finishOn, requestedAt })
-    )
+    dispatch(requestTreatmentDashboard({ siteId, endedOn, requestedAt }))
 
     return aspectFetch('/result/confirmed-treatment-tracking', {
       method: 'POST',
-      body: JSON.stringify({ siteId, startOn, finishOn }),
+      body: JSON.stringify({ siteId, endedOn }),
       errorNotifications: {
         default: errorPleaseTryAgainInAFewMinutes(
           defineMessages({
@@ -591,7 +589,13 @@ export default function dashboardReducer(state = initialState, action) {
     case RECEIVE_TREATMENT_DASHBOARD: {
       return state.withMutations(mutState => {
         onRequested(action, mutState, () => {
-          mutState.set('treatmentStatus', new Immutable.fromJS(action.data))
+          const payload = action.data
+          payload.data.forEach(item => {
+            const date = new Date(`${item.monthTested}-15`)
+            const monthName = date.toLocaleString('en-us', { month: 'long' })
+            item.period = `${monthName} ${date.getFullYear()}`
+          })
+          mutState.set('treatmentStatus', new Immutable.fromJS(payload))
         })
       })
     }

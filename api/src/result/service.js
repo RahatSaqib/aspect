@@ -1,7 +1,7 @@
 const Boom = require('boom')
 const _ = require('lodash')
 const dateFormat = require('date-fns/format')
-const { subDays, subMonths, addMonths, min } = require('date-fns')
+const { subDays, subMonths, startOfMonth, endOfMonth } = require('date-fns')
 const Promise = require('bluebird')
 const {
   knex,
@@ -1273,19 +1273,21 @@ async function confirmedTreatmentTracking(request) {
 
   const { siteId } = payload
 
-  // normalize and format 'startOn' and 'finishOn'
-  let { startOn, finishOn } = payload
-  if (!startOn && !finishOn) {
-    finishOn = new Date()
-    startOn = subMonths(finishOn, 5)
-  } else if (!startOn && finishOn) {
-    startOn = subMonths(finishOn, 5)
-  } else if (startOn && !finishOn) {
-    finishOn = min(new Date(), addMonths(startOn, 5))
+  const now = new Date()
+  const lastEndedOn = endOfMonth(subMonths(now, 1))
+
+  // normalize and format 'endedOn'
+  let { endedOn } = payload
+  if (!endedOn) {
+    endedOn = subMonths(now, 1)
   }
-  startOn = dateFormat(startOn, 'yyyy-MM')
-  finishOn = dateFormat(finishOn, 'yyyy-MM')
-  const lastOn = dateFormat(new Date(), 'yyyy-MM')
+  endedOn = endOfMonth(endedOn)
+  if (endedOn > lastEndedOn) {
+    return Boom.expectationFailed(
+      '"endedOn" can not be greater than previous month'
+    )
+  }
+  const startedOn = startOfMonth(subMonths(endedOn, 5)) // 6 months period
 
   const data = await knex('Result as r')
     // consider 100% as all results where requiresTreatment = 1 in the resultCategoryAssay table
@@ -1296,8 +1298,6 @@ async function confirmedTreatmentTracking(request) {
       )
     })
     .where('rca.requiresTreatment', 1)
-    // join Assay table to filter by assayTypeId
-    .innerJoin('Assay as a', 'r.assayId', 'a.id')
     // join ResultTreatmentStatusLog to count by 'OnTreatment' and 'NotPossible' statuses
     .leftOuterJoin('ResultTreatmentStatusLog as rtslConfirmed', function() {
       this.on('r.treatmentStatusLogId', 'rtslConfirmed.id')
@@ -1323,20 +1323,16 @@ async function confirmedTreatmentTracking(request) {
       }
     })
     // filter by date range, inclusive
-    .whereRaw(`date_format(r.endedOn, '%Y-%m') >= ?`, [startOn])
-    .whereRaw(`date_format(r.endedOn, '%Y-%m') <= ?`, [finishOn])
-    // .where('a.assayTypeId', 1) // ???
+    .where('r.endedOn', '>=', startedOn)
+    .where('r.endedOn', '<=', endedOn)
     .select(
       knex.raw('count(r.id) as total'),
       knex.raw('count(rtslConfirmed.id) as cntConfirmed'),
       knex.raw('count(rtslUnaccountable.id) as cntUnaccountable'),
-      knex.raw(`date_format(r.endedOn, '%Y-%m') AS month_tested`), // group by r.endedOn as 'yyyy-MM'
-      knex.raw(`date_format(r.endedOn, '%M %Y') AS period`), // to show in bottom axis as 'yyyy-MonthName'
-      knex.raw(`date_format(r.endedOn, '%Y') AS year`),
-      knex.raw(`date_format(r.endedOn, '%m') AS month`) // month number, to show i18n month name on FE
+      knex.raw(`date_format(r.endedOn, '%Y-%m') AS monthTested`) // group by r.endedOn as 'yyyy-MM'
     )
-    .groupBy('month_tested')
-    .orderBy('month_tested')
+    .groupBy('monthTested')
+    .orderBy('monthTested')
     .map(d => {
       // add percentages
       const getPercentage = (total, value) => {
@@ -1355,9 +1351,8 @@ async function confirmedTreatmentTracking(request) {
 
   return {
     siteId,
-    startOn, // 'yyyy-MM'
-    finishOn, // 'yyyy-MM'
-    lastOn, // 'yyyy-MM'
+    endedOn: dateFormat(endedOn, 'yyyy-MM-dd'),
+    lastOn: dateFormat(lastEndedOn, 'yyyy-MM-dd'),
     data,
   }
 }

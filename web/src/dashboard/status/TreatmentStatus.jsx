@@ -8,13 +8,12 @@ import { compose, withProps, lifecycle, withHandlers, pure } from 'recompose'
 import { connect } from 'react-redux'
 import Card from '@material-ui/core/Card'
 
-import { addMonths, subMonths, format as dateFormat } from 'date-fns'
+import { addMonths, format as dateFormat } from 'date-fns'
 
 import IconTitle from 'react-icons/lib/fa/pie-chart'
 import IconBarChart from 'react-icons/lib/fa/bar-chart'
 import IconArrowLeft from 'react-icons/lib/md/keyboard-arrow-left'
 import IconArrowRight from 'react-icons/lib/md/keyboard-arrow-right'
-// import IconHelp from 'react-icons/lib/md/help'
 import { ResponsiveBar } from '@nivo/bar'
 
 import { Unit } from '../../components/pureGrids'
@@ -30,18 +29,15 @@ const cssClasses = classnames.bind(require('./Status.css'))
 
 const changePeriod = (props, shift) => {
   const { lastOn, siteId, fetchTreatmentDashboard } = props
-  let { startOn, finishOn } = props
+  let { endedOn } = props
 
   const last = Date.parse(`${lastOn}`)
-  let finish = addMonths(Date.parse(`${finishOn}`), shift)
+  let finish = addMonths(Date.parse(`${endedOn}`), shift)
   if (finish > last) {
     finish = last
   }
-  const start = subMonths(finish, 5)
-
-  startOn = dateFormat(start, 'yyyy-MM')
-  finishOn = dateFormat(finish, 'yyyy-MM')
-  fetchTreatmentDashboard({ siteId, startOn, finishOn })
+  endedOn = dateFormat(finish, 'yyyy-MM-dd')
+  fetchTreatmentDashboard({ siteId, endedOn })
 }
 const enhance = compose(
   pure,
@@ -61,13 +57,7 @@ const enhance = compose(
       const treatmentStatus = state.dashboard.treatmentStatus.toJS()
       return {
         sitesSelectList: state.site.selectList,
-        ..._.pick(treatmentStatus, [
-          'siteId',
-          'startOn',
-          'finishOn',
-          'lastOn',
-          'data',
-        ]),
+        ..._.pick(treatmentStatus, ['siteId', 'endedOn', 'lastOn', 'data']),
       }
     },
     bindActionCreators.bind(null, {
@@ -82,13 +72,12 @@ const enhance = compose(
     },
   }),
   withHandlers({
-    onChange: ({ startOn, finishOn, fetchTreatmentDashboard }) => ({
+    onChange: ({ endedOn, fetchTreatmentDashboard }) => ({
       target: { value },
     }) => {
       fetchTreatmentDashboard({
         siteId: value || null,
-        startOn,
-        finishOn,
+        endedOn,
       })
     },
     onBack: props => () => changePeriod(props, -1),
@@ -122,7 +111,7 @@ export const TreatmentStatus = ({
   title,
 
   lastOn,
-  finishOn,
+  endedOn,
   data = [],
   isSingleSite,
   source,
@@ -211,7 +200,7 @@ export const TreatmentStatus = ({
                       {tick.value}
                     </text>
                     {data[tick.tickIndex] &&
-                      data[tick.tickIndex].month_tested === lastOn && (
+                      data[tick.tickIndex].monthTested === lastOn && (
                         <text
                           textAnchor="middle"
                           dominantBaseline="middle"
@@ -293,7 +282,7 @@ export const TreatmentStatus = ({
             'Treatment--ArrowRightContainer'
           )}
         >
-          {finishOn < lastOn && (
+          {endedOn < lastOn && (
             <IconArrowRight size={40} color="grey" onClick={onForward} />
           )}
         </Unit>
