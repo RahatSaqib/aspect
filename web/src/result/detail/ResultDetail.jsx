@@ -258,11 +258,6 @@ export class ResultDetail extends PureComponent {
       },
     } = this.props
 
-    if (event.target.id === 'OnTreatment') {
-      return this.props.logTreatmentStatus(resultId, {
-        externalId: event.target.id,
-      })
-    }
     return this.props.logTreatmentStatus(resultId, {
       externalId: event.target.id,
     })

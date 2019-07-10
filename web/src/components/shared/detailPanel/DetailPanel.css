@@ -67,24 +67,19 @@
   padding: 8px 10px 0 0;
 }
 
-.TreatmentTitle p:nth-child(2) {
-  margin-left: 10em;
-  padding: 10px;
-  background-color: var(--aspect-color-chill-blue-2);
-  border-radius: 5em;
-  color: white;
-  padding: 8px;
-  font-size: 12px;
-}
-
-.TreatmentTitle p:first-child {
-  color: var(--aspect-color-shakespeare);
-}
-
 .TreatmentCheckBox {
   display: flex;
   width: 22em;
   justify-content: space-between;
+}
+
+.TreatmentCheckBox div:nth-child(3) {
+  background-color: var(--aspect-color-chill-blue-2);
+  color: white;
+  padding: 9px;
+  border-radius: 21px;
+  position: relative;
+  margin-top: -6px;
 }
 
 .TreatmentNoteContainer {

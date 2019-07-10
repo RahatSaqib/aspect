@@ -405,6 +405,9 @@ function validateResultResponse() {
     resultWorkflowLogCreatedOn: Joi.date()
       .allow(null)
       .description('CreatedOn date from the latest ResultWorkflowLog'),
+    resultTreatmentStatusChangedOn: Joi.date()
+      .allow(null)
+      .description('ChangedOn date from the latest ResultTreatmentStatusLog'),
     resultWorkflowLogChangedOn: Joi.date()
       .allow(null)
       .description('ChangedOn date from the latest ResultWorkflowLog'),
@@ -414,6 +417,12 @@ function validateResultResponse() {
     resultTreatmentMethod: Joi.string()
       .allow(null, '')
       .description('Method from latest ResultTreatmentWorkflowLog'),
+    resultTreatmentStatus: Joi.string()
+      .allow(null, '')
+      .description('ExternalId of the result treatment status'),
+    treatmentStatusInfo: Joi.string()
+      .allow(null, '')
+      .description('treatment status info'),
     resultTreatmentData: Joi.string()
       .allow(null, '')
       .description('Operator from latest ResultTreatmentWorkflowLog'),

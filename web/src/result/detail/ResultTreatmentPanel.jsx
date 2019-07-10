@@ -24,8 +24,30 @@ const ResultTreatmentPanel = ({ styles, data, restProps }) => (
         <div className={styles.Treatment}>
           <PermIdentity className={styles[`${data.get('treatmentStatus')}`]} />
           <div className={styles.TreatmentInfo}>
-            <h6>Not yet confirmed</h6>
-            <h6>now now</h6>
+            {[
+              {
+                id: 'OnTreatment',
+                label: 'Confirmed',
+              },
+              {
+                id: 'NotPossible',
+                label: 'Not possible',
+              },
+            ].map(
+              treatmentStatus =>
+                treatmentStatus.id === data.get('resultTreatmentStatus') && (
+                  <h6>
+                    {treatmentStatus.label}{' '}
+                    <span>
+                      -{' '}
+                      {date(
+                        data.get('resultTreatmentStatusChangedOn'),
+                        'dd/MM/yyyy'
+                      )}
+                    </span>
+                  </h6>
+                )
+            )}
             <h3>
               {differenceInCalendarDays(new Date(), data.get('endedOn'))} days
             </h3>
@@ -35,8 +57,7 @@ const ResultTreatmentPanel = ({ styles, data, restProps }) => (
     >
       <div className={styles.TreatmentLinkLayout}>
         <div className={styles.TreatmentTitle}>
-          <p>Linked to treatment </p>
-          <p>Add Note </p>
+          <p>Link to Treatment</p>
         </div>
         <div className={styles.TreatmentCheckBox}>
           {[
@@ -54,24 +75,17 @@ const ResultTreatmentPanel = ({ styles, data, restProps }) => (
                 onChange={restProps.onTreatmentChange}
                 id={treatmentCheckbox.id}
                 disabled={
-                  !restProps.userPermission.includes('treatmentStatus:edit')
+                  !restProps.userPermission.includes('treatmentStatus:edit') ||
+                  !restProps.userPermission.includes('treatmentStatus:admin')
                 }
                 checked={
                   treatmentCheckbox.id === data.get('resultTreatmentStatus')
                 }
               />{' '}
               {treatmentCheckbox.label}
-              {treatmentCheckbox.treatmentStatus && (
-                <span>
-                  -{' '}
-                  {date(
-                    data.get('resultTreatmentStatusChangedOn'),
-                    'dd/MM/yyyy'
-                  )}
-                </span>
-              )}
             </div>
           ))}
+          <div>Add Note </div>
         </div>
       </div>
     </ExpansionPanelHeader>

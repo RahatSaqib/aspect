@@ -608,14 +608,11 @@ export default function resultReducer(state = initialState, action) {
       return state.withMutations(mutState => {
         const result = state.items.byId
           .get(action.resultId)
-          .set('resultTreatmentStatus', action.item.treatmentStatus.externalId)
-          .set(
-            'treatmentStatus',
-            action.item.treatmentStatus.treatmentStatusInfo
-          )
+          .set('resultTreatmentStatus', action.item.resultTreatmentStatus)
+          .set('treatmentStatus', action.item.treatmentStatusInfo)
           .set(
             'resultTreatmentStatusChangedOn',
-            action.item.treatmentStatus.resultTreatmentStatusChangedOn
+            action.item.resultTreatmentStatusChangedOn
           )
 
         mutState.set('items', receiveItem(mutState.items, result))

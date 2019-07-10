@@ -74,6 +74,7 @@ const SELECT_SHOW_FIELDS = [
   'rs.externalId as resultWorkflowStatusExternalId',
   'rsl.changedOn as resultWorkflowChangedOn',
   'rts.id as resultTreatmentStatusId',
+  'rts.externalId as resultTreatmentStatus',
   'r.resultData',
   'r.formData',
   'r.siteId',
@@ -110,6 +111,7 @@ const SELECT_SHOW_FIELDS = [
   'rtsl.method as resultTreatmentMethod',
   'rtsl.data as resultTreatmentData',
   'rtsl.resultTreatmentStatusId',
+  'rtsl.changedOn as resultTreatmentStatusChangedOn',
 ]
 
 const SORT_FIELDS = [
@@ -297,17 +299,7 @@ async function getListResults(query, auth) {
   const newData = _.map(data, v => {
     isPastThirtyDays = lastThirtyDays <= v.endedOn
 
-    if (v.resultTreatmentStatus === 'OnTreatment') {
-      v.treatmentStatus = 'ok'
-    } else if (v.resultTreatmentStatus === 'NotPossible') {
-      v.treatmentStatus = 'na'
-    } else if (v.requiresTreatment === 1 && isPastThirtyDays) {
-      v.treatmentStatus = 'alert'
-    } else if (v.requiresTreatment === 1 && !isPastThirtyDays) {
-      v.treatmentStatus = 'warning'
-    } else {
-      v.treatmentStatus = 'na'
-    }
+    getResultTreatmentStatus(v, isPastThirtyDays)
     return v
   })
 
@@ -320,6 +312,20 @@ async function getListResults(query, auth) {
   }
 
   return result
+}
+
+function getResultTreatmentStatus(response, isPastThirtyDays) {
+  if (response.resultTreatmentStatus === 'OnTreatment') {
+    response.treatmentStatusInfo = 'ok'
+  } else if (response.resultTreatmentStatus === 'NotPossible') {
+    response.treatmentStatusInfo = 'na'
+  } else if (response.requiresTreatment === 1 && isPastThirtyDays) {
+    response.treatmentStatusInfo = 'alert'
+  } else if (response.requiresTreatment === 1 && !isPastThirtyDays) {
+    response.treatmentStatusInfo = 'warning'
+  } else {
+    response.treatmentStatusInfo = 'na'
+  }
 }
 
 async function listResults(request) {
@@ -790,6 +796,12 @@ async function getResultByResultId(request, fields = SELECT_SHOW_FIELDS) {
     data.files = files
   }
 
+  const lastThirtyDays = subDays(new Date(), 30)
+
+  const isPastThirtyDays = lastThirtyDays <= data.endedOn
+
+  getResultTreatmentStatus(data, isPastThirtyDays)
+
   return { ok: results.length === 1, data }
 }
 
@@ -988,7 +1000,6 @@ async function updateTreatmentStatus(request) {
   const { id: currentUserId } = await getUser(auth.credentials.name)
   const { permissions } = auth.credentials
 
-
   // get the result so we can check access and if status changed
   const result = await getResultByResultId(request)
   if (!result.ok) {
@@ -997,12 +1008,8 @@ async function updateTreatmentStatus(request) {
 
   const { resultTreatmentStatusId, data, method, changedOn = now } = payload
 
-  if (!permissions.includes('treatmentStatus:view')) {
-    return Boom.unauthorized('You are not authorised to view treatment status')
-  }
-
   if (
-    !resultTreatmentStatusId &&
+    !permissions.includes('treatmentStatus:admin') ||
     !permissions.includes('treatmentStatus:edit')
   ) {
     return Boom.unauthorized('You are not authorised to edit treatment status')
@@ -1054,14 +1061,6 @@ async function updateTreatmentStatus(request) {
   }
   const response = await showResult(request)
   response.data.treatmentStatus = lastTreatment
-
-  if (lastTreatment.externalId === 'OnTreatment') {
-    response.data.treatmentStatus.treatmentStatusInfo = 'ok'
-  } else if (lastTreatment.externalId === 'NotPossible') {
-    response.data.treatmentStatus.treatmentStatusInfo = 'na'
-  }
-
-  response.data.treatmentStatus.resultTreatmentStatusChangedOn = changedOn
 
   return response
 }
