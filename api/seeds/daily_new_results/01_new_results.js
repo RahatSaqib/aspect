@@ -89,10 +89,12 @@ async function seed(knex) {
 
   const partnerOne = await knex('Partner').first()
   const partnerOneId = partnerOne.id
-  const siteDatas = await knex('Site')
-    .where({ partnerId: partnerOneId })
-    .select()
-
+  const siteDatas = await knex('Site as s')
+    .join('Geography as g', 's.geographyId', 'g.id')
+    .join('Country as c', 'g.countryId', 'c.id')
+    .where('s.partnerId', partnerOneId)
+    .where('c.abbreviation', 'US')
+    .select('s.*')
   // Results section
   // TB results:
   let possibleResults = [
@@ -185,6 +187,7 @@ async function seed(knex) {
   const { approved: deviceStatusApproved } = await allDeviceStatusToId()
   const [{ DeviceCount }] = await knex('Device')
     .where('partnerId', partnerOneId)
+    .whereIn('siteId', _.map(siteDatas, 'id'))
     .count('* as DeviceCount')
   if (deviceTypes.length > DeviceCount) {
     let i = 0
@@ -211,6 +214,7 @@ async function seed(knex) {
 
   const devicesGeneXpert = await knex('Device')
     .where({ deviceTypeId: deviceTypeGeneXpertId, partnerId: partnerOneId })
+    .whereIn('siteId', _.map(siteDatas, 'id'))
     .select()
 
   const { id: lastSampleId } = await knex('Sample')
@@ -684,6 +688,7 @@ async function seed(knex) {
   ).id
   const devicesDaktari = await knex('Device')
     .where({ deviceTypeId: deviceTypeGeneXpertId, partnerId: partnerOneId })
+    .whereIn('siteId', _.map(siteDatas, 'id'))
     .select()
   await Promise.all(
     _.map(_.range(resultHcvNumber), async i => {
