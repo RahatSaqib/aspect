@@ -1,3 +1,6 @@
+const Excel = require('exceljs')
+const fs = require('fs')
+
 function findContentInExcelRow(
   row,
   placeHolderTag,
@@ -30,7 +33,6 @@ function findContentInExcelSheet(
 ) {
   let rowCell = null
   worksheet.eachRow((row, rowNumber) => {
-    // console.log(row.values)
     const cell = findContentInExcelRow(
       row,
       placeHolderTag,
@@ -88,15 +90,35 @@ function setColumnsKeys(worksheet, placeHolderTag, rowsNext = 0) {
     })
 
     worksheet.columns = columns
-    // worksheet.spliceRows(cell.rowNumber + rowsNext, 2)
     return cell.rowNumber + rowsNext
   }
 }
+async function generateReport(
+  format,
+  reportTemplate,
+  placeHolderTag,
+  data,
+  placeHolderTagValuesIndex = 0
+) {
+  let workbook = new Excel.Workbook()
+  workbook = await workbook.xlsx.readFile(reportTemplate)
+  const worksheet = workbook.getWorksheet(1)
+  setColumnsKeysAndBindData(
+    worksheet,
+    placeHolderTag,
+    data,
+    placeHolderTagValuesIndex
+  )
 
+  const stream = fs.writeFileSync(`prueba1devices.${format}`)
+  if (format === 'xlsx') return workbook.xlsx.write(stream)
+  return workbook.csv.write(stream)
+}
 module.exports = {
   findContentInExcelRow,
   setColumnsKeysAndBindData,
   findContentInExcelSheet,
   replaceContentInExcelSheet,
   setColumnsKeys,
+  generateReport,
 }

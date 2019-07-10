@@ -1,22 +1,25 @@
-// const _ = require('lodash')
-// const { subDays, addMilliseconds, subMinutes } = require('date-fns')
-const { assert } = require('chai')
-const { getDevicesReport } = require('../../src/excelReports/service')
-// const Promise = require('bluebird')
-// const { run } = require('../../src/db')
-// const { runTestWithKnex } = require('../utils/generatorFunctionUtils')
+const supertest = require('supertest')
+const chai = require('chai')
 
+const { assert } = chai
+const shared = require('../utils/sharedToken')
+
+const server = supertest.agent('http://localhost:8080/api')
+const path = '/device/export'
 describe.only('Excel reports', () => {
-  // shared.checkToken(server, path)
+  shared.checkToken(server, path)
 
   it('should return a list of devices when using valid token', async () => {
-    const request = {
+    /* const request = {
       query: {},
       auth: { credentials: { name: 'admin' } },
       format: 'xlsx',
-    }
-    await getDevicesReport(request)
-
-    assert.isTrue(true)
+    } */
+    await server
+      .get(path)
+      .set('Authorization', `Bearer ${shared.token}`)
+      .end((err, res) => {
+        assert.isTrue(!res)
+      })
   })
 })

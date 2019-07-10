@@ -9,7 +9,7 @@ const {
   showDevice,
   updateDevice,
   listStatusTypes,
-  exportDevices,
+  // exportDevices,
   listDevicesForSelectList,
   updateDeviceMaintenance,
 } = require('./service')
@@ -448,7 +448,7 @@ const routes = [
   {
     method: 'GET',
     path: '/device/export',
-    handler: asyncHandler(exportDevices),
+    handler: getDevicesReport,
     config: Object.assign(
       {
         description: 'Export Device List into Excel or CSV',
