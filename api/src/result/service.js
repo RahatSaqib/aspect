@@ -1008,10 +1008,7 @@ async function updateTreatmentStatus(request) {
 
   const { resultTreatmentStatusId, data, method, changedOn = now } = payload
 
-  if (
-    !permissions.includes('treatmentStatus:admin') ||
-    !permissions.includes('treatmentStatus:edit')
-  ) {
+  if (!permissions.includes('treatmentStatus:admin')) {
     return Boom.unauthorized('You are not authorised to edit treatment status')
   }
 

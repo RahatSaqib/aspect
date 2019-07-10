@@ -158,7 +158,7 @@ export const DetailPanel = ({ intl, data, schema, ...restProps }) => (
       icon={<MdAssignment className={cssClasses('Title__Icon')} />}
       className={cssClasses('Title')}
     />
-    {data && data.get('treatmentStatus') && (
+    {data && data.get('treatmentStatusInfo') && (
       <ResultTreatmentPanel styles={styles} data={data} restProps={restProps} />
     )}
     {schema

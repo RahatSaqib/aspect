@@ -609,7 +609,7 @@ export default function resultReducer(state = initialState, action) {
         const result = state.items.byId
           .get(action.resultId)
           .set('resultTreatmentStatus', action.item.resultTreatmentStatus)
-          .set('treatmentStatus', action.item.treatmentStatusInfo)
+          .set('treatmentStatusInfo', action.item.treatmentStatusInfo)
           .set(
             'resultTreatmentStatusChangedOn',
             action.item.resultTreatmentStatusChangedOn
