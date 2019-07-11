@@ -237,7 +237,7 @@ describe('result endpoints', () => {
       })
     })
   })
-  describe.only('PUT', () => {
+  describe('PUT', () => {
     describe('/result/treatment-status/{resultId}', () => {
       let endpoint
       const expectedResponse = { value: 'Expected result' }

@@ -796,11 +796,13 @@ async function getResultByResultId(request, fields = SELECT_SHOW_FIELDS) {
     data.files = files
   }
 
-  const lastThirtyDays = subDays(new Date(), 30)
+  if (data) {
+    const lastThirtyDays = subDays(new Date(), 30)
 
-  const isPastThirtyDays = lastThirtyDays <= data.endedOn
+    const isPastThirtyDays = lastThirtyDays <= data.endedOn
 
-  getResultTreatmentStatus(data, isPastThirtyDays)
+    getResultTreatmentStatus(data, isPastThirtyDays)
+  }
 
   return { ok: results.length === 1, data }
 }
