@@ -11,7 +11,7 @@ async function getDevicesReport(request, reply) {
   // const request = { query: {}, auth: { credentials: { name: 'admin' } } }
   const devices = await listDevices(request)
   const reportFile = path.join(__dirname, './reportTemplates/Devices.xlsx')
-  const fileStream = generateReport(
+  const report = generateReport(
     request.format,
     reportFile,
     '<Headers>',
@@ -27,17 +27,27 @@ async function getDevicesReport(request, reply) {
     ),
     2
   )
-  return reply(fileStream)
-    .header(
-      'Content-Disposition',
-      `attachment; filename=devices.${request.format}`
-    )
-    .header(
-      'Content-Type',
-      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-    )
+  return downloadReportFile(report, reply)
 }
+async function downloadReportFile(reportFunction, reply) {
+  await reportFunction
+    .then(resp => {
+      reply(resp)
+        .encoding('binary')
+        .type(
+          'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        )
+        .header(
+          'content-disposition',
+          `attachment; filename=test-${new Date().toISOString()}.xlsx;`
+        )
+    })
 
+    .catch(err => {
+      console.error(err) // eslint-disable-line no-console
+      reply(err)
+    })
+}
 module.exports = {
   getDevicesReport,
 }

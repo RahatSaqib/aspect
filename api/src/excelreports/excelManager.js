@@ -110,9 +110,8 @@ async function generateReport(
     placeHolderTagValuesIndex
   )
 
-  const stream = fs.writeFileSync(`prueba1devices.${format}`)
-  if (format === 'xlsx') return workbook.xlsx.write(stream)
-  return workbook.csv.write(stream)
+  if (format === 'xlsx') return workbook.xlsx.writeBuffer()
+  return workbook.csv.writeBuffer()
 }
 module.exports = {
   findContentInExcelRow,

@@ -453,8 +453,8 @@ const routes = [
       {
         description: 'Export Device List into Excel or CSV',
         notes: 'Filtered and sorted list of devices',
-      },
-      listDevicesBaseConfig()
+      }
+      // listDevicesBaseRequest()
     ),
   },
   {

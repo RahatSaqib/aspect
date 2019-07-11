@@ -142,7 +142,8 @@ async function listReports(request) {
 
 function proxyGxReport(request, reply) {
   return proxyGxReportAsync(request)
-    .then(resp =>
+    .then(resp => {
+      console.log(resp)
       reply(resp.body)
         .header(
           'Content-Type',
@@ -152,7 +153,8 @@ function proxyGxReport(request, reply) {
           'Content-Disposition',
           `attachment; filename="${request.params.reportName}.xlsx"`
         )
-    )
+        .header('accept-encoding', 'gzip,deflate')
+    })
     .catch(err => {
       console.error(err) // eslint-disable-line no-console
       reply(err)

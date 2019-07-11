@@ -18,8 +18,13 @@ describe.only('Excel reports', () => {
     await server
       .get(path)
       .set('Authorization', `Bearer ${shared.token}`)
-      .end((err, res) => {
-        assert.isTrue(!res)
+      .then(res => {
+        console.log(res)
+        assert.isNotNull(!res)
+        assert.isString(res.text)
+      })
+      .catch(e => {
+        console.log('error:', e)
       })
   })
 })
