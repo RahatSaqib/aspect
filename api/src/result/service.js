@@ -1332,7 +1332,6 @@ async function confirmedTreatmentTracking(request) {
       knex.raw(`date_format(r.endedOn, '%Y-%m') AS monthTested`) // group by r.endedOn as 'yyyy-MM'
     )
     .groupBy('monthTested')
-    .orderBy('monthTested')
     .map(d => {
       // add percentages
       const getPercentage = (total, value) => {
@@ -1346,8 +1345,27 @@ async function confirmedTreatmentTracking(request) {
       }
       d.confirmed = getPercentage(d.total, d.cntConfirmed)
       d.unaccountable = getPercentage(d.total, d.cntUnaccountable)
+      delete d.total
+      delete d.cntConfirmed
+      delete d.cntUnaccountable
       return d
     })
+
+  let dt = endedOn
+  while (dt >= startedOn) {
+    const monthTested = dateFormat(dt, 'yyyy-MM')
+    if (!data.find(x => x.monthTested === monthTested)) {
+      data.push({
+        confirmed: 0,
+        unaccountable: 0,
+        monthTested,
+      })
+    }
+    dt = endOfMonth(subMonths(dt, 1))
+  }
+  data.sort((a, b) => b.monthTested - a.monthTested)
+
+  // data
 
   return {
     siteId,

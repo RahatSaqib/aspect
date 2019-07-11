@@ -2,7 +2,7 @@ const supertest = require('supertest')
 const chai = require('chai')
 const _ = require('lodash')
 const dateFormat = require('date-fns/format')
-const { addMinutes } = require('date-fns')
+const { addMinutes, subMonths, endOfMonth } = require('date-fns')
 
 const shared = require('../utils/sharedToken')
 const { runTestWithKnex } = require('../utils/generatorFunctionUtils')
@@ -917,6 +917,38 @@ describe('Result download routes', () => {
           assert.property(res.body.data[0], 'errorCode')
           assert.property(res.body.data[0], 'errorNotes')
           assert.property(res.body.data[0], 'sample')
+
+          done()
+        })
+    })
+  })
+})
+
+describe('Result Treatment', () => {
+  describe('Status Tracking - POST', () => {
+    const path = '/api/result/confirmed-treatment-tracking'
+    shared.checkToken(server, path)
+
+    it('Should return percentages of OnTreatment and Unaccountable', done => {
+      const now = new Date()
+      const endedOn = dateFormat(endOfMonth(subMonths(now, 1)), 'yyyy-MM-dd')
+      const siteId = null
+      server
+        .post(`${path}`)
+        .send({ endedOn, siteId })
+        .set('Authorization', `Bearer ${shared.token}`)
+        .end((err, res) => {
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+
+          assert.property(res.body, 'endedOn')
+          assert.property(res.body, 'data')
+          assert.property(res.body, 'siteId')
+
+          assert.equal(res.body.data.length, 6) // for 6 months
+          assert.property(res.body.data[0], 'monthTested')
+          assert.property(res.body.data[0], 'confirmed')
+          assert.property(res.body.data[0], 'unaccountable')
 
           done()
         })
