@@ -426,6 +426,9 @@ function validateResultResponse() {
     resultTreatmentData: Joi.string()
       .allow(null, '')
       .description('Operator from latest ResultTreatmentWorkflowLog'),
+    requiresTreatment: Joi.number()
+      .allow(null, '')
+      .description('Predicted required treatment'),
   }
 }
 

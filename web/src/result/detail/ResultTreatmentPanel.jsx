@@ -14,7 +14,7 @@ import {
 const enhance = compose(
   pure,
   requirePermission({
-    permissions: ['treatmentStatus:admin'],
+    permissions: ['treatmentStatus:view', 'treatmentStatus:admin'],
   })
 )
 const ResultTreatmentPanel = ({ styles, data, restProps }) => {
@@ -26,6 +26,10 @@ const ResultTreatmentPanel = ({ styles, data, restProps }) => {
     {
       id: 'NotPossible',
       label: 'Not possible',
+    },
+    {
+      id: 'AwaitingTreatment',
+      label: 'Not yet confirmed on treatment',
     },
   ]
 
@@ -43,13 +47,15 @@ const ResultTreatmentPanel = ({ styles, data, restProps }) => {
                   treatmentStatus.id === data.get('resultTreatmentStatus') && (
                     <h6>
                       {treatmentStatus.label}{' '}
-                      <span>
-                        -{' '}
-                        {date(
-                          data.get('resultTreatmentStatusChangedOn'),
-                          'dd/MM/yyyy'
-                        )}
-                      </span>
+                      {treatmentStatus.id !== 'AwaitingTreatment' && (
+                        <span>
+                          -{' '}
+                          {date(
+                            data.get('resultTreatmentStatusChangedOn'),
+                            'dd/MM/yyyy'
+                          )}
+                        </span>
+                      )}
                     </h6>
                   )
               )}
@@ -65,21 +71,30 @@ const ResultTreatmentPanel = ({ styles, data, restProps }) => {
             <p>Link to Treatment</p>
           </div>
           <div className={styles.TreatmentCheckBox}>
-            {treatmentCheckBoxList.map(treatmentCheckbox => (
-              <div>
-                <AspectCheckBox
-                  onChange={restProps.onTreatmentChange}
-                  id={treatmentCheckbox.id}
-                  disabled={
-                    !restProps.userPermission.includes('treatmentStatus:admin')
-                  }
-                  checked={
-                    treatmentCheckbox.id === data.get('resultTreatmentStatus')
-                  }
-                />{' '}
-                {treatmentCheckbox.label}
-              </div>
-            ))}
+            {treatmentCheckBoxList.map(
+              treatmentCheckbox =>
+                treatmentCheckbox.id !== 'AwaitingTreatment' && (
+                  <div>
+                    <AspectCheckBox
+                      onChange={restProps.onTreatmentChange}
+                      id={treatmentCheckbox.id}
+                      disabled={
+                        !restProps.userPermission.includes(
+                          'treatmentStatus:admin'
+                        ) &&
+                        !restProps.userPermission.includes(
+                          'treatmentStatus:edit'
+                        )
+                      }
+                      checked={
+                        treatmentCheckbox.id ===
+                        data.get('resultTreatmentStatus')
+                      }
+                    />{' '}
+                    {treatmentCheckbox.label}
+                  </div>
+                )
+            )}
             <div>Add Note </div>
           </div>
         </div>

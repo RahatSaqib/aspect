@@ -102,6 +102,9 @@ const SELECT_SHOW_FIELDS = [
   'so.name as sampleOriginSiteName',
   'stp.name as sampleTypeName',
   knex.raw('JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.id")) as patientId'),
+  knex.raw(
+    'GREATEST(rtas.requiresTreatment, rtas2.requiresTreatment) as requiresTreatment'
+  ),
   'r.patientData',
   'rf.formSchema',
   'rsl.reason as resultWorkflowLogReason',
@@ -293,13 +296,8 @@ async function getListResults(query, auth) {
     })
   }
 
-  const lastThirtyDays = subDays(new Date(), 30)
-  let isPastThirtyDays = 0
-
   const newData = _.map(data, v => {
-    isPastThirtyDays = lastThirtyDays <= v.endedOn
-
-    getResultTreatmentStatus(v, isPastThirtyDays)
+    getResultTreatmentStatus(v)
     return v
   })
 
@@ -314,7 +312,10 @@ async function getListResults(query, auth) {
   return result
 }
 
-function getResultTreatmentStatus(response, isPastThirtyDays) {
+function getResultTreatmentStatus(response) {
+  const lastThirtyDays = subDays(new Date(), 30)
+  const isPastThirtyDays = lastThirtyDays <= response.endedOn
+
   if (response.resultTreatmentStatus === 'OnTreatment') {
     response.treatmentStatusInfo = 'ok'
   } else if (response.resultTreatmentStatus === 'NotPossible') {
@@ -735,6 +736,18 @@ async function getResultByResultId(request, fields = SELECT_SHOW_FIELDS) {
     .leftJoin('Sample as sp', 'r.sampleId', 'sp.id')
     .leftJoin('SampleType as stp', 'sp.sampleTypeId', 'stp.id')
     .leftJoin('Site as so', 'sp.originSiteId', 'so.id')
+    .leftJoin('ResultCategoryAssay as rtas', function() {
+      this.on('r.assayId', 'rtas.assayId').andOn(
+        'r.resultCategory1',
+        'rtas.resultCategoryId'
+      )
+    })
+    .leftJoin('ResultCategoryAssay as rtas2', function() {
+      this.on('r.assayId', 'rtas2.assayId').andOn(
+        'r.resultCategory1',
+        'rtas2.resultCategoryId'
+      )
+    })
     .leftJoin(
       'ResultWorkflowLog as rsl',
       'r.resultWorkflowStatusLogId',
@@ -797,11 +810,7 @@ async function getResultByResultId(request, fields = SELECT_SHOW_FIELDS) {
   }
 
   if (data) {
-    const lastThirtyDays = subDays(new Date(), 30)
-
-    const isPastThirtyDays = lastThirtyDays <= data.endedOn
-
-    getResultTreatmentStatus(data, isPastThirtyDays)
+    getResultTreatmentStatus(data)
   }
 
   return { ok: results.length === 1, data }
@@ -1010,7 +1019,10 @@ async function updateTreatmentStatus(request) {
 
   const { resultTreatmentStatusId, data, method, changedOn = now } = payload
 
-  if (!permissions.includes('treatmentStatus:admin')) {
+  if (
+    !permissions.includes('treatmentStatus:admin') &&
+    !permissions.includes('treatmentStatus:edit')
+  ) {
     return Boom.unauthorized('You are not authorised to edit treatment status')
   }
 
