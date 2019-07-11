@@ -15,6 +15,7 @@ import MdClose from 'react-icons/lib/md/clear'
 import Button from '@material-ui/core/Button'
 
 // Our own imports
+import ResultTreatmentPanel from './ResultTreatmentPanel'
 import config from '../../config'
 import DelayShowingProgressBar from '../../components/shared/DelayShowingProgressBar'
 import JSONSchemaCard from '../../components/shared/JSONSchemaCard'
@@ -307,6 +308,21 @@ export class ResultDetail extends PureComponent {
     this.setState({ imageIndex })
   }
 
+  renderTreatmentSection = () => {
+    const { result, userPermission } = this.props
+    return (
+      result &&
+      result.get('treatmentStatusInfo') && (
+        <ResultTreatmentPanel
+          styles={styles}
+          data={result}
+          onTreatmentChange={this.handleOnTreatmentChange}
+          userPermission={userPermission}
+        />
+      )
+    )
+  }
+
   renderProgress() {
     return <DelayShowingProgressBar variant="indeterminate" />
   }
@@ -595,14 +611,7 @@ export class ResultDetail extends PureComponent {
   }
 
   renderContent() {
-    const {
-      result,
-      screenSchema,
-      userPermission,
-      resultTags,
-      editable,
-      intl,
-    } = this.props
+    const { result, screenSchema, resultTags, editable, intl } = this.props
     return (
       <div>
         <DetailPanel
@@ -610,8 +619,7 @@ export class ResultDetail extends PureComponent {
           data={result}
           schema={screenSchema}
           className={cssClasses('FieldsContainer')}
-          onTreatmentChange={this.handleOnTreatmentChange}
-          userPermission={userPermission}
+          treatmentSection={this.renderTreatmentSection()}
         >
           {/* Render lower-level sections in assay schema in cards */}
           {this.renderLowerLevelSchemaSections()}

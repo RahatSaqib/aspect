@@ -3,21 +3,25 @@ import PermIdentity from '@material-ui/icons/PermIdentity'
 import { format as date, differenceInCalendarDays } from 'date-fns'
 import { compose, pure } from 'recompose'
 import requirePermission from '../../components/shared/requirePermissions'
-import AspectCheckBox from '../../components/shared/AspectCheckbox'
 
 import {
   ExpansionPanel,
   ExpansionPanelHeader,
   ExpansionPanelDetail,
 } from '../../components/shared/expansionPanel'
+import CheckboxField from '../../components/shared/CheckboxField'
 
 const enhance = compose(
   pure,
   requirePermission({
-    permissions: ['treatmentStatus:view', 'treatmentStatus:admin'],
+    permissions: [
+      'treatmentStatus:admin',
+      'treatmentStatus:view',
+      'treatmentStatus:edit',
+    ],
   })
 )
-const ResultTreatmentPanel = ({ styles, data, restProps }) => {
+const ResultTreatmentPanel = ({ styles, data, ...restProps }) => {
   const treatmentCheckBoxList = [
     {
       id: 'OnTreatment',
@@ -41,11 +45,12 @@ const ResultTreatmentPanel = ({ styles, data, restProps }) => {
             <PermIdentity
               className={styles[`${data.get('treatmentStatusInfo')}`]}
             />
+
             <div className={styles.TreatmentInfo}>
               {treatmentCheckBoxList.map(
                 treatmentStatus =>
                   treatmentStatus.id === data.get('resultTreatmentStatus') && (
-                    <h6>
+                    <h4>
                       {treatmentStatus.label}{' '}
                       {treatmentStatus.id !== 'AwaitingTreatment' && (
                         <span>
@@ -56,7 +61,7 @@ const ResultTreatmentPanel = ({ styles, data, restProps }) => {
                           )}
                         </span>
                       )}
-                    </h6>
+                    </h4>
                   )
               )}
               <h3>
@@ -74,25 +79,20 @@ const ResultTreatmentPanel = ({ styles, data, restProps }) => {
             {treatmentCheckBoxList.map(
               treatmentCheckbox =>
                 treatmentCheckbox.id !== 'AwaitingTreatment' && (
-                  <div>
-                    <AspectCheckBox
-                      onChange={restProps.onTreatmentChange}
-                      id={treatmentCheckbox.id}
-                      disabled={
-                        !restProps.userPermission.includes(
-                          'treatmentStatus:admin'
-                        ) &&
-                        !restProps.userPermission.includes(
-                          'treatmentStatus:edit'
-                        )
-                      }
-                      checked={
-                        treatmentCheckbox.id ===
-                        data.get('resultTreatmentStatus')
-                      }
-                    />{' '}
-                    {treatmentCheckbox.label}
-                  </div>
+                  <CheckboxField
+                    onChange={restProps.onTreatmentChange}
+                    id={treatmentCheckbox.id}
+                    disabled={
+                      !restProps.userPermission.includes(
+                        'treatmentStatus:admin'
+                      ) &&
+                      !restProps.userPermission.includes('treatmentStatus:edit')
+                    }
+                    checked={
+                      treatmentCheckbox.id === data.get('resultTreatmentStatus')
+                    }
+                    label={treatmentCheckbox.label}
+                  />
                 )
             )}
             <div>Add Note </div>

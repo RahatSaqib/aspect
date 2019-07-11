@@ -176,3 +176,114 @@
   flex-basis: 25%;
   white-space: nowrap;
 }
+
+.ok {
+  color: var(--aspect-color-mantis);
+  font-size: 100px;
+}
+
+.alert {
+  color: var(--aspect-color-mandy);
+  font-size: 100px;
+}
+
+.na {
+  color: var(--aspect-color-grey-5);
+  font-size: 100px;
+}
+
+.warning {
+  color: var(--aspect-color-supernova);
+  font-size: 100px;
+}
+
+.TreatmentNoteExpansionPanelContainer {
+  padding-bottom: 10px;
+}
+
+.Treatment {
+  display: flex;
+}
+
+.TreatmentInfo h6 {
+  margin: 0;
+  text-align: center;
+  font-size: 25px;
+}
+.TreatmentInfo h4 {
+  width: 102px;
+  font-size: 12px;
+  text-align: center;
+  margin-bottom: 8px;
+}
+
+.TreatmentInfo h6:first-child {
+  margin-top: 30px;
+}
+
+.TreatmentLinkLayout div {
+  max-width: 30em;
+}
+
+.TreatmentTitle {
+  display: flex;
+}
+
+.TreatmentTitle p {
+  padding: 8px 10px 0 0;
+}
+
+.TreatmentCheckBox {
+  display: flex;
+  width: 22em;
+  justify-content: space-between;
+}
+
+.TreatmentCheckBox div:nth-child(3) {
+  background-color: var(--aspect-color-chill-blue-2);
+  color: white;
+  padding: 10px 9px 8px 9px;
+  border-radius: 21px;
+  position: relative;
+  margin-top: 6px;
+}
+
+.TreatmentNoteContainer {
+  background-color: var(--aspect-color-grey-7);
+  width: 23em;
+  margin-left: 20.5%;
+  margin-top: 5px;
+  padding: 0 19px 0 12px;
+}
+
+.TreatmentNoteContainer > div:first-child {
+  display: none
+}
+
+.TreatmentNoteContainer > div:nth-child(2) {
+  padding-right: 0;
+}
+
+.TreatmentNoteContainer svg {
+  font-size: 19px;
+  margin-bottom: -12px;
+  color: var(--aspect-color-chill-blue-2)
+}
+
+.TreatmentNoteHeader > p:nth-child(1) {
+  margin: 0;
+}
+
+.TreatmentNoteBody {
+  margin-bottom: 15px;
+}
+
+.TreatmentNoteFooter p:first-child {
+  margin: 0 0 5px 0;
+  color: var(--aspect-color-chill-blue-2)
+}
+
+.TreatmentNoteFooter p:nth-child(2) {
+  margin: 0 0 5px 0;
+  font-size: 12px;
+}

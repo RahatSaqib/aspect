@@ -314,7 +314,7 @@ async function getListResults(query, auth) {
 
 function getResultTreatmentStatus(response) {
   const lastThirtyDays = subDays(new Date(), 30)
-  const isPastThirtyDays = lastThirtyDays <= response.endedOn
+  const isPastThirtyDays = lastThirtyDays >= response.endedOn
 
   if (response.resultTreatmentStatus === 'OnTreatment') {
     response.treatmentStatusInfo = 'ok'
