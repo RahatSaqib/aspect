@@ -191,7 +191,7 @@
     "is-promise": "^2.1.0",
     "jwt-decode": "^2.2.0",
     "keycode": "^2.1.8",
-    "lodash": "^4.17.4",
+    "lodash": "^4.17.14",
     "piwik-react-router": "^0.12.0",
     "prop-types": "^15.5.8",
     "raven-js": "^3.14.2",
