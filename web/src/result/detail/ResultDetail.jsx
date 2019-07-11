@@ -308,7 +308,7 @@ export class ResultDetail extends PureComponent {
     this.setState({ imageIndex })
   }
 
-  renderTreatmentSection = () => {
+  renderTreatmentStatusSection = () => {
     const { result, userPermission } = this.props
     return (
       result &&
@@ -619,7 +619,7 @@ export class ResultDetail extends PureComponent {
           data={result}
           schema={screenSchema}
           className={cssClasses('FieldsContainer')}
-          treatmentSection={this.renderTreatmentSection()}
+          treatmentStatusSection={this.renderTreatmentStatusSection()}
         >
           {/* Render lower-level sections in assay schema in cards */}
           {this.renderLowerLevelSchemaSections()}
