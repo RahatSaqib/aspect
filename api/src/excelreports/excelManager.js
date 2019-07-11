@@ -1,5 +1,4 @@
 const Excel = require('exceljs')
-const fs = require('fs')
 
 function findContentInExcelRow(
   row,
