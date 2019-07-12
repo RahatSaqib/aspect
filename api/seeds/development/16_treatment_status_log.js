@@ -1,7 +1,99 @@
-const { seedResultTreatment } = require('../utils_treatment')
+const _ = require('lodash')
+
+const { subMonths, startOfMonth, endOfMonth } = require('date-fns')
+const { resultTreatmentStatusToId } = require('../../src/shared/dictionary')
 
 module.exports = require('../utils').seed(seed, __filename)
 
 async function seed(knex) {
-  await seedResultTreatment(knex)
+  // await seedResultTreatment(knex)
+  const now = new Date()
+  const treatmentStatusOnTreatmentId = await resultTreatmentStatusToId(
+    'OnTreatment'
+  )
+  const treatmentStatusNotPossibleId = await resultTreatmentStatusToId(
+    'NotPossible'
+  )
+
+  const query = knex('Result as r')
+    .innerJoin('ResultCategory as rc', 'r.resultCategory1', 'rc.id')
+    .innerJoin('ResultCategoryAssay as rca', function() {
+      this.on('r.assayId', 'rca.assayId').andOn(
+        'r.resultCategory1',
+        'rca.resultCategoryId'
+      )
+    })
+    .where('rca.requiresTreatment', 1)
+    .where('rc.externalId', 'Detected')
+
+  await Promise.all(
+    // process 12 last months
+    _.range(1, 12).map(async shift => {
+      const prevMonth = subMonths(now, shift)
+      const startedOn = startOfMonth(prevMonth)
+      const endedOn = endOfMonth(prevMonth)
+      const getResults = async () =>
+        query
+          .clone()
+          .leftOuterJoin(
+            'ResultTreatmentStatusLog as log',
+            'r.treatmentStatusLogId',
+            'log.id'
+          )
+          .where('r.endedOn', '>=', startedOn)
+          .where('r.endedOn', '<=', endedOn)
+          .select('r.*', 'log.resultTreatmentStatusId')
+      const results = await getResults()
+      // ----------
+      // 40%-70% of results should be 'on treatment', 10-15% - unaccountable
+      // ----------
+      const cntTotal = results.length
+      const cntTreatment = results.filter(
+        x => x.resultTreatmentStatusId === treatmentStatusOnTreatmentId
+      ).length
+      const cntUnaccountable = results.filter(
+        x => x.resultTreatmentStatusId === treatmentStatusNotPossibleId
+      ).length
+      const pcTreatments = (100 * cntTreatment) / cntTotal
+      const pcUnaccountables = (100 * cntUnaccountable) / cntTotal
+      let index = 0
+      const resultsFree = results.filter(x => !x.resultTreatmentStatusId)
+      const addLogs = (cntDiff, resultTreatmentStatusId) =>
+        _.range(cntDiff).map(async () => {
+          index += 1
+          const { id: resultId } = resultsFree[index] || {}
+          if (resultId) {
+            // insert in ResultTreatmentStatusLog
+            const [treatmentStatusLogId] = await knex(
+              'ResultTreatmentStatusLog'
+            ).insert({
+              resultId,
+              resultTreatmentStatusId,
+              changedOn: now,
+              createdOn: now,
+            })
+            // update Result
+            await knex('Result')
+              .update({
+                treatmentStatusLogId,
+              })
+              .where({ id: resultId })
+          }
+        })
+
+      if (pcTreatments < 40) {
+        await Promise.all(
+          addLogs(_.random(40, 70) - pcTreatments, treatmentStatusOnTreatmentId)
+        )
+      }
+      if (pcUnaccountables < 10) {
+        await Promise.all(
+          addLogs(
+            _.random(10, 15) - pcUnaccountables,
+            treatmentStatusNotPossibleId
+          )
+        )
+      }
+    })
+  )
 }
