@@ -1,17 +1,22 @@
 import _ from 'lodash'
 import classnames from 'classnames/bind'
 import React from 'react'
-import { compose, withProps, withHandlers, lifecycle } from 'recompose'
+import { compose, withProps,withState, withHandlers, lifecycle } from 'recompose'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
 import TableBody from '@material-ui/core/TableBody'
-
+import CloudDownloadIcon  from '@material-ui/icons/CloudDownload' 
+import Popover from '@material-ui/core/Popover';
+import Typography from '@material-ui/core/Typography';
+import IconButton from '@material-ui/core/IconButton';
 import {
   makeSortPageSelector,
   makeSearchParamsSanitizer,
   composeSanitizer,
 } from '../../shared/selectors/searchParams'
+import { stringify } from 'querystring'
+import { mergeToFiltersParams } from '../../filter/utils'
 import {
   sanitizeFiltersStringBy,
   reduceFiltersConfig,
@@ -22,7 +27,7 @@ import BrowseEmptyList from '../../globals/components/BrowseEmptyList'
 import BrowseTablePaginator from '../../globals/components/BrowseTablePaginator'
 import DataTableCard from '../../components/shared/DataTableCard'
 import DataTableProgressBar from '../../components/shared/DataTableProgressBar'
-
+import config from '../../config'
 import { fetchDevices, exportDevices } from '../DeviceRedux'
 import {
   DeviceDataTable,
@@ -32,7 +37,6 @@ import {
 import messages from './messages'
 
 const cssClasses = classnames.bind(require('./DeviceList.css'))
-
 const FILTERS_CONFIG = [
   {
     assayAndResultCategory: true,
@@ -72,6 +76,7 @@ const searchSanitizer = makeSearchParamsSanitizer({
     'thisMonth',
   ],
 })
+
 const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
 const filtersFromLocation = composeSanitizer(
   _.flowRight(
@@ -82,10 +87,16 @@ const filtersFromLocation = composeSanitizer(
 )
 
 const enhance = compose(
-  withProps(
+  withProps( 
     makeSortPageSelector({
       sortCol: 'name',
-    })
+    }),({ location }) => {
+      const searchParams = new URLSearchParams(location.search)
+      const filtersParams = new URLSearchParams(searchParams.get('filters') || '')
+      return {
+        filters: _.fromPairs([...filtersParams.entries()]),
+      }
+    }
   ),
   connect(
     state => ({
@@ -99,6 +110,7 @@ const enhance = compose(
       exportDevices,
     })
   ),
+  withState('anchorEl','setAnchorEl',false),
   withHandlers({
     onInitialLoad: ({
       location,
@@ -120,27 +132,36 @@ const enhance = compose(
         )
       }
     },
-    onExportClick: ({
+    onPopoverClick:(({setAnchorEl})=>(event)=>{setAnchorEl(event.currentTarget)}),
+    onPopoverClose:(({setAnchorEl})=>()=>{setAnchorEl(null)}),
+    onExcelClick: ({
       location,
-      exportDevices,
       sortCol,
       sortDir,
       pageAt,
       pageSize,
     }) => formatType => {
+    
       const { sanitized, value: filtersParams } = filtersFromLocation(location)
+      const filterMerged = mergeToFiltersParams({hasResult:1, format:'xlsx'}, filtersParams)
+      const filters = _.fromPairs([...filterMerged.entries()])
       if (!sanitized) {
-        exportDevices(
-          filtersParams,
-          { hasResults: 1 },
-          formatType,
+        console.log('aca')
+       const url= `${config.aspectApi}/device/export?${stringify({
           sortCol,
           sortDir,
-          pageAt,
-          pageSize
-        )
+          page: pageAt,
+          size: pageSize,
+          ...filters,
+        })}`
+        var a =document.getElementById('ReportAnchorLink')
+        a.href = url
+        a.click()
+
+      
       }
     },
+   
     onRowClick: ({ history }) => ({
       currentTarget: {
         dataset: { deviceId },
@@ -202,6 +223,10 @@ export const DeviceList = ({
   items,
   displayPreferences,
   // --- injected by recompose ---
+  onPopoverClick,
+  onPopoverClose,
+  onExcelClick,
+  anchorEl,
   sortCol,
   sortDir,
   pageAt,
@@ -227,6 +252,35 @@ export const DeviceList = ({
       {items.currentIdList.isEmpty() && (
         <BrowseEmptyList history={history} location={location} intl={intl} />
       )}
+      <div>
+      <IconButton variant="contained" onClick={onPopoverClick} className={classnames('DownloadButton')}>
+        <CloudDownloadIcon></CloudDownloadIcon>
+      </IconButton>
+      <Popover
+      id='simple-popover'
+      open={Boolean(anchorEl)}
+      anchorOrigin={{
+        vertical: 'bottom',
+        horizontal: 'left',
+      }}
+      anchorEl={anchorEl}
+      className={classnames('Popover')}
+      transformOrigin={{
+        vertical: 'top',
+        horizontal: 'left',
+      }}
+      onClose={onPopoverClose}
+      >
+
+      <ol style={{listStyleType: 'none', padding:'5px',margin:'5px 30px 5px 30px'}}>
+      <li> <a inverse onClick={onExcelClick}> Excel</a></li>
+      <li>CSV</li>
+      <a id={'ReportAnchorLink'}></a>
+    </ol>
+  
+        
+      </Popover>
+    </div>
       {!items.currentIdList.isEmpty() && (
         <DeviceDataTable
           selectable={false}

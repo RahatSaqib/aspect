@@ -4,7 +4,7 @@ import React from 'react'
 import { compose, withProps, withHandlers, pure, lifecycle } from 'recompose'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-
+import Report from '../../dashboard/status/Reports'
 import BrowseNavDropdown from './BrowseNavDropdown'
 import { mergeToFiltersParams, reduceNavLinks } from '../../filter/utils'
 import FiltersBtnGroup from '../../filter/btnGroup/FiltersBtnGroup'
@@ -133,6 +133,7 @@ export const BrowseFilters = ({
       dateFormat={dateFormat}
       {...restProps}
     />
+    <Report></Report>
   </div>
 )
 

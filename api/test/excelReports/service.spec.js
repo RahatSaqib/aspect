@@ -9,22 +9,21 @@ const path = '/device/export'
 describe.only('Excel reports', () => {
   shared.checkToken(server, path)
 
-  it('should return a list of devices when using valid token', async () => {
+  it('should return a list of devices when using valid token', () => {
     /* const request = {
       query: {},
       auth: { credentials: { name: 'admin' } },
       format: 'xlsx',
     } */
-    await server
-      .get(path)
+    server
+      .get(
+        `${path}?sortCol=name&sortDir=asc&page=0&size=10&format=&hasResults=1`
+      )
       .set('Authorization', `Bearer ${shared.token}`)
-      .then(res => {
+      .end((error, res) => {
         console.log(res)
         assert.isNotNull(!res)
         assert.isString(res.text)
-      })
-      .catch(e => {
-        console.log('error:', e)
       })
   })
 })

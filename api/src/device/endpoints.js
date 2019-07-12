@@ -453,7 +453,80 @@ const routes = [
       {
         description: 'Export Device List into Excel or CSV',
         notes: 'Filtered and sorted list of devices',
+        validate: {
+          query: Object.assign(
+            {
+              hasResults: Joi.number()
+                .allow('')
+                .min(0)
+                .max(1)
+                .description(
+                  'Filter for getting devices that can have results'
+                ),
+              hasConnectivity: Joi.number()
+                .allow('')
+                .min(0)
+                .max(1)
+                .description(
+                  'Filter for getting devices that can have connectivity'
+                ),
+              deviceIds: Joi.string()
+                .allow('')
+                .description('Filter for device ids'),
+              assayId: Joi.number()
+                .allow('')
+                .description('Assay ID'),
+              resultCategoryId: Joi.number()
+                .allow('')
+                .description('Result Category ID'),
+              deviceName: Joi.string()
+                .allow('')
+                .description('Filter for device name'),
+              deviceStatusId: Joi.number()
+                .allow('')
+                .description('Filter for device status ID'),
+              deviceTypeId: Joi.number()
+                .allow('')
+                .description('Filter for device type ID'),
+              category: Joi.string().description(
+                'Filter for device type category'
+              ),
+              type: Joi.string().description('Filter for device type'),
+              name: Joi.string()
+                .allow('')
+                .description('Filter for device name'),
+              siteName: Joi.string()
+                .allow('')
+                .description('Filter for site name'),
+              siteExternalId: Joi.string()
+                .allow('')
+                .description('Filter for facility code'),
+              // query param 'format' is applicable only for handler 'exportDevices'
+              format: Joi.string()
+                .allow('')
+                .description('File format for exporting data'),
+            },
+            validateAllGeographyFilterParams(),
+            validateDateRangeParams(),
+            validateSortPageParams(
+              // TODO: Add 'availabilityRate' Sort Page Param
+              'name',
+              'state',
+              'status',
+              'errorRate',
+              'createdOn',
+              'lastSeen',
+              'lastMonth',
+              'thisMonth',
+              'deliveredLastMonth',
+              'deliveredThisMonth',
+              'acknowledgedRatio',
+              'totalFlagged'
+            )
+          ),
+        },
       }
+
       // listDevicesBaseRequest()
     ),
   },

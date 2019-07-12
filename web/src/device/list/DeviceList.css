@@ -5,3 +5,13 @@
 .DeviceDataTable {
   composes: ComponentDataTable from '../../components/shared/DataTable.css';
 }
+
+.DownloadButton{
+  margin-left: 95% !important;
+}
+
+.Popover {
+  padding: 5px !important;
+  width: 10%;
+  
+}

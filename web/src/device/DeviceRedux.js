@@ -1,4 +1,5 @@
 import { stringify } from 'querystring'
+import { saveAs } from 'file-saver';
 import _ from 'lodash'
 import Immutable from 'immutable'
 import { defineMessages } from 'react-intl'
