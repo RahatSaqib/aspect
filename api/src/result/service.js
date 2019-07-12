@@ -1356,22 +1356,19 @@ async function confirmedTreatmentTracking(request) {
     const monthTested = dateFormat(dt, 'yyyy-MM')
     if (!data.find(x => x.monthTested === monthTested)) {
       data.push({
+        monthTested,
         confirmed: 0,
         unaccountable: 0,
-        monthTested,
       })
     }
     dt = endOfMonth(subMonths(dt, 1))
   }
-  data.sort((a, b) => b.monthTested - a.monthTested)
-
-  // data
 
   return {
     siteId,
     endedOn: dateFormat(endedOn, 'yyyy-MM-dd'),
     lastOn: dateFormat(lastEndedOn, 'yyyy-MM-dd'),
-    data,
+    data: _.sortBy(data, [x => x.monthTested]),
   }
 }
 

@@ -8,7 +8,7 @@ import { compose, withProps, lifecycle, withHandlers, pure } from 'recompose'
 import { connect } from 'react-redux'
 import Card from '@material-ui/core/Card'
 
-import { addMonths, format as dateFormat } from 'date-fns'
+import { addMonths, endOfMonth, format as dateFormat } from 'date-fns'
 
 import IconTitle from 'react-icons/lib/fa/pie-chart'
 import IconBarChart from 'react-icons/lib/fa/bar-chart'
@@ -32,7 +32,7 @@ const changePeriod = (props, shift) => {
   let { endedOn } = props
 
   const last = Date.parse(`${lastOn}`)
-  let finish = addMonths(Date.parse(`${endedOn}`), shift)
+  let finish = endOfMonth(addMonths(Date.parse(`${endedOn}`), shift))
   if (finish > last) {
     finish = last
   }
@@ -225,6 +225,7 @@ export const TreatmentStatus = ({
               enableGridY={false}
               enableLabel={false}
               animate
+              maxValue={100}
               motionStiffness={90}
               motionDamping={15}
               tooltip={({ id, value, color, indexValue }) => (
