@@ -155,7 +155,6 @@ const enhance = compose(
     }) => formatType => {
       const { sanitized, value: filtersParams } = filtersFromLocation(location)
       if (!sanitized) {
-        console.log('click')
         exportDevices(
           filtersParams,
           { hasResults: 1 },

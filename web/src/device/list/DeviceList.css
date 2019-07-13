@@ -15,3 +15,15 @@
   width: 10%;
   
 }
+.ReportsContainer__Button {
+  background-color: transparent;
+  color: #000;
+  font-size: 14px;
+  border:0px;
+  padding:0px;
+  white-space: normal;
+  border:none;
+  height: auto;
+  width:100%;
+  
+}

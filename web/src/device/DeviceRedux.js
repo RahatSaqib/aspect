@@ -272,8 +272,6 @@ export function exportDevices(
     const filtersParams = mergeToFiltersParams(extraFilters, rawFiltersParams)
     const filters = _.fromPairs([...filtersParams.entries()])
 
-    console.log('format', fileFormat)
-
     return aspectFetchFile(
       `/device/export?${stringify({
         sortCol,
@@ -317,7 +315,6 @@ export function exportDevices(
   }
 }
 function receivedExportResponse(response, format) {
-  console.log('format2', format)
   return {
     type: types.EXPORT_RESPONSE_FILE_RECEIVED,
     response,

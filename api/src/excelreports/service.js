@@ -1,6 +1,6 @@
 const _ = require('lodash')
 const path = require('path')
-const { getListDevices } = require('../device/service')
+const { listDevices } = require('../device/service')
 const { generateReport } = require('./excelManager')
 
 async function getDevicesReport(request, reply) {
@@ -9,17 +9,8 @@ async function getDevicesReport(request, reply) {
   // but everyone has parameters of the API (Request, query, Credentials, etc).
   // I think if we don't want to repeat code we have to argue a little bit about this architecture.
 
-  const { query, auth } = request
-  console.log(query)
-  // ---------------
-  // change query page/size values to get whole dataset (not only currently paged items)
-  query.page = 0
-  // do not export more than 100.000 records
-  query.size = 1e5
-
   // get whole dataset - based on current query params (sorting, filtering) and auth constraints
-  const devices = [] // await getListDevices(query, auth)
-
+  const devices = await listDevices(request)
   const reportFile = path.join(__dirname, './reportTemplates/Devices.xlsx')
   const report = generateReport(
     request.format,

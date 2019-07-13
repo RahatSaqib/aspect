@@ -63,16 +63,11 @@ function handleFetchResponseOrError(fetch, input, options = {}) {
       resp => {
         const date = resp.headers.get('date')
         const contentType = resp.headers.get('Content-Type')
-        const contentDisposition = resp.headers.get('content-disposition')
-
         if (date) {
           const store = require('../../store').default
           store.dispatch(setLastServerResponseTime(new Date(date)))
         }
         if (contentType && contentType.indexOf('content-stream') > 0) {
-          for (const pair of resp.headers.entries()) {
-            console.log(`${pair[0]}: ${pair[1]}`)
-          }
           return resp.blob()
         }
         if (resp.ok) {
