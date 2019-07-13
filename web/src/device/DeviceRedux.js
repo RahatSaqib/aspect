@@ -1,11 +1,10 @@
 import { stringify } from 'querystring'
-import { saveAs } from 'file-saver';
 import _ from 'lodash'
 import Immutable from 'immutable'
 import { defineMessages } from 'react-intl'
 import differenceInMinutes from 'date-fns/differenceInMinutes'
 
-import { aspectFetch } from '../shared/utils/fetch'
+import aspectFetchFile, { aspectFetch } from '../shared/utils/fetch'
 import { mergeToFiltersParams } from '../filter/utils'
 import {
   filterFieldsRejectedError,
@@ -20,12 +19,12 @@ import {
   receiveTableItems,
   Table,
 } from '../shared/metaReducers/table'
-import { receivedExportResponse } from '../filter/FilterRedux'
 
 export const types = {
   REQUEST_DEVICES: 'REQUEST_DEVICES',
   RECEIVE_DEVICES: 'RECEIVE_DEVICES',
   REJECTED_DEVICES: 'REJECTED_DEVICES',
+  EXPORT_RESPONSE_FILE_RECEIVED: 'EXPORT_RESPONSE_FILE_RECEIVED',
 
   REQUEST_SINGLE_DEVICE: 'REQUEST_SINGLE_DEVICE',
   RECEIVE_SINGLE_DEVICE: 'RECEIVE_SINGLE_DEVICE',
@@ -266,13 +265,16 @@ export function exportDevices(
   sortCol,
   sortDir,
   page,
-  pageSize
+  pageSize,
+  fileFormat
 ) {
   return dispatch => {
     const filtersParams = mergeToFiltersParams(extraFilters, rawFiltersParams)
     const filters = _.fromPairs([...filtersParams.entries()])
 
-    return aspectFetch(
+    console.log('format', fileFormat)
+
+    return aspectFetchFile(
       `/device/export?${stringify({
         sortCol,
         sortDir,
@@ -309,12 +311,19 @@ export function exportDevices(
           ),
         },
       }
-    ).then(json => {
-      dispatch(receivedExportResponse(format, json))
+    ).then(elem => {
+      dispatch(receivedExportResponse(elem, fileFormat))
     })
   }
 }
-
+function receivedExportResponse(response, format) {
+  console.log('format2', format)
+  return {
+    type: types.EXPORT_RESPONSE_FILE_RECEIVED,
+    response,
+    format,
+  }
+}
 export function showDialog(externalId, data) {
   return dispatch => {
     dispatch({
@@ -402,6 +411,16 @@ const initialState = new Device()
 
 export default function deviceReducer(state = initialState, action) {
   switch (action.type) {
+    case types.EXPORT_RESPONSE_FILE_RECEIVED: {
+      const fileURL = URL.createObjectURL(action.response)
+      const fileLink = document.createElement('a')
+      fileLink.href = fileURL
+      fileLink.download = `report_prueba.${action.format}`
+      fileLink.click()
+
+      // Open the URL on new Window
+      return state
+    }
     case types.REQUEST_DEVICES:
       return state.withMutations(mutState => {
         mutState.set('requestedAt', action.requestedAt)

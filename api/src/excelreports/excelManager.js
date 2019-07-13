@@ -109,7 +109,7 @@ async function generateReport(
     placeHolderTagValuesIndex
   )
 
-  if (format === 'xlsx') return workbook.xlsx.writeBuffer()
+  if (format !== 'csv') return workbook.xlsx.writeBuffer()
   return workbook.csv.writeBuffer()
 }
 module.exports = {

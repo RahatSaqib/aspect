@@ -133,7 +133,7 @@ export const BrowseFilters = ({
       dateFormat={dateFormat}
       {...restProps}
     />
-    <Report></Report>
+    <Report />
   </div>
 )
 

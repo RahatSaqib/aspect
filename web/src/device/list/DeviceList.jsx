@@ -1,33 +1,36 @@
 import _ from 'lodash'
 import classnames from 'classnames/bind'
 import React from 'react'
-import { compose, withProps,withState, withHandlers, lifecycle } from 'recompose'
+import {
+  compose,
+  withProps,
+  withState,
+  withHandlers,
+  lifecycle,
+} from 'recompose'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
 import TableBody from '@material-ui/core/TableBody'
-import CloudDownloadIcon  from '@material-ui/icons/CloudDownload' 
-import Popover from '@material-ui/core/Popover';
-import Typography from '@material-ui/core/Typography';
-import IconButton from '@material-ui/core/IconButton';
+import CloudDownloadIcon from '@material-ui/icons/CloudDownload'
+import Popover from '@material-ui/core/Popover'
+import IconButton from '@material-ui/core/IconButton'
 import {
   makeSortPageSelector,
   makeSearchParamsSanitizer,
   composeSanitizer,
 } from '../../shared/selectors/searchParams'
-import { stringify } from 'querystring'
-import { mergeToFiltersParams } from '../../filter/utils'
 import {
   sanitizeFiltersStringBy,
   reduceFiltersConfig,
 } from '../../filter/utils'
+
 import NavTitle from '../../globals/components/NavTitle'
 import BrowseFilters from '../../globals/components/BrowseFilters'
 import BrowseEmptyList from '../../globals/components/BrowseEmptyList'
 import BrowseTablePaginator from '../../globals/components/BrowseTablePaginator'
 import DataTableCard from '../../components/shared/DataTableCard'
 import DataTableProgressBar from '../../components/shared/DataTableProgressBar'
-import config from '../../config'
 import { fetchDevices, exportDevices } from '../DeviceRedux'
 import {
   DeviceDataTable,
@@ -37,6 +40,7 @@ import {
 import messages from './messages'
 
 const cssClasses = classnames.bind(require('./DeviceList.css'))
+
 const FILTERS_CONFIG = [
   {
     assayAndResultCategory: true,
@@ -87,12 +91,15 @@ const filtersFromLocation = composeSanitizer(
 )
 
 const enhance = compose(
-  withProps( 
+  withProps(
     makeSortPageSelector({
       sortCol: 'name',
-    }),({ location }) => {
+    }),
+    ({ location }) => {
       const searchParams = new URLSearchParams(location.search)
-      const filtersParams = new URLSearchParams(searchParams.get('filters') || '')
+      const filtersParams = new URLSearchParams(
+        searchParams.get('filters') || ''
+      )
       return {
         filters: _.fromPairs([...filtersParams.entries()]),
       }
@@ -110,7 +117,7 @@ const enhance = compose(
       exportDevices,
     })
   ),
-  withState('anchorEl','setAnchorEl',false),
+  withState('anchorEl', 'setAnchorEl', false),
   withHandlers({
     onInitialLoad: ({
       location,
@@ -132,36 +139,36 @@ const enhance = compose(
         )
       }
     },
-    onPopoverClick:(({setAnchorEl})=>(event)=>{setAnchorEl(event.currentTarget)}),
-    onPopoverClose:(({setAnchorEl})=>()=>{setAnchorEl(null)}),
+    onPopoverClick: ({ setAnchorEl }) => event => {
+      setAnchorEl(event.currentTarget)
+    },
+    onPopoverClose: ({ setAnchorEl }) => () => {
+      setAnchorEl(null)
+    },
     onExcelClick: ({
       location,
+      exportDevices,
       sortCol,
       sortDir,
       pageAt,
       pageSize,
     }) => formatType => {
-    
       const { sanitized, value: filtersParams } = filtersFromLocation(location)
-      const filterMerged = mergeToFiltersParams({hasResult:1, format:'xlsx'}, filtersParams)
-      const filters = _.fromPairs([...filterMerged.entries()])
       if (!sanitized) {
-        console.log('aca')
-       const url= `${config.aspectApi}/device/export?${stringify({
+        console.log('click')
+        exportDevices(
+          filtersParams,
+          { hasResults: 1 },
+          formatType,
           sortCol,
           sortDir,
-          page: pageAt,
-          size: pageSize,
-          ...filters,
-        })}`
-        var a =document.getElementById('ReportAnchorLink')
-        a.href = url
-        a.click()
-
-      
+          pageAt,
+          pageSize,
+          'xlsx'
+        )
       }
     },
-   
+
     onRowClick: ({ history }) => ({
       currentTarget: {
         dataset: { deviceId },
@@ -253,34 +260,48 @@ export const DeviceList = ({
         <BrowseEmptyList history={history} location={location} intl={intl} />
       )}
       <div>
-      <IconButton variant="contained" onClick={onPopoverClick} className={classnames('DownloadButton')}>
-        <CloudDownloadIcon></CloudDownloadIcon>
-      </IconButton>
-      <Popover
-      id='simple-popover'
-      open={Boolean(anchorEl)}
-      anchorOrigin={{
-        vertical: 'bottom',
-        horizontal: 'left',
-      }}
-      anchorEl={anchorEl}
-      className={classnames('Popover')}
-      transformOrigin={{
-        vertical: 'top',
-        horizontal: 'left',
-      }}
-      onClose={onPopoverClose}
-      >
-
-      <ol style={{listStyleType: 'none', padding:'5px',margin:'5px 30px 5px 30px'}}>
-      <li> <a inverse onClick={onExcelClick}> Excel</a></li>
-      <li>CSV</li>
-      <a id={'ReportAnchorLink'}></a>
-    </ol>
-  
-        
-      </Popover>
-    </div>
+        <IconButton
+          variant="contained"
+          onClick={onPopoverClick}
+          className={classnames('DownloadButton')}
+        >
+          <CloudDownloadIcon />
+        </IconButton>
+        <Popover
+          id="simple-popover"
+          open={Boolean(anchorEl)}
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'left',
+          }}
+          anchorEl={anchorEl}
+          className={classnames('Popover')}
+          transformOrigin={{
+            vertical: 'top',
+            horizontal: 'left',
+          }}
+          onClose={onPopoverClose}
+        >
+          <ol
+            style={{
+              listStyleType: 'none',
+              padding: '5px',
+              margin: '5px 30px 5px 30px',
+            }}
+          >
+            <li>
+              <button
+                className={cssClasses('ReportsContainer__Button')}
+                inverse
+                onClick={onExcelClick}
+              >
+                Excel
+              </button>
+            </li>
+            <li>CSV</li>
+          </ol>
+        </Popover>
+      </div>
       {!items.currentIdList.isEmpty() && (
         <DeviceDataTable
           selectable={false}

@@ -7,6 +7,13 @@ import { setLastServerResponseTime } from '../../globals/GlobalsRedux'
 import config from '../../config'
 import { getAspectAccess } from '../../globals/sideEffects/LocalStorage'
 
+export const aspectFetchFile = createFetch(
+  base(config.aspectApi),
+  header('Content-Type', 'application/content-stream'),
+  addAuthHeaderMiddleware,
+  handleFetchResponseOrError
+)
+
 export const aspectFetch = createFetch(
   base(config.aspectApi),
   accept('application/json'),
@@ -55,9 +62,18 @@ function handleFetchResponseOrError(fetch, input, options = {}) {
     .then(
       resp => {
         const date = resp.headers.get('date')
+        const contentType = resp.headers.get('Content-Type')
+        const contentDisposition = resp.headers.get('content-disposition')
+
         if (date) {
           const store = require('../../store').default
           store.dispatch(setLastServerResponseTime(new Date(date)))
+        }
+        if (contentType && contentType.indexOf('content-stream') > 0) {
+          for (const pair of resp.headers.entries()) {
+            console.log(`${pair[0]}: ${pair[1]}`)
+          }
+          return resp.blob()
         }
         if (resp.ok) {
           // HTTP Status === 2xx
