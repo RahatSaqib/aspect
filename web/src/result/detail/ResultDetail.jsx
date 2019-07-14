@@ -15,6 +15,7 @@ import MdClose from 'react-icons/lib/md/clear'
 import Button from '@material-ui/core/Button'
 
 // Our own imports
+import ResultTreatmentPanel from './ResultTreatmentPanel'
 import config from '../../config'
 import DelayShowingProgressBar from '../../components/shared/DelayShowingProgressBar'
 import JSONSchemaCard from '../../components/shared/JSONSchemaCard'
@@ -26,6 +27,7 @@ import {
   setResultFormDataValue,
   saveResultFormData,
   Result,
+  logTreatmentStatus,
 } from '../ResultRedux'
 import ConnectedTagInput from '../../tag/ConnectedTagInput'
 import { fetchTags, updateTags } from '../../tag/TagRedux'
@@ -153,6 +155,7 @@ const enhance = compose(
         resultTags,
         editable: isEditable(state.user, 'result'),
         token: state.user.access,
+        userPermission: state.user.jwt.permissions,
         formDataSaving,
         formDataDirty,
       }
@@ -167,6 +170,7 @@ const enhance = compose(
           saveResultFormData,
           fetchTags,
           updateTags,
+          logTreatmentStatus,
         },
         dispatch
       )
@@ -182,6 +186,7 @@ const enhance = compose(
     formDataSaving: PropTypes.bool.isRequired,
     formDataDirty: PropTypes.bool.isRequired,
     saveResultFormData: PropTypes.func.isRequired,
+    logTreatmentStatus: PropTypes.func.isRequired,
   })
 )
 
@@ -199,8 +204,8 @@ export class ResultDetail extends PureComponent {
     this.handleFetchResult()
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (this.props.match.params.resultId !== nextProps.match.params.resultId) {
+  componentDidUpdate(prevProps) {
+    if (this.props.match.params.resultId !== prevProps.match.params.resultId) {
       this.handleFetchResult()
     }
   }
@@ -247,6 +252,25 @@ export class ResultDetail extends PureComponent {
     return result && result.has('assay')
   }
 
+  handleOnTreatmentChange = event => {
+    const {
+      match: {
+        params: { resultId },
+      },
+      result,
+    } = this.props
+
+    if (event.target.id === result.get('resultTreatmentStatus')) {
+      return this.props.logTreatmentStatus(resultId, {
+        externalId: 'AwaitingTreatment',
+      })
+    }
+
+    return this.props.logTreatmentStatus(resultId, {
+      externalId: event.target.id,
+    })
+  }
+
   drawIconPrev = isFirst => (
     <div className={cssClasses('ButPreview')}>
       <MdChevronLeft
@@ -282,6 +306,21 @@ export class ResultDetail extends PureComponent {
     let { imageIndex } = this.state
     imageIndex += (!isFirst && dir === -1) || (!isLast && dir === 1) ? dir : 0
     this.setState({ imageIndex })
+  }
+
+  renderTreatmentStatusSection = () => {
+    const { result, userPermission } = this.props
+    return (
+      result &&
+      result.get('treatmentStatusInfo') && (
+        <ResultTreatmentPanel
+          styles={styles}
+          data={result}
+          onTreatmentChange={this.handleOnTreatmentChange}
+          userPermission={userPermission}
+        />
+      )
+    )
   }
 
   renderProgress() {
@@ -580,6 +619,7 @@ export class ResultDetail extends PureComponent {
           data={result}
           schema={screenSchema}
           className={cssClasses('FieldsContainer')}
+          titleSection={this.renderTreatmentStatusSection()}
         >
           {/* Render lower-level sections in assay schema in cards */}
           {this.renderLowerLevelSchemaSections()}

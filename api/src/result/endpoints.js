@@ -580,7 +580,7 @@ const routes = [
     config: {
       description: 'Update Result Treatment Status',
       notes: 'Update the treatment status of a result',
-      auth: { scope: ['result:edit'] },
+      auth: { scope: ['treatmentStatus:edit'] },
       validate: {
         params: {
           resultId: Joi.number()
