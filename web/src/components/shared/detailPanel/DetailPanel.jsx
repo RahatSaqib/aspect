@@ -153,7 +153,7 @@ export const DetailPanel = ({
   intl,
   data,
   schema,
-  treatmentStatusSection,
+  titleSection,
   ...restProps
 }) => (
   <Card {...restProps}>
@@ -163,7 +163,7 @@ export const DetailPanel = ({
       className={cssClasses('Title')}
     />
 
-    {treatmentStatusSection}
+    {titleSection}
 
     {schema
       .get('groups')

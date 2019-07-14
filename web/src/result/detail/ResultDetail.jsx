@@ -619,7 +619,7 @@ export class ResultDetail extends PureComponent {
           data={result}
           schema={screenSchema}
           className={cssClasses('FieldsContainer')}
-          treatmentStatusSection={this.renderTreatmentStatusSection()}
+          titleSection={this.renderTreatmentStatusSection()}
         >
           {/* Render lower-level sections in assay schema in cards */}
           {this.renderLowerLevelSchemaSections()}
