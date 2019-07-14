@@ -1960,6 +1960,22 @@ async function seed(knex) {
     },
     {
       jobFunctionId: jobFunctionIdAdmin,
+      permissionId: modules.treatmentStatus.admin,
+    },
+    {
+      jobFunctionId: jobFunctionIdManager,
+      permissionId: modules.treatmentStatus.admin,
+    },
+    {
+      jobFunctionId: jobFunctionIdClinician,
+      permissionId: modules.treatmentStatus.admin,
+    },
+    {
+      jobFunctionId: jobFunctionIdPartnerTwo,
+      permissionId: modules.treatmentStatus.admin,
+    },
+    {
+      jobFunctionId: jobFunctionIdAdmin,
       permissionId: modules.result.admin,
     },
     { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.site.admin },

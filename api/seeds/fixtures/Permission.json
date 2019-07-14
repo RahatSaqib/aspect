@@ -29,6 +29,10 @@
       "activities": ["view", "edit", "admin"]
     },
     {
+      "name": "treatmentStatus",
+      "activities": ["view", "edit", "admin"]
+    },
+    {
       "name": "site",
       "activities": ["view", "edit", "admin"]
     },
