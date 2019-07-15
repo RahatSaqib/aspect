@@ -12,9 +12,6 @@ import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
 import TableBody from '@material-ui/core/TableBody'
-import CloudDownloadIcon from '@material-ui/icons/CloudDownload'
-import Popover from '@material-ui/core/Popover'
-import IconButton from '@material-ui/core/IconButton'
 import {
   makeSortPageSelector,
   makeSearchParamsSanitizer,
@@ -27,6 +24,7 @@ import {
 
 import NavTitle from '../../globals/components/NavTitle'
 import BrowseFilters from '../../globals/components/BrowseFilters'
+import ExportListButton from '../../globals/components/ExportListButton'
 import BrowseEmptyList from '../../globals/components/BrowseEmptyList'
 import BrowseTablePaginator from '../../globals/components/BrowseTablePaginator'
 import DataTableCard from '../../components/shared/DataTableCard'
@@ -139,12 +137,6 @@ const enhance = compose(
         )
       }
     },
-    onPopoverClick: ({ setAnchorEl }) => event => {
-      setAnchorEl(event.currentTarget)
-    },
-    onPopoverClose: ({ setAnchorEl }) => () => {
-      setAnchorEl(null)
-    },
     onExcelClick: ({
       location,
       exportDevices,
@@ -164,7 +156,8 @@ const enhance = compose(
           sortDir,
           pageAt,
           pageSize,
-          format
+          format,
+          'devices'
         )
       }
     },
@@ -230,10 +223,7 @@ export const DeviceList = ({
   items,
   displayPreferences,
   // --- injected by recompose ---
-  onPopoverClick,
-  onPopoverClose,
   onExcelClick,
-  anchorEl,
   sortCol,
   sortDir,
   pageAt,
@@ -259,57 +249,13 @@ export const DeviceList = ({
       {items.currentIdList.isEmpty() && (
         <BrowseEmptyList history={history} location={location} intl={intl} />
       )}
-      <section>
-        <IconButton
-          variant="contained"
-          onClick={onPopoverClick}
-          className={cssClasses('DownloadButton')}
-        >
-          <CloudDownloadIcon style={{ fontSize: 30 }} />
-        </IconButton>
-        <Popover
-          id="simple-popover"
-          open={Boolean(anchorEl)}
-          anchorOrigin={{
-            vertical: 'bottom',
-            horizontal: 'left',
-          }}
-          anchorEl={anchorEl}
-          className={cssClasses('Popover')}
-          transformOrigin={{
-            vertical: 'top',
-            horizontal: 'left',
-          }}
-          onClose={onPopoverClose}
-        >
-          <ol
-            style={{
-              listStyleType: 'none',
-              padding: '5px',
-              margin: '5px 30px 5px 30px',
-            }}
-          >
-            <li>
-              <button
-                className={cssClasses('Reports_Button')}
-                inverse
-                onClick={onExcelClick}
-                id="xlsx"
-              >
-                Excel
-              </button>
-            </li>
-            <button
-              className={cssClasses('Reports_Button')}
-              inverse
-              onClick={onExcelClick}
-              id="csv"
-            >
-              CSV
-            </button>
-          </ol>
-        </Popover>
-      </section>
+
+      <ExportListButton
+        onExcelClick={onExcelClick}
+        onCsvClick={onExcelClick}
+        reportName="Devices"
+      />
+
       {!items.currentIdList.isEmpty() && (
         <DeviceDataTable
           selectable={false}

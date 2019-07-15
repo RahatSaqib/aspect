@@ -3,7 +3,7 @@ import _ from 'lodash'
 import Immutable from 'immutable'
 import { defineMessages } from 'react-intl'
 import differenceInMinutes from 'date-fns/differenceInMinutes'
-
+import { receivedExportResponse } from '../globals/components/ExportListButtonRedux'
 import aspectFetchFile, { aspectFetch } from '../shared/utils/fetch'
 import { mergeToFiltersParams } from '../filter/utils'
 import {
@@ -24,8 +24,6 @@ export const types = {
   REQUEST_DEVICES: 'REQUEST_DEVICES',
   RECEIVE_DEVICES: 'RECEIVE_DEVICES',
   REJECTED_DEVICES: 'REJECTED_DEVICES',
-  EXPORT_RESPONSE_FILE_RECEIVED: 'EXPORT_RESPONSE_FILE_RECEIVED',
-
   REQUEST_SINGLE_DEVICE: 'REQUEST_SINGLE_DEVICE',
   RECEIVE_SINGLE_DEVICE: 'RECEIVE_SINGLE_DEVICE',
 
@@ -266,7 +264,8 @@ export function exportDevices(
   sortDir,
   page,
   pageSize,
-  fileFormat
+  fileFormat,
+  reportName
 ) {
   return dispatch => {
     const filtersParams = mergeToFiltersParams(extraFilters, rawFiltersParams)
@@ -310,17 +309,11 @@ export function exportDevices(
         },
       }
     ).then(elem => {
-      dispatch(receivedExportResponse(elem, fileFormat))
+      dispatch(receivedExportResponse(elem, fileFormat, reportName))
     })
   }
 }
-function receivedExportResponse(response, format) {
-  return {
-    type: types.EXPORT_RESPONSE_FILE_RECEIVED,
-    response,
-    format,
-  }
-}
+
 export function showDialog(externalId, data) {
   return dispatch => {
     dispatch({
@@ -408,16 +401,16 @@ const initialState = new Device()
 
 export default function deviceReducer(state = initialState, action) {
   switch (action.type) {
-    case types.EXPORT_RESPONSE_FILE_RECEIVED: {
+    /* case types.EXPORT_RESPONSE_FILE_RECEIVED: {
       const fileURL = URL.createObjectURL(action.response)
       const fileLink = document.createElement('a')
       fileLink.href = fileURL
-      fileLink.download = `report_prueba.${action.format}`
+      fileLink.download = `report_${action.reportName}.${action.format}`
       fileLink.click()
 
       // Open the URL on new Window
       return state
-    }
+    } */
     case types.REQUEST_DEVICES:
       return state.withMutations(mutState => {
         mutState.set('requestedAt', action.requestedAt)
