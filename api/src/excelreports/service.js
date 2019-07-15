@@ -1,6 +1,7 @@
 const _ = require('lodash')
 const path = require('path')
 const { listDevices } = require('../device/service')
+const { format } = require('date-fns')
 const { generateReport } = require('./excelManager')
 
 async function getDevicesReport(request, reply) {
@@ -11,20 +12,25 @@ async function getDevicesReport(request, reply) {
 
   // get whole dataset - based on current query params (sorting, filtering) and auth constraints
   const devices = await listDevices(request)
+  const { query } = request
   const reportFile = path.join(__dirname, './reportTemplates/Devices.xlsx')
   const report = generateReport(
-    request.format,
+    query.format,
     reportFile,
-    '<Headers>',
+    '<Headers>', // This is an invented tag to look for in the report template. Also we can find a text for a header instead of create a place holder.
     _.map(devices.data, elem =>
       Object.assign(
         {
           availabilityRate: elem.availability.rate * 100,
           issueCategories: elem.issueCategories.join(','),
+          errorRate: elem.error.rate * 100,
         },
         elem
       )
     ),
+    {
+      date: format(new Date(), 'yyyy-MM-dd'),
+    },
     2 // If the function locate the row number for the placeholder,
     // how many rows after appears the placeholders for the values (default 0)
   )

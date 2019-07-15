@@ -92,16 +92,38 @@ function setColumnsKeys(worksheet, placeHolderTag, rowsNext = 0) {
     return cell.rowNumber + rowsNext
   }
 }
+// This functions manage everything about the report template.
+// the parameters are:
+// The format (csv or xlsx)
+// the path of the report template file
+// The place holder which we are looking for replacements.
+// the data source (Every property are going to match with <propertyname> tag and,
+//           if it finds into the template, the tag is going to be replaced with the property value)
+// headersData: is the object with properties we are going to replace in the header.
+// placeHolderTagValuesIndex: is the relative index from the header row, where we have to start replacing the values.
+// worksheetName: is the worksheet name or number for the current workbook, where we are going to work with.
 async function generateReport(
   format,
   reportTemplate,
   placeHolderTag,
   data,
-  placeHolderTagValuesIndex = 0
+  headersData,
+  placeHolderTagValuesIndex = 0,
+  worksheetName = 1
 ) {
   let workbook = new Excel.Workbook()
   workbook = await workbook.xlsx.readFile(reportTemplate)
-  const worksheet = workbook.getWorksheet(1)
+
+  const worksheet = workbook.getWorksheet(worksheetName)
+
+  if (headersData) {
+    console.log(headersData)
+    for (const key in headersData) {
+      if ({}.hasOwnProperty.call(headersData, key)) {
+        replaceContentInExcelSheet(worksheet, `<${key}>`, headersData[key])
+      }
+    }
+  }
   setColumnsKeysAndBindData(
     worksheet,
     placeHolderTag,

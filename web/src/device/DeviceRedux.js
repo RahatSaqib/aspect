@@ -277,7 +277,7 @@ export function exportDevices(
         sortDir,
         page,
         size: pageSize,
-        format,
+        format: fileFormat,
         ...filters,
       })}`,
       {
