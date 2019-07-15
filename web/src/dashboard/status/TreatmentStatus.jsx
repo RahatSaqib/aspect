@@ -120,6 +120,8 @@ export const TreatmentStatus = ({
   const colors = ['rgb(65, 174, 118)', 'grey']
   const tickSeparatorX = `-${50 / data.length}%`
 
+  lastOn = dateFormat(lastOn, 'yyyy-MM')
+
   return (
     <Card className={className}>
       <div
