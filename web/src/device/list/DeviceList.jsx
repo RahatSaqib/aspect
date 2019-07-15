@@ -153,6 +153,7 @@ const enhance = compose(
       pageAt,
       pageSize,
     }) => formatType => {
+      const format = formatType.target.id
       const { sanitized, value: filtersParams } = filtersFromLocation(location)
       if (!sanitized) {
         exportDevices(
@@ -163,7 +164,7 @@ const enhance = compose(
           sortDir,
           pageAt,
           pageSize,
-          'xlsx'
+          format
         )
       }
     },
@@ -258,13 +259,13 @@ export const DeviceList = ({
       {items.currentIdList.isEmpty() && (
         <BrowseEmptyList history={history} location={location} intl={intl} />
       )}
-      <div>
+      <section>
         <IconButton
           variant="contained"
           onClick={onPopoverClick}
-          className={classnames('DownloadButton')}
+          className={cssClasses('DownloadButton')}
         >
-          <CloudDownloadIcon />
+          <CloudDownloadIcon style={{ fontSize: 30 }} />
         </IconButton>
         <Popover
           id="simple-popover"
@@ -274,7 +275,7 @@ export const DeviceList = ({
             horizontal: 'left',
           }}
           anchorEl={anchorEl}
-          className={classnames('Popover')}
+          className={cssClasses('Popover')}
           transformOrigin={{
             vertical: 'top',
             horizontal: 'left',
@@ -290,17 +291,25 @@ export const DeviceList = ({
           >
             <li>
               <button
-                className={cssClasses('ReportsContainer__Button')}
+                className={cssClasses('Reports_Button')}
                 inverse
                 onClick={onExcelClick}
+                id="xlsx"
               >
                 Excel
               </button>
             </li>
-            <li>CSV</li>
+            <button
+              className={cssClasses('Reports_Button')}
+              inverse
+              onClick={onExcelClick}
+              id="csv"
+            >
+              CSV
+            </button>
           </ol>
         </Popover>
-      </div>
+      </section>
       {!items.currentIdList.isEmpty() && (
         <DeviceDataTable
           selectable={false}
