@@ -2,11 +2,12 @@ const _ = require('lodash')
 
 const { subMonths, startOfMonth, endOfMonth } = require('date-fns')
 const { resultTreatmentStatusToId } = require('../../src/shared/dictionary')
+const { getPermissionModules } = require('../utils')
 
 module.exports = require('../utils').seed(seed, __filename)
 
 async function seed(knex) {
-  // await seedResultTreatment(knex)
+  const modules = await getPermissionModules(knex)
   const now = new Date()
   const treatmentStatusOnTreatmentId = await resultTreatmentStatusToId(
     'OnTreatment'
@@ -96,4 +97,60 @@ async function seed(knex) {
       }
     })
   )
+
+  // check/define permissions for user 'myanmar_admin'
+  const userName = 'myanmar_admin'
+  const countryName = 'Myanmar'
+  // Country
+  const { id: countryId } = await knex('Country')
+    .where({ name: countryName })
+    .first()
+  // Geography
+  const { id: geographyId } = await knex('Geography')
+    .where({ countryId })
+    .whereNull('stateId')
+    .whereNull('lgaId')
+    .first()
+  // Person
+  const { id: personId, lastPartnerId: partnerId } = await knex('Person as p')
+    .innerJoin('User as u', 'p.userId', 'u.id')
+    .where('u.name', userName)
+    .first()
+  // JobFunction
+  const { id: jobFunctionId } = await knex('JobFunction')
+    .where({ partnerId, name: 'Admin' })
+    .first()
+  // Job
+  let { id: jobId } =
+    (await knex('Job')
+      .where({ personId, jobFunctionId })
+      .first()) || {}
+  if (!jobId) {
+    ;[jobId] = await knex('Job').insert({
+      personId,
+      jobFunctionId,
+    })
+  }
+  // JobContext
+  const jobContext = await knex('JobContext')
+    .where({ jobId, geographyId })
+    .whereNull('siteId')
+    .first()
+  if (!jobContext) {
+    await knex('JobContext').insert({
+      jobId,
+      geographyId,
+      siteId: null,
+    })
+  }
+  // JobFunctionPermission
+  const jobFunctionPermission = await knex('JobFunctionPermission')
+    .where({ permissionId: modules.treatmentStatus.admin, jobFunctionId })
+    .first()
+  if (!jobFunctionPermission) {
+    await knex('JobFunctionPermission').insert({
+      jobFunctionId,
+      permissionId: modules.treatmentStatus.admin,
+    })
+  }
 }

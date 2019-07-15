@@ -41,17 +41,14 @@ const changePeriod = (props, shift) => {
 }
 const enhance = compose(
   pure,
-  // requirePermissions({
-  //   permissions: [
-  //     'site:admin',
-  //     'site:view',
-  //     'site:edit',
-  //     'device:admin',
-  //     'device:view',
-  //     'device:edit',
-  //   ],
-  //   features: ['siteDashboard', 'deviceDashboard'],
-  // }),
+  requirePermissions({
+    permissions: [
+      'treatmentStatus:admin',
+      'treatmentStatus:view',
+      'treatmentStatus:edit',
+    ],
+    features: ['summaryDashboard', 'siteDashboard', 'deviceDashboard'],
+  }),
   connect(
     state => {
       const treatmentStatus = state.dashboard.treatmentStatus.toJS()
