@@ -9,7 +9,6 @@ const {
   showDevice,
   updateDevice,
   listStatusTypes,
-  // exportDevices,
   listDevicesForSelectList,
   updateDeviceMaintenance,
 } = require('./service')
@@ -518,17 +517,6 @@ const routes = [
         }),
       },
     },
-  },
-  {
-    method: 'GET',
-    path: '/deviceReport',
-    handler: asyncHandler(getDevicesReport),
-    config: Object.assign(
-      {
-        description: 'Device excel or csv report',
-      },
-      listDevicesBaseConfig()
-    ),
   },
 ]
 

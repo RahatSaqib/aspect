@@ -401,16 +401,6 @@ const initialState = new Device()
 
 export default function deviceReducer(state = initialState, action) {
   switch (action.type) {
-    /* case types.EXPORT_RESPONSE_FILE_RECEIVED: {
-      const fileURL = URL.createObjectURL(action.response)
-      const fileLink = document.createElement('a')
-      fileLink.href = fileURL
-      fileLink.download = `report_${action.reportName}.${action.format}`
-      fileLink.click()
-
-      // Open the URL on new Window
-      return state
-    } */
     case types.REQUEST_DEVICES:
       return state.withMutations(mutState => {
         mutState.set('requestedAt', action.requestedAt)
