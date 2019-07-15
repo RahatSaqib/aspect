@@ -84,7 +84,7 @@ export const messages = defineMessages({
       other {# devices}
     }`,
   },
-  exportDevices:{
+  exportDevices: {
     id: 'pages.DeviceList.exportDevices',
     defaultMessage: 'Export device list',
   },
