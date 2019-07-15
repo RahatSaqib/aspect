@@ -117,7 +117,6 @@ async function generateReport(
   const worksheet = workbook.getWorksheet(worksheetName)
 
   if (headersData) {
-    console.log(headersData)
     for (const key in headersData) {
       if ({}.hasOwnProperty.call(headersData, key)) {
         replaceContentInExcelSheet(worksheet, `<${key}>`, headersData[key])

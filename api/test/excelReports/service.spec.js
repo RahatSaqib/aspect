@@ -9,8 +9,8 @@ const path = '/device/export'
 describe('Excel reports', () => {
   shared.checkToken(server, path)
 
-  it('should return a list of devices when using valid token', () => {
-    server
+  it('should return a list of devices when using valid token', async () => {
+    await server
       .get(
         `${path}?sortCol=name&sortDir=asc&page=0&size=10&format=&hasResults=1`
       )
