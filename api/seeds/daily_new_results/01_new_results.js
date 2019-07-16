@@ -557,7 +557,7 @@ async function seed(knex) {
       if (_.random(4) === 0) {
         let copies = 3200
         let log = 5
-        if (result === possibleResults[0]) {
+        if (_.random(4) <= 1) {
           copies = Math.floor(Math.random() * 500000)
           log = Math.round(Math.random() * 600) / 100
         } else {
@@ -843,7 +843,7 @@ async function seed(knex) {
         if (_.random(4) === 0) {
           let copies = 3200
           let log = 5
-          if (result === possibleResults[0]) {
+          if (_.random(4) <= 1) {
             copies = Math.floor(Math.random() * 500000)
             log = Math.round(Math.random() * 600) / 100
           } else {
@@ -989,7 +989,7 @@ async function seed(knex) {
       j += 1
       let copies = 3200
       let log = 5
-      if (result === possibleResults[0]) {
+      if (_.random(4) <= 1) {
         copies = Math.floor(Math.random() * 500000)
         log = Math.round(Math.random() * 600) / 100
       } else {
