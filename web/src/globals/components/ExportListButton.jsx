@@ -38,7 +38,7 @@ const ExportListButton = ({
       onClick={onPopoverClick}
       className={cssClasses('DownloadButton')}
     >
-      <CloudDownloadIcon style={{ fontSize: 30 }} />
+      <CloudDownloadIcon style={{ fontSize: '1.25rem' }} />
     </IconButton>
     <Popover
       id="simple-popover"

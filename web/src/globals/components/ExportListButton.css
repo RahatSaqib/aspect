@@ -1,7 +1,7 @@
 
 .DownloadButton{
     margin-left: 93% !important;
-    font-size: 15px !important;
+    font-size: 1.25rem !important;
   }
   
   .Popover {
@@ -12,7 +12,7 @@
   .Reports_Button {
     background-color: transparent;
     color: #000;
-    font-size: 17px;
+    font-size: 15px;
     border:0px;
     padding:0px;
     white-space: normal;
