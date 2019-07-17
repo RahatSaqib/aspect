@@ -21,6 +21,7 @@ const {
   showFileReferences,
   downloadFile,
   downloadFirstImage,
+  confirmedTreatmentTracking,
 } = require('./service')
 const {
   validateAllGeographyFilterParams,
@@ -616,6 +617,28 @@ const routes = [
             .description('The results')
             .keys(validateResultResponse()),
         }),
+      },
+    },
+  },
+  {
+    method: 'POST',
+    path: '/result/confirmed-treatment-tracking',
+    handler: asyncHandler(confirmedTreatmentTracking),
+    config: {
+      description: 'Aggregated data for Treatment Graph on dashboard',
+      notes:
+        'Set of percentages of Confirmed and Unaccountable percentage for few months',
+      auth: { scope: ['result:view', 'result:edit'] },
+      validate: {
+        payload: {
+          siteId: Joi.number()
+            .integer()
+            .allow(null),
+          endedOn: Joi.date()
+            .iso()
+            .allow(null)
+            .description('Ending date'),
+        },
       },
     },
   },

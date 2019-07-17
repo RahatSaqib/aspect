@@ -1,7 +1,7 @@
 const Boom = require('boom')
 const _ = require('lodash')
 const dateFormat = require('date-fns/format')
-const { subDays } = require('date-fns')
+const { subDays, subMonths, startOfMonth, endOfMonth } = require('date-fns')
 const Promise = require('bluebird')
 const {
   knex,
@@ -1296,6 +1296,116 @@ function createUniqueIdForResult(
   return uniqueId
 }
 
+async function confirmedTreatmentTracking(request) {
+  const { auth, payload } = request
+
+  const statusOnTreatmentId = await resultTreatmentStatusToId('OnTreatment')
+  const statusUnaccountableId = await resultTreatmentStatusToId('NotPossible')
+
+  // get data constraints
+  const dataConstraints = await getConstraints(auth.credentials)
+
+  const { siteId } = payload
+
+  const now = new Date()
+  const lastEndedOn = endOfMonth(subMonths(now, 1))
+
+  // normalize and format 'endedOn'
+  let { endedOn } = payload
+  if (!endedOn) {
+    endedOn = subMonths(now, 1)
+  }
+  endedOn = endOfMonth(endedOn)
+  if (endedOn > lastEndedOn) {
+    return Boom.expectationFailed(
+      '"endedOn" can not be greater than previous month'
+    )
+  }
+  const startedOn = startOfMonth(subMonths(endedOn, 5)) // 6 months period
+
+  const data = await knex('Result as r')
+    // consider 100% as all results where requiresTreatment = 1 in the resultCategoryAssay table
+    .innerJoin('ResultCategoryAssay as rca', function() {
+      this.on('r.assayId', 'rca.assayId').andOn(
+        'r.resultCategory1',
+        'rca.resultCategoryId'
+      )
+    })
+    .where('rca.requiresTreatment', 1)
+    // join ResultTreatmentStatusLog to count by 'OnTreatment' and 'NotPossible' statuses
+    .leftOuterJoin('ResultTreatmentStatusLog as rtslConfirmed', function() {
+      this.on('r.treatmentStatusLogId', 'rtslConfirmed.id')
+        .andOn('rtslConfirmed.resultTreatmentStatusId', statusOnTreatmentId)
+        .andOn('r.id', 'rtslConfirmed.resultId')
+    })
+    .leftOuterJoin('ResultTreatmentStatusLog as rtslUnaccountable', function() {
+      this.on('r.treatmentStatusLogId', 'rtslUnaccountable.id')
+        .andOn(
+          'rtslUnaccountable.resultTreatmentStatusId',
+          statusUnaccountableId
+        )
+        .andOn('r.id', 'rtslUnaccountable.resultId')
+    })
+    // filter by access level of current user
+    .leftOuterJoin('Site as s', 'r.siteId', 's.id')
+    .leftOuterJoin('Geography as g', 'r.geographyId', 'g.id')
+    .modify(addConstraints, dataConstraints, { site: 's', geography: 'g' })
+    // if 'siteId' specified - filter by siteId
+    .where(function() {
+      if (siteId) {
+        this.where('s.id', siteId)
+      }
+    })
+    // filter by date range, inclusive
+    .where('r.endedOn', '>=', startedOn)
+    .where('r.endedOn', '<=', endedOn)
+    .select(
+      knex.raw('count(r.id) as total'),
+      knex.raw('count(rtslConfirmed.id) as cntConfirmed'),
+      knex.raw('count(rtslUnaccountable.id) as cntUnaccountable'),
+      knex.raw(`date_format(r.endedOn, '%Y-%m') AS monthTested`) // group by r.endedOn as 'yyyy-MM'
+    )
+    .groupBy('monthTested')
+    .map(d => {
+      // add percentages
+      const getPercentage = (total, value) => {
+        let pc = 0
+        if (total) {
+          pc = (value * 100) / total
+          // max 1 decimal point
+          pc = Math.round(10 * pc) / 10
+        }
+        return pc
+      }
+      d.confirmed = getPercentage(d.total, d.cntConfirmed)
+      d.unaccountable = getPercentage(d.total, d.cntUnaccountable)
+      return d
+    })
+
+  let dt = endedOn
+  while (dt >= startedOn) {
+    const monthTested = dateFormat(dt, 'yyyy-MM')
+    if (!data.find(x => x.monthTested === monthTested)) {
+      data.push({
+        monthTested,
+        confirmed: 0,
+        unaccountable: 0,
+        cntConfirmed: 0,
+        cntUnaccountable: 0,
+        total: 0,
+      })
+    }
+    dt = endOfMonth(subMonths(dt, 1))
+  }
+
+  return {
+    siteId,
+    endedOn: dateFormat(endedOn, 'yyyy-MM-dd'),
+    lastOn: dateFormat(lastEndedOn, 'yyyy-MM-dd'),
+    data: _.sortBy(data, [x => x.monthTested]),
+  }
+}
+
 module.exports = {
   listResults,
   downloadResultsList,
@@ -1314,4 +1424,5 @@ module.exports = {
   downloadFile,
   downloadFirstImage,
   createUniqueIdForResult,
+  confirmedTreatmentTracking,
 }
