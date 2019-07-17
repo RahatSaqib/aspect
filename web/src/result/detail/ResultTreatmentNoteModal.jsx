@@ -1,19 +1,7 @@
 import React from 'react'
 import Button from '@material-ui/core/Button'
 import TextField from '@material-ui/core/TextField'
-import { defineMessages } from 'react-intl'
 import AspectDialog from '../../components/shared/AspectDialog'
-
-export const messages = defineMessages({
-  submit: {
-    id: 'pages.ResultDetail.submit',
-    defaultMessage: 'Submit',
-  },
-  cancel: {
-    id: 'pages.ResultDetail.cancel',
-    defaultMessage: 'Cancel',
-  },
-})
 
 const ResultTreatmentNoteModal = ({ data, restProps }) => (
   <AspectDialog
