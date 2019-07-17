@@ -4,6 +4,12 @@ const { listDevices } = require('../device/service')
 const { format } = require('date-fns')
 const { generateReport } = require('./excelManager')
 
+const issues = {
+  issueCategoryDeviceHealth: 'Device',
+  issueCategoryReagentHealth: 'Reagent',
+  issueCategoryDataHealth: 'Data',
+  issueCategoryConnectivityHealth: 'Connectivity',
+}
 async function getDevicesReport(request, reply) {
   // Here is a really good example of the necessity of a data layer.
   // I tried to call some existing service method for the list of devices,
@@ -18,16 +24,25 @@ async function getDevicesReport(request, reply) {
     query.format,
     reportFile,
     '<Headers>', // This is an invented tag to look for in the report template. Also we can find a text for a header instead of create a place holder.
-    _.map(devices.data, elem =>
-      Object.assign(
+    _.map(devices.data, elem => {
+      console.log(
+        _.map(elem.issueCategories, current => issues[current.key]).join(',')
+      )
+      return Object.assign(
         {
           availabilityRate: elem.availability.rate * 100,
-          issueCategories: elem.issueCategories.join(','),
+          issuesCategories: _.map(
+            elem.issueCategories,
+            current => issues[current.key]
+          )
+            .join(',')
+            .replace('[')
+            .replace(']'),
           errorRate: elem.error.rate * 100,
         },
         elem
       )
-    ),
+    }),
     {
       date: format(new Date(), 'yyyy-MM-dd'),
     },
