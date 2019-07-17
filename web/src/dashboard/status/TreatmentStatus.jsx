@@ -117,7 +117,8 @@ export const TreatmentStatus = ({
   ...restProps
 }) => {
   const keys = ['confirmed', 'unaccountable']
-  const colors = ['rgb(65, 174, 118)', 'grey']
+  const colors = ['rgb(65, 174, 118)', 'rgb(128, 128, 128)']
+  const colorsFaded = ['rgb(65, 174, 118, .5)', 'rgb(128, 128, 128, .5)']
   const tickSeparatorX = `-${50 / data.length}%`
 
   lastOn = dateFormat(lastOn, 'yyyy-MM')
@@ -168,7 +169,12 @@ export const TreatmentStatus = ({
               margin={{ top: 0, right: 0, bottom: 50, left: 0 }}
               padding={0.01} // between stacks, (ratio)
               innerPadding={1} // between bars in a stack, (px)
-              colors={colors}
+              colors={bar => {
+                const colorIndex = keys.findIndex(key => key === bar.id)
+                const palette =
+                  bar.data.monthTested === lastOn ? colorsFaded : colors
+                return palette[colorIndex]
+              }}
               axisBottom={{
                 tickSize: 0,
                 tickPadding: 10,
@@ -227,7 +233,7 @@ export const TreatmentStatus = ({
               maxValue={100}
               motionStiffness={90}
               motionDamping={15}
-              tooltip={({ id, value, color, indexValue }) => (
+              tooltip={({ color, data, id, indexValue, value }) => (
                 <div>
                   <div style={{ display: 'flex', alignItems: 'center' }}>
                     <div
@@ -238,7 +244,8 @@ export const TreatmentStatus = ({
                   </div>
                   <div>
                     {`${indexValue}: `}
-                    <strong>{value}</strong>%
+                    <strong>{value}</strong>% (
+                    {data[`cnt${id[0].toUpperCase()}${id.substr(1)}`]} results)
                   </div>
                 </div>
               )}

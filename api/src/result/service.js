@@ -1379,9 +1379,6 @@ async function confirmedTreatmentTracking(request) {
       }
       d.confirmed = getPercentage(d.total, d.cntConfirmed)
       d.unaccountable = getPercentage(d.total, d.cntUnaccountable)
-      delete d.total
-      delete d.cntConfirmed
-      delete d.cntUnaccountable
       return d
     })
 
@@ -1393,6 +1390,9 @@ async function confirmedTreatmentTracking(request) {
         monthTested,
         confirmed: 0,
         unaccountable: 0,
+        cntConfirmed: 0,
+        cntUnaccountable: 0,
+        total: 0,
       })
     }
     dt = endOfMonth(subMonths(dt, 1))
