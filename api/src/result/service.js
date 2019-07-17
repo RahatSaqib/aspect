@@ -115,6 +115,7 @@ const SELECT_SHOW_FIELDS = [
   'rtsl.data as resultTreatmentData',
   'rtsl.resultTreatmentStatusId',
   'rtsl.changedOn as resultTreatmentStatusChangedOn',
+  'rtsl.createdOn as resultTreatmentStatusCreatedOn',
 ]
 
 const SORT_FIELDS = [
@@ -722,6 +723,7 @@ async function downloadFileAsync({ auth, params }) {
 async function getResultByResultId(request, fields = SELECT_SHOW_FIELDS) {
   const { auth, params } = request
   const dataConstraints = await getConstraints(auth.credentials)
+  const { userName } = await getUser(auth.credentials.name)
 
   const results = await knex('Result as r')
     .innerJoin('Device as d', 'r.deviceId', 'd.id')
@@ -812,6 +814,8 @@ async function getResultByResultId(request, fields = SELECT_SHOW_FIELDS) {
   if (data) {
     getResultTreatmentStatus(data)
   }
+
+  data.resultTreatmentStatusCreatedBy = userName
 
   return { ok: results.length === 1, data }
 }
@@ -1044,7 +1048,10 @@ async function updateTreatmentStatus(request) {
     treatmentStatusId = resultTreatmentStatusId
   }
   let lastTreatment = await getLastTreatmentStatusByResult(resultId)
-  if (treatmentStatusId !== result.data.resultTreatmentStatusId) {
+  if (
+    treatmentStatusId !== result.data.resultTreatmentStatusId &&
+    treatmentStatusId
+  ) {
     const [treatmentStatusLogId] = await knex(
       'ResultTreatmentStatusLog'
     ).insert({
@@ -1070,9 +1077,21 @@ async function updateTreatmentStatus(request) {
       lastTreatment = await getLastTreatmentStatusByResult(resultId)
     }
   }
+
+  if (data && !treatmentStatusId) {
+    const [{ treatmentStatusLogId }] = await knex('Result')
+      .where('id', resultId)
+      .select('treatmentStatusLogId')
+    await knex('ResultTreatmentStatusLog')
+      .where('id', treatmentStatusLogId)
+      .update({
+        data,
+        changedOn,
+      })
+  }
+
   const response = await showResult(request)
   response.data.treatmentStatus = lastTreatment
-
   return response
 }
 async function getLastTreatmentStatusByResult(resultId) {

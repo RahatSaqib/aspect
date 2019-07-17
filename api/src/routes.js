@@ -313,6 +313,9 @@ function validateResultResponse() {
       .integer()
       .positive()
       .description('The id of the site'),
+    resultTreatmentStatusCreatedBy: Joi.string()
+      .allow(null)
+      .description('The name of the user that created the note'),
     siteName: Joi.string()
       .allow(null)
       .description('The name of the site'),
@@ -408,6 +411,9 @@ function validateResultResponse() {
     resultTreatmentStatusChangedOn: Joi.date()
       .allow(null)
       .description('ChangedOn date from the latest ResultTreatmentStatusLog'),
+    resultTreatmentStatusCreatedOn: Joi.date()
+      .allow(null)
+      .description('CreatedOn date from the latest ResultTreatmentStatusLog'),
     resultWorkflowLogChangedOn: Joi.date()
       .allow(null)
       .description('ChangedOn date from the latest ResultWorkflowLog'),

@@ -1,0 +1,52 @@
+import React from 'react'
+import Button from '@material-ui/core/Button'
+import TextField from '@material-ui/core/TextField'
+import { defineMessages } from 'react-intl'
+import AspectDialog from '../../components/shared/AspectDialog'
+
+export const messages = defineMessages({
+  submit: {
+    id: 'pages.ResultDetail.submit',
+    defaultMessage: 'Submit',
+  },
+  cancel: {
+    id: 'pages.ResultDetail.cancel',
+    defaultMessage: 'Cancel',
+  },
+})
+
+const ResultTreatmentNoteModal = ({ data, restProps }) => (
+  <AspectDialog
+    actions={[
+      <Button color="primary" onClick={restProps.onToggleShown}>
+        Cancel
+      </Button>,
+      <Button
+        color="primary"
+        variant="contained"
+        disabled={!restProps.isActive}
+        onClick={restProps.onNoteSubmit}
+      >
+        Submit
+      </Button>,
+    ]}
+    maxWidth="sm"
+    open={restProps.isShown}
+    onClose={restProps.onToggleShown}
+    title="Add Note"
+  >
+    <div data-note-text-input>
+      <TextField
+        id="standard-multiline-flexible"
+        multiline
+        rowsMax="5"
+        placeholder="click and start adding notes"
+        defaultValue={data.get('resultTreatmentData')}
+        onChange={restProps.onNoteChange}
+        margin="normal"
+      />
+    </div>
+  </AspectDialog>
+)
+
+export default ResultTreatmentNoteModal

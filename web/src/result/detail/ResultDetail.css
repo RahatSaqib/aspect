@@ -239,13 +239,17 @@
   justify-content: space-between;
 }
 
-.TreatmentCheckBox div:nth-child(3) {
+.TreatmentCheckBox button {
   background-color: var(--aspect-color-chill-blue-2);
   color: white;
   padding: 10px 9px 8px 9px;
   border-radius: 21px;
   position: relative;
   margin-top: 6px;
+}
+
+.TreatmentCheckBox button:hover {
+  background-color: var(--aspect-color-chill-blue-2);
 }
 
 .TreatmentNoteContainer {
@@ -261,7 +265,7 @@
 }
 
 .TreatmentNoteContainer > div:nth-child(2) {
-  padding-right: 0;
+  padding: 10px 0;
 }
 
 .TreatmentNoteContainer svg {
@@ -275,7 +279,7 @@
 }
 
 .TreatmentNoteBody {
-  margin-bottom: 15px;
+  margin: 5px 0 15px 0;
 }
 
 .TreatmentNoteFooter p:first-child {
@@ -286,4 +290,8 @@
 .TreatmentNoteFooter p:nth-child(2) {
   margin: 0 0 5px 0;
   font-size: 12px;
+}
+
+[data-note-text-input] > div {
+  width: 100%;
 }
