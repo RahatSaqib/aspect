@@ -1078,7 +1078,7 @@ async function updateTreatmentStatus(request) {
     }
   }
 
-  if (data && !treatmentStatusId) {
+  if (data) {
     const [{ treatmentStatusLogId }] = await knex('Result')
       .where('id', resultId)
       .select('treatmentStatusLogId')
