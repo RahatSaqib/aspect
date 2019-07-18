@@ -582,7 +582,7 @@ class DefaultSenaiteLIMS extends SynchronousDataProcessor {
                 Purged: 12,
               }
               if (
-                resultWorkflowPriority[proposedResultWorkflowStatus] >=
+                resultWorkflowPriority[proposedResultWorkflowStatus] >
                 resultWorkflowPriority[currentResultWorkflowStatus]
               ) {
                 resultWorkflowStatus = proposedResultWorkflowStatus
