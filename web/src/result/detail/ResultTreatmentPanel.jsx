@@ -63,7 +63,10 @@ const ResultTreatmentPanel = ({ styles, data, ...restProps }) => {
 
   return (
     <div>
-      <ExpansionPanel className={styles.TreatmentNoteExpansionPanelContainer}>
+      <ExpansionPanel
+        expanded
+        className={styles.TreatmentNoteExpansionPanelContainer}
+      >
         <ExpansionPanelHeader
           label={
             <div className={styles.Treatment}>

@@ -813,9 +813,8 @@ async function getResultByResultId(request, fields = SELECT_SHOW_FIELDS) {
 
   if (data) {
     getResultTreatmentStatus(data)
+    data.resultTreatmentStatusCreatedBy = userName
   }
-
-  data.resultTreatmentStatusCreatedBy = userName
 
   return { ok: results.length === 1, data }
 }
@@ -1092,6 +1091,7 @@ async function updateTreatmentStatus(request) {
 
   const response = await showResult(request)
   response.data.treatmentStatus = lastTreatment
+
   return response
 }
 async function getLastTreatmentStatusByResult(resultId) {
