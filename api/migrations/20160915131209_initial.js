@@ -852,7 +852,7 @@ async function up(knex) {
       .index()
     deviceLog.string('senderIp').notNullable()
     deviceLog.string('checkpoint').index()
-    deviceLog.text('rawMessage', 'mediumtext')
+    deviceLog.text('rawMessage')
     deviceLog
       .boolean('deviceConfigurationUpdated')
       .notNullable()
