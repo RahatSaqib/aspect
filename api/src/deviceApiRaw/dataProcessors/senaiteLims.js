@@ -450,6 +450,10 @@ class DefaultSenaiteLIMS extends SynchronousDataProcessor {
             resultRecord.deviceId = deviceId
             resultRecord.rawData = JSON.stringify(payload)
             resultRecord.createdOn = now
+            resultRecord.senderOperator =
+              testResultAnalysis.Creator ||
+              testResultAnalysis.Analyst ||
+              testResultAnalysis.Verificators
           }
           if (!resultRecord.geographyId) {
             resultRecord.geographyId = geographyId
@@ -468,6 +472,12 @@ class DefaultSenaiteLIMS extends SynchronousDataProcessor {
           }
           if (!resultRecord.resultTypeId) {
             resultRecord.resultTypeId = await resultTypeToId('Patient')
+          }
+          if (!resultRecord.senderOperator) {
+            resultRecord.senderOperator =
+              testResultAnalysis.Creator ||
+              testResultAnalysis.Analyst ||
+              testResultAnalysis.Verificators
           }
           resultRecord.updatedOn = now
           resultRecord.resultData.senaiteResult.testTypeId =
