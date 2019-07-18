@@ -479,6 +479,16 @@ class DefaultSenaiteLIMS extends SynchronousDataProcessor {
               testResultAnalysis.Analyst ||
               testResultAnalysis.Verificators
           }
+          if (!resultRecord.startedOn) {
+            resultRecord.startedOn = parseDateOrDefault(
+              testResultAnalysis.ResultCaptureDate
+            )
+          }
+          if (!resultRecord.endedOn) {
+            resultRecord.endedOn = parseDateOrDefault(
+              testResultAnalysis.ResultCaptureDate
+            )
+          }
           resultRecord.updatedOn = now
           resultRecord.resultData.senaiteResult.testTypeId =
             testResultAnalysis.id // "MGITRESULT"
