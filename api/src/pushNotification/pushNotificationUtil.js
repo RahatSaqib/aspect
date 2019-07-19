@@ -18,7 +18,8 @@ async function sendPushNotification(deviceTokenId, title, body, data) {
         title,
         body,
       },
-      token: deviceTokenId,
+      token:
+        'co7rK_hUuJo:APA91bHttzdmRpXj1nrsyDP51looJ3_ZmXj4CyJnsDBEH-4m5JW4tSTKgRfOq1Ag5Wrn4hlaqMHDD4VmYl78xP_A60zTgD6j6-xR3GKIEswQqml29namC4wUaxWudJ79fVnSkITKZE-D',
     })
     .then(response => {
       // Response is a message ID string.

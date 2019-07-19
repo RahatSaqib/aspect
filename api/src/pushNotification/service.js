@@ -91,12 +91,12 @@ async function doSendPushNotificationMessage(
 ) {
   // get message
   const d = await knex('PushNotificationMessage as sm')
-    .leftJoin('Person as p', 'm.personId', 'p.id')
+    .leftJoin('Person as p', 'sm.personId', 'p.id')
     .leftJoin('User as u', 'p.userId', 'u.id')
     .leftJoin('RefreshToken as t', 'u.id', 't.userId')
     .where('sm.id', pushNotificationMessageId)
     .whereNotNull('t.deviceTokenId')
-    .first('t.deviceTokenId, sm.title', 'sm.body', 'sm.data')
+    .first('t.deviceTokenId', 'sm.title', 'sm.body', 'sm.data')
 
   const { deviceTokenId, title, body, data } = d || {}
 
