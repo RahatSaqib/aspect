@@ -24,11 +24,8 @@ async function getDevicesReport(request, reply) {
     query.format,
     reportFile,
     '<Headers>', // This is an invented tag to look for in the report template. Also we can find a text for a header instead of create a place holder.
-    _.map(devices.data, elem => {
-      console.log(
-        _.map(elem.issueCategories, current => issues[current.key]).join(',')
-      )
-      return Object.assign(
+    _.map(devices.data, elem =>
+      Object.assign(
         {
           availabilityRate: elem.availability.rate * 100,
           issuesCategories: _.map(
@@ -42,7 +39,7 @@ async function getDevicesReport(request, reply) {
         },
         elem
       )
-    }),
+    ),
     {
       date: format(new Date(), 'yyyy-MM-dd'),
     },
