@@ -32,11 +32,12 @@ const routes = [
     },
   },
   {
-    method: 'GET',
+    method: 'POST',
     path: '/testpushnotification',
     handler: asyncHandler(testPush),
     config: {
       description: 'Test for sending push notification to all devices',
+      auth: { scope: ['notification:admin'] },
       response: {
         options: {
           allowUnknown: false,
