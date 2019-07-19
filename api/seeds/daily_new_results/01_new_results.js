@@ -349,12 +349,12 @@ async function seed(knex) {
   // Ebola results:
   possibleResults = [
     {
-      resultText: 'Ebola GP NON DÉTECTÉ|Ebola NP NON DÉTECTÉ',
+      resultText: 'Ebola GP NOT DETECTED|Ebola NP NOT DETECTED',
       category1: resultCategoryNotDetectedId,
       category2: resultCategoryNotDetectedId,
     },
     {
-      resultText: 'Ebola GP DÉTECTÉ|Ebola NP NON DÉTECTÉ',
+      resultText: 'Ebola GP DETECTED|Ebola NP NOT DETECTED',
       category1: resultCategoryDetectedId,
       category2: resultCategoryNotDetectedId,
     },
@@ -512,10 +512,13 @@ async function seed(knex) {
   // HIV VL Results for the GeneXpert:
   possibleResults = [
     {
-      resultText: 'HIV-1 DÉTECTÉ {0} copies/mL (log {1})',
+      resultText: 'HIV-1 DETECTED {0} copies/mL (log {1})',
       category1: resultCategoryDetectedId,
     },
-    { resultText: 'HIV-1 NON DÉTECTÉ', category1: resultCategoryNotDetectedId },
+    {
+      resultText: 'HIV-1 NOT DETECTED',
+      category1: resultCategoryNotDetectedId,
+    },
     { resultText: 'No Result', category1: resultCategoryNoResultId },
     { resultText: 'ERROR', category1: resultCategoryErrorId },
     { resultText: 'Invalid', category1: resultCategoryInvalidId },
@@ -554,7 +557,7 @@ async function seed(knex) {
     ).id
     await Promise.all(possibleResults, async result => {
       j += 1
-      if (_.random(4) === 0) {
+      if (_.random(2) === 0) {
         let copies = 3200
         let log = 5
         if (result === possibleResults[0]) {
@@ -701,7 +704,7 @@ async function seed(knex) {
 
       _.map(possibleResults, async result => {
         j += 1
-        if (_.random(4) === 0) {
+        if (_.random(2) === 0) {
           let count = 3200
           if (result === possibleResults[0]) {
             count = Math.floor(Math.random() * 100000000)
@@ -840,7 +843,7 @@ async function seed(knex) {
 
       _.map(possibleResults, async result => {
         j += 1
-        if (_.random(4) === 0) {
+        if (_.random(2) === 0) {
           let copies = 3200
           let log = 5
           if (result === possibleResults[0]) {
@@ -978,7 +981,7 @@ async function seed(knex) {
   ).id
   await Promise.each(_.range(resultHcvNumber), async i => {
     const result = _.sample(possibleResults)
-    if (_.random(4) === 0) {
+    if (_.random(2) === 0) {
       const device = devicesDaktari[i % devicesDaktari.length]
       const siteData = siteDatas.find(site => site.id === device.siteId)
       const sample = samples[i % samples.length]
