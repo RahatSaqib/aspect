@@ -72,14 +72,16 @@ const ExportListButton = ({
             Excel
           </button>
         </li>
-        <button
-          className={cssClasses('Reports_Button')}
-          inverse
-          onClick={onCsvClick}
-          id="csv"
-        >
-          CSV
-        </button>
+        <li>
+          <button
+            className={cssClasses('Reports_Button')}
+            inverse
+            onClick={onCsvClick}
+            id="csv"
+          >
+            CSV
+          </button>
+        </li>
       </ol>
     </Popover>
   </div>

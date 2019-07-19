@@ -4,7 +4,7 @@ import Immutable from 'immutable'
 import { defineMessages } from 'react-intl'
 import differenceInMinutes from 'date-fns/differenceInMinutes'
 import { receivedExportResponse } from '../globals/components/ExportListButtonRedux'
-import aspectFetchFile, { aspectFetch } from '../shared/utils/fetch'
+import { aspectFetchFile, aspectFetch } from '../shared/utils/fetch'
 import { mergeToFiltersParams } from '../filter/utils'
 import {
   filterFieldsRejectedError,

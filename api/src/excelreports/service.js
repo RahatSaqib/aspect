@@ -61,7 +61,7 @@ async function downloadReportFile(
     .then(resp => {
       reply(resp)
         .encoding('binary')
-        .type('application/content-stream')
+        .type('application/octet-stream')
         .header(
           'content-disposition',
           `attachment; filename=${fileName}_${new Date().toISOString()}.${format};`
