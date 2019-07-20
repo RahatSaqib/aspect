@@ -58,6 +58,7 @@ describe('result/service', () => {
         getUser: () =>
           Promise.resolve({
             id: 1,
+            userName: 'Admin',
           }),
       },
     })

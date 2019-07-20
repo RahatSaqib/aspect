@@ -422,6 +422,7 @@ describe('Result routes', () => {
           baseTreatmentStatusAssertion(res)
 
           const { treatmentStatus } = res.body.data
+
           // check if resultWorkflowStatus was updated
           assert.equal(treatmentStatus.externalId, 'OnTreatment')
 
@@ -429,7 +430,7 @@ describe('Result routes', () => {
         })
     })
 
-    it('Should update result treatment status given a resultId - set to null', done => {
+    it('Should update result treatment status given a resultId - set resultTreatmentData', done => {
       const changedOn = addMinutes(new Date(), 2)
       const updateWithNull = {
         resultTreatmentStatusId: null,
@@ -445,7 +446,7 @@ describe('Result routes', () => {
         .end((err, res) => {
           baseTreatmentStatusAssertion(res)
 
-          assert.isUndefined(res.body.data.treatmentStatus)
+          assert.equal(res.body.data.resultTreatmentData, 'should be treated')
 
           done()
         })

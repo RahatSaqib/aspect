@@ -610,6 +610,7 @@ export default function resultReducer(state = initialState, action) {
           .get(action.resultId)
           .set('resultTreatmentStatus', action.item.resultTreatmentStatus)
           .set('treatmentStatusInfo', action.item.treatmentStatusInfo)
+          .set('resultTreatmentData', action.item.resultTreatmentData)
           .set(
             'resultTreatmentStatusChangedOn',
             action.item.resultTreatmentStatusChangedOn

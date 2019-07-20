@@ -309,7 +309,14 @@ export class ResultDetail extends PureComponent {
   }
 
   renderTreatmentStatusSection = () => {
-    const { result, userPermission } = this.props
+    const {
+      result,
+      userPermission,
+      logTreatmentStatus,
+      match: {
+        params: { resultId },
+      },
+    } = this.props
     return (
       result &&
       result.get('treatmentStatusInfo') && (
@@ -318,6 +325,8 @@ export class ResultDetail extends PureComponent {
           data={result}
           onTreatmentChange={this.handleOnTreatmentChange}
           userPermission={userPermission}
+          logTreatmentStatus={logTreatmentStatus}
+          resultId={resultId}
         />
       )
     )
