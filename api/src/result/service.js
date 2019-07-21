@@ -373,6 +373,12 @@ async function getDownloadResultsList(query, auth) {
       'rtsl.resultTreatmentStatusId',
       'rt.id'
     )
+    .whereIn('rs.externalId', [
+      'Deliverable',
+      'Delivered',
+      'Acknowledged',
+      'Flagged',
+    ])
     .modify((queryBuilder, params) => {
       if (params.minUpdatedOn) {
         queryBuilder.where('r.updatedOn', '>=', params.minUpdatedOn)

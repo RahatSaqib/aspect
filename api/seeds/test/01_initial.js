@@ -1274,7 +1274,12 @@ async function seed(knex) {
 
   // GeneXpert HIV-1 Viral Load
   await knex('ResultCategoryAssay').insert({
-    resultCategoryId: resultCategoryDetectedId,
+    resultCategoryId: resultCategoryLessThan1000,
+    assayId: assayGeneXpertHiv1VlId,
+  })
+
+  await knex('ResultCategoryAssay').insert({
+    resultCategoryId: resultCategoryMoreThan1000,
     assayId: assayGeneXpertHiv1VlId,
   })
 
@@ -1564,7 +1569,7 @@ async function seed(knex) {
   })
 
   // Result Workflow Status
-  const processed = await resultWorkflowStatusToId('Processed')
+  const deliverable = await resultWorkflowStatusToId('Deliverable')
 
   // Create geographic hierarchy
   const countries = {}
@@ -1895,7 +1900,7 @@ async function seed(knex) {
     const resultId = await knex('Result').insert(resultData)
     const [lastLogId] = await knex('ResultWorkflowLog').insert({
       resultId,
-      resultWorkflowStatusId: processed,
+      resultWorkflowStatusId: deliverable,
       operator: 'Aaron',
       changedOn: subMinutes(now, 90),
       createdOn: subMinutes(now, 90),

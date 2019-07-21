@@ -25,7 +25,6 @@ async function seed(knex) {
       )
     })
     .where('rca.requiresTreatment', 1)
-    .where('rc.externalId', 'Detected')
 
   await Promise.all(
     // process 12 last months
