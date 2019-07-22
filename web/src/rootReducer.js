@@ -30,7 +30,6 @@ import jobs from './job/JobRedux'
 import router from './router/RouterRedux'
 import resultWorkflowStatus from './resultWorkflowStatus/ResultWorkflowStatusRedux'
 import reporter from './reporter/ReporterRedux'
-import exportListButtonReducer from './globals/components/ExportListButtonRedux'
 
 const appReducer = combineReducers({
   form: formReducer,
@@ -62,7 +61,6 @@ const appReducer = combineReducers({
   router,
   resultWorkflowStatus,
   reporter,
-  exportListButton: exportListButtonReducer,
 })
 
 const App = Immutable.Record({
@@ -95,7 +93,6 @@ const App = Immutable.Record({
   router: undefined,
   resultWorkflowStatus: undefined,
   reporter: undefined,
-  exportListButton: undefined,
 })
 
 const initialState = new App()

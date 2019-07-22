@@ -7,13 +7,8 @@ import classnames from 'classnames/bind'
 
 const cssClasses = classnames.bind(require('./ExportListButton.css'))
 
-export const exportFormatTypes = {
-  EXCEL: 'xlsx',
-  CSV: 'csv',
-}
-
 const enhance = compose(
-  withState('anchorEl', 'setAnchorEl', false),
+  withState('anchorEl', 'setAnchorEl', null),
   withHandlers({
     onPopoverClick: ({ setAnchorEl }) => event => {
       setAnchorEl(event.currentTarget)
@@ -48,7 +43,6 @@ const ExportListButton = ({
         horizontal: 'left',
       }}
       anchorEl={anchorEl}
-      className={cssClasses('Popover')}
       transformOrigin={{
         vertical: 'top',
         horizontal: 'left',

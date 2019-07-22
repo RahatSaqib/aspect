@@ -12,7 +12,7 @@ const {
   listDevicesForSelectList,
   updateDeviceMaintenance,
 } = require('./service')
-const { getDevicesReport } = require('../excelReports/service')
+const { getDevicesReport } = require('./serviceReports')
 const {
   validateAllGeographyFilterParams,
 } = require('../geography/requestValidation')

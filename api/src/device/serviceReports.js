@@ -1,8 +1,8 @@
 const _ = require('lodash')
 const path = require('path')
-const { listDevices } = require('../device/service')
+const { listDevices } = require('./service')
 const { format } = require('date-fns')
-const { generateReport } = require('./excelManager')
+const { generateReport } = require('../excelreports/excelManager')
 
 const issues = {
   issueCategoryDeviceHealth: 'Device',
@@ -19,7 +19,10 @@ async function getDevicesReport(request, reply) {
   // get whole dataset - based on current query params (sorting, filtering) and auth constraints
   const devices = await listDevices(request)
   const { query } = request
-  const reportFile = path.join(__dirname, './reportTemplates/Devices.xlsx')
+  const reportFile = path.join(
+    __dirname,
+    '../excelreports/reportTemplates/Devices.xlsx'
+  )
   const report = generateReport(
     query.format,
     reportFile,

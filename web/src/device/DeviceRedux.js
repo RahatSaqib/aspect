@@ -3,7 +3,6 @@ import _ from 'lodash'
 import Immutable from 'immutable'
 import { defineMessages } from 'react-intl'
 import differenceInMinutes from 'date-fns/differenceInMinutes'
-import { receivedExportResponse } from '../globals/components/ExportListButtonRedux'
 import { aspectFetchFile, aspectFetch } from '../shared/utils/fetch'
 import { mergeToFiltersParams } from '../filter/utils'
 import {
@@ -12,7 +11,7 @@ import {
   errorPleaseTryAgainInAFewMinutes,
   errorInsufficientScope,
 } from '../error/CommonErrorNotifications'
-
+import { receivedExportResponse } from '../globals/GlobalsRedux'
 import { receiveList, receiveItem, Items } from '../shared/metaReducers/items'
 import {
   requestTable,
@@ -308,8 +307,9 @@ export function exportDevices(
           ),
         },
       }
-    ).then(elem => {
-      dispatch(receivedExportResponse(elem, fileFormat, reportName))
+    ).then(async elem => {
+      const file = await elem
+      dispatch(receivedExportResponse(file, fileFormat, reportName))
     })
   }
 }
