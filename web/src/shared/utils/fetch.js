@@ -67,7 +67,7 @@ function handleFetchResponseOrError(fetch, input, options = {}) {
           const store = require('../../store').default
           store.dispatch(setLastServerResponseTime(new Date(date)))
         }
-        if (contentType && contentType.indexOf('content-stream') > 0) {
+        if (contentType && contentType.indexOf('octet-stream') > 0) {
           return resp.blob()
         }
         if (resp.ok) {
