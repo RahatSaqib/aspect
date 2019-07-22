@@ -1,4 +1,4 @@
-module.exports = require('../utils').seed(seed)
+module.exports = require('../utils').seed(seed, __filename)
 
 const { seedDataCategory } = require('../dataCategoryLow')
 const {
@@ -20,7 +20,6 @@ async function seed(knex) {
   if (reagentHealthResolution != null) {
     return
   }
-
   await seedStockIssuesUpdate(knex, 'Myanmar')
   await seedReagentHealthResolution(knex)
   await updateTemplatesToIncludeDeviceName(knex)

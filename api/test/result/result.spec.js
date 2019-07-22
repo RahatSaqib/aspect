@@ -2,6 +2,7 @@ const supertest = require('supertest')
 const chai = require('chai')
 const _ = require('lodash')
 const dateFormat = require('date-fns/format')
+const { addMinutes, subMonths, endOfMonth } = require('date-fns')
 
 const shared = require('../utils/sharedToken')
 const { runTestWithKnex } = require('../utils/generatorFunctionUtils')
@@ -381,7 +382,7 @@ describe('Result routes', () => {
     }
 
     it('Should update result treatment status given a resultId - with externalId', done => {
-      const changedOn = '2019-03-25T10:00:33.000Z'
+      const changedOn = new Date()
       const updateWithExternalId = {
         externalId: 'AwaitingTreatment',
         data: 'should be treated',
@@ -403,8 +404,9 @@ describe('Result routes', () => {
           done()
         })
     })
+
     it('Should update result treatment status given a resultId - with resultTreatmentStatusId', done => {
-      const changedOn = '2019-03-26T10:00:33.000Z'
+      const changedOn = addMinutes(new Date(), 1)
       const updateWithId = {
         resultTreatmentStatusId: 2,
         data: 'should be treated',
@@ -420,15 +422,16 @@ describe('Result routes', () => {
           baseTreatmentStatusAssertion(res)
 
           const { treatmentStatus } = res.body.data
+
           // check if resultWorkflowStatus was updated
           assert.equal(treatmentStatus.externalId, 'OnTreatment')
-          assert.equal(treatmentStatus.changedOn, changedOn)
 
           done()
         })
     })
-    it('Should update result treatment status given a resultId - set to null', done => {
-      const changedOn = '2019-03-27T10:00:33.000Z'
+
+    it('Should update result treatment status given a resultId - set resultTreatmentData', done => {
+      const changedOn = addMinutes(new Date(), 2)
       const updateWithNull = {
         resultTreatmentStatusId: null,
         data: 'should be treated',
@@ -443,7 +446,7 @@ describe('Result routes', () => {
         .end((err, res) => {
           baseTreatmentStatusAssertion(res)
 
-          assert.isUndefined(res.body.data.treatmentStatus)
+          assert.equal(res.body.data.resultTreatmentData, 'should be treated')
 
           done()
         })
@@ -915,6 +918,38 @@ describe('Result download routes', () => {
           assert.property(res.body.data[0], 'errorCode')
           assert.property(res.body.data[0], 'errorNotes')
           assert.property(res.body.data[0], 'sample')
+
+          done()
+        })
+    })
+  })
+})
+
+describe('Result Treatment', () => {
+  describe('Status Tracking - POST', () => {
+    const path = '/api/result/confirmed-treatment-tracking'
+    shared.checkToken(server, path)
+
+    it('Should return percentages of OnTreatment and Unaccountable', done => {
+      const now = new Date()
+      const endedOn = dateFormat(endOfMonth(subMonths(now, 1)), 'yyyy-MM-dd')
+      const siteId = null
+      server
+        .post(`${path}`)
+        .send({ endedOn, siteId })
+        .set('Authorization', `Bearer ${shared.token}`)
+        .end((err, res) => {
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+
+          assert.property(res.body, 'endedOn')
+          assert.property(res.body, 'data')
+          assert.property(res.body, 'siteId')
+
+          assert.equal(res.body.data.length, 6) // for 6 months
+          assert.property(res.body.data[0], 'monthTested')
+          assert.property(res.body.data[0], 'confirmed')
+          assert.property(res.body.data[0], 'unaccountable')
 
           done()
         })

@@ -1,7 +1,7 @@
 const Promise = require('bluebird')
 const _ = require('lodash')
 const { readJson } = require('fs-extra')
-
+const path = require('path')
 const { allFeatureToId } = require('../src/shared/dictionary')
 
 const uniqueKeys = {
@@ -49,22 +49,44 @@ const foreignKeys = {
 
 // Helper for seeed files. Ru
 let hasSeededStaticData = false
-function seed(seed) {
+// Set up the file name of the seed with __filename.
+function seed(seed, fileName) {
   return {
     seed(knex) {
-      return runSeed(seed, knex).catch(err => {
+      return runSeed(seed, knex, fileName).catch(err => {
         console.error(err) // eslint-disable-line no-console
         throw err
       })
     },
   }
 }
-async function runSeed(seed, knex) {
+
+async function runSeed(seed, knex, fileName) {
+  const seedsRun = await getSeedsRan(knex)
   if (!hasSeededStaticData) {
     await seedStaticData(knex)
     hasSeededStaticData = true
   }
-  return seed(knex)
+  if (fileName) {
+    fileName = path.relative(__filename, fileName).slice(3)
+  }
+  if (fileName && (!seedsRun || !seedsRun[fileName])) {
+    return seed(knex)
+      .catch(async e => {
+        await knex('AspectSeed').insert({
+          fileName,
+          success: false,
+          errorMessage: e.message,
+        })
+        throw e
+      })
+      .then(async () => {
+        await knex('AspectSeed').insert({
+          fileName,
+          success: true,
+        })
+      })
+  }
 }
 
 async function rowsAsObject(knex, table, column = 'name') {
@@ -2240,6 +2262,17 @@ async function setCapacityForExistingDevices(knex) {
     }
   })
 }
+async function getSeedsRan(knex) {
+  return knex('AspectSeed as ap')
+    .where({ success: true })
+    .select('ap.fileName')
+    .reduce((memo, row) => {
+      if (!memo[row.fileName]) {
+        memo[row.fileName] = true
+      }
+      return memo
+    }, {})
+}
 
 async function seedDeviceMaintenanceType(knex) {
   const { data: deviceMaintenanceTypes } = await readJson(
@@ -2256,6 +2289,7 @@ async function seedDeviceMaintenanceType(knex) {
 
 module.exports = {
   seed,
+  getSeedsRan,
   rowsAsObject,
   getDefaultMessageTypes,
   seedStockIssues,

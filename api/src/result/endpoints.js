@@ -12,6 +12,7 @@ const {
   listResultTypes,
   updateWorkflowStatus,
   updateTreatmentStatus,
+  listTreatmentStatusTypes,
   updateFormData,
   listWorkflowStatusTypes,
   listWorkflowStatusLog,
@@ -20,6 +21,7 @@ const {
   showFileReferences,
   downloadFile,
   downloadFirstImage,
+  confirmedTreatmentTracking,
 } = require('./service')
 const {
   validateAllGeographyFilterParams,
@@ -61,6 +63,9 @@ function listResultsBaseConfig() {
           workflowStatusId: Joi.number()
             .allow('')
             .description('Filter for Result Workflow Status ID'),
+          treatmentStatusId: Joi.number()
+            .allow('')
+            .description('Filter for Result Treatment Status ID'),
           jsonFields: Joi.array()
             .max(10)
             .items(Joi.string().max(50))
@@ -559,13 +564,23 @@ const routes = [
     }),
   },
   {
+    method: 'GET',
+    path: '/result/treatment-status-types',
+    handler: asyncHandler(listTreatmentStatusTypes),
+    config: {
+      description: 'Result Treatment Status List',
+      notes: 'Dictionary set of Result Treatment Status options',
+      auth: { scope: ['result:view', 'result:edit'] },
+    },
+  },
+  {
     method: 'PUT',
     path: '/result/treatment-status/{resultId}',
     handler: asyncHandler(updateTreatmentStatus),
     config: {
       description: 'Update Result Treatment Status',
       notes: 'Update the treatment status of a result',
-      auth: { scope: ['result:edit'] },
+      auth: { scope: ['treatmentStatus:edit'] },
       validate: {
         params: {
           resultId: Joi.number()
@@ -602,6 +617,28 @@ const routes = [
             .description('The results')
             .keys(validateResultResponse()),
         }),
+      },
+    },
+  },
+  {
+    method: 'POST',
+    path: '/result/confirmed-treatment-tracking',
+    handler: asyncHandler(confirmedTreatmentTracking),
+    config: {
+      description: 'Aggregated data for Treatment Graph on dashboard',
+      notes:
+        'Set of percentages of Confirmed and Unaccountable percentage for few months',
+      auth: { scope: ['result:view', 'result:edit'] },
+      validate: {
+        payload: {
+          siteId: Joi.number()
+            .integer()
+            .allow(null),
+          endedOn: Joi.date()
+            .iso()
+            .allow(null)
+            .description('Ending date'),
+        },
       },
     },
   },

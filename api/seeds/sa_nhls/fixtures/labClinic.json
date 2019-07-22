@@ -9,11 +9,11 @@
       "devices": [
         {
           "deviceTypeId": "AlereQ",
-          "deviceSerial": "NAT-04000925"
+          "deviceSerial": "nat-04000286"
         },
         {
           "deviceTypeId": "AlereQ",
-          "deviceSerial": "nat-04001091"
+          "deviceSerial": "NAT-04000523"
         },
         {
           "deviceTypeId": "AlereQ",
@@ -21,24 +21,11 @@
         },
         {
           "deviceTypeId": "AlereQ",
-          "deviceSerial": "nat-04000286"
-        }
-      ]
-    },
-    {
-      "externalId": "RMMCH",
-      "name": "Rahima Moosa Mother and Child Hospital",
-      "shortName": "RMMCH",
-      "stateName": "Gauteng",
-      "lgaName": "Coronationville",
-      "devices": [
-        {
-          "deviceTypeId": "AlereQ",
-          "deviceSerial": "NAT-04001094"
+          "deviceSerial": "NAT-04000925"
         },
         {
           "deviceTypeId": "AlereQ",
-          "deviceSerial": "NAT-04000893"
+          "deviceSerial": "nat-04001091"
         }
       ]
     },
@@ -56,17 +43,56 @@
       ]
     },
     {
-      "externalId": "kalafong",
-      "name": "Kalafong KPTH",
-      "shortName": "Kalafong KPTH",
-      "stateName": "Gauteng",
-      "lgaName": "Kalafong"
-    },
-    {
       "externalId": "DNAH",
       "name": "Dora Nginza Hospital",
       "shortName": "Dora Nginza Hospital",
       "stateName": "Eastern Cape"
+    },
+    {
+      "externalId": "KPTH",
+      "name": "Kalafong KPTH",
+      "shortName": "Kalafong KPTH",
+      "stateName": "Gauteng",
+      "lgaName": "Kalafong",
+      "devices": [
+        {
+          "deviceTypeId": "AlereQ",
+          "deviceSerial": "NAT-04001093"
+        }
+      ]
+    },
+    {
+      "externalId": "RMMCH",
+      "name": "Rahima Moosa Mother and Child Hospital",
+      "shortName": "RMMCH",
+      "stateName": "Gauteng",
+      "lgaName": "Coronationville",
+      "devices": [
+        {
+          "deviceTypeId": "AlereQ",
+          "deviceSerial": "nat-04000283"
+        },
+        {
+          "deviceTypeId": "AlereQ",
+          "deviceSerial": "nat-04000533"
+        },
+        {
+          "deviceTypeId": "AlereQ",
+          "deviceSerial": "NAT-04000535"
+        },
+        {
+          "deviceTypeId": "AlereQ",
+          "deviceSerial": "NAT-04000537"
+        },
+        {
+          "deviceTypeId": "AlereQ",
+          "deviceSerial": "NAT-04000893"
+        },
+        {
+          "deviceTypeId": "AlereQ",
+          "deviceSerial": "NAT-04001094"
+        }
+      ]
     }
   ]
 }

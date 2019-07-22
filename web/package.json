@@ -160,6 +160,9 @@
   "dependencies": {
     "@material-ui/core": "^3.9.0",
     "@material-ui/icons": "^3.0.1",
+    "@nivo/bar": "^0.59.1",
+    "@nivo/line": "^0.59.1",
+    "@nivo/pie": "^0.59.1",
     "@vx/axis": "^0.0.147",
     "@vx/event": "^0.0.182",
     "@vx/geo": "^0.0.184",
@@ -191,7 +194,7 @@
     "is-promise": "^2.1.0",
     "jwt-decode": "^2.2.0",
     "keycode": "^2.1.8",
-    "lodash": "^4.17.4",
+    "lodash": "^4.17.14",
     "piwik-react-router": "^0.12.0",
     "prop-types": "^15.5.8",
     "raven-js": "^3.14.2",

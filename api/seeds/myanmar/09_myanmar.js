@@ -1,4 +1,4 @@
-module.exports = require('../utils').seed(seed)
+module.exports = require('../utils').seed(seed, __filename)
 
 const _ = require('lodash')
 const Promise = require('bluebird')
@@ -8,6 +8,7 @@ const { getPermissionModules } = require('../utils')
 const geography = require('./fixtures/geography.json')
 
 async function seed(knex) {
+  const issueTypes = await rowsAsObject(knex, 'IssueType', 'externalId')
   const alertTemplateWithHideFlag = await knex('AlertTemplate')
     .where('hideWhenSiteFilterIsSelected', 1)
     .orWhere('hideWhenSiteFilterIsNotSelected', 1)
@@ -16,9 +17,6 @@ async function seed(knex) {
   if (alertTemplateWithHideFlag) {
     return
   }
-
-  const issueTypes = await rowsAsObject(knex, 'IssueType', 'externalId')
-
   await knex('AlertTemplate')
     .where({
       message:

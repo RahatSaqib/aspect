@@ -62,6 +62,10 @@ const messages = defineMessages({
     id: 'filter.btnGroup.withWorkflowStatus',
     defaultMessage: 'with workflow status is {workflowStatusName}',
   },
+  withTreatmentStatus: {
+    id: 'filter.btnGroup.withTreatmentStatus',
+    defaultMessage: 'with treatment status is {treatmentStatusName}',
+  },
   withDeviceStatus: {
     id: 'filter.btnGroup.withDeviceStatus',
     defaultMessage: 'with device status is {deviceStatusName}',
@@ -112,6 +116,7 @@ const enhance = compose(
       assayItems: state.assay.items,
       partnerItems: state.jobs.partnersAndJobFunctionsForSelectList.partners,
       workflowStatusItems: state.resultWorkflowStatus.items,
+      treatmentStatusItems: state.resultTreatmentStatus.items,
       deviceStatusItems: state.deviceStatus.items,
       deviceTypeItems: state.deviceType.selectList.items,
     }),
@@ -142,6 +147,7 @@ const filtersOrdering = {
   externalId: 15,
   notificationName: 20,
   revoked: 21,
+  treatmentStatusId: 22,
   // -1: Special orderings
   siteIds: -1,
 }
@@ -263,6 +269,18 @@ const buttonBy = {
         workflowStatusName: workflowStatusItems
           .find(
             it => it.get('id') === workflowStatusId,
+            EMPTY_CONTEXT,
+            EMPTY_MAP
+          )
+          .get('name'),
+      })
+  ),
+  treatmentStatusId: makeButton(
+    ({ intl, treatmentStatusItems }, treatmentStatusId) =>
+      intl.formatMessage(messages.withTreatmentStatus, {
+        treatmentStatusName: treatmentStatusItems
+          .find(
+            it => it.get('id') === treatmentStatusId,
             EMPTY_CONTEXT,
             EMPTY_MAP
           )

@@ -149,13 +149,22 @@ export const DetailGroup = compose(
   </ExpansionPanel>
 ))
 
-export const DetailPanel = ({ intl, data, schema, ...restProps }) => (
+export const DetailPanel = ({
+  intl,
+  data,
+  schema,
+  titleSection,
+  ...restProps
+}) => (
   <Card {...restProps}>
     <CardTitle
       title={schema.get('title')}
       icon={<MdAssignment className={cssClasses('Title__Icon')} />}
       className={cssClasses('Title')}
     />
+
+    {titleSection}
+
     {schema
       .get('groups')
       .sortBy(value => value.get('order'))

@@ -30,6 +30,11 @@ export const types = {
   REQUEST_UPDATING_SINGLE_RESULT: 'REQUEST_UPDATING_SINGLE_RESULT',
   RECEIVE_UPDATED_SINGLE_RESULT: 'RECEIVE_UPDATED_SINGLE_RESULT',
 
+  REQUEST_CREATING_TREATMENT_STATUS_LOG:
+    'REQUEST_CREATING_TREATMENT_STATUS_LOG',
+  RECEIVE_CREATING_TREATMENT_STATUS_LOG:
+    'RECEIVE_CREATING_TREATMENT_STATUS_LOG',
+
   REQUEST_WORKFLOW_LOG: 'REQUEST_WORKFLOW_LOG',
   RECEIVE_WORKFLOW_LOG: 'RECEIVE_WORKFLOW_LOG',
 
@@ -112,6 +117,45 @@ export function fetchResults(filtersParams, sortCol, sortDir, page, pageSize) {
     )
       .then(json => dispatch(receiveResults(json)))
       .catch(() => dispatch(rejectResults()))
+  }
+}
+
+// updating a single result with given resultId and data
+function requestCreatingTreatmentStatusLog(resultId) {
+  return {
+    type: types.REQUEST_CREATING_TREATMENT_STATUS_LOG,
+    resultId,
+  }
+}
+
+// received a updated single result
+function receiveTreatmentStatusLog(item, resultId) {
+  return {
+    type: types.RECEIVE_CREATING_TREATMENT_STATUS_LOG,
+    resultId,
+    item,
+  }
+}
+
+export function logTreatmentStatus(resultId, data) {
+  return dispatch => {
+    dispatch(requestCreatingTreatmentStatusLog(resultId, data))
+
+    return aspectFetch(`/result/treatment-status/${resultId}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+      errorNotifications: {
+        default: errorPleaseTryAgainInAFewMinutes(
+          defineMessages({
+            title: {
+              id: 'errorResponseMessages.updateSingleResult.PUT.default.title',
+              defaultMessage:
+                'An Error Occurred When Trying to Save the Result',
+            },
+          })
+        ),
+      },
+    }).then(json => dispatch(receiveTreatmentStatusLog(json.data, resultId)))
   }
 }
 
@@ -560,6 +604,20 @@ export default function resultReducer(state = initialState, action) {
           )
         })
         .merge({ formDataDirty: true })
+    case types.RECEIVE_CREATING_TREATMENT_STATUS_LOG:
+      return state.withMutations(mutState => {
+        const result = state.items.byId
+          .get(action.resultId)
+          .set('resultTreatmentStatus', action.item.resultTreatmentStatus)
+          .set('treatmentStatusInfo', action.item.treatmentStatusInfo)
+          .set('resultTreatmentData', action.item.resultTreatmentData)
+          .set(
+            'resultTreatmentStatusChangedOn',
+            action.item.resultTreatmentStatusChangedOn
+          )
+
+        mutState.set('items', receiveItem(mutState.items, result))
+      })
     default:
       return state
   }

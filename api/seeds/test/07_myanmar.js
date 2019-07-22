@@ -1,4 +1,4 @@
-module.exports = require('../utils').seed(seed)
+module.exports = require('../utils').seed(seed, __filename)
 
 const _ = require('lodash')
 const Promise = require('bluebird')
@@ -22,7 +22,6 @@ async function seed(knex) {
   if (alertTemplateWithHideFlag) {
     return
   }
-
   await knex('AlertTemplate')
     .where({
       message:

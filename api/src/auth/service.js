@@ -38,6 +38,7 @@ function getUser(username) {
       'u.legacyPassword',
       'u.id',
       'u.name',
+      'p.name as userName',
       'p.culture',
       'p.timezone',
       'p.id as personId',

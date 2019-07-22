@@ -1,6 +1,9 @@
 import _ from 'lodash'
 import classnames from 'classnames/bind'
 import React from 'react'
+import PermIdentity from '@material-ui/icons/PermIdentity'
+import Tooltip from '@material-ui/core/Tooltip'
+
 import {
   DataTableRow as TableRow,
   DataTableCell as TableCell,
@@ -10,6 +13,8 @@ import { formatDate } from '../../shared/utils/dateFormat'
 const cssClasses = classnames.bind(
   require('../../components/shared/DataTableRow.css')
 )
+
+const styles = require('../../components/shared/DataTableRow.css')
 
 const formatterByType = _.partial(
   // TODO: refactor, see DeviceOperationTableRow
@@ -29,6 +34,13 @@ const ResultTableRow = ({ intl, extraColumns, result, ...restProps }) => (
     <TableCell hiddenOn="md">{result.get('sampleGroup')}</TableCell>
     <TableCell>{result.get('resultText')}</TableCell>
     <TableCell hiddenOn="sm">{result.get('resultWorkflowStatus')}</TableCell>
+    <TableCell hiddenOn="sm">
+      <Tooltip title={result.get('resultTreatmentStatusName')}>
+        <PermIdentity
+          className={styles[`${result.get('treatmentStatusInfo')}`]}
+        />
+      </Tooltip>
+    </TableCell>
     <TableCell hiddenOn="xs">{result.get('patientId')}</TableCell>
     {extraColumns.map(column => (
       // TODO: refactor, see DeviceOperationTableRow
