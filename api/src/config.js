@@ -58,6 +58,9 @@ module.exports = {
     passPhrase: process.env['encryption.passPhrase'],
     initVector: process.env['encryption.initVector'],
   },
+  pushNotification: {
+    testDeviceTokenId: process.env['pushNotification.testDeviceTokenId'],
+  },
 }
 
 configureOptional(module.exports)

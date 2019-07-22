@@ -9,17 +9,16 @@ firebaseAdmin.initializeApp({
   databaseURL: 'https://reporter-app-systemone.firebaseio.com',
 })
 
-async function sendPushNotification(deviceTokenId, title, body, data) {
+async function sendPushNotification(token, title, body, data) {
   return firebaseAdmin
     .messaging()
     .send({
-      data,
+      data: data || {}, // data must be a non-null object
       notification: {
         title,
         body,
       },
-      token:
-        'co7rK_hUuJo:APA91bHttzdmRpXj1nrsyDP51looJ3_ZmXj4CyJnsDBEH-4m5JW4tSTKgRfOq1Ag5Wrn4hlaqMHDD4VmYl78xP_A60zTgD6j6-xR3GKIEswQqml29namC4wUaxWudJ79fVnSkITKZE-D',
+      token,
     })
     .then(response => {
       // Response is a message ID string.

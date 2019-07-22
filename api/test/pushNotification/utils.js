@@ -1,5 +1,9 @@
 const _ = require('lodash')
+const addDays = require('date-fns/addDays')
 const chai = require('chai')
+const {
+  pushNotification: { testDeviceTokenId },
+} = require('../../src/config')
 const { messageStatusToId } = require('../../src/shared/dictionary')
 const { run } = require('../../src/db')
 const { queuePurge } = require('../utils/mqUtils')
@@ -47,8 +51,22 @@ class PushNotificationTestContext {
 
       const messageStatusId = await messageStatusToId('Initial')
 
-      // add sample push notification message
+      // create app-entry for user in RefreshToken table:
       const now = new Date()
+      await knex('RefreshToken').insert({
+        userId,
+        clientId: '12345678-1234-5678-91011-abcdefghijk',
+        clientName: 'Funky Phone',
+        token: 'faketokenz',
+        deviceTokenId: testDeviceTokenId,
+        expires: addDays(now, 30),
+        revoked: 0,
+        createdOn: now,
+        clientType: 'reporter_app',
+        updatedOn: now,
+      })
+
+      // add sample push notification message
       this.messageId = await knex('PushNotificationMessage').insert(
         {
           pushNotificationTemplateId,
@@ -73,6 +91,13 @@ class PushNotificationTestContext {
     return run(async knex => {
       // make sure MQ finished it's job before removing sample message
       await waitForIdle()
+
+      // remove refresh token
+      await knex('RefreshToken')
+        .where({
+          clientId: '12345678-1234-5678-91011-abcdefghijk',
+        })
+        .delete()
 
       // remove sample message
       if (this.messageId) {
