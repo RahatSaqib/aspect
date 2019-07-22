@@ -68,11 +68,26 @@ function setColumnsKeysAndBindData(
   worksheet,
   placeHolderTag,
   dataCollection,
-  rowsNext = 0
+  rowsNext = 0,
+  defaultNoDataMessage
 ) {
   const indexRow = setColumnsKeys(worksheet, placeHolderTag, rowsNext)
-  worksheet.spliceRows(indexRow, 1, ...dataCollection)
+  if (dataCollection.length > 0)
+    worksheet.spliceRows(indexRow, 1, ...dataCollection)
+  else setMessageOnRow(worksheet, indexRow, defaultNoDataMessage)
 }
+
+function setMessageOnRow(worksheet, rowIndex, defaultNoDataMessage) {
+  const row = worksheet.getRow(rowIndex)
+  if (row) {
+    worksheet.mergeCells(
+      `${row.getCell(1).address}:${row.getCell(row.cellCount).address}`
+    )
+    row.getCell(1).value = defaultNoDataMessage
+    row.getCell(1).alignment = { horizontal: 'center' }
+  }
+}
+
 // it set up the keys for the columns headers and return the row index where you are goint to add data rows
 function setColumnsKeys(worksheet, placeHolderTag, rowsNext = 0) {
   const cell = findContentInExcelSheet(worksheet, placeHolderTag)
@@ -109,7 +124,8 @@ async function generateReport(
   data,
   headersData,
   placeHolderTagValuesIndex = 0,
-  worksheetName = 1
+  worksheetName = 1,
+  defaultNoDataMessage = 'No data for this period'
 ) {
   let workbook = new Excel.Workbook()
   workbook = await workbook.xlsx.readFile(reportTemplate)
@@ -127,7 +143,8 @@ async function generateReport(
     worksheet,
     placeHolderTag,
     data,
-    placeHolderTagValuesIndex
+    placeHolderTagValuesIndex,
+    defaultNoDataMessage
   )
 
   if (format !== 'csv') return workbook.xlsx.writeBuffer()
