@@ -9,7 +9,7 @@ import { getAspectAccess } from '../../globals/sideEffects/LocalStorage'
 
 export const aspectFetchFile = createFetch(
   base(config.aspectApi),
-  header('Content-Type', 'application/octect-stream'),
+  header('Content-Type', 'application/octet-stream'),
   addAuthHeaderMiddleware,
   handleFetchResponseOrError
 )
