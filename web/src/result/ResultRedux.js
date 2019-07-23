@@ -615,6 +615,10 @@ export default function resultReducer(state = initialState, action) {
             'resultTreatmentStatusChangedOn',
             action.item.resultTreatmentStatusChangedOn
           )
+          .set(
+            'resultTreatmentStatusCreatedOn',
+            action.item.resultTreatmentStatusCreatedOn
+          )
 
         mutState.set('items', receiveItem(mutState.items, result))
       })

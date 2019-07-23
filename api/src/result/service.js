@@ -314,19 +314,27 @@ async function getListResults(query, auth) {
 }
 
 function getResultTreatmentStatus(response) {
-  const lastThirtyDays = subDays(new Date(), 30)
-  const isPastThirtyDays = lastThirtyDays >= response.endedOn
+  const today = new Date()
+  const lastSixteenDays = subDays(today, 16)
+  const lastThirtyTwoDays = subDays(today, 32)
+  const isPastThirtyTwoDays = response.endedOn >= lastThirtyTwoDays
+  const isPastSixteenDays =
+    response.endedOn >= lastSixteenDays && response.endedOn < lastThirtyTwoDays
 
-  if (response.resultTreatmentStatus === 'OnTreatment') {
-    response.treatmentStatusInfo = 'ok'
-  } else if (response.resultTreatmentStatus === 'NotPossible') {
-    response.treatmentStatusInfo = 'na'
-  } else if (response.requiresTreatment === 1 && isPastThirtyDays) {
-    response.treatmentStatusInfo = 'alert'
-  } else if (response.requiresTreatment === 1 && !isPastThirtyDays) {
-    response.treatmentStatusInfo = 'warning'
+  if (response.requiresTreatment) {
+    if (response.resultTreatmentStatus === 'OnTreatment') {
+      response.treatmentStatusInfo = 'ok'
+    } else if (response.resultTreatmentStatus === 'NotPossible') {
+      response.treatmentStatusInfo = 'na'
+    } else if (isPastThirtyTwoDays) {
+      response.treatmentStatusInfo = 'alert'
+    } else if (isPastSixteenDays) {
+      response.treatmentStatusInfo = 'warning'
+    } else {
+      response.treatmentStatusInfo = 'na'
+    }
   } else {
-    response.treatmentStatusInfo = 'na'
+    response.treatmentStatusInfo = null
   }
 }
 
@@ -1097,6 +1105,10 @@ async function updateTreatmentStatus(request) {
 
   const response = await showResult(request)
   response.data.treatmentStatus = lastTreatment
+
+  if (!response.data.resultTreatmentStatusCreatedOn) {
+    response.data.resultTreatmentStatusCreatedOn = now
+  }
 
   return response
 }

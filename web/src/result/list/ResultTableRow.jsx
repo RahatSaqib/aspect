@@ -35,11 +35,13 @@ const ResultTableRow = ({ intl, extraColumns, result, ...restProps }) => (
     <TableCell>{result.get('resultText')}</TableCell>
     <TableCell hiddenOn="sm">{result.get('resultWorkflowStatus')}</TableCell>
     <TableCell hiddenOn="sm">
-      <Tooltip title={result.get('resultTreatmentStatusName')}>
-        <PermIdentity
-          className={styles[`${result.get('treatmentStatusInfo')}`]}
-        />
-      </Tooltip>
+      {result.get('treatmentStatusInfo') && (
+        <Tooltip title={result.get('resultTreatmentStatusName')}>
+          <PermIdentity
+            className={styles[`${result.get('treatmentStatusInfo')}`]}
+          />
+        </Tooltip>
+      )}
     </TableCell>
     <TableCell hiddenOn="xs">{result.get('patientId')}</TableCell>
     {extraColumns.map(column => (
