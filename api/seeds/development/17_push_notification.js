@@ -26,7 +26,7 @@ async function seed(knex) {
       {
         title: 'New Results Available',
         body:
-          'There are {issue.data.numberOfResults} new results available in Aspect Reporter',
+          'There are {issue.data.numberOfResults} new results for {{site.name}} available in Aspect Reporter',
         data: null,
       },
       auditFields
@@ -83,7 +83,21 @@ async function seed(knex) {
         issueTypeId: newResultsIssueTypeId,
         issueEventStatusId,
         triggerConditions: JSON.stringify({
-          action: 'NEW_RESULTS_AVAILABLE',
+          action: 'FACT_NEW_RESULTS_AVAILABLE',
+        }),
+      },
+      timeStampFields
+    )
+  )
+
+  await knex('IssueResolutionTrigger').insert(
+    Object.assign(
+      {
+        partnerId,
+        issueTypeId: newResultsIssueTypeId,
+        resolutionConditions: JSON.stringify({
+          evaluationMethod: 'issue-age',
+          evaluationParameter: { minutes: 24 * 60 - 10 },
         }),
       },
       timeStampFields
