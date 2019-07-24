@@ -318,17 +318,14 @@ export class ResultDetail extends PureComponent {
       },
     } = this.props
     return (
-      result &&
-      result.get('treatmentStatusInfo') && (
-        <ResultTreatmentPanel
-          styles={styles}
-          data={result}
-          onTreatmentChange={this.handleOnTreatmentChange}
-          userPermission={userPermission}
-          logTreatmentStatus={logTreatmentStatus}
-          resultId={resultId}
-        />
-      )
+      <ResultTreatmentPanel
+        styles={styles}
+        data={result}
+        onTreatmentChange={this.handleOnTreatmentChange}
+        userPermission={userPermission}
+        logTreatmentStatus={logTreatmentStatus}
+        resultId={resultId}
+      />
     )
   }
 

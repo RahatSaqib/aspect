@@ -70,11 +70,16 @@ const ResultTreatmentPanel = ({ styles, data, ...restProps }) => {
         <ExpansionPanelHeader
           label={
             <div className={styles.Treatment}>
-              <PermIdentity
-                className={styles[`${data.get('treatmentStatusInfo')}`]}
-              />
+              {data.get('treatmentStatusInfo') && (
+                <PermIdentity
+                  className={styles[`${data.get('treatmentStatusInfo')}`]}
+                />
+              )}
 
               <div className={styles.TreatmentInfo}>
+                {!data.get('resultTreatmentStatus') && (
+                  <h4>Not yet confirmed on treatment</h4>
+                )}
                 {treatmentCheckBoxList.map(
                   treatmentStatus =>
                     treatmentStatus.id ===
