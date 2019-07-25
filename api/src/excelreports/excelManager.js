@@ -150,6 +150,28 @@ async function generateReport(
   if (format !== 'csv') return workbook.xlsx.writeBuffer()
   return workbook.csv.writeBuffer()
 }
+async function downloadReportFile(
+  reportFunction,
+  reply,
+  format,
+  fileName = 'report_'
+) {
+  await reportFunction
+    .then(resp => {
+      reply(resp)
+        .encoding('binary')
+        .type('application/octet-stream')
+        .header(
+          'content-disposition',
+          `attachment; filename=${fileName}_${new Date().toISOString()}.${format};`
+        )
+    })
+
+    .catch(err => {
+      console.error('Error ', err) // eslint-disable-line no-console
+      reply(err)
+    })
+}
 module.exports = {
   findContentInExcelRow,
   setColumnsKeysAndBindData,
@@ -157,4 +179,5 @@ module.exports = {
   replaceContentInExcelSheet,
   setColumnsKeys,
   generateReport,
+  downloadReportFile,
 }
