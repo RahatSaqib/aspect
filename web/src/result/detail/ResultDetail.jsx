@@ -8,6 +8,7 @@ import { defineMessages } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
+
 // Material-UI
 import MdChevronLeft from 'react-icons/lib/md/chevron-left'
 import MdChevronRight from 'react-icons/lib/md/chevron-right'
@@ -51,6 +52,7 @@ import {
 } from '../../shared/utils/dateFormat'
 
 import styles from './ResultDetail.css'
+import ResultDetailsBackBar from './ResultDetailsBackBar'
 
 const cssClasses = classnames.bind(styles)
 
@@ -619,7 +621,7 @@ export class ResultDetail extends PureComponent {
   renderContent() {
     const { result, screenSchema, resultTags, editable, intl } = this.props
     return (
-      <div>
+      <div className={styles.ResultPanel}>
         <DetailPanel
           intl={intl}
           data={result}
@@ -670,13 +672,22 @@ export class ResultDetail extends PureComponent {
   render() {
     const {
       intl: { formatMessage },
+      match,
+      history,
+      location,
     } = this.props
 
     return (
       <div className={cssClasses('Container')}>
         <Helmet title={formatMessage(messages.title)} />
         <NavTitle title={formatMessage(messages.title)} />
-
+        <ResultDetailsBackBar
+          formatMessage={formatMessage}
+          history={history}
+          location={location}
+          match={match}
+          title="Result Details"
+        />
         {this.renderPaper()}
       </div>
     )
