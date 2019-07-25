@@ -1,6 +1,6 @@
 @import '../../globals/variables.css';
 
-.Container {
+.Container .ResultPanel {
   padding: 10px;
 }
 
