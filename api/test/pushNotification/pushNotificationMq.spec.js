@@ -18,7 +18,7 @@ const {
 } = require('../../src/pushNotification/actions')
 const { messageStatusToId } = require('../../src/shared/dictionary')
 
-describe.only('Sending push notification via Message Queue', () => {
+describe('Sending push notification via Message Queue', () => {
   const { runTest } = context
 
   afterEach(context.afterEach)
