@@ -9,15 +9,18 @@ const {
   showDevice,
   updateDevice,
   listStatusTypes,
-  exportDevices,
   listDevicesForSelectList,
   updateDeviceMaintenance,
 } = require('./service')
+const { getDevicesReport } = require('./serviceReports')
 const {
   validateAllGeographyFilterParams,
 } = require('../geography/requestValidation')
 
 function listDevicesBaseConfig() {
+  return Object.assign({}, listDevicesBaseRequest(), listDevicesBaseResponse())
+}
+function listDevicesBaseRequest() {
   return {
     auth: { scope: ['device:view', 'device:edit'] },
     validate: {
@@ -88,6 +91,11 @@ function listDevicesBaseConfig() {
         )
       ),
     },
+  }
+}
+
+function listDevicesBaseResponse() {
+  return {
     response: {
       options: {
         allowUnknown: false,
@@ -439,13 +447,13 @@ const routes = [
   {
     method: 'GET',
     path: '/device/export',
-    handler: asyncHandler(exportDevices),
+    handler: getDevicesReport,
     config: Object.assign(
       {
         description: 'Export Device List into Excel or CSV',
         notes: 'Filtered and sorted list of devices',
       },
-      listDevicesBaseConfig()
+      listDevicesBaseRequest()
     ),
   },
   {

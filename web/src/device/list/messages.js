@@ -84,6 +84,10 @@ export const messages = defineMessages({
       other {# devices}
     }`,
   },
+  exportDevices: {
+    id: 'pages.DeviceList.exportDevices',
+    defaultMessage: 'Export device list',
+  },
   reportingForDays: {
     id: 'pages.DeviceList.reportingForDays',
     defaultMessage: 'For {period}',

@@ -3,8 +3,7 @@ import _ from 'lodash'
 import Immutable from 'immutable'
 import { defineMessages } from 'react-intl'
 import differenceInMinutes from 'date-fns/differenceInMinutes'
-
-import { aspectFetch } from '../shared/utils/fetch'
+import { aspectFetchFile, aspectFetch } from '../shared/utils/fetch'
 import { mergeToFiltersParams } from '../filter/utils'
 import {
   filterFieldsRejectedError,
@@ -12,20 +11,18 @@ import {
   errorPleaseTryAgainInAFewMinutes,
   errorInsufficientScope,
 } from '../error/CommonErrorNotifications'
-
+import { receivedExportResponse } from '../globals/GlobalsRedux'
 import { receiveList, receiveItem, Items } from '../shared/metaReducers/items'
 import {
   requestTable,
   receiveTableItems,
   Table,
 } from '../shared/metaReducers/table'
-import { receivedExportResponse } from '../filter/FilterRedux'
 
 export const types = {
   REQUEST_DEVICES: 'REQUEST_DEVICES',
   RECEIVE_DEVICES: 'RECEIVE_DEVICES',
   REJECTED_DEVICES: 'REJECTED_DEVICES',
-
   REQUEST_SINGLE_DEVICE: 'REQUEST_SINGLE_DEVICE',
   RECEIVE_SINGLE_DEVICE: 'RECEIVE_SINGLE_DEVICE',
 
@@ -265,19 +262,21 @@ export function exportDevices(
   sortCol,
   sortDir,
   page,
-  pageSize
+  pageSize,
+  fileFormat,
+  reportName
 ) {
   return dispatch => {
     const filtersParams = mergeToFiltersParams(extraFilters, rawFiltersParams)
     const filters = _.fromPairs([...filtersParams.entries()])
 
-    return aspectFetch(
+    return aspectFetchFile(
       `/device/export?${stringify({
         sortCol,
         sortDir,
         page,
         size: pageSize,
-        format,
+        format: fileFormat,
         ...filters,
       })}`,
       {
@@ -308,8 +307,9 @@ export function exportDevices(
           ),
         },
       }
-    ).then(json => {
-      dispatch(receivedExportResponse(format, json))
+    ).then(async elem => {
+      const file = await elem
+      dispatch(receivedExportResponse(file, fileFormat, reportName))
     })
   }
 }

@@ -8,7 +8,7 @@ export const types = {
 }
 
 export const exportFormatTypes = {
-  EXCEL: 'excel',
+  EXCEL: 'xlsx',
   CSV: 'csv',
 }
 

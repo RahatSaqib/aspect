@@ -10,11 +10,6 @@ const {
   resultCategoryToId,
   deviceMaintenanceTypeToId,
 } = require('../shared/dictionary')
-const {
-  getCellsByValue,
-  generateExcelFile,
-  generateCsvFile,
-} = require('../shared/io')
 
 const SELECT_LIST_FIELDS = [
   'd.id',
@@ -228,8 +223,8 @@ async function getListDevices(query, auth) {
 // ---------------------------------
 async function listDevices(request) {
   const { query, auth } = request
-
   // get dataset for current query params (sorting, filtering and pagination) and auth constraints
+
   const result = await getListDevices(query, auth)
 
   return result
@@ -387,94 +382,6 @@ async function updateDevice(request) {
   return result
 }
 
-// ---------------------------------
-// exporting Devices data
-// ---------------------------------
-async function exportDevices(request) {
-  const { query, auth } = request
-
-  // ---------------
-  // change query page/size values to get whole dataset (not only currently paged items)
-  query.page = 0
-  // do not export more than 100.000 records
-  query.size = 1e5
-
-  // get whole dataset - based on current query params (sorting, filtering) and auth constraints
-  const devices = await getListDevices(query, auth)
-
-  let result = null
-
-  if (query.format === 'excel') {
-    // fill in data into given workbook
-    const populateData = workbook => {
-      // get 1st sheet (1-based)
-      const worksheet = workbook.getWorksheet(1)
-
-      // locate cell(s) with needed value
-      const cells = getCellsByValue(worksheet, '<DeviceListRows>')
-      if (cells.length > 0) {
-        // empty such cells
-        cells.forEach(cell => {
-          cell.value = ''
-        })
-
-        // use 1st cell only (actually, should not be more than one)
-        const patternRowNumber = cells[0].row + 2
-
-        // fill in array 'rows'
-        const rows = []
-        devices.data.forEach(d => {
-          // ------
-          // --->>> order of array elements should match columns order in template file
-          // ------
-          rows.push([d.name, d.status, d.createdOn, d.lastSeen, d.totalTests])
-        })
-
-        // insert rows from patternRowNumber, and remove row number 'patternRowNumber'
-        worksheet.spliceRows(patternRowNumber, 1, ...rows)
-      }
-    }
-
-    result = await generateExcelFile({
-      templateFileName: 'Devices.xlsx',
-      outputFileName: 'devices.xlsx',
-      populateData,
-    })
-  } else if (query.format === 'csv') {
-    const items = devices.data
-    const columnNames = [
-      'Device Name',
-      'Short Name',
-      'Status',
-      'Created On',
-      'Last Seen',
-      'Type',
-      'Category',
-      'Connected',
-      'Total Tests',
-    ]
-    const fieldNames = [
-      'name',
-      'shortName',
-      'status',
-      'createdOn',
-      'lastSeen',
-      'type',
-      'category',
-      'hasConnectivity',
-      'totalTests',
-    ]
-    result = await generateCsvFile(
-      'devices.csv',
-      items,
-      columnNames,
-      fieldNames
-    )
-  }
-
-  return result
-}
-
 async function listStatusTypes() {
   const resultQuery = knex('DeviceStatus as ds')
 
@@ -606,7 +513,6 @@ module.exports = {
   showDevice,
   updateDevice,
   listStatusTypes,
-  exportDevices,
   listDevicesForSelectList,
   getDevice,
   updateDeviceMaintenance,

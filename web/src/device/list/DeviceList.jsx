@@ -1,12 +1,17 @@
 import _ from 'lodash'
 import classnames from 'classnames/bind'
 import React from 'react'
-import { compose, withProps, withHandlers, lifecycle } from 'recompose'
+import {
+  compose,
+  withProps,
+  withState,
+  withHandlers,
+  lifecycle,
+} from 'recompose'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
 import TableBody from '@material-ui/core/TableBody'
-
 import {
   makeSortPageSelector,
   makeSearchParamsSanitizer,
@@ -16,13 +21,14 @@ import {
   sanitizeFiltersStringBy,
   reduceFiltersConfig,
 } from '../../filter/utils'
+
 import NavTitle from '../../globals/components/NavTitle'
 import BrowseFilters from '../../globals/components/BrowseFilters'
+import ExportListButton from '../../globals/components/ExportListButton'
 import BrowseEmptyList from '../../globals/components/BrowseEmptyList'
 import BrowseTablePaginator from '../../globals/components/BrowseTablePaginator'
 import DataTableCard from '../../components/shared/DataTableCard'
 import DataTableProgressBar from '../../components/shared/DataTableProgressBar'
-
 import { fetchDevices, exportDevices } from '../DeviceRedux'
 import {
   DeviceDataTable,
@@ -72,6 +78,7 @@ const searchSanitizer = makeSearchParamsSanitizer({
     'thisMonth',
   ],
 })
+
 const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
 const filtersFromLocation = composeSanitizer(
   _.flowRight(
@@ -85,7 +92,16 @@ const enhance = compose(
   withProps(
     makeSortPageSelector({
       sortCol: 'name',
-    })
+    }),
+    ({ location }) => {
+      const searchParams = new URLSearchParams(location.search)
+      const filtersParams = new URLSearchParams(
+        searchParams.get('filters') || ''
+      )
+      return {
+        filters: _.fromPairs([...filtersParams.entries()]),
+      }
+    }
   ),
   connect(
     state => ({
@@ -99,6 +115,7 @@ const enhance = compose(
       exportDevices,
     })
   ),
+  withState('anchorEl', 'setAnchorEl', false),
   withHandlers({
     onInitialLoad: ({
       location,
@@ -120,7 +137,7 @@ const enhance = compose(
         )
       }
     },
-    onExportClick: ({
+    onExcelClick: ({
       location,
       exportDevices,
       sortCol,
@@ -128,6 +145,7 @@ const enhance = compose(
       pageAt,
       pageSize,
     }) => formatType => {
+      const format = formatType.target.id
       const { sanitized, value: filtersParams } = filtersFromLocation(location)
       if (!sanitized) {
         exportDevices(
@@ -137,10 +155,13 @@ const enhance = compose(
           sortCol,
           sortDir,
           pageAt,
-          pageSize
+          pageSize,
+          format,
+          'devices'
         )
       }
     },
+
     onRowClick: ({ history }) => ({
       currentTarget: {
         dataset: { deviceId },
@@ -202,6 +223,7 @@ export const DeviceList = ({
   items,
   displayPreferences,
   // --- injected by recompose ---
+  onExcelClick,
   sortCol,
   sortDir,
   pageAt,
@@ -227,6 +249,13 @@ export const DeviceList = ({
       {items.currentIdList.isEmpty() && (
         <BrowseEmptyList history={history} location={location} intl={intl} />
       )}
+
+      <ExportListButton
+        onExcelClick={onExcelClick}
+        onCsvClick={onExcelClick}
+        reportName="Devices"
+      />
+
       {!items.currentIdList.isEmpty() && (
         <DeviceDataTable
           selectable={false}
