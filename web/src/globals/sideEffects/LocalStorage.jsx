@@ -10,7 +10,6 @@ const AS_REFRESH = 'asRefresh'
 const AS_CLIENT_ID = 'asClientId'
 const AS_CULTURE = 'asCulture'
 const AS_TIMEZONE = 'asTimezoneId'
-const AS_DRAWER_OPEN = 'asDrawerOpen'
 const AS_DISPLAY_PREFERENCES = 'asDisplayPreferences'
 
 const DEFAULT_DISPLAY_PREFERENCES = {
@@ -62,11 +61,6 @@ const storageMappings = [
   {
     storageKey: AS_TIMEZONE,
     propsKey: 'timezoneId',
-  },
-  {
-    storageKey: AS_DRAWER_OPEN,
-    propsKey: 'drawerOpen',
-    load: it => it === 'true',
   },
   {
     storageKey: AS_DISPLAY_PREFERENCES,
