@@ -2,7 +2,10 @@ const _ = require('lodash')
 const path = require('path')
 const { listDevices } = require('./service')
 const { format } = require('date-fns')
-const { generateReport } = require('../excelreports/excelManager')
+const {
+  generateReport,
+  downloadReportFile,
+} = require('../excelreports/excelManager')
 
 const issues = {
   issueCategoryDeviceHealth: 'Device',
@@ -24,54 +27,37 @@ async function getDevicesReport(request, reply) {
     '../excelreports/reportTemplates/Devices.xlsx'
   )
   const report = generateReport(
-    query.format,
-    reportFile,
-    '<Headers>', // This is an invented tag to look for in the report template. Also we can find a text for a header instead of create a place holder.
-    _.map(devices.data, elem =>
-      Object.assign(
-        {
-          availabilityRate: elem.availability.rate * 100,
-          issuesCategories: _.map(
-            elem.issueCategories,
-            current => issues[current.key]
-          )
-            .join(',')
-            .replace('[')
-            .replace(']'),
-          errorRate: elem.error.rate * 100,
-        },
-        elem
-      )
+    query.format, // xlsx or csv
+    reportFile, // the path to the exceltemplate
+    '<Headers>', // This is an invented tag to look for, in the report template, for selecting the first cell we want to work with.
+    // Also we can find a text for a header instead of create a place holder.
+    _.map(
+      devices.data,
+      elem =>
+        Object.assign(
+          {
+            availabilityRate: elem.availability.rate * 100,
+            issuesCategories: _.map(
+              elem.issueCategories,
+              current => issues[current.key]
+            )
+              .join(',')
+              .replace('[')
+              .replace(']'),
+            errorRate: elem.error.rate * 100,
+          },
+          elem
+        )
+      // this is the data source to create the reportvalues.
+      // It should be an Array of JSON objects, where each must be plained (Without nested properties)
     ),
     {
       date: format(new Date(), 'yyyy-MM-dd'),
-    },
+    }, // the json object to replace values in the header.
     2 // If the function locate the row number for the placeholder,
     // how many rows after appears the placeholders for the values (default 0)
   )
   return downloadReportFile(report, reply, request.format)
-}
-async function downloadReportFile(
-  reportFunction,
-  reply,
-  format,
-  fileName = 'report_'
-) {
-  await reportFunction
-    .then(resp => {
-      reply(resp)
-        .encoding('binary')
-        .type('application/octet-stream')
-        .header(
-          'content-disposition',
-          `attachment; filename=${fileName}_${new Date().toISOString()}.${format};`
-        )
-    })
-
-    .catch(err => {
-      console.error('Error ', err) // eslint-disable-line no-console
-      reply(err)
-    })
 }
 module.exports = {
   getDevicesReport,
