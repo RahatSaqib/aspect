@@ -594,6 +594,11 @@ export default function dashboardReducer(state = initialState, action) {
             const date = new Date(`${item.monthTested}-15`)
             const monthName = date.toLocaleString('en-us', { month: 'long' })
             item.period = `${monthName} ${date.getFullYear()}`
+            item.cntNotConfirmed =
+              item.total - item.cntConfirmed - item.cntNotPossible
+            // ensure max 1 decimal point for float data types
+            const pc = 100 - item.pcConfirmed - item.pcNotPossible
+            item.pcNotConfirmed = Math.round(10 * pc) / 10
           })
           mutState.set('treatmentStatus', new Immutable.fromJS(payload))
         })

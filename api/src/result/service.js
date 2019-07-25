@@ -1338,7 +1338,7 @@ async function confirmedTreatmentTracking(request) {
   const { auth, payload } = request
 
   const statusOnTreatmentId = await resultTreatmentStatusToId('OnTreatment')
-  const statusUnaccountableId = await resultTreatmentStatusToId('NotPossible')
+  const statusNotPossibleId = await resultTreatmentStatusToId('NotPossible')
 
   // get data constraints
   const dataConstraints = await getConstraints(auth.credentials)
@@ -1376,13 +1376,10 @@ async function confirmedTreatmentTracking(request) {
         .andOn('rtslConfirmed.resultTreatmentStatusId', statusOnTreatmentId)
         .andOn('r.id', 'rtslConfirmed.resultId')
     })
-    .leftOuterJoin('ResultTreatmentStatusLog as rtslUnaccountable', function() {
-      this.on('r.treatmentStatusLogId', 'rtslUnaccountable.id')
-        .andOn(
-          'rtslUnaccountable.resultTreatmentStatusId',
-          statusUnaccountableId
-        )
-        .andOn('r.id', 'rtslUnaccountable.resultId')
+    .leftOuterJoin('ResultTreatmentStatusLog as rtslNotPossible', function() {
+      this.on('r.treatmentStatusLogId', 'rtslNotPossible.id')
+        .andOn('rtslNotPossible.resultTreatmentStatusId', statusNotPossibleId)
+        .andOn('r.id', 'rtslNotPossible.resultId')
     })
     // filter by access level of current user
     .leftOuterJoin('Site as s', 'r.siteId', 's.id')
@@ -1400,7 +1397,7 @@ async function confirmedTreatmentTracking(request) {
     .select(
       knex.raw('count(r.id) as total'),
       knex.raw('count(rtslConfirmed.id) as cntConfirmed'),
-      knex.raw('count(rtslUnaccountable.id) as cntUnaccountable'),
+      knex.raw('count(rtslNotPossible.id) as cntNotPossible'),
       knex.raw(`date_format(r.endedOn, '%Y-%m') AS monthTested`) // group by r.endedOn as 'yyyy-MM'
     )
     .groupBy('monthTested')
@@ -1415,8 +1412,8 @@ async function confirmedTreatmentTracking(request) {
         }
         return pc
       }
-      d.confirmed = getPercentage(d.total, d.cntConfirmed)
-      d.unaccountable = getPercentage(d.total, d.cntUnaccountable)
+      d.pcConfirmed = getPercentage(d.total, d.cntConfirmed)
+      d.pcNotPossible = getPercentage(d.total, d.cntNotPossible)
       return d
     })
 
@@ -1426,10 +1423,10 @@ async function confirmedTreatmentTracking(request) {
     if (!data.find(x => x.monthTested === monthTested)) {
       data.push({
         monthTested,
-        confirmed: 0,
-        unaccountable: 0,
+        pcConfirmed: 0,
+        pcNotPossible: 0,
         cntConfirmed: 0,
-        cntUnaccountable: 0,
+        cntNotPossible: 0,
         total: 0,
       })
     }

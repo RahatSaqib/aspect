@@ -116,9 +116,26 @@ export const TreatmentStatus = ({
   onBack,
   ...restProps
 }) => {
-  const keys = ['confirmed', 'unaccountable']
-  const colors = ['rgb(65, 174, 118)', 'rgb(128, 128, 128)']
-  const colorsFaded = ['rgb(65, 174, 118, .5)', 'rgb(128, 128, 128, .5)']
+  const series = [
+    {
+      label: 'Confirmed',
+      key: 'pcConfirmed',
+      color: 'rgb(65, 174, 118)', // green
+      colorFade: 'rgba(65, 174, 118, .5)',
+    },
+    {
+      label: 'Not Possible',
+      key: 'pcNotPossible',
+      color: 'rgb(128, 128, 128)', // grey
+      colorFade: 'rgba(128, 128, 128, .5)',
+    },
+    {
+      label: 'Not Confirmed',
+      key: 'pcNotConfirmed', // calculated value, see reducer for case RECEIVE_TREATMENT_DASHBOARD
+      color: 'rgb(244, 117, 96)', // red
+      colorFade: 'rgba(244, 117, 96, .5)',
+    },
+  ]
   const tickSeparatorX = `-${50 / data.length}%`
 
   lastOn = dateFormat(lastOn, 'yyyy-MM')
@@ -164,17 +181,16 @@ export const TreatmentStatus = ({
           <div style={{ height: 260 }}>
             <ResponsiveBar
               data={data}
-              keys={keys}
+              keys={series.map(x => x.key)}
               indexBy="period"
               margin={{ top: 0, right: 0, bottom: 50, left: 0 }}
               padding={0.01} // between stacks, (ratio)
               innerPadding={1} // between bars in a stack, (px)
-              colors={bar => {
-                const colorIndex = keys.findIndex(key => key === bar.id)
-                const palette =
-                  bar.data.monthTested === lastOn ? colorsFaded : colors
-                return palette[colorIndex]
-              }}
+              colors={bar =>
+                series.find(x => x.key === bar.id)[
+                  bar.data.monthTested === lastOn ? 'colorFade' : 'color'
+                ]
+              }
               axisBottom={{
                 tickSize: 0,
                 tickPadding: 10,
@@ -240,12 +256,12 @@ export const TreatmentStatus = ({
                       className={cssClasses('Treatment--graph-tooltip-color')}
                       style={{ backgroundColor: color }}
                     />
-                    {`% ${id[0].toUpperCase()}${id.substr(1)} `}
+                    {`% ${series.find(x => x.key === id).label} `}
                   </div>
                   <div>
                     {`${indexValue}: `}
-                    <strong>{value}</strong>% (
-                    {data[`cnt${id[0].toUpperCase()}${id.substr(1)}`]} results)
+                    <strong>{value}</strong>% ({data[`cnt${id.substr(2)}`]}{' '}
+                    results)
                   </div>
                 </div>
               )}
@@ -260,26 +276,23 @@ export const TreatmentStatus = ({
             />
           </div>
           <div className={cssClasses('Treatment--graph-legend')}>
-            {keys.map((key, index) => {
-              const keyName = `${key[0].toUpperCase()}${key.substr(1)}`
-              return (
-                <div className={cssClasses('Treatment--graph-legend-item')}>
-                  <IconBarChart size={20} color={colors[index]} />
-                  <span
-                    className={cssClasses('Treatment--graph-legend-item-text')}
-                  >
-                    {keyName}
-                  </span>
-                  <AspectTooltip
-                    showHelpIcon
-                    className={cssClasses('Treatment--graph-tooltip-help-icon')}
-                    title={intl.formatMessage(
-                      messages[`treatmentTooltipFor${keyName}`]
-                    )}
-                  />
-                </div>
-              )
-            })}
+            {series.map(({ label, key, color }) => (
+              <div className={cssClasses('Treatment--graph-legend-item')}>
+                <IconBarChart size={20} color={color} />
+                <span
+                  className={cssClasses('Treatment--graph-legend-item-text')}
+                >
+                  {label}
+                </span>
+                <AspectTooltip
+                  showHelpIcon
+                  className={cssClasses('Treatment--graph-tooltip-help-icon')}
+                  title={intl.formatMessage(
+                    messages[`treatmentTooltipFor_${key}`]
+                  )}
+                />
+              </div>
+            ))}
           </div>
         </Unit>
         <Unit
