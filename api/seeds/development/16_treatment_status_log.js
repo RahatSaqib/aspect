@@ -16,6 +16,8 @@ async function seed(knex) {
     'NotPossible'
   )
 
+  // make sure current results have 'OnTreatment' and 'NotPossible' logs,
+  // and their sum is less than total results per month
   const query = knex('Result as r')
     .innerJoin('ResultCategory as rc', 'r.resultCategory1', 'rc.id')
     .innerJoin('ResultCategoryAssay as rca', function() {
@@ -32,37 +34,27 @@ async function seed(knex) {
       const prevMonth = subMonths(now, shift)
       const startedOn = startOfMonth(prevMonth)
       const endedOn = endOfMonth(prevMonth)
-      const getResults = async () =>
-        query
-          .clone()
-          .leftOuterJoin(
-            'ResultTreatmentStatusLog as log',
-            'r.treatmentStatusLogId',
-            'log.id'
-          )
-          .where('r.endedOn', '>=', startedOn)
-          .where('r.endedOn', '<=', endedOn)
-          .select('r.*', 'log.resultTreatmentStatusId')
-      const results = await getResults()
-      // ----------
-      // 40%-70% of results should be 'on treatment', 10-15% - unaccountable
-      // ----------
-      const cntTotal = results.length
-      const cntTreatment = results.filter(
-        x => x.resultTreatmentStatusId === treatmentStatusOnTreatmentId
-      ).length
-      const cntUnaccountable = results.filter(
-        x => x.resultTreatmentStatusId === treatmentStatusNotPossibleId
-      ).length
-      const pcTreatments = (100 * cntTreatment) / cntTotal
-      const pcUnaccountables = (100 * cntUnaccountable) / cntTotal
-      let index = 0
-      const resultsFree = results.filter(x => !x.resultTreatmentStatusId)
-      const addLogs = (cntDiff, resultTreatmentStatusId) =>
-        _.range(cntDiff).map(async () => {
-          index += 1
-          const { id: resultId } = resultsFree[index] || {}
-          if (resultId) {
+      // get results for current month
+      const results = await query
+        .clone()
+        .leftOuterJoin(
+          'ResultTreatmentStatusLog as log',
+          'r.treatmentStatusLogId',
+          'log.id'
+        )
+        .where('r.endedOn', '>=', startedOn)
+        .where('r.endedOn', '<=', endedOn)
+        .select('r.*', 'log.resultTreatmentStatusId')
+      // ----------------------
+      // helper functions
+      // ----------------------
+      const addLogs = (cntDiff, resultTreatmentStatusId) => {
+        // get results un-assigned to any treatment status
+        const resultsFree = results.filter(x => !x.resultTreatmentStatusId)
+        return _.range(cntDiff).map(async index => {
+          const result = resultsFree[index]
+          if (result) {
+            const { id: resultId } = result
             // insert in ResultTreatmentStatusLog
             const [treatmentStatusLogId] = await knex(
               'ResultTreatmentStatusLog'
@@ -73,6 +65,7 @@ async function seed(knex) {
               createdOn: now,
             })
             // update Result
+            result.treatmentStatusLogId = treatmentStatusLogId
             await knex('Result')
               .update({
                 treatmentStatusLogId,
@@ -80,23 +73,79 @@ async function seed(knex) {
               .where({ id: resultId })
           }
         })
-
-      if (pcTreatments < 40) {
-        await Promise.all(
-          addLogs(_.random(40, 70) - pcTreatments, treatmentStatusOnTreatmentId)
-        )
       }
-      if (pcUnaccountables < 10) {
-        await Promise.all(
-          addLogs(
-            _.random(10, 15) - pcUnaccountables,
-            treatmentStatusNotPossibleId
-          )
+      const removeLogs = (cntDiff, scopeResults) =>
+        _.range(cntDiff).map(async index => {
+          const result = scopeResults[index]
+          if (result) {
+            const { id: resultId } = result
+            // remove from ResultTreatmentStatusLog
+            await knex('ResultTreatmentStatusLog')
+              .where({ resultId })
+              .del()
+            // update Result
+            result.treatmentStatusLogId = null
+            await knex('Result')
+              .update({ treatmentStatusLogId: null })
+              .where({ id: resultId })
+          }
+        })
+      const normalizeTreatments = async (
+        pcCurrentStatus,
+        pcMax,
+        pcMin,
+        treatmentStatusId,
+        scopeResults
+      ) => {
+        const pcNewStatus = _.random(pcMin, pcMax)
+        let cntDiff
+        // if too little
+        if (pcCurrentStatus < pcMin) {
+          cntDiff = Math.floor((pcNewStatus - pcCurrentStatus) * cntTotal) / 100
+          if (cntDiff > 0) {
+            await Promise.all(addLogs(cntDiff, treatmentStatusId))
+          }
+        }
+        // if too many
+        if (pcCurrentStatus > pcMax) {
+          cntDiff = Math.floor((pcCurrentStatus - pcNewStatus) * cntTotal) / 100
+          if (cntDiff > 0) {
+            await Promise.all(removeLogs(cntDiff, scopeResults))
+          }
+        }
+      }
+      // ----------
+      // set 'OnTreatment' and 'NotPossible' to be in % range
+      // ----------
+      const cntTotal = results.length
+      const resultsOnTreatment = results.filter(
+        x => x.resultTreatmentStatusId === treatmentStatusOnTreatmentId
+      )
+      const resultsNotPossible = results.filter(
+        x => x.resultTreatmentStatusId === treatmentStatusNotPossibleId
+      )
+      if (cntTotal > 0) {
+        // set 'OnTreatment' to be in % range
+        await normalizeTreatments(
+          (100 * resultsOnTreatment.length) / cntTotal, // pcOnTreatment
+          50, // min %
+          60, // max %
+          treatmentStatusOnTreatmentId,
+          resultsOnTreatment
+        )
+        // set 'NotPossible' to be in % range
+        await normalizeTreatments(
+          (100 * resultsNotPossible.length) / cntTotal, // pcNotPossible
+          10, // min %
+          15, // max %
+          treatmentStatusNotPossibleId,
+          resultsNotPossible
         )
       }
     })
   )
 
+  // make sure specified users have permissions to see Treatment Graph
   const users = ['myanmar_admin', 'admin']
   await Promise.all(
     users.map(async userName => {
