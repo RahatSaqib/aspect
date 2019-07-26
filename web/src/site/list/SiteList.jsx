@@ -23,12 +23,13 @@ import BrowseEmptyList from '../../globals/components/BrowseEmptyList'
 import BrowseTablePaginator from '../../globals/components/BrowseTablePaginator'
 import DataTableCard from '../../components/shared/DataTableCard'
 import DataTableProgressBar from '../../components/shared/DataTableProgressBar'
-import { fetchSites } from '../SiteRedux'
+import { fetchSites, exportSites } from '../SiteRedux'
 import {
   SiteDataTable,
   SiteDataTableHead,
   SiteDataTableRow,
 } from './SiteDataTable'
+import ExportListButton from '../../globals/components/ExportListButton'
 
 const cssClasses = classnames.bind(require('./SiteList.css'))
 
@@ -116,7 +117,16 @@ const enhance = compose(
   withProps(
     makeSortPageSelector({
       sortCol: 'name',
-    })
+    }),
+    ({ location }) => {
+      const searchParams = new URLSearchParams(location.search)
+      const filtersParams = new URLSearchParams(
+        searchParams.get('filters') || ''
+      )
+      return {
+        filters: _.fromPairs([...filtersParams.entries()]),
+      }
+    }
   ),
   connect(
     state => ({
@@ -126,6 +136,7 @@ const enhance = compose(
     }),
     bindActionCreators.bind(null, {
       fetchSites,
+      exportSites,
     })
   ),
   withHandlers({
@@ -151,6 +162,29 @@ const enhance = compose(
         },
       } = event
       history.push(`/browse/site/${siteId}/alerts`)
+    },
+
+    onExcelClick: ({
+      location,
+      exportSites,
+      sortCol,
+      sortDir,
+      pageAt,
+      pageSize,
+    }) => formatType => {
+      const format = formatType.target.id
+      const { sanitized, value: filtersParams } = filtersFromLocation(location)
+      if (!sanitized) {
+        exportSites(
+          filtersParams,
+          sortCol,
+          sortDir,
+          pageAt,
+          pageSize,
+          format,
+          'sites'
+        )
+      }
     },
 
     onRowClick: ({ history }) => ({
@@ -204,6 +238,7 @@ export const SiteList = ({
   table,
   items,
   // --- injected by recompose ---
+  onExcelClick,
   sortCol,
   sortDir,
   pageAt,
@@ -226,6 +261,13 @@ export const SiteList = ({
       {items.currentIdList.isEmpty() && (
         <BrowseEmptyList history={history} location={location} intl={intl} />
       )}
+
+      <ExportListButton
+        onExcelClick={onExcelClick}
+        onCsvClick={onExcelClick}
+        reportName="Sites"
+      />
+
       {!items.currentIdList.isEmpty() && (
         <SiteDataTable
           selectable={false}
