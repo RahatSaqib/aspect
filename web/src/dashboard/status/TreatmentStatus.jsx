@@ -7,6 +7,9 @@ import { bindActionCreators } from 'redux'
 import { compose, withProps, lifecycle, withHandlers, pure } from 'recompose'
 import { connect } from 'react-redux'
 import Card from '@material-ui/core/Card'
+// import lightGreen from '@material-ui/core/colors/lightGreen'
+// import grey from '@material-ui/core/colors/grey'
+// import red from '@material-ui/core/colors/red'
 
 import { addMonths, endOfMonth, format as dateFormat } from 'date-fns'
 
@@ -102,6 +105,11 @@ const enhance = compose(
   }))
 )
 
+function getColorWithAlpha(color, opacity) {
+  const y = Math.floor(opacity * 255)
+  return color + (y < 16 ? '0' : '') + y.toString(16)
+}
+
 export const TreatmentStatus = ({
   intl,
   className,
@@ -120,20 +128,26 @@ export const TreatmentStatus = ({
     {
       label: 'Confirmed',
       key: 'pcConfirmed',
-      color: 'rgb(65, 174, 118)', // green
-      colorFade: 'rgba(65, 174, 118, .5)',
+      color: process.env['--aspect-color-mantis'], // green
+      colorFade: getColorWithAlpha(process.env['--aspect-color-mantis'], 0.5),
+      // color: lightGreen[500],
+      // colorFade: lightGreen[300],
     },
     {
       label: 'Not Possible',
       key: 'pcNotPossible',
-      color: 'rgb(128, 128, 128)', // grey
-      colorFade: 'rgba(128, 128, 128, .5)',
+      color: process.env['--aspect-color-grey-5'],
+      colorFade: process.env['--aspect-color-grey-6'],
+      // color: grey[500],
+      // colorFade: grey[300],
     },
     {
       label: 'Not Confirmed',
       key: 'pcNotConfirmed', // calculated value, see reducer for case RECEIVE_TREATMENT_DASHBOARD
-      color: 'rgb(244, 117, 96)', // red
-      colorFade: 'rgba(244, 117, 96, .5)',
+      color: process.env['--aspect-color-mandy'], // red
+      colorFade: getColorWithAlpha(process.env['--aspect-color-mandy'], 0.5),
+      // color: red[500],
+      // colorFade: red[200],
     },
   ]
   const tickSeparatorX = `-${50 / data.length}%`
