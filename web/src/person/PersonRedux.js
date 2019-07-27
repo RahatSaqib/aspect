@@ -11,6 +11,7 @@ import {
   errorPleaseTryAgainInAFewMinutes,
   errorInsufficientScope,
 } from '../error/CommonErrorNotifications'
+import { receivedExportResponse } from '../globals/GlobalsRedux'
 import { receiveList, receiveItem, Items } from '../shared/metaReducers/items'
 import {
   requestTable,
@@ -175,6 +176,62 @@ function receiveAvailablePersons(items) {
   return {
     type: types.RECEIVE_AVAILABLE_PERSONS,
     items,
+  }
+}
+
+export function exportContacts(
+  filtersParams,
+  sortCol,
+  sortDir,
+  page,
+  pageSize,
+  fileFormat,
+  reportName
+) {
+  return dispatch => {
+    const filters = _.fromPairs([...filtersParams.entries()])
+
+    return aspectFetch(
+      `/person/export?${stringify({
+        sortCol,
+        sortDir,
+        page,
+        size: pageSize,
+        format: fileFormat,
+        ...filters,
+      })}`,
+      {
+        errorNotifications: {
+          400: filterFieldsRejectedError(
+            defineMessages({
+              title: {
+                id: 'errorResponseMessages.exportContacts.GET.400.title',
+                defaultMessage: 'Exporting Contacts Failed',
+              },
+            })
+          ),
+          403: errorInsufficientScope(
+            defineMessages({
+              title: {
+                id: 'errorResponseMessages.fetchPersons.GET.403.title',
+                defaultMessage: 'Insufficient Permissions',
+              },
+            })
+          ),
+          default: errorPleaseTryAgainInAFewMinutes(
+            defineMessages({
+              title: {
+                id: 'errorResponseMessages.exportContacts.GET.default.title',
+                defaultMessage: 'Exporting Contacts Failed',
+              },
+            })
+          ),
+        },
+      }
+    ).then(async elem => {
+      const file = await elem
+      dispatch(receivedExportResponse(file, fileFormat, reportName))
+    })
   }
 }
 
