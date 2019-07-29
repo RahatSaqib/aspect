@@ -15,6 +15,7 @@ import {
   errorPleaseTryAgainInAFewMinutes,
   errorInsufficientScope,
 } from '../error/CommonErrorNotifications'
+import { receivedExportResponse } from '../globals/GlobalsRedux'
 
 export const types = {
   REQUEST_INVENTORY_ITEMS: 'REQUEST_INVENTORY_ITEMS',
@@ -172,6 +173,62 @@ export function showReceiveInventoryDialog(inventoryItemId) {
 export function hideAdjustInventoryDialog() {
   return {
     type: types.HIDE_ADJUST_INVENTORY_DIALOG,
+  }
+}
+
+export function exportSupplies(
+  filtersParams,
+  sortCol,
+  sortDir,
+  page,
+  pageSize,
+  fileFormat,
+  reportName
+) {
+  return dispatch => {
+    const filters = _.fromPairs([...filtersParams.entries()])
+
+    return aspectFetch(
+      `/inventory/export?${stringify({
+        sortCol,
+        sortDir,
+        page,
+        size: pageSize,
+        format: fileFormat,
+        ...filters,
+      })}`,
+      {
+        errorNotifications: {
+          400: filterFieldsRejectedError(
+            defineMessages({
+              title: {
+                id: 'errorResponseMessages.exportSites.GET.400.title',
+                defaultMessage: 'Exporting Sites Failed',
+              },
+            })
+          ),
+          403: errorInsufficientScope(
+            defineMessages({
+              title: {
+                id: 'errorResponseMessages.fetchPersons.GET.403.title',
+                defaultMessage: 'Insufficient Permissions',
+              },
+            })
+          ),
+          default: errorPleaseTryAgainInAFewMinutes(
+            defineMessages({
+              title: {
+                id: 'errorResponseMessages.exportSites.GET.default.title',
+                defaultMessage: 'Exporting Sites Failed',
+              },
+            })
+          ),
+        },
+      }
+    ).then(async elem => {
+      const file = await elem
+      dispatch(receivedExportResponse(file, fileFormat, reportName))
+    })
   }
 }
 

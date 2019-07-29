@@ -35,6 +35,7 @@ import BrowseFilters from '../../globals/components/BrowseFilters'
 import BrowseEmptyList from '../../globals/components/BrowseEmptyList'
 import BrowseTablePaginator from '../../globals/components/BrowseTablePaginator'
 import DataTableCard from '../../components/shared/DataTableCard'
+import ExportListButton from '../../globals/components/ExportListButton'
 import DataTableProgressBar from '../../components/shared/DataTableProgressBar'
 import { showAcknowledgement } from '../../appNotification/AppNotificationRedux'
 import { testConductedReasonI18nKey } from '../adjustment/InventoryAdjustmentDialogForm'
@@ -57,6 +58,7 @@ import {
   removeInventory,
   transferInventory,
   receiveInventory,
+  exportSupplies,
 } from '../InventoryRedux'
 import {
   InventoryDataTable,
@@ -164,7 +166,16 @@ const enhance = compose(
   withProps(
     makeSortPageSelector({
       sortCol: 'siteName',
-    })
+    }),
+    ({ location }) => {
+      const searchParams = new URLSearchParams(location.search)
+      const filtersParams = new URLSearchParams(
+        searchParams.get('filters') || ''
+      )
+      return {
+        filters: _.fromPairs([...filtersParams.entries()]),
+      }
+    }
   ),
   connect(
     state => ({
@@ -191,6 +202,8 @@ const enhance = compose(
       removeInventory,
       transferInventory,
       receiveInventory,
+
+      exportSupplies,
     })
   ),
   withHandlers({
@@ -205,6 +218,29 @@ const enhance = compose(
       const { sanitized, value: filtersParams } = filtersFromLocation(location)
       if (!sanitized) {
         fetchInventoryItems(filtersParams, sortCol, sortDir, pageAt, pageSize)
+      }
+    },
+
+    onExcelClick: ({
+      location,
+      exportSupplies,
+      sortCol,
+      sortDir,
+      pageAt,
+      pageSize,
+    }) => formatType => {
+      const format = formatType.target.id
+      const { sanitized, value: filtersParams } = filtersFromLocation(location)
+      if (!sanitized) {
+        exportSupplies(
+          filtersParams,
+          sortCol,
+          sortDir,
+          pageAt,
+          pageSize,
+          format,
+          'supplies'
+        )
       }
     },
   }),
@@ -319,6 +355,7 @@ export const InventoryItemsList = ({
   items,
   inventoryAdjustment,
   // --- injected by recompose ---
+  onExcelClick,
   sortCol,
   sortDir,
   pageAt,
@@ -371,6 +408,13 @@ export const InventoryItemsList = ({
       className={cssClasses('DataTableCard--table')}
     >
       <DataTableProgressBar disabled={!table.loading} />
+
+      <ExportListButton
+        onExcelClick={onExcelClick}
+        onCsvClick={onExcelClick}
+        reportName="Devices"
+      />
+
       {items.currentIdList.isEmpty() && (
         <BrowseEmptyList history={history} location={location} intl={intl} />
       )}
