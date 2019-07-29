@@ -18,6 +18,7 @@ import {
   receiveTableItems,
   Table,
 } from '../shared/metaReducers/table'
+import { receivedExportResponse } from '../globals/GlobalsRedux'
 
 export const types = {
   REQUEST_ROUTERS: 'REQUEST_ROUTERS',
@@ -110,6 +111,62 @@ export function fetchRouters(
     )
       .then(json => dispatch(receiveRouters(json)))
       .catch(() => dispatch(rejectRouters()))
+  }
+}
+export function exportRouters(
+  rawFiltersParams,
+  extraFilters = {},
+  sortCol,
+  sortDir,
+  page,
+  pageSize,
+  fileFormat,
+  reportName
+) {
+  return dispatch => {
+    const filtersParams = mergeToFiltersParams(extraFilters, rawFiltersParams)
+    const filters = _.fromPairs([...filtersParams.entries()])
+
+    return aspectFetch(
+      `/device/export?${stringify({
+        sortCol,
+        sortDir,
+        page,
+        size: pageSize,
+        ...filters,
+      })}`,
+      {
+        errorNotifications: {
+          400: filterFieldsRejectedError(
+            defineMessages({
+              title: {
+                id: 'errorResponseMessages.exportRouters.GET.400.title',
+                defaultMessage: 'Exporting Routers Failed',
+              },
+            })
+          ),
+          403: errorInsufficientScope(
+            defineMessages({
+              title: {
+                id: 'errorResponseMessages.exportPersons.GET.403.title',
+                defaultMessage: 'Insufficient Permissions',
+              },
+            })
+          ),
+          default: errorPleaseTryAgainInAFewMinutes(
+            defineMessages({
+              title: {
+                id: 'errorResponseMessages.exportRouters.GET.default.title',
+                defaultMessage: 'Exporting Routers Failed',
+              },
+            })
+          ),
+        },
+      }
+    ).then(async elem => {
+      const file = await elem
+      dispatch(receivedExportResponse(file, fileFormat, reportName))
+    })
   }
 }
 

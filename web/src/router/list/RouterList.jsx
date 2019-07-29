@@ -23,12 +23,13 @@ import BrowseEmptyList from '../../globals/components/BrowseEmptyList'
 import BrowseTablePaginator from '../../globals/components/BrowseTablePaginator'
 import DataTableCard from '../../components/shared/DataTableCard'
 import DataTableProgressBar from '../../components/shared/DataTableProgressBar'
-import { fetchRouters } from '../RouterRedux'
+import { fetchRouters, exportRouters } from '../RouterRedux'
 import {
   RouterDataTable,
   RouterDataTableHead,
   RouterDataTableRow,
 } from './RouterDataTable'
+import ExportListButton from '../../globals/components/ExportListButton'
 
 const cssClasses = classnames.bind(require('./RouterList.css'))
 
@@ -89,7 +90,16 @@ const enhance = compose(
   withProps(
     makeSortPageSelector({
       sortCol: 'name',
-    })
+    }),
+    ({ location }) => {
+      const searchParams = new URLSearchParams(location.search)
+      const filtersParams = new URLSearchParams(
+        searchParams.get('filters') || ''
+      )
+      return {
+        filters: _.fromPairs([...filtersParams.entries()]),
+      }
+    }
   ),
   connect(
     state => ({
@@ -99,6 +109,7 @@ const enhance = compose(
     }),
     bindActionCreators.bind(null, {
       fetchRouters,
+      exportRouters,
     })
   ),
   withHandlers({
@@ -119,6 +130,30 @@ const enhance = compose(
           sortDir,
           pageAt,
           pageSize
+        )
+      }
+    },
+
+    onExcelClick: ({
+      location,
+      exportRouters,
+      sortCol,
+      sortDir,
+      pageAt,
+      pageSize,
+    }) => formatType => {
+      const format = formatType.target.id
+      const { sanitized, value: filtersParams } = filtersFromLocation(location)
+      if (!sanitized) {
+        exportRouters(
+          filtersParams,
+          { hasResults: 0, hasConnectivity: 1 },
+          sortCol,
+          sortDir,
+          pageAt,
+          pageSize,
+          format,
+          'routers'
         )
       }
     },
@@ -173,6 +208,7 @@ export const RouterList = ({
   table,
   items,
   // --- injected by recompose ---
+  onExcelClick,
   sortCol,
   sortDir,
   pageAt,
@@ -191,6 +227,13 @@ export const RouterList = ({
     />
     <DataTableCard key={`DataTableCard--table-${location.key}`}>
       <DataTableProgressBar disabled={!table.loading} />
+
+      <ExportListButton
+        onExcelClick={onExcelClick}
+        onCsvClick={onExcelClick}
+        reportName="Routers"
+      />
+
       {items.currentIdList.isEmpty() && (
         <BrowseEmptyList history={history} location={location} intl={intl} />
       )}

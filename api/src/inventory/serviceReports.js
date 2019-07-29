@@ -6,7 +6,6 @@ const {
   generateReport,
   downloadReportFile,
 } = require('../excelreports/excelManager')
-const distanceInWordsToNow = require('date-fns/distance_in_words_to_now')
 
 async function getSuppliesReport(request, reply) {
   // Here is a really good example of the necessity of a data layer.
@@ -31,9 +30,7 @@ async function getSuppliesReport(request, reply) {
       supplies.data,
       elem =>
         Object.assign(elem, {
-          expires: distanceInWordsToNow(elem.expiresOn, {
-            addSuffix: true,
-          }),
+          expires: format(new Date(elem.expiresOn), 'yyyy-MM-dd'),
           expiresOn: format(new Date(elem.expiresOn), 'yyyy-MM-dd'),
         })
       // this is the data source to create the reportvalues.

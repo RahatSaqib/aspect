@@ -24,33 +24,38 @@ async function getDevicesReport(request, reply) {
   const { query } = request
   const reportFile = path.join(
     __dirname,
-    '../excelreports/reportTemplates/Devices.xlsx'
+    `../excelreports/reportTemplates/${
+      devices.data[0].category !== 'Router' ? 'Devices.xlsx' : 'Routers.xlsx'
+    }`
   )
+
   const report = generateReport(
     query.format, // xlsx or csv
     reportFile, // the path to the exceltemplate
     '<Headers>', // This is an invented tag to look for, in the report template, for selecting the first cell we want to work with.
     // Also we can find a text for a header instead of create a place holder.
-    _.map(
-      devices.data,
-      elem =>
-        Object.assign(
-          {
-            availabilityRate: elem.availability.rate * 100,
-            issuesCategories: _.map(
-              elem.issueCategories,
-              current => issues[current.key]
+    devices.data[0].category !== 'Router'
+      ? _.map(
+          devices.data,
+          elem =>
+            Object.assign(
+              {
+                availabilityRate: elem.availability.rate * 100,
+                issuesCategories: _.map(
+                  elem.issueCategories,
+                  current => issues[current.key]
+                )
+                  .join(',')
+                  .replace('[')
+                  .replace(']'),
+                errorRate: elem.error.rate * 100,
+              },
+              elem
             )
-              .join(',')
-              .replace('[')
-              .replace(']'),
-            errorRate: elem.error.rate * 100,
-          },
-          elem
+          // this is the data source to create the reportvalues.
+          // It should be an Array of JSON objects, where each must be plained (Without nested properties)
         )
-      // this is the data source to create the reportvalues.
-      // It should be an Array of JSON objects, where each must be plained (Without nested properties)
-    ),
+      : devices.data,
     {
       date: format(new Date(), 'yyyy-MM-dd'),
     }, // the json object to replace values in the header.
