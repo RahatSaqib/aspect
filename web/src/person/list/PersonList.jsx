@@ -259,7 +259,7 @@ export const PersonList = ({
       <ExportListButton
         onExcelClick={onExcelClick}
         onCsvClick={onExcelClick}
-        reportName="Sites"
+        reportName="Contacts"
       />
 
       {!items.currentIdList.isEmpty() && (

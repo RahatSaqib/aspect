@@ -412,7 +412,7 @@ export const InventoryItemsList = ({
       <ExportListButton
         onExcelClick={onExcelClick}
         onCsvClick={onExcelClick}
-        reportName="Devices"
+        reportName="Supplies"
       />
 
       {items.currentIdList.isEmpty() && (
