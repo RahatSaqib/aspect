@@ -15,6 +15,7 @@ import {
   receiveTableItems,
   Table,
 } from '../shared/metaReducers/table'
+import { receivedExportResponse } from '../globals/GlobalsRedux'
 
 export const types = {
   REQUEST_NOTIFICATIONS: 'REQUEST_NOTIFICATIONS',
@@ -101,6 +102,62 @@ export function fetchNotifications(
     )
       .then(json => dispatch(receiveNotifications(json)))
       .catch(() => dispatch(rejectNotifications()))
+  }
+}
+
+export function exportNotifications(
+  filtersParams,
+  sortCol,
+  sortDir,
+  page,
+  pageSize,
+  fileFormat,
+  reportName
+) {
+  return dispatch => {
+    const filters = _.fromPairs([...filtersParams.entries()])
+
+    return aspectFetch(
+      `/notification/export?${stringify({
+        sortCol,
+        sortDir,
+        page,
+        size: pageSize,
+        format: fileFormat,
+        ...filters,
+      })}`,
+      {
+        errorNotifications: {
+          400: filterFieldsRejectedError(
+            defineMessages({
+              title: {
+                id: 'errorResponseMessages.exportNotification.GET.400.title',
+                defaultMessage: 'Exporting Notification Failed',
+              },
+            })
+          ),
+          403: errorInsufficientScope(
+            defineMessages({
+              title: {
+                id: 'errorResponseMessages.exportNotification.GET.403.title',
+                defaultMessage: 'Insufficient Permissions',
+              },
+            })
+          ),
+          default: errorPleaseTryAgainInAFewMinutes(
+            defineMessages({
+              title: {
+                id: 'errorResponseMessages.exportNotifications.GET.default.title',
+                defaultMessage: 'Exporting Notifications Failed',
+              },
+            })
+          ),
+        },
+      }
+    ).then(async elem => {
+      const file = await elem
+      dispatch(receivedExportResponse(file, fileFormat, reportName))
+    })
   }
 }
 /*
