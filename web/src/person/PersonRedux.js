@@ -213,7 +213,7 @@ export function exportContacts(
           403: errorInsufficientScope(
             defineMessages({
               title: {
-                id: 'errorResponseMessages.fetchPersons.GET.403.title',
+                id: 'errorResponseMessages.exportContacts.GET.403.title',
                 defaultMessage: 'Insufficient Permissions',
               },
             })

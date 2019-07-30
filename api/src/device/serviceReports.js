@@ -22,10 +22,11 @@ async function getDevicesReport(request, reply) {
   // get whole dataset - based on current query params (sorting, filtering) and auth constraints
   const devices = await listDevices(request)
   const { query } = request
+  const [devicesData] = devices.data
   const reportFile = path.join(
     __dirname,
     `../excelreports/reportTemplates/${
-      devices.data[0].category !== 'Router' ? 'Devices.xlsx' : 'Routers.xlsx'
+      devicesData.category !== 'Router' ? 'Devices.xlsx' : 'Routers.xlsx'
     }`
   )
 
@@ -34,7 +35,7 @@ async function getDevicesReport(request, reply) {
     reportFile, // the path to the exceltemplate
     '<Headers>', // This is an invented tag to look for, in the report template, for selecting the first cell we want to work with.
     // Also we can find a text for a header instead of create a place holder.
-    devices.data[0].category !== 'Router'
+    devicesData.category !== 'Router'
       ? _.map(
           devices.data,
           elem =>

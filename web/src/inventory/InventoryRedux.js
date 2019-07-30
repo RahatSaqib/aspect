@@ -202,15 +202,15 @@ export function exportSupplies(
           400: filterFieldsRejectedError(
             defineMessages({
               title: {
-                id: 'errorResponseMessages.exportSites.GET.400.title',
-                defaultMessage: 'Exporting Sites Failed',
+                id: 'errorResponseMessages.exportSupplies.GET.400.title',
+                defaultMessage: 'Exporting Supplies Failed',
               },
             })
           ),
           403: errorInsufficientScope(
             defineMessages({
               title: {
-                id: 'errorResponseMessages.fetchPersons.GET.403.title',
+                id: 'errorResponseMessages.exportSupplies.GET.403.title',
                 defaultMessage: 'Insufficient Permissions',
               },
             })
@@ -218,8 +218,8 @@ export function exportSupplies(
           default: errorPleaseTryAgainInAFewMinutes(
             defineMessages({
               title: {
-                id: 'errorResponseMessages.exportSites.GET.default.title',
-                defaultMessage: 'Exporting Sites Failed',
+                id: 'errorResponseMessages.exportSupplies.GET.default.title',
+                defaultMessage: 'Exporting Supplies Failed',
               },
             })
           ),

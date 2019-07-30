@@ -143,7 +143,7 @@ export function exportSites(
           403: errorInsufficientScope(
             defineMessages({
               title: {
-                id: 'errorResponseMessages.fetchPersons.GET.403.title',
+                id: 'errorResponseMessages.exportSites.GET.403.title',
                 defaultMessage: 'Insufficient Permissions',
               },
             })
