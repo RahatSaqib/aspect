@@ -101,6 +101,10 @@ async function seed(knex) {
     { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.assay.admin },
     { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.device.admin },
     { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.site.admin },
+    {
+      jobFunctionId: jobFunctionIdAdmin,
+      permissionId: modules.treatmentStatus.admin,
+    },
   ])
   await knex('JobFunctionFeature').insert([
     { jobFunctionId: jobFunctionIdAdmin, featureId: features.device },
@@ -158,6 +162,10 @@ async function seed(knex) {
     { jobFunctionId: jobFunctionIdLabUser, permissionId: modules.assay.view },
     { jobFunctionId: jobFunctionIdLabUser, permissionId: modules.device.view },
     { jobFunctionId: jobFunctionIdLabUser, permissionId: modules.site.view },
+    {
+      jobFunctionId: jobFunctionIdLabUser,
+      permissionId: modules.treatmentStatus.admin,
+    },
   ])
   await knex('JobFunctionFeature').insert([
     { jobFunctionId: jobFunctionIdLabUser, featureId: features.device },
