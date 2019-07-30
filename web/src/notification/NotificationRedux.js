@@ -147,7 +147,8 @@ export function exportNotifications(
           default: errorPleaseTryAgainInAFewMinutes(
             defineMessages({
               title: {
-                id: 'errorResponseMessages.exportNotifications.GET.default.title',
+                id:
+                  'errorResponseMessages.exportNotifications.GET.default.title',
                 defaultMessage: 'Exporting Notifications Failed',
               },
             })
