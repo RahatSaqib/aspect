@@ -4,6 +4,7 @@ const _ = require('lodash')
 const { subMonths, startOfMonth, endOfMonth } = require('date-fns')
 const { resultTreatmentStatusToId } = require('../../src/shared/dictionary')
 const { getPermissionModules } = require('../utils')
+const { setUserPermission } = require('../../src/shared/permissions')
 
 module.exports = require('../utils').seed(seed, __filename)
 
@@ -22,58 +23,12 @@ async function seed(knex) {
     // ------------------------------------------------------
     // make sure specified users have permissions to see Treatment Graph
     // ------------------------------------------------------
-    // Country, Person
-    const {
-      id: personId,
-      lastPartnerId: partnerId,
-      lastCountryId: countryId,
-    } = await knex('Person as p')
-      .innerJoin('User as u', 'p.userId', 'u.id')
-      .where('u.name', userName)
-      .first('p.*')
-    // Geography
-    const { id: geographyId } = await knex('Geography')
-      .where({ countryId })
-      .whereNull('stateId')
-      .whereNull('lgaId')
-      .first()
-    // JobFunction
-    const { id: jobFunctionId } = await knex('JobFunction')
-      .where({ partnerId, name: 'Admin' })
-      .first()
-    // Job
-    let { id: jobId } =
-      (await knex('Job')
-        .where({ personId, jobFunctionId })
-        .first()) || {}
-    if (!jobId) {
-      ;[jobId] = await knex('Job').insert({
-        personId,
-        jobFunctionId,
-      })
-    }
-    // JobContext
-    const jobContext = await knex('JobContext')
-      .where({ jobId, geographyId })
-      .whereNull('siteId')
-      .first()
-    if (!jobContext) {
-      await knex('JobContext').insert({
-        jobId,
-        geographyId,
-        siteId: null,
-      })
-    }
-    // JobFunctionPermission
-    const jobFunctionPermission = await knex('JobFunctionPermission')
-      .where({ permissionId: modules.treatmentStatus.admin, jobFunctionId })
-      .first()
-    if (!jobFunctionPermission) {
-      await knex('JobFunctionPermission').insert({
-        jobFunctionId,
-        permissionId: modules.treatmentStatus.admin,
-      })
-    }
+    const { partnerId } = await setUserPermission(
+      knex,
+      userName,
+      'Admin', // jobFunctionName
+      modules.treatmentStatus.admin // permissionId
+    )
 
     // ------------------------------------------------------
     // make sure current results have 'OnTreatment' and 'NotPossible' logs,
