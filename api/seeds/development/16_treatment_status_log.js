@@ -1,3 +1,4 @@
+const Promise = require('bluebird')
 const _ = require('lodash')
 
 const { subMonths, startOfMonth, endOfMonth } = require('date-fns')
@@ -17,216 +18,211 @@ async function seed(knex) {
   )
 
   const users = ['myanmar_admin', 'admin']
-  await Promise.all(
-    users.map(async userName => {
-      // ------------------------------------------------------
-      // make sure specified users have permissions to see Treatment Graph
-      // ------------------------------------------------------
-      // Country, Person
-      const {
-        id: personId,
-        lastPartnerId: partnerId,
-        lastCountryId: countryId,
-      } = await knex('Person as p')
-        .innerJoin('User as u', 'p.userId', 'u.id')
-        .where('u.name', userName)
-        .first('p.*')
-      // Geography
-      const { id: geographyId } = await knex('Geography')
-        .where({ countryId })
-        .whereNull('stateId')
-        .whereNull('lgaId')
-        .first()
-      // JobFunction
-      const { id: jobFunctionId } = await knex('JobFunction')
-        .where({ partnerId, name: 'Admin' })
-        .first()
-      // Job
-      let { id: jobId } =
-        (await knex('Job')
-          .where({ personId, jobFunctionId })
-          .first()) || {}
-      if (!jobId) {
-        ;[jobId] = await knex('Job').insert({
-          personId,
-          jobFunctionId,
-        })
-      }
-      // JobContext
-      const jobContext = await knex('JobContext')
-        .where({ jobId, geographyId })
-        .whereNull('siteId')
-        .first()
-      if (!jobContext) {
-        await knex('JobContext').insert({
-          jobId,
-          geographyId,
-          siteId: null,
-        })
-      }
-      // JobFunctionPermission
-      const jobFunctionPermission = await knex('JobFunctionPermission')
-        .where({ permissionId: modules.treatmentStatus.admin, jobFunctionId })
-        .first()
-      if (!jobFunctionPermission) {
-        await knex('JobFunctionPermission').insert({
-          jobFunctionId,
-          permissionId: modules.treatmentStatus.admin,
-        })
-      }
+  await Promise.each(users, async userName => {
+    // ------------------------------------------------------
+    // make sure specified users have permissions to see Treatment Graph
+    // ------------------------------------------------------
+    // Country, Person
+    const {
+      id: personId,
+      lastPartnerId: partnerId,
+      lastCountryId: countryId,
+    } = await knex('Person as p')
+      .innerJoin('User as u', 'p.userId', 'u.id')
+      .where('u.name', userName)
+      .first('p.*')
+    // Geography
+    const { id: geographyId } = await knex('Geography')
+      .where({ countryId })
+      .whereNull('stateId')
+      .whereNull('lgaId')
+      .first()
+    // JobFunction
+    const { id: jobFunctionId } = await knex('JobFunction')
+      .where({ partnerId, name: 'Admin' })
+      .first()
+    // Job
+    let { id: jobId } =
+      (await knex('Job')
+        .where({ personId, jobFunctionId })
+        .first()) || {}
+    if (!jobId) {
+      ;[jobId] = await knex('Job').insert({
+        personId,
+        jobFunctionId,
+      })
+    }
+    // JobContext
+    const jobContext = await knex('JobContext')
+      .where({ jobId, geographyId })
+      .whereNull('siteId')
+      .first()
+    if (!jobContext) {
+      await knex('JobContext').insert({
+        jobId,
+        geographyId,
+        siteId: null,
+      })
+    }
+    // JobFunctionPermission
+    const jobFunctionPermission = await knex('JobFunctionPermission')
+      .where({ permissionId: modules.treatmentStatus.admin, jobFunctionId })
+      .first()
+    if (!jobFunctionPermission) {
+      await knex('JobFunctionPermission').insert({
+        jobFunctionId,
+        permissionId: modules.treatmentStatus.admin,
+      })
+    }
 
-      // ------------------------------------------------------
-      // make sure current results have 'OnTreatment' and 'NotPossible' logs,
-      // and their sum is less than total results per month
-      // ------------------------------------------------------
-      const query = knex('Result as r')
-        .innerJoin('ResultCategory as rc', 'r.resultCategory1', 'rc.id')
-        .innerJoin('ResultCategoryAssay as rca', function() {
-          this.on('r.assayId', 'rca.assayId').andOn(
-            'r.resultCategory1',
-            'rca.resultCategoryId'
-          )
-        })
-        .where('rca.requiresTreatment', 1)
-        .where('r.partnerId', partnerId)
+    // ------------------------------------------------------
+    // make sure current results have 'OnTreatment' and 'NotPossible' logs,
+    // and their sum is less than total results per month
+    // ------------------------------------------------------
+    const query = knex('Result as r')
+      .innerJoin('ResultCategory as rc', 'r.resultCategory1', 'rc.id')
+      .innerJoin('ResultCategoryAssay as rca', function() {
+        this.on('r.assayId', 'rca.assayId').andOn(
+          'r.resultCategory1',
+          'rca.resultCategoryId'
+        )
+      })
+      .where('rca.requiresTreatment', 1)
+      .where('r.partnerId', partnerId)
 
-      await Promise.all(
-        // process 12 last months
-        _.range(1, 12).map(async shift => {
-          const prevMonth = subMonths(now, shift)
-          const startedOn = startOfMonth(prevMonth)
-          const endedOn = endOfMonth(prevMonth)
-          // get results for current month
-          const results = await query
-            .clone()
-            .leftOuterJoin(
-              'ResultTreatmentStatusLog as log',
-              'r.treatmentStatusLogId',
-              'log.id'
-            )
-            .where('r.endedOn', '>=', startedOn)
-            .where('r.endedOn', '<=', endedOn)
-            .select('r.*', 'log.resultTreatmentStatusId')
-          // ----------------------
-          // helper functions
-          // ----------------------
-          const updateResultTable = async (
-            result,
-            resultTreatmentStatusId = null,
-            treatmentStatusLogId = null
-          ) => {
+    // process 12 last months
+    await Promise.each(_.range(1, 12), async shift => {
+      const prevMonth = subMonths(now, shift)
+      const startedOn = startOfMonth(prevMonth)
+      const endedOn = endOfMonth(prevMonth)
+      // get results for current month
+      const results = await query
+        .clone()
+        .leftOuterJoin(
+          'ResultTreatmentStatusLog as log',
+          'r.treatmentStatusLogId',
+          'log.id'
+        )
+        .where('r.endedOn', '>=', startedOn)
+        .where('r.endedOn', '<=', endedOn)
+        .select('r.*', 'log.resultTreatmentStatusId')
+      // ----------------------
+      // helper functions
+      // ----------------------
+      const updateResultTable = async (
+        result,
+        resultTreatmentStatusId = null,
+        treatmentStatusLogId = null
+      ) => {
+        const { id: resultId } = result
+        // set props for local 'result' item
+        result.resultTreatmentStatusId = resultTreatmentStatusId
+        result.treatmentStatusLogId = treatmentStatusLogId
+        // update Result table
+        await knex('Result')
+          .update({
+            treatmentStatusLogId,
+          })
+          .where({ id: resultId })
+      }
+      // ----------------------
+      const addLogs = async (cntDiff, resultTreatmentStatusId) => {
+        // get results un-assigned to any treatment status
+        const resultsFree = results.filter(x => !x.resultTreatmentStatusId)
+        await Promise.each(_.range(cntDiff), async index => {
+          const result = resultsFree[index]
+          if (result) {
             const { id: resultId } = result
-            // set props for local 'result' item
-            result.resultTreatmentStatusId = resultTreatmentStatusId
-            result.treatmentStatusLogId = treatmentStatusLogId
-            // update Result table
-            await knex('Result')
-              .update({
-                treatmentStatusLogId,
-              })
-              .where({ id: resultId })
-          }
-          // ----------------------
-          const addLogs = (cntDiff, resultTreatmentStatusId) => {
-            // get results un-assigned to any treatment status
-            const resultsFree = results.filter(x => !x.resultTreatmentStatusId)
-            return _.range(cntDiff).map(async index => {
-              const result = resultsFree[index]
-              if (result) {
-                const { id: resultId } = result
-                // insert in ResultTreatmentStatusLog
-                const [treatmentStatusLogId] = await knex(
-                  'ResultTreatmentStatusLog'
-                ).insert({
-                  resultId,
-                  resultTreatmentStatusId,
-                  changedOn: now,
-                  createdOn: now,
-                })
-                // update Result
-                await updateResultTable(
-                  result,
-                  resultTreatmentStatusId,
-                  treatmentStatusLogId
-                )
-              }
+            // insert in ResultTreatmentStatusLog
+            const [treatmentStatusLogId] = await knex(
+              'ResultTreatmentStatusLog'
+            ).insert({
+              resultId,
+              resultTreatmentStatusId,
+              changedOn: now,
+              createdOn: now,
             })
-          }
-          // ----------------------
-          const removeLogs = (cntDiff, scopeResults) =>
-            _.range(cntDiff).map(async index => {
-              const result = scopeResults[index]
-              if (result) {
-                const { id: resultId } = result
-                // remove from ResultTreatmentStatusLog
-                await knex('ResultTreatmentStatusLog')
-                  .where({ resultId })
-                  .del()
-                // update Result
-                await updateResultTable(result)
-              }
-            })
-          // ----------------------
-          const addIfTooLittle = async (
-            scopeResults,
-            pcMin,
-            pcMax,
-            treatmentStatusId
-          ) => {
-            const pcCurrentStatus = (100 * scopeResults.length) / cntTotal
-            if (pcCurrentStatus < pcMin) {
-              const pcNewStatus = _.random(pcMin, pcMax)
-              const cntDiff =
-                Math.round((pcNewStatus - pcCurrentStatus) * cntTotal) / 100
-              if (cntDiff > 0) {
-                await Promise.all(addLogs(cntDiff, treatmentStatusId))
-              }
-            }
-          }
-          // ----------------------
-          const releaseIfTooMany = async (scopeResults, pcMax) => {
-            const pcCurrentStatus = (100 * scopeResults.length) / cntTotal
-            // if too many
-            if (pcCurrentStatus > pcMax) {
-              const cntDiff =
-                Math.round((pcCurrentStatus - pcMax) * cntTotal) / 100
-              if (cntDiff > 0) {
-                await Promise.all(removeLogs(cntDiff, scopeResults))
-              }
-            }
-          }
-          // ----------------------
-          // set 'OnTreatment' and 'NotPossible' to be in % range
-          // ----------------------
-          const cntTotal = results.length
-          const resultsOnTreatment = results.filter(
-            x => x.resultTreatmentStatusId === treatmentStatusOnTreatmentId
-          )
-          const resultsNotPossible = results.filter(
-            x => x.resultTreatmentStatusId === treatmentStatusNotPossibleId
-          )
-          if (cntTotal > 0) {
-            // remove from log table if percentage exceeds max %
-            await releaseIfTooMany(resultsOnTreatment, 60) // max %
-            await releaseIfTooMany(resultsNotPossible, 25) // max %
-
-            // set 'OnTreatment' to be in % range
-            await addIfTooLittle(
-              resultsOnTreatment,
-              40, // min %
-              60, // max %
-              treatmentStatusOnTreatmentId
-            )
-            // set 'NotPossible' to be in % range
-            await addIfTooLittle(
-              resultsNotPossible,
-              15, // min %
-              25, // max %
-              treatmentStatusNotPossibleId
+            // update Result
+            await updateResultTable(
+              result,
+              resultTreatmentStatusId,
+              treatmentStatusLogId
             )
           }
         })
+      }
+      // ----------------------
+      const removeLogs = (cntDiff, scopeResults) =>
+        Promise.each(_.range(cntDiff), async index => {
+          const result = scopeResults[index]
+          if (result) {
+            const { id: resultId } = result
+            // remove from ResultTreatmentStatusLog
+            await knex('ResultTreatmentStatusLog')
+              .where({ resultId })
+              .del()
+            // update Result
+            await updateResultTable(result)
+          }
+        })
+      // ----------------------
+      const addIfTooLittle = async (
+        scopeResults,
+        pcMin,
+        pcMax,
+        treatmentStatusId
+      ) => {
+        const pcCurrentStatus = (100 * scopeResults.length) / cntTotal
+        if (pcCurrentStatus < pcMin) {
+          const pcNewStatus = _.random(pcMin, pcMax)
+          const cntDiff =
+            Math.round((pcNewStatus - pcCurrentStatus) * cntTotal) / 100
+          if (cntDiff > 0) {
+            await addLogs(cntDiff, treatmentStatusId)
+          }
+        }
+      }
+      // ----------------------
+      const releaseIfTooMany = async (scopeResults, pcMax) => {
+        const pcCurrentStatus = (100 * scopeResults.length) / cntTotal
+        // if too many
+        if (pcCurrentStatus > pcMax) {
+          const cntDiff = Math.round((pcCurrentStatus - pcMax) * cntTotal) / 100
+          if (cntDiff > 0) {
+            await removeLogs(cntDiff, scopeResults)
+          }
+        }
+      }
+      // ----------------------
+      // set 'OnTreatment' and 'NotPossible' to be in % range
+      // ----------------------
+      const cntTotal = results.length
+      const resultsOnTreatment = results.filter(
+        x => x.resultTreatmentStatusId === treatmentStatusOnTreatmentId
       )
+      const resultsNotPossible = results.filter(
+        x => x.resultTreatmentStatusId === treatmentStatusNotPossibleId
+      )
+      if (cntTotal > 0) {
+        // remove from log table if percentage exceeds max %
+        await releaseIfTooMany(resultsOnTreatment, 60) // max %
+        await releaseIfTooMany(resultsNotPossible, 25) // max %
+
+        // set 'OnTreatment' to be in % range
+        await addIfTooLittle(
+          resultsOnTreatment,
+          40, // min %
+          60, // max %
+          treatmentStatusOnTreatmentId
+        )
+        // set 'NotPossible' to be in % range
+        await addIfTooLittle(
+          resultsNotPossible,
+          15, // min %
+          25, // max %
+          treatmentStatusNotPossibleId
+        )
+      }
     })
-  )
+  })
 }

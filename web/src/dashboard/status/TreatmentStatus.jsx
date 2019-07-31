@@ -7,9 +7,6 @@ import { bindActionCreators } from 'redux'
 import { compose, withProps, lifecycle, withHandlers, pure } from 'recompose'
 import { connect } from 'react-redux'
 import Card from '@material-ui/core/Card'
-// import lightGreen from '@material-ui/core/colors/lightGreen'
-// import grey from '@material-ui/core/colors/grey'
-// import red from '@material-ui/core/colors/red'
 
 import { addMonths, endOfMonth, format as dateFormat } from 'date-fns'
 
@@ -130,24 +127,18 @@ export const TreatmentStatus = ({
       key: 'pcConfirmed',
       color: process.env['--aspect-color-mantis'], // green
       colorFade: getColorWithAlpha(process.env['--aspect-color-mantis'], 0.5),
-      // color: lightGreen[500],
-      // colorFade: lightGreen[300],
     },
     {
       label: 'Not Possible',
       key: 'pcNotPossible',
       color: process.env['--aspect-color-grey-5'],
       colorFade: process.env['--aspect-color-grey-6'],
-      // color: grey[500],
-      // colorFade: grey[300],
     },
     {
       label: 'Not Confirmed',
       key: 'pcNotConfirmed', // calculated value, see reducer for case RECEIVE_TREATMENT_DASHBOARD
       color: process.env['--aspect-color-mandy'], // red
       colorFade: getColorWithAlpha(process.env['--aspect-color-mandy'], 0.5),
-      // color: red[500],
-      // colorFade: red[200],
     },
   ]
   const tickSeparatorX = `-${50 / data.length}%`
