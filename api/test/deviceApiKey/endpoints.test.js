@@ -34,7 +34,7 @@ describe('deviceApiKey endpoints', () => {
       })
     })
 
-    describe('/deviceApiKey/export', () => {
+    describe.skip('/deviceApiKey/export', () => {
       let endpoint
       const expectedResponse = { value: 'Expected result' }
 

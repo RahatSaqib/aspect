@@ -22,4 +22,85 @@ describe('Excel reports', () => {
         assert.isString(res.text)
       })
   })
+  it('should return a list of supplies when using valid token', async () => {
+    await server
+      .get('/inventory/export?sortCol=name&sortDir=asc&page=0&size=10&format=')
+      .set('Authorization', `Bearer ${shared.token}`)
+      .end((error, res) => {
+        assert.equal(res.status, 200)
+        assert.typeOf(res.body, 'Object')
+        assert.isNotNull(!res)
+        assert.isString(res.text)
+      })
+  })
+  it('should return a list of contacts when using valid token', async () => {
+    await server
+      .get('/person/export?sortCol=name&sortDir=asc&page=0&size=10&format=')
+      .set('Authorization', `Bearer ${shared.token}`)
+      .end((error, res) => {
+        assert.equal(res.status, 200)
+        assert.typeOf(res.body, 'Object')
+        assert.isNotNull(!res)
+        assert.isString(res.text)
+      })
+  })
+  it('should return a list of sites when using valid token', async () => {
+    await server
+      .get('/sites/export?sortCol=name&sortDir=asc&page=0&size=10&format=')
+      .set('Authorization', `Bearer ${shared.token}`)
+      .end((error, res) => {
+        assert.equal(res.status, 200)
+        assert.typeOf(res.body, 'Object')
+        assert.isNotNull(!res)
+        assert.isString(res.text)
+      })
+  })
+  it('should return a list of reports when using valid token', async () => {
+    await server
+      .get('/report/export?sortCol=name&sortDir=asc&page=0&size=10&format=')
+      .set('Authorization', `Bearer ${shared.token}`)
+      .end((error, res) => {
+        assert.equal(res.status, 200)
+        assert.typeOf(res.body, 'Object')
+        assert.isNotNull(!res)
+        assert.isString(res.text)
+      })
+  })
+  it('should return a list of notification when using valid token', async () => {
+    await server
+      .get(
+        '/notification/export?sortCol=name&sortDir=asc&page=0&size=10&format='
+      )
+      .set('Authorization', `Bearer ${shared.token}`)
+      .end((error, res) => {
+        assert.equal(res.status, 200)
+        assert.typeOf(res.body, 'Object')
+        assert.isNotNull(!res)
+        assert.isString(res.text)
+      })
+  })
+  it('should return a list of notification when using valid token', async () => {
+    await server
+      .get(
+        '/deviceApiKey/export?sortCol=name&sortDir=asc&page=0&size=10&format='
+      )
+      .set('Authorization', `Bearer ${shared.token}`)
+      .end((error, res) => {
+        assert.equal(res.status, 200)
+        assert.typeOf(res.body, 'Object')
+        assert.isNotNull(!res)
+        assert.isString(res.text)
+      })
+  })
+  it('should return a list of routers when using valid token', async () => {
+    await server
+      .get('/device/export?sortCol=name&sortDir=asc&page=0&size=10&format=')
+      .set('Authorization', `Bearer ${shared.token}`)
+      .end((error, res) => {
+        assert.equal(res.status, 200)
+        assert.typeOf(res.body, 'Object')
+        assert.isNotNull(!res)
+        assert.isString(res.text)
+      })
+  })
 })
