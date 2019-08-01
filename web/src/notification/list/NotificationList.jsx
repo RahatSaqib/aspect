@@ -159,7 +159,7 @@ export const NotificationList = props => {
         sortCol,
         sortDir,
         pageAt,
-        pageSize,
+        table.get('total'),
         format,
         'notifications'
       )

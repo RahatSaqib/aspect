@@ -170,7 +170,7 @@ const enhance = compose(
       sortCol,
       sortDir,
       pageAt,
-      pageSize,
+      table,
     }) => formatType => {
       const format = formatType.target.id
       const { sanitized, value: filtersParams } = filtersFromLocation(location)
@@ -180,7 +180,7 @@ const enhance = compose(
           sortCol,
           sortDir,
           pageAt,
-          pageSize,
+          table.get('total'),
           format,
           'sites'
         )
