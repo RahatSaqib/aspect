@@ -58,6 +58,11 @@ exports[`NotificationList module NotificationList component should render correc
     <DataTableProgressBar
       disabled={true}
     />
+    <withState(withHandlers(ExportListButton))
+      onCsvClick={[Function]}
+      onExcelClick={[Function]}
+      reportName="Notifications"
+    />
     <pure(withHandlers(EmptyList))
       history={
         Object {
