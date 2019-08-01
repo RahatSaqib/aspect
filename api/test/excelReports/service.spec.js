@@ -10,17 +10,15 @@ describe('Excel reports', () => {
   shared.checkToken(server, path)
 
   it('should return a list of devices when using valid token', async () => {
-    await server
+    const res = await server
       .get(
         `${path}?sortCol=name&sortDir=asc&page=0&size=10&format=&hasResults=1`
       )
       .set('Authorization', `Bearer ${shared.token}`)
-      .end((error, res) => {
-        assert.equal(res.status, 200)
-        assert.typeOf(res.body, 'Object')
-        assert.isNotNull(!res)
-        assert.isString(res.text)
-      })
+    assert.equal(res.status, 200)
+    assert.typeOf(res.body, 'Object')
+    assert.isNotNull(!res)
+    assert.isString(res.text)
   })
   it('should return a list of supplies when using valid token', async () => {
     await server
