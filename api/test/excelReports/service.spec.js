@@ -16,9 +16,7 @@ describe('Excel reports', () => {
       )
       .set('Authorization', `Bearer ${shared.token}`)
     assert.equal(res.status, 200)
-    assert.typeOf(res.body, 'Object')
-    assert.isNotNull(!res)
-    assert.isString(res.text)
+    assert.instanceOf(res.body, Buffer)
   })
   it('should return a list of supplies when using valid token', async () => {
     await server
