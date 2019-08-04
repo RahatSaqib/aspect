@@ -24,7 +24,9 @@ describe('Excel reports', () => {
   })
   it('should return a list of supplies when using valid token', async () => {
     await server
-      .get('/inventory/export?sortCol=name&sortDir=asc&page=0&size=10&format=')
+      .get(
+        '/inventory/export?sortCol=siteName&sortDir=asc&page=0&size=10&format'
+      )
       .set('Authorization', `Bearer ${shared.token}`)
       .end((error, res) => {
         assert.equal(res.status, 200)
@@ -46,7 +48,7 @@ describe('Excel reports', () => {
   })
   it('should return a list of sites when using valid token', async () => {
     await server
-      .get('/sites/export?sortCol=name&sortDir=asc&page=0&size=10&format=')
+      .get('/site/export?sortCol=name&sortDir=asc&page=0&size=10&format=')
       .set('Authorization', `Bearer ${shared.token}`)
       .end((error, res) => {
         assert.equal(res.status, 200)
@@ -57,7 +59,7 @@ describe('Excel reports', () => {
   })
   it('should return a list of reports when using valid token', async () => {
     await server
-      .get('/report/export?sortCol=name&sortDir=asc&page=0&size=10&format=')
+      .get('/report/export?sortCol=name&sortDir=asc&page=0&size=10&format=xlsx')
       .set('Authorization', `Bearer ${shared.token}`)
       .end((error, res) => {
         assert.equal(res.status, 200)
@@ -69,7 +71,7 @@ describe('Excel reports', () => {
   it('should return a list of notification when using valid token', async () => {
     await server
       .get(
-        '/notification/export?sortCol=name&sortDir=asc&page=0&size=10&format='
+        '/notification/export?sortCol=name&sortDir=asc&page=0&size=10&format=csv'
       )
       .set('Authorization', `Bearer ${shared.token}`)
       .end((error, res) => {
@@ -79,10 +81,10 @@ describe('Excel reports', () => {
         assert.isString(res.text)
       })
   })
-  it('should return a list of notification when using valid token', async () => {
+  it('should return a list of deviceApiKey when using valid token', async () => {
     await server
       .get(
-        '/deviceApiKey/export?sortCol=name&sortDir=asc&page=0&size=10&format='
+        '/deviceApiKey/export?sortCol=createdOn&sortDir=asc&page=0&size=10&format='
       )
       .set('Authorization', `Bearer ${shared.token}`)
       .end((error, res) => {

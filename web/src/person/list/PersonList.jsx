@@ -157,7 +157,7 @@ const enhance = compose(
           pageAt,
           table.get('total') > 0 ? table.get('total') : 1,
           format,
-          'sites'
+          'contacts'
         )
       }
     },
