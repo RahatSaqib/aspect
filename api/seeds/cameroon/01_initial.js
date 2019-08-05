@@ -9,6 +9,8 @@ const geography = require('./fixtures/geography.json')
 const {
   allFeatureToId,
   partnerTypeToId,
+  deviceStatusToId,
+  allDeviceTypeCategoryToId,
 } = require('../../src/shared/dictionary')
 
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
@@ -20,7 +22,7 @@ async function seed(knex) {
   const now = new Date()
   const [adminId] = await knex('User').insert({
     name: 'admin',
-    password: bcrypt.hashSync('54wzDZPtOs', saltRounds),
+    password: bcrypt.hashSync('q04TvNf7', saltRounds),
     approved: 1,
     createdOn: now,
     lockedOut: 0,
@@ -172,4 +174,60 @@ async function seed(knex) {
     { jobFunctionId: jobFunctionIdLabUser, featureId: features.result },
     { jobFunctionId: jobFunctionIdLabUser, featureId: features.site },
   ])
+  const {
+    'Information System': deviceTypeCategoryInformationSystem,
+  } = await allDeviceTypeCategoryToId()
+  const [deviceTypeId] = await knex('DeviceType')
+    .insert({
+      externalId: 'GxAlert',
+      name: 'GxAlert',
+      manufacturer: 'SystemOne',
+      plugin: 'gxalert',
+      deviceTypeCategoryId: deviceTypeCategoryInformationSystem,
+    })
+    .returning('Id')
+  console.log('devicetype', deviceTypeId)
+  const { cameroonGeographyId } = await knex('Geography')
+    .where({ countryId })
+    .whereNull('stateId', 'lgaId')
+    .first('id as cameroonGeographyId')
+  const site = Object.assign({}, auditFields, {
+    name: 'GxAlert Site',
+    shortName: 'GxA Site',
+    externalId: 'gxalert',
+    partnerId,
+    geographyId: cameroonGeographyId,
+    createdOn: new Date(),
+    updatedOn: new Date(),
+  })
+  const gxAlertSiteId = await knex('Site').insert(site)
+
+  // insert GxAlert device
+  const gxAlertDeviceId = await knex('Device').insert(
+    Object.assign({}, auditFields, {
+      name: 'GxAlert',
+      deviceStatusId: await deviceStatusToId('approved'),
+      partnerId,
+      geographyId: cameroonGeographyId,
+      siteId: gxAlertSiteId,
+      createdOn: new Date(),
+      updatedOn: new Date(),
+      lastPingOn: new Date(),
+      lastSeenOn: new Date(),
+      deviceTypeId,
+    })
+  )
+
+  await knex('DeviceApiKey').insert(
+    Object.assign(
+      {
+        token: 'ukpjat39531egjy4pc20',
+        revoked: 0,
+        partnerId,
+        geographyId: cameroonGeographyId,
+        deviceId: gxAlertDeviceId,
+      },
+      auditFields
+    )
+  )
 }
