@@ -26,5 +26,5 @@ async function seed(knex) {
     maxDaysDeviceNoResults: 14,
     serverUrl: 'https://nigeria.aspect.id',
   })
-  commonInserts(knex, partnerId, adminId, geography)
+  commonInserts(knex, partnerId, adminId, geography, 'wg0Rmh6tj7pmdPo3fAXIt')
 }

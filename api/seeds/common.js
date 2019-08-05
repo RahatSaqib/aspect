@@ -3,9 +3,19 @@ const Promise = require('bluebird')
 
 const utils = require('./utils')
 
-const { allFeatureToId } = require('../src/shared/dictionary')
+const {
+  allFeatureToId,
+  deviceStatusToId,
+  allDeviceTypeCategoryToId,
+} = require('../src/shared/dictionary')
 
-async function commonInserts(knex, partnerId, adminId, geography) {
+async function commonInserts(
+  knex,
+  partnerId,
+  adminId,
+  geography,
+  deviceApiToken = null
+) {
   const now = new Date()
   utils.hasSeededStaticData = true
   const auditFields = {
@@ -143,8 +153,75 @@ async function commonInserts(knex, partnerId, adminId, geography) {
     { jobFunctionId: jobFunctionIdLabUser, featureId: features.result },
     { jobFunctionId: jobFunctionIdLabUser, featureId: features.site },
   ])
+  if (deviceApiToken)
+    insertGxAlertDevice(knex, countryId, partnerId, auditFields, deviceApiToken)
+}
+
+async function insertGxAlertDevice(
+  knex,
+  countryId,
+  partnerId,
+  auditFields,
+  deviceApiToken
+) {
+  const {
+    'Information System': deviceTypeCategoryInformationSystem,
+  } = await allDeviceTypeCategoryToId()
+  const [deviceTypeId] = await knex('DeviceType')
+    .insert({
+      externalId: 'GxAlert',
+      name: 'GxAlert',
+      manufacturer: 'SystemOne',
+      plugin: 'gxalert',
+      deviceTypeCategoryId: deviceTypeCategoryInformationSystem,
+    })
+    .returning('Id')
+  const { countryGeographyId } = await knex('Geography')
+    .where({ countryId })
+    .whereNull('stateId', 'lgaId')
+    .first('id as countryGeographyId')
+  const site = Object.assign({}, auditFields, {
+    name: 'GxAlert Site',
+    shortName: 'GxA Site',
+    externalId: 'gxalert',
+    partnerId,
+    geographyId: countryGeographyId,
+    createdOn: new Date(),
+    updatedOn: new Date(),
+  })
+  const gxAlertSiteId = await knex('Site').insert(site)
+
+  // insert GxAlert device
+  const gxAlertDeviceId = await knex('Device').insert(
+    Object.assign({}, auditFields, {
+      name: 'GxAlert',
+      deviceStatusId: await deviceStatusToId('approved'),
+      partnerId,
+      geographyId: countryGeographyId,
+      siteId: gxAlertSiteId,
+      createdOn: new Date(),
+      updatedOn: new Date(),
+      lastPingOn: new Date(),
+      lastSeenOn: new Date(),
+      deviceTypeId,
+    })
+  )
+
+  await knex('DeviceApiKey').insert(
+    Object.assign(
+      {
+        token: deviceApiToken,
+        revoked: 0,
+        partnerId,
+        geographyId: countryGeographyId,
+        deviceId: gxAlertDeviceId,
+      },
+      auditFields
+    )
+  )
 }
 
 module.exports = {
   commonInserts,
+  insertGxAlertDevice,
 }
