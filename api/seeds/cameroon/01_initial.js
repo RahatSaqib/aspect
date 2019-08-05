@@ -220,7 +220,7 @@ async function seed(knex) {
   await knex('DeviceApiKey').insert(
     Object.assign(
       {
-        token: 'ukpjat39531egjy4pc20',
+        token: 'Zs4uow3jV0md6cmET0zUY',
         revoked: 0,
         partnerId,
         geographyId: cameroonGeographyId,
