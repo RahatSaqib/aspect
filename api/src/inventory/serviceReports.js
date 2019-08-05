@@ -30,7 +30,7 @@ async function getSuppliesReport(request, reply) {
       supplies.data,
       elem =>
         Object.assign(elem, {
-          expires: format(new Date(elem.expiresOn), 'yyyy-MM-dd'),
+          expires: elem.canExpire,
           expiresOn: format(new Date(elem.expiresOn), 'yyyy-MM-dd'),
         })
       // this is the data source to create the reportvalues.
