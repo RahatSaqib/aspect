@@ -186,7 +186,6 @@ async function seed(knex) {
       deviceTypeCategoryId: deviceTypeCategoryInformationSystem,
     })
     .returning('Id')
-  console.log('devicetype', deviceTypeId)
   const { cameroonGeographyId } = await knex('Geography')
     .where({ countryId })
     .whereNull('stateId', 'lgaId')
