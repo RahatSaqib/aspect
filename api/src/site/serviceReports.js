@@ -7,12 +7,6 @@ const {
   downloadReportFile,
 } = require('../excelreports/excelManager')
 
-const issues = {
-  issueCategoryDeviceHealth: 'Device',
-  issueCategoryReagentHealth: 'Reagent',
-  issueCategoryDataHealth: 'Data',
-  issueCategoryConnectivityHealth: 'Connectivity',
-}
 async function getSitesReport(request, reply) {
   // Here is a really good example of the necessity of a data layer.
   // I tried to call some existing service method for the list of devices,
@@ -33,19 +27,13 @@ async function getSitesReport(request, reply) {
     // Also we can find a text for a header instead of create a place holder.
     _.map(
       devices.data,
-      elem =>
-        Object.assign(
-          {
-            issuesCategories: _.map(
-              elem.issueCategories,
-              current => issues[current.key]
-            )
-              .join(',')
-              .replace('[')
-              .replace(']'),
-          },
-          elem
-        )
+      elem => {
+        if (elem.siteIssues) {
+          elem.siteIssues = elem.siteIssues.join(',')
+          return elem
+        }
+        return elem
+      }
       // this is the data source to create the reportvalues.
       // It should be an Array of JSON objects, where each must be plained (Without nested properties)
     ),

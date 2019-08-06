@@ -94,7 +94,7 @@ function setColumnsKeysAndBindData(
     worksheet.spliceRows(indexRow, 1, ...dataCollection)
     worksheet.eachRow((row, rowNumber) => {
       if (rowNumber >= lastRowCount) {
-        row.eachCell((cell, cellNumber) => {
+        row.eachCell({ includeEmpty: true }, (cell, cellNumber) => {
           cell.border = cellsBorderStyleFormat[cellNumber - 1]
           cell.alignment = cellsAlignmentStyleFormat[cellNumber - 1]
           cell.fill = cellsFillStyleFormat[cellNumber - 1]
