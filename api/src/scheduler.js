@@ -38,7 +38,7 @@ function startScheduler(queue) {
   )
   cron.schedule('30 7,22,37,52 * * * *', dispatcher.resolveIssues) // run every 15 minutes starting at 7m and 30s
 
-  cron.schedule('0 1 * * *', dispatcher.factNewResultsAvailableCheck) // daily at 7am
+  cron.schedule('0 7 * * *', dispatcher.factNewResultsAvailableCheck) // daily at 7am
 }
 
 function createActionDispatcher(queue, actionCreators) {
