@@ -14,6 +14,7 @@ async function commonInserts(
   partnerId,
   adminId,
   geography,
+  countryAbbreviation,
   deviceApiToken = null
 ) {
   const now = new Date()
@@ -54,48 +55,42 @@ async function commonInserts(
     })
     countryData.geographyId = countryGeographyId
   })
-
-  const { culture, timezone, id: countryId, geographyId } = countries.CR
-
-  const [adminPersonId] = await knex('Person').insert(
-    Object.assign(
-      {
-        userId: adminId,
-        name: 'Admin',
-        lastPartnerId: partnerId,
-        lastCountryId: countryId,
-        geographyId,
-        culture,
-        timezone,
-      },
-      auditFields
-    )
-  )
+  const { culture, timezone, id: countryId, geographyId } = countries[
+    countryAbbreviation
+  ]
+  const [adminPersonId] = await knex('Person').insert({
+    userId: adminId,
+    name: 'Admin',
+    lastPartnerId: partnerId,
+    lastCountryId: countryId,
+    geographyId,
+    culture,
+    timezone,
+    ...auditFields,
+  })
 
   const [jobFunctionIdAdmin] = await knex('JobFunction').insert({
     name: 'Admin',
     partnerId,
   })
-  await knex('JobFunctionPermission').insert([
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.browse.view },
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.result.admin },
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.assay.admin },
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.device.admin },
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.site.admin },
-    {
-      jobFunctionId: jobFunctionIdAdmin,
-      permissionId: modules.treatmentStatus.admin,
-    },
+  await insertJobFunctionPermission(knex, jobFunctionIdAdmin, [
+    modules.browse.view,
+    modules.result.admin,
+    modules.assay.admin,
+    modules.device.admin,
+    modules.treatmentStatus.admin,
   ])
-  await knex('JobFunctionFeature').insert([
-    { jobFunctionId: jobFunctionIdAdmin, featureId: features.device },
-    { jobFunctionId: jobFunctionIdAdmin, featureId: features.result },
-    { jobFunctionId: jobFunctionIdAdmin, featureId: features.site },
+
+  await insertJobFeatures(knex, jobFunctionIdAdmin, [
+    features.device,
+    features.result,
+    features.site,
   ])
 
   const [jobIdAdmin] = await knex('Job').insert([
     { personId: adminPersonId, jobFunctionId: jobFunctionIdAdmin },
   ])
+
   await knex('JobContext').insert({
     jobId: jobIdAdmin,
     geographyId,
@@ -105,58 +100,67 @@ async function commonInserts(
     name: 'Regional Officer',
     partnerId,
   })
-  await knex('JobFunctionPermission').insert([
-    {
-      jobFunctionId: jobFunctionIdRegionalOfficer,
-      permissionId: modules.browse.view,
-    },
-    {
-      jobFunctionId: jobFunctionIdRegionalOfficer,
-      permissionId: modules.result.admin,
-    },
-    {
-      jobFunctionId: jobFunctionIdRegionalOfficer,
-      permissionId: modules.assay.view,
-    },
-    {
-      jobFunctionId: jobFunctionIdRegionalOfficer,
-      permissionId: modules.device.view,
-    },
-    {
-      jobFunctionId: jobFunctionIdRegionalOfficer,
-      permissionId: modules.site.view,
-    },
+  await insertJobFunctionPermission(knex, jobFunctionIdRegionalOfficer, [
+    modules.browse.view,
+    modules.result.admin,
+    modules.assay.view,
+    modules.device.view,
+    modules.site.view,
   ])
-  await knex('JobFunctionFeature').insert([
-    { jobFunctionId: jobFunctionIdRegionalOfficer, featureId: features.device },
-    { jobFunctionId: jobFunctionIdRegionalOfficer, featureId: features.result },
-    { jobFunctionId: jobFunctionIdRegionalOfficer, featureId: features.site },
+  await insertJobFeatures(knex, jobFunctionIdRegionalOfficer, [
+    features.device,
+    features.result,
+    features.site,
   ])
 
   const [jobFunctionIdLabUser] = await knex('JobFunction').insert({
     name: 'Lab User',
     partnerId,
   })
-  await knex('JobFunctionPermission').insert([
-    { jobFunctionId: jobFunctionIdLabUser, permissionId: modules.browse.view },
-    { jobFunctionId: jobFunctionIdLabUser, permissionId: modules.result.admin },
-    { jobFunctionId: jobFunctionIdLabUser, permissionId: modules.assay.view },
-    { jobFunctionId: jobFunctionIdLabUser, permissionId: modules.device.view },
-    { jobFunctionId: jobFunctionIdLabUser, permissionId: modules.site.view },
-    {
-      jobFunctionId: jobFunctionIdLabUser,
-      permissionId: modules.treatmentStatus.admin,
-    },
+  await insertJobFunctionPermission(knex, jobFunctionIdLabUser, [
+    modules.browse.view,
+    modules.result.admin,
+    modules.assay.view,
+    modules.device.view,
+    modules.site.view,
+    modules.treatmentStatus.admin,
   ])
-  await knex('JobFunctionFeature').insert([
-    { jobFunctionId: jobFunctionIdLabUser, featureId: features.device },
-    { jobFunctionId: jobFunctionIdLabUser, featureId: features.result },
-    { jobFunctionId: jobFunctionIdLabUser, featureId: features.site },
+  await insertJobFeatures(knex, jobFunctionIdLabUser, [
+    features.device,
+    features.result,
+    features.site,
   ])
   if (deviceApiToken)
     insertGxAlertDevice(knex, countryId, partnerId, auditFields, deviceApiToken)
 }
-
+async function insertJobFunctionPermission(
+  knex,
+  jobFunctionId,
+  jobPermissions
+) {
+  const JobFunctionPermission = _.map(jobPermissions, permissionId =>
+    Object.assign(
+      {},
+      {
+        jobFunctionId,
+        permissionId,
+      }
+    )
+  )
+  await knex('JobFunctionPermission').insert(JobFunctionPermission)
+}
+async function insertJobFeatures(knex, jobFunctionId, jobFeatures) {
+  const JobFunctionFeature = _.map(jobFeatures, featureId =>
+    Object.assign(
+      {},
+      {
+        jobFunctionId,
+        featureId,
+      }
+    )
+  )
+  await knex('JobFunctionFeature').insert(JobFunctionFeature)
+}
 async function insertGxAlertDevice(
   knex,
   countryId,
@@ -180,7 +184,8 @@ async function insertGxAlertDevice(
     .where({ countryId })
     .whereNull('stateId', 'lgaId')
     .first('id as countryGeographyId')
-  const site = Object.assign({}, auditFields, {
+  const site = {
+    ...auditFields,
     name: 'GxAlert Site',
     shortName: 'GxA Site',
     externalId: 'gxalert',
@@ -188,37 +193,32 @@ async function insertGxAlertDevice(
     geographyId: countryGeographyId,
     createdOn: new Date(),
     updatedOn: new Date(),
-  })
+  }
   const gxAlertSiteId = await knex('Site').insert(site)
 
   // insert GxAlert device
-  const gxAlertDeviceId = await knex('Device').insert(
-    Object.assign({}, auditFields, {
-      name: 'GxAlert',
-      deviceStatusId: await deviceStatusToId('approved'),
-      partnerId,
-      geographyId: countryGeographyId,
-      siteId: gxAlertSiteId,
-      createdOn: new Date(),
-      updatedOn: new Date(),
-      lastPingOn: new Date(),
-      lastSeenOn: new Date(),
-      deviceTypeId,
-    })
-  )
+  const gxAlertDeviceId = await knex('Device').insert({
+    ...auditFields,
+    name: 'GxAlert',
+    deviceStatusId: await deviceStatusToId('approved'),
+    partnerId,
+    geographyId: countryGeographyId,
+    siteId: gxAlertSiteId,
+    createdOn: new Date(),
+    updatedOn: new Date(),
+    lastPingOn: new Date(),
+    lastSeenOn: new Date(),
+    deviceTypeId,
+  })
 
-  await knex('DeviceApiKey').insert(
-    Object.assign(
-      {
-        token: deviceApiToken,
-        revoked: 0,
-        partnerId,
-        geographyId: countryGeographyId,
-        deviceId: gxAlertDeviceId,
-      },
-      auditFields
-    )
-  )
+  await knex('DeviceApiKey').insert({
+    token: deviceApiToken,
+    revoked: 0,
+    partnerId,
+    geographyId: countryGeographyId,
+    deviceId: gxAlertDeviceId,
+    ...auditFields,
+  })
 }
 
 module.exports = {
