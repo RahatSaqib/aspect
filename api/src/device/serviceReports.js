@@ -56,7 +56,11 @@ async function getDevicesReport(request, reply) {
           // this is the data source to create the reportvalues.
           // It should be an Array of JSON objects, where each must be plained (Without nested properties)
         )
-      : devices.data,
+      : _.map(devices.data, elem =>
+          Object.assign(elem, {
+            lastSeen: format(new Date(elem.lastSeen), 'yyyy-MM-ddHH:mm:ss'),
+          })
+        ),
     {
       date: format(new Date(), 'yyyy-MM-dd'),
     }, // the json object to replace values in the header.

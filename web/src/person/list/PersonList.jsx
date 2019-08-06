@@ -155,7 +155,7 @@ const enhance = compose(
           sortCol,
           sortDir,
           pageAt,
-          table.get('total'),
+          table.get('total') > 0 ? table.get('total') : 1,
           format,
           'sites'
         )

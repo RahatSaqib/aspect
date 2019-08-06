@@ -72,9 +72,39 @@ function setColumnsKeysAndBindData(
   defaultNoDataMessage
 ) {
   const indexRow = setColumnsKeys(worksheet, placeHolderTag, rowsNext)
-  if (dataCollection.length > 0)
+  const lastRowCount = worksheet.actualRowCount
+
+  if (dataCollection.length > 0) {
+    const cellsBorderStyleFormat = []
+    const cellsAlignmentStyleFormat = []
+    const cellsFillStyleFormat = []
+    const cellsFontStyleFormat = []
+
+    worksheet
+      .getRow(lastRowCount)
+      .eachCell(cell => cellsBorderStyleFormat.push(cell.border))
+    worksheet
+      .getRow(lastRowCount)
+      .eachCell(cell => cellsAlignmentStyleFormat.push(cell.alignment))
+    worksheet
+      .getRow(lastRowCount)
+      .eachCell(cell => cellsFillStyleFormat.push(cell.fill))
+    worksheet
+      .getRow(lastRowCount)
+      .eachCell(cell => cellsFontStyleFormat.push(cell.font))
+
     worksheet.spliceRows(indexRow, 1, ...dataCollection)
-  else setMessageOnRow(worksheet, indexRow, defaultNoDataMessage)
+    worksheet.eachRow((row, rowNumber) => {
+      if (rowNumber >= lastRowCount) {
+        row.eachCell((cell, cellNumber) => {
+          cell.border = cellsBorderStyleFormat[cellNumber - 1]
+          cell.alignment = cellsAlignmentStyleFormat[cellNumber - 1]
+          cell.fill = cellsFillStyleFormat[cellNumber - 1]
+          cell.font = cellsFontStyleFormat[cellNumber - 1]
+        })
+      }
+    })
+  } else setMessageOnRow(worksheet, indexRow, defaultNoDataMessage)
 }
 
 function setMessageOnRow(worksheet, rowIndex, defaultNoDataMessage) {
