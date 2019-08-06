@@ -282,13 +282,18 @@ export const messages = defineMessages({
     id: 'pages.Status.treatmentGraphNotCompleteData',
     defaultMessage: 'Not Complete Data',
   },
-  treatmentTooltipForConfirmed: {
-    id: 'pages.Status.treatmentTooltipForConfirmed',
-    defaultMessage: 'Explanation for percentage of "on treatment" results',
+  treatmentTooltipFor_pcConfirmed: {
+    id: 'pages.Status.treatmentTooltipFor_pcConfirmed',
+    defaultMessage: 'Percentage of results confirmed on treatment',
   },
-  treatmentTooltipForUnaccountable: {
-    id: 'pages.Status.treatmentTooltipForUnaccountable',
-    defaultMessage: 'Explanation for percentage of "unaccountable" results',
+  treatmentTooltipFor_pcNotPossible: {
+    id: 'pages.Status.treatmentTooltipFor_pcNotPossible',
+    defaultMessage:
+      'Percentage of results not possible to confirm on treatment',
+  },
+  treatmentTooltipFor_pcNotConfirmed: {
+    id: 'pages.Status.treatmentTooltipFor_pcNotConfirmed',
+    defaultMessage: 'Percentage of results not confirmed on treatment',
   },
 })
 
