@@ -80,18 +80,16 @@ function setColumnsKeysAndBindData(
     const cellsFillStyleFormat = []
     const cellsFontStyleFormat = []
 
-    worksheet
-      .getRow(lastRowCount)
-      .eachCell(cell => cellsBorderStyleFormat.push(cell.border))
-    worksheet
-      .getRow(lastRowCount)
-      .eachCell(cell => cellsAlignmentStyleFormat.push(cell.alignment))
-    worksheet
-      .getRow(lastRowCount)
-      .eachCell(cell => cellsFillStyleFormat.push(cell.fill))
-    worksheet
-      .getRow(lastRowCount)
-      .eachCell(cell => cellsFontStyleFormat.push(cell.font))
+    const getReferenceStyleRow = worksheet.getRow(lastRowCount)
+
+    getReferenceStyleRow.eachCell(cell =>
+      cellsBorderStyleFormat.push(cell.border)
+    )
+    getReferenceStyleRow.eachCell(cell =>
+      cellsAlignmentStyleFormat.push(cell.alignment)
+    )
+    getReferenceStyleRow.eachCell(cell => cellsFillStyleFormat.push(cell.fill))
+    getReferenceStyleRow.eachCell(cell => cellsFontStyleFormat.push(cell.font))
 
     worksheet.spliceRows(indexRow, 1, ...dataCollection)
     worksheet.eachRow((row, rowNumber) => {
