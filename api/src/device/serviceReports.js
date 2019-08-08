@@ -58,7 +58,7 @@ async function getDevicesReport(request, reply) {
         )
       : _.map(devices.data, elem =>
           Object.assign(elem, {
-            lastSeen: format(new Date(elem.lastSeen), 'yyyy-MM-ddHH:mm:ss'),
+            lastSeen: format(new Date(elem.lastSeen), 'yyyy-MM-dd HH:mm:ss'),
           })
         ),
     {

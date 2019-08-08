@@ -116,6 +116,7 @@ export function exportReports(
         sortDir,
         page,
         size: pageSize,
+        format: fileFormat,
         ...filters,
       })}`,
       {
@@ -140,7 +141,7 @@ export function exportReports(
             defineMessages({
               title: {
                 id: 'errorResponseMessages.exportReports.GET.default.title',
-                defaultMessage: 'E~xporting Reports Failed',
+                defaultMessage: 'Exporting Reports Failed',
               },
             })
           ),
