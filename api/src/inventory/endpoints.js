@@ -17,6 +17,8 @@ const {
   updateInventoryStockLevel,
 } = require('./service')
 
+const { getSuppliesReport } = require('./serviceReports')
+
 const inventoryFilters = {
   consumableId: Joi.number()
     .integer()
@@ -72,6 +74,34 @@ const removeInventoryCommonPayloadFields = Object.assign(
   }
 )
 
+function listSuppliesBaseConfig() {
+  return {
+    auth: { scope: ['inventory:view', 'inventory:edit'] },
+    validate: {
+      query: Object.assign(
+        {
+          format: Joi.string()
+            .allow('')
+            .description('File format for exporting data'),
+        },
+        inventoryFilters,
+        validateAllGeographyFilterParams(),
+        validateDateRangeParams(),
+        validateSortPageParams(
+          'consumableName',
+          'manufacturer',
+          'siteName',
+          'countryName',
+          'stateName',
+          'lgaName',
+          'quantityOnHand',
+          'expiresOn'
+        )
+      ),
+    },
+  }
+}
+
 const routes = [
   {
     method: 'GET',
@@ -105,29 +135,25 @@ const routes = [
     method: 'GET',
     path: '/inventory/group-by-site',
     handler: asyncHandler(listInventoryItemsGroupedBySite),
-    config: {
-      description: 'List of Consumables on Hand Grouped by Site',
-      notes: 'Pageable and sortable list of inventory items grouped by site',
-      auth: { scope: ['inventory:view', 'inventory:edit'] },
-      validate: {
-        query: Object.assign(
-          {},
-          inventoryFilters,
-          validateAllGeographyFilterParams(),
-          validateDateRangeParams(),
-          validateSortPageParams(
-            'consumableName',
-            'manufacturer',
-            'siteName',
-            'countryName',
-            'stateName',
-            'lgaName',
-            'quantityOnHand',
-            'expiresOn'
-          )
-        ),
+    config: Object.assign(
+      {
+        description: 'List of Consumables on Hand Grouped by Site',
+        notes: 'Pageable and sortable list of inventory items grouped by site',
       },
-    },
+      listSuppliesBaseConfig()
+    ),
+  },
+  {
+    method: 'GET',
+    path: '/inventory/export',
+    handler: getSuppliesReport,
+    config: Object.assign(
+      {
+        description: 'Export Supplies List into Excel or CSV',
+        notes: 'Filtered and sorted list of supplies',
+      },
+      listSuppliesBaseConfig()
+    ),
   },
   {
     method: 'POST',

@@ -23,12 +23,13 @@ import BrowseEmptyList from '../../globals/components/BrowseEmptyList'
 import BrowseTablePaginator from '../../globals/components/BrowseTablePaginator'
 import DataTableCard from '../../components/shared/DataTableCard'
 import DataTableProgressBar from '../../components/shared/DataTableProgressBar'
-import { fetchReports } from '../ReportRedux'
+import { fetchReports, exportReports } from '../ReportRedux'
 import {
   ReportDataTable,
   ReportDataTableHead,
   ReportDataTableRow,
 } from './ReportDataTable'
+import ExportListButton from '../../globals/components/ExportListButton'
 
 const cssClasses = classnames.bind(require('./ReportList.css'))
 
@@ -100,7 +101,16 @@ const enhance = compose(
   withProps(
     makeSortPageSelector({
       sortCol: 'name',
-    })
+    }),
+    ({ location }) => {
+      const searchParams = new URLSearchParams(location.search)
+      const filtersParams = new URLSearchParams(
+        searchParams.get('filters') || ''
+      )
+      return {
+        filters: _.fromPairs([...filtersParams.entries()]),
+      }
+    }
   ),
   connect(
     state => ({
@@ -110,6 +120,7 @@ const enhance = compose(
     }),
     bindActionCreators.bind(null, {
       fetchReports,
+      exportReports,
     })
   ),
   withHandlers({
@@ -124,6 +135,29 @@ const enhance = compose(
       const { sanitized, value: filtersParams } = filtersFromLocation(location)
       if (!sanitized) {
         fetchReports(filtersParams, sortCol, sortDir, pageAt, pageSize)
+      }
+    },
+
+    onExcelClick: ({
+      location,
+      exportReports,
+      sortCol,
+      sortDir,
+      pageAt,
+      table,
+    }) => formatType => {
+      const format = formatType.target.id
+      const { sanitized, value: filtersParams } = filtersFromLocation(location)
+      if (!sanitized) {
+        exportReports(
+          filtersParams,
+          sortCol,
+          sortDir,
+          pageAt,
+          table.get('total') > 0 ? table.get('total') : 1,
+          format,
+          'report'
+        )
       }
     },
   }),
@@ -172,6 +206,7 @@ export const ReportList = ({
   table,
   items,
   // --- injected by recompose ---
+  onExcelClick,
   sortCol,
   sortDir,
   pageAt,
@@ -189,6 +224,11 @@ export const ReportList = ({
     />
     <DataTableCard key={`DataTableCard--table-${location.key}`}>
       <DataTableProgressBar disabled={!table.loading} />
+      <ExportListButton
+        onExcelClick={onExcelClick}
+        onCsvClick={onExcelClick}
+        reportName="Report"
+      />
       {items.currentIdList.isEmpty() && (
         <BrowseEmptyList history={history} location={location} intl={intl} />
       )}

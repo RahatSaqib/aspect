@@ -23,7 +23,8 @@ import BrowseEmptyList from '../../globals/components/BrowseEmptyList'
 import BrowseTablePaginator from '../../globals/components/BrowseTablePaginator'
 import DataTableCard from '../../components/shared/DataTableCard'
 import DataTableProgressBar from '../../components/shared/DataTableProgressBar'
-import { fetchNotifications } from '../NotificationRedux'
+import { fetchNotifications, exportNotifications } from '../NotificationRedux'
+import ExportListButton from '../../globals/components/ExportListButton'
 import {
   NotificationDataTable,
   NotificationDataTableHead,
@@ -104,6 +105,7 @@ export const NotificationList = props => {
     sortDir,
     pageAt,
     pageSize,
+    exportNotifications,
   } = props
 
   useEffect(
@@ -147,6 +149,22 @@ export const NotificationList = props => {
       dataset: { notificationId },
     },
   }) => history.push(`/browse/notification/${notificationId}`)
+
+  const onExcelClick = formatType => {
+    const format = formatType.target.id
+    const { sanitized, value: filtersParams } = filtersFromLocation(location)
+    if (!sanitized) {
+      exportNotifications(
+        filtersParams,
+        sortCol,
+        sortDir,
+        pageAt,
+        table.get('total') > 0 ? table.get('total') : 1,
+        format,
+        'notifications'
+      )
+    }
+  }
   return (
     <div className={cssClasses('Container')}>
       <Helmet title={intl.formatMessage(messages.notificationsTitle)} />
@@ -159,6 +177,11 @@ export const NotificationList = props => {
       />
       <DataTableCard key={`DataTableCard--table-${location.key}`}>
         <DataTableProgressBar disabled={!table.loading} />
+        <ExportListButton
+          onExcelClick={onExcelClick}
+          onCsvClick={onExcelClick}
+          reportName="Notifications"
+        />
         {items.currentIdList.isEmpty() && (
           <BrowseEmptyList history={history} location={location} intl={intl} />
         )}
@@ -264,6 +287,7 @@ NotificationList.propTypes = {
   table: PropTypes.instanceOf(Immutable.Record).isRequired,
   items: PropTypes.instanceOf(Immutable.Record).isRequired,
   fetchNotifications: PropTypes.func.isRequired,
+  exportNotifications: PropTypes.func.isRequired,
   userPermissions: PropTypes.instanceOf(Immutable.Set).isRequired,
   sortCol: PropTypes.string,
   sortDir: PropTypes.string,
@@ -273,5 +297,5 @@ NotificationList.propTypes = {
 
 export default connect(
   mapStateToProps,
-  { fetchNotifications }
+  { fetchNotifications, exportNotifications }
 )(NotificationList)

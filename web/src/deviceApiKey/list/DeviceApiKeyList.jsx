@@ -46,6 +46,7 @@ import {
   DeviceApiKeyDataTableHead,
   DeviceApiKeyDataTableRow,
 } from './DeviceApiKeyDataTable'
+import ExportListButton from '../../globals/components/ExportListButton'
 
 const cssClasses = classnames.bind(require('./DeviceApiKeyList.css'))
 
@@ -149,7 +150,16 @@ const enhance = compose(
     makeSortPageSelector({
       sortCol: 'createdOn',
       sortDir: 'desc',
-    })
+    }),
+    ({ location }) => {
+      const searchParams = new URLSearchParams(location.search)
+      const filtersParams = new URLSearchParams(
+        searchParams.get('filters') || ''
+      )
+      return {
+        filters: _.fromPairs([...filtersParams.entries()]),
+      }
+    }
   ),
   connect(
     state => ({
@@ -185,18 +195,20 @@ const enhance = compose(
       exportDeviceApiKeys,
       sortCol,
       sortDir,
+      table,
       pageAt,
-      pageSize,
     }) => formatType => {
+      const format = formatType.target.id
       const { sanitized, value: filtersParams } = filtersFromLocation(location)
       if (!sanitized) {
         exportDeviceApiKeys(
           filtersParams,
-          formatType,
+          format,
           sortCol,
           sortDir,
           pageAt,
-          pageSize
+          table.get('total') > 0 ? table.get('total') : 1,
+          'deviceApiKey'
         )
       }
     },
@@ -420,6 +432,11 @@ export const DeviceApiKeyList = ({
     </div>
     <DataTableCard key={`DataTableCard--table-${location.key}`}>
       <DataTableProgressBar disabled={!table.loading} />
+      <ExportListButton
+        onExcelClick={onExportClick}
+        onCsvClick={onExportClick}
+        reportName="DeviceApiKey"
+      />
       {items.currentIdList.isEmpty() && (
         <BrowseEmptyList history={history} location={location} intl={intl} />
       )}

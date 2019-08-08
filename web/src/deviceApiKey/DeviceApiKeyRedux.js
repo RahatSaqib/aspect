@@ -16,7 +16,7 @@ import {
   receiveTableItems,
   Table,
 } from '../shared/metaReducers/table'
-import { receivedExportResponse } from '../filter/FilterRedux'
+import { receivedExportResponse } from '../globals/GlobalsRedux'
 
 export const types = {
   REQUEST_DEVICE_API_KEYS: 'REQUEST_DEVICE_API_KEYS',
@@ -112,11 +112,12 @@ export function fetchDeviceApiKeys(
 
 export function exportDeviceApiKeys(
   filtersParams,
-  format,
+  fileFormat,
   sortCol,
   sortDir,
   page,
-  pageSize
+  pageSize,
+  reportName
 ) {
   return dispatch => {
     const filters = _.fromPairs([...filtersParams.entries()])
@@ -127,7 +128,7 @@ export function exportDeviceApiKeys(
         sortDir,
         page,
         size: pageSize,
-        format,
+        format: fileFormat,
         ...filters,
       })}`,
       {
@@ -151,8 +152,9 @@ export function exportDeviceApiKeys(
           ),
         },
       }
-    ).then(json => {
-      dispatch(receivedExportResponse(format, json))
+    ).then(async elem => {
+      const file = await elem
+      dispatch(receivedExportResponse(file, fileFormat, reportName))
     })
   }
 }

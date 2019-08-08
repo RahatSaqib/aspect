@@ -27,12 +27,14 @@ import BrowseEmptyList from '../../globals/components/BrowseEmptyList'
 import BrowseTablePaginator from '../../globals/components/BrowseTablePaginator'
 import DataTableCard from '../../components/shared/DataTableCard'
 import DataTableProgressBar from '../../components/shared/DataTableProgressBar'
-import { fetchPersons } from '../PersonRedux'
+import { fetchPersons, exportContacts } from '../PersonRedux'
 import {
   PersonDataTable,
   PersonDataTableHead,
   PersonDataTableRow,
 } from './PersonDataTable'
+
+import ExportListButton from '../../globals/components/ExportListButton'
 
 const cssClasses = classnames.bind(require('./PersonList.css'))
 
@@ -100,7 +102,16 @@ const enhance = compose(
   withProps(
     makeSortPageSelector({
       sortCol: 'name',
-    })
+    }),
+    ({ location }) => {
+      const searchParams = new URLSearchParams(location.search)
+      const filtersParams = new URLSearchParams(
+        searchParams.get('filters') || ''
+      )
+      return {
+        filters: _.fromPairs([...filtersParams.entries()]),
+      }
+    }
   ),
   connect(
     state => ({
@@ -110,6 +121,7 @@ const enhance = compose(
     }),
     bindActionCreators.bind(null, {
       fetchPersons,
+      exportContacts,
     })
   ),
   withHandlers({
@@ -124,6 +136,29 @@ const enhance = compose(
       const { sanitized, value: filtersParams } = filtersFromLocation(location)
       if (!sanitized) {
         fetchPersons(filtersParams, sortCol, sortDir, pageAt, pageSize)
+      }
+    },
+
+    onExcelClick: ({
+      location,
+      exportContacts,
+      sortCol,
+      sortDir,
+      pageAt,
+      table,
+    }) => formatType => {
+      const format = formatType.target.id
+      const { sanitized, value: filtersParams } = filtersFromLocation(location)
+      if (!sanitized) {
+        exportContacts(
+          filtersParams,
+          sortCol,
+          sortDir,
+          pageAt,
+          table.get('total') > 0 ? table.get('total') : 1,
+          format,
+          'contacts'
+        )
       }
     },
 
@@ -183,6 +218,7 @@ export const PersonList = ({
   table,
   items,
   // --- injected by recompose ---
+  onExcelClick,
   sortCol,
   sortDir,
   pageAt,
@@ -219,6 +255,13 @@ export const PersonList = ({
       {items.currentIdList.isEmpty() && (
         <BrowseEmptyList history={history} location={location} intl={intl} />
       )}
+
+      <ExportListButton
+        onExcelClick={onExcelClick}
+        onCsvClick={onExcelClick}
+        reportName="Contacts"
+      />
+
       {!items.currentIdList.isEmpty() && (
         <PersonDataTable
           selectable={false}

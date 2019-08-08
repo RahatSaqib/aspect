@@ -1,35 +1,60 @@
 const Joi = require('joi')
 const { asyncHandler, validateSortPageParams } = require('../routes')
 const { listReports, proxyGxReport } = require('./service')
+const { getReport } = require('./serviceReports')
+
+function listReportBaseConfig() {
+  return {
+    auth: { scope: ['report:view', 'report:edit'] },
+    validate: {
+      query: Object.assign(
+        {
+          format: Joi.string()
+            .allow('')
+            .description('File format for exporting data'),
+
+          contactNameOrEmail: Joi.string()
+            .allow('')
+            .description('Filter for report name'),
+        },
+        validateSortPageParams(
+          'name',
+          'deploymentName',
+          'moduleSerial',
+          'dateOfError',
+          'error',
+          'totalTestsRun',
+          'totalErrors'
+        )
+      ),
+    },
+  }
+}
 
 const routes = [
   {
     method: 'GET',
     path: '/report',
     handler: asyncHandler(listReports),
-    config: {
-      description: 'Report List',
-      notes: 'Pageable and sortable list of reports',
-      auth: { scope: ['report:view', 'report:edit'] },
-      validate: {
-        query: Object.assign(
-          {
-            contactNameOrEmail: Joi.string()
-              .allow('')
-              .description('Filter for report name'),
-          },
-          validateSortPageParams(
-            'name',
-            'deploymentName',
-            'moduleSerial',
-            'dateOfError',
-            'error',
-            'totalTestsRun',
-            'totalErrors'
-          )
-        ),
+    config: Object.assign(
+      {
+        description: 'Report List',
+        notes: 'Pageable and sortable list of reports',
       },
-    },
+      listReportBaseConfig()
+    ),
+  },
+  {
+    method: 'GET',
+    path: '/report/export',
+    handler: getReport,
+    config: Object.assign(
+      {
+        description: 'Export Report List into Excel or CSV',
+        notes: 'Filtered and sorted list of Report',
+      },
+      listReportBaseConfig()
+    ),
   },
   {
     method: 'GET',

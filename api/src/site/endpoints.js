@@ -14,45 +14,69 @@ const {
   listSitesForSelectList,
 } = require('./service')
 
+const { getSitesReport } = require('./serviceReports')
+
+function listSitesBaseConfig() {
+  return {
+    auth: { scope: ['site:view', 'site:edit'] },
+    validate: {
+      query: Object.assign(
+        {
+          siteIds: Joi.string()
+            .allow('')
+            .description('Filter for site ids'),
+          deviceName: Joi.string()
+            .allow('')
+            .description('Filter for device name'),
+          siteName: Joi.string()
+            .allow('')
+            .description('Filter for site name'),
+          externalId: Joi.string()
+            .allow('')
+            .description('Filter for facility code'),
+          format: Joi.string()
+            .allow('')
+            .description('File format for exporting data'),
+        },
+        validateAllGeographyFilterParams(),
+        validateDateRangeParams(),
+        validateSortPageParams(
+          'name',
+          'shortName',
+          'state',
+          'lga',
+          'createdOn',
+          'totalDevices',
+          'externalId'
+        )
+      ),
+    },
+  }
+}
 const routes = [
   {
     method: 'GET',
     path: '/site',
     handler: asyncHandler(listSites),
-    config: {
-      description: 'Site List',
-      notes: 'Pageable and sortable list of sites',
-      auth: { scope: ['site:view', 'site:edit'] },
-      validate: {
-        query: Object.assign(
-          {
-            siteIds: Joi.string()
-              .allow('')
-              .description('Filter for site ids'),
-            deviceName: Joi.string()
-              .allow('')
-              .description('Filter for device name'),
-            siteName: Joi.string()
-              .allow('')
-              .description('Filter for site name'),
-            externalId: Joi.string()
-              .allow('')
-              .description('Filter for facility code'),
-          },
-          validateAllGeographyFilterParams(),
-          validateDateRangeParams(),
-          validateSortPageParams(
-            'name',
-            'shortName',
-            'state',
-            'lga',
-            'createdOn',
-            'totalDevices',
-            'externalId'
-          )
-        ),
+    config: Object.assign(
+      {
+        description: 'Site List',
+        notes: 'Pageable and sortable list of sites',
       },
-    },
+      listSitesBaseConfig()
+    ),
+  },
+  {
+    method: 'GET',
+    path: '/site/export',
+    handler: getSitesReport,
+    config: Object.assign(
+      {
+        description: 'Export Site List into Excel or CSV',
+        notes: 'Filtered and sorted list of sites',
+      },
+      listSitesBaseConfig()
+    ),
   },
   {
     method: 'GET',
