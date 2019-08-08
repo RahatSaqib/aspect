@@ -131,7 +131,13 @@ async function commonInserts(
     features.site,
   ])
   if (deviceApiToken)
-    insertGxAlertDevice(knex, countryId, partnerId, auditFields, deviceApiToken)
+    await insertGxAlertDevice(
+      knex,
+      countryId,
+      partnerId,
+      auditFields,
+      deviceApiToken
+    )
 }
 async function insertJobFunctionPermission(
   knex,
@@ -147,7 +153,7 @@ async function insertJobFunctionPermission(
       }
     )
   )
-  await knex('JobFunctionPermission').insert(JobFunctionPermission)
+  return knex('JobFunctionPermission').insert(JobFunctionPermission)
 }
 async function insertJobFeatures(knex, jobFunctionId, jobFeatures) {
   const JobFunctionFeature = _.map(jobFeatures, featureId =>
@@ -159,7 +165,7 @@ async function insertJobFeatures(knex, jobFunctionId, jobFeatures) {
       }
     )
   )
-  await knex('JobFunctionFeature').insert(JobFunctionFeature)
+  return knex('JobFunctionFeature').insert(JobFunctionFeature)
 }
 async function insertGxAlertDevice(
   knex,
@@ -224,4 +230,6 @@ async function insertGxAlertDevice(
 module.exports = {
   commonInserts,
   insertGxAlertDevice,
+  insertJobFunctionPermission,
+  insertJobFeatures,
 }
