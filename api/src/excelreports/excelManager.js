@@ -71,7 +71,11 @@ function setColumnsKeysAndBindData(
   rowsNext = 0,
   defaultNoDataMessage
 ) {
-  const indexRow = setColumnsKeys(worksheet, placeHolderTag, rowsNext)
+  const indexRow = setColumnsKeysByPlaceHolder(
+    worksheet,
+    placeHolderTag,
+    rowsNext
+  )
   const lastRowCount = worksheet.actualRowCount
 
   if (dataCollection.length > 0) {
@@ -117,7 +121,7 @@ function setMessageOnRow(worksheet, rowIndex, defaultNoDataMessage) {
 }
 
 // it set up the keys for the columns headers and return the row index where you are goint to add data rows
-function setColumnsKeys(worksheet, placeHolderTag, rowsNext = 0) {
+function setColumnsKeysByPlaceHolder(worksheet, placeHolderTag, rowsNext = 0) {
   const cell = findContentInExcelSheet(worksheet, placeHolderTag)
   if (cell) {
     const columns = []
@@ -175,7 +179,17 @@ async function generateReport(
     defaultNoDataMessage
   )
 
-  if (format !== 'csv') return workbook.xlsx.writeBuffer()
+  return generateReportFile(workbook, format)
+}
+async function generateWorkbookByDataSource(format, data, workSheetName) {
+  const workbook = new Excel.Workbook()
+  const worksheet = workbook.addWorksheet(workSheetName)
+
+  worksheet.spliceRows(0, 1, ...data)
+  return generateReportFile(workbook, format)
+}
+async function generateReportFile(workbook, format) {
+  if (format.toLowerCase() !== 'csv') return workbook.xlsx.writeBuffer()
   return workbook.csv.writeBuffer()
 }
 async function downloadReportFile(
@@ -200,12 +214,15 @@ async function downloadReportFile(
       reply(err)
     })
 }
+
 module.exports = {
   findContentInExcelRow,
   setColumnsKeysAndBindData,
   findContentInExcelSheet,
   replaceContentInExcelSheet,
-  setColumnsKeys,
+  setColumnsKeysByPlaceHolder,
   generateReport,
+  generateWorkbookByDataSource,
   downloadReportFile,
+  generateReportFile,
 }

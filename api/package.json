@@ -90,6 +90,7 @@
     "email-templates": "^2.7.1",
     "exceljs": "^1.13.0",
     "firebase-admin": "^8.0.0",
+    "flat": "^4.1.0",
     "fs-extra": "^6.0.1",
     "google-libphonenumber": "^3.2.2",
     "handlebars": "^4.0.11",

@@ -13,11 +13,6 @@ const { resultUpdated } = require('./actions')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 const { getUser } = require('../auth/service')
 const {
-  getCellsByValue,
-  generateExcelFile,
-  generateCsvFile,
-} = require('../shared/io')
-const {
   resultWorkflowStatusToId,
   resultTreatmentStatusToId,
 } = require('../shared/dictionary')
@@ -55,8 +50,7 @@ const SELECT_LIST_FIELDS = [
   ),
   knex.raw('JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.id")) as patientId'),
 ]
-
-const SELECT_SHOW_FIELDS = [
+const SELECT_EXPORT_FIELDS = [
   'r.id',
   'r.externalId',
   'r.startedOn',
@@ -106,7 +100,6 @@ const SELECT_SHOW_FIELDS = [
     'GREATEST(rtas.requiresTreatment, rtas2.requiresTreatment) as requiresTreatment'
   ),
   'r.patientData',
-  'rf.formSchema',
   'rsl.reason as resultWorkflowLogReason',
   'rsl.operator as resultWorkflowLogOperator',
   'rsl.createdOn as resultWorkflowLogCreatedOn',
@@ -117,7 +110,7 @@ const SELECT_SHOW_FIELDS = [
   'rtsl.changedOn as resultTreatmentStatusChangedOn',
   'rtsl.createdOn as resultTreatmentStatusCreatedOn',
 ]
-
+const SELECT_SHOW_FIELDS = _.concat(SELECT_EXPORT_FIELDS, 'rf.formSchema')
 const SORT_FIELDS = [
   'endedOn',
   'deviceName',
@@ -136,8 +129,8 @@ const SORT_FIELDS = [
   'patientId',
 ]
 
-async function getListResults(query, auth) {
-  const selectFields = _.clone(SELECT_LIST_FIELDS)
+async function getListResults(query, auth, fields = SELECT_LIST_FIELDS) {
+  const selectFields = _.clone(fields)
   const sortableFields = _.clone(SORT_FIELDS)
 
   const assayColumns = []
@@ -275,16 +268,16 @@ async function getListResults(query, auth) {
     .clone()
     .count('r.id as count')
     .first()
-
+  console.log('getcount')
   // get rows
   const getItems = resultQuery
     .clone()
     .modify(sortPageParams, query, 'endedOn')
     .select(selectFields)
-
+  console.log('getitems', getItems.toString())
   // return result when both queries are finished
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
-
+  console.log('after query')
   // if assay specified columns from the resultData field, parse them to valid JSON
   if (assayColumns) {
     _.each(data, d => {
@@ -338,9 +331,14 @@ function getResultTreatmentStatus(response) {
   }
 }
 
-async function listResults(request) {
+async function listResults(request, showAllFields = false) {
+  console.log('resultado')
   const { query, auth } = request
-  const result = await getListResults(query, auth)
+  const result = await getListResults(
+    query,
+    auth,
+    showAllFields ? SELECT_EXPORT_FIELDS : SELECT_LIST_FIELDS
+  )
   return result
 }
 
@@ -863,91 +861,6 @@ async function listResultTypes(request) {
 // ---------------------------------
 // exporting Results data
 // ---------------------------------
-async function exportResults(request) {
-  const { query, auth } = request
-
-  // ---------------
-  // change query page/size values to get whole dataset (not only currently paged items)
-  query.page = 0
-  // do not export more than 100.000 records
-  query.size = 1e5
-
-  // get whole dataset - based on current query params (sorting, filtering) and auth constraints
-  const results = await getListResults(query, auth)
-
-  let result = null
-
-  if (query.format === 'excel') {
-    // fill in data into given workbook
-    const populateData = workbook => {
-      // get 1st sheet (1-based)
-      const worksheet = workbook.getWorksheet(1)
-
-      // locate cell(s) with needed value
-      const cells = getCellsByValue(worksheet, '<ResultListRows>')
-      if (cells.length > 0) {
-        // empty such cells
-        cells.forEach(cell => {
-          cell.value = ''
-        })
-
-        // use 1st cell only (actually, should not be more than one)
-        const patternRowNumber = cells[0].row + 2
-
-        // fill in array 'rows'
-        const rows = []
-        results.data.forEach(r => {
-          // ------
-          // --->>> order of array elements should match columns order in template file
-          // ------
-          rows.push([
-            r.endedOn,
-            r.deviceName,
-            r.sampleOriginSiteName,
-            r.sampleId,
-            r.sampleGroup,
-            r.patientId,
-          ])
-        })
-
-        // insert rows from patternRowNumber, and remove row number 'patternRowNumber'
-        worksheet.spliceRows(patternRowNumber, 1, ...rows)
-      }
-    }
-
-    result = await generateExcelFile({
-      templateFileName: 'Results.xlsx',
-      outputFileName: 'results.xlsx',
-      populateData,
-    })
-  } else if (query.format === 'csv') {
-    const items = results.data
-    const columnNames = [
-      'Test Date',
-      'Device',
-      'Sample Origin Site',
-      'Sample ID',
-      'Sample Group',
-      'Patient ID',
-    ]
-    const fieldNames = [
-      'endedOn',
-      'deviceName',
-      'sampleOriginSiteName',
-      'sampleId',
-      'sampleGroup',
-      'patientId',
-    ]
-    result = await generateCsvFile(
-      'results.csv',
-      items,
-      columnNames,
-      fieldNames
-    )
-  }
-
-  return result
-}
 
 async function updateWorkflowStatus(request) {
   const { auth, params, payload } = request
@@ -1449,11 +1362,9 @@ module.exports = {
   updateWorkflowStatus,
   updateTreatmentStatus,
   listTreatmentStatusTypes,
-
   updateFormData,
   listWorkflowStatusTypes,
   listWorkflowStatusLog,
-  exportResults,
   showDeviceLogs,
   showFileReferences,
   downloadFile,

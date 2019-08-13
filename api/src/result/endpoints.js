@@ -16,13 +16,13 @@ const {
   updateFormData,
   listWorkflowStatusTypes,
   listWorkflowStatusLog,
-  exportResults,
   showDeviceLogs,
   showFileReferences,
   downloadFile,
   downloadFirstImage,
   confirmedTreatmentTracking,
 } = require('./service')
+const { getResultsReport } = require('./serviceReport')
 const {
   validateAllGeographyFilterParams,
 } = require('../geography/requestValidation')
@@ -315,7 +315,7 @@ const routes = [
   {
     method: 'GET',
     path: '/result/export',
-    handler: asyncHandler(exportResults),
+    handler: getResultsReport,
     config: Object.assign(
       {
         description: 'Export Result List into Excel or CSV',
@@ -620,6 +620,7 @@ const routes = [
       },
     },
   },
+
   {
     method: 'POST',
     path: '/result/confirmed-treatment-tracking',
