@@ -55,6 +55,27 @@ describe('auth endpoints', () => {
           .execute()
       })
     })
+    describe('/device/report/{deviceId}', () => {
+      let endpoint
+      const expectedResponse = { value: 'Expected result' }
+
+      beforeEach(() => {
+        endpoint = setupRoute('GET', '/device/report/{deviceId}', {
+          async getUtilizationAndErrorRateReport() {
+            return expectedResponse
+          },
+        })
+      })
+      it('Should respond with the data returned from the service', done => {
+        endpointUtils
+          .callHandlerOn(endpoint)
+          .handleResponseWith(response => {
+            assert.deepEqual(response, expectedResponse)
+          })
+          .thenCall(done)
+          .execute()
+      })
+    })
 
     describe('/device/status-types', () => {
       let endpoint

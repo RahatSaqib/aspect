@@ -1,6 +1,7 @@
 const _ = require('lodash')
 const subDays = require('date-fns/subDays')
 const Boom = require('boom')
+const { subMonths, startOfMonth, format, endOfMonth } = require('date-fns')
 
 const { knex, filterParams, sortPageParams } = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
@@ -508,6 +509,115 @@ async function updateDeviceMaintenance(request) {
   return { ok: true, data: device, deviceMaintenanceId }
 }
 
+async function getUtilizationAndErrorRateReport(request) {
+  const { auth, params } = request
+
+  const { deviceId } = params
+
+  const dataConstraints = await getConstraints(auth.credentials)
+
+  const endedOn = new Date()
+
+  const startedOn = startOfMonth(subMonths(endedOn, 11)) // 12 months period
+
+  const resultQuery = knex('Result as r')
+    .leftJoin('ResultCategory as rc1', 'rc1.id', 'r.resultCategory1')
+    .leftJoin('ResultCategory as rc2', 'rc2.id', 'r.resultCategory2')
+    .leftJoin('Device as d', 'r.deviceId', 'd.id')
+    .leftJoin('DeviceCapacity as dc', 'dc.id', 'd.deviceCapacityId')
+    .modify(addConstraints, dataConstraints, { result: 'r' })
+    .where('r.deviceId', deviceId)
+    .where('r.endedOn', '>=', startedOn)
+    .where('r.endedOn', '<=', endedOn)
+
+  const errorRate = resultQuery
+    .clone()
+    .where('rc1.name', 'Error')
+    .select([
+      knex.raw('count(rc1.id) as errorCount'), // group by r.endedOn as 'yyyy-MM'
+      knex.raw(`date_format(r.endedOn, '%Y-%m') AS monthTested`), // group by r.endedOn as 'yyyy-MM'
+    ])
+    .groupBy('monthTested')
+
+  const getResult = resultQuery.clone().select([
+    'rc1.name',
+    knex.raw(`date_format(r.endedOn, '%Y-%m') AS monthTested`), // group by r.endedOn as 'yyyy-MM'
+  ])
+
+  const getDeviceCapacity = resultQuery
+    .clone()
+    .select(['dc.dailyCapacity'])
+    .where('r.deviceId', deviceId)
+    .first()
+
+  const [data, count, { dailyCapacity }] = await Promise.all([
+    getResult,
+    errorRate,
+    getDeviceCapacity,
+  ])
+
+  let dt = endedOn
+
+  while (dt >= startedOn) {
+    const monthTested = format(dt, 'yyyy-MM')
+    count.map(x => {
+      if (x.resultCount === undefined) {
+        x.resultCount = 0
+        return x
+      }
+      return x
+    })
+
+    if (!count.find(x => x.monthTested === monthTested)) {
+      count.push({
+        errorCount: 0,
+        resultCount: 0,
+        monthTested,
+      })
+    }
+
+    dt = endOfMonth(subMonths(dt, 1))
+  }
+
+  // get result count for each month
+  count.map(x => {
+    data.map(y => {
+      if (x.monthTested === y.monthTested) {
+        x.resultCount += 1
+        return y
+      }
+      return y
+    })
+    return x
+  })
+
+  const newData = _.map(count, x => {
+    x.utilizationRate =
+      Math.round((x.resultCount * 100) / (30 * dailyCapacity)) / 10
+
+    if (x.resultCount) {
+      x.errorRate = Math.round((x.errorCount * 100) / x.resultCount) / 10
+      return x
+    }
+    x.errorRate = 0
+    return x
+  })
+
+  const errorRateAvg =
+    newData.reduce((total, elem) => {
+      total += elem.errorRate
+      return total
+    }, 0) / newData.length
+
+  return {
+    ok: true,
+    length: newData.length,
+    utilizationRateAvg: 80,
+    errorRateAvg,
+    data: _.sortBy(newData, [x => x.monthTested]),
+  }
+}
+
 module.exports = {
   listDevices,
   showDevice,
@@ -516,4 +626,5 @@ module.exports = {
   listDevicesForSelectList,
   getDevice,
   updateDeviceMaintenance,
+  getUtilizationAndErrorRateReport,
 }

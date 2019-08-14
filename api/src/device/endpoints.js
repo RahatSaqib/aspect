@@ -11,6 +11,7 @@ const {
   listStatusTypes,
   listDevicesForSelectList,
   updateDeviceMaintenance,
+  getUtilizationAndErrorRateReport,
 } = require('./service')
 const { getDevicesReport } = require('./serviceReports')
 const {
@@ -376,6 +377,14 @@ const routes = [
       },
       listDevicesBaseConfig()
     ),
+  },
+  {
+    method: 'GET',
+    path: '/device/report/{deviceId}',
+    handler: asyncHandler(getUtilizationAndErrorRateReport),
+    config: Object.assign({
+      description: 'Utilization and Error Rate List',
+    }),
   },
   {
     method: 'GET',
