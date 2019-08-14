@@ -50,7 +50,7 @@ const SELECT_LIST_FIELDS = [
   ),
   knex.raw('JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.id")) as patientId'),
 ]
-const SELECT_EXPORT_FIELDS = [
+const SELECT_COMMON_FIELDS = [
   'r.id',
   'r.externalId',
   'r.startedOn',
@@ -110,7 +110,8 @@ const SELECT_EXPORT_FIELDS = [
   'rtsl.changedOn as resultTreatmentStatusChangedOn',
   'rtsl.createdOn as resultTreatmentStatusCreatedOn',
 ]
-const SELECT_SHOW_FIELDS = _.concat(SELECT_EXPORT_FIELDS, 'rf.formSchema')
+const SELECT_SHOW_FIELDS = _.concat(SELECT_COMMON_FIELDS, 'rf.formSchema')
+const SELECT_EXPORT_FIELDS = SELECT_COMMON_FIELDS
 const SORT_FIELDS = [
   'endedOn',
   'deviceName',
@@ -268,16 +269,13 @@ async function getListResults(query, auth, fields = SELECT_LIST_FIELDS) {
     .clone()
     .count('r.id as count')
     .first()
-  console.log('getcount')
   // get rows
   const getItems = resultQuery
     .clone()
     .modify(sortPageParams, query, 'endedOn')
     .select(selectFields)
-  console.log('getitems', getItems.toString())
   // return result when both queries are finished
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
-  console.log('after query')
   // if assay specified columns from the resultData field, parse them to valid JSON
   if (assayColumns) {
     _.each(data, d => {
@@ -332,7 +330,6 @@ function getResultTreatmentStatus(response) {
 }
 
 async function listResults(request, showAllFields = false) {
-  console.log('resultado')
   const { query, auth } = request
   const result = await getListResults(
     query,

@@ -135,8 +135,16 @@ async function listAssays(request) {
 
   return result
 }
-
+async function getAllAssaySchemas() {
+  return knex('Assay as a').select(
+    'name',
+    'externalId',
+    'resultDataSchema',
+    'patientDataSchema'
+  )
+}
 module.exports = {
   listAssays,
+  getAllAssaySchemas,
   listAssaysResultSchema,
 }

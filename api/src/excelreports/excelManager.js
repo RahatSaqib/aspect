@@ -181,15 +181,23 @@ async function generateReport(
 
   return generateReportFile(workbook, format)
 }
-async function generateWorkbookByDataSource(format, data, workSheetName) {
+async function generateWorkbookByDataSource(
+  format,
+  data,
+  workSheetName,
+  columnsSchema
+) {
   const workbook = new Excel.Workbook()
   const worksheet = workbook.addWorksheet(workSheetName)
-
-  worksheet.spliceRows(0, 1, ...data)
+  worksheet.columns = columnsSchema
+  worksheet.addRows(data)
   return generateReportFile(workbook, format)
 }
 async function generateReportFile(workbook, format) {
-  if (format.toLowerCase() !== 'csv') return workbook.xlsx.writeBuffer()
+  await workbook.xlsx.writeFile('export2.xlsx')
+  await workbook.csv.writeFile('export2.csv')
+  if (format && format.toLowerCase() !== 'csv')
+    return workbook.xlsx.writeBuffer()
   return workbook.csv.writeBuffer()
 }
 async function downloadReportFile(

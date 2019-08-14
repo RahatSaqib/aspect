@@ -1,12 +1,11 @@
 const { listResults } = require('./service')
 const flatten = require('flat')
 const _ = require('lodash')
-const path = require('path')
 const {
   generateWorkbookByDataSource,
   downloadReportFile,
 } = require('../excelreports/excelManager')
-// const { listAssaysResultSchema } = require('../assay/service')
+const { getAllAssaySchemas } = require('../assay/service')
 
 async function getResultsReport(request, reply) {
   // Here is a really good example of the necessity of a data layer.
@@ -21,37 +20,57 @@ async function getResultsReport(request, reply) {
   // do not export more than 100.000 records
   query.size = 10
   const results = await listResults(request, true)
-  const reportFile = path.join(
-    __dirname,
-    '../excelreports/reportTemplates/Results.xlsx'
-  )
   const data = _.map(results.data, elem =>
-    flatten(
-      Object.assign(
-        {},
-        elem,
-        {
-          patientData: JSON.parse(elem.patientData),
-          resultData: JSON.parse(elem.resultData),
-        }
-        // flatten(elem.formtData)
-      )
-    )
+    flatten({
+      ...elem,
+      patientData: JSON.parse(elem.patientData),
+      resultData: JSON.parse(elem.resultData),
+    })
   )
-  console.log('----------------------')
+  const assaysMetadata = await getAssaySchema(request)
+  const headers = []
+  _.forEach(_.sample(data), (value, key) =>
+    headers.push({
+      header: key,
+      key: key.replace('.title', '').replace('.properties', ''),
+    })
+  )
+  _.forEach(assaysMetadata, (value, key) => {
+    if (key.toLowerCase().indexOf('title') >= 0)
+      headers.push({
+        header: value,
+        key: key.replace('.title', '').replace('.properties', ''),
+      })
+  })
+  console.log(headers)
 
-  const elem = _.sample(data)
-  console.log(elem)
-
-  // const assaySchema = listAssaysResultSchema(request)
+  console.log(_.sample(data))
   const report = generateWorkbookByDataSource(
     query.format, // xlsx or csv
     data,
-    'Results'
+    'Results',
+    headers
   )
   return downloadReportFile(report, reply, request.format)
 }
-
+async function getAssaySchema(request) {
+  const assaySchema = await getAllAssaySchemas(request)
+  let resultSchema = {}
+  let patientSchema = {}
+  assaySchema.forEach(element => {
+    if (element.patientDataSchema)
+      patientSchema = _.merge(
+        patientSchema,
+        JSON.parse(element.patientDataSchema)
+      )
+    if (element.resultDataSchema)
+      resultSchema = _.merge(resultSchema, JSON.parse(element.resultDataSchema))
+  })
+  return {
+    ...flatten({ resultData: resultSchema }),
+    ...flatten({ patientData: patientSchema }),
+  }
+}
 module.exports = {
   getResultsReport,
 }
