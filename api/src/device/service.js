@@ -1,7 +1,13 @@
 const _ = require('lodash')
 const subDays = require('date-fns/subDays')
 const Boom = require('boom')
-const { subMonths, startOfMonth, format, endOfMonth } = require('date-fns')
+const {
+  subMonths,
+  startOfMonth,
+  format,
+  endOfMonth,
+  getDaysInMonth,
+} = require('date-fns')
 
 const { knex, filterParams, sortPageParams } = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
@@ -520,7 +526,7 @@ async function getDevicePerformance(request) {
 
   const startedOn = startOfMonth(subMonths(endedOn, 11)) // 12 months period
 
-  const getPerfomanceResult = await knex('Result as r')
+  const devicePerformance = await knex('Result as r')
     .leftJoin('ResultCategory as rc1', 'rc1.id', 'r.resultCategory1')
     .leftJoin('ResultCategory as rc2', 'rc2.id', 'r.resultCategory2')
     .modify(addConstraints, dataConstraints, { result: 'r' })
@@ -529,35 +535,49 @@ async function getDevicePerformance(request) {
     .where('r.endedOn', '<=', endedOn)
     .select([
       knex.raw('count(r.id) as totalResult'), // group by r.endedOn as 'yyyy-MM'
-      knex.raw(`sum(rc1.name = 'Error') as errorCount`), // group by r.endedOn as 'yyyy-MM'
-      knex.raw(`date_format(r.endedOn, '%Y-%m') AS monthTested`), // group by r.endedOn as 'yyyy-MM'
+      knex.raw(`sum(rc1.name = 'Error') as errorCount`),
+      knex.raw(`date_format(r.endedOn, '%Y-%m') AS monthTested`),
     ])
     .groupBy('monthTested')
+
+  const [deviceCountry] = await knex('Device as d')
+    .leftOuterJoin('Geography as g', 'd.geographyId', 'g.id')
+    .leftOuterJoin('Country as c', 'g.countryId', 'c.id')
+    .where('d.id', deviceId)
 
   const [{ countryTotalResult, countryTotalErrorCount }] = await knex(
     'Result as r'
   )
     .leftJoin('ResultCategory as rc1', 'rc1.id', 'r.resultCategory1')
     .leftJoin('ResultCategory as rc2', 'rc2.id', 'r.resultCategory2')
+    .leftOuterJoin('Geography as g', 'r.geographyId', 'g.id')
+    .leftOuterJoin('Country as c', 'g.countryId', 'c.id')
     .where('r.endedOn', '>=', startedOn)
     .where('r.endedOn', '<=', endedOn)
+    .where('c.id', '<=', deviceCountry.countryId)
     .select([
-      knex.raw('count(r.id) as countryTotalResult'), // group by r.endedOn as 'yyyy-MM'
-      knex.raw(`sum(rc1.name = 'Error') as countryTotalErrorCount`), // group by r.endedOn as 'yyyy-MM'
+      knex.raw('count(r.id) as countryTotalResult'),
+      knex.raw(`sum(rc1.name = 'Error') as countryTotalErrorCount`),
     ])
 
-  const [{ dailyCapacity }] = await knex('DeviceCapacity as dc')
+  const [deviceCapacity] = await knex('DeviceCapacity as dc')
     .leftJoin('Device as d', 'd.deviceCapacityId', 'dc.id')
     .where('d.id', deviceId)
     .select('dc.dailyCapacity')
+
+  if (!deviceCapacity) {
+    return Boom.expectationFailed(
+      '"dailyCapacity" can never be null or undefine and must be greater than 0'
+    )
+  }
 
   let dt = endedOn
 
   while (dt >= startedOn) {
     const monthTested = format(dt, 'yyyy-MM')
 
-    if (!getPerfomanceResult.find(x => x.monthTested === monthTested)) {
-      getPerfomanceResult.push({
+    if (!devicePerformance.find(x => x.monthTested === monthTested)) {
+      devicePerformance.push({
         errorCount: 0,
         totalResult: 0,
         monthTested,
@@ -567,8 +587,11 @@ async function getDevicePerformance(request) {
     dt = endOfMonth(subMonths(dt, 1))
   }
 
-  const newData = _.map(getPerfomanceResult, x => {
-    x.utilizationRate = Math.round((x.totalResult * 100) / (30 * dailyCapacity))
+  const newData = _.map(devicePerformance, x => {
+    x.utilizationRate = Math.round(
+      (x.totalResult * 100) /
+        (getDaysInMonth(new Date(x.monthTested)) * deviceCapacity.dailyCapacity)
+    )
 
     if (x.totalResult) {
       x.errorRate = Math.round((x.errorCount * 100) / x.totalResult)

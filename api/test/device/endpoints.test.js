@@ -55,13 +55,13 @@ describe('auth endpoints', () => {
           .execute()
       })
     })
-    describe('/device/report/{deviceId}', () => {
+    describe('/device/performance/{deviceId}', () => {
       let endpoint
       const expectedResponse = { value: 'Expected result' }
 
       beforeEach(() => {
-        endpoint = setupRoute('GET', '/device/report/{deviceId}', {
-          async getUtilizationAndErrorRateReport() {
+        endpoint = setupRoute('GET', '/device/performance/{deviceId}', {
+          async getDevicePerformance() {
             return expectedResponse
           },
         })
