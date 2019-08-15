@@ -11,7 +11,7 @@ const {
   listStatusTypes,
   listDevicesForSelectList,
   updateDeviceMaintenance,
-  getUtilizationAndErrorRateReport,
+  getDevicePerformance,
 } = require('./service')
 const { getDevicesReport } = require('./serviceReports')
 const {
@@ -380,10 +380,10 @@ const routes = [
   },
   {
     method: 'GET',
-    path: '/device/report/{deviceId}',
-    handler: asyncHandler(getUtilizationAndErrorRateReport),
+    path: '/device/performance/{deviceId}',
+    handler: asyncHandler(getDevicePerformance),
     config: Object.assign({
-      description: 'Utilization and Error Rate List',
+      description: 'Historic utilization and error rates for the device',
     }),
   },
   {

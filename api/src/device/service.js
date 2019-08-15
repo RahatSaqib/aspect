@@ -509,7 +509,7 @@ async function updateDeviceMaintenance(request) {
   return { ok: true, data: device, deviceMaintenanceId }
 }
 
-async function getUtilizationAndErrorRateReport(request) {
+async function getDevicePerformance(request) {
   const { auth, params } = request
 
   const { deviceId } = params
@@ -520,58 +520,46 @@ async function getUtilizationAndErrorRateReport(request) {
 
   const startedOn = startOfMonth(subMonths(endedOn, 11)) // 12 months period
 
-  const resultQuery = knex('Result as r')
+  const getPerfomanceResult = await knex('Result as r')
     .leftJoin('ResultCategory as rc1', 'rc1.id', 'r.resultCategory1')
     .leftJoin('ResultCategory as rc2', 'rc2.id', 'r.resultCategory2')
-    .leftJoin('Device as d', 'r.deviceId', 'd.id')
-    .leftJoin('DeviceCapacity as dc', 'dc.id', 'd.deviceCapacityId')
     .modify(addConstraints, dataConstraints, { result: 'r' })
     .where('r.deviceId', deviceId)
     .where('r.endedOn', '>=', startedOn)
     .where('r.endedOn', '<=', endedOn)
-
-  const errorRate = resultQuery
-    .clone()
-    .where('rc1.name', 'Error')
     .select([
-      knex.raw('count(rc1.id) as errorCount'), // group by r.endedOn as 'yyyy-MM'
+      knex.raw('count(r.id) as totalResult'), // group by r.endedOn as 'yyyy-MM'
+      knex.raw(`sum(rc1.name = 'Error') as errorCount`), // group by r.endedOn as 'yyyy-MM'
       knex.raw(`date_format(r.endedOn, '%Y-%m') AS monthTested`), // group by r.endedOn as 'yyyy-MM'
     ])
     .groupBy('monthTested')
 
-  const getResult = resultQuery.clone().select([
-    'rc1.name',
-    knex.raw(`date_format(r.endedOn, '%Y-%m') AS monthTested`), // group by r.endedOn as 'yyyy-MM'
-  ])
+  const [{ countryTotalResult, countryTotalErrorCount }] = await knex(
+    'Result as r'
+  )
+    .leftJoin('ResultCategory as rc1', 'rc1.id', 'r.resultCategory1')
+    .leftJoin('ResultCategory as rc2', 'rc2.id', 'r.resultCategory2')
+    .where('r.endedOn', '>=', startedOn)
+    .where('r.endedOn', '<=', endedOn)
+    .select([
+      knex.raw('count(r.id) as countryTotalResult'), // group by r.endedOn as 'yyyy-MM'
+      knex.raw(`sum(rc1.name = 'Error') as countryTotalErrorCount`), // group by r.endedOn as 'yyyy-MM'
+    ])
 
-  const getDeviceCapacity = resultQuery
-    .clone()
-    .select(['dc.dailyCapacity'])
-    .where('r.deviceId', deviceId)
-    .first()
-
-  const [data, count, { dailyCapacity }] = await Promise.all([
-    getResult,
-    errorRate,
-    getDeviceCapacity,
-  ])
+  const [{ dailyCapacity }] = await knex('DeviceCapacity as dc')
+    .leftJoin('Device as d', 'd.deviceCapacityId', 'dc.id')
+    .where('d.id', deviceId)
+    .select('dc.dailyCapacity')
 
   let dt = endedOn
 
   while (dt >= startedOn) {
     const monthTested = format(dt, 'yyyy-MM')
-    count.map(x => {
-      if (x.resultCount === undefined) {
-        x.resultCount = 0
-        return x
-      }
-      return x
-    })
 
-    if (!count.find(x => x.monthTested === monthTested)) {
-      count.push({
+    if (!getPerfomanceResult.find(x => x.monthTested === monthTested)) {
+      getPerfomanceResult.push({
         errorCount: 0,
-        resultCount: 0,
+        totalResult: 0,
         monthTested,
       })
     }
@@ -579,41 +567,24 @@ async function getUtilizationAndErrorRateReport(request) {
     dt = endOfMonth(subMonths(dt, 1))
   }
 
-  // get result count for each month
-  count.map(x => {
-    data.map(y => {
-      if (x.monthTested === y.monthTested) {
-        x.resultCount += 1
-        return y
-      }
-      return y
-    })
-    return x
-  })
+  const newData = _.map(getPerfomanceResult, x => {
+    x.utilizationRate = Math.round((x.totalResult * 100) / (30 * dailyCapacity))
 
-  const newData = _.map(count, x => {
-    x.utilizationRate =
-      Math.round((x.resultCount * 100) / (30 * dailyCapacity)) / 10
-
-    if (x.resultCount) {
-      x.errorRate = Math.round((x.errorCount * 100) / x.resultCount) / 10
+    if (x.totalResult) {
+      x.errorRate = Math.round((x.errorCount * 100) / x.totalResult)
       return x
     }
     x.errorRate = 0
     return x
   })
 
-  const errorRateAvg =
-    newData.reduce((total, elem) => {
-      total += elem.errorRate
-      return total
-    }, 0) / newData.length
-
   return {
     ok: true,
     length: newData.length,
     utilizationRateAvg: 80,
-    errorRateAvg,
+    errorRateAvg: Math.round(
+      (countryTotalErrorCount * 100) / countryTotalResult
+    ),
     data: _.sortBy(newData, [x => x.monthTested]),
   }
 }
@@ -626,5 +597,5 @@ module.exports = {
   listDevicesForSelectList,
   getDevice,
   updateDeviceMaintenance,
-  getUtilizationAndErrorRateReport,
+  getDevicePerformance,
 }
