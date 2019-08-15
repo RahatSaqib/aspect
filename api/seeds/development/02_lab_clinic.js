@@ -229,41 +229,53 @@ async function seed(knex) {
         title: 'Client Name',
         type: 'string',
         order: 1,
+        report:true,
       },
       surname: {
         title: 'Client Surname',
         type: 'string',
         order: 2,
+        report:true,
       },
       artNumber: {
         title: 'ART #',
         type: 'string',
         order: 4,
+        report:true,
+
       },
       age: {
         title: 'Age (months)',
         type: 'string',
         order: 3,
+        report:true,
       },
       dateOfBirth: {
         title: 'Date of Birth',
         type: 'string',
         order: 4,
+        report:true,
       },
       gender: {
         title: 'Gender',
         type: 'string',
         order: 5,
+        report:true,
+
       },
       provider: {
         title: 'Provider',
         type: 'string',
         order: 7,
+        report:true,
+
       },
       phone: {
         title: 'Phone #',
         type: 'string',
         order: 8,
+        report:true,
+
       },
     }),
   })

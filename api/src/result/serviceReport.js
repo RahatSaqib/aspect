@@ -7,34 +7,69 @@ const {
 } = require('../excelreports/excelManager')
 const { getAllAssaySchemas } = require('../assay/service')
 
+const resultHeaders = [
+  { key: 'startedOn', header: 'Test Start Date' },
+  { key: 'endedOn', header: 'Test End Date' },
+  { key: 'deviceName', header: 'Device' },
+  { key: 'deviceSerial', header: 'Device Serial #' },
+  { key: 'countryName', header: 'Country' },
+  { key: 'stateName', header: 'State' },
+  { key: 'lgaName', header: 'LGA' },
+  { key: 'resultCategory1Name', header: 'Result category 1' },
+  { key: 'resultCategory2Name', header: 'Result category 2' },
+  { key: 'resultWorkflowStatus', header: 'Result Status' },
+  { key: 'resultWorkflowChangedOn', header: 'Result Status date' },
+  { key: 'resultTreatmentStatus', header: 'Result Treatment Status' },
+  { key: 'siteName', header: 'Site' },
+  { key: 'assayVersion', header: 'Assay Version' },
+  { key: 'consumableSerial', header: 'Consumable Serial' },
+  { key: 'consumableLot', header: 'Consumable Lot' },
+  { key: 'consumableExpirationDate', header: 'Consumable Expiration Date' },
+  { key: 'instrumentSerial', header: 'Instrument Serial' },
+  { key: 'moduleName', header: 'Module' },
+  { key: 'moduleSerial', header: 'Module Serial' },
+  { key: 'researchId', header: 'Research Id' },
+  { key: 'senderVersion', header: 'Sender Version' },
+  { key: 'senderOperator', header: 'Operator' },
+  { key: 'notes', header: 'Notes' },
+  { key: 'errorCode', header: 'Error Code' },
+  { key: 'errorNotes', header: 'Error notes' },
+  { key: 'createdOn', header: 'Error date' },
+  { key: 'sampleId', header: 'Sample Id' },
+  { key: 'sampleGroup', header: 'Sample Group' },
+  { key: 'sampleCollectedOn', header: 'sample collected Date' },
+  { key: 'sampleOriginSiteName', header: 'Sample origin site' },
+  { key: 'sampleTypeName', header: 'Sample type' },
+  { key: 'patientId', header: 'Patient Id' },
+  { key: 'requiresTreatment', header: 'Requires Treatment' },
+  { key: 'resultWorkflowLogReason', header: 'Result Reason' },
+  { key: 'resultWorkflowLogOperator', header: 'Result Log Operator' },
+  { key: 'resultWorkflowLogCreatedOn', header: 'Result Log date' },
+  { key: 'resultTreatmentMethod', header: 'Result Treatment Method' },
+  { key: 'resultTreatmentData', header: 'Result Treatment Data' },
+  {
+    key: 'resultTreatmentStatusChangedOn',
+    header: 'Result Treatment status date',
+  },
+  { key: 'treatmentStatusInfo', header: 'Treatment status info' },
+]
 async function getResultsReport(request, reply) {
   // Here is a really good example of the necessity of a data layer.
   // I tried to call some existing service method for the list of devices,
   // but everyone has parameters of the API (Request, query, Credentials, etc).
   // I think if we don't want to repeat code we have to argue a little bit about this architecture.
-  const { query, auth } = request
+  const { query } = request
   // get whole dataset - based on current query params (sorting, filtering) and auth constraints
   // ---------------
   // change query page/size values to get whole dataset (not only currently paged items)
   query.page = 0
   // do not export more than 100.000 records
-  query.size = 10
+  query.size = 10e5
   const results = await listResults(request, true)
-  const data = _.map(results.data, elem =>
-    flatten({
-      ...elem,
-      patientData: JSON.parse(elem.patientData),
-      resultData: JSON.parse(elem.resultData),
-    })
-  )
+
   const assaysMetadata = await getAssaySchema(request)
-  const headers = []
-  _.forEach(_.sample(data), (value, key) =>
-    headers.push({
-      header: key,
-      key: key.replace('.title', '').replace('.properties', ''),
-    })
-  )
+  // / this is for generate the headers and key for each row.
+  const headers = resultHeaders
   _.forEach(assaysMetadata, (value, key) => {
     if (key.toLowerCase().indexOf('title') >= 0)
       headers.push({
@@ -42,14 +77,21 @@ async function getResultsReport(request, reply) {
         key: key.replace('.title', '').replace('.properties', ''),
       })
   })
-  console.log(headers)
 
-  console.log(_.sample(data))
   const report = generateWorkbookByDataSource(
     query.format, // xlsx or csv
-    data,
+    results.data,
     'Results',
-    headers
+    headers,
+    'Aspect Results',
+    (
+      elem // if you need to transform your dataset to another format, you should pass the transformation function to avoid iterate twice the datasource.
+    ) =>
+      flatten({
+        ...elem,
+        patientData: JSON.parse(elem.patientData),
+        resultData: JSON.parse(elem.resultData),
+      })
   )
   return downloadReportFile(report, reply, request.format)
 }

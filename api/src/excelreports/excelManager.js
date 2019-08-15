@@ -1,4 +1,5 @@
 const Excel = require('exceljs')
+const _ = require('lodash')
 
 function findContentInExcelRow(
   row,
@@ -185,12 +186,51 @@ async function generateWorkbookByDataSource(
   format,
   data,
   workSheetName,
-  columnsSchema
+  columnsSchema,
+  reportTitle,
+  rowsConvertionFunction = null
 ) {
   const workbook = new Excel.Workbook()
   const worksheet = workbook.addWorksheet(workSheetName)
+
   worksheet.columns = columnsSchema
-  worksheet.addRows(data)
+  worksheet.columns.forEach(column => {
+    column.width = column.header.length + 2
+  })
+  worksheet.getRow(4).values = _.map(columnsSchema, elem => elem.header)
+  worksheet.getRow(4).eachCell(cell => {
+    cell.border = {
+      top: { style: 'double', color: { argb: 'FFFFFFFF' } },
+      left: { style: 'double', color: { argb: 'FFFFFFFF' } },
+      bottom: { style: 'double', color: { argb: 'FFFFFFFF' } },
+      right: { style: 'double', color: { argb: 'FFFFFFFF' } },
+    }
+    cell.fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: '803CC0DD' },
+    }
+    cell.font = {
+      bold: true,
+    }
+  })
+  worksheet.spliceRows(1, 1)
+  worksheet.mergeCells('A1', 'C1')
+  worksheet.getCell('A1').value = reportTitle
+
+  worksheet.getCell('A1').font = {
+    size: 20,
+    bold: true,
+  }
+
+  if (!rowsConvertionFunction) {
+    worksheet.addRows(data)
+  } else {
+    data.forEach(element => {
+      worksheet.addRow(rowsConvertionFunction(element))
+    })
+  }
+
   return generateReportFile(workbook, format)
 }
 async function generateReportFile(workbook, format) {
