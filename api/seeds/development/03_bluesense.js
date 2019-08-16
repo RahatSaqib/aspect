@@ -77,6 +77,7 @@ async function seed(knex) {
       resultText: {
         title: 'Result Text',
         type: 'string',
+        report: true,
       },
     }),
     patientDataSchema: JSON.stringify({
@@ -84,16 +85,19 @@ async function seed(knex) {
         type: 'string',
         order: 1,
         title: 'Client Name',
+        report: true,
       },
       surname: {
         type: 'string',
         order: 2,
         title: 'Client Surname',
+        report: true,
       },
       gender: {
         type: 'string',
         order: 3,
         title: 'Gender',
+        report: true,
       },
     }),
   })
