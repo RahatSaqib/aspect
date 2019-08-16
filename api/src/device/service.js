@@ -554,7 +554,7 @@ async function getDevicePerformance(request) {
     .leftOuterJoin('Country as c', 'g.countryId', 'c.id')
     .where('r.endedOn', '>=', startedOn)
     .where('r.endedOn', '<=', endedOn)
-    .where('c.id', '<=', deviceCountry.countryId)
+    .where('c.id', deviceCountry.countryId)
     .select([
       knex.raw('count(r.id) as countryTotalResult'),
       knex.raw(`sum(rc1.name = 'Error') as countryTotalErrorCount`),
@@ -564,12 +564,6 @@ async function getDevicePerformance(request) {
     .leftJoin('Device as d', 'd.deviceCapacityId', 'dc.id')
     .where('d.id', deviceId)
     .select('dc.dailyCapacity')
-
-  if (!deviceCapacity) {
-    return Boom.expectationFailed(
-      '"dailyCapacity" can never be null or undefine and must be greater than 0'
-    )
-  }
 
   let dt = endedOn
 
@@ -587,11 +581,19 @@ async function getDevicePerformance(request) {
     dt = endOfMonth(subMonths(dt, 1))
   }
 
+  let utilizationRateAvg = null
   const newData = _.map(devicePerformance, x => {
-    x.utilizationRate = Math.round(
-      (x.totalResult * 100) /
-        (getDaysInMonth(new Date(x.monthTested)) * deviceCapacity.dailyCapacity)
-    )
+    if (deviceCapacity) {
+      utilizationRateAvg = 80
+
+      x.utilizationRate = Math.round(
+        (x.totalResult * 100) /
+          (getDaysInMonth(new Date(x.monthTested)) *
+            deviceCapacity.dailyCapacity)
+      )
+    } else {
+      x.utilizationRate = null
+    }
 
     if (x.totalResult) {
       x.errorRate = Math.round((x.errorCount * 100) / x.totalResult)
@@ -604,7 +606,7 @@ async function getDevicePerformance(request) {
   return {
     ok: true,
     length: newData.length,
-    utilizationRateAvg: 80,
+    utilizationRateAvg,
     errorRateAvg: Math.round(
       (countryTotalErrorCount * 100) / countryTotalResult
     ),
