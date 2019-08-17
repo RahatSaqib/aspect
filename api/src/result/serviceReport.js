@@ -1,6 +1,9 @@
 const { listResults } = require('./service')
 const flatten = require('flat')
 const _ = require('lodash')
+const { knex } = require('../db')
+const { getUser } = require('../auth/service')
+
 const {
   generateWorkbookByDataSource,
   downloadReportFile,
@@ -58,18 +61,20 @@ async function getResultsReport(request, reply) {
   // I tried to call some existing service method for the list of devices,
   // but everyone has parameters of the API (Request, query, Credentials, etc).
   // I think if we don't want to repeat code we have to argue a little bit about this architecture.
-  const { query } = request
+  const { query, auth } = request
+  const user = await getUser(auth.credentials.name)
   // get whole dataset - based on current query params (sorting, filtering) and auth constraints
   // ---------------
   // change query page/size values to get whole dataset (not only currently paged items)
   query.page = 0
   // do not export more than 100.000 records
-  query.size = 10e5
+  query.size = 100
   const results = await listResults(request, true)
 
   const assaysMetadata = await getAssaySchema(request)
   // / this is for generate the headers and key for each row.
   const headers = resultHeaders
+  getResultFormData(user.partnerId, headers)
   _.forEach(assaysMetadata, (value, key) => {
     if (key.toLowerCase().indexOf('title') >= 0)
       headers.push({
@@ -89,8 +94,9 @@ async function getResultsReport(request, reply) {
     ) =>
       flatten({
         ...elem,
-        patientData: JSON.parse(elem.patientData),
-        resultData: JSON.parse(elem.resultData),
+        patientData: filterExcluded(JSON.parse(elem.patientData)),
+        resultData: filterExcluded(JSON.parse(elem.resultData)),
+        formData: filterExcluded(JSON.parse(elem.formData)),
       })
   )
   return downloadReportFile(report, reply, request.format)
@@ -109,10 +115,35 @@ async function getAssaySchema(request) {
       resultSchema = _.merge(resultSchema, JSON.parse(element.resultDataSchema))
   })
   return {
-    ...flatten({ resultData: resultSchema }),
-    ...flatten({ patientData: patientSchema }),
+    ...flatten({ resultData: filterExcluded(resultSchema) }),
+    ...flatten({ patientData: filterExcluded(patientSchema) }),
   }
 }
+async function getResultFormData(partnerId, headers) {
+  const formSchema = await knex('ResultForm')
+    .where('partnerId', partnerId)
+    .select('formSchema')
+  const existingResultForm = formSchema
+  _.forEach(existingResultForm, value => {
+    _.forEach(JSON.parse(value.formSchema).fields, (value, key) => {
+      if (
+        value &&
+        (_.isNil(value.excludeReport) || !value.excludeReport) &&
+        value.name
+      )
+        headers.push({
+          header: value.name,
+          key: key.replace('.title', '').replace('.properties', ''),
+        })
+    })
+  })
+}
+const filterExcluded = collection =>
+  _.filter(
+    collection,
+    elem => elem && (_.isNil(elem.excludeReport) || !elem.excludeReport)
+  )
+
 module.exports = {
   getResultsReport,
 }
