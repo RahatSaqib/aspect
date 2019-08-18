@@ -28,6 +28,8 @@ import BrowseTablePaginator, {
 import DataTableCard from '../../components/shared/DataTableCard'
 import DataTableProgressBar from '../../components/shared/DataTableProgressBar'
 import { fetchResults, exportResults } from '../ResultRedux'
+import ExportListButton from '../../globals/components/ExportListButton'
+
 import {
   ResultDataTable,
   ResultDataTableHead,
@@ -278,6 +280,11 @@ export const ResultList = ({
     />
     <DataTableCard key={`DataTableCard--table-${location.key}`}>
       <DataTableProgressBar disabled={!table.loading} />
+      <ExportListButton
+        onExcelClick={onExportClick}
+        onCsvClick={onExportClick}
+        reportName="Results"
+      />
       {items.currentIdList.isEmpty() && (
         <BrowseEmptyList history={history} location={location} intl={intl} />
       )}

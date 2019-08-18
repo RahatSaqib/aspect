@@ -135,13 +135,12 @@ async function listAssays(request) {
 
   return result
 }
-async function getAllAssaySchemas() {
-  return knex('Assay as a').select(
-    'name',
-    'externalId',
-    'resultDataSchema',
-    'patientDataSchema'
-  )
+async function getAllAssaySchemas(assayId = null) {
+  return knex('Assay as a')
+    .modify((queryBuilder, param) => {
+      if (param) queryBuilder.where('assayId', param)
+    }, assayId)
+    .select('name', 'externalId', 'resultDataSchema', 'patientDataSchema')
 }
 module.exports = {
   listAssays,

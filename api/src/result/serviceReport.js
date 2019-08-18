@@ -1,4 +1,4 @@
-const { listResults } = require('./service')
+const { exportResults } = require('./service')
 const flatten = require('flat')
 const _ = require('lodash')
 const { knex } = require('../db')
@@ -10,7 +10,7 @@ const {
 } = require('../excelreports/excelManager')
 const { getAllAssaySchemas } = require('../assay/service')
 
-const resultHeaders = [
+const headers = [
   { key: 'startedOn', header: 'Test Start Date' },
   { key: 'endedOn', header: 'Test End Date' },
   { key: 'deviceName', header: 'Device' },
@@ -69,19 +69,11 @@ async function getResultsReport(request, reply) {
   query.page = 0
   // do not export more than 100.000 records
   query.size = 100
-  const results = await listResults(request, true)
-
-  const assaysMetadata = await getAssaySchema(request)
+  const results = await exportResults(query, auth)
   // / this is for generate the headers and key for each row.
-  const headers = resultHeaders
-  getResultFormData(user.partnerId, headers)
-  _.forEach(assaysMetadata, (value, key) => {
-    if (key.toLowerCase().indexOf('title') >= 0)
-      headers.push({
-        header: value,
-        key: key.replace('.title', '').replace('.properties', ''),
-      })
-  })
+  await getAssaySchema(request, headers)
+
+  await getResultFormData(user.partnerId, headers)
 
   const report = generateWorkbookByDataSource(
     query.format, // xlsx or csv
@@ -94,15 +86,16 @@ async function getResultsReport(request, reply) {
     ) =>
       flatten({
         ...elem,
-        patientData: filterExcluded(JSON.parse(elem.patientData)),
-        resultData: filterExcluded(JSON.parse(elem.resultData)),
-        formData: filterExcluded(JSON.parse(elem.formData)),
+        patientData: JSON.parse(elem.patientData),
+        resultData: JSON.parse(elem.resultData),
+        formData: JSON.parse(elem.formData),
       })
   )
   return downloadReportFile(report, reply, request.format)
 }
-async function getAssaySchema(request) {
-  const assaySchema = await getAllAssaySchemas(request)
+async function getAssaySchema(request, headers) {
+  const { query } = request
+  const assaySchema = await getAllAssaySchemas(query.assayId)
   let resultSchema = {}
   let patientSchema = {}
   assaySchema.forEach(element => {
@@ -114,10 +107,17 @@ async function getAssaySchema(request) {
     if (element.resultDataSchema)
       resultSchema = _.merge(resultSchema, JSON.parse(element.resultDataSchema))
   })
-  return {
+  const flattenObjects = {
     ...flatten({ resultData: filterExcluded(resultSchema) }),
     ...flatten({ patientData: filterExcluded(patientSchema) }),
   }
+  _.forEach(flattenObjects, (value, key) => {
+    if (key.toLowerCase().indexOf('title') >= 0)
+      headers.push({
+        header: value,
+        key: key.replace('.title', '').replace('.properties', ''),
+      })
+  })
 }
 async function getResultFormData(partnerId, headers) {
   const formSchema = await knex('ResultForm')

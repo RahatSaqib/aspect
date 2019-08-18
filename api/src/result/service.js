@@ -111,7 +111,6 @@ const SELECT_COMMON_FIELDS = [
   'rtsl.createdOn as resultTreatmentStatusCreatedOn',
 ]
 const SELECT_SHOW_FIELDS = _.concat(SELECT_COMMON_FIELDS, 'rf.formSchema')
-const SELECT_EXPORT_FIELDS = SELECT_COMMON_FIELDS
 const SORT_FIELDS = [
   'endedOn',
   'deviceName',
@@ -328,14 +327,132 @@ function getResultTreatmentStatus(response) {
     response.treatmentStatusInfo = null
   }
 }
+async function exportResults(query, auth) {
+  const selectFields = _.clone(SELECT_COMMON_FIELDS)
+  const sortableFields = _.clone(SORT_FIELDS)
 
-async function listResults(request, showAllFields = false) {
+  const assayColumns = []
+  if (query.assayId) {
+    const assay = await knex('Assay as a')
+      .where('a.id', query.assayId)
+      .first()
+
+    if (assay.resultCategory1Label) {
+      selectFields.push('rc1.name as resultCategory1Name')
+      sortableFields.push('resultCategory1Name')
+      assayColumns.push({
+        db: 'resultCategory1Name',
+        type: 'string',
+        title: assay.resultCategory1Label,
+        i18nKey: assay.resultCategory1i18nKey,
+      })
+    }
+
+    if (assay.resultCategory2Label) {
+      selectFields.push('rc2.name as resultCategory2Name')
+      sortableFields.push('resultCategory2Name')
+    }
+  }
+
+  // now we know if the sort that was passed is valid:
+  if (query.sortCol && !sortableFields.includes(query.sortCol)) {
+    return Boom.badRequest()
+  }
+
+  // get data constraints
+  const dataConstraints = await getConstraints(auth.credentials)
+
+  const resultQuery = knex('Result as r')
+    .innerJoin('Assay as a', 'r.assayId', 'a.id')
+    .innerJoin('Device as d', 'r.deviceId', 'd.id')
+    .leftJoin('Geography as g', 'r.geographyId', 'g.id')
+    .leftJoin('Country as c', 'g.countryId', 'c.id')
+    .leftJoin('State as st', 'g.stateId', 'st.id')
+    .leftJoin('Lga as lg', 'g.lgaId', 'lg.id')
+    .leftJoin('ResultCategory as rc1', 'r.resultCategory1', 'rc1.id')
+    .leftJoin('ResultCategory as rc2', 'r.resultCategory2', 'rc2.id')
+    .leftJoin('Sample as sp', 'r.sampleId', 'sp.id')
+    .leftJoin('SampleType as stp', 'sp.sampleTypeId', 'stp.id')
+    .leftJoin('Site as so', 'sp.originSiteId', 'so.id')
+    .leftJoin('ResultCategoryAssay as rtas', function() {
+      this.on('r.assayId', 'rtas.assayId').andOn(
+        'r.resultCategory1',
+        'rtas.resultCategoryId'
+      )
+    })
+    .leftJoin('ResultCategoryAssay as rtas2', function() {
+      this.on('r.assayId', 'rtas2.assayId').andOn(
+        'r.resultCategory1',
+        'rtas2.resultCategoryId'
+      )
+    })
+    .leftJoin(
+      'ResultWorkflowLog as rsl',
+      'r.resultWorkflowStatusLogId',
+      'rsl.id'
+    )
+    .leftJoin(
+      'ResultWorkflowStatus as rs',
+      'rsl.resultWorkflowStatusId',
+      'rs.id'
+    )
+    .leftJoin(
+      'ResultTreatmentStatusLog as rtsl',
+      'r.treatmentStatusLogId',
+      'rtsl.id'
+    )
+    .leftJoin(
+      'ResultTreatmentStatus as rts',
+      'rtsl.resultTreatmentStatusId',
+      'rts.id'
+    )
+    .leftJoin('Site as si', 'r.siteId', 'si.id')
+    .where('r.partnerId', dataConstraints.partner.id)
+    .modify(filterDateRangeParams, query, 'r.endedOn')
+    .modify(filterParams, query, {
+      deviceId: 'd.id',
+      assayId: 'r.assayId',
+      resultCategoryId: 'r.resultCategory1',
+      countryId: 'g.countryId',
+      stateId: 'g.stateId',
+      lgaId: 'g.lgaId',
+      deviceName: 'd.name',
+      siteName: 'si.name',
+      sampleId: 'sp.externalId',
+      sampleOriginSite: 'so.name',
+      sampleGroup: 'r.sampleGroup',
+      workflowStatusId: 'rs.id',
+      treatmentStatusId: 'rts.id',
+    })
+    .modify((queryBuilder, params) => {
+      if (params.patientOrResearchId) {
+        queryBuilder
+          .whereRaw('JSON_EXTRACT(r.patientData, "$.id") like ?', [
+            `%${params.patientOrResearchId}%`,
+          ])
+          .orWhere('r.researchId', 'like', `%${params.patientOrResearchId}%`)
+      }
+    }, query)
+    .modify(addConstraints, dataConstraints, { device: 'd', sample: 's' })
+    .modify(sortPageParams, query, 'endedOn')
+    .select(selectFields)
+  console.log(resultQuery.toString())
+  const data = await resultQuery
+  const newData = _.map(data, v => {
+    getResultTreatmentStatus(v)
+    return v
+  })
+
+  const result = {
+    ok: true,
+    data: newData,
+  }
+
+  return result
+}
+async function listResults(request) {
   const { query, auth } = request
-  const result = await getListResults(
-    query,
-    auth,
-    showAllFields ? SELECT_EXPORT_FIELDS : SELECT_LIST_FIELDS
-  )
+  const result = await getListResults(query, auth)
   return result
 }
 
@@ -1353,6 +1470,7 @@ async function confirmedTreatmentTracking(request) {
 
 module.exports = {
   listResults,
+  exportResults,
   downloadResultsList,
   showResult,
   listResultTypes,

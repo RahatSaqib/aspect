@@ -234,8 +234,6 @@ async function generateWorkbookByDataSource(
   return generateReportFile(workbook, format)
 }
 async function generateReportFile(workbook, format) {
-  await workbook.xlsx.writeFile('export2.xlsx')
-  await workbook.csv.writeFile('export2.csv')
   if (format && format.toLowerCase() !== 'csv')
     return workbook.xlsx.writeBuffer()
   return workbook.csv.writeBuffer()
