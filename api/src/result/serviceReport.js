@@ -57,6 +57,7 @@ const headers = [
   { key: 'treatmentStatusInfo', header: 'Treatment status info' },
 ]
 async function getResultsReport(request, reply) {
+  console.log('ejecuto')
   // Here is a really good example of the necessity of a data layer.
   // I tried to call some existing service method for the list of devices,
   // but everyone has parameters of the API (Request, query, Credentials, etc).
@@ -67,14 +68,12 @@ async function getResultsReport(request, reply) {
   // ---------------
   // change query page/size values to get whole dataset (not only currently paged items)
   query.page = 0
-  // do not export more than 100.000 records
-  query.size = 100
+  // do not export more than 1.000.000 records
+  query.size = 10e6
   const results = await exportResults(query, auth)
   // / this is for generate the headers and key for each row.
-  await getAssaySchema(request, headers)
-
+  await getAssaySchema(query, user.partnerId, headers)
   await getResultFormData(user.partnerId, headers)
-
   const report = generateWorkbookByDataSource(
     query.format, // xlsx or csv
     results.data,
@@ -93,9 +92,8 @@ async function getResultsReport(request, reply) {
   )
   return downloadReportFile(report, reply, request.format)
 }
-async function getAssaySchema(request, headers) {
-  const { query } = request
-  const assaySchema = await getAllAssaySchemas(query.assayId)
+async function getAssaySchema(query, partnerId, headers) {
+  const assaySchema = await getAllAssaySchemas(partnerId, query.assayId)
   let resultSchema = {}
   let patientSchema = {}
   assaySchema.forEach(element => {

@@ -4,11 +4,13 @@ import IconButton from '@material-ui/core/IconButton'
 import React from 'react'
 import { compose, withState, withHandlers } from 'recompose'
 import classnames from 'classnames/bind'
+import LinearProgress from '@material-ui/core/LinearProgress'
 
 const cssClasses = classnames.bind(require('./ExportListButton.css'))
 
 const enhance = compose(
   withState('anchorEl', 'setAnchorEl', null),
+  withState('loading', 'setLoading', null),
   withHandlers({
     onPopoverClick: ({ setAnchorEl }) => event => {
       setAnchorEl(event.currentTarget)
@@ -16,18 +18,29 @@ const enhance = compose(
     onPopoverClose: ({ setAnchorEl }) => () => {
       setAnchorEl(null)
     },
+    onMyExport: prop => e => {
+      e.preventDefault()
+      prop.setAnchorEl(null)
+      prop.setLoading(true)
+      if (e.currentTarget.id === 'csv') prop.onCsvClick(e.currentTarget)
+      else prop.onExcelClick(e.currentTarget)
+      // prop.setLoading(false)
+      return true
+    },
   })
 )
 
 const ExportListButton = ({
-  onExcelClick,
-  onCsvClick,
+  onMyExport,
+
   // --- injected by recompose ---
   onPopoverClick,
   onPopoverClose,
   anchorEl,
+  loading,
 }) => (
   <div>
+    {loading && <LinearProgress />}
     <IconButton
       variant="contained"
       onClick={onPopoverClick}
@@ -60,7 +73,7 @@ const ExportListButton = ({
           <button
             className={cssClasses('Reports_Button')}
             inverse
-            onClick={onExcelClick}
+            onClick={onMyExport}
             id="xlsx"
           >
             Excel
@@ -70,7 +83,7 @@ const ExportListButton = ({
           <button
             className={cssClasses('Reports_Button')}
             inverse
-            onClick={onCsvClick}
+            onClick={onMyExport}
             id="csv"
           >
             CSV

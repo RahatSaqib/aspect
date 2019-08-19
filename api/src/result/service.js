@@ -261,8 +261,9 @@ async function getListResults(query, auth, fields = SELECT_LIST_FIELDS) {
           .orWhere('r.researchId', 'like', `%${params.patientOrResearchId}%`)
       }
     }, query)
-    .modify(addConstraints, dataConstraints, { device: 'd', sample: 's' })
-
+    .where('r.partnerId', dataConstraints.partner.id)
+    .where('c.id', dataConstraints.country.id)
+  // .modify(addConstraints, dataConstraints, { device: 'd', sample: 's' })
   // get total count for paging
   const getCount = resultQuery
     .clone()
@@ -327,6 +328,7 @@ function getResultTreatmentStatus(response) {
     response.treatmentStatusInfo = null
   }
 }
+
 async function exportResults(query, auth) {
   const selectFields = _.clone(SELECT_COMMON_FIELDS)
   const sortableFields = _.clone(SORT_FIELDS)
@@ -361,7 +363,10 @@ async function exportResults(query, auth) {
 
   // get data constraints
   const dataConstraints = await getConstraints(auth.credentials)
-
+  const addPartnerConstraints = (queryBuilder, { partner, country }) => {
+    if (partner) queryBuilder.where('r.partnerId', partner.id)
+    if (country) queryBuilder.where('c.id', country.id)
+  }
   const resultQuery = knex('Result as r')
     .innerJoin('Assay as a', 'r.assayId', 'a.id')
     .innerJoin('Device as d', 'r.deviceId', 'd.id')
@@ -407,7 +412,7 @@ async function exportResults(query, auth) {
       'rts.id'
     )
     .leftJoin('Site as si', 'r.siteId', 'si.id')
-    .where('r.partnerId', dataConstraints.partner.id)
+    .modify(addPartnerConstraints, dataConstraints)
     .modify(filterDateRangeParams, query, 'r.endedOn')
     .modify(filterParams, query, {
       deviceId: 'd.id',
@@ -433,10 +438,8 @@ async function exportResults(query, auth) {
           .orWhere('r.researchId', 'like', `%${params.patientOrResearchId}%`)
       }
     }, query)
-    .modify(addConstraints, dataConstraints, { device: 'd', sample: 's' })
     .modify(sortPageParams, query, 'endedOn')
     .select(selectFields)
-  console.log(resultQuery.toString())
   const data = await resultQuery
   const newData = _.map(data, v => {
     getResultTreatmentStatus(v)

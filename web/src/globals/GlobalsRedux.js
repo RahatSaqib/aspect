@@ -62,6 +62,7 @@ export default function globalsReducer(state = initialState, action) {
 }
 
 function downloadFile(blob, reportName, reportFormat) {
+  console.log('report received')
   const fileURL = URL.createObjectURL(blob)
   const fileLink = document.createElement('a')
   fileLink.href = fileURL

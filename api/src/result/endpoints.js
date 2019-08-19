@@ -30,6 +30,10 @@ const {
 function listResultsBaseConfig() {
   return {
     auth: { scope: ['result:view', 'result:edit'] },
+    timeout: {
+      server: 360000,
+      socket: false,
+    },
     validate: {
       query: Object.assign(
         {

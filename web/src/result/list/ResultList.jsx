@@ -189,11 +189,13 @@ const enhance = compose(
       if (!sanitized) {
         exportResults(
           filtersParams,
-          formatType,
+          formatType.id,
           sortCol,
           sortDir,
           pageAt,
-          pageSize
+          pageSize,
+          formatType.id,
+          'results'
         )
       }
     },

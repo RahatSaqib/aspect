@@ -16,7 +16,7 @@ import {
   receiveTableItems,
   Table,
 } from '../shared/metaReducers/table'
-import { receivedExportResponse } from '../filter/FilterRedux'
+import { receivedExportResponse } from '../globals/GlobalsRedux'
 import screenSchema from './ResultScreenSchema.json'
 
 export const types = {
@@ -458,7 +458,9 @@ export function exportResults(
   sortCol,
   sortDir,
   page,
-  pageSize
+  pageSize,
+  fileFormat,
+  reportName
 ) {
   return dispatch => {
     const filters = _.fromPairs([...filtersParams.entries()])
@@ -491,8 +493,9 @@ export function exportResults(
           ),
         },
       }
-    ).then(json => {
-      dispatch(receivedExportResponse(format, json))
+    ).then(async elem => {
+      const file = await elem
+      dispatch(receivedExportResponse(file, fileFormat, reportName))
     })
   }
 }
