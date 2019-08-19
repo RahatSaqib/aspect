@@ -13,6 +13,7 @@ import MdFileDownload from 'react-icons/lib/md/file-download'
 import Helmet from 'react-helmet'
 import TableBody from '@material-ui/core/TableBody'
 import NotesIcon from '@material-ui/icons/ChatBubbleOutline'
+import { ResponsiveBar } from '@nivo/bar'
 
 import {
   makeSortPageSelector,
@@ -196,9 +197,10 @@ const formatMaintenanceDate = (intl, date) => {
 const enhance = compose(
   connect(
     state => {
-      const { activeDialog } = state.device
+      const { activeDialog, performanceReport } = state.device
       return {
         activeDialog,
+        performanceReport,
       }
     },
     {
@@ -335,6 +337,156 @@ const enhanceResults = compose(
     },
   })
 )
+
+const PerformanceBarChart = ({ data, series, color, avgValue }) => (
+  <ResponsiveBar
+    data={data.toJS()}
+    indexBy="period"
+    keys={series.map(x => x.key)}
+    margin={{ top: 10, right: 0, bottom: 90, left: 50 }}
+    padding={0.01} // between stacks, (ratio)
+    innerPadding={1} // between bars in a stack, (px)
+    enableGridY={false}
+    enableLabel={false}
+    defs={[
+      {
+        id: 'lines',
+        type: 'patternLines',
+        background: 'inherit',
+        color: process.env[color],
+        rotation: 45,
+        lineWidth: 7,
+        spacing: 8,
+      },
+    ]}
+    fill={[
+      {
+        match: {
+          id: 'exceededErrorRate',
+        },
+        id: 'lines',
+      },
+    ]}
+    axisLeft={{
+      tickRotation: 0,
+      legend: 'Percentage(%)',
+      legendPosition: 'middle',
+      legendOffset: -40,
+    }}
+    colors={bar => series.find(x => x.key === bar.id).color}
+    animate
+    markers={[
+      {
+        axis: 'y',
+        value: avgValue,
+        lineStyle: {
+          stroke: process.env['--aspect-color-ship-cove'],
+          strokeWidth: 2,
+        },
+        legendOrientation: 'vertical',
+      },
+    ]}
+    tooltip={({ color, id, indexValue, value }) => (
+      <div>
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <div
+            className={cssClasses('Performance--graph-tooltip-color')}
+            style={{ backgroundColor: color }}
+          />
+          {`% ${series.find(x => x.key === id).label} `}
+        </div>
+        <div>
+          {`${indexValue}: `}
+          <strong>{value}</strong>%
+        </div>
+      </div>
+    )}
+    maxValue={100}
+    motionStiffness={90}
+    motionDamping={15}
+  />
+)
+const PerformanceReport = enhance(({ performanceReport }) => {
+  const data = performanceReport.get('data')
+  const avgUtilizationRate = performanceReport.get('utilizationRateAvg')
+  const avgErrorRate = performanceReport.get('errorRateAvg')
+  const utilizationRateSeries = [
+    {
+      label: 'Utilization Rate',
+      key: 'utilizationRate',
+      color: process.env['--aspect-color-shakespeare'], // green
+    },
+    {
+      label: 'Exceeded Utili Rate',
+      key: 'exceededUtilizationRate',
+      color: '#FFFFFF',
+    },
+  ]
+  const errorRateSeries = [
+    {
+      label: 'Error Rate',
+      key: 'errorRate',
+      color: process.env['--aspect-color-mandy'], // green
+    },
+    {
+      label: 'Exceeded Error Rate',
+      key: 'exceededErrorRate',
+      color: '#FFFFFF',
+    },
+  ]
+  return (
+    <section className={cssClasses('Section', 'Graph_Section')}>
+      <Card className={cssClasses('Graph_Container')}>
+        {data && (
+          <div className={cssClasses('Graph_Container__Content')}>
+            <p>Utilization Rate</p>
+            <PerformanceBarChart
+              data={data}
+              series={utilizationRateSeries}
+              color="--aspect-color-shakespeare"
+              avgValue={avgUtilizationRate}
+            />
+            <div className={cssClasses('Graph_Legend')}>
+              <div data-utilization-rate-legend>
+                <div /> <span> Utilization Rate</span>
+              </div>
+              <div data-utilization-rate-average-legend>
+                <div /> <span> Average </span>
+              </div>
+              <div data-utilization-rate-above-average-legend>
+                <div /> <span> Above Average</span>
+              </div>
+            </div>
+          </div>
+        )}
+      </Card>
+      <Card className={cssClasses('Graph_Container')}>
+        {data && (
+          <div className={cssClasses('Graph_Container__Content')}>
+            <p>Error Rate</p>
+            <PerformanceBarChart
+              data={data}
+              series={errorRateSeries}
+              color="--aspect-color-mandy"
+              avgValue={avgErrorRate}
+            />
+            <div className={cssClasses('Graph_Legend')}>
+              <div data-error-rate-legend>
+                <div /> <span> Error Rate</span>
+              </div>
+              <div data-error-rate-average-legend>
+                <div /> <span> Average </span>
+              </div>
+              <div data-error-rate-above-average-legend>
+                <div /> <span> Above Average</span>
+              </div>
+            </div>
+          </div>
+        )}
+      </Card>
+    </section>
+  )
+})
 
 const Results = enhanceResults(
   ({
@@ -665,6 +817,7 @@ export const DeviceDetailProfile = ({
           onSubmit={onWarrantySubmit}
         />
       </section>
+      <PerformanceReport match={match} location={location} />
       <Results
         match={match}
         history={history}

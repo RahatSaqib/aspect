@@ -32,6 +32,11 @@ export const types = {
   REQUEST_DEVICES_FOR_SELECT_LIST: 'REQUEST_DEVICES_FOR_SELECT_LIST',
   RECEIVE_DEVICES_FOR_SELECT_LIST: 'RECEIVE_DEVICES_FOR_SELECT_LIST',
 
+  REQUEST_DEVICES_FOR_PERFORMANCE_REPORT:
+    'REQUEST_DEVICES_FOR_PERFORMANCE_REPORT',
+  RECEIVE_DEVICES_FOR_PERFORMANCE_REPORT:
+    'RECEIVE_DEVICES_FOR_PERFORMANCE_REPORT',
+
   DEVICE_MAINTENANCE_FORM_SHOW: 'DEVICE_MAINTENANCE_FORM_SHOW',
   DEVICE_MAINTENANCE_FORM_HIDE: 'DEVICE_MAINTENANCE_FORM_HIDE',
 }
@@ -378,6 +383,38 @@ export function updateDeviceMaintenance({
       })
 }
 
+export function fetchPerformanceReport({ deviceId }) {
+  return dispatch => {
+    dispatch(requestPerformanceReport(deviceId))
+
+    return aspectFetch(`/device/performance/${deviceId}`, {
+      errorNotifications: {
+        default: errorPleaseTryAgainInAFewMinutes(
+          defineMessages({
+            title: {
+              id:
+                'errorResponseMessages.fetchPerformanceReport.GET.default.title',
+              defaultMessage: 'Error Loading Device profile performance report',
+            },
+          })
+        ),
+      },
+    }).then(json => dispatch(receivePerformanceReport(json)))
+  }
+}
+function requestPerformanceReport(payload) {
+  return {
+    type: types.REQUEST_DEVICES_FOR_PERFORMANCE_REPORT,
+    ...payload,
+  }
+}
+function receivePerformanceReport(data) {
+  return {
+    type: types.RECEIVE_DEVICES_FOR_PERFORMANCE_REPORT,
+    data,
+  }
+}
+
 /*
  * ---------------- Reducers -----------------
  */
@@ -395,6 +432,7 @@ const Device = Immutable.Record({
     name: undefined,
     data: undefined,
   }),
+  performanceReport: Immutable.Map(),
 })
 
 const initialState = new Device()
@@ -443,6 +481,32 @@ export default function deviceReducer(state = initialState, action) {
       })
     case types.DEVICE_MAINTENANCE_FORM_HIDE:
       return state.setIn(['activeDialog', 'name'], undefined)
+    case types.RECEIVE_DEVICES_FOR_PERFORMANCE_REPORT:
+      return state.withMutations(mutState => {
+        const payload = action.data
+        payload.data.forEach(item => {
+          const date = new Date(item.monthTested)
+          const monthName = date.toLocaleString('en-us', { month: 'short' })
+          item.period = monthName
+          item.exceededErrorRate =
+            item.errorRate > payload.errorRateAvg
+              ? item.errorRate - payload.errorRateAvg
+              : 0
+          item.errorRate =
+            item.errorRate > payload.errorRateAvg
+              ? payload.errorRateAvg
+              : item.errorRate
+          item.exceededUtilizationRate =
+            item.utilizationRate > payload.utilizationRateAvg
+              ? item.utilizationRate - payload.utilizationRateAvg
+              : 0
+          item.utilizationRate =
+            item.utilizationRate > payload.utilizationRateAvg
+              ? payload.utilizationRateAvg
+              : item.utilizationRate
+        })
+        mutState.set('performanceReport', new Immutable.fromJS(payload))
+      })
     default:
       return state
   }

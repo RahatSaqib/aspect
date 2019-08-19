@@ -12,6 +12,80 @@
   padding: 20px;
 }
 
+.Graph_Section {
+  display: flex;
+}
+
+.Graph_Container {
+  width: 50%;
+  padding: 5px 10px;
+  font-size: var(--aspect-font-size-md);
+}
+
+.Graph_Container > div {
+  height: 350px;
+  padding-bottom: 20px;
+}
+
+
+.Graph_Section > div:first-child {
+  margin-right: 20px;
+}
+
+.Graph_Legend {
+  margin-top: -60px;
+  display: flex;
+  margin-left: 35%;
+}
+
+.Graph_Legend > div {
+  margin-right: 10px;
+  display: flex;
+}
+
+.Graph_Legend div > div {
+  width: 20px;
+  height: 20px;
+  margin-right: 5px;
+}
+
+[data-utilization-rate-legend] div {
+  background-color: var(--aspect-color-shakespeare);
+}
+
+[data-utilization-rate-average-legend] div {
+  background-color: var(--aspect-color-ship-cove);
+}
+
+[data-utilization-rate-above-average-legend] div {
+  background: repeating-linear-gradient(
+  45deg,
+  var(--aspect-color-shakespeare),
+  var(--aspect-color-shakespeare) 5px,
+  var(--aspect-color-shakespeare) 5px,
+  #ffffff 7px
+);
+}
+
+[data-error-rate-legend] div {
+  background-color: var(--aspect-color-mandy);
+}
+
+[data-error-rate-average-legend] div {
+  background-color: var(--aspect-color-ship-cove);
+}
+
+[data-error-rate-above-average-legend] div {
+  /* background-color: aqua; */
+  background: repeating-linear-gradient(
+  45deg,
+  var(--aspect-color-mandy),
+  var(--aspect-color-mandy) 5px,
+  var(--aspect-color-mandy) 5px,
+  #ffffff 7px
+);
+}
+
 .Header {
   padding-bottom: 20px;
   display: flex;
