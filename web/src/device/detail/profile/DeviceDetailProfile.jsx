@@ -198,9 +198,11 @@ const enhance = compose(
   connect(
     state => {
       const { activeDialog, performanceReport } = state.device
+      const { culture } = state.user
       return {
         activeDialog,
         performanceReport,
+        culture,
       }
     },
     {
@@ -340,7 +342,7 @@ const enhanceResults = compose(
 
 const PerformanceBarChart = ({ data, series, color, avgValue }) => (
   <ResponsiveBar
-    data={data.toJS()}
+    data={data}
     indexBy="period"
     keys={series.map(x => x.key)}
     margin={{ top: 10, right: 0, bottom: 90, left: 50 }}
@@ -406,18 +408,43 @@ const PerformanceBarChart = ({ data, series, color, avgValue }) => (
     motionDamping={15}
   />
 )
-const PerformanceReport = enhance(({ performanceReport }) => {
-  const data = performanceReport.get('data')
-  const avgUtilizationRate = performanceReport.get('utilizationRateAvg')
-  const avgErrorRate = performanceReport.get('errorRateAvg')
+const PerformanceReport = enhance(({ performanceReport, culture }) => {
+  const payload = performanceReport.toJS()
+  if (payload.data) {
+    payload.data.forEach(item => {
+      const date = new Date(item.monthTested)
+      const monthName = date.toLocaleString(culture, { month: 'short' })
+      item.period = monthName
+      item.exceededErrorRate =
+        item.errorRate > payload.errorRateAvg
+          ? item.errorRate - payload.errorRateAvg
+          : 0
+      item.errorRate =
+        item.errorRate > payload.errorRateAvg
+          ? payload.errorRateAvg
+          : item.errorRate
+      item.exceededUtilizationRate =
+        item.utilizationRate > payload.utilizationRateAvg
+          ? item.utilizationRate - payload.utilizationRateAvg
+          : 0
+      item.utilizationRate =
+        item.utilizationRate > payload.utilizationRateAvg
+          ? payload.utilizationRateAvg
+          : item.utilizationRate
+    })
+  }
+
+  const avgUtilizationRate = payload.utilizationRateAvg
+  const avgErrorRate = payload.errorRateAvg
+  const { data } = payload
   const utilizationRateSeries = [
     {
       label: 'Utilization Rate',
       key: 'utilizationRate',
-      color: process.env['--aspect-color-shakespeare'], // green
+      color: process.env['--aspect-color-shakespeare'],
     },
     {
-      label: 'Exceeded Utili Rate',
+      label: 'Above Target Utilization Rate',
       key: 'exceededUtilizationRate',
       color: '#FFFFFF',
     },
@@ -429,60 +456,71 @@ const PerformanceReport = enhance(({ performanceReport }) => {
       color: process.env['--aspect-color-mandy'], // green
     },
     {
-      label: 'Exceeded Error Rate',
+      label: 'Above Average Error Rate',
       key: 'exceededErrorRate',
       color: '#FFFFFF',
     },
   ]
+
   return (
-    <section className={cssClasses('Section', 'Graph_Section')}>
-      <Card className={cssClasses('Graph_Container')}>
-        {data && (
-          <div className={cssClasses('Graph_Container__Content')}>
-            <p>Utilization Rate</p>
-            <PerformanceBarChart
-              data={data}
-              series={utilizationRateSeries}
-              color="--aspect-color-shakespeare"
-              avgValue={avgUtilizationRate}
-            />
-            <div className={cssClasses('Graph_Legend')}>
-              <div data-utilization-rate-legend>
-                <div /> <span> Utilization Rate</span>
+    <section className={cssClasses('Section')}>
+      <Card className={cssClasses('Section')}>
+        <p data-panel-title>Performance</p>
+        <div data-graph-container>
+          {data && data[0].utilizationRate !== null && (
+            <Card
+              className={cssClasses('Graph_Container')}
+              data-utilization-graph
+            >
+              {data && (
+                <div>
+                  <p>Utilization Rate</p>
+                  <PerformanceBarChart
+                    data={data}
+                    series={utilizationRateSeries}
+                    color="--aspect-color-shakespeare"
+                    avgValue={avgUtilizationRate}
+                  />
+                  <div className={cssClasses('Graph_Legend')}>
+                    <div data-utilization-rate-legend>
+                      <div /> <span> Utilization Rate</span>
+                    </div>
+                    <div data-utilization-rate-average-legend>
+                      <div /> <span> Target </span>
+                    </div>
+                    <div data-utilization-rate-above-average-legend>
+                      <div /> <span> Above Target </span>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </Card>
+          )}
+          <Card className={cssClasses('Graph_Container')}>
+            {data && (
+              <div>
+                <p>Error Rate</p>
+                <PerformanceBarChart
+                  data={data}
+                  series={errorRateSeries}
+                  color="--aspect-color-mandy"
+                  avgValue={avgErrorRate}
+                />
+                <div className={cssClasses('Graph_Legend')}>
+                  <div data-error-rate-legend>
+                    <div /> <span> Error Rate</span>
+                  </div>
+                  <div data-error-rate-average-legend>
+                    <div /> <span> Country Average </span>
+                  </div>
+                  <div data-error-rate-above-average-legend>
+                    <div /> <span> Above Average</span>
+                  </div>
+                </div>
               </div>
-              <div data-utilization-rate-average-legend>
-                <div /> <span> Average </span>
-              </div>
-              <div data-utilization-rate-above-average-legend>
-                <div /> <span> Above Average</span>
-              </div>
-            </div>
-          </div>
-        )}
-      </Card>
-      <Card className={cssClasses('Graph_Container')}>
-        {data && (
-          <div className={cssClasses('Graph_Container__Content')}>
-            <p>Error Rate</p>
-            <PerformanceBarChart
-              data={data}
-              series={errorRateSeries}
-              color="--aspect-color-mandy"
-              avgValue={avgErrorRate}
-            />
-            <div className={cssClasses('Graph_Legend')}>
-              <div data-error-rate-legend>
-                <div /> <span> Error Rate</span>
-              </div>
-              <div data-error-rate-average-legend>
-                <div /> <span> Average </span>
-              </div>
-              <div data-error-rate-above-average-legend>
-                <div /> <span> Above Average</span>
-              </div>
-            </div>
-          </div>
-        )}
+            )}
+          </Card>
+        </div>
       </Card>
     </section>
   )

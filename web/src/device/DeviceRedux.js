@@ -383,7 +383,7 @@ export function updateDeviceMaintenance({
       })
 }
 
-export function fetchPerformanceReport({ deviceId }) {
+export function fetchPerformanceReport(deviceId) {
   return dispatch => {
     dispatch(requestPerformanceReport(deviceId))
 
@@ -402,10 +402,10 @@ export function fetchPerformanceReport({ deviceId }) {
     }).then(json => dispatch(receivePerformanceReport(json)))
   }
 }
-function requestPerformanceReport(payload) {
+function requestPerformanceReport(deviceId) {
   return {
     type: types.REQUEST_DEVICES_FOR_PERFORMANCE_REPORT,
-    ...payload,
+    deviceId,
   }
 }
 function receivePerformanceReport(data) {
@@ -483,29 +483,7 @@ export default function deviceReducer(state = initialState, action) {
       return state.setIn(['activeDialog', 'name'], undefined)
     case types.RECEIVE_DEVICES_FOR_PERFORMANCE_REPORT:
       return state.withMutations(mutState => {
-        const payload = action.data
-        payload.data.forEach(item => {
-          const date = new Date(item.monthTested)
-          const monthName = date.toLocaleString('en-us', { month: 'short' })
-          item.period = monthName
-          item.exceededErrorRate =
-            item.errorRate > payload.errorRateAvg
-              ? item.errorRate - payload.errorRateAvg
-              : 0
-          item.errorRate =
-            item.errorRate > payload.errorRateAvg
-              ? payload.errorRateAvg
-              : item.errorRate
-          item.exceededUtilizationRate =
-            item.utilizationRate > payload.utilizationRateAvg
-              ? item.utilizationRate - payload.utilizationRateAvg
-              : 0
-          item.utilizationRate =
-            item.utilizationRate > payload.utilizationRateAvg
-              ? payload.utilizationRateAvg
-              : item.utilizationRate
-        })
-        mutState.set('performanceReport', new Immutable.fromJS(payload))
+        mutState.set('performanceReport', new Immutable.fromJS(action.data))
       })
     default:
       return state

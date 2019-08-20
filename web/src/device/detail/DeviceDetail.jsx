@@ -36,7 +36,7 @@ const enhance = compose(
         loading: !!state.device.requestedAt,
         device,
         displayPreferences,
-        performanceReport: state.device.PerformanceReport,
+        performanceReport: state.device.performanceReport,
       }
     },
     bindActionCreators.bind(null, {
@@ -54,7 +54,7 @@ const enhance = compose(
     }) => () => {
       const searchParams = new URLSearchParams(location.search)
       fetchSingleDevice(match.params.deviceId, searchParams)
-      fetchPerformanceReport({ deviceId: match.params.deviceId })
+      fetchPerformanceReport(match.params.deviceId)
     },
 
     onDateRangeChange: ({ history, location }) => ({

@@ -12,24 +12,31 @@
   padding: 20px;
 }
 
-.Graph_Section {
+[data-graph-container] {
   display: flex;
+}
+
+[data-utilization-graph] {
+  margin-right: 20px;
+}
+
+[data-graph-container] {
+  text-align: center
+}
+
+[data-panel-title] {
+font-size: 1.5em;
 }
 
 .Graph_Container {
   width: 50%;
   padding: 5px 10px;
-  font-size: var(--aspect-font-size-md);
+  font-size: var(--aspect-font-size-sm);
 }
 
 .Graph_Container > div {
   height: 350px;
   padding-bottom: 20px;
-}
-
-
-.Graph_Section > div:first-child {
-  margin-right: 20px;
 }
 
 .Graph_Legend {
@@ -76,7 +83,6 @@
 }
 
 [data-error-rate-above-average-legend] div {
-  /* background-color: aqua; */
   background: repeating-linear-gradient(
   45deg,
   var(--aspect-color-mandy),
