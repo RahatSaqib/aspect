@@ -340,7 +340,7 @@ const enhanceResults = compose(
   })
 )
 
-const PerformanceBarChart = ({ data, series, color, avgValue }) => (
+const PerformanceBarChart = ({ data, series, color, avgValue, maxValue }) => (
   <ResponsiveBar
     data={data}
     indexBy="period"
@@ -394,28 +394,34 @@ const PerformanceBarChart = ({ data, series, color, avgValue }) => (
         legendOrientation: 'vertical',
       },
     ]}
-    tooltip={({ color, id, indexValue, value }) => (
-      <div>
-        <div style={{ display: 'flex', alignItems: 'center' }}>
-          <div
-            className={cssClasses('Performance--graph-tooltip-color')}
-            style={{ backgroundColor: color }}
-          />
-          {`% ${series.find(x => x.key === id).label} `}
-        </div>
+    tooltip={({ color, id, indexValue }) => {
+      const periodData = data.find(x => x.period === indexValue)
+      const value = periodData.errorRate + periodData.exceededErrorRate
+      return (
         <div>
-          {`${indexValue}: `}
-          <strong>{value}</strong>%
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <div
+              className={cssClasses('Performance--graph-tooltip-color')}
+              style={{ backgroundColor: color }}
+            />
+            {`% ${series.find(x => x.key === id).label} `}
+          </div>
+          <div>
+            {`${indexValue}: `}
+            <strong>{value}</strong>%
+          </div>
         </div>
-      </div>
-    )}
-    maxValue={100}
+      )
+    }}
+    maxValue={maxValue}
     motionStiffness={90}
     motionDamping={15}
   />
 )
 const PerformanceReport = enhance(({ performanceReport, culture }) => {
   const payload = performanceReport.toJS()
+  let maxUtilizationRate = 0
+  let maxErrorRate = 0
   if (payload.data) {
     payload.data.forEach(item => {
       const date = new Date(item.monthTested)
@@ -438,6 +444,15 @@ const PerformanceReport = enhance(({ performanceReport, culture }) => {
           ? payload.utilizationRateAvg
           : item.utilizationRate
     })
+    maxUtilizationRate = payload.data.reduce(
+      (prev, current) =>
+        prev > current.utilizationRate ? prev : current.utilizationRate,
+      payload.utilizationRateAvg
+    )
+    maxErrorRate = payload.data.reduce(
+      (prev, current) => (prev > current.errorRate ? prev : current.errorRate),
+      payload.errorRateAvg
+    )
   }
 
   const avgUtilizationRate = payload.utilizationRateAvg
@@ -474,7 +489,7 @@ const PerformanceReport = enhance(({ performanceReport, culture }) => {
         <p data-panel-title>Performance</p>
         <div data-graph-container>
           {data && data[0].utilizationRate !== null && (
-            <Card
+            <div
               className={cssClasses('Graph_Container')}
               data-utilization-graph
             >
@@ -486,6 +501,7 @@ const PerformanceReport = enhance(({ performanceReport, culture }) => {
                     series={utilizationRateSeries}
                     color="--aspect-color-shakespeare"
                     avgValue={avgUtilizationRate}
+                    maxValue={maxUtilizationRate}
                   />
                   <div className={cssClasses('Graph_Legend')}>
                     <div data-utilization-rate-legend>
@@ -500,9 +516,9 @@ const PerformanceReport = enhance(({ performanceReport, culture }) => {
                   </div>
                 </div>
               )}
-            </Card>
+            </div>
           )}
-          <Card className={cssClasses('Graph_Container')}>
+          <div className={cssClasses('Graph_Container')}>
             {data && (
               <div>
                 <p>Error Rate</p>
@@ -511,6 +527,7 @@ const PerformanceReport = enhance(({ performanceReport, culture }) => {
                   series={errorRateSeries}
                   color="--aspect-color-mandy"
                   avgValue={avgErrorRate}
+                  maxValue={maxErrorRate}
                 />
                 <div className={cssClasses('Graph_Legend')}>
                   <div data-error-rate-legend>
@@ -525,7 +542,7 @@ const PerformanceReport = enhance(({ performanceReport, culture }) => {
                 </div>
               </div>
             )}
-          </Card>
+          </div>
         </div>
       </Card>
     </section>

@@ -25,7 +25,8 @@
 }
 
 [data-panel-title] {
-font-size: 1.5em;
+font-size: 1.5rem;
+color: var(--aspect-color-grey-2);
 }
 
 .Graph_Container {
@@ -42,7 +43,7 @@ font-size: 1.5em;
 .Graph_Legend {
   margin-top: -60px;
   display: flex;
-  margin-left: 35%;
+  justify-content: center;
 }
 
 .Graph_Legend > div {
@@ -51,8 +52,9 @@ font-size: 1.5em;
 }
 
 .Graph_Legend div > div {
-  width: 20px;
-  height: 20px;
+  margin-top: 3px;
+  width: 28px;
+  height: 11px;
   margin-right: 5px;
 }
 
