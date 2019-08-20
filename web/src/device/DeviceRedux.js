@@ -32,6 +32,11 @@ export const types = {
   REQUEST_DEVICES_FOR_SELECT_LIST: 'REQUEST_DEVICES_FOR_SELECT_LIST',
   RECEIVE_DEVICES_FOR_SELECT_LIST: 'RECEIVE_DEVICES_FOR_SELECT_LIST',
 
+  REQUEST_DEVICES_FOR_PERFORMANCE_REPORT:
+    'REQUEST_DEVICES_FOR_PERFORMANCE_REPORT',
+  RECEIVE_DEVICES_FOR_PERFORMANCE_REPORT:
+    'RECEIVE_DEVICES_FOR_PERFORMANCE_REPORT',
+
   DEVICE_MAINTENANCE_FORM_SHOW: 'DEVICE_MAINTENANCE_FORM_SHOW',
   DEVICE_MAINTENANCE_FORM_HIDE: 'DEVICE_MAINTENANCE_FORM_HIDE',
 }
@@ -378,6 +383,38 @@ export function updateDeviceMaintenance({
       })
 }
 
+export function fetchPerformanceReport(deviceId) {
+  return dispatch => {
+    dispatch(requestPerformanceReport(deviceId))
+
+    return aspectFetch(`/device/performance/${deviceId}`, {
+      errorNotifications: {
+        default: errorPleaseTryAgainInAFewMinutes(
+          defineMessages({
+            title: {
+              id:
+                'errorResponseMessages.fetchPerformanceReport.GET.default.title',
+              defaultMessage: 'Error Loading Device profile performance report',
+            },
+          })
+        ),
+      },
+    }).then(json => dispatch(receivePerformanceReport(json)))
+  }
+}
+function requestPerformanceReport(deviceId) {
+  return {
+    type: types.REQUEST_DEVICES_FOR_PERFORMANCE_REPORT,
+    deviceId,
+  }
+}
+function receivePerformanceReport(data) {
+  return {
+    type: types.RECEIVE_DEVICES_FOR_PERFORMANCE_REPORT,
+    data,
+  }
+}
+
 /*
  * ---------------- Reducers -----------------
  */
@@ -395,6 +432,7 @@ const Device = Immutable.Record({
     name: undefined,
     data: undefined,
   }),
+  performanceReport: Immutable.Map(),
 })
 
 const initialState = new Device()
@@ -443,6 +481,10 @@ export default function deviceReducer(state = initialState, action) {
       })
     case types.DEVICE_MAINTENANCE_FORM_HIDE:
       return state.setIn(['activeDialog', 'name'], undefined)
+    case types.RECEIVE_DEVICES_FOR_PERFORMANCE_REPORT:
+      return state.withMutations(mutState => {
+        mutState.set('performanceReport', new Immutable.fromJS(action.data))
+      })
     default:
       return state
   }

@@ -13,6 +13,7 @@ import MdFileDownload from 'react-icons/lib/md/file-download'
 import Helmet from 'react-helmet'
 import TableBody from '@material-ui/core/TableBody'
 import NotesIcon from '@material-ui/icons/ChatBubbleOutline'
+import { ResponsiveBar } from '@nivo/bar'
 
 import {
   makeSortPageSelector,
@@ -196,9 +197,12 @@ const formatMaintenanceDate = (intl, date) => {
 const enhance = compose(
   connect(
     state => {
-      const { activeDialog } = state.device
+      const { activeDialog, performanceReport } = state.device
+      const { culture } = state.user
       return {
         activeDialog,
+        performanceReport,
+        culture,
       }
     },
     {
@@ -335,6 +339,232 @@ const enhanceResults = compose(
     },
   })
 )
+
+const PerformanceBarChart = ({
+  data,
+  series,
+  color,
+  avgValue,
+  maxValue,
+  info,
+}) => (
+  <ResponsiveBar
+    data={data}
+    indexBy="period"
+    keys={series.map(x => x.key)}
+    margin={{ top: 10, right: 0, bottom: 90, left: 50 }}
+    padding={0.01} // between stacks, (ratio)
+    innerPadding={1} // between bars in a stack, (px)
+    enableGridY={false}
+    enableLabel={false}
+    defs={[
+      {
+        id: 'lines',
+        type: 'patternLines',
+        background: 'inherit',
+        color: process.env[color],
+        rotation: 45,
+        lineWidth: 7,
+        spacing: 8,
+      },
+    ]}
+    fill={[
+      {
+        match: {
+          id: 'exceededErrorRate',
+        },
+        id: 'lines',
+      },
+      {
+        match: {
+          id: 'exceededUtilizationRate',
+        },
+        id: 'lines',
+      },
+    ]}
+    axisLeft={{
+      tickRotation: 0,
+      legend: 'Percentage(%)',
+      legendPosition: 'middle',
+      legendOffset: -40,
+    }}
+    colors={bar => series.find(x => x.key === bar.id).color}
+    animate
+    markers={[
+      {
+        axis: 'y',
+        value: avgValue,
+        lineStyle: {
+          stroke: process.env['--aspect-color-ship-cove'],
+          strokeWidth: 2,
+        },
+        legendOrientation: 'vertical',
+      },
+    ]}
+    tooltip={({ color, indexValue }) => {
+      const periodData = data.find(x => x.period === indexValue)
+      const value = periodData.errorRate + periodData.exceededErrorRate
+      return (
+        <div>
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <div
+              className={cssClasses('Performance--graph-tooltip-color')}
+              style={{ backgroundColor: color }}
+            />
+            {`% ${info} `}
+          </div>
+          <div>
+            {`${indexValue}: `}
+            <strong>{value}</strong>%
+          </div>
+        </div>
+      )
+    }}
+    maxValue={maxValue}
+    motionStiffness={90}
+    motionDamping={15}
+  />
+)
+const PerformanceReport = enhance(({ performanceReport, culture }) => {
+  const payload = performanceReport.toJS()
+  let maxUtilizationRate = 0
+  let maxErrorRate = 0
+  if (payload.data) {
+    payload.data.forEach(item => {
+      const date = new Date(item.monthTested)
+      const monthName = date.toLocaleString(culture, { month: 'short' })
+      item.period = monthName
+      item.exceededErrorRate =
+        item.errorRate > payload.errorRateAvg
+          ? item.errorRate - payload.errorRateAvg
+          : 0
+      item.errorRate =
+        item.errorRate > payload.errorRateAvg
+          ? payload.errorRateAvg
+          : item.errorRate
+      item.exceededUtilizationRate =
+        item.utilizationRate > payload.utilizationRateAvg
+          ? item.utilizationRate - payload.utilizationRateAvg
+          : 0
+      item.utilizationRate =
+        item.utilizationRate > payload.utilizationRateAvg
+          ? payload.utilizationRateAvg
+          : item.utilizationRate
+    })
+    maxUtilizationRate = payload.data.reduce(
+      (prev, current) =>
+        prev > current.utilizationRate + current.exceededUtilizationRate
+          ? prev
+          : current.utilizationRate + current.exceededUtilizationRate,
+      payload.utilizationRateAvg
+    )
+    maxErrorRate = payload.data.reduce(
+      (prev, current) =>
+        prev > current.errorRate + current.exceededErrorRate
+          ? prev
+          : current.errorRate + current.exceededErrorRate,
+      payload.errorRateAvg
+    )
+
+    maxErrorRate = maxErrorRate === 100 ? maxErrorRate : maxErrorRate + 10
+    maxUtilizationRate += 10
+  }
+
+  const avgUtilizationRate = payload.utilizationRateAvg
+  const avgErrorRate = payload.errorRateAvg
+  const { data } = payload
+  const utilizationRateSeries = [
+    {
+      label: 'Utilization Rate',
+      key: 'utilizationRate',
+      color: process.env['--aspect-color-shakespeare'],
+    },
+    {
+      label: 'Above Target Utilization Rate',
+      key: 'exceededUtilizationRate',
+      color: '#FFFFFF',
+    },
+  ]
+  const errorRateSeries = [
+    {
+      label: 'Error Rate',
+      key: 'errorRate',
+      color: process.env['--aspect-color-mandy'], // green
+    },
+    {
+      label: 'Above Average Error Rate',
+      key: 'exceededErrorRate',
+      color: '#FFFFFF',
+    },
+  ]
+
+  return (
+    <section className={cssClasses('Section')}>
+      <Card className={cssClasses('Section')}>
+        <p data-panel-title>Performance</p>
+        <div data-graph-container>
+          {data && data[0].utilizationRate !== null && (
+            <div
+              className={cssClasses('Graph_Container')}
+              data-utilization-graph
+            >
+              {data && (
+                <div>
+                  <p>Utilization Rate</p>
+                  <PerformanceBarChart
+                    data={data}
+                    series={utilizationRateSeries}
+                    color="--aspect-color-shakespeare"
+                    avgValue={avgUtilizationRate}
+                    maxValue={maxUtilizationRate}
+                    info="Utilization Rate"
+                  />
+                  <div className={cssClasses('Graph_Legend')}>
+                    <div data-utilization-rate-legend>
+                      <div /> <span> Utilization Rate</span>
+                    </div>
+                    <div data-utilization-rate-average-legend>
+                      <div /> <span> Target </span>
+                    </div>
+                    <div data-utilization-rate-above-average-legend>
+                      <div /> <span> Above Target </span>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+          <div className={cssClasses('Graph_Container')}>
+            {data && (
+              <div>
+                <p>Error Rate</p>
+                <PerformanceBarChart
+                  data={data}
+                  series={errorRateSeries}
+                  color="--aspect-color-mandy"
+                  avgValue={avgErrorRate}
+                  maxValue={maxErrorRate}
+                  info="Error Rate"
+                />
+                <div className={cssClasses('Graph_Legend')}>
+                  <div data-error-rate-legend>
+                    <div /> <span> Error Rate</span>
+                  </div>
+                  <div data-error-rate-average-legend>
+                    <div /> <span> Country Average </span>
+                  </div>
+                  <div data-error-rate-above-average-legend>
+                    <div /> <span> Above Average</span>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </Card>
+    </section>
+  )
+})
 
 const Results = enhanceResults(
   ({
@@ -665,6 +895,7 @@ export const DeviceDetailProfile = ({
           onSubmit={onWarrantySubmit}
         />
       </section>
+      <PerformanceReport match={match} location={location} />
       <Results
         match={match}
         history={history}

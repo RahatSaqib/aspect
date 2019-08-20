@@ -7,7 +7,11 @@ import { connect } from 'react-redux'
 import { Switch, Redirect, Route } from 'react-router-dom'
 import isEditable from '../../shared/selectors/isEditable'
 import { DelayShowingProgressCircular } from '../../components/shared/DelayShowingProgressBar'
-import { fetchSingleDevice, updateSingleDevice } from '../DeviceRedux'
+import {
+  fetchSingleDevice,
+  updateSingleDevice,
+  fetchPerformanceReport,
+} from '../DeviceRedux'
 import DeviceDetailProfile from './profile/DeviceDetailProfile'
 import DeviceDetailOperation from './operation/DeviceDetailOperation'
 import DeviceDetailAlerts from './alerts/DeviceDetailAlerts'
@@ -32,17 +36,25 @@ const enhance = compose(
         loading: !!state.device.requestedAt,
         device,
         displayPreferences,
+        performanceReport: state.device.performanceReport,
       }
     },
     bindActionCreators.bind(null, {
       fetchSingleDevice,
       updateSingleDevice,
+      fetchPerformanceReport,
     })
   ),
   withHandlers({
-    onInitialLoad: ({ location, match, fetchSingleDevice }) => () => {
+    onInitialLoad: ({
+      location,
+      match,
+      fetchSingleDevice,
+      fetchPerformanceReport,
+    }) => () => {
       const searchParams = new URLSearchParams(location.search)
       fetchSingleDevice(match.params.deviceId, searchParams)
+      fetchPerformanceReport(match.params.deviceId)
     },
 
     onDateRangeChange: ({ history, location }) => ({
