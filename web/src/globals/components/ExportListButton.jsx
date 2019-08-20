@@ -3,14 +3,26 @@ import Popover from '@material-ui/core/Popover'
 import IconButton from '@material-ui/core/IconButton'
 import React from 'react'
 import { compose, withState, withHandlers } from 'recompose'
+import { connect } from 'react-redux'
 import classnames from 'classnames/bind'
 import LinearProgress from '@material-ui/core/LinearProgress'
+import { onStartDownloading } from '../GlobalsRedux'
 
 const cssClasses = classnames.bind(require('./ExportListButton.css'))
 
+const mapStateToProps = state => ({
+  downloadStarted: state.getIn(['globals', 'downloadStarted']),
+})
+const mapDispatchToProps = dispatch => ({
+  startDownloading: () => dispatch(onStartDownloading()),
+})
+
 const enhance = compose(
+  connect(
+    mapStateToProps,
+    mapDispatchToProps
+  ),
   withState('anchorEl', 'setAnchorEl', null),
-  withState('loading', 'setLoading', null),
   withHandlers({
     onPopoverClick: ({ setAnchorEl }) => event => {
       setAnchorEl(event.currentTarget)
@@ -18,13 +30,19 @@ const enhance = compose(
     onPopoverClose: ({ setAnchorEl }) => () => {
       setAnchorEl(null)
     },
-    onMyExport: prop => e => {
+    onMyExport: ({
+      setAnchorEl,
+      onExcelClick,
+      onCsvClick,
+      startDownloading,
+    }) => e => {
       e.preventDefault()
-      prop.setAnchorEl(null)
-      prop.setLoading(true)
-      if (e.currentTarget.id === 'csv') prop.onCsvClick(e.currentTarget)
-      else prop.onExcelClick(e.currentTarget)
-      // prop.setLoading(false)
+      setAnchorEl(null)
+      // console.log('onStartDownload', onStartDownload)
+      startDownloading()
+      if (e.currentTarget.id === 'csv') onCsvClick(e.currentTarget)
+      else onExcelClick(e.currentTarget)
+
       return true
     },
   })
@@ -37,10 +55,10 @@ const ExportListButton = ({
   onPopoverClick,
   onPopoverClose,
   anchorEl,
-  loading,
+  downloadStarted,
 }) => (
   <div>
-    {loading && <LinearProgress />}
+    {downloadStarted && <LinearProgress />}
     <IconButton
       variant="contained"
       onClick={onPopoverClick}

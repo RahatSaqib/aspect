@@ -57,7 +57,6 @@ const headers = [
   { key: 'treatmentStatusInfo', header: 'Treatment status info' },
 ]
 async function getResultsReport(request, reply) {
-  console.log('ejecuto')
   // Here is a really good example of the necessity of a data layer.
   // I tried to call some existing service method for the list of devices,
   // but everyone has parameters of the API (Request, query, Credentials, etc).
