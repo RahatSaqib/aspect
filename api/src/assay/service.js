@@ -149,7 +149,6 @@ async function getAllAssaySchemas(partnerId, assayId = null) {
       'a.resultDataSchema',
       'a.patientDataSchema'
     )
-  console.log(query.toString())
   return query
 }
 module.exports = {
