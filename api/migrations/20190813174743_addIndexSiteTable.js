@@ -2,11 +2,11 @@ module.exports = require('../src/db').migration(up, down)
 
 async function up(knex) {
   await knex.schema.alterTable('Result', t => {
-    t.dropIndex('result_partnerid_index')
     t.integer('partnerId')
+      .unsigned()
       .notNullable()
+      // .references('Partner.id')
       .alter()
-    t.foreign('partnerId').references('Partner.id')
   })
   await knex.schema.alterTable('Site', t => {
     t.index(['partnerId', 'geographyId'])
@@ -14,12 +14,12 @@ async function up(knex) {
 }
 async function down(knex) {
   await knex.schema.alterTable('Result', t => {
-    t.index('result_partnerid_index')
-
     t.integer('partnerId')
+      .unsigned()
       .nullable()
       .alter()
-    t.foreign('partnerId').references('Partner.id')
+  })
+  await knex.schema.alterTable('Site', t => {
     t.dropIndex(['partnerId', 'geographyId'])
   })
 }
