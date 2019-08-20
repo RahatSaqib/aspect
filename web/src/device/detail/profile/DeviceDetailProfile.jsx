@@ -446,13 +446,21 @@ const PerformanceReport = enhance(({ performanceReport, culture }) => {
     })
     maxUtilizationRate = payload.data.reduce(
       (prev, current) =>
-        prev > current.utilizationRate ? prev : current.utilizationRate,
+        prev > current.utilizationRate + current.exceededUtilizationRate
+          ? prev
+          : current.utilizationRate + current.exceededUtilizationRate,
       payload.utilizationRateAvg
     )
     maxErrorRate = payload.data.reduce(
-      (prev, current) => (prev > current.errorRate ? prev : current.errorRate),
+      (prev, current) =>
+        prev > current.errorRate + current.exceededErrorRate
+          ? prev
+          : current.errorRate + current.exceededErrorRate,
       payload.errorRateAvg
     )
+
+    maxErrorRate = maxErrorRate === 100 ? maxErrorRate : maxErrorRate + 10
+    maxUtilizationRate += 10
   }
 
   const avgUtilizationRate = payload.utilizationRateAvg
