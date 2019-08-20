@@ -162,6 +162,27 @@ describe('Device routes', () => {
           done()
         })
     })
+
+    it('should return performance report of a specific device', done => {
+      server
+        .get(`${path}/performance/2`)
+        .set('Authorization', `Bearer ${shared.token}`)
+        .end((err, res) => {
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+          assert.property(res.body, 'utilizationRateAvg')
+          assert.property(res.body, 'errorRateAvg')
+          assert.property(res.body, 'data')
+          assert.equal(res.body.data.length, 12)
+          assert.typeOf(res.body.data, 'array')
+          assert.property(res.body.data[0], 'totalResult')
+          assert.property(res.body.data[0], 'errorCount')
+          assert.property(res.body.data[0], 'monthTested')
+          assert.property(res.body.data[0], 'utilizationRate')
+          assert.property(res.body.data[0], 'errorRate')
+          done()
+        })
+    })
   })
 
   describe('POST', () => {
