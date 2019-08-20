@@ -44,140 +44,140 @@ async function seed(knex) {
         list: false,
         order: 1,
         type: 'string',
-        report: true,
+
         title: 'Result No',
       },
       deviceSerial: {
         list: true,
         order: 2,
         type: 'string',
-        report: true,
+
         title: 'Device Serial',
       },
       testName: {
         list: true,
         order: 3,
         type: 'string',
-        report: true,
+
         title: 'Test Name',
       },
       cartridgeId: {
         list: true,
         order: 4,
         type: 'string',
-        report: true,
+
         title: 'Cartridge ID',
       },
       sampleId: {
         list: true,
         order: 5,
         type: 'string',
-        report: true,
+
         title: 'Sample ID',
       },
       hiv1MNResult: {
         list: true,
         order: 6,
         type: 'string',
-        report: true,
+
         title: 'HIV-1 M/N',
       },
       hiv1OResult: {
         list: true,
         order: 7,
         type: 'string',
-        report: true,
+
         title: 'HIV-1 O',
       },
       hiv2Result: {
         list: true,
         order: 8,
         type: 'string',
-        report: true,
+
         title: 'HIV-2',
       },
       errorCode: {
         list: true,
         order: 9,
         type: 'string',
-        report: true,
+
         title: 'Error Code',
       },
       operator: {
         list: true,
         order: 10,
         type: 'string',
-        report: true,
+
         title: 'Operator',
       },
       timeStamp: {
         list: true,
         order: 11,
         type: 'time',
-        report: true,
+
         title: 'Timestamp',
       },
       sampleDetection: {
         list: false,
         order: 12,
         type: 'string',
-        report: true,
+
         title: 'Sample Detection Check',
       },
       deviceCheck: {
         list: false,
         order: 13,
         type: 'string',
-        report: true,
+
         title: 'Device Check',
       },
       hiv1PositiveControl: {
         list: false,
         order: 14,
         type: 'string',
-        report: true,
+
         title: 'HIV-1 Positive Control',
       },
       hiv2PositiveControl: {
         list: false,
         order: 15,
         type: 'string',
-        report: true,
+
         title: 'HIV-2 Positive Control',
       },
       negativeControl: {
         list: false,
         order: 16,
         type: 'string',
-        report: true,
+
         title: 'Negative Control',
       },
       analysisCheck: {
         list: false,
         order: 17,
         type: 'string',
-        report: true,
+
         title: 'Analysis Check',
       },
       softwareVersion: {
         list: false,
         order: 18,
         type: 'string',
-        report: true,
+
         title: 'Device Software Version',
       },
       sourceFile: {
         list: false,
         order: 19,
         type: 'string',
-        report: true,
+
         title: 'Source File',
       },
       pickedUpOn: {
         list: false,
         order: 20,
         type: 'time',
-        report: true,
+
         title: 'Picked Up On',
       },
     }),
@@ -196,154 +196,154 @@ async function seed(knex) {
         list: false,
         order: 1,
         type: 'string',
-        report: true,
+
         title: 'Result No',
       },
       deviceSerial: {
         list: true,
         order: 2,
         type: 'string',
-        report: true,
+
         title: 'Device Serial',
       },
       testName: {
         list: true,
         order: 3,
         type: 'string',
-        report: true,
+
         title: 'Test Name',
       },
       cartridgeId: {
         list: true,
         order: 4,
         type: 'string',
-        report: true,
+
         title: 'Cartridge ID',
       },
       sampleId: {
         list: true,
         order: 5,
         type: 'string',
-        report: true,
+
         title: 'Sample ID',
       },
       hiv1MNResult: {
         list: true,
         order: 6,
         type: 'string',
-        report: true,
+
         title: 'HIV-1 M/N cp/mL',
       },
       hiv1OResult: {
         list: true,
         order: 7,
         type: 'string',
-        report: true,
+
         title: 'HIV-1 O cp/mL',
       },
       hiv2Result: {
         list: true,
         order: 8,
         type: 'string',
-        report: true,
+
         title: 'HIV-2 cp/mL',
       },
       errorCode: {
         list: true,
         order: 9,
         type: 'string',
-        report: true,
+
         title: 'Error Code',
       },
       operator: {
         list: true,
         order: 10,
         type: 'string',
-        report: true,
+
         title: 'Operator',
       },
       timeStamp: {
         list: true,
         order: 11,
         type: 'time',
-        report: true,
+
         title: 'Timestamp',
       },
       sampleDetection: {
         list: false,
         order: 12,
         type: 'string',
-        report: true,
+
         title: 'Sample Detection Check',
       },
       deviceCheck: {
         list: false,
         order: 13,
         type: 'string',
-        report: true,
+
         title: 'Device Check',
       },
       hiv1PositiveControl: {
         list: false,
         order: 14,
         type: 'string',
-        report: true,
+
         title: 'HIV-1 Positive Control',
       },
       hiv2PositiveControl: {
         list: false,
         order: 15,
         type: 'string',
-        report: true,
+
         title: 'HIV-2 Positive Control',
       },
       negativeControl: {
         list: false,
         order: 16,
         type: 'string',
-        report: true,
+
         title: 'Negative Control',
       },
       analysisCheck: {
         list: false,
         order: 17,
         type: 'string',
-        report: true,
+
         title: 'Analysis Check',
       },
       softwareVersion: {
         list: false,
         order: 18,
         type: 'string',
-        report: true,
+
         title: 'Device Software Version',
       },
       deviceMode: {
         list: false,
         order: 19,
         type: 'string',
-        report: true,
+
         title: 'Device Mode',
       },
       status: {
         list: false,
         order: 20,
         type: 'string',
-        report: true,
+
         title: 'Status',
       },
       sourceFile: {
         list: false,
         order: 21,
         type: 'string',
-        report: true,
+
         title: 'Source File',
       },
       pickedUpOn: {
         list: false,
         order: 22,
         type: 'time',
-        report: true,
+
         title: 'Picked Up On',
       },
     }),

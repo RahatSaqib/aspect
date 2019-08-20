@@ -181,61 +181,59 @@ async function seed(knex) {
       resultText: {
         title: 'Result',
         type: 'string',
-        report: true,
       },
       interpretation: {
         title: 'Interpretation',
         type: 'string',
-        report: true,
       },
     }),
     patientDataSchema: JSON.stringify({
       name: {
         title: 'Client Name',
         type: 'string',
-        report: true,
+
         order: 1,
       },
       surname: {
         title: 'Client Surname',
         type: 'string',
-        report: true,
+
         order: 2,
       },
       artNumber: {
         title: 'ART #',
         type: 'string',
-        report: true,
+
         order: 4,
       },
       age: {
         title: 'Age (months)',
         type: 'string',
-        report: true,
+
         order: 3,
       },
       dateOfBirth: {
         title: 'Date of Birth',
         type: 'string',
-        report: true,
+
         order: 4,
       },
       gender: {
         title: 'Gender',
         type: 'string',
-        report: true,
+
         order: 5,
       },
       provider: {
         title: 'Provider',
         type: 'string',
-        report: true,
+
         order: 7,
       },
       phone: {
         title: 'Phone #',
         type: 'string',
-        report: true,
+
         order: 8,
       },
     }),
@@ -265,55 +263,55 @@ async function seed(knex) {
       name: {
         title: 'Client Name',
         type: 'string',
-        report: true,
+
         order: 1,
       },
       surname: {
         title: 'Client Surname',
         type: 'string',
-        report: true,
+
         order: 2,
       },
       age: {
         title: 'Age (months)',
         type: 'string',
-        report: true,
+
         order: 3,
       },
       dateOfBirth: {
         title: 'Date of Birth',
         type: 'string',
-        report: true,
+
         order: 4,
       },
       gender: {
         title: 'Gender',
         type: 'string',
-        report: true,
+
         order: 5,
       },
       hccNumber: {
         title: 'HCC #',
         type: 'string',
-        report: true,
+
         order: 6,
       },
       motherName: {
         title: 'Mother Name',
         type: 'string',
-        report: true,
+
         order: 7,
       },
       motherSurname: {
         title: 'Mother Surname',
         type: 'string',
-        report: true,
+
         order: 8,
       },
       phone: {
         title: 'Phone #',
         type: 'string',
-        report: true,
+
         order: 9,
       },
     }),

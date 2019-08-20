@@ -63,85 +63,71 @@ async function seed(knex) {
 
   const patientDataSchema = JSON.stringify({
     name: {
-      report: true,
       title: 'Name of patient',
       type: 'string',
       order: 0,
     },
     age: {
-      report: true,
       title: 'Age',
       type: 'number',
       order: 1,
     },
     gender: {
-      report: true,
       title: 'Sex',
       type: 'string',
       order: 2,
     },
     dateOfBirth: {
-      report: true,
       title: 'Date of Birth',
       type: 'string',
       order: 3,
     },
     state: {
-      report: true,
       title: 'Province',
       type: 'string',
       order: 4,
     },
     site: {
-      report: true,
       title: 'Site',
       type: 'string',
       order: 5,
     },
     focalPerson: {
-      report: true,
       title: 'Focal Person',
       type: 'string',
       order: 6,
     },
     contactDetails: {
-      report: true,
       title: 'Contact Details',
       type: 'string',
       order: 7,
     },
     xpertMtbRifResult: {
-      report: true,
       title: 'XPERT MTB RIF Result',
       type: 'string',
       order: 8,
     },
     dateStartedOnTreatment: {
-      report: true,
       title: 'Date Started on TX',
       type: 'string',
       order: 9,
     },
     baselineCulture: {
-      report: true,
       title: 'Baseline Culture',
       type: 'string',
       order: 10,
     },
     lpaFl: {
-      report: true,
       title: 'LPA FL',
       type: 'string',
       order: 5,
     },
     lpaSl: {
-      report: true,
       title: 'LPA SL',
       type: 'string',
       order: 11,
     },
     mgitSire: {
-      report: true,
       title: 'MGIT SIRE',
       type: 'string',
       order: 12,
@@ -164,26 +150,22 @@ async function seed(knex) {
         list: false,
         order: 0,
         type: 'object',
-        report: true,
+
         title: 'EMB',
         properties: {
           sirStatus: {
-            report: true,
             title: 'SIR Status',
             type: 'string',
           },
           growthUnits: {
-            report: true,
             title: 'Growth Units',
             type: 'number',
           },
           antibioticConcentration: {
-            report: true,
             title: 'Concentration',
             type: 'number',
           },
           antibioticConcentrationUnits: {
-            report: true,
             title: 'Units',
             type: 'string',
           },
@@ -193,26 +175,22 @@ async function seed(knex) {
         list: false,
         order: 1,
         type: 'object',
-        report: true,
+
         title: 'RIF',
         properties: {
           sirStatus: {
-            report: true,
             title: 'SIR Status',
             type: 'string',
           },
           growthUnits: {
-            report: true,
             title: 'Growth Units',
             type: 'number',
           },
           antibioticConcentration: {
-            report: true,
             title: 'Concentration',
             type: 'number',
           },
           antibioticConcentrationUnits: {
-            report: true,
             title: 'Units',
             type: 'string',
           },
@@ -222,26 +200,22 @@ async function seed(knex) {
         list: false,
         order: 2,
         type: 'object',
-        report: true,
+
         title: 'S',
         properties: {
           sirStatus: {
-            report: true,
             title: 'SIR Status',
             type: 'string',
           },
           growthUnits: {
-            report: true,
             title: 'Growth Units',
             type: 'number',
           },
           antibioticConcentration: {
-            report: true,
             title: 'Concentration',
             type: 'number',
           },
           antibioticConcentrationUnits: {
-            report: true,
             title: 'Units',
             type: 'string',
           },
@@ -251,26 +225,22 @@ async function seed(knex) {
         list: false,
         order: 3,
         type: 'object',
-        report: true,
+
         title: 'EM',
         properties: {
           sirStatus: {
-            report: true,
             title: 'SIR Status',
             type: 'string',
           },
           growthUnits: {
-            report: true,
             title: 'Growth Units',
             type: 'number',
           },
           antibioticConcentration: {
-            report: true,
             title: 'Concentration',
             type: 'number',
           },
           antibioticConcentrationUnits: {
-            report: true,
             title: 'Units',
             type: 'string',
           },
@@ -280,26 +250,22 @@ async function seed(knex) {
         list: false,
         order: 4,
         type: 'object',
-        report: true,
+
         title: 'RA',
         properties: {
           sirStatus: {
-            report: true,
             title: 'SIR Status',
             type: 'string',
           },
           growthUnits: {
-            report: true,
             title: 'Growth Units',
             type: 'number',
           },
           antibioticConcentration: {
-            report: true,
             title: 'Concentration',
             type: 'number',
           },
           antibioticConcentrationUnits: {
-            report: true,
             title: 'Units',
             type: 'string',
           },
@@ -309,26 +275,22 @@ async function seed(knex) {
         list: false,
         order: 5,
         type: 'object',
-        report: true,
+
         title: 'INH',
         properties: {
           sirStatus: {
-            report: true,
             title: 'SIR Status',
             type: 'string',
           },
           growthUnits: {
-            report: true,
             title: 'Growth Units',
             type: 'number',
           },
           antibioticConcentration: {
-            report: true,
             title: 'Concentration',
             type: 'number',
           },
           antibioticConcentrationUnits: {
-            report: true,
             title: 'Units',
             type: 'string',
           },
@@ -338,133 +300,133 @@ async function seed(knex) {
         list: false,
         order: 6,
         type: 'number',
-        report: true,
+
         title: 'Protocol Length',
       },
       instrumentLocation: {
         list: false,
         order: 7,
         type: 'string',
-        report: true,
+
         title: 'Specimen Instrument Location',
       },
       isolateNumber: {
         list: false,
         order: 8,
         type: 'number',
-        report: true,
+
         title: 'Isolate Number',
       },
       senderName: {
         list: false,
         order: 9,
         type: 'string',
-        report: true,
+
         title: 'Sender Name',
       },
       instrumentType: {
         list: false,
         order: 10,
         type: 'string',
-        report: true,
+
         title: 'Instrument Type',
       },
       instrumentNumber: {
         list: false,
         order: 11,
         type: 'string',
-        report: true,
+
         title: 'Instrument Number',
       },
       versionNumber: {
         list: false,
         order: 12,
         type: 'string',
-        report: true,
+
         title: 'Version Number',
       },
       testId: {
         list: false,
         order: 13,
         type: 'string',
-        report: true,
+
         title: 'Test ID',
       },
       resultTypeCode: {
         list: false,
         order: 14,
         type: 'string',
-        report: true,
+
         title: 'Result Type Code',
       },
       preliminaryFinalStatus: {
         list: false,
         order: 15,
         type: 'string',
-        report: true,
+
         title: 'Preliminary/Final',
       },
       dateInoculated: {
         list: false,
         order: 16,
         type: 'date',
-        report: true,
+
         title: 'Date Inoculated',
       },
       dateFlaggedScanned: {
         list: false,
         order: 17,
         type: 'date',
-        report: true,
+
         title: 'Date Flagged Positive/Scanned Out',
       },
       dateLjGrowth: {
         list: false,
         order: 18,
         type: 'date',
-        report: true,
+
         title: 'Date LJ Growth',
       },
       ljGrowthClCOunt: {
         list: false,
         order: 19,
         type: 'number',
-        report: true,
+
         title: 'CL Count',
       },
       ljGrowthZn: {
         list: false,
         order: 20,
         type: 'number',
-        report: true,
+
         title: 'LJ Growth ZN',
       },
       mgitTurbidity: {
         list: false,
         order: 21,
         type: 'string',
-        report: true,
+
         title: 'Turbidity',
       },
       ba: {
         list: false,
         order: 22,
         type: 'string',
-        report: true,
+
         title: 'B/A',
       },
       actionTaken: {
         list: false,
         order: 23,
         type: 'string',
-        report: true,
+
         title: 'Action Taken',
       },
       doneBy: {
         list: false,
         order: 24,
         type: 'string',
-        report: true,
+
         title: 'Done By',
       },
     }),
@@ -540,133 +502,133 @@ async function seed(knex) {
         list: false,
         order: 2,
         type: 'number',
-        report: true,
+
         title: 'Protocol Length',
       },
       instrumentLocation: {
         list: false,
         order: 3,
         type: 'string',
-        report: true,
+
         title: 'Specimen Instrument Location',
       },
       isolateNumber: {
         list: false,
         order: 4,
         type: 'number',
-        report: true,
+
         title: 'Isolate Number',
       },
       senderName: {
         list: false,
         order: 5,
         type: 'string',
-        report: true,
+
         title: 'Sender Name',
       },
       instrumentType: {
         list: false,
         order: 6,
         type: 'string',
-        report: true,
+
         title: 'Instrument Type',
       },
       instrumentNumber: {
         list: false,
         order: 7,
         type: 'string',
-        report: true,
+
         title: 'Instrument Number',
       },
       versionNumber: {
         list: false,
         order: 8,
         type: 'string',
-        report: true,
+
         title: 'Version Number',
       },
       testId: {
         list: false,
         order: 9,
         type: 'string',
-        report: true,
+
         title: 'Test ID',
       },
       resultTypeCode: {
         list: false,
         order: 10,
         type: 'string',
-        report: true,
+
         title: 'Result Type Code',
       },
       preliminaryFinalStatus: {
         list: false,
         order: 11,
         type: 'string',
-        report: true,
+
         title: 'Preliminary/Final',
       },
       dateInoculated: {
         list: false,
         order: 12,
         type: 'date',
-        report: true,
+
         title: 'Date Inoculated',
       },
       dateFlaggedScanned: {
         list: false,
         order: 13,
         type: 'date',
-        report: true,
+
         title: 'Date Flagged Positive/Scanned Out',
       },
       dateLjGrowth: {
         list: false,
         order: 14,
         type: 'date',
-        report: true,
+
         title: 'Date LJ Growth',
       },
       ljGrowthClCOunt: {
         list: false,
         order: 15,
         type: 'number',
-        report: true,
+
         title: 'CL Count',
       },
       ljGrowthZn: {
         list: false,
         order: 16,
         type: 'number',
-        report: true,
+
         title: 'LJ Growth ZN',
       },
       mgitTurbidity: {
         list: false,
         order: 17,
         type: 'string',
-        report: true,
+
         title: 'Turbidity',
       },
       ba: {
         list: false,
         order: 18,
         type: 'string',
-        report: true,
+
         title: 'B/A',
       },
       actionTaken: {
         list: false,
         order: 19,
         type: 'string',
-        report: true,
+
         title: 'Action Taken',
       },
       doneBy: {
         list: false,
         order: 20,
         type: 'string',
-        report: true,
+
         title: 'Done By',
       },
     }),
@@ -750,476 +712,476 @@ async function seed(knex) {
         list: false,
         order: 1,
         type: 'number',
-        report: true,
+
         title: 'Order-Number of Strip in Analysis',
       },
       company: {
         list: true,
         order: 2,
         type: 'string',
-        report: true,
+
         title: 'Producer of Testkit',
       },
       typeOfTest: {
         list: true,
         order: 3,
         type: 'string',
-        report: true,
+
         title: 'Internal name of setcard',
       },
       revision: {
         list: false,
         order: 4,
         type: 'number',
-        report: true,
+
         title: 'Internal revision number of setcard',
       },
       control: {
         list: false,
         order: 5,
         type: 'string',
-        report: true,
+
         title: 'Internal name of control',
       },
       igType: {
         list: true,
         order: 6,
         type: 'string',
-        report: true,
+
         title: 'Internal Ig-Type',
       },
       charge: {
         list: false,
         order: 7,
         type: 'string',
-        report: true,
+
         title: 'Lot-Number of Testkit',
       },
       stripType: {
         list: true,
         order: 8,
         type: 'string',
-        report: true,
+
         title: 'Internal Type of Strip',
       },
       cw: {
         list: false,
         order: 9,
         type: 'number',
-        report: true,
+
         title: 'Internal Connected-With-Strip number',
       },
       probeNumber: {
         list: false,
         order: 10,
         type: 'string',
-        report: true,
+
         title: 'Blood-Sample-ID',
       },
       pid: {
         list: true,
         order: 11,
         type: 'string',
-        report: true,
+
         title: 'External Patient-ID',
       },
       lastName: {
         list: false,
         order: 12,
         type: 'string',
-        report: true,
+
         title: 'Last name of Patient',
       },
       firstName: {
         list: false,
         order: 13,
         type: 'string',
-        report: true,
+
         title: 'First name of Patient',
       },
       birthday: {
         list: false,
         order: 14,
         type: 'date',
-        report: true,
+
         title: 'Date of Birth of Patient',
       },
       sex: {
         list: false,
         order: 15,
         type: 'string',
-        report: true,
+
         title: 'Sex of Patient',
       },
       elisaIgA: {
         list: true,
         order: 16,
         type: 'string',
-        report: true,
+
         title: 'Result Elisa IgA',
       },
       elisaIgG: {
         list: true,
         order: 17,
         type: 'string',
-        report: true,
+
         title: 'Result Elisa IgG',
       },
       elisaIgM: {
         list: true,
         order: 18,
         type: 'string',
-        report: true,
+
         title: 'Result Elisa IgM',
       },
       dateOfRequest: {
         list: false,
         order: 19,
         type: 'date',
-        report: true,
+
         title: 'Date of Request',
       },
       dateOfAnalysis: {
         list: false,
         order: 20,
         type: 'date',
-        report: true,
+
         title: 'Date of Analysis',
       },
       cutOffTolerance: {
         list: false,
         order: 21,
         type: 'number',
-        report: true,
+
         title: 'Cut-Off Tolerance value',
       },
       rShort: {
         list: true,
         order: 22,
         type: 'string',
-        report: true,
+
         title: 'Short form of result',
       },
       result: {
         list: false,
         order: 23,
         type: 'string',
-        report: true,
+
         title: 'Long form of result',
       },
       rjoined: {
         list: false,
         order: 24,
         type: 'string',
-        report: true,
+
         title: 'Result for joined Analysis',
       },
       antigens: {
         list: false,
         order: 25,
         type: 'string',
-        report: true,
+
         title: 'Antigens',
       },
       revAntigens: {
         list: false,
         order: 26,
         type: 'string',
-        report: true,
+
         title: 'Content of "Revised Antigens" Field in Analysis Window',
       },
       windowsUser: {
         list: false,
         order: 27,
         type: 'string',
-        report: true,
+
         title: 'User logged onto Windows System',
       },
       checkSum: {
         list: false,
         order: 28,
         type: 'number',
-        report: true,
+
         title: 'Checksum for data row',
       },
       band1I: {
         list: false,
         order: 29,
         type: 'number',
-        report: true,
+
         title: 'Intensity of Band 1 on Strip',
       },
       band1Co: {
         list: false,
         order: 30,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 1 compared to CutOff',
       },
       band1A: {
         list: false,
         order: 31,
         type: 'number',
-        report: true,
+
         title: 'Integral (Area) of Band 1 on Strip',
       },
       band1R: {
         list: false,
         order: 32,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 1',
       },
       band2I: {
         list: false,
         order: 33,
         type: 'number',
-        report: true,
+
         title: 'Intensity of Band 2 on Strip',
       },
       band2Co: {
         list: false,
         order: 34,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 2 compared to CutOff',
       },
       band2A: {
         list: false,
         order: 35,
         type: 'number',
-        report: true,
+
         title: 'Integral (Area) of Band 2 on Strip',
       },
       band2R: {
         list: false,
         order: 36,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 2',
       },
       band3I: {
         list: false,
         order: 37,
         type: 'number',
-        report: true,
+
         title: 'Intensity of Band N on Strip',
       },
       band3Co: {
         list: false,
         order: 38,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band N compared to CutOff',
       },
       band3A: {
         list: false,
         order: 39,
         type: 'number',
-        report: true,
+
         title: 'Integral (Area) of Band N on Strip',
       },
       band3R: {
         list: false,
         order: 40,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band N',
       },
       band4I: {
         list: false,
         order: 41,
         type: 'number',
-        report: true,
+
         title: 'Intensity of Band 4 on Strip',
       },
       band4Co: {
         list: false,
         order: 42,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 4 compared to CutOff',
       },
       band4A: {
         list: false,
         order: 43,
         type: 'number',
-        report: true,
+
         title: 'Integral (Area) of Band 4 on Strip',
       },
       band4R: {
         list: false,
         order: 44,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 4',
       },
       band5I: {
         list: false,
         order: 45,
         type: 'number',
-        report: true,
+
         title: 'Intensity of Band 5 on Strip',
       },
       band5Co: {
         list: false,
         order: 46,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 5 compared to CutOff',
       },
       band5A: {
         list: false,
         order: 47,
         type: 'number',
-        report: true,
+
         title: 'Integral (Area) of Band 5 on Strip',
       },
       band5R: {
         list: false,
         order: 48,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 5',
       },
       band6I: {
         list: false,
         order: 49,
         type: 'number',
-        report: true,
+
         title: 'Intensity of Band 6 on Strip',
       },
       band6Co: {
         list: false,
         order: 50,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 6 compared to CutOff',
       },
       band6A: {
         list: false,
         order: 51,
         type: 'number',
-        report: true,
+
         title: 'Integral (Area) of Band 6 on Strip',
       },
       band6R: {
         list: false,
         order: 52,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 6',
       },
       band7I: {
         list: false,
         order: 53,
         type: 'number',
-        report: true,
+
         title: 'Intensity of Band 7 on Strip',
       },
       band7Co: {
         list: false,
         order: 54,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 7 compared to CutOff',
       },
       band7A: {
         list: false,
         order: 55,
         type: 'number',
-        report: true,
+
         title: 'Integral (Area) of Band 7 on Strip',
       },
       band7R: {
         list: false,
         order: 56,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 7',
       },
       band8I: {
         list: false,
         order: 57,
         type: 'number',
-        report: true,
+
         title: 'Intensity of Band 8 on Strip',
       },
       band8Co: {
         list: false,
         order: 58,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 8 compared to CutOff',
       },
       band8A: {
         list: false,
         order: 59,
         type: 'number',
-        report: true,
+
         title: 'Integral (Area) of Band 8 on Strip',
       },
       band8R: {
         list: false,
         order: 60,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 8',
       },
       band9I: {
         list: false,
         order: 61,
         type: 'number',
-        report: true,
+
         title: 'Intensity of Band 9 on Strip',
       },
       band9Co: {
         list: false,
         order: 62,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 9 compared to CutOff',
       },
       band9A: {
         list: false,
         order: 63,
         type: 'number',
-        report: true,
+
         title: 'Integral (Area) of Band 9 on Strip',
       },
       band9R: {
         list: false,
         order: 64,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 9',
       },
       band10I: {
         list: false,
         order: 65,
         type: 'number',
-        report: true,
+
         title: 'Intensity of Band 10 on Strip',
       },
       band10Co: {
         list: false,
         order: 66,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 10 compared to CutOff',
       },
       band10A: {
         list: false,
         order: 67,
         type: 'number',
-        report: true,
+
         title: 'Integral (Area) of Band 10 on Strip',
       },
       band10R: {
         list: false,
         order: 68,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 10',
       },
     }),
@@ -1307,952 +1269,952 @@ async function seed(knex) {
         list: false,
         order: 1,
         type: 'number',
-        report: true,
+
         title: 'Order-Number of Strip in Analysis',
       },
       company: {
         list: true,
         order: 2,
         type: 'string',
-        report: true,
+
         title: 'Producer of Testkit',
       },
       typeOfTest: {
         list: true,
         order: 3,
         type: 'string',
-        report: true,
+
         title: 'Internal name of setcard',
       },
       revision: {
         list: false,
         order: 4,
         type: 'number',
-        report: true,
+
         title: 'Internal revision number of setcard',
       },
       control: {
         list: false,
         order: 5,
         type: 'string',
-        report: true,
+
         title: 'Internal name of control',
       },
       igType: {
         list: true,
         order: 6,
         type: 'string',
-        report: true,
+
         title: 'Internal Ig-Type',
       },
       charge: {
         list: false,
         order: 7,
         type: 'string',
-        report: true,
+
         title: 'Lot-Number of Testkit',
       },
       stripType: {
         list: true,
         order: 8,
         type: 'string',
-        report: true,
+
         title: 'Internal Type of Strip',
       },
       cw: {
         list: false,
         order: 9,
         type: 'number',
-        report: true,
+
         title: 'Internal Connected-With-Strip number',
       },
       probeNumber: {
         list: false,
         order: 10,
         type: 'string',
-        report: true,
+
         title: 'Blood-Sample-ID',
       },
       pid: {
         list: true,
         order: 11,
         type: 'string',
-        report: true,
+
         title: 'External Patient-ID',
       },
       lastName: {
         list: false,
         order: 12,
         type: 'string',
-        report: true,
+
         title: 'Last name of Patient',
       },
       firstName: {
         list: false,
         order: 13,
         type: 'string',
-        report: true,
+
         title: 'First name of Patient',
       },
       birthday: {
         list: false,
         order: 14,
         type: 'date',
-        report: true,
+
         title: 'Date of Birth of Patient',
       },
       sex: {
         list: false,
         order: 15,
         type: 'string',
-        report: true,
+
         title: 'Sex of Patient',
       },
       elisaIgA: {
         list: true,
         order: 16,
         type: 'string',
-        report: true,
+
         title: 'Result Elisa IgA',
       },
       elisaIgG: {
         list: true,
         order: 17,
         type: 'string',
-        report: true,
+
         title: 'Result Elisa IgG',
       },
       elisaIgM: {
         list: true,
         order: 18,
         type: 'string',
-        report: true,
+
         title: 'Result Elisa IgM',
       },
       dateOfRequest: {
         list: false,
         order: 19,
         type: 'date',
-        report: true,
+
         title: 'Date of Request',
       },
       dateOfAnalysis: {
         list: false,
         order: 20,
         type: 'date',
-        report: true,
+
         title: 'Date of Analysis',
       },
       cutOffTolerance: {
         list: false,
         order: 21,
         type: 'number',
-        report: true,
+
         title: 'Cut-Off Tolerance value',
       },
       rShort: {
         list: true,
         order: 22,
         type: 'string',
-        report: true,
+
         title: 'Short form of result',
       },
       result: {
         list: false,
         order: 23,
         type: 'string',
-        report: true,
+
         title: 'Long form of result',
       },
       rjoined: {
         list: false,
         order: 24,
         type: 'string',
-        report: true,
+
         title: 'Result for joined Analysis',
       },
       antigens: {
         list: false,
         order: 25,
         type: 'string',
-        report: true,
+
         title: 'Antigens',
       },
       revAntigens: {
         list: false,
         order: 26,
         type: 'string',
-        report: true,
+
         title: 'Content of "Revised Antigens" Field in Analysis Window',
       },
       windowsUser: {
         list: false,
         order: 27,
         type: 'string',
-        report: true,
+
         title: 'User logged onto Windows System',
       },
       checkSum: {
         list: false,
         order: 28,
         type: 'number',
-        report: true,
+
         title: 'Checksum for data row',
       },
       band1I: {
         list: false,
         order: 29,
         type: 'number',
-        report: true,
+
         title: 'Intensity of Band 1 on Strip',
       },
       band1Co: {
         list: false,
         order: 30,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 1 compared to CutOff',
       },
       band1A: {
         list: false,
         order: 31,
         type: 'number',
-        report: true,
+
         title: 'Integral (Area) of Band 1 on Strip',
       },
       band1R: {
         list: false,
         order: 32,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 1',
       },
       band2I: {
         list: false,
         order: 33,
         type: 'number',
-        report: true,
+
         title: 'Intensity of Band 2 on Strip',
       },
       band2Co: {
         list: false,
         order: 34,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 2 compared to CutOff',
       },
       band2A: {
         list: false,
         order: 35,
         type: 'number',
-        report: true,
+
         title: 'Integral (Area) of Band 2 on Strip',
       },
       band2R: {
         list: false,
         order: 36,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 2',
       },
       band3I: {
         list: false,
         order: 37,
         type: 'number',
-        report: true,
+
         title: 'Intensity of Band N on Strip',
       },
       band3Co: {
         list: false,
         order: 38,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band N compared to CutOff',
       },
       band3A: {
         list: false,
         order: 39,
         type: 'number',
-        report: true,
+
         title: 'Integral (Area) of Band N on Strip',
       },
       band3R: {
         list: false,
         order: 40,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band N',
       },
       band4I: {
         list: false,
         order: 41,
         type: 'number',
-        report: true,
+
         title: 'Intensity of Band 4 on Strip',
       },
       band4Co: {
         list: false,
         order: 42,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 4 compared to CutOff',
       },
       band4A: {
         list: false,
         order: 43,
         type: 'number',
-        report: true,
+
         title: 'Integral (Area) of Band 4 on Strip',
       },
       band4R: {
         list: false,
         order: 44,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 4',
       },
       band5I: {
         list: false,
         order: 45,
         type: 'number',
-        report: true,
+
         title: 'Intensity of Band 5 on Strip',
       },
       band5Co: {
         list: false,
         order: 46,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 5 compared to CutOff',
       },
       band5A: {
         list: false,
         order: 47,
         type: 'number',
-        report: true,
+
         title: 'Integral (Area) of Band 5 on Strip',
       },
       band5R: {
         list: false,
         order: 48,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 5',
       },
       band6I: {
         list: false,
         order: 49,
         type: 'number',
-        report: true,
+
         title: 'Intensity of Band 6 on Strip',
       },
       band6Co: {
         list: false,
         order: 50,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 6 compared to CutOff',
       },
       band6A: {
         list: false,
         order: 51,
         type: 'number',
-        report: true,
+
         title: 'Integral (Area) of Band 6 on Strip',
       },
       band6R: {
         list: false,
         order: 52,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 6',
       },
       band7I: {
         list: false,
         order: 53,
         type: 'number',
-        report: true,
+
         title: 'Intensity of Band 7 on Strip',
       },
       band7Co: {
         list: false,
         order: 54,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 7 compared to CutOff',
       },
       band7A: {
         list: false,
         order: 55,
         type: 'number',
-        report: true,
+
         title: 'Integral (Area) of Band 7 on Strip',
       },
       band7R: {
         list: false,
         order: 56,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 7',
       },
       band8I: {
         list: false,
         order: 57,
         type: 'number',
-        report: true,
+
         title: 'Intensity of Band 8 on Strip',
       },
       band8Co: {
         list: false,
         order: 58,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 8 compared to CutOff',
       },
       band8A: {
         list: false,
         order: 59,
         type: 'number',
-        report: true,
+
         title: 'Integral (Area) of Band 8 on Strip',
       },
       band8R: {
         list: false,
         order: 60,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 8',
       },
       band9I: {
         list: false,
         order: 61,
         type: 'number',
-        report: true,
+
         title: 'Intensity of Band 9 on Strip',
       },
       band9Co: {
         list: false,
         order: 62,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 9 compared to CutOff',
       },
       band9A: {
         list: false,
         order: 63,
         type: 'number',
-        report: true,
+
         title: 'Integral (Area) of Band 9 on Strip',
       },
       band9R: {
         list: false,
         order: 64,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 9',
       },
       band10I: {
         list: false,
         order: 65,
         type: 'number',
-        report: true,
+
         title: 'Intensity of Band 10 on Strip',
       },
       band10Co: {
         list: false,
         order: 66,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 10 compared to CutOff',
       },
       band10A: {
         list: false,
         order: 67,
         type: 'number',
-        report: true,
+
         title: 'Integral (Area) of Band 10 on Strip',
       },
       band10R: {
         list: false,
         order: 68,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 10',
       },
       band11I: {
         list: false,
         order: 69,
         type: 'number',
-        report: true,
+
         title: 'Intensity of Band 11 on Strip',
       },
       band11Co: {
         list: false,
         order: 70,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 11 compared to CutOff',
       },
       band11A: {
         list: false,
         order: 71,
         type: 'number',
-        report: true,
+
         title: 'Integral (Area) of Band 11 on Strip',
       },
       band11R: {
         list: false,
         order: 72,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 11',
       },
       band12I: {
         list: false,
         order: 73,
         type: 'number',
-        report: true,
+
         title: 'Intensity of Band 12 on Strip',
       },
       band12Co: {
         list: false,
         order: 74,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 12 compared to CutOff',
       },
       band12A: {
         list: false,
         order: 75,
         type: 'number',
-        report: true,
+
         title: 'Integral (Area) of Band 12 on Strip',
       },
       band12R: {
         list: false,
         order: 76,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 12',
       },
       band13I: {
         list: false,
         order: 77,
         type: 'number',
-        report: true,
+
         title: 'Intensity of Band 13 on Strip',
       },
       band13Co: {
         list: false,
         order: 78,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 13 compared to CutOff',
       },
       band13A: {
         list: false,
         order: 79,
         type: 'number',
-        report: true,
+
         title: 'Integral (Area) of Band 13 on Strip',
       },
       band13R: {
         list: false,
         order: 80,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 13',
       },
       band14I: {
         list: false,
         order: 81,
         type: 'number',
-        report: true,
+
         title: 'Intensity of Band 14 on Strip',
       },
       band14Co: {
         list: false,
         order: 82,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 14 compared to CutOff',
       },
       band14A: {
         list: false,
         order: 83,
         type: 'number',
-        report: true,
+
         title: 'Integral (Area) of Band 14 on Strip',
       },
       band14R: {
         list: false,
         order: 84,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 14',
       },
       band15I: {
         list: false,
         order: 85,
         type: 'number',
-        report: true,
+
         title: 'Intensity of Band 15 on Strip',
       },
       band15Co: {
         list: false,
         order: 86,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 15 compared to CutOff',
       },
       band15A: {
         list: false,
         order: 87,
         type: 'number',
-        report: true,
+
         title: 'Integral (Area) of Band 15 on Strip',
       },
       band15R: {
         list: false,
         order: 88,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 15',
       },
       band16I: {
         list: false,
         order: 89,
         type: 'number',
-        report: true,
+
         title: 'Intensity of Band 16 on Strip',
       },
       band16Co: {
         list: false,
         order: 90,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 16 compared to CutOff',
       },
       band16A: {
         list: false,
         order: 91,
         type: 'number',
-        report: true,
+
         title: 'Integral (Area) of Band 16 on Strip',
       },
       band16R: {
         list: false,
         order: 92,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 16',
       },
       band17I: {
         list: false,
         order: 93,
         type: 'number',
-        report: true,
+
         title: 'Intensity of Band 17 on Strip',
       },
       band17Co: {
         list: false,
         order: 94,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 17 compared to CutOff',
       },
       band17A: {
         list: false,
         order: 95,
         type: 'number',
-        report: true,
+
         title: 'Integral (Area) of Band 17 on Strip',
       },
       band17R: {
         list: false,
         order: 96,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 17',
       },
       band18I: {
         list: false,
         order: 97,
         type: 'number',
-        report: true,
+
         title: 'Intensity of Band 18 on Strip',
       },
       band18Co: {
         list: false,
         order: 98,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 18 compared to CutOff',
       },
       band18A: {
         list: false,
         order: 99,
         type: 'number',
-        report: true,
+
         title: 'Integral (Area) of Band 18 on Strip',
       },
       band18R: {
         list: false,
         order: 100,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 18',
       },
       band19I: {
         list: false,
         order: 101,
         type: 'number',
-        report: true,
+
         title: 'Intensity of Band 19 on Strip',
       },
       band19Co: {
         list: false,
         order: 102,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 19 compared to CutOff',
       },
       band19A: {
         list: false,
         order: 103,
         type: 'number',
-        report: true,
+
         title: 'Integral (Area) of Band 19 on Strip',
       },
       band19R: {
         list: false,
         order: 104,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 19',
       },
       band20I: {
         list: false,
         order: 105,
         type: 'number',
-        report: true,
+
         title: 'Intensity of Band 20 on Strip',
       },
       band20Co: {
         list: false,
         order: 106,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 20 compared to CutOff',
       },
       band20A: {
         list: false,
         order: 107,
         type: 'number',
-        report: true,
+
         title: 'Integral (Area) of Band 20 on Strip',
       },
       band20R: {
         list: false,
         order: 108,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 20',
       },
       band21I: {
         list: false,
         order: 109,
         type: 'number',
-        report: true,
+
         title: 'Intensity of Band 21 on Strip',
       },
       band21Co: {
         list: false,
         order: 110,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 21 compared to CutOff',
       },
       band21A: {
         list: false,
         order: 111,
         type: 'number',
-        report: true,
+
         title: 'Integral (Area) of Band 21 on Strip',
       },
       band21R: {
         list: false,
         order: 112,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 21',
       },
       band22I: {
         list: false,
         order: 113,
         type: 'number',
-        report: true,
+
         title: 'Intensity of Band 22 on Strip',
       },
       band22Co: {
         list: false,
         order: 114,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 22 compared to CutOff',
       },
       band22A: {
         list: false,
         order: 115,
         type: 'number',
-        report: true,
+
         title: 'Integral (Area) of Band 22 on Strip',
       },
       band22R: {
         list: false,
         order: 116,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 22',
       },
       band23I: {
         list: false,
         order: 117,
         type: 'number',
-        report: true,
+
         title: 'Intensity of Band 23 on Strip',
       },
       band23Co: {
         list: false,
         order: 118,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 23 compared to CutOff',
       },
       band23A: {
         list: false,
         order: 119,
         type: 'number',
-        report: true,
+
         title: 'Integral (Area) of Band 23 on Strip',
       },
       band23R: {
         list: false,
         order: 120,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 23',
       },
       band24I: {
         list: false,
         order: 121,
         type: 'number',
-        report: true,
+
         title: 'Intensity of Band 24 on Strip',
       },
       band24Co: {
         list: false,
         order: 122,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 24 compared to CutOff',
       },
       band24A: {
         list: false,
         order: 123,
         type: 'number',
-        report: true,
+
         title: 'Integral (Area) of Band 24 on Strip',
       },
       band24R: {
         list: false,
         order: 124,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 24',
       },
       band25I: {
         list: false,
         order: 125,
         type: 'number',
-        report: true,
+
         title: 'Intensity of Band 25 on Strip',
       },
       band25Co: {
         list: false,
         order: 126,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 25 compared to CutOff',
       },
       band25A: {
         list: false,
         order: 127,
         type: 'number',
-        report: true,
+
         title: 'Integral (Area) of Band 25 on Strip',
       },
       band25R: {
         list: false,
         order: 128,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 25',
       },
       band26I: {
         list: false,
         order: 129,
         type: 'number',
-        report: true,
+
         title: 'Intensity of Band 26 on Strip',
       },
       band26Co: {
         list: false,
         order: 130,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 26 compared to CutOff',
       },
       band26A: {
         list: false,
         order: 131,
         type: 'number',
-        report: true,
+
         title: 'Integral (Area) of Band 26 on Strip',
       },
       band26R: {
         list: false,
         order: 132,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 26',
       },
       band27I: {
         list: false,
         order: 133,
         type: 'number',
-        report: true,
+
         title: 'Intensity of Band 27 on Strip',
       },
       band27Co: {
         list: false,
         order: 134,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 27 compared to CutOff',
       },
       band27A: {
         list: false,
         order: 135,
         type: 'number',
-        report: true,
+
         title: 'Integral (Area) of Band 27 on Strip',
       },
       band27R: {
         list: false,
         order: 136,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 27',
       },
     }),
@@ -2328,812 +2290,812 @@ async function seed(knex) {
         list: false,
         order: 1,
         type: 'number',
-        report: true,
+
         title: 'Order-Number of Strip in Analysis',
       },
       company: {
         list: true,
         order: 2,
         type: 'string',
-        report: true,
+
         title: 'Producer of Testkit',
       },
       typeOfTest: {
         list: true,
         order: 3,
         type: 'string',
-        report: true,
+
         title: 'Internal name of setcard',
       },
       revision: {
         list: false,
         order: 4,
         type: 'number',
-        report: true,
+
         title: 'Internal revision number of setcard',
       },
       control: {
         list: false,
         order: 5,
         type: 'string',
-        report: true,
+
         title: 'Internal name of control',
       },
       igType: {
         list: true,
         order: 6,
         type: 'string',
-        report: true,
+
         title: 'Internal Ig-Type',
       },
       charge: {
         list: false,
         order: 7,
         type: 'string',
-        report: true,
+
         title: 'Lot-Number of Testkit',
       },
       stripType: {
         list: true,
         order: 8,
         type: 'string',
-        report: true,
+
         title: 'Internal Type of Strip',
       },
       cw: {
         list: false,
         order: 9,
         type: 'number',
-        report: true,
+
         title: 'Internal Connected-With-Strip number',
       },
       probeNumber: {
         list: false,
         order: 10,
         type: 'string',
-        report: true,
+
         title: 'Blood-Sample-ID',
       },
       pid: {
         list: true,
         order: 11,
         type: 'string',
-        report: true,
+
         title: 'External Patient-ID',
       },
       lastName: {
         list: false,
         order: 12,
         type: 'string',
-        report: true,
+
         title: 'Last name of Patient',
       },
       firstName: {
         list: false,
         order: 13,
         type: 'string',
-        report: true,
+
         title: 'First name of Patient',
       },
       birthday: {
         list: false,
         order: 14,
         type: 'date',
-        report: true,
+
         title: 'Date of Birth of Patient',
       },
       sex: {
         list: false,
         order: 15,
         type: 'string',
-        report: true,
+
         title: 'Sex of Patient',
       },
       elisaIgA: {
         list: true,
         order: 16,
         type: 'string',
-        report: true,
+
         title: 'Result Elisa IgA',
       },
       elisaIgG: {
         list: true,
         order: 17,
         type: 'string',
-        report: true,
+
         title: 'Result Elisa IgG',
       },
       elisaIgM: {
         list: true,
         order: 18,
         type: 'string',
-        report: true,
+
         title: 'Result Elisa IgM',
       },
       dateOfRequest: {
         list: false,
         order: 19,
         type: 'date',
-        report: true,
+
         title: 'Date of Request',
       },
       dateOfAnalysis: {
         list: false,
         order: 20,
         type: 'date',
-        report: true,
+
         title: 'Date of Analysis',
       },
       cutOffTolerance: {
         list: false,
         order: 21,
         type: 'number',
-        report: true,
+
         title: 'Cut-Off Tolerance value',
       },
       rShort: {
         list: true,
         order: 22,
         type: 'string',
-        report: true,
+
         title: 'Short form of result',
       },
       result: {
         list: false,
         order: 23,
         type: 'string',
-        report: true,
+
         title: 'Long form of result',
       },
       rjoined: {
         list: false,
         order: 24,
         type: 'string',
-        report: true,
+
         title: 'Result for joined Analysis',
       },
       antigens: {
         list: false,
         order: 25,
         type: 'string',
-        report: true,
+
         title: 'Antigens',
       },
       revAntigens: {
         list: false,
         order: 26,
         type: 'string',
-        report: true,
+
         title: 'Content of "Revised Antigens" Field in Analysis Window',
       },
       windowsUser: {
         list: false,
         order: 27,
         type: 'string',
-        report: true,
+
         title: 'User logged onto Windows System',
       },
       checkSum: {
         list: false,
         order: 28,
         type: 'number',
-        report: true,
+
         title: 'Checksum for data row',
       },
       band1I: {
         list: false,
         order: 29,
         type: 'number',
-        report: true,
+
         title: 'Intensity of Band 1 on Strip',
       },
       band1Co: {
         list: false,
         order: 30,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 1 compared to CutOff',
       },
       band1A: {
         list: false,
         order: 31,
         type: 'number',
-        report: true,
+
         title: 'Integral (Area) of Band 1 on Strip',
       },
       band1R: {
         list: false,
         order: 32,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 1',
       },
       band2I: {
         list: false,
         order: 33,
         type: 'number',
-        report: true,
+
         title: 'Intensity of Band 2 on Strip',
       },
       band2Co: {
         list: false,
         order: 34,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 2 compared to CutOff',
       },
       band2A: {
         list: false,
         order: 35,
         type: 'number',
-        report: true,
+
         title: 'Integral (Area) of Band 2 on Strip',
       },
       band2R: {
         list: false,
         order: 36,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 2',
       },
       band3I: {
         list: false,
         order: 37,
         type: 'number',
-        report: true,
+
         title: 'Intensity of Band N on Strip',
       },
       band3Co: {
         list: false,
         order: 38,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band N compared to CutOff',
       },
       band3A: {
         list: false,
         order: 39,
         type: 'number',
-        report: true,
+
         title: 'Integral (Area) of Band N on Strip',
       },
       band3R: {
         list: false,
         order: 40,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band N',
       },
       band4I: {
         list: false,
         order: 41,
         type: 'number',
-        report: true,
+
         title: 'Intensity of Band 4 on Strip',
       },
       band4Co: {
         list: false,
         order: 42,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 4 compared to CutOff',
       },
       band4A: {
         list: false,
         order: 43,
         type: 'number',
-        report: true,
+
         title: 'Integral (Area) of Band 4 on Strip',
       },
       band4R: {
         list: false,
         order: 44,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 4',
       },
       band5I: {
         list: false,
         order: 45,
         type: 'number',
-        report: true,
+
         title: 'Intensity of Band 5 on Strip',
       },
       band5Co: {
         list: false,
         order: 46,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 5 compared to CutOff',
       },
       band5A: {
         list: false,
         order: 47,
         type: 'number',
-        report: true,
+
         title: 'Integral (Area) of Band 5 on Strip',
       },
       band5R: {
         list: false,
         order: 48,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 5',
       },
       band6I: {
         list: false,
         order: 49,
         type: 'number',
-        report: true,
+
         title: 'Intensity of Band 6 on Strip',
       },
       band6Co: {
         list: false,
         order: 50,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 6 compared to CutOff',
       },
       band6A: {
         list: false,
         order: 51,
         type: 'number',
-        report: true,
+
         title: 'Integral (Area) of Band 6 on Strip',
       },
       band6R: {
         list: false,
         order: 52,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 6',
       },
       band7I: {
         list: false,
         order: 53,
         type: 'number',
-        report: true,
+
         title: 'Intensity of Band 7 on Strip',
       },
       band7Co: {
         list: false,
         order: 54,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 7 compared to CutOff',
       },
       band7A: {
         list: false,
         order: 55,
         type: 'number',
-        report: true,
+
         title: 'Integral (Area) of Band 7 on Strip',
       },
       band7R: {
         list: false,
         order: 56,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 7',
       },
       band8I: {
         list: false,
         order: 57,
         type: 'number',
-        report: true,
+
         title: 'Intensity of Band 8 on Strip',
       },
       band8Co: {
         list: false,
         order: 58,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 8 compared to CutOff',
       },
       band8A: {
         list: false,
         order: 59,
         type: 'number',
-        report: true,
+
         title: 'Integral (Area) of Band 8 on Strip',
       },
       band8R: {
         list: false,
         order: 60,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 8',
       },
       band9I: {
         list: false,
         order: 61,
         type: 'number',
-        report: true,
+
         title: 'Intensity of Band 9 on Strip',
       },
       band9Co: {
         list: false,
         order: 62,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 9 compared to CutOff',
       },
       band9A: {
         list: false,
         order: 63,
         type: 'number',
-        report: true,
+
         title: 'Integral (Area) of Band 9 on Strip',
       },
       band9R: {
         list: false,
         order: 64,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 9',
       },
       band10I: {
         list: false,
         order: 65,
         type: 'number',
-        report: true,
+
         title: 'Intensity of Band 10 on Strip',
       },
       band10Co: {
         list: false,
         order: 66,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 10 compared to CutOff',
       },
       band10A: {
         list: false,
         order: 67,
         type: 'number',
-        report: true,
+
         title: 'Integral (Area) of Band 10 on Strip',
       },
       band10R: {
         list: false,
         order: 68,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 10',
       },
       band11I: {
         list: false,
         order: 69,
         type: 'number',
-        report: true,
+
         title: 'Intensity of Band 11 on Strip',
       },
       band11Co: {
         list: false,
         order: 70,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 11 compared to CutOff',
       },
       band11A: {
         list: false,
         order: 71,
         type: 'number',
-        report: true,
+
         title: 'Integral (Area) of Band 11 on Strip',
       },
       band11R: {
         list: false,
         order: 72,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 11',
       },
       band12I: {
         list: false,
         order: 73,
         type: 'number',
-        report: true,
+
         title: 'Intensity of Band 12 on Strip',
       },
       band12Co: {
         list: false,
         order: 74,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 12 compared to CutOff',
       },
       band12A: {
         list: false,
         order: 75,
         type: 'number',
-        report: true,
+
         title: 'Integral (Area) of Band 12 on Strip',
       },
       band12R: {
         list: false,
         order: 76,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 12',
       },
       band13I: {
         list: false,
         order: 77,
         type: 'number',
-        report: true,
+
         title: 'Intensity of Band 13 on Strip',
       },
       band13Co: {
         list: false,
         order: 78,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 13 compared to CutOff',
       },
       band13A: {
         list: false,
         order: 79,
         type: 'number',
-        report: true,
+
         title: 'Integral (Area) of Band 13 on Strip',
       },
       band13R: {
         list: false,
         order: 80,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 13',
       },
       band14I: {
         list: false,
         order: 81,
         type: 'number',
-        report: true,
+
         title: 'Intensity of Band 14 on Strip',
       },
       band14Co: {
         list: false,
         order: 82,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 14 compared to CutOff',
       },
       band14A: {
         list: false,
         order: 83,
         type: 'number',
-        report: true,
+
         title: 'Integral (Area) of Band 14 on Strip',
       },
       band14R: {
         list: false,
         order: 84,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 14',
       },
       band15I: {
         list: false,
         order: 85,
         type: 'number',
-        report: true,
+
         title: 'Intensity of Band 15 on Strip',
       },
       band15Co: {
         list: false,
         order: 86,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 15 compared to CutOff',
       },
       band15A: {
         list: false,
         order: 87,
         type: 'number',
-        report: true,
+
         title: 'Integral (Area) of Band 15 on Strip',
       },
       band15R: {
         list: false,
         order: 88,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 15',
       },
       band16I: {
         list: false,
         order: 89,
         type: 'number',
-        report: true,
+
         title: 'Intensity of Band 16 on Strip',
       },
       band16Co: {
         list: false,
         order: 90,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 16 compared to CutOff',
       },
       band16A: {
         list: false,
         order: 91,
         type: 'number',
-        report: true,
+
         title: 'Integral (Area) of Band 16 on Strip',
       },
       band16R: {
         list: false,
         order: 92,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 16',
       },
       band17I: {
         list: false,
         order: 93,
         type: 'number',
-        report: true,
+
         title: 'Intensity of Band 17 on Strip',
       },
       band17Co: {
         list: false,
         order: 94,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 17 compared to CutOff',
       },
       band17A: {
         list: false,
         order: 95,
         type: 'number',
-        report: true,
+
         title: 'Integral (Area) of Band 17 on Strip',
       },
       band17R: {
         list: false,
         order: 96,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 17',
       },
       band18I: {
         list: false,
         order: 97,
         type: 'number',
-        report: true,
+
         title: 'Intensity of Band 18 on Strip',
       },
       band18Co: {
         list: false,
         order: 98,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 18 compared to CutOff',
       },
       band18A: {
         list: false,
         order: 99,
         type: 'number',
-        report: true,
+
         title: 'Integral (Area) of Band 18 on Strip',
       },
       band18R: {
         list: false,
         order: 100,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 18',
       },
       band19I: {
         list: false,
         order: 101,
         type: 'number',
-        report: true,
+
         title: 'Intensity of Band 19 on Strip',
       },
       band19Co: {
         list: false,
         order: 102,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 19 compared to CutOff',
       },
       band19A: {
         list: false,
         order: 103,
         type: 'number',
-        report: true,
+
         title: 'Integral (Area) of Band 19 on Strip',
       },
       band19R: {
         list: false,
         order: 104,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 19',
       },
       band20I: {
         list: false,
         order: 105,
         type: 'number',
-        report: true,
+
         title: 'Intensity of Band 20 on Strip',
       },
       band20Co: {
         list: false,
         order: 106,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 20 compared to CutOff',
       },
       band20A: {
         list: false,
         order: 107,
         type: 'number',
-        report: true,
+
         title: 'Integral (Area) of Band 20 on Strip',
       },
       band20R: {
         list: false,
         order: 108,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 20',
       },
       band21I: {
         list: false,
         order: 109,
         type: 'number',
-        report: true,
+
         title: 'Intensity of Band 21 on Strip',
       },
       band21Co: {
         list: false,
         order: 110,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 21 compared to CutOff',
       },
       band21A: {
         list: false,
         order: 111,
         type: 'number',
-        report: true,
+
         title: 'Integral (Area) of Band 21 on Strip',
       },
       band21R: {
         list: false,
         order: 112,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 21',
       },
       band22I: {
         list: false,
         order: 113,
         type: 'number',
-        report: true,
+
         title: 'Intensity of Band 22 on Strip',
       },
       band22Co: {
         list: false,
         order: 114,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 22 compared to CutOff',
       },
       band22A: {
         list: false,
         order: 115,
         type: 'number',
-        report: true,
+
         title: 'Integral (Area) of Band 22 on Strip',
       },
       band22R: {
         list: false,
         order: 116,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 22',
       },
     }),
@@ -3210,952 +3172,952 @@ async function seed(knex) {
         list: false,
         order: 1,
         type: 'number',
-        report: true,
+
         title: 'Order-Number of Strip in Analysis',
       },
       company: {
         list: true,
         order: 2,
         type: 'string',
-        report: true,
+
         title: 'Producer of Testkit',
       },
       typeOfTest: {
         list: true,
         order: 3,
         type: 'string',
-        report: true,
+
         title: 'Internal name of setcard',
       },
       revision: {
         list: false,
         order: 4,
         type: 'number',
-        report: true,
+
         title: 'Internal revision number of setcard',
       },
       control: {
         list: false,
         order: 5,
         type: 'string',
-        report: true,
+
         title: 'Internal name of control',
       },
       igType: {
         list: true,
         order: 6,
         type: 'string',
-        report: true,
+
         title: 'Internal Ig-Type',
       },
       charge: {
         list: false,
         order: 7,
         type: 'string',
-        report: true,
+
         title: 'Lot-Number of Testkit',
       },
       stripType: {
         list: true,
         order: 8,
         type: 'string',
-        report: true,
+
         title: 'Internal Type of Strip',
       },
       cw: {
         list: false,
         order: 9,
         type: 'number',
-        report: true,
+
         title: 'Internal Connected-With-Strip number',
       },
       probeNumber: {
         list: false,
         order: 10,
         type: 'string',
-        report: true,
+
         title: 'Blood-Sample-ID',
       },
       pid: {
         list: true,
         order: 11,
         type: 'string',
-        report: true,
+
         title: 'External Patient-ID',
       },
       lastName: {
         list: false,
         order: 12,
         type: 'string',
-        report: true,
+
         title: 'Last name of Patient',
       },
       firstName: {
         list: false,
         order: 13,
         type: 'string',
-        report: true,
+
         title: 'First name of Patient',
       },
       birthday: {
         list: false,
         order: 14,
         type: 'date',
-        report: true,
+
         title: 'Date of Birth of Patient',
       },
       sex: {
         list: false,
         order: 15,
         type: 'string',
-        report: true,
+
         title: 'Sex of Patient',
       },
       elisaIgA: {
         list: true,
         order: 16,
         type: 'string',
-        report: true,
+
         title: 'Result Elisa IgA',
       },
       elisaIgG: {
         list: true,
         order: 17,
         type: 'string',
-        report: true,
+
         title: 'Result Elisa IgG',
       },
       elisaIgM: {
         list: true,
         order: 18,
         type: 'string',
-        report: true,
+
         title: 'Result Elisa IgM',
       },
       dateOfRequest: {
         list: false,
         order: 19,
         type: 'date',
-        report: true,
+
         title: 'Date of Request',
       },
       dateOfAnalysis: {
         list: false,
         order: 20,
         type: 'date',
-        report: true,
+
         title: 'Date of Analysis',
       },
       cutOffTolerance: {
         list: false,
         order: 21,
         type: 'number',
-        report: true,
+
         title: 'Cut-Off Tolerance value',
       },
       rShort: {
         list: true,
         order: 22,
         type: 'string',
-        report: true,
+
         title: 'Short form of result',
       },
       result: {
         list: false,
         order: 23,
         type: 'string',
-        report: true,
+
         title: 'Long form of result',
       },
       rjoined: {
         list: false,
         order: 24,
         type: 'string',
-        report: true,
+
         title: 'Result for joined Analysis',
       },
       antigens: {
         list: false,
         order: 25,
         type: 'string',
-        report: true,
+
         title: 'Antigens',
       },
       revAntigens: {
         list: false,
         order: 26,
         type: 'string',
-        report: true,
+
         title: 'Content of "Revised Antigens" Field in Analysis Window',
       },
       windowsUser: {
         list: false,
         order: 27,
         type: 'string',
-        report: true,
+
         title: 'User logged onto Windows System',
       },
       checkSum: {
         list: false,
         order: 28,
         type: 'number',
-        report: true,
+
         title: 'Checksum for data row',
       },
       band1I: {
         list: false,
         order: 29,
         type: 'number',
-        report: true,
+
         title: 'Intensity of Band 1 on Strip',
       },
       band1Co: {
         list: false,
         order: 30,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 1 compared to CutOff',
       },
       band1A: {
         list: false,
         order: 31,
         type: 'number',
-        report: true,
+
         title: 'Integral (Area) of Band 1 on Strip',
       },
       band1R: {
         list: false,
         order: 32,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 1',
       },
       band2I: {
         list: false,
         order: 33,
         type: 'number',
-        report: true,
+
         title: 'Intensity of Band 2 on Strip',
       },
       band2Co: {
         list: false,
         order: 34,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 2 compared to CutOff',
       },
       band2A: {
         list: false,
         order: 35,
         type: 'number',
-        report: true,
+
         title: 'Integral (Area) of Band 2 on Strip',
       },
       band2R: {
         list: false,
         order: 36,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 2',
       },
       band3I: {
         list: false,
         order: 37,
         type: 'number',
-        report: true,
+
         title: 'Intensity of Band N on Strip',
       },
       band3Co: {
         list: false,
         order: 38,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band N compared to CutOff',
       },
       band3A: {
         list: false,
         order: 39,
         type: 'number',
-        report: true,
+
         title: 'Integral (Area) of Band N on Strip',
       },
       band3R: {
         list: false,
         order: 40,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band N',
       },
       band4I: {
         list: false,
         order: 41,
         type: 'number',
-        report: true,
+
         title: 'Intensity of Band 4 on Strip',
       },
       band4Co: {
         list: false,
         order: 42,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 4 compared to CutOff',
       },
       band4A: {
         list: false,
         order: 43,
         type: 'number',
-        report: true,
+
         title: 'Integral (Area) of Band 4 on Strip',
       },
       band4R: {
         list: false,
         order: 44,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 4',
       },
       band5I: {
         list: false,
         order: 45,
         type: 'number',
-        report: true,
+
         title: 'Intensity of Band 5 on Strip',
       },
       band5Co: {
         list: false,
         order: 46,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 5 compared to CutOff',
       },
       band5A: {
         list: false,
         order: 47,
         type: 'number',
-        report: true,
+
         title: 'Integral (Area) of Band 5 on Strip',
       },
       band5R: {
         list: false,
         order: 48,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 5',
       },
       band6I: {
         list: false,
         order: 49,
         type: 'number',
-        report: true,
+
         title: 'Intensity of Band 6 on Strip',
       },
       band6Co: {
         list: false,
         order: 50,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 6 compared to CutOff',
       },
       band6A: {
         list: false,
         order: 51,
         type: 'number',
-        report: true,
+
         title: 'Integral (Area) of Band 6 on Strip',
       },
       band6R: {
         list: false,
         order: 52,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 6',
       },
       band7I: {
         list: false,
         order: 53,
         type: 'number',
-        report: true,
+
         title: 'Intensity of Band 7 on Strip',
       },
       band7Co: {
         list: false,
         order: 54,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 7 compared to CutOff',
       },
       band7A: {
         list: false,
         order: 55,
         type: 'number',
-        report: true,
+
         title: 'Integral (Area) of Band 7 on Strip',
       },
       band7R: {
         list: false,
         order: 56,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 7',
       },
       band8I: {
         list: false,
         order: 57,
         type: 'number',
-        report: true,
+
         title: 'Intensity of Band 8 on Strip',
       },
       band8Co: {
         list: false,
         order: 58,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 8 compared to CutOff',
       },
       band8A: {
         list: false,
         order: 59,
         type: 'number',
-        report: true,
+
         title: 'Integral (Area) of Band 8 on Strip',
       },
       band8R: {
         list: false,
         order: 60,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 8',
       },
       band9I: {
         list: false,
         order: 61,
         type: 'number',
-        report: true,
+
         title: 'Intensity of Band 9 on Strip',
       },
       band9Co: {
         list: false,
         order: 62,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 9 compared to CutOff',
       },
       band9A: {
         list: false,
         order: 63,
         type: 'number',
-        report: true,
+
         title: 'Integral (Area) of Band 9 on Strip',
       },
       band9R: {
         list: false,
         order: 64,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 9',
       },
       band10I: {
         list: false,
         order: 65,
         type: 'number',
-        report: true,
+
         title: 'Intensity of Band 10 on Strip',
       },
       band10Co: {
         list: false,
         order: 66,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 10 compared to CutOff',
       },
       band10A: {
         list: false,
         order: 67,
         type: 'number',
-        report: true,
+
         title: 'Integral (Area) of Band 10 on Strip',
       },
       band10R: {
         list: false,
         order: 68,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 10',
       },
       band11I: {
         list: false,
         order: 69,
         type: 'number',
-        report: true,
+
         title: 'Intensity of Band 11 on Strip',
       },
       band11Co: {
         list: false,
         order: 70,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 11 compared to CutOff',
       },
       band11A: {
         list: false,
         order: 71,
         type: 'number',
-        report: true,
+
         title: 'Integral (Area) of Band 11 on Strip',
       },
       band11R: {
         list: false,
         order: 72,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 11',
       },
       band12I: {
         list: false,
         order: 73,
         type: 'number',
-        report: true,
+
         title: 'Intensity of Band 12 on Strip',
       },
       band12Co: {
         list: false,
         order: 74,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 12 compared to CutOff',
       },
       band12A: {
         list: false,
         order: 75,
         type: 'number',
-        report: true,
+
         title: 'Integral (Area) of Band 12 on Strip',
       },
       band12R: {
         list: false,
         order: 76,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 12',
       },
       band13I: {
         list: false,
         order: 77,
         type: 'number',
-        report: true,
+
         title: 'Intensity of Band 13 on Strip',
       },
       band13Co: {
         list: false,
         order: 78,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 13 compared to CutOff',
       },
       band13A: {
         list: false,
         order: 79,
         type: 'number',
-        report: true,
+
         title: 'Integral (Area) of Band 13 on Strip',
       },
       band13R: {
         list: false,
         order: 80,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 13',
       },
       band14I: {
         list: false,
         order: 81,
         type: 'number',
-        report: true,
+
         title: 'Intensity of Band 14 on Strip',
       },
       band14Co: {
         list: false,
         order: 82,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 14 compared to CutOff',
       },
       band14A: {
         list: false,
         order: 83,
         type: 'number',
-        report: true,
+
         title: 'Integral (Area) of Band 14 on Strip',
       },
       band14R: {
         list: false,
         order: 84,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 14',
       },
       band15I: {
         list: false,
         order: 85,
         type: 'number',
-        report: true,
+
         title: 'Intensity of Band 15 on Strip',
       },
       band15Co: {
         list: false,
         order: 86,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 15 compared to CutOff',
       },
       band15A: {
         list: false,
         order: 87,
         type: 'number',
-        report: true,
+
         title: 'Integral (Area) of Band 15 on Strip',
       },
       band15R: {
         list: false,
         order: 88,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 15',
       },
       band16I: {
         list: false,
         order: 89,
         type: 'number',
-        report: true,
+
         title: 'Intensity of Band 16 on Strip',
       },
       band16Co: {
         list: false,
         order: 90,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 16 compared to CutOff',
       },
       band16A: {
         list: false,
         order: 91,
         type: 'number',
-        report: true,
+
         title: 'Integral (Area) of Band 16 on Strip',
       },
       band16R: {
         list: false,
         order: 92,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 16',
       },
       band17I: {
         list: false,
         order: 93,
         type: 'number',
-        report: true,
+
         title: 'Intensity of Band 17 on Strip',
       },
       band17Co: {
         list: false,
         order: 94,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 17 compared to CutOff',
       },
       band17A: {
         list: false,
         order: 95,
         type: 'number',
-        report: true,
+
         title: 'Integral (Area) of Band 17 on Strip',
       },
       band17R: {
         list: false,
         order: 96,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 17',
       },
       band18I: {
         list: false,
         order: 97,
         type: 'number',
-        report: true,
+
         title: 'Intensity of Band 18 on Strip',
       },
       band18Co: {
         list: false,
         order: 98,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 18 compared to CutOff',
       },
       band18A: {
         list: false,
         order: 99,
         type: 'number',
-        report: true,
+
         title: 'Integral (Area) of Band 18 on Strip',
       },
       band18R: {
         list: false,
         order: 100,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 18',
       },
       band19I: {
         list: false,
         order: 101,
         type: 'number',
-        report: true,
+
         title: 'Intensity of Band 19 on Strip',
       },
       band19Co: {
         list: false,
         order: 102,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 19 compared to CutOff',
       },
       band19A: {
         list: false,
         order: 103,
         type: 'number',
-        report: true,
+
         title: 'Integral (Area) of Band 19 on Strip',
       },
       band19R: {
         list: false,
         order: 104,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 19',
       },
       band20I: {
         list: false,
         order: 105,
         type: 'number',
-        report: true,
+
         title: 'Intensity of Band 20 on Strip',
       },
       band20Co: {
         list: false,
         order: 106,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 20 compared to CutOff',
       },
       band20A: {
         list: false,
         order: 107,
         type: 'number',
-        report: true,
+
         title: 'Integral (Area) of Band 20 on Strip',
       },
       band20R: {
         list: false,
         order: 108,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 20',
       },
       band21I: {
         list: false,
         order: 109,
         type: 'number',
-        report: true,
+
         title: 'Intensity of Band 21 on Strip',
       },
       band21Co: {
         list: false,
         order: 110,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 21 compared to CutOff',
       },
       band21A: {
         list: false,
         order: 111,
         type: 'number',
-        report: true,
+
         title: 'Integral (Area) of Band 21 on Strip',
       },
       band21R: {
         list: false,
         order: 112,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 21',
       },
       band22I: {
         list: false,
         order: 113,
         type: 'number',
-        report: true,
+
         title: 'Intensity of Band 22 on Strip',
       },
       band22Co: {
         list: false,
         order: 114,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 22 compared to CutOff',
       },
       band22A: {
         list: false,
         order: 115,
         type: 'number',
-        report: true,
+
         title: 'Integral (Area) of Band 22 on Strip',
       },
       band22R: {
         list: false,
         order: 116,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 22',
       },
       band23I: {
         list: false,
         order: 117,
         type: 'number',
-        report: true,
+
         title: 'Intensity of Band 23 on Strip',
       },
       band23Co: {
         list: false,
         order: 118,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 23 compared to CutOff',
       },
       band23A: {
         list: false,
         order: 119,
         type: 'number',
-        report: true,
+
         title: 'Integral (Area) of Band 23 on Strip',
       },
       band23R: {
         list: false,
         order: 120,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 23',
       },
       band24I: {
         list: false,
         order: 121,
         type: 'number',
-        report: true,
+
         title: 'Intensity of Band 24 on Strip',
       },
       band24Co: {
         list: false,
         order: 122,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 24 compared to CutOff',
       },
       band24A: {
         list: false,
         order: 123,
         type: 'number',
-        report: true,
+
         title: 'Integral (Area) of Band 24 on Strip',
       },
       band24R: {
         list: false,
         order: 124,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 24',
       },
       band25I: {
         list: false,
         order: 125,
         type: 'number',
-        report: true,
+
         title: 'Intensity of Band 25 on Strip',
       },
       band25Co: {
         list: false,
         order: 126,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 25 compared to CutOff',
       },
       band25A: {
         list: false,
         order: 127,
         type: 'number',
-        report: true,
+
         title: 'Integral (Area) of Band 25 on Strip',
       },
       band25R: {
         list: false,
         order: 128,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 25',
       },
       band26I: {
         list: false,
         order: 129,
         type: 'number',
-        report: true,
+
         title: 'Intensity of Band 26 on Strip',
       },
       band26Co: {
         list: false,
         order: 130,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 26 compared to CutOff',
       },
       band26A: {
         list: false,
         order: 131,
         type: 'number',
-        report: true,
+
         title: 'Integral (Area) of Band 26 on Strip',
       },
       band26R: {
         list: false,
         order: 132,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 26',
       },
       band27I: {
         list: false,
         order: 133,
         type: 'number',
-        report: true,
+
         title: 'Intensity of Band 27 on Strip',
       },
       band27Co: {
         list: false,
         order: 134,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 27 compared to CutOff',
       },
       band27A: {
         list: false,
         order: 135,
         type: 'number',
-        report: true,
+
         title: 'Integral (Area) of Band 27 on Strip',
       },
       band27R: {
         list: false,
         order: 136,
         type: 'number',
-        report: true,
+
         title: 'Relative Intensity of Band 27',
       },
     }),

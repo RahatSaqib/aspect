@@ -74,14 +74,12 @@ async function seed(knex) {
     resultCategory1Label: 'Status',
     resultDataSchema: JSON.stringify({
       resultText: {
-        report: true,
         list: true,
         order: 1,
         type: 'string',
         title: 'Result',
       },
       hcwResult: {
-        report: true,
         list: true,
         order: 2,
         type: 'string',
@@ -89,35 +87,33 @@ async function seed(knex) {
       },
       hcwConfirmatoryResult: {
         list: false,
-        report: true,
+
         order: 3,
         type: 'string',
         title: 'HCW Confirmatory Result',
       },
       hcwTiebreakerResult: {
         list: false,
-        report: true,
+
         order: 4,
         type: 'string',
         title: 'HCW Tiebreaker Result',
       },
     }),
     patientDataSchema: JSON.stringify({
-      id: { type: 'string', order: 0, title: 'Patient ID', report: true },
-      age: { type: 'int', order: 1, title: 'Age', report: true },
-      gender: { type: 'string', order: 2, title: 'Gender', report: true },
-      phone: { type: 'string', order: 3, title: 'Phone Number', report: true },
+      id: { type: 'string', order: 0, title: 'Patient ID' },
+      age: { type: 'int', order: 1, title: 'Age' },
+      gender: { type: 'string', order: 2, title: 'Gender' },
+      phone: { type: 'string', order: 3, title: 'Phone Number' },
       educationLevel: {
         type: 'string',
         order: 4,
         title: 'Education Level',
-        report: true,
       },
       previousTesting: {
         type: 'string',
         order: 5,
         title: 'Previous Testing',
-        report: true,
       },
     }),
   })

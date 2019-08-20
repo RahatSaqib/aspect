@@ -36,12 +36,12 @@ async function seed(knex) {
     resultSourceId,
     resultCategory1Label: 'Status',
     resultDataSchema: JSON.stringify({
-      resultText: { list: true, type: 'string', report: true, title: 'Result' },
+      resultText: { list: true, type: 'string', title: 'Result' },
     }),
     patientDataSchema: JSON.stringify({
-      age: { type: 'int', order: 2, report: true, title: 'Age' },
-      name: { type: 'string', order: 1, report: true, title: 'Client Name' },
-      gender: { type: 'string', order: 3, report: true, title: 'Gender' },
+      age: { type: 'int', order: 2, title: 'Age' },
+      name: { type: 'string', order: 1, title: 'Client Name' },
+      gender: { type: 'string', order: 3, title: 'Gender' },
     }),
   })
 }
