@@ -340,7 +340,14 @@ const enhanceResults = compose(
   })
 )
 
-const PerformanceBarChart = ({ data, series, color, avgValue, maxValue }) => (
+const PerformanceBarChart = ({
+  data,
+  series,
+  color,
+  avgValue,
+  maxValue,
+  info,
+}) => (
   <ResponsiveBar
     data={data}
     indexBy="period"
@@ -394,7 +401,7 @@ const PerformanceBarChart = ({ data, series, color, avgValue, maxValue }) => (
         legendOrientation: 'vertical',
       },
     ]}
-    tooltip={({ color, id, indexValue }) => {
+    tooltip={({ color, indexValue }) => {
       const periodData = data.find(x => x.period === indexValue)
       const value = periodData.errorRate + periodData.exceededErrorRate
       return (
@@ -404,7 +411,7 @@ const PerformanceBarChart = ({ data, series, color, avgValue, maxValue }) => (
               className={cssClasses('Performance--graph-tooltip-color')}
               style={{ backgroundColor: color }}
             />
-            {`% ${series.find(x => x.key === id).label} `}
+            {`% ${info} `}
           </div>
           <div>
             {`${indexValue}: `}
@@ -510,6 +517,7 @@ const PerformanceReport = enhance(({ performanceReport, culture }) => {
                     color="--aspect-color-shakespeare"
                     avgValue={avgUtilizationRate}
                     maxValue={maxUtilizationRate}
+                    info="Utilization Rate"
                   />
                   <div className={cssClasses('Graph_Legend')}>
                     <div data-utilization-rate-legend>
@@ -536,6 +544,7 @@ const PerformanceReport = enhance(({ performanceReport, culture }) => {
                   color="--aspect-color-mandy"
                   avgValue={avgErrorRate}
                   maxValue={maxErrorRate}
+                  info="Error Rate"
                 />
                 <div className={cssClasses('Graph_Legend')}>
                   <div data-error-rate-legend>
