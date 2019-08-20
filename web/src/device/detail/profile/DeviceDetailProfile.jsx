@@ -368,6 +368,12 @@ const PerformanceBarChart = ({ data, series, color, avgValue }) => (
         },
         id: 'lines',
       },
+      {
+        match: {
+          id: 'exceededUtilizationRate',
+        },
+        id: 'lines',
+      },
     ]}
     axisLeft={{
       tickRotation: 0,
