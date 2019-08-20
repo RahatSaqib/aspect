@@ -99,7 +99,7 @@ function keyToValue(table, column) {
 _.each(cacheConfig, (config, table) => {
   const { additionalColumns = [] } = config
   // assayTypeToId, deviceStatusToId, etc. for each configured table
-  // deviceTypeToPlugin etc. for each configured additonal column
+  // deviceTypeToPlugin etc. for each configured additional column
   const name = _.lowerFirst(table)
   const columns = ['id', ...additionalColumns]
   _.each(columns, column => {
