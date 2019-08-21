@@ -2,20 +2,27 @@
 // configuration =========
 // =======================
 const _ = require('lodash')
+const Hapi = require('hapi')
+
 const config = require('./config')
 const { version } = require('./../package.json')
-const { addClientRoutes, addDeviceRoutes } = require('./routes')
+const {
+  addClientRoutes,
+  addDeviceRoutes,
+  addDeviceRawRoutes,
+} = require('./routes')
 const { createMessageQueue } = require('./mq')
 const { addSubscriptions } = require('./subscriptions')
 const { startScheduler } = require('./scheduler')
 const { addLoggers } = require('./logger/service')
 const deviceApiKeyPlugin = require('./deviceApi/deviceApiKeyPlugin')
-const Hapi = require('hapi')
+const { continueUnprocessedRawData } = require('./deviceApiRaw/service')
 
 const server = new Hapi.Server()
 const port = process.env.PORT || 8080
 const clientApiPath = '/api'
 const deviceApiPath = '/device'
+const deviceApiRawPath = '/device/raw'
 
 server.connection({
   port,
@@ -26,42 +33,61 @@ server.connection({
   },
 })
 
+const {
+  swagger: { enabled: swaggerEnabled },
+  raven,
+} = config
+
+// Load Raven (Sentry) plugin if configured
+const ravenPlugins = raven
+  ? [
+      {
+        register: require('hapi-raven'),
+        options: { dsn: raven.dsn },
+      },
+    ]
+  : []
+
+// Load Swagger documentation if configured
+const swaggerPlugins = swaggerEnabled
+  ? [
+      require('vision'), // eslint-disable-line import/order
+      {
+        register: require('hapi-swagger'),
+        options: {
+          info: {
+            title: 'Aspect API',
+            version,
+          },
+          schemes: config.swagger.schemes,
+          host: config.swagger.host,
+          pathPrefixSize: config.swagger.pathPrefixSize,
+          swaggerUIPath: `${config.swagger.apiUrlSegment}/swaggerui/`,
+          jsonPath: `${config.swagger.apiUrlSegment}/swagger.json`,
+          pathReplacements: [
+            {
+              replaceIn: 'all',
+              pattern: /^/,
+              replacement: config.swagger.apiUrlSegment,
+            },
+          ],
+        },
+      },
+    ]
+  : []
+
 const plugins = [
-  // static file handling (hapi-swagger dependency)
-  require('inert'),
-
-  // view layer (hapi-swagger dependency)
-  require('vision'),
-
+  ...ravenPlugins,
+  require('inert'), // eslint-disable-line import/order
+  ...swaggerPlugins,
   // JWT for authentication in client API
-  require('hapi-auth-jwt2'),
+  require('hapi-auth-jwt2'), // eslint-disable-line import/order
 
   // API Key in Device API
   deviceApiKeyPlugin,
 
   // Basic authentication in Device API
-  require('hapi-auth-basic'),
-
-  // SwaggerUI and documentation
-  {
-    register: require('hapi-swagger'),
-    options: {
-      info: {
-        title: 'Aspect API',
-        version,
-      },
-      swaggerUIPath: `${config.swagger.uiPath}/swaggerui/`,
-      jsonPath: `${config.swagger.uiPath}/swagger.json`,
-      documentationPath: `${config.swagger.uiPath}/documentation`,
-      pathReplacements: [
-        {
-          replaceIn: 'all',
-          pattern: /^/,
-          replacement: config.swagger.uiPath,
-        },
-      ],
-    },
-  },
+  require('hapi-auth-basic'), // eslint-disable-line import/order
 
   // Set payload prior to validation transformation
   rawPayloadPlugin,
@@ -69,8 +95,6 @@ const plugins = [
   // Set message queue
   messageQueuePlugin,
 ]
-
-addRavenPlugin(plugins)
 
 function messageQueuePlugin(server, options, next) {
   createMessageQueue('aspect')
@@ -80,30 +104,23 @@ function messageQueuePlugin(server, options, next) {
       if (config.scheduler.enabled) {
         startScheduler(queue)
       }
-      server.ext('onPreHandler', (request, reply) => {
-        request.plugins.messageContext = queue.createMessageContext(
-          'aspect_request'
-        )
-        reply.continue()
-      })
-      next()
+      return continueUnprocessedRawData(queue)
+        .then(() => {
+          server.ext('onPreHandler', (request, reply) => {
+            request.plugins.messageContext = queue.createMessageContext(
+              'aspect_request'
+            )
+            reply.continue()
+          })
+          next()
+        })
+        .catch(next)
     })
     .catch(next)
 }
 messageQueuePlugin.attributes = {
   name: 'messageQueue',
   version,
-}
-
-// Loads Raven (Sentry) plugin if configured
-function addRavenPlugin(plugins) {
-  const { raven } = config
-  if (raven) {
-    plugins.push({
-      register: require('hapi-raven'),
-      options: { dsn: raven.dsn },
-    })
-  }
 }
 
 // Plugin to set payload prior to validation transformation
@@ -141,8 +158,16 @@ server.auth.strategy('deviceApiBasic', 'basic', {
 server.auth.strategy('clientApi', 'jwt', {
   key: config.secret,
   validateFunc(decoded, request, callback) {
-    // TODO What do we want to do to validate data within decoded JWT token?
-    const valid = true
+    let valid = true
+
+    // if user has to accept license, deny all requests except to the license api:
+    if (
+      decoded.hasToAcceptLicenseId &&
+      request.url.path.indexOf('/api/auth/features') === -1 &&
+      request.url.path.indexOf('/api/auth/license') === -1
+    ) {
+      valid = false
+    }
 
     // can specify either module or permission, e.g. "device" or "device:view"
     // for authorization scope on routes.
@@ -152,7 +177,6 @@ server.auth.strategy('clientApi', 'jwt', {
     // ["device", "!site"] will authorize anyone with device but not site modules
     // ["+device", "site:view", "site:edit"] will authorize anyone with device (required)
     //   and either "site:view" or "site:edit" permissions
-
     const modules = decoded.permissions
       ? _.uniq(
           _.map(
@@ -218,6 +242,33 @@ server.register(
   {
     routes: {
       prefix: deviceApiPath,
+    },
+  },
+  err => {
+    if (err) throw err
+  }
+)
+
+// Device API raw data route mounted under /device/raw
+function deviceApiRawPlugin(server, options, next) {
+  addDeviceRawRoutes(server)
+  // TODO ZIMBABWE: Try create a test that would have blocked the queue if purgeOnStart hadn't been set
+  // TODO ZIMBABWE: Test if files can be uploaded to RAW device API
+
+  // TODO Raw Device API: Wait for a data processor topic to be created on the message queue before dispatching messages to it.
+  // TODO Raw Device API: Delete topics on the message queue that were completely processed when server starts
+  // TODO Raw Device API: Archive records from the DeviceApiRaw table once they have been processed
+  next()
+}
+deviceApiRawPlugin.attributes = {
+  name: 'deviceApiRaw',
+  version,
+}
+server.register(
+  { register: deviceApiRawPlugin },
+  {
+    routes: {
+      prefix: deviceApiRawPath,
     },
   },
   err => {

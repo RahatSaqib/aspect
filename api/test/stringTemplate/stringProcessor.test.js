@@ -2,9 +2,10 @@ const _ = require('lodash')
 const proxyquire = require('proxyquire')
 const Promise = require('bluebird')
 const { assert, expect } = require('chai')
+const { convertToTimeZone } = require('date-fns-timezone')
+
 const { runTest } = require('../utils/generatorFunctionUtils')
 const { formatDateOrDefault } = require('../../src/shared/date')
-const { convertToTimeZone } = require('date-fns-timezone')
 
 describe('stringTemplate', () => {
   describe('processUsingHandlebarsSyntax', () => {
@@ -122,7 +123,7 @@ describe('stringTemplate', () => {
           offlineOn: '2018-08-01',
         },
         displayPreferences: {
-          dateFormat: 'D/M/YYYY',
+          dateFormat: 'd/M/yyyy',
         },
       }
       return runTest(processUsingHandlebarsSyntax, [sampleString, inputObject])(
@@ -135,9 +136,9 @@ describe('stringTemplate', () => {
 
   describe('processUsingDataSourceQuery', () => {
     const displayPreferences = {
-      dateFormat: 'D/M/YYYY',
+      dateFormat: 'd/M/yyyy',
       timeFormat: 'HH:mm:ss',
-      dateTimeFormat: 'D/M/YYYY HH:mm:ss',
+      dateTimeFormat: 'd/M/yyyy HH:mm:ss',
     }
     const { processUsingDataSourceQuery } = proxyquire(
       '../../src/stringTemplate/service',
@@ -201,7 +202,7 @@ describe('stringTemplate', () => {
       })
 
       it('should format date with a specific format is specified', async () => {
-        const specifiedFormat = 'YYYY-MM-DDHH:mm'
+        const specifiedFormat = 'yyyy-MM-ddHH:mm'
         const message = await runProcessUsingDataSourceQuery(
           `Offline since {{formatDate device.lastSeenOn formatString='${specifiedFormat}'}}`
         )
@@ -272,7 +273,7 @@ describe('stringTemplate', () => {
       })
 
       it('should not change the date to use an offset if the timezone IS NOT specified', async () => {
-        const specifiedFormat = 'YYYY-MM-DDHH:mm'
+        const specifiedFormat = 'yyyy-MM-ddHH:mm'
         const message = await runProcessUsingDataSourceQuery(
           `Offline since {{formatDate (offsetToTimeZone device.lastSeenOn) formatString='${specifiedFormat}'}}`
         )
@@ -302,7 +303,7 @@ describe('stringTemplate', () => {
       it('should map the value to something in the value map provided', async () => {
         const valueMap = {
           DNAH: 'D',
-          kalafong: 'K',
+          KPTH: 'K',
           CMJAH: 'J',
           RMMCH: 'R',
           CHBAH: 'B',
@@ -621,7 +622,7 @@ describe('stringTemplate', () => {
 
     describe('chaining helpers', () => {
       it("should pass the result of a helper to it's predecessor", async () => {
-        const specifiedFormat = 'YYYY-MMMM-DD'
+        const specifiedFormat = 'yyyy-MMMM-dd'
         const message = await runProcessUsingDataSourceQuery(
           `Offline since {{urlEncode (enclose (toLowerCase (formatDate device.lastSeenOn formatString='${specifiedFormat}')) with='"')}}`
         )
@@ -639,7 +640,7 @@ describe('stringTemplate', () => {
 
     describe('use cases for SA NHLS', () => {
       it('should process RedCAP API Payloads', async () => {
-        const redCapDateTimeFormat = 'YYYY-MM-DD HH:mm'
+        const redCapDateTimeFormat = 'yyyy-MM-dd HH:mm'
         const johannesburgTimeZone = 'Africa/Johannesburg'
         const template =
           `token=1A234567B8C90D12345E6789F0G1234H&content=record&format=json&type=flat&overwriteBehavior=normal&forceAutoNumber=true&data=%5B%7B%22` +
@@ -648,7 +649,7 @@ describe('stringTemplate', () => {
           `%22first_name%22%3A{{urlEncode (enclose (defaultTo result.formData.nameOfPatient '') with='"')}}%2C%20` +
           `%22surname%22%3A{{urlEncode (enclose (defaultTo result.formData.surnameOfPatient '') with='"')}}%2C%20` +
           `%22hospital_number%22%3A{{urlEncode (enclose (defaultTo result.formData.hospitalNumber '') with='"')}}%2C%20` +
-          `%22site_code%22%3A{{urlEncode (enclose (defaultTo (mapValue site.id '{"DNAH":"D","kalafong":"K","CMJAH":"J","RMMCH":"R","CHBAH":"B"}') '') with='"')}}%2C%20` +
+          `%22site_code%22%3A{{urlEncode (enclose (defaultTo (mapValue site.id '{"DNAH":"D","KPTH":"K","CMJAH":"J","RMMCH":"R","CHBAH":"B"}') '') with='"')}}%2C%20` +
           `%22ward_cubicle%22%3A{{urlEncode (enclose (defaultTo result.formData.ward '') with='"')}}%2C%20` +
           `%22sample_category%22%3A{{urlEncode (enclose (defaultTo result.formData.sampleType '') with='"')}}%2C%20` +
           `%22instrument_ca%22%3A{{urlEncode (enclose (defaultTo (mapValue device.deviceType '{"CepheidGeneXpert":"1","AlereQ":"2"}') '') with='"')}}%2C%20` +
@@ -703,7 +704,7 @@ describe('stringTemplate', () => {
         }
         const redCapSiteCodes = {
           DNAH: 'D',
-          kalafong: 'K',
+          KPTH: 'K',
           CMJAH: 'J',
           RMMCH: 'R',
           CHBAH: 'B',
@@ -1314,12 +1315,8 @@ describe('stringTemplate', () => {
           const patientData = JSON.parse(dataSource.resultPatientData)
           assert.equal(
             message.payload,
-            `GxAlert. ${dataSource.expectedTitle} ${
-              dataSource.siteShortName
-            }; ` +
-              `in Ward: ${formData.ward}; Sample ID: ${
-                dataSource.sampleExternalId
-              };  ` +
+            `GxAlert. ${dataSource.expectedTitle} ${dataSource.siteShortName}; ` +
+              `in Ward: ${formData.ward}; Sample ID: ${dataSource.sampleExternalId};  ` +
               `Patient ID: ${patientData.id} on ${formatDateOrDefault(
                 dataSource.resultEndedOn,
                 displayPreferences.dateFormat

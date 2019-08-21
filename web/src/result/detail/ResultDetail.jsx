@@ -8,32 +8,36 @@ import { defineMessages } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
+
 // Material-UI
 import MdChevronLeft from 'react-icons/lib/md/chevron-left'
 import MdChevronRight from 'react-icons/lib/md/chevron-right'
 import MdClose from 'react-icons/lib/md/clear'
-import { Button } from 'react-toolbox/lib/button'
+import Button from '@material-ui/core/Button'
 
 // Our own imports
+import ResultTreatmentPanel from './ResultTreatmentPanel'
 import config from '../../config'
 import DelayShowingProgressBar from '../../components/shared/DelayShowingProgressBar'
-import CheckboxField from '../../components/shared/CheckboxField'
 import JSONSchemaCard from '../../components/shared/JSONSchemaCard'
 import NavTitle from '../../globals/components/NavTitle'
 import {
   fetchSingleResult,
   fetchResultLog,
-  updateResultQcCheck,
   saveResultFormDataValue,
   setResultFormDataValue,
   saveResultFormData,
   Result,
+  logTreatmentStatus,
 } from '../ResultRedux'
 import ConnectedTagInput from '../../tag/ConnectedTagInput'
 import { fetchTags, updateTags } from '../../tag/TagRedux'
-import isEditable from '../../shared/selectors/result'
+import isEditable from '../../shared/selectors/isEditable'
 import { Unit } from '../../components/pureGrids'
-import { ReadOnlyField } from '../../components/shared/ReadOnlyFields'
+import {
+  ReadOnlyField,
+  ReadOnlyFields,
+} from '../../components/shared/ReadOnlyFields'
 import DetailPanel from '../../components/shared/detailPanel/DetailPanel'
 import {
   ExpansionPanel,
@@ -41,8 +45,14 @@ import {
   ExpansionPanelDetail,
 } from '../../components/shared/expansionPanel'
 import CustomField from './CustomField'
+import {
+  formatDate,
+  withDateFormatProps,
+  withTimeFormatProps,
+} from '../../shared/utils/dateFormat'
 
 import styles from './ResultDetail.css'
+import ResultDetailsBackBar from './ResultDetailsBackBar'
 
 const cssClasses = classnames.bind(styles)
 
@@ -53,15 +63,7 @@ const messages = defineMessages({
     id: 'pages.ResultDetail.title',
     defaultMessage: 'Result Detail',
   },
-  qcCheck: {
-    id: 'pages.ResultDetail.qcCheck',
-    defaultMessage: 'QC Check',
-  },
-  qcCheckDisabledHelp: {
-    id: 'pages.ResultDetail.qcCheckDisabledHelp',
-    defaultMessage:
-      '"QC Check" is only enabled if the result is in the status "Ready for Delivery" and hasn\'t been sent to the reporter yet',
-  },
+
   fieldRawData: {
     id: 'pages.ResultDetail.rawData',
     defaultMessage: 'Raw Data',
@@ -110,6 +112,22 @@ const messages = defineMessages({
     id: 'pages.ResultDetail.formFields.submit',
     defaultMessage: 'Submit',
   },
+  fieldWorkflow: {
+    id: 'pages.ResultDetail.fieldWorkflow',
+    defaultMessage: 'Workflow',
+  },
+  resultWorkflowStatus: {
+    id: 'pages.ResultDetail.resultWorkflowStatus',
+    defaultMessage: 'Status',
+  },
+  resultWorkflowLogReason: {
+    id: 'pages.ResultDetail.resultWorkflowLogReason',
+    defaultMessage: 'Reason',
+  },
+  resultWorkflowLogCreatedOn: {
+    id: 'pages.ResultDetail.resultWorkflowLogCreatedOn',
+    defaultMessage: 'Created On',
+  },
 })
 
 const enhance = compose(
@@ -120,6 +138,8 @@ const enhance = compose(
       }).isRequired,
     }).isRequired,
   }),
+  withDateFormatProps,
+  withTimeFormatProps,
   connect(
     (state, props) => {
       const result = state.result.items.byId.get(props.match.params.resultId)
@@ -135,8 +155,9 @@ const enhance = compose(
         screenSchema,
         deviceLogs: state.result.deviceLogs,
         resultTags,
-        editable: isEditable(state.user, result),
+        editable: isEditable(state.user, 'result'),
         token: state.user.access,
+        userPermission: state.user.jwt.permissions,
         formDataSaving,
         formDataDirty,
       }
@@ -146,12 +167,12 @@ const enhance = compose(
         {
           fetchSingleResult,
           fetchResultLog,
-          updateResultQcCheck,
           saveResultFormDataValue,
           setResultFormDataValue,
           saveResultFormData,
           fetchTags,
           updateTags,
+          logTreatmentStatus,
         },
         dispatch
       )
@@ -162,12 +183,12 @@ const enhance = compose(
     editable: PropTypes.bool.isRequired,
     fetchSingleResult: PropTypes.func.isRequired,
     fetchResultLog: PropTypes.func.isRequired,
-    updateResultQcCheck: PropTypes.func.isRequired,
     fetchTags: PropTypes.func.isRequired,
     updateTags: PropTypes.func.isRequired,
     formDataSaving: PropTypes.bool.isRequired,
     formDataDirty: PropTypes.bool.isRequired,
     saveResultFormData: PropTypes.func.isRequired,
+    logTreatmentStatus: PropTypes.func.isRequired,
   })
 )
 
@@ -185,15 +206,10 @@ export class ResultDetail extends PureComponent {
     this.handleFetchResult()
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (this.props.match.params.resultId !== nextProps.match.params.resultId) {
+  componentDidUpdate(prevProps) {
+    if (this.props.match.params.resultId !== prevProps.match.params.resultId) {
       this.handleFetchResult()
     }
-  }
-
-  onChangeQcCheck = event => {
-    const { result } = this.props
-    this.props.updateResultQcCheck(result.get('id'), event.target.checked)
   }
 
   onResultTagChange = (qryId, qryType, tags) => {
@@ -221,7 +237,11 @@ export class ResultDetail extends PureComponent {
   }
 
   handleFetchResult = () => {
-    const { match: { params: { resultId } } } = this.props
+    const {
+      match: {
+        params: { resultId },
+      },
+    } = this.props
     this.props.fetchSingleResult(resultId)
 
     this.props.fetchResultLog(resultId)
@@ -232,6 +252,25 @@ export class ResultDetail extends PureComponent {
   hasResultWithAssay() {
     const { result } = this.props
     return result && result.has('assay')
+  }
+
+  handleOnTreatmentChange = event => {
+    const {
+      match: {
+        params: { resultId },
+      },
+      result,
+    } = this.props
+
+    if (event.target.id === result.get('resultTreatmentStatus')) {
+      return this.props.logTreatmentStatus(resultId, {
+        externalId: 'AwaitingTreatment',
+      })
+    }
+
+    return this.props.logTreatmentStatus(resultId, {
+      externalId: event.target.id,
+    })
   }
 
   drawIconPrev = isFirst => (
@@ -271,12 +310,36 @@ export class ResultDetail extends PureComponent {
     this.setState({ imageIndex })
   }
 
+  renderTreatmentStatusSection = () => {
+    const {
+      result,
+      userPermission,
+      logTreatmentStatus,
+      match: {
+        params: { resultId },
+      },
+    } = this.props
+    return (
+      <ResultTreatmentPanel
+        styles={styles}
+        data={result}
+        onTreatmentChange={this.handleOnTreatmentChange}
+        userPermission={userPermission}
+        logTreatmentStatus={logTreatmentStatus}
+        resultId={resultId}
+      />
+    )
+  }
+
   renderProgress() {
-    return <DelayShowingProgressBar type="linear" mode="indeterminate" />
+    return <DelayShowingProgressBar variant="indeterminate" />
   }
 
   renderRawResult() {
-    const { intl: { formatMessage }, deviceLogs } = this.props
+    const {
+      intl: { formatMessage },
+      deviceLogs,
+    } = this.props
     const logs = deviceLogs.toJS()
 
     return (
@@ -342,6 +405,8 @@ export class ResultDetail extends PureComponent {
       setResultFormDataValue,
       formDataSaving,
       formDataDirty,
+      dateFormat,
+      timeFormat,
     } = this.props
     if (!result || !result.getIn(['formSchema', 'fields'])) {
       return false
@@ -373,7 +438,9 @@ export class ResultDetail extends PureComponent {
         <ExpansionPanelHeader label={sectionLabel}>
           <div className={cssClasses('FormDataContainer')}>
             {fieldKeys.map(formFieldKey => {
-              const { intl: { formatMessage } } = this.props
+              const {
+                intl: { formatMessage },
+              } = this.props
               const fieldSchema = result.getIn([
                 'formSchema',
                 'fields',
@@ -394,6 +461,8 @@ export class ResultDetail extends PureComponent {
                     formatMessage={formatMessage}
                     isMultiField={isMultiField}
                     updateFormData={updateFormData}
+                    dateFormat={dateFormat}
+                    timeFormat={timeFormat}
                   />
                 </Unit>
               )
@@ -401,11 +470,12 @@ export class ResultDetail extends PureComponent {
             {showSubmitButton && (
               <Button
                 disabled={!formDataDirty}
-                raised
-                label={formatMessage(messages.submit)}
+                variant="contained"
                 onClick={this.submitFormData}
                 className={cssClasses('FormDataSubmitButton')}
-              />
+              >
+                {formatMessage(messages.submit)}
+              </Button>
             )}
             {formDataSaving && this.renderProgress()}
           </div>
@@ -418,7 +488,11 @@ export class ResultDetail extends PureComponent {
   }
 
   renderImagesSection() {
-    const { intl: { formatMessage }, result, token } = this.props
+    const {
+      intl: { formatMessage },
+      result,
+      token,
+    } = this.props
 
     const files = result.get('files') || Immutable.List()
     const totalFiles = files.count()
@@ -512,43 +586,60 @@ export class ResultDetail extends PureComponent {
     )
   }
 
+  renderWorkflow() {
+    const { result, intl } = this.props
+    const { formatMessage } = intl
+    const fields = [
+      'resultWorkflowStatus',
+      'resultWorkflowLogReason',
+      'resultWorkflowLogCreatedOn',
+    ].map((fieldName, key) => {
+      let value = result.get(fieldName)
+      if (fieldName.includes('CreatedOn')) {
+        value = formatDate(value)
+      }
+      return {
+        key,
+        label: formatMessage(messages[fieldName]),
+        value,
+      }
+    })
+
+    return (
+      <ExpansionPanel className={cssClasses('FieldsContainer')}>
+        <ExpansionPanelHeader label={formatMessage(messages.fieldWorkflow)} />
+        <ExpansionPanelDetail>
+          <ReadOnlyFields
+            className={cssClasses('Field__Container')}
+            fields={fields}
+          />
+        </ExpansionPanelDetail>
+      </ExpansionPanel>
+    )
+  }
+
   renderContent() {
     const { result, screenSchema, resultTags, editable, intl } = this.props
     return (
-      <div>
+      <div className={styles.ResultPanel}>
         <DetailPanel
           intl={intl}
           data={result}
           schema={screenSchema}
           className={cssClasses('FieldsContainer')}
+          titleSection={this.renderTreatmentStatusSection()}
         >
+          {/* Render lower-level sections in assay schema in cards */}
+          {this.renderLowerLevelSchemaSections()}
+
           {/* Render images attachment */}
           {this.renderImagesSection()}
 
           {/* Render lower-level sections in assay schema in cards */}
           {this.renderFormData()}
 
-          <ExpansionPanel className={cssClasses('FieldsContainer')}>
-            <ExpansionPanelHeader
-              label={intl.formatMessage(messages.fieldFollowup)}
-            >
-              <CheckboxField
-                name="Status"
-                label={intl.formatMessage(messages.confirmed)}
-                style={{ marginRight: 4 }}
-                checked={result.get('qcCheck') === 1}
-                onChange={this.onChangeQcCheck}
-                disabled={
-                  result.get('resultWorkflowStatusExternalId') !== 'Deliverable'
-                }
-                title={
-                  result.get('resultWorkflowStatusExternalId') !== 'Deliverable'
-                    ? intl.formatMessage(messages.qcCheckDisabledHelp)
-                    : ''
-                }
-              />
-            </ExpansionPanelHeader>
-          </ExpansionPanel>
+          {this.renderWorkflow()}
+
           <ExpansionPanel disabled>
             <ExpansionPanelHeader label={intl.formatMessage(messages.tags)}>
               <ConnectedTagInput
@@ -561,9 +652,6 @@ export class ResultDetail extends PureComponent {
               />
             </ExpansionPanelHeader>
           </ExpansionPanel>
-
-          {/* Render lower-level sections in assay schema in cards */}
-          {this.renderLowerLevelSchemaSections()}
           {/* Render Raw Result sections */}
           {this.renderRawResult()}
         </DetailPanel>
@@ -582,13 +670,24 @@ export class ResultDetail extends PureComponent {
   }
 
   render() {
-    const { intl: { formatMessage } } = this.props
+    const {
+      intl: { formatMessage },
+      match,
+      history,
+      location,
+    } = this.props
 
     return (
       <div className={cssClasses('Container')}>
         <Helmet title={formatMessage(messages.title)} />
         <NavTitle title={formatMessage(messages.title)} />
-
+        <ResultDetailsBackBar
+          formatMessage={formatMessage}
+          history={history}
+          location={location}
+          match={match}
+          title="Result Details"
+        />
         {this.renderPaper()}
       </div>
     )

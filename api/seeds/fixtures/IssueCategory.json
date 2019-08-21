@@ -3,22 +3,26 @@
     {
       "name": "Device Health",
       "externalId": "DeviceHealth",
-      "i18nKey": "issueCategoryDeviceHealth"
+      "i18nKey": "issueCategoryDeviceHealth",
+      "shortName": "Device"
     },
     {
       "name": "Reagent Health",
       "externalId": "ReagentHealth",
-      "i18nKey": "issueCategoryReagentHealth"
+      "i18nKey": "issueCategoryReagentHealth",
+      "shortName": "Reagent"
     },
     {
       "name": "Data Health",
       "externalId": "DataHealth",
-      "i18nKey": "issueCategoryDataHealth"
+      "i18nKey": "issueCategoryDataHealth",
+      "shortName":"Data"
     },
     {
       "name": "Connectivity Health",
       "externalId": "ConnectivityHealth",
-      "i18nKey": "issueCategoryConnectivityHealth"
+      "i18nKey": "issueCategoryConnectivityHealth",
+      "shortName": "Connectivity"
     }
   ]
 }

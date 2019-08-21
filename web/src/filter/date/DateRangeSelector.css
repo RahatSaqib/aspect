@@ -10,7 +10,7 @@
 }
 
 .DateRangeSelector__DatePickerContainer > * {
-  width: 276px;
+  width: auto;
 }
 
 .DateRangeSelector__RangeModeSelector div div div {

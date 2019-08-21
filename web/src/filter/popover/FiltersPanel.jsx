@@ -1,12 +1,11 @@
 import classnames from 'classnames/bind'
 import { compose, withState, withHandlers } from 'recompose'
-import React from 'react'
+import React, { Fragment } from 'react'
 import ReactDOM from 'react-dom'
 import { defineMessages } from 'react-intl'
 import MdKeyboardArrowDown from 'react-icons/lib/md/keyboard-arrow-down'
-import { Overlay } from 'react-toolbox/lib/overlay'
-import { Card } from 'react-toolbox/lib/card'
-import { Button } from 'react-toolbox/lib/button'
+import Modal from '@material-ui/core/Modal'
+import Card from '@material-ui/core/Card'
 
 import FallbackUntilDone from '../../components/shared/FallbackUntilDone'
 import FocusBlurTextField from '../../components/shared/FocusBlurTextField'
@@ -20,7 +19,11 @@ import ConsumableSelectField from '../resource/ConsumableSelectField'
 import SiteAutoCompleteField from '../resource/SiteAutoCompleteField'
 import DateRangeSelector from '../date/DateRangeSelector'
 import ResultWorkflowStatusSelectField from '../resource/ResultWorkflowStatusSelectField'
+import ResultTreatmentStatusSelectField from '../resource/ResultTreatmentStatusSelectField'
 import DeviceStatusSelectField from '../resource/DeviceStatusSelectField'
+import DeviceTypeSelectField from '../resource/DeviceTypeSelectField'
+import AspectButton from '../../components/shared/AspectButton'
+import RevokedSelectField from '../resource/RevokedSelectField'
 
 const cssClasses = classnames.bind(require('./FiltersPanel.css'))
 
@@ -90,9 +93,22 @@ const enhance = compose(
         workflowStatusId,
       }),
 
+    onTreatmentStatusIdChange: ({ onChangeFilters }) => treatmentStatusId =>
+      onChangeFilters({
+        treatmentStatusId,
+      }),
+
     onDeviceStatusIdChange: ({ onChangeFilters }) => deviceStatusId =>
       onChangeFilters({
         deviceStatusId,
+      }),
+    onDeviceTypeIdChange: ({ onChangeFilters }) => deviceTypeId =>
+      onChangeFilters({
+        deviceTypeId,
+      }),
+    onRevokedChange: ({ onChangeFilters }) => revoked =>
+      onChangeFilters({
+        revoked,
       }),
 
     onExcelExport: props => () =>
@@ -285,6 +301,14 @@ const messages = defineMessages({
     id: 'filter.popover.selectWorkflowStatus',
     defaultMessage: 'Select status...',
   },
+  treatmentStatus: {
+    id: 'filter.popover.workflowStatus',
+    defaultMessage: 'Treatment Status',
+  },
+  selectTreatmentStatus: {
+    id: 'filter.popover.selectWorkflowStatus',
+    defaultMessage: 'Select status...',
+  },
   deviceStatus: {
     id: 'filter.popover.deviceStatus',
     defaultMessage: 'Device Status',
@@ -293,6 +317,14 @@ const messages = defineMessages({
     id: 'filter.popover.selectDeviceStatus',
     defaultMessage: 'Select status...',
   },
+  deviceType: {
+    id: 'filter.popover.deviceType',
+    defaultMessage: 'Device Type',
+  },
+  selectDeviceType: {
+    id: 'filter.popover.selectDeviceType',
+    defaultMessage: 'Select type...',
+  },
   externalId: {
     id: 'filter.popover.externalId',
     defaultMessage: 'Facility Code',
@@ -300,6 +332,22 @@ const messages = defineMessages({
   enterExternalId: {
     id: 'filter.popover.enterExternalId',
     defaultMessage: 'Enter facility code...',
+  },
+  notificationName: {
+    id: 'filter.popover.notificationName',
+    defaultMessage: 'Notification',
+  },
+  selectNotificationName: {
+    id: 'filter.popover.selectNotificationName',
+    defaultMessage: 'Enter notification name...',
+  },
+  revoked: {
+    id: 'filter.popover.revoked',
+    defaultMessage: 'Revoked',
+  },
+  selectRevoked: {
+    id: 'filter.popover.selectRevoked',
+    defaultMessage: 'Select revoked status...',
   },
 })
 
@@ -313,6 +361,7 @@ export const FiltersPanel = ({
   config,
   dateFilterLabel,
   // --- injected by recompose ---
+  dateFormat,
   onToggleShown,
   isShown,
   onCountryIdChange,
@@ -327,12 +376,15 @@ export const FiltersPanel = ({
   onSampleOriginSiteChange,
   onDateChange,
   onWorkflowStatusIdChange,
+  onTreatmentStatusIdChange,
   onDeviceStatusIdChange,
+  onDeviceTypeIdChange,
+  onRevokedChange,
 }) => (
   <div className={cssClasses('Container', className)}>
-    <Button
+    <AspectButton
       className={cssClasses('Button')}
-      primary
+      color="primary"
       inverse
       disabled={disabled}
       onClick={onToggleShown}
@@ -358,12 +410,16 @@ export const FiltersPanel = ({
           'Button__icon--shown': isShown,
         })}
       />
-    </Button>
-    <Overlay
-      active={isShown}
-      onClick={onToggleShown}
-      onEscKeyDown={onToggleShown}
-    />
+    </AspectButton>
+
+    <Modal
+      className={cssClasses('Modal')}
+      open={isShown}
+      onClose={onToggleShown}
+    >
+      <Fragment />
+    </Modal>
+
     <div
       className={cssClasses('Popover', {
         'Popover--shown': isShown,
@@ -405,38 +461,35 @@ export const FiltersPanel = ({
             />
           </div>
         )}
-        {config.geography &&
-          config.state && (
-            <div className={cssClasses('Control')}>
-              <StateSelectField
-                allItemText={intl.formatMessage(messages.all)}
-                onStateIdChange={onStateIdChange}
-                countryId={filters.countryId}
-                stateId={filters.stateId}
-                floatingLabelFixed
-                hintText={intl.formatMessage(messages.selectState)}
-                floatingLabelText={intl.formatMessage(messages.state)}
-                style={{ verticalAlign: 'bottom' }}
-              />
-            </div>
-          )}
-        {config.geography &&
-          config.state &&
-          config.lga && (
-            <div className={cssClasses('Control')}>
-              <LgaSelectField
-                allItemText={intl.formatMessage(messages.all)}
-                onLgaIdChange={onLgaIdChange}
-                countryId={filters.countryId}
-                stateId={filters.stateId}
-                lgaId={filters.lgaId}
-                floatingLabelFixed
-                hintText={intl.formatMessage(messages.selectLga)}
-                floatingLabelText={intl.formatMessage(messages.lga)}
-                style={{ verticalAlign: 'bottom' }}
-              />
-            </div>
-          )}
+        {config.geography && config.state && (
+          <div className={cssClasses('Control')}>
+            <StateSelectField
+              allItemText={intl.formatMessage(messages.all)}
+              onStateIdChange={onStateIdChange}
+              countryId={filters.countryId}
+              stateId={filters.stateId}
+              floatingLabelFixed
+              hintText={intl.formatMessage(messages.selectState)}
+              floatingLabelText={intl.formatMessage(messages.state)}
+              style={{ verticalAlign: 'bottom' }}
+            />
+          </div>
+        )}
+        {config.geography && config.state && config.lga && (
+          <div className={cssClasses('Control')}>
+            <LgaSelectField
+              allItemText={intl.formatMessage(messages.all)}
+              onLgaIdChange={onLgaIdChange}
+              countryId={filters.countryId}
+              stateId={filters.stateId}
+              lgaId={filters.lgaId}
+              floatingLabelFixed
+              hintText={intl.formatMessage(messages.selectLga)}
+              floatingLabelText={intl.formatMessage(messages.lga)}
+              style={{ verticalAlign: 'bottom' }}
+            />
+          </div>
+        )}
         {config.assayAndResultCategory && (
           <div className={cssClasses('Control')}>
             <AssaySelectField
@@ -638,6 +691,35 @@ export const FiltersPanel = ({
             />
           </div>
         )}
+        {config.deviceType && (
+          <div className={cssClasses('Control')}>
+            <DeviceTypeSelectField
+              allItemText={intl.formatMessage(messages.all)}
+              value={filters.deviceTypeId}
+              onDeviceTypeChange={onDeviceTypeIdChange}
+              floatingLabelFixed
+              hintText={intl.formatMessage(messages.selectDeviceType)}
+              floatingLabelText={intl.formatMessage(messages.deviceType)}
+              style={{ verticalAlign: 'bottom' }}
+              autoWidth
+            />
+          </div>
+        )}
+        {config.notificationName && (
+          <div className={cssClasses('Control')}>
+            <FocusBlurTextField
+              name="notificationName"
+              value={filters.notificationName || ''}
+              onCommitValue={onTextFieldCommitValue}
+              InputLabelProps={{
+                shrink: true,
+              }}
+              placeholder={intl.formatMessage(messages.selectNotificationName)}
+              label={intl.formatMessage(messages.notificationName)}
+              margin="normal"
+            />
+          </div>
+        )}
         {config.date && (
           <DateRangeSelector
             floatingLabelText={
@@ -647,8 +729,37 @@ export const FiltersPanel = ({
             controlClassName={cssClasses('Control')}
             minDate={filters.minDate}
             maxDate={filters.maxDate}
+            dateFormat={dateFormat}
             autoOk
           />
+        )}
+
+        {config.revoked && (
+          <div className={cssClasses('Control')}>
+            <RevokedSelectField
+              floatingLabelText={intl.formatMessage(messages.revoked)}
+              onRevokedChange={onRevokedChange}
+              allItemText={intl.formatMessage(messages.all)}
+              value={filters.revoked}
+              floatingLabelFixed
+              hintText={intl.formatMessage(messages.selectRevoked)}
+              style={{ verticalAlign: 'bottom' }}
+            />
+          </div>
+        )}
+        {config.treatmentStatus && (
+          <div className={cssClasses('Control')}>
+            <ResultTreatmentStatusSelectField
+              allItemText={intl.formatMessage(messages.all)}
+              value={filters.treatmentStatusId}
+              onTreatmentStatusChange={onTreatmentStatusIdChange}
+              floatingLabelFixed
+              hintText={intl.formatMessage(messages.selectTreatmentStatus)}
+              floatingLabelText={intl.formatMessage(messages.treatmentStatus)}
+              style={{ verticalAlign: 'bottom' }}
+              autoWidth
+            />
+          </div>
         )}
       </FallbackUntilDone>
     </div>

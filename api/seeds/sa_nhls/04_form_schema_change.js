@@ -1,4 +1,4 @@
-module.exports = require('../utils').seed(seed)
+module.exports = require('../utils').seed(seed, __filename)
 
 const _ = require('lodash')
 const Promise = require('bluebird')
@@ -20,7 +20,6 @@ async function seed(knex) {
   ) {
     return
   }
-
   const saNhlsPartner = await knex('Partner')
     .where('name', 'South Africa NHLS')
     .first('id')

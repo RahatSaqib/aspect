@@ -16,14 +16,15 @@
   padding: 30px;
 }
 
+.Card hr {
+  visibility: hidden;
+  margin: 8px 0;
+}
+
 .Card__Title {
   margin-top: 0;
   display: flex;
   justify-content: space-between;
-}
-
-.Card__Button {
-  font-weight: var(--lato-font-weight-bold);
 }
 
 .Card__Button--inline {
@@ -47,7 +48,11 @@
 .Input__inputElement {
   border: 1px solid rgba(0, 0, 0, 0.12);
   border-radius: 4px;
-  padding: 8px 12px;
+  padding: 0 12px;
+}
+
+.Input__inputElement:before {
+  border-bottom: none;
 }
 
 .Input--inline {
@@ -55,7 +60,11 @@
   width: 50px;
 }
 
-.Button--primary:not([disabled]).Button--raised.Button--inverse {
+.Card__Button:global(.inverse) {
+  background-color: var(--aspect-color-grey-7);
+}
+
+.Card__Button:global(.inverse):hover {
   background-color: var(--aspect-color-grey-7);
 }
 

@@ -91,35 +91,28 @@ async function addResultCategory(context, result) {
 async function checkResultDeliverable(context, result) {
   const { knex, actions, now } = context
   const { id: resultId, patientData } = result
-
   // Now's a good time to see if the result is in the
   // status "Validated" and can be promoted to "Deliverable" base on patient data
   if (patientData && patientDataIsComplete(JSON.parse(patientData))) {
     const resultWorkflowExternalId = (await knex('Result as r')
       .where('r.id', resultId)
-      .join('ResultWorkflowStatus as rw', 'r.resultWorkflowStatusId', 'rw.id')
+      .join('ResultWorkflowLog as rwl', 'r.resultWorkflowStatusLogId', 'rwl.id')
+      .join('ResultWorkflowStatus as rw', 'rwl.resultWorkflowStatusId', 'rw.id')
       .first('rw.externalId')).externalId
 
     // only auto update if not already in deliverable
     // status, it hasn't been delivered yet,
     // and it is now in the status "Validated"
+
     if (resultWorkflowExternalId === VALIDATED_EXTERNALID) {
       const resultWorkflowDeliverableId = await resultWorkflowStatusToId(
         DELIVERABLE_EXTERNALID
       )
 
-      await knex('Result')
-        .where('id', resultId)
-        .update({
-          resultWorkflowStatusId: resultWorkflowDeliverableId,
-          // auto QC-check Deliverable results RRT-313
-          qcCheck: 1,
-        })
-
       // add a second so this entry shows up after the workflow status log entry
       // that was added as part of the original update
       const logEntryNow = new Date(now.getTime() + 1000)
-      await knex('ResultWorkflowLog').insert({
+      const [lastLogId] = await knex('ResultWorkflowLog').insert({
         resultId,
         resultWorkflowStatusId: resultWorkflowDeliverableId,
         operator: null,
@@ -127,7 +120,12 @@ async function checkResultDeliverable(context, result) {
         createdOn: logEntryNow,
         reason: 'Validated & Complete Patient Data',
       })
-
+      await knex('Result')
+        .where('id', resultId)
+        .update({
+          resultWorkflowStatusLogId: lastLogId,
+          // auto QC-check Deliverable results RRT-313
+        })
       actions.resultUpdated(resultId)
     }
   }

@@ -1,7 +1,7 @@
 const _ = require('lodash')
 const Boom = require('boom')
 
-const setMilliseconds = require('date-fns/set_milliseconds')
+const setMilliseconds = require('date-fns/setMilliseconds')
 const {
   findConsumables,
   findConsumableReason,

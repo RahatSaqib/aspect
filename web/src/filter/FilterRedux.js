@@ -8,7 +8,7 @@ export const types = {
 }
 
 export const exportFormatTypes = {
-  EXCEL: 'excel',
+  EXCEL: 'xlsx',
   CSV: 'csv',
 }
 
@@ -76,6 +76,7 @@ const ListConfig = Immutable.Record({
   workflowStatus: false,
   deviceStatus: false,
   externalId: false,
+  notificationName: false,
 })
 
 const ListExport = Immutable.Record({

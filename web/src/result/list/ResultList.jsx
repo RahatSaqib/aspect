@@ -7,6 +7,7 @@ import { defineMessages } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
+import TableBody from '@material-ui/core/TableBody'
 
 import {
   makeSortPageSelector,
@@ -68,6 +69,10 @@ const messages = defineMessages({
     id: 'pages.ResultList.resultWorkflowStatus',
     defaultMessage: 'Result Workflow Status',
   },
+  resultTreatmentStatus: {
+    id: 'pages.ResultList.resultTreatmentStatus',
+    defaultMessage: 'Treatment',
+  },
   assayId: {
     id: 'pages.ResultList.assayId',
     defaultMessage: 'Assay',
@@ -107,6 +112,7 @@ const FILTERS_CONFIG = [
   },
   { sampleOriginSite: true, requiredPermissions: [] },
   { workflowStatus: true, requiredPermissions: [] },
+  { treatmentStatus: true, requiredPermissions: [] },
 ]
 
 const searchSanitizer = makeSearchParamsSanitizer({
@@ -191,7 +197,9 @@ const enhance = compose(
     },
 
     onRowClick: ({ history }) => ({
-      currentTarget: { dataset: { resultId } },
+      currentTarget: {
+        dataset: { resultId },
+      },
     }) => history.push(`/browse/result/${resultId}`),
   }),
   lifecycle({
@@ -268,7 +276,7 @@ export const ResultList = ({
       onClickExport={onExportClick}
       askConfirmationForExport={table.total > 1000}
     />
-    <DataTableCard>
+    <DataTableCard key={`DataTableCard--table-${location.key}`}>
       <DataTableProgressBar disabled={!table.loading} />
       {items.currentIdList.isEmpty() && (
         <BrowseEmptyList history={history} location={location} intl={intl} />
@@ -293,13 +301,13 @@ export const ResultList = ({
                 key: 'deviceName',
                 label: intl.formatMessage(messages.deviceName),
                 sortable: true,
-                hiddenOn: 'md',
+                hiddenOn: 'sm',
               },
               {
                 key: 'sampleOriginSiteName',
                 label: intl.formatMessage(messages.sampleOriginSiteName),
                 sortable: true,
-                hiddenOn: 'md',
+                hiddenOn: 'sm',
               },
               {
                 key: 'sampleId',
@@ -310,7 +318,7 @@ export const ResultList = ({
                 key: 'sampleGroup',
                 label: intl.formatMessage(messages.sampleGroup),
                 sortable: true,
-                hiddenOn: 'lg',
+                hiddenOn: 'md',
               },
               {
                 key: 'resultText',
@@ -321,7 +329,13 @@ export const ResultList = ({
                 key: 'resultWorkflowStatus',
                 label: intl.formatMessage(messages.resultWorkflowStatus),
                 sortable: true,
-                hiddenOn: 'md',
+                hiddenOn: 'sm',
+              },
+              {
+                key: 'resultTreatmentStatus',
+                label: intl.formatMessage(messages.resultTreatmentStatus),
+                sortable: true,
+                hiddenOn: 'sm',
               },
               {
                 key: 'patientId',
@@ -337,22 +351,24 @@ export const ResultList = ({
                   intl
                 ),
                 sortable: true,
-                hiddenOn: 'lg',
+                hiddenOn: 'md',
               }))
             )}
           />
-          {items.currentIdList
-            .map(id => items.byId.get(id))
-            .map(result => (
-              <ResultDataTableRow
-                key={result.get('id')}
-                intl={intl}
-                extraColumns={table.extraColumns}
-                result={result}
-                onClick={onRowClick}
-                data-result-id={result.get('id')}
-              />
-            ))}
+          <TableBody>
+            {items.currentIdList
+              .map(id => items.byId.get(id))
+              .map(result => (
+                <ResultDataTableRow
+                  key={result.get('id')}
+                  intl={intl}
+                  extraColumns={table.extraColumns}
+                  result={result}
+                  onClick={onRowClick}
+                  data-result-id={result.get('id')}
+                />
+              ))}
+          </TableBody>
         </ResultDataTable>
       )}
       {!items.currentIdList.isEmpty() && (

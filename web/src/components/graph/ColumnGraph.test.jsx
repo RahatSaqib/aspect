@@ -1,10 +1,9 @@
 import React from 'react'
-import ReactShallowRenderer from 'react-test-renderer/shallow'
+import { shallow } from 'enzyme'
 
 import ColumnGraph from './ColumnGraph'
 
 describe('ColumnGraph component', () => {
-  const renderer = new ReactShallowRenderer()
   const props = {
     data: [
       {
@@ -30,9 +29,7 @@ describe('ColumnGraph component', () => {
     hideLabel: false,
   }
 
-  it('should shallow render correctly', () => {
-    const element = renderer.render(<ColumnGraph {...props} rightLabel />)
-
-    expect(element).toMatchSnapshot()
+  it('should shallow render without crash', () => {
+    shallow(<ColumnGraph {...props} rightLabel />)
   })
 })

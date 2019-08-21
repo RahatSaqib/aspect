@@ -37,6 +37,10 @@ describe('result/service', () => {
       }
       this.first = () => Promise.resolve(firstResult)
       this.update = () => Promise.resolve()
+      this.from = () => this
+      this.whereIn = () => this
+      this.groupBy = () => this
+      this.as = () => this
       return this
     }
     return _.merge(fakeKnexFunction, fakeKnexFunction())
@@ -54,6 +58,7 @@ describe('result/service', () => {
         getUser: () =>
           Promise.resolve({
             id: 1,
+            userName: 'Admin',
           }),
       },
     })

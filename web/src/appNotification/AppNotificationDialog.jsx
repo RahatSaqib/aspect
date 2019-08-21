@@ -40,7 +40,12 @@ const genericMessages = defineMessages({
   },
 })
 
-const enhance = _.flowRight(connect(mapStateToProps, mapDispatchToProps))
+const enhance = _.flowRight(
+  connect(
+    mapStateToProps,
+    mapDispatchToProps
+  )
+)
 
 export class AppNotificationDialog extends PureComponent {
   static propTypes = {
@@ -80,7 +85,10 @@ export class AppNotificationDialog extends PureComponent {
   }
 
   render() {
-    const { appNotification, intl: { formatMessage } } = this.props
+    const {
+      appNotification,
+      intl: { formatMessage },
+    } = this.props
 
     const toJSOrDefault = (immutableObject, defaultValue) =>
       immutableObject && immutableObject.toJS

@@ -1,4 +1,4 @@
-module.exports = require('../utils').seed(seed)
+module.exports = require('../utils').seed(seed, __filename)
 
 const { rowsAsObject } = require('../utils')
 
@@ -17,7 +17,6 @@ async function seed(knex) {
   if (issueResolutionTrigger) {
     return
   }
-
   const now = new Date()
   const issueTypes = await rowsAsObject(knex, 'IssueType', 'externalId')
 

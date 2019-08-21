@@ -4,7 +4,7 @@ import React from 'react'
 import { compose, withProps, withHandlers, pure, lifecycle } from 'recompose'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-
+import Report from '../../dashboard/status/Reports'
 import BrowseNavDropdown from './BrowseNavDropdown'
 import { mergeToFiltersParams, reduceNavLinks } from '../../filter/utils'
 import FiltersBtnGroup from '../../filter/btnGroup/FiltersBtnGroup'
@@ -15,6 +15,7 @@ import {
   closeExportConfirmation,
   beginListExportProcessing,
 } from '../../filter/FilterRedux'
+import { getAspectDisplayPreferences } from '../sideEffects/LocalStorage'
 
 const cssClasses = classnames.bind(require('./BrowseFilters.css'))
 
@@ -23,8 +24,10 @@ const enhance = compose(
   withProps(({ location }) => {
     const searchParams = new URLSearchParams(location.search)
     const filtersParams = new URLSearchParams(searchParams.get('filters') || '')
+    const prefs = getAspectDisplayPreferences()
     return {
       filters: _.fromPairs([...filtersParams.entries()]),
+      dateFormat: _.replace(prefs.get('dateFormat'), /-/g, '/'),
     }
   }),
   withHandlers({
@@ -108,6 +111,7 @@ export const BrowseFilters = ({
   onRemoveFilterItem,
   reducedSource,
   userPermissions,
+  dateFormat,
   ...restProps
 }) => (
   <div className={cssClasses('Container')}>
@@ -126,8 +130,10 @@ export const BrowseFilters = ({
     <FiltersPanel
       intl={intl}
       className={cssClasses('FiltersPanel')}
+      dateFormat={dateFormat}
       {...restProps}
     />
+    <Report />
   </div>
 )
 

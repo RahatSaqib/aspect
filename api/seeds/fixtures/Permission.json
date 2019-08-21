@@ -29,6 +29,10 @@
       "activities": ["view", "edit", "admin"]
     },
     {
+      "name": "treatmentStatus",
+      "activities": ["view", "edit", "admin"]
+    },
+    {
       "name": "site",
       "activities": ["view", "edit", "admin"]
     },
@@ -54,6 +58,10 @@
     },
     {
       "name": "actionDashboard",
+      "activities": ["view", "edit", "admin"]
+    },
+    {
+      "name": "reporter",
       "activities": ["view", "edit", "admin"]
     }
   ]

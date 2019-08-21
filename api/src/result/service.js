@@ -1,7 +1,8 @@
 const Boom = require('boom')
 const _ = require('lodash')
 const dateFormat = require('date-fns/format')
-
+const { subDays, subMonths, startOfMonth, endOfMonth } = require('date-fns')
+const Promise = require('bluebird')
 const {
   knex,
   filterParams,
@@ -16,14 +17,18 @@ const {
   generateExcelFile,
   generateCsvFile,
 } = require('../shared/io')
-const { resultWorkflowStatusToId } = require('../shared/dictionary')
+const {
+  resultWorkflowStatusToId,
+  resultTreatmentStatusToId,
+} = require('../shared/dictionary')
 const { oneDirectionalMd5Hash } = require('../shared/encryption')
+const { returnIso8601StringWithoutTimeZoneOffset } = require('../shared/date')
 const { getPathFromFileReferenceId } = require('../file/service')
 
 const SELECT_LIST_FIELDS = [
   'r.id',
   'r.externalId',
-  'r.endedOn',
+  knex.raw('IFNULL(r.endedOn, r.startedOn) as endedOn'),
   'd.name as deviceName',
   'c.name as countryName',
   'st.name as stateName',
@@ -31,6 +36,12 @@ const SELECT_LIST_FIELDS = [
   'rc1.name as resultCategory1Name',
   'rc2.name as resultCategory2Name',
   'rs.name as resultWorkflowStatus',
+  'rts.externalId as resultTreatmentStatus',
+  'rtsl.changedOn as resultTreatmentStatusChangedOn',
+  knex.raw('ifnull(rts.name, "N/A") as resultTreatmentStatusName'),
+  knex.raw(
+    'GREATEST(rtas.requiresTreatment, rtas2.requiresTreatment) as requiresTreatment'
+  ),
   'so.name as sampleOriginSiteName',
   'sp.externalId as sampleId',
   'r.sampleGroup',
@@ -58,9 +69,12 @@ const SELECT_SHOW_FIELDS = [
   'lg.name as lgaName',
   'rc1.name as resultCategory1Name',
   'rc2.name as resultCategory2Name',
-  'r.resultWorkflowStatusId',
+  'rs.id as resultWorkflowStatusId',
   'rs.name as resultWorkflowStatus',
   'rs.externalId as resultWorkflowStatusExternalId',
+  'rsl.changedOn as resultWorkflowChangedOn',
+  'rts.id as resultTreatmentStatusId',
+  'rts.externalId as resultTreatmentStatus',
   'r.resultData',
   'r.formData',
   'r.siteId',
@@ -88,9 +102,20 @@ const SELECT_SHOW_FIELDS = [
   'so.name as sampleOriginSiteName',
   'stp.name as sampleTypeName',
   knex.raw('JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.id")) as patientId'),
+  knex.raw(
+    'GREATEST(rtas.requiresTreatment, rtas2.requiresTreatment) as requiresTreatment'
+  ),
   'r.patientData',
-  'r.qcCheck',
   'rf.formSchema',
+  'rsl.reason as resultWorkflowLogReason',
+  'rsl.operator as resultWorkflowLogOperator',
+  'rsl.createdOn as resultWorkflowLogCreatedOn',
+  'rsl.changedOn as resultWorkflowLogChangedOn',
+  'rtsl.method as resultTreatmentMethod',
+  'rtsl.data as resultTreatmentData',
+  'rtsl.resultTreatmentStatusId',
+  'rtsl.changedOn as resultTreatmentStatusChangedOn',
+  'rtsl.createdOn as resultTreatmentStatusCreatedOn',
 ]
 
 const SORT_FIELDS = [
@@ -103,6 +128,9 @@ const SORT_FIELDS = [
   'sampleGroup',
   'resultText',
   'resultWorkflowStatus',
+  'resultTreatmentStatus',
+  'resultTreatmentStatusChangedOn',
+  'requiresTreatment',
   'resultCategory1Name',
   'resultCategory2Name',
   'patientId',
@@ -182,11 +210,39 @@ async function getListResults(query, auth) {
     .leftJoin('Sample as sp', 'r.sampleId', 'sp.id')
     .leftJoin('SampleType as stp', 'sp.sampleTypeId', 'stp.id')
     .leftJoin('Site as so', 'sp.originSiteId', 'so.id')
-    .leftJoin('ResultWorkflowStatus as rs', 'r.resultWorkflowStatusId', 'rs.id')
-    .leftJoin('ResultSource as rsrc', 'r.resultSourceId', 'rsrc.id')
-    .leftJoin('Site as sr', 'r.siteId', 'sr.id')
-    // Filter Generated results for now until we come up with appropriate UI
-    .where('rsrc.externalId', '<>', 'Generated')
+    .leftJoin('ResultCategoryAssay as rtas', function() {
+      this.on('r.assayId', 'rtas.assayId').andOn(
+        'r.resultCategory1',
+        'rtas.resultCategoryId'
+      )
+    })
+    .leftJoin('ResultCategoryAssay as rtas2', function() {
+      this.on('r.assayId', 'rtas2.assayId').andOn(
+        'r.resultCategory1',
+        'rtas2.resultCategoryId'
+      )
+    })
+    .leftJoin(
+      'ResultWorkflowLog as rsl',
+      'r.resultWorkflowStatusLogId',
+      'rsl.id'
+    )
+    .leftJoin(
+      'ResultWorkflowStatus as rs',
+      'rsl.resultWorkflowStatusId',
+      'rs.id'
+    )
+    .leftJoin(
+      'ResultTreatmentStatusLog as rtsl',
+      'r.treatmentStatusLogId',
+      'rtsl.id'
+    )
+    .leftJoin(
+      'ResultTreatmentStatus as rts',
+      'rtsl.resultTreatmentStatusId',
+      'rts.id'
+    )
+    .leftJoin('Site as si', 'r.siteId', 'si.id')
     .modify(filterDateRangeParams, query, 'r.endedOn')
     .modify(filterParams, query, {
       deviceId: 'd.id',
@@ -196,11 +252,12 @@ async function getListResults(query, auth) {
       stateId: 'g.stateId',
       lgaId: 'g.lgaId',
       deviceName: 'd.name',
-      siteName: 'sr.name',
+      siteName: 'si.name',
       sampleId: 'sp.externalId',
       sampleOriginSite: 'so.name',
       sampleGroup: 'r.sampleGroup',
-      workflowStatusId: 'r.resultWorkflowStatusId',
+      workflowStatusId: 'rs.id',
+      treatmentStatusId: 'rts.id',
     })
     .modify((queryBuilder, params) => {
       if (params.patientOrResearchId) {
@@ -240,15 +297,45 @@ async function getListResults(query, auth) {
     })
   }
 
+  const newData = _.map(data, v => {
+    getResultTreatmentStatus(v)
+    return v
+  })
+
   const result = {
     ok: true,
     total,
-    length: data.length,
-    data,
+    length: newData.length,
+    data: newData,
     extraColumns: assayColumns,
   }
 
   return result
+}
+
+function getResultTreatmentStatus(response) {
+  if (response.requiresTreatment) {
+    const today = new Date()
+    const lastSixteenDays = subDays(today, 16)
+    const lastThirtyTwoDays = subDays(today, 32)
+    const isPastThirtyTwoDays = response.endedOn >= lastThirtyTwoDays
+    const isPastSixteenDays =
+      response.endedOn >= lastSixteenDays &&
+      response.endedOn < lastThirtyTwoDays
+    if (response.resultTreatmentStatus === 'OnTreatment') {
+      response.treatmentStatusInfo = 'ok'
+    } else if (response.resultTreatmentStatus === 'NotPossible') {
+      response.treatmentStatusInfo = 'na'
+    } else if (isPastThirtyTwoDays) {
+      response.treatmentStatusInfo = 'alert'
+    } else if (isPastSixteenDays) {
+      response.treatmentStatusInfo = 'warning'
+    } else {
+      response.treatmentStatusInfo = 'na'
+    }
+  } else {
+    response.treatmentStatusInfo = null
+  }
 }
 
 async function listResults(request) {
@@ -257,6 +344,281 @@ async function listResults(request) {
   return result
 }
 
+async function getDownloadResultsList(query, auth) {
+  // get data constraints
+  const dataConstraints = await getConstraints(auth.credentials)
+  const resultQuery = knex('Result as r')
+    .innerJoin('Assay as a', 'r.assayId', 'a.id')
+    .innerJoin('AssayType as at', 'a.assayTypeId', 'at.id')
+    .innerJoin('Device as d', 'r.deviceId', 'd.id')
+    .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
+    .leftJoin('Geography as g', 'r.geographyId', 'g.id')
+    .leftJoin('Country as c', 'g.countryId', 'c.id')
+    .leftJoin('State as st', 'g.stateId', 'st.id')
+    .leftJoin('Lga as lg', 'g.lgaId', 'lg.id')
+    .leftJoin('ResultCategory as rc1', 'r.resultCategory1', 'rc1.id')
+    .leftJoin('ResultCategory as rc2', 'r.resultCategory2', 'rc2.id')
+    .leftJoin(
+      'ResultWorkflowLog as rsl',
+      'r.resultWorkflowStatusLogId',
+      'rsl.id'
+    )
+    .leftJoin(
+      'ResultWorkflowStatus as rs',
+      'rsl.resultWorkflowStatusId',
+      'rs.id'
+    )
+    .leftJoin('Sample as sp', 'r.sampleId', 'sp.id')
+    .leftJoin('SampleType as stp', 'sp.sampleTypeId', 'stp.id')
+    .leftJoin('Site as so', 'sp.originSiteId', 'so.id')
+    .leftJoin('Site as si', 'r.siteId', 'si.id')
+    .leftJoin(
+      'ResultTreatmentStatusLog as rtsl',
+      'r.treatmentStatusLogId',
+      'rtsl.id'
+    )
+    .leftJoin(
+      'ResultTreatmentStatus as rt',
+      'rtsl.resultTreatmentStatusId',
+      'rt.id'
+    )
+    .whereIn('rs.externalId', [
+      'Deliverable',
+      'Delivered',
+      'Acknowledged',
+      'Flagged',
+    ])
+    .modify((queryBuilder, params) => {
+      if (params.minUpdatedOn) {
+        queryBuilder.where('r.updatedOn', '>=', params.minUpdatedOn)
+      }
+      if (params.maxUpdatedOn) {
+        queryBuilder.where('r.updatedOn', '<', params.maxUpdatedOn)
+      }
+      if (params.patientSample) {
+        queryBuilder.where(builder =>
+          builder
+            .where('sp.externalId', 'like', `%${params.patientSample}%`)
+            .orWhere(
+              knex.raw('JSON_EXTRACT(patientData,"$.firstName")'),
+              'like',
+              `%${params.patientSample}%`
+            )
+            .orWhere(
+              knex.raw('JSON_EXTRACT(patientData,"$.lastName")'),
+              'like',
+              `%${params.patientSample}%`
+            )
+            .orWhere(
+              knex.raw('JSON_EXTRACT(patientData,"$.name")'),
+              'like',
+              `%${params.patientSample}%`
+            )
+            .orWhere(
+              knex.raw('JSON_EXTRACT(patientData,"$.id")'),
+              'like',
+              `%${params.patientSample}%`
+            )
+        )
+      }
+      if (params.assayTypeAbbreviations) {
+        queryBuilder.whereIn(
+          'at.abbreviation',
+          params.assayTypeAbbreviations.split(',')
+        )
+      }
+      if (params.resultCategories) {
+        queryBuilder.where(builder =>
+          builder
+            .whereIn('rc1.externalId', params.resultCategories.split(','))
+            .orWhereIn('rc2.externalId', params.resultCategories.split(','))
+        )
+      }
+      if (params.workflowStatus) {
+        queryBuilder.where('rs.externalId', params.workflowStatus)
+      }
+      if (params.treatmentStatus)
+        queryBuilder.where('rt.externalId', params.treatmentStatus)
+      if (params.deviceType)
+        queryBuilder.where('dt.externalId', params.deviceType)
+      else queryBuilder.where('dt.externalId', 'CepheidGeneXpert')
+    }, query)
+    .modify(addConstraints, dataConstraints, { device: 'd', sample: 's' })
+  // get total count for paging
+  const getCount = resultQuery
+    .clone()
+    .count('r.id as count')
+    .first()
+
+  // get rows
+  const getItems = resultQuery
+    .clone()
+    .modify(sortPageParams, query, 'r.updatedOn')
+    .select(
+      'r.id',
+      'r.externalId',
+      'r.startedOn',
+      'r.endedOn',
+      'r.createdOn',
+      'r.updatedOn',
+      'r.longitude',
+      'r.latitude',
+      'r.treatmentStatusLogId',
+      'a.externalId as assayExternalId',
+      'si.name as siteName',
+      'd.name as deviceName',
+      'rc1.externalId as resultCategory1ExternalId',
+      'rc2.externalId as resultCategory2ExternalId',
+      'r.patientData',
+      'r.resultData',
+      'r.formData',
+      'r.researchId',
+      'r.senderVersion',
+      'r.senderOperator',
+      'r.notes',
+      'r.errorCode',
+      'r.errorNotes',
+      'sp.externalId as sampleId',
+      'r.sampleGroup',
+      'sp.collectedOn as sampleCollectedOn',
+      'so.id as sampleOriginSiteId',
+      'so.externalId as sampleOriginSiteExternalId',
+      'so.name as sampleOriginSiteName',
+      'stp.name as sampleTypeName',
+      'rs.name as resultWorkflowStatusName',
+      'rs.externalId as resultWorkflowStatusExternalId',
+      'rs.i18nKey as resultWorkflowStatusi18nKey',
+      'rsl.reason as resultWorkflowStatusReason',
+      'rsl.changedOn as resultWorkflowStatusChangedOn',
+      'rtsl.changedOn as resultTreatmentStatusChangedOn',
+      'rtsl.data as resultTreatmentStatusData',
+      'rtsl.method as resultTreatmentStatusMethod',
+      'rt.name as resultTreatmentStatusName',
+      'rt.externalId as resultTreatmentStatusExternalId',
+      'rt.i18nKey as resultTreatmentStatusi18nKey'
+    )
+
+  // return result when both queries are finished
+  const [{ count: total }, data] = await Promise.all([getCount, getItems])
+
+  const transformedData = _.map(data, d => ({
+    id: d.id,
+    externalId: d.externalId,
+    startedOn: returnIso8601StringWithoutTimeZoneOffset(d.startedOn),
+    endedOn: returnIso8601StringWithoutTimeZoneOffset(d.endedOn),
+    createdOn: d.createdOn,
+    updatedOn: d.updatedOn,
+    longitude: d.longitude,
+    latitude: d.latitude,
+    assayExternalId: d.assayExternalId,
+    siteName: d.siteName,
+    deviceName: d.deviceName,
+    resultCategory1ExternalId: d.resultCategory1ExternalId,
+    resultCategory2ExternalId: d.resultCategory2ExternalId,
+    patientData: d.patientData ? JSON.parse(d.patientData) : null,
+    resultData: d.resultData ? JSON.parse(d.resultData) : null,
+    formData: d.formData ? JSON.parse(d.formData) : null,
+    researchId: d.researchId,
+    senderVersion: d.senderVersion,
+    senderOperator: d.senderOperator,
+    notes: d.notes,
+    errorCode: d.errorCode,
+    errorNotes: d.errorNotes,
+    sample: {
+      id: d.sampleId,
+      collectedOn: d.sampleCollectedOn,
+      group: d.sampleGroup,
+      type: d.sampleTypeName,
+      originSite: d.sampleOriginSiteId
+        ? {
+            externalId: d.sampleOriginSiteExternalId,
+            name: d.sampleOriginSiteName,
+          }
+        : null,
+    },
+    workflowStatus: {
+      name: d.resultWorkflowStatusName,
+      externalId: d.resultWorkflowStatusExternalId,
+      i18nKey: d.resultWorkflowStatusi18nKey,
+      reason: d.resultWorkflowStatusReason,
+      changedOn: d.resultWorkflowStatusChangedOn,
+    },
+    treatmentStatus: {
+      changedOn: d.resultTreatmentStatusChangedOn,
+      name: d.resultTreatmentStatusName,
+      externalId: d.resultTreatmentStatusExternalId,
+      i18nKey: d.resultTreatmentStatusi18nKey,
+      method: d.resultTreatmentStatusMethod,
+      data: d.resultTreatmentStatusData,
+    },
+  }))
+  const result = {
+    ok: true,
+    total,
+    length: transformedData.length,
+    data: transformedData,
+  }
+
+  return result
+}
+
+async function downloadResultsList(request) {
+  const { query, auth } = request
+  const user = await getUser(auth.credentials.name)
+  const result = await getDownloadResultsList(query, auth)
+  const idsToUpdate = _.uniq(
+    _.map(
+      _.omitBy(
+        result.data,
+        elem => elem.workflowStatus.externalId !== 'Delivered'
+      ),
+      elem => elem.id
+    )
+  )
+
+  const idsToBeRegistered = _.uniq(_.map(result.data, elem => elem.id))
+  if (idsToUpdate) await updateResultStatus(idsToUpdate, user.id)
+  if (idsToBeRegistered) await addResultDownloadLog(idsToBeRegistered, user.id)
+
+  const assigmentValue = elem => {
+    elem.workflowStatus.externalId = 'Delivered'
+  }
+  _.forEach(result.data, assigmentValue)
+  return result
+}
+async function addResultDownloadLog(idsToBeRegistered, userId) {
+  const now = new Date()
+
+  await Promise.each(idsToBeRegistered, async resultId => {
+    await knex('ResultDownloadLog').insert({
+      resultId,
+      createdOn: now,
+      createdBy: userId,
+    })
+  })
+}
+async function updateResultStatus(idsToUpdate, userId) {
+  const { id: DeliveredId } = await knex('ResultWorkflowStatus')
+    .where('externalId', 'Delivered')
+    .first('id')
+  const now = new Date()
+  await Promise.each(idsToUpdate, async resultId => {
+    const [resultWorkflowStatusLogId] = await knex('ResultWorkflowLog').insert({
+      resultId,
+      resultWorkflowStatusId: DeliveredId,
+      changedOn: now,
+      createdOn: now,
+      createdBy: userId,
+      reason: 'Download Results Api',
+      operator: 'Reporter App',
+    })
+    await knex('Result')
+      .where({
+        id: resultId,
+      })
+      .update({ resultWorkflowStatusLogId })
+  })
+}
 async function showResult(request) {
   const result = await getResultByResultId(request)
   return result.ok ? result : Boom.notFound()
@@ -277,7 +639,6 @@ async function getDeviceLogsByResultId(request) {
     .modify(addConstraints, dataConstraints, { device: 'd' })
     .select(
       'dl.createdOn',
-      'dl.checkpoint as checkPoint',
       'dl.deviceOperationId',
       'dl.source',
       'dl.deviceConfigurationUpdated',
@@ -289,7 +650,10 @@ async function getDeviceLogsByResultId(request) {
 }
 
 async function showFileReferences(request) {
-  const { params: { resultId }, auth } = request
+  const {
+    params: { resultId },
+    auth,
+  } = request
   const dataConstraints = await getConstraints(auth.credentials)
   const fileReferences = await knex('ResultFileReference as rf')
     .join('FileReference as f', 'f.id', 'rf.fileReferenceId')
@@ -327,7 +691,10 @@ function downloadFile(request, reply) {
 }
 
 function downloadFirstImage(request, reply) {
-  const { auth, params: { resultId } } = request
+  const {
+    auth,
+    params: { resultId },
+  } = request
   return downloadFileAsync({ auth, params: { resultId, mimeType: 'image' } })
     .then(path => {
       reply.file(path)
@@ -370,6 +737,7 @@ async function downloadFileAsync({ auth, params }) {
 async function getResultByResultId(request, fields = SELECT_SHOW_FIELDS) {
   const { auth, params } = request
   const dataConstraints = await getConstraints(auth.credentials)
+  const { userName } = await getUser(auth.credentials.name)
 
   const results = await knex('Result as r')
     .innerJoin('Device as d', 'r.deviceId', 'd.id')
@@ -384,7 +752,38 @@ async function getResultByResultId(request, fields = SELECT_SHOW_FIELDS) {
     .leftJoin('Sample as sp', 'r.sampleId', 'sp.id')
     .leftJoin('SampleType as stp', 'sp.sampleTypeId', 'stp.id')
     .leftJoin('Site as so', 'sp.originSiteId', 'so.id')
-    .leftJoin('ResultWorkflowStatus as rs', 'r.resultWorkflowStatusId', 'rs.id')
+    .leftJoin('ResultCategoryAssay as rtas', function() {
+      this.on('r.assayId', 'rtas.assayId').andOn(
+        'r.resultCategory1',
+        'rtas.resultCategoryId'
+      )
+    })
+    .leftJoin('ResultCategoryAssay as rtas2', function() {
+      this.on('r.assayId', 'rtas2.assayId').andOn(
+        'r.resultCategory1',
+        'rtas2.resultCategoryId'
+      )
+    })
+    .leftJoin(
+      'ResultWorkflowLog as rsl',
+      'r.resultWorkflowStatusLogId',
+      'rsl.id'
+    )
+    .leftJoin(
+      'ResultWorkflowStatus as rs',
+      'rsl.resultWorkflowStatusId',
+      'rs.id'
+    )
+    .leftJoin(
+      'ResultTreatmentStatusLog as rtsl',
+      'r.treatmentStatusLogId',
+      'rtsl.id'
+    )
+    .leftJoin(
+      'ResultTreatmentStatus as rts',
+      'rtsl.resultTreatmentStatusId',
+      'rts.id'
+    )
     .leftJoin('ResultForm as rf', function() {
       this.on('r.assayId', 'rf.assayId').andOn('r.partnerId', 'rf.partnerId')
     })
@@ -424,6 +823,11 @@ async function getResultByResultId(request, fields = SELECT_SHOW_FIELDS) {
     // select files attached to this result
     const { data: files } = await showFileReferences(request)
     data.files = files
+  }
+
+  if (data) {
+    getResultTreatmentStatus(data)
+    data.resultTreatmentStatusCreatedBy = userName
   }
 
   return { ok: results.length === 1, data }
@@ -550,17 +954,18 @@ async function updateWorkflowStatus(request) {
   const now = new Date()
   const { resultId } = params
   const { id: currentUserId } = await getUser(auth.credentials.name)
-
   // get the result so we can check access and if status changed
   const result = await getResultByResultId(request)
   if (!result.ok) {
     Boom.notFound()
   }
-
   let { resultWorkflowStatusId } = payload
+  const { changedOn = now, operator, reason, updatedOn } = payload
+
   // check if a externalId is provided
   if (payload.externalId) {
     resultWorkflowStatusId = await resultWorkflowStatusToId(payload.externalId)
+
     if (!resultWorkflowStatusId) {
       return Boom.badRequest('Invalid ResultWorkflowStatus ID')
     }
@@ -568,76 +973,170 @@ async function updateWorkflowStatus(request) {
 
   // update the resultWorkflowStatusId.
   if (resultWorkflowStatusId !== result.data.resultWorkflowStatusId) {
-    await knex('Result')
-      .where('id', resultId)
-      .update({
-        resultWorkflowStatusId,
-        updatedBy: currentUserId,
-        updatedOn: now,
-      })
-
-    await knex('ResultWorkflowLog').insert({
+    const [lastLogId] = await knex('ResultWorkflowLog').insert({
       resultId,
       resultWorkflowStatusId,
       createdBy: currentUserId,
-      changedOn: now,
+      operator,
+      reason,
+      changedOn,
       createdOn: now,
     })
+
+    if (!updatedOn || result.data.resultWorkflowChangedOn < updatedOn) {
+      await knex('Result')
+        .where('id', resultId)
+        .update({
+          resultWorkflowStatusLogId: lastLogId,
+          updatedBy: currentUserId,
+          updatedOn: now,
+        })
+    }
   }
 
   const response = await showResult(request)
   return response
 }
 
-async function updateQcCheck(request) {
-  const { auth, params, payload, plugins: { messageContext } } = request
+async function listTreatmentStatusTypes() {
+  const resultQuery = knex('ResultTreatmentStatus as rsl')
+
+  // get total count for paging
+  const getCount = resultQuery
+    .clone()
+    .count('rsl.id as count')
+    .first()
+
+  // get rows
+  const getItems = resultQuery
+    .clone()
+    .orderBy('id', 'asc')
+    .select('id', 'name')
+
+  // return result when both queries are finished
+  const [{ count: total }, data] = await Promise.all([getCount, getItems])
+
+  const result = { ok: true, total, length: data.length, data }
+
+  return result
+}
+
+async function updateTreatmentStatus(request) {
+  const { auth, params, payload } = request
   const now = new Date()
   const { resultId } = params
   const { id: currentUserId } = await getUser(auth.credentials.name)
+  const { permissions } = auth.credentials
 
-  // get the result so we can check access and workflow status
+  // get the result so we can check access and if status changed
   const result = await getResultByResultId(request)
   if (!result.ok) {
-    return Boom.notFound()
+    Boom.notFound()
   }
 
-  if (result.data.resultWorkflowStatusExternalId !== 'Deliverable') {
-    return Boom.badRequest(
-      '"QC Check" can only be set for results that are in the workflow status "Ready for Delivery".'
-    )
+  const { resultTreatmentStatusId, data, method, changedOn = now } = payload
+
+  if (
+    !permissions.includes('treatmentStatus:admin') &&
+    !permissions.includes('treatmentStatus:edit')
+  ) {
+    return Boom.unauthorized('You are not authorised to edit treatment status')
   }
 
-  // update the result QC Check flag
-  messageContext.bindActionCreators({
-    resultUpdated,
-  })
-  await messageContext.transact(async knex => {
-    await knex('Result')
-      .where('id', resultId)
-      .update({
-        qcCheck: payload.qcCheck,
-        updatedBy: currentUserId,
-        updatedOn: now,
-      })
-
-    // log QC-Check change in separate table
-    await knex('ResultQualityControlLog').insert({
+  let treatmentStatusId = null
+  // check if a externalId is provided
+  if (payload.externalId) {
+    treatmentStatusId = await resultTreatmentStatusToId(payload.externalId)
+    if (!treatmentStatusId) {
+      return Boom.badRequest('Invalid externalId')
+    }
+  } else if (resultTreatmentStatusId) {
+    // check if value of resultTreatmentStatusId is valid
+    const treatmentStatus = await knex('ResultTreatmentStatus')
+      .where('id', resultTreatmentStatusId)
+      .first()
+    if (!treatmentStatus) {
+      return Boom.badRequest('Invalid resultTreatmentStatusId')
+    }
+    treatmentStatusId = resultTreatmentStatusId
+  }
+  let lastTreatment = await getLastTreatmentStatusByResult(resultId)
+  if (
+    treatmentStatusId !== result.data.resultTreatmentStatusId &&
+    treatmentStatusId
+  ) {
+    const [treatmentStatusLogId] = await knex(
+      'ResultTreatmentStatusLog'
+    ).insert({
       resultId,
-      qcCheck: payload.qcCheck,
-      createdBy: currentUserId,
+      resultTreatmentStatusId: treatmentStatusId,
+      method,
+      data,
       createdOn: now,
+      changedOn,
+      createdBy: currentUserId,
     })
+    if (
+      !lastTreatment ||
+      (lastTreatment && lastTreatment.changedOn < changedOn)
+    ) {
+      await knex('Result')
+        .where('id', resultId)
+        .update({
+          treatmentStatusLogId,
+          updatedBy: currentUserId,
+          updatedOn: now,
+        })
+      lastTreatment = await getLastTreatmentStatusByResult(resultId)
+    }
+  }
 
-    // notify result updated so result is redelivered
-    messageContext.resultUpdated(resultId)
-  })
+  if (data) {
+    const [{ treatmentStatusLogId }] = await knex('Result')
+      .where('id', resultId)
+      .select('treatmentStatusLogId')
+    await knex('ResultTreatmentStatusLog')
+      .where('id', treatmentStatusLogId)
+      .update({
+        data,
+        changedOn,
+      })
+  }
 
   const response = await showResult(request)
+  response.data.treatmentStatus = lastTreatment
+
+  if (!response.data.resultTreatmentStatusCreatedOn) {
+    response.data.resultTreatmentStatusCreatedOn =
+      result.endedOn || result.startedOn || now
+  }
+
   return response
+}
+async function getLastTreatmentStatusByResult(resultId) {
+  return knex('Result as r')
+    .innerJoin(
+      'ResultTreatmentStatusLog as rtl',
+      'r.treatmentStatusLogId',
+      'rtl.id'
+    )
+    .innerJoin(
+      'ResultTreatmentStatus as ts',
+      'rtl.resultTreatmentStatusId',
+      'ts.id'
+    )
+    .where('rtl.resultId', resultId)
+    .orderBy('rtl.changedOn', 'desc')
+    .first('rtl.changedOn', 'ts.name', 'ts.externalId', 'ts.i18nKey')
 }
 
 async function updateFormData(request) {
-  const { auth, params, payload, plugins: { messageContext } } = request
+  const {
+    auth,
+    params,
+    payload,
+    plugins: { messageContext },
+  } = request
   const now = new Date()
   const { resultId } = params
 
@@ -835,12 +1334,122 @@ function createUniqueIdForResult(
   return uniqueId
 }
 
+async function confirmedTreatmentTracking(request) {
+  const { auth, payload } = request
+
+  const statusOnTreatmentId = await resultTreatmentStatusToId('OnTreatment')
+  const statusNotPossibleId = await resultTreatmentStatusToId('NotPossible')
+
+  // get data constraints
+  const dataConstraints = await getConstraints(auth.credentials)
+
+  const { siteId } = payload
+
+  const now = new Date()
+  const lastEndedOn = endOfMonth(subMonths(now, 1))
+
+  // normalize and format 'endedOn'
+  let { endedOn } = payload
+  if (!endedOn) {
+    endedOn = subMonths(now, 1)
+  }
+  endedOn = endOfMonth(endedOn)
+  if (endedOn > lastEndedOn) {
+    return Boom.expectationFailed(
+      '"endedOn" can not be greater than previous month'
+    )
+  }
+  const startedOn = startOfMonth(subMonths(endedOn, 5)) // 6 months period
+
+  const data = await knex('Result as r')
+    // consider 100% as all results where requiresTreatment = 1 in the resultCategoryAssay table
+    .innerJoin('ResultCategoryAssay as rca', function() {
+      this.on('r.assayId', 'rca.assayId').andOn(
+        'r.resultCategory1',
+        'rca.resultCategoryId'
+      )
+    })
+    .where('rca.requiresTreatment', 1)
+    // join ResultTreatmentStatusLog to count by 'OnTreatment' and 'NotPossible' statuses
+    .leftOuterJoin('ResultTreatmentStatusLog as rtslConfirmed', function() {
+      this.on('r.treatmentStatusLogId', 'rtslConfirmed.id')
+        .andOn('rtslConfirmed.resultTreatmentStatusId', statusOnTreatmentId)
+        .andOn('r.id', 'rtslConfirmed.resultId')
+    })
+    .leftOuterJoin('ResultTreatmentStatusLog as rtslNotPossible', function() {
+      this.on('r.treatmentStatusLogId', 'rtslNotPossible.id')
+        .andOn('rtslNotPossible.resultTreatmentStatusId', statusNotPossibleId)
+        .andOn('r.id', 'rtslNotPossible.resultId')
+    })
+    // filter by access level of current user
+    .leftOuterJoin('Site as s', 'r.siteId', 's.id')
+    .leftOuterJoin('Geography as g', 'r.geographyId', 'g.id')
+    .modify(addConstraints, dataConstraints, { site: 's', geography: 'g' })
+    // if 'siteId' specified - filter by siteId
+    .where(function() {
+      if (siteId) {
+        this.where('s.id', siteId)
+      }
+    })
+    // filter by date range, inclusive
+    .where('r.endedOn', '>=', startedOn)
+    .where('r.endedOn', '<=', endedOn)
+    .select(
+      knex.raw('count(r.id) as total'),
+      knex.raw('count(rtslConfirmed.id) as cntConfirmed'),
+      knex.raw('count(rtslNotPossible.id) as cntNotPossible'),
+      knex.raw(`date_format(r.endedOn, '%Y-%m') AS monthTested`) // group by r.endedOn as 'yyyy-MM'
+    )
+    .groupBy('monthTested')
+    .map(d => {
+      // add percentages
+      const getPercentage = (total, value) => {
+        let pc = 0
+        if (total) {
+          pc = (value * 100) / total
+          // max 1 decimal point
+          pc = Math.round(10 * pc) / 10
+        }
+        return pc
+      }
+      d.pcConfirmed = getPercentage(d.total, d.cntConfirmed)
+      d.pcNotPossible = getPercentage(d.total, d.cntNotPossible)
+      return d
+    })
+
+  let dt = endedOn
+  while (dt >= startedOn) {
+    const monthTested = dateFormat(dt, 'yyyy-MM')
+    if (!data.find(x => x.monthTested === monthTested)) {
+      data.push({
+        monthTested,
+        pcConfirmed: 0,
+        pcNotPossible: 0,
+        cntConfirmed: 0,
+        cntNotPossible: 0,
+        total: 0,
+      })
+    }
+    dt = endOfMonth(subMonths(dt, 1))
+  }
+
+  return {
+    siteId,
+    endedOn: dateFormat(endedOn, 'yyyy-MM-dd'),
+    lastOn: dateFormat(lastEndedOn, 'yyyy-MM-dd'),
+    data: _.sortBy(data, [x => x.monthTested]),
+  }
+}
+
 module.exports = {
   listResults,
+  downloadResultsList,
   showResult,
   listResultTypes,
   updateWorkflowStatus,
-  updateQcCheck,
+  updateTreatmentStatus,
+  listTreatmentStatusTypes,
+
   updateFormData,
   listWorkflowStatusTypes,
   listWorkflowStatusLog,
@@ -850,4 +1459,5 @@ module.exports = {
   downloadFile,
   downloadFirstImage,
   createUniqueIdForResult,
+  confirmedTreatmentTracking,
 }

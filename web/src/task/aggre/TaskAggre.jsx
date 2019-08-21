@@ -7,7 +7,7 @@ import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
 import Helmet from 'react-helmet'
 import FaArrowUp from 'react-icons/lib/fa/arrow-up'
-
+import queryString from 'query-string'
 import { makeSortPageSelector } from '../../shared/selectors/searchParams'
 import DetailBackBar from '../../globals/components/DetailBackBar'
 import { Unit } from '../../components/pureGrids'
@@ -25,7 +25,7 @@ import {
   TaskDataTableHead,
   TaskDataTableRow,
 } from '../list/TaskDataTable'
-import { fetchTasks } from '../TaskRedux'
+import { getTasksByAlertTemplateAndDate } from '../TaskRedux'
 
 const cssClasses = classnames.bind(require('./TaskAggre.css'))
 
@@ -66,23 +66,36 @@ const enhance = compose(
     state => ({
       items: state.task.items,
       table: state.task.table,
+      sites: state.task.sites,
+      devices: state.task.devices,
+      title: state.task.title,
     }),
     bindActionCreators.bind(null, {
-      fetchTasks,
+      getTasksByAlertTemplateAndDate,
     })
   ),
   withHandlers({
     onInitialLoad: ({
       location,
-      fetchTasks,
+      getTasksByAlertTemplateAndDate,
       sortCol,
       sortDir,
       pageAt,
       pageSize,
     }) => () => {
       const { sanitized, value: filtersParams } = filtersFromLocation(location)
+      const taskDetails = queryString.parse(location.search)
       if (!sanitized) {
-        fetchTasks(filtersParams, sortCol, sortDir, pageAt, pageSize)
+        getTasksByAlertTemplateAndDate(
+          filtersParams,
+          sortCol,
+          sortDir,
+          pageAt,
+          pageSize,
+          taskDetails.date,
+          taskDetails.categoryId,
+          taskDetails.alertTemplateId
+        )
       }
     },
 
@@ -90,8 +103,11 @@ const enhance = compose(
       history.goBack()
     },
 
-    onRowClick: ({ history }) => ({ currentTarget: { dataset: { taskId } } }) =>
-      history.push(`/task-list/${taskId}`),
+    onRowClick: ({ history }) => ({
+      currentTarget: {
+        dataset: { taskId },
+      },
+    }) => history.push(`/task-list/${taskId}`),
   }),
   lifecycle({
     componentWillMount() {
@@ -131,6 +147,9 @@ export const TaskAggre = ({
   match,
   table,
   items,
+  sites,
+  devices,
+  title,
   // --- injected by recompose ---
   onBackClick,
   sortCol,
@@ -146,71 +165,52 @@ export const TaskAggre = ({
       location={location}
       match={match}
       onBackClick={onBackClick}
-      title="TB positive results"
+      title={title}
     />
     <section className={cssClasses('Section')}>
       <Unit lg="1-4">
-        <legend className={cssClasses('Summary__Legend')}>Site</legend>
+        <legend className={cssClasses('Summary__Legend')}>Sites</legend>
         <div>
-          <span className={cssClasses('Summary__Item')}>
-            Kampala Lab
-            <Link
-              to="/browse/site"
-              className={cssClasses('Summary__Item__Link')}
-            >
-              <FaArrowUp
-                className={cssClasses('Summary__Item__Link__FaArrowUp')}
-              />
-            </Link>
-          </span>
+          {sites &&
+            !sites.isEmpty() &&
+            sites.toArray().map(element => (
+              <span className={cssClasses('Summary__Item')}>
+                {element.site}
+                <Link
+                  to={`/browse/site/${element.siteId}`}
+                  className={cssClasses('Summary__Item__Link')}
+                >
+                  <FaArrowUp
+                    className={cssClasses('Summary__Item__Link__FaArrowUp')}
+                  />
+                </Link>
+              </span>
+            ))}
         </div>
       </Unit>
       <Unit lg="1-2">
         <legend className={cssClasses('Summary__Legend')}>Devices</legend>
         <div>
-          <span className={cssClasses('Summary__Item')}>
-            TB Device Kampala 1
-            <Link
-              to="/browse/device"
-              className={cssClasses('Summary__Item__Link')}
-            >
-              <FaArrowUp
-                className={cssClasses('Summary__Item__Link__FaArrowUp')}
-              />
-            </Link>
-          </span>
-          <span className={cssClasses('Summary__Item')}>
-            TB Device Kampala 2
-            <Link
-              to="/browse/device"
-              className={cssClasses('Summary__Item__Link')}
-            >
-              <FaArrowUp
-                className={cssClasses('Summary__Item__Link__FaArrowUp')}
-              />
-            </Link>
-          </span>
-        </div>
-      </Unit>
-      <Unit lg="1-4">
-        <legend className={cssClasses('Summary__Legend')}>More</legend>
-        <div>
-          <span className={cssClasses('Summary__Item')}>
-            Alert settings
-            <Link
-              to="/task/detail"
-              className={cssClasses('Summary__Item__Link')}
-            >
-              <FaArrowUp
-                className={cssClasses('Summary__Item__Link__FaArrowUp')}
-              />
-            </Link>
-          </span>
+          {devices &&
+            !devices.isEmpty() &&
+            devices.toArray().map(element => (
+              <span className={cssClasses('Summary__Item')}>
+                {element.device}
+                <Link
+                  to={`/browse/device/${element.deviceId}`}
+                  className={cssClasses('Summary__Item__Link')}
+                >
+                  <FaArrowUp
+                    className={cssClasses('Summary__Item__Link__FaArrowUp')}
+                  />
+                </Link>
+              </span>
+            ))}
         </div>
       </Unit>
     </section>
     <section className={cssClasses('Section')}>
-      <DataTableCard>
+      <DataTableCard key={`DataTableCard--table-${location.key}`}>
         <DataTableProgressBar disabled={!table.loading} />
         {items.currentIdList.isEmpty() && (
           <BrowseEmptyList history={history} location={location} intl={intl} />
@@ -230,33 +230,22 @@ export const TaskAggre = ({
                 {
                   key: 'topic',
                   label: intl.formatMessage(messages.topic),
+                  sortable: true,
                 },
                 {
                   key: 'site',
                   label: intl.formatMessage(messages.site),
+                  sortable: true,
                 },
                 {
                   key: 'time',
                   label: intl.formatMessage(messages.time),
-                },
-                {
-                  key: 'alert',
+                  sortable: true,
                 },
               ]}
             />
             {items.currentIdList
-              .map(id =>
-                items.byId.get(id).merge({
-                  /* FIXME: actual impl */
-                  alertType: 'mine',
-                  topic: 'health',
-                  title: 'TB',
-                  alertCount: 0,
-                  message: 'positive results',
-                  site: 'Kampala Lab',
-                  notificationCount: 0,
-                })
-              )
+              .map(id => items.byId.get(id))
               .map(task => (
                 <TaskDataTableRow
                   key={task.get('id')}
@@ -264,12 +253,12 @@ export const TaskAggre = ({
                   messages={messages}
                   task={task}
                   onClick={onRowClick}
-                  data-task-id="detail"
+                  data-task-id={`${task.get('id')}`}
                 />
               ))}
           </TaskDataTable>
         )}
-        {!items.currentIdList.isEmpty() && (
+        {!items.isEmpty() && (
           <BrowseTablePaginator
             history={history}
             location={location}

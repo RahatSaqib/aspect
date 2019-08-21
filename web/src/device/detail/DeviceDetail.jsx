@@ -4,10 +4,14 @@ import React from 'react'
 import { compose, withHandlers, lifecycle, withProps } from 'recompose'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import { Switch, Route } from 'react-router-dom'
-import isEditable from '../../shared/selectors/device'
-import DelayShowingProgressBar from '../../components/shared/DelayShowingProgressBar'
-import { fetchSingleDevice, updateSingleDevice } from '../DeviceRedux'
+import { Switch, Redirect, Route } from 'react-router-dom'
+import isEditable from '../../shared/selectors/isEditable'
+import { DelayShowingProgressCircular } from '../../components/shared/DelayShowingProgressBar'
+import {
+  fetchSingleDevice,
+  updateSingleDevice,
+  fetchPerformanceReport,
+} from '../DeviceRedux'
 import DeviceDetailProfile from './profile/DeviceDetailProfile'
 import DeviceDetailOperation from './operation/DeviceDetailOperation'
 import DeviceDetailAlerts from './alerts/DeviceDetailAlerts'
@@ -25,24 +29,37 @@ const enhance = compose(
         EMPTY_MAP
       )
 
+      const { displayPreferences } = state.user
+
       return {
-        editable: isEditable(state.user, device),
+        editable: isEditable(state.user, 'device'),
         loading: !!state.device.requestedAt,
         device,
+        displayPreferences,
+        performanceReport: state.device.performanceReport,
       }
     },
     bindActionCreators.bind(null, {
       fetchSingleDevice,
       updateSingleDevice,
+      fetchPerformanceReport,
     })
   ),
   withHandlers({
-    onInitialLoad: ({ location, match, fetchSingleDevice }) => () => {
+    onInitialLoad: ({
+      location,
+      match,
+      fetchSingleDevice,
+      fetchPerformanceReport,
+    }) => () => {
       const searchParams = new URLSearchParams(location.search)
       fetchSingleDevice(match.params.deviceId, searchParams)
+      fetchPerformanceReport(match.params.deviceId)
     },
 
-    onDateRangeChange: ({ history, location }) => dateRange => {
+    onDateRangeChange: ({ history, location }) => ({
+      target: { value: dateRange },
+    }) => {
       const searchParams = new URLSearchParams(location.search)
       searchParams.set('dateRange', dateRange)
 
@@ -81,6 +98,7 @@ export const DeviceDetail = ({
   dateRange,
   onDateRangeChange,
   device,
+  displayPreferences,
   updateSingleDevice,
 }) => (
   <div>
@@ -96,6 +114,8 @@ export const DeviceDetail = ({
               dateRange={dateRange}
               onDateRangeChange={onDateRangeChange}
               device={device}
+              disabled={!editable}
+              displayPreferences={displayPreferences}
               updateSingleDevice={updateSingleDevice}
             />
           )}
@@ -104,37 +124,50 @@ export const DeviceDetail = ({
           exact
           path={`${match.path}/operation`}
           render={props => (
-            <DeviceDetailOperation intl={intl} {...props} device={device} />
+            <DeviceDetailOperation
+              intl={intl}
+              {...props}
+              device={device}
+              disabled={!editable}
+            />
           )}
         />
         <Route
           exact
           path={`${match.path}/alerts`}
           render={props => (
-            <DeviceDetailAlerts intl={intl} {...props} device={device} />
+            <DeviceDetailAlerts
+              intl={intl}
+              {...props}
+              device={device}
+              disabled={!editable}
+            />
           )}
         />
         <Route
           exact
           path={`${match.path}/edit`}
-          render={props => (
-            <DeviceDetailEdit
-              intl={intl}
-              {...props}
-              device={device}
-              editable={editable}
-              updateSingleDevice={updateSingleDevice}
-            />
-          )}
+          render={props =>
+            editable ? (
+              <DeviceDetailEdit
+                intl={intl}
+                {...props}
+                device={device}
+                editable={editable}
+                updateSingleDevice={updateSingleDevice}
+              />
+            ) : (
+              <Redirect to={match.url} />
+            )
+          }
         />
       </Switch>
     )}
     {loading && (
-      <DelayShowingProgressBar
-        className={cssClasses('DelayShowingProgressBar')}
+      <DelayShowingProgressCircular
+        className={cssClasses('DelayShowingProgressCircular')}
         disabled={false}
-        type="circular"
-        mode="indeterminate"
+        variant="indeterminate"
       />
     )}
   </div>

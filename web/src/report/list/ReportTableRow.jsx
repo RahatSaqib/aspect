@@ -1,7 +1,10 @@
 import _ from 'lodash'
 import classnames from 'classnames/bind'
 import React from 'react'
-import { TableRow, TableCell } from 'react-toolbox/lib/table'
+import {
+  DataTableRow as TableRow,
+  DataTableCell as TableCell,
+} from '../../components/shared/tableBody'
 
 const cssClasses = classnames.bind(
   require('../../components/shared/DataTableRow.css')
@@ -10,28 +13,13 @@ const cssClasses = classnames.bind(
 const enhance = _.identity
 
 const ReportTableRow = ({ intl, report, ...restProps }) => (
-  <TableRow
-    {...restProps}
-    className={cssClasses(restProps.className, 'TableRow')}
-  >
-    <TableCell className={cssClasses('TableCell')}>
-      {report.get('deploymentName')}
-    </TableCell>
-    <TableCell className={cssClasses('TableCell')}>
-      {report.get('moduleSerial')}
-    </TableCell>
-    <TableCell className={cssClasses('TableCell')}>
-      {report.get('dateOfError')}
-    </TableCell>
-    <TableCell className={cssClasses('TableCell')}>
-      {report.get('error')}
-    </TableCell>
-    <TableCell className={cssClasses('TableCell')}>
-      {report.get('totalTestsRun')}
-    </TableCell>
-    <TableCell className={cssClasses('TableCell')}>
-      {report.get('totalErrors')}
-    </TableCell>
+  <TableRow {...restProps} className={cssClasses(restProps.className)}>
+    <TableCell>{report.get('deploymentName')}</TableCell>
+    <TableCell>{report.get('moduleSerial')}</TableCell>
+    <TableCell>{report.get('dateOfError')}</TableCell>
+    <TableCell>{report.get('error')}</TableCell>
+    <TableCell>{report.get('totalTestsRun')}</TableCell>
+    <TableCell>{report.get('totalErrors')}</TableCell>
   </TableRow>
 )
 

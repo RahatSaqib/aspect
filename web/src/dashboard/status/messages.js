@@ -1,3 +1,4 @@
+/* eslint-disable linebreak-style */
 import { defineMessages } from 'react-intl'
 
 export const messages = defineMessages({
@@ -268,6 +269,31 @@ export const messages = defineMessages({
   activeSince: {
     id: 'pages.Status.activeSince',
     defaultMessage: 'Active since',
+  },
+  treatmentTitle: {
+    id: 'pages.Status.treatmentTitle',
+    defaultMessage: 'Confirmed Treatment Tracking',
+  },
+  treatmentAllSites: {
+    id: 'pages.Status.treatmentAllSites',
+    defaultMessage: 'All Sites',
+  },
+  treatmentGraphNotCompleteData: {
+    id: 'pages.Status.treatmentGraphNotCompleteData',
+    defaultMessage: 'Not Complete Data',
+  },
+  treatmentTooltipFor_pcConfirmed: {
+    id: 'pages.Status.treatmentTooltipFor_pcConfirmed',
+    defaultMessage: 'Percentage of results confirmed on treatment',
+  },
+  treatmentTooltipFor_pcNotPossible: {
+    id: 'pages.Status.treatmentTooltipFor_pcNotPossible',
+    defaultMessage:
+      'Percentage of results not possible to confirm on treatment',
+  },
+  treatmentTooltipFor_pcNotConfirmed: {
+    id: 'pages.Status.treatmentTooltipFor_pcNotConfirmed',
+    defaultMessage: 'Percentage of results not confirmed on treatment',
   },
 })
 

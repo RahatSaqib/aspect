@@ -129,6 +129,23 @@
         {
           "abbreviation": "AL",
           "name": "Alabama",
+          "lgas": [
+            {
+              "name": "Winston"
+            },
+            {
+              "name": "Pike"
+            },
+            {
+              "name": "Lawrence"
+            },
+            {
+              "name": "Perry"
+            },
+            {
+              "name": "Tallapoosa"
+            }
+          ],
           "lat": 32.806671,
           "lng": -86.79113
         },
@@ -141,6 +158,23 @@
         {
           "abbreviation": "AZ",
           "name": "Arizona",
+          "lgas": [
+            {
+              "name": "Phoenix"
+            },
+            {
+              "name": "Tucson"
+            },
+            {
+              "name": "Yavapai"
+            },
+            {
+              "name": "Yuma"
+            },
+            {
+              "name": "Maricopa"
+            }
+          ],
           "lat": 33.729759,
           "lng": -111.431221
         },
@@ -165,6 +199,9 @@
         {
           "abbreviation": "DC",
           "name": "District of Columbia",
+          "lgas": [
+            { "name": "Naval Anacost Annex" }
+          ],
           "lat": 38.897438,
           "lng": -77.026817
         },
@@ -183,6 +220,11 @@
         {
           "abbreviation": "GA",
           "name": "Georgia",
+          "lgas": [
+            { "name": "Atlanta" },
+            { "name": "Clayton" },
+            { "name": "Bryan" }
+          ],
           "lat": 33.040619,
           "lng": -83.643074
         },
@@ -201,6 +243,15 @@
         {
           "abbreviation": "ID",
           "name": "Idaho",
+          "lgas": [
+            { "name": "Clearwater" },
+            { "name": "Gooding" },
+            { "name": "Twin Falls" },
+            { "name": "Teton" },
+            { "name": "Valley" },
+            { "name": "Kootenai" },
+            { "name": "Cassia" }
+          ],
           "lat": 44.240459,
           "lng": -114.478828
         },
@@ -375,6 +426,14 @@
         {
           "abbreviation": "OR",
           "name": "Oregon",
+          "lgas": [
+            {
+              "name": "Clackamas"
+            },
+            {
+              "name": "Sherman"
+            }
+          ],
           "lat": 44.572021,
           "lng": -122.070938
         },
@@ -687,6 +746,63 @@
             { "name": "Yangon (South)" },
             { "name": "Yangon (West)" }
           ]
+        }
+      ]
+    },
+    {
+      "abbreviation": "ZW",
+      "name": "Zimbabwe",
+      "a3": "ZWE",
+      "culture": "en",
+      "countryCode": "263",
+      "stateLabel": "Province",
+      "lgaLabel": "District",
+      "timezone": "South Africa Standard Time",
+      "portNumber": 3029,
+      "exportColumns": "DeploymentDescription|TestEndedOn|AssayName|AssayVersion|User|Result1|Result2|ResultText|PatientId|ReagentLotID|ExpirationDate|CartridgeSerial|ModuleSerial|SoftwareVersion|ErrorCode|ErrorCategory|ErrorDescription|SampleId|Notes|ProbeDCt|ProbeCCt|ProbeECt|ProbeBCt|Qc1Ct|Qc2Ct",
+      "inventoryDaysThreshold": 21,
+      "monthStartsOnDay": 1,
+      "states": [
+        {
+          "name": "Bulawayo"
+        },
+        {
+          "name": "Harare",
+          "lgas": [
+            {
+              "name": "Chitungwiza"
+            },
+            {
+              "name": "Epworth"
+            },
+            {
+              "name": "Harare"
+            }
+          ]
+        },
+        {
+          "name": "Manicaland"
+        },
+        {
+          "name": "Mashonaland Central"
+        },
+        {
+          "name": "Mashonaland East"
+        },
+        {
+          "name": "Mashonaland West"
+        },
+        {
+          "name": "Masvingo"
+        },
+        {
+          "name": "Matabeleland North"
+        },
+        {
+          "name": "Matabeleland South"
+        },
+        {
+          "name": "Midlands"
         }
       ]
     }

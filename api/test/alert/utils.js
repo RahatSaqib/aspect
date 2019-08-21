@@ -2,10 +2,9 @@ const _ = require('lodash')
 const chai = require('chai')
 const { messageStatusToId } = require('../../src/shared/dictionary')
 const { run } = require('../../src/db')
-const { queuePurge } = require('../utils/mqUtils')
+const { queuePurge, waitForIdle } = require('../utils/mqUtils')
 
 const { assert } = chai
-const { waitForIdle } = require('../utils/mqUtils')
 
 // ------------------------------------------------------
 // alert context
@@ -23,7 +22,9 @@ class AlertTestContext {
 
   runTest(test) {
     return run(async knex => {
-      const { auth: { user } } = this
+      const {
+        auth: { user },
+      } = this
       const { userId } = await knex('User')
         .where({ name: user })
         .first('id as userId')
@@ -34,21 +35,21 @@ class AlertTestContext {
       const { id: alertTemplateId } = await knex('AlertTemplate').first('id')
       assert.isOk(alertTemplateId)
 
-      // read 1st Result and coresponding siteId/deviceId
+      // read 1st Result and corresponding siteId/deviceId
       const { id: resultId, siteId, deviceId } = await knex('Result').first(
         'id',
         'siteId',
         'deviceId'
       )
 
-      const messageStatusId = await messageStatusToId('Initial')
+      const initialMessageStatusId = await messageStatusToId('Initial')
 
       // add sample alert message
       const now = new Date()
       this.messageId = await knex('AlertMessage').insert(
         {
           alertTemplateId,
-          messageStatusId,
+          messageStatusId: initialMessageStatusId,
           personId: userId,
           siteId,
           deviceId,

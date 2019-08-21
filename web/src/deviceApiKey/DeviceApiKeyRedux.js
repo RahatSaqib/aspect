@@ -16,11 +16,12 @@ import {
   receiveTableItems,
   Table,
 } from '../shared/metaReducers/table'
-import { receivedExportResponse } from '../filter/FilterRedux'
+import { receivedExportResponse } from '../globals/GlobalsRedux'
 
 export const types = {
   REQUEST_DEVICE_API_KEYS: 'REQUEST_DEVICE_API_KEYS',
   RECEIVE_DEVICE_API_KEYS: 'RECEIVE_DEVICE_API_KEYS',
+  REJECTED_DEVICE_API_KEYS: 'REJECTED_DEVICE_API_KEYS',
 
   REQUEST_UPDATING_SINGLE_DEVICE_API_KEY:
     'REQUEST_UPDATING_SINGLE_DEVICE_API_KEY',
@@ -46,6 +47,12 @@ function receiveDeviceApiKeys(json) {
     type: types.RECEIVE_DEVICE_API_KEYS,
     items: json.data,
     total: json.total,
+  }
+}
+
+function rejectDeviceApiKeys() {
+  return {
+    type: types.REJECTED_DEVICE_API_KEYS,
   }
 }
 
@@ -97,17 +104,20 @@ export function fetchDeviceApiKeys(
           ),
         },
       }
-    ).then(json => dispatch(receiveDeviceApiKeys(json)))
+    )
+      .then(json => dispatch(receiveDeviceApiKeys(json)))
+      .catch(() => dispatch(rejectDeviceApiKeys()))
   }
 }
 
 export function exportDeviceApiKeys(
   filtersParams,
-  format,
+  fileFormat,
   sortCol,
   sortDir,
   page,
-  pageSize
+  pageSize,
+  reportName
 ) {
   return dispatch => {
     const filters = _.fromPairs([...filtersParams.entries()])
@@ -118,7 +128,7 @@ export function exportDeviceApiKeys(
         sortDir,
         page,
         size: pageSize,
-        format,
+        format: fileFormat,
         ...filters,
       })}`,
       {
@@ -142,8 +152,9 @@ export function exportDeviceApiKeys(
           ),
         },
       }
-    ).then(json => {
-      dispatch(receivedExportResponse(format, json))
+    ).then(async elem => {
+      const file = await elem
+      dispatch(receivedExportResponse(file, fileFormat, reportName))
     })
   }
 }
@@ -261,6 +272,11 @@ export default function deviceApiKeyReducer(state = initialState, action) {
         const immutList = Immutable.fromJS(action.items)
         mutState.set('items', receiveList(mutState.items, immutList))
         mutState.set('table', receiveTableItems(mutState.table, action.total))
+      })
+    case types.REJECTED_DEVICE_API_KEYS:
+      return state.withMutations(mutState => {
+        mutState.set('items', mutState.get('items').clear())
+        mutState.set('table', mutState.get('table').clear())
       })
     case types.RECEIVE_UPDATED_SINGLE_DEVICE_API_KEY:
       return state.withMutations(mutState => {

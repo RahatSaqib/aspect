@@ -5,12 +5,14 @@ const tableCache = {}
 
 // TODO ASP-757 Standardize static data key on externalId
 const cacheConfig = {
+  Assay: {},
   AssayType: {
     keyColumn: 'name',
   },
   ConsumableReason: {
     keyColumn: 'name',
   },
+  DeviceApiRawStatus: {},
   DeviceStatus: {
     keyColumn: 'token',
   },
@@ -38,10 +40,12 @@ const cacheConfig = {
   ResultSource: {},
   ResultType: {},
   ResultWorkflowStatus: {},
+  ResultTreatmentStatus: {},
   SampleType: {},
   Unit: {
     keyColumn: 'name',
   },
+  DeviceMaintenanceType: {},
 }
 
 async function rowsByColumn(table) {
@@ -95,7 +99,7 @@ function keyToValue(table, column) {
 _.each(cacheConfig, (config, table) => {
   const { additionalColumns = [] } = config
   // assayTypeToId, deviceStatusToId, etc. for each configured table
-  // deviceTypeToPlugin etc. for each configured additonal column
+  // deviceTypeToPlugin etc. for each configured additional column
   const name = _.lowerFirst(table)
   const columns = ['id', ...additionalColumns]
   _.each(columns, column => {

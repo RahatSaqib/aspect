@@ -1,6 +1,6 @@
 const supertest = require('supertest')
 const chai = require('chai')
-const { addDays, subDays } = require('date-fns')
+const { addDays, subDays, subHours } = require('date-fns')
 const { run } = require('../../src/db')
 const { createTestContext, getDeviceFromApiKey } = require('../deviceApi/utils')
 const {
@@ -10,7 +10,11 @@ const {
   deviceMaintenance,
   deviceMaintenanceResolved,
 } = require('../../src/device/actions')
-const { issueAcknowledged, issueResolved } = require('../../src/issue/actions')
+const {
+  issueAcknowledged,
+  issueResolved,
+  resolveIssues,
+} = require('../../src/issue/actions')
 const {
   processDynamicMessage,
   numberOfDays,
@@ -19,8 +23,19 @@ const {
   createMessageContext,
   waitForIdle,
   waitForAction,
+  dispatchAndWaitForAction,
 } = require('../utils/mqUtils')
-const { factGenerateDeviceConnectivity } = require('../../src/fact/actions')
+const {
+  factGenerateDeviceConnectivity,
+  factNewResultsAvailableCheck,
+} = require('../../src/fact/actions')
+const {
+  resultSourceToId,
+  resultTypeToId,
+  issueTypeToId,
+  issueStatusToId,
+  issueEventStatusToId,
+} = require('../../src/shared/dictionary')
 
 const server = supertest.agent('http://localhost:8080')
 const { assert, expect } = chai
@@ -123,8 +138,8 @@ describe('Fact based issues', () => {
       const deviceNoResultsDate = subDays(now, maxDaysDeviceNoResults + 1)
       const numberOfDaysOffline = numberOfDays(deviceOfflineDate)
       const numberOfDaysNoResults = numberOfDays(deviceNoResultsDate)
-      assert.equal(numberOfDaysOffline, `${maxDaysDeviceOffline + 2} days`)
-      assert.equal(numberOfDaysNoResults, `${maxDaysDeviceNoResults + 2} days`)
+      assert.equal(numberOfDaysOffline, `${maxDaysDeviceOffline + 1} days`)
+      assert.equal(numberOfDaysNoResults, `${maxDaysDeviceNoResults + 1} days`)
       await knex('Device as d')
         .where('d.id', newDevice.id)
         .update({
@@ -1089,4 +1104,130 @@ describe('Fact based issues', () => {
       assert.equal(issues[1].deviceId, deviceId)
       assert.equal(issues[1].issueStatus, 'Resolved')
     }))
+  describe('New results available', () => {
+    let issueId = null
+
+    after(async () =>
+      run(async knex => {
+        await waitForIdle()
+
+        // remove result and sample:
+        const { id: resultId, sampleId } = await knex('Result')
+          .where('externalId', 'AVAILABLE_RESULT_1')
+          .first('id', 'sampleId')
+        await knex('Result')
+          .update('treatmentStatusLogId', null)
+          .where('id', resultId)
+        await knex('ResultTreatmentStatusLog')
+          .where('resultId', resultId)
+          .delete()
+        await knex('Result')
+          .where('id', resultId)
+          .delete()
+        await knex('Sample')
+          .where('id', sampleId)
+          .delete()
+        await knex('Issue')
+          .where('id', issueId)
+          .delete()
+      })
+    )
+
+    it('should create a new results available issue and resolve it when it is older than 24 hours', () =>
+      runTest(async knex => {
+        const now = new Date()
+        const issueTypeId = await issueTypeToId('NewResultsAvailable')
+        const issueStatusActive = await issueStatusToId('Active')
+        const issueStatusResolved = await issueStatusToId('Resolved')
+        const issueEventStatusTriggered = await issueEventStatusToId(
+          'Triggered'
+        )
+
+        const issueResolutionTrigger = await knex('IssueResolutionTrigger')
+          .where('issueTypeId', issueTypeId)
+          .first()
+
+        // get first device for partner so we can create a couple of results
+        const device = await knex('Device')
+          .where('partnerId', issueResolutionTrigger.partnerId)
+          .first()
+
+        const messageContext = await createMessageContext()
+        messageContext.bindActionCreators({
+          factNewResultsAvailableCheck,
+        })
+
+        await messageContext.factNewResultsAvailableCheck()
+        await waitForIdle()
+
+        // should have no new results available to begin with
+        let issues = await knex('Issue')
+          .where('issueTypeId', issueTypeId)
+          .where('siteId', device.siteId)
+          .where('issueStatusId', issueStatusActive)
+        assert.equal(issues.length, 0)
+
+        // add sample and result
+        const gxMtbRifAssay = await knex('Assay')
+          .where({ externalId: 'GxMtbRif' })
+          .first()
+        const resultSourceId = await resultSourceToId('DiagnosticDevice')
+        const resultTypeId = await resultTypeToId('Patient')
+
+        const sampleId = await knex('Sample').insert({
+          externalId: 'AVAILABLE_SAMPLE_1',
+          collectedOn: subHours(now, 12),
+          originSiteId: device.siteId,
+        })
+
+        await knex('Result').insert({
+          createdOn: subHours(now, 6),
+          updatedOn: subHours(now, 6),
+          externalId: 'AVAILABLE_RESULT_1',
+          assayId: gxMtbRifAssay.id,
+          partnerId: device.partnerId,
+          geographyId: device.geographyId,
+          siteId: device.siteId,
+          deviceId: device.id,
+          resultSourceId,
+          resultTypeId,
+          sampleId,
+          startedOn: subHours(now, 8),
+          endedOn: subHours(now, 6),
+        })
+
+        await messageContext.factNewResultsAvailableCheck()
+        await waitForIdle()
+
+        // should now have new results available
+        issues = await knex('Issue')
+          .where('issueTypeId', issueTypeId)
+          .where('siteId', device.siteId)
+          .where('issueStatusId', issueStatusActive)
+
+        issueId = issues[0].id
+
+        assert.equal(issues.length, 1)
+        assert.deepEqual(JSON.parse(issues[0].data), {
+          siteId: device.siteId,
+          numberOfResults: 1,
+        })
+
+        // update issue date to be triggered 24 hours ago:
+        await knex('IssueEvent')
+          .update('createdOn', subHours(now, 24))
+          .where('issueId', issueId)
+          .where('issueEventStatusId', issueEventStatusTriggered)
+
+        await dispatchAndWaitForAction(resolveIssues(issueId))
+        await waitForIdle()
+
+        // issue should now be resolved
+        const issue = await knex('Issue')
+          .where('id', issueId)
+          .first()
+
+        assert.equal(issue.issueStatusId, issueStatusResolved)
+      }))
+  })
 })

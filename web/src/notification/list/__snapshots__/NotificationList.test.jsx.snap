@@ -13,6 +13,16 @@ exports[`NotificationList module NotificationList component should render correc
     title="Notifications"
   />
   <pure(withProps(withHandlers(Connect(lifecycle(BrowseFilters)))))
+    config={
+      Object {
+        "name": true,
+      }
+    }
+    history={
+      Object {
+        "push": [Function],
+      }
+    }
     intl={
       Object {
         "defaultFormats": Object {},
@@ -48,7 +58,17 @@ exports[`NotificationList module NotificationList component should render correc
     <DataTableProgressBar
       disabled={true}
     />
+    <withState(withHandlers(ExportListButton))
+      onCsvClick={[Function]}
+      onExcelClick={[Function]}
+      reportName="Notifications"
+    />
     <pure(withHandlers(EmptyList))
+      history={
+        Object {
+          "push": [Function],
+        }
+      }
       intl={
         Object {
           "defaultFormats": Object {},

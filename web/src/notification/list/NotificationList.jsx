@@ -1,11 +1,12 @@
 import _ from 'lodash'
 import classnames from 'classnames/bind'
-import React from 'react'
-import { compose, withProps, withHandlers, lifecycle } from 'recompose'
+import React, { useEffect, useState } from 'react'
+import PropTypes from 'prop-types'
+import Immutable from 'immutable'
 import { defineMessages } from 'react-intl'
-import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
+import TableBody from '@material-ui/core/TableBody'
 
 import {
   makeSortPageSelector,
@@ -22,7 +23,8 @@ import BrowseEmptyList from '../../globals/components/BrowseEmptyList'
 import BrowseTablePaginator from '../../globals/components/BrowseTablePaginator'
 import DataTableCard from '../../components/shared/DataTableCard'
 import DataTableProgressBar from '../../components/shared/DataTableProgressBar'
-import { fetchNotifications } from '../NotificationRedux'
+import { fetchNotifications, exportNotifications } from '../NotificationRedux'
+import ExportListButton from '../../globals/components/ExportListButton'
 import {
   NotificationDataTable,
   NotificationDataTableHead,
@@ -36,21 +38,29 @@ const messages = defineMessages({
     id: 'pages.NotificationList.title',
     defaultMessage: 'Notifications',
   },
+  notificationsName: {
+    id: 'pages.NotificationList.name',
+    defaultMessage: 'Name',
+  },
   lastTriggered: {
     id: 'pages.NotificationList.lastTriggered',
     defaultMessage: 'Last triggered',
-  },
-  recipients: {
-    id: 'pages.NotificationList.recipients',
-    defaultMessage: 'Recipients',
   },
   totalTriggers: {
     id: 'pages.NotificationList.totalTriggers',
     defaultMessage: 'Total triggers',
   },
-  errors: {
-    id: 'pages.NotificationList.errors',
-    defaultMessage: 'Errors',
+  issues: {
+    id: 'pages.NotificationList.issues',
+    defaultMessage: 'Issues',
+  },
+  sms: {
+    id: 'pages.NotificationList.sms',
+    defaultMessage: 'SMS',
+  },
+  email: {
+    id: 'pages.NotificationList.email',
+    defaultMessage: 'Email',
   },
   paginatorStatus: {
     id: 'pages.NotificationList.paginatorStatus',
@@ -61,20 +71,16 @@ const messages = defineMessages({
   },
 })
 
-const FILTERS_CONFIG = [
-  {
-    contactNameOrEmail: true,
-    requiredPermissions: [],
-  },
-]
+const FILTERS_CONFIG = [{ notificationName: true, requiredPermissions: [] }]
 
 const searchSanitizer = makeSearchParamsSanitizer({
   availableSortCol: [
-    'alertName',
+    'name',
     'lastTriggeredOn',
-    'recipientsCount',
-    'triggersCount',
-    'errorsCount',
+    'totalTriggers',
+    'alertCount',
+    'emailCount',
+    'smsCount',
   ],
 })
 const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
@@ -86,174 +92,210 @@ const filtersFromLocation = composeSanitizer(
   searchSanitizer
 )
 
-const enhance = compose(
-  withProps(
-    makeSortPageSelector({
-      sortCol: 'lastTriggeredOn',
-      sortDir: 'desc',
-    })
-  ),
-  connect(
-    state => ({
-      items: state.notification.items,
-      table: state.notification.table,
-      userPermissions: state.user.jwt.permissions,
-    }),
-    bindActionCreators.bind(null, {
-      fetchNotifications,
-    })
-  ),
-  withHandlers({
-    onInitialLoad: ({
-      location,
-      fetchNotifications,
-      sortCol,
-      sortDir,
-      pageAt,
-      pageSize,
-    }) => () => {
-      const { sanitized, value: filtersParams } = filtersFromLocation(location)
-      if (!sanitized) {
-        fetchNotifications(filtersParams, sortCol, sortDir, pageAt, pageSize)
-      }
-    },
+export const NotificationList = props => {
+  const {
+    intl,
+    history,
+    location,
+    table,
+    items,
+    fetchNotifications,
+    userPermissions,
+    sortCol,
+    sortDir,
+    pageAt,
+    pageSize,
+    exportNotifications,
+  } = props
 
-    onRowClick: ({ history }) => ({
-      currentTarget: { dataset: { notificationId } },
-    }) => history.push(`/browse/notification/${notificationId}`),
-  }),
-  lifecycle({
-    componentWillMount() {
-      const { sanitized, value: searchParams } = searchSanitizer(
-        this.props.location
-      )
-      const {
-        sanitized: filtersSanitized,
-        value: filtersParams,
-      } = filtersSanitizer(searchParams.get('filters') || '')
-      if (sanitized || filtersSanitized) {
-        searchParams.set('filters', filtersParams)
-
-        this.props.history.replace({
-          ...this.props.location,
-          search: searchParams.toString(),
-        })
-      }
-      const reducedFilters = reduceFiltersConfig(
-        FILTERS_CONFIG,
-        this.props.userPermissions
-      )
-      this.setState({
-        reducedFilters,
-      })
+  useEffect(
+    () => {
+      onInitialLoad()
     },
-
-    componentDidMount() {
-      this.props.onInitialLoad()
-    },
-
-    componentWillReceiveProps(nextProps) {
-      if (this.props.location.search !== nextProps.location.search) {
-        this.props.onInitialLoad()
-      }
-    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [location.search]
+  )
+  const onInitialLoad = () => {
+    const { sanitized, value: filtersParams } = filtersFromLocation(location)
+    if (!sanitized) {
+      fetchNotifications(filtersParams, sortCol, sortDir, pageAt, pageSize)
+    }
+  }
+  const [reducedFilters, setReducedFilters] = useState({
+    name: true,
   })
-)
+  useEffect(() => {
+    setFilters()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+  const setFilters = () => {
+    const { sanitized, value: searchParams } = searchSanitizer(location)
+    const {
+      sanitized: filtersSanitized,
+      value: filtersParams,
+    } = filtersSanitizer(searchParams.get('filters') || '')
+    if (sanitized || filtersSanitized) {
+      searchParams.set('filters', filtersParams)
 
-export const NotificationList = ({
-  intl,
-  history,
-  location,
-  table,
-  items,
-  // --- injected by recompose ---
-  sortCol,
-  sortDir,
-  pageAt,
-  pageSize,
-  onRowClick,
-  reducedFilters,
-}) => (
-  <div className={cssClasses('Container')}>
-    <Helmet title={intl.formatMessage(messages.notificationsTitle)} />
-    <NavTitle title={intl.formatMessage(messages.notificationsTitle)} />
-    <BrowseFilters
-      history={history}
-      location={location}
-      intl={intl}
-      config={reducedFilters}
-    />
-    <DataTableCard>
-      <DataTableProgressBar disabled={!table.loading} />
-      {items.currentIdList.isEmpty() && (
-        <BrowseEmptyList history={history} location={location} intl={intl} />
-      )}
-      {!items.currentIdList.isEmpty() && (
-        <NotificationDataTable
-          selectable={false}
-          className={cssClasses('NotificationDataTable')}
-        >
-          <NotificationDataTableHead
+      history.replace({
+        ...location,
+        search: searchParams.toString(),
+      })
+    }
+    setReducedFilters(reduceFiltersConfig(FILTERS_CONFIG, userPermissions))
+  }
+  const onRowClick = ({
+    currentTarget: {
+      dataset: { notificationId },
+    },
+  }) => history.push(`/browse/notification/${notificationId}`)
+
+  const onExcelClick = formatType => {
+    const format = formatType.target.id
+    const { sanitized, value: filtersParams } = filtersFromLocation(location)
+    if (!sanitized) {
+      exportNotifications(
+        filtersParams,
+        sortCol,
+        sortDir,
+        pageAt,
+        table.get('total') > 0 ? table.get('total') : 1,
+        format,
+        'notifications'
+      )
+    }
+  }
+  return (
+    <div className={cssClasses('Container')}>
+      <Helmet title={intl.formatMessage(messages.notificationsTitle)} />
+      <NavTitle title={intl.formatMessage(messages.notificationsTitle)} />
+      <BrowseFilters
+        history={history}
+        location={location}
+        intl={intl}
+        config={reducedFilters}
+      />
+      <DataTableCard key={`DataTableCard--table-${location.key}`}>
+        <DataTableProgressBar disabled={!table.loading} />
+        <ExportListButton
+          onExcelClick={onExcelClick}
+          onCsvClick={onExcelClick}
+          reportName="Notifications"
+        />
+        {items.currentIdList.isEmpty() && (
+          <BrowseEmptyList history={history} location={location} intl={intl} />
+        )}
+        {!items.currentIdList.isEmpty() && (
+          <NotificationDataTable
+            selectable={false}
+            className={cssClasses('NotificationDataTable')}
+          >
+            <NotificationDataTableHead
+              history={history}
+              location={location}
+              sortColumnKey={sortCol}
+              sortColumnDir={sortDir}
+              columns={[
+                {
+                  key: 'name',
+                  label: intl.formatMessage(messages.notificationsName),
+                  sortable: true,
+                },
+                {
+                  key: 'lastTriggeredOn',
+                  label: intl.formatMessage(messages.lastTriggered),
+                  sortable: true,
+                },
+                {
+                  key: 'totalTriggers',
+                  label: intl.formatMessage(messages.totalTriggers),
+                  sortable: true,
+                },
+                {
+                  key: 'alertCount',
+                  label: intl.formatMessage(messages.issues),
+                  sortable: true,
+                },
+                {
+                  key: 'smsCount',
+                  label: intl.formatMessage(messages.sms),
+                  sortable: true,
+                },
+                {
+                  key: 'emailCount',
+                  label: intl.formatMessage(messages.email),
+                  sortable: true,
+                },
+              ]}
+            />
+            <TableBody>
+              {items.currentIdList
+                .map(id => items.byId.get(id))
+                .map(notification => (
+                  <NotificationDataTableRow
+                    key={notification.get('id')}
+                    intl={intl}
+                    notification={notification}
+                    onClick={onRowClick}
+                    data-notification-id={notification.get('id')}
+                  />
+                ))}
+            </TableBody>
+          </NotificationDataTable>
+        )}
+        {!items.currentIdList.isEmpty() && (
+          <BrowseTablePaginator
             history={history}
             location={location}
-            sortColumnKey={sortCol}
-            sortColumnDir={sortDir}
-            columns={[
-              {
-                key: 'alertType',
-              },
-              {
-                key: 'alertName',
-                sortable: true,
-              },
-              {
-                key: 'lastTriggeredOn',
-                label: intl.formatMessage(messages.lastTriggered),
-                sortable: true,
-              },
-              {
-                key: 'recipientsCount',
-                label: intl.formatMessage(messages.recipients),
-                sortable: true,
-              },
-              {
-                key: 'triggersCount',
-                label: intl.formatMessage(messages.totalTriggers),
-                sortable: true,
-              },
-              {
-                key: 'errorsCount',
-                label: intl.formatMessage(messages.errors),
-                sortable: true,
-              },
-            ]}
+            intl={intl}
+            paginatorStatus={messages.paginatorStatus}
+            total={table.total}
+            pageAt={pageAt}
+            pageSize={pageSize}
           />
-          {items.currentIdList
-            .map(id => items.byId.get(id))
-            .map(notification => (
-              <NotificationDataTableRow
-                key={notification.get('id')}
-                intl={intl}
-                notification={notification}
-                onClick={onRowClick}
-                data-notification-id="detail"
-              />
-            ))}
-        </NotificationDataTable>
-      )}
-      {!items.currentIdList.isEmpty() && (
-        <BrowseTablePaginator
-          history={history}
-          location={location}
-          intl={intl}
-          paginatorStatus={messages.paginatorStatus}
-          total={table.total}
-          pageAt={pageAt}
-          pageSize={pageSize}
-        />
-      )}
-    </DataTableCard>
-  </div>
-)
+        )}
+      </DataTableCard>
+    </div>
+  )
+}
 
-export default enhance(NotificationList)
+const mapStateToProps = (state, ownProps) => {
+  const { sortCol, sortDir, pageAt, pageSize } = makeSortPageSelector({
+    sortCol: 'name',
+    sortDir: 'desc',
+  })({ location: ownProps.location })
+  return {
+    items: state.notification.items,
+    table: state.notification.table,
+    userPermissions: state.user.jwt.permissions,
+    sortCol,
+    sortDir,
+    pageAt,
+    pageSize,
+  }
+}
+
+NotificationList.defaultProps = {
+  sortCol: 'name',
+  sortDir: 'desc',
+}
+
+NotificationList.propTypes = {
+  intl: PropTypes.object.isRequired, // eslint-disable-line
+  location: PropTypes.object.isRequired, // eslint-disable-line
+  history: PropTypes.object.isRequired, // eslint-disable-line
+  table: PropTypes.instanceOf(Immutable.Record).isRequired,
+  items: PropTypes.instanceOf(Immutable.Record).isRequired,
+  fetchNotifications: PropTypes.func.isRequired,
+  exportNotifications: PropTypes.func.isRequired,
+  userPermissions: PropTypes.instanceOf(Immutable.Set).isRequired,
+  sortCol: PropTypes.string,
+  sortDir: PropTypes.string,
+  pageAt: PropTypes.number.isRequired,
+  pageSize: PropTypes.number.isRequired,
+}
+
+export default connect(
+  mapStateToProps,
+  { fetchNotifications, exportNotifications }
+)(NotificationList)

@@ -7,6 +7,7 @@ const {
   onDeviceUpdateFlag,
   onResultLogged,
   checkDataCategoriesForLowStatus,
+  onFactNewResultsAvailableCheck,
 } = require('./service')
 
 const subscriptions = [
@@ -25,6 +26,7 @@ const subscriptions = [
       DEVICE_NO_RESULTS: onDeviceUpdateFlag({ noResults: 1 }),
       RESULT_LOGGED: onResultLogged,
       FACT_DATA_CATEGORY_LOW_CHECK: checkDataCategoriesForLowStatus,
+      FACT_NEW_RESULTS_AVAILABLE_CHECK: onFactNewResultsAvailableCheck,
     },
   },
 ]

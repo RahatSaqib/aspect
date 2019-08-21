@@ -1016,7 +1016,25 @@
     "username": null,
     "password": null,
     "mobile": "+27832944504",
-    "tags": ["EID+KPTH", "VL>50KPTH", "EID+", "HIV-VL>50"],
+    "tags": ["VL>50KPTH", "HIV-VL>50"],
+    "geographies": [],
+    "deploymentShortName": null,
+    "timezone": "South Africa Standard Time",
+    "culture": "en",
+    "title": null,
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Sr Khensani Phelane",
+    "jobFunctions": ["Regional Officer"],
+    "emailAddress": "phelanekhensi@gmail.com",
+    "username": "phelanekhensi@gmail.com",
+    "password": "vNO1eqNm",
+    "mobile": "+27765040345",
+    "tags": ["EID+KPTH", "EID+", "VL>50KPTH", "HIV-VL>50"],
     "geographies": [{
       "stateName": "Gauteng",
       "lgaName": "Kalafong"

@@ -6,6 +6,7 @@ import { defineMessages } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
+import TableBody from '@material-ui/core/TableBody'
 
 import {
   makeSortPageSelector,
@@ -22,12 +23,13 @@ import BrowseEmptyList from '../../globals/components/BrowseEmptyList'
 import BrowseTablePaginator from '../../globals/components/BrowseTablePaginator'
 import DataTableCard from '../../components/shared/DataTableCard'
 import DataTableProgressBar from '../../components/shared/DataTableProgressBar'
-import { fetchRouters } from '../RouterRedux'
+import { fetchRouters, exportRouters } from '../RouterRedux'
 import {
   RouterDataTable,
   RouterDataTableHead,
   RouterDataTableRow,
 } from './RouterDataTable'
+import ExportListButton from '../../globals/components/ExportListButton'
 
 const cssClasses = classnames.bind(require('./RouterList.css'))
 
@@ -88,7 +90,16 @@ const enhance = compose(
   withProps(
     makeSortPageSelector({
       sortCol: 'name',
-    })
+    }),
+    ({ location }) => {
+      const searchParams = new URLSearchParams(location.search)
+      const filtersParams = new URLSearchParams(
+        searchParams.get('filters') || ''
+      )
+      return {
+        filters: _.fromPairs([...filtersParams.entries()]),
+      }
+    }
   ),
   connect(
     state => ({
@@ -98,6 +109,7 @@ const enhance = compose(
     }),
     bindActionCreators.bind(null, {
       fetchRouters,
+      exportRouters,
     })
   ),
   withHandlers({
@@ -121,8 +133,34 @@ const enhance = compose(
         )
       }
     },
+
+    onExcelClick: ({
+      location,
+      exportRouters,
+      sortCol,
+      sortDir,
+      pageAt,
+      table,
+    }) => formatType => {
+      const format = formatType.target.id
+      const { sanitized, value: filtersParams } = filtersFromLocation(location)
+      if (!sanitized) {
+        exportRouters(
+          filtersParams,
+          { hasResults: 0, hasConnectivity: 1 },
+          sortCol,
+          sortDir,
+          pageAt,
+          table.get('total') > 0 ? table.get('total') : 1,
+          format,
+          'routers'
+        )
+      }
+    },
     onRowClick: ({ history }) => ({
-      currentTarget: { dataset: { routerId } },
+      currentTarget: {
+        dataset: { routerId },
+      },
     }) => history.push(`/browse/router/${routerId}`),
   }),
   lifecycle({
@@ -170,6 +208,7 @@ export const RouterList = ({
   table,
   items,
   // --- injected by recompose ---
+  onExcelClick,
   sortCol,
   sortDir,
   pageAt,
@@ -186,8 +225,15 @@ export const RouterList = ({
       intl={intl}
       config={reducedFilters}
     />
-    <DataTableCard>
+    <DataTableCard key={`DataTableCard--table-${location.key}`}>
       <DataTableProgressBar disabled={!table.loading} />
+
+      <ExportListButton
+        onExcelClick={onExcelClick}
+        onCsvClick={onExcelClick}
+        reportName="Routers"
+      />
+
       {items.currentIdList.isEmpty() && (
         <BrowseEmptyList history={history} location={location} intl={intl} />
       )}
@@ -224,17 +270,19 @@ export const RouterList = ({
               },
             ]}
           />
-          {items.currentIdList
-            .map(id => items.byId.get(id))
-            .map(router => (
-              <RouterDataTableRow
-                key={router.get('id')}
-                intl={intl}
-                router={router}
-                onClick={onRowClick}
-                data-router-id={router.get('id')}
-              />
-            ))}
+          <TableBody>
+            {items.currentIdList
+              .map(id => items.byId.get(id))
+              .map(router => (
+                <RouterDataTableRow
+                  key={router.get('id')}
+                  intl={intl}
+                  router={router}
+                  onClick={onRowClick}
+                  data-router-id={router.get('id')}
+                />
+              ))}
+          </TableBody>
         </RouterDataTable>
       )}
       {!items.currentIdList.isEmpty() && (

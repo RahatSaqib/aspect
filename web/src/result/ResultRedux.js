@@ -22,12 +22,18 @@ import screenSchema from './ResultScreenSchema.json'
 export const types = {
   REQUEST_RESULTS: 'REQUEST_RESULTS',
   RECEIVE_RESULTS: 'RECEIVE_RESULTS',
+  REJECTED_RESULTS: 'REJECTED_RESULTS',
 
   REQUEST_SINGLE_RESULT: 'REQUEST_SINGLE_RESULT',
   RECEIVE_SINGLE_RESULT: 'RECEIVE_SINGLE_RESULT',
 
   REQUEST_UPDATING_SINGLE_RESULT: 'REQUEST_UPDATING_SINGLE_RESULT',
   RECEIVE_UPDATED_SINGLE_RESULT: 'RECEIVE_UPDATED_SINGLE_RESULT',
+
+  REQUEST_CREATING_TREATMENT_STATUS_LOG:
+    'REQUEST_CREATING_TREATMENT_STATUS_LOG',
+  RECEIVE_CREATING_TREATMENT_STATUS_LOG:
+    'RECEIVE_CREATING_TREATMENT_STATUS_LOG',
 
   REQUEST_WORKFLOW_LOG: 'REQUEST_WORKFLOW_LOG',
   RECEIVE_WORKFLOW_LOG: 'RECEIVE_WORKFLOW_LOG',
@@ -61,10 +67,17 @@ function receiveResults(json) {
   }
 }
 
+function rejectResults() {
+  return {
+    type: types.REJECTED_RESULTS,
+  }
+}
+
 export function fetchResults(filtersParams, sortCol, sortDir, page, pageSize) {
   return dispatch => {
     const filters = _.fromPairs([...filtersParams.entries()])
     dispatch(requestResults(sortCol, sortDir, page, pageSize, filters))
+    sortCol = !Object.keys(filters).length ? 'endedOn' : sortCol
 
     return aspectFetch(
       `/result?${stringify({
@@ -102,7 +115,48 @@ export function fetchResults(filtersParams, sortCol, sortDir, page, pageSize) {
           ),
         },
       }
-    ).then(json => dispatch(receiveResults(json)))
+    )
+      .then(json => dispatch(receiveResults(json)))
+      .catch(() => dispatch(rejectResults()))
+  }
+}
+
+// updating a single result with given resultId and data
+function requestCreatingTreatmentStatusLog(resultId) {
+  return {
+    type: types.REQUEST_CREATING_TREATMENT_STATUS_LOG,
+    resultId,
+  }
+}
+
+// received a updated single result
+function receiveTreatmentStatusLog(item, resultId) {
+  return {
+    type: types.RECEIVE_CREATING_TREATMENT_STATUS_LOG,
+    resultId,
+    item,
+  }
+}
+
+export function logTreatmentStatus(resultId, data) {
+  return dispatch => {
+    dispatch(requestCreatingTreatmentStatusLog(resultId, data))
+
+    return aspectFetch(`/result/treatment-status/${resultId}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+      errorNotifications: {
+        default: errorPleaseTryAgainInAFewMinutes(
+          defineMessages({
+            title: {
+              id: 'errorResponseMessages.updateSingleResult.PUT.default.title',
+              defaultMessage:
+                'An Error Occurred When Trying to Save the Result',
+            },
+          })
+        ),
+      },
+    }).then(json => dispatch(receiveTreatmentStatusLog(json.data, resultId)))
   }
 }
 
@@ -153,7 +207,8 @@ export function fetchSingleResult(resultId) {
         default: errorPleaseTryAgainInAFewMinutes(
           defineMessages({
             title: {
-              id: 'errorResponseMessages.fetchSingleResult.GET.default.title',
+              id:
+                'errorResponseMessages.fetchSingleResultDetails.GET.default.title',
               defaultMessage: 'Error Loading Result Details',
             },
           })
@@ -173,7 +228,7 @@ export function fetchResultLog(resultId) {
         default: errorPleaseTryAgainInAFewMinutes(
           defineMessages({
             title: {
-              id: 'errorResponseMessages.fetchSingleResult.GET.default.title',
+              id: 'errorResponseMessages.fetchDeviceLog.GET.default.title',
               defaultMessage: 'Error Loading Result Logs',
             },
           })
@@ -259,15 +314,6 @@ export function updateResultWorkflowStatus(resultId) {
   }
 }
 
-// update a single result's QC Check flag
-function updateSingleResultQcCheck(resultId, qcCheck) {
-  return {
-    type: types.REQUEST_SINGLE_RESULT,
-    resultId,
-    qcCheck,
-  }
-}
-
 function setSingleResultFormDataValue(resultId, formFieldKey, value) {
   return {
     type: types.SET_RESULT_FORM_DATA_VALUE,
@@ -281,28 +327,6 @@ function savingSingleResultFormData(resultId) {
   return {
     type: types.SAVING_RESULT_FORM_DATA,
     resultId,
-  }
-}
-
-export function updateResultQcCheck(resultId, qcCheck) {
-  return dispatch => {
-    dispatch(updateSingleResultQcCheck(resultId, qcCheck))
-
-    return aspectFetch(`/result/qc-check/${resultId}`, {
-      method: 'PUT',
-      body: JSON.stringify({ qcCheck }),
-      errorNotifications: {
-        default: errorPleaseTryAgainInAFewMinutes(
-          defineMessages({
-            title: {
-              id: 'errorResponseMessages.updateResultQcCheck.PUT.default.title',
-              defaultMessage:
-                'An error occurred when trying to update the "QC Check" flag.',
-            },
-          })
-        ),
-      },
-    }).then(json => dispatch(receiveUpdatedSingleResult(json.data)))
   }
 }
 
@@ -518,6 +542,11 @@ export default function resultReducer(state = initialState, action) {
           receiveTableItems(mutState.table, action.total, action.extraColumns)
         )
       })
+    case types.REJECTED_RESULTS:
+      return state.withMutations(mutState => {
+        mutState.set('items', mutState.get('items').clear())
+        mutState.set('table', mutState.get('table').clear())
+      })
     case types.RECEIVE_SINGLE_RESULT:
     case types.RECEIVE_UPDATED_SINGLE_RESULT:
       return state
@@ -576,6 +605,24 @@ export default function resultReducer(state = initialState, action) {
           )
         })
         .merge({ formDataDirty: true })
+    case types.RECEIVE_CREATING_TREATMENT_STATUS_LOG:
+      return state.withMutations(mutState => {
+        const result = state.items.byId
+          .get(action.resultId)
+          .set('resultTreatmentStatus', action.item.resultTreatmentStatus)
+          .set('treatmentStatusInfo', action.item.treatmentStatusInfo)
+          .set('resultTreatmentData', action.item.resultTreatmentData)
+          .set(
+            'resultTreatmentStatusChangedOn',
+            action.item.resultTreatmentStatusChangedOn
+          )
+          .set(
+            'resultTreatmentStatusCreatedOn',
+            action.item.resultTreatmentStatusCreatedOn
+          )
+
+        mutState.set('items', receiveItem(mutState.items, result))
+      })
     default:
       return state
   }

@@ -60,10 +60,14 @@
   margin: 0 10px;
   padding: 0;
   min-width: 40px;
-  background-color: var(--aspect-color-grey-7);
   font-weight: var(--lato-font-weight-bold);
   text-align: center;
   text-transform: capitalize;
+}
+
+.Right__Button:not(.selected) {
+  color: var(--aspect-color-chill-blue-1);
+  background-color: var(--aspect-color-grey-7);
 }
 
 .Right__Button:last-child {

@@ -1,14 +1,14 @@
 import Immutable from 'immutable'
 import React from 'react'
-import ReactTestRenderer from 'react-test-renderer'
+import { shallow } from 'enzyme'
 
 import { ReadOnlyField } from '../../components/shared/ReadOnlyFields'
 import JSONSchemaCard, { PropertiesSchemaCard } from './JSONSchemaCard'
 
 describe('JSONSchemaCard module', () => {
   describe('PropertiesSchemaCard testInstance', () => {
-    it('should handle nested field expanding correctly', () => {
-      const testInstance = ReactTestRenderer.create(
+    it('should handle nested field expanding without crash', () => {
+      shallow(
         <PropertiesSchemaCard
           title="Data"
           initiallyExpanded
@@ -17,13 +17,12 @@ describe('JSONSchemaCard module', () => {
           data={data.get('probes')}
         />
       )
-      expect(testInstance).toMatchSnapshot()
     })
   })
 
   describe('JSONSchemaCard testInstance', () => {
-    it('should render correctly', () => {
-      const testInstance = ReactTestRenderer.create(
+    it('should render without crash', () => {
+      shallow(
         <JSONSchemaCard
           title="Data"
           renderField={field => <ReadOnlyField {...field} />}
@@ -31,7 +30,6 @@ describe('JSONSchemaCard module', () => {
           data={data}
         />
       )
-      expect(testInstance).toMatchSnapshot()
     })
   })
 })

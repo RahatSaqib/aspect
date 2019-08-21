@@ -1,6 +1,8 @@
 const supertest = require('supertest')
 const chai = require('chai')
 const _ = require('lodash')
+const dateFormat = require('date-fns/format')
+const { addMinutes, subMonths, endOfMonth } = require('date-fns')
 
 const shared = require('../utils/sharedToken')
 const { runTestWithKnex } = require('../utils/generatorFunctionUtils')
@@ -22,6 +24,9 @@ describe('Result routes', () => {
   let assayId = 1
   let initialResultWorkflowStatus = ''
   let initialResultWorkflowStatusName = ''
+  const reason = 'testing'
+  const operator = 'Tester'
+  const changedOn = new Date(dateFormat(new Date(), 'yyyy-MM-dd HH:mm:ss.000Z'))
   describe('GET', () => {
     shared.checkToken(server, path)
 
@@ -135,7 +140,6 @@ describe('Result routes', () => {
           assert.property(res.body.data, 'notes')
           assert.property(res.body.data, 'errorCode')
           assert.property(res.body.data, 'errorNotes')
-          assert.property(res.body.data, 'qcCheck')
           assert.property(res.body.data, 'createdOn')
           assert.property(res.body.data, 'updatedOn')
           assert.property(res.body.data, 'assayId')
@@ -159,13 +163,25 @@ describe('Result routes', () => {
   })
 
   describe('PUT', () => {
+    after(async () =>
+      runTestWithKnex(async knex => {
+        await knex('ResultTreatmentStatusLog')
+          .where('resultId', resultId)
+          .delete()
+      })
+    )
     it('Should update result status given a resultId', done => {
       const updateWithExternalId = {
         resultWorkflowStatusId: null,
         externalId: 'Validated',
+        reason,
+        operator,
+        changedOn,
       }
       const updateWithId = {
         resultWorkflowStatusId: 1,
+        operator: 'operator 1',
+        reason: 'reason 1',
         externalId: null,
       }
 
@@ -213,13 +229,31 @@ describe('Result routes', () => {
             'updatedOn',
             'assayId',
             'assay',
+            'resultWorkflowLogReason',
+            'resultWorkflowLogCreatedOn',
+            'resultWorkflowLogOperator',
+            'resultTreatmentMethod',
+            'resultTreatmentData',
           ]
           _.each(resultFieldNames, fieldName => {
             assert.property(res.body.data, fieldName)
           })
-
           // check the updated fieldName
           assert.equal(res.body.data.resultWorkflowStatus, 'Validated')
+          assert.equal(res.body.data.resultWorkflowLogReason, reason)
+          assert.equal(res.body.data.resultWorkflowLogOperator, operator)
+          assert.closeTo(
+            new Date(res.body.data.updatedOn).getTime(),
+            new Date().getTime(),
+            5000
+          )
+          assert.equal(
+            dateFormat(
+              res.body.data.resultWorkflowLogChangedOn,
+              'yyyy-MM-dd HH:mm:ss'
+            ),
+            dateFormat(changedOn, 'yyyy-MM-dd HH:mm:ss')
+          )
 
           // update with resultWorkflowStatusId
           server
@@ -300,169 +334,121 @@ describe('Result routes', () => {
         })
     })
 
-    it('Updating "QC Check" should fail if not in status "Deliverable"', done => {
-      // try settings
+    // ------------------------------------------------------------------------
+    // helper function
+    const baseTreatmentStatusAssertion = res => {
+      assert.equal(res.status, 200)
+      assert.typeOf(res.body, 'Object')
+      assert.property(res.body, 'data')
+      assert.typeOf(res.body.data, 'Object')
+      assert.typeOf(res.body.data.assay, 'Object')
+      assert.typeOf(res.body.data.assay.resultDataSchema, 'Object')
+      assert.typeOf(res.body.data.resultData, 'Object')
+      const resultFieldNames = [
+        'id',
+        'endedOn',
+        'deviceName',
+        'countryName',
+        'stateName',
+        'lgaName',
+        'resultCategory1Name',
+        'resultCategory2Name',
+        'resultData',
+        'sampleId',
+        'sampleGroup',
+        'patientId',
+        'siteName',
+        'assayVersion',
+        'consumableSerial',
+        'consumableLot',
+        'consumableExpirationDate',
+        'instrumentSerial',
+        'moduleName',
+        'moduleSerial',
+        'researchId',
+        'senderVersion',
+        'senderOperator',
+        'notes',
+        'errorCode',
+        'errorNotes',
+        'createdOn',
+        'updatedOn',
+        'assayId',
+        'assay',
+      ]
+      _.each(resultFieldNames, fieldName => {
+        assert.property(res.body.data, fieldName)
+      })
+    }
+
+    it('Should update result treatment status given a resultId - with externalId', done => {
+      const changedOn = new Date()
+      const updateWithExternalId = {
+        externalId: 'AwaitingTreatment',
+        data: 'should be treated',
+        method: 'sms',
+        changedOn,
+      }
+      // update with external ID
       server
-        .put(`${path}/workflow-status/${resultId}`)
-        .send({
-          resultWorkflowStatusId: null,
-          externalId: 'Validated',
-        })
+        .put(`${path}/treatment-status/${resultId}`)
+        .send(updateWithExternalId)
         .set('Authorization', `Bearer${shared.token}`)
-        .end(() => {
-          server
-            .put(`${path}/qc-check/${resultId}`)
-            .send({ qcCheck: true })
-            .set('Authorization', `Bearer${shared.token}`)
-            .end((err, res) => {
-              assert.equal(res.status, 400)
-              done()
-            })
+        .end((err, res) => {
+          baseTreatmentStatusAssertion(res)
+
+          const { treatmentStatus } = res.body.data
+          // check the updated fieldName
+          assert.equal(treatmentStatus.externalId, 'AwaitingTreatment')
+
+          done()
         })
     })
 
-    it('Should update "QC Check" given a resultId and boolean if in status "Deliverable"', done => {
-      // ensure we have a result in status "Deliverable"
+    it('Should update result treatment status given a resultId - with resultTreatmentStatusId', done => {
+      const changedOn = addMinutes(new Date(), 1)
+      const updateWithId = {
+        resultTreatmentStatusId: 2,
+        data: 'should be treated',
+        method: 'sms',
+        changedOn,
+      }
+      // update with resultTreatmentStatusId
       server
-        .put(`${path}/workflow-status/${resultId}`)
-        .send({
-          resultWorkflowStatusId: null,
-          externalId: 'Deliverable',
-        })
+        .put(`${path}/treatment-status/${resultId}`)
+        .send(updateWithId)
         .set('Authorization', `Bearer${shared.token}`)
-        .end(() => {
-          // get first result in status "Deliverable"
-          server
-            .get(`${path}?workflowStatusId=7`)
-            .set('Authorization', `Bearer ${shared.token}`)
-            .end((err, res) => {
-              resultId = res.body.data[0].id
+        .end((err, res) => {
+          baseTreatmentStatusAssertion(res)
 
-              // set to true
-              server
-                .put(`${path}/qc-check/${resultId}`)
-                .send({ qcCheck: true })
-                .set('Authorization', `Bearer${shared.token}`)
-                .end((err, res) => {
-                  assert.equal(res.status, 200)
-                  assert.typeOf(res.body, 'Object')
-                  assert.property(res.body, 'data')
-                  assert.typeOf(res.body.data, 'Object')
-                  assert.typeOf(res.body.data.assay, 'Object')
-                  assert.typeOf(res.body.data.assay.resultDataSchema, 'Object')
-                  assert.typeOf(res.body.data.resultData, 'Object')
-                  const resultFieldNames = [
-                    'id',
-                    'endedOn',
-                    'deviceName',
-                    'countryName',
-                    'stateName',
-                    'lgaName',
-                    'resultCategory1Name',
-                    'resultCategory2Name',
-                    'resultData',
-                    'sampleId',
-                    'sampleGroup',
-                    'patientId',
-                    'siteName',
-                    'assayVersion',
-                    'consumableSerial',
-                    'consumableLot',
-                    'consumableExpirationDate',
-                    'instrumentSerial',
-                    'moduleName',
-                    'moduleSerial',
-                    'researchId',
-                    'senderVersion',
-                    'senderOperator',
-                    'notes',
-                    'errorCode',
-                    'errorNotes',
-                    'createdOn',
-                    'updatedOn',
-                    'assayId',
-                    'assay',
-                  ]
-                  _.each(resultFieldNames, fieldName => {
-                    assert.property(res.body.data, fieldName)
-                  })
+          const { treatmentStatus } = res.body.data
 
-                  // check that flag was set to true
-                  assert.equal(res.body.data.qcCheck, 1)
+          // check if resultWorkflowStatus was updated
+          assert.equal(treatmentStatus.externalId, 'OnTreatment')
 
-                  // ...and back to false
-                  server
-                    .put(`${path}/qc-check/${resultId}`)
-                    .send({ qcCheck: false })
-                    .set('Authorization', `Bearer${shared.token}`)
-                    .end((err, res) => {
-                      assert.equal(res.status, 200)
-                      assert.typeOf(res.body, 'Object')
-                      assert.property(res.body, 'data')
-                      assert.typeOf(res.body.data, 'Object')
-                      assert.typeOf(res.body.data.assay, 'Object')
-                      assert.typeOf(
-                        res.body.data.assay.resultDataSchema,
-                        'Object'
-                      )
-                      assert.typeOf(res.body.data.resultData, 'Object')
-                      const resultFieldNames = [
-                        'id',
-                        'endedOn',
-                        'deviceName',
-                        'countryName',
-                        'stateName',
-                        'lgaName',
-                        'resultCategory1Name',
-                        'resultCategory2Name',
-                        'resultData',
-                        'sampleId',
-                        'sampleGroup',
-                        'patientId',
-                        'siteName',
-                        'assayVersion',
-                        'consumableSerial',
-                        'consumableLot',
-                        'consumableExpirationDate',
-                        'instrumentSerial',
-                        'moduleName',
-                        'moduleSerial',
-                        'researchId',
-                        'senderVersion',
-                        'senderOperator',
-                        'notes',
-                        'errorCode',
-                        'errorNotes',
-                        'createdOn',
-                        'updatedOn',
-                        'assayId',
-                        'assay',
-                      ]
-                      _.each(resultFieldNames, fieldName => {
-                        assert.property(res.body.data, fieldName)
-                      })
+          done()
+        })
+    })
 
-                      // check that flag was set to false
-                      assert.equal(res.body.data.qcCheck, 0)
+    it('Should update result treatment status given a resultId - set resultTreatmentData', done => {
+      const changedOn = addMinutes(new Date(), 2)
+      const updateWithNull = {
+        resultTreatmentStatusId: null,
+        data: 'should be treated',
+        method: 'sms',
+        changedOn,
+      }
+      // set to null
+      server
+        .put(`${path}/treatment-status/${resultId}`)
+        .send(updateWithNull)
+        .set('Authorization', `Bearer${shared.token}`)
+        .end((err, res) => {
+          baseTreatmentStatusAssertion(res)
 
-                      // Clean Up: Update resultWorkflowStatus with original status
-                      server
-                        .put(`${path}/workflow-status/${resultId}`)
-                        .send({
-                          resultWorkflowStatusId: null,
-                          externalId: initialResultWorkflowStatus,
-                        })
-                        .set('Authorization', `Bearer${shared.token}`)
-                        .end((err, res) => {
-                          assert.equal(
-                            res.body.data.resultWorkflowStatus,
-                            initialResultWorkflowStatus
-                          )
-                          done()
-                        })
-                    })
-                })
-            })
+          assert.equal(res.body.data.resultTreatmentData, 'should be treated')
+
+          done()
         })
     })
 
@@ -663,6 +649,311 @@ describe('Result Workflow Status Log', () => {
           assert.property(res.body.data[0], 'statusName')
           assert.property(res.body.data[0], 'operator')
           assert.property(res.body, 'total')
+          done()
+        })
+    })
+  })
+})
+
+describe('Result download routes', () => {
+  const path = '/api/result/download'
+  afterEach(() =>
+    runTestWithKnex(async knex => {
+      await knex('ResultDownloadLog').delete()
+    })
+  )
+  describe('GET', () => {
+    shared.checkToken(server, path)
+
+    it('should return a paged list of results, including all result details', () =>
+      runTestWithKnex(knex => {
+        server
+          .get(`${path}?size=1&deviceType=DaktariVirology`)
+          .set('Authorization', `Bearer ${shared.token}`)
+          .end(async (err, res) => {
+            assert.equal(res.status, 200)
+            assert.typeOf(res.body, 'Object')
+
+            assert.property(res.body, 'ok')
+            assert.property(res.body, 'total')
+            assert.property(res.body, 'length')
+            assert.property(res.body, 'data')
+
+            assert.equal(res.body.ok, true)
+            assert.isAtLeast(res.body.total, 2)
+            assert.equal(res.body.length, 1)
+
+            assert.typeOf(res.body.data, 'array')
+            assert.equal(res.body.data.length, 1)
+
+            assert.property(res.body.data[0], 'id')
+            assert.property(res.body.data[0], 'externalId')
+            assert.property(res.body.data[0], 'startedOn')
+            assert.property(res.body.data[0], 'endedOn')
+            assert.property(res.body.data[0], 'createdOn')
+            assert.property(res.body.data[0], 'updatedOn')
+            assert.property(res.body.data[0], 'longitude')
+            assert.property(res.body.data[0], 'latitude')
+            assert.property(res.body.data[0], 'assayExternalId')
+            assert.property(res.body.data[0], 'siteName')
+            assert.property(res.body.data[0], 'deviceName')
+            assert.property(res.body.data[0], 'resultCategory1ExternalId')
+            assert.property(res.body.data[0], 'resultCategory2ExternalId')
+            assert.property(res.body.data[0], 'workflowStatus')
+            assert.equal(
+              res.body.data[0].workflowStatus.externalId,
+              'Delivered'
+            )
+
+            assert.property(res.body.data[0], 'treatmentStatus')
+            assert.property(res.body.data[0], 'patientData')
+            assert.property(res.body.data[0], 'resultData')
+            assert.property(res.body.data[0], 'formData')
+            assert.property(res.body.data[0], 'researchId')
+            assert.property(res.body.data[0], 'senderVersion')
+            assert.property(res.body.data[0], 'senderOperator')
+            assert.property(res.body.data[0], 'notes')
+            assert.property(res.body.data[0], 'errorCode')
+            assert.property(res.body.data[0], 'errorNotes')
+            assert.property(res.body.data[0], 'sample')
+
+            assert.equal(Object.keys(res.body.data[0]).length, 25)
+            // check if the download is register in the table.
+            const { count: totalResult } = await knex('ResultDownloadLog')
+              .where('resultId', res.body.data[0].id)
+              .count('id as count')
+              .first()
+
+            assert.isAtLeast(totalResult, 1)
+          })
+      }))
+
+    it('should test querying different results with different optional parameters', done => {
+      const resultCategories = [
+        'Detected',
+        'Invalid',
+        'Error',
+        'Acknowledged',
+        'Processed',
+      ]
+      server
+        .get(
+          `${path}?size=1&deviceType=DaktariVirology&resultCategories=${resultCategories.join(
+            ','
+          )}`
+        )
+        .set('Authorization', `Bearer ${shared.token}`)
+        .end((err, res) => {
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+
+          assert.property(res.body, 'ok')
+          assert.property(res.body, 'total')
+          assert.property(res.body, 'length')
+          assert.property(res.body, 'data')
+
+          assert.equal(res.body.ok, true)
+          assert.isAtLeast(res.body.total, 1)
+          assert.equal(res.body.length, 1)
+
+          assert.typeOf(res.body.data, 'array')
+          assert.equal(res.body.data.length, 1)
+
+          assert.property(res.body.data[0], 'id')
+          assert.property(res.body.data[0], 'externalId')
+          assert.property(res.body.data[0], 'startedOn')
+          assert.property(res.body.data[0], 'endedOn')
+          assert.property(res.body.data[0], 'createdOn')
+          assert.property(res.body.data[0], 'updatedOn')
+          assert.property(res.body.data[0], 'longitude')
+          assert.property(res.body.data[0], 'latitude')
+          assert.property(res.body.data[0], 'assayExternalId')
+          assert.property(res.body.data[0], 'siteName')
+          assert.property(res.body.data[0], 'deviceName')
+          assert.property(res.body.data[0], 'resultCategory1ExternalId')
+          assert.property(res.body.data[0], 'resultCategory2ExternalId')
+          assert.property(res.body.data[0], 'workflowStatus')
+          assert.equal(res.body.data[0].workflowStatus.externalId, 'Delivered')
+          assert.property(res.body.data[0], 'treatmentStatus')
+          assert.property(res.body.data[0], 'patientData')
+          assert.property(res.body.data[0], 'resultData')
+          assert.property(res.body.data[0], 'formData')
+          assert.property(res.body.data[0], 'researchId')
+          assert.property(res.body.data[0], 'senderVersion')
+          assert.property(res.body.data[0], 'senderOperator')
+          assert.property(res.body.data[0], 'notes')
+          assert.property(res.body.data[0], 'errorCode')
+          assert.property(res.body.data[0], 'errorNotes')
+          assert.property(res.body.data[0], 'sample')
+
+          assert.equal(Object.keys(res.body.data[0]).length, 25)
+        })
+
+      server
+        .get(
+          `${path}?size=1&deviceType=DaktariVirology&assayTypeAbbreviations=HCV,Ebola,HIV`
+        )
+        .set('Authorization', `Bearer ${shared.token}`)
+        .end((err, res) => {
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+
+          assert.property(res.body, 'ok')
+          assert.property(res.body, 'total')
+          assert.property(res.body, 'length')
+          assert.property(res.body, 'data')
+          assert.equal(res.body.ok, true)
+          assert.isAtLeast(res.body.total, 2)
+          assert.equal(res.body.length, 1)
+
+          assert.typeOf(res.body.data, 'array')
+          assert.equal(res.body.data.length, 1)
+
+          assert.property(res.body.data[0], 'id')
+          assert.property(res.body.data[0], 'externalId')
+          assert.property(res.body.data[0], 'startedOn')
+          assert.property(res.body.data[0], 'endedOn')
+          assert.property(res.body.data[0], 'createdOn')
+          assert.property(res.body.data[0], 'updatedOn')
+          assert.property(res.body.data[0], 'longitude')
+          assert.property(res.body.data[0], 'latitude')
+          assert.property(res.body.data[0], 'assayExternalId')
+          assert.property(res.body.data[0], 'siteName')
+          assert.property(res.body.data[0], 'deviceName')
+          assert.property(res.body.data[0], 'resultCategory1ExternalId')
+          assert.property(res.body.data[0], 'resultCategory2ExternalId')
+          assert.property(res.body.data[0], 'workflowStatus')
+          assert.property(res.body.data[0], 'treatmentStatus')
+          assert.property(res.body.data[0], 'patientData')
+          assert.property(res.body.data[0], 'resultData')
+          assert.property(res.body.data[0], 'formData')
+          assert.property(res.body.data[0], 'researchId')
+          assert.property(res.body.data[0], 'senderVersion')
+          assert.property(res.body.data[0], 'senderOperator')
+          assert.property(res.body.data[0], 'notes')
+          assert.property(res.body.data[0], 'errorCode')
+          assert.property(res.body.data[0], 'errorNotes')
+          assert.property(res.body.data[0], 'sample')
+          assert.equal(res.body.data[0].workflowStatus.externalId, 'Delivered')
+        })
+      server
+        .get(`${path}?size=1&workflowStatus=OK`)
+        .set('Authorization', `Bearer ${shared.token}`)
+        .end((err, res) => {
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+
+          assert.property(res.body, 'ok')
+          assert.property(res.body, 'total')
+          assert.property(res.body, 'length')
+          assert.property(res.body, 'data')
+
+          assert.equal(res.body.ok, true)
+          assert.isAtLeast(res.body.total, 0)
+          assert.equal(res.body.length, 0)
+
+          assert.typeOf(res.body.data, 'array')
+          assert.equal(res.body.data.length, 0)
+        })
+      server
+        .get(`${path}?size=1&treatmentStatus=OnTreatment`)
+        .set('Authorization', `Bearer ${shared.token}`)
+        .end((err, res) => {
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+          assert.property(res.body, 'ok')
+          assert.property(res.body, 'total')
+          assert.property(res.body, 'length')
+          assert.property(res.body, 'data')
+
+          assert.equal(res.body.ok, true)
+          assert.isAtLeast(res.body.total, 0)
+          assert.equal(res.body.length, 0)
+
+          assert.typeOf(res.body.data, 'array')
+          assert.equal(res.body.data.length, 0)
+        })
+      server
+        .get(`${path}?size=1&patientSample=-&deviceType=DaktariVirology`)
+        .set('Authorization', `Bearer ${shared.token}`)
+        .end((err, res) => {
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+
+          assert.property(res.body, 'ok')
+          assert.property(res.body, 'total')
+          assert.property(res.body, 'length')
+          assert.property(res.body, 'data')
+
+          assert.equal(res.body.ok, true)
+          assert.isAtLeast(res.body.total, 1)
+          assert.equal(res.body.length, 1)
+
+          assert.typeOf(res.body.data, 'array')
+          assert.equal(res.body.data.length, 1)
+
+          assert.property(res.body.data[0], 'id')
+          assert.property(res.body.data[0], 'externalId')
+          assert.property(res.body.data[0], 'startedOn')
+          assert.property(res.body.data[0], 'endedOn')
+          assert.property(res.body.data[0], 'createdOn')
+          assert.property(res.body.data[0], 'updatedOn')
+          assert.property(res.body.data[0], 'longitude')
+          assert.property(res.body.data[0], 'latitude')
+          assert.property(res.body.data[0], 'assayExternalId')
+          assert.property(res.body.data[0], 'siteName')
+          assert.property(res.body.data[0], 'deviceName')
+          assert.property(res.body.data[0], 'resultCategory1ExternalId')
+          assert.property(res.body.data[0], 'resultCategory2ExternalId')
+          assert.property(res.body.data[0], 'workflowStatus')
+          assert.property(res.body.data[0], 'treatmentStatus')
+          assert.property(res.body.data[0], 'patientData')
+          assert.property(res.body.data[0], 'resultData')
+          assert.equal(res.body.data[0].workflowStatus.externalId, 'Delivered')
+          assert.property(res.body.data[0], 'formData')
+          assert.property(res.body.data[0], 'researchId')
+          assert.property(res.body.data[0], 'senderVersion')
+          assert.property(res.body.data[0], 'senderOperator')
+          assert.property(res.body.data[0], 'notes')
+          assert.property(res.body.data[0], 'errorCode')
+          assert.property(res.body.data[0], 'errorNotes')
+          assert.property(res.body.data[0], 'sample')
+
+          done()
+        })
+    })
+  })
+})
+
+describe('Result Treatment', () => {
+  describe('Status Tracking - POST', () => {
+    const path = '/api/result/confirmed-treatment-tracking'
+    shared.checkToken(server, path)
+
+    it('Should return percentages of OnTreatment and Unaccountable', done => {
+      const now = new Date()
+      const endedOn = dateFormat(endOfMonth(subMonths(now, 1)), 'yyyy-MM-dd')
+      const siteId = null
+      server
+        .post(`${path}`)
+        .send({ endedOn, siteId })
+        .set('Authorization', `Bearer ${shared.token}`)
+        .end((err, res) => {
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+
+          assert.property(res.body, 'endedOn')
+          assert.property(res.body, 'data')
+          assert.property(res.body, 'siteId')
+
+          assert.equal(res.body.data.length, 6) // for 6 months
+          assert.property(res.body.data[0], 'monthTested')
+          assert.property(res.body.data[0], 'pcConfirmed')
+          assert.property(res.body.data[0], 'pcNotPossible')
+          assert.property(res.body.data[0], 'cntConfirmed')
+          assert.property(res.body.data[0], 'cntNotPossible')
+          assert.property(res.body.data[0], 'total')
+
           done()
         })
     })

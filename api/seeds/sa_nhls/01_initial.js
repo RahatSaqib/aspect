@@ -1,4 +1,4 @@
-module.exports = require('../utils').seed(seed)
+module.exports = require('../utils').seed(seed, __filename)
 
 const _ = require('lodash')
 const bcrypt = require('bcrypt')
@@ -76,6 +76,7 @@ async function seed(knex) {
     deviceLogHistoryDays: 365,
     maxDaysDeviceOffline: 7,
     maxDaysDeviceNoResults: 14,
+    serverUrl: 'https://sanhls.aspect.id',
   })
 
   // Create geographic hierarchy
@@ -300,6 +301,7 @@ async function seed(knex) {
 
   const [alereQHiv12DetectAssayId] = await knex('Assay').insert({
     name: 'Alere q HIV-1/2 Detect',
+    abbreviation: 'Q HIV detect',
     i18nKey: 'assayAlereQHiv12Detect',
     externalId: 'assayAlereQHiv12Detect',
     assayTypeId: await assayTypeToId('HIV Qual'),
@@ -403,6 +405,7 @@ async function seed(knex) {
 
   const [alereQHiv12VLPlasmaAssayId] = await knex('Assay').insert({
     name: 'Alere q HIV-1/2 VL plasma',
+    abbreviation: 'Q HIV Plasma',
     i18nKey: 'assayAlereQHiv12VLPlasma',
     externalId: 'assayAlereQHiv12VLPlasma',
     assayTypeId: await assayTypeToId('HIV VL'),

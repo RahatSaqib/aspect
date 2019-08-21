@@ -55,6 +55,49 @@ describe('person endpoints', () => {
           .execute()
       })
     })
+
+    describe('person/available', () => {
+      let endpoint
+      const expectedResponse = { value: 'Expected result' }
+
+      beforeEach(() => {
+        endpoint = setupRoute('GET', '/person/available', {
+          async availableContacts() {
+            return expectedResponse
+          },
+        })
+      })
+      it('Should respond with the data returned from the service', done => {
+        endpointUtils
+          .callHandlerOn(endpoint)
+          .handleResponseWith(response => {
+            assert.deepEqual(response, expectedResponse)
+          })
+          .thenCall(done)
+          .execute()
+      })
+    })
+    describe('/person/refresh-token', () => {
+      let endpoint
+      const expectedResponse = { value: 'Expected result' }
+
+      before(() => {
+        endpoint = setupRoute('GET', '/person/refresh-token', {
+          async listRefreshTokens() {
+            return expectedResponse
+          },
+        })
+      })
+      it('Should respond with the data returned from the service', done => {
+        endpointUtils
+          .callHandlerOn(endpoint)
+          .handleResponseWith(response => {
+            assert.deepEqual(response, expectedResponse)
+          })
+          .thenCall(done)
+          .execute()
+      })
+    })
   })
 
   describe('PUT', () => {
@@ -87,6 +130,71 @@ describe('person endpoints', () => {
       beforeEach(() => {
         endpoint = setupRoute('PUT', '/person/preferences/{personId}', {
           async updatePersonUserPreferences() {
+            return expectedResponse
+          },
+        })
+      })
+      it('Should respond with the data returned from the service', done => {
+        endpointUtils
+          .callHandlerOn(endpoint)
+          .handleResponseWith(response => {
+            assert.deepEqual(response, expectedResponse)
+          })
+          .thenCall(done)
+          .execute()
+      })
+    })
+    describe('/person/assign/{siteId}', () => {
+      let endpoint
+      const expectedResponse = { value: 'Expected result' }
+
+      beforeEach(() => {
+        endpoint = setupRoute('PUT', '/person/assign/{siteId}', {
+          async assignContact() {
+            return expectedResponse
+          },
+        })
+      })
+      it('Should respond with the data returned from the service', done => {
+        endpointUtils
+          .callHandlerOn(endpoint)
+          .handleResponseWith(response => {
+            assert.deepEqual(response, expectedResponse)
+          })
+          .thenCall(done)
+          .execute()
+      })
+    })
+
+    describe('/person/unassign/{siteId}', () => {
+      let endpoint
+      const expectedResponse = { value: 'Expected result' }
+
+      beforeEach(() => {
+        endpoint = setupRoute('PUT', '/person/unassign/{siteId}', {
+          async unAssignContact() {
+            return expectedResponse
+          },
+        })
+      })
+      it('Should respond with the data returned from the service', done => {
+        endpointUtils
+          .callHandlerOn(endpoint)
+          .handleResponseWith(response => {
+            assert.deepEqual(response, expectedResponse)
+          })
+          .thenCall(done)
+          .execute()
+      })
+    })
+
+    describe('/person/refresh-token/{refreshTokenId}', () => {
+      let endpoint
+      const expectedResponse = { value: 'Expected result' }
+
+      before(() => {
+        endpoint = setupRoute('PUT', '/person/refresh-token/{refreshTokenId}', {
+          async updateRefreshToken() {
             return expectedResponse
           },
         })

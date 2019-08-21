@@ -1,8 +1,8 @@
-module.exports = require('../utils').seed(seed)
-
+module.exports = require('../utils').seed(seed, __filename)
 const _ = require('lodash')
-const config = require('../../src/config')
 const bcrypt = require('bcrypt')
+
+const config = require('../../src/config')
 const { randomToken } = require('../../src/deviceApi/apiKey')
 const { getPermissionModules } = require('../utils')
 const {
@@ -24,7 +24,6 @@ async function seed(knex) {
   if (existingAdminUser) {
     return
   }
-
   // Create admin user and audit fields
   const now = new Date()
   const [adminId] = await knex('User').insert({
@@ -52,6 +51,7 @@ async function seed(knex) {
 
   await knex('Assay').insert({
     name: 'CommCare Gates RDT',
+    abbreviation: 'CC RDT',
     i18nKey: 'assayCommCareGatesRDT',
     externalId: 'CommCareGatesRDT',
     assayTypeId: await assayTypeToId('HIV Qual'),

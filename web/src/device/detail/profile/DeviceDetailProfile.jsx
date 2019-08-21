@@ -1,41 +1,51 @@
 import _ from 'lodash'
-import Immutable from 'immutable'
 import classnames from 'classnames/bind'
-import React from 'react'
+import React, { Fragment } from 'react'
 import { defineMessages } from 'react-intl'
 import { compose, withProps, withHandlers, lifecycle } from 'recompose'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import { Button } from 'react-toolbox/lib/button'
-import { Card } from 'react-toolbox/lib/card'
+import Button from '@material-ui/core/Button'
+import IconButton from '@material-ui/core/IconButton'
+import Tooltip from '@material-ui/core/Tooltip'
+import Card from '@material-ui/core/Card'
 import MdFileDownload from 'react-icons/lib/md/file-download'
 import Helmet from 'react-helmet'
+import TableBody from '@material-ui/core/TableBody'
+import NotesIcon from '@material-ui/icons/ChatBubbleOutline'
+import { ResponsiveBar } from '@nivo/bar'
+
 import {
   makeSortPageSelector,
   makeSearchParamsSanitizer,
   composeSanitizer,
 } from '../../../shared/selectors/searchParams'
+import { formatDate } from '../../../shared/utils/dateFormat'
 import { sanitizeFiltersStringBy } from '../../../filter/utils'
-import StyledDropdown from '../../../components/themedReactToolbox/StyledDropdown'
-import { Unit } from '../../../components/pureGrids'
 import DataTableProgressBar from '../../../components/shared/DataTableProgressBar'
+import ColoredNumber from '../../../components/shared/ColoredNumber'
+import AspectTooltip from '../../../components/shared/AspectTooltip'
 import BrowseTablePaginator from '../../../globals/components/BrowseTablePaginator'
 import BrowseEmptyList from '../../../globals/components/BrowseEmptyList'
-import AbnormalBarChart from '../../../dashboard/operational/AbnormalBarChart'
 import { fetchResults, exportResults } from '../../../result/ResultRedux'
 import { tokens } from '../../../deviceStatus/DeviceStatusRedux'
+import {
+  showDialog,
+  hideDialog,
+  updateDeviceMaintenance,
+} from '../../DeviceRedux'
 import DeviceDetailBackBar from '../DeviceDetailBackBar'
-import Summary from '../Summary'
+import Summary from '../../../globals/components/Summary'
 import {
   ResultDataTable,
   ResultDataTableHead,
   ResultDataTableRow,
 } from './ResultDataTable'
 import requirePermissions from '../../../components/shared/requirePermissions'
+import CalibrationDialog from '../../maintenance/CalibrationDialog'
+import WarrantyDialog from '../../maintenance/WarrantyDialog'
 
 const cssClasses = classnames.bind(require('../DeviceDetail.css'))
-
-const EMPTY_LIST = Immutable.List()
 
 const messages = defineMessages({
   deviceType: {
@@ -50,13 +60,9 @@ const messages = defineMessages({
     id: 'pages.DeviceDetailProfile.calibration',
     defaultMessage: 'Calibration',
   },
-  firmware: {
-    id: 'pages.DeviceDetailProfile.firmware',
-    defaultMessage: 'Firmware',
-  },
-  location: {
-    id: 'pages.DeviceDetailProfile.location',
-    defaultMessage: 'Location',
+  site: {
+    id: 'pages.DeviceDetailProfile.site',
+    defaultMessage: 'Site',
   },
   connectivity: {
     id: 'pages.DeviceDetailProfile.connectivity',
@@ -66,13 +72,27 @@ const messages = defineMessages({
     id: 'pages.DeviceDetailProfile.lastSeenOn',
     defaultMessage: 'Last seen {lastSeen}',
   },
-  maintenance: {
-    id: 'pages.DeviceDetailProfile.maintenance',
-    defaultMessage: 'Maintenance',
-  },
   warranty: {
     id: 'pages.DeviceDetailProfile.warranty',
     defaultMessage: 'Warranty',
+  },
+  utilizationRate: {
+    id: 'pages.DeviceDetailProfile.utilizationRate',
+    defaultMessage: 'Utilization Rate',
+  },
+  utilizationRateExplain: {
+    id: 'pages.DeviceDetailProfile.utilizationRateExplain',
+    defaultMessage:
+      'Number of results in the last 30 days divided by the daily capacity of the instrument multiplied by 30 days',
+  },
+  errorRate: {
+    id: 'pages.DeviceDetailProfile.errorRate',
+    defaultMessage: 'Error Rate',
+  },
+  errorRateExplain: {
+    id: 'pages.DeviceDetailProfile.errorRateExplain',
+    defaultMessage:
+      'Number of errors divided by number of results in the last 30 days',
   },
   endedOn: {
     id: 'pages.DeviceDetailProfile.EndedOn',
@@ -109,6 +129,30 @@ const messages = defineMessages({
       other {# results}
     }`,
   },
+  noResults: {
+    id: 'pages.DeviceDetailProfile.noResults',
+    defaultMessage: 'No Results',
+  },
+  undefinedValue: {
+    id: 'pages.DeviceDetailProfile.undefinedValue',
+    defaultMessage: 'n/a',
+  },
+  notes: {
+    id: 'pages.DeviceDetailProfile.notes',
+    defaultMessage: 'notes',
+  },
+  buttonAddRecord: {
+    id: 'pages.DeviceDetailProfile.buttonAddRecord',
+    defaultMessage: 'Add Record',
+  },
+  buttonUpdate: {
+    id: 'pages.DeviceDetailProfile.buttonUpdate',
+    defaultMessage: 'Update',
+  },
+  buttonChange: {
+    id: 'pages.DeviceDetailProfile.buttonChange',
+    defaultMessage: 'Change',
+  },
 })
 
 const FILTERS_CONFIG = {
@@ -143,8 +187,30 @@ const filtersFromLocation = composeSanitizer(
   ),
   searchSanitizer
 )
+const formatMaintenanceDate = (intl, date) => {
+  if (!date) {
+    return intl.formatMessage(messages.undefinedValue)
+  }
+  return formatDate(date)
+}
 
 const enhance = compose(
+  connect(
+    state => {
+      const { activeDialog, performanceReport } = state.device
+      const { culture } = state.user
+      return {
+        activeDialog,
+        performanceReport,
+        culture,
+      }
+    },
+    {
+      showDialog,
+      hideDialog,
+      updateDeviceMaintenance,
+    }
+  ),
   withProps(
     makeSortPageSelector({
       sortCol: 'endedOn',
@@ -159,6 +225,28 @@ const enhance = compose(
             ? tokens.APPROVED
             : tokens.ASSIGNED,
       }),
+    onShowCalibrationDialog: ({ showDialog, device }) => () => {
+      showDialog('calibration', device)
+    },
+    onShowWarrantyDialog: ({ showDialog, device }) => () => {
+      showDialog('warranty', device)
+    },
+    onHideDialog: ({ hideDialog }) => () => hideDialog(),
+
+    onCalibrationSubmit: ({ device, updateDeviceMaintenance }) => values => {
+      updateDeviceMaintenance({
+        externalId: 'calibration',
+        device,
+        values,
+      })
+    },
+    onWarrantySubmit: ({ device, updateDeviceMaintenance }) => values => {
+      updateDeviceMaintenance({
+        externalId: 'warranty',
+        device,
+        values,
+      })
+    },
   })
 )
 
@@ -215,7 +303,9 @@ const enhanceResults = compose(
     },
 
     onRowClick: ({ history }) => ({
-      currentTarget: { dataset: { resultId } },
+      currentTarget: {
+        dataset: { resultId },
+      },
       // TODO: correct path?
     }) => history.push(`/browse/result/${resultId}`),
   }),
@@ -250,6 +340,232 @@ const enhanceResults = compose(
   })
 )
 
+const PerformanceBarChart = ({
+  data,
+  series,
+  color,
+  avgValue,
+  maxValue,
+  info,
+}) => (
+  <ResponsiveBar
+    data={data}
+    indexBy="period"
+    keys={series.map(x => x.key)}
+    margin={{ top: 10, right: 0, bottom: 90, left: 50 }}
+    padding={0.01} // between stacks, (ratio)
+    innerPadding={1} // between bars in a stack, (px)
+    enableGridY={false}
+    enableLabel={false}
+    defs={[
+      {
+        id: 'lines',
+        type: 'patternLines',
+        background: 'inherit',
+        color: process.env[color],
+        rotation: 45,
+        lineWidth: 7,
+        spacing: 8,
+      },
+    ]}
+    fill={[
+      {
+        match: {
+          id: 'exceededErrorRate',
+        },
+        id: 'lines',
+      },
+      {
+        match: {
+          id: 'exceededUtilizationRate',
+        },
+        id: 'lines',
+      },
+    ]}
+    axisLeft={{
+      tickRotation: 0,
+      legend: 'Percentage(%)',
+      legendPosition: 'middle',
+      legendOffset: -40,
+    }}
+    colors={bar => series.find(x => x.key === bar.id).color}
+    animate
+    markers={[
+      {
+        axis: 'y',
+        value: avgValue,
+        lineStyle: {
+          stroke: process.env['--aspect-color-ship-cove'],
+          strokeWidth: 2,
+        },
+        legendOrientation: 'vertical',
+      },
+    ]}
+    tooltip={({ color, indexValue }) => {
+      const periodData = data.find(x => x.period === indexValue)
+      const value = periodData.errorRate + periodData.exceededErrorRate
+      return (
+        <div>
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <div
+              className={cssClasses('Performance--graph-tooltip-color')}
+              style={{ backgroundColor: color }}
+            />
+            {`% ${info} `}
+          </div>
+          <div>
+            {`${indexValue}: `}
+            <strong>{value}</strong>%
+          </div>
+        </div>
+      )
+    }}
+    maxValue={maxValue}
+    motionStiffness={90}
+    motionDamping={15}
+  />
+)
+const PerformanceReport = enhance(({ performanceReport, culture }) => {
+  const payload = performanceReport.toJS()
+  let maxUtilizationRate = 0
+  let maxErrorRate = 0
+  if (payload.data) {
+    payload.data.forEach(item => {
+      const date = new Date(item.monthTested)
+      const monthName = date.toLocaleString(culture, { month: 'short' })
+      item.period = monthName
+      item.exceededErrorRate =
+        item.errorRate > payload.errorRateAvg
+          ? item.errorRate - payload.errorRateAvg
+          : 0
+      item.errorRate =
+        item.errorRate > payload.errorRateAvg
+          ? payload.errorRateAvg
+          : item.errorRate
+      item.exceededUtilizationRate =
+        item.utilizationRate > payload.utilizationRateAvg
+          ? item.utilizationRate - payload.utilizationRateAvg
+          : 0
+      item.utilizationRate =
+        item.utilizationRate > payload.utilizationRateAvg
+          ? payload.utilizationRateAvg
+          : item.utilizationRate
+    })
+    maxUtilizationRate = payload.data.reduce(
+      (prev, current) =>
+        prev > current.utilizationRate + current.exceededUtilizationRate
+          ? prev
+          : current.utilizationRate + current.exceededUtilizationRate,
+      payload.utilizationRateAvg
+    )
+    maxErrorRate = payload.data.reduce(
+      (prev, current) =>
+        prev > current.errorRate + current.exceededErrorRate
+          ? prev
+          : current.errorRate + current.exceededErrorRate,
+      payload.errorRateAvg
+    )
+
+    maxErrorRate = maxErrorRate === 100 ? maxErrorRate : maxErrorRate + 10
+    maxUtilizationRate += 10
+  }
+
+  const avgUtilizationRate = payload.utilizationRateAvg
+  const avgErrorRate = payload.errorRateAvg
+  const { data } = payload
+  const utilizationRateSeries = [
+    {
+      label: 'Utilization Rate',
+      key: 'utilizationRate',
+      color: process.env['--aspect-color-shakespeare'],
+    },
+    {
+      label: 'Above Target Utilization Rate',
+      key: 'exceededUtilizationRate',
+      color: '#FFFFFF',
+    },
+  ]
+  const errorRateSeries = [
+    {
+      label: 'Error Rate',
+      key: 'errorRate',
+      color: process.env['--aspect-color-mandy'], // green
+    },
+    {
+      label: 'Above Average Error Rate',
+      key: 'exceededErrorRate',
+      color: '#FFFFFF',
+    },
+  ]
+
+  return (
+    <section className={cssClasses('Section')}>
+      <Card className={cssClasses('Section')}>
+        <p data-panel-title>Performance</p>
+        <div data-graph-container>
+          {data && data[0].utilizationRate !== null && (
+            <div
+              className={cssClasses('Graph_Container')}
+              data-utilization-graph
+            >
+              {data && (
+                <div>
+                  <p>Utilization Rate</p>
+                  <PerformanceBarChart
+                    data={data}
+                    series={utilizationRateSeries}
+                    color="--aspect-color-shakespeare"
+                    avgValue={avgUtilizationRate}
+                    maxValue={maxUtilizationRate}
+                    info="Utilization Rate"
+                  />
+                  <div className={cssClasses('Graph_Legend')}>
+                    <div data-utilization-rate-legend>
+                      <div /> <span> Utilization Rate</span>
+                    </div>
+                    <div data-utilization-rate-average-legend>
+                      <div /> <span> Target </span>
+                    </div>
+                    <div data-utilization-rate-above-average-legend>
+                      <div /> <span> Above Target </span>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+          <div className={cssClasses('Graph_Container')}>
+            {data && (
+              <div>
+                <p>Error Rate</p>
+                <PerformanceBarChart
+                  data={data}
+                  series={errorRateSeries}
+                  color="--aspect-color-mandy"
+                  avgValue={avgErrorRate}
+                  maxValue={maxErrorRate}
+                  info="Error Rate"
+                />
+                <div className={cssClasses('Graph_Legend')}>
+                  <div data-error-rate-legend>
+                    <div /> <span> Error Rate</span>
+                  </div>
+                  <div data-error-rate-average-legend>
+                    <div /> <span> Country Average </span>
+                  </div>
+                  <div data-error-rate-above-average-legend>
+                    <div /> <span> Above Average</span>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </Card>
+    </section>
+  )
+})
+
 const Results = enhanceResults(
   ({
     intl,
@@ -270,7 +586,9 @@ const Results = enhanceResults(
         <header className={cssClasses('Header')}>
           <div className={cssClasses('Header__Title')}>Test history</div>
           <div className={cssClasses('Header__Actions')}>
-            <Button icon={<MdFileDownload />} onClick={onExportClick} />
+            <IconButton onClick={onExportClick}>
+              <MdFileDownload />
+            </IconButton>
           </div>
         </header>
         <div>
@@ -330,17 +648,19 @@ const Results = enhanceResults(
                   },
                 ]}
               />
-              {items.currentIdList
-                .map(id => items.byId.get(id))
-                .map(result => (
-                  <ResultDataTableRow
-                    key={result.get('id')}
-                    intl={intl}
-                    result={result}
-                    onClick={onRowClick}
-                    data-result-id={result.get('id')}
-                  />
-                ))}
+              <TableBody>
+                {items.currentIdList
+                  .map(id => items.byId.get(id))
+                  .map(result => (
+                    <ResultDataTableRow
+                      key={result.get('id')}
+                      intl={intl}
+                      result={result}
+                      onClick={onRowClick}
+                      data-result-id={result.get('id')}
+                    />
+                  ))}
+              </TableBody>
             </ResultDataTable>
           )}
           {!items.currentIdList.isEmpty() && (
@@ -365,124 +685,229 @@ export const DeviceDetailProfile = ({
   history,
   location,
   match,
-  dateRange,
-  onDateRangeChange,
   device,
+  disabled,
+  displayPreferences,
   // --- injected by recompose ---
   onToggleDeviceStatus,
   sortCol,
   sortDir,
   pageAt,
   pageSize,
-}) => (
-  <div>
-    <Helmet title={device.get('name')} />
-    <DeviceDetailBackBar
-      intl={intl}
-      history={history}
-      location={location}
-      match={match}
-      title={device.get('name')}
-    />
-    <section className={cssClasses('Section', 'Section--first')}>
-      <Card className={cssClasses('Section__Content')}>
-        <div>
-          <Summary
-            title={intl.formatMessage(messages.deviceType)}
-            description={device.getIn(['deviceType', 'name'])}
-            to={`/browse/device-type/${device.get('deviceTypeId')}`}
-          />
-          <Summary
-            title={intl.formatMessage(messages.status)}
-            description={device.get('status')}
-            action={
-              <Button raised onClick={onToggleDeviceStatus}>
-                Change
-              </Button>
-            }
-          />
-          <Summary
-            title={intl.formatMessage(messages.calibration)}
-            description="TODO: Up to date"
-            action={<Button raised>Add record</Button>}
-          />
-          <Summary title={intl.formatMessage(messages.firmware)} />
-          <Summary
-            title={intl.formatMessage(messages.location)}
-            description={device.get('siteName')}
-            to={`/browse/site/${device.get('siteId')}`}
-          />
-          <Summary
-            title={intl.formatMessage(messages.connectivity)}
-            description={intl.formatMessage(messages.lastSeen, {
-              lastSeen: intl.formatRelative(device.get('lastSeen')),
-            })}
-          />
-          <Summary
-            title={intl.formatMessage(messages.maintenance)}
-            description="TODO: Up to date"
-            action={<Button raised>Add record</Button>}
-          />
-          <Summary
-            title={intl.formatMessage(messages.warranty)}
-            description="TODO: Expires in 18 months"
-            action={<Button raised>Update</Button>}
-          />
-        </div>
-      </Card>
-    </section>
-    <section className={cssClasses('Section')}>
-      <Card className={cssClasses('Section__Content')}>
-        <header className={cssClasses('Header')}>
-          <div className={cssClasses('Header__Title')}>Performance</div>
-          <div className={cssClasses('Header__Actions')}>
-            <StyledDropdown
-              value={dateRange}
-              source={[
-                {
-                  value: '30',
-                  label: '30 days',
-                },
-                {
-                  value: '60',
-                  label: '60 days',
-                },
-                {
-                  value: '90',
-                  label: '90 days',
-                },
-              ]}
-              onChange={onDateRangeChange}
+  activeDialog,
+  onShowCalibrationDialog,
+  onShowWarrantyDialog,
+  onHideDialog,
+  onCalibrationSubmit,
+  onWarrantySubmit,
+}) => {
+  const deviceName = `${device.getIn(['deviceType', 'name'])} at ${device.get(
+    'siteName'
+  )}`
+  const dailyCapacity = device.get('dailyCapacity')
+  const resultCountThisMonth = device.get('resultCountThisMonth')
+  const errorCountThisMonth = device.get('errorCountThisMonth')
+  const utilizationRateThisMonth = device.get('utilizationRateThisMonth')
+  const errorRateThisMonth = device.get('errorRateThisMonth')
+  const calibrationNotes = device.get('calibrationNotes')
+  const warrantyNotes = device.get('warrantyNotes')
+  return (
+    <div>
+      <Helmet title={deviceName} />
+      <DeviceDetailBackBar
+        intl={intl}
+        history={history}
+        location={location}
+        match={match}
+        disabled={disabled}
+        title={deviceName}
+      />
+      <section className={cssClasses('Section', 'Section--first')}>
+        <Card className={cssClasses('Section__Content')}>
+          <div>
+            <Summary
+              title={intl.formatMessage(messages.deviceType)}
+              description={device.getIn(['deviceType', 'name'])}
+              to={`/browse/device?filters=deviceTypeId%3D${device.getIn([
+                'deviceType',
+                'id',
+              ])}`}
+            />
+            <Summary
+              title={intl.formatMessage(messages.status)}
+              description={device.get('status')}
+              action={
+                <Button
+                  variant="contained"
+                  onClick={onToggleDeviceStatus}
+                  disabled={disabled}
+                >
+                  {intl.formatMessage(messages.buttonChange)}
+                </Button>
+              }
+            />
+            <Summary
+              title={intl.formatMessage(messages.calibration)}
+              description={
+                <Fragment>
+                  {formatMaintenanceDate(intl, device.get('calibrationDate'))}
+                  {calibrationNotes && (
+                    <Tooltip title={calibrationNotes} placement="top">
+                      <IconButton
+                        aria-label={intl.formatMessage(messages.notes)}
+                      >
+                        <NotesIcon fontSize="larger" />
+                      </IconButton>
+                    </Tooltip>
+                  )}
+                </Fragment>
+              }
+              action={
+                <Button
+                  variant="contained"
+                  onClick={onShowCalibrationDialog}
+                  disabled={disabled}
+                >
+                  {intl.formatMessage(messages.buttonAddRecord)}
+                </Button>
+              }
+            />
+            <Summary
+              title={intl.formatMessage(messages.site)}
+              description={device.get('siteName')}
+              to={`/browse/site/${device.get('siteId')}`}
+            />
+            <Summary
+              title={intl.formatMessage(messages.connectivity)}
+              description={intl.formatMessage(messages.lastSeen, {
+                lastSeen: intl.formatRelative(device.get('lastSeen')),
+              })}
+            />
+            <Summary
+              title={intl.formatMessage(messages.warranty)}
+              description={
+                <Fragment>
+                  {formatMaintenanceDate(intl, device.get('warrantyDueDate'))}
+                  {warrantyNotes && (
+                    <Tooltip title={warrantyNotes} placement="bottom">
+                      <IconButton
+                        aria-label={intl.formatMessage(messages.notes)}
+                      >
+                        <NotesIcon fontSize="larger" />
+                      </IconButton>
+                    </Tooltip>
+                  )}
+                </Fragment>
+              }
+              action={
+                <Button
+                  variant="contained"
+                  onClick={onShowWarrantyDialog}
+                  disabled={disabled}
+                >
+                  {intl.formatMessage(messages.buttonUpdate)}
+                </Button>
+              }
+            />
+            {utilizationRateThisMonth !== null && (
+              <Summary
+                title={
+                  <AspectTooltip
+                    showHelpIcon
+                    title={
+                      <React.Fragment>
+                        {intl.formatMessage(messages.utilizationRateExplain)}
+                        {resultCountThisMonth !== null && (
+                          <React.Fragment>
+                            {`: ${resultCountThisMonth} / (${dailyCapacity}*30) = ${intl.formatNumber(
+                              utilizationRateThisMonth
+                            )}`}
+                          </React.Fragment>
+                        )}
+                      </React.Fragment>
+                    }
+                  >
+                    {intl.formatMessage(messages.utilizationRate)}
+                  </AspectTooltip>
+                }
+                description={
+                  <ColoredNumber
+                    number={utilizationRateThisMonth}
+                    intl={intl}
+                    formatNumberStyle="percent"
+                    error={
+                      utilizationRateThisMonth <
+                      displayPreferences.get('utilizationRateThreshold')
+                    }
+                  />
+                }
+              />
+            )}
+            <Summary
+              title={
+                <AspectTooltip
+                  showHelpIcon
+                  title={
+                    <React.Fragment>
+                      {intl.formatMessage(messages.errorRateExplain)}
+                      {errorRateThisMonth !== null && (
+                        <React.Fragment>
+                          {`: ${errorCountThisMonth} / ${resultCountThisMonth} =
+                          ${intl.formatNumber(errorRateThisMonth)}`}
+                        </React.Fragment>
+                      )}
+                    </React.Fragment>
+                  }
+                >
+                  {intl.formatMessage(messages.errorRate)}
+                </AspectTooltip>
+              }
+              description={
+                errorRateThisMonth !== null ? (
+                  <ColoredNumber
+                    number={errorRateThisMonth}
+                    intl={intl}
+                    formatNumberStyle="percent"
+                    error={
+                      errorRateThisMonth >
+                      displayPreferences.get('errorRateThreshold')
+                    }
+                  />
+                ) : (
+                  intl.formatMessage(messages.noResults)
+                )
+              }
             />
           </div>
-        </header>
-        <div>
-          {device
-            .getIn(['operations'], EMPTY_LIST)
-            .map(c => (
-              <AbnormalBarChart
-                key={c.get('key')}
-                intl={intl}
-                component={Unit}
-                item={c}
-                sm="1-2"
-                lg="1-4"
-              />
-            ))}
-        </div>
-      </Card>
-    </section>
-    <Results
-      match={match}
-      history={history}
-      location={location}
-      sortDir={sortDir}
-      sortCol={sortCol}
-      intl={intl}
-      pageAt={pageAt}
-      pageSize={pageSize}
-    />
-  </div>
-)
+        </Card>
+        <CalibrationDialog
+          intl={intl}
+          device={device}
+          isDialogActive={activeDialog.get('name') === 'calibration'}
+          onCancel={onHideDialog}
+          onSubmit={onCalibrationSubmit}
+        />
+        <WarrantyDialog
+          intl={intl}
+          device={device}
+          isDialogActive={activeDialog.get('name') === 'warranty'}
+          onCancel={onHideDialog}
+          onSubmit={onWarrantySubmit}
+        />
+      </section>
+      <PerformanceReport match={match} location={location} />
+      <Results
+        match={match}
+        history={history}
+        location={location}
+        sortDir={sortDir}
+        sortCol={sortCol}
+        intl={intl}
+        pageAt={pageAt}
+        pageSize={pageSize}
+      />
+    </div>
+  )
+}
 
 export default enhance(DeviceDetailProfile)

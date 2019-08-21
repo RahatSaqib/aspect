@@ -9,6 +9,7 @@ const {
   factGenerateDeviceConnectivity,
   factGenerateResultCounts,
   factDataCategoryLow,
+  factNewResultsAvailable,
 } = require('./actions')
 const { resolveIssues, escalateIssues } = require('../issue/actions')
 const {
@@ -790,6 +791,40 @@ async function getDataCategoryStatus(
   }
 }
 
+// ----------------------------------------------
+// This function is triggered by scheduler, and checks if new results are available for any sample origin sites
+// ----------------------------------------------
+function onFactNewResultsAvailableCheck(action, { messageContext }) {
+  const context = messageContext.bindActionCreators({
+    factNewResultsAvailable,
+  })
+
+  // loop all sites and audit each consumables
+  return context.run(async knex => {
+    const now = new Date()
+    // get sample origin sites that have new results in last 24 hours
+    // TODO: Enable Issues for persons. Currently triggering a notification for every origin site. That means people who have access to more than one site will receive a separate notification for each site.
+    const sites = await knex('Result as r')
+      .innerJoin('Sample as sa', 'r.sampleId', 'sa.id')
+      .innerJoin('Site as si', 'sa.originSiteId', 'si.id')
+      .groupBy('si.id')
+      .where('r.createdOn', '>', subDays(now, 1))
+      .where('r.endedOn', '>', subDays(now, 30))
+      .select(
+        knex.raw('si.id as siteId'),
+        knex.raw('coalesce(r.partnerId, si.partnerId) as partnerId'),
+        knex.raw('coalesce(r.geographyId, si.geographyId) as geographyId')
+      )
+      .count('r.id as numberOfResults')
+      .having(knex.raw('count(r.id) > 0'))
+
+    // loop all and trigger issue
+    _.map(sites, async site => {
+      context.factNewResultsAvailable(site)
+    })
+  })
+}
+
 module.exports = {
   daysToCalculate,
   onFactGenerateDeviceConnectivity,
@@ -803,4 +838,5 @@ module.exports = {
   checkDataCategoriesForLowStatus,
   getDataCategoryStatus,
   MIN_RESULTS_TO_TRIGGER_DATA_CATEGORY_LOW,
+  onFactNewResultsAvailableCheck,
 }

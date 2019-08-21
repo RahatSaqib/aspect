@@ -1,14 +1,14 @@
 const _ = require('lodash')
 const supertest = require('supertest')
 const chai = require('chai')
-const addYears = require('date-fns/add_years')
-const subDays = require('date-fns/sub_days')
-const addHours = require('date-fns/add_hours')
-const subHours = require('date-fns/sub_hours')
-const addMinutes = require('date-fns/add_minutes')
-const subMinutes = require('date-fns/sub_minutes')
-const addSeconds = require('date-fns/add_seconds')
-const setMilliseconds = require('date-fns/set_milliseconds')
+const addYears = require('date-fns/addYears')
+const subDays = require('date-fns/subDays')
+const addHours = require('date-fns/addHours')
+const subHours = require('date-fns/subHours')
+const addMinutes = require('date-fns/addMinutes')
+const subMinutes = require('date-fns/subMinutes')
+const addSeconds = require('date-fns/addSeconds')
+const setMilliseconds = require('date-fns/setMilliseconds')
 const dateFormat = require('date-fns/format')
 const Promise = require('bluebird')
 const { createGxConnectTestContext } = require('./gxconnect_utils')
@@ -214,7 +214,6 @@ describe('Device API routes for GxConnect Devices', () => {
               .send(
                 _.merge({}, secondContext.basicDevicePayload, {
                   configuration: {
-                    checkpoint: null,
                     data: {
                       country: countryCode,
                       deviceSerialNumber,
@@ -909,7 +908,7 @@ describe('Device API routes for GxConnect Devices', () => {
             basicResultPayload,
             {
               result: {
-                id: dateFormat(new Date(), 'x'),
+                id: dateFormat(new Date(), 'T'),
                 startedOn: now,
                 endedOn: now,
                 instrument: {
@@ -944,7 +943,7 @@ describe('Device API routes for GxConnect Devices', () => {
             basicResultPayload,
             {
               result: {
-                id: dateFormat(new Date(), 'x'),
+                id: dateFormat(new Date(), 'T'),
                 startedOn: now,
                 endedOn: now,
                 instrument: {
@@ -982,7 +981,7 @@ describe('Device API routes for GxConnect Devices', () => {
             basicResultPayload,
             {
               result: {
-                id: dateFormat(new Date(), 'x'),
+                id: dateFormat(new Date(), 'T'),
                 startedOn: subMinutes(now, 5),
                 endedOn: now,
                 instrument: {
@@ -1026,7 +1025,7 @@ describe('Device API routes for GxConnect Devices', () => {
             basicResultPayload,
             {
               result: {
-                id: dateFormat(new Date(), 'x'),
+                id: dateFormat(new Date(), 'T'),
                 data: { a: 'b', c: 2, d: false, e: { f: 'g' } },
                 type: { id: 'Study' },
                 source: { id: 'EnteredByHand' },
@@ -1190,7 +1189,12 @@ describe('Device API routes for GxConnect Devices', () => {
         assert.equal(result2Source.externalId, 'EnteredByHand')
 
         const result2Status = await knex('ResultWorkflowStatus as rs')
-          .where({ id: result2.resultWorkflowStatusId })
+          .innerJoin(
+            'ResultWorkflowLog as rwl',
+            'rs.id',
+            'rwl.ResultWorkflowStatusId'
+          )
+          .where('rwl.id', result2.resultWorkflowStatusLogId)
           .first('externalId')
         assert.equal(result2Status.externalId, 'Acknowledged')
 
@@ -1396,6 +1400,8 @@ describe('Device API routes for GxConnect Devices', () => {
             siteId: site.id,
             expiresOn: expiryDate,
             quantityOnHand: initialQuantityOnHand,
+            createdOn: subDays(now, 4),
+            updatedOn: subDays(now, 4),
           })
 
           const testStartedOn = setMilliseconds(subDays(context.now, 3), 0)
@@ -1409,7 +1415,7 @@ describe('Device API routes for GxConnect Devices', () => {
                 _.assign({}, basicDevicePayload, basicResultPayload),
                 {
                   result: _.assign({}, basicResultPayload.result, {
-                    id: dateFormat(new Date(), 'x'),
+                    id: dateFormat(new Date(), 'T'),
                     startedOn: testStartedOn,
                     endedOn: testEndedOn,
                     sample: { id: 'Existing Sample' },
@@ -1462,7 +1468,7 @@ describe('Device API routes for GxConnect Devices', () => {
         it('should NOT reduce inventory levels of the consumable', () =>
           runTest(async knex => {
             const { basicDevicePayload, deviceAuth, site, now } = context
-            const uniqueTestId = dateFormat(new Date(), 'x')
+            const uniqueTestId = dateFormat(new Date(), 'T')
 
             const consumableAssays = await knex('ConsumableAssay as ca')
               .join('Assay as a', 'ca.assayId', 'a.id')
@@ -1485,6 +1491,8 @@ describe('Device API routes for GxConnect Devices', () => {
               siteId: site.id,
               expiresOn: expiryDate,
               quantityOnHand: initialQuantityOnHand,
+              createdOn: subDays(now, 4),
+              updatedOn: subDays(now, 4),
             })
 
             const inventoryItemBeforeFirstRequest = await knex('InventoryItem')
@@ -2248,7 +2256,10 @@ describe('Device API routes for GxConnect Devices', () => {
       const initialQuantityOnHand = 100
       beforeEach(async () =>
         run(async knex => {
-          const { basicDevicePayload, site: { id: siteId } } = context
+          const {
+            basicDevicePayload,
+            site: { id: siteId },
+          } = context
           const consumableAssay = await knex('ConsumableAssay as ca')
             .join('Assay as a', 'ca.assayId', 'a.id')
             .join('DeviceType as dt', 'a.deviceTypeId', 'dt.id')

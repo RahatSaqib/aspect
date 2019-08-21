@@ -331,7 +331,12 @@ function getActionData(action) {
 }
 
 async function updateIssueStatus(request) {
-  const { auth, params, payload, plugins: { messageContext } } = request
+  const {
+    auth,
+    params,
+    payload,
+    plugins: { messageContext },
+  } = request
   const now = new Date()
   const { issueId } = params
   const { issueStatusExternalId } = payload

@@ -1,13 +1,14 @@
 const supertest = require('supertest')
 const chai = require('chai')
-const shared = require('../utils/sharedToken')
 const _ = require('lodash')
-const addYears = require('date-fns/add_years')
+const addYears = require('date-fns/addYears')
 
-const server = supertest.agent('http://localhost:8080')
-const { assert } = chai
+const shared = require('../utils/sharedToken')
 const { run } = require('../../src/db')
 const { getConstraints, addConstraints } = require('../../src/auth/constraints')
+
+const { assert } = chai
+const server = supertest.agent('http://localhost:8080')
 
 describe('Inventory Routes', () => {
   describe('Inventory List Route', () => {

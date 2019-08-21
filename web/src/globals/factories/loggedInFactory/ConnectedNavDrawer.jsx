@@ -2,7 +2,7 @@ import React from 'react'
 import { compose } from 'recompose'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import { NavDrawer } from 'react-toolbox/lib/layout'
+import Drawer from '@material-ui/core/Drawer'
 import FaUser from 'react-icons/lib/fa/user'
 
 import LinkNavigation, { makeThemedLink } from './LinkNavigation'
@@ -28,7 +28,7 @@ const ConnectedNavDrawer = ({
   toggleDrawer,
   closeDrawer,
 }) => (
-  <NavDrawer active={drawerOpen} onOverlayClick={toggleDrawer}>
+  <Drawer open={drawerOpen} onClose={toggleDrawer}>
     <LinkNavigation
       history={history}
       location={location}
@@ -43,7 +43,7 @@ const ConnectedNavDrawer = ({
         icon: <FaUser />,
       })}
     </LinkNavigation>
-  </NavDrawer>
+  </Drawer>
 )
 
 export default enhance(ConnectedNavDrawer)

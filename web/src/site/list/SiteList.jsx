@@ -6,6 +6,7 @@ import { defineMessages } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
+import TableBody from '@material-ui/core/TableBody'
 
 import {
   makeSortPageSelector,
@@ -22,16 +23,17 @@ import BrowseEmptyList from '../../globals/components/BrowseEmptyList'
 import BrowseTablePaginator from '../../globals/components/BrowseTablePaginator'
 import DataTableCard from '../../components/shared/DataTableCard'
 import DataTableProgressBar from '../../components/shared/DataTableProgressBar'
-import { fetchSites } from '../SiteRedux'
+import { fetchSites, exportSites } from '../SiteRedux'
 import {
   SiteDataTable,
   SiteDataTableHead,
   SiteDataTableRow,
 } from './SiteDataTable'
+import ExportListButton from '../../globals/components/ExportListButton'
 
 const cssClasses = classnames.bind(require('./SiteList.css'))
 
-const messages = defineMessages({
+export const messages = defineMessages({
   sitesTitle: {
     id: 'pages.SiteList.title',
     defaultMessage: 'Sites',
@@ -54,7 +56,27 @@ const messages = defineMessages({
   },
   externalId: {
     id: 'pages.SiteList.externalId',
-    defaultMessage: 'Facility Code',
+    defaultMessage: 'Site ID',
+  },
+  siteIssues: {
+    id: 'pages.SiteList.siteIssues',
+    defaultMessage: 'Issues',
+  },
+  deviceHealth: {
+    id: 'pages.SiteList.deviceHealth',
+    defaultMessage: 'Device Health',
+  },
+  reagentHealth: {
+    id: 'pages.SiteList.reagentHealth',
+    defaultMessage: 'Reagent Health',
+  },
+  dataHealth: {
+    id: 'pages.SiteList.dataHealth',
+    defaultMessage: 'Data Health',
+  },
+  connectivityHealth: {
+    id: 'pages.SiteList.connectivityHealth',
+    defaultMessage: 'Connectivity Health',
   },
   paginatorStatus: {
     id: 'pages.SiteList.paginatorStatus',
@@ -95,7 +117,16 @@ const enhance = compose(
   withProps(
     makeSortPageSelector({
       sortCol: 'name',
-    })
+    }),
+    ({ location }) => {
+      const searchParams = new URLSearchParams(location.search)
+      const filtersParams = new URLSearchParams(
+        searchParams.get('filters') || ''
+      )
+      return {
+        filters: _.fromPairs([...filtersParams.entries()]),
+      }
+    }
   ),
   connect(
     state => ({
@@ -105,6 +136,7 @@ const enhance = compose(
     }),
     bindActionCreators.bind(null, {
       fetchSites,
+      exportSites,
     })
   ),
   withHandlers({
@@ -122,8 +154,44 @@ const enhance = compose(
       }
     },
 
-    onRowClick: ({ history }) => ({ currentTarget: { dataset: { siteId } } }) =>
-      history.push(`/browse/site/${siteId}`),
+    onAlertClick: ({ history }) => event => {
+      event.stopPropagation()
+      const {
+        currentTarget: {
+          dataset: { siteId },
+        },
+      } = event
+      history.push(`/browse/site/${siteId}/alerts`)
+    },
+
+    onExcelClick: ({
+      location,
+      exportSites,
+      sortCol,
+      sortDir,
+      pageAt,
+      table,
+    }) => formatType => {
+      const format = formatType.target.id
+      const { sanitized, value: filtersParams } = filtersFromLocation(location)
+      if (!sanitized) {
+        exportSites(
+          filtersParams,
+          sortCol,
+          sortDir,
+          pageAt,
+          table.get('total') > 0 ? table.get('total') : 1,
+          format,
+          'sites'
+        )
+      }
+    },
+
+    onRowClick: ({ history }) => ({
+      currentTarget: {
+        dataset: { siteId },
+      },
+    }) => history.push(`/browse/site/${siteId}`),
   }),
   lifecycle({
     componentWillMount() {
@@ -170,11 +238,13 @@ export const SiteList = ({
   table,
   items,
   // --- injected by recompose ---
+  onExcelClick,
   sortCol,
   sortDir,
   pageAt,
   pageSize,
   onRowClick,
+  onAlertClick,
   reducedFilters,
 }) => (
   <div className={cssClasses('Container')}>
@@ -186,11 +256,18 @@ export const SiteList = ({
       intl={intl}
       config={reducedFilters}
     />
-    <DataTableCard>
+    <DataTableCard key={`DataTableCard--table-${location.key}`}>
       <DataTableProgressBar disabled={!table.loading} />
       {items.currentIdList.isEmpty() && (
         <BrowseEmptyList history={history} location={location} intl={intl} />
       )}
+
+      <ExportListButton
+        onExcelClick={onExcelClick}
+        onCsvClick={onExcelClick}
+        reportName="Sites"
+      />
+
       {!items.currentIdList.isEmpty() && (
         <SiteDataTable
           selectable={false}
@@ -213,6 +290,11 @@ export const SiteList = ({
                 sortable: true,
               },
               {
+                key: 'siteId',
+                label: intl.formatMessage(messages.externalId),
+                sortable: true,
+              },
+              {
                 key: 'lga',
                 label: intl.formatMessage(messages.lga),
                 sortable: true,
@@ -222,19 +304,26 @@ export const SiteList = ({
                 label: intl.formatMessage(messages.totalDevices),
                 sortable: true,
               },
+              {
+                key: 'siteIssues',
+                label: intl.formatMessage(messages.siteIssues),
+              },
             ]}
           />
-          {items.currentIdList
-            .map(id => items.byId.get(id))
-            .map(site => (
-              <SiteDataTableRow
-                key={site.get('id')}
-                intl={intl}
-                site={site}
-                onClick={onRowClick}
-                data-site-id={site.get('id')}
-              />
-            ))}
+          <TableBody>
+            {items.currentIdList
+              .map(id => items.byId.get(id))
+              .map(site => (
+                <SiteDataTableRow
+                  key={site.get('id')}
+                  intl={intl}
+                  site={site}
+                  onClick={onRowClick}
+                  onAlertClick={onAlertClick}
+                  data-site-id={site.get('id')}
+                />
+              ))}
+          </TableBody>
         </SiteDataTable>
       )}
       {!items.currentIdList.isEmpty() && (

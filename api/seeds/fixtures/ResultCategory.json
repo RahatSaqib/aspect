@@ -74,6 +74,56 @@
       "name": "Unknown",
       "externalId": "Unknown",
       "i18nKey": "resultCategoryUnknown"
+    },
+    {
+      "name": "Susceptible",
+      "externalId": "Susceptible",
+      "i18nKey": "resultCategorySusceptible"
+    },
+    {
+      "name": "Resistant",
+      "externalId": "Resistant",
+      "i18nKey": "resultCategoryResistant"
+    },
+    {
+      "name": "Negative",
+      "i18nKey": "resultCategoryNegative",
+      "externalId": "Negative"
+    },
+    {
+      "name": "Positive (+)",
+      "i18nKey": "resultCategoryPositive1",
+      "externalId": "Positive1"
+    },
+    {
+      "name": "Positive (++)",
+      "i18nKey": "resultCategoryPositive2",
+      "externalId": "Positive2"
+    },
+    {
+      "name": "Positive (+++)",
+      "i18nKey": "resultCategoryPositive3",
+      "externalId": "Positive3"
+    },
+    {
+      "name": "Scanty (1-9/100)",
+      "i18nKey": "resultCategoryScanty",
+      "externalId": "Scanty"
+    },
+    {
+      "name": "Contaminated",
+      "i18nKey": "resultCategoryContaminated",
+      "externalId": "Contaminated"
+    },
+    {
+      "name": "Positive MOTT",
+      "i18nKey": "resultCategoryPositiveMOTT",
+      "externalId": "PositiveMOTT"
+    },
+    {
+      "name": "Positive MTB",
+      "i18nKey": "resultCategoryPositiveMTB",
+      "externalId": "PositiveMTB"
     }
   ]
 }

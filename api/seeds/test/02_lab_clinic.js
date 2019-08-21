@@ -1,5 +1,5 @@
 /* eslint no-await-in-loop: 0 */
-module.exports = require('../utils').seed(seed)
+module.exports = require('../utils').seed(seed, __filename)
 
 const bcrypt = require('bcrypt')
 const _ = require('lodash')
@@ -31,7 +31,6 @@ async function seed(knex) {
   if (existingAdminUser) {
     return
   }
-
   // Create admin user and audit fields
   const [adminId] = await knex('User').insert({
     name: 'reporter_admin',
@@ -170,6 +169,7 @@ async function seed(knex) {
 
   await knex('Assay').insert({
     name: 'Reporter HIV VL',
+    abbreviation: 'Reporter HIV VL',
     i18nKey: 'AssayReporterHivVl',
     externalId: 'HivVl',
     assayTypeId: await assayTypeToId('HIV VL'),
@@ -233,6 +233,7 @@ async function seed(knex) {
 
   await knex('Assay').insert({
     name: 'Reporter EID',
+    abbreviation: 'Reporter EID',
     i18nKey: 'AssayReporterEid',
     externalId: 'EID',
     assayTypeId: await assayTypeToId('EID'),
@@ -352,9 +353,18 @@ async function seed(knex) {
       jobFunctionId: jobFunctionIdLabAdmin,
       permissionId: modules.result.admin,
     },
-    { jobFunctionId: jobFunctionIdLabAdmin, permissionId: modules.site.admin },
-    { jobFunctionId: jobFunctionIdLabAdmin, permissionId: modules.assay.admin },
-    { jobFunctionId: jobFunctionIdLabAdmin, permissionId: modules.browse.view },
+    {
+      jobFunctionId: jobFunctionIdLabAdmin,
+      permissionId: modules.site.admin,
+    },
+    {
+      jobFunctionId: jobFunctionIdLabAdmin,
+      permissionId: modules.assay.admin,
+    },
+    {
+      jobFunctionId: jobFunctionIdLabAdmin,
+      permissionId: modules.browse.view,
+    },
   ])
 
   await knex('JobFunctionPermission').insert([
@@ -363,11 +373,23 @@ async function seed(knex) {
       jobFunctionId: jobFunctionIdAdmin,
       permissionId: modules.deviceApiKey.admin,
     },
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.device.admin },
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.person.admin },
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.result.admin },
+    {
+      jobFunctionId: jobFunctionIdAdmin,
+      permissionId: modules.device.admin,
+    },
+    {
+      jobFunctionId: jobFunctionIdAdmin,
+      permissionId: modules.person.admin,
+    },
+    {
+      jobFunctionId: jobFunctionIdAdmin,
+      permissionId: modules.result.admin,
+    },
     { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.site.admin },
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.assay.admin },
+    {
+      jobFunctionId: jobFunctionIdAdmin,
+      permissionId: modules.assay.admin,
+    },
     {
       jobFunctionId: jobFunctionIdAdmin,
       permissionId: modules.inventory.admin,
@@ -381,8 +403,14 @@ async function seed(knex) {
       permissionId: modules.issue.admin,
     },
     { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.task.admin },
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.report.admin },
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.browse.view },
+    {
+      jobFunctionId: jobFunctionIdAdmin,
+      permissionId: modules.report.admin,
+    },
+    {
+      jobFunctionId: jobFunctionIdAdmin,
+      permissionId: modules.browse.view,
+    },
   ])
 
   // add widgets

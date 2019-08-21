@@ -11,6 +11,7 @@ import {
   errorPleaseTryAgainInAFewMinutes,
   errorInsufficientScope,
 } from '../error/CommonErrorNotifications'
+import { receivedExportResponse } from '../globals/GlobalsRedux'
 import { receiveList, receiveItem, Items } from '../shared/metaReducers/items'
 import {
   requestTable,
@@ -20,19 +21,57 @@ import {
 
 export const types = {
   REQUEST_PERSONS: 'REQUEST_PERSONS',
+  CAN_LOG_IN_PERSON: 'CAN_LOG_IN_PERSON',
   RECEIVE_PERSONS: 'RECEIVE_PERSONS',
+  REJECTED_PERSONS: 'REJECTED_PERSONS',
+
+  PREFILL_EMAIL: 'PREFILL_EMAIL',
+
+  RECEIVE_AVAILABLE_PERSONS: 'RECEIVE_AVAILABLE_PERSONS',
+  REQUEST_AVAILABLE_PERSONS: 'REQUEST_AVAILABLE_PERSONS',
+
+  REQUEST_SITE_CONTACTS: 'REQUEST_SITE_CONTACTS',
+  RECEIVE_SITE_CONTACTS: 'RECEIVE_SITE_CONTACTS',
 
   REQUEST_SINGLE_PERSON: 'REQUEST_SINGLE_PERSON',
   RECEIVE_SINGLE_PERSON: 'RECEIVE_SINGLE_PERSON',
+
+  REQUEST_CREATING_SINGLE_PERSON: 'REQUEST_CREATING_SINGLE_PERSON',
+  RECEIVE_CREATED_SINGLE_PERSON: 'RECEIVE_CREATED_SINGLE_PERSON',
 
   REQUEST_UPDATING_SINGLE_PERSON: 'REQUEST_UPDATING_SINGLE_PERSON',
   RECEIVE_UPDATED_SINGLE_PERSON: 'RECEIVE_UPDATED_SINGLE_PERSON',
   RECEIVE_UPDATED_SINGLE_PERSON_LOGIN_DETAILS:
     'RECEIVE_UPDATED_SINGLE_PERSON_LOGIN_DETAILS',
+
+  REQUEST_UPDATE_SITE_CONTACTS: 'REQUEST_UPDATE_SITE_CONTACTS',
+  RECEIVE_UPDATE_SITE_CONTACTS: 'RECEIVE_UPDATE_SITE_CONTACTS',
+
+  REQUEST_ASSIGNMENTS: 'REQUEST_ASSIGNMENTS',
+  RECEIVE_ASSIGNMENTS: 'RECEIVE_ASSIGNMENTS',
+  REQUEST_DELETE_ASSIGNMENT: 'REQUEST_DELETE_ASSIGNMENT',
+  RECEIVE_DELETE_ASSIGNMENT: 'RECEIVE_DELETE_ASSIGNMENT',
 }
+
+const contactDetailsFields = [
+  'name',
+  'title',
+  'email',
+  'email2',
+  'phone',
+  'cell',
+  'countryId',
+  'stateId',
+  'lgaId',
+  'zip',
+  'notes',
+  'lastPartnerId',
+  'canLogIn',
+]
 /*
  * ---------------- Action Creators -----------------
  */
+
 function requestPersons(sortCol, sortDir, page, size, filters) {
   return {
     type: types.REQUEST_PERSONS,
@@ -51,7 +90,35 @@ function receivePersons(json) {
     total: json.total,
   }
 }
-
+function transformToUser(canLogIn, personId) {
+  return {
+    type: types.CAN_LOG_IN_PERSON,
+    canLogIn,
+    personId,
+  }
+}
+function rejectPersons() {
+  return {
+    type: types.REJECTED_PERSONS,
+  }
+}
+export function personCanLogIn(canLogIn, personId) {
+  return dispatch => {
+    dispatch(transformToUser(canLogIn, personId))
+  }
+}
+export function emailValueBlur(value, personId) {
+  return dispatch => {
+    dispatch(prefillEmailValue(value, personId))
+  }
+}
+function prefillEmailValue(email, personId) {
+  return {
+    type: types.PREFILL_EMAIL,
+    email,
+    personId,
+  }
+}
 export function fetchPersons(filtersParams, sortCol, sortDir, page, pageSize) {
   return dispatch => {
     const filters = _.fromPairs([...filtersParams.entries()])
@@ -93,10 +160,131 @@ export function fetchPersons(filtersParams, sortCol, sortDir, page, pageSize) {
           ),
         },
       }
-    ).then(json => dispatch(receivePersons(json)))
+    )
+      .then(json => dispatch(receivePersons(json)))
+      .catch(() => dispatch(rejectPersons()))
   }
 }
 
+function requestAvailablePersons() {
+  return {
+    type: types.REQUEST_AVAILABLE_PERSONS,
+  }
+}
+// receive possible contacts
+function receiveAvailablePersons(items) {
+  return {
+    type: types.RECEIVE_AVAILABLE_PERSONS,
+    items,
+  }
+}
+
+export function exportContacts(
+  filtersParams,
+  sortCol,
+  sortDir,
+  page,
+  pageSize,
+  fileFormat,
+  reportName
+) {
+  return dispatch => {
+    const filters = _.fromPairs([...filtersParams.entries()])
+
+    return aspectFetch(
+      `/person/export?${stringify({
+        sortCol,
+        sortDir,
+        page,
+        size: pageSize,
+        format: fileFormat,
+        ...filters,
+      })}`,
+      {
+        errorNotifications: {
+          400: filterFieldsRejectedError(
+            defineMessages({
+              title: {
+                id: 'errorResponseMessages.exportContacts.GET.400.title',
+                defaultMessage: 'Exporting Contacts Failed',
+              },
+            })
+          ),
+          403: errorInsufficientScope(
+            defineMessages({
+              title: {
+                id: 'errorResponseMessages.exportContacts.GET.403.title',
+                defaultMessage: 'Insufficient Permissions',
+              },
+            })
+          ),
+          default: errorPleaseTryAgainInAFewMinutes(
+            defineMessages({
+              title: {
+                id: 'errorResponseMessages.exportContacts.GET.default.title',
+                defaultMessage: 'Exporting Contacts Failed',
+              },
+            })
+          ),
+        },
+      }
+    ).then(async elem => {
+      const file = await elem
+      dispatch(receivedExportResponse(file, fileFormat, reportName))
+    })
+  }
+}
+
+export function fetchAvailablePersons() {
+  return dispatch => {
+    dispatch(requestAvailablePersons())
+    return aspectFetch('/person/available', {
+      errorNotifications: {
+        403: errorInsufficientScope(
+          defineMessages({
+            title: {
+              id: 'errorResponseMessages.fetchAvailablePersons.GET.403.title',
+              defaultMessage: 'Insufficient Permissions',
+            },
+          })
+        ),
+      },
+    }).then(json => dispatch(receiveAvailablePersons(json.data)))
+  }
+}
+
+function requestSiteContacts(siteId) {
+  return {
+    type: types.REQUEST_SITE_CONTACTS,
+    siteId,
+  }
+}
+// receive possible contacts
+function receiveSiteContacts(siteId, items) {
+  return {
+    type: types.RECEIVE_SITE_CONTACTS,
+    items,
+    siteId,
+  }
+}
+
+export function fetchSiteContacts(siteId) {
+  return dispatch => {
+    dispatch(requestSiteContacts(siteId))
+    return aspectFetch(`/person?siteId=${siteId}`, {
+      errorNotifications: {
+        400: filterFieldsRejectedError(
+          defineMessages({
+            title: {
+              id: 'errorResponseMessages.fetchASiteContacts.GET.400.title',
+              defaultMessage: 'Invalid Site ID',
+            },
+          })
+        ),
+      },
+    }).then(json => dispatch(receiveSiteContacts(siteId, json.data)))
+  }
+}
 // loading a single person with given personId
 function requestSinglePerson(personId) {
   return {
@@ -114,7 +302,7 @@ function receiveSinglePerson(item) {
 }
 
 // load a single person with given personId
-export function fetchSinglePerson(personId) {
+export function fetchSinglePerson(personId, cb) {
   return dispatch => {
     dispatch(requestSinglePerson(personId))
 
@@ -137,7 +325,53 @@ export function fetchSinglePerson(personId) {
           })
         ),
       },
-    }).then(json => dispatch(receiveSinglePerson(json.data)))
+    }).then(json => {
+      dispatch(receiveSinglePerson(json.data))
+      if (cb) cb()
+    })
+  }
+}
+
+// creating a single person with given data
+function requestCreatingSinglePerson(data) {
+  return {
+    type: types.REQUEST_CREATING_SINGLE_PERSON,
+    data,
+  }
+}
+
+// received a created single person
+function receiveCreatedSinglePerson(item) {
+  return {
+    type: types.RECEIVE_CREATED_SINGLE_PERSON,
+    item,
+  }
+}
+
+// create a single person with given data
+export function createPerson(data) {
+  return dispatch => {
+    dispatch(requestCreatingSinglePerson(data))
+
+    const personJson = data.toJS ? data.toJS() : data
+    return aspectFetch('/person', {
+      method: 'POST',
+      body: JSON.stringify(_.pick(personJson, contactDetailsFields)),
+      errorNotifications: {
+        default: errorPleaseTryAgainInAFewMinutes(
+          defineMessages({
+            title: {
+              id: 'errorResponseMessages.createPerson.POST.default.title',
+              defaultMessage:
+                'An Error Occurred When Trying to Create the Contact',
+            },
+          })
+        ),
+      },
+    }).then(json => {
+      dispatch(receiveCreatedSinglePerson(json.data))
+      return json.data
+    })
   }
 }
 
@@ -161,8 +395,7 @@ function receiveUpdatedSinglePerson(item) {
 function receiveUpdatedSinglePersonLoadinDetails(updatedInformation) {
   return {
     type: types.RECEIVE_UPDATED_SINGLE_PERSON_LOGIN_DETAILS,
-    personId: updatedInformation.personId,
-    username: updatedInformation.username,
+    ...updatedInformation,
   }
 }
 
@@ -199,20 +432,12 @@ function updatePerson(path, personId, data, fields) {
 }
 
 export function updateSinglePerson(personId, data) {
-  return updatePerson(`/person/${personId}`, personId, data, [
-    'name',
-    'title',
-    'email',
-    'email2',
-    'phone',
-    'cell',
-    'countryId',
-    'stateId',
-    'lgaId',
-    'zip',
-    'notes',
-    'lastPartnerId',
-  ])
+  return updatePerson(
+    `/person/${personId}`,
+    personId,
+    data,
+    contactDetailsFields
+  )
 }
 
 export function updateSinglePersonLoginDetails(personId, data) {
@@ -223,7 +448,11 @@ export function updateSinglePersonLoginDetails(personId, data) {
     return aspectFetch(`/auth/update-person-login-details/${personId}`, {
       method: 'PUT',
       body: JSON.stringify(
-        _.pick(loginDetailsJson, ['newUsername', 'newPassword'])
+        _.pick(loginDetailsJson, [
+          'newUsername',
+          'newPassword',
+          'userLockedOut',
+        ])
       ),
       errorNotifications: {
         409: inlineWarning(
@@ -277,13 +506,145 @@ export function updateSinglePersonUserPreferences(personId, data) {
     'culture',
   ])
 }
+
+function requestUpdateSiteContacts() {
+  return {
+    type: types.REQUEST_UPDATE_SITE_CONTACTS,
+  }
+}
+
+function receiveUpdateSiteContacts(siteId, items) {
+  return {
+    type: types.RECEIVE_UPDATE_SITE_CONTACTS,
+    siteId,
+    items,
+  }
+}
+
+// (un)assign person with given person to site with siteId
+export function fetchUpdateSiteContacts(siteId, person, operation) {
+  const path = operation === 'delete' ? 'unassign' : 'assign'
+  return dispatch => {
+    dispatch(requestUpdateSiteContacts())
+    return aspectFetch(`/person/${path}/${siteId}`, {
+      method: 'PUT',
+      body: JSON.stringify(person),
+      errorNotifications: {
+        403: errorInsufficientScope(
+          defineMessages({
+            title: {
+              id: 'errorResponseMessages.fetchUpdateSiteContacts.PUT.404.title',
+              defaultMessage: 'Not Found',
+            },
+          })
+        ),
+      },
+    }).then(json => dispatch(receiveUpdateSiteContacts(siteId, json.data)))
+  }
+}
+
+export function fetchPersonAssignments(personId) {
+  return dispatch => {
+    dispatch(requestPersonAssignments(personId))
+    return aspectFetch(`/job-function/person-assignments/${personId}`, {
+      errorNotifications: {
+        403: errorInsufficientScope(
+          defineMessages({
+            title: {
+              id: 'errorResponseMessages.fetchPersonAssignments.GET.404.title',
+              defaultMessage: 'Not Found',
+            },
+          })
+        ),
+      },
+    }).then(json => dispatch(receivePersonAssignments(personId, json.data)))
+  }
+}
+export function addPersonAssignment(data) {
+  return dispatch => {
+    const { personId } = data
+    dispatch(requestPersonAssignments(personId))
+    return aspectFetch(`/job-function/assign-person-to-job-and-site`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+      errorNotifications: {
+        403: errorInsufficientScope(
+          defineMessages({
+            title: {
+              id: 'errorResponseMessages.addPersonAssignment.POST.404.title',
+              defaultMessage: 'Not Found',
+            },
+          })
+        ),
+      },
+    }).then(json => dispatch(receivePersonAssignments(personId, json.data)))
+  }
+}
+export function deletePersonAssignment(data) {
+  return dispatch => {
+    const { personId, jobContextId } = data
+    dispatch({
+      type: types.REQUEST_DELETE_ASSIGNMENT,
+      personId,
+      jobContextId,
+    })
+    return aspectFetch(
+      `/job-function/person-assignment/${personId}/${jobContextId}`,
+      {
+        method: 'DELETE',
+        errorNotifications: {
+          403: errorInsufficientScope(
+            defineMessages({
+              title: {
+                id:
+                  'errorResponseMessages.deletePersonAssignment.DELETE.404.title',
+                defaultMessage: 'Not Found',
+              },
+            })
+          ),
+        },
+      }
+    ).then(json =>
+      dispatch({
+        type: types.RECEIVE_DELETE_ASSIGNMENT,
+        personId,
+        jobContextId,
+        items: json.data,
+      })
+    )
+  }
+}
+function requestPersonAssignments(personId) {
+  return {
+    type: types.REQUEST_ASSIGNMENTS,
+    personId,
+  }
+}
+function receivePersonAssignments(personId, items) {
+  return {
+    type: types.RECEIVE_ASSIGNMENTS,
+    personId,
+    items,
+  }
+}
+
 /*
  * ---------------- Reducers -----------------
  */
 const Person = Immutable.Record({
   items: new Items(),
   table: new Table(),
+  availableContacts: Immutable.Map(),
+  siteContacts: Immutable.Map(),
+  personNew: Immutable.Map(),
 })
+
+const ContactTagItems = Immutable.Record({
+  loading: false,
+  items: Immutable.List(),
+  lastRefreshed: undefined,
+})
+
 export const ContactDetails = Immutable.Record({
   id: null,
   name: null,
@@ -298,6 +659,7 @@ export const ContactDetails = Immutable.Record({
   zip: null,
   notes: null,
   lastPartnerId: null,
+  canLogIn: false,
 })
 export const LoginDetails = Immutable.Record({
   id: null,
@@ -307,6 +669,8 @@ export const LoginDetails = Immutable.Record({
   currentPassword: null,
   partnerId: null,
   jobFunctions: new Immutable.List([]),
+  userLockedOut: null,
+  email: null,
 })
 export const UserPreferences = Immutable.Record({
   id: null,
@@ -315,6 +679,14 @@ export const UserPreferences = Immutable.Record({
 })
 
 const initialState = new Person()
+
+function requestAvailableContacts(state) {
+  const people = state.getIn(['availableContacts', 'person'])
+  if (people) {
+    state.setIn(['availableContacts', 'person', 'loading'], true)
+  }
+  return state
+}
 
 export default function personReducer(state = initialState, action) {
   switch (action.type) {
@@ -326,18 +698,58 @@ export default function personReducer(state = initialState, action) {
         mutState.set('items', receiveList(mutState.items, immutList))
         mutState.set('table', receiveTableItems(mutState.table, action.total))
       })
+    case types.REJECTED_PERSONS:
+      return state.withMutations(mutState => {
+        mutState.set('items', mutState.get('items').clear())
+        mutState.set('table', mutState.get('table').clear())
+      })
+    case types.CAN_LOG_IN_PERSON:
+      return state.withMutations(mutState => {
+        const currentState = state.items.byId
+          .get(action.personId)
+          .set('canLogIn', action.canLogIn)
+        mutState.set('items', receiveItem(mutState.items, currentState))
+      })
+    case types.REQUEST_AVAILABLE_PERSONS:
+      return requestAvailableContacts(state)
+    case types.RECEIVE_AVAILABLE_PERSONS:
+      return state.mergeDeepIn(
+        ['availableContacts', 'person'],
+        new ContactTagItems({
+          loading: false,
+          lastRefreshed: action.lastRefreshed,
+          items: new Immutable.fromJS(action.items),
+        })
+      )
+    case types.RECEIVE_UPDATE_SITE_CONTACTS:
+    case types.RECEIVE_SITE_CONTACTS:
+      return state.setIn(
+        ['siteContacts', action.siteId],
+        new Immutable.fromJS(action.items)
+      )
     case types.RECEIVE_SINGLE_PERSON:
     case types.RECEIVE_UPDATED_SINGLE_PERSON:
+    case types.RECEIVE_CREATED_SINGLE_PERSON:
       return state.withMutations(mutState => {
         const immutItem = Immutable.fromJS({ ...action.item, loaded: true })
         mutState.set('items', receiveItem(mutState.items, immutItem))
       })
+    case types.PREFILL_EMAIL:
+      return state.withMutations(mutState => {
+        const currentState = state.items.byId
+          .get(action.personId)
+          .set('email', action.email)
+        mutState.set('items', receiveItem(mutState.items, currentState))
+      })
     case types.RECEIVE_UPDATED_SINGLE_PERSON_LOGIN_DETAILS:
       return state.withMutations(mutState => {
-        const person = state.items.byId.get(action.personId).merge({
-          loaded: true,
-          username: action.username,
-        })
+        const person = state.items.byId
+          .get(action.personId)
+          .set('loaded', true)
+          .set('username', action.username)
+          .set('userLockedOut', action.userLockedOut)
+          .set('userId', action.userId)
+
         mutState.set('items', receiveItem(mutState.items, person))
       })
     case types.REQUEST_UPDATING_SINGLE_PERSON:
@@ -345,6 +757,26 @@ export default function personReducer(state = initialState, action) {
         const person = state.items.byId
           .get(action.personId)
           .set('loaded', false)
+        mutState.set('items', receiveItem(mutState.items, person))
+      })
+    case types.REQUEST_CREATING_SINGLE_PERSON:
+      return state.setIn(['personNew', 'loaded'], false)
+
+    case types.REQUEST_ASSIGNMENTS:
+    case types.REQUEST_DELETE_ASSIGNMENT:
+      return state.withMutations(mutState => {
+        const person = state.items.byId
+          .get(action.personId)
+          .set('loadedAssignments', false)
+        mutState.set('items', receiveItem(mutState.items, person))
+      })
+    case types.RECEIVE_ASSIGNMENTS:
+    case types.RECEIVE_DELETE_ASSIGNMENT:
+      return state.withMutations(mutState => {
+        const person = state.items.byId
+          .get(action.personId)
+          .set('loadedAssignments', true)
+          .set('assignments', action.items)
         mutState.set('items', receiveItem(mutState.items, person))
       })
     default:

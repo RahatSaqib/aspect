@@ -1,7 +1,8 @@
-const config = require('../config')
 const path = require('path')
 const { createWriteStream } = require('fs')
 const { ensureFile } = require('fs-extra')
+
+const config = require('../config')
 
 async function createStreamFromFileReference(knex, fileReferenceId) {
   const refPath = await getPathFromFileReferenceId(knex, fileReferenceId)

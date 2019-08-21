@@ -2,7 +2,6 @@ import classnames from 'classnames/bind'
 import React from 'react'
 import { compose, pure } from 'recompose'
 import Helmet from 'react-helmet'
-import { Layout, Panel } from 'react-toolbox/lib/layout'
 
 import IdleDialog from '../../../idle/components/IdleDialog'
 import AppNotificationSnackBar from '../../../appNotification/AppNotificationSnackBar'
@@ -17,9 +16,9 @@ const cssClasses = classnames.bind(require('./index.css'))
 export const loggedInFactory = compose(
   intlScrollToTopOnUpdateFactory,
   render => props => (
-    <Layout>
+    <div classnames={cssClasses('Layout')}>
       <ConnectedNavDrawer history={props.history} location={props.location} />
-      <Panel className={cssClasses('Panel')}>
+      <div className={cssClasses('Panel')}>
         <VerticalAppBar history={props.history} location={props.location} />
         <HorizontalAppBar history={props.history} location={props.location} />
         <Helmet titleTemplate="%s - Aspect" defaultTitle="Aspect" />
@@ -27,8 +26,8 @@ export const loggedInFactory = compose(
         <IdleDialog intl={props.intl} />
         <AppNotificationDialog intl={props.intl} />
         <AppNotificationSnackBar intl={props.intl} />
-      </Panel>
-    </Layout>
+      </div>
+    </div>
   ),
   React.createFactory,
   pure

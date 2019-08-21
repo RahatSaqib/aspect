@@ -1,7 +1,8 @@
-module.exports = require('../utils').seed(seed)
+module.exports = require('../utils').seed(seed, __filename)
+
+const bcrypt = require('bcrypt')
 
 const config = require('../../src/config')
-const bcrypt = require('bcrypt')
 const {
   getPermissionModules,
   assignAllFeaturesToJobFunctionIds,
@@ -23,7 +24,6 @@ async function seed(knex) {
   if (existingAdminUser) {
     return
   }
-
   // Create admin user and audit fields
   const now = new Date()
   const [adminId] = await knex('User').insert({
@@ -66,6 +66,7 @@ async function seed(knex) {
 
   await knex('Assay').insert({
     name: 'BluSense Dengue',
+    abbreviation: 'BS DENGUE',
     i18nKey: 'assayBlusenseDengue',
     externalId: 'Dengue',
     assayTypeId: assayTypeDengueId,
@@ -99,6 +100,7 @@ async function seed(knex) {
 
   await knex('Assay').insert({
     name: 'BluSense Zika',
+    abbreviation: 'BS Zika',
     i18nKey: 'assayBlusenseZika',
     externalId: 'Zika',
     assayTypeId: assayTypeZikaId,

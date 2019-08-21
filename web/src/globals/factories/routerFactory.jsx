@@ -39,14 +39,17 @@ import InventoryItemsList from '../../inventory/list/InventoryItemsList'
 import RouterList from '../../router/list/RouterList'
 import RouterDetail from '../../router/detail/RouterDetail'
 import ReporterList from '../../reporter/list/ReporterList'
-import ReporterDetail from '../../reporter/detail/ReporterDetail'
 import NotFound from '../../error/notFound/NotFound'
+import License from '../../auth/license/License'
 
-const notImplementedLoggedInFactory = compose(loggedInFactory, name => () => (
-  <div style={{ padding: 10 }}>
-    <Paper style={{ padding: 10 }}>{name} is not implemented yet</Paper>
-  </div>
-))
+const notImplementedLoggedInFactory = compose(
+  loggedInFactory,
+  name => () => (
+    <div style={{ padding: 10 }}>
+      <Paper style={{ padding: 10 }}>{name} is not implemented yet</Paper>
+    </div>
+  )
+)
 
 const makeRenderRedirectToLoginWithReason = _.memoize(
   reason => ({ location }) => (
@@ -62,6 +65,19 @@ const makeRenderRedirectToLoginWithReason = _.memoize(
 const renderRedirectToLoginOr = props =>
   props.isLoggedOut &&
   makeRenderRedirectToLoginWithReason(props.loggedOutReason)
+
+const makeRenderRedirectToLicense = _.memoize(licenseId => ({ location }) => (
+  <Redirect
+    to={{
+      pathname: '/license',
+      state: { referrer: location, licenseId },
+    }}
+  />
+))
+
+const renderRedirectToLicenseOr = props =>
+  props.hasToAcceptLicenseId &&
+  makeRenderRedirectToLicense(props.hasToAcceptLicenseId)
 
 const renderRedirectToDashboard = ({ features }) => ({ location }) => (
   <Redirect
@@ -91,7 +107,7 @@ const renderTaskList = loggedInFactory(TaskList)
 const renderTaskAggre = loggedInDetailFactory(TaskAggre)
 const renderTaskDetail = loggedInDetailFactory(TaskDetail)
 const renderOperationalData = loggedInFactory(OperationalData)
-const renderAccountDetails = loggedInFactory(AccountDetails)
+const renderAccountDetails = loggedInDetailFactory(AccountDetails)
 const renderDeviceDemo = loggedInFactory(DeviceDemo)
 /* TODO: real components */
 const renderClinicalIndicators = notImplementedLoggedInFactory(
@@ -106,18 +122,18 @@ const renderDeviceApiKeyList = loggedInFactory(DeviceApiKeyList)
 const renderRouterList = loggedInFactory(RouterList)
 const renderRouterDetail = loggedInFactory(RouterDetail)
 const renderReporterList = loggedInFactory(ReporterList)
-const renderReporterDetail = loggedInFactory(ReporterDetail)
 const renderResultList = loggedInFactory(ResultList)
-const renderResultDetail = loggedInFactory(ResultDetail)
+const renderResultDetail = loggedInDetailFactory(ResultDetail)
 const renderSiteList = loggedInFactory(SiteList)
-const renderSiteDetail = loggedInFactory(SiteDetail)
+const renderSiteDetail = loggedInDetailFactory(SiteDetail)
 const renderPersonList = loggedInFactory(PersonList)
-const renderPersonDetail = loggedInFactory(PersonDetail)
+const renderPersonDetail = loggedInDetailFactory(PersonDetail)
 const renderInventoryItemsList = loggedInFactory(InventoryItemsList)
 const renderNotificationList = loggedInFactory(NotificationList)
 const renderNotificationDetail = loggedInDetailFactory(NotificationDetail)
 const renderReportList = loggedInFactory(ReportList)
 const renderNotFound = signedOutFactory(NotFound)
+const renderLicense = signedOutFactory(License)
 
 export const routerFactory = () => props => (
   <Router history={history}>
@@ -126,7 +142,9 @@ export const routerFactory = () => props => (
         exact
         path="/"
         render={
-          renderRedirectToLoginOr(props) || renderRedirectToDashboard(props)
+          renderRedirectToLoginOr(props) ||
+          renderRedirectToLicenseOr(props) ||
+          renderRedirectToDashboard(props)
         }
       />
 
@@ -134,15 +152,25 @@ export const routerFactory = () => props => (
       <Route path="/reset-password" render={renderResetPassword} />
 
       <Route
+        path="/license"
+        render={renderRedirectToLoginOr(props) || renderLicense}
+      />
+
+      <Route
         exact
         path="/dashboard"
-        render={renderRedirectToLoginOr(props) || renderLoadableStatus}
+        render={
+          renderRedirectToLoginOr(props) ||
+          renderRedirectToLicenseOr(props) ||
+          renderLoadableStatus
+        }
       />
       <Route
         exact
         path="/task-list"
         render={
           renderRedirectToLoginOr(props) ||
+          renderRedirectToLicenseOr(props) ||
           renderRedirectToNotFound(props, ['task']) ||
           renderTaskList
         }
@@ -152,6 +180,7 @@ export const routerFactory = () => props => (
         path="/task-list/aggre-list"
         render={
           renderRedirectToLoginOr(props) ||
+          renderRedirectToLicenseOr(props) ||
           renderRedirectToNotFound(props, ['task']) ||
           renderTaskAggre
         }
@@ -160,6 +189,7 @@ export const routerFactory = () => props => (
         path="/task-list/:taskId"
         render={
           renderRedirectToLoginOr(props) ||
+          renderRedirectToLicenseOr(props) ||
           renderRedirectToNotFound(props, ['task']) ||
           renderTaskDetail
         }
@@ -168,6 +198,7 @@ export const routerFactory = () => props => (
         path="/operational-data"
         render={
           renderRedirectToLoginOr(props) ||
+          renderRedirectToLicenseOr(props) ||
           renderRedirectToNotFound(props, ['operationalData']) ||
           renderOperationalData
         }
@@ -177,6 +208,7 @@ export const routerFactory = () => props => (
         path="/account-details/current"
         render={
           renderRedirectToLoginOr(props) ||
+          renderRedirectToLicenseOr(props) ||
           renderRedirectToNotFound(props, ['account']) ||
           renderAccountDetails
         }
@@ -186,6 +218,7 @@ export const routerFactory = () => props => (
         path="/demo/device/:deviceId"
         render={
           renderRedirectToLoginOr(props) ||
+          renderRedirectToLicenseOr(props) ||
           renderRedirectToNotFound(props, ['deviceDemo']) ||
           renderDeviceDemo
         }
@@ -195,6 +228,7 @@ export const routerFactory = () => props => (
         path="/clinical-indicators"
         render={
           renderRedirectToLoginOr(props) ||
+          renderRedirectToLicenseOr(props) ||
           renderRedirectToNotFound(props, ['clinicalIndicators']) ||
           renderClinicalIndicators
         }
@@ -203,6 +237,7 @@ export const routerFactory = () => props => (
         path="/reports"
         render={
           renderRedirectToLoginOr(props) ||
+          renderRedirectToLicenseOr(props) ||
           renderRedirectToNotFound(props, ['reports']) ||
           renderReports
         }
@@ -211,6 +246,7 @@ export const routerFactory = () => props => (
         path="/manage"
         render={
           renderRedirectToLoginOr(props) ||
+          renderRedirectToLicenseOr(props) ||
           renderRedirectToNotFound(props, ['manage']) ||
           renderManage
         }
@@ -223,6 +259,7 @@ export const routerFactory = () => props => (
         path="/browse/device"
         render={
           renderRedirectToLoginOr(props) ||
+          renderRedirectToLicenseOr(props) ||
           renderRedirectToNotFound(props, ['device']) ||
           renderDeviceList
         }
@@ -231,6 +268,7 @@ export const routerFactory = () => props => (
         path="/browse/device/:deviceId"
         render={
           renderRedirectToLoginOr(props) ||
+          renderRedirectToLicenseOr(props) ||
           renderRedirectToNotFound(props, ['device']) ||
           renderDeviceDetail
         }
@@ -241,6 +279,7 @@ export const routerFactory = () => props => (
         path="/browse/deviceApiKey"
         render={
           renderRedirectToLoginOr(props) ||
+          renderRedirectToLicenseOr(props) ||
           renderRedirectToNotFound(props, ['deviceApiKey']) ||
           renderDeviceApiKeyList
         }
@@ -251,6 +290,7 @@ export const routerFactory = () => props => (
         path="/browse/router"
         render={
           renderRedirectToLoginOr(props) ||
+          renderRedirectToLicenseOr(props) ||
           renderRedirectToNotFound(props, ['router']) ||
           renderRouterList
         }
@@ -259,6 +299,7 @@ export const routerFactory = () => props => (
         path="/browse/router/:routerId"
         render={
           renderRedirectToLoginOr(props) ||
+          renderRedirectToLicenseOr(props) ||
           renderRedirectToNotFound(props, ['router']) ||
           renderRouterDetail
         }
@@ -269,16 +310,9 @@ export const routerFactory = () => props => (
         path="/browse/reporter"
         render={
           renderRedirectToLoginOr(props) ||
+          renderRedirectToLicenseOr(props) ||
           renderRedirectToNotFound(props, ['reporter']) ||
           renderReporterList
-        }
-      />
-      <Route
-        path="/browse/reporter/:terminalId"
-        render={
-          renderRedirectToLoginOr(props) ||
-          renderRedirectToNotFound(props, ['reporter']) ||
-          renderReporterDetail
         }
       />
 
@@ -287,6 +321,7 @@ export const routerFactory = () => props => (
         path="/browse/result"
         render={
           renderRedirectToLoginOr(props) ||
+          renderRedirectToLicenseOr(props) ||
           renderRedirectToNotFound(props, ['result']) ||
           renderResultList
         }
@@ -295,6 +330,7 @@ export const routerFactory = () => props => (
         path="/browse/result/:resultId"
         render={
           renderRedirectToLoginOr(props) ||
+          renderRedirectToLicenseOr(props) ||
           renderRedirectToNotFound(props, ['result']) ||
           renderResultDetail
         }
@@ -305,6 +341,7 @@ export const routerFactory = () => props => (
         path="/browse/site"
         render={
           renderRedirectToLoginOr(props) ||
+          renderRedirectToLicenseOr(props) ||
           renderRedirectToNotFound(props, ['site']) ||
           renderSiteList
         }
@@ -313,6 +350,7 @@ export const routerFactory = () => props => (
         path="/browse/site/:siteId"
         render={
           renderRedirectToLoginOr(props) ||
+          renderRedirectToLicenseOr(props) ||
           renderRedirectToNotFound(props, ['site']) ||
           renderSiteDetail
         }
@@ -323,6 +361,7 @@ export const routerFactory = () => props => (
         path="/browse/person"
         render={
           renderRedirectToLoginOr(props) ||
+          renderRedirectToLicenseOr(props) ||
           renderRedirectToNotFound(props, ['person']) ||
           renderPersonList
         }
@@ -331,6 +370,7 @@ export const routerFactory = () => props => (
         path="/browse/person/:personId"
         render={
           renderRedirectToLoginOr(props) ||
+          renderRedirectToLicenseOr(props) ||
           renderRedirectToNotFound(props, ['person']) ||
           renderPersonDetail
         }
@@ -341,6 +381,7 @@ export const routerFactory = () => props => (
         path="/browse/inventory"
         render={
           renderRedirectToLoginOr(props) ||
+          renderRedirectToLicenseOr(props) ||
           renderRedirectToNotFound(props, ['inventory']) ||
           renderInventoryItemsList
         }
@@ -351,6 +392,7 @@ export const routerFactory = () => props => (
         path="/browse/notification"
         render={
           renderRedirectToLoginOr(props) ||
+          renderRedirectToLicenseOr(props) ||
           renderRedirectToNotFound(props, ['notification']) ||
           renderNotificationList
         }
@@ -360,6 +402,7 @@ export const routerFactory = () => props => (
         path="/browse/notification/:notificationId"
         render={
           renderRedirectToLoginOr(props) ||
+          renderRedirectToLicenseOr(props) ||
           renderRedirectToNotFound(props, ['notification']) ||
           renderNotificationDetail
         }
@@ -370,6 +413,7 @@ export const routerFactory = () => props => (
         path="/browse/report"
         render={
           renderRedirectToLoginOr(props) ||
+          renderRedirectToLicenseOr(props) ||
           renderRedirectToNotFound(props, ['report']) ||
           renderReportList
         }

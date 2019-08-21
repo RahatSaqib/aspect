@@ -41,7 +41,6 @@ export class CountrySelectField extends PureComponent {
       'onCountryIdChange',
       'fetchCountriesForLocationSelector',
     ])
-
     return (
       <SelectField
         {...restProps}
@@ -74,6 +73,9 @@ function mapDispatchToProps(dispatch) {
   )
 }
 
-export default _.flowRight(connect(mapStateToProps, mapDispatchToProps))(
-  CountrySelectField
-)
+export default _.flowRight(
+  connect(
+    mapStateToProps,
+    mapDispatchToProps
+  )
+)(CountrySelectField)

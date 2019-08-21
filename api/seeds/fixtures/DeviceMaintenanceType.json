@@ -1,0 +1,19 @@
+{
+  "data": [
+    {
+      "name": "Calibration",
+      "externalId": "calibration",
+      "i18nKey": "deviceMaintenanceCalibration"
+    },
+    {
+      "name": "Warranty",
+      "externalId": "warranty",
+      "i18nKey": "deviceMaintenanceWarranty"
+    },
+    {
+      "name": "Service",
+      "externalId": "service",
+      "i18nKey": "deviceMaintenanceService"
+    }
+  ]
+}

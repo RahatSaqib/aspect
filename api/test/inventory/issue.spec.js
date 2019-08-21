@@ -1,7 +1,7 @@
 const _ = require('lodash')
 const { addDays, subDays } = require('date-fns')
 const { assert, expect } = require('chai')
-const subHours = require('date-fns/sub_hours')
+const subHours = require('date-fns/subHours')
 
 const { queuePurge } = require('../utils/mqUtils')
 const { run } = require('../../src/db')
@@ -31,7 +31,6 @@ const { loadPlugin } = require('../../src/plugin/registration')
 const {
   deviceTypeToId,
   deviceStatusToId,
-  resultWorkflowStatusToId,
   resultSourceToId,
   resultTypeToId,
   resultCategoryToId,
@@ -496,9 +495,7 @@ async function triggerInitialIssue({
     assert.equal(
       action2.totalWasted,
       TO_BE_WASTED,
-      `action.totalWasted (${TO_BE_WASTED}) does not match totalWasted in db (${
-        action2.totalWasted
-      })`
+      `action.totalWasted (${TO_BE_WASTED}) does not match totalWasted in db (${action2.totalWasted})`
     )
   }
 
@@ -557,7 +554,6 @@ async function createTestResult(knex, device) {
     .where({ externalId: 'GxMtbRif' })
     .first()
 
-  const resultWorkflowStatusId = await resultWorkflowStatusToId('OK')
   const resultSourceId = await resultSourceToId('DiagnosticDevice')
   const resultTypeId = await resultTypeToId('Patient')
   const sampleTypeId = await sampleTypeToId('DBS')
@@ -581,7 +577,6 @@ async function createTestResult(knex, device) {
     geographyId: device.geographyId,
     siteId: device.siteId,
     deviceId: device.id,
-    resultWorkflowStatusId,
     resultSourceId,
     resultTypeId,
     sampleId,

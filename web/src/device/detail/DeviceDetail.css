@@ -12,27 +12,86 @@
   padding: 20px;
 }
 
-.Summary {
-  padding-bottom: 10px;
+[data-graph-container] {
+  display: flex;
 }
 
-.Summary__Title {
-  line-height: 24px;
-  color: var(--aspect-color-grey-3);
+[data-utilization-graph] {
+  margin-right: 20px;
 }
 
-.Summary__Description {
-  padding-right: 10px;
-  color: var(--aspect-color-grey-2);
-  font-weight: var(--lato-font-weight-bold);
+[data-graph-container] {
+  text-align: center
 }
 
-.Summary__Description__Link {
-  margin-left: 10px;
+[data-panel-title] {
+font-size: 1.5rem;
+color: var(--aspect-color-grey-2);
 }
 
-.Summary__Description__Action {
-  margin-left: 20px;
+.Graph_Container {
+  width: 50%;
+  padding: 5px 10px;
+  font-size: var(--aspect-font-size-sm);
+}
+
+.Graph_Container > div {
+  height: 350px;
+  padding-bottom: 20px;
+}
+
+.Graph_Legend {
+  margin-top: -60px;
+  display: flex;
+  justify-content: center;
+}
+
+.Graph_Legend > div {
+  margin-right: 10px;
+  display: flex;
+}
+
+.Graph_Legend div > div {
+  margin-top: 3px;
+  width: 28px;
+  height: 11px;
+  margin-right: 5px;
+}
+
+[data-utilization-rate-legend] div {
+  background-color: var(--aspect-color-shakespeare);
+}
+
+[data-utilization-rate-average-legend] div {
+  background-color: var(--aspect-color-ship-cove);
+}
+
+[data-utilization-rate-above-average-legend] div {
+  background: repeating-linear-gradient(
+  45deg,
+  var(--aspect-color-shakespeare),
+  var(--aspect-color-shakespeare) 5px,
+  var(--aspect-color-shakespeare) 5px,
+  #ffffff 7px
+);
+}
+
+[data-error-rate-legend] div {
+  background-color: var(--aspect-color-mandy);
+}
+
+[data-error-rate-average-legend] div {
+  background-color: var(--aspect-color-ship-cove);
+}
+
+[data-error-rate-above-average-legend] div {
+  background: repeating-linear-gradient(
+  45deg,
+  var(--aspect-color-mandy),
+  var(--aspect-color-mandy) 5px,
+  var(--aspect-color-mandy) 5px,
+  #ffffff 7px
+);
 }
 
 .Header {
@@ -51,7 +110,7 @@
 }
 
 .Form__Actions {
-  padding: 20px;
+  padding: 20px 0;
   text-align: right;
 }
 
@@ -60,7 +119,7 @@
   composes: ComponentDataTable from '../../components/shared/DataTable.css';
 }
 
-.DelayShowingProgressBar {
+.DelayShowingProgressCircular {
   position: fixed;
   top: 50%;
   left: 50%;

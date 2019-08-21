@@ -12,7 +12,8 @@ import {
   withProps,
   withStateHandlers,
 } from 'recompose'
-import { Card } from 'react-toolbox/lib/card'
+import Card from '@material-ui/core/Card'
+import TableBody from '@material-ui/core/TableBody'
 
 import { Unit } from '../../components/pureGrids'
 import { fetchActionDashboard } from '../DashboardRedux'
@@ -87,7 +88,9 @@ const enhance = compose(
     onActionListClick: ({ history }) => event => {
       event.stopPropagation()
       const {
-        currentTarget: { dataset: { siteId, deviceId, resultId } },
+        currentTarget: {
+          dataset: { siteId, deviceId, resultId },
+        },
       } = event
       if (resultId) {
         history.push(`/browse/result/${resultId}`)
@@ -231,9 +234,8 @@ export const ActionStatus = ({
               },
             ]}
           />
-          {actionSummaryMap
-            .get(selectedCategory, EMPTY_LIST)
-            .map(action => (
+          <TableBody>
+            {actionSummaryMap.get(selectedCategory, EMPTY_LIST).map(action => (
               <ActionDataTableRow
                 key={action.get('id')}
                 intl={intl}
@@ -243,6 +245,7 @@ export const ActionStatus = ({
                 sortingProps={sortingProps}
               />
             ))}
+          </TableBody>
         </ActionDataTable>
         {!actionSummaryMap.has(selectedCategory) && (
           <div className={cssClasses('ActionDataTable--empty')}>

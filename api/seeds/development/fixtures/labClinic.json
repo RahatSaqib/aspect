@@ -4338,6 +4338,7 @@
       "devices": [
         {
           "name": "PIH M2000",
+          "deviceTypeId": "CHAILIMS",
           "shortName": "PIH M2000",
           "macAddress": "5B-35-EF-E8-22-FB",
           "serial": "M2000-XY-1234",
@@ -4360,6 +4361,7 @@
       "devices": [
         {
           "name": "KCH M2000",
+          "deviceTypeId": "CHAILIMS",
           "shortName": "KCH M2000",
           "macAddress": "9E-8E-14-CC-BF-8E",
           "serial": "M2000-XY-1235",
@@ -4407,6 +4409,36 @@
       "externalId": "CHIZ",
       "name": "Chiradzulu District Hospital",
       "shortName": "Chiradzulu"
+    },
+    {
+      "externalId": "TB-REF-LAB",
+      "name": "TB Reference Lab",
+      "shortName": "TB Reference",
+      "stateName": "Harare",
+      "lgaName": "Harare",
+      "latitude": -17.859121,
+      "longitude": 31.0109402,
+      "devices": [
+        {
+          "deviceTypeId": "BDMGIT",
+          "name": "TB Reference Lab BD MGIT GF012345",
+          "shortName": "TB-REF-LAB MGIT",
+          "deviceSerial": "MG1234",
+          "deviceApiKey": "7et5utnhhmgp82mcr6x0"
+        },
+        {
+          "deviceTypeId": "HainGenoScan",
+          "name": "TB Reference Lab Hain GenoScan",
+          "shortName": "TB-REF-LAB Hain GenoScan",
+          "deviceApiKey": "jvjptuf4f9p72tmuew10"
+        },
+        {
+          "deviceTypeId": "SenaiteLims",
+          "name": "TB Reference Lab Senaite LIMS",
+          "shortName": "TB-REF-LAB Senaite",
+          "deviceApiKey": "q8f2ujd19kcnf31f1tzg"
+        }
+      ]
     }
   ]
 }

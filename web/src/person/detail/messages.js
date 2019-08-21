@@ -13,7 +13,7 @@ export default defineMessages({
   },
   systemAccessControl: {
     id: 'pages.PersonDetails.systemAccessControl',
-    defaultMessage: 'System Access & Jobs',
+    defaultMessage: 'Login',
   },
   none: {
     id: 'pages.PersonDetails.none',
@@ -22,6 +22,14 @@ export default defineMessages({
   languageAndTimezone: {
     id: 'pages.PersonDetails.languageAndTimezone',
     defaultMessage: 'Language & Timezone',
+  },
+  detailsCreatedSuccessfully: {
+    id: 'pages.PersonDetails.detailsCreatedSuccessfully',
+    defaultMessage: 'Contact Created Successfully',
+  },
+  contactDetailsCreatedMessage: {
+    id: 'pages.PersonDetails.contactDetailsCreatedMessage',
+    defaultMessage: 'Contact details created successfully',
   },
   detailsUpdatedSuccessfully: {
     id: 'pages.PersonDetails.detailsUpdatedSuccessfully',
@@ -45,7 +53,7 @@ export default defineMessages({
   },
   jobTitle: {
     id: 'pages.ContactDetails.title',
-    defaultMessage: 'Job Title',
+    defaultMessage: 'Title',
   },
   emailHeader: {
     id: 'pages.ContactDetails.emailHeader',
@@ -53,11 +61,11 @@ export default defineMessages({
   },
   primaryEmail: {
     id: 'pages.ContactDetails.email',
-    defaultMessage: 'Primary',
+    defaultMessage: 'Email',
   },
   secondaryEmail: {
     id: 'pages.ContactDetails.email2',
-    defaultMessage: 'Alternate',
+    defaultMessage: 'Alternate Email',
   },
   phone: {
     id: 'pages.ContactDetails.phoneHeader',
@@ -111,6 +119,10 @@ export default defineMessages({
     id: 'pages.ContactDetails.nameRequired',
     defaultMessage: 'Please enter your Full name',
   },
+  countryRequired: {
+    id: 'pages.ContactDetails.countryRequired',
+    defaultMessage: 'Please select Country',
+  },
   invalidEmailAddress: {
     id: 'pages.ContactDetails.invalidEmailAddress',
     defaultMessage: 'Please enter a valid email address',
@@ -150,6 +162,10 @@ export default defineMessages({
     defaultMessage:
       'The password needs to contain at least one number or special character (%!$*...)',
   },
+  userLockedOutLabel: {
+    id: 'pages.UpdateLoginDetails.userEnableLabel',
+    defaultMessage: 'User lockedout',
+  },
   passwordsDoNotMatch: {
     id: 'pages.UpdateLoginDetails.passwordsDoNotMatch',
     defaultMessage: "These passwords don't match",
@@ -186,5 +202,65 @@ export default defineMessages({
   language: {
     id: 'pages.UserPreferences.language',
     defaultMessage: 'Language',
+  },
+  tags: {
+    id: 'pages.UserPreferences.tags',
+    defaultMessage: 'Tags',
+  },
+  chooseTags: {
+    id: 'pages.UserPreferences.chooseTags',
+    defaultMessage: 'Choose tags',
+  },
+  jobAssignment: {
+    id: 'pages.UserPreferences.jobAssignment',
+    defaultMessage: 'Job Assignment',
+  },
+  job: {
+    id: 'pages.UserPreferences.job',
+    defaultMessage: 'Job',
+  },
+  assignmentDetails: {
+    id: 'pages.UserPreferences.assignmentDetails',
+    defaultMessage: 'Assignment Details',
+  },
+  assignments: {
+    id: 'pages.UserPreferences.assignments',
+    defaultMessage: 'This contact is assigned to:',
+  },
+  create: {
+    id: 'pages.PersonDetails.create',
+    defaultMessage: 'Create',
+  },
+  site: {
+    id: 'pages.JobAssignments.site',
+    defaultMessage: 'Site',
+  },
+  selectJob: {
+    id: 'pages.JobAssignments.selectJob',
+    defaultMessage: 'Select Job',
+  },
+  jobRequired: {
+    id: 'pages.JobAssignments.jobRequired',
+    defaultMessage: 'Please select Job',
+  },
+  cancel: {
+    id: 'pages.JobAssignments.cancel',
+    defaultMessage: 'Cancel',
+  },
+  yesDelete: {
+    id: 'pages.JobAssignments.yesDelete',
+    defaultMessage: 'Yes, delete',
+  },
+  allStates: {
+    id: 'pages.JobAssignments.allStates',
+    defaultMessage: 'All states',
+  },
+  allAreas: {
+    id: 'pages.JobAssignments.allAreas',
+    defaultMessage: 'All areas',
+  },
+  allSites: {
+    id: 'pages.JobAssignments.allSites',
+    defaultMessage: 'All sites',
   },
 })

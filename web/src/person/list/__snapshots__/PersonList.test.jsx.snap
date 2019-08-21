@@ -35,6 +35,23 @@ exports[`Person List module PersonList component should shallow render correctly
       }
     }
   />
+  <DataTableCard
+    className="DataTableCard--action"
+  >
+    <div />
+    <WithStyles(Tooltip)
+      placement="bottom"
+      title="Add Contact"
+    >
+      <WithStyles(IconButton)
+        aria-label="Add Contact"
+      >
+        <pure(AddIcon)
+          fontSize="large"
+        />
+      </WithStyles(IconButton)>
+    </WithStyles(Tooltip)>
+  </DataTableCard>
   <DataTableCard>
     <DataTableProgressBar
       disabled={true}
@@ -61,6 +78,9 @@ exports[`Person List module PersonList component should shallow render correctly
           "search": "",
         }
       }
+    />
+    <withState(withHandlers(ExportListButton))
+      reportName="Contacts"
     />
   </DataTableCard>
 </div>

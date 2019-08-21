@@ -100,6 +100,27 @@ describe('result endpoints', () => {
       })
     })
 
+    describe('/result/treatment-status-types', () => {
+      let endpoint
+      const expectedResponse = { value: 'Expected result' }
+
+      beforeEach(() => {
+        endpoint = setupRoute('GET', '/result/treatment-status-types', {
+          async listTreatmentStatusTypes() {
+            return expectedResponse
+          },
+        })
+      })
+      it('Should respond with the data returned from the service', done => {
+        endpointUtils
+          .callHandlerOn(endpoint)
+          .handleResponseWith(response => {
+            assert.deepEqual(response, expectedResponse)
+          })
+          .thenCall(done)
+          .execute()
+      })
+    })
     describe('/result/workflow-status-types', () => {
       let endpoint
       const expectedResponse = { value: 'Expected result' }
@@ -169,6 +190,28 @@ describe('result endpoints', () => {
           .execute()
       })
     })
+
+    describe('/result/download', () => {
+      let endpoint
+      const expectedResponse = { value: 'Expected result' }
+
+      beforeEach(() => {
+        endpoint = setupRoute('GET', '/result/download', {
+          async downloadResultsList() {
+            return expectedResponse
+          },
+        })
+      })
+      it('Should respond with the data returned from the service', done => {
+        endpointUtils
+          .callHandlerOn(endpoint)
+          .handleResponseWith(response => {
+            assert.deepEqual(response, expectedResponse)
+          })
+          .thenCall(done)
+          .execute()
+      })
+    })
   })
 
   describe('PUT', () => {
@@ -179,6 +222,29 @@ describe('result endpoints', () => {
       beforeEach(() => {
         endpoint = setupRoute('PUT', '/result/workflow-status/{resultId}', {
           async updateWorkflowStatus() {
+            return expectedResponse
+          },
+        })
+      })
+      it('Should respond with the data returned from the service', done => {
+        endpointUtils
+          .callHandlerOn(endpoint)
+          .handleResponseWith(response => {
+            assert.deepEqual(response, expectedResponse)
+          })
+          .thenCall(done)
+          .execute()
+      })
+    })
+  })
+  describe('PUT', () => {
+    describe('/result/treatment-status/{resultId}', () => {
+      let endpoint
+      const expectedResponse = { value: 'Expected result' }
+
+      beforeEach(() => {
+        endpoint = setupRoute('PUT', '/result/treatment-status/{resultId}', {
+          async updateTreatmentStatus() {
             return expectedResponse
           },
         })

@@ -182,6 +182,10 @@ async function deleteGeneXpertDeviceSiteDataAndRefreshTokens(
     .orWhereIn('generatedResultId', resultIds)
     .delete()
 
+  await knex('ResultTag').delete()
+
+  await knex('Tag').delete()
+
   await knex('Result')
     .whereIn('id', resultIds)
     .delete()
@@ -226,7 +230,6 @@ class GxAlertApiTestContext {
         id: 'CepheidGeneXpert',
       },
       site: null,
-      checkpoint: null,
       log: null,
       configuration: null,
       operation: null,
@@ -274,11 +277,18 @@ class GxAlertApiTestContext {
         .where('token', 'approved')
         .first()
 
+      const deviceCapacity = await knex('DeviceCapacity')
+        .where({ deviceTypeId: gxAlertDeviceType.id })
+        .where({ partnerId: partner.id })
+        .where({ defaultForDeviceType: 1 })
+        .first('id')
+
       const now = new Date()
       const [deviceId] = await knex('Device').insert({
         partnerId: partner.id,
         geographyId: geography.id,
         deviceTypeId: gxAlertDeviceType.id,
+        deviceCapacityId: deviceCapacity ? deviceCapacity.id : null,
         deviceStatusId: approvedDeviceStatus.id,
         name: this.basicDevicePayload.name,
         shortName: this.basicDevicePayload.name,
@@ -381,8 +391,13 @@ class GxAlertApiTestContext {
         .join('Result as r', 'dl.resultId', 'r.id')
         .join('Device as sourceDevice', 'r.deviceId', 'r.deviceId')
         .leftJoin(
+          'ResultWorkflowLog as rwsl',
+          'r.resultWorkflowStatusLogId',
+          'rwsl.id'
+        )
+        .leftJoin(
           'ResultWorkflowStatus as rws',
-          'r.resultWorkflowStatusId',
+          'rwsl.resultWorkflowStatusId',
           'rws.id'
         )
         .leftJoin('Assay as a', 'r.assayId', 'a.id')
@@ -446,8 +461,13 @@ class GxAlertApiTestContext {
       const resultDetails = await knex('Result as r')
         .join('Device as sourceDevice', 'r.deviceId', 'r.deviceId')
         .leftJoin(
+          'ResultWorkflowLog as rwsl',
+          'r.resultWorkflowStatusLogId',
+          'rwsl.id'
+        )
+        .leftJoin(
           'ResultWorkflowStatus as rws',
-          'r.resultWorkflowStatusId',
+          'rwsl.resultWorkflowStatusId',
           'rws.id'
         )
         .leftJoin('Assay as a', 'r.assayId', 'a.id')

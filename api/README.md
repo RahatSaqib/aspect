@@ -4,6 +4,14 @@ This is the web api for all aspect clients.
 
 Swagger UI is available for testing the UI manually and viewing route documentation at http://localhost:8080/documentation .  Use the `api/auth` route to generate a JWT token (named 'access' in response) and include the token in authenticated routes.
 
+## Recommended versions
+
+Node v8.13 ([nvm](https://github.com/creationix/nvm) highly recommended)
+
+Mysql v5.7
+
+Yarn v1.9.4
+
 ## Quick start
 
 Quick Start for development. Everything is explained in more detail throughout this README.
@@ -36,6 +44,9 @@ grant all on aspect. * to 'aspectapi'@'localhost';
 flush privileges;
 EOT
 
+# If you are using MySQL 5.7 or have ONLY_FULL_GROUP_BY in your sql_mode by default, add this to my.cnf or my.ini
+sql_mode=STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION
+
 # Create an .env file and configure settings for your environment
 # using .env.example as a template
 # Make sure to uncomment following line so that knex could find it's seed directory
@@ -62,7 +73,7 @@ git checkout develop
 git pull origin develop
 
 # If new migrations (but safe to run any time)
-npm run knex migrate:latest
+yarn run knex migrate:latest
 ```
 
 If you would like to start with a fresh database:
@@ -172,33 +183,33 @@ $ curl -H 'Authorization: Bearer ${jwt_token}' -H 'Content-Type: application/jso
 
 ##Tests
 Tests are in /test and written in Mocha/Chai
-To run tests, `npm test` in the terminal
+To run tests, `yarn test` in the terminal
 
 ###Running tests against a local database
 The test suite makes actual requests to the API which queries a MySQL database. The connection settings are stored as environment variables.
 Environment variables are loaded from a file, called .env, that you need to add to the root of the application.
 See [Environment Configuration](#environment-configuration) in order to change the config, on your machine, to point to a local database
 
-Once your environment is configured run tests using the `npm test` command
+Once your environment is configured run tests using the `yarn test` command
 
 ## Migrations
 
 Migrations are managed with [knex](http://knexjs.org/#Migrations).
 
-To update to latest migration, run `npm run knex migrate:latest`.  Migrations are tracked in the `knex_migrations` table so only migrations that have not been applied will be run in the appropriate order.  It is safe to run migrations at any time. If no migrations need to run, the command will only print a message indicating that you are up to date.
+To update to latest migration, run `yarn run knex migrate:latest`.  Migrations are tracked in the `knex_migrations` table so only migrations that have not been applied will be run in the appropriate order.  It is safe to run migrations at any time. If no migrations need to run, the command will only print a message indicating that you are up to date.
 
 ```bash
 # Create a new migration
-$ npm run knex migrate:make migration_name
+$ yarn run knex migrate:make migration_name
 Created migration: ./migrations/{dateTime}_migration_name.js
 
 # Edit created file in migrations using Schema API or Raw Queries
 
 # Update to latest migrate
-$ npm run knex migrate:latest
+$ yarn run knex migrate:latest
 
 # Rollback if migration done in error
-$ npm run knex migrate:rollback
+$ yarn run knex migrate:rollback
 
 ```
 
@@ -231,7 +242,7 @@ seeds.directory='./seeds/development'
 Now you can run all seed files within that directory (alphabetical order).
 
 ```bash
-npm run knex seed:run
+yarn run knex seed:run
 ```
 
 Unlike migrations ALL seed files are run every time.  You should structure your seed files to take this into account.  The files are run in alphabetical order, so it is good practice to prefix your seed name with the order to run. If a seed file should only be executed once, check for existing data and return early before inserting new seed data.
@@ -257,11 +268,11 @@ eb open
 To check which dependencies have newer versions available:
 
 ```bash
-npm outdated
+yarn outdated
 ```
 
 To update all to the latest version (this is not the same as the "Wanted" version):
 
 ```bash
-npm update --save
+yarn upgrade
 ```

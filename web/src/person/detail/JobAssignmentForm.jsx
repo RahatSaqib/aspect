@@ -1,0 +1,193 @@
+import _ from 'lodash'
+import React from 'react'
+import { compose, lifecycle, withHandlers, pure } from 'recompose'
+import Button from '@material-ui/core/Button'
+import MenuItem from '@material-ui/core/MenuItem'
+import classnames from 'classnames/bind'
+import recomposeForm from '../../components/recomposeForm'
+
+import { Unit } from '../../components/pureGrids'
+
+import messages from './messages'
+import CountrySelectField from '../../filter/geography/CountrySelectField'
+import StateSelectField from '../../filter/geography/StateSelectField'
+import LgaSelectField from '../../filter/geography/LgaSelectField'
+import SiteSelectField from '../../filter/resource/SiteSelectField'
+import SelectField from '../../components/shared/SelectField'
+import PersonAssignments from './PersonAssignments'
+
+const cssClasses = classnames.bind(require('./PersonDetail.css'))
+
+const DEFAULT_VALUES = {
+  jobFunctionId: undefined,
+  countryId: undefined,
+  stateId: undefined,
+  lgaId: undefined,
+  siteId: undefined,
+}
+
+const validate = ({ jobFunctionId }, { intl }) => {
+  const errors = {}
+  if (!jobFunctionId) {
+    errors.jobFunctionId = intl.formatMessage(messages.jobRequired)
+  }
+  return errors
+}
+const enhance = compose(
+  pure,
+  lifecycle({
+    componentWillMount() {
+      const onChange = values => this.setState({ values })
+      this.setState({
+        onChange,
+        values: { ...DEFAULT_VALUES, countryId: this.props.countryId },
+      })
+    },
+  }),
+  recomposeForm({
+    fields: [
+      { fieldName: 'jobFunctionId', valueFromChangeEvent: _.identity },
+      { fieldName: 'countryId', valueFromChangeEvent: _.identity },
+      { fieldName: 'stateId', valueFromChangeEvent: _.identity },
+      { fieldName: 'lgaId', valueFromChangeEvent: _.identity },
+      { fieldName: 'siteId', valueFromChangeEvent: _.identity },
+    ],
+    validate,
+  }),
+  withHandlers({
+    onStateIdChange: ({ onStateIdChange, values }) => stateId => {
+      values.lgaId = undefined
+      values.siteId = undefined
+      onStateIdChange(stateId)
+    },
+    onLgaIdChange: ({ onLgaIdChange, values }) => lgaId => {
+      values.siteId = undefined
+      onLgaIdChange(lgaId)
+    },
+    onJobFunctionIdChange: ({ onJobFunctionIdChange }) => jobFunctionId => {
+      onJobFunctionIdChange(jobFunctionId)
+    },
+    handleSubmit: ({ handleSubmit, values, form }) => event => {
+      handleSubmit(event)
+      values.jobFunctionId = undefined
+      values.stateId = undefined
+      values.lgaId = undefined
+      values.siteId = undefined
+      form.valid = false
+    },
+  })
+)
+
+export const JobAssignemntForm = ({
+  intl,
+  loading,
+  form,
+  meta,
+  values,
+  onJobFunctionIdChange,
+  onStateIdChange,
+  onLgaIdChange,
+  onSiteIdChange,
+  handleSubmit,
+  jobFunctions = [],
+  assignments,
+  loadedAssignments,
+  onDeleteAssignment,
+}) => {
+  const baseProps = {
+    allItemText: intl.formatMessage(messages.all),
+    disabled: form.submitting,
+    floatingLabelFixed: true,
+    fullWidth: true,
+    hintText: intl.formatMessage(messages.all),
+  }
+  return (
+    <div className={cssClasses('Job__Assignment', 'Form__Content')}>
+      <Unit sm="1-2" className={cssClasses('Section__Content')}>
+        <form
+          onSubmit={handleSubmit}
+          className={cssClasses('Assignment__Form')}
+        >
+          <SelectField
+            fullWidth
+            hintText={intl.formatMessage(messages.selectJob)}
+            value={values.jobFunctionId}
+            onChange={({ target: { value } }) => {
+              onJobFunctionIdChange(value === 'all' ? undefined : value)
+            }}
+            floatingLabelFixed
+            floatingLabelText={intl.formatMessage(messages.job)}
+            errorStyle={{
+              float: 'left',
+              whiteSpace: 'nowrap',
+              textOverflow: 'visible',
+            }}
+            errorText={meta.jobFunctionId.touched && meta.jobFunctionId.error}
+          >
+            {jobFunctions.map(x => (
+              <MenuItem key={x.id} value={x.id}>
+                {x.name}
+              </MenuItem>
+            ))}
+          </SelectField>
+          <section>
+            <h1>{intl.formatMessage(messages.assignmentDetails)}</h1>
+            <CountrySelectField
+              disabled
+              allItemText={intl.formatMessage(messages.all)}
+              countryId={values.countryId}
+              floatingLabelFixed
+              floatingLabelText={intl.formatMessage(messages.country)}
+            />
+            <StateSelectField
+              {...baseProps}
+              onStateIdChange={onStateIdChange}
+              countryId={values.countryId}
+              stateId={values.stateId}
+              floatingLabelText={intl.formatMessage(messages.state)}
+            />
+            <LgaSelectField
+              {...baseProps}
+              onLgaIdChange={onLgaIdChange}
+              countryId={values.countryId}
+              stateId={values.stateId}
+              lgaId={values.lgaId}
+              floatingLabelText={intl.formatMessage(messages.lga)}
+            />
+            <SiteSelectField
+              {...baseProps}
+              floatingLabelText={intl.formatMessage(messages.site)}
+              value={values.siteId}
+              onSiteChange={onSiteIdChange}
+              countryId={values.countryId}
+              stateId={values.stateId}
+              lgaId={values.lgaId}
+            />
+          </section>
+          <div className={cssClasses('Form__ActionRow')}>
+            <Button
+              type="submit"
+              color="primary"
+              variant="contained"
+              disabled={
+                loading || form.pristine || !form.valid || form.submitting
+              }
+            >
+              {intl.formatMessage(messages.save)}
+            </Button>
+          </div>
+        </form>
+      </Unit>
+      <Unit sm="1-2" className={cssClasses('Section__Content')}>
+        <PersonAssignments
+          intl={intl}
+          assignments={assignments}
+          loadedAssignments={loadedAssignments}
+          onDeleteAssignment={onDeleteAssignment}
+        />
+      </Unit>
+    </div>
+  )
+}
+
+export default enhance(JobAssignemntForm)

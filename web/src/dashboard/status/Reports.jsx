@@ -3,8 +3,8 @@ import _ from 'lodash'
 import React from 'react'
 import { connect } from 'react-redux'
 import { compose, pure, withProps } from 'recompose'
-import { Card } from 'react-toolbox/lib/card'
-import { Button } from 'react-toolbox/lib/button'
+import Button from '@material-ui/core/Button'
+import Card from '@material-ui/core/Card'
 import subtractDays from 'date-fns/subDays'
 import subtractYears from 'date-fns/subYears'
 import endOfYear from 'date-fns/endOfYear'
@@ -32,17 +32,17 @@ const enhance = compose(
     const searchParams = new URLSearchParams(location.search)
     const filtersParams = new URLSearchParams(searchParams.get('filters') || '')
     const now = new Date()
-    const last7Days = formatDate(subtractDays(now, 7), 'YYYY-MM-DD')
-    const last30Days = formatDate(subtractDays(now, 30), 'YYYY-MM-DD')
-    const beginningOfThisYear = formatDate(startOfYear(now), 'YYYY-MM-DD')
-    const endOfThisYear = formatDate(endOfYear(now), 'YYYY-MM-DD')
+    const last7Days = formatDate(subtractDays(now, 7), 'yyyy-MM-dd')
+    const last30Days = formatDate(subtractDays(now, 30), 'yyyy-MM-dd')
+    const beginningOfThisYear = formatDate(startOfYear(now), 'yyyy-MM-dd')
+    const endOfThisYear = formatDate(endOfYear(now), 'yyyy-MM-dd')
     const beginningOfLastYear = formatDate(
       startOfYear(subtractYears(now, 1)),
-      'YYYY-MM-DD'
+      'yyyy-MM-dd'
     )
     const endOfLastYear = formatDate(
       endOfYear(subtractYears(now, 1)),
-      'YYYY-MM-DD'
+      'yyyy-MM-dd'
     )
     return {
       showHigherLevel: _.isEmpty(filtersParams.get('siteId')),
@@ -73,118 +73,7 @@ export const Reports = ({
   userFeatures,
   token,
 }) =>
-  (showHigherLevel &&
-    isEnabledFeature(userFeatures, ['targetDashboard']) && (
-      <Card className={className}>
-        <div className={cssClasses('TitleContainer')}>
-          <Title
-            title={title}
-            icon={
-              <Icon
-                className={cssClasses('Title__Icon')}
-                type={require('../../components/shared/icon/assets/reports.svg')}
-              />
-            }
-          />
-        </div>
-        <div className={cssClasses('ReportsContainer')}>
-          <Button
-            className={cssClasses('ReportsContainer__Button')}
-            inverse
-            href={`${
-              config.aspectApi
-            }/report/gx/RifResistanceExportExcel.xlsx?dateFrom=${last7Days}&token=${token}`}
-          >
-            Rif Report (last 7 days)
-          </Button>
-          <Button
-            className={cssClasses('ReportsContainer__Button')}
-            inverse
-            href={`${
-              config.aspectApi
-            }/report/gx/MtbPositiveExportExcel.xlsx?dateFrom=${last7Days}&token=${token}`}
-          >
-            MTB+ Report (last 7 days)
-          </Button>
-          <Button
-            className={cssClasses('ReportsContainer__Button')}
-            inverse
-            href={`${
-              config.aspectApi
-            }/report/gx/IndeterminateExportExcel.xlsx?dateFrom=${last7Days}&token=${token}`}
-          >
-            TI Report (last 7 days)
-          </Button>
-          <Button
-            className={cssClasses('ReportsContainer__Button')}
-            inverse
-            href={`${
-              config.aspectApi
-            }/report/gx/FailedTestsReportExcel.xlsx?dateFrom=${last7Days}&token=${token}`}
-          >
-            Failed Test Report (last 7 days)
-          </Button>
-        </div>
-        <div className={cssClasses('ReportsContainer')}>
-          <Button
-            className={cssClasses('ReportsContainer__Button')}
-            inverse
-            href={`${
-              config.aspectApi
-            }/report/gx/RifResistanceExportExcel.xlsx?dateFrom=${last30Days}&token=${token}`}
-          >
-            Rif Report (last 30 days)
-          </Button>
-          <Button
-            className={cssClasses('ReportsContainer__Button')}
-            inverse
-            href={`${
-              config.aspectApi
-            }/report/gx/MtbPositiveExportExcel.xlsx?dateFrom=${last30Days}&token=${token}`}
-          >
-            MTB+ Report (last 30 days)
-          </Button>
-          <Button
-            className={cssClasses('ReportsContainer__Button')}
-            inverse
-            href={`${
-              config.aspectApi
-            }/report/gx/IndeterminateExportExcel.xlsx?dateFrom=${last30Days}&token=${token}`}
-          >
-            TI Report (last 30 days)
-          </Button>
-          <Button
-            className={cssClasses('ReportsContainer__Button')}
-            inverse
-            href={`${
-              config.aspectApi
-            }/report/gx/FailedTestsReportExcel.xlsx?dateFrom=${last30Days}&token=${token}`}
-          >
-            Failed Test Report (last 30 days)
-          </Button>
-        </div>
-        <div className={cssClasses('ReportsContainer')}>
-          <Button
-            className={cssClasses('ReportsContainer__Button')}
-            inverse
-            href={`${
-              config.aspectApi
-            }/report/gx/QuarterlyReportExcel.xlsx?dateFrom=${beginningOfLastYear}&dateTo=${endOfLastYear}&token=${token}`}
-          >
-            {`Quarterly Report ${new Date().getFullYear() - 1}`}
-          </Button>
-          <Button
-            className={cssClasses('ReportsContainer__Button')}
-            inverse
-            href={`${
-              config.aspectApi
-            }/report/gx/QuarterlyReportExcel.xlsx?dateFrom=${beginningOfThisYear}&dateTo=${endOfThisYear}&token=${token}`}
-          >
-            {`Quarterly Report ${new Date().getFullYear()}`}
-          </Button>
-        </div>
-      </Card>
-    )) || (
+  (showHigherLevel && isEnabledFeature(userFeatures, ['targetDashboard']) && (
     <Card className={className}>
       <div className={cssClasses('TitleContainer')}>
         <Title
@@ -201,27 +90,111 @@ export const Reports = ({
         <Button
           className={cssClasses('ReportsContainer__Button')}
           inverse
-          href={`${
-            config.aspectApi
-          }/report/gx/LogsExportExcel.xlsx?dateFrom=${last30Days}&siteId=${siteId}&token=${token}`}
+          href={`${config.aspectApi}/report/gx/RifResistanceExportExcel.xlsx?dateFrom=${last7Days}&token=${token}`}
         >
-          Inventory Report
+          Rif Report (last 7 days)
         </Button>
         <Button
           className={cssClasses('ReportsContainer__Button')}
           inverse
-          href={`${
-            config.aspectApi
-          }/report/gx/QuarterlyReportExcel.xlsx?dateFrom=${beginningOfLastYear}&dateTo=${endOfLastYear}&siteId=${siteId}&token=${token}`}
+          href={`${config.aspectApi}/report/gx/MtbPositiveExportExcel.xlsx?dateFrom=${last7Days}&token=${token}`}
+        >
+          MTB+ Report (last 7 days)
+        </Button>
+        <Button
+          className={cssClasses('ReportsContainer__Button')}
+          inverse
+          href={`${config.aspectApi}/report/gx/IndeterminateExportExcel.xlsx?dateFrom=${last7Days}&token=${token}`}
+        >
+          TI Report (last 7 days)
+        </Button>
+        <Button
+          className={cssClasses('ReportsContainer__Button')}
+          inverse
+          href={`${config.aspectApi}/report/gx/FailedTestsReportExcel.xlsx?dateFrom=${last7Days}&token=${token}`}
+        >
+          Failed Test Report (last 7 days)
+        </Button>
+      </div>
+      <div className={cssClasses('ReportsContainer')}>
+        <Button
+          className={cssClasses('ReportsContainer__Button')}
+          inverse
+          href={`${config.aspectApi}/report/gx/RifResistanceExportExcel.xlsx?dateFrom=${last30Days}&token=${token}`}
+        >
+          Rif Report (last 30 days)
+        </Button>
+        <Button
+          className={cssClasses('ReportsContainer__Button')}
+          inverse
+          href={`${config.aspectApi}/report/gx/MtbPositiveExportExcel.xlsx?dateFrom=${last30Days}&token=${token}`}
+        >
+          MTB+ Report (last 30 days)
+        </Button>
+        <Button
+          className={cssClasses('ReportsContainer__Button')}
+          inverse
+          href={`${config.aspectApi}/report/gx/IndeterminateExportExcel.xlsx?dateFrom=${last30Days}&token=${token}`}
+        >
+          TI Report (last 30 days)
+        </Button>
+        <Button
+          className={cssClasses('ReportsContainer__Button')}
+          inverse
+          href={`${config.aspectApi}/report/gx/FailedTestsReportExcel.xlsx?dateFrom=${last30Days}&token=${token}`}
+        >
+          Failed Test Report (last 30 days)
+        </Button>
+      </div>
+      <div className={cssClasses('ReportsContainer')}>
+        <Button
+          className={cssClasses('ReportsContainer__Button')}
+          inverse
+          href={`${config.aspectApi}/report/gx/QuarterlyReportExcel.xlsx?dateFrom=${beginningOfLastYear}&dateTo=${endOfLastYear}&token=${token}`}
         >
           {`Quarterly Report ${new Date().getFullYear() - 1}`}
         </Button>
         <Button
           className={cssClasses('ReportsContainer__Button')}
           inverse
-          href={`${
-            config.aspectApi
-          }/report/gx/QuarterlyReportExcel.xlsx?dateFrom=${beginningOfThisYear}&dateTo=${endOfThisYear}&siteId=${siteId}&token=${token}`}
+          href={`${config.aspectApi}/report/gx/QuarterlyReportExcel.xlsx?dateFrom=${beginningOfThisYear}&dateTo=${endOfThisYear}&token=${token}`}
+        >
+          {`Quarterly Report ${new Date().getFullYear()}`}
+        </Button>
+      </div>
+    </Card>
+  )) || (
+    <Card className={className}>
+      <div className={cssClasses('TitleContainer')}>
+        <Title
+          title={title}
+          icon={
+            <Icon
+              className={cssClasses('Title__Icon')}
+              type={require('../../components/shared/icon/assets/reports.svg')}
+            />
+          }
+        />
+      </div>
+      <div className={cssClasses('ReportsContainer')}>
+        <Button
+          className={cssClasses('ReportsContainer__Button')}
+          inverse
+          href={`${config.aspectApi}/report/gx/LogsExportExcel.xlsx?dateFrom=${last30Days}&siteId=${siteId}&token=${token}`}
+        >
+          Inventory Report
+        </Button>
+        <Button
+          className={cssClasses('ReportsContainer__Button')}
+          inverse
+          href={`${config.aspectApi}/report/gx/QuarterlyReportExcel.xlsx?dateFrom=${beginningOfLastYear}&dateTo=${endOfLastYear}&siteId=${siteId}&token=${token}`}
+        >
+          {`Quarterly Report ${new Date().getFullYear() - 1}`}
+        </Button>
+        <Button
+          className={cssClasses('ReportsContainer__Button')}
+          inverse
+          href={`${config.aspectApi}/report/gx/QuarterlyReportExcel.xlsx?dateFrom=${beginningOfThisYear}&dateTo=${endOfThisYear}&siteId=${siteId}&token=${token}`}
         >
           {`Quarterly Report ${new Date().getFullYear()}`}
         </Button>

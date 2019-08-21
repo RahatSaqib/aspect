@@ -13,20 +13,17 @@ async function up(knex) {
   })
 
   await knex.schema.createTable('FactInventoryConsumptionRate', x => {
-    x
-      .integer('siteId')
+    x.integer('siteId')
       .unsigned()
       .notNullable()
       .references('id')
       .inTable('Site')
-    x
-      .integer('consumableId')
+    x.integer('consumableId')
       .unsigned()
       .notNullable()
       .references('id')
       .inTable('Consumable')
-    x
-      .integer('days')
+    x.integer('days')
       .unsigned()
       .notNullable()
     // for 'rate' use float - because daily rate is calculated as "totals for last 10 days with at least 1 test"/10

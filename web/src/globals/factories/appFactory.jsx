@@ -73,8 +73,10 @@ const mapStateToProps = state => {
     access: state.user.access,
     refresh: state.user.refresh,
     clientId: state.user.clientId,
+    countryId: state.user.countryId,
     displayPreferences: state.user.displayPreferences,
     drawerOpen: state.user.drawerOpen,
+    hasToAcceptLicenseId: state.user.jwt.hasToAcceptLicenseId,
     // For render()
     isLoggedOut,
     loggedOutReason,
@@ -141,7 +143,10 @@ export const appFactory = compose(
     )
 
     return React.createFactory(
-      connect(mapStateToProps, mapDispatchToProps)(App)
+      connect(
+        mapStateToProps,
+        mapDispatchToProps
+      )(App)
     )
   },
   routerFactory

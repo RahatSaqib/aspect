@@ -48,6 +48,9 @@ exports[`ReportList component should shallow render correctly 1`] = `
     <DataTableProgressBar
       disabled={true}
     />
+    <withState(withHandlers(ExportListButton))
+      reportName="Report"
+    />
     <pure(withHandlers(EmptyList))
       intl={
         Object {

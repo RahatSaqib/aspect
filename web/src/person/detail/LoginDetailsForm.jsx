@@ -1,11 +1,10 @@
-import _ from 'lodash'
 import classnames from 'classnames/bind'
 import React from 'react'
 import { compose, lifecycle, withHandlers, pure } from 'recompose'
-import { Button } from 'react-toolbox/lib/button'
-import { Input } from 'react-toolbox/lib/input'
-import { Dialog } from 'react-toolbox/lib/dialog'
-
+import Button from '@material-ui/core/Button'
+import TextField from '@material-ui/core/TextField'
+import AspectDialog from '../../components/shared/AspectDialog'
+import AspectSwitch from '../../components/shared/AspectSwitch'
 import StrongPasswordInput from '../../components/shared/StrongPasswordInput'
 import recomposeForm from '../../components/recomposeForm'
 import messages from './messages'
@@ -13,7 +12,7 @@ import messages from './messages'
 const cssClasses = classnames.bind(require('./PersonDetail.css'))
 
 export function validate(
-  { username, newPassword, confirmNewPassword, currentPassword },
+  { username, newPassword, confirmNewPassword, currentPassword, shouldPrefill },
   { intl, currentPasswordInputDialogOpen }
 ) {
   const errors = {}
@@ -42,6 +41,11 @@ export function validate(
       )
     }
   }
+  if (shouldPrefill && !newPassword) {
+    errors.currentPassword = intl.formatMessage(
+      messages.currentPasswordRequired
+    )
+  }
   return errors
 }
 
@@ -50,11 +54,18 @@ const DEFAULT_VALUES = {
   newPassword: '',
   confirmNewPassword: '',
   currentPassword: '',
+  userLockedOut: false,
 }
 
-const getInitialValues = loginDetails => ({
+const getInitialValues = (loginDetails, shouldPrefill, emailValue) => ({
   ...DEFAULT_VALUES,
-  username: loginDetails.get('username') || DEFAULT_VALUES.username,
+  username: shouldPrefill
+    ? emailValue
+    : loginDetails.get('username') || DEFAULT_VALUES.username,
+  // username: loginDetails.get('username') || DEFAULT_VALUES.username,
+  userLockedOut:
+    loginDetails.get('userLockedOut') || DEFAULT_VALUES.userLockedOut,
+  shouldPrefill,
 })
 
 const enhance = compose(
@@ -62,18 +73,24 @@ const enhance = compose(
   lifecycle({
     componentWillMount() {
       const onChange = values => this.setState({ values })
-
       this.setState({
         onChange,
-        values: getInitialValues(this.props.loginDetails),
+        values: getInitialValues(
+          this.props.loginDetails,
+          this.props.shouldPrefill,
+          this.props.emailValue
+        ),
       })
     },
 
     componentWillReceiveProps(nextProps) {
-      const { loginDetails } = nextProps
+      const { loginDetails, shouldPrefill, emailValue } = nextProps
+
       if (this.props.loginDetails !== loginDetails) {
         // Re-initialize
-        this.state.onChange(getInitialValues(loginDetails))
+        this.state.onChange(
+          getInitialValues(loginDetails, shouldPrefill, emailValue)
+        )
       }
     },
   }),
@@ -81,16 +98,20 @@ const enhance = compose(
     fields: [
       {
         fieldName: 'username',
-        valueFromChangeEvent: _.identity,
+        valueFromChangeEvent: it => it.target.value,
       },
       'newPassword',
       {
         fieldName: 'confirmNewPassword',
-        valueFromChangeEvent: _.identity,
+        valueFromChangeEvent: it => it.target.value,
       },
       {
         fieldName: 'currentPassword',
-        valueFromChangeEvent: _.identity,
+        valueFromChangeEvent: it => it.target.value,
+      },
+      {
+        fieldName: 'userLockedOut',
+        valueFromChangeEvent: it => it.target.checked,
       },
     ],
     validate,
@@ -117,6 +138,8 @@ export const LoginDetailsForm = ({
   loading,
   currentPasswordInputDialogOpen,
   closeCurrentPasswordInputDialog,
+  canModify = true,
+  // classes,
   // --- injected by recompose ---
   onSubmit,
   form,
@@ -124,6 +147,7 @@ export const LoginDetailsForm = ({
   meta,
   onUsernameChange,
   onNewPasswordChange,
+  onUserLockedOutChange,
   onConfirmNewPasswordChange,
   onCurrentPasswordChange,
   onCurrentPasswordKeyPress,
@@ -131,7 +155,9 @@ export const LoginDetailsForm = ({
 }) => (
   <form onSubmit={onSubmit} className={cssClasses('Form')}>
     <div className={cssClasses('Form__Content')}>
-      <Input
+      <TextField
+        autoFocus
+        fullWidth
         type="text"
         name="username"
         label={intl.formatMessage(messages.username)}
@@ -139,11 +165,15 @@ export const LoginDetailsForm = ({
         onChange={onUsernameChange}
         disabled={loading}
         error={meta.username.touched && meta.username.error}
-        maxLength={255}
+        helperText={meta.username.touched && meta.username.error}
+        inputProps={{ maxLength: 255 }}
+        margin="normal"
+        FormHelperTextProps={{
+          margin: 'dense',
+        }}
       />
       <br />
       <StrongPasswordInput
-        // TODO: refactor StrongPasswordInput into react-toolbox or HOC
         intl={intl}
         input={{
           value: values.newPassword,
@@ -161,7 +191,9 @@ export const LoginDetailsForm = ({
         }}
         popOverProps={{}}
       />
-      <Input
+      <TextField
+        autoFocus
+        fullWidth
         type="password"
         name="confirmNewPassword"
         label={intl.formatMessage(messages.confirmNewPassword)}
@@ -169,38 +201,56 @@ export const LoginDetailsForm = ({
         onChange={onConfirmNewPasswordChange}
         disabled={loading}
         error={meta.confirmNewPassword.touched && meta.confirmNewPassword.error}
-        maxLength={100}
+        helperText={
+          meta.confirmNewPassword.touched && meta.confirmNewPassword.error
+        }
+        inputProps={{ maxLength: 100 }}
       />
+      {canModify && (
+        <AspectSwitch
+          name="userLockedOut"
+          checked={values.userLockedOut}
+          onChange={onUserLockedOutChange}
+          labelText={intl.formatMessage(messages.userLockedOutLabel)}
+        />
+      )}
     </div>
     <div className={cssClasses('Form__ActionRow')}>
       <Button
         type="submit"
-        primary
-        raised
+        color="primary"
+        variant="contained"
         disabled={loading || form.pristine || !form.valid || form.submitting}
-        label={intl.formatMessage(messages.save)}
-      />
+      >
+        {intl.formatMessage(messages.save)}
+      </Button>
     </div>
-    <Dialog
+    <AspectDialog
       actions={[
-        {
-          label: intl.formatMessage(messages.cancelCurrentPassword),
-          onClick: closeCurrentPasswordInputDialog,
-          disabled: loading,
-        },
-        {
-          label: intl.formatMessage(messages.submitCurrentPassword),
-          onClick: handleSubmit,
-          disabled: loading || form.pristine || !form.valid || form.submitting,
-        },
+        <Button
+          color="primary"
+          disabled={loading}
+          onClick={closeCurrentPasswordInputDialog}
+        >
+          {intl.formatMessage(messages.cancelCurrentPassword)}
+        </Button>,
+        <Button
+          color="primary"
+          disabled={loading || form.pristine || !form.valid || form.submitting}
+          onClick={handleSubmit}
+        >
+          {intl.formatMessage(messages.submitCurrentPassword)}
+        </Button>,
       ]}
-      active={currentPasswordInputDialogOpen || false}
-      onEscKeyDown={closeCurrentPasswordInputDialog}
-      onOverlayClick={closeCurrentPasswordInputDialog}
+      open={currentPasswordInputDialogOpen || false}
+      onEscapeKeyDown={closeCurrentPasswordInputDialog}
+      onClose={closeCurrentPasswordInputDialog}
       title={intl.formatMessage(messages.currentPasswordDialogHeader)}
     >
       <p>{intl.formatMessage(messages.currentPasswordDialogMessage)}</p>
-      <Input
+      <TextField
+        autoFocus
+        fullWidth
         type="password"
         name="currentPassword"
         value={values.currentPassword}
@@ -208,9 +258,14 @@ export const LoginDetailsForm = ({
         onKeyPress={onCurrentPasswordKeyPress}
         disabled={loading}
         error={meta.currentPassword.touched && meta.currentPassword.error}
-        maxLength={100}
+        helperText={meta.currentPassword.touched && meta.currentPassword.error}
+        inputProps={{ maxLength: 100 }}
+        margin="normal"
+        FormHelperTextProps={{
+          margin: 'dense',
+        }}
       />
-    </Dialog>
+    </AspectDialog>
   </form>
 )
 

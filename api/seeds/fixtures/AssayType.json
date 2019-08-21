@@ -2,59 +2,79 @@
   "data": [
     {
       "name": "MTB/Rif",
-      "i18nKey": "assayTypeMtbRif"
+      "i18nKey": "assayTypeMtbRif",
+      "abbreviation":"TB"
     },
     {
       "name": "Ebola",
-      "i18nKey": "assayTypeEbola"
+      "i18nKey": "assayTypeEbola",
+      "abbreviation":"EB"
     },
     {
       "name": "HIV VL",
-      "i18nKey": "assayTypeHivVl"
+      "i18nKey": "assayTypeHivVl",
+      "abbreviation":"HIV"
     },
     {
       "name": "HIV Qual",
-      "i18nKey": "assayTypeHivQual"
+      "i18nKey": "assayTypeHivQual",
+      "abbreviation":"HIV"
     },
     {
       "name": "CD4 Count",
-      "i18nKey": "assayTypeCD4"
+      "i18nKey": "assayTypeCD4",
+      "abbreviation":"CD4"
     },
     {
       "name": "EID",
-      "i18nKey": "assayTypeEid"
+      "i18nKey": "assayTypeEid",
+      "abbreviation":"EID"
     },
     {
       "name": "HCV",
-      "i18nKey": "assayTypeHcv"
+      "i18nKey": "assayTypeHcv",
+      "abbreviation":"HCV"
+
     },
     {
       "name": "Lipid Panel",
-      "i18nKey": "assayTypeLipidPanel"
+      "i18nKey": "assayTypeLipidPanel",
+      "abbreviation":"LP"
     },
     {
       "name": "Zika",
-      "i18nKey": "assayTypeZika"
+      "i18nKey": "assayTypeZika",
+      "abbreviation":"ZK"
     },
     {
       "name": "Dengue",
-      "i18nKey": "assayTypeDengue"
+      "i18nKey": "assayTypeDengue",
+      "abbreviation":"DG"
     },
     {
       "name": "TB AST",
-      "i18nKey": "assayTypeTbAst"
+      "i18nKey": "assayTypeTbAst",
+      "abbreviation":"TB"
     },
     {
       "name": "TB G&D",
-      "i18nKey": "assayTypeTbGnd"
+      "i18nKey": "assayTypeTbGnd",
+      "abbreviation":"TB"
     },
     {
       "name": "Unknown",
-      "i18nKey": "assayTypeUnknown"
+      "i18nKey": "assayTypeUnknown",
+      "abbreviation":"UK"
     },
     {
       "name": "Generic RDT",
-      "i18nKey": "genericRDT"
+      "i18nKey": "genericRDT",
+      "abbreviation":"RDT"
+    },
+    {
+      "name": "GenoType Test Strip",
+      "i18nKey": "genoTypeTestStrip",
+      "abbreviation":"GTTS"
     }
   ]
 }

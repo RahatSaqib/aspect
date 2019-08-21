@@ -1,9 +1,8 @@
-import _ from 'lodash'
 import classnames from 'classnames/bind'
 import React from 'react'
 import { compose, withState, pure } from 'recompose'
-import { Button } from 'react-toolbox/lib/button'
-import { Input } from 'react-toolbox/lib/input'
+import Button from '@material-ui/core/Button'
+import TextField from '@material-ui/core/TextField'
 
 import StrongPasswordInput from '../../components/shared/StrongPasswordInput'
 import recomposeForm from '../../components/recomposeForm'
@@ -46,7 +45,7 @@ const enhance = compose(
       'newPassword',
       {
         fieldName: 'confirmNewPassword',
-        valueFromChangeEvent: _.identity,
+        valueFromChangeEvent: it => it.target.value,
       },
     ],
     validate,
@@ -67,7 +66,6 @@ export const ResetPasswordEnterPassword = ({
     <div className={cssClasses('Form__Content')}>
       <p>{intl.formatMessage(messages.enterNewPasswordContent)}</p>
       <StrongPasswordInput
-        // TODO: refactor StrongPasswordInput into react-toolbox or HOC
         intl={intl}
         input={{
           value: values.newPassword,
@@ -84,24 +82,29 @@ export const ResetPasswordEnterPassword = ({
         }}
         popOverProps={{}}
       />
-      <Input
+      <TextField
+        fullWidth
         type="password"
         name="confirmNewPassword"
         label={intl.formatMessage(messages.confirmNewPassword)}
         value={values.confirmNewPassword}
         onChange={onConfirmNewPasswordChange}
         error={meta.confirmNewPassword.touched && meta.confirmNewPassword.error}
-        maxLength={500}
+        helperText={
+          meta.confirmNewPassword.touched && meta.confirmNewPassword.error
+        }
+        inputProps={{ maxLength: 100 }}
       />
     </div>
     <div className={cssClasses('Form__ActionRow')}>
       <Button
         type="submit"
-        primary
-        raised
+        variant="contained"
+        color="primary"
         disabled={form.pristine || !form.valid || form.submitting}
-        label={intl.formatMessage(messages.next)}
-      />
+      >
+        {intl.formatMessage(messages.next)}
+      </Button>
       {action}
     </div>
   </form>

@@ -13,8 +13,7 @@ import { defineMessages } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
-import { Checkbox } from 'react-toolbox/lib/checkbox'
-
+import TableBody from '@material-ui/core/TableBody'
 import Button from '@material-ui/core/Button'
 
 import {
@@ -32,6 +31,7 @@ import BrowseEmptyList from '../../globals/components/BrowseEmptyList'
 import BrowseTablePaginator from '../../globals/components/BrowseTablePaginator'
 import DataTableCard from '../../components/shared/DataTableCard'
 import DataTableProgressBar from '../../components/shared/DataTableProgressBar'
+import AspectCheckbox from '../../components/shared/AspectCheckbox'
 import {
   exportDeviceApiKeys,
   generateDeviceApiKeys,
@@ -46,6 +46,7 @@ import {
   DeviceApiKeyDataTableHead,
   DeviceApiKeyDataTableRow,
 } from './DeviceApiKeyDataTable'
+import ExportListButton from '../../globals/components/ExportListButton'
 
 const cssClasses = classnames.bind(require('./DeviceApiKeyList.css'))
 
@@ -149,7 +150,16 @@ const enhance = compose(
     makeSortPageSelector({
       sortCol: 'createdOn',
       sortDir: 'desc',
-    })
+    }),
+    ({ location }) => {
+      const searchParams = new URLSearchParams(location.search)
+      const filtersParams = new URLSearchParams(
+        searchParams.get('filters') || ''
+      )
+      return {
+        filters: _.fromPairs([...filtersParams.entries()]),
+      }
+    }
   ),
   connect(
     state => ({
@@ -185,18 +195,20 @@ const enhance = compose(
       exportDeviceApiKeys,
       sortCol,
       sortDir,
+      table,
       pageAt,
-      pageSize,
     }) => formatType => {
+      const format = formatType.target.id
       const { sanitized, value: filtersParams } = filtersFromLocation(location)
       if (!sanitized) {
         exportDeviceApiKeys(
           filtersParams,
-          formatType,
+          format,
           sortCol,
           sortDir,
           pageAt,
-          pageSize
+          table.get('total') > 0 ? table.get('total') : 1,
+          'deviceApiKey'
         )
       }
     },
@@ -314,8 +326,12 @@ const enhance = compose(
     },
 
     onSelectedChange: ({ dialogState, onChangeDialogState }) => (
-      isInputChecked,
-      { target: { dataset: { deviceApiKeyId } } }
+      {
+        target: {
+          dataset: { deviceApiKeyId },
+        },
+      },
+      isInputChecked
     ) => {
       const { assignerValues } = dialogState
       const nextDeviceApiKeyIds = isInputChecked
@@ -331,10 +347,12 @@ const enhance = compose(
       })
     },
 
-    onRevokedChange: ({ updateSingleDeviceApiKey }) => (
-      revoked,
-      { target: { dataset: { deviceApiKeyId } } }
-    ) => {
+    onRevokedChange: ({ updateSingleDeviceApiKey }) => (event, revoked) => {
+      const {
+        target: {
+          dataset: { deviceApiKeyId },
+        },
+      } = event
       updateSingleDeviceApiKey(deviceApiKeyId, {
         revoked,
       })
@@ -412,8 +430,13 @@ export const DeviceApiKeyList = ({
         intl={intl}
       />
     </div>
-    <DataTableCard>
+    <DataTableCard key={`DataTableCard--table-${location.key}`}>
       <DataTableProgressBar disabled={!table.loading} />
+      <ExportListButton
+        onExcelClick={onExportClick}
+        onCsvClick={onExportClick}
+        reportName="DeviceApiKey"
+      />
       {items.currentIdList.isEmpty() && (
         <BrowseEmptyList history={history} location={location} intl={intl} />
       )}
@@ -431,7 +454,7 @@ export const DeviceApiKeyList = ({
               {
                 key: 'id',
                 label: (
-                  <Checkbox
+                  <AspectCheckbox
                     name="selectAll"
                     disabled={selectableIds.isEmpty()}
                     checked={selectableIds.equals(
@@ -478,23 +501,25 @@ export const DeviceApiKeyList = ({
               },
             ]}
           />
-          {items.currentIdList
-            .map(id => items.byId.get(id))
-            .map(deviceApiKey => (
-              <DeviceApiKeyDataTableRow
-                key={deviceApiKey.get('id')}
-                intl={intl}
-                deviceApiKey={deviceApiKey}
-                disabled={!selectableIds.includes(deviceApiKey.get('id'))}
-                checked={
-                  assignerValues.deviceApiKeyIds.indexOf(
-                    deviceApiKey.get('id')
-                  ) !== -1
-                }
-                onSelectedChange={onSelectedChange}
-                onRevokedChange={onRevokedChange}
-              />
-            ))}
+          <TableBody>
+            {items.currentIdList
+              .map(id => items.byId.get(id))
+              .map(deviceApiKey => (
+                <DeviceApiKeyDataTableRow
+                  key={deviceApiKey.get('id')}
+                  intl={intl}
+                  deviceApiKey={deviceApiKey}
+                  disabled={!selectableIds.includes(deviceApiKey.get('id'))}
+                  checked={
+                    assignerValues.deviceApiKeyIds.indexOf(
+                      deviceApiKey.get('id')
+                    ) !== -1
+                  }
+                  onSelectedChange={onSelectedChange}
+                  onRevokedChange={onRevokedChange}
+                />
+              ))}
+          </TableBody>
         </DeviceApiKeyDataTable>
       )}
       {!items.currentIdList.isEmpty() && (

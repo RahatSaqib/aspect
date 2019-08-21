@@ -61,6 +61,26 @@ async function up(knex) {
 }
 
 async function down(knex) {
+  const longRows = await knex('SmsTemplate')
+    .where(knex.raw('LENGTH(message) > 1000'))
+    .select('id')
+
+  await Promise.all(
+    _.map(longRows, async row => {
+      await knex('MessageType')
+        .where({ smsTemplateId: row.id })
+        .update({ smsTemplateId: null })
+    })
+  )
+
+  await Promise.all(
+    _.map(longRows, async row => {
+      await knex('SmsTemplate')
+        .where(row)
+        .del()
+    })
+  )
+
   await knex.schema.table('SmsTemplate', smsTemplate => {
     smsTemplate
       .string('message', 1000)

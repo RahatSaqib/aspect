@@ -7,10 +7,13 @@ import {
   SHARED_DEFAULT_VALUES,
   sharedMessages,
   sharedFields,
-  withTodayProps,
   connectConsumableFromInventoryItem,
   InventoryAdjustmentDialogForm,
 } from './InventoryAdjustmentDialogForm'
+import {
+  withTodayProps,
+  withDateFormatProps,
+} from '../../shared/utils/dateFormat'
 
 const messages = defineMessages({
   siteShouldBeDifferent: {
@@ -79,6 +82,7 @@ const DEFAULT_VALUES = _.pick(SHARED_DEFAULT_VALUES, [
 const enhance = compose(
   pure,
   withTodayProps,
+  withDateFormatProps,
   lifecycle({
     componentWillMount() {
       const onChange = values => this.setState({ values })

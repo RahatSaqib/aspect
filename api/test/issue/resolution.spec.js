@@ -238,7 +238,9 @@ describe('Issue Resolution', () => {
     { countryAbbreviation, partnerId }
   ) {
     // get 1st site for current partner
-    const { s: { id: siteId, geographyId } } = await getSite(knex, {
+    const {
+      s: { id: siteId, geographyId },
+    } = await getSite(knex, {
       countryAbbreviation,
       partnerId,
     })
@@ -1007,7 +1009,6 @@ describe('Issue Resolution', () => {
           geographyId: device.geographyId,
           siteId: device.siteId,
           deviceId: device.id,
-          resultWorkflowStatusId: resultWorkflowStatus.id,
           resultSourceId: resultSource.id,
           resultTypeId: resultType.id,
           sampleId,
@@ -1016,6 +1017,20 @@ describe('Issue Resolution', () => {
           startedOn: subHours(now, 2),
           endedOn: now,
         })
+
+        const [resultWorkflowStatusId] = await knex('ResultWorkflowLog').insert(
+          {
+            resultId,
+            resultWorkflowStatusId: resultWorkflowStatus.id,
+            changedOn: now,
+            createdOn: now,
+          }
+        )
+        await knex('Result')
+          .where('id', resultId)
+          .update({
+            resultWorkflowStatusLogId: resultWorkflowStatusId,
+          })
         return resultId
       }
 

@@ -1,4 +1,9 @@
-module.exports = require('../utils').seed(seed)
+module.exports = require('../utils').seed(seed, __filename)
+
+const _ = require('lodash')
+const bcrypt = require('bcrypt')
+const Promise = require('bluebird')
+const { addMilliseconds, addMinutes, subMinutes, subDays } = require('date-fns')
 
 const config = require('../../src/config')
 const {
@@ -19,20 +24,11 @@ const {
   resultWorkflowStatusToId,
   unitToId,
 } = require('../../src/shared/dictionary')
-const _ = require('lodash')
-const bcrypt = require('bcrypt')
-const Promise = require('bluebird')
 const { randomToken } = require('../../src/deviceApi/apiKey')
 const geography = require('./fixtures/geography.json')
 const patients = require('./fixtures/patients.json')
 const dashboardWidget = require('./fixtures/dashboardWidget.json')
 const { errorCodes } = require('./fixtures/errorCodes.js')
-const {
-  addMilliseconds,
-  addMinutes,
-
-  subDays,
-} = require('date-fns')
 
 const millisInHour = 1000 * 60 * 60
 const millisInMinute = 1000 * 60
@@ -53,7 +49,7 @@ function calculateDateForResult(
 ) {
   const daysToSubtract =
     resultTimeFrameInDays -
-    Math.ceil(currentResult / totalResults * resultTimeFrameInDays)
+    Math.ceil((currentResult / totalResults) * resultTimeFrameInDays)
 
   return addMilliseconds(
     subDays(now, daysToSubtract),
@@ -69,7 +65,6 @@ async function seed(knex) {
   if (existingAdminUser) {
     return
   }
-
   // Create admin user and audit fields
   const [adminId] = await knex('User').insert({
     name: 'admin',
@@ -722,6 +717,7 @@ async function seed(knex) {
 
   const [assayGeneXpertMtbRifId] = await knex('Assay').insert({
     name: 'GeneXpert MTB/Rif',
+    abbreviation: 'GX MTB/Rif',
     i18nKey: 'assayGeneXpertMtbRif',
     externalId: 'GxMtbRif',
     assayTypeId: assayTypeMTBRifId,
@@ -737,6 +733,7 @@ async function seed(knex) {
 
   const [assayGeneXpertMtbRifUltraId] = await knex('Assay').insert({
     name: 'GeneXpert MTB/Rif Ultra',
+    abbreviation: 'GX MTB/Ultra',
     i18nKey: 'assayGeneXpertMtbRifUltra',
     externalId: 'GxMtbRifUltra',
     assayTypeId: assayTypeMTBRifId,
@@ -752,6 +749,7 @@ async function seed(knex) {
 
   const [assayGeneXpertHiv1VlId] = await knex('Assay').insert({
     name: 'GeneXpert HIV-1 VL',
+    abbreviation: 'GX HIV VL',
     i18nKey: 'assayGeneXpertHiv1Vl',
     externalId: 'GxHiv1Vl',
     assayTypeId: assayTypeHivVlId,
@@ -767,6 +765,7 @@ async function seed(knex) {
 
   const [assayGeneXpertHiv1QualId] = await knex('Assay').insert({
     name: 'GeneXpert HIV-1 Qual',
+    abbreviation: 'GX HIV Qual',
     i18nKey: 'assayGeneXpertHiv1Qual',
     externalId: 'GxHiv1Qual',
     assayTypeId: assayTypeHivQualId,
@@ -782,6 +781,7 @@ async function seed(knex) {
 
   const [assayGeneXpertEbolaId] = await knex('Assay').insert({
     name: 'GeneXpert Ebola',
+    abbreviation: 'GX Ebola',
     i18nKey: 'assayGeneXpertEbola',
     externalId: 'GxEbola',
     assayTypeId: assayTypeEbolaId,
@@ -797,6 +797,7 @@ async function seed(knex) {
 
   await knex('Assay').insert({
     name: 'GeneXpert Unknown',
+    abbreviation: 'GX UK',
     i18nKey: 'assayGeneXpertUnknown',
     externalId: 'GxUnknown',
     assayTypeId: assayTypeUnknownId,
@@ -807,6 +808,7 @@ async function seed(knex) {
 
   const [assayGeneXpertHcvId] = await knex('Assay').insert({
     name: 'GeneXpert HCV',
+    abbreviation: 'GX HCV',
     i18nKey: 'assayGeneXpertHcv',
     externalId: 'GxHcv',
     assayTypeId: assayTypeHcvId,
@@ -822,6 +824,7 @@ async function seed(knex) {
 
   const [assayDaktariHcvId] = await knex('Assay').insert({
     name: 'Daktari HCV',
+    abbreviation: 'DAK HCV',
     i18nKey: 'assayDaktariHcv',
     externalId: 'DaktariHcv',
     assayTypeId: assayTypeHcvId,
@@ -837,6 +840,7 @@ async function seed(knex) {
 
   const [assayDaktariHivVlId] = await knex('Assay').insert({
     name: 'Daktari HIV-VL',
+    abbreviation: 'DAK HIV VL',
     i18nKey: 'assayDaktariHivVl',
     externalId: 'DaktariHivVl',
     assayTypeId: assayTypeHivVlId,
@@ -852,6 +856,7 @@ async function seed(knex) {
 
   const [assayDaktariCD4Id] = await knex('Assay').insert({
     name: 'Daktari CD4',
+    abbreviation: 'DAK CD4',
     i18nKey: 'assayDaktariCD4',
     externalId: 'DaktariCD4',
     assayTypeId: assayTypeCD4Id,
@@ -867,6 +872,7 @@ async function seed(knex) {
 
   await knex('Assay').insert({
     name: 'Afinion HIV VL',
+    abbreviation: 'AF HIV VL',
     i18nKey: 'assayAfinionHivVl',
     externalId: 'AfinionHivVl',
     assayTypeId: assayTypeHivVlId,
@@ -887,6 +893,7 @@ async function seed(knex) {
 
   await knex('Assay').insert({
     name: 'Afinion Lipid Panel',
+    abbreviation: 'AF LP',
     i18nKey: 'assayAfinionLipidPanel',
     externalId: 'LipidPanel',
     assayTypeId: assayTypeLipidPanelId,
@@ -915,6 +922,7 @@ async function seed(knex) {
 
   await knex('Assay').insert({
     name: 'Q HIV VL',
+    abbreviation: 'Q HIV VL',
     i18nKey: 'assayQHivVl',
     externalId: 'HivVl',
     assayTypeId: assayTypeHivVlId,
@@ -926,6 +934,7 @@ async function seed(knex) {
 
   await knex('Assay').insert({
     name: 'Abbott m2000 HIV VL',
+    abbreviation: 'm2000 HIV VL',
     i18nKey: 'AssayAbbottM2000HivVl',
     externalId: 'HivVl',
     assayTypeId: assayTypeHivVlId,
@@ -975,6 +984,7 @@ async function seed(knex) {
 
   await knex('Assay').insert({
     name: 'Abbott m2000 EID',
+    abbreviation: 'm2000 EID',
     i18nKey: 'AssayAbbottM2000Eid',
     externalId: 'EID',
     assayTypeId: assayTypeEid,
@@ -1031,6 +1041,7 @@ async function seed(knex) {
 
   await knex('Assay').insert({
     name: 'CHAI HIV VL',
+    abbreviation: 'CHAI HIV VL',
     i18nKey: 'AssayChaiHivVl',
     externalId: 'HivVl',
     assayTypeId: assayTypeHivVlId,
@@ -1095,6 +1106,7 @@ async function seed(knex) {
 
   await knex('Assay').insert({
     name: 'CHAI EID',
+    abbreviation: 'CHAI EID',
     i18nKey: 'AssayChaiEid',
     externalId: 'EID',
     assayTypeId: assayTypeEid,
@@ -1164,6 +1176,7 @@ async function seed(knex) {
 
   const [assayCommCareHiv] = await knex('Assay').insert({
     name: 'CommCare HIV',
+    abbreviation: 'CC HIV',
     i18nKey: 'commCareHiv',
     externalId: 'CommCareHiv',
     assayTypeId: assayTypeEid,
@@ -1261,7 +1274,12 @@ async function seed(knex) {
 
   // GeneXpert HIV-1 Viral Load
   await knex('ResultCategoryAssay').insert({
-    resultCategoryId: resultCategoryDetectedId,
+    resultCategoryId: resultCategoryLessThan1000,
+    assayId: assayGeneXpertHiv1VlId,
+  })
+
+  await knex('ResultCategoryAssay').insert({
+    resultCategoryId: resultCategoryMoreThan1000,
     assayId: assayGeneXpertHiv1VlId,
   })
 
@@ -1551,7 +1569,7 @@ async function seed(knex) {
   })
 
   // Result Workflow Status
-  const processed = await resultWorkflowStatusToId('Processed')
+  const deliverable = await resultWorkflowStatusToId('Deliverable')
 
   // Create geographic hierarchy
   const countries = {}
@@ -1570,13 +1588,18 @@ async function seed(knex) {
       'exportColumns',
       'inventoryDaysThreshold',
       'monthStartsOnDay',
+      'tagRegexSampleId',
+      'tagRegexNotes',
+      'tagRegexPatientId',
     ])
     const [countryId] = await knex('Country').insert(countryData)
     countryData.id = countryId
     countries[country.abbreviation] = countryData
     countryData.states = {}
 
-    const [countryGeographyId] = await knex('Geography').insert({ countryId })
+    const [countryGeographyId] = await knex('Geography').insert({
+      countryId,
+    })
     countryData.geographyId = countryGeographyId
 
     await Promise.each(country.states || [], async state => {
@@ -1675,8 +1698,8 @@ async function seed(knex) {
       siteId: site.id,
       createdOn: new Date(+now - 3 * _.random(10) * millisInHour),
       updatedOn: new Date(+now - _.random(10) * millisInHour),
-      lastPingOn: new Date(+now - _.random(10) * millisInHour / 3),
-      lastSeenOn: new Date(+now - _.random(10) * millisInHour / 3),
+      lastPingOn: new Date(+now - (_.random(10) * millisInHour) / 3),
+      lastSeenOn: new Date(+now - (_.random(10) * millisInHour) / 3),
     })
   )
 
@@ -1708,8 +1731,8 @@ async function seed(knex) {
       deviceId: i === 0 ? routerId : null,
       createdOn: new Date(+now - 3 * i * millisInHour),
       updatedOn: new Date(+now - i * millisInHour),
-      lastPingOn: new Date(+now - i * millisInHour / 3),
-      lastSeenOn: new Date(+now - i * millisInHour / 3),
+      lastPingOn: new Date(+now - (i * millisInHour) / 3),
+      lastSeenOn: new Date(+now - (i * millisInHour) / 3),
       hostId: _.times(8, () =>
         String.fromCharCode(65 + i + (_.random(1) > 0 ? 32 : 0))
       ).join(''),
@@ -1783,7 +1806,10 @@ async function seed(knex) {
       resultText: 'HIV Detected (log {1})',
       category1: resultCategoryDetectedId,
     },
-    { resultText: 'HIV Not Detected', category1: resultCategoryNotDetectedId },
+    {
+      resultText: 'HIV Not Detected',
+      category1: resultCategoryNotDetectedId,
+    },
     { resultText: 'No Result', category1: resultCategoryNoResultId },
     { resultText: 'Error', category1: resultCategoryErrorId },
     { resultText: 'Invalid', category1: resultCategoryInvalidId },
@@ -1835,13 +1861,12 @@ async function seed(knex) {
         geographyId: siteData.geographyId,
         siteId: siteData.id,
         deviceId: device.id,
-        resultWorkflowStatusId: processed,
         longitude: -81.581222,
         latitude: 28.419348,
         resultSourceId: resultSourceDiagnosticId,
         resultTypeId: resultTypePatientId,
         sampleId: sample.id,
-        sampleRunNumber: `${i % 2 + 1}`,
+        sampleRunNumber: `${(i % 2) + 1}`,
         sampleGroup: `GRP-HIV-${i % 5}`,
         resultCategory1: result.category1,
         resultData: JSON.stringify(resultData),
@@ -1858,7 +1883,7 @@ async function seed(knex) {
         patientData: JSON.stringify(patients[_.random(patientNumber)]),
         senderVersion: '4.4',
         senderOperator: 'Aaron',
-        notes: 'This is an HIV test result',
+        notes: 'This is an HIV test result, 123-12',
         errorCode:
           result.category1 === resultCategoryErrorId
             ? errorCodes[_.random(errorCodes.length)]
@@ -1873,14 +1898,18 @@ async function seed(knex) {
 
   await Promise.each(resultDatas, async resultData => {
     const resultId = await knex('Result').insert(resultData)
-    await knex('ResultWorkflowLog').insert({
+    const [lastLogId] = await knex('ResultWorkflowLog').insert({
       resultId,
-      resultWorkflowStatusId: processed,
+      resultWorkflowStatusId: deliverable,
       operator: 'Aaron',
-      changedOn: addMinutes(now, 90),
-      createdOn: addMinutes(now, 90),
+      changedOn: subMinutes(now, 90),
+      createdOn: subMinutes(now, 90),
       createdBy: adminId,
     })
+
+    await knex('Result')
+      .where('id', resultId)
+      .update({ resultWorkflowStatusLogId: lastLogId })
   })
 
   // Job Functions
@@ -1904,13 +1933,19 @@ async function seed(knex) {
     partnerId: partnerTwoId,
   })
 
+  const featureBlacklist = ['clinicalIndicators', 'operationalData']
+
   // assign features to JobFeatures
-  await assignAllFeaturesToJobFunctionIds(knex, [
-    jobFunctionIdAdmin,
-    jobFunctionIdManager,
-    jobFunctionIdPartnerTwo,
-    jobFunctionIdClinician,
-  ])
+  await assignAllFeaturesToJobFunctionIds(
+    knex,
+    [
+      jobFunctionIdAdmin,
+      jobFunctionIdManager,
+      jobFunctionIdPartnerTwo,
+      jobFunctionIdClinician,
+    ],
+    featureBlacklist
+  )
 
   // assign permissions to job functions
   const modules = await getPermissionModules(knex)
@@ -1920,11 +1955,39 @@ async function seed(knex) {
       jobFunctionId: jobFunctionIdAdmin,
       permissionId: modules.deviceApiKey.admin,
     },
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.device.admin },
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.person.admin },
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.result.admin },
+    {
+      jobFunctionId: jobFunctionIdAdmin,
+      permissionId: modules.device.admin,
+    },
+    {
+      jobFunctionId: jobFunctionIdAdmin,
+      permissionId: modules.person.admin,
+    },
+    {
+      jobFunctionId: jobFunctionIdAdmin,
+      permissionId: modules.treatmentStatus.admin,
+    },
+    {
+      jobFunctionId: jobFunctionIdManager,
+      permissionId: modules.treatmentStatus.admin,
+    },
+    {
+      jobFunctionId: jobFunctionIdClinician,
+      permissionId: modules.treatmentStatus.admin,
+    },
+    {
+      jobFunctionId: jobFunctionIdPartnerTwo,
+      permissionId: modules.treatmentStatus.admin,
+    },
+    {
+      jobFunctionId: jobFunctionIdAdmin,
+      permissionId: modules.result.admin,
+    },
     { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.site.admin },
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.assay.admin },
+    {
+      jobFunctionId: jobFunctionIdAdmin,
+      permissionId: modules.assay.admin,
+    },
     {
       jobFunctionId: jobFunctionIdAdmin,
       permissionId: modules.inventory.admin,
@@ -1938,32 +2001,68 @@ async function seed(knex) {
       permissionId: modules.issue.admin,
     },
     { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.task.admin },
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.report.admin },
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.browse.view },
+    {
+      jobFunctionId: jobFunctionIdAdmin,
+      permissionId: modules.report.admin,
+    },
+    {
+      jobFunctionId: jobFunctionIdAdmin,
+      permissionId: modules.browse.view,
+    },
+    {
+      jobFunctionId: jobFunctionIdAdmin,
+      permissionId: modules.reporter.admin,
+    },
 
-    { jobFunctionId: jobFunctionIdManager, permissionId: modules.site.edit },
-    { jobFunctionId: jobFunctionIdManager, permissionId: modules.device.edit },
-    { jobFunctionId: jobFunctionIdManager, permissionId: modules.assay.edit },
+    {
+      jobFunctionId: jobFunctionIdManager,
+      permissionId: modules.site.edit,
+    },
+    {
+      jobFunctionId: jobFunctionIdManager,
+      permissionId: modules.device.edit,
+    },
+    {
+      jobFunctionId: jobFunctionIdManager,
+      permissionId: modules.assay.edit,
+    },
     {
       jobFunctionId: jobFunctionIdManager,
       permissionId: modules.inventory.edit,
     },
+    {
+      jobFunctionId: jobFunctionIdManager,
+      permissionId: modules.reporter.edit,
+    },
 
-    { jobFunctionId: jobFunctionIdPartnerTwo, permissionId: modules.site.edit },
+    {
+      jobFunctionId: jobFunctionIdPartnerTwo,
+      permissionId: modules.site.edit,
+    },
     {
       jobFunctionId: jobFunctionIdPartnerTwo,
       permissionId: modules.device.edit,
     },
 
-    { jobFunctionId: jobFunctionIdClinician, permissionId: modules.site.view },
+    {
+      jobFunctionId: jobFunctionIdClinician,
+      permissionId: modules.site.view,
+    },
     {
       jobFunctionId: jobFunctionIdClinician,
       permissionId: modules.device.view,
     },
-    { jobFunctionId: jobFunctionIdClinician, permissionId: modules.assay.view },
+    {
+      jobFunctionId: jobFunctionIdClinician,
+      permissionId: modules.assay.view,
+    },
     {
       jobFunctionId: jobFunctionIdClinician,
       permissionId: modules.inventory.view,
+    },
+    {
+      jobFunctionId: jobFunctionIdClinician,
+      permissionId: modules.reporter.view,
     },
   ])
 
@@ -2022,7 +2121,10 @@ async function seed(knex) {
 
     { jobFunctionId: jobFunctionIdPartnerTwo, widgetId: widgetIds.sites },
     { jobFunctionId: jobFunctionIdPartnerTwo, widgetId: widgetIds.devices },
-    { jobFunctionId: jobFunctionIdPartnerTwo, widgetId: widgetIds.contacts },
+    {
+      jobFunctionId: jobFunctionIdPartnerTwo,
+      widgetId: widgetIds.contacts,
+    },
 
     { jobFunctionId: jobFunctionIdClinician, widgetId: widgetIds.sites },
     { jobFunctionId: jobFunctionIdClinician, widgetId: widgetIds.devices },

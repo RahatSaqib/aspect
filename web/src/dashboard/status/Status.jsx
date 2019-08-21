@@ -1,3 +1,4 @@
+/* eslint-disable linebreak-style */
 import classnames from 'classnames/bind'
 import React from 'react'
 import { compose, lifecycle, withState } from 'recompose'
@@ -7,14 +8,13 @@ import Helmet from 'react-helmet'
 import { showAcknowledgement } from '../../appNotification/AppNotificationRedux'
 import messages from './messages'
 import SummaryStatus from './SummaryStatus'
-import DeviceStatus from './DeviceStatus'
 import InventoryStatus from './InventoryStatus'
-import ResultStatus from './ResultStatus'
 import SiteStatus from './SiteStatus'
 import ActionStatus from './ActionStatus'
 import TargetStatus from './TargetStatus'
 import Reports from './Reports'
 import BrowseSiteDropdown from '../../globals/components/BrowseSiteDropdown'
+import TreatmentStatus from './TreatmentStatus'
 
 const cssClasses = classnames.bind(require('./Status.css'))
 
@@ -64,6 +64,14 @@ const Status = ({
       className={cssClasses('Section--summary')}
     />
 
+    <TreatmentStatus
+      intl={intl}
+      history={history}
+      location={location}
+      className={cssClasses('Section--withDropdown')}
+      title={intl.formatMessage(messages.treatmentTitle)}
+    />
+
     <TargetStatus
       intl={intl}
       history={history}
@@ -82,28 +90,14 @@ const Status = ({
       setMarginBottom={setMarginBottom}
     />
 
+    {/* ========Commenting out as per ASP-940 ==============
+    
     <ResultStatus
       intl={intl}
       countryIsoAlpha2Code={countryIsoAlpha2Code}
       className={cssClasses('Section--withStatus')}
       title={intl.formatMessage(messages.clinicalTitle)}
-    />
-
-    <InventoryStatus
-      history={history}
-      intl={intl}
-      countryIsoAlpha2Code={countryIsoAlpha2Code}
-      className={cssClasses('Section--withStatus')}
-      title={intl.formatMessage(messages.consumableTitle)}
-    />
-
-    <DeviceStatus
-      history={history}
-      intl={intl}
-      countryIsoAlpha2Code={countryIsoAlpha2Code}
-      className={cssClasses('Section--withStatus')}
-      title={intl.formatMessage(messages.devicesTitle)}
-    />
+    /> */}
 
     <SiteStatus
       history={history}
@@ -111,6 +105,13 @@ const Status = ({
       countryIsoAlpha2Code={countryIsoAlpha2Code}
       className={cssClasses('Section--withStatus')}
       title={intl.formatMessage(messages.sitesTitle)}
+    />
+    <InventoryStatus
+      history={history}
+      intl={intl}
+      countryIsoAlpha2Code={countryIsoAlpha2Code}
+      className={cssClasses('Section--withStatus')}
+      title={intl.formatMessage(messages.consumableTitle)}
     />
 
     <Reports

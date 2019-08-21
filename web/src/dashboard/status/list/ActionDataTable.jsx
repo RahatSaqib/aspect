@@ -1,14 +1,10 @@
-import { themr } from 'react-css-themr'
-import { tableFactory } from 'react-toolbox/lib/table/Table'
-import { TABLE } from 'react-toolbox/lib/identifiers'
+import Table from '@material-ui/core/Table'
 
-import DataTableHead from '../../../globals/components/BrowseDataTableHead'
+import DataTableHead from '../../../components/shared/tableHead'
 import ActionTableRow from './ActionTableRow'
 
-const RawTable = tableFactory(DataTableHead, ActionTableRow)
-export const ActionDataTable = themr(TABLE)(RawTable)
-
 export {
+  Table as ActionDataTable,
   DataTableHead as ActionDataTableHead,
   ActionTableRow as ActionDataTableRow,
 }

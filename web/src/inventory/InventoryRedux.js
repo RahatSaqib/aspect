@@ -15,10 +15,12 @@ import {
   errorPleaseTryAgainInAFewMinutes,
   errorInsufficientScope,
 } from '../error/CommonErrorNotifications'
+import { receivedExportResponse } from '../globals/GlobalsRedux'
 
 export const types = {
   REQUEST_INVENTORY_ITEMS: 'REQUEST_INVENTORY_ITEMS',
   RECEIVE_INVENTORY_ITEMS: 'RECEIVE_INVENTORY_ITEMS',
+  REJECTED_INVENTORY_ITEMS: 'REJECTED_INVENTORY_ITEMS',
   TOGGLE_GROUP_BY_SITE: 'TOGGLE_GROUP_BY_SITE',
 
   RECEIVE_UPDATED_SINGLE_INVENTORY_ITEM:
@@ -53,6 +55,12 @@ function receiveInventoryItems(json, childrenPropertyPath) {
     items: json.data,
     total: json.total,
     childrenPropertyPath,
+  }
+}
+
+function rejectInventoryItems() {
+  return {
+    type: types.REJECTED_INVENTORY_ITEMS,
   }
 }
 
@@ -118,11 +126,13 @@ export function fetchInventoryItems(
           ),
         },
       }
-    ).then(json =>
-      dispatch(
-        receiveInventoryItems(json, groupBySite ? ['inventoryItems'] : [])
-      )
     )
+      .then(json =>
+        dispatch(
+          receiveInventoryItems(json, groupBySite ? ['inventoryItems'] : [])
+        )
+      )
+      .catch(() => dispatch(rejectInventoryItems()))
   }
 }
 
@@ -163,6 +173,62 @@ export function showReceiveInventoryDialog(inventoryItemId) {
 export function hideAdjustInventoryDialog() {
   return {
     type: types.HIDE_ADJUST_INVENTORY_DIALOG,
+  }
+}
+
+export function exportSupplies(
+  filtersParams,
+  sortCol,
+  sortDir,
+  page,
+  pageSize,
+  fileFormat,
+  reportName
+) {
+  return dispatch => {
+    const filters = _.fromPairs([...filtersParams.entries()])
+
+    return aspectFetch(
+      `/inventory/export?${stringify({
+        sortCol,
+        sortDir,
+        page,
+        size: pageSize,
+        format: fileFormat,
+        ...filters,
+      })}`,
+      {
+        errorNotifications: {
+          400: filterFieldsRejectedError(
+            defineMessages({
+              title: {
+                id: 'errorResponseMessages.exportSupplies.GET.400.title',
+                defaultMessage: 'Exporting Supplies Failed',
+              },
+            })
+          ),
+          403: errorInsufficientScope(
+            defineMessages({
+              title: {
+                id: 'errorResponseMessages.exportSupplies.GET.403.title',
+                defaultMessage: 'Insufficient Permissions',
+              },
+            })
+          ),
+          default: errorPleaseTryAgainInAFewMinutes(
+            defineMessages({
+              title: {
+                id: 'errorResponseMessages.exportSupplies.GET.default.title',
+                defaultMessage: 'Exporting Supplies Failed',
+              },
+            })
+          ),
+        },
+      }
+    ).then(async elem => {
+      const file = await elem
+      dispatch(receivedExportResponse(file, fileFormat, reportName))
+    })
   }
 }
 
@@ -385,6 +451,11 @@ export default function inventoryItemsReducer(state = initialState, action) {
           'table',
           receiveTableItems(mutState.table, action.total, action.extraColumns)
         )
+      })
+    case types.REJECTED_INVENTORY_ITEMS:
+      return state.withMutations(mutState => {
+        mutState.set('items', mutState.get('items').clear())
+        mutState.set('table', mutState.get('table').clear())
       })
     case types.TOGGLE_GROUP_BY_SITE:
       return state.setIn(

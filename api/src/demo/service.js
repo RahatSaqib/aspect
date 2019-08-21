@@ -1,9 +1,5 @@
 const _ = require('lodash')
 const Boom = require('boom')
-const { knex } = require('../db')
-const { getConstraints, addConstraints } = require('../auth/constraints')
-const { groupToken, randomToken } = require('../deviceApi/apiKey')
-
 const {
   createFetch,
   base,
@@ -12,6 +8,10 @@ const {
   method,
   body,
 } = require('http-client')
+
+const { knex } = require('../db')
+const { getConstraints, addConstraints } = require('../auth/constraints')
+const { groupToken, randomToken } = require('../deviceApi/apiKey')
 
 async function getDemoDevice(request) {
   const { auth, params } = request
@@ -115,7 +115,16 @@ async function postDemoDeviceResult(request) {
     .leftJoin('ResultCategory as rc1', 'r.resultCategory1', 'rc1.id')
     .leftJoin('ResultCategory as rc2', 'r.resultCategory2', 'rc2.id')
     .leftJoin('ResultType as rt', 'r.resultTypeId', 'rt.id')
-    .leftJoin('ResultWorkflowStatus as rs', 'r.resultWorkflowStatusId', 'rs.id')
+    .leftJoin(
+      'ResultWorkflowLog as rsl',
+      'r.resultWorkflowStatusLogId',
+      'rsl.id'
+    )
+    .leftJoin(
+      'ResultWorkflowStatus as rs',
+      'rsl.resultWorkflowStatusId',
+      'rs.id'
+    )
     .where({ 'r.id': resultId })
     .first(
       'r.resultData',

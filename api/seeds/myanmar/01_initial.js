@@ -1,8 +1,9 @@
-module.exports = require('../utils').seed(seed)
+module.exports = require('../utils').seed(seed, __filename)
 
-const config = require('../../src/config')
 const _ = require('lodash')
 const bcrypt = require('bcrypt')
+
+const config = require('../../src/config')
 const geography = require('./fixtures/geography.json')
 const {
   allAssayTypeToId,
@@ -26,7 +27,6 @@ async function seed(knex) {
   if (existingAdminUser) {
     return
   }
-
   // Create admin user and audit fields
   const [adminId] = await knex('User').insert({
     name: 'admin',
@@ -457,6 +457,7 @@ async function seed(knex) {
 
   const [assayGeneXpertMtbRifId] = await knex('Assay').insert({
     name: 'GeneXpert MTB/Rif',
+    abbreviation: 'GX MTB/Rif',
     i18nKey: 'assayGeneXpertMtbRif',
     externalId: 'GxMtbRif',
     assayTypeId: assayTypeMTBRifId,
@@ -472,6 +473,7 @@ async function seed(knex) {
 
   const [assayGeneXpertMtbRifUltraId] = await knex('Assay').insert({
     name: 'GeneXpert MTB/Rif Ultra',
+    abbreviation: 'GX MTB/Ultra',
     i18nKey: 'assayGeneXpertMtbRifUltra',
     externalId: 'GxMtbRifUltra',
     assayTypeId: assayTypeMTBRifId,
@@ -487,6 +489,7 @@ async function seed(knex) {
 
   const [assayGeneXpertHiv1VlId] = await knex('Assay').insert({
     name: 'GeneXpert HIV-1 VL',
+    abbreviation: 'GX HIV VL',
     i18nKey: 'assayGeneXpertHiv1Vl',
     externalId: 'GxHiv1Vl',
     assayTypeId: assayTypeHivVlId,
@@ -502,6 +505,7 @@ async function seed(knex) {
 
   const [assayGeneXpertHiv1QualId] = await knex('Assay').insert({
     name: 'GeneXpert HIV-1 Qual',
+    abbreviation: 'GX HIV Qual',
     i18nKey: 'assayGeneXpertHiv1Qual',
     externalId: 'GxHiv1Qual',
     assayTypeId: assayTypeHivQualId,
@@ -517,6 +521,7 @@ async function seed(knex) {
 
   const [assayGeneXpertEbolaId] = await knex('Assay').insert({
     name: 'GeneXpert Ebola',
+    abbreviation: 'GX Ebola',
     i18nKey: 'assayGeneXpertEbola',
     externalId: 'GxEbola',
     assayTypeId: assayTypeEbolaId,
@@ -532,6 +537,7 @@ async function seed(knex) {
 
   await knex('Assay').insert({
     name: 'GeneXpert Unknown',
+    abbreviation: 'GX UK',
     i18nKey: 'assayGeneXpertUnknown',
     externalId: 'GxUnknown',
     assayTypeId: assayTypeUnknownId,
@@ -542,6 +548,7 @@ async function seed(knex) {
 
   const [assayGeneXpertHcvId] = await knex('Assay').insert({
     name: 'GeneXpert HCV',
+    abbreviation: 'GX HCV',
     i18nKey: 'assayGeneXpertHcv',
     externalId: 'GeneXpertHcv',
     assayTypeId: assayTypeHcvId,

@@ -15,7 +15,10 @@ const SELECT_LIST_FIELDS = [
 ]
 
 async function getConsumableAssays(request) {
-  const { auth, params: { consumableId } } = request
+  const {
+    auth,
+    params: { consumableId },
+  } = request
 
   const dataConstraints = await getConstraints(auth.credentials)
 
@@ -66,9 +69,14 @@ function selectAssayConsumables(knex, partnerId, assayId, consumableId) {
 }
 
 async function getAssayConsumables(request) {
-  const { auth, params: { assayId } } = request
+  const {
+    auth,
+    params: { assayId },
+  } = request
 
-  const { partner: { id: partnerId } } = await getConstraints(auth.credentials)
+  const {
+    partner: { id: partnerId },
+  } = await getConstraints(auth.credentials)
 
   const assayConsumables = await selectAssayConsumables(
     query('Get assay consumable'),
@@ -80,7 +88,10 @@ async function getAssayConsumables(request) {
 }
 
 async function createAssayConsumable(request) {
-  const { auth, payload: { assayId, consumableId, quantity } } = request
+  const {
+    auth,
+    payload: { assayId, consumableId, quantity },
+  } = request
 
   const dataConstraints = await getConstraints(auth.credentials)
 

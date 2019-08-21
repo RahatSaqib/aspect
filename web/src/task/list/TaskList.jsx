@@ -1,14 +1,22 @@
 import _ from 'lodash'
 import classnames from 'classnames/bind'
 import React from 'react'
-import { compose, withProps, withHandlers, lifecycle } from 'recompose'
+import PropTypes from 'prop-types'
+import {
+  compose,
+  withProps,
+  withHandlers,
+  lifecycle,
+  setPropTypes,
+  defaultProps,
+} from 'recompose'
 import { defineMessages } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
+/* import TableBody from '@material-ui/core/TableBody'
 
-import { Button } from 'react-toolbox/lib/button'
-
+import AspectButton from '../../components/shared/AspectButton' */
 import {
   makeSortPageSelector,
   makeSearchParamsSanitizer,
@@ -16,8 +24,8 @@ import {
 } from '../../shared/selectors/searchParams'
 import { sanitizeFiltersStringBy } from '../../filter/utils'
 // import FiltersPanel from '../../filter/popover/FiltersPanel'
-import ButtonGroup from '../../components/themedReactToolbox/ButtonGroup'
-import StyledDropdown from '../../components/themedReactToolbox/StyledDropdown'
+// import ButtonGroup from '../../components/themedReactToolbox/ButtonGroup'
+import StyledDropdown from '../../components/shared/StyledDropdown'
 import BrowseEmptyList from '../../globals/components/BrowseEmptyList'
 import BrowseTablePaginator from '../../globals/components/BrowseTablePaginator'
 import DataTableCard from '../../components/shared/DataTableCard'
@@ -69,7 +77,7 @@ const FILTERS_CONFIG = {
 }
 
 export const searchSanitizer = makeSearchParamsSanitizer({
-  availableSortCol: ['topic', 'site', 'time'],
+  availableSortCol: ['issueCategory', 'site', 'time'],
 })
 export const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
 export const filtersFromLocation = composeSanitizer(
@@ -80,7 +88,26 @@ export const filtersFromLocation = composeSanitizer(
   searchSanitizer
 )
 
+function mergeFilterOptions(searchParams, filterOptions = {}) {
+  const options = _.pickBy(filterOptions, _.identity)
+  Object.keys(options).forEach(key => {
+    const param = searchParams.get(key)
+    const option = options[key]
+    if (param && _.isEqual(param, option)) {
+      return
+    }
+    searchParams.set(key, option)
+  })
+  return searchParams
+}
+
 const enhance = compose(
+  setPropTypes({
+    baseFilterOptions: PropTypes.object,
+  }),
+  defaultProps({
+    baseFilterOptions: {},
+  }),
   withProps(
     makeSortPageSelector({
       sortCol: 'time',
@@ -105,22 +132,34 @@ const enhance = compose(
       sortDir,
       pageAt,
       pageSize,
+      filterOptions,
     }) => () => {
       const { sanitized, value: filtersParams } = filtersFromLocation(location)
       if (!sanitized) {
-        fetchTasks(filtersParams, sortCol, sortDir, pageAt, pageSize)
+        fetchTasks(
+          mergeFilterOptions(filtersParams, filterOptions),
+          sortCol,
+          sortDir,
+          pageAt,
+          pageSize
+        )
       }
     },
 
-    onAlertTypeClick: ({ history, location }) => ({
-      currentTarget: { dataset: { alertType } },
+    onAlertTypeClick: ({ history, location, filterOptions }) => ({
+      currentTarget: {
+        dataset: { alertType },
+      },
     }) => {
       const searchParams = new URLSearchParams(location.search)
       const filtersParams = new URLSearchParams(
         searchParams.get('filters') || ''
       )
       filtersParams.set('alertType', alertType)
-      searchParams.set('filters', filtersParams)
+      searchParams.set(
+        'filters',
+        mergeFilterOptions(filtersParams, filterOptions)
+      )
 
       history.replace({
         ...location,
@@ -128,13 +167,18 @@ const enhance = compose(
       })
     },
 
-    onTopicChange: ({ history, location }) => topic => {
+    onIssueCategoryChange: ({ history, location, filterOptions }) => ({
+      target: { value: issueCategory },
+    }) => {
       const searchParams = new URLSearchParams(location.search)
       const filtersParams = new URLSearchParams(
         searchParams.get('filters') || ''
       )
-      filtersParams.set('topic', topic)
-      searchParams.set('filters', filtersParams)
+      filtersParams.set('issueCategory', issueCategory)
+      searchParams.set(
+        'filters',
+        mergeFilterOptions(filtersParams, filterOptions)
+      )
 
       history.replace({
         ...location,
@@ -142,23 +186,28 @@ const enhance = compose(
       })
     },
 
-    onRowClick: ({ history }) => ({ currentTarget: { dataset: { taskId } } }) =>
-      history.push(`/task-list/${taskId}`),
+    onRowClick: ({ history }) => ({
+      currentTarget: {
+        dataset: { taskId },
+      },
+    }) => history.push(`/task-list/${taskId}`),
   }),
   lifecycle({
     componentWillMount() {
-      const { sanitized, value: searchParams } = searchSanitizer(
-        this.props.location
-      )
+      const { location, history, filterOptions } = this.props
+      const { sanitized, value: searchParams } = searchSanitizer(location)
       const {
         sanitized: filtersSanitized,
         value: filtersParams,
       } = filtersSanitizer(searchParams.get('filters') || '')
-      if (sanitized || filtersSanitized) {
-        searchParams.set('filters', filtersParams)
+      if (sanitized || filtersSanitized || filterOptions) {
+        searchParams.set(
+          'filters',
+          mergeFilterOptions(filtersParams, filterOptions)
+        )
 
-        this.props.history.replace({
-          ...this.props.location,
+        history.replace({
+          ...location,
           search: searchParams.toString(),
         })
       }
@@ -174,13 +223,14 @@ const enhance = compose(
       }
     },
   }),
-  withProps(({ location }) => {
+  withProps(({ location, filterOptions }) => {
     const searchParams = new URLSearchParams(location.search)
-    const filtersParams = new URLSearchParams(searchParams.get('filters') || '')
+    let filtersParams = new URLSearchParams(searchParams.get('filters') || '')
+    filtersParams = mergeFilterOptions(filtersParams, filterOptions)
 
     return {
       alertType: filtersParams.get('alertType') || 'all',
-      topic: filtersParams.get('topic') || 'all',
+      issueCategory: filtersParams.get('issueCategory') || 'all',
     }
   })
 )
@@ -191,12 +241,11 @@ export const TaskList = ({
   location,
   table,
   items,
-  countByAlert,
+  filterOptions,
   // --- injected by recompose ---
-  alertType,
-  topic,
-  onAlertTypeClick,
-  onTopicChange,
+
+  issueCategory,
+  onIssueCategoryChange,
   sortCol,
   sortDir,
   pageAt,
@@ -206,54 +255,64 @@ export const TaskList = ({
   <div className={cssClasses('Container')}>
     <Helmet title={intl.formatMessage(messages.tasksTitle)} />
     <div className={cssClasses('FiltersGroup')}>
+      {/*
       <ButtonGroup adjacent className={cssClasses('FiltersGroup__Child')}>
-        <Button
-          primary
-          raised
+        <AspectButton
+          color="primary"
+          variant="contained"
+
           inverse={alertType !== 'mine'}
-          label="My alerts"
           data-alert-type="mine"
           onClick={onAlertTypeClick}
-        />
-        <Button
+        >
+          My alerts
+        </AspectButton>
+        <AspectButton
           className={cssClasses('Button--mini')}
-          primary
-          raised
-          label={`${countByAlert.get('mine', 0)}`}
-        />
+          color="primary"
+          variant="contained"
+        >
+          {`${countByAlert.get('mine', 0)}`}
+        </AspectButton>
       </ButtonGroup>
       <ButtonGroup adjacent className={cssClasses('FiltersGroup__Child')}>
-        <Button
-          primary
-          raised
+        <AspectButton
+          color="primary"
+          variant="contained"
           inverse={alertType !== 'snoozed'}
-          label="Snoozed"
           data-alert-type="snoozed"
           onClick={onAlertTypeClick}
-        />
-        <Button
+        >
+          Snoozed
+        </AspectButton>
+        <AspectButton
           className={cssClasses('Button--mini')}
-          primary
-          raised
-          label={`${countByAlert.get('snoozed', 0)}`}
-        />
+          color="primary"
+          variant="contained"
+        >
+          {`${countByAlert.get('snoozed', 0)}`}
+        </AspectButton>
       </ButtonGroup>
+
       <ButtonGroup adjacent className={cssClasses('FiltersGroup__Child')}>
-        <Button
-          primary
-          raised
+        <AspectButton
+          color="primary"
+          variant="contained"
           inverse={alertType !== 'all'}
-          label="All"
           data-alert-type="all"
           onClick={onAlertTypeClick}
-        />
-        <Button
+        >
+          All
+        </AspectButton>
+        <AspectButton
           className={cssClasses('Button--mini')}
-          primary
-          raised
-          label={`${countByAlert.get('total', 0)}`}
-        />
+          color="primary"
+          variant="contained"
+        >
+          {`${countByAlert.get('total', 0)}`}
+        </AspectButton>
       </ButtonGroup>
+      */}
       <div
         className={cssClasses(
           'FiltersGroup__Child',
@@ -261,7 +320,7 @@ export const TaskList = ({
         )}
       >
         <StyledDropdown
-          value={topic}
+          value={issueCategory}
           source={[
             {
               value: 'all',
@@ -272,19 +331,19 @@ export const TaskList = ({
               label: 'Device',
             },
             {
-              value: 'consumable',
-              label: 'Consumable',
+              value: 'reagent',
+              label: 'Reagent',
             },
             {
-              value: 'health',
-              label: 'Health',
+              value: 'data',
+              label: 'Data',
             },
             {
-              value: 'site',
-              label: 'Sites',
+              value: 'connectivity',
+              label: 'Connectivity',
             },
           ]}
-          onChange={onTopicChange}
+          onChange={onIssueCategoryChange}
         />
       </div>
       {/* <div className={cssClasses('FiltersGroup__Child')}>
@@ -299,7 +358,7 @@ export const TaskList = ({
         />
       </div> */}
     </div>
-    <DataTableCard>
+    <DataTableCard key={`DataTableCard--table-${location.key}`}>
       <DataTableProgressBar disabled={!table.loading} />
       {items.currentIdList.isEmpty() && (
         <BrowseEmptyList history={history} location={location} intl={intl} />
@@ -319,7 +378,7 @@ export const TaskList = ({
                 key: 'icon',
               },
               {
-                key: 'topic',
+                key: 'issueCategory',
                 label: intl.formatMessage(messages.topic),
                 sortable: true,
               },
@@ -333,25 +392,33 @@ export const TaskList = ({
                 label: intl.formatMessage(messages.time),
                 sortable: true,
               },
-              {
-                key: 'alert',
-              },
             ]}
           />
           {items.currentIdList
             .map(id => items.byId.get(id))
-            .map(task => (
-              <TaskDataTableRow
-                key={task.get('id')}
-                intl={intl}
-                messages={messages}
-                task={task}
-                onClick={onRowClick}
-                data-task-id={
-                  task.get('alertCount') > 0 ? 'aggre-list' : 'detail'
-                }
-              />
-            ))}
+            .map(task => {
+              const filtersParams = new URLSearchParams(filterOptions)
+              const aggreListQuerystring = new URLSearchParams({
+                filters: filtersParams.toString(),
+                categoryId: task.get('issueCategoryId'),
+                date: task.get('time'),
+                alertTemplateId: task.get('alertTemplateId'),
+              })
+              return (
+                <TaskDataTableRow
+                  key={task.get('id')}
+                  intl={intl}
+                  messages={messages}
+                  task={task}
+                  onClick={onRowClick}
+                  data-task-id={
+                    task.get('issueCount') > 1
+                      ? `aggre-list?${aggreListQuerystring.toString()}`
+                      : `${task.get('id')}`
+                  }
+                />
+              )
+            })}
         </TaskDataTable>
       )}
       {!items.currentIdList.isEmpty() && (

@@ -5,7 +5,7 @@ import { compose, lifecycle, withHandlers, withProps } from 'recompose'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
-import { Card } from 'react-toolbox/lib/card'
+import Card from '@material-ui/core/Card'
 import { Unit } from '../../components/pureGrids'
 import Icon from '../../components/shared/icon/Icon'
 import { fetchStatDashboard } from '../DashboardRedux'
@@ -128,9 +128,7 @@ export const SummaryStatus = ({
               <Icon
                 className={cssClasses('Summary__Card__Title__Icon')}
                 // eslint-disable-next-line import/no-dynamic-require
-                type={require(`../../components/shared/icon/assets/${
-                  widget.icon
-                }.svg`)}
+                type={require(`../../components/shared/icon/assets/${widget.icon}.svg`)}
               />
               <span className={cssClasses('Summary__Card__Title--main')}>
                 {formatMessage('title', widget, intl, defaultMessages)}

@@ -10,7 +10,6 @@ const AS_REFRESH = 'asRefresh'
 const AS_CLIENT_ID = 'asClientId'
 const AS_CULTURE = 'asCulture'
 const AS_TIMEZONE = 'asTimezoneId'
-const AS_DRAWER_OPEN = 'asDrawerOpen'
 const AS_DISPLAY_PREFERENCES = 'asDisplayPreferences'
 
 const DEFAULT_DISPLAY_PREFERENCES = {
@@ -64,11 +63,6 @@ const storageMappings = [
     propsKey: 'timezoneId',
   },
   {
-    storageKey: AS_DRAWER_OPEN,
-    propsKey: 'drawerOpen',
-    load: it => it === 'true',
-  },
-  {
     storageKey: AS_DISPLAY_PREFERENCES,
     propsKey: 'displayPreferences',
     load: it => Immutable.Map(JSON.parse(it)),
@@ -86,9 +80,9 @@ const enhance = compose(
       storageMappings.forEach(
         ({ storageKey, propsKey, update = _.identity }) => {
           const value = props[propsKey]
-          if (_.isUndefined(value)) {
+          if (_.isUndefined(value) && propsKey !== 'clientId') {
             localStorage.removeItem(storageKey)
-          } else {
+          } else if (update(value)) {
             localStorage.setItem(storageKey, update(value))
           }
         }
@@ -100,7 +94,6 @@ const enhance = compose(
       localStorage.removeItem('jwt')
       localStorage.removeItem('jwt_expires')
       localStorage.removeItem('refresh')
-      localStorage.removeItem('clientId')
       localStorage.removeItem('culture')
       localStorage.removeItem('timezone')
       // End-TODO

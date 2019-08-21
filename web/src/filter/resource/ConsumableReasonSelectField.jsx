@@ -5,9 +5,9 @@ import { compose, setPropTypes, lifecycle, pure } from 'recompose'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 
-import Select from '@material-ui/core/Select'
 import MenuItem from '@material-ui/core/MenuItem'
 
+import SelectField from '../../components/shared/SelectField'
 import { fetchConsumableReasons } from '../../consumable/ConsumableRedux'
 
 export const testConductedReasonI18nKey = 'ConsumableReason_TestConducted'
@@ -50,7 +50,7 @@ const enhance = compose(
   lifecycle({
     componentWillMount() {
       this.setState({
-        onChange: (event, index, value) => {
+        onChange: ({ target: { value } }) => {
           this.props.onConsumableReasonIdChange(
             value === 'all' ? undefined : value
           )
@@ -69,30 +69,27 @@ export const ConsumableReasonSelectField = ({
   intl,
   fetchConsumableReasons,
   consumableReasons,
-  onConsumableReasonIdChange,
+  onChange,
   ...restProps
 }) => (
-  <Select
+  <SelectField
     {...restProps}
+    onChange={onChange}
     disabled={
       restProps.disabled ||
       consumableReasons.loading ||
       consumableReasons.items.isEmpty()
     }
   >
-    {allItemText && <MenuItem value="all" primaryText={allItemText} />}
+    {allItemText && <MenuItem value="all">{allItemText}</MenuItem>}
     {consumableReasons.items.map(c => (
-      <MenuItem
-        key={c.get('id')}
-        value={c.get('id')}
-        primaryText={
-          messages[c.get('i18nKey')]
-            ? intl.formatMessage(messages[c.get('i18nKey')])
-            : c.get('name')
-        }
-      />
+      <MenuItem key={c.get('id')} value={c.get('id')}>
+        {messages[c.get('i18nKey')]
+          ? intl.formatMessage(messages[c.get('i18nKey')])
+          : c.get('name')}
+      </MenuItem>
     ))}
-  </Select>
+  </SelectField>
 )
 
 export default enhance(ConsumableReasonSelectField)

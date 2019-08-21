@@ -55,7 +55,9 @@ const sanitizerByConfigKey = {
   siteName: defaultSanitizer,
   sampleOriginSite: defaultSanitizer,
   contactNameOrEmail: defaultSanitizer,
+  notificationName: defaultSanitizer,
   externalId: defaultSanitizer,
+  revoked: defaultSanitizer,
   consumable: makeKeySanitizer('consumableId'),
   workflowStatus: makeKeySanitizer('workflowStatusId'),
   deviceStatus: makeKeySanitizer('deviceStatusId'),
@@ -159,6 +161,9 @@ export const reduceFiltersConfig = (configObject, userPermissions) => {
             case 'deviceStatus':
               result.deviceStatus = true
               break
+            case 'deviceType':
+              result.deviceType = true
+              break
             case 'externalId':
               result.externalId = true
               break
@@ -180,8 +185,17 @@ export const reduceFiltersConfig = (configObject, userPermissions) => {
             case 'workflowStatus':
               result.workflowStatus = true
               break
+            case 'treatmentStatus':
+              result.treatmentStatus = true
+              break
             case 'contactNameOrEmail':
               result.contactNameOrEmail = true
+              break
+            case 'notificationName':
+              result.notificationName = true
+              break
+            case 'revoked':
+              result.revoked = true
               break
             default:
           }

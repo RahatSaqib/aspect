@@ -1,6 +1,6 @@
 @import '../../globals/variables.css';
 
-.Container {
+.Container .ResultPanel {
   padding: 10px;
 }
 
@@ -164,4 +164,134 @@
   margin-right: 12px;
   padding-left: 12px;
   padding-right: 12px;
+}
+
+.Field__Container {
+  display: flex;
+  flex-grow: 1;
+  flex-wrap: wrap;
+}
+
+.Field__Container > * {
+  flex-basis: 25%;
+  white-space: nowrap;
+}
+
+.ok {
+  color: var(--aspect-color-mantis);
+  font-size: 100px;
+}
+
+.alert {
+  color: var(--aspect-color-mandy);
+  font-size: 100px;
+}
+
+.na {
+  color: var(--aspect-color-grey-5);
+  font-size: 100px;
+}
+
+.warning {
+  color: var(--aspect-color-supernova);
+  font-size: 100px;
+}
+
+.TreatmentNoteExpansionPanelContainer {
+  padding-bottom: 10px;
+}
+
+.Treatment {
+  display: flex;
+}
+
+.TreatmentInfo h3 {
+  margin: 0;
+  text-align: center;
+  font-size: 25px;
+}
+.TreatmentInfo h4 {
+  width: 102px;
+  font-size: 12px;
+  text-align: center;
+  margin-bottom: 8px;
+}
+
+.TreatmentInfo h6:first-child {
+  margin-top: 30px;
+}
+
+.TreatmentLinkLayout div {
+  max-width: 30em;
+}
+
+.TreatmentTitle {
+  display: flex;
+}
+
+.TreatmentTitle p {
+  padding: 8px 10px 0 0;
+}
+
+.TreatmentCheckBox {
+  display: flex;
+  width: 22em;
+  justify-content: space-between;
+}
+
+.TreatmentCheckBox button {
+  background-color: var(--aspect-color-chill-blue-2);
+  color: white;
+  padding: 10px 9px 8px 9px;
+  border-radius: 21px;
+  position: relative;
+  margin-top: 6px;
+}
+
+.TreatmentCheckBox button:hover {
+  background-color: var(--aspect-color-chill-blue-2);
+}
+
+.TreatmentNoteContainer {
+  background-color: var(--aspect-color-grey-7);
+  width: 23em;
+  margin-left: 20.5%;
+  margin-top: 5px;
+  padding: 0 19px 0 12px;
+}
+
+.TreatmentNoteContainer > div:first-child {
+  display: none
+}
+
+.TreatmentNoteContainer > div:nth-child(2) {
+  padding: 10px 0;
+}
+
+.TreatmentNoteContainer svg {
+  font-size: 19px;
+  margin-bottom: -12px;
+  color: var(--aspect-color-chill-blue-2)
+}
+
+.TreatmentNoteHeader > p:nth-child(1) {
+  margin: 0;
+}
+
+.TreatmentNoteBody {
+  margin: 5px 0 15px 0;
+}
+
+.TreatmentNoteFooter p:first-child {
+  margin: 0 0 5px 0;
+  color: var(--aspect-color-chill-blue-2)
+}
+
+.TreatmentNoteFooter p:nth-child(2) {
+  margin: 0 0 5px 0;
+  font-size: 12px;
+}
+
+[data-note-text-input] > div {
+  width: 100%;
 }

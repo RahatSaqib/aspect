@@ -1,16 +1,69 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`App Notification SnackBar component should shallow render correctly 1`] = `
-<ThemedActivableRenderer
-  action="DETAILS..."
-  active={false}
-  composeTheme="deeply"
-  delay={500}
-  label="Login Failed"
-  mapThemrProps={[Function]}
-  onClick={[Function]}
-  onTimeout={[Function]}
-  timeout={4000}
-  type="accept"
+<AppNotificationSnackBar
+  appNotification={
+    Immutable.Record {
+      "hasNotification": true,
+      "notificationType": "error",
+      "messageValues": Object {
+        "error": "Unauthorized",
+        "message": "Authentication failed. Wrong password.",
+        "statusCode": 401,
+      },
+      "showDetails": true,
+      "notificationOptions": Immutable.Map {
+        "showAs": "interrupt",
+        "showClose": true,
+        "showProceed": false,
+        "severity": "warn",
+        "title": Immutable.Map {
+          "id": "errorResponseMessages.loginStart.POST.default.default.title",
+          "defaultMessage": "Login Failed",
+        },
+        "message": Immutable.Map {
+          "id": "errorResponseMessages.loginStart.POST.default.default.message",
+          "defaultMessage": "The details that you have entered are incorrect",
+        },
+        "resolution": Immutable.Map {
+          "id": "errorResponseMessages.loginStart.POST.default.resolution",
+          "defaultMessage": "Please re-enter your login details and try again?",
+        },
+      },
+    }
+  }
+  classes={
+    Object {
+      "info": "AppNotificationSnackBar-info-1",
+      "warning": "AppNotificationSnackBar-warning-2",
+    }
+  }
+  hideAppNotification={[Function]}
+  intl={
+    Object {
+      "defaultFormats": Object {},
+      "defaultLocale": "en",
+      "formatDate": [Function],
+      "formatHTMLMessage": [Function],
+      "formatMessage": [Function],
+      "formatNumber": [Function],
+      "formatPlural": [Function],
+      "formatRelative": [Function],
+      "formatTime": [Function],
+      "formats": Object {},
+      "formatters": Object {
+        "getDateTimeFormat": [Function],
+        "getMessageFormat": [Function],
+        "getNumberFormat": [Function],
+        "getPluralFormat": [Function],
+        "getRelativeFormat": [Function],
+      },
+      "locale": "en",
+      "messages": Object {},
+      "now": [Function],
+      "textComponent": "span",
+    }
+  }
+  showMoreDetails={[Function]}
 />
 `;

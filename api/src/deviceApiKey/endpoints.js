@@ -2,7 +2,6 @@ const Joi = require('joi')
 const { asyncHandler, validateSortPageParams } = require('../routes')
 const {
   listDeviceApiKeys,
-  exportDeviceApiKeys,
   generateDeviceApiKeys,
   assignDeviceApiKeys,
   revokeDeviceApiKey,
@@ -10,6 +9,7 @@ const {
 const {
   validateAllGeographyFilterParams,
 } = require('../geography/requestValidation')
+const { getDeviceAPIKeysReport } = require('./serviceReports')
 
 function listDeviceApiKeysBaseConfig() {
   return {
@@ -62,7 +62,7 @@ const routes = [
   {
     method: 'GET',
     path: '/deviceApiKey/export',
-    handler: asyncHandler(exportDeviceApiKeys),
+    handler: getDeviceAPIKeysReport,
     config: Object.assign(
       {
         description: 'Export DeviceApiKey List into Excel or CSV',

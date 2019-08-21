@@ -15,9 +15,13 @@ export default defineMessages({
     id: 'pages.SiteDetail.fieldShortName',
     defaultMessage: 'ShortName',
   },
+  fieldFacilityCode: {
+    id: 'pages.SiteDetail.fieldFacilityCode',
+    defaultMessage: 'Facility Code',
+  },
   fieldExternalId: {
     id: 'pages.SiteDetail.fieldExternalId',
-    defaultMessage: 'Facility Code',
+    defaultMessage: 'Site ID',
   },
   fieldTimeZone: {
     id: 'pages.SiteDetail.fieldTimeZone',
@@ -51,8 +55,44 @@ export default defineMessages({
     id: 'pages.SiteDetail.fieldZip',
     defaultMessage: 'Zip',
   },
+  fieldLongitude: {
+    id: 'pages.SiteDetail.fieldLongitude',
+    defaultMessage: 'Longitude',
+  },
+  fieldLatitude: {
+    id: 'pages.SiteDetail.fieldLatitude',
+    defaultMessage: 'Latitude',
+  },
   fieldTags: {
     id: 'pages.SiteDetail.fieldTags',
     defaultMessage: 'Tags',
+  },
+  fieldDevices: {
+    id: 'pages.SiteDetail.fieldDevices',
+    defaultMessage: 'Devices',
+  },
+  fieldContact: {
+    id: 'pages.SiteDetail.fieldContact',
+    defaultMessage: 'Site Contacts',
+  },
+  buttonSetBasedonAddress: {
+    id: 'pages.SiteDetail.buttonSetBasedonAddress',
+    defaultMessage: 'Set based on address',
+  },
+  buttonUpdate: {
+    id: 'pages.SiteDetail.buttonUpdate',
+    defaultMessage: 'UPDATE',
+  },
+  fieldNoContact: {
+    id: 'pages.SiteDetail.fieldNoContact',
+    defaultMessage: 'No contacts assigned to site',
+  },
+  fieldNoMatch: {
+    id: 'pages.SiteDetail.fieldNoMatch',
+    defaultMessage: 'No matching results found',
+  },
+  fieldNoMatchTags: {
+    id: 'pages.SiteDetail.fieldNoMatchTags',
+    defaultMessage: 'Press enter to add tag',
   },
 })

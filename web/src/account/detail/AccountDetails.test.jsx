@@ -1,6 +1,8 @@
 import _ from 'lodash'
 import React from 'react'
 import ReactShallowRenderer from 'react-test-renderer/shallow'
+import { shallow } from 'enzyme'
+import { Route } from 'react-router-dom'
 
 import { AccountDetailsData } from '../AccountRedux'
 
@@ -21,6 +23,9 @@ describe('AccountDetails module', () => {
       saveContactDetails: _.noop,
       saveLoginDetails: _.noop,
       saveUserPreferences: _.noop,
+      history: {},
+      location: {},
+      match: {},
     }
 
     it('should shallow render correctly', () => {
@@ -29,11 +34,85 @@ describe('AccountDetails module', () => {
       expect(element).toMatchSnapshot()
     })
 
-    describe('when loading is true', () => {
+    describe('loading status', () => {
       it('should show a progress bar in each tab', () => {
-        const element = renderer.render(<AccountDetails {...props} loading />)
+        const wrapper = shallow(<AccountDetails {...props} loading />)
+        const results = wrapper.find(Route)
 
-        expect(element).toMatchSnapshot()
+        expect(results).toHaveLength(2)
+        results.forEach(route => expect(route.prop('render')).toHaveLength(1))
+      })
+    })
+
+    describe('dialog', () => {
+      const saveLoginDetailsSuccess = () => Promise.resolve()
+      const saveLoginDetailsWithOtherError = () =>
+        Promise.reject({ otherError: 'other-error-message' }) // eslint-disable-line prefer-promise-reject-errors
+      const saveLoginDetailsWithCurrentPasswordError = () =>
+        Promise.reject({ currentPassword: 'currentPassword-error' }) // eslint-disable-line prefer-promise-reject-errors
+
+      let wrapper
+
+      beforeEach(() => {
+        wrapper = shallow(<AccountDetails {...props} />)
+      })
+
+      afterEach(() => {
+        wrapper = null
+      })
+
+      it('should close the `CurrentPasswordInputDialog` when saves the login detail successfully', () => {
+        wrapper.setProps({ saveLoginDetails: saveLoginDetailsSuccess })
+
+        const instance = wrapper.instance()
+
+        instance.openCurrentPasswordInputDialog()
+        expect(wrapper.state('currentPasswordInputDialogOpen')).toBe(true)
+
+        instance.handleSaveLoginDetails().then(() => {
+          expect(wrapper.state('currentPasswordInputDialogOpen')).toBe(false)
+        })
+      })
+
+      it('should not close the `CurrentPasswordInputDialog` when the error is not `currentPassword`', () => {
+        wrapper.setProps({ saveLoginDetails: saveLoginDetailsWithOtherError })
+
+        const instance = wrapper.instance()
+        instance.openCurrentPasswordInputDialog()
+        expect(wrapper.state('currentPasswordInputDialogOpen')).toBe(true)
+
+        instance.handleSaveLoginDetails().catch(() => {
+          expect(wrapper.state('currentPasswordInputDialogOpen')).toBe(true)
+        })
+      })
+
+      it('should not close the `CurrentPasswordInputDialog` when the error is `currentPassword`', () => {
+        wrapper.setProps({
+          saveLoginDetails: saveLoginDetailsWithCurrentPasswordError,
+        })
+
+        const instance = wrapper.instance()
+        instance.openCurrentPasswordInputDialog()
+        expect(wrapper.state('currentPasswordInputDialogOpen')).toBe(true)
+
+        instance.handleSaveLoginDetails().catch(() => {
+          expect(wrapper.state('currentPasswordInputDialogOpen')).toBe(false)
+        })
+      })
+    })
+
+    describe('lifecycle', () => {
+      describe('componentDidMount', () => {
+        it('should invoke `fetchAccountDetails` when the component is mounted', () => {
+          const fetchAccountDetails = jest.fn()
+          shallow(
+            <AccountDetails
+              {...props}
+              fetchAccountDetails={fetchAccountDetails}
+            />
+          )
+          expect(fetchAccountDetails).toBeCalled()
+        })
       })
     })
   })

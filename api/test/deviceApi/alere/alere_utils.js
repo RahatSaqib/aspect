@@ -168,7 +168,8 @@ async function deleteDeviceSiteDataAndRefreshTokens(
     .whereIn('sourceResultId', resultIds)
     .orWhereIn('generatedResultId', resultIds)
     .delete()
-
+  await knex('ResultTag').delete()
+  await knex('Tag').delete()
   await knex('Result')
     .whereIn('id', resultIds)
     .delete()
@@ -247,11 +248,17 @@ class DeviceApiTestContext {
         .from('DeviceStatus')
         .where('token', 'approved')
         .first()
+      const deviceCapacity = await knex('DeviceCapacity')
+        .where({ deviceTypeId: alereFtpConnectorDeviceType.id })
+        .where({ partnerId: partner.id })
+        .where({ defaultForDeviceType: 1 })
+        .first('id')
       const now = new Date()
       const [deviceId] = await knex('Device').insert({
         partnerId: partner.id,
         geographyId: geography.id,
         deviceTypeId: alereFtpConnectorDeviceType.id,
+        deviceCapacityId: deviceCapacity ? deviceCapacity.id : null,
         deviceStatusId: approvedDeviceStatus.id,
         name: 'Some Alere FTP Connector',
         shortName: 'Alere FTP',
@@ -363,8 +370,13 @@ class DeviceApiTestContext {
         .join('Result as r', 'dl.resultId', 'r.id')
         .join('Device as sourceDevice', 'r.deviceId', 'r.deviceId')
         .leftJoin(
+          'ResultWorkflowLog as rwsl',
+          'r.resultWorkflowStatusLogId',
+          'rwsl.id'
+        )
+        .leftJoin(
           'ResultWorkflowStatus as rws',
-          'r.resultWorkflowStatusId',
+          'rwsl.resultWorkflowStatusId',
           'rws.id'
         )
         .leftJoin('Assay as a', 'r.assayId', 'a.id')
@@ -424,8 +436,13 @@ class DeviceApiTestContext {
       const resultDetails = await knex('Result as r')
         .join('Device as sourceDevice', 'r.deviceId', 'r.deviceId')
         .leftJoin(
+          'ResultWorkflowLog as rwsl',
+          'r.resultWorkflowStatusLogId',
+          'rwsl.id'
+        )
+        .leftJoin(
           'ResultWorkflowStatus as rws',
-          'r.resultWorkflowStatusId',
+          'rwsl.resultWorkflowStatusId',
           'rws.id'
         )
         .leftJoin('Assay as a', 'r.assayId', 'a.id')

@@ -220,9 +220,10 @@
 @media screen and (min-width: 64em) {
   .SummaryItemsBlocks--horizontal-scrollable {
     height: 400px;
-    overflow-x: scroll;
+    overflow-x: auto;
     display: flex;
     flex-flow: column wrap;
+    overflow-x: auto;
   }
 }
 
@@ -238,11 +239,11 @@
   text-transform: capitalize;
 }
 
-.Button--receive:not([disabled]).Button--raised {
+.Button--receive:not([disabled]) {
   background-color: var(--aspect-color-mantis);
 }
 
-.Button--discard:not([disabled]).Button--raised {
+.Button--discard:not([disabled]) {
   background-color: var(--aspect-color-mandy);
 }
 
@@ -408,6 +409,7 @@
 .ReportsContainer__Button {
   margin: 0 20px;
   background-color: var(--aspect-color-grey-5);
+  color: #fff;
   white-space: normal;
   height: auto;
   width: 250px;
@@ -424,4 +426,52 @@
   .ReportsContainer__Button {
     margin: 0 20px;
   }
+}
+
+@media screen and (--lg-viewport) {
+  .Treatment--TitleContainer::after {
+    flex: none;
+  }
+}
+.Treatment--arrow-container {
+  text-align: center;
+  height: 245px;
+  padding-top: 105px;
+}
+.Treatment--arrow-container svg {
+  cursor: pointer;
+  border-radius: 50%;
+}
+.Treatment--arrow-container svg:hover {
+  border: 1px solid var(--aspect-color-grey-7);
+  background-color: var(--aspect-color-grey-8);
+}
+.Treatment--ArrowLeftContainer {
+  border-right: 1px solid var(--aspect-color-grey-5);
+}
+.Treatment--ArrowRightContainer {
+  border-left: 1px solid var(--aspect-color-grey-5);
+}
+.Treatment--graph-legend{
+  display: flex;
+  margin: 30px 0;
+}
+.Treatment--graph-legend-item{
+  display: flex;
+  align-items: center;
+  margin-right: 30px;
+}
+.Treatment--graph-legend-item-text {
+  margin: 0 2px 0 5px;
+  font-size: 1.1em;
+}
+.Treatment--graph-tooltip-help-icon svg {
+  margin-top: -10px;
+  cursor: pointer;
+  color: #34717c;
+}
+.Treatment--graph-tooltip-color {
+  width: 15px;
+  height: 15px;
+  margin-right: 5px;
 }

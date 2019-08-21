@@ -7,15 +7,17 @@ import { defineMessages } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
-import { Checkbox } from 'react-toolbox/lib/checkbox'
-import { IconButton } from 'react-toolbox/lib/button'
-import withTooltip from 'react-toolbox/lib/tooltip'
-import { IconMenu, MenuItem } from 'react-toolbox/lib/menu'
-import MdAdd from 'react-icons/lib/md/add'
-import MdTransfer from 'react-icons/lib/md/swap-horiz'
-import MdRemove from 'react-icons/lib/md/remove'
-import MdDone from 'react-icons/lib/md/done'
-import MdMoreVert from 'react-icons/lib/md/more-vert'
+import IconButton from '@material-ui/core/IconButton'
+import Tooltip from '@material-ui/core/Tooltip'
+import MenuItem from '@material-ui/core/MenuItem'
+import ListItemIcon from '@material-ui/core/ListItemIcon'
+import ListItemText from '@material-ui/core/ListItemText'
+import AddIcon from '@material-ui/icons/Add'
+import TransferIcon from '@material-ui/icons/SwapHoriz'
+import RemoveIcon from '@material-ui/icons/Remove'
+import DoneIcon from '@material-ui/icons/Done'
+import MoreVertIcon from '@material-ui/icons/MoreVert'
+import TableBody from '@material-ui/core/TableBody'
 
 import {
   makeSortPageSelector,
@@ -26,11 +28,14 @@ import {
   sanitizeFiltersStringBy,
   reduceFiltersConfig,
 } from '../../filter/utils'
+import CheckboxField from '../../components/shared/CheckboxField'
+import IconMenu from '../../components/shared/IconMenu'
 import NavTitle from '../../globals/components/NavTitle'
 import BrowseFilters from '../../globals/components/BrowseFilters'
 import BrowseEmptyList from '../../globals/components/BrowseEmptyList'
 import BrowseTablePaginator from '../../globals/components/BrowseTablePaginator'
 import DataTableCard from '../../components/shared/DataTableCard'
+import ExportListButton from '../../globals/components/ExportListButton'
 import DataTableProgressBar from '../../components/shared/DataTableProgressBar'
 import { showAcknowledgement } from '../../appNotification/AppNotificationRedux'
 import { testConductedReasonI18nKey } from '../adjustment/InventoryAdjustmentDialogForm'
@@ -53,6 +58,7 @@ import {
   removeInventory,
   transferInventory,
   receiveInventory,
+  exportSupplies,
 } from '../InventoryRedux'
 import {
   InventoryDataTable,
@@ -61,8 +67,6 @@ import {
 } from './InventoryDataTable'
 
 const cssClasses = classnames.bind(require('./InventoryItemsList.css'))
-
-const TooltipIconButton = withTooltip(IconButton)
 
 const EMPTY_MAP = Immutable.Map()
 
@@ -162,7 +166,16 @@ const enhance = compose(
   withProps(
     makeSortPageSelector({
       sortCol: 'siteName',
-    })
+    }),
+    ({ location }) => {
+      const searchParams = new URLSearchParams(location.search)
+      const filtersParams = new URLSearchParams(
+        searchParams.get('filters') || ''
+      )
+      return {
+        filters: _.fromPairs([...filtersParams.entries()]),
+      }
+    }
   ),
   connect(
     state => ({
@@ -189,6 +202,8 @@ const enhance = compose(
       removeInventory,
       transferInventory,
       receiveInventory,
+
+      exportSupplies,
     })
   ),
   withHandlers({
@@ -203,6 +218,29 @@ const enhance = compose(
       const { sanitized, value: filtersParams } = filtersFromLocation(location)
       if (!sanitized) {
         fetchInventoryItems(filtersParams, sortCol, sortDir, pageAt, pageSize)
+      }
+    },
+
+    onExcelClick: ({
+      location,
+      exportSupplies,
+      sortCol,
+      sortDir,
+      pageAt,
+      table,
+    }) => formatType => {
+      const format = formatType.target.id
+      const { sanitized, value: filtersParams } = filtersFromLocation(location)
+      if (!sanitized) {
+        exportSupplies(
+          filtersParams,
+          sortCol,
+          sortDir,
+          pageAt,
+          table.get('total') > 0 ? table.get('total') : 1,
+          format,
+          'supplies'
+        )
       }
     },
   }),
@@ -255,10 +293,10 @@ const enhance = compose(
     },
   }),
   withHandlers({
-    onGroupBySiteChange: ({
-      toggleGroupBySite,
-      onInitialLoad,
-    }) => isInputChecked => {
+    onGroupBySiteChange: ({ toggleGroupBySite, onInitialLoad }) => (
+      event,
+      isInputChecked
+    ) => {
       toggleGroupBySite(isInputChecked)
       onInitialLoad()
     },
@@ -309,16 +347,6 @@ const enhance = compose(
   })
 )
 
-const makeOnInventoryItemActionSelect = inventoryItemId => showDialogFn =>
-  showDialogFn(inventoryItemId)
-
-const themes = {
-  TooltipIconButton: {
-    tooltip: cssClasses('TooltipIconButton__tooltip'),
-    toggle: cssClasses('TooltipIconButton__toggle'),
-  },
-}
-
 export const InventoryItemsList = ({
   intl,
   history,
@@ -327,6 +355,7 @@ export const InventoryItemsList = ({
   items,
   inventoryAdjustment,
   // --- injected by recompose ---
+  onExcelClick,
   sortCol,
   sortDir,
   pageAt,
@@ -355,30 +384,42 @@ export const InventoryItemsList = ({
       dateFilterLabel={intl.formatMessage(messages.expiresOn)}
     />
     <DataTableCard className={cssClasses('DataTableCard--action')}>
-      <Checkbox
+      <CheckboxField
         className={cssClasses('Checkbox')}
         name="groupBySite"
         checked={table.get('groupBy').includes('siteId')}
-        onChange={onGroupBySiteChange}
         label={intl.formatMessage(messages.groupBySite)}
+        onChange={onGroupBySiteChange}
       />
-      <TooltipIconButton
-        theme={themes.TooltipIconButton}
-        icon={<MdAdd />}
-        tooltip={intl.formatMessage(messages.addInventory)}
-        onClick={showNewInventoryDialog}
-      />
+      <Tooltip
+        title={intl.formatMessage(messages.addInventory)}
+        placement="bottom"
+      >
+        <IconButton
+          aria-label={intl.formatMessage(messages.addInventory)}
+          onClick={showNewInventoryDialog}
+        >
+          <AddIcon fontSize="large" />
+        </IconButton>
+      </Tooltip>
     </DataTableCard>
-    <DataTableCard className={cssClasses('DataTableCard--table')}>
+    <DataTableCard
+      key={`DataTableCard--table-${location.key}`}
+      className={cssClasses('DataTableCard--table')}
+    >
       <DataTableProgressBar disabled={!table.loading} />
+
+      <ExportListButton
+        onExcelClick={onExcelClick}
+        onCsvClick={onExcelClick}
+        reportName="Supplies"
+      />
+
       {items.currentIdList.isEmpty() && (
         <BrowseEmptyList history={history} location={location} intl={intl} />
       )}
       {!items.currentIdList.isEmpty() && (
-        <InventoryDataTable
-          selectable={false}
-          className={cssClasses('InventoryDataTable')}
-        >
+        <InventoryDataTable className={cssClasses('InventoryDataTable')}>
           <InventoryDataTableHead
             history={history}
             location={location}
@@ -416,53 +457,81 @@ export const InventoryItemsList = ({
               },
             ]}
           />
-          {items.currentIdList
-            .map(id => items.byId.get(id))
-            .map(inventoryItem => (
-              <InventoryDataTableRow
-                key={inventoryItem.get('id')}
-                intl={intl}
-                inventoryItem={inventoryItem}
-              >
-                <IconMenu
-                  icon={<MdMoreVert />}
-                  position="topRight"
-                  onSelect={makeOnInventoryItemActionSelect(
-                    inventoryItem.get('id')
-                  )}
+          <TableBody>
+            {items.currentIdList
+              .map(id => items.byId.get(id))
+              .map(inventoryItem => (
+                <InventoryDataTableRow
+                  key={inventoryItem.get('id')}
+                  intl={intl}
+                  inventoryItem={inventoryItem}
                 >
-                  {inventoryItem.get('inTransitFromSiteId') && (
-                    <MenuItem
-                      value={showReceiveInventoryDialog}
-                      icon={<MdDone />}
-                      caption={intl.formatMessage(messages.receiveInventory)}
-                    />
-                  )}
-                  {!inventoryItem.get('inTransitFromSiteId') && (
-                    <MenuItem
-                      value={showAddInventoryDialog}
-                      icon={<MdAdd />}
-                      caption={intl.formatMessage(messages.addInventory)}
-                    />
-                  )}
+                  <IconMenu icon={<MoreVertIcon />}>
+                    {inventoryItem.get('inTransitFromSiteId') && (
+                      <MenuItem
+                        value={inventoryItem.get('id')}
+                        onClick={showReceiveInventoryDialog}
+                      >
+                        <ListItemIcon>
+                          <DoneIcon />
+                        </ListItemIcon>
+                        <ListItemText
+                          inset
+                          primary={intl.formatMessage(
+                            messages.receiveInventory
+                          )}
+                        />
+                      </MenuItem>
+                    )}
+                    {!inventoryItem.get('inTransitFromSiteId') && (
+                      <MenuItem
+                        value={inventoryItem.get('id')}
+                        onClick={showAddInventoryDialog}
+                      >
+                        <ListItemIcon>
+                          <AddIcon />
+                        </ListItemIcon>
+                        <ListItemText
+                          inset
+                          primary={intl.formatMessage(messages.addInventory)}
+                        />
+                      </MenuItem>
+                    )}
 
-                  {!inventoryItem.get('inTransitFromSiteId') && (
-                    <MenuItem
-                      value={showTransferInventoryDialog}
-                      icon={<MdTransfer />}
-                      caption={intl.formatMessage(messages.transferInventory)}
-                    />
-                  )}
-                  {!inventoryItem.get('inTransitFromSiteId') && (
-                    <MenuItem
-                      value={showRemoveInventoryDialog}
-                      icon={<MdRemove />}
-                      caption={intl.formatMessage(messages.removeInventory)}
-                    />
-                  )}
-                </IconMenu>
-              </InventoryDataTableRow>
-            ))}
+                    {!inventoryItem.get('inTransitFromSiteId') && (
+                      <MenuItem
+                        value={inventoryItem.get('id')}
+                        onClick={showTransferInventoryDialog}
+                      >
+                        <ListItemIcon>
+                          <TransferIcon />
+                        </ListItemIcon>
+                        <ListItemText
+                          inset
+                          primary={intl.formatMessage(
+                            messages.transferInventory
+                          )}
+                        />
+                      </MenuItem>
+                    )}
+                    {!inventoryItem.get('inTransitFromSiteId') && (
+                      <MenuItem
+                        value={inventoryItem.get('id')}
+                        onClick={showRemoveInventoryDialog}
+                      >
+                        <ListItemIcon>
+                          <RemoveIcon />
+                        </ListItemIcon>
+                        <ListItemText
+                          inset
+                          primary={intl.formatMessage(messages.removeInventory)}
+                        />
+                      </MenuItem>
+                    )}
+                  </IconMenu>
+                </InventoryDataTableRow>
+              ))}
+          </TableBody>
         </InventoryDataTable>
       )}
       {!items.currentIdList.isEmpty() && (

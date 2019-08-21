@@ -6,6 +6,10 @@ import { defineMessages } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
+import TableBody from '@material-ui/core/TableBody'
+import IconButton from '@material-ui/core/IconButton'
+import Tooltip from '@material-ui/core/Tooltip'
+import AddIcon from '@material-ui/icons/Add'
 
 import {
   makeSortPageSelector,
@@ -16,18 +20,21 @@ import {
   sanitizeFiltersStringBy,
   reduceFiltersConfig,
 } from '../../filter/utils'
+// import CheckboxField from '../../components/shared/CheckboxField'
 import NavTitle from '../../globals/components/NavTitle'
 import BrowseFilters from '../../globals/components/BrowseFilters'
 import BrowseEmptyList from '../../globals/components/BrowseEmptyList'
 import BrowseTablePaginator from '../../globals/components/BrowseTablePaginator'
 import DataTableCard from '../../components/shared/DataTableCard'
 import DataTableProgressBar from '../../components/shared/DataTableProgressBar'
-import { fetchPersons } from '../PersonRedux'
+import { fetchPersons, exportContacts } from '../PersonRedux'
 import {
   PersonDataTable,
   PersonDataTableHead,
   PersonDataTableRow,
 } from './PersonDataTable'
+
+import ExportListButton from '../../globals/components/ExportListButton'
 
 const cssClasses = classnames.bind(require('./PersonList.css'))
 
@@ -59,6 +66,14 @@ const messages = defineMessages({
       other {# contacts}
     }`,
   },
+  tags: {
+    id: 'pages.PersonList.tags',
+    defaultMessage: 'Tags',
+  },
+  addContact: {
+    id: 'pages.PersonList.addContact',
+    defaultMessage: 'Add Contact',
+  },
 })
 
 const FILTERS_CONFIG = [
@@ -87,7 +102,16 @@ const enhance = compose(
   withProps(
     makeSortPageSelector({
       sortCol: 'name',
-    })
+    }),
+    ({ location }) => {
+      const searchParams = new URLSearchParams(location.search)
+      const filtersParams = new URLSearchParams(
+        searchParams.get('filters') || ''
+      )
+      return {
+        filters: _.fromPairs([...filtersParams.entries()]),
+      }
+    }
   ),
   connect(
     state => ({
@@ -97,6 +121,7 @@ const enhance = compose(
     }),
     bindActionCreators.bind(null, {
       fetchPersons,
+      exportContacts,
     })
   ),
   withHandlers({
@@ -114,9 +139,39 @@ const enhance = compose(
       }
     },
 
+    onExcelClick: ({
+      location,
+      exportContacts,
+      sortCol,
+      sortDir,
+      pageAt,
+      table,
+    }) => formatType => {
+      const format = formatType.target.id
+      const { sanitized, value: filtersParams } = filtersFromLocation(location)
+      if (!sanitized) {
+        exportContacts(
+          filtersParams,
+          sortCol,
+          sortDir,
+          pageAt,
+          table.get('total') > 0 ? table.get('total') : 1,
+          format,
+          'contacts'
+        )
+      }
+    },
+
     onRowClick: ({ history }) => ({
-      currentTarget: { dataset: { personId } },
+      currentTarget: {
+        dataset: { personId },
+      },
     }) => history.push(`/browse/person/${personId}`),
+
+    showNewContactPage: ({ history }) => event => {
+      event.stopPropagation()
+      history.push('/browse/person/add')
+    },
   }),
   lifecycle({
     componentWillMount() {
@@ -163,12 +218,14 @@ export const PersonList = ({
   table,
   items,
   // --- injected by recompose ---
+  onExcelClick,
   sortCol,
   sortDir,
   pageAt,
   pageSize,
   onRowClick,
   reducedFilters,
+  showNewContactPage,
 }) => (
   <div className={cssClasses('Container')}>
     <Helmet title={intl.formatMessage(messages.contactsTitle)} />
@@ -179,11 +236,32 @@ export const PersonList = ({
       intl={intl}
       config={reducedFilters}
     />
-    <DataTableCard>
+    <DataTableCard className={cssClasses('DataTableCard--action')}>
+      <div />
+      <Tooltip
+        title={intl.formatMessage(messages.addContact)}
+        placement="bottom"
+      >
+        <IconButton
+          aria-label={intl.formatMessage(messages.addContact)}
+          onClick={showNewContactPage}
+        >
+          <AddIcon fontSize="large" />
+        </IconButton>
+      </Tooltip>
+    </DataTableCard>
+    <DataTableCard key={`DataTableCard--table-${location.key}`}>
       <DataTableProgressBar disabled={!table.loading} />
       {items.currentIdList.isEmpty() && (
         <BrowseEmptyList history={history} location={location} intl={intl} />
       )}
+
+      <ExportListButton
+        onExcelClick={onExcelClick}
+        onCsvClick={onExcelClick}
+        reportName="Contacts"
+      />
+
       {!items.currentIdList.isEmpty() && (
         <PersonDataTable
           selectable={false}
@@ -215,19 +293,26 @@ export const PersonList = ({
                 label: intl.formatMessage(messages.lga),
                 sortable: true,
               },
+              {
+                key: 'tags',
+                label: intl.formatMessage(messages.tags),
+                sortable: true,
+              },
             ]}
           />
-          {items.currentIdList
-            .map(id => items.byId.get(id))
-            .map(person => (
-              <PersonDataTableRow
-                key={person.get('id')}
-                intl={intl}
-                person={person}
-                onClick={onRowClick}
-                data-person-id={person.get('id')}
-              />
-            ))}
+          <TableBody>
+            {items.currentIdList
+              .map(id => items.byId.get(id))
+              .map(person => (
+                <PersonDataTableRow
+                  key={person.get('id')}
+                  intl={intl}
+                  person={person}
+                  onClick={onRowClick}
+                  data-person-id={person.get('id')}
+                />
+              ))}
+          </TableBody>
         </PersonDataTable>
       )}
       {!items.currentIdList.isEmpty() && (

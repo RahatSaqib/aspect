@@ -26,7 +26,6 @@ const {
   deviceStatusToId,
   resultSourceToId,
   resultTypeToId,
-  resultWorkflowStatusToId,
   sampleTypeToId,
 } = require('../../src/shared/dictionary')
 const patients = require('../../seeds/test/fixtures/patients.json')
@@ -48,7 +47,7 @@ function calculateDateForResult(
 ) {
   const daysToSubtract =
     resultTimeFrameInDays -
-    Math.ceil(currentResult / totalResults * resultTimeFrameInDays)
+    Math.ceil((currentResult / totalResults) * resultTimeFrameInDays)
 
   return addMilliseconds(
     subDays(now, daysToSubtract),
@@ -148,7 +147,9 @@ describe('DataCategoryLow Issues Endpoint', () => {
         .first()
 
       // get 1st site for current partner and labUser
-      const { s: { geographyId } } = await getSite(knex, {
+      const {
+        s: { geographyId },
+      } = await getSite(knex, {
         partnerId,
         countryAbbreviation,
         requireInventory: false,
@@ -177,7 +178,6 @@ describe('DataCategoryLow Issues Endpoint', () => {
 
       // get dictionary data
       const sampleTypeId = await sampleTypeToId('DBS')
-      const resultWorkflowStatusId = await resultWorkflowStatusToId('OK')
       const resultSourceId = await resultSourceToId('Generated')
       const resultTypeId = await resultTypeToId('Patient')
       const resultMtbNumber = 100
@@ -255,11 +255,10 @@ describe('DataCategoryLow Issues Endpoint', () => {
             geographyId,
             siteId, // new site
             deviceId, // new device
-            resultWorkflowStatusId,
             resultSourceId,
             resultTypeId,
             sampleId: sample.id, // new sanple
-            sampleRunNumber: `${i % 2 + 1}`,
+            sampleRunNumber: `${(i % 2) + 1}`,
             sampleGroup: `GRP-${i % 5}`,
             resultCategory1: resultCategoryDetectedId,
             patientData: JSON.stringify(patient),

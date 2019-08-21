@@ -10,13 +10,15 @@ const enhance = compose(
   setPropTypes({
     title: PropTypes.string,
   }),
-  connect(null, dispatch =>
-    bindActionCreators(
-      {
-        setNavTitle,
-      },
-      dispatch
-    )
+  connect(
+    null,
+    dispatch =>
+      bindActionCreators(
+        {
+          setNavTitle,
+        },
+        dispatch
+      )
   ),
   lifecycle({
     componentWillMount() {

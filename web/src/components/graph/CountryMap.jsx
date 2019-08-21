@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import classnames from 'classnames/bind'
 import PropTypes from 'prop-types'
-import React from 'react'
+import React, { Fragment } from 'react'
 import { compose, pure, lifecycle } from 'recompose'
 import { Mercator } from '@vx/geo'
 import { Group } from '@vx/group'
@@ -29,6 +29,14 @@ Usually it's an array like this:
 @see See [d3-geo/projection.fitExtent](https://github.com/d3/d3-geo#projection_fitExtent)
    */
   extent: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.number)).isRequired,
+  fill: PropTypes.func.isRequired,
+  stroke: PropTypes.func.isRequired,
+  projectionFunc: PropTypes.func.isRequired,
+  transform: PropTypes.string,
+}
+
+const defaultProps = {
+  transform: '',
 }
 
 const enhance = compose(
@@ -74,6 +82,10 @@ export const CountryMap = ({
   extent,
   loading, // eslint-disable-line react/prop-types
   topojson, // eslint-disable-line react/prop-types
+  fill,
+  stroke,
+  projectionFunc,
+  transform,
   ...restProps
 }) => {
   if (loading) {
@@ -91,10 +103,37 @@ export const CountryMap = ({
       data={geojson.features}
       fitExtent={[extent, geojson]}
       {...restProps}
-    />
+    >
+      {mercator => {
+        const currProjection = _.get(mercator, ['features', 0, 'projection'])
+        return (
+          <Fragment>
+            <g transform={transform}>
+              {mercator.features.map((feature, i) => {
+                const { feature: f } = feature
+                return (
+                  <path
+                    // eslint-disable-next-line react/no-array-index-key
+                    key={`map-feature-${i}`}
+                    d={mercator.path(f)}
+                    fill={fill(f)}
+                    stroke={stroke()}
+                    strokeWidth={0.5}
+                  />
+                )
+              })}
+              {currProjection &&
+                projectionFunc &&
+                projectionFunc(currProjection)}
+            </g>
+          </Fragment>
+        )
+      }}
+    </Mercator>
   )
 }
 
 CountryMap.propTypes = propTypes
+CountryMap.defaultProps = defaultProps
 
 export default enhance(CountryMap)

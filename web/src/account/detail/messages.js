@@ -8,6 +8,6 @@ export default defineMessages({
   },
   usernameAndPassword: {
     id: 'pages.AccountDetails.usernameAndPassword',
-    defaultMessage: 'Username & Password',
+    defaultMessage: 'Login',
   },
 })

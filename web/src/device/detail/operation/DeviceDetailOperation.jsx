@@ -5,10 +5,12 @@ import { defineMessages } from 'react-intl'
 import { compose, withProps, withHandlers, lifecycle } from 'recompose'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import { Button } from 'react-toolbox/lib/button'
-import { Card } from 'react-toolbox/lib/card'
+import IconButton from '@material-ui/core/IconButton'
+import Card from '@material-ui/core/Card'
 import MdFileDownload from 'react-icons/lib/md/file-download'
 import Helmet from 'react-helmet'
+import TableBody from '@material-ui/core/TableBody'
+
 import {
   makeSortPageSelector,
   makeSearchParamsSanitizer,
@@ -20,7 +22,7 @@ import BrowseTablePaginator from '../../../globals/components/BrowseTablePaginat
 import BrowseEmptyList from '../../../globals/components/BrowseEmptyList'
 import { fetchDeviceOperations } from '../../../deviceOperation/DeviceOperationRedux'
 import DeviceDetailBackBar from '../DeviceDetailBackBar'
-import Summary from '../Summary'
+import Summary from '../../../globals/components/Summary'
 import {
   DeviceOperationDataTable,
   DeviceOperationDataTableHead,
@@ -161,6 +163,7 @@ export const DeviceDetailOperation = ({
   location,
   match,
   device,
+  disabled,
   // --- injected by recompose ---
   table,
   items,
@@ -177,6 +180,7 @@ export const DeviceDetailOperation = ({
       history={history}
       location={location}
       match={match}
+      disabled={disabled}
       title={device.get('name')}
     />
     <section className={cssClasses('Section', 'Section--first')}>
@@ -209,7 +213,9 @@ export const DeviceDetailOperation = ({
         <header className={cssClasses('Header')}>
           <div className={cssClasses('Header__Title')}>Operation history</div>
           <div className={cssClasses('Header__Actions')}>
-            <Button icon={<MdFileDownload />} onClick={onExportClick} />
+            <IconButton onClick={onExportClick}>
+              <MdFileDownload />
+            </IconButton>
           </div>
         </header>
         <div>
@@ -255,19 +261,21 @@ export const DeviceDetailOperation = ({
                     .valueSeq()
                 )}
               />
-              {items.currentIdList
-                .map(id => items.byId.get(id))
-                .map(deviceOperation => (
-                  <DeviceOperationDataTableRow
-                    key={deviceOperation.get('id')}
-                    intl={intl}
-                    deviceOperation={deviceOperation}
-                    deviceOperationSchema={device.getIn([
-                      'deviceType',
-                      'deviceOperationSchema',
-                    ])}
-                  />
-                ))}
+              <TableBody>
+                {items.currentIdList
+                  .map(id => items.byId.get(id))
+                  .map(deviceOperation => (
+                    <DeviceOperationDataTableRow
+                      key={deviceOperation.get('id')}
+                      intl={intl}
+                      deviceOperation={deviceOperation}
+                      deviceOperationSchema={device.getIn([
+                        'deviceType',
+                        'deviceOperationSchema',
+                      ])}
+                    />
+                  ))}
+              </TableBody>
             </DeviceOperationDataTable>
           )}
           {!items.currentIdList.isEmpty() && (

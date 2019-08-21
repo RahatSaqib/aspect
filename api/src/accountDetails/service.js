@@ -38,9 +38,14 @@ async function getAccountDetailsForLoggedInUser(request) {
 
 async function saveDetailsForLoggedInUser(request, updatablePersonFields) {
   const username = request.auth.credentials.name
+  let accountDetails = await getAccountDetailsForUsername(username)
   const newAccountDetails = request.payload
 
-  let accountDetails = await getAccountDetailsForUsername(username)
+  _.mapKeys(newAccountDetails, (value, key) => {
+    if (value === '') {
+      _.set(newAccountDetails, `${key}`, null)
+    }
+  })
 
   // The account details do not belong to the user that submitted this request!
   if (accountDetails.id !== newAccountDetails.id) {
@@ -107,4 +112,5 @@ module.exports = {
   getAccountDetailsForLoggedInUser,
   saveContactDetailsForLoggedInUser,
   saveUserPreferencesForLoggedInUser,
+  getAccountDetailsForUsername,
 }

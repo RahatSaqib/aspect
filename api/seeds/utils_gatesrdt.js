@@ -30,7 +30,7 @@ function calculateDateForResult(
 ) {
   const daysToSubtract =
     resultTimeFrameInDays -
-    Math.ceil(currentResult / totalResults * resultTimeFrameInDays)
+    Math.ceil((currentResult / totalResults) * resultTimeFrameInDays)
 
   return addMilliseconds(
     subDays(now, daysToSubtract),
@@ -235,13 +235,12 @@ async function createResults(
         geographyId,
         siteId,
         deviceId,
-        resultWorkflowStatusId: deliverable,
         longitude: -33.78725,
         latitude: -13.96692,
         resultSourceId: resultSourceLimsId,
         resultTypeId: resultTypePatientId,
         sampleId: sample.id,
-        sampleRunNumber: `${i % 2 + 1}`,
+        sampleRunNumber: `${(i % 2) + 1}`,
         sampleGroup: sample.externalId.substring(0, 10),
         resultCategory1: result.category1,
         resultData: JSON.stringify(resultData),
@@ -264,7 +263,6 @@ async function createResults(
           artNumber: patient.artHccNumber,
           dateOfBirth: patient.dob,
         }),
-        qcCheck: 1,
       })
     )
 
@@ -276,14 +274,16 @@ async function createResults(
       createdBy: userId,
     })
 
-    await knex('ResultWorkflowLog').insert({
+    const [lastLogId] = await knex('ResultWorkflowLog').insert({
       resultId,
       resultWorkflowStatusId: deliverable,
       changedOn: addHours(randomDate, 2),
       createdOn: addHours(randomDate, 1),
       createdBy: userId,
     })
-
+    await knex('Result')
+      .where('id', resultId)
+      .update({ resultWorkflowStatusLogId: lastLogId })
     // for 1st result - add an attachment image
     if (i === 0) {
       const { id: fileContentTypeId } = await knex('FileContentType')

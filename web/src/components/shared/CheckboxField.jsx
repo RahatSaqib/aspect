@@ -3,20 +3,19 @@ import React from 'react'
 
 import { withStyles } from '@material-ui/core/styles'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
-import Checkbox from '@material-ui/core/Checkbox'
-import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank'
-import CheckBoxIcon from '@material-ui/icons/CheckBox'
+import AspectCheckbox from '../../components/shared/AspectCheckbox'
 
 const styles = {
   root: {
     marginLeft: 0,
+    marginRight: 0,
   },
   label: {
     fontSize: '1em',
     lineHeight: '24px',
   },
   checkbox: {
-    marginRight: 16,
+    marginRight: 12,
     padding: '10px 0',
   },
   icon: {
@@ -24,19 +23,20 @@ const styles = {
   },
 }
 
-const CheckboxField = ({ classes: classesMap, label, ...restProps }) => (
+const CheckboxField = ({
+  classes: classesMap,
+  className,
+  label,
+  ...restProps
+}) => (
   <FormControlLabel
     classes={{
       root: classesMap.root,
       label: classesMap.label,
     }}
+    className={className}
     control={
-      <Checkbox
-        classes={{ root: classesMap.checkbox }}
-        icon={<CheckBoxOutlineBlankIcon classes={{ root: classesMap.icon }} />}
-        checkedIcon={<CheckBoxIcon classes={{ root: classesMap.icon }} />}
-        {...restProps}
-      />
+      <AspectCheckbox classes={{ root: classesMap.checkbox }} {...restProps} />
     }
     label={label}
   />
@@ -44,7 +44,12 @@ const CheckboxField = ({ classes: classesMap, label, ...restProps }) => (
 
 CheckboxField.propTypes = {
   classes: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  className: PropTypes.string,
   label: PropTypes.string.isRequired,
+}
+
+CheckboxField.defaultProps = {
+  className: '',
 }
 
 export default withStyles(styles)(CheckboxField)

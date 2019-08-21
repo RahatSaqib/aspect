@@ -15,10 +15,12 @@ import {
   receiveTableItems,
   Table,
 } from '../shared/metaReducers/table'
+import { receivedExportResponse } from '../globals/GlobalsRedux'
 
 export const types = {
   REQUEST_REPORTS: 'REQUEST_REPORTS',
   RECEIVE_REPORTS: 'RECEIVE_REPORTS',
+  REJECTED_REPORTS: 'REJECTED_REPORTS',
 }
 //
 
@@ -41,6 +43,12 @@ function receiveReports(json) {
     type: types.RECEIVE_REPORTS,
     items: json.data,
     total: json.total,
+  }
+}
+
+function rejectReports() {
+  return {
+    type: types.REJECTED_REPORTS,
   }
 }
 
@@ -85,7 +93,64 @@ export function fetchReports(filtersParams, sortCol, sortDir, page, pageSize) {
           ),
         },
       }
-    ).then(json => dispatch(receiveReports(json)))
+    )
+      .then(json => dispatch(receiveReports(json)))
+      .catch(() => dispatch(rejectReports()))
+  }
+}
+export function exportReports(
+  filtersParams,
+  sortCol,
+  sortDir,
+  page,
+  pageSize,
+  fileFormat,
+  reportName
+) {
+  return dispatch => {
+    const filters = _.fromPairs([...filtersParams.entries()])
+
+    return aspectFetch(
+      `/report/export?${stringify({
+        sortCol,
+        sortDir,
+        page,
+        size: pageSize,
+        format: fileFormat,
+        ...filters,
+      })}`,
+      {
+        errorNotifications: {
+          400: filterFieldsRejectedError(
+            defineMessages({
+              title: {
+                id: 'errorResponseMessages.exportReports.GET.400.title',
+                defaultMessage: 'Exporting Reports Failed',
+              },
+            })
+          ),
+          403: errorInsufficientScope(
+            defineMessages({
+              title: {
+                id: 'errorResponseMessages.exportPersons.GET.403.title',
+                defaultMessage: 'Insufficient Permissions',
+              },
+            })
+          ),
+          default: errorPleaseTryAgainInAFewMinutes(
+            defineMessages({
+              title: {
+                id: 'errorResponseMessages.exportReports.GET.default.title',
+                defaultMessage: 'Exporting Reports Failed',
+              },
+            })
+          ),
+        },
+      }
+    ).then(async elem => {
+      const file = await elem
+      dispatch(receivedExportResponse(file, fileFormat, reportName))
+    })
   }
 }
 /*
@@ -109,6 +174,11 @@ export default function reportReducer(state = initialState, action) {
         const immutList = Immutable.fromJS(action.items)
         mutState.set('items', receiveList(mutState.items, immutList))
         mutState.set('table', receiveTableItems(mutState.table, action.total))
+      })
+    case types.REJECTED_REPORTS:
+      return state.withMutations(mutState => {
+        mutState.set('items', mutState.get('items').clear())
+        mutState.set('table', mutState.get('table').clear())
       })
     default:
       return state

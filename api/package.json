@@ -29,7 +29,8 @@
     "test:quiet": "npm-run-all test:unit test:contract:quiet",
     "test:contract": "npm-run-all -c start:background mocha:contract stop:background",
     "test:contract:quiet": "npm-run-all -c start:background:quiet mocha:contract stop:background:quiet",
-    "test:unit": "npm-run-all lint mocha:unit:clear:coverage mocha:unit:coverage"
+    "test:unit": "npm-run-all lint mocha:unit:clear:coverage mocha:unit:coverage",
+    "test:reseed": "npm-run-all db:reseed test"
   },
   "nyc": {
     "check-coverage": true,
@@ -67,6 +68,10 @@
       "api/seeds/**/*.js": [
         "eslint --fix",
         "git add"
+      ],
+      "api/*.js": [
+        "eslint --fix",
+        "git add"
       ]
     }
   },
@@ -78,13 +83,15 @@
     "base32": "^0.0.6",
     "bcrypt": "^1.0.3",
     "boom": "^5.2.0",
-    "date-fns": "^1.28.5",
+    "date-fns": "2.0.0-alpha.8",
     "date-fns-timezone": "^0.1.4",
     "debug": "^3.1.0",
     "dotenv-safe": "^4.0.4",
     "email-templates": "^2.7.1",
-    "exceljs": "^0.5.1",
+    "exceljs": "^1.13.0",
+    "firebase-admin": "^8.0.0",
     "fs-extra": "^6.0.1",
+    "google-libphonenumber": "^3.2.2",
     "handlebars": "^4.0.11",
     "hapi": "^16.5.2",
     "hapi-auth-basic": "^4.2.0",
@@ -98,12 +105,13 @@
     "json2csv": "^3.11.1",
     "jsonwebtoken": "^7.4.3",
     "knex": "^0.14.6",
-    "lodash": "^4.17.4",
+    "lodash": "^4.17.14",
     "mysql": "^2.14.1",
     "node-base64-image": "^1.0.4",
     "node-cron": "^1.2.1",
     "node-uuid": "^1.4.8",
     "nodemailer": "^4.6.8",
+    "phone": "^2.3.7",
     "raven": "^2.1.2",
     "shx": "^0.2.2",
     "timezone-support": "^1.8.1",
@@ -123,6 +131,7 @@
     "forever": "^0.15.3",
     "fs-extra-cli": "^0.0.4",
     "husky": "^0.14.3",
+    "jwt-decode": "^2.2.0",
     "lint-staged": "^6.0.0",
     "mocha": "^3.5.0",
     "mocha-bamboo-reporter": "^1.1.1",

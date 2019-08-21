@@ -1,7 +1,8 @@
 import _ from 'lodash'
 import React from 'react'
+import classNames from 'classnames'
 import { compose, withHandlers, pure } from 'recompose'
-import RTLink from 'react-toolbox/lib/link'
+import MUILink from '@material-ui/core/Link'
 
 const enhance = compose(
   withHandlers({
@@ -19,12 +20,23 @@ const enhance = compose(
   pure
 )
 
-const Link = ({ history, location, onLinkClick, ...restProps }) => (
-  <RTLink
+const Link = ({
+  label,
+  history,
+  location,
+  onLinkClick,
+  theme,
+  ...restProps
+}) => (
+  <MUILink
     {...restProps}
-    active={new RegExp(`^${restProps.href}`).test(location.pathname)}
     onClick={onLinkClick}
-  />
+    className={classNames(theme.link, {
+      [theme.active]: new RegExp(`^${restProps.href}`).test(location.pathname),
+    })}
+  >
+    <abbr>{label}</abbr>
+  </MUILink>
 )
 
 export default enhance(Link)

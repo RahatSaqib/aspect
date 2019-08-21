@@ -4,7 +4,7 @@ import React, { Children } from 'react'
 import { compose, pure } from 'recompose'
 import { defineMessages } from 'react-intl'
 import { connect } from 'react-redux'
-import { Button } from 'react-toolbox/lib/button'
+import Button from '@material-ui/core/Button'
 import MdClose from 'react-icons/lib/md/close'
 import { formatDate } from '../../shared/utils/dateFormat'
 
@@ -62,9 +62,17 @@ const messages = defineMessages({
     id: 'filter.btnGroup.withWorkflowStatus',
     defaultMessage: 'with workflow status is {workflowStatusName}',
   },
+  withTreatmentStatus: {
+    id: 'filter.btnGroup.withTreatmentStatus',
+    defaultMessage: 'with treatment status is {treatmentStatusName}',
+  },
   withDeviceStatus: {
     id: 'filter.btnGroup.withDeviceStatus',
     defaultMessage: 'with device status is {deviceStatusName}',
+  },
+  withDeviceType: {
+    id: 'filter.btnGroup.withDeviceType',
+    defaultMessage: 'with device type is {deviceTypeName}',
   },
   whereExternalIdIncludes: {
     id: 'filter.btnGroup.whereExternalIdIncludes',
@@ -78,8 +86,26 @@ const messages = defineMessages({
     id: 'filter.btnGroup.whereSiteIdIsIn',
     defaultMessage: 'where siteId is in ({joinedIds})',
   },
-})
+  whereNotificationNameIncludes: {
+    id: 'filter.btnGroup.whereNotificationNameIncludes',
+    defaultMessage: 'where notification name includes "{notificationName}"',
+  },
 
+  withRevoked: {
+    id: 'filter.btnGroup.withRevoked',
+    defaultMessage: 'where revoked is "{revokedStatus}"',
+  },
+})
+const revokedOptions = [
+  {
+    id: '0',
+    name: 'false',
+  },
+  {
+    id: '1',
+    name: 'true',
+  },
+]
 const enhance = compose(
   pure,
   connect(
@@ -90,7 +116,9 @@ const enhance = compose(
       assayItems: state.assay.items,
       partnerItems: state.jobs.partnersAndJobFunctionsForSelectList.partners,
       workflowStatusItems: state.resultWorkflowStatus.items,
+      treatmentStatusItems: state.resultTreatmentStatus.items,
       deviceStatusItems: state.deviceStatus.items,
+      deviceTypeItems: state.deviceType.selectList.items,
     }),
     null
   )
@@ -117,6 +145,9 @@ const filtersOrdering = {
   workflowStatusId: 16,
   deviceStatusId: 17,
   externalId: 15,
+  notificationName: 20,
+  revoked: 21,
+  treatmentStatusId: 22,
   // -1: Special orderings
   siteIds: -1,
 }
@@ -125,8 +156,8 @@ const makeButton = labelFn => (props, filterKey) => (
   <Button
     key={filterKey}
     className={cssClasses('Button')}
-    raised
-    accent
+    color="secondary"
+    variant="contained"
     onClick={() => props.onRemoveFilterItem(filterKey)}
   >
     {labelFn(props, props.filters[filterKey])}
@@ -244,6 +275,18 @@ const buttonBy = {
           .get('name'),
       })
   ),
+  treatmentStatusId: makeButton(
+    ({ intl, treatmentStatusItems }, treatmentStatusId) =>
+      intl.formatMessage(messages.withTreatmentStatus, {
+        treatmentStatusName: treatmentStatusItems
+          .find(
+            it => it.get('id') === treatmentStatusId,
+            EMPTY_CONTEXT,
+            EMPTY_MAP
+          )
+          .get('name'),
+      })
+  ),
   deviceStatusId: makeButton(({ intl, deviceStatusItems }, deviceStatusId) =>
     intl.formatMessage(messages.withDeviceStatus, {
       deviceStatusName: deviceStatusItems
@@ -251,9 +294,31 @@ const buttonBy = {
         .get('name'),
     })
   ),
+  deviceTypeId: makeButton(({ intl, deviceTypeItems }, deviceTypeId) =>
+    intl.formatMessage(messages.withDeviceType, {
+      deviceTypeName: deviceTypeItems
+        .find(it => it.get('id') === deviceTypeId, EMPTY_CONTEXT, EMPTY_MAP)
+        .get('name'),
+    })
+  ),
   externalId: makeButton(({ intl }, externalId) =>
     intl.formatMessage(messages.whereExternalIdIncludes, {
       externalId,
+    })
+  ),
+  notificationName: makeButton(({ intl }, notificationName) =>
+    intl.formatMessage(messages.whereNotificationNameIncludes, {
+      notificationName,
+    })
+  ),
+
+  revoked: makeButton(({ intl }, revoked) =>
+    intl.formatMessage(messages.withRevoked, {
+      revokedStatus: revokedOptions.find(
+        it => it.id === revoked,
+        EMPTY_CONTEXT,
+        EMPTY_MAP
+      ).name,
     })
   ),
   // Special keys

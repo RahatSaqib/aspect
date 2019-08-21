@@ -1,15 +1,15 @@
 const _ = require('lodash')
 const supertest = require('supertest')
 const chai = require('chai')
-const addYears = require('date-fns/add_years')
-const subDays = require('date-fns/sub_days')
-const addDays = require('date-fns/add_days')
-const addHours = require('date-fns/add_hours')
-const subHours = require('date-fns/sub_hours')
-const addMinutes = require('date-fns/add_minutes')
-const subMinutes = require('date-fns/sub_minutes')
-const addSeconds = require('date-fns/add_seconds')
-const setMilliseconds = require('date-fns/set_milliseconds')
+const addYears = require('date-fns/addYears')
+const subDays = require('date-fns/subDays')
+const addDays = require('date-fns/addDays')
+const addHours = require('date-fns/addHours')
+const subHours = require('date-fns/subHours')
+const addMinutes = require('date-fns/addMinutes')
+const subMinutes = require('date-fns/subMinutes')
+const addSeconds = require('date-fns/addSeconds')
+const setMilliseconds = require('date-fns/setMilliseconds')
 const dateFormat = require('date-fns/format')
 const Promise = require('bluebird')
 const { createGxAlertTestContext } = require('./gxalert_utils')
@@ -1754,10 +1754,8 @@ describe('Device API routes for GxAlert Device', () => {
               status: null,
               type: { id: 'CepheidGeneXpert' },
               site: null,
-              checkpoint: null,
               log: null,
               configuration: {
-                checkpoint: null,
                 data: {
                   macAddress: 'MAC0A0027000010',
                   hostId: 'xPertLab',
@@ -1816,10 +1814,8 @@ describe('Device API routes for GxAlert Device', () => {
               status: null,
               type: { id: 'CepheidGeneXpert' },
               site: null,
-              checkpoint: null,
               log: null,
               configuration: {
-                checkpoint: null,
                 data: {
                   macAddress: 'MAC0A0027000010',
                   gxAlertDeviceId,
@@ -1896,10 +1892,8 @@ describe('Device API routes for GxAlert Device', () => {
               status: null,
               type: { id: 'CepheidGeneXpert' },
               site: null,
-              checkpoint: null,
               log: null,
               configuration: {
-                checkpoint: null,
                 data: {
                   macAddress: 'MAC0A0127001010',
                   hostId,
@@ -1978,7 +1972,7 @@ describe('Device API routes for GxAlert Device', () => {
             const inactiveMaintenanceNote = 'Router only has one SIM in it'
             const inactiveMaintenanceExpectedBackOnline = dateFormat(
               addDays(now, 15),
-              'YYYY-MM-DD'
+              'yyyy-MM-dd'
             )
             const waitForDeviceMaintenance = waitForAction(
               deviceMaintenance(deviceId)
@@ -2022,7 +2016,7 @@ describe('Device API routes for GxAlert Device', () => {
               const inactiveMaintenanceNote = 'Router cannot connect to VPN'
               const inactiveMaintenanceExpectedBackOnline = dateFormat(
                 addDays(now, 23),
-                'YYYY-MM-DD'
+                'yyyy-MM-dd'
               )
               const waitForDeviceMaintenance = waitForAction(
                 deviceMaintenance(deviceId)
@@ -2062,7 +2056,7 @@ describe('Device API routes for GxAlert Device', () => {
               const activeMaintenanceNote = 'VPN config was incorrect'
               const activeMaintenanceExpectedBackOnline = dateFormat(
                 now,
-                'YYYY-MM-DD'
+                'yyyy-MM-dd'
               )
               const waitForDeviceSeen = waitForAction(deviceSeen(deviceId))
               await postToDeviceApi(
@@ -2101,7 +2095,7 @@ describe('Device API routes for GxAlert Device', () => {
                 'Router cannot connect to the network'
               const inactiveMaintenanceExpectedBackOnline = dateFormat(
                 addDays(now, 16),
-                'YYYY-MM-DD'
+                'yyyy-MM-dd'
               )
               await postToDeviceApi(
                 _.merge(standardDevicePayload, {
@@ -2131,7 +2125,7 @@ describe('Device API routes for GxAlert Device', () => {
               const activeMaintenanceNote = 'VPN config was incorrect'
               const activeMaintenanceExpectedBackOnline = dateFormat(
                 now,
-                'YYYY-MM-DD'
+                'yyyy-MM-dd'
               )
               await postToDeviceApi(
                 _.merge(standardDevicePayload, {
@@ -2181,7 +2175,7 @@ describe('Device API routes for GxAlert Device', () => {
               const inactiveMaintenanceNote = 'Router cannot connect to VPN'
               const inactiveMaintenanceExpectedBackOnline = dateFormat(
                 addDays(now, 23),
-                'YYYY-MM-DD'
+                'yyyy-MM-dd'
               )
               const response = await postToDeviceApi(
                 _.merge(standardDevicePayload, {
@@ -2219,7 +2213,7 @@ describe('Device API routes for GxAlert Device', () => {
             const inactiveMaintenanceNote = 'Duplicate Router shows connected'
             const inactiveMaintenanceExpectedBackOnline = dateFormat(
               addDays(now, 19),
-              'YYYY-MM-DD'
+              'yyyy-MM-dd'
             )
             await waitForApproximately(100, 'milliseconds')
             await postToDeviceApi(
@@ -2375,10 +2369,8 @@ describe('Device API routes for GxAlert Device', () => {
               status: null,
               type: { id: 'CepheidGeneXpert' },
               site: null,
-              checkpoint: null,
               log: null,
               configuration: {
-                checkpoint: null,
                 data: {
                   macAddress: 'MAC0A0127019921',
                   hostId,
@@ -2837,10 +2829,8 @@ describe('Device API routes for GxAlert Device', () => {
             status: null,
             type: { id: 'CepheidGeneXpert' },
             site: null,
-            checkpoint: null,
             log: null,
             configuration: {
-              checkpoint: null,
               data: { macAddress, gxAlertDeviceId: deviceIdFromGxAlert },
             },
             operation: null,
@@ -3041,8 +3031,12 @@ describe('Device API routes for GxAlert Device', () => {
           expectedStatusCode: 200,
         })
 
-        const { body: { result: firstResult } } = firstResponse
-        const { body: { result: secondResult } } = secondResponse
+        const {
+          body: { result: firstResult },
+        } = firstResponse
+        const {
+          body: { result: secondResult },
+        } = secondResponse
         assert.equal(secondResult.id, firstResult.id)
         assert.equal(secondResult.createdOn, firstResult.createdOn)
         expect(JSON.parse(secondResult.resultData)).to.containSubset(
@@ -3073,7 +3067,7 @@ describe('Device API routes for GxAlert Device', () => {
             basicResultPayload,
             {
               result: {
-                id: dateFormat(new Date(), 'x'),
+                id: dateFormat(new Date(), 'T'),
                 startedOn: now,
                 endedOn: now,
                 instrument: {
@@ -3097,7 +3091,6 @@ describe('Device API routes for GxAlert Device', () => {
         expect(JSON.parse(result1.resultData)).to.containSubset({ a: 'b' })
         assert.isNotOk(result1.errorCode)
         assert.equal(initialCount + 1, await countResults())
-
         deviceApiResponse = await postToDeviceApi({
           authHeader: deviceAuth,
           payload: _.merge(
@@ -3107,7 +3100,7 @@ describe('Device API routes for GxAlert Device', () => {
             basicResultPayload,
             {
               result: {
-                id: dateFormat(new Date(), 'x'),
+                id: dateFormat(new Date(), 'T'),
                 startedOn: now,
                 endedOn: now,
                 instrument: {
@@ -3144,7 +3137,7 @@ describe('Device API routes for GxAlert Device', () => {
             basicResultPayload,
             {
               result: {
-                id: dateFormat(new Date(), 'x'),
+                id: dateFormat(new Date(), 'T'),
                 startedOn: subMinutes(now, 5),
                 endedOn: now,
                 instrument: {
@@ -3188,7 +3181,7 @@ describe('Device API routes for GxAlert Device', () => {
             basicResultPayload,
             {
               result: {
-                id: dateFormat(new Date(), 'x'),
+                id: dateFormat(new Date(), 'T'),
                 data: { a: 'b', c: 2, d: false, e: { f: 'g' } },
                 type: { id: 'Study' },
                 source: { id: 'EnteredByHand' },
@@ -3352,7 +3345,12 @@ describe('Device API routes for GxAlert Device', () => {
         assert.equal(result2Source.externalId, 'EnteredByHand')
 
         const result2Status = await knex('ResultWorkflowStatus as rs')
-          .where({ id: result2.resultWorkflowStatusId })
+          .innerJoin(
+            'ResultWorkflowLog as rsl',
+            'rs.id',
+            'rsl.ResultWorkflowStatusId'
+          )
+          .where('rsl.id', result2.resultWorkflowStatusLogId)
           .first('externalId')
         assert.equal(result2Status.externalId, 'Acknowledged')
 
@@ -3647,6 +3645,8 @@ describe('Device API routes for GxAlert Device', () => {
             siteId: geneXpertDevice.siteId,
             expiresOn: expiryDate,
             quantityOnHand: initialQuantityOnHand,
+            createdOn: subDays(now, 4),
+            updatedOn: subDays(now, 4),
           })
 
           const testStartedOn = setMilliseconds(subDays(now, 3), 0)
@@ -3661,7 +3661,7 @@ describe('Device API routes for GxAlert Device', () => {
               basicResultPayload,
               {
                 result: {
-                  id: dateFormat(new Date(), 'x'),
+                  id: dateFormat(new Date(), 'T'),
                   startedOn: testStartedOn,
                   endedOn: testEndedOn,
                   sample: { id: 'Existing Sample' },
@@ -3710,7 +3710,7 @@ describe('Device API routes for GxAlert Device', () => {
       describe('when the test already exists in the database', () => {
         it('should NOT reduce inventory levels of the consumable', () =>
           runTest(async knex => {
-            const uniqueTestId = dateFormat(new Date(), 'x')
+            const uniqueTestId = dateFormat(new Date(), 'T')
             const consumableAssays = await knex('ConsumableAssay as ca')
               .join('Assay as a', 'ca.assayId', 'a.id')
               .join('DeviceType as dt', 'a.deviceTypeId', 'dt.id')
@@ -3733,6 +3733,8 @@ describe('Device API routes for GxAlert Device', () => {
               siteId: geneXpertDevice.siteId,
               expiresOn: expiryDate,
               quantityOnHand: initialQuantityOnHand,
+              createdOn: subDays(now, 4),
+              updatedOn: subDays(now, 4),
             })
 
             const inventoryItemBefore = await knex('InventoryItem')
@@ -3778,7 +3780,9 @@ describe('Device API routes for GxAlert Device', () => {
               .where('d.id', firstResponse.body.device.id)
               .first('d.siteId')
             const {
-              body: { result: { id: resultIdAfterFirstRequest } },
+              body: {
+                result: { id: resultIdAfterFirstRequest },
+              },
             } = firstResponse
 
             const inventoryItemsAfterFirstRequest = await knex('InventoryItem')
@@ -3873,7 +3877,9 @@ describe('Device API routes for GxAlert Device', () => {
               .first('d.siteId')
             assert.equal(siteIdFromSecondRequest, siteIdFromFirstRequest)
             const {
-              body: { result: { id: resultIdAfterSecondRequest } },
+              body: {
+                result: { id: resultIdAfterSecondRequest },
+              },
             } = secondResponse
             assert.equal(resultIdAfterSecondRequest, resultIdAfterFirstRequest)
 
