@@ -188,7 +188,7 @@ async function generateWorkbookByDataSource(
   workSheetName,
   columnsSchema,
   reportTitle,
-  rowsConvertionFunction = null
+  rowsConversionFunction = null
 ) {
   const workbook = new Excel.Workbook()
   const worksheet = workbook.addWorksheet(workSheetName)
@@ -223,11 +223,11 @@ async function generateWorkbookByDataSource(
     bold: true,
   }
 
-  if (!rowsConvertionFunction) {
+  if (!rowsConversionFunction) {
     worksheet.addRows(data)
   } else {
     data.forEach(element => {
-      worksheet.addRow(rowsConvertionFunction(element))
+      worksheet.addRow(rowsConversionFunction(element))
     })
   }
 

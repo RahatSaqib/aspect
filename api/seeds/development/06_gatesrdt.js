@@ -87,14 +87,12 @@ async function seed(knex) {
       },
       hcwConfirmatoryResult: {
         list: false,
-
         order: 3,
         type: 'string',
         title: 'HCW Confirmatory Result',
       },
       hcwTiebreakerResult: {
         list: false,
-
         order: 4,
         type: 'string',
         title: 'HCW Tiebreaker Result',

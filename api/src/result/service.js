@@ -23,6 +23,9 @@ const { getPathFromFileReferenceId } = require('../file/service')
 const SELECT_LIST_FIELDS = [
   'r.id',
   'r.externalId',
+  knex.raw(
+    "case when GREATEST(rtas.requiresTreatment, rtas2.requiresTreatment) =false then null else case when rts.externalId= 'OnTreatment' then 'ok' when rts.externalId = 'NotPossible' then 'na' when r.endedOn>=DATE_SUB(NOW(),INTERVAL 32 DAY) then 'alert' when r.endedOn>=DATE_SUB(NOW(),INTERVAL 16 DAY) and r.endedOn<DATE_SUB(NOW(),INTERVAL 32 DAY) then 'warning' else 'na' end end as treatmentStatusInfo"
+  ),
   knex.raw('IFNULL(r.endedOn, r.startedOn) as endedOn'),
   'd.name as deviceName',
   'c.name as countryName',
@@ -98,6 +101,9 @@ const SELECT_COMMON_FIELDS = [
   knex.raw('JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.id")) as patientId'),
   knex.raw(
     'GREATEST(rtas.requiresTreatment, rtas2.requiresTreatment) as requiresTreatment'
+  ),
+  knex.raw(
+    "case when GREATEST(rtas.requiresTreatment, rtas2.requiresTreatment) =false then null else case when rts.externalId= 'OnTreatment' then 'ok' when rts.externalId = 'NotPossible' then 'na' when r.endedOn>=DATE_SUB(NOW(),INTERVAL 32 DAY) then 'alert' when r.endedOn>=DATE_SUB(NOW(),INTERVAL 16 DAY) and r.endedOn<DATE_SUB(NOW(),INTERVAL 32 DAY) then 'warning' else 'na' end end as treatmentStatusInfo"
   ),
   'r.patientData',
   'rsl.reason as resultWorkflowLogReason',
@@ -261,9 +267,7 @@ async function getListResults(query, auth, fields = SELECT_LIST_FIELDS) {
           .orWhere('r.researchId', 'like', `%${params.patientOrResearchId}%`)
       }
     }, query)
-    .where('r.partnerId', dataConstraints.partner.id)
-    .where('c.id', dataConstraints.country.id)
-  // .modify(addConstraints, dataConstraints, { device: 'd', sample: 's' })
+    .modify(addPartnerQueryConstraints, dataConstraints)
   // get total count for paging
   const getCount = resultQuery
     .clone()
@@ -288,16 +292,16 @@ async function getListResults(query, auth, fields = SELECT_LIST_FIELDS) {
     })
   }
 
-  const newData = _.map(data, v => {
+  /* const newData = _.map(data, v => {
     getResultTreatmentStatus(v)
     return v
-  })
+  }) */
 
   const result = {
     ok: true,
     total,
-    length: newData.length,
-    data: newData,
+    length: data.length,
+    data,
     extraColumns: assayColumns,
   }
 
@@ -328,7 +332,17 @@ function getResultTreatmentStatus(response) {
     response.treatmentStatusInfo = null
   }
 }
-
+const addPartnerQueryConstraints = (
+  queryBuilder,
+  { partner, country, geography, site }
+) => {
+  if (partner) queryBuilder.where('r.partnerId', partner.id)
+  if (site) queryBuilder.where('r.siteId', partner.id)
+  else if (geography) {
+    if (geography.lgaId) queryBuilder.where('g.lgaId', geography.lgaId)
+    else if (geography.stateId) queryBuilder.where('g.stateId', geography.lgaId)
+  } else if (country) queryBuilder.where('c.id', country.id)
+}
 async function exportResults(query, auth) {
   const selectFields = _.clone(SELECT_COMMON_FIELDS)
   const sortableFields = _.clone(SORT_FIELDS)
@@ -363,10 +377,7 @@ async function exportResults(query, auth) {
 
   // get data constraints
   const dataConstraints = await getConstraints(auth.credentials)
-  const addPartnerConstraints = (queryBuilder, { partner, country }) => {
-    if (partner) queryBuilder.where('r.partnerId', partner.id)
-    if (country) queryBuilder.where('c.id', country.id)
-  }
+
   const resultQuery = knex('Result as r')
     .innerJoin('Assay as a', 'r.assayId', 'a.id')
     .innerJoin('Device as d', 'r.deviceId', 'd.id')
@@ -412,7 +423,7 @@ async function exportResults(query, auth) {
       'rts.id'
     )
     .leftJoin('Site as si', 'r.siteId', 'si.id')
-    .modify(addPartnerConstraints, dataConstraints)
+    .modify(addPartnerQueryConstraints, dataConstraints)
     .modify(filterDateRangeParams, query, 'r.endedOn')
     .modify(filterParams, query, {
       deviceId: 'd.id',
@@ -441,14 +452,10 @@ async function exportResults(query, auth) {
     .modify(sortPageParams, query, 'endedOn')
     .select(selectFields)
   const data = await resultQuery
-  const newData = _.map(data, v => {
-    getResultTreatmentStatus(v)
-    return v
-  })
 
   const result = {
     ok: true,
-    data: newData,
+    data,
   }
 
   return result
@@ -462,6 +469,7 @@ async function listResults(request) {
 async function getDownloadResultsList(query, auth) {
   // get data constraints
   const dataConstraints = await getConstraints(auth.credentials)
+
   const resultQuery = knex('Result as r')
     .innerJoin('Assay as a', 'r.assayId', 'a.id')
     .innerJoin('AssayType as at', 'a.assayTypeId', 'at.id')
@@ -560,6 +568,7 @@ async function getDownloadResultsList(query, auth) {
     }, query)
     .modify(addConstraints, dataConstraints, { device: 'd', sample: 's' })
   // get total count for paging
+
   const getCount = resultQuery
     .clone()
     .count('r.id as count')
