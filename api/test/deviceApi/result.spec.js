@@ -1,7 +1,7 @@
 const supertest = require('supertest')
 const chai = require('chai')
 const _ = require('lodash')
-const { subDays, addDays, startOfDay } = require('date-fns')
+const { subDays, addDays, startOfDay, parseISO } = require('date-fns')
 const { parseDateOrDefault } = require('../../src/shared/date')
 const { getResult } = require('../../src/deviceApi/result')
 const {
@@ -1699,7 +1699,7 @@ describe('Device Result API routes', () => {
             .first('id')
 
           const past = subDays(now, 1)
-          const future = addDays(now, 7)
+          const future = addDays(parseISO(now.toISOString()), 7)
 
           const assayExternalId = 'DaktariHivVl'
           const { id: daktariHivVlCartridgeId } = await knex('Consumable as c')
@@ -1820,7 +1820,7 @@ describe('Device Result API routes', () => {
             .first('id')
 
           const past = subDays(now, 1)
-          const future = addDays(now, 7)
+          const future = addDays(parseISO(now.toISOString()), 7)
           const futureExpiresOn = startOfDay(future)
 
           const assayExternalId = 'DaktariHivVl'
@@ -1999,7 +1999,7 @@ describe('Device Result API routes', () => {
             .first('id')
 
           const past = subDays(now, 1)
-          const future = addDays(now, 7)
+          const future = addDays(parseISO(now.toISOString()), 7)
           const futureExpiresOn = startOfDay(future)
 
           const assayExternalId = 'DaktariHivVl'
@@ -2223,7 +2223,7 @@ describe('Device Result API routes', () => {
             .first('id')
 
           const past = subDays(now, 1)
-          const future = addDays(now, 7)
+          const future = addDays(parseISO(now.toISOString()), 7)
 
           const assayExternalId = 'DaktariHivVl'
           const { id: daktariHivVlCartridgeId } = await knex('Consumable as c')
@@ -2241,7 +2241,7 @@ describe('Device Result API routes', () => {
             consumableId: daktariHivVlCartridgeId,
             siteId,
             lotNumber: 'not as close',
-            expiresOn: addDays(future, 2),
+            expiresOn: addDays(parseISO(future.toISOString()), 2),
             quantityOnHand: 40,
             createdBy: adminId,
             createdOn: subDays(past, 3),
@@ -2253,7 +2253,7 @@ describe('Device Result API routes', () => {
             consumableId: daktariHivVlCartridgeId,
             siteId,
             lotNumber: 'closest',
-            expiresOn: addDays(future, 1),
+            expiresOn: addDays(parseISO(future.toISOString()), 1),
             quantityOnHand: 30,
             createdBy: adminId,
             createdOn: subDays(past, 2),

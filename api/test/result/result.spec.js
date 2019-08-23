@@ -2,7 +2,7 @@ const supertest = require('supertest')
 const chai = require('chai')
 const _ = require('lodash')
 const dateFormat = require('date-fns/format')
-const { addMinutes, subMonths, endOfMonth } = require('date-fns')
+const { addMinutes, subMonths, endOfMonth, parseISO } = require('date-fns')
 
 const shared = require('../utils/sharedToken')
 const { runTestWithKnex } = require('../utils/generatorFunctionUtils')
@@ -26,7 +26,9 @@ describe('Result routes', () => {
   let initialResultWorkflowStatusName = ''
   const reason = 'testing'
   const operator = 'Tester'
-  const changedOn = new Date(dateFormat(new Date(), 'yyyy-MM-dd HH:mm:ss.000Z'))
+  const changedOn = new Date(
+    dateFormat(new Date(), "yyyy-MM-dd HH:mm:ss.000'Z'")
+  )
   describe('GET', () => {
     shared.checkToken(server, path)
 
@@ -249,10 +251,12 @@ describe('Result routes', () => {
           )
           assert.equal(
             dateFormat(
-              res.body.data.resultWorkflowLogChangedOn,
+              parseISO(
+                new Date(res.body.data.resultWorkflowLogChangedOn).toISOString()
+              ),
               'yyyy-MM-dd HH:mm:ss'
             ),
-            dateFormat(changedOn, 'yyyy-MM-dd HH:mm:ss')
+            dateFormat(parseISO(changedOn.toISOString()), 'yyyy-MM-dd HH:mm:ss')
           )
 
           // update with resultWorkflowStatusId
@@ -406,7 +410,7 @@ describe('Result routes', () => {
     })
 
     it('Should update result treatment status given a resultId - with resultTreatmentStatusId', done => {
-      const changedOn = addMinutes(new Date(), 1)
+      const changedOn = addMinutes(parseISO(new Date().toISOString()), 1)
       const updateWithId = {
         resultTreatmentStatusId: 2,
         data: 'should be treated',
@@ -431,7 +435,7 @@ describe('Result routes', () => {
     })
 
     it('Should update result treatment status given a resultId - set resultTreatmentData', done => {
-      const changedOn = addMinutes(new Date(), 2)
+      const changedOn = addMinutes(parseISO(new Date().toISOString()), 2)
       const updateWithNull = {
         resultTreatmentStatusId: null,
         data: 'should be treated',

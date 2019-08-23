@@ -8,6 +8,7 @@ const {
   addWeeks,
   addMonths,
   addYears,
+  parseISO,
 } = require('date-fns')
 const { readTextFile } = require('../shared/io')
 
@@ -190,21 +191,36 @@ async function triggeredEventOlderThan(knex, issue, issueAge) {
     issueAge
   )
   const issueTriggeredOnPlusAge = addYears(
-    addMonths(
-      addWeeks(
-        addDays(
-          addHours(
-            addMinutes(
-              addSeconds(issue.triggeredOn, issueAgeSpec.seconds),
-              issueAgeSpec.minutes
+    parseISO(
+      addMonths(
+        parseISO(
+          addWeeks(
+            parseISO(
+              addDays(
+                parseISO(
+                  addHours(
+                    parseISO(
+                      addMinutes(
+                        parseISO(
+                          addSeconds(
+                            parseISO(issue.triggeredOn.toISOString()),
+                            issueAgeSpec.seconds
+                          ).toISOString()
+                        ),
+                        issueAgeSpec.minutes
+                      ).toISOString()
+                    ),
+                    issueAgeSpec.hours
+                  ).toISOString()
+                ),
+                issueAgeSpec.days
+              ).toISOString()
             ),
-            issueAgeSpec.hours
-          ),
-          issueAgeSpec.days
+            issueAgeSpec.weeks
+          ).toISOString()
         ),
-        issueAgeSpec.weeks
-      ),
-      issueAgeSpec.months
+        issueAgeSpec.months
+      ).toISOString()
     ),
     issueAgeSpec.years
   )

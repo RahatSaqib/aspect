@@ -1,4 +1,4 @@
-const { addDays, format } = require('date-fns')
+const { addDays, format, parseISO } = require('date-fns')
 
 // ----------- Action Types ---------------------
 const types = {
@@ -17,7 +17,10 @@ function inventoryStockout(siteId, consumableId, daysDue) {
     throw new Error('Must specify siteId, consumableId, daysDue')
   }
 
-  const date = format(addDays(new Date(), daysDue), 'yyyy-MM-dd')
+  const date = format(
+    addDays(parseISO(new Date().toISOString()), daysDue),
+    'yyyy-MM-dd'
+  )
 
   return {
     type: types.INVENTORY_STOCKOUT,
@@ -36,7 +39,10 @@ function inventoryStockExpiring(siteId, consumableId, daysDue, totalWasted) {
     throw new Error('Must specify siteId, consumableId, daysDue, totalWasted')
   }
 
-  const date = format(addDays(new Date(), daysDue), 'yyyy-MM-dd')
+  const date = format(
+    addDays(parseISO(new Date().toISOString()), daysDue),
+    'yyyy-MM-dd'
+  )
 
   return {
     type: types.INVENTORY_STOCK_EXPIRING,

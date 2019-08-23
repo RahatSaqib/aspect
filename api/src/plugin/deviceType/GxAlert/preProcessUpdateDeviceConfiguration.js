@@ -1,5 +1,6 @@
 const _ = require('lodash')
 const dateFormat = require('date-fns/format')
+const parseISO = require('date-fns/parseISO')
 const {
   deviceMaintenance,
   deviceMaintenanceResolved,
@@ -34,7 +35,10 @@ async function preProcessUpdateDeviceConfiguration(context) {
       expectedBackOnline:
         !inactive || _.isEmpty(expectedBackOnlineInData)
           ? null
-          : dateFormat(expectedBackOnlineInData, 'yyyy-MM-dd'),
+          : dateFormat(
+              parseISO(new Date(expectedBackOnlineInData).toISOString()),
+              'yyyy-MM-dd'
+            ),
     })
     const dueOn = parseDateOrDefault(newMaintenanceData.expectedBackOnline)
     if (inactive) {

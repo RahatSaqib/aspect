@@ -1,5 +1,6 @@
 const _ = require('lodash')
 const addDays = require('date-fns/addDays')
+const parseISO = require('date-fns/parseISO')
 const chai = require('chai')
 const {
   pushNotification: { testDeviceTokenId },
@@ -59,7 +60,7 @@ class PushNotificationTestContext {
         clientName: 'Funky Phone',
         token: 'faketokenz',
         deviceTokenId: testDeviceTokenId,
-        expires: addDays(now, 30),
+        expires: addDays(parseISO(now.toISOString()), 30),
         revoked: 0,
         createdOn: now,
         clientType: 'reporter_app',
