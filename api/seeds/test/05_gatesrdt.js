@@ -73,32 +73,23 @@ async function seed(knex) {
     resultSourceId: await resultSourceToId('DiagnosticDevice'),
     resultCategory1Label: 'Status',
     resultDataSchema: JSON.stringify({
-      resultText: {
-        list: true,
-        order: 1,
-        type: 'string',
-
-        title: 'Result',
-      },
+      resultText: { list: true, order: 1, type: 'string', title: 'Result' },
       hcwResult: {
         list: true,
         order: 2,
         type: 'string',
-
         title: 'HCW Result',
       },
       hcwConfirmatoryResult: {
         list: false,
         order: 3,
         type: 'string',
-
         title: 'HCW Confirmatory Result',
       },
       hcwTiebreakerResult: {
         list: false,
         order: 4,
         type: 'string',
-
         title: 'HCW Tiebreaker Result',
       },
     }),
@@ -110,13 +101,11 @@ async function seed(knex) {
       educationLevel: {
         type: 'string',
         order: 4,
-
         title: 'Education Level',
       },
       previousTesting: {
         type: 'string',
         order: 5,
-
         title: 'Previous Testing',
       },
     }),

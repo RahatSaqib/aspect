@@ -442,12 +442,7 @@ async function seed(knex) {
         type: 'string',
         title: 'Error Code',
       },
-      operator: {
-        list: true,
-        order: 10,
-        type: 'string',
-        title: 'Operator',
-      },
+      operator: { list: true, order: 10, type: 'string', title: 'Operator' },
       timeStamp: {
         list: true,
         order: 11,
@@ -556,7 +551,6 @@ async function seed(knex) {
       },
       errorCode: {
         list: true,
-
         order: 9,
         type: 'string',
         title: 'Error Code',

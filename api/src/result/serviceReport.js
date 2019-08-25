@@ -135,6 +135,8 @@ async function getResultFormData(partnerId, headers) {
     })
   })
 }
+// Add field excludeReport in the json metadata of the custom fields
+// if you don't want add this field to the report.
 const filterExcluded = collection =>
   _.filter(
     collection,

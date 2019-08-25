@@ -364,7 +364,6 @@ async function seed(knex) {
       title: 'Probes',
       type: 'object',
       i18nKey: 'Probes',
-
       properties: {
         probeA: {
           title: 'Probe A',
@@ -485,7 +484,6 @@ async function seed(knex) {
       title: 'Probes',
       type: 'object',
       i18nKey: 'probes',
-
       properties: {
         gpCt: {
           title: 'GP Ct',
@@ -554,7 +552,6 @@ async function seed(knex) {
       title: 'Probes',
       type: 'object',
       i18nKey: 'probes',
-
       properties: {
         gpCt: {
           title: 'GP Ct',
@@ -965,25 +962,21 @@ async function seed(knex) {
       surname: {
         title: 'Client Surname',
         type: 'string',
-
         order: 2,
       },
       addressPhone: {
         title: 'Address/Phone',
         type: 'string',
-
         order: 3,
       },
       artNumber: {
         title: 'ART #',
         type: 'string',
-
         order: 4,
       },
       gender: {
         title: 'Gender',
         type: 'string',
-
         order: 5,
       },
     }),
@@ -1010,44 +1003,37 @@ async function seed(knex) {
       provider: {
         title: 'Provider ID',
         type: 'string',
-
         order: 0,
       },
       name: {
         title: 'Client Name',
         type: 'string',
-
         order: 1,
       },
       surname: {
         title: 'Client Surname',
         type: 'string',
-
         order: 2,
       },
       addressPhone: {
         title: 'Address/Phone',
         type: 'string',
-
         order: 3,
       },
       motherName: {
         title: "Mother's Name",
         type: 'string',
-
         order: 4,
       },
       hccNumber: {
         list: true,
         title: 'HCC #',
         type: 'string',
-
         order: 5,
       },
       gender: {
         title: 'Gender',
         type: 'string',
-
         order: 6,
       },
     }),
@@ -1078,49 +1064,41 @@ async function seed(knex) {
       name: {
         title: 'Client Name',
         type: 'string',
-
         order: 1,
       },
       surname: {
         title: 'Client Surname',
         type: 'string',
-
         order: 2,
       },
       artNumber: {
         title: 'ART #',
         type: 'string',
-
         order: 4,
       },
       age: {
         title: 'Age (months)',
         type: 'string',
-
         order: 3,
       },
       dateOfBirth: {
         title: 'Date of Birth',
         type: 'string',
-
         order: 4,
       },
       gender: {
         title: 'Gender',
         type: 'string',
-
         order: 5,
       },
       provider: {
         title: 'Provider',
         type: 'string',
-
         order: 7,
       },
       phone: {
         title: 'Phone #',
         type: 'string',
-
         order: 8,
       },
     }),
@@ -1151,55 +1129,46 @@ async function seed(knex) {
       name: {
         title: 'Client Name',
         type: 'string',
-
         order: 1,
       },
       surname: {
         title: 'Client Surname',
         type: 'string',
-
         order: 2,
       },
       age: {
         title: 'Age (months)',
         type: 'string',
-
         order: 3,
       },
       dateOfBirth: {
         title: 'Date of Birth',
         type: 'string',
-
         order: 4,
       },
       gender: {
         title: 'Gender',
         type: 'string',
-
         order: 5,
       },
       hccNumber: {
         title: 'HCC #',
         type: 'string',
-
         order: 6,
       },
       motherName: {
         title: 'Mother Name',
         type: 'string',
-
         order: 7,
       },
       motherSurname: {
         title: 'Mother Surname',
         type: 'string',
-
         order: 8,
       },
       phone: {
         title: 'Phone #',
         type: 'string',
-
         order: 9,
       },
     }),
