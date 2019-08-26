@@ -7,7 +7,6 @@ const shared = require('../utils/sharedToken')
 
 const server = supertest.agent('http://localhost:8080/api')
 
-
 describe('Excel reports', () => {
   it('should return a files when using valid token', async () => {
     const queries = [
@@ -18,12 +17,10 @@ describe('Excel reports', () => {
       '/report/export?sortCol=name&sortDir=asc&page=0&size=10&format=xlsx',
       '/notification/export?sortCol=name&sortDir=asc&page=0&size=10&format=csv',
       '/deviceApiKey/export?sortCol=createdOn&sortDir=asc&page=0&size=10&format=',
-
-      '/result/export?format=csv',
-
+      '/result/export?sortCol=createdOn&sortDir=asc&page=0&size=10&format=csv',
     ]
     shared.checkToken(server, queries[0])
-    return Promise.each(queries, async query => {
+    await Promise.each(queries, async query => {
       const res = await server
         .get(query)
         .set('Authorization', `Bearer ${shared.token}`)

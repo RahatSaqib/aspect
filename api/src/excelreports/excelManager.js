@@ -188,7 +188,8 @@ async function generateWorkbookByDataSource(
   workSheetName,
   columnsSchema,
   reportTitle,
-  rowsConversionFunction = null
+  rowsConversionFunction = null,
+  defaultNoDataMessage = 'No data for this period'
 ) {
   const workbook = new Excel.Workbook()
   const worksheet = workbook.addWorksheet(workSheetName)
@@ -197,8 +198,12 @@ async function generateWorkbookByDataSource(
   worksheet.columns.forEach(column => {
     column.width = column.header.length + 2
   })
-  worksheet.getRow(4).values = _.map(columnsSchema, elem => elem.header)
-  worksheet.getRow(4).eachCell(cell => {
+  const headerIndex = 4
+  worksheet.getRow(headerIndex).values = _.map(
+    columnsSchema,
+    elem => elem.header
+  )
+  worksheet.getRow(headerIndex).eachCell(cell => {
     cell.border = {
       top: { style: 'double', color: { argb: 'FFFFFFFF' } },
       left: { style: 'double', color: { argb: 'FFFFFFFF' } },
@@ -222,14 +227,15 @@ async function generateWorkbookByDataSource(
     size: 20,
     bold: true,
   }
-
-  if (!rowsConversionFunction) {
-    worksheet.addRows(data)
-  } else {
-    data.forEach(element => {
-      worksheet.addRow(rowsConversionFunction(element))
-    })
-  }
+  if (data) {
+    if (!rowsConversionFunction) {
+      worksheet.addRows(data)
+    } else {
+      data.forEach(element => {
+        worksheet.addRow(rowsConversionFunction(element))
+      })
+    }
+  } else setMessageOnRow(worksheet, headerIndex + 1, defaultNoDataMessage)
 
   return generateReportFile(workbook, format)
 }
