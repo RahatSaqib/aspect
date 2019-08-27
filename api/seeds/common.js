@@ -79,6 +79,7 @@ async function commonInserts(
     modules.assay.admin,
     modules.device.admin,
     modules.treatmentStatus.admin,
+    modules.site.admin,
   ])
 
   await insertJobFeatures(knex, jobFunctionIdAdmin, [
@@ -102,9 +103,10 @@ async function commonInserts(
   })
   await insertJobFunctionPermission(knex, jobFunctionIdRegionalOfficer, [
     modules.browse.view,
-    modules.result.admin,
+    modules.result.edit,
     modules.assay.view,
     modules.device.view,
+    modules.treatmentStatus.view,
     modules.site.view,
   ])
   await insertJobFeatures(knex, jobFunctionIdRegionalOfficer, [
@@ -119,11 +121,11 @@ async function commonInserts(
   })
   await insertJobFunctionPermission(knex, jobFunctionIdLabUser, [
     modules.browse.view,
-    modules.result.admin,
+    modules.result.edit,
     modules.assay.view,
     modules.device.view,
     modules.site.view,
-    modules.treatmentStatus.admin,
+    modules.treatmentStatus.view,
   ])
   await insertJobFeatures(knex, jobFunctionIdLabUser, [
     features.device,
