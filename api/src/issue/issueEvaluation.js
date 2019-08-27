@@ -190,37 +190,25 @@ async function triggeredEventOlderThan(knex, issue, issueAge) {
     },
     issueAge
   )
+
   const issueTriggeredOnPlusAge = addYears(
-    parseISO(
-      addMonths(
-        parseISO(
-          addWeeks(
-            parseISO(
-              addDays(
-                parseISO(
-                  addHours(
-                    parseISO(
-                      addMinutes(
-                        parseISO(
-                          addSeconds(
-                            parseISO(issue.triggeredOn.toISOString()),
-                            issueAgeSpec.seconds
-                          ).toISOString()
-                        ),
-                        issueAgeSpec.minutes
-                      ).toISOString()
-                    ),
-                    issueAgeSpec.hours
-                  ).toISOString()
-                ),
-                issueAgeSpec.days
-              ).toISOString()
-            ),
-            issueAgeSpec.weeks
-          ).toISOString()
+    addMonths(
+      addWeeks(
+        addDays(
+          parseISO(
+            addHours(
+              addMinutes(
+                addSeconds(issue.triggeredOn, issueAgeSpec.seconds),
+                issueAgeSpec.minutes
+              ),
+              issueAgeSpec.hours
+            ).toISOString()
+          ),
+          issueAgeSpec.days
         ),
-        issueAgeSpec.months
-      ).toISOString()
+        issueAgeSpec.weeks
+      ),
+      issueAgeSpec.months
     ),
     issueAgeSpec.years
   )
