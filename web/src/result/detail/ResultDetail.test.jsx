@@ -14,6 +14,7 @@ describe('Result Detail screen', () => {
     match: { params: { resultId: 23048 } },
     result: Immutable.Map({
       id: 103897,
+      resultWorkflowLogCreatedOn: '2019-08-17T16:52:52.000Z',
       assay: Immutable.Map({}),
     }),
     updateTags() {},
@@ -46,6 +47,8 @@ describe('Result Detail screen', () => {
         result: Immutable.Map({
           id: 103897,
           assay: Immutable.Map({}),
+          resultWorkflowLogCreatedOn: '2019-08-17T16:52:52.000Z',
+          resultWorkflowStatus: '',
           formSchema: Immutable.Map({
             fields: Immutable.Map({
               expertInterpretation: Immutable.Map({
@@ -146,6 +149,7 @@ describe('Result Detail screen', () => {
         result: Immutable.Map({
           id: 103897,
           assay: Immutable.Map({}),
+          resultWorkflowLogCreatedOn: '2019-08-17T16:52:52.000Z',
           formSchema: Immutable.Map({
             fields: Immutable.Map({
               field1: Immutable.Map({
@@ -222,6 +226,7 @@ describe('Result Detail screen', () => {
         result: Immutable.Map({
           id: 103897,
           assay: Immutable.Map({}),
+          resultWorkflowLogCreatedOn: '2019-08-17T16:52:52.000Z',
           formSchema: Immutable.Map({
             fields: Immutable.Map({
               field1: Immutable.Map({
@@ -309,6 +314,7 @@ describe('Result Detail screen', () => {
           _.merge({}, defaultProps, {
             result: Immutable.Map({
               id: 23454,
+              resultWorkflowLogCreatedOn: '2019-08-17T16:52:52.000Z',
               assay: Immutable.Map({}),
               formSchema: Immutable.Map({}),
             }),

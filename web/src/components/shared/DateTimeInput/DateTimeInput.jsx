@@ -20,6 +20,7 @@ import MenuList from '@material-ui/core/MenuList'
 import Popper from '@material-ui/core/Popper'
 
 import toDate from 'date-fns/toDate'
+import parseISO from 'date-fns/parseISO'
 
 import { formatWithLocale } from '../../../shared/utils/dateFormat'
 import AspectButton from '../AspectButton'
@@ -571,8 +572,8 @@ const DateTimeInput = props => {
   const FieldProps = originFieldProps || getDefaultFieldsProps(intl)
   const TextFieldsProps = _fp.merge(getDefaultFieldsProps(intl), FieldProps)
   const formatMessage = _fp.prop(['formatMessage'], intl)
-  const minDate = toDate(min)
-  const maxDate = toDate(max)
+  const minDate = toDate(parseISO(min))
+  const maxDate = toDate(parseISO(max))
   const orderList = getOrderList(displayFormat)
   const isControlled = useCallback(() => !(value === undefined), [value])
   const initialValue = isControlled()

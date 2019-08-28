@@ -143,7 +143,7 @@ export const TreatmentStatus = ({
   ]
   const tickSeparatorX = `-${50 / data.length}%`
 
-  lastOn = dateFormat(lastOn, 'yyyy-MM')
+  lastOn = lastOn && dateFormat(new Date(lastOn), 'yyyy-MM')
 
   return (
     <Card className={className}>

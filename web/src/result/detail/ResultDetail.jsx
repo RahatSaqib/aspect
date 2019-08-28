@@ -399,7 +399,7 @@ export class ResultDetail extends PureComponent {
 
   renderFormData() {
     const {
-      intl: { formatMessage },
+      intl,
       result,
       saveResultFormDataValue,
       setResultFormDataValue,
@@ -408,6 +408,7 @@ export class ResultDetail extends PureComponent {
       dateFormat,
       timeFormat,
     } = this.props
+    const { formatMessage } = intl
     if (!result || !result.getIn(['formSchema', 'fields'])) {
       return false
     }
@@ -438,9 +439,6 @@ export class ResultDetail extends PureComponent {
         <ExpansionPanelHeader label={sectionLabel}>
           <div className={cssClasses('FormDataContainer')}>
             {fieldKeys.map(formFieldKey => {
-              const {
-                intl: { formatMessage },
-              } = this.props
               const fieldSchema = result.getIn([
                 'formSchema',
                 'fields',
@@ -458,7 +456,7 @@ export class ResultDetail extends PureComponent {
                     formFieldKey={formFieldKey}
                     fieldSchema={fieldSchema}
                     formData={formData}
-                    formatMessage={formatMessage}
+                    intl={intl}
                     isMultiField={isMultiField}
                     updateFormData={updateFormData}
                     dateFormat={dateFormat}

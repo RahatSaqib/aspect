@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import classnames from 'classnames/bind'
 import React from 'react'
-import { formatDistanceStrict } from 'date-fns'
+import { formatDistanceStrict, parseISO } from 'date-fns'
 
 import {
   DataTableRow as TableRow,
@@ -83,7 +83,10 @@ const DeviceTableRow = ({
     </TableCell>
     <TableCell>
       {intl.formatMessage(messages.reportingForDays, {
-        period: formatDistanceStrict(new Date(), device.get('createdOn')),
+        period: formatDistanceStrict(
+          new Date(),
+          parseISO(device.get('createdOn'))
+        ),
       })}
     </TableCell>
     <TableCell>{intl.formatRelative(device.get('lastSeen'))}</TableCell>
