@@ -25,10 +25,10 @@
     "start:background:quiet": "forever start src/server.js",
     "stop:background": "forever stop src/server.js",
     "stop:background:quiet": "forever stop src/server.js",
-    "test": "npm-run-all test:unit test:contract",
+    "test": "TZ='UTC+0' npm-run-all test:unit test:contract",
     "test:quiet": "npm-run-all test:unit test:contract:quiet",
-    "test:contract": "npm-run-all -c start:background mocha:contract stop:background",
-    "test:contract:quiet": "npm-run-all -c start:background:quiet mocha:contract stop:background:quiet",
+    "test:contract": "TZ='UTC+0' npm-run-all -c start:background mocha:contract stop:background",
+    "test:contract:quiet": "TZ='UTC+0' npm-run-all -c start:background:quiet mocha:contract stop:background:quiet",
     "test:unit": "npm-run-all lint mocha:unit:clear:coverage mocha:unit:coverage",
     "test:reseed": "npm-run-all db:reseed test"
   },
