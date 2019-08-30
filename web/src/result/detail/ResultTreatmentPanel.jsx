@@ -1,6 +1,6 @@
 import React from 'react'
 import PermIdentity from '@material-ui/icons/PermIdentity'
-import { format as date, differenceInCalendarDays } from 'date-fns'
+import { format as date, differenceInCalendarDays, parseISO } from 'date-fns'
 import { compose, pure, withHandlers, withState } from 'recompose'
 import requirePermission from '../../components/shared/requirePermissions'
 
@@ -90,7 +90,9 @@ const ResultTreatmentPanel = ({ styles, data, ...restProps }) => {
                           <span>
                             -{' '}
                             {date(
-                              data.get('resultTreatmentStatusCreatedOn'),
+                              parseISO(
+                                data.get('resultTreatmentStatusCreatedOn')
+                              ),
                               'dd/MM/yyyy'
                             )}
                           </span>
@@ -99,7 +101,10 @@ const ResultTreatmentPanel = ({ styles, data, ...restProps }) => {
                     )
                 )}
                 <h3>
-                  {differenceInCalendarDays(new Date(), data.get('endedOn'))}{' '}
+                  {differenceInCalendarDays(
+                    new Date(),
+                    parseISO(data.get('endedOn'))
+                  )}
                   days
                 </h3>
               </div>

@@ -1,4 +1,4 @@
-import { startOfDay, format as dateFnFormat } from 'date-fns'
+import { startOfDay, format as dateFnFormat, parseISO } from 'date-fns'
 import { withProps } from 'recompose'
 
 import { getAspectDisplayPreferences } from '../../globals/sideEffects/LocalStorage'
@@ -7,19 +7,21 @@ import getLocale from './locale'
 function format(date, displayPreferenceKey) {
   const prefs = getAspectDisplayPreferences()
   const dateFormat = prefs.get(displayPreferenceKey, 'yyyy-MM-dd')
-  return date == null ? '' : dateFnFormat(date, dateFormat)
+  return date == null
+    ? ''
+    : dateFnFormat(parseISO(date.toISOString()), dateFormat)
 }
 
 export function formatDate(date) {
-  return format(date, 'dateFormat')
+  return format(parseISO(date), 'dateFormat')
 }
 
 export function formatTime(date) {
-  return format(date, 'timeFormat')
+  return format(parseISO(date), 'timeFormat')
 }
 
 export function formatDateTime(date) {
-  return format(date, 'dateTimeFormat')
+  return format(parseISO(date), 'dateTimeFormat')
 }
 
 export const formatWithLocale = locale => (date, formatStr) =>

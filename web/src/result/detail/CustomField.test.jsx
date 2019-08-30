@@ -49,7 +49,7 @@ describe('CustomField component', () => {
         }),
       }),
       updateFormData: sinon.spy(),
-      formatMessage: message => message.defaultMessage,
+      intl: { formatMessage: message => message.defaultMessage },
     }
 
     it('should shallow render without crash', () => {
@@ -118,7 +118,7 @@ describe('CustomField component', () => {
         }),
       }),
       updateFormData: sinon.spy(),
-      formatMessage: message => message.defaultMessage,
+      intl: { formatMessage: message => message.defaultMessage },
     }
 
     it('should shallow render without crash', () => {
@@ -183,7 +183,7 @@ describe('CustomField component', () => {
         }),
       }),
       updateFormData: sinon.spy(),
-      formatMessage: message => message.defaultMessage,
+      intl: { formatMessage: message => message.defaultMessage },
     }
 
     it('should shallow render without crash', () => {
@@ -232,7 +232,7 @@ describe('CustomField component', () => {
         }),
       }),
       updateFormData: sinon.spy(),
-      formatMessage: message => message.defaultMessage,
+      intl: { formatMessage: message => message.defaultMessage },
     }
 
     it('should shallow render without crash', () => {
@@ -285,7 +285,7 @@ describe('CustomField component', () => {
         }),
       }),
       updateFormData: sinon.spy(),
-      formatMessage: message => message.defaultMessage,
+      intl: { formatMessage: message => message.defaultMessage },
     }
     it('should not show Custom Field where the type is unrecognized', () => {
       const customField = renderCustomerField(props)

@@ -110,11 +110,13 @@ export default class CustomField extends PureComponent {
       formFieldKey,
       fieldSchema,
       formData,
-      formatMessage,
+      intl,
       dateFormat,
       timeFormat,
       isMultiField = false,
     } = this.props
+
+    const { formatMessage } = intl
 
     const fieldType = fieldSchema.getIn(['control', 'type'])
     const fieldLabel = isMultiField

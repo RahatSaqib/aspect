@@ -15,6 +15,7 @@ import getDaysInMonth from 'date-fns/getDaysInMonth'
 import subtractYears from 'date-fns/subYears'
 import closestTo from 'date-fns/closestTo'
 import isWithinInterval from 'date-fns/isWithinInterval'
+import parseISO from 'date-fns/parseISO'
 
 const now = new Date()
 export const since = new Date(getYear(subtractYears(now, 10)), 0, 1)
@@ -66,7 +67,7 @@ export const normalizeDate = ({ date, minDate = since, maxDate = until }) => {
     return minDate
   }
 
-  if (isWithinInterval(date, { start: minDate, end: maxDate })) {
+  if (isWithinInterval(parseISO(date), { start: minDate, end: maxDate })) {
     return date
   }
   return closestTo(date, [minDate, maxDate])
