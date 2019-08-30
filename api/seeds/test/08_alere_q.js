@@ -1,297 +1,338 @@
 module.exports = require('../utils').seed(seed, __filename)
 
-const bcrypt = require('bcrypt')
-const _ = require('lodash')
-
-const config = require('../../src/config')
-
+const { rowsAsObject } = require('../utils')
 const {
-  rowsAsObject,
-  getPermissionModules,
-  seedIssueEventTriggersForPartner,
-} = require('../utils')
-
-const {
-  allFeatureToId,
+  deviceTypeCategoryToId,
   assayTypeToId,
-  partnerTypeToId,
   resultSourceToId,
-  fileContentTypeToId,
-  messageSeverityToId,
+  unitToId,
 } = require('../../src/shared/dictionary')
 
-const saltRounds = parseInt(config.passwordSaltRounds, 10)
-
 async function seed(knex) {
-  // Skip this seed file if we already have an admin user
-  const existingAdminUser = await knex('User')
-    .where({ name: 'gates_rdt' })
+  // Skip this seed file if we already have an AlereFtpConnector Device Type
+  const alereFtpConnectorDeviceType = await knex('DeviceType')
+    .where('externalId', 'AlereFtpConnector')
     .first('id')
-  if (existingAdminUser) {
+  if (alereFtpConnectorDeviceType) {
     return
   }
-  // Create admin user and audit fields
-  const now = new Date()
-  const [adminId] = await knex('User').insert({
-    name: 'gates_rdt',
-    password: bcrypt.hashSync('gates2018', saltRounds),
-    approved: 1,
-    createdOn: now,
-    lockedOut: 0,
-    failedPasswordAttempts: 0,
+
+  const deviceTypeCategoryConnector = await deviceTypeCategoryToId('Connector')
+
+  await knex('DeviceType').insert({
+    externalId: 'AlereFtpConnector',
+    name: 'Alere FTP Connector',
+    manufacturer: 'SystemOne',
+    plugin: 'alereftpconnector',
+    deviceTypeCategoryId: deviceTypeCategoryConnector,
   })
-  const auditFields = {
-    createdOn: now,
-    createdBy: adminId,
-    updatedOn: now,
-    updatedBy: adminId,
-  }
 
   // Reuse previously seeded "static" data
-  const [deviceTypes, modules, features, issueTypes] = await Promise.all([
-    rowsAsObject(knex, 'DeviceType', 'externalId'),
-    getPermissionModules(knex),
-    allFeatureToId(),
-    rowsAsObject(knex, 'IssueType', 'externalId'),
-  ])
+  const deviceTypes = await rowsAsObject(knex, 'DeviceType', 'externalId')
 
-  const [partnerId] = await knex('Partner').insert({
-    name: 'GatesRDT',
-    partnerTypeId: await partnerTypeToId('Operating'),
-    deviceLogHistoryDays: 365,
-    maxDaysDeviceOffline: 7,
-    maxDaysDeviceNoResults: 14,
-  })
-
-  await knex('Assay').insert({
-    name: 'CommCare Gates RDT',
-    abbreviation: 'CC RDT',
-    i18nKey: 'assayCommCareGatesRDT',
-    externalId: 'CommCareGatesRDT',
+  const [alereQHiv12DetectAssayId] = await knex('Assay').insert({
+    name: 'Alere q HIV-1/2 Detect',
+    abbreviation: 'Q HIV detect',
+    i18nKey: 'assayAlereQHiv12Detect',
+    externalId: 'assayAlereQHiv12Detect',
     assayTypeId: await assayTypeToId('HIV Qual'),
-    deviceTypeId: deviceTypes.CommCareApp.id,
+    deviceTypeId: deviceTypes.AlereQ.id,
     resultSourceId: await resultSourceToId('DiagnosticDevice'),
-    resultCategory1Label: 'Status',
+    resultCategory1Label: 'Result',
     resultDataSchema: JSON.stringify({
-      resultText: { list: true, order: 1, type: 'string', title: 'Result' },
-      hcwResult: {
+      resultNo: {
+        list: false,
+        order: 1,
+        type: 'string',
+
+        title: 'Result No',
+      },
+      deviceSerial: {
         list: true,
         order: 2,
         type: 'string',
-        title: 'HCW Result',
+
+        title: 'Device Serial',
       },
-      hcwConfirmatoryResult: {
-        list: false,
+      testName: {
+        list: true,
         order: 3,
         type: 'string',
-        title: 'HCW Confirmatory Result',
+        title: 'Test Name',
       },
-      hcwTiebreakerResult: {
-        list: false,
+      cartridgeId: {
+        list: true,
         order: 4,
         type: 'string',
-        title: 'HCW Tiebreaker Result',
+        title: 'Cartridge ID',
       },
-    }),
-    patientDataSchema: JSON.stringify({
-      id: { type: 'string', order: 0, title: 'Patient ID' },
-      age: { type: 'int', order: 1, title: 'Age' },
-      gender: { type: 'string', order: 2, title: 'Gender' },
-      phone: { type: 'string', order: 3, title: 'Phone Number' },
-      educationLevel: {
-        type: 'string',
-        order: 4,
-        title: 'Education Level',
-      },
-      previousTesting: {
-        type: 'string',
+      sampleId: {
+        list: true,
         order: 5,
-        title: 'Previous Testing',
+        type: 'string',
+        title: 'Sample ID',
+      },
+      hiv1MNResult: {
+        list: true,
+        order: 6,
+        type: 'string',
+        title: 'HIV-1 M/N',
+      },
+      hiv1OResult: {
+        list: true,
+        order: 7,
+        type: 'string',
+        title: 'HIV-1 O',
+      },
+      hiv2Result: {
+        list: true,
+        order: 8,
+        type: 'string',
+        title: 'HIV-2',
+      },
+      errorCode: {
+        list: true,
+        order: 9,
+        type: 'string',
+        title: 'Error Code',
+      },
+      operator: {
+        list: true,
+        order: 10,
+        type: 'string',
+        title: 'Operator',
+      },
+      timeStamp: {
+        list: true,
+        order: 11,
+        type: 'time',
+        title: 'Timestamp',
+      },
+      sampleDetection: {
+        list: false,
+        order: 12,
+        type: 'string',
+        title: 'Sample Detection Check',
+      },
+      deviceCheck: {
+        list: false,
+        order: 13,
+        type: 'string',
+        title: 'Device Check',
+      },
+      hiv1PositiveControl: {
+        list: false,
+        order: 14,
+        type: 'string',
+        title: 'HIV-1 Positive Control',
+      },
+      hiv2PositiveControl: {
+        list: false,
+        order: 15,
+        type: 'string',
+        title: 'HIV-2 Positive Control',
+      },
+      negativeControl: {
+        list: false,
+        order: 16,
+        type: 'string',
+        title: 'Negative Control',
+      },
+      analysisCheck: {
+        list: false,
+        order: 17,
+        type: 'string',
+        title: 'Analysis Check',
+      },
+      softwareVersion: {
+        list: false,
+        order: 18,
+        type: 'string',
+        title: 'Device Software Version',
+      },
+      sourceFile: {
+        list: false,
+        order: 19,
+        type: 'string',
+        title: 'Source File',
+      },
+      pickedUpOn: {
+        list: false,
+        order: 20,
+        type: 'time',
+        title: 'Picked Up On',
+      },
+    }),
+  })
+  const [alereQHiv12VLPlasmaAssayId] = await knex('Assay').insert({
+    name: 'Alere q HIV-1/2 VL plasma',
+    abbreviation: 'Q HIV Plasma',
+    i18nKey: 'assayAlereQHiv12VLPlasma',
+    externalId: 'assayAlereQHiv12VLPlasma',
+    assayTypeId: await assayTypeToId('HIV VL'),
+    deviceTypeId: deviceTypes.AlereQ.id,
+    resultSourceId: await resultSourceToId('DiagnosticDevice'),
+    resultCategory1Label: 'Result',
+    resultDataSchema: JSON.stringify({
+      resultNo: {
+        list: false,
+        order: 1,
+        type: 'string',
+        title: 'Result No',
+      },
+      deviceSerial: {
+        list: true,
+        order: 2,
+        type: 'string',
+        title: 'Device Serial',
+      },
+      testName: {
+        list: true,
+        order: 3,
+        type: 'string',
+        title: 'Test Name',
+      },
+      cartridgeId: {
+        list: true,
+        order: 4,
+        type: 'string',
+        title: 'Cartridge ID',
+      },
+      sampleId: {
+        list: true,
+        order: 5,
+        type: 'string',
+        title: 'Sample ID',
+      },
+      hiv1MNResult: {
+        list: true,
+        order: 6,
+        type: 'string',
+        title: 'HIV-1 M/N cp/mL',
+      },
+      hiv1OResult: {
+        list: true,
+        order: 7,
+        type: 'string',
+        title: 'HIV-1 O cp/mL',
+      },
+      hiv2Result: {
+        list: true,
+        order: 8,
+        type: 'string',
+        title: 'HIV-2 cp/mL',
+      },
+      errorCode: {
+        list: true,
+        order: 9,
+        type: 'string',
+        title: 'Error Code',
+      },
+      operator: {
+        list: true,
+        order: 10,
+        type: 'string',
+        title: 'Operator',
+      },
+      timeStamp: {
+        list: true,
+        order: 11,
+        type: 'time',
+        title: 'Timestamp',
+      },
+      sampleDetection: {
+        list: false,
+        order: 12,
+        type: 'string',
+        title: 'Sample Detection Check',
+      },
+      deviceCheck: {
+        list: false,
+        order: 13,
+        type: 'string',
+        title: 'Device Check',
+      },
+      hiv1PositiveControl: {
+        list: false,
+        order: 14,
+        type: 'string',
+        title: 'HIV-1 Positive Control',
+      },
+      hiv2PositiveControl: {
+        list: false,
+        order: 15,
+        type: 'string',
+        title: 'HIV-2 Positive Control',
+      },
+      negativeControl: {
+        list: false,
+        order: 16,
+        type: 'string',
+        title: 'Negative Control',
+      },
+      analysisCheck: {
+        list: false,
+        order: 17,
+        type: 'string',
+        title: 'Analysis Check',
+      },
+      softwareVersion: {
+        list: false,
+        order: 18,
+        type: 'string',
+        title: 'Device Software Version',
+      },
+      deviceMode: {
+        list: false,
+        order: 19,
+        type: 'string',
+        title: 'Device Mode',
+      },
+      status: {
+        list: false,
+        order: 20,
+        type: 'string',
+        title: 'Status',
+      },
+      sourceFile: {
+        list: false,
+        order: 21,
+        type: 'string',
+        title: 'Source File',
+      },
+      pickedUpOn: {
+        list: false,
+        order: 22,
+        type: 'time',
+        title: 'Picked Up On',
       },
     }),
   })
 
-  const [usCountry] = await knex('Country as c')
-    .where({ 'c.a3': 'USA' })
-    .select('c.id', 'c.culture', 'c.timezone')
-  const { culture, timezone, id: countryId } = usCountry
-  const { id: geographyId } = await knex('Geography')
-    .where({ countryId })
-    .whereNull('stateId')
-    .whereNull('lgaId')
-    .first()
-
-  // Assign all features and admin permissions to Admin user
-  const [adminPersonId] = await knex('Person').insert(
-    Object.assign(
-      {
-        userId: adminId,
-        name: 'Gates RDT Admin',
-        lastPartnerId: partnerId,
-        lastCountryId: countryId,
-        geographyId,
-        culture,
-        timezone,
-      },
-      auditFields
-    )
-  )
-
-  const [jobFunctionIdAdmin] = await knex('JobFunction').insert({
-    name: 'Admin',
-    partnerId,
+  const piece = await unitToId('Piece')
+  const [alereQHiv12DetectCartridgeId] = await knex('Consumable').insert({
+    name: 'Alere q HIV-1/2 Detect Cartridge',
+    unit: piece,
+    canExpire: 1,
+    manufacturer: 'Alere',
   })
-  await knex('JobFunctionPermission').insert([
-    {
-      jobFunctionId: jobFunctionIdAdmin,
-      permissionId: modules.browse.view,
-    },
-    {
-      jobFunctionId: jobFunctionIdAdmin,
-      permissionId: modules.result.admin,
-    },
-    {
-      jobFunctionId: jobFunctionIdAdmin,
-      permissionId: modules.device.admin,
-    },
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.site.admin },
-    {
-      jobFunctionId: jobFunctionIdAdmin,
-      permissionId: modules.deviceApiKey.admin,
-    },
-  ])
-  await knex('JobFunctionFeature').insert([
-    { jobFunctionId: jobFunctionIdAdmin, featureId: features.device },
-    { jobFunctionId: jobFunctionIdAdmin, featureId: features.result },
-    { jobFunctionId: jobFunctionIdAdmin, featureId: features.site },
-    { jobFunctionId: jobFunctionIdAdmin, featureId: features.deviceApiKey },
-  ])
-
-  const [jobIdAdmin] = await knex('Job').insert([
-    { personId: adminPersonId, jobFunctionId: jobFunctionIdAdmin },
-  ])
-  await knex('JobContext').insert({ jobId: jobIdAdmin, geographyId })
-
-  // Create WebhookTemplate for downloading images
-  const commcareApiKey = _.get(config, 'plugin.commcare.apiKey', '')
-  const [webhookTemplateId] = await knex('WebhookTemplate').insert(
-    Object.assign(
-      {
-        externalId: 'commcareDownloadImage',
-        method: 'GET',
-        url: '{{ result.data.resultImageUrl }}',
-        fileName: '{{ result.data.resultImageFileName }}',
-        fileContentTypeId: await fileContentTypeToId('imageJpg'),
-        headers: JSON.stringify({
-          Authorization: `ApiKey ${commcareApiKey}`,
-        }),
-      },
-      auditFields
-    )
-  )
-
-  const [resultPositiveSmsTemplateId] = await knex('SmsTemplate').insert(
-    Object.assign(
-      {
-        phoneNumber: '{{ result.patient.phone }}',
-        message:
-          'Dear participant ID #{{ result.patient.id }}: An HIV self-test is a screening test. Please visit your nearest clinic as your test MUST be confirmed by a healthcare worker as soon as possible',
-      },
-      auditFields
-    )
-  )
-  const [resultNegativeSmsTemplateId] = await knex('SmsTemplate').insert(
-    Object.assign(
-      {
-        phoneNumber: '{{ result.patient.phone }}',
-        message:
-          'Dear participant ID #{{ result.patient.id }}: An HIV self-test is a screening test. Please ensure you re-test in 3 months.',
-      },
-      auditFields
-    )
-  )
-
-  const messageSeverityId = await messageSeverityToId('Alert')
-  const [resultReceivedMessageTypeId] = await knex('MessageType').insert({
-    messageSeverityId,
-    webhookTemplateId,
+  const [alereQHiv12VLPlasmaCartridgeId] = await knex('Consumable').insert({
+    name: 'Alere q HIV-1/2 VL Plasma Cartridge',
+    unit: piece,
+    canExpire: 1,
+    manufacturer: 'Alere',
   })
 
-  const [resultPositiveMessageTypeId] = await knex('MessageType').insert({
-    messageSeverityId,
-    smsTemplateId: resultPositiveSmsTemplateId,
-  })
-
-  const [resultNegativeMessageTypeId] = await knex('MessageType').insert({
-    messageSeverityId,
-    smsTemplateId: resultNegativeSmsTemplateId,
-  })
-
-  // Notifications
-  await knex('NotificationType').insert([
-    Object.assign(
-      {
-        name: 'Result Received',
-        partnerId,
-        issueTypeId: issueTypes.ResultReceived.id,
-        jobFunctionId: jobFunctionIdAdmin,
-        level: 1,
-        canAcknowledge: 0,
-        messageTypeId: resultReceivedMessageTypeId,
-      },
-      auditFields
-    ),
-    Object.assign(
-      {
-        name: 'Result Negative',
-        partnerId,
-        issueTypeId: issueTypes.ResultReceived.id,
-        jobFunctionId: jobFunctionIdAdmin,
-        level: 2,
-        canAcknowledge: 0,
-        messageTypeId: resultNegativeMessageTypeId,
-      },
-      auditFields
-    ),
-    Object.assign(
-      {
-        name: 'Result Positive',
-        partnerId,
-        issueTypeId: issueTypes.ResultReceived.id,
-        jobFunctionId: jobFunctionIdAdmin,
-        level: 3,
-        canAcknowledge: 0,
-        messageTypeId: resultPositiveMessageTypeId,
-      },
-      auditFields
-    ),
-  ])
-
-  // Issue Escalation Triggers
-  await knex('IssueEscalationTrigger').insert([
+  await knex('ConsumableAssay').insert([
     {
-      issueTypeId: issueTypes.ResultReceived.id,
-      partnerId,
-      escalateToLevel: 2,
-      escalationConditions: JSON.stringify({
-        evaluationMethod: 'result-category',
-        evaluationParameter: { index: 2, externalId: 'NotDetected' },
-      }),
-      createdOn: now,
-      updatedOn: now,
+      assayId: alereQHiv12DetectAssayId,
+      consumableId: alereQHiv12DetectCartridgeId,
+      quantity: 1,
     },
     {
-      issueTypeId: issueTypes.ResultReceived.id,
-      partnerId,
-      escalateToLevel: 3,
-      escalationConditions: JSON.stringify({
-        evaluationMethod: 'result-category',
-        evaluationParameter: { index: 2, externalId: 'Detected' },
-      }),
-      createdOn: now,
-      updatedOn: now,
+      assayId: alereQHiv12VLPlasmaAssayId,
+      consumableId: alereQHiv12VLPlasmaCartridgeId,
+      quantity: 1,
     },
   ])
-
-  await seedIssueEventTriggersForPartner(knex, partnerId)
 }
