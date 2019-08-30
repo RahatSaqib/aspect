@@ -2,10 +2,14 @@ module.exports = require('../src/db').migration(up, down)
 
 async function up(knex) {
   await knex.schema.alterTable('Result', t => {
+    t.dropForeign('partnerId')
+  })
+  await knex.schema.alterTable('Result', t => {
     t.integer('partnerId')
       .unsigned()
       .notNullable()
-      // .references('Partner.id')
+      .references('id')
+      .inTable('Partner')
       .alter()
   })
   await knex.schema.alterTable('Site', t => {
@@ -14,9 +18,14 @@ async function up(knex) {
 }
 async function down(knex) {
   await knex.schema.alterTable('Result', t => {
+    t.dropForeign('partnerId')
+  })
+  await knex.schema.alterTable('Result', t => {
     t.integer('partnerId')
       .unsigned()
       .nullable()
+      .references('id')
+      .inTable('Partner')
       .alter()
   })
   await knex.schema.alterTable('Site', t => {
