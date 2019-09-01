@@ -318,10 +318,10 @@ function getResultTreatmentStatus(response) {
     const today = new Date()
     const lastSixteenDays = subDays(today, 16)
     const lastThirtyTwoDays = subDays(today, 32)
-    const isPastThirtyTwoDays = response.endedOn >= lastThirtyTwoDays
+    const isPastThirtyTwoDays = response.endedOn <= lastThirtyTwoDays
     const isPastSixteenDays =
-      response.endedOn >= lastSixteenDays &&
-      response.endedOn < lastThirtyTwoDays
+      response.endedOn <= lastSixteenDays &&
+      response.endedOn > lastThirtyTwoDays
     if (response.resultTreatmentStatus === 'OnTreatment') {
       response.treatmentStatusInfo = 'ok'
     } else if (response.resultTreatmentStatus === 'NotPossible') {
