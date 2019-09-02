@@ -1,0 +1,44 @@
+module.exports = require('../utils').seed(seed, __filename)
+
+const { addGeneXpertDeviceTypes } = require('../common')
+
+const { patientData } = require('./fixtures/geneXpertPatientDataSchema.json')
+
+async function seed(knex) {
+  // Grant access to sites
+  // Reuse previously seeded "static" data
+  const { id: permissionSiteAdminId } = await knex('Permission')
+    .where('module', 'site')
+    .where('activity', 'admin')
+    .first('id')
+
+  const { id: jobFunctionIdAdmin } = await knex('JobFunction')
+    .where('name', 'Admin')
+    .first('id')
+
+  if (
+    !(await knex('JobFunctionPermission')
+      .where('jobFunctionId', jobFunctionIdAdmin)
+      .where('permissionId', permissionSiteAdminId))
+  )
+    await knex('JobFunctionPermission').insert([
+      {
+        jobFunctionId: jobFunctionIdAdmin,
+        permissionId: permissionSiteAdminId,
+      },
+    ])
+  await addGeneXpertDeviceTypes(
+    knex,
+    [
+      'GxUnknown',
+      'GxHcv',
+      'GxHiv',
+      'GxMtbRif',
+      'GxMtbRifUltra',
+      'GxHiv1Vl',
+      'GxHiv1Qual',
+      'GxEbola',
+    ],
+    patientData
+  )
+}
