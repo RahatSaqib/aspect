@@ -32,6 +32,6 @@ async function seed(knex) {
     adminId,
     geography,
     'NG',
-    'wg0Rmh6tj7pmdPo3fAXIt'
+    'q5zh29mw0a01zkqzq1yg'
   )
 }

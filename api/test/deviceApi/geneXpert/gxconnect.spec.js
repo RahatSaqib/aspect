@@ -774,7 +774,7 @@ describe('Device API routes for GxConnect Devices', () => {
           geographyId: site.geographyId,
           assay: basicResultPayload.result.assay.id,
           assayVersion: basicResultPayload.result.assay.version,
-          resultWorkflowStatus: 'OK',
+          resultWorkflowStatus: 'Deliverable',
           resultSource: 'DiagnosticDevice',
           resultType: 'Patient',
           resultCategory1: 'Success',
@@ -1727,6 +1727,85 @@ describe('Device API routes for GxConnect Devices', () => {
             }
           )
           assert.equal(lastResult.resultData.geneXpertTestId, errorTestResultId)
+        }))
+    })
+
+    describe('when no workflow status has been specified in the result payload', () => {
+      it('should default the workflow status to "Deliverable"', () =>
+        runTest(async () => {
+          const { basicDevicePayload, deviceAuth } = context
+
+          const testResultId = 'UNIQUE-ID-WITH-DELIVERABLE-RESULT'
+
+          const testStartedOn = setMilliseconds(subDays(context.now, 3), 0)
+          const testEndedOn = setMilliseconds(addHours(testStartedOn, 2), 0)
+          await server
+            .post('/device')
+            .set('Authorization', deviceAuth)
+            .send(
+              _.assign(
+                {},
+                _.assign({}, basicDevicePayload, basicResultPayload),
+                {
+                  result: _.assign({}, basicResultPayload.result, {
+                    id: testResultId,
+                    startedOn: testStartedOn,
+                    endedOn: testEndedOn,
+                  }),
+                }
+              )
+            )
+            .then(res => {
+              assert.equal(res.status, 200)
+              assert.typeOf(res.body, 'Object')
+            })
+            .catch(assert.fail)
+
+          const lastResult = await getLastResult()
+          assert.deepEqual(_.pick(lastResult, 'resultWorkflowStatus'), {
+            resultWorkflowStatus: 'Deliverable',
+          })
+          assert.equal(lastResult.resultData.geneXpertTestId, testResultId)
+        }))
+    })
+
+    describe('when a workflow status has been specified in the result payload', () => {
+      it('should set the workflow status of the result accordingly', () =>
+        runTest(async () => {
+          const { basicDevicePayload, deviceAuth } = context
+
+          const testResultId = 'UNIQUE-ID-WITH-WORKFLOW-RESULT'
+
+          const testStartedOn = setMilliseconds(subDays(context.now, 3), 0)
+          const testEndedOn = setMilliseconds(addHours(testStartedOn, 2), 0)
+          await server
+            .post('/device')
+            .set('Authorization', deviceAuth)
+            .send(
+              _.assign(
+                {},
+                _.assign({}, basicDevicePayload, basicResultPayload),
+                {
+                  result: _.assign({}, basicResultPayload.result, {
+                    id: testResultId,
+                    startedOn: testStartedOn,
+                    endedOn: testEndedOn,
+                    workflow: { status: { id: 'Acknowledged' } },
+                  }),
+                }
+              )
+            )
+            .then(res => {
+              assert.equal(res.status, 200)
+              assert.typeOf(res.body, 'Object')
+            })
+            .catch(assert.fail)
+
+          const lastResult = await getLastResult()
+          assert.deepEqual(_.pick(lastResult, 'resultWorkflowStatus'), {
+            resultWorkflowStatus: 'Acknowledged',
+          })
+          assert.equal(lastResult.resultData.geneXpertTestId, testResultId)
         }))
     })
 

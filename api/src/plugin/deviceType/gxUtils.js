@@ -127,6 +127,11 @@ async function preProcessMergeResult({ knex, deviceId, payload }) {
   if (!existingResult) {
     // Only assign assay to GxUnknown if result is new
     await assignGxUnknownAssayIfNotExists(knex, payload)
+
+    // Only set workflow status to "Deliverable" by default if result is new and not an error
+    if (!_.get(payload, 'workflow.status.id') && !payload.error) {
+      _.set(payload, 'workflow.status.id', 'Deliverable')
+    }
   } else {
     // Are we setting this result to NO RESULT?
     if (

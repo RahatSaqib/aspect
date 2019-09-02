@@ -2,14 +2,6 @@ const crypto = require('crypto')
 const base32 = require('base32')
 const _ = require('lodash')
 
-// alias table duplicated from base32 and regular expression and replace function
-const base32Alias = { o: 0, i: 1, l: 1, s: 5 }
-const base32AliasRegExp = new RegExp(
-  `[${Object.keys(base32Alias).join('')}]`,
-  'g'
-)
-const base32AliasReplacer = c => base32Alias[c]
-
 function randomToken() {
   // creates a random 20 character base32 encoded token
   return base32.encode(crypto.randomBytes(12))
@@ -30,8 +22,6 @@ function normalizeToken(token) {
       .toLowerCase()
       // Ignore dashes or spaces
       .replace(/[ -]/g, '')
-      // Normalize base32 alias for similar characters
-      .replace(base32AliasRegExp, base32AliasReplacer)
   )
 }
 
