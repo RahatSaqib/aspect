@@ -101,7 +101,7 @@ function onFactGenerateDeviceConnectivity({ deviceId }, { messageContext }) {
             : subDays(now, maxDaysDeviceNoResults)
         // TODO move #days to partner config
         const maxMaintenanceDateNoResult = addDays(
-          parseISO(new Date(lastSeenOn).toISOString()),
+          parseISO(lastSeenOn.toISOString()),
           30
         )
 

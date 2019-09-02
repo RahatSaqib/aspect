@@ -1972,7 +1972,7 @@ describe('Device API routes for GxAlert Device', () => {
               'Connectivity issues, router cannot connect'
             const inactiveMaintenanceNote = 'Router only has one SIM in it'
             const inactiveMaintenanceExpectedBackOnline = dateFormat(
-              addDays(parseISO(new Date(now).toISOString()), 15),
+              addDays(parseISO(now.toISOString()), 15),
               'yyyy-MM-dd'
             )
             const waitForDeviceMaintenance = waitForAction(
@@ -2016,7 +2016,7 @@ describe('Device API routes for GxAlert Device', () => {
               const inactiveMaintenanceReason = 'Connectivity Problems'
               const inactiveMaintenanceNote = 'Router cannot connect to VPN'
               const inactiveMaintenanceExpectedBackOnline = dateFormat(
-                addDays(parseISO(new Date(now).toISOString()), 23),
+                addDays(parseISO(now.toISOString()), 23),
                 'yyyy-MM-dd'
               )
               const waitForDeviceMaintenance = waitForAction(
@@ -2095,7 +2095,7 @@ describe('Device API routes for GxAlert Device', () => {
               const inactiveMaintenanceNote =
                 'Router cannot connect to the network'
               const inactiveMaintenanceExpectedBackOnline = dateFormat(
-                addDays(parseISO(new Date(now).toISOString()), 16),
+                addDays(parseISO(now.toISOString()), 16),
                 'yyyy-MM-dd'
               )
               await postToDeviceApi(
@@ -2175,7 +2175,7 @@ describe('Device API routes for GxAlert Device', () => {
               const inactiveMaintenanceReason = 'Connectivity Problems'
               const inactiveMaintenanceNote = 'Router cannot connect to VPN'
               const inactiveMaintenanceExpectedBackOnline = dateFormat(
-                addDays(parseISO(new Date(now).toISOString()), 23),
+                addDays(parseISO(now.toISOString()), 23),
                 'yyyy-MM-dd'
               )
               const response = await postToDeviceApi(
@@ -2213,7 +2213,7 @@ describe('Device API routes for GxAlert Device', () => {
             const inactiveMaintenanceReason = 'Duplicate No ping'
             const inactiveMaintenanceNote = 'Duplicate Router shows connected'
             const inactiveMaintenanceExpectedBackOnline = dateFormat(
-              addDays(parseISO(new Date(now).toISOString()), 19),
+              addDays(parseISO(now.toISOString()), 19),
               'yyyy-MM-dd'
             )
             await waitForApproximately(100, 'milliseconds')
