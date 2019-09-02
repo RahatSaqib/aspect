@@ -12,7 +12,7 @@ const jobFunctionNames = {
   ResultViewerNo: 'Result Viewer - No',
   Clinician: 'Clinician',
 }
-const countryAbbr3 = 'NGA'
+const countryAbbr3 = 'USA'
 const partnerId = 1
 
 async function seed(knex) {
@@ -152,38 +152,41 @@ async function seed(knex) {
         permMap[`${perm.module}:${perm.activity}`] = perm.id
         return permMap
       }, {})
+
     // --------
-    // if JobFunction not have permission 'result:view' - then add it
-    const jfPermission = await knex('JobFunctionPermission')
-      .where({
-        jobFunctionId,
-        permissionId: permissions['result:view'],
-      })
-      .first()
-    let permissionId = permissions['result:view']
+    // helper functions
+    // - add job function permission if missing
+    const addPermission = async (jobFunctionId, permissionId) => {
+      const props = { jobFunctionId, permissionId }
+      const perm = await knex('JobFunctionPermission')
+        .where(props)
+        .first()
+      if (!perm) {
+        await knex('JobFunctionPermission').insert(props)
+      }
+    }
+    // - delete job function permission if exists
+    const delPermission = async (jobFunctionId, permissionId) => {
+      const props = { jobFunctionId, permissionId }
+      const perm = await knex('JobFunctionPermission')
+        .where(props)
+        .first()
+      if (perm) {
+        await knex('JobFunctionPermission').del(props)
+      }
+    }
+    // --------
     // make sure Job Function ResultViewerYes has permission 'result:view'
-    if (jobFunctionName === jobFunctionNames.ResultViewerYes && !jfPermission) {
-      await knex('JobFunctionPermission').insert({
-        jobFunctionId,
-        permissionId,
-      })
+    if (jobFunctionName === jobFunctionNames.ResultViewerYes) {
+      await addPermission(jobFunctionId, permissions['result:view'])
     }
     // make sure Job Function ResultViewerNo does NOT have permission 'result:view'
-    else if (
-      jobFunctionName === jobFunctionNames.ResultViewerNo &&
-      jfPermission
-    ) {
-      await knex('JobFunctionPermission').del({ jobFunctionId, permissionId })
+    else if (jobFunctionName === jobFunctionNames.ResultViewerNo) {
+      await delPermission(jobFunctionId, permissions['result:view'])
     }
-    // add permission 'site:view'
-    permissionId = permissions['site:view']
-    const props = { jobFunctionId, permissionId }
-    const perm = await knex('JobFunctionPermission')
-      .where(props)
-      .first()
-    if (!perm) {
-      await knex('JobFunctionPermission').insert(props)
-    }
+    // add base permissions
+    await addPermission(jobFunctionId, permissions['site:view'])
+    await addPermission(jobFunctionId, permissions['assay:view'])
     // --------
     // Job
     const userName =
