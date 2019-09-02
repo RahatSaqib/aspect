@@ -185,8 +185,11 @@ async function seed(knex) {
       await delPermission(jobFunctionId, permissions['result:view'])
     }
     // add base permissions
-    await addPermission(jobFunctionId, permissions['site:view'])
-    await addPermission(jobFunctionId, permissions['assay:view'])
+    await Promise.each(
+      ['browse:view', 'reporter:view', 'site:view', 'assay:view'],
+      perm => addPermission(jobFunctionId, permissions[perm])
+    )
+
     // --------
     // Job
     const userName =
