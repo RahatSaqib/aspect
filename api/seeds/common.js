@@ -2,7 +2,7 @@ const _ = require('lodash')
 const Promise = require('bluebird')
 
 const utils = require('./utils')
-const GXPatientDataSchema = require('./fixtures/geneXpertDevice/geneXpertPatientDataSchema.json')
+const gxPatientDataSchema = require('./fixtures/geneXpertDevice/geneXpertPatientDataSchema.json')
 const geneXpertResultDataSchemaHiv = require('./fixtures/geneXpertDevice/geneXpertResultDataSchemaHiv.json')
 const geneXpertResultDataSchema = require('./fixtures/geneXpertDevice/geneXpertResultDataSchema.json')
 const geneXpertResultDataSchemaHcv = require('./fixtures/geneXpertDevice/geneXpertResultDataSchemaHcv.json')
@@ -233,15 +233,15 @@ async function insertGxAlertDevice(
     ...auditFields,
   })
 }
-async function addGeneXpertDeviceTypes(
+async function addGeneXpertDeviceType(
   knex,
-  assayTypeExternalsId,
+  assayExternalIds,
   patientDataSchema
 ) {
   let geneXpertPatientDataSchema
   if (patientDataSchema)
     geneXpertPatientDataSchema = JSON.stringify(patientDataSchema)
-  else geneXpertPatientDataSchema = JSON.stringify(GXPatientDataSchema)
+  else geneXpertPatientDataSchema = JSON.stringify(gxPatientDataSchema)
 
   // Add device types
   const { Lab: deviceTypeCategoryLab } = await allDeviceTypeCategoryToId()
@@ -268,7 +268,7 @@ async function addGeneXpertDeviceTypes(
     Unknown: assayTypeUnknownId,
   } = await allAssayTypeToId()
 
-  if (_.includes(assayTypeExternalsId, 'GxUnknown'))
+  if (_.includes(assayExternalIds, 'GxUnknown'))
     await knex('Assay').insert({
       name: 'GeneXpert Unknown',
       i18nKey: 'assayGeneXpertUnknown',
@@ -279,7 +279,7 @@ async function addGeneXpertDeviceTypes(
       patientDataSchema: geneXpertPatientDataSchema,
       abbreviation: 'GX UK',
     })
-  if (_.includes(assayTypeExternalsId, 'GxHcv'))
+  if (_.includes(assayExternalIds, 'GxHcv'))
     await knex('Assay').insert({
       name: 'GeneXpert HCV',
       i18nKey: 'assayGeneXpertHcv',
@@ -295,7 +295,7 @@ async function addGeneXpertDeviceTypes(
       patientDataSchema: geneXpertPatientDataSchema,
       abbreviation: 'GX HCV',
     })
-  if (_.includes(assayTypeExternalsId, 'GxMtbRif'))
+  if (_.includes(assayExternalIds, 'GxMtbRif'))
     await knex('Assay').insert({
       name: 'GeneXpert MTB/Rif',
       i18nKey: 'assayGeneXpertMtbRif',
@@ -311,7 +311,7 @@ async function addGeneXpertDeviceTypes(
       patientDataSchema: geneXpertPatientDataSchema,
       abbreviation: 'GX MTB/Rif',
     })
-  if (_.includes(assayTypeExternalsId, 'GxMtbRifUltra'))
+  if (_.includes(assayExternalIds, 'GxMtbRifUltra'))
     await knex('Assay').insert({
       name: 'GeneXpert MTB/Rif Ultra',
       i18nKey: 'assayGeneXpertMtbRifUltra',
@@ -327,7 +327,7 @@ async function addGeneXpertDeviceTypes(
       patientDataSchema: geneXpertPatientDataSchema,
       abbreviation: 'GX MTB/ULTRA',
     })
-  if (_.includes(assayTypeExternalsId, 'GxHiv1Vl'))
+  if (_.includes(assayExternalIds, 'GxHiv1Vl'))
     await knex('Assay').insert({
       name: 'GeneXpert HIV-1 VL',
       i18nKey: 'assayGeneXpertHiv1Vl',
@@ -343,7 +343,7 @@ async function addGeneXpertDeviceTypes(
       patientDataSchema: geneXpertPatientDataSchema,
       abbreviation: 'GX HIV VL',
     })
-  if (_.includes(assayTypeExternalsId, 'GxHiv1Qual'))
+  if (_.includes(assayExternalIds, 'GxHiv1Qual'))
     await knex('Assay').insert({
       name: 'GeneXpert HIV-1 Qual',
       i18nKey: 'assayGeneXpertHiv1Qual',
@@ -359,7 +359,7 @@ async function addGeneXpertDeviceTypes(
       patientDataSchema: geneXpertPatientDataSchema,
       abbreviation: 'GX HIV Qual',
     })
-  if (_.includes(assayTypeExternalsId, 'GxEbola'))
+  if (_.includes(assayExternalIds, 'GxEbola'))
     await knex('Assay').insert({
       name: 'GeneXpert Ebola',
       i18nKey: 'assayGeneXpertEbola',
@@ -381,5 +381,5 @@ module.exports = {
   insertGxAlertDevice,
   insertJobFunctionPermission,
   insertJobFeatures,
-  addGeneXpertDeviceTypes,
+  addGeneXpertDeviceType,
 }
