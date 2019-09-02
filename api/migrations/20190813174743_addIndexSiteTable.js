@@ -4,6 +4,17 @@ async function up(knex) {
   await knex.schema.alterTable('Result', t => {
     t.dropForeign('partnerId')
   })
+  await knex.schema.alterTable('DeviceApiKey', t => {
+    t.dropForeign('partnerId')
+  })
+  await knex.schema.alterTable('DeviceApiKey', t => {
+    t.integer('partnerId')
+      .unsigned()
+      .notNullable()
+      .references('id')
+      .inTable('Partner')
+      .alter()
+  })
   await knex.schema.alterTable('Result', t => {
     t.integer('partnerId')
       .unsigned()
@@ -21,6 +32,17 @@ async function down(knex) {
     t.dropForeign('partnerId')
   })
   await knex.schema.alterTable('Result', t => {
+    t.integer('partnerId')
+      .unsigned()
+      .nullable()
+      .references('id')
+      .inTable('Partner')
+      .alter()
+  })
+  await knex.schema.alterTable('DeviceApiKey', t => {
+    t.dropForeign('partnerId')
+  })
+  await knex.schema.alterTable('DeviceApiKey', t => {
     t.integer('partnerId')
       .unsigned()
       .nullable()
