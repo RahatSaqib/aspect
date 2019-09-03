@@ -85,6 +85,7 @@ describe('Device API Raw routes for BD MGIT', () => {
       createdBy: userId,
       updatedOn: now,
       updatedBy: userId,
+      partnerId: partner.id,
     })
   })
 

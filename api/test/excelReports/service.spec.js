@@ -17,9 +17,10 @@ describe('Excel reports', () => {
       '/report/export?sortCol=name&sortDir=asc&page=0&size=10&format=xlsx',
       '/notification/export?sortCol=name&sortDir=asc&page=0&size=10&format=csv',
       '/deviceApiKey/export?sortCol=createdOn&sortDir=asc&page=0&size=10&format=',
+      '/result/export?sortCol=createdOn&sortDir=asc&page=0&size=10&format=csv',
     ]
     shared.checkToken(server, queries[0])
-    return Promise.each(queries, async query => {
+    await Promise.each(queries, async query => {
       const res = await server
         .get(query)
         .set('Authorization', `Bearer ${shared.token}`)

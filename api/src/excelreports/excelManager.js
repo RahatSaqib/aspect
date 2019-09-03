@@ -1,4 +1,5 @@
 const Excel = require('exceljs')
+const _ = require('lodash')
 
 function findContentInExcelRow(
   row,
@@ -71,7 +72,11 @@ function setColumnsKeysAndBindData(
   rowsNext = 0,
   defaultNoDataMessage
 ) {
-  const indexRow = setColumnsKeys(worksheet, placeHolderTag, rowsNext)
+  const indexRow = setColumnsKeysByPlaceHolder(
+    worksheet,
+    placeHolderTag,
+    rowsNext
+  )
   const lastRowCount = worksheet.actualRowCount
 
   if (dataCollection.length > 0) {
@@ -117,7 +122,7 @@ function setMessageOnRow(worksheet, rowIndex, defaultNoDataMessage) {
 }
 
 // it set up the keys for the columns headers and return the row index where you are goint to add data rows
-function setColumnsKeys(worksheet, placeHolderTag, rowsNext = 0) {
+function setColumnsKeysByPlaceHolder(worksheet, placeHolderTag, rowsNext = 0) {
   const cell = findContentInExcelSheet(worksheet, placeHolderTag)
   if (cell) {
     const columns = []
@@ -175,7 +180,68 @@ async function generateReport(
     defaultNoDataMessage
   )
 
-  if (format !== 'csv') return workbook.xlsx.writeBuffer()
+  return generateReportFile(workbook, format)
+}
+async function generateWorkbookByDataSource(
+  format,
+  data,
+  workSheetName,
+  columnsSchema,
+  reportTitle,
+  rowsConversionFunction = null,
+  defaultNoDataMessage = 'No data for this period'
+) {
+  const workbook = new Excel.Workbook()
+  const worksheet = workbook.addWorksheet(workSheetName)
+
+  worksheet.columns = columnsSchema
+  worksheet.columns.forEach(column => {
+    column.width = column.header.length + 2
+  })
+  const headerIndex = 4
+  worksheet.getRow(headerIndex).values = _.map(
+    columnsSchema,
+    elem => elem.header
+  )
+  worksheet.getRow(headerIndex).eachCell(cell => {
+    cell.border = {
+      top: { style: 'double', color: { argb: 'FFFFFFFF' } },
+      left: { style: 'double', color: { argb: 'FFFFFFFF' } },
+      bottom: { style: 'double', color: { argb: 'FFFFFFFF' } },
+      right: { style: 'double', color: { argb: 'FFFFFFFF' } },
+    }
+    cell.fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: '803CC0DD' },
+    }
+    cell.font = {
+      bold: true,
+    }
+  })
+  worksheet.spliceRows(1, 1)
+  worksheet.mergeCells('A1', 'C1')
+  worksheet.getCell('A1').value = reportTitle
+
+  worksheet.getCell('A1').font = {
+    size: 20,
+    bold: true,
+  }
+  if (data) {
+    if (!rowsConversionFunction) {
+      worksheet.addRows(data)
+    } else {
+      data.forEach(element => {
+        worksheet.addRow(rowsConversionFunction(element))
+      })
+    }
+  } else setMessageOnRow(worksheet, headerIndex + 1, defaultNoDataMessage)
+
+  return generateReportFile(workbook, format)
+}
+async function generateReportFile(workbook, format) {
+  if (format && format.toLowerCase() !== 'csv')
+    return workbook.xlsx.writeBuffer()
   return workbook.csv.writeBuffer()
 }
 async function downloadReportFile(
@@ -200,12 +266,15 @@ async function downloadReportFile(
       reply(err)
     })
 }
+
 module.exports = {
   findContentInExcelRow,
   setColumnsKeysAndBindData,
   findContentInExcelSheet,
   replaceContentInExcelSheet,
-  setColumnsKeys,
+  setColumnsKeysByPlaceHolder,
   generateReport,
+  generateWorkbookByDataSource,
   downloadReportFile,
+  generateReportFile,
 }

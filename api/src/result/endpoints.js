@@ -16,13 +16,13 @@ const {
   updateFormData,
   listWorkflowStatusTypes,
   listWorkflowStatusLog,
-  exportResults,
   showDeviceLogs,
   showFileReferences,
   downloadFile,
   downloadFirstImage,
   confirmedTreatmentTracking,
 } = require('./service')
+const { getResultsReport } = require('./serviceReport')
 const {
   validateAllGeographyFilterParams,
 } = require('../geography/requestValidation')
@@ -30,6 +30,10 @@ const {
 function listResultsBaseConfig() {
   return {
     auth: { scope: ['result:view', 'result:edit'] },
+    timeout: {
+      server: 360000,
+      socket: false,
+    },
     validate: {
       query: Object.assign(
         {
@@ -315,7 +319,7 @@ const routes = [
   {
     method: 'GET',
     path: '/result/export',
-    handler: asyncHandler(exportResults),
+    handler: getResultsReport,
     config: Object.assign(
       {
         description: 'Export Result List into Excel or CSV',

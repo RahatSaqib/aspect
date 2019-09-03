@@ -151,7 +151,7 @@ export const NotificationList = props => {
   }) => history.push(`/browse/notification/${notificationId}`)
 
   const onExcelClick = formatType => {
-    const format = formatType.target.id
+    const format = formatType.id
     const { sanitized, value: filtersParams } = filtersFromLocation(location)
     if (!sanitized) {
       exportNotifications(
