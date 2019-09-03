@@ -1,4 +1,5 @@
 const supertest = require('supertest')
+const format = require('date-fns/format')
 const chai = require('chai')
 const { addDays, subDays, subHours } = require('date-fns')
 const { run } = require('../../src/db')
@@ -801,11 +802,12 @@ describe('Fact based issues', () => {
       const deviceOfflineDate = subDays(now, maxDaysDeviceOffline - 2)
       const deviceNoResultsDate = subDays(now, maxDaysDeviceNoResults - 2)
       const maintenanceDueOn = addDays(now, 30 - 2)
+
       await knex('Device as d')
         .where('d.id', newDevice.id)
         .update({
-          createdOn: deviceNoResultsDate,
-          lastPingOn: deviceOfflineDate,
+          createdOn: format(deviceNoResultsDate, 'yyyy-MM-dd'),
+          lastPingOn: format(deviceOfflineDate, 'yyyy-MM-dd'),
         })
 
       messageContext.factGenerateDeviceConnectivity(newDevice.id)
