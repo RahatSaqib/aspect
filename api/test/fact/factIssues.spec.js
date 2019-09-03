@@ -1,6 +1,6 @@
 const supertest = require('supertest')
 const chai = require('chai')
-const { addDays, subDays, subHours, parseISO } = require('date-fns')
+const { addDays, subDays, subHours } = require('date-fns')
 const { run } = require('../../src/db')
 const { createTestContext, getDeviceFromApiKey } = require('../deviceApi/utils')
 const {
@@ -598,7 +598,7 @@ describe('Fact based issues', () => {
       assert.isOk(maxDaysDeviceNoResults > maxDaysDeviceOffline)
       const deviceOfflineDate = subDays(now, maxDaysDeviceOffline - 2)
       const deviceNoResultsDate = subDays(now, maxDaysDeviceNoResults - 2)
-      const maintenanceDueOn = addDays(parseISO(now.toISOString()), 30 + 2)
+      const maintenanceDueOn = addDays(now, 30 + 2)
       await knex('Device as d')
         .where('d.id', newDevice.id)
         .update({
@@ -800,7 +800,7 @@ describe('Fact based issues', () => {
       assert.isOk(maxDaysDeviceNoResults > maxDaysDeviceOffline)
       const deviceOfflineDate = subDays(now, maxDaysDeviceOffline - 2)
       const deviceNoResultsDate = subDays(now, maxDaysDeviceNoResults - 2)
-      const maintenanceDueOn = addDays(parseISO(now.toISOString()), 30 - 2)
+      const maintenanceDueOn = addDays(now, 30 - 2)
       await knex('Device as d')
         .where('d.id', newDevice.id)
         .update({

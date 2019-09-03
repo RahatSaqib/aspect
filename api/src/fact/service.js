@@ -1,4 +1,4 @@
-const { addDays, subDays, startOfDay, parseISO } = require('date-fns')
+const { addDays, subDays, startOfDay } = require('date-fns')
 const _ = require('lodash')
 const Promise = require('bluebird')
 const {
@@ -100,10 +100,7 @@ function onFactGenerateDeviceConnectivity({ deviceId }, { messageContext }) {
             ? null
             : subDays(now, maxDaysDeviceNoResults)
         // TODO move #days to partner config
-        const maxMaintenanceDateNoResult = addDays(
-          parseISO(lastSeenOn.toISOString()),
-          30
-        )
+        const maxMaintenanceDateNoResult = addDays(lastSeenOn, 30)
 
         // If we haven't seen a result, use deviceCreatedOn for checks
         if (lastResultOn == null) {

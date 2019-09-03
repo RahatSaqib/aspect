@@ -251,12 +251,10 @@ describe('Result routes', () => {
           )
           assert.equal(
             dateFormat(
-              parseISO(
-                new Date(res.body.data.resultWorkflowLogChangedOn).toISOString()
-              ),
+              parseISO(res.body.data.resultWorkflowLogChangedOn),
               'yyyy-MM-dd HH:mm:ss'
             ),
-            dateFormat(parseISO(changedOn.toISOString()), 'yyyy-MM-dd HH:mm:ss')
+            dateFormat(changedOn, 'yyyy-MM-dd HH:mm:ss')
           )
 
           // update with resultWorkflowStatusId
@@ -410,7 +408,7 @@ describe('Result routes', () => {
     })
 
     it('Should update result treatment status given a resultId - with resultTreatmentStatusId', done => {
-      const changedOn = addMinutes(parseISO(new Date().toISOString()), 1)
+      const changedOn = addMinutes(new Date(), 1)
       const updateWithId = {
         resultTreatmentStatusId: 2,
         data: 'should be treated',
@@ -435,7 +433,7 @@ describe('Result routes', () => {
     })
 
     it('Should update result treatment status given a resultId - set resultTreatmentData', done => {
-      const changedOn = addMinutes(parseISO(new Date().toISOString()), 2)
+      const changedOn = addMinutes(new Date(), 2)
       const updateWithNull = {
         resultTreatmentStatusId: null,
         data: 'should be treated',

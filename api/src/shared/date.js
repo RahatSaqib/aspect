@@ -10,11 +10,12 @@ function parseDateOrDefault(date, defaultValue = null) {
   if (date == null || date === '') {
     return defaultValue
   }
-  const parsed = dateFns.toDate(dateFns.parseISO(new Date(date).toISOString()))
+  const parsed =
+    date instanceof Date ? date : dateFns.toDate(dateFns.parseISO(date))
   return dateFns.isValid(parsed) ? parsed : defaultValue
 }
 
-function formatDateOrDefault(date, dateFormat, defaultValue = '') {
+function formatDateOrDefault(date, dateFormat, defaultValue = null) {
   date = parseDateOrDefault(date)
   if (date == null) {
     return defaultValue

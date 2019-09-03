@@ -35,10 +35,7 @@ async function preProcessUpdateDeviceConfiguration(context) {
       expectedBackOnline:
         !inactive || _.isEmpty(expectedBackOnlineInData)
           ? null
-          : dateFormat(
-              parseISO(new Date(expectedBackOnlineInData).toISOString()),
-              'yyyy-MM-dd'
-            ),
+          : dateFormat(parseISO(expectedBackOnlineInData), 'yyyy-MM-dd'),
     })
     const dueOn = parseDateOrDefault(newMaintenanceData.expectedBackOnline)
     if (inactive) {

@@ -213,14 +213,11 @@ function numberOfDays(date) {
     return 'days'
   }
 
-  return formatDistanceStrict(
-    new Date(),
-    parseISO(new Date(date).toISOString()),
-    {
-      unit: 'day',
-      roundingMethod: 'floor',
-    }
-  )
+  const parsedDate = date instanceof Date ? date : parseISO(date)
+  return formatDistanceStrict(new Date(), parsedDate, {
+    unit: 'day',
+    roundingMethod: 'floor',
+  })
 }
 
 function isoDate(date) {

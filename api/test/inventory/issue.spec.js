@@ -1,5 +1,5 @@
 const _ = require('lodash')
-const { addDays, subDays, parseISO } = require('date-fns')
+const { addDays, subDays } = require('date-fns')
 const { assert, expect } = require('chai')
 const subHours = require('date-fns/subHours')
 
@@ -467,7 +467,7 @@ async function triggerInitialIssue({
 
   // check alert message
   if (issueType === 'InventoryStockout') {
-    const date = addDays(parseISO(new Date().toISOString()), daysDue)
+    const date = addDays(new Date(), daysDue)
     assert.equal(
       notifLU.alertMessage,
       processUsingHandlebarsSyntax(

@@ -378,7 +378,7 @@ async function getInventoryItemList(auth, dataConstraints) {
     )
     if (_.isDate(it.expiresOn)) {
       it.expiring = isAfter(
-        addDays(parseISO(it.expiresOn.toISOString()), it.remainingDays),
+        addDays(parseISO(it.expiresOn), it.remainingDays),
         it.expiresOn
       )
     }
@@ -904,10 +904,7 @@ async function deviceOperational(request) {
 
   const calibrationDeviceList = _.sortBy(
     deviceList.map(it => {
-      const calibrationOn = addDays(
-        parseISO(now.toISOString()),
-        _.random(55, 120)
-      )
+      const calibrationOn = addDays(parseISO(now), _.random(55, 120))
       const value = differenceInDays(calibrationOn, now)
 
       return {

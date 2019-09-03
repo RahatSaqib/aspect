@@ -4,7 +4,6 @@ const chai = require('chai')
 const addYears = require('date-fns/addYears')
 const subDays = require('date-fns/subDays')
 const addDays = require('date-fns/addDays')
-const parseISO = require('date-fns/parseISO')
 const addHours = require('date-fns/addHours')
 const subHours = require('date-fns/subHours')
 const addMinutes = require('date-fns/addMinutes')
@@ -1972,7 +1971,7 @@ describe('Device API routes for GxAlert Device', () => {
               'Connectivity issues, router cannot connect'
             const inactiveMaintenanceNote = 'Router only has one SIM in it'
             const inactiveMaintenanceExpectedBackOnline = dateFormat(
-              addDays(parseISO(now.toISOString()), 15),
+              addDays(now, 15),
               'yyyy-MM-dd'
             )
             const waitForDeviceMaintenance = waitForAction(
@@ -2016,7 +2015,7 @@ describe('Device API routes for GxAlert Device', () => {
               const inactiveMaintenanceReason = 'Connectivity Problems'
               const inactiveMaintenanceNote = 'Router cannot connect to VPN'
               const inactiveMaintenanceExpectedBackOnline = dateFormat(
-                addDays(parseISO(now.toISOString()), 23),
+                addDays(now, 23),
                 'yyyy-MM-dd'
               )
               const waitForDeviceMaintenance = waitForAction(
@@ -2095,7 +2094,7 @@ describe('Device API routes for GxAlert Device', () => {
               const inactiveMaintenanceNote =
                 'Router cannot connect to the network'
               const inactiveMaintenanceExpectedBackOnline = dateFormat(
-                addDays(parseISO(now.toISOString()), 16),
+                addDays(now, 16),
                 'yyyy-MM-dd'
               )
               await postToDeviceApi(
@@ -2175,7 +2174,7 @@ describe('Device API routes for GxAlert Device', () => {
               const inactiveMaintenanceReason = 'Connectivity Problems'
               const inactiveMaintenanceNote = 'Router cannot connect to VPN'
               const inactiveMaintenanceExpectedBackOnline = dateFormat(
-                addDays(parseISO(now.toISOString()), 23),
+                addDays(now, 23),
                 'yyyy-MM-dd'
               )
               const response = await postToDeviceApi(
@@ -2213,7 +2212,7 @@ describe('Device API routes for GxAlert Device', () => {
             const inactiveMaintenanceReason = 'Duplicate No ping'
             const inactiveMaintenanceNote = 'Duplicate Router shows connected'
             const inactiveMaintenanceExpectedBackOnline = dateFormat(
-              addDays(parseISO(now.toISOString()), 19),
+              addDays(now, 19),
               'yyyy-MM-dd'
             )
             await waitForApproximately(100, 'milliseconds')
