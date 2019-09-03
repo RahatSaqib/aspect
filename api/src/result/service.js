@@ -292,11 +292,6 @@ async function getListResults(query, auth, fields = SELECT_LIST_FIELDS) {
     })
   }
 
-  /* const newData = _.map(data, v => {
-    getResultTreatmentStatus(v)
-    return v
-  }) */
-
   const result = {
     ok: true,
     total,
@@ -568,7 +563,6 @@ async function getDownloadResultsList(query, auth) {
     }, query)
     .modify(addConstraints, dataConstraints, { device: 'd', sample: 's' })
   // get total count for paging
-
   const getCount = resultQuery
     .clone()
     .count('r.id as count')

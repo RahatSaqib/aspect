@@ -44,14 +44,12 @@ async function seed(knex) {
         list: false,
         order: 1,
         type: 'string',
-
         title: 'Result No',
       },
       deviceSerial: {
         list: true,
         order: 2,
         type: 'string',
-
         title: 'Device Serial',
       },
       testName: {

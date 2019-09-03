@@ -624,7 +624,6 @@ const routes = [
       },
     },
   },
-
   {
     method: 'POST',
     path: '/result/confirmed-treatment-tracking',
