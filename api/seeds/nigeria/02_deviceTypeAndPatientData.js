@@ -1,6 +1,6 @@
 module.exports = require('../utils').seed(seed, __filename)
 
-const { addGeneXpertDeviceTypes } = require('../common')
+const { addGeneXpertDeviceTypeAndAssays } = require('../common')
 
 const { patientData } = require('./fixtures/geneXpertPatientDataSchema.json')
 
@@ -27,7 +27,7 @@ async function seed(knex) {
         permissionId: permissionSiteAdminId,
       },
     ])
-  await addGeneXpertDeviceTypes(
+  await addGeneXpertDeviceTypeAndAssays(
     knex,
     [
       'GxUnknown',
