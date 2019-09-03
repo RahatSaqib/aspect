@@ -233,7 +233,7 @@ async function insertGxAlertDevice(
     ...auditFields,
   })
 }
-async function addGeneXpertDeviceType(
+async function addGeneXpertDeviceTypeAndAssays(
   knex,
   assayExternalIds,
   patientDataSchema
@@ -381,5 +381,5 @@ module.exports = {
   insertGxAlertDevice,
   insertJobFunctionPermission,
   insertJobFeatures,
-  addGeneXpertDeviceType,
+  addGeneXpertDeviceTypeAndAssays,
 }
