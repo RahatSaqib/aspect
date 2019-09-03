@@ -189,6 +189,7 @@ async function triggeredEventOlderThan(knex, issue, issueAge) {
     },
     issueAge
   )
+
   const issueTriggeredOnPlusAge = addYears(
     addMonths(
       addWeeks(

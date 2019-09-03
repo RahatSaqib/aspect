@@ -2,7 +2,7 @@ const supertest = require('supertest')
 const chai = require('chai')
 const _ = require('lodash')
 const dateFormat = require('date-fns/format')
-const { addMinutes, subMonths, endOfMonth } = require('date-fns')
+const { addMinutes, subMonths, endOfMonth, parseISO } = require('date-fns')
 
 const shared = require('../utils/sharedToken')
 const { runTestWithKnex } = require('../utils/generatorFunctionUtils')
@@ -26,7 +26,9 @@ describe('Result routes', () => {
   let initialResultWorkflowStatusName = ''
   const reason = 'testing'
   const operator = 'Tester'
-  const changedOn = new Date(dateFormat(new Date(), 'yyyy-MM-dd HH:mm:ss.000Z'))
+  const changedOn = new Date(
+    dateFormat(new Date(), "yyyy-MM-dd HH:mm:ss.000'Z'")
+  )
   describe('GET', () => {
     shared.checkToken(server, path)
 
@@ -249,7 +251,7 @@ describe('Result routes', () => {
           )
           assert.equal(
             dateFormat(
-              res.body.data.resultWorkflowLogChangedOn,
+              parseISO(res.body.data.resultWorkflowLogChangedOn),
               'yyyy-MM-dd HH:mm:ss'
             ),
             dateFormat(changedOn, 'yyyy-MM-dd HH:mm:ss')
