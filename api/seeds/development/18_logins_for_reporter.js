@@ -41,11 +41,13 @@ async function seed(knex) {
   const { siteId, geographyId } = await knex('Result as r')
     .innerJoin('Site as s', 'r.siteId', 's.id')
     .innerJoin('Geography as g', 's.geographyId', 'g.id')
+    .innerJoin('Sample as sa', 'r.sampleId', 'sa.id')
     .where('r.partnerId', partnerId)
     .where('g.countryId', countryId)
-    .select('r.siteId', 'r.geographyId')
+    .whereNotNull('sa.originSiteId')
+    .select('sa.originSiteId as siteId', 'r.geographyId')
     .count('r.id as total')
-    .groupBy('r.siteId')
+    .groupBy('sa.originSiteId')
     .orderBy('total', 'desc')
     .first()
   // ---------------------
@@ -179,7 +181,6 @@ async function seed(knex) {
         ? userNames[0]
         : userNames[1]
     const [jobId] = await knex('Job').insert({
-      // personId: users.find(x => x.name === userNames[0]).personId,
       personId: users.find(x => x.userName === userName).personId,
       jobFunctionId,
     })
