@@ -147,6 +147,8 @@ SiteDetail.propTypes = {
     params: PropTypes.shape({
       siteId: PropTypes.string.isRequired,
     }).isRequired,
+    path: PropTypes.string.isRequired,
+    url: PropTypes.string.isRequired,
   }).isRequired,
   location: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   history: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
