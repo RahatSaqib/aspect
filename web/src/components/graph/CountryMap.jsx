@@ -33,9 +33,6 @@ Usually it's an array like this:
   stroke: PropTypes.func.isRequired,
   projectionFunc: PropTypes.func.isRequired,
   transform: PropTypes.string,
-  topojson: {
-    object: PropTypes.arrayOf(PropTypes.object),
-  }.isRequired,
 }
 
 const defaultProps = {
@@ -99,6 +96,7 @@ export const CountryMap = ({
     )
   }
 
+  // eslint-disable-next-line react/prop-types
   const geojson = feature(topojson, topojson.objects[countryIsoAlpha2Code])
 
   return (

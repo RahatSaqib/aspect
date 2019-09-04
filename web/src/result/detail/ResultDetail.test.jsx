@@ -21,6 +21,7 @@ describe('Result Detail screen', () => {
     fetchSingleResult() {},
     fetchResultLog() {},
     fetchTags() {},
+    logTreatmentStatus() {},
     saveResultFormDataValue: sinon.spy(),
     updateResultQcCheck() {},
     deviceLogs: Immutable.List([]),
