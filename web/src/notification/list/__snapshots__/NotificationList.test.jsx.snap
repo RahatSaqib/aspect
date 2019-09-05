@@ -45,7 +45,9 @@ exports[`NotificationList module NotificationList component should render correc
         "locale": "en",
         "messages": Object {},
         "now": [Function],
+        "onError": [Function],
         "textComponent": "span",
+        "timeZone": null,
       }
     }
     location={
@@ -91,7 +93,9 @@ exports[`NotificationList module NotificationList component should render correc
           "locale": "en",
           "messages": Object {},
           "now": [Function],
+          "onError": [Function],
           "textComponent": "span",
+          "timeZone": null,
         }
       }
       location={

@@ -70,7 +70,9 @@ exports[`TaskList module TaskList component should render correctly 1`] = `
           "locale": "en",
           "messages": Object {},
           "now": [Function],
+          "onError": [Function],
           "textComponent": "span",
+          "timeZone": null,
         }
       }
       location={

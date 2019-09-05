@@ -15,10 +15,12 @@ export class ResultWorkflowStatusSelectField extends PureComponent {
   static propTypes = {
     allItemText: PropTypes.string,
     fetchWorkflowStatuses: PropTypes.func.isRequired,
-    workflowStatusItems: PropTypes.shape({
-      id: PropTypes.string,
-      name: PropTypes.string,
-    }).isRequired,
+    workflowStatusItems: PropTypes.arrayOf(
+      PropTypes.shape({
+        id: PropTypes.string,
+        name: PropTypes.string,
+      })
+    ).isRequired,
     onWorkflowStatusChange: PropTypes.func.isRequired,
     value: PropTypes.string,
   }

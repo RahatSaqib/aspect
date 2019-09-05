@@ -96,6 +96,7 @@ export const CountryMap = ({
     )
   }
 
+  // eslint-disable-next-line react/prop-types
   const geojson = feature(topojson, topojson.objects[countryIsoAlpha2Code])
 
   return (
