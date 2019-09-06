@@ -2124,7 +2124,7 @@ async function updateCategoryAssay(knex) {
   })
 }
 
-async function updateAssayAbbreviation(knex) {
+async function updateAssayResultCategoryTreatmentEmphasize(knex) {
   const categories = await knex('ResultCategory').select(
     'id',
     'name',
@@ -2156,11 +2156,7 @@ async function updateAssayAbbreviation(knex) {
         requiresTreatment: false,
         emphasize: true,
       }
-    } else if (
-      ['Success', 'LessThan1000', 'Unknown', 'NotDetected'].indexOf(
-        externalId
-      ) >= 0
-    ) {
+    } else {
       json = {
         requiresTreatment: false,
         emphasize: false,
@@ -2335,5 +2331,5 @@ module.exports = {
   seedDeviceMaintenanceType,
 
   updateCategoryAssay,
-  updateAssayAbbreviation,
+  updateAssayResultCategoryTreatmentEmphasize,
 }
