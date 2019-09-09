@@ -5,7 +5,6 @@ module.exports = {
   passwordAttempts: process.env.passwordAttempts,
   passwordSaltRounds: process.env.passwordSaltRounds,
   gxAlertApi: process.env.gxAlertApi,
-  serverKey: process.env['firebase.serverkey'] || '',
   db: {
     connectionLimit: parseInt(process.env['db.connectionLimit'], 10) || 10,
     host: process.env['db.host'],
