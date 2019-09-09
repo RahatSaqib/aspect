@@ -1,6 +1,6 @@
 const Boom = require('boom')
 const fetch = require('node-fetch')
-const config = require('./src/config')
+const config = require('../config')
 
 // Initialize default app
 const FIREBASE_CLOUD_MESSAGING_URL = 'https://fcm.googleapis.com/fcm/send'

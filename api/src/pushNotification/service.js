@@ -101,7 +101,7 @@ async function doSendPushNotificationMessage(
   const { deviceTokenId, title, body, data } = d || {}
 
   // push notification handler
-  const { sendPushNotification } = require('../../pushNotificationUtil')
+  const { sendPushNotification } = require('./pushNotificationUtil')
 
   // assume status is 'Sent'
   const {
