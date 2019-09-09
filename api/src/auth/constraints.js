@@ -208,6 +208,15 @@ function addConstraints(queryBuilder, constraints, aliases) {
     queryBuilder.where({ [`${person}.personId`]: constraints.person.id })
   }
 
+  if (device) {
+    queryBuilder.leftOuterJoin(
+      `DeviceStatus as deviceStatus`,
+      `${device}.deviceStatusId`,
+      `deviceStatus.id`
+    )
+    queryBuilder.where({ [`deviceStatus.token`]: 'approved' })
+  }
+
   // data filter constraints are ORed
   if (!_.isEmpty(_.get(constraints, '$or'))) {
     const getBaseProps = (queryBuilder, constraint) => ({

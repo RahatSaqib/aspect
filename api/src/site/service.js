@@ -142,6 +142,7 @@ async function showSite(request) {
   item.devices = await knex('Device as d')
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .innerJoin('DeviceTypeCategory as dtc', 'dt.deviceTypeCategoryId', 'dtc.id')
+    .modify(addConstraints, dataConstraints, { device: 'd' })
     .where('siteId', params.siteId)
     .distinct('dt.id', 'dt.name', 'dtc.id as category')
     .select()
