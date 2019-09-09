@@ -2,6 +2,8 @@ const _ = require('lodash')
 const Promise = require('bluebird')
 
 const utils = require('./utils')
+const { query } = require('../src/db')
+
 const gxPatientDataSchema = require('./fixtures/geneXpertDevice/geneXpertPatientDataSchema.json')
 const geneXpertResultDataSchemaHiv = require('./fixtures/geneXpertDevice/geneXpertResultDataSchemaHiv.json')
 const geneXpertResultDataSchema = require('./fixtures/geneXpertDevice/geneXpertResultDataSchema.json')
@@ -473,14 +475,26 @@ async function insertStatesAndLgas(knex, countryId, states) {
   )
 }
 
+// adds the categories (array of externalIds) to the given assayId
+// safe to execute multiple times - will only add new entires
 async function insertAssayResultCategories(knex, assayId, categories) {
   await Promise.all(
     _.map(categories || [], async category => {
       const resultCategoryId = await resultCategoryToId(category)
-      await knex('ResultCategoryAssay').insert({
-        assayId,
-        resultCategoryId,
-      })
+
+      await query('Insert or update result categories for the assay').raw(
+        'INSERT INTO ResultCategoryAssay set ? ON DUPLICATE KEY UPDATE ?',
+        [
+          {
+            assayId,
+            resultCategoryId,
+          },
+          {
+            assayId,
+            resultCategoryId,
+          },
+        ]
+      )
     })
   )
 }

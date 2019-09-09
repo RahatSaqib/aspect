@@ -1,23 +1,31 @@
 module.exports = require('../utils').seed(seed, __filename)
 
 const geography = require('./fixtures/geography.json')
+const sites = require('./fixtures/sites.json')
 const {
   insertStatesAndLgas,
   insertAssayResultCategories,
 } = require('../common')
-const { updateAssayResultCategoryTreatmentEmphasize } = require('../utils')
+const {
+  updateAssayResultCategoryTreatmentEmphasize,
+  insertSites,
+} = require('../utils')
 
 async function seed(knex) {
+  const { id: countryId } = await knex('Country')
+    .where('name', 'Nigeria')
+    .first('id')
+
+  const { id: partnerId } = await knex('Partner')
+    .where({ name: 'Nigeria' })
+    .first('id')
+
   // have to check if states are already set up because they're now part of common inserts:
   const { stateCount } = await knex('State')
     .count('id as stateCount')
     .first()
 
   if (stateCount === 0) {
-    const { id: countryId } = await knex('Country')
-      .where('name', 'Nigeria')
-      .first('id')
-
     await insertStatesAndLgas(knex, countryId, geography.countries[0].states)
   }
 
@@ -107,6 +115,7 @@ async function seed(knex) {
   }
 
   // set up result category assays:
+  // HCV categories
   const { id: geneXpertHcvAssayId } = await knex('Assay')
     .where('externalId', 'GxHcv')
     .first('id')
@@ -117,6 +126,7 @@ async function seed(knex) {
     'Error',
   ])
 
+  // MTB-Rif categories
   const { id: geneXpertMtbRifAssayId } = await knex('Assay')
     .where('externalId', 'GxMtbRif')
     .first('id')
@@ -129,6 +139,7 @@ async function seed(knex) {
     'Error',
   ])
 
+  // MTB-Rif ULTRA categories
   const { id: geneXpertMtbRifUltraAssayId } = await knex('Assay')
     .where('externalId', 'GxMtbRifUltra')
     .first('id')
@@ -142,6 +153,7 @@ async function seed(knex) {
     'Error',
   ])
 
+  // HIV-VL categories
   const { id: geneXpertHivVlAssayId } = await knex('Assay')
     .where('externalId', 'GxHiv1Vl')
     .first('id')
@@ -154,6 +166,7 @@ async function seed(knex) {
     'Error',
   ])
 
+  // HIV-QUAL categories
   const { id: geneXpertHivQualAssayId } = await knex('Assay')
     .where('externalId', 'GxHiv1Qual')
     .first('id')
@@ -165,6 +178,7 @@ async function seed(knex) {
     'Error',
   ])
 
+  // Ebola categories
   const { id: geneXpertEbolaAssayId } = await knex('Assay')
     .where('externalId', 'GxEbola')
     .first('id')
@@ -177,4 +191,6 @@ async function seed(knex) {
   ])
 
   await updateAssayResultCategoryTreatmentEmphasize(knex)
+
+  await insertSites(knex, partnerId, countryId, sites.sites)
 }
