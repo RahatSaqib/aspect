@@ -82,20 +82,4 @@ describe('Notification routes', () => {
         })
     })
   })
-
-  describe('GET /TestPushNotification', () => {
-    shared.checkToken(server, path)
-
-    it.skip('should send a push notification for all test devices', () => {
-      server
-        .get('/api/testpushnotification')
-        .set('Authorization', `Bearer ${shared.token}`)
-        .end((err, res) => {
-          assert.equal(res.status, 200)
-          assert.typeOf(res.body, 'Object')
-          assert.property(res.body, 'ok')
-          assert.equal(res.body.ok, true)
-        })
-    })
-  })
 })

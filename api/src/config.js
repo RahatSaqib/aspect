@@ -5,6 +5,7 @@ module.exports = {
   passwordAttempts: process.env.passwordAttempts,
   passwordSaltRounds: process.env.passwordSaltRounds,
   gxAlertApi: process.env.gxAlertApi,
+  serverKey: process.env['firebase.serverkey'] || '',
   db: {
     connectionLimit: parseInt(process.env['db.connectionLimit'], 10) || 10,
     host: process.env['db.host'],
@@ -72,7 +73,10 @@ function configureOptional(config) {
   if (logstashEndpoint) {
     config.logstash = { endpoint: logstashEndpoint }
   }
-
+  const firebase = process.env['firebase.serverkey']
+  if (firebase) {
+    config.firebase = { serverKey: firebase }
+  }
   // load sentry
   const ravenDsn = process.env['raven.dsn']
   if (ravenDsn) {
