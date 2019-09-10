@@ -2124,7 +2124,7 @@ async function updateCategoryAssay(knex) {
   })
 }
 
-async function updateAssayAbbreviation(knex) {
+async function updateAssayResultCategoryTreatmentEmphasize(knex) {
   const categories = await knex('ResultCategory').select(
     'id',
     'name',
@@ -2156,11 +2156,7 @@ async function updateAssayAbbreviation(knex) {
         requiresTreatment: false,
         emphasize: true,
       }
-    } else if (
-      ['Success', 'LessThan1000', 'Unknown', 'NotDetected'].indexOf(
-        externalId
-      ) >= 0
-    ) {
+    } else {
       json = {
         requiresTreatment: false,
         emphasize: false,
@@ -2297,6 +2293,78 @@ async function seedDeviceMaintenanceType(knex) {
   )
 }
 
+async function insertSites(knex, partnerId, countryId, sites) {
+  const now = new Date()
+  const { id: adminId } = await knex('User')
+    .where('name', 'admin')
+    .first('id')
+
+  // insert sites from a JSON file. Safe to run multiple times. Will only add sites that don't exist yet (based on externalId)
+  await Promise.each(sites, async site => {
+    let siteId = null
+    const existingSite = await knex('Site')
+      .where('externalId', site.externalId)
+      .first('id')
+
+    if (existingSite) {
+      siteId = existingSite.id
+    } else {
+      const { id: siteGeographyId } = await knex('Geography as g')
+        .join('State as s', 'g.stateId', 's.id')
+        .join('Lga as l', 'g.lgaId', 'l.id')
+        .where({ countryId })
+        .where('s.name', site.stateName)
+        .where('l.name', site.lgaName)
+        .first('g.id')
+
+      ;[siteId] = await knex('Site').insert({
+        partnerId,
+        geographyId: siteGeographyId,
+        name: site.name,
+        shortName: site.shortName,
+        externalId: site.externalId,
+        notes: site.notes,
+        city: site.city,
+        street1: site.street1,
+        street2: site.street2,
+        zip: site.zip,
+        latitude: site.latitude || null,
+        longitude: site.longitude || null,
+        timezoneId: site.timezoneId,
+        hoursStart: site.hoursStart,
+        hoursEnd: site.hoursEnd,
+        createdOn: now,
+        createdBy: adminId,
+        updatedOn: now,
+        updatedBy: adminId,
+      })
+    }
+
+    await Promise.each(site.tags, async tag => {
+      const tagDetails = { partnerId, title: tag }
+      let tagId = null
+      const existingTag = await knex('Tag')
+        .where(tagDetails)
+        .first('id')
+      if (existingTag) {
+        tagId = existingTag.id
+      } else {
+        ;[tagId] = await knex('Tag').insert(tagDetails)
+      }
+
+      const siteTagDetails = { tagId, siteId }
+
+      const { siteTagCount } = await knex('SiteTag')
+        .where(siteTagDetails)
+        .count('tagId as siteTagCount')
+
+      if (!siteTagCount) {
+        await knex('SiteTag').insert(siteTagDetails)
+      }
+    })
+  })
+}
+
 module.exports = {
   seed,
   getSeedsRan,
@@ -2335,5 +2403,6 @@ module.exports = {
   seedDeviceMaintenanceType,
 
   updateCategoryAssay,
-  updateAssayAbbreviation,
+  updateAssayResultCategoryTreatmentEmphasize,
+  insertSites,
 }
