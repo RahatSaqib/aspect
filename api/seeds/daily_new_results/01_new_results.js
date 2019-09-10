@@ -9,7 +9,7 @@ const {
 } = require('date-fns')
 module.exports = require('../utils').seed(
   seed,
-  `${__filename}-${format(new Date(), 'YYYY-MM-dd')}`
+  `${__filename}-${format(new Date(), 'yyyy-MM-dd')}`
 )
 const patients = require('./fixtures/patients.json')
 const { errorCodes } = require('./fixtures/errorCodes.js')
@@ -28,9 +28,9 @@ const patientNumber = patients.length - 1
 const millisInHour = 1000 * 60 * 60
 const millisInMinute = 1000 * 60
 const resultTimeFrameInDays = 365
-const resultMtbNumber = 5
-const resultHivVlNumber = 5
-const resultEbolaNumber = 2
+const resultMtbNumber = 3000
+const resultHivVlNumber = 3000
+const resultEbolaNumber = 1000
 const now = new Date()
 
 function calculateDateForResult(

@@ -1406,13 +1406,11 @@ async function confirmedTreatmentTracking(request) {
     // join ResultTreatmentStatusLog to count by 'OnTreatment' and 'NotPossible' statuses
     .leftOuterJoin('ResultTreatmentStatusLog as rtslConfirmed', function() {
       this.on('r.treatmentStatusLogId', 'rtslConfirmed.id')
-        .andOn('rtslConfirmed.resultTreatmentStatusId', statusOnTreatmentId)
+        .onIn('rtslConfirmed.resultTreatmentStatusId', [
+          statusOnTreatmentId,
+          statusNotPossibleId,
+        ])
         .andOn('r.id', 'rtslConfirmed.resultId')
-    })
-    .leftOuterJoin('ResultTreatmentStatusLog as rtslNotPossible', function() {
-      this.on('r.treatmentStatusLogId', 'rtslNotPossible.id')
-        .andOn('rtslNotPossible.resultTreatmentStatusId', statusNotPossibleId)
-        .andOn('r.id', 'rtslNotPossible.resultId')
     })
     // filter by access level of current user
     .leftOuterJoin('Site as s', 'r.siteId', 's.id')
@@ -1430,7 +1428,7 @@ async function confirmedTreatmentTracking(request) {
     .select(
       knex.raw('count(r.id) as total'),
       knex.raw('count(rtslConfirmed.id) as cntConfirmed'),
-      knex.raw('count(rtslNotPossible.id) as cntNotPossible'),
+      // knex.raw('count(rtslNotPossible.id) as cntNotPossible'),
       knex.raw(`date_format(r.endedOn, '%Y-%m') AS monthTested`) // group by r.endedOn as 'yyyy-MM'
     )
     .groupBy('monthTested')
@@ -1446,7 +1444,6 @@ async function confirmedTreatmentTracking(request) {
         return pc
       }
       d.pcConfirmed = getPercentage(d.total, d.cntConfirmed)
-      d.pcNotPossible = getPercentage(d.total, d.cntNotPossible)
       return d
     })
 
@@ -1457,9 +1454,7 @@ async function confirmedTreatmentTracking(request) {
       data.push({
         monthTested,
         pcConfirmed: 0,
-        pcNotPossible: 0,
         cntConfirmed: 0,
-        cntNotPossible: 0,
         total: 0,
       })
     }

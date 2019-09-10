@@ -5,7 +5,7 @@ const { subMinutes, format } = require('date-fns')
 
 module.exports = require('../utils').seed(
   seed,
-  `${__filename}-${format(new Date(), 'YYYY-MM-dd')}`
+  `${__filename}-${format(new Date(), 'yyyy-MM-dd')}`
 )
 
 const now = new Date()
@@ -17,7 +17,7 @@ async function seed(knex) {
     .where({ treatmentStatusLogId: null })
     .select('id')
 
-  await Promise.each(_.sampleSize(results, 5), async resultId => {
+  await Promise.each(_.sampleSize(results, 3000), async resultId => {
     // generate random treatment status
 
     const treatment = await resultTreatmentStatusToId(
