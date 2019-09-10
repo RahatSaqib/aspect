@@ -524,10 +524,10 @@ const routes = [
                   .allow(null)
                   .description('Operator of the device'),
                 notes: Joi.string()
-                  .allow(null)
+                  .allow(null, '')
                   .description('Any notes entered for the sample'),
                 errorCode: Joi.string()
-                  .allow(null)
+                  .allow(null, '')
                   .description(
                     'If an error occurred, contains the error code from the device'
                   ),
