@@ -13,6 +13,7 @@ const {
   getAstmField,
   locateAstmE1394Value,
   getNumberOfAstmE1394Children,
+  structureAstmE1394,
 } = require('../../shared/astm')
 const { deviceSeen } = require('../../device/actions')
 const { SynchronousDataProcessor } = require('./_base')
@@ -55,6 +56,24 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
     // TODO: Collect multiple patient, order, result & comments in a single message
     // TODO: Checksum validation
     // TODO: Error code mapping
+    const sanitisedPayload = payload
+      .replace(/\\\\/g, '\\')
+      .split('\n')
+      .reduce((resultRawMessages, rawLine) => {
+        if (rawLine) {
+          const line = getAllStringsEnclosedBetweenCharacters(rawLine, "'")
+            .map(quotedLine => quotedLine.replace(/^\d(H|P|O|Q|C|R|L)?/, '$1'))
+            .shift()
+          if (DefaultAbbottM2000.containsM2000AstmLineHeader(rawLine)) {
+            resultRawMessages = [...resultRawMessages, line]
+          } else if (line && resultRawMessages.length) {
+            resultRawMessages[resultRawMessages.length - 1] += `\n${line}`
+          }
+        }
+        return resultRawMessages
+      }, [])
+      .join('\n')
+    console.log(JSON.stringify(structureAstmE1394(sanitisedPayload)))
     this.results = payload
       .replace(/\\\\/g, '\\')
       .split('\n')

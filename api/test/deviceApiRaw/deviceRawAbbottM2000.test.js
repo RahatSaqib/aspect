@@ -45,9 +45,7 @@ describe('Device API Raw Abbott M2000 Data Processor', () => {
       payload: abbottStandardInterfaceExample,
     })
     await m2000DataProcessorStandardInterfaceExample.processRequest()
-    console.log(
-      JSON.stringify(m2000DataProcessorStandardInterfaceExample.results)
-    )
+    // console.log(JSON.stringify(m2000DataProcessorStandardInterfaceExample.results))
     // console.log(m2000DataProcessorStandardInterfaceExample.results.length)
   })
 })

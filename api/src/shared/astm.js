@@ -340,8 +340,516 @@ function getNumberOfAstmE1394Children(
   ).length
 }
 
+function structureAstmE1394(
+  astmPayload,
+  defaultDelimiters = {
+    fieldDelimiter: '|',
+    repeatDelimiter: '\\',
+    componentDelimiter: '^',
+    escapeDelimiter: '&',
+  }
+) {
+  if (!astmPayload) {
+    return null
+  }
+  const astmRecords = astmPayload.split(/\r|\n/)
+  /*
+  |----------------|---------|---------|---------|---------|---------|
+  |  RECORD TYPE   | LEVEL 0 | LEVEL 1 | LEVEL 2 | LEVEL 3 | LEVEL 4 |
+  |----------------|---------|---------|---------|---------|---------|
+  | H (Header)     |    X    |         |         |         |         |
+  | P (Patient)    |         |    X    |         |         |         |
+  | O (Order)      |         |         |    X    |         |         |
+  | Q (Enquiry)    |         |    X    |         |         |         |
+  | C (Comment)    |         |    X    |    X    |    X    |    X    |
+  | R (Result)     |         |         |         |    X    |         |
+  | L (Terminator) |    X    |         |         |         |         |
+  |----------------|---------|---------|---------|---------|---------|
+  NOTE: Because Comments can exist at more than 1 level, to define
+        where a comment exists within the message hierarchy, it will
+        always be placed directly below it's immediate parent, therefore,
+        a comment cannot terinate a record
+
+  A Header (Level 0) +0
+  B   Patient1 (Level 1) +1
+  C     Order1 (Level 2) +1
+  D       Result1 (Level 3) +1
+  E     Order2 (Level 2) –1 at this point, saves A thru D
+  F       Comment1 (Level 3) +1
+  G     Order3 (Level 2) –1 at this point, saves E thru F
+  H       Comment1 (Level 3) +1
+  I   Patient2 (Level 1) –2 at this point, saves G thru H
+  J     Order1 (Level 2) +1
+  K       Result1 (Level 3) +1
+  L         Comment1 (Level 4) +1
+  M       Result2 (Level 3) –1 at this point, saves I thru L
+  N       Result3 (Level 3) +0
+  O     Order2 (Level 2) –1 at this point, saves M thru N
+  P       Comment1 (Level 3) +1
+  Q   Patient3 (Level 1) –2
+  R     Order1 (Level 2) +1
+  S       Result1 (Level 3) +1
+  T Terminator (Level 0) –3 at this point, saves Q thru S
+  */
+  return astmRecords
+    .reduce((astmMessages, astmRecord, index) => {
+      if (/^H/.test(astmRecord)) {
+        const delimiters = getDelimiters(astmRecord, defaultDelimiters)
+        if (astmRecord[1] === delimiters.fieldDelimiter) {
+          astmMessages = [
+            ...astmMessages,
+            {
+              rawMessage: astmRecord,
+              rawHeader: astmRecord,
+              delimiters,
+              patients: [],
+              enquiries: [],
+              comments: [],
+            },
+          ]
+        }
+      } else if (!_.isEmpty(astmMessages)) {
+        const astmMessage = astmMessages[astmMessages.length - 1]
+        const { delimiters } = astmMessage
+        astmMessage.rawMessage += `\n${astmRecord}`
+        if (
+          new RegExp(
+            `^P${escapeReservedRegexCharacters(delimiters.fieldDelimiter)}\\d`,
+            'g'
+          ).test(astmRecord)
+        ) {
+          astmMessage.patients = [
+            ...astmMessage.patients,
+            {
+              rawMessage: `${astmRecord}`,
+              orders: [],
+              comments: [],
+            },
+          ]
+        } else if (
+          new RegExp(
+            `^O${escapeReservedRegexCharacters(delimiters.fieldDelimiter)}\\d`,
+            'g'
+          ).test(astmRecord)
+        ) {
+          if (!_.isEmpty(astmMessage.patients)) {
+            const patient =
+              astmMessage.patients[astmMessage.patients.length - 1]
+            patient.orders = [
+              ...patient.orders,
+              {
+                rawMessage: `${astmRecord}`,
+                results: [],
+                comments: [],
+              },
+            ]
+          }
+        } else if (
+          new RegExp(
+            `^R${escapeReservedRegexCharacters(delimiters.fieldDelimiter)}\\d`,
+            'g'
+          ).test(astmRecord)
+        ) {
+          if (!_.isEmpty(astmMessage.patients)) {
+            const patient =
+              astmMessage.patients[astmMessage.patients.length - 1]
+            if (!_.isEmpty(patient.orders)) {
+              const order = patient.orders[patient.orders.length - 1]
+              order.results = [
+                ...order.results,
+                {
+                  rawMessage: `${astmRecord}`,
+                  comments: [],
+                },
+              ]
+            }
+          }
+        } else if (
+          new RegExp(
+            `^Q${escapeReservedRegexCharacters(delimiters.fieldDelimiter)}\\d`,
+            'g'
+          ).test(astmRecord)
+        ) {
+          astmMessage.enquiries = [
+            ...astmMessage.enquiries,
+            {
+              rawMessage: `${astmRecord}`,
+            },
+          ]
+        } else if (
+          new RegExp(
+            `^C${escapeReservedRegexCharacters(delimiters.fieldDelimiter)}\\d`,
+            'g'
+          ).test(astmRecord)
+        ) {
+          if (_.isEmpty(astmMessage.patients)) {
+            astmMessage.comments = [
+              ...astmMessage.comments,
+              {
+                rawMessage: `${astmRecord}`,
+              },
+            ]
+          } else {
+            const patient =
+              astmMessage.patients[astmMessage.patients.length - 1]
+            if (_.isEmpty(patient.orders)) {
+              patient.comments = [
+                ...patient.comments,
+                {
+                  rawMessage: `${astmRecord}`,
+                },
+              ]
+            } else {
+              const order = patient.orders[patient.orders.length - 1]
+              if (_.isEmpty(order.results)) {
+                order.comments = [
+                  ...order.comments,
+                  {
+                    rawMessage: `\n${astmRecord}`,
+                  },
+                ]
+              } else {
+                const result = order.results[order.results.length - 1]
+                result.comments = [
+                  ...result.comments,
+                  {
+                    rawMessage: `\n${astmRecord}`,
+                  },
+                ]
+              }
+            }
+          }
+        } else if (
+          new RegExp(
+            `^L${escapeReservedRegexCharacters(delimiters.fieldDelimiter)}\\d`,
+            'g'
+          ).test(astmRecord)
+        ) {
+          astmMessage.rawTerminator = astmRecord
+        } else if (index > 0) {
+          const previousAstmRecord = astmRecords[index - 1]
+          if (
+            new RegExp(
+              `^H${escapeReservedRegexCharacters(delimiters.fieldDelimiter)}`,
+              'g'
+            ).test(previousAstmRecord)
+          ) {
+            previousAstmRecord.rawHeader += astmRecord
+          } else if (
+            new RegExp(
+              `^P${escapeReservedRegexCharacters(
+                delimiters.fieldDelimiter
+              )}\\d`,
+              'g'
+            ).test(previousAstmRecord)
+          ) {
+            if (!_.isEmpty(astmMessage.patients)) {
+              const patient =
+                astmMessage.patients[astmMessage.patients.length - 1]
+              patient.rawMessage += `${astmRecord}`
+            }
+          } else if (
+            new RegExp(
+              `^O${escapeReservedRegexCharacters(
+                delimiters.fieldDelimiter
+              )}\\d`,
+              'g'
+            ).test(previousAstmRecord)
+          ) {
+            if (!_.isEmpty(astmMessage.patients)) {
+              const patient =
+                astmMessage.patients[astmMessage.patients.length - 1]
+              if (!_.isEmpty(patient.orders)) {
+                const order = patient.orders[patient.orders.length - 1]
+                order.rawMessage += `${astmRecord}`
+              }
+            }
+          } else if (
+            new RegExp(
+              `^R${escapeReservedRegexCharacters(
+                delimiters.fieldDelimiter
+              )}\\d`,
+              'g'
+            ).test(previousAstmRecord)
+          ) {
+            if (!_.isEmpty(astmMessage.patients)) {
+              const patient =
+                astmMessage.patients[astmMessage.patients.length - 1]
+              if (!_.isEmpty(patient.orders)) {
+                const order = patient.orders[patient.orders.length - 1]
+                if (!_.isEmpty(order.results)) {
+                  const result = order.results[order.results.length - 1]
+                  result.rawMessage += `${astmRecord}`
+                }
+              }
+            }
+          } else if (
+            new RegExp(
+              `^Q${escapeReservedRegexCharacters(
+                delimiters.fieldDelimiter
+              )}\\d`,
+              'g'
+            ).test(previousAstmRecord)
+          ) {
+            if (!_.isEmpty(astmMessage.enquiries)) {
+              const enquiry =
+                astmMessage.enquiries[astmMessage.enquiries.length - 1]
+              enquiry.rawMessage += `${astmRecord}`
+            }
+          } else if (
+            new RegExp(
+              `^C${escapeReservedRegexCharacters(
+                delimiters.fieldDelimiter
+              )}\\d`,
+              'g'
+            ).test(previousAstmRecord)
+          ) {
+            if (_.isEmpty(astmMessage.patients)) {
+              if (!_.isEmpty(astmMessage.comments)) {
+                const comment = astmMessage.comments[astmMessage.comments - 1]
+                comment.rawMessage += `${astmRecord}`
+              }
+            } else {
+              const patient =
+                astmMessage.patients[astmMessage.patients.length - 1]
+              if (_.isEmpty(patient.orders)) {
+                if (!_.isEmpty(patient.comments)) {
+                  const comment = patient.comments[patient.comments - 1]
+                  comment.rawMessage += `${astmRecord}`
+                }
+              } else {
+                const order = patient.orders[patient.orders.length - 1]
+                if (_.isEmpty(order.results)) {
+                  if (!_.isEmpty(order.comments)) {
+                    const comment = order.comments[order.comments - 1]
+                    comment.rawMessage += `${astmRecord}`
+                  }
+                } else {
+                  const result = order.results[order.results.length - 1]
+                  if (!_.isEmpty(result.comments)) {
+                    const comment = result.comments[result.comments - 1]
+                    comment.rawMessage += `${astmRecord}`
+                  }
+                }
+              }
+            }
+          } else if (
+            new RegExp(
+              `^L${escapeReservedRegexCharacters(
+                delimiters.fieldDelimiter
+              )}\\d`,
+              'g'
+            ).test(previousAstmRecord)
+          ) {
+            astmMessage.rawTerminator += astmRecord
+          }
+        }
+      }
+      return astmMessages
+    }, [])
+    .map(astmMessage => {
+      const {
+        delimiters: {
+          fieldDelimiter,
+          repeatDelimiter,
+          componentDelimiter,
+          escapeDelimiter,
+        },
+      } = astmMessage
+      const baseOneIndex = array => [null, ...array]
+      const arrayToString = (array, joinWith = ' ') =>
+        array.filter(value => !_.isEmpty(value)).join(joinWith)
+      const parseFieldForComponents = fieldValue => {
+        const componentValues = splitWithEscape(
+          fieldValue,
+          componentDelimiter,
+          escapeDelimiter
+        ).map(component => component.trim())
+        if (componentValues.length > 1) {
+          return {
+            value: arrayToString(componentValues),
+            ...baseOneIndex(componentValues),
+          }
+        }
+        return componentValues[0]
+      }
+      const parseFieldForRepeats = repeatedValueString => {
+        const repeatedValues = splitWithEscape(
+          repeatedValueString,
+          repeatDelimiter,
+          escapeDelimiter
+        ).map(repeatedValue => parseFieldForComponents(repeatedValue))
+        if (repeatedValues.length > 1) {
+          return {
+            value: arrayToString(
+              repeatedValues.map(repeatedValue =>
+                _.isUndefined(repeatedValue.value)
+                  ? repeatedValue
+                  : repeatedValue.value
+              ),
+              '\n'
+            ),
+            ...baseOneIndex(repeatedValues),
+          }
+        }
+        return repeatedValues[0]
+      }
+      const parseRecordForFields = recordString => {
+        const recordBeforeChecksum = recordString.substr(
+          0,
+          recordString.indexOf('\\r\\x')
+        )
+        return baseOneIndex(
+          splitWithEscape(
+            recordBeforeChecksum,
+            fieldDelimiter,
+            escapeDelimiter
+          ).map(fieldValue => parseFieldForRepeats(fieldValue))
+        )
+      }
+      return {
+        value: astmMessage.rawMessage,
+        H: {
+          value: astmMessage.rawHeader,
+          ...parseRecordForFields(astmMessage.rawHeader),
+        },
+        L: {
+          value: astmMessage.rawTerminator,
+          ...parseRecordForFields(astmMessage.rawTerminator),
+        },
+        ...astmMessage.patients.reduce((patientsObject, patientAstmMessage) => {
+          const patient = {
+            value: patientAstmMessage.rawMessage,
+            ...parseRecordForFields(patientAstmMessage.rawMessage),
+            ...patientAstmMessage.orders.reduce(
+              (ordersObject, orderAstmMessage) => {
+                const order = {
+                  value: orderAstmMessage.rawMessage,
+                  ...parseRecordForFields(orderAstmMessage.rawMessage),
+                  ...orderAstmMessage.results.reduce(
+                    (resultsObject, resultAstmMessage) => {
+                      const result = {
+                        value: resultAstmMessage.rawMessage,
+                        ...parseRecordForFields(resultAstmMessage.rawMessage),
+                        ...resultAstmMessage.comments.reduce(
+                          (commentsObject, commentAstmMessage) => {
+                            const comment = {
+                              value: commentAstmMessage.rawMessage,
+                              ...parseRecordForFields(
+                                commentAstmMessage.rawMessage
+                              ),
+                            }
+                            const commentRecordId = `${comment['1']}${
+                              comment['2']
+                            }`
+                            commentsObject[commentRecordId] = comment
+                            commentsObject.comments = [
+                              ...(commentsObject.comments || []),
+                              commentRecordId,
+                            ]
+                            return commentsObject
+                          },
+                          {}
+                        ),
+                      }
+                      const resultRecordId = `${result['1']}${result['2']}`
+                      resultsObject[resultRecordId] = result
+                      resultsObject.results = [
+                        ...(resultsObject.results || []),
+                        resultRecordId,
+                      ]
+                      return resultsObject
+                    },
+                    {}
+                  ),
+                  ...orderAstmMessage.comments.reduce(
+                    (commentsObject, commentAstmMessage) => {
+                      const comment = {
+                        value: commentAstmMessage.rawMessage,
+                        ...parseRecordForFields(commentAstmMessage.rawMessage),
+                      }
+                      const commentRecordId = `${comment['1']}${comment['2']}`
+                      commentsObject[commentRecordId] = comment
+                      commentsObject.comments = [
+                        ...(commentsObject.comments || []),
+                        commentRecordId,
+                      ]
+                      return commentsObject
+                    },
+                    {}
+                  ),
+                }
+                const orderRecordId = `${order['1']}${order['2']}`
+                ordersObject[orderRecordId] = order
+                ordersObject.orders = [
+                  ...(ordersObject.orders || []),
+                  orderRecordId,
+                ]
+                return ordersObject
+              },
+              {}
+            ),
+            ...patientAstmMessage.comments.reduce(
+              (commentsObject, commentAstmMessage) => {
+                const comment = {
+                  value: commentAstmMessage.rawMessage,
+                  ...parseRecordForFields(commentAstmMessage.rawMessage),
+                }
+                const commentRecordId = `${comment['1']}${comment['2']}`
+                commentsObject[commentRecordId] = comment
+                commentsObject.comments = [
+                  ...(commentsObject.comments || []),
+                  commentRecordId,
+                ]
+                return commentsObject
+              },
+              {}
+            ),
+          }
+          const patientRecordId = `${patient['1']}${patient['2']}`
+          patientsObject[patientRecordId] = patient
+          patientsObject.patients = [
+            ...(patientsObject.patients || []),
+            patientRecordId,
+          ]
+          return patientsObject
+        }, {}),
+        ...astmMessage.enquiries.reduce(
+          (enquiriesObject, enquiryAstmMessage) => {
+            const enquiry = {
+              value: enquiryAstmMessage.rawMessage,
+              ...parseRecordForFields(enquiryAstmMessage.rawMessage),
+            }
+            const enquiryRecordId = `${enquiry['1']}${enquiry['2']}`
+            enquiriesObject[enquiryRecordId] = enquiry
+            enquiriesObject.enquiries = [
+              ...(enquiriesObject.enquiries || []),
+              enquiryRecordId,
+            ]
+            return enquiriesObject
+          },
+          {}
+        ),
+        ...astmMessage.comments.reduce((commentsObject, commentAstmMessage) => {
+          const comment = {
+            value: commentAstmMessage.rawMessage,
+            ...parseRecordForFields(commentAstmMessage.rawMessage),
+          }
+          const commentRecordId = `${comment['1']}${comment['2']}`
+          commentsObject[commentRecordId] = comment
+          commentsObject.comments = [
+            ...(commentsObject.comments || []),
+            commentRecordId,
+          ]
+          return commentsObject
+        }, {}),
+      }
+    })
+}
+
 module.exports = {
   getAstmField,
   locateAstmE1394Value,
   getNumberOfAstmE1394Children,
+  structureAstmE1394,
 }
