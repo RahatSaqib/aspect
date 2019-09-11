@@ -312,8 +312,8 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
       return results
     }, [])
     const m2000AspectAssayCodeMapping = {
-      '1mLDBSvOP': 'abbottM2000HivVL',
-      'HIV0.6ml': 'abbottM2000HivVL',
+      '1mLDBSvOP': 'abbottM2000DBSHivVL',
+      'HIV0.6ml': 'abbottM2000PlasmaHivVL',
       'HIVQLDRDBS': 'abbottM2000HIVEID',
     }
     const unknownAssayCodes = parsedResults.map(parsedResult => _.get(parsedResult, 'result.assay.code')).filter(assayCode => !Object.keys(m2000AspectAssayCodeMapping).includes(assayCode))
@@ -345,12 +345,8 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
       this.messageContext.dispatch(deviceSeen(deviceId))
 
       await Promise.each(parsedResults, await parsedResult => {
-        const m2000AspectAssayCodeMapping = {
-
-        }
-        const assayId = await assayToId(
-          mgitResultTypeCode === 'AST_MGIT' ? 'assayBdMgitAst' : 'assayBdMgitGnd'
-        )
+        const assayId = await assayToId(_.get(parsedResult, 'result.assay.code'))
+        const resultText = _.get(parsedResult, 'result.text')
 
       })
 

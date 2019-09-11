@@ -4581,9 +4581,9 @@ async function seed(knex) {
   })
 
   await knex('Assay').insert({
-    name: 'Abbott m2000 HIV VL',
-    i18nKey: 'AssayAbbottM2000HivVl',
-    externalId: 'abbottM2000HivVL',
+    name: 'Abbott m2000 Plasma HIV VL',
+    i18nKey: 'abbottM2000PlasmaHivVL',
+    externalId: 'abbottM2000PlasmaHivVL',
     assayTypeId: assayTypeHivVlId,
     deviceTypeId: deviceTypeM2000Id,
     resultSourceId: resultSourceDiagnosticId,
@@ -4626,18 +4626,68 @@ async function seed(knex) {
         type: 'string',
         order: 5,
       },
-      abbreviation: 'm2000 HIV VL',
+      abbreviation: 'm2000 P HIV VL',
     }),
   })
 
   await knex('Assay').insert({
-    name: 'Abbott m2000 EID',
-    i18nKey: 'AssayAbbottM2000Eid',
+    name: 'Abbott m2000 DBS HIV VL',
+    i18nKey: 'AssayAbbottM2000DBSHivVl',
+    externalId: 'abbottM2000DBSHivVL',
+    assayTypeId: assayTypeHivVlId,
+    deviceTypeId: deviceTypeM2000Id,
+    resultSourceId: resultSourceDiagnosticId,
+    resultCategory1Label: 'HIV',
+    resultCategory1i18nKey: 'resultCategoryHivVl',
+    resultDataSchema: JSON.stringify({
+      resultText: {
+        list: true,
+        title: 'Result',
+        type: 'string',
+      },
+    }),
+    patientDataSchema: JSON.stringify({
+      provider: {
+        title: 'Provider ID',
+        type: 'string',
+      },
+      name: {
+        title: 'Client Name',
+        type: 'string',
+        order: 1,
+      },
+      surname: {
+        title: 'Client Surname',
+        type: 'string',
+        order: 2,
+      },
+      addressPhone: {
+        title: 'Address/Phone',
+        type: 'string',
+        order: 3,
+      },
+      artNumber: {
+        title: 'ART #',
+        type: 'string',
+        order: 4,
+      },
+      gender: {
+        title: 'Gender',
+        type: 'string',
+        order: 5,
+      },
+      abbreviation: 'm2000 DBS HIV VL',
+    }),
+  })
+
+  await knex('Assay').insert({
+    name: 'Abbott m2000 HIV EID',
+    i18nKey: 'AssayAbbottM2000HivEid',
     externalId: 'abbottM2000HIVEID',
     assayTypeId: assayTypeEid,
     deviceTypeId: deviceTypeM2000Id,
     resultSourceId: resultSourceDiagnosticId,
-    resultCategory1Label: 'EID',
+    resultCategory1Label: 'HIV',
     resultCategory1i18nKey: 'resultCategoryEid',
     resultDataSchema: JSON.stringify({
       resultText: {
