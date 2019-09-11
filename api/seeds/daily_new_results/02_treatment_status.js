@@ -17,7 +17,7 @@ async function seed(knex) {
     .where({ treatmentStatusLogId: null })
     .select('id')
 
-  await Promise.each(_.sampleSize(results, 3000), async resultId => {
+  await Promise.each(_.sampleSize(results, 5), async resultId => {
     // generate random treatment status
 
     const treatment = await resultTreatmentStatusToId(
