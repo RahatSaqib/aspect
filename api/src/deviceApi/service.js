@@ -709,6 +709,7 @@ function createNewDeviceFromRequest(request, now) {
     const { device, error } = await createNewDevice(knex, now, {
       deviceTypeExternalId,
       name: payload.name,
+      shortName: payload.name,
       serial: payload.serial,
       partnerId: apiKey.partnerId,
       siteId: apiKey.siteId,

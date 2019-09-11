@@ -350,6 +350,30 @@ describe('Device API routes', () => {
 
         assert.equal(newDevice.deviceCapacityId, deviceCapacityId)
       }))
+    it('should return shortName of 45 characters if shortName is greater than 45 when creating a device', () =>
+      runTest(async knex => {
+        const { apiKey, deviceAuth } = newDeviceContext
+        assert.isOk(apiKey)
+
+        // add device
+        await server
+          .post(devicePath)
+          .set('Authorization', deviceAuth)
+          .send({
+            type: { id: 'DaktariInSight' },
+            site: { id: 'CHIZ' },
+            name:
+              'Chanayethazan 1 GeneXpert, Chanayethazan 2 GeneXpert and Patheingyi 1 GeneXpert',
+          })
+          .then(res => {
+            assert.equal(res.status, 200)
+          })
+        await waitForIdle()
+
+        const newDevice = await getDeviceFromApiKey(knex, apiKey)
+
+        assert.lengthOf(newDevice.shortName, 45)
+      }))
   })
 
   describe('add device Logs', () => {

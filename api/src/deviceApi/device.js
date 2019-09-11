@@ -175,6 +175,9 @@ async function createNewDevice(
     }
   }
   const deviceStatusId = await deviceStatusToId(status)
+  if (shortName && shortName.length > 45) {
+    shortName = shortName.substr(0, 45)
+  }
   const [deviceId] = await knex('Device').insert({
     partnerId,
     geographyId,
