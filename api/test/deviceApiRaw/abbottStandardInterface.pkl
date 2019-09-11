@@ -4,7 +4,7 @@ S'1H|\\^&|||m2000^1.0.0.0^123456789^H1P1O1R1C1Q1L1|||||||P|1|19930330133346\r\x0
 p3
 aS'2C|1|I|Example Message Comment|G\r\x0343\r\n'
 p4
-aS'3P|1|||PIDSID13|Patient^Im^A||19320122|F|||||Dr.Amesbury||||||||||||ParkClinic\r\x033F\r\n'
+aS'3P|1|||PIDSID13|Patient^Im^A\\And^This^Is^My^Wife||19320122|F|||||Dr.Amesbury||||||||||||ParkClinic\r\x033F\r\n'
 p5
 aS'4C|1|I|Example Patient Comment|G\r\x0343\r\n'
 p6

@@ -13,7 +13,7 @@ const {
   getAstmField,
   locateAstmE1394Value,
   getNumberOfAstmE1394Children,
-  structureAstmE1394,
+  astmE1394MessagesToJson,
 } = require('../../shared/astm')
 const { deviceSeen } = require('../../device/actions')
 const { SynchronousDataProcessor } = require('./_base')
@@ -73,7 +73,7 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
         return resultRawMessages
       }, [])
       .join('\n')
-    console.log(JSON.stringify(structureAstmE1394(sanitisedPayload)))
+    console.log(JSON.stringify(astmE1394MessagesToJson(sanitisedPayload)))
     this.results = payload
       .replace(/\\\\/g, '\\')
       .split('\n')
