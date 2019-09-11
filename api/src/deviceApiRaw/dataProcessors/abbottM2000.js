@@ -53,7 +53,10 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
     const { auth, payload } = request
     const utcNow = getUtcTime()
     this.response = { deviceApiRawId: this.id }
-    // TODO: Collect multiple patient, order, result & comments in a single message
+    if (!payload) {
+      throw Boom.badRequest('No payload to process')
+    }
+    const remoteAddress = getRemoteAddress(request)
     // TODO: Checksum validation
     // TODO: Error code mapping
     const sanitisedPayload = payload
@@ -73,313 +76,283 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
         return resultRawMessages
       }, [])
       .join('\n')
-    console.log(JSON.stringify(astmE1394MessagesToJson(sanitisedPayload)))
-    this.results = payload
-      .replace(/\\\\/g, '\\')
-      .split('\n')
-      .reduce((resultRawMessages, rawLine) => {
-        if (rawLine) {
-          const line = getAllStringsEnclosedBetweenCharacters(rawLine, "'")
-            .map(quotedLine => quotedLine.replace(/^\d(H|P|O|Q|C|R|L)?/, '$1'))
-            .shift()
-          if (DefaultAbbottM2000.containsM2000AstmLineHeader(rawLine)) {
-            resultRawMessages = [...resultRawMessages, line]
-          } else if (line && resultRawMessages.length) {
-            resultRawMessages[resultRawMessages.length - 1] += `\n${line}`
+    const jsonAstmMessages = astmE1394MessagesToJson(sanitisedPayload)
+    const arrayFromPossibleRepeatedValue = (jsonAstmObject, path) =>
+      _.get(jsonAstmObject, `${path}.items`)
+        ? _.get(jsonAstmObject, `${path}.items`).map(i =>
+            _.get(jsonAstmObject, `${path}.${i}`)
+          )
+        : _.isEmpty(_.get(jsonAstmObject, `${path}.value`))
+        ? []
+        : [_.get(jsonAstmObject, `${path}`)]
+    const commentsFromJsonAstmRecord = jsonAstmRecord =>
+      _.isEmpty(_.get(jsonAstmRecord, 'comments'))
+        ? {}
+        : {
+            comments: _.get(jsonAstmRecord, 'comments').map(commentId => ({
+              source: { I: 'Instrument' }[
+                _.get(jsonAstmRecord, `${commentId}.3.value`)
+              ],
+              text: _.get(jsonAstmRecord, `${commentId}.4.value`),
+              type: { G: 'Result Comment', I: 'Exception String' }[
+                _.get(jsonAstmRecord, `${commentId}.5.value`)
+              ],
+            })),
           }
-        }
-        return resultRawMessages
-      }, [])
-      .map(raw => {
-        const delimitersString = raw.substr(raw.indexOf('H') + 1, 4)
-        const delimiters = {
-          fieldDelimiter: delimitersString[0], // |
-          repeatDelimiter: delimitersString[1], // \
-          componentDelimiter: delimitersString[2], // ^
-          escapeDelimiter: delimitersString[3], // &
-        }
-        const abbottAstmMessage = {
-          rawMessage: raw,
-          sender: {
-            nameOrId: getAstmField(raw, 'H,5,1,1', delimiters),
-            softwareVersion: getAstmField(raw, 'H,5,1,2', delimiters),
-            serialNumber: getAstmField(raw, 'H,5,1,3', delimiters),
-            interfaceVersion: getAstmField(raw, 'H,5,1,4', delimiters),
-          },
-          typeOfMessage: {
-            P: 'Production',
-            D: 'Debugging',
-            Q: 'Quality Control',
-          }[getAstmField(raw, 'H,12,1,1', delimiters)],
-          versionNo: getAstmField(raw, 'H,13,1,1', delimiters),
-          dateAndTime: dateParse(
-            getAstmField(raw, 'H,14,1,1', delimiters),
-            'yyyyLLddHHmmss',
-            utcNow
-          ),
-          patients: [],
-          messageIsComplete: getAstmField(raw, 'L,2,1,1', delimiters) === '1',
-        }
-        const numberOfPatientsInMessage = getNumberOfAstmE1394Children(
-          raw,
-          'H',
-          'P',
-          delimiters
-        )
-        for (let p = 0; p < numberOfPatientsInMessage; p++) {
-          const patientRecordPath = `H.P${p + 1}`
-          const getPatientRecordValue = fieldNumber =>
-            locateAstmE1394Value(
-              raw,
-              patientRecordPath,
-              fieldNumber,
-              null,
-              null,
-              delimiters
-            )
+    const enquiriesFromJsonAstmRecord = jsonAstmRecord =>
+      _.isEmpty(_.get(jsonAstmRecord, 'enquiries'))
+        ? {}
+        : {
+            enquiries: _.get(jsonAstmRecord, 'enquiries').map(enquiryId => ({
+              specimenId: _.get(jsonAstmRecord, `${enquiryId}.3.value`),
+              assayCode: _.get(jsonAstmRecord, `${enquiryId}.5.value`),
+              statusCode: { O: 'Orders' }[
+                _.get(jsonAstmRecord, `${enquiryId}.13.value`)
+              ],
+            })),
+          }
+    const parsedResults = jsonAstmMessages.reduce((results, jsonAstmMessage) => {
+      const abbottAstmMessage = {
+        rawMessage: _.get(jsonAstmMessage, 'value'),
+        sender: {
+          nameOrId: _.get(jsonAstmMessage, 'H.4.1.value'),
+          softwareVersion: _.get(jsonAstmMessage, 'H.4.2.value'),
+          serialNumber: _.get(jsonAstmMessage, 'H.4.3.value'),
+          interfaceVersion: _.get(jsonAstmMessage, 'H.4.4.value'),
+        },
+        typeOfMessage: {
+          P: 'Production',
+          D: 'Debugging',
+          Q: 'Quality Control',
+        }[_.get(jsonAstmMessage, 'H.11.value')],
+        versionNo: _.get(jsonAstmMessage, 'H.12.value'),
+        dateAndTime: dateParse(
+          _.get(jsonAstmMessage, 'H.13.value'),
+          'yyyyLLddHHmmss',
+          utcNow
+        ),
+        messageIsComplete: _.get(jsonAstmMessage, 'L.2.value') === '1',
+        ...commentsFromJsonAstmRecord(_.get(jsonAstmMessage, 'H')),
+        ...enquiriesFromJsonAstmRecord(_.get(jsonAstmMessage, 'H')),
+      }
+      results = [
+        ...results,
+        ..._.get(jsonAstmMessage, 'H.patients').reduce((results, patientId) => {
+          const jsonAstmPatient = _.get(jsonAstmMessage, `H.${patientId}`)
           const patient = {
-            practicePatientId: getPatientRecordValue(3),
-            laboratoryPatientId: getPatientRecordValue(4),
-            patientIdNo3: getPatientRecordValue(5),
-            patientName: getPatientRecordValue(6),
+            practicePatientId: _.get(jsonAstmPatient, '3.value'),
+            laboratoryPatientId: _.get(jsonAstmPatient, '4.value'),
+            patientIdNo3: _.get(jsonAstmPatient, '5.value'),
+            patientName: _.get(jsonAstmPatient, '6.value'),
             dateOfBirth: dateParse(
-              getPatientRecordValue(7),
+              _.get(jsonAstmPatient, '8.value'),
               'yyyyLLdd',
               utcNow
             ),
             gender: { M: 'Male', F: 'Female', U: 'Unknown' }[
-              getPatientRecordValue(8)
+              _.get(jsonAstmPatient, '9.value')
             ],
-            doctor: getPatientRecordValue(9),
-            location: getPatientRecordValue(10),
-            testOrders: [],
+            ethnicOrigin: _.get(jsonAstmPatient, '10.value'),
+            patientAddress: _.get(jsonAstmPatient, '11.value'),
+            patientPhone: _.get(jsonAstmPatient, '13.value'),
+            attendingPhysician: _.get(jsonAstmPatient, '14.value'),
+            patientHeight: _.get(jsonAstmPatient, '17.value'),
+            patientWeight: _.get(jsonAstmPatient, '18.value'),
+            patientDiagnoses: arrayFromPossibleRepeatedValue(
+              jsonAstmPatient,
+              '19'
+            ).map(diagnosis => ({
+              code: _.get(diagnosis, '1.value'),
+              description: _.get(diagnosis, '2.value'),
+            })),
+            patientMedications: arrayFromPossibleRepeatedValue(
+              jsonAstmPatient,
+              '20'
+            ).map(medication => ({
+              name: _.get(medication, '1.value'),
+              level: _.get(medication, '2.value'),
+              startDate: _.get(medication, '3.value'),
+              endDate: _.get(medication, '4.value'),
+            })),
+            patientDiet: _.get(jsonAstmPatient, '21.value'),
+            admissionOrDischargeDates: _.get(jsonAstmPatient, '24.value'),
+            admissionStatus: _.get(jsonAstmPatient, '25.value'),
+            location: _.get(jsonAstmPatient, '26.value'),
+            isolationStatus: _.get(jsonAstmPatient, '31.value'),
+            hospitalInstitution: _.get(jsonAstmPatient, '34.value'),
+            dosageCategory: _.get(jsonAstmPatient, '35.value'),
+            ...commentsFromJsonAstmRecord(jsonAstmPatient),
           }
-          const numberOfOrdersForPatient = getNumberOfAstmE1394Children(
-            raw,
-            patientRecordPath,
-            'O',
-            delimiters
-          )
-          for (let o = 0; o < numberOfOrdersForPatient; o++) {
-            const testOrderRecordPath = `${patientRecordPath}.O${o + 1}`
-            const getTestOrderRecordValue = (fieldNumber, componentNumber) =>
-              locateAstmE1394Value(
-                raw,
-                testOrderRecordPath,
-                fieldNumber,
-                null,
-                componentNumber,
-                delimiters
-              )
-            const testOrder = {
-              specimenId: getTestOrderRecordValue(3, 1),
-              instrumentIds: {
-                specimen: getTestOrderRecordValue(4, 1),
-                carousel: getTestOrderRecordValue(4, 2),
-                position: getTestOrderRecordValue(4, 3),
-              },
-              assay: {
-                code: getTestOrderRecordValue(5, 4),
-                name: getTestOrderRecordValue(5, 5),
-                protocol: getTestOrderRecordValue(5, 6),
-                status: { P: 'Primary', C: 'Correlation' }[
-                  getTestOrderRecordValue(5, 7)
-                ],
-              },
-              priority: { S: 'STAT', R: 'Routine' }[
-                getTestOrderRecordValue(6, 1)
-              ],
-              collectionTime: dateParse(
-                getTestOrderRecordValue(7, 1),
-                'yyyyLLddHHmmss',
-                utcNow
-              ),
-              actionCode: { Q: 'Quality Control Result', '': 'Patient Result' }[
-                getTestOrderRecordValue(8, 1)
-              ],
-              reportType: {
-                F: 'Final Result',
-                X: 'Test could not be performed',
-              }[getTestOrderRecordValue(9, 1)],
-              results: [],
-              comments: [],
-            }
-            const numberOfCommentsForTestOrder = getNumberOfAstmE1394Children(
-              raw,
-              testOrderRecordPath,
-              'C',
-              delimiters
-            )
-            for (let toc = 0; toc < numberOfCommentsForTestOrder; toc++) {
-              const testOrderCommentRecordPath = `${testOrderRecordPath}.C${toc +
-                1}`
-              const getTestOrderCommentRecordValue = fieldNumber =>
-                locateAstmE1394Value(
-                  raw,
-                  testOrderCommentRecordPath,
-                  fieldNumber,
-                  null,
-                  null,
-                  delimiters
-                )
-              const testOrderComment = {
-                source: { I: 'Instrument' }[getTestOrderCommentRecordValue(3)],
-                text: getTestOrderCommentRecordValue(4),
-                type: { G: 'Result Comment', I: 'Exception String' }[
-                  getTestOrderCommentRecordValue(5)
-                ],
-              }
-              testOrder.comments = [...testOrder.comments, testOrderComment]
-            }
-            const numberOfResultsForTestOrder = getNumberOfAstmE1394Children(
-              raw,
-              testOrderRecordPath,
-              'R',
-              delimiters
-            )
-            for (let r = 0; r < numberOfResultsForTestOrder; r++) {
-              const resultRecordPath = `${testOrderRecordPath}.O${o + 1}`
-              const getResultRecordValue = (fieldNumber, componentNumber) =>
-                locateAstmE1394Value(
-                  raw,
-                  resultRecordPath,
-                  fieldNumber,
-                  null,
-                  componentNumber,
-                  delimiters
-                )
-              const result = {
-                consumable: {
-                  code: getResultRecordValue(3, 4),
-                  name: getResultRecordValue(3, 5),
-                  protocol: getResultRecordValue(3, 6),
-                  status: { P: 'Primary', C: 'Correlation' }[
-                    getResultRecordValue(3, 7)
+          results = [
+            ...results,
+            ..._.get(jsonAstmPatient, 'orders').reduce((results, orderId) => {
+              const jsonAstmOrder = jsonAstmPatient[orderId]
+              const order = {
+                specimen: {
+                  id: _.get(
+                    jsonAstmOrder,
+                    '3.1.value',
+                    _.get(jsonAstmOrder, '3.value')
+                  ),
+                  locationId: _.get(jsonAstmOrder, '3.2.value'),
+                  position: _.get(jsonAstmOrder, '3.3.value'),
+                },
+                instrumentSpecimen: {
+                  id: _.get(
+                    jsonAstmOrder,
+                    '4.1.value',
+                    _.get(jsonAstmOrder, '4.value')
+                  ),
+                  locationId: _.get(jsonAstmOrder, '4.2.value'),
+                  position: _.get(jsonAstmOrder, '4.3.value'),
+                },
+                assay: {
+                  code: _.get(jsonAstmOrder, '5.4.value'),
+                  name: _.get(jsonAstmOrder, '5.5.value'),
+                  protocol: _.get(jsonAstmOrder, '5.6.value'),
+                  testQualifier: { P: 'Primary', C: 'Correlation' }[
+                    _.get(jsonAstmOrder, '5.7.value')
                   ],
-                  reagentLotNo: getResultRecordValue(3, 8),
-                  reagentSerialNo: getResultRecordValue(3, 9),
-                  controlLotNo: getResultRecordValue(3, 10),
-                  resultType: {
-                    F: 'Final Result',
-                    P: 'Preliminary Result',
-                    I: 'Interpretation of Final Result',
-                  }[getResultRecordValue(3, 11)],
                 },
-                text: getResultRecordValue(4, 1),
-                unit: getResultRecordValue(5, 1),
-                referenceRanges: getResultRecordValue(6, 1),
-                abnormalFlags: getResultRecordValue(7, 1),
-                status: {
-                  F: 'Final Result',
-                  R: 'Previously Transmitted Result',
-                }[getResultRecordValue(8, 1)],
-                operators: {
-                  orderOperatorId: getResultRecordValue(9, 1),
-                  releaseOperatorId: getResultRecordValue(4, 2),
-                },
-                completedOn: dateParse(
-                  getResultRecordValue(10, 1),
+                priority: { S: 'STAT', R: 'Routine' }[
+                  _.get(jsonAstmOrder, '6.value')
+                ],
+                requestTime: dateParse(
+                  _.get(jsonAstmOrder, '7.value'),
                   'yyyyLLddHHmmss',
                   utcNow
                 ),
-                moduleSerial: getResultRecordValue(11, 1),
-                comments: [],
+                collectionTime: dateParse(
+                  _.get(jsonAstmOrder, '8.value'),
+                  'yyyyLLddHHmmss',
+                  utcNow
+                ),
+                collectorId: _.get(jsonAstmOrder, '11.value'),
+                actionCode: {
+                  C: 'Cancel Test Order',
+                  A: 'Add Test to Order',
+                  N: 'New Test Order',
+                  Q: 'Quality Control Result',
+                  '': 'Patient Result',
+                }[_.get(jsonAstmOrder, '12.value')],
+                reportType: {
+                  F: 'Final Result',
+                  X: 'Test could not be performed',
+                }[_.get(jsonAstmOrder, '26.value')],
+                ...commentsFromJsonAstmRecord(jsonAstmOrder),
               }
-              const numberOfCommentsForResult = getNumberOfAstmE1394Children(
-                raw,
-                resultRecordPath,
-                'C',
-                delimiters
-              )
-              for (let rc = 0; rc < numberOfCommentsForResult; rc++) {
-                const resultCommentRecordPath = `${resultRecordPath}.C${rc + 1}`
-                const getResultCommentRecordValue = fieldNumber =>
-                  locateAstmE1394Value(
-                    raw,
-                    resultCommentRecordPath,
-                    fieldNumber,
-                    null,
-                    null,
-                    delimiters
-                  )
-                const resultComment = {
-                  source: { I: 'Instrument' }[getResultCommentRecordValue(3)],
-                  text: getResultCommentRecordValue(4),
-                  type: { G: 'Result Comment', I: 'Exception String' }[
-                    getResultCommentRecordValue(5)
-                  ],
-                }
-                result.comments = [...result.comments, resultComment]
-              }
-              testOrder.results = [...testOrder.results, result]
-            }
-            patient.testOrders = [...patient.testOrders, testOrder]
-          }
-          abbottAstmMessage.patients = [...abbottAstmMessage.patients, patient]
-        }
-        return abbottAstmMessage
-      })
-    /*
+              results = [
+                ...results,
+                ..._.get(jsonAstmOrder, 'results').reduce(
+                  (results, resultId) => {
+                    const jsonAstmResult = jsonAstmOrder[resultId]
+                    const result = {
+                      assay: {
+                        code: _.get(jsonAstmResult, '3.4.value'),
+                        name: _.get(jsonAstmResult, '3.5.value'),
+                        protocol: _.get(jsonAstmResult, '3.6.value'),
+                        status: { P: 'Primary', C: 'Correlation' }[
+                          _.get(jsonAstmResult, '3.7.value')
+                        ],
+                      },
+                      consumable: {
+                        reagentLot: _.get(jsonAstmResult, '3.8.value'),
+                        reagentSerialNumber: _.get(jsonAstmResult, '3.9.value'),
+                        controlLotNumber: _.get(jsonAstmResult, '3.10.value'),
+                      },
+                      type: {
+                        F: 'Final Result',
+                        P: 'Preliminary Result',
+                        I: 'Interpretation of Final Result',
+                      }[_.get(jsonAstmResult, '3.11.value')],
+                      text: _.get(jsonAstmResult, '4.value'),
+                      unit: _.get(jsonAstmResult, '5.value'),
+                      referenceRanges: _.get(jsonAstmResult, '6.value'),
+                      abnormalFlags: arrayFromPossibleRepeatedValue(
+                        jsonAstmResult,
+                        '7'
+                      ).map(abnormalFlag => _.get(abnormalFlag, 'value')),
+                      status: {
+                        F: 'Final Result',
+                        R: 'Previously Transmitted Result',
+                      }[_.get(jsonAstmResult, '9.value')],
+                      operators: {
+                        orderOperatorId: _.get(jsonAstmResult, '11.1.value'),
+                        releaseOperatorId: _.get(jsonAstmResult, '11.2.value'),
+                      },
+                      completedOn: dateParse(
+                        _.get(jsonAstmResult, '13.value'),
+                        'yyyyLLddHHmmss',
+                        utcNow
+                      ),
+                      moduleSerial: _.get(jsonAstmResult, '14.2.value'),
+                      comments: [],
+                      ...commentsFromJsonAstmRecord(jsonAstmResult),
+                    }
+                    results = [
+                      ...results,
+                      {
+                        message: abbottAstmMessage,
+                        patient,
+                        order,
+                        result,
+                      },
+                    ]
+                    return results
+                  },
+                  []
+                ),
+              ]
+              return results
+            }, []),
+          ]
+          return results
+        }, []),
+      ]
+      return results
+    }, [])
+    const m2000AspectAssayCodeMapping = {
+      '1mLDBSvOP': 'abbottM2000HivVL',
+      'HIV0.6ml': 'abbottM2000HivVL',
+      'HIVQLDRDBS': 'abbottM2000HIVEID',
+    }
+    const unknownAssayCodes = parsedResults.map(parsedResult => _.get(parsedResult, 'result.assay.code')).filter(assayCode => !Object.keys(m2000AspectAssayCodeMapping).includes(assayCode))
+    if(!_.isEmpty(unknownAssayCodes)) {
+      throw Boom.badRequest(`Unknown assay codes: ${unknownAssayCodes.join(', ')}`)
+    }
     await transact(async knex => {
       const { deviceId } = await knex('DeviceApiKey')
         .where('token', auth.credentials.token)
         .first('deviceId')
-      const remoteAddress = getRemoteAddress(request)
       if (!deviceId) {
         throw Boom.badRequest(
           'Invalid device API key: Cannot determine which device this came from'
         )
       }
-
       this.response.deviceId = deviceId
-
-      const utcNow = getUtcTime()
-
       const [deviceLogId] = await knex('DeviceLog').insert({
         deviceId,
         source: _.get(payload, 'log.source', ''),
         createdOn: utcNow,
         senderIp: remoteAddress,
-        // TODO: DeviceLog handle non-JSON payloads
         rawMessage: JSON.stringify(request.plugins.rawPayload),
       })
 
       this.response.deviceLogId = deviceLogId
-
       await knex('Device')
         .where({ id: deviceId })
         .update({ lastSeenOn: utcNow, updatedOn: utcNow })
       this.messageContext.dispatch(deviceSeen(deviceId))
 
-      if (!this.request.payload) {
-        throw Boom.badRequest('No payload to process')
-      }
+      await Promise.each(parsedResults, await parsedResult => {
+        const m2000AspectAssayCodeMapping = {
 
-      // reconstruct ASTM message:
-      const astm = `${this.request.payload.header}\n${this.request.payload.body}`
+        }
+        const assayId = await assayToId(
+          mgitResultTypeCode === 'AST_MGIT' ? 'assayBdMgitAst' : 'assayBdMgitGnd'
+        )
 
-      // NOTE: BACTEC MGIT 960 does not support patient information and therefore always transmits an empty Patient record.
-
-      // specimen’s assigned sequence number (barcode) that is always 12 digits.
-      const mgitConsumableSequenceNumber = getAstmField(astm, 'R,3,1,5')
-
-      // Use result type code to determine assay ID
-      // GND_MGIT for growth and Detection specimens or AST_MGIT for AST sets
-      // For those new to MGIT & TB diagnostics:
-      //   - GND_MGIT is an assay used to detect the presence & concentration of TB
-      //   - AST_MGIT is an assay used to detect the resistance/susceptibility to various sets of antibiotics
-      const mgitResultTypeCode = getAstmField(astm, 'R,3,1,4')
-
-      if (
-        mgitResultTypeCode !== 'GND_MGIT' &&
-        mgitResultTypeCode !== 'AST_MGIT'
-      ) {
-        throw Boom.badRequest(`Unknown result type: ${mgitResultTypeCode}`)
-      }
-
-      const assayId = await assayToId(
-        mgitResultTypeCode === 'AST_MGIT' ? 'assayBdMgitAst' : 'assayBdMgitGnd'
-      )
+      })
 
       // Use test status to determine workflow status and result category 1:
       const mgitTestStatus = getAstmField(astm, 'R,4,1,1')
@@ -584,7 +557,6 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
         .where('id', deviceLogId)
         .update({ resultId })
     })
-    */
   }
 
   async getResponse() {

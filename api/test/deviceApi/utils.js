@@ -298,7 +298,7 @@ async function createDevice(
 
 async function createResult(
   knex,
-  { deviceId, userId, sampleType = 'DBS', assayName = 'DaktariHivVl' }
+  { deviceId, userId, sampleType = 'DBS', assayName = 'DaktariHivVL' }
 ) {
   const now = new Date()
 

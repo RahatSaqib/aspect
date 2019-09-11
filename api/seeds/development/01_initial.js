@@ -4489,7 +4489,7 @@ async function seed(knex) {
   const [assayDaktariHivVlId] = await knex('Assay').insert({
     name: 'Daktari HIV-VL',
     i18nKey: 'assayDaktariHivVl',
-    externalId: 'DaktariHivVl',
+    externalId: 'DaktariHivVL',
     assayTypeId: assayTypeHivVlId,
     deviceTypeId: deviceTypeDaktariVirologyId,
     resultSourceId: resultSourceDiagnosticId,
@@ -4521,7 +4521,7 @@ async function seed(knex) {
   await knex('Assay').insert({
     name: 'Afinion HIV VL',
     i18nKey: 'assayAfinionHivVl',
-    externalId: 'AfinionHivVl',
+    externalId: 'AfinionHivVL',
     assayTypeId: assayTypeHivVlId,
     deviceTypeId: deviceTypeAfinionId,
     resultSourceId: resultSourceDiagnosticId,
@@ -4571,7 +4571,7 @@ async function seed(knex) {
   await knex('Assay').insert({
     name: 'Q HIV VL',
     i18nKey: 'assayQHivVl',
-    externalId: 'HivVl',
+    externalId: 'QHivVL',
     assayTypeId: assayTypeHivVlId,
     deviceTypeId: deviceTypeQId,
     resultSourceId: resultSourceDiagnosticId,
@@ -4583,7 +4583,7 @@ async function seed(knex) {
   await knex('Assay').insert({
     name: 'Abbott m2000 HIV VL',
     i18nKey: 'AssayAbbottM2000HivVl',
-    externalId: 'HivVl',
+    externalId: 'abbottM2000HivVL',
     assayTypeId: assayTypeHivVlId,
     deviceTypeId: deviceTypeM2000Id,
     resultSourceId: resultSourceDiagnosticId,
@@ -4633,7 +4633,7 @@ async function seed(knex) {
   await knex('Assay').insert({
     name: 'Abbott m2000 EID',
     i18nKey: 'AssayAbbottM2000Eid',
-    externalId: 'EID',
+    externalId: 'abbottM2000HIVEID',
     assayTypeId: assayTypeEid,
     deviceTypeId: deviceTypeM2000Id,
     resultSourceId: resultSourceDiagnosticId,
@@ -4690,7 +4690,7 @@ async function seed(knex) {
   await knex('Assay').insert({
     name: 'CHAI HIV VL',
     i18nKey: 'AssayChaiHivVl',
-    externalId: 'HivVl',
+    externalId: 'CHAIHivVL',
     assayTypeId: assayTypeHivVlId,
     deviceTypeId: deviceTypeChaiId,
     resultSourceId: resultSourceLIMSId,
@@ -4755,7 +4755,7 @@ async function seed(knex) {
   await knex('Assay').insert({
     name: 'CHAI EID',
     i18nKey: 'AssayChaiEid',
-    externalId: 'EID',
+    externalId: 'CHAIEID',
     assayTypeId: assayTypeEid,
     deviceTypeId: deviceTypeChaiId,
     resultSourceId: resultSourceLIMSId,
