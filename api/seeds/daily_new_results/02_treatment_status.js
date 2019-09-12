@@ -5,7 +5,7 @@ const { subMinutes, format } = require('date-fns')
 
 module.exports = require('../utils').seed(
   seed,
-  `${__filename}-${format(new Date(), 'YYYY-MM-dd')}`
+  `${__filename}-${format(new Date(), 'yyyy-MM-dd')}`
 )
 
 const now = new Date()

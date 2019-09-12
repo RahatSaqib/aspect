@@ -24,7 +24,7 @@ const SELECT_LIST_FIELDS = [
   'r.id',
   'r.externalId',
   knex.raw(
-    "case when GREATEST(rtas.requiresTreatment, rtas2.requiresTreatment) =false then null else case when rts.externalId= 'OnTreatment' then 'ok' when rts.externalId = 'NotPossible' then 'na' when r.endedOn>=DATE_SUB(NOW(),INTERVAL 32 DAY) then 'alert' when r.endedOn>=DATE_SUB(NOW(),INTERVAL 16 DAY) and r.endedOn<DATE_SUB(NOW(),INTERVAL 32 DAY) then 'warning' else 'na' end end as treatmentStatusInfo"
+    "case when ifnull(GREATEST(rtas.requiresTreatment, rtas2.requiresTreatment), 0) = 0 then null else case when rts.externalId= 'OnTreatment' then 'ok' when rts.externalId = 'NotPossible' then 'na' when r.endedOn<DATE_SUB(NOW(),INTERVAL 32 DAY) then 'alert' when r.endedOn<=DATE_SUB(NOW(),INTERVAL 16 DAY) and r.endedOn>=DATE_SUB(NOW(),INTERVAL 32 DAY) then 'warning' else 'na' end end as treatmentStatusInfo"
   ),
   knex.raw('IFNULL(r.endedOn, r.startedOn) as endedOn'),
   'd.name as deviceName',
@@ -38,7 +38,7 @@ const SELECT_LIST_FIELDS = [
   'rtsl.changedOn as resultTreatmentStatusChangedOn',
   knex.raw('ifnull(rts.name, "N/A") as resultTreatmentStatusName'),
   knex.raw(
-    'GREATEST(rtas.requiresTreatment, rtas2.requiresTreatment) as requiresTreatment'
+    'ifnull(GREATEST(rtas.requiresTreatment, rtas2.requiresTreatment), 0) as requiresTreatment'
   ),
   'so.name as sampleOriginSiteName',
   'sp.externalId as sampleId',
@@ -103,7 +103,7 @@ const SELECT_COMMON_FIELDS = [
     'GREATEST(rtas.requiresTreatment, rtas2.requiresTreatment) as requiresTreatment'
   ),
   knex.raw(
-    "case when GREATEST(rtas.requiresTreatment, rtas2.requiresTreatment) =false then null else case when rts.externalId= 'OnTreatment' then 'ok' when rts.externalId = 'NotPossible' then 'na' when r.endedOn>=DATE_SUB(NOW(),INTERVAL 32 DAY) then 'alert' when r.endedOn>=DATE_SUB(NOW(),INTERVAL 16 DAY) and r.endedOn<DATE_SUB(NOW(),INTERVAL 32 DAY) then 'warning' else 'na' end end as treatmentStatusInfo"
+    "case when GREATEST(rtas.requiresTreatment, rtas2.requiresTreatment) = 0 then null else case when rts.externalId= 'OnTreatment' then 'ok' when rts.externalId = 'NotPossible' then 'na' when r.endedOn<DATE_SUB(NOW(),INTERVAL 32 DAY) then 'alert' when r.endedOn<=DATE_SUB(NOW(),INTERVAL 16 DAY) and r.endedOn>=DATE_SUB(NOW(),INTERVAL 32 DAY) then 'warning' else 'na' end end as treatmentStatusInfo"
   ),
   'r.patientData',
   'rsl.reason as resultWorkflowLogReason',
@@ -1370,9 +1370,6 @@ function createUniqueIdForResult(
 async function confirmedTreatmentTracking(request) {
   const { auth, payload } = request
 
-  const statusOnTreatmentId = await resultTreatmentStatusToId('OnTreatment')
-  const statusNotPossibleId = await resultTreatmentStatusToId('NotPossible')
-
   // get data constraints
   const dataConstraints = await getConstraints(auth.credentials)
 
@@ -1403,17 +1400,16 @@ async function confirmedTreatmentTracking(request) {
       )
     })
     .where('rca.requiresTreatment', 1)
-    // join ResultTreatmentStatusLog to count by 'OnTreatment' and 'NotPossible' statuses
-    .leftOuterJoin('ResultTreatmentStatusLog as rtslConfirmed', function() {
-      this.on('r.treatmentStatusLogId', 'rtslConfirmed.id')
-        .andOn('rtslConfirmed.resultTreatmentStatusId', statusOnTreatmentId)
-        .andOn('r.id', 'rtslConfirmed.resultId')
-    })
-    .leftOuterJoin('ResultTreatmentStatusLog as rtslNotPossible', function() {
-      this.on('r.treatmentStatusLogId', 'rtslNotPossible.id')
-        .andOn('rtslNotPossible.resultTreatmentStatusId', statusNotPossibleId)
-        .andOn('r.id', 'rtslNotPossible.resultId')
-    })
+    .leftOuterJoin(
+      'ResultTreatmentStatusLog as rtsl',
+      'r.treatmentStatusLogId',
+      'rtsl.id'
+    )
+    .leftOuterJoin(
+      'ResultTreatmentStatus as rts',
+      'rtsl.resultTreatmentStatusId',
+      'rts.id'
+    )
     // filter by access level of current user
     .leftOuterJoin('Site as s', 'r.siteId', 's.id')
     .leftOuterJoin('Geography as g', 'r.geographyId', 'g.id')
@@ -1428,9 +1424,8 @@ async function confirmedTreatmentTracking(request) {
     .where('r.endedOn', '>=', startedOn)
     .where('r.endedOn', '<=', endedOn)
     .select(
-      knex.raw('count(r.id) as total'),
-      knex.raw('count(rtslConfirmed.id) as cntConfirmed'),
-      knex.raw('count(rtslNotPossible.id) as cntNotPossible'),
+      knex.raw('sum(ifnull(rts.externalId, "") != "NotPossible") as total'),
+      knex.raw('sum(rts.externalId = "OnTreatment") as cntConfirmed'),
       knex.raw(`date_format(r.endedOn, '%Y-%m') AS monthTested`) // group by r.endedOn as 'yyyy-MM'
     )
     .groupBy('monthTested')
@@ -1446,7 +1441,6 @@ async function confirmedTreatmentTracking(request) {
         return pc
       }
       d.pcConfirmed = getPercentage(d.total, d.cntConfirmed)
-      d.pcNotPossible = getPercentage(d.total, d.cntNotPossible)
       return d
     })
 
@@ -1457,9 +1451,7 @@ async function confirmedTreatmentTracking(request) {
       data.push({
         monthTested,
         pcConfirmed: 0,
-        pcNotPossible: 0,
         cntConfirmed: 0,
-        cntNotPossible: 0,
         total: 0,
       })
     }
