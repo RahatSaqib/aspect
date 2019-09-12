@@ -53,7 +53,7 @@ async function listNotifications(request) {
 
   function columnCount(column) {
     return knex.raw(
-      `CASE 
+      `CASE
         WHEN m.${column}TemplateId IS NULL
         THEN null
         ELSE SUM(CASE WHEN n.${column}MessageId IS NULL THEN 0 ELSE 1 END) END as ${column}Count`
@@ -183,6 +183,7 @@ async function onIssueEscalated({ issueId }, { messageContext: context }) {
                 site: 's',
                 geography: 'g',
                 partner: 'p',
+                showUnapprovedDevices: true,
               })
               .where({ 'i.id': issueId })
               .first('i.id')

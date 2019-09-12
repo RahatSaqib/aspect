@@ -153,6 +153,7 @@ function addConstraints(queryBuilder, constraints, aliases) {
     device,
     sample,
     person,
+    showUnapprovedDevices = false,
     jobFunction,
     allowAdminThrough = false,
   } = aliases
@@ -208,7 +209,7 @@ function addConstraints(queryBuilder, constraints, aliases) {
     queryBuilder.where({ [`${person}.personId`]: constraints.person.id })
   }
 
-  if (device) {
+  if (device && !showUnapprovedDevices) {
     queryBuilder.leftOuterJoin(
       `DeviceStatus as deviceStatus`,
       `${device}.deviceStatusId`,
