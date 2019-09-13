@@ -129,6 +129,7 @@ function getJobContextConstraint(context) {
   // works because all geographies include higher levels
   if (context.siteId != null) {
     constraint.site = { id: context.siteId }
+    constraint.sample = { originSiteId: context.siteId }
   } else if (context.lgaId != null) {
     constraint.geography = { lgaId: context.lgaId }
   } else if (context.stateId != null) {

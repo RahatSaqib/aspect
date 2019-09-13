@@ -268,7 +268,7 @@ async function getListResults(query, auth, fields = SELECT_LIST_FIELDS) {
       }
     }, query)
     .modify(addPartnerQueryConstraints, dataConstraints)
-    .modify(addConstraints, dataConstraints, { device: 'd' })
+    .modify(addConstraints, dataConstraints, { device: 'd', sample: 'sp' })
   // get total count for paging
   const getCount = resultQuery
     .clone()
@@ -420,7 +420,7 @@ async function exportResults(query, auth) {
     )
     .leftJoin('Site as si', 'r.siteId', 'si.id')
     .modify(addPartnerQueryConstraints, dataConstraints)
-    .modify(addConstraints, dataConstraints, { device: 'd' })
+    .modify(addConstraints, dataConstraints, { device: 'd', sample: 'sp' })
     .modify(filterDateRangeParams, query, 'r.endedOn')
     .modify(filterParams, query, {
       deviceId: 'd.id',
@@ -563,7 +563,7 @@ async function getDownloadResultsList(query, auth) {
         queryBuilder.where('dt.externalId', params.deviceType)
       else queryBuilder.where('dt.externalId', 'CepheidGeneXpert')
     }, query)
-    .modify(addConstraints, dataConstraints, { device: 'd', sample: 's' })
+    .modify(addConstraints, dataConstraints, { device: 'd', sample: 'sp' })
   // get total count for paging
   const getCount = resultQuery
     .clone()
@@ -778,11 +778,12 @@ async function showFileReferences(request) {
   const fileReferences = await knex('ResultFileReference as rf')
     .join('FileReference as f', 'f.id', 'rf.fileReferenceId')
     .join('Result as r', 'r.id', 'rf.resultId')
+    .join('Sample as sp', 'r.sampleId', 'sp.id')
     .join('FileContentType as fct', 'f.fileContentTypeId', 'fct.id')
     .join('Device as d', 'r.deviceId', 'd.id')
     .where('rf.resultId', resultId)
     .orderBy('f.id', 'asc')
-    .modify(addConstraints, dataConstraints, { device: 'd' })
+    .modify(addConstraints, dataConstraints, { device: 'd', sample: 'sp' })
     .select(
       'f.id',
       'f.name',
@@ -831,9 +832,10 @@ async function downloadFileAsync({ auth, params }) {
   const fileReference = await knex('ResultFileReference as rf')
     .join('FileReference as f', 'f.id', 'rf.fileReferenceId')
     .join('Result as r', 'r.id', 'rf.resultId')
+    .join('Sample as sp', 'r.sampleId', 'sp.id')
     .join('FileContentType as fct', 'f.fileContentTypeId', 'fct.id')
     .join('Device as d', 'r.deviceId', 'd.id')
-    .modify(addConstraints, dataConstraints, { device: 'd' })
+    .modify(addConstraints, dataConstraints, { device: 'd', sample: 'sp' })
     .where('rf.resultId', resultId)
     .modify(qb => {
       if (fileReferenceId != null) {
@@ -908,7 +910,7 @@ async function getResultByResultId(request, fields = SELECT_SHOW_FIELDS) {
       this.on('r.assayId', 'rf.assayId').andOn('r.partnerId', 'rf.partnerId')
     })
     .where('r.id', +params.resultId)
-    .modify(addConstraints, dataConstraints, { device: 'd' })
+    .modify(addConstraints, dataConstraints, { device: 'd', sample: 'sp' })
     .select(fields)
 
   let data = null
@@ -1061,7 +1063,6 @@ async function updateTreatmentStatus(request) {
   const now = new Date()
   const { resultId } = params
   const { id: currentUserId } = await getUser(auth.credentials.name)
-  const { permissions } = auth.credentials
 
   // get the result so we can check access and if status changed
   const result = await getResultByResultId(request)
@@ -1070,13 +1071,6 @@ async function updateTreatmentStatus(request) {
   }
 
   const { resultTreatmentStatusId, data, method, changedOn = now } = payload
-
-  if (
-    !permissions.includes('treatmentStatus:admin') &&
-    !permissions.includes('treatmentStatus:edit')
-  ) {
-    return Boom.unauthorized('You are not authorised to edit treatment status')
-  }
 
   let treatmentStatusId = null
   // check if a externalId is provided
@@ -1416,10 +1410,12 @@ async function confirmedTreatmentTracking(request) {
     .leftOuterJoin('Site as s', 'r.siteId', 's.id')
     .innerJoin('Device as d', 'r.deviceId', 'd.id')
     .leftOuterJoin('Geography as g', 'r.geographyId', 'g.id')
+    .innerJoin('Sample as sp', 'r.sampleId', 'sp.id')
     .modify(addConstraints, dataConstraints, {
       site: 's',
       geography: 'g',
       device: 'd',
+      sample: 'sp',
     })
     // if 'siteId' specified - filter by siteId
     .where(function() {
