@@ -125,6 +125,7 @@ async function postDemoDeviceResult(request) {
       'rsl.resultWorkflowStatusId',
       'rs.id'
     )
+    .modify(addConstraints, userConstraints, { device: 'd' })
     .where({ 'r.id': resultId })
     .first(
       'r.resultData',

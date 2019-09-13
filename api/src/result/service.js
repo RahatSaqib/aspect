@@ -268,6 +268,7 @@ async function getListResults(query, auth, fields = SELECT_LIST_FIELDS) {
       }
     }, query)
     .modify(addPartnerQueryConstraints, dataConstraints)
+    .modify(addConstraints, dataConstraints, { device: 'd' })
   // get total count for paging
   const getCount = resultQuery
     .clone()
@@ -419,6 +420,7 @@ async function exportResults(query, auth) {
     )
     .leftJoin('Site as si', 'r.siteId', 'si.id')
     .modify(addPartnerQueryConstraints, dataConstraints)
+    .modify(addConstraints, dataConstraints, { device: 'd' })
     .modify(filterDateRangeParams, query, 'r.endedOn')
     .modify(filterParams, query, {
       deviceId: 'd.id',
@@ -1412,8 +1414,13 @@ async function confirmedTreatmentTracking(request) {
     )
     // filter by access level of current user
     .leftOuterJoin('Site as s', 'r.siteId', 's.id')
+    .innerJoin('Device as d', 'r.deviceId', 'd.id')
     .leftOuterJoin('Geography as g', 'r.geographyId', 'g.id')
-    .modify(addConstraints, dataConstraints, { site: 's', geography: 'g' })
+    .modify(addConstraints, dataConstraints, {
+      site: 's',
+      geography: 'g',
+      device: 'd',
+    })
     // if 'siteId' specified - filter by siteId
     .where(function() {
       if (siteId) {
