@@ -2,28 +2,22 @@ const Promise = require('bluebird')
 const _ = require('lodash')
 const Boom = require('boom')
 const dateParse = require('date-fns/parse')
-const { knex, transact } = require('../../db')
+const { transact } = require('../../db')
 const { getRemoteAddress } = require('../../shared/request')
 const { getUtcTime } = require('../../shared/date')
 const {
   getAllStringsEnclosedBetweenCharacters,
-  stringContains,
 } = require('../../shared/string')
-const {
-  getAstmField,
-  locateAstmE1394Value,
-  getNumberOfAstmE1394Children,
-  astmE1394MessagesToJson,
-} = require('../../shared/astm')
+const { astmE1394MessagesToJson } = require('../../shared/astm')
 const { deviceSeen } = require('../../device/actions')
 const { SynchronousDataProcessor } = require('./_base')
-
 const {
-  assayToId,
+  allAssayToId,
+  allSampleTypeToId,
   resultTypeToId,
   resultSourceToId,
   resultCategoryToId,
-  resultWorkflowStatusToId,
+  allResultWorkflowStatusToId,
 } = require('../../shared/dictionary')
 
 class DefaultAbbottM2000 extends SynchronousDataProcessor {
@@ -57,7 +51,6 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
       throw Boom.badRequest('No payload to process')
     }
     const remoteAddress = getRemoteAddress(request)
-    // TODO: Checksum validation
     // TODO: Error code mapping
     const sanitisedPayload = payload
       .replace(/\\\\/g, '\\')
@@ -86,10 +79,10 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
         ? []
         : [_.get(jsonAstmObject, `${path}`)]
     const commentsFromJsonAstmRecord = jsonAstmRecord =>
-      _.isEmpty(_.get(jsonAstmRecord, 'comments'))
+      _.isEmpty(jsonAstmRecord.comments)
         ? {}
         : {
-            comments: _.get(jsonAstmRecord, 'comments').map(commentId => ({
+            comments: jsonAstmRecord.comments.map(commentId => ({
               source: { I: 'Instrument' }[
                 _.get(jsonAstmRecord, `${commentId}.3.value`)
               ],
@@ -97,461 +90,740 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
               type: { G: 'Result Comment', I: 'Exception String' }[
                 _.get(jsonAstmRecord, `${commentId}.5.value`)
               ],
+              rawData: _.get(jsonAstmRecord, `${commentId}.value`),
             })),
           }
     const enquiriesFromJsonAstmRecord = jsonAstmRecord =>
-      _.isEmpty(_.get(jsonAstmRecord, 'enquiries'))
+      _.isEmpty(jsonAstmRecord.enquiries)
         ? {}
         : {
-            enquiries: _.get(jsonAstmRecord, 'enquiries').map(enquiryId => ({
+            enquiries: jsonAstmRecord.enquiries.map(enquiryId => ({
               specimenId: _.get(jsonAstmRecord, `${enquiryId}.3.value`),
               assayCode: _.get(jsonAstmRecord, `${enquiryId}.5.value`),
               statusCode: { O: 'Orders' }[
                 _.get(jsonAstmRecord, `${enquiryId}.13.value`)
               ],
+              rawData: _.get(jsonAstmRecord, `${enquiryId}.value`),
             })),
           }
-    const parsedResults = jsonAstmMessages.reduce((results, jsonAstmMessage) => {
-      const abbottAstmMessage = {
-        rawMessage: _.get(jsonAstmMessage, 'value'),
-        sender: {
-          nameOrId: _.get(jsonAstmMessage, 'H.4.1.value'),
-          softwareVersion: _.get(jsonAstmMessage, 'H.4.2.value'),
-          serialNumber: _.get(jsonAstmMessage, 'H.4.3.value'),
-          interfaceVersion: _.get(jsonAstmMessage, 'H.4.4.value'),
-        },
-        typeOfMessage: {
-          P: 'Production',
-          D: 'Debugging',
-          Q: 'Quality Control',
-        }[_.get(jsonAstmMessage, 'H.11.value')],
-        versionNo: _.get(jsonAstmMessage, 'H.12.value'),
-        dateAndTime: dateParse(
-          _.get(jsonAstmMessage, 'H.13.value'),
-          'yyyyLLddHHmmss',
-          utcNow
-        ),
-        messageIsComplete: _.get(jsonAstmMessage, 'L.2.value') === '1',
-        ...commentsFromJsonAstmRecord(_.get(jsonAstmMessage, 'H')),
-        ...enquiriesFromJsonAstmRecord(_.get(jsonAstmMessage, 'H')),
+
+    const mergeValueInResult = (baseValue, sourceValue) => {
+      if (_.isEmpty(baseValue) && !_.isEmpty(sourceValue)) {
+        return sourceValue
+      } else if (!_.isEmpty(baseValue) && _.isEmpty(sourceValue)) {
+        return baseValue
       }
-      results = [
-        ...results,
-        ..._.get(jsonAstmMessage, 'H.patients').reduce((results, patientId) => {
-          const jsonAstmPatient = _.get(jsonAstmMessage, `H.${patientId}`)
-          const patient = {
-            practicePatientId: _.get(jsonAstmPatient, '3.value'),
-            laboratoryPatientId: _.get(jsonAstmPatient, '4.value'),
-            patientIdNo3: _.get(jsonAstmPatient, '5.value'),
-            patientName: _.get(jsonAstmPatient, '6.value'),
-            dateOfBirth: dateParse(
-              _.get(jsonAstmPatient, '8.value'),
-              'yyyyLLdd',
+      if (_.isArray(baseValue) && _.isArray(sourceValue)) {
+        return [...baseValue, ...sourceValue]
+      }
+      return sourceValue || baseValue
+    }
+    const parsedResults = jsonAstmMessages.reduce(
+      (results, jsonAstmMessage) => {
+        const resultHeader = {
+          device: {
+            serial: _.get(jsonAstmMessage, 'H.4.3.value'),
+            lastSeenOn: dateParse(
+              _.get(jsonAstmMessage, 'H.13.value'),
+              'yyyyLLddHHmmss',
               utcNow
             ),
-            gender: { M: 'Male', F: 'Female', U: 'Unknown' }[
-              _.get(jsonAstmPatient, '9.value')
-            ],
-            ethnicOrigin: _.get(jsonAstmPatient, '10.value'),
-            patientAddress: _.get(jsonAstmPatient, '11.value'),
-            patientPhone: _.get(jsonAstmPatient, '13.value'),
-            attendingPhysician: _.get(jsonAstmPatient, '14.value'),
-            patientHeight: _.get(jsonAstmPatient, '17.value'),
-            patientWeight: _.get(jsonAstmPatient, '18.value'),
-            patientDiagnoses: arrayFromPossibleRepeatedValue(
-              jsonAstmPatient,
-              '19'
-            ).map(diagnosis => ({
-              code: _.get(diagnosis, '1.value'),
-              description: _.get(diagnosis, '2.value'),
-            })),
-            patientMedications: arrayFromPossibleRepeatedValue(
-              jsonAstmPatient,
-              '20'
-            ).map(medication => ({
-              name: _.get(medication, '1.value'),
-              level: _.get(medication, '2.value'),
-              startDate: _.get(medication, '3.value'),
-              endDate: _.get(medication, '4.value'),
-            })),
-            patientDiet: _.get(jsonAstmPatient, '21.value'),
-            admissionOrDischargeDates: _.get(jsonAstmPatient, '24.value'),
-            admissionStatus: _.get(jsonAstmPatient, '25.value'),
-            location: _.get(jsonAstmPatient, '26.value'),
-            isolationStatus: _.get(jsonAstmPatient, '31.value'),
-            hospitalInstitution: _.get(jsonAstmPatient, '34.value'),
-            dosageCategory: _.get(jsonAstmPatient, '35.value'),
-            ...commentsFromJsonAstmRecord(jsonAstmPatient),
-          }
-          results = [
-            ...results,
-            ..._.get(jsonAstmPatient, 'orders').reduce((results, orderId) => {
-              const jsonAstmOrder = jsonAstmPatient[orderId]
-              const order = {
-                specimen: {
-                  id: _.get(
-                    jsonAstmOrder,
-                    '3.1.value',
-                    _.get(jsonAstmOrder, '3.value')
-                  ),
-                  locationId: _.get(jsonAstmOrder, '3.2.value'),
-                  position: _.get(jsonAstmOrder, '3.3.value'),
-                },
-                instrumentSpecimen: {
-                  id: _.get(
-                    jsonAstmOrder,
-                    '4.1.value',
-                    _.get(jsonAstmOrder, '4.value')
-                  ),
-                  locationId: _.get(jsonAstmOrder, '4.2.value'),
-                  position: _.get(jsonAstmOrder, '4.3.value'),
-                },
-                assay: {
-                  code: _.get(jsonAstmOrder, '5.4.value'),
-                  name: _.get(jsonAstmOrder, '5.5.value'),
-                  protocol: _.get(jsonAstmOrder, '5.6.value'),
-                  testQualifier: { P: 'Primary', C: 'Correlation' }[
-                    _.get(jsonAstmOrder, '5.7.value')
-                  ],
-                },
-                priority: { S: 'STAT', R: 'Routine' }[
-                  _.get(jsonAstmOrder, '6.value')
+            lastPingOn: utcNow,
+            lastPingFromIp: remoteAddress,
+            configurationData: {
+              deviceTypeName: _.get(jsonAstmMessage, 'H.4.1.value'),
+              deviceVersion: _.get(jsonAstmMessage, 'H.4.2.value'),
+              interfaceVersion: _.get(jsonAstmMessage, 'H.4.4.value'),
+              softwareVersion: _.get(jsonAstmMessage, 'H.12.value'),
+            },
+            ...commentsFromJsonAstmRecord(jsonAstmMessage.H),
+            ...enquiriesFromJsonAstmRecord(jsonAstmMessage.H),
+          },
+          instrumentSerial: _.get(jsonAstmMessage, 'H.4.3.value'),
+          moduleSerial: _.get(jsonAstmMessage, 'H.4.3.value'),
+          senderVersion: _.get(jsonAstmMessage, 'H.12.value'),
+          resultData: {
+            typeOfMessage: {
+              P: 'Production',
+              D: 'Debugging',
+              Q: 'Quality Control',
+            }[_.get(jsonAstmMessage, 'H.11.value')],
+            messageIsComplete: _.get(jsonAstmMessage, 'L.2.value') === '1',
+          },
+          rawData: jsonAstmMessage.value,
+        }
+        results = [
+          ...results,
+          ..._.get(jsonAstmMessage, 'H.patients').reduce(
+            (results, patientId) => {
+              const jsonAstmPatient = _.get(jsonAstmMessage, `H.${patientId}`)
+              const patientData = {
+                practicePatientId: _.get(jsonAstmPatient, '3.value'),
+                laboratoryPatientId: _.get(jsonAstmPatient, '4.value'),
+                additionaPatientId: _.get(jsonAstmPatient, '5.value'),
+                patientName: _.get(jsonAstmPatient, '6.value'),
+                dateOfBirth: dateParse(
+                  _.get(jsonAstmPatient, '8.value'),
+                  'yyyyLLdd',
+                  utcNow
+                ),
+                gender: { M: 'Male', F: 'Female', U: 'Unknown' }[
+                  _.get(jsonAstmPatient, '9.value')
                 ],
-                requestTime: dateParse(
-                  _.get(jsonAstmOrder, '7.value'),
-                  'yyyyLLddHHmmss',
-                  utcNow
-                ),
-                collectionTime: dateParse(
-                  _.get(jsonAstmOrder, '8.value'),
-                  'yyyyLLddHHmmss',
-                  utcNow
-                ),
-                collectorId: _.get(jsonAstmOrder, '11.value'),
-                actionCode: {
-                  C: 'Cancel Test Order',
-                  A: 'Add Test to Order',
-                  N: 'New Test Order',
-                  Q: 'Quality Control Result',
-                  '': 'Patient Result',
-                }[_.get(jsonAstmOrder, '12.value')],
-                reportType: {
-                  F: 'Final Result',
-                  X: 'Test could not be performed',
-                }[_.get(jsonAstmOrder, '26.value')],
-                ...commentsFromJsonAstmRecord(jsonAstmOrder),
+                ethnicOrigin: _.get(jsonAstmPatient, '10.value'),
+                patientAddress: _.get(jsonAstmPatient, '11.value'),
+                patientPhone: _.get(jsonAstmPatient, '13.value'),
+                attendingPhysician: _.get(jsonAstmPatient, '14.value'),
+                patientHeight: _.get(jsonAstmPatient, '17.value'),
+                patientWeight: _.get(jsonAstmPatient, '18.value'),
+                patientDiagnoses: arrayFromPossibleRepeatedValue(
+                  jsonAstmPatient,
+                  '19'
+                ).map(diagnosis => ({
+                  code: _.get(diagnosis, '1.value'),
+                  description: _.get(diagnosis, '2.value'),
+                })),
+                patientMedications: arrayFromPossibleRepeatedValue(
+                  jsonAstmPatient,
+                  '20'
+                ).map(medication => ({
+                  name: _.get(medication, '1.value'),
+                  level: _.get(medication, '2.value'),
+                  startDate: _.get(medication, '3.value'),
+                  endDate: _.get(medication, '4.value'),
+                })),
+                patientDiet: _.get(jsonAstmPatient, '21.value'),
+                admissionOrDischargeDates: _.get(jsonAstmPatient, '24.value'),
+                admissionStatus: _.get(jsonAstmPatient, '25.value'),
+                location: _.get(jsonAstmPatient, '26.value'),
+                isolationStatus: _.get(jsonAstmPatient, '31.value'),
+                hospitalInstitution: _.get(jsonAstmPatient, '34.value'),
+                dosageCategory: _.get(jsonAstmPatient, '35.value'),
+                ...commentsFromJsonAstmRecord(jsonAstmPatient),
               }
               results = [
                 ...results,
-                ..._.get(jsonAstmOrder, 'results').reduce(
-                  (results, resultId) => {
-                    const jsonAstmResult = jsonAstmOrder[resultId]
-                    const result = {
-                      assay: {
-                        code: _.get(jsonAstmResult, '3.4.value'),
-                        name: _.get(jsonAstmResult, '3.5.value'),
-                        protocol: _.get(jsonAstmResult, '3.6.value'),
-                        status: { P: 'Primary', C: 'Correlation' }[
-                          _.get(jsonAstmResult, '3.7.value')
-                        ],
-                      },
-                      consumable: {
-                        reagentLot: _.get(jsonAstmResult, '3.8.value'),
-                        reagentSerialNumber: _.get(jsonAstmResult, '3.9.value'),
-                        controlLotNumber: _.get(jsonAstmResult, '3.10.value'),
-                      },
-                      type: {
-                        F: 'Final Result',
-                        P: 'Preliminary Result',
-                        I: 'Interpretation of Final Result',
-                      }[_.get(jsonAstmResult, '3.11.value')],
-                      text: _.get(jsonAstmResult, '4.value'),
-                      unit: _.get(jsonAstmResult, '5.value'),
-                      referenceRanges: _.get(jsonAstmResult, '6.value'),
-                      abnormalFlags: arrayFromPossibleRepeatedValue(
-                        jsonAstmResult,
-                        '7'
-                      ).map(abnormalFlag => _.get(abnormalFlag, 'value')),
-                      status: {
-                        F: 'Final Result',
-                        R: 'Previously Transmitted Result',
-                      }[_.get(jsonAstmResult, '9.value')],
-                      operators: {
-                        orderOperatorId: _.get(jsonAstmResult, '11.1.value'),
-                        releaseOperatorId: _.get(jsonAstmResult, '11.2.value'),
-                      },
-                      completedOn: dateParse(
-                        _.get(jsonAstmResult, '13.value'),
+                ...jsonAstmPatient.orders.reduce((results, orderId) => {
+                  const jsonAstmOrder = jsonAstmPatient[orderId]
+                  const sampleId = _.get(
+                    jsonAstmOrder,
+                    '3.1.value',
+                    _.get(
+                      jsonAstmOrder,
+                      '3.value',
+                      _.get(
+                        jsonAstmOrder,
+                        '4.1.value',
+                        _.get(jsonAstmOrder, '4.value')
+                      )
+                    )
+                  )
+                  const startedOnString = _.get(jsonAstmOrder, '7.value')
+                  const carouselId = _.get(
+                    jsonAstmOrder,
+                    '3.2.value',
+                    _.get(jsonAstmOrder, '4.2.value')
+                  )
+                  const wellPosition = _.get(
+                    jsonAstmOrder,
+                    '3.3.value',
+                    _.get(jsonAstmOrder, '4.3.value')
+                  )
+                  const testOrder = {
+                    sample: {
+                      externalId: sampleId,
+                      collectedOn: dateParse(
+                        _.get(jsonAstmOrder, '8.value'),
                         'yyyyLLddHHmmss',
                         utcNow
                       ),
-                      moduleSerial: _.get(jsonAstmResult, '14.2.value'),
-                      comments: [],
-                      ...commentsFromJsonAstmRecord(jsonAstmResult),
-                    }
-                    results = [
-                      ...results,
-                      {
-                        message: abbottAstmMessage,
-                        patient,
-                        order,
-                        result,
-                      },
-                    ]
-                    return results
-                  },
-                  []
-                ),
+                      sampleTypeExternalId: {
+                        HIVQLDRDBS: 'DBS',
+                        '1mLDBSvOP': 'DBS',
+                        'HIV0.6ml': 'Plasma',
+                      }[_.get(jsonAstmOrder, '5.4.value')],
+                    },
+                    assay: {
+                      code: _.get(jsonAstmOrder, '5.4.value'),
+                    },
+                    sampleRunNumber: carouselId,
+                    moduleName: wellPosition,
+                    startedOn: dateParse(
+                      startedOnString,
+                      'yyyyLLddHHmmss',
+                      utcNow
+                    ),
+                    resultData: {
+                      assayName: _.get(jsonAstmOrder, '5.5.value'),
+                      assayProtocol: _.get(jsonAstmOrder, '5.6.value'),
+                      priority: { S: 'STAT', R: 'Routine' }[
+                        _.get(jsonAstmOrder, '6.value')
+                      ],
+                      testQualifier: { P: 'Primary', C: 'Correlation' }[
+                        _.get(jsonAstmOrder, '5.7.value')
+                      ],
+                      collectedBy: _.get(jsonAstmOrder, '11.value'),
+                      actionCode: {
+                        C: 'Cancel Test Order',
+                        A: 'Add Test to Order',
+                        N: 'New Test Order',
+                        Q: 'Quality Control Result',
+                        '': 'Patient Result',
+                      }[_.get(jsonAstmOrder, '12.value', '')],
+                      reportType: {
+                        F: 'Final Result',
+                        X: 'Test could not be performed',
+                      }[_.get(jsonAstmOrder, '26.value')],
+                      ...commentsFromJsonAstmRecord(jsonAstmOrder),
+                    },
+                  }
+                  results = [
+                    ...results,
+                    ...jsonAstmOrder.results.reduce((results, resultId) => {
+                      const jsonAstmResult = jsonAstmOrder[resultId]
+                      const moduleSerial = _.get(jsonAstmResult, '14.2.value')
+                      const endedOnString = _.get(jsonAstmResult, '13.value')
+                      const resultDateString = startedOnString || endedOnString
+                      const result = {
+                        assay: {
+                          code: _.get(jsonAstmResult, '3.4.value'),
+                        },
+                        externalId: `${sampleId}|${moduleSerial}|${carouselId}|${wellPosition}|${resultDateString}`,
+                        consumableLot: _.get(jsonAstmResult, '3.6.value'),
+                        consumableSerial: _.get(jsonAstmResult, '3.7.value'),
+                        senderOperator: _.get(
+                          jsonAstmResult,
+                          '11.2.value',
+                          _.get(jsonAstmResult, '11.1.value')
+                        ),
+                        endedOn: dateParse(
+                          endedOnString,
+                          'yyyyLLddHHmmss',
+                          utcNow
+                        ),
+                        moduleSerial,
+                        resultData: {
+                          assayName: _.get(jsonAstmResult, '3.5.value'),
+                          priority: { S: 'STAT', R: 'Routine' }[
+                            _.get(jsonAstmOrder, '6.value')
+                          ],
+                          resultType: {
+                            F: 'Final Result',
+                            P: 'Preliminary Result',
+                            I: 'Interpretation of Final Result',
+                          }[_.get(jsonAstmResult, '3.9.value')],
+                          referenceRanges: _.get(jsonAstmResult, '6.value'),
+                          abnormalFlags: arrayFromPossibleRepeatedValue(
+                            jsonAstmResult,
+                            '7'
+                          ).map(abnormalFlag => abnormalFlag.value),
+                          resultText: _.get(jsonAstmResult, '4.value'),
+                          resultUnit: _.get(jsonAstmResult, '5.value'),
+                          resultStatus: {
+                            F: 'Final Result',
+                            R: 'Previously Transmitted Result',
+                          }[_.get(jsonAstmResult, '9.value')],
+                          orderOperatorId: _.get(jsonAstmResult, '11.1.value'),
+                          controlConsumableLotNumber: _.get(
+                            jsonAstmResult,
+                            '3.8.value'
+                          ),
+                          ...commentsFromJsonAstmRecord(jsonAstmResult),
+                        },
+                        patientData,
+                      }
+                      results = [
+                        ...results,
+                        _.mergeWith(
+                          _.mergeWith(
+                            resultHeader,
+                            testOrder,
+                            mergeValueInResult
+                          ),
+                          result,
+                          mergeValueInResult
+                        ),
+                      ]
+                      return results
+                    }, []),
+                  ]
+                  return results
+                }, []),
               ]
               return results
-            }, []),
-          ]
-          return results
-        }, []),
-      ]
-      return results
-    }, [])
-    const m2000AspectAssayCodeMapping = {
-      '1mLDBSvOP': 'abbottM2000DBSHivVL',
-      'HIV0.6ml': 'abbottM2000PlasmaHivVL',
-      'HIVQLDRDBS': 'abbottM2000HIVEID',
+            },
+            []
+          ),
+        ]
+        return results
+      },
+      []
+    )
+    const assayIds = await allAssayToId()
+    const resultWorkflowStatus = await allResultWorkflowStatusToId()
+    const m2000AspectAssayIdMapping = {
+      '1mLDBSvOP': assayIds.abbottM2000DBSHivVL,
+      'HIV0.6ml': assayIds.abbottM2000PlasmaHivVL,
+      HIVQLDRDBS: assayIds.abbottM2000HIVEID,
     }
-    const unknownAssayCodes = parsedResults.map(parsedResult => _.get(parsedResult, 'result.assay.code')).filter(assayCode => !Object.keys(m2000AspectAssayCodeMapping).includes(assayCode))
-    if(!_.isEmpty(unknownAssayCodes)) {
-      throw Boom.badRequest(`Unknown assay codes: ${unknownAssayCodes.join(', ')}`)
+    const resultCategoryMapping = {
+      '1mLDBSvOP': {
+        I: {
+          Detected: resultCategoryToId('Detected'),
+          'Target not detected': resultCategoryToId('NotDetected'),
+        },
+        F: {
+          'Not detected': resultCategoryToId('NotDetected'),
+          '< 550': resultCategoryToId('LessThan550'),
+          Numeric: resultCategoryToId('MoreThan550'),
+        },
+      },
+      'HIV0.6ml': {
+        I: {
+          Detected: resultCategoryToId('Detected'),
+          'Target not detected': resultCategoryToId('NotDetected'),
+        },
+        F: {
+          'Not detected': resultCategoryToId('NotDetected'),
+          '< 40': resultCategoryToId('LessThan40'),
+          Numeric: resultCategoryToId('MoreThan40'),
+        },
+      },
+      HIVQLDRDBS: {
+        F: {
+          'HIV-1 Detected': resultCategoryToId('Detected'),
+          'Not Detected': resultCategoryToId('NotDetected'),
+        },
+      },
     }
+    const resultCategoryErrorId = resultCategoryToId('Error')
+    const sampleTypeIds = await allSampleTypeToId()
+    const unknownAssayCodes = parsedResults
+      .map(parsedResult => _.get(parsedResult, 'assay.code'))
+      .filter(
+        assayCode => !Object.keys(m2000AspectAssayIdMapping).includes(assayCode)
+      )
+    if (!_.isEmpty(unknownAssayCodes)) {
+      throw Boom.badRequest(
+        `Unknown assay codes: ${unknownAssayCodes.join(', ')}`
+      )
+    }
+    const resultExternalIds = _.uniq(
+      parsedResults
+        .filter(
+          parsedResult =>
+            _.get(parsedResult, 'resultData.actionCode') === 'Patient Result'
+        )
+        .map(parsedResult => parsedResult.externalId)
+    )
+    const qualityControlResults = parsedResults.filter(
+      parsedResult =>
+        _.get(parsedResult, 'resultData.actionCode') ===
+        'Quality Control Result'
+    )
+    const hivQualityControlResultsToSummary = (
+      hivQualityControlResults,
+      passFinalResult,
+      passCycleNumber
+    ) => {
+      const finalResult = hivQualityControlResults.find(
+        result => result.resultData.resultType === 'Final Result'
+      )
+      const qualityControlSummary = {}
+      if (finalResult) {
+        Object.assign(qualityControlSummary, {
+          passed: passFinalResult(finalResult),
+          reportType: finalResult.resultData.reportType,
+          abnormalFlags: finalResult.resultData.abnormalFlags,
+          result: finalResult.resultData.resultText,
+          moduleName: finalResult.moduleName,
+          assayCode: finalResult.assay.code,
+          assayName: finalResult.resultData.assayName,
+          consumableLot: finalResult.consumableLot,
+          consumableSerial: finalResult.consumableSerial,
+          controlConsumableLotNumber: finalResult.resultData.assayName,
+          endedOn: finalResult.endedOn,
+          moduleSerial: finalResult.moduleSerial,
+          orderOperatorId: finalResult.resultData.orderOperatorId,
+          senderOperator: finalResult.senderOperator,
+        })
+      }
+      const cycleNumberResult = hivQualityControlResults.find(
+        result => result.resultData.resultType === 'Preliminary Result'
+      )
+      if (cycleNumberResult) {
+        const cycleNumberSummary = {}
+        if (!passCycleNumber(cycleNumberResult)) {
+          Object.assign(cycleNumberSummary, {
+            passed: false,
+            reportType: cycleNumberResult.resultData.reportType,
+          })
+        }
+        if (cycleNumberResult.resultData.resultText) {
+          Object.assign(cycleNumberSummary, {
+            cycleNumber: parseFloat(cycleNumberResult.resultData.resultText),
+          })
+        }
+        Object.assign(qualityControlSummary, cycleNumberSummary)
+        qualityControlSummary.abnormalFlags = [
+          ...qualityControlSummary.abnormalFlags,
+          cycleNumberResult.resultData.abnormalFlags,
+        ]
+      }
+      return qualityControlSummary
+    }
+    const qualityControlSummaries = _.uniq(
+      qualityControlResults.map(
+        qualityControlResult => qualityControlResult.sampleRunNumber
+      )
+    ).reduce((qualityControlSummaries, sampleRunNumber) => {
+      const qualityControlResultsForRun = qualityControlResults.filter(
+        qualityControlResult =>
+          qualityControlResult.sampleRunNumber === sampleRunNumber
+      )
+      const qualityControlAssayCodes = _.uniq(
+        qualityControlResultsForRun.map(result => result.assay.code)
+      )
+      const qualityControlSummary = qualityControlAssayCodes.reduce(
+        (qualityControlSummary, assayCode) => {
+          // If this is an HIV Assay
+          const qualityControlSummaryForAssay = {}
+          if (['1mLDBSvOP', 'HIV0.6ml', 'HIVQLDRDBS'].includes(assayCode)) {
+            const negResults = qualityControlResultsForRun.filter(
+              result => result.sample.externalId === 'HIV_NEG'
+            )
+            if (!_.isEmpty(negResults)) {
+              qualityControlSummaryForAssay.negativeControl = hivQualityControlResultsToSummary(
+                negResults,
+                finalResult =>
+                  finalResult.resultData.reportType === 'Final Result' &&
+                  ['Passed', 'Not detected'].includes(
+                    finalResult.resultData.resultText
+                  ),
+                cycleNumberResult =>
+                  cycleNumberResult.resultData.reportType === 'Final Result'
+              )
+            }
+            const lowPositiveResults = qualityControlResultsForRun.filter(
+              result => result.sample.externalId === 'HIV_LOPOS'
+            )
+            if (!_.isEmpty(lowPositiveResults)) {
+              qualityControlSummaryForAssay.lowPositiveControl = hivQualityControlResultsToSummary(
+                lowPositiveResults,
+                finalResult =>
+                  finalResult.resultData.reportType === 'Final Result' &&
+                  (finalResult.resultData.resultText === 'Passed' ||
+                    !isNaN(finalResult.resultData.resultText)),
+                cycleNumberResult =>
+                  cycleNumberResult.resultData.reportType === 'Final Result'
+              )
+            }
+            const highPositiveResults = qualityControlResultsForRun.filter(
+              result => result.sample.externalId === 'HIV_HIPOS'
+            )
+            if (!_.isEmpty(highPositiveResults)) {
+              qualityControlSummaryForAssay.highPositiveControl = hivQualityControlResultsToSummary(
+                highPositiveResults,
+                finalResult =>
+                  finalResult.resultData.reportType === 'Final Result' &&
+                  (finalResult.resultData.resultText === 'Passed' ||
+                    !isNaN(finalResult.resultData.resultText)),
+                cycleNumberResult =>
+                  cycleNumberResult.resultData.reportType === 'Final Result'
+              )
+            }
+          } // TODO: Add Quality Control Logic for TB and other assay codes when we learn more about them
+          qualityControlSummary[assayCode] = qualityControlSummaryForAssay
+          return qualityControlSummary
+        },
+        {}
+      )
+      qualityControlSummaries[sampleRunNumber] = qualityControlSummary
+      return qualityControlSummaries
+    }, {})
+    const deviceCommentsAndEnquiries = _.uniqBy(
+      parsedResults.map(parsedResult => ({
+        comments: _.get(parsedResult, 'device.comments'),
+        enquiries: _.get(parsedResult, 'device.enquiries'),
+      })),
+      JSON.stringify
+    )
+    const latestDevice = parsedResults
+      .map(parsedResult => ({
+        ...parsedResult.device,
+        rawData: parsedResult.rawData,
+      }))
+      .sort((device1, device2) => device1.lastSeenOn >= device2.lastSeenOn)
+      .pop()
+    const deviceDetailsInPayload = _.mergeWith(
+      latestDevice,
+      deviceCommentsAndEnquiries,
+      mergeValueInResult
+    )
+
     await transact(async knex => {
-      const { deviceId } = await knex('DeviceApiKey')
+      const deviceApiKey = await knex('DeviceApiKey')
         .where('token', auth.credentials.token)
-        .first('deviceId')
-      if (!deviceId) {
+        .first()
+      if (!deviceApiKey.deviceId) {
         throw Boom.badRequest(
           'Invalid device API key: Cannot determine which device this came from'
         )
       }
-      this.response.deviceId = deviceId
-      const [deviceLogId] = await knex('DeviceLog').insert({
-        deviceId,
-        source: _.get(payload, 'log.source', ''),
-        createdOn: utcNow,
-        senderIp: remoteAddress,
-        rawMessage: JSON.stringify(request.plugins.rawPayload),
-      })
-
-      this.response.deviceLogId = deviceLogId
-      await knex('Device')
-        .where({ id: deviceId })
-        .update({ lastSeenOn: utcNow, updatedOn: utcNow })
-      this.messageContext.dispatch(deviceSeen(deviceId))
-
-      await Promise.each(parsedResults, await parsedResult => {
-        const assayId = await assayToId(_.get(parsedResult, 'result.assay.code'))
-        const resultText = _.get(parsedResult, 'result.text')
-
-      })
-
-      // Use test status to determine workflow status and result category 1:
-      const mgitTestStatus = getAstmField(astm, 'R,4,1,1')
-      let resultCategory1 = null
-      let resultWorkflowStatusId = null
-
-      switch (mgitTestStatus) {
-        case 'INST_POSITIVE':
-          resultCategory1 = await resultCategoryToId('Detected')
-          resultWorkflowStatusId = await resultWorkflowStatusToId('Processed')
-          break
-        case 'INST_NEGATIVE':
-          resultCategory1 = await resultCategoryToId('NotDetected')
-          resultWorkflowStatusId = await resultWorkflowStatusToId('Processed')
-          break
-        case 'INST_COMPLETE':
-          resultCategory1 = await resultCategoryToId('Success')
-          resultWorkflowStatusId = await resultWorkflowStatusToId('Processed')
-          break
-        case 'INST_REMOVED':
-          resultCategory1 = await resultCategoryToId('Missing')
-          resultWorkflowStatusId = await resultWorkflowStatusToId('Purged')
-          break
-        case 'INST_ERROR':
-          resultCategory1 = await resultCategoryToId('Error')
-          resultWorkflowStatusId = await resultWorkflowStatusToId('Error')
-          break
-        case 'INST_ONGOING':
-        default:
-          resultCategory1 = await resultCategoryToId('Unknown')
-          resultWorkflowStatusId = await resultWorkflowStatusToId('InProgress')
-          break
+      const device = await knex('Device')
+        .where('id', deviceApiKey.deviceId)
+        .first()
+      const site =
+        (await knex('Site')
+          .where('id', device.siteId)
+          .first()) || {}
+      const resultSourceDiagnosticDeviceId = resultSourceToId(
+        'DiagnosticDevice'
+      )
+      const resultTypePatientId = resultTypeToId('Patient')
+      this.response.deviceId = device.id
+      this.response.deviceLogIds = []
+      if (deviceDetailsInPayload.lastSeenOn >= device.lastSeenOn) {
+        device.configurationData = JSON.parse(device.configurationData)
+        await knex('Device')
+          .where('id', deviceId)
+          .update(
+            _.mergeWith(
+              device,
+              _.omit(deviceDetailsInPayload, [
+                'comments',
+                'enquiries',
+                'rawData',
+              ]),
+              { updatedOn: utcNow },
+              mergeValueInResult
+            )
+          )
+        const [configDeviceLogId] = await knex('DeviceLog').insert({
+          deviceId: device.id,
+          source: this.name,
+          deviceConfigurationUpdated: true,
+          createdOn: utcNow,
+          senderIp: remoteAddress,
+          rawMessage: deviceDetailsInPayload.rawData,
+        })
+        this.response.deviceLogIds = [
+          ...this.response.deviceLogIds,
+          configDeviceLogId,
+        ]
+        if (!_.isEmpty(deviceDetailsInPayload.comments)) {
+          const commentDeviceLogIds = await Promise.each(
+            deviceDetailsInPayload.comments,
+            async comment => {
+              const [commentDeviceLogId] = await knex('DeviceLog').insert({
+                deviceId: device.id,
+                source: this.name,
+                createdOn: utcNow,
+                senderIp: remoteAddress,
+                rawMessage: comment.rawData,
+              })
+              return commentDeviceLogId
+            }
+          )
+          this.response.deviceLogIds = [
+            ...this.response.deviceLogIds,
+            ...commentDeviceLogIds,
+          ]
+        }
+        if (!_.isEmpty(deviceDetailsInPayload.enquiries)) {
+          const enquiryDeviceLogIds = await Promise.each(
+            deviceDetailsInPayload.enquiries,
+            async comment => {
+              const [enquiryDeviceLogId] = await knex('DeviceLog').insert({
+                deviceId: device.id,
+                source: this.name,
+                createdOn: utcNow,
+                senderIp: remoteAddress,
+                rawMessage: comment.rawData,
+              })
+              return enquiryDeviceLogId
+            }
+          )
+          this.response.deviceLogIds = [
+            ...this.response.deviceLogIds,
+            ...enquiryDeviceLogIds,
+          ]
+        }
       }
-
-      // accessionNumber = sample ID
-      const mgitAccessionNumber = getAstmField(astm, 'O,3,1,1')
-      const mgitStartedOn = getAstmField(astm, 'R,12,1,1')
-      const mgitEndedOn = getAstmField(astm, 'R,13,1,1')
-      const mgitVersionNumber = getAstmField(astm, 'H,13,1,1')
-
-      const resultSourceId = await resultSourceToId('DiagnosticDevice')
-      const resultTypeId = await resultTypeToId('Patient')
-      const site = await knex('Site as s')
-        .join('Device as d', 's.id', 'd.siteId')
-        .where('d.id', deviceId)
-        .first(
-          's.id',
-          's.partnerId',
-          's.geographyId',
-          's.longitude',
-          's.latitude'
+      this.messageContext.dispatch(deviceSeen(device.id))
+      await Promise.each(resultExternalIds, async resultExternalId => {
+        const resultsWithSameId = parsedResults.filter(
+          parsedResult => parsedResult.externalId === resultExternalId
+        )
+        const finalResult = resultsWithSameId.find(
+          result => result.resultData.resultType === 'Final Result'
+        )
+        let { sampleId, collectedOn } =
+          (await knex('Sample as s')
+            .join('SampleType as st', 's.sampleTypeId', 'st.id')
+            .where('s.externalId', finalResult.sample.externalId)
+            .andWhere('st.externalId', finalResult.sample.sampleTypeExternalId)
+            .first('s.id as sampleId', 's.collectedOn')) || {}
+        if (!sampleId) {
+          ;[sampleId] = await knex('Sample').insert({
+            externalId: finalResult.sample.externalId,
+            collectedOn: finalResult.sample.collectedOn,
+            sampleTypeId:
+              sampleTypeIds[finalResult.sample.sampleTypeExternalId],
+          })
+        } else if (collectedOn != finalResult.sample.collectedOn) {
+          await knex('Sample')
+            .where('id', sampleId)
+            .update({ collectedOn: finalResult.sample.collectedOn })
+        }
+        const qualityControlSummary = _.get(
+          qualityControlSummaries,
+          `${finalResult.sampleRunNumber}.${finalResult.assay.code}`,
+          {}
+        )
+        const passedQualityControl =
+          _.isEmpty(qualityControlSummary) ||
+          (Object.values(qualityControlSummary).every(
+            control => control.passed
+          ) &&
+            (_.isEmpty(qualityControlSummary.lowPositiveControl) ||
+              _.isEmpty(qualityControlSummary.highPositiveControl) ||
+              isNaN(qualityControlSummary.lowPositiveControl.result) ||
+              isNaN(qualityControlSummary.highPositiveControl.result) ||
+              parseFloat(qualityControlSummary.highPositiveControl.result) >
+                parseFloat(qualityControlSummary.lowPositiveControl.result)))
+        const cycleNumberResult = resultsWithSameId.find(
+          result => result.resultData.resultType === 'Preliminary Result'
+        )
+        const interpretationResult = resultsWithSameId.find(
+          result =>
+            result.resultData.resultType === 'Interpretation of Final Result'
         )
 
-      const device = await knex('Device')
-        .where('id', deviceId)
-        .first()
-
-      // It is possible that a single plastic carrier could be used more than once for a particular access number.
-      // The test start date/time, with the sequence number, uniquely identifies a test and its result.
-      const externalId = `${mgitStartedOn}_${mgitConsumableSequenceNumber}`
-      const result = await knex('Result')
-        .where('deviceId', deviceId)
-        .where('externalId', externalId)
-        .first()
-
-      // build up result data field:
-      const resultData = {
-        senderName: getAstmField(astm, 'H,5,1,1'),
-        versionNumber: mgitVersionNumber,
-        messageDateTime: getAstmField(astm, 'H,14,1,1'),
-        accessionNumber: mgitAccessionNumber,
-        isolateNumber: getAstmField(astm, 'O,3,1,2'),
-        testId: getAstmField(astm, 'O,5,1,4'),
-        resultTypeCode: mgitResultTypeCode,
-        consumableSequenceNumber: mgitConsumableSequenceNumber,
-        preliminaryFinalStatus: getAstmField(astm, 'R,9,1,1'),
-        testStartDateTime: mgitStartedOn,
-        testEndedDateTime: mgitEndedOn,
-        instrumentType: getAstmField(astm, 'R,14,1,1'),
-        protocolLength: getAstmField(astm, 'R,14,1,3'),
-        instrumentNumber: getAstmField(astm, 'R,14,1,4'),
-        instrumentLocation: getAstmField(astm, 'R,14,1,5'),
-      }
-
-      // while
-      let i = 1
-      let antibiotic = null
-      let susceptible = null
-      let resultCategory2 = null
-
-      // TODO: Consider NOT treating these results part of a "lower level schema section". Could be top-level properties like "firSirStatus", "rifAntibioticConcentration" instead
-      // eslint-disable-next-line no-cond-assign
-      while ((antibiotic = getAstmField(astm, `R,3,${i},6`))) {
-        // The BACTEC MGIT 960 instrument transmits an ‘S’ for susceptible, ‘I’ for Indeterminate (not currently used), or an ‘R’ for resistant.
-        const sirStatus = getAstmField(astm, `R,4,${i},3`)
-        if (sirStatus === 'S') {
-          susceptible = true
-        }
-
-        resultData[antibiotic] = {
-          sirStatus,
-          antibioticConcentration: getAstmField(astm, `R,3,${i},7`),
-          antibioticConcentrationUnits: getAstmField(astm, `R,3,${i},8`),
-          growthUnits: getAstmField(astm, `R,4,${i},2`),
-        }
-        i += 1
-      }
-
-      // Use SIR status to determine result category 2:
-      if (mgitResultTypeCode === 'AST_MGIT' && susceptible !== null) {
-        if (susceptible) {
-          resultCategory2 = await resultCategoryToId('Susceptible')
-        } else {
-          resultCategory2 = await resultCategoryToId('Resistant')
-        }
-      }
-
-      // add/update result
-      const resultFields = {
-        assayId,
-        partnerId: device.partnerId,
-        geographyId: site ? site.geographyId : null,
-        siteId: site ? site.id : null,
-        deviceId,
-        longitude: site ? site.longitude : null,
-        latitude: site ? site.latitude : null,
-        resultSourceId,
-        resultTypeId,
-        resultCategory1,
-        resultCategory2,
-        startedOn: dateParse(mgitStartedOn, 'yyyyLLddHHmmss', utcNow),
-        endedOn: mgitEndedOn
-          ? dateParse(mgitEndedOn, 'yyyyLLddHHmmss', utcNow)
-          : null,
-        consumableSerial: mgitConsumableSequenceNumber,
-        senderVersion: mgitVersionNumber,
-        updatedOn: utcNow,
-        resultData: JSON.stringify(resultData),
-      }
-
-      // add/update sample
-      const sampleFields = {
-        externalId: mgitAccessionNumber,
-        originSiteId: site ? site.id : null,
-      }
-
-      // Insert or update result
-      let resultId = null
-      if (result) {
-        // update sample
-        await knex('Sample')
-          .where('id', result.sampleId)
-          .update(sampleFields)
-
-        // update result
-        await knex('Result')
-          .where('deviceId', deviceId)
-          .where('externalId', externalId)
-          .update(resultFields)
-
-        resultId = result.id
-      } else {
-        // insert sample
-        const sampleId = await knex('Sample').insert(sampleFields)
-
-        // insert result
-        ;[resultId] = await knex('Result').insert(
-          Object.assign(resultFields, {
-            deviceId,
-            externalId,
+        const result = _.mergeWith(
+          {},
+          _.omit(cycleNumberResult || {}, ['device', 'sample', 'assay']),
+          _.omit(interpretationResult || {}, ['device', 'sample', 'assay']),
+          _.omit(finalResult, ['device', 'sample', 'assay']),
+          {
+            assayId: m2000AspectAssayIdMapping[finalResult.assay.code],
+            partnerId: deviceApiKey.partnerId,
+            geographyId: device.geographyId,
+            siteId: site.id,
+            longitude: site.longitude,
+            latitude: site.latitude,
+            resultSourceId: resultSourceDiagnosticDeviceId,
+            resultTypeId: resultTypePatientId,
             sampleId,
+            resultData: {
+              passedQualityControl,
+              qualityControlSummary,
+            },
+            updatedOn: utcNow,
+          }
+        )
+        if (result.resultData.reporType !== 'Final Result') {
+          result.resultCategory1 = resultCategoryErrorId
+          result.errorCode = result.resultData.abnormalFlags.join(',')
+        } else {
+          const interpretationResultCategoryId = interpretationResult
+            ? resultCategoryMapping[interpretationResult.assay.code].I[
+                interpretationResult.resultData.resultText
+              ]
+            : null
+          const finalResultCategoryId =
+            resultCategoryMapping[finalResult.assay.code].F[
+              _.isNaN(finalResult.resultData.resultText)
+                ? finalResult.resultData.resultText
+                : 'Numeric'
+            ]
+          if (interpretationResult) {
+            result.resultCategory1 = interpretationResultCategoryId
+            result.resultCategory2 = finalResultCategoryId
+          } else {
+            result.resultCategory1 = finalResultCategoryId
+          }
+        }
+        result.notes = _.uniq(
+          result.resultData.comments.map(comment => comment.text)
+        ).join('\n')
+        const existingResult = await knex('Result')
+          .where('externalId', result.externalId)
+          .andWhere('deviceId', device.id)
+          .first()
+        const resultWorkflowStatusId = await resultWorkflowStatusToId(
+          result.resultCategory1 === resultCategoryErrorId
+            ? 'Error'
+            : 'Processed'
+        )
+        if (existingResult) {
+          result.id = existingResult.id
+          existingResult.resultData = JSON.parse(existingResult.resultData)
+          existingResult.patientData = JSON.parse(existingResult.resultData)
+          existingResult.formData = JSON.parse(existingResult.resultData)
+          if (existingResult.notes) {
+            result.notes = _.uniq(
+              `${existingResult.notes}\n${result.notes}`.split('\n')
+            ).join('\n')
+          }
+          const resultWorkflowStatusLog = await knex('ResultWorkflowStatusLog')
+            .where('id', existingResult.resultWorkflowStatusLogId)
+            .first()
+          if (
+            [
+              resultWorkflowStatus.OK,
+              resultWorkflowStatus.Error,
+              resultWorkflowStatus.Ordered,
+              resultWorkflowStatus.InProgress,
+              resultWorkflowStatus.Processed,
+            ].includes(resultWorkflowStatusLog.resultWorkflowStatusId)
+          ) {
+            const [resultWorkflowStatusLogId] = await knex(
+              'ResultWorkflowLog'
+            ).insert({
+              resultId: existingResult.id,
+              resultWorkflowStatusId,
+              changedOn: utcNow,
+              createdOn: utcNow,
+            })
+            result.resultWorkflowStatusLogId = resultWorkflowStatusLogId
+          }
+          Object.assign(existingResult, result)
+          await knex('Result')
+            .where('id', result.id)
+            .update(existingResult)
+        } else {
+          result.createdOn = utcNow
+          const [resultId] = await knex('Result').insert(result)
+          result.id = resultId
+        }
+        if (!result.resultWorkflowStatusLogId) {
+          const [resultWorkflowStatusLogId] = await knex(
+            'ResultWorkflowLog'
+          ).insert({
+            resultId: result.id,
+            resultWorkflowStatusId,
+            changedOn: utcNow,
             createdOn: utcNow,
           })
-        )
-      }
-
-      // Save workflow status
-      let newStatus = false
-      if (result && result.resultWorkflowStatusLogId) {
-        const log = await knex('ResultWorkflowLog').where(
-          'id',
-          result.resultWorkflowStatusLogId
-        )
-
-        newStatus = log.resultWorkflowStatusId !== resultWorkflowStatusId
-      }
-
-      if (newStatus || !result || !result.resultWorkflowStatusLogId) {
-        const logId = await knex('ResultWorkflowLog').insert({
-          resultId,
-          resultWorkflowStatusId,
-          changedOn: utcNow,
+          await knex('Result')
+            .where('id', result.id)
+            .update({ resultWorkflowStatusLogId })
+        }
+        const [resultDeviceLogId] = await knex('DeviceLog').insert({
+          deviceId: device.id,
+          source: this.name,
           createdOn: utcNow,
+          senderIp: remoteAddress,
+          rawMessage: result.rawData,
+          resultId: result.id,
         })
-
-        await knex('Result')
-          .where('id', resultId)
-          .update('resultWorkflowStatusLogId', logId)
-      }
-
-      await knex('DeviceLog')
-        .where('id', deviceLogId)
-        .update({ resultId })
+        this.response.deviceLogIds = [
+          ...this.response.deviceLogIds,
+          resultDeviceLogId,
+        ]
+        // TODO: Inventory, reduce reagent and control reagent
+      })
     })
   }
 

@@ -40,9 +40,8 @@ function getDelimiters(
       componentDelimiter: '^',
       escapeDelimiter: '&',
     }
-  } else {
-    return explicitDelimiters
   }
+  return explicitDelimiters
 }
 
 function getFieldValue(
@@ -345,7 +344,8 @@ function baseOneIndex(array) {
 }
 
 function arrayToString(array, joinWith = ' ') {
-  return array.filter(value => !_.isEmpty(value)).join(joinWith)
+  const joinedValues = array.filter(value => !_.isEmpty(value)).join(joinWith)
+  return joinedValues === '' ? null : joinedValues
 }
 
 function astmE1394RecordToJson(
@@ -369,7 +369,7 @@ function astmE1394RecordToJson(
   )
   return _.omit(
     {
-      value: astmRecordString,
+      value: astmRecordString === '' ? null : astmRecordString,
       ...baseOneIndex(
         splitWithEscape(
           recordBeforeChecksum,
@@ -387,38 +387,42 @@ function astmE1394RecordToJson(
               escapeDelimiter
             ).map(component => component.trim())
             if (componentValues.length > 1) {
+              const value = arrayToString(componentValues)
               return _.omit(
                 {
-                  value: arrayToString(componentValues),
-                  ...baseOneIndex(componentValues).map(value => ({ value })),
+                  value: value === '' ? null : value,
+                  ...baseOneIndex(componentValues).map(value => ({
+                    value: value === '' ? null : value,
+                  })),
                 },
                 '0'
               )
             }
             return {
-              value: componentValues[0],
+              value: componentValues[0] === '' ? null : componentValues[0],
             }
           })
           if (repeatedValues.length > 1) {
+            const value = arrayToString(
+              repeatedValues.map(repeatedValue =>
+                _.isUndefined(repeatedValue.value)
+                  ? repeatedValue
+                  : repeatedValue.value
+              ),
+              '\n'
+            )
             return _.omit(
               {
                 items: repeatedValues.map((repeatedValue, index) =>
                   (index + 1).toString()
                 ),
-                value: arrayToString(
-                  repeatedValues.map(repeatedValue =>
-                    _.isUndefined(repeatedValue.value)
-                      ? repeatedValue
-                      : repeatedValue.value
-                  ),
-                  '\n'
-                ),
+                value: value === '' ? null : value,
                 ...baseOneIndex(repeatedValues),
               },
               '0'
             )
           }
-          return repeatedValues[0]
+          return repeatedValues[0] === '' ? null : repeatedValues[0]
         })
       ),
     },
@@ -525,16 +529,16 @@ This function should transform the payload so that nested
   H: {
     '1': { value: 'H' },
     '2': {
-      '1': { value: '' },
+      '1': { value: null },
       '2': {
-        '1': { value: '' },
+        '1': { value: null },
         '2': { value: '|' },
         value: '|',
       },
-      items: [ '1', '2'],
+      items: ['1', '2'],
       value: '|',
     },
-    '3': { value: '' },
+    '3': { value: null },
     '4': {
       '1': { value: 'Name of Instrument' },
       '2': { value: '1.0.0.0' },
@@ -548,8 +552,8 @@ This function should transform the payload so that nested
     P1: {
       '1': { value: 'P' },
       '2': { value: '1' },
-      '3': { value: '' },
-      '4': { value: '' },
+      '3': { value: null },
+      '4': { value: null },
       '5': { value: 'PIDSID13' },
       '6': {
         '1': {
@@ -566,12 +570,12 @@ This function should transform the payload so that nested
           '5': { value: 'Wife' },
           value: 'And This Is My Wife',
         },
-        items: [ '1', '2'],
+        items: ['1', '2'],
         value: 'Patient Im A\nAnd This Is My Wife',
       },
       '7': { value: '19320122' },
       '8': { value: 'F' },
-      '9': { value: '' },
+      '9': { value: null },
       '10': { value: 'Dr.Amesbury' },
       '11': { value: 'ParkClinic' },
       value:
@@ -587,9 +591,9 @@ This function should transform the payload so that nested
           value: 'SID3 A123 5',
         },
         '5': {
-          '1': { value: '' },
-          '2': { value: '' },
-          '3': { value: '' },
+          '1': { value: null },
+          '2': { value: null },
+          '3': { value: null },
           '4': { value: '123' },
           '5': { value: 'Assay1' },
           '6': { value: 'UNDILUTED' },
@@ -597,9 +601,9 @@ This function should transform the payload so that nested
           value: '123 Assay1 UNDILUTED P',
         },
         '6': { value: 'R' },
-        '7': { value: '' },
+        '7': { value: null },
         '8': { value: '20010223081223' },
-        '9': { value: '' },
+        '9': { value: null },
         '10': { value: 'F' },
         value:
           'O|1|SID13|SID3^A123^5|^^^123^Assay1^UNDILUTED^P|R||20010223081223||F\\r\\x03D0\\r\\n',
@@ -607,16 +611,16 @@ This function should transform the payload so that nested
           '1': { value: 'R' },
           '2': { value: '1' },
           '3': {
-            '1': { value: '' },
-            '2': { value: '' },
-            '3': { value: '' },
+            '1': { value: null },
+            '2': { value: null },
+            '3': { value: null },
             '4': { value: '0021' },
             '5': { value: 'B-hCG' },
             '6': { value: 'UNDILUTED' },
             '7': { value: 'P' },
             '8': { value: '47331M100' },
             '9': { value: '00788' },
-            '10': { value: '' },
+            '10': { value: null },
             '11': { value: 'F' },
             value: '0021 B-hCG UNDILUTED P 47331M100 00788 F',
           },
@@ -629,7 +633,7 @@ This function should transform the payload so that nested
             value: 'EXP <',
           },
           '8': { value: 'F' },
-          '9': { value: '' },
+          '9': { value: null },
           '10': { value: '19990715081030' },
           '11': { value: 'I20100' },
           value:
@@ -640,25 +644,25 @@ This function should transform the payload so that nested
           '1': { value: 'R' },
           '2': { value: '2' },
           '3': {
-            '1': { value: '' },
-            '2': { value: '' },
-            '3': { value: '' },
+            '1': { value: null },
+            '2': { value: null },
+            '3': { value: null },
             '4': { value: '0021' },
             '5': { value: 'B-hCG' },
             '6': { value: 'UNDILUTED' },
             '7': { value: 'P' },
             '8': { value: '47331M100' },
             '9': { value: '00788' },
-            '10': { value: '' },
+            '10': { value: null },
             '11': { value: 'I' },
             value: '0021 B-hCG UNDILUTED P 47331M100 00788 I',
           },
           '4': { value: 'NEGATIVE' },
-          '5': { value: '' },
-          '6': { value: '' },
-          '7': { value: '' },
+          '5': { value: null },
+          '6': { value: null },
+          '7': { value: null },
           '8': { value: 'F' },
-          '9': { value: '' },
+          '9': { value: null },
           '10': { value: '19990715081030' },
           '11': { value: 'I20100' },
           value:
@@ -668,25 +672,25 @@ This function should transform the payload so that nested
           '1': { value: 'R' },
           '2': { value: '3' },
           '3': {
-            '1': { value: '' },
-            '2': { value: '' },
-            '3': { value: '' },
+            '1': { value: null },
+            '2': { value: null },
+            '3': { value: null },
             '4': { value: '0021' },
             '5': { value: 'B-hCG' },
             '6': { value: 'UNDILUTED' },
             '7': { value: 'P' },
             '8': { value: '47331M100' },
             '9': { value: '00788' },
-            '10': { value: '' },
+            '10': { value: null },
             '11': { value: 'P' },
             value: '0021 B-hCG UNDILUTED P 47331M100 00788 P',
           },
           '4': { value: '9245' },
           '5': { value: 'RLU' },
-          '6': { value: '' },
-          '7': { value: '' },
+          '6': { value: null },
+          '7': { value: null },
           '8': { value: 'F' },
-          '9': { value: '' },
+          '9': { value: null },
           '10': { value: '19990715081030' },
           '11': { value: 'I20100' },
           value:
@@ -727,19 +731,19 @@ This function should transform the payload so that nested
       '1': { value: 'Q' },
       '2': { value: '1' },
       '3': {
-        '1': { value: '' },
+        '1': { value: null },
         '2': { value: 'SID12345' },
         value: 'SID12345',
       },
-      '4': { value: '' },
+      '4': { value: null },
       '5': {
-        '1': { value: '' },
-        '2': { value: '' },
-        '3': { value: '' },
+        '1': { value: null },
+        '2': { value: null },
+        '3': { value: null },
         '4': { value: 'ALL' },
         value: 'ALL',
       },
-      '6': { value: '' },
+      '6': { value: null },
       '7': { value: 'O' },
       value: 'Q|1|^SID12345||^^^ALL||O\\r\\x0343\\r\\n',
     },
@@ -765,16 +769,16 @@ This function should transform the payload so that nested
   H: {
     '1': { value: 'H' },
     '2': {
-      '1': { value: '' },
+      '1': { value: null },
       '2': {
-        '1': { value: '' },
+        '1': { value: null },
         '2': { value: '|' },
         value: '|',
       },
-      items: [ '1', '2'],
+      items: ['1', '2'],
       value: '|',
     },
-    '3': { value: '' },
+    '3': { value: null },
     '4': {
       '1': { value: 'Name of Instrument' },
       '2': { value: '1.0.0.0' },
@@ -800,9 +804,9 @@ This function should transform the payload so that nested
           value: 'TSHBIORAD 2 A123 2',
         },
         '5': {
-          '1': { value: '' },
-          '2': { value: '' },
-          '3': { value: '' },
+          '1': { value: null },
+          '2': { value: null },
+          '3': { value: null },
           '4': { value: '0241' },
           '5': { value: 'TSH' },
           '6': { value: 'UNDILUTED' },
@@ -810,8 +814,8 @@ This function should transform the payload so that nested
           value: '0241 TSH UNDILUTED P',
         },
         '6': { value: 'R' },
-        '7': { value: '' },
-        '8': { value: '' },
+        '7': { value: null },
+        '8': { value: null },
         '9': { value: 'Q' },
         '10': { value: 'F' },
         value:
@@ -820,9 +824,9 @@ This function should transform the payload so that nested
           '1': { value: 'R' },
           '2': { value: '1' },
           '3': {
-            '1': { value: '' },
-            '2': { value: '' },
-            '3': { value: '' },
+            '1': { value: null },
+            '2': { value: null },
+            '3': { value: null },
             '4': { value: '0241' },
             '5': { value: 'TSH' },
             '6': { value: 'UNDILUTED' },
@@ -836,7 +840,7 @@ This function should transform the payload so that nested
           '4': { value: '4.6011' },
           '5': { value: 'mIU/mL' },
           '6': { value: '4.292500 TO 5.397300' },
-          '7': { value: '' },
+          '7': { value: null },
           '8': { value: 'F' },
           '9': {
             '1': { value: 'ECB' },
@@ -1137,7 +1141,7 @@ function astmE1394MessagesToJson(
     .map(astmMessage => {
       const { delimiters } = astmMessage
       return {
-        value: astmMessage.rawMessage,
+        value: astmMessage.rawMessage === '' ? null : astmMessage.rawMessage,
         H: {
           ...astmE1394RecordToJson(astmMessage.rawHeader, delimiters),
           ...astmMessage.patients.reduce(

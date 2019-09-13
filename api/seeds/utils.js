@@ -2168,9 +2168,15 @@ async function updateCategoryAssay(knex) {
         emphasize: true,
       }
     } else if (
-      ['Success', 'LessThan40', 'LessThan550', 'LessThan1000', 'Unknown', 'NotDetected', 'Negative'].indexOf(
-        externalId
-      ) >= 0
+      [
+        'Success',
+        'LessThan40',
+        'LessThan550',
+        'LessThan1000',
+        'Unknown',
+        'NotDetected',
+        'Negative',
+      ].indexOf(externalId) >= 0
     ) {
       json = {
         requiresTreatment: false,
@@ -2193,7 +2199,13 @@ async function updateAssayResultCategoryTreatmentEmphasize(knex) {
   await Promise.each(categories, async ({ id, externalId }) => {
     let json
     if (
-      ['Detected', 'Trace Detected', 'MoreThan40', 'MoreThan550', 'MoreThan1000'].indexOf(externalId) >= 0
+      [
+        'Detected',
+        'Trace Detected',
+        'MoreThan40',
+        'MoreThan550',
+        'MoreThan1000',
+      ].indexOf(externalId) >= 0
     ) {
       json = {
         requiresTreatment: true,
