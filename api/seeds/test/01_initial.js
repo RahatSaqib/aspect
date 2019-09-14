@@ -2192,7 +2192,6 @@ async function seed(knex) {
 
     { jobFunctionId: jobFunctionIdClinician, widgetId: widgetIds.sites },
     { jobFunctionId: jobFunctionIdClinician, widgetId: widgetIds.devices },
-    { jobFunctionId: jobFunctionIdClinician, widgetId: widgetIds.contacts },
   ])
 
   // Messages
