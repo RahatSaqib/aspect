@@ -221,7 +221,7 @@ p117
 aa(lp118
 S'0R|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^I|Target not detected|||||F||bryan^bryan||20190825165311|275021695\r\x038C\r\n'
 p119
-aS'1R|3|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|-1.00|cycle number||||F||bryan^bryan||20190825165311|275021695\r\x0300\r\n'
+aS'1R|3|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|-1.00|cycle number|||F||br|yan^bryan||20190825165311|275021695\r\x0300\r\n'
 p120
 aS'2L|1\r\x033B\r\n'
 p121

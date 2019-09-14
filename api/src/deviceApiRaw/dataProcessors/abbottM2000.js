@@ -112,7 +112,7 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
         formatString: 'yyyyLLddHHmmss',
         backupDate: utcNow,
       })
-    const mergeValueInResult = (baseValue, sourceValue) => {
+    const mergeDeep = (baseValue, sourceValue) => {
       if (_.isEmpty(baseValue) && !_.isEmpty(sourceValue)) {
         return sourceValue
       } else if (!_.isEmpty(baseValue) && _.isEmpty(sourceValue)) {
@@ -121,7 +121,7 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
       if (_.isArray(baseValue) && _.isArray(sourceValue)) {
         return [...(baseValue || []), ...(sourceValue || [])]
       }
-      if (_.isObject(baseValue) || _.isObject(sourceValue)) {
+      if (_.isPlainObject(baseValue) || _.isPlainObject(sourceValue)) {
         return
       }
       return sourceValue || baseValue
@@ -257,13 +257,14 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
                           _.get(jsonAstmOrder, '5.7.value')
                         ],
                         collectedBy: _.get(jsonAstmOrder, '11.value'),
-                        actionCode: {
-                          C: 'Cancel Test Order',
-                          A: 'Add Test to Order',
-                          N: 'New Test Order',
-                          Q: 'Quality Control Result',
-                          '': 'Patient Result',
-                        }[_.get(jsonAstmOrder, '12.value', '')],
+                        actionCode:
+                          {
+                            C: 'Cancel Test Order',
+                            A: 'Add Test to Order',
+                            N: 'New Test Order',
+                            Q: 'Quality Control Result',
+                          }[_.get(jsonAstmOrder, '12.value')] ||
+                          'Patient Result',
                         reportType: {
                           F: 'Final Result',
                           X: 'Test could not be performed',
@@ -276,19 +277,19 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
                       ..._.get(jsonAstmOrder, 'results', ['']).reduce(
                         (results, resultId) => {
                           const jsonAstmResult = jsonAstmOrder[resultId] || {
-                            '13': {
-                              value: null,
-                            },
-                            '14': {
-                              '2': {
-                                value: instrumentSerial,
+                            '3': {
+                              '9': {
+                                value: 'F',
                               },
                             },
+                            '13': {
+                              value: startedOnString,
+                            },
+                            '14': {
+                              value: instrumentSerial,
+                            },
                           }
-                          const moduleSerial = _.get(
-                            jsonAstmResult,
-                            '14.2.value'
-                          )
+                          const moduleSerial = _.get(jsonAstmResult, '14.value')
                           const endedOnString = _.get(
                             jsonAstmResult,
                             '13.value'
@@ -299,7 +300,8 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
                             assay: {
                               code: _.get(jsonAstmResult, '3.4.value'),
                             },
-                            externalId: `${sampleId}|${moduleSerial}|${carouselId}|${wellPosition}|${resultDateString}`,
+                            externalId: `${sampleId}|${moduleSerial}|${carouselId}|${wellPosition}|${resultDateString ||
+                              ''}`,
                             consumableLot: _.get(jsonAstmResult, '3.6.value'),
                             consumableSerial: _.get(
                               jsonAstmResult,
@@ -347,12 +349,12 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
                           }
                           const mergedResultData = _.mergeWith(
                             _.mergeWith(
-                              resultHeader,
-                              testOrder,
-                              mergeValueInResult
+                              _.cloneDeep(resultHeader),
+                              _.cloneDeep(testOrder),
+                              mergeDeep
                             ),
                             result,
-                            mergeValueInResult
+                            mergeDeep
                           )
                           results = [...results, mergedResultData]
                           return results
@@ -375,7 +377,7 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
       []
     )
     const assayIds = await allAssayToId()
-    const resultWorkflowStatus = await allResultWorkflowStatusToId()
+    const resultWorkflowStatuses = await allResultWorkflowStatusToId()
     const m2000AspectAssayIdMapping = {
       '1mLDBSvOP': assayIds.abbottM2000DBSHivVL,
       'HIV0.6ml': assayIds.abbottM2000PlasmaHivVL,
@@ -571,9 +573,9 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
       .sort((device1, device2) => device1.lastSeenOn >= device2.lastSeenOn)
       .pop()
     const deviceDetailsInPayload = _.mergeWith(
-      latestDevice,
+      _.cloneDeep(latestDevice),
       deviceCommentsAndEnquiries,
-      mergeValueInResult
+      mergeDeep
     )
 
     await transact(async knex => {
@@ -593,10 +595,10 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
         (await knex('Site')
           .where('id', device.siteId)
           .first()) || {}
-      const resultSourceDiagnosticDeviceId = resultSourceToId(
+      const resultSourceDiagnosticDeviceId = await resultSourceToId(
         'DiagnosticDevice'
       )
-      const resultTypePatientId = resultTypeToId('Patient')
+      const resultTypePatientId = await resultTypeToId('Patient')
       this.response.deviceId = device.id
       this.response.deviceLogIds = []
       if (deviceDetailsInPayload.lastSeenOn >= device.lastSeenOn) {
@@ -605,14 +607,14 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
           .where('id', device.id)
           .update(
             _.mergeWith(
-              device,
-              _.omit(deviceDetailsInPayload, [
+              _.cloneDeep(device),
+              _.omit(_.cloneDeep(deviceDetailsInPayload), [
                 'comments',
                 'enquiries',
                 'rawData',
               ]),
               { updatedOn: utcNow },
-              mergeValueInResult
+              mergeDeep
             )
           )
         const [configDeviceLogId] = await knex('DeviceLog').insert({
@@ -674,12 +676,14 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
         const finalResult = resultsWithSameId.find(
           result => result.resultData.resultType === 'Final Result'
         )
-        let { sampleId, collectedOn } =
+        const existingSample =
           (await knex('Sample as s')
             .join('SampleType as st', 's.sampleTypeId', 'st.id')
             .where('s.externalId', finalResult.sample.externalId)
             .andWhere('st.externalId', finalResult.sample.sampleTypeExternalId)
-            .first('s.id as sampleId', 's.collectedOn')) || {}
+            .first('s.*')) || {}
+        let { id: sampleId } = existingSample
+        const { collectedOn } = existingSample
         if (!sampleId) {
           ;[sampleId] = await knex('Sample').insert({
             externalId: finalResult.sample.externalId,
@@ -717,10 +721,17 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
         )
 
         const result = _.mergeWith(
-          {},
-          _.omit(cycleNumberResult || {}, ['device', 'sample', 'assay']),
-          _.omit(interpretationResult || {}, ['device', 'sample', 'assay']),
-          _.omit(finalResult, ['device', 'sample', 'assay']),
+          _.omit(_.cloneDeep(cycleNumberResult) || {}, [
+            'device',
+            'sample',
+            'assay',
+          ]),
+          _.omit(_.cloneDeep(interpretationResult) || {}, [
+            'device',
+            'sample',
+            'assay',
+          ]),
+          _.omit(_.cloneDeep(finalResult), ['device', 'sample', 'assay']),
           {
             assayId: m2000AspectAssayIdMapping[finalResult.assay.code],
             partnerId: deviceApiKey.partnerId,
@@ -761,22 +772,27 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
           }
         }
         result.notes = _.uniq(
-          result.resultData.comments.map(comment => comment.text)
+          (result.resultData.comments || []).map(comment => comment.text)
         ).join('\n')
         const existingResult = await knex('Result')
           .where('externalId', result.externalId)
           .andWhere('deviceId', device.id)
           .first()
-        const resultWorkflowStatusId = await resultWorkflowStatusToId(
-          result.resultCategory1 === resultCategoryErrorId
-            ? 'Error'
-            : 'Processed'
-        )
+        const resultWorkflowStatusId =
+          resultWorkflowStatuses[
+            result.resultCategory1 === resultCategoryErrorId
+              ? 'Error'
+              : 'Processed'
+          ]
         if (existingResult) {
           result.id = existingResult.id
-          existingResult.resultData = JSON.parse(existingResult.resultData)
-          existingResult.patientData = JSON.parse(existingResult.resultData)
-          existingResult.formData = JSON.parse(existingResult.resultData)
+          existingResult.resultData = JSON.parse(
+            existingResult.resultData || '{}'
+          )
+          existingResult.patientData = JSON.parse(
+            existingResult.patientData || '{}'
+          )
+          existingResult.formData = JSON.parse(existingResult.formData || '{}')
           if (existingResult.notes) {
             result.notes = _.uniq(
               `${existingResult.notes}\n${result.notes}`.split('\n')
@@ -787,11 +803,11 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
             .first()
           if (
             [
-              resultWorkflowStatus.OK,
-              resultWorkflowStatus.Error,
-              resultWorkflowStatus.Ordered,
-              resultWorkflowStatus.InProgress,
-              resultWorkflowStatus.Processed,
+              resultWorkflowStatuses.OK,
+              resultWorkflowStatuses.Error,
+              resultWorkflowStatuses.Ordered,
+              resultWorkflowStatuses.InProgress,
+              resultWorkflowStatuses.Processed,
             ].includes(resultWorkflowStatusLog.resultWorkflowStatusId)
           ) {
             const [resultWorkflowStatusLogId] = await knex(

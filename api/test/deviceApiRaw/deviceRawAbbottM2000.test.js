@@ -3,8 +3,6 @@ const fs = require('fs')
 const path = require('path')
 const Promise = require('bluebird')
 const proxyquire = require('proxyquire')
-const dateParse = require('date-fns/parse')
-const { getUtcTime } = require('../../src/shared/date')
 
 const { assert } = chai
 
@@ -14,43 +12,53 @@ describe('Device API Raw Abbott M2000 Data Processor', () => {
   let dbsHivVlPklPayload = ''
 
   before(() => {
-    knexSpy = table => ({
-      where: () => ({
-        first: async () => {
-          switch (table) {
-            case 'DeviceApiKey':
-              return Promise.resolve({
-                id: 1,
-                revoked: false,
-                partnerId: 1,
-                deviceId: 1,
-              })
-            case 'Device':
-              return Promise.resolve({
-                id: 1,
-                siteId: 1,
-                geographyId: 1,
-                configurationData: '{}',
-                lastSeenOn: new Date(1990, 1, 13, 7, 30),
-              })
-            case 'Site':
-              return Promise.resolve({
-                id: 1,
-                longitude: 1,
-                latitude: 1,
-              })
-            default:
-              return Promise.resolve({})
-          }
-        },
-        update: async () => {
-          return Promise.resolve()
-        },
-      }),
-      insert: async record => {
-        return Promise.resolve([1])
-      },
-    })
+    knexSpy = table => {
+      const where = () => {
+        const finalCall = {
+          first: async () => {
+            switch (table) {
+              case 'DeviceApiKey':
+                return Promise.resolve({
+                  id: 1,
+                  revoked: false,
+                  partnerId: 1,
+                  deviceId: 1,
+                })
+              case 'Device':
+                return Promise.resolve({
+                  id: 1,
+                  siteId: 1,
+                  geographyId: 1,
+                  configurationData: '{}',
+                  lastSeenOn: new Date(1990, 1, 13, 7, 30),
+                })
+              case 'Site':
+                return Promise.resolve({
+                  id: 1,
+                  longitude: 1,
+                  latitude: 1,
+                })
+              case 'Result':
+                return Promise.resolve()
+              default:
+                return Promise.resolve({})
+            }
+          },
+          update: async () => {
+            return Promise.resolve()
+          },
+        }
+        finalCall.andWhere = () => finalCall
+        return finalCall
+      }
+      const knex = {
+        where,
+        insert: async () => Promise.resolve([1]),
+      }
+      const join = () => knex
+      knex.join = join
+      return knex
+    }
     const resolveWith = returnValue => async () => Promise.resolve(returnValue)
     DefaultAbbottM2000 = proxyquire(
       '../../src/deviceApiRaw/dataProcessors/abbottM2000',

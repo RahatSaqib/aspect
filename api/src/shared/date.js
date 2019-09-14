@@ -8,9 +8,9 @@ function getDateOrDefault(object, propertyPath, defaultValue) {
 
 function parseDateOrDefault(
   date,
-  options = { formatString: null, backupDate: null }
+  options = { formatString: null, backupDate: null, defaultDate: null }
 ) {
-  const defaultValue = _.isDate(options) ? options : options.backupDate
+  const defaultValue = _.isDate(options) ? options : options.defaultDate
   if (date == null || date === '') {
     return defaultValue
   }
