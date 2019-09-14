@@ -6,13 +6,18 @@ function getDateOrDefault(object, propertyPath, defaultValue) {
   return parseDateOrDefault(date, defaultValue)
 }
 
-function parseDateOrDefault(date, defaultValue = null) {
+function parseDateOrDefault(
+  date,
+  options = { formatString: null, backupDate: null }
+) {
+  const defaultValue = _.isDate(options) ? options : options.backupDate
   if (date == null || date === '') {
     return defaultValue
   }
-  const parsed =
-    date instanceof Date ? date : dateFns.toDate(dateFns.parseISO(date))
-  return dateFns.isValid(parsed) ? parsed : defaultValue
+  const parsedDate = date instanceof Date ? date : (options.formatString
+    ? dateFns.parse(date, options.formatString, options.backupDate)
+    : dateFns.toDate(date))
+  return dateFns.isValid(parsedDate) ? parsedDate : defaultValue
 }
 
 function formatDateOrDefault(date, dateFormat, defaultValue = null) {

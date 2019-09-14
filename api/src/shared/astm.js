@@ -5,6 +5,7 @@ const {
   stringContains,
   stringReplace,
   escapeReservedRegexCharacters,
+  nullIfEmpty,
 } = require('./string')
 
 function getDelimiters(
@@ -345,7 +346,7 @@ function baseOneIndex(array) {
 
 function arrayToString(array, joinWith = ' ') {
   const joinedValues = array.filter(value => !_.isEmpty(value)).join(joinWith)
-  return joinedValues === '' ? null : joinedValues
+  return nullIfEmpty(joinedValues)
 }
 
 function astmE1394RecordToJson(
@@ -369,7 +370,7 @@ function astmE1394RecordToJson(
   )
   return _.omit(
     {
-      value: astmRecordString === '' ? null : astmRecordString,
+      value: nullIfEmpty(astmRecordString),
       ...baseOneIndex(
         splitWithEscape(
           recordBeforeChecksum,
@@ -390,16 +391,16 @@ function astmE1394RecordToJson(
               const value = arrayToString(componentValues)
               return _.omit(
                 {
-                  value: value === '' ? null : value,
+                  value: nullIfEmpty(value),
                   ...baseOneIndex(componentValues).map(value => ({
-                    value: value === '' ? null : value,
+                    value: nullIfEmpty(value),
                   })),
                 },
                 '0'
               )
             }
             return {
-              value: componentValues[0] === '' ? null : componentValues[0],
+              value: nullIfEmpty(componentValues[0]),
             }
           })
           if (repeatedValues.length > 1) {
@@ -416,13 +417,13 @@ function astmE1394RecordToJson(
                 items: repeatedValues.map((repeatedValue, index) =>
                   (index + 1).toString()
                 ),
-                value: value === '' ? null : value,
+                value: nullIfEmpty(value),
                 ...baseOneIndex(repeatedValues),
               },
               '0'
             )
           }
-          return repeatedValues[0] === '' ? null : repeatedValues[0]
+          return nullIfEmpty(repeatedValues[0])
         })
       ),
     },
@@ -1141,7 +1142,7 @@ function astmE1394MessagesToJson(
     .map(astmMessage => {
       const { delimiters } = astmMessage
       return {
-        value: astmMessage.rawMessage === '' ? null : astmMessage.rawMessage,
+        value: nullIfEmpty(astmMessage.rawMessage),
         H: {
           ...astmE1394RecordToJson(astmMessage.rawHeader, delimiters),
           ...astmMessage.patients.reduce(

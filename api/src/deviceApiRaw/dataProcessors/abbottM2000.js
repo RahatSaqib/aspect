@@ -1,10 +1,9 @@
 const Promise = require('bluebird')
 const _ = require('lodash')
 const Boom = require('boom')
-const dateParse = require('date-fns/parse')
 const { transact } = require('../../db')
 const { getRemoteAddress } = require('../../shared/request')
-const { getUtcTime } = require('../../shared/date')
+const { getUtcTime, parseDateOrDefault } = require('../../shared/date')
 const {
   getAllStringsEnclosedBetweenCharacters,
 } = require('../../shared/string')
@@ -106,7 +105,13 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
               rawData: _.get(jsonAstmRecord, `${enquiryId}.value`),
             })),
           }
-
+    const parseDate = value =>
+      parseDateOrDefault(value, { formatString: 'yyyyLLdd' })
+    const parseTime = value =>
+      parseDateOrDefault(value, {
+        formatString: 'yyyyLLddHHmmss',
+        backupDate: utcNow,
+      })
     const mergeValueInResult = (baseValue, sourceValue) => {
       if (_.isEmpty(baseValue) && !_.isEmpty(sourceValue)) {
         return sourceValue
@@ -114,20 +119,20 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
         return baseValue
       }
       if (_.isArray(baseValue) && _.isArray(sourceValue)) {
-        return [...baseValue, ...sourceValue]
+        return [...(baseValue || []), ...(sourceValue || [])]
+      }
+      if (_.isObject(baseValue) || _.isObject(sourceValue)) {
+        return
       }
       return sourceValue || baseValue
     }
     const parsedResults = jsonAstmMessages.reduce(
       (results, jsonAstmMessage) => {
+        const instrumentSerial = _.get(jsonAstmMessage, 'H.4.3.value')
         const resultHeader = {
           device: {
             serial: _.get(jsonAstmMessage, 'H.4.3.value'),
-            lastSeenOn: dateParse(
-              _.get(jsonAstmMessage, 'H.13.value'),
-              'yyyyLLddHHmmss',
-              utcNow
-            ),
+            lastSeenOn: parseTime(_.get(jsonAstmMessage, 'H.13.value')),
             lastPingOn: utcNow,
             lastPingFromIp: remoteAddress,
             configurationData: {
@@ -139,7 +144,7 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
             ...commentsFromJsonAstmRecord(jsonAstmMessage.H),
             ...enquiriesFromJsonAstmRecord(jsonAstmMessage.H),
           },
-          instrumentSerial: _.get(jsonAstmMessage, 'H.4.3.value'),
+          instrumentSerial,
           moduleSerial: _.get(jsonAstmMessage, 'H.4.3.value'),
           senderVersion: _.get(jsonAstmMessage, 'H.12.value'),
           resultData: {
@@ -154,7 +159,7 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
         }
         results = [
           ...results,
-          ..._.get(jsonAstmMessage, 'H.patients').reduce(
+          ..._.get(jsonAstmMessage, 'H.patients', []).reduce(
             (results, patientId) => {
               const jsonAstmPatient = _.get(jsonAstmMessage, `H.${patientId}`)
               const patientData = {
@@ -162,11 +167,7 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
                 laboratoryPatientId: _.get(jsonAstmPatient, '4.value'),
                 additionaPatientId: _.get(jsonAstmPatient, '5.value'),
                 patientName: _.get(jsonAstmPatient, '6.value'),
-                dateOfBirth: dateParse(
-                  _.get(jsonAstmPatient, '8.value'),
-                  'yyyyLLdd',
-                  utcNow
-                ),
+                dateOfBirth: parseDate(_.get(jsonAstmPatient, '8.value')),
                 gender: { M: 'Male', F: 'Female', U: 'Unknown' }[
                   _.get(jsonAstmPatient, '9.value')
                 ],
@@ -203,152 +204,166 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
               }
               results = [
                 ...results,
-                ...jsonAstmPatient.orders.reduce((results, orderId) => {
-                  const jsonAstmOrder = jsonAstmPatient[orderId]
-                  const sampleId = _.get(
-                    jsonAstmOrder,
-                    '3.1.value',
-                    _.get(
+                ..._.get(jsonAstmPatient, 'orders', []).reduce(
+                  (results, orderId) => {
+                    const jsonAstmOrder = jsonAstmPatient[orderId]
+                    const sampleId = _.get(
                       jsonAstmOrder,
-                      '3.value',
+                      '3.1.value',
                       _.get(
                         jsonAstmOrder,
-                        '4.1.value',
-                        _.get(jsonAstmOrder, '4.value')
+                        '3.value',
+                        _.get(
+                          jsonAstmOrder,
+                          '4.1.value',
+                          _.get(jsonAstmOrder, '4.value')
+                        )
                       )
                     )
-                  )
-                  const startedOnString = _.get(jsonAstmOrder, '7.value')
-                  const carouselId = _.get(
-                    jsonAstmOrder,
-                    '3.2.value',
-                    _.get(jsonAstmOrder, '4.2.value')
-                  )
-                  const wellPosition = _.get(
-                    jsonAstmOrder,
-                    '3.3.value',
-                    _.get(jsonAstmOrder, '4.3.value')
-                  )
-                  const testOrder = {
-                    sample: {
-                      externalId: sampleId,
-                      collectedOn: dateParse(
-                        _.get(jsonAstmOrder, '8.value'),
-                        'yyyyLLddHHmmss',
-                        utcNow
-                      ),
-                      sampleTypeExternalId: {
-                        HIVQLDRDBS: 'DBS',
-                        '1mLDBSvOP': 'DBS',
-                        'HIV0.6ml': 'Plasma',
-                      }[_.get(jsonAstmOrder, '5.4.value')],
-                    },
-                    assay: {
-                      code: _.get(jsonAstmOrder, '5.4.value'),
-                    },
-                    sampleRunNumber: carouselId,
-                    moduleName: wellPosition,
-                    startedOn: dateParse(
-                      startedOnString,
-                      'yyyyLLddHHmmss',
-                      utcNow
-                    ),
-                    resultData: {
-                      assayName: _.get(jsonAstmOrder, '5.5.value'),
-                      assayProtocol: _.get(jsonAstmOrder, '5.6.value'),
-                      priority: { S: 'STAT', R: 'Routine' }[
-                        _.get(jsonAstmOrder, '6.value')
-                      ],
-                      testQualifier: { P: 'Primary', C: 'Correlation' }[
-                        _.get(jsonAstmOrder, '5.7.value')
-                      ],
-                      collectedBy: _.get(jsonAstmOrder, '11.value'),
-                      actionCode: {
-                        C: 'Cancel Test Order',
-                        A: 'Add Test to Order',
-                        N: 'New Test Order',
-                        Q: 'Quality Control Result',
-                        '': 'Patient Result',
-                      }[_.get(jsonAstmOrder, '12.value', '')],
-                      reportType: {
-                        F: 'Final Result',
-                        X: 'Test could not be performed',
-                      }[_.get(jsonAstmOrder, '26.value')],
-                      ...commentsFromJsonAstmRecord(jsonAstmOrder),
-                    },
-                  }
-                  results = [
-                    ...results,
-                    ...jsonAstmOrder.results.reduce((results, resultId) => {
-                      const jsonAstmResult = jsonAstmOrder[resultId]
-                      const moduleSerial = _.get(jsonAstmResult, '14.2.value')
-                      const endedOnString = _.get(jsonAstmResult, '13.value')
-                      const resultDateString = startedOnString || endedOnString
-                      const result = {
-                        assay: {
-                          code: _.get(jsonAstmResult, '3.4.value'),
-                        },
-                        externalId: `${sampleId}|${moduleSerial}|${carouselId}|${wellPosition}|${resultDateString}`,
-                        consumableLot: _.get(jsonAstmResult, '3.6.value'),
-                        consumableSerial: _.get(jsonAstmResult, '3.7.value'),
-                        senderOperator: _.get(
-                          jsonAstmResult,
-                          '11.2.value',
-                          _.get(jsonAstmResult, '11.1.value')
-                        ),
-                        endedOn: dateParse(
-                          endedOnString,
-                          'yyyyLLddHHmmss',
-                          utcNow
-                        ),
-                        moduleSerial,
-                        resultData: {
-                          assayName: _.get(jsonAstmResult, '3.5.value'),
-                          priority: { S: 'STAT', R: 'Routine' }[
-                            _.get(jsonAstmOrder, '6.value')
-                          ],
-                          resultType: {
-                            F: 'Final Result',
-                            P: 'Preliminary Result',
-                            I: 'Interpretation of Final Result',
-                          }[_.get(jsonAstmResult, '3.9.value')],
-                          referenceRanges: _.get(jsonAstmResult, '6.value'),
-                          abnormalFlags: arrayFromPossibleRepeatedValue(
+                    const startedOnString = _.get(jsonAstmOrder, '7.value')
+                    const carouselId = _.get(
+                      jsonAstmOrder,
+                      '3.2.value',
+                      _.get(jsonAstmOrder, '4.2.value')
+                    )
+                    const wellPosition = _.get(
+                      jsonAstmOrder,
+                      '3.3.value',
+                      _.get(jsonAstmOrder, '4.3.value')
+                    )
+                    const testOrder = {
+                      sample: {
+                        externalId: sampleId,
+                        collectedOn: parseTime(_.get(jsonAstmOrder, '8.value')),
+                        sampleTypeExternalId: {
+                          HIVQLDRDBS: 'DBS',
+                          '1mLDBSvOP': 'DBS',
+                          'HIV0.6ml': 'Plasma',
+                        }[_.get(jsonAstmOrder, '5.4.value')],
+                      },
+                      assay: {
+                        code: _.get(jsonAstmOrder, '5.4.value'),
+                      },
+                      sampleRunNumber: carouselId,
+                      moduleName: wellPosition,
+                      startedOn: parseTime(startedOnString),
+                      resultData: {
+                        assayName: _.get(jsonAstmOrder, '5.5.value'),
+                        assayProtocol: _.get(jsonAstmOrder, '5.6.value'),
+                        priority: { S: 'STAT', R: 'Routine' }[
+                          _.get(jsonAstmOrder, '6.value')
+                        ],
+                        testQualifier: { P: 'Primary', C: 'Correlation' }[
+                          _.get(jsonAstmOrder, '5.7.value')
+                        ],
+                        collectedBy: _.get(jsonAstmOrder, '11.value'),
+                        actionCode: {
+                          C: 'Cancel Test Order',
+                          A: 'Add Test to Order',
+                          N: 'New Test Order',
+                          Q: 'Quality Control Result',
+                          '': 'Patient Result',
+                        }[_.get(jsonAstmOrder, '12.value', '')],
+                        reportType: {
+                          F: 'Final Result',
+                          X: 'Test could not be performed',
+                        }[_.get(jsonAstmOrder, '26.value')],
+                        ...commentsFromJsonAstmRecord(jsonAstmOrder),
+                      },
+                    }
+                    results = [
+                      ...results,
+                      ..._.get(jsonAstmOrder, 'results', ['']).reduce(
+                        (results, resultId) => {
+                          const jsonAstmResult = jsonAstmOrder[resultId] || {
+                            '13': {
+                              value: null,
+                            },
+                            '14': {
+                              '2': {
+                                value: instrumentSerial,
+                              },
+                            },
+                          }
+                          const moduleSerial = _.get(
                             jsonAstmResult,
-                            '7'
-                          ).map(abnormalFlag => abnormalFlag.value),
-                          resultText: _.get(jsonAstmResult, '4.value'),
-                          resultUnit: _.get(jsonAstmResult, '5.value'),
-                          resultStatus: {
-                            F: 'Final Result',
-                            R: 'Previously Transmitted Result',
-                          }[_.get(jsonAstmResult, '9.value')],
-                          orderOperatorId: _.get(jsonAstmResult, '11.1.value'),
-                          controlConsumableLotNumber: _.get(
+                            '14.2.value'
+                          )
+                          const endedOnString = _.get(
                             jsonAstmResult,
-                            '3.8.value'
-                          ),
-                          ...commentsFromJsonAstmRecord(jsonAstmResult),
-                        },
-                        patientData,
-                      }
-                      results = [
-                        ...results,
-                        _.mergeWith(
-                          _.mergeWith(
-                            resultHeader,
-                            testOrder,
+                            '13.value'
+                          )
+                          const resultDateString =
+                            startedOnString || endedOnString
+                          const result = {
+                            assay: {
+                              code: _.get(jsonAstmResult, '3.4.value'),
+                            },
+                            externalId: `${sampleId}|${moduleSerial}|${carouselId}|${wellPosition}|${resultDateString}`,
+                            consumableLot: _.get(jsonAstmResult, '3.6.value'),
+                            consumableSerial: _.get(
+                              jsonAstmResult,
+                              '3.7.value'
+                            ),
+                            senderOperator: _.get(
+                              jsonAstmResult,
+                              '11.2.value',
+                              _.get(jsonAstmResult, '11.1.value')
+                            ),
+                            endedOn: parseTime(endedOnString),
+                            moduleSerial,
+                            resultData: {
+                              assayName: _.get(jsonAstmResult, '3.5.value'),
+                              priority: { S: 'STAT', R: 'Routine' }[
+                                _.get(jsonAstmOrder, '6.value')
+                              ],
+                              resultType: {
+                                F: 'Final Result',
+                                P: 'Preliminary Result',
+                                I: 'Interpretation of Final Result',
+                              }[_.get(jsonAstmResult, '3.9.value')],
+                              referenceRanges: _.get(jsonAstmResult, '6.value'),
+                              abnormalFlags: arrayFromPossibleRepeatedValue(
+                                jsonAstmResult,
+                                '7'
+                              ).map(abnormalFlag => abnormalFlag.value),
+                              resultText: _.get(jsonAstmResult, '4.value'),
+                              resultUnit: _.get(jsonAstmResult, '5.value'),
+                              resultStatus: {
+                                F: 'Final Result',
+                                R: 'Previously Transmitted Result',
+                              }[_.get(jsonAstmResult, '9.value')],
+                              orderOperatorId: _.get(
+                                jsonAstmResult,
+                                '11.1.value'
+                              ),
+                              controlConsumableLotNumber: _.get(
+                                jsonAstmResult,
+                                '3.8.value'
+                              ),
+                              ...commentsFromJsonAstmRecord(jsonAstmResult),
+                            },
+                            patientData,
+                          }
+                          const mergedResultData = _.mergeWith(
+                            _.mergeWith(
+                              resultHeader,
+                              testOrder,
+                              mergeValueInResult
+                            ),
+                            result,
                             mergeValueInResult
-                          ),
-                          result,
-                          mergeValueInResult
-                        ),
-                      ]
-                      return results
-                    }, []),
-                  ]
-                  return results
-                }, []),
+                          )
+                          results = [...results, mergedResultData]
+                          return results
+                        },
+                        []
+                      ),
+                    ]
+                    return results
+                  },
+                  []
+                ),
               ]
               return results
             },
@@ -466,7 +481,7 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
         }
         Object.assign(qualityControlSummary, cycleNumberSummary)
         qualityControlSummary.abnormalFlags = [
-          ...qualityControlSummary.abnormalFlags,
+          ...(qualityControlSummary.abnormalFlags || []),
           cycleNumberResult.resultData.abnormalFlags,
         ]
       }
@@ -562,9 +577,10 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
     )
 
     await transact(async knex => {
-      const deviceApiKey = await knex('DeviceApiKey')
-        .where('token', auth.credentials.token)
-        .first()
+      const deviceApiKey =
+        (await knex('DeviceApiKey')
+          .where('token', auth.credentials.token)
+          .first()) || {}
       if (!deviceApiKey.deviceId) {
         throw Boom.badRequest(
           'Invalid device API key: Cannot determine which device this came from'
@@ -586,7 +602,7 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
       if (deviceDetailsInPayload.lastSeenOn >= device.lastSeenOn) {
         device.configurationData = JSON.parse(device.configurationData)
         await knex('Device')
-          .where('id', deviceId)
+          .where('id', device.id)
           .update(
             _.mergeWith(
               device,

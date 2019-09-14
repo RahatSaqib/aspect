@@ -99,6 +99,10 @@ function stringReplace(input, replaceString, replaceWith) {
   )
 }
 
+function nullIfEmpty(value) {
+  return value === '' ? null : value
+}
+
 module.exports = {
   convertStringToFloat,
   getAllStringsEnclosedBetweenCharacters,
@@ -106,4 +110,5 @@ module.exports = {
   stringContains,
   stringReplace,
   escapeReservedRegexCharacters,
+  nullIfEmpty,
 }
