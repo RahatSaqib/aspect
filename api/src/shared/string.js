@@ -103,6 +103,10 @@ function nullIfEmpty(value) {
   return value === '' ? null : value
 }
 
+function isNumeric(value) {
+  return !isNaN(value) // eslint-disable-line no-restricted-globals
+}
+
 module.exports = {
   convertStringToFloat,
   getAllStringsEnclosedBetweenCharacters,
@@ -111,4 +115,5 @@ module.exports = {
   stringReplace,
   escapeReservedRegexCharacters,
   nullIfEmpty,
+  isNumeric,
 }

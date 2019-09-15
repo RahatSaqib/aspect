@@ -3,9 +3,14 @@ const _ = require('lodash')
 const Boom = require('boom')
 const { transact } = require('../../db')
 const { getRemoteAddress } = require('../../shared/request')
-const { getUtcTime, parseDateOrDefault } = require('../../shared/date')
+const {
+  getUtcTime,
+  parseDateOrDefault,
+  dateEqual,
+} = require('../../shared/date')
 const {
   getAllStringsEnclosedBetweenCharacters,
+  isNumeric,
 } = require('../../shared/string')
 const { astmE1394MessagesToJson } = require('../../shared/astm')
 const { deviceSeen } = require('../../device/actions')
@@ -50,7 +55,6 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
       throw Boom.badRequest('No payload to process')
     }
     const remoteAddress = getRemoteAddress(request)
-    // TODO: Error code mapping
     const sanitisedPayload = payload
       .replace(/\\\\/g, '\\')
       .split('\n')
@@ -69,42 +73,48 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
       }, [])
       .join('\n')
     const jsonAstmMessages = astmE1394MessagesToJson(sanitisedPayload)
-    const arrayFromPossibleRepeatedValue = (jsonAstmObject, path) =>
-      _.get(jsonAstmObject, `${path}.items`)
-        ? _.get(jsonAstmObject, `${path}.items`).map(i =>
-            _.get(jsonAstmObject, `${path}.${i}`)
-          )
-        : _.isEmpty(_.get(jsonAstmObject, `${path}.value`))
-        ? []
-        : [_.get(jsonAstmObject, `${path}`)]
-    const commentsFromJsonAstmRecord = jsonAstmRecord =>
-      _.isEmpty(jsonAstmRecord.comments)
-        ? {}
-        : {
-            comments: jsonAstmRecord.comments.map(commentId => ({
-              source: { I: 'Instrument' }[
-                _.get(jsonAstmRecord, `${commentId}.3.value`)
-              ],
-              text: _.get(jsonAstmRecord, `${commentId}.4.value`),
-              type: { G: 'Result Comment', I: 'Exception String' }[
-                _.get(jsonAstmRecord, `${commentId}.5.value`)
-              ],
-              rawData: _.get(jsonAstmRecord, `${commentId}.value`),
-            })),
-          }
-    const enquiriesFromJsonAstmRecord = jsonAstmRecord =>
-      _.isEmpty(jsonAstmRecord.enquiries)
-        ? {}
-        : {
-            enquiries: jsonAstmRecord.enquiries.map(enquiryId => ({
-              specimenId: _.get(jsonAstmRecord, `${enquiryId}.3.value`),
-              assayCode: _.get(jsonAstmRecord, `${enquiryId}.5.value`),
-              statusCode: { O: 'Orders' }[
-                _.get(jsonAstmRecord, `${enquiryId}.13.value`)
-              ],
-              rawData: _.get(jsonAstmRecord, `${enquiryId}.value`),
-            })),
-          }
+    const arrayFromPossibleRepeatedValue = (jsonAstmObject, path) => {
+      if (_.get(jsonAstmObject, `${path}.items`)) {
+        return _.get(jsonAstmObject, `${path}.items`).map(i =>
+          _.get(jsonAstmObject, `${path}.${i}`)
+        )
+      } else if (!_.isEmpty(_.get(jsonAstmObject, `${path}.value`))) {
+        return [_.get(jsonAstmObject, `${path}`)]
+      }
+      return []
+    }
+    const commentsFromJsonAstmRecord = jsonAstmRecord => {
+      if (!_.isEmpty(jsonAstmRecord.comments)) {
+        return {
+          comments: jsonAstmRecord.comments.map(commentId => ({
+            source: { I: 'Instrument' }[
+              _.get(jsonAstmRecord, `${commentId}.3.value`)
+            ],
+            text: _.get(jsonAstmRecord, `${commentId}.4.value`),
+            type: { G: 'Result Comment', I: 'Exception String' }[
+              _.get(jsonAstmRecord, `${commentId}.5.value`)
+            ],
+            rawData: _.get(jsonAstmRecord, `${commentId}.value`),
+          })),
+        }
+      }
+      return {}
+    }
+    const enquiriesFromJsonAstmRecord = jsonAstmRecord => {
+      if (!_.isEmpty(jsonAstmRecord.enquiries)) {
+        return {
+          enquiries: jsonAstmRecord.enquiries.map(enquiryId => ({
+            specimenId: _.get(jsonAstmRecord, `${enquiryId}.3.value`),
+            assayCode: _.get(jsonAstmRecord, `${enquiryId}.5.value`),
+            statusCode: { O: 'Orders' }[
+              _.get(jsonAstmRecord, `${enquiryId}.13.value`)
+            ],
+            rawData: _.get(jsonAstmRecord, `${enquiryId}.value`),
+          })),
+        }
+      }
+      return {}
+    }
     const parseDate = value =>
       parseDateOrDefault(value, { formatString: 'yyyyLLdd' })
     const parseTime = value =>
@@ -188,7 +198,7 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
               }
               const patientDiagnoses = arrayFromPossibleRepeatedValue(
                 jsonAstmPatient,
-                  '19'
+                '19'
               ).map(diagnosis => ({
                 code: _.get(diagnosis, '1.value'),
                 description: _.get(diagnosis, '2.value'),
@@ -465,7 +475,8 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
           assayName: finalResult.resultData.assayName,
           consumableLot: finalResult.consumableLot,
           consumableSerial: finalResult.consumableSerial,
-          controlConsumableLotNumber: finalResult.resultData.assayName,
+          controlConsumableLotNumber:
+            finalResult.resultData.controlConsumableLotNumber,
           endedOn: finalResult.endedOn,
           moduleSerial: finalResult.moduleSerial,
           orderOperatorId: finalResult.resultData.orderOperatorId,
@@ -537,7 +548,7 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
                 finalResult =>
                   finalResult.resultData.reportType === 'Final Result' &&
                   (finalResult.resultData.resultText === 'Passed' ||
-                    !isNaN(finalResult.resultData.resultText)),
+                    isNumeric(finalResult.resultData.resultText)),
                 cycleNumberResult =>
                   cycleNumberResult.resultData.reportType === 'Final Result'
               )
@@ -551,7 +562,7 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
                 finalResult =>
                   finalResult.resultData.reportType === 'Final Result' &&
                   (finalResult.resultData.resultText === 'Passed' ||
-                    !isNaN(finalResult.resultData.resultText)),
+                    isNumeric(finalResult.resultData.resultText)),
                 cycleNumberResult =>
                   cycleNumberResult.resultData.reportType === 'Final Result'
               )
@@ -565,13 +576,6 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
       qualityControlSummaries[sampleRunNumber] = qualityControlSummary
       return qualityControlSummaries
     }, {})
-    const deviceCommentsAndEnquiries = _.uniqBy(
-      parsedResults.map(parsedResult => ({
-        comments: _.get(parsedResult, 'device.comments'),
-        enquiries: _.get(parsedResult, 'device.enquiries'),
-      })),
-      JSON.stringify
-    )
     const latestDevice = parsedResults
       .map(parsedResult => ({
         ...parsedResult.device,
@@ -581,7 +585,26 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
       .pop()
     const deviceDetailsInPayload = _.mergeWith(
       _.cloneDeep(latestDevice),
-      deviceCommentsAndEnquiries,
+      {
+        configurationData: {
+          comments: _.uniq(
+            parsedResults
+              .filter(
+                parsedResult =>
+                  !_.isEmpty(_.get(parsedResult, 'device.comments'))
+              )
+              .map(parsedResult => _.get(parsedResult, 'device.comments'))
+          ),
+          enquiries: _.uniq(
+            parsedResults
+              .filter(
+                parsedResult =>
+                  !_.isEmpty(_.get(parsedResult, 'device.enquiries'))
+              )
+              .map(parsedResult => _.get(parsedResult, 'device.enquiries'))
+          ),
+        },
+      },
       mergeDeep
     )
 
@@ -615,7 +638,7 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
           .update(
             _.mergeWith(
               _.cloneDeep(device),
-              _.omit(_.cloneDeep(deviceDetailsInPayload), [
+              _.cloneDeep(_.omit(deviceDetailsInPayload), [
                 'comments',
                 'enquiries',
                 'rawData',
@@ -698,7 +721,7 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
             sampleTypeId:
               sampleTypeIds[finalResult.sample.sampleTypeExternalId],
           })
-        } else if (collectedOn != finalResult.sample.collectedOn) {
+        } else if (!dateEqual(collectedOn, finalResult.sample.collectedOn)) {
           await knex('Sample')
             .where('id', sampleId)
             .update({ collectedOn: finalResult.sample.collectedOn })
@@ -715,8 +738,8 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
           ) &&
             (_.isEmpty(qualityControlSummary.lowPositiveControl) ||
               _.isEmpty(qualityControlSummary.highPositiveControl) ||
-              isNaN(qualityControlSummary.lowPositiveControl.result) ||
-              isNaN(qualityControlSummary.highPositiveControl.result) ||
+              !isNumeric(qualityControlSummary.lowPositiveControl.result) ||
+              !isNumeric(qualityControlSummary.highPositiveControl.result) ||
               parseFloat(qualityControlSummary.highPositiveControl.result) >
                 parseFloat(qualityControlSummary.lowPositiveControl.result)))
         const cycleNumberResult = resultsWithSameId.find(
@@ -728,17 +751,13 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
         )
 
         const result = _.mergeWith(
-          _.omit(_.cloneDeep(cycleNumberResult) || {}, [
-            'device',
-            'sample',
-            'assay',
-          ]),
-          _.omit(_.cloneDeep(interpretationResult) || {}, [
-            'device',
-            'sample',
-            'assay',
-          ]),
-          _.omit(_.cloneDeep(finalResult), ['device', 'sample', 'assay']),
+          _.cloneDeep(
+            _.omit(cycleNumberResult || {}, ['device', 'sample', 'assay'])
+          ),
+          _.cloneDeep(
+            _.omit(interpretationResult || {}, ['device', 'sample', 'assay'])
+          ),
+          _.cloneDeep(_.omit(finalResult, ['device', 'sample', 'assay'])),
           {
             assayId: m2000AspectAssayIdMapping[finalResult.assay.code],
             partnerId: deviceApiKey.partnerId,

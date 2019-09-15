@@ -51,10 +51,18 @@ function getUtcTime(localTime) {
   return new Date(time.getTime() + time.getTimezoneOffset() * 60000)
 }
 
+function dateEqual(date1, date2) {
+  if ((!date1 && date2) || (date1 && !date2)) {
+    return false
+  }
+  return dateFns.isEqual(date1, date2)
+}
+
 module.exports = {
   getDateOrDefault,
   parseDateOrDefault,
   formatDateOrDefault,
   returnIso8601StringWithoutTimeZoneOffset,
   getUtcTime,
+  dateEqual,
 }

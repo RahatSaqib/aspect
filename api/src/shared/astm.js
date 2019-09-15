@@ -406,9 +406,7 @@ function astmE1394RecordToJson(
           if (repeatedValues.length > 1) {
             const value = arrayToString(
               repeatedValues.map(repeatedValue =>
-                _.isUndefined(repeatedValue.value)
-                  ? repeatedValue
-                  : repeatedValue.value
+                _.get(repeatedValue, 'value', repeatedValue)
               ),
               '\n'
             )
