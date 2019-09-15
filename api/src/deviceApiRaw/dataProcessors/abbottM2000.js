@@ -15,7 +15,7 @@ const {
   allSampleTypeToId,
   resultTypeToId,
   resultSourceToId,
-  resultCategoryToId,
+  allResultCategoryToId,
   allResultWorkflowStatusToId,
 } = require('../../shared/dictionary')
 
@@ -177,22 +177,6 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
                 attendingPhysician: _.get(jsonAstmPatient, '14.value'),
                 patientHeight: _.get(jsonAstmPatient, '17.value'),
                 patientWeight: _.get(jsonAstmPatient, '18.value'),
-                patientDiagnoses: arrayFromPossibleRepeatedValue(
-                  jsonAstmPatient,
-                  '19'
-                ).map(diagnosis => ({
-                  code: _.get(diagnosis, '1.value'),
-                  description: _.get(diagnosis, '2.value'),
-                })),
-                patientMedications: arrayFromPossibleRepeatedValue(
-                  jsonAstmPatient,
-                  '20'
-                ).map(medication => ({
-                  name: _.get(medication, '1.value'),
-                  level: _.get(medication, '2.value'),
-                  startDate: _.get(medication, '3.value'),
-                  endDate: _.get(medication, '4.value'),
-                })),
                 patientDiet: _.get(jsonAstmPatient, '21.value'),
                 admissionOrDischargeDates: _.get(jsonAstmPatient, '24.value'),
                 admissionStatus: _.get(jsonAstmPatient, '25.value'),
@@ -201,6 +185,28 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
                 hospitalInstitution: _.get(jsonAstmPatient, '34.value'),
                 dosageCategory: _.get(jsonAstmPatient, '35.value'),
                 ...commentsFromJsonAstmRecord(jsonAstmPatient),
+              }
+              const patientDiagnoses = arrayFromPossibleRepeatedValue(
+                jsonAstmPatient,
+                  '19'
+              ).map(diagnosis => ({
+                code: _.get(diagnosis, '1.value'),
+                description: _.get(diagnosis, '2.value'),
+              }))
+              if (!_.isEmpty(patientDiagnoses)) {
+                patientData.diagnoses = patientDiagnoses
+              }
+              const patientMedications = arrayFromPossibleRepeatedValue(
+                jsonAstmPatient,
+                '20'
+              ).map(medication => ({
+                name: _.get(medication, '1.value'),
+                level: _.get(medication, '2.value'),
+                startDate: _.get(medication, '3.value'),
+                endDate: _.get(medication, '4.value'),
+              }))
+              if (!_.isEmpty(patientMedications)) {
+                patientData.medications = patientMedications
               }
               results = [
                 ...results,
@@ -383,37 +389,38 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
       'HIV0.6ml': assayIds.abbottM2000PlasmaHivVL,
       HIVQLDRDBS: assayIds.abbottM2000HIVEID,
     }
+    const resultCategories = await allResultCategoryToId()
     const resultCategoryMapping = {
       '1mLDBSvOP': {
         I: {
-          Detected: resultCategoryToId('Detected'),
-          'Target not detected': resultCategoryToId('NotDetected'),
+          Detected: resultCategories.Detected,
+          'Target not detected': resultCategories.NotDetected,
         },
         F: {
-          'Not detected': resultCategoryToId('NotDetected'),
-          '< 550': resultCategoryToId('LessThan550'),
-          Numeric: resultCategoryToId('MoreThan550'),
+          'Not detected': resultCategories.NotDetected,
+          '< 550': resultCategories.LessThan550,
+          Numeric: resultCategories.MoreThan550,
         },
       },
       'HIV0.6ml': {
         I: {
-          Detected: resultCategoryToId('Detected'),
-          'Target not detected': resultCategoryToId('NotDetected'),
+          Detected: resultCategories.Detected,
+          'Target not detected': resultCategories.NotDetected,
         },
         F: {
-          'Not detected': resultCategoryToId('NotDetected'),
-          '< 40': resultCategoryToId('LessThan40'),
-          Numeric: resultCategoryToId('MoreThan40'),
+          'Not detected': resultCategories.NotDetected,
+          '< 40': resultCategories.LessThan40,
+          Numeric: resultCategories.MoreThan40,
         },
       },
       HIVQLDRDBS: {
         F: {
-          'HIV-1 Detected': resultCategoryToId('Detected'),
-          'Not Detected': resultCategoryToId('NotDetected'),
+          'HIV-1 Detected': resultCategories.Detected,
+          'Not Detected': resultCategories.NotDetected,
         },
       },
     }
-    const resultCategoryErrorId = resultCategoryToId('Error')
+    const resultCategoryErrorId = resultCategories.Error
     const sampleTypeIds = await allSampleTypeToId()
     const unknownAssayCodes = parsedResults
       .map(parsedResult => _.get(parsedResult, 'assay.code'))
@@ -482,10 +489,10 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
           })
         }
         Object.assign(qualityControlSummary, cycleNumberSummary)
-        qualityControlSummary.abnormalFlags = [
+        qualityControlSummary.abnormalFlags = _.uniq([
           ...(qualityControlSummary.abnormalFlags || []),
-          cycleNumberResult.resultData.abnormalFlags,
-        ]
+          ...(cycleNumberResult.resultData.abnormalFlags || []),
+        ])
       }
       return qualityControlSummary
     }

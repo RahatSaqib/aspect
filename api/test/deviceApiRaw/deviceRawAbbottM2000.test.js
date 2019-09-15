@@ -4,16 +4,19 @@ const path = require('path')
 const Promise = require('bluebird')
 const proxyquire = require('proxyquire')
 
+const { parseDateOrDefault } = require('../../src/shared/date')
+
 const { assert } = chai
 
 describe('Device API Raw Abbott M2000 Data Processor', () => {
+  const utcNow = new Date('2019-09-15T08:09:10.123Z')
   let knexSpy
   let DefaultAbbottM2000 = ''
   let dbsHivVlPklPayload = ''
 
   before(() => {
     knexSpy = table => {
-      const where = () => {
+      const where = (...rest) => {
         const finalCall = {
           first: async () => {
             switch (table) {
@@ -21,24 +24,27 @@ describe('Device API Raw Abbott M2000 Data Processor', () => {
                 return Promise.resolve({
                   id: 1,
                   revoked: false,
-                  partnerId: 1,
-                  deviceId: 1,
+                  partnerId: 2,
+                  deviceId: 3,
                 })
               case 'Device':
                 return Promise.resolve({
-                  id: 1,
-                  siteId: 1,
-                  geographyId: 1,
+                  id: 4,
+                  siteId: 5,
+                  geographyId: 6,
                   configurationData: '{}',
                   lastSeenOn: new Date(1990, 1, 13, 7, 30),
                 })
               case 'Site':
                 return Promise.resolve({
-                  id: 1,
-                  longitude: 1,
-                  latitude: 1,
+                  id: 7,
+                  longitude: 8,
+                  latitude: 9,
                 })
               case 'Result':
+                if (rest[1] === 'SYS123165|275021695|vl110|D1|20190825165311') {
+                  console.log(rest[1])
+                }
                 return Promise.resolve()
               default:
                 return Promise.resolve({})
@@ -53,7 +59,12 @@ describe('Device API Raw Abbott M2000 Data Processor', () => {
       }
       const knex = {
         where,
-        insert: async () => Promise.resolve([1]),
+        insert: async (record) => {
+          if (record.moduleName === 'D1') {
+            console.log(JSON.stringify(record))
+          }
+          return Promise.resolve([1])
+        },
       }
       const join = () => knex
       knex.join = join
@@ -66,13 +77,38 @@ describe('Device API Raw Abbott M2000 Data Processor', () => {
         '../../db': {
           transact: async transaction => transaction(knexSpy),
         },
+        '../../shared/date': {
+          parseDateOrDefault,
+          getUtcTime: () => utcNow,
+        },
         '../../shared/dictionary': {
-          allAssayToId: resolveWith({}),
-          allSampleTypeToId: resolveWith({}),
-          resultTypeToId: resolveWith({}),
-          resultSourceToId: resolveWith({}),
-          resultCategoryToId: resolveWith({}),
-          allResultWorkflowStatusToId: resolveWith({}),
+          allAssayToId: resolveWith({
+            abbottM2000DBSHivVL: 1,
+            abbottM2000PlasmaHivVL: 2,
+            abbottM2000HIVEID: 3,
+          }),
+          allSampleTypeToId: resolveWith({
+            DBS: 4,
+            Plasma: 5,
+          }),
+          resultTypeToId: resolveWith(6),
+          resultSourceToId: resolveWith(7),
+          allResultCategoryToId: resolveWith({
+            Detected: 8,
+            NotDetected: 9,
+            LessThan550: 10,
+            MoreThan550: 11,
+            LessThan40: 12,
+            MoreThan40: 13,
+            Error: 14,
+          }),
+          allResultWorkflowStatusToId: resolveWith({
+            Processed: 15,
+            OK: 16,
+            Ordered: 17,
+            InProgress: 18,
+            Error: 19,
+          }),
         },
       }
     )
