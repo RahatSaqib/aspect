@@ -104,10 +104,7 @@ export class AppNotificationDialog extends PureComponent {
       appNotification.get('notificationOptions'),
       {}
     )
-    const messageValues = toJSOrDefault(
-      appNotification.get('messageValues'),
-      appNotification.get('messageValues') || {}
-    )
+    const messageValues = appNotification.get('messageValues') || {}
 
     const isError =
       appNotification.getIn(['notificationOptions', 'notificationType']) ===
