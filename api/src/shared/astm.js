@@ -96,10 +96,7 @@ function astmE1394RecordToJson(
     componentDelimiter,
     escapeDelimiter,
   } = delimiters
-  const recordBeforeChecksum = astmRecordString.substr(
-    0,
-    astmRecordString.indexOf('\\r\\x')
-  )
+  const recordBeforeChecksum = astmRecordString.substr(0, astmRecordString.indexOf('\\r'))
   return _.omit(
     {
       value: nullIfEmpty(astmRecordString),

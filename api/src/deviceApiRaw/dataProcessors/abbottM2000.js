@@ -59,7 +59,6 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
     }
     const remoteAddress = getRemoteAddress(request)
     const sanitisedPayload = payload
-      .replace(/\\\\/g, '\\')
       .split('\n')
       .reduce((resultRawMessages, rawLine) => {
         if (rawLine) {
@@ -451,7 +450,7 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
       )
     if (!_.isEmpty(unknownAssayCodes)) {
       throw Boom.badRequest(
-        `Unknown assay codes: ${unknownAssayCodes.join(', ')}`
+        `Unknown assay codes: ${_.uniq(unknownAssayCodes).join(', ')}`
       )
     }
     const resultExternalIds = _.uniq(
@@ -778,6 +777,7 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
             partnerId: deviceApiKey.partnerId,
             geographyId: device.geographyId,
             siteId: site.id,
+            deviceId: device.id,
             longitude: site.longitude,
             latitude: site.latitude,
             resultSourceId: resultSourceDiagnosticDeviceId,
@@ -881,10 +881,20 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
           Object.assign(existingResult, result)
           await knex('Result')
             .where('id', result.id)
-            .update(existingResult)
+            .update({
+              ...existingResult,
+              resultData: existingResult.resultData ? JSON.stringify(existingResult.resultData) : null,
+              patientData: existingResult.patientData ? JSON.stringify(existingResult.patientData) : null,
+              formData: existingResult.formData ? JSON.stringify(existingResult.formData) : null,
+            })
         } else {
           result.createdOn = utcNow
-          const [resultId] = await knex('Result').insert(result)
+          const [resultId] = await knex('Result').insert({
+            ...result,
+            resultData: result.resultData ? JSON.stringify(result.resultData) : null,
+            patientData: result.patientData ? JSON.stringify(result.patientData) : null,
+            formData: result.formData ? JSON.stringify(result.formData) : null,
+          })
           result.id = resultId
         }
         if (!result.resultWorkflowStatusLogId) {
