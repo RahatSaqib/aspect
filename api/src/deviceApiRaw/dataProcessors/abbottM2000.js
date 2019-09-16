@@ -1,6 +1,7 @@
 const Promise = require('bluebird')
 const _ = require('lodash')
 const Boom = require('boom')
+const { convertToTimeZone } = require('date-fns-timezone')
 const { transact } = require('../../db')
 const { getRemoteAddress } = require('../../shared/request')
 const {
@@ -117,13 +118,22 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
       }
       return {}
     }
-    const parseDate = value =>
-      parseDateOrDefault(value, { formatString: 'yyyyLLdd' })
-    const parseTime = value =>
-      parseDateOrDefault(value, {
-        formatString: 'yyyyLLddHHmmss',
-        backupDate: utcNow,
+    const parseDate = value => {
+      const parsedValue = parseDateOrDefault(value, {
+        formatString: 'yyyyLLdd',
       })
+      return parsedValue
+        ? convertToTimeZone(parsedValue, { timeZone: 'UTC' })
+        : parsedValue
+    }
+    const parseTime = value => {
+      const parsedValue = parseDateOrDefault(value, {
+        formatString: 'yyyyLLddHHmmss',
+      })
+      return parsedValue
+        ? convertToTimeZone(parsedValue, { timeZone: 'UTC' })
+        : parsedValue
+    }
     const mergeDeep = (baseValue, sourceValue) => {
       if (_.isEmpty(baseValue) && !_.isEmpty(sourceValue)) {
         return sourceValue
@@ -723,7 +733,10 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
             sampleTypeId:
               sampleTypeIds[finalResult.sample.sampleTypeExternalId],
           })
-        } else if (!dateEqual(collectedOn, finalResult.sample.collectedOn)) {
+        } else if (
+          finalResult.sample.collectedOn &&
+          !dateEqual(collectedOn, finalResult.sample.collectedOn)
+        ) {
           await knex('Sample')
             .where('id', sampleId)
             .update({ collectedOn: finalResult.sample.collectedOn })
@@ -777,7 +790,7 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
             updatedOn: utcNow,
           }
         )
-        if (result.resultData.reporType !== 'Final Result') {
+        if (result.resultData.reportType !== 'Final Result') {
           result.resultCategory1 = resultCategoryErrorId
           result.errorCode = result.resultData.abnormalFlags.join(',')
         } else {
@@ -826,9 +839,10 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
               `${existingResult.notes}\n${result.notes}`.split('\n')
             ).join('\n')
           }
-          const resultWorkflowStatusLog = await knex('ResultWorkflowStatusLog')
-            .where('id', existingResult.resultWorkflowStatusLogId)
-            .first()
+          const resultWorkflowStatusLog =
+            (await knex('ResultWorkflowStatusLog')
+              .where('id', existingResult.resultWorkflowStatusLogId)
+              .first()) || {}
           if (
             [
               resultWorkflowStatuses.OK,

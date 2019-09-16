@@ -17,7 +17,11 @@ function parseDateOrDefault(
   const parsedDate =
     date instanceof Date ? date : (
       options && options.formatString
-        ? dateFns.parse(date, options.formatString, options.backupDate)
+        ? dateFns.parse(
+          date,
+        options.formatString,
+        options.backupDate || getUtcTime()
+        )
         : dateFns.toDate(date)
     )
   return dateFns.isValid(parsedDate) ? parsedDate : defaultValue
