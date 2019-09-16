@@ -106,7 +106,7 @@ export class AppNotificationDialog extends PureComponent {
     )
     const messageValues = toJSOrDefault(
       appNotification.get('messageValues'),
-      {}
+      appNotification.get('messageValues') || {}
     )
 
     const isError =
