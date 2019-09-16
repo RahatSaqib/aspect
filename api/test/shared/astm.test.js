@@ -50,25 +50,6 @@ describe('ASTM parser', () => {
     })
   })
 
-  describe('When repeat delimiters are present in the message', () => {
-    it('should allow the caller to find the value using the number of the repetition', () => {
-      const repeatDelimiterAstmString = `H|\\^&|||My^Host^Computer|||||ASI^1.0^s/n||P|1|19930631
-P|1||PID1234||Doe^John|Smith|19500522|M|||||Jones^Bob^^^Dr|||||300.0^Anxiety\\311.0^Depression|
-O|1|SID1000||^^^10^Test10^protocol1\\^^^22^Test22|S|19930631|19930629||||N||||SERUM|Miller^John^^^Dr|||||||||O|
-P|2||PID2222||Small^Jane|Smith|19400820|M|||||Jones^John^^^Dr||||||
-O|1|SID1001||^^^20^Test20^protocol4|R|19930631|19930629||||N||||SERUM|Ahmad^Joe^^^Dr|||||||||O|
-L|1|N
-`
-      const astmPosition = 'O,5[2],1,5'
-      const expectedResult = 'Test22'
-      const secondTestOrderForJohnDoe = getAstmField(
-        repeatDelimiterAstmString,
-        astmPosition
-      )
-      assert.equal(secondTestOrderForJohnDoe, expectedResult)
-    })
-  })
-
   describe('astmE1394MessagesToJson', () => {
     it('Should transform the ASTM payload in the explanatory comment correctly', () => {
       const astmPayload = `H|\\^&|||Name of Instrument^1.0.0.0|P|1|19930330133346\\r\\x0392\\r\\n

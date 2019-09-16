@@ -86,19 +86,6 @@ function splitWithEscape(stringToSplit, splitOnCharacter, escapeCharacter) {
     .map(item => item.replace(new RegExp(e, 'g'), ''))
 }
 
-function stringContains(stringToSearch, searchForString, escapeCharacter) {
-  return (
-    splitWithEscape(stringToSearch, searchForString, escapeCharacter).length > 1
-  )
-}
-
-function stringReplace(input, replaceString, replaceWith) {
-  return input.replace(
-    new RegExp(escapeReservedRegexCharacters(replaceString, 'g')),
-    replaceWith
-  )
-}
-
 function nullIfEmpty(value) {
   return value === '' ? null : value
 }
@@ -111,8 +98,6 @@ module.exports = {
   convertStringToFloat,
   getAllStringsEnclosedBetweenCharacters,
   splitWithEscape,
-  stringContains,
-  stringReplace,
   escapeReservedRegexCharacters,
   nullIfEmpty,
   isNumeric,

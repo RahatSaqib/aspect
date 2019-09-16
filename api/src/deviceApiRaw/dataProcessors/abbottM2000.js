@@ -40,6 +40,8 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
   static async canProcessRequest(request) {
     const { payload } = request
     return (
+      payload &&
+      _.isString(payload) &&
       payload.trim().startsWith('(lp1\n(lp2\n') &&
       payload.trim().endsWith('\naa.') &&
       DefaultAbbottM2000.containsM2000AstmLineHeader(payload)

@@ -10,13 +10,16 @@ function parseDateOrDefault(
   date,
   options = { formatString: null, backupDate: null, defaultDate: null }
 ) {
-  const defaultValue = _.isDate(options) ? options : options.defaultDate
+  const defaultValue = _.isPlainObject(options) ? options.defaultDate : options
   if (date == null || date === '') {
     return defaultValue
   }
-  const parsedDate = date instanceof Date ? date : (options.formatString
-    ? dateFns.parse(date, options.formatString, options.backupDate)
-    : dateFns.toDate(date))
+  const parsedDate =
+    date instanceof Date ? date : (
+      options && options.formatString
+        ? dateFns.parse(date, options.formatString, options.backupDate)
+        : dateFns.toDate(date)
+    )
   return dateFns.isValid(parsedDate) ? parsedDate : defaultValue
 }
 
