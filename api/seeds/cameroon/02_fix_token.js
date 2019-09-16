@@ -335,6 +335,21 @@ async function seed(knex) {
       type: 'string',
       order: 3,
     },
+    hivStatus: {
+      title: 'HIV Status',
+      type: 'string',
+      order: 4,
+    },
+    referringFacility: {
+      title: 'Referring Facility',
+      type: 'string',
+      order: 5,
+    },
+    referringClinicianPhone: {
+      title: 'Referring Clinician or Facility Phone Number (if known)',
+      type: 'string',
+      order: 6,
+    },
   })
 
   await knex('Assay').insert({
