@@ -72,7 +72,10 @@ function configureOptional(config) {
   if (logstashEndpoint) {
     config.logstash = { endpoint: logstashEndpoint }
   }
-
+  const firebase = process.env['firebase.serverkey']
+  if (firebase) {
+    config.firebase = { serverKey: firebase }
+  }
   // load sentry
   const ravenDsn = process.env['raven.dsn']
   if (ravenDsn) {
