@@ -9,7 +9,7 @@ const {
 } = require('date-fns')
 module.exports = require('../utils').seed(
   seed,
-  `${__filename}-${format(new Date(), 'YYYY-MM-dd')}`
+  `${__filename}-${format(new Date(), 'yyyy-MM-dd')}`
 )
 const patients = require('./fixtures/patients.json')
 const { errorCodes } = require('./fixtures/errorCodes.js')

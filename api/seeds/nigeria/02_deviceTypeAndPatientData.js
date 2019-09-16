@@ -16,11 +16,12 @@ async function seed(knex) {
     .where('name', 'Admin')
     .first('id')
 
-  if (
-    !(await knex('JobFunctionPermission')
-      .where('jobFunctionId', jobFunctionIdAdmin)
-      .where('permissionId', permissionSiteAdminId))
-  )
+  const { jobFunctionId } = await knex('JobFunctionPermission')
+    .where('jobFunctionId', jobFunctionIdAdmin)
+    .where('permissionId', permissionSiteAdminId)
+    .first('jobFunctionId')
+
+  if (!jobFunctionId)
     await knex('JobFunctionPermission').insert([
       {
         jobFunctionId: jobFunctionIdAdmin,

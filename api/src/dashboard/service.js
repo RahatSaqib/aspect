@@ -405,6 +405,7 @@ async function getConsumablesList(auth, dataConstraints) {
     .leftOuterJoin('IssueStatus as ist', 'i.issueStatusId', 'ist.id')
     .modify(addConstraints, dataConstraints, {
       site: 's',
+      device: 'd',
     })
     .groupBy('c.id', 's.id')
     .select(
@@ -530,6 +531,7 @@ async function getDeviceList(auth, dataConstraints) {
     .modify(addConstraints, dataConstraints, {
       site: 's',
       geography: 'g',
+      device: 'd',
     })
     .groupBy('d.id')
     .select(

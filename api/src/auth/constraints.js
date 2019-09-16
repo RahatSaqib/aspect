@@ -153,6 +153,7 @@ function addConstraints(queryBuilder, constraints, aliases) {
     device,
     sample,
     person,
+    showUnapprovedDevices = false,
     jobFunction,
     allowAdminThrough = false,
   } = aliases
@@ -206,6 +207,15 @@ function addConstraints(queryBuilder, constraints, aliases) {
   }
   if (person && constraints.person && !allowAdminThrough) {
     queryBuilder.where({ [`${person}.personId`]: constraints.person.id })
+  }
+
+  if (device && !showUnapprovedDevices) {
+    queryBuilder.leftOuterJoin(
+      `DeviceStatus as deviceStatus`,
+      `${device}.deviceStatusId`,
+      `deviceStatus.id`
+    )
+    queryBuilder.where({ [`deviceStatus.token`]: 'approved' })
   }
 
   // data filter constraints are ORed

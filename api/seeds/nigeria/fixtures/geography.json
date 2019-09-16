@@ -868,8 +868,11 @@
 					]
 				},
 				{
-					"name": "FCT - Abuja",
+					"name": "Abuja Federal Capital Territory",
 					"lgas": [
+						{
+							"name": "Abaji"
+						},
 						{
 							"name": "Bwari"
 						},
@@ -884,6 +887,9 @@
 						},
 						{
 							"name": "Municipal Area Council"
+						},
+						{
+							"name": "AMAC"
 						}
 					]
 				},

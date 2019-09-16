@@ -129,12 +129,6 @@ export const TreatmentStatus = ({
       colorFade: getColorWithAlpha(process.env['--aspect-color-mantis'], 0.5),
     },
     {
-      label: 'Not Possible',
-      key: 'pcNotPossible',
-      color: process.env['--aspect-color-grey-5'],
-      colorFade: process.env['--aspect-color-grey-6'],
-    },
-    {
       label: 'Not Confirmed',
       key: 'pcNotConfirmed', // calculated value, see reducer for case RECEIVE_TREATMENT_DASHBOARD
       color: process.env['--aspect-color-mandy'], // red

@@ -951,9 +951,7 @@ describe('Result Treatment', () => {
           assert.equal(res.body.data.length, 6) // for 6 months
           assert.property(res.body.data[0], 'monthTested')
           assert.property(res.body.data[0], 'pcConfirmed')
-          assert.property(res.body.data[0], 'pcNotPossible')
           assert.property(res.body.data[0], 'cntConfirmed')
-          assert.property(res.body.data[0], 'cntNotPossible')
           assert.property(res.body.data[0], 'total')
 
           done()
