@@ -331,24 +331,9 @@ async function seed(knex) {
       order: 2,
     },
     name: {
-      title: 'Retreatment Case',
+      title: 'name',
       type: 'string',
       order: 3,
-    },
-    hivStatus: {
-      title: 'HIV Status',
-      type: 'string',
-      order: 4,
-    },
-    referringFacility: {
-      title: 'Referring Facility',
-      type: 'string',
-      order: 5,
-    },
-    referringClinicianPhone: {
-      title: 'Referring Clinician or Facility Phone Number (if known)',
-      type: 'string',
-      order: 6,
     },
   })
 
