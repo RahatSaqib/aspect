@@ -792,7 +792,23 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
         )
         if (result.resultData.reportType !== 'Final Result') {
           result.resultCategory1 = resultCategoryErrorId
-          result.errorCode = result.resultData.abnormalFlags.join(',')
+          const testExceptionComments = _.get(
+            result,
+            'resultData.comments',
+            []
+          ).filter(comment => comment.type === 'Exception String')
+          const testExceptionCodes = _.uniq(
+            testExceptionComments.map(comment =>
+              comment.text.split(':')[0].trim()
+            )
+          )
+          result.errorCode = [
+            ...result.resultData.abnormalFlags,
+            ...testExceptionCodes,
+          ].join(',')
+          result.errorNotes = _.uniq(
+            testExceptionComments.map(comment => comment.text)
+          ).join('\n')
         } else {
           const interpretationResultCategoryId = interpretationResult
             ? resultCategoryMapping[interpretationResult.assay.code].I[

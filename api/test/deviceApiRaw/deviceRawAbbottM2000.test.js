@@ -444,6 +444,9 @@ describe('Device API Raw Abbott M2000 Data Processor', () => {
     expect(errorResults).to.have.lengthOf(1)
     expect(errorResults).to.containSubset([
       {
+        errorCode: '4442',
+        errorNotes:
+          '4442 : Internal control cycle number is too high. Valid range is [19.22, 23.22].',
         notes:
           '4442 : Internal control cycle number is too high. Valid range is [19.22, 23.22].',
         resultData: {
