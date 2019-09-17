@@ -18,10 +18,5 @@
     "title": "name",
     "type": "string",
     "order": 3
-  },
-  "hivStatus": {
-    "title": "HIV Status",
-    "type": "string",
-    "order": 4
   }
 }

@@ -335,6 +335,39 @@ async function seed(knex) {
       type: 'string',
       order: 3,
     },
+    referringFacility: {
+      title: 'Referring Facility',
+      type: 'string',
+      order: 4,
+    },
+    referringClinicianPhone: {
+      title: 'Referring Clinician or Facility Phone Number (if known)',
+      type: 'string',
+      order: 5,
+    },
+  })
+
+  const geneXpertPatientDataSchemaTb = JSON.stringify({
+    id: {
+      title: 'Patient ID',
+      type: 'string',
+      order: 0,
+    },
+    gender: {
+      title: 'Gender',
+      type: 'string',
+      order: 1,
+    },
+    age: {
+      title: 'Age',
+      type: 'number',
+      order: 2,
+    },
+    name: {
+      title: 'name',
+      type: 'string',
+      order: 3,
+    },
     hivStatus: {
       title: 'HIV Status',
       type: 'string',
@@ -391,7 +424,7 @@ async function seed(knex) {
     resultCategory2Label: 'Rif',
     resultCategory2i18nKey: 'resultCategoryRif',
     resultDataSchema: geneXpertResultDataSchema,
-    patientDataSchema: geneXpertPatientDataSchema,
+    patientDataSchema: geneXpertPatientDataSchemaTb,
     abbreviation: 'GX MTB/Rif',
   })
 
@@ -407,7 +440,7 @@ async function seed(knex) {
     resultCategory2Label: 'Rif',
     resultCategory2i18nKey: 'resultCategoryRif',
     resultDataSchema: geneXpertResultDataSchema,
-    patientDataSchema: geneXpertPatientDataSchema,
+    patientDataSchema: geneXpertPatientDataSchemaTb,
     abbreviation: 'GX MTB/ULTRA',
   })
 
