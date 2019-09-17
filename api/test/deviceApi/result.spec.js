@@ -1378,7 +1378,7 @@ describe('Device Result API routes', () => {
           const { deviceId, deviceAuth, now } = context
           const results = [
             {
-              assayExternalId: 'DaktariLl',
+              assayExternalId: 'DaktariHivVL',
               cartridgeName: 'Daktari HIV-VL Cartridge',
               deviceId,
             },
