@@ -6717,17 +6717,25 @@ async function seed(knex) {
     partnerId: partnerTwoId,
   })
 
-  const featureBlacklist = ['clinicalIndicators', 'operationalData']
+  let featureBlacklist = ['clinicalIndicators', 'operationalData']
 
   // assign features to JobFeatures
   await assignAllFeaturesToJobFunctionIds(
     knex,
-    [
-      jobFunctionIdAdmin,
-      jobFunctionIdManager,
-      jobFunctionIdPartnerTwo,
-      jobFunctionIdClinician,
-    ],
+    [jobFunctionIdAdmin, jobFunctionIdManager, jobFunctionIdPartnerTwo],
+    featureBlacklist
+  )
+
+  featureBlacklist = [
+    'clinicalIndicators',
+    'operationalData',
+    'manage',
+    'reporter',
+  ]
+
+  await assignAllFeaturesToJobFunctionIds(
+    knex,
+    [jobFunctionIdClinician],
     featureBlacklist
   )
 
@@ -6770,10 +6778,6 @@ async function seed(knex) {
       permissionId: modules.treatmentStatus.admin,
     },
     {
-      jobFunctionId: jobFunctionIdClinician,
-      permissionId: modules.treatmentStatus.admin,
-    },
-    {
       jobFunctionId: jobFunctionIdPartnerTwo,
       permissionId: modules.treatmentStatus.admin,
     },
@@ -6808,7 +6812,15 @@ async function seed(knex) {
     },
     {
       jobFunctionId: jobFunctionIdClinician,
-      permissionId: modules.reporter.view,
+      permissionId: modules.result.edit,
+    },
+    {
+      jobFunctionId: jobFunctionIdClinician,
+      permissionId: modules.browse.view,
+    },
+    {
+      jobFunctionId: jobFunctionIdClinician,
+      permissionId: modules.treatmentStatus.edit,
     },
   ])
 
@@ -6972,7 +6984,6 @@ async function seed(knex) {
 
     { jobFunctionId: jobFunctionIdClinician, widgetId: widgetIds.sites },
     { jobFunctionId: jobFunctionIdClinician, widgetId: widgetIds.devices },
-    { jobFunctionId: jobFunctionIdClinician, widgetId: widgetIds.contacts },
   ])
 
   // Messages
