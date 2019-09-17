@@ -15,15 +15,15 @@ function parseDateOrDefault(
     return defaultValue
   }
   const parsedDate =
-    date instanceof Date ? date : (
-      options && options.formatString
-        ? dateFns.parse(
+    date instanceof Date
+      ? date
+      : options && options.formatString
+      ? dateFns.parse(
           date,
-        options.formatString,
-        options.backupDate || getUtcTime()
+          options.formatString,
+          options.backupDate || getUtcTime()
         )
-        : dateFns.toDate(date)
-    )
+      : dateFns.toDate(dateFns.parseISO(date))
   return dateFns.isValid(parsedDate) ? parsedDate : defaultValue
 }
 
