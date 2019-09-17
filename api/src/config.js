@@ -72,7 +72,7 @@ function configureOptional(config) {
   if (logstashEndpoint) {
     config.logstash = { endpoint: logstashEndpoint }
   }
-  const firebase = process.env['firebase.serverkey']
+  const firebase = process.env['firebase.serverKey']
   if (firebase) {
     config.firebase = { serverKey: firebase }
   }
