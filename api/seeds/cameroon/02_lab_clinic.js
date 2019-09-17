@@ -8,7 +8,6 @@ const { subMinutes, subMonths } = require('date-fns')
 const { randomToken } = require('../../src/deviceApi/apiKey')
 const labClinic = require('./fixtures/labClinic.json')
 const {
-  deviceTypeCategoryToId,
   deviceTypeToId,
   deviceStatusToId,
 } = require('../../src/shared/dictionary')
@@ -16,55 +15,6 @@ const {
 const now = new Date()
 
 async function seed(knex) {
-  // Categories of devices (lab, connectivity...)
-  const deviceTypeCategoryLab = await deviceTypeCategoryToId('Lab')
-
-  const m2000ConfigurationDataSchema = JSON.stringify({
-    requirePrinter: {
-      title: 'Require printer',
-      type: 'string',
-    },
-    adminPassword: {
-      title: 'Admin password',
-      type: 'string',
-    },
-    firmwareUpdateRequired: {
-      title: 'Firmware update required',
-      type: 'string',
-    },
-    firmwareVersions: {
-      title: 'Firmware versions',
-      type: 'object',
-      i18nKey: 'Firmware versions',
-      properties: {
-        versionAlpha: {
-          title: 'Alpha',
-          type: 'string',
-        },
-        versionBeta: {
-          title: 'Beta',
-          type: 'string',
-        },
-        versionRC: {
-          title: 'RC',
-          type: 'string',
-        },
-        versionGold: {
-          title: 'Gold',
-          type: 'string',
-        },
-      },
-    },
-  })
-
-  await knex('DeviceType').insert({
-    externalId: 'AbbottM2000',
-    name: 'm2000',
-    manufacturer: 'Abbott',
-    deviceTypeCategoryId: deviceTypeCategoryLab,
-    configurationDataSchema: m2000ConfigurationDataSchema,
-  })
-
   const { id: adminId } = await knex('User')
     .where({ name: 'admin' })
     .first('id')

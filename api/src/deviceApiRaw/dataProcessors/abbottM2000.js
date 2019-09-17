@@ -184,21 +184,21 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
             (results, patientId) => {
               const jsonAstmPatient = _.get(jsonAstmMessage, `H.${patientId}`)
               const patientData = {
+                id: _.get(jsonAstmPatient, '4.value'), // Laboratory Patient ID
                 practicePatientId: _.get(jsonAstmPatient, '3.value'),
-                laboratoryPatientId: _.get(jsonAstmPatient, '4.value'),
                 additionaPatientId: _.get(jsonAstmPatient, '5.value'),
-                patientName: _.get(jsonAstmPatient, '6.value'),
+                name: _.get(jsonAstmPatient, '6.value'),
                 dateOfBirth: parseDate(_.get(jsonAstmPatient, '8.value')),
                 gender: { M: 'Male', F: 'Female', U: 'Unknown' }[
                   _.get(jsonAstmPatient, '9.value')
                 ],
                 ethnicOrigin: _.get(jsonAstmPatient, '10.value'),
-                patientAddress: _.get(jsonAstmPatient, '11.value'),
-                patientPhone: _.get(jsonAstmPatient, '13.value'),
+                address: _.get(jsonAstmPatient, '11.value'),
+                phone: _.get(jsonAstmPatient, '13.value'),
                 attendingPhysician: _.get(jsonAstmPatient, '14.value'),
-                patientHeight: _.get(jsonAstmPatient, '17.value'),
-                patientWeight: _.get(jsonAstmPatient, '18.value'),
-                patientDiet: _.get(jsonAstmPatient, '21.value'),
+                height: _.get(jsonAstmPatient, '17.value'),
+                weight: _.get(jsonAstmPatient, '18.value'),
+                diet: _.get(jsonAstmPatient, '21.value'),
                 admissionOrDischargeDates: _.get(jsonAstmPatient, '24.value'),
                 admissionStatus: _.get(jsonAstmPatient, '25.value'),
                 location: _.get(jsonAstmPatient, '26.value'),
@@ -873,6 +873,8 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
             ).insert({
               resultId: existingResult.id,
               resultWorkflowStatusId,
+              operator: finalResult.senderOperator,
+              reason: `Result update from ${this.name}`,
               changedOn: utcNow,
               createdOn: utcNow,
             })
@@ -883,16 +885,26 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
             .where('id', result.id)
             .update({
               ...existingResult,
-              resultData: existingResult.resultData ? JSON.stringify(existingResult.resultData) : null,
-              patientData: existingResult.patientData ? JSON.stringify(existingResult.patientData) : null,
-              formData: existingResult.formData ? JSON.stringify(existingResult.formData) : null,
+              resultData: existingResult.resultData
+                ? JSON.stringify(existingResult.resultData)
+                : null,
+              patientData: existingResult.patientData
+                ? JSON.stringify(existingResult.patientData)
+                : null,
+              formData: existingResult.formData
+                ? JSON.stringify(existingResult.formData)
+                : null,
             })
         } else {
           result.createdOn = utcNow
           const [resultId] = await knex('Result').insert({
             ...result,
-            resultData: result.resultData ? JSON.stringify(result.resultData) : null,
-            patientData: result.patientData ? JSON.stringify(result.patientData) : null,
+            resultData: result.resultData
+              ? JSON.stringify(result.resultData)
+              : null,
+            patientData: result.patientData
+              ? JSON.stringify(result.patientData)
+              : null,
             formData: result.formData ? JSON.stringify(result.formData) : null,
           })
           result.id = resultId
@@ -903,6 +915,8 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
           ).insert({
             resultId: result.id,
             resultWorkflowStatusId,
+            operator: finalResult.senderOperator,
+            reason: `New result from ${this.name}`,
             changedOn: utcNow,
             createdOn: utcNow,
           })

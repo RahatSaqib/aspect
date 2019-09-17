@@ -354,17 +354,15 @@ describe('Device API Raw Abbott M2000 Data Processor', () => {
         'latitude',
         'resultSourceId',
       ]),
-      resultData: _.pick(result.resultData, ['qualityControlSummary']),
+      resultData: _.pick(JSON.parse(result.resultData), [
+        'qualityControlSummary',
+      ]),
     }))
     const uniqueRunLevelProperties = _.uniqBy(
       runLevelProperties,
       JSON.stringify
     )
     expect(uniqueRunLevelProperties).to.have.lengthOf(1)
-    const resultsEndedOn = convertToTimeZone(
-      new Date(2019, 7, 25, 16, 53, 11),
-      { timeZone: 'UTC' }
-    )
     expect(uniqueRunLevelProperties).to.containSubset([
       {
         instrumentSerial: '275021695',
@@ -383,7 +381,6 @@ describe('Device API Raw Abbott M2000 Data Processor', () => {
               consumableLot: '466746',
               consumableSerial: '11176551',
               controlConsumableLotNumber: '468347',
-              endedOn: resultsEndedOn,
               moduleSerial: '275021695',
               orderOperatorId: 'bryan',
               senderOperator: 'bryan',
@@ -400,7 +397,6 @@ describe('Device API Raw Abbott M2000 Data Processor', () => {
               consumableLot: '466746',
               consumableSerial: '11176551',
               controlConsumableLotNumber: '468347',
-              endedOn: resultsEndedOn,
               moduleSerial: '275021695',
               orderOperatorId: 'bryan',
               senderOperator: 'bryan',
@@ -417,7 +413,6 @@ describe('Device API Raw Abbott M2000 Data Processor', () => {
               consumableLot: '466746',
               consumableSerial: '11176551',
               controlConsumableLotNumber: '468347',
-              endedOn: resultsEndedOn,
               moduleSerial: '275021695',
               orderOperatorId: 'bryan',
               senderOperator: 'bryan',
@@ -434,13 +429,20 @@ describe('Device API Raw Abbott M2000 Data Processor', () => {
         resultSourceId: staticDatabaseData.resultSourceId,
       },
     ])
-    expect(_.uniq(insertedResults.map(result => result.id))).to.have.lengthOf(
-      92
-    )
-    const errorResults = insertedResults.filter(
-      result =>
-        result.resultCategory1 === staticDatabaseData.ResultCategory.Error
-    )
+    expect(
+      _.uniq(insertedResults.map(result => result.externalId))
+    ).to.have.lengthOf(92)
+    const errorResults = insertedResults
+      .filter(
+        result =>
+          result.resultCategory1 === staticDatabaseData.ResultCategory.Error
+      )
+      .map(result => ({
+        ...result,
+        resultData: result.resultData ? JSON.parse(result.resultData) : null,
+        patientData: result.patientData ? JSON.parse(result.patientData) : null,
+        formData: result.formData ? JSON.parse(result.formData) : null,
+      }))
     expect(errorResults).to.have.lengthOf(1)
     expect(errorResults).to.containSubset([
       {
@@ -465,8 +467,47 @@ describe('Device API Raw Abbott M2000 Data Processor', () => {
       },
     ])
     expect(
-      updateResultCalls.map(updateResultCall => updateResultCall.args[1])
-    ).to.containSubset([existingResultRecord])
+      updateResultCalls
+        .filter(
+          updateResultCall => Object.keys(updateResultCall.args[1]).length > 1
+        )
+        .map(updateResultCall => ({
+          ...updateResultCall.args[1],
+          resultData: updateResultCall.args[1].resultData
+            ? JSON.parse(updateResultCall.args[1].resultData)
+            : null,
+          patientData: updateResultCall.args[1].patientData
+            ? JSON.parse(updateResultCall.args[1].patientData)
+            : null,
+          formData: updateResultCall.args[1].formData
+            ? JSON.parse(updateResultCall.args[1].formData)
+            : null,
+        }))
+    ).to.containSubset([
+      {
+        ...existingResultRecord,
+        resultData: {
+          ...existingResultRecord.resultData,
+          qualityControlSummary: {
+            highPositiveControl: _.omit(
+              existingResultRecord.resultData.qualityControlSummary
+                .highPositiveControl,
+              ['endedOn']
+            ),
+            lowPositiveControl: _.omit(
+              existingResultRecord.resultData.qualityControlSummary
+                .lowPositiveControl,
+              ['endedOn']
+            ),
+            negativeControl: _.omit(
+              existingResultRecord.resultData.qualityControlSummary
+                .negativeControl,
+              ['endedOn']
+            ),
+          },
+        },
+      },
+    ])
 
     const insertResultWorkflowLogCalls = insertCalls.filter(
       insertCall => insertCall.args[0] === 'ResultWorkflowLog'

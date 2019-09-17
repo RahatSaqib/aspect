@@ -325,7 +325,9 @@ aa.`
       expect(result.resultTypeId).to.equal(expectedResultTypeId)
       if (result.resultCategory1 !== errorResultCategoryId) {
         expect(result.endedOn.getTime()).to.equal(
-          convertToTimeZone(new Date(2019, 7, 25, 16, 53, 11), { timeZone: 'UTC' }).getTime()
+          convertToTimeZone(new Date(2019, 7, 25, 16, 53, 11), {
+            timeZone: 'UTC',
+          }).getTime()
         )
         expect(result.consumableSerial).to.equal('11176551')
       }

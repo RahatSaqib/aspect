@@ -656,30 +656,14 @@ async function seed(knex) {
     NotDetected: resultCategoryNotDetectedId,
     Indeterminate: resultCategoryIndeterminateId,
     Error: resultCategoryErrorId,
-    LessThan40: resultCategoryLessThan40Id,
-    LessThan550: resultCategoryLessThan550Id,
     LessThan1000: resultCategoryLessThan1000Id,
-    MoreThan40: resultCategoryMoreThan40Id,
-    MoreThan550: resultCategoryMoreThan550Id,
     MoreThan1000: resultCategoryMoreThan1000Id,
     CollectNewSample: resultCategoryCollectNewSampleId,
   } = await allResultCategoryToId()
 
   // Reuse previously seeded "static" data
-  const { id: assayIdAbbottM2000Eid } = await knex('Assay')
-    .where('externalId', 'abbottM2000HIVEID')
-    .first()
-
   const { id: assayIdChaiEid } = await knex('Assay')
     .where('name', 'CHAI EID')
-    .first()
-
-  const { id: assayIdAbbottM2000PlasmaHivVl } = await knex('Assay')
-    .where('externalId', 'abbottM2000PlasmaHivVL')
-    .first()
-
-  const { id: assayIdAbbottM2000DBSHivVl } = await knex('Assay')
-    .where('externalId', 'abbottM2000DBSHivVL')
     .first()
 
   const { id: assayIdChaiHivVl } = await knex('Assay')
@@ -694,28 +678,6 @@ async function seed(knex) {
   const resultSourceLimsId = await resultSourceToId('LIMS')
 
   const resultTypePatientId = await resultTypeToId('Patient')
-
-  // EID results:
-  // assign categories to assay
-  await knex('ResultCategoryAssay').insert({
-    resultCategoryId: resultCategoryNotDetectedId,
-    assayId: assayIdAbbottM2000Eid,
-  })
-
-  await knex('ResultCategoryAssay').insert({
-    resultCategoryId: resultCategoryDetectedId,
-    assayId: assayIdAbbottM2000Eid,
-  })
-
-  await knex('ResultCategoryAssay').insert({
-    resultCategoryId: resultCategoryIndeterminateId,
-    assayId: assayIdAbbottM2000Eid,
-  })
-
-  await knex('ResultCategoryAssay').insert({
-    resultCategoryId: resultCategoryErrorId,
-    assayId: assayIdAbbottM2000Eid,
-  })
 
   await knex('ResultCategoryAssay').insert({
     resultCategoryId: resultCategoryNotDetectedId,
@@ -882,56 +844,6 @@ async function seed(knex) {
 
   // HIV VL results:
   // assign categories to assay
-  await knex('ResultCategoryAssay').insert({
-    resultCategoryId: resultCategoryDetectedId,
-    assayId: assayIdAbbottM2000PlasmaHivVl,
-  })
-
-  await knex('ResultCategoryAssay').insert({
-    resultCategoryId: resultCategoryNotDetectedId,
-    assayId: assayIdAbbottM2000PlasmaHivVl,
-  })
-
-  await knex('ResultCategoryAssay').insert({
-    resultCategoryId: resultCategoryLessThan40Id,
-    assayId: assayIdAbbottM2000PlasmaHivVl,
-  })
-
-  await knex('ResultCategoryAssay').insert({
-    resultCategoryId: resultCategoryMoreThan40Id,
-    assayId: assayIdAbbottM2000PlasmaHivVl,
-  })
-
-  await knex('ResultCategoryAssay').insert({
-    resultCategoryId: resultCategoryErrorId,
-    assayId: assayIdAbbottM2000PlasmaHivVl,
-  })
-
-  await knex('ResultCategoryAssay').insert({
-    resultCategoryId: resultCategoryDetectedId,
-    assayId: assayIdAbbottM2000DBSHivVl,
-  })
-
-  await knex('ResultCategoryAssay').insert({
-    resultCategoryId: resultCategoryNotDetectedId,
-    assayId: assayIdAbbottM2000DBSHivVl,
-  })
-
-  await knex('ResultCategoryAssay').insert({
-    resultCategoryId: resultCategoryLessThan550Id,
-    assayId: assayIdAbbottM2000DBSHivVl,
-  })
-
-  await knex('ResultCategoryAssay').insert({
-    resultCategoryId: resultCategoryMoreThan550Id,
-    assayId: assayIdAbbottM2000DBSHivVl,
-  })
-
-  await knex('ResultCategoryAssay').insert({
-    resultCategoryId: resultCategoryErrorId,
-    assayId: assayIdAbbottM2000DBSHivVl,
-  })
-
   await knex('ResultCategoryAssay').insert({
     resultCategoryId: resultCategoryLessThan1000Id,
     assayId: assayIdChaiHivVl,
