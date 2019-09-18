@@ -176,6 +176,9 @@ async function createNewDevice(
       name = `${deviceType.name} #${deviceCount.cnt + 1}`
     }
   }
+  if (!shortName && name) {
+    shortName = name
+  }
   const deviceStatusId = await deviceStatusToId(status)
   if (shortName && shortName.length > 45) {
     shortName = shortName.substr(0, 45)
