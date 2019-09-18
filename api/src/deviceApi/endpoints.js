@@ -387,9 +387,6 @@ const routes = [
         },
         payload: Joi.object().keys(
           Object.assign({}, devicePayload, {
-            name: Joi.string()
-              .allow('', null)
-              .description('The device name'),
             log: Joi.object()
               .allow(null)
               .keys(logPayload)

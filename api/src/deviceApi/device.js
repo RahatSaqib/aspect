@@ -162,7 +162,9 @@ async function createNewDevice(
 
   // Use or generate device name
   if (!name) {
-    if (serial) {
+    if (shortName) {
+      name = shortName
+    } else if (serial) {
       name = serial
     } else {
       const [deviceCount] = await knex('Device')
@@ -219,6 +221,7 @@ async function createNewDevice(
       'd.siteId',
       'd.geographyId',
       'd.name',
+      'd.shortName',
       'd.serial',
       'd.macAddress',
       'd.configurationData',
