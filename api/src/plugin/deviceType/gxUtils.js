@@ -618,11 +618,16 @@ async function getOrCreateSite(
           'c.abbreviation': countryCode,
         })
         .andWhere(function() {
-          this.where({ 's.name': deviceName })
-            .orWhere({ 's.shortName': deviceName })
-            .orWhere({ 's.shortName': deviceShortName })
-            .orWhere({ 's.externalId': deviceName })
-            .orWhere({ 's.externalId': deviceShortName })
+          if (deviceName) {
+            this.where({ 's.name': deviceName })
+              .orWhere({ 's.shortName': deviceName })
+              .orWhere({ 's.externalId': deviceName })
+          }
+          if (deviceShortName) {
+            this.orWhere({ 's.shortName': deviceShortName }).orWhere({
+              's.externalId': deviceShortName,
+            })
+          }
         })
         .select('s.*')
       if (matchingSites.length === 1) {

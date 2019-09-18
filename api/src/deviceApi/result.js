@@ -44,8 +44,16 @@ async function mergeResult(
 
   const siteQ = knex('Site as s')
     .join('Device as d', 's.id', 'd.siteId')
+    .join('Geography as g', 's.geographyId', 'g.id')
     .where({ 'd.id': deviceId })
-    .first('s.id', 's.partnerId', 's.geographyId', 's.latitude', 's.longitude')
+    .first(
+      's.id',
+      's.partnerId',
+      'g.countryId',
+      's.geographyId',
+      's.latitude',
+      's.longitude'
+    )
 
   // Select ResultType if specified, otherwise Patient
   let resultTypeId = null
@@ -109,11 +117,6 @@ async function mergeResult(
     if (!resultTypeId) {
       requestErrors.push(`result type with id ${_.get(payload, 'type.id')}`)
     }
-    /* if (!resultWorkflowStatusId) {
-      requestErrors.push(
-        `result workflow status id ${_.get(payload, 'workflow.status.id')}`
-      )
-    } */
     if (!resultCategory1) {
       requestErrors.push(`result categories with ids ${categoryIds.join(' ')}`)
     }
@@ -152,13 +155,109 @@ async function mergeResult(
   let sampleOriginSiteId = site.id
   const payloadOriginSiteId = _.get(payload, 'sample.originSite.id', false)
   if (payloadOriginSiteId) {
-    const sampleOriginSite = await knex('Site')
+    const originSiteStateName = _.get(payload, 'sample.originSite.state')
+    let originSiteGeographyId
+    if (originSiteStateName) {
+      let { id: originSiteStateId } =
+        (await knex('State as s')
+          .join('Geography as g', 's.id', 'g.stateId')
+          .where({
+            'g.countryId': site.countryId,
+            's.name': originSiteStateName,
+          })
+          .first('s.id')) || {}
+      if (!originSiteStateId) {
+        ;[originSiteStateId] = await knex('State').insert({
+          name: originSiteStateName,
+        })
+        ;[originSiteGeographyId] = await knex('Geography').insert({
+          countryId: site.countryId,
+          stateId: originSiteStateId,
+        })
+      }
+      const originSiteLgaName = _.get(payload, 'sample.originSite.state')
+      if (originSiteLgaName) {
+        let { id: originSiteLgaId } =
+          (await knex('Lga as l')
+            .join('Geography as g', 'l.id', 'g.lgaId')
+            .where({
+              'g.stateId': originSiteStateId,
+              'l.name': originSiteLgaName,
+            })
+            .first('l.id')) || {}
+        if (!originSiteLgaId) {
+          ;[originSiteLgaId] = await knex('Lga').insert({
+            name: originSiteLgaName,
+          })
+          ;[originSiteGeographyId] = await knex('Geography').insert({
+            countryId: site.countryId,
+            stateId: originSiteStateId,
+            lgaId: originSiteLgaId,
+          })
+        }
+      }
+    }
+    let sampleOriginSite = await knex('Site')
       .where({ partnerId: site.partnerId, externalId: payloadOriginSiteId })
-      .first('id')
-    if (sampleOriginSite == null) {
-      throw Boom.badRequest(
-        `Cannot find Sample origin site ${payloadOriginSiteId}`
+      .first('s.*')
+    const sampleOriginSiteName = _.get(payload, 'sample.originSite.name')
+    const sampleOriginSiteDetailsInPayload = {
+      name: sampleOriginSiteName,
+      shortName: _.get(payload, 'sample.originSite.shortName'),
+      notes: _.get(payload, 'sample.originSite.notes'),
+      partnerId: site.partnerId,
+      geographyId: originSiteGeographyId,
+      city: _.get(payload, 'sample.originSite.city'),
+      street1: _.get(payload, 'sample.originSite.street1'),
+      street2: _.get(payload, 'sample.originSite.street2'),
+      zip: _.get(payload, 'sample.originSite.zip'),
+      longitude: parseFloat(
+        _.get(payload, 'sample.originSite.location.longitude', null)
+      ),
+      latitude: parseFloat(
+        _.get(payload, 'sample.originSite.location.latitude', null)
+      ),
+      timezoneId: _.get(payload, 'sample.originSite.timezoneId'),
+      hoursStart: parseFloat(
+        _.get(payload, 'sample.originSite.hoursStart', null)
+      ),
+      hoursEnd: parseFloat(_.get(payload, 'sample.originSite.hoursEnd', null)),
+    }
+    if (!sampleOriginSite) {
+      if (!sampleOriginSiteName) {
+        throw Boom.badRequest(
+          `Cannot find Sample origin site ${payloadOriginSiteId}`
+        )
+      }
+      const newSampleOriginSite = {
+        ...sampleOriginSiteDetailsInPayload,
+        externalId: payloadOriginSiteId,
+        createdOn: now,
+        updatedOn: now,
+      }
+      if (!newSampleOriginSite.shortName) {
+        newSampleOriginSite.shortName = sampleOriginSiteName
+      }
+      if (newSampleOriginSite.shortName.length > 45) {
+        newSampleOriginSite.shortName = newSampleOriginSite.shortName.substr(
+          0,
+          45
+        )
+      }
+      const [newSampleOriginSiteId] = await knex('Site').insert(
+        newSampleOriginSite
       )
+      sampleOriginSite = { id: newSampleOriginSiteId }
+    } else {
+      await knex('Site')
+        .where('id', sampleOriginSite.id)
+        .update({
+          ..._.omit(sampleOriginSite, ['id']),
+          ..._.omitBy(
+            sampleOriginSiteDetailsInPayload,
+            value => !_.isEmpty(value)
+          ),
+        })
     }
     sampleOriginSiteId = sampleOriginSite.id
   }

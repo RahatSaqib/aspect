@@ -197,6 +197,64 @@ const resultPayload = {
         id: Joi.string()
           .required()
           .description('ID of the site where the sample was collected'),
+        name: Joi.string()
+          .allow('', null)
+          .description('Name of the site where the sample was collected'),
+        shortName: Joi.string()
+          .allow('', null)
+          .description('Short name of the site where the sample was collected'),
+        notes: Joi.string()
+          .allow('', null)
+          .description('Notes about the site where the sample was collected'),
+        state: Joi.string()
+          .allow('', null)
+          .description(
+            'Name of the state or province where the sample was collected'
+          ),
+        lga: Joi.string()
+          .allow('', null)
+          .description(
+            'Short name of the LGA or district where the sample was collected'
+          ),
+        city: Joi.string()
+          .allow('', null)
+          .description('City name of the site where the sample was collected'),
+        street1: Joi.string()
+          .allow('', null)
+          .description(
+            'Address (line 1) of the site where the sample was collected'
+          ),
+        street2: Joi.string()
+          .allow('', null)
+          .description(
+            'Address (line 2) of the site where the sample was collected'
+          ),
+        zip: Joi.string()
+          .allow('', null)
+          .description(
+            'Zip/Postal code of the site where the sample was collected'
+          ),
+        location: Joi.object()
+          .allow(null)
+          .keys({
+            latitude: Joi.number().description(
+              'Latitude where the sample was collected. Will default to the site location'
+            ),
+            longitude: Joi.number().description(
+              'Longitude where the sample was collected. Will default to the site location'
+            ),
+          }),
+        timezoneId: Joi.string()
+          .allow('', null)
+          .description(
+            'The timezone for the site (format: Myanmar Standard Time)'
+          ),
+        hoursStart: Joi.number()
+          .allow('', null)
+          .description('The hour that the site opens on a working day'),
+        hoursEnd: Joi.number()
+          .allow('', null)
+          .description('The hour that the site closes on a working day'),
       }),
   }),
   category: Joi.array()
