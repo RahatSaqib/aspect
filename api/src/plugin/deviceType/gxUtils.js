@@ -47,6 +47,7 @@ async function preProcessAddDeviceData({ knex, device, payload, now }) {
     _.every(Object.keys(configurationData), configurationDataKey =>
       [
         'macAddress',
+        'shortName',
         'gxAlertDeviceId',
         'hostId',
         'deviceSerialNumber',
