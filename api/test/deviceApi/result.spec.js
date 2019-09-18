@@ -9,6 +9,7 @@ const {
   getDeviceConfigurationData,
   getLastDeviceOperationId,
   getLastResultId,
+  createSite,
 } = require('./utils')
 
 const { waitForIdle } = require('../utils/mqUtils')
@@ -579,7 +580,7 @@ describe('Device Result API routes', () => {
     it('should set the origin site details of the sample', () =>
       runTest(async knex => {
         const resultIds = []
-        const { deviceId, clientAuth, deviceAuth } = context
+        const { deviceId, clientAuth, deviceAuth, now } = context
         const clientPath = `${apiResultPath}?deviceId=${deviceId}&size=1000`
 
         const getResultResponse1 = await server
@@ -596,7 +597,7 @@ describe('Device Result API routes', () => {
         }
 
         const existingSiteExternalId = 'ExistingOriginSite'
-        const existingSiteId = await context.createSite(knex, {
+        const existingSiteId = await createSite(knex, {
           partner: context.partner,
           user: context.user,
           site: existingSiteExternalId,
@@ -607,7 +608,7 @@ describe('Device Result API routes', () => {
           startedOn: now,
           data: { a: 'b' },
           assay: { id: 'DaktariHivVl' },
-          instrument: { serial: '1234567' },
+          instrument: { serial: '9879879' },
           sample: {
             id: '493284729',
             originSite: {
@@ -650,7 +651,7 @@ describe('Device Result API routes', () => {
           street2: 'In a suburb',
           zip: '12345',
           latitude: 12.12,
-          longitude: 21.21,
+          longitude: 15.12,
           timezoneId: 'South Africa Standard Time',
           hoursStart: 9,
           hoursEnd: 17,
@@ -674,7 +675,7 @@ describe('Device Result API routes', () => {
           hoursStart: expectedSampleOriginSite.hoursStart,
           hoursEnd: expectedSampleOriginSite.hoursEnd,
         }
-        const postExistingResultResponse = await server
+        await server
           .post(devicePath)
           .set('Authorization', deviceAuth)
           .send({
@@ -687,11 +688,11 @@ describe('Device Result API routes', () => {
         lastResultId = await getLastResultId(knex, deviceId)
 
         const updatedResultSampleOriginSite = await knex('Result as r')
-          .join('Sample as s', 'r.sampleId', 's.id')
-          .join('Site as si', 's.originSiteId', 'si.id')
-          .join('Geography as g', 'si.geographyId', 'g.id')
-          .join('State as st', 'g.stateId', 'st.id')
-          .join('Lga as l', 'l.lgaId', 'l.id')
+          .leftJoin('Sample as s', 'r.sampleId', 's.id')
+          .leftJoin('Site as si', 's.originSiteId', 'si.id')
+          .leftJoin('Geography as g', 'si.geographyId', 'g.id')
+          .leftJoin('State as st', 'g.stateId', 'st.id')
+          .leftJoin('Lga as l', 'g.lgaId', 'l.id')
           .where('r.id', lastResultId)
           .first('si.*', 'st.name as stateName', 'l.name as lgaName')
         expect(updatedResultSampleOriginSite).to.containSubset(

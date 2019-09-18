@@ -44,7 +44,7 @@ async function mergeResult(
 
   const siteQ = knex('Site as s')
     .join('Device as d', 's.id', 'd.siteId')
-    .join('Geography as g', 's.geographyId', 'g.id')
+    .leftJoin('Geography as g', 's.geographyId', 'g.id')
     .where({ 'd.id': deviceId })
     .first(
       's.id',
@@ -156,7 +156,12 @@ async function mergeResult(
   const payloadOriginSiteId = _.get(payload, 'sample.originSite.id', false)
   if (payloadOriginSiteId) {
     const originSiteStateName = _.get(payload, 'sample.originSite.state')
-    let originSiteGeographyId
+    let { id: originSiteGeographyId } =
+      (await knex('Geography')
+        .where('countryId', site.countryId)
+        .whereNull('stateId')
+        .whereNull('lgaId')
+        .first('id')) || {}
     if (originSiteStateName) {
       let { id: originSiteStateId } =
         (await knex('State as s')
@@ -170,12 +175,23 @@ async function mergeResult(
         ;[originSiteStateId] = await knex('State').insert({
           name: originSiteStateName,
         })
-        ;[originSiteGeographyId] = await knex('Geography').insert({
+      }
+      let { id: originSiteStateGeographyId } =
+        (await knex('Geography')
+          .whereNull('lgaId')
+          .andWhere({
+            countryId: site.countryId,
+            stateId: originSiteStateId,
+          })
+          .first('id')) || {}
+      if (!originSiteStateGeographyId) {
+        ;[originSiteStateGeographyId] = await knex('Geography').insert({
           countryId: site.countryId,
           stateId: originSiteStateId,
         })
       }
-      const originSiteLgaName = _.get(payload, 'sample.originSite.state')
+      originSiteGeographyId = originSiteStateGeographyId
+      const originSiteLgaName = _.get(payload, 'sample.originSite.lga')
       if (originSiteLgaName) {
         let { id: originSiteLgaId } =
           (await knex('Lga as l')
@@ -189,18 +205,36 @@ async function mergeResult(
           ;[originSiteLgaId] = await knex('Lga').insert({
             name: originSiteLgaName,
           })
-          ;[originSiteGeographyId] = await knex('Geography').insert({
+        }
+        let { id: originSiteLgaGeographyId } =
+          (await knex('Geography')
+            .where({
+              countryId: site.countryId,
+              stateId: originSiteStateId,
+              lgaId: originSiteLgaId,
+            })
+            .first('id')) || {}
+        if (!originSiteLgaGeographyId) {
+          ;[originSiteLgaGeographyId] = await knex('Geography').insert({
             countryId: site.countryId,
             stateId: originSiteStateId,
             lgaId: originSiteLgaId,
           })
         }
+        originSiteGeographyId = originSiteLgaGeographyId
       }
     }
     let sampleOriginSite = await knex('Site')
       .where({ partnerId: site.partnerId, externalId: payloadOriginSiteId })
-      .first('s.*')
+      .first()
     const sampleOriginSiteName = _.get(payload, 'sample.originSite.name')
+    const convertToFloat = value => {
+      const convertedValue = parseFloat(value)
+      if (_.isNaN(convertedValue)) {
+        return null
+      }
+      return convertedValue
+    }
     const sampleOriginSiteDetailsInPayload = {
       name: sampleOriginSiteName,
       shortName: _.get(payload, 'sample.originSite.shortName'),
@@ -211,17 +245,17 @@ async function mergeResult(
       street1: _.get(payload, 'sample.originSite.street1'),
       street2: _.get(payload, 'sample.originSite.street2'),
       zip: _.get(payload, 'sample.originSite.zip'),
-      longitude: parseFloat(
-        _.get(payload, 'sample.originSite.location.longitude', null)
+      longitude: convertToFloat(
+        _.get(payload, 'sample.originSite.location.longitude')
       ),
-      latitude: parseFloat(
-        _.get(payload, 'sample.originSite.location.latitude', null)
+      latitude: convertToFloat(
+        _.get(payload, 'sample.originSite.location.latitude')
       ),
       timezoneId: _.get(payload, 'sample.originSite.timezoneId'),
-      hoursStart: parseFloat(
-        _.get(payload, 'sample.originSite.hoursStart', null)
+      hoursStart: convertToFloat(
+        _.get(payload, 'sample.originSite.hoursStart')
       ),
-      hoursEnd: parseFloat(_.get(payload, 'sample.originSite.hoursEnd', null)),
+      hoursEnd: convertToFloat(_.get(payload, 'sample.originSite.hoursEnd')),
     }
     if (!sampleOriginSite) {
       if (!sampleOriginSiteName) {
@@ -253,10 +287,7 @@ async function mergeResult(
         .where('id', sampleOriginSite.id)
         .update({
           ..._.omit(sampleOriginSite, ['id']),
-          ..._.omitBy(
-            sampleOriginSiteDetailsInPayload,
-            value => !_.isEmpty(value)
-          ),
+          ..._.omitBy(sampleOriginSiteDetailsInPayload, _.isNil),
         })
     }
     sampleOriginSiteId = sampleOriginSite.id
