@@ -4,7 +4,11 @@ const chai = require('chai')
 const {
   pushNotification: { testDeviceTokenId },
 } = require('../../src/config')
-const { messageStatusToId } = require('../../src/shared/dictionary')
+const {
+  messageStatusToId,
+  issueTypeToId,
+  issueStatusToId,
+} = require('../../src/shared/dictionary')
 const { run } = require('../../src/db')
 const { queuePurge } = require('../utils/mqUtils')
 
@@ -43,13 +47,16 @@ class PushNotificationTestContext {
       assert.isOk(pushNotificationTemplateId)
 
       // read 1st Result and coresponding siteId/deviceId
-      const { id: resultId, siteId, deviceId } = await knex('Result').first(
-        'id',
-        'siteId',
-        'deviceId'
-      )
+      const { siteId, deviceId, partnerId, geographyId } = await knex(
+        'Result'
+      ).first('id', 'siteId', 'deviceId', 'partnerId', 'geographyId')
 
+      const issueTypeId = await issueTypeToId('NewResultsAvailable')
+      const issueStatusId = await issueStatusToId('Active')
       const messageStatusId = await messageStatusToId('Initial')
+      const { id: notificationTypeId } = await knex('NotificationType')
+        .where('name', 'New Results Available')
+        .first('id')
 
       // create app-entry for user in RefreshToken table:
       const now = new Date()
@@ -66,6 +73,22 @@ class PushNotificationTestContext {
         updatedOn: now,
       })
 
+      // add issue
+      this.issueId = await knex('Issue').insert({
+        issueTypeId,
+        issueStatusId,
+        partnerId,
+        geographyId,
+        siteId,
+        deviceId,
+        level: 1,
+        createdOn: now,
+        updatedOn: now,
+        data: JSON.stringify({ numberOfResults: 1 }),
+      })
+
+      assert.isOk(this.issueId)
+
       // add sample push notification message
       this.messageId = await knex('PushNotificationMessage').insert(
         {
@@ -74,7 +97,6 @@ class PushNotificationTestContext {
           personId: userId,
           siteId,
           deviceId,
-          resultId,
           createdOn: now,
           updatedOn: now,
         },
@@ -82,6 +104,17 @@ class PushNotificationTestContext {
       )
 
       assert.isOk(this.messageId)
+
+      // add notification
+      this.notificationId = await knex('Notification').insert({
+        notificationTypeId,
+        issueId: this.issueId,
+        personId: userId,
+        pushNotificationMessageId: this.messageId,
+        createdOn: now,
+      })
+
+      assert.isOk(this.notificationId)
 
       return test(knex)
     })
@@ -99,10 +132,24 @@ class PushNotificationTestContext {
         })
         .delete()
 
-      // remove sample message
+      // remove message
       if (this.messageId) {
         await knex('PushNotificationMessage')
           .where('id', this.messageId)
+          .delete()
+      }
+
+      // remove notification
+      if (this.notificationId) {
+        await knex('Notification')
+          .where('id', this.notificationId)
+          .delete()
+      }
+
+      // remove issue
+      if (this.issueId) {
+        await knex('Issue')
+          .where('id', this.issueId)
           .delete()
       }
 
