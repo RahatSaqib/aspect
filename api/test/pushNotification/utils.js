@@ -132,17 +132,17 @@ class PushNotificationTestContext {
         })
         .delete()
 
-      // remove message
-      if (this.messageId) {
-        await knex('PushNotificationMessage')
-          .where('id', this.messageId)
-          .delete()
-      }
-
       // remove notification
       if (this.notificationId) {
         await knex('Notification')
           .where('id', this.notificationId)
+          .delete()
+      }
+
+      // remove message
+      if (this.messageId) {
+        await knex('PushNotificationMessage')
+          .where('id', this.messageId)
           .delete()
       }
 
