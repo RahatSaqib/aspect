@@ -25,11 +25,7 @@ async function sendPushNotification(token, title, body, data) {
   }
 
   return fetch(FIREBASE_CLOUD_MESSAGING_URL, options)
-    .then(response => {
-      // Response is a message ID string.
-      console.log('Successfully sent message:', response)
-      return { ok: true }
-    })
+    .then(() => ({ ok: true }))
     .catch(error => {
       console.log('Error sending message:', error)
       return Boom.expectationFailed('Error trying to send push message')

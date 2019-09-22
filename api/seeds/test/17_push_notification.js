@@ -26,7 +26,7 @@ async function seed(knex) {
       {
         title: 'New Results Available',
         body:
-          'There are {issue.data.numberOfResults} new results available for site {{site.name}} in Aspect Reporter',
+          'There are {{issue.data.numberOfResults}} new results available for site {{site.name}} in Aspect Reporter',
         data: null,
       },
       auditFields
