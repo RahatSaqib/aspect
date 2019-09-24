@@ -15,10 +15,12 @@ export class DeviceStatusSelectField extends PureComponent {
   static propTypes = {
     allItemText: PropTypes.string,
     fetchDeviceStatuses: PropTypes.func.isRequired,
-    deviceStatusItems: PropTypes.shape({
-      id: PropTypes.string,
-      name: PropTypes.string,
-    }).isRequired,
+    deviceStatusItems: PropTypes.arrayOf(
+      PropTypes.shape({
+        id: PropTypes.string,
+        name: PropTypes.string,
+      })
+    ).isRequired,
     onDeviceStatusChange: PropTypes.func.isRequired,
     value: PropTypes.string,
   }

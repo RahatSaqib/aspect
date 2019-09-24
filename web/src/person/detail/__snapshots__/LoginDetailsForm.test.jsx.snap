@@ -62,7 +62,9 @@ exports[`LoginDetailsForm module LoginDetailsForm component should disable all f
           "locale": "en",
           "messages": Object {},
           "now": [Function],
+          "onError": [Function],
           "textComponent": "span",
+          "timeZone": null,
         }
       }
       meta={Object {}}
@@ -228,7 +230,9 @@ exports[`LoginDetailsForm module LoginDetailsForm component should disable the s
           "locale": "en",
           "messages": Object {},
           "now": [Function],
+          "onError": [Function],
           "textComponent": "span",
+          "timeZone": null,
         }
       }
       meta={Object {}}
@@ -394,7 +398,9 @@ exports[`LoginDetailsForm module LoginDetailsForm component should disable the s
           "locale": "en",
           "messages": Object {},
           "now": [Function],
+          "onError": [Function],
           "textComponent": "span",
+          "timeZone": null,
         }
       }
       meta={Object {}}
@@ -560,7 +566,9 @@ exports[`LoginDetailsForm module LoginDetailsForm component should disable the s
           "locale": "en",
           "messages": Object {},
           "now": [Function],
+          "onError": [Function],
           "textComponent": "span",
+          "timeZone": null,
         }
       }
       meta={Object {}}
@@ -726,7 +734,9 @@ exports[`LoginDetailsForm module LoginDetailsForm component should enable the su
           "locale": "en",
           "messages": Object {},
           "now": [Function],
+          "onError": [Function],
           "textComponent": "span",
+          "timeZone": null,
         }
       }
       meta={Object {}}
@@ -892,7 +902,9 @@ exports[`LoginDetailsForm module LoginDetailsForm component should render correc
           "locale": "en",
           "messages": Object {},
           "now": [Function],
+          "onError": [Function],
           "textComponent": "span",
+          "timeZone": null,
         }
       }
       meta={Object {}}

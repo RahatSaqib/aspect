@@ -1655,6 +1655,24 @@ async function seed(knex) {
     })
   })
 
+  const siteDataDayton = Object.assign(
+    {
+      partnerId: partnerOneId,
+      geographyId: siteDatas[0].geographyId,
+      externalId: 'OH_Dayton',
+      name: 'Dayton Ohio',
+      shortName: 'Dayton, OH',
+      city: 'Dayton City',
+      street1: '3 Main Street',
+      zip: '12345-3',
+      latitude: 0,
+      longitude: 0,
+    },
+    auditFields
+  )
+  const [siteDaytonId] = await knex('Site').insert(siteDataDayton)
+  siteDataDayton.id = siteDaytonId
+
   const { id: geographyId } = await knex('Geography as g')
     .innerJoin('Country as c', 'c.id', 'g.countryId')
     .where({ 'c.a3': 'USA' })
@@ -1682,6 +1700,31 @@ async function seed(knex) {
       email: config.admin.email,
       cell: config.admin.cell,
     })
+
+  // create clinician user
+  const [clinicianId] = await knex('User').insert({
+    name: 'clinician',
+    password: bcrypt.hashSync('test07', saltRounds),
+    approved: 1,
+    createdOn: now,
+    lockedOut: 0,
+    failedPasswordAttempts: 0,
+  })
+
+  const [clinicianPersonId] = await knex('Person').insert(
+    Object.assign(
+      {
+        userId: clinicianId,
+        name: 'Clinician',
+        lastPartnerId: partnerOneId,
+        lastCountryId: countries.US.id,
+        timezone: countries.US.timezone,
+        culture: countries.US.culture,
+        geographyId,
+      },
+      auditFields
+    )
+  )
 
   const deviceStatusApproved = await deviceStatusToId('approved')
 
@@ -1786,11 +1829,11 @@ async function seed(knex) {
   // some HCV samples for Daktari
   const samples = []
   await Promise.each(siteDatas, async (siteData, i) => {
-    const siteDate = siteDatas[i]
+    const siteDate = i === 0 ? siteDataDayton : siteDatas[i]
     const sample = Object.assign(
       {},
       {
-        externalId: `SMP-HCV-GX-${i}`,
+        externalId: `SMP-HIV-GX-${i}`,
         collectedOn: calculateDateForResult(i, resultHcvNumber, millisInMinute),
         sampleTypeId: await sampleTypeToId('DBS'),
         originSiteId: siteDate.id,
@@ -1933,17 +1976,25 @@ async function seed(knex) {
     partnerId: partnerTwoId,
   })
 
-  const featureBlacklist = ['clinicalIndicators', 'operationalData']
+  let featureBlacklist = ['clinicalIndicators', 'operationalData']
 
   // assign features to JobFeatures
   await assignAllFeaturesToJobFunctionIds(
     knex,
-    [
-      jobFunctionIdAdmin,
-      jobFunctionIdManager,
-      jobFunctionIdPartnerTwo,
-      jobFunctionIdClinician,
-    ],
+    [jobFunctionIdAdmin, jobFunctionIdManager, jobFunctionIdPartnerTwo],
+    featureBlacklist
+  )
+
+  featureBlacklist = [
+    'clinicalIndicators',
+    'operationalData',
+    'manage',
+    'reporter',
+  ]
+
+  await assignAllFeaturesToJobFunctionIds(
+    knex,
+    [jobFunctionIdClinician],
     featureBlacklist
   )
 
@@ -1969,10 +2020,6 @@ async function seed(knex) {
     },
     {
       jobFunctionId: jobFunctionIdManager,
-      permissionId: modules.treatmentStatus.admin,
-    },
-    {
-      jobFunctionId: jobFunctionIdClinician,
       permissionId: modules.treatmentStatus.admin,
     },
     {
@@ -2062,7 +2109,15 @@ async function seed(knex) {
     },
     {
       jobFunctionId: jobFunctionIdClinician,
-      permissionId: modules.reporter.view,
+      permissionId: modules.result.edit,
+    },
+    {
+      jobFunctionId: jobFunctionIdClinician,
+      permissionId: modules.browse.view,
+    },
+    {
+      jobFunctionId: jobFunctionIdClinician,
+      permissionId: modules.treatmentStatus.edit,
     },
   ])
 
@@ -2072,9 +2127,18 @@ async function seed(knex) {
     jobFunctionId: jobFunctionIdAdmin,
   })
 
+  const jobIdClinician = await knex('Job').insert({
+    personId: clinicianPersonId,
+    jobFunctionId: jobFunctionIdClinician,
+  })
+
   // Constrain jobs by context
   await knex('JobContext').insert([
     { jobId: jobIdAdmin, geographyId: countries.US.geographyId },
+  ])
+
+  await knex('JobContext').insert([
+    { jobId: jobIdClinician, siteId: siteDataDayton.id },
   ])
 
   // Create DashboardWidget
@@ -2128,7 +2192,6 @@ async function seed(knex) {
 
     { jobFunctionId: jobFunctionIdClinician, widgetId: widgetIds.sites },
     { jobFunctionId: jobFunctionIdClinician, widgetId: widgetIds.devices },
-    { jobFunctionId: jobFunctionIdClinician, widgetId: widgetIds.contacts },
   ])
 
   // Messages

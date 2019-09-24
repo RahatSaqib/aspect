@@ -1,5 +1,6 @@
 const _ = require('lodash')
 const addDays = require('date-fns/addDays')
+const parseISO = require('date-fns/parseISO')
 const subDays = require('date-fns/subDays')
 const isAfter = require('date-fns/isAfter')
 const differenceInDays = require('date-fns/differenceInDays')
@@ -377,7 +378,7 @@ async function getInventoryItemList(auth, dataConstraints) {
     )
     if (_.isDate(it.expiresOn)) {
       it.expiring = isAfter(
-        addDays(it.expiresOn, it.remainingDays),
+        addDays(parseISO(it.expiresOn), it.remainingDays),
         it.expiresOn
       )
     }
@@ -404,6 +405,7 @@ async function getConsumablesList(auth, dataConstraints) {
     .leftOuterJoin('IssueStatus as ist', 'i.issueStatusId', 'ist.id')
     .modify(addConstraints, dataConstraints, {
       site: 's',
+      device: 'd',
     })
     .groupBy('c.id', 's.id')
     .select(
@@ -529,6 +531,7 @@ async function getDeviceList(auth, dataConstraints) {
     .modify(addConstraints, dataConstraints, {
       site: 's',
       geography: 'g',
+      device: 'd',
     })
     .groupBy('d.id')
     .select(
@@ -903,7 +906,7 @@ async function deviceOperational(request) {
 
   const calibrationDeviceList = _.sortBy(
     deviceList.map(it => {
-      const calibrationOn = addDays(now, _.random(55, 120))
+      const calibrationOn = addDays(parseISO(now), _.random(55, 120))
       const value = differenceInDays(calibrationOn, now)
 
       return {

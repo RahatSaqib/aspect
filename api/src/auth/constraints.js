@@ -129,6 +129,7 @@ function getJobContextConstraint(context) {
   // works because all geographies include higher levels
   if (context.siteId != null) {
     constraint.site = { id: context.siteId }
+    constraint.sample = { originSiteId: context.siteId }
   } else if (context.lgaId != null) {
     constraint.geography = { lgaId: context.lgaId }
   } else if (context.stateId != null) {
@@ -153,6 +154,7 @@ function addConstraints(queryBuilder, constraints, aliases) {
     device,
     sample,
     person,
+    showUnapprovedDevices = false,
     jobFunction,
     allowAdminThrough = false,
   } = aliases
@@ -206,6 +208,15 @@ function addConstraints(queryBuilder, constraints, aliases) {
   }
   if (person && constraints.person && !allowAdminThrough) {
     queryBuilder.where({ [`${person}.personId`]: constraints.person.id })
+  }
+
+  if (device && !showUnapprovedDevices) {
+    queryBuilder.leftOuterJoin(
+      `DeviceStatus as deviceStatus`,
+      `${device}.deviceStatusId`,
+      `deviceStatus.id`
+    )
+    queryBuilder.where({ [`deviceStatus.token`]: 'approved' })
   }
 
   // data filter constraints are ORed

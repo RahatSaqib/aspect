@@ -82,7 +82,12 @@ async function seed(knex) {
         type: 'string',
         title: 'HIV-1 O',
       },
-      hiv2Result: { list: true, order: 8, type: 'string', title: 'HIV-2' },
+      hiv2Result: {
+        list: true,
+        order: 8,
+        type: 'string',
+        title: 'HIV-2',
+      },
       errorCode: {
         list: true,
         order: 9,

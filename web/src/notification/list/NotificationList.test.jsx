@@ -21,6 +21,7 @@ describe('NotificationList module', () => {
       push: () => {},
     },
     fetchNotifications: () => {},
+    exportNotifications: () => {},
     userPermissions: Immutable.Set([
       'notification:admin',
       'report:admin',

@@ -33,10 +33,14 @@ describe('PersonDetail module', () => {
     }),
     showAcknowledgement: _.noop,
     fetchSinglePerson: _.noop,
+    createPerson: _.noop,
     updateSinglePerson: _.noop,
     updateSinglePersonLoginDetails: _.noop,
     updateSinglePersonUserPreferences: _.noop,
     fetchPartnersAndJobFunctionsForSelectList: _.noop,
+    isNew: false,
+    addPersonAssignment: _.noop,
+    deletePersonAssignment: _.noop,
   }
 
   describe('Person Detail component', () => {

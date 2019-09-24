@@ -16,13 +16,13 @@ const {
   updateFormData,
   listWorkflowStatusTypes,
   listWorkflowStatusLog,
-  exportResults,
   showDeviceLogs,
   showFileReferences,
   downloadFile,
   downloadFirstImage,
   confirmedTreatmentTracking,
 } = require('./service')
+const { getResultsReport } = require('./serviceReport')
 const {
   validateAllGeographyFilterParams,
 } = require('../geography/requestValidation')
@@ -30,6 +30,10 @@ const {
 function listResultsBaseConfig() {
   return {
     auth: { scope: ['result:view', 'result:edit'] },
+    timeout: {
+      server: 360000,
+      socket: false,
+    },
     validate: {
       query: Object.assign(
         {
@@ -315,7 +319,7 @@ const routes = [
   {
     method: 'GET',
     path: '/result/export',
-    handler: asyncHandler(exportResults),
+    handler: getResultsReport,
     config: Object.assign(
       {
         description: 'Export Result List into Excel or CSV',
@@ -520,10 +524,10 @@ const routes = [
                   .allow(null)
                   .description('Operator of the device'),
                 notes: Joi.string()
-                  .allow(null)
+                  .allow(null, '')
                   .description('Any notes entered for the sample'),
                 errorCode: Joi.string()
-                  .allow(null)
+                  .allow(null, '')
                   .description(
                     'If an error occurred, contains the error code from the device'
                   ),
@@ -580,7 +584,7 @@ const routes = [
     config: {
       description: 'Update Result Treatment Status',
       notes: 'Update the treatment status of a result',
-      auth: { scope: ['treatmentStatus:edit'] },
+      auth: { scope: ['treatmentStatus:edit', 'treatmentStatus:admin'] },
       validate: {
         params: {
           resultId: Joi.number()

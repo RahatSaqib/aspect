@@ -58,7 +58,9 @@ describe('Sending push notification via Message Queue', () => {
       assert.equal(msg.messageStatusId, messageStatusIdSent)
       // make sure generated message does not have unprocessed curly braces {{ }}
       assert(
-        !msg.body.includes('{{') && !msg.body.includes('}}'),
+        !msg.body.includes('{{') &&
+          !msg.body.includes('}}') &&
+          !msg.body.includes('issue.data'),
         'Push notification message template has not been parsed well'
       )
     }))

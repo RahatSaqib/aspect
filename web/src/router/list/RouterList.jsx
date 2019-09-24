@@ -142,7 +142,7 @@ const enhance = compose(
       pageAt,
       table,
     }) => formatType => {
-      const format = formatType.target.id
+      const format = formatType.id
       const { sanitized, value: filtersParams } = filtersFromLocation(location)
       if (!sanitized) {
         exportRouters(

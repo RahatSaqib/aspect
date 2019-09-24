@@ -35,7 +35,9 @@ exports[`ReportList component should shallow render correctly 1`] = `
         "locale": "en",
         "messages": Object {},
         "now": [Function],
+        "onError": [Function],
         "textComponent": "span",
+        "timeZone": null,
       }
     }
     location={
@@ -48,7 +50,7 @@ exports[`ReportList component should shallow render correctly 1`] = `
     <DataTableProgressBar
       disabled={true}
     />
-    <withState(withHandlers(ExportListButton))
+    <Connect(withState(withHandlers(ExportListButton)))
       reportName="Report"
     />
     <pure(withHandlers(EmptyList))
@@ -74,7 +76,9 @@ exports[`ReportList component should shallow render correctly 1`] = `
           "locale": "en",
           "messages": Object {},
           "now": [Function],
+          "onError": [Function],
           "textComponent": "span",
+          "timeZone": null,
         }
       }
       location={

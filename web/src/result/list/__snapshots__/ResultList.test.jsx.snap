@@ -36,7 +36,9 @@ exports[`Result List component should shallow render correctly when filter for a
         "locale": "en",
         "messages": Object {},
         "now": [Function],
+        "onError": [Function],
         "textComponent": "span",
+        "timeZone": null,
       }
     }
     location={
@@ -48,6 +50,9 @@ exports[`Result List component should shallow render correctly when filter for a
   <DataTableCard>
     <DataTableProgressBar
       disabled={true}
+    />
+    <Connect(withState(withHandlers(ExportListButton)))
+      reportName="Results"
     />
     <pure(withHandlers(EmptyList))
       intl={
@@ -72,7 +77,9 @@ exports[`Result List component should shallow render correctly when filter for a
           "locale": "en",
           "messages": Object {},
           "now": [Function],
+          "onError": [Function],
           "textComponent": "span",
+          "timeZone": null,
         }
       }
       location={
@@ -121,7 +128,9 @@ exports[`Result List component should shallow render correctly when filter for a
         "locale": "en",
         "messages": Object {},
         "now": [Function],
+        "onError": [Function],
         "textComponent": "span",
+        "timeZone": null,
       }
     }
     location={
@@ -133,6 +142,9 @@ exports[`Result List component should shallow render correctly when filter for a
   <DataTableCard>
     <DataTableProgressBar
       disabled={true}
+    />
+    <Connect(withState(withHandlers(ExportListButton)))
+      reportName="Results"
     />
     <pure(withHandlers(EmptyList))
       intl={
@@ -157,7 +169,9 @@ exports[`Result List component should shallow render correctly when filter for a
           "locale": "en",
           "messages": Object {},
           "now": [Function],
+          "onError": [Function],
           "textComponent": "span",
+          "timeZone": null,
         }
       }
       location={

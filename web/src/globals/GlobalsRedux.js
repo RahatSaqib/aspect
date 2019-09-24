@@ -6,6 +6,7 @@ export const types = {
   GLOBALS_SET_LAST_SERVER_RESPONSE_TIME:
     'GLOBALS_SET_LAST_SERVER_RESPONSE_TIME',
   EXPORT_RESPONSE_FILE_RECEIVED: 'EXPORT_RESPONSE_FILE_RECEIVED',
+  EXPORT_FILE_STARTED: 'EXPORT_FILE_STARTED',
 }
 
 /*
@@ -25,6 +26,12 @@ export function setNavTitle(title) {
     title,
   }
 }
+export function onStartDownloading() {
+  return {
+    type: types.EXPORT_FILE_STARTED,
+  }
+}
+
 export function receivedExportResponse(blob, format, reportName) {
   downloadFile(blob, reportName, format)
   return {
@@ -40,8 +47,7 @@ export function receivedExportResponse(blob, format, reportName) {
 const Globals = Immutable.Record({
   title: undefined,
   lastServerResponseTime: new Date(),
-  reportName: undefined,
-  fileFormat: undefined,
+  downloadStarted: false,
 })
 
 const initialState = new Globals()
@@ -49,8 +55,10 @@ const initialState = new Globals()
 export default function globalsReducer(state = initialState, action) {
   switch (action.type) {
     case types.EXPORT_RESPONSE_FILE_RECEIVED: {
-      // Open the URL on new Window
-      return state
+      return state.set('downloadStarted', false)
+    }
+    case types.EXPORT_FILE_STARTED: {
+      return state.set('downloadStarted', true)
     }
     case types.GLOBALS_SET_NAV_TITLE:
       return state.set('title', action.title)

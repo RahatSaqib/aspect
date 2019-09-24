@@ -79,7 +79,7 @@ exports[`Person List module PersonList component should shallow render correctly
         }
       }
     />
-    <withState(withHandlers(ExportListButton))
+    <Connect(withState(withHandlers(ExportListButton)))
       reportName="Contacts"
     />
   </DataTableCard>

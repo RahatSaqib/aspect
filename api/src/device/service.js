@@ -132,7 +132,10 @@ async function getListDevices(query, auth) {
       siteExternalId: 's.externalId',
       siteName: 's.name',
     })
-    .modify(addConstraints, dataConstraints, { device: 'd' })
+    .modify(addConstraints, dataConstraints, {
+      device: 'd',
+      showUnapprovedDevices: true,
+    })
 
   // get total count for paging
   const getCount = deviceQuery
@@ -286,7 +289,10 @@ async function getDeviceByDeviceId({
         .andOn('dmW.deviceMaintenanceTypeId', maintenanceWarrantyId)
     })
     .where('d.id', +deviceId)
-    .modify(addConstraints, dataConstraints, { device: 'd' })
+    .modify(addConstraints, dataConstraints, {
+      device: 'd',
+      showUnapprovedDevices: true,
+    })
     .first(fields)
 
   if (!device) {
@@ -529,7 +535,8 @@ async function getDevicePerformance(request) {
   const devicePerformance = await knex('Result as r')
     .leftJoin('ResultCategory as rc1', 'rc1.id', 'r.resultCategory1')
     .leftJoin('ResultCategory as rc2', 'rc2.id', 'r.resultCategory2')
-    .modify(addConstraints, dataConstraints, { result: 'r' })
+    .innerJoin('Device as d', 'r.deviceId', 'd.id')
+    .modify(addConstraints, dataConstraints, { result: 'r', device: 'd' })
     .where('r.deviceId', deviceId)
     .where('r.endedOn', '>=', startedOn)
     .where('r.endedOn', '<=', endedOn)

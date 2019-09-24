@@ -1,5 +1,5 @@
 module.exports = require('../utils').seed(seed, __filename)
-
+const Promise = require('bluebird')
 const _ = require('lodash')
 const bcrypt = require('bcrypt')
 const {
@@ -5779,7 +5779,7 @@ async function seed(knex) {
     },
   }
 
-  _.map(_.range(resultMtbNumber), async i => {
+  await Promise.each(_.range(resultMtbNumber), async i => {
     const device = devicesGeneXpert[i % devicesGeneXpert.length]
     const siteData = siteDatas.find(site => site.id === device.siteId)
     const sample = samples[i % samples.length]
@@ -6013,7 +6013,7 @@ async function seed(knex) {
     },
   }
 
-  _.map(_.range(resultEbolaNumber), async i => {
+  await Promise.each(_.range(resultEbolaNumber), async i => {
     const device = devicesGeneXpert[i % devicesGeneXpert.length]
     const siteData = siteDatas.find(site => site.id === device.siteId)
     const sample = samples[i % samples.length]
@@ -6189,7 +6189,7 @@ async function seed(knex) {
 
   // make sure we have at least one result with these status
   const ensureResultIds = [acknowledged, validated, deliverable]
-  _.map(_.range(resultHivVlNumber), async i => {
+  await Promise.each(_.range(resultHivVlNumber), async i => {
     const device = devicesGeneXpert[i % devicesGeneXpert.length]
     const siteData = siteDatas.find(site => site.id === device.siteId)
     const sample = samples[i % samples.length]
@@ -6333,7 +6333,7 @@ async function seed(knex) {
     },
   }
 
-  _.map(_.range(resultHcvNumber), async i => {
+  await Promise.each(_.range(resultHcvNumber), async i => {
     const device = devicesDaktari[i % devicesDaktari.length]
     const siteData = siteDatas.find(site => site.id === device.siteId)
     const sample = samples[i % samples.length]
@@ -6468,7 +6468,7 @@ async function seed(knex) {
     },
   }
 
-  _.map(_.range(resultHivVlNumber), async i => {
+  await Promise.each(_.range(resultHivVlNumber), async i => {
     const device = devicesDaktari[i % devicesDaktari.length]
     const siteData = siteDatas.find(site => site.id === device.siteId)
     const sample = samples[i % samples.length]
@@ -6609,7 +6609,7 @@ async function seed(knex) {
     },
   }
 
-  _.map(_.range(resultHcvNumber), async i => {
+  await Promise.each(_.range(resultHcvNumber), async i => {
     const device = devicesDaktari[i % devicesDaktari.length]
     const siteData = siteDatas.find(site => site.id === device.siteId)
     const sample = samples[i % samples.length]
@@ -6717,17 +6717,25 @@ async function seed(knex) {
     partnerId: partnerTwoId,
   })
 
-  const featureBlacklist = ['clinicalIndicators', 'operationalData']
+  let featureBlacklist = ['clinicalIndicators', 'operationalData']
 
   // assign features to JobFeatures
   await assignAllFeaturesToJobFunctionIds(
     knex,
-    [
-      jobFunctionIdAdmin,
-      jobFunctionIdManager,
-      jobFunctionIdPartnerTwo,
-      jobFunctionIdClinician,
-    ],
+    [jobFunctionIdAdmin, jobFunctionIdManager, jobFunctionIdPartnerTwo],
+    featureBlacklist
+  )
+
+  featureBlacklist = [
+    'clinicalIndicators',
+    'operationalData',
+    'manage',
+    'reporter',
+  ]
+
+  await assignAllFeaturesToJobFunctionIds(
+    knex,
+    [jobFunctionIdClinician],
     featureBlacklist
   )
 
@@ -6770,10 +6778,6 @@ async function seed(knex) {
       permissionId: modules.treatmentStatus.admin,
     },
     {
-      jobFunctionId: jobFunctionIdClinician,
-      permissionId: modules.treatmentStatus.admin,
-    },
-    {
       jobFunctionId: jobFunctionIdPartnerTwo,
       permissionId: modules.treatmentStatus.admin,
     },
@@ -6808,7 +6812,15 @@ async function seed(knex) {
     },
     {
       jobFunctionId: jobFunctionIdClinician,
-      permissionId: modules.reporter.view,
+      permissionId: modules.result.edit,
+    },
+    {
+      jobFunctionId: jobFunctionIdClinician,
+      permissionId: modules.browse.view,
+    },
+    {
+      jobFunctionId: jobFunctionIdClinician,
+      permissionId: modules.treatmentStatus.edit,
     },
   ])
 
@@ -6972,7 +6984,6 @@ async function seed(knex) {
 
     { jobFunctionId: jobFunctionIdClinician, widgetId: widgetIds.sites },
     { jobFunctionId: jobFunctionIdClinician, widgetId: widgetIds.devices },
-    { jobFunctionId: jobFunctionIdClinician, widgetId: widgetIds.contacts },
   ])
 
   // Messages

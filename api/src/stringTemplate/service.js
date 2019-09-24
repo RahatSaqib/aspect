@@ -1,5 +1,5 @@
 const _ = require('lodash')
-const { formatDistanceStrict } = require('date-fns')
+const { formatDistanceStrict, parseISO } = require('date-fns')
 const { findTimeZone } = require('timezone-support')
 const { convertToTimeZone } = require('date-fns-timezone')
 const handlebars = require('handlebars')
@@ -212,9 +212,11 @@ function numberOfDays(date) {
   if (date == null || date === '') {
     return 'days'
   }
-  return formatDistanceStrict(new Date(), date, {
+
+  const parsedDate = date instanceof Date ? date : parseISO(date)
+  return formatDistanceStrict(new Date(), parsedDate, {
     unit: 'day',
-    partialMethod: 'ceil',
+    roundingMethod: 'floor',
   })
 }
 

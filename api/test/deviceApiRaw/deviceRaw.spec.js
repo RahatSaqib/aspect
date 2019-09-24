@@ -48,7 +48,9 @@ describe('Device API Raw routes', () => {
             .where('id', revokedKeyInDatabase.id)
             .update({ revoked: true, updatedOn: now })
         } else if (!revokedKeyInDatabase) {
-          const { id: userId } = await knex('User').first('id')
+          const { id: userId, partnerId } = await knex('User as u')
+            .innerJoin('Person as p', 'u.id', 'p.userId')
+            .first('u.id', 'p.lastPartnerId as partnerId')
           await knex('DeviceApiKey').insert({
             token: revokedApiKeyToken,
             revoked: true,
@@ -56,6 +58,7 @@ describe('Device API Raw routes', () => {
             createdBy: userId,
             updatedOn: now,
             updatedBy: userId,
+            partnerId,
           })
         }
       })
@@ -95,7 +98,9 @@ describe('Device API Raw routes', () => {
           .where('id', validKeyInDatabase.id)
           .update({ revoked: false, updatedOn: now })
       } else if (!validKeyInDatabase) {
-        const { id: userId } = await knex('User').first('id')
+        const { id: userId, partnerId } = await knex('User as u')
+          .innerJoin('Person as p', 'u.id', 'p.userId')
+          .first('u.id', 'p.lastPartnerId as partnerId')
         await knex('DeviceApiKey').insert({
           token: validApiKeyToken,
           revoked: false,
@@ -103,6 +108,7 @@ describe('Device API Raw routes', () => {
           createdBy: userId,
           updatedOn: now,
           updatedBy: userId,
+          partnerId,
         })
       }
     })

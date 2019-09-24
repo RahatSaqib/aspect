@@ -65,6 +65,7 @@ describe('Device API Raw routes for Senaite LIMS', () => {
       createdBy: userId,
       updatedOn: now,
       updatedBy: userId,
+      partnerId: partner.id,
     })
   })
 

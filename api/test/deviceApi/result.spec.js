@@ -38,7 +38,7 @@ describe('Device Result API routes', () => {
       .then(() => result)
   }
 
-  const clientBasePath = '/api/result'
+  const apiResultPath = '/api/result'
   function setResultAsDeliverable(
     context,
     resultId,
@@ -48,7 +48,7 @@ describe('Device Result API routes', () => {
     const { clientAuth } = context
     const status = { externalId: 'Deliverable' }
     if (changedOn) status.updatedOn = changedOn.toISOString()
-    const clientSingleResultPath = `${clientBasePath}/`
+    const clientSingleResultPath = `${apiResultPath}/`
     return server
       .put(`${clientSingleResultPath}workflow-status/${resultId}`)
       .send(status)
@@ -91,70 +91,71 @@ describe('Device Result API routes', () => {
       runTest(async knex => {
         const resultIds = []
         const { deviceId, clientAuth, deviceAuth, now } = context
-        const clientSingleResultPath = `${clientBasePath}/`
-        const clientPath = `${clientBasePath}?deviceId=${deviceId}&size=1000`
+        const clientSingleResultPath = `${apiResultPath}/`
+        const clientPath = `${apiResultPath}?deviceId=${deviceId}&size=1000`
 
-        let initialDataLength = 0
-        await server
+        const getResultResponse1 = await server
           .get(clientPath)
           .set('Authorization', clientAuth)
-          .then(res => {
-            assert.equal(res.status, 200)
-            assert.typeOf(res.body, 'Object')
-            assert.property(res.body, 'data')
-            assert.typeOf(res.body.data, 'array')
-            assert.isAtLeast(res.body.data.length, 0)
-            initialDataLength = res.body.data.length
-            assert.property(res.body, 'total')
-          })
+        assert.equal(getResultResponse1.status, 200)
+        assert.typeOf(getResultResponse1.body, 'Object')
+        assert.property(getResultResponse1.body, 'data')
+        assert.property(getResultResponse1.body, 'total')
+        assert.typeOf(getResultResponse1.body.data, 'array')
 
-        const deviceChangedName = `Device Changed Name ${now}`
+        const initialDataLength = getResultResponse1.body.data.length
+
+        let lastResultId = await getLastResultId(knex, deviceId)
+        if (lastResultId) {
+          resultIds.push(lastResultId)
+        }
+        const deviceChangedName = `Device Changed Name ${new Date()}`
 
         const resultPayload = {
           startedOn: now,
           data: { a: 'b' },
           assay: { id: 'DaktariHivVl' },
           instrument: { serial: '1234567' },
-          sample: { id: '76543789' },
+          sample: { id: '29347293' },
         }
-        await server
+        const postNewResultResponse1 = await server
           .post(devicePath)
           .set('Authorization', deviceAuth)
           .send({
             name: deviceChangedName,
             result: resultPayload,
           })
-          .then(res => {
-            assert.equal(res.status, 200)
-            assert.typeOf(res.body, 'Object')
-          })
+        assert.equal(postNewResultResponse1.status, 200)
+        assert.typeOf(postNewResultResponse1.body, 'Object')
 
-        resultIds.push(await getLastResultId(knex, deviceId))
-
-        await server
+        lastResultId = await getLastResultId(knex, deviceId)
+        if (lastResultId && !resultIds.includes(lastResultId)) {
+          resultIds.push(lastResultId)
+        }
+        const getResultResponse2 = await server
           .get(clientPath)
           .set('Authorization', clientAuth)
-          .then(res => {
-            assert.equal(res.status, 200)
-            assert.typeOf(res.body, 'Object')
-            assert.property(res.body, 'data')
-            assert.typeOf(res.body.data, 'array')
-            assert.property(res.body, 'total')
+        assert.equal(getResultResponse2.status, 200)
+        assert.typeOf(getResultResponse2.body, 'Object')
+        assert.property(getResultResponse2.body, 'data')
+        assert.typeOf(getResultResponse2.body.data, 'array')
+        assert.property(getResultResponse2.body, 'total')
+        assert.equal(getResultResponse2.body.data.length, initialDataLength + 1)
 
-            assert.equal(res.body.data.length, initialDataLength + 1)
-            const lastResult = _.find(res.body.data, { id: resultIds[0] })
-            assert.typeOf(lastResult, 'Object')
-            assert.equal(lastResult.id, resultIds[0])
-          })
+        const lastResult = _.find(getResultResponse2.body.data, {
+          id: lastResultId,
+        })
+        assert.typeOf(lastResult, 'Object')
+        assert.equal(lastResult.id, lastResultId)
 
         const result1 = await knex('Result as r')
-          .where({ id: resultIds[0] })
+          .where({ id: lastResultId })
           .first()
 
         const tagsResult1 = await knex('Result as r')
           .join('ResultTag as rt', 'r.id', 'rt.resultId')
           .join('Tag as t', 'rt.tagid', 't.id')
-          .where({ 'r.id': resultIds[0] })
+          .where({ 'r.id': lastResultId })
           .select('t.*')
 
         assert.equal(tagsResult1.length, 0)
@@ -218,7 +219,7 @@ describe('Device Result API routes', () => {
           .where('id', '<>', result1.siteId)
           .first()
 
-        await server
+        const postNewResultResponse2 = await server
           .post(devicePostResultPath)
           .set('Authorization', deviceAuth)
           .send({
@@ -310,28 +311,27 @@ describe('Device Result API routes', () => {
               notes: 'Oh NOZE!',
             },
           })
-          .then(res => {
-            assert.equal(res.status, 200)
-            assert.typeOf(res.body, 'Object')
-          })
+        assert.equal(postNewResultResponse2.status, 200)
+        assert.typeOf(postNewResultResponse2.body, 'Object')
 
-        resultIds.push(await getLastResultId(knex, deviceId))
+        lastResultId = await getLastResultId(knex, deviceId)
+        if (lastResultId && !resultIds.includes(lastResultId)) {
+          resultIds.push(lastResultId)
+        }
 
-        await server
+        const getResultResponse3 = await server
           .get(clientPath)
           .set('Authorization', clientAuth)
-          .then(res => {
-            assert.equal(res.status, 200)
-            assert.typeOf(res.body, 'Object')
-            assert.property(res.body, 'data')
-            assert.typeOf(res.body.data, 'array')
-            assert.property(res.body, 'total')
+        assert.equal(getResultResponse3.status, 200)
+        assert.typeOf(getResultResponse3.body, 'Object')
+        assert.property(getResultResponse3.body, 'data')
+        assert.typeOf(getResultResponse3.body.data, 'array')
+        assert.property(getResultResponse3.body, 'total')
 
-            assert.equal(res.body.data.length, initialDataLength + 2)
-          })
+        assert.equal(getResultResponse3.body.data.length, initialDataLength + 2)
 
         const result2 = await knex('Result as r')
-          .where({ 'r.id': resultIds[1] })
+          .where({ 'r.id': lastResultId })
           .first()
         const tagsResult2 = await knex('Result as r')
           .join('ResultTag as rt', 'r.id', 'rt.resultId')
@@ -450,7 +450,7 @@ describe('Device Result API routes', () => {
           'DeviceLog as dl'
         )
           .innerJoin('Result as r', 'r.id', 'dl.resultId')
-          .where({ 'r.id': resultIds[1] })
+          .where({ 'r.id': lastResultId })
           .select('rawMessage', 'resultId')
 
         assert.deepEqual(JSON.parse(log2Raw), {
@@ -542,41 +542,38 @@ describe('Device Result API routes', () => {
             notes: 'Oh NOZE!',
           },
         })
-        await server
+        const getResultResponse4 = await server
           .get(clientSingleResultPath + resultId2)
           .set('Authorization', clientAuth)
-          .then(res => {
-            assert.equal(res.status, 200)
-            assert.typeOf(res.body, 'Object')
-            assert.typeOf(res.body.data, 'Object')
-            assert.typeOf(res.body.data.resultData, 'Object')
-            assert.deepEqual(res.body.data.resultData, {
-              a: 'b',
-              c: 2,
-              d: false,
-              e: { f: 'g' },
-            })
-          })
+
+        assert.equal(getResultResponse4.status, 200)
+        assert.typeOf(getResultResponse4.body, 'Object')
+        assert.typeOf(getResultResponse4.body.data, 'Object')
+        assert.typeOf(getResultResponse4.body.data.resultData, 'Object')
+        assert.deepEqual(getResultResponse4.body.data.resultData, {
+          a: 'b',
+          c: 2,
+          d: false,
+          e: { f: 'g' },
+        })
 
         await setResultAsDeliverableAndApprove(context, resultId2)
 
-        await server
+        const postNewResultResponse4 = await server
           .post(devicePath)
           .set('Authorization', deviceAuth)
           .send({ name: deviceChangedName })
-          .then(res => {
-            assert.equal(res.status, 200)
-            assert.typeOf(res.body, 'Object')
-          })
 
-        await server
+        assert.equal(postNewResultResponse4.status, 200)
+        assert.typeOf(postNewResultResponse4.body, 'Object')
+
+        const getResultResponse5 = await server
           .get(`${devicePath}`)
           .set('Authorization', deviceAuth)
-          .then(res => {
-            assert.equal(res.status, 200)
-            assert.typeOf(res.body, 'Object')
-            assert.equal(res.body.name, deviceChangedName)
-          })
+
+        assert.equal(getResultResponse5.status, 200)
+        assert.typeOf(getResultResponse5.body, 'Object')
+        assert.equal(getResultResponse5.body.name, deviceChangedName)
       }))
 
     it('should set result status with different updatedOn parameters', () =>

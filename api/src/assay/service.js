@@ -135,8 +135,24 @@ async function listAssays(request) {
 
   return result
 }
-
+async function getAllAssaySchemas(partnerId, assayId = null) {
+  const query = knex('Assay as a')
+    .innerJoin('DeviceType as dt', 'a.deviceTypeId', 'dt.id')
+    .innerJoin('Device as d', 'dt.id', 'd.deviceTypeId')
+    .modify((queryBuilder, assayId) => {
+      if (assayId) queryBuilder.where('a.id', assayId)
+    }, assayId)
+    .where('d.partnerId', partnerId)
+    .select(
+      'a.name',
+      'a.externalId',
+      'a.resultDataSchema',
+      'a.patientDataSchema'
+    )
+  return query
+}
 module.exports = {
   listAssays,
+  getAllAssaySchemas,
   listAssaysResultSchema,
 }

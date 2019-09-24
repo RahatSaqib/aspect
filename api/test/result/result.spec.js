@@ -2,7 +2,7 @@ const supertest = require('supertest')
 const chai = require('chai')
 const _ = require('lodash')
 const dateFormat = require('date-fns/format')
-const { addMinutes, subMonths, endOfMonth } = require('date-fns')
+const { addMinutes, subMonths, endOfMonth, parseISO } = require('date-fns')
 
 const shared = require('../utils/sharedToken')
 const { runTestWithKnex } = require('../utils/generatorFunctionUtils')
@@ -18,6 +18,16 @@ const {
   getLastResult,
 } = require('../deviceApi/utils')
 
+const getClinicianAccessToken = () =>
+  server
+    .post('/api/auth')
+    .send({
+      name: 'clinician',
+      password: 'test07',
+      clientName: 'Mocha web',
+    })
+    .then(res => res.body.access)
+
 describe('Result routes', () => {
   const path = '/api/result'
   let resultId = 1
@@ -26,7 +36,15 @@ describe('Result routes', () => {
   let initialResultWorkflowStatusName = ''
   const reason = 'testing'
   const operator = 'Tester'
-  const changedOn = new Date(dateFormat(new Date(), 'yyyy-MM-dd HH:mm:ss.000Z'))
+  const changedOn = new Date(
+    dateFormat(new Date(), "yyyy-MM-dd HH:mm:ss.000'Z'")
+  )
+
+  let clinicianAccessToken = ''
+  before(async () => {
+    clinicianAccessToken = await getClinicianAccessToken()
+  })
+
   describe('GET', () => {
     shared.checkToken(server, path)
 
@@ -50,6 +68,7 @@ describe('Result routes', () => {
             assert.property(res.body.data[0], 'lgaName')
             assert.property(res.body.data[0], 'sampleId')
             assert.property(res.body.data[0], 'sampleGroup')
+            assert.property(res.body.data[0], 'sampleOriginSiteName')
             assert.property(res.body.data[0], 'resultText')
             assert.property(res.body.data[0], 'resultWorkflowStatus')
             assert.property(res.body.data[0], 'patientId')
@@ -89,6 +108,7 @@ describe('Result routes', () => {
           assert.property(res.body.data[0], 'lgaName')
           assert.property(res.body.data[0], 'sampleId')
           assert.property(res.body.data[0], 'sampleGroup')
+          assert.property(res.body.data[0], 'sampleOriginSiteName')
           assert.property(res.body.data[0], 'patientId')
           assert.property(res.body.data[0], 'assayName')
           assert.property(res.body.data[0], 'resultCategory1Name')
@@ -105,6 +125,103 @@ describe('Result routes', () => {
       server
         .get(`${path}/${resultId}`)
         .set('Authorization', `Bearer ${shared.token}`)
+        .end((err, res) => {
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+          assert.property(res.body, 'data')
+          assert.typeOf(res.body.data, 'Object')
+          assert.property(res.body.data, 'id')
+          assert.property(res.body.data, 'endedOn')
+          assert.property(res.body.data, 'deviceName')
+          assert.property(res.body.data, 'countryName')
+          assert.property(res.body.data, 'stateName')
+          assert.property(res.body.data, 'lgaName')
+          assert.property(res.body.data, 'resultCategory1Name')
+          assert.property(res.body.data, 'resultCategory2Name')
+          assert.property(res.body.data, 'resultWorkflowStatusId')
+          assert.property(res.body.data, 'resultWorkflowStatus')
+          assert.property(res.body.data, 'resultWorkflowStatusExternalId')
+          assert.property(res.body.data, 'resultData')
+          assert.typeOf(res.body.data.resultData, 'Object')
+          assert.property(res.body.data, 'sampleId')
+          assert.property(res.body.data, 'sampleGroup')
+          assert.property(res.body.data, 'patientId')
+          assert.property(res.body.data, 'siteName')
+          assert.property(res.body.data, 'assayVersion')
+          assert.property(res.body.data, 'consumableSerial')
+          assert.property(res.body.data, 'consumableLot')
+          assert.property(res.body.data, 'consumableExpirationDate')
+          assert.property(res.body.data, 'instrumentSerial')
+          assert.property(res.body.data, 'moduleName')
+          assert.property(res.body.data, 'moduleSerial')
+          assert.property(res.body.data, 'researchId')
+          assert.property(res.body.data, 'senderVersion')
+          assert.property(res.body.data, 'senderOperator')
+          assert.property(res.body.data, 'notes')
+          assert.property(res.body.data, 'errorCode')
+          assert.property(res.body.data, 'errorNotes')
+          assert.property(res.body.data, 'createdOn')
+          assert.property(res.body.data, 'updatedOn')
+          assert.property(res.body.data, 'assayId')
+          assert.property(res.body.data, 'assay')
+          assert.typeOf(res.body.data.assay, 'Object')
+          assert.property(res.body.data.assay, 'id')
+          assert.property(res.body.data.assay, 'name')
+          assert.property(res.body.data.assay, 'i18nKey')
+          assert.property(res.body.data.assay, 'assayTypeId')
+          assert.property(res.body.data.assay, 'deviceTypeId')
+          assert.property(res.body.data.assay, 'resultCategory1Label')
+          assert.property(res.body.data.assay, 'resultCategory1i18nKey')
+          assert.property(res.body.data.assay, 'resultCategory2Label')
+          assert.property(res.body.data.assay, 'resultCategory2i18nKey')
+          assert.property(res.body.data.assay, 'resultDataSchema')
+          assert.typeOf(res.body.data.assay.resultDataSchema, 'Object')
+          assert.property(res.body.data, 'files')
+          done()
+        })
+    })
+
+    it('should return a list of results that the clinician has access to via sample origin site', done => {
+      server
+        .get(`${path}?assayId=${assayId}`)
+        .set('Authorization', `Bearer ${clinicianAccessToken}`)
+        .end((err, res) => {
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+          assert.property(res.body, 'data')
+          assert.typeOf(res.body.data, 'array')
+          assert.equal(res.body.data.length, 3)
+          assert.property(res.body.data[0], 'id')
+          assert.property(res.body.data[0], 'endedOn')
+          assert.property(res.body.data[0], 'deviceName')
+          assert.property(res.body.data[0], 'countryName')
+          assert.property(res.body.data[0], 'stateName')
+          assert.property(res.body.data[0], 'lgaName')
+          assert.property(res.body.data[0], 'sampleId')
+          assert.property(res.body.data[0], 'sampleGroup')
+          assert.property(res.body.data[0], 'sampleOriginSiteName')
+          assert.property(res.body.data[0], 'patientId')
+          assert.property(res.body.data[0], 'assayName')
+          assert.property(res.body.data[0], 'resultCategory1Name')
+          assert.property(res.body.data[0], 'resultCategory2Name')
+          assert.property(res.body.data[0], 'resultText')
+          assert.property(res.body.data[0], 'resultWorkflowStatus')
+          assert.property(res.body, 'total')
+          assert.typeOf(res.body.extraColumns, 'array')
+
+          const originSites = _.uniqBy(res.body.data, 'sampleOriginSiteName')
+          assert.equal(originSites.length, 1)
+          assert.equal(originSites[0].sampleOriginSiteName, 'Dayton Ohio')
+          ;[{ id: resultId }] = res.body.data
+
+          done()
+        })
+    })
+
+    it('should return a single result that the clinician has access to via sample origin site', done => {
+      server
+        .get(`${path}/${resultId}`)
+        .set('Authorization', `Bearer ${clinicianAccessToken}`)
         .end((err, res) => {
           assert.equal(res.status, 200)
           assert.typeOf(res.body, 'Object')
@@ -249,7 +366,7 @@ describe('Result routes', () => {
           )
           assert.equal(
             dateFormat(
-              res.body.data.resultWorkflowLogChangedOn,
+              parseISO(res.body.data.resultWorkflowLogChangedOn),
               'yyyy-MM-dd HH:mm:ss'
             ),
             dateFormat(changedOn, 'yyyy-MM-dd HH:mm:ss')
@@ -657,6 +774,12 @@ describe('Result Workflow Status Log', () => {
 
 describe('Result download routes', () => {
   const path = '/api/result/download'
+
+  let clinicianAccessToken = ''
+  before(async () => {
+    clinicianAccessToken = await getClinicianAccessToken()
+  })
+
   afterEach(() =>
     runTestWithKnex(async knex => {
       await knex('ResultDownloadLog').delete()
@@ -922,6 +1045,67 @@ describe('Result download routes', () => {
           done()
         })
     })
+
+    it('should return a paged list of results, including all result details, that the clinician has access to', () =>
+      runTestWithKnex(knex => {
+        server
+          .get(`${path}?deviceType=DaktariVirology`)
+          .set('Authorization', `Bearer ${clinicianAccessToken}`)
+          .end(async (err, res) => {
+            assert.equal(res.status, 200)
+            assert.typeOf(res.body, 'Object')
+
+            assert.property(res.body, 'ok')
+            assert.property(res.body, 'total')
+            assert.property(res.body, 'length')
+            assert.property(res.body, 'data')
+
+            assert.equal(res.body.ok, true)
+            assert.equal(res.body.length, 3)
+
+            assert.typeOf(res.body.data, 'array')
+            assert.equal(res.body.data.length, 3)
+
+            assert.property(res.body.data[0], 'id')
+            assert.property(res.body.data[0], 'externalId')
+            assert.property(res.body.data[0], 'startedOn')
+            assert.property(res.body.data[0], 'endedOn')
+            assert.property(res.body.data[0], 'createdOn')
+            assert.property(res.body.data[0], 'updatedOn')
+            assert.property(res.body.data[0], 'longitude')
+            assert.property(res.body.data[0], 'latitude')
+            assert.property(res.body.data[0], 'assayExternalId')
+            assert.property(res.body.data[0], 'siteName')
+            assert.property(res.body.data[0], 'deviceName')
+            assert.property(res.body.data[0], 'resultCategory1ExternalId')
+            assert.property(res.body.data[0], 'resultCategory2ExternalId')
+            assert.property(res.body.data[0], 'workflowStatus')
+            assert.equal(
+              res.body.data[0].workflowStatus.externalId,
+              'Delivered'
+            )
+            assert.property(res.body.data[0], 'treatmentStatus')
+            assert.property(res.body.data[0], 'patientData')
+            assert.property(res.body.data[0], 'resultData')
+            assert.property(res.body.data[0], 'formData')
+            assert.property(res.body.data[0], 'researchId')
+            assert.property(res.body.data[0], 'senderVersion')
+            assert.property(res.body.data[0], 'senderOperator')
+            assert.property(res.body.data[0], 'notes')
+            assert.property(res.body.data[0], 'errorCode')
+            assert.property(res.body.data[0], 'errorNotes')
+            assert.property(res.body.data[0], 'sample')
+
+            assert.equal(Object.keys(res.body.data[0]).length, 25)
+            // check if the download is register in the table.
+            const { count: totalResult } = await knex('ResultDownloadLog')
+              .where('resultId', res.body.data[0].id)
+              .count('id as count')
+              .first()
+
+            assert.isAtLeast(totalResult, 1)
+          })
+      }))
   })
 })
 
@@ -949,9 +1133,7 @@ describe('Result Treatment', () => {
           assert.equal(res.body.data.length, 6) // for 6 months
           assert.property(res.body.data[0], 'monthTested')
           assert.property(res.body.data[0], 'pcConfirmed')
-          assert.property(res.body.data[0], 'pcNotPossible')
           assert.property(res.body.data[0], 'cntConfirmed')
-          assert.property(res.body.data[0], 'cntNotPossible')
           assert.property(res.body.data[0], 'total')
 
           done()

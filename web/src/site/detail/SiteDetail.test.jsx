@@ -18,6 +18,8 @@ describe('SiteDetail component', () => {
       params: {
         siteId: '1',
       },
+      path: '/browse/site/1/alerts',
+      url: '/browe/site',
     },
     history: {},
     location: {},
