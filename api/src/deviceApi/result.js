@@ -9,6 +9,7 @@ const {
   resultWorkflowStatusToId,
   sampleTypeToId,
 } = require('../shared/dictionary')
+const { convertStringToFloat } = require('../shared/string')
 
 const { getDevice } = require('../device/service')
 const inventory = require('../inventory/service')
@@ -228,13 +229,6 @@ async function mergeResult(
       .where({ partnerId: site.partnerId, externalId: payloadOriginSiteId })
       .first()
     const sampleOriginSiteName = _.get(payload, 'sample.originSite.name')
-    const convertToFloat = value => {
-      const convertedValue = parseFloat(value)
-      if (_.isNaN(convertedValue)) {
-        return null
-      }
-      return convertedValue
-    }
     const sampleOriginSiteDetailsInPayload = {
       name: sampleOriginSiteName,
       shortName: _.get(payload, 'sample.originSite.shortName'),
@@ -245,17 +239,19 @@ async function mergeResult(
       street1: _.get(payload, 'sample.originSite.street1'),
       street2: _.get(payload, 'sample.originSite.street2'),
       zip: _.get(payload, 'sample.originSite.zip'),
-      longitude: convertToFloat(
+      longitude: convertStringToFloat(
         _.get(payload, 'sample.originSite.location.longitude')
       ),
-      latitude: convertToFloat(
+      latitude: convertStringToFloat(
         _.get(payload, 'sample.originSite.location.latitude')
       ),
       timezoneId: _.get(payload, 'sample.originSite.timezoneId'),
-      hoursStart: convertToFloat(
+      hoursStart: convertStringToFloat(
         _.get(payload, 'sample.originSite.hoursStart')
       ),
-      hoursEnd: convertToFloat(_.get(payload, 'sample.originSite.hoursEnd')),
+      hoursEnd: convertStringToFloat(
+        _.get(payload, 'sample.originSite.hoursEnd')
+      ),
     }
     if (!sampleOriginSite) {
       if (!sampleOriginSiteName) {
