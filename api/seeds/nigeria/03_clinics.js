@@ -15,6 +15,8 @@ const {
 } = require('../utils')
 const { allFeatureToId } = require('../../src/shared/dictionary')
 
+const treatmentStatus = require('../fixtures/treatmentStatus.json')
+
 const bcrypt = require('bcrypt')
 
 const config = require('../../src/config')
@@ -23,6 +25,8 @@ const saltRounds = parseInt(config.passwordSaltRounds, 10)
 
 async function seed(knex) {
   const now = new Date()
+
+  await knex('ResultTreatmentStatus').insert(treatmentStatus)
 
   const { id: countryId } = await knex('Country')
     .where('name', 'Nigeria')
