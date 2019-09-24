@@ -610,21 +610,23 @@ export default function resultReducer(state = initialState, action) {
         .merge({ formDataDirty: true })
     case types.RECEIVE_CREATING_TREATMENT_STATUS_LOG:
       return state.withMutations(mutState => {
-        const result = state.items.byId
-          .get(action.resultId)
-          .set('resultTreatmentStatus', action.item.resultTreatmentStatus)
-          .set('treatmentStatusInfo', action.item.treatmentStatusInfo)
-          .set('resultTreatmentData', action.item.resultTreatmentData)
-          .set(
-            'resultTreatmentStatusChangedOn',
-            action.item.resultTreatmentStatusChangedOn
-          )
-          .set(
-            'resultTreatmentStatusCreatedOn',
-            action.item.resultTreatmentStatusCreatedOn
-          )
-
-        mutState.set('items', receiveItem(mutState.items, result))
+        const {
+          resultTreatmentStatus,
+          treatmentStatusInfo,
+          resultTreatmentData,
+          resultTreatmentStatusChangedOn,
+          resultTreatmentStatusCreatedOn,
+        } = action.item
+        mutState.set(
+          'items',
+          mutState.items.mergeDeepIn(['byId', action.resultId], {
+            resultTreatmentStatus,
+            treatmentStatusInfo,
+            resultTreatmentData,
+            resultTreatmentStatusChangedOn,
+            resultTreatmentStatusCreatedOn,
+          })
+        )
       })
     default:
       return state

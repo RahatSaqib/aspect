@@ -27,10 +27,9 @@ const enhance = compose(
   }),
   withHandlers({
     onToggleShown: ({ setIsShown }) => () => setIsShown(isShown => !isShown),
-    onNoteChange: ({ setIsActive, setNote, data }) => event => {
+    onNoteChange: ({ setIsActive, setNote }) => event => {
       const note = event.target.value.trim()
-      const checkNote =
-        (data.get('resultTreatmentData') || '') !== event.target.value.trim()
+      const checkNote = event.target.value.trim() !== ''
       setNote(() => note)
       return setIsActive(() => checkNote)
     },
@@ -40,7 +39,10 @@ const enhance = compose(
       resultId,
       note,
     }) => () => {
-      logTreatmentStatus(resultId, { data: note })
+      logTreatmentStatus(resultId, {
+        data: note,
+        resultNoteType: 'ResultFollowUp',
+      })
       return setIsShown(isShown => !isShown)
     },
   })
@@ -60,6 +62,8 @@ const ResultTreatmentPanel = ({ styles, data, ...restProps }) => {
       label: 'Not yet confirmed on treatment',
     },
   ]
+
+  const resultNotes = data.get('resultTreatmentData').toJS()
 
   return (
     <div>
@@ -144,21 +148,28 @@ const ResultTreatmentPanel = ({ styles, data, ...restProps }) => {
             </div>
           </div>
         </ExpansionPanelHeader>
-        {data.get('resultTreatmentData') && (
+        {resultNotes.length > 0 && (
           <ExpansionPanelDetail className={styles.TreatmentNoteContainer}>
             <div className={styles.TreatmentNoteHeader}>
               <p>NOTE:</p>
             </div>
-            <div className={styles.TreatmentNoteBody}>
-              {data.get('resultTreatmentData')}
-            </div>
-            <div className={styles.TreatmentNoteFooter}>
-              <p>Note added by:</p>
-              <p>{`${data.get('resultTreatmentStatusCreatedBy')} - ${date(
-                data.get('resultTreatmentStatusChangedOn'),
-                'dd/MM/yyyy'
-              )}`}</p>
-            </div>
+            {resultNotes.map(resultNote => (
+              <div className={styles.TreatmentNoteComment}>
+                <div className={styles.TreatmentNoteBody}>
+                  {resultNote.text}
+                </div>
+                <div className={styles.TreatmentNoteFooter}>
+                  <span>Note added by: </span>
+                  <span>
+                    {' '}
+                    {`${resultNote.createdBy} - ${date(
+                      parseISO(resultNote.createdOn),
+                      'dd/MM/yyyy'
+                    )}`}{' '}
+                  </span>
+                </div>
+              </div>
+            ))}
           </ExpansionPanelDetail>
         )}
       </ExpansionPanel>

@@ -264,8 +264,15 @@
   display: none
 }
 
+.TreatmentNoteContainer > div:last-child > div:last-child {
+  border-bottom: none;
+}
+
 .TreatmentNoteContainer > div:nth-child(2) {
   padding: 10px 0;
+  max-height: 200px;
+  max-width: 500px;
+  overflow: scroll;
 }
 
 .TreatmentNoteContainer svg {
@@ -275,23 +282,26 @@
 }
 
 .TreatmentNoteHeader > p:nth-child(1) {
-  margin: 0;
+  margin: 0 0 10px 0;
 }
 
 .TreatmentNoteBody {
-  margin: 5px 0 15px 0;
+  margin-bottom: 5px;
 }
 
-.TreatmentNoteFooter p:first-child {
+.TreatmentNoteFooter span:nth-child(1) {
   margin: 0 0 5px 0;
   color: var(--aspect-color-chill-blue-2)
 }
 
 .TreatmentNoteFooter p:nth-child(2) {
-  margin: 0 0 5px 0;
   font-size: 12px;
 }
 
 [data-note-text-input] > div {
   width: 100%;
+}
+.TreatmentNoteComment {
+  border-bottom: 1px solid var(--aspect-color-chill-blue-2);
+  margin-bottom: 15px;
 }

@@ -111,7 +111,6 @@ const SELECT_COMMON_FIELDS = [
   'rsl.createdOn as resultWorkflowLogCreatedOn',
   'rsl.changedOn as resultWorkflowLogChangedOn',
   'rtsl.method as resultTreatmentMethod',
-  'rtsl.data as resultTreatmentData',
   'rtsl.resultTreatmentStatusId',
   'rtsl.changedOn as resultTreatmentStatusChangedOn',
   'rtsl.createdOn as resultTreatmentStatusCreatedOn',
@@ -418,6 +417,7 @@ async function exportResults(query, auth) {
       'rtsl.resultTreatmentStatusId',
       'rts.id'
     )
+    .leftJoin('ResultNote as rn', 'rn.resultId', 'r.id')
     .leftJoin('Site as si', 'r.siteId', 'si.id')
     .modify(addPartnerQueryConstraints, dataConstraints)
     .modify(addConstraints, dataConstraints, { device: 'd', sample: 'sp' })
@@ -975,7 +975,20 @@ async function getResultByResultId(request, fields = SELECT_SHOW_FIELDS) {
   }
 
   if (data) {
+    const resultNotes = await knex('ResultNote as rn')
+      .leftJoin('User as u', 'rn.createdBy', 'u.id')
+      .where('rn.resultId', +params.resultId)
+      .orderBy('rn.createdOn', 'desc')
+      .select([
+        'u.name as createdBy',
+        'rn.text',
+        'rn.id',
+        'rn.changedOn',
+        'rn.createdOn',
+      ])
+
     getResultTreatmentStatus(data)
+    data.resultTreatmentData = resultNotes
     data.resultTreatmentStatusCreatedBy = userName
   }
 
@@ -1160,6 +1173,7 @@ async function updateTreatmentStatus(
       changedOn,
       createdBy: currentUserId,
     })
+
     if (
       !lastTreatment ||
       (lastTreatment && lastTreatment.changedOn < changedOn)

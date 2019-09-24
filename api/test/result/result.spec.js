@@ -504,6 +504,7 @@ describe('Result routes', () => {
         externalId: 'AwaitingTreatment',
         data: 'should be treated',
         method: 'sms',
+        resultNoteType: 'ResultFollowUp',
         changedOn,
       }
       // update with external ID
@@ -528,6 +529,7 @@ describe('Result routes', () => {
         resultTreatmentStatusId: 2,
         data: 'should be treated',
         method: 'sms',
+        resultNoteType: 'ResultFollowUp',
         changedOn,
       }
       // update with resultTreatmentStatusId
@@ -553,6 +555,7 @@ describe('Result routes', () => {
         resultTreatmentStatusId: null,
         data: 'should be treated',
         method: 'sms',
+        resultNoteType: 'ResultFollowUp',
         changedOn,
       }
       // set to null
@@ -563,7 +566,10 @@ describe('Result routes', () => {
         .end((err, res) => {
           baseTreatmentStatusAssertion(res)
 
-          assert.equal(res.body.data.resultTreatmentData, 'should be treated')
+          assert.equal(
+            res.body.data.resultTreatmentData[0].text,
+            'should be treated'
+          )
 
           done()
         })

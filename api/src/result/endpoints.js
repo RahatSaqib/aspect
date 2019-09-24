@@ -644,6 +644,7 @@ const routes = [
           externalId: Joi.string().allow('', null),
           data: Joi.string().allow('', null),
           method: Joi.string().allow('', null),
+          resultNoteType: Joi.string().allow('', null),
           changedOn: Joi.date()
             .iso()
             .optional()
