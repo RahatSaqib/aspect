@@ -59,6 +59,14 @@ async function getOrCreateDevice(knex, payload, gxAlertDevice, now) {
       .pluck('c.abbreviation')
   }
   const deviceName = _.get(payload, 'name', null)
+  let deviceShortName = _.get(
+    payload,
+    'configuration.data.shortName',
+    deviceName
+  )
+  if (deviceShortName && deviceShortName.length > 45) {
+    deviceShortName = deviceShortName.substr(0, 45)
+  }
   const deviceDetails = {
     partnerId,
     hostId,
@@ -75,6 +83,7 @@ async function getOrCreateDevice(knex, payload, gxAlertDevice, now) {
       now,
       countryCode,
       deviceName,
+      deviceShortName,
       true
     )
     const lastPingOn = getDateOrDefault(
@@ -90,6 +99,7 @@ async function getOrCreateDevice(knex, payload, gxAlertDevice, now) {
     const { device, error } = await createNewDevice(knex, now, {
       deviceTypeExternalId,
       name: deviceName,
+      shortName: deviceShortName,
       serial: payload.serial,
       partnerId,
       siteId: site.id,
