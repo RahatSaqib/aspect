@@ -38,7 +38,8 @@ async function listAssaysResultSchema(request) {
     .innerJoin('Device as d', 'r.deviceId', 'd.id')
     .innerJoin('DeviceType as dt', 'd.devicetypeId', 'dt.id')
     .innerJoin('AssayType as at', 'a.assaytypeId', 'at.id')
-    .modify(addConstraints, dataConstraints, { device: 'd' })
+    .leftJoin('Sample as sp', 'r.sampleId', 'sp.id')
+    .modify(addConstraints, dataConstraints, { device: 'd', sample: 'sp' })
     .select(
       'a.id as assayId',
       'a.externalId',
@@ -89,7 +90,8 @@ async function listAssays(request) {
   const dataConstraints = await getConstraints(auth.credentials)
   const usedAssayIds = await knex('Result as r')
     .innerJoin('Device as d', 'r.deviceId', 'd.id')
-    .modify(addConstraints, dataConstraints, { device: 'd' })
+    .leftJoin('Sample as sp', 'r.sampleId', 'sp.id')
+    .modify(addConstraints, dataConstraints, { device: 'd', sample: 'sp' })
     .distinct('r.assayId')
     .pluck('assayId')
 

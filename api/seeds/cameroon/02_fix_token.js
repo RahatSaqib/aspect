@@ -331,7 +331,7 @@ async function seed(knex) {
       order: 2,
     },
     name: {
-      title: 'name',
+      title: 'Name',
       type: 'string',
       order: 3,
     },
@@ -364,7 +364,7 @@ async function seed(knex) {
       order: 2,
     },
     name: {
-      title: 'name',
+      title: 'Name',
       type: 'string',
       order: 3,
     },
