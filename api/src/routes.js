@@ -428,7 +428,7 @@ function validateResultResponse() {
     treatmentStatusInfo: Joi.string()
       .allow(null, '')
       .description('treatment status info'),
-    resultTreatmentData: Joi.array()
+    resultNotes: Joi.array()
       .allow(null, '')
       .description('Operator from latest ResultTreatmentWorkflowLog'),
     requiresTreatment: Joi.number()

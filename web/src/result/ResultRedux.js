@@ -669,11 +669,11 @@ export default function resultReducer(state = initialState, action) {
       })
     case types.RECEIVE_CREATING_RESULT_NOTE:
       return state.withMutations(mutState => {
-        const resultTreatmentData = action.item
+        const resultNotes = action.item
         mutState.set(
           'items',
           mutState.items.mergeDeepIn(['byId', action.resultId], {
-            resultTreatmentData,
+            resultNotes,
           })
         )
       })

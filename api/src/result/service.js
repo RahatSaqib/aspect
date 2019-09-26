@@ -977,7 +977,7 @@ async function getResultByResultId(request, fields = SELECT_SHOW_FIELDS) {
     const resultNotes = await getResultNoteByResultId(+params.resultId)
 
     getResultTreatmentStatus(data)
-    data.resultTreatmentData = resultNotes
+    data.resultNotes = resultNotes
     data.resultTreatmentStatusCreatedBy = userName
   }
 
@@ -1229,17 +1229,17 @@ async function addResultNote(request) {
     Boom.notFound()
   }
 
-  const { data, resultNoteType } = payload
+  const { data, resultNoteType, changedOn = now } = payload
 
   const [{ id: resultNoteTypeId }] = await knex('ResultNoteType')
-    .where('externalId', resultNoteType)
+    .where('externalId', resultNoteType || 'General')
     .select('id')
 
   await knex('ResultNote').insert({
     resultNoteTypeId,
     resultId,
     text: data,
-    changedOn: now,
+    changedOn,
     createdOn: now,
     updatedBy: currentUserId,
     createdBy: currentUserId,

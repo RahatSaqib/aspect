@@ -58,7 +58,7 @@ const ResultTreatmentPanel = ({ styles, data, ...restProps }) => {
     },
   ]
 
-  const resultNotes = data.get('resultTreatmentData').toJS()
+  const resultNotes = data.get('resultNotes').toJS()
 
   return (
     <div>
