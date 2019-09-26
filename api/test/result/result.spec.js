@@ -1197,6 +1197,44 @@ describe('Result Treatment', () => {
         })
     })
   })
+
+  describe('Add Result Note - POST', () => {
+    const resultId = 1
+
+    after(async () =>
+      runTestWithKnex(async knex => {
+        await knex('ResultNote')
+          .where('resultId', resultId)
+          .delete()
+      })
+    )
+    const path = '/api/result/result-note'
+
+    it('Should return list of result note of a particular resultId', done => {
+      const comment = {
+        data: 'Cough confirmed',
+        resultNoteType: 'ResultFollowUp',
+      }
+      server
+        .post(`${path}/${resultId}`)
+        .send({ comment })
+        .set('Authorization', `Bearer ${shared.token}`)
+        .end((err, res) => {
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+
+          assert.property(res.body, 'data')
+
+          assert.equal(res.body.data.length, 1) // for 6 months
+          assert.property(res.body.data[0], 'createdBy')
+          assert.property(res.body.data[0], 'text')
+          assert.property(res.body.data[0], 'changedOn')
+          assert.property(res.body.data[0], 'createdOn')
+
+          done()
+        })
+    })
+  })
 })
 
 describe('Result Follow Up', () => {

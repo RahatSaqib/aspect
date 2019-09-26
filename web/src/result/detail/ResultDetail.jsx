@@ -29,6 +29,7 @@ import {
   saveResultFormData,
   Result,
   logTreatmentStatus,
+  addResultNote,
 } from '../ResultRedux'
 import ConnectedTagInput from '../../tag/ConnectedTagInput'
 import { fetchTags, updateTags } from '../../tag/TagRedux'
@@ -173,6 +174,7 @@ const enhance = compose(
           fetchTags,
           updateTags,
           logTreatmentStatus,
+          addResultNote,
         },
         dispatch
       )
@@ -189,6 +191,7 @@ const enhance = compose(
     formDataDirty: PropTypes.bool.isRequired,
     saveResultFormData: PropTypes.func.isRequired,
     logTreatmentStatus: PropTypes.func.isRequired,
+    addResultNote: PropTypes.func.isRequired,
   })
 )
 
@@ -316,7 +319,7 @@ export class ResultDetail extends PureComponent {
     const {
       result,
       userPermission,
-      logTreatmentStatus,
+      addResultNote,
       match: {
         params: { resultId },
       },
@@ -327,7 +330,7 @@ export class ResultDetail extends PureComponent {
         data={result}
         onTreatmentChange={this.handleOnTreatmentChange}
         userPermission={userPermission}
-        logTreatmentStatus={logTreatmentStatus}
+        addResultNote={addResultNote}
         resultId={resultId}
       />
     )

@@ -30,6 +30,9 @@ export const types = {
   REQUEST_UPDATING_SINGLE_RESULT: 'REQUEST_UPDATING_SINGLE_RESULT',
   RECEIVE_UPDATED_SINGLE_RESULT: 'RECEIVE_UPDATED_SINGLE_RESULT',
 
+  REQUEST_CREATING_RESULT_NOTE: 'REQUEST_CREATING_RESULT_NOTE',
+  RECEIVE_CREATING_RESULT_NOTE: 'RECEIVE_CREATING_RESULT_NOTE',
+
   REQUEST_CREATING_TREATMENT_STATUS_LOG:
     'REQUEST_CREATING_TREATMENT_STATUS_LOG',
   RECEIVE_CREATING_TREATMENT_STATUS_LOG:
@@ -138,6 +141,23 @@ function receiveTreatmentStatusLog(item, resultId) {
   }
 }
 
+// updating a single result with given resultId and data
+function requestCreatingResultNote(resultId) {
+  return {
+    type: types.REQUEST_CREATING_RESULT_NOTE,
+    resultId,
+  }
+}
+
+// received a updated single result
+function receiveResultNote(item, resultId) {
+  return {
+    type: types.RECEIVE_CREATING_RESULT_NOTE,
+    resultId,
+    item,
+  }
+}
+
 export function logTreatmentStatus(resultId, data) {
   return dispatch => {
     dispatch(requestCreatingTreatmentStatusLog(resultId, data))
@@ -157,6 +177,27 @@ export function logTreatmentStatus(resultId, data) {
         ),
       },
     }).then(json => dispatch(receiveTreatmentStatusLog(json.data, resultId)))
+  }
+}
+export function addResultNote(resultId, data) {
+  return dispatch => {
+    dispatch(requestCreatingResultNote(resultId))
+
+    return aspectFetch(`/result/result-note/${resultId}`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+      errorNotifications: {
+        default: errorPleaseTryAgainInAFewMinutes(
+          defineMessages({
+            title: {
+              id: 'errorResponseMessages.updateSingleResult.PUT.default.title',
+              defaultMessage:
+                'An Error Occurred When Trying to Save the Result',
+            },
+          })
+        ),
+      },
+    }).then(json => dispatch(receiveResultNote(json.data, resultId)))
   }
 }
 
@@ -613,7 +654,6 @@ export default function resultReducer(state = initialState, action) {
         const {
           resultTreatmentStatus,
           treatmentStatusInfo,
-          resultTreatmentData,
           resultTreatmentStatusChangedOn,
           resultTreatmentStatusCreatedOn,
         } = action.item
@@ -622,9 +662,18 @@ export default function resultReducer(state = initialState, action) {
           mutState.items.mergeDeepIn(['byId', action.resultId], {
             resultTreatmentStatus,
             treatmentStatusInfo,
-            resultTreatmentData,
             resultTreatmentStatusChangedOn,
             resultTreatmentStatusCreatedOn,
+          })
+        )
+      })
+    case types.RECEIVE_CREATING_RESULT_NOTE:
+      return state.withMutations(mutState => {
+        const resultTreatmentData = action.item
+        mutState.set(
+          'items',
+          mutState.items.mergeDeepIn(['byId', action.resultId], {
+            resultTreatmentData,
           })
         )
       })

@@ -33,13 +33,8 @@ const enhance = compose(
       setNote(() => note)
       return setIsActive(() => checkNote)
     },
-    onNoteSubmit: ({
-      logTreatmentStatus,
-      setIsShown,
-      resultId,
-      note,
-    }) => () => {
-      logTreatmentStatus(resultId, {
+    onNoteSubmit: ({ addResultNote, setIsShown, resultId, note }) => () => {
+      addResultNote(resultId, {
         data: note,
         resultNoteType: 'ResultFollowUp',
       })

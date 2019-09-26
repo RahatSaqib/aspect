@@ -974,17 +974,7 @@ async function getResultByResultId(request, fields = SELECT_SHOW_FIELDS) {
   }
 
   if (data) {
-    const resultNotes = await knex('ResultNote as rn')
-      .leftJoin('User as u', 'rn.createdBy', 'u.id')
-      .where('rn.resultId', +params.resultId)
-      .orderBy('rn.createdOn', 'desc')
-      .select(
-        'u.name as createdBy',
-        'rn.text',
-        'rn.id',
-        'rn.changedOn',
-        'rn.createdOn'
-      )
+    const resultNotes = await getResultNoteByResultId(+params.resultId)
 
     getResultTreatmentStatus(data)
     data.resultTreatmentData = resultNotes
@@ -992,6 +982,22 @@ async function getResultByResultId(request, fields = SELECT_SHOW_FIELDS) {
   }
 
   return { ok: results.length === 1, data }
+}
+
+async function getResultNoteByResultId(resultId) {
+  const resultNotes = await knex('ResultNote as rn')
+    .leftJoin('User as u', 'rn.createdBy', 'u.id')
+    .where('rn.resultId', resultId)
+    .orderBy('rn.createdOn', 'desc')
+    .select(
+      'u.name as createdBy',
+      'rn.text',
+      'rn.id',
+      'rn.changedOn',
+      'rn.createdOn'
+    )
+
+  return resultNotes
 }
 
 async function listResultTypes(request) {
@@ -1209,6 +1215,39 @@ async function updateTreatmentStatus(
   }
 
   return response
+}
+
+async function addResultNote(request) {
+  const { auth, params, payload } = request
+  const now = new Date()
+  const { resultId } = params
+  const { id: currentUserId } = await getUser(auth.credentials.name)
+
+  // get the result so we can check access and if status changed
+  const result = await getResultByResultId(request)
+  if (!result.ok) {
+    Boom.notFound()
+  }
+
+  const { data, resultNoteType } = payload
+
+  const [{ id: resultNoteTypeId }] = await knex('ResultNoteType')
+    .where('externalId', resultNoteType)
+    .select('id')
+
+  await knex('ResultNote').insert({
+    resultNoteTypeId,
+    resultId,
+    text: data,
+    changedOn: now,
+    createdOn: now,
+    updatedBy: currentUserId,
+    createdBy: currentUserId,
+  })
+
+  const response = await getResultNoteByResultId(+params.resultId)
+
+  return { ok: true, length: response.length, data: response }
 }
 
 async function getLastTreatmentStatusByResult(resultId) {
@@ -1884,4 +1923,5 @@ module.exports = {
   setResultFollowUp,
   updateResultFollowUp,
   deleteResultFollowUp,
+  addResultNote,
 }
