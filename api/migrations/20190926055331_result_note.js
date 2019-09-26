@@ -1,0 +1,46 @@
+module.exports = require('../src/db').migration(up, down)
+
+async function up(knex) {
+  await knex.schema.createTable('ResultNoteType', resultNoteType => {
+    resultNoteType.increments('id')
+    resultNoteType.string('name').notNullable()
+    resultNoteType.string('i18nKey').notNullable()
+    resultNoteType.string('externalId').notNullable()
+  })
+
+  await knex.schema.createTable('ResultNote', resultNote => {
+    resultNote.increments('id')
+    resultNote
+      .integer('resultNoteTypeId')
+      .unsigned()
+      .references('id')
+      .inTable('ResultNoteType')
+      .notNullable()
+    resultNote
+      .integer('resultId')
+      .unsigned()
+      .references('id')
+      .inTable('Result')
+      .notNullable()
+    resultNote.string('text').notNullable()
+    resultNote.dateTime('changedOn').notNullable()
+    resultNote.dateTime('createdOn').notNullable()
+    resultNote
+      .integer('createdBy')
+      .unsigned()
+      .index()
+      .references('id')
+      .inTable('User')
+    resultNote
+      .integer('updatedBy')
+      .unsigned()
+      .index()
+      .references('id')
+      .inTable('User')
+  })
+}
+
+async function down(knex) {
+  await knex.schema.dropTableIfExists('ResultNoteType')
+  await knex.schema.dropTableIfExists('ResultNote')
+}

@@ -417,7 +417,6 @@ async function exportResults(query, auth) {
       'rtsl.resultTreatmentStatusId',
       'rts.id'
     )
-    .leftJoin('ResultNote as rn', 'rn.resultId', 'r.id')
     .leftJoin('Site as si', 'r.siteId', 'si.id')
     .modify(addPartnerQueryConstraints, dataConstraints)
     .modify(addConstraints, dataConstraints, { device: 'd', sample: 'sp' })
@@ -979,13 +978,13 @@ async function getResultByResultId(request, fields = SELECT_SHOW_FIELDS) {
       .leftJoin('User as u', 'rn.createdBy', 'u.id')
       .where('rn.resultId', +params.resultId)
       .orderBy('rn.createdOn', 'desc')
-      .select([
+      .select(
         'u.name as createdBy',
         'rn.text',
         'rn.id',
         'rn.changedOn',
-        'rn.createdOn',
-      ])
+        'rn.createdOn'
+      )
 
     getResultTreatmentStatus(data)
     data.resultTreatmentData = resultNotes
