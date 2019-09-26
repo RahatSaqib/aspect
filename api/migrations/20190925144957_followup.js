@@ -66,10 +66,52 @@ async function up(knex) {
       'FollowUpAssay_unique'
     )
   })
+
+  await knex.schema.createTable('ResultFollowUp', followUp => {
+    followUp
+      .integer('resultId')
+      .unsigned()
+      .index()
+      .references('id')
+      .inTable('Result')
+      .notNullable()
+    followUp
+      .integer('followUpId')
+      .unsigned()
+      .index()
+      .references('id')
+      .inTable('FollowUp')
+      .notNullable()
+    followUp.datetime('date')
+    followUp
+      .datetime('createdOn')
+      .notNullable()
+      .defaultTo(knex.fn.now())
+    followUp
+      .integer('createdBy')
+      .notNullable()
+      .unsigned()
+      .index()
+      .references('id')
+      .inTable('User')
+    followUp
+      .datetime('updatedOn')
+      .notNullable()
+      .defaultTo(knex.fn.now())
+    followUp
+      .integer('updatedBy')
+      .notNullable()
+      .unsigned()
+      .index()
+      .references('id')
+      .inTable('User')
+    followUp.unique(['resultId', 'followUpId'])
+  })
 }
 
 async function down(knex) {
   await knex.schema.dropTable('FollowUpAssay')
   await knex.schema.dropTable('FollowUp')
   await knex.schema.dropTable('FollowUpType')
+  await knex.schema.dropTable('ResultFollowUp')
 }
