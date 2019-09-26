@@ -490,6 +490,7 @@ async function seedStaticData(knex) {
     'ResultType',
     'ResultWorkflowStatus',
     'SampleType',
+    'FollowUpType',
     // TODO ASP-757 Standardize static data key on externalId
     ['AssayType', 'name'],
     ['ConsumableReason', 'name'],
@@ -552,6 +553,61 @@ async function seedStaticDataPermission(knex, { modules }) {
         .first('id')
       if (existingPermission == null) {
         await knex('Permission').insert(permission)
+      }
+    }
+  }
+}
+
+async function addFollowUps(knex, partnerIds, { data }) {
+  const assaysDb = await knex('Assay').select('id', 'externalId')
+  const typesDb = await knex('FollowUpType').select('id', 'externalId')
+  for (const { type, name, externalId, i18nKey, assays } of data) {
+    const { id: followUpTypeId } = _.find(typesDb, { externalId: type })
+    const followUp = { followUpTypeId, name, externalId, i18nKey }
+    const existingFollowUp = await knex('FollowUp')
+      .where(followUp)
+      .first('id')
+    let followUpId = null
+    if (existingFollowUp == null) {
+      followUpId = await knex('FollowUp').insert(followUp)
+    } else {
+      followUpId = existingFollowUp.id
+    }
+
+    /* eslint-disable no-await-in-loop */
+    for (const partnerId of partnerIds) {
+      if (assays && assays.length > 0) {
+        for (const assay of assays) {
+          const assayDb = _.find(assaysDb, { externalId: assay })
+          if (!assayDb) continue // eslint-disable-line no-continue
+          const followUpAssay = {
+            partnerId,
+            followUpId,
+            assayId: assayDb.id,
+          }
+          const existingFollowUpAssay = await knex('FollowUpAssay')
+            .where(followUpAssay)
+            .whereNull('resultCategory1')
+            .whereNull('resultCategory2')
+            .first('assayId')
+          if (existingFollowUpAssay == null) {
+            await knex('FollowUpAssay').insert(followUpAssay)
+          }
+        }
+      } else {
+        const followUpAssay = {
+          partnerId,
+          followUpId,
+        }
+        const existingFollowUpAssay = await knex('FollowUpAssay')
+          .where(followUpAssay)
+          .whereNull('assayId')
+          .whereNull('resultCategory1')
+          .whereNull('resultCategory2')
+          .first('assayId')
+        if (existingFollowUpAssay == null) {
+          await knex('FollowUpAssay').insert(followUpAssay)
+        }
       }
     }
   }
@@ -2405,4 +2461,6 @@ module.exports = {
   updateCategoryAssay,
   updateAssayResultCategoryTreatmentEmphasize,
   insertSites,
+
+  addFollowUps,
 }
