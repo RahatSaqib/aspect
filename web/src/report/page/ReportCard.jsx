@@ -7,37 +7,37 @@ import Typography from '@material-ui/core/Typography'
 import React from 'react'
 import { Unit } from '../../components/pureGrids'
 
-const ReportCard = ({ className, title, description, linkUrl }) => (
-  <Unit lg="1-4" style={{ height: 100 }}>
-    <Card className={className} style={{ margin: 10 }}>
-      <CardActionArea>
-        <CardContent>
-          <Typography gutterBottom variant="h5" component="h4">
-            {title}
-          </Typography>
-          <Typography variant="body2" color="textSecondary" component="p">
-            {description}
-          </Typography>
-        </CardContent>
-      </CardActionArea>
-      <CardActions>
-        {/* <Button size="small" color="primary">
+const ReportCard = ({ className, title, description, linkUrl }) => {
+  const downloadFunc = () => window.open(linkUrl, '_blank')
+  return (
+    <Unit lg="1-4" style={{ height: 100 }}>
+      <Card className={className} style={{ margin: 10 }}>
+        <CardActionArea onClick={downloadFunc}>
+          <CardContent>
+            <Typography gutterBottom variant="h5" component="h4">
+              {title}
+            </Typography>
+            <Typography variant="body2" color="textSecondary" component="p">
+              {description}
+            </Typography>
+          </CardContent>
+        </CardActionArea>
+        <CardActions>
+          {/* <Button size="small" color="primary">
           Share
         </Button> */}
 
-        <Button
-          size="small"
-          color="primary"
-          // eslint-disable-next-line no-return-assign
-          onClick={() => {
-            window.open(linkUrl, '_blank')
-          }}
-        >
-          Download
-        </Button>
-      </CardActions>
-    </Card>
-  </Unit>
-)
-
+          <Button
+            size="small"
+            color="primary"
+            // eslint-disable-next-line no-return-assign
+            onClick={downloadFunc}
+          >
+            Download
+          </Button>
+        </CardActions>
+      </Card>
+    </Unit>
+  )
+}
 export default ReportCard
