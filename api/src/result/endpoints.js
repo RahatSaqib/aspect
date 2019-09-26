@@ -21,6 +21,7 @@ const {
   downloadFile,
   downloadFirstImage,
   confirmedTreatmentTracking,
+  listFollowUps,
 } = require('./service')
 const { getResultsReport } = require('./serviceReport')
 const {
@@ -643,6 +644,140 @@ const routes = [
             .allow(null)
             .description('Ending date'),
         },
+      },
+    },
+  },
+  {
+    method: 'GET',
+    path: '/result/follow-ups',
+    handler: asyncHandler(listFollowUps),
+    config: {
+      description: 'Result Follow Up List',
+      notes: 'List of possible result follow ups',
+      auth: { scope: ['result:view', 'result:edit'] },
+      validate: {
+        query: {
+          typeId: Joi.number()
+            .integer()
+            .allow(null)
+            .description('ID of the follow up type'),
+          assayId: Joi.number()
+            .integer()
+            .allow(null)
+            .description('ID of the assay'),
+          resultCategory1: Joi.number()
+            .integer()
+            .allow(null)
+            .description('ID of the first result category'),
+          resultCategory2: Joi.number()
+            .integer()
+            .allow(null)
+            .description('ID of the second result category'),
+        },
+      },
+      response: {
+        schema: Joi.object().keys({
+          ok: Joi.bool()
+            .required()
+            .description('False if there was some sort of error'),
+          total: Joi.number()
+            .required()
+            .description(
+              'The total number of follow-ups that match the given filters'
+            ),
+          length: Joi.number()
+            .required()
+            .description('The number of follow-ups included in this response'),
+          data: Joi.array()
+            .required()
+            .description('The possible result follow-ups')
+            .items(
+              Joi.object().keys({
+                id: Joi.number()
+                  .required()
+                  .description(
+                    'Unique ID of the follow up for this instance of Aspect'
+                  ),
+                name: Joi.string()
+                  .required()
+                  .description('Name of the follow up'),
+                externalId: Joi.string()
+                  .required()
+                  .description('Unique ID of the follow up'),
+                i18nKey: Joi.string()
+                  .required()
+                  .description('Translation key'),
+                type: Joi.object()
+                  .description('Type of follow up')
+                  .keys({
+                    id: Joi.number()
+                      .required()
+                      .description(
+                        'Unique ID of the follow up type for this instance of Aspect'
+                      ),
+                    name: Joi.string()
+                      .required()
+                      .description('Name of the follow up type'),
+                    externalId: Joi.string()
+                      .required()
+                      .description('Unique ID of the follow up type'),
+                    i18nKey: Joi.string()
+                      .required()
+                      .description('Translation key'),
+                  }),
+                assays: Joi.array().items(
+                  Joi.object().keys({
+                    id: Joi.number()
+                      .required()
+                      .description(
+                        'Unique ID of the assay for this instance of Aspect'
+                      ),
+                    name: Joi.string()
+                      .required()
+                      .description('Name of the assay'),
+                    externalId: Joi.string()
+                      .required()
+                      .description('Unique ID of the assay'),
+                    i18nKey: Joi.string()
+                      .required()
+                      .description('Translation key'),
+                    resultCategories: Joi.array().items(
+                      Joi.object().keys({
+                        category1: Joi.object().keys({
+                          id: Joi.any()
+                            .required()
+                            .description('Unique ID of the result category'),
+                          name: Joi.string()
+                            .required()
+                            .description('Name of the assay'),
+                          externalId: Joi.string()
+                            .required()
+                            .description('Unique ID of the assay'),
+                          i18nKey: Joi.string()
+                            .required()
+                            .description('Translation key'),
+                        }),
+                        category2: Joi.object().keys({
+                          id: Joi.number()
+                            .required()
+                            .description('Unique ID of the result category'),
+                          name: Joi.string()
+                            .required()
+                            .description('Name of the assay'),
+                          externalId: Joi.string()
+                            .required()
+                            .description('Unique ID of the assay'),
+                          i18nKey: Joi.string()
+                            .required()
+                            .description('Translation key'),
+                        }),
+                      })
+                    ),
+                  })
+                ),
+              })
+            ),
+        }),
       },
     },
   },

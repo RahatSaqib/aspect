@@ -1141,3 +1141,26 @@ describe('Result Treatment', () => {
     })
   })
 })
+
+describe('Result Follow Up', () => {
+  const path = '/api/result/follow-ups'
+
+  describe('GET', () => {
+    shared.checkToken(server, path)
+
+    it('should return a list of possible result follow ups', done => {
+      server
+        .get(path)
+        .set('Authorization', `Bearer ${shared.token}`)
+        .end((err, res) => {
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+          assert.property(res.body, 'data')
+          assert.typeOf(res.body.data, 'array')
+          assert.isAtLeast(res.body.data.length, 7)
+          assert.property(res.body, 'total')
+          done()
+        })
+    })
+  })
+})

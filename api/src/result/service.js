@@ -1469,6 +1469,144 @@ async function confirmedTreatmentTracking(request) {
   }
 }
 
+async function listFollowUps(request) {
+  const { auth, query } = request
+  const dataConstraints = await getConstraints(auth.credentials)
+
+  const queryBuilder = knex('FollowUp as fu')
+    .join('FollowUpType as fut', 'fu.followUpTypeId', 'fut.id')
+    .join('FollowUpAssay as fua', 'fu.id', 'fua.followUpId')
+    .leftJoin('Assay as a', 'fua.assayId', 'a.id')
+    .leftJoin('ResultCategory as rc1', 'fua.resultCategory1', 'rc1.id')
+    .leftJoin('ResultCategory as rc2', 'fua.resultCategory2', 'rc2.id')
+    .orderBy('fu.id', 'a.id', 'rc1.id', 'rc2.id')
+    .where('fua.partnerId', dataConstraints.partner.id)
+    .select(
+      'fu.id',
+      'fu.name',
+      'fu.externalId',
+      'fu.i18nKey',
+      'fut.id as followUpTypeId',
+      'fut.name as followUpTypeName',
+      'fut.externalId as followUpTypeExternalId',
+      'fut.i18nKey as followUpTypeI18nKey',
+      'a.id as assayId',
+      'a.name as assayName',
+      'a.externalId as assayExternalId',
+      'a.i18nKey as assayI18nKey',
+      'rc1.id as resultCategory1Id',
+      'rc1.name as resultCategory1Name',
+      'rc1.externalId as resultCategory1ExternalId',
+      'rc1.i18nKey as resultCategory1I18nKey',
+      'rc2.id as resultCategory2Id',
+      'rc2.name as resultCategory2Name',
+      'rc2.externalId as resultCategory2ExternalId',
+      'rc2.i18nKey as resultCategory2I18nKey'
+    )
+
+  if (query.typeId) {
+    queryBuilder.where('fu.followUpTypeId', query.typeId)
+  }
+
+  if (query.assayId) {
+    queryBuilder.where(function() {
+      this.where('fua.assayId', query.assayId).orWhereNull('fua.assayId')
+    })
+  }
+
+  if (query.resultCategory1) {
+    queryBuilder.where(function() {
+      this.where('fua.resultCategory1', query.resultCategory1)
+    })
+  }
+
+  if (query.resultCategory2) {
+    queryBuilder.where(function() {
+      this.where('fua.resultCategory2', query.resultCategory2)
+    })
+  }
+
+  const data = await queryBuilder
+
+  // convert data to nested JSON
+  const followUps = _.uniqBy(data, 'id').map(f =>
+    Object.assign(
+      _.pick(f, ['id', 'name', 'externalId', 'i18nKey'], {
+        type: {
+          id: f.followUpTypeId,
+          name: f.followUpTypeName,
+          externalId: f.followUpTypeExternalId,
+          i18nKey: f.followUpTypeI18nKey,
+        },
+      }),
+      {
+        assays: _.uniqBy(
+          data.filter(d => d.id === f.id && d.assayId),
+          'assayId'
+        ).map(a =>
+          Object.assign(
+            _.mapKeys(
+              _.pick(a, [
+                'assayId',
+                'assayName',
+                'assayExternalId',
+                'assayI18nKey',
+              ]),
+
+              (v, k) => _.lowerFirst(k.replace('assay', ''))
+            ),
+            {
+              resultCategories: _.uniqBy(
+                data.filter(
+                  d =>
+                    d.id === f.id &&
+                    d.assayId === a.assayId &&
+                    d.resultCategory1Id
+                ),
+                r => `${r.resultCategory1Id}-${r.resultCategory2Id}`
+              ).map(r =>
+                Object.assign(
+                  {
+                    category1: _.mapKeys(
+                      _.pick(r, [
+                        'resultCategory1Id',
+                        'resultCategory1Name',
+                        'resultCategory1ExternalId',
+                        'resultCategory1I18nKey',
+                      ]),
+                      (v, k) => _.lowerFirst(k.replace('resultCategory1', ''))
+                    ),
+                  },
+                  {
+                    category2: _.mapKeys(
+                      _.pick(r, [
+                        'resultCategory2Id',
+                        'resultCategory2Name',
+                        'resultCategory2ExternalId',
+                        'resultCategory2I18nKey',
+                      ]),
+                      (v, k) => _.lowerFirst(k.replace('resultCategory2', ''))
+                    ),
+                  }
+                )
+              ),
+            }
+          )
+        ),
+      }
+    )
+  )
+
+  const result = {
+    ok: true,
+    total: followUps.length,
+    length: followUps.length,
+    data: followUps,
+  }
+
+  return result
+}
+
 module.exports = {
   listResults,
   exportResults,
@@ -1487,4 +1625,5 @@ module.exports = {
   downloadFirstImage,
   createUniqueIdForResult,
   confirmedTreatmentTracking,
+  listFollowUps,
 }
