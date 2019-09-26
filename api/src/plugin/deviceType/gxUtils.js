@@ -47,6 +47,7 @@ async function preProcessAddDeviceData({ knex, device, payload, now }) {
     _.every(Object.keys(configurationData), configurationDataKey =>
       [
         'macAddress',
+        'shortName',
         'gxAlertDeviceId',
         'hostId',
         'deviceSerialNumber',
@@ -559,6 +560,7 @@ async function getOrCreateSite(
   now,
   countryCode,
   deviceName,
+  deviceShortName,
   fromGxAlert
 ) {
   let sites = []
@@ -579,6 +581,9 @@ async function getOrCreateSite(
   }
   if (!deviceName) {
     deviceName = _.get(payload, 'name')
+  }
+  if (!deviceShortName) {
+    deviceShortName = _.get(payload, 'configuration.data.shortName')
   }
   if (deviceName && countryCode) {
     if (device.siteId && !fromGxAlert) {
@@ -614,9 +619,16 @@ async function getOrCreateSite(
           'c.abbreviation': countryCode,
         })
         .andWhere(function() {
-          this.where({ 's.name': deviceName })
-            .orWhere({ 's.shortName': deviceName })
-            .orWhere({ 's.externalId': deviceName })
+          if (deviceName) {
+            this.where({ 's.name': deviceName })
+              .orWhere({ 's.shortName': deviceName })
+              .orWhere({ 's.externalId': deviceName })
+          }
+          if (deviceShortName) {
+            this.orWhere({ 's.shortName': deviceShortName }).orWhere({
+              's.externalId': deviceShortName,
+            })
+          }
         })
         .select('s.*')
       if (matchingSites.length === 1) {
@@ -652,7 +664,7 @@ async function getOrCreateSite(
 
         const newSite = {
           name: deviceName,
-          shortName: deviceName,
+          shortName: deviceShortName || deviceName,
           externalId: deviceName,
           partnerId: device.partnerId,
           geographyId: geography.id,

@@ -552,6 +552,7 @@ async function createDeviceApiContext(
       'd.siteId',
       'd.geographyId',
       'd.name',
+      'd.shortName',
       'd.serial',
       'd.macAddress',
       'd.configurationData',
@@ -709,7 +710,6 @@ function createNewDeviceFromRequest(request, now) {
     const { device, error } = await createNewDevice(knex, now, {
       deviceTypeExternalId,
       name: payload.name,
-      shortName: payload.name,
       serial: payload.serial,
       partnerId: apiKey.partnerId,
       siteId: apiKey.siteId,

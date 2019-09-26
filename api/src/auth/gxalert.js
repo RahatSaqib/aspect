@@ -279,15 +279,16 @@ async function setJobContext(knex, jobId, gxUser) {
   // deployments
   if (_.isArray(gxUser.access.deployments)) {
     await Promise.all(
-      _.map(gxUser.access.deployments, async dep => {
+      _.map(gxUser.access.deployments, async deployment => {
         const options = {
-          countryAbbreviation: dep.countryAbbreviation,
-          stateName: dep.stateName,
-          stateAbbreviation: dep.stateAbbreviation,
-          lgaName: dep.lgaName,
+          countryAbbreviation: deployment.countryAbbreviation,
+          stateName: deployment.stateName,
+          stateAbbreviation: deployment.stateAbbreviation,
+          lgaName: deployment.lgaName,
         }
         const geographyId = await getCreateGeographyIdByGxGeo(knex, options)
-        const shortName = dep.description || dep.hostId
+        const shortName =
+          deployment.shortName || deployment.description || deployment.hostId
 
         let { siteId } =
           (await knex('Device')

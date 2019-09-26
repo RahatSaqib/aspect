@@ -691,7 +691,7 @@ module.exports = {
   getLastDeviceOperationId,
   getLastResultId,
   getLastResult,
-  deleteDeviceAndTestData,
+  createSite,
   postToDeviceApi,
   getMaxDeviceId,
   getDeviceType,
