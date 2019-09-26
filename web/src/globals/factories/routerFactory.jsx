@@ -33,6 +33,7 @@ import ResultDetail from '../../result/detail/ResultDetail'
 import NotificationList from '../../notification/list/NotificationList'
 import NotificationDetail from '../../notification/detail/NotificationDetail'
 import ReportList from '../../report/list/ReportList'
+import ReportIndex from '../../report/page/ReportIndex'
 import AccountDetails from '../../account/detail/AccountDetails'
 import StyleguideMain from '../../styleguide/main/StyleguideMain'
 import InventoryItemsList from '../../inventory/list/InventoryItemsList'
@@ -113,7 +114,7 @@ const renderDeviceDemo = loggedInFactory(DeviceDemo)
 const renderClinicalIndicators = notImplementedLoggedInFactory(
   'Clinical Indicators'
 )
-const renderReports = notImplementedLoggedInFactory('Reports')
+const renderReports = loggedInFactory(ReportIndex)
 const renderManage = notImplementedLoggedInFactory('Manage')
 /* END-TODO: real components */
 const renderDeviceList = loggedInFactory(DeviceList)
