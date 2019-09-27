@@ -8,6 +8,7 @@ const {
   body,
 } = require('http-client')
 const { webhookMessagePending, webhookMessageSent } = require('./actions')
+const { resolveIssues, escalateIssues } = require('../issue/actions')
 const { messageStatusToId } = require('../shared/dictionary')
 const {
   addDataSourceToQuery,
@@ -157,6 +158,23 @@ function onWebhookMessagePending({ webhookMessageId }, { messageContext }) {
   })
 }
 
+function onWebhookMessageSent({ webhookMessageId }, { messageContext }) {
+  const context = messageContext.bindActionCreators({
+    resolveIssues,
+    escalateIssues,
+  })
+  return context.run(async knex => {
+    const { issueId } = await knex('WebhookMessage as m')
+      .join('Notification as n', 'm.id', 'n.webHookMessageId')
+      .where('m.id', webhookMessageId)
+      .first('n.issueId')
+    if (issueId) {
+      context.resolveIssues(issueId)
+      context.escalateIssues(issueId)
+    }
+  })
+}
+
 async function createWebhookMessageFromTemplate(knex, webhookMessageId) {
   const data = await knex('WebhookMessage as m')
     .innerJoin('WebhookTemplate as tmpl', 'm.webhookTemplateId', 'tmpl.id')
@@ -185,4 +203,5 @@ async function createWebhookMessageFromTemplate(knex, webhookMessageId) {
 module.exports = {
   onWebhookMessageCreated,
   onWebhookMessagePending,
+  onWebhookMessageSent,
 }
