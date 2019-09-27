@@ -3,7 +3,9 @@ const _ = require('lodash')
 async function shouldSendResultToCheckTbApp(knex, action) {
   if (action.resultId) {
     const result = await knex('Result as r')
-      .where('r.id', action.resultId)
+      .join('Assay as a', 'r.assayId', 'a.id')
+      .whereIn('a.externalId', ['GxMtbRif', 'GxMtbRifUltra'])
+      .andWhere('r.id', action.resultId)
       .first('r.id')
     if (_.isEmpty(result)) {
       return false
