@@ -1039,7 +1039,7 @@ async function updateWorkflowStatus(request) {
   // get the result so we can check access and if status changed
   const result = await getResultByResultId(request)
   if (!result.ok) {
-    Boom.notFound()
+    return Boom.notFound()
   }
   let { resultWorkflowStatusId } = payload
   const { changedOn = now, operator, reason, updatedOn } = payload
@@ -1226,7 +1226,7 @@ async function addResultNote(request) {
   // get the result so we can check access and if status changed
   const result = await getResultByResultId(request)
   if (!result.ok) {
-    Boom.notFound()
+    return Boom.notFound()
   }
 
   const { data, resultNoteType, changedOn = now } = payload
