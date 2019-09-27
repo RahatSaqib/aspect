@@ -974,7 +974,7 @@ async function getResultByResultId(request, fields = SELECT_SHOW_FIELDS) {
   }
 
   if (data) {
-    const resultNotes = await getResultNoteByResultId(+params.resultId)
+    const resultNotes = await getResultNotesByResultId(+params.resultId)
 
     getResultTreatmentStatus(data)
     data.resultNotes = resultNotes
@@ -984,7 +984,7 @@ async function getResultByResultId(request, fields = SELECT_SHOW_FIELDS) {
   return { ok: results.length === 1, data }
 }
 
-async function getResultNoteByResultId(resultId) {
+async function getResultNotesByResultId(resultId) {
   const resultNotes = await knex('ResultNote as rn')
     .leftJoin('User as u', 'rn.createdBy', 'u.id')
     .where('rn.resultId', resultId)
@@ -1245,7 +1245,7 @@ async function addResultNote(request) {
     createdBy: currentUserId,
   })
 
-  const response = await getResultNoteByResultId(+params.resultId)
+  const response = await getResultNotesByResultId(+params.resultId)
 
   return { ok: true, length: response.length, data: response }
 }
