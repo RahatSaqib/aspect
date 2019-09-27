@@ -985,6 +985,7 @@ async function getResultByResultId(request, fields = SELECT_SHOW_FIELDS) {
 async function getResultNotesByResultId(resultId) {
   const resultNotes = await knex('ResultNote as rn')
     .leftJoin('User as u', 'rn.createdBy', 'u.id')
+    .leftJoin('ResultNoteType as rt', 'rt.id', 'rn.resultNoteTypeId')
     .where('rn.resultId', resultId)
     .orderBy('rn.createdOn', 'desc')
     .select(
@@ -992,7 +993,8 @@ async function getResultNotesByResultId(resultId) {
       'rn.text',
       'rn.id',
       'rn.changedOn',
-      'rn.createdOn'
+      'rn.createdOn',
+      'rt.name as noteType'
     )
 
   return resultNotes
@@ -1253,7 +1255,6 @@ async function addResultNote(request) {
     ok: true,
     length: resultNotes.length,
     data: resultNotes,
-    noteType: resultNoteType,
   }
 }
 

@@ -326,7 +326,6 @@ const routes = [
             .required()
             .description('False if there was some sort of error'),
           length: Joi.number().required(),
-          noteType: Joi.string().required(),
           data: Joi.array()
             .required()
             .description('The result notes'),
