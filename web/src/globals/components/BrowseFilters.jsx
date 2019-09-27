@@ -195,12 +195,6 @@ export const navigations = [
     requiredFeatures: ['notification'],
   },
   {
-    value: '/browse/report',
-    label: 'Reports',
-    requiredPermissions: ['report:view', 'report:admin', 'report:edit'],
-    requiredFeatures: ['report'],
-  },
-  {
     value: '/browse/deviceApiKey',
     label: 'Device API Keys',
     requiredPermissions: [
