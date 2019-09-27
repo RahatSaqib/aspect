@@ -504,7 +504,6 @@ describe('Result routes', () => {
         externalId: 'AwaitingTreatment',
         data: 'should be treated',
         method: 'sms',
-        resultNoteType: 'ResultFollowUp',
         changedOn,
       }
       // update with external ID
@@ -529,7 +528,6 @@ describe('Result routes', () => {
         resultTreatmentStatusId: 2,
         data: 'should be treated',
         method: 'sms',
-        resultNoteType: 'ResultFollowUp',
         changedOn,
       }
       // update with resultTreatmentStatusId
@@ -555,7 +553,6 @@ describe('Result routes', () => {
         resultTreatmentStatusId: null,
         data: 'should be treated',
         method: 'sms',
-        resultNoteType: 'ResultFollowUp',
         changedOn,
       }
       // set to null
