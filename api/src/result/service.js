@@ -1235,6 +1235,10 @@ async function addResultNote(request) {
     .where('externalId', resultNoteType || 'General')
     .select('id')
 
+  if (!resultNoteTypeId) {
+    return Boom.notFound()
+  }
+
   await knex('ResultNote').insert({
     resultNoteTypeId,
     resultId,
