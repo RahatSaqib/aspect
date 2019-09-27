@@ -234,7 +234,7 @@ describe('result endpoints', () => {
 
       beforeEach(() => {
         endpoint = setupRoute('PUT', '/result/treatment-status/{resultId}', {
-          async updateTreatmentStatus() {
+          async updateTreatmentStatusPost() {
             return expectedResponse
           },
         })
