@@ -112,20 +112,25 @@ function onWebhookMessagePending({ webhookMessageId }, { messageContext }) {
 
       const messageUpdates = {}
       if (!webhookError) {
-        const fetch = createFetch(...fetchArgs)
-        const resp = await fetch(message.url)
-        if (fileStream != null) {
-          resp.body.pipe(fileStream)
+        try {
+          const fetch = createFetch(...fetchArgs)
+          const resp = await fetch(message.url)
+          if (fileStream != null) {
+            resp.body.pipe(fileStream)
+          }
+          messageUpdates.response = `${resp.status}`
+          if (resp.statusText) {
+            messageUpdates.response += ` - ${resp.statusText}`
+          }
+          const responseText = await resp.text()
+          if (responseText) {
+            messageUpdates.response += ` ${responseText}`
+          }
+          webhookError = !resp.ok
+        } catch (err) {
+          webhookError = true
+          messageUpdates.response = err.toString()
         }
-        messageUpdates.response = `${resp.status}`
-        if (resp.statusText) {
-          messageUpdates.response += ` - ${resp.statusText}`
-        }
-        const responseText = await resp.text()
-        if (responseText) {
-          messageUpdates.response += ` ${responseText}`
-        }
-        webhookError = !resp.ok
       }
       const now = new Date()
       messageUpdates.updatedOn = now

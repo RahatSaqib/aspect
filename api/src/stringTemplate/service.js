@@ -7,6 +7,7 @@ const handlebars = require('handlebars')
 const { knex } = require('../db')
 const { parseDateOrDefault, formatDateOrDefault } = require('../shared/date')
 
+handlebars.registerHelper('curly', curlyBrace)
 handlebars.registerHelper('numberOfDays', numberOfDays)
 handlebars.registerHelper('isoDate', isoDate)
 handlebars.registerHelper('offsetToTimeZone', offsetToTimeZone)
@@ -212,6 +213,10 @@ function processUsingDynamicHelpers(template, ds) {
   return message
     .replace(/\${openMustaches}/g, '{{')
     .replace(/\${closeMustaches}/g, '}}')
+}
+
+function curlyBrace(object, open) {
+  return open ? '{' : '}'
 }
 
 function numberOfDays(date) {
