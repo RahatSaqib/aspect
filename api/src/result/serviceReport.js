@@ -49,7 +49,7 @@ const headers = [
   { key: 'resultWorkflowLogOperator', header: 'Result Log Operator' },
   { key: 'resultWorkflowLogCreatedOn', header: 'Result Log date' },
   { key: 'resultTreatmentMethod', header: 'Result Treatment Method' },
-  { key: 'resultTreatmentData', header: 'Result Treatment Data' },
+  { key: 'resultNotes', header: 'Result Treatment Data' },
   {
     key: 'resultTreatmentStatusChangedOn',
     header: 'Result Treatment status date',

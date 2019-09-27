@@ -350,7 +350,7 @@ describe('Result routes', () => {
             'resultWorkflowLogCreatedOn',
             'resultWorkflowLogOperator',
             'resultTreatmentMethod',
-            'resultTreatmentData',
+            'resultNotes',
           ]
           _.each(resultFieldNames, fieldName => {
             assert.property(res.body.data, fieldName)
@@ -549,7 +549,7 @@ describe('Result routes', () => {
         })
     })
 
-    it('Should update result treatment status given a resultId - set resultTreatmentData', done => {
+    it('Should update result treatment status given a resultId - set resultNotes', done => {
       const changedOn = addMinutes(new Date(), 2)
       const updateWithNull = {
         resultTreatmentStatusId: null,
@@ -566,10 +566,7 @@ describe('Result routes', () => {
         .end((err, res) => {
           baseTreatmentStatusAssertion(res)
 
-          assert.equal(
-            res.body.data.resultTreatmentData[0].text,
-            'should be treated'
-          )
+          assert.equal(res.body.data.resultNotes[0].text, 'should be treated')
 
           done()
         })
@@ -1217,7 +1214,7 @@ describe('Result Treatment', () => {
       }
       server
         .post(`${path}/${resultId}`)
-        .send({ comment })
+        .send(comment)
         .set('Authorization', `Bearer ${shared.token}`)
         .end((err, res) => {
           assert.equal(res.status, 200)

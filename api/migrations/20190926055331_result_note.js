@@ -41,6 +41,6 @@ async function up(knex) {
 }
 
 async function down(knex) {
-  await knex.schema.dropTableIfExists('ResultNoteType')
   await knex.schema.dropTableIfExists('ResultNote')
+  await knex.schema.dropTableIfExists('ResultNoteType')
 }
