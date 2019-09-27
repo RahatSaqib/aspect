@@ -30,7 +30,7 @@ async function prepareEmailMessageForSending(context, knex, emailMessageId) {
     knex,
     emailMessageId
   )
-  const messageStatusId = await messageStatusToId('Pending')
+  const pendingMessageStatusId = await messageStatusToId('Pending')
 
   // store generated email message into the same record and set messageStatusId
   await knex('EmailMessage')
@@ -39,7 +39,7 @@ async function prepareEmailMessageForSending(context, knex, emailMessageId) {
       subject,
       body,
       htmlBody,
-      messageStatusId,
+      messageStatusId: pendingMessageStatusId,
       updatedOn: new Date(),
     })
 
@@ -83,16 +83,20 @@ async function doSendEmailMessage(context, knex, emailMessageId) {
   let messageStatusId = messageStatusIdSent
 
   // send email
-  await sendEmail(email, subject, htmlBody, body).catch(() => {
-    // set status to 'Error'
-    messageStatusId = messageStatusIdError
-  })
+  const sendResponse = await sendEmail(email, subject, htmlBody, body).catch(
+    err => {
+      // set status to 'Error'
+      messageStatusId = messageStatusIdError
+      return err
+    }
+  )
 
   // store status in db
   await knex('EmailMessage')
     .where({ id: emailMessageId })
     .update({
       messageStatusId,
+      sendResponse: JSON.stringify(sendResponse),
       updatedOn: new Date(),
     })
 
