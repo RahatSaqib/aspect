@@ -8,7 +8,8 @@ import React from 'react'
 import { Unit } from '../../components/pureGrids'
 
 const ReportCard = ({ className, title, description, linkUrl }) => {
-  const downloadFunc = () => window.open(linkUrl, '_blank')
+  // eslint-disable-next-line no-return-assign
+  const downloadFunc = () => (window.location.href = linkUrl)
   return (
     <Unit lg="1-4" style={{ height: 100 }}>
       <Card className={className} style={{ margin: 10 }}>
@@ -23,16 +24,12 @@ const ReportCard = ({ className, title, description, linkUrl }) => {
           </CardContent>
         </CardActionArea>
         <CardActions>
-          {/* <Button size="small" color="primary">
+          {/* 
+          <Button size="small" color="primary">
           Share
         </Button> */}
 
-          <Button
-            size="small"
-            color="primary"
-            // eslint-disable-next-line no-return-assign
-            onClick={downloadFunc}
-          >
+          <Button size="small" color="primary" onClick={downloadFunc}>
             Download
           </Button>
         </CardActions>
