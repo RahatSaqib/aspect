@@ -202,6 +202,28 @@ describe('result endpoints', () => {
           .execute()
       })
     })
+
+    describe('/result/follow-ups', () => {
+      let endpoint
+      const expectedResponse = { value: 'Expected result' }
+
+      beforeEach(() => {
+        endpoint = setupRoute('GET', '/result/follow-ups', {
+          async listFollowUps() {
+            return expectedResponse
+          },
+        })
+      })
+      it('Should respond with the data returned from the service', done => {
+        endpointUtils
+          .callHandlerOn(endpoint)
+          .handleResponseWith(response => {
+            assert.deepEqual(response, expectedResponse)
+          })
+          .thenCall(done)
+          .execute()
+      })
+    })
   })
 
   describe('PUT', () => {
@@ -226,8 +248,7 @@ describe('result endpoints', () => {
           .execute()
       })
     })
-  })
-  describe('PUT', () => {
+
     describe('/result/treatment-status/{resultId}', () => {
       let endpoint
       const expectedResponse = { value: 'Expected result' }
@@ -249,26 +270,75 @@ describe('result endpoints', () => {
           .execute()
       })
     })
-  })
-  describe('/result/follow-ups', () => {
-    let endpoint
-    const expectedResponse = { value: 'Expected result' }
 
-    beforeEach(() => {
-      endpoint = setupRoute('GET', '/result/follow-ups', {
-        async listFollowUps() {
-          return expectedResponse
-        },
+    describe('/result/follow-up/{resultId}', () => {
+      let endpoint
+      const expectedResponse = { value: 'Expected result' }
+
+      beforeEach(() => {
+        endpoint = setupRoute('PUT', '/result/follow-up/{resultId}', {
+          async updateResultFollowUp() {
+            return expectedResponse
+          },
+        })
+      })
+      it('Should respond with the data returned from the service', done => {
+        endpointUtils
+          .callHandlerOn(endpoint)
+          .handleResponseWith(response => {
+            assert.deepEqual(response, expectedResponse)
+          })
+          .thenCall(done)
+          .execute()
       })
     })
-    it('Should respond with the data returned from the service', done => {
-      endpointUtils
-        .callHandlerOn(endpoint)
-        .handleResponseWith(response => {
-          assert.deepEqual(response, expectedResponse)
+  })
+
+  describe('POST', () => {
+    describe('/result/follow-up/{resultId}', () => {
+      let endpoint
+      const expectedResponse = { value: 'Expected result' }
+
+      beforeEach(() => {
+        endpoint = setupRoute('POST', '/result/follow-up/{resultId}', {
+          async setResultFollowUp() {
+            return expectedResponse
+          },
         })
-        .thenCall(done)
-        .execute()
+      })
+      it('Should respond with the data returned from the service', done => {
+        endpointUtils
+          .callHandlerOn(endpoint)
+          .handleResponseWith(response => {
+            assert.deepEqual(response, expectedResponse)
+          })
+          .thenCall(done)
+          .execute()
+      })
+    })
+  })
+
+  describe('DELETE', () => {
+    describe('/result/follow-up/{resultId}', () => {
+      let endpoint
+      const expectedResponse = { value: 'Expected result' }
+
+      beforeEach(() => {
+        endpoint = setupRoute('DELETE', '/result/follow-up/{resultId}', {
+          async deleteResultFollowUp() {
+            return expectedResponse
+          },
+        })
+      })
+      it('Should respond with the data returned from the service', done => {
+        endpointUtils
+          .callHandlerOn(endpoint)
+          .handleResponseWith(response => {
+            assert.deepEqual(response, expectedResponse)
+          })
+          .thenCall(done)
+          .execute()
+      })
     })
   })
 })
