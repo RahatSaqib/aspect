@@ -29,7 +29,7 @@ const enhance = compose(
     onToggleShown: ({ setIsShown }) => () => setIsShown(isShown => !isShown),
     onNoteChange: ({ setIsActive, setNote }) => event => {
       const note = event.target.value.trim()
-      const checkNote = event.target.value.trim() !== ''
+      const checkNote = !note
       setNote(() => note)
       return setIsActive(() => checkNote)
     },
