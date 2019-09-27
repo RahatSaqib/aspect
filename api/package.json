@@ -78,6 +78,8 @@
   "author": "SystemOne",
   "license": "ISC",
   "dependencies": {
+    "@hapi/inert": "^5.2.2",
+    "@hapi/vision": "^5.5.4",
     "amqplib": "^0.5.2",
     "babel-eslint": "^7.2.2",
     "base32": "^0.0.6",
