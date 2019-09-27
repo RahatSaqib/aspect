@@ -14,37 +14,6 @@ const messages = defineMessages({
     id: 'pages.ReportIndex.title',
     defaultMessage: 'Reports',
   },
-  deploymentName: {
-    id: 'pages.ReportIndex.deploymentName',
-    defaultMessage: 'Deployment Name',
-  },
-  moduleSerial: {
-    id: 'pages.ReportIndex.moduleSerial',
-    defaultMessage: 'Module Serial',
-  },
-  dateOfError: {
-    id: 'pages.ReportIndex.dateOfError',
-    defaultMessage: 'Date of Error',
-  },
-  error: {
-    id: 'pages.ReportIndex.error',
-    defaultMessage: 'Error',
-  },
-  totalTestsRun: {
-    id: 'pages.ReportIndex.totalTestsRun',
-    defaultMessage: 'Total Tests Run',
-  },
-  totalErrors: {
-    id: 'pages.ReportIndex.totalErrors',
-    defaultMessage: 'Total Errors',
-  },
-  paginatorStatus: {
-    id: 'pages.ReportIndex.paginatorStatus',
-    defaultMessage: `Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural,
-      one {# report}
-      other {# reports}
-    }`,
-  },
 })
 const token = getAspectAccess()
 const ReportIndex = ({ intl, className, history }) => (
