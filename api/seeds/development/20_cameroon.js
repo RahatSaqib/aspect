@@ -87,7 +87,7 @@ async function seed(knex) {
         },
       ],
     },
-    'CM',
+    'CR',
     'fkhrolf5kovl5ynya44h'
   )
 
