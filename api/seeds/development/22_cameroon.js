@@ -43,7 +43,7 @@ async function seed(knex) {
     {
       countries: [
         {
-          abbreviation: 'CR',
+          abbreviation: 'CM',
           name: 'Cameroon',
           a3: 'CMR',
           culture: 'FR',
@@ -87,7 +87,7 @@ async function seed(knex) {
         },
       ],
     },
-    'CR',
+    'CM',
     'fkhrolf5kovl5ynya44h'
   )
 
