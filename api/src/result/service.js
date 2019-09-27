@@ -1249,9 +1249,9 @@ async function addResultNote(request) {
     createdBy: currentUserId,
   })
 
-  const response = await getResultNotesByResultId(+params.resultId)
+  const resultNotes = await getResultNotesByResultId(+params.resultId)
 
-  return { ok: true, length: response.length, data: response }
+  return { ok: true, length: resultNotes.length, data: resultNotes }
 }
 
 async function getLastTreatmentStatusByResult(resultId) {
