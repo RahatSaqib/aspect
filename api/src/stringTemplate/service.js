@@ -27,12 +27,12 @@ handlebars.registerHelper(
 handlebars.registerHelper('toInt', toInt)
 handlebars.registerHelper('maxViralLoadValue', maxViralLoadValue)
 handlebars.registerHelper({
-  eq: (v1, v2) => v1 === v2,
-  ne: (v1, v2) => v1 !== v2,
-  lt: (v1, v2) => v1 < v2,
-  gt: (v1, v2) => v1 > v2,
-  lte: (v1, v2) => v1 <= v2,
-  gte: (v1, v2) => v1 >= v2,
+  eq: (v1, v2) => rawValue(v1) === rawValue(v2),
+  ne: (v1, v2) => rawValue(v1) !== rawValue(v2),
+  lt: (v1, v2) => rawValue(v1) < rawValue(v2),
+  gt: (v1, v2) => rawValue(v1) > rawValue(v2),
+  lte: (v1, v2) => rawValue(v1) <= rawValue(v2),
+  gte: (v1, v2) => rawValue(v1) >= rawValue(v2),
   and: (...rest) => Array.prototype.slice.call(rest).every(Boolean),
   or: (...rest) => Array.prototype.slice.call(rest, 0, -1).some(Boolean),
 })
@@ -274,54 +274,52 @@ function safeString(value) {
   return new handlebars.SafeString(value)
 }
 
-function rawString(value) {
-  let rawValue = value
+function rawValue(value) {
+  let raw = value
   if (value instanceof handlebars.SafeString) {
-    rawValue = value.string
+    raw = value.string
   }
-  return rawValue
+  return raw
 }
 
 function mapValue(value, options) {
-  const rawValue = rawString(value)
+  const raw = rawValue(value)
   const valueMapString = getArgumentFromOptions(options, 'valueMap')
   if (valueMapString) {
-    return safeString(JSON.parse(valueMapString)[rawValue])
+    return safeString(JSON.parse(valueMapString)[raw])
   }
   return safeString(value)
 }
 
 function defaultTo(value, options) {
-  const rawValue = rawString(value)
+  const raw = rawValue(value)
   const defaultValue = getArgumentFromOptions(options, 'value')
-  return safeString(rawValue || defaultValue)
+  return safeString(raw || defaultValue)
 }
 
 function enclose(value, options) {
-  const rawValue = rawString(value)
-  if (_.isNil(rawValue)) {
+  const raw = rawValue(value)
+  if (_.isNil(raw)) {
     return value
   }
   const encloseWith = getArgumentFromOptions(options, 'with')
-  return safeString(`${encloseWith}${rawValue}${encloseWith}`)
+  return safeString(`${encloseWith}${raw}${encloseWith}`)
 }
 
 function escapeLines(value) {
-  const rawValue = rawString(value)
-  if (!rawValue || rawValue.indexOf('\n') < 0) {
+  const raw = rawValue(value)
+  if (!raw || raw.indexOf('\n') < 0) {
     return safeString(value)
   }
-  return safeString(
-    _.map(rawValue.split('\n'), line => line.trim()).join('\\n')
-  )
+  return safeString(_.map(raw.split('\n'), line => line.trim()).join('\\n'))
 }
 
 function urlEncode(value) {
-  const rawValue = rawString(value)
-  if (_.isNil(rawValue)) {
+  const raw = rawValue(value)
+  if (_.isNil(raw)) {
     return value
   }
-  return safeString(encodeURIComponent(rawValue))
+  return safeString(encodeURIComponent(raw))
 }
 
 function priorityResult(resultCategories, resultCategoryId) {
@@ -357,8 +355,8 @@ function tryMergeResultCategories(resultCategory1, resultCategory2) {
 }
 
 function isRegexMatch(stringValue, options) {
-  const rawValue = rawString(stringValue)
-  if (!_.isNil(rawValue)) {
+  const raw = rawValue(stringValue)
+  if (!_.isNil(raw)) {
     const expression = getArgumentFromOptions(options, 'expression')
     if (expression) {
       const regex = new RegExp(expression, 'g')
@@ -368,8 +366,8 @@ function isRegexMatch(stringValue, options) {
 }
 
 function extractValueFromRegexCaptureGroup(stringValue, options) {
-  const rawValue = rawString(stringValue)
-  if (!_.isNil(rawValue)) {
+  const raw = rawValue(stringValue)
+  if (!_.isNil(raw)) {
     const expression = getArgumentFromOptions(options, 'expression')
     const groupNumber = _.get(options, ['hash', 'groupNumber'], 1)
     if (expression) {
@@ -383,27 +381,25 @@ function extractValueFromRegexCaptureGroup(stringValue, options) {
 }
 
 function toInt(value) {
-  const rawValue = rawString(value)
-  if (!_.isNil(rawValue)) {
-    return parseInt(rawValue, 10)
+  const raw = rawValue(value)
+  if (!_.isNil(raw)) {
+    return parseInt(raw, 10)
   }
 }
 
 function extractNumericViralLoadValue(value) {
-  let rawValue = value
-  if (_.isNil(rawValue)) {
-    rawValue = 0
+  let raw = value
+  if (_.isNil(raw)) {
+    raw = 0
   } else {
-    rawValue = rawString(value)
+    raw = rawValue(value)
   }
-  if (typeof rawValue === 'number') {
-    return { numericValue: rawValue, text: rawValue.toString() }
+  if (typeof raw === 'number') {
+    return { numericValue: raw, text: raw.toString() }
   }
-  if (typeof rawValue === 'string') {
+  if (typeof raw === 'string') {
     const numericStringValue = (
-      rawString(
-        extractValueFromRegexCaptureGroup(rawValue, '([\\d|\\s|\\.]+)')
-      ) || ''
+      rawValue(extractValueFromRegexCaptureGroup(raw, '([\\d|\\s|\\.]+)')) || ''
     ).trim()
     const numericStringValueWithoutWhiteSpace = numericStringValue.replace(
       /\s/,
@@ -411,13 +407,13 @@ function extractNumericViralLoadValue(value) {
     )
     const numericValue = parseFloat(numericStringValueWithoutWhiteSpace)
     if (!Number.isNaN(numericValue)) {
-      if (isRegexMatch(rawValue, '>[\\d|\\s|\\.]+')) {
+      if (isRegexMatch(raw, '>[\\d|\\s|\\.]+')) {
         return {
           numericValue: numericValue + 1,
           text: `> ${numericStringValue}`,
         }
       }
-      if (isRegexMatch(rawValue, '<[\\d|\\s|\\.]+')) {
+      if (isRegexMatch(raw, '<[\\d|\\s|\\.]+')) {
         return {
           numericValue: numericValue - 1,
           text: `< ${numericStringValue}`,

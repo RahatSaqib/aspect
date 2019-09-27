@@ -20,13 +20,22 @@ async function seedCheckTbAppWebHook(knex, { partnerId, auditFields }) {
           method: 'PUT',
           url: `${checkTbAppUrl}{{urlEncode result.sample.id}}/lab`,
           payload:
-            `{{curly true}}"auth_key":"${checkTbAppAuthKey}",` +
-            `"mtb_result":{{enclose (defaultTo (mapValue result.category1.id '{"Detected":"MTB DETECTED","Trace Detected":"MTB DETECTED","NotDetected":"MTB NOT DETECTED","Indeterminate":"INDETERMINATE","Invalid":"INVALID","NoResult":"NO RESULT","Error":"ERROR","Negative":"MTB NOT DETECTED","Positive1":"MTB DETECTED","Positive2":"MTB DETECTED","Positive3":"MTB DETECTED","PositiveMTB":"MTB DETECTED","Positive":"MTB DETECTED"}') '') with='"'}},` +
-            `"mtb_grade":{{enclose (defaultTo (mapValue result.data.result1Text '{"DETECTED HIGH":"HIGH","MTB DETECTED HIGH":"HIGH","DETECTED MEDIUM":"MEDIUM","MTB DETECTED MEDIUM":"MEDIUM","DETECTED LOW":"LOW","MTB DETECTED LOW":"LOW","DETECTED VERY LOW":"VERY LOW","MTB DETECTED VERY LOW":"VERY LOW"}') '') with='"'}},` +
-            `"rif_result":{{enclose (defaultTo (mapValue result.data.result2Text '{"DETECTED":"DETECTED","NEG":"NOT DETECTED","NOT DE":"NOT DETECTED","NOT DETECTED":"NOT DETECTED","POS":"DETECTED","Rif Resistance DETECTED":"DETECTED","Rif Resistance NOT DETECTED":"NOT DETECTED"}') '') with='"'}},` +
+            `{{curly true}}` +
+            `"auth_key":"${checkTbAppAuthKey}",` +
+            `"mtb_result":{{enclose (defaultTo (mapValue result.category1.id '{"Detected":"detected","Trace Detected":"trace","NotDetected":"not_detected","Indeterminate":"error_invalid","Invalid":"error_invalid","NoResult":"not_done","Error":"error_invalid","Negative":"not_detected","Positive1":"not_detected","Positive2":"detected","Positive3":"detected","PositiveMTB":"detected","Positive":"detected"}') '') with='"'}},` +
+            `{{#if (eq (defaultTo (mapValue result.data.result1Text '{"DETECTED HIGH":"graded","MTB DETECTED HIGH":"graded","DETECTED MEDIUM":"graded","MTB DETECTED MEDIUM":"graded","DETECTED LOW":"graded","MTB DETECTED LOW":"graded","DETECTED VERY LOW":"graded","MTB DETECTED VERY LOW":"graded"}') '') 'graded')}}` +
+            `"mtb_grade":{{enclose (defaultTo (mapValue result.data.result1Text '{"DETECTED HIGH":"high","MTB DETECTED HIGH":"high","DETECTED MEDIUM":"medium","MTB DETECTED MEDIUM":"medium","DETECTED LOW":"low","MTB DETECTED LOW":"low","DETECTED VERY LOW":"very_low","MTB DETECTED VERY LOW":"very_low"}') '') with='"'}},` +
+            `{{/if}}` +
+            `{{#if (eq (defaultTo (mapValue result.category1.id '{"NotDetected":"mtbNotDetected","Negative":"mtbNotDetected"}') '') 'mtbNotDetected')}}` +
+            `"rif_result":"not_detected",` +
+            `{{else}}` +
+            `"rif_result":{{enclose (defaultTo (mapValue result.category2.id '{"Detected":"detected","NotDetected":"not_detected","Indeterminate":"indeterminate","Susceptible":"not_detected","Resistant":"detected","Negative":"not_detected","Positive":"detected","Positive1":"detected","Positive2":"detected","Positive3":"detected"}') 'indeterminate') with='"'}},` +
+            `{{/if}}` +
             `"test_date":{{enclose (defaultTo (formatDate (offsetToTimeZone result.createdOn 'Africa/Douala') '${checkTbAppDateTimeFormat}') '') with='"'}},` +
             `"deployment_full_name":{{enclose (defaultTo device.name '') with='"'}},` +
-            `"cartridge_serial":{{enclose (defaultTo result.consumableSerial '') with='"'}},"operator":{{enclose (defaultTo result.senderOperator '') with='"'}}{{curly}}`,
+            `"cartridge_serial":{{enclose (defaultTo result.consumableSerial '') with='"'}},` +
+            `"operator":{{enclose (defaultTo result.senderOperator '') with='"'}}` +
+            `{{curly}}`,
           fileContentTypeId: await fileContentTypeToId('applicationJson'),
         },
         auditFields

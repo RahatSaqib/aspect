@@ -5,7 +5,10 @@ const { assert, expect } = require('chai')
 const { convertToTimeZone } = require('date-fns-timezone')
 
 const { runTest } = require('../utils/generatorFunctionUtils')
-const { formatDateOrDefault } = require('../../src/shared/date')
+const {
+  formatDateOrDefault,
+  parseDateOrDefault,
+} = require('../../src/shared/date')
 
 describe('stringTemplate', () => {
   describe('processUsingHandlebarsSyntax', () => {
@@ -170,6 +173,9 @@ describe('stringTemplate', () => {
       assayExternalId: 'assayAlereQHiv12Detect',
       resultCategory1ExternalId: 'Detected',
       resultCategory2ExternalId: 'NotDetected',
+      createdOn: parseDateOrDefault('2018-08-01T10:38:00.000Z'),
+      consumableSerial: '12345678',
+      senderOperator: 'Dr Foster Went to Gloucestershire',
     }
 
     async function runProcessUsingDataSourceQuery(
@@ -1324,6 +1330,102 @@ describe('stringTemplate', () => {
               `; Result: ${dataSource.expectedResult}`,
             `Use case failed: ${JSON.stringify(useCase)}`
           )
+        })
+      })
+    })
+
+    describe('use cases for Cameroon', () => {
+      it('should process Check TB App Payloads', async () => {
+        const checkTbAppAuthKey = '00000-00000-00000-00000'
+        const checkTbAppDateTimeFormat = 'yyyy-MM-dd HH:mm'
+        const template =
+          `{{curly true}}` +
+          `"auth_key":"${checkTbAppAuthKey}",` +
+          `"mtb_result":{{enclose (defaultTo (mapValue result.category1.id '{"Detected":"detected","Trace Detected":"trace","NotDetected":"not_detected","Indeterminate":"error_invalid","Invalid":"error_invalid","NoResult":"not_done","Error":"error_invalid","Negative":"not_detected","Positive1":"not_detected","Positive2":"detected","Positive3":"detected","PositiveMTB":"detected","Positive":"detected"}') '') with='"'}},` +
+          `{{#if (eq (defaultTo (mapValue result.data.result1Text '{"DETECTED HIGH":"graded","MTB DETECTED HIGH":"graded","DETECTED MEDIUM":"graded","MTB DETECTED MEDIUM":"graded","DETECTED LOW":"graded","MTB DETECTED LOW":"graded","DETECTED VERY LOW":"graded","MTB DETECTED VERY LOW":"graded"}') '') 'graded')}}` +
+          `"mtb_grade":{{enclose (defaultTo (mapValue result.data.result1Text '{"DETECTED HIGH":"high","MTB DETECTED HIGH":"high","DETECTED MEDIUM":"medium","MTB DETECTED MEDIUM":"medium","DETECTED LOW":"low","MTB DETECTED LOW":"low","DETECTED VERY LOW":"very_low","MTB DETECTED VERY LOW":"very_low"}') '') with='"'}},` +
+          `{{/if}}` +
+          `{{#if (eq (defaultTo (mapValue result.category1.id '{"NotDetected":"mtbNotDetected","Negative":"mtbNotDetected"}') '') 'mtbNotDetected')}}` +
+          `"rif_result":"not_detected",` +
+          `{{else}}` +
+          `"rif_result":{{enclose (defaultTo (mapValue result.category2.id '{"Detected":"detected","NotDetected":"not_detected","Indeterminate":"indeterminate","Susceptible":"not_detected","Resistant":"detected","Negative":"not_detected","Positive":"detected","Positive1":"detected","Positive2":"detected","Positive3":"detected"}') 'indeterminate') with='"'}},` +
+          `{{/if}}` +
+          `"test_date":{{enclose (defaultTo (formatDate (offsetToTimeZone result.createdOn 'Africa/Douala') '${checkTbAppDateTimeFormat}') '') with='"'}},` +
+          `"deployment_full_name":{{enclose (defaultTo device.name '') with='"'}},` +
+          `"cartridge_serial":{{enclose (defaultTo result.consumableSerial '') with='"'}},` +
+          `"operator":{{enclose (defaultTo result.senderOperator '') with='"'}}` +
+          `{{curly}}`
+        const useCases = [
+          {
+            assayExternalId: 'GxMtbRif',
+            resultCategory1ExternalId: 'Error',
+            resultCategory2ExternalId: 'Error',
+            expectedMtbResult: 'error_invalid',
+            expectedMtbGrade: undefined,
+            expectedRifResult: 'indeterminate',
+            expectedTestDate: '2018-08-01 11:38',
+            expectedCartridgeSerial: messageDataSource.consumableSerial,
+            expectedOperator: messageDataSource.senderOperator,
+            deviceTypeExternalId: 'CepheidGeneXpert',
+            resultData: `{"result1Text":"ERROR"}`,
+          },
+          {
+            assayExternalId: 'GxMtbRif',
+            resultCategory1ExternalId: 'Detected',
+            resultCategory2ExternalId: 'NotDetected',
+            expectedMtbResult: 'detected',
+            expectedMtbGrade: 'low',
+            expectedRifResult: 'not_detected',
+            expectedTestDate: '2018-08-01 11:38',
+            expectedCartridgeSerial: messageDataSource.consumableSerial,
+            expectedOperator: messageDataSource.senderOperator,
+            deviceTypeExternalId: 'CepheidGeneXpert',
+            resultData: `{"result1Text":"MTB DETECTED LOW"}`,
+          },
+          {
+            assayExternalId: 'GxMtbRifUltra',
+            resultCategory1ExternalId: 'Trace Detected',
+            resultCategory2ExternalId: 'Indeterminate',
+            expectedMtbResult: 'trace',
+            expectedMtbGrade: undefined,
+            expectedRifResult: 'indeterminate',
+            expectedTestDate: '2018-08-01 11:38',
+            expectedCartridgeSerial: messageDataSource.consumableSerial,
+            expectedOperator: messageDataSource.senderOperator,
+            deviceTypeExternalId: 'CepheidGeneXpert',
+            resultData: `{"result1Text":"MTB TRACE DETECTED"}`,
+          },
+          {
+            assayExternalId: 'GxMtbRif',
+            resultCategory1ExternalId: 'NotDetected',
+            resultCategory2ExternalId: null,
+            expectedMtbResult: 'not_detected',
+            expectedMtbGrade: undefined,
+            expectedRifResult: 'not_detected',
+            expectedTestDate: '2018-08-01 11:38',
+            expectedCartridgeSerial: messageDataSource.consumableSerial,
+            expectedOperator: messageDataSource.senderOperator,
+            deviceTypeExternalId: 'CepheidGeneXpert',
+            resultData: `{"result1Text":"MTB NOT DETECTED"}`,
+          },
+        ]
+        await Promise.each(useCases, async useCase => {
+          const dataSource = Object.assign({}, messageDataSource, useCase)
+          const message = await runProcessUsingDataSourceQuery(
+            template,
+            useCase
+          )
+          const messagePayload = JSON.parse(message.payload)
+          expect(messagePayload).to.containSubset({
+            auth_key: checkTbAppAuthKey,
+            mtb_result: dataSource.expectedMtbResult,
+            mtb_grade: dataSource.expectedMtbGrade,
+            rif_result: dataSource.expectedRifResult,
+            test_date: dataSource.expectedTestDate,
+            deployment_full_name: dataSource.deviceName,
+            cartridge_serial: dataSource.consumableSerial,
+            operator: dataSource.senderOperator,
+          })
         })
       })
     })
