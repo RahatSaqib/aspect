@@ -1,12 +1,14 @@
-[
-  {
-    "name": "Result FollowUp",
-    "i18nKey": "ResultNoteTypeResultFollowUp",
-    "externalId": "ResultFollowUp"
-  },
-  {
-    "name": "General",
-    "i18nKey": "ResultNoteTypeGeneral",
-    "externalId": "General"
-  }
-]
+{
+  "data": [
+    {
+      "name": "Result FollowUp",
+      "i18nKey": "ResultNoteTypeResultFollowUp",
+      "externalId": "ResultFollowUp"
+    },
+    {
+      "name": "General",
+      "i18nKey": "ResultNoteTypeGeneral",
+      "externalId": "General"
+    }
+  ]
+}

@@ -974,10 +974,8 @@ async function getResultByResultId(request, fields = SELECT_SHOW_FIELDS) {
   }
 
   if (data) {
-    const resultNotes = await getResultNotesByResultId(+params.resultId)
-
     getResultTreatmentStatus(data)
-    data.resultNotes = resultNotes
+    data.resultNotes = await getResultNotesByResultId(+params.resultId)
     data.resultTreatmentStatusCreatedBy = userName
   }
 
@@ -1229,11 +1227,11 @@ async function addResultNote(request) {
     return Boom.notFound()
   }
 
-  const { data, resultNoteType, changedOn = now } = payload
+  const { note, resultNoteType, changedOn = now } = payload
 
-  const [{ id: resultNoteTypeId }] = await knex('ResultNoteType')
+  const { id: resultNoteTypeId } = await knex('ResultNoteType')
     .where('externalId', resultNoteType || 'General')
-    .select('id')
+    .first('id')
 
   if (!resultNoteTypeId) {
     return Boom.notFound()
@@ -1242,7 +1240,7 @@ async function addResultNote(request) {
   await knex('ResultNote').insert({
     resultNoteTypeId,
     resultId,
-    text: data,
+    text: note,
     changedOn,
     createdOn: now,
     updatedBy: currentUserId,
@@ -1251,7 +1249,12 @@ async function addResultNote(request) {
 
   const resultNotes = await getResultNotesByResultId(+params.resultId)
 
-  return { ok: true, length: resultNotes.length, data: resultNotes }
+  return {
+    ok: true,
+    length: resultNotes.length,
+    data: resultNotes,
+    noteType: resultNoteType,
+  }
 }
 
 async function getLastTreatmentStatusByResult(resultId) {

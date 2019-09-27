@@ -547,6 +547,28 @@ describe('Result routes', () => {
         })
     })
 
+    it('Should update result treatment status given a resultId - set resultNotes', done => {
+      const changedOn = addMinutes(new Date(), 2)
+      const updateWithNull = {
+        resultTreatmentStatusId: null,
+        data: 'should be treated',
+        method: 'sms',
+        changedOn,
+      }
+      // set to null
+      server
+        .put(`${path}/treatment-status/${resultId}`)
+        .send(updateWithNull)
+        .set('Authorization', `Bearer${shared.token}`)
+        .end((err, res) => {
+          baseTreatmentStatusAssertion(res)
+
+          assert.equal(res.body.data.resultNotes[0].text, 'should be treated')
+
+          done()
+        })
+    })
+
     describe('Form data', () => {
       const context = createTestContext(server, {
         user: 'gates_rdt',
@@ -1184,7 +1206,7 @@ describe('Result Treatment', () => {
 
     it('Should return list of result note of a particular resultId', done => {
       const comment = {
-        data: 'Cough confirmed',
+        note: 'Cough confirmed',
         resultNoteType: 'ResultFollowUp',
       }
       server

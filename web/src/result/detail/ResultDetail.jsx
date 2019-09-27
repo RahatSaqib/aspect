@@ -268,13 +268,11 @@ export class ResultDetail extends PureComponent {
     if (event.target.id === result.get('resultTreatmentStatus')) {
       return this.props.logTreatmentStatus(resultId, {
         externalId: 'AwaitingTreatment',
-        resultNoteType: 'ResultFollowUp',
       })
     }
 
     return this.props.logTreatmentStatus(resultId, {
       externalId: event.target.id,
-      resultNoteType: 'ResultFollowUp',
     })
   }
 

@@ -305,10 +305,11 @@ const routes = [
           resultId: Joi.number()
             .integer()
             .positive()
+            .required()
             .description('Result Id'),
         },
         payload: {
-          data: Joi.string().allow('', null),
+          note: Joi.string(),
           resultNoteType: Joi.string().allow('', null),
           changedOn: Joi.date()
             .description('Date when the note was added.')
@@ -325,6 +326,7 @@ const routes = [
             .required()
             .description('False if there was some sort of error'),
           length: Joi.number().required(),
+          noteType: Joi.string().required(),
           data: Joi.array()
             .required()
             .description('The result notes'),

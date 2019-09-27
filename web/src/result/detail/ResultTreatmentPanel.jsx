@@ -29,13 +29,13 @@ const enhance = compose(
     onToggleShown: ({ setIsShown }) => () => setIsShown(isShown => !isShown),
     onNoteChange: ({ setIsActive, setNote }) => event => {
       const note = event.target.value.trim()
-      const checkNote = !note
+      const checkNote = note !== ''
       setNote(() => note)
       return setIsActive(() => checkNote)
     },
     onNoteSubmit: ({ addResultNote, setIsShown, resultId, note }) => () => {
       addResultNote(resultId, {
-        data: note,
+        note,
         resultNoteType: 'ResultFollowUp',
       })
       return setIsShown(isShown => !isShown)
