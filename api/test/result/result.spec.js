@@ -1226,63 +1226,38 @@ describe('Result Follow Up', () => {
           .first('id')
 
         const date = new Date('2019-08-01')
-        const response = await server
+        const resultFollowUpExternalId = '1234'
+
+        const responseFirst = await server
           .post(`${path}`)
-          .send({ followUpId, date })
+          .send({ followUpId, date, externalId: resultFollowUpExternalId })
           .set('Authorization', `Bearer ${shared.token}`)
 
-        assert.equal(response.statusCode, 200)
+        assert.equal(responseFirst.statusCode, 200)
 
-        // should have follow up with the externalid 'drtb-prexdr'
+        // should have follow up with the externalId 'drtb-prexdr'
         const {
           externalId: externalIdFollowUp,
           date: followUpDate,
         } = await knex('ResultFollowUp as rfu')
           .join('FollowUp as fu', 'rfu.followUpId', 'fu.id')
-          .where('resultId', resultId)
+          .where('rfu.resultId', resultId)
+          .where('rfu.externalId', resultFollowUpExternalId)
           .first('fu.externalId', 'rfu.date')
 
         assert.equal(externalIdFollowUp, 'drtb-prexdr')
         assert.equal(date.getTime(), followUpDate.getTime())
-      }))
 
-    it('Should replace a follow up if there is already one of the same type', async () =>
-      runTestWithKnex(async knex => {
-        const { id: followUpId } = await knex('FollowUp')
-          .where('externalId', 'drtb-bbsr')
-          .first('id')
-
-        const response = await server
+        const responseSecond = await server
           .post(`${path}`)
-          .send({ followUpId })
+          .send({ followUpId, externalId: resultFollowUpExternalId })
           .set('Authorization', `Bearer ${shared.token}`)
 
-        assert.equal(response.statusCode, 200)
-
-        // should have one follow up with the externalid 'drtb-bbsr'
-        const followUps = await knex('ResultFollowUp as rfu')
-          .join('FollowUp as fu', 'rfu.followUpId', 'fu.id')
-          .join('FollowUpType as fut', 'fu.followUpTypeId', 'fut.id')
-          .where('resultId', resultId)
-          .where('fut.externalId', 'treatment')
-          .select('fu.externalId')
-
-        assert.equal(followUps.length, 1)
-        assert.equal(followUps[0].externalId, 'drtb-bbsr')
-      }))
-
-    it('Should set the treatment status based on follow up', async () =>
-      runTestWithKnex(async knex => {
-        const { id: followUpId } = await knex('FollowUp')
-          .where('externalId', 'dstb-4rh')
-          .first('id')
-
-        const response = await server
-          .post(`${path}`)
-          .send({ followUpId })
-          .set('Authorization', `Bearer ${shared.token}`)
-
-        assert.equal(response.statusCode, 200)
+        assert.equal(
+          responseSecond.statusCode,
+          400,
+          'Should return error if external ID already exists'
+        )
 
         // should have a treatment status of "On Treatment"
         const { externalId } = await knex('Result as r')
@@ -1309,23 +1284,43 @@ describe('Result Follow Up', () => {
 
     it('Should update the date of a follow up', async () =>
       runTestWithKnex(async knex => {
-        const { id: followUpId } = await knex('FollowUp')
-          .where('externalId', 'dstb-4rh')
-          .first('id')
-
         const date = new Date('2019-09-01')
         const response = await server
           .put(`${path}`)
-          .send({ followUpId, date })
+          .send({ externalId: '1234', date })
           .set('Authorization', `Bearer ${shared.token}`)
 
         assert.equal(response.statusCode, 200)
 
         const { date: followUpDate } = await knex('ResultFollowUp as rfu')
           .where('resultId', resultId)
+          .where('externalId', '1234')
           .first('rfu.date')
 
         assert.equal(date.getTime(), followUpDate.getTime())
+      }))
+  })
+
+  describe('DELETE', () => {
+    const resultId = 1
+    const path = `/api/result/follow-up/${resultId}`
+
+    it('Should delete the follow up with the given external ID', async () =>
+      runTestWithKnex(async knex => {
+        const response = await server
+          .delete(`${path}`)
+          .send({ externalId: '1234' })
+          .set('Authorization', `Bearer ${shared.token}`)
+
+        assert.equal(response.statusCode, 200)
+
+        // should have a treatment status of "On Treatment"
+        const followUps = await knex('ResultFollowUp')
+          .where('resultId', resultId)
+          .where('externalId', '1234')
+          .first('id')
+
+        assert(!followUps)
       }))
   })
 })

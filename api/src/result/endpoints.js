@@ -571,25 +571,10 @@ const routes = [
                     Joi.object().keys({
                       id: Joi.number()
                         .required()
-                        .description('Follow Up ID'),
-                      name: Joi.string()
-                        .required()
-                        .description('Name of the follow up'),
+                        .description('Result follow up ID'),
                       externalId: Joi.string()
-                        .required()
+                        .allow(null, '')
                         .description('External ID of the follow up'),
-                      i18nKey: Joi.string()
-                        .required()
-                        .description('Translation key for the follow up'),
-                      followUpTypeName: Joi.string()
-                        .required()
-                        .description('Name of the follow up type'),
-                      followUpTypeExternalId: Joi.string()
-                        .required()
-                        .description('External ID of the follow up type'),
-                      followUpTypei18nKey: Joi.string()
-                        .required()
-                        .description('Translation key for the follow up type'),
                       date: Joi.date()
                         .allow(null)
                         .description('When the follow up started'),
@@ -603,6 +588,21 @@ const routes = [
                         .description(
                           'When the follow up was last updated in Aspect'
                         ),
+                      name: Joi.string()
+                        .required()
+                        .description('Name of the follow up'),
+                      i18nKey: Joi.string()
+                        .required()
+                        .description('Translation key for the follow up'),
+                      followUpTypeName: Joi.string()
+                        .required()
+                        .description('Name of the follow up type'),
+                      followUpTypeExternalId: Joi.string()
+                        .required()
+                        .description('External ID of the follow up type'),
+                      followUpTypei18nKey: Joi.string()
+                        .required()
+                        .description('Translation key for the follow up type'),
                     })
                   ),
               })
@@ -838,16 +838,21 @@ const routes = [
             .required()
             .integer()
             .positive()
-            .description('Result Id'),
+            .description('Result ID'),
         },
         payload: Joi.object()
           .keys({
+            externalId: Joi.string()
+              .allow('', null)
+              .description(
+                'Optional externalId of the result follow up. This is mostly for app-use so apps can uniquely identify a follow up record that they created.'
+              ),
             followUpId: Joi.number()
               .integer()
               .positive()
               .allow(null)
               .description('The ID of the follow up'),
-            externalId: Joi.string()
+            followUpExternalId: Joi.string()
               .allow('', null)
               .description(
                 'The externalId of the follow up. Will be used if followUpId is null/empty.'
@@ -857,7 +862,7 @@ const routes = [
               .optional()
               .description('This is the date when the follow up happened'),
           })
-          .xor('followUpId', 'externalId'),
+          .xor('followUpId', 'followUpExternalId'),
       },
       response: {
         options: {
@@ -889,26 +894,26 @@ const routes = [
             .required()
             .integer()
             .positive()
-            .description('Result Id'),
+            .description('Result ID'),
         },
         payload: Joi.object()
           .keys({
-            followUpId: Joi.number()
+            id: Joi.number()
               .integer()
               .positive()
               .allow(null)
-              .description('The ID of the follow up'),
+              .description('The ID of the result follow up.'),
             externalId: Joi.string()
               .allow('', null)
               .description(
-                'The externalId of the follow up. Will be used if followUpId is null/empty.'
+                'The externalId of the result follow up. Will be used in combination with the result ID to find the result follow up if id is empty'
               ),
             date: Joi.date()
               .iso()
               .optional()
               .description('This is the date when the follow up happened'),
           })
-          .xor('followUpId', 'externalId'),
+          .xor('id', 'externalId'),
       },
       response: {
         options: {
@@ -940,22 +945,22 @@ const routes = [
             .required()
             .integer()
             .positive()
-            .description('Result Id'),
+            .description('Result ID'),
         },
         payload: Joi.object()
           .keys({
-            followUpId: Joi.number()
+            id: Joi.number()
               .integer()
               .positive()
               .allow(null)
-              .description('The ID of the follow up'),
+              .description('The ID of the result follow up.'),
             externalId: Joi.string()
               .allow('', null)
               .description(
-                'The externalId of the follow up. Will be used if followUpId is null/empty.'
+                'The externalId of the result follow up. Will be used in combination with the result ID to find the result follow up if id is empty.'
               ),
           })
-          .xor('followUpId', 'externalId'),
+          .xor('id', 'externalId'),
       },
       response: {
         options: {

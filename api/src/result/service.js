@@ -628,16 +628,16 @@ async function getDownloadResultsList(query, auth) {
     .whereIn('rfu.resultId', data.map(d => d.id))
     .select(
       'rfu.resultId',
-      'fu.id',
+      'rfu.id',
+      'rfu.externalId',
+      'rfu.date',
+      'rfu.createdOn',
+      'rfu.updatedOn',
       'fu.name',
-      'fu.externalId',
       'fu.i18nKey',
       'fut.name as followUpTypeName',
       'fut.externalId as followUpTypeExternalId',
-      'fut.i18nKey as followUpTypei18nKey',
-      'rfu.date',
-      'rfu.createdOn',
-      'rfu.updatedOn'
+      'fut.i18nKey as followUpTypei18nKey'
     )
 
   const transformedData = _.map(data, d => ({
@@ -692,7 +692,7 @@ async function getDownloadResultsList(query, auth) {
     },
     followUps: _.sortBy(
       _.filter(followUps, { resultId: d.id }).map(f => _.omit(f, 'resultId')),
-      'updatedOn'
+      ['date', 'updatedOn']
     ),
   }))
 
@@ -1675,11 +1675,11 @@ async function setResultFollowUp(request) {
     Boom.notFound()
   }
 
-  const { externalId, followUpId, date } = payload
+  const { externalId, followUpId, followUpExternalId, date } = payload
 
   const followUp = await knex('FollowUp as fu')
     .join('FollowUpType as fut', 'fu.followUpTypeId', 'fut.id')
-    .where('fu.externalId', externalId || -1)
+    .where('fu.externalId', followUpExternalId || -1)
     .orWhere('fu.id', followUpId || -1)
     .first('fu.id', 'fu.externalId', 'fu.followUpTypeId')
 
@@ -1687,19 +1687,22 @@ async function setResultFollowUp(request) {
     return Boom.badRequest('Invalid follow up ID')
   }
 
-  // TODO: We may want to support multiple follow ups of the same type in the future.
-  // This code assumes that there can only be one follow up per type for a result
-  await knex('ResultFollowUp')
-    .where('resultId', resultId)
-    .whereIn('followUpId', function() {
-      this.select('id')
-        .from('FollowUp')
-        .where('followUpTypeId', followUp.followUpTypeId)
-    })
-    .del()
+  if (externalId) {
+    const resultFollowUp = await knex('ResultFollowUp')
+      .where('resultId', resultId)
+      .where('externalId', externalId)
+      .first('id')
+
+    if (resultFollowUp) {
+      return Boom.badRequest(
+        'This result already has a follow up with this external ID.'
+      )
+    }
+  }
 
   await knex('ResultFollowUp').insert({
     resultId,
+    externalId,
     followUpId: followUp.id,
     date,
     createdBy: currentUserId,
@@ -1722,7 +1725,7 @@ async function updateResultFollowUp(request) {
   const now = new Date()
   const { auth, params, payload } = request
   const { resultId } = params
-  const { date, followUpId, externalId } = payload
+  const { date, id, externalId } = payload
   const { id: currentUserId } = await getUser(auth.credentials.name)
 
   // get the result so we can check access and if status changed
@@ -1731,19 +1734,11 @@ async function updateResultFollowUp(request) {
     Boom.notFound()
   }
 
-  const followUp = await knex('FollowUp as fu')
-    .join('FollowUpType as fut', 'fu.followUpTypeId', 'fut.id')
-    .where('fu.externalId', externalId || -1)
-    .orWhere('fu.id', followUpId || -1)
-    .first('fu.id')
-
-  if (!followUp) {
-    return Boom.badRequest('Invalid follow up ID')
-  }
-
   const affectedRows = await knex('ResultFollowUp as r')
-    .where('resultId', resultId)
-    .where('followUpId', followUp.id)
+    .where('id', id || '-1')
+    .orWhere(function() {
+      this.where('resultId', resultId).where('externalId', externalId || '-1')
+    })
     .update({ date, updatedOn: now, updatedBy: currentUserId })
 
   if (affectedRows === 0) {
@@ -1756,7 +1751,7 @@ async function updateResultFollowUp(request) {
 async function deleteResultFollowUp(request) {
   const { auth, params, payload } = request
   const { resultId } = params
-  const { date, followUpId, externalId } = payload
+  const { date, id, externalId } = payload
   const { id: currentUserId } = await getUser(auth.credentials.name)
 
   // get the result so we can check access
@@ -1765,19 +1760,11 @@ async function deleteResultFollowUp(request) {
     Boom.notFound()
   }
 
-  const followUp = await knex('FollowUp as fu')
-    .join('FollowUpType as fut', 'fu.followUpTypeId', 'fut.id')
-    .where('fu.externalId', externalId || -1)
-    .orWhere('fu.id', followUpId || -1)
-    .first('fu.id', 'fu.externalId')
-
-  if (!followUp) {
-    return Boom.badRequest('Invalid follow up ID')
-  }
-
   const affectedRows = await knex('ResultFollowUp')
-    .where('resultId', resultId)
-    .where('followUpId', followUp.id)
+    .where('id', id || '-1')
+    .orWhere(function() {
+      this.where('resultId', resultId).where('externalId', externalId || '-1')
+    })
     .del()
 
   if (affectedRows === 0) {
@@ -1847,16 +1834,16 @@ async function showResultFollowUps(request) {
     .orderBy('rfu.date', 'rfu.updatedOn')
     .modify(addConstraints, dataConstraints, { device: 'd', sample: 'sp' })
     .select(
-      'fu.id',
+      'rfu.id',
+      'rfu.externalId',
+      'rfu.date',
+      'rfu.createdOn',
+      'rfu.updatedOn',
       'fu.name',
-      'fu.externalId',
       'fu.i18nKey',
       'fut.name as followUpTypeName',
       'fut.externalId as followUpTypeExternalId',
-      'fut.i18nKey as followUpTypei18nKey',
-      'rfu.date',
-      'rfu.createdOn',
-      'rfu.updatedOn'
+      'fut.i18nKey as followUpTypei18nKey'
     )
 
   return { data: followUps }

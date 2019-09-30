@@ -68,6 +68,8 @@ async function up(knex) {
   })
 
   await knex.schema.createTable('ResultFollowUp', followUp => {
+    followUp.increments('id')
+    followUp.string('externalId')
     followUp
       .integer('resultId')
       .unsigned()
@@ -105,7 +107,7 @@ async function up(knex) {
       .index()
       .references('id')
       .inTable('User')
-    followUp.unique(['resultId', 'followUpId'])
+    followUp.unique(['resultId', 'externalId'])
   })
 }
 

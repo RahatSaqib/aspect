@@ -440,13 +440,22 @@ function validateResultResponse() {
         Joi.object().keys({
           id: Joi.number()
             .required()
-            .description('Follow Up ID'),
+            .description('Result follow up ID'),
+          externalId: Joi.string()
+            .allow(null, '')
+            .description('External ID of the follow up'),
+          date: Joi.date()
+            .allow(null)
+            .description('When the follow up started'),
+          createdOn: Joi.date()
+            .required()
+            .description('When the follow up was first created in Aspect'),
+          updatedOn: Joi.date()
+            .required()
+            .description('When the follow up was last updated in Aspect'),
           name: Joi.string()
             .required()
             .description('Name of the follow up'),
-          externalId: Joi.string()
-            .required()
-            .description('External ID of the follow up'),
           i18nKey: Joi.string()
             .required()
             .description('Translation key for the follow up'),
@@ -459,15 +468,6 @@ function validateResultResponse() {
           followUpTypei18nKey: Joi.string()
             .required()
             .description('Translation key for the follow up type'),
-          date: Joi.date()
-            .allow(null)
-            .description('When the follow up started'),
-          createdOn: Joi.date()
-            .required()
-            .description('When the follow up was first created in Aspect'),
-          updatedOn: Joi.date()
-            .required()
-            .description('When the follow up was last updated in Aspect'),
         })
       ),
   }
