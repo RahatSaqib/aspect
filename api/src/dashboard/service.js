@@ -660,8 +660,16 @@ async function siteDashboard(request) {
   const dataConstraints = await getConstraints(auth.credentials)
 
   const siteList = await getSiteList(auth, dataConstraints)
+  const assayResultCategoryList = await getAssayResultCategoryList()
   const deviceList = await getDeviceList(auth, dataConstraints)
   const inventoryItemList = await getInventoryItemList(auth, dataConstraints)
+
+  const assayResultCategoryFilterList = assayResultCategoryList.map(
+    (assayresultCateory, index) => ({
+      id: index + 1,
+      name: `${assayresultCateory.abbreviation}:${assayresultCateory.name}`,
+    })
+  )
 
   const filteredLength = _.flowRight(
     _.size,
@@ -758,6 +766,7 @@ async function siteDashboard(request) {
 
   const result = {
     data: {
+      assayResultCategoryFilterList,
       siteList,
       siteSummaryMap,
     },
@@ -1438,6 +1447,16 @@ async function addStockLevelUpdateActions(
       }
     )
   }
+}
+
+async function getAssayResultCategoryList() {
+  const assayResultCategory = await knex('ResultCategoryAssay as rca')
+    .innerJoin('Assay as a', 'a.id', 'rca.assayId')
+    .innerJoin('ResultCategory as rc', 'rca.resultCategoryId', 'rc.id')
+    .where('rca.requiresTreatment', 1)
+    .select('a.abbreviation', 'rc.name')
+
+  return assayResultCategory
 }
 
 module.exports = {

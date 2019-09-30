@@ -452,6 +452,7 @@ const Summary = Immutable.Record({
   deviceList: Immutable.List(),
   deviceSummaryMap: Immutable.Map(),
   siteList: Immutable.List(),
+  assayResultCategoryList: Immutable.List(),
   siteSummaryMap: Immutable.Map(),
   operational: Immutable.Map(),
   actionSummaryMap: Immutable.Map(),
@@ -521,6 +522,10 @@ export default function dashboardReducer(state = initialState, action) {
       return state.withMutations(mutState => {
         onRequested(action, mutState, () => {
           mutState.mergeDeepIn(['siteList'], action.data.siteList)
+          mutState.mergeDeepIn(
+            ['assayResultCategoryList'],
+            action.data.assayResultCategoryFilterList
+          )
           mutState.mergeDeepIn(['siteSummaryMap'], action.data.siteSummaryMap)
         })
       })

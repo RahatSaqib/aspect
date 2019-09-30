@@ -158,6 +158,7 @@
 
 .FiltersGroup > *:first-child {
   padding-top: 15px;
+  margin-left: 10px;
 }
 
 .ChartContainer {
@@ -474,4 +475,7 @@
   width: 15px;
   height: 15px;
   margin-right: 5px;
+}
+.FiltersGroup__Child--dropdown {
+  margin-left: 10px;
 }

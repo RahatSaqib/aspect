@@ -4,7 +4,14 @@ import Immutable from 'immutable'
 import classnames from 'classnames/bind'
 import React from 'react'
 import { bindActionCreators } from 'redux'
-import { compose, withProps, lifecycle, withHandlers, pure } from 'recompose'
+import {
+  compose,
+  withProps,
+  lifecycle,
+  withHandlers,
+  pure,
+  withState,
+} from 'recompose'
 import { connect } from 'react-redux'
 import Card from '@material-ui/core/Card'
 
@@ -41,6 +48,7 @@ const changePeriod = (props, shift) => {
 }
 const enhance = compose(
   pure,
+  withState('resultCategoryId', 'setResultCategoryId', ''),
   requirePermissions({
     permissions: [
       'treatmentStatus:admin',
@@ -54,6 +62,7 @@ const enhance = compose(
       const treatmentStatus = state.dashboard.treatmentStatus.toJS()
       return {
         sitesSelectList: state.site.selectList,
+        assayResultCategoryList: state.dashboard.assayResultCategoryList,
         ..._.pick(treatmentStatus, ['siteId', 'endedOn', 'lastOn', 'data']),
       }
     },
@@ -69,7 +78,7 @@ const enhance = compose(
     },
   }),
   withHandlers({
-    onChange: ({ endedOn, fetchTreatmentDashboard }) => ({
+    onSiteChange: ({ endedOn, fetchTreatmentDashboard }) => ({
       target: { value },
     }) => {
       fetchTreatmentDashboard({
@@ -77,34 +86,82 @@ const enhance = compose(
         endedOn,
       })
     },
+    onResultCategoryChange: ({ setResultCategoryId }) => ({
+      target: { value },
+    }) => {
+      setResultCategoryId(() => value)
+    },
     onBack: props => () => changePeriod(props, -1),
     onForward: props => () => changePeriod(props, 1),
   }),
-  withProps(({ intl, siteId, sitesSelectList, theme }) => ({
-    theme,
-    isSingleSite:
-      sitesSelectList.items.size === 1 && !sitesSelectList.stateName,
-    source: sitesSelectList.items
-      .map(item => ({
-        value: item.get('id'),
-        label: item.get('name'),
-      }))
-      .insert(0, {
-        value: '',
-        label: intl.formatMessage(messages.treatmentAllSites, {
-          region: sitesSelectList.stateName || sitesSelectList.countryName,
-        }),
-      })
-      .toJS(),
-    value: sitesSelectList.items
-      .find(it => it.get('id') === siteId, null, Immutable.Map())
-      .get('id', ''),
-  }))
+  withProps(
+    ({
+      intl,
+      siteId,
+      sitesSelectList,
+      theme,
+      assayResultCategoryList,
+      resultCategoryId,
+    }) => ({
+      theme,
+      isSingleSite:
+        sitesSelectList.items.size === 1 && !sitesSelectList.stateName,
+      source: sitesSelectList.items
+        .map(item => ({
+          value: item.get('id'),
+          label: item.get('name'),
+        }))
+        .insert(0, {
+          value: '',
+          label: intl.formatMessage(messages.treatmentAllSites, {
+            region: sitesSelectList.stateName || sitesSelectList.countryName,
+          }),
+        })
+        .toJS(),
+      siteValue: sitesSelectList.items
+        .find(it => it.get('id') === siteId, null, Immutable.Map())
+        .get('id', ''),
+      isSingleAssayResultCategory: assayResultCategoryList.length === 1,
+      assayResultCategorySource: assayResultCategoryList
+        .map(item => ({
+          value: item.get('id'),
+          label: item.get('name'),
+        }))
+        .insert(0, {
+          value: '',
+          label: intl.formatMessage(messages.assayResultCategoryAll),
+        })
+        .toJS(),
+      resultCategoryValue: assayResultCategoryList.find(
+        it => it.get('id') === resultCategoryId
+      ),
+    })
+  )
 )
 
 function getColorWithAlpha(color, opacity) {
   const y = Math.floor(opacity * 255)
   return color + (y < 16 ? '0' : '') + y.toString(16)
+}
+
+function filterDropDownField(fieldList, fieldItem, otherProps) {
+  return (
+    <div
+      className={cssClasses(
+        'FiltersGroup__Child',
+        'FiltersGroup__Child--dropdown'
+      )}
+    >
+      {fieldList.length > 1 &&
+        (fieldItem ? (
+          <div className={cssClasses('SiteDropdown__Label')}>
+            {fieldList[1].label}
+          </div>
+        ) : (
+          <StyledDropdown displayEmpty source={fieldList} {...otherProps} />
+        ))}
+    </div>
+  )
 }
 
 export const TreatmentStatus = ({
@@ -117,6 +174,12 @@ export const TreatmentStatus = ({
   data = [],
   isSingleSite,
   source,
+  siteValue,
+  assayResultCategorySource,
+  isSingleAssayResultCategory,
+  onResultCategoryChange,
+  resultCategoryValue,
+  onSiteChange,
   onForward,
   onBack,
   ...restProps
@@ -139,6 +202,8 @@ export const TreatmentStatus = ({
 
   lastOn = lastOn && dateFormat(new Date(lastOn), 'yyyy-MM')
 
+  // console.log('myvaklue', resultCategoryValue)
+
   return (
     <Card className={className}>
       <div
@@ -148,21 +213,23 @@ export const TreatmentStatus = ({
           title={title}
           icon={<IconTitle className={cssClasses('Title__Icon')} />}
         />
-        <div
-          className={cssClasses(
-            'FiltersGroup__Child',
-            'FiltersGroup__Child--dropdown'
-          )}
-        >
-          {source.length > 1 &&
-            (isSingleSite ? (
-              <div className={cssClasses('SiteDropdown__Label')}>
-                {source[1].label}
-              </div>
-            ) : (
-              <StyledDropdown displayEmpty source={source} {...restProps} />
-            ))}
-        </div>
+
+        {filterDropDownField(source, isSingleSite, {
+          ...restProps,
+          value: siteValue,
+          onChange: onSiteChange,
+        })}
+
+        {filterDropDownField(
+          assayResultCategorySource,
+          isSingleAssayResultCategory,
+          {
+            ...restProps,
+            onChange: onResultCategoryChange,
+            value: resultCategoryValue ? resultCategoryValue.get('id') : '',
+          }
+        )}
+
         <Unit sm="1-8" />
       </div>
 
