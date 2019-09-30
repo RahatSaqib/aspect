@@ -40,7 +40,7 @@ async function seed(knex) {
     partnerId,
     adminId,
     geography,
-    'CR',
+    'CM',
     'Zs4uow3jV0md6cmET0zUY'
   )
 }
