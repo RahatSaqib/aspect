@@ -845,8 +845,13 @@ const routes = [
             followUpId: Joi.number()
               .integer()
               .positive()
-              .allow(null),
-            externalId: Joi.string().allow('', null),
+              .allow(null)
+              .description('The ID of the follow up'),
+            externalId: Joi.string()
+              .allow('', null)
+              .description(
+                'The externalId of the follow up. Will be used if followUpId is null/empty.'
+              ),
             date: Joi.date()
               .iso()
               .optional()
@@ -891,8 +896,13 @@ const routes = [
             followUpId: Joi.number()
               .integer()
               .positive()
-              .allow(null),
-            externalId: Joi.string().allow('', null),
+              .allow(null)
+              .description('The ID of the follow up'),
+            externalId: Joi.string()
+              .allow('', null)
+              .description(
+                'The externalId of the follow up. Will be used if followUpId is null/empty.'
+              ),
             date: Joi.date()
               .iso()
               .optional()
@@ -937,8 +947,13 @@ const routes = [
             followUpId: Joi.number()
               .integer()
               .positive()
-              .allow(null),
-            externalId: Joi.string().allow('', null),
+              .allow(null)
+              .description('The ID of the follow up'),
+            externalId: Joi.string()
+              .allow('', null)
+              .description(
+                'The externalId of the follow up. Will be used if followUpId is null/empty.'
+              ),
           })
           .xor('followUpId', 'externalId'),
       },

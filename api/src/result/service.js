@@ -690,8 +690,9 @@ async function getDownloadResultsList(query, auth) {
       method: d.resultTreatmentStatusMethod,
       data: d.resultTreatmentStatusData,
     },
-    followUps: _.filter(followUps, { resultId: d.id }).map(f =>
-      _.omit(f, 'resultId')
+    followUps: _.sortBy(
+      _.filter(followUps, { resultId: d.id }).map(f => _.omit(f, 'resultId')),
+      'updatedOn'
     ),
   }))
 
