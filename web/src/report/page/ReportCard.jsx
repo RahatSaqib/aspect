@@ -5,14 +5,29 @@ import CardContent from '@material-ui/core/CardContent'
 import Button from '@material-ui/core/Button'
 import Typography from '@material-ui/core/Typography'
 import React from 'react'
-import { Unit } from '../../components/pureGrids'
+import Grid from '@material-ui/core/Grid'
+import { withStyles } from '@material-ui/core/styles'
 
-const ReportCard = ({ className, title, description, linkUrl }) => {
+const styles = {
+  card: {
+    margin: 10,
+    // Use flex layout with column direction for components in the card
+    // (CardContent and CardActions)
+    display: 'flex',
+    flexDirection: 'column',
+
+    // Justify the content so that CardContent will always be at the top of the card,
+    // and CardActions will be at the bottom
+    justifyContent: 'space-between',
+  },
+}
+
+const reportCardStyleless = ({ classes, title, description, linkUrl }) => {
   // eslint-disable-next-line no-return-assign
   const downloadFunc = () => (window.location.href = linkUrl)
   return (
-    <Unit lg="1-4" style={{ height: '100%' }}>
-      <Card className={className} style={{ margin: 10, height: '100%' }}>
+    <Grid component={Card} xs className={classes.card}>
+      <Card>
         <CardActionArea onClick={downloadFunc}>
           <CardContent>
             <Typography gutterBottom variant="h5" component="h4">
@@ -24,17 +39,14 @@ const ReportCard = ({ className, title, description, linkUrl }) => {
           </CardContent>
         </CardActionArea>
         <CardActions>
-          {/* 
-          <Button size="small" color="primary">
-          Share
-        </Button> */}
-
           <Button size="small" color="primary" onClick={downloadFunc}>
             Download
           </Button>
         </CardActions>
       </Card>
-    </Unit>
+    </Grid>
   )
 }
+const ReportCard = withStyles(styles)(reportCardStyleless)
+
 export default ReportCard

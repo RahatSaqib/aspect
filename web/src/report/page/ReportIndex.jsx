@@ -1,6 +1,7 @@
 import React from 'react'
 import { defineMessages } from 'react-intl'
 import Helmet from 'react-helmet'
+import Grid from '@material-ui/core/Grid'
 import classnames from 'classnames/bind'
 import NavTitle from '../../globals/components/NavTitle'
 import ReportCard from './ReportCard'
@@ -16,41 +17,36 @@ const messages = defineMessages({
   },
 })
 const token = getAspectAccess()
-const ReportIndex = ({ intl, className, history }) => (
+const ReportIndex = ({ intl, history }) => (
   <div className={cssClasses('Container')}>
     <Helmet title={intl.formatMessage(messages.reportsTitle)} />
     <NavTitle title={intl.formatMessage(messages.reportsTitle)} />
-    <div style={{ padding: 10, flex: 1 }}>
+    <Grid container>
       <ReportCard
-        className={className}
         title="MTB Detected RR Detected"
         description="Contains all MTB Detected/RR Detected cases"
         linkUrl={`${config.aspectApi}/report/MTB_Detected_RR_Detected.xlsx?token=${token}`}
         history={history}
       />
-
       <ReportCard
-        className={className}
         title="Critical Errors By Device"
         description="Includes a list of devices that had at least 2 critical errors"
         linkUrl={`${config.aspectApi}/report/DevicesWithErrors.xlsx?token=${token}`}
         history={history}
       />
       <ReportCard
-        className={className}
         title="RIF Resistance Rate (%positive results)"
         description="Listing RIF Resistance Rate for all facilities, ranked highest to lowest."
         linkUrl={`${config.aspectApi}/report/RifResistanceRate.xlsx?token=${token}`}
         history={history}
       />
       <ReportCard
-        className={className}
         title="Results with HIV Not Suppressed"
         description="All HIV results where the virus is not suppressed"
         linkUrl={`${config.aspectApi}/report/HIVNotSuppressed.xlsx?token=${token}`}
         history={history}
       />
-    </div>
+    </Grid>
   </div>
 )
 
