@@ -11,8 +11,8 @@ const ReportCard = ({ className, title, description, linkUrl }) => {
   // eslint-disable-next-line no-return-assign
   const downloadFunc = () => (window.location.href = linkUrl)
   return (
-    <Unit lg="1-4" style={{ height: 100 }}>
-      <Card className={className} style={{ margin: 10 }}>
+    <Unit lg="1-4" style={{ height: '100%' }}>
+      <Card className={className} style={{ margin: 10, height: '100%' }}>
         <CardActionArea onClick={downloadFunc}>
           <CardContent>
             <Typography gutterBottom variant="h5" component="h4">
