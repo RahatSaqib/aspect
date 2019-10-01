@@ -621,6 +621,25 @@ async function getDownloadResultsList(query, auth) {
   // return result when both queries are finished
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
 
+  // get follow ups for all results in the response for performance (filter later)
+  const followUps = await knex('ResultFollowUp as rfu')
+    .join('FollowUp as fu', 'rfu.followUpId', 'fu.id')
+    .join('FollowUpType as fut', 'fu.followUpTypeId', 'fut.id')
+    .whereIn('rfu.resultId', data.map(d => d.id))
+    .select(
+      'rfu.resultId',
+      'rfu.id',
+      'rfu.externalId',
+      'rfu.date',
+      'rfu.createdOn',
+      'rfu.updatedOn',
+      'fu.name',
+      'fu.i18nKey',
+      'fut.name as followUpTypeName',
+      'fut.externalId as followUpTypeExternalId',
+      'fut.i18nKey as followUpTypei18nKey'
+    )
+
   const transformedData = _.map(data, d => ({
     id: d.id,
     externalId: d.externalId,
@@ -671,7 +690,12 @@ async function getDownloadResultsList(query, auth) {
       method: d.resultTreatmentStatusMethod,
       data: d.resultTreatmentStatusData,
     },
+    followUps: _.sortBy(
+      _.filter(followUps, { resultId: d.id }).map(f => _.omit(f, 'resultId')),
+      ['date', 'updatedOn']
+    ),
   }))
+
   const result = {
     ok: true,
     total,
@@ -945,6 +969,9 @@ async function getResultByResultId(request, fields = SELECT_SHOW_FIELDS) {
     // select files attached to this result
     const { data: files } = await showFileReferences(request)
     data.files = files
+
+    const { data: followUps } = await showResultFollowUps(request)
+    data.followUps = followUps
   }
 
   if (data) {
@@ -1058,10 +1085,8 @@ async function listTreatmentStatusTypes() {
   return result
 }
 
-async function updateTreatmentStatus(request) {
-  const { auth, params, payload } = request
-  const now = new Date()
-  const { resultId } = params
+async function updateTreatmentStatusPost(request) {
+  const { auth, payload } = request
   const { id: currentUserId } = await getUser(auth.credentials.name)
 
   // get the result so we can check access and if status changed
@@ -1070,12 +1095,42 @@ async function updateTreatmentStatus(request) {
     Boom.notFound()
   }
 
-  const { resultTreatmentStatusId, data, method, changedOn = now } = payload
+  const {
+    resultTreatmentStatusId,
+    externalId,
+    data,
+    method,
+    changedOn,
+  } = payload
+
+  return updateTreatmentStatus(
+    request,
+    currentUserId,
+    result,
+    resultTreatmentStatusId,
+    externalId,
+    data,
+    method,
+    changedOn
+  )
+}
+
+async function updateTreatmentStatus(
+  request,
+  currentUserId,
+  result,
+  resultTreatmentStatusId,
+  externalId,
+  data,
+  method,
+  changedOn = new Date()
+) {
+  const now = new Date()
 
   let treatmentStatusId = null
   // check if a externalId is provided
-  if (payload.externalId) {
-    treatmentStatusId = await resultTreatmentStatusToId(payload.externalId)
+  if (externalId) {
+    treatmentStatusId = await resultTreatmentStatusToId(externalId)
     if (!treatmentStatusId) {
       return Boom.badRequest('Invalid externalId')
     }
@@ -1089,7 +1144,7 @@ async function updateTreatmentStatus(request) {
     }
     treatmentStatusId = resultTreatmentStatusId
   }
-  let lastTreatment = await getLastTreatmentStatusByResult(resultId)
+  let lastTreatment = await getLastTreatmentStatusByResult(result.data.id)
   if (
     treatmentStatusId !== result.data.resultTreatmentStatusId &&
     treatmentStatusId
@@ -1097,7 +1152,7 @@ async function updateTreatmentStatus(request) {
     const [treatmentStatusLogId] = await knex(
       'ResultTreatmentStatusLog'
     ).insert({
-      resultId,
+      resultId: result.data.id,
       resultTreatmentStatusId: treatmentStatusId,
       method,
       data,
@@ -1110,19 +1165,19 @@ async function updateTreatmentStatus(request) {
       (lastTreatment && lastTreatment.changedOn < changedOn)
     ) {
       await knex('Result')
-        .where('id', resultId)
+        .where('id', result.data.id)
         .update({
           treatmentStatusLogId,
           updatedBy: currentUserId,
           updatedOn: now,
         })
-      lastTreatment = await getLastTreatmentStatusByResult(resultId)
+      lastTreatment = await getLastTreatmentStatusByResult(result.data.id)
     }
   }
 
   if (data) {
     const [{ treatmentStatusLogId }] = await knex('Result')
-      .where('id', resultId)
+      .where('id', result.data.id)
       .select('treatmentStatusLogId')
     await knex('ResultTreatmentStatusLog')
       .where('id', treatmentStatusLogId)
@@ -1137,11 +1192,12 @@ async function updateTreatmentStatus(request) {
 
   if (!response.data.resultTreatmentStatusCreatedOn) {
     response.data.resultTreatmentStatusCreatedOn =
-      result.endedOn || result.startedOn || now
+      result.data.endedOn || result.data.startedOn || now
   }
 
   return response
 }
+
 async function getLastTreatmentStatusByResult(resultId) {
   return knex('Result as r')
     .innerJoin(
@@ -1607,6 +1663,192 @@ async function listFollowUps(request) {
   return result
 }
 
+async function setResultFollowUp(request) {
+  const { auth, params, payload } = request
+  const now = new Date()
+  const { resultId } = params
+  const { id: currentUserId } = await getUser(auth.credentials.name)
+
+  // get the result so we can check access and if status changed
+  const result = await getResultByResultId(request)
+  if (!result.ok) {
+    Boom.notFound()
+  }
+
+  const { externalId, followUpId, followUpExternalId, date } = payload
+
+  const followUp = await knex('FollowUp as fu')
+    .join('FollowUpType as fut', 'fu.followUpTypeId', 'fut.id')
+    .where('fu.externalId', followUpExternalId || -1)
+    .orWhere('fu.id', followUpId || -1)
+    .first('fu.id', 'fu.externalId', 'fu.followUpTypeId')
+
+  if (!followUp) {
+    return Boom.badRequest('Invalid follow up ID')
+  }
+
+  if (externalId) {
+    const resultFollowUp = await knex('ResultFollowUp')
+      .where('resultId', resultId)
+      .where('externalId', externalId)
+      .first('id')
+
+    if (resultFollowUp) {
+      return Boom.badRequest(
+        'This result already has a follow up with this external ID.'
+      )
+    }
+  }
+
+  await knex('ResultFollowUp').insert({
+    resultId,
+    externalId,
+    followUpId: followUp.id,
+    date,
+    createdBy: currentUserId,
+    createdOn: now,
+    updatedBy: currentUserId,
+    updatedOn: now,
+  })
+
+  return updateTreatmentStatusBasedOnFollowUps(
+    request,
+    currentUserId,
+    result,
+    date,
+    'FollowUp',
+    'Client API'
+  )
+}
+
+async function updateResultFollowUp(request) {
+  const now = new Date()
+  const { auth, params, payload } = request
+  const { resultId } = params
+  const { date, id, externalId } = payload
+  const { id: currentUserId } = await getUser(auth.credentials.name)
+
+  // get the result so we can check access and if status changed
+  const result = await getResultByResultId(request)
+  if (!result.ok) {
+    Boom.notFound()
+  }
+
+  const affectedRows = await knex('ResultFollowUp as r')
+    .where('id', id || '-1')
+    .orWhere(function() {
+      this.where('resultId', resultId).where('externalId', externalId || '-1')
+    })
+    .update({ date, updatedOn: now, updatedBy: currentUserId })
+
+  if (affectedRows === 0) {
+    return Boom.notFound('Could not find follow up')
+  }
+
+  return showResult(request)
+}
+
+async function deleteResultFollowUp(request) {
+  const { auth, params, payload } = request
+  const { resultId } = params
+  const { date, id, externalId } = payload
+  const { id: currentUserId } = await getUser(auth.credentials.name)
+
+  // get the result so we can check access
+  const result = await getResultByResultId(request)
+  if (!result.ok) {
+    Boom.notFound()
+  }
+
+  const affectedRows = await knex('ResultFollowUp')
+    .where('id', id || '-1')
+    .orWhere(function() {
+      this.where('resultId', resultId).where('externalId', externalId || '-1')
+    })
+    .del()
+
+  if (affectedRows === 0) {
+    return Boom.notFound('Could not find follow up')
+  }
+
+  return updateTreatmentStatusBasedOnFollowUps(
+    request,
+    currentUserId,
+    result,
+    date,
+    'FollowUp',
+    'Client API'
+  )
+}
+
+async function updateTreatmentStatusBasedOnFollowUps(
+  request,
+  currentUserId,
+  result,
+  date,
+  data,
+  method
+) {
+  const followUps = await knex('ResultFollowUp as r')
+    .join('FollowUp as f', 'r.followUpId', 'f.id')
+    .join('FollowUpType as t', 'f.followUpTypeId', 't.id')
+    .where('resultId', result.data.id)
+    .select('f.externalId', 't.externalId as followUpTypeExternalId')
+  let treatmentStatusExternalId = 'AwaitingTreatment'
+  if (_.find(followUps, f => f.followUpTypeExternalId === 'treatment')) {
+    treatmentStatusExternalId = 'OnTreatment'
+  } else if (
+    _.find(
+      followUps,
+      f => f.followUpTypeExternalId === 'outcome' && f.externalId !== 'cured'
+    )
+  ) {
+    treatmentStatusExternalId = 'NotPossible'
+  }
+
+  return updateTreatmentStatus(
+    request,
+    currentUserId,
+    result,
+    null,
+    treatmentStatusExternalId,
+    data,
+    method,
+    date
+  )
+}
+
+async function showResultFollowUps(request) {
+  const {
+    params: { resultId },
+    auth,
+  } = request
+  const dataConstraints = await getConstraints(auth.credentials)
+  const followUps = await knex('ResultFollowUp as rfu')
+    .join('Result as r', 'r.id', 'rfu.resultId')
+    .join('Sample as sp', 'r.sampleId', 'sp.id')
+    .join('Device as d', 'r.deviceId', 'd.id')
+    .join('FollowUp as fu', 'rfu.followUpId', 'fu.id')
+    .join('FollowUpType as fut', 'fu.followUpTypeId', 'fut.id')
+    .where('rfu.resultId', resultId)
+    .orderBy('rfu.date', 'rfu.updatedOn')
+    .modify(addConstraints, dataConstraints, { device: 'd', sample: 'sp' })
+    .select(
+      'rfu.id',
+      'rfu.externalId',
+      'rfu.date',
+      'rfu.createdOn',
+      'rfu.updatedOn',
+      'fu.name',
+      'fu.i18nKey',
+      'fut.name as followUpTypeName',
+      'fut.externalId as followUpTypeExternalId',
+      'fut.i18nKey as followUpTypei18nKey'
+    )
+
+  return { data: followUps }
+}
+
 module.exports = {
   listResults,
   exportResults,
@@ -1614,7 +1856,7 @@ module.exports = {
   showResult,
   listResultTypes,
   updateWorkflowStatus,
-  updateTreatmentStatus,
+  updateTreatmentStatusPost,
   listTreatmentStatusTypes,
   updateFormData,
   listWorkflowStatusTypes,
@@ -1626,4 +1868,7 @@ module.exports = {
   createUniqueIdForResult,
   confirmedTreatmentTracking,
   listFollowUps,
+  setResultFollowUp,
+  updateResultFollowUp,
+  deleteResultFollowUp,
 }

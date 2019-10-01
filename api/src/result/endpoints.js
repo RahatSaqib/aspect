@@ -11,7 +11,7 @@ const {
   showResult,
   listResultTypes,
   updateWorkflowStatus,
-  updateTreatmentStatus,
+  updateTreatmentStatusPost,
   listTreatmentStatusTypes,
   updateFormData,
   listWorkflowStatusTypes,
@@ -22,6 +22,9 @@ const {
   downloadFirstImage,
   confirmedTreatmentTracking,
   listFollowUps,
+  setResultFollowUp,
+  updateResultFollowUp,
+  deleteResultFollowUp,
 } = require('./service')
 const { getResultsReport } = require('./serviceReport')
 const {
@@ -562,6 +565,46 @@ const routes = [
                         name: Joi.string().description('Name of the site'),
                       }),
                   }),
+                followUps: Joi.array()
+                  .description('Result Follow Ups')
+                  .items(
+                    Joi.object().keys({
+                      id: Joi.number()
+                        .required()
+                        .description('Result follow up ID'),
+                      externalId: Joi.string()
+                        .allow(null, '')
+                        .description('External ID of the follow up'),
+                      date: Joi.date()
+                        .allow(null)
+                        .description('When the follow up started'),
+                      createdOn: Joi.date()
+                        .required()
+                        .description(
+                          'When the follow up was first created in Aspect'
+                        ),
+                      updatedOn: Joi.date()
+                        .required()
+                        .description(
+                          'When the follow up was last updated in Aspect'
+                        ),
+                      name: Joi.string()
+                        .required()
+                        .description('Name of the follow up'),
+                      i18nKey: Joi.string()
+                        .required()
+                        .description('Translation key for the follow up'),
+                      followUpTypeName: Joi.string()
+                        .required()
+                        .description('Name of the follow up type'),
+                      followUpTypeExternalId: Joi.string()
+                        .required()
+                        .description('External ID of the follow up type'),
+                      followUpTypei18nKey: Joi.string()
+                        .required()
+                        .description('Translation key for the follow up type'),
+                    })
+                  ),
               })
             ),
         }),
@@ -581,7 +624,7 @@ const routes = [
   {
     method: 'PUT',
     path: '/result/treatment-status/{resultId}',
-    handler: asyncHandler(updateTreatmentStatus),
+    handler: asyncHandler(updateTreatmentStatusPost),
     config: {
       description: 'Update Result Treatment Status',
       notes: 'Update the treatment status of a result',
@@ -654,7 +697,7 @@ const routes = [
     config: {
       description: 'Result Follow Up List',
       notes: 'List of possible result follow ups',
-      auth: { scope: ['result:view', 'result:edit'] },
+      auth: { scope: ['treatmentStatus:view', 'treatmentStatus:edit'] },
       validate: {
         query: {
           typeId: Joi.number()
@@ -777,6 +820,160 @@ const routes = [
                 ),
               })
             ),
+        }),
+      },
+    },
+  },
+  {
+    method: 'POST',
+    path: '/result/follow-up/{resultId}',
+    handler: asyncHandler(setResultFollowUp),
+    config: {
+      description: 'Add a result follow up',
+      notes: 'Adds a treatment/outcome follow up for a result',
+      auth: { scope: ['treatmentStatus:edit', 'treatmentStatus:admin'] },
+      validate: {
+        params: {
+          resultId: Joi.number()
+            .required()
+            .integer()
+            .positive()
+            .description('Result ID'),
+        },
+        payload: Joi.object()
+          .keys({
+            externalId: Joi.string()
+              .allow('', null)
+              .description(
+                'Optional externalId of the result follow up. This is mostly for app-use so apps can uniquely identify a follow up record that they created.'
+              ),
+            followUpId: Joi.number()
+              .integer()
+              .positive()
+              .allow(null)
+              .description('The ID of the follow up'),
+            followUpExternalId: Joi.string()
+              .allow('', null)
+              .description(
+                'The externalId of the follow up. Will be used if followUpId is null/empty.'
+              ),
+            date: Joi.date()
+              .iso()
+              .optional()
+              .description('This is the date when the follow up happened'),
+          })
+          .xor('followUpId', 'followUpExternalId'),
+      },
+      response: {
+        options: {
+          allowUnknown: false,
+        },
+        schema: Joi.object().keys({
+          ok: Joi.bool()
+            .required()
+            .description('False if there was some sort of error'),
+          data: Joi.object()
+            .required()
+            .description('The results')
+            .keys(validateResultResponse()),
+        }),
+      },
+    },
+  },
+  {
+    method: 'PUT',
+    path: '/result/follow-up/{resultId}',
+    handler: asyncHandler(updateResultFollowUp),
+    config: {
+      description: 'Set the date of a follow up',
+      notes: 'Updates the date of a follow up for a result',
+      auth: { scope: ['treatmentStatus:edit', 'treatmentStatus:admin'] },
+      validate: {
+        params: {
+          resultId: Joi.number()
+            .required()
+            .integer()
+            .positive()
+            .description('Result ID'),
+        },
+        payload: Joi.object()
+          .keys({
+            id: Joi.number()
+              .integer()
+              .positive()
+              .allow(null)
+              .description('The ID of the result follow up.'),
+            externalId: Joi.string()
+              .allow('', null)
+              .description(
+                'The externalId of the result follow up. Will be used in combination with the result ID to find the result follow up if id is empty'
+              ),
+            date: Joi.date()
+              .iso()
+              .optional()
+              .description('This is the date when the follow up happened'),
+          })
+          .xor('id', 'externalId'),
+      },
+      response: {
+        options: {
+          allowUnknown: false,
+        },
+        schema: Joi.object().keys({
+          ok: Joi.bool()
+            .required()
+            .description('False if there was some sort of error'),
+          data: Joi.object()
+            .required()
+            .description('The results')
+            .keys(validateResultResponse()),
+        }),
+      },
+    },
+  },
+  {
+    method: 'DELETE',
+    path: '/result/follow-up/{resultId}',
+    handler: asyncHandler(deleteResultFollowUp),
+    config: {
+      description: 'Remove a follow up from a result',
+      notes: 'Removes a follow up from a result',
+      auth: { scope: ['treatmentStatus:edit', 'treatmentStatus:admin'] },
+      validate: {
+        params: {
+          resultId: Joi.number()
+            .required()
+            .integer()
+            .positive()
+            .description('Result ID'),
+        },
+        payload: Joi.object()
+          .keys({
+            id: Joi.number()
+              .integer()
+              .positive()
+              .allow(null)
+              .description('The ID of the result follow up.'),
+            externalId: Joi.string()
+              .allow('', null)
+              .description(
+                'The externalId of the result follow up. Will be used in combination with the result ID to find the result follow up if id is empty.'
+              ),
+          })
+          .xor('id', 'externalId'),
+      },
+      response: {
+        options: {
+          allowUnknown: false,
+        },
+        schema: Joi.object().keys({
+          ok: Joi.bool()
+            .required()
+            .description('False if there was some sort of error'),
+          data: Joi.object()
+            .required()
+            .description('The results')
+            .keys(validateResultResponse()),
         }),
       },
     },
