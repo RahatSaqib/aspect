@@ -9,10 +9,10 @@ async function shouldResolveResultUpdatedIssue(knex, issue) {
     .join('WebhookMessage as wm', 'n.webhookMessageId', 'wm.id')
     .join('WebhookTemplate as wt', 'wm.webhookTemplateId', 'wt.id')
     .join('MessageStatus as ms', 'wm.messageStatusId', 'ms.id')
-    .where('i.id', id)
+    .whereIn('ms.externalId', ['Sent', 'Error'])
+    .andWhere('i.id', id)
     .andWhere('nt.partnerId', partnerId)
     .andWhere('wt.externalId', 'checkTbAppGeneXpert')
-    .andWhere('ms.externalId', 'Sent')
     .first('wm.id as webHookMessageId')
   return !_.isNil(sentCheckTbAppNotification)
 }
