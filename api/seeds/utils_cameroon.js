@@ -23,7 +23,7 @@ async function seedCheckTbAppWebHook(knex, { partnerId, auditFields }) {
             `{{curly true}}` +
             `"auth_key":"${checkTbAppAuthKey}",` +
             `"mtb_result":{{enclose (defaultTo (mapValue result.category1.id '{"Detected":"detected","Trace Detected":"trace","NotDetected":"not_detected","Indeterminate":"error_invalid","Invalid":"error_invalid","NoResult":"not_done","Error":"error_invalid","Negative":"not_detected","Positive1":"not_detected","Positive2":"detected","Positive3":"detected","PositiveMTB":"detected","Positive":"detected"}') '') with='"'}},` +
-            `"mtb_grade":{{enclose (defaultTo (mapValue (extractValueFromRegexCaptureGroup result.data.resultText '(DETECTED HIGH|DETECTED MEDIUM|DETECTED LOW|DETECTED VERY LOW)') '{"DETECTED HIGH":"high","DETECTED MEDIUM":"medium","DETECTED LOW":"low","DETECTED VERY LOW":"very_low"}') '') with='"'}},` +
+            `"mtb_grade":{{enclose (defaultTo (mapValue (extractValueFromRegexCaptureGroup result.data.resultText '(DETECTED HIGH|DÉTECTÉ ÉLEVÉ|DETECTED MEDIUM|DÉTECTÉ MOYEN|DETECTED LOW|DÉTECTÉ BAS|DETECTED VERY LOW|DÉTECTÉ TRÈS BAS)') '{"DETECTED HIGH":"high","DÉTECTÉ ÉLEVÉ":"high","DETECTED MEDIUM":"medium","DÉTECTÉ MOYEN":"medium","DETECTED LOW":"low","DÉTECTÉ BAS":"low","DETECTED VERY LOW":"very_low","DÉTECTÉ TRÈS BAS":"very_low"}') '') with='"'}},` +
             `{{#if (eq (defaultTo (mapValue result.category1.id '{"NotDetected":"mtbNotDetected","Negative":"mtbNotDetected"}') '') 'mtbNotDetected')}}` +
             `"rif_result":"not_detected",` +
             `{{else}}` +
