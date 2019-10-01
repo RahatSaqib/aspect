@@ -25,6 +25,7 @@ const {
   setResultFollowUp,
   updateResultFollowUp,
   deleteResultFollowUp,
+  addResultNote,
 } = require('./service')
 const { getResultsReport } = require('./serviceReport')
 const {
@@ -288,6 +289,47 @@ const routes = [
             .description('Result Id'),
         },
         payload: Joi.object(),
+      },
+    },
+  },
+  {
+    method: 'POST',
+    path: '/result/result-note/{resultId}',
+    handler: asyncHandler(addResultNote),
+    config: {
+      description: 'Add result note to results',
+      notes: 'Add result note to results',
+      auth: { scope: ['result:edit'] },
+      validate: {
+        params: {
+          resultId: Joi.number()
+            .integer()
+            .positive()
+            .required()
+            .description('Result Id'),
+        },
+        payload: {
+          note: Joi.string(),
+          resultNoteType: Joi.string().allow('', null),
+          changedOn: Joi.date()
+            .description('Date when the note was added.')
+            .iso()
+            .allow(null),
+        },
+      },
+      response: {
+        options: {
+          allowUnknown: false,
+        },
+        schema: Joi.object().keys({
+          ok: Joi.bool()
+            .required()
+            .description('False if there was some sort of error'),
+          length: Joi.number().required(),
+          data: Joi.array()
+            .required()
+            .description('The result notes'),
+        }),
       },
     },
   },

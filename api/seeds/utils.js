@@ -491,6 +491,7 @@ async function seedStaticData(knex) {
     'ResultWorkflowStatus',
     'SampleType',
     'FollowUpType',
+    'ResultNoteType',
     // TODO ASP-757 Standardize static data key on externalId
     ['AssayType', 'name'],
     ['ConsumableReason', 'name'],

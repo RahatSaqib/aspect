@@ -351,6 +351,7 @@ describe('Result routes', () => {
             'resultWorkflowLogOperator',
             'resultTreatmentMethod',
             'resultTreatmentData',
+            'resultNotes',
           ]
           _.each(resultFieldNames, fieldName => {
             assert.property(res.body.data, fieldName)
@@ -547,7 +548,7 @@ describe('Result routes', () => {
         })
     })
 
-    it('Should update result treatment status given a resultId - set resultTreatmentData', done => {
+    it('Should update result treatment status given a resultId - set resultNotes', done => {
       const changedOn = addMinutes(new Date(), 2)
       const updateWithNull = {
         resultTreatmentStatusId: null,
@@ -1186,6 +1187,44 @@ describe('Result Treatment', () => {
           assert.property(res.body.data[0], 'pcConfirmed')
           assert.property(res.body.data[0], 'cntConfirmed')
           assert.property(res.body.data[0], 'total')
+
+          done()
+        })
+    })
+  })
+
+  describe('Add Result Note - POST', () => {
+    const resultId = 1
+
+    after(async () =>
+      runTestWithKnex(async knex => {
+        await knex('ResultNote')
+          .where('resultId', resultId)
+          .delete()
+      })
+    )
+    const path = '/api/result/result-note'
+
+    it('Should return list of result note of a particular resultId', done => {
+      const comment = {
+        note: 'Cough confirmed',
+        resultNoteType: 'ResultFollowUp',
+      }
+      server
+        .post(`${path}/${resultId}`)
+        .send(comment)
+        .set('Authorization', `Bearer ${shared.token}`)
+        .end((err, res) => {
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+
+          assert.property(res.body, 'data')
+
+          assert.equal(res.body.data.length, 1) // for 6 months
+          assert.property(res.body.data[0], 'createdBy')
+          assert.property(res.body.data[0], 'text')
+          assert.property(res.body.data[0], 'changedOn')
+          assert.property(res.body.data[0], 'createdOn')
 
           done()
         })

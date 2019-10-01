@@ -3,7 +3,7 @@ import Button from '@material-ui/core/Button'
 import TextField from '@material-ui/core/TextField'
 import AspectDialog from '../../components/shared/AspectDialog'
 
-const ResultTreatmentNoteModal = ({ data, restProps }) => (
+const ResultTreatmentNoteModal = ({ restProps }) => (
   <AspectDialog
     actions={[
       <Button color="primary" onClick={restProps.onToggleShown}>
@@ -29,7 +29,6 @@ const ResultTreatmentNoteModal = ({ data, restProps }) => (
         multiline
         rowsMax="5"
         placeholder="click and start adding notes"
-        defaultValue={data.get('resultTreatmentData')}
         onChange={restProps.onNoteChange}
         margin="normal"
       />

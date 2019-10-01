@@ -976,10 +976,29 @@ async function getResultByResultId(request, fields = SELECT_SHOW_FIELDS) {
 
   if (data) {
     getResultTreatmentStatus(data)
+    data.resultNotes = await getResultNotesByResultId(+params.resultId)
     data.resultTreatmentStatusCreatedBy = userName
   }
 
   return { ok: results.length === 1, data }
+}
+
+async function getResultNotesByResultId(resultId) {
+  const resultNotes = await knex('ResultNote as rn')
+    .leftJoin('User as u', 'rn.createdBy', 'u.id')
+    .leftJoin('ResultNoteType as rt', 'rt.id', 'rn.resultNoteTypeId')
+    .where('rn.resultId', resultId)
+    .orderBy('rn.createdOn', 'desc')
+    .select(
+      'u.name as createdBy',
+      'rn.text',
+      'rn.id',
+      'rn.changedOn',
+      'rn.createdOn',
+      'rt.name as noteType'
+    )
+
+  return resultNotes
 }
 
 async function listResultTypes(request) {
@@ -1021,7 +1040,7 @@ async function updateWorkflowStatus(request) {
   // get the result so we can check access and if status changed
   const result = await getResultByResultId(request)
   if (!result.ok) {
-    Boom.notFound()
+    return Boom.notFound()
   }
   let { resultWorkflowStatusId } = payload
   const { changedOn = now, operator, reason, updatedOn } = payload
@@ -1160,6 +1179,7 @@ async function updateTreatmentStatus(
       changedOn,
       createdBy: currentUserId,
     })
+
     if (
       !lastTreatment ||
       (lastTreatment && lastTreatment.changedOn < changedOn)
@@ -1196,6 +1216,51 @@ async function updateTreatmentStatus(
   }
 
   return response
+}
+
+async function addResultNote(request) {
+  const { auth, params, payload } = request
+  const now = new Date()
+  const { resultId } = params
+  const { id: currentUserId } = await getUser(auth.credentials.name)
+
+  // get the result so we can check access and if status changed
+  const result = await getResultByResultId(request)
+  if (!result.ok) {
+    return Boom.notFound()
+  }
+
+  const { note, resultNoteType, changedOn = now } = payload
+
+  const { id: resultNoteTypeId } = await knex('ResultNoteType')
+    .where('externalId', resultNoteType || 'General')
+    .first('id')
+
+  if (!resultNoteTypeId) {
+    return Boom.notFound()
+  }
+
+  if (note.length > 255) {
+    return Boom.badRequest('The length of the comment must be less than 256')
+  }
+
+  await knex('ResultNote').insert({
+    resultNoteTypeId,
+    resultId,
+    text: note,
+    changedOn,
+    createdOn: now,
+    updatedBy: currentUserId,
+    createdBy: currentUserId,
+  })
+
+  const resultNotes = await getResultNotesByResultId(+params.resultId)
+
+  return {
+    ok: true,
+    length: resultNotes.length,
+    data: resultNotes,
+  }
 }
 
 async function getLastTreatmentStatusByResult(resultId) {
@@ -1871,4 +1936,5 @@ module.exports = {
   setResultFollowUp,
   updateResultFollowUp,
   deleteResultFollowUp,
+  addResultNote,
 }
