@@ -1342,9 +1342,7 @@ describe('stringTemplate', () => {
           `{{curly true}}` +
           `"auth_key":"${checkTbAppAuthKey}",` +
           `"mtb_result":{{enclose (defaultTo (mapValue result.category1.id '{"Detected":"detected","Trace Detected":"trace","NotDetected":"not_detected","Indeterminate":"error_invalid","Invalid":"error_invalid","NoResult":"not_done","Error":"error_invalid","Negative":"not_detected","Positive1":"not_detected","Positive2":"detected","Positive3":"detected","PositiveMTB":"detected","Positive":"detected"}') '') with='"'}},` +
-          `{{#if (eq (defaultTo (mapValue result.data.result1Text '{"DETECTED HIGH":"graded","MTB DETECTED HIGH":"graded","DETECTED MEDIUM":"graded","MTB DETECTED MEDIUM":"graded","DETECTED LOW":"graded","MTB DETECTED LOW":"graded","DETECTED VERY LOW":"graded","MTB DETECTED VERY LOW":"graded"}') '') 'graded')}}` +
-          `"mtb_grade":{{enclose (defaultTo (mapValue result.data.result1Text '{"DETECTED HIGH":"high","MTB DETECTED HIGH":"high","DETECTED MEDIUM":"medium","MTB DETECTED MEDIUM":"medium","DETECTED LOW":"low","MTB DETECTED LOW":"low","DETECTED VERY LOW":"very_low","MTB DETECTED VERY LOW":"very_low"}') '') with='"'}},` +
-          `{{/if}}` +
+          `"mtb_grade":{{enclose (defaultTo (mapValue (extractValueFromRegexCaptureGroup result.data.resultText '(DETECTED HIGH|DETECTED MEDIUM|DETECTED LOW|DETECTED VERY LOW)') '{"DETECTED HIGH":"high","DETECTED MEDIUM":"medium","DETECTED LOW":"low","DETECTED VERY LOW":"very_low"}') '') with='"'}},` +
           `{{#if (eq (defaultTo (mapValue result.category1.id '{"NotDetected":"mtbNotDetected","Negative":"mtbNotDetected"}') '') 'mtbNotDetected')}}` +
           `"rif_result":"not_detected",` +
           `{{else}}` +
@@ -1361,13 +1359,13 @@ describe('stringTemplate', () => {
             resultCategory1ExternalId: 'Error',
             resultCategory2ExternalId: 'Error',
             expectedMtbResult: 'error_invalid',
-            expectedMtbGrade: undefined,
+            expectedMtbGrade: '',
             expectedRifResult: 'indeterminate',
             expectedTestDate: '2018-08-01 11:38',
             expectedCartridgeSerial: messageDataSource.consumableSerial,
             expectedOperator: messageDataSource.senderOperator,
             deviceTypeExternalId: 'CepheidGeneXpert',
-            resultData: `{"result1Text":"ERROR"}`,
+            resultData: `{"resultText":"ERROR"}`,
           },
           {
             assayExternalId: 'GxMtbRif',
@@ -1380,33 +1378,33 @@ describe('stringTemplate', () => {
             expectedCartridgeSerial: messageDataSource.consumableSerial,
             expectedOperator: messageDataSource.senderOperator,
             deviceTypeExternalId: 'CepheidGeneXpert',
-            resultData: `{"result1Text":"MTB DETECTED LOW"}`,
+            resultData: `{"resultText":"DETECTED LOW|NOT DETECTED|"}`,
           },
           {
             assayExternalId: 'GxMtbRifUltra',
             resultCategory1ExternalId: 'Trace Detected',
             resultCategory2ExternalId: 'Indeterminate',
             expectedMtbResult: 'trace',
-            expectedMtbGrade: undefined,
+            expectedMtbGrade: '',
             expectedRifResult: 'indeterminate',
             expectedTestDate: '2018-08-01 11:38',
             expectedCartridgeSerial: messageDataSource.consumableSerial,
             expectedOperator: messageDataSource.senderOperator,
             deviceTypeExternalId: 'CepheidGeneXpert',
-            resultData: `{"result1Text":"MTB TRACE DETECTED"}`,
+            resultData: `{"resultText":"MTB Trace DETECTED|RIF Resistance INDETERMINATE"}`,
           },
           {
             assayExternalId: 'GxMtbRif',
             resultCategory1ExternalId: 'NotDetected',
             resultCategory2ExternalId: null,
             expectedMtbResult: 'not_detected',
-            expectedMtbGrade: undefined,
+            expectedMtbGrade: '',
             expectedRifResult: 'not_detected',
             expectedTestDate: '2018-08-01 11:38',
             expectedCartridgeSerial: messageDataSource.consumableSerial,
             expectedOperator: messageDataSource.senderOperator,
             deviceTypeExternalId: 'CepheidGeneXpert',
-            resultData: `{"result1Text":"MTB NOT DETECTED"}`,
+            resultData: `{"resultText":"MTB NOT DETECTED"}`,
           },
         ]
         await Promise.each(useCases, async useCase => {

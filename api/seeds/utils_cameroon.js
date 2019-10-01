@@ -23,9 +23,7 @@ async function seedCheckTbAppWebHook(knex, { partnerId, auditFields }) {
             `{{curly true}}` +
             `"auth_key":"${checkTbAppAuthKey}",` +
             `"mtb_result":{{enclose (defaultTo (mapValue result.category1.id '{"Detected":"detected","Trace Detected":"trace","NotDetected":"not_detected","Indeterminate":"error_invalid","Invalid":"error_invalid","NoResult":"not_done","Error":"error_invalid","Negative":"not_detected","Positive1":"not_detected","Positive2":"detected","Positive3":"detected","PositiveMTB":"detected","Positive":"detected"}') '') with='"'}},` +
-            `{{#if (eq (defaultTo (mapValue result.data.result1Text '{"DETECTED HIGH":"graded","MTB DETECTED HIGH":"graded","DETECTED MEDIUM":"graded","MTB DETECTED MEDIUM":"graded","DETECTED LOW":"graded","MTB DETECTED LOW":"graded","DETECTED VERY LOW":"graded","MTB DETECTED VERY LOW":"graded"}') '') 'graded')}}` +
-            `"mtb_grade":{{enclose (defaultTo (mapValue result.data.result1Text '{"DETECTED HIGH":"high","MTB DETECTED HIGH":"high","DETECTED MEDIUM":"medium","MTB DETECTED MEDIUM":"medium","DETECTED LOW":"low","MTB DETECTED LOW":"low","DETECTED VERY LOW":"very_low","MTB DETECTED VERY LOW":"very_low"}') '') with='"'}},` +
-            `{{/if}}` +
+            `"mtb_grade":{{enclose (defaultTo (mapValue (extractValueFromRegexCaptureGroup result.data.resultText '(DETECTED HIGH|DETECTED MEDIUM|DETECTED LOW|DETECTED VERY LOW)') '{"DETECTED HIGH":"high","DETECTED MEDIUM":"medium","DETECTED LOW":"low","DETECTED VERY LOW":"very_low"}') '') with='"'}},` +
             `{{#if (eq (defaultTo (mapValue result.category1.id '{"NotDetected":"mtbNotDetected","Negative":"mtbNotDetected"}') '') 'mtbNotDetected')}}` +
             `"rif_result":"not_detected",` +
             `{{else}}` +

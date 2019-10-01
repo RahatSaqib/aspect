@@ -120,13 +120,11 @@ async function processUsingDataSourceQuery(data, templateFields, options = {}) {
   return templateFields.reduce((memo, field) => {
     const fieldName = field.replace(/template/i, '')
     const template = (data && data[field]) || ''
-    let message
     if (options.dynamic) {
-      message = processUsingDynamicHelpers(template, ds)
+      memo[fieldName] = processUsingDynamicHelpers(template, ds)
     } else {
-      message = processUsingHandlebarsSyntax(template, ds)
+      memo[fieldName] = processUsingHandlebarsSyntax(template, ds)
     }
-    memo[fieldName] = message
     return memo
   }, {})
 }
