@@ -350,6 +350,7 @@ describe('Result routes', () => {
             'resultWorkflowLogCreatedOn',
             'resultWorkflowLogOperator',
             'resultTreatmentMethod',
+            'resultTreatmentData',
             'resultNotes',
           ]
           _.each(resultFieldNames, fieldName => {
@@ -563,7 +564,7 @@ describe('Result routes', () => {
         .end((err, res) => {
           baseTreatmentStatusAssertion(res)
 
-          assert.equal(res.body.data.resultNotes[0].text, 'should be treated')
+          assert.equal(res.body.data.resultTreatmentData, 'should be treated')
 
           done()
         })

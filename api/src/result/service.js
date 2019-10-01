@@ -111,6 +111,7 @@ const SELECT_COMMON_FIELDS = [
   'rsl.createdOn as resultWorkflowLogCreatedOn',
   'rsl.changedOn as resultWorkflowLogChangedOn',
   'rtsl.method as resultTreatmentMethod',
+  'rtsl.data as resultTreatmentData',
   'rtsl.resultTreatmentStatusId',
   'rtsl.changedOn as resultTreatmentStatusChangedOn',
   'rtsl.createdOn as resultTreatmentStatusCreatedOn',
@@ -1237,6 +1238,10 @@ async function addResultNote(request) {
 
   if (!resultNoteTypeId) {
     return Boom.notFound()
+  }
+
+  if (note.length > 255) {
+    return Boom.badRequest('The length of the comment must be less than 256')
   }
 
   await knex('ResultNote').insert({
