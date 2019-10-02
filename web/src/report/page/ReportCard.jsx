@@ -10,7 +10,7 @@ import { withStyles } from '@material-ui/core/styles'
 
 const styles = {
   card: {
-    margin: 10,
+    margin: 16,
     // Use flex layout with column direction for components in the card
     // (CardContent and CardActions)
     display: 'flex',
@@ -18,6 +18,10 @@ const styles = {
 
     // Justify the content so that CardContent will always be at the top of the card,
     // and CardActions will be at the bottom
+    justifyContent: 'space-between',
+  },
+  actions: {
+    display: 'flex',
     justifyContent: 'space-between',
   },
 }
@@ -38,7 +42,7 @@ const reportCardStyleless = ({ classes, title, description, linkUrl }) => {
             </Typography>
           </CardContent>
         </CardActionArea>
-        <CardActions>
+        <CardActions className={classes.actions}>
           <Button size="small" color="primary" onClick={downloadFunc}>
             Download
           </Button>
