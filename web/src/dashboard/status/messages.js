@@ -297,7 +297,7 @@ export const messages = defineMessages({
   },
   assayResultCategoryAll: {
     id: 'pages.Status.assayResultCategoryAll',
-    defaultMessage: 'All ResultCategory',
+    defaultMessage: 'All Results',
   },
 })
 

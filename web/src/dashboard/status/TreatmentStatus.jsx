@@ -202,8 +202,6 @@ export const TreatmentStatus = ({
 
   lastOn = lastOn && dateFormat(new Date(lastOn), 'yyyy-MM')
 
-  // console.log('myvaklue', resultCategoryValue)
-
   return (
     <Card className={className}>
       <div

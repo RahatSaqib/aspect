@@ -524,7 +524,7 @@ export default function dashboardReducer(state = initialState, action) {
           mutState.mergeDeepIn(['siteList'], action.data.siteList)
           mutState.mergeDeepIn(
             ['assayResultCategoryList'],
-            action.data.assayResultCategoryFilterList
+            action.data.assayResultCategoryList
           )
           mutState.mergeDeepIn(['siteSummaryMap'], action.data.siteSummaryMap)
         })
