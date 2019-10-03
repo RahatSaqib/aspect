@@ -24,7 +24,7 @@ const SELECT_LIST_FIELDS = [
   'r.id',
   'r.externalId',
   knex.raw(
-    "case when ifnull(GREATEST(rtas.requiresTreatment, rtas2.requiresTreatment), 0) = 0 then null else case when rts.externalId= 'OnTreatment' then 'ok' when rts.externalId = 'NotPossible' then 'na' when r.endedOn<DATE_SUB(NOW(),INTERVAL 32 DAY) then 'alert' when r.endedOn<=DATE_SUB(NOW(),INTERVAL 16 DAY) and r.endedOn>=DATE_SUB(NOW(),INTERVAL 32 DAY) then 'warning' else 'na' end end as treatmentStatusInfo"
+    "case when ifnull(GREATEST(IFNULL(rtas.requiresTreatment,0), IFNULL(rtas2.requiresTreatment,0)), 0) = 0 then null else case when rts.externalId= 'OnTreatment' then 'ok' when rts.externalId = 'NotPossible' then 'na' when r.endedOn<DATE_SUB(NOW(),INTERVAL 32 DAY) then 'alert' when r.endedOn<=DATE_SUB(NOW(),INTERVAL 16 DAY) and r.endedOn>=DATE_SUB(NOW(),INTERVAL 32 DAY) then 'warning' else 'na' end end as treatmentStatusInfo"
   ),
   knex.raw('IFNULL(r.endedOn, r.startedOn) as endedOn'),
   'd.name as deviceName',
@@ -38,7 +38,7 @@ const SELECT_LIST_FIELDS = [
   'rtsl.changedOn as resultTreatmentStatusChangedOn',
   knex.raw('ifnull(rts.name, "N/A") as resultTreatmentStatusName'),
   knex.raw(
-    'ifnull(GREATEST(rtas.requiresTreatment, rtas2.requiresTreatment), 0) as requiresTreatment'
+    'ifnull(GREATEST(IFNULL(rtas.requiresTreatment,0), IFNULL(rtas2.requiresTreatment,0)), 0) as requiresTreatment'
   ),
   'so.name as sampleOriginSiteName',
   'sp.externalId as sampleId',
@@ -100,10 +100,10 @@ const SELECT_COMMON_FIELDS = [
   'stp.name as sampleTypeName',
   knex.raw('JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.id")) as patientId'),
   knex.raw(
-    'GREATEST(rtas.requiresTreatment, rtas2.requiresTreatment) as requiresTreatment'
+    'GREATEST(IFNULL(rtas.requiresTreatment,0), IFNULL(rtas2.requiresTreatment,0)) as requiresTreatment'
   ),
   knex.raw(
-    "case when GREATEST(rtas.requiresTreatment, rtas2.requiresTreatment) = 0 then null else case when rts.externalId= 'OnTreatment' then 'ok' when rts.externalId = 'NotPossible' then 'na' when r.endedOn<DATE_SUB(NOW(),INTERVAL 32 DAY) then 'alert' when r.endedOn<=DATE_SUB(NOW(),INTERVAL 16 DAY) and r.endedOn>=DATE_SUB(NOW(),INTERVAL 32 DAY) then 'warning' else 'na' end end as treatmentStatusInfo"
+    "case when GREATEST(IFNULL(rtas.requiresTreatment,0), IFNULL(rtas2.requiresTreatment,0)) = 0 then null else case when rts.externalId= 'OnTreatment' then 'ok' when rts.externalId = 'NotPossible' then 'na' when r.endedOn<DATE_SUB(NOW(),INTERVAL 32 DAY) then 'alert' when r.endedOn<=DATE_SUB(NOW(),INTERVAL 16 DAY) and r.endedOn>=DATE_SUB(NOW(),INTERVAL 32 DAY) then 'warning' else 'na' end end as treatmentStatusInfo"
   ),
   'r.patientData',
   'rsl.reason as resultWorkflowLogReason',
@@ -1490,7 +1490,7 @@ async function confirmedTreatmentTracking(request) {
   // get data constraints
   const dataConstraints = await getConstraints(auth.credentials)
 
-  const { siteId } = payload
+  const { siteId, assayTypeId, resultCategoryId } = payload
 
   const now = new Date()
   const lastEndedOn = endOfMonth(subMonths(now, 1))
@@ -1542,6 +1542,15 @@ async function confirmedTreatmentTracking(request) {
     .where(function() {
       if (siteId) {
         this.where('s.id', siteId)
+      }
+    })
+    .modify(queryBuilder => {
+      if (assayTypeId && resultCategoryId) {
+        queryBuilder
+          .innerJoin('Assay as a', 'a.id', 'r.assayId')
+          .innerJoin('AssayType as at', 'at.id', 'a.assayTypeId')
+          .where('a.assayTypeId', assayTypeId)
+          .where('r.resultCategory1', resultCategoryId)
       }
     })
     // filter by date range, inclusive

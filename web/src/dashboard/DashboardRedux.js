@@ -402,14 +402,27 @@ export function fetchActionDashboard(rawFiltersParams, sortCol, sortDir) {
 }
 
 // -------------------------------------------------------------------
-export function fetchTreatmentDashboard({ siteId, endedOn } = {}) {
+export function fetchTreatmentDashboard({
+  siteId,
+  assayTypeId,
+  resultCategoryId,
+  endedOn,
+} = {}) {
   return dispatch => {
     const requestedAt = `treatment_${Date.now()}`
-    dispatch(requestTreatmentDashboard({ siteId, endedOn, requestedAt }))
+    dispatch(
+      requestTreatmentDashboard({
+        siteId,
+        assayTypeId,
+        resultCategoryId,
+        endedOn,
+        requestedAt,
+      })
+    )
 
     return aspectFetch('/result/confirmed-treatment-tracking', {
       method: 'POST',
-      body: JSON.stringify({ siteId, endedOn }),
+      body: JSON.stringify({ siteId, endedOn, assayTypeId, resultCategoryId }),
       errorNotifications: {
         default: errorPleaseTryAgainInAFewMinutes(
           defineMessages({

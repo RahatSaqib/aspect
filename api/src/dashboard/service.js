@@ -1450,7 +1450,10 @@ async function getAssayResultCategoryList() {
     .where('rca.requiresTreatment', 1)
     .groupBy('at.id', 'at.name', 'rc.name')
     .orderBy('at.name', 'rc.name')
-    .select('at.id', knex.raw(`CONCAT(at.name,':',rc.name) as name`))
+    .select(
+      knex.raw(`CONCAT(at.id,'-',rc.id) as id`),
+      knex.raw(`CONCAT(at.name,':',rc.name) as name`)
+    )
 
   return assayResultCategory
 }

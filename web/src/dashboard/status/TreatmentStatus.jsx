@@ -86,9 +86,19 @@ const enhance = compose(
         endedOn,
       })
     },
-    onResultCategoryChange: ({ setResultCategoryId }) => ({
-      target: { value },
-    }) => {
+    onResultCategoryChange: ({
+      endedOn,
+      siteId = null,
+      fetchTreatmentDashboard,
+      setResultCategoryId,
+    }) => ({ target: { value } }) => {
+      const [assayTypeId, resultCategoryId] = value.split('-')
+      fetchTreatmentDashboard({
+        siteId,
+        assayTypeId: assayTypeId || null,
+        resultCategoryId: resultCategoryId || null,
+        endedOn,
+      })
       setResultCategoryId(() => value)
     },
     onBack: props => () => changePeriod(props, -1),

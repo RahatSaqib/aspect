@@ -724,6 +724,12 @@ const routes = [
           siteId: Joi.number()
             .integer()
             .allow(null),
+          assayTypeId: Joi.number()
+            .integer()
+            .allow(null),
+          resultCategoryId: Joi.number()
+            .integer()
+            .allow(null),
           endedOn: Joi.date()
             .iso()
             .allow(null)
