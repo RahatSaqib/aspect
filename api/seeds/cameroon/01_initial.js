@@ -6,7 +6,7 @@ const utils = require('../utils')
 const { seedAbbottM2000AndAssays } = require('../utils_abbott_m2000')
 const geography = require('./fixtures/geography.json')
 const { partnerTypeToId } = require('../../src/shared/dictionary')
-const { commonInserts } = require('../common')
+const { commonUpserts } = require('../common')
 
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
 
@@ -35,7 +35,7 @@ async function seed(knex) {
 
   await seedAbbottM2000AndAssays(knex)
 
-  await commonInserts(
+  await commonUpserts(
     knex,
     partnerId,
     adminId,

@@ -6,7 +6,8 @@ const utils = require('../utils')
 const { seedCheckTbAppWebHook } = require('../utils_cameroon')
 const config = require('../../src/config')
 const { partnerTypeToId } = require('../../src/shared/dictionary')
-const { commonInserts } = require('../common')
+const geography = require('./fixtures/geography.json')
+const { commonUpserts } = require('../common')
 
 module.exports = require('../utils').seed(seed, __filename)
 
@@ -36,55 +37,13 @@ async function seed(knex) {
     plugin: 'cameroon',
   })
 
-  await commonInserts(
+  await commonUpserts(
     knex,
     partnerId,
     adminId,
     {
       countries: [
-        {
-          abbreviation: 'CM',
-          name: 'Cameroon',
-          a3: 'CMR',
-          culture: 'FR',
-          countryCode: '237',
-          stateLabel: 'Region',
-          lgaLabel: 'Division',
-          timezone: 'W. Central Africa Standard Time',
-          portNumber: 3029,
-          exportColumns:
-            'DeploymentDescription|TestEndedOn|AssayName|AssayVersion|User|Result1|Result2|ResultText|PatientId|ReagentLotID|ExpirationDate|CartridgeSerial|ModuleSerial|SoftwareVersion|ErrorCode|ErrorCategory|ErrorDescription|SampleId|Notes|ProbeDCt|ProbeCCt|ProbeECt|ProbeBCt|Qc1Ct|Qc2Ct',
-          inventoryDaysThreshold: 21,
-          monthStartsOnDay: 1,
-          states: [
-            {
-              name: 'Nord-Ouest',
-              lgas: [
-                {
-                  name: 'Boyo',
-                },
-                {
-                  name: 'Bui',
-                },
-                {
-                  name: 'Donga-Mantung',
-                },
-                {
-                  name: 'Menchum',
-                },
-                {
-                  name: 'Mezam',
-                },
-                {
-                  name: 'Momo',
-                },
-                {
-                  name: 'Ngo-Ketunjia',
-                },
-              ],
-            },
-          ],
-        },
+        geography.countries.find(country => country.abbreviation === 'CM'),
       ],
     },
     'CM',
