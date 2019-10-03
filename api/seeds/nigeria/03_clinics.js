@@ -42,7 +42,7 @@ async function seed(knex) {
     .first()
 
   if (stateCount === 0) {
-    await insertStatesAndLgas(knex, countryId, geography.countries[0].states)
+    await upsertStatesAndLgas(knex, countryId, geography.countries[0].states)
   }
 
   // give admin access to persons and reporters
