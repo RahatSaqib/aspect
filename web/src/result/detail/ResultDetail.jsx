@@ -17,6 +17,9 @@ import Button from '@material-ui/core/Button'
 
 // Our own imports
 import ResultTreatmentPanel from './ResultTreatmentPanel'
+import AwesomeTimeline from './timeline/AwesomeTimeline'
+import AspectTimeline from './timeline/AspectTimeline'
+
 import config from '../../config'
 import DelayShowingProgressBar from '../../components/shared/DelayShowingProgressBar'
 import JSONSchemaCard from '../../components/shared/JSONSchemaCard'
@@ -690,6 +693,8 @@ export class ResultDetail extends PureComponent {
           title="Result Details"
         />
         {this.renderPaper()}
+        <AwesomeTimeline />
+        <AspectTimeline />
       </div>
     )
   }
