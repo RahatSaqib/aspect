@@ -27,6 +27,7 @@ const {
   deleteResultFollowUp,
   addResultNote,
 } = require('./service')
+const { getPatientResultsDetails } = require('./patientResultDetailService')
 const { getResultsReport } = require('./serviceReport')
 const {
   validateAllGeographyFilterParams,
@@ -1019,6 +1020,35 @@ const routes = [
         }),
       },
     },
+  },
+  {
+    method: 'GET',
+    path: '/result/patientresultsdetails',
+    handler: asyncHandler(getPatientResultsDetails),
+    config: Object.assign({
+      description: 'Get the patient results with details',
+      auth: { scope: ['result:view', 'result:edit'] },
+      validate: {
+        query: {
+          patientId: Joi.string()
+            .required()
+            .description('patient Id'),
+        },
+      },
+      response: {
+        options: {
+          allowUnknown: false,
+        },
+        schema: Joi.object().keys({
+          ok: Joi.bool()
+            .required()
+            .description('False if there was some sort of error'),
+          data: Joi.array()
+            .required()
+            .description('The results'),
+        }),
+      },
+    }),
   },
 ]
 
