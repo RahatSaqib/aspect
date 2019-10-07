@@ -54,6 +54,7 @@ async function getPatientResultsDetails(request) {
       'rtsl.createdon as resultTestStatusLog',
       'rts.externalid as resultTreatmentId'
     )
+    .orderBy('sampleCollectedOn', 'resultEndedOn', 'resultTestStatusLog')
 
   let data = []
   const results = await resultDetails

@@ -1044,6 +1044,75 @@ const routes = [
             .required()
             .description('False if there was some sort of error'),
           data: Joi.array()
+            .items(
+              Joi.object().keys({
+                resultId: Joi.number()
+                  .required()
+                  .description('The id of the result'),
+                sampleCollectedOn: Joi.date()
+                  .iso()
+                  .required()
+                  .description(
+                    'The date when the sample was taken in iso format'
+                  ),
+                OriginalSiteName: Joi.string()
+                  .required()
+                  .description(
+                    'The name of the place where the sample was taken'
+                  ),
+                sampleId: Joi.string()
+                  .required()
+                  .description('The sample id'),
+                resultEndedOn: Joi.date()
+                  .iso()
+                  .required()
+                  .description('The result ended date in iso format'),
+                assayAbbreviation: Joi.string()
+                  .required()
+                  .description('The assay abbreviation name'),
+                assayId: Joi.string()
+                  .required()
+                  .description('The assay id'),
+                resultData: Joi.Object()
+                  .keys({
+                    probes: Joi.Object(),
+                    resultText: Joi.string(),
+                  })
+                  .required()
+                  .description('The result data'),
+                resultSiteName: Joi.string()
+                  .required()
+                  .description('The result site name'),
+                resultNotes: Joi.string()
+                  .required()
+                  .description('The result notes'),
+                resultStatus: Joi.string()
+                  .required()
+                  .description('The result status'),
+                resultStatusLog: Joi.date()
+                  .iso()
+                  .required()
+                  .description('The Result status log date'),
+                resultTestStatusLog: Joi.date()
+                  .iso()
+                  .required()
+                  .description(
+                    'The result Treatment status date in iso format'
+                  ),
+                resultTreatmentId: Joi.string()
+                  .required()
+                  .description('The result treatment id'),
+                patientData: Joi.Object()
+                  .keys({
+                    probes: Joi.Object(),
+                    resultText: Joi.string(),
+                  })
+                  .description('Patient data'),
+                followUps: Joi.array()
+                  .items(Joi.object())
+                  .description('Follow ups for the result'),
+              })
+            )
             .required()
             .description('The results'),
         }),
