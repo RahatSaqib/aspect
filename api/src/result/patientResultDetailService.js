@@ -1,15 +1,15 @@
 const { knex } = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
-// const { getUser } = require('../auth/service')
-// const _ = require('lodash')
+
 const { showResultFollowUps } = require('./service')
+const Promise = require('bluebird')
 
 async function getPatientResultsDetails(request) {
   const { auth, query } = request
-  //console.log(query)
+  // console.log(query)
   const dataConstraints = await getConstraints(auth.credentials)
   // const { userName } = await getUser(auth.credentials.name)
- // console.log('entre')
+  // console.log('entre')
   const resultDetails = knex('Result as r')
     .join('Sample as s', 'r.sampleId', 's.id')
     .join('Site as originsite', 's.originSiteId', 'originsite.id')
@@ -39,6 +39,7 @@ async function getPatientResultsDetails(request) {
     .where(knex.raw('JSON_EXTRACT(r.patientData,"$.id")'), query.patientId)
     .modify(addConstraints, dataConstraints, { sample: 's' })
     .select(
+      'r.id as resultId',
       's.collectedOn as sampleCollectedOn',
       'originsite.name as OriginalSiteName',
       's.externalId as sampleId',
@@ -55,22 +56,22 @@ async function getPatientResultsDetails(request) {
     )
 
   let data = []
- // console.log(resultDetails.toString())
   const results = await resultDetails
-console.log(results)
   // translate result data back to an object and get assay details
   // if selecting the result was successful
-  if (results.length === 1) {
-    ;[data] = results
-    if (data.resultData) {
-      data.resultData = JSON.parse(data.resultData)
-    }
-    if (data.patientData) {
-      data.patientData = JSON.parse(data.patientData)
-    }
-
-    const { data: followUps } = await showResultFollowUps(request)
-    data.followUps = followUps
+  if (results.length >= 1) {
+    data = await Promise.map(results, async result => {
+      const { data: followUps } = await showResultFollowUps(
+        result.resultId,
+        dataConstraints
+      )
+      const resultsData = Object.assign({}, result, {
+        resultData: result.resultData ? JSON.parse(result.resultData) : '',
+        patientData: result.resultData ? JSON.parse(result.resultData) : '',
+        followUps,
+      })
+      return resultsData
+    })
   }
 
   return { ok: results.length >= 1, data }
