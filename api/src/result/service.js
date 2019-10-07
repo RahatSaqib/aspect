@@ -633,8 +633,9 @@ async function getDownloadResultsList(query, auth) {
       'rfu.date',
       'rfu.createdOn',
       'rfu.updatedOn',
-      'fu.name',
-      'fu.i18nKey',
+      'fu.name as followUpName',
+      'fu.externalId as followUpExternalId',
+      'fu.i18nKey as followUpi18nKey',
       'fut.name as followUpTypeName',
       'fut.externalId as followUpTypeExternalId',
       'fut.i18nKey as followUpTypei18nKey'
@@ -1652,14 +1653,15 @@ async function listFollowUps(request) {
   // convert data to nested JSON
   const followUps = _.uniqBy(data, 'id').map(f =>
     Object.assign(
-      _.pick(f, ['id', 'name', 'externalId', 'i18nKey'], {
+      _.pick(f, ['id', 'name', 'externalId', 'i18nKey']),
+      {
         type: {
           id: f.followUpTypeId,
           name: f.followUpTypeName,
           externalId: f.followUpTypeExternalId,
           i18nKey: f.followUpTypeI18nKey,
         },
-      }),
+      },
       {
         assays: _.uniqBy(
           data.filter(d => d.id === f.id && d.assayId),
@@ -1737,7 +1739,7 @@ async function setResultFollowUp(request) {
   // get the result so we can check access and if status changed
   const result = await getResultByResultId(request)
   if (!result.ok) {
-    Boom.notFound()
+    return Boom.notFound()
   }
 
   const { externalId, followUpId, followUpExternalId, date } = payload
@@ -1790,21 +1792,35 @@ async function updateResultFollowUp(request) {
   const now = new Date()
   const { auth, params, payload } = request
   const { resultId } = params
-  const { date, id, externalId } = payload
+  const { date, id, externalId, followUpId, followUpExternalId } = payload
   const { id: currentUserId } = await getUser(auth.credentials.name)
 
   // get the result so we can check access and if status changed
   const result = await getResultByResultId(request)
   if (!result.ok) {
-    Boom.notFound()
+    return Boom.notFound()
   }
 
-  const affectedRows = await knex('ResultFollowUp as r')
+  const followUp = await knex('FollowUp as fu')
+    .join('FollowUpType as fut', 'fu.followUpTypeId', 'fut.id')
+    .where('fu.externalId', followUpExternalId || -1)
+    .orWhere('fu.id', followUpId || -1)
+    .first('fu.id', 'fu.externalId', 'fu.followUpTypeId')
+
+  const affectedRows = await knex('ResultFollowUp')
     .where('id', id || '-1')
     .orWhere(function() {
       this.where('resultId', resultId).where('externalId', externalId || '-1')
     })
-    .update({ date, updatedOn: now, updatedBy: currentUserId })
+    .update({
+      date,
+      updatedOn: now,
+      updatedBy: currentUserId,
+      followUpId: knex.raw(
+        'ifnull(?, followUpId)',
+        followUp ? followUp.id : null
+      ),
+    })
 
   if (affectedRows === 0) {
     return Boom.notFound('Could not find follow up')
@@ -1822,19 +1838,15 @@ async function deleteResultFollowUp(request) {
   // get the result so we can check access
   const result = await getResultByResultId(request)
   if (!result.ok) {
-    Boom.notFound()
+    return Boom.notFound()
   }
 
-  const affectedRows = await knex('ResultFollowUp')
+  await knex('ResultFollowUp')
     .where('id', id || '-1')
     .orWhere(function() {
       this.where('resultId', resultId).where('externalId', externalId || '-1')
     })
     .del()
-
-  if (affectedRows === 0) {
-    return Boom.notFound('Could not find follow up')
-  }
 
   return updateTreatmentStatusBasedOnFollowUps(
     request,
@@ -1904,8 +1916,9 @@ async function showResultFollowUps(request) {
       'rfu.date',
       'rfu.createdOn',
       'rfu.updatedOn',
-      'fu.name',
-      'fu.i18nKey',
+      'fu.name as followUpName',
+      'fu.externalId as followUpExternalId',
+      'fu.i18nKey as followUpi18nKey',
       'fut.name as followUpTypeName',
       'fut.externalId as followUpTypeExternalId',
       'fut.i18nKey as followUpTypei18nKey'
