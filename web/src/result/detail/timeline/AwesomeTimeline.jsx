@@ -26,9 +26,9 @@ const events = [
   },
 ]
 
-const AwesomeTimeline = milestones => (
+const AwesomeTimeline = (milestones) => (
   <Grid xs style={{ margin: 10 }}>
-    <Timeline events={milestones || events} style={{ margin: 10 }} />
+    <Timeline events={events} style={{ margin: 10 }} />
   </Grid>
 )
 export default AwesomeTimeline

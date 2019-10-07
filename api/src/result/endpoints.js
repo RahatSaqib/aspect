@@ -1073,9 +1073,9 @@ const routes = [
                 assayId: Joi.string()
                   .required()
                   .description('The assay id'),
-                resultData: Joi.Object()
+                resultData: Joi.object()
                   .keys({
-                    probes: Joi.Object(),
+                    probes: Joi.object(),
                     resultText: Joi.string(),
                   })
                   .required()
@@ -1102,9 +1102,9 @@ const routes = [
                 resultTreatmentId: Joi.string()
                   .required()
                   .description('The result treatment id'),
-                patientData: Joi.Object()
+                patientData: Joi.object()
                   .keys({
-                    probes: Joi.Object(),
+                    probes: Joi.object(),
                     resultText: Joi.string(),
                   })
                   .description('Patient data'),

@@ -18,8 +18,6 @@ import Button from '@material-ui/core/Button'
 // Our own imports
 import ResultTreatmentPanel from './ResultTreatmentPanel'
 import AwesomeTimeline from './timeline/AwesomeTimeline'
-import AspectTimeline from './timeline/AspectTimeline'
-
 import config from '../../config'
 import DelayShowingProgressBar from '../../components/shared/DelayShowingProgressBar'
 import JSONSchemaCard from '../../components/shared/JSONSchemaCard'
@@ -457,6 +455,7 @@ export class ResultDetail extends PureComponent {
                   xl="1-3"
                   className={cssClasses('Flexed')}
                 >
+                lala
                   <CustomField
                     resultId={result.get('id')}
                     formFieldKey={formFieldKey}
@@ -694,7 +693,6 @@ export class ResultDetail extends PureComponent {
         />
         {this.renderPaper()}
         <AwesomeTimeline />
-        <AspectTimeline />
       </div>
     )
   }
