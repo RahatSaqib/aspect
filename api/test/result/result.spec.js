@@ -1332,6 +1332,17 @@ describe('Result Follow Up', () => {
 
         assert.equal(externalId, 'OnTreatment')
       }))
+
+    it('should return an error if result does not exist', done => {
+      server
+        .post('/api/result/follow-up/987654321')
+        .send({ externalId: '1234', followUpExternalId: 'drtb-bbsr' })
+        .set('Authorization', `Bearer ${shared.token}`)
+        .end((err, res) => {
+          assert.equal(res.status, 404)
+          done()
+        })
+    })
   })
 
   describe('PUT', () => {
@@ -1389,6 +1400,17 @@ describe('Result Follow Up', () => {
         )
         assert.equal('drtb-bbsr', updatedFollowUp.externalId)
       }))
+
+    it('should return an error if follow up does not exist', done => {
+      server
+        .put(`${path}`)
+        .send({ externalId: 'VWXYZ', followUpExternalId: 'drtb-bbsr' })
+        .set('Authorization', `Bearer ${shared.token}`)
+        .end((err, res) => {
+          assert.equal(res.status, 404)
+          done()
+        })
+    })
   })
 
   describe('DELETE', () => {

@@ -1739,7 +1739,7 @@ async function setResultFollowUp(request) {
   // get the result so we can check access and if status changed
   const result = await getResultByResultId(request)
   if (!result.ok) {
-    Boom.notFound()
+    return Boom.notFound()
   }
 
   const { externalId, followUpId, followUpExternalId, date } = payload
@@ -1798,7 +1798,7 @@ async function updateResultFollowUp(request) {
   // get the result so we can check access and if status changed
   const result = await getResultByResultId(request)
   if (!result.ok) {
-    Boom.notFound()
+    return Boom.notFound()
   }
 
   const followUp = await knex('FollowUp as fu')
@@ -1838,7 +1838,7 @@ async function deleteResultFollowUp(request) {
   // get the result so we can check access
   const result = await getResultByResultId(request)
   if (!result.ok) {
-    Boom.notFound()
+    return Boom.notFound()
   }
 
   await knex('ResultFollowUp')
