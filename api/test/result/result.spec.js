@@ -845,7 +845,9 @@ describe('Result download routes', () => {
             assert.typeOf(res.body.data[0].followUps, 'array')
             assert.property(res.body.data[0].followUps[0], 'id')
             assert.property(res.body.data[0].followUps[0], 'externalId')
-            assert.property(res.body.data[0].followUps[0], 'i18nKey')
+            assert.property(res.body.data[0].followUps[0], 'followUpExternalId')
+            assert.property(res.body.data[0].followUps[0], 'followUpi18nKey')
+            assert.property(res.body.data[0].followUps[0], 'followUpName')
             assert.property(
               res.body.data[0].followUps[0],
               'followUpTypeExternalId'
@@ -932,7 +934,9 @@ describe('Result download routes', () => {
           assert.typeOf(res.body.data[0].followUps, 'array')
           assert.property(res.body.data[0].followUps[0], 'id')
           assert.property(res.body.data[0].followUps[0], 'externalId')
-          assert.property(res.body.data[0].followUps[0], 'i18nKey')
+          assert.property(res.body.data[0].followUps[0], 'followUpExternalId')
+          assert.property(res.body.data[0].followUps[0], 'followUpi18nKey')
+          assert.property(res.body.data[0].followUps[0], 'followUpName')
           assert.property(
             res.body.data[0].followUps[0],
             'followUpTypeExternalId'
@@ -1134,7 +1138,9 @@ describe('Result download routes', () => {
             assert.typeOf(res.body.data[0].followUps, 'array')
             assert.property(res.body.data[0].followUps[0], 'id')
             assert.property(res.body.data[0].followUps[0], 'externalId')
-            assert.property(res.body.data[0].followUps[0], 'i18nKey')
+            assert.property(res.body.data[0].followUps[0], 'followUpExternalId')
+            assert.property(res.body.data[0].followUps[0], 'followUpi18nKey')
+            assert.property(res.body.data[0].followUps[0], 'followUpName')
             assert.property(
               res.body.data[0].followUps[0],
               'followUpTypeExternalId'

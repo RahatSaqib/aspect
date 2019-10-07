@@ -633,8 +633,9 @@ async function getDownloadResultsList(query, auth) {
       'rfu.date',
       'rfu.createdOn',
       'rfu.updatedOn',
-      'fu.name',
-      'fu.i18nKey',
+      'fu.name as followUpName',
+      'fu.externalId as followUpExternalId',
+      'fu.i18nKey as followUpi18nKey',
       'fut.name as followUpTypeName',
       'fut.externalId as followUpTypeExternalId',
       'fut.i18nKey as followUpTypei18nKey'
@@ -1915,8 +1916,9 @@ async function showResultFollowUps(request) {
       'rfu.date',
       'rfu.createdOn',
       'rfu.updatedOn',
-      'fu.name',
-      'fu.i18nKey',
+      'fu.name as followUpName',
+      'fu.externalId as followUpExternalId',
+      'fu.i18nKey as followUpi18nKey',
       'fut.name as followUpTypeName',
       'fut.externalId as followUpTypeExternalId',
       'fut.i18nKey as followUpTypei18nKey'

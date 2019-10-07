@@ -630,10 +630,13 @@ const routes = [
                         .description(
                           'When the follow up was last updated in Aspect'
                         ),
-                      name: Joi.string()
+                      followUpExternalId: Joi.string()
+                        .required()
+                        .description('External ID of the follow up'),
+                      followUpName: Joi.string()
                         .required()
                         .description('Name of the follow up'),
-                      i18nKey: Joi.string()
+                      followUpi18nKey: Joi.string()
                         .required()
                         .description('Translation key for the follow up'),
                       followUpTypeName: Joi.string()
