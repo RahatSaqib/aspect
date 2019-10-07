@@ -1825,16 +1825,12 @@ async function deleteResultFollowUp(request) {
     Boom.notFound()
   }
 
-  const affectedRows = await knex('ResultFollowUp')
+  await knex('ResultFollowUp')
     .where('id', id || '-1')
     .orWhere(function() {
       this.where('resultId', resultId).where('externalId', externalId || '-1')
     })
     .del()
-
-  if (affectedRows === 0) {
-    return Boom.notFound('Could not find follow up')
-  }
 
   return updateTreatmentStatusBasedOnFollowUps(
     request,

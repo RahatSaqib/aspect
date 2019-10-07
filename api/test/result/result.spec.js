@@ -1352,8 +1352,38 @@ describe('Result Follow Up', () => {
           .set('Authorization', `Bearer ${shared.token}`)
 
         assert.equal(response.statusCode, 200)
+        assert.typeOf(response.body, 'Object')
+        assert.property(response.body, 'data')
+        assert.typeOf(response.body.data, 'Object')
+        assert.property(response.body.data, 'id')
+        assert.property(response.body.data, 'externalId')
+        assert.property(response.body.data, 'resultData')
 
-        // should have a treatment status of "On Treatment"
+        // should not have any follow ups
+        const followUps = await knex('ResultFollowUp')
+          .where('resultId', resultId)
+          .where('externalId', '1234')
+          .first('id')
+
+        assert(!followUps)
+      }))
+
+    it('Should return result details even if follow up was not found', async () =>
+      runTestWithKnex(async knex => {
+        const response = await server
+          .delete(`${path}`)
+          .send({ externalId: 'VWXYZ' })
+          .set('Authorization', `Bearer ${shared.token}`)
+
+        assert.equal(response.statusCode, 200)
+        assert.typeOf(response.body, 'Object')
+        assert.property(response.body, 'data')
+        assert.typeOf(response.body.data, 'Object')
+        assert.property(response.body.data, 'id')
+        assert.property(response.body.data, 'externalId')
+        assert.property(response.body.data, 'resultData')
+
+        // should not have any follow ups
         const followUps = await knex('ResultFollowUp')
           .where('resultId', resultId)
           .where('externalId', '1234')
