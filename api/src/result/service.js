@@ -1791,7 +1791,7 @@ async function updateResultFollowUp(request) {
   const now = new Date()
   const { auth, params, payload } = request
   const { resultId } = params
-  const { date, id, externalId } = payload
+  const { date, id, externalId, followUpId, followUpExternalId } = payload
   const { id: currentUserId } = await getUser(auth.credentials.name)
 
   // get the result so we can check access and if status changed
@@ -1800,12 +1800,26 @@ async function updateResultFollowUp(request) {
     Boom.notFound()
   }
 
-  const affectedRows = await knex('ResultFollowUp as r')
+  const followUp = await knex('FollowUp as fu')
+    .join('FollowUpType as fut', 'fu.followUpTypeId', 'fut.id')
+    .where('fu.externalId', followUpExternalId || -1)
+    .orWhere('fu.id', followUpId || -1)
+    .first('fu.id', 'fu.externalId', 'fu.followUpTypeId')
+
+  const affectedRows = await knex('ResultFollowUp')
     .where('id', id || '-1')
     .orWhere(function() {
       this.where('resultId', resultId).where('externalId', externalId || '-1')
     })
-    .update({ date, updatedOn: now, updatedBy: currentUserId })
+    .update({
+      date,
+      updatedOn: now,
+      updatedBy: currentUserId,
+      followUpId: knex.raw(
+        'ifnull(?, followUpId)',
+        followUp ? followUp.id : null
+      ),
+    })
 
   if (affectedRows === 0) {
     return Boom.notFound('Could not find follow up')

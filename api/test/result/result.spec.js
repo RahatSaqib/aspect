@@ -1233,7 +1233,7 @@ describe('Result Treatment', () => {
 })
 
 describe('Result Follow Up', () => {
-  describe.only('GET', () => {
+  describe('GET', () => {
     const path = '/api/result/follow-ups'
 
     shared.checkToken(server, path)
@@ -1332,9 +1332,15 @@ describe('Result Follow Up', () => {
     const resultId = 1
     const path = `/api/result/follow-up/${resultId}`
 
-    it('Should update the date of a follow up', async () =>
+    it('Should update the date of a result follow up', async () =>
       runTestWithKnex(async knex => {
         const date = new Date('2019-09-01')
+
+        const existingFollowUp = await knex('ResultFollowUp')
+          .where('resultId', resultId)
+          .where('externalId', '1234')
+          .first('followUpId')
+
         const response = await server
           .put(`${path}`)
           .send({ externalId: '1234', date })
@@ -1342,12 +1348,40 @@ describe('Result Follow Up', () => {
 
         assert.equal(response.statusCode, 200)
 
-        const { date: followUpDate } = await knex('ResultFollowUp as rfu')
+        const updatedFollowUp = await knex('ResultFollowUp')
           .where('resultId', resultId)
           .where('externalId', '1234')
-          .first('rfu.date')
+          .first('date', 'followUpId')
 
-        assert.equal(date.getTime(), followUpDate.getTime())
+        assert.equal(date.getTime(), updatedFollowUp.date.getTime())
+        assert.equal(existingFollowUp.followUpId, updatedFollowUp.followUpId)
+      }))
+
+    it('Should update the follow up of a result follow up', async () =>
+      runTestWithKnex(async knex => {
+        const existingFollowUp = await knex('ResultFollowUp')
+          .where('resultId', resultId)
+          .where('externalId', '1234')
+          .first('date', 'followUpId')
+
+        const response = await server
+          .put(`${path}`)
+          .send({ externalId: '1234', followUpExternalId: 'drtb-bbsr' })
+          .set('Authorization', `Bearer ${shared.token}`)
+
+        assert.equal(response.statusCode, 200)
+
+        const updatedFollowUp = await knex('ResultFollowUp as rfu')
+          .join('FollowUp as fu', 'rfu.followUpId', 'fu.id')
+          .where('resultId', resultId)
+          .where('rfu.externalId', '1234')
+          .first('rfu.date', 'fu.externalId')
+
+        assert.equal(
+          existingFollowUp.date.getTime(),
+          updatedFollowUp.date.getTime()
+        )
+        assert.equal('drtb-bbsr', updatedFollowUp.externalId)
       }))
   })
 
