@@ -1652,14 +1652,15 @@ async function listFollowUps(request) {
   // convert data to nested JSON
   const followUps = _.uniqBy(data, 'id').map(f =>
     Object.assign(
-      _.pick(f, ['id', 'name', 'externalId', 'i18nKey'], {
+      _.pick(f, ['id', 'name', 'externalId', 'i18nKey']),
+      {
         type: {
           id: f.followUpTypeId,
           name: f.followUpTypeName,
           externalId: f.followUpTypeExternalId,
           i18nKey: f.followUpTypeI18nKey,
         },
-      }),
+      },
       {
         assays: _.uniqBy(
           data.filter(d => d.id === f.id && d.assayId),

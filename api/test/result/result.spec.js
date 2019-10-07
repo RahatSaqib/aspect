@@ -1233,7 +1233,7 @@ describe('Result Treatment', () => {
 })
 
 describe('Result Follow Up', () => {
-  describe('GET', () => {
+  describe.only('GET', () => {
     const path = '/api/result/follow-ups'
 
     shared.checkToken(server, path)
@@ -1247,8 +1247,19 @@ describe('Result Follow Up', () => {
           assert.typeOf(res.body, 'Object')
           assert.property(res.body, 'data')
           assert.typeOf(res.body.data, 'array')
-          assert.isAtLeast(res.body.data.length, 7)
           assert.property(res.body, 'total')
+          assert.isAtLeast(res.body.data.length, 7)
+          assert.property(res.body.data[0], 'id')
+          assert.property(res.body.data[0], 'name')
+          assert.property(res.body.data[0], 'externalId')
+          assert.property(res.body.data[0], 'i18nKey')
+          assert.property(res.body.data[0], 'type')
+          assert.property(res.body.data[0].type, 'id')
+          assert.property(res.body.data[0].type, 'name')
+          assert.property(res.body.data[0].type, 'externalId')
+          assert.property(res.body.data[0].type, 'i18nKey')
+          assert.property(res.body.data[0], 'assays')
+          assert.typeOf(res.body.data[0].assays, 'array')
           done()
         })
     })
