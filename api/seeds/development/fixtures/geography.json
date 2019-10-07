@@ -131,19 +131,16 @@
           "name": "Alabama",
           "lgas": [
             {
-              "name": "Winston"
+              "name": "Winston",
+              "cities": ["Winston", "Mobile", "Selma", "Independence"]
             },
             {
-              "name": "Pike"
+              "name": "Pike",
+              "cities": ["Pike", "Warren", "Turner", "Carter"]
             },
             {
-              "name": "Lawrence"
-            },
-            {
-              "name": "Perry"
-            },
-            {
-              "name": "Tallapoosa"
+              "name": "Lawrence",
+              "cities": ["Lawrence", "Crenshaw", "Morristown", "Colton"]
             }
           ],
           "lat": 32.806671,
@@ -160,19 +157,20 @@
           "name": "Arizona",
           "lgas": [
             {
-              "name": "Phoenix"
+              "name": "Phoenix",
+              "cities": ["Phoenix", "Palmdale", "Desert Springs", "Wilder"]
             },
             {
-              "name": "Tucson"
+              "name": "Tucson",
+              "cities": ["Tucson", "Middleton", "Wyler", "Madrid"]
             },
             {
-              "name": "Yavapai"
+              "name": "Yuma",
+              "cities": ["Yuma", "Littleton", "Cooperstown", "Marlboro"]
             },
             {
-              "name": "Yuma"
-            },
-            {
-              "name": "Maricopa"
+              "name": "Maricopa",
+              "cities": ["Maricopa", "Saunter", "Simi", "Lima"]
             }
           ],
           "lat": 33.729759,
@@ -199,9 +197,6 @@
         {
           "abbreviation": "DC",
           "name": "District of Columbia",
-          "lgas": [
-            { "name": "Naval Anacost Annex" }
-          ],
           "lat": 38.897438,
           "lng": -77.026817
         },
@@ -221,9 +216,8 @@
           "abbreviation": "GA",
           "name": "Georgia",
           "lgas": [
-            { "name": "Atlanta" },
-            { "name": "Clayton" },
-            { "name": "Bryan" }
+            { "name": "Atlanta", "cities": ["Atlanta", "Peachtown", "Cobbler", "Norton"] },
+            { "name": "Clayton", "cities": ["Clayton", "New Berlin", "Athens", "Savannah"] }
           ],
           "lat": 33.040619,
           "lng": -83.643074
@@ -244,13 +238,8 @@
           "abbreviation": "ID",
           "name": "Idaho",
           "lgas": [
-            { "name": "Clearwater" },
-            { "name": "Gooding" },
-            { "name": "Twin Falls" },
-            { "name": "Teton" },
-            { "name": "Valley" },
-            { "name": "Kootenai" },
-            { "name": "Cassia" }
+            { "name": "Clearwater", "cities": ["Clearwater", "Idaho Falls", "Rome", "Chestnut Hill"] },
+            { "name": "Gooding", "cities": ["Gooding", "Cordon", "College Station", "Oden"] }
           ],
           "lat": 44.240459,
           "lng": -114.478828
@@ -302,10 +291,12 @@
           "name": "Massachusetts",
           "lgas": [
             {
-              "name": "Franklin"
+              "name": "Franklin",
+              "cities": ["Northampton", "Deerfield", "Amherst", "Belchertown"]
             },
             {
-              "name": "Suffolk"
+              "name": "Suffolk",
+              "cities": ["Boston", "Peabody", "Lowell", "Worcester"]
             }
           ],
           "lat": 42.230171,
@@ -358,16 +349,16 @@
           "name": "Nebraska",
           "lgas": [
             {
-              "name": "Hall"
+              "name": "Hall",
+              "cities": ["Hall", "Palmer", "West Hall", "Lincoln"]
             },
             {
-              "name": "Gage"
+              "name": "Gage",
+              "cities": ["Gage", "East Gage", "Rearden", "South Hampton"]
             },
             {
-              "name": "Lancaster"
-            },
-            {
-              "name": "Wayne"
+              "name": "Lancaster",
+              "cities": ["Lancaster", "Hampton", "Franklin", "Marden"]
             }
           ],
           "lat": 41.12537,
@@ -414,10 +405,12 @@
           "name": "Ohio",
           "lgas": [
             {
-              "name": "Wayne"
+              "name": "Wayne",
+              "cities": ["Wooster", "Mansfield", "Croydon", "Wayne"]
             },
             {
-              "name": "Cuyahoga"
+              "name": "Cuyahoga",
+              "cities": ["Cleveland", "Cleveland Heights", "Cherry Hill", "Erie"]
             }
           ],
           "lat": 40.388783,
@@ -428,10 +421,12 @@
           "name": "Oregon",
           "lgas": [
             {
-              "name": "Clackamas"
+              "name": "Clackamas",
+              "cities": ["Beaverton", "Portland", "Clackamas", "Woodrow"]
             },
             {
-              "name": "Sherman"
+              "name": "Sherman",
+              "cities": ["Sherman", "East Sherman", "Holden", "York"]
             }
           ],
           "lat": 44.572021,

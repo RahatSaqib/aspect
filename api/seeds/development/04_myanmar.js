@@ -39,6 +39,9 @@ const millisInHour = 1000 * 60 * 60
 const millisInMinute = 1000 * 60
 const resultTimeFrameInDays = 365
 
+const resultMultiplier = process.env['seeds.resultMultiplier'] || 100
+const resultMtbNumber = resultMultiplier
+
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
 
 async function seed(knex) {
@@ -547,7 +550,6 @@ async function seed(knex) {
           device.id = deviceId
 
           // only create results if managed region
-          const resultMtbNumber = 1000 + Math.floor(Math.random() * 200 - 100)
           await Promise.all(
             _.map(_.range(resultMtbNumber), async i => {
               const sample = samples[i % samples.length]

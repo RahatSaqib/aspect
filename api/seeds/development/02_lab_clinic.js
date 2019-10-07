@@ -761,11 +761,11 @@ async function seed(knex) {
 
   // Reuse previously seeded "static" data
   const { id: assayIdEid } = await knex('Assay')
-    .where('name', 'CHAI EID')
+    .where('name', 'Abbott m2000 EID')
     .first()
 
   const { id: assayIdHivVl } = await knex('Assay')
-    .where('name', 'CHAI HIV VL')
+    .where('name', 'Abbott m2000 HIV VL')
     .first()
 
   const {
@@ -826,9 +826,9 @@ async function seed(knex) {
     },
   ]
 
-  const deviceTypeCHAILIMS = await deviceTypeToId('CHAILIMS')
-  const CHAILIMSM2000Devices = await knex('Device')
-    .where('deviceTypeId', deviceTypeCHAILIMS)
+  const deviceTypeAbbottM2000 = await deviceTypeToId('AbbottM2000')
+  const m2000Devices = await knex('Device')
+    .where('deviceTypeId', deviceTypeAbbottM2000)
     .select('id', 'siteId')
 
   async function createUniqueResultIdForDevice(
@@ -856,7 +856,7 @@ async function seed(knex) {
   }
 
   async function createResultEid(i) {
-    const device = CHAILIMSM2000Devices[i % CHAILIMSM2000Devices.length]
+    const device = m2000Devices[i % m2000Devices.length]
     const siteData = await knex('Site')
       .where('id', device.siteId)
       .first('id')
@@ -1031,7 +1031,7 @@ async function seed(knex) {
   }
 
   async function createResultHiv(i) {
-    const device = CHAILIMSM2000Devices[i % CHAILIMSM2000Devices.length]
+    const device = m2000Devices[i % m2000Devices.length]
     const siteData = await knex('Site')
       .where('id', device.siteId)
       .first('id')

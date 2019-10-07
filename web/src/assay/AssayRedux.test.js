@@ -31,10 +31,10 @@ describe('AssayRedux module', () => {
     {
       id: 4,
       assayTypeId: 3,
-      name: 'Afinion HIV VL',
+      name: 'GeneXpert HIV-1 VL',
       assayTypeName: 'HIV VL',
-      deviceTypeId: 2,
-      deviceTypeName: 'Afinion',
+      deviceTypeId: 1,
+      deviceTypeName: 'GeneXpert',
       resultDataSchema: {
         log: {
           type: 'number',

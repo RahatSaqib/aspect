@@ -25,12 +25,6 @@
       "dailyCapacity": 96
     },
     {
-      "deviceTypeExternalId": "AlereAfinion",
-      "defaultForDeviceType": true,
-      "name": "Afinion",
-      "dailyCapacity": 8
-    },
-    {
       "deviceTypeExternalId": "AlereQ",
       "defaultForDeviceType": true,
       "name": "Q",
