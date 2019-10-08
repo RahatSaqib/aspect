@@ -92,8 +92,6 @@ export const DetailGroup = compose(
               value: (data && data.get(key)) || rawData.get(key) || '',
               format: format(value.get('type'), intl),
               to: value.get('link') && makeLink(value.get('link'), rawData),
-              buttonClick:() => eval('alert("pupu")'),
-              buttonText: value.get('buttonText') || '',
             }))
             .toJSON()}
         />
@@ -150,8 +148,6 @@ export const DetailGroup = compose(
     )}
   </ExpansionPanel>
 ))
-const transformToFunction = (fnText) =>eval(fnText)
-
 export const DetailPanel = ({
   intl,
   data,

@@ -455,7 +455,6 @@ export class ResultDetail extends PureComponent {
                   xl="1-3"
                   className={cssClasses('Flexed')}
                 >
-                lala
                   <CustomField
                     resultId={result.get('id')}
                     formFieldKey={formFieldKey}
@@ -632,6 +631,7 @@ export class ResultDetail extends PureComponent {
           className={cssClasses('FieldsContainer')}
           titleSection={this.renderTreatmentStatusSection()}
         >
+          <AwesomeTimeline />
           {/* Render lower-level sections in assay schema in cards */}
           {this.renderLowerLevelSchemaSections()}
 
@@ -692,7 +692,6 @@ export class ResultDetail extends PureComponent {
           title="Result Details"
         />
         {this.renderPaper()}
-        <AwesomeTimeline />
       </div>
     )
   }

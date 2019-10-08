@@ -248,7 +248,8 @@
             "type": "string",
             "row": 0,
             "order": 0,
-            "title": "Patient ID"
+            "title": "Patient ID",
+            "link":"/browse/patient/<%= patientId %>"
           }
         }
       },
