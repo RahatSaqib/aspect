@@ -272,7 +272,7 @@ export const messages = defineMessages({
   },
   treatmentTitle: {
     id: 'pages.Status.treatmentTitle',
-    defaultMessage: 'Confirmed Treatment Tracking',
+    defaultMessage: 'Confirmed Follow-up',
   },
   treatmentAllSites: {
     id: 'pages.Status.treatmentAllSites',
