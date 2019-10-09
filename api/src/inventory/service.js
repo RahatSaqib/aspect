@@ -529,6 +529,149 @@ async function listInventoryItemsGroupedBySite(request) {
   }
 }
 
+async function getDaysByLocation(request) {
+  const { auth } = request
+  const dataConstraints = await getConstraints(auth.credentials)
+  // -----------------
+  const baseInventoryItemsBySiteGeography = query(
+    'Join Inventory Items, Site Details, and Geography Details'
+  )
+    .from('InventoryItem as ii')
+    .innerJoin('Consumable as c', 'ii.consumableId', 'c.id')
+    .innerJoin('Site as s', 'ii.siteId', 's.id')
+    .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
+    .leftOuterJoin('Country as co', 'g.countryId', 'co.id')
+    .leftOuterJoin('State as st', 'g.stateId', 'st.id')
+    .leftOuterJoin('Lga as l', 'g.lgaId', 'l.id')
+    .leftOuterJoin('Site as itfs', 'ii.inTransitFromSiteId', 'itfs.id')
+    // dailyRate
+    .leftOuterJoin('FactInventoryConsumptionRate as rate1', function() {
+      this.on('rate1.siteId', '=', 's.id')
+        .andOn('rate1.consumableId', '=', 'c.id')
+        .andOn('rate1.days', '=', 1)
+    })
+    .modify(filterParams, request.query, INVENTORY_ITEM_FILTER_FIELDS)
+    .modify(filterDateRangeParams, request.query, 'ii.expiresOn')
+    .modify(
+      addConstraints,
+      dataConstraints,
+      INVENTORY_ITEM_DATA_CONSTRAINT_ALIASES
+    )
+    .select(
+      'ii.id',
+      'ii.consumableId',
+      'ii.siteId',
+      'ii.lotNumber',
+      'ii.quantityOnHand',
+      // expirationDate - set when quantityOnHand > 0
+      knex.raw(
+        'CASE WHEN IFNULL(ii.quantityOnHand,0) > 0 THEN ii.expiresOn ELSE NULL END as expirationDate'
+      ),
+      // expiresInDays - when inventory expires, in days
+      knex.raw(`
+        CASE 
+        WHEN IFNULL(ii.quantityOnHand,0) = 0 THEN NULL
+        ELSE CAST(GREATEST(DATEDIFF(ii.expiresOn, NOW()), 0) AS SIGNED INTEGER)
+        END AS expiresInDays
+      `),
+      // daily consumption rate
+      knex.raw('CAST(rate1.rate AS DECIMAL(10, 6)) AS dailyRate'),
+      // lastsInDays - how long the 'quantityOnHand' lasts, in days
+      knex.raw(`
+        CASE 
+        WHEN IFNULL(ii.quantityOnHand,0) > 0 and IFNULL(rate1.rate, 0) > 0 THEN CAST(ii.quantityOnHand / rate1.rate AS SIGNED) 
+        ELSE NULL 
+        END AS lastsInDays
+      `),
+      'c.name as consumableName',
+      'c.manufacturer',
+      'c.canExpire',
+      's.name as siteName',
+      'g.countryId',
+      'g.stateId',
+      'g.lgaId',
+      'co.name as countryName',
+      'st.name as stateName',
+      'l.name as lgaName'
+    )
+  // -----------------
+  // add couple of calculated fields - daysUnexpired, wasted
+  const baseWithCalculatedFields = knex
+    .from(baseInventoryItemsBySiteGeography.as('t1'))
+    .select(
+      't1.*',
+      knex.raw(`
+      CASE 
+        WHEN IFNULL(quantityOnHand,0) = 0 THEN NULL
+        WHEN expiresInDays > lastsInDays OR expirationDate IS NULL OR dailyRate IS NULL
+          THEN lastsInDays
+        ELSE expiresInDays
+      END AS daysUnexpired
+      `),
+      knex.raw(`
+      CASE
+        WHEN IFNULL(quantityOnHand,0) = 0 THEN NULL
+        WHEN expiresInDays < lastsInDays AND expirationDate IS NOT NULL
+          THEN 
+            CASE 
+              WHEN expirationDate > NOW() THEN CAST(dailyRate * (lastsInDays - expiresInDays) AS SIGNED)
+              ELSE quantityOnHand
+            END
+        ELSE 0
+      END AS wasted
+      `)
+    )
+  // -----------------
+  // group by location fields and consumableId, and return different counts
+  const result = await knex
+    .from(baseWithCalculatedFields.as('t2'))
+    .groupBy('countryId', 'stateId', 'lgaId', 'siteId', 'consumableId')
+    .select(
+      'countryId',
+      'stateId',
+      'lgaId',
+      'siteId',
+      'countryName',
+      'stateName',
+      'lgaName',
+      'siteName',
+      'consumableName',
+      knex.raw(
+        'COUNT(CASE WHEN daysUnexpired IS NOT NULL AND daysUnexpired = 0 THEN true ELSE null END) as outOfStock'
+      ),
+      knex.raw(
+        'COUNT(CASE WHEN daysUnexpired IS NOT NULL AND daysUnexpired BETWEEN 1 and 14 THEN true ELSE null END) as upTo14'
+      ),
+      knex.raw(
+        'COUNT(CASE WHEN daysUnexpired IS NOT NULL AND daysUnexpired BETWEEN 15 and 30 THEN true ELSE null END) as upto30'
+      ),
+      knex.raw(
+        'COUNT(CASE WHEN daysUnexpired IS NOT NULL AND daysUnexpired BETWEEN 31 and 90 THEN true ELSE null END) as upTo90'
+      ),
+      knex.raw(
+        'COUNT(CASE WHEN daysUnexpired IS NOT NULL AND daysUnexpired BETWEEN 91 and 180 THEN true ELSE null END) as upTo180'
+      ),
+      knex.raw(
+        'COUNT(CASE WHEN daysUnexpired IS NOT NULL AND daysUnexpired > 180 THEN true ELSE null END) as moreThan180'
+      ),
+      knex.raw(
+        'COUNT(CASE WHEN daysUnexpired IS NOT NULL AND daysUnexpired > 180 THEN true ELSE null END) as moreThan180'
+      ),
+      knex.raw(
+        'COUNT(CASE WHEN daysUnexpired IS NULL AND quantityOnHand IS NULL THEN true ELSE null END) as notRecorded'
+      ),
+      knex.raw(
+        'COUNT(CASE WHEN daysUnexpired IS NULL AND quantityOnHand IS NOT NULL THEN true ELSE null END) as noConsumption'
+      )
+    )
+
+  return {
+    ok: true,
+    total: result.length,
+    data: result,
+  }
+}
+
 async function findInventoryItem(
   siteId,
   consumableId,
@@ -1299,4 +1442,5 @@ module.exports = {
   receiveInventory,
   selectInventoryStockAtSite,
   updateInventoryStockLevel,
+  getDaysByLocation,
 }

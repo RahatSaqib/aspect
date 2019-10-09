@@ -15,6 +15,7 @@ const {
   transferInventory,
   receiveInventory,
   updateInventoryStockLevel,
+  getDaysByLocation,
 } = require('./service')
 
 const { getSuppliesReport } = require('./serviceReports')
@@ -174,6 +175,17 @@ const routes = [
             .required(),
         }),
       },
+    },
+  },
+  {
+    method: 'GET',
+    path: '/inventory/days-by-location',
+    handler: asyncHandler(getDaysByLocation),
+    config: {
+      description: 'Get inventories availability by location',
+      notes:
+        'Returns list of inventory counts grouped by site/geography/state/lga',
+      ...listSuppliesBaseConfig(),
     },
   },
   {

@@ -142,6 +142,70 @@ describe('Inventory Routes', () => {
         })
       })
     })
+
+    describe('/inventory/days-by-location', () => {
+      const path = '/api/inventory/days-by-location'
+
+      describe('GET', () => {
+        shared.checkToken(server, path)
+
+        it('should return a list of sites with inventories counts, when using valid token', done => {
+          server
+            .get(path)
+            .set('Authorization', `Bearer ${shared.token}`)
+            .end((err, res) => {
+              assert.equal(res.status, 200)
+              assert.typeOf(res.body, 'Object')
+              assert.property(res.body, 'data')
+              assert.typeOf(res.body.data, 'array')
+              res.body.data.forEach(site => {
+                // ids
+                assert.property(site, 'countryId')
+                assert.property(site, 'stateId')
+                assert.property(site, 'lgaId')
+                assert.property(site, 'siteId')
+                // names
+                assert.property(site, 'countryName')
+                assert.property(site, 'stateName')
+                assert.property(site, 'lgaName')
+                assert.property(site, 'siteName')
+                assert.property(site, 'consumableName')
+                // counts
+                assert.property(site, 'outOfStock')
+                assert.property(site, 'upTo14')
+                assert.property(site, 'upto30')
+                assert.property(site, 'upTo90')
+                assert.property(site, 'upTo180')
+                assert.property(site, 'moreThan180')
+                assert.property(site, 'notRecorded')
+                assert.property(site, 'noConsumption')
+              })
+              assert.property(res.body, 'total')
+              done()
+            })
+        })
+
+        it('should accept consumableId and siteName as query string parameters', done => {
+          const consumableId = 1
+          const siteNameFilter = 'lab'
+          server
+            .get(
+              `${path}?consumableId=${consumableId}&siteName=${siteNameFilter}`
+            )
+            .set('Authorization', `Bearer ${shared.token}`)
+            .end((err, res) => {
+              assert.equal(res.status, 200)
+              res.body.data.forEach(site => {
+                assert.includes(
+                  site.siteName.toLowerCase(),
+                  siteNameFilter.toLowerCase()
+                )
+              })
+              done()
+            })
+        })
+      })
+    })
   })
 
   describe('Inventory Adjustments', () => {
