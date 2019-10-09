@@ -1452,7 +1452,7 @@ async function getAssayResultCategoryList() {
     .orderBy('at.name', 'rc.name')
     .select(
       knex.raw(`CONCAT(at.id,'-',rc.id) as id`),
-      knex.raw(`CONCAT(at.name,':',rc.name) as name`)
+      knex.raw(`CONCAT(at.name,': ',rc.name) as name`)
     )
 
   return assayResultCategory

@@ -49,6 +49,8 @@ const changePeriod = (props, shift) => {
 const enhance = compose(
   pure,
   withState('resultCategoryId', 'setResultCategoryId', ''),
+  withState('resultCategoryValue', 'setResultCategoryValue', ''),
+  withState('assayTypeId', 'setAssayTypeId', ''),
   requirePermissions({
     permissions: [
       'treatmentStatus:admin',
@@ -78,28 +80,37 @@ const enhance = compose(
     },
   }),
   withHandlers({
-    onSiteChange: ({ endedOn, fetchTreatmentDashboard }) => ({
-      target: { value },
-    }) => {
-      fetchTreatmentDashboard({
-        siteId: value || null,
-        endedOn,
-      })
-    },
-    onResultCategoryChange: ({
+    onChange: ({
       endedOn,
-      siteId = null,
       fetchTreatmentDashboard,
       setResultCategoryId,
+      setAssayTypeId,
+      assayTypeId,
+      resultCategoryId,
+      siteId,
+      setResultCategoryValue,
     }) => ({ target: { value } }) => {
-      const [assayTypeId, resultCategoryId] = value.split('-')
+      const selectedValue = value.split('-')
+      assayTypeId = assayTypeId || null
+      resultCategoryId = resultCategoryId || null
+
+      if (selectedValue.length > 1) {
+        ;[assayTypeId, resultCategoryId] = selectedValue
+        setResultCategoryId(() =>
+          resultCategoryId > 0 ? resultCategoryId : null
+        )
+        setAssayTypeId(() => (assayTypeId > 0 ? assayTypeId : null))
+        setResultCategoryValue(() => value)
+      }
+
+      siteId = selectedValue.length === 1 ? value : siteId
+
       fetchTreatmentDashboard({
-        siteId,
-        assayTypeId: assayTypeId || null,
-        resultCategoryId: resultCategoryId || null,
+        siteId: siteId || null,
+        assayTypeId,
+        resultCategoryId,
         endedOn,
       })
-      setResultCategoryId(() => value)
     },
     onBack: props => () => changePeriod(props, -1),
     onForward: props => () => changePeriod(props, 1),
@@ -111,7 +122,7 @@ const enhance = compose(
       sitesSelectList,
       theme,
       assayResultCategoryList,
-      resultCategoryId,
+      resultCategoryValue,
     }) => ({
       theme,
       isSingleSite:
@@ -138,12 +149,12 @@ const enhance = compose(
           label: item.get('name'),
         }))
         .insert(0, {
-          value: '',
+          value: '0-0',
           label: intl.formatMessage(messages.assayResultCategoryAll),
         })
         .toJS(),
       resultCategoryValue: assayResultCategoryList.find(
-        it => it.get('id') === resultCategoryId
+        it => it.get('id') === resultCategoryValue
       ),
     })
   )
@@ -187,9 +198,7 @@ export const TreatmentStatus = ({
   siteValue,
   assayResultCategorySource,
   isSingleAssayResultCategory,
-  onResultCategoryChange,
   resultCategoryValue,
-  onSiteChange,
   onForward,
   onBack,
   ...restProps
@@ -225,7 +234,6 @@ export const TreatmentStatus = ({
         {filterDropDownField(source, isSingleSite, {
           ...restProps,
           value: siteValue,
-          onChange: onSiteChange,
         })}
 
         {filterDropDownField(
@@ -233,8 +241,7 @@ export const TreatmentStatus = ({
           isSingleAssayResultCategory,
           {
             ...restProps,
-            onChange: onResultCategoryChange,
-            value: resultCategoryValue ? resultCategoryValue.get('id') : '',
+            value: resultCategoryValue ? resultCategoryValue.get('id') : '0-0',
           }
         )}
 
