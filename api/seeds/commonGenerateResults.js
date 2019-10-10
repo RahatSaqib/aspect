@@ -126,7 +126,7 @@ async function generateResults(
     },
     {
       resultText: 'Not Detected',
-      category1: resultCategoryDetectedId,
+      category1: resultCategoryNotDetectedId,
       category2: null,
       minLikelihood: 39,
       maxLikelihood: 100,
