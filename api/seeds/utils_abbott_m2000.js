@@ -288,6 +288,10 @@ async function seedAbbottM2000AndAssays(knex) {
       title: 'Message Complete',
       type: 'bool',
     },
+    messageSentOn: {
+      title: 'Message Sent On',
+      type: 'time',
+    },
     testQualifier: {
       title: 'Test Qualifier',
       type: 'string',

@@ -152,8 +152,8 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
         const instrumentSerial = _.get(jsonAstmMessage, 'H.4.3.value')
         const resultHeader = {
           device: {
-            serial: _.get(jsonAstmMessage, 'H.4.3.value'),
-            lastSeenOn: parseTime(_.get(jsonAstmMessage, 'H.13.value')),
+            serial: instrumentSerial,
+            lastSeenOn: utcNow,
             lastPingOn: utcNow,
             lastPingFromIp: remoteAddress,
             configurationData: {
@@ -166,7 +166,6 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
             ...enquiriesFromJsonAstmRecord(jsonAstmMessage.H),
           },
           instrumentSerial,
-          moduleSerial: _.get(jsonAstmMessage, 'H.4.3.value'),
           senderVersion: _.get(jsonAstmMessage, 'H.12.value'),
           resultData: {
             typeOfMessage: {
@@ -175,6 +174,7 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
               Q: 'Quality Control',
             }[_.get(jsonAstmMessage, 'H.11.value')],
             messageIsComplete: _.get(jsonAstmMessage, 'L.2.value') === '1',
+            messageSentOn: parseTime(_.get(jsonAstmMessage, 'H.13.value')),
           },
           rawData: jsonAstmMessage.value,
         }
