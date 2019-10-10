@@ -901,6 +901,14 @@ async function seed(knex) {
         moduleName: 'Module A',
         moduleSerial: `M-1234-${i % 4}`,
         senderOperator: 'Frank',
+        errorCode:
+          result.category1 === resultCategoryErrorId
+            ? _.random(2000, 9000)
+            : null,
+        errorNotes:
+          result.category1 === resultCategoryErrorId
+            ? 'Temperature out of acceptable range'
+            : null,
         patientData: JSON.stringify({
           id: patient.id,
           age: patient.age,
@@ -1090,6 +1098,14 @@ async function seed(knex) {
         moduleName: 'Module A',
         moduleSerial: `M-1234-${i % 4}`,
         senderOperator: 'Frank',
+        errorCode:
+          result.category1 === resultCategoryErrorId
+            ? _.random(2000, 9000)
+            : null,
+        errorNotes:
+          result.category1 === resultCategoryErrorId
+            ? 'Temperature out of acceptable range'
+            : null,
         patientData: JSON.stringify({
           id: patient.id,
           age: patient.age,
