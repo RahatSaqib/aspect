@@ -186,7 +186,7 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
               const patientData = {
                 id: _.get(jsonAstmPatient, '4.value'), // Laboratory Patient ID
                 practicePatientId: _.get(jsonAstmPatient, '3.value'),
-                additionaPatientId: _.get(jsonAstmPatient, '5.value'),
+                additionalPatientId: _.get(jsonAstmPatient, '5.value'),
                 name: _.get(jsonAstmPatient, '6.value'),
                 dateOfBirth: parseDate(_.get(jsonAstmPatient, '8.value')),
                 gender: { M: 'Male', F: 'Female', U: 'Unknown' }[
