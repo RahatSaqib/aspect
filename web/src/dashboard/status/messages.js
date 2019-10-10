@@ -295,6 +295,10 @@ export const messages = defineMessages({
     id: 'pages.Status.treatmentTooltipFor_pcNotConfirmed',
     defaultMessage: 'Percentage of results not confirmed on treatment',
   },
+  assayResultCategoryAll: {
+    id: 'pages.Status.assayResultCategoryAll',
+    defaultMessage: 'All Results',
+  },
 })
 
 export default messages

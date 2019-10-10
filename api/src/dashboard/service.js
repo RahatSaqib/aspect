@@ -660,6 +660,7 @@ async function siteDashboard(request) {
   const dataConstraints = await getConstraints(auth.credentials)
 
   const siteList = await getSiteList(auth, dataConstraints)
+  const assayResultCategoryList = await getAssayResultCategoryList()
   const deviceList = await getDeviceList(auth, dataConstraints)
   const inventoryItemList = await getInventoryItemList(auth, dataConstraints)
 
@@ -758,6 +759,7 @@ async function siteDashboard(request) {
 
   const result = {
     data: {
+      assayResultCategoryList,
       siteList,
       siteSummaryMap,
     },
@@ -1438,6 +1440,22 @@ async function addStockLevelUpdateActions(
       }
     )
   }
+}
+
+async function getAssayResultCategoryList() {
+  const assayResultCategory = await knex('ResultCategoryAssay as rca')
+    .innerJoin('Assay as a', 'a.id', 'rca.assayId')
+    .innerJoin('AssayType as at', 'at.id', 'a.assayTypeId')
+    .innerJoin('ResultCategory as rc', 'rca.resultCategoryId', 'rc.id')
+    .where('rca.requiresTreatment', 1)
+    .groupBy('at.id', 'at.name', 'rc.name')
+    .orderBy('at.name', 'rc.name')
+    .select(
+      knex.raw(`CONCAT(at.id,'-',rc.id) as id`),
+      knex.raw(`CONCAT(at.name,': ',rc.name) as name`)
+    )
+
+  return assayResultCategory
 }
 
 module.exports = {

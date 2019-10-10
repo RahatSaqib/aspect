@@ -402,14 +402,27 @@ export function fetchActionDashboard(rawFiltersParams, sortCol, sortDir) {
 }
 
 // -------------------------------------------------------------------
-export function fetchTreatmentDashboard({ siteId, endedOn } = {}) {
+export function fetchTreatmentDashboard({
+  siteId,
+  assayTypeId,
+  resultCategoryId,
+  endedOn,
+} = {}) {
   return dispatch => {
     const requestedAt = `treatment_${Date.now()}`
-    dispatch(requestTreatmentDashboard({ siteId, endedOn, requestedAt }))
+    dispatch(
+      requestTreatmentDashboard({
+        siteId,
+        assayTypeId,
+        resultCategoryId,
+        endedOn,
+        requestedAt,
+      })
+    )
 
     return aspectFetch('/result/confirmed-treatment-tracking', {
       method: 'POST',
-      body: JSON.stringify({ siteId, endedOn }),
+      body: JSON.stringify({ siteId, endedOn, assayTypeId, resultCategoryId }),
       errorNotifications: {
         default: errorPleaseTryAgainInAFewMinutes(
           defineMessages({
@@ -452,6 +465,7 @@ const Summary = Immutable.Record({
   deviceList: Immutable.List(),
   deviceSummaryMap: Immutable.Map(),
   siteList: Immutable.List(),
+  assayResultCategoryList: Immutable.List(),
   siteSummaryMap: Immutable.Map(),
   operational: Immutable.Map(),
   actionSummaryMap: Immutable.Map(),
@@ -521,6 +535,10 @@ export default function dashboardReducer(state = initialState, action) {
       return state.withMutations(mutState => {
         onRequested(action, mutState, () => {
           mutState.mergeDeepIn(['siteList'], action.data.siteList)
+          mutState.mergeDeepIn(
+            ['assayResultCategoryList'],
+            action.data.assayResultCategoryList
+          )
           mutState.mergeDeepIn(['siteSummaryMap'], action.data.siteSummaryMap)
         })
       })
