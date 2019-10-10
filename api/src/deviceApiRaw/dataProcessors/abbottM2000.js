@@ -150,6 +150,7 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
     const parsedResults = jsonAstmMessages.reduce(
       (results, jsonAstmMessage) => {
         const instrumentSerial = _.get(jsonAstmMessage, 'H.4.3.value')
+        const messageSentOn = parseTime(_.get(jsonAstmMessage, 'H.13.value'))
         const resultHeader = {
           device: {
             serial: instrumentSerial,
@@ -174,7 +175,7 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
               Q: 'Quality Control',
             }[_.get(jsonAstmMessage, 'H.11.value')],
             messageIsComplete: _.get(jsonAstmMessage, 'L.2.value') === '1',
-            messageSentOn: parseTime(_.get(jsonAstmMessage, 'H.13.value')),
+            messageSentOn,
           },
           rawData: jsonAstmMessage.value,
         }
@@ -339,7 +340,7 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
                               '11.2.value',
                               _.get(jsonAstmResult, '11.1.value')
                             ),
-                            endedOn: parseTime(endedOnString),
+                            endedOn: parseTime(endedOnString) || messageSentOn,
                             moduleSerial,
                             resultData: {
                               assayName: _.get(jsonAstmResult, '3.5.value'),
