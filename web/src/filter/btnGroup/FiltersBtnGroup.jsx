@@ -32,11 +32,11 @@ const messages = defineMessages({
   },
   sampleId: {
     id: 'filter.btnGroup.sampleId',
-    defaultMessage: 'sample {sampleId}',
+    defaultMessage: 'sample includes "{sampleId}"',
   },
-  sampleGroup: {
-    id: 'filter.btnGroup.sampleGroup',
-    defaultMessage: 'sample group {sampleGroup}',
+  errorCode: {
+    id: 'filter.btnGroup.errorCode',
+    defaultMessage: 'error code includes "{errorCode}"',
   },
   whereDeviceNameIncludes: {
     id: 'filter.btnGroup.whereDeviceNameIncludes',
@@ -132,16 +132,16 @@ const filtersOrdering = {
   lgaId: 3,
   minDate: 18,
   maxDate: 19,
-  partnerId: 7,
-  patientOrResearchId: 8,
+  partnerId: 8,
+  patientOrResearchId: 10,
   sampleId: 9,
-  sampleGroup: 10,
+  errorCode: 6,
   deviceName: 11,
   resultCategoryId: 5,
   siteName: 12,
   sampleOriginSite: 13,
   contactNameOrEmail: 14,
-  consumableId: 6,
+  consumableId: 7,
   workflowStatusId: 16,
   deviceStatusId: 17,
   externalId: 15,
@@ -211,9 +211,6 @@ const buttonBy = {
   sampleId: makeButton(({ intl }, sampleId) =>
     intl.formatMessage(messages.sampleId, { sampleId })
   ),
-  sampleGroup: makeButton(({ intl }, sampleGroup) =>
-    intl.formatMessage(messages.sampleGroup, { sampleGroup })
-  ),
   deviceName: makeButton(({ intl }, deviceName) =>
     intl.formatMessage(messages.whereDeviceNameIncludes, {
       deviceName,
@@ -236,6 +233,9 @@ const buttonBy = {
           )
           .get('name', ''),
       })
+  ),
+  errorCode: makeButton(({ intl }, errorCode) =>
+    intl.formatMessage(messages.errorCode, { errorCode })
   ),
   siteName: makeButton(({ intl }, siteName) =>
     intl.formatMessage(messages.whereSiteNameIncludes, {

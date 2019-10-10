@@ -31,8 +31,8 @@ const ResultTableRow = ({ intl, extraColumns, result, ...restProps }) => (
     <TableCell hiddenOn="sm">{result.get('deviceName')}</TableCell>
     <TableCell hiddenOn="sm">{result.get('sampleOriginSiteName')}</TableCell>
     <TableCell>{result.get('sampleId')}</TableCell>
-    <TableCell hiddenOn="md">{result.get('sampleGroup')}</TableCell>
     <TableCell>{result.get('resultText')}</TableCell>
+    <TableCell hiddenOn="md">{result.get('errorCode')}</TableCell>
     <TableCell hiddenOn="sm">{result.get('resultWorkflowStatus')}</TableCell>
     <TableCell hiddenOn="sm">
       {result.get('treatmentStatusInfo') && (

@@ -104,7 +104,7 @@ const ResultTreatmentPanel = ({ styles, data, ...restProps }) => {
                     new Date(),
                     parseISO(data.get('endedOn'))
                   )}
-                  days
+                  &nbsp;days
                 </h3>
               </div>
             </div>

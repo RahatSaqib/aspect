@@ -50,7 +50,7 @@ const sanitizerByConfigKey = {
   patientOrResearchId: defaultSanitizer,
   partnerId: defaultSanitizer,
   sampleId: defaultSanitizer,
-  sampleGroup: defaultSanitizer,
+  errorCode: defaultSanitizer,
   deviceName: defaultSanitizer,
   siteName: defaultSanitizer,
   sampleOriginSite: defaultSanitizer,
@@ -176,8 +176,8 @@ export const reduceFiltersConfig = (configObject, userPermissions) => {
             case 'sampleId':
               result.sampleId = true
               break
-            case 'sampleGroup':
-              result.sampleGroup = true
+            case 'errorCode':
+              result.errorCode = true
               break
             case 'sampleOriginSite':
               result.sampleOriginSite = true

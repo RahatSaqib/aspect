@@ -106,9 +106,9 @@ const messages = defineMessages({
     id: 'pages.DeviceDetailProfile.sampleId',
     defaultMessage: 'Sample ID',
   },
-  sampleGroup: {
-    id: 'pages.DeviceDetailProfile.sampleGroup',
-    defaultMessage: 'Sample Group',
+  errorCode: {
+    id: 'pages.DeviceDetailProfile.errorCode',
+    defaultMessage: 'Error Code',
   },
   resultText: {
     id: 'pages.DeviceDetailProfile.resultText',
@@ -163,7 +163,7 @@ const FILTERS_CONFIG = {
   date: true,
   patientOrResearchId: true,
   sampleId: true,
-  sampleGroup: true,
+  errorCode: true,
   siteName: true,
   sampleOriginSite: true,
   workflowStatus: true,
@@ -175,7 +175,7 @@ const searchSanitizer = makeSearchParamsSanitizer({
     'deviceName',
     'sampleOriginSiteName',
     'sampleId',
-    'sampleGroup',
+    'errorCode',
     'patientId',
   ],
 })
@@ -627,13 +627,13 @@ const Results = enhanceResults(
                     sortable: true,
                   },
                   {
-                    key: 'sampleGroup',
-                    label: intl.formatMessage(messages.sampleGroup),
+                    key: 'resultText',
+                    label: intl.formatMessage(messages.resultText),
                     sortable: true,
                   },
                   {
-                    key: 'resultText',
-                    label: intl.formatMessage(messages.resultText),
+                    key: 'errorCode',
+                    label: intl.formatMessage(messages.errorCode),
                     sortable: true,
                   },
                   {
