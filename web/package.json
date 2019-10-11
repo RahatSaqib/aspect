@@ -208,7 +208,6 @@
     "react-intl": "^2.2.3",
     "react-jss": "^8.6.1",
     "react-loadable": "^5.2.2",
-    "react-material-timeline": "^3.0.1",
     "react-redux": "^5.0.4",
     "react-router": "^4.1.1",
     "react-router-dom": "^4.1.1",
@@ -223,6 +222,7 @@
     "redux-thunk": "^2.2.0",
     "topojson-client": "^3.0.0",
     "url-search-params-polyfill": "^2.0.0",
+    "vertical-timeline-component-for-react": "^1.0.6",
     "warning": "^3.0.0",
     "whatwg-fetch": "^2.0.3"
   }

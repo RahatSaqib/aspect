@@ -17,7 +17,6 @@ import Button from '@material-ui/core/Button'
 
 // Our own imports
 import ResultTreatmentPanel from './ResultTreatmentPanel'
-import AwesomeTimeline from './timeline/AwesomeTimeline'
 import config from '../../config'
 import DelayShowingProgressBar from '../../components/shared/DelayShowingProgressBar'
 import JSONSchemaCard from '../../components/shared/JSONSchemaCard'
@@ -631,7 +630,6 @@ export class ResultDetail extends PureComponent {
           className={cssClasses('FieldsContainer')}
           titleSection={this.renderTreatmentStatusSection()}
         >
-          <AwesomeTimeline />
           {/* Render lower-level sections in assay schema in cards */}
           {this.renderLowerLevelSchemaSections()}
 
