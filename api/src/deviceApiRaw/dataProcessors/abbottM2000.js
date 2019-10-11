@@ -645,20 +645,22 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
       this.response.deviceLogIds = []
       if (deviceDetailsInPayload.lastSeenOn >= device.lastSeenOn) {
         device.configurationData = JSON.parse(device.configurationData)
+        const deviceUpdates = _.mergeWith(
+          _.cloneDeep(device),
+          _.cloneDeep(
+            _.omit(deviceDetailsInPayload, ['comments', 'enquiries', 'rawData'])
+          ),
+          { updatedOn: utcNow },
+          mergeDeep
+        )
+        if (!_.isNil(deviceUpdates.configurationData)) {
+          deviceUpdates.configurationData = JSON.stringify(
+            deviceUpdates.configurationData
+          )
+        }
         await knex('Device')
           .where('id', device.id)
-          .update(
-            _.mergeWith(
-              _.cloneDeep(device),
-              _.cloneDeep(_.omit(deviceDetailsInPayload), [
-                'comments',
-                'enquiries',
-                'rawData',
-              ]),
-              { updatedOn: utcNow },
-              mergeDeep
-            )
-          )
+          .update(deviceUpdates)
         const [configDeviceLogId] = await knex('DeviceLog').insert({
           deviceId: device.id,
           source: this.name,

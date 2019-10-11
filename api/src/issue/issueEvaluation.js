@@ -23,7 +23,7 @@ const evaluationMethods = {
 
 async function issueConditionsMet(knex, issue, conditions) {
   if (_.isEmpty(conditions)) {
-    return Promise.resolve(true)
+    return Promise.resolve(false)
   }
   if (Array.isArray(conditions)) {
     return evaluateArrayOfConditions(knex, issue, conditions)

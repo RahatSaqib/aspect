@@ -1,7 +1,7 @@
 {
   "countries": [
     {
-      "abbreviation": "CR",
+      "abbreviation": "CM",
       "name": "Cameroon",
       "a3": "CMR",
       "culture": "FR",
@@ -13,28 +13,27 @@
       "exportColumns": "DeploymentDescription|TestEndedOn|AssayName|AssayVersion|User|Result1|Result2|ResultText|PatientId|ReagentLotID|ExpirationDate|CartridgeSerial|ModuleSerial|SoftwareVersion|ErrorCode|ErrorCategory|ErrorDescription|SampleId|Notes|ProbeDCt|ProbeCCt|ProbeECt|ProbeBCt|Qc1Ct|Qc2Ct",
       "inventoryDaysThreshold": 21,
       "monthStartsOnDay": 1,
-      "states":[
-        {
-          "name":"Adamaoua",
-          "lgas":[
-            {
-               "name":"Vina"
-            },
-            {
-               "name":"Mbéré"
-            },
-            {
-               "name":"Mayo-Banyo"
-            },
-            {
-               "name":"Faro-et-Déo"
-            },
-            {
-               "name":"Djérem"
-            }
-         ]
-        },
-        {
+      "states":[{
+        "name":"Adamaoua",
+        "lgas":[
+          {
+             "name":"Vina"
+          },
+          {
+             "name":"Mbéré"
+          },
+          {
+             "name":"Mayo-Banyo"
+          },
+          {
+             "name":"Faro-et-Déo"
+          },
+          {
+             "name":"Djérem"
+          }
+        ]
+      },
+       {
           "name":"Centre",
           "lgas": [
             {
@@ -68,8 +67,8 @@
                "name":"Nyong-et-So'o"
             }
          ]
-        },
-        {
+       },
+       {
           "name":"Est",
           "lgas":[
             {
@@ -85,8 +84,8 @@
                "name":"Lom-et-Djérem"
             }
          ]
-        },
-        {
+       },
+       {
           "name":"Extreme-Nord",
           "lgas":[
             {
@@ -108,8 +107,8 @@
                "name":"Mayo-Tsanaga"
             }
          ]
-        },
-        {
+       },
+       {
           "name":"Littoral",
           "lgas":[
             {
@@ -125,8 +124,8 @@
                "name":"Wouri"
             }
          ]
-        },
-        {
+       },
+       {
           "name":"Nord",
           "lgas":[
             {
@@ -141,25 +140,103 @@
             {
                "name":"Mayo-Rey"
             }
-          ]
-        },
-        {
+         ]
+       },
+       {
           "name":"Nord-Ouest",
           "lgas":[
             {
+              "name":"Boyo"
+            },
+            {
+              "name":"Bui"
+            },
+            {
+              "name":"Donga-Mantung"
+            },
+            {
+              "name":"Menchum"
+            },
+            {
               "name":"Mezam"
+            },
+            {
+              "name":"Momo"
+            },
+            {
+              "name":"Ngo-Ketunjia"
             }
           ]
-        },
-        {
-          "name":"Ouest"
-        },
-        {
-          "name":"Sud"
-        },
-        {
-          "name":"Sud-Ouest"
-        }
+       },
+       {
+          "name":"Ouest",
+          "lgas":[
+            {
+              "name":"Bamboutos"
+            },
+            {
+              "name":"Haut-Nkam"
+            },
+            {
+              "name":"Hauts-Plateaux"
+            },
+            {
+              "name":"Koung-Khi"
+            },
+            {
+              "name":"Ménoua"
+            },
+            {
+              "name":"Mifi"
+            },
+            {
+              "name":"Ndé"
+            },
+            {
+              "name":"Noun"
+            }
+          ]
+       },
+       {
+          "name":"Sud",
+          "lgas":[
+            {
+              "name":"Ambam"
+            },
+            {
+              "name":"Mvila"
+            },
+            {
+              "name":"Océan"
+            },
+            {
+              "name":"Vallée-du-Ntem"
+            }
+          ]
+       },
+       {
+          "name":"Sud-Ouest",
+          "lgas":[
+            {
+              "name":"Fako"
+            },
+            {
+              "name":"Koupé-Manengouba"
+            },
+            {
+              "name":"Lebialem"
+            },
+            {
+              "name":"Manyu"
+            },
+            {
+              "name":"Meme"
+            },
+            {
+              "name":"Ndian"
+            }
+          ]
+       }
       ]
     }
   ]

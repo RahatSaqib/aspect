@@ -3,6 +3,7 @@ const types = {
   WEBHOOK_MESSAGE_CREATED: 'WEBHOOK_MESSAGE_CREATED',
   WEBHOOK_MESSAGE_PENDING: 'WEBHOOK_MESSAGE_PENDING',
   WEBHOOK_MESSAGE_SENT: 'WEBHOOK_MESSAGE_SENT',
+  WEBHOOK_MESSAGE_ERROR: 'WEBHOOK_MESSAGE_ERROR',
 }
 
 // ----------- Action Creators -------------------
@@ -55,9 +56,26 @@ function webhookMessageSent(webhookMessageId) {
   }
 }
 
+/**
+ * Creates an action to notify MQ there was an error
+ * trying to send the webook message
+ *
+ * webhookMessageId is required.
+ */
+function webhookMessageError(webhookMessageId) {
+  if (!webhookMessageId) {
+    throw new Error('Must specify webhookMessageId')
+  }
+  return {
+    type: types.WEBHOOK_MESSAGE_ERROR,
+    webhookMessageId,
+  }
+}
+
 module.exports = {
   types,
   webhookMessageCreated,
   webhookMessagePending,
   webhookMessageSent,
+  webhookMessageError,
 }

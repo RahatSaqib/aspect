@@ -7,7 +7,12 @@ const {
   header,
   body,
 } = require('http-client')
-const { webhookMessagePending, webhookMessageSent } = require('./actions')
+const {
+  webhookMessagePending,
+  webhookMessageSent,
+  webhookMessageError,
+} = require('./actions')
+const { resolveIssues, escalateIssues } = require('../issue/actions')
 const { messageStatusToId } = require('../shared/dictionary')
 const {
   addDataSourceToQuery,
@@ -61,7 +66,10 @@ function onWebhookMessageCreated({ webhookMessageId }, { messageContext }) {
 }
 
 function onWebhookMessagePending({ webhookMessageId }, { messageContext }) {
-  const context = messageContext.bindActionCreators({ webhookMessageSent })
+  const context = messageContext.bindActionCreators({
+    webhookMessageSent,
+    webhookMessageError,
+  })
   return context.run(async knex => {
     // TODO If filename and resultId add ResultFileReference join
     const message = await knex('WebhookMessage as m')
@@ -112,26 +120,32 @@ function onWebhookMessagePending({ webhookMessageId }, { messageContext }) {
 
       const messageUpdates = {}
       if (!webhookError) {
-        const fetch = createFetch(...fetchArgs)
-        const resp = await fetch(message.url)
-        if (fileStream != null) {
-          resp.body.pipe(fileStream)
+        try {
+          const fetch = createFetch(...fetchArgs)
+          const resp = await fetch(message.url)
+          if (fileStream != null) {
+            resp.body.pipe(fileStream)
+          }
+          messageUpdates.response = `${resp.status}`
+          if (resp.statusText) {
+            messageUpdates.response += ` - ${resp.statusText}`
+          }
+          const responseText = await resp.text()
+          if (responseText) {
+            messageUpdates.response += ` ${responseText}`
+          }
+          webhookError = !resp.ok
+        } catch (err) {
+          webhookError = true
+          messageUpdates.response = err.toString()
         }
-        messageUpdates.response = `${resp.status}`
-        if (resp.statusText) {
-          messageUpdates.response += ` - ${resp.statusText}`
-        }
-        const responseText = await resp.text()
-        if (responseText) {
-          messageUpdates.response += ` ${responseText}`
-        }
-        webhookError = !resp.ok
       }
       const now = new Date()
       messageUpdates.updatedOn = now
       const messageStatusIdSent = await messageStatusToId('Sent')
+      const messageStatusIdError = await messageStatusToId('Error')
       if (webhookError) {
-        messageUpdates.messageStatusId = await messageStatusToId('Error')
+        messageUpdates.messageStatusId = messageStatusIdError
       } else {
         messageUpdates.messageStatusId = messageStatusIdSent
         if (message.fileReferenceId != null && message.resultId != null) {
@@ -147,7 +161,34 @@ function onWebhookMessagePending({ webhookMessageId }, { messageContext }) {
 
       if (messageUpdates.messageStatusId === messageStatusIdSent) {
         context.webhookMessageSent(webhookMessageId)
+      } else if (messageUpdates.messageStatusId === messageStatusIdError) {
+        context.webhookMessageError(webhookMessageId)
       }
+    }
+  })
+}
+
+function onWebhookMessageSent({ webhookMessageId }, { messageContext }) {
+  return finalizeWebhookMessage(webhookMessageId, messageContext)
+}
+
+function onWebhookMessageError({ webhookMessageId }, { messageContext }) {
+  return finalizeWebhookMessage(webhookMessageId, messageContext)
+}
+
+function finalizeWebhookMessage(webhookMessageId, messageContext) {
+  const context = messageContext.bindActionCreators({
+    resolveIssues,
+    escalateIssues,
+  })
+  return context.run(async knex => {
+    const { issueId } = await knex('WebhookMessage as m')
+      .join('Notification as n', 'm.id', 'n.webHookMessageId')
+      .where('m.id', webhookMessageId)
+      .first('n.issueId')
+    if (issueId) {
+      context.resolveIssues(issueId)
+      context.escalateIssues(issueId)
     }
   })
 }
@@ -180,4 +221,6 @@ async function createWebhookMessageFromTemplate(knex, webhookMessageId) {
 module.exports = {
   onWebhookMessageCreated,
   onWebhookMessagePending,
+  onWebhookMessageSent,
+  onWebhookMessageError,
 }
