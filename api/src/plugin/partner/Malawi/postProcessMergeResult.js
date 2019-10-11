@@ -4,8 +4,8 @@ const { resultWorkflowStatusToId } = require('../../../shared/dictionary')
 
 const VALIDATED_EXTERNALID = 'Validated'
 const DELIVERABLE_EXTERNALID = 'Deliverable'
-const EXTERNAL_ID_HIV_VL = 'HivVl'
-const EXTERNAL_ID_EID = 'EID'
+const EXTERNAL_ID_HIV_VL = 'CHAIHivVL'
+const EXTERNAL_ID_EID = 'CHAIEID'
 const DEVICE_TYPE_EXTERNAL_ID = 'CHAILIMS'
 const RESULT_TEXT_LDL = '< LDL'
 

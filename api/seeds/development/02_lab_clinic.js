@@ -96,110 +96,12 @@ async function seed(knex) {
     maxDaysDeviceNoResults: 14,
   })
 
-  /* TODO Add configuration schema once UI supports and we synchronize correctly
-  // define configurationData object
-  const reporterConfigurationDataSchema = JSON.stringify({
-    requirePrinter: {
-      title: 'Require printer',
-      type: 'string'
-    },
-    adminPassword: {
-      title: 'Admin password',
-      type: 'string'
-    },
-    firmwareUpdateRequired: {
-      title: 'Firmware update required',
-      type: 'string'
-    },
-    userPins: {
-      title: 'Pins',
-      type: 'object',
-      i18nKey: 'User Pins',
-      properties: {
-        user1Pin: {
-          title: 'user1Pin',
-          type: 'string'
-        },
-        user1Name: {
-          title: 'user1Name',
-          type: 'string'
-        },
-        user1Assays: {
-          title: 'user1Assays',
-          type: 'array'
-        },
-        user2Pin: {
-          title: 'user2Pin',
-          type: 'string'
-        },
-        user2Name: {
-          title: 'user2Name',
-          type: 'string'
-        },
-        user2Assays: {
-          title: 'user2Assays',
-          type: 'array'
-        },
-        user3Pin: {
-          title: 'user3Pin',
-          type: 'string'
-        },
-        user3Name: {
-          title: 'user3Name',
-          type: 'string'
-        },
-        user3Assays: {
-          title: 'user3Assays',
-          type: 'array'
-        },
-        user4Pin: {
-          title: 'user4Pin',
-          type: 'string'
-        },
-        user4Name: {
-          title: 'user4Name',
-          type: 'string'
-        },
-        user4Assays: {
-          title: 'user4Assays',
-          type: 'array'
-        },
-        user5Pin: {
-          title: 'user5Pin',
-          type: 'string'
-        },
-        user5Name: {
-          title: 'user5Name',
-          type: 'string'
-        },
-        user5Assays: {
-          title: 'user5Assays',
-          type: 'array'
-        },
-        adminPin: {
-          title: 'adminPin',
-          type: 'string'
-        },
-        adminName: {
-          title: 'adminName',
-          type: 'string'
-        },
-        adminAssays: {
-          title: 'adminAssays',
-          type: 'array'
-        }
-      }
-    }
-  })
-*/
-
   // Reporter Device Type
   const [deviceTypeIdReporter] = await knex('DeviceType').insert({
     externalId: 'AspectReporter',
     name: 'Aspect Reporter',
     manufacturer: 'SystemOne',
     deviceTypeCategoryId: await deviceTypeCategoryToId('Client'),
-    // configurationDataSchema: reporterConfigurationDataSchema
   })
 
   const resultSourceGeneratedId = await resultSourceToId('Generated')
@@ -208,7 +110,7 @@ async function seed(knex) {
     name: 'Reporter HIV VL',
     abbreviation: 'Reporter HIV VL',
     i18nKey: 'AssayReporterHivVl',
-    externalId: 'HivVl',
+    externalId: 'ReporterHivVL',
     assayTypeId: await assayTypeToId('HIV VL'),
     deviceTypeId: deviceTypeIdReporter,
     resultSourceId: resultSourceGeneratedId,
@@ -272,7 +174,7 @@ async function seed(knex) {
     name: 'Reporter EID',
     abbreviation: 'Reporter EID',
     i18nKey: 'AssayReporterEid',
-    externalId: 'EID',
+    externalId: 'ReporterEID',
     assayTypeId: await assayTypeToId('EID'),
     deviceTypeId: deviceTypeIdReporter,
     resultSourceId: resultSourceGeneratedId,
@@ -760,11 +662,11 @@ async function seed(knex) {
   } = await allResultCategoryToId()
 
   // Reuse previously seeded "static" data
-  const { id: assayIdEid } = await knex('Assay')
+  const { id: assayIdChaiEid } = await knex('Assay')
     .where('name', 'CHAI EID')
     .first()
 
-  const { id: assayIdHivVl } = await knex('Assay')
+  const { id: assayIdChaiHivVl } = await knex('Assay')
     .where('name', 'CHAI HIV VL')
     .first()
 
@@ -777,26 +679,24 @@ async function seed(knex) {
 
   const resultTypePatientId = await resultTypeToId('Patient')
 
-  // EID results:
-  // assign categories to assay
   await knex('ResultCategoryAssay').insert({
     resultCategoryId: resultCategoryNotDetectedId,
-    assayId: assayIdEid,
+    assayId: assayIdChaiEid,
   })
 
   await knex('ResultCategoryAssay').insert({
     resultCategoryId: resultCategoryDetectedId,
-    assayId: assayIdEid,
+    assayId: assayIdChaiEid,
   })
 
   await knex('ResultCategoryAssay').insert({
     resultCategoryId: resultCategoryIndeterminateId,
-    assayId: assayIdEid,
+    assayId: assayIdChaiEid,
   })
 
   await knex('ResultCategoryAssay').insert({
     resultCategoryId: resultCategoryErrorId,
-    assayId: assayIdEid,
+    assayId: assayIdChaiEid,
   })
 
   const possibleResultsEid = [
@@ -877,7 +777,7 @@ async function seed(knex) {
     const resultId = await knex('Result').insert(
       Object.assign({}, auditFields, {
         externalId: resultExternalId,
-        assayId: assayIdEid,
+        assayId: assayIdChaiEid,
         partnerId,
         geographyId: siteData.geographyId,
         siteId: siteData.id,
@@ -946,22 +846,22 @@ async function seed(knex) {
   // assign categories to assay
   await knex('ResultCategoryAssay').insert({
     resultCategoryId: resultCategoryLessThan1000Id,
-    assayId: assayIdHivVl,
+    assayId: assayIdChaiHivVl,
   })
 
   await knex('ResultCategoryAssay').insert({
     resultCategoryId: resultCategoryMoreThan1000Id,
-    assayId: assayIdHivVl,
+    assayId: assayIdChaiHivVl,
   })
 
   await knex('ResultCategoryAssay').insert({
     resultCategoryId: resultCategoryCollectNewSampleId,
-    assayId: assayIdHivVl,
+    assayId: assayIdChaiHivVl,
   })
 
   await knex('ResultCategoryAssay').insert({
     resultCategoryId: resultCategoryErrorId,
-    assayId: assayIdHivVl,
+    assayId: assayIdChaiHivVl,
   })
 
   const possibleResultsHivVl = [
@@ -1066,7 +966,7 @@ async function seed(knex) {
     const resultId = await knex('Result').insert(
       Object.assign({}, auditFields, {
         externalId: resultExternalId,
-        assayId: assayIdHivVl,
+        assayId: assayIdChaiHivVl,
         partnerId,
         geographyId: siteData.geographyId,
         siteId: siteData.id,

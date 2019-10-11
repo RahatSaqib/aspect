@@ -10,6 +10,7 @@ const {
   getPermissionModules,
   assignAllFeaturesToJobFunctionIds,
 } = require('../utils')
+const { seedAbbottM2000AndAssays } = require('../utils_abbott_m2000')
 const {
   allAssayTypeToId,
   allDeviceTypeCategoryToId,
@@ -104,6 +105,8 @@ async function seed(knex) {
     maxDaysDeviceNoResults: 14,
   })
 
+  await seedAbbottM2000AndAssays(knex)
+
   // Categories of devices (lab, connectivity...)
   const {
     Lab: deviceTypeCategoryLab,
@@ -144,44 +147,6 @@ async function seed(knex) {
         },
         module4: {
           title: 'Module 4',
-          type: 'string',
-        },
-      },
-    },
-  })
-
-  const m2000ConfigurationDataSchema = JSON.stringify({
-    requirePrinter: {
-      title: 'Require printer',
-      type: 'string',
-    },
-    adminPassword: {
-      title: 'Admin password',
-      type: 'string',
-    },
-    firmwareUpdateRequired: {
-      title: 'Firmware update required',
-      type: 'string',
-    },
-    firmwareVersions: {
-      title: 'Firmware versions',
-      type: 'object',
-      i18nKey: 'Firmware versions',
-      properties: {
-        versionAlpha: {
-          title: 'Alpha',
-          type: 'string',
-        },
-        versionBeta: {
-          title: 'Beta',
-          type: 'string',
-        },
-        versionRC: {
-          title: 'RC',
-          type: 'string',
-        },
-        versionGold: {
-          title: 'Gold',
           type: 'string',
         },
       },
@@ -272,15 +237,6 @@ async function seed(knex) {
     name: 'Q',
     manufacturer: 'Alere',
     deviceTypeCategoryId: deviceTypeCategoryLab,
-  })
-
-  const [deviceTypeM2000Id] = await knex('DeviceType').insert({
-    externalId: 'AbbottM2000',
-    name: 'm2000',
-    manufacturer: 'Abbott',
-    deviceTypeCategoryId: deviceTypeCategoryLab,
-    configurationDataSchema: m2000ConfigurationDataSchema,
-    deviceOperationSchema,
   })
 
   const [deviceTypeChaiId] = await knex('DeviceType').insert({
@@ -842,7 +798,7 @@ async function seed(knex) {
     name: 'Daktari HIV-VL',
     abbreviation: 'DAK HIV VL',
     i18nKey: 'assayDaktariHivVl',
-    externalId: 'DaktariHivVl',
+    externalId: 'DaktariHivVL',
     assayTypeId: assayTypeHivVlId,
     deviceTypeId: deviceTypeDaktariVirologyId,
     resultSourceId: resultSourceDiagnosticId,
@@ -874,7 +830,7 @@ async function seed(knex) {
     name: 'Afinion HIV VL',
     abbreviation: 'AF HIV VL',
     i18nKey: 'assayAfinionHivVl',
-    externalId: 'AfinionHivVl',
+    externalId: 'AfinionHivVL',
     assayTypeId: assayTypeHivVlId,
     deviceTypeId: deviceTypeAfinionId,
     resultSourceId: resultSourceDiagnosticId,
@@ -924,7 +880,7 @@ async function seed(knex) {
     name: 'Q HIV VL',
     abbreviation: 'Q HIV VL',
     i18nKey: 'assayQHivVl',
-    externalId: 'HivVl',
+    externalId: 'QHivVL',
     assayTypeId: assayTypeHivVlId,
     deviceTypeId: deviceTypeQId,
     resultSourceId: resultSourceDiagnosticId,
@@ -933,117 +889,10 @@ async function seed(knex) {
   })
 
   await knex('Assay').insert({
-    name: 'Abbott m2000 HIV VL',
-    abbreviation: 'm2000 HIV VL',
-    i18nKey: 'AssayAbbottM2000HivVl',
-    externalId: 'HivVl',
-    assayTypeId: assayTypeHivVlId,
-    deviceTypeId: deviceTypeM2000Id,
-    resultSourceId: resultSourceDiagnosticId,
-    resultCategory1Label: 'HIV',
-    resultCategory1i18nKey: 'resultCategoryHivVl',
-    resultDataSchema: JSON.stringify({
-      resultText: {
-        list: true,
-        title: 'Result',
-        type: 'string',
-      },
-    }),
-    patientDataSchema: JSON.stringify({
-      provider: {
-        title: 'Provider ID',
-        type: 'string',
-      },
-      name: {
-        title: 'Client Name',
-        type: 'string',
-        order: 1,
-      },
-      surname: {
-        title: 'Client Surname',
-        type: 'string',
-        order: 2,
-      },
-      addressPhone: {
-        title: 'Address/Phone',
-        type: 'string',
-        order: 3,
-      },
-      artNumber: {
-        title: 'ART #',
-        type: 'string',
-        order: 4,
-      },
-      gender: {
-        title: 'Gender',
-        type: 'string',
-        order: 5,
-      },
-    }),
-  })
-
-  await knex('Assay').insert({
-    name: 'Abbott m2000 EID',
-    abbreviation: 'm2000 EID',
-    i18nKey: 'AssayAbbottM2000Eid',
-    externalId: 'EID',
-    assayTypeId: assayTypeEid,
-    deviceTypeId: deviceTypeM2000Id,
-    resultSourceId: resultSourceDiagnosticId,
-    resultCategory1Label: 'EID',
-    resultCategory1i18nKey: 'resultCategoryEid',
-    resultDataSchema: JSON.stringify({
-      resultText: {
-        list: true,
-        title: 'Result',
-        type: 'string',
-      },
-    }),
-    patientDataSchema: JSON.stringify({
-      provider: {
-        title: 'Provider ID',
-        type: 'string',
-        order: 0,
-      },
-      name: {
-        title: 'Client Name',
-        type: 'string',
-        order: 1,
-      },
-      surname: {
-        title: 'Client Surname',
-        type: 'string',
-        order: 2,
-      },
-      addressPhone: {
-        title: 'Address/Phone',
-        type: 'string',
-        order: 3,
-      },
-      motherName: {
-        title: "Mother's Name",
-        type: 'string',
-        order: 4,
-      },
-      hccNumber: {
-        list: true,
-        title: 'HCC #',
-        type: 'string',
-        order: 5,
-      },
-      gender: {
-        title: 'Gender',
-        type: 'string',
-        order: 6,
-      },
-    }),
-  })
-
-  await knex('Assay').insert({
     name: 'CHAI HIV VL',
     abbreviation: 'CHAI HIV VL',
     i18nKey: 'AssayChaiHivVl',
-    externalId: 'HivVl',
+    externalId: 'CHAIHivVL',
     assayTypeId: assayTypeHivVlId,
     deviceTypeId: deviceTypeChaiId,
     resultSourceId: resultSourceLIMSId,
@@ -1108,7 +957,7 @@ async function seed(knex) {
     name: 'CHAI EID',
     abbreviation: 'CHAI EID',
     i18nKey: 'AssayChaiEid',
-    externalId: 'EID',
+    externalId: 'CHAIEID',
     assayTypeId: assayTypeEid,
     deviceTypeId: deviceTypeChaiId,
     resultSourceId: resultSourceLIMSId,

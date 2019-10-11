@@ -3,6 +3,7 @@ module.exports = require('../utils').seed(seed, __filename)
 const bcrypt = require('bcrypt')
 const config = require('../../src/config')
 const utils = require('../utils')
+const { seedAbbottM2000AndAssays } = require('../utils_abbott_m2000')
 const geography = require('./fixtures/geography.json')
 const { partnerTypeToId } = require('../../src/shared/dictionary')
 const { commonInserts } = require('../common')
@@ -31,6 +32,8 @@ async function seed(knex) {
     maxDaysDeviceNoResults: 14,
     serverUrl: 'https://cameroon.aspect.id',
   })
+
+  await seedAbbottM2000AndAssays(knex)
 
   await commonInserts(
     knex,
