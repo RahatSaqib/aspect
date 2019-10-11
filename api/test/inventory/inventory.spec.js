@@ -149,6 +149,20 @@ describe('Inventory Routes', () => {
       describe('GET', () => {
         shared.checkToken(server, path)
 
+        const assertAggregatedItem = item => {
+          assert.property(item, 'consumableId')
+          assert.property(item, 'consumableName')
+          // counts
+          assert.property(item, 'outOfStock')
+          assert.property(item, 'upTo14')
+          assert.property(item, 'upto30')
+          assert.property(item, 'upTo90')
+          assert.property(item, 'upTo180')
+          assert.property(item, 'moreThan180')
+          assert.property(item, 'notRecorded')
+          assert.property(item, 'noConsumption')
+        }
+
         it('should return a list of sites with inventories counts, when using valid token', done => {
           server
             .get(path)
@@ -158,28 +172,7 @@ describe('Inventory Routes', () => {
               assert.typeOf(res.body, 'Object')
               assert.property(res.body, 'data')
               assert.typeOf(res.body.data, 'array')
-              res.body.data.forEach(site => {
-                // ids
-                assert.property(site, 'countryId')
-                assert.property(site, 'stateId')
-                assert.property(site, 'lgaId')
-                assert.property(site, 'siteId')
-                // names
-                assert.property(site, 'countryName')
-                assert.property(site, 'stateName')
-                assert.property(site, 'lgaName')
-                assert.property(site, 'siteName')
-                assert.property(site, 'consumableName')
-                // counts
-                assert.property(site, 'outOfStock')
-                assert.property(site, 'upTo14')
-                assert.property(site, 'upto30')
-                assert.property(site, 'upTo90')
-                assert.property(site, 'upTo180')
-                assert.property(site, 'moreThan180')
-                assert.property(site, 'notRecorded')
-                assert.property(site, 'noConsumption')
-              })
+              res.body.data.forEach(item => assertAggregatedItem(item))
               assert.property(res.body, 'total')
               done()
             })
@@ -195,12 +188,7 @@ describe('Inventory Routes', () => {
             .set('Authorization', `Bearer ${shared.token}`)
             .end((err, res) => {
               assert.equal(res.status, 200)
-              res.body.data.forEach(site => {
-                assert.includes(
-                  site.siteName.toLowerCase(),
-                  siteNameFilter.toLowerCase()
-                )
-              })
+              res.body.data.forEach(item => assertAggregatedItem(item))
               done()
             })
         })

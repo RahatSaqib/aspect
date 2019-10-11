@@ -625,16 +625,9 @@ async function getDaysByLocation(request) {
   // group by location fields and consumableId, and return different counts
   const result = await knex
     .from(baseWithCalculatedFields.as('t2'))
-    .groupBy('countryId', 'stateId', 'lgaId', 'siteId', 'consumableId')
+    .groupBy('consumableId')
     .select(
-      'countryId',
-      'stateId',
-      'lgaId',
-      'siteId',
-      'countryName',
-      'stateName',
-      'lgaName',
-      'siteName',
+      'consumableId',
       'consumableName',
       knex.raw(
         'COUNT(CASE WHEN daysUnexpired IS NOT NULL AND daysUnexpired = 0 THEN true ELSE null END) as outOfStock'
