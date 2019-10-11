@@ -35,8 +35,7 @@ const millisInMinute = 1000 * 60
 const millisInNormalYear = 1000 * 60 * 60 * 24 * 365
 const resultTimeFrameInDays = 365
 
-const resultMultiplier = process.env['seeds.resultMultiplier'] || 100
-const resultHcvNumber = 0.5 * resultMultiplier
+const resultHcvNumber = 100
 const now = new Date()
 const patientNumber = patients.length - 1
 

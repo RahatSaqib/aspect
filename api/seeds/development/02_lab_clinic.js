@@ -39,8 +39,8 @@ const saltRounds = parseInt(config.passwordSaltRounds, 10)
 const millisInMinute = 1000 * 60
 const resultTimeFrameInDays = 180
 const resultMultiplier = process.env['seeds.resultMultiplier'] || 100
-const resultEidNumber = 8 * resultMultiplier
-const resultHivVlNumber = 70 * resultMultiplier
+const resultEidNumber = 0.2 * resultMultiplier
+const resultHivVlNumber = resultMultiplier
 const now = new Date()
 const patientNumber = patients.length - 1
 
