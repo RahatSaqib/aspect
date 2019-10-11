@@ -302,8 +302,6 @@ describe('Device API Raw Abbott M2000 Data Processor', () => {
       lastPingFromIp: deviceIpAddress,
       lastPingOn: utcNow,
       lastSeenOn: utcNow,
-      rawData:
-        'H|\\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312\\r\\x0395\\r\\n\nP|1\\r\\x0342\\r\\n\nO|1|SYS123572|SYS123572^vl110^H2|^^^1mLDBSvOP^HIV1.0mlDBS|||||||||||||||||||||F\\r\\x0384\\r\\n\nR|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|Not detected|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695\\r\\x03A5\\r\\n\nR|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^I|Target not detected|||||F||bryan^bryan||20190825165311|275021695\\r\\x038C\\r\\n\nR|3|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|-1.00|cycle number|||F||br|yan^bryan||20190825165311|275021695\\r\\x0300\\r\\n\nL|1\\r\\x033B\\r\\n',
       serial: '275021695',
       siteId: 5,
       updatedOn: utcNow,

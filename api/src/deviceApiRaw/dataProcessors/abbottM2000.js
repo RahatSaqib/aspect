@@ -650,11 +650,13 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
           .update(
             _.mergeWith(
               _.cloneDeep(device),
-              _.cloneDeep(_.omit(deviceDetailsInPayload), [
-                'comments',
-                'enquiries',
-                'rawData',
-              ]),
+              _.cloneDeep(
+                _.omit(deviceDetailsInPayload, [
+                  'comments',
+                  'enquiries',
+                  'rawData',
+                ])
+              ),
               { updatedOn: utcNow },
               mergeDeep
             )
