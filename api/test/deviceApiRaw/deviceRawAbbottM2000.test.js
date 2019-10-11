@@ -290,7 +290,11 @@ describe('Device API Raw Abbott M2000 Data Processor', () => {
       updateCall => updateCall.args[0] === 'Device'
     )
     expect(updateDeviceCalls).to.have.lengthOf(1)
-    expect(updateDeviceCalls[0].args[1]).to.containSubset({
+    const actualDeviceUpdates = updateDeviceCalls[0].args[1]
+    actualDeviceUpdates.configurationData = JSON.parse(
+      actualDeviceUpdates.configurationData
+    )
+    expect(actualDeviceUpdates).to.containSubset({
       configurationData: {
         comments: [],
         deviceTypeName: 'm2000',
