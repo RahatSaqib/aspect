@@ -859,7 +859,7 @@ async function seed(knex) {
     const device = m2000Devices[i % m2000Devices.length]
     const siteData = await knex('Site')
       .where('id', device.siteId)
-      .first('id')
+      .first('id', 'geographyId')
     const sample = samples[i % samples.length]
     const randomDate = calculateDateForResult(i, resultEidNumber, 6000)
 
@@ -874,6 +874,7 @@ async function seed(knex) {
       sample.externalId,
       device.id
     )
+
     const resultId = await knex('Result').insert(
       Object.assign({}, auditFields, {
         externalId: resultExternalId,
@@ -1042,7 +1043,7 @@ async function seed(knex) {
     const device = m2000Devices[i % m2000Devices.length]
     const siteData = await knex('Site')
       .where('id', device.siteId)
-      .first('id')
+      .first('id', 'geographyId')
     const sample = samples[i % samples.length]
     const randomDate = calculateDateForResult(i, resultHivVlNumber, 6000)
 
