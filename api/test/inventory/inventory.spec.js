@@ -155,7 +155,7 @@ describe('Inventory Routes', () => {
           // counts
           assert.property(item, 'outOfStock')
           assert.property(item, 'upTo14')
-          assert.property(item, 'upto30')
+          assert.property(item, 'upTo30')
           assert.property(item, 'upTo90')
           assert.property(item, 'upTo180')
           assert.property(item, 'moreThan180')

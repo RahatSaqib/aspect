@@ -636,16 +636,13 @@ async function getDaysByLocation(request) {
         'COUNT(CASE WHEN daysUnexpired IS NOT NULL AND daysUnexpired BETWEEN 1 and 14 THEN true ELSE null END) as upTo14'
       ),
       knex.raw(
-        'COUNT(CASE WHEN daysUnexpired IS NOT NULL AND daysUnexpired BETWEEN 15 and 30 THEN true ELSE null END) as upto30'
+        'COUNT(CASE WHEN daysUnexpired IS NOT NULL AND daysUnexpired BETWEEN 15 and 30 THEN true ELSE null END) as upTo30'
       ),
       knex.raw(
         'COUNT(CASE WHEN daysUnexpired IS NOT NULL AND daysUnexpired BETWEEN 31 and 90 THEN true ELSE null END) as upTo90'
       ),
       knex.raw(
         'COUNT(CASE WHEN daysUnexpired IS NOT NULL AND daysUnexpired BETWEEN 91 and 180 THEN true ELSE null END) as upTo180'
-      ),
-      knex.raw(
-        'COUNT(CASE WHEN daysUnexpired IS NOT NULL AND daysUnexpired > 180 THEN true ELSE null END) as moreThan180'
       ),
       knex.raw(
         'COUNT(CASE WHEN daysUnexpired IS NOT NULL AND daysUnexpired > 180 THEN true ELSE null END) as moreThan180'

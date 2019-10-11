@@ -186,6 +186,52 @@ const routes = [
       notes:
         'Returns list of inventory counts grouped by site/geography/state/lga',
       ...listSuppliesBaseConfig(),
+      response: {
+        options: {
+          allowUnknown: false,
+        },
+        schema: Joi.object().keys({
+          ok: Joi.bool()
+            .required()
+            .description('False on any non-fatal error'),
+          total: Joi.number()
+            .required()
+            .description('The total number of items aggregated by consumable'),
+          data: Joi.array()
+            .allow(null)
+            .items(
+              Joi.object().keys({
+                consumableId: Joi.number().description('The consumable id'),
+                consumableName: Joi.string().description('The consumable name'),
+
+                outOfStock: Joi.number().description(
+                  'Number of locations which are out of stock'
+                ),
+                upTo14: Joi.number().description(
+                  'Number of locations with inventories up to 14 days in stock'
+                ),
+                upTo30: Joi.number().description(
+                  'Number of locations with inventories up to 30 days in stock'
+                ),
+                upTo90: Joi.number().description(
+                  'Number of locations with inventories up to 90 days in stock'
+                ),
+                upTo180: Joi.number().description(
+                  'Number of locations with inventories up to 180 days in stock'
+                ),
+                moreThan180: Joi.number().description(
+                  'Number of locations with inventories for more than 180 days in stock'
+                ),
+                notRecorded: Joi.number().description(
+                  'Number of locations with no recorded inventories in stock'
+                ),
+                noConsumption: Joi.number().description(
+                  'Number of locations which have not been consumed inventories so far'
+                ),
+              })
+            ),
+        }),
+      },
     },
   },
   {
