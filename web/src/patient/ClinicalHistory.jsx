@@ -1,149 +1,67 @@
-import _ from 'lodash'
 import classnames from 'classnames/bind'
-
-import React from 'react'
-import { compose, withProps, withHandlers, lifecycle } from 'recompose'
-import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
+import React, { useRef, useEffect, useState } from 'react'
+
 import Helmet from 'react-helmet'
 import Grid from '@material-ui/core/Grid'
 import Paper from '@material-ui/core/Paper'
 import NavTitle from '../globals/components/NavTitle'
 import DetailBackBar from '../globals/components/DetailBackBar'
 import AspectTimeline from './timeline/Timeline'
+import { fetchResultsByPatient } from './PatientRedux'
 
 const cssClasses = classnames.bind(require('./ClinicalHistory.css'))
 
-const enhance = compose(
-  withProps(({ location }) => {
-    const searchParams = new URLSearchParams(location.search)
-    const filtersParams = new URLSearchParams(searchParams.get('filters') || '')
-    return {
-      filters: _.fromPairs([...filtersParams.entries()]),
-    }
-  }),
-  // connect(
-  //   state => ({
-  //     items: state.site.items,
-  //     table: state.site.table,
-  //     userPermissions: state.user.jwt.permissions,
-  //   }),
-  //   bindActionCreators.bind(null, null)
-  // ),
-  withHandlers({
-    /*   onInitialLoad: ({
-      fetchSites,
-      sortCol,
-      sortDir,
-      pageAt,
-      pageSize,
-    }) => () => {
-      const { sanitized, value: filtersParams } = filtersFromLocation(location)
-      if (!sanitized) {
-        fetchSites(filtersParams, sortCol, sortDir, pageAt, pageSize)
-      }
-    },
+export const ClinicalHistory = props => {
+  const { history, location, items, fetchResultsByPatient } = props
 
-    onAlertClick: ({ history }) => event => {
-      event.stopPropagation()
-      const {
-        currentTarget: {
-          dataset: { siteId },
-        },
-      } = event
-      history.push(`/browse/site/${siteId}/alerts`)
-    },
-
-    onExcelClick: ({
-      location,
-      exportSites,
-      sortCol,
-      sortDir,
-      pageAt,
-      table,
-    }) => formatType => {
-      const format = formatType.id
-      const { sanitized, value: filtersParams } = filtersFromLocation(location)
-      if (!sanitized) {
-        exportSites(
-          filtersParams,
-          sortCol,
-          sortDir,
-          pageAt,
-          table.get('total') > 0 ? table.get('total') : 1,
-          format,
-          'sites'
-        )
-      }
-    },
-
-    onRowClick: ({ history }) => ({
-      currentTarget: {
-        dataset: { siteId },
-      },
-    }) => history.push(`/browse/site/${siteId}`), */
-  })
-  /* lifecycle({
-    componentWillMount() { */
-  /* this.setState({
-        reducedFilters,
-      }) */
-  //  },
-
-  // componentDidMount() {
-  //   this.props.onInitialLoad()
-  // },
-
-  // componentWillReceiveProps(nextProps) {
-  //   if (this.props.location.search !== nextProps.location.search) {
-  //     this.props.onInitialLoad()
-  //   }
-  // },
-  // })
-)
-const data = [
-  {
-    text: 'Wrote my first blog post ever on Medium',
-    date: 'March 03 2017',
-    category: {
-      tag: 'medium',
-      color: '#018f69',
-    },
-    link: {
-      url:
-        'https://medium.com/@popflorin1705/javascript-coding-challenge-1-6d9c712963d2',
-      text: 'Read more',
-    },
-  },
-  {
-    // Another object with data
-  },
-]
-export const ClinicalHistory = ({ history, location }) => {
   const onBackClick = () => {
     history.goBack()
   }
+
+  const once = useRef(false)
+  const [patientId, setPatientId] = useState('')
+  useEffect(() => {
+    // componentDidMount goes in here
+    // everything with this if clause will only run once
+    if (once.current === false) {
+      once.current = true
+      setPatientId(props.match.params.patientId)
+      fetchResultsByPatient(props.match.params.patientId)
+
+      // clean up after componentDidMount
+      return () => {}
+    }
+
+    // componentDidUpdate goes in here
+    // everything listed here will run whenever the component was updated
+    console.log('items', items.toJS())
+    // clean up after componentDidUpdate
+
+    return () => {}
+  }, [fetchResultsByPatient, items, patientId, props.match.params.patientId])
+
   const events = [
     {
-      date: '12/08/1981',
+      date: new Date(),
+      title: 'Sample 1',
+      subtitle: 'Test 1',
+      details: 'details',
+    },
+    {
+      date: new Date(),
       title: 'Sample 1',
       subtitle: 'Test 1',
       details: 'asdasdasdasdasdasdasdas',
     },
     {
-      date: '12/08/1981',
+      date: new Date(),
       title: 'Sample 1',
       subtitle: 'Test 1',
       details: 'asdasdasdasdasdasdasdas',
     },
     {
-      date: '12/08/1981',
-      title: 'Sample 1',
-      subtitle: 'Test 1',
-      details: 'asdasdasdasdasdasdasdas',
-    },
-    {
-      date: '12/08/1981',
+      date: new Date(),
       title: 'Sample 1',
       subtitle: 'Test 1',
       details: 'asdasdasdasdasdasdasdas',
@@ -156,17 +74,156 @@ export const ClinicalHistory = ({ history, location }) => {
       <DetailBackBar
         history={history}
         location={location}
-        // match={match}
         onBackClick={onBackClick}
-        title="Patient 1334-12312-123"
+        title={`Patient ${patientId}`}
       />
 
       <section className={cssClasses('Section', 'Section--first')}>
         <Grid container spacing={4} alignItems="stretch" direction="row">
-          <Grid item xs={8}>
-            <Paper style={{ height: '100%' }}>fecha</Paper>
+          <Grid item xs={4}>
+            <Paper style={{ height: '100%' }}>
+              <div className="ExpansionPanel--Label--2830PGK9">
+                <h1
+                  style={{
+                    fontSize: '1.8rem',
+                    color: '#3e8f98',
+                    width: '90%',
+                    maxWidth: 1200,
+                    margin: '0 auto',
+                    textAlign: 'center',
+                    paddingTop: 40,
+                    paddingBottom: 50,
+                  }}
+                >
+                  Patient Details
+                </h1>
+              </div>
+              <div
+                className="ExpansionPanel--Detail__Content--wNTlYFfV"
+                style={{ paddingRigth: 100, paddingLeft: 100 }}
+              >
+                <div className="DetailPanel--Field__Container--34KfOVCb">
+                  <div className="ReadOnlyField--Container--2SFi-H7_">
+                    <label
+                      htmlFor="City"
+                      className="ReadOnlyField--Container__Label--2la6CCdI"
+                    >
+                      City
+                    </label>
+                    <div
+                      id="City"
+                      className="ReadOnlyField--Container__Value--33FHRX9D"
+                    >
+                      Edingeni
+                    </div>
+                  </div>
+                  <div className="ReadOnlyField--Container--2SFi-H7_">
+                    <label
+                      htmlFor="State"
+                      className="ReadOnlyField--Container__Label--2la6CCdI"
+                    >
+                      State
+                    </label>
+                    <div
+                      id="State"
+                      className="ReadOnlyField--Container__Value--33FHRX9D"
+                    >
+                      Mzimba
+                    </div>
+                  </div>
+                  <div className="ReadOnlyField--Container--2SFi-H7_">
+                    <label
+                      htmlFor="Zip"
+                      className="ReadOnlyField--Container__Label--2la6CCdI"
+                    >
+                      Zip
+                    </label>
+                    <div
+                      id="Zip"
+                      className="ReadOnlyField--Container__Value--33FHRX9D"
+                    >
+                      38872
+                    </div>
+                  </div>
+                </div>
+                <div className="DetailPanel--Field__Container--34KfOVCb">
+                  <div className="ReadOnlyField--Container--2SFi-H7_">
+                    <label
+                      htmlFor="Phone"
+                      className="ReadOnlyField--Container__Label--2la6CCdI"
+                    >
+                      Phone
+                    </label>
+                    <div
+                      id="Phone"
+                      className="ReadOnlyField--Container__Value--33FHRX9D"
+                    >
+                      345-304-0414
+                    </div>
+                  </div>
+                  <div className="ReadOnlyField--Container--2SFi-H7_">
+                    <label
+                      htmlFor="HIV_Status"
+                      className="ReadOnlyField--Container__Label--2la6CCdI"
+                    >
+                      HIV Status
+                    </label>
+                    <div
+                      id="HIV_Status"
+                      className="ReadOnlyField--Container__Value--33FHRX9D"
+                    >
+                      HIV Unknown
+                    </div>
+                  </div>
+                  <div className="ReadOnlyField--Container--2SFi-H7_">
+                    <label
+                      htmlFor="Age_(in years)"
+                      className="ReadOnlyField--Container__Label--2la6CCdI"
+                    >
+                      Age (in years)
+                    </label>
+                    <div
+                      id="Age_(in years)"
+                      className="ReadOnlyField--Container__Value--33FHRX9D"
+                    >
+                      8
+                    </div>
+                  </div>
+                </div>
+                <div className="DetailPanel--Field__Container--34KfOVCb">
+                  <div className="ReadOnlyField--Container--2SFi-H7_">
+                    <label
+                      htmlFor="Gender"
+                      className="ReadOnlyField--Container__Label--2la6CCdI"
+                    >
+                      Gender
+                    </label>
+                    <div
+                      id="Gender"
+                      className="ReadOnlyField--Container__Value--33FHRX9D"
+                    >
+                      Male
+                    </div>
+                  </div>
+                  <div className="ReadOnlyField--Container--2SFi-H7_">
+                    <label
+                      htmlFor="Microscopy_Result"
+                      className="ReadOnlyField--Container__Label--2la6CCdI"
+                    >
+                      Microscopy Result
+                    </label>
+                    <div
+                      id="Microscopy_Result"
+                      className="ReadOnlyField--Container__Value--33FHRX9D"
+                    >
+                      Smear Positive
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </Paper>
           </Grid>
-          <Grid item xs={4} sm container style={{ marginLeft: 10 }}>
+          <Grid item xs={8} sm container style={{ marginLeft: 10 }}>
             <Paper style={{ width: '100%' }}>
               <AspectTimeline
                 items={events}
@@ -179,5 +236,12 @@ export const ClinicalHistory = ({ history, location }) => {
     </div>
   )
 }
+const mapStateToProps = state => ({
+  items: state.patient.items,
+  userPermissions: state.user.jwt.permissions,
+})
 
-export default enhance(ClinicalHistory)
+export default connect(
+  mapStateToProps,
+  { fetchResultsByPatient }
+)(ClinicalHistory)
