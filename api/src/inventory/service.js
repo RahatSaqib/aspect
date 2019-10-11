@@ -546,9 +546,9 @@ async function getDaysByLocation(request) {
     .leftOuterJoin('Site as itfs', 'ii.inTransitFromSiteId', 'itfs.id')
     // dailyRate
     .leftOuterJoin('FactInventoryConsumptionRate as rate1', function() {
-      this.on('rate1.siteId', '=', 's.id')
-        .andOn('rate1.consumableId', '=', 'c.id')
-        .andOn('rate1.days', '=', 1)
+      this.on('rate1.siteId', 's.id')
+        .andOn('rate1.consumableId', 'c.id')
+        .andOn('rate1.days', 1)
     })
     .modify(filterParams, request.query, INVENTORY_ITEM_FILTER_FIELDS)
     .modify(filterDateRangeParams, request.query, 'ii.expiresOn')
