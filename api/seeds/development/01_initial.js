@@ -4927,7 +4927,7 @@ async function seed(knex) {
       const siteData = siteDatas[i % siteDatas.length]
       const [routerId] = await knex('Device').insert(
         Object.assign({}, auditFields, {
-          name: `Router at ${i} ${siteData.shortName}`,
+          name: `Router at ${siteData.shortName}`,
           shortName: `r${i}`,
           deviceTypeId: deviceTypeIdRouter,
           deviceStatusId: deviceStatusApproved,
@@ -4963,7 +4963,7 @@ async function seed(knex) {
       const siteData = siteDatas[i % siteDatas.length]
       const routerId = routerIds[i]
       const device = Object.assign({}, auditFields, {
-        name: `GeneXpert #${i} ${siteData.shortName}`,
+        name: `GeneXpert`,
         shortName: `GeneXpert #${i}`,
         deviceTypeId: deviceTypeGeneXpertId,
         deviceStatusId: deviceStatusApproved,

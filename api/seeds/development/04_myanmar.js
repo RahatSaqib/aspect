@@ -785,12 +785,8 @@ async function seed(knex) {
   )
 
   // Fill Issue/AlertMessage/Notification table with some mock data
-  const { rootId } = await knex('User')
-    .where({ name: 'Admin' })
-    .first('id as rootId')
-  const devices = await knex('Device')
-    .where({ partnerId })
-    .orWhere('partnerId', rootId)
+  const devices = await knex('Device').where({ partnerId })
+
   const issueStatusActiveId = await getId(knex, 'IssueStatus', 'Active')
   const issueStatusAcknowledgedId = await getId(
     knex,
