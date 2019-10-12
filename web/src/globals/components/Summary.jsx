@@ -10,8 +10,9 @@ const cssClasses = classnames.bind(require('./Summary.css'))
 
 const enhance = _.identity
 
-const descriptionSection = (description, to, action) => (
+const descriptionSection = (description, to, action, landscape, title) => (
   <div className={cssClasses('Summary__Description')}>
+    {landscape && <title />}
     {description}
     {to && (
       <Link to={to} className={cssClasses('Summary__Description__Link')}>
@@ -26,16 +27,29 @@ const descriptionSection = (description, to, action) => (
   </div>
 )
 
-const Summary = ({ title, description, to, action, cols }) => (
+const Summary = ({
+  title,
+  description,
+  to,
+  action,
+  cols,
+  landscape = false,
+}) => (
   <Unit sm={`1-${cols}`} className={cssClasses('Summary')}>
-    <div className={cssClasses('Summary__Title')}>{title}</div>
+    {!landscape && <div className={cssClasses('Summary__Title')}>{title}</div>}
     {Array.isArray(description)
       ? description.map(item => (
           <Fragment key={item.description}>
-            {descriptionSection(item.description, item.to, item.action)}
+            {descriptionSection(
+              item.description,
+              item.to,
+              item.action,
+              landscape,
+              title
+            )}
           </Fragment>
         ))
-      : descriptionSection(description, to, action)}
+      : descriptionSection(description, to, action, landscape, title)}
   </Unit>
 )
 
@@ -56,12 +70,14 @@ Summary.propTypes = {
   to: PropTypes.string,
   action: PropTypes.string,
   cols: PropTypes.string,
+  landscape: PropTypes.bool,
 }
 
 Summary.defaultProps = {
   to: null,
   action: null,
   cols: '3',
+  landscape: false,
 }
 
 export default enhance(Summary)

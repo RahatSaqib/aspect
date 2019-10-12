@@ -1085,32 +1085,56 @@ const routes = [
                   .description('The result site name'),
                 resultNotes: Joi.string()
                   .required()
+                  .allow(null)
                   .description('The result notes'),
                 resultStatus: Joi.string()
                   .required()
+                  .allow(null)
                   .description('The result status'),
                 resultStatusLog: Joi.date()
                   .iso()
                   .required()
+                  .allow(null)
                   .description('The Result status log date'),
-                resultTestStatusLog: Joi.date()
+                resultTestStatusLogDate: Joi.date()
                   .iso()
                   .required()
+                  .allow(null)
                   .description(
                     'The result Treatment status date in iso format'
                   ),
+                resultTestStatusLogNotes: Joi.string()
+                  .required()
+                  .allow(null)
+                  .description(
+                    'The result Treatment status date in iso format'
+                  ),
+                resultTestStatusLogId: Joi.number()
+                  .required()
+                  .allow(null)
+                  .description('the result status'),
                 resultTreatmentId: Joi.string()
                   .required()
-                  .description('The result treatment id'),
+                  .description('The result treatment status id'),
+                resultTreatmentName: Joi.string()
+                  .required()
+                  .allow(null)
+                  .description('The result treatment status name'),
                 patientData: Joi.object()
                   .keys({
                     probes: Joi.object(),
                     resultText: Joi.string(),
                   })
+                  .allow(null)
                   .description('Patient data'),
-                followUps: Joi.array()
-                  .items(Joi.object())
-                  .description('Follow ups for the result'),
+                type: Joi.string()
+                  .required()
+                  .description('The type of the milestone'),
+                date: Joi.date()
+                  .iso()
+                  .required()
+                  .description('The date of the milestone'),
+                notes: Joi.string().description('description of the milestone'),
               })
             )
             .required()

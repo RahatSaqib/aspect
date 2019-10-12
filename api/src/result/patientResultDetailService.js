@@ -134,7 +134,6 @@ async function getPatientResultsDetails(request) {
       )
     )
   })
-  console.log(_.orderBy(finalResult, 'date', 'desc'))
   return {
     ok: finalResult.length >= 1,
     data: _.orderBy(finalResult, 'date', 'desc'),

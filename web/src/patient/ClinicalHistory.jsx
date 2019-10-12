@@ -1,19 +1,43 @@
 import classnames from 'classnames/bind'
 import { connect } from 'react-redux'
 import React, { useRef, useEffect, useState } from 'react'
+import { defineMessages } from 'react-intl'
 
 import Helmet from 'react-helmet'
+import _ from 'lodash'
 import Grid from '@material-ui/core/Grid'
 import Paper from '@material-ui/core/Paper'
 import NavTitle from '../globals/components/NavTitle'
 import DetailBackBar from '../globals/components/DetailBackBar'
 import AspectTimeline from './timeline/Timeline'
 import { fetchResultsByPatient } from './PatientRedux'
+import Summary from '../globals/components/Summary'
 
 const cssClasses = classnames.bind(require('./ClinicalHistory.css'))
 
+const messages = defineMessages({
+  resultNotes: {
+    id: 'pages.ClinicalHistory.resultNotes',
+    defaultMessage: 'Result',
+  },
+  resultSiteName: {
+    id: 'pages.ClinicalHistory.resultSiteName',
+    defaultMessage: 'Lab',
+  },
+})
+
 export const ClinicalHistory = props => {
   const { history, location, items, fetchResultsByPatient } = props
+  const TimelineItemResult = ({ result, intl }) => (
+    <Grid item xs>
+      {console.log('entre')}
+      lalala
+      {/* <Summary title="Result Title" description={result.notes} />
+        {result.notes}
+        <Summary title="Lab" description={result.resultSiteName} />
+        {result.resultSiteName} */}
+    </Grid>
+  )
 
   const onBackClick = () => {
     history.goBack()
@@ -21,6 +45,7 @@ export const ClinicalHistory = props => {
 
   const once = useRef(false)
   const [patientId, setPatientId] = useState('')
+  const [timelineItems, setTimelineItems] = useState([])
   useEffect(() => {
     // componentDidMount goes in here
     // everything with this if clause will only run once
@@ -32,45 +57,42 @@ export const ClinicalHistory = props => {
       // clean up after componentDidMount
       return () => {}
     }
-
+    setTimelineItems(
+      _.map(items, item => {
+        // eslint-disable-next-line new-cap
+        const FixedTimeline = TimelineItemResult({
+          result: item,
+          intl: location,
+        })
+        return {
+          ...item,
+          // eslint-disable-next-line new-cap
+          details: (
+            <div>
+              <FixedTimeline />
+            </div>
+          ),
+        }
+      })
+    )
     // componentDidUpdate goes in here
     // everything listed here will run whenever the component was updated
-    console.log('items', items.toJS())
+
     // clean up after componentDidUpdate
 
     return () => {}
-  }, [fetchResultsByPatient, items, patientId, props.match.params.patientId])
+  }, [
+    fetchResultsByPatient,
+    items,
+    location,
+    patientId,
+    props.match.params.patientId,
+  ])
 
-  const events = [
-    {
-      date: new Date(),
-      title: 'Sample 1',
-      subtitle: 'Test 1',
-      details: 'details',
-    },
-    {
-      date: new Date(),
-      title: 'Sample 1',
-      subtitle: 'Test 1',
-      details: 'asdasdasdasdasdasdasdas',
-    },
-    {
-      date: new Date(),
-      title: 'Sample 1',
-      subtitle: 'Test 1',
-      details: 'asdasdasdasdasdasdasdas',
-    },
-    {
-      date: new Date(),
-      title: 'Sample 1',
-      subtitle: 'Test 1',
-      details: 'asdasdasdasdasdasdasdas',
-    },
-  ]
   return (
     <div className={cssClasses('Container')}>
-      <Helmet title="Patient" />
-      <NavTitle title="Patient" />
+      <Helmet title={`Patient ${patientId}`} />
+      <NavTitle title={`Patient ${patientId}`} />
       <DetailBackBar
         history={history}
         location={location}
@@ -226,7 +248,7 @@ export const ClinicalHistory = props => {
           <Grid item xs={8} sm container style={{ marginLeft: 10 }}>
             <Paper style={{ width: '100%' }}>
               <AspectTimeline
-                items={events}
+                items={timelineItems}
                 title="Clinical History Timeline"
               />
             </Paper>
@@ -237,7 +259,7 @@ export const ClinicalHistory = props => {
   )
 }
 const mapStateToProps = state => ({
-  items: state.patient.items,
+  items: state.patient.items.toJS(),
   userPermissions: state.user.jwt.permissions,
 })
 

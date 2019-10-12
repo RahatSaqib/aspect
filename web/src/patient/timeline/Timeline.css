@@ -102,5 +102,7 @@ h1 {
   padding: 10px;
   line-height: 1.5rem;
   color: #6d6f7d;
+  width: 100%;
+  max-width: 20%;
 
 }
