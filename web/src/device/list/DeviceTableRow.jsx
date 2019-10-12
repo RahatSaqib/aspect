@@ -47,9 +47,7 @@ const DeviceTableRow = ({
     {...restProps}
     className={cssClasses('TableRow', restProps.className)}
   >
-    <TableCell>{`${device.get('type')} at ${device.get(
-      'siteName'
-    )}`}</TableCell>
+    <TableCell>{device.get('name')}</TableCell>
     <TableCell>{device.get('status')}</TableCell>
     <TableCell>
       <Rate

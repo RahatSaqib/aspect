@@ -116,7 +116,7 @@ export const messages = defineMessages({
   },
   highFailuresRatesStatus: {
     id: 'pages.Status.highFailuresRatesStatus',
-    defaultMessage: 'high failures rates',
+    defaultMessage: 'high failure rates',
   },
   reportingStatus: {
     id: 'pages.Status.reportingStatus',

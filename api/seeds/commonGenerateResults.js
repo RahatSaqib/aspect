@@ -184,7 +184,7 @@ async function generateResults(
       const siteData = _.sample(siteDatas)
       await knex('Device').insert(
         Object.assign({}, auditFields, {
-          name: `Router at ${i} ${siteData.shortName}`,
+          name: `${siteData.shortName} Router`,
           shortName: `r${i}`,
           deviceTypeId: elem.id,
           deviceStatusId: deviceStatusApproved,

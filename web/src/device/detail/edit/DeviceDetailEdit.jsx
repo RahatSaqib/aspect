@@ -126,9 +126,7 @@ export const DeviceDetailEdit = ({
   handleSubmit,
   onDeviceTagChange,
 }) => {
-  const deviceName = `${device.getIn(['deviceType', 'name'])} at ${device.get(
-    'siteName'
-  )}`
+  const deviceName = device.get('name')
   return (
     <div>
       <Helmet title={deviceName} />

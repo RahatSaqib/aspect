@@ -875,7 +875,10 @@ async function seed(knex) {
               {
                 issueTypeId,
                 issueStatusId,
-                deviceId: device.id,
+                deviceId:
+                  issueTypes.StockLevelUpdate.id === issueTypeId
+                    ? null
+                    : device.id,
                 siteId: device.siteId,
                 geographyId: device.geographyId,
               },
@@ -1001,7 +1004,10 @@ async function seed(knex) {
               {
                 issueTypeId,
                 issueStatusId,
-                deviceId: device.id,
+                deviceId:
+                  issueTypes.StockLevelUpdate.id === issueTypeId
+                    ? null
+                    : device.id,
                 siteId: device.siteId,
                 geographyId: device.geographyId,
               },

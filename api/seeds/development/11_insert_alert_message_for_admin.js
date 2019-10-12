@@ -44,7 +44,7 @@ async function seed(knex) {
           siteId: site.id,
           deviceTypeId: deviceType.id,
           deviceStatusId,
-          name: deviceType.name,
+          name: `${site.name} ${deviceType.name}`,
           shortName: `D-${_.random(100000, 999999)}`,
           serial: `S1-D-${_.random(100000, 999999)}`,
           lastSeenOn: subDays(now, _.random(1, 30)),
@@ -114,7 +114,16 @@ async function seed(knex) {
               {
                 issueTypeId,
                 issueStatusId,
-                deviceId: device.id,
+                deviceId: _.includes(
+                  [
+                    issueTypes.StockLevelUpdate.id,
+                    issueTypes.InventoryStockout.id,
+                    issueTypes.InventoryStockExpiring.id,
+                  ],
+                  issueTypeId
+                )
+                  ? null
+                  : device.id,
                 siteId: device.siteId,
                 geographyId: device.geographyId,
                 createdOn: issueDate,
@@ -180,7 +189,16 @@ async function seed(knex) {
               {
                 issueTypeId,
                 issueStatusId,
-                deviceId: device.id,
+                deviceId: _.includes(
+                  [
+                    issueTypes.StockLevelUpdate.id,
+                    issueTypes.InventoryStockout.id,
+                    issueTypes.InventoryStockExpiring.id,
+                  ],
+                  issueTypeId
+                )
+                  ? null
+                  : device.id,
                 siteId: device.siteId,
                 geographyId: device.geographyId,
                 createdOn: issueDate,

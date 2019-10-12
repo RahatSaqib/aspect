@@ -227,7 +227,7 @@ async function seed(knex) {
                   siteId,
                   deviceTypeId: await deviceTypeToId(device.deviceTypeId),
                   deviceStatusId: await deviceStatusToId('approved'),
-                  name: `${siteData.shortName} ${device.deviceTypeId} ${device.deviceSerial}`,
+                  name: `${siteData.shortName} ${device.deviceTypeId}`,
                   shortName: `${device.deviceTypeId} ${device.deviceSerial}`,
                   serial: device.deviceSerial,
                   culture: southAfricaCountry.culture,

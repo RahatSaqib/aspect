@@ -555,7 +555,7 @@ async function seed(knex) {
         // Router
         await knex('Device').insert(
           Object.assign({}, auditFields, {
-            name: `Router at ${siteData.name}`,
+            name: `${siteData.name} Router`,
             shortName: `RO-${siteData.shortName}`,
             deviceTypeId: deviceTypeIdRouter,
             deviceStatusId: approvedDeviceStatusId,

@@ -187,8 +187,8 @@ async function getListDevices(query, auth) {
         .as('deliveredThisMonth'),
       // get csv of issue types
       knex('Issue as i1')
-      .leftOuterJoin('IssueType as it', 'i1.issueTypeId', 'it.id')
-      .leftOuterJoin('IssueStatus as ist', 'i1.issueStatusId', 'ist.id')
+        .leftOuterJoin('IssueType as it', 'i1.issueTypeId', 'it.id')
+        .leftOuterJoin('IssueStatus as ist', 'i1.issueStatusId', 'ist.id')
         .leftOuterJoin('IssueCategory as ic', 'it.issueCategoryId', 'ic.id')
         .whereRaw('i1.deviceId = d.id')
         // skip IssueStatus 'Inactive', 'OK' or 'Resolved'

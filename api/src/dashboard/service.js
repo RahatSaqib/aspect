@@ -524,10 +524,13 @@ async function getDeviceList(auth, dataConstraints) {
   const deviceList = await knex('Device as d')
     .innerJoin('Site as s', 's.id', 'd.siteId')
     .innerJoin('Partner as p', 'd.partnerId', 'p.id')
+    .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
+    .innerJoin('DeviceTypeCategory as dtc', 'dt.deviceTypeCategoryId', 'dtc.id')
     .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
     .leftOuterJoin('Issue as i', 'd.id', 'i.deviceId')
     .leftOuterJoin('IssueType as it', 'i.issueTypeId', 'it.id')
     .leftOuterJoin('IssueStatus as ist', 'i.issueStatusId', 'ist.id')
+    .whereIn('dtc.name', ['Lab', 'Integrated'])
     .modify(addConstraints, dataConstraints, {
       site: 's',
       geography: 'g',
@@ -542,7 +545,7 @@ async function getDeviceList(auth, dataConstraints) {
         "sum(ist.externalId not in ('Inactive', 'OK', 'Resolved')) as totalIssues"
       ),
       knex.raw(
-        "sum(it.externalId = 'DeviceNoResults' and ist.externalId not in ('Inactive', 'OK', 'Resolved')) as cntNoResults"
+        "sum((it.externalId = 'DeviceNoResults' or it.externalId = 'DeviceOffline') and ist.externalId not in ('Inactive', 'OK', 'Resolved')) as cntNoResults"
       ),
       knex.raw(
         "sum((it.externalId like 'Machine%' or it.externalId like 'Module%' or it.externalId like 'Reagent%') and ist.externalId not in ('Inactive', 'OK', 'Resolved')) as cntErrorRate"

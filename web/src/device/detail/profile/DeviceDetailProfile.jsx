@@ -701,9 +701,7 @@ export const DeviceDetailProfile = ({
   onCalibrationSubmit,
   onWarrantySubmit,
 }) => {
-  const deviceName = `${device.getIn(['deviceType', 'name'])} at ${device.get(
-    'siteName'
-  )}`
+  const deviceName = device.get('name')
   const dailyCapacity = device.get('dailyCapacity')
   const resultCountThisMonth = device.get('resultCountThisMonth')
   const errorCountThisMonth = device.get('errorCountThisMonth')

@@ -62,21 +62,21 @@ export const messages = defineMessages({
     id: 'pages.SiteList.siteIssues',
     defaultMessage: 'Issues',
   },
-  deviceHealth: {
-    id: 'pages.SiteList.deviceHealth',
-    defaultMessage: 'Device Health',
+  issueCategoryDeviceHealth: {
+    id: 'pages.SiteList.issueCategoryDeviceHealth',
+    defaultMessage: 'Device',
   },
-  reagentHealth: {
-    id: 'pages.SiteList.reagentHealth',
-    defaultMessage: 'Reagent Health',
+  issueCategoryReagentHealth: {
+    id: 'pages.SiteList.issueCategoryReagentHealth',
+    defaultMessage: 'Reagent',
   },
-  dataHealth: {
-    id: 'pages.SiteList.dataHealth',
-    defaultMessage: 'Data Health',
+  issueCategoryDataHealth: {
+    id: 'pages.SiteList.issueCategoryDataHealth',
+    defaultMessage: 'Data',
   },
-  connectivityHealth: {
-    id: 'pages.SiteList.connectivityHealth',
-    defaultMessage: 'Connectivity Health',
+  issueCategoryConnectivityHealth: {
+    id: 'pages.SiteList.issueCategoryConnectivityHealth',
+    defaultMessage: 'Connectivity',
   },
   paginatorStatus: {
     id: 'pages.SiteList.paginatorStatus',
