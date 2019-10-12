@@ -64,9 +64,9 @@ const INVENTORY_ITEM_FILTER_FIELDS = {
   countryId: 'g.countryId',
   stateId: 'g.stateId',
   lgaId: 'g.lgaId',
-  consumableId: 'ii.consumableId',
+  consumableId: 'c.id',
   siteName: 's.name',
-  siteId: 'ii.siteId',
+  siteId: 's.id',
 }
 
 const INVENTORY_ITEM_DATA_CONSTRAINT_ALIASES = { geography: 'g', site: 's' }
@@ -534,16 +534,15 @@ async function getDaysByLocation(request) {
   const dataConstraints = await getConstraints(auth.credentials)
   // -----------------
   const baseInventoryItemsBySiteGeography = query(
-    'Join Inventory Items, Site Details, and Geography Details'
+    'Join Consumable with Inventory Items, Site Details, and Geography Details'
   )
-    .from('InventoryItem as ii')
-    .innerJoin('Consumable as c', 'ii.consumableId', 'c.id')
+    .from('Consumable as c')
+    .innerJoin('InventoryItem as ii', 'c.id', 'ii.consumableId')
     .innerJoin('Site as s', 'ii.siteId', 's.id')
     .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
     .leftOuterJoin('Country as co', 'g.countryId', 'co.id')
     .leftOuterJoin('State as st', 'g.stateId', 'st.id')
     .leftOuterJoin('Lga as l', 'g.lgaId', 'l.id')
-    .leftOuterJoin('Site as itfs', 'ii.inTransitFromSiteId', 'itfs.id')
     // dailyRate
     .leftOuterJoin('FactInventoryConsumptionRate as rate1', function() {
       this.on('rate1.siteId', 's.id')
@@ -558,19 +557,17 @@ async function getDaysByLocation(request) {
       INVENTORY_ITEM_DATA_CONSTRAINT_ALIASES
     )
     .select(
-      'ii.id',
-      'ii.consumableId',
-      'ii.siteId',
-      'ii.lotNumber',
+      'c.id as consumableId',
+      'c.name as consumableName',
+      's.id as siteId',
       'ii.quantityOnHand',
-      // expirationDate - set when quantityOnHand > 0
       knex.raw(
-        'CASE WHEN IFNULL(ii.quantityOnHand,0) > 0 THEN ii.expiresOn ELSE NULL END as expirationDate'
+        'CASE WHEN ii.quantityOnHand IS NOT NULL THEN ii.expiresOn ELSE NULL END as expirationDate'
       ),
       // expiresInDays - when inventory expires, in days
       knex.raw(`
         CASE 
-        WHEN IFNULL(ii.quantityOnHand,0) = 0 THEN NULL
+        WHEN ii.quantityOnHand IS NULL THEN NULL
         ELSE CAST(GREATEST(DATEDIFF(ii.expiresOn, NOW()), 0) AS SIGNED INTEGER)
         END AS expiresInDays
       `),
@@ -582,18 +579,37 @@ async function getDaysByLocation(request) {
         WHEN IFNULL(ii.quantityOnHand,0) > 0 and IFNULL(rate1.rate, 0) > 0 THEN CAST(ii.quantityOnHand / rate1.rate AS SIGNED) 
         ELSE NULL 
         END AS lastsInDays
-      `),
-      'c.name as consumableName',
-      'c.manufacturer',
-      'c.canExpire',
-      's.name as siteName',
-      'g.countryId',
-      'g.stateId',
-      'g.lgaId',
-      'co.name as countryName',
-      'st.name as stateName',
-      'l.name as lgaName'
+      `)
     )
+    .union([
+      query('Join Consumable with Sites which does not have inventories')
+        .from('Consumable as c')
+        .join('Site as s')
+        .leftOuterJoin('InventoryItem as ii', function() {
+          this.on('c.id', 'ii.consumableId').andOn('s.id', 'ii.siteId')
+        })
+        .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
+        .leftOuterJoin('Country as co', 'g.countryId', 'co.id')
+        .leftOuterJoin('State as st', 'g.stateId', 'st.id')
+        .leftOuterJoin('Lga as l', 'g.lgaId', 'l.id')
+        .whereNull('ii.id') // means site doesn't have inventory items
+        .modify(filterParams, request.query, INVENTORY_ITEM_FILTER_FIELDS)
+        .modify(
+          addConstraints,
+          dataConstraints,
+          INVENTORY_ITEM_DATA_CONSTRAINT_ALIASES
+        )
+        .select(
+          'c.id as consumableId',
+          'c.name as consumableName',
+          's.id as siteId',
+          knex.raw('null as quantityOnHand'),
+          knex.raw('null as expirationDate'),
+          knex.raw('null as expiresInDays'),
+          knex.raw('null as dailyRate'),
+          knex.raw('null as lastsInDays')
+        ),
+    ])
   // -----------------
   // add couple of calculated fields - daysUnexpired, wasted
   const baseWithCalculatedFields = knex
@@ -602,7 +618,8 @@ async function getDaysByLocation(request) {
       't1.*',
       knex.raw(`
       CASE 
-        WHEN IFNULL(quantityOnHand,0) = 0 THEN NULL
+        WHEN quantityOnHand IS NULL THEN NULL
+        WHEN quantityOnHand <= 0 THEN 0
         WHEN expiresInDays > lastsInDays OR expirationDate IS NULL OR dailyRate IS NULL
           THEN lastsInDays
         ELSE expiresInDays
@@ -610,10 +627,11 @@ async function getDaysByLocation(request) {
       `),
       knex.raw(`
       CASE
-        WHEN IFNULL(quantityOnHand,0) = 0 THEN NULL
+        WHEN quantityOnHand IS NULL THEN NULL
+        WHEN quantityOnHand <= 0 THEN 0
         WHEN expiresInDays < lastsInDays AND expirationDate IS NOT NULL
-          THEN 
-            CASE 
+          THEN
+            CASE
               WHEN expirationDate > NOW() THEN CAST(dailyRate * (lastsInDays - expiresInDays) AS SIGNED)
               ELSE quantityOnHand
             END
