@@ -29,13 +29,23 @@ const messages = defineMessages({
 export const ClinicalHistory = props => {
   const { history, location, items, fetchResultsByPatient } = props
   const TimelineItemResult = ({ result, intl }) => (
-    <Grid item xs>
-      {console.log('entre')}
-      lalala
-      {/* <Summary title="Result Title" description={result.notes} />
-        {result.notes}
-        <Summary title="Lab" description={result.resultSiteName} />
-        {result.resultSiteName} */}
+    <Grid container spacing={2}>
+      <Grid item xs={12}>
+        <Grid container>
+          <Grid key="1" item>
+            <span className={cssClasses('Summary__Title')}>result status</span>
+            <span className={cssClasses('Summary__Description')}>
+              {result.resultNotes}
+            </span>
+          </Grid>
+          <Grid key="2" item>
+            <span className={cssClasses('Summary__Title')}>Result status</span>
+            <span className={cssClasses('Summary__Description')}>
+              {result.resultNotes}
+            </span>
+          </Grid>
+        </Grid>
+      </Grid>
     </Grid>
   )
 
@@ -67,11 +77,10 @@ export const ClinicalHistory = props => {
         return {
           ...item,
           // eslint-disable-next-line new-cap
-          details: (
-            <div>
-              <FixedTimeline />
-            </div>
-          ),
+          details: TimelineItemResult({
+            result: item,
+            intl: location,
+          }),
         }
       })
     )
