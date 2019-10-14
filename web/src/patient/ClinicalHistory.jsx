@@ -103,11 +103,11 @@ export const ClinicalHistory = props => {
           <Grid item xs={4}>
             <Paper style={{ height: '100%' }}>
               <section style={{ padding: 20 }}>
-                <div>
+                <div style={{ marginTop: 20, textAlign: 'center' }}>
                   <h1>Patient data</h1>
                 </div>
               </section>
-              <div style={{ padding: '0px 20px 20px 20px' }}>
+              <div style={{ padding: '0px 0px 20px 20px' }}>
                 {rawPatientData &&
                   rawPatientData.map(elem => [<ReadOnlyField {...elem} />])}
               </div>
