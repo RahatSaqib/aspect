@@ -39,8 +39,7 @@ const millisInHour = 1000 * 60 * 60
 const millisInMinute = 1000 * 60
 const resultTimeFrameInDays = 365
 
-const resultMultiplier = process.env['seeds.resultMultiplier'] || 100
-const resultMtbNumber = resultMultiplier
+const resultMtbNumber = 100
 
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
 
