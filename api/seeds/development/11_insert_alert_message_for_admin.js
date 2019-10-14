@@ -75,7 +75,9 @@ async function seed(knex) {
     'IssueStatus',
     'Acknowledged'
   )
-
+  const consumableIds = await knex('Consumable')
+    .where('manufacturer', 'Cepheid')
+    .select('id')
   const issue = {
     level: 1,
     partnerId: _.head(devices).partnerId,
@@ -102,6 +104,14 @@ async function seed(knex) {
     _.map(_.take(devices, 20), async device => {
       await Promise.all(
         _.map(luIssueTypeIds, async issueTypeId => {
+          const isStockIssue = _.includes(
+            [
+              issueTypes.StockLevelUpdate.id,
+              issueTypes.InventoryStockout.id,
+              issueTypes.InventoryStockExpiring.id,
+            ],
+            issueTypeId
+          )
           const issueDate = subDays(now, _.random(1, 90))
           const issueStatusId =
             issueDate > subDays(now, 5)
@@ -114,20 +124,14 @@ async function seed(knex) {
               {
                 issueTypeId,
                 issueStatusId,
-                deviceId: _.includes(
-                  [
-                    issueTypes.StockLevelUpdate.id,
-                    issueTypes.InventoryStockout.id,
-                    issueTypes.InventoryStockExpiring.id,
-                  ],
-                  issueTypeId
-                )
-                  ? null
-                  : device.id,
+                deviceId: isStockIssue ? null : device.id,
                 siteId: device.siteId,
                 geographyId: device.geographyId,
                 createdOn: issueDate,
                 updatedOn: issueDate,
+                consumableId: isStockIssue
+                  ? consumableIds[_.random(consumableIds.length - 1)].id
+                  : null,
               },
               issue
             )
@@ -178,6 +182,14 @@ async function seed(knex) {
       await Promise.all(
         _.map(roIssueTypeIds, async issueTypeId => {
           const issueDate = subDays(now, _.random(1, 90))
+          const isStockIssue = _.includes(
+            [
+              issueTypes.StockLevelUpdate.id,
+              issueTypes.InventoryStockout.id,
+              issueTypes.InventoryStockExpiring.id,
+            ],
+            issueTypeId
+          )
           const issueStatusId =
             issueDate > subDays(now, 5)
               ? _.random(1) === 1
@@ -189,20 +201,14 @@ async function seed(knex) {
               {
                 issueTypeId,
                 issueStatusId,
-                deviceId: _.includes(
-                  [
-                    issueTypes.StockLevelUpdate.id,
-                    issueTypes.InventoryStockout.id,
-                    issueTypes.InventoryStockExpiring.id,
-                  ],
-                  issueTypeId
-                )
-                  ? null
-                  : device.id,
+                deviceId: isStockIssue ? null : device.id,
                 siteId: device.siteId,
                 geographyId: device.geographyId,
                 createdOn: issueDate,
                 updatedOn: issueDate,
+                consumableId: isStockIssue
+                  ? consumableIds[_.random(consumableIds.length - 1)].id
+                  : null,
               },
               issue
             )
