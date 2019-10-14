@@ -1055,7 +1055,7 @@ const routes = [
                   .description(
                     'The date when the sample was taken in iso format'
                   ),
-                OriginalSiteName: Joi.string()
+                originalSiteName: Joi.string()
                   .required()
                   .description(
                     'The name of the place where the sample was taken'
@@ -1096,20 +1096,35 @@ const routes = [
                   .required()
                   .allow(null)
                   .description('The Result status log date'),
-                resultTestStatusLogDate: Joi.date()
+                resultTreatmentStatusLogDate: Joi.date()
                   .iso()
                   .required()
                   .allow(null)
                   .description(
                     'The result Treatment status date in iso format'
                   ),
-                resultTestStatusLogNotes: Joi.string()
+
+                resultTreatmentStatusLogData: Joi.string()
+                  .required()
+                  .allow(null)
+                  .description('The result Treatment status data'),
+
+                resultTreatmentStatusLogMethod: Joi.string()
+                  .required()
+                  .allow(null)
+                  .description('The result Treatment status method'),
+
+                resultTreatmentStatusLogCreatedBy: Joi.string()
+                  .required()
+                  .allow(null)
+                  .description('The user who creates the result Treatment'),
+                resultTreatmentStatusLogNotes: Joi.string()
                   .required()
                   .allow(null)
                   .description(
                     'The result Treatment status date in iso format'
                   ),
-                resultTestStatusLogId: Joi.number()
+                resultTreatmentStatusLogId: Joi.number()
                   .required()
                   .allow(null)
                   .description('the result status'),
@@ -1134,7 +1149,9 @@ const routes = [
                   .iso()
                   .required()
                   .description('The date of the milestone'),
-                notes: Joi.string().description('description of the milestone'),
+                notes: Joi.string()
+                  .allow('')
+                  .description('description of the milestone'),
               })
             )
             .required()

@@ -6,8 +6,12 @@ import classnames from 'classnames/bind'
 const cssClasses = classnames.bind(require('./Timeline.css'))
 
 const AspectTimelineItem = ({ data }) => (
-  <Grid container spacing={2}>
-    <Grid item className={cssClasses('timecell')}>
+  <Grid container spacing={2} style={{ display: 'table' }}>
+    <Grid
+      item
+      className={cssClasses('timecell')}
+      style={{ display: 'table-cell', verticalAlign: 'middle' }}
+    >
       <time>{format(parseISO(data.date), 'MMM d, yyyy ')}</time>
     </Grid>
     <Grid item xs={12} sm container style={{ padding: 10 }}>

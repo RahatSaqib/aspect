@@ -56,14 +56,12 @@ Summary.propTypes = {
   to: PropTypes.string,
   action: PropTypes.string,
   cols: PropTypes.string,
-  landscape: PropTypes.bool,
 }
 
 Summary.defaultProps = {
   to: null,
   action: null,
   cols: '3',
-  landscape: false,
 }
 
 export default enhance(Summary)

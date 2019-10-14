@@ -1,7 +1,6 @@
 const { knex } = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 
-const { showResultFollowUps } = require('./service')
 const Promise = require('bluebird')
 const _ = require('lodash')
 
@@ -32,6 +31,8 @@ async function getPatientResultsDetails(request) {
       'r.treatmentStatusLogId',
       'rtsl.id'
     )
+    .leftJoin('User as u', 'rtsl.createdBy', 'u.id')
+    .leftJoin('Person as p', 'u.id', 'p.UserId')
     .leftJoin(
       'ResultTreatmentStatus as rts',
       'rtsl.resultTreatmentStatusId',
@@ -42,7 +43,7 @@ async function getPatientResultsDetails(request) {
     .select(
       'r.id as resultId',
       's.collectedOn as sampleCollectedOn',
-      'originsite.name as OriginalSiteName',
+      'originsite.name as originalSiteName',
       's.externalId as sampleId',
       'r.endedon as resultEndedOn',
       'a.abbreviation as assayAbbreviation',
@@ -52,9 +53,14 @@ async function getPatientResultsDetails(request) {
       'r.notes as resultNotes',
       'rs.externalid as resultStatus',
       'rsl.createdon as resultStatusLog',
-      'rtsl.createdon as resultTestStatusLogDate',
-      'rtsl.id as resultTestStatusLogId',
-      knex.raw("CONCAT(rtsl.data,' ',rtsl.method) as resultTestStatusLogNotes"),
+      'rtsl.createdon as resultTreatmentStatusLogDate',
+      'rtsl.id as resultTreatmentStatusLogId',
+      'rtsl.data as resultTreatmentStatusLogData',
+      'rtsl.method as resultTreatmentStatusLogMethod',
+      'p.name as resultTreatmentStatusLogCreatedBy',
+      knex.raw(
+        "CONCAT(rtsl.data,' ',rtsl.method) as resultTreatmentStatusLogNotes"
+      ),
       'rts.name as resultTreatmentName',
       'rts.externalid as resultTreatmentId'
     )
@@ -99,41 +105,19 @@ async function getPatientResultsDetails(request) {
       })
     )
   )
-  _.each(ResultTreatmentStatusLog, treatment =>
-    finalResult.push(
-      Object.assign({}, treatment, {
-        date: treatment.resultTestStatusLogDate,
-        type: 'Treatment',
-        notes: `Treatment status:${treatment.resultTestStatusName} - ${treatment.resultTestStatusLogNotes}`,
-      })
-    )
-  )
 
   _.each(ResultTreatmentStatusLog, treatment =>
     finalResult.push(
       Object.assign({}, treatment, {
-        date: treatment.resultTestStatusLogDate,
+        date: treatment.resultTreatmentStatusLogDate,
         type: 'Treatment',
-        notes: `Treatment status:${treatment.resultTestStatusName} - ${treatment.resultTestStatusLogNotes}`,
+        notes: treatment.resultTreatmentName
+          ? `Treatment status:${treatment.resultTreatmentName}`
+          : '',
       })
     )
   )
 
-  await _.map(uniqResults, async followUp => {
-    const { data: followUps } = await showResultFollowUps(
-      followUp.resultId,
-      dataConstraints
-    )
-    _.each(followUps, item =>
-      finalResult.push(
-        Object.assign({}, followUp, {
-          date: item.createdOn,
-          type: 'FollowUp',
-          notes: `${item.name} ${item.followUpTypeName}`,
-        })
-      )
-    )
-  })
   return {
     ok: finalResult.length >= 1,
     data: _.orderBy(finalResult, 'date', 'desc'),

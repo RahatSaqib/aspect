@@ -1,53 +1,21 @@
 import classnames from 'classnames/bind'
 import { connect } from 'react-redux'
 import React, { useRef, useEffect, useState } from 'react'
-import { defineMessages } from 'react-intl'
-
 import Helmet from 'react-helmet'
 import _ from 'lodash'
 import Grid from '@material-ui/core/Grid'
 import Paper from '@material-ui/core/Paper'
+
 import NavTitle from '../globals/components/NavTitle'
 import DetailBackBar from '../globals/components/DetailBackBar'
 import AspectTimeline from './timeline/Timeline'
 import { fetchResultsByPatient } from './PatientRedux'
-import Summary from '../globals/components/Summary'
+import Milestones from './timeline/Milestones'
 
 const cssClasses = classnames.bind(require('./ClinicalHistory.css'))
 
-const messages = defineMessages({
-  resultNotes: {
-    id: 'pages.ClinicalHistory.resultNotes',
-    defaultMessage: 'Result',
-  },
-  resultSiteName: {
-    id: 'pages.ClinicalHistory.resultSiteName',
-    defaultMessage: 'Lab',
-  },
-})
-
 export const ClinicalHistory = props => {
-  const { history, location, items, fetchResultsByPatient } = props
-  const TimelineItemResult = ({ result, intl }) => (
-    <Grid container spacing={2}>
-      <Grid item xs={12}>
-        <Grid container>
-          <Grid key="1" item>
-            <span className={cssClasses('Summary__Title')}>result status</span>
-            <span className={cssClasses('Summary__Description')}>
-              {result.resultNotes}
-            </span>
-          </Grid>
-          <Grid key="2" item>
-            <span className={cssClasses('Summary__Title')}>Result status</span>
-            <span className={cssClasses('Summary__Description')}>
-              {result.resultNotes}
-            </span>
-          </Grid>
-        </Grid>
-      </Grid>
-    </Grid>
-  )
+  const { intl, history, location, items, fetchResultsByPatient } = props
 
   const onBackClick = () => {
     history.goBack()
@@ -63,26 +31,19 @@ export const ClinicalHistory = props => {
       once.current = true
       setPatientId(props.match.params.patientId)
       fetchResultsByPatient(props.match.params.patientId)
-
       // clean up after componentDidMount
       return () => {}
     }
+
     setTimelineItems(
-      _.map(items, item => {
+      _.map(items, item => ({
+        ...item,
         // eslint-disable-next-line new-cap
-        const FixedTimeline = TimelineItemResult({
-          result: item,
-          intl: location,
-        })
-        return {
-          ...item,
-          // eslint-disable-next-line new-cap
-          details: TimelineItemResult({
-            result: item,
-            intl: location,
-          }),
-        }
-      })
+        details: Milestones({
+          item,
+          intl,
+        }),
+      }))
     )
     // componentDidUpdate goes in here
     // everything listed here will run whenever the component was updated
@@ -92,9 +53,11 @@ export const ClinicalHistory = props => {
     return () => {}
   }, [
     fetchResultsByPatient,
+    intl,
     items,
     location,
     patientId,
+    props,
     props.match.params.patientId,
   ])
 
