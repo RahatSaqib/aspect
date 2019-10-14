@@ -49,6 +49,7 @@ async function getPatientResultsDetails(request) {
       'a.abbreviation as assayAbbreviation',
       'a.externalId as assayId',
       'r.resultData as resultData',
+      'r.patientData as patientData',
       'resultSite.name as resultSiteName',
       'r.notes as resultNotes',
       'rs.externalid as resultStatus',
@@ -62,7 +63,8 @@ async function getPatientResultsDetails(request) {
         "CONCAT(rtsl.data,' ',rtsl.method) as resultTreatmentStatusLogNotes"
       ),
       'rts.name as resultTreatmentName',
-      'rts.externalid as resultTreatmentId'
+      'rts.externalid as resultTreatmentId',
+      'a.patientDataSchema as patientDataSchema'
     )
     .orderBy('sampleCollectedOn', 'resultEndedOn', 'resultTestStatusLog')
 
@@ -73,8 +75,11 @@ async function getPatientResultsDetails(request) {
   if (results.length >= 1) {
     data = await Promise.map(results, async result => {
       const resultsData = Object.assign({}, result, {
-        resultData: result.resultData ? JSON.parse(result.resultData) : '',
-        patientData: result.resultData ? JSON.parse(result.resultData) : '',
+        resultData: result.resultData ? JSON.parse(result.resultData) : null,
+        patientData: result.patientData ? JSON.parse(result.patientData) : null,
+        patientDataSchema: result.patientDataSchema
+          ? JSON.parse(result.patientDataSchema)
+          : null,
       })
 
       return resultsData

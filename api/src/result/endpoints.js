@@ -1136,10 +1136,6 @@ const routes = [
                   .allow(null)
                   .description('The result treatment status name'),
                 patientData: Joi.object()
-                  .keys({
-                    probes: Joi.object(),
-                    resultText: Joi.string(),
-                  })
                   .allow(null)
                   .description('Patient data'),
                 type: Joi.string()
@@ -1152,6 +1148,10 @@ const routes = [
                 notes: Joi.string()
                   .allow('')
                   .description('description of the milestone'),
+                patientDataSchema: Joi.object()
+                  .required()
+                  .allow(null)
+                  .description('The Patient Schema'),
               })
             )
             .required()

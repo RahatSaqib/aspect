@@ -5,12 +5,13 @@ import Helmet from 'react-helmet'
 import _ from 'lodash'
 import Grid from '@material-ui/core/Grid'
 import Paper from '@material-ui/core/Paper'
-
+import ReadOnlyField from '../components/shared/ReadOnlyField'
 import NavTitle from '../globals/components/NavTitle'
 import DetailBackBar from '../globals/components/DetailBackBar'
 import AspectTimeline from './timeline/Timeline'
 import { fetchResultsByPatient } from './PatientRedux'
 import Milestones from './timeline/Milestones'
+import { formatDate, formatDateTime } from '../shared/utils/dateFormat'
 
 const cssClasses = classnames.bind(require('./ClinicalHistory.css'))
 
@@ -20,6 +21,14 @@ export const ClinicalHistory = props => {
   const onBackClick = () => {
     history.goBack()
   }
+  const format = (type, intl) =>
+    type === 'number'
+      ? intl.formatNumber
+      : type === 'date'
+      ? formatDate
+      : type === 'time'
+      ? formatDateTime
+      : null
 
   const once = useRef(false)
   const [patientId, setPatientId] = useState('')
@@ -60,6 +69,23 @@ export const ClinicalHistory = props => {
     props,
     props.match.params.patientId,
   ])
+  const patient = items.length > 0 ? items[0] : null
+
+  const patientData = []
+  let rawPatientData
+  if (patient) {
+    _.mapKeys(patient.patientDataSchema, (value, key) =>
+      patientData.push({ ...value, key })
+    )
+
+    rawPatientData = _.sortBy(patientData, 'order').map(value => ({
+      key: _.get(value, 'key'),
+      label: _.get(value, 'title'),
+      value: _.get(patient.patientData, _.get(value, 'key')),
+      format: format(_.get(value, 'type'), intl),
+      data: patient,
+    }))
+  }
 
   return (
     <div className={cssClasses('Container')}>
@@ -76,144 +102,14 @@ export const ClinicalHistory = props => {
         <Grid container spacing={4} alignItems="stretch" direction="row">
           <Grid item xs={4}>
             <Paper style={{ height: '100%' }}>
-              <div className="ExpansionPanel--Label--2830PGK9">
-                <h1
-                  style={{
-                    fontSize: '1.8rem',
-                    color: '#3e8f98',
-                    width: '90%',
-                    maxWidth: 1200,
-                    margin: '0 auto',
-                    textAlign: 'center',
-                    paddingTop: 40,
-                    paddingBottom: 50,
-                  }}
-                >
-                  Patient Details
-                </h1>
-              </div>
-              <div
-                className="ExpansionPanel--Detail__Content--wNTlYFfV"
-                style={{ paddingRigth: 100, paddingLeft: 100 }}
-              >
-                <div className="DetailPanel--Field__Container--34KfOVCb">
-                  <div className="ReadOnlyField--Container--2SFi-H7_">
-                    <label
-                      htmlFor="City"
-                      className="ReadOnlyField--Container__Label--2la6CCdI"
-                    >
-                      City
-                    </label>
-                    <div
-                      id="City"
-                      className="ReadOnlyField--Container__Value--33FHRX9D"
-                    >
-                      Edingeni
-                    </div>
-                  </div>
-                  <div className="ReadOnlyField--Container--2SFi-H7_">
-                    <label
-                      htmlFor="State"
-                      className="ReadOnlyField--Container__Label--2la6CCdI"
-                    >
-                      State
-                    </label>
-                    <div
-                      id="State"
-                      className="ReadOnlyField--Container__Value--33FHRX9D"
-                    >
-                      Mzimba
-                    </div>
-                  </div>
-                  <div className="ReadOnlyField--Container--2SFi-H7_">
-                    <label
-                      htmlFor="Zip"
-                      className="ReadOnlyField--Container__Label--2la6CCdI"
-                    >
-                      Zip
-                    </label>
-                    <div
-                      id="Zip"
-                      className="ReadOnlyField--Container__Value--33FHRX9D"
-                    >
-                      38872
-                    </div>
-                  </div>
+              <section style={{ padding: 20 }}>
+                <div>
+                  <h1>Patient data</h1>
                 </div>
-                <div className="DetailPanel--Field__Container--34KfOVCb">
-                  <div className="ReadOnlyField--Container--2SFi-H7_">
-                    <label
-                      htmlFor="Phone"
-                      className="ReadOnlyField--Container__Label--2la6CCdI"
-                    >
-                      Phone
-                    </label>
-                    <div
-                      id="Phone"
-                      className="ReadOnlyField--Container__Value--33FHRX9D"
-                    >
-                      345-304-0414
-                    </div>
-                  </div>
-                  <div className="ReadOnlyField--Container--2SFi-H7_">
-                    <label
-                      htmlFor="HIV_Status"
-                      className="ReadOnlyField--Container__Label--2la6CCdI"
-                    >
-                      HIV Status
-                    </label>
-                    <div
-                      id="HIV_Status"
-                      className="ReadOnlyField--Container__Value--33FHRX9D"
-                    >
-                      HIV Unknown
-                    </div>
-                  </div>
-                  <div className="ReadOnlyField--Container--2SFi-H7_">
-                    <label
-                      htmlFor="Age_(in years)"
-                      className="ReadOnlyField--Container__Label--2la6CCdI"
-                    >
-                      Age (in years)
-                    </label>
-                    <div
-                      id="Age_(in years)"
-                      className="ReadOnlyField--Container__Value--33FHRX9D"
-                    >
-                      8
-                    </div>
-                  </div>
-                </div>
-                <div className="DetailPanel--Field__Container--34KfOVCb">
-                  <div className="ReadOnlyField--Container--2SFi-H7_">
-                    <label
-                      htmlFor="Gender"
-                      className="ReadOnlyField--Container__Label--2la6CCdI"
-                    >
-                      Gender
-                    </label>
-                    <div
-                      id="Gender"
-                      className="ReadOnlyField--Container__Value--33FHRX9D"
-                    >
-                      Male
-                    </div>
-                  </div>
-                  <div className="ReadOnlyField--Container--2SFi-H7_">
-                    <label
-                      htmlFor="Microscopy_Result"
-                      className="ReadOnlyField--Container__Label--2la6CCdI"
-                    >
-                      Microscopy Result
-                    </label>
-                    <div
-                      id="Microscopy_Result"
-                      className="ReadOnlyField--Container__Value--33FHRX9D"
-                    >
-                      Smear Positive
-                    </div>
-                  </div>
-                </div>
+              </section>
+              <div style={{ padding: '0px 20px 20px 20px' }}>
+                {rawPatientData &&
+                  rawPatientData.map(elem => [<ReadOnlyField {...elem} />])}
               </div>
             </Paper>
           </Grid>
