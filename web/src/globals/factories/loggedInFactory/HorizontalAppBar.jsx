@@ -8,7 +8,7 @@ import Toolbar from '@material-ui/core/Toolbar'
 import IconButton from '@material-ui/core/IconButton'
 import MenuItem from '@material-ui/core/MenuItem'
 
-import { FaUser } from 'react-icons/lib/fa'
+import FaUser from 'react-icons/lib/fa/user'
 
 import ConfluenceIcon from './ConfluenceIcon'
 import LinkNavigation from './LinkNavigation'

@@ -43,13 +43,14 @@ describe('Result routes', () => {
           })
       }))
 
-    it('it should return a 404 for the specific patient id', done =>
+    it('it should return a 404 for the specific patient id', done => {
       server
         .get(`${path}/patientresultsdetails?patientId=1111111`)
         .set('Authorization', `Bearer ${shared.token}`)
-        .end((err, res) => {
+        .end((_err, res) => {
           assert.equal(res.status, 404)
           done()
-        }))
+        })
+    })
   })
 })

@@ -17,7 +17,7 @@ async function seed(knex) {
     .where('name', 'Admin')
     .first('id')
 
-  const [modules] = await getPermissionModules(knex)
+  const modules = await getPermissionModules(knex)
   // features
   await insertJobFunctionPermission(knex, jobFunctionIdAdmin, [
     modules.patient.admin,
