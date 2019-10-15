@@ -1,6 +1,6 @@
 const { knex } = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
-
+const Boom = require('boom')
 const Promise = require('bluebird')
 const _ = require('lodash')
 
@@ -70,6 +70,9 @@ async function getPatientResultsDetails(request) {
 
   let data = []
   const results = await resultDetails
+  if (results.length === 0) {
+    return Boom.notFound("There isn't any patient with this id")
+  }
   // translate result data back to an object and get assay details
   // if selecting the result was successful
   if (results.length >= 1) {
@@ -122,7 +125,9 @@ async function getPatientResultsDetails(request) {
       })
     )
   )
-
+  if (finalResult.length === 1) {
+    return Boom.notFound("There isn't any patient with this id")
+  }
   return {
     ok: finalResult.length >= 1,
     data: _.orderBy(finalResult, 'date', 'desc'),
