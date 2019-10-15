@@ -125,7 +125,7 @@ const personDetailsResponse = {
         hideSampleId: Joi.number()
           .allow(null)
           .description('Person hideSampleId'),
-        hideNotes: Joi.string()
+        hideNotes: Joi.number()
           .allow(null)
           .description('Person hideNotes'),
         country: Joi.string()
