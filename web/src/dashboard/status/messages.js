@@ -299,6 +299,10 @@ export const messages = defineMessages({
     id: 'pages.Status.assayResultCategoryAll',
     defaultMessage: 'All Results',
   },
+  inventoryTitle: {
+    id: 'pages.Status.inventoryTitle',
+    defaultMessage: 'Inventory Item',
+  },
 })
 
 export default messages

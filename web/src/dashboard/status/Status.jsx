@@ -15,6 +15,7 @@ import TargetStatus from './TargetStatus'
 import Reports from './Reports'
 import BrowseSiteDropdown from '../../globals/components/BrowseSiteDropdown'
 import TreatmentStatus from './TreatmentStatus'
+import InventoryItems from './inventoryItems'
 
 const cssClasses = classnames.bind(require('./Status.css'))
 
@@ -72,6 +73,14 @@ const Status = ({
       title={intl.formatMessage(messages.treatmentTitle)}
     />
 
+    <InventoryItems
+      intl={intl}
+      history={history}
+      location={location}
+      className={cssClasses('Section--withDropdown')}
+      title={intl.formatMessage(messages.inventoryTitle)}
+    />
+
     <TargetStatus
       intl={intl}
       history={history}
@@ -91,7 +100,7 @@ const Status = ({
     />
 
     {/* ========Commenting out as per ASP-940 ==============
-    
+
     <ResultStatus
       intl={intl}
       countryIsoAlpha2Code={countryIsoAlpha2Code}

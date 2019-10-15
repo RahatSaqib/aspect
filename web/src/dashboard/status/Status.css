@@ -479,3 +479,10 @@
 .FiltersGroup__Child--dropdown {
   margin-left: 10px;
 }
+.Inventory_Container {
+  margin-top: 40px;
+}
+
+.Inventory_Container text {
+  font-size: 14px !important;
+}
