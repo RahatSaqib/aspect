@@ -911,6 +911,7 @@ const routes = [
             date: Joi.date()
               .iso()
               .optional()
+              .allow(null)
               .description('This is the date when the follow up happened'),
           })
           .xor('followUpId', 'followUpExternalId'),
@@ -962,6 +963,7 @@ const routes = [
             date: Joi.date()
               .iso()
               .optional()
+              .allow(null)
               .description('This is the date when the follow up happened'),
             followUpId: Joi.number()
               .integer()
