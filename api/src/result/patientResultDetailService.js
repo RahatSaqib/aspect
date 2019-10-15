@@ -70,6 +70,7 @@ async function getPatientResultsDetails(request) {
 
   let data = []
   const results = await resultDetails
+  // if no result we are going to return not found for the specific patient id
   if (results.length === 0) {
     return Boom.notFound("There isn't any patient with this id")
   }
@@ -88,7 +89,10 @@ async function getPatientResultsDetails(request) {
       return resultsData
     })
   }
-
+  /* for doing only one query i normalize the data with lodash in memory */
+  /* the idea is to create one record per milestone and normalize the data to place it into the timeline */
+  /* it categorize the milestone, add notes and dates to everyone. */
+  /* when we will add the outcomes, should be normalized as the next couple of lines */
   const finalResult = []
   const samples = _.uniqBy(data, 'sampleId')
   const uniqResults = _.uniqBy(data, 'resultId')
