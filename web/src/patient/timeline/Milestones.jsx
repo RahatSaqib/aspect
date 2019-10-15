@@ -12,7 +12,7 @@ const cssClasses = classnames.bind(require('./Milestones.css'))
 const sampleTexts = {
   sampleId: {
     id: 'pages.Milestones.sampleId',
-    defaultMessage: 'Sample Id: ',
+    defaultMessage: 'Sample Id ',
   },
   originalSiteName: {
     id: 'pages.Milestones.originalSiteName',
@@ -80,7 +80,7 @@ const treatmentTexts = {
   },
   resultTreatmentName: {
     id: 'pages.Milestones.resultTreatmentName',
-    defaultMessage: 'Treatment status: ',
+    defaultMessage: 'Treatment status ',
   },
 }
 
@@ -150,30 +150,30 @@ const TimelineItemResult = ({ result, intl }) => {
   const detailsFields = [
     {
       key: intl.formatMessage(messagesResult.resultSiteName),
-      value: result.resultSiteName,
+      value: result.get('resultSiteName'),
     },
     {
       key: intl.formatMessage(messagesResult.resultSiteName),
-      value: result.resultSiteName,
+      value: result.get('resultSiteName'),
     },
     {
       key: intl.formatMessage(messagesResult.assayType),
-      value: result.assayAbbreviation,
+      value: result.get('assayAbbreviation'),
     },
     {
       key: intl.formatMessage(messagesResult.notes),
-      value: result.notes,
+      value: result.get('notes'),
     },
     {
       key: intl.formatMessage(messagesResult.sampleId),
-      value: result.sampleId,
+      value: result.get('sampleId'),
     },
   ]
   return (
     <TimelineGenericPatientMilestone
       title={{
         key: intl.formatMessage(messagesResult.result),
-        value: result.resultNotes,
+        value: result.get('resultNotes'),
       }}
       details={detailsFields}
       link={{
@@ -191,26 +191,26 @@ const TimelineItemSample = ({ sample, intl }) => {
   const detailsFields = [
     {
       key: intl.formatMessage(messages.originalSiteName),
-      value: sample.originalSiteName,
+      value: sample.get('originalSiteName'),
     },
     {
       key: intl.formatMessage(messages.sampleCollectedOn),
-      value: sample.sampleCollectedOn,
+      value: sample.get('sampleCollectedOn'),
     },
     {
       key: intl.formatMessage(messages.assayAbbreviation),
-      value: sample.assayAbbreviation,
+      value: sample.get('assayAbbreviation'),
     },
     {
       key: intl.formatMessage(messages.notes),
-      value: sample.notes,
+      value: sample.get('notes'),
     },
   ]
   return (
     <TimelineGenericPatientMilestone
       title={{
         key: intl.formatMessage(messages.sampleId),
-        value: sample.sampleId,
+        value: sample.get('sampleId'),
       }}
       details={detailsFields}
       expand={false}
@@ -224,26 +224,26 @@ const TimelineItemTreatment = ({ treatment, intl }) => {
   const detailsFields = [
     {
       key: intl.formatMessage(messages.resultTreatmentStatusLogData),
-      value: treatment.resultTreatmentStatusLogData,
+      value: treatment.get('resultTreatmentStatusLogData'),
     },
     {
       key: intl.formatMessage(messages.resultTreatmentStatusLogMethod),
-      value: treatment.resultTreatmentStatusLogMethod,
+      value: treatment.get('resultTreatmentStatusLogMethod'),
     },
     {
       key: intl.formatMessage(messages.resultTreatmentStatusLogCreatedBy),
-      value: treatment.resultTreatmentStatusLogCreatedBy,
+      value: treatment.get('resultTreatmentStatusLogCreatedBy'),
     },
     {
       key: intl.formatMessage(messages.notes),
-      value: treatment.notes,
+      value: treatment.get('notes'),
     },
   ]
   return (
     <TimelineGenericPatientMilestone
       title={{
         key: intl.formatMessage(messages.resultTreatmentName),
-        value: treatment.resultTreatmentName,
+        value: treatment.get('resultTreatmentName'),
       }}
       details={detailsFields}
       expand={false}
@@ -252,11 +252,11 @@ const TimelineItemTreatment = ({ treatment, intl }) => {
   )
 }
 const Milestones = ({ item, intl }) => {
-  if (item.type === 'Sample')
+  if (item.get('type') === 'Sample')
     return <TimelineItemSample sample={item} intl={intl} />
-  if (item.type === 'Result')
+  if (item.get('type') === 'Result')
     return <TimelineItemResult result={item} intl={intl} />
-  if (item.type === 'Treatment')
+  if (item.get('type') === 'Treatment')
     return <TimelineItemTreatment treatment={item} intl={intl} />
 }
 export default Milestones

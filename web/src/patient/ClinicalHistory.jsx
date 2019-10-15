@@ -16,19 +16,18 @@ import { formatDate, formatDateTime } from '../shared/utils/dateFormat'
 const cssClasses = classnames.bind(require('./ClinicalHistory.css'))
 
 export const ClinicalHistory = props => {
-  const { intl, history, location, items, fetchResultsByPatient } = props
+  const {
+    intl,
+    history,
+    location,
+    patientDataSchema,
+    items,
+    fetchResultsByPatient,
+  } = props
 
   const onBackClick = () => {
     history.goBack()
   }
-  const format = (type, intl) =>
-    type === 'number'
-      ? intl.formatNumber
-      : type === 'date'
-      ? formatDate
-      : type === 'time'
-      ? formatDateTime
-      : null
 
   const once = useRef(false)
   const [patientId, setPatientId] = useState('')
@@ -45,8 +44,9 @@ export const ClinicalHistory = props => {
     }
 
     setTimelineItems(
-      _.map(items, item => ({
+      items.map(item => ({
         ...item,
+        date: item.get('date'),
         // eslint-disable-next-line new-cap
         details: Milestones({
           item,
@@ -69,23 +69,6 @@ export const ClinicalHistory = props => {
     props,
     props.match.params.patientId,
   ])
-  const patient = items.length > 0 ? items[0] : null
-
-  const patientData = []
-  let rawPatientData
-  if (patient) {
-    _.mapKeys(patient.patientDataSchema, (value, key) =>
-      patientData.push({ ...value, key })
-    )
-
-    rawPatientData = _.sortBy(patientData, 'order').map(value => ({
-      key: _.get(value, 'key'),
-      label: _.get(value, 'title'),
-      value: _.get(patient.patientData, _.get(value, 'key')),
-      format: format(_.get(value, 'type'), intl),
-      data: patient,
-    }))
-  }
 
   return (
     <div className={cssClasses('Container')}>
@@ -108,8 +91,8 @@ export const ClinicalHistory = props => {
                 </div>
               </section>
               <div style={{ padding: '0px 0px 20px 20px' }}>
-                {rawPatientData &&
-                  rawPatientData.map(elem => [<ReadOnlyField {...elem} />])}
+                {patientDataSchema &&
+                  patientDataSchema.map(elem => [<ReadOnlyField {...elem} />])}
               </div>
             </Paper>
           </Grid>
@@ -126,10 +109,39 @@ export const ClinicalHistory = props => {
     </div>
   )
 }
-const mapStateToProps = state => ({
-  items: state.patient.items.toJS(),
-  userPermissions: state.user.jwt.permissions,
-})
+const mapStateToProps = (state, ownProps) => {
+  const { intl } = ownProps
+  const format = type =>
+    type === 'number'
+      ? intl.formatNumber
+      : type === 'date'
+      ? formatDate
+      : type === 'time'
+      ? formatDateTime
+      : null
+  const orderSchemaProperties = patient => {
+    const patientData = []
+    _.mapKeys(patient.toJS().patientDataSchema, (value, key) =>
+      patientData.push({ ...value, key })
+    )
+
+    return _.sortBy(patientData, 'order').map(value => ({
+      key: _.get(value, 'key'),
+      label: _.get(value, 'title'),
+      value: _.get(patient.toJS().patientData, _.get(value, 'key')),
+      format: format(_.get(value, 'type'), intl),
+    }))
+  }
+
+  return {
+    items: state.patient.items,
+    patientDataSchema:
+      state.patient.items.count() > 0
+        ? orderSchemaProperties(state.patient.items.get(0))
+        : null,
+    userPermissions: state.user.jwt.permissions,
+  }
+}
 
 export default connect(
   mapStateToProps,
