@@ -1141,21 +1141,33 @@ const routes = [
                 type: Joi.string()
                   .required()
                   .description('The type of the milestone'),
+                sampleType: Joi.string()
+                  .required()
+                  .description('The sample type'),
                 date: Joi.date()
                   .iso()
                   .required()
                   .description('The date of the milestone'),
                 notes: Joi.string()
+                  .optional()
                   .allow('')
                   .description('description of the milestone'),
                 patientDataSchema: Joi.object()
                   .required()
                   .allow(null)
                   .description('The Patient Schema'),
+                followUpTypeName: Joi.string()
+                  .optional()
+                  .allow(null)
+                  .description('The follow up type name'),
+                followUpName: Joi.string()
+                  .optional()
+                  .allow(null)
+                  .description('The follow up name'),
               })
             )
             .required()
-            .description('The results'),
+            .description('The patient results'),
         }),
       },
     }),

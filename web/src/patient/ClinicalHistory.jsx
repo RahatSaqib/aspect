@@ -42,7 +42,7 @@ export const ClinicalHistory = props => {
       // clean up after componentDidMount
       return () => {}
     }
-
+    let i = 0
     setTimelineItems(
       items.map(item => ({
         ...item,
@@ -51,6 +51,8 @@ export const ClinicalHistory = props => {
         details: Milestones({
           item,
           intl,
+          // eslint-disable-next-line no-plusplus
+          expand: i++ < 2,
         }),
       }))
     )

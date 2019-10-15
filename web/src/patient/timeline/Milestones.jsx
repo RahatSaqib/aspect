@@ -22,9 +22,9 @@ const sampleTexts = {
     id: 'pages.Milestones.sampleCollectedOn',
     defaultMessage: 'Collected On: ',
   },
-  assayAbbreviation: {
-    id: 'pages.Milestones.assayAbbreviation',
-    defaultMessage: 'Assay type: ',
+  sampleType: {
+    id: 'pages.Milestones.sampleType',
+    defaultMessage: 'Sample Type: ',
   },
   notes: {
     id: 'pages.Milestones.notes',
@@ -35,8 +35,11 @@ const sampleTexts = {
 const resultsTexts = {
   result: {
     id: 'pages.Milestones.resultNotes',
-    defaultMessage: 'Result',
-    header: true,
+    defaultMessage: 'Result ',
+  },
+  resultEndedOn: {
+    id: 'pages.Milestones.resultEndedOn',
+    defaultMessage: 'Result ended on: ',
   },
   resultSiteName: {
     id: 'pages.Milestones.resultSiteName',
@@ -49,7 +52,6 @@ const resultsTexts = {
   viewResultsDetails: {
     id: 'pages.Milestones.viewResultsDetails',
     defaultMessage: 'view Results Details ',
-    link: true,
   },
   notes: {
     id: 'pages.Milestones.notes',
@@ -61,10 +63,24 @@ const resultsTexts = {
   },
 }
 
+const followUpsTexts = {
+  date: {
+    id: 'pages.Milestones.date',
+    defaultMessage: 'Created on ',
+  },
+  followUpName: {
+    id: 'pages.Milestones.followUpName',
+    defaultMessage: 'Outcome ',
+  },
+  followUpTypeName: {
+    id: 'pages.Milestones.resultSiteName',
+    defaultMessage: 'Outcome type: ',
+  },
+}
 const treatmentTexts = {
   resultTreatmentStatusLogData: {
     id: 'pages.Milestones.resultTreatmentStatusLogData',
-    defaultMessage: 'Treatment data:',
+    defaultMessage: 'Treatment data: ',
   },
   resultTreatmentStatusLogMethod: {
     id: 'pages.Milestones.resultTreatmentStatusLogMethod',
@@ -73,10 +89,6 @@ const treatmentTexts = {
   resultTreatmentStatusLogCreatedBy: {
     id: 'pages.Milestones.resultTreatmentStatusLogCreatedBy',
     defaultMessage: 'Treatment created by: ',
-  },
-  notes: {
-    id: 'pages.Milestones.notes',
-    defaultMessage: 'Notes: ',
   },
   resultTreatmentName: {
     id: 'pages.Milestones.resultTreatmentName',
@@ -94,12 +106,13 @@ const TimelineGenericPatientMilestone = ({
   const [expanded, setExpanded] = useState(expand)
   return (
     <ExpansionPanel
-      onChange={(event, expanded) => setExpanded(expanded)}
+      onChange={(event, expandparam) => setExpanded(expandparam)}
       style={{
         width: '100%',
         display: 'table',
         backgroundColor: expanded ? 'white' : color,
       }}
+      expanded={expanded}
     >
       <ExpansionPanelSummary
         expandIcon={expanded ? <span>-</span> : <span>+</span>}
@@ -145,13 +158,9 @@ const TimelineGenericPatientMilestone = ({
   )
 }
 
-const TimelineItemResult = ({ result, intl }) => {
+const TimelineItemResult = ({ result, intl, expand }) => {
   const messagesResult = defineMessages(resultsTexts)
   const detailsFields = [
-    {
-      key: intl.formatMessage(messagesResult.resultSiteName),
-      value: result.get('resultSiteName'),
-    },
     {
       key: intl.formatMessage(messagesResult.resultSiteName),
       value: result.get('resultSiteName'),
@@ -161,8 +170,12 @@ const TimelineItemResult = ({ result, intl }) => {
       value: result.get('assayAbbreviation'),
     },
     {
+      key: intl.formatMessage(messagesResult.resultEndedOn),
+      value: result.get('resultEndedOn'),
+    },
+    {
       key: intl.formatMessage(messagesResult.notes),
-      value: result.get('notes'),
+      value: result.get('resultNotes'),
     },
     {
       key: intl.formatMessage(messagesResult.sampleId),
@@ -177,16 +190,40 @@ const TimelineItemResult = ({ result, intl }) => {
       }}
       details={detailsFields}
       link={{
-        to: `/browse/result/${result.resultId}`,
+        to: `/browse/result/${result.get('resultId')}`,
         text: intl.formatMessage(messagesResult.viewResultsDetails),
       }}
-      expand={false}
+      expand={expand}
       color="#c2f9e3"
     />
   )
 }
 
-const TimelineItemSample = ({ sample, intl }) => {
+const TimelineItemFollowUp = ({ fu, intl, expand }) => {
+  const messages = defineMessages(followUpsTexts)
+  const detailsFields = [
+    {
+      key: intl.formatMessage(messages.date),
+      value: fu.get('date'),
+    },
+    {
+      key: intl.formatMessage(messages.followUpTypeName),
+      value: fu.get('followUpTypeName'),
+    },
+  ]
+  return (
+    <TimelineGenericPatientMilestone
+      title={{
+        key: intl.formatMessage(messages.followUpName),
+        value: fu.get('followUpName'),
+      }}
+      details={detailsFields}
+      expand={expand}
+      color="#DFD2E6"
+    />
+  )
+}
+const TimelineItemSample = ({ sample, intl, expand }) => {
   const messages = defineMessages(sampleTexts)
   const detailsFields = [
     {
@@ -198,8 +235,8 @@ const TimelineItemSample = ({ sample, intl }) => {
       value: sample.get('sampleCollectedOn'),
     },
     {
-      key: intl.formatMessage(messages.assayAbbreviation),
-      value: sample.get('assayAbbreviation'),
+      key: intl.formatMessage(messages.sampleType),
+      value: sample.get('sampleType'),
     },
     {
       key: intl.formatMessage(messages.notes),
@@ -213,13 +250,13 @@ const TimelineItemSample = ({ sample, intl }) => {
         value: sample.get('sampleId'),
       }}
       details={detailsFields}
-      expand={false}
+      expand={expand}
       color="#efe5d3"
     />
   )
 }
 
-const TimelineItemTreatment = ({ treatment, intl }) => {
+const TimelineItemTreatment = ({ treatment, intl, expand }) => {
   const messages = defineMessages(treatmentTexts)
   const detailsFields = [
     {
@@ -234,10 +271,6 @@ const TimelineItemTreatment = ({ treatment, intl }) => {
       key: intl.formatMessage(messages.resultTreatmentStatusLogCreatedBy),
       value: treatment.get('resultTreatmentStatusLogCreatedBy'),
     },
-    {
-      key: intl.formatMessage(messages.notes),
-      value: treatment.get('notes'),
-    },
   ]
   return (
     <TimelineGenericPatientMilestone
@@ -246,17 +279,21 @@ const TimelineItemTreatment = ({ treatment, intl }) => {
         value: treatment.get('resultTreatmentName'),
       }}
       details={detailsFields}
-      expand={false}
+      expand={expand}
       color="#c4ddfa"
     />
   )
 }
-const Milestones = ({ item, intl }) => {
+const Milestones = ({ item, intl, expand }) => {
   if (item.get('type') === 'Sample')
-    return <TimelineItemSample sample={item} intl={intl} />
+    return <TimelineItemSample sample={item} intl={intl} expand={expand} />
   if (item.get('type') === 'Result')
-    return <TimelineItemResult result={item} intl={intl} />
+    return <TimelineItemResult result={item} intl={intl} expand={expand} />
   if (item.get('type') === 'Treatment')
-    return <TimelineItemTreatment treatment={item} intl={intl} />
+    return (
+      <TimelineItemTreatment treatment={item} intl={intl} expand={expand} />
+    )
+  if (item.get('type') === 'FollowUp')
+    return <TimelineItemFollowUp fu={item} intl={intl} expand={expand} />
 }
 export default Milestones

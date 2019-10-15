@@ -1,5 +1,6 @@
 const { knex } = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
+const { showResultFollowUps } = require('./service')
 const Boom = require('boom')
 const Promise = require('bluebird')
 const _ = require('lodash')
@@ -12,6 +13,7 @@ async function getPatientResultsDetails(request) {
   // console.log('entre')
   const resultDetails = knex('Result as r')
     .join('Sample as s', 'r.sampleId', 's.id')
+    .join('SampleType as st', 's.sampleTypeId', 'st.id')
     .join('Site as originsite', 's.originSiteId', 'originsite.id')
     .join('Site as resultSite', 's.originSiteId', 'resultSite.id')
     .join('Assay as a', 'r.assayId', 'a.id')
@@ -42,6 +44,7 @@ async function getPatientResultsDetails(request) {
     .modify(addConstraints, dataConstraints, { sample: 's' })
     .select(
       'r.id as resultId',
+      'st.name as sampleType',
       's.collectedOn as sampleCollectedOn',
       'originsite.name as originalSiteName',
       's.externalId as sampleId',
@@ -98,7 +101,7 @@ async function getPatientResultsDetails(request) {
   const uniqResults = _.uniqBy(data, 'resultId')
   const ResultTreatmentStatusLog = _.uniqBy(data, 'ResultTreatmentStatusLogId')
 
-  _.each(uniqResults, result =>
+  _.each(uniqResults, async result =>
     finalResult.push(
       Object.assign({}, result, {
         date: result.resultEndedOn,
@@ -117,14 +120,31 @@ async function getPatientResultsDetails(request) {
       })
     )
   )
-
+  await Promise.each(uniqResults, async result => {
+    const followUps = await showResultFollowUps(
+      result.resultId,
+      dataConstraints
+    )
+    if (followUps) {
+      _.each(followUps.data, fu => {
+        finalResult.push(
+          Object.assign({}, result, {
+            date: fu.createdOn,
+            followUpTypeName: fu.followUpTypeName,
+            type: 'FollowUp',
+            followUpName: fu.name,
+          })
+        )
+      })
+    }
+  })
   _.each(ResultTreatmentStatusLog, treatment =>
     finalResult.push(
       Object.assign({}, treatment, {
         date: treatment.resultTreatmentStatusLogDate,
         type: 'Treatment',
         notes: treatment.resultTreatmentName
-          ? `Treatment status:${treatment.resultTreatmentName}`
+          ? `${treatment.resultTreatmentName}`
           : '',
       })
     )
