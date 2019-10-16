@@ -479,10 +479,15 @@
 .FiltersGroup__Child--dropdown {
   margin-left: 10px;
 }
-.Inventory_Container {
+.Inventory_graph_Container {
   margin-top: 40px;
 }
-
-.Inventory_Container text {
+.Inventory_graph_Container text {
   font-size: 14px !important;
+}
+.Inventory_Container {
+  box-shadow: none;
+}
+.Inventory_Container > div:first-child {
+  justify-content: flex-start;
 }

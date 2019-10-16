@@ -12,11 +12,9 @@ import {
 } from 'recompose'
 import Card from '@material-ui/core/Card'
 import { connect } from 'react-redux'
-import IconTitle from 'react-icons/lib/fa/cart-arrow-down'
 import { ResponsiveBar } from '@nivo/bar'
 
 import { fetchInventoryDashboard } from '../DashboardRedux'
-import Title from './Title'
 import { Unit } from '../../components/pureGrids'
 import StyledDropdown from '../../components/shared/StyledDropdown'
 
@@ -73,7 +71,7 @@ const InventoryItemBarChart = ({ data, history }) => (
       tickSize: 5,
       tickPadding: 5,
       tickRotation: 0,
-      legend: 'Locations',
+      legend: 'Total Locations',
       legendPosition: 'middle',
       legendOffset: -40,
     }}
@@ -160,7 +158,7 @@ function selectChartLabel(label) {
 
 function rearrangeInventoryKey(inventoryItem) {
   return {
-    outOfStock: inventoryItem.outofStock,
+    outOfStock: inventoryItem.outOfStock,
     upTo14: inventoryItem.upTo14,
     upTo30: inventoryItem.upTo30,
     upTo90: inventoryItem.upTo90,
@@ -198,14 +196,10 @@ export const inventoryItems = ({
   })
 
   return (
-    <Card className={className}>
+    <Card className={(className, cssClasses('Inventory_Container'))}>
       <div
         className={cssClasses('TitleContainer', 'Treatment--TitleContainer')}
       >
-        <Title
-          title={title}
-          icon={<IconTitle className={cssClasses('Title__Icon')} />}
-        />
         <div
           className={cssClasses(
             'FiltersGroup__Child',
@@ -230,11 +224,10 @@ export const inventoryItems = ({
         <Unit sm="1-8" />
       </div>
       <div>
-        <Unit sm="1-8" />
         <Unit sm="3-4" style={{ height: 320 }}>
           <div
             style={{ height: 320 }}
-            className={cssClasses('Inventory_Container')}
+            className={cssClasses('Inventory_graph_Container')}
             data-utilization-graph
           >
             <InventoryItemBarChart history={history} data={data} />

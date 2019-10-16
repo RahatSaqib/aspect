@@ -468,7 +468,7 @@ export function fetchInventoryDashboard() {
           defineMessages({
             title: {
               id:
-                'errorResponseMessages.fetchInventoryDashboard.POST.default.title',
+                'errorResponseMessages.fetchInventoryDashboard.GET.default.title',
               defaultMessage: 'Error Loading Dashboard Inventory',
             },
           })
