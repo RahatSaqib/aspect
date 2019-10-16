@@ -42,6 +42,9 @@ export const RECEIVE_ACTION_STATUS = 'RECEIVE_ACTION_STATUS'
 export const REQUEST_TREATMENT_DASHBOARD = 'REQUEST_TREATMENT_DASHBOARD'
 export const RECEIVE_TREATMENT_DASHBOARD = 'RECEIVE_TREATMENT_DASHBOARD'
 
+export const RECEIVE_INVENTORY_DASHBOARD = 'RECEIVE_INVENTORY_DASHBOARD'
+export const REQUEST_INVENTORY_DASHBOARD = 'REQUEST_INVENTORY_DASHBOARD'
+
 /*
  * ---------------- Action Creators -----------------
  */
@@ -451,6 +454,45 @@ function receiveTreatmentDashboard(requestedAt, data) {
   }
 }
 
+export function fetchInventoryDashboard() {
+  return dispatch => {
+    const requestedAt = `inventoryItem_${Date.now()}`
+    dispatch(
+      requestInventoryDashboard({
+        requestedAt,
+      })
+    )
+    return aspectFetch('/inventory/days-by-location', {
+      errorNotifications: {
+        default: errorPleaseTryAgainInAFewMinutes(
+          defineMessages({
+            title: {
+              id:
+                'errorResponseMessages.fetchInventoryDashboard.GET.default.title',
+              defaultMessage: 'Error Loading Dashboard Inventory',
+            },
+          })
+        ),
+      },
+    }).then(json => dispatch(receiveInventoryDashboard(requestedAt, json)))
+  }
+}
+
+function requestInventoryDashboard(data) {
+  return {
+    type: REQUEST_INVENTORY_DASHBOARD,
+    data,
+  }
+}
+
+function receiveInventoryDashboard(requestedAt, data) {
+  return {
+    type: RECEIVE_INVENTORY_DASHBOARD,
+    requestedAt,
+    data,
+  }
+}
+
 /*
  * ---------------- Reducers -----------------
  */
@@ -470,6 +512,7 @@ const Summary = Immutable.Record({
   operational: Immutable.Map(),
   actionSummaryMap: Immutable.Map(),
   treatmentStatus: Immutable.Map(),
+  inventoryItems: Immutable.List(),
 })
 
 const initialState = new Summary()
@@ -622,6 +665,12 @@ export default function dashboardReducer(state = initialState, action) {
         })
       })
     }
+    case RECEIVE_INVENTORY_DASHBOARD:
+      return state.withMutations(mutState => {
+        const payload = action.data
+
+        mutState.set('inventoryItems', new Immutable.fromJS(payload.data))
+      })
     default:
       return state
   }

@@ -23,6 +23,7 @@ import { showNewInventoryDialog } from '../../inventory/InventoryRedux'
 import Title from './Title'
 import CountryWithPoints from './CountryWithPoints'
 import SummaryItemsBlock from './SummaryItemsBlock'
+import InventoryItems from './InventoryItems'
 import messages from './messages'
 
 const cssClasses = classnames.bind(require('./Status.css'))
@@ -140,6 +141,7 @@ export const InventoryStatus = ({
   className,
   title,
   fill,
+  history,
   points,
   inventoryConsumableSummaryList,
   onInventoryClick,
@@ -202,6 +204,11 @@ export const InventoryStatus = ({
         </div>
       </Unit>
     </div>
+    <InventoryItems
+      intl={intl}
+      history={history}
+      className={cssClasses('Section--withDropdown')}
+    />
   </Card>
 )
 

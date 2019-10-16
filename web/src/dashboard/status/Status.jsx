@@ -91,7 +91,6 @@ const Status = ({
     />
 
     {/* ========Commenting out as per ASP-940 ==============
-    
     <ResultStatus
       intl={intl}
       countryIsoAlpha2Code={countryIsoAlpha2Code}

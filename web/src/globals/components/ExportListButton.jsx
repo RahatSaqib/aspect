@@ -38,7 +38,6 @@ const enhance = compose(
     }) => e => {
       e.preventDefault()
       setAnchorEl(null)
-      // console.log('onStartDownload', onStartDownload)
       startDownloading()
       if (e.currentTarget.id === 'csv') onCsvClick(e.currentTarget)
       else onExcelClick(e.currentTarget)
