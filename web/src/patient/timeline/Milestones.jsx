@@ -6,6 +6,7 @@ import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails'
 import ExpansionPanelActions from '@material-ui/core/ExpansionPanelActions'
 import { defineMessages } from 'react-intl'
 import classnames from 'classnames/bind'
+import { format, parseISO } from 'date-fns'
 
 const cssClasses = classnames.bind(require('./Milestones.css'))
 
@@ -81,6 +82,10 @@ const treatmentTexts = {
   resultTreatmentStatusLogData: {
     id: 'pages.Milestones.resultTreatmentStatusLogData',
     defaultMessage: 'Treatment data: ',
+  },
+  date: {
+    id: 'pages.Milestones.date',
+    defaultMessage: 'Created on: ',
   },
   resultTreatmentStatusLogMethod: {
     id: 'pages.Milestones.resultTreatmentStatusLogMethod',
@@ -171,7 +176,10 @@ const TimelineItemResult = ({ result, intl, expand }) => {
     },
     {
       key: intl.formatMessage(messagesResult.resultEndedOn),
-      value: result.get('resultEndedOn'),
+      value: format(
+        parseISO(result.get('resultEndedOn')),
+        'yyyy-MM-dd HH:mm:ss'
+      ),
     },
     {
       key: intl.formatMessage(messagesResult.notes),
@@ -204,7 +212,7 @@ const TimelineItemFollowUp = ({ fu, intl, expand }) => {
   const detailsFields = [
     {
       key: intl.formatMessage(messages.date),
-      value: fu.get('date'),
+      value: format(parseISO(fu.get('date')), 'yyyy-MM-dd HH:mm:ss'),
     },
     {
       key: intl.formatMessage(messages.followUpTypeName),
@@ -232,7 +240,10 @@ const TimelineItemSample = ({ sample, intl, expand }) => {
     },
     {
       key: intl.formatMessage(messages.sampleCollectedOn),
-      value: sample.get('sampleCollectedOn'),
+      value: format(
+        parseISO(sample.get('sampleCollectedOn')),
+        'yyyy-MM-dd HH:mm:ss'
+      ),
     },
     {
       key: intl.formatMessage(messages.sampleType),
@@ -270,6 +281,10 @@ const TimelineItemTreatment = ({ treatment, intl, expand }) => {
     {
       key: intl.formatMessage(messages.resultTreatmentStatusLogCreatedBy),
       value: treatment.get('resultTreatmentStatusLogCreatedBy'),
+    },
+    {
+      key: intl.formatMessage(messages.date),
+      value: format(parseISO(treatment.get('date')), 'yyyy-MM-dd HH:mm:ss'),
     },
   ]
   return (

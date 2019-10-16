@@ -25,7 +25,7 @@ const AspectTimeline = ({ items, title }) => (
   <div style={{ margin: 20 }}>
     <section className={cssClasses('intro')}>
       <div className={cssClasses('container')}>
-        <h1>{title}</h1>
+        <p data-panel-title>{title}</p>
       </div>
     </section>
     {items.map(data => [<AspectTimelineItem data={data} />])}

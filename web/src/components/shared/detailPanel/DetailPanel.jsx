@@ -92,6 +92,10 @@ export const DetailGroup = compose(
               value: (data && data.get(key)) || rawData.get(key) || '',
               format: format(value.get('type'), intl),
               to: value.get('link') && makeLink(value.get('link'), rawData),
+              linkButton: value.get('linkButton') && {
+                text: value.get('linkButton').toJS().text,
+                to: makeLink(value.get('linkButton').toJS().to, rawData),
+              },
             }))
             .toJSON()}
         />
@@ -113,6 +117,10 @@ export const DetailGroup = compose(
             value: (data && data.get(key)) || rawData.get(key) || '',
             format: format(value.get('type'), intl),
             to: value.get('link') && makeLink(value.get('link'), rawData),
+            linkButton: value.get('linkButton') && {
+              text: value.get('linkButton').toJS().text,
+              to: makeLink(value.get('linkButton').toJS().to, rawData),
+            },
           }))
           .toJSON()}
       />
@@ -135,6 +143,10 @@ export const DetailGroup = compose(
               value: (data && data.get(key)) || rawData.get(key) || '',
               format: format(value.get('type'), intl),
               to: value.get('link') && makeLink(value.get('link'), rawData),
+              linkButton: value.get('linkButton') && {
+                text: value.get('linkButton').toJS().text,
+                to: makeLink(value.get('linkButton').toJS().to, rawData),
+              },
             }))
           )
           .map(fields => (

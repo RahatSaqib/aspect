@@ -249,7 +249,10 @@
             "row": 0,
             "order": 0,
             "title": "Patient ID",
-            "link":"/browse/patient/<%= patientId %>"
+            "linkButton":{ 
+              "to": "/browse/patient/<%= patientId %>", 
+              "text": "Clinical History"
+            }
           }
         }
       },

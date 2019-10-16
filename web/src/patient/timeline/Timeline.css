@@ -1,4 +1,4 @@
-
+@import '../../globals/variables.css';
 
 *,
 *::before,
@@ -8,19 +8,16 @@
   box-sizing: border-box;
 }
 
-
-
 /* INTRO SECTION
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
 .intro{
-  padding: 20px;
+  padding-bottom: 10px;
 }
 
 .container {
   width: 90%;
   max-width: 1200px;
-  margin: 0 auto;
-  text-align: center;
+  margin: 0 0;
 }
 
 h1 {

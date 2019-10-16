@@ -4,6 +4,24 @@
   font-size: 1rem;
 }
 
+
+.button {
+  background-color: var(--aspect-color-chill-blue-2);
+  color: white;
+  margin-left: 6px;
+  padding: 10px 9px 8px 9px;
+  border-radius: 21px;
+  position: relative;
+  margin-top: 6px;
+  text-decoration: none  !important;
+}
+
+.button :hover {
+  background-color: var(--aspect-color-chill-blue-2)  !important;
+  text-decoration: none  !important;
+ 
+}
+
 .Container--large {
   font-size: 1.15rem;
 }

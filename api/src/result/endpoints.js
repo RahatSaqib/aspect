@@ -1130,6 +1130,7 @@ const routes = [
                   .description('the result status'),
                 resultTreatmentId: Joi.string()
                   .required()
+                  .allow(null)
                   .description('The result treatment status id'),
                 resultTreatmentName: Joi.string()
                   .required()
@@ -1147,6 +1148,7 @@ const routes = [
                 date: Joi.date()
                   .iso()
                   .required()
+                  .allow(null)
                   .description('The date of the milestone'),
                 notes: Joi.string()
                   .optional()

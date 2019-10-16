@@ -99,7 +99,10 @@ async function getPatientResultsDetails(request) {
   const finalResult = []
   const samples = _.uniqBy(data, 'sampleId')
   const uniqResults = _.uniqBy(data, 'resultId')
-  const ResultTreatmentStatusLog = _.uniqBy(data, 'ResultTreatmentStatusLogId')
+  const ResultTreatmentStatusLog = _.uniqBy(
+    _.filter(data, elem => elem.ResultTreatmentStatusLogId),
+    'ResultTreatmentStatusLogId'
+  )
 
   _.each(uniqResults, async result =>
     finalResult.push(

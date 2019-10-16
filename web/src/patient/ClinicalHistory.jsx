@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 import React, { useRef, useEffect, useState } from 'react'
 import Helmet from 'react-helmet'
 import _ from 'lodash'
+import { defineMessages } from 'react-intl'
 import Grid from '@material-ui/core/Grid'
 import Paper from '@material-ui/core/Paper'
 import ReadOnlyField from '../components/shared/ReadOnlyField'
@@ -15,6 +16,20 @@ import { formatDate, formatDateTime } from '../shared/utils/dateFormat'
 
 const cssClasses = classnames.bind(require('./ClinicalHistory.css'))
 
+const messages = defineMessages({
+  clinicalHistory: {
+    id: 'pages.ClinicalHistory.clinicalHistory',
+    defaultMessage: 'Clinical History',
+  },
+  patient: {
+    id: 'pages.ClinicalHistory.patient',
+    defaultMessage: 'Patient',
+  },
+  patientData: {
+    id: 'pages.ClinicalHistory.patient',
+    defaultMessage: 'Patient Data',
+  },
+})
 export const ClinicalHistory = props => {
   const {
     intl,
@@ -74,23 +89,24 @@ export const ClinicalHistory = props => {
 
   return (
     <div className={cssClasses('Container')}>
-      <Helmet title={`Patient ${patientId}`} />
-      <NavTitle title={`Patient ${patientId}`} />
+      <Helmet title={`${intl.formatMessage(messages.patient)} ${patientId}`} />
+      <NavTitle
+        title={`${intl.formatMessage(messages.patient)} ${patientId}`}
+      />
       <DetailBackBar
         history={history}
         location={location}
         onBackClick={onBackClick}
-        title={`Patient ${patientId}`}
+        title={`${intl.formatMessage(messages.patient)} ${patientId}`}
       />
-
       <section className={cssClasses('Section', 'Section--first')}>
         <Grid container spacing={4} alignItems="stretch" direction="row">
           <Grid item xs={4}>
             <Paper style={{ height: '100%' }}>
               <section style={{ padding: 20 }}>
-                <div style={{ marginTop: 20, textAlign: 'center' }}>
-                  <h1>Patient data</h1>
-                </div>
+                <p data-panel-title>
+                  {intl.formatMessage(messages.patientData)}
+                </p>
               </section>
               <div style={{ padding: '0px 0px 20px 20px' }}>
                 {patientDataSchema &&
@@ -102,7 +118,7 @@ export const ClinicalHistory = props => {
             <Paper style={{ width: '100%' }}>
               <AspectTimeline
                 items={timelineItems}
-                title="Clinical History Timeline"
+                title={intl.formatMessage(messages.clinicalHistory)}
               />
             </Paper>
           </Grid>
