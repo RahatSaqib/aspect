@@ -171,7 +171,6 @@ function rearrangeInventoryKey(inventoryItem) {
 
 export const inventoryItems = ({
   className,
-  title,
   source,
   isSingleItem,
   selectInventoryItem,
@@ -221,10 +220,9 @@ export const inventoryItems = ({
               />
             ))}
         </div>
-        <Unit sm="1-8" />
       </div>
       <div>
-        <Unit sm="3-4" style={{ height: 320 }}>
+        <Unit sm="3-4" style={{ height: 320, width: '100%' }}>
           <div
             style={{ height: 320 }}
             className={cssClasses('Inventory_graph_Container')}

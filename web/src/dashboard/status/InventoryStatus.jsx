@@ -208,7 +208,6 @@ export const InventoryStatus = ({
       intl={intl}
       history={history}
       className={cssClasses('Section--withDropdown')}
-      title={intl.formatMessage(messages.inventoryTitle)}
     />
   </Card>
 )
