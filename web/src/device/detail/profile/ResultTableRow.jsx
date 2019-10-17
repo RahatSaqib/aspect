@@ -18,8 +18,8 @@ const ResultTableRow = ({ intl, result, ...restProps }) => (
     <TableCell>{formatDate(result.get('endedOn'))}</TableCell>
     <TableCell>{result.get('sampleOriginSiteName')}</TableCell>
     <TableCell>{result.get('sampleId')}</TableCell>
-    <TableCell>{result.get('sampleGroup')}</TableCell>
     <TableCell>{result.get('resultText')}</TableCell>
+    <TableCell>{result.get('errorCode')}</TableCell>
     <TableCell>{result.get('resultWorkflowStatus')}</TableCell>
     <TableCell>{result.get('patientId')}</TableCell>
   </TableRow>

@@ -18,9 +18,7 @@ export const DeviceDetailAlerts = ({
   disabled,
   // --- injected by recompose ---
 }) => {
-  const deviceName = `${device.getIn(['deviceType', 'name'])} at ${device.get(
-    'siteName'
-  )}`
+  const deviceName = device.get('name')
   const { deviceId } = match.params
   return (
     <div>

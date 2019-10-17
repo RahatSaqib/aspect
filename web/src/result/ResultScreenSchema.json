@@ -294,6 +294,12 @@
             "order": 1,
             "title": "RIF",
             "titleAssayDefinition": "resultCategory2Label"
+          },
+          "errorCode": {
+            "type": "string",
+            "row": 1,
+            "order": 3,
+            "title": "Error Code"
           }
         },
         "dataSchema": "assay.resultDataSchema"

@@ -91,19 +91,21 @@ export const TaskDetail = ({
             </span>
           </h2>
           <div className={cssClasses('Card__Content')}>
-            <Unit lg="1-5">
-              <span className={cssClasses('Summary__Item')}>
-                {task.get('device')}
-                <Link
-                  to={`/browse/device/{task.get('device')}`}
-                  className={cssClasses('Summary__Item__Link')}
-                >
-                  <FaArrowUp
-                    className={cssClasses('Summary__Item__Link__FaArrowUp')}
-                  />
-                </Link>
-              </span>
-            </Unit>
+            {task.get('device') && (
+              <Unit lg="1-5">
+                <span className={cssClasses('Summary__Item')}>
+                  {task.get('device')}
+                  <Link
+                    to={`/browse/device/{task.get('device')}`}
+                    className={cssClasses('Summary__Item__Link')}
+                  >
+                    <FaArrowUp
+                      className={cssClasses('Summary__Item__Link__FaArrowUp')}
+                    />
+                  </Link>
+                </span>
+              </Unit>
+            )}
             <Unit lg="1-5">
               <span className={cssClasses('Summary__Item')}>
                 {task.get('site')}
@@ -125,6 +127,7 @@ export const TaskDetail = ({
                 Snooze
               </Link> */}
             </Unit>
+            <br />
             <Unit lg="1-5">
               <legend className={cssClasses('Summary__Legend')}>
                 People alerted
@@ -145,16 +148,23 @@ export const TaskDetail = ({
                 Site contact
               </legend>
               <div>
-                {_.map(jobPersons.toArray(), elem => (
-                  <span className={cssClasses('Summary__Item')}>
-                    {elem.personName}
-                    <Link to="#" className={cssClasses('Summary__Item__Link')}>
-                      <FaArrowUp
-                        className={cssClasses('Summary__Item__Link__FaArrowUp')}
-                      />
-                    </Link>
-                  </span>
-                ))}
+                {jobPersons && jobPersons.length > 0
+                  ? _.map(jobPersons.toArray(), elem => (
+                      <span className={cssClasses('Summary__Item')}>
+                        {elem.personName}
+                        <Link
+                          to="#"
+                          className={cssClasses('Summary__Item__Link')}
+                        >
+                          <FaArrowUp
+                            className={cssClasses(
+                              'Summary__Item__Link__FaArrowUp'
+                            )}
+                          />
+                        </Link>
+                      </span>
+                    ))
+                  : '-'}
               </div>
             </Unit>
             <Unit lg="1-2">
@@ -241,7 +251,7 @@ export const TaskDetail = ({
             </Unit>
             <Unit sm="1-2">
               <AspectButton variant="contained">Add comment</AspectButton>
-            </Unit>          
+            </Unit>
             <Unit sm="1-2" className={cssClasses('NewMessage__Checkbox')}>
               <CheckboxField checked={false} label="This is now resolved" />
             </Unit> */}

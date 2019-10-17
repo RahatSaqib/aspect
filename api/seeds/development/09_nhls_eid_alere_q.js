@@ -227,7 +227,7 @@ async function seed(knex) {
                   siteId,
                   deviceTypeId: await deviceTypeToId(device.deviceTypeId),
                   deviceStatusId: await deviceStatusToId('approved'),
-                  name: `${siteData.shortName} ${device.deviceTypeId} ${device.deviceSerial}`,
+                  name: `${siteData.shortName} ${device.deviceTypeId}`,
                   shortName: `${device.deviceTypeId} ${device.deviceSerial}`,
                   serial: device.deviceSerial,
                   culture: southAfricaCountry.culture,
@@ -404,7 +404,7 @@ async function seed(knex) {
   })
 
   const [alereQHiv12DetectAssayId] = await knex('Assay').insert({
-    name: 'Alere q HIV-1/2 Detect',
+    name: 'Alere Q HIV-1/2 Detect',
     abbreviation: 'Q HIV detect',
     i18nKey: 'assayAlereQHiv12Detect',
     externalId: 'assayAlereQHiv12Detect',
@@ -507,7 +507,7 @@ async function seed(knex) {
     patientDataSchema,
   })
   const [alereQHiv12VLPlasmaAssayId] = await knex('Assay').insert({
-    name: 'Alere q HIV-1/2 VL plasma',
+    name: 'Alere Q HIV-1/2 VL plasma',
     abbreviation: 'Q HIV Plasma',
     i18nKey: 'assayAlereQHiv12VLPlasma',
     externalId: 'assayAlereQHiv12VLPlasma',
@@ -634,13 +634,13 @@ async function seed(knex) {
 
   const piece = await unitToId('Piece')
   const [alereQHiv12DetectCartridgeId] = await knex('Consumable').insert({
-    name: 'Alere q HIV-1/2 Detect Cartridge',
+    name: 'Alere Q HIV-1/2 Detect Cartridge',
     unit: piece,
     canExpire: 1,
     manufacturer: 'Alere',
   })
   const [alereQHiv12VLPlasmaCartridgeId] = await knex('Consumable').insert({
-    name: 'Alere q HIV-1/2 VL Plasma Cartridge',
+    name: 'Alere Q HIV-1/2 VL Plasma Cartridge',
     unit: piece,
     canExpire: 1,
     manufacturer: 'Alere',

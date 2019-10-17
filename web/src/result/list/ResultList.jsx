@@ -59,9 +59,9 @@ const messages = defineMessages({
     id: 'pages.ResultList.sampleId',
     defaultMessage: 'Sample ID',
   },
-  sampleGroup: {
-    id: 'pages.ResultList.sampleGroup',
-    defaultMessage: 'Sample Group',
+  errorCode: {
+    id: 'pages.ResultList.errorCode',
+    defaultMessage: 'Error Code',
   },
   resultText: {
     id: 'pages.ResultList.resultText',
@@ -107,7 +107,7 @@ const FILTERS_CONFIG = [
   { date: true, requiredPermissions: [] },
   { patientOrResearchId: true, requiredPermissions: [] },
   { sampleId: true, requiredPermissions: [] },
-  { sampleGroup: true, requiredPermissions: [] },
+  { errorCode: true, requiredPermissions: [] },
   {
     siteName: true,
     requiredPermissions: ['site:view', 'site:admin', 'site:edit'],
@@ -123,7 +123,7 @@ const searchSanitizer = makeSearchParamsSanitizer({
     'deviceName',
     'sampleOriginSiteName',
     'sampleId',
-    'sampleGroup',
+    'errorCode',
     'patientId',
     /* --- table.extraColumns BEGIN --- */
     'resultCategory1Name',
@@ -324,15 +324,15 @@ export const ResultList = ({
                 sortable: true,
               },
               {
-                key: 'sampleGroup',
-                label: intl.formatMessage(messages.sampleGroup),
-                sortable: true,
-                hiddenOn: 'md',
-              },
-              {
                 key: 'resultText',
                 label: intl.formatMessage(messages.resultText),
                 sortable: true,
+              },
+              {
+                key: 'errorCode',
+                label: intl.formatMessage(messages.errorCode),
+                sortable: true,
+                hiddenOn: 'md',
               },
               {
                 key: 'resultWorkflowStatus',

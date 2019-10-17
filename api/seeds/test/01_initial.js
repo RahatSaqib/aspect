@@ -36,8 +36,7 @@ const millisInMinute = 1000 * 60
 const millisInNormalYear = 1000 * 60 * 60 * 24 * 365
 const resultTimeFrameInDays = 365
 
-const resultMultiplier = process.env['seeds.resultMultiplier'] || 100
-const resultHcvNumber = 0.5 * resultMultiplier
+const resultHcvNumber = 100
 const now = new Date()
 const patientNumber = patients.length - 1
 
@@ -225,16 +224,9 @@ async function seed(knex) {
     deviceOperationSchema,
   })
 
-  const [deviceTypeAfinionId] = await knex('DeviceType').insert({
-    externalId: 'AlereAfinion',
-    name: 'Afinion',
-    manufacturer: 'Alere',
-    deviceTypeCategoryId: deviceTypeCategoryLab,
-  })
-
   const [deviceTypeQId] = await knex('DeviceType').insert({
     externalId: 'AlereQ',
-    name: 'Q',
+    name: 'Alere Q',
     manufacturer: 'Alere',
     deviceTypeCategoryId: deviceTypeCategoryLab,
   })
@@ -306,7 +298,6 @@ async function seed(knex) {
     'CD4 Count': assayTypeCD4Id,
     EID: assayTypeEid,
     HCV: assayTypeHcvId,
-    'Lipid Panel': assayTypeLipidPanelId,
     Unknown: assayTypeUnknownId,
   } = await allAssayTypeToId()
 
@@ -824,56 +815,6 @@ async function seed(knex) {
     resultCategory2i18nKey: null,
     resultDataSchema: geneXpertResultDataSchemaHiv,
     patientDataSchema: geneXpertPatientDataSchema,
-  })
-
-  await knex('Assay').insert({
-    name: 'Afinion HIV VL',
-    abbreviation: 'AF HIV VL',
-    i18nKey: 'assayAfinionHivVl',
-    externalId: 'AfinionHivVL',
-    assayTypeId: assayTypeHivVlId,
-    deviceTypeId: deviceTypeAfinionId,
-    resultSourceId: resultSourceDiagnosticId,
-    resultDataSchema: JSON.stringify({
-      copies: {
-        title: 'copies/mL',
-        type: 'number',
-        list: true,
-      },
-      log: {
-        title: 'log',
-        type: 'number',
-      },
-    }),
-  })
-
-  await knex('Assay').insert({
-    name: 'Afinion Lipid Panel',
-    abbreviation: 'AF LP',
-    i18nKey: 'assayAfinionLipidPanel',
-    externalId: 'LipidPanel',
-    assayTypeId: assayTypeLipidPanelId,
-    deviceTypeId: deviceTypeAfinionId,
-    resultSourceId: resultSourceDiagnosticId,
-    resultDataSchema: JSON.stringify({
-      chol: {
-        title: 'Chol (mmol/L)',
-        type: 'number',
-        unit: 'mmol/L',
-        list: true,
-      },
-      trig: {
-        title: 'Trig (mmol/L)',
-        type: 'number',
-        unit: 'mmol/L',
-        list: true,
-      },
-      hdl: {
-        title: 'HDL (mmol/L)',
-        type: 'number',
-        unit: 'mmol/L',
-      },
-    }),
   })
 
   await knex('Assay').insert({

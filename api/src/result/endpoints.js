@@ -51,6 +51,9 @@ function listResultsBaseConfig() {
           resultCategoryId: Joi.number()
             .allow('')
             .description('Result Category ID'),
+          errorCode: Joi.string()
+            .allow('')
+            .description('Filter error code'),
           deviceName: Joi.string()
             .allow('')
             .description('Filter for device name'),
@@ -63,9 +66,6 @@ function listResultsBaseConfig() {
           sampleId: Joi.string()
             .allow('')
             .description('Filter for sample ID'),
-          sampleGroup: Joi.string()
-            .allow('')
-            .description('Filter for sample group'),
           sampleOriginSite: Joi.string()
             .allow('')
             .description('Filter for sample origin site ID'),

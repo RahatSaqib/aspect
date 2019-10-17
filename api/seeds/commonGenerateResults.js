@@ -126,7 +126,7 @@ async function generateResults(
     },
     {
       resultText: 'Not Detected',
-      category1: resultCategoryDetectedId,
+      category1: resultCategoryNotDetectedId,
       category2: null,
       minLikelihood: 39,
       maxLikelihood: 100,
@@ -184,7 +184,7 @@ async function generateResults(
       const siteData = _.sample(siteDatas)
       await knex('Device').insert(
         Object.assign({}, auditFields, {
-          name: `Router at ${i} ${siteData.shortName}`,
+          name: `${siteData.shortName} Router`,
           shortName: `r${i}`,
           deviceTypeId: elem.id,
           deviceStatusId: deviceStatusApproved,

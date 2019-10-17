@@ -39,6 +39,8 @@ const millisInHour = 1000 * 60 * 60
 const millisInMinute = 1000 * 60
 const resultTimeFrameInDays = 365
 
+const resultMtbNumber = 100
+
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
 
 async function seed(knex) {
@@ -547,7 +549,6 @@ async function seed(knex) {
           device.id = deviceId
 
           // only create results if managed region
-          const resultMtbNumber = 1000 + Math.floor(Math.random() * 200 - 100)
           await Promise.all(
             _.map(_.range(resultMtbNumber), async i => {
               const sample = samples[i % samples.length]
@@ -783,12 +784,8 @@ async function seed(knex) {
   )
 
   // Fill Issue/AlertMessage/Notification table with some mock data
-  const { rootId } = await knex('User')
-    .where({ name: 'Admin' })
-    .first('id as rootId')
-  const devices = await knex('Device')
-    .where({ partnerId })
-    .orWhere('partnerId', rootId)
+  const devices = await knex('Device').where({ partnerId })
+
   const issueStatusActiveId = await getId(knex, 'IssueStatus', 'Active')
   const issueStatusAcknowledgedId = await getId(
     knex,
@@ -877,7 +874,10 @@ async function seed(knex) {
               {
                 issueTypeId,
                 issueStatusId,
-                deviceId: device.id,
+                deviceId:
+                  issueTypes.StockLevelUpdate.id === issueTypeId
+                    ? null
+                    : device.id,
                 siteId: device.siteId,
                 geographyId: device.geographyId,
               },
@@ -1003,7 +1003,10 @@ async function seed(knex) {
               {
                 issueTypeId,
                 issueStatusId,
-                deviceId: device.id,
+                deviceId:
+                  issueTypes.StockLevelUpdate.id === issueTypeId
+                    ? null
+                    : device.id,
                 siteId: device.siteId,
                 geographyId: device.geographyId,
               },

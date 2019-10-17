@@ -39,8 +39,8 @@ const saltRounds = parseInt(config.passwordSaltRounds, 10)
 const millisInMinute = 1000 * 60
 const resultTimeFrameInDays = 180
 const resultMultiplier = process.env['seeds.resultMultiplier'] || 100
-const resultEidNumber = 8 * resultMultiplier
-const resultHivVlNumber = 70 * resultMultiplier
+const resultEidNumber = 0.2 * resultMultiplier
+const resultHivVlNumber = resultMultiplier
 const now = new Date()
 const patientNumber = patients.length - 1
 
@@ -457,7 +457,7 @@ async function seed(knex) {
         // Router
         await knex('Device').insert(
           Object.assign({}, auditFields, {
-            name: `Router at ${siteData.name}`,
+            name: `${siteData.name} Router`,
             shortName: `RO-${siteData.shortName}`,
             deviceTypeId: deviceTypeIdRouter,
             deviceStatusId: approvedDeviceStatusId,
@@ -662,12 +662,12 @@ async function seed(knex) {
   } = await allResultCategoryToId()
 
   // Reuse previously seeded "static" data
-  const { id: assayIdChaiEid } = await knex('Assay')
-    .where('name', 'CHAI EID')
+  const { id: assayIdEid } = await knex('Assay')
+    .where('externalId', 'abbottM2000HIVEID')
     .first()
 
-  const { id: assayIdChaiHivVl } = await knex('Assay')
-    .where('name', 'CHAI HIV VL')
+  const { id: assayIdHivVl } = await knex('Assay')
+    .where('externalId', 'abbottM2000DBSHivVL')
     .first()
 
   const {
@@ -678,26 +678,6 @@ async function seed(knex) {
   const resultSourceLimsId = await resultSourceToId('LIMS')
 
   const resultTypePatientId = await resultTypeToId('Patient')
-
-  await knex('ResultCategoryAssay').insert({
-    resultCategoryId: resultCategoryNotDetectedId,
-    assayId: assayIdChaiEid,
-  })
-
-  await knex('ResultCategoryAssay').insert({
-    resultCategoryId: resultCategoryDetectedId,
-    assayId: assayIdChaiEid,
-  })
-
-  await knex('ResultCategoryAssay').insert({
-    resultCategoryId: resultCategoryIndeterminateId,
-    assayId: assayIdChaiEid,
-  })
-
-  await knex('ResultCategoryAssay').insert({
-    resultCategoryId: resultCategoryErrorId,
-    assayId: assayIdChaiEid,
-  })
 
   const possibleResultsEid = [
     {
@@ -726,9 +706,9 @@ async function seed(knex) {
     },
   ]
 
-  const deviceTypeCHAILIMS = await deviceTypeToId('CHAILIMS')
-  const CHAILIMSM2000Devices = await knex('Device')
-    .where('deviceTypeId', deviceTypeCHAILIMS)
+  const deviceTypeAbbottM2000 = await deviceTypeToId('AbbottM2000')
+  const m2000Devices = await knex('Device')
+    .where('deviceTypeId', deviceTypeAbbottM2000)
     .select('id', 'siteId')
 
   async function createUniqueResultIdForDevice(
@@ -756,10 +736,10 @@ async function seed(knex) {
   }
 
   async function createResultEid(i) {
-    const device = CHAILIMSM2000Devices[i % CHAILIMSM2000Devices.length]
+    const device = m2000Devices[i % m2000Devices.length]
     const siteData = await knex('Site')
       .where('id', device.siteId)
-      .first('id')
+      .first('id', 'geographyId')
     const sample = samples[i % samples.length]
     const randomDate = calculateDateForResult(i, resultEidNumber, 6000)
 
@@ -774,10 +754,11 @@ async function seed(knex) {
       sample.externalId,
       device.id
     )
+
     const resultId = await knex('Result').insert(
       Object.assign({}, auditFields, {
         externalId: resultExternalId,
-        assayId: assayIdChaiEid,
+        assayId: assayIdEid,
         partnerId,
         geographyId: siteData.geographyId,
         siteId: siteData.id,
@@ -801,6 +782,14 @@ async function seed(knex) {
         moduleName: 'Module A',
         moduleSerial: `M-1234-${i % 4}`,
         senderOperator: 'Frank',
+        errorCode:
+          result.category1 === resultCategoryErrorId
+            ? _.random(2000, 9000)
+            : null,
+        errorNotes:
+          result.category1 === resultCategoryErrorId
+            ? 'Temperature out of acceptable range'
+            : null,
         patientData: JSON.stringify({
           id: patient.id,
           age: patient.age,
@@ -841,28 +830,6 @@ async function seed(knex) {
   for (const i of _.range(resultEidNumber)) {
     await createResultEid(i)
   }
-
-  // HIV VL results:
-  // assign categories to assay
-  await knex('ResultCategoryAssay').insert({
-    resultCategoryId: resultCategoryLessThan1000Id,
-    assayId: assayIdChaiHivVl,
-  })
-
-  await knex('ResultCategoryAssay').insert({
-    resultCategoryId: resultCategoryMoreThan1000Id,
-    assayId: assayIdChaiHivVl,
-  })
-
-  await knex('ResultCategoryAssay').insert({
-    resultCategoryId: resultCategoryCollectNewSampleId,
-    assayId: assayIdChaiHivVl,
-  })
-
-  await knex('ResultCategoryAssay').insert({
-    resultCategoryId: resultCategoryErrorId,
-    assayId: assayIdChaiHivVl,
-  })
 
   const possibleResultsHivVl = [
     {
@@ -931,10 +898,10 @@ async function seed(knex) {
   }
 
   async function createResultHiv(i) {
-    const device = CHAILIMSM2000Devices[i % CHAILIMSM2000Devices.length]
+    const device = m2000Devices[i % m2000Devices.length]
     const siteData = await knex('Site')
       .where('id', device.siteId)
-      .first('id')
+      .first('id', 'geographyId')
     const sample = samples[i % samples.length]
     const randomDate = calculateDateForResult(i, resultHivVlNumber, 6000)
 
@@ -966,7 +933,7 @@ async function seed(knex) {
     const resultId = await knex('Result').insert(
       Object.assign({}, auditFields, {
         externalId: resultExternalId,
-        assayId: assayIdChaiHivVl,
+        assayId: assayIdHivVl,
         partnerId,
         geographyId: siteData.geographyId,
         siteId: siteData.id,
@@ -990,6 +957,14 @@ async function seed(knex) {
         moduleName: 'Module A',
         moduleSerial: `M-1234-${i % 4}`,
         senderOperator: 'Frank',
+        errorCode:
+          result.category1 === resultCategoryErrorId
+            ? _.random(2000, 9000)
+            : null,
+        errorNotes:
+          result.category1 === resultCategoryErrorId
+            ? 'Temperature out of acceptable range'
+            : null,
         patientData: JSON.stringify({
           id: patient.id,
           age: patient.age,
