@@ -272,7 +272,7 @@ export const messages = defineMessages({
   },
   treatmentTitle: {
     id: 'pages.Status.treatmentTitle',
-    defaultMessage: 'Confirmed Treatment Tracking',
+    defaultMessage: 'Confirmed Follow-up',
   },
   treatmentAllSites: {
     id: 'pages.Status.treatmentAllSites',
@@ -294,6 +294,10 @@ export const messages = defineMessages({
   treatmentTooltipFor_pcNotConfirmed: {
     id: 'pages.Status.treatmentTooltipFor_pcNotConfirmed',
     defaultMessage: 'Percentage of results not confirmed on treatment',
+  },
+  assayResultCategoryAll: {
+    id: 'pages.Status.assayResultCategoryAll',
+    defaultMessage: 'All Results',
   },
 })
 

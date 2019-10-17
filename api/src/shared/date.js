@@ -6,13 +6,25 @@ function getDateOrDefault(object, propertyPath, defaultValue) {
   return parseDateOrDefault(date, defaultValue)
 }
 
-function parseDateOrDefault(date, defaultValue = null) {
+function parseDateOrDefault(
+  date,
+  options = { formatString: null, backupDate: null, defaultDate: null }
+) {
+  const defaultValue = _.isPlainObject(options) ? options.defaultDate : options
   if (date == null || date === '') {
     return defaultValue
   }
-  const parsed =
-    date instanceof Date ? date : dateFns.toDate(dateFns.parseISO(date))
-  return dateFns.isValid(parsed) ? parsed : defaultValue
+  const parsedDate =
+    date instanceof Date
+      ? date
+      : options && options.formatString
+      ? dateFns.parse(
+          date,
+          options.formatString,
+          options.backupDate || getUtcTime()
+        )
+      : dateFns.toDate(dateFns.parseISO(date))
+  return dateFns.isValid(parsedDate) ? parsedDate : defaultValue
 }
 
 function formatDateOrDefault(date, dateFormat, defaultValue = null) {
@@ -46,10 +58,18 @@ function getUtcTime(localTime) {
   return new Date(time.getTime() + time.getTimezoneOffset() * 60000)
 }
 
+function dateEqual(date1, date2) {
+  if ((!date1 && date2) || (date1 && !date2)) {
+    return false
+  }
+  return dateFns.isEqual(date1, date2)
+}
+
 module.exports = {
   getDateOrDefault,
   parseDateOrDefault,
   formatDateOrDefault,
   returnIso8601StringWithoutTimeZoneOffset,
   getUtcTime,
+  dateEqual,
 }

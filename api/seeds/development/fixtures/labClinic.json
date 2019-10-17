@@ -4439,6 +4439,24 @@
           "deviceApiKey": "q8f2ujd19kcnf31f1tzg"
         }
       ]
+    },
+    {
+      "externalId": "BAMENDA-TBRL",
+      "name": "TB Reference Laboratory Bamenda",
+      "shortName": "TBRL Bamenda",
+      "stateName": "Nord-Ouest",
+      "lgaName": "Mezam",
+      "latitude": 5.9568439,
+      "longitude": 10.1440459,
+      "devices": [
+        {
+          "deviceTypeId": "AbbottM2000",
+          "name": "Bamenda TBRL M2000",
+          "shortName": "Bamenda M2000",
+          "deviceSerial": "BM-M2000",
+          "deviceApiKey": "tehzervf4ja584ex029g"
+        }
+      ]
     }
   ]
 }

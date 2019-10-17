@@ -24,7 +24,7 @@ const SELECT_LIST_FIELDS = [
   'r.id',
   'r.externalId',
   knex.raw(
-    "case when ifnull(GREATEST(rtas.requiresTreatment, rtas2.requiresTreatment), 0) = 0 then null else case when rts.externalId= 'OnTreatment' then 'ok' when rts.externalId = 'NotPossible' then 'na' when r.endedOn<DATE_SUB(NOW(),INTERVAL 32 DAY) then 'alert' when r.endedOn<=DATE_SUB(NOW(),INTERVAL 16 DAY) and r.endedOn>=DATE_SUB(NOW(),INTERVAL 32 DAY) then 'warning' else 'na' end end as treatmentStatusInfo"
+    "case when GREATEST(IFNULL(rtas.requiresTreatment,0), IFNULL(rtas2.requiresTreatment,0)) = 0 then null else case when rts.externalId= 'OnTreatment' then 'ok' when rts.externalId = 'NotPossible' then 'na' when r.endedOn<DATE_SUB(NOW(),INTERVAL 32 DAY) then 'alert' when r.endedOn<=DATE_SUB(NOW(),INTERVAL 16 DAY) and r.endedOn>=DATE_SUB(NOW(),INTERVAL 32 DAY) then 'warning' else 'na' end end as treatmentStatusInfo"
   ),
   knex.raw('IFNULL(r.endedOn, r.startedOn) as endedOn'),
   'd.name as deviceName',
@@ -38,7 +38,7 @@ const SELECT_LIST_FIELDS = [
   'rtsl.changedOn as resultTreatmentStatusChangedOn',
   knex.raw('ifnull(rts.name, "N/A") as resultTreatmentStatusName'),
   knex.raw(
-    'ifnull(GREATEST(rtas.requiresTreatment, rtas2.requiresTreatment), 0) as requiresTreatment'
+    'GREATEST(IFNULL(rtas.requiresTreatment,0), IFNULL(rtas2.requiresTreatment,0)) as requiresTreatment'
   ),
   'so.name as sampleOriginSiteName',
   'sp.externalId as sampleId',
@@ -102,10 +102,10 @@ const SELECT_COMMON_FIELDS = [
   'stp.name as sampleTypeName',
   knex.raw('JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.id")) as patientId'),
   knex.raw(
-    'GREATEST(rtas.requiresTreatment, rtas2.requiresTreatment) as requiresTreatment'
+    'GREATEST(IFNULL(rtas.requiresTreatment,0), IFNULL(rtas2.requiresTreatment,0)) as requiresTreatment'
   ),
   knex.raw(
-    "case when GREATEST(rtas.requiresTreatment, rtas2.requiresTreatment) = 0 then null else case when rts.externalId= 'OnTreatment' then 'ok' when rts.externalId = 'NotPossible' then 'na' when r.endedOn<DATE_SUB(NOW(),INTERVAL 32 DAY) then 'alert' when r.endedOn<=DATE_SUB(NOW(),INTERVAL 16 DAY) and r.endedOn>=DATE_SUB(NOW(),INTERVAL 32 DAY) then 'warning' else 'na' end end as treatmentStatusInfo"
+    "case when GREATEST(IFNULL(rtas.requiresTreatment,0), IFNULL(rtas2.requiresTreatment,0)) = 0 then null else case when rts.externalId= 'OnTreatment' then 'ok' when rts.externalId = 'NotPossible' then 'na' when r.endedOn<DATE_SUB(NOW(),INTERVAL 32 DAY) then 'alert' when r.endedOn<=DATE_SUB(NOW(),INTERVAL 16 DAY) and r.endedOn>=DATE_SUB(NOW(),INTERVAL 32 DAY) then 'warning' else 'na' end end as treatmentStatusInfo"
   ),
   'r.patientData',
   'rsl.reason as resultWorkflowLogReason',
@@ -636,8 +636,9 @@ async function getDownloadResultsList(query, auth) {
       'rfu.date',
       'rfu.createdOn',
       'rfu.updatedOn',
-      'fu.name',
-      'fu.i18nKey',
+      'fu.name as followUpName',
+      'fu.externalId as followUpExternalId',
+      'fu.i18nKey as followUpi18nKey',
       'fut.name as followUpTypeName',
       'fut.externalId as followUpTypeExternalId',
       'fut.i18nKey as followUpTypei18nKey'
@@ -1493,7 +1494,7 @@ async function confirmedTreatmentTracking(request) {
   // get data constraints
   const dataConstraints = await getConstraints(auth.credentials)
 
-  const { siteId } = payload
+  const { siteId, assayTypeId, resultCategoryId } = payload
 
   const now = new Date()
   const lastEndedOn = endOfMonth(subMonths(now, 1))
@@ -1545,6 +1546,14 @@ async function confirmedTreatmentTracking(request) {
     .where(function() {
       if (siteId) {
         this.where('s.id', siteId)
+      }
+    })
+    .modify(queryBuilder => {
+      if (assayTypeId && resultCategoryId) {
+        queryBuilder
+          .innerJoin('Assay as a', 'a.id', 'r.assayId')
+          .where('a.assayTypeId', assayTypeId)
+          .where('r.resultCategory1', resultCategoryId)
       }
     })
     // filter by date range, inclusive
@@ -1655,14 +1664,15 @@ async function listFollowUps(request) {
   // convert data to nested JSON
   const followUps = _.uniqBy(data, 'id').map(f =>
     Object.assign(
-      _.pick(f, ['id', 'name', 'externalId', 'i18nKey'], {
+      _.pick(f, ['id', 'name', 'externalId', 'i18nKey']),
+      {
         type: {
           id: f.followUpTypeId,
           name: f.followUpTypeName,
           externalId: f.followUpTypeExternalId,
           i18nKey: f.followUpTypeI18nKey,
         },
-      }),
+      },
       {
         assays: _.uniqBy(
           data.filter(d => d.id === f.id && d.assayId),
@@ -1740,7 +1750,7 @@ async function setResultFollowUp(request) {
   // get the result so we can check access and if status changed
   const result = await getResultByResultId(request)
   if (!result.ok) {
-    Boom.notFound()
+    return Boom.notFound()
   }
 
   const { externalId, followUpId, followUpExternalId, date } = payload
@@ -1793,21 +1803,35 @@ async function updateResultFollowUp(request) {
   const now = new Date()
   const { auth, params, payload } = request
   const { resultId } = params
-  const { date, id, externalId } = payload
+  const { date, id, externalId, followUpId, followUpExternalId } = payload
   const { id: currentUserId } = await getUser(auth.credentials.name)
 
   // get the result so we can check access and if status changed
   const result = await getResultByResultId(request)
   if (!result.ok) {
-    Boom.notFound()
+    return Boom.notFound()
   }
 
-  const affectedRows = await knex('ResultFollowUp as r')
+  const followUp = await knex('FollowUp as fu')
+    .join('FollowUpType as fut', 'fu.followUpTypeId', 'fut.id')
+    .where('fu.externalId', followUpExternalId || -1)
+    .orWhere('fu.id', followUpId || -1)
+    .first('fu.id', 'fu.externalId', 'fu.followUpTypeId')
+
+  const affectedRows = await knex('ResultFollowUp')
     .where('id', id || '-1')
     .orWhere(function() {
       this.where('resultId', resultId).where('externalId', externalId || '-1')
     })
-    .update({ date, updatedOn: now, updatedBy: currentUserId })
+    .update({
+      date,
+      updatedOn: now,
+      updatedBy: currentUserId,
+      followUpId: knex.raw(
+        'ifnull(?, followUpId)',
+        followUp ? followUp.id : null
+      ),
+    })
 
   if (affectedRows === 0) {
     return Boom.notFound('Could not find follow up')
@@ -1825,19 +1849,15 @@ async function deleteResultFollowUp(request) {
   // get the result so we can check access
   const result = await getResultByResultId(request)
   if (!result.ok) {
-    Boom.notFound()
+    return Boom.notFound()
   }
 
-  const affectedRows = await knex('ResultFollowUp')
+  await knex('ResultFollowUp')
     .where('id', id || '-1')
     .orWhere(function() {
       this.where('resultId', resultId).where('externalId', externalId || '-1')
     })
     .del()
-
-  if (affectedRows === 0) {
-    return Boom.notFound('Could not find follow up')
-  }
 
   return updateTreatmentStatusBasedOnFollowUps(
     request,
@@ -1907,8 +1927,9 @@ async function showResultFollowUps(request) {
       'rfu.date',
       'rfu.createdOn',
       'rfu.updatedOn',
-      'fu.name',
-      'fu.i18nKey',
+      'fu.name as followUpName',
+      'fu.externalId as followUpExternalId',
+      'fu.i18nKey as followUpi18nKey',
       'fut.name as followUpTypeName',
       'fut.externalId as followUpTypeExternalId',
       'fut.i18nKey as followUpTypei18nKey'

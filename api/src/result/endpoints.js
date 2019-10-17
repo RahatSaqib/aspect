@@ -630,10 +630,13 @@ const routes = [
                         .description(
                           'When the follow up was last updated in Aspect'
                         ),
-                      name: Joi.string()
+                      followUpExternalId: Joi.string()
+                        .required()
+                        .description('External ID of the follow up'),
+                      followUpName: Joi.string()
                         .required()
                         .description('Name of the follow up'),
-                      i18nKey: Joi.string()
+                      followUpi18nKey: Joi.string()
                         .required()
                         .description('Translation key for the follow up'),
                       followUpTypeName: Joi.string()
@@ -722,6 +725,12 @@ const routes = [
       validate: {
         payload: {
           siteId: Joi.number()
+            .integer()
+            .allow(null),
+          assayTypeId: Joi.number()
+            .integer()
+            .allow(null),
+          resultCategoryId: Joi.number()
             .integer()
             .allow(null),
           endedOn: Joi.date()
@@ -902,6 +911,7 @@ const routes = [
             date: Joi.date()
               .iso()
               .optional()
+              .allow(null)
               .description('This is the date when the follow up happened'),
           })
           .xor('followUpId', 'followUpExternalId'),
@@ -953,7 +963,18 @@ const routes = [
             date: Joi.date()
               .iso()
               .optional()
+              .allow(null)
               .description('This is the date when the follow up happened'),
+            followUpId: Joi.number()
+              .integer()
+              .positive()
+              .allow(null)
+              .description('The ID of the follow up'),
+            followUpExternalId: Joi.string()
+              .allow('', null)
+              .description(
+                'The externalId of the follow up. Will be used if followUpId is null/empty.'
+              ),
           })
           .xor('id', 'externalId'),
       },

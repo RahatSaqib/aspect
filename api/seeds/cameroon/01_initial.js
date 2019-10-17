@@ -3,9 +3,10 @@ module.exports = require('../utils').seed(seed, __filename)
 const bcrypt = require('bcrypt')
 const config = require('../../src/config')
 const utils = require('../utils')
+const { seedAbbottM2000AndAssays } = require('../utils_abbott_m2000')
 const geography = require('./fixtures/geography.json')
 const { partnerTypeToId } = require('../../src/shared/dictionary')
-const { commonInserts } = require('../common')
+const { commonUpserts } = require('../common')
 
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
 
@@ -32,12 +33,14 @@ async function seed(knex) {
     serverUrl: 'https://cameroon.aspect.id',
   })
 
-  await commonInserts(
+  await seedAbbottM2000AndAssays(knex)
+
+  await commonUpserts(
     knex,
     partnerId,
     adminId,
     geography,
-    'CR',
+    'CM',
     'Zs4uow3jV0md6cmET0zUY'
   )
 }

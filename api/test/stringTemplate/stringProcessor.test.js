@@ -5,7 +5,10 @@ const { assert, expect } = require('chai')
 const { convertToTimeZone } = require('date-fns-timezone')
 
 const { runTest } = require('../utils/generatorFunctionUtils')
-const { formatDateOrDefault } = require('../../src/shared/date')
+const {
+  formatDateOrDefault,
+  parseDateOrDefault,
+} = require('../../src/shared/date')
 
 describe('stringTemplate', () => {
   describe('processUsingHandlebarsSyntax', () => {
@@ -170,6 +173,9 @@ describe('stringTemplate', () => {
       assayExternalId: 'assayAlereQHiv12Detect',
       resultCategory1ExternalId: 'Detected',
       resultCategory2ExternalId: 'NotDetected',
+      createdOn: parseDateOrDefault('2018-08-01T10:38:00.000Z'),
+      consumableSerial: '12345678',
+      senderOperator: 'Dr Foster Went to Gloucestershire',
     }
 
     async function runProcessUsingDataSourceQuery(
@@ -1324,6 +1330,152 @@ describe('stringTemplate', () => {
               `; Result: ${dataSource.expectedResult}`,
             `Use case failed: ${JSON.stringify(useCase)}`
           )
+        })
+      })
+    })
+
+    describe('use cases for Cameroon', () => {
+      it('should process Check TB App Payloads', async () => {
+        const checkTbAppAuthKey = '00000-00000-00000-00000'
+        const checkTbAppDateTimeFormat = 'yyyy-MM-dd HH:mm'
+        const template =
+          `{{curly true}}` +
+          `"auth_key":"${checkTbAppAuthKey}",` +
+          `"mtb_result":{{enclose (defaultTo (mapValue result.category1.id '{"Detected":"detected","Trace Detected":"trace","NotDetected":"not_detected","Indeterminate":"error_invalid","Invalid":"error_invalid","NoResult":"not_done","Error":"error_invalid","Negative":"not_detected","Positive1":"not_detected","Positive2":"detected","Positive3":"detected","PositiveMTB":"detected","Positive":"detected"}') '') with='"'}},` +
+          `"mtb_grade":{{enclose (defaultTo (mapValue (extractValueFromRegexCaptureGroup result.data.resultText '(DETECTED HIGH|DÉTECTÉ ÉLEVÉ|DETECTED MEDIUM|DÉTECTÉ MOYEN|DETECTED LOW|DÉTECTÉ BAS|DETECTED VERY LOW|DÉTECTÉ TRÈS BAS)') '{"DETECTED HIGH":"high","DÉTECTÉ ÉLEVÉ":"high","DETECTED MEDIUM":"medium","DÉTECTÉ MOYEN":"medium","DETECTED LOW":"low","DÉTECTÉ BAS":"low","DETECTED VERY LOW":"very_low","DÉTECTÉ TRÈS BAS":"very_low"}') '') with='"'}},` +
+          `{{#if (eq (defaultTo (mapValue result.category1.id '{"NotDetected":"mtbNotDetected","Negative":"mtbNotDetected"}') '') 'mtbNotDetected')}}` +
+          `"rif_result":"not_detected",` +
+          `{{else}}` +
+          `"rif_result":{{enclose (defaultTo (mapValue result.category2.id '{"Detected":"detected","NotDetected":"not_detected","Indeterminate":"indeterminate","Susceptible":"not_detected","Resistant":"detected","Negative":"not_detected","Positive":"detected","Positive1":"detected","Positive2":"detected","Positive3":"detected"}') 'indeterminate') with='"'}},` +
+          `{{/if}}` +
+          `"test_date":{{enclose (defaultTo (formatDate (offsetToTimeZone result.createdOn 'Africa/Douala') '${checkTbAppDateTimeFormat}') '') with='"'}},` +
+          `"deployment_full_name":{{enclose (defaultTo device.name '') with='"'}},` +
+          `"cartridge_serial":{{enclose (defaultTo result.consumableSerial '') with='"'}},` +
+          `"operator":{{enclose (defaultTo result.senderOperator '') with='"'}}` +
+          `{{curly}}`
+        const useCases = [
+          {
+            assayExternalId: 'GxMtbRif',
+            resultCategory1ExternalId: 'Error',
+            resultCategory2ExternalId: 'Error',
+            expectedMtbResult: 'error_invalid',
+            expectedMtbGrade: '',
+            expectedRifResult: 'indeterminate',
+            expectedTestDate: '2018-08-01 11:38',
+            expectedCartridgeSerial: messageDataSource.consumableSerial,
+            expectedOperator: messageDataSource.senderOperator,
+            deviceTypeExternalId: 'CepheidGeneXpert',
+            resultData: `{"resultText":"ERROR"}`,
+          },
+          {
+            assayExternalId: 'GxMtbRif',
+            resultCategory1ExternalId: 'Detected',
+            resultCategory2ExternalId: 'NotDetected',
+            expectedMtbResult: 'detected',
+            expectedMtbGrade: 'low',
+            expectedRifResult: 'not_detected',
+            expectedTestDate: '2018-08-01 11:38',
+            expectedCartridgeSerial: messageDataSource.consumableSerial,
+            expectedOperator: messageDataSource.senderOperator,
+            deviceTypeExternalId: 'CepheidGeneXpert',
+            resultData: `{"resultText":"DETECTED LOW|NOT DETECTED|"}`,
+          },
+          {
+            assayExternalId: 'GxMtbRifUltra',
+            resultCategory1ExternalId: 'Trace Detected',
+            resultCategory2ExternalId: 'Indeterminate',
+            expectedMtbResult: 'trace',
+            expectedMtbGrade: '',
+            expectedRifResult: 'indeterminate',
+            expectedTestDate: '2018-08-01 11:38',
+            expectedCartridgeSerial: messageDataSource.consumableSerial,
+            expectedOperator: messageDataSource.senderOperator,
+            deviceTypeExternalId: 'CepheidGeneXpert',
+            resultData: `{"resultText":"MTB Trace DETECTED|RIF Resistance INDETERMINATE"}`,
+          },
+          {
+            assayExternalId: 'GxMtbRif',
+            resultCategory1ExternalId: 'NotDetected',
+            resultCategory2ExternalId: null,
+            expectedMtbResult: 'not_detected',
+            expectedMtbGrade: '',
+            expectedRifResult: 'not_detected',
+            expectedTestDate: '2018-08-01 11:38',
+            expectedCartridgeSerial: messageDataSource.consumableSerial,
+            expectedOperator: messageDataSource.senderOperator,
+            deviceTypeExternalId: 'CepheidGeneXpert',
+            resultData: `{"resultText":"MTB NOT DETECTED"}`,
+          },
+          {
+            assayExternalId: 'GxMtbRif',
+            resultCategory1ExternalId: 'Detected',
+            resultCategory2ExternalId: 'NotDetected',
+            expectedMtbResult: 'detected',
+            expectedMtbGrade: 'medium',
+            expectedRifResult: 'not_detected',
+            expectedTestDate: '2018-08-01 11:38',
+            expectedCartridgeSerial: messageDataSource.consumableSerial,
+            expectedOperator: messageDataSource.senderOperator,
+            deviceTypeExternalId: 'CepheidGeneXpert',
+            resultData: `{"resultText":"MTB DÉTECTÉ MOYEN|Rif Resistance NON DÉTECTÉ"}`,
+          },
+          {
+            assayExternalId: 'GxMtbRif',
+            resultCategory1ExternalId: 'Detected',
+            resultCategory2ExternalId: 'NotDetected',
+            expectedMtbResult: 'detected',
+            expectedMtbGrade: 'low',
+            expectedRifResult: 'not_detected',
+            expectedTestDate: '2018-08-01 11:38',
+            expectedCartridgeSerial: messageDataSource.consumableSerial,
+            expectedOperator: messageDataSource.senderOperator,
+            deviceTypeExternalId: 'CepheidGeneXpert',
+            resultData: `{"resultText":"MTB DÉTECTÉ BAS|Rif Resistance NON DÉTECTÉ"}`,
+          },
+          {
+            assayExternalId: 'GxMtbRif',
+            resultCategory1ExternalId: 'Detected',
+            resultCategory2ExternalId: 'NotDetected',
+            expectedMtbResult: 'detected',
+            expectedMtbGrade: 'high',
+            expectedRifResult: 'not_detected',
+            expectedTestDate: '2018-08-01 11:38',
+            expectedCartridgeSerial: messageDataSource.consumableSerial,
+            expectedOperator: messageDataSource.senderOperator,
+            deviceTypeExternalId: 'CepheidGeneXpert',
+            resultData: `{"resultText":"MTB DÉTECTÉ ÉLEVÉ|Rif Resistance NON DÉTECTÉ"}`,
+          },
+          {
+            assayExternalId: 'GxMtbRif',
+            resultCategory1ExternalId: 'Detected',
+            resultCategory2ExternalId: 'NotDetected',
+            expectedMtbResult: 'detected',
+            expectedMtbGrade: 'very_low',
+            expectedRifResult: 'not_detected',
+            expectedTestDate: '2018-08-01 11:38',
+            expectedCartridgeSerial: messageDataSource.consumableSerial,
+            expectedOperator: messageDataSource.senderOperator,
+            deviceTypeExternalId: 'CepheidGeneXpert',
+            resultData: `{"resultText":"MTB DÉTECTÉ TRÈS BAS|Rif Resistance INDÉTERMINÉ"}`,
+          },
+        ]
+        await Promise.each(useCases, async useCase => {
+          const dataSource = Object.assign({}, messageDataSource, useCase)
+          const message = await runProcessUsingDataSourceQuery(
+            template,
+            useCase
+          )
+          const messagePayload = JSON.parse(message.payload)
+          expect(messagePayload).to.containSubset({
+            auth_key: checkTbAppAuthKey,
+            mtb_result: dataSource.expectedMtbResult,
+            mtb_grade: dataSource.expectedMtbGrade,
+            rif_result: dataSource.expectedRifResult,
+            test_date: dataSource.expectedTestDate,
+            deployment_full_name: dataSource.deviceName,
+            cartridge_serial: dataSource.consumableSerial,
+            operator: dataSource.senderOperator,
+          })
         })
       })
     })

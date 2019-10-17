@@ -116,6 +116,10 @@ const plugins = {
     onGxAlertAuthenticated: require('./partner/SA_NHLS/onGxAlertAuthenticated'),
     postProcessMergeResult: require('./partner/SA_NHLS/postProcessMergeResult'),
   },
+  cameroon: {
+    issueTriggers: require('./partner/Cameroon/issueTriggers'),
+    issueResolutions: require('./partner/Cameroon/issueResolutionConditions'),
+  },
 }
 
 /**

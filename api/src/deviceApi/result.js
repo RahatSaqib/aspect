@@ -831,6 +831,7 @@ function getAllResultTags(country, result) {
   }
   return _.uniqBy(taggingResults)
 }
+
 async function getExistingTagByPartner(
   knex,
   partnerId,

@@ -1,0 +1,1382 @@
+(lp1
+(lp2
+S'1H|\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312\r\x0392\r\n'
+p3
+aS'2P|1\r\x033F\r\n'
+p4
+aS'3O|1|HIV_NEG|HIV_NEG^vl110^A1|^^^1mLDBSvOP^HIV1.0mlDBS|||||||Q||||||||||||||F\r\x03D0\r\n'
+p5
+aS'4R|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^468347^F|Not detected|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695\r\x03E2\r\n'
+p6
+aS'5R|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^468347^P|-1.00|cycle number||||F||bryan^bryan||20190825165311|275021695\r\x0343\r\n'
+p7
+aS'6L|1\r\x033F\r\n'
+p8
+aS'7H|\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312\r\x0398\r\n'
+p9
+aa(lp10
+S'0P|1\r\x033D\r\n'
+p11
+aS'1O|1|HIV_LOPOS|HIV_LOPOS^vl110^B1|^^^1mLDBSvOP^HIV1.0mlDBS|||||||Q||||||||||||||F\r\x0335\r\n'
+p12
+aS'2R|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^468347^F|80332|Copies / mL|14791 TO 467735|OPEN||F||bryan^bryan||20190825165311|275021695\r\x0376\r\n'
+p13
+aS'3R|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^468347^P|22.09|cycle number||||F||bryan^bryan||20190825165311|275021695\r\x0350\r\n'
+p14
+aS'4L|1\r\x033D\r\n'
+p15
+aS'5H|\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312\r\x0396\r\n'
+p16
+aS'6P|1\r\x0343\r\n'
+p17
+aS'7O|1|HIV_HIPOS|HIV_HIPOS^vl110^C1|^^^1mLDBSvOP^HIV1.0mlDBS|||||||Q||||||||||||||F\r\x0328\r\n'
+p18
+aa(lp19
+S'0R|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^468347^F|8427744|Copies / mL|1445440 TO 45708821|OPEN||F||bryan^bryan||20190825165311|275021695\r\x03AB\r\n'
+p20
+aS'1R|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^468347^P|15.49|cycle number||||F||bryan^bryan||20190825165311|275021695\r\x0354\r\n'
+p21
+aS'2L|1\r\x033B\r\n'
+p22
+aS'3H|\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312\r\x0394\r\n'
+p23
+aS'4P|1\r\x0341\r\n'
+p24
+aS'5O|1|SYS123165|SYS123165^vl110^D1|^^^1mLDBSvOP^HIV1.0mlDBS|||20190823101300||||||||||||||||||F\r\x037A\r\n'
+p25
+aS'6R|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|Not detected|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695\r\x03A4\r\n'
+p26
+aS'7R|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^I|Target not detected|||||F||bryan^bryan||20190825165311|275021695\r\x0393\r\n'
+p27
+aa(lp28
+S'0R|3|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|-1.00|cycle number||||F||bryan^bryan||20190825165311|275021695\r\x03FF\r\n'
+p29
+aS'1L|1\r\x033A\r\n'
+p30
+aS'2H|\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312\r\x0393\r\n'
+p31
+aS'3P|1\r\x0340\r\n'
+p32
+aS'4O|1|SYS123178|SYS123178^vl110^E1|^^^1mLDBSvOP^HIV1.0mlDBS|||||||||||||||||||||F\r\x0382\r\n'
+p33
+aS'5R|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|Not detected|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695\r\x03A3\r\n'
+p34
+aS'6R|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^I|Target not detected|||||F||bryan^bryan||20190825165311|275021695\r\x0392\r\n'
+p35
+aS'7R|3|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|-1.00|cycle number||||F||bryan^bryan||20190825165311|275021695\r\x0306\r\n'
+p36
+aa(lp37
+S'0L|1\r\x0339\r\n'
+p38
+aS'1H|\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312\r\x0392\r\n'
+p39
+aS'2P|1\r\x033F\r\n'
+p40
+aS'3O|1|SYS123301|SYS123301^vl110^F1|^^^1mLDBSvOP^HIV1.0mlDBS|||||||||||||||||||||F\r\x036A\r\n'
+p41
+aS'4R|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|1486|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695\r\x03E2\r\n'
+p42
+aS'5R|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|27.75|cycle number||||F||bryan^bryan||20190825165311|275021695\r\x031A\r\n'
+p43
+aS'6L|1\r\x033F\r\n'
+p44
+aS'7H|\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312\r\x0398\r\n'
+p45
+aa(lp46
+S'0P|1\r\x033D\r\n'
+p47
+aS'1O|1|SYS123310|SYS123310^vl110^G1|^^^1mLDBSvOP^HIV1.0mlDBS|||||||||||||||||||||F\r\x0369\r\n'
+p48
+aS'2R|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|Not detected|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695\r\x03A0\r\n'
+p49
+aS'3R|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^I|Target not detected|||||F||bryan^bryan||20190825165311|275021695\r\x038F\r\n'
+p50
+aS'4R|3|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|-1.00|cycle number||||F||bryan^bryan||20190825165311|275021695\r\x0303\r\n'
+p51
+aS'5L|1\r\x033E\r\n'
+p52
+aS'6H|\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312\r\x0397\r\n'
+p53
+aS'7P|1\r\x0344\r\n'
+p54
+aa(lp55
+S'0O|1|SYS124340|SYS124340^vl110^H1|^^^1mLDBSvOP^HIV1.0mlDBS|||||||||||||||||||||F\r\x0373\r\n'
+p56
+aS'1R|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|Not detected|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695\r\x039F\r\n'
+p57
+aS'2R|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^I|Target not detected|||||F||bryan^bryan||20190825165311|275021695\r\x038E\r\n'
+p58
+aS'3R|3|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|-1.00|cycle number||||F||bryan^bryan||20190825165311|275021695\r\x0302\r\n'
+p59
+aS'4L|1\r\x033D\r\n'
+p60
+aS'5H|\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312\r\x0396\r\n'
+p61
+aS'6P|1\r\x0343\r\n'
+p62
+aS'7O|1|p|p^vl110^A2|^^^1mLDBSvOP^HIV1.0mlDBS|||||||||||||||||||||F\r\x0324\r\n'
+p63
+aa(lp64
+S'0R|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|Not detected|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695\r\x039E\r\n'
+p65
+aS'1R|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^I|Target not detected|||||F||bryan^bryan||20190825165311|275021695\r\x038D\r\n'
+p66
+aS'2R|3|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|-1.00|cycle number||||F||bryan^bryan||20190825165311|275021695\r\x0301\r\n'
+p67
+aS'3L|1\r\x033C\r\n'
+p68
+aS'4H|\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312\r\x0395\r\n'
+p69
+aS'5P|1\r\x0342\r\n'
+p70
+aS'6O|1|SYS123566|SYS123566^vl110^B2|^^^1mLDBSvOP^HIV1.0mlDBS|||||||||||||||||||||F\r\x0384\r\n'
+p71
+aS'7R|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|Not detected|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695\r\x03A5\r\n'
+p72
+aa(lp73
+S'0R|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^I|Target not detected|||||F||bryan^bryan||20190825165311|275021695\r\x038C\r\n'
+p74
+aS'1R|3|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|-1.00|cycle number||||F||bryan^bryan||20190825165311|275021695\r\x0300\r\n'
+p75
+aS'2L|1\r\x033B\r\n'
+p76
+aS'3H|\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312\r\x0394\r\n'
+p77
+aS'4P|1\r\x0341\r\n'
+p78
+aS'5O|1|SYS123567|SYS123567^vl110^C2|^^^1mLDBSvOP^HIV1.0mlDBS|||||||||||||||||||||F\r\x0386\r\n'
+p79
+aS'6R|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|Not detected|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695\r\x03A4\r\n'
+p80
+aS'7R|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^I|Target not detected|||||F||bryan^bryan||20190825165311|275021695\r\x0393\r\n'
+p81
+aa(lp82
+S'0R|3|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|-1.00|cycle number||||F||bryan^bryan||20190825165311|275021695\r\x03FF\r\n'
+p83
+aS'1L|1\r\x033A\r\n'
+p84
+aS'2H|\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312\r\x0393\r\n'
+p85
+aS'3P|1\r\x0340\r\n'
+p86
+aS'4O|1|SYS123568|SYS123568^vl110^D2|^^^1mLDBSvOP^HIV1.0mlDBS|||||||||||||||||||||F\r\x0388\r\n'
+p87
+aS'5R|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|Not detected|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695\r\x03A3\r\n'
+p88
+aS'6R|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^I|Target not detected|||||F||bryan^bryan||20190825165311|275021695\r\x0392\r\n'
+p89
+aS'7R|3|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|-1.00|cycle number||||F||bryan^bryan||20190825165311|275021695\r\x0306\r\n'
+p90
+aa(lp91
+S'0L|1\r\x0339\r\n'
+p92
+aS'1H|\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312\r\x0392\r\n'
+p93
+aS'2P|1\r\x033F\r\n'
+p94
+aS'3O|1|SYS123569|SYS123569^vl110^E2|^^^1mLDBSvOP^HIV1.0mlDBS|||||||||||||||||||||F\r\x038A\r\n'
+p95
+aS'4R|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|Not detected|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695\r\x03A2\r\n'
+p96
+aS'5R|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^I|Target not detected|||||F||bryan^bryan||20190825165311|275021695\r\x0391\r\n'
+p97
+aS'6R|3|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|-1.00|cycle number||||F||bryan^bryan||20190825165311|275021695\r\x0305\r\n'
+p98
+aS'7L|1\r\x0340\r\n'
+p99
+aa(lp100
+S'0H|\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312\r\x0391\r\n'
+p101
+aS'1P|1\r\x033E\r\n'
+p102
+aS'2O|1|SYS123570|SYS123570^vl110^F2|^^^1mLDBSvOP^HIV1.0mlDBS|||||||||||||||||||||F\r\x037A\r\n'
+p103
+aS'3R|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|Not detected|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695\r\x03A1\r\n'
+p104
+aS'4R|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^I|Target not detected|||||F||bryan^bryan||20190825165311|275021695\r\x0390\r\n'
+p105
+aS'5R|3|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|-1.00|cycle number||||F||bryan^bryan||20190825165311|275021695\r\x0304\r\n'
+p106
+aS'6L|1\r\x033F\r\n'
+p107
+aS'7H|\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312\r\x0398\r\n'
+p108
+aa(lp109
+S'0P|1\r\x033D\r\n'
+p110
+aS'1O|1|SYS123571|SYS123571^vl110^G2|^^^1mLDBSvOP^HIV1.0mlDBS|||||||||||||||||||||X\r\x038E\r\n'
+p111
+aS'2C|1|I|4442 : Internal control cycle number is too high. Valid range is [19.22, 23.22].|I\r\x0391\r\n'
+p112
+aS'3L|1\r\x033C\r\n'
+p113
+aS'4H|\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312\r\x0395\r\n'
+p114
+aS'5P|1\r\x0342\r\n'
+p115
+aS'6O|1|SYS123572|SYS123572^vl110^H2|^^^1mLDBSvOP^HIV1.0mlDBS|||||||||||||||||||||F\r\x0384\r\n'
+p116
+aS'7R|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|Not detected|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695\r\x03A5\r\n'
+p117
+aa(lp118
+S'0R|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^I|Target not detected|||||F||bryan^bryan||20190825165311|275021695\r\x038C\r\n'
+p119
+aS'1R|3|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|-1.00|cycle number|||F||br|yan^bryan||20190825165311|275021695\r\x0300\r\n'
+p120
+aS'2L|1\r\x033B\r\n'
+p121
+aS'3H|\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312\r\x0394\r\n'
+p122
+aS'4P|1\r\x0341\r\n'
+p123
+aS'5O|1|SYS123573|SYS123573^vl110^A3|^^^1mLDBSvOP^HIV1.0mlDBS|||||||||||||||||||||F\r\x037F\r\n'
+p124
+aS'6R|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|Not detected|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695\r\x03A4\r\n'
+p125
+aS'7R|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^I|Target not detected|||||F||bryan^bryan||20190825165311|275021695\r\x0393\r\n'
+p126
+aa(lp127
+S'0R|3|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|-1.00|cycle number||||F||bryan^bryan||20190825165311|275021695\r\x03FF\r\n'
+p128
+aS'1L|1\r\x033A\r\n'
+p129
+aS'2H|\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312\r\x0393\r\n'
+p130
+aS'3P|1\r\x0340\r\n'
+p131
+aS'4O|1|SYS123574|SYS123574^vl110^B3|^^^1mLDBSvOP^HIV1.0mlDBS|||||||||||||||||||||F\r\x0381\r\n'
+p132
+aS'5R|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|< 550|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695\r\x0306\r\n'
+p133
+aS'6R|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^I|Detected|||||F||bryan^bryan||20190825165311|275021695\r\x037A\r\n'
+p134
+aS'7R|3|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|29.21|cycle number||||F||bryan^bryan||20190825165311|275021695\r\x0316\r\n'
+p135
+aa(lp136
+S'0L|1\r\x0339\r\n'
+p137
+aS'1H|\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312\r\x0392\r\n'
+p138
+aS'2P|1\r\x033F\r\n'
+p139
+aS'3O|1|SYS123575|SYS123575^vl110^C3|^^^1mLDBSvOP^HIV1.0mlDBS|||||||||||||||||||||F\r\x0383\r\n'
+p140
+aS'4R|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|Not detected|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695\r\x03A2\r\n'
+p141
+aS'5R|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^I|Target not detected|||||F||bryan^bryan||20190825165311|275021695\r\x0391\r\n'
+p142
+aS'6R|3|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|-1.00|cycle number||||F||bryan^bryan||20190825165311|275021695\r\x0305\r\n'
+p143
+aS'7L|1\r\x0340\r\n'
+p144
+aa(lp145
+S'0H|\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312\r\x0391\r\n'
+p146
+aS'1P|1\r\x033E\r\n'
+p147
+aS'2O|1|SYS123576|SYS123576^vl110^D3|^^^1mLDBSvOP^HIV1.0mlDBS|||||||||||||||||||||F\r\x0385\r\n'
+p148
+aS'3R|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|Not detected|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695\r\x03A1\r\n'
+p149
+aS'4R|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^I|Target not detected|||||F||bryan^bryan||20190825165311|275021695\r\x0390\r\n'
+p150
+aS'5R|3|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|-1.00|cycle number||||F||bryan^bryan||20190825165311|275021695\r\x0304\r\n'
+p151
+aS'6L|1\r\x033F\r\n'
+p152
+aS'7H|\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312\r\x0398\r\n'
+p153
+aa(lp154
+S'0P|1\r\x033D\r\n'
+p155
+aS'1O|1|SYS123577|SYS123577^vl110^E3|^^^1mLDBSvOP^HIV1.0mlDBS|||||||||||||||||||||F\r\x0387\r\n'
+p156
+aS'2R|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|5322|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695\r\x03D9\r\n'
+p157
+aS'3R|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|25.94|cycle number||||F||bryan^bryan||20190825165311|275021695\r\x0317\r\n'
+p158
+aS'4L|1\r\x033D\r\n'
+p159
+aS'5H|\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312\r\x0396\r\n'
+p160
+aS'6P|1\r\x0343\r\n'
+p161
+aS'7O|1|SYS123578|SYS123578^vl110^F3|^^^1mLDBSvOP^HIV1.0mlDBS|||||||||||||||||||||F\r\x0390\r\n'
+p162
+aa(lp163
+S'0R|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|Not detected|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695\r\x039E\r\n'
+p164
+aS'1R|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^I|Target not detected|||||F||bryan^bryan||20190825165311|275021695\r\x038D\r\n'
+p165
+aS'2R|3|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|-1.00|cycle number||||F||bryan^bryan||20190825165311|275021695\r\x0301\r\n'
+p166
+aS'3L|1\r\x033C\r\n'
+p167
+aS'4H|\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312\r\x0395\r\n'
+p168
+aS'5P|1\r\x0342\r\n'
+p169
+aS'6O|1|SYS123579|SYS123579^vl110^G3|^^^1mLDBSvOP^HIV1.0mlDBS|||||||||||||||||||||F\r\x0392\r\n'
+p170
+aS'7R|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|Not detected|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695\r\x03A5\r\n'
+p171
+aa(lp172
+S'0R|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^I|Target not detected|||||F||bryan^bryan||20190825165311|275021695\r\x038C\r\n'
+p173
+aS'1R|3|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|-1.00|cycle number||||F||bryan^bryan||20190825165311|275021695\r\x0300\r\n'
+p174
+aS'2L|1\r\x033B\r\n'
+p175
+aS'3H|\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312\r\x0394\r\n'
+p176
+aS'4P|1\r\x0341\r\n'
+p177
+aS'5O|1|SYS123580|SYS123580^vl110^H3|^^^1mLDBSvOP^HIV1.0mlDBS|||||||||||||||||||||F\r\x0382\r\n'
+p178
+aS'6R|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|11640|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695\r\x030D\r\n'
+p179
+aS'7R|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|24.83|cycle number||||F||bryan^bryan||20190825165311|275021695\r\x0318\r\n'
+p180
+aa(lp181
+S'0L|1\r\x0339\r\n'
+p182
+aS'1H|\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312\r\x0392\r\n'
+p183
+aS'2P|1\r\x033F\r\n'
+p184
+aS'3O|1|SYS123581|SYS123581^vl110^A4|^^^1mLDBSvOP^HIV1.0mlDBS|||||||||||||||||||||F\r\x037C\r\n'
+p185
+aS'4R|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|Not detected|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695\r\x03A2\r\n'
+p186
+aS'5R|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^I|Target not detected|||||F||bryan^bryan||20190825165311|275021695\r\x0391\r\n'
+p187
+aS'6R|3|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|-1.00|cycle number||||F||bryan^bryan||20190825165311|275021695\r\x0305\r\n'
+p188
+aS'7L|1\r\x0340\r\n'
+p189
+aa(lp190
+S'0H|\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312\r\x0391\r\n'
+p191
+aS'1P|1\r\x033E\r\n'
+p192
+aS'2O|1|SYS123582|SYS123582^vl110^B4|^^^1mLDBSvOP^HIV1.0mlDBS|||||||||||||||||||||F\r\x037E\r\n'
+p193
+aS'3R|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|Not detected|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695\r\x03A1\r\n'
+p194
+aS'4R|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^I|Target not detected|||||F||bryan^bryan||20190825165311|275021695\r\x0390\r\n'
+p195
+aS'5R|3|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|-1.00|cycle number||||F||bryan^bryan||20190825165311|275021695\r\x0304\r\n'
+p196
+aS'6L|1\r\x033F\r\n'
+p197
+aS'7H|\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312\r\x0398\r\n'
+p198
+aa(lp199
+S'0P|1\r\x033D\r\n'
+p200
+aS'1O|1|SYS123583|SYS123583^vl110^C4|^^^1mLDBSvOP^HIV1.0mlDBS|||||||||||||||||||||F\r\x0380\r\n'
+p201
+aS'2R|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|Not detected|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695\r\x03A0\r\n'
+p202
+aS'3R|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^I|Target not detected|||||F||bryan^bryan||20190825165311|275021695\r\x038F\r\n'
+p203
+aS'4R|3|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|-1.00|cycle number||||F||bryan^bryan||20190825165311|275021695\r\x0303\r\n'
+p204
+aS'5L|1\r\x033E\r\n'
+p205
+aS'6H|\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312\r\x0397\r\n'
+p206
+aS'7P|1\r\x0344\r\n'
+p207
+aa(lp208
+S'0O|1|SYS123584|SYS123584^vl110^D4|^^^1mLDBSvOP^HIV1.0mlDBS|||||||||||||||||||||F\r\x0382\r\n'
+p209
+aS'1R|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|Not detected|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695\r\x039F\r\n'
+p210
+aS'2R|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^I|Target not detected|||||F||bryan^bryan||20190825165311|275021695\r\x038E\r\n'
+p211
+aS'3R|3|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|-1.00|cycle number||||F||bryan^bryan||20190825165311|275021695\r\x0302\r\n'
+p212
+aS'4L|1\r\x033D\r\n'
+p213
+aS'5H|\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312\r\x0396\r\n'
+p214
+aS'6P|1\r\x0343\r\n'
+p215
+aS'7O|1|SYS123585|SYS123585^vl110^E4|^^^1mLDBSvOP^HIV1.0mlDBS|||||||||||||||||||||F\r\x038C\r\n'
+p216
+aa(lp217
+S'0R|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|Not detected|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695\r\x039E\r\n'
+p218
+aS'1R|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^I|Target not detected|||||F||bryan^bryan||20190825165311|275021695\r\x038D\r\n'
+p219
+aS'2R|3|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|-1.00|cycle number||||F||bryan^bryan||20190825165311|275021695\r\x0301\r\n'
+p220
+aS'3L|1\r\x033C\r\n'
+p221
+aS'4H|\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312\r\x0395\r\n'
+p222
+aS'5P|1\r\x0342\r\n'
+p223
+aS'6O|1|SYS123586|SYS123586^vl110^F4|^^^1mLDBSvOP^HIV1.0mlDBS|||||||||||||||||||||F\r\x038E\r\n'
+p224
+aS'7R|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|56467|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695\r\x031E\r\n'
+p225
+aa(lp226
+S'0R|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|22.59|cycle number||||F||bryan^bryan||20190825165311|275021695\r\x0312\r\n'
+p227
+aS'1L|1\r\x033A\r\n'
+p228
+aS'2H|\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312\r\x0393\r\n'
+p229
+aS'3P|1\r\x0340\r\n'
+p230
+aS'4O|1|SYS123587|SYS123587^vl110^G4|^^^1mLDBSvOP^HIV1.0mlDBS|||||||||||||||||||||F\r\x038F\r\n'
+p231
+aS'5R|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|Not detected|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695\r\x03A3\r\n'
+p232
+aS'6R|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^I|Target not detected|||||F||bryan^bryan||20190825165311|275021695\r\x0392\r\n'
+p233
+aS'7R|3|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|-1.00|cycle number||||F||bryan^bryan||20190825165311|275021695\r\x0306\r\n'
+p234
+aa(lp235
+S'0L|1\r\x0339\r\n'
+p236
+aS'1H|\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312\r\x0392\r\n'
+p237
+aS'2P|1\r\x033F\r\n'
+p238
+aS'3O|1|SYS123588|SYS123588^vl110^H4|^^^1mLDBSvOP^HIV1.0mlDBS|||||||||||||||||||||F\r\x0391\r\n'
+p239
+aS'4R|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|10325|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695\r\x030A\r\n'
+p240
+aS'5R|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|25.00|cycle number||||F||bryan^bryan||20190825165311|275021695\r\x030C\r\n'
+p241
+aS'6L|1\r\x033F\r\n'
+p242
+aS'7H|\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312\r\x0398\r\n'
+p243
+aa(lp244
+S'0P|1\r\x033D\r\n'
+p245
+aS'1O|1|SYS123589|SYS123589^vl110^A5|^^^1mLDBSvOP^HIV1.0mlDBS|||||||||||||||||||||F\r\x038B\r\n'
+p246
+aS'2R|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|Not detected|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695\r\x03A0\r\n'
+p247
+aS'3R|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^I|Target not detected|||||F||bryan^bryan||20190825165311|275021695\r\x038F\r\n'
+p248
+aS'4R|3|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|-1.00|cycle number||||F||bryan^bryan||20190825165311|275021695\r\x0303\r\n'
+p249
+aS'5L|1\r\x033E\r\n'
+p250
+aS'6H|\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312\r\x0397\r\n'
+p251
+aS'7P|1\r\x0344\r\n'
+p252
+aa(lp253
+S'0O|1|SYS123590|SYS123590^vl110^B5|^^^1mLDBSvOP^HIV1.0mlDBS|||||||||||||||||||||F\r\x037B\r\n'
+p254
+aS'1R|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|Not detected|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695\r\x039F\r\n'
+p255
+aS'2R|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^I|Target not detected|||||F||bryan^bryan||20190825165311|275021695\r\x038E\r\n'
+p256
+aS'3R|3|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|-1.00|cycle number||||F||bryan^bryan||20190825165311|275021695\r\x0302\r\n'
+p257
+aS'4L|1\r\x033D\r\n'
+p258
+aS'5H|\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312\r\x0396\r\n'
+p259
+aS'6P|1\r\x0343\r\n'
+p260
+aS'7O|1|SYS123591|SYS123591^vl110^C5|^^^1mLDBSvOP^HIV1.0mlDBS|||||||||||||||||||||F\r\x0385\r\n'
+p261
+aa(lp262
+S'0R|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|Not detected|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695\r\x039E\r\n'
+p263
+aS'1R|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^I|Target not detected|||||F||bryan^bryan||20190825165311|275021695\r\x038D\r\n'
+p264
+aS'2R|3|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|-1.00|cycle number||||F||bryan^bryan||20190825165311|275021695\r\x0301\r\n'
+p265
+aS'3L|1\r\x033C\r\n'
+p266
+aS'4H|\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312\r\x0395\r\n'
+p267
+aS'5P|1\r\x0342\r\n'
+p268
+aS'6O|1|SYS123592|SYS123592^vl110^D5|^^^1mLDBSvOP^HIV1.0mlDBS|||||||||||||||||||||F\r\x0387\r\n'
+p269
+aS'7R|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|Not detected|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695\r\x03A5\r\n'
+p270
+aa(lp271
+S'0R|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^I|Target not detected|||||F||bryan^bryan||20190825165311|275021695\r\x038C\r\n'
+p272
+aS'1R|3|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|-1.00|cycle number||||F||bryan^bryan||20190825165311|275021695\r\x0300\r\n'
+p273
+aS'2L|1\r\x033B\r\n'
+p274
+aS'3H|\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312\r\x0394\r\n'
+p275
+aS'4P|1\r\x0341\r\n'
+p276
+aS'5O|1|SYS123593|SYS123593^vl110^E5|^^^1mLDBSvOP^HIV1.0mlDBS|||||||||||||||||||||F\r\x0389\r\n'
+p277
+aS'6R|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|6393|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695\r\x03E6\r\n'
+p278
+aS'7R|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|25.68|cycle number||||F||bryan^bryan||20190825165311|275021695\r\x031C\r\n'
+p279
+aa(lp280
+S'0L|1\r\x0339\r\n'
+p281
+aS'1H|\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312\r\x0392\r\n'
+p282
+aS'2P|1\r\x033F\r\n'
+p283
+aS'3O|1|SYS123594|SYS123594^vl110^F5|^^^1mLDBSvOP^HIV1.0mlDBS|||||||||||||||||||||F\r\x038A\r\n'
+p284
+aS'4R|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|Not detected|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695\r\x03A2\r\n'
+p285
+aS'5R|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^I|Target not detected|||||F||bryan^bryan||20190825165311|275021695\r\x0391\r\n'
+p286
+aS'6R|3|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|-1.00|cycle number||||F||bryan^bryan||20190825165311|275021695\r\x0305\r\n'
+p287
+aS'7L|1\r\x0340\r\n'
+p288
+aa(lp289
+S'0H|\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312\r\x0391\r\n'
+p290
+aS'1P|1\r\x033E\r\n'
+p291
+aS'2O|1|SYS123595|SYS123595^vl110^G5|^^^1mLDBSvOP^HIV1.0mlDBS|||||||||||||||||||||F\r\x038C\r\n'
+p292
+aS'3R|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|Not detected|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695\r\x03A1\r\n'
+p293
+aS'4R|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^I|Target not detected|||||F||bryan^bryan||20190825165311|275021695\r\x0390\r\n'
+p294
+aS'5R|3|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|-1.00|cycle number||||F||bryan^bryan||20190825165311|275021695\r\x0304\r\n'
+p295
+aS'6L|1\r\x033F\r\n'
+p296
+aS'7H|\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312\r\x0398\r\n'
+p297
+aa(lp298
+S'0P|1\r\x033D\r\n'
+p299
+aS'1O|1|SYS123596|SYS123596^vl110^H5|^^^1mLDBSvOP^HIV1.0mlDBS|||||||||||||||||||||F\r\x038E\r\n'
+p300
+aS'2R|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|Not detected|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695\r\x03A0\r\n'
+p301
+aS'3R|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^I|Target not detected|||||F||bryan^bryan||20190825165311|275021695\r\x038F\r\n'
+p302
+aS'4R|3|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|-1.00|cycle number||||F||bryan^bryan||20190825165311|275021695\r\x0303\r\n'
+p303
+aS'5L|1\r\x033E\r\n'
+p304
+aS'6H|\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312\r\x0397\r\n'
+p305
+aS'7P|1\r\x0344\r\n'
+p306
+aa(lp307
+S'0O|1|SYS123597|SYS123597^vl110^A6|^^^1mLDBSvOP^HIV1.0mlDBS|||||||||||||||||||||F\r\x0389\r\n'
+p308
+aS'1R|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|Not detected|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695\r\x039F\r\n'
+p309
+aS'2R|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^I|Target not detected|||||F||bryan^bryan||20190825165311|275021695\r\x038E\r\n'
+p310
+aS'3R|3|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|-1.00|cycle number||||F||bryan^bryan||20190825165311|275021695\r\x0302\r\n'
+p311
+aS'4L|1\r\x033D\r\n'
+p312
+aS'5H|\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312\r\x0396\r\n'
+p313
+aS'6P|1\r\x0343\r\n'
+p314
+aS'7O|1|SYS123598|SYS123598^vl110^B6|^^^1mLDBSvOP^HIV1.0mlDBS|||||||||||||||||||||F\r\x0393\r\n'
+p315
+aa(lp316
+S'0R|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|Not detected|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695\r\x039E\r\n'
+p317
+aS'1R|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^I|Target not detected|||||F||bryan^bryan||20190825165311|275021695\r\x038D\r\n'
+p318
+aS'2R|3|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|-1.00|cycle number||||F||bryan^bryan||20190825165311|275021695\r\x0301\r\n'
+p319
+aS'3L|1\r\x033C\r\n'
+p320
+aS'4H|\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312\r\x0395\r\n'
+p321
+aS'5P|1\r\x0342\r\n'
+p322
+aS'6O|1|SYS123599|SYS123599^vl110^C6|^^^1mLDBSvOP^HIV1.0mlDBS|||||||||||||||||||||F\r\x0395\r\n'
+p323
+aS'7R|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|Not detected|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695\r\x03A5\r\n'
+p324
+aa(lp325
+S'0R|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^I|Target not detected|||||F||bryan^bryan||20190825165311|275021695\r\x038C\r\n'
+p326
+aS'1R|3|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|-1.00|cycle number||||F||bryan^bryan||20190825165311|275021695\r\x0300\r\n'
+p327
+aS'2L|1\r\x033B\r\n'
+p328
+aS'3H|\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312\r\x0394\r\n'
+p329
+aS'4P|1\r\x0341\r\n'
+p330
+aS'5O|1|SYS123600|SYS123600^vl110^D6|^^^1mLDBSvOP^HIV1.0mlDBS|||||||||||||||||||||F\r\x0373\r\n'
+p331
+aS'6R|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|Not detected|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695\r\x03A4\r\n'
+p332
+aS'7R|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^I|Target not detected|||||F||bryan^bryan||20190825165311|275021695\r\x0393\r\n'
+p333
+aa(lp334
+S'0R|3|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|-1.00|cycle number||||F||bryan^bryan||20190825165311|275021695\r\x03FF\r\n'
+p335
+aS'1L|1\r\x033A\r\n'
+p336
+aS'2H|\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312\r\x0393\r\n'
+p337
+aS'3P|1\r\x0340\r\n'
+p338
+aS'4O|1|SYS123601|SYS123601^vl110^E6|^^^1mLDBSvOP^HIV1.0mlDBS|||||||||||||||||||||F\r\x0375\r\n'
+p339
+aS'5R|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|Not detected|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695\r\x03A3\r\n'
+p340
+aS'6R|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^I|Target not detected|||||F||bryan^bryan||20190825165311|275021695\r\x0392\r\n'
+p341
+aS'7R|3|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|-1.00|cycle number||||F||bryan^bryan||20190825165311|275021695\r\x0306\r\n'
+p342
+aa(lp343
+S'0L|1\r\x0339\r\n'
+p344
+aS'1H|\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312\r\x0392\r\n'
+p345
+aS'2P|1\r\x033F\r\n'
+p346
+aS'3O|1|SYS123602|SYS123602^vl110^F6|^^^1mLDBSvOP^HIV1.0mlDBS|||||||||||||||||||||F\r\x0377\r\n'
+p347
+aS'4R|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|Not detected|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695\r\x03A2\r\n'
+p348
+aS'5R|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^I|Target not detected|||||F||bryan^bryan||20190825165311|275021695\r\x0391\r\n'
+p349
+aS'6R|3|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|-1.00|cycle number||||F||bryan^bryan||20190825165311|275021695\r\x0305\r\n'
+p350
+aS'7L|1\r\x0340\r\n'
+p351
+aa(lp352
+S'0H|\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312\r\x0391\r\n'
+p353
+aS'1P|1\r\x033E\r\n'
+p354
+aS'2O|1|SYS123603|SYS123603^vl110^G6|^^^1mLDBSvOP^HIV1.0mlDBS|||||||||||||||||||||F\r\x0379\r\n'
+p355
+aS'3R|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|Not detected|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695\r\x03A1\r\n'
+p356
+aS'4R|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^I|Target not detected|||||F||bryan^bryan||20190825165311|275021695\r\x0390\r\n'
+p357
+aS'5R|3|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|-1.00|cycle number||||F||bryan^bryan||20190825165311|275021695\r\x0304\r\n'
+p358
+aS'6L|1\r\x033F\r\n'
+p359
+aS'7H|\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312\r\x0398\r\n'
+p360
+aa(lp361
+S'0P|1\r\x033D\r\n'
+p362
+aS'1O|1|SYS123604|SYS123604^vl110^H6|^^^1mLDBSvOP^HIV1.0mlDBS|||||||||||||||||||||F\r\x037B\r\n'
+p363
+aS'2R|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|5247|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695\r\x03DF\r\n'
+p364
+aS'3R|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|25.96|cycle number||||F||bryan^bryan||20190825165311|275021695\r\x0319\r\n'
+p365
+aS'4L|1\r\x033D\r\n'
+p366
+aS'5H|\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312\r\x0396\r\n'
+p367
+aS'6P|1\r\x0343\r\n'
+p368
+aS'7O|1|SYS123605|SYS123605^vl110^A7|^^^1mLDBSvOP^HIV1.0mlDBS|||||||||||||||||||||F\r\x037D\r\n'
+p369
+aa(lp370
+S'0R|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|10109|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695\r\x0306\r\n'
+p371
+aS'1R|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|25.03|cycle number||||F||bryan^bryan||20190825165311|275021695\r\x030B\r\n'
+p372
+aS'2L|1\r\x033B\r\n'
+p373
+aS'3H|\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312\r\x0394\r\n'
+p374
+aS'4P|1\r\x0341\r\n'
+p375
+aS'5O|1|SYS123606|SYS123606^vl110^B7|^^^1mLDBSvOP^HIV1.0mlDBS|||||||||||||||||||||F\r\x037E\r\n'
+p376
+aS'6R|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|15541|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695\r\x0311\r\n'
+p377
+aS'7R|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|24.42|cycle number||||F||bryan^bryan||20190825165311|275021695\r\x0313\r\n'
+p378
+aa(lp379
+S'0L|1\r\x0339\r\n'
+p380
+aS'1H|\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312\r\x0392\r\n'
+p381
+aS'2P|1\r\x033F\r\n'
+p382
+aS'3O|1|SYS123607|SYS123607^vl110^C7|^^^1mLDBSvOP^HIV1.0mlDBS|||20190822113300||||||||||||||||||F\r\x037F\r\n'
+p383
+aS'4R|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|Not detected|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695\r\x03A2\r\n'
+p384
+aS'5R|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^I|Target not detected|||||F||bryan^bryan||20190825165311|275021695\r\x0391\r\n'
+p385
+aS'6R|3|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|-1.00|cycle number||||F||bryan^bryan||20190825165311|275021695\r\x0305\r\n'
+p386
+aS'7L|1\r\x0340\r\n'
+p387
+aa(lp388
+S'0H|\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312\r\x0391\r\n'
+p389
+aS'1P|1\r\x033E\r\n'
+p390
+aS'2O|1|SYS123608|SYS123608^vl110^D7|^^^1mLDBSvOP^HIV1.0mlDBS|||||||||||||||||||||F\r\x0381\r\n'
+p391
+aS'3R|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|Not detected|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695\r\x03A1\r\n'
+p392
+aS'4R|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^I|Target not detected|||||F||bryan^bryan||20190825165311|275021695\r\x0390\r\n'
+p393
+aS'5R|3|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|-1.00|cycle number||||F||bryan^bryan||20190825165311|275021695\r\x0304\r\n'
+p394
+aS'6L|1\r\x033F\r\n'
+p395
+aS'7H|\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312\r\x0398\r\n'
+p396
+aa(lp397
+S'0P|1\r\x033D\r\n'
+p398
+aS'1O|1|SYS123609|SYS123609^vl110^E7|^^^1mLDBSvOP^HIV1.0mlDBS|||||||||||||||||||||F\r\x0383\r\n'
+p399
+aS'2R|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|Not detected|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695\r\x03A0\r\n'
+p400
+aS'3R|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^I|Target not detected|||||F||bryan^bryan||20190825165311|275021695\r\x038F\r\n'
+p401
+aS'4R|3|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|-1.00|cycle number||||F||bryan^bryan||20190825165311|275021695\r\x0303\r\n'
+p402
+aS'5L|1\r\x033E\r\n'
+p403
+aS'6H|\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312\r\x0397\r\n'
+p404
+aS'7P|1\r\x0344\r\n'
+p405
+aa(lp406
+S'0O|1|SYS123610|SYS123610^vl110^F7|^^^1mLDBSvOP^HIV1.0mlDBS|||||||||||||||||||||F\r\x0373\r\n'
+p407
+aS'1R|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|Not detected|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695\r\x039F\r\n'
+p408
+aS'2R|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^I|Target not detected|||||F||bryan^bryan||20190825165311|275021695\r\x038E\r\n'
+p409
+aS'3R|3|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|-1.00|cycle number||||F||bryan^bryan||20190825165311|275021695\r\x0302\r\n'
+p410
+aS'4L|1\r\x033D\r\n'
+p411
+aS'5H|\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312\r\x0396\r\n'
+p412
+aS'6P|1\r\x0343\r\n'
+p413
+aS'7O|1|SYS123611|SYS123611^vl110^G7|^^^1mLDBSvOP^HIV1.0mlDBS|||||||||||||||||||||F\r\x037D\r\n'
+p414
+aa(lp415
+S'0R|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|Not detected|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695\r\x039E\r\n'
+p416
+aS'1R|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^I|Target not detected|||||F||bryan^bryan||20190825165311|275021695\r\x038D\r\n'
+p417
+aS'2R|3|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|-1.00|cycle number||||F||bryan^bryan||20190825165311|275021695\r\x0301\r\n'
+p418
+aS'3L|1\r\x033C\r\n'
+p419
+aS'4H|\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312\r\x0395\r\n'
+p420
+aS'5P|1\r\x0342\r\n'
+p421
+aS'6O|1|SYS123612|SYS123612^vl110^H7|^^^1mLDBSvOP^HIV1.0mlDBS|||||||||||||||||||||F\r\x037F\r\n'
+p422
+aS'7R|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|Not detected|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695\r\x03A5\r\n'
+p423
+aa(lp424
+S'0R|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^I|Target not detected|||||F||bryan^bryan||20190825165311|275021695\r\x038C\r\n'
+p425
+aS'1R|3|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|-1.00|cycle number||||F||bryan^bryan||20190825165311|275021695\r\x0300\r\n'
+p426
+aS'2L|1\r\x033B\r\n'
+p427
+aS'3H|\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312\r\x0394\r\n'
+p428
+aS'4P|1\r\x0341\r\n'
+p429
+aS'5O|1|SYS123613|SYS123613^vl110^A8|^^^1mLDBSvOP^HIV1.0mlDBS|||||||||||||||||||||F\r\x037A\r\n'
+p430
+aS'6R|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|Not detected|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695\r\x03A4\r\n'
+p431
+aS'7R|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^I|Target not detected|||||F||bryan^bryan||20190825165311|275021695\r\x0393\r\n'
+p432
+aa(lp433
+S'0R|3|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|-1.00|cycle number||||F||bryan^bryan||20190825165311|275021695\r\x03FF\r\n'
+p434
+aS'1L|1\r\x033A\r\n'
+p435
+aS'2H|\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312\r\x0393\r\n'
+p436
+aS'3P|1\r\x0340\r\n'
+p437
+aS'4O|1|SYS123614|SYS123614^vl110^B8|^^^1mLDBSvOP^HIV1.0mlDBS|||||||||||||||||||||F\r\x037C\r\n'
+p438
+aS'5R|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|Not detected|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695\r\x03A3\r\n'
+p439
+aS'6R|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^I|Target not detected|||||F||bryan^bryan||20190825165311|275021695\r\x0392\r\n'
+p440
+aS'7R|3|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|-1.00|cycle number||||F||bryan^bryan||20190825165311|275021695\r\x0306\r\n'
+p441
+aa(lp442
+S'0L|1\r\x0339\r\n'
+p443
+aS'1H|\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312\r\x0392\r\n'
+p444
+aS'2P|1\r\x033F\r\n'
+p445
+aS'3O|1|SYS123615|SYS123615^vl110^C8|^^^1mLDBSvOP^HIV1.0mlDBS|||||||||||||||||||||F\r\x037E\r\n'
+p446
+aS'4R|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|Not detected|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695\r\x03A2\r\n'
+p447
+aS'5R|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^I|Target not detected|||||F||bryan^bryan||20190825165311|275021695\r\x0391\r\n'
+p448
+aS'6R|3|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|-1.00|cycle number||||F||bryan^bryan||20190825165311|275021695\r\x0305\r\n'
+p449
+aS'7L|1\r\x0340\r\n'
+p450
+aa(lp451
+S'0H|\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312\r\x0391\r\n'
+p452
+aS'1P|1\r\x033E\r\n'
+p453
+aS'2O|1|SYS123616|SYS123616^vl110^D8|^^^1mLDBSvOP^HIV1.0mlDBS|||||||||||||||||||||F\r\x0380\r\n'
+p454
+aS'3R|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|Not detected|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695\r\x03A1\r\n'
+p455
+aS'4R|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^I|Target not detected|||||F||bryan^bryan||20190825165311|275021695\r\x0390\r\n'
+p456
+aS'5R|3|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|-1.00|cycle number||||F||bryan^bryan||20190825165311|275021695\r\x0304\r\n'
+p457
+aS'6L|1\r\x033F\r\n'
+p458
+aS'7H|\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312\r\x0398\r\n'
+p459
+aa(lp460
+S'0P|1\r\x033D\r\n'
+p461
+aS'1O|1|SYS123617|SYS123617^vl110^E8|^^^1mLDBSvOP^HIV1.0mlDBS|||||||||||||||||||||F\r\x0382\r\n'
+p462
+aS'2R|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|Not detected|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695\r\x03A0\r\n'
+p463
+aS'3R|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^I|Target not detected|||||F||bryan^bryan||20190825165311|275021695\r\x038F\r\n'
+p464
+aS'4R|3|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|-1.00|cycle number||||F||bryan^bryan||20190825165311|275021695\r\x0303\r\n'
+p465
+aS'5L|1\r\x033E\r\n'
+p466
+aS'6H|\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312\r\x0397\r\n'
+p467
+aS'7P|1\r\x0344\r\n'
+p468
+aa(lp469
+S'0O|1|SYS123618|SYS123618^vl110^F8|^^^1mLDBSvOP^HIV1.0mlDBS|||||||||||||||||||||F\r\x0384\r\n'
+p470
+aS'1R|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|74337|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695\r\x0314\r\n'
+p471
+aS'2R|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|22.20|cycle number||||F||bryan^bryan||20190825165311|275021695\r\x0308\r\n'
+p472
+aS'3L|1\r\x033C\r\n'
+p473
+aS'4H|\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312\r\x0395\r\n'
+p474
+aS'5P|1\r\x0342\r\n'
+p475
+aS'6O|1|SYS123619|SYS123619^vl110^G8|^^^1mLDBSvOP^HIV1.0mlDBS|||||||||||||||||||||F\r\x038D\r\n'
+p476
+aS'7R|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|Not detected|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695\r\x03A5\r\n'
+p477
+aa(lp478
+S'0R|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^I|Target not detected|||||F||bryan^bryan||20190825165311|275021695\r\x038C\r\n'
+p479
+aS'1R|3|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|-1.00|cycle number||||F||bryan^bryan||20190825165311|275021695\r\x0300\r\n'
+p480
+aS'2L|1\r\x033B\r\n'
+p481
+aS'3H|\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312\r\x0394\r\n'
+p482
+aS'4P|1\r\x0341\r\n'
+p483
+aS'5O|1|SYS123620|SYS123620^vl110^H8|^^^1mLDBSvOP^HIV1.0mlDBS|||||||||||||||||||||F\r\x037D\r\n'
+p484
+aS'6R|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|Not detected|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695\r\x03A4\r\n'
+p485
+aS'7R|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^I|Target not detected|||||F||bryan^bryan||20190825165311|275021695\r\x0393\r\n'
+p486
+aa(lp487
+S'0R|3|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|-1.00|cycle number||||F||bryan^bryan||20190825165311|275021695\r\x03FF\r\n'
+p488
+aS'1L|1\r\x033A\r\n'
+p489
+aS'2H|\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312\r\x0393\r\n'
+p490
+aS'3P|1\r\x0340\r\n'
+p491
+aS'4O|1|SYS123621|SYS123621^vl110^A9|^^^1mLDBSvOP^HIV1.0mlDBS|||||||||||||||||||||F\r\x0378\r\n'
+p492
+aS'5R|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|Not detected|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695\r\x03A3\r\n'
+p493
+aS'6R|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^I|Target not detected|||||F||bryan^bryan||20190825165311|275021695\r\x0392\r\n'
+p494
+aS'7R|3|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|-1.00|cycle number||||F||bryan^bryan||20190825165311|275021695\r\x0306\r\n'
+p495
+aa(lp496
+S'0L|1\r\x0339\r\n'
+p497
+aS'1H|\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312\r\x0392\r\n'
+p498
+aS'2P|1\r\x033F\r\n'
+p499
+aS'3O|1|SYS123622|SYS123622^vl110^B9|^^^1mLDBSvOP^HIV1.0mlDBS|||||||||||||||||||||F\r\x037A\r\n'
+p500
+aS'4R|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|58082|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695\r\x0316\r\n'
+p501
+aS'5R|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|22.55|cycle number||||F||bryan^bryan||20190825165311|275021695\r\x0313\r\n'
+p502
+aS'6L|1\r\x033F\r\n'
+p503
+aS'7H|\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312\r\x0398\r\n'
+p504
+aa(lp505
+S'0P|1\r\x033D\r\n'
+p506
+aS'1O|1|SYS123623|SYS123623^vl110^C9|^^^1mLDBSvOP^HIV1.0mlDBS|||||||||||||||||||||F\r\x037B\r\n'
+p507
+aS'2R|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|Not detected|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695\r\x03A0\r\n'
+p508
+aS'3R|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^I|Target not detected|||||F||bryan^bryan||20190825165311|275021695\r\x038F\r\n'
+p509
+aS'4R|3|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|-1.00|cycle number||||F||bryan^bryan||20190825165311|275021695\r\x0303\r\n'
+p510
+aS'5L|1\r\x033E\r\n'
+p511
+aS'6H|\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312\r\x0397\r\n'
+p512
+aS'7P|1\r\x0344\r\n'
+p513
+aa(lp514
+S'0O|1|SYS123624|SYS123624^vl110^D9|^^^1mLDBSvOP^HIV1.0mlDBS|||||||||||||||||||||F\r\x037D\r\n'
+p515
+aS'1R|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|Not detected|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695\r\x039F\r\n'
+p516
+aS'2R|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^I|Target not detected|||||F||bryan^bryan||20190825165311|275021695\r\x038E\r\n'
+p517
+aS'3R|3|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|-1.00|cycle number||||F||bryan^bryan||20190825165311|275021695\r\x0302\r\n'
+p518
+aS'4L|1\r\x033D\r\n'
+p519
+aS'5H|\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312\r\x0396\r\n'
+p520
+aS'6P|1\r\x0343\r\n'
+p521
+aS'7O|1|SYS123625|SYS123625^vl110^E9|^^^1mLDBSvOP^HIV1.0mlDBS|||||||||||||||||||||F\r\x0387\r\n'
+p522
+aa(lp523
+S'0R|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|Not detected|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695\r\x039E\r\n'
+p524
+aS'1R|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^I|Target not detected|||||F||bryan^bryan||20190825165311|275021695\r\x038D\r\n'
+p525
+aS'2R|3|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|-1.00|cycle number||||F||bryan^bryan||20190825165311|275021695\r\x0301\r\n'
+p526
+aS'3L|1\r\x033C\r\n'
+p527
+aS'4H|\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312\r\x0395\r\n'
+p528
+aS'5P|1\r\x0342\r\n'
+p529
+aS'6O|1|SYS123626|SYS123626^vl110^F9|^^^1mLDBSvOP^HIV1.0mlDBS|||||||||||||||||||||F\r\x0389\r\n'
+p530
+aS'7R|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|1015|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695\r\x03D9\r\n'
+p531
+aa(lp532
+S'0R|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|28.29|cycle number||||F||bryan^bryan||20190825165311|275021695\r\x0315\r\n'
+p533
+aS'1L|1\r\x033A\r\n'
+p534
+aS'2H|\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312\r\x0393\r\n'
+p535
+aS'3P|1\r\x0340\r\n'
+p536
+aS'4O|1|SYS123627|SYS123627^vl110^G9|^^^1mLDBSvOP^HIV1.0mlDBS|||||||||||||||||||||F\r\x038A\r\n'
+p537
+aS'5R|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|805589|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695\r\x0353\r\n'
+p538
+aS'6R|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|18.82|cycle number||||F||bryan^bryan||20190825165311|275021695\r\x0319\r\n'
+p539
+aS'7L|1\r\x0340\r\n'
+p540
+aa(lp541
+S'0H|\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312\r\x0391\r\n'
+p542
+aS'1P|1\r\x033E\r\n'
+p543
+aS'2O|1|SYS123628|SYS123628^vl110^H9|^^^1mLDBSvOP^HIV1.0mlDBS|||||||||||||||||||||F\r\x038B\r\n'
+p544
+aS'3R|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|Not detected|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695\r\x03A1\r\n'
+p545
+aS'4R|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^I|Target not detected|||||F||bryan^bryan||20190825165311|275021695\r\x0390\r\n'
+p546
+aS'5R|3|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|-1.00|cycle number||||F||bryan^bryan||20190825165311|275021695\r\x0304\r\n'
+p547
+aS'6L|1\r\x033F\r\n'
+p548
+aS'7H|\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312\r\x0398\r\n'
+p549
+aa(lp550
+S'0P|1\r\x033D\r\n'
+p551
+aS'1O|1|SYS123629|SYS123629^vl110^A10|^^^1mLDBSvOP^HIV1.0mlDBS|||||||||||||||||||||F\r\x03AD\r\n'
+p552
+aS'2R|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|119220|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695\r\x033C\r\n'
+p553
+aS'3R|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|21.53|cycle number||||F||bryan^bryan||20190825165311|275021695\r\x030E\r\n'
+p554
+aS'4L|1\r\x033D\r\n'
+p555
+aS'5H|\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312\r\x0396\r\n'
+p556
+aS'6P|1\r\x0343\r\n'
+p557
+aS'7O|1|SYS123630|SYS123630^vl110^B10|^^^1mLDBSvOP^HIV1.0mlDBS|||||||||||||||||||||F\r\x03A4\r\n'
+p558
+aa(lp559
+S'0R|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|573|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695\r\x03AA\r\n'
+p560
+aS'1R|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|29.10|cycle number||||F||bryan^bryan||20190825165311|275021695\r\x030D\r\n'
+p561
+aS'2L|1\r\x033B\r\n'
+p562
+aS'3H|\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312\r\x0394\r\n'
+p563
+aS'4P|1\r\x0341\r\n'
+p564
+aS'5O|1|SYS123631|SYS123631^vl110^C10|^^^1mLDBSvOP^HIV1.0mlDBS|||||||||||||||||||||F\r\x03A5\r\n'
+p565
+aS'6R|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|< 550|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695\r\x0307\r\n'
+p566
+aS'7R|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^I|Detected|||||F||bryan^bryan||20190825165311|275021695\r\x037B\r\n'
+p567
+aa(lp568
+S'0R|3|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|30.88|cycle number||||F||bryan^bryan||20190825165311|275021695\r\x0314\r\n'
+p569
+aS'1L|1\r\x033A\r\n'
+p570
+aS'2H|\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312\r\x0393\r\n'
+p571
+aS'3P|1\r\x0340\r\n'
+p572
+aS'4O|1|SYS123632|SYS123632^vl110^D10|^^^1mLDBSvOP^HIV1.0mlDBS|||||||||||||||||||||F\r\x03A7\r\n'
+p573
+aS'5R|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|Not detected|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695\r\x03A3\r\n'
+p574
+aS'6R|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^I|Target not detected|||||F||bryan^bryan||20190825165311|275021695\r\x0392\r\n'
+p575
+aS'7R|3|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|-1.00|cycle number||||F||bryan^bryan||20190825165311|275021695\r\x0306\r\n'
+p576
+aa(lp577
+S'0L|1\r\x0339\r\n'
+p578
+aS'1H|\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312\r\x0392\r\n'
+p579
+aS'2P|1\r\x033F\r\n'
+p580
+aS'3O|1|SYS123633|SYS123633^vl110^E10|^^^1mLDBSvOP^HIV1.0mlDBS|||||||||||||||||||||F\r\x03A9\r\n'
+p581
+aS'4R|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|Not detected|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695\r\x03A2\r\n'
+p582
+aS'5R|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^I|Target not detected|||||F||bryan^bryan||20190825165311|275021695\r\x0391\r\n'
+p583
+aS'6R|3|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|-1.00|cycle number||||F||bryan^bryan||20190825165311|275021695\r\x0305\r\n'
+p584
+aS'7L|1\r\x0340\r\n'
+p585
+aa(lp586
+S'0H|\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312\r\x0391\r\n'
+p587
+aS'1P|1\r\x033E\r\n'
+p588
+aS'2O|1|SYS123634|SYS123634^vl110^F10|^^^1mLDBSvOP^HIV1.0mlDBS|||||||||||||||||||||F\r\x03AB\r\n'
+p589
+aS'3R|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|Not detected|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695\r\x03A1\r\n'
+p590
+aS'4R|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^I|Target not detected|||||F||bryan^bryan||20190825165311|275021695\r\x0390\r\n'
+p591
+aS'5R|3|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|-1.00|cycle number||||F||bryan^bryan||20190825165311|275021695\r\x0304\r\n'
+p592
+aS'6L|1\r\x033F\r\n'
+p593
+aS'7H|\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312\r\x0398\r\n'
+p594
+aa(lp595
+S'0P|1\r\x033D\r\n'
+p596
+aS'1O|1|SYS123635|SYS123635^vl110^G10|^^^1mLDBSvOP^HIV1.0mlDBS|||||||||||||||||||||F\r\x03AD\r\n'
+p597
+aS'2R|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|Not detected|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695\r\x03A0\r\n'
+p598
+aS'3R|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^I|Target not detected|||||F||bryan^bryan||20190825165311|275021695\r\x038F\r\n'
+p599
+aS'4R|3|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|-1.00|cycle number||||F||bryan^bryan||20190825165311|275021695\r\x0303\r\n'
+p600
+aS'5L|1\r\x033E\r\n'
+p601
+aS'6H|\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312\r\x0397\r\n'
+p602
+aS'7P|1\r\x0344\r\n'
+p603
+aa(lp604
+S'0O|1|SYS123636|SYS123636^vl110^H10|^^^1mLDBSvOP^HIV1.0mlDBS|||||||||||||||||||||F\r\x03AF\r\n'
+p605
+aS'1R|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|Not detected|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695\r\x039F\r\n'
+p606
+aS'2R|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^I|Target not detected|||||F||bryan^bryan||20190825165311|275021695\r\x038E\r\n'
+p607
+aS'3R|3|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|-1.00|cycle number||||F||bryan^bryan||20190825165311|275021695\r\x0302\r\n'
+p608
+aS'4L|1\r\x033D\r\n'
+p609
+aS'5H|\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312\r\x0396\r\n'
+p610
+aS'6P|1\r\x0343\r\n'
+p611
+aS'7O|1|SYS123640|SYS123640^vl110^A11|^^^1mLDBSvOP^HIV1.0mlDBS|||||||||||||||||||||F\r\x03A6\r\n'
+p612
+aa(lp613
+S'0R|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|Not detected|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695\r\x039E\r\n'
+p614
+aS'1R|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^I|Target not detected|||||F||bryan^bryan||20190825165311|275021695\r\x038D\r\n'
+p615
+aS'2R|3|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|-1.00|cycle number||||F||bryan^bryan||20190825165311|275021695\r\x0301\r\n'
+p616
+aS'3L|1\r\x033C\r\n'
+p617
+aS'4H|\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312\r\x0395\r\n'
+p618
+aS'5P|1\r\x0342\r\n'
+p619
+aS'6O|1|SYS123641|SYS123641^vl110^B11|^^^1mLDBSvOP^HIV1.0mlDBS|||||||||||||||||||||F\r\x03A8\r\n'
+p620
+aS'7R|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|54128|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695\r\x0316\r\n'
+p621
+aa(lp622
+S'0R|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|22.65|cycle number||||F||bryan^bryan||20190825165311|275021695\r\x030F\r\n'
+p623
+aS'1L|1\r\x033A\r\n'
+p624
+aS'2H|\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312\r\x0393\r\n'
+p625
+aS'3P|1\r\x0340\r\n'
+p626
+aS'4O|1|SYS123642|SYS123642^vl110^C11|^^^1mLDBSvOP^HIV1.0mlDBS|||||||||||||||||||||F\r\x03A9\r\n'
+p627
+aS'5R|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|< 550|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695\r\x0306\r\n'
+p628
+aS'6R|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^I|Detected|||||F||bryan^bryan||20190825165311|275021695\r\x037A\r\n'
+p629
+aS'7R|3|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|29.43|cycle number||||F||bryan^bryan||20190825165311|275021695\r\x031A\r\n'
+p630
+aa(lp631
+S'0L|1\r\x0339\r\n'
+p632
+aS'1H|\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312\r\x0392\r\n'
+p633
+aS'2P|1\r\x033F\r\n'
+p634
+aS'3O|1|SYS123643|SYS123643^vl110^D11|^^^1mLDBSvOP^HIV1.0mlDBS|||||||||||||||||||||F\r\x03AB\r\n'
+p635
+aS'4R|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|15216|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695\r\x030E\r\n'
+p636
+aS'5R|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|24.45|cycle number||||F||bryan^bryan||20190825165311|275021695\r\x0314\r\n'
+p637
+aS'6L|1\r\x033F\r\n'
+p638
+aS'7H|\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312\r\x0398\r\n'
+p639
+aa(lp640
+S'0P|1\r\x033D\r\n'
+p641
+aS'1O|1|SYS123644|SYS123644^vl110^E11|^^^1mLDBSvOP^HIV1.0mlDBS|||||||||||||||||||||F\r\x03AC\r\n'
+p642
+aS'2R|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|Not detected|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695\r\x03A0\r\n'
+p643
+aS'3R|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^I|Target not detected|||||F||bryan^bryan||20190825165311|275021695\r\x038F\r\n'
+p644
+aS'4R|3|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|-1.00|cycle number||||F||bryan^bryan||20190825165311|275021695\r\x0303\r\n'
+p645
+aS'5L|1\r\x033E\r\n'
+p646
+aS'6H|\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312\r\x0397\r\n'
+p647
+aS'7P|1\r\x0344\r\n'
+p648
+aa(lp649
+S'0O|1|SYS123645|SYS123645^vl110^F11|^^^1mLDBSvOP^HIV1.0mlDBS|||||||||||||||||||||F\r\x03AE\r\n'
+p650
+aS'1R|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|Not detected|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695\r\x039F\r\n'
+p651
+aS'2R|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^I|Target not detected|||||F||bryan^bryan||20190825165311|275021695\r\x038E\r\n'
+p652
+aS'3R|3|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|-1.00|cycle number||||F||bryan^bryan||20190825165311|275021695\r\x0302\r\n'
+p653
+aS'4L|1\r\x033D\r\n'
+p654
+aS'5H|\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312\r\x0396\r\n'
+p655
+aS'6P|1\r\x0343\r\n'
+p656
+aS'7O|1|SYS123646|SYS123646^vl110^G11|^^^1mLDBSvOP^HIV1.0mlDBS|||||||||||||||||||||F\r\x03B8\r\n'
+p657
+aa(lp658
+S'0R|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|Not detected|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695\r\x039E\r\n'
+p659
+aS'1R|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^I|Target not detected|||||F||bryan^bryan||20190825165311|275021695\r\x038D\r\n'
+p660
+aS'2R|3|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|-1.00|cycle number||||F||bryan^bryan||20190825165311|275021695\r\x0301\r\n'
+p661
+aS'3L|1\r\x033C\r\n'
+p662
+aS'4H|\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312\r\x0395\r\n'
+p663
+aS'5P|1\r\x0342\r\n'
+p664
+aS'6O|1|SYS123647|SYS123647^vl110^H11|^^^1mLDBSvOP^HIV1.0mlDBS|||||||||||||||||||||F\r\x03BA\r\n'
+p665
+aS'7R|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|Not detected|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695\r\x03A5\r\n'
+p666
+aa(lp667
+S'0R|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^I|Target not detected|||||F||bryan^bryan||20190825165311|275021695\r\x038C\r\n'
+p668
+aS'1R|3|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|-1.00|cycle number||||F||bryan^bryan||20190825165311|275021695\r\x0300\r\n'
+p669
+aS'2L|1\r\x033B\r\n'
+p670
+aS'3H|\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312\r\x0394\r\n'
+p671
+aS'4P|1\r\x0341\r\n'
+p672
+aS'5O|1|SYS123648|SYS123648^vl110^A12|^^^1mLDBSvOP^HIV1.0mlDBS|||||||||||||||||||||F\r\x03B5\r\n'
+p673
+aS'6R|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|Not detected|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695\r\x03A4\r\n'
+p674
+aS'7R|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^I|Target not detected|||||F||bryan^bryan||20190825165311|275021695\r\x0393\r\n'
+p675
+aa(lp676
+S'0R|3|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|-1.00|cycle number||||F||bryan^bryan||20190825165311|275021695\r\x03FF\r\n'
+p677
+aS'1L|1\r\x033A\r\n'
+p678
+aS'2H|\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312\r\x0393\r\n'
+p679
+aS'3P|1\r\x0340\r\n'
+p680
+aS'4O|1|SYS123649|SYS123649^vl110^B12|^^^1mLDBSvOP^HIV1.0mlDBS|||||||||||||||||||||F\r\x03B7\r\n'
+p681
+aS'5R|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|Not detected|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695\r\x03A3\r\n'
+p682
+aS'6R|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^I|Target not detected|||||F||bryan^bryan||20190825165311|275021695\r\x0392\r\n'
+p683
+aS'7R|3|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|-1.00|cycle number||||F||bryan^bryan||20190825165311|275021695\r\x0306\r\n'
+p684
+aa(lp685
+S'0L|1\r\x0339\r\n'
+p686
+aS'1H|\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312\r\x0392\r\n'
+p687
+aS'2P|1\r\x033F\r\n'
+p688
+aS'3O|1|SYS123650|SYS123650^vl110^C12|^^^1mLDBSvOP^HIV1.0mlDBS|||||||||||||||||||||F\r\x03A7\r\n'
+p689
+aS'4R|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|Not detected|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695\r\x03A2\r\n'
+p690
+aS'5R|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^I|Target not detected|||||F||bryan^bryan||20190825165311|275021695\r\x0391\r\n'
+p691
+aS'6R|3|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|-1.00|cycle number||||F||bryan^bryan||20190825165311|275021695\r\x0305\r\n'
+p692
+aS'7L|1\r\x0340\r\n'
+p693
+aa(lp694
+S'0H|\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312\r\x0391\r\n'
+p695
+aS'1P|1\r\x033E\r\n'
+p696
+aS'2O|1|SYS123651|SYS123651^vl110^D12|^^^1mLDBSvOP^HIV1.0mlDBS|||||||||||||||||||||F\r\x03A9\r\n'
+p697
+aS'3R|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|Not detected|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695\r\x03A1\r\n'
+p698
+aS'4R|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^I|Target not detected|||||F||bryan^bryan||20190825165311|275021695\r\x0390\r\n'
+p699
+aS'5R|3|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|-1.00|cycle number||||F||bryan^bryan||20190825165311|275021695\r\x0304\r\n'
+p700
+aS'6L|1\r\x033F\r\n'
+p701
+aS'7H|\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312\r\x0398\r\n'
+p702
+aa(lp703
+S'0P|1\r\x033D\r\n'
+p704
+aS'1O|1|SYS123652|SYS123652^vl110^E12|^^^1mLDBSvOP^HIV1.0mlDBS|||||||||||||||||||||F\r\x03AB\r\n'
+p705
+aS'2R|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|920|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695\r\x03A8\r\n'
+p706
+aS'3R|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|28.43|cycle number||||F||bryan^bryan||20190825165311|275021695\r\x0314\r\n'
+p707
+aS'4L|1\r\x033D\r\n'
+p708
+aS'5H|\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312\r\x0396\r\n'
+p709
+aS'6P|1\r\x0343\r\n'
+p710
+aS'7O|1|SYS123653|SYS123653^vl110^F12|^^^1mLDBSvOP^HIV1.0mlDBS|||||||||||||||||||||F\r\x03B4\r\n'
+p711
+aa(lp712
+S'0R|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|Not detected|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695\r\x039E\r\n'
+p713
+aS'1R|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^I|Target not detected|||||F||bryan^bryan||20190825165311|275021695\r\x038D\r\n'
+p714
+aS'2R|3|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|-1.00|cycle number||||F||bryan^bryan||20190825165311|275021695\r\x0301\r\n'
+p715
+aS'3L|1\r\x033C\r\n'
+p716
+aS'4H|\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312\r\x0395\r\n'
+p717
+aS'5P|1\r\x0342\r\n'
+p718
+aS'6O|1|SYS123654|SYS123654^vl110^G12|^^^1mLDBSvOP^HIV1.0mlDBS|||||||||||||||||||||F\r\x03B6\r\n'
+p719
+aS'7R|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|Not detected|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695\r\x03A5\r\n'
+p720
+aa(lp721
+S'0R|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^I|Target not detected|||||F||bryan^bryan||20190825165311|275021695\r\x038C\r\n'
+p722
+aS'1R|3|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|-1.00|cycle number||||F||bryan^bryan||20190825165311|275021695\r\x0300\r\n'
+p723
+aS'2L|1\r\x033B\r\n'
+p724
+aS'3H|\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312\r\x0394\r\n'
+p725
+aS'4P|1\r\x0341\r\n'
+p726
+aS'5O|1|SYS123655|SYS123655^vl110^H12|^^^1mLDBSvOP^HIV1.0mlDBS|||||||||||||||||||||F\r\x03B8\r\n'
+p727
+aS'6R|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|Not detected|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695\r\x03A4\r\n'
+p728
+aS'7R|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^I|Target not detected|||||F||bryan^bryan||20190825165311|275021695\r\x0393\r\n'
+p729
+aa(lp730
+S'0R|3|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|-1.00|cycle number||||F||bryan^bryan||20190825165311|275021695\r\x03FF\r\n'
+p731
+aS'1L|1\r\x033A\r\n'
+p732
+aa.

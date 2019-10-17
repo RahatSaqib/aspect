@@ -32,7 +32,7 @@ import ResultList from '../../result/list/ResultList'
 import ResultDetail from '../../result/detail/ResultDetail'
 import NotificationList from '../../notification/list/NotificationList'
 import NotificationDetail from '../../notification/detail/NotificationDetail'
-import ReportList from '../../report/list/ReportList'
+import ReportIndex from '../../report/page/ReportIndex'
 import AccountDetails from '../../account/detail/AccountDetails'
 import StyleguideMain from '../../styleguide/main/StyleguideMain'
 import InventoryItemsList from '../../inventory/list/InventoryItemsList'
@@ -113,7 +113,7 @@ const renderDeviceDemo = loggedInFactory(DeviceDemo)
 const renderClinicalIndicators = notImplementedLoggedInFactory(
   'Clinical Indicators'
 )
-const renderReports = notImplementedLoggedInFactory('Reports')
+const renderReports = loggedInFactory(ReportIndex)
 const renderManage = notImplementedLoggedInFactory('Manage')
 /* END-TODO: real components */
 const renderDeviceList = loggedInFactory(DeviceList)
@@ -131,7 +131,6 @@ const renderPersonDetail = loggedInDetailFactory(PersonDetail)
 const renderInventoryItemsList = loggedInFactory(InventoryItemsList)
 const renderNotificationList = loggedInFactory(NotificationList)
 const renderNotificationDetail = loggedInDetailFactory(NotificationDetail)
-const renderReportList = loggedInFactory(ReportList)
 const renderNotFound = signedOutFactory(NotFound)
 const renderLicense = signedOutFactory(License)
 
@@ -414,8 +413,7 @@ export const routerFactory = () => props => (
         render={
           renderRedirectToLoginOr(props) ||
           renderRedirectToLicenseOr(props) ||
-          renderRedirectToNotFound(props, ['report']) ||
-          renderReportList
+          renderRedirectToNotFound(props, ['report'])
         }
       />
 

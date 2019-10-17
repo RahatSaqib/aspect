@@ -27,6 +27,7 @@ async function sendPushNotification(token, title, body, data) {
   return fetch(FIREBASE_CLOUD_MESSAGING_URL, options)
     .then(() => ({ ok: true }))
     .catch(error => {
+      // eslint-disable-next-line no-console
       console.log('Error sending message:', error)
       return Boom.expectationFailed('Error trying to send push message')
     })
