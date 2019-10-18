@@ -403,7 +403,11 @@ const PerformanceBarChart = ({
     ]}
     tooltip={({ color, indexValue }) => {
       const periodData = data.find(x => x.period === indexValue)
-      const value = periodData.errorRate + periodData.exceededErrorRate
+      const value =
+        info === 'Error Rate'
+          ? periodData.errorRate + periodData.exceededErrorRate
+          : periodData.utilizationRate + periodData.exceededUtilizationRate
+
       return (
         <div>
           <div style={{ display: 'flex', alignItems: 'center' }}>
