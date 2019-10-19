@@ -1837,7 +1837,14 @@ async function updateResultFollowUp(request) {
     return Boom.notFound('Could not find follow up')
   }
 
-  return showResult(request)
+  return updateTreatmentStatusBasedOnFollowUps(
+    request,
+    currentUserId,
+    result,
+    date,
+    'FollowUp',
+    'Client API'
+  )
 }
 
 async function deleteResultFollowUp(request) {
