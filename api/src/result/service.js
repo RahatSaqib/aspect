@@ -1908,8 +1908,7 @@ async function updateTreatmentStatusBasedOnFollowUps(
     null,
     treatmentStatusExternalId,
     data,
-    method,
-    null
+    method
   )
 }
 
