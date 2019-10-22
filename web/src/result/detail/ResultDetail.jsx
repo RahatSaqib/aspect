@@ -313,6 +313,14 @@ export class ResultDetail extends PureComponent {
     this.setState({ imageIndex })
   }
 
+  formatRawMessage = msg => {
+    try {
+      return JSON.parse(msg)
+    } catch (err) {
+      return msg
+    }
+  }
+
   renderTreatmentStatusSection = () => {
     const {
       result,
@@ -359,7 +367,7 @@ export class ResultDetail extends PureComponent {
             {logs.map(log => {
               const createdOn = new Date(log.createdOn)
               const rawMessage = log.rawMessage
-                ? JSON.parse(log.rawMessage)
+                ? this.formatRawMessage(log.rawMessage)
                 : ''
               return (
                 <ReadOnlyField
