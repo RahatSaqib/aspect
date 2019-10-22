@@ -530,7 +530,7 @@ async function getDevicePerformance(request) {
 
   const endedOn = new Date()
 
-  const startedOn = startOfMonth(subMonths(endedOn, 11)) // 12 months period
+  const startedOn = startOfMonth(subMonths(endedOn, 12)) // 12 months period
 
   const devicePerformance = await knex('Result as r')
     .leftJoin('ResultCategory as rc1', 'rc1.id', 'r.resultCategory1')

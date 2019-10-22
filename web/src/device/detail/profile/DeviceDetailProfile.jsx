@@ -403,7 +403,11 @@ const PerformanceBarChart = ({
     ]}
     tooltip={({ color, indexValue }) => {
       const periodData = data.find(x => x.period === indexValue)
-      const value = periodData.errorRate + periodData.exceededErrorRate
+      const value =
+        info === 'Error Rate'
+          ? periodData.errorRate + periodData.exceededErrorRate
+          : periodData.utilizationRate + periodData.exceededUtilizationRate
+
       return (
         <div>
           <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -432,7 +436,10 @@ const PerformanceReport = enhance(({ performanceReport, culture }) => {
   if (payload.data) {
     payload.data.forEach(item => {
       const date = new Date(item.monthTested)
-      const monthName = date.toLocaleString(culture, { month: 'short' })
+      const monthName = date.toLocaleString(culture, {
+        month: 'short',
+        timeZone: 'UTC',
+      })
       item.period = monthName
       item.exceededErrorRate =
         item.errorRate > payload.errorRateAvg
