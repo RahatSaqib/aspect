@@ -315,11 +315,10 @@ export class ResultDetail extends PureComponent {
 
   formatRawMessage = msg => {
     try {
-      JSON.parse(msg)
+      return JSON.parse(msg)
     } catch (err) {
       return msg
     }
-    return JSON.parse(msg)
   }
 
   renderTreatmentStatusSection = () => {
