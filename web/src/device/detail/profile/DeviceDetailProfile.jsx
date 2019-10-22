@@ -347,91 +347,88 @@ const PerformanceBarChart = ({
   avgValue,
   maxValue,
   info,
-}) => {
-  console.log('data', data)
-  return (
-    <ResponsiveBar
-      data={data}
-      indexBy="period"
-      keys={series.map(x => x.key)}
-      margin={{ top: 10, right: 0, bottom: 90, left: 50 }}
-      padding={0.01} // between stacks, (ratio)
-      innerPadding={1} // between bars in a stack, (px)
-      enableGridY={false}
-      enableLabel={false}
-      defs={[
-        {
-          id: 'lines',
-          type: 'patternLines',
-          background: 'inherit',
-          color: process.env[color],
-          rotation: 45,
-          lineWidth: 7,
-          spacing: 8,
+}) => (
+  <ResponsiveBar
+    data={data}
+    indexBy="period"
+    keys={series.map(x => x.key)}
+    margin={{ top: 10, right: 0, bottom: 90, left: 50 }}
+    padding={0.01} // between stacks, (ratio)
+    innerPadding={1} // between bars in a stack, (px)
+    enableGridY={false}
+    enableLabel={false}
+    defs={[
+      {
+        id: 'lines',
+        type: 'patternLines',
+        background: 'inherit',
+        color: process.env[color],
+        rotation: 45,
+        lineWidth: 7,
+        spacing: 8,
+      },
+    ]}
+    fill={[
+      {
+        match: {
+          id: 'exceededErrorRate',
         },
-      ]}
-      fill={[
-        {
-          match: {
-            id: 'exceededErrorRate',
-          },
-          id: 'lines',
+        id: 'lines',
+      },
+      {
+        match: {
+          id: 'exceededUtilizationRate',
         },
-        {
-          match: {
-            id: 'exceededUtilizationRate',
-          },
-          id: 'lines',
+        id: 'lines',
+      },
+    ]}
+    axisLeft={{
+      tickRotation: 0,
+      legend: 'Percentage(%)',
+      legendPosition: 'middle',
+      legendOffset: -40,
+    }}
+    colors={bar => series.find(x => x.key === bar.id).color}
+    animate
+    markers={[
+      {
+        axis: 'y',
+        value: avgValue,
+        lineStyle: {
+          stroke: process.env['--aspect-color-ship-cove'],
+          strokeWidth: 2,
         },
-      ]}
-      axisLeft={{
-        tickRotation: 0,
-        legend: 'Percentage(%)',
-        legendPosition: 'middle',
-        legendOffset: -40,
-      }}
-      colors={bar => series.find(x => x.key === bar.id).color}
-      animate
-      markers={[
-        {
-          axis: 'y',
-          value: avgValue,
-          lineStyle: {
-            stroke: process.env['--aspect-color-ship-cove'],
-            strokeWidth: 2,
-          },
-          legendOrientation: 'vertical',
-        },
-      ]}
-      tooltip={({ color, indexValue }) => {
-        const periodData = data.find(x => x.period === indexValue)
-        const value =
-          info === 'Error Rate'
-            ? periodData.errorRate + periodData.exceededErrorRate
-            : periodData.utilizationRate + periodData.exceededUtilizationRate
+        legendOrientation: 'vertical',
+      },
+    ]}
+    tooltip={({ color, indexValue }) => {
+      const periodData = data.find(x => x.period === indexValue)
+      const value =
+        info === 'Error Rate'
+          ? periodData.errorRate + periodData.exceededErrorRate
+          : periodData.utilizationRate + periodData.exceededUtilizationRate
 
-        return (
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-              <div
-                className={cssClasses('Performance--graph-tooltip-color')}
-                style={{ backgroundColor: color }}
-              />
-              {`% ${info} `}
-            </div>
-            <div>
-              {`${indexValue}: `}
-              <strong>{value}</strong>%
-            </div>
+      return (
+        <div>
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <div
+              className={cssClasses('Performance--graph-tooltip-color')}
+              style={{ backgroundColor: color }}
+            />
+            {`% ${info} `}
           </div>
-        )
-      }}
-      maxValue={maxValue}
-      motionStiffness={90}
-      motionDamping={15}
-    />
-  )
-}
+          <div>
+            {`${indexValue}: `}
+            <strong>{value}</strong>%
+          </div>
+        </div>
+      )
+    }}
+    maxValue={maxValue}
+    motionStiffness={90}
+    motionDamping={15}
+  />
+)
 const PerformanceReport = enhance(({ performanceReport, culture }) => {
   const payload = performanceReport.toJS()
   let maxUtilizationRate = 0
