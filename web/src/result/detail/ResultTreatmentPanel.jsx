@@ -99,13 +99,15 @@ const ResultTreatmentPanel = ({ styles, data, ...restProps }) => {
                       </h4>
                     )
                 )}
-                <h3>
-                  {differenceInCalendarDays(
-                    new Date(),
-                    parseISO(data.get('endedOn'))
-                  )}
-                  &nbsp;days
-                </h3>
+                {data.get('endedOn') && (
+                  <h3>
+                    {differenceInCalendarDays(
+                      new Date(),
+                      parseISO(data.get('endedOn'))
+                    )}
+                    &nbsp;days
+                  </h3>
+                )}
               </div>
             </div>
           }
