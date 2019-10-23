@@ -2,9 +2,9 @@ module.exports = require('../utils').seed(seed, __filename)
 
 const {
   getRandomResults,
-  getMGITResultFromTBPossitive,
   createDevicesForAllMissingTypes,
 } = require('../commonGenerateResults')
+const { getMGITResultFromTBPossitive } = require('../commonTB')
 
 const { allResultCategoryToId } = require('../../src/shared/dictionary')
 const Promise = require('bluebird')

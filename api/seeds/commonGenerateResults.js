@@ -12,10 +12,10 @@ const {
   addHours,
   subHours,
   subDays,
-  addDays,
   format,
 } = require('date-fns')
 
+const { getMGITResultFromTBPossitive } = require('./commonTB')
 const {
   allResultCategoryToId,
   allResultWorkflowStatusToId,
@@ -948,31 +948,8 @@ async function getRandomResults(
     .limit(queryLimit)
   return query
 }
-function getMGITResultFromTBPossitive(result, assaysMGIT, devicesMGIT) {
-  const randomDateMgit = addDays(result.endedOn, _.random(5))
-  const now = new Date()
-  return _.omit(
-    _.defaults(
-      {
-        assayId: _.sample(assaysMGIT),
-        startedOn: randomDateMgit,
-        endedOn: addMinutes(randomDateMgit, 100),
-        createdOn: addMinutes(randomDateMgit, 120),
-        updatedOn: addMinutes(randomDateMgit, 180),
-        consumableSerial: `${_.random(100)}12`,
-        consumableExpirationDate: new Date(+now + 200 * _.random(10)),
-        deviceId: _.sample(devicesMGIT).id,
-        resultData: JSON.stringify(result.resultData),
-        externalId: `TBMGIT-${_.random(1000)}-${format(new Date(), 'tt')}-D`,
-      },
-      result
-    ),
-    'id'
-  )
-}
 
 module.exports = {
-  getMGITResultFromTBPossitive,
   generateResults,
   getRandomResults,
   createDevicesForAllMissingTypes,

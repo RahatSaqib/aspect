@@ -1,16 +1,20 @@
 module.exports = require('../utils').seed(seed, __filename)
-const config = require('./src/config')
+const config = require('../../src/config')
 
 const {
   getRandomResults,
   generateResults,
-  getMGITResultFromTBPossitive,
   createDevicesForAllMissingTypes,
 } = require('../commonGenerateResults')
 
 const patients = require('./fixtures/patients.json')
 const { errorCodes } = require('./fixtures/errorCodes.js')
 const { allResultCategoryToId } = require('../../src/shared/dictionary')
+const {
+  updateMGITAssays,
+  getMGITResultFromTBPossitive,
+} = require('../commonTB')
+
 const Promise = require('bluebird')
 const _ = require('lodash')
 // result categories
@@ -70,6 +74,7 @@ async function seed(knex) {
   const devicesMGIT = await knex('Device')
     .where({ deviceTypeId: deviceTypeBDMGIT })
     .select()
+  await updateMGITAssays(knex, deviceTypeBDMGIT)
   await Promise.each(results, result => {
     if (devicesMGIT.length > 0)
       knex('Result').insert(
