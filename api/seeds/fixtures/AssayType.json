@@ -3,77 +3,92 @@
     {
       "name": "MTB/Rif",
       "i18nKey": "assayTypeMtbRif",
+      "externalId": "assayTypeMtbRif",
       "abbreviation":"TB"
     },
     {
       "name": "Ebola",
       "i18nKey": "assayTypeEbola",
+      "externalId": "assayTypeEbola",
       "abbreviation":"EB"
     },
     {
       "name": "HIV VL",
       "i18nKey": "assayTypeHivVl",
+      "externalId": "assayTypeHivVl",
       "abbreviation":"HIV"
     },
     {
       "name": "HIV Qual",
       "i18nKey": "assayTypeHivQual",
+      "externalId": "assayTypeHivQual",
       "abbreviation":"HIV"
     },
     {
       "name": "CD4 Count",
       "i18nKey": "assayTypeCD4",
+      "externalId": "assayTypeCD4",
       "abbreviation":"CD4"
     },
     {
       "name": "EID",
       "i18nKey": "assayTypeEid",
+      "externalId": "assayTypeEid",
       "abbreviation":"EID"
     },
     {
       "name": "HCV",
       "i18nKey": "assayTypeHcv",
+      "externalId": "assayTypeHcv",
       "abbreviation":"HCV"
 
     },
     {
       "name": "Lipid Panel",
       "i18nKey": "assayTypeLipidPanel",
+      "externalId": "assayTypeLipidPanel",
       "abbreviation":"LP"
     },
     {
       "name": "Zika",
       "i18nKey": "assayTypeZika",
+      "externalId": "assayTypeZika",
       "abbreviation":"ZK"
     },
     {
       "name": "Dengue",
       "i18nKey": "assayTypeDengue",
+      "externalId": "assayTypeDengue",
       "abbreviation":"DG"
     },
     {
       "name": "TB AST",
       "i18nKey": "assayTypeTbAst",
+      "externalId": "assayTypeTbAst",
       "abbreviation":"TB"
     },
     {
       "name": "TB G&D",
       "i18nKey": "assayTypeTbGnd",
+      "externalId": "assayTypeTbGnd",
       "abbreviation":"TB"
     },
     {
       "name": "Unknown",
       "i18nKey": "assayTypeUnknown",
+      "externalId": "assayTypeUnknown",
       "abbreviation":"UK"
     },
     {
       "name": "Generic RDT",
       "i18nKey": "genericRDT",
+      "externalId": "genericRDT",
       "abbreviation":"RDT"
     },
     {
       "name": "GenoType Test Strip",
       "i18nKey": "genoTypeTestStrip",
+      "externalId": "genoTypeTestStrip",
       "abbreviation":"GTTS"
     }
   ]
