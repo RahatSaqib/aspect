@@ -32,10 +32,9 @@ async function seed(knex) {
       .where('r.resultCategory1', resultCategoryDetectedId)
 
   const results = await getRandomResults(knex, queryBuilderFunction)
-  const deviceTypeBDMGIT = await knex('DeviceType')
+  const { id: deviceTypeBDMGIT } = await knex('DeviceType')
     .where('externalId', 'BDMGIT')
-    .select('id')
-
+    .first('id')
   const partners = await knex('Person as p')
     .join('User as u', 'u.id', 'p.userId')
     .where('u.name', 'like', '%admin%')
@@ -75,10 +74,10 @@ async function seed(knex) {
     .where({ deviceTypeId: deviceTypeBDMGIT })
     .select()
   await updateMGITAssays(knex, deviceTypeBDMGIT)
-  await Promise.each(results, result => {
+  await Promise.each(results, async result => {
     if (devicesMGIT.length > 0)
       knex('Result').insert(
-        getMGITResultFromTBPossitive(result, MGITAssays, devicesMGIT)
+        await getMGITResultFromTBPossitive(result, MGITAssays, devicesMGIT)
       )
   })
 }

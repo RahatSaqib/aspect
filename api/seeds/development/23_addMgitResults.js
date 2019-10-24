@@ -51,10 +51,10 @@ async function seed(knex) {
     .where({ deviceTypeId: deviceTypeBDMGIT })
     .select()
   // adding existing mgit results for tb possitive results.
-  await Promise.each(results, result => {
+  await Promise.each(results, async result => {
     if (devicesMGIT.length > 0)
       knex('Result').insert(
-        getMGITResultFromTBPossitive(result, MGITAssays, devicesMGIT)
+        await getMGITResultFromTBPossitive(result, MGITAssays, devicesMGIT)
       )
   })
 }

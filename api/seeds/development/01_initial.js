@@ -37,7 +37,7 @@ const geography = require('./fixtures/geography.json')
 const patients = require('./fixtures/patients.json')
 const dashboardWidget = require('./fixtures/dashboardWidget.json')
 const { errorCodes } = require('./fixtures/errorCodes.js')
-const { updateMGITassays } = require('../commonTB.js')
+const { updateMGITAssays } = require('../commonTB')
 
 const millisInHour = 1000 * 60 * 60
 const millisInMinute = 1000 * 60
@@ -326,7 +326,7 @@ async function seed(knex) {
       order: 12,
     },
   })
-  await updateMGITassays(knex, deviceTypeBDMGITId, patientDataSchema)
+  await updateMGITAssays(knex, deviceTypeBDMGITId, patientDataSchema)
   // Units
   const piece = await unitToId('Piece')
 

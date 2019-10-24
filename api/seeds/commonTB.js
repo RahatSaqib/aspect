@@ -1,5 +1,6 @@
 const {
   assayTypeToId,
+  assayToId,
   resultSourceToId,
   resultCategoryToId,
 } = require('../src/shared/dictionary')
@@ -8,10 +9,13 @@ const { addMinutes, addDays, format } = require('date-fns')
 const AssayBdMgitAstResultDataSchema = require('./fixtures/AssayBdMgitAstResultDataSchema.json')
 const AssayBdMgitGndResultDataSchema = require('./fixtures/AssayBdMgitGnd.json')
 const MGITPatientDataSchema = require('./fixtures/MGITPatientDataSchema.json')
+const Promise = require('bluebird')
 
-function getMGITResultFromTBPossitive(result, assaysMGIT, devicesMGIT) {
+async function getMGITResultFromTBPossitive(result, assaysMGIT, devicesMGIT) {
   const randomDateMgit = addDays(result.endedOn, _.random(5))
   const now = new Date()
+  const assay = _.sample(assaysMGIT)
+  const assayId = await assayToId('assayBdMgitAst')
   return _.omit(
     _.defaults(
       {
@@ -23,7 +27,7 @@ function getMGITResultFromTBPossitive(result, assaysMGIT, devicesMGIT) {
         consumableSerial: `${_.random(100)}12`,
         consumableExpirationDate: new Date(+now + 200 * _.random(10)),
         deviceId: _.sample(devicesMGIT).id,
-        resultData: JSON.stringify(result.resultData),
+        resultData: JSON.stringify(getNewMgitResultData(assayId === assay)),
         externalId: `TBMGIT-${_.random(1000)}-${format(new Date(), 'tt')}-D`,
       },
       result
@@ -45,8 +49,8 @@ async function updateMGITAssays(
     deviceTypeId: deviceTypeBDMGITId,
     resultSourceId: await resultSourceToId('DiagnosticDevice'),
     resultCategory1Label: 'Result',
-    resultDataSchema: AssayBdMgitAstResultDataSchema,
-    patientDataSchema,
+    resultDataSchema: JSON.stringify({ AssayBdMgitAstResultDataSchema }),
+    patientDataSchema: JSON.stringify({ patientDataSchema }),
   }
   let { id: assayBdMgitAstId } =
     (await knex('Assay')
@@ -63,46 +67,35 @@ async function updateMGITAssays(
       .update(assayBdMgitAst)
   }
 
-  // assign categories to BD MGIT AST assay
-  await knex('ResultCategoryAssay').insert({
-    resultCategoryId: await resultCategoryToId('Detected'),
-    assayId: assayBdMgitAstId,
-  })
+  const values = await Promise.all([
+    await resultCategoryToId('Detected'),
+    await resultCategoryToId('NotDetected'),
+    await resultCategoryToId('Success'),
+    await resultCategoryToId('Missing'),
+    await resultCategoryToId('Error'),
+    await resultCategoryToId('Unknown'),
+    await resultCategoryToId('Susceptible'),
+    await resultCategoryToId('Resistant'),
+  ])
+  const resultCategoryId = await knex('ResultCategoryAssay')
+    .where({ assayId: assayBdMgitAstId })
+    .select('resultCategoryId')
 
-  await knex('ResultCategoryAssay').insert({
-    resultCategoryId: await resultCategoryToId('NotDetected'),
-    assayId: assayBdMgitAstId,
-  })
+  const categoriesToInsert = _.filter(
+    values,
+    elem =>
+      !_.includes(
+        _.map(resultCategoryId, category => category.resultCategoryId),
+        elem
+      )
+  )
 
-  await knex('ResultCategoryAssay').insert({
-    resultCategoryId: await resultCategoryToId('Success'),
-    assayId: assayBdMgitAstId,
-  })
-
-  await knex('ResultCategoryAssay').insert({
-    resultCategoryId: await resultCategoryToId('Missing'),
-    assayId: assayBdMgitAstId,
-  })
-
-  await knex('ResultCategoryAssay').insert({
-    resultCategoryId: await resultCategoryToId('Error'),
-    assayId: assayBdMgitAstId,
-  })
-
-  await knex('ResultCategoryAssay').insert({
-    resultCategoryId: await resultCategoryToId('Unknown'),
-    assayId: assayBdMgitAstId,
-  })
-
-  await knex('ResultCategoryAssay').insert({
-    resultCategoryId: await resultCategoryToId('Susceptible'),
-    assayId: assayBdMgitAstId,
-  })
-
-  await knex('ResultCategoryAssay').insert({
-    resultCategoryId: await resultCategoryToId('Resistant'),
-    assayId: assayBdMgitAstId,
-  })
+  await Promise.each(categoriesToInsert, elem =>
+    knex('ResultCategoryAssay').insert({
+      resultCategoryId: elem,
+      assayId: assayBdMgitAstId,
+    })
+  )
 
   const assayBdMgitGnd = {
     name: 'BD MGIT GND',
@@ -113,8 +106,8 @@ async function updateMGITAssays(
     deviceTypeId: deviceTypeBDMGITId,
     resultSourceId: await resultSourceToId('DiagnosticDevice'),
     resultCategory1Label: 'Result',
-    resultDataSchema: AssayBdMgitGndResultDataSchema,
-    patientDataSchema,
+    resultDataSchema: JSON.stringify({ AssayBdMgitGndResultDataSchema }),
+    patientDataSchema: JSON.stringify({ patientDataSchema }),
   }
   let { id: assayBdMgitGndId } =
     (await knex('Assay')
@@ -130,38 +123,76 @@ async function updateMGITAssays(
       .where('id', assayBdMgitGndId)
       .update(assayBdMgitGnd)
   }
-  // assign categories to BD MGIT GND assay
-  await knex('ResultCategoryAssay').insert({
-    resultCategoryId: await resultCategoryToId('Detected'),
-    assayId: assayBdMgitGndId,
-  })
-
-  await knex('ResultCategoryAssay').insert({
-    resultCategoryId: await resultCategoryToId('NotDetected'),
-    assayId: assayBdMgitGndId,
-  })
-
-  await knex('ResultCategoryAssay').insert({
-    resultCategoryId: await resultCategoryToId('Success'),
-    assayId: assayBdMgitGndId,
-  })
-
-  await knex('ResultCategoryAssay').insert({
-    resultCategoryId: await resultCategoryToId('Missing'),
-    assayId: assayBdMgitGndId,
-  })
-
-  await knex('ResultCategoryAssay').insert({
-    resultCategoryId: await resultCategoryToId('Error'),
-    assayId: assayBdMgitGndId,
-  })
-
-  await knex('ResultCategoryAssay').insert({
-    resultCategoryId: await resultCategoryToId('Unknown'),
-    assayId: assayBdMgitGndId,
-  })
+  values.splice(-2, 2)
+  const resultCategoryBdMgitGndId = await knex('ResultCategoryAssay')
+    .where({ assayId: assayBdMgitGndId })
+    .select('resultCategoryId')
+  const valuesToInsert = _.filter(
+    values,
+    elem =>
+      !_.includes(
+        _.map(resultCategoryBdMgitGndId, category => category.resultCategoryId),
+        elem
+      )
+  )
+  await Promise.each(valuesToInsert, elem =>
+    knex('ResultCategoryAssay').insert({
+      resultCategoryId: elem,
+      assayId: assayBdMgitGndId,
+    })
+  )
 }
 
+function getNewMgitResultData(isAST) {
+  return {
+    EMB: {
+      sirStatus: _.sample(['susceptible', 'resistant']),
+      growthUnits: _.random(1, 1300),
+      antibioticConcentration: `${_.random(1, 10)}.00`,
+      antibioticConcentrationUnits: 'ug/ml',
+    },
+    RIF: {
+      sirStatus: _.sample(['susceptible', 'resistant']),
+      growthUnits: _.random(1, 1300),
+      antibioticConcentration: `${_.random(1, 10)}.00`,
+      antibioticConcentrationUnits: 'ug/ml',
+    },
+    S: {
+      sirStatus: _.sample(['susceptible', 'resistant']),
+      growthUnits: _.random(1, 1300),
+      antibioticConcentration: `${_.random(1, 10)}.00`,
+      antibioticConcentrationUnits: 'ug/ml',
+    },
+    EM: {
+      sirStatus: _.sample(['susceptible', 'resistant']),
+      growthUnits: _.random(1, 1300),
+      antibioticConcentration: `${_.random(1, 10)}.00`,
+      antibioticConcentrationUnits: 'ug/ml',
+    },
+    RA: {
+      sirStatus: _.sample(['susceptible', 'resistant']),
+      growthUnits: _.random(1, 1300),
+      antibioticConcentration: `${_.random(1, 10)}.00`,
+      antibioticConcentrationUnits: 'ug/ml',
+    },
+    INH: {
+      sirStatus: _.sample(['susceptible', 'resistant']),
+      growthUnits: _.random(1, 1300),
+      antibioticConcentration: `${_.random(1, 10)}.00`,
+      antibioticConcentrationUnits: 'ug/ml',
+    },
+    protocolLength: 42,
+    instrumentLocation: 'B/A03',
+    isolateNumber: '1',
+    senderName: '7 Loveton Circle',
+    instrumentType: 'MGIT960',
+    instrumentNumber: '13',
+    versionNumber: 'V1.00',
+    testId: !isAST ? 'MGIT_960_GND' : 'MGIT_960_AST',
+    resultTypeCode: !isAST ? 'GND_MGIT' : 'AST_MGIT',
+    preliminaryFinalStatus: 'P',
+  }
+}
 module.exports = {
   updateMGITAssays,
   getMGITResultFromTBPossitive,

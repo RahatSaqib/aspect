@@ -350,7 +350,11 @@ async function generateResults(
     ) {
       resultElement.id = resultId
       possitiveMTBResults.push(
-        getMGITResultFromTBPossitive(resultElement, assayBdMgit, devicesMGIT)
+        await getMGITResultFromTBPossitive(
+          resultElement,
+          assayBdMgit,
+          devicesMGIT
+        )
       )
     }
 

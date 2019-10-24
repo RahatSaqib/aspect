@@ -58,59 +58,5 @@
 		"order": 11,
 		"type": "string",
 		"title": "Preliminary/Final"
-	},
-	"dateInoculated": {
-		"list": false,
-		"order": 12,
-		"type": "date",
-		"title": "Date Inoculated"
-	},
-	"dateFlaggedScanned": {
-		"list": false,
-		"order": 13,
-		"type": "date",
-		"title": "Date Flagged Positive/Scanned Out"
-	},
-	"dateLjGrowth": {
-		"list": false,
-		"order": 14,
-		"type": "date",
-		"title": "Date LJ Growth"
-	},
-	"ljGrowthClCOunt": {
-		"list": false,
-		"order": 15,
-		"type": "number",
-		"title": "CL Count"
-	},
-	"ljGrowthZn": {
-		"list": false,
-		"order": 16,
-		"type": "number",
-		"title": "LJ Growth ZN"
-	},
-	"mgitTurbidity": {
-		"list": false,
-		"order": 17,
-		"type": "string",
-		"title": "Turbidity"
-	},
-	"ba": {
-		"list": false,
-		"order": 18,
-		"type": "string",
-		"title": "B/A"
-	},
-	"actionTaken": {
-		"list": false,
-		"order": 19,
-		"type": "string",
-		"title": "Action Taken"
-	},
-	"doneBy": {
-		"list": false,
-		"order": 20,
-		"type": "string",
-		"title": "Done By"
 	}
 }
