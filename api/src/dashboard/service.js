@@ -712,13 +712,13 @@ async function siteDashboard(request) {
     []
   )
 
-  const anyDevicewithIssueBySiteId = _.mapValues(
+  const anyDeviceWithIssueBySiteId = _.mapValues(
     _.groupBy(_.uniqBy(deviceList, 'siteId'), 'siteId'),
     list => _.every(list, { fullyOperational: false })
   )
 
-  const siteswithIssueSiteIds = _.sortedUniq(
-    _.reduce(anyDevicewithIssueBySiteId, siteIdAccumulator, []),
+  const sitesWithIssueSiteIds = _.sortedUniq(
+    _.reduce(anyDeviceWithIssueBySiteId, siteIdAccumulator, []),
     'siteId'
   )
 
@@ -747,11 +747,11 @@ async function siteDashboard(request) {
       ],
     },
     deviceManagement: {
-      siteIds: siteswithIssueSiteIds,
+      siteIds: sitesWithIssueSiteIds,
       items: [
         {
           key: 0,
-          count: siteswithIssueSiteIds.length /* TODO: ASP-520 */,
+          count: sitesWithIssueSiteIds.length /* TODO: ASP-520 */,
           titleI18nKey: i18nKeys.sitesTitle,
           subI18nKey: i18nKeys.withDeviceIssues,
         },
