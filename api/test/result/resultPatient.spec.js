@@ -16,7 +16,6 @@ describe('Result routes', () => {
       runTestWithKnex(async knex => {
         const result = await knex('Result').first('*')
         const patientData = JSON.parse(result.patientData)
-
         await server
           .get(`${path}/patientresultsdetails?patientId=${patientData.id}`)
           .set('Authorization', `Bearer ${shared.token}`)
@@ -39,14 +38,6 @@ describe('Result routes', () => {
             assert.property(res.body.data[0], 'resultStatus')
             assert.property(res.body.data[0], 'resultStatusLog')
             assert.property(res.body.data[0], 'resultTreatmentStatusLogDate')
-            assert.property(res.body.data[0], 'notes')
-            assert.property(res.body.data[0], 'resultTreatmentStatusLogMethod')
-            assert.property(
-              res.body.data[0],
-              'resultTreatmentStatusLogCreatedBy'
-            )
-            assert.property(res.body.data[0], 'resultTreatmentStatusLogNotes')
-            assert.property(res.body.data[0], 'resultTreatmentStatusLogId')
             assert.property(res.body.data[0], 'resultTreatmentId')
             assert.property(res.body.data[0], 'patientData')
             assert.property(res.body.data[0], 'type')

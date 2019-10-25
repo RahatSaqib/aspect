@@ -1074,10 +1074,6 @@ const routes = [
                   .required()
                   .description('The assay id'),
                 resultData: Joi.object()
-                  .keys({
-                    probes: Joi.object(),
-                    resultText: Joi.string(),
-                  })
                   .required()
                   .description('The result data'),
                 resultSiteName: Joi.string()
@@ -1103,31 +1099,6 @@ const routes = [
                   .description(
                     'The result Treatment status date in iso format'
                   ),
-
-                resultTreatmentStatusLogData: Joi.string()
-                  .required()
-                  .allow(null)
-                  .description('The result Treatment status data'),
-
-                resultTreatmentStatusLogMethod: Joi.string()
-                  .required()
-                  .allow(null)
-                  .description('The result Treatment status method'),
-
-                resultTreatmentStatusLogCreatedBy: Joi.string()
-                  .required()
-                  .allow(null)
-                  .description('The user who creates the result Treatment'),
-                resultTreatmentStatusLogNotes: Joi.string()
-                  .required()
-                  .allow(null)
-                  .description(
-                    'The result Treatment status date in iso format'
-                  ),
-                resultTreatmentStatusLogId: Joi.number()
-                  .required()
-                  .allow(null)
-                  .description('the result status'),
                 resultTreatmentId: Joi.string()
                   .required()
                   .allow(null)
@@ -1152,7 +1123,7 @@ const routes = [
                   .description('The date of the milestone'),
                 notes: Joi.string()
                   .optional()
-                  .allow('')
+                  .allow('', null)
                   .description('description of the milestone'),
                 patientDataSchema: Joi.object()
                   .required()

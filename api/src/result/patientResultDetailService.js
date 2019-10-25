@@ -8,8 +8,6 @@ const _ = require('lodash')
 async function getPatientResultsDetails(request) {
   const { auth, query } = request
   const dataConstraints = await getConstraints(auth.credentials)
-  // const { userName } = await getUser(auth.credentials.name)
-  // console.log('entre')
   const resultDetails = knex('Result as r')
     .join('Sample as s', 'r.sampleId', 's.id')
     .join('SampleType as st', 's.sampleTypeId', 'st.id')
@@ -60,52 +58,34 @@ async function getPatientResultsDetails(request) {
       'rs.externalid as resultStatus',
       'rsl.createdon as resultStatusLog',
       'rtsl.createdon as resultTreatmentStatusLogDate',
-      'rtsl.id as resultTreatmentStatusLogId',
-      'rtsl.data as resultTreatmentStatusLogData',
-      'rtsl.method as resultTreatmentStatusLogMethod',
-      'p.name as resultTreatmentStatusLogCreatedBy',
-      knex.raw(
-        "CONCAT(rtsl.data,' ',rtsl.method) as resultTreatmentStatusLogNotes"
-      ),
       'rts.name as resultTreatmentName',
       'rts.externalid as resultTreatmentId',
       'a.patientDataSchema as patientDataSchema'
     )
     .orderBy('sampleCollectedOn', 'resultEndedOn', 'resultTestStatusLog')
 
-  let data = []
-
   const results = await resultDetails
   // if no result we are going to return not found for the specific patient id
   if (results.length === 0) {
     return Boom.notFound("There isn't any patient with this id")
   }
-  // translate result data back to an object and get assay details
-  // if selecting the result was successful
-  if (results.length >= 1) {
-    data = await Promise.map(results, async result => {
-      const resultsData = Object.assign({}, result, {
-        resultData: result.resultData ? JSON.parse(result.resultData) : null,
-        patientData: result.patientData ? JSON.parse(result.patientData) : null,
-        patientDataSchema: result.patientDataSchema
-          ? JSON.parse(result.patientDataSchema)
-          : null,
-      })
 
-      return resultsData
-    })
-  }
   /* for doing only one query i normalize the data with lodash in memory */
   /* the idea is to create one record per milestone and normalize the data to place it into the timeline */
   /* it categorize the milestone, add notes and dates to everyone. */
   /* when we will add the outcomes, should be normalized as the next couple of lines */
   const finalResult = []
-  const samples = _.uniqBy(data, 'sampleId')
-  const uniqResults = _.uniqBy(data, 'resultId')
+  const samples = _.uniqBy(results, 'sampleId')
+  const uniqResults = _.uniqBy(results, 'resultId')
 
   _.each(uniqResults, async result =>
     finalResult.push(
       Object.assign({}, result, {
+        resultData: result.resultData ? JSON.parse(result.resultData) : null,
+        patientData: result.patientData ? JSON.parse(result.patientData) : null,
+        patientDataSchema: result.patientDataSchema
+          ? JSON.parse(result.patientDataSchema)
+          : null,
         date: result.resultEndedOn,
         type: 'Result',
         notes:
@@ -118,6 +98,11 @@ async function getPatientResultsDetails(request) {
   _.each(samples, sample =>
     finalResult.push(
       Object.assign({}, sample, {
+        resultData: sample.resultData ? JSON.parse(sample.resultData) : null,
+        patientData: sample.patientData ? JSON.parse(sample.patientData) : null,
+        patientDataSchema: sample.patientDataSchema
+          ? JSON.parse(sample.patientDataSchema)
+          : null,
         date: sample.sampleCollectedOn,
         type: 'Sample',
         notes: 'Sample collected',
@@ -133,6 +118,15 @@ async function getPatientResultsDetails(request) {
       _.each(followUps.data, fu => {
         finalResult.push(
           Object.assign({}, result, {
+            resultData: result.resultData
+              ? JSON.parse(result.resultData)
+              : null,
+            patientData: result.patientData
+              ? JSON.parse(result.patientData)
+              : null,
+            patientDataSchema: result.patientDataSchema
+              ? JSON.parse(result.patientDataSchema)
+              : null,
             date: fu.date || fu.createdOn,
             followUpTypeName: fu.followUpTypeName,
             type: fu.followUpTypeName,
