@@ -18,6 +18,7 @@ async function getPatientResultsDetails(request) {
     .join('Site as resultSite', 's.originSiteId', 'resultSite.id')
     .join('Assay as a', 'r.assayId', 'a.id')
     .join('ResultCategory as rc1', 'r.resultCategory1', 'rc1.id')
+    .join('ResultCategory as rc2', 'r.resultCategory2', 'rc2.id')
     .leftJoin(
       'ResultWorkflowLog as rsl',
       'r.resultWorkflowStatusLogId',
@@ -44,6 +45,8 @@ async function getPatientResultsDetails(request) {
     .modify(addConstraints, dataConstraints, { sample: 's' })
     .select(
       'r.id as resultId',
+      'rc1.name as resultCategory1',
+      'rc2.name as resultCategory2',
       'st.name as sampleType',
       's.collectedOn as sampleCollectedOn',
       'originsite.name as originalSiteName',
@@ -109,7 +112,9 @@ async function getPatientResultsDetails(request) {
       Object.assign({}, result, {
         date: result.resultEndedOn,
         type: 'Result',
-        notes: result.notes,
+        notes:
+          result.resultData.resultText ||
+          `${result.resultCategory1} | ${result.resultCategory2}`,
       })
     )
   )

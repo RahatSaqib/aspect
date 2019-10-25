@@ -1166,6 +1166,13 @@ const routes = [
                   .optional()
                   .allow(null)
                   .description('The follow up name'),
+                resultCategory1: Joi.string()
+                  .required()
+                  .description('The result category 1'),
+                resultCategory2: Joi.string()
+                  .required()
+                  .allow(null)
+                  .description('The result category 2'),
               })
             )
             .required()

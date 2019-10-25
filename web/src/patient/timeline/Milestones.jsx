@@ -13,11 +13,11 @@ const cssClasses = classnames.bind(require('./Milestones.css'))
 const sampleTexts = {
   sampleId: {
     id: 'pages.Milestones.sampleId',
-    defaultMessage: 'Sample Id ',
+    defaultMessage: 'Sample ',
   },
   originalSiteName: {
     id: 'pages.Milestones.originalSiteName',
-    defaultMessage: 'Original site name: ',
+    defaultMessage: 'Sample Collection Site: ',
   },
   sampleCollectedOn: {
     id: 'pages.Milestones.sampleCollectedOn',
@@ -60,7 +60,7 @@ const resultsTexts = {
   },
   sampleId: {
     id: 'pages.Milestones.sampleId',
-    defaultMessage: 'SampleId: ',
+    defaultMessage: 'Sample Id: ',
   },
 }
 
@@ -115,7 +115,7 @@ const TimelineGenericPatientMilestone = ({
       style={{
         width: '100%',
         display: 'table',
-        backgroundColor: expanded ? 'white' : color,
+        backgroundColor: color,
       }}
       expanded={expanded}
     >
@@ -194,7 +194,7 @@ const TimelineItemResult = ({ result, intl, expand }) => {
     <TimelineGenericPatientMilestone
       title={{
         key: intl.formatMessage(messagesResult.result),
-        value: result.get('resultNotes'),
+        value: result.get('notes'),
       }}
       details={detailsFields}
       link={{
