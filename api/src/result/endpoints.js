@@ -1027,7 +1027,7 @@ const routes = [
     handler: asyncHandler(getPatientResultsDetails),
     config: Object.assign({
       description: 'Get the patient results with details',
-      auth: { scope: ['result:view', 'result:edit'] },
+      auth: { scope: ['patient:view', 'patient:edit'] },
       validate: {
         query: {
           patientId: Joi.string()
@@ -1173,6 +1173,13 @@ const routes = [
                   .required()
                   .allow(null)
                   .description('The result category 2'),
+                followUpCreatedOn: Joi.date()
+                  .iso()
+                  .optional()
+                  .allow(null)
+                  .description(
+                    'The follow up(Treatment/outcome) creation date in iso format'
+                  ),
               })
             )
             .required()

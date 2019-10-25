@@ -67,15 +67,19 @@ const resultsTexts = {
 const followUpsTexts = {
   date: {
     id: 'pages.Milestones.date',
-    defaultMessage: 'Created on ',
+    defaultMessage: 'Date ',
   },
   followUpName: {
     id: 'pages.Milestones.followUpName',
     defaultMessage: 'Outcome ',
   },
   followUpTypeName: {
-    id: 'pages.Milestones.resultSiteName',
+    id: 'pages.Milestones.followUpTypeName',
     defaultMessage: 'Outcome type: ',
+  },
+  followUpCreatedOn: {
+    id: 'pages.Milestones.followUpCreatedOn',
+    defaultMessage: 'Created On: ',
   },
 }
 const treatmentTexts = {
@@ -97,7 +101,7 @@ const treatmentTexts = {
   },
   resultTreatmentName: {
     id: 'pages.Milestones.resultTreatmentName',
-    defaultMessage: 'Treatment status ',
+    defaultMessage: 'Treatment',
   },
 }
 
@@ -218,6 +222,10 @@ const TimelineItemFollowUp = ({ fu, intl, expand }) => {
       key: intl.formatMessage(messages.followUpTypeName),
       value: fu.get('followUpTypeName'),
     },
+    {
+      key: intl.formatMessage(messages.followUpCreatedOn),
+      value: fu.get('followUpCreatedOn'),
+    },
   ]
   return (
     <TimelineGenericPatientMilestone
@@ -272,15 +280,7 @@ const TimelineItemTreatment = ({ treatment, intl, expand }) => {
   const detailsFields = [
     {
       key: intl.formatMessage(messages.resultTreatmentStatusLogData),
-      value: treatment.get('resultTreatmentStatusLogData'),
-    },
-    {
-      key: intl.formatMessage(messages.resultTreatmentStatusLogMethod),
-      value: treatment.get('resultTreatmentStatusLogMethod'),
-    },
-    {
-      key: intl.formatMessage(messages.resultTreatmentStatusLogCreatedBy),
-      value: treatment.get('resultTreatmentStatusLogCreatedBy'),
+      value: treatment.get('followUpCreatedOn'),
     },
     {
       key: intl.formatMessage(messages.date),
@@ -291,7 +291,7 @@ const TimelineItemTreatment = ({ treatment, intl, expand }) => {
     <TimelineGenericPatientMilestone
       title={{
         key: intl.formatMessage(messages.resultTreatmentName),
-        value: treatment.get('resultTreatmentName'),
+        value: treatment.get('followUpName'),
       }}
       details={detailsFields}
       expand={expand}
@@ -308,7 +308,7 @@ const Milestones = ({ item, intl, expand }) => {
     return (
       <TimelineItemTreatment treatment={item} intl={intl} expand={expand} />
     )
-  if (item.get('type') === 'FollowUp')
+  if (item.get('type') === 'Outcome')
     return <TimelineItemFollowUp fu={item} intl={intl} expand={expand} />
 }
 export default Milestones

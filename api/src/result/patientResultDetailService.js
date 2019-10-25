@@ -7,7 +7,6 @@ const _ = require('lodash')
 
 async function getPatientResultsDetails(request) {
   const { auth, query } = request
-  // console.log(query)
   const dataConstraints = await getConstraints(auth.credentials)
   // const { userName } = await getUser(auth.credentials.name)
   // console.log('entre')
@@ -18,7 +17,7 @@ async function getPatientResultsDetails(request) {
     .join('Site as resultSite', 's.originSiteId', 'resultSite.id')
     .join('Assay as a', 'r.assayId', 'a.id')
     .join('ResultCategory as rc1', 'r.resultCategory1', 'rc1.id')
-    .join('ResultCategory as rc2', 'r.resultCategory2', 'rc2.id')
+    .leftJoin('ResultCategory as rc2', 'r.resultCategory2', 'rc2.id')
     .leftJoin(
       'ResultWorkflowLog as rsl',
       'r.resultWorkflowStatusLogId',
@@ -75,6 +74,7 @@ async function getPatientResultsDetails(request) {
     .orderBy('sampleCollectedOn', 'resultEndedOn', 'resultTestStatusLog')
 
   let data = []
+
   const results = await resultDetails
   // if no result we are going to return not found for the specific patient id
   if (results.length === 0) {
@@ -102,10 +102,6 @@ async function getPatientResultsDetails(request) {
   const finalResult = []
   const samples = _.uniqBy(data, 'sampleId')
   const uniqResults = _.uniqBy(data, 'resultId')
-  const ResultTreatmentStatusLog = _.uniqBy(
-    _.filter(data, elem => elem.ResultTreatmentStatusLogId),
-    'ResultTreatmentStatusLogId'
-  )
 
   _.each(uniqResults, async result =>
     finalResult.push(
@@ -137,27 +133,18 @@ async function getPatientResultsDetails(request) {
       _.each(followUps.data, fu => {
         finalResult.push(
           Object.assign({}, result, {
-            date: fu.createdOn,
+            date: fu.date || fu.createdOn,
             followUpTypeName: fu.followUpTypeName,
-            type: 'FollowUp',
+            type: fu.followUpTypeName,
             followUpName: fu.name,
+            followUpCreatedOn: fu.createdOn,
           })
         )
       })
     }
   })
-  _.each(ResultTreatmentStatusLog, treatment =>
-    finalResult.push(
-      Object.assign({}, treatment, {
-        date: treatment.resultTreatmentStatusLogDate,
-        type: 'Treatment',
-        notes: treatment.resultTreatmentName
-          ? `${treatment.resultTreatmentName}`
-          : '',
-      })
-    )
-  )
-  if (finalResult.length === 1) {
+
+  if (finalResult.length === 0) {
     return Boom.notFound("There isn't any patient with this id")
   }
   return {
