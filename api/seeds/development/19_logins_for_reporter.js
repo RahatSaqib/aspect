@@ -38,18 +38,19 @@ async function seed(knex) {
     .first()
   // ---------------------
   // get siteId with most of results
-  const { siteId, geographyId } = await knex('Result as r')
-    .innerJoin('Site as s', 'r.siteId', 's.id')
-    .innerJoin('Geography as g', 's.geographyId', 'g.id')
-    .innerJoin('Sample as sa', 'r.sampleId', 'sa.id')
-    .where('r.partnerId', partnerId)
-    .where('g.countryId', countryId)
-    .whereNotNull('sa.originSiteId')
-    .select('sa.originSiteId as siteId', 'r.geographyId')
-    .count('r.id as total')
-    .groupBy('sa.originSiteId')
-    .orderBy('total', 'desc')
-    .first()
+  const { siteId, geographyId } =
+    (await knex('Result as r')
+      .innerJoin('Site as s', 'r.siteId', 's.id')
+      .innerJoin('Geography as g', 's.geographyId', 'g.id')
+      .innerJoin('Sample as sa', 'r.sampleId', 'sa.id')
+      .where('r.partnerId', partnerId)
+      .where('g.countryId', countryId)
+      .whereNotNull('sa.originSiteId')
+      .select('sa.originSiteId as siteId', 'r.geographyId')
+      .count('r.id as total')
+      .groupBy('sa.originSiteId')
+      .orderBy('total', 'desc')
+      .first()) || {}
   // ---------------------
   // make sure user exists - create if missing
   await Promise.each(userNames, async name => {

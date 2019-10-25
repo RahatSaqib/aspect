@@ -4,7 +4,14 @@ import Immutable from 'immutable'
 import classnames from 'classnames/bind'
 import React from 'react'
 import { bindActionCreators } from 'redux'
-import { compose, withProps, lifecycle, withHandlers, pure } from 'recompose'
+import {
+  compose,
+  withProps,
+  lifecycle,
+  withHandlers,
+  pure,
+  withState,
+} from 'recompose'
 import { connect } from 'react-redux'
 import Card from '@material-ui/core/Card'
 
@@ -41,6 +48,9 @@ const changePeriod = (props, shift) => {
 }
 const enhance = compose(
   pure,
+  withState('resultCategoryId', 'setResultCategoryId', ''),
+  withState('resultCategoryValue', 'setResultCategoryValue', ''),
+  withState('assayTypeId', 'setAssayTypeId', ''),
   requirePermissions({
     permissions: [
       'treatmentStatus:admin',
@@ -54,6 +64,7 @@ const enhance = compose(
       const treatmentStatus = state.dashboard.treatmentStatus.toJS()
       return {
         sitesSelectList: state.site.selectList,
+        assayResultCategoryList: state.dashboard.assayResultCategoryList,
         ..._.pick(treatmentStatus, ['siteId', 'endedOn', 'lastOn', 'data']),
       }
     },
@@ -69,42 +80,109 @@ const enhance = compose(
     },
   }),
   withHandlers({
-    onChange: ({ endedOn, fetchTreatmentDashboard }) => ({
-      target: { value },
-    }) => {
+    onChange: ({
+      endedOn,
+      fetchTreatmentDashboard,
+      setResultCategoryId,
+      setAssayTypeId,
+      assayTypeId,
+      resultCategoryId,
+      siteId,
+      setResultCategoryValue,
+    }) => ({ target: { value } }) => {
+      const selectedValue = value.split('-')
+      assayTypeId = assayTypeId || null
+      resultCategoryId = resultCategoryId || null
+
+      if (selectedValue.length > 1) {
+        ;[assayTypeId, resultCategoryId] = selectedValue
+        setResultCategoryId(() =>
+          resultCategoryId > 0 ? resultCategoryId : null
+        )
+        setAssayTypeId(() => (assayTypeId > 0 ? assayTypeId : null))
+        setResultCategoryValue(() => value)
+      }
+
+      siteId = selectedValue.length === 1 ? value : siteId
+
       fetchTreatmentDashboard({
-        siteId: value || null,
+        siteId: siteId || null,
+        assayTypeId,
+        resultCategoryId,
         endedOn,
       })
     },
     onBack: props => () => changePeriod(props, -1),
     onForward: props => () => changePeriod(props, 1),
   }),
-  withProps(({ intl, siteId, sitesSelectList, theme }) => ({
-    theme,
-    isSingleSite:
-      sitesSelectList.items.size === 1 && !sitesSelectList.stateName,
-    source: sitesSelectList.items
-      .map(item => ({
-        value: item.get('id'),
-        label: item.get('name'),
-      }))
-      .insert(0, {
-        value: '',
-        label: intl.formatMessage(messages.treatmentAllSites, {
-          region: sitesSelectList.stateName || sitesSelectList.countryName,
-        }),
-      })
-      .toJS(),
-    value: sitesSelectList.items
-      .find(it => it.get('id') === siteId, null, Immutable.Map())
-      .get('id', ''),
-  }))
+  withProps(
+    ({
+      intl,
+      siteId,
+      sitesSelectList,
+      theme,
+      assayResultCategoryList,
+      resultCategoryValue,
+    }) => ({
+      theme,
+      isSingleSite:
+        sitesSelectList.items.size === 1 && !sitesSelectList.stateName,
+      source: sitesSelectList.items
+        .map(item => ({
+          value: item.get('id'),
+          label: item.get('name'),
+        }))
+        .insert(0, {
+          value: '',
+          label: intl.formatMessage(messages.treatmentAllSites, {
+            region: sitesSelectList.stateName || sitesSelectList.countryName,
+          }),
+        })
+        .toJS(),
+      siteValue: sitesSelectList.items
+        .find(it => it.get('id') === siteId, null, Immutable.Map())
+        .get('id', ''),
+      isSingleAssayResultCategory: assayResultCategoryList.length === 1,
+      assayResultCategorySource: assayResultCategoryList
+        .map(item => ({
+          value: item.get('id'),
+          label: item.get('name'),
+        }))
+        .insert(0, {
+          value: '0-0',
+          label: intl.formatMessage(messages.assayResultCategoryAll),
+        })
+        .toJS(),
+      resultCategoryValue: assayResultCategoryList.find(
+        it => it.get('id') === resultCategoryValue
+      ),
+    })
+  )
 )
 
 function getColorWithAlpha(color, opacity) {
   const y = Math.floor(opacity * 255)
   return color + (y < 16 ? '0' : '') + y.toString(16)
+}
+
+function filterDropDownField(fieldList, fieldItem, otherProps) {
+  return (
+    <div
+      className={cssClasses(
+        'FiltersGroup__Child',
+        'FiltersGroup__Child--dropdown'
+      )}
+    >
+      {fieldList.length > 1 &&
+        (fieldItem ? (
+          <div className={cssClasses('SiteDropdown__Label')}>
+            {fieldList[1].label}
+          </div>
+        ) : (
+          <StyledDropdown displayEmpty source={fieldList} {...otherProps} />
+        ))}
+    </div>
+  )
 }
 
 export const TreatmentStatus = ({
@@ -117,6 +195,10 @@ export const TreatmentStatus = ({
   data = [],
   isSingleSite,
   source,
+  siteValue,
+  assayResultCategorySource,
+  isSingleAssayResultCategory,
+  resultCategoryValue,
   onForward,
   onBack,
   ...restProps
@@ -148,21 +230,21 @@ export const TreatmentStatus = ({
           title={title}
           icon={<IconTitle className={cssClasses('Title__Icon')} />}
         />
-        <div
-          className={cssClasses(
-            'FiltersGroup__Child',
-            'FiltersGroup__Child--dropdown'
-          )}
-        >
-          {source.length > 1 &&
-            (isSingleSite ? (
-              <div className={cssClasses('SiteDropdown__Label')}>
-                {source[1].label}
-              </div>
-            ) : (
-              <StyledDropdown displayEmpty source={source} {...restProps} />
-            ))}
-        </div>
+
+        {filterDropDownField(source, isSingleSite, {
+          ...restProps,
+          value: siteValue,
+        })}
+
+        {filterDropDownField(
+          assayResultCategorySource,
+          isSingleAssayResultCategory,
+          {
+            ...restProps,
+            value: resultCategoryValue ? resultCategoryValue.get('id') : '0-0',
+          }
+        )}
+
         <Unit sm="1-8" />
       </div>
 

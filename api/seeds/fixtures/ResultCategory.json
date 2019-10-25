@@ -51,6 +51,26 @@
       "i18nKey": "resultCategoryDiscordant"
     },
     {
+      "name": "< 40",
+      "externalId": "LessThan40",
+      "i18nKey": "resultCategoryLessThan40"
+    },
+    {
+      "name": ">= 40",
+      "externalId": "MoreThan40",
+      "i18nKey": "resultCategoryMoreThan40"
+    },
+    {
+      "name": "< 550",
+      "externalId": "LessThan550",
+      "i18nKey": "resultCategoryLessThan550"
+    },
+    {
+      "name": ">= 550",
+      "externalId": "MoreThan550",
+      "i18nKey": "resultCategoryMoreThan550"
+    },
+    {
       "name": "< 1000",
       "externalId": "LessThan1000",
       "i18nKey": "resultCategoryLessThan1000"

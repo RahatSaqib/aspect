@@ -106,9 +106,9 @@ const messages = defineMessages({
     id: 'pages.DeviceDetailProfile.sampleId',
     defaultMessage: 'Sample ID',
   },
-  sampleGroup: {
-    id: 'pages.DeviceDetailProfile.sampleGroup',
-    defaultMessage: 'Sample Group',
+  errorCode: {
+    id: 'pages.DeviceDetailProfile.errorCode',
+    defaultMessage: 'Error Code',
   },
   resultText: {
     id: 'pages.DeviceDetailProfile.resultText',
@@ -163,7 +163,7 @@ const FILTERS_CONFIG = {
   date: true,
   patientOrResearchId: true,
   sampleId: true,
-  sampleGroup: true,
+  errorCode: true,
   siteName: true,
   sampleOriginSite: true,
   workflowStatus: true,
@@ -175,7 +175,7 @@ const searchSanitizer = makeSearchParamsSanitizer({
     'deviceName',
     'sampleOriginSiteName',
     'sampleId',
-    'sampleGroup',
+    'errorCode',
     'patientId',
   ],
 })
@@ -403,7 +403,11 @@ const PerformanceBarChart = ({
     ]}
     tooltip={({ color, indexValue }) => {
       const periodData = data.find(x => x.period === indexValue)
-      const value = periodData.errorRate + periodData.exceededErrorRate
+      const value =
+        info === 'Error Rate'
+          ? periodData.errorRate + periodData.exceededErrorRate
+          : periodData.utilizationRate + periodData.exceededUtilizationRate
+
       return (
         <div>
           <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -432,7 +436,10 @@ const PerformanceReport = enhance(({ performanceReport, culture }) => {
   if (payload.data) {
     payload.data.forEach(item => {
       const date = new Date(item.monthTested)
-      const monthName = date.toLocaleString(culture, { month: 'short' })
+      const monthName = date.toLocaleString(culture, {
+        month: 'short',
+        timeZone: 'UTC',
+      })
       item.period = monthName
       item.exceededErrorRate =
         item.errorRate > payload.errorRateAvg
@@ -627,13 +634,13 @@ const Results = enhanceResults(
                     sortable: true,
                   },
                   {
-                    key: 'sampleGroup',
-                    label: intl.formatMessage(messages.sampleGroup),
+                    key: 'resultText',
+                    label: intl.formatMessage(messages.resultText),
                     sortable: true,
                   },
                   {
-                    key: 'resultText',
-                    label: intl.formatMessage(messages.resultText),
+                    key: 'errorCode',
+                    label: intl.formatMessage(messages.errorCode),
                     sortable: true,
                   },
                   {
@@ -701,9 +708,7 @@ export const DeviceDetailProfile = ({
   onCalibrationSubmit,
   onWarrantySubmit,
 }) => {
-  const deviceName = `${device.getIn(['deviceType', 'name'])} at ${device.get(
-    'siteName'
-  )}`
+  const deviceName = device.get('name')
   const dailyCapacity = device.get('dailyCapacity')
   const resultCountThisMonth = device.get('resultCountThisMonth')
   const errorCountThisMonth = device.get('errorCountThisMonth')

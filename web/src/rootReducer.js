@@ -24,7 +24,6 @@ import inventory from './inventory/InventoryRedux'
 import notification from './notification/NotificationRedux'
 import tag from './tag/TagRedux'
 import task from './task/TaskRedux'
-import report from './report/ReportRedux'
 import idle from './idle/IdleRedux'
 import jobs from './job/JobRedux'
 import router from './router/RouterRedux'
@@ -58,7 +57,6 @@ const appReducer = combineReducers({
   notification,
   tag,
   task,
-  report,
   router,
   resultWorkflowStatus,
   resultTreatmentStatus,

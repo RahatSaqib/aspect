@@ -64,7 +64,7 @@ async function deleteDeviceSiteDataAndRefreshTokens(
   knex,
   alereDeviceSerialNumbers
 ) {
-  const alereDeviceTypes = ['AlereAfinion', 'AlereQ']
+  const alereDeviceTypes = ['AlereQ']
   const deviceAndSiteIds = await knex('Device as d')
     .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .whereIn('d.serial', alereDeviceSerialNumbers)

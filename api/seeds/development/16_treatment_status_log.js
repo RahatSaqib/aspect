@@ -18,7 +18,7 @@ async function seed(knex) {
     'NotPossible'
   )
 
-  const users = ['myanmar_admin', 'admin']
+  const users = ['myanmar_admin', 'admin', 'reporter_admin']
   await Promise.each(users, async userName => {
     // ------------------------------------------------------
     // make sure specified users have permissions to see Treatment Graph

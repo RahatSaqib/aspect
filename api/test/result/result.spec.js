@@ -67,7 +67,7 @@ describe('Result routes', () => {
             assert.property(res.body.data[0], 'stateName')
             assert.property(res.body.data[0], 'lgaName')
             assert.property(res.body.data[0], 'sampleId')
-            assert.property(res.body.data[0], 'sampleGroup')
+            assert.property(res.body.data[0], 'errorCode')
             assert.property(res.body.data[0], 'sampleOriginSiteName')
             assert.property(res.body.data[0], 'resultText')
             assert.property(res.body.data[0], 'resultWorkflowStatus')
@@ -107,7 +107,7 @@ describe('Result routes', () => {
           assert.property(res.body.data[0], 'stateName')
           assert.property(res.body.data[0], 'lgaName')
           assert.property(res.body.data[0], 'sampleId')
-          assert.property(res.body.data[0], 'sampleGroup')
+          assert.property(res.body.data[0], 'errorCode')
           assert.property(res.body.data[0], 'sampleOriginSiteName')
           assert.property(res.body.data[0], 'patientId')
           assert.property(res.body.data[0], 'assayName')
@@ -198,7 +198,7 @@ describe('Result routes', () => {
           assert.property(res.body.data[0], 'stateName')
           assert.property(res.body.data[0], 'lgaName')
           assert.property(res.body.data[0], 'sampleId')
-          assert.property(res.body.data[0], 'sampleGroup')
+          assert.property(res.body.data[0], 'errorCode')
           assert.property(res.body.data[0], 'sampleOriginSiteName')
           assert.property(res.body.data[0], 'patientId')
           assert.property(res.body.data[0], 'assayName')
@@ -351,6 +351,7 @@ describe('Result routes', () => {
             'resultWorkflowLogOperator',
             'resultTreatmentMethod',
             'resultTreatmentData',
+            'resultNotes',
           ]
           _.each(resultFieldNames, fieldName => {
             assert.property(res.body.data, fieldName)
@@ -547,7 +548,7 @@ describe('Result routes', () => {
         })
     })
 
-    it('Should update result treatment status given a resultId - set resultTreatmentData', done => {
+    it('Should update result treatment status given a resultId - set resultNotes', done => {
       const changedOn = addMinutes(new Date(), 2)
       const updateWithNull = {
         resultTreatmentStatusId: null,
@@ -840,7 +841,27 @@ describe('Result download routes', () => {
             assert.property(res.body.data[0], 'errorNotes')
             assert.property(res.body.data[0], 'sample')
 
-            assert.equal(Object.keys(res.body.data[0]).length, 25)
+            assert.property(res.body.data[0], 'followUps')
+            assert.typeOf(res.body.data[0].followUps, 'array')
+            assert.property(res.body.data[0].followUps[0], 'id')
+            assert.property(res.body.data[0].followUps[0], 'externalId')
+            assert.property(res.body.data[0].followUps[0], 'followUpExternalId')
+            assert.property(res.body.data[0].followUps[0], 'followUpi18nKey')
+            assert.property(res.body.data[0].followUps[0], 'followUpName')
+            assert.property(
+              res.body.data[0].followUps[0],
+              'followUpTypeExternalId'
+            )
+            assert.property(
+              res.body.data[0].followUps[0],
+              'followUpTypei18nKey'
+            )
+            assert.property(res.body.data[0].followUps[0], 'followUpTypeName')
+            assert.property(res.body.data[0].followUps[0], 'date')
+            assert.property(res.body.data[0].followUps[0], 'createdOn')
+            assert.property(res.body.data[0].followUps[0], 'updatedOn')
+
+            assert.equal(Object.keys(res.body.data[0]).length, 26)
             // check if the download is register in the table.
             const { count: totalResult } = await knex('ResultDownloadLog')
               .where('resultId', res.body.data[0].id)
@@ -909,7 +930,24 @@ describe('Result download routes', () => {
           assert.property(res.body.data[0], 'errorNotes')
           assert.property(res.body.data[0], 'sample')
 
-          assert.equal(Object.keys(res.body.data[0]).length, 25)
+          assert.property(res.body.data[0], 'followUps')
+          assert.typeOf(res.body.data[0].followUps, 'array')
+          assert.property(res.body.data[0].followUps[0], 'id')
+          assert.property(res.body.data[0].followUps[0], 'externalId')
+          assert.property(res.body.data[0].followUps[0], 'followUpExternalId')
+          assert.property(res.body.data[0].followUps[0], 'followUpi18nKey')
+          assert.property(res.body.data[0].followUps[0], 'followUpName')
+          assert.property(
+            res.body.data[0].followUps[0],
+            'followUpTypeExternalId'
+          )
+          assert.property(res.body.data[0].followUps[0], 'followUpTypei18nKey')
+          assert.property(res.body.data[0].followUps[0], 'followUpTypeName')
+          assert.property(res.body.data[0].followUps[0], 'date')
+          assert.property(res.body.data[0].followUps[0], 'createdOn')
+          assert.property(res.body.data[0].followUps[0], 'updatedOn')
+
+          assert.equal(Object.keys(res.body.data[0]).length, 26)
         })
 
       server
@@ -1096,7 +1134,27 @@ describe('Result download routes', () => {
             assert.property(res.body.data[0], 'errorNotes')
             assert.property(res.body.data[0], 'sample')
 
-            assert.equal(Object.keys(res.body.data[0]).length, 25)
+            assert.property(res.body.data[0], 'followUps')
+            assert.typeOf(res.body.data[0].followUps, 'array')
+            assert.property(res.body.data[0].followUps[0], 'id')
+            assert.property(res.body.data[0].followUps[0], 'externalId')
+            assert.property(res.body.data[0].followUps[0], 'followUpExternalId')
+            assert.property(res.body.data[0].followUps[0], 'followUpi18nKey')
+            assert.property(res.body.data[0].followUps[0], 'followUpName')
+            assert.property(
+              res.body.data[0].followUps[0],
+              'followUpTypeExternalId'
+            )
+            assert.property(
+              res.body.data[0].followUps[0],
+              'followUpTypei18nKey'
+            )
+            assert.property(res.body.data[0].followUps[0], 'followUpTypeName')
+            assert.property(res.body.data[0].followUps[0], 'date')
+            assert.property(res.body.data[0].followUps[0], 'createdOn')
+            assert.property(res.body.data[0].followUps[0], 'updatedOn')
+
+            assert.equal(Object.keys(res.body.data[0]).length, 26)
             // check if the download is register in the table.
             const { count: totalResult } = await knex('ResultDownloadLog')
               .where('resultId', res.body.data[0].id)
@@ -1139,5 +1197,272 @@ describe('Result Treatment', () => {
           done()
         })
     })
+  })
+
+  describe('Add Result Note - POST', () => {
+    const resultId = 1
+
+    after(async () =>
+      runTestWithKnex(async knex => {
+        await knex('ResultNote')
+          .where('resultId', resultId)
+          .delete()
+      })
+    )
+    const path = '/api/result/result-note'
+
+    it('Should return list of result note of a particular resultId', done => {
+      const comment = {
+        note: 'Cough confirmed',
+        resultNoteType: 'ResultFollowUp',
+      }
+      server
+        .post(`${path}/${resultId}`)
+        .send(comment)
+        .set('Authorization', `Bearer ${shared.token}`)
+        .end((err, res) => {
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+
+          assert.property(res.body, 'data')
+
+          assert.equal(res.body.data.length, 1) // for 6 months
+          assert.property(res.body.data[0], 'createdBy')
+          assert.property(res.body.data[0], 'text')
+          assert.property(res.body.data[0], 'changedOn')
+          assert.property(res.body.data[0], 'createdOn')
+
+          done()
+        })
+    })
+  })
+})
+
+describe('Result Follow Up', () => {
+  describe('GET', () => {
+    const path = '/api/result/follow-ups'
+
+    shared.checkToken(server, path)
+
+    it('should return a list of possible result follow ups', done => {
+      server
+        .get(path)
+        .set('Authorization', `Bearer ${shared.token}`)
+        .end((err, res) => {
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+          assert.property(res.body, 'data')
+          assert.typeOf(res.body.data, 'array')
+          assert.property(res.body, 'total')
+          assert.isAtLeast(res.body.data.length, 7)
+          assert.property(res.body.data[0], 'id')
+          assert.property(res.body.data[0], 'name')
+          assert.property(res.body.data[0], 'externalId')
+          assert.property(res.body.data[0], 'i18nKey')
+          assert.property(res.body.data[0], 'type')
+          assert.property(res.body.data[0].type, 'id')
+          assert.property(res.body.data[0].type, 'name')
+          assert.property(res.body.data[0].type, 'externalId')
+          assert.property(res.body.data[0].type, 'i18nKey')
+          assert.property(res.body.data[0], 'assays')
+          assert.typeOf(res.body.data[0].assays, 'array')
+          done()
+        })
+    })
+  })
+
+  describe('POST', () => {
+    const resultId = 1
+    const path = `/api/result/follow-up/${resultId}`
+
+    it('Should add a follow up to a result and update treatment status', async () =>
+      runTestWithKnex(async knex => {
+        const { id: followUpId } = await knex('FollowUp')
+          .where('externalId', 'drtb-prexdr')
+          .first('id')
+
+        const date = new Date('2019-08-01')
+        const resultFollowUpExternalId = '1234'
+
+        const responseFirst = await server
+          .post(`${path}`)
+          .send({ followUpId, date, externalId: resultFollowUpExternalId })
+          .set('Authorization', `Bearer ${shared.token}`)
+
+        assert.equal(responseFirst.statusCode, 200)
+
+        // should have follow up with the externalId 'drtb-prexdr'
+        const {
+          externalId: externalIdFollowUp,
+          date: followUpDate,
+        } = await knex('ResultFollowUp as rfu')
+          .join('FollowUp as fu', 'rfu.followUpId', 'fu.id')
+          .where('rfu.resultId', resultId)
+          .where('rfu.externalId', resultFollowUpExternalId)
+          .first('fu.externalId', 'rfu.date')
+
+        assert.equal(externalIdFollowUp, 'drtb-prexdr')
+        assert.equal(date.getTime(), followUpDate.getTime())
+
+        const responseSecond = await server
+          .post(`${path}`)
+          .send({ followUpId, externalId: resultFollowUpExternalId })
+          .set('Authorization', `Bearer ${shared.token}`)
+
+        assert.equal(
+          responseSecond.statusCode,
+          400,
+          'Should return error if external ID already exists'
+        )
+
+        // should have a treatment status of "On Treatment"
+        const { externalId } = await knex('Result as r')
+          .join(
+            'ResultTreatmentStatusLog as rtsl',
+            'r.treatmentStatusLogId',
+            'rtsl.id'
+          )
+          .join(
+            'ResultTreatmentStatus as rts',
+            'rtsl.resultTreatmentStatusId',
+            'rts.id'
+          )
+          .where('resultId', resultId)
+          .first('rts.externalId')
+
+        assert.equal(externalId, 'OnTreatment')
+      }))
+
+    it('should return an error if result does not exist', done => {
+      server
+        .post('/api/result/follow-up/987654321')
+        .send({ externalId: '1234', followUpExternalId: 'drtb-bbsr' })
+        .set('Authorization', `Bearer ${shared.token}`)
+        .end((err, res) => {
+          assert.equal(res.status, 404)
+          done()
+        })
+    })
+  })
+
+  describe('PUT', () => {
+    const resultId = 1
+    const path = `/api/result/follow-up/${resultId}`
+
+    it('Should update the date of a result follow up', async () =>
+      runTestWithKnex(async knex => {
+        const date = new Date('2019-09-01')
+
+        const existingFollowUp = await knex('ResultFollowUp')
+          .where('resultId', resultId)
+          .where('externalId', '1234')
+          .first('followUpId')
+
+        const response = await server
+          .put(`${path}`)
+          .send({ externalId: '1234', date })
+          .set('Authorization', `Bearer ${shared.token}`)
+
+        assert.equal(response.statusCode, 200)
+
+        const updatedFollowUp = await knex('ResultFollowUp')
+          .where('resultId', resultId)
+          .where('externalId', '1234')
+          .first('date', 'followUpId')
+
+        assert.equal(date.getTime(), updatedFollowUp.date.getTime())
+        assert.equal(existingFollowUp.followUpId, updatedFollowUp.followUpId)
+      }))
+
+    it('Should update the follow up of a result follow up', async () =>
+      runTestWithKnex(async knex => {
+        const existingFollowUp = await knex('ResultFollowUp')
+          .where('resultId', resultId)
+          .where('externalId', '1234')
+          .first('date', 'followUpId')
+
+        const response = await server
+          .put(`${path}`)
+          .send({ externalId: '1234', followUpExternalId: 'drtb-bbsr' })
+          .set('Authorization', `Bearer ${shared.token}`)
+
+        assert.equal(response.statusCode, 200)
+
+        const updatedFollowUp = await knex('ResultFollowUp as rfu')
+          .join('FollowUp as fu', 'rfu.followUpId', 'fu.id')
+          .where('resultId', resultId)
+          .where('rfu.externalId', '1234')
+          .first('rfu.date', 'fu.externalId')
+
+        assert.equal(
+          existingFollowUp.date.getTime(),
+          updatedFollowUp.date.getTime()
+        )
+        assert.equal('drtb-bbsr', updatedFollowUp.externalId)
+      }))
+
+    it('should return an error if follow up does not exist', done => {
+      server
+        .put(`${path}`)
+        .send({ externalId: 'VWXYZ', followUpExternalId: 'drtb-bbsr' })
+        .set('Authorization', `Bearer ${shared.token}`)
+        .end((err, res) => {
+          assert.equal(res.status, 404)
+          done()
+        })
+    })
+  })
+
+  describe('DELETE', () => {
+    const resultId = 1
+    const path = `/api/result/follow-up/${resultId}`
+
+    it('Should delete the follow up with the given external ID', async () =>
+      runTestWithKnex(async knex => {
+        const response = await server
+          .delete(`${path}`)
+          .send({ externalId: '1234' })
+          .set('Authorization', `Bearer ${shared.token}`)
+
+        assert.equal(response.statusCode, 200)
+        assert.typeOf(response.body, 'Object')
+        assert.property(response.body, 'data')
+        assert.typeOf(response.body.data, 'Object')
+        assert.property(response.body.data, 'id')
+        assert.property(response.body.data, 'externalId')
+        assert.property(response.body.data, 'resultData')
+
+        // should not have any follow ups
+        const followUps = await knex('ResultFollowUp')
+          .where('resultId', resultId)
+          .where('externalId', '1234')
+          .first('id')
+
+        assert(!followUps)
+      }))
+
+    it('Should return result details even if follow up was not found', async () =>
+      runTestWithKnex(async knex => {
+        const response = await server
+          .delete(`${path}`)
+          .send({ externalId: 'VWXYZ' })
+          .set('Authorization', `Bearer ${shared.token}`)
+
+        assert.equal(response.statusCode, 200)
+        assert.typeOf(response.body, 'Object')
+        assert.property(response.body, 'data')
+        assert.typeOf(response.body.data, 'Object')
+        assert.property(response.body.data, 'id')
+        assert.property(response.body.data, 'externalId')
+        assert.property(response.body.data, 'resultData')
+
+        // should not have any follow ups
+        const followUps = await knex('ResultFollowUp')
+          .where('resultId', resultId)
+          .where('externalId', '1234')
+          .first('id')
+
+        assert(!followUps)
+      }))
   })
 })

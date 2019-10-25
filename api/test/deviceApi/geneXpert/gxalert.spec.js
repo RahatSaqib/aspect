@@ -204,6 +204,7 @@ describe('Device API routes for GxAlert Device', () => {
         describe('when a new gxAlertDeviceId is specified', () => {
           const initialGxAlertDeviceId = 2012
           const deviceName = 'Some Laboratory'
+          const deviceShortName = 'Some Lab'
           const macAddress = 'MAC00000INITIAL'
           const hostId = 'GXDevice5'
           const deviceSerialNumber = 'SERIAL1'
@@ -230,6 +231,7 @@ describe('Device API routes for GxAlert Device', () => {
                   name: deviceName,
                   configuration: {
                     data: {
+                      shortName: deviceShortName,
                       macAddress,
                       hostId,
                       deviceSerialNumber,
@@ -246,7 +248,7 @@ describe('Device API routes for GxAlert Device', () => {
                 })
               ).to.containSubset({
                 name: deviceName,
-                shortName: deviceName,
+                shortName: deviceShortName,
                 macAddress,
                 serial: deviceSerialNumber,
                 hostId,
@@ -261,7 +263,7 @@ describe('Device API routes for GxAlert Device', () => {
               const initialGeneXpertDevice = await getCurrentGeneXpertDevice()
               expect(initialGeneXpertDevice).to.containSubset({
                 name: deviceName,
-                shortName: deviceName,
+                shortName: deviceShortName,
                 macAddress,
                 serial: deviceSerialNumber,
                 hostId,
@@ -305,11 +307,12 @@ describe('Device API routes for GxAlert Device', () => {
                   })
                 ).to.containSubset({
                   name: deviceName,
-                  shortName: deviceName,
+                  shortName: deviceShortName,
                   macAddress,
                   serial: deviceSerialNumber,
                   hostId,
                   configurationData: {
+                    shortName: deviceShortName,
                     macAddress,
                     deviceSerialNumber,
                     instrumentSerialNumbers,
@@ -320,11 +323,12 @@ describe('Device API routes for GxAlert Device', () => {
                 const newGeneXpertDevice = await getCurrentGeneXpertDevice()
                 expect(newGeneXpertDevice).to.containSubset({
                   name: deviceName,
-                  shortName: deviceName,
+                  shortName: deviceShortName,
                   macAddress,
                   serial: deviceSerialNumber,
                   hostId,
                   configurationData: {
+                    shortName: deviceShortName,
                     macAddress,
                     deviceSerialNumber,
                     instrumentSerialNumbers,
@@ -350,11 +354,12 @@ describe('Device API routes for GxAlert Device', () => {
                 expect(devicesWithDuplicateProperties).to.containSubset([
                   {
                     name: deviceName,
-                    shortName: deviceName,
+                    shortName: deviceShortName,
                     macAddress,
                     serial: deviceSerialNumber,
                     hostId,
                     configurationData: {
+                      shortName: deviceShortName,
                       macAddress,
                       deviceSerialNumber,
                       instrumentSerialNumbers,

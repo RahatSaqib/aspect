@@ -3,7 +3,7 @@ const bcrypt = require('bcrypt')
 const config = require('../../src/config')
 const { partnerTypeToId } = require('../../src/shared/dictionary')
 const geography = require('./fixtures/geography.json')
-const { commonInserts } = require('../common')
+const { commonUpserts } = require('../common')
 
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
 
@@ -26,7 +26,7 @@ async function seed(knex) {
     maxDaysDeviceNoResults: 14,
     serverUrl: 'https://nigeria.aspect.id',
   })
-  await commonInserts(
+  await commonUpserts(
     knex,
     partnerId,
     adminId,

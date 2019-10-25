@@ -9,6 +9,7 @@ const {
   getDeviceConfigurationData,
   getLastDeviceOperationId,
   getLastResultId,
+  createSite,
 } = require('./utils')
 
 const { waitForIdle } = require('../utils/mqUtils')
@@ -114,7 +115,7 @@ describe('Device Result API routes', () => {
         const resultPayload = {
           startedOn: now,
           data: { a: 'b' },
-          assay: { id: 'DaktariHivVl' },
+          assay: { id: 'DaktariHivVL' },
           instrument: { serial: '1234567' },
           sample: { id: '29347293' },
         }
@@ -202,7 +203,7 @@ describe('Device Result API routes', () => {
           .where({ id: result1.assayId })
           .first('externalId', 'name')
 
-        assert.equal(result1Assay.externalId, 'DaktariHivVl')
+        assert.equal(result1Assay.externalId, 'DaktariHivVL')
         assert.equal(result1Assay.name, 'Daktari HIV-VL')
 
         const [result1Category1, result1Category2] = await knex(
@@ -234,7 +235,7 @@ describe('Device Result API routes', () => {
             },
             category: [{ id: 'Detected' }, { id: 'Indeterminate' }],
             assay: {
-              id: 'DaktariHivVl',
+              id: 'DaktariHivVL',
               version: '1a.c1',
             },
             sample: {
@@ -428,7 +429,7 @@ describe('Device Result API routes', () => {
         const result2Assay = await knex('Assay as assay')
           .where({ id: result2.assayId })
           .first('externalId', 'name')
-        assert.equal(result2Assay.externalId, 'DaktariHivVl')
+        assert.equal(result2Assay.externalId, 'DaktariHivVL')
         assert.equal(result2Assay.name, 'Daktari HIV-VL')
 
         const result2Sample = await knex('Sample as s')
@@ -465,7 +466,7 @@ describe('Device Result API routes', () => {
           },
           category: [{ id: 'Detected' }, { id: 'Indeterminate' }],
           assay: {
-            id: 'DaktariHivVl',
+            id: 'DaktariHivVL',
             version: '1a.c1',
           },
           sample: {
@@ -576,6 +577,129 @@ describe('Device Result API routes', () => {
         assert.equal(getResultResponse5.body.name, deviceChangedName)
       }))
 
+    it('should set the origin site details of the sample', () =>
+      runTest(async knex => {
+        const resultIds = []
+        const { deviceId, clientAuth, deviceAuth, now } = context
+        const clientPath = `${apiResultPath}?deviceId=${deviceId}&size=1000`
+
+        const getResultResponse1 = await server
+          .get(clientPath)
+          .set('Authorization', clientAuth)
+        assert.equal(getResultResponse1.status, 200)
+        assert.typeOf(getResultResponse1.body, 'Object')
+        assert.property(getResultResponse1.body, 'data')
+        assert.property(getResultResponse1.body, 'total')
+        assert.typeOf(getResultResponse1.body.data, 'array')
+        let lastResultId = await getLastResultId(knex, deviceId)
+        if (lastResultId) {
+          resultIds.push(lastResultId)
+        }
+
+        const existingSiteExternalId = 'ExistingOriginSite'
+        const existingSiteId = await createSite(knex, {
+          partner: context.partner,
+          user: context.user,
+          site: existingSiteExternalId,
+        })
+        context.siteIds.push(existingSiteId)
+
+        const resultPayload = {
+          startedOn: now,
+          data: { a: 'b' },
+          assay: { id: 'DaktariHivVl' },
+          instrument: { serial: '9879879' },
+          sample: {
+            id: '493284729',
+            originSite: {
+              id: existingSiteExternalId,
+            },
+          },
+        }
+        const postNewResultResponse = await server
+          .post(devicePath)
+          .set('Authorization', deviceAuth)
+          .send({
+            name: 'Device Name',
+            result: resultPayload,
+          })
+        assert.equal(postNewResultResponse.status, 200)
+        assert.typeOf(postNewResultResponse.body, 'Object')
+
+        lastResultId = await getLastResultId(knex, deviceId)
+        if (lastResultId && !resultIds.includes(lastResultId)) {
+          resultIds.push(lastResultId)
+        }
+        const resultSampleOriginSite = await knex('Result as r')
+          .join('Sample as s', 'r.sampleId', 's.id')
+          .join('Site as si', 's.originSiteId', 'si.id')
+          .where('r.id', lastResultId)
+          .first('si.*')
+        assert.equal(resultSampleOriginSite.externalId, existingSiteExternalId)
+        assert.equal(resultSampleOriginSite.id, existingSiteId)
+
+        const expectedSampleOriginSite = {
+          id: existingSiteId,
+          externalId: existingSiteExternalId,
+          name: 'New name for site',
+          shortName: 'New name',
+          notes: 'this site has been updated',
+          stateName: 'New Province',
+          lgaName: 'New District',
+          city: 'Springfield',
+          street1: '123 New Avenue',
+          street2: 'In a suburb',
+          zip: '12345',
+          latitude: 12.12,
+          longitude: 15.12,
+          timezoneId: 'South Africa Standard Time',
+          hoursStart: 9,
+          hoursEnd: 17,
+        }
+        resultPayload.sample.originSite = {
+          ...resultPayload.sample.originSite,
+          name: expectedSampleOriginSite.name,
+          shortName: expectedSampleOriginSite.shortName,
+          notes: expectedSampleOriginSite.notes,
+          state: expectedSampleOriginSite.stateName,
+          lga: expectedSampleOriginSite.lgaName,
+          city: expectedSampleOriginSite.city,
+          street1: expectedSampleOriginSite.street1,
+          street2: expectedSampleOriginSite.street2,
+          zip: expectedSampleOriginSite.zip,
+          location: {
+            latitude: expectedSampleOriginSite.latitude,
+            longitude: expectedSampleOriginSite.longitude,
+          },
+          timezoneId: expectedSampleOriginSite.timezoneId,
+          hoursStart: expectedSampleOriginSite.hoursStart,
+          hoursEnd: expectedSampleOriginSite.hoursEnd,
+        }
+        await server
+          .post(devicePath)
+          .set('Authorization', deviceAuth)
+          .send({
+            name: 'Device Name',
+            result: resultPayload,
+          })
+        assert.equal(postNewResultResponse.status, 200)
+        assert.typeOf(postNewResultResponse.body, 'Object')
+
+        lastResultId = await getLastResultId(knex, deviceId)
+
+        const updatedResultSampleOriginSite = await knex('Result as r')
+          .leftJoin('Sample as s', 'r.sampleId', 's.id')
+          .leftJoin('Site as si', 's.originSiteId', 'si.id')
+          .leftJoin('Geography as g', 'si.geographyId', 'g.id')
+          .leftJoin('State as st', 'g.stateId', 'st.id')
+          .leftJoin('Lga as l', 'g.lgaId', 'l.id')
+          .where('r.id', lastResultId)
+          .first('si.*', 'st.name as stateName', 'l.name as lgaName')
+        expect(updatedResultSampleOriginSite).to.containSubset(
+          expectedSampleOriginSite
+        )
+      }))
+
     it('should set result status with different updatedOn parameters', () =>
       runTest(async knex => {
         const resultIds = []
@@ -584,7 +708,7 @@ describe('Device Result API routes', () => {
         const resultPayload = {
           startedOn: now,
           data: { a: 'b' },
-          assay: { id: 'DaktariHivVl' },
+          assay: { id: 'DaktariHivVL' },
           instrument: { serial: '1234567' },
           sample: { id: '76543789' },
         }
@@ -651,7 +775,7 @@ describe('Device Result API routes', () => {
         const resultPayload = {
           startedOn: now,
           data: { a: 'b' },
-          assay: { id: 'DaktariHivVl' },
+          assay: { id: 'DaktariHivVL' },
           instrument: { serial: '1234567' },
           sample: { id: '76543789' },
         }
@@ -697,7 +821,7 @@ describe('Device Result API routes', () => {
           startedOn: now,
           data: { a: 'c' },
           error: { code: '1' },
-          assay: { id: 'DaktariHivVl' },
+          assay: { id: 'DaktariHivVL' },
           instrument: { serial: '1234567' },
           sample: { id: '76543788' },
         }
@@ -743,7 +867,7 @@ describe('Device Result API routes', () => {
           data: { a: 'd' },
           category: { id: 'Invalid' },
           error: { code: '1' },
-          assay: { id: 'DaktariHivVl' },
+          assay: { id: 'DaktariHivVL' },
           instrument: { serial: '1234567' },
           sample: { id: '76543787' },
         }
@@ -784,7 +908,7 @@ describe('Device Result API routes', () => {
           startedOn: now,
           data: { a: 'e' },
           category: [{ id: 'Detected' }, { id: 'NotDetected' }],
-          assay: { id: 'DaktariHivVl' },
+          assay: { id: 'DaktariHivVL' },
           instrument: { serial: '1234567' },
           sample: { id: '76543786' },
         }
@@ -844,7 +968,7 @@ describe('Device Result API routes', () => {
             id: resultExternalIds[0],
             startedOn: now,
             data: { a: 'b' },
-            assay: { id: 'DaktariHivVl' },
+            assay: { id: 'DaktariHivVL' },
           })
           .then(res => {
             assert.equal(res.status, 200)
@@ -866,7 +990,7 @@ describe('Device Result API routes', () => {
             id: resultExternalIds[0],
             startedOn: now,
             data: { a: 'b', c: 'd' },
-            assay: { id: 'DaktariHivVl' },
+            assay: { id: 'DaktariHivVL' },
           })
           .then(res => {
             assert.equal(res.status, 200)
@@ -889,7 +1013,7 @@ describe('Device Result API routes', () => {
             id: resultExternalIds[1],
             startedOn: now,
             data: { a: 'b' },
-            assay: { id: 'DaktariHivVl' },
+            assay: { id: 'DaktariHivVL' },
           })
           .then(res => {
             assert.equal(res.status, 200)
@@ -924,7 +1048,7 @@ describe('Device Result API routes', () => {
             workflow: { status: { id: 'Acknowledged' } },
             category: [{ id: 'Detected' }, { id: 'Indeterminate' }],
             assay: {
-              id: 'DaktariHivVl',
+              id: 'DaktariHivVL',
               version: '1a.c1',
             },
             sample: {
@@ -1097,7 +1221,7 @@ describe('Device Result API routes', () => {
         const result2Assay = await knex('Assay as assay')
           .where({ id: result2.assayId })
           .first('externalId', 'name')
-        assert.equal(result2Assay.externalId, 'DaktariHivVl')
+        assert.equal(result2Assay.externalId, 'DaktariHivVL')
         assert.equal(result2Assay.name, 'Daktari HIV-VL')
 
         const result2Sample = await knex('Sample as s')
@@ -1144,7 +1268,7 @@ describe('Device Result API routes', () => {
             result: {
               startedOn: now,
               data: { a: 'd' },
-              assay: { id: 'DaktariHivVl' },
+              assay: { id: 'DaktariHivVL' },
             },
           })
           .then(res => {
@@ -1194,7 +1318,7 @@ describe('Device Result API routes', () => {
             result: {
               startedOn: now,
               data: { a: 'd' },
-              assay: { id: 'DaktariHivVl' },
+              assay: { id: 'DaktariHivVL' },
             },
           })
           .then(res => {
@@ -1254,7 +1378,7 @@ describe('Device Result API routes', () => {
           const { deviceId, deviceAuth, now } = context
           const results = [
             {
-              assayExternalId: 'DaktariHivVl',
+              assayExternalId: 'DaktariHivVL',
               cartridgeName: 'Daktari HIV-VL Cartridge',
               deviceId,
             },
@@ -1339,7 +1463,7 @@ describe('Device Result API routes', () => {
           const { id: adminId } = await knex('User')
             .where({ name: user })
             .first('id')
-          const assayExternalId = 'DaktariHivVl'
+          const assayExternalId = 'DaktariHivVL'
           const daktariHivVlCartridgeId = (await knex('Consumable as c')
             .where('c.name', 'Daktari HIV-VL Cartridge')
             .first('c.id')).id
@@ -1568,7 +1692,7 @@ describe('Device Result API routes', () => {
           const { id: adminId } = await knex('User')
             .where({ name: user })
             .first('id')
-          const assayExternalId = 'DaktariHivVl'
+          const assayExternalId = 'DaktariHivVL'
           const daktariHivVlCartridgeId = (await knex('Consumable as c')
             .where('c.name', 'Daktari HIV-VL Cartridge')
             .first('c.id')).id
@@ -1701,7 +1825,7 @@ describe('Device Result API routes', () => {
           const past = subDays(now, 1)
           const future = addDays(now, 7)
 
-          const assayExternalId = 'DaktariHivVl'
+          const assayExternalId = 'DaktariHivVL'
           const { id: daktariHivVlCartridgeId } = await knex('Consumable as c')
             .where('c.name', 'Daktari HIV-VL Cartridge')
             .first('c.id')
@@ -1823,7 +1947,7 @@ describe('Device Result API routes', () => {
           const future = addDays(now, 7)
           const futureExpiresOn = startOfDay(future)
 
-          const assayExternalId = 'DaktariHivVl'
+          const assayExternalId = 'DaktariHivVL'
           const { id: daktariHivVlCartridgeId } = await knex('Consumable as c')
             .where('c.name', 'Daktari HIV-VL Cartridge')
             .first('c.id')
@@ -2002,7 +2126,7 @@ describe('Device Result API routes', () => {
           const future = addDays(now, 7)
           const futureExpiresOn = startOfDay(future)
 
-          const assayExternalId = 'DaktariHivVl'
+          const assayExternalId = 'DaktariHivVL'
           const { id: daktariHivVlCartridgeId } = await knex('Consumable as c')
             .where('c.name', 'Daktari HIV-VL Cartridge')
             .first('c.id')
@@ -2225,7 +2349,7 @@ describe('Device Result API routes', () => {
           const past = subDays(now, 1)
           const future = addDays(now, 7)
 
-          const assayExternalId = 'DaktariHivVl'
+          const assayExternalId = 'DaktariHivVL'
           const { id: daktariHivVlCartridgeId } = await knex('Consumable as c')
             .where('c.name', 'Daktari HIV-VL Cartridge')
             .first('c.id')
@@ -2373,7 +2497,7 @@ describe('Device Result API routes', () => {
           const { siteId } = await knex('Device')
             .where({ id: deviceId })
             .first('siteId')
-          const assayExternalId = 'DaktariHivVl'
+          const assayExternalId = 'DaktariHivVL'
           const daktariHivVlCartridgeId = (await knex('Consumable as c')
             .where('c.name', 'Daktari HIV-VL Cartridge')
             .first('c.id')).id
@@ -2546,7 +2670,7 @@ describe('Device Result API routes', () => {
       it('should update the result counts in the facts-tables when a new result is reported', () =>
         runTest(async knex => {
           const resultDetails = {
-            assayExternalId: 'DaktariHivVl',
+            assayExternalId: 'DaktariHivVL',
             resultCategory1ExternalId: 'Detected',
             resultCategory2ExternalId: 'MoreThan1000',
             deviceId: context.deviceId,

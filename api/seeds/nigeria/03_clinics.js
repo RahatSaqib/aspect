@@ -3,10 +3,10 @@ module.exports = require('../utils').seed(seed, __filename)
 const geography = require('./fixtures/geography.json')
 const sites = require('./fixtures/sites.json')
 const {
-  insertStatesAndLgas,
-  insertAssayResultCategories,
-  insertJobFunctionPermission,
-  insertJobFeatures,
+  upsertStatesAndLgas,
+  upsertAssayResultCategories,
+  upsertJobFunctionPermission,
+  upsertJobFeatures,
 } = require('../common')
 const {
   updateAssayResultCategoryTreatmentEmphasize,
@@ -42,7 +42,7 @@ async function seed(knex) {
     .first()
 
   if (stateCount === 0) {
-    await insertStatesAndLgas(knex, countryId, geography.countries[0].states)
+    await upsertStatesAndLgas(knex, countryId, geography.countries[0].states)
   }
 
   // give admin access to persons and reporters
@@ -135,7 +135,7 @@ async function seed(knex) {
   const { id: geneXpertHcvAssayId } = await knex('Assay')
     .where('externalId', 'GxHcv')
     .first('id')
-  await insertAssayResultCategories(geneXpertHcvAssayId, [
+  await upsertAssayResultCategories(geneXpertHcvAssayId, [
     'Detected',
     'Invalid',
     'NoResult',
@@ -146,7 +146,7 @@ async function seed(knex) {
   const { id: geneXpertMtbRifAssayId } = await knex('Assay')
     .where('externalId', 'GxMtbRif')
     .first('id')
-  await insertAssayResultCategories(knex, geneXpertMtbRifAssayId, [
+  await upsertAssayResultCategories(knex, geneXpertMtbRifAssayId, [
     'Detected',
     'NotDetected',
     'Indeterminate',
@@ -159,7 +159,7 @@ async function seed(knex) {
   const { id: geneXpertMtbRifUltraAssayId } = await knex('Assay')
     .where('externalId', 'GxMtbRifUltra')
     .first('id')
-  await insertAssayResultCategories(knex, geneXpertMtbRifUltraAssayId, [
+  await upsertAssayResultCategories(knex, geneXpertMtbRifUltraAssayId, [
     'Detected',
     'Trace Detected',
     'NotDetected',
@@ -173,7 +173,7 @@ async function seed(knex) {
   const { id: geneXpertHivVlAssayId } = await knex('Assay')
     .where('externalId', 'GxHiv1Vl')
     .first('id')
-  await insertAssayResultCategories(knex, geneXpertHivVlAssayId, [
+  await upsertAssayResultCategories(knex, geneXpertHivVlAssayId, [
     'LessThan1000',
     'MoreThan1000',
     'NotDetected',
@@ -186,7 +186,7 @@ async function seed(knex) {
   const { id: geneXpertHivQualAssayId } = await knex('Assay')
     .where('externalId', 'GxHiv1Qual')
     .first('id')
-  await insertAssayResultCategories(knex, geneXpertHivQualAssayId, [
+  await upsertAssayResultCategories(knex, geneXpertHivQualAssayId, [
     'Detected',
     'NotDetected',
     'Invalid',
@@ -198,7 +198,7 @@ async function seed(knex) {
   const { id: geneXpertEbolaAssayId } = await knex('Assay')
     .where('externalId', 'GxEbola')
     .first('id')
-  await insertAssayResultCategories(knex, geneXpertEbolaAssayId, [
+  await upsertAssayResultCategories(knex, geneXpertEbolaAssayId, [
     'Detected',
     'NotDetected',
     'Invalid',
@@ -226,7 +226,7 @@ async function seed(knex) {
   ])
 
   // features
-  await insertJobFunctionPermission(knex, jobFunctionIdClinician, [
+  await upsertJobFunctionPermission(knex, jobFunctionIdClinician, [
     modules.browse.view,
     modules.result.edit,
     modules.assay.edit,
@@ -237,7 +237,7 @@ async function seed(knex) {
   ])
 
   // permissions
-  await insertJobFeatures(knex, jobFunctionIdClinician, [
+  await upsertJobFeatures(knex, jobFunctionIdClinician, [
     features.device,
     features.result,
     features.site,
@@ -351,7 +351,7 @@ async function seed(knex) {
           order: 2,
         },
         name: {
-          title: 'name',
+          title: 'Name',
           type: 'string',
           order: 3,
         },
@@ -406,7 +406,7 @@ async function seed(knex) {
           order: 2,
         },
         name: {
-          title: 'name',
+          title: 'Name',
           type: 'string',
           order: 3,
         },

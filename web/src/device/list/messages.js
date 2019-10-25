@@ -96,21 +96,20 @@ export const messages = defineMessages({
     id: 'pages.DeviceList.noResults',
     defaultMessage: 'No Results',
   },
-
   issueCategoryDeviceHealth: {
-    id: 'issueCategoryDeviceHealth',
+    id: 'pages.DeviceList.deviceHealth',
     defaultMessage: 'Device',
   },
   issueCategoryReagentHealth: {
-    id: 'issueCategoryReagentHealth',
+    id: 'pages.DeviceList.reagentHealth',
     defaultMessage: 'Reagent',
   },
   issueCategoryDataHealth: {
-    id: 'issueCategoryDataHealth',
+    id: 'pages.DeviceList.dataHealth',
     defaultMessage: 'Data',
   },
   issueCategoryConnectivityHealth: {
-    id: 'issueCategoryConnectivityHealth',
+    id: 'pages.DeviceList.connectivityHealth',
     defaultMessage: 'Connectivity',
   },
 })

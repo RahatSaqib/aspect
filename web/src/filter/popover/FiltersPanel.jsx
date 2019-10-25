@@ -232,13 +232,13 @@ const messages = defineMessages({
     id: 'filter.popover.enterSampleId',
     defaultMessage: 'Enter sample ID...',
   },
-  sampleGroup: {
-    id: 'filter.popover.sampleGroup',
-    defaultMessage: 'Sample Group',
+  errorCode: {
+    id: 'filter.popover.errorCode',
+    defaultMessage: 'Error Code',
   },
-  enterSampleGroup: {
-    id: 'filter.popover.enterSampleGroup',
-    defaultMessage: 'Enter sample group...',
+  enterErrorCode: {
+    id: 'filter.popover.enterErrorCode',
+    defaultMessage: 'Enter error code...',
   },
   result: {
     id: 'filter.popover.result',
@@ -518,6 +518,21 @@ export const FiltersPanel = ({
             />
           </div>
         )}
+        {config.errorCode && (
+          <div className={cssClasses('Control')}>
+            <FocusBlurTextField
+              name="errorCode"
+              value={filters.errorCode || ''}
+              onCommitValue={onTextFieldCommitValue}
+              InputLabelProps={{
+                shrink: true,
+              }}
+              placeholder={intl.formatMessage(messages.enterErrorCode)}
+              label={intl.formatMessage(messages.errorCode)}
+              margin="normal"
+            />
+          </div>
+        )}
         {config.consumable && (
           <div className={cssClasses('Control')}>
             <ConsumableSelectField
@@ -575,21 +590,6 @@ export const FiltersPanel = ({
               }}
               placeholder={intl.formatMessage(messages.enterSampleId)}
               label={intl.formatMessage(messages.sampleId)}
-              margin="normal"
-            />
-          </div>
-        )}
-        {config.sampleGroup && (
-          <div className={cssClasses('Control')}>
-            <FocusBlurTextField
-              name="sampleGroup"
-              value={filters.sampleGroup || ''}
-              onCommitValue={onTextFieldCommitValue}
-              InputLabelProps={{
-                shrink: true,
-              }}
-              placeholder={intl.formatMessage(messages.enterSampleGroup)}
-              label={intl.formatMessage(messages.sampleGroup)}
               margin="normal"
             />
           </div>

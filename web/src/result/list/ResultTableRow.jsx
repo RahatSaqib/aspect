@@ -27,12 +27,14 @@ const formatterByType = _.partial(
 
 const ResultTableRow = ({ intl, extraColumns, result, ...restProps }) => (
   <TableRow {...restProps} className={cssClasses(restProps.className)}>
-    <TableCell>{formatDate(result.get('endedOn'))}</TableCell>
-    <TableCell hiddenOn="sm">{result.get('deviceName')}</TableCell>
+    <TableCell>
+      {result.get('endedOn') ? formatDate(result.get('endedOn')) : ''}
+    </TableCell>
+    <TableCell>{result.get('deviceName')}</TableCell>
     <TableCell hiddenOn="sm">{result.get('sampleOriginSiteName')}</TableCell>
     <TableCell>{result.get('sampleId')}</TableCell>
-    <TableCell hiddenOn="md">{result.get('sampleGroup')}</TableCell>
     <TableCell>{result.get('resultText')}</TableCell>
+    <TableCell hiddenOn="md">{result.get('errorCode')}</TableCell>
     <TableCell hiddenOn="sm">{result.get('resultWorkflowStatus')}</TableCell>
     <TableCell hiddenOn="sm">
       {result.get('treatmentStatusInfo') && (

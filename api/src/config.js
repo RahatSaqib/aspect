@@ -103,6 +103,15 @@ function configureOptional(config) {
       authToken: redcapWebApiAuthToken,
     }
   }
+
+  const checkTbAppWebApiUrl = process.env['webhook.checktbapp.url']
+  const checkTbAppWebApiAuthKey = process.env['webhook.checktbapp.authKey']
+  if (checkTbAppWebApiUrl && checkTbAppWebApiAuthKey) {
+    config.webhook.checktbapp = {
+      url: checkTbAppWebApiUrl,
+      authKey: checkTbAppWebApiAuthKey,
+    }
+  }
 }
 
 function getBooleanOrDefault(key, defaultValue) {

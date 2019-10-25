@@ -524,10 +524,13 @@ async function getDeviceList(auth, dataConstraints) {
   const deviceList = await knex('Device as d')
     .innerJoin('Site as s', 's.id', 'd.siteId')
     .innerJoin('Partner as p', 'd.partnerId', 'p.id')
+    .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
+    .innerJoin('DeviceTypeCategory as dtc', 'dt.deviceTypeCategoryId', 'dtc.id')
     .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
     .leftOuterJoin('Issue as i', 'd.id', 'i.deviceId')
     .leftOuterJoin('IssueType as it', 'i.issueTypeId', 'it.id')
     .leftOuterJoin('IssueStatus as ist', 'i.issueStatusId', 'ist.id')
+    .whereIn('dtc.name', ['Lab', 'Integrated'])
     .modify(addConstraints, dataConstraints, {
       site: 's',
       geography: 'g',
@@ -542,7 +545,7 @@ async function getDeviceList(auth, dataConstraints) {
         "sum(ist.externalId not in ('Inactive', 'OK', 'Resolved')) as totalIssues"
       ),
       knex.raw(
-        "sum(it.externalId = 'DeviceNoResults' and ist.externalId not in ('Inactive', 'OK', 'Resolved')) as cntNoResults"
+        "sum((it.externalId = 'DeviceNoResults' or it.externalId = 'DeviceOffline') and ist.externalId not in ('Inactive', 'OK', 'Resolved')) as cntNoResults"
       ),
       knex.raw(
         "sum((it.externalId like 'Machine%' or it.externalId like 'Module%' or it.externalId like 'Reagent%') and ist.externalId not in ('Inactive', 'OK', 'Resolved')) as cntErrorRate"
@@ -660,6 +663,7 @@ async function siteDashboard(request) {
   const dataConstraints = await getConstraints(auth.credentials)
 
   const siteList = await getSiteList(auth, dataConstraints)
+  const assayResultCategoryList = await getAssayResultCategoryList()
   const deviceList = await getDeviceList(auth, dataConstraints)
   const inventoryItemList = await getInventoryItemList(auth, dataConstraints)
 
@@ -758,6 +762,7 @@ async function siteDashboard(request) {
 
   const result = {
     data: {
+      assayResultCategoryList,
       siteList,
       siteSummaryMap,
     },
@@ -1438,6 +1443,22 @@ async function addStockLevelUpdateActions(
       }
     )
   }
+}
+
+async function getAssayResultCategoryList() {
+  const assayResultCategory = await knex('ResultCategoryAssay as rca')
+    .innerJoin('Assay as a', 'a.id', 'rca.assayId')
+    .innerJoin('AssayType as at', 'at.id', 'a.assayTypeId')
+    .innerJoin('ResultCategory as rc', 'rca.resultCategoryId', 'rc.id')
+    .where('rca.requiresTreatment', 1)
+    .groupBy('at.id', 'at.name', 'rc.name')
+    .orderBy('at.name', 'rc.name')
+    .select(
+      knex.raw(`CONCAT(at.id,'-',rc.id) as id`),
+      knex.raw(`CONCAT(at.name,': ',rc.name) as name`)
+    )
+
+  return assayResultCategory
 }
 
 module.exports = {

@@ -29,11 +29,11 @@ const SiteTableRow = ({ intl, site, onAlertClick, ...restProps }) => (
             <ColoredButton
               key={issue}
               className={cssClasses('ColoredButton--micro')}
-              label={intl.formatMessage(messages[_.camelCase(issue)])}
-              shipCove={issue === 'DeviceHealth'}
-              shakespeare={issue === 'ReagentHealth'}
-              mountain={issue === 'ConnectivityHealth'}
-              brink={issue === 'DataHealth'}
+              label={intl.formatMessage(messages[issue])}
+              shipCove={issue === 'issueCategoryDeviceHealth'}
+              shakespeare={issue === 'issueCategoryReagentHealth'}
+              brink={issue === 'issueCategoryDataHealth'}
+              mountain={issue === 'issueCategoryConnectivityHealth'}
               onClick={onAlertClick}
               data-site-id={site.get('id')}
             />

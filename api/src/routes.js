@@ -305,7 +305,6 @@ function validateResultResponse() {
       .description("The result's Workflow status name"),
     resultData: Joi.object().description('The result data'),
     files: Joi.array().description('Result Files'),
-
     formData: Joi.object()
       .allow(null)
       .description('The form data'),
@@ -432,9 +431,49 @@ function validateResultResponse() {
     resultTreatmentData: Joi.string()
       .allow(null, '')
       .description('Operator from latest ResultTreatmentWorkflowLog'),
+    resultNotes: Joi.array().description('List of result notes'),
     requiresTreatment: Joi.number()
       .allow(null, '')
       .description('Predicted required treatment'),
+    followUps: Joi.array()
+      .description('Result Follow Ups')
+      .items(
+        Joi.object().keys({
+          id: Joi.number()
+            .required()
+            .description('Result follow up ID'),
+          externalId: Joi.string()
+            .allow(null, '')
+            .description('External ID of the follow up'),
+          date: Joi.date()
+            .allow(null)
+            .description('When the follow up started'),
+          createdOn: Joi.date()
+            .required()
+            .description('When the follow up was first created in Aspect'),
+          updatedOn: Joi.date()
+            .required()
+            .description('When the follow up was last updated in Aspect'),
+          followUpExternalId: Joi.string()
+            .required()
+            .description('External ID of the follow up'),
+          followUpName: Joi.string()
+            .required()
+            .description('Name of the follow up'),
+          followUpi18nKey: Joi.string()
+            .required()
+            .description('Translation key for the follow up'),
+          followUpTypeName: Joi.string()
+            .required()
+            .description('Name of the follow up type'),
+          followUpTypeExternalId: Joi.string()
+            .required()
+            .description('External ID of the follow up type'),
+          followUpTypei18nKey: Joi.string()
+            .required()
+            .description('Translation key for the follow up type'),
+        })
+      ),
   }
 }
 

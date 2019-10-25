@@ -50,24 +50,24 @@ describe('issue evaluation', () => {
 
   beforeEach(() => initKnex())
 
-  it('should evaluate to true for empty conditions', async () => {
+  it('should evaluate to false for empty conditions', async () => {
     const issue = {}
     let conditions = {}
     const issueConditionsMet = getIssueConditionsMet()
     await runTest(issueConditionsMet, [knex, issue, conditions])(result => {
-      assert.isOk(result)
+      assert.isNotOk(result)
     })
     conditions = []
     await runTest(issueConditionsMet, [knex, issue, conditions])(result => {
-      assert.isOk(result)
+      assert.isNotOk(result)
     })
     conditions = null
     await runTest(issueConditionsMet, [knex, issue, conditions])(result => {
-      assert.isOk(result)
+      assert.isNotOk(result)
     })
     conditions = undefined
     await runTest(issueConditionsMet, [knex, issue, conditions])(result => {
-      assert.isOk(result)
+      assert.isNotOk(result)
     })
   })
 

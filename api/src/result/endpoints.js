@@ -11,7 +11,7 @@ const {
   showResult,
   listResultTypes,
   updateWorkflowStatus,
-  updateTreatmentStatus,
+  updateTreatmentStatusPost,
   listTreatmentStatusTypes,
   updateFormData,
   listWorkflowStatusTypes,
@@ -21,6 +21,11 @@ const {
   downloadFile,
   downloadFirstImage,
   confirmedTreatmentTracking,
+  listFollowUps,
+  setResultFollowUp,
+  updateResultFollowUp,
+  deleteResultFollowUp,
+  addResultNote,
 } = require('./service')
 const { getResultsReport } = require('./serviceReport')
 const {
@@ -46,6 +51,9 @@ function listResultsBaseConfig() {
           resultCategoryId: Joi.number()
             .allow('')
             .description('Result Category ID'),
+          errorCode: Joi.string()
+            .allow('')
+            .description('Filter error code'),
           deviceName: Joi.string()
             .allow('')
             .description('Filter for device name'),
@@ -58,9 +66,6 @@ function listResultsBaseConfig() {
           sampleId: Joi.string()
             .allow('')
             .description('Filter for sample ID'),
-          sampleGroup: Joi.string()
-            .allow('')
-            .description('Filter for sample group'),
           sampleOriginSite: Joi.string()
             .allow('')
             .description('Filter for sample origin site ID'),
@@ -284,6 +289,47 @@ const routes = [
             .description('Result Id'),
         },
         payload: Joi.object(),
+      },
+    },
+  },
+  {
+    method: 'POST',
+    path: '/result/result-note/{resultId}',
+    handler: asyncHandler(addResultNote),
+    config: {
+      description: 'Add result note to results',
+      notes: 'Add result note to results',
+      auth: { scope: ['result:edit'] },
+      validate: {
+        params: {
+          resultId: Joi.number()
+            .integer()
+            .positive()
+            .required()
+            .description('Result Id'),
+        },
+        payload: {
+          note: Joi.string(),
+          resultNoteType: Joi.string().allow('', null),
+          changedOn: Joi.date()
+            .description('Date when the note was added.')
+            .iso()
+            .allow(null),
+        },
+      },
+      response: {
+        options: {
+          allowUnknown: false,
+        },
+        schema: Joi.object().keys({
+          ok: Joi.bool()
+            .required()
+            .description('False if there was some sort of error'),
+          length: Joi.number().required(),
+          data: Joi.array()
+            .required()
+            .description('The result notes'),
+        }),
       },
     },
   },
@@ -561,6 +607,49 @@ const routes = [
                         name: Joi.string().description('Name of the site'),
                       }),
                   }),
+                followUps: Joi.array()
+                  .description('Result Follow Ups')
+                  .items(
+                    Joi.object().keys({
+                      id: Joi.number()
+                        .required()
+                        .description('Result follow up ID'),
+                      externalId: Joi.string()
+                        .allow(null, '')
+                        .description('External ID of the follow up'),
+                      date: Joi.date()
+                        .allow(null)
+                        .description('When the follow up started'),
+                      createdOn: Joi.date()
+                        .required()
+                        .description(
+                          'When the follow up was first created in Aspect'
+                        ),
+                      updatedOn: Joi.date()
+                        .required()
+                        .description(
+                          'When the follow up was last updated in Aspect'
+                        ),
+                      followUpExternalId: Joi.string()
+                        .required()
+                        .description('External ID of the follow up'),
+                      followUpName: Joi.string()
+                        .required()
+                        .description('Name of the follow up'),
+                      followUpi18nKey: Joi.string()
+                        .required()
+                        .description('Translation key for the follow up'),
+                      followUpTypeName: Joi.string()
+                        .required()
+                        .description('Name of the follow up type'),
+                      followUpTypeExternalId: Joi.string()
+                        .required()
+                        .description('External ID of the follow up type'),
+                      followUpTypei18nKey: Joi.string()
+                        .required()
+                        .description('Translation key for the follow up type'),
+                    })
+                  ),
               })
             ),
         }),
@@ -580,7 +669,7 @@ const routes = [
   {
     method: 'PUT',
     path: '/result/treatment-status/{resultId}',
-    handler: asyncHandler(updateTreatmentStatus),
+    handler: asyncHandler(updateTreatmentStatusPost),
     config: {
       description: 'Update Result Treatment Status',
       notes: 'Update the treatment status of a result',
@@ -638,11 +727,317 @@ const routes = [
           siteId: Joi.number()
             .integer()
             .allow(null),
+          assayTypeId: Joi.number()
+            .integer()
+            .allow(null),
+          resultCategoryId: Joi.number()
+            .integer()
+            .allow(null),
           endedOn: Joi.date()
             .iso()
             .allow(null)
             .description('Ending date'),
         },
+      },
+    },
+  },
+  {
+    method: 'GET',
+    path: '/result/follow-ups',
+    handler: asyncHandler(listFollowUps),
+    config: {
+      description: 'Result Follow Up List',
+      notes: 'List of possible result follow ups',
+      auth: { scope: ['treatmentStatus:view', 'treatmentStatus:edit'] },
+      validate: {
+        query: {
+          typeId: Joi.number()
+            .integer()
+            .allow(null)
+            .description('ID of the follow up type'),
+          assayId: Joi.number()
+            .integer()
+            .allow(null)
+            .description('ID of the assay'),
+          resultCategory1: Joi.number()
+            .integer()
+            .allow(null)
+            .description('ID of the first result category'),
+          resultCategory2: Joi.number()
+            .integer()
+            .allow(null)
+            .description('ID of the second result category'),
+        },
+      },
+      response: {
+        schema: Joi.object().keys({
+          ok: Joi.bool()
+            .required()
+            .description('False if there was some sort of error'),
+          total: Joi.number()
+            .required()
+            .description(
+              'The total number of follow-ups that match the given filters'
+            ),
+          length: Joi.number()
+            .required()
+            .description('The number of follow-ups included in this response'),
+          data: Joi.array()
+            .required()
+            .description('The possible result follow-ups')
+            .items(
+              Joi.object().keys({
+                id: Joi.number()
+                  .required()
+                  .description(
+                    'Unique ID of the follow up for this instance of Aspect'
+                  ),
+                name: Joi.string()
+                  .required()
+                  .description('Name of the follow up'),
+                externalId: Joi.string()
+                  .required()
+                  .description('Unique ID of the follow up'),
+                i18nKey: Joi.string()
+                  .required()
+                  .description('Translation key'),
+                type: Joi.object()
+                  .description('Type of follow up')
+                  .keys({
+                    id: Joi.number()
+                      .required()
+                      .description(
+                        'Unique ID of the follow up type for this instance of Aspect'
+                      ),
+                    name: Joi.string()
+                      .required()
+                      .description('Name of the follow up type'),
+                    externalId: Joi.string()
+                      .required()
+                      .description('Unique ID of the follow up type'),
+                    i18nKey: Joi.string()
+                      .required()
+                      .description('Translation key'),
+                  }),
+                assays: Joi.array().items(
+                  Joi.object().keys({
+                    id: Joi.number()
+                      .required()
+                      .description(
+                        'Unique ID of the assay for this instance of Aspect'
+                      ),
+                    name: Joi.string()
+                      .required()
+                      .description('Name of the assay'),
+                    externalId: Joi.string()
+                      .required()
+                      .description('Unique ID of the assay'),
+                    i18nKey: Joi.string()
+                      .required()
+                      .description('Translation key'),
+                    resultCategories: Joi.array().items(
+                      Joi.object().keys({
+                        category1: Joi.object().keys({
+                          id: Joi.any()
+                            .required()
+                            .description('Unique ID of the result category'),
+                          name: Joi.string()
+                            .required()
+                            .description('Name of the assay'),
+                          externalId: Joi.string()
+                            .required()
+                            .description('Unique ID of the assay'),
+                          i18nKey: Joi.string()
+                            .required()
+                            .description('Translation key'),
+                        }),
+                        category2: Joi.object().keys({
+                          id: Joi.number()
+                            .required()
+                            .description('Unique ID of the result category'),
+                          name: Joi.string()
+                            .required()
+                            .description('Name of the assay'),
+                          externalId: Joi.string()
+                            .required()
+                            .description('Unique ID of the assay'),
+                          i18nKey: Joi.string()
+                            .required()
+                            .description('Translation key'),
+                        }),
+                      })
+                    ),
+                  })
+                ),
+              })
+            ),
+        }),
+      },
+    },
+  },
+  {
+    method: 'POST',
+    path: '/result/follow-up/{resultId}',
+    handler: asyncHandler(setResultFollowUp),
+    config: {
+      description: 'Add a result follow up',
+      notes: 'Adds a treatment/outcome follow up for a result',
+      auth: { scope: ['treatmentStatus:edit', 'treatmentStatus:admin'] },
+      validate: {
+        params: {
+          resultId: Joi.number()
+            .required()
+            .integer()
+            .positive()
+            .description('Result ID'),
+        },
+        payload: Joi.object()
+          .keys({
+            externalId: Joi.string()
+              .allow('', null)
+              .description(
+                'Optional externalId of the result follow up. This is mostly for app-use so apps can uniquely identify a follow up record that they created.'
+              ),
+            followUpId: Joi.number()
+              .integer()
+              .positive()
+              .allow(null)
+              .description('The ID of the follow up'),
+            followUpExternalId: Joi.string()
+              .allow('', null)
+              .description(
+                'The externalId of the follow up. Will be used if followUpId is null/empty.'
+              ),
+            date: Joi.date()
+              .iso()
+              .optional()
+              .allow(null)
+              .description('This is the date when the follow up happened'),
+          })
+          .xor('followUpId', 'followUpExternalId'),
+      },
+      response: {
+        options: {
+          allowUnknown: false,
+        },
+        schema: Joi.object().keys({
+          ok: Joi.bool()
+            .required()
+            .description('False if there was some sort of error'),
+          data: Joi.object()
+            .required()
+            .description('The results')
+            .keys(validateResultResponse()),
+        }),
+      },
+    },
+  },
+  {
+    method: 'PUT',
+    path: '/result/follow-up/{resultId}',
+    handler: asyncHandler(updateResultFollowUp),
+    config: {
+      description: 'Set the date of a follow up',
+      notes: 'Updates the date of a follow up for a result',
+      auth: { scope: ['treatmentStatus:edit', 'treatmentStatus:admin'] },
+      validate: {
+        params: {
+          resultId: Joi.number()
+            .required()
+            .integer()
+            .positive()
+            .description('Result ID'),
+        },
+        payload: Joi.object()
+          .keys({
+            id: Joi.number()
+              .integer()
+              .positive()
+              .allow(null)
+              .description('The ID of the result follow up.'),
+            externalId: Joi.string()
+              .allow('', null)
+              .description(
+                'The externalId of the result follow up. Will be used in combination with the result ID to find the result follow up if id is empty'
+              ),
+            date: Joi.date()
+              .iso()
+              .optional()
+              .allow(null)
+              .description('This is the date when the follow up happened'),
+            followUpId: Joi.number()
+              .integer()
+              .positive()
+              .allow(null)
+              .description('The ID of the follow up'),
+            followUpExternalId: Joi.string()
+              .allow('', null)
+              .description(
+                'The externalId of the follow up. Will be used if followUpId is null/empty.'
+              ),
+          })
+          .xor('id', 'externalId'),
+      },
+      response: {
+        options: {
+          allowUnknown: false,
+        },
+        schema: Joi.object().keys({
+          ok: Joi.bool()
+            .required()
+            .description('False if there was some sort of error'),
+          data: Joi.object()
+            .required()
+            .description('The results')
+            .keys(validateResultResponse()),
+        }),
+      },
+    },
+  },
+  {
+    method: 'DELETE',
+    path: '/result/follow-up/{resultId}',
+    handler: asyncHandler(deleteResultFollowUp),
+    config: {
+      description: 'Remove a follow up from a result',
+      notes: 'Removes a follow up from a result',
+      auth: { scope: ['treatmentStatus:edit', 'treatmentStatus:admin'] },
+      validate: {
+        params: {
+          resultId: Joi.number()
+            .required()
+            .integer()
+            .positive()
+            .description('Result ID'),
+        },
+        payload: Joi.object()
+          .keys({
+            id: Joi.number()
+              .integer()
+              .positive()
+              .allow(null)
+              .description('The ID of the result follow up.'),
+            externalId: Joi.string()
+              .allow('', null)
+              .description(
+                'The externalId of the result follow up. Will be used in combination with the result ID to find the result follow up if id is empty.'
+              ),
+          })
+          .xor('id', 'externalId'),
+      },
+      response: {
+        options: {
+          allowUnknown: false,
+        },
+        schema: Joi.object().keys({
+          ok: Joi.bool()
+            .required()
+            .description('False if there was some sort of error'),
+          data: Joi.object()
+            .required()
+            .description('The results')
+            .keys(validateResultResponse()),
+        }),
       },
     },
   },

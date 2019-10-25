@@ -62,7 +62,7 @@ async function listSites(request) {
         .select(
           'i.siteId',
           knex.raw(
-            "GROUP_CONCAT( DISTINCT ic.externalId SEPARATOR ',' ) as siteIssues"
+            "GROUP_CONCAT(DISTINCT ic.i18nKey SEPARATOR ',') as siteIssues"
           )
         )
         .innerJoin('IssueStatus as ist', 'ist.id', 'i.issuestatusid ')
