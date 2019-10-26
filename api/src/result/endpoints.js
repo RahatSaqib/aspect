@@ -1151,6 +1151,19 @@ const routes = [
                   .description(
                     'The follow up(Treatment/outcome) creation date in iso format'
                   ),
+                followUpDate: Joi.date()
+                  .iso()
+                  .optional()
+                  .allow(null)
+                  .description('follow up date'),
+                resultFollowUpId: Joi.number()
+                  .optional()
+                  .allow(null)
+                  .description('the follow up id'),
+                followUpTypeExternalId: Joi.string()
+                  .optional()
+                  .allow(null)
+                  .description('the follow up type id'),
               })
             )
             .required()

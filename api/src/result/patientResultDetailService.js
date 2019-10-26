@@ -1,8 +1,6 @@
 const { knex } = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
-const { showResultFollowUps } = require('./service')
 const Boom = require('boom')
-const Promise = require('bluebird')
 const _ = require('lodash')
 
 async function getPatientResultsDetails(request) {
@@ -16,6 +14,9 @@ async function getPatientResultsDetails(request) {
     .join('Assay as a', 'r.assayId', 'a.id')
     .join('ResultCategory as rc1', 'r.resultCategory1', 'rc1.id')
     .leftJoin('ResultCategory as rc2', 'r.resultCategory2', 'rc2.id')
+    .leftJoin('ResultFollowUp as rfu', 'r.id', 'rfu.resultId')
+    .leftJoin('FollowUp as fu', 'rfu.followUpId', 'fu.id')
+    .leftJoin('FollowUpType as fut', 'fu.followUpTypeId', 'fut.id')
     .leftJoin(
       'ResultWorkflowLog as rsl',
       'r.resultWorkflowStatusLogId',
@@ -60,10 +61,15 @@ async function getPatientResultsDetails(request) {
       'rtsl.createdon as resultTreatmentStatusLogDate',
       'rts.name as resultTreatmentName',
       'rts.externalid as resultTreatmentId',
-      'a.patientDataSchema as patientDataSchema'
+      'a.patientDataSchema as patientDataSchema',
+      'rfu.date as followUpDate',
+      'rfu.id as resultFollowUpId',
+      'rfu.createdOn as followUpCreatedOn',
+      'fu.name as followUpName',
+      'fut.name as followUpTypeName',
+      'fut.externalId as followUpTypeExternalId'
     )
     .orderBy('sampleCollectedOn', 'resultEndedOn', 'resultTestStatusLog')
-
   const results = await resultDetails
   // if no result we are going to return not found for the specific patient id
   if (results.length === 0) {
@@ -77,6 +83,7 @@ async function getPatientResultsDetails(request) {
   const finalResult = []
   const samples = _.uniqBy(results, 'sampleId')
   const uniqResults = _.uniqBy(results, 'resultId')
+  const followUps = _.uniqBy(results, 'resultFollowUpId')
 
   _.each(uniqResults, async result =>
     finalResult.push(
@@ -109,33 +116,18 @@ async function getPatientResultsDetails(request) {
       })
     )
   )
-  await Promise.each(uniqResults, async result => {
-    const followUps = await showResultFollowUps(
-      result.resultId,
-      dataConstraints
-    )
-    if (followUps) {
-      _.each(followUps.data, fu => {
-        finalResult.push(
-          Object.assign({}, result, {
-            resultData: result.resultData
-              ? JSON.parse(result.resultData)
-              : null,
-            patientData: result.patientData
-              ? JSON.parse(result.patientData)
-              : null,
-            patientDataSchema: result.patientDataSchema
-              ? JSON.parse(result.patientDataSchema)
-              : null,
-            date: fu.date || fu.createdOn,
-            followUpTypeName: fu.followUpTypeName,
-            type: fu.followUpTypeName,
-            followUpName: fu.name,
-            followUpCreatedOn: fu.createdOn,
-          })
-        )
+  _.each(followUps, fu => {
+    finalResult.push(
+      Object.assign({}, fu, {
+        resultData: fu.resultData ? JSON.parse(fu.resultData) : null,
+        patientData: fu.patientData ? JSON.parse(fu.patientData) : null,
+        patientDataSchema: fu.patientDataSchema
+          ? JSON.parse(fu.patientDataSchema)
+          : null,
+        date: fu.followUpDate || fu.followUpCreatedOn,
+        type: _.capitalize(fu.followUpTypeExternalId),
       })
-    }
+    )
   })
 
   return {
