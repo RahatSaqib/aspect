@@ -83,9 +83,9 @@ const followUpsTexts = {
   },
 }
 const treatmentTexts = {
-  resultTreatmentStatusLogData: {
+  resultTreatmentStatusLogDate: {
     id: 'pages.Milestones.resultTreatmentStatusLogData',
-    defaultMessage: 'Treatment data: ',
+    defaultMessage: 'Treatment date: ',
   },
   date: {
     id: 'pages.Milestones.date',
@@ -279,8 +279,11 @@ const TimelineItemTreatment = ({ treatment, intl, expand }) => {
   const messages = defineMessages(treatmentTexts)
   const detailsFields = [
     {
-      key: intl.formatMessage(messages.resultTreatmentStatusLogData),
-      value: treatment.get('followUpCreatedOn'),
+      key: intl.formatMessage(messages.resultTreatmentStatusLogDate),
+      value: format(
+        parseISO(treatment.get('followUpCreatedOn')),
+        'yyyy-MM-dd HH:mm:ss'
+      ),
     },
     {
       key: intl.formatMessage(messages.date),

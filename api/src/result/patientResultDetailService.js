@@ -90,7 +90,7 @@ async function getPatientResultsDetails(request) {
         type: 'Result',
         notes:
           result.resultData.resultText ||
-          `${result.resultCategory1} | ${result.resultCategory2}`,
+          `${result.resultCategory1} ${result.resultCategory2 || ''}`,
       })
     )
   )
@@ -138,12 +138,9 @@ async function getPatientResultsDetails(request) {
     }
   })
 
-  if (finalResult.length === 0) {
-    return Boom.notFound("There isn't any patient with this id")
-  }
   return {
     ok: finalResult.length >= 1,
-    data: _.orderBy(finalResult, 'date', 'desc'),
+    data: _.sortBy(finalResult, elem => new Date(elem.date)).reverse(),
   }
 }
 
