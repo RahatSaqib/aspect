@@ -1121,7 +1121,7 @@ const routes = [
                   .required()
                   .allow(null)
                   .description('The date of the milestone'),
-                notes: Joi.string()
+                description: Joi.string()
                   .optional()
                   .allow('', null)
                   .description('description of the milestone'),

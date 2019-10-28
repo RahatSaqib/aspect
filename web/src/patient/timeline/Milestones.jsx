@@ -29,7 +29,7 @@ const sampleTexts = {
   },
   notes: {
     id: 'pages.Milestones.notes',
-    defaultMessage: 'Notes: ',
+    defaultMessage: 'Description: ',
   },
 }
 
@@ -56,7 +56,7 @@ const resultsTexts = {
   },
   notes: {
     id: 'pages.Milestones.notes',
-    defaultMessage: 'Notes: ',
+    defaultMessage: 'Description: ',
   },
   sampleId: {
     id: 'pages.Milestones.sampleId',
@@ -198,7 +198,7 @@ const TimelineItemResult = ({ result, intl, expand }) => {
     <TimelineGenericPatientMilestone
       title={{
         key: intl.formatMessage(messagesResult.result),
-        value: result.get('notes'),
+        value: result.get('description'),
       }}
       details={detailsFields}
       link={{
@@ -259,7 +259,7 @@ const TimelineItemSample = ({ sample, intl, expand }) => {
     },
     {
       key: intl.formatMessage(messages.notes),
-      value: sample.get('notes'),
+      value: sample.get('description'),
     },
   ]
   return (

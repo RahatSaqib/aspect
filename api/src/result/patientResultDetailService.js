@@ -95,7 +95,7 @@ async function getPatientResultsDetails(request) {
           : null,
         date: result.resultEndedOn,
         type: 'Result',
-        notes:
+        description:
           result.resultData.resultText ||
           `${result.resultCategory1} ${result.resultCategory2 || ''}`,
       })
@@ -112,7 +112,7 @@ async function getPatientResultsDetails(request) {
           : null,
         date: sample.sampleCollectedOn,
         type: 'Sample',
-        notes: 'Sample collected',
+        description: 'Sample collected',
       })
     )
   )
