@@ -8,7 +8,7 @@ async function getPatientResultsDetails(request) {
   const dataConstraints = await getConstraints(auth.credentials)
   const resultDetails = knex('Result as r')
     .join('Sample as s', 'r.sampleId', 's.id')
-    .join('SampleType as st', 's.sampleTypeId', 'st.id')
+    .leftJoin('SampleType as st', 's.sampleTypeId', 'st.id')
     .join('Site as originsite', 's.originSiteId', 'originsite.id')
     .join('Site as resultSite', 's.originSiteId', 'resultSite.id')
     .join('Assay as a', 'r.assayId', 'a.id')
