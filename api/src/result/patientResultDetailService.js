@@ -117,17 +117,18 @@ async function getPatientResultsDetails(request) {
     )
   )
   _.each(followUps, fu => {
-    finalResult.push(
-      Object.assign({}, fu, {
-        resultData: fu.resultData ? JSON.parse(fu.resultData) : null,
-        patientData: fu.patientData ? JSON.parse(fu.patientData) : null,
-        patientDataSchema: fu.patientDataSchema
-          ? JSON.parse(fu.patientDataSchema)
-          : null,
-        date: fu.followUpDate || fu.followUpCreatedOn,
-        type: _.capitalize(fu.followUpTypeExternalId),
-      })
-    )
+    if (fu.followUpTypeExternalId)
+      finalResult.push(
+        Object.assign({}, fu, {
+          resultData: fu.resultData ? JSON.parse(fu.resultData) : null,
+          patientData: fu.patientData ? JSON.parse(fu.patientData) : null,
+          patientDataSchema: fu.patientDataSchema
+            ? JSON.parse(fu.patientDataSchema)
+            : null,
+          date: fu.followUpDate || fu.followUpCreatedOn,
+          type: _.capitalize(fu.followUpTypeExternalId),
+        })
+      )
   })
 
   return {
