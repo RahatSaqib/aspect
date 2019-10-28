@@ -16,23 +16,20 @@ async function getMGITResultFromTBPossitive(result, assaysMGIT, devicesMGIT) {
   const now = new Date()
   const assay = _.sample(assaysMGIT)
   const assayId = await assayToId('assayBdMgitAst')
-  return _.omit(
-    _.defaults(
-      {
-        assayId: _.sample(assaysMGIT),
-        startedOn: randomDateMgit,
-        endedOn: addMinutes(randomDateMgit, 100),
-        createdOn: addMinutes(randomDateMgit, 120),
-        updatedOn: addMinutes(randomDateMgit, 180),
-        consumableSerial: `${_.random(100)}12`,
-        consumableExpirationDate: new Date(+now + 200 * _.random(10)),
-        deviceId: _.sample(devicesMGIT).id,
-        resultData: JSON.stringify(getNewMgitResultData(assayId === assay)),
-        externalId: `TBMGIT-${_.random(1000)}-${format(new Date(), 'tt')}-D`,
-      },
-      result
-    ),
-    'id'
+  return _.defaults(
+    {
+      assayId: _.sample(assaysMGIT).id,
+      startedOn: randomDateMgit,
+      endedOn: addMinutes(randomDateMgit, 100),
+      createdOn: addMinutes(randomDateMgit, 120),
+      updatedOn: addMinutes(randomDateMgit, 180),
+      consumableSerial: `${_.random(100)}12`,
+      consumableExpirationDate: new Date(+now + 200 * _.random(10)),
+      deviceId: _.sample(devicesMGIT).id,
+      resultData: JSON.stringify(getNewMgitResultData(assayId === assay)),
+      externalId: `TBMGIT-${_.random(1000)}-${format(new Date(), 'TT')}-D`,
+    },
+    _.omit(result, ['treatmentStatusExternalId', 'id'])
   )
 }
 async function updateMGITAssays(

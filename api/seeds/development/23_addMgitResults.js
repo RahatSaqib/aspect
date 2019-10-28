@@ -8,6 +8,7 @@ const { getMGITResultFromTBPossitive } = require('../commonTB')
 
 const { allResultCategoryToId } = require('../../src/shared/dictionary')
 const Promise = require('bluebird')
+const _ = require('lodash')
 
 async function seed(knex) {
   const { Detected: resultCategoryDetectedId } = await allResultCategoryToId()
@@ -15,16 +16,16 @@ async function seed(knex) {
   const MGITAssays = await knex('Assay')
     .whereIn('externalid', ['assayBdMgitAst', 'assayBdMgitGnd'])
     .select('id')
-
   const queryBuilderFunction = queryBuilder =>
     queryBuilder
       .whereRaw('RAND()*100<=80')
       .where('r.resultCategory1', resultCategoryDetectedId)
 
   const results = await getRandomResults(knex, queryBuilderFunction)
+
   const deviceTypeBDMGIT = await knex('DeviceType')
     .where('externalId', 'BDMGIT')
-    .select('id')
+    .select('id as deviceTypeBDMGIT')
 
   const partners = await knex('Person as p')
     .join('User as u', 'u.id', 'p.userId')
@@ -35,10 +36,12 @@ async function seed(knex) {
       'u.name as userName'
     )
     .distinct()
+
   await Promise.each(partners, async partner => {
     const siteData = await knex('Site')
       .where('partnerId', partner.partnerId)
       .select()
+
     await createDevicesForAllMissingTypes(knex, siteData, partner.partnerId, {
       createdOn: new Date(),
       createdBy: partner.userId,
@@ -48,13 +51,18 @@ async function seed(knex) {
   })
 
   const devicesMGIT = await knex('Device')
-    .where({ deviceTypeId: deviceTypeBDMGIT })
+    .whereIn('deviceTypeId', _.map(deviceTypeBDMGIT, 'deviceTypeBDMGIT'))
     .select()
   // adding existing mgit results for tb possitive results.
   await Promise.each(results, async result => {
-    if (devicesMGIT.length > 0)
-      knex('Result').insert(
-        await getMGITResultFromTBPossitive(result, MGITAssays, devicesMGIT)
+    // console.log('devicemgit', devicesMGIT.length)
+    const elegibleDevices = _.filter(
+      devicesMGIT,
+      device => device.siteId === result.siteId
+    )
+    if (elegibleDevices.length > 0)
+      await knex('Result').insert(
+        await getMGITResultFromTBPossitive(result, MGITAssays, elegibleDevices)
       )
   })
 }

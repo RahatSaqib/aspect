@@ -56,7 +56,6 @@ async function createDevicesForAllMissingTypes(
   const deviceTypes = await knex('DeviceType as dt')
     .whereNotIn('dt.id', _.map(existingDevicesType, 'deviceTypeId'))
     .select()
-
   const { approved: deviceStatusApproved } = await allDeviceStatusToId()
   /* const [{ deviceCount }] = await knex('Device')
     .where('partnerId', partnerOneId)
