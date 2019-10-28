@@ -111,6 +111,7 @@ async function getPatientResultsDetails(request) {
           ? JSON.parse(sample.patientDataSchema)
           : null,
         date: sample.sampleCollectedOn,
+        sampleType: sample.sampleType || '-',
         type: 'Sample',
         description: 'Sample collected',
       })

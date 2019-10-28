@@ -1115,6 +1115,7 @@ const routes = [
                   .description('The type of the milestone'),
                 sampleType: Joi.string()
                   .required()
+                  .allow('', null)
                   .description('The sample type'),
                 date: Joi.date()
                   .iso()
