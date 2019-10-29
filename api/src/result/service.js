@@ -974,7 +974,10 @@ async function getResultByResultId(request, fields = SELECT_SHOW_FIELDS) {
     const { data: files } = await showFileReferences(request)
     data.files = files
 
-    const { data: followUps } = await showResultFollowUps(request)
+    const { data: followUps } = await showResultFollowUps(
+      params.resultId,
+      dataConstraints
+    )
     data.followUps = followUps
   }
 
@@ -1912,12 +1915,7 @@ async function updateTreatmentStatusBasedOnFollowUps(
   )
 }
 
-async function showResultFollowUps(request) {
-  const {
-    params: { resultId },
-    auth,
-  } = request
-  const dataConstraints = await getConstraints(auth.credentials)
+async function showResultFollowUps(resultId, dataConstraints) {
   const followUps = await knex('ResultFollowUp as rfu')
     .join('Result as r', 'r.id', 'rfu.resultId')
     .join('Sample as sp', 'r.sampleId', 'sp.id')
@@ -1940,7 +1938,6 @@ async function showResultFollowUps(request) {
       'fut.externalId as followUpTypeExternalId',
       'fut.i18nKey as followUpTypei18nKey'
     )
-
   return { data: followUps }
 }
 
@@ -1967,4 +1964,5 @@ module.exports = {
   updateResultFollowUp,
   deleteResultFollowUp,
   addResultNote,
+  showResultFollowUps,
 }
