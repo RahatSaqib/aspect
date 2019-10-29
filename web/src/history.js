@@ -1,4 +1,4 @@
-import createBrowserHistory from 'history/createBrowserHistory'
+import { createBrowserHistory } from 'history'
 import piwikReactRouter from 'piwik-react-router'
 
 import config from './config'
