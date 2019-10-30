@@ -47,7 +47,7 @@ async function seed(knex) {
 
   await Promise.each(tbResults, async result => {
     if (devicesMGIT.length > 0)
-      knex('Result').insert(
+      return knex('Result').insert(
         await getMGITResultFromTBPossitive(result, MGITAssays, devicesMGIT)
       )
   })

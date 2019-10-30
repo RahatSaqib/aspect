@@ -241,24 +241,26 @@ async function generateResults(
   let samples = []
   await Promise.all(
     _.map(_.range(resultMtbNumber), async i => {
-      const siteData = siteDatas[i % siteDatas.length]
-      const sample = Object.assign(
-        {},
-        {
-          externalId: `SMP-TB-${format(new Date(), 'tt')}`,
-          collectedOn: calculateDateForResult(
-            i,
-            resultMtbNumber,
-            millisInMinute
-          ),
-          sampleTypeId: sampleTypeDBSId,
-          originSiteId: siteData.id,
-        }
-      )
+      const siteData = _.sample(siteDatas)
+      if (siteData) {
+        const sample = Object.assign(
+          {},
+          {
+            externalId: `SMP-TB-${format(new Date(), 'tt')}`,
+            collectedOn: calculateDateForResult(
+              i,
+              resultMtbNumber,
+              millisInMinute
+            ),
+            sampleTypeId: sampleTypeDBSId,
+            originSiteId: siteData.id,
+          }
+        )
 
-      sample.id = await knex('Sample').insert(sample)
+        sample.id = await knex('Sample').insert(sample)
 
-      samples.push(sample)
+        samples.push(sample)
+      }
     })
   )
   const {
@@ -378,7 +380,7 @@ async function generateResults(
   // some Ebola samples:
   await Promise.all(
     _.map(_.range(resultEbolaNumber / 2), async i => {
-      const siteData = siteDatas[i % siteDatas.length]
+      const siteData = _.sample(siteDatas)
       const sample = Object.assign(
         {},
         {
@@ -541,7 +543,7 @@ async function generateResults(
   // some HIV VL samples:
   samples = []
   await Promise.each(_.range(resultHivVlNumber / 2), async i => {
-    const siteData = siteDatas[i % siteDatas.length]
+    const siteData = _.sample(siteDatas)
     const sample = Object.assign(
       {},
       {

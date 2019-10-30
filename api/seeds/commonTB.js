@@ -65,14 +65,14 @@ async function updateMGITAssays(
   }
 
   const values = await Promise.all([
-    await resultCategoryToId('Detected'),
-    await resultCategoryToId('NotDetected'),
-    await resultCategoryToId('Success'),
-    await resultCategoryToId('Missing'),
-    await resultCategoryToId('Error'),
-    await resultCategoryToId('Unknown'),
-    await resultCategoryToId('Susceptible'),
-    await resultCategoryToId('Resistant'),
+    resultCategoryToId('Detected'),
+    resultCategoryToId('NotDetected'),
+    resultCategoryToId('Success'),
+    resultCategoryToId('Missing'),
+    resultCategoryToId('Error'),
+    resultCategoryToId('Unknown'),
+    resultCategoryToId('Susceptible'),
+    resultCategoryToId('Resistant'),
   ])
   const resultCategoryId = await knex('ResultCategoryAssay')
     .where({ assayId: assayBdMgitAstId })
