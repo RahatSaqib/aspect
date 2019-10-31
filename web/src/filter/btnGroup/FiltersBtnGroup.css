@@ -6,6 +6,7 @@
 
 .FiltersBtnGroup {
   margin: -var(--margin);
+  align-items: flex-start !important;
 }
 
 .FiltersBtnGroup__Child {
