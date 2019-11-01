@@ -45,42 +45,51 @@ async function createDevicesForAllMissingTypes(
   knex,
   siteDatas,
   partnerOneId,
-  auditFields
+  auditFields,
+  devicesWithSameTypePerPartner = 5,
+  deviceTypesToInsert // it is the array of devicetypes to insert (externalid).
+  // if it's null or empty this function is going to insert all missing types.
 ) {
+  let deviceTypes
   const existingDevicesType = await knex('Device')
     .whereIn('siteId', _.map(siteDatas, 'id'))
     .where('partnerId', partnerOneId)
     .select('Device.deviceTypeId')
     .distinct()
-
-  const deviceTypes = await knex('DeviceType as dt')
-    .whereNotIn('dt.id', _.map(existingDevicesType, 'deviceTypeId'))
-    .select()
+  if (deviceTypesToInsert && deviceTypesToInsert.length > 1) {
+    deviceTypes = await knex('DeviceType as dt')
+      .whereIn('dt.externalId', deviceTypesToInsert)
+      .whereNotIn('dt.id', _.map(existingDevicesType, 'deviceTypeId'))
+      .select()
+  } else {
+    deviceTypes = await knex('DeviceType as dt')
+      .whereNotIn('dt.id', _.map(existingDevicesType, 'deviceTypeId'))
+      .select()
+  }
   const { approved: deviceStatusApproved } = await allDeviceStatusToId()
-  /* const [{ deviceCount }] = await knex('Device')
-    .where('partnerId', partnerOneId)
-    .whereIn('siteId', _.map(siteDatas, 'id'))
-    .countDistinct('deviceTypeId as deviceCount') */
+
   if (deviceTypes.length > 0 && siteDatas.length > 0) {
     let i = 0
     await Promise.each(deviceTypes, async elem => {
-      const siteData = _.sample(siteDatas)
-      const deviceToInsert = Object.assign({}, auditFields, {
-        name: `${siteData.shortName} Router`,
-        shortName: `r${i}`,
-        deviceTypeId: elem.id,
-        deviceStatusId: deviceStatusApproved,
-        partnerId: siteData.partnerId,
-        geographyId: siteData.geographyId,
-        siteId: siteData.id,
-        createdOn: new Date(+now - 3 * i * millisInHour),
-        updatedOn: new Date(+now - i * millisInHour),
-        lastPingOn: new Date(+now - (i * millisInHour) / 3),
-        lastSeenOn: new Date(+now - (i * millisInHour) / 3),
-      })
-      await knex('Device').insert(deviceToInsert)
+      _.each(_.range(devicesWithSameTypePerPartner), async () => {
+        const siteData = _.sample(siteDatas)
+        const deviceToInsert = Object.assign({}, auditFields, {
+          name: `${siteData.shortName} Router`,
+          shortName: `r${i}`,
+          deviceTypeId: elem.id,
+          deviceStatusId: deviceStatusApproved,
+          partnerId: siteData.partnerId,
+          geographyId: siteData.geographyId,
+          siteId: siteData.id,
+          createdOn: new Date(+now - 3 * i * millisInHour),
+          updatedOn: new Date(+now - i * millisInHour),
+          lastPingOn: new Date(+now - (i * millisInHour) / 3),
+          lastSeenOn: new Date(+now - (i * millisInHour) / 3),
+        })
+        await knex('Device').insert(deviceToInsert)
 
-      i += 1
+        i += 1
+      })
     })
   }
 }
@@ -223,7 +232,14 @@ async function generateResults(
     deviceTypes,
     elem => elem.externalId === 'BDMGIT'
   ).id
-  createDevicesForAllMissingTypes(knex, siteDatas, partnerOneId, auditFields)
+  createDevicesForAllMissingTypes(
+    knex,
+    siteDatas,
+    partnerOneId,
+    auditFields,
+    1,
+    ['BDMGIT', 'CepheidGeneXpert', 'GxMtbRif']
+  )
 
   const devicesGeneXpert = await knex('Device')
     .where({ deviceTypeId: deviceTypeGeneXpertId, partnerId: partnerOneId })
