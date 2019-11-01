@@ -5,9 +5,9 @@ const treatmentStatuses = ['OnTreatment', 'AwaitingTreatment', 'NotPossible']
 const millisInHour = 1000 * 60 * 60
 const millisInMinute = 1000 * 60
 const resultTimeFrameInDays = 365
-const resultMtbNumber = 20
-const resultHivVlNumber = 20
-const resultEbolaNumber = 10
+const resultMtbNumber = 10
+const resultHivVlNumber = 10
+const resultEbolaNumber = 5
 const now = new Date()
 const {
   addMilliseconds,
