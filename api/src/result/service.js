@@ -199,6 +199,10 @@ async function getListResults(query, auth, fields = SELECT_LIST_FIELDS) {
   // get data constraints
   const dataConstraints = await getConstraints(auth.credentials)
 
+  if (query.sortCol === 'resultTreatmentStatus') {
+    query = { ...query, sortCol: 'treatmentStatusInfo' }
+  }
+
   const resultQuery = knex('Result as r')
     .innerJoin('Assay as a', 'r.assayId', 'a.id')
     .innerJoin('Device as d', 'r.deviceId', 'd.id')
