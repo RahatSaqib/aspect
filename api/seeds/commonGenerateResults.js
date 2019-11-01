@@ -5,9 +5,9 @@ const treatmentStatuses = ['OnTreatment', 'AwaitingTreatment', 'NotPossible']
 const millisInHour = 1000 * 60 * 60
 const millisInMinute = 1000 * 60
 const resultTimeFrameInDays = 365
-const resultMtbNumber = 10
-const resultHivVlNumber = 10
-const resultEbolaNumber = 5
+const resultMtbNumber = 20
+const resultHivVlNumber = 20
+const resultEbolaNumber = 0
 const now = new Date()
 const {
   addMilliseconds,
@@ -843,11 +843,10 @@ async function normalizeTreatmentStatusDistribution(
     })
   }
 }
-
 async function normalizeTreatmentStatusDistributionByResults(knex, resultsId) {
   if (resultsId.length > 0) {
     const inTreatment = Math.floor(
-      (_.random(50, 60) / 100.0) * resultsId.length
+      (_.random(40, 50) / 100.0) * resultsId.length
     )
     const notPossible = Math.floor(
       (_.random(10, 20) / 100.0) * resultsId.length
