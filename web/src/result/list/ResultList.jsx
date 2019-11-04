@@ -127,7 +127,7 @@ const searchSanitizer = makeSearchParamsSanitizer({
     'patientId',
     'resultText',
     'resultWorkflowStatus',
-    'resultTreatmentStatus',
+    'treatmentStatusInfo',
     /* --- table.extraColumns BEGIN --- */
     'resultCategory1Name',
     'resultCategory2Name',
@@ -344,7 +344,7 @@ export const ResultList = ({
                 hiddenOn: 'sm',
               },
               {
-                key: 'resultTreatmentStatus',
+                key: 'treatmentStatusInfo',
                 label: intl.formatMessage(messages.resultTreatmentStatus),
                 sortable: true,
                 hiddenOn: 'sm',
