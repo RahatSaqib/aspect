@@ -296,8 +296,8 @@ async function generateResults(
   let ensureResultIds = [acknowledged, validated, deliverable]
   const possitiveMTBResults = []
   await Promise.each(_.range(resultMtbNumber), async i => {
-    const device = devicesGeneXpert[i % devicesGeneXpert.length]
     if (devicesGeneXpert.length === 0) return
+    const device = devicesGeneXpert[i % devicesGeneXpert.length]
     const siteData = siteDatas.find(site => site.id === device.siteId)
     const sample = samples[i % samples.length]
     const randomDate = subDays(new Date(), _.random(5))
