@@ -1,0 +1,206 @@
+{
+	"EMB": {
+		"list": false,
+		"order": 0,
+		"type": "object",
+		"title": "EMB",
+		"properties": {
+			"sirStatus": {
+				"title": "SIR Status",
+				"type": "string"
+			},
+			"growthUnits": {
+				"title": "Growth Units",
+				"type": "number"
+			},
+			"antibioticConcentration": {
+				"title": "Concentration",
+				"type": "number"
+			},
+			"antibioticConcentrationUnits": {
+				"title": "Units",
+				"type": "string"
+			}
+		}
+	},
+	"RIF": {
+		"list": false,
+		"order": 1,
+		"type": "object",
+		"title": "RIF",
+		"properties": {
+			"sirStatus": {
+				"title": "SIR Status",
+				"type": "string"
+			},
+			"growthUnits": {
+				"title": "Growth Units",
+				"type": "number"
+			},
+			"antibioticConcentration": {
+				"title": "Concentration",
+				"type": "number"
+			},
+			"antibioticConcentrationUnits": {
+				"title": "Units",
+				"type": "string"
+			}
+		}
+	},
+	"S": {
+		"list": false,
+		"order": 2,
+		"type": "object",
+		"title": "S",
+		"properties": {
+			"sirStatus": {
+				"title": "SIR Status",
+				"type": "string"
+			},
+			"growthUnits": {
+				"title": "Growth Units",
+				"type": "number"
+			},
+			"antibioticConcentration": {
+				"title": "Concentration",
+				"type": "number"
+			},
+			"antibioticConcentrationUnits": {
+				"title": "Units",
+				"type": "string"
+			}
+		}
+	},
+	"EM": {
+		"list": false,
+		"order": 3,
+		"type": "object",
+		"title": "EM",
+		"properties": {
+			"sirStatus": {
+				"title": "SIR Status",
+				"type": "string"
+			},
+			"growthUnits": {
+				"title": "Growth Units",
+				"type": "number"
+			},
+			"antibioticConcentration": {
+				"title": "Concentration",
+				"type": "number"
+			},
+			"antibioticConcentrationUnits": {
+				"title": "Units",
+				"type": "string"
+			}
+		}
+	},
+	"RA": {
+		"list": false,
+		"order": 4,
+		"type": "object",
+		"title": "RA",
+		"properties": {
+			"sirStatus": {
+				"title": "SIR Status",
+				"type": "string"
+			},
+			"growthUnits": {
+				"title": "Growth Units",
+				"type": "number"
+			},
+			"antibioticConcentration": {
+				"title": "Concentration",
+				"type": "number"
+			},
+			"antibioticConcentrationUnits": {
+				"title": "Units",
+				"type": "string"
+			}
+		}
+	},
+	"INH": {
+		"list": false,
+		"order": 5,
+		"type": "object",
+		"title": "INH",
+		"properties": {
+			"sirStatus": {
+				"title": "SIR Status",
+				"type": "string"
+			},
+			"growthUnits": {
+				"title": "Growth Units",
+				"type": "number"
+			},
+			"antibioticConcentration": {
+				"title": "Concentration",
+				"type": "number"
+			},
+			"antibioticConcentrationUnits": {
+				"title": "Units",
+				"type": "string"
+			}
+		}
+	},
+	"protocolLength": {
+		"list": false,
+		"order": 6,
+		"type": "number",
+		"title": "Protocol Length"
+	},
+	"instrumentLocation": {
+		"list": false,
+		"order": 7,
+		"type": "string",
+		"title": "Specimen Instrument Location"
+	},
+	"isolateNumber": {
+		"list": false,
+		"order": 8,
+		"type": "number",
+		"title": "Isolate Number"
+	},
+	"senderName": {
+		"list": false,
+		"order": 9,
+		"type": "string",
+		"title": "Sender Name"
+	},
+	"instrumentType": {
+		"list": false,
+		"order": 10,
+		"type": "string",
+		"title": "Instrument Type"
+	},
+	"instrumentNumber": {
+		"list": false,
+		"order": 11,
+		"type": "string",
+		"title": "Instrument Number"
+	},
+	"versionNumber": {
+		"list": false,
+		"order": 12,
+		"type": "string",
+		"title": "Version Number"
+	},
+	"testId": {
+		"list": false,
+		"order": 13,
+		"type": "string",
+		"title": "Test ID"
+	},
+	"resultTypeCode": {
+		"list": false,
+		"order": 14,
+		"type": "string",
+		"title": "Result Type Code"
+	},
+	"preliminaryFinalStatus": {
+		"list": false,
+		"order": 15,
+		"type": "string",
+		"title": "Preliminary/Final"
+	}
+}
