@@ -20,6 +20,9 @@ const styles = {
     // and CardActions will be at the bottom
     justifyContent: 'space-between',
   },
+  formatCard: {
+    boxShadow: 'none',
+  },
   actions: {
     display: 'flex',
     justifyContent: 'space-between',
@@ -31,7 +34,7 @@ const reportCardStyleless = ({ classes, title, description, linkUrl }) => {
   const downloadFunc = () => (window.location.href = linkUrl)
   return (
     <Grid component={Card} xs className={classes.card}>
-      <Card>
+      <Card className={classes.formatCard}>
         <CardActionArea onClick={downloadFunc}>
           <CardContent>
             <Typography gutterBottom variant="h5" component="h4">

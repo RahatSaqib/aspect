@@ -27,6 +27,7 @@ const {
   deleteResultFollowUp,
   addResultNote,
 } = require('./service')
+const { getPatientResultsDetails } = require('./patientResultDetailService')
 const { getResultsReport } = require('./serviceReport')
 const {
   validateAllGeographyFilterParams,
@@ -1040,6 +1041,158 @@ const routes = [
         }),
       },
     },
+  },
+  {
+    method: 'GET',
+    path: '/result/patientresultsdetails',
+    handler: asyncHandler(getPatientResultsDetails),
+    config: Object.assign({
+      description: 'Get the patient results with details',
+      auth: { scope: ['patient:view', 'patient:edit'] },
+      validate: {
+        query: {
+          patientId: Joi.string()
+            .required()
+            .description('patient Id'),
+        },
+      },
+      response: {
+        options: {
+          allowUnknown: false,
+        },
+        schema: Joi.object().keys({
+          ok: Joi.bool()
+            .required()
+            .description('False if there was some sort of error'),
+          data: Joi.array()
+            .items(
+              Joi.object().keys({
+                resultId: Joi.number()
+                  .required()
+                  .description('The id of the result'),
+                sampleCollectedOn: Joi.date()
+                  .iso()
+                  .required()
+                  .description(
+                    'The date when the sample was taken in iso format'
+                  ),
+                originalSiteName: Joi.string()
+                  .required()
+                  .description(
+                    'The name of the place where the sample was taken'
+                  ),
+                sampleId: Joi.string()
+                  .required()
+                  .description('The sample id'),
+                resultEndedOn: Joi.date()
+                  .iso()
+                  .required()
+                  .description('The result ended date in iso format'),
+                assayAbbreviation: Joi.string()
+                  .required()
+                  .description('The assay abbreviation name'),
+                assayId: Joi.string()
+                  .required()
+                  .description('The assay id'),
+                resultData: Joi.object()
+                  .required()
+                  .description('The result data'),
+                resultSiteName: Joi.string()
+                  .required()
+                  .description('The result site name'),
+                resultNotes: Joi.string()
+                  .required()
+                  .allow(null)
+                  .description('The result notes'),
+                resultStatus: Joi.string()
+                  .required()
+                  .allow(null)
+                  .description('The result status'),
+                resultStatusLog: Joi.date()
+                  .iso()
+                  .required()
+                  .allow(null)
+                  .description('The Result status log date'),
+                resultTreatmentStatusLogDate: Joi.date()
+                  .iso()
+                  .required()
+                  .allow(null)
+                  .description(
+                    'The result Treatment status date in iso format'
+                  ),
+                resultTreatmentId: Joi.string()
+                  .required()
+                  .allow(null)
+                  .description('The result treatment status id'),
+                resultTreatmentName: Joi.string()
+                  .required()
+                  .allow(null)
+                  .description('The result treatment status name'),
+                patientData: Joi.object()
+                  .allow(null)
+                  .description('Patient data'),
+                type: Joi.string()
+                  .required()
+                  .description('The type of the milestone'),
+                sampleType: Joi.string()
+                  .required()
+                  .allow('', null)
+                  .description('The sample type'),
+                date: Joi.date()
+                  .iso()
+                  .required()
+                  .allow(null)
+                  .description('The date of the milestone'),
+                description: Joi.string()
+                  .optional()
+                  .allow('', null)
+                  .description('description of the milestone'),
+                patientDataSchema: Joi.object()
+                  .required()
+                  .allow(null)
+                  .description('The Patient Schema'),
+                followUpTypeName: Joi.string()
+                  .optional()
+                  .allow(null)
+                  .description('The follow up type name'),
+                followUpName: Joi.string()
+                  .optional()
+                  .allow(null)
+                  .description('The follow up name'),
+                resultCategory1: Joi.string()
+                  .required()
+                  .description('The result category 1'),
+                resultCategory2: Joi.string()
+                  .required()
+                  .allow(null)
+                  .description('The result category 2'),
+                followUpCreatedOn: Joi.date()
+                  .iso()
+                  .optional()
+                  .allow(null)
+                  .description(
+                    'The follow up(Treatment/outcome) creation date in iso format'
+                  ),
+                followUpDate: Joi.date()
+                  .iso()
+                  .optional()
+                  .allow(null)
+                  .description('follow up date'),
+                resultFollowUpId: Joi.number()
+                  .optional()
+                  .allow(null)
+                  .description('the follow up id'),
+                followUpTypeExternalId: Joi.string()
+                  .optional()
+                  .allow(null)
+                  .description('the follow up type id'),
+              })
+            )
+            .required()
+            .description('The patient results'),
+        }),
+      },
+    }),
   },
 ]
 

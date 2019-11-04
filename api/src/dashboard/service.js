@@ -680,7 +680,7 @@ async function siteDashboard(request) {
 
   const allDeviceOnlineBySiteId = _.mapValues(
     _.groupBy(deviceList, 'siteId'),
-    list => _.every(list, { offline: 0 })
+    list => _.every(list, { offline: false })
   )
   const allDeviceOnlineSiteIds = _.reduce(
     allDeviceOnlineBySiteId,
@@ -712,6 +712,16 @@ async function siteDashboard(request) {
     []
   )
 
+  const anyDeviceWithIssueBySiteId = _.mapValues(
+    _.groupBy(_.uniqBy(deviceList, 'siteId'), 'siteId'),
+    list => _.every(list, { fullyOperational: false })
+  )
+
+  const sitesWithIssueSiteIds = _.sortedUniq(
+    _.reduce(anyDeviceWithIssueBySiteId, siteIdAccumulator, []),
+    'siteId'
+  )
+
   const siteSummaryMap = {
     onlineNow: {
       siteIds: allDeviceOnlineSiteIds,
@@ -737,11 +747,11 @@ async function siteDashboard(request) {
       ],
     },
     deviceManagement: {
-      siteIds: [undefined /* TODO: ASP-520 */],
+      siteIds: sitesWithIssueSiteIds,
       items: [
         {
           key: 0,
-          count: 1 /* TODO: ASP-520 */,
+          count: sitesWithIssueSiteIds.length /* TODO: ASP-520 */,
           titleI18nKey: i18nKeys.sitesTitle,
           subI18nKey: i18nKeys.withDeviceIssues,
         },

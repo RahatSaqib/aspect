@@ -53,7 +53,7 @@ const messages = defineMessages({
   },
   sampleOriginSiteName: {
     id: 'pages.ResultList.sampleOriginSiteName',
-    defaultMessage: 'Sample Origin Site',
+    defaultMessage: 'Sample Collection Site',
   },
   sampleId: {
     id: 'pages.ResultList.sampleId',

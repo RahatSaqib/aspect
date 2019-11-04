@@ -10,7 +10,11 @@ const middleware = [thunk, idleMiddleware]
 // our redux store with dev tools
 const createStoreWithDevTools = compose(
   applyMiddleware(...middleware),
-  window.devToolsExtension ? window.devToolsExtension() : f => f
+  // eslint-disable-next-line no-underscore-dangle
+  window.__REDUX_DEVTOOLS_EXTENSION__
+    ? // eslint-disable-next-line no-underscore-dangle
+      window.__REDUX_DEVTOOLS_EXTENSION__()
+    : f => f
 )(createStore)
 
 const store = createStoreWithDevTools(rootReducer)
