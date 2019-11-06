@@ -12,26 +12,26 @@ async function seed(knex) {
   const now = new Date()
   const [adminId] = await knex('User').insert({
     name: 'admin',
-    password: bcrypt.hashSync('bC2B04ABra', saltRounds),
+    password: bcrypt.hashSync('xwxg6dhiLU', saltRounds),
     approved: 1,
     createdOn: now,
     lockedOut: 0,
     failedPasswordAttempts: 0,
   })
   const [partnerId] = await knex('Partner').insert({
-    name: 'Nigeria',
+    name: 'Pakistan',
     partnerTypeId: await partnerTypeToId('Operating'),
     deviceLogHistoryDays: 365,
     maxDaysDeviceOffline: 7,
     maxDaysDeviceNoResults: 14,
-    serverUrl: 'https://nigeria.aspect.id',
+    serverUrl: 'https://philippines.aspect.id',
   })
   await commonUpserts(
     knex,
     partnerId,
     adminId,
     geography,
-    'NG',
-    'q5zh29mw0a01zkqzq1yg'
+    'PK',
+    'jdk5ctyu8jhwimkvfc99'
   )
 }
