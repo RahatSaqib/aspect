@@ -70,6 +70,17 @@ function calculateDateForResult(
   )
 }
 
+function getRandomTBPatientData(patientNumber, patientData) {
+  const tBpatientData = patientData[_.random(patientNumber)]
+  tBpatientData.hivStatus = _.sample([
+    'HIV positive',
+    'HIV negative',
+    'HIV unknow',
+    null,
+  ])
+  return tBpatientData
+}
+
 async function seed(knex) {
   // Skip this seed file if we already have an admin user
   const existingAdminUser = await knex('User')
@@ -4609,7 +4620,9 @@ async function seed(knex) {
           moduleName: 'Module A',
           moduleSerial: `M-1234-${i % 4}`,
           researchId: `R-ID-${i}`,
-          patientData: JSON.stringify(patients[_.random(patientNumber)]),
+          patientData: JSON.stringify(
+            getRandomTBPatientData(patientNumber, patients)
+          ),
           senderVersion: '4.6b',
           senderOperator: 'Marsha',
           notes: 'This is a test... result',
@@ -4692,7 +4705,9 @@ async function seed(knex) {
                 moduleName: 'Module A',
                 moduleSerial: `M-1234-${i % 4}`,
                 researchId: `R-ID-${i}`,
-                patientData: JSON.stringify(patients[_.random(patientNumber)]),
+                patientData: JSON.stringify(
+                  getRandomTBPatientData(patientNumber, patients)
+                ),
                 senderVersion: '4.6b',
                 senderOperator: 'Marsha',
                 notes: 'This is a test... result',

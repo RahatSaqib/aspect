@@ -217,6 +217,12 @@ describe('DataCategoryLow Issues Endpoint', () => {
 
           // get sample patient
           const patient = patients[_.random(totalPatients - 1)]
+          patient.hivStatus = _.sample([
+            'HIV positive',
+            'HIV negative',
+            'HIV unknow',
+            null,
+          ])
 
           // set values for all categories
           dataCategories.forEach(category => {
