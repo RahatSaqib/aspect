@@ -1,0 +1,456 @@
+{
+	"countries": [
+		{
+			"abbreviation": "PH", 
+			"name": "Philippines", 
+			"a3": "PHL", 
+			"culture": "en-US", 
+			"countryCode": "63", 
+			"stateLabel": "Provinces", 
+			"lgaLabel": "Districts", 
+			"timezone": "Taipei Standard Time", 
+			"portNumber": 3017, 
+			"exportColumns": "DeploymentDescription|TestEndedOn|AssayName|AssayVersion|User|Result1|Result2|ReagentLotID|ExpirationDate|CartridgeSerial|ModuleSerial|SoftwareVersion|ErrorCode|ErrorCategory|ErrorDescription|SampleId|Notes",
+			"inventoryDaysThreshold": 21,
+			"monthStartsOnDay": 1, 
+			"states": [
+				{
+					"name": "Ilocos Region (Region I)", 
+					"lgas": [
+						{
+							"name": "Ilocos Norte"
+						},
+						{
+							"name": "Ilocos Sur"
+						},
+						{
+							"name": "La Union"
+						},
+						{
+							"name": "Pangasinan"
+						}
+					]
+				},
+				{
+					"name": "Cagayan Valley (Region II)",
+					"lgas": [
+						{
+							"name": "Batanes"
+						},
+						{
+							"name": "Cagayan"
+						},
+						{
+							"name": "Isabela"
+						},
+						{
+							"name": "Nueva Vizcaya"
+						},
+						{
+							"name": "Quirino"
+						}
+					]
+				},
+				{
+					"name": "Central Luzon (Region III)",
+					"lgas": [
+						{
+							"name": "Bataan"
+						},
+						{
+							"name": "Bulacan"
+						},
+						{
+							"name": "Nueva Ecija"
+						},
+						{
+							"name": "Pampanga"
+						},
+						{
+							"name": "Angeles City"
+						},
+						{
+							"name": "Tarlac"
+						},
+						{
+							"name": "Zambales"
+						},
+						{
+							"name": "Olongapo City"
+						},
+						{
+							"name": "Aurora"
+						}
+					]
+				},
+				{
+					"name": "Calabarzon (Region IV-A)",
+					"lgas": [
+						{
+							"name": "Batangas"
+						},
+						{
+							"name": "Cavite"
+						},
+						{
+							"name": "Laguna"
+						},
+						{
+							"name": "Quezon"
+						},
+						{
+							"name": "Lucena City"
+						},
+						{
+							"name": "Rizal"
+						}
+					]
+				},
+				{
+					"name": "Bicol Region (Region V)",
+					"lgas": [
+						{
+							"name": "Albay"
+						},
+						{
+							"name": "Camarines Norte"
+						},
+						{
+							"name": "Camarines Sur"
+						},
+						{
+							"name": "Catanduanes"
+						},
+						{
+							"name": "Masbate"
+						},
+						{
+							"name": "Sorsogon"
+						}
+					]
+				},
+				{
+					"name": "Western Visayas (Region VI)",
+					"lgas": [
+						{
+							"name": "Aklan"
+						},
+						{
+							"name": "Antique"
+						},
+						{
+							"name": "Capiz"
+						},
+						{
+							"name": "Iloilo"
+						},
+						{
+							"name": "Iloilo City"
+						},
+						{
+							"name": "Negros Occidental"
+						},
+						{
+							"name": "Bacolod City"
+						},
+						{
+							"name": "Guimaras"
+						}
+					]
+				},
+				{
+					"name": "Central Visayas (Region VII)",
+					"lgas": [
+						{
+							"name": "Bohol"
+						},
+						{
+							"name": "Cebu"
+						},
+						{
+							"name": "Cebu City"
+						},
+						{
+							"name": "Lapu-Lapu City (Opon)"
+						},
+						{
+							"name": "Mandaue City"
+						},
+						{
+							"name": "Negros Oriental"
+						},
+						{
+							"name": "Siquijor"
+						}
+					]
+				},
+				{
+					"name": "Eastern Visayas (Region VIII)",
+					"lgas": [
+						{
+							"name": "Eastern Samar"
+						},
+						{
+							"name": "Leyte"
+						},
+						{
+							"name": "Northern Samar"
+						},
+						{
+							"name": "Samar (Western Samar)"
+						},
+						{
+							"name": "Southern Leyte"
+						},
+						{
+							"name": "Biliran"
+						},
+						{
+							"name": "Tacloban City"
+						}
+					]
+				},
+				{
+					"name": "Zamboanga Peninsula (Region IX)",
+					"lgas": [
+						{
+							"name": "Zamboanga del Norte"
+						},
+						{
+							"name": "Zamboanga del Sur"
+						},
+						{
+							"name": "Zamboanga City"
+						},
+						{
+							"name": "Zamboanga del Sibugay"
+						},
+						{
+							"name": "City of Isabela (not a province)"
+						}
+					]
+				},
+				{
+					"name": "Northern Mindanao",
+					"lgas": [
+						{
+							"name": "Bukidnon"
+						},
+						{
+							"name": "Camiguin"
+						},
+						{
+							"name": "Lanao del Norte"
+						},
+						{
+							"name": "Misamis Occidental"
+						},
+						{
+							"name": "Misamis Oriental"
+						},
+						{
+							"name": "Iligan City"
+						},
+						{
+							"name": "Cagayan de Oro city"
+						}
+					]
+				},
+				{
+					"name": "Davao Region (Region XI)",
+					"lgas": [
+						{
+							"name": "Davao City"
+						},
+						{
+							"name": "Davao del Norte"
+						},
+						{
+							"name": "Davao del Sur"
+						},
+						{
+							"name": "Davao Oriental"
+						},
+						{
+							"name": "Compostela Valley"
+						},
+						{
+							"name": "Davao Occidental"
+						}
+					]
+				},
+				{
+					"name": "Soccsksargen (Region XII)",
+					"lgas": [
+						{
+							"name": "Cotabato (North Cotabato)"
+						},
+						{
+							"name": "South Cotabato"
+						},
+						{
+							"name": "Sultan Kudarat"
+						},
+						{
+							"name": "Sarangani"
+						},
+						{
+							"name": "General Santos City (Dadiangas)"
+						},
+						{
+							"name": "Cotabato City"
+						}
+					]
+				},
+				{
+					"name": "National Capital Region (NCR)",
+					"lgas": [
+						{
+							"name": "City of Manila"
+						},
+						{
+							"name": "Mandaluyong City"
+						},
+						{
+							"name": "Marikina City"
+						},
+						{
+							"name": "Pasig City"
+						},
+						{
+							"name": "Quezon City"
+						},
+						{
+							"name": "San Juan City"
+						},
+						{
+							"name": "Caloocan City"
+						},
+						{
+							"name": "Malabon City"
+						},
+						{
+							"name": "Navotas City"
+						},
+						{
+							"name": "Valenzuela City"
+						},
+						{
+							"name": "Las Pinas City"
+						},
+						{
+							"name": "Makati City"
+						},
+						{
+							"name": "Muntinlupa City"
+						},
+						{
+							"name": "Parañaque City"
+						},
+						{
+							"name": "Pasay City"
+						},
+						{
+							"name": "Taguig City"
+						},
+						{
+							"name": "Pateros"
+						}
+					]
+				},
+				{
+					"name": "Cordillera Administrative Region (CAR)",
+					"lgas": [
+						{
+							"name": "Abra"
+						},
+						{
+							"name": "Benguet"
+						},
+						{
+							"name": "Baguio City"
+						},
+						{
+							"name": "Ifugao"
+						},
+						{
+							"name": "Kalinga"
+						},
+						{
+							"name": "Mountain Province"
+						},
+						{
+							"name": "Apayao"
+						}
+					]
+				},
+				{
+					"name": "Autonomous Region of Muslim Mindanao (ARMM)",
+					"lgas": [
+						{
+							"name": "Basilan"
+						},
+						{
+							"name": "Lanao del Sur"
+						},
+						{
+							"name": "Maguindanao"
+						},
+						{
+							"name": "Sulu"
+						},
+						{
+							"name": "Tami-Tawi"
+						}
+					]
+				},
+				{
+					"name": "Caraga (Region XIII)",
+					"lgas": [
+						{
+							"name": "Agusan del Norte"
+						},
+						{
+							"name": "Agusan del Sur"
+						},
+						{
+							"name": "Surigao del Norte"
+						},
+						{
+							"name": "Surigao del Sur"
+						},
+						{
+							"name": "Dinagat Islands"
+						},
+						{
+							"name": "Butuan City"
+						}
+					]
+				},
+				{
+					"name": "Mimaropa Region",
+					"lgas": [
+						{
+							"name": "Marinduque"
+						},
+						{
+							"name": "Occidental Mindoro"
+						},
+						{
+							"name": "Oriental Mindoro"
+						},
+						{
+							"name": "Palawan"
+						},
+						{
+							"name": "Puerto Princesa City"
+						},
+						{
+							"name": "Romblon"
+						}					
+					]
+				}
+			]
+		}
+	]
+}
