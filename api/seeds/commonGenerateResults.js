@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 const _ = require('lodash')
 const Promise = require('bluebird')
 
@@ -29,6 +30,8 @@ const {
   allDeviceStatusToId,
   resultTreatmentStatusToId,
 } = require('../src/shared/dictionary')
+
+const { getRandomTBPatientData } = require('./commonTbresults')
 
 function calculateDateForResult(
   currentResult,
@@ -350,7 +353,9 @@ async function generateResults(
       moduleName: 'Module A',
       moduleSerial: `M-1234-${i % 4}`,
       researchId: `R-ID-${i}`,
-      patientData: JSON.stringify(patients[_.random(patientNumber)]),
+      patientData: JSON.stringify(
+        getRandomTBPatientData(patientNumber, patients)
+      ),
       senderVersion: '4.6b',
       senderOperator: 'Marsha',
       notes: 'This is a test... result',

@@ -38,6 +38,7 @@ const patients = require('./fixtures/patients.json')
 const dashboardWidget = require('./fixtures/dashboardWidget.json')
 const { errorCodes } = require('./fixtures/errorCodes.js')
 const { updateMGITAssays } = require('../commonTB')
+const { getRandomTBPatientData } = require('../commonTbresults')
 
 const millisInHour = 1000 * 60 * 60
 const millisInMinute = 1000 * 60
@@ -3616,7 +3617,7 @@ async function seed(knex) {
   })
 
   // define patientData object
-  const geneXpertPatientDataSchema = JSON.stringify({
+  const patientData = {
     id: {
       title: 'Patient ID',
       type: 'string',
@@ -3652,11 +3653,6 @@ async function seed(knex) {
       type: 'string',
       order: 6,
     },
-    hivStatus: {
-      title: 'HIV Status',
-      type: 'string',
-      order: 7,
-    },
     age: {
       title: 'Age (in years)',
       type: 'number',
@@ -3672,6 +3668,18 @@ async function seed(knex) {
       type: 'string',
       order: 10,
     },
+  }
+  const geneXpertPatientDataSchema = JSON.stringify({
+    ...patientData,
+  })
+
+  const geneXpertTBPatientDataSchema = JSON.stringify({
+    ...patientData,
+    hivStatus: {
+      title: 'HIV Status',
+      type: 'string',
+      order: 7,
+    },
   })
 
   const [assayGeneXpertMtbRifId] = await knex('Assay').insert({
@@ -3686,7 +3694,7 @@ async function seed(knex) {
     resultCategory2Label: 'Rif',
     resultCategory2i18nKey: 'resultCategoryRif',
     resultDataSchema: geneXpertResultDataSchema,
-    patientDataSchema: geneXpertPatientDataSchema,
+    patientDataSchema: geneXpertTBPatientDataSchema,
     abbreviation: 'GX MTB/Rif',
   })
 
@@ -3702,7 +3710,7 @@ async function seed(knex) {
     resultCategory2Label: 'Rif',
     resultCategory2i18nKey: 'resultCategoryRif',
     resultDataSchema: geneXpertResultDataSchema,
-    patientDataSchema: geneXpertPatientDataSchema,
+    patientDataSchema: geneXpertTBPatientDataSchema,
     abbreviation: 'GX MTB/ULTRA',
   })
 
@@ -4602,7 +4610,9 @@ async function seed(knex) {
           moduleName: 'Module A',
           moduleSerial: `M-1234-${i % 4}`,
           researchId: `R-ID-${i}`,
-          patientData: JSON.stringify(patients[_.random(patientNumber)]),
+          patientData: JSON.stringify(
+            getRandomTBPatientData(patientNumber, patients)
+          ),
           senderVersion: '4.6b',
           senderOperator: 'Marsha',
           notes: 'This is a test... result',
@@ -4685,7 +4695,9 @@ async function seed(knex) {
                 moduleName: 'Module A',
                 moduleSerial: `M-1234-${i % 4}`,
                 researchId: `R-ID-${i}`,
-                patientData: JSON.stringify(patients[_.random(patientNumber)]),
+                patientData: JSON.stringify(
+                  getRandomTBPatientData(patientNumber, patients)
+                ),
                 senderVersion: '4.6b',
                 senderOperator: 'Marsha',
                 notes: 'This is a test... result',
