@@ -5094,18 +5094,98 @@ async function seed(knex) {
       })
     )
 
+    possibleResults = [
+      {
+        resultText: 'HCV-1 DETECTED {0} copies/mL (log {1})',
+        category1: resultCategoryMoreThan1000,
+        minLikelihood: 0,
+        maxLikelihood: 40,
+      },
+      {
+        resultText: 'HCV-1 DETECTED {0} copies/mL (log {1})',
+        category1: resultCategoryLessThan1000,
+        minLikelihood: 41,
+        maxLikelihood: 80,
+      },
+      {
+        resultText: 'HCV-1 NOT DETECTED',
+        category1: resultCategoryNotDetectedId,
+        minLikelihood: 81,
+        maxLikelihood: 90,
+      },
+      {
+        resultText: 'No Result',
+        category1: resultCategoryNoResultId,
+        minLikelihood: 91,
+        maxLikelihood: 93,
+      },
+      {
+        resultText: 'Error',
+        category1: resultCategoryErrorId,
+        minLikelihood: 94,
+        maxLikelihood: 97,
+      },
+      {
+        resultText: 'Invalid',
+        category1: resultCategoryInvalidId,
+        minLikelihood: 98,
+        maxLikelihood: 100,
+      },
+    ]
+
+    resultData = {
+      probes: {
+        gpCt: 25.4,
+        gpEndPt: 558.0,
+        cicCt: 23.9,
+        cicEndPt: 289.0,
+        sacCt: 33.8,
+        sacEndPt: 650.0,
+        npCt: 12.2,
+        npEndPt: null,
+        qc1Ct: 0.32,
+        qc1Endpt: 0,
+        qc2Ct: 11.4,
+        qc2Endpt: 0.5,
+      },
+    }
+
     await Promise.each(_.range(resultHcvNumber), async i => {
       const device = devicesGeneXpert[i % devicesGeneXpert.length]
       const siteData = siteDatas.find(site => site.id === device.siteId)
       const sample = samples[i % samples.length]
       const randomDate = calculateDateForResult(i, resultHcvNumber, 6000)
 
+      const rnd = _.random(0, 100)
+      const result = _.find(
+        possibleResults,
+        r => rnd >= r.minLikelihood && rnd <= r.maxLikelihood
+      )
+
+      let copies = 0
+      let log = 0
+      if (result === possibleResults[0]) {
+        copies = _.random(1001, 1000000)
+        log = _.round(_.random(0.1, 9.9), 2)
+      } else if (result === possibleResults[1]) {
+        copies = _.random(50, 1000)
+        log = _.round(_.random(0.1, 9.9), 2)
+      } else {
+        copies = null
+        log = null
+      }
+
+      resultData.copies = copies
+      resultData.log = log
+      resultData.resultText = result.resultText
+        .replace('{0}', copies)
+        .replace('{1}', log)
+
       let j = 0
       await Promise.all(
         _.map(possibleResults, async result => {
           j += 1
           if (_.random(5) === 0) {
-            resultData.resultText = result.resultText
             const resultId = await knex('Result').insert(
               Object.assign({}, auditFields, {
                 externalId: `UQHCV-${i}-${j}`,
