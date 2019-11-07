@@ -261,6 +261,90 @@ function addConstraints(queryBuilder, constraints, aliases) {
   }
 }
 
+function addConstraintsResults(queryBuilder, constraints, aliases) {
+  const { geography, site, result: resultAlias } = aliases
+  const {
+    device,
+    sample,
+    person,
+    showUnapprovedDevices = false,
+    jobFunction,
+    allowAdminThrough = false,
+  } = aliases
+
+  if (_.isEmpty(constraints)) {
+    queryBuilder.whereRaw('0 = 1')
+    return
+  }
+
+  // Partner, country, and constraints are ANDed
+  if (constraints.partner) {
+    queryBuilder.where(function() {
+      this.whereNull(`${resultAlias}.partnerId`).orWhere(
+        `${resultAlias}.partnerId`,
+        constraints.partner.id
+      )
+    })
+  }
+
+  if (constraints.country) {
+    queryBuilder.where(`${resultAlias}.countryId`, constraints.country.id)
+  }
+  if (person && constraints.person && !allowAdminThrough) {
+    queryBuilder.where({ [`${person}.personId`]: constraints.person.id })
+  }
+
+  if (device && !showUnapprovedDevices) {
+    queryBuilder.leftOuterJoin(
+      `DeviceStatus as deviceStatus`,
+      `${device}.deviceStatusId`,
+      `deviceStatus.id`
+    )
+    queryBuilder.where({ [`deviceStatus.token`]: 'approved' })
+  }
+
+  // data filter constraints are ORed
+  if (!_.isEmpty(_.get(constraints, '$or'))) {
+    const getBaseProps = (queryBuilder, constraint) => ({
+      queryBuilder,
+      jobFunctionAlias: jobFunction,
+      jobFunctionConstraint: constraint.jobFunction,
+      personAlias: person,
+      personConstraint: constraint.person,
+      allowAdminThrough,
+    })
+    queryBuilder.where(function() {
+      for (const constraint of constraints.$or) {
+        addConstraintWithJobFunction({
+          ...getBaseProps(this, constraint),
+          alias: geography,
+          constraint: constraint.geography,
+        })
+        addConstraintWithJobFunction({
+          ...getBaseProps(this, constraint),
+          alias: site,
+          constraint: constraint.site,
+        })
+        addConstraintWithJobFunction({
+          ...getBaseProps(this, constraint),
+          alias: device,
+          constraint: constraint.device,
+        })
+        addConstraintWithJobFunction({
+          ...getBaseProps(this, constraint),
+          alias: sample,
+          constraint: constraint.sample,
+        })
+        addConstraintWithJobFunction({
+          ...getBaseProps(this, constraint),
+          alias: person,
+          constraint: constraint.person,
+        })
+      }
+    })
+  }
+}
+
 function addConstraintWithJobFunction({
   queryBuilder,
   alias,
@@ -335,6 +419,7 @@ function canEditInventories(auth) {
 }
 
 module.exports = {
+  addConstraintsResults,
   getConstraints,
   getJobConstraints,
   addConstraints,
