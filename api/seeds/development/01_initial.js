@@ -38,6 +38,7 @@ const patients = require('./fixtures/patients.json')
 const dashboardWidget = require('./fixtures/dashboardWidget.json')
 const { errorCodes } = require('./fixtures/errorCodes.js')
 const { updateMGITAssays } = require('../commonTB')
+const { getRandomTBPatientData } = require('../commonTbresults')
 
 const millisInHour = 1000 * 60 * 60
 const millisInMinute = 1000 * 60
@@ -68,17 +69,6 @@ function calculateDateForResult(
     subDays(now, daysToSubtract),
     _.random(randomMillisToAdd)
   )
-}
-
-function getRandomTBPatientData(patientNumber, patientData) {
-  const tBpatientData = patientData[_.random(patientNumber)]
-  tBpatientData.hivStatus = _.sample([
-    'HIV positive',
-    'HIV negative',
-    'HIV unknow',
-    null,
-  ])
-  return tBpatientData
 }
 
 async function seed(knex) {

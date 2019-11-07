@@ -31,6 +31,8 @@ const {
   resultTreatmentStatusToId,
 } = require('../src/shared/dictionary')
 
+const { getRandomTBPatientData } = require('./commonTbresults')
+
 function calculateDateForResult(
   currentResult,
   totalResults,
@@ -44,17 +46,6 @@ function calculateDateForResult(
     subDays(now, daysToSubtract),
     _.random(randomMillisToAdd)
   )
-}
-
-function getRandomTBPatientData(patientNumber, patientData) {
-  const tBpatientData = patientData[_.random(patientNumber)]
-  tBpatientData.hivStatus = _.sample([
-    'HIV positive',
-    'HIV negative',
-    'HIV unknow',
-    null,
-  ])
-  return tBpatientData
 }
 
 async function createDevicesForAllMissingTypes(

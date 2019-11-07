@@ -29,6 +29,7 @@ const {
   sampleTypeToId,
 } = require('../../src/shared/dictionary')
 const patients = require('../../seeds/test/fixtures/patients.json')
+const { getRandomTBPatientData } = require('../../seeds/commonTbresults')
 
 const totalPatients = patients.length
 
@@ -216,13 +217,7 @@ describe('DataCategoryLow Issues Endpoint', () => {
           const sample = samples[i % samples.length]
 
           // get sample patient
-          const patient = patients[_.random(totalPatients - 1)]
-          patient.hivStatus = _.sample([
-            'HIV positive',
-            'HIV negative',
-            'HIV unknow',
-            null,
-          ])
+          const patient = getRandomTBPatientData(totalPatients - 1, patients)
 
           // set values for all categories
           dataCategories.forEach(category => {
