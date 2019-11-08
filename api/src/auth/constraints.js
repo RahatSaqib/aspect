@@ -262,7 +262,7 @@ function addConstraints(queryBuilder, constraints, aliases) {
 }
 
 function addConstraintsResults(queryBuilder, constraints, aliases) {
-  const { geography, site, result: resultAlias } = aliases
+  const { country, geography, site, result: resultAlias } = aliases
   const {
     device,
     sample,
@@ -287,8 +287,8 @@ function addConstraintsResults(queryBuilder, constraints, aliases) {
     })
   }
 
-  if (constraints.country) {
-    queryBuilder.where(`${resultAlias}.countryId`, constraints.country.id)
+  if (constraints.country && country) {
+    queryBuilder.where(`${country}.id`, constraints.country.id)
   }
   if (person && constraints.person && !allowAdminThrough) {
     queryBuilder.where({ [`${person}.personId`]: constraints.person.id })

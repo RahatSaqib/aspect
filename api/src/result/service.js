@@ -575,8 +575,8 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
       sample: 'sp',
       geography: 'g',
       result: 'r',
+      country: 'c',
     })
-  console.log(resultQuery.toString())
   // get total count for paging
   const getCount = resultQuery
     .clone()
