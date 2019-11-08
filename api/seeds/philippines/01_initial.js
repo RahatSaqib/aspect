@@ -14,6 +14,9 @@ const { readJson } = require('fs-extra')
 
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
 
+const fixturesPath = `${__dirname}/fixtures/`
+const geneXpertDevicePath = `${fixturesPath}geneXpertDevice/`
+
 async function seed(knex) {
   // Create admin user and audit fields
   const now = new Date()
@@ -43,7 +46,6 @@ async function seed(knex) {
   )
 
   // Upsert GeneExpert device type and assays
-  const geneXpertDevicePath = `${__dirname}/fixtures/geneXpertDevice/`
   const patientDataSchema = await readJson(
     `${geneXpertDevicePath}/geneXpertPatientDataSchema.json`
   )
