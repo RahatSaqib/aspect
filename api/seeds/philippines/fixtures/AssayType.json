@@ -1,0 +1,10 @@
+{
+  "data": [
+    {
+      "name": "MTB/Rif",
+      "i18nKey": "assayTypeMtbRif",
+      "externalId": "assayTypeMtbRif",
+      "abbreviation":"TB"
+    }
+  ]
+}

@@ -1,9 +1,16 @@
-module.exports = require('../utils').seed(seed, __filename)
+module.exports = require('../utils').seed(seed, __filename, {
+  seedsFolder: 'philippines',
+  staticDataFiles: ['AssayType'],
+})
 const bcrypt = require('bcrypt')
 const config = require('../../src/config')
 const { partnerTypeToId } = require('../../src/shared/dictionary')
 const geography = require('./fixtures/geography.json')
-const { commonUpserts } = require('../common')
+const {
+  commonUpserts,
+  upsertGeneXpertDeviceTypeAndAssays,
+} = require('../common')
+const { readJson } = require('fs-extra')
 
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
 
@@ -19,7 +26,7 @@ async function seed(knex) {
     failedPasswordAttempts: 0,
   })
   const [partnerId] = await knex('Partner').insert({
-    name: 'Pakistan',
+    name: 'Philippines',
     partnerTypeId: await partnerTypeToId('Operating'),
     deviceLogHistoryDays: 365,
     maxDaysDeviceOffline: 7,
@@ -31,7 +38,22 @@ async function seed(knex) {
     partnerId,
     adminId,
     geography,
-    'PK',
+    'PH',
     'jdk5ctyu8jhwimkvfc99'
+  )
+
+  // Upsert GeneExpert device type and assays
+  const geneXpertDevicePath = `${__dirname}/fixtures/geneXpertDevice/`
+  const patientDataSchema = await readJson(
+    `${geneXpertDevicePath}/geneXpertPatientDataSchema.json`
+  )
+  const resultDataSchema = await readJson(
+    `${geneXpertDevicePath}/geneXpertResultDataSchema.json`
+  )
+  await upsertGeneXpertDeviceTypeAndAssays(
+    knex,
+    ['GxMtbRif', 'GxMtbRifUltra'],
+    patientDataSchema,
+    resultDataSchema
   )
 }

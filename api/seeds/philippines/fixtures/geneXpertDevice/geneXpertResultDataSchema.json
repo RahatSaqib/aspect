@@ -1,0 +1,72 @@
+{
+	"clinicianOrFacilityPhoneNumber": {
+		"title" : "Referring Clinician or Facility Phone Number (if known)",
+		"type" : "string",
+		"order" : 30
+	},
+	"nameOfPersonRequestinTest": {
+		"title" : "Name of Person Requesting Test",
+		"type" : "string",
+		"order" : 40
+	},
+	"repeatTest": {
+		"title" : "Repeat Test",
+		"type" : "int",
+		"order" : 100
+	},
+	"requestingFacilityName": {
+		"title" : "Name of Requesting Facility",
+		"type" : "string",
+		"order" : 10
+	},
+	"requestDate": {
+		"title" : "Date of Request",
+		"type" : "string",
+		"order" : 20
+	},
+	"patientId": {
+		"title" : "TB Case No.(Patient ID)",
+		"type" : "string",
+		"order" : 160
+	},
+	"specimenType": {
+		"title" : "Specimen Type",
+		"type" : "int",
+		"order" : 170
+	},
+	"repeatCollection": {
+		"title" : "Repeat Collection?",
+		"type" : "int",
+		"order" : 180
+	},
+	"presumptiveDsTbOrDrTb": {
+		"title" : "Presumptive DS-TB/DR-TB",
+		"type" : "int",
+		"order" : 190
+	},
+	"specimenCollectedDate": {
+		"title" : "Date Specimen Collected",
+		"type" : "string",
+		"order" : 200
+	},
+	"sampleId": {
+		"title" : "Specimen Code (Sample ID)",
+		"type" : "string",
+		"order" : 210
+	},
+	"visualAppearance": {
+		"title" : "Visual Appearance",
+		"type" : "int",
+		"order" : 220
+	},
+	"releaseDate": {
+		"title" : "Date of Release",
+		"type" : "string",
+		"order" : 230
+	},
+	"performedBy": {
+		"title" : "Performed by",
+		"type" : "string",
+		"order" : 240
+	}
+}
