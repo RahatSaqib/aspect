@@ -43,6 +43,7 @@ async function commonUpserts(
   const countries = {}
   await Promise.each(geography.countries, async country => {
     const countryData = _.pick(country, [
+      'id',
       'abbreviation',
       'name',
       'a3',
@@ -75,6 +76,7 @@ async function commonUpserts(
         countryId,
       })
     }
+    // eslint-disable-next-line no-console
     countryData.id = countryId
     countries[country.abbreviation] = countryData
     countryData.states = {}
@@ -607,7 +609,7 @@ async function upsertAssay(knex, assay) {
 async function upsertStatesAndLgas(knex, countryId, states) {
   await Promise.all(
     _.map(states || [], async state => {
-      const stateData = _.pick(state, ['abbreviation', 'name'])
+      const stateData = _.pick(state, ['id', 'abbreviation', 'name'])
       let { stateId, stateGeographyId } =
         (await knex('State as s')
           .leftJoin('Geography as g', 's.id', 'g.stateId')
@@ -631,13 +633,15 @@ async function upsertStatesAndLgas(knex, countryId, states) {
       stateData.geographyId = stateGeographyId
       await Promise.all(
         _.map(state.lgas || [], async lga => {
-          const lgaData = _.pick(lga, ['name'])
+          const lgaData = _.pick(lga, ['id', 'name'])
+
           let { lgaId, lgaGeographyId } =
             (await knex('Lga as l')
               .leftJoin('Geography as g', 'l.id', 'g.lgaId')
               .where('g.stateId', stateId)
               .andWhere('l.name', lga.name)
               .first('l.id as lgaId', 'g.id as lgaGeographyId')) || {}
+
           if (!lgaId) {
             ;[lgaId] = await knex('Lga').insert(lgaData)
           }

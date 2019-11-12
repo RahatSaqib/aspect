@@ -2478,6 +2478,29 @@ async function insertSites(knex, partnerId, countryId, sites) {
   })
 }
 
+async function getGeographyId(knex, countryId, stateId, lgaId) {
+  const { geographyId } = await knex('Geography as g')
+    .modify(
+      (queryBuilder, { countryId, stateId, lgaId }) => {
+        if (countryId) {
+          queryBuilder = queryBuilder.where('g.countryId', countryId)
+
+          if (stateId) {
+            queryBuilder = queryBuilder.where('g.stateId', stateId)
+
+            if (lgaId) queryBuilder = queryBuilder.where('g.lgaId', lgaId)
+            else queryBuilder = queryBuilder.where('g.lgaId', null)
+          } else {
+            queryBuilder = queryBuilder.where('g.stateId', null)
+          }
+        }
+      },
+      { countryId, stateId, lgaId }
+    )
+    .first('id as geographyId')
+  return geographyId
+}
+
 module.exports = {
   seed,
   seedTable,
@@ -2492,6 +2515,7 @@ module.exports = {
   upsertItems,
   upsertSingle,
   seedIssues,
+  getGeographyId,
 
   seedNotificationTypes,
   upsertNotificationTypes,
