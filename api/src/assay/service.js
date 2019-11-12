@@ -1,6 +1,10 @@
 const _ = require('lodash')
 const { knex, filterParams, sortPageParams } = require('../db')
-const { getConstraints, addConstraints } = require('../auth/constraints')
+const {
+  getConstraints,
+  addConstraints,
+  addConstraintsResults,
+} = require('../auth/constraints')
 
 const SELECT_LIST_FIELDS = [
   'a.id',
@@ -39,7 +43,11 @@ async function listAssaysResultSchema(request) {
     .innerJoin('DeviceType as dt', 'd.devicetypeId', 'dt.id')
     .innerJoin('AssayType as at', 'a.assaytypeId', 'at.id')
     .leftJoin('Sample as sp', 'r.sampleId', 'sp.id')
-    .modify(addConstraints, dataConstraints, { device: 'd', sample: 'sp' })
+    .modify(addConstraintsResults, dataConstraints, {
+      device: 'd',
+      sample: 'sp',
+      result: 'r',
+    })
     .select(
       'a.id as assayId',
       'a.externalId',
