@@ -314,6 +314,11 @@ const routes = [
         payload: {
           note: Joi.string(),
           resultNoteType: Joi.string().allow('', null),
+          commentId: Joi.number()
+            .integer()
+            .positive()
+            .allow(null)
+            .description('Comment Id to update'),
           changedOn: Joi.date()
             .description('Date when the note was added.')
             .iso()

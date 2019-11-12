@@ -1256,7 +1256,7 @@ async function addResultNote(request) {
     return Boom.notFound()
   }
 
-  const { note, resultNoteType, changedOn = now } = payload
+  const { note, resultNoteType, commentId, changedOn = now } = payload
 
   const { id: resultNoteTypeId } = await knex('ResultNoteType')
     .where('externalId', resultNoteType || 'General')
@@ -1270,15 +1270,25 @@ async function addResultNote(request) {
     return Boom.badRequest('The length of the comment must be less than 256')
   }
 
-  await knex('ResultNote').insert({
-    resultNoteTypeId,
-    resultId,
-    text: note,
-    changedOn,
-    createdOn: now,
-    updatedBy: currentUserId,
-    createdBy: currentUserId,
-  })
+  if (commentId) {
+    await knex('ResultNote')
+      .where({ id: commentId, resultId })
+      .update({
+        text: note,
+        changedOn,
+        updatedBy: currentUserId,
+      })
+  } else {
+    await knex('ResultNote').insert({
+      resultNoteTypeId,
+      resultId,
+      text: note,
+      changedOn,
+      createdOn: now,
+      updatedBy: currentUserId,
+      createdBy: currentUserId,
+    })
+  }
 
   const resultNotes = await getResultNotesByResultId(+params.resultId)
 
