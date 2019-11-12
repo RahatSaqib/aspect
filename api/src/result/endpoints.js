@@ -26,6 +26,7 @@ const {
   updateResultFollowUp,
   deleteResultFollowUp,
   addResultNote,
+  allResultNotes,
 } = require('./service')
 const { getPatientResultsDetails } = require('./patientResultDetailService')
 const { getResultsReport } = require('./serviceReport')
@@ -298,8 +299,8 @@ const routes = [
     path: '/result/result-note/{resultId}',
     handler: asyncHandler(addResultNote),
     config: {
-      description: 'Add result note to results',
-      notes: 'Add result note to results',
+      description: 'Add result note to result',
+      notes: 'Add result note to result',
       auth: { scope: ['result:edit'] },
       validate: {
         params: {
@@ -316,6 +317,39 @@ const routes = [
             .description('Date when the note was added.')
             .iso()
             .allow(null),
+        },
+      },
+      response: {
+        options: {
+          allowUnknown: false,
+        },
+        schema: Joi.object().keys({
+          ok: Joi.bool()
+            .required()
+            .description('False if there was some sort of error'),
+          length: Joi.number().required(),
+          data: Joi.array()
+            .required()
+            .description('The result notes'),
+        }),
+      },
+    },
+  },
+  {
+    method: 'GET',
+    path: '/result/result-all-notes/{resultId}',
+    handler: asyncHandler(allResultNotes),
+    config: {
+      description: 'Get all notes for specified result ',
+      notes: 'Get all notes for specified result',
+      auth: { scope: ['result:view', 'result:edit'] },
+      validate: {
+        params: {
+          resultId: Joi.number()
+            .integer()
+            .positive()
+            .required()
+            .description('Result Id'),
         },
       },
       response: {
@@ -651,6 +685,21 @@ const routes = [
                         .description('Translation key for the follow up type'),
                     })
                   ),
+                cntComments: Joi.number()
+                  .allow(null)
+                  .description('Total number of comments for this result'),
+                lastCommentId: Joi.number()
+                  .allow(null)
+                  .description('Last comment ID for this result'),
+                lastCommentText: Joi.string()
+                  .allow(null, '')
+                  .description('Last comment for this result'),
+                lastCommentOn: Joi.date()
+                  .allow(null)
+                  .description('Last comment date for this result'),
+                lastCommentBy: Joi.string()
+                  .allow(null, '')
+                  .description('Last comment creator for this result'),
               })
             ),
         }),

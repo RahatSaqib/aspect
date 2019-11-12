@@ -505,6 +505,15 @@ async function getDownloadResultsList(query, auth) {
       'rtsl.resultTreatmentStatusId',
       'rt.id'
     )
+    .leftJoin(
+      knex.raw(
+        '(select count(id) as cntComments, max(id) as lastId, resultId from ResultNote group by resultId) as rn'
+      ),
+      'r.id',
+      'rn.resultId'
+    )
+    .leftJoin('ResultNote as rn2', 'rn.lastId', 'rn2.id')
+    .leftJoin('User as u2', 'rn2.createdBy', 'u2.id')
     .whereIn('rs.externalId', [
       'Deliverable',
       'Delivered',
@@ -618,7 +627,12 @@ async function getDownloadResultsList(query, auth) {
       'rtsl.method as resultTreatmentStatusMethod',
       'rt.name as resultTreatmentStatusName',
       'rt.externalId as resultTreatmentStatusExternalId',
-      'rt.i18nKey as resultTreatmentStatusi18nKey'
+      'rt.i18nKey as resultTreatmentStatusi18nKey',
+      'rn.cntComments',
+      'rn2.id as lastCommentId',
+      'rn2.text as lastCommentText',
+      'rn2.createdOn as lastCommentOn',
+      'u2.name as lastCommentBy'
     )
 
   // return result when both queries are finished
@@ -698,6 +712,11 @@ async function getDownloadResultsList(query, auth) {
       _.filter(followUps, { resultId: d.id }).map(f => _.omit(f, 'resultId')),
       ['date', 'updatedOn']
     ),
+    cntComments: d.cntComments,
+    lastCommentId: d.lastCommentId ? +d.lastCommentId : null,
+    lastCommentText: d.lastCommentText,
+    lastCommentOn: d.lastCommentOn,
+    lastCommentBy: d.lastCommentBy,
   }))
 
   const result = {
@@ -1260,6 +1279,24 @@ async function addResultNote(request) {
     updatedBy: currentUserId,
     createdBy: currentUserId,
   })
+
+  const resultNotes = await getResultNotesByResultId(+params.resultId)
+
+  return {
+    ok: true,
+    length: resultNotes.length,
+    data: resultNotes,
+  }
+}
+
+async function allResultNotes(request) {
+  const { params } = request
+
+  // get the result so we can check access and if status changed
+  const result = await getResultByResultId(request)
+  if (!result.ok) {
+    return Boom.notFound()
+  }
 
   const resultNotes = await getResultNotesByResultId(+params.resultId)
 
@@ -1964,5 +2001,6 @@ module.exports = {
   updateResultFollowUp,
   deleteResultFollowUp,
   addResultNote,
+  allResultNotes,
   showResultFollowUps,
 }
