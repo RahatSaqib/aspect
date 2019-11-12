@@ -27,6 +27,7 @@ const {
   deleteResultFollowUp,
   addResultNote,
   allResultNotes,
+  deleteResultNote,
 } = require('./service')
 const { getPatientResultsDetails } = require('./patientResultDetailService')
 const { getResultsReport } = require('./serviceReport')
@@ -350,6 +351,44 @@ const routes = [
             .positive()
             .required()
             .description('Result Id'),
+        },
+      },
+      response: {
+        options: {
+          allowUnknown: false,
+        },
+        schema: Joi.object().keys({
+          ok: Joi.bool()
+            .required()
+            .description('False if there was some sort of error'),
+          length: Joi.number().required(),
+          data: Joi.array()
+            .required()
+            .description('The result notes'),
+        }),
+      },
+    },
+  },
+  {
+    method: 'DELETE',
+    path: '/result/result-note/{resultId}/{commentId}',
+    handler: asyncHandler(deleteResultNote),
+    config: {
+      description: 'Remove a specified comment from a result',
+      notes: 'Removes a specified comment from a result',
+      auth: { scope: ['result:edit', 'result:admin'] },
+      validate: {
+        params: {
+          resultId: Joi.number()
+            .required()
+            .integer()
+            .positive()
+            .description('Result ID'),
+          commentId: Joi.number()
+            .required()
+            .integer()
+            .positive()
+            .description('Result Comment ID'),
         },
       },
       response: {

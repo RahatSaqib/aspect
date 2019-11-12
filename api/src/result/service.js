@@ -1289,6 +1289,30 @@ async function addResultNote(request) {
   }
 }
 
+async function deleteResultNote(request) {
+  const { params } = request
+  const { resultId, commentId } = params
+
+  // get the result so we can check access
+  const result = await getResultByResultId(request)
+  if (!result.ok) {
+    return Boom.notFound()
+  }
+
+  await knex('ResultNote')
+    .where('id', commentId)
+    .where('resultId', resultId)
+    .del()
+
+  const resultNotes = await getResultNotesByResultId(+params.resultId)
+
+  return {
+    ok: true,
+    length: resultNotes.length,
+    data: resultNotes,
+  }
+}
+
 async function allResultNotes(request) {
   const { params } = request
 
@@ -2001,6 +2025,7 @@ module.exports = {
   updateResultFollowUp,
   deleteResultFollowUp,
   addResultNote,
+  deleteResultNote,
   allResultNotes,
   showResultFollowUps,
 }
