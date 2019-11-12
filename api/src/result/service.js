@@ -710,6 +710,8 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
         setDelivered && d.resultWorkflowStatusExternalId !== 'Delivered'
           ? new Date()
           : d.resultWorkflowStatusChangedOn,
+      setDelivered:
+        setDelivered && d.resultWorkflowStatusExternalId !== 'Delivered',
     },
     treatmentStatus: {
       changedOn: d.resultTreatmentStatusChangedOn,
@@ -742,10 +744,7 @@ async function downloadResultsList(request) {
   const myProm = new Promise(async () => {
     const idsToUpdate = _.uniq(
       _.map(
-        _.omitBy(
-          result.data,
-          elem => elem.workflowStatus.externalId !== 'Delivered'
-        ),
+        _.omitBy(result.data, elem => !elem.workflowStatus.setDelivered),
         elem => elem.id
       )
     )
