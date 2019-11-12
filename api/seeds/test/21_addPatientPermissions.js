@@ -12,7 +12,7 @@ async function seed(knex) {
     { module: 'patient', activity: 'edit' },
   ])
 
-  const [featureid] = await knex('feature').insert({ module: 'patient' })
+  const [featureid] = await knex('Feature').insert({ module: 'patient' })
   const { id: jobFunctionIdAdmin } = await knex('JobFunction')
     .where('name', 'Admin')
     .first('id')
