@@ -2478,6 +2478,28 @@ async function insertSites(knex, partnerId, countryId, sites) {
   })
 }
 
+async function getFeatureByModule(knex, module) {
+  const feature = await knex('feature')
+    .where({ module })
+    .first()
+  return feature
+}
+
+async function getPermissonByModuleAndActivity(knex, module, activity) {
+  const permisson = await knex('permission')
+    .where({ module })
+    .where({ activity })
+    .first()
+  return permisson
+}
+
+async function getPartnerByName(knex, name) {
+  const partner = await knex('Partner')
+    .where({ name })
+    .first()
+  return partner
+}
+
 async function getGeographyId(knex, countryId, stateId, lgaId) {
   const { geographyId } = await knex('Geography as g')
     .modify(
@@ -2516,6 +2538,9 @@ module.exports = {
   upsertSingle,
   seedIssues,
   getGeographyId,
+  getPartnerByName,
+  getFeatureByModule,
+  getPermissonByModuleAndActivity,
 
   seedNotificationTypes,
   upsertNotificationTypes,

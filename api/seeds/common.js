@@ -694,4 +694,5 @@ module.exports = {
   upsertGeneXpertDeviceTypeAndAssays,
   upsertStatesAndLgas,
   upsertAssayResultCategories,
+  upsertJobFunction,
 }

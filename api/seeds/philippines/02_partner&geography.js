@@ -3,7 +3,7 @@ module.exports = require('../utils').seed(seed, __filename, {
   staticDataFiles: ['AssayType'],
 })
 const { partnerTypeToId } = require('../../src/shared/dictionary')
-const geography = require('./fixtures/geography.json')
+const geography = require('./fixtures/Geography.json')
 const { commonUpserts } = require('../common')
 
 async function seed(knex) {
