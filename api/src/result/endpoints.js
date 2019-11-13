@@ -320,7 +320,7 @@ const routes = [
             .allow(null)
             .description('Comment Id to update'),
           changedOn: Joi.date()
-            .description('Date when the note was added.')
+            .description('Date when the note was added/edited.')
             .iso()
             .allow(null),
         },
@@ -729,21 +729,31 @@ const routes = [
                         .description('Translation key for the follow up type'),
                     })
                   ),
-                cntComments: Joi.number()
+                comments: Joi.array()
                   .allow(null)
-                  .description('Total number of comments for this result'),
-                lastCommentId: Joi.number()
-                  .allow(null)
-                  .description('Last comment ID for this result'),
-                lastCommentText: Joi.string()
-                  .allow(null, '')
-                  .description('Last comment for this result'),
-                lastCommentOn: Joi.date()
-                  .allow(null)
-                  .description('Last comment date for this result'),
-                lastCommentBy: Joi.string()
-                  .allow(null, '')
-                  .description('Last comment creator for this result'),
+                  .description('Result comments')
+                  .items(
+                    Joi.object().keys({
+                      id: Joi.number()
+                        .required()
+                        .description('Result comment ID'),
+                      text: Joi.string()
+                        .allow(null, '')
+                        .description('Comment text'),
+                      createdBy: Joi.string()
+                        .required()
+                        .description('Who added comment'),
+                      createdOn: Joi.date()
+                        .required()
+                        .description('When comment was first created'),
+                      changedOn: Joi.date()
+                        .required()
+                        .description('When the comment was last updated'),
+                      noteType: Joi.string()
+                        .required()
+                        .description('Type of comment'),
+                    })
+                  ),
               })
             ),
         }),

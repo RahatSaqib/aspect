@@ -505,15 +505,6 @@ async function getDownloadResultsList(query, auth) {
       'rtsl.resultTreatmentStatusId',
       'rt.id'
     )
-    .leftJoin(
-      knex.raw(
-        '(select count(id) as cntComments, max(id) as lastId, resultId from ResultNote group by resultId) as rn'
-      ),
-      'r.id',
-      'rn.resultId'
-    )
-    .leftJoin('ResultNote as rn2', 'rn.lastId', 'rn2.id')
-    .leftJoin('User as u2', 'rn2.createdBy', 'u2.id')
     .whereIn('rs.externalId', [
       'Deliverable',
       'Delivered',
@@ -627,12 +618,7 @@ async function getDownloadResultsList(query, auth) {
       'rtsl.method as resultTreatmentStatusMethod',
       'rt.name as resultTreatmentStatusName',
       'rt.externalId as resultTreatmentStatusExternalId',
-      'rt.i18nKey as resultTreatmentStatusi18nKey',
-      'rn.cntComments',
-      'rn2.id as lastCommentId',
-      'rn2.text as lastCommentText',
-      'rn2.createdOn as lastCommentOn',
-      'u2.name as lastCommentBy'
+      'rt.i18nKey as resultTreatmentStatusi18nKey'
     )
 
   // return result when both queries are finished
@@ -656,6 +642,22 @@ async function getDownloadResultsList(query, auth) {
       'fut.name as followUpTypeName',
       'fut.externalId as followUpTypeExternalId',
       'fut.i18nKey as followUpTypei18nKey'
+    )
+  // get comments for all results in the response for performance (filter later)
+  const comments = await knex('ResultNote as rn')
+    .innerJoin('ResultNoteType as rnt', 'rn.resultNoteTypeId', 'rnt.id')
+    .leftOuterJoin('User as uC', 'rn.createdBy', 'uC.id')
+    .leftOuterJoin('User as uU', 'rn.updatedBy', 'uU.id')
+    .whereIn('rn.resultId', data.map(d => d.id))
+    .select(
+      'rn.resultId',
+      'rn.id',
+      'rn.text',
+      'rn.createdOn',
+      'rn.changedOn',
+      'uC.name as createdBy',
+      'uU.name as updatedBy',
+      'rnt.name as resultNoteType'
     )
 
   const transformedData = _.map(data, d => ({
@@ -712,11 +714,11 @@ async function getDownloadResultsList(query, auth) {
       _.filter(followUps, { resultId: d.id }).map(f => _.omit(f, 'resultId')),
       ['date', 'updatedOn']
     ),
-    cntComments: d.cntComments,
-    lastCommentId: d.lastCommentId ? +d.lastCommentId : null,
-    lastCommentText: d.lastCommentText,
-    lastCommentOn: d.lastCommentOn,
-    lastCommentBy: d.lastCommentBy,
+    comments: _.orderBy(
+      _.filter(comments, { resultId: d.id }).map(f => _.omit(f, 'resultId')),
+      ['createdOn'],
+      ['desc']
+    ),
   }))
 
   const result = {
