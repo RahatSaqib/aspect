@@ -3,96 +3,40 @@
         "name": "Lab Manager",
         "features": [
             "account",
-            "task",
-            "reports",
-            "operationalData",
-            "manage",
-            "clinicalIndicators",
             "device",
-            "deviceDemo",
             "result",
             "person",
             "site",
-            "inventory",
-            "router",
-            "reporter",
-            "notification",
-            "report",
-            "deviceApiKey",
-            "summaryDashboard",
-            "siteDashboard",
-            "inventoryDashboard",
-            "deviceDashboard",
-            "resultDashboard",
-            "targetDashboard",
-            "actionDashboard",
-            "actionDashboardInventoryLevelUpdate",
-            "siteFilterDashboard"
+            "summaryDashboard"
         ],
         "permissions": [
             {
                 "module": "assay",
-                "activity": "admin"
-            },
-            {
-                "module": "demo",
-                "activity": "admin"
-            },
-            {
-                "module": "deviceApiKey",
-                "activity": "admin"
+                "activity": "view"
             },
             {
                 "module": "device",
-                "activity": "admin"
-            },
-            {
-                "module": "inventory",
-                "activity": "admin"
+                "activity": "edit"
             },
             {
                 "module": "person",
-                "activity": "admin"
+                "activity": "view"
             },
             {
                 "module": "result",
-                "activity": "admin"
+                "activity": "edit"
             },
             {
                 "module": "treatmentStatus",
-                "activity": "admin"
+                "activity": "edit"
             },
             {
                 "module": "site",
-                "activity": "admin"
-            },
-            {
-                "module": "issue",
-                "activity": "admin"
-            },
-            {
-                "module": "notification",
-                "activity": "admin"
-            },
-            {
-                "module": "task",
-                "activity": "admin"
-            },
-            {
-                "module": "report",
-                "activity": "admin"
+                "activity": "edit"
             },
             {
                 "module": "browse",
                 "activity": "view"
-            },
-            {
-                "module": "actionDashboard",
-                "activity": "admin"
-            },
-            {
-                "module": "reporter",
-                "activity": "admin"
             }
         ]
     },
@@ -100,96 +44,40 @@
         "name": "Lab Services Manager",
         "features": [
             "account",
-            "task",
-            "reports",
-            "operationalData",
-            "manage",
-            "clinicalIndicators",
             "device",
-            "deviceDemo",
             "result",
             "person",
             "site",
-            "inventory",
-            "router",
-            "reporter",
-            "notification",
-            "report",
-            "deviceApiKey",
-            "summaryDashboard",
-            "siteDashboard",
-            "inventoryDashboard",
-            "deviceDashboard",
-            "resultDashboard",
-            "targetDashboard",
-            "actionDashboard",
-            "actionDashboardInventoryLevelUpdate",
-            "siteFilterDashboard"
+            "summaryDashboard"
         ],
         "permissions": [
             {
                 "module": "assay",
-                "activity": "admin"
-            },
-            {
-                "module": "demo",
-                "activity": "admin"
-            },
-            {
-                "module": "deviceApiKey",
-                "activity": "admin"
+                "activity": "view"
             },
             {
                 "module": "device",
-                "activity": "admin"
-            },
-            {
-                "module": "inventory",
-                "activity": "admin"
+                "activity": "edit"
             },
             {
                 "module": "person",
-                "activity": "admin"
+                "activity": "view"
             },
             {
                 "module": "result",
-                "activity": "admin"
+                "activity": "edit"
             },
             {
                 "module": "treatmentStatus",
-                "activity": "admin"
+                "activity": "edit"
             },
             {
                 "module": "site",
-                "activity": "admin"
-            },
-            {
-                "module": "issue",
-                "activity": "admin"
-            },
-            {
-                "module": "notification",
-                "activity": "admin"
-            },
-            {
-                "module": "task",
-                "activity": "admin"
-            },
-            {
-                "module": "report",
-                "activity": "admin"
+                "activity": "edit"
             },
             {
                 "module": "browse",
                 "activity": "view"
-            },
-            {
-                "module": "actionDashboard",
-                "activity": "admin"
-            },
-            {
-                "module": "reporter",
-                "activity": "admin"
             }
         ]
     },
@@ -197,96 +85,40 @@
         "name": "Lab Worker/Med Tech",
         "features": [
             "account",
-            "task",
-            "reports",
-            "operationalData",
-            "manage",
-            "clinicalIndicators",
             "device",
-            "deviceDemo",
             "result",
             "person",
             "site",
-            "inventory",
-            "router",
-            "reporter",
-            "notification",
-            "report",
-            "deviceApiKey",
-            "summaryDashboard",
-            "siteDashboard",
-            "inventoryDashboard",
-            "deviceDashboard",
-            "resultDashboard",
-            "targetDashboard",
-            "actionDashboard",
-            "actionDashboardInventoryLevelUpdate",
-            "siteFilterDashboard"
+            "summaryDashboard"
         ],
         "permissions": [
             {
                 "module": "assay",
-                "activity": "admin"
-            },
-            {
-                "module": "demo",
-                "activity": "admin"
-            },
-            {
-                "module": "deviceApiKey",
-                "activity": "admin"
+                "activity": "view"
             },
             {
                 "module": "device",
-                "activity": "admin"
-            },
-            {
-                "module": "inventory",
-                "activity": "admin"
+                "activity": "view"
             },
             {
                 "module": "person",
-                "activity": "admin"
+                "activity": "view"
             },
             {
                 "module": "result",
-                "activity": "admin"
+                "activity": "edit"
             },
             {
                 "module": "treatmentStatus",
-                "activity": "admin"
+                "activity": "edit"
             },
             {
                 "module": "site",
-                "activity": "admin"
-            },
-            {
-                "module": "issue",
-                "activity": "admin"
-            },
-            {
-                "module": "notification",
-                "activity": "admin"
-            },
-            {
-                "module": "task",
-                "activity": "admin"
-            },
-            {
-                "module": "report",
-                "activity": "admin"
+                "activity": "view"
             },
             {
                 "module": "browse",
                 "activity": "view"
-            },
-            {
-                "module": "actionDashboard",
-                "activity": "admin"
-            },
-            {
-                "module": "reporter",
-                "activity": "admin"
             }
         ]
     },
@@ -294,96 +126,40 @@
         "name": "Remote Health Worker",
         "features": [
             "account",
-            "task",
-            "reports",
-            "operationalData",
-            "manage",
-            "clinicalIndicators",
             "device",
-            "deviceDemo",
             "result",
             "person",
             "site",
-            "inventory",
-            "router",
-            "reporter",
-            "notification",
-            "report",
-            "deviceApiKey",
-            "summaryDashboard",
-            "siteDashboard",
-            "inventoryDashboard",
-            "deviceDashboard",
-            "resultDashboard",
-            "targetDashboard",
-            "actionDashboard",
-            "actionDashboardInventoryLevelUpdate",
-            "siteFilterDashboard"
+            "summaryDashboard"
         ],
         "permissions": [
             {
                 "module": "assay",
-                "activity": "admin"
-            },
-            {
-                "module": "demo",
-                "activity": "admin"
-            },
-            {
-                "module": "deviceApiKey",
-                "activity": "admin"
+                "activity": "view"
             },
             {
                 "module": "device",
-                "activity": "admin"
-            },
-            {
-                "module": "inventory",
-                "activity": "admin"
+                "activity": "view"
             },
             {
                 "module": "person",
-                "activity": "admin"
+                "activity": "view"
             },
             {
                 "module": "result",
-                "activity": "admin"
+                "activity": "edit"
             },
             {
                 "module": "treatmentStatus",
-                "activity": "admin"
+                "activity": "edit"
             },
             {
                 "module": "site",
-                "activity": "admin"
-            },
-            {
-                "module": "issue",
-                "activity": "admin"
-            },
-            {
-                "module": "notification",
-                "activity": "admin"
-            },
-            {
-                "module": "task",
-                "activity": "admin"
-            },
-            {
-                "module": "report",
-                "activity": "admin"
+                "activity": "view"
             },
             {
                 "module": "browse",
                 "activity": "view"
-            },
-            {
-                "module": "actionDashboard",
-                "activity": "admin"
-            },
-            {
-                "module": "reporter",
-                "activity": "admin"
             }
         ]
     }
