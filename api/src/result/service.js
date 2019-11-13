@@ -654,10 +654,10 @@ async function getDownloadResultsList(query, auth) {
       'rn.id',
       'rn.text',
       'rn.createdOn',
-      'rn.changedOn',
       'uC.name as createdBy',
-      'uU.name as updatedBy',
-      'rnt.name as resultNoteType'
+      'rn.changedOn',
+      'uU.name as changedBy',
+      'rnt.name as noteType'
     )
 
   const transformedData = _.map(data, d => ({

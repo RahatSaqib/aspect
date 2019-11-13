@@ -740,17 +740,20 @@ const routes = [
                       text: Joi.string()
                         .allow(null, '')
                         .description('Comment text'),
-                      createdBy: Joi.string()
-                        .required()
-                        .description('Who added comment'),
                       createdOn: Joi.date()
                         .required()
                         .description('When comment was first created'),
+                      createdBy: Joi.string()
+                        .allow(null, '')
+                        .description('Who added comment'),
                       changedOn: Joi.date()
                         .required()
                         .description('When the comment was last updated'),
+                      changedBy: Joi.string()
+                        .allow(null, '')
+                        .description('Who changed comment'),
                       noteType: Joi.string()
-                        .required()
+                        .allow(null, '')
                         .description('Type of comment'),
                     })
                   ),
