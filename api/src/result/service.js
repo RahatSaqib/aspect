@@ -544,10 +544,10 @@ async function getDownloadResultsList(query, auth) {
             )
         )
       }
-      if (params.assayTypeAbbreviations) {
+      if (params.assayExternalIds) {
         queryBuilder.whereIn(
-          'at.abbreviation',
-          params.assayTypeAbbreviations.split(',')
+          'a.externalId',
+          params.assayExternalIds.split(',')
         )
       }
       if (params.resultCategories) {

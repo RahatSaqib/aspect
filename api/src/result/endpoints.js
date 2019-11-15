@@ -400,9 +400,9 @@ const routes = [
               .description(
                 'Is the string for look for the patient. this string could be the patient id, the sample id or the patient name'
               ),
-            assayTypeAbbreviations: Joi.string()
+            assayExternalIds: Joi.string()
               .optional()
-              .description('an array with the assay type abbreviation'),
+              .description('an array with the assay externalId'),
             resultCategories: Joi.string()
               .optional()
               .description('an array with the assay type abbreviation'),
