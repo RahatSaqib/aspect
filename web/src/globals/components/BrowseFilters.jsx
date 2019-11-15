@@ -70,6 +70,7 @@ const enhance = compose(
       }
 
       searchParams.set('filters', filtersParams)
+      searchParams.delete('sortCol')
 
       history.replace({
         ...location,

@@ -129,7 +129,7 @@ const SORT_FIELDS = [
   'errorCode',
   'resultText',
   'resultWorkflowStatus',
-  'resultTreatmentStatus',
+  'treatmentStatusInfo',
   'resultTreatmentStatusChangedOn',
   'requiresTreatment',
   'resultCategory1Name',
