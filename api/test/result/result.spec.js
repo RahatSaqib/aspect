@@ -1262,6 +1262,17 @@ describe.only('Result Comments', () => {
       })
   })
 
+  it('Should fail on retrieving comments of unknown resultId', done => {
+    server
+      .get(`/api/result/result-all-notes/99999999`)
+      .set('Authorization', `Bearer ${shared.token}`)
+      .end((err, res) => {
+        assert.equal(res.status, 404) // Not Found
+
+        done()
+      })
+  })
+
   it('Should deny EDIT comment by non-author and non-admin', done => {
     text += '!'
     const comment = {
