@@ -1246,6 +1246,21 @@ async function updateTreatmentStatus(
   return response
 }
 
+// helper func
+async function isAuthorOrAdminOfResultComment(
+  credentials,
+  resultId,
+  commentId
+) {
+  const user = await getUser(credentials.name)
+  const { createdBy } = await knex('ResultNote')
+    .where('id', commentId)
+    .where('resultId', resultId)
+    .first()
+  const isResultAdmin = credentials.permissions.includes(`${module}:admin`)
+  return createdBy === user.id || isResultAdmin
+}
+
 async function addResultNote(request) {
   const { auth, params, payload } = request
   const now = new Date()
@@ -1273,6 +1288,15 @@ async function addResultNote(request) {
   }
 
   if (commentId) {
+    const canEdit = await isAuthorOrAdminOfResultComment(
+      auth.credentials,
+      resultId,
+      commentId
+    )
+    if (!canEdit) {
+      return Boom.forbidden('This user can not edit comment')
+    }
+
     await knex('ResultNote')
       .where({ id: commentId, resultId })
       .update({
@@ -1302,13 +1326,22 @@ async function addResultNote(request) {
 }
 
 async function deleteResultNote(request) {
-  const { params } = request
+  const { auth, params } = request
   const { resultId, commentId } = params
 
   // get the result so we can check access
   const result = await getResultByResultId(request)
   if (!result.ok) {
     return Boom.notFound()
+  }
+
+  const canDelete = await isAuthorOrAdminOfResultComment(
+    auth.credentials,
+    resultId,
+    commentId
+  )
+  if (!canDelete) {
+    return Boom.forbidden('This user can not delete comment')
   }
 
   await knex('ResultNote')

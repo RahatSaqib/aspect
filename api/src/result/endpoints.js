@@ -381,7 +381,7 @@ const routes = [
     config: {
       description: 'Remove a specified comment from a result',
       notes: 'Removes a specified comment from a result',
-      auth: { scope: ['result:edit', 'result:admin'] },
+      auth: { scope: ['result:view', 'result:edit'] },
       validate: {
         params: {
           resultId: Joi.number()
