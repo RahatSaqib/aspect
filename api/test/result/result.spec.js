@@ -1210,7 +1210,7 @@ describe('Result Treatment', () => {
   })
 })
 
-describe.only('Result Comments', () => {
+describe('Result Comments', () => {
   const resultId = 1
 
   let commentId = null
