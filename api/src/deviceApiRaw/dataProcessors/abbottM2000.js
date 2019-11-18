@@ -9,10 +9,7 @@ const {
   parseDateOrDefault,
   dateEqual,
 } = require('../../shared/date')
-const {
-  getAllStringsEnclosedBetweenCharacters,
-  isNumeric,
-} = require('../../shared/string')
+const { isNumeric } = require('../../shared/string')
 const { astmE1394MessagesToJson } = require('../../shared/astm')
 const { deviceSeen } = require('../../device/actions')
 const { SynchronousDataProcessor } = require('./_base')
