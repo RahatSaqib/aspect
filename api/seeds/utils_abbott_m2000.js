@@ -519,6 +519,67 @@ async function seedAbbottM2000AndAssays(knex) {
       externalId: 'MoreThan40',
     },
     {
+      name: '< 150',
+      i18nKey: 'resultCategoryLessThan150',
+      externalId: 'LessThan150',
+    },
+    {
+      name: '>= 150',
+      i18nKey: 'resultCategoryMoreThan150',
+      externalId: 'MoreThan150',
+    },
+    {
+      name: '< 550',
+      i18nKey: 'resultCategoryLessThan550',
+      externalId: 'LessThan550',
+    },
+    {
+      name: '>= 550',
+      i18nKey: 'resultCategoryMoreThan550',
+      externalId: 'MoreThan550',
+    },
+    {
+      name: 'Indeterminate',
+      i18nKey: 'resultCategoryIndeterminate',
+      externalId: 'Indeterminate',
+    },
+    {
+      name: 'Error',
+      i18nKey: 'resultCategoryError',
+      externalId: 'Error',
+    },
+  ])
+
+  const abbottM2000PlasmaHbvVLId = await ensureAssay(
+    'abbottM2000PlasmaHbvVL',
+    'Abbott m2000 Plasma HBV VL',
+    'abbottM2000PlasmaHbvVL',
+    'HBV',
+    'resultCategoryHbvVl',
+    'HBV VL'
+  )
+  await ensureResultCategories(abbottM2000PlasmaHbvVLId, [
+    {
+      name: 'Not Detected',
+      i18nKey: 'resultCategoryNotDetected',
+      externalId: 'NotDetected',
+    },
+    {
+      name: 'Detected',
+      i18nKey: 'resultCategoryDetected',
+      externalId: 'Detected',
+    },
+    {
+      name: '< 15',
+      i18nKey: 'resultCategoryLessThan40',
+      externalId: 'LessThan40',
+    },
+    {
+      name: '>= 15',
+      i18nKey: 'resultCategoryMoreThan40',
+      externalId: 'MoreThan40',
+    },
+    {
       name: 'Indeterminate',
       i18nKey: 'resultCategoryIndeterminate',
       externalId: 'Indeterminate',

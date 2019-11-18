@@ -411,6 +411,7 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
       'HIV0.6ml': assayIds.abbottM2000PlasmaHivVL,
       'HIV0.2ml': assayIds.abbottM2000PlasmaHivVL,
       HIVQLDRDBS: assayIds.abbottM2000HIVEID,
+      'HBV 0.2ml': assayIds.abbottM2000PlasmaHbvVL,
     }
     const resultCategories = await allResultCategoryToId()
     const resultCategoryMapping = {
@@ -453,6 +454,17 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
           'Not Detected': resultCategories.NotDetected,
         },
       },
+      'HBV 0.2ml': {
+        I: {
+          Detected: resultCategories.Detected,
+          'Target not detected': resultCategories.NotDetected,
+        },
+        F: {
+          'Not detected': resultCategories.NotDetected,
+          '< 15': resultCategories.LessThan15,
+          Numeric: resultCategories.MoreThan15,
+        },
+      },
     }
     const resultCategoryErrorId = resultCategories.Error
     const sampleTypeIds = await allSampleTypeToId()
@@ -479,7 +491,7 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
         _.get(parsedResult, 'resultData.actionCode') ===
         'Quality Control Result'
     )
-    const hivQualityControlResultsToSummary = (
+    const vlQualityControlResultsToSummary = (
       hivQualityControlResults,
       passFinalResult,
       passCycleNumber
@@ -556,7 +568,7 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
               result => result.sample.externalId === 'HIV_NEG'
             )
             if (!_.isEmpty(negResults)) {
-              qualityControlSummaryForAssay.negativeControl = hivQualityControlResultsToSummary(
+              qualityControlSummaryForAssay.negativeControl = vlQualityControlResultsToSummary(
                 negResults,
                 finalResult =>
                   finalResult.resultData.reportType === 'Final Result' &&
@@ -571,7 +583,7 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
               result => result.sample.externalId === 'HIV_LOPOS'
             )
             if (!_.isEmpty(lowPositiveResults)) {
-              qualityControlSummaryForAssay.lowPositiveControl = hivQualityControlResultsToSummary(
+              qualityControlSummaryForAssay.lowPositiveControl = vlQualityControlResultsToSummary(
                 lowPositiveResults,
                 finalResult =>
                   finalResult.resultData.reportType === 'Final Result' &&
@@ -585,7 +597,51 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
               result => result.sample.externalId === 'HIV_HIPOS'
             )
             if (!_.isEmpty(highPositiveResults)) {
-              qualityControlSummaryForAssay.highPositiveControl = hivQualityControlResultsToSummary(
+              qualityControlSummaryForAssay.highPositiveControl = vlQualityControlResultsToSummary(
+                highPositiveResults,
+                finalResult =>
+                  finalResult.resultData.reportType === 'Final Result' &&
+                  (finalResult.resultData.resultText === 'Passed' ||
+                    isNumeric(finalResult.resultData.resultText)),
+                cycleNumberResult =>
+                  cycleNumberResult.resultData.reportType === 'Final Result'
+              )
+            }
+          } else if (['HBV 0.2ml'].includes(assayCode)) {
+            const negResults = qualityControlResultsForRun.filter(
+              result => result.sample.externalId === 'HBV_NEG'
+            )
+            if (!_.isEmpty(negResults)) {
+              qualityControlSummaryForAssay.negativeControl = vlQualityControlResultsToSummary(
+                negResults,
+                finalResult =>
+                  finalResult.resultData.reportType === 'Final Result' &&
+                  ['Passed', 'Not detected'].includes(
+                    finalResult.resultData.resultText
+                  ),
+                cycleNumberResult =>
+                  cycleNumberResult.resultData.reportType === 'Final Result'
+              )
+            }
+            const lowPositiveResults = qualityControlResultsForRun.filter(
+              result => result.sample.externalId === 'HBV_LOPOS'
+            )
+            if (!_.isEmpty(lowPositiveResults)) {
+              qualityControlSummaryForAssay.lowPositiveControl = vlQualityControlResultsToSummary(
+                lowPositiveResults,
+                finalResult =>
+                  finalResult.resultData.reportType === 'Final Result' &&
+                  (finalResult.resultData.resultText === 'Passed' ||
+                    isNumeric(finalResult.resultData.resultText)),
+                cycleNumberResult =>
+                  cycleNumberResult.resultData.reportType === 'Final Result'
+              )
+            }
+            const highPositiveResults = qualityControlResultsForRun.filter(
+              result => result.sample.externalId === 'HBV_HIPOS'
+            )
+            if (!_.isEmpty(highPositiveResults)) {
+              qualityControlSummaryForAssay.highPositiveControl = vlQualityControlResultsToSummary(
                 highPositiveResults,
                 finalResult =>
                   finalResult.resultData.reportType === 'Final Result' &&
