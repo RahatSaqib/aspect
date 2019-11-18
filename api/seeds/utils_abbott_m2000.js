@@ -551,6 +551,16 @@ async function seedAbbottM2000AndAssays(knex) {
       externalId: 'Detected',
     },
     {
+      name: '< 150',
+      i18nKey: 'resultCategoryLessThan150',
+      externalId: 'LessThan150',
+    },
+    {
+      name: '>= 150',
+      i18nKey: 'resultCategoryMoreThan150',
+      externalId: 'MoreThan150',
+    },
+    {
       name: '< 550',
       i18nKey: 'resultCategoryLessThan550',
       externalId: 'LessThan550',

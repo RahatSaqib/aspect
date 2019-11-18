@@ -35,18 +35,30 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
   }
 
   static containsM2000AstmLineHeader(line) {
-    return /a?S'\dH.{7,14}m2000.{1,2}\d*\.\d*\.\d*\.\d*.*\\r\\n'/.test(line)
+    return /H.{7,14}m2000.{1,2}\d*\.\d*\.\d*\.\d*.*\n/.test(line)
+  }
+
+  static sanitisePayload(payload) {
+    return `\n${payload}`
+      .replace(/\u0002/g, '') // eslint-disable-line no-control-regex
+      .replace(/\u0003/g, '\n') // eslint-disable-line no-control-regex
+      .replace(/\r/g, '')
+      .replace(/\x02/g, '') // eslint-disable-line no-control-regex
+      .replace(/\x03/g, '') // eslint-disable-line no-control-regex
+      .replace(/(a*)?\(?l?p(\d)*\n/g, '\n')
+      .replace(/\n(a*)?S'(\d)?/g, '\n')
+      .replace(/\\r\\x[a-zA-Z0-9]{4}\\r\\n'\n/g, '\n')
+      .replace(/\na*\.\n?/g, '')
+      .replace(/\n[A-Z0-9]{2}\n/g, '\n')
+      .replace(/\n+/g, '\n')
+      .replace(/\n[0-9]?/g, '\n')
+      .trim()
   }
 
   static async canProcessRequest(request) {
     const { payload } = request
-    return (
-      payload &&
-      _.isString(payload) &&
-      payload.trim().startsWith('(lp1\n(lp2\n') &&
-      payload.trim().endsWith('\naa.') &&
-      DefaultAbbottM2000.containsM2000AstmLineHeader(payload)
-    )
+    const sanitisedPayload = DefaultAbbottM2000.sanitisePayload(payload)
+    return DefaultAbbottM2000.containsM2000AstmLineHeader(sanitisedPayload)
   }
 
   async processRequest() {
@@ -58,22 +70,7 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
       throw Boom.badRequest('No payload to process')
     }
     const remoteAddress = getRemoteAddress(request)
-    const sanitisedPayload = payload
-      .split('\n')
-      .reduce((resultRawMessages, rawLine) => {
-        if (rawLine) {
-          const line = getAllStringsEnclosedBetweenCharacters(rawLine, "'")
-            .map(quotedLine => quotedLine.replace(/^\d(H|P|O|Q|C|R|L)?/, '$1'))
-            .shift()
-          if (DefaultAbbottM2000.containsM2000AstmLineHeader(rawLine)) {
-            resultRawMessages = [...resultRawMessages, line]
-          } else if (line && resultRawMessages.length) {
-            resultRawMessages[resultRawMessages.length - 1] += `\n${line}`
-          }
-        }
-        return resultRawMessages
-      }, [])
-      .join('\n')
+    const sanitisedPayload = DefaultAbbottM2000.sanitisePayload(payload)
     const jsonAstmMessages = astmE1394MessagesToJson(sanitisedPayload)
     const arrayFromPossibleRepeatedValue = (jsonAstmObject, path) => {
       if (_.get(jsonAstmObject, `${path}.items`)) {
@@ -269,6 +266,7 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
                           HIVQLDRDBS: 'DBS',
                           '1mLDBSvOP': 'DBS',
                           'HIV0.6ml': 'Plasma',
+                          'HIV0.2ml': 'Plasma',
                         }[_.get(jsonAstmOrder, '5.4.value')],
                       },
                       assay: {
@@ -411,6 +409,7 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
     const m2000AspectAssayIdMapping = {
       '1mLDBSvOP': assayIds.abbottM2000DBSHivVL,
       'HIV0.6ml': assayIds.abbottM2000PlasmaHivVL,
+      'HIV0.2ml': assayIds.abbottM2000PlasmaHivVL,
       HIVQLDRDBS: assayIds.abbottM2000HIVEID,
     }
     const resultCategories = await allResultCategoryToId()
@@ -435,6 +434,17 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
           'Not detected': resultCategories.NotDetected,
           '< 40': resultCategories.LessThan40,
           Numeric: resultCategories.MoreThan40,
+        },
+      },
+      'HIV0.2ml': {
+        I: {
+          Detected: resultCategories.Detected,
+          'Target not detected': resultCategories.NotDetected,
+        },
+        F: {
+          'Not detected': resultCategories.NotDetected,
+          '< 150': resultCategories.LessThan150,
+          Numeric: resultCategories.MoreThan150,
         },
       },
       HIVQLDRDBS: {
@@ -537,7 +547,11 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
         (qualityControlSummary, assayCode) => {
           // If this is an HIV Assay
           const qualityControlSummaryForAssay = {}
-          if (['1mLDBSvOP', 'HIV0.6ml', 'HIVQLDRDBS'].includes(assayCode)) {
+          if (
+            ['1mLDBSvOP', 'HIV0.6ml', 'HIV0.2ml', 'HIVQLDRDBS'].includes(
+              assayCode
+            )
+          ) {
             const negResults = qualityControlResultsForRun.filter(
               result => result.sample.externalId === 'HIV_NEG'
             )
@@ -747,7 +761,7 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
         }
         const qualityControlSummary = _.get(
           qualityControlSummaries,
-          `${finalResult.sampleRunNumber}.${finalResult.assay.code}`,
+          [finalResult.sampleRunNumber, finalResult.assay.code],
           {}
         )
         const passedQualityControl =
