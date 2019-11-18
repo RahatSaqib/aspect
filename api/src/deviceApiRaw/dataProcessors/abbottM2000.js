@@ -267,6 +267,7 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
                           '1mLDBSvOP': 'DBS',
                           'HIV0.6ml': 'Plasma',
                           'HIV0.2ml': 'Plasma',
+                          'HBV 0.2ml': 'Plasma',
                         }[_.get(jsonAstmOrder, '5.4.value')],
                       },
                       assay: {

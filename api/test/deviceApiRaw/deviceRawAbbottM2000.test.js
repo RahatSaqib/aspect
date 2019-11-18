@@ -1619,12 +1619,9 @@ L|1`
           ...existingResultRecord,
           resultData: {
             ...existingResultRecord.resultData,
-            messageSentOn: convertToTimeZone(
-              new Date(2019, 10, 7, 18, 8, 38),
-              {
-                timeZone: 'UTC',
-              }
-            ).toISOString(),
+            messageSentOn: convertToTimeZone(new Date(2019, 10, 7, 18, 8, 38), {
+              timeZone: 'UTC',
+            }).toISOString(),
             qualityControlSummary: {
               highPositiveControl: _.omit(
                 existingResultRecord.resultData.qualityControlSummary

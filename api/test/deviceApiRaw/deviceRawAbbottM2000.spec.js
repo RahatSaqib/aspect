@@ -527,7 +527,7 @@ aa.`
     })
   })
 
-  it('should parse the ASTM RAW messages from an HBV Plasma VL plate, using HIV 0.2ml reagent protocol, and save the results in the database', async () => {
+  it('should parse the ASTM RAW messages from an HBV Plasma VL plate, using HBV 0.2ml reagent protocol, and save the results in the database', async () => {
     const payload = await readTextFile(
       path.join(__dirname, 'abbottM2000PlasmaHbvVlRaw.pkl'),
       'utf8'
@@ -552,7 +552,7 @@ aa.`
         .map(deviceLog => deviceLog.resultId)
     )
     expect(resultIds).to.have.lengthOf.above(1)
-    expect(resultIds).to.have.lengthOf(93)
+    expect(resultIds).to.have.lengthOf(45)
 
     // inspect that the results that were created have the expected values:
     const results = await knex('Result')
@@ -580,11 +580,11 @@ aa.`
       expect(result.resultTypeId).to.equal(expectedResultTypeId)
       if (result.resultCategory1 !== errorResultCategoryId) {
         expect(result.endedOn.getTime()).to.equal(
-          convertToTimeZone(new Date(2019, 10, 15, 22, 33, 51), {
+          convertToTimeZone(new Date(2019, 10, 7, 18, 8, 37), {
             timeZone: 'UTC',
           }).getTime()
         )
-        expect(result.consumableSerial).to.equal('11763671')
+        expect(result.consumableSerial).to.equal('11832001')
       }
       expect(result.senderVersion).to.equal('1')
       expect(result.updatedOn.getTime()).to.be.closeTo(
@@ -595,7 +595,7 @@ aa.`
       expect(resultData).to.containSubset({
         typeOfMessage: 'Production',
         messageIsComplete: true,
-        assayName: 'HBV0.2ml',
+        assayName: 'HBV 0.2ml',
         actionCode: 'Patient Result',
         resultType: 'Final Result',
         abnormalFlags: [],
@@ -607,11 +607,11 @@ aa.`
             abnormalFlags: [],
             result: 'Not detected',
             moduleName: 'C1',
-            assayCode: 'HBV0.2ml',
-            assayName: 'HBV0.2ml',
-            consumableLot: '488445',
-            consumableSerial: '11763671',
-            controlConsumableLotNumber: '488990',
+            assayCode: 'HBV 0.2ml',
+            assayName: 'HBV 0.2ml',
+            consumableLot: '488761',
+            consumableSerial: '11832001',
+            controlConsumableLotNumber: '488125',
             moduleSerial: '275020369',
             orderOperatorId: 'fse',
             senderOperator: 'Administrator',
@@ -621,33 +621,33 @@ aa.`
             passed: true,
             reportType: 'Final Result',
             abnormalFlags: [],
-            result: '832',
+            result: '664',
             moduleName: 'B1',
-            assayCode: 'HBV0.2ml',
-            assayName: 'HBV0.2ml',
-            consumableLot: '488445',
-            consumableSerial: '11763671',
-            controlConsumableLotNumber: '488990',
+            assayCode: 'HBV 0.2ml',
+            assayName: 'HBV 0.2ml',
+            consumableLot: '488761',
+            consumableSerial: '11832001',
+            controlConsumableLotNumber: '488125',
             moduleSerial: '275020369',
             orderOperatorId: 'fse',
             senderOperator: 'Administrator',
-            cycleNumber: 25.28,
+            cycleNumber: 33.58,
           },
           highPositiveControl: {
             passed: true,
             reportType: 'Final Result',
             abnormalFlags: [],
-            result: '109603',
+            result: '42689',
             moduleName: 'A1',
-            assayCode: 'HBV0.2ml',
-            assayName: 'HBV0.2ml',
-            consumableLot: '488445',
-            consumableSerial: '11763671',
-            controlConsumableLotNumber: '488990',
+            assayCode: 'HBV 0.2ml',
+            assayName: 'HBV 0.2ml',
+            consumableLot: '488761',
+            consumableSerial: '11832001',
+            controlConsumableLotNumber: '488125',
             moduleSerial: '275020369',
             orderOperatorId: 'fse',
             senderOperator: 'Administrator',
-            cycleNumber: 18.18,
+            cycleNumber: 27.15,
           },
         },
       })

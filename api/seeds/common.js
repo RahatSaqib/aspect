@@ -394,6 +394,7 @@ async function upsertGeneXpertDeviceTypeAndAssays(
     Ebola: assayTypeEbolaId,
     'HIV VL': assayTypeHivVlId,
     'HIV Qual': assayTypeHivQualId,
+    'HBV VL': assayTypeHbvVlId,
     HCV: assayTypeHcvId,
     Unknown: assayTypeUnknownId,
   } = await allAssayTypeToId()
