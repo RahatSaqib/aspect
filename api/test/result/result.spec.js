@@ -952,7 +952,7 @@ describe('Result download routes', () => {
 
       server
         .get(
-          `${path}?size=1&deviceType=DaktariVirology&assayTypeAbbreviations=HCV,Ebola,HIV`
+          `${path}?size=1&deviceType=DaktariVirology&assayExternalIds=GxMtbRif,GxEbola,GxHiv1Vl,GxHcv,DaktariHivVL`
         )
         .set('Authorization', `Bearer ${shared.token}`)
         .end((err, res) => {
