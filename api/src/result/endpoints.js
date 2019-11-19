@@ -402,7 +402,7 @@ const routes = [
               ),
             assayExternalIds: Joi.string()
               .optional()
-              .description('an array with the assay externalId'),
+              .description('a csv string with the assay externalId'),
             resultCategories: Joi.string()
               .optional()
               .description('an array with the assay type abbreviation'),
