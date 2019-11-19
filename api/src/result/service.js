@@ -545,10 +545,7 @@ async function getDownloadResultsList(query, auth) {
         )
       }
       if (params.assayExternalIds) {
-        queryBuilder.whereIn(
-          'a.externalId',
-          params.assayExternalIds.split(',')
-        )
+        queryBuilder.whereIn('a.externalId', params.assayExternalIds.split(','))
       }
       if (params.resultCategories) {
         queryBuilder.where(builder =>
