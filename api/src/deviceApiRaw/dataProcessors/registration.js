@@ -4,6 +4,7 @@ const registeredDataProcessors = [
   require('./abbottM2000'),
   require('./bdMgit'),
   require('./senaiteLims'),
+  require('./philippinesNtrl'),
   require('./default'),
 ]
 
