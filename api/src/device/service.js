@@ -329,7 +329,10 @@ async function getDeviceByDeviceId({
 }
 
 async function getDeviceByRequest(request, fields = SELECT_SHOW_FIELDS) {
-  const { auth: { credentials }, params: { deviceId } } = request
+  const {
+    auth: { credentials },
+    params: { deviceId },
+  } = request
 
   return getDeviceByDeviceId({
     deviceId,
@@ -443,7 +446,11 @@ async function getDevice(deviceId) {
 }
 
 async function updateDeviceMaintenance(request) {
-  const { auth: { credentials }, params, payload } = request
+  const {
+    auth: { credentials },
+    params,
+    payload,
+  } = request
   const dataConstraints = await getConstraints(credentials)
 
   let device = await knex('Device as d')
@@ -587,8 +594,7 @@ async function getDevicePerformance(request) {
       utilizationRateAvg = 80
 
       x.utilizationRate = Math.round(
-        x.totalResult *
-          100 /
+        (x.totalResult * 100) /
           (getDaysInMonth(new Date(x.monthTested)) *
             deviceCapacity.dailyCapacity)
       )
@@ -597,7 +603,7 @@ async function getDevicePerformance(request) {
     }
 
     if (x.totalResult) {
-      x.errorRate = Math.round(x.errorCount * 100 / x.totalResult)
+      x.errorRate = Math.round((x.errorCount * 100) / x.totalResult)
       return x
     }
     x.errorRate = 0
@@ -608,7 +614,9 @@ async function getDevicePerformance(request) {
     ok: true,
     length: newData.length,
     utilizationRateAvg,
-    errorRateAvg: Math.round(countryTotalErrorCount * 100 / countryTotalResult),
+    errorRateAvg: Math.round(
+      (countryTotalErrorCount * 100) / countryTotalResult
+    ),
     data: _.sortBy(newData, [x => x.monthTested]),
   }
 }

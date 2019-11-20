@@ -3,19 +3,11 @@ module.exports = require('../utils').seed(seed, __filename, {
   staticDataFiles: ['AssayType'],
 })
 const { upsertGeneXpertDeviceTypeAndAssays } = require('../common')
-const { readJson } = require('fs-extra')
-
-const fixturesPath = `${__dirname}/fixtures/`
-const geneXpertDevicePath = `${fixturesPath}geneXpertDevice/`
 
 async function seed(knex) {
   // Create admin user and audit fields
-  const patientDataSchema = await readJson(
-    `${geneXpertDevicePath}/geneXpertPatientDataSchema.json`
-  )
-  const resultDataSchema = await readJson(
-    `${geneXpertDevicePath}/geneXpertResultDataSchema.json`
-  )
+  const patientDataSchema = require('./fixtures/geneXpertDevice/geneXpertPatientDataSchema.json')
+  const resultDataSchema = require('./fixtures/geneXpertDevice/geneXpertResultDataSchema.json')
   await upsertGeneXpertDeviceTypeAndAssays(
     knex,
     ['GxMtbRif', 'GxMtbRifUltra'],

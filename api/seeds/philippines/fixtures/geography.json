@@ -1,609 +1,239 @@
 {
-	"countries": [
-		{
-			"id" : 1,
-			"abbreviation" : "PH",
-			"name" : "Philippines",
-			"a3" : "PHL",
-			"culture" : "en-PH",
-			"countryCode" : "63",
-			"stateLabel" : "Region",
-			"lgaLabel" : "Province/HUC",
-			"timezone" : "Taipei Standard Time",
-			"portNumber" : 3017,
-			"exportColumns" : "DeploymentDescription|TestEndedOn|AssayName|AssayVersion|User|Result1|Result2|ReagentLotID|ExpirationDate|CartridgeSerial|ModuleSerial|SoftwareVersion|ErrorCode|ErrorCategory|ErrorDescription|SampleId|Notes|ProbeA|ProbeB|ProbeC|ProbeD|ProbeE|ProbeSpc|Qc1|Qc2|ProbeACt|ProbeBCt|ProbeCCt|ProbeDCt|ProbeECt|ProbeSpcCt|Qc1Ct|Qc2Ct|ProbeAEndpt|ProbeBEndpt|ProbeCEndpt|ProbeDEndpt|ProbeEEndpt|ProbeSpcEndpt|Qc1Endpt|Qc2Endpt",
-			"inventoryDaysThreshold" : 21,
-			"monthStartsOnDay" : null,
-			"states": [
-				{
-					"id": 646,
-					"name": "ILOCOS REGION (REGION I)",
-					"abbreviation": "RO 1",
-					"lgas": [
-						{
-							"id": 4,
-							"name": "ILOCOS NORTE"
-						},
-						{
-							"id": 5,
-							"name": "ILOCOS SUR"
-						},
-						{
-							"id" : 6,
-							"name" : "LA UNION"
-						},
-						{
-							"id" : 7,
-							"name" : "PANGASINAN"
-						}
-					]
-				},
-				{
-					"id": 647,
-					"name": "CAGAYAN VALLEY (REGION II)",
-					"abbreviation": "RO 2",
-					"lgas": [
-						{
-							"id" : 8,
-							"name" : "BATANES"
-						},
-						{
-							"id" : 9,
-							"name" : "CAGAYAN"
-						},
-						{
-							"id" : 10,
-							"name" : "ISABELA"
-						},
-						{
-							"id" : 11,
-							"name" : "NUEVA VIZCAYA"
-						},
-						{
-							"id" : 12,
-							"name" : "QUIRINO"
-						}
-					]
-				},
-				{
-					"id": 648,
-					"name": "CENTRAL LUZON (REGION III)",
-					"abbreviation": "RO 3",
-					"lgas": [
-						{
-							"id" : 13,
-							"name" : "BATAAN"
-						},
-						{
-							"id" : 14,
-							"name" : "BULACAN"
-						},
-						{
-							"id" : 15,
-							"name" : "NUEVA ECIJA"
-						},
-						{
-							"id" : 16,
-							"name" : "PAMPANGA"
-						},
-						{
-							"id" : 17,
-							"name" : "ANGELES CITY"
-						},
-						{
-							"id" : 18,
-							"name" : "TARLAC"
-						},
-						{
-							"id" : 19,
-							"name" : "ZAMBALES"
-						},
-						{
-							"id" : 20,
-							"name" : "OLONGAPO CITY"
-						},
-						{
-							"id" : 21,
-							"name" : "AURORA"
-						}
-					]
-				},
-				{
-					"id": 649,
-					"name": "CALABARZON (REGION IV-A)",
-					"abbreviation": "RO 4A",
-					"lgas": [
-						{
-							"id" : 22,
-							"name" : "BATANGAS"
-						},
-						{
-							"id" : 23,
-							"name" : "CAVITE"
-						},
-						{
-							"id" : 24,
-							"name" : "LAGUNA"
-						},
-						{
-							"id" : 25,
-							"name" : "QUEZON"
-						},
-						{
-							"id" : 26,
-							"name" : "LUCENA CITY"
-						},
-						{
-							"id" : 27,
-							"name" : "RIZAL"
-						}
-					]
-				},
-				{
-					"id": 650,
-					"name": "BICOL REGION (REGION V)",
-					"abbreviation": "RO 5",
-					"lgas": [
-						{
-							"id" : 28,
-							"name" : "ALBAY"
-						},
-						{
-							"id" : 29,
-							"name" : "CAMARINES NORTE"
-						},
-						{
-							"id" : 30,
-							"name" : "CAMARINES SUR"
-						},
-						{
-							"id" : 31,
-							"name" : "CATANDUANES"
-						},
-						{
-							"id" : 32,
-							"name" : "MASBATE"
-						},
-						{
-							"id" : 33,
-							"name" : "SORSOGON"
-						}
-					]
-				},
-				{
-					"id": 651,
-					"name": "WESTERN VISAYAS (REGION VI)",
-					"abbreviation": "RO 6",
-					"lgas": [
-						{
-							"id" : 34,
-							"name" : "AKLAN"
-						},
-						{
-							"id" : 35,
-							"name" : "ANTIQUE"
-						},
-						{
-							"id" : 36,
-							"name" : "CAPIZ"
-						},
-						{
-							"id" : 37,
-							"name" : "ILOILO"
-						},
-						{
-							"id" : 38,
-							"name" : "ILOILO CITY"
-						},
-						{
-							"id" : 39,
-							"name" : "NEGROS OCCIDENTAL"
-						},
-						{
-							"id" : 40,
-							"name" : "BACOLOD CITY"
-						},
-						{
-							"id" : 41,
-							"name" : "GUIMARAS"
-						}
-					]
-				},
-				{
-					"id": 652,
-					"name": "CENTRAL VISAYAS (REGION VII)",
-					"abbreviation": "RO 7",
-					"lgas": [
-						{
-							"id" : 42,
-							"name" : "BOHOL"
-						},
-						{
-							"id" : 43,
-							"name" : "CEBU"
-						},
-						{
-							"id" : 44,
-							"name" : "CEBU CITY"
-						},
-						{
-							"id" : 45,
-							"name" : "LAPU-LAPU CITY (OPON)"
-						},
-						{
-							"id" : 46,
-							"name" : "MANDAUE CITY"
-						},
-						{
-							"id" : 47,
-							"name" : "NEGROS ORIENTAL"
-						},
-						{
-							"id" : 48,
-							"name" : "SIQUIJOR"
-						}
-					]
-				},
-				{
-					"id": 653,
-					"name": "EASTERN VISAYAS (REGION VIII)",
-					"abbreviation": "RO 8",
-					"lgas": [
-						{
-							"id" : 49,
-							"name" : "EASTERN SAMAR"
-						},
-						{
-							"id" : 50,
-							"name" : "LEYTE"
-						},
-						{
-							"id" : 51,
-							"name" : "NORTHERN SAMAR"
-						},
-						{
-							"id" : 52,
-							"name" : "SAMAR (WESTERN SAMAR)"
-						},
-						{
-							"id" : 53,
-							"name" : "SOUTHERN LEYTE"
-						},
-						{
-							"id" : 54,
-							"name" : "BILIRAN"
-						},
-						{
-							"id" : 55,
-							"name" : "TACLOBAN CITY"
-						}
-					]
-				},
-				{
-					"id": 654,
-					"name": "ZAMBOANGA PENINSULA (REGION IX)",
-					"abbreviation": "RO 9",
-					"lgas": [
-						{
-							"id" : 56,
-							"name" : "ZAMBOANGA DEL NORTE"
-						},
-						{
-							"id" : 57,
-							"name" : "ZAMBOANGA DEL SUR"
-						},
-						{
-							"id" : 58,
-							"name" : "ZAMBOANGA CITY"
-						},
-						{
-							"id" : 59,
-							"name" : "ZAMBOANGA SIBUGAY"
-						},
-						{
-							"id" : 60,
-							"name" : "CITY OF ISABELA (NOT A PROVINCE)"
-						}
-					]
-				},
-				{
-					"id": 655,
-					"name": "NORTHERN MINDANAO (REGION X)",
-					"abbreviation": "RO 10",
-					"lgas": [
-						{
-							"id" : 61,
-							"name" : "BUKIDNON"
-						},
-						{
-							"id" : 62,
-							"name" : "CAMIGUIN"
-						},
-						{
-							"id" : 63,
-							"name" : "LANAO DEL NORTE"
-						},
-						{
-							"id" : 64,
-							"name" : "MISAMIS OCCIDENTAL"
-						},
-						{
-							"id" : 65,
-							"name" : "MISAMIS ORIENTAL"
-						},
-						{
-							"id" : 66,
-							"name" : "ILIGAN CITY"
-						},
-						{
-							"id" : 67,
-							"name" : "CAGAYAN DE ORO CITY"
-						}
-					]
-				},
-				{
-					"id": 656,
-					"name": "DAVAO REGION (REGION XI)",
-					"abbreviation": "RO 11",
-					"lgas": [
-						{
-							"id" : 68,
-							"name" : "DAVAO CITY"
-						},
-						{
-							"id" : 69,
-							"name" : "DAVAO DEL NORTE"
-						},
-						{
-							"id" : 70,
-							"name" : "DAVAO DEL SUR"
-						},
-						{
-							"id" : 71,
-							"name" : "DAVAO ORIENTAL"
-						},
-						{
-							"id" : 72,
-							"name" : "COMPOSTELA VALLEY"
-						},
-						{
-							"stateAbbreviation" : "RO 11",
-							"id" : 73,
-							"name" : "DAVAO OCCIDENTAL"
-						}
-					]
-				},
-				{
-					"id": 657,
-					"name": "SOCCSKSARGEN (REGION XII)",
-					"abbreviation": "RO 12",
-					"lgas": [
-						{
-							"id" : 74,
-							"name" : "COTABATO (NORTH COTABATO)"
-						},
-						{
-							"id" : 75,
-							"name" : "SOUTH COTABATO"
-						},
-						{
-							"id" : 76,
-							"name" : "SULTAN KUDARAT"
-						},
-						{
-							"id" : 77,
-							"name" : "SARANGANI"
-						},
-						{
-							"id" : 78,
-							"name" : "GENERAL SANTOS CITY (DADIANGAS)"
-						},
-						{
-							"id" : 79,
-							"name" : "COTABATO CITY"
-						}
-					]
-				},
-				{
-					"id": 658,
-					"name": "NATIONAL CAPITAL REGION (NCR)",
-					"abbreviation": "NCR",
-					"lgas": [
-						{
-							"id" : 80,
-							"name" : "CITY OF MANILA"
-						},
-						{
-							"id" : 81,
-							"name" : "MANDALUYONG CITY"
-						},
-						{
-							"id" : 82,
-							"name" : "MARIKINA CITY"
-						},
-						{
-							"id" : 83,
-							"name" : "PASIG CITY"
-						},
-						{
-							"id" : 84,
-							"name" : "QUEZON CITY"
-						},
-						{
-							"id" : 85,
-							"name" : "SAN JUAN CITY"
-						},
-						{
-							"id" : 86,
-							"name" : "CALOOCAN CITY"
-						},
-						{
-							"id" : 87,
-							"name" : "MALABON CITY"
-						},
-						{
-							"id" : 88,
-							"name" : "NAVOTAS CITY"
-						},
-						{
-							"id" : 89,
-							"name" : "VALENZUELA CITY"
-						},
-						{
-							"id" : 90,
-							"name" : "LAS PINAS CITY"
-						},
-						{
-							"id" : 91,
-							"name" : "MAKATI CITY"
-						},
-						{
-							"id" : 92,
-							"name" : "MUNTINLUPA CITY"
-						},
-						{
-							"id" : 93,
-							"name" : "PARAÑAQUE CITY"
-						},
-						{
-							"id" : 94,
-							"name" : "PASAY CITY"
-						},
-						{
-							"id" : 95,
-							"name" : "TAGUIG CITY"
-						},
-						{
-							"id" : 96,
-							"name" : "PATEROS"
-						}
-					]
-				},
-				{
-					"id": 659,
-					"name": "CORDILLERA ADMINISTRATIVE REGION (CAR)",
-					"abbreviation": "CAR",
-					"lgas": [
-						{
-							"id" : 97,
-							"name" : "ABRA"
-						},
-						{
-							"id" : 98,
-							"name" : "BENGUET"
-						},
-						{
-							"id" : 99,
-							"name" : "BAGUIO CITY"
-						},
-						{
-							"id" : 100,
-							"name" : "IFUGAO"
-						},
-						{
-							"id" : 101,
-							"name" : "KALINGA"
-						},
-						{
-							"id" : 102,
-							"name" : "MOUNTAIN PROVINCE"
-						},
-						{
-							"id" : 103,
-							"name" : "APAYAO"
-						}
-					]
-				},
-				{
-					"id": 660,
-					"name": "AUTONOMOUS REGION OF MUSLIM MINDANAO (ARMM)",
-					"abbreviation": "ARMM",
-					"lgas": [
-						{
-							"id" : 104,
-							"name" : "BASILAN"
-						},
-						{
-							"id" : 105,
-							"name" : "LANAO DEL SUR"
-						},
-						{
-							"id" : 106,
-							"name" : "MAGUINDANAO"
-						},
-						{
-							"id" : 107,
-							"name" : "SULU"
-						},
-						{
-							"id" : 108,
-							"name" : "TAWI-TAWI"
-						}
-					]
-				},
-				{
-					"id": 661,
-					"name": "CARAGA (REGION XIII)",
-					"abbreviation": "RO 13",
-					"lgas": [
-						{
-							"id" : 109,
-							"name" : "AGUSAN DEL NORTE"
-						},
-						{
-							"id" : 110,
-							"name" : "AGUSAN DEL SUR"
-						},
-						{
-							"id" : 111,
-							"name" : "SURIGAO DEL NORTE"
-						},
-						{
-							"id" : 112,
-							"name" : "SURIGAO DEL SUR"
-						},
-						{
-							"id" : 113,
-							"name" : "DINAGAT ISLANDS"
-						},
-						{
-							"id" : 114,
-							"name" : "BUTUAN CITY"
-						}
-					]
-				},
-				{
-					"id": 662,
-					"name": "MiMaRoPa REGION",
-					"abbreviation": "MiMaRoPa",
-					"lgas": [
-						{
-							"id" : 115,
-							"name" : "MARINDUQUE"
-						},
-						{
-							"id" : 116,
-							"name" : "OCCIDENTAL MINDORO"
-						},
-						{
-							"id" : 117,
-							"name" : "ORIENTAL MINDORO"
-						},
-						{
-							"id" : 118,
-							"name" : "PALAWAN"
-						},
-						{
-							"id" : 119,
-							"name" : "PUERTO PRINCESA CITY"
-						},
-						{
-							"id" : 120,
-							"name" : "ROMBLON"
-						}
-					]
-				}
-			]
-		}
-	]
+  "countries": [
+    {
+      "abbreviation" : "PH",
+      "name" : "Philippines",
+      "a3" : "PHL",
+      "culture" : "en-PH",
+      "countryCode" : "63",
+      "stateLabel" : "Region",
+      "lgaLabel" : "Province/HUC",
+      "timezone" : "Taipei Standard Time",
+      "portNumber" : 3017,
+      "exportColumns" : "DeploymentDescription|TestEndedOn|AssayName|AssayVersion|User|Result1|Result2|ReagentLotID|ExpirationDate|CartridgeSerial|ModuleSerial|SoftwareVersion|ErrorCode|ErrorCategory|ErrorDescription|SampleId|Notes|ProbeA|ProbeB|ProbeC|ProbeD|ProbeE|ProbeSpc|Qc1|Qc2|ProbeACt|ProbeBCt|ProbeCCt|ProbeDCt|ProbeECt|ProbeSpcCt|Qc1Ct|Qc2Ct|ProbeAEndpt|ProbeBEndpt|ProbeCEndpt|ProbeDEndpt|ProbeEEndpt|ProbeSpcEndpt|Qc1Endpt|Qc2Endpt",
+      "inventoryDaysThreshold" : 21,
+      "monthStartsOnDay" : null,
+      "states": [
+        {
+          "name": "ILOCOS REGION (REGION I)",
+          "abbreviation": "RO 1",
+          "lgas": [
+            { "name": "ILOCOS NORTE" },
+            { "name": "ILOCOS SUR" },
+            { "name" : "LA UNION" },
+            { "name" : "PANGASINAN" }
+          ]
+        },
+        {
+          "name": "CAGAYAN VALLEY (REGION II)",
+          "abbreviation": "RO 2",
+          "lgas": [
+            { "name" : "BATANES" },
+            { "name" : "CAGAYAN" },
+            { "name" : "ISABELA" },
+            { "name" : "NUEVA VIZCAYA" },
+            { "name" : "QUIRINO" }
+          ]
+        },
+        {
+          "name": "CENTRAL LUZON (REGION III)",
+          "abbreviation": "RO 3",
+          "lgas": [
+            { "name" : "BATAAN" },
+            { "name" : "BULACAN" },
+            { "name" : "NUEVA ECIJA" },
+            { "name" : "PAMPANGA" },
+            { "name" : "ANGELES CITY" },
+            { "name" : "TARLAC" },
+            { "name" : "ZAMBALES" },
+            { "name" : "OLONGAPO CITY" },
+            { "name" : "AURORA" }
+          ]
+        },
+        {
+          "name": "CALABARZON (REGION IV-A)",
+          "abbreviation": "RO 4A",
+          "lgas": [
+            { "name" : "BATANGAS" },
+            { "name" : "CAVITE" },
+            { "name" : "LAGUNA" },
+            { "name" : "QUEZON" },
+            { "name" : "LUCENA CITY" },
+            { "name" : "RIZAL" }
+          ]
+        },
+        {
+          "name": "BICOL REGION (REGION V)",
+          "abbreviation": "RO 5",
+          "lgas": [
+            { "name" : "ALBAY" },
+            { "name" : "CAMARINES NORTE" },
+            { "name" : "CAMARINES SUR" },
+            { "name" : "CATANDUANES" },
+            { "name" : "MASBATE" },
+            { "name" : "SORSOGON" }
+          ]
+        },
+        {
+          "name": "WESTERN VISAYAS (REGION VI)",
+          "abbreviation": "RO 6",
+          "lgas": [
+            { "name" : "AKLAN" },
+            { "name" : "ANTIQUE" },
+            { "name" : "CAPIZ" },
+            { "name" : "ILOILO" },
+            { "name" : "ILOILO CITY" },
+            { "name" : "NEGROS OCCIDENTAL" },
+            { "name" : "BACOLOD CITY" },
+            { "name" : "GUIMARAS" }
+          ]
+        },
+        {
+          "name": "CENTRAL VISAYAS (REGION VII)",
+          "abbreviation": "RO 7",
+          "lgas": [
+            { "name" : "BOHOL" },
+            { "name" : "CEBU" },
+            { "name" : "CEBU CITY" },
+            { "name" : "LAPU-LAPU CITY (OPON)" },
+            { "name" : "MANDAUE CITY" },
+            { "name" : "NEGROS ORIENTAL" },
+            { "name" : "SIQUIJOR" }
+          ]
+        },
+        {
+          "name": "EASTERN VISAYAS (REGION VIII)",
+          "abbreviation": "RO 8",
+          "lgas": [
+            { "name" : "EASTERN SAMAR" },
+            { "name" : "LEYTE" },
+            { "name" : "NORTHERN SAMAR" },
+            { "name" : "SAMAR (WESTERN SAMAR)" },
+            { "name" : "SOUTHERN LEYTE" },
+            { "name" : "BILIRAN" },
+            { "name" : "TACLOBAN CITY" }
+          ]
+        },
+        {
+          "name": "ZAMBOANGA PENINSULA (REGION IX)",
+          "abbreviation": "RO 9",
+          "lgas": [
+            { "name" : "ZAMBOANGA DEL NORTE" },
+            { "name" : "ZAMBOANGA DEL SUR" },
+            { "name" : "ZAMBOANGA CITY" },
+            { "name" : "ZAMBOANGA SIBUGAY" },
+            { "name" : "CITY OF ISABELA (NOT A PROVINCE)" }
+          ]
+        },
+        {
+          "name": "NORTHERN MINDANAO (REGION X)",
+          "abbreviation": "RO 10",
+          "lgas": [
+            { "name" : "BUKIDNON" },
+            { "name" : "CAMIGUIN" },
+            { "name" : "LANAO DEL NORTE" },
+            { "name" : "MISAMIS OCCIDENTAL" },
+            { "name" : "MISAMIS ORIENTAL" },
+            { "name" : "ILIGAN CITY" },
+            { "name" : "CAGAYAN DE ORO CITY" }
+          ]
+        },
+        {
+          "name": "DAVAO REGION (REGION XI)",
+          "abbreviation": "RO 11",
+          "lgas": [
+            { "name" : "DAVAO CITY" },
+            { "name" : "DAVAO DEL NORTE" },
+            { "name" : "DAVAO DEL SUR" },
+            { "name" : "DAVAO ORIENTAL" },
+            { "name" : "COMPOSTELA VALLEY" },
+            { "name" : "DAVAO OCCIDENTAL" }
+          ]
+        },
+        {
+          "name": "SOCCSKSARGEN (REGION XII)",
+          "abbreviation": "RO 12",
+          "lgas": [
+            { "name" : "COTABATO (NORTH COTABATO)" },
+            { "name" : "SOUTH COTABATO" },
+            { "name" : "SULTAN KUDARAT" },
+            { "name" : "SARANGANI" },
+            { "name" : "GENERAL SANTOS CITY (DADIANGAS)" },
+            { "name" : "COTABATO CITY" }
+          ]
+        },
+        {
+          "name": "NATIONAL CAPITAL REGION (NCR)",
+          "abbreviation": "NCR",
+          "lgas": [
+            { "name" : "CITY OF MANILA" },
+            { "name" : "MANDALUYONG CITY" },
+            { "name" : "MARIKINA CITY" },
+            { "name" : "PASIG CITY" },
+            { "name" : "QUEZON CITY" },
+            { "name" : "SAN JUAN CITY" },
+            { "name" : "CALOOCAN CITY" },
+            { "name" : "MALABON CITY" },
+            { "name" : "NAVOTAS CITY" },
+            { "name" : "VALENZUELA CITY" },
+            { "name" : "LAS PINAS CITY" },
+            { "name" : "MAKATI CITY" },
+            { "name" : "MUNTINLUPA CITY" },
+            { "name" : "PARAÑAQUE CITY" },
+            { "name" : "PASAY CITY" },
+            { "name" : "TAGUIG CITY" },
+            { "name" : "PATEROS" }
+          ]
+        },
+        {
+          "name": "CORDILLERA ADMINISTRATIVE REGION (CAR)",
+          "abbreviation": "CAR",
+          "lgas": [
+            { "name" : "ABRA" },
+            { "name" : "BENGUET" },
+            { "name" : "BAGUIO CITY" },
+            { "name" : "IFUGAO" },
+            { "name" : "KALINGA" },
+            { "name" : "MOUNTAIN PROVINCE" },
+            { "name" : "APAYAO" }
+          ]
+        },
+        {
+          "name": "AUTONOMOUS REGION OF MUSLIM MINDANAO (ARMM)",
+          "abbreviation": "ARMM",
+          "lgas": [
+            { "name" : "BASILAN" },
+            { "name" : "LANAO DEL SUR" },
+            { "name" : "MAGUINDANAO" },
+            { "name" : "SULU" },
+            { "name" : "TAWI-TAWI" }
+          ]
+        },
+        {
+          "name": "CARAGA (REGION XIII)",
+          "abbreviation": "RO 13",
+          "lgas": [
+            { "name" : "AGUSAN DEL NORTE" },
+            { "name" : "AGUSAN DEL SUR" },
+            { "name" : "SURIGAO DEL NORTE" },
+            { "name" : "SURIGAO DEL SUR" },
+            { "name" : "DINAGAT ISLANDS" },
+            { "name" : "BUTUAN CITY" }
+          ]
+        },
+        {
+          "name": "MiMaRoPa REGION",
+          "abbreviation": "MiMaRoPa",
+          "lgas": [
+            { "name" : "MARINDUQUE" },
+            { "name" : "OCCIDENTAL MINDORO" },
+            { "name" : "ORIENTAL MINDORO" },
+            { "name" : "PALAWAN" },
+            { "name" : "PUERTO PRINCESA CITY" },
+            { "name" : "ROMBLON" }
+          ]
+        }
+      ]
+    }
+  ]
 }

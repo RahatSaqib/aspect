@@ -21,16 +21,13 @@
 }
 
 [data-graph-container] {
-  text-align: center
+  text-align: center;
 }
 
 [data-panel-title] {
-font-size: 1.5rem;
-color: var(--aspect-color-grey-2);
+  font-size: 1.5rem;
+  color: var(--aspect-color-grey-2);
 }
-
-
-
 
 .Header {
   padding-bottom: 20px;
@@ -51,4 +48,3 @@ color: var(--aspect-color-grey-2);
   padding: 20px 0;
   text-align: right;
 }
-

@@ -2479,18 +2479,15 @@ async function insertSites(knex, partnerId, countryId, sites) {
 }
 
 async function getFeatureByModule(knex, module) {
-  const feature = await knex('feature')
+  return knex('feature')
     .where({ module })
     .first()
-  return feature
 }
 
 async function getPermissonByModuleAndActivity(knex, module, activity) {
-  const permisson = await knex('permission')
-    .where({ module })
-    .where({ activity })
+  return knex('permission')
+    .where({ module, activity })
     .first()
-  return permisson
 }
 
 async function getPartnerByName(knex, name) {
