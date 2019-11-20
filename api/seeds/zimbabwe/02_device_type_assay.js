@@ -368,7 +368,7 @@ async function seed(knex) {
         type: 'date',
         title: 'Date LJ Growth',
       },
-      ljGrowthClCOunt: {
+      ljGrowthClCount: {
         list: false,
         order: 19,
         type: 'number',
@@ -551,7 +551,7 @@ async function seed(knex) {
         type: 'date',
         title: 'Date LJ Growth',
       },
-      ljGrowthClCOunt: {
+      ljGrowthClCount: {
         list: false,
         order: 15,
         type: 'number',

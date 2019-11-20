@@ -82,7 +82,10 @@ async function seed(knex) {
       if (existingUser) {
         userId = existingUser.id
       } else {
-        const pw = bcrypt.hashSync(person.password || 'WelcomeToAspect', saltRounds)
+        const pw = bcrypt.hashSync(
+          person.password || 'WelcomeToAspect',
+          saltRounds
+        )
         const baseUserData = {
           password: pw,
           failedPasswordAttempts: 0,
@@ -145,20 +148,22 @@ async function seed(knex) {
         existingPerson.hideSampleId !== person.hideSampleId ||
         existingPerson.hideNotes !== person.hideNotes
       ) {
-        await knex('Person').where('id', existingPerson.id).update({
-          name: person.personName,
-          timezone: person.timezone,
-          title: person.title,
-          geographyId,
-          email: person.personEmailAddress,
-          cell: person.personCell,
-          phone: person.personPhone,
-          hidePatientId: person.hidePatientId,
-          hideSampleId: person.hideSampleId,
-          hideNotes: person.hideNotes,
-          updatedOn: now,
-          updatedBy: adminId,
-        })
+        await knex('Person')
+          .where('id', existingPerson.id)
+          .update({
+            name: person.personName,
+            timezone: person.timezone,
+            title: person.title,
+            geographyId,
+            email: person.personEmailAddress,
+            cell: person.personCell,
+            phone: person.personPhone,
+            hidePatientId: person.hidePatientId,
+            hideSampleId: person.hideSampleId,
+            hideNotes: person.hideNotes,
+            updatedOn: now,
+            updatedBy: adminId,
+          })
       }
       personId = existingPerson.id
     } else {
