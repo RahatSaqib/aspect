@@ -6,3 +6,8 @@ See subfolders for project specific READMEs.
 
 The Aspect API lives under `api`
 React Client App lives under `web`
+
+
+## For create a production release please follow the next steps.
+
+https://kb.systemone.id/display/AS/Release+Process
