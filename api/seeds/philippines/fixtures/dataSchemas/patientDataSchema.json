@@ -170,38 +170,53 @@
     "order": 33
   },
   "dateCollected2": {
-    "title": "Date Collected 3",
+    "title": "Date Collected 2",
     "type": "date",
     "order": 34
+  },
+  "dateCollected3": {
+    "title": "Date Collected 3",
+    "type": "date",
+    "order": 35
   },
   "volume1": {
     "title": "Volume 1",
     "type": "string",
-    "order": 35
+    "order": 36
   },
   "volume2": {
     "title": "Volume 2",
     "type": "string",
-    "order": 36
+    "order": 37
+  },
+  "volume3": {
+    "title": "Volume 3",
+    "type": "string",
+    "order": 38
   },
   "consistency1": {
     "title": "consistency 1",
     "type": "string",
-    "order": 37
+    "order": 39
   },
   "consistency2": {
     "title": "consistency 2",
     "type": "string",
-    "order": 38
+    "order": 40
+  },
+  "consistency3": {
+    "title": "consistency 3",
+    "type": "string",
+    "order": 41
   },
   "encodedBy": {
     "title": "Encoded by",
     "type": "string",
-    "order": 39
+    "order": 42
   },
   "dateEncoded": {
     "title": "Date Encoded",
     "type": "date",
-    "order": 40
+    "order": 43
   }
 }
