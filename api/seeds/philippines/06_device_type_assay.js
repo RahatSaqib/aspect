@@ -120,6 +120,10 @@ async function seed(knex) {
           title: 'Date Read',
           type: 'date',
         },
+        dateReleased: {
+          title: 'Date Released',
+          type: 'date',
+        },
         readBy: {
           title: 'Read by Med Tech',
           type: 'string',
@@ -588,10 +592,6 @@ async function seed(knex) {
             title: 'DST Status',
             type: 'string',
           },
-          datCollected1: {
-            title: 'Date Collected 1',
-            type: 'date',
-          },
           result1: {
             title: 'Result 1',
             type: 'string',
@@ -599,10 +599,6 @@ async function seed(knex) {
           grade1: {
             title: 'Grade 1',
             type: 'string',
-          },
-          datCollected2: {
-            title: 'Date Collected 2',
-            type: 'date',
           },
           result2: {
             title: 'Result 2',
@@ -828,21 +824,9 @@ async function seed(knex) {
         type: 'object',
         title: 'Encoded Result',
         properties: {
-          labNo: {
-            title: 'Lab No',
-            type: 'string',
-          },
           smearMethod: {
             title: 'Smear Method',
             type: 'string',
-          },
-          dateCollected1: {
-            title: 'Date Collected 1',
-            type: 'date',
-          },
-          dateCollected2: {
-            title: 'Date Collected 2',
-            type: 'date',
           },
           smearResult1: {
             title: 'Smear Result 1',
