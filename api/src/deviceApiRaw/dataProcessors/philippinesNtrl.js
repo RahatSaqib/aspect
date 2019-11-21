@@ -1,10 +1,22 @@
 const _ = require('lodash')
+const Promise = require('bluebird')
 const Boom = require('boom')
-const { knex, transact } = require('../../db')
+const { transact } = require('../../db')
 const { getRemoteAddress } = require('../../shared/request')
-const { getUtcTime } = require('../../shared/date')
+const {
+  formatDateOrDefault,
+  getDateOrDefault,
+  getUtcTime,
+} = require('../../shared/date')
 const { deviceSeen } = require('../../device/actions')
 const { SynchronousDataProcessor } = require('./_base')
+const {
+  sampleTypeToId,
+  assayToId,
+  resultSourceToId,
+  resultTypeToId,
+  allResultCategoryToId,
+} = require('../../src/shared/dictionary')
 
 class DefaultPhilippinesNtrl extends SynchronousDataProcessor {
   constructor(request, messageContext) {
@@ -172,40 +184,429 @@ class DefaultPhilippinesNtrl extends SynchronousDataProcessor {
   async processRequest() {
     const { request } = this
     const { auth, payload } = request
-
     this.response = { deviceApiRawId: this.id }
-    await transact(async knex => {
+    return transact(async knex => {
       const { deviceId } = await knex('DeviceApiKey')
         .where('token', auth.credentials.token)
         .first('deviceId')
-      const remoteAddress = getRemoteAddress(request)
       if (!deviceId) {
         throw Boom.badRequest(
           'Invalid device API key: Cannot determine which device this came from'
         )
       }
-
       this.response.deviceId = deviceId
-
+      const dateKeys = [
+        'MRF Date Requested',
+        'Date transfered to DST',
+        'Date Collected 1',
+        'Date Collected 2',
+        'Date Collected 3',
+        'Date Received',
+        'Date Encoded',
+        'Smear Date Released',
+        'Smear TAT',
+        'Culture Date Inoculated',
+        'Culture Date Released',
+        'Culture TAT',
+        'DSSM&Culture Releasing Form Date Released',
+        'DST Date Inoculated',
+        'DST Date Read',
+        'DST Date Released',
+        'DST Releasing Form Released Date',
+        'Gx Processing Date',
+        'Gx Date Released',
+        'Gx TAT',
+        'LPA Date Processed',
+        'LPA Date Released',
+        'LPA Date of Release',
+        'LPA TAT',
+      ]
+      dateKeys.forEach(dateKey => {
+        payload[dateKey] = getDateOrDefault(payload, dateKey)
+      })
+      const rawMessage = JSON.stringify(request.plugins.rawPayload)
       const utcNow = getUtcTime()
-
+      const remoteAddress = getRemoteAddress(request)
       const [deviceLogId] = await knex('DeviceLog').insert({
         deviceId,
-        source: _.get(payload, 'log.source', ''),
+        source: 'Philippines NTRL DB Record Updated',
         createdOn: utcNow,
         senderIp: remoteAddress,
-        rawMessage: JSON.stringify(request.plugins.rawPayload),
+        rawMessage,
       })
-
       this.response.deviceLogId = deviceLogId
-
       await knex('Device')
         .where({ id: deviceId })
         .update({ lastSeenOn: utcNow, updatedOn: utcNow })
+      const site = await knex('Device as d')
+        .join('Site as s', 'd.siteId', 's.id')
+        .where('d.id', deviceId)
+        .first('s.*')
       this.messageContext.dispatch(deviceSeen(deviceId))
 
-      if (!this.request.payload) {
-        throw Boom.badRequest('No payload to process')
+      const sampleTypeMapping = {
+        Sputum: 'Sputum',
+        Isolates: 'Isolate',
+        Others: 'Other',
+      }
+      const sampleTypeId = await sampleTypeToId(
+        sampleTypeMapping[payload['Type of Specimen']] || 'Other'
+      )
+      const originSite = await knex('Site')
+        .where('externalId', payload['Referring Health Facility'])
+        .first()
+      const ntrlLabRequestId = `PN-${formatDateOrDefault(
+        payload['Date Encoded'],
+        'YY'
+      )}-${payload['Serial Number']}`
+      const sampleOriginSiteId = originSite ? originSite.id : null
+      const sampleCollectionDateKeys = [
+        'Date Collected 1',
+        'Date Collected 2',
+        'Date Collected 3',
+      ].filter(dateCollectedKey => _.isNil(payload[dateCollectedKey]))
+      const samples = sampleCollectionDateKeys.map(dateCollectedKey => {
+        const sample = {
+          externalId: `${ntrlLabRequestId}`,
+          collectedOn: payload[dateCollectedKey],
+          sampleTypeId,
+          originSiteId: sampleOriginSiteId,
+        }
+        if (sampleCollectionDateKeys.length > 1) {
+          sample.externalId = `${ntrlLabRequestId}/${
+            dateCollectedKey[dateCollectedKey.length - 1]
+          }`
+        }
+        return sample
+      })
+      if (_.isEmpty(samples)) {
+        samples.push({
+          externalId: ntrlLabRequestId,
+          sampleTypeId,
+          originSiteId: sampleOriginSiteId,
+        })
+      }
+      await Promise.each(samples, async sample => {
+        let existingSample = await knex('Sample')
+          .where('externalId', sample.externalId)
+          .first()
+        if (!existingSample) {
+          existingSample = await knex('Sample')
+            .where('externalId', ntrlLabRequestId)
+            .first()
+        }
+        if (
+          existingSample &&
+          (existingSample.externalId !== sample.externalId ||
+            existingSample.sampleTypeId !== sample.sampleTypeId ||
+            existingSample.sampleOriginSiteId !== sample.sampleOriginSiteId)
+        ) {
+          sample.id = existingSample.id
+          await knex('Sample')
+            .where('id', existingSample.id)
+            .update(sample)
+        } else {
+          const [sampleId] = await knex('Sample').insert(sample)
+          sample.id = sampleId
+        }
+      })
+      const sampleIds = samples.map(sample => sample.id)
+      const patientData = {
+        serialNumber: payload['Serial Number'],
+        mrfDateRequested: payload['MRF Date Requested'],
+        referringHealthFacility: payload['Referring Health Facility'],
+        requestingPhysician: payload['Requesting Physician'],
+        lastName: payload['Last Name'],
+        firstName: payload['First Name'],
+        middleInitialOrName: payload['Middle Initial'],
+        age: payload.Age,
+        sex: payload.Sex,
+        address: payload.Address,
+        cultureCenter: payload['Culture Center'],
+        dstCenter: payload['DST Center'],
+        treatmentCategory: payload['Treatment Category'],
+        registrationGroup: payload['Registration Group'],
+        treatmentSchedule: payload['Treatment Schedule'],
+        monthOfTreatment: payload['Month of tx'],
+        typeOfSpecimen: payload['Type of Specimen'],
+        ifOthersSpecify: payload['(If Others) Specify'],
+        site: payload.Site,
+        testRequestedSmear: payload['Test Requested Smear'],
+        testRequestedCulture: payload['Test Requested Culture'],
+        testRequestedDst: payload['Test Requested DST'],
+        testRequestedLpa: payload['Test Requested LPA'],
+        testRequestedGx: payload['Test Requested Gx'],
+        dateTransferedToDst: payload['Date transfered to DST'],
+        cultureMethod: payload['Culture Method'],
+        presumptiveDsOrDr: payload['Presumptive DS or DR'],
+        dateReceived: payload['Date Received'],
+        labNo1: payload['Date Received'],
+        tbCaseNumber: payload['TB Case Number'],
+        dateCollected1: payload['Date Collected 1'],
+        dateCollected2: payload['Date Collected 2'],
+        dateCollected3: payload['Date Collected 3'],
+        volume1: payload['Volume 1'],
+        volume2: payload['Volume 2'],
+        volume3: payload['Volume 3'],
+        consistency1: payload['Consistency 1'],
+        consistency2: payload['Consistency 3'],
+        consistency3: payload['Consistency 4'],
+        encodedBy: payload['Encoded By'],
+        dateEncoded: payload['Date Encoded'],
+      }
+      const dstResultData = {
+        testRequested: payload['DST Test Requested'],
+        dateInoculated: payload['DST Date Inoculated'],
+        inoculatedBy: payload['DST MT Inoculated'],
+        idResult: payload['DST ID Result'],
+        streptomycin: payload.Streptomycin,
+        isoniazid: payload.Isoniazid,
+        rifampicin: payload.Rifampicin,
+        ethambutol: payload.Ethambutol,
+        pyrazinamide: payload.Pyrazinamide,
+        kanamycin: payload.Kanamycin,
+        levofloxacin: payload.Levofloxacin,
+        amikacin: payload.Amikacin,
+        capreomycin: payload.Capreomycin,
+        methodUsed: payload['DST Method Used'],
+        otherMethodUsed: payload['DST Method Used Others'],
+        remarks: payload['DST Remarks'],
+        dateRead: payload['DST Date Read'],
+        dateReleased: payload['DST Date Released'],
+        readBy: payload['DST MT Read'],
+        labTech: payload['DST Lab Tech'],
+        encodedBy: payload['DST Encoded by'],
+        reviewedBy: payload['DST Releasing Form Lab Manager'],
+      }
+      const resultSourceId = await resultSourceToId('LIMS')
+      const resultTypeId = await resultTypeToId('Patient')
+      const resultCategories = await allResultCategoryToId()
+      const mergeDeep = (baseValue, sourceValue) => {
+        if (_.isEmpty(baseValue) && !_.isEmpty(sourceValue)) {
+          return sourceValue
+        } else if (!_.isEmpty(baseValue) && _.isEmpty(sourceValue)) {
+          return baseValue
+        }
+        if (_.isArray(baseValue) && _.isArray(sourceValue)) {
+          return [...(baseValue || []), ...(sourceValue || [])]
+        }
+        if (_.isPlainObject(baseValue) || _.isPlainObject(sourceValue)) {
+          return
+        }
+        return sourceValue || baseValue
+      }
+      if (
+        Object.values(dstResultData).some(
+          value => value !== '' && !_.isNil(value)
+        )
+      ) {
+        const assayBdMgitAstId = await assayToId('assayBdMgitAst')
+        const assayGenericDstId = await assayToId('assayGenericDst')
+        const result = (await knex('Result as r')
+          .whereIn('r.sampleId', sampleIds)
+          .whereIn('.r.assayId', [assayBdMgitAstId, assayGenericDstId])
+          .andWhere({ deviceId })
+          .first('r.*')) || {
+          assayId:
+            dstResultData.methodUsed === 'Liquid Culture (MGIT 960)'
+              ? assayBdMgitAstId
+              : assayGenericDstId,
+          partnerId: site.partnerId,
+          geographyId: site.geographyId,
+          siteId: site.id,
+          deviceId,
+          sampleId: samples[0].id,
+          longitude: site.longitude,
+          latitude: site.latitude,
+          resultSourceId,
+          resultTypeId,
+          resultCategory1: resultCategories.Missing,
+          resultCategory2: resultCategories.Missing,
+          startedOn: dstResultData.dateRead,
+          endedOn: dstResultData.dateRead,
+          resultData: JSON.stringify({
+            encodedResult: dstResultData,
+          }),
+          patientData: JSON.stringify(patientData),
+          rawData: rawMessage,
+          insertedOn: utcNow,
+          insertedBy: null,
+          updatedOn: utcNow,
+          updatedBy: null,
+        }
+        if (result.id) {
+          if (!result.siteId) {
+            result.siteId = site.id
+          }
+          if (site.longitude) {
+            result.longitude = site.longitude
+          }
+          if (site.latitude) {
+            result.latitude = site.latitude
+          }
+          if (!result.resultCategory2) {
+            result.resultCategory2 = resultCategories.Missing
+          }
+          if (!result.resultCategory2) {
+            result.resultCategory2 = resultCategories.Missing
+          }
+          if (!result.startedOn) {
+            result.startedOn = dstResultData.dateRead
+          }
+          if (!result.endedOn) {
+            result.endedOn = dstResultData.dateRead
+          }
+          const resultData = JSON.parse(result.resultData || '{}')
+          resultData.encodedResult = dstResultData
+          result.resultData = JSON.stringify(resultData)
+          const resultPatientData = JSON.parse(result.patientData || '{}')
+          result.patientData = JSON.stringify(
+            mergeDeep(resultPatientData, patientData)
+          )
+          if (result.rawData) {
+            result.rawData += `\n${rawMessage}`
+          } else {
+            result.rawData = rawMessage
+          }
+          result.updatedOn = utcNow
+          result.updatedBy = null
+        }
+        if (!result.resultCategory1) {
+          result.resultCategory1 = resultCategories.Missing
+        }
+        if (!result.resultCategory2) {
+          result.resultCategory2 = resultCategories.Missing
+        }
+        const resultCategory1Id = {
+          'M. tuberculosis': resultCategories.PositiveMTB,
+          'No growth after 6 weeks': resultCategories.NotDetected,
+          'No growth after 8 weeks': resultCategories.NotDetected,
+          'Non tuberculous mycobacteria': resultCategories.PositiveMOTT,
+          Contaminated: resultCategories.Contaminated,
+          'Not Done': resultCategories.Missing,
+          'NON-VIABLE': resultCategories.Invalid,
+        }[dstResultData.idResult]
+
+        const resultCategory2IdMappings = {
+          RESISTANT: resultCategories.Resistant,
+          SUSCEPTIBLE: resultCategories.Susceptible,
+          'NOT DONE': resultCategories.Missing,
+          'NON VIABLE': resultCategories.Invalid,
+          CONTAMINATED: resultCategories.Contaminated,
+        }
+        const resultsForDrugsTested = [
+          dstResultData.isoniazid,
+          dstResultData.rifampicin,
+          dstResultData.ethambutol,
+          dstResultData.pyrazinamide,
+          dstResultData.kanamycin,
+          dstResultData.levofloxacin,
+          dstResultData.amikacin,
+          dstResultData.capreomycin,
+        ]
+        let resultCategory2Id = resultCategories.Missing
+        if (
+          resultsForDrugsTested.some(
+            resultForDrugsTested =>
+              resultCategory2IdMappings[resultForDrugsTested] === 'Resistant'
+          )
+        ) {
+          resultCategory2Id = resultCategories.Resistant
+        } else if (
+          resultsForDrugsTested.every(resultForDrugsTested =>
+            ['Susceptible', 'Missing'].includes(
+              resultCategory2IdMappings[resultForDrugsTested]
+            )
+          )
+        ) {
+          resultCategory2Id = resultCategories.Susceptible
+        } else if (
+          resultsForDrugsTested.some(
+            resultForDrugsTested =>
+              resultCategory2IdMappings[resultForDrugsTested] === 'Contaminated'
+          )
+        ) {
+          resultCategory2Id = resultCategories.Contaminated
+        } else if (
+          resultsForDrugsTested.some(
+            resultForDrugsTested =>
+              resultCategory2IdMappings[resultForDrugsTested] === 'Invalid'
+          )
+        ) {
+          resultCategory2Id = resultCategories.Invalid
+        }
+        const resultOverwritePriority = [
+          resultCategories.PositiveMTB,
+          resultCategories.PositiveMOTT,
+          resultCategories.Resistant,
+          resultCategories.Susceptible,
+          resultCategories.Contaminated,
+          resultCategories.Invalid,
+          resultCategories.NotDetected,
+          resultCategories.Missing,
+        ]
+        if (
+          resultOverwritePriority.indexOf(resultCategory1Id) <
+          result.resultCategory1
+        ) {
+          result.resultCategory1 = resultCategory1Id
+        }
+        if (
+          resultOverwritePriority.indexOf(resultCategory2Id) <
+          result.resultCategory2
+        ) {
+          result.resultCategory2 = resultCategory2Id
+        }
+      }
+
+      const cultureResultData = {
+        dateInoculated: payload['Culture Date Inoculated'],
+        medTech: payload['Culture Med Tech'],
+        resultStatus: payload['Culture Result Status'],
+        dstStatus: payload['Culture DST Status'],
+        result1: payload['Culture Result 1'],
+        grade1: payload['Culture Grade 1'],
+        result2: payload['Culture Result 2'],
+        grade2: payload['Culture Grade 2'],
+        finalResult: payload['Culture Final Result'],
+        remarks: payload['Culture Remarks 1'],
+        dateReleased: payload['Culture Date Released'],
+        encodedBy: payload['Culture Encoded by'],
+        labTech: payload['Culture Lab Tech'],
+      }
+      const lpaResultData = {
+        center: payload['LPA Center'],
+        lpaKit: payload['LPA Kit Used'],
+        lpaKitOther: payload['LPA Kit Others'],
+        mtbComplex: payload['LPA MTB Complex'],
+        rifampicin: payload['LPA Rifampicin Result'],
+        isoniazid: payload['LPA Isoniazid Result'],
+        ethmabutol: payload['LPA Ethambutol'],
+        fluoroquinolones: payload['LPA Fluoroquinolones'],
+        aminoglycoside: payload['LPA Aminoglycosides/ SLI'],
+        remarks: payload['LPA Remarks:'],
+        dateReleased: payload['LPA Date of Release'],
+        performedBy: payload['LPA Performed By'],
+        reviewedBy: payload['LPA Reviewed By'],
+      }
+      const smearResultData = {
+        smearMethod: payload['Smear Method'],
+        smearResult1: payload['Smear Result 1'],
+        smearResult2: payload['Smear Result 2'],
+        finalResult: payload['Smear Final Result'],
+        dateReleased: payload['Smear Date Released'],
+        encodedBy: payload['Smear Encoded by'],
+        laboratoryTechnician: payload['Smear Lab Tech'],
+      }
+      const geneXpertResultData = {
+        center: payload['Gx Center'],
+        processingDate: payload['Gx Processing Date'],
+        mtb: payload['Gx MTB'],
+        rifampicin: payload['Gx Rifampicin'],
+        remarks: payload['Gx Remarks'],
+        dateReleased: payload['Gx Date Released'],
+        examiner: payload['Gx Examiner'],
+        labManager: payload['Gx Laboratory Manager'],
       }
     })
   }
