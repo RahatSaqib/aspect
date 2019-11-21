@@ -557,6 +557,89 @@ async function seed(knex) {
     assayId: assayBdMgitGndId,
   })
 
+  const assayGenericDst = {
+    name: 'Generic TB Drug Sensitivity Test',
+    abbreviation: 'GENERIC DST',
+    i18nKey: 'assayGenericDst',
+    externalId: 'assayGenericDst',
+    assayTypeId: await assayTypeToId('TB ASD'),
+    deviceTypeId: deviceTypeNTRLDatabaseId,
+    resultSourceId: await resultSourceToId('LIMS'),
+    resultCategory1Label: 'MTB',
+    resultCategory1i18nKey: 'resultCategoryMTB',
+    resultCategory2Label: 'Resistance',
+    resultCategory2i18nKey: 'resultCategoryResistance',
+    resultDataSchema: JSON.stringify(ntrlDatabaseDstResultDataSchema),
+    patientDataSchema,
+  }
+
+  let { id: assayGenericDstId } =
+    (await knex('Assay')
+      .where('externalId', 'assayGenericDst')
+      .first('id')) || {}
+  if (!assayGenericDstId) {
+    assayGenericDstId = await knex('Assay').insert(assayGenericDst)
+  } else {
+    await knex('Assay')
+      .where('id', assayGenericDstId)
+      .update(assayGenericDst)
+  }
+
+  await knex('ResultCategoryAssay').insert({
+    resultCategoryId: await resultCategoryToId('PositiveMTB'),
+    assayId: assayGenericDstId,
+  })
+
+  await knex('ResultCategoryAssay').insert({
+    resultCategoryId: await resultCategoryToId('NotDetected'),
+    assayId: assayGenericDstId,
+  })
+
+  await knex('ResultCategoryAssay').insert({
+    resultCategoryId: await resultCategoryToId('PositiveMOTT'),
+    assayId: assayGenericDstId,
+  })
+
+  await knex('ResultCategoryAssay').insert({
+    resultCategoryId: await resultCategoryToId('Success'),
+    assayId: assayGenericDstId,
+  })
+
+  await knex('ResultCategoryAssay').insert({
+    resultCategoryId: await resultCategoryToId('Missing'),
+    assayId: assayGenericDstId,
+  })
+
+  await knex('ResultCategoryAssay').insert({
+    resultCategoryId: await resultCategoryToId('Error'),
+    assayId: assayGenericDstId,
+  })
+
+  await knex('ResultCategoryAssay').insert({
+    resultCategoryId: await resultCategoryToId('Contaminated'),
+    assayId: assayGenericDstId,
+  })
+
+  await knex('ResultCategoryAssay').insert({
+    resultCategoryId: await resultCategoryToId('Invalid'),
+    assayId: assayGenericDstId,
+  })
+
+  await knex('ResultCategoryAssay').insert({
+    resultCategoryId: await resultCategoryToId('Unknown'),
+    assayId: assayGenericDstId,
+  })
+
+  await knex('ResultCategoryAssay').insert({
+    resultCategoryId: await resultCategoryToId('Susceptible'),
+    assayId: assayGenericDstId,
+  })
+
+  await knex('ResultCategoryAssay').insert({
+    resultCategoryId: await resultCategoryToId('Resistant'),
+    assayId: assayGenericDstId,
+  })
+
   const assayCulture = {
     name: 'Culture',
     abbreviation: 'CULTURE',
