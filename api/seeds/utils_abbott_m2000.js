@@ -441,7 +441,8 @@ async function seedAbbottM2000AndAssays(knex) {
     i18nKey,
     resultCategory1Label,
     resultCategory1i18nKey,
-    assayType
+    assayType,
+    abbreviation
   ) => {
     let { id } =
       (await knex('Assay')
@@ -459,6 +460,7 @@ async function seedAbbottM2000AndAssays(knex) {
         resultCategory1i18nKey,
         resultDataSchema: JSON.stringify(abbottM2000ResultDataSchema),
         patientDataSchema: JSON.stringify(abbottM2000PatientDataSchema),
+        abbreviation,
       })
     }
     return id
@@ -492,7 +494,8 @@ async function seedAbbottM2000AndAssays(knex) {
     'abbottM2000PlasmaHivVL',
     'HIV',
     'resultCategoryHivVl',
-    'HIV VL'
+    'HIV VL',
+    'M2000 Plasma HIV VL'
   )
   await ensureResultCategories(abbottM2000PlasmaHivVLId, [
     {
@@ -533,7 +536,8 @@ async function seedAbbottM2000AndAssays(knex) {
     'AssayAbbottM2000DBSHivVl',
     'HIV',
     'resultCategoryHivVl',
-    'HIV VL'
+    'HIV VL',
+    'm2000 DBS HIV VL'
   )
   await ensureResultCategories(abbottM2000DBSHivVLId, [
     {
@@ -574,7 +578,8 @@ async function seedAbbottM2000AndAssays(knex) {
     'AssayAbbottM2000HivEid',
     'HIV',
     'resultCategoryEid',
-    'HIV Qual'
+    'HIV Qual',
+    'm2000 HIV EID'
   )
   await ensureResultCategories(abbottM2000HIVEIDId, [
     {
