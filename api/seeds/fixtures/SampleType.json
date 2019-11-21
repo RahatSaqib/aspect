@@ -49,6 +49,11 @@
       "name": "Gastric Lavage",
       "externalId": "Gastric Lavage",
       "i18nKey": "sampleTypeGastricLavage"
+    },
+    {
+      "name": "Isolate",
+      "externalId": "Isolate",
+      "i18nKey": "sampleTypeIsolate"
     }
   ]
 }
