@@ -21,8 +21,8 @@ async function seed(knex) {
   if (deviceTypeNTRLDatabaseId) return
 
   deviceTypeNTRLDatabaseId = await knex('DeviceType').insert({
-    externalId: 'NTRLDatabase',
-    name: 'NTRL Database',
+    externalId: 'PhilippinesNtrl',
+    name: 'Philippines NTRL Database',
     manufacturer: 'NTRL',
     deviceTypeCategoryId: informationSystemDeviceTypeCategoryId,
   })

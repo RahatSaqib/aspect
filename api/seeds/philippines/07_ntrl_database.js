@@ -16,7 +16,7 @@ async function seed(knex) {
     .first()
 
   const { id: deviceTypeId } = await knex('DeviceType')
-    .where('externalId', 'NTRLDatabase')
+    .where('externalId', 'PhilippinesNtrl')
     .first('id')
 
   let { id: ntrlDatabaseDeviceId } =
