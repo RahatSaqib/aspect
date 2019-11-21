@@ -880,13 +880,19 @@ async function normalizeTreatmentStatusDistribution(
   if (resultsByPartnerByMonths.length > 0) {
     // normalize not possible treatment status to have 10~20% of results.
     await Promise.each(resultsByPartnerByMonths, async elem => {
+      console.log('elem 2', elem)
       const percentageNotPossible = Math.round(
         (elem.notPossible / Math.max(parseFloat(elem.totalQuantity), 1.0)) * 100
       )
+
+      console.log('percentage not', percentageNotPossible)
       if (!_.inRange(percentageNotPossible, 10, 20)) {
         const resultsQuantity = Math.round(
           (_.random(10, 20) / 100.0) * elem.totalQuantity
         )
+
+        console.log('elem 3', elem)
+        console.log('result quantity', resultsQuantity)
 
         const queryLimit = Math.abs(resultsQuantity - elem.notPossible)
         const queryBuilder =
@@ -902,14 +908,24 @@ async function normalizeTreatmentStatusDistribution(
           partnerId,
           elem.month
         )
+        console.log('result to update', resultsToUpdate)
         if (resultsToUpdate.length > 0) {
           if (percentageNotPossible < 10) {
+            console.log(
+              'percentage not possible first condition',
+              percentageNotPossible
+            )
             await setTreatmentStatusToResults(
               knex,
               resultsToUpdate,
               treatmentStatuses.slice(-1) // only update with some of the on treatment status.
             )
           } else {
+            console.log(
+              'percentage not possible other condition',
+              percentageNotPossible
+            )
+
             await setTreatmentStatusToResults(
               knex,
               resultsToUpdate,
