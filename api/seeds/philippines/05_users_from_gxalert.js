@@ -129,7 +129,7 @@ async function seed(knex) {
             lgaId: district.id,
           })
           .first()
-      : { id: null }
+      : { id: philippinesCountry.id }
     let personId = null
     const existingPerson = await knex('Person')
       .where({ userId })
@@ -195,10 +195,13 @@ async function seed(knex) {
             personId,
             jobFunctionId: jobFunctions[jobFunctionName],
           })
-          if (jobFunctionName === 'Lab User') {
+          if (
+            jobFunctionName === 'Lab User' &&
+            siteIds[person.sites[0].shortName]
+          ) {
             await knex('JobContext').insert({
               jobId,
-              siteId: siteIds[person.deploymentShortName],
+              siteId: siteIds[person.sites[0].shortName],
             })
           } else if (!_.isEmpty(person.geographies)) {
             await Promise.each(person.geographies, async geography => {
