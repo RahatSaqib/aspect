@@ -413,8 +413,8 @@ class DefaultPhilippinesNtrl extends SynchronousDataProcessor {
         const assayGenericDstId = await assayToId('assayGenericDst')
         const result = (await knex('Result as r')
           .whereIn('r.sampleId', sampleIds)
-          .whereIn('.r.assayId', [assayBdMgitAstId, assayGenericDstId])
-          .andWhere({ deviceId })
+          .whereIn('r.assayId', [assayBdMgitAstId, assayGenericDstId])
+          .andWhere('r.siteId', site.id)
           .first('r.*')) || {
           ...baseNewResult,
           assayId:
@@ -545,9 +545,9 @@ class DefaultPhilippinesNtrl extends SynchronousDataProcessor {
         }
         await Promise.each(cultureSamples, async (cultureSample, index) => {
           const result = (await knex('Result as r')
-            .whereIn('.r.assayId', [assayBdMgitGndId, assayCultureId])
+            .whereIn('r.assayId', [assayBdMgitGndId, assayCultureId])
             .andWhere('r.sampleId', cultureSample.id)
-            .andWhere({ deviceId })
+            .andWhere('r.siteId', site.id)
             .first('r.*')) || {
             ...baseNewResult,
             assayId: assayCultureId,
@@ -620,7 +620,7 @@ class DefaultPhilippinesNtrl extends SynchronousDataProcessor {
         mtbComplex: payload['LPA MTB Complex'],
         rifampicin: payload['LPA Rifampicin Result'],
         isoniazid: payload['LPA Isoniazid Result'],
-        ethmabutol: payload['LPA Ethambutol'],
+        ethambutol: payload['LPA Ethambutol'],
         fluoroquinolones: payload['LPA Fluoroquinolones'],
         aminoglycoside: payload['LPA Aminoglycosides/ SLI'],
         remarks: payload['LPA Remarks:'],
@@ -628,6 +628,90 @@ class DefaultPhilippinesNtrl extends SynchronousDataProcessor {
         performedBy: payload['LPA Performed By'],
         reviewedBy: payload['LPA Reviewed By'],
       }
+      if (objectHasValues(lpaResultData)) {
+        const assayLpaId = await assayToId('assayLPA')
+        const result = (await knex('Result as r')
+          .whereIn('r.sampleId', sampleIds)
+          .andWhere('r.assayId', assayLpaId)
+          .andWhere('r.siteId', site.id)
+          .first('r.*')) || {
+          ...baseNewResult,
+          assayId: assayLpaId,
+          sampleId: samples[0].id,
+          startedOn: lpaResultData.dateReleased,
+          endedOn: lpaResultData.dateReleased,
+          resultData: JSON.stringify({
+            encodedResult: lpaResultData,
+          }),
+          senderOperator: lpaResultData.performedBy,
+        }
+        const resultCategory1Id = {
+          'M. tb Detected': resultCategories.Detected,
+          'M. tb Not Detected': resultCategories.NotDetected,
+          Invalid: resultCategories.Invalid,
+        }[lpaResultData.mtbComplex]
+        const resultCategory2IdMappings = {
+          'High-level resistance detected': resultCategories.Resistant,
+          'Low-level resistance detected': resultCategories.Resistant,
+          'Resistance not detected': resultCategories.Susceptible,
+          'Resistance Detected': resultCategories.Resistant,
+          'Resistance Not Detected': resultCategories.Susceptible,
+        }
+        const resultsForDrugsTested = [
+          lpaResultData.rifampicin,
+          lpaResultData.isoniazid,
+          lpaResultData.ethambutol,
+          lpaResultData.fluoroquinolones,
+          lpaResultData.aminoglycoside,
+        ]
+        let resultCategory2Id = resultCategories.Missing
+        if (
+          resultsForDrugsTested.some(
+            resultForDrugsTested =>
+              resultCategory2IdMappings[resultForDrugsTested] === 'Resistant'
+          )
+        ) {
+          resultCategory2Id = resultCategories.Resistant
+        } else if (
+          resultsForDrugsTested.every(resultForDrugsTested =>
+            ['Susceptible', 'Missing'].includes(
+              resultCategory2IdMappings[resultForDrugsTested]
+            )
+          )
+        ) {
+          resultCategory2Id = resultCategories.Susceptible
+        }
+        const resultOverwritePriority = [
+          resultCategories.PositiveMTB,
+          resultCategories.PositiveMOTT,
+          resultCategories.Detected,
+          resultCategories.Resistant,
+          resultCategories.Susceptible,
+          resultCategories.Contaminated,
+          resultCategories.Invalid,
+          resultCategories.NotDetected,
+          resultCategories.Missing,
+        ]
+        await this.upsertResult(
+          knex,
+          rawMessage,
+          site,
+          result,
+          resultCategory1Id,
+          resultCategory2Id,
+          lpaResultData,
+          lpaResultData.dateReleased,
+          lpaResultData.dateReleased,
+          lpaResultData.performedBy,
+          lpaResultData.remarks,
+          patientData,
+          utcNow,
+          resultCategories,
+          resultWorkflowStatuses,
+          resultOverwritePriority
+        )
+      }
+
       const smearResultData = {
         smearMethod: payload['Smear Method'],
         smearResult1: payload['Smear Result 1'],
