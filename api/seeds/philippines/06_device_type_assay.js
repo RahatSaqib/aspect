@@ -582,7 +582,7 @@ async function seed(knex) {
     abbreviation: 'GENERIC DST',
     i18nKey: 'assayGenericDst',
     externalId: 'assayGenericDst',
-    assayTypeId: await assayTypeToId('TB ASD'),
+    assayTypeId: await assayTypeToId('TB AST'),
     deviceTypeId: deviceTypeNTRLDatabaseId,
     resultSourceId: await resultSourceToId('LIMS'),
     resultCategory1Label: 'MTB',
