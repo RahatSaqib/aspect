@@ -36,7 +36,7 @@ async function seed(knex) {
     deviceLogHistoryDays: 365,
     maxDaysDeviceOffline: 7,
     maxDaysDeviceNoResults: 14,
-    serverUrl: 'https://philippines.aspect.id',
+    serverUrl: 'https://philippines.aspect.id:8443',
   })
 
   await commonUpserts(

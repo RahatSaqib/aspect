@@ -76,7 +76,6 @@ async function commonUpserts(
         countryId,
       })
     }
-    // eslint-disable-next-line no-console
     countryData.id = countryId
     countries[country.abbreviation] = countryData
     countryData.states = {}
