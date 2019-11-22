@@ -442,7 +442,17 @@ async function seed(knex) {
   })
 
   await knex('ResultCategoryAssay').insert({
+    resultCategoryId: await resultCategoryToId('PositiveMTB'),
+    assayId: assayBdMgitAstId,
+  })
+
+  await knex('ResultCategoryAssay').insert({
     resultCategoryId: await resultCategoryToId('NotDetected'),
+    assayId: assayBdMgitAstId,
+  })
+
+  await knex('ResultCategoryAssay').insert({
+    resultCategoryId: await resultCategoryToId('PositiveMOTT'),
     assayId: assayBdMgitAstId,
   })
 
@@ -523,7 +533,17 @@ async function seed(knex) {
   })
 
   await knex('ResultCategoryAssay').insert({
+    resultCategoryId: await resultCategoryToId('PositiveMTB'),
+    assayId: assayBdMgitGndId,
+  })
+
+  await knex('ResultCategoryAssay').insert({
     resultCategoryId: await resultCategoryToId('NotDetected'),
+    assayId: assayBdMgitGndId,
+  })
+
+  await knex('ResultCategoryAssay').insert({
+    resultCategoryId: await resultCategoryToId('PositiveMOTT'),
     assayId: assayBdMgitGndId,
   })
 
@@ -584,6 +604,11 @@ async function seed(knex) {
       .where('id', assayGenericDstId)
       .update(assayGenericDst)
   }
+
+  await knex('ResultCategoryAssay').insert({
+    resultCategoryId: await resultCategoryToId('Detected'),
+    assayId: assayGenericDstId,
+  })
 
   await knex('ResultCategoryAssay').insert({
     resultCategoryId: await resultCategoryToId('PositiveMTB'),
@@ -807,8 +832,8 @@ async function seed(knex) {
             title: 'Isoniazid (H)',
             type: 'string',
           },
-          ethmabutol: {
-            title: 'Ethmabutol (E)',
+          ethambutol: {
+            title: 'Ethambutol (E)',
             type: 'string',
           },
           fluoroquinolones: {
