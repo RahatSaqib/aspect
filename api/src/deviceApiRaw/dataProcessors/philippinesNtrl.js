@@ -7,6 +7,7 @@ const {
   formatDateOrDefault,
   getDateOrDefault,
   getUtcTime,
+  dateEqual,
 } = require('../../shared/date')
 const { deviceSeen } = require('../../device/actions')
 const { SynchronousDataProcessor } = require('./_base')
@@ -16,6 +17,7 @@ const {
   resultSourceToId,
   resultTypeToId,
   allResultCategoryToId,
+  allResultWorkflowStatusToId,
 } = require('../../src/shared/dictionary')
 
 class DefaultPhilippinesNtrl extends SynchronousDataProcessor {
@@ -184,7 +186,7 @@ class DefaultPhilippinesNtrl extends SynchronousDataProcessor {
   async processRequest() {
     const { request } = this
     const { auth, payload } = request
-    this.response = { deviceApiRawId: this.id }
+    this.response = { deviceApiRawId: this.id, resultIds: [] }
     return transact(async knex => {
       const { deviceId } = await knex('DeviceApiKey')
         .where('token', auth.credentials.token)
@@ -241,7 +243,7 @@ class DefaultPhilippinesNtrl extends SynchronousDataProcessor {
       const site = await knex('Device as d')
         .join('Site as s', 'd.siteId', 's.id')
         .where('d.id', deviceId)
-        .first('s.*')
+        .first('s.*', 'd.name as deviceName')
       this.messageContext.dispatch(deviceSeen(deviceId))
 
       const sampleTypeMapping = {
@@ -299,6 +301,7 @@ class DefaultPhilippinesNtrl extends SynchronousDataProcessor {
           existingSample &&
           (existingSample.externalId !== sample.externalId ||
             existingSample.sampleTypeId !== sample.sampleTypeId ||
+            !dateEqual(existingSample.collectedOn, sample.collectedOn) ||
             existingSample.sampleOriginSiteId !== sample.sampleOriginSiteId)
         ) {
           sample.id = existingSample.id
@@ -354,6 +357,29 @@ class DefaultPhilippinesNtrl extends SynchronousDataProcessor {
         encodedBy: payload['Encoded By'],
         dateEncoded: payload['Date Encoded'],
       }
+      const resultSourceId = await resultSourceToId('LIMS')
+      const resultTypeId = await resultTypeToId('Patient')
+      const resultCategories = await allResultCategoryToId()
+      const resultWorkflowStatuses = await allResultWorkflowStatusToId()
+      const baseNewResult = {
+        partnerId: site.partnerId,
+        geographyId: site.geographyId,
+        siteId: site.id,
+        deviceId,
+        longitude: site.longitude,
+        latitude: site.latitude,
+        resultSourceId,
+        resultTypeId,
+        resultCategory1: resultCategories.Missing,
+        resultCategory2: resultCategories.Missing,
+        patientData: JSON.stringify(patientData),
+        rawData: rawMessage,
+        insertedOn: utcNow,
+        insertedBy: null,
+        updatedOn: utcNow,
+        updatedBy: null,
+      }
+
       const dstResultData = {
         testRequested: payload['DST Test Requested'],
         dateInoculated: payload['DST Date Inoculated'],
@@ -378,23 +404,6 @@ class DefaultPhilippinesNtrl extends SynchronousDataProcessor {
         encodedBy: payload['DST Encoded by'],
         reviewedBy: payload['DST Releasing Form Lab Manager'],
       }
-      const resultSourceId = await resultSourceToId('LIMS')
-      const resultTypeId = await resultTypeToId('Patient')
-      const resultCategories = await allResultCategoryToId()
-      const mergeDeep = (baseValue, sourceValue) => {
-        if (_.isEmpty(baseValue) && !_.isEmpty(sourceValue)) {
-          return sourceValue
-        } else if (!_.isEmpty(baseValue) && _.isEmpty(sourceValue)) {
-          return baseValue
-        }
-        if (_.isArray(baseValue) && _.isArray(sourceValue)) {
-          return [...(baseValue || []), ...(sourceValue || [])]
-        }
-        if (_.isPlainObject(baseValue) || _.isPlainObject(sourceValue)) {
-          return
-        }
-        return sourceValue || baseValue
-      }
       if (
         Object.values(dstResultData).some(
           value => value !== '' && !_.isNil(value)
@@ -407,69 +416,17 @@ class DefaultPhilippinesNtrl extends SynchronousDataProcessor {
           .whereIn('.r.assayId', [assayBdMgitAstId, assayGenericDstId])
           .andWhere({ deviceId })
           .first('r.*')) || {
+          ...baseNewResult,
           assayId:
             dstResultData.methodUsed === 'Liquid Culture (MGIT 960)'
               ? assayBdMgitAstId
               : assayGenericDstId,
-          partnerId: site.partnerId,
-          geographyId: site.geographyId,
-          siteId: site.id,
-          deviceId,
           sampleId: samples[0].id,
-          longitude: site.longitude,
-          latitude: site.latitude,
-          resultSourceId,
-          resultTypeId,
-          resultCategory1: resultCategories.Missing,
-          resultCategory2: resultCategories.Missing,
           startedOn: dstResultData.dateRead,
           endedOn: dstResultData.dateRead,
           resultData: JSON.stringify({
             encodedResult: dstResultData,
           }),
-          patientData: JSON.stringify(patientData),
-          rawData: rawMessage,
-          insertedOn: utcNow,
-          insertedBy: null,
-          updatedOn: utcNow,
-          updatedBy: null,
-        }
-        if (result.id) {
-          if (!result.siteId) {
-            result.siteId = site.id
-          }
-          if (site.longitude) {
-            result.longitude = site.longitude
-          }
-          if (site.latitude) {
-            result.latitude = site.latitude
-          }
-          if (!result.resultCategory2) {
-            result.resultCategory2 = resultCategories.Missing
-          }
-          if (!result.resultCategory2) {
-            result.resultCategory2 = resultCategories.Missing
-          }
-          if (!result.startedOn) {
-            result.startedOn = dstResultData.dateRead
-          }
-          if (!result.endedOn) {
-            result.endedOn = dstResultData.dateRead
-          }
-          const resultData = JSON.parse(result.resultData || '{}')
-          resultData.encodedResult = dstResultData
-          result.resultData = JSON.stringify(resultData)
-          const resultPatientData = JSON.parse(result.patientData || '{}')
-          result.patientData = JSON.stringify(
-            mergeDeep(resultPatientData, patientData)
-          )
-          if (result.rawData) {
-            result.rawData += `\n${rawMessage}`
-          } else {
-            result.rawData = rawMessage
-          }
-          result.updatedOn = utcNow
-          result.updatedBy = null
         }
         if (!result.resultCategory1) {
           result.resultCategory1 = resultCategories.Missing
@@ -486,7 +443,6 @@ class DefaultPhilippinesNtrl extends SynchronousDataProcessor {
           'Not Done': resultCategories.Missing,
           'NON-VIABLE': resultCategories.Invalid,
         }[dstResultData.idResult]
-
         const resultCategory2IdMappings = {
           RESISTANT: resultCategories.Resistant,
           SUSCEPTIBLE: resultCategories.Susceptible,
@@ -557,6 +513,20 @@ class DefaultPhilippinesNtrl extends SynchronousDataProcessor {
         ) {
           result.resultCategory2 = resultCategory2Id
         }
+        await this.upsertResult(
+          knex,
+          rawMessage,
+          site,
+          result,
+          dstResultData,
+          dstResultData.dateRead,
+          dstResultData.dateRead,
+          dstResultData.readBy,
+          patientData,
+          utcNow,
+          resultCategories,
+          resultWorkflowStatuses
+        )
       }
 
       const cultureResultData = {
@@ -609,6 +579,146 @@ class DefaultPhilippinesNtrl extends SynchronousDataProcessor {
         labManager: payload['Gx Laboratory Manager'],
       }
     })
+  }
+
+  async upsertResult(
+    knex,
+    rawMessage,
+    site,
+    result,
+    newResultData,
+    resultStartedOn,
+    resultEndedOn,
+    operator,
+    patientData,
+    utcNow,
+    resultCategories,
+    resultWorkflowStatuses
+  ) {
+    const mergeDeep = (baseValue, sourceValue) => {
+      if (_.isEmpty(baseValue) && !_.isEmpty(sourceValue)) {
+        return sourceValue
+      } else if (!_.isEmpty(baseValue) && _.isEmpty(sourceValue)) {
+        return baseValue
+      }
+      if (_.isArray(baseValue) && _.isArray(sourceValue)) {
+        return [...(baseValue || []), ...(sourceValue || [])]
+      }
+      if (_.isPlainObject(baseValue) || _.isPlainObject(sourceValue)) {
+        return
+      }
+      return sourceValue || baseValue
+    }
+    if (result.id) {
+      if (!result.siteId) {
+        result.siteId = site.id
+      }
+      if (site.longitude) {
+        result.longitude = site.longitude
+      }
+      if (site.latitude) {
+        result.latitude = site.latitude
+      }
+      if (!result.startedOn) {
+        result.startedOn = resultStartedOn
+      }
+      if (!result.endedOn) {
+        result.endedOn = resultEndedOn
+      }
+      const resultData = JSON.parse(result.resultData || '{}')
+      resultData.encodedResult = newResultData
+      result.resultData = JSON.stringify(resultData)
+      const resultPatientData = JSON.parse(result.patientData || '{}')
+      result.patientData = JSON.stringify(
+        mergeDeep(resultPatientData, patientData)
+      )
+      if (result.rawData) {
+        result.rawData += `\n${rawMessage}`
+      } else {
+        result.rawData = rawMessage
+      }
+      result.updatedOn = utcNow
+      result.updatedBy = null
+    }
+    if (!result.id) {
+      const [resultId] = await knex('Result').insert(result)
+      result.id = resultId
+    }
+    const resultWorkflowStatusLogId = await this.appendResultWorkflowLog(
+      knex,
+      result,
+      site,
+      operator,
+      utcNow,
+      resultCategories,
+      resultWorkflowStatuses
+    )
+    if (resultWorkflowStatusLogId) {
+      await knex('Result')
+        .where('id', result.id)
+        .update({ resultWorkflowStatusLogId })
+    }
+    this.response.resultIds = [...this.response.resultIds, result.id]
+  }
+
+  async appendResultWorkflowLog(
+    knex,
+    result,
+    site,
+    operator,
+    utcNow,
+    resultCategories,
+    resultWorkflowStatuses
+  ) {
+    const resultWorkflowStatusId =
+      result.resultCategory1 === resultCategories.Missing &&
+      result.resultCategory2 === resultCategories.Missing
+        ? resultWorkflowStatuses.Ordered
+        : resultWorkflowStatuses.Processed
+    const resultWorkflowLog = {
+      resultId: result.id,
+      resultWorkflowStatusId,
+      operator,
+      reason: `Data from ${site.deviceName}`,
+      changedOn: utcNow,
+      createdOn: utcNow,
+    }
+    if (!result.id) {
+      const [resultWorkflowStatusLogId] = await knex(
+        'ResultWorkflowLog'
+      ).insert(resultWorkflowLog)
+      return resultWorkflowStatusLogId
+    } else {
+      const existingResultWorklfowLog = await knex('ResultWorkflowStatus')
+        .where('id', result.resultWorkflowStatusLogId)
+        .first()
+      const resultWorkflowStatusPriority = [
+        resultWorkflowStatuses.Purged,
+        resultWorkflowStatuses.Flagged,
+        resultWorkflowStatuses.Acknowledged,
+        resultWorkflowStatuses.Delivered,
+        resultWorkflowStatuses.Deliverable,
+        resultWorkflowStatuses.Validated,
+        resultWorkflowStatuses.Error,
+        resultWorkflowStatuses.Processed,
+        resultWorkflowStatuses.InProgress,
+        resultWorkflowStatuses.Ordered,
+        resultWorkflowStatuses.OK,
+      ]
+      if (
+        !existingResultWorklfowLog ||
+        resultWorkflowStatusPriority.indexOf(resultWorkflowStatusId) <
+          resultWorkflowStatusPriority.indexOf(
+            existingResultWorklfowLog.resultWorkflowStatusId
+          )
+      ) {
+        const [resultWorkflowStatusLogId] = await knex(
+          'ResultWorkflowLog'
+        ).insert(resultWorkflowLog)
+        return resultWorkflowStatusLogId
+      }
+    }
+    return Promise.resolve()
   }
 }
 
