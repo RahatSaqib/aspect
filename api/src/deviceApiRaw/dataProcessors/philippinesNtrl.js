@@ -721,6 +721,110 @@ class DefaultPhilippinesNtrl extends SynchronousDataProcessor {
         encodedBy: payload['Smear Encoded by'],
         laboratoryTechnician: payload['Smear Lab Tech'],
       }
+      if (objectHasValues(smearResultData)) {
+        const assaySmearId = await assayToId('assaySmear')
+        const smearSamples = []
+        if (smearResultData.smearResult1) {
+          smearSamples.push(samples[0])
+        }
+        if (smearResultData.smearResult2 && samples.length > 1) {
+          smearSamples.push(samples[1])
+        }
+        await Promise.each(smearSamples, async (smearSample, index) => {
+          const result = (await knex('Result as r')
+            .where('r.assayId', assaySmearId)
+            .andWhere('r.sampleId', smearSample.id)
+            .andWhere('r.siteId', site.id)
+            .first('r.*')) || {
+            ...baseNewResult,
+            assayId: assaySmearId,
+            sampleId: smearSample.id,
+            startedOn: smearResultData.dateReleased,
+            endedOn: smearResultData.dateReleased,
+            resultData: JSON.stringify({
+              encodedResult: smearResultData,
+            }),
+            senderOperator: smearResultData.laboratoryTechnician,
+          }
+          const resultCategoryMappings = {
+            '0': resultCategories.NotDetected,
+            '+1': resultCategories.Detected,
+            '+2': resultCategories.Detected,
+            '+3': resultCategories.Detected,
+            '+4': resultCategories.Detected,
+            '+5': resultCategories.Detected,
+            '+6': resultCategories.Detected,
+            '+7': resultCategories.Detected,
+            '+8': resultCategories.Detected,
+            '+9': resultCategories.Detected,
+            '+10': resultCategories.Detected,
+            '+11': resultCategories.Detected,
+            '+12': resultCategories.Detected,
+            '+13': resultCategories.Detected,
+            '+14': resultCategories.Detected,
+            '+15': resultCategories.Detected,
+            '+16': resultCategories.Detected,
+            '+17': resultCategories.Detected,
+            '+18': resultCategories.Detected,
+            '+19': resultCategories.Detected,
+            '+20': resultCategories.Detected,
+            '+21': resultCategories.Detected,
+            '+22': resultCategories.Detected,
+            '+23': resultCategories.Detected,
+            '+24': resultCategories.Detected,
+            '+25': resultCategories.Detected,
+            '+26': resultCategories.Detected,
+            '+27': resultCategories.Detected,
+            '+28': resultCategories.Detected,
+            '+29': resultCategories.Detected,
+            '1+': resultCategories.Positive1,
+            '2+': resultCategories.Positive2,
+            '3+': resultCategories.Positive3,
+            QNS: resultCategories.Invalid,
+            'NON-VIABLE': resultCategories.Invalid,
+            'NOT DONE': resultCategories.NoResult,
+            'POSITIVE FOR Acid Fast Bacilli': resultCategories.Detected,
+            'NEGATIVE FOR Acid Fast Bacilli': resultCategories.NotDetected,
+          }
+          const resultCategory1Id =
+            resultCategoryMappings[
+              index === 0
+                ? smearResultData.smearResult1
+                : smearResultData.smearResult2
+            ]
+          const resultCategory2Id =
+            resultCategoryMappings[cultureResultData.finalResult]
+          const resultOverwritePriority = [
+            resultCategories.Positive3,
+            resultCategories.Positive2,
+            resultCategories.Positive1,
+            resultCategories.Detected,
+            resultCategories.Invalid,
+            resultCategories.NotDetected,
+            resultCategories.NoResult,
+            resultCategories.Missing,
+          ]
+          await this.upsertResult(
+            knex,
+            rawMessage,
+            site,
+            result,
+            resultCategory1Id,
+            resultCategory2Id,
+            smearResultData,
+            smearResultData.dateReleased,
+            smearResultData.dateReleased,
+            smearResultData.laboratoryTechnician,
+            null,
+            patientData,
+            utcNow,
+            resultCategories,
+            resultWorkflowStatuses,
+            resultOverwritePriority
+          )
+        })
+      }
+
       const geneXpertResultData = {
         center: payload['Gx Center'],
         processingDate: payload['Gx Processing Date'],
@@ -730,6 +834,66 @@ class DefaultPhilippinesNtrl extends SynchronousDataProcessor {
         dateReleased: payload['Gx Date Released'],
         examiner: payload['Gx Examiner'],
         labManager: payload['Gx Laboratory Manager'],
+      }
+      if (objectHasValues(geneXpertResultData)) {
+        const assayGeneXpertMtbRifId = await assayToId('assayGeneXpertMtbRif')
+        const assayGeneXpertMtbRifUltraId = await assayToId(
+          'assayGeneXpertMtbRifUltra'
+        )
+        const result = (await knex('Result as r')
+          .whereIn('r.sampleId', sampleIds)
+          .whereIn('r.assayId', [
+            assayGeneXpertMtbRifId,
+            assayGeneXpertMtbRifUltraId,
+          ])
+          .andWhere('r.siteId', site.id)
+          .first('r.*')) || {
+          ...baseNewResult,
+          assayId: assayGeneXpertMtbRifId,
+          sampleId: samples[0].id,
+          startedOn: geneXpertResultData.processingDate,
+          endedOn: geneXpertResultData.processingDate,
+          resultData: JSON.stringify({
+            encodedResult: geneXpertResultData,
+          }),
+          senderOperator: geneXpertResultData.examiner,
+        }
+        const resultCategory1Id = {
+          POSITIVE: resultCategories.Detected,
+          NEGATIVE: resultCategories.NotDetected,
+        }[geneXpertResultData.mtb]
+        const resultCategory2Id = {
+          SUSCEPTIBLE: resultCategories.NotDetected,
+          RESISTANT: resultCategories.Detected,
+          INDETERMINATE: resultCategories.Indeterminate,
+        }[geneXpertResultData.rifampicin]
+        const resultOverwritePriority = [
+          resultCategories.Detected,
+          resultCategories.NotDetected,
+          resultCategories.Error,
+          resultCategories.Indeterminate,
+          resultCategories.Invalid,
+          resultCategories.NoResult,
+          resultCategories.Missing,
+        ]
+        await this.upsertResult(
+          knex,
+          rawMessage,
+          site,
+          result,
+          resultCategory1Id,
+          resultCategory2Id,
+          geneXpertResultData,
+          geneXpertResultData.processingDate,
+          geneXpertResultData.processingDate,
+          geneXpertResultData.examiner,
+          geneXpertResultData.remarks,
+          patientData,
+          utcNow,
+          resultCategories,
+          resultWorkflowStatuses,
+          resultOverwritePriority
+        )
       }
     })
   }
@@ -784,7 +948,7 @@ class DefaultPhilippinesNtrl extends SynchronousDataProcessor {
     ) {
       result.resultCategory2 = resultCategory2Id
     }
-    if (remarks && (!result.notes || !result.notes.includes(remarks))) {
+    if (remarks && (!result.notes || !result.notes.includes(remarks.trim()))) {
       if (!result.notes) {
         result.notes = ''
       } else {
@@ -871,35 +1035,34 @@ class DefaultPhilippinesNtrl extends SynchronousDataProcessor {
         'ResultWorkflowLog'
       ).insert(resultWorkflowLog)
       return resultWorkflowStatusLogId
-    } else {
-      const existingResultWorklfowLog = await knex('ResultWorkflowStatus')
-        .where('id', result.resultWorkflowStatusLogId)
-        .first()
-      const resultWorkflowStatusPriority = [
-        resultWorkflowStatuses.Purged,
-        resultWorkflowStatuses.Flagged,
-        resultWorkflowStatuses.Acknowledged,
-        resultWorkflowStatuses.Delivered,
-        resultWorkflowStatuses.Deliverable,
-        resultWorkflowStatuses.Validated,
-        resultWorkflowStatuses.Error,
-        resultWorkflowStatuses.Processed,
-        resultWorkflowStatuses.InProgress,
-        resultWorkflowStatuses.Ordered,
-        resultWorkflowStatuses.OK,
-      ]
-      if (
-        !existingResultWorklfowLog ||
-        resultWorkflowStatusPriority.indexOf(resultWorkflowStatusId) <
-          resultWorkflowStatusPriority.indexOf(
-            existingResultWorklfowLog.resultWorkflowStatusId
-          )
-      ) {
-        const [resultWorkflowStatusLogId] = await knex(
-          'ResultWorkflowLog'
-        ).insert(resultWorkflowLog)
-        return resultWorkflowStatusLogId
-      }
+    }
+    const existingResultWorklfowLog = await knex('ResultWorkflowStatus')
+      .where('id', result.resultWorkflowStatusLogId)
+      .first()
+    const resultWorkflowStatusPriority = [
+      resultWorkflowStatuses.Purged,
+      resultWorkflowStatuses.Flagged,
+      resultWorkflowStatuses.Acknowledged,
+      resultWorkflowStatuses.Delivered,
+      resultWorkflowStatuses.Deliverable,
+      resultWorkflowStatuses.Validated,
+      resultWorkflowStatuses.Error,
+      resultWorkflowStatuses.Processed,
+      resultWorkflowStatuses.InProgress,
+      resultWorkflowStatuses.Ordered,
+      resultWorkflowStatuses.OK,
+    ]
+    if (
+      !existingResultWorklfowLog ||
+      resultWorkflowStatusPriority.indexOf(resultWorkflowStatusId) <
+        resultWorkflowStatusPriority.indexOf(
+          existingResultWorklfowLog.resultWorkflowStatusId
+        )
+    ) {
+      const [resultWorkflowStatusLogId] = await knex(
+        'ResultWorkflowLog'
+      ).insert(resultWorkflowLog)
+      return resultWorkflowStatusLogId
     }
     return Promise.resolve()
   }
