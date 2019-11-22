@@ -779,12 +779,17 @@ async function setTreatmentStatusToResults(
 }
 async function getTreatmentDistributionByPartner(knex, partnerId, month) {
   const conditionBuilder = (builder, partId, specificMonth) => {
-    if (partnerId) builder.where({ partnerId: partId })
+    if (partnerId) builder.where('r.partnerId', partId)
     if (specificMonth)
       builder.whereRaw("DATE_FORMAT (r.createdon, '%Y-%m') = ?", specificMonth)
   }
 
   return knex('Result as r')
+    .innerJoin('ResultCategoryAssay as rca', builder => {
+      builder
+        .on('r.assayId', 'rca.assayId')
+        .andOn('r.resultCategory1', 'rca.resultCategoryId')
+    })
     .leftJoin(
       'ResultTreatmentStatusLog as rtsl',
       'r.treatmentStatusLogId',
@@ -795,6 +800,14 @@ async function getTreatmentDistributionByPartner(knex, partnerId, month) {
       'rtsl.resultTreatmentStatusId',
       'rts.id'
     )
+    .innerJoin('Device as d', 'r.deviceId', 'd.id')
+    .leftJoin(
+      'DeviceStatus as deviceStatus',
+      'd.deviceStatusId',
+      'deviceStatus.id'
+    )
+    .where('rca.requiresTreatment', true)
+    .where('deviceStatus.token', 'approved')
     .modify(conditionBuilder, partnerId, month)
     .groupByRaw("DATE_FORMAT(r.createdon,'%Y-%m')")
     .select(
@@ -828,13 +841,13 @@ async function normalizeTreatmentStatusDistribution(
       const percentageInTreatment = Math.round(
         (elem.inTreatment / Math.max(parseFloat(elem.totalQuantity), 1.0)) * 100
       )
-      if (!_.inRange(percentageInTreatment, 70, 80)) {
+      if (!_.inRange(percentageInTreatment, 50, 60)) {
         const resultsQuantity = Math.round(
-          (_.random(70, 80) / 100.0) * elem.totalQuantity
+          (_.random(50, 60) / 100.0) * elem.totalQuantity
         )
         const queryLimit = Math.abs(resultsQuantity - elem.inTreatment)
         const queryBuilder =
-          percentageInTreatment < 70
+          percentageInTreatment < 50
             ? builder =>
                 builder.whereRaw(
                   "(rts.externalId is null or rts.externalId ='NotPossible')"
@@ -849,7 +862,9 @@ async function normalizeTreatmentStatusDistribution(
           queryBuilder,
           queryLimit,
           partnerId,
-          elem.month
+          elem.month,
+          true,
+          true
         )
         if (resultsToUpdate.length > 0) {
           if (percentageInTreatment < 70) {
@@ -880,19 +895,14 @@ async function normalizeTreatmentStatusDistribution(
   if (resultsByPartnerByMonths.length > 0) {
     // normalize not possible treatment status to have 10~20% of results.
     await Promise.each(resultsByPartnerByMonths, async elem => {
-      console.log('elem 2', elem)
       const percentageNotPossible = Math.round(
         (elem.notPossible / Math.max(parseFloat(elem.totalQuantity), 1.0)) * 100
       )
 
-      console.log('percentage not', percentageNotPossible)
       if (!_.inRange(percentageNotPossible, 10, 20)) {
         const resultsQuantity = Math.round(
           (_.random(10, 20) / 100.0) * elem.totalQuantity
         )
-
-        console.log('elem 3', elem)
-        console.log('result quantity', resultsQuantity)
 
         const queryLimit = Math.abs(resultsQuantity - elem.notPossible)
         const queryBuilder =
@@ -906,26 +916,18 @@ async function normalizeTreatmentStatusDistribution(
           queryBuilder,
           queryLimit,
           partnerId,
-          elem.month
+          elem.month,
+          true,
+          true
         )
-        console.log('result to update', resultsToUpdate)
         if (resultsToUpdate.length > 0) {
           if (percentageNotPossible < 10) {
-            console.log(
-              'percentage not possible first condition',
-              percentageNotPossible
-            )
             await setTreatmentStatusToResults(
               knex,
               resultsToUpdate,
               treatmentStatuses.slice(-1) // only update with some of the on treatment status.
             )
           } else {
-            console.log(
-              'percentage not possible other condition',
-              percentageNotPossible
-            )
-
             await setTreatmentStatusToResults(
               knex,
               resultsToUpdate,
@@ -967,9 +969,16 @@ async function getRandomResults(
   queryBuilder,
   queryLimit = 10000,
   partnerId,
-  month
+  month,
+  onlyRequiresTreatment,
+  onlyApprovedDevices
 ) {
   const query = knex('Result as r')
+    .innerJoin('ResultCategoryAssay as rca', builder => {
+      builder
+        .on('r.assayId', 'rca.assayId')
+        .andOn('r.resultCategory1', 'rca.resultCategoryId')
+    })
     .leftJoin(
       'ResultTreatmentStatusLog as rtsl',
       'r.treatmentStatusLogId',
@@ -980,13 +989,26 @@ async function getRandomResults(
       'rtsl.resultTreatmentStatusId',
       'rts.id'
     )
+    .innerJoin('Device as d', 'r.deviceId', 'd.id')
+    .leftJoin(
+      'DeviceStatus as deviceStatus',
+      'd.deviceStatusId',
+      'deviceStatus.id'
+    )
     .modify((builder, selectedMonth) => {
       if (selectedMonth)
         builder.whereRaw("DATE_FORMAT(r.createdon,'%Y-%m')= ?", selectedMonth)
     }, month)
-    .modify((builder, idpartner) => {
-      if (idpartner) builder.where({ partnerId: idpartner })
-    }, partnerId)
+    .modify(
+      (builder, idpartner, approvedDevices, requiresTreatment) => {
+        if (idpartner) builder.where('r.partnerId', idpartner)
+        if (approvedDevices) builder.where('deviceStatus.token', 'approved')
+        if (requiresTreatment) builder.where('rca.requiresTreatment', true)
+      },
+      partnerId,
+      onlyApprovedDevices,
+      onlyRequiresTreatment
+    )
     .modify(queryBuilder)
     .select('rts.externalid as treatmentStatusExternalId', 'r.*')
     .orderByRaw('RAND()')
