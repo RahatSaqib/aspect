@@ -10,11 +10,7 @@ const {
   sortPageParams,
 } = require('../db')
 const { resultUpdated } = require('./actions')
-const {
-  getConstraints,
-  addConstraints,
-  addConstraintsResults,
-} = require('../auth/constraints')
+const { getConstraints, addConstraints } = require('../auth/constraints')
 const { getUser } = require('../auth/service')
 const {
   resultWorkflowStatusToId,
@@ -570,7 +566,7 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
         queryBuilder.where('dt.externalId', params.deviceType)
       else queryBuilder.where('dt.externalId', 'CepheidGeneXpert')
     }, query)
-    .modify(addConstraintsResults, dataConstraints, {
+    .modify(addConstraints, dataConstraints, {
       device: 'd',
       sample: 'sp',
       geography: 'g',
@@ -744,14 +740,14 @@ async function downloadResultsList(request) {
   const myProm = new Promise(async () => {
     const idsToUpdate = _.uniq(
       _.map(
-        _.omitBy(result.data, elem => !elem.workflowStatus.setDelivered),
+        _.pickBy(result.data, elem => elem.workflowStatus.setDelivered),
         elem => elem.id
       )
     )
-
     const idsToBeRegistered = _.uniq(_.map(result.data, elem => elem.id))
-    if (idsToUpdate) await updateResultStatus(idsToUpdate, user.id)
-    if (idsToBeRegistered)
+    if (idsToUpdate && idsToUpdate.length > 0)
+      await updateResultStatus(idsToUpdate, user.id)
+    if (idsToBeRegistered && idsToBeRegistered.length > 0)
       await addResultDownloadLog(idsToBeRegistered, user.id)
   })
   // eslint-disable-next-line no-console
