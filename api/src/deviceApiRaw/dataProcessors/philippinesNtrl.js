@@ -380,6 +380,9 @@ class DefaultPhilippinesNtrl extends SynchronousDataProcessor {
         updatedBy: null,
       }
 
+      const objectHasValues = o =>
+        Object.values(o).some(value => value !== '' && !_.isNil(value))
+
       const dstResultData = {
         testRequested: payload['DST Test Requested'],
         dateInoculated: payload['DST Date Inoculated'],
@@ -404,11 +407,8 @@ class DefaultPhilippinesNtrl extends SynchronousDataProcessor {
         encodedBy: payload['DST Encoded by'],
         reviewedBy: payload['DST Releasing Form Lab Manager'],
       }
-      if (
-        Object.values(dstResultData).some(
-          value => value !== '' && !_.isNil(value)
-        )
-      ) {
+      if (objectHasValues(dstResultData)) {
+        // TODO: Update MGIT Data processor to lookup results for assayGenericDst as well
         const assayBdMgitAstId = await assayToId('assayBdMgitAst')
         const assayGenericDstId = await assayToId('assayGenericDst')
         const result = (await knex('Result as r')
@@ -427,12 +427,7 @@ class DefaultPhilippinesNtrl extends SynchronousDataProcessor {
           resultData: JSON.stringify({
             encodedResult: dstResultData,
           }),
-        }
-        if (!result.resultCategory1) {
-          result.resultCategory1 = resultCategories.Missing
-        }
-        if (!result.resultCategory2) {
-          result.resultCategory2 = resultCategories.Missing
+          senderOperator: dstResultData.labTech,
         }
         const resultCategory1Id = {
           'M. tuberculosis': resultCategories.PositiveMTB,
@@ -494,6 +489,7 @@ class DefaultPhilippinesNtrl extends SynchronousDataProcessor {
         const resultOverwritePriority = [
           resultCategories.PositiveMTB,
           resultCategories.PositiveMOTT,
+          resultCategories.Detected,
           resultCategories.Resistant,
           resultCategories.Susceptible,
           resultCategories.Contaminated,
@@ -501,31 +497,23 @@ class DefaultPhilippinesNtrl extends SynchronousDataProcessor {
           resultCategories.NotDetected,
           resultCategories.Missing,
         ]
-        if (
-          resultOverwritePriority.indexOf(resultCategory1Id) <
-          result.resultCategory1
-        ) {
-          result.resultCategory1 = resultCategory1Id
-        }
-        if (
-          resultOverwritePriority.indexOf(resultCategory2Id) <
-          result.resultCategory2
-        ) {
-          result.resultCategory2 = resultCategory2Id
-        }
         await this.upsertResult(
           knex,
           rawMessage,
           site,
           result,
+          resultCategory1Id,
+          resultCategory2Id,
           dstResultData,
           dstResultData.dateRead,
           dstResultData.dateRead,
           dstResultData.readBy,
+          dstResultData.remarks,
           patientData,
           utcNow,
           resultCategories,
-          resultWorkflowStatuses
+          resultWorkflowStatuses,
+          resultOverwritePriority
         )
       }
 
@@ -544,6 +532,87 @@ class DefaultPhilippinesNtrl extends SynchronousDataProcessor {
         encodedBy: payload['Culture Encoded by'],
         labTech: payload['Culture Lab Tech'],
       }
+      if (objectHasValues(cultureResultData)) {
+        // TODO: Update MGIT Data processor to lookup results for assayCulture as well
+        const assayBdMgitGndId = await assayToId('assayBdMgitGnd')
+        const assayCultureId = await assayToId('assayCulture')
+        const cultureSamples = []
+        if (cultureResultData.result1) {
+          cultureSamples.push(samples[0])
+        }
+        if (cultureResultData.result2 && samples.length > 1) {
+          cultureSamples.push(samples[1])
+        }
+        await Promise.each(cultureSamples, async (cultureSample, index) => {
+          const result = (await knex('Result as r')
+            .whereIn('.r.assayId', [assayBdMgitGndId, assayCultureId])
+            .andWhere('r.sampleId', cultureSample.id)
+            .andWhere({ deviceId })
+            .first('r.*')) || {
+            ...baseNewResult,
+            assayId: assayCultureId,
+            sampleId: cultureSample.id,
+            startedOn: cultureResultData.dateReleased,
+            endedOn: cultureResultData.dateReleased,
+            resultData: JSON.stringify({
+              encodedResult: cultureResultData,
+            }),
+            senderOperator: cultureSample.medTech,
+          }
+          const resultCategoryMappings = {
+            'M. tuberculosis': resultCategories.PositiveMTB,
+            'No growth after 8 weeks': resultCategories.NotDetected,
+            'No growth after 6 weeks': resultCategories.NotDetected,
+            Contaminated: resultCategories.Contaminated,
+            Spillage: resultCategories.Invalid,
+            'On-going': resultCategories.Missing,
+            'Non-tuberculous mycobacteria': resultCategories.PositiveMOTT,
+            'No Specimen': resultCategories.NoResult,
+            QNS: resultCategories.Invalid,
+            'NON-VIABLE': resultCategories.Invalid,
+            'Not Done': resultCategories.NoResult,
+          }
+          const resultCategory1Id =
+            resultCategoryMappings[
+              index === 0
+                ? cultureResultData.result1
+                : cultureResultData.result2
+            ]
+          const resultCategory2Id =
+            resultCategoryMappings[cultureResultData.finalResult]
+          const resultOverwritePriority = [
+            resultCategories.PositiveMTB,
+            resultCategories.Detected,
+            resultCategories.PositiveMOTT,
+            resultCategories.Resistant,
+            resultCategories.Susceptible,
+            resultCategories.Contaminated,
+            resultCategories.Invalid,
+            resultCategories.NotDetected,
+            resultCategories.NoResult,
+            resultCategories.Missing,
+          ]
+          await this.upsertResult(
+            knex,
+            rawMessage,
+            site,
+            result,
+            resultCategory1Id,
+            resultCategory2Id,
+            cultureResultData,
+            cultureResultData.dateReleased,
+            cultureResultData.dateReleased,
+            cultureResultData.labTech,
+            cultureResultData.remarks,
+            patientData,
+            utcNow,
+            resultCategories,
+            resultWorkflowStatuses,
+            resultOverwritePriority
+          )
+        })
+      }
+
       const lpaResultData = {
         center: payload['LPA Center'],
         lpaKit: payload['LPA Kit Used'],
@@ -586,14 +655,18 @@ class DefaultPhilippinesNtrl extends SynchronousDataProcessor {
     rawMessage,
     site,
     result,
+    resultCategory1Id,
+    resultCategory2Id,
     newResultData,
     resultStartedOn,
     resultEndedOn,
     operator,
+    remarks,
     patientData,
     utcNow,
     resultCategories,
-    resultWorkflowStatuses
+    resultWorkflowStatuses,
+    resultOverwritePriority
   ) {
     const mergeDeep = (baseValue, sourceValue) => {
       if (_.isEmpty(baseValue) && !_.isEmpty(sourceValue)) {
@@ -608,6 +681,32 @@ class DefaultPhilippinesNtrl extends SynchronousDataProcessor {
         return
       }
       return sourceValue || baseValue
+    }
+    if (!result.resultCategory1) {
+      result.resultCategory1 = resultCategories.Missing
+    }
+    if (!result.resultCategory2) {
+      result.resultCategory2 = resultCategories.Missing
+    }
+    if (
+      resultOverwritePriority.indexOf(resultCategory1Id) <
+      resultOverwritePriority.indexOf(result.resultCategory1)
+    ) {
+      result.resultCategory1 = resultCategory1Id
+    }
+    if (
+      resultOverwritePriority.indexOf(resultCategory2Id) <
+      resultOverwritePriority.indexOf(result.resultCategory2)
+    ) {
+      result.resultCategory2 = resultCategory2Id
+    }
+    if (remarks && (!result.notes || !result.notes.includes(remarks))) {
+      if (!result.notes) {
+        result.notes = ''
+      } else {
+        result.notes += '\n'
+      }
+      result.notes += remarks
     }
     if (result.id) {
       if (!result.siteId) {
