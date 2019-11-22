@@ -18,7 +18,7 @@ const {
   resultTypeToId,
   allResultCategoryToId,
   allResultWorkflowStatusToId,
-} = require('../../src/shared/dictionary')
+} = require('../../shared/dictionary')
 
 class DefaultPhilippinesNtrl extends SynchronousDataProcessor {
   constructor(request, messageContext) {
@@ -259,7 +259,7 @@ class DefaultPhilippinesNtrl extends SynchronousDataProcessor {
         .first()
       const ntrlLabRequestId = `PN-${formatDateOrDefault(
         payload['Date Encoded'],
-        'YY'
+        'yy'
       )}-${payload['Serial Number']}`
       const sampleOriginSiteId = originSite ? originSite.id : null
       const sampleCollectionDateKeys = [
@@ -374,8 +374,8 @@ class DefaultPhilippinesNtrl extends SynchronousDataProcessor {
         resultCategory2: resultCategories.Missing,
         patientData: JSON.stringify(patientData),
         rawData: rawMessage,
-        insertedOn: utcNow,
-        insertedBy: null,
+        createdOn: utcNow,
+        createdBy: null,
         updatedOn: utcNow,
         updatedBy: null,
       }
@@ -836,10 +836,9 @@ class DefaultPhilippinesNtrl extends SynchronousDataProcessor {
         labManager: payload['Gx Laboratory Manager'],
       }
       if (objectHasValues(geneXpertResultData)) {
-        const assayGeneXpertMtbRifId = await assayToId('assayGeneXpertMtbRif')
-        const assayGeneXpertMtbRifUltraId = await assayToId(
-          'assayGeneXpertMtbRifUltra'
-        )
+        const assayGeneXpertMtbRifId = await assayToId('GxMtbRif')
+        const assayGeneXpertMtbRifUltraId = await assayToId('GxMtbRifUltra')
+
         const result = (await knex('Result as r')
           .whereIn('r.sampleId', sampleIds)
           .whereIn('r.assayId', [
@@ -1030,13 +1029,13 @@ class DefaultPhilippinesNtrl extends SynchronousDataProcessor {
       changedOn: utcNow,
       createdOn: utcNow,
     }
-    if (!result.id) {
+    if (!result.id || !result.resultWorkflowStatusLogId) {
       const [resultWorkflowStatusLogId] = await knex(
         'ResultWorkflowLog'
       ).insert(resultWorkflowLog)
       return resultWorkflowStatusLogId
     }
-    const existingResultWorklfowLog = await knex('ResultWorkflowStatus')
+    const existingResultWorkflowLog = await knex('ResultWorkflowLog')
       .where('id', result.resultWorkflowStatusLogId)
       .first()
     const resultWorkflowStatusPriority = [
@@ -1053,10 +1052,10 @@ class DefaultPhilippinesNtrl extends SynchronousDataProcessor {
       resultWorkflowStatuses.OK,
     ]
     if (
-      !existingResultWorklfowLog ||
+      !existingResultWorkflowLog ||
       resultWorkflowStatusPriority.indexOf(resultWorkflowStatusId) <
         resultWorkflowStatusPriority.indexOf(
-          existingResultWorklfowLog.resultWorkflowStatusId
+          existingResultWorkflowLog.resultWorkflowStatusId
         )
     ) {
       const [resultWorkflowStatusLogId] = await knex(
