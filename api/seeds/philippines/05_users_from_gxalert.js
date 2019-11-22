@@ -197,6 +197,8 @@ async function seed(knex) {
           })
           if (
             jobFunctionName === 'Lab User' &&
+            person.sites &&
+            person.sites.length > 0 &&
             siteIds[person.sites[0].shortName]
           ) {
             await knex('JobContext').insert({
