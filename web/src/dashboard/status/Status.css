@@ -453,11 +453,11 @@
 .Treatment--ArrowRightContainer {
   border-left: 1px solid var(--aspect-color-grey-5);
 }
-.Treatment--graph-legend{
+.Treatment--graph-legend {
   display: flex;
   margin: 30px 0;
 }
-.Treatment--graph-legend-item{
+.Treatment--graph-legend-item {
   display: flex;
   align-items: center;
   margin-right: 30px;

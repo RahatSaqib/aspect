@@ -4,6 +4,33 @@ const { readJson } = require('fs-extra')
 const path = require('path')
 const { allFeatureToId } = require('../src/shared/dictionary')
 
+const tables = [
+  'DeviceApiRawStatus',
+  'FileContentType',
+  'IssueCategory',
+  'IssueEventStatus',
+  'IssueStatusSeverity',
+  ['IssueStatus', seedStaticDataIssueStatus],
+  'MessageStatus',
+  'MessageSeverity',
+  'ResultCategory',
+  'ResultSource',
+  'ResultType',
+  'ResultWorkflowStatus',
+  'SampleType',
+  'FollowUpType',
+  'ResultNoteType',
+  // TODO ASP-757 Standardize static data key on externalId
+  ['AssayType', 'name'],
+  ['ConsumableReason', 'name'],
+  ['DeviceStatus', 'token'],
+  ['PartnerType', 'name'],
+  ['DeviceTypeCategory', 'name'],
+  ['Unit', 'name'],
+  ['Feature', 'module'],
+  ['Permission', seedStaticDataPermission],
+]
+
 const uniqueKeys = {
   NotificationType: [
     'partnerId',
@@ -49,11 +76,12 @@ const foreignKeys = {
 
 // Helper for seeed files. Ru
 let hasSeededStaticData = false
+
 // Set up the file name of the seed with __filename.
-function seed(seed, fileName) {
+function seed(seed, fileName, overridedSeeds) {
   return {
     seed(knex) {
-      return runSeed(seed, knex, fileName).catch(err => {
+      return runSeed(seed, knex, fileName, overridedSeeds).catch(err => {
         console.error(err) // eslint-disable-line no-console
         throw err
       })
@@ -61,10 +89,10 @@ function seed(seed, fileName) {
   }
 }
 
-async function runSeed(seed, knex, fileName) {
+async function runSeed(seed, knex, fileName, overridedSeeds) {
   const seedsRun = await getSeedsRan(knex)
   if (!hasSeededStaticData) {
-    await seedStaticData(knex)
+    await seedStaticData(knex, overridedSeeds)
     hasSeededStaticData = true
   }
   if (fileName) {
@@ -475,52 +503,67 @@ async function getPermissionModules(knex) {
   }, {})
 }
 
-async function seedStaticData(knex) {
-  const tables = [
-    'DeviceApiRawStatus',
-    'FileContentType',
-    'IssueCategory',
-    'IssueEventStatus',
-    'IssueStatusSeverity',
-    ['IssueStatus', seedStaticDataIssueStatus],
-    'MessageStatus',
-    'MessageSeverity',
-    'ResultCategory',
-    'ResultSource',
-    'ResultType',
-    'ResultWorkflowStatus',
-    'SampleType',
-    'FollowUpType',
-    'ResultNoteType',
-    // TODO ASP-757 Standardize static data key on externalId
-    ['AssayType', 'name'],
-    ['ConsumableReason', 'name'],
-    ['DeviceStatus', 'token'],
-    ['PartnerType', 'name'],
-    ['DeviceTypeCategory', 'name'],
-    ['Unit', 'name'],
-    ['Feature', 'module'],
-    ['Permission', seedStaticDataPermission],
-  ]
-  for (const tableItem of tables) {
-    /* eslint-disable no-await-in-loop */
-    // Need to add in order since some old code relies on hardcoded Ids
-    const table = _.isArray(tableItem) ? tableItem[0] : tableItem
-    const keyColumn = _.isArray(tableItem) ? tableItem[1] : 'externalId'
-    const fixture = await readJson(`./seeds/fixtures/${table}.json`)
-    if (_.isFunction(keyColumn)) {
-      await keyColumn(knex, fixture)
-    } else {
-      for (const datum of fixture.data) {
-        const existingDatum = await knex(table)
-          .where(keyColumn, datum[keyColumn])
-          .first('id')
-        if (existingDatum == null) {
-          await knex(table).insert(datum)
-        }
+async function getSeedsFolder(table, overridedSeeds) {
+  //  Look for overrided fixture. If exists, sets the seedsFolder (country folder)
+  let folder = ''
+  let i = 0
+  while (i < overridedSeeds.staticDataFiles.length && folder === '') {
+    const overridedTable = overridedSeeds.staticDataFiles[i]
+    if (table === overridedTable) {
+      folder = overridedSeeds.seedsFolder
+      overridedSeeds.staticDataFiles.splice(i)
+    }
+    i += 1
+  }
+  return folder
+}
+
+async function seedTable(knex, fixtureItem, overridedSeeds) {
+  const table = _.isArray(fixtureItem) ? fixtureItem[0] : fixtureItem
+  const keyColumn = _.isArray(fixtureItem) ? fixtureItem[1] : 'externalId'
+
+  const seedsFolder = await getSeedsFolder(table, overridedSeeds)
+
+  const fixturePath = `./seeds/${
+    seedsFolder && seedsFolder !== '' ? `${seedsFolder}/` : ''
+  }fixtures/${table}.json`
+
+  const fixture = await readJson(fixturePath)
+  if (_.isFunction(keyColumn)) {
+    await keyColumn(knex, fixture)
+  } else {
+    for (const datum of fixture.data) {
+      // eslint-disable-next-line no-await-in-loop
+      const existingDatum = await knex(table)
+        .where(keyColumn, datum[keyColumn])
+        .first('id')
+      if (existingDatum == null) {
+        // eslint-disable-next-line no-await-in-loop
+        await knex(table).insert(datum)
       }
     }
   }
+}
+
+async function warnNotExistingOverridedSeeds(overridedSeeds) {
+  for (const fileName of overridedSeeds.staticDataFiles) {
+    // eslint-disable-next-line no-console
+    console.warn(
+      `IMPORTANT! The overrided file '${fileName}' doesn't exist. Please, make sure that the file name is correct.`
+    )
+  }
+}
+
+async function seedStaticData(knex, overridedSeeds) {
+  if (!overridedSeeds)
+    overridedSeeds = { seedsFolder: null, staticDataFiles: [] }
+
+  for (const tableItem of tables) {
+    // eslint-disable-next-line no-await-in-loop
+    await seedTable(knex, tableItem, overridedSeeds)
+  }
+
+  await warnNotExistingOverridedSeeds(overridedSeeds)
 }
 
 async function seedStaticDataIssueStatus(knex, { data }) {
@@ -2387,7 +2430,6 @@ async function insertSites(knex, partnerId, countryId, sites) {
         .where('s.name', site.stateName)
         .where('l.name', site.lgaName)
         .first('g.id')
-
       ;[siteId] = await knex('Site').insert({
         partnerId,
         geographyId: siteGeographyId,
@@ -2436,8 +2478,51 @@ async function insertSites(knex, partnerId, countryId, sites) {
   })
 }
 
+async function getFeatureByModule(knex, module) {
+  return knex('feature')
+    .where({ module })
+    .first()
+}
+
+async function getPermissonByModuleAndActivity(knex, module, activity) {
+  return knex('permission')
+    .where({ module, activity })
+    .first()
+}
+
+async function getPartnerByName(knex, name) {
+  const partner = await knex('Partner')
+    .where({ name })
+    .first()
+  return partner
+}
+
+async function getGeographyId(knex, countryId, stateId, lgaId) {
+  const { geographyId } = await knex('Geography as g')
+    .modify(
+      (queryBuilder, { countryId, stateId, lgaId }) => {
+        if (countryId) {
+          queryBuilder = queryBuilder.where('g.countryId', countryId)
+
+          if (stateId) {
+            queryBuilder = queryBuilder.where('g.stateId', stateId)
+
+            if (lgaId) queryBuilder = queryBuilder.where('g.lgaId', lgaId)
+            else queryBuilder = queryBuilder.where('g.lgaId', null)
+          } else {
+            queryBuilder = queryBuilder.where('g.stateId', null)
+          }
+        }
+      },
+      { countryId, stateId, lgaId }
+    )
+    .first('id as geographyId')
+  return geographyId
+}
+
 module.exports = {
   seed,
+  seedTable,
   getSeedsRan,
   rowsAsObject,
   getDefaultMessageTypes,
@@ -2449,6 +2534,10 @@ module.exports = {
   upsertItems,
   upsertSingle,
   seedIssues,
+  getGeographyId,
+  getPartnerByName,
+  getFeatureByModule,
+  getPermissonByModuleAndActivity,
 
   seedNotificationTypes,
   upsertNotificationTypes,

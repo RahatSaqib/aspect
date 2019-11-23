@@ -1,7 +1,7 @@
 const _ = require('lodash')
-const subDays = require('date-fns/subDays')
 const Boom = require('boom')
 const {
+  subDays,
   subMonths,
   startOfMonth,
   format,

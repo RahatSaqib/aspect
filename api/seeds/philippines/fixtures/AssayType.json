@@ -1,0 +1,40 @@
+{
+  "data": [
+    {
+      "name": "MTB/Rif",
+      "i18nKey": "assayTypeMtbRif",
+      "externalId": "assayTypeMtbRif",
+      "abbreviation":"TB"
+    },
+    {
+      "name": "TB AST",
+      "i18nKey": "assayTypeTbAst",
+      "externalId": "assayTypeTbAst",
+      "abbreviation":"TB"
+    },
+    {
+      "name": "TB G&D",
+      "i18nKey": "assayTypeTbGnd",
+      "externalId": "assayTypeTbGnd",
+      "abbreviation":"TB"
+    },
+    {
+      "name": "GenoType Test Strip",
+      "i18nKey": "genoTypeTestStrip",
+      "externalId": "genoTypeTestStrip",
+      "abbreviation":"TB"
+    },
+    {
+      "name": "Microscopy",
+      "i18nKey": "microscopy",
+      "externalId": "microscopy",
+      "abbreviation":"TB"
+    },
+    {
+      "name": "Unknown",
+      "i18nKey": "assayTypeUnknown",
+      "externalId": "assayTypeUnknown",
+      "abbreviation":"UK"
+    }
+  ]
+}

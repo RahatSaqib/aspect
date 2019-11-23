@@ -111,10 +111,13 @@ h2.Form__Header {
 }
 
 .Form__Content__Arrange-field > div {
-  width: 100%
+  width: 100%;
 }
 
-.ZipCodeField, .PartnerDropDown, .TimezoneField, .CultureField {
+.ZipCodeField,
+.PartnerDropDown,
+.TimezoneField,
+.CultureField {
   width: 66%;
 }
 
