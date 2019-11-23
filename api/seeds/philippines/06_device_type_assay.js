@@ -6,6 +6,7 @@ const {
   resultSourceToId,
   resultCategoryToId,
 } = require('../../src/shared/dictionary')
+const { updateAssayResultCategoryTreatmentEmphasize } = require('../utils')
 
 async function seed(knex) {
   const labDeviceTypeCategoryId = await deviceTypeCategoryToId('Lab')
@@ -1017,4 +1018,6 @@ async function seed(knex) {
     resultCategoryId: await resultCategoryToId('Unknown'),
     assayId: assaySmearId,
   })
+
+  await updateAssayResultCategoryTreatmentEmphasize(knex)
 }
