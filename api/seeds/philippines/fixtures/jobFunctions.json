@@ -1,5 +1,19 @@
 [
   {
+    "name": "Admin",
+    "features": [
+      "account",
+      "summaryDashboard"
+    ]
+  },
+  {
+    "name": "Regional Officer",
+    "features": [
+      "account",
+      "summaryDashboard"
+    ]
+  },
+  {
       "name": "Lab Manager",
       "features": [
           "account",
@@ -123,12 +137,20 @@
       ]
   },
   {
+    "name": "Lab User",
+    "features": [
+      "account",
+      "summaryDashboard"
+    ]
+  },
+  {
       "name": "Remote Health Worker",
       "features": [
           "account",
           "device",
           "result",
           "person",
+          "reporter",
           "site",
           "summaryDashboard"
       ],
