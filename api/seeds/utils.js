@@ -2479,13 +2479,13 @@ async function insertSites(knex, partnerId, countryId, sites) {
 }
 
 async function getFeatureByModule(knex, module) {
-  return knex('feature')
+  return knex('Feature')
     .where({ module })
     .first()
 }
 
 async function getPermissonByModuleAndActivity(knex, module, activity) {
-  return knex('permission')
+  return knex('Permission')
     .where({ module, activity })
     .first()
 }
