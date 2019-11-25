@@ -41,6 +41,7 @@ import RouterDetail from '../../router/detail/RouterDetail'
 import ReporterList from '../../reporter/list/ReporterList'
 import NotFound from '../../error/notFound/NotFound'
 import License from '../../auth/license/License'
+import ClinicalHistory from '../../patient/ClinicalHistory'
 
 const notImplementedLoggedInFactory = compose(
   loggedInFactory,
@@ -131,6 +132,7 @@ const renderPersonDetail = loggedInDetailFactory(PersonDetail)
 const renderInventoryItemsList = loggedInFactory(InventoryItemsList)
 const renderNotificationList = loggedInFactory(NotificationList)
 const renderNotificationDetail = loggedInDetailFactory(NotificationDetail)
+const renderClinicalHistory = loggedInDetailFactory(ClinicalHistory)
 const renderNotFound = signedOutFactory(NotFound)
 const renderLicense = signedOutFactory(License)
 
@@ -272,7 +274,15 @@ export const routerFactory = () => props => (
           renderDeviceDetail
         }
       />
-
+      <Route
+        path="/browse/patient/:patientId"
+        render={
+          renderRedirectToLoginOr(props) ||
+          renderRedirectToLicenseOr(props) ||
+          renderRedirectToNotFound(props, ['patient']) ||
+          renderClinicalHistory
+        }
+      />
       <Route
         exact
         path="/browse/deviceApiKey"

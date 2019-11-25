@@ -4,9 +4,9 @@ const Promise = require('bluebird')
 const utils = require('./utils')
 const { query } = require('../src/db')
 
+const gxResultDataSchema = require('./fixtures/geneXpertDevice/geneXpertResultDataSchema.json')
 const gxPatientDataSchema = require('./fixtures/geneXpertDevice/geneXpertPatientDataSchema.json')
 const geneXpertResultDataSchemaHiv = require('./fixtures/geneXpertDevice/geneXpertResultDataSchemaHiv.json')
-const geneXpertResultDataSchema = require('./fixtures/geneXpertDevice/geneXpertResultDataSchema.json')
 const geneXpertResultDataSchemaHcv = require('./fixtures/geneXpertDevice/geneXpertResultDataSchemaHcv.json')
 const {
   allFeatureToId,
@@ -43,6 +43,7 @@ async function commonUpserts(
   const countries = {}
   await Promise.each(geography.countries, async country => {
     const countryData = _.pick(country, [
+      'id',
       'abbreviation',
       'name',
       'a3',
@@ -367,12 +368,18 @@ async function upsertGxAlertDevice(
 async function upsertGeneXpertDeviceTypeAndAssays(
   knex,
   assayExternalIds,
-  patientDataSchema
+  overridePatientDataSchema,
+  overrideResultDataSchema
 ) {
   let geneXpertPatientDataSchema
-  if (patientDataSchema)
-    geneXpertPatientDataSchema = JSON.stringify(patientDataSchema)
-  else geneXpertPatientDataSchema = JSON.stringify(gxPatientDataSchema)
+  if (overridePatientDataSchema)
+    geneXpertPatientDataSchema = overridePatientDataSchema
+  else geneXpertPatientDataSchema = gxPatientDataSchema
+
+  let geneXpertResultDataSchema
+  if (overrideResultDataSchema)
+    geneXpertResultDataSchema = overrideResultDataSchema
+  else geneXpertResultDataSchema = gxResultDataSchema
 
   // Add device types
   const { Lab: deviceTypeCategoryLab } = await allDeviceTypeCategoryToId()
@@ -400,167 +407,187 @@ async function upsertGeneXpertDeviceTypeAndAssays(
   } = await allAssayTypeToId()
 
   if (_.includes(assayExternalIds, 'GxUnknown')) {
-    await upsertAssay(knex, {
-      name: 'GeneXpert Unknown',
-      i18nKey: 'assayGeneXpertUnknown',
-      externalId: 'GxUnknown',
-      assayTypeId: assayTypeUnknownId,
-      deviceTypeId: deviceTypeGeneXpertId,
-      resultSourceId: resultSourceDiagnosticId,
-      patientDataSchema: geneXpertPatientDataSchema,
-      abbreviation: 'GX UK',
-    })
+    await createAssay(
+      knex,
+      'GeneXpert Unknown',
+      'assayGeneXpertUnknown',
+      'GxUnknown',
+      assayTypeUnknownId,
+      deviceTypeGeneXpertId,
+      resultSourceDiagnosticId,
+      'GX UK',
+      geneXpertPatientDataSchema
+    )
   }
   if (_.includes(assayExternalIds, 'GxHcv')) {
-    const geneXpertHcvAssayId = await upsertAssay(knex, {
-      name: 'GeneXpert HCV',
-      i18nKey: 'assayGeneXpertHcv',
-      externalId: 'GxHcv',
-      assayTypeId: assayTypeHcvId,
-      deviceTypeId: deviceTypeGeneXpertId,
-      resultSourceId: resultSourceDiagnosticId,
-      resultCategory1Label: 'HCV',
-      resultCategory1i18nKey: 'resultCategoryHcv',
-      resultCategory2Label: null,
-      resultCategory2i18nKey: null,
-      resultDataSchema: JSON.stringify(geneXpertResultDataSchemaHcv),
-      patientDataSchema: geneXpertPatientDataSchema,
-      abbreviation: 'GX HCV',
-    })
-    await upsertAssayResultCategories(geneXpertHcvAssayId, [
-      'Detected',
-      'Invalid',
-      'NoResult',
-      'Error',
-    ])
+    await createAssay(
+      knex,
+      'GeneXpert HCV',
+      'assayGeneXpertHcv',
+      'GxHcv',
+      assayTypeHcvId,
+      deviceTypeGeneXpertId,
+      resultSourceDiagnosticId,
+      'GX HCV',
+      geneXpertPatientDataSchema,
+      geneXpertResultDataSchemaHcv,
+      ['Detected', 'Invalid', 'NoResult', 'Error'],
+      'HCV',
+      'resultCategoryHcv',
+      null,
+      null
+    )
   }
   if (_.includes(assayExternalIds, 'GxMtbRif')) {
-    const geneXpertMtbRifAssayId = await upsertAssay(knex, {
-      name: 'GeneXpert MTB/Rif',
-      i18nKey: 'assayGeneXpertMtbRif',
-      externalId: 'GxMtbRif',
-      assayTypeId: assayTypeMTBRifId,
-      deviceTypeId: deviceTypeGeneXpertId,
-      resultSourceId: resultSourceDiagnosticId,
-      resultCategory1Label: 'MTB',
-      resultCategory1i18nKey: 'resultCategoryMtb',
-      resultCategory2Label: 'Rif',
-      resultCategory2i18nKey: 'resultCategoryRif',
-      resultDataSchema: JSON.stringify(geneXpertResultDataSchema),
-      patientDataSchema: geneXpertPatientDataSchema,
-      abbreviation: 'GX MTB/Rif',
-    })
-    await upsertAssayResultCategories(knex, geneXpertMtbRifAssayId, [
-      'Detected',
-      'NotDetected',
-      'Indeterminate',
-      'Invalid',
-      'NoResult',
-      'Error',
-    ])
+    await createAssay(
+      knex,
+      'GeneXpert MTB/Rif',
+      'assayGeneXpertMtbRif',
+      'GxMtbRif',
+      assayTypeMTBRifId,
+      deviceTypeGeneXpertId,
+      resultSourceDiagnosticId,
+      'GX MTB/Rif',
+      geneXpertPatientDataSchema,
+      geneXpertResultDataSchema,
+      [
+        'Detected',
+        'NotDetected',
+        'Indeterminate',
+        'Invalid',
+        'NoResult',
+        'Error',
+      ],
+      'MTB',
+      'resultCategoryMtb',
+      'Rif',
+      'resultCategoryRif'
+    )
   }
   if (_.includes(assayExternalIds, 'GxMtbRifUltra')) {
-    const geneXpertMtbRifUltraAssayId = await upsertAssay(knex, {
-      name: 'GeneXpert MTB/Rif Ultra',
-      i18nKey: 'assayGeneXpertMtbRifUltra',
-      externalId: 'GxMtbRifUltra',
-      assayTypeId: assayTypeMTBRifId,
-      deviceTypeId: deviceTypeGeneXpertId,
-      resultSourceId: resultSourceDiagnosticId,
-      resultCategory1Label: 'MTB',
-      resultCategory1i18nKey: 'resultCategoryMtb',
-      resultCategory2Label: 'Rif',
-      resultCategory2i18nKey: 'resultCategoryRif',
-      resultDataSchema: JSON.stringify(geneXpertResultDataSchema),
-      patientDataSchema: geneXpertPatientDataSchema,
-      abbreviation: 'GX MTB/ULTRA',
-    })
-    await upsertAssayResultCategories(knex, geneXpertMtbRifUltraAssayId, [
-      'Detected',
-      'Trace Detected',
-      'NotDetected',
-      'Indeterminate',
-      'Invalid',
-      'NoResult',
-      'Error',
-    ])
+    await createAssay(
+      knex,
+      'GeneXpert MTB/Rif Ultra',
+      'assayGeneXpertMtbRifUltra',
+      'GxMtbRifUltra',
+      assayTypeMTBRifId,
+      deviceTypeGeneXpertId,
+      resultSourceDiagnosticId,
+      'GX MTB/ULTRA',
+      geneXpertPatientDataSchema,
+      geneXpertResultDataSchema,
+      [
+        'Detected',
+        'Trace Detected',
+        'NotDetected',
+        'Indeterminate',
+        'Invalid',
+        'NoResult',
+        'Error',
+      ],
+      'MTB',
+      'resultCategoryMtb',
+      'Rif',
+      'resultCategoryRif'
+    )
   }
   if (_.includes(assayExternalIds, 'GxHiv1Vl')) {
-    const geneXpertHivVlAssayId = await upsertAssay(knex, {
-      name: 'GeneXpert HIV-1 VL',
-      i18nKey: 'assayGeneXpertHiv1Vl',
-      externalId: 'GxHiv1Vl',
-      assayTypeId: assayTypeHivVlId,
-      deviceTypeId: deviceTypeGeneXpertId,
-      resultSourceId: resultSourceDiagnosticId,
-      resultCategory1Label: 'HIV',
-      resultCategory1i18nKey: 'resultCategoryHiv',
-      resultCategory2Label: null,
-      resultCategory2i18nKey: null,
-      resultDataSchema: JSON.stringify(geneXpertResultDataSchemaHiv),
-      patientDataSchema: geneXpertPatientDataSchema,
-      abbreviation: 'GX HIV VL',
-    })
-    await upsertAssayResultCategories(knex, geneXpertHivVlAssayId, [
-      'LessThan1000',
-      'MoreThan1000',
-      'NotDetected',
-      'Invalid',
-      'NoResult',
-      'Error',
-    ])
+    await createAssay(
+      knex,
+      'GeneXpert HIV-1 VL',
+      'assayGeneXpertHiv1Vl',
+      'GxHiv1Vl',
+      assayTypeHivVlId,
+      deviceTypeGeneXpertId,
+      resultSourceDiagnosticId,
+      'GX HIV VL',
+      geneXpertPatientDataSchema,
+      geneXpertResultDataSchemaHiv,
+      [
+        'LessThan1000',
+        'MoreThan1000',
+        'NotDetected',
+        'Invalid',
+        'NoResult',
+        'Error',
+      ],
+      'HIV',
+      'resultCategoryHiv'
+    )
   }
   if (_.includes(assayExternalIds, 'GxHiv1Qual')) {
-    const geneXpertHivQualAssayId = await upsertAssay(knex, {
-      name: 'GeneXpert HIV-1 Qual',
-      i18nKey: 'assayGeneXpertHiv1Qual',
-      externalId: 'GxHiv1Qual',
-      assayTypeId: assayTypeHivQualId,
-      deviceTypeId: deviceTypeGeneXpertId,
-      resultSourceId: resultSourceDiagnosticId,
-      resultCategory1Label: 'HIV',
-      resultCategory1i18nKey: 'resultCategoryHiv',
-      resultCategory2Label: null,
-      resultCategory2i18nKey: null,
-      resultDataSchema: JSON.stringify(geneXpertResultDataSchemaHiv),
-      patientDataSchema: geneXpertPatientDataSchema,
-      abbreviation: 'GX HIV Qual',
-    })
-    await upsertAssayResultCategories(knex, geneXpertHivQualAssayId, [
-      'Detected',
-      'NotDetected',
-      'Invalid',
-      'NoResult',
-      'Error',
-    ])
+    await createAssay(
+      knex,
+      'GeneXpert HIV-1 Qual',
+      'assayGeneXpertHiv1Qual',
+      'GxHiv1Qual',
+      assayTypeHivQualId,
+      deviceTypeGeneXpertId,
+      resultSourceDiagnosticId,
+      'GX HIV Qual',
+      geneXpertPatientDataSchema,
+      geneXpertResultDataSchemaHiv,
+      ['Detected', 'NotDetected', 'Invalid', 'NoResult', 'Error'],
+      'HIV',
+      'resultCategoryHiv'
+    )
   }
   if (_.includes(assayExternalIds, 'GxEbola')) {
-    const geneXpertEbolaAssayId = await upsertAssay(knex, {
-      name: 'GeneXpert Ebola',
-      i18nKey: 'assayGeneXpertEbola',
-      externalId: 'GxEbola',
-      assayTypeId: assayTypeEbolaId,
-      deviceTypeId: deviceTypeGeneXpertId,
-      resultSourceId: resultSourceDiagnosticId,
-      resultCategory1Label: 'GP',
-      resultCategory1i18nKey: 'resultCategoryEbolaGp',
-      resultCategory2Label: 'NP',
-      resultCategory2i18nKey: 'resultCategoryEbolaNp',
-      resultDataSchema: JSON.stringify(geneXpertResultDataSchema),
-      patientDataSchema: geneXpertPatientDataSchema,
-      abbreviation: 'GX Ebola',
-    })
-    await upsertAssayResultCategories(knex, geneXpertEbolaAssayId, [
-      'Detected',
-      'NotDetected',
-      'Invalid',
-      'NoResult',
-      'Error',
-    ])
+    await createAssay(
+      knex,
+      'GeneXpert Ebola',
+      'assayGeneXpertEbola',
+      'GxEbola',
+      assayTypeEbolaId,
+      deviceTypeGeneXpertId,
+      resultSourceDiagnosticId,
+      'GX Ebola',
+      geneXpertPatientDataSchema,
+      geneXpertResultDataSchema,
+      ['Detected', 'NotDetected', 'Invalid', 'NoResult', 'Error'],
+      'GP',
+      'resultCategoryEbolaGp'
+    )
   }
 
-  // now that we added assays and result categories, update which categories requires treatment and what should be emphasized
   await utils.updateAssayResultCategoryTreatmentEmphasize(knex)
+}
+
+async function createAssay(
+  knex,
+  name,
+  i18nKey,
+  externalId,
+  assayTypeId,
+  deviceTypeId,
+  resultSourceId,
+  abbreviation,
+  patientDataSchema,
+  resultDataSchema,
+  categories,
+  resultCategory1Label,
+  resultCategory1i18nKey,
+  resultCategory2Label,
+  resultCategory2i18nKey
+) {
+  const assay = {
+    name,
+    i18nKey,
+    externalId,
+    assayTypeId,
+    deviceTypeId,
+    resultSourceId,
+    resultCategory1Label,
+    resultCategory1i18nKey,
+    resultCategory2Label,
+    resultCategory2i18nKey,
+    resultDataSchema: JSON.stringify(resultDataSchema),
+    patientDataSchema: JSON.stringify(patientDataSchema),
+    abbreviation,
+  }
+  const assayId = await upsertAssay(knex, assay)
+  if (categories && categories.length > 0)
+    await upsertAssayResultCategories(knex, assayId, categories)
 }
 
 async function upsertAssay(knex, assay) {
@@ -581,7 +608,7 @@ async function upsertAssay(knex, assay) {
 async function upsertStatesAndLgas(knex, countryId, states) {
   await Promise.all(
     _.map(states || [], async state => {
-      const stateData = _.pick(state, ['abbreviation', 'name'])
+      const stateData = _.pick(state, ['id', 'abbreviation', 'name'])
       let { stateId, stateGeographyId } =
         (await knex('State as s')
           .leftJoin('Geography as g', 's.id', 'g.stateId')
@@ -605,13 +632,15 @@ async function upsertStatesAndLgas(knex, countryId, states) {
       stateData.geographyId = stateGeographyId
       await Promise.all(
         _.map(state.lgas || [], async lga => {
-          const lgaData = _.pick(lga, ['name'])
+          const lgaData = _.pick(lga, ['id', 'name'])
+
           let { lgaId, lgaGeographyId } =
             (await knex('Lga as l')
               .leftJoin('Geography as g', 'l.id', 'g.lgaId')
               .where('g.stateId', stateId)
               .andWhere('l.name', lga.name)
               .first('l.id as lgaId', 'g.id as lgaGeographyId')) || {}
+
           if (!lgaId) {
             ;[lgaId] = await knex('Lga').insert(lgaData)
           }
@@ -664,4 +693,5 @@ module.exports = {
   upsertGeneXpertDeviceTypeAndAssays,
   upsertStatesAndLgas,
   upsertAssayResultCategories,
+  upsertJobFunction,
 }

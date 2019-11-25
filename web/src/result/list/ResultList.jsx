@@ -53,7 +53,7 @@ const messages = defineMessages({
   },
   sampleOriginSiteName: {
     id: 'pages.ResultList.sampleOriginSiteName',
-    defaultMessage: 'Sample Origin Site',
+    defaultMessage: 'Sample Collection Site',
   },
   sampleId: {
     id: 'pages.ResultList.sampleId',
@@ -125,6 +125,9 @@ const searchSanitizer = makeSearchParamsSanitizer({
     'sampleId',
     'errorCode',
     'patientId',
+    'resultText',
+    'resultWorkflowStatus',
+    'treatmentStatusInfo',
     /* --- table.extraColumns BEGIN --- */
     'resultCategory1Name',
     'resultCategory2Name',
@@ -341,7 +344,7 @@ export const ResultList = ({
                 hiddenOn: 'sm',
               },
               {
-                key: 'resultTreatmentStatus',
+                key: 'treatmentStatusInfo',
                 label: intl.formatMessage(messages.resultTreatmentStatus),
                 sortable: true,
                 hiddenOn: 'sm',

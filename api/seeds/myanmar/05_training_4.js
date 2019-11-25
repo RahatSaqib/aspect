@@ -454,7 +454,7 @@ async function seed(knex) {
   }
 
   // define patientData object
-  const geneXpertPatientDataSchema = JSON.stringify({
+  const patientData = {
     id: {
       title: 'Patient ID',
       type: 'string',
@@ -480,11 +480,6 @@ async function seed(knex) {
       type: 'string',
       order: 4,
     },
-    hivStatus: {
-      title: 'HIV Status',
-      type: 'string',
-      order: 5,
-    },
     age: {
       title: 'Age (in years)',
       type: 'number',
@@ -505,6 +500,18 @@ async function seed(knex) {
       type: 'string',
       order: 9,
     },
+  }
+  const geneXpertPatientDataSchema = JSON.stringify({
+    ...patientData,
+  })
+
+  const geneXpertTBPatientDataSchema = JSON.stringify({
+    ...patientData,
+    hivStatus: {
+      title: 'HIV Status',
+      type: 'string',
+      order: 5,
+    },
   })
 
   await knex('Assay')
@@ -517,7 +524,7 @@ async function seed(knex) {
           geneXpertResultDataSchemaTbGxEbola
         )
       ),
-      patientDataSchema: geneXpertPatientDataSchema,
+      patientDataSchema: geneXpertTBPatientDataSchema,
     })
 
   await knex('Assay')

@@ -24,6 +24,7 @@ export const ReadOnlyField = ({
   value,
   lg,
   hideLabel = false,
+  linkButton = null,
   to,
   format = _.identity,
   nullText = '-',
@@ -48,6 +49,11 @@ export const ReadOnlyField = ({
         {to && (
           <Link to={to} className={cssClasses('Container__Link')}>
             <FaExternalLink />
+          </Link>
+        )}
+        {linkButton && (
+          <Link to={linkButton.to || '#'} className={cssClasses('button')}>
+            {linkButton.text}
           </Link>
         )}
       </div>

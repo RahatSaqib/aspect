@@ -1,0 +1,222 @@
+{
+  "serialNumber": {
+    "title": "Serial Code",
+    "type": "string",
+    "order": 0
+  },
+  "mrfDateRequested": {
+    "title": "MRF Date Requested",
+    "type": "date",
+    "order": 1
+  },
+  "referringHealthFacility": {
+    "title": "Referring Health Facility",
+    "type": "string",
+    "order": 2
+  },
+  "requestingPhysician": {
+    "title": "Requesting Physician",
+    "type": "string",
+    "order": 3
+  },
+  "lastName": {
+    "title": "Last Name",
+    "type": "string",
+    "order": 4
+  },
+  "firstName": {
+    "title": "First Name",
+    "type": "string",
+    "order": 5
+  },
+  "middleInitialOrName": {
+    "title": "Middle Initial/Name",
+    "type": "string",
+    "order": 6
+  },
+  "age": {
+    "title": "Age",
+    "type": "number",
+    "order": 7
+  },
+  "sex": {
+    "title": "Sex",
+    "type": "string",
+    "order": 8
+  },
+  "address": {
+    "title": "Address",
+    "type": "string",
+    "order": 9
+  },
+  "phone": {
+    "title" : "Patient Phone",
+    "type" : "string",
+    "order" : 10
+  },
+  "landlineNo": {
+    "title" : "Patient's Landline No.",
+    "type" : "string",
+    "order" : 11
+  },
+  "emailAddress": {
+    "title" : "Patient's Email Address",
+    "type" : "string",
+    "order" : 12
+  },
+  "cultureCenter": {
+    "title": "Culture Center",
+    "type": "string",
+    "order": 13
+  },
+  "dstCenter": {
+    "title": "DST Center",
+    "type": "string",
+    "order": 14
+  },
+  "treatmentCategory": {
+    "title": "Treatment Category",
+    "type": "string",
+    "order": 15
+  },
+  "registrationGroup": {
+    "title": "Registration Group",
+    "type": "string",
+    "order": 16
+  },
+  "treatmentSchedule": {
+    "title": "Treatment Schedule",
+    "type": "string",
+    "order": 17
+  },
+  "monthOfTreatment": {
+    "title": "Month of tx",
+    "type": "string",
+    "order": 18
+  },
+  "typeOfSpecimen": {
+    "title": "Type of Specimen",
+    "type": "string",
+    "order": 19
+  },
+  "ifOthersSpecify": {
+    "title": "(If Others) Specify",
+    "type": "string",
+    "order": 20
+  },
+  "site": {
+    "title": "Site",
+    "type": "string",
+    "order": 21
+  },
+  "testRequestedSmear": {
+    "title": "Test Requested Smear",
+    "type": "bool",
+    "order": 22
+  },
+  "testRequestedCulture": {
+    "title": "Test Requested Culture",
+    "type": "bool",
+    "order": 23
+  },
+  "testRequestedDst": {
+    "title": "Test Requested DST",
+    "type": "bool",
+    "order": 24
+  },
+  "testRequestedLpa": {
+    "title": "Test Requested LPA",
+    "type": "bool",
+    "order": 25
+  },
+  "testRequestedGx": {
+    "title": "Test Requested Gx",
+    "type": "bool",
+    "order": 26
+  },
+  "dateTransferedToDst": {
+    "title": "Date transfered to DST",
+    "type": "date",
+    "order": 27
+  },
+  "cultureMethod": {
+    "title": "Culture Method",
+    "type": "string",
+    "order": 28
+  },
+  "presumptiveDsOrDr": {
+    "title": "If for Xpert, DST or LPA",
+    "type": "string",
+    "order": 29
+  },
+  "dateReceived": {
+    "title": "Date Received",
+    "type": "date",
+    "order": 30
+  },
+  "labNo1": {
+    "title": "Lab No",
+    "type": "string",
+    "order": 31
+  },
+  "tbCaseNumber": {
+    "title": "TB Case Number",
+    "type": "string",
+    "order": 32
+  },
+  "dateCollected1": {
+    "title": "Date Collected 1",
+    "type": "date",
+    "order": 33
+  },
+  "dateCollected2": {
+    "title": "Date Collected 2",
+    "type": "date",
+    "order": 34
+  },
+  "dateCollected3": {
+    "title": "Date Collected 3",
+    "type": "date",
+    "order": 35
+  },
+  "volume1": {
+    "title": "Volume 1",
+    "type": "string",
+    "order": 36
+  },
+  "volume2": {
+    "title": "Volume 2",
+    "type": "string",
+    "order": 37
+  },
+  "volume3": {
+    "title": "Volume 3",
+    "type": "string",
+    "order": 38
+  },
+  "consistency1": {
+    "title": "consistency 1",
+    "type": "string",
+    "order": 39
+  },
+  "consistency2": {
+    "title": "consistency 2",
+    "type": "string",
+    "order": 40
+  },
+  "consistency3": {
+    "title": "consistency 3",
+    "type": "string",
+    "order": 41
+  },
+  "encodedBy": {
+    "title": "Encoded by",
+    "type": "string",
+    "order": 42
+  },
+  "dateEncoded": {
+    "title": "Date Encoded",
+    "type": "date",
+    "order": 43
+  }
+}

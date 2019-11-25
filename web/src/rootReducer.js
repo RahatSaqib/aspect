@@ -30,6 +30,7 @@ import router from './router/RouterRedux'
 import resultWorkflowStatus from './resultWorkflowStatus/ResultWorkflowStatusRedux'
 import resultTreatmentStatus from './resultTreatmentStatus/ResultTreatmentStatusRedux'
 import reporter from './reporter/ReporterRedux'
+import patient from './patient/PatientRedux'
 
 const appReducer = combineReducers({
   form: formReducer,
@@ -61,6 +62,7 @@ const appReducer = combineReducers({
   resultWorkflowStatus,
   resultTreatmentStatus,
   reporter,
+  patient,
 })
 
 const App = Immutable.Record({
@@ -94,6 +96,7 @@ const App = Immutable.Record({
   resultWorkflowStatus: undefined,
   resultTreatmentStatus: undefined,
   reporter: undefined,
+  patient: undefined,
 })
 
 const initialState = new App()

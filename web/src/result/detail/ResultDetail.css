@@ -261,7 +261,7 @@
 }
 
 .TreatmentNoteContainer > div:first-child {
-  display: none
+  display: none;
 }
 
 .TreatmentNoteContainer > div:last-child > div:last-child {
@@ -278,7 +278,7 @@
 .TreatmentNoteContainer svg {
   font-size: 19px;
   margin-bottom: -12px;
-  color: var(--aspect-color-chill-blue-2)
+  color: var(--aspect-color-chill-blue-2);
 }
 
 .TreatmentNoteHeader > p:nth-child(1) {
@@ -291,7 +291,7 @@
 
 .TreatmentNoteFooter span:nth-child(1) {
   margin: 0 0 5px 0;
-  color: var(--aspect-color-chill-blue-2)
+  color: var(--aspect-color-chill-blue-2);
 }
 
 .TreatmentNoteFooter p:nth-child(2) {

@@ -553,7 +553,7 @@ async function seed(knex) {
   })
 
   // define patientData object
-  const geneXpertPatientDataSchema = JSON.stringify({
+  const patientData = {
     id: {
       title: 'Patient ID',
       type: 'string',
@@ -589,11 +589,6 @@ async function seed(knex) {
       type: 'string',
       order: 6,
     },
-    hivStatus: {
-      title: 'HIV Status',
-      type: 'string',
-      order: 7,
-    },
     age: {
       title: 'Age (in years)',
       type: 'number',
@@ -608,6 +603,18 @@ async function seed(knex) {
       title: 'Microscopy Result',
       type: 'string',
       order: 10,
+    },
+  }
+  const geneXpertPatientDataSchema = JSON.stringify({
+    ...patientData,
+  })
+
+  const geneXpertTBPatientDataSchema = JSON.stringify({
+    ...patientData,
+    hivStatus: {
+      title: 'HIV Status',
+      type: 'string',
+      order: 7,
     },
   })
 
@@ -675,7 +682,7 @@ async function seed(knex) {
     resultCategory2Label: 'Rif',
     resultCategory2i18nKey: 'resultCategoryRif',
     resultDataSchema: geneXpertResultDataSchema,
-    patientDataSchema: geneXpertPatientDataSchema,
+    patientDataSchema: geneXpertTBPatientDataSchema,
   })
 
   const [assayGeneXpertMtbRifUltraId] = await knex('Assay').insert({
@@ -691,7 +698,7 @@ async function seed(knex) {
     resultCategory2Label: 'Rif',
     resultCategory2i18nKey: 'resultCategoryRif',
     resultDataSchema: geneXpertResultDataSchema,
-    patientDataSchema: geneXpertPatientDataSchema,
+    patientDataSchema: geneXpertTBPatientDataSchema,
   })
 
   const [assayGeneXpertHiv1VlId] = await knex('Assay').insert({

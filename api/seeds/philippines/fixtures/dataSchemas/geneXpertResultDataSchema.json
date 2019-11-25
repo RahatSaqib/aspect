@@ -1,0 +1,106 @@
+{
+  "encodedResult": {
+    "list": false,
+    "order": 0,
+    "type": "object" ,
+    "title": "Encoded Result" ,
+    "properties": {
+      "center": {
+        "title": "Center" ,
+        "type": "string"
+      },
+      "processingDate": {
+        "title": "Processing Date" ,
+        "type": "date"
+      },
+      "mtb": {
+        "title": "MTB" ,
+        "type": "string"
+      },
+      "rifampicin": {
+        "title": "Rifampicin" ,
+        "type": "string"
+      },
+      "remarks": {
+        "title": "Remarks" ,
+        "type": "string"
+      },
+      "dateReleased": {
+        "title": "Date Released" ,
+        "type": "date"
+      },
+      "examiner": {
+        "title": "Examiner" ,
+        "type": "string"
+      },
+      "labManager": {
+        "title": "Lab Manager" ,
+        "type": "string"
+      }
+    }
+  },
+  "gxAlertCustomFields": {
+    "list": false,
+    "order": 1,
+    "type": "object" ,
+    "title": "GxAlert Custom Fields" ,
+    "properties": {
+      "requestingFacilityName": {
+        "title": "Name of Requesting Facility",
+        "type": "string"
+      },
+      "requestDate": {
+        "title": "Date of Request",
+        "type": "date"
+      },
+      "clinicianOrFacilityPhoneNumber": {
+        "title": "Referring Clinician or Facility Phone Number (if known)",
+        "type": "string"
+      },
+      "nameOfPersonRequestingTest": {
+        "title": "Name of Person Requesting Test",
+        "type": "string"
+      },
+      "repeatTest": {
+        "title": "Repeat Test",
+        "type": "int"
+      },
+      "patientId": {
+        "title": "TB Case No.(Patient ID)",
+        "type": "string"
+      },
+      "specimenType": {
+        "title": "Specimen Type",
+        "type": "int"
+      },
+      "repeatCollection": {
+        "title": "Repeat Collection?",
+        "type": "int"
+      },
+      "presumptiveDsTbOrDrTb": {
+        "title": "Presumptive DS-TB/DR-TB",
+        "type": "int"
+      },
+      "specimenCollectedDate": {
+        "title": "Date Specimen Collected",
+        "type": "date"
+      },
+      "sampleId": {
+        "title": "Specimen Code (Sample ID)",
+        "type": "string"
+      },
+      "visualAppearance": {
+        "title": "Visual Appearance",
+        "type": "int"
+      },
+      "releaseDate": {
+        "title": "Date of Release",
+        "type": "date"
+      },
+      "performedBy": {
+        "title": "Performed by",
+        "type": "string"
+      }
+    }
+  }
+}

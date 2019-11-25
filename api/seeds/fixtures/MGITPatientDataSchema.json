@@ -1,0 +1,72 @@
+{
+	"name": {
+		"title": "Name of patient",
+		"type": "string",
+		"order": 0
+	},
+	"age": {
+		"title": "Age",
+		"type": "number",
+		"order": 1
+	},
+	"gender": {
+		"title": "Sex",
+		"type": "string",
+		"order": 2
+	},
+	"dateOfBirth": {
+		"title": "Date of Birth",
+		"type": "string",
+		"order": 3
+	},
+	"state": {
+		"title": "Province",
+		"type": "string",
+		"order": 4
+	},
+	"site": {
+		"title": "Site",
+		"type": "string",
+		"order": 5
+	},
+	"focalPerson": {
+		"title": "Focal Person",
+		"type": "string",
+		"order": 6
+	},
+	"contactDetails": {
+		"title": "Contact Details",
+		"type": "string",
+		"order": 7
+	},
+	"xpertMtbRifResult": {
+		"title": "XPERT MTB RIF Result",
+		"type": "string",
+		"order": 8
+	},
+	"dateStartedOnTreatment": {
+		"title": "Date Started on TX",
+		"type": "string",
+		"order": 9
+	},
+	"baselineCulture": {
+		"title": "Baseline Culture",
+		"type": "string",
+		"order": 10
+	},
+	"lpaFl": {
+		"title": "LPA FL",
+		"type": "string",
+		"order": 5
+	},
+	"lpaSl": {
+		"title": "LPA SL",
+		"type": "string",
+		"order": 11
+	},
+	"mgitSire": {
+		"title": "MGIT SIRE",
+		"type": "string",
+		"order": 12
+	}
+}
