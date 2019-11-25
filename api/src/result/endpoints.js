@@ -34,7 +34,9 @@ const { getResultsReport } = require('./serviceReport')
 const {
   validateAllGeographyFilterParams,
 } = require('../geography/requestValidation')
-
+// -----------------------------------------------------
+// helper functions
+// -----------------------------------------------------
 function listResultsBaseConfig() {
   return {
     auth: { scope: ['result:view', 'result:edit'] },
@@ -97,7 +99,48 @@ function listResultsBaseConfig() {
     },
   }
 }
+// -----------------------------------------------------
+function getResponseForComments() {
+  return {
+    options: {
+      allowUnknown: false,
+    },
+    schema: Joi.object().keys({
+      ok: Joi.bool()
+        .required()
+        .description('False if there was some sort of error'),
+      length: Joi.number().required(),
+      data: Joi.array()
+        .required()
+        .description('The result comments')
+        .items(
+          Joi.object().keys({
+            id: Joi.number()
+              .required()
+              .description('Unique ID of the comment'),
+            text: Joi.string()
+              .required()
+              .description('Comment text'),
+            createdBy: Joi.string()
+              .description('User name who created comment'),
+            createdOn: Joi.date()
+              .required()
+              .description('When comment was created'),
+            changedOn: Joi.date()
+              .required()
+              .description('When comment was updated'),
+            noteType: Joi.string()
+              .required()
+              .description('Comment type'),
+          })
+        ),
+    }),
+  }
+}
 
+// -----------------------------------------------------
+// routes
+// -----------------------------------------------------
 const routes = [
   {
     method: 'GET',
@@ -325,20 +368,7 @@ const routes = [
             .allow(null),
         },
       },
-      response: {
-        options: {
-          allowUnknown: false,
-        },
-        schema: Joi.object().keys({
-          ok: Joi.bool()
-            .required()
-            .description('False if there was some sort of error'),
-          length: Joi.number().required(),
-          data: Joi.array()
-            .required()
-            .description('The result notes'),
-        }),
-      },
+      response: getResponseForComments(),
     },
   },
   {
@@ -358,20 +388,7 @@ const routes = [
             .description('Result Id'),
         },
       },
-      response: {
-        options: {
-          allowUnknown: false,
-        },
-        schema: Joi.object().keys({
-          ok: Joi.bool()
-            .required()
-            .description('False if there was some sort of error'),
-          length: Joi.number().required(),
-          data: Joi.array()
-            .required()
-            .description('The result notes'),
-        }),
-      },
+      response: getResponseForComments(),
     },
   },
   {
@@ -396,20 +413,7 @@ const routes = [
             .description('Result Comment ID'),
         },
       },
-      response: {
-        options: {
-          allowUnknown: false,
-        },
-        schema: Joi.object().keys({
-          ok: Joi.bool()
-            .required()
-            .description('False if there was some sort of error'),
-          length: Joi.number().required(),
-          data: Joi.array()
-            .required()
-            .description('The result notes'),
-        }),
-      },
+      response: getResponseForComments(),
     },
   },
   {
