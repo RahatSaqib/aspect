@@ -871,7 +871,11 @@ describe('Result download routes', () => {
             assert.property(res.body.data[0].followUps[0], 'createdOn')
             assert.property(res.body.data[0].followUps[0], 'updatedOn')
 
-            assert.equal(Object.keys(res.body.data[0]).length, 26)
+            assert.property(res.body.data[0], 'comments')
+            assert.typeOf(res.body.data[0].followUps, 'array')
+            assert.property(res.body.data[0].followUps[0], 'id')
+
+            assert.equal(Object.keys(res.body.data[0]).length, 27)
             // check if the download is register in the table.
             const { count: totalResult } = await knex('ResultDownloadLog')
               .where('resultId', res.body.data[0].id)
@@ -957,7 +961,11 @@ describe('Result download routes', () => {
           assert.property(res.body.data[0].followUps[0], 'createdOn')
           assert.property(res.body.data[0].followUps[0], 'updatedOn')
 
-          assert.equal(Object.keys(res.body.data[0]).length, 26)
+          assert.property(res.body.data[0], 'comments')
+          assert.typeOf(res.body.data[0].followUps, 'array')
+          assert.property(res.body.data[0].followUps[0], 'id')
+
+          assert.equal(Object.keys(res.body.data[0]).length, 27)
         })
 
       server
@@ -1164,7 +1172,11 @@ describe('Result download routes', () => {
             assert.property(res.body.data[0].followUps[0], 'createdOn')
             assert.property(res.body.data[0].followUps[0], 'updatedOn')
 
-            assert.equal(Object.keys(res.body.data[0]).length, 26)
+            assert.property(res.body.data[0], 'comments')
+            assert.typeOf(res.body.data[0].followUps, 'array')
+            assert.property(res.body.data[0].followUps[0], 'id')
+
+            assert.equal(Object.keys(res.body.data[0]).length, 27)
             // check if the download is register in the table.
             const { count: totalResult } = await knex('ResultDownloadLog')
               .where('resultId', res.body.data[0].id)
