@@ -121,8 +121,9 @@ function getResponseForComments() {
             text: Joi.string()
               .required()
               .description('Comment text'),
-            createdBy: Joi.string()
-              .description('User name who created comment'),
+            createdBy: Joi.string().description(
+              'User name who created comment'
+            ),
             createdOn: Joi.date()
               .required()
               .description('When comment was created'),
