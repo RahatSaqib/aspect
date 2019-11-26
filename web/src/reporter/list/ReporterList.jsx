@@ -23,7 +23,8 @@ import BrowseEmptyList from '../../globals/components/BrowseEmptyList'
 import BrowseTablePaginator from '../../globals/components/BrowseTablePaginator'
 import DataTableCard from '../../components/shared/DataTableCard'
 import DataTableProgressBar from '../../components/shared/DataTableProgressBar'
-import { fetchReporters } from '../ReporterRedux'
+import { fetchReporters, exportReporters } from '../ReporterRedux'
+import ExportListButton from '../../globals/components/ExportListButton'
 import {
   ReporterDataTable,
   ReporterDataTableHead,
@@ -130,6 +131,7 @@ const enhance = compose(
     }),
     bindActionCreators.bind(null, {
       fetchReporters,
+      exportReporters,
     })
   ),
   withHandlers({
@@ -144,6 +146,25 @@ const enhance = compose(
       const { sanitized, value: filtersParams } = filtersFromLocation(location)
       if (!sanitized) {
         fetchReporters(filtersParams, sortCol, sortDir, pageAt, pageSize)
+      }
+    },
+
+    onExportClick: ({
+      location,
+      exportReporters,
+      pageAt,
+      pageSize,
+    }) => formatType => {
+      const { sanitized, value: filtersParams } = filtersFromLocation(location)
+      if (!sanitized) {
+        exportReporters(
+          filtersParams,
+          formatType.id,
+          pageAt,
+          pageSize,
+          formatType.id,
+          'reporters'
+        )
       }
     },
   }),
@@ -195,6 +216,7 @@ export const ReporterList = ({
   sortCol,
   sortDir,
   pageAt,
+  onExportClick,
   pageSize,
   reducedFilters,
 }) => (
@@ -205,10 +227,16 @@ export const ReporterList = ({
       history={history}
       location={location}
       intl={intl}
+      onClickExport={onExportClick}
       config={reducedFilters}
     />
     <DataTableCard key={`DataTableCard--table-${location.key}`}>
       <DataTableProgressBar disabled={!table.loading} />
+      <ExportListButton
+        onExcelClick={onExportClick}
+        onCsvClick={onExportClick}
+        reportName="Results"
+      />
       {items.currentIdList.isEmpty() && (
         <BrowseEmptyList history={history} location={location} intl={intl} />
       )}

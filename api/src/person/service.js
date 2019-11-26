@@ -385,7 +385,7 @@ async function listRefreshTokens(request) {
 
   const getCount = tokenQuery
     .clone()
-    .count('r.createdOn as count')
+    .count('r.clientId as count')
     .first()
 
   const getItems = tokenQuery

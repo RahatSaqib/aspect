@@ -25,11 +25,16 @@ async function getReport(request, reply) {
     reportFile, // the path to the exceltemplate
     '<Headers>', // This is an invented tag to look for, in the report template, for selecting the first cell we want to work with.
     // Also we can find a text for a header instead of create a place holder.
-    _.map(reports.data, report => ({
-      ...report,
-      acknowledgedRatio: report.acknowledgedRatio * 100,
-      confirmFollowUpRatio: report.confirmFollowUpRatio * 100,
-    })),
+    _.map(
+      reports.data,
+      elem =>
+        Object.assign(elem, {
+          acknowledgedRatio: _.round(elem.acknowledgedRatio * 100),
+          confirmFollowUpRatio: _.round(elem.confirmFollowUpRatio * 100),
+        })
+      // this is the data source to create the reportvalues.
+      // It should be an Array of JSON objects, where each must be plained (Without nested properties)
+    ),
     // this is the data source to create the reportvalues.
     // It should be an Array of JSON objects, where each must be plained (Without nested properties)
     {
