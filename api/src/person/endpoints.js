@@ -99,6 +99,12 @@ const routes = [
             deviceName: Joi.string()
               .allow('')
               .description('Filter for device name'),
+            assayId: Joi.string()
+              .allow('')
+              .description('Filter for assay'),
+            treatmentStatusId: Joi.string()
+              .allow('')
+              .description('Filter for treatment status'),
             revoked: Joi.string()
               .valid('0', '1')
               .description('Filter for revoked status'),
@@ -169,18 +175,22 @@ const routes = [
                 lastSeen: Joi.date()
                   .required()
                   .description('The date when the device was last online'),
-                deliveredThisMonth: Joi.number()
-                  .allow(null)
-                  .description('Number of tests delivered in the last 30 days'),
-                deliveredLastMonth: Joi.number()
-                  .allow(null)
-                  .description(
-                    'Number of tests delivered in the 30 days before that'
-                  ),
                 acknowledgedRatio: Joi.number()
                   .required()
                   .description('The acknowledged ratio'),
+                confirmFollowUpRatio: Joi.number()
+                  .required()
+                  .description('The acknowledged ratio'),
                 totalFlagged: Joi.number()
+                  .required()
+                  .description('The total flagged'),
+                totalFollowUp: Joi.number()
+                  .required()
+                  .description('The total flagged'),
+                totalAcknowledge: Joi.number()
+                  .required()
+                  .description('The total flagged'),
+                delivered: Joi.number()
                   .required()
                   .description('The total flagged'),
               })

@@ -61,13 +61,13 @@ const messages = defineMessages({
     id: 'pages.ReporterList.numberOfTestsLeft',
     defaultMessage: 'Number Of Tests Delivered',
   },
-  deliveredLastMonth: {
-    id: 'pages.ReporterList.deliveredLastMonth',
-    defaultMessage: 'Last Month',
+  delivered: {
+    id: 'pages.ReporterList.delivered',
+    defaultMessage: 'Delivered',
   },
-  deliveredThisMonth: {
-    id: 'pages.ReporterList.deliveredThisMonth',
-    defaultMessage: 'This Month',
+  comfirmedFollowup: {
+    id: 'pages.ReporterList.followup',
+    defaultMessage: '% Confirmed Follow-up',
   },
   acknowledgedRatio: {
     id: 'pages.ReporterList.acknowledgedRatio',
@@ -97,6 +97,11 @@ const FILTERS_CONFIG = [
   { date: true, requiredPermissions: [] },
   { deviceName: true, requiredPermissions: [] },
   { revoked: true, requiredPermissions: [] },
+  { treatmentStatus: true, requiredPermissions: [] },
+  {
+    assayAndResultCategory: true,
+    requiredPermissions: ['assay:view', 'assay:admin', 'assay:edit'],
+  },
 ]
 
 const searchSanitizer = makeSearchParamsSanitizer({
@@ -213,24 +218,6 @@ export const ReporterList = ({
           className={cssClasses('ReporterDataTable')}
         >
           <ReporterDataTableHead
-            compact
-            columns={[
-              {
-                key: 'emptystart',
-                colSpan: 4,
-              },
-              {
-                key: 'tests',
-                colSpan: 2,
-                label: intl.formatMessage(messages.numberOfTests),
-              },
-              {
-                key: 'emptyend',
-                colSpan: 3,
-              },
-            ]}
-          />
-          <ReporterDataTableHead
             history={history}
             location={location}
             sortColumnKey={sortCol}
@@ -242,7 +229,7 @@ export const ReporterList = ({
                 sortable: true,
               },
               {
-                key: 'device',
+                key: 'deviceName',
                 label: intl.formatMessage(messages.reporterDevice),
                 sortable: true,
               },
@@ -256,12 +243,12 @@ export const ReporterList = ({
                 label: intl.formatMessage(messages.lastSeen),
               },
               {
-                key: 'deliveredLastMonth',
-                label: intl.formatMessage(messages.deliveredLastMonth),
+                key: 'delivered',
+                label: intl.formatMessage(messages.delivered),
               },
               {
-                key: 'deliveredThisMonth',
-                label: intl.formatMessage(messages.deliveredThisMonth),
+                key: 'comfirmedFollowup',
+                label: intl.formatMessage(messages.comfirmedFollowup),
               },
               {
                 key: 'acknowledgedRatio',

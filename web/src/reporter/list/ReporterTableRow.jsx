@@ -30,11 +30,11 @@ const ReporterTableRow = ({
       <TableCell>{reporter.get('deviceName')}</TableCell>
       <TableCell>{intl.formatRelative(reporter.get('createdOn'))}</TableCell>
       <TableCell>{intl.formatRelative(reporter.get('lastSeen'))}</TableCell>
+      <TableCell>{intl.formatNumber(reporter.get('delivered'))}</TableCell>
       <TableCell>
-        {intl.formatNumber(reporter.get('deliveredLastMonth'))}
-      </TableCell>
-      <TableCell>
-        {intl.formatNumber(reporter.get('deliveredThisMonth'))}
+        {intl.formatNumber(reporter.get('confirmFollowUpRatio'), {
+          style: 'percent',
+        })}
       </TableCell>
       <TableCell>
         {intl.formatNumber(reporter.get('acknowledgedRatio'), {
