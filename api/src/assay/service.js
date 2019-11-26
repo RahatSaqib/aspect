@@ -33,13 +33,13 @@ const SELECT_LIST_RESULT_CATEGORY_FIELDS = [
 async function listAssaysResultSchema(request) {
   const { auth } = request
   const dataConstraints = await getConstraints(auth.credentials)
-  const assaysList = await knex('Result as r')
-    .innerJoin('Assay as a', 'r.assayId', 'a.id')
-    .innerJoin('Device as d', 'r.deviceId', 'd.id')
-    .innerJoin('DeviceType as dt', 'd.devicetypeId', 'dt.id')
+  const assaysList = await knex('Assay as a')
+    .innerJoin('DeviceType as dt', 'a.devicetypeId', 'dt.id')
+    .innerJoin('Device as d', 'dt.id', 'd.deviceTypeId')
     .innerJoin('AssayType as at', 'a.assaytypeId', 'at.id')
-    .leftJoin('Sample as sp', 'r.sampleId', 'sp.id')
-    .modify(addConstraints, dataConstraints, { device: 'd', sample: 'sp' })
+    .modify(addConstraints, dataConstraints, {
+      device: 'd',
+    })
     .select(
       'a.id as assayId',
       'a.externalId',
@@ -58,6 +58,7 @@ async function listAssaysResultSchema(request) {
       'at.abbreviation as assayTypeAbbreviation'
     )
     .distinct()
+
   const rawResultCategories = await knex('ResultCategory as rc')
     .innerJoin('ResultCategoryAssay as rca', 'rc.id', 'rca.resultCategoryId')
     .whereIn('rca.assayId', _.map(assaysList, 'assayId'))

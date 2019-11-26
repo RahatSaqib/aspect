@@ -6,10 +6,6 @@ const treatmentStatuses = ['OnTreatment', 'AwaitingTreatment', 'NotPossible']
 const millisInHour = 1000 * 60 * 60
 const millisInMinute = 1000 * 60
 const resultTimeFrameInDays = 365
-
-const resultMtbNumber = 20
-const resultHivVlNumber = 20
-const resultEbolaNumber = 0
 const now = new Date()
 const {
   addMilliseconds,
@@ -107,9 +103,9 @@ async function generateResults(
   patients,
   errorCodes,
   countryAbbreviation = 'US',
-  resultMtbNumber = 5,
-  resultHivVlNumber = 5,
-  resultEbolaNumber = 2
+  resultMtbNumber = 20,
+  resultHivVlNumber = 20,
+  resultEbolaNumber = 0
 ) {
   const resultsid = []
   const siteDatas = await knex('Site as s')

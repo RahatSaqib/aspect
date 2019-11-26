@@ -157,6 +157,8 @@ function addConstraints(queryBuilder, constraints, aliases) {
     showUnapprovedDevices = false,
     jobFunction,
     allowAdminThrough = false,
+    country,
+    result: resultAlias,
   } = aliases
 
   if (_.isEmpty(constraints)) {
@@ -166,46 +168,77 @@ function addConstraints(queryBuilder, constraints, aliases) {
 
   // TODO generalize constraint building
   // TODO only join queries if needed within constraints or required by unspecified aliases
-  if (device && !site) {
-    site = alias('Site')
-    queryBuilder.leftOuterJoin(
-      `Site as ${site}`,
-      `${device}.siteId`,
-      `${site}.id`
-    )
-  }
-
-  if (site) {
-    if (!partner) {
-      partner = alias('Partner')
-      queryBuilder.leftOuterJoin(
-        `Partner as ${partner}`,
-        `${site}.partnerId`,
-        `${partner}.id`
-      )
+  if (resultAlias) {
+    if (constraints.partner) {
+      queryBuilder.where(function() {
+        this.whereNull(`${resultAlias}.partnerId`).orWhere(
+          `${resultAlias}.partnerId`,
+          constraints.partner.id
+        )
+      })
     }
-
     if (!geography) {
       geography = alias('Geography')
       queryBuilder.leftOuterJoin(
         `Geography as ${geography}`,
-        `${site}.geographyId`,
+        `${resultAlias}.geographyId`,
         `${geography}.id`
       )
     }
+    if (partner && constraints.partner) {
+      queryBuilder.where(function() {
+        this.whereNull(`${resultAlias}.partnerId`).orWhere({
+          [`${resultAlias}.partnerId`]: constraints.partner.id,
+        })
+      })
+    }
+  } else {
+    if (device && !site) {
+      site = alias('Site')
+      queryBuilder.leftOuterJoin(
+        `Site as ${site}`,
+        `${device}.siteId`,
+        `${site}.id`
+      )
+    }
+
+    if (site) {
+      if (!partner) {
+        partner = alias('Partner')
+        queryBuilder.leftOuterJoin(
+          `Partner as ${partner}`,
+          `${site}.partnerId`,
+          `${partner}.id`
+        )
+      }
+
+      if (!geography && !country) {
+        geography = alias('Geography')
+        queryBuilder.leftOuterJoin(
+          `Geography as ${geography}`,
+          `${site}.geographyId`,
+          `${geography}.id`
+        )
+      }
+    }
+    // Partner, country, and constraints are ANDed
+    if (partner && constraints.partner) {
+      queryBuilder.where(function() {
+        this.whereNull(`${partner}.id`).orWhere({
+          [`${partner}.id`]: constraints.partner.id,
+        })
+      })
+    }
+
+    if (country && constraints.country) {
+      queryBuilder.where(`${country}.id`, constraints.country.id)
+    } else if (geography && constraints.country) {
+      queryBuilder.where({
+        [`${geography}.countryId`]: constraints.country.id,
+      })
+    }
   }
 
-  // Partner, country, and constraints are ANDed
-  if (partner && constraints.partner) {
-    queryBuilder.where(function() {
-      this.whereNull(`${partner}.id`).orWhere({
-        [`${partner}.id`]: constraints.partner.id,
-      })
-    })
-  }
-  if (geography && constraints.country) {
-    queryBuilder.where({ [`${geography}.countryId`]: constraints.country.id })
-  }
   if (person && constraints.person && !allowAdminThrough) {
     queryBuilder.where({ [`${person}.personId`]: constraints.person.id })
   }
@@ -260,7 +293,6 @@ function addConstraints(queryBuilder, constraints, aliases) {
     })
   }
 }
-
 function addConstraintWithJobFunction({
   queryBuilder,
   alias,

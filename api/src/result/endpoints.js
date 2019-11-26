@@ -522,6 +522,10 @@ const routes = [
                         'Reason for the latest workflow status change'
                       )
                       .allow(null, ''),
+                    setDelivered: Joi.boolean()
+                      .optional()
+                      .allow(null)
+                      .description('Tells if the record was updated manually'),
                   }),
                 treatmentStatus: Joi.object()
                   .allow(null)

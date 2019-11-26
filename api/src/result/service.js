@@ -466,7 +466,7 @@ async function listResults(request) {
   return result
 }
 
-async function getDownloadResultsList(query, auth) {
+async function getDownloadResultsList(query, auth, setDelivered = false) {
   // get data constraints
   const dataConstraints = await getConstraints(auth.credentials)
 
@@ -563,7 +563,13 @@ async function getDownloadResultsList(query, auth) {
         queryBuilder.where('dt.externalId', params.deviceType)
       else queryBuilder.where('dt.externalId', 'CepheidGeneXpert')
     }, query)
-    .modify(addConstraints, dataConstraints, { device: 'd', sample: 'sp' })
+    .modify(addConstraints, dataConstraints, {
+      device: 'd',
+      sample: 'sp',
+      geography: 'g',
+      result: 'r',
+      country: 'c',
+    })
   // get total count for paging
   const getCount = resultQuery
     .clone()
@@ -677,11 +683,28 @@ async function getDownloadResultsList(query, auth) {
         : null,
     },
     workflowStatus: {
-      name: d.resultWorkflowStatusName,
-      externalId: d.resultWorkflowStatusExternalId,
-      i18nKey: d.resultWorkflowStatusi18nKey,
-      reason: d.resultWorkflowStatusReason,
-      changedOn: d.resultWorkflowStatusChangedOn,
+      name:
+        setDelivered && d.resultWorkflowStatusExternalId !== 'Delivered'
+          ? 'Delivered'
+          : d.resultWorkflowStatusName,
+      externalId:
+        setDelivered && d.resultWorkflowStatusExternalId !== 'Delivered'
+          ? 'Delivered'
+          : d.resultWorkflowStatusExternalId,
+      i18nKey:
+        setDelivered && d.resultWorkflowStatusExternalId !== 'Delivered'
+          ? 'ResultWorkflowStatusDelivered'
+          : d.resultWorkflowStatusi18nKey,
+      reason:
+        setDelivered && d.resultWorkflowStatusExternalId !== 'Delivered'
+          ? 'Download Results Api'
+          : d.resultWorkflowStatusReason,
+      changedOn:
+        setDelivered && d.resultWorkflowStatusExternalId !== 'Delivered'
+          ? new Date()
+          : d.resultWorkflowStatusChangedOn,
+      setDelivered:
+        setDelivered && d.resultWorkflowStatusExternalId !== 'Delivered',
     },
     treatmentStatus: {
       changedOn: d.resultTreatmentStatusChangedOn,
@@ -710,25 +733,22 @@ async function getDownloadResultsList(query, auth) {
 async function downloadResultsList(request) {
   const { query, auth } = request
   const user = await getUser(auth.credentials.name)
-  const result = await getDownloadResultsList(query, auth)
-  const idsToUpdate = _.uniq(
-    _.map(
-      _.omitBy(
-        result.data,
-        elem => elem.workflowStatus.externalId !== 'Delivered'
-      ),
-      elem => elem.id
+  const result = await getDownloadResultsList(query, auth, true)
+  const myProm = new Promise(async () => {
+    const idsToUpdate = _.uniq(
+      _.map(
+        _.pickBy(result.data, elem => elem.workflowStatus.setDelivered),
+        elem => elem.id
+      )
     )
-  )
-
-  const idsToBeRegistered = _.uniq(_.map(result.data, elem => elem.id))
-  if (idsToUpdate) await updateResultStatus(idsToUpdate, user.id)
-  if (idsToBeRegistered) await addResultDownloadLog(idsToBeRegistered, user.id)
-
-  const assigmentValue = elem => {
-    elem.workflowStatus.externalId = 'Delivered'
-  }
-  _.forEach(result.data, assigmentValue)
+    const idsToBeRegistered = _.uniq(_.map(result.data, elem => elem.id))
+    if (idsToUpdate && idsToUpdate.length > 0)
+      await updateResultStatus(idsToUpdate, user.id)
+    if (idsToBeRegistered && idsToBeRegistered.length > 0)
+      await addResultDownloadLog(idsToBeRegistered, user.id)
+  })
+  // eslint-disable-next-line no-console
+  myProm.catch(err => console.log(err))
   return result
 }
 async function addResultDownloadLog(idsToBeRegistered, userId) {

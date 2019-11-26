@@ -499,29 +499,37 @@ describe('Result routes', () => {
       })
     }
 
-    it('Should update result treatment status given a resultId - with externalId', done => {
-      const changedOn = new Date()
-      const updateWithExternalId = {
-        externalId: 'AwaitingTreatment',
-        data: 'should be treated',
-        method: 'sms',
-        changedOn,
-      }
-      // update with external ID
-      server
-        .put(`${path}/treatment-status/${resultId}`)
-        .send(updateWithExternalId)
-        .set('Authorization', `Bearer${shared.token}`)
-        .end((err, res) => {
-          baseTreatmentStatusAssertion(res)
+    it('Should update result treatment status given a resultId - with externalId', () =>
+      runTestWithKnex(async knex => {
+        const changedOn = new Date()
+        const updateWithExternalId = {
+          externalId: 'AwaitingTreatment',
+          data: 'should be treated',
+          method: 'sms',
+          changedOn,
+        }
+        const { testResultId } = await knex('ResultTreatmentStatus as s')
+          .join(
+            'ResultTreatmentStatusLog as l',
+            's.id',
+            'l.resultTreatmentStatusId'
+          )
+          .where('s.externalId', '<>', 'AwaitingTreatment')
+          .first('l.resultId as testResultId')
 
-          const { treatmentStatus } = res.body.data
-          // check the updated fieldName
-          assert.equal(treatmentStatus.externalId, 'AwaitingTreatment')
+        // update with external ID
+        server
+          .put(`${path}/treatment-status/${testResultId}`)
+          .send(updateWithExternalId)
+          .set('Authorization', `Bearer${shared.token}`)
+          .end((err, res) => {
+            baseTreatmentStatusAssertion(res)
 
-          done()
-        })
-    })
+            const { treatmentStatus } = res.body.data
+            // check the updated fieldName
+            assert.equal(treatmentStatus.externalId, 'AwaitingTreatment')
+          })
+      }))
 
     it('Should update result treatment status given a resultId - with resultTreatmentStatusId', done => {
       const changedOn = addMinutes(new Date(), 1)
