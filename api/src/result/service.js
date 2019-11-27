@@ -646,6 +646,22 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
       'fut.externalId as followUpTypeExternalId',
       'fut.i18nKey as followUpTypei18nKey'
     )
+  // get comments for all results in the response for performance (filter later)
+  const comments = await knex('ResultNote as rn')
+    .innerJoin('ResultNoteType as rnt', 'rn.resultNoteTypeId', 'rnt.id')
+    .leftOuterJoin('User as uC', 'rn.createdBy', 'uC.id')
+    .leftOuterJoin('User as uU', 'rn.updatedBy', 'uU.id')
+    .whereIn('rn.resultId', data.map(d => d.id))
+    .select(
+      'rn.resultId',
+      'rn.id',
+      'rn.text',
+      'rn.createdOn',
+      'uC.name as createdBy',
+      'rn.changedOn',
+      'uU.name as changedBy',
+      'rnt.name as noteType'
+    )
 
   const transformedData = _.map(data, d => ({
     id: d.id,
@@ -717,6 +733,11 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
     followUps: _.sortBy(
       _.filter(followUps, { resultId: d.id }).map(f => _.omit(f, 'resultId')),
       ['date', 'updatedOn']
+    ),
+    comments: _.orderBy(
+      _.filter(comments, { resultId: d.id }).map(f => _.omit(f, 'resultId')),
+      ['createdOn'],
+      ['desc']
     ),
   }))
 
@@ -1242,6 +1263,21 @@ async function updateTreatmentStatus(
   return response
 }
 
+// helper func
+async function isAuthorOrAdminOfResultComment(
+  credentials,
+  resultId,
+  commentId
+) {
+  const user = await getUser(credentials.name)
+  const { createdBy } = await knex('ResultNote')
+    .where('id', commentId)
+    .where('resultId', resultId)
+    .first()
+  const isResultAdmin = credentials.permissions.includes(`result:admin`)
+  return createdBy === user.id || isResultAdmin
+}
+
 async function addResultNote(request) {
   const { auth, params, payload } = request
   const now = new Date()
@@ -1254,7 +1290,7 @@ async function addResultNote(request) {
     return Boom.notFound()
   }
 
-  const { note, resultNoteType, changedOn = now } = payload
+  const { note, resultNoteType, commentId, changedOn = now } = payload
 
   const { id: resultNoteTypeId } = await knex('ResultNoteType')
     .where('externalId', resultNoteType || 'General')
@@ -1268,15 +1304,85 @@ async function addResultNote(request) {
     return Boom.badRequest('The length of the comment must be less than 256')
   }
 
-  await knex('ResultNote').insert({
-    resultNoteTypeId,
+  if (commentId) {
+    const canEdit = await isAuthorOrAdminOfResultComment(
+      auth.credentials,
+      resultId,
+      commentId
+    )
+    if (!canEdit) {
+      return Boom.forbidden('This user can not edit comment')
+    }
+
+    await knex('ResultNote')
+      .where({ id: commentId, resultId })
+      .update({
+        text: note,
+        changedOn,
+        updatedBy: currentUserId,
+      })
+  } else {
+    await knex('ResultNote').insert({
+      resultNoteTypeId,
+      resultId,
+      text: note,
+      changedOn,
+      createdOn: now,
+      updatedBy: currentUserId,
+      createdBy: currentUserId,
+    })
+  }
+
+  const resultNotes = await getResultNotesByResultId(+params.resultId)
+
+  return {
+    ok: true,
+    length: resultNotes.length,
+    data: resultNotes,
+  }
+}
+
+async function deleteResultNote(request) {
+  const { auth, params } = request
+  const { resultId, commentId } = params
+
+  // get the result so we can check access
+  const result = await getResultByResultId(request)
+  if (!result.ok) {
+    return Boom.notFound()
+  }
+
+  const canDelete = await isAuthorOrAdminOfResultComment(
+    auth.credentials,
     resultId,
-    text: note,
-    changedOn,
-    createdOn: now,
-    updatedBy: currentUserId,
-    createdBy: currentUserId,
-  })
+    commentId
+  )
+  if (!canDelete) {
+    return Boom.forbidden('This user can not delete comment')
+  }
+
+  await knex('ResultNote')
+    .where('id', commentId)
+    .where('resultId', resultId)
+    .del()
+
+  const resultNotes = await getResultNotesByResultId(+params.resultId)
+
+  return {
+    ok: true,
+    length: resultNotes.length,
+    data: resultNotes,
+  }
+}
+
+async function allResultNotes(request) {
+  const { params } = request
+
+  // get the result so we can check access and if status changed
+  const result = await getResultByResultId(request)
+  if (!result.ok) {
+    return Boom.notFound()
+  }
 
   const resultNotes = await getResultNotesByResultId(+params.resultId)
 
@@ -1981,5 +2087,7 @@ module.exports = {
   updateResultFollowUp,
   deleteResultFollowUp,
   addResultNote,
+  deleteResultNote,
+  allResultNotes,
   showResultFollowUps,
 }
