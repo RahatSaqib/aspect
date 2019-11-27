@@ -24,7 +24,7 @@ class DefaultPhilippinesNtrl extends SynchronousDataProcessor {
   constructor(request, messageContext) {
     super(request, messageContext)
     this.encryptRawData = false
-    this.timeoutMilliseconds = 10000
+    this.timeoutMilliseconds = 60000
     this.processRequest = this.processRequest.bind(this)
     this.getResponse = this.getResponse.bind(this)
     this.response = {}
