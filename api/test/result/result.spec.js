@@ -3,9 +3,11 @@ const chai = require('chai')
 const _ = require('lodash')
 const dateFormat = require('date-fns/format')
 const { addMinutes, subMonths, endOfMonth, parseISO } = require('date-fns')
-
 const shared = require('../utils/sharedToken')
-const { runTestWithKnex } = require('../utils/generatorFunctionUtils')
+const {
+  runTestWithKnex,
+  waitForApproximately,
+} = require('../utils/generatorFunctionUtils')
 
 const server = supertest.agent('http://localhost:8080')
 const { assert } = chai
@@ -796,27 +798,24 @@ describe('Result download routes', () => {
   )
   describe('GET', () => {
     shared.checkToken(server, path)
-
-    it('should return a paged list of results, including all result details', () =>
-      runTestWithKnex(knex => {
-        server
-          .get(`${path}?size=1&deviceType=DaktariVirology`)
+    it('should return a paged list of results and update them to delivered', () =>
+      runTestWithKnex(async knex => {
+        await server
+          .get(`${path}?size=10&deviceType=DaktariVirology`)
           .set('Authorization', `Bearer ${shared.token}`)
-          .end(async (err, res) => {
+          .then(async res => {
             assert.equal(res.status, 200)
             assert.typeOf(res.body, 'Object')
-
             assert.property(res.body, 'ok')
             assert.property(res.body, 'total')
             assert.property(res.body, 'length')
             assert.property(res.body, 'data')
 
             assert.equal(res.body.ok, true)
-            assert.isAtLeast(res.body.total, 2)
-            assert.equal(res.body.length, 1)
+            assert.isAtLeast(res.body.length, 1)
 
             assert.typeOf(res.body.data, 'array')
-            assert.equal(res.body.data.length, 1)
+            assert.isAtLeast(res.body.data.length, 1)
 
             assert.property(res.body.data[0], 'id')
             assert.property(res.body.data[0], 'externalId')
@@ -836,7 +835,6 @@ describe('Result download routes', () => {
               res.body.data[0].workflowStatus.externalId,
               'Delivered'
             )
-
             assert.property(res.body.data[0], 'treatmentStatus')
             assert.property(res.body.data[0], 'patientData')
             assert.property(res.body.data[0], 'resultData')
@@ -870,13 +868,28 @@ describe('Result download routes', () => {
             assert.property(res.body.data[0].followUps[0], 'updatedOn')
 
             assert.equal(Object.keys(res.body.data[0]).length, 26)
+            await waitForApproximately(2, 'seconds')
             // check if the download is register in the table.
-            const { count: totalResult } = await knex('ResultDownloadLog')
-              .where('resultId', res.body.data[0].id)
-              .count('id as count')
+            const { count: totalResult } = await knex(
+              'ResultDownloadLog as rdl'
+            )
+              .join('Result as r', 'rdl.resultId', 'r.id')
+              .join(
+                'ResultWorkflowLog as rsl',
+                'r.resultWorkflowStatusLogId',
+                'rsl.id'
+              )
+              .join(
+                'ResultWorkflowStatus as rs',
+                'rs.id',
+                'rsl.resultWorkflowStatusId'
+              )
+              .whereIn('rdl.resultId', _.map(res.body.data, elem => elem.id))
+              .where('rs.externalId', 'Delivered')
+              .count('rdl.id as count')
               .first()
 
-            assert.isAtLeast(totalResult, 1)
+            assert.isAtLeast(totalResult, res.body.length)
           })
       }))
 
