@@ -391,23 +391,6 @@ async function listRefreshTokens(request) {
   const getItems = tokenQuery
     .clone()
     .modify(sortPageParams, query, 'user')
-    .select(
-      'r.clientId as id',
-      'p.name as user',
-      'r.clientName as deviceName',
-      'r.createdOn',
-      'r.revoked',
-      knex.raw(
-        "sum(case rws.externalId when 'Acknowledged' then 1 else 0 end) as totalAcknowledge"
-      ),
-      knex.raw(
-        "sum(case rws.externalId when 'Flagged' then 1 else 0 end) totalFlagged"
-      ),
-      knex.raw(
-        "sum(case when  rts.externalId != 'NotPossible' then 1 else 0 end) totalFollowUp"
-      ),
-      knex.raw('count(rdl.id) as delivered')
-    )
     .modify(filterParams, query, {
       countryId: 'g.countryId',
       stateId: 'g.stateId',
@@ -444,12 +427,31 @@ async function listRefreshTokens(request) {
       'rwl.resultWorkflowStatusId'
     )
     .groupBy('rdl.createdBy', 'rdl.createdOn')
+    .select(
+      'r.clientId as id',
+      'p.name as user',
+      'r.clientName as deviceName',
+      'r.createdOn',
+      'r.revoked',
+      knex.raw(
+        "sum(case rws.externalId when 'Acknowledged' then 1 else 0 end) as totalAcknowledge"
+      ),
+      knex.raw(
+        "sum(case rws.externalId when 'Flagged' then 1 else 0 end) as totalFlagged"
+      ),
+      knex.raw(
+        "sum(case when  rts.externalId != 'NotPossible' then 1 else 0 end) as totalFollowUp"
+      ),
+      knex.raw('count(rdl.id) as delivered'),
+      knex.raw(
+        'GREATEST(ifnull(r.updatedOn, r.createdOn), max(rdl.createdOn)) as lastSeen'
+      )
+    )
 
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
 
   // TODO: Fix with real data from Results download table
   data.forEach(it => {
-    it.lastSeen = it.createdOn
     it.acknowledgedRatio = it.totalAcknowledge / it.delivered
     it.confirmFollowUpRatio = it.totalFollowUp / it.delivered
   })
