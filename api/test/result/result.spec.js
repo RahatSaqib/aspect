@@ -60,7 +60,7 @@ describe('Result routes', () => {
   describe('GET', () => {
     shared.checkToken(server, path)
 
-    it('should return a list of results', () =>
+    it('should return a list of results', async () =>
       runTestWithKnex(async knex => {
         initialResultWorkflowStatusName = await server
           .get(path)

@@ -134,9 +134,8 @@ async function getListDevices(query, auth) {
     })
     .modify(addConstraints, dataConstraints, {
       device: 'd',
-      showUnapprovedDevices: true,
+      showUnapprovedDevices: false,
     })
-
   // get total count for paging
   const getCount = deviceQuery
     .clone()
