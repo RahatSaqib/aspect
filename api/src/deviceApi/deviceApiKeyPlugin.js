@@ -20,7 +20,7 @@ function authenticate(request, h) {
   return authToken(token)
       .then(credentials => h.authenticated({ credentials }))
       .catch(err => {
-        console.error(`Error occurred on authenticating token '${token}'`)
+        console.error(err)
         throw err
       })
 }
