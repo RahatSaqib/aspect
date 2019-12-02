@@ -2,6 +2,7 @@
 // configuration =========
 // =======================
 const _ = require('lodash')
+const Boom = require('@hapi/boom')
 const Hapi = require('@hapi/hapi')
 
 const config = require('./config')
