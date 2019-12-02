@@ -314,9 +314,22 @@ class DefaultPhilippinesNtrl extends SynchronousDataProcessor {
         }
       })
       const sampleIds = samples.map(sample => sample.id)
+      let patientNameId = payload['Last Name'] || ''
+      if (payload['First Name']) {
+        if (patientNameId) {
+          patientNameId += ', '
+        }
+        patientNameId += payload['First Name']
+      }
+      if (patientNameId && payload['Middle Initial']) {
+        patientNameId += ` ${payload['Middle Initial']}`
+      }
       const patientData = {
         id:
-          payload['TB Case Number'] || payload['Lab No 1'] || ntrlLabRequestId,
+          payload['TB Case Number'] ||
+          patientNameId ||
+          payload['Lab No 1'] ||
+          ntrlLabRequestId,
         serialNumber: payload['Serial Number'],
         mrfDateRequested: payload['MRF Date Requested'],
         referringHealthFacility: payload['Referring Health Facility'],
@@ -345,7 +358,7 @@ class DefaultPhilippinesNtrl extends SynchronousDataProcessor {
         cultureMethod: payload['Culture Method'],
         presumptiveDsOrDr: payload['Presumptive DS or DR'],
         dateReceived: payload['Date Received'],
-        labNo1: payload['Date Received'],
+        labNo1: payload['Lab No 1'],
         tbCaseNumber: payload['TB Case Number'],
         dateCollected1: payload['Date Collected 1'],
         dateCollected2: payload['Date Collected 2'],
@@ -419,6 +432,10 @@ class DefaultPhilippinesNtrl extends SynchronousDataProcessor {
           .andWhere('r.siteId', site.id)
           .first('r.*')) || {
           ...baseNewResult,
+          externalId: `${formatDateOrDefault(
+            dstResultData.dateRead || utcNow,
+            'yyyyMMdd'
+          )}_DST_${samples[0].externalId}`,
           assayId:
             dstResultData.methodUsed === 'Liquid Culture (MGIT 960)'
               ? assayBdMgitAstId
@@ -552,6 +569,10 @@ class DefaultPhilippinesNtrl extends SynchronousDataProcessor {
             .andWhere('r.siteId', site.id)
             .first('r.*')) || {
             ...baseNewResult,
+            externalId: `${formatDateOrDefault(
+              cultureResultData.dateReleased || utcNow,
+              'yyyyMMdd'
+            )}_CULTURE_${cultureSample.externalId}`,
             assayId: assayCultureId,
             sampleId: cultureSample.id,
             startedOn: cultureResultData.dateReleased,
@@ -638,6 +659,10 @@ class DefaultPhilippinesNtrl extends SynchronousDataProcessor {
           .andWhere('r.siteId', site.id)
           .first('r.*')) || {
           ...baseNewResult,
+          externalId: `${formatDateOrDefault(
+            lpaResultData.dateReleased || utcNow,
+            'yyyyMMdd'
+          )}_LPA_${samples[0].externalId}`,
           assayId: assayLpaId,
           sampleId: samples[0].id,
           startedOn: lpaResultData.dateReleased,
@@ -739,6 +764,10 @@ class DefaultPhilippinesNtrl extends SynchronousDataProcessor {
             .andWhere('r.siteId', site.id)
             .first('r.*')) || {
             ...baseNewResult,
+            externalId: `${formatDateOrDefault(
+              smearResultData.dateReleased || utcNow,
+              'yyyyMMdd'
+            )}_SMEAR_${smearSample.externalId}`,
             assayId: assaySmearId,
             sampleId: smearSample.id,
             startedOn: smearResultData.dateReleased,
@@ -850,6 +879,10 @@ class DefaultPhilippinesNtrl extends SynchronousDataProcessor {
           .andWhere('r.siteId', site.id)
           .first('r.*')) || {
           ...baseNewResult,
+          externalId: `${formatDateOrDefault(
+            geneXpertResultData.processingDate || utcNow,
+            'yyyyMMdd'
+          )}_GX_${samples[0].externalId}`,
           assayId: assayGeneXpertMtbRifId,
           sampleId: samples[0].id,
           startedOn: geneXpertResultData.processingDate,
@@ -991,6 +1024,10 @@ class DefaultPhilippinesNtrl extends SynchronousDataProcessor {
     if (!result.id) {
       const [resultId] = await knex('Result').insert(result)
       result.id = resultId
+    } else {
+      await knex('Result')
+        .where('id', result.id)
+        .update(result)
     }
     const resultWorkflowStatusLogId = await this.appendResultWorkflowLog(
       knex,

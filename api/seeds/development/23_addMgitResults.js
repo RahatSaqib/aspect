@@ -55,7 +55,6 @@ async function seed(knex) {
     .select()
   // adding existing mgit results for tb possitive results.
   await Promise.each(results, async result => {
-    // console.log('devicemgit', devicesMGIT.length)
     const elegibleDevices = _.filter(
       devicesMGIT,
       device => device.siteId === result.siteId

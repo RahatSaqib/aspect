@@ -239,7 +239,6 @@ function addConstraints(queryBuilder, constraints, aliases) {
     }
   }
   if (device && !showUnapprovedDevices) {
-    console.log('add')
     queryBuilder.leftOuterJoin(
       `DeviceStatus as deviceStatus`,
       `${device}.deviceStatusId`,
