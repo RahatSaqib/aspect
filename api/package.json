@@ -51,27 +51,30 @@
     "report-dir": "./coverage"
   },
   "lint-staged": {
-    "linters": {
-      "api/src/**/*.js": [
-        "eslint --fix",
-        "git add"
-      ],
-      "api/test/**/*.js": [
-        "eslint --fix",
-        "git add"
-      ],
-      "api/migrations/**/*.js": [
-        "eslint --fix",
-        "git add"
-      ],
-      "api/seeds/**/*.js": [
-        "eslint --fix",
-        "git add"
-      ],
-      "api/*.js": [
-        "eslint --fix",
-        "git add"
-      ]
+    "api/src/**/*.js": [
+      "eslint --fix",
+      "git add"
+    ],
+    "api/test/**/*.js": [
+      "eslint --fix",
+      "git add"
+    ],
+    "api/migrations/**/*.js": [
+      "eslint --fix",
+      "git add"
+    ],
+    "api/seeds/**/*.js": [
+      "eslint --fix",
+      "git add"
+    ],
+    "api/*.js": [
+      "eslint --fix",
+      "git add"
+    ]
+  },
+  "husky": {
+    "hooks": {
+        "pre-commit": "lint-staged"
     }
   },
   "author": "SystemOne",
