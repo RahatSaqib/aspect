@@ -36,12 +36,12 @@ const server = new Hapi.server({
         failAction: async (request, h, err) => {
           if (process.env.NODE_ENV === 'production') {
             // In prod, log a limited error message and throw the default Bad Request error.
-            console.error('ValidationError:', err.message);
-            throw Boom.badRequest(`Invalid request payload input`);
+            console.error('ValidationError:', err.message) // eslint-disable-line no-console
+            throw Boom.badRequest(`Invalid request payload input`)
           } else {
             // During development, log and respond with the full error.
-            console.error(err);
-            throw err;
+            console.error(err) // eslint-disable-line no-console
+            throw err
           }
         }
       },
@@ -108,7 +108,7 @@ const rawPayloadPlugin = {
 const messageQueuePlugin = {
   name: 'messageQueue',
   version,
-  register: async (server, options) => 
+  register: async server => 
     createMessageQueue('aspect')
       .then(queue => {
         addLoggers(server, queue)
@@ -172,7 +172,7 @@ const start = async () => {
   // Client API uses JWT
   server.auth.strategy('clientApi', 'jwt', {
     key: config.secret,
-    validate: async (decoded, request, h) => {
+    validate: async (decoded, request) => {
       let isValid = true
       // if user has to accept license, deny all requests except to the license api:
       if (
@@ -237,7 +237,7 @@ const start = async () => {
           resolve()
         })
         .catch((err) => {
-          console.error('server.register - clientApi: ', err)
+          console.error(err) // eslint-disable-line no-console
           throw err
         }),
     },
@@ -260,7 +260,7 @@ const start = async () => {
           resolve()
         })
         .catch((err) => {
-          console.error('server.register - deviceApi:', err);
+          console.error(err) // eslint-disable-line no-console
           throw err
         }),
     },
@@ -289,7 +289,7 @@ const start = async () => {
           resolve()
         })
         .catch((err) => {
-          console.error('server.register - deviceApiRaw: ', err);
+          console.error(err) // eslint-disable-line no-console
           throw err
         }),
     },
