@@ -266,7 +266,7 @@ class DefaultPhilippinesNtrl extends SynchronousDataProcessor {
         'Date Collected 1',
         'Date Collected 2',
         'Date Collected 3',
-      ].filter(dateCollectedKey => _.isNil(payload[dateCollectedKey]))
+      ].filter(dateCollectedKey => !_.isNil(payload[dateCollectedKey]))
       const samples = sampleCollectionDateKeys.map(dateCollectedKey => {
         const sample = {
           externalId: `${ntrlLabRequestId}`,
@@ -422,7 +422,16 @@ class DefaultPhilippinesNtrl extends SynchronousDataProcessor {
         encodedBy: payload['DST Encoded by'],
         reviewedBy: payload['DST Releasing Form Lab Manager'],
       }
-      if (objectHasValues(dstResultData)) {
+      if (
+        objectHasValues(
+          _.omit(dstResultData, [
+            'readBy',
+            'labTech',
+            'encodedBy',
+            'reviewedBy',
+          ])
+        )
+      ) {
         // TODO: Update MGIT Data processor to lookup results for assayGenericDst as well
         const assayBdMgitAstId = await assayToId('assayBdMgitAst')
         const assayGenericDstId = await assayToId('assayGenericDst')
@@ -551,7 +560,9 @@ class DefaultPhilippinesNtrl extends SynchronousDataProcessor {
         encodedBy: payload['Culture Encoded by'],
         labTech: payload['Culture Lab Tech'],
       }
-      if (objectHasValues(cultureResultData)) {
+      if (
+        objectHasValues(_.omit(cultureResultData, ['encodedBy', 'labTech']))
+      ) {
         // TODO: Update MGIT Data processor to lookup results for assayCulture as well
         const assayBdMgitGndId = await assayToId('assayBdMgitGnd')
         const assayCultureId = await assayToId('assayCulture')
@@ -651,7 +662,9 @@ class DefaultPhilippinesNtrl extends SynchronousDataProcessor {
         performedBy: payload['LPA Performed By'],
         reviewedBy: payload['LPA Reviewed By'],
       }
-      if (objectHasValues(lpaResultData)) {
+      if (
+        objectHasValues(_.omit(lpaResultData, ['performedBy', 'reviewedBy']))
+      ) {
         const assayLpaId = await assayToId('assayLPA')
         const result = (await knex('Result as r')
           .whereIn('r.sampleId', sampleIds)
@@ -748,7 +761,11 @@ class DefaultPhilippinesNtrl extends SynchronousDataProcessor {
         encodedBy: payload['Smear Encoded by'],
         laboratoryTechnician: payload['Smear Lab Tech'],
       }
-      if (objectHasValues(smearResultData)) {
+      if (
+        objectHasValues(
+          _.omit(smearResultData, ['encodedBy', 'laboratoryTechnician'])
+        )
+      ) {
         const assaySmearId = await assayToId('assaySmear')
         const smearSamples = []
         if (smearResultData.smearResult1) {
@@ -866,7 +883,9 @@ class DefaultPhilippinesNtrl extends SynchronousDataProcessor {
         examiner: payload['Gx Examiner'],
         labManager: payload['Gx Laboratory Manager'],
       }
-      if (objectHasValues(geneXpertResultData)) {
+      if (
+        objectHasValues(_.omit(geneXpertResultData, ['examiner', 'labManager']))
+      ) {
         const assayGeneXpertMtbRifId = await assayToId('GxMtbRif')
         const assayGeneXpertMtbRifUltraId = await assayToId('GxMtbRifUltra')
 
