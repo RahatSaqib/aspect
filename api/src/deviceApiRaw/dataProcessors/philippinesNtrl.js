@@ -275,7 +275,7 @@ class DefaultPhilippinesNtrl extends SynchronousDataProcessor {
           originSiteId: sampleOriginSiteId,
         }
         if (sampleCollectionDateKeys.length > 1) {
-          sample.externalId = `${ntrlLabRequestId}/${
+          sample.externalId = `${ntrlLabRequestId}-${
             dateCollectedKey[dateCollectedKey.length - 1]
           }`
         }
@@ -315,6 +315,8 @@ class DefaultPhilippinesNtrl extends SynchronousDataProcessor {
       })
       const sampleIds = samples.map(sample => sample.id)
       const patientData = {
+        id:
+          payload['TB Case Number'] || payload['Lab No 1'] || ntrlLabRequestId,
         serialNumber: payload['Serial Number'],
         mrfDateRequested: payload['MRF Date Requested'],
         referringHealthFacility: payload['Referring Health Facility'],
