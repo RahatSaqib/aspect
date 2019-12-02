@@ -250,20 +250,20 @@ async function downloadReportFile(
   format,
   fileName = 'report_'
 ) {
-  await reportFunction
-    .then(resp => {
-      reply(resp)
+  return reportFunction
+    .then(resp =>
+      reply.response(resp)
         .encoding('binary')
         .type('application/octet-stream')
         .header(
           'content-disposition',
           `attachment; filename=${fileName}_${new Date().toISOString()}.${format};`
         )
-    })
+    )
 
     .catch(err => {
       console.error('Error ', err) // eslint-disable-line no-console
-      reply(err)
+      throw err
     })
 }
 

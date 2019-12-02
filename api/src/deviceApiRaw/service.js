@@ -1,5 +1,5 @@
 const _ = require('lodash')
-const Boom = require('boom')
+const Boom = require('@hapi/boom')
 const Promise = require('bluebird')
 const { asyncHandler } = require('../routes')
 const { loadRawDataProcessor } = require('./dataProcessors/registration')

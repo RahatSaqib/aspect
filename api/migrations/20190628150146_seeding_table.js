@@ -7,7 +7,7 @@ async function up(knex) {
     seeds
       .datetime('runOn')
       .notNullable()
-      .defaultTo(knex.fn.now(6))
+      .defaultTo(knex.fn.now())
     seeds.boolean('success').notNullable()
     seeds.text('errorMessage').nullable()
   })

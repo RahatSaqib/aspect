@@ -3,7 +3,7 @@
 // also has a corresponding endpoint to a single update, for example,
 // POST /device {result: {}} is equivalent to POST /device/result if
 // only result data is posted.
-const Joi = require('joi')
+const Joi = require('@hapi/joi')
 const {
   getDeviceDataHandler,
   getDeviceOperationHandler,
@@ -463,9 +463,8 @@ const routes = [
               .description('Device Result Data.'),
           })
         ),
-        failAction(request, reply, source, error) {
-          addDeviceLog(error)(request, reply)
-        },
+        failAction: async (request, h, error) => 
+          addDeviceLog(error)(request, h),
       },
       response: {
         options: {
@@ -508,9 +507,8 @@ const routes = [
             .keys(logPayload)
             .description('Device Log Data'),
         }),
-        failAction(request, reply, source, error) {
-          addDeviceLog(error)(request, reply)
-        },
+        failAction: async (request, h, error) => 
+          addDeviceLog(error)(request, h),
       },
       response: {
         options: {
@@ -563,9 +561,8 @@ const routes = [
             .keys(logPayload)
             .description('Device Log Data'),
         }),
-        failAction(request, reply, source, error) {
-          addDeviceLog(error)(request, reply)
-        },
+        failAction: async (request, h, error) => 
+          addDeviceLog(error)(request, h),
       },
       response: {
         options: {
@@ -626,9 +623,8 @@ const routes = [
             .keys(logPayload)
             .description('Device Log Data'),
         }),
-        failAction(request, reply, source, error) {
-          addDeviceLog(error)(request, reply)
-        },
+        failAction: async (request, h, error) => 
+          addDeviceLog(error)(request, h),
       },
       response: {
         options: {

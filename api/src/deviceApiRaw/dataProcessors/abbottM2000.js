@@ -1,6 +1,6 @@
 const Promise = require('bluebird')
 const _ = require('lodash')
-const Boom = require('boom')
+const Boom = require('@hapi/boom')
 const { convertToTimeZone } = require('date-fns-timezone')
 const { transact } = require('../../db')
 const { getRemoteAddress } = require('../../shared/request')

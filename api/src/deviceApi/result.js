@@ -1,4 +1,4 @@
-const Boom = require('boom')
+const Boom = require('@hapi/boom')
 const _ = require('lodash')
 
 const { isJson, deepMerge } = require('../shared/json')
@@ -771,14 +771,13 @@ async function resolveAutoTagging(knex, result) {
   )
 
   _.map(tagsToBeAdded, async tag => {
-    const TagId = await knex('Tag')
-      .returning('id')
+    const [tagId] = await knex('Tag')
       .insert({
         title: tag,
         partnerId: result.partnerId,
       })
     await knex('ResultTag').insert({
-      tagId: TagId,
+      tagId,
       resultId: result.id,
     })
   })

@@ -1,5 +1,5 @@
 const _ = require('lodash')
-const Boom = require('boom')
+const Boom = require('@hapi/boom')
 const Promise = require('bluebird')
 const { knex, transact } = require('../../db')
 const { getRemoteAddress } = require('../../shared/request')

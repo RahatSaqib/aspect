@@ -1,6 +1,6 @@
 const { knex } = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
-const Boom = require('boom')
+const Boom = require('@hapi/boom')
 const _ = require('lodash')
 
 async function getPatientResultsDetails(request) {

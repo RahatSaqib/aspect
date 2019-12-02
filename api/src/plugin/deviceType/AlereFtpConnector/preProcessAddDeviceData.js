@@ -1,5 +1,5 @@
 const _ = require('lodash')
-const Boom = require('boom')
+const Boom = require('@hapi/boom')
 const { createNewDevice } = require('../../../deviceApi/device')
 
 async function preProcessAddDeviceData(context) {

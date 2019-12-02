@@ -1,19 +1,13 @@
-const Boom = require('boom')
+const Boom = require('@hapi/boom')
 const { knex } = require('../db')
 const { version } = require('../../package.json')
 const { normalizeToken } = require('./apiKey')
 
-function register(plugin, options, next) {
+function register(plugin, options) {
   plugin.auth.scheme('deviceApiKey', () => ({ authenticate }))
-  next()
 }
 
-register.attributes = {
-  name: 'deviceApiKeyAuth',
-  version,
-}
-
-function authenticate(request, reply) {
+function authenticate(request, h) {
   const { query, headers } = request
   let token = ''
   if (query.token) {
@@ -23,15 +17,17 @@ function authenticate(request, reply) {
     // Remove Bearer from Authorization header
     token = headers.authorization.replace(/Bearer/gi, '')
   }
-  authToken(token)
-    .then(credentials => reply.continue({ credentials }))
-    .catch(err => reply(err))
+  return authToken(token)
+      .then(credentials => h.authenticated({ credentials }))
+      // .catch(err => Boom.unauthorized(err))
 }
 
-function validateApiKeyAuthBasic(request, username, password, callback) {
-  authToken(password)
-    .then(credentials => callback(null, true, credentials))
-    .catch(err => callback(err, false, null))
+const validateApiKeyAuthBasic = {
+  validate: async function(request, username, password) {
+    return authToken(password)
+      .then(credentials => ({ isValid: true, credentials }))
+      .catch(err => ({ isValid: false }))
+  },
 }
 
 async function authToken(token) {
@@ -59,6 +55,10 @@ async function authToken(token) {
 }
 
 module.exports = {
-  register,
+  plugin: {
+    name: 'deviceApiKeyAuth',
+    version,
+    register,
+  },
   validateApiKeyAuthBasic,
 }

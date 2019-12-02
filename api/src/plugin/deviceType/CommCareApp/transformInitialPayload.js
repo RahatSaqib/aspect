@@ -1,5 +1,5 @@
 const _ = require('lodash')
-const Boom = require('boom')
+const Boom = require('@hapi/boom')
 
 const { normalizePhoneNumber } = require('../../../shared/phoneNormalization')
 const { getDateOrDefault } = require('../../../shared/date')

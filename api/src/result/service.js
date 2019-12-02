@@ -1,4 +1,4 @@
-const Boom = require('boom')
+const Boom = require('@hapi/boom')
 const _ = require('lodash')
 const dateFormat = require('date-fns/format')
 const { subDays, subMonths, startOfMonth, endOfMonth } = require('date-fns')
@@ -873,7 +873,7 @@ function downloadFile(request, reply) {
     })
     .catch(err => {
       console.error(err) // eslint-disable-line no-console
-      reply(err)
+      throw err
     })
 }
 
@@ -888,7 +888,7 @@ function downloadFirstImage(request, reply) {
     })
     .catch(err => {
       console.error(err) // eslint-disable-line no-console
-      reply(err)
+      throw err
     })
 }
 
