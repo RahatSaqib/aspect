@@ -7,35 +7,43 @@
     "properties": {
       "center": {
         "title": "Center" ,
-        "type": "string"
+        "type": "string",
+        "order": 0
       },
       "processingDate": {
         "title": "Processing Date" ,
-        "type": "date"
+        "type": "date",
+        "order": 1
       },
       "mtb": {
         "title": "MTB" ,
-        "type": "string"
+        "type": "string",
+        "order": 2
       },
       "rifampicin": {
         "title": "Rifampicin" ,
-        "type": "string"
+        "type": "string",
+        "order": 3
       },
       "remarks": {
         "title": "Remarks" ,
-        "type": "string"
+        "type": "string",
+        "order": 4
       },
       "dateReleased": {
         "title": "Date Released" ,
-        "type": "date"
+        "type": "date",
+        "order": 5
       },
       "examiner": {
         "title": "Examiner" ,
-        "type": "string"
+        "type": "string",
+        "order": 6
       },
       "labManager": {
         "title": "Lab Manager" ,
-        "type": "string"
+        "type": "string",
+        "order": 7
       }
     }
   },
@@ -47,59 +55,73 @@
     "properties": {
       "requestingFacilityName": {
         "title": "Name of Requesting Facility",
-        "type": "string"
+        "type": "string",
+        "order": 0
       },
       "requestDate": {
         "title": "Date of Request",
-        "type": "date"
+        "type": "date",
+        "order": 1
       },
       "clinicianOrFacilityPhoneNumber": {
         "title": "Referring Clinician or Facility Phone Number (if known)",
-        "type": "string"
+        "type": "string",
+        "order": 2
       },
       "nameOfPersonRequestingTest": {
         "title": "Name of Person Requesting Test",
-        "type": "string"
+        "type": "string",
+        "order": 3
       },
       "repeatTest": {
         "title": "Repeat Test",
-        "type": "int"
+        "type": "int",
+        "order": 4
       },
       "patientId": {
         "title": "TB Case No.(Patient ID)",
-        "type": "string"
+        "type": "string",
+        "order": 5
       },
       "specimenType": {
         "title": "Specimen Type",
-        "type": "int"
+        "type": "int",
+        "order": 6
       },
       "repeatCollection": {
         "title": "Repeat Collection?",
-        "type": "int"
+        "type": "int",
+        "order": 7
       },
       "presumptiveDsTbOrDrTb": {
         "title": "Presumptive DS-TB/DR-TB",
-        "type": "int"
+        "type": "int",
+        "order": 8
       },
       "specimenCollectedDate": {
         "title": "Date Specimen Collected",
-        "type": "date"
+        "type": "date",
+        "order": 9
       },
       "sampleId": {
         "title": "Specimen Code (Sample ID)",
-        "type": "string"
+        "type": "string",
+        "order": 10
       },
       "visualAppearance": {
         "title": "Visual Appearance",
-        "type": "int"
+        "type": "int",
+        "order": 11
       },
       "releaseDate": {
         "title": "Date of Release",
-        "type": "date"
+        "type": "date",
+        "order": 12
       },
       "performedBy": {
         "title": "Performed by",
-        "type": "string"
+        "type": "string",
+        "order": 13
       }
     }
   }

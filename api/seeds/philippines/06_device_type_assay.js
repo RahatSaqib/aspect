@@ -56,90 +56,112 @@ async function seed(knex) {
         testRequested: {
           title: 'Test Requested',
           type: 'string',
+          order: 0,
         },
         dateInoculated: {
           title: 'Date Inoculated',
           type: 'date',
+          order: 1,
         },
         inoculatedBy: {
           title: 'Inoculated by Med Tech',
           type: 'string',
+          order: 2,
         },
         idResult: {
           title: 'ID Result',
           type: 'string',
+          order: 3,
         },
         streptomycin: {
           title: 'Streptomycin',
           type: 'string',
+          order: 4,
         },
         isoniazid: {
           title: 'Isoniazid',
           type: 'string',
+          order: 5,
         },
         rifampicin: {
           title: 'Rifampicin',
           type: 'string',
+          order: 6,
         },
         ethambutol: {
           title: 'Ethambutol',
           type: 'string',
+          order: 7,
         },
         pyrazinamide: {
           title: 'Pyrazinamide',
           type: 'string',
+          order: 8,
         },
         kanamycin: {
           title: 'Kanamycin',
           type: 'string',
+          order: 9,
         },
         levofloxacin: {
           title: 'Levofloxacin',
           type: 'string',
+          order: 10,
         },
         amikacin: {
           title: 'Amikacin',
           type: 'string',
+          order: 11,
         },
         capreomycin: {
           title: 'Capreomycin',
           type: 'string',
+          order: 12,
         },
         methodUsed: {
           title: 'Method Used',
           type: 'string',
+          order: 13,
         },
         otherMethodUsed: {
           title: 'Other Method',
           type: 'string',
+          order: 14,
         },
         remarks: {
           title: 'Remarks',
           type: 'string',
+          order: 15,
         },
         dateRead: {
           title: 'Date Read',
           type: 'date',
+          order: 16,
         },
         dateReleased: {
           title: 'Date Released',
           type: 'date',
+          order: 17,
         },
         readBy: {
           title: 'Read by Med Tech',
           type: 'string',
+          order: 18,
         },
         labTech: {
           title: 'Lab Tech',
           type: 'string',
+          order: 19,
         },
         encodedBy: {
           title: 'Encoded By',
           type: 'string',
+          order: 20,
         },
         reviewedBy: {
           title: 'Reviewed By',
           type: 'string',
+          order: 21,
         },
       },
     },
@@ -286,18 +308,22 @@ async function seed(knex) {
           sirStatus: {
             title: 'SIR Status',
             type: 'string',
+            order: 0,
           },
           growthUnits: {
             title: 'Growth Units',
             type: 'number',
+            order: 1,
           },
           antibioticConcentration: {
             title: 'Concentration',
             type: 'number',
+            order: 2,
           },
           antibioticConcentrationUnits: {
             title: 'Units',
             type: 'string',
+            order: 3,
           },
         },
       },
@@ -310,18 +336,22 @@ async function seed(knex) {
           sirStatus: {
             title: 'SIR Status',
             type: 'string',
+            order: 0,
           },
           growthUnits: {
             title: 'Growth Units',
             type: 'number',
+            order: 1,
           },
           antibioticConcentration: {
             title: 'Concentration',
             type: 'number',
+            order: 2,
           },
           antibioticConcentrationUnits: {
             title: 'Units',
             type: 'string',
+            order: 3,
           },
         },
       },
@@ -334,18 +364,22 @@ async function seed(knex) {
           sirStatus: {
             title: 'SIR Status',
             type: 'string',
+            order: 0,
           },
           growthUnits: {
             title: 'Growth Units',
             type: 'number',
+            order: 1,
           },
           antibioticConcentration: {
             title: 'Concentration',
             type: 'number',
+            order: 2,
           },
           antibioticConcentrationUnits: {
             title: 'Units',
             type: 'string',
+            order: 3,
           },
         },
       },
@@ -358,18 +392,22 @@ async function seed(knex) {
           sirStatus: {
             title: 'SIR Status',
             type: 'string',
+            order: 0,
           },
           growthUnits: {
             title: 'Growth Units',
             type: 'number',
+            order: 1,
           },
           antibioticConcentration: {
             title: 'Concentration',
             type: 'number',
+            order: 2,
           },
           antibioticConcentrationUnits: {
             title: 'Units',
             type: 'string',
+            order: 3,
           },
         },
       },
@@ -382,18 +420,22 @@ async function seed(knex) {
           sirStatus: {
             title: 'SIR Status',
             type: 'string',
+            order: 0,
           },
           growthUnits: {
             title: 'Growth Units',
             type: 'number',
+            order: 1,
           },
           antibioticConcentration: {
             title: 'Concentration',
             type: 'number',
+            order: 2,
           },
           antibioticConcentrationUnits: {
             title: 'Units',
             type: 'string',
+            order: 3,
           },
         },
       },
@@ -406,18 +448,22 @@ async function seed(knex) {
           sirStatus: {
             title: 'SIR Status',
             type: 'string',
+            order: 0,
           },
           growthUnits: {
             title: 'Growth Units',
             type: 'number',
+            order: 1,
           },
           antibioticConcentration: {
             title: 'Concentration',
             type: 'number',
+            order: 2,
           },
           antibioticConcentrationUnits: {
             title: 'Units',
             type: 'string',
+            order: 3,
           },
         },
       },
@@ -688,54 +734,67 @@ async function seed(knex) {
           dateInoculated: {
             title: 'Date Inoculated',
             type: 'date',
+            order: 0,
           },
           medTech: {
             title: 'Med Tech',
             type: 'string',
+            order: 1,
           },
           resultStatus: {
             title: 'Result Status',
             type: 'string',
+            order: 2,
           },
           dstStatus: {
             title: 'DST Status',
             type: 'string',
+            order: 3,
           },
           result1: {
             title: 'Result 1',
             type: 'string',
+            order: 4,
           },
           grade1: {
             title: 'Grade 1',
             type: 'string',
+            order: 5,
           },
           result2: {
             title: 'Result 2',
             type: 'string',
+            order: 6,
           },
           grade2: {
             title: 'Grade 2',
             type: 'string',
+            order: 7,
           },
           finalResult: {
             title: 'Final Result',
             type: 'string',
+            order: 8,
           },
           remarks: {
             title: 'Remarks',
             type: 'string',
+            order: 9,
           },
           dateReleased: {
             title: 'Date Released',
             type: 'date',
+            order: 10,
           },
           encodedBy: {
             title: 'Encoded By',
             type: 'string',
+            order: 11,
           },
           labTech: {
             title: 'Lab Tech',
             type: 'string',
+            order: 12,
           },
         },
       },
@@ -810,54 +869,67 @@ async function seed(knex) {
         title: 'Encoded Result',
         properties: {
           center: {
+            order: 0,
             title: 'Center',
             type: 'string',
           },
           lpaKit: {
+            order: 1,
             title: 'LPA Kit Used',
             type: 'string',
           },
           lpaKitOther: {
+            order: 2,
             title: 'Other Kit Used',
             type: 'string',
           },
           mtbComplex: {
+            order: 3,
             title: 'MTB Complex',
             type: 'string',
           },
           rifampicin: {
+            order: 4,
             title: 'Rifampicin (R)',
             type: 'string',
           },
           isoniazid: {
+            order: 5,
             title: 'Isoniazid (H)',
             type: 'string',
           },
           ethambutol: {
+            order: 6,
             title: 'Ethambutol (E)',
             type: 'string',
           },
           fluoroquinolones: {
+            order: 7,
             title: 'Fluoroquinolones (FQ)',
             type: 'string',
           },
           aminoglycoside: {
+            order: 8,
             title: 'Aminoglycoside/CP (SLI)',
             type: 'string',
           },
           remarks: {
+            order: 9,
             title: 'Remarks',
             type: 'string',
           },
           dateReleased: {
+            order: 10,
             title: 'Date Released',
             type: 'date',
           },
           performedBy: {
+            order: 11,
             title: 'Performed By',
             type: 'string',
           },
           reviewedBy: {
+            order: 12,
             title: 'Reviewed By',
             type: 'string',
           },
@@ -936,30 +1008,37 @@ async function seed(knex) {
           smearMethod: {
             title: 'Smear Method',
             type: 'string',
+            order: 0,
           },
           smearResult1: {
             title: 'Smear Result 1',
             type: 'string',
+            order: 1,
           },
           smearResult2: {
             title: 'Smear Result 2',
             type: 'string',
+            order: 2,
           },
           finalResult: {
             title: 'Final Result',
             type: 'string',
+            order: 3,
           },
           dateReleased: {
             title: 'Date Released',
             type: 'date',
+            order: 4,
           },
           encodedBy: {
             title: 'Encoded By',
             type: 'string',
+            order: 5,
           },
           laboratoryTechnician: {
             title: 'Laboratory Technician',
             type: 'string',
+            order: 6,
           },
         },
       },

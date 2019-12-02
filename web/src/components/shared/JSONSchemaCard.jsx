@@ -33,9 +33,11 @@ export const PropertiesSchemaCard = compose(
             key,
             label: dataSchema.getIn([key, 'title']) /* Todo: i18n */,
             type: dataSchema.getIn([key, 'type']),
+            order: dataSchema.getIn([key, 'order'], 0),
             value: data && data.get(key),
           }))
           .sortBy(({ label }) => label)
+          .sortBy(({ order }) => order)
           .map(field => (
             <Unit key={field.key} xs="1-2" sm="1-3">
               {renderField(field)}
@@ -69,8 +71,10 @@ export const JSONSchemaCard = ({
         key,
         label: dataSchema.getIn([key, 'title']) /* Todo: i18n */,
         type: dataSchema.getIn([key, 'type']),
+        order: dataSchema.getIn([key, 'order'], 0),
         value: data.get(key),
       }))
+      .sortBy(property => property.order)
       .map(field => {
         if (field.type === 'object' && field.value) {
           return (
