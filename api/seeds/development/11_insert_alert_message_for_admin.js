@@ -265,7 +265,7 @@ async function seed(knex) {
   const messageStatusId = await messageStatusToId('Sent')
   await Promise.each(issues, async issue => {
     // add sample alert message
-    const [insertedId] = await knex('AlertMessage')
+    const [alertMessageId] = await knex('AlertMessage')
       .insert({
         alertTemplateId: issue.alertTemplateId,
         messageStatusId,
@@ -279,7 +279,7 @@ async function seed(knex) {
     await knex('Notification').insert(
       Object.assign({
         createdOn: issue.createdOn,
-        alertMessageId: insertedId,
+        alertMessageId,
         issueId: issue.id,
         personId,
         notificationTypeId: 1,
