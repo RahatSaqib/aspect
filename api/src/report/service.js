@@ -155,7 +155,6 @@ function proxyGxReport(request, reply) {
     })
     .catch(err => {
       console.error(err) // eslint-disable-line no-console
-      // reply(err)
       throw err
     })
 }
