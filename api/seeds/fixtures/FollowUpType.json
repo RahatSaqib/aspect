@@ -1,7 +1,7 @@
 {
   "data": [
     {
-      "name": "Treatment",
+      "name": "Action",
       "externalId": "treatment",
       "i18nKey": "treatment"
     },
