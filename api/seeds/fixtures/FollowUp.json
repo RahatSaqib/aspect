@@ -87,6 +87,13 @@
     {
       "assays": [],
       "type": "outcome",
+      "name": "Cured",
+      "externalId": "cured",
+      "i18nKey": "cured"
+    },
+    {
+      "assays": [],
+      "type": "outcome",
       "name": "Moved",
       "externalId": "moved",
       "i18nKey": "moved"
