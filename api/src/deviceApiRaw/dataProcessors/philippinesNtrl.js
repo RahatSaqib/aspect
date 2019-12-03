@@ -697,24 +697,35 @@ class DefaultPhilippinesNtrl extends SynchronousDataProcessor {
           'Resistance Detected': resultCategories.Resistant,
           'Resistance Not Detected': resultCategories.Susceptible,
         }
-        const resultsForDrugsTested = [
+        const resultsForFirstLineDrugsTested = [
           lpaResultData.rifampicin,
           lpaResultData.isoniazid,
           lpaResultData.ethambutol,
+        ]
+        const resultsForSecondLineDrugsTested = [
           lpaResultData.fluoroquinolones,
           lpaResultData.aminoglycoside,
+        ]
+        const resultsForDrugsTested = [
+          ...resultsForFirstLineDrugsTested,
+          ...resultsForSecondLineDrugsTested,
         ]
         let resultCategory2Id = resultCategories.Missing
         if (
           resultsForDrugsTested.some(
             resultForDrugsTested =>
-              resultCategory2IdMappings[resultForDrugsTested] === 'Resistant'
+              resultCategory2IdMappings[resultForDrugsTested] === resultCategories.Resistant
           )
         ) {
           resultCategory2Id = resultCategories.Resistant
         } else if (
-          resultsForDrugsTested.every(resultForDrugsTested =>
-            ['Susceptible', 'Missing'].includes(
+          resultsForFirstLineDrugsTested.every(resultForDrugsTested =>
+            [resultCategories.Susceptible].includes(
+              resultCategory2IdMappings[resultForDrugsTested]
+            )
+          ) ||
+          resultsForSecondLineDrugsTested.every(resultForDrugsTested =>
+            [resultCategories.Susceptible].includes(
               resultCategory2IdMappings[resultForDrugsTested]
             )
           )
