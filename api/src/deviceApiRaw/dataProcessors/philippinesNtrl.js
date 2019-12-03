@@ -393,7 +393,7 @@ class DefaultPhilippinesNtrl extends SynchronousDataProcessor {
         testRequested: payload['DST Test Requested'],
         dateInoculated: payload['DST Date Inoculated'],
         inoculatedBy: payload['DST MT Inoculated'],
-        idResult: payload['DST ID Result'],
+        idResult: payload['DST ID Result'] || payload['Culture Final Result'], // There is a mis-mapping in the NTRL database that uses the Culture Final Result in the DST result encoding form
         streptomycin: payload.Streptomycin,
         isoniazid: payload.Isoniazid,
         rifampicin: payload.Rifampicin,
@@ -445,22 +445,23 @@ class DefaultPhilippinesNtrl extends SynchronousDataProcessor {
               ? assayBdMgitAstId
               : assayGenericDstId,
           sampleId: samples[0].id,
-          startedOn: dstResultData.dateRead,
-          endedOn: dstResultData.dateRead,
+          startedOn: dstResultData.dateRead || dstResultData.dateReleased,
+          endedOn: dstResultData.dateRead || dstResultData.dateReleased,
           resultData: JSON.stringify({
             encodedResult: dstResultData,
           }),
           senderOperator: dstResultData.labTech,
         }
-        const resultCategory1Id = {
-          'M. tuberculosis': resultCategories.PositiveMTB,
-          'No growth after 6 weeks': resultCategories.NotDetected,
-          'No growth after 8 weeks': resultCategories.NotDetected,
-          'Non tuberculous mycobacteria': resultCategories.PositiveMOTT,
-          Contaminated: resultCategories.Contaminated,
-          'Not Done': resultCategories.Missing,
-          'NON-VIABLE': resultCategories.Invalid,
-        }[dstResultData.idResult]
+        const resultCategory1Id =
+          {
+            'M. tuberculosis': resultCategories.PositiveMTB,
+            'No growth after 6 weeks': resultCategories.NotDetected,
+            'No growth after 8 weeks': resultCategories.NotDetected,
+            'Non tuberculous mycobacteria': resultCategories.PositiveMOTT,
+            Contaminated: resultCategories.Contaminated,
+            'Not Done': resultCategories.Missing,
+            'NON-VIABLE': resultCategories.Invalid,
+          }[dstResultData.idResult] || resultCategories.Missing
         const resultCategory2IdMappings = {
           RESISTANT: resultCategories.Resistant,
           SUSCEPTIBLE: resultCategories.Susceptible,
@@ -469,6 +470,7 @@ class DefaultPhilippinesNtrl extends SynchronousDataProcessor {
           CONTAMINATED: resultCategories.Contaminated,
         }
         const resultsForDrugsTested = [
+          dstResultData.streptomycin,
           dstResultData.isoniazid,
           dstResultData.rifampicin,
           dstResultData.ethambutol,
@@ -482,29 +484,32 @@ class DefaultPhilippinesNtrl extends SynchronousDataProcessor {
         if (
           resultsForDrugsTested.some(
             resultForDrugsTested =>
-              resultCategory2IdMappings[resultForDrugsTested] === 'Resistant'
+              resultCategory2IdMappings[resultForDrugsTested] ===
+              resultCategories.Resistant
           )
         ) {
           resultCategory2Id = resultCategories.Resistant
         } else if (
-          resultsForDrugsTested.every(resultForDrugsTested =>
-            ['Susceptible', 'Missing'].includes(
-              resultCategory2IdMappings[resultForDrugsTested]
-            )
-          )
-        ) {
-          resultCategory2Id = resultCategories.Susceptible
-        } else if (
           resultsForDrugsTested.some(
             resultForDrugsTested =>
-              resultCategory2IdMappings[resultForDrugsTested] === 'Contaminated'
+              resultCategory2IdMappings[resultForDrugsTested] ===
+              resultCategories.Contaminated
           )
         ) {
           resultCategory2Id = resultCategories.Contaminated
         } else if (
           resultsForDrugsTested.some(
             resultForDrugsTested =>
-              resultCategory2IdMappings[resultForDrugsTested] === 'Invalid'
+              resultCategory2IdMappings[resultForDrugsTested] ===
+              resultCategories.Susceptible
+          )
+        ) {
+          resultCategory2Id = resultCategories.Susceptible
+        } else if (
+          resultsForDrugsTested.some(
+            resultForDrugsTested =>
+              resultCategory2IdMappings[resultForDrugsTested] ===
+              resultCategories.Invalid
           )
         ) {
           resultCategory2Id = resultCategories.Invalid
@@ -860,7 +865,7 @@ class DefaultPhilippinesNtrl extends SynchronousDataProcessor {
                 : smearResultData.smearResult2
             ]
           const resultCategory2Id =
-            resultCategoryMappings[cultureResultData.finalResult]
+            resultCategoryMappings[smearResultData.finalResult]
           const resultOverwritePriority = [
             resultCategories.Positive3,
             resultCategories.Positive2,
