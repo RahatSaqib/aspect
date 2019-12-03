@@ -625,7 +625,7 @@ async function seed(knex) {
   })
 
   const assayGenericDst = {
-    name: 'Generic TB Drug Sensitivity Test',
+    name: 'TB DST',
     abbreviation: 'GENERIC DST',
     i18nKey: 'assayGenericDst',
     externalId: 'assayGenericDst',

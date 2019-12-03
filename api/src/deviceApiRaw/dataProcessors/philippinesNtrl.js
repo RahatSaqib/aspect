@@ -426,16 +426,20 @@ class DefaultPhilippinesNtrl extends SynchronousDataProcessor {
         // TODO: Update MGIT Data processor to lookup results for assayGenericDst as well
         const assayBdMgitAstId = await assayToId('assayBdMgitAst')
         const assayGenericDstId = await assayToId('assayGenericDst')
-        const result = (await knex('Result as r')
-          .whereIn('r.sampleId', sampleIds)
-          .whereIn('r.assayId', [assayBdMgitAstId, assayGenericDstId])
-          .andWhere('r.siteId', site.id)
-          .first('r.*')) || {
+        const externalId = `${formatDateOrDefault(
+          dstResultData.dateRead || utcNow,
+          'yyyyMMdd'
+        )}_DST_${samples[0].externalId}`
+        const result = (await knex('Result')
+          .where({ externalId, deviceId })
+          .orWhere(function() {
+            this.whereIn('sampleId', sampleIds)
+              .whereIn('assayId', [assayBdMgitAstId, assayGenericDstId])
+              .andWhere('siteId', site.id)
+          })
+          .first()) || {
           ...baseNewResult,
-          externalId: `${formatDateOrDefault(
-            dstResultData.dateRead || utcNow,
-            'yyyyMMdd'
-          )}_DST_${samples[0].externalId}`,
+          externalId,
           assayId:
             dstResultData.methodUsed === 'Liquid Culture (MGIT 960)'
               ? assayBdMgitAstId
@@ -565,16 +569,20 @@ class DefaultPhilippinesNtrl extends SynchronousDataProcessor {
           cultureSamples.push(samples[1])
         }
         await Promise.each(cultureSamples, async (cultureSample, index) => {
-          const result = (await knex('Result as r')
-            .whereIn('r.assayId', [assayBdMgitGndId, assayCultureId])
-            .andWhere('r.sampleId', cultureSample.id)
-            .andWhere('r.siteId', site.id)
-            .first('r.*')) || {
+          const externalId = `${formatDateOrDefault(
+            cultureResultData.dateReleased || utcNow,
+            'yyyyMMdd'
+          )}_CULTURE_${cultureSample.externalId}`
+          const result = (await knex('Result')
+            .where({ externalId, deviceId })
+            .orWhere(function() {
+              this.whereIn('assayId', [assayBdMgitGndId, assayCultureId])
+                .andWhere('sampleId', cultureSample.id)
+                .andWhere('siteId', site.id)
+            })
+            .first()) || {
             ...baseNewResult,
-            externalId: `${formatDateOrDefault(
-              cultureResultData.dateReleased || utcNow,
-              'yyyyMMdd'
-            )}_CULTURE_${cultureSample.externalId}`,
+            externalId,
             assayId: assayCultureId,
             sampleId: cultureSample.id,
             startedOn: cultureResultData.dateReleased,
@@ -657,16 +665,20 @@ class DefaultPhilippinesNtrl extends SynchronousDataProcessor {
         objectHasValues(_.omit(lpaResultData, ['performedBy', 'reviewedBy']))
       ) {
         const assayLpaId = await assayToId('assayLPA')
-        const result = (await knex('Result as r')
-          .whereIn('r.sampleId', sampleIds)
-          .andWhere('r.assayId', assayLpaId)
-          .andWhere('r.siteId', site.id)
-          .first('r.*')) || {
+        const externalId = `${formatDateOrDefault(
+          lpaResultData.dateReleased || utcNow,
+          'yyyyMMdd'
+        )}_LPA_${samples[0].externalId}`
+        const result = (await knex('Result')
+          .where({ externalId, deviceId })
+          .orWhere(function() {
+            this.whereIn('sampleId', sampleIds)
+              .andWhere('assayId', assayLpaId)
+              .andWhere('siteId', site.id)
+          })
+          .first()) || {
           ...baseNewResult,
-          externalId: `${formatDateOrDefault(
-            lpaResultData.dateReleased || utcNow,
-            'yyyyMMdd'
-          )}_LPA_${samples[0].externalId}`,
+          externalId,
           assayId: assayLpaId,
           sampleId: samples[0].id,
           startedOn: lpaResultData.dateReleased,
@@ -778,16 +790,20 @@ class DefaultPhilippinesNtrl extends SynchronousDataProcessor {
           smearSamples.push(samples[1])
         }
         await Promise.each(smearSamples, async (smearSample, index) => {
-          const result = (await knex('Result as r')
-            .where('r.assayId', assaySmearId)
-            .andWhere('r.sampleId', smearSample.id)
-            .andWhere('r.siteId', site.id)
-            .first('r.*')) || {
+          const externalId = `${formatDateOrDefault(
+            smearResultData.dateReleased || utcNow,
+            'yyyyMMdd'
+          )}_SMEAR_${smearSample.externalId}`
+          const result = (await knex('Result')
+            .where({ externalId, deviceId })
+            .orWhere(function() {
+              this.where('assayId', assaySmearId)
+                .andWhere('sampleId', smearSample.id)
+                .andWhere('siteId', site.id)
+            })
+            .first()) || {
             ...baseNewResult,
-            externalId: `${formatDateOrDefault(
-              smearResultData.dateReleased || utcNow,
-              'yyyyMMdd'
-            )}_SMEAR_${smearSample.externalId}`,
+            externalId,
             assayId: assaySmearId,
             sampleId: smearSample.id,
             startedOn: smearResultData.dateReleased,
@@ -892,19 +908,23 @@ class DefaultPhilippinesNtrl extends SynchronousDataProcessor {
         const assayGeneXpertMtbRifId = await assayToId('GxMtbRif')
         const assayGeneXpertMtbRifUltraId = await assayToId('GxMtbRifUltra')
 
-        const result = (await knex('Result as r')
-          .whereIn('r.sampleId', sampleIds)
-          .whereIn('r.assayId', [
-            assayGeneXpertMtbRifId,
-            assayGeneXpertMtbRifUltraId,
-          ])
-          .andWhere('r.siteId', site.id)
-          .first('r.*')) || {
+        const externalId = `${formatDateOrDefault(
+          geneXpertResultData.processingDate || utcNow,
+          'yyyyMMdd'
+        )}_GX_${samples[0].externalId}`
+        const result = (await knex('Result')
+          .where({ externalId, deviceId })
+          .orWhere(function() {
+            this.whereIn('sampleId', sampleIds)
+              .whereIn('assayId', [
+                assayGeneXpertMtbRifId,
+                assayGeneXpertMtbRifUltraId,
+              ])
+              .andWhere('siteId', site.id)
+          })
+          .first()) || {
           ...baseNewResult,
-          externalId: `${formatDateOrDefault(
-            geneXpertResultData.processingDate || utcNow,
-            'yyyyMMdd'
-          )}_GX_${samples[0].externalId}`,
+          externalId,
           assayId: assayGeneXpertMtbRifId,
           sampleId: samples[0].id,
           startedOn: geneXpertResultData.processingDate,
