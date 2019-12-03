@@ -228,15 +228,6 @@ class DefaultPhilippinesNtrl extends SynchronousDataProcessor {
       })
       const rawMessage = JSON.stringify(request.plugins.rawPayload)
       const utcNow = getUtcTime()
-      const remoteAddress = getRemoteAddress(request)
-      const [deviceLogId] = await knex('DeviceLog').insert({
-        deviceId,
-        source: 'Philippines NTRL DB Record Updated',
-        createdOn: utcNow,
-        senderIp: remoteAddress,
-        rawMessage,
-      })
-      this.response.deviceLogId = deviceLogId
       await knex('Device')
         .where({ id: deviceId })
         .update({ lastSeenOn: utcNow, updatedOn: utcNow })
@@ -714,7 +705,8 @@ class DefaultPhilippinesNtrl extends SynchronousDataProcessor {
         if (
           resultsForDrugsTested.some(
             resultForDrugsTested =>
-              resultCategory2IdMappings[resultForDrugsTested] === resultCategories.Resistant
+              resultCategory2IdMappings[resultForDrugsTested] ===
+              resultCategories.Resistant
           )
         ) {
           resultCategory2Id = resultCategories.Resistant
@@ -1059,6 +1051,13 @@ class DefaultPhilippinesNtrl extends SynchronousDataProcessor {
         .where('id', result.id)
         .update(result)
     }
+    await this.appendDeviceLog(
+      knex,
+      result.deviceId,
+      result.id,
+      rawMessage,
+      utcNow
+    )
     const resultWorkflowStatusLogId = await this.appendResultWorkflowLog(
       knex,
       result,
@@ -1133,6 +1132,22 @@ class DefaultPhilippinesNtrl extends SynchronousDataProcessor {
       return resultWorkflowStatusLogId
     }
     return Promise.resolve()
+  }
+
+  async appendDeviceLog(knex, deviceId, resultId, rawMessage, utcNow) {
+    const remoteAddress = getRemoteAddress(this.request)
+    const [deviceLogId] = await knex('DeviceLog').insert({
+      deviceId,
+      resultId,
+      source: 'Philippines NTRL DB Record Updated',
+      createdOn: utcNow,
+      senderIp: remoteAddress,
+      rawMessage,
+    })
+    if (_.isNil(this.response.deviceLogIds)) {
+      this.response.deviceLogIds = []
+    }
+    this.response.deviceLogIds = [...this.response.deviceLogIds, deviceLogId]
   }
 }
 
