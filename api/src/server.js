@@ -28,9 +28,6 @@ const server = new Hapi.server({
   host: '127.0.0.1',
   routes: {
       cors: {
-          origin: ['*'],
-          additionalHeaders: ['cache-control', 'x-requested-with'],
-          credentials: true,
           exposedHeaders: ['WWW-Authenticate', 'Server-Authorization', 'Date'],
       },
       validate: {
