@@ -30,19 +30,6 @@ const server = new Hapi.server({
       cors: {
           exposedHeaders: ['WWW-Authenticate', 'Server-Authorization', 'Date'],
       },
-      validate: {
-        failAction: async (request, h, err) => {
-          if (process.env.NODE_ENV === 'production') {
-            // In prod, log a limited error message and throw the default Bad Request error.
-            console.error('ValidationError:', err.message) // eslint-disable-line no-console
-            throw Boom.badRequest(`Invalid request payload input`)
-          } else {
-            // During development, log and respond with the full error.
-            console.error(err) // eslint-disable-line no-console
-            throw err
-          }
-        }
-      },
   },
 })
 
@@ -153,6 +140,31 @@ const start = async () => {
 
   await server.register(plugins)
 
+  if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
+    // ==========================================================================
+    // ==========================================================================
+    // show raw error in log
+    // ==========================================================================
+    // ==========================================================================
+    server.events.on('log', (event, tags) => {
+      if (tags.error) {
+        const { error } = event
+        console.error('-------------------')
+        console.error(error || event)
+        console.error('-------------------')
+      }
+    })
+    server.ext('onPreResponse', function(request, h) {
+      var response = request.response
+      // if error, pass it through server.log
+      // FYI - response.isServer indicates status code >= 500
+      if (response && response.isBoom && response.isServer) {
+        server.log([ 'error' ], response)
+      }
+      return h.continue
+    })
+  }
+
   // ==========================================================================
   // ==========================================================================
   // Authentication strategies and Authorization Scopes
@@ -175,8 +187,8 @@ const start = async () => {
       // if user has to accept license, deny all requests except to the license api:
       if (
         decoded.hasToAcceptLicenseId &&
-        request.url.path.indexOf('/api/auth/features') === -1 &&
-        request.url.path.indexOf('/api/auth/license') === -1
+        request.url.pathname.indexOf('/api/auth/features') === -1 &&
+        request.url.pathname.indexOf('/api/auth/license') === -1
       ) {
         isValid = false
       }
