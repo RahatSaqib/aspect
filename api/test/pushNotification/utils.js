@@ -99,8 +99,7 @@ class PushNotificationTestContext {
           deviceId,
           createdOn: now,
           updatedOn: now,
-        },
-        'id'
+        }
       )
 
       assert.isOk(this.messageId)

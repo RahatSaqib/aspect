@@ -56,8 +56,7 @@ class AlertTestContext {
           resultId,
           createdOn: now,
           updatedOn: now,
-        },
-        'id'
+        }
       )
 
       assert.isOk(this.messageId)

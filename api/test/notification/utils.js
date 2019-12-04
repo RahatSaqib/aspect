@@ -38,8 +38,7 @@ class NotificationTestContext {
           name: 'Results Delayed',
           createdOn: now,
           updatedOn: now,
-        },
-        'id'
+        }
       )
 
       assert.isOk(this.ntId)
