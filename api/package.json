@@ -94,7 +94,7 @@
     "date-fns-timezone": "^0.1.4",
     "debug": "^4.1.1",
     "dotenv-safe": "^8.2.0",
-    "email-templates": "^6.0.4",
+    "email-templates": "^2.7.1",
     "exceljs": "^3.4.0",
     "firebase-admin": "^8.8.0",
     "flat": "^5.0.0",
