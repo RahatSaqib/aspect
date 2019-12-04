@@ -3,5 +3,6 @@
 --ui bdd
 --recursive
 --timeout 10000
+--exit
 test/utils/unitTestSetup.js
 test/**/*.test.js*
