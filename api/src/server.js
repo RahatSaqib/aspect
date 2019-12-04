@@ -30,6 +30,12 @@ const server = new Hapi.server({
       cors: {
           exposedHeaders: ['WWW-Authenticate', 'Server-Authorization', 'Date'],
       },
+      validate: {
+        failAction: async (request, h, err) => {
+          console.error(err);
+          throw err;
+        }
+      },
   },
 })
 
