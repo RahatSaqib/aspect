@@ -556,7 +556,8 @@ async function seedAbbottM2000AndAssays(knex) {
     'abbottM2000PlasmaHbvVL',
     'HBV',
     'resultCategoryHbvVl',
-    'HBV VL'
+    'HBV VL',
+    'M2000 Plasma HBV VL'
   )
   await ensureResultCategories(abbottM2000PlasmaHbvVLId, [
     {
