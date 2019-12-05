@@ -39,7 +39,7 @@
     "no-restricted-syntax": "off",
     "no-shadow": "off",
     "no-use-before-define": "off",
-    "prefer-object-spread": "off",
+    "prefer-object-spread": "warn",
     "prettier/prettier": ["error", {
       "semi": false,
       "singleQuote": true,
