@@ -599,8 +599,7 @@ async function createTestInventory(knex, siteId, partnerId) {
       unit: 1,
       canExpire: 1,
       manufacturer: 'Daktari',
-    },
-    'id'
+    }
   )
   await knex('ConsumableAssay').insert({
     consumableId,
@@ -620,8 +619,7 @@ async function createTestInventory(knex, siteId, partnerId) {
       siteId,
       lotNumber: 'TEST-LOT',
       quantityOnHand: 500,
-    },
-    'id'
+    }
   )
 
   const inventoryItem = await knex('InventoryItem')

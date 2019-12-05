@@ -129,8 +129,7 @@ describe('Sending Webhook Message via Message Queue', () => {
         resultId,
         createdOn: now,
         updatedOn: now,
-      },
-      'id'
+      }
     )
     webhookMessageIds.push(messageId)
     return messageId
