@@ -20,7 +20,7 @@ function authenticate(request, h) {
   return authToken(token)
       .then(credentials => h.authenticated({ credentials }))
       .catch(err => {
-        console.error(err)
+        console.error(err) // eslint-disable-line no-console
         throw err
       })
 }

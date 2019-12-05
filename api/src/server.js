@@ -162,9 +162,9 @@ const start = async () => {
     server.events.on('log', (event, tags) => {
       if (tags.error) {
         const { error } = event
-        console.error('-------------------')
-        console.error(error || event)
-        console.error('-------------------')
+        console.error('-------------------') // eslint-disable-line no-console
+        console.error(error || event) // eslint-disable-line no-console
+        console.error('-------------------') // eslint-disable-line no-console
       }
     })
     server.ext('onPreResponse', function(request, h) {
