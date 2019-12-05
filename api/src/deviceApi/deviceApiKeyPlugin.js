@@ -3,7 +3,7 @@ const { knex } = require('../db')
 const { version } = require('../../package.json')
 const { normalizeToken } = require('./apiKey')
 
-function register(plugin, options) {
+function register(plugin) {
   plugin.auth.scheme('deviceApiKey', () => ({ authenticate }))
 }
 
@@ -29,7 +29,7 @@ const validateApiKeyAuthBasic = {
   validate: async function(request, username, password) {
     return authToken(password)
       .then(credentials => ({ isValid: true, credentials }))
-      .catch(err => ({ isValid: false }))
+      .catch(() => ({ isValid: false }))
   },
 }
 

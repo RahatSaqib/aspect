@@ -140,7 +140,7 @@ const plugins = [
   deviceApiKeyPlugin,
 
   // Basic authentication in Device API
-  require('@hapi/basic'),
+  require('@hapi/basic'), // eslint-disable-line import/order
 
   // Set payload prior to validation transformation
   rawPayloadPlugin,
