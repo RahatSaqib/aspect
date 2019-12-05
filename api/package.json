@@ -51,23 +51,23 @@
     "report-dir": "./coverage"
   },
   "lint-staged": {
-    "api/src/**/*.js": [
+    "./src/**/*.js": [
       "eslint --fix",
       "git add"
     ],
-    "api/test/**/*.js": [
+    "./test/**/*.js": [
       "eslint --fix",
       "git add"
     ],
-    "api/migrations/**/*.js": [
+    "./migrations/**/*.js": [
       "eslint --fix",
       "git add"
     ],
-    "api/seeds/**/*.js": [
+    "./seeds/**/*.js": [
       "eslint --fix",
       "git add"
     ],
-    "api/*.js": [
+    "./*.js": [
       "eslint --fix",
       "git add"
     ]
