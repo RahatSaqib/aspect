@@ -775,7 +775,7 @@ async function downloadResultsList(request) {
       await addResultDownloadLog(idsToBeRegistered, user.id)
   }
   // eslint-disable-next-line no-console
-  myProm.catch(err => console.log(err))
+  await myProm().catch(err => console.log(err))
   return result
 }
 async function addResultDownloadLog(idsToBeRegistered, userId) {
