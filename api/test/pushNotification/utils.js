@@ -90,17 +90,15 @@ class PushNotificationTestContext {
       assert.isOk(this.issueId)
 
       // add sample push notification message
-      this.messageId = await knex('PushNotificationMessage').insert(
-        {
-          pushNotificationTemplateId,
-          messageStatusId,
-          personId: userId,
-          siteId,
-          deviceId,
-          createdOn: now,
-          updatedOn: now,
-        }
-      )
+      this.messageId = await knex('PushNotificationMessage').insert({
+        pushNotificationTemplateId,
+        messageStatusId,
+        personId: userId,
+        siteId,
+        deviceId,
+        createdOn: now,
+        updatedOn: now,
+      })
 
       assert.isOk(this.messageId)
 

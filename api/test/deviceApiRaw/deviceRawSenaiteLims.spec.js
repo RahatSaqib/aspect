@@ -90,10 +90,16 @@ describe('Device API Raw routes for Senaite LIMS', () => {
           .select('gr.id', 'gr.sampleId', 's.originSiteId')
       })
     const resultIds = _.uniq(
-      _.map(_.filter(results, result => result.id !== null), 'id')
+      _.map(
+        _.filter(results, result => result.id !== null),
+        'id'
+      )
     )
     const sampleIds = _.uniq(
-      _.map(_.filter(results, result => result.sampleId !== null), 'sampleId')
+      _.map(
+        _.filter(results, result => result.sampleId !== null),
+        'sampleId'
+      )
     )
     const originSiteIds = _.uniq(
       _.map(

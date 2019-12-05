@@ -46,18 +46,16 @@ class AlertTestContext {
 
       // add sample alert message
       const now = new Date()
-      this.messageId = await knex('AlertMessage').insert(
-        {
-          alertTemplateId,
-          messageStatusId: initialMessageStatusId,
-          personId: userId,
-          siteId,
-          deviceId,
-          resultId,
-          createdOn: now,
-          updatedOn: now,
-        }
-      )
+      this.messageId = await knex('AlertMessage').insert({
+        alertTemplateId,
+        messageStatusId: initialMessageStatusId,
+        personId: userId,
+        siteId,
+        deviceId,
+        resultId,
+        createdOn: now,
+        updatedOn: now,
+      })
 
       assert.isOk(this.messageId)
 

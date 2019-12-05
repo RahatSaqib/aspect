@@ -18,15 +18,15 @@ function authenticate(request, h) {
     token = headers.authorization.replace(/Bearer/gi, '')
   }
   return authToken(token)
-      .then(credentials => h.authenticated({ credentials }))
-      .catch(err => {
-        console.error(err) // eslint-disable-line no-console
-        throw err
-      })
+    .then(credentials => h.authenticated({ credentials }))
+    .catch(err => {
+      console.error(err) // eslint-disable-line no-console
+      throw err
+    })
 }
 
 const validateApiKeyAuthBasic = {
-  validate: async function(request, username, password) {
+  async validate(request, username, password) {
     return authToken(password)
       .then(credentials => ({ isValid: true, credentials }))
       .catch(() => ({ isValid: false }))

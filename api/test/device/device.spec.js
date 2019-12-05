@@ -81,7 +81,10 @@ describe('Device routes', () => {
           assert.typeOf(res.body.data[0].availability, 'Object')
           assert.property(res.body.data[0], 'deliveredLastMonth')
           assert.property(res.body.data[0], 'deliveredThisMonth')
-          assert.equal(_.every(res.body.data, d => d.hasResults === 1), true)
+          assert.equal(
+            _.every(res.body.data, d => d.hasResults === 1),
+            true
+          )
           assert.property(res.body, 'total')
           done()
         })

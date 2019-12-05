@@ -18,7 +18,7 @@ const { startScheduler } = require('./scheduler')
 const { addLoggers } = require('./logger/service')
 const {
   plugin: deviceApiKeyPlugin,
-  validateApiKeyAuthBasic 
+  validateApiKeyAuthBasic,
 } = require('./deviceApi/deviceApiKeyPlugin')
 const { continueUnprocessedRawData } = require('./deviceApiRaw/service')
 
@@ -27,22 +27,22 @@ const server = new Hapi.server({
   port,
   host: '127.0.0.1',
   routes: {
-      cors: {
-          exposedHeaders: ['WWW-Authenticate', 'Server-Authorization', 'Date'],
+    cors: {
+      exposedHeaders: ['WWW-Authenticate', 'Server-Authorization', 'Date'],
+    },
+    validate: {
+      failAction: async (request, h, err) => {
+        if (process.env.NODE_ENV === 'production') {
+          // In prod, log a limited error message and throw the default Bad Request error.
+          console.error('ValidationError:', err.message) // eslint-disable-line no-console
+          throw Boom.badRequest(`Invalid request payload input`)
+        } else {
+          // During development, log and respond with the full error.
+          console.error(err) // eslint-disable-line no-console
+          throw err
+        }
       },
-      validate: {
-        failAction: async (request, h, err) => {
-          if (process.env.NODE_ENV === 'production') {
-            // In prod, log a limited error message and throw the default Bad Request error.
-            console.error('ValidationError:', err.message); // eslint-disable-line no-console
-            throw Boom.badRequest(`Invalid request payload input`);
-          } else {
-            // During development, log and respond with the full error.
-            console.error(err); // eslint-disable-line no-console
-            throw err;
-          }
-        },
-      },
+    },
   },
 })
 
@@ -90,7 +90,6 @@ const swaggerPlugins = swaggerEnabled
     ]
   : []
 
-
 // Plugin to set payload prior to validation transformation
 const rawPayloadPlugin = {
   name: 'rawPayload',
@@ -106,7 +105,7 @@ const rawPayloadPlugin = {
 const messageQueuePlugin = {
   name: 'messageQueue',
   version,
-  register: async server => 
+  register: async server =>
     createMessageQueue('aspect')
       .then(queue => {
         addLoggers(server, queue)
@@ -117,15 +116,14 @@ const messageQueuePlugin = {
         return queue
       })
       .then(queue => {
-        return continueUnprocessedRawData(queue)
-          .then(() => {
-            server.ext('onPreHandler', (request, h) => {
-              request.plugins.messageContext = queue.createMessageContext(
-                'aspect_request'
-              )
-              return h.continue
-            })
+        return continueUnprocessedRawData(queue).then(() => {
+          server.ext('onPreHandler', (request, h) => {
+            request.plugins.messageContext = queue.createMessageContext(
+              'aspect_request'
+            )
+            return h.continue
           })
+        })
       }),
 }
 
@@ -150,7 +148,6 @@ const plugins = [
 ]
 
 const start = async () => {
-
   await server.register(plugins)
 
   if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
@@ -168,11 +165,11 @@ const start = async () => {
       }
     })
     server.ext('onPreResponse', function(request, h) {
-      var response = request.response
+      const { response } = request
       // if error, pass it through server.log
       // FYI - response.isServer indicates status code >= 500
       if (response && response.isBoom && response.isServer) {
-        server.log([ 'error' ], response)
+        server.log(['error'], response)
       }
       return h.continue
     })
@@ -232,10 +229,10 @@ const start = async () => {
 
   // ==========================================================================
   // ==========================================================================
-  // routes 
+  // routes
   // ==========================================================================
   // ==========================================================================
-  
+
   // =======================
   // echo to see API is alive
   // =======================
@@ -251,15 +248,14 @@ const start = async () => {
   // use plugin to mount all API routes at /api
   // =======================
   await server.register(
-    { 
+    {
       name: 'clientApi',
       version,
       register: async server =>
         new Promise(resolve => {
           addClientRoutes(server)
           resolve()
-        })
-        .catch((err) => {
+        }).catch(err => {
           console.error(err) // eslint-disable-line no-console
           throw err
         }),
@@ -268,7 +264,7 @@ const start = async () => {
       routes: {
         prefix: '/api',
       },
-    },
+    }
   )
   // =======================
   // All device API routes mounted under /device
@@ -281,8 +277,7 @@ const start = async () => {
         new Promise(resolve => {
           addDeviceRoutes(server)
           resolve()
-        })
-        .catch((err) => {
+        }).catch(err => {
           console.error(err) // eslint-disable-line no-console
           throw err
         }),
@@ -291,7 +286,7 @@ const start = async () => {
       routes: {
         prefix: '/device',
       },
-    },
+    }
   )
   // =======================
   // Device API raw data route mounted under /device/raw
@@ -310,8 +305,7 @@ const start = async () => {
           // TODO Raw Device API: Delete topics on the message queue that were completely processed when server starts
           // TODO Raw Device API: Archive records from the DeviceApiRaw table once they have been processed
           resolve()
-        })
-        .catch((err) => {
+        }).catch(err => {
           console.error(err) // eslint-disable-line no-console
           throw err
         }),
@@ -320,7 +314,7 @@ const start = async () => {
       routes: {
         prefix: '/device/raw',
       },
-    },
+    }
   )
 
   // =======================

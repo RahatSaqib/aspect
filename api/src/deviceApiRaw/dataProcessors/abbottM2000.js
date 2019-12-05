@@ -80,7 +80,8 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
         return _.get(jsonAstmObject, `${path}.items`).map(i =>
           _.get(jsonAstmObject, `${path}.${i}`)
         )
-      } else if (!_.isEmpty(_.get(jsonAstmObject, `${path}.value`))) {
+      }
+      if (!_.isEmpty(_.get(jsonAstmObject, `${path}.value`))) {
         return [_.get(jsonAstmObject, `${path}`)]
       }
       return []
@@ -136,7 +137,8 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
     const mergeDeep = (baseValue, sourceValue) => {
       if (_.isEmpty(baseValue) && !_.isEmpty(sourceValue)) {
         return sourceValue
-      } else if (!_.isEmpty(baseValue) && _.isEmpty(sourceValue)) {
+      }
+      if (!_.isEmpty(baseValue) && _.isEmpty(sourceValue)) {
         return baseValue
       }
       if (_.isArray(baseValue) && _.isArray(sourceValue)) {

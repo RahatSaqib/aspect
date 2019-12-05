@@ -252,7 +252,8 @@ async function downloadReportFile(
 ) {
   return reportFunction
     .then(resp =>
-      reply.response(resp)
+      reply
+        .response(resp)
         .encoding('binary')
         .type('application/octet-stream')
         .header(

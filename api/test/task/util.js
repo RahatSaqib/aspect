@@ -59,20 +59,18 @@ class TaskContextTest {
 
       await Promise.each(issues, async elem => {
         // add sample alert message
-        const [issueId] = await knex('Issue')
-          .insert(elem)
+        const [issueId] = await knex('Issue').insert(elem)
         const now = new Date()
-        const [alertMessageId] = await knex('AlertMessage')
-          .insert({
-            alertTemplateId,
-            messageStatusId,
-            message: 'Test message',
-            personId: userId,
-            siteId: '3',
-            deviceId: elem.deviceId,
-            createdOn: now,
-            updatedOn: now,
-          })
+        const [alertMessageId] = await knex('AlertMessage').insert({
+          alertTemplateId,
+          messageStatusId,
+          message: 'Test message',
+          personId: userId,
+          siteId: '3',
+          deviceId: elem.deviceId,
+          createdOn: now,
+          updatedOn: now,
+        })
         await knex('Notification').insert({
           createdOn: now,
           alertMessageId,

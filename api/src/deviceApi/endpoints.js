@@ -463,7 +463,7 @@ const routes = [
               .description('Device Result Data.'),
           })
         ),
-        failAction: async (request, h, error) => 
+        failAction: async (request, h, error) =>
           addDeviceLog(error)(request, h),
       },
       response: {
@@ -507,7 +507,7 @@ const routes = [
             .keys(logPayload)
             .description('Device Log Data'),
         }),
-        failAction: async (request, h, error) => 
+        failAction: async (request, h, error) =>
           addDeviceLog(error)(request, h),
       },
       response: {
@@ -561,7 +561,7 @@ const routes = [
             .keys(logPayload)
             .description('Device Log Data'),
         }),
-        failAction: async (request, h, error) => 
+        failAction: async (request, h, error) =>
           addDeviceLog(error)(request, h),
       },
       response: {
@@ -623,7 +623,7 @@ const routes = [
             .keys(logPayload)
             .description('Device Log Data'),
         }),
-        failAction: async (request, h, error) => 
+        failAction: async (request, h, error) =>
           addDeviceLog(error)(request, h),
       },
       response: {

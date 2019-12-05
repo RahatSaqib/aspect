@@ -1,5 +1,7 @@
 module.exports = require('../utils').seed(seed, __filename)
 
+const Promise = require('bluebird')
+const _ = require('lodash')
 const {
   getRandomResults,
   createDevicesForAllMissingTypes,
@@ -7,8 +9,6 @@ const {
 const { getMGITResultFromTBPossitive } = require('../commonTB')
 
 const { allResultCategoryToId } = require('../../src/shared/dictionary')
-const Promise = require('bluebird')
-const _ = require('lodash')
 
 async function seed(knex) {
   const { Detected: resultCategoryDetectedId } = await allResultCategoryToId()

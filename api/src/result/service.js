@@ -631,7 +631,10 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
   const followUps = await knex('ResultFollowUp as rfu')
     .join('FollowUp as fu', 'rfu.followUpId', 'fu.id')
     .join('FollowUpType as fut', 'fu.followUpTypeId', 'fut.id')
-    .whereIn('rfu.resultId', data.map(d => d.id))
+    .whereIn(
+      'rfu.resultId',
+      data.map(d => d.id)
+    )
     .select(
       'rfu.resultId',
       'rfu.id',
@@ -651,7 +654,10 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
     .innerJoin('ResultNoteType as rnt', 'rn.resultNoteTypeId', 'rnt.id')
     .leftOuterJoin('User as uC', 'rn.createdBy', 'uC.id')
     .leftOuterJoin('User as uU', 'rn.updatedBy', 'uU.id')
-    .whereIn('rn.resultId', data.map(d => d.id))
+    .whereIn(
+      'rn.resultId',
+      data.map(d => d.id)
+    )
     .select(
       'rn.resultId',
       'rn.id',
@@ -1452,9 +1458,7 @@ async function updateFormData(request) {
       const undefinedFieldMessage =
         unrecognisedFields.length > 1
           ? `This result cannot accept the following fields in it's form data: [${unrecognisedFields.join()}] because they are not defined in the forms schema.`
-          : `This result cannot accept the following field in it's form data: ${
-              unrecognisedFields[0]
-            } because it is not defined in the forms schema.`
+          : `This result cannot accept the following field in it's form data: ${unrecognisedFields[0]} because it is not defined in the forms schema.`
       return Boom.badRequest(undefinedFieldMessage)
     }
     const fieldValidationErrors = []
@@ -1483,9 +1487,7 @@ async function updateFormData(request) {
             if (!_.isEmpty(illegalValuesEntered)) {
               const validationMessage =
                 illegalValuesEntered.length === 1
-                  ? `${
-                      illegalValuesEntered[0]
-                    } is invalid for ${formFieldKey} because it is not present in the options configured for the field.`
+                  ? `${illegalValuesEntered[0]} is invalid for ${formFieldKey} because it is not present in the options configured for the field.`
                   : `[${illegalValuesEntered.join()}] are invalid for ${formFieldKey} because they are not present in the options configured for the field.`
               fieldValidationErrors.push(validationMessage)
             }

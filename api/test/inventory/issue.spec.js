@@ -593,14 +593,12 @@ async function createTestInventory(knex, siteId, partnerId) {
     .where({ externalId: 'GxMtbRif' })
     .first('id')
 
-  const [consumableId] = await knex('Consumable').insert(
-    {
-      name: 'Test Cartridge',
-      unit: 1,
-      canExpire: 1,
-      manufacturer: 'Daktari',
-    }
-  )
+  const [consumableId] = await knex('Consumable').insert({
+    name: 'Test Cartridge',
+    unit: 1,
+    canExpire: 1,
+    manufacturer: 'Daktari',
+  })
   await knex('ConsumableAssay').insert({
     consumableId,
     assayId,
@@ -613,14 +611,12 @@ async function createTestInventory(knex, siteId, partnerId) {
     allowStockUpdateFromActionDashboard: true,
   })
 
-  const inventoryItemId = await knex('InventoryItem').insert(
-    {
-      consumableId,
-      siteId,
-      lotNumber: 'TEST-LOT',
-      quantityOnHand: 500,
-    }
-  )
+  const inventoryItemId = await knex('InventoryItem').insert({
+    consumableId,
+    siteId,
+    lotNumber: 'TEST-LOT',
+    quantityOnHand: 500,
+  })
 
   const inventoryItem = await knex('InventoryItem')
     .where({ id: inventoryItemId })

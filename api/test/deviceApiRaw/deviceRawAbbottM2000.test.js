@@ -215,10 +215,8 @@ describe('Device API Raw Abbott M2000 Data Processor', () => {
               _.get(rest, '1') === existingResultRecord.externalId
             ) {
               return Promise.resolve(existingResultRecord)
-            } else if (
-              table === 'Sample as s' &&
-              existingSamples[_.get(rest, '1')]
-            ) {
+            }
+            if (table === 'Sample as s' && existingSamples[_.get(rest, '1')]) {
               return Promise.resolve(existingSamples[_.get(rest, '1')])
             }
             return Promise.resolve(databaseRecords[table])

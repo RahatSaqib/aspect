@@ -47,18 +47,16 @@ class SmsTestContext {
 
       // add sample sms message
       const now = new Date()
-      this.messageId = await knex('SmsMessage').insert(
-        {
-          smsTemplateId,
-          messageStatusId,
-          personId: userId,
-          siteId,
-          deviceId,
-          resultId,
-          createdOn: now,
-          updatedOn: now,
-        }
-      )
+      this.messageId = await knex('SmsMessage').insert({
+        smsTemplateId,
+        messageStatusId,
+        personId: userId,
+        siteId,
+        deviceId,
+        resultId,
+        createdOn: now,
+        updatedOn: now,
+      })
 
       assert.isOk(this.messageId)
 
