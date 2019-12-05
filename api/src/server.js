@@ -32,9 +32,16 @@ const server = new Hapi.server({
       },
       validate: {
         failAction: async (request, h, err) => {
-          console.error(err);
-          throw err;
-        }
+          if (process.env.NODE_ENV === 'production') {
+            // In prod, log a limited error message and throw the default Bad Request error.
+            console.error('ValidationError:', err.message); // eslint-disable-line no-console
+            throw Boom.badRequest(`Invalid request payload input`);
+          } else {
+            // During development, log and respond with the full error.
+            console.error(err); // eslint-disable-line no-console
+            throw err;
+          }
+        },
       },
   },
 })
