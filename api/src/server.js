@@ -64,7 +64,7 @@ const ravenPlugins = raven
 // Load Swagger documentation if configured
 const swaggerPlugins = swaggerEnabled
   ? [
-      require('inert'),
+      require('inert'), // eslint-disable-line import/order
       require('vision'), // eslint-disable-line import/order
       {
         plugin: require('hapi-swagger'),

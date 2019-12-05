@@ -755,7 +755,7 @@ async function downloadResultsList(request) {
   const { query, auth } = request
   const user = await getUser(auth.credentials.name)
   const result = await getDownloadResultsList(query, auth, true)
-  const myProm = new Promise(async () => {
+  const myProm = async () => {
     const idsToUpdate = _.uniq(
       _.map(
         _.pickBy(result.data, elem => elem.workflowStatus.setDelivered),
@@ -767,7 +767,7 @@ async function downloadResultsList(request) {
       await updateResultStatus(idsToUpdate, user.id)
     if (idsToBeRegistered && idsToBeRegistered.length > 0)
       await addResultDownloadLog(idsToBeRegistered, user.id)
-  })
+  }
   // eslint-disable-next-line no-console
   myProm.catch(err => console.log(err))
   return result
