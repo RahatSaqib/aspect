@@ -44,7 +44,7 @@ describe('Result routes', () => {
     clinicianAccessToken = await getClinicianAccessToken()
   })
 
-  describe('GET', () => {
+  describe.only('GET', () => {
     shared.checkToken(server, path)
 
     it('should return a list of results', async () =>
@@ -279,7 +279,7 @@ describe('Result routes', () => {
   })
 
   describe('PUT', () => {
-    after(async () =>
+    after(() =>
       runTestWithKnex(async knex => {
         await knex('ResultTreatmentStatusLog')
           .where('resultId', resultId)
@@ -498,7 +498,7 @@ describe('Result routes', () => {
       })
     }
 
-    it('Should update result treatment status given a resultId - with externalId', () =>
+    it('Should update result treatment status given a resultId - with externalId', async () =>
       runTestWithKnex(async knex => {
         const changedOn = new Date()
         const updateWithExternalId = {
@@ -517,11 +517,11 @@ describe('Result routes', () => {
           .first('l.resultId as testResultId')
 
         // update with external ID
-        server
+        return server
           .put(`${path}/treatment-status/${testResultId}`)
           .send(updateWithExternalId)
           .set('Authorization', `Bearer${shared.token}`)
-          .end((err, res) => {
+          .then(res => {
             baseTreatmentStatusAssertion(res)
 
             const { treatmentStatus } = res.body.data
@@ -620,7 +620,7 @@ describe('Result routes', () => {
 
       afterEach(context.afterEach)
 
-      it('Should save values to the formData field in the result', async () =>
+      it('Should save values to the formData field in the result', () =>
         runTestWithKnex(async knex => {
           let response = await server
             .put(`${path}/form-data/${resultId}`)
@@ -693,7 +693,7 @@ describe('Result routes', () => {
           )
         }))
 
-      it("Should NOT save values to the formData field in the result when field sent is not in the assay's form schema", async () =>
+      it("Should NOT save values to the formData field in the result when field sent is not in the assay's form schema", () =>
         runTestWithKnex(async knex => {
           const response = await server
             .put(`${path}/form-data/${resultId}`)
@@ -709,7 +709,7 @@ describe('Result routes', () => {
           assert.isNull(resultFromDatabase.formData)
         }))
 
-      it("Should NOT save values to the formData field in the result when value is not in the selector field's options list", async () =>
+      it("Should NOT save values to the formData field in the result when value is not in the selector field's options list", () =>
         runTestWithKnex(async knex => {
           const response = await server
             .put(`${path}/form-data/${resultId}`)
