@@ -350,11 +350,11 @@ describe('Result download routes', () => {
     })
 
     it('should return a paged list of results, including all result details, that the clinician has access to', () =>
-      runTestWithKnex(knex => {
-        server
+      runTestWithKnex(async knex => {
+        await server
           .get(`${path}?deviceType=DaktariVirology`)
           .set('Authorization', `Bearer ${clinicianAccessToken}`)
-          .end(async (err, res) => {
+          .then(async res => {
             assert.equal(res.status, 200)
             assert.typeOf(res.body, 'Object')
 

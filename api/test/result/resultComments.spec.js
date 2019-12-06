@@ -30,7 +30,7 @@ describe('Result Comments', () => {
   let text = 'Cough confirmed'
   let clinicianAccessToken = ''
   let adminAccessToken = ''
-  before(async () =>
+  before(() =>
     runTestWithKnex(async knex => {
       await knex('ResultNote')
         .where('resultId', resultId)

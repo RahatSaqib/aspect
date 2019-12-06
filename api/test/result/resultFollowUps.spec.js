@@ -43,7 +43,7 @@ describe('Result Follow Up', () => {
     const resultId = 1
     const path = `/api/result/follow-up/${resultId}`
 
-    it('Should add a follow up to a result and update treatment status', async () =>
+    it('Should add a follow up to a result and update treatment status', () =>
       runTestWithKnex(async knex => {
         const { id: followUpId } = await knex('FollowUp')
           .where('externalId', 'drtb-prexdr')
@@ -117,7 +117,7 @@ describe('Result Follow Up', () => {
     const resultId = 1
     const path = `/api/result/follow-up/${resultId}`
 
-    it('Should update the date of a result follow up', async () =>
+    it('Should update the date of a result follow up', () =>
       runTestWithKnex(async knex => {
         const date = new Date('2019-09-01')
 
@@ -142,7 +142,7 @@ describe('Result Follow Up', () => {
         assert.equal(existingFollowUp.followUpId, updatedFollowUp.followUpId)
       }))
 
-    it('Should update the follow up of a result follow up', async () =>
+    it('Should update the follow up of a result follow up', () =>
       runTestWithKnex(async knex => {
         const existingFollowUp = await knex('ResultFollowUp')
           .where('resultId', resultId)
@@ -185,7 +185,7 @@ describe('Result Follow Up', () => {
     const resultId = 1
     const path = `/api/result/follow-up/${resultId}`
 
-    it('Should delete the follow up with the given external ID', async () =>
+    it('Should delete the follow up with the given external ID', () =>
       runTestWithKnex(async knex => {
         const response = await server
           .delete(`${path}`)
@@ -209,7 +209,7 @@ describe('Result Follow Up', () => {
         assert(!followUps)
       }))
 
-    it('Should return result details even if follow up was not found', async () =>
+    it('Should return result details even if follow up was not found', () =>
       runTestWithKnex(async knex => {
         const response = await server
           .delete(`${path}`)

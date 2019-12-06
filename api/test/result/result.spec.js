@@ -44,7 +44,7 @@ describe('Result routes', () => {
     clinicianAccessToken = await getClinicianAccessToken()
   })
 
-  describe.only('GET', () => {
+  describe('GET', () => {
     shared.checkToken(server, path)
 
     it('should return a list of results', async () =>
