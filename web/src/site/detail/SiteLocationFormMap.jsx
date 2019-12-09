@@ -89,19 +89,26 @@ export class SiteLocationFormMap extends PureComponent {
       : fullAddressInSite
     const addressQuery = formatFullAddressToAddressQuery(fullAddress)
 
-    this.geocoder.geocode(
-      {
-        address: addressQuery,
-      },
-      (results, status) => {
-        if (this.isUnmounted) {
-          return
-        }
-        if (status !== google.maps.GeocoderStatus.OK) {
-          return
-        }
-        this.handlePositionFound(results[0])
-      }
+    window.addEventListener(
+      'keyup',
+      _.debounce(
+        () =>
+          this.geocoder.geocode(
+            {
+              address: addressQuery,
+            },
+            (results, status) => {
+              if (this.isUnmounted) {
+                return
+              }
+              if (status !== google.maps.GeocoderStatus.OK) {
+                return
+              }
+              this.handlePositionFound(results[0])
+            }
+          ),
+        1000
+      )
     )
   }
 
