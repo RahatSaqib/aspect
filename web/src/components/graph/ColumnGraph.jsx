@@ -77,17 +77,11 @@ class ColumnGraph extends Component {
     })
 
     // Compose together the scale and accessor functions to get point functions
-    const yPoint = _.flowRight(
-      yScale,
-      y
-    )
+    const yPoint = _.flowRight(yScale, y)
 
     const xPoint = []
     for (let i = 0; i < maxLength; i++) {
-      xPoint[i] = _.flowRight(
-        xScale,
-        x[i]
-      )
+      xPoint[i] = _.flowRight(xScale, x[i])
     }
 
     // determine labelling based on props

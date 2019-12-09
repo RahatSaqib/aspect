@@ -921,7 +921,10 @@ describe('geography action creators', () => {
   describe('fetchStatesForLocationSelector', () => {
     beforeAll(() => {
       countriesState = createCountriesStateWith(
-        [{ id: 1, name: 'South Africa' }, { id: 2, name: 'United States' }],
+        [
+          { id: 1, name: 'South Africa' },
+          { id: 2, name: 'United States' },
+        ],
         now
       )
     })
