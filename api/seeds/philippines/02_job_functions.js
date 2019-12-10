@@ -5,6 +5,7 @@ module.exports = require('../utils').seed(seed, __filename, {
 const Promise = require('bluebird')
 const _ = require('lodash')
 
+const treatmentStatus = require('../fixtures/treatmentStatus.json')
 const {
   getPartnerByName,
   getFeatureByModule,
@@ -14,15 +15,17 @@ const jobFunctions = require('./fixtures/jobFunctions.json')
 const { upsertJobFunction } = require('../common')
 
 async function seed(knex) {
+  await knex('ResultTreatmentStatus').insert(treatmentStatus)
+
   const partner = await getPartnerByName(knex, 'Philippines')
   await Promise.each(jobFunctions, async jf => {
     const jobFunction = _.omit(jf, ['features', 'permissions'])
-    const featureIds = await Promise.map(jf.features, async feature => {
+    const featureIds = await Promise.map(jf.features || [], async feature => {
       const { id: featureId } = await getFeatureByModule(knex, feature)
       return featureId
     })
     const permissionIds = await Promise.map(
-      jf.permissions,
+      jf.permissions || [],
       async permission => {
         const { id: permissionId } = await getPermissonByModuleAndActivity(
           knex,

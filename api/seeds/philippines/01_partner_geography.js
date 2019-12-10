@@ -6,7 +6,7 @@ module.exports = require('../utils').seed(seed, __filename, {
 const bcrypt = require('bcrypt')
 const config = require('../../src/config')
 const { partnerTypeToId } = require('../../src/shared/dictionary')
-const geography = require('./fixtures/Geography.json')
+const geography = require('./fixtures/geography.json')
 const { commonUpserts } = require('../common')
 
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
