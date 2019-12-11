@@ -41,23 +41,16 @@ export function getLatLongFromAddress(address) {
         lng: location.lng(),
       })
 
-    window.addEventListener(
-      'keyup',
-      _.debounce(
-        () =>
-          geocoder.geocode(
-            {
-              address: addressQuery,
-            },
-            (results, status) => {
-              if (status !== google.maps.GeocoderStatus.OK) {
-                return reject(new Error('bad geocoder status'))
-              }
-              handler(results[0])
-            }
-          ),
-        1000
-      )
+    geocoder.geocode(
+      {
+        address: addressQuery,
+      },
+      (results, status) => {
+        if (status !== google.maps.GeocoderStatus.OK) {
+          return reject(new Error('bad geocoder status'))
+        }
+        handler(results[0])
+      }
     )
   })
 }

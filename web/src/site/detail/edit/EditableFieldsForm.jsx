@@ -1,9 +1,10 @@
 // Imports from packages
 import PropTypes from 'prop-types'
 import React from 'react'
+import { connect } from 'react-redux'
 
 import { compose, setPropTypes, pure, withHandlers } from 'recompose'
-import { Field, reduxForm } from 'redux-form/immutable'
+import { Field, reduxForm, formValueSelector } from 'redux-form/immutable'
 import classnames from 'classnames/bind'
 
 // Material-UI
@@ -51,6 +52,8 @@ function validate(values) {
   return errors
 }
 
+const selector = formValueSelector('siteDetail')
+
 const enhance = compose(
   setPropTypes({
     labels: PropTypes.object.isRequired,
@@ -58,6 +61,31 @@ const enhance = compose(
     updateLatLongFromFormAddress: PropTypes.func.isRequired,
   }),
   pure,
+  connect(
+    state => {
+      const latLngInForm = selector(state, 'lat', 'lng')
+      const fullAddressInForm = selector(
+        state,
+        'country',
+        'state',
+        'lga',
+        'city',
+        'address',
+        'address2'
+      )
+      // const fullAddressInSite = address(props.site)
+
+      const debounced = false
+
+      return {
+        latLngInForm,
+        // fullAddressInSite,
+        fullAddressInForm,
+        debounced,
+      }
+    },
+    {}
+  ),
   reduxForm({
     form: 'siteDetail',
     validate,
@@ -126,12 +154,14 @@ export const EditableFieldsForm = ({
         name="address"
         label={labels.address}
         component={renderTextField}
+        onBlur={onSetBasedAddressClick}
       />
       <Field
         className={cssClasses('container__field')}
         name="address2"
         label={labels.address2}
         component={renderTextField}
+        onBlur={onSetBasedAddressClick}
       />
     </div>
     <div className={cssClasses('container')}>
@@ -140,6 +170,7 @@ export const EditableFieldsForm = ({
         name="city"
         label={labels.city}
         component={renderTextField}
+        onBlur={onSetBasedAddressClick}
       />
       <Field
         className={cssClasses('container__field')}
