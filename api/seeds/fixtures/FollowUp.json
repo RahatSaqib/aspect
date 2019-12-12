@@ -94,13 +94,6 @@
     {
       "assays": [],
       "type": "outcome",
-      "name": "Moved",
-      "externalId": "moved",
-      "i18nKey": "moved"
-    },
-    {
-      "assays": [],
-      "type": "outcome",
       "name": "Died",
       "externalId": "died",
       "i18nKey": "died"
