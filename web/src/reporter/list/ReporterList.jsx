@@ -66,6 +66,10 @@ const messages = defineMessages({
     id: 'pages.ReporterList.delivered',
     defaultMessage: 'Delivered',
   },
+  requiresFollowUp: {
+    id: 'pages.ReporterList.requiresFollowUp',
+    defaultMessage: 'Requires Follow-up',
+  },
   comfirmedFollowup: {
     id: 'pages.ReporterList.followup',
     defaultMessage: '% Confirmed Follow-up',
@@ -106,7 +110,17 @@ const FILTERS_CONFIG = [
 ]
 
 const searchSanitizer = makeSearchParamsSanitizer({
-  availableSortCol: ['user', 'deviceName', 'createdOn', 'lastSeen', 'status'],
+  availableSortCol: [
+    'user',
+    'deviceName',
+    'createdOn',
+    'lastSeen',
+    'delivered',
+    'confirmFollowUpRatio',
+    'status',
+    'acknowledgedRatio',
+    'requiresFollowUp',
+  ],
 })
 const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
 const filtersFromLocation = composeSanitizer(
@@ -269,22 +283,32 @@ export const ReporterList = ({
               {
                 key: 'lastSeen',
                 label: intl.formatMessage(messages.lastSeen),
+                sortable: true,
               },
               {
                 key: 'delivered',
                 label: intl.formatMessage(messages.delivered),
+                sortable: true,
               },
               {
-                key: 'comfirmedFollowup',
+                key: 'requiresFollowUp',
+                label: intl.formatMessage(messages.requiresFollowUp),
+                sortable: true,
+              },
+              {
+                key: 'confirmFollowUpRatio',
                 label: intl.formatMessage(messages.comfirmedFollowup),
+                sortable: true,
               },
               {
                 key: 'acknowledgedRatio',
                 label: intl.formatMessage(messages.acknowledgedRatio),
+                sortable: true,
               },
               {
                 key: 'totalFlagged',
                 label: intl.formatMessage(messages.flagged),
+                sortable: true,
               },
               {
                 key: 'revoked',

@@ -1,12 +1,6 @@
 const _ = require('lodash')
-const Boom = require('@hapi/boom')
-const {
-  query,
-  knex,
-  filterParams,
-  filterDateRangeParams,
-  sortPageParams,
-} = require('../db')
+const Boom = require('boom')
+const { query, knex, filterParams, sortPageParams } = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 const userService = require('../auth/service')
 const { transformGeographyFromUpdates } = require('../geography/service')
@@ -381,7 +375,6 @@ async function listRefreshTokens(request) {
     .leftJoin('Geography as g', 'p.geographyId', 'g.id')
     .where({ clientType: clientTypes.app })
     .modify(addConstraints, dataConstraints, { partner: 'prt' })
-    .modify(filterDateRangeParams, query, 'r.createdOn')
 
   const getCount = tokenQuery
     .clone()
@@ -402,7 +395,13 @@ async function listRefreshTokens(request) {
       revoked: 'r.revoked',
     })
     .leftJoin('ResultDownloadLog as rdl', function() {
-      this.on('rdl.createdBy', 'r.userId').andOn('rdl.createdOn', 'r.createdOn')
+      this.on(function() {
+        this.on('rdl.createdBy', 'r.userId')
+        if (query.minDate && query.maxDate) {
+          this.andOn('rdl.createdOn', '>=', knex.raw('?', [query.minDate]))
+          this.andOn('rdl.createdOn', '<=', knex.raw('?', [query.maxDate]))
+        }
+      })
     })
     .leftJoin('Result as rt', 'rt.id', 'rdl.resultId')
     .leftJoin('Assay as a', 'a.id', 'rt.assayId')
@@ -426,7 +425,13 @@ async function listRefreshTokens(request) {
       'rws.id',
       'rwl.resultWorkflowStatusId'
     )
-    .groupBy('rdl.createdBy', 'rdl.createdOn')
+    .leftJoin('ResultCategoryAssay as rca', function() {
+      this.on('rca.resultCategoryId', 'rt.resultCategory1').andOn(
+        'rca.assayId',
+        'rt.assayId'
+      )
+    })
+    .groupBy('r.clientId')
     .select(
       'r.clientId as id',
       'p.name as user',
@@ -434,27 +439,25 @@ async function listRefreshTokens(request) {
       'r.createdOn',
       'r.revoked',
       knex.raw(
-        "sum(case rws.externalId when 'Acknowledged' then 1 else 0 end) as totalAcknowledge"
+        "sum(case rws.externalId when 'Acknowledged' then 1 else 0 end)/sum(case when rca.requiresTreatment = '1' then 1 else 0 end) as acknowledgedRatio"
       ),
       knex.raw(
         "sum(case rws.externalId when 'Flagged' then 1 else 0 end) as totalFlagged"
       ),
       knex.raw(
-        "sum(case when  rts.externalId != 'NotPossible' then 1 else 0 end) as totalFollowUp"
+        "sum(case when  rts.externalId = 'OnTreatment' AND rca.requiresTreatment = '1' then 1 else 0 end)/sum(case when rca.requiresTreatment = '1' then 1 else 0 end) as confirmFollowUpRatio"
       ),
       knex.raw('count(rdl.id) as delivered'),
       knex.raw(
         'GREATEST(ifnull(r.updatedOn, r.createdOn), max(rdl.createdOn)) as lastSeen'
+      ),
+      knex.raw(
+        "sum(case when rca.requiresTreatment = '1' then 1 else 0 end) as requiresFollowUp"
       )
     )
 
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
 
-  // TODO: Fix with real data from Results download table
-  data.forEach(it => {
-    it.acknowledgedRatio = it.totalAcknowledge / it.delivered
-    it.confirmFollowUpRatio = it.totalFollowUp / it.delivered
-  })
   return { ok: true, total, length: data.length, data }
 }
 

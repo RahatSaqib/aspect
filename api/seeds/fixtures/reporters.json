@@ -12,7 +12,7 @@
         "updatedOn": null
     },
     {
-        "userId": 1,
+        "userId": 2,
         "clientId": "stri5ng",
         "clientName": "Tecno F5",
         "token": "D7EWS+LPKVfE58dIcPA294Isc1QHwDE/hJF6DGTJMDqhUoTCytaiMvtmsrJyzDiF",
@@ -24,7 +24,7 @@
         "updatedOn": null
     },
     {
-        "userId": 1,
+        "userId": 3,
         "clientId": "7c9acea298de66d5",
         "clientName": "Samsung Galaxy",
         "token": "8E1a6O92oe7Vh/XI8222DGJrsIAWg5/ZcK2E8jZG/IMstAGKDGBCVrknCi6Ev0fS",
@@ -36,7 +36,7 @@
         "updatedOn": null
     },
     {
-        "userId": 3,
+        "userId": 4,
         "clientId": "stri1ng",
         "clientName": "Infinix ",
         "token": "D7EWS+LPKVfE58dIcPA294Isc1QHwDE/gJFD7GTJMDqhUoTCytaiMvtmsrJyzDiF",
@@ -48,7 +48,7 @@
         "updatedOn": null
     },
     {
-        "userId": 2,
+        "userId": 5,
         "clientId": "7c9acea348de66d5",
         "clientName": "moto g(6) plus",
         "token": "8E1a6O92oe7Vh/XI8222DGJrsIAWg5/ZcK8E8jZG/IMstAGKDGBCVrknCi6Ev0fS",
@@ -60,7 +60,7 @@
         "updatedOn": null
     },
     {
-        "userId": 4,
+        "userId": 6,
         "clientId": "strin4g",
         "clientName": "ariel",
         "token": "D7EWS+LPKVfE58dIcPA294Isc2QHwDE/gJF6DGTJMDqhUoTCytaiMvtmsrJyzDiF",

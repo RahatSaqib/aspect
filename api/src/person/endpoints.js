@@ -81,15 +81,13 @@ function listReporterBaseConfig() {
           'user',
           'deviceName',
           'createdOn',
-          // TODO: Fix with real data from ResultsDownload table tbd
-          // 'lastSeen',
-          // 'lastMonth',
-          // 'thisMonth',
-          // 'deliveredLastMonth',
-          // 'deliveredThisMonth',
-          // 'acknowledgedRatio',
-          // 'totalFlagged',
-          'revoked'
+          'lastSeen',
+          'delivered',
+          'acknowledgedRatio',
+          'confirmFollowUpRatio',
+          'totalFlagged',
+          'revoked',
+          'requiresFollowUp'
         )
       ),
     },
@@ -184,25 +182,25 @@ const routes = [
                     ),
                   lastSeen: Joi.date()
                     .required()
+                    .allow(null)
                     .description('The date when the device was last online'),
                   acknowledgedRatio: Joi.number()
                     .required()
+                    .allow(null)
                     .description('The acknowledged ratio'),
                   confirmFollowUpRatio: Joi.number()
                     .required()
-                    .description('The acknowledged ratio'),
+                    .allow(null)
+                    .description('The confirm follow up ratio'),
                   totalFlagged: Joi.number()
-                    .required()
-                    .description('The total flagged'),
-                  totalFollowUp: Joi.number()
-                    .required()
-                    .description('The total flagged'),
-                  totalAcknowledge: Joi.number()
                     .required()
                     .description('The total flagged'),
                   delivered: Joi.number()
                     .required()
-                    .description('The total flagged'),
+                    .description('The total result delivered'),
+                  requiresFollowUp: Joi.number()
+                    .required()
+                    .description('The total requires followup'),
                 })
               ),
           }),
