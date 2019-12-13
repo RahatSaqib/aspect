@@ -2,7 +2,6 @@
 // configuration =========
 // =======================
 const _ = require('lodash')
-const Boom = require('@hapi/boom')
 const Hapi = require('@hapi/hapi')
 
 const config = require('./config')
@@ -32,15 +31,9 @@ const server = new Hapi.server({
     },
     validate: {
       failAction: async (request, h, err) => {
-        if (process.env.NODE_ENV === 'production') {
-          // In prod, log a limited error message and throw the default Bad Request error.
-          console.error('ValidationError:', err.message) // eslint-disable-line no-console
-          throw Boom.badRequest(`Invalid request payload input`)
-        } else {
-          // During development, log and respond with the full error.
-          console.error(err) // eslint-disable-line no-console
-          throw err
-        }
+        // log and respond with the full error
+        console.error(err) // eslint-disable-line no-console
+        throw err
       },
     },
   },
