@@ -1852,7 +1852,8 @@ class DefaultPhilippinesNtrl extends SynchronousDataProcessor {
     const mergeDeep = (baseValue, sourceValue) => {
       if (_.isEmpty(baseValue) && !_.isEmpty(sourceValue)) {
         return sourceValue
-      } else if (!_.isEmpty(baseValue) && _.isEmpty(sourceValue)) {
+      }
+      if (!_.isEmpty(baseValue) && _.isEmpty(sourceValue)) {
         return baseValue
       }
       if (_.isArray(baseValue) && _.isArray(sourceValue)) {
