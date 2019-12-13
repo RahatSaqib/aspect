@@ -1,0 +1,188 @@
+[
+  {
+    "name": "Admin",
+    "features": [
+      "account",
+      "summaryDashboard"
+    ]
+  },
+  {
+    "name": "Regional Officer",
+    "features": [
+      "account",
+      "summaryDashboard"
+    ]
+  },
+  {
+      "name": "Lab Manager",
+      "features": [
+          "account",
+          "device",
+          "result",
+          "person",
+          "site",
+          "summaryDashboard"
+      ],
+      "permissions": [
+          {
+              "module": "assay",
+              "activity": "view"
+          },
+          {
+              "module": "device",
+              "activity": "edit"
+          },
+          {
+              "module": "person",
+              "activity": "view"
+          },
+          {
+              "module": "result",
+              "activity": "edit"
+          },
+          {
+              "module": "treatmentStatus",
+              "activity": "edit"
+          },
+          {
+              "module": "site",
+              "activity": "edit"
+          },
+          {
+              "module": "browse",
+              "activity": "view"
+          }
+      ]
+  },
+  {
+      "name": "Lab Services Manager",
+      "features": [
+          "account",
+          "device",
+          "result",
+          "person",
+          "site",
+          "summaryDashboard"
+      ],
+      "permissions": [
+          {
+              "module": "assay",
+              "activity": "view"
+          },
+          {
+              "module": "device",
+              "activity": "edit"
+          },
+          {
+              "module": "person",
+              "activity": "view"
+          },
+          {
+              "module": "result",
+              "activity": "edit"
+          },
+          {
+              "module": "treatmentStatus",
+              "activity": "edit"
+          },
+          {
+              "module": "site",
+              "activity": "edit"
+          },
+          {
+              "module": "browse",
+              "activity": "view"
+          }
+      ]
+  },
+  {
+      "name": "Lab Worker/Med Tech",
+      "features": [
+          "account",
+          "device",
+          "result",
+          "person",
+          "site",
+          "summaryDashboard"
+      ],
+      "permissions": [
+          {
+              "module": "assay",
+              "activity": "view"
+          },
+          {
+              "module": "device",
+              "activity": "view"
+          },
+          {
+              "module": "person",
+              "activity": "view"
+          },
+          {
+              "module": "result",
+              "activity": "edit"
+          },
+          {
+              "module": "treatmentStatus",
+              "activity": "edit"
+          },
+          {
+              "module": "site",
+              "activity": "view"
+          },
+          {
+              "module": "browse",
+              "activity": "view"
+          }
+      ]
+  },
+  {
+    "name": "Lab User",
+    "features": [
+      "account",
+      "summaryDashboard"
+    ]
+  },
+  {
+      "name": "Remote Health Worker",
+      "features": [
+          "account",
+          "device",
+          "result",
+          "person",
+          "reporter",
+          "site",
+          "summaryDashboard"
+      ],
+      "permissions": [
+          {
+              "module": "assay",
+              "activity": "view"
+          },
+          {
+              "module": "device",
+              "activity": "view"
+          },
+          {
+              "module": "person",
+              "activity": "view"
+          },
+          {
+              "module": "result",
+              "activity": "edit"
+          },
+          {
+              "module": "treatmentStatus",
+              "activity": "edit"
+          },
+          {
+              "module": "site",
+              "activity": "view"
+          },
+          {
+              "module": "browse",
+              "activity": "view"
+          }
+      ]
+  }
+]
