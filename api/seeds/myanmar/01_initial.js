@@ -884,7 +884,7 @@ async function seed(knex) {
               const geoData = { countryId, stateId, lgaId }
               const [geographyId] = await knex('Geography').insert(geoData)
               lgaData.geographyId = geographyId
-              geographies.push(Object.assign({ id: geographyId }, geoData))
+              geographies.push({ id: geographyId, ...geoData })
             })
           )
         })
@@ -897,414 +897,268 @@ async function seed(knex) {
   const personIds = {}
   const adminName = 'Admin'
   userIds[adminName] = adminId
-  const [personId] = await knex('Person').insert(
-    Object.assign(
-      {
-        userId: adminId,
-        name: adminName,
-        timezone: countries.MM.timezone,
-        culture: countries.MM.culture,
-        geographyId: countries.MM.geographyId,
-      },
-      auditFields
-    )
-  )
+  const [personId] = await knex('Person').insert({
+    userId: adminId,
+    name: adminName,
+    timezone: countries.MM.timezone,
+    culture: countries.MM.culture,
+    geographyId: countries.MM.geographyId,
+    ...auditFields,
+  })
   personIds[adminName.toLowerCase()] = personId
 
   // Messages
-  const [deviceOfflineAlertTemplateId] = await knex('AlertTemplate').insert(
-    Object.assign(
-      {
-        message: 'Cannot reach network for {{numberOfDays}} days',
-      },
-      auditFields
-    )
-  )
+  const [deviceOfflineAlertTemplateId] = await knex('AlertTemplate').insert({
+    message: 'Cannot reach network for {{numberOfDays}} days',
+    ...auditFields,
+  })
 
-  const [deviceOfflineSmsTemplateId] = await knex('SmsTemplate').insert(
-    Object.assign(
-      {
-        message: '{{site.name}} cannot reach network for {{numberOfDays}} days',
-      },
-      auditFields
-    )
-  )
+  const [deviceOfflineSmsTemplateId] = await knex('SmsTemplate').insert({
+    message: '{{site.name}} cannot reach network for {{numberOfDays}} days',
+    ...auditFields,
+  })
 
-  const [deviceOfflineEmailTemplateId] = await knex('EmailTemplate').insert(
-    Object.assign(
-      {
-        subject: '{{site.name}} cannot reach network for {{numberOfDays}} days',
-        body: '{{site.name}} cannot reach network for {{numberOfDays}} days',
-        htmlBody:
-          '<em>{{site.name}}</em> cannot reach network for {{numberOfDays}} days',
-      },
-      auditFields
-    )
-  )
+  const [deviceOfflineEmailTemplateId] = await knex('EmailTemplate').insert({
+    subject: '{{site.name}} cannot reach network for {{numberOfDays}} days',
+    body: '{{site.name}} cannot reach network for {{numberOfDays}} days',
+    htmlBody:
+      '<em>{{site.name}}</em> cannot reach network for {{numberOfDays}} days',
+    ...auditFields,
+  })
   // Module temperature messages
   const [moduleTemperatureErrorAlertTemplateId] = await knex(
     'AlertTemplate'
-  ).insert(
-    Object.assign(
-      {
-        message:
-          'Temperature errors on Module {{result.moduleName}}; notify RO',
-      },
-      auditFields
-    )
-  )
+  ).insert({
+    message: 'Temperature errors on Module {{result.moduleName}}; notify RO',
+    ...auditFields,
+  })
 
   const [moduleTemperatureErrorSmsTemplateId] = await knex(
     'SmsTemplate'
-  ).insert(
-    Object.assign(
-      {
-        message:
-          '{{device.name}} has Temperature errors on Module {{result.moduleName}}; notify RO.',
-      },
-      auditFields
-    )
-  )
+  ).insert({
+    message:
+      '{{device.name}} has Temperature errors on Module {{result.moduleName}}; notify RO.',
+    ...auditFields,
+  })
 
   const [moduleTemperatureErrorEmailTemplateId] = await knex(
     'EmailTemplate'
-  ).insert(
-    Object.assign(
-      {
-        subject:
-          '{{device.name}} has Temperature errors on Module {{result.moduleName}}; notify RO.',
-        body:
-          '{{device.name}} has Temperature errors on Module {{result.moduleName}}; notify RO.',
-        htmlBody:
-          '<em>{{device.name}}</em> has Temperature errors on Module {{result.moduleName}}; notify RO.',
-      },
-      auditFields
-    )
-  )
+  ).insert({
+    subject:
+      '{{device.name}} has Temperature errors on Module {{result.moduleName}}; notify RO.',
+    body:
+      '{{device.name}} has Temperature errors on Module {{result.moduleName}}; notify RO.',
+    htmlBody:
+      '<em>{{device.name}}</em> has Temperature errors on Module {{result.moduleName}}; notify RO.',
+    ...auditFields,
+  })
 
   // Module power error messages
-  const [modulePowerErrorAlertTemplateId] = await knex('AlertTemplate').insert(
-    Object.assign(
-      {
-        message: 'Power errors on Module {{result.moduleName}}; notify RO',
-      },
-      auditFields
-    )
-  )
+  const [modulePowerErrorAlertTemplateId] = await knex('AlertTemplate').insert({
+    message: 'Power errors on Module {{result.moduleName}}; notify RO',
+    ...auditFields,
+  })
 
-  const [modulePowerErrorSmsTemplateId] = await knex('SmsTemplate').insert(
-    Object.assign(
-      {
-        message: 'Power errors on Module {{result.moduleName}}; notify RO',
-      },
-      auditFields
-    )
-  )
+  const [modulePowerErrorSmsTemplateId] = await knex('SmsTemplate').insert({
+    message: 'Power errors on Module {{result.moduleName}}; notify RO',
+    ...auditFields,
+  })
 
-  const [modulePowerErrorEmailTemplateId] = await knex('EmailTemplate').insert(
-    Object.assign(
-      {
-        subject: '{{result.moduleName}} Power Errors',
-        body: 'Power errors on Module {{result.moduleName}}; notify RO',
-        htmlBody: 'Power errors on <em>{{result.moduleName}}</em> notify RO',
-      },
-      auditFields
-    )
-  )
+  const [modulePowerErrorEmailTemplateId] = await knex('EmailTemplate').insert({
+    subject: '{{result.moduleName}} Power Errors',
+    body: 'Power errors on Module {{result.moduleName}}; notify RO',
+    htmlBody: 'Power errors on <em>{{result.moduleName}}</em> notify RO',
+    ...auditFields,
+  })
 
   // Module failure error messages
   const [moduleFailureErrorAlertTemplateId] = await knex(
     'AlertTemplate'
-  ).insert(
-    Object.assign(
-      {
-        message: 'Module {{result.moduleName}}: Critical errors; notify R.O.',
-      },
-      auditFields
-    )
-  )
+  ).insert({
+    message: 'Module {{result.moduleName}}: Critical errors; notify R.O.',
+    ...auditFields,
+  })
 
-  const [moduleFailureErrorSmsTemplateId] = await knex('SmsTemplate').insert(
-    Object.assign(
-      {
-        message: 'Module {{result.moduleName}}: Critical errors; notify R.O.',
-      },
-      auditFields
-    )
-  )
+  const [moduleFailureErrorSmsTemplateId] = await knex('SmsTemplate').insert({
+    message: 'Module {{result.moduleName}}: Critical errors; notify R.O.',
+    ...auditFields,
+  })
 
   const [moduleFailureErrorEmailTemplateId] = await knex(
     'EmailTemplate'
-  ).insert(
-    Object.assign(
-      {
-        subject: 'Module Failure Errors',
-        body: 'Module {{result.moduleName}}: Critical errors; notify R.O.',
-        htmlBody:
-          'Module <em>{{result.moduleName}}</em>: Critical errors; notify R.O.',
-      },
-      auditFields
-    )
-  )
+  ).insert({
+    subject: 'Module Failure Errors',
+    body: 'Module {{result.moduleName}}: Critical errors; notify R.O.',
+    htmlBody:
+      'Module <em>{{result.moduleName}}</em>: Critical errors; notify R.O.',
+    ...auditFields,
+  })
 
-  const [deviceNoResultsAlertTemplateId] = await knex('AlertTemplate').insert(
-    Object.assign(
-      {
-        message: 'No testing for {{numberOfDays}} days.',
-      },
-      auditFields
-    )
-  )
+  const [deviceNoResultsAlertTemplateId] = await knex('AlertTemplate').insert({
+    message: 'No testing for {{numberOfDays}} days.',
+    ...auditFields,
+  })
 
-  const [deviceNoResultsSmsTemplateId] = await knex('SmsTemplate').insert(
-    Object.assign(
-      {
-        message: '{{site.name}} no testing for {{numberOfDays}} days.',
-      },
-      auditFields
-    )
-  )
+  const [deviceNoResultsSmsTemplateId] = await knex('SmsTemplate').insert({
+    message: '{{site.name}} no testing for {{numberOfDays}} days.',
+    ...auditFields,
+  })
 
-  const [deviceNoResultsEmailTemplateId] = await knex('EmailTemplate').insert(
-    Object.assign(
-      {
-        subject: '{{site.name}} No Testing',
-        body: '{{site.name}} no testing {{numberOfDays}} days.',
-        htmlBody:
-          '<em>{{site.name}}</em> no testing for {{numberOfDays}} days.',
-      },
-      auditFields
-    )
-  )
+  const [deviceNoResultsEmailTemplateId] = await knex('EmailTemplate').insert({
+    subject: '{{site.name}} No Testing',
+    body: '{{site.name}} no testing {{numberOfDays}} days.',
+    htmlBody: '<em>{{site.name}}</em> no testing for {{numberOfDays}} days.',
+    ...auditFields,
+  })
 
   // Machine temperature error messages
   const [machineTemperatureErrorAlertTemplateId] = await knex(
     'AlertTemplate'
-  ).insert(
-    Object.assign(
-      {
-        message: 'Temperature errors across machine, conduct troubleshooting.',
-      },
-      auditFields
-    )
-  )
+  ).insert({
+    message: 'Temperature errors across machine, conduct troubleshooting.',
+    ...auditFields,
+  })
 
   const [machineTemperatureErrorSmsTemplateId] = await knex(
     'SmsTemplate'
-  ).insert(
-    Object.assign(
-      {
-        message: 'Temperature errors across machine, conduct troubleshooting.',
-      },
-      auditFields
-    )
-  )
+  ).insert({
+    message: 'Temperature errors across machine, conduct troubleshooting.',
+    ...auditFields,
+  })
 
   const [machineTemperatureErrorEmailTemplateId] = await knex(
     'EmailTemplate'
-  ).insert(
-    Object.assign(
-      {
-        subject: 'Machine Temperature Errors',
-        body: 'Temperature errors across machine, conduct troubleshooting.',
-        htmlBody: 'Temperature errors across machine, conduct troubleshooting',
-      },
-      auditFields
-    )
-  )
+  ).insert({
+    subject: 'Machine Temperature Errors',
+    body: 'Temperature errors across machine, conduct troubleshooting.',
+    htmlBody: 'Temperature errors across machine, conduct troubleshooting',
+    ...auditFields,
+  })
 
   // Module Generic issue messages
   const [moduleGenericErrorAlertTemplateId] = await knex(
     'AlertTemplate'
-  ).insert(
-    Object.assign(
-      {
-        message: 'Module {{module.moduleName}} errors, conduct troubleshooting',
-      },
-      auditFields
-    )
-  )
+  ).insert({
+    message: 'Module {{module.moduleName}} errors, conduct troubleshooting',
+    ...auditFields,
+  })
 
-  const [moduleGenericErrorSmsTemplateId] = await knex('SmsTemplate').insert(
-    Object.assign(
-      {
-        message: 'Module {{result.moduleName}} errors, conduct troubleshooting',
-      },
-      auditFields
-    )
-  )
+  const [moduleGenericErrorSmsTemplateId] = await knex('SmsTemplate').insert({
+    message: 'Module {{result.moduleName}} errors, conduct troubleshooting',
+    ...auditFields,
+  })
 
   const [moduleGenericErrorEmailTemplateId] = await knex(
     'EmailTemplate'
-  ).insert(
-    Object.assign(
-      {
-        subject: 'Machine Temperature Errors',
-        body: 'Module {{result.moduleName}} errors, conduct troubleshooting',
-        htmlBody:
-          'Module <em>{{result.moduleName}}</em> errors, conduct troubleshooting',
-      },
-      auditFields
-    )
-  )
+  ).insert({
+    subject: 'Machine Temperature Errors',
+    body: 'Module {{result.moduleName}} errors, conduct troubleshooting',
+    htmlBody:
+      'Module <em>{{result.moduleName}}</em> errors, conduct troubleshooting',
+    ...auditFields,
+  })
 
   // Machine Power issue templates
   const [machinePowerErrorAlertTemplateId] = await knex('AlertTemplate').insert(
-    Object.assign(
-      {
-        message: 'Power error across machine, conduct troubleshooting',
-      },
-      auditFields
-    )
+    {
+      message: 'Power error across machine, conduct troubleshooting',
+      ...auditFields,
+    }
   )
 
-  const [machinePowerErrorSmsTemplateId] = await knex('SmsTemplate').insert(
-    Object.assign(
-      {
-        message: 'Power error across machine, conduct troubleshooting',
-      },
-      auditFields
-    )
-  )
+  const [machinePowerErrorSmsTemplateId] = await knex('SmsTemplate').insert({
+    message: 'Power error across machine, conduct troubleshooting',
+    ...auditFields,
+  })
 
   const [machinePowerErrorEmailTemplateId] = await knex('EmailTemplate').insert(
-    Object.assign(
-      {
-        subject: 'Power error across machine',
-        body: 'Power error across machine, conduct troubleshooting',
-        htmlBody: 'Power error across machine, conduct troubleshooting',
-      },
-      auditFields
-    )
+    {
+      subject: 'Power error across machine',
+      body: 'Power error across machine, conduct troubleshooting',
+      htmlBody: 'Power error across machine, conduct troubleshooting',
+      ...auditFields,
+    }
   )
 
   // Machine Generic issue templates
   const [machineGenericErrorAlertTemplateId] = await knex(
     'AlertTemplate'
-  ).insert(
-    Object.assign(
-      {
-        message: 'Generic errors across machine, conduct troubleshooting',
-      },
-      auditFields
-    )
-  )
+  ).insert({
+    message: 'Generic errors across machine, conduct troubleshooting',
+    ...auditFields,
+  })
 
-  const [machineGenericErrorSmsTemplateId] = await knex('SmsTemplate').insert(
-    Object.assign(
-      {
-        message: 'Generic errors across machine, conduct troubleshooting',
-      },
-      auditFields
-    )
-  )
+  const [machineGenericErrorSmsTemplateId] = await knex('SmsTemplate').insert({
+    message: 'Generic errors across machine, conduct troubleshooting',
+    ...auditFields,
+  })
 
   const [machineGenericErrorEmailTemplateId] = await knex(
     'EmailTemplate'
-  ).insert(
-    Object.assign(
-      {
-        subject: 'Generic Errors',
-        body: 'Generic errors across machine, conduct troubleshooting',
-        htmlBody: 'Generic errors across machine, conduct troubleshooting',
-      },
-      auditFields
-    )
-  )
+  ).insert({
+    subject: 'Generic Errors',
+    body: 'Generic errors across machine, conduct troubleshooting',
+    htmlBody: 'Generic errors across machine, conduct troubleshooting',
+    ...auditFields,
+  })
 
   // Data Category Low issue templates
-  const [dataCategoryLowAlertTemplateId] = await knex('AlertTemplate').insert(
-    Object.assign(
-      {
-        message:
-          '{{dataCategoryName}} collection rate {{dataCategoryCollectionRatePercentage}}',
-      },
-      auditFields
-    )
-  )
+  const [dataCategoryLowAlertTemplateId] = await knex('AlertTemplate').insert({
+    message:
+      '{{dataCategoryName}} collection rate {{dataCategoryCollectionRatePercentage}}',
+    ...auditFields,
+  })
 
-  const [dataCategoryLowSmsTemplateId] = await knex('SmsTemplate').insert(
-    Object.assign(
-      {
-        message:
-          '{{dataCategoryName}} collection rate {{dataCategoryCollectionRatePercentage}}',
-      },
-      auditFields
-    )
-  )
+  const [dataCategoryLowSmsTemplateId] = await knex('SmsTemplate').insert({
+    message:
+      '{{dataCategoryName}} collection rate {{dataCategoryCollectionRatePercentage}}',
+    ...auditFields,
+  })
 
-  const [dataCategoryLowEmailTemplateId] = await knex('EmailTemplate').insert(
-    Object.assign(
-      {
-        subject: 'Low Collection Rate',
-        body:
-          '{{dataCategoryName}} collection rate {{dataCategoryCollectionRatePercentage}}',
-        htmlBody:
-          '{{dataCategoryName}} collection rate {{dataCategoryCollectionRatePercentage}}',
-      },
-      auditFields
-    )
-  )
+  const [dataCategoryLowEmailTemplateId] = await knex('EmailTemplate').insert({
+    subject: 'Low Collection Rate',
+    body:
+      '{{dataCategoryName}} collection rate {{dataCategoryCollectionRatePercentage}}',
+    htmlBody:
+      '{{dataCategoryName}} collection rate {{dataCategoryCollectionRatePercentage}}',
+    ...auditFields,
+  })
 
   // Stock level update issue templates
-  const [stockLevelUpdateAlertTemplateId] = await knex('AlertTemplate').insert(
-    Object.assign(
-      {
-        message: 'Update Stock Level',
-      },
-      auditFields
-    )
-  )
+  const [stockLevelUpdateAlertTemplateId] = await knex('AlertTemplate').insert({
+    message: 'Update Stock Level',
+    ...auditFields,
+  })
 
-  const [stockLevelUpdateSmsTemplateId] = await knex('SmsTemplate').insert(
-    Object.assign(
-      {
-        message: '{{site.name}} - Update Stock Level',
-      },
-      auditFields
-    )
-  )
+  const [stockLevelUpdateSmsTemplateId] = await knex('SmsTemplate').insert({
+    message: '{{site.name}} - Update Stock Level',
+    ...auditFields,
+  })
 
-  const [stockLevelUpdateEmailTemplateId] = await knex('EmailTemplate').insert(
-    Object.assign(
-      {
-        subject: '{{site.name}} - Update Stock Level',
-        body: '{{site.name}} - Update Stock Level',
-        htmlBody: '{{site.name}} - Update Stock Level',
-      },
-      auditFields
-    )
-  )
+  const [stockLevelUpdateEmailTemplateId] = await knex('EmailTemplate').insert({
+    subject: '{{site.name}} - Update Stock Level',
+    body: '{{site.name}} - Update Stock Level',
+    htmlBody: '{{site.name}} - Update Stock Level',
+    ...auditFields,
+  })
 
   // Stock level update issue templates
-  const [reagentHealthAlertTemplateId] = await knex('AlertTemplate').insert(
-    Object.assign(
-      {
-        message: 'Cartridge-specific errors exceed 5%',
-      },
-      auditFields
-    )
-  )
+  const [reagentHealthAlertTemplateId] = await knex('AlertTemplate').insert({
+    message: 'Cartridge-specific errors exceed 5%',
+    ...auditFields,
+  })
 
-  const [reagentHealthSmsTemplateId] = await knex('SmsTemplate').insert(
-    Object.assign(
-      {
-        message: '{{site.name}} - Cartridge-specific errors exceed 5%',
-      },
-      auditFields
-    )
-  )
+  const [reagentHealthSmsTemplateId] = await knex('SmsTemplate').insert({
+    message: '{{site.name}} - Cartridge-specific errors exceed 5%',
+    ...auditFields,
+  })
 
-  const [reagentHealthEmailTemplateId] = await knex('EmailTemplate').insert(
-    Object.assign(
-      {
-        subject: '{{site.name}} - Cartridge-specific errors exceed 5%',
-        body: '{{site.name}} - Cartridge-specific errors exceed 5%',
-        htmlBody: '{{site.name}} - Cartridge-specific errors exceed 5%',
-      },
-      auditFields
-    )
-  )
+  const [reagentHealthEmailTemplateId] = await knex('EmailTemplate').insert({
+    subject: '{{site.name}} - Cartridge-specific errors exceed 5%',
+    body: '{{site.name}} - Cartridge-specific errors exceed 5%',
+    htmlBody: '{{site.name}} - Cartridge-specific errors exceed 5%',
+    ...auditFields,
+  })
 
   const messageSeverities = await allMessageSeverityToId()
 

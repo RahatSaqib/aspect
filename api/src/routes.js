@@ -170,11 +170,10 @@ function asyncHandler(handler) {
 // extracts and sanitizes the parameters related to sorting and paging
 // from the candidate params and returns them as an object
 function getSortPageParams(params, sortColumnMapping, defaultSort) {
-  return Object.assign(
-    {},
-    getSortParams(params, sortColumnMapping, defaultSort),
-    getPageParams(params)
-  )
+  return {
+    ...getSortParams(params, sortColumnMapping, defaultSort),
+    ...getPageParams(params),
+  }
 }
 
 // extracts and sanitizes the parameters related to sorting from the

@@ -133,7 +133,7 @@ async function seed(knex) {
               const geoData = { countryId, stateId, lgaId }
               const [geographyId] = await knex('Geography').insert(geoData)
               lgaData.geographyId = geographyId
-              geographies.push(Object.assign({ id: geographyId }, geoData))
+              geographies.push({ id: geographyId, ...geoData })
             })
           )
         })
@@ -146,17 +146,13 @@ async function seed(knex) {
   const personIds = {}
   const adminName = 'Admin'
   userIds[adminName] = adminId
-  const [personId] = await knex('Person').insert(
-    Object.assign(
-      {
-        userId: adminId,
-        name: adminName,
-        timezone: countries.ZA.timezone,
-        culture: countries.ZA.culture,
-        geographyId: countries.ZA.geographyId,
-      },
-      auditFields
-    )
-  )
+  const [personId] = await knex('Person').insert({
+    userId: adminId,
+    name: adminName,
+    timezone: countries.ZA.timezone,
+    culture: countries.ZA.culture,
+    geographyId: countries.ZA.geographyId,
+    ...auditFields,
+  })
   personIds[adminName.toLowerCase()] = personId
 }

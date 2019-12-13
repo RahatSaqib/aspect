@@ -231,14 +231,10 @@ async function upsertJobFunctionPermission(
     jobPermissions.filter(
       permissionId => !existingJobFunctionPermissions.includes(permissionId)
     ),
-    permissionId =>
-      Object.assign(
-        {},
-        {
-          jobFunctionId,
-          permissionId,
-        }
-      )
+    permissionId => ({
+      jobFunctionId,
+      permissionId,
+    })
   )
   return knex('JobFunctionPermission').insert(JobFunctionPermission)
 }
@@ -251,14 +247,10 @@ async function upsertJobFeatures(knex, jobFunctionId, jobFeatures) {
     jobFeatures.filter(
       featureId => !existingJobFunctionFeatures.includes(featureId)
     ),
-    featureId =>
-      Object.assign(
-        {},
-        {
-          jobFunctionId,
-          featureId,
-        }
-      )
+    featureId => ({
+      jobFunctionId,
+      featureId,
+    })
   )
   return knex('JobFunctionFeature').insert(JobFunctionFeature)
 }

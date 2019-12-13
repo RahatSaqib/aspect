@@ -26,25 +26,19 @@ function listContactBaseConfig() {
   return {
     auth: { scope: ['person:view', 'person:edit'] },
     validate: {
-      query: Object.assign(
-        {
-          contactNameOrEmail: Joi.string()
-            .allow('')
-            .description('Filter for person name/email'),
-        },
-        {
-          siteId: Joi.number()
-            .allow('')
-            .description('Site ID'),
-        },
-        {
-          format: Joi.string()
-            .allow('')
-            .description('File format for exporting data'),
-        },
-        validateAllGeographyFilterParams(),
-        validateSortPageParams('name', 'level', 'state', 'lga')
-      ),
+      query: {
+        contactNameOrEmail: Joi.string()
+          .allow('')
+          .description('Filter for person name/email'),
+        siteId: Joi.number()
+          .allow('')
+          .description('Site ID'),
+        format: Joi.string()
+          .allow('')
+          .description('File format for exporting data'),
+        ...validateAllGeographyFilterParams(),
+        ...validateSortPageParams('name', 'level', 'state', 'lga'),
+      },
     },
   }
 }
@@ -53,25 +47,21 @@ const routes = [
     method: 'GET',
     path: '/person',
     handler: asyncHandler(listPeople),
-    config: Object.assign(
-      {
-        description: 'People List',
-        notes: 'Pageable and sortable list of people',
-      },
-      listContactBaseConfig()
-    ),
+    config: {
+      description: 'People List',
+      notes: 'Pageable and sortable list of people',
+      ...listContactBaseConfig(),
+    },
   },
   {
     method: 'GET',
     path: '/person/export',
     handler: getContactReport,
-    config: Object.assign(
-      {
-        description: 'Export Contact List into Excel or CSV',
-        notes: 'Filtered and sorted list of Contacts',
-      },
-      listContactBaseConfig()
-    ),
+    config: {
+      description: 'Export Contact List into Excel or CSV',
+      notes: 'Filtered and sorted list of Contacts',
+      ...listContactBaseConfig(),
+    },
   },
   {
     method: 'GET',
@@ -91,21 +81,19 @@ const routes = [
       description: 'List of all reporter app refresh tokens',
       auth: { scope: ['reporter:view', 'reporter:edit'] },
       validate: {
-        query: Object.assign(
-          {
-            contactNameOrEmail: Joi.string()
-              .allow('')
-              .description('Filter for person name/email'),
-            deviceName: Joi.string()
-              .allow('')
-              .description('Filter for device name'),
-            revoked: Joi.string()
-              .valid('0', '1')
-              .description('Filter for revoked status'),
-          },
-          validateAllGeographyFilterParams(),
-          validateDateRangeParams(),
-          validateSortPageParams(
+        query: {
+          contactNameOrEmail: Joi.string()
+            .allow('')
+            .description('Filter for person name/email'),
+          deviceName: Joi.string()
+            .allow('')
+            .description('Filter for device name'),
+          revoked: Joi.string()
+            .valid('0', '1')
+            .description('Filter for revoked status'),
+          ...validateAllGeographyFilterParams(),
+          ...validateDateRangeParams(),
+          ...validateSortPageParams(
             'user',
             'deviceName',
             'createdOn',
@@ -118,8 +106,8 @@ const routes = [
             // 'acknowledgedRatio',
             // 'totalFlagged',
             'revoked'
-          )
-        ),
+          ),
+        },
       },
       response: {
         options: {

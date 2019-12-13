@@ -28,19 +28,16 @@ async function generateNotificationsReport(request, reply) {
     // Also we can find a text for a header instead of create a place holder.
     _.map(
       devices.data,
-      elem =>
-        Object.assign(
-          {
-            issuesCategories: _.map(
-              elem.issueCategories,
-              current => issues[current.key]
-            )
-              .join(',')
-              .replace('[')
-              .replace(']'),
-          },
-          elem
+      elem => ({
+        issuesCategories: _.map(
+          elem.issueCategories,
+          current => issues[current.key]
         )
+          .join(',')
+          .replace('[')
+          .replace(']'),
+        ...elem,
+      })
       // this is the data source to create the reportvalues.
       // It should be an Array of JSON objects, where each must be plained (Without nested properties)
     ),

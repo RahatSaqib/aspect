@@ -4143,7 +4143,7 @@ async function seed(knex) {
               const geoData = { countryId, stateId, lgaId }
               const [geographyId] = await knex('Geography').insert(geoData)
               lgaData.geographyId = geographyId
-              geographies.push(Object.assign({ id: geographyId }, geoData))
+              geographies.push({ id: geographyId, ...geoData })
 
               // up to 5 of sites at each LGA
               if (
@@ -4157,30 +4157,28 @@ async function seed(knex) {
                       lga.cities && lga.cities[siteNumber - 1]
                         ? lga.cities[siteNumber - 1]
                         : null
-                    const siteData = Object.assign(
-                      {
-                        partnerId: partnerOneId,
-                        geographyId,
-                        externalId: `${state.name}_${siteNumber}`,
-                        name: city
-                          ? `${city} ${
-                              labStrings[_.random(0, labStrings.length - 1)]
-                            }`
-                          : `${lga.name} ${country.lgaLabel} Lab ${siteNumber}`,
-                        shortName:
-                          city || `${lga.name}, ${stateKey} ${siteNumber}`,
-                        city: city || `${lga.name} City`,
-                        street1: `${lgaData.id} Main Street`,
-                        zip: `12345-${lgaData.id}`,
-                        latitude: _.has(state, 'lat')
-                          ? state.lat + _.random(-0.5, 0.5, true)
-                          : undefined,
-                        longitude: _.has(state, 'lng')
-                          ? state.lng + _.random(-0.5, 0.5, true)
-                          : undefined,
-                      },
-                      auditFields
-                    )
+                    const siteData = {
+                      partnerId: partnerOneId,
+                      geographyId,
+                      externalId: `${state.name}_${siteNumber}`,
+                      name: city
+                        ? `${city} ${
+                            labStrings[_.random(0, labStrings.length - 1)]
+                          }`
+                        : `${lga.name} ${country.lgaLabel} Lab ${siteNumber}`,
+                      shortName:
+                        city || `${lga.name}, ${stateKey} ${siteNumber}`,
+                      city: city || `${lga.name} City`,
+                      street1: `${lgaData.id} Main Street`,
+                      zip: `12345-${lgaData.id}`,
+                      latitude: _.has(state, 'lat')
+                        ? state.lat + _.random(-0.5, 0.5, true)
+                        : undefined,
+                      longitude: _.has(state, 'lng')
+                        ? state.lng + _.random(-0.5, 0.5, true)
+                        : undefined,
+                      ...auditFields,
+                    }
                     const [siteId] = await knex('Site').insert(siteData)
                     siteData.id = siteId
                     countryData.sites.push(siteData)
@@ -4249,20 +4247,16 @@ async function seed(knex) {
           ? countries.NG.culture
           : countries.US.culture
 
-        const [personId] = await knex('Person').insert(
-          Object.assign(
-            {
-              userId,
-              name,
-              lastPartnerId,
-              lastCountryId,
-              timezone,
-              culture,
-              geographyId: geographies[geographies.length % userId].id,
-            },
-            auditFields
-          )
-        )
+        const [personId] = await knex('Person').insert({
+          userId,
+          name,
+          lastPartnerId,
+          lastCountryId,
+          timezone,
+          culture,
+          geographyId: geographies[geographies.length % userId].id,
+          ...auditFields,
+        })
         personIds[name.toLowerCase()] = personId
       }
     )
@@ -4287,33 +4281,33 @@ async function seed(knex) {
     const routerIds = []
     await Promise.each(_.range(routerNumber), async i => {
       const siteData = siteDatas[i % siteDatas.length]
-      const [routerId] = await knex('Device').insert(
-        Object.assign({}, auditFields, {
-          name: `${siteData.shortName} Router`,
-          shortName: `r${i}`,
-          deviceTypeId: deviceTypeIdRouter,
-          deviceStatusId: deviceStatusApproved,
-          partnerId: siteData.partnerId,
-          geographyId: siteData.geographyId,
-          siteId: siteData.id,
-          createdOn: new Date(+now - 3 * i * millisInHour),
-          updatedOn: new Date(+now - i * millisInHour),
-          lastPingOn: new Date(+now - (i * millisInHour) / 3),
-          lastSeenOn: new Date(+now - (i * millisInHour) / 3),
-        })
-      )
+      const [routerId] = await knex('Device').insert({
+        ...auditFields,
+        name: `${siteData.shortName} Router`,
+        shortName: `r${i}`,
+        deviceTypeId: deviceTypeIdRouter,
+        deviceStatusId: deviceStatusApproved,
+        partnerId: siteData.partnerId,
+        geographyId: siteData.geographyId,
+        siteId: siteData.id,
+        createdOn: new Date(+now - 3 * i * millisInHour),
+        updatedOn: new Date(+now - i * millisInHour),
+        lastPingOn: new Date(+now - (i * millisInHour) / 3),
+        lastSeenOn: new Date(+now - (i * millisInHour) / 3),
+      })
       routerIds.push(routerId)
     })
 
     // ... and 1-3 sims for some routers
     const sims = _.map(_.range(0, routerNumber, 2), i => {
       const routerId = routerIds[i]
-      return Object.assign({}, auditFields, {
+      return {
+        ...auditFields,
         deviceId: routerId,
         provider: i % 3 === 0 ? 'Glo' : 'Vodafone',
         serial: `SRL-${routerId}`,
         number: `+1 413 123 45${routerId}`,
-      })
+      }
     })
     await knex('DeviceSim').insert(sims)
 
@@ -4322,7 +4316,8 @@ async function seed(knex) {
     await Promise.each(_.range(deviceNumber), async i => {
       const siteData = siteDatas[i % siteDatas.length]
       const routerId = routerIds[i]
-      const device = Object.assign({}, auditFields, {
+      const device = {
+        ...auditFields,
         name: `${siteData.name} GeneXpert`,
         shortName: `GeneXpert #${i}`,
         deviceTypeId: deviceTypeGeneXpertId,
@@ -4353,25 +4348,21 @@ async function seed(knex) {
         serial: _.times(24, () =>
           String.fromCharCode(65 + _.random(25) + (_.random(1) > 0 ? 32 : 0))
         ).join(''),
-      })
+      }
 
       device.id = await knex('Device').insert(device)
       devicesGeneXpert.push(device)
 
       // Create API Keys
-      await knex('DeviceApiKey').insert(
-        Object.assign(
-          {
-            token: randomToken(),
-            revoked: 0,
-            partnerId: siteData.partnerId,
-            geographyId: siteData.geographyId,
-            siteId: siteData.id,
-            deviceId: device.id,
-          },
-          auditFields
-        )
-      )
+      await knex('DeviceApiKey').insert({
+        token: randomToken(),
+        revoked: 0,
+        partnerId: siteData.partnerId,
+        geographyId: siteData.geographyId,
+        siteId: siteData.id,
+        deviceId: device.id,
+        ...auditFields,
+      })
 
       // Create Status Log
       await knex('DeviceStatusLog').insert({
@@ -4401,66 +4392,51 @@ async function seed(knex) {
     await Promise.each(_.range(siteDatas.length), async i => {
       const siteData = siteDatas[i]
       // TB Cartridges
-      await knex('InventoryItem').insert(
-        Object.assign(
-          {
-            consumableId: consumableGxTbCartridgeId,
-            siteId: siteData.id,
-            lotNumber: `${(i + 3) * (i + 1)}${
-              ['A', 'B'][i % 2]
-            }-${(siteData.id + i) * consumableGxTbCartridgeId}`,
-            expiresOn: new Date(
-              new Date(
-                now.getTime() +
-                  _.random(-millisInNormalYear, millisInNormalYear)
-              ).setHours(0, 0, 0, 0)
-            ),
-            quantityOnHand: _.random(0, 1000),
-          },
-          auditFields
-        )
-      )
+      await knex('InventoryItem').insert({
+        consumableId: consumableGxTbCartridgeId,
+        siteId: siteData.id,
+        lotNumber: `${(i + 3) * (i + 1)}${['A', 'B'][i % 2]}-${(siteData.id +
+          i) *
+          consumableGxTbCartridgeId}`,
+        expiresOn: new Date(
+          new Date(
+            now.getTime() + _.random(-millisInNormalYear, millisInNormalYear)
+          ).setHours(0, 0, 0, 0)
+        ),
+        quantityOnHand: _.random(0, 1000),
+        ...auditFields,
+      })
       if (i % 5 === 0) {
-        await knex('InventoryItem').insert(
-          Object.assign(
-            {
-              consumableId: consumableGxEbolaCartridgeId,
-              siteId: siteData.id,
-              lotNumber: `${(i + 7) * (i + 1)}${
-                ['Q', 'P'][i % 2]
-              }-${(siteData.id + i) * consumableGxEbolaCartridgeId}`,
-              expiresOn: new Date(
-                new Date(
-                  now.getTime() +
-                    _.random(-millisInNormalYear, millisInNormalYear)
-                ).setHours(0, 0, 0, 0)
-              ),
-              quantityOnHand: _.random(0, 1000),
-            },
-            auditFields
-          )
-        )
+        await knex('InventoryItem').insert({
+          consumableId: consumableGxEbolaCartridgeId,
+          siteId: siteData.id,
+          lotNumber: `${(i + 7) * (i + 1)}${['Q', 'P'][i % 2]}-${(siteData.id +
+            i) *
+            consumableGxEbolaCartridgeId}`,
+          expiresOn: new Date(
+            new Date(
+              now.getTime() + _.random(-millisInNormalYear, millisInNormalYear)
+            ).setHours(0, 0, 0, 0)
+          ),
+          quantityOnHand: _.random(0, 1000),
+          ...auditFields,
+        })
       }
       if (i % 7 === 0) {
-        await knex('InventoryItem').insert(
-          Object.assign(
-            {
-              consumableId: consumableGxHiv1VlCartridgeId,
-              siteId: siteData.id,
-              lotNumber: `${(i + 11) * (i + 1)}${
-                ['A', 'V'][i % 2]
-              }-${(siteData.id + i) * consumableGxHiv1VlCartridgeId}`,
-              expiresOn: new Date(
-                new Date(
-                  now.getTime() +
-                    _.random(-millisInNormalYear, millisInNormalYear)
-                ).setHours(0, 0, 0, 0)
-              ),
-              quantityOnHand: _.random(0, 1000),
-            },
-            auditFields
-          )
-        )
+        await knex('InventoryItem').insert({
+          consumableId: consumableGxHiv1VlCartridgeId,
+          siteId: siteData.id,
+          lotNumber: `${(i + 11) * (i + 1)}${['A', 'V'][i % 2]}-${(siteData.id +
+            i) *
+            consumableGxHiv1VlCartridgeId}`,
+          expiresOn: new Date(
+            new Date(
+              now.getTime() + _.random(-millisInNormalYear, millisInNormalYear)
+            ).setHours(0, 0, 0, 0)
+          ),
+          quantityOnHand: _.random(0, 1000),
+          ...auditFields,
+        })
       }
     })
 
@@ -4473,19 +4449,12 @@ async function seed(knex) {
     let samples = []
     await Promise.each(_.range(resultMtbNumber / 2), async i => {
       const siteData = siteDatas[i % siteDatas.length]
-      const sample = Object.assign(
-        {},
-        {
-          externalId: `SMP-TB-${i}`,
-          collectedOn: calculateDateForResult(
-            i,
-            resultMtbNumber,
-            millisInMinute
-          ),
-          sampleTypeId: sampleTypeDBSId,
-          originSiteId: siteData.id,
-        }
-      )
+      const sample = {
+        externalId: `SMP-TB-${i}`,
+        collectedOn: calculateDateForResult(i, resultMtbNumber, millisInMinute),
+        sampleTypeId: sampleTypeDBSId,
+        originSiteId: siteData.id,
+      }
 
       sample.id = await knex('Sample').insert(sample)
 
@@ -4580,52 +4549,51 @@ async function seed(knex) {
         r => rnd >= r.minLikelihood && rnd <= r.maxLikelihood
       )
       resultData.resultText = result.resultText
-      const resultId = await knex('Result').insert(
-        Object.assign({}, auditFields, {
-          externalId: `UQTB-${i}`,
-          assayId: assayGeneXpertMtbRifId,
-          partnerId: partnerOneId,
-          geographyId: siteData.geographyId,
-          siteId: siteData.id,
-          deviceId: device.id,
-          longitude: -81.581222,
-          latitude: 28.419348,
-          resultSourceId: resultSourceDiagnosticId,
-          resultTypeId: resultTypePatientId,
-          sampleId: sample.id,
-          sampleRunNumber: `${(i % 2) + 1}`,
-          sampleGroup: `GRP-HIV-${i % 5}`,
-          resultCategory1: result.category1,
-          resultCategory2: result.category2,
-          resultData: JSON.stringify(resultData),
-          assayVersion: '4',
-          startedOn: randomDate,
-          endedOn: addMinutes(randomDate, 100),
-          createdOn: addMinutes(randomDate, 120),
-          updatedOn: addMinutes(randomDate, 180),
-          consumableSerial: `${i}12`,
-          consumableExpirationDate: new Date(+now + 200 * i * millisInHour),
-          consumableLot: `Lot ${i % 5}`,
-          instrumentSerial: `S-1234-${i % 3}`,
-          moduleName: 'Module A',
-          moduleSerial: `M-1234-${i % 4}`,
-          researchId: `R-ID-${i}`,
-          patientData: JSON.stringify(
-            getRandomTBPatientData(patientNumber, patients)
-          ),
-          senderVersion: '4.6b',
-          senderOperator: 'Marsha',
-          notes: 'This is a test... result',
-          errorCode:
-            result.category1 === resultCategoryErrorId
-              ? errorCodes[_.random(errorCodes.length)]
-              : null,
-          errorNotes:
-            result.category1 === resultCategoryErrorId
-              ? 'Exceeded cycle threshold'
-              : null,
-        })
-      )
+      const resultId = await knex('Result').insert({
+        ...auditFields,
+        externalId: `UQTB-${i}`,
+        assayId: assayGeneXpertMtbRifId,
+        partnerId: partnerOneId,
+        geographyId: siteData.geographyId,
+        siteId: siteData.id,
+        deviceId: device.id,
+        longitude: -81.581222,
+        latitude: 28.419348,
+        resultSourceId: resultSourceDiagnosticId,
+        resultTypeId: resultTypePatientId,
+        sampleId: sample.id,
+        sampleRunNumber: `${(i % 2) + 1}`,
+        sampleGroup: `GRP-HIV-${i % 5}`,
+        resultCategory1: result.category1,
+        resultCategory2: result.category2,
+        resultData: JSON.stringify(resultData),
+        assayVersion: '4',
+        startedOn: randomDate,
+        endedOn: addMinutes(randomDate, 100),
+        createdOn: addMinutes(randomDate, 120),
+        updatedOn: addMinutes(randomDate, 180),
+        consumableSerial: `${i}12`,
+        consumableExpirationDate: new Date(+now + 200 * i * millisInHour),
+        consumableLot: `Lot ${i % 5}`,
+        instrumentSerial: `S-1234-${i % 3}`,
+        moduleName: 'Module A',
+        moduleSerial: `M-1234-${i % 4}`,
+        researchId: `R-ID-${i}`,
+        patientData: JSON.stringify(
+          getRandomTBPatientData(patientNumber, patients)
+        ),
+        senderVersion: '4.6b',
+        senderOperator: 'Marsha',
+        notes: 'This is a test... result',
+        errorCode:
+          result.category1 === resultCategoryErrorId
+            ? errorCodes[_.random(errorCodes.length)]
+            : null,
+        errorNotes:
+          result.category1 === resultCategoryErrorId
+            ? 'Exceeded cycle threshold'
+            : null,
+      })
 
       await knex('ResultWorkflowLog').insert({
         resultId,
@@ -4666,7 +4634,8 @@ async function seed(knex) {
               id: siteData.externalId,
             },
             result: {
-              data: Object.assign({}, auditFields, {
+              data: {
+                ...auditFields,
                 externalId: `UQTB-${i}`,
                 assayId: assayGeneXpertMtbRifId,
                 partnerId: partnerOneId,
@@ -4709,7 +4678,7 @@ async function seed(knex) {
                   result.category1 === resultCategoryErrorId
                     ? 'Exceeded cycle threshold'
                     : null,
-              }),
+              },
             },
           },
         }),
@@ -4722,19 +4691,16 @@ async function seed(knex) {
     samples = []
     await Promise.each(_.range(resultEbolaNumber / 2), async i => {
       const siteData = siteDatas[i % siteDatas.length]
-      const sample = Object.assign(
-        {},
-        {
-          externalId: `SMP-EB-${i}`,
-          collectedOn: calculateDateForResult(
-            i,
-            resultEbolaNumber,
-            millisInMinute
-          ),
-          sampleTypeId: sampleTypePlasmaId,
-          originSiteId: siteData.id,
-        }
-      )
+      const sample = {
+        externalId: `SMP-EB-${i}`,
+        collectedOn: calculateDateForResult(
+          i,
+          resultEbolaNumber,
+          millisInMinute
+        ),
+        sampleTypeId: sampleTypePlasmaId,
+        originSiteId: siteData.id,
+      }
 
       sample.id = await knex('Sample').insert(sample)
 
@@ -4815,50 +4781,49 @@ async function seed(knex) {
         j += 1
         if (_.random(5) === 0) {
           resultData.resultText = result.resultText
-          const resultId = await knex('Result').insert(
-            Object.assign({}, auditFields, {
-              externalId: `UQEB-${i}-${j}`,
-              assayId: assayGeneXpertEbolaId,
-              partnerId: partnerOneId,
-              geographyId: siteData.geographyId,
-              siteId: siteData.id,
-              deviceId: device.id,
-              longitude: -81.581222,
-              latitude: 28.419348,
-              resultSourceId: resultSourceDiagnosticId,
-              resultTypeId: resultTypePatientId,
-              sampleId: sample.id,
-              sampleRunNumber: `${(i % 2) + 1}`,
-              resultCategory1: result.category1,
-              sampleGroup: `GRP-HIV-${i % 5}`,
-              resultCategory2: result.category2,
-              resultData: JSON.stringify(resultData),
-              assayVersion: '4',
-              startedOn: randomDate,
-              endedOn: addMinutes(randomDate, 100),
-              createdOn: addMinutes(randomDate, 120),
-              updatedOn: addMinutes(randomDate, 180),
-              consumableSerial: `${i}12`,
-              consumableExpirationDate: new Date(+now + 200 * i * millisInHour),
-              consumableLot: `Lot ${i % 5}`,
-              instrumentSerial: `S-1234-${i % 3}`,
-              moduleName: 'Module A',
-              moduleSerial: `M-1234-${i % 4}`,
-              researchId: `R-ID-${i}`,
-              patientData: JSON.stringify(patients[_.random(patientNumber)]),
-              senderVersion: '4.7a',
-              senderOperator: 'Marsha',
-              notes: 'This is an Ebola test result',
-              errorCode:
-                result.category1 === resultCategoryErrorId
-                  ? errorCodes[_.random(errorCodes.length)]
-                  : null,
-              errorNotes:
-                result.category1 === resultCategoryErrorId
-                  ? 'Exceeded cycle threshold'
-                  : null,
-            })
-          )
+          const resultId = await knex('Result').insert({
+            ...auditFields,
+            externalId: `UQEB-${i}-${j}`,
+            assayId: assayGeneXpertEbolaId,
+            partnerId: partnerOneId,
+            geographyId: siteData.geographyId,
+            siteId: siteData.id,
+            deviceId: device.id,
+            longitude: -81.581222,
+            latitude: 28.419348,
+            resultSourceId: resultSourceDiagnosticId,
+            resultTypeId: resultTypePatientId,
+            sampleId: sample.id,
+            sampleRunNumber: `${(i % 2) + 1}`,
+            resultCategory1: result.category1,
+            sampleGroup: `GRP-HIV-${i % 5}`,
+            resultCategory2: result.category2,
+            resultData: JSON.stringify(resultData),
+            assayVersion: '4',
+            startedOn: randomDate,
+            endedOn: addMinutes(randomDate, 100),
+            createdOn: addMinutes(randomDate, 120),
+            updatedOn: addMinutes(randomDate, 180),
+            consumableSerial: `${i}12`,
+            consumableExpirationDate: new Date(+now + 200 * i * millisInHour),
+            consumableLot: `Lot ${i % 5}`,
+            instrumentSerial: `S-1234-${i % 3}`,
+            moduleName: 'Module A',
+            moduleSerial: `M-1234-${i % 4}`,
+            researchId: `R-ID-${i}`,
+            patientData: JSON.stringify(patients[_.random(patientNumber)]),
+            senderVersion: '4.7a',
+            senderOperator: 'Marsha',
+            notes: 'This is an Ebola test result',
+            errorCode:
+              result.category1 === resultCategoryErrorId
+                ? errorCodes[_.random(errorCodes.length)]
+                : null,
+            errorNotes:
+              result.category1 === resultCategoryErrorId
+                ? 'Exceeded cycle threshold'
+                : null,
+          })
 
           await knex('ResultWorkflowLog').insert({
             resultId,
@@ -4898,19 +4863,16 @@ async function seed(knex) {
     samples = []
     await Promise.each(_.range(resultHivVlNumber / 2), async i => {
       const siteData = siteDatas[i % siteDatas.length]
-      const sample = Object.assign(
-        {},
-        {
-          externalId: `SMP-HIV-${i}`,
-          collectedOn: calculateDateForResult(
-            i,
-            resultHivVlNumber,
-            millisInMinute
-          ),
-          sampleTypeId: sampleTypeDBSId,
-          originSiteId: siteData.id,
-        }
-      )
+      const sample = {
+        externalId: `SMP-HIV-${i}`,
+        collectedOn: calculateDateForResult(
+          i,
+          resultHivVlNumber,
+          millisInMinute
+        ),
+        sampleTypeId: sampleTypeDBSId,
+        originSiteId: siteData.id,
+      }
 
       sample.id = await knex('Sample').insert(sample)
 
@@ -5014,48 +4976,47 @@ async function seed(knex) {
           ? validated
           : acknowledged
 
-      const resultId = await knex('Result').insert(
-        Object.assign({}, auditFields, {
-          externalId: `UQHIV-${i}`,
-          assayId: assayGeneXpertHiv1VlId,
-          partnerId: partnerOneId,
-          geographyId: siteData.geographyId,
-          siteId: siteData.id,
-          deviceId: device.id,
-          longitude: -81.581222,
-          latitude: 28.419348,
-          resultSourceId: resultSourceDiagnosticId,
-          resultTypeId: resultTypePatientId,
-          sampleId: sample.id,
-          sampleRunNumber: `${(i % 2) + 1}`,
-          resultCategory1: result.category1,
-          resultData: JSON.stringify(resultData),
-          assayVersion: '4',
-          startedOn: randomDate,
-          endedOn: addMinutes(randomDate, 92),
-          createdOn: addMinutes(randomDate, 100),
-          updatedOn: addMinutes(randomDate, 120),
-          consumableSerial: `${i}12`,
-          consumableExpirationDate: new Date(+now + 200 * i * millisInHour),
-          consumableLot: `Lot ${i % 5}`,
-          instrumentSerial: `S-1234-${i % 3}`,
-          moduleName: 'Module A',
-          moduleSerial: `M-1234-${i % 4}`,
-          researchId: `R-ID-${i}`,
-          patientData: JSON.stringify(patients[_.random(patientNumber)]),
-          senderVersion: '4.4',
-          senderOperator: 'Marsha',
-          notes: 'This is an HIV test result',
-          errorCode:
-            result.category1 === resultCategoryErrorId
-              ? errorCodes[_.random(errorCodes.length)]
-              : null,
-          errorNotes:
-            result.category1 === resultCategoryErrorId
-              ? 'Exceeded cycle threshold'
-              : null,
-        })
-      )
+      const resultId = await knex('Result').insert({
+        ...auditFields,
+        externalId: `UQHIV-${i}`,
+        assayId: assayGeneXpertHiv1VlId,
+        partnerId: partnerOneId,
+        geographyId: siteData.geographyId,
+        siteId: siteData.id,
+        deviceId: device.id,
+        longitude: -81.581222,
+        latitude: 28.419348,
+        resultSourceId: resultSourceDiagnosticId,
+        resultTypeId: resultTypePatientId,
+        sampleId: sample.id,
+        sampleRunNumber: `${(i % 2) + 1}`,
+        resultCategory1: result.category1,
+        resultData: JSON.stringify(resultData),
+        assayVersion: '4',
+        startedOn: randomDate,
+        endedOn: addMinutes(randomDate, 92),
+        createdOn: addMinutes(randomDate, 100),
+        updatedOn: addMinutes(randomDate, 120),
+        consumableSerial: `${i}12`,
+        consumableExpirationDate: new Date(+now + 200 * i * millisInHour),
+        consumableLot: `Lot ${i % 5}`,
+        instrumentSerial: `S-1234-${i % 3}`,
+        moduleName: 'Module A',
+        moduleSerial: `M-1234-${i % 4}`,
+        researchId: `R-ID-${i}`,
+        patientData: JSON.stringify(patients[_.random(patientNumber)]),
+        senderVersion: '4.4',
+        senderOperator: 'Marsha',
+        notes: 'This is an HIV test result',
+        errorCode:
+          result.category1 === resultCategoryErrorId
+            ? errorCodes[_.random(errorCodes.length)]
+            : null,
+        errorNotes:
+          result.category1 === resultCategoryErrorId
+            ? 'Exceeded cycle threshold'
+            : null,
+      })
 
       const [lastLogId] = await knex('ResultWorkflowLog').insert({
         resultId,
@@ -5075,18 +5036,15 @@ async function seed(knex) {
     samples = []
     await Promise.all(
       _.map(_.range(resultHcvNumber / 2), async i => {
-        const sample = Object.assign(
-          {},
-          {
-            externalId: `SMP-HCV-GX-${i}`,
-            collectedOn: calculateDateForResult(
-              i,
-              resultHcvNumber,
-              millisInMinute
-            ),
-            sampleTypeId: sampleTypeDBSId,
-          }
-        )
+        const sample = {
+          externalId: `SMP-HCV-GX-${i}`,
+          collectedOn: calculateDateForResult(
+            i,
+            resultHcvNumber,
+            millisInMinute
+          ),
+          sampleTypeId: sampleTypeDBSId,
+        }
 
         sample.id = await knex('Sample').insert(sample)
 
@@ -5186,52 +5144,49 @@ async function seed(knex) {
         _.map(possibleResults, async result => {
           j += 1
           if (_.random(5) === 0) {
-            const resultId = await knex('Result').insert(
-              Object.assign({}, auditFields, {
-                externalId: `UQHCV-${i}-${j}`,
-                assayId: assayGeneXpertHcvId,
-                partnerId: partnerOneId,
-                geographyId: siteData.geographyId,
-                siteId: siteData.id,
-                deviceId: device.id,
-                longitude: -81.581222,
-                latitude: 28.419348,
-                resultSourceId: resultSourceDiagnosticId,
-                resultTypeId: resultTypePatientId,
-                sampleId: sample.id,
-                sampleRunNumber: `${(i % 2) + 1}`,
-                resultCategory1: result.category1,
-                sampleGroup: `GRP-HCV-${i % 5}`,
-                resultCategory2: result.category2,
-                resultData: JSON.stringify(resultData),
-                assayVersion: '4',
-                startedOn: randomDate,
-                endedOn: addMinutes(randomDate, 100),
-                createdOn: addMinutes(randomDate, 120),
-                updatedOn: addMinutes(randomDate, 180),
-                consumableSerial: `${i}12`,
-                consumableExpirationDate: new Date(
-                  +now + 200 * i * millisInHour
-                ),
-                consumableLot: `Lot ${i % 5}`,
-                instrumentSerial: `S-1234-${i % 3}`,
-                moduleName: 'Module A',
-                moduleSerial: `M-1234-${i % 4}`,
-                researchId: `R-ID-${i}`,
-                patientData: JSON.stringify(patients[_.random(patientNumber)]),
-                senderVersion: '4.7a',
-                senderOperator: 'Marsha',
-                notes: 'This is an HCV test result',
-                errorCode:
-                  result.category1 === resultCategoryErrorId
-                    ? errorCodes[_.random(errorCodes.length)]
-                    : null,
-                errorNotes:
-                  result.category1 === resultCategoryErrorId
-                    ? 'Exceeded cycle threshold'
-                    : null,
-              })
-            )
+            const resultId = await knex('Result').insert({
+              ...auditFields,
+              externalId: `UQHCV-${i}-${j}`,
+              assayId: assayGeneXpertHcvId,
+              partnerId: partnerOneId,
+              geographyId: siteData.geographyId,
+              siteId: siteData.id,
+              deviceId: device.id,
+              longitude: -81.581222,
+              latitude: 28.419348,
+              resultSourceId: resultSourceDiagnosticId,
+              resultTypeId: resultTypePatientId,
+              sampleId: sample.id,
+              sampleRunNumber: `${(i % 2) + 1}`,
+              resultCategory1: result.category1,
+              sampleGroup: `GRP-HCV-${i % 5}`,
+              resultCategory2: result.category2,
+              resultData: JSON.stringify(resultData),
+              assayVersion: '4',
+              startedOn: randomDate,
+              endedOn: addMinutes(randomDate, 100),
+              createdOn: addMinutes(randomDate, 120),
+              updatedOn: addMinutes(randomDate, 180),
+              consumableSerial: `${i}12`,
+              consumableExpirationDate: new Date(+now + 200 * i * millisInHour),
+              consumableLot: `Lot ${i % 5}`,
+              instrumentSerial: `S-1234-${i % 3}`,
+              moduleName: 'Module A',
+              moduleSerial: `M-1234-${i % 4}`,
+              researchId: `R-ID-${i}`,
+              patientData: JSON.stringify(patients[_.random(patientNumber)]),
+              senderVersion: '4.7a',
+              senderOperator: 'Marsha',
+              notes: 'This is an HCV test result',
+              errorCode:
+                result.category1 === resultCategoryErrorId
+                  ? errorCodes[_.random(errorCodes.length)]
+                  : null,
+              errorNotes:
+                result.category1 === resultCategoryErrorId
+                  ? 'Exceeded cycle threshold'
+                  : null,
+            })
 
             await knex('ResultWorkflowLog').insert({
               resultId,
@@ -5534,9 +5489,10 @@ async function seed(knex) {
         'extraLabel',
         'extraLabelI18nKey',
       ])
-      await knex('DashboardWidgetStat').insert(
-        Object.assign({ dashboardWidgetId: widgetId }, statWidgetData)
-      )
+      await knex('DashboardWidgetStat').insert({
+        dashboardWidgetId: widgetId,
+        ...statWidgetData,
+      })
       widgetIds[_.toLower(widget.title)] = widgetId
     })
   )
@@ -5560,454 +5516,306 @@ async function seed(knex) {
   ])
 
   // Messages
-  const [deviceOfflineAlertTemplateId] = await knex('AlertTemplate').insert(
-    Object.assign(
-      {
-        message: 'Cannot reach network for {{numberOfDays device.lastPingOn}}',
-      },
-      auditFields
-    )
-  )
+  const [deviceOfflineAlertTemplateId] = await knex('AlertTemplate').insert({
+    message: 'Cannot reach network for {{numberOfDays device.lastPingOn}}',
+    ...auditFields,
+  })
 
-  const [deviceOfflineSmsTemplateId] = await knex('SmsTemplate').insert(
-    Object.assign(
-      {
-        message:
-          '{{site.name}} cannot reach network for {{numberOfDays device.lastPingOn}}',
-      },
-      auditFields
-    )
-  )
+  const [deviceOfflineSmsTemplateId] = await knex('SmsTemplate').insert({
+    message:
+      '{{site.name}} cannot reach network for {{numberOfDays device.lastPingOn}}',
+    ...auditFields,
+  })
 
-  const [deviceOfflineEmailTemplateId] = await knex('EmailTemplate').insert(
-    Object.assign(
-      {
-        subject:
-          '{{site.name}} cannot reach network for {{numberOfDays device.lastPingOn}}',
-        body:
-          '{{site.name}} cannot reach network for {{numberOfDays device.lastPingOn}}',
-        htmlBody:
-          '<em>{{site.name}}</em> cannot reach network for {{numberOfDays device.lastPingOn}}',
-      },
-      auditFields
-    )
-  )
+  const [deviceOfflineEmailTemplateId] = await knex('EmailTemplate').insert({
+    subject:
+      '{{site.name}} cannot reach network for {{numberOfDays device.lastPingOn}}',
+    body:
+      '{{site.name}} cannot reach network for {{numberOfDays device.lastPingOn}}',
+    htmlBody:
+      '<em>{{site.name}}</em> cannot reach network for {{numberOfDays device.lastPingOn}}',
+    ...auditFields,
+  })
   // Module temperature messages
   const [moduleTemperatureErrorAlertTemplateId] = await knex(
     'AlertTemplate'
-  ).insert(
-    Object.assign(
-      {
-        message:
-          'Temperature errors on Module {{issue.data.moduleName}}; notify RO',
-      },
-      auditFields
-    )
-  )
+  ).insert({
+    message:
+      'Temperature errors on Module {{issue.data.moduleName}}; notify RO',
+    ...auditFields,
+  })
 
   const [moduleTemperatureErrorSmsTemplateId] = await knex(
     'SmsTemplate'
-  ).insert(
-    Object.assign(
-      {
-        message:
-          '{{device.name}} has Temperature errors on Module {{issue.data.moduleName}}; notify RO',
-      },
-      auditFields
-    )
-  )
+  ).insert({
+    message:
+      '{{device.name}} has Temperature errors on Module {{issue.data.moduleName}}; notify RO',
+    ...auditFields,
+  })
 
   const [moduleTemperatureErrorEmailTemplateId] = await knex(
     'EmailTemplate'
-  ).insert(
-    Object.assign(
-      {
-        subject:
-          '{{device.name}} has Temperature errors on Module {{issue.data.moduleName}}',
-        body:
-          '{{device.name}} has Temperature errors on Module {{issue.data.moduleName}}; notify RO.',
-        htmlBody:
-          '<em>{{device.name}}</em> has Temperature errors on Module {{issue.data.moduleName}}; notify RO.',
-      },
-      auditFields
-    )
-  )
+  ).insert({
+    subject:
+      '{{device.name}} has Temperature errors on Module {{issue.data.moduleName}}',
+    body:
+      '{{device.name}} has Temperature errors on Module {{issue.data.moduleName}}; notify RO.',
+    htmlBody:
+      '<em>{{device.name}}</em> has Temperature errors on Module {{issue.data.moduleName}}; notify RO.',
+    ...auditFields,
+  })
 
   // Module power error messages
-  const [modulePowerErrorAlertTemplateId] = await knex('AlertTemplate').insert(
-    Object.assign(
-      {
-        message: 'Power errors on Module {{issue.data.moduleName}}; notify RO',
-      },
-      auditFields
-    )
-  )
+  const [modulePowerErrorAlertTemplateId] = await knex('AlertTemplate').insert({
+    message: 'Power errors on Module {{issue.data.moduleName}}; notify RO',
+    ...auditFields,
+  })
 
-  const [modulePowerErrorSmsTemplateId] = await knex('SmsTemplate').insert(
-    Object.assign(
-      {
-        message:
-          '{{device.name}} has power errors on Module {{issue.data.moduleName}}; notify RO',
-      },
-      auditFields
-    )
-  )
+  const [modulePowerErrorSmsTemplateId] = await knex('SmsTemplate').insert({
+    message:
+      '{{device.name}} has power errors on Module {{issue.data.moduleName}}; notify RO',
+    ...auditFields,
+  })
 
-  const [modulePowerErrorEmailTemplateId] = await knex('EmailTemplate').insert(
-    Object.assign(
-      {
-        subject:
-          '{{device.name}} has power errors on module {{issue.data.moduleName}}',
-        body:
-          '{{device.name}} has power errors on module {{issue.data.moduleName}}; notify RO',
-        htmlBody:
-          '{{device.name}} has power errors on module <em>{{issue.data.moduleName}}</em>; notify RO',
-      },
-      auditFields
-    )
-  )
+  const [modulePowerErrorEmailTemplateId] = await knex('EmailTemplate').insert({
+    subject:
+      '{{device.name}} has power errors on module {{issue.data.moduleName}}',
+    body:
+      '{{device.name}} has power errors on module {{issue.data.moduleName}}; notify RO',
+    htmlBody:
+      '{{device.name}} has power errors on module <em>{{issue.data.moduleName}}</em>; notify RO',
+    ...auditFields,
+  })
 
   // Module failure error messages
   const [moduleFailureErrorAlertTemplateId] = await knex(
     'AlertTemplate'
-  ).insert(
-    Object.assign(
-      {
-        message:
-          'Module {{issue.data.moduleName}}: Critical errors; notify R.O.',
-      },
-      auditFields
-    )
-  )
+  ).insert({
+    message: 'Module {{issue.data.moduleName}}: Critical errors; notify R.O.',
+    ...auditFields,
+  })
 
-  const [moduleFailureErrorSmsTemplateId] = await knex('SmsTemplate').insert(
-    Object.assign(
-      {
-        message:
-          'Module {{issue.data.moduleName}} in {{device.name}}: Critical errors; notify RO',
-      },
-      auditFields
-    )
-  )
+  const [moduleFailureErrorSmsTemplateId] = await knex('SmsTemplate').insert({
+    message:
+      'Module {{issue.data.moduleName}} in {{device.name}}: Critical errors; notify RO',
+    ...auditFields,
+  })
 
   const [moduleFailureErrorEmailTemplateId] = await knex(
     'EmailTemplate'
-  ).insert(
-    Object.assign(
-      {
-        subject: '{{device.name}}: Critical Module Errors',
-        body:
-          'Module {{issue.data.moduleName}} in {{device.name}}: Critical errors; notify RO',
-        htmlBody:
-          'Module <em>{{issue.data.moduleName}}</em> in {{device.name}}: Critical errors; notify RO',
-      },
-      auditFields
-    )
-  )
+  ).insert({
+    subject: '{{device.name}}: Critical Module Errors',
+    body:
+      'Module {{issue.data.moduleName}} in {{device.name}}: Critical errors; notify RO',
+    htmlBody:
+      'Module <em>{{issue.data.moduleName}}</em> in {{device.name}}: Critical errors; notify RO',
+    ...auditFields,
+  })
 
-  const [deviceNoResultsAlertTemplateId] = await knex('AlertTemplate').insert(
-    Object.assign(
-      {
-        message: 'No testing for {{numberOfDays issue.data.lastResultOn}}',
-      },
-      auditFields
-    )
-  )
+  const [deviceNoResultsAlertTemplateId] = await knex('AlertTemplate').insert({
+    message: 'No testing for {{numberOfDays issue.data.lastResultOn}}',
+    ...auditFields,
+  })
 
-  const [deviceNoResultsSmsTemplateId] = await knex('SmsTemplate').insert(
-    Object.assign(
-      {
-        message:
-          '{{device.name}} no testing for {{numberOfDays issue.data.lastResultOn}}',
-      },
-      auditFields
-    )
-  )
+  const [deviceNoResultsSmsTemplateId] = await knex('SmsTemplate').insert({
+    message:
+      '{{device.name}} no testing for {{numberOfDays issue.data.lastResultOn}}',
+    ...auditFields,
+  })
 
-  const [deviceNoResultsEmailTemplateId] = await knex('EmailTemplate').insert(
-    Object.assign(
-      {
-        subject: '{{device.name}}: No Testing',
-        body:
-          '{{device.name}} no testing {{numberOfDays issue.data.lastResultOn}}',
-        htmlBody:
-          '<em>{{device.name}}</em> no testing for {{numberOfDays issue.data.lastResultOn}}',
-      },
-      auditFields
-    )
-  )
+  const [deviceNoResultsEmailTemplateId] = await knex('EmailTemplate').insert({
+    subject: '{{device.name}}: No Testing',
+    body: '{{device.name}} no testing {{numberOfDays issue.data.lastResultOn}}',
+    htmlBody:
+      '<em>{{device.name}}</em> no testing for {{numberOfDays issue.data.lastResultOn}}',
+    ...auditFields,
+  })
 
   const [deviceMaintenanceAlertTemplateId] = await knex('AlertTemplate').insert(
-    Object.assign(
-      {
-        message: 'Under Maintenance',
-      },
-      auditFields
-    )
+    {
+      message: 'Under Maintenance',
+      ...auditFields,
+    }
   )
 
-  const [deviceMaintenanceSmsTemplateId] = await knex('SmsTemplate').insert(
-    Object.assign(
-      {
-        message: '{{site.name}} under maintenance.',
-      },
-      auditFields
-    )
-  )
+  const [deviceMaintenanceSmsTemplateId] = await knex('SmsTemplate').insert({
+    message: '{{site.name}} under maintenance.',
+    ...auditFields,
+  })
 
   const [deviceMaintenanceEmailTemplateId] = await knex('EmailTemplate').insert(
-    Object.assign(
-      {
-        subject: '{{site.name}} Maintenance',
-        body: '{{site.name}} under maintenance.',
-        htmlBody: '<em>{{site.name}}</em> maintenance',
-      },
-      auditFields
-    )
+    {
+      subject: '{{site.name}} Maintenance',
+      body: '{{site.name}} under maintenance.',
+      htmlBody: '<em>{{site.name}}</em> maintenance',
+      ...auditFields,
+    }
   )
 
   // Machine temperature error messages
   const [machineTemperatureErrorAlertTemplateId] = await knex(
     'AlertTemplate'
-  ).insert(
-    Object.assign(
-      {
-        message: 'Temperature errors across machine, conduct troubleshooting.',
-      },
-      auditFields
-    )
-  )
+  ).insert({
+    message: 'Temperature errors across machine, conduct troubleshooting.',
+    ...auditFields,
+  })
 
   const [machineTemperatureErrorSmsTemplateId] = await knex(
     'SmsTemplate'
-  ).insert(
-    Object.assign(
-      {
-        message:
-          '{{device.name}}: Temperature errors across machine, conduct troubleshooting',
-      },
-      auditFields
-    )
-  )
+  ).insert({
+    message:
+      '{{device.name}}: Temperature errors across machine, conduct troubleshooting',
+    ...auditFields,
+  })
 
   const [machineTemperatureErrorEmailTemplateId] = await knex(
     'EmailTemplate'
-  ).insert(
-    Object.assign(
-      {
-        subject: '{{device.name}}: Machine Temperature Errors',
-        body:
-          '{{device.name}}: Temperature errors across machine, conduct troubleshooting.',
-        htmlBody:
-          '<em>{{device.name}}</em>: Temperature errors across machine, conduct troubleshooting.',
-      },
-      auditFields
-    )
-  )
+  ).insert({
+    subject: '{{device.name}}: Machine Temperature Errors',
+    body:
+      '{{device.name}}: Temperature errors across machine, conduct troubleshooting.',
+    htmlBody:
+      '<em>{{device.name}}</em>: Temperature errors across machine, conduct troubleshooting.',
+    ...auditFields,
+  })
 
   // Module Procedural issue messages
   const [moduleProceduralErrorAlertTemplateId] = await knex(
     'AlertTemplate'
-  ).insert(
-    Object.assign(
-      {
-        message:
-          'Possible module failure on module {{issue.data.moduleName}} contact engineer',
-      },
-      auditFields
-    )
-  )
+  ).insert({
+    message:
+      'Possible module failure on module {{issue.data.moduleName}} contact engineer',
+    ...auditFields,
+  })
 
   const [moduleProceduralErrorSmsTemplateId] = await knex('SmsTemplate').insert(
-    Object.assign(
-      {
-        message:
-          '{{device.name}}: Possible module failure on module {{issue.data.moduleName}} contact engineer',
-      },
-      auditFields
-    )
+    {
+      message:
+        '{{device.name}}: Possible module failure on module {{issue.data.moduleName}} contact engineer',
+      ...auditFields,
+    }
   )
 
   const [moduleProceduralErrorEmailTemplateId] = await knex(
     'EmailTemplate'
-  ).insert(
-    Object.assign(
-      {
-        subject: '{{device.name}}: Possible module failure',
-        body:
-          '{{device.name}}: Possible module failure on module {{issue.data.moduleName}} contact engineer',
-        htmlBody:
-          '{{device.name}}: Possible module failure on module <em>{{issue.data.moduleName}}</em> contact engineer',
-      },
-      auditFields
-    )
-  )
+  ).insert({
+    subject: '{{device.name}}: Possible module failure',
+    body:
+      '{{device.name}}: Possible module failure on module {{issue.data.moduleName}} contact engineer',
+    htmlBody:
+      '{{device.name}}: Possible module failure on module <em>{{issue.data.moduleName}}</em> contact engineer',
+    ...auditFields,
+  })
 
   // Machine Power issue templates
   const [machinePowerErrorAlertTemplateId] = await knex('AlertTemplate').insert(
-    Object.assign(
-      {
-        message: 'Power error across machine, conduct troubleshooting',
-      },
-      auditFields
-    )
+    {
+      message: 'Power error across machine, conduct troubleshooting',
+      ...auditFields,
+    }
   )
 
-  const [machinePowerErrorSmsTemplateId] = await knex('SmsTemplate').insert(
-    Object.assign(
-      {
-        message:
-          '{{device.name}}: Power error across machine, conduct troubleshooting.',
-      },
-      auditFields
-    )
-  )
+  const [machinePowerErrorSmsTemplateId] = await knex('SmsTemplate').insert({
+    message:
+      '{{device.name}}: Power error across machine, conduct troubleshooting.',
+    ...auditFields,
+  })
 
   const [machinePowerErrorEmailTemplateId] = await knex('EmailTemplate').insert(
-    Object.assign(
-      {
-        subject: '{{device.name}}: Power error across machine',
-        body:
-          '{{device.name}}: Power error across machine, conduct troubleshooting.',
-        htmlBody:
-          '<em>{{device.name}}</em>: Power error across machine, conduct troubleshooting.',
-      },
-      auditFields
-    )
+    {
+      subject: '{{device.name}}: Power error across machine',
+      body:
+        '{{device.name}}: Power error across machine, conduct troubleshooting.',
+      htmlBody:
+        '<em>{{device.name}}</em>: Power error across machine, conduct troubleshooting.',
+      ...auditFields,
+    }
   )
 
   // Machine Procedural issue templates
   const [machineProceduralErrorAlertTemplateId] = await knex(
     'AlertTemplate'
-  ).insert(
-    Object.assign(
-      {
-        message: 'Procedural errors across machine, conduct troubleshooting',
-      },
-      auditFields
-    )
-  )
+  ).insert({
+    message: 'Procedural errors across machine, conduct troubleshooting',
+    ...auditFields,
+  })
 
   const [machineProceduralErrorSmsTemplateId] = await knex(
     'SmsTemplate'
-  ).insert(
-    Object.assign(
-      {
-        message:
-          '{{device.name}}: Procedural errors across machine, conduct troubleshooting',
-      },
-      auditFields
-    )
-  )
+  ).insert({
+    message:
+      '{{device.name}}: Procedural errors across machine, conduct troubleshooting',
+    ...auditFields,
+  })
 
   const [machineProceduralErrorEmailTemplateId] = await knex(
     'EmailTemplate'
-  ).insert(
-    Object.assign(
-      {
-        subject: '{{device.name}}: Procedural Errors',
-        body:
-          '{{device.name}}: Procedural errors across machine, conduct troubleshooting.',
-        htmlBody:
-          '<em>{{device.name}}</em>: Procedural errors across machine, conduct troubleshooting.',
-      },
-      auditFields
-    )
-  )
+  ).insert({
+    subject: '{{device.name}}: Procedural Errors',
+    body:
+      '{{device.name}}: Procedural errors across machine, conduct troubleshooting.',
+    htmlBody:
+      '<em>{{device.name}}</em>: Procedural errors across machine, conduct troubleshooting.',
+    ...auditFields,
+  })
 
   // Data Category Low issue templates
-  const [dataCategoryLowAlertTemplateId] = await knex('AlertTemplate').insert(
-    Object.assign(
-      {
-        message:
-          '{{dataCategoryName}} collection rate {{dataCategoryCollectionRatePercentage}}',
-      },
-      auditFields
-    )
-  )
+  const [dataCategoryLowAlertTemplateId] = await knex('AlertTemplate').insert({
+    message:
+      '{{dataCategoryName}} collection rate {{dataCategoryCollectionRatePercentage}}',
+    ...auditFields,
+  })
 
-  const [dataCategoryLowSmsTemplateId] = await knex('SmsTemplate').insert(
-    Object.assign(
-      {
-        message:
-          '{{dataCategoryName}} collection rate {{dataCategoryCollectionRatePercentage}}',
-      },
-      auditFields
-    )
-  )
+  const [dataCategoryLowSmsTemplateId] = await knex('SmsTemplate').insert({
+    message:
+      '{{dataCategoryName}} collection rate {{dataCategoryCollectionRatePercentage}}',
+    ...auditFields,
+  })
 
-  const [dataCategoryLowEmailTemplateId] = await knex('EmailTemplate').insert(
-    Object.assign(
-      {
-        subject: 'Low Collection Rate',
-        body:
-          '{{dataCategoryName}} collection rate {{dataCategoryCollectionRatePercentage}}',
-        htmlBody:
-          '{{dataCategoryName}} collection rate {{dataCategoryCollectionRatePercentage}}',
-      },
-      auditFields
-    )
-  )
+  const [dataCategoryLowEmailTemplateId] = await knex('EmailTemplate').insert({
+    subject: 'Low Collection Rate',
+    body:
+      '{{dataCategoryName}} collection rate {{dataCategoryCollectionRatePercentage}}',
+    htmlBody:
+      '{{dataCategoryName}} collection rate {{dataCategoryCollectionRatePercentage}}',
+    ...auditFields,
+  })
 
   // Stock level update issue templates
-  const [stockLevelUpdateAlertTemplateId] = await knex('AlertTemplate').insert(
-    Object.assign(
-      {
-        message: 'Update Stock Level',
-      },
-      auditFields
-    )
-  )
+  const [stockLevelUpdateAlertTemplateId] = await knex('AlertTemplate').insert({
+    message: 'Update Stock Level',
+    ...auditFields,
+  })
 
-  const [stockLevelUpdateSmsTemplateId] = await knex('SmsTemplate').insert(
-    Object.assign(
-      {
-        message: '{{site.name}} - Update Stock Level',
-      },
-      auditFields
-    )
-  )
+  const [stockLevelUpdateSmsTemplateId] = await knex('SmsTemplate').insert({
+    message: '{{site.name}} - Update Stock Level',
+    ...auditFields,
+  })
 
-  const [stockLevelUpdateEmailTemplateId] = await knex('EmailTemplate').insert(
-    Object.assign(
-      {
-        subject: '{{site.name}} - Update Stock Level',
-        body: '{{site.name}} - Update Stock Level',
-        htmlBody: '{{site.name}} - Update Stock Level',
-      },
-      auditFields
-    )
-  )
+  const [stockLevelUpdateEmailTemplateId] = await knex('EmailTemplate').insert({
+    subject: '{{site.name}} - Update Stock Level',
+    body: '{{site.name}} - Update Stock Level',
+    htmlBody: '{{site.name}} - Update Stock Level',
+    ...auditFields,
+  })
 
   // Stock level update issue templates
-  const [reagentHealthAlertTemplateId] = await knex('AlertTemplate').insert(
-    Object.assign(
-      {
-        message: 'Cartridge-specific errors exceed 5%',
-      },
-      auditFields
-    )
-  )
+  const [reagentHealthAlertTemplateId] = await knex('AlertTemplate').insert({
+    message: 'Cartridge-specific errors exceed 5%',
+    ...auditFields,
+  })
 
-  const [reagentHealthSmsTemplateId] = await knex('SmsTemplate').insert(
-    Object.assign(
-      {
-        message: '{{device.name}} - Cartridge-specific errors exceed 5%',
-      },
-      auditFields
-    )
-  )
+  const [reagentHealthSmsTemplateId] = await knex('SmsTemplate').insert({
+    message: '{{device.name}} - Cartridge-specific errors exceed 5%',
+    ...auditFields,
+  })
 
-  const [reagentHealthEmailTemplateId] = await knex('EmailTemplate').insert(
-    Object.assign(
-      {
-        subject: '{{device.name}} - Cartridge-specific errors exceed 5%',
-        body: '{{device.name}} - Cartridge-specific errors exceed 5%',
-        htmlBody: '{{device.name}} - Cartridge-specific errors exceed 5%',
-      },
-      auditFields
-    )
-  )
+  const [reagentHealthEmailTemplateId] = await knex('EmailTemplate').insert({
+    subject: '{{device.name}} - Cartridge-specific errors exceed 5%',
+    body: '{{device.name}} - Cartridge-specific errors exceed 5%',
+    htmlBody: '{{device.name}} - Cartridge-specific errors exceed 5%',
+    ...auditFields,
+  })
 
   const messageSeverities = await allMessageSeverityToId()
 

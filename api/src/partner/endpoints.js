@@ -12,14 +12,12 @@ const routes = [
       notes: 'Pageable and sortable list of partners',
       auth: { scope: ['device', 'site', 'partner'] },
       validate: {
-        query: Object.assign(
-          {
-            name: Joi.string()
-              .allow('')
-              .description('Filter for partner name'),
-          },
-          validateSortPageParams('name', 'partnerTypeName')
-        ),
+        query: {
+          name: Joi.string()
+            .allow('')
+            .description('Filter for partner name'),
+          ...validateSortPageParams('name', 'partnerTypeName'),
+        },
       },
     },
   },

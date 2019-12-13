@@ -25,11 +25,11 @@ const routes = [
       notes: 'The top level summary dashboard',
       auth: { scope: ['site', 'device'] },
       validate: {
-        query: Object.assign({
+        query: {
           siteId: Joi.number()
             .allow('')
             .description('Filter for site ID'),
-        }),
+        },
       },
     },
   },
@@ -95,14 +95,14 @@ const routes = [
       notes: 'The top level operational data',
       auth: { scope: ['site', 'device'] },
       validate: {
-        query: Object.assign({
+        query: {
           assayType: Joi.string()
             .allow('')
             .description('Filter for assay type'),
           dateRange: Joi.number()
             .allow('')
             .description('Filter for date range'),
-        }),
+        },
       },
     },
   },
@@ -115,19 +115,17 @@ const routes = [
       notes: 'List of action category with actions',
       auth: { scope: ['site', 'device'] },
       validate: {
-        query: Object.assign(
-          {
-            siteId: Joi.number()
-              .allow('')
-              .description('Filter for Site ID'),
-          },
-          validateSortPageParams(
+        query: {
+          siteId: Joi.number()
+            .allow('')
+            .description('Filter for Site ID'),
+          ...validateSortPageParams(
             'issueStatusSortOrder',
             'siteName',
             'deviceName',
             'message'
-          )
-        ),
+          ),
+        },
       },
     },
   },

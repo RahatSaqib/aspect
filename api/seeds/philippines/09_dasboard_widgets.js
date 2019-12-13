@@ -36,9 +36,10 @@ async function seed(knex) {
         'extraLabel',
         'extraLabelI18nKey',
       ])
-      await knex('DashboardWidgetStat').insert(
-        Object.assign({ dashboardWidgetId: widgetId }, statWidgetData)
-      )
+      await knex('DashboardWidgetStat').insert({
+        dashboardWidgetId: widgetId,
+        ...statWidgetData,
+      })
       widgetIds[_.toLower(widget.title)] = widgetId
     })
   )

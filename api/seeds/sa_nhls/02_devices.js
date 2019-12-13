@@ -83,19 +83,17 @@ async function seed(knex) {
         .first()
 
       // sites
-      const siteData = Object.assign(
-        {
-          partnerId,
-          geographyId: clinicGeographyId,
-          name: clinic.name,
-          shortName: clinic.shortName,
-          externalId: clinic.externalId,
-          latitude: clinic.latitude,
-          longitude: clinic.longitude,
-          timezoneId: southAfricaCountry.timezone,
-        },
-        auditFields
-      )
+      const siteData = {
+        partnerId,
+        geographyId: clinicGeographyId,
+        name: clinic.name,
+        shortName: clinic.shortName,
+        externalId: clinic.externalId,
+        latitude: clinic.latitude,
+        longitude: clinic.longitude,
+        timezoneId: southAfricaCountry.timezone,
+        ...auditFields,
+      }
       const existingSite = await knex('Site')
         .where('externalId', clinic.externalId)
         .orWhere('name', clinic.name)
@@ -124,24 +122,20 @@ async function seed(knex) {
               )
             const deviceTypeId = await deviceTypeToId(device.deviceTypeId)
             if (!existingDevice) {
-              await knex('Device').insert(
-                Object.assign(
-                  {
-                    partnerId,
-                    geographyId: clinicGeographyId,
-                    siteId,
-                    deviceTypeId,
-                    deviceStatusId: await deviceStatusToId('approved'),
-                    name: `${siteData.shortName} ${device.deviceTypeId} ${device.deviceSerial}`,
-                    shortName: `${device.deviceTypeId} ${device.deviceSerial}`,
-                    serial: device.deviceSerial,
-                    culture: southAfricaCountry.culture,
-                    timezone: siteData.timezoneId,
-                    configurationData: '{}',
-                  },
-                  auditFields
-                )
-              )
+              await knex('Device').insert({
+                partnerId,
+                geographyId: clinicGeographyId,
+                siteId,
+                deviceTypeId,
+                deviceStatusId: await deviceStatusToId('approved'),
+                name: `${siteData.shortName} ${device.deviceTypeId} ${device.deviceSerial}`,
+                shortName: `${device.deviceTypeId} ${device.deviceSerial}`,
+                serial: device.deviceSerial,
+                culture: southAfricaCountry.culture,
+                timezone: siteData.timezoneId,
+                configurationData: '{}',
+                ...auditFields,
+              })
             } else if (
               existingDevice.geographyId !== clinicGeographyId ||
               existingDevice.siteId !== siteId ||

@@ -12,12 +12,10 @@ const routes = [
       notes: 'Pageable and sortable list of device operations',
       auth: { scope: ['device:view', 'device:edit'] },
       validate: {
-        query: Object.assign(
-          {
-            deviceId: Joi.string().description('Filter for device id'),
-          },
-          validateSortPageParams('startedOn', 'id')
-        ),
+        query: {
+          deviceId: Joi.string().description('Filter for device id'),
+          ...validateSortPageParams('startedOn', 'id'),
+        },
       },
     },
   },

@@ -12,11 +12,10 @@ async function seed(knex) {
 
   const resultForms = await knex('ResultForm')
     .select()
-    .map(resultForm =>
-      Object.assign({}, resultForm, {
-        formSchema: JSON.parse(resultForm.formSchema),
-      })
-    )
+    .map(resultForm => ({
+      ...resultForm,
+      formSchema: JSON.parse(resultForm.formSchema),
+    }))
 
   const sampleTypeValuesNotNumeric = !_.every(resultForms, resultForm =>
     _.every(resultForm.formSchema.fields.sampleType.control.options, option =>
