@@ -1,4 +1,4 @@
-const Joi = require('joi')
+const Joi = require('@hapi/joi')
 
 const { asyncHandler } = require('../routes')
 
@@ -33,7 +33,7 @@ const routes = [
           clientId: Joi.string(),
           clientType: Joi.string()
             .lowercase()
-            .valid(Object.values(clientTypes)),
+            .valid(...Object.values(clientTypes)),
           deviceTokenId: Joi.string().allow(null),
         },
       },
@@ -78,7 +78,7 @@ const routes = [
           token: Joi.string().required(),
           clientType: Joi.string()
             .lowercase()
-            .valid(Object.values(clientTypes)),
+            .valid(...Object.values(clientTypes)),
           deviceTokenId: Joi.string().allow(null),
         },
       },
@@ -117,7 +117,7 @@ const routes = [
           clientName: Joi.string().required(),
           clientType: Joi.string()
             .lowercase()
-            .valid(Object.values(clientTypes)),
+            .valid(...Object.values(clientTypes)),
           clientId: Joi.string(),
         },
       },

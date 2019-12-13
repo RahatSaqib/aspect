@@ -1,7 +1,7 @@
 const _ = require('lodash')
 
-const { resultTreatmentStatusToId } = require('../../src/shared/dictionary')
 const { subMinutes } = require('date-fns')
+const { resultTreatmentStatusToId } = require('../../src/shared/dictionary')
 
 module.exports = require('../utils').seed(seed, __filename)
 

@@ -1389,9 +1389,11 @@ describe('Device Result API routes', () => {
               const { siteId } = await knex('Device')
                 .where({ id: resultDetails.deviceId })
                 .first('siteId')
-              const cartridgeId = (await knex('Consumable')
-                .where({ name: resultDetails.cartridgeName })
-                .first('id')).id
+              const cartridgeId = (
+                await knex('Consumable')
+                  .where({ name: resultDetails.cartridgeName })
+                  .first('id')
+              ).id
 
               const inventoryItemsBefore = await getInventoryItemsAtSite(
                 knex,
@@ -1464,9 +1466,11 @@ describe('Device Result API routes', () => {
             .where({ name: user })
             .first('id')
           const assayExternalId = 'DaktariHivVL'
-          const daktariHivVlCartridgeId = (await knex('Consumable as c')
-            .where('c.name', 'Daktari HIV-VL Cartridge')
-            .first('c.id')).id
+          const daktariHivVlCartridgeId = (
+            await knex('Consumable as c')
+              .where('c.name', 'Daktari HIV-VL Cartridge')
+              .first('c.id')
+          ).id
 
           let resultDetails = {
             lotNumber: 'ABC123',
@@ -1487,11 +1491,13 @@ describe('Device Result API routes', () => {
             updatedOn: past,
           })
 
-          const inventoryConsumedByTest = (await knex('ConsumableAssay as ca')
-            .join('Assay as a', 'ca.assayId', 'a.id')
-            .where('a.externalId', assayExternalId)
-            .andWhere('ca.consumableId', daktariHivVlCartridgeId)
-            .first('ca.quantity')).quantity
+          const inventoryConsumedByTest = (
+            await knex('ConsumableAssay as ca')
+              .join('Assay as a', 'ca.assayId', 'a.id')
+              .where('a.externalId', assayExternalId)
+              .andWhere('ca.consumableId', daktariHivVlCartridgeId)
+              .first('ca.quantity')
+          ).quantity
 
           let cartridgeAtSiteBefore = _.find(
             await getInventoryItemsAtSite(knex, siteId),
@@ -1693,14 +1699,18 @@ describe('Device Result API routes', () => {
             .where({ name: user })
             .first('id')
           const assayExternalId = 'DaktariHivVL'
-          const daktariHivVlCartridgeId = (await knex('Consumable as c')
-            .where('c.name', 'Daktari HIV-VL Cartridge')
-            .first('c.id')).id
-          const inventoryConsumedByTest = (await knex('ConsumableAssay as ca')
-            .join('Assay as a', 'ca.assayId', 'a.id')
-            .where('a.externalId', assayExternalId)
-            .andWhere('ca.consumableId', daktariHivVlCartridgeId)
-            .first('ca.quantity')).quantity
+          const daktariHivVlCartridgeId = (
+            await knex('Consumable as c')
+              .where('c.name', 'Daktari HIV-VL Cartridge')
+              .first('c.id')
+          ).id
+          const inventoryConsumedByTest = (
+            await knex('ConsumableAssay as ca')
+              .join('Assay as a', 'ca.assayId', 'a.id')
+              .where('a.externalId', assayExternalId)
+              .andWhere('ca.consumableId', daktariHivVlCartridgeId)
+              .first('ca.quantity')
+          ).quantity
 
           const resultDetails = {
             lotNumber: 'QWE987',
@@ -2498,18 +2508,22 @@ describe('Device Result API routes', () => {
             .where({ id: deviceId })
             .first('siteId')
           const assayExternalId = 'DaktariHivVL'
-          const daktariHivVlCartridgeId = (await knex('Consumable as c')
-            .where('c.name', 'Daktari HIV-VL Cartridge')
-            .first('c.id')).id
+          const daktariHivVlCartridgeId = (
+            await knex('Consumable as c')
+              .where('c.name', 'Daktari HIV-VL Cartridge')
+              .first('c.id')
+          ).id
           // Remove inventory item if it already exists
           await knex('InventoryItem')
             .where({ consumableId: daktariHivVlCartridgeId, siteId })
             .del()
-          const inventoryConsumedByTest = (await knex('ConsumableAssay as ca')
-            .join('Assay as a', 'ca.assayId', 'a.id')
-            .where('a.externalId', assayExternalId)
-            .andWhere('ca.consumableId', daktariHivVlCartridgeId)
-            .first('ca.quantity')).quantity
+          const inventoryConsumedByTest = (
+            await knex('ConsumableAssay as ca')
+              .join('Assay as a', 'ca.assayId', 'a.id')
+              .where('a.externalId', assayExternalId)
+              .andWhere('ca.consumableId', daktariHivVlCartridgeId)
+              .first('ca.quantity')
+          ).quantity
 
           const resultDetails = {
             lotNumber: 'HIV533',

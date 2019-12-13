@@ -1,4 +1,4 @@
-const Boom = require('boom')
+const Boom = require('@hapi/boom')
 const _ = require('lodash')
 const { knex, transact, run } = require('../db')
 const { getRemoteAddress } = require('../shared/request')

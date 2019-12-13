@@ -8,7 +8,7 @@ const logConsoleDataKeys = {
 }
 
 function addLoggers(server, queue) {
-  server.on('response', request => logRequest(queue, request))
+  server.events.on('response', request => logRequest(queue, request))
 }
 
 function getLoggerSubscriptions() {

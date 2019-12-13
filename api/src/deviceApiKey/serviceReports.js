@@ -1,6 +1,6 @@
 const path = require('path')
-const { listDeviceApiKeys } = require('./service')
 const { format } = require('date-fns')
+const { listDeviceApiKeys } = require('./service')
 const {
   generateReport,
   downloadReportFile,

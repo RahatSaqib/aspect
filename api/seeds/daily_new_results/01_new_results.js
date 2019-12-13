@@ -3,6 +3,8 @@ module.exports = require('../utils').seed(
   seed,
   `${__filename}-${format(new Date(), 'yyyy-MM-dd')}`
 )
+const _ = require('lodash')
+const Promise = require('bluebird')
 const patients = require('./fixtures/patients.json')
 const { errorCodes } = require('./fixtures/errorCodes.js')
 const { resultCategoryToId } = require('../../src/shared/dictionary')
@@ -11,8 +13,6 @@ const {
   normalizeTreatmentStatusDistributionByResults,
 } = require('../commonGenerateResults')
 const { getMGITResultFromTBPossitive } = require('../commonTB')
-const _ = require('lodash')
-const Promise = require('bluebird')
 
 async function seed(knex) {
   // Create admin user and audit fields
@@ -40,7 +40,10 @@ async function seed(knex) {
   const tbResults = await knex('Result as r')
     .join('Assay as a', 'r.assayId', 'a.id')
     .join('AssayType as at', 'a.assayTypeId', 'at.id')
-    .whereIn('r.id', _.map(results, elem => elem.id))
+    .whereIn(
+      'r.id',
+      _.map(results, elem => elem.id)
+    )
     .where('at.externalId', 'assayTypeMtbRif')
     .where('r.resultCategory1', await resultCategoryToId('Detected'))
     .select('r.*')

@@ -1,6 +1,6 @@
 const Promise = require('bluebird')
 const _ = require('lodash')
-const Boom = require('boom')
+const Boom = require('@hapi/boom')
 const { startOfDay } = require('date-fns')
 const { getDateOrDefault, parseDateOrDefault } = require('../shared/date')
 const {

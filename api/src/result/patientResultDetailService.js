@@ -1,7 +1,7 @@
+const Boom = require('@hapi/boom')
+const _ = require('lodash')
 const { knex } = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
-const Boom = require('boom')
-const _ = require('lodash')
 
 async function getPatientResultsDetails(request) {
   const { auth, query } = request

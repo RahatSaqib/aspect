@@ -1,9 +1,9 @@
 module.exports = require('../utils').seed(seed, __filename)
+const Promise = require('bluebird')
 const {
   normalizeTreatmentStatusDistribution,
   getTreatmentDistributionByPartner,
 } = require('../commonGenerateResults')
-const Promise = require('bluebird')
 
 async function seed(knex) {
   const { partnerId } = await knex('Person as p')

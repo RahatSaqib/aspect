@@ -1,5 +1,5 @@
 const _ = require('lodash')
-const Boom = require('boom')
+const Boom = require('@hapi/boom')
 const { transact } = require('../../../db')
 const { findDevices } = require('../gxUtils')
 

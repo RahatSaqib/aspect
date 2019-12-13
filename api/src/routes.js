@@ -1,4 +1,4 @@
-const Joi = require('joi')
+const Joi = require('@hapi/joi')
 
 // Adds all API routes to the server
 function addClientRoutes(server) {
@@ -160,7 +160,7 @@ function asyncHandler(handler) {
   return (request, reply) =>
     handler(request)
       .then(reply)
-      .then(null, err => {
+      .catch(err => {
         // Log err stack and Rethrow to Hapi handles error case and Boom.500
         console.error(err) // eslint-disable-line no-console
         throw err
@@ -210,7 +210,7 @@ function validateSortPageParams(...sortColumns) {
     sortCol:
       sortColumns.length > 0
         ? Joi.string()
-            .valid(sortColumns)
+            .valid(...sortColumns)
             .description('Sort on named column')
         : Joi.string().description('Sort on named column'),
     sortDir: Joi.string()

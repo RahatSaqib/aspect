@@ -1,15 +1,15 @@
+const _ = require('lodash')
+const { addMinutes, addDays, format } = require('date-fns')
+const Promise = require('bluebird')
 const {
   assayTypeToId,
   assayToId,
   resultSourceToId,
   resultCategoryToId,
 } = require('../src/shared/dictionary')
-const _ = require('lodash')
-const { addMinutes, addDays, format } = require('date-fns')
 const AssayBdMgitAstResultDataSchema = require('./fixtures/AssayBdMgitAstResultDataSchema.json')
 const AssayBdMgitGndResultDataSchema = require('./fixtures/AssayBdMgitGnd.json')
 const MGITPatientDataSchema = require('./fixtures/MGITPatientDataSchema.json')
-const Promise = require('bluebird')
 
 async function getMGITResultFromTBPossitive(result, assaysMGIT, devicesMGIT) {
   const randomDateMgit = addDays(result.endedOn, _.random(5))

@@ -1,7 +1,7 @@
 const _ = require('lodash')
 const path = require('path')
-const { listSites } = require('./service')
 const { format } = require('date-fns')
+const { listSites } = require('./service')
 const {
   generateReport,
   downloadReportFile,

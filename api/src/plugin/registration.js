@@ -1,5 +1,5 @@
 const { get, merge } = require('lodash')
-const Boom = require('boom')
+const Boom = require('@hapi/boom')
 
 const { postProcessMergeResult } = require('../deviceApi/result')
 

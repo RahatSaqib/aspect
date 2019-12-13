@@ -1,6 +1,6 @@
-const { exportResults } = require('./service')
 const flatten = require('flat')
 const _ = require('lodash')
+const { exportResults } = require('./service')
 const { knex } = require('../db')
 const { getUser } = require('../auth/service')
 
