@@ -397,8 +397,10 @@ async function listRefreshTokens(request) {
     .leftJoin('ResultDownloadLog as rdl', function() {
       this.on(function() {
         this.on('rdl.createdBy', 'r.userId')
-        if (query.minDate && query.maxDate) {
+        if (query.minDate) {
           this.andOn('rdl.createdOn', '>=', knex.raw('?', [query.minDate]))
+        }
+        if (query.maxDate) {
           this.andOn('rdl.createdOn', '<=', knex.raw('?', [query.maxDate]))
         }
       })
@@ -449,7 +451,7 @@ async function listRefreshTokens(request) {
       ),
       knex.raw('count(rdl.id) as delivered'),
       knex.raw(
-        'GREATEST(ifnull(r.updatedOn, r.createdOn), max(rdl.createdOn)) as lastSeen'
+        "GREATEST(ifnull(r.updatedOn, r.createdOn), ifnull(max(rdl.createdOn), '')) as lastSeen"
       ),
       knex.raw(
         "sum(case when rca.requiresTreatment = '1' then 1 else 0 end) as requiresFollowUp"

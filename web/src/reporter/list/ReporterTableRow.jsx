@@ -29,11 +29,7 @@ const ReporterTableRow = ({
       <TableCell>{reporter.get('user')}</TableCell>
       <TableCell>{reporter.get('deviceName')}</TableCell>
       <TableCell>{intl.formatRelative(reporter.get('createdOn'))}</TableCell>
-      <TableCell>
-        {reporter.get('lastSeen')
-          ? intl.formatRelative(reporter.get('lastSeen'))
-          : 'N/A'}
-      </TableCell>
+      <TableCell>{intl.formatRelative(reporter.get('lastSeen'))}</TableCell>
       <TableCell>{intl.formatNumber(reporter.get('delivered'))}</TableCell>
       <TableCell>
         {intl.formatNumber(reporter.get('requiresFollowUp'))}
