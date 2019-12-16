@@ -23,7 +23,8 @@ import BrowseEmptyList from '../../globals/components/BrowseEmptyList'
 import BrowseTablePaginator from '../../globals/components/BrowseTablePaginator'
 import DataTableCard from '../../components/shared/DataTableCard'
 import DataTableProgressBar from '../../components/shared/DataTableProgressBar'
-import { fetchReporters } from '../ReporterRedux'
+import { fetchReporters, exportReporters } from '../ReporterRedux'
+import ExportListButton from '../../globals/components/ExportListButton'
 import {
   ReporterDataTable,
   ReporterDataTableHead,
@@ -61,13 +62,17 @@ const messages = defineMessages({
     id: 'pages.ReporterList.numberOfTestsLeft',
     defaultMessage: 'Number Of Tests Delivered',
   },
-  deliveredLastMonth: {
-    id: 'pages.ReporterList.deliveredLastMonth',
-    defaultMessage: 'Last Month',
+  delivered: {
+    id: 'pages.ReporterList.delivered',
+    defaultMessage: 'Delivered',
   },
-  deliveredThisMonth: {
-    id: 'pages.ReporterList.deliveredThisMonth',
-    defaultMessage: 'This Month',
+  requiresFollowUp: {
+    id: 'pages.ReporterList.requiresFollowUp',
+    defaultMessage: 'Requires Follow-up',
+  },
+  comfirmedFollowup: {
+    id: 'pages.ReporterList.followup',
+    defaultMessage: '% Confirmed Follow-up',
   },
   acknowledgedRatio: {
     id: 'pages.ReporterList.acknowledgedRatio',
@@ -97,10 +102,25 @@ const FILTERS_CONFIG = [
   { date: true, requiredPermissions: [] },
   { deviceName: true, requiredPermissions: [] },
   { revoked: true, requiredPermissions: [] },
+  { treatmentStatus: true, requiredPermissions: [] },
+  {
+    assayAndResultCategory: true,
+    requiredPermissions: ['assay:view', 'assay:admin', 'assay:edit'],
+  },
 ]
 
 const searchSanitizer = makeSearchParamsSanitizer({
-  availableSortCol: ['user', 'deviceName', 'createdOn', 'lastSeen', 'status'],
+  availableSortCol: [
+    'user',
+    'deviceName',
+    'createdOn',
+    'lastSeen',
+    'delivered',
+    'confirmFollowUpRatio',
+    'status',
+    'acknowledgedRatio',
+    'requiresFollowUp',
+  ],
 })
 const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
 const filtersFromLocation = composeSanitizer(
@@ -125,6 +145,7 @@ const enhance = compose(
     }),
     bindActionCreators.bind(null, {
       fetchReporters,
+      exportReporters,
     })
   ),
   withHandlers({
@@ -139,6 +160,25 @@ const enhance = compose(
       const { sanitized, value: filtersParams } = filtersFromLocation(location)
       if (!sanitized) {
         fetchReporters(filtersParams, sortCol, sortDir, pageAt, pageSize)
+      }
+    },
+
+    onExportClick: ({
+      location,
+      exportReporters,
+      pageAt,
+      pageSize,
+    }) => formatType => {
+      const { sanitized, value: filtersParams } = filtersFromLocation(location)
+      if (!sanitized) {
+        exportReporters(
+          filtersParams,
+          formatType.id,
+          pageAt,
+          pageSize,
+          formatType.id,
+          'reporters'
+        )
       }
     },
   }),
@@ -190,6 +230,7 @@ export const ReporterList = ({
   sortCol,
   sortDir,
   pageAt,
+  onExportClick,
   pageSize,
   reducedFilters,
 }) => (
@@ -200,10 +241,16 @@ export const ReporterList = ({
       history={history}
       location={location}
       intl={intl}
+      onClickExport={onExportClick}
       config={reducedFilters}
     />
     <DataTableCard key={`DataTableCard--table-${location.key}`}>
       <DataTableProgressBar disabled={!table.loading} />
+      <ExportListButton
+        onExcelClick={onExportClick}
+        onCsvClick={onExportClick}
+        reportName="Results"
+      />
       {items.currentIdList.isEmpty() && (
         <BrowseEmptyList history={history} location={location} intl={intl} />
       )}
@@ -212,24 +259,6 @@ export const ReporterList = ({
           selectable={false}
           className={cssClasses('ReporterDataTable')}
         >
-          <ReporterDataTableHead
-            compact
-            columns={[
-              {
-                key: 'emptystart',
-                colSpan: 4,
-              },
-              {
-                key: 'tests',
-                colSpan: 2,
-                label: intl.formatMessage(messages.numberOfTests),
-              },
-              {
-                key: 'emptyend',
-                colSpan: 3,
-              },
-            ]}
-          />
           <ReporterDataTableHead
             history={history}
             location={location}
@@ -242,7 +271,7 @@ export const ReporterList = ({
                 sortable: true,
               },
               {
-                key: 'device',
+                key: 'deviceName',
                 label: intl.formatMessage(messages.reporterDevice),
                 sortable: true,
               },
@@ -254,22 +283,32 @@ export const ReporterList = ({
               {
                 key: 'lastSeen',
                 label: intl.formatMessage(messages.lastSeen),
+                sortable: true,
               },
               {
-                key: 'deliveredLastMonth',
-                label: intl.formatMessage(messages.deliveredLastMonth),
+                key: 'delivered',
+                label: intl.formatMessage(messages.delivered),
+                sortable: true,
               },
               {
-                key: 'deliveredThisMonth',
-                label: intl.formatMessage(messages.deliveredThisMonth),
+                key: 'requiresFollowUp',
+                label: intl.formatMessage(messages.requiresFollowUp),
+                sortable: true,
+              },
+              {
+                key: 'confirmFollowUpRatio',
+                label: intl.formatMessage(messages.comfirmedFollowup),
+                sortable: true,
               },
               {
                 key: 'acknowledgedRatio',
                 label: intl.formatMessage(messages.acknowledgedRatio),
+                sortable: true,
               },
               {
                 key: 'totalFlagged',
                 label: intl.formatMessage(messages.flagged),
+                sortable: true,
               },
               {
                 key: 'revoked',

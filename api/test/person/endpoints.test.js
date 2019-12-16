@@ -209,5 +209,17 @@ describe('person endpoints', () => {
           .execute()
       })
     })
+
+    describe('/reporter/export', () => {
+      const expectedResponse = { value: 'Expected reporter' }
+
+      beforeEach(() => {
+        setupRoute('GET', '/reporter/export', {
+          async listRefreshTokens() {
+            return expectedResponse
+          },
+        })
+      })
+    })
   })
 })
