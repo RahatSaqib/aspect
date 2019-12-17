@@ -1,12 +1,6 @@
 const _ = require('lodash')
 const Boom = require('boom')
-const {
-  query,
-  knex,
-  filterParams,
-  filterDateRangeParams,
-  sortPageParams,
-} = require('../db')
+const { query, knex, filterParams, sortPageParams } = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 const userService = require('../auth/service')
 const { transformGeographyFromUpdates } = require('../geography/service')
@@ -381,15 +375,6 @@ async function listRefreshTokens(request) {
     .leftJoin('Geography as g', 'p.geographyId', 'g.id')
     .where({ clientType: clientTypes.app })
     .modify(addConstraints, dataConstraints, { partner: 'prt' })
-    .modify(filterDateRangeParams, query, 'r.createdOn')
-    .modify(filterParams, query, {
-      countryId: 'g.countryId',
-      stateId: 'g.stateId',
-      lgaId: 'g.lgaId',
-      contactNameOrEmail: ['p.name', 'p.email', 'p.email2'],
-      deviceName: 'r.clientName',
-      revoked: 'r.revoked',
-    })
 
   const getCount = tokenQuery
     .clone()
@@ -399,24 +384,82 @@ async function listRefreshTokens(request) {
   const getItems = tokenQuery
     .clone()
     .modify(sortPageParams, query, 'user')
+    .modify(filterParams, query, {
+      countryId: 'g.countryId',
+      stateId: 'g.stateId',
+      lgaId: 'g.lgaId',
+      assayId: 'rt.assayId',
+      treatmentStatusId: 'rts.id',
+      contactNameOrEmail: ['p.name', 'p.email', 'p.email2'],
+      deviceName: 'r.clientName',
+      revoked: 'r.revoked',
+    })
+    .leftJoin('ResultDownloadLog as rdl', function() {
+      this.on(function() {
+        this.on('rdl.createdBy', 'r.userId')
+        if (query.minDate) {
+          this.andOn('rdl.createdOn', '>=', knex.raw('?', [query.minDate]))
+        }
+        if (query.maxDate) {
+          this.andOn('rdl.createdOn', '<=', knex.raw('?', [query.maxDate]))
+        }
+      })
+    })
+    .leftJoin('Result as rt', 'rt.id', 'rdl.resultId')
+    .leftJoin('Assay as a', 'a.id', 'rt.assayId')
+    .leftJoin(
+      'ResultTreatmentStatusLog as rtsl',
+      'rtsl.id',
+      'rt.treatmentStatusLogId'
+    )
+    .leftJoin(
+      'ResultTreatmentStatus as rts',
+      'rts.id',
+      'rtsl.resultTreatmentStatusId'
+    )
+    .leftJoin(
+      'ResultWorkflowLog as rwl',
+      'rwl.id',
+      'rt.resultWorkflowStatusLogId'
+    )
+    .leftJoin(
+      'ResultWorkflowStatus as rws',
+      'rws.id',
+      'rwl.resultWorkflowStatusId'
+    )
+    .leftJoin('ResultCategoryAssay as rca', function() {
+      this.on('rca.resultCategoryId', 'rt.resultCategory1').andOn(
+        'rca.assayId',
+        'rt.assayId'
+      )
+    })
+    .groupBy('r.clientId')
     .select(
       'r.clientId as id',
       'p.name as user',
       'r.clientName as deviceName',
       'r.createdOn',
-      'r.revoked'
+      'r.revoked',
+      knex.raw(
+        "sum(case rws.externalId when 'Acknowledged' then 1 else 0 end)/sum(case when rca.requiresTreatment = '1' then 1 else 0 end) as acknowledgedRatio"
+      ),
+      knex.raw(
+        "sum(case rws.externalId when 'Flagged' then 1 else 0 end) as totalFlagged"
+      ),
+      knex.raw(
+        "sum(case when  rts.externalId = 'OnTreatment' AND rca.requiresTreatment = '1' then 1 else 0 end)/sum(case when rca.requiresTreatment = '1' then 1 else 0 end) as confirmFollowUpRatio"
+      ),
+      knex.raw('count(rdl.id) as delivered'),
+      knex.raw(
+        "GREATEST(ifnull(r.updatedOn, r.createdOn), ifnull(max(rdl.createdOn), '')) as lastSeen"
+      ),
+      knex.raw(
+        "sum(case when rca.requiresTreatment = '1' then 1 else 0 end) as requiresFollowUp"
+      )
     )
 
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
 
-  // TODO: Fix with real data from Results download table
-  data.forEach(it => {
-    it.lastSeen = Date.now()
-    it.deliveredLastMonth = _.random(0, 10)
-    it.deliveredThisMonth = _.random(0, 20)
-    it.acknowledgedRatio = _.random(0, 1)
-    it.totalFlagged = _.random(1, total)
-  })
   return { ok: true, total, length: data.length, data }
 }
 

@@ -1,4 +1,4 @@
-const Boom = require('boom')
+const Boom = require('@hapi/boom')
 const _ = require('lodash')
 const dateFormat = require('date-fns/format')
 const { subDays, subMonths, startOfMonth, endOfMonth } = require('date-fns')
@@ -466,7 +466,7 @@ async function listResults(request) {
   return result
 }
 
-async function getDownloadResultsList(query, auth) {
+async function getDownloadResultsList(query, auth, setDelivered = false) {
   // get data constraints
   const dataConstraints = await getConstraints(auth.credentials)
 
@@ -563,7 +563,13 @@ async function getDownloadResultsList(query, auth) {
         queryBuilder.where('dt.externalId', params.deviceType)
       else queryBuilder.where('dt.externalId', 'CepheidGeneXpert')
     }, query)
-    .modify(addConstraints, dataConstraints, { device: 'd', sample: 'sp' })
+    .modify(addConstraints, dataConstraints, {
+      device: 'd',
+      sample: 'sp',
+      geography: 'g',
+      result: 'r',
+      country: 'c',
+    })
   // get total count for paging
   const getCount = resultQuery
     .clone()
@@ -625,7 +631,10 @@ async function getDownloadResultsList(query, auth) {
   const followUps = await knex('ResultFollowUp as rfu')
     .join('FollowUp as fu', 'rfu.followUpId', 'fu.id')
     .join('FollowUpType as fut', 'fu.followUpTypeId', 'fut.id')
-    .whereIn('rfu.resultId', data.map(d => d.id))
+    .whereIn(
+      'rfu.resultId',
+      data.map(d => d.id)
+    )
     .select(
       'rfu.resultId',
       'rfu.id',
@@ -639,6 +648,25 @@ async function getDownloadResultsList(query, auth) {
       'fut.name as followUpTypeName',
       'fut.externalId as followUpTypeExternalId',
       'fut.i18nKey as followUpTypei18nKey'
+    )
+  // get comments for all results in the response for performance (filter later)
+  const comments = await knex('ResultNote as rn')
+    .innerJoin('ResultNoteType as rnt', 'rn.resultNoteTypeId', 'rnt.id')
+    .leftOuterJoin('User as uC', 'rn.createdBy', 'uC.id')
+    .leftOuterJoin('User as uU', 'rn.updatedBy', 'uU.id')
+    .whereIn(
+      'rn.resultId',
+      data.map(d => d.id)
+    )
+    .select(
+      'rn.resultId',
+      'rn.id',
+      'rn.text',
+      'rn.createdOn',
+      'uC.name as createdBy',
+      'rn.changedOn',
+      'uU.name as changedBy',
+      'rnt.name as noteType'
     )
 
   const transformedData = _.map(data, d => ({
@@ -677,11 +705,28 @@ async function getDownloadResultsList(query, auth) {
         : null,
     },
     workflowStatus: {
-      name: d.resultWorkflowStatusName,
-      externalId: d.resultWorkflowStatusExternalId,
-      i18nKey: d.resultWorkflowStatusi18nKey,
-      reason: d.resultWorkflowStatusReason,
-      changedOn: d.resultWorkflowStatusChangedOn,
+      name:
+        setDelivered && d.resultWorkflowStatusExternalId !== 'Delivered'
+          ? 'Delivered'
+          : d.resultWorkflowStatusName,
+      externalId:
+        setDelivered && d.resultWorkflowStatusExternalId !== 'Delivered'
+          ? 'Delivered'
+          : d.resultWorkflowStatusExternalId,
+      i18nKey:
+        setDelivered && d.resultWorkflowStatusExternalId !== 'Delivered'
+          ? 'ResultWorkflowStatusDelivered'
+          : d.resultWorkflowStatusi18nKey,
+      reason:
+        setDelivered && d.resultWorkflowStatusExternalId !== 'Delivered'
+          ? 'Download Results Api'
+          : d.resultWorkflowStatusReason,
+      changedOn:
+        setDelivered && d.resultWorkflowStatusExternalId !== 'Delivered'
+          ? new Date()
+          : d.resultWorkflowStatusChangedOn,
+      setDelivered:
+        setDelivered && d.resultWorkflowStatusExternalId !== 'Delivered',
     },
     treatmentStatus: {
       changedOn: d.resultTreatmentStatusChangedOn,
@@ -694,6 +739,11 @@ async function getDownloadResultsList(query, auth) {
     followUps: _.sortBy(
       _.filter(followUps, { resultId: d.id }).map(f => _.omit(f, 'resultId')),
       ['date', 'updatedOn']
+    ),
+    comments: _.orderBy(
+      _.filter(comments, { resultId: d.id }).map(f => _.omit(f, 'resultId')),
+      ['createdOn'],
+      ['desc']
     ),
   }))
 
@@ -710,25 +760,22 @@ async function getDownloadResultsList(query, auth) {
 async function downloadResultsList(request) {
   const { query, auth } = request
   const user = await getUser(auth.credentials.name)
-  const result = await getDownloadResultsList(query, auth)
-  const idsToUpdate = _.uniq(
-    _.map(
-      _.omitBy(
-        result.data,
-        elem => elem.workflowStatus.externalId !== 'Delivered'
-      ),
-      elem => elem.id
+  const result = await getDownloadResultsList(query, auth, true)
+  const myProm = async () => {
+    const idsToUpdate = _.uniq(
+      _.map(
+        _.pickBy(result.data, elem => elem.workflowStatus.setDelivered),
+        elem => elem.id
+      )
     )
-  )
-
-  const idsToBeRegistered = _.uniq(_.map(result.data, elem => elem.id))
-  if (idsToUpdate) await updateResultStatus(idsToUpdate, user.id)
-  if (idsToBeRegistered) await addResultDownloadLog(idsToBeRegistered, user.id)
-
-  const assigmentValue = elem => {
-    elem.workflowStatus.externalId = 'Delivered'
+    const idsToBeRegistered = _.uniq(_.map(result.data, elem => elem.id))
+    if (idsToUpdate && idsToUpdate.length > 0)
+      await updateResultStatus(idsToUpdate, user.id)
+    if (idsToBeRegistered && idsToBeRegistered.length > 0)
+      await addResultDownloadLog(idsToBeRegistered, user.id)
   }
-  _.forEach(result.data, assigmentValue)
+  // eslint-disable-next-line no-console
+  await myProm().catch(err => console.log(err))
   return result
 }
 async function addResultDownloadLog(idsToBeRegistered, userId) {
@@ -832,7 +879,7 @@ function downloadFile(request, reply) {
     })
     .catch(err => {
       console.error(err) // eslint-disable-line no-console
-      reply(err)
+      throw err
     })
 }
 
@@ -847,7 +894,7 @@ function downloadFirstImage(request, reply) {
     })
     .catch(err => {
       console.error(err) // eslint-disable-line no-console
-      reply(err)
+      throw err
     })
 }
 
@@ -1222,6 +1269,21 @@ async function updateTreatmentStatus(
   return response
 }
 
+// helper func
+async function isAuthorOrAdminOfResultComment(
+  credentials,
+  resultId,
+  commentId
+) {
+  const user = await getUser(credentials.name)
+  const { createdBy } = await knex('ResultNote')
+    .where('id', commentId)
+    .where('resultId', resultId)
+    .first()
+  const isResultAdmin = credentials.permissions.includes(`result:admin`)
+  return createdBy === user.id || isResultAdmin
+}
+
 async function addResultNote(request) {
   const { auth, params, payload } = request
   const now = new Date()
@@ -1234,7 +1296,7 @@ async function addResultNote(request) {
     return Boom.notFound()
   }
 
-  const { note, resultNoteType, changedOn = now } = payload
+  const { note, resultNoteType, commentId, changedOn = now } = payload
 
   const { id: resultNoteTypeId } = await knex('ResultNoteType')
     .where('externalId', resultNoteType || 'General')
@@ -1248,15 +1310,85 @@ async function addResultNote(request) {
     return Boom.badRequest('The length of the comment must be less than 256')
   }
 
-  await knex('ResultNote').insert({
-    resultNoteTypeId,
+  if (commentId) {
+    const canEdit = await isAuthorOrAdminOfResultComment(
+      auth.credentials,
+      resultId,
+      commentId
+    )
+    if (!canEdit) {
+      return Boom.forbidden('This user can not edit comment')
+    }
+
+    await knex('ResultNote')
+      .where({ id: commentId, resultId })
+      .update({
+        text: note,
+        changedOn,
+        updatedBy: currentUserId,
+      })
+  } else {
+    await knex('ResultNote').insert({
+      resultNoteTypeId,
+      resultId,
+      text: note,
+      changedOn,
+      createdOn: now,
+      updatedBy: currentUserId,
+      createdBy: currentUserId,
+    })
+  }
+
+  const resultNotes = await getResultNotesByResultId(+params.resultId)
+
+  return {
+    ok: true,
+    length: resultNotes.length,
+    data: resultNotes,
+  }
+}
+
+async function deleteResultNote(request) {
+  const { auth, params } = request
+  const { resultId, commentId } = params
+
+  // get the result so we can check access
+  const result = await getResultByResultId(request)
+  if (!result.ok) {
+    return Boom.notFound()
+  }
+
+  const canDelete = await isAuthorOrAdminOfResultComment(
+    auth.credentials,
     resultId,
-    text: note,
-    changedOn,
-    createdOn: now,
-    updatedBy: currentUserId,
-    createdBy: currentUserId,
-  })
+    commentId
+  )
+  if (!canDelete) {
+    return Boom.forbidden('This user can not delete comment')
+  }
+
+  await knex('ResultNote')
+    .where('id', commentId)
+    .where('resultId', resultId)
+    .del()
+
+  const resultNotes = await getResultNotesByResultId(+params.resultId)
+
+  return {
+    ok: true,
+    length: resultNotes.length,
+    data: resultNotes,
+  }
+}
+
+async function allResultNotes(request) {
+  const { params } = request
+
+  // get the result so we can check access and if status changed
+  const result = await getResultByResultId(request)
+  if (!result.ok) {
+    return Boom.notFound()
+  }
 
   const resultNotes = await getResultNotesByResultId(+params.resultId)
 
@@ -1326,9 +1458,7 @@ async function updateFormData(request) {
       const undefinedFieldMessage =
         unrecognisedFields.length > 1
           ? `This result cannot accept the following fields in it's form data: [${unrecognisedFields.join()}] because they are not defined in the forms schema.`
-          : `This result cannot accept the following field in it's form data: ${
-              unrecognisedFields[0]
-            } because it is not defined in the forms schema.`
+          : `This result cannot accept the following field in it's form data: ${unrecognisedFields[0]} because it is not defined in the forms schema.`
       return Boom.badRequest(undefinedFieldMessage)
     }
     const fieldValidationErrors = []
@@ -1357,9 +1487,7 @@ async function updateFormData(request) {
             if (!_.isEmpty(illegalValuesEntered)) {
               const validationMessage =
                 illegalValuesEntered.length === 1
-                  ? `${
-                      illegalValuesEntered[0]
-                    } is invalid for ${formFieldKey} because it is not present in the options configured for the field.`
+                  ? `${illegalValuesEntered[0]} is invalid for ${formFieldKey} because it is not present in the options configured for the field.`
                   : `[${illegalValuesEntered.join()}] are invalid for ${formFieldKey} because they are not present in the options configured for the field.`
               fieldValidationErrors.push(validationMessage)
             }
@@ -1961,5 +2089,7 @@ module.exports = {
   updateResultFollowUp,
   deleteResultFollowUp,
   addResultNote,
+  deleteResultNote,
+  allResultNotes,
   showResultFollowUps,
 }

@@ -1,4 +1,4 @@
-const Boom = require('boom')
+const Boom = require('@hapi/boom')
 const fetch = require('node-fetch')
 const config = require('../config')
 

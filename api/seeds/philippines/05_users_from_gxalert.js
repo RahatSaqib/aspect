@@ -34,6 +34,11 @@ async function seed(knex) {
   const philippinesCountry = await knex('Country as c')
     .where({ 'c.a3': 'PHL' })
     .first('c.id', 'c.culture', 'c.timezone')
+  const philippinesGeography = await knex('Geography')
+    .where('countryId', philippinesCountry.id)
+    .whereNull('stateId')
+    .whereNull('lgaId')
+    .first('id')
   const { id: countryId } = philippinesCountry
   const philippinesRegions = await knex('Geography as g')
     .innerJoin('State as s', 's.id', 'g.stateId')
@@ -129,7 +134,7 @@ async function seed(knex) {
             lgaId: district.id,
           })
           .first()
-      : { id: philippinesCountry.id }
+      : { id: philippinesGeography.id }
     let personId = null
     const existingPerson = await knex('Person')
       .where({ userId })

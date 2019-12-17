@@ -1,5 +1,7 @@
 module.exports = require('../utils').seed(seed, __filename)
 
+const Promise = require('bluebird')
+const _ = require('lodash')
 const {
   getRandomResults,
   createDevicesForAllMissingTypes,
@@ -7,8 +9,6 @@ const {
 const { getMGITResultFromTBPossitive } = require('../commonTB')
 
 const { allResultCategoryToId } = require('../../src/shared/dictionary')
-const Promise = require('bluebird')
-const _ = require('lodash')
 
 async function seed(knex) {
   const { Detected: resultCategoryDetectedId } = await allResultCategoryToId()
@@ -55,7 +55,6 @@ async function seed(knex) {
     .select()
   // adding existing mgit results for tb possitive results.
   await Promise.each(results, async result => {
-    // console.log('devicemgit', devicesMGIT.length)
     const elegibleDevices = _.filter(
       devicesMGIT,
       device => device.siteId === result.siteId

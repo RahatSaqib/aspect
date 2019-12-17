@@ -1,4 +1,4 @@
-const Joi = require('joi')
+const Joi = require('@hapi/joi')
 const { asyncHandler, validateSortPageParams } = require('../routes')
 const { listReports, proxyGxReport } = require('./service')
 const { getReport } = require('./serviceReports')

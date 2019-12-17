@@ -1,4 +1,4 @@
-const Joi = require('joi')
+const Joi = require('@hapi/joi')
 const {
   asyncHandler,
   validateDateRangeParams,
@@ -26,13 +26,17 @@ const {
   updateResultFollowUp,
   deleteResultFollowUp,
   addResultNote,
+  allResultNotes,
+  deleteResultNote,
 } = require('./service')
 const { getPatientResultsDetails } = require('./patientResultDetailService')
 const { getResultsReport } = require('./serviceReport')
 const {
   validateAllGeographyFilterParams,
 } = require('../geography/requestValidation')
-
+// -----------------------------------------------------
+// helper functions
+// -----------------------------------------------------
 function listResultsBaseConfig() {
   return {
     auth: { scope: ['result:view', 'result:edit'] },
@@ -95,7 +99,49 @@ function listResultsBaseConfig() {
     },
   }
 }
+// -----------------------------------------------------
+function getResponseForComments() {
+  return {
+    options: {
+      allowUnknown: false,
+    },
+    schema: Joi.object().keys({
+      ok: Joi.bool()
+        .required()
+        .description('False if there was some sort of error'),
+      length: Joi.number().required(),
+      data: Joi.array()
+        .required()
+        .description('The result comments')
+        .items(
+          Joi.object().keys({
+            id: Joi.number()
+              .required()
+              .description('Unique ID of the comment'),
+            text: Joi.string()
+              .required()
+              .description('Comment text'),
+            createdBy: Joi.string().description(
+              'User name who created comment'
+            ),
+            createdOn: Joi.date()
+              .required()
+              .description('When comment was created'),
+            changedOn: Joi.date()
+              .required()
+              .description('When comment was updated'),
+            noteType: Joi.string()
+              .required()
+              .description('Comment type'),
+          })
+        ),
+    }),
+  }
+}
 
+// -----------------------------------------------------
+// routes
+// -----------------------------------------------------
 const routes = [
   {
     method: 'GET',
@@ -298,8 +344,8 @@ const routes = [
     path: '/result/result-note/{resultId}',
     handler: asyncHandler(addResultNote),
     config: {
-      description: 'Add result note to results',
-      notes: 'Add result note to results',
+      description: 'Add result note to result',
+      notes: 'Add result note to result',
       auth: { scope: ['result:edit'] },
       validate: {
         params: {
@@ -312,26 +358,63 @@ const routes = [
         payload: {
           note: Joi.string(),
           resultNoteType: Joi.string().allow('', null),
+          commentId: Joi.number()
+            .integer()
+            .positive()
+            .allow(null)
+            .description('Comment Id to update'),
           changedOn: Joi.date()
-            .description('Date when the note was added.')
+            .description('Date when the note was added/edited.')
             .iso()
             .allow(null),
         },
       },
-      response: {
-        options: {
-          allowUnknown: false,
+      response: getResponseForComments(),
+    },
+  },
+  {
+    method: 'GET',
+    path: '/result/result-all-notes/{resultId}',
+    handler: asyncHandler(allResultNotes),
+    config: {
+      description: 'Get all notes for specified result ',
+      notes: 'Get all notes for specified result',
+      auth: { scope: ['result:view', 'result:edit'] },
+      validate: {
+        params: {
+          resultId: Joi.number()
+            .integer()
+            .positive()
+            .required()
+            .description('Result Id'),
         },
-        schema: Joi.object().keys({
-          ok: Joi.bool()
-            .required()
-            .description('False if there was some sort of error'),
-          length: Joi.number().required(),
-          data: Joi.array()
-            .required()
-            .description('The result notes'),
-        }),
       },
+      response: getResponseForComments(),
+    },
+  },
+  {
+    method: 'DELETE',
+    path: '/result/result-note/{resultId}/{commentId}',
+    handler: asyncHandler(deleteResultNote),
+    config: {
+      description: 'Remove a specified comment from a result',
+      notes: 'Removes a specified comment from a result',
+      auth: { scope: ['result:view', 'result:edit'] },
+      validate: {
+        params: {
+          resultId: Joi.number()
+            .required()
+            .integer()
+            .positive()
+            .description('Result ID'),
+          commentId: Joi.number()
+            .required()
+            .integer()
+            .positive()
+            .description('Result Comment ID'),
+        },
+      },
+      response: getResponseForComments(),
     },
   },
   {
@@ -522,6 +605,10 @@ const routes = [
                         'Reason for the latest workflow status change'
                       )
                       .allow(null, ''),
+                    setDelivered: Joi.boolean()
+                      .optional()
+                      .allow(null)
+                      .description('Tells if the record was updated manually'),
                   }),
                 treatmentStatus: Joi.object()
                   .allow(null)
@@ -649,6 +736,34 @@ const routes = [
                       followUpTypei18nKey: Joi.string()
                         .required()
                         .description('Translation key for the follow up type'),
+                    })
+                  ),
+                comments: Joi.array()
+                  .allow(null)
+                  .description('Result comments')
+                  .items(
+                    Joi.object().keys({
+                      id: Joi.number()
+                        .required()
+                        .description('Result comment ID'),
+                      text: Joi.string()
+                        .allow(null, '')
+                        .description('Comment text'),
+                      createdOn: Joi.date()
+                        .required()
+                        .description('When comment was first created'),
+                      createdBy: Joi.string()
+                        .allow(null, '')
+                        .description('Who added comment'),
+                      changedOn: Joi.date()
+                        .required()
+                        .description('When the comment was last updated'),
+                      changedBy: Joi.string()
+                        .allow(null, '')
+                        .description('Who changed comment'),
+                      noteType: Joi.string()
+                        .allow(null, '')
+                        .description('Type of comment'),
                     })
                   ),
               })

@@ -1,18 +1,13 @@
 const _ = require('lodash')
 const path = require('path')
-const { listSites } = require('./service')
 const { format } = require('date-fns')
+const { listSites } = require('./service')
 const {
   generateReport,
   downloadReportFile,
 } = require('../excelreports/excelManager')
 
 async function getSitesReport(request, reply) {
-  // Here is a really good example of the necessity of a data layer.
-  // I tried to call some existing service method for the list of devices,
-  // but everyone has parameters of the API (Request, query, Credentials, etc).
-  // I think if we don't want to repeat code we have to argue a little bit about this architecture.
-
   // get whole dataset - based on current query params (sorting, filtering) and auth constraints
   const devices = await listSites(request)
   const { query } = request

@@ -1,5 +1,5 @@
 const _ = require('lodash')
-const Boom = require('boom')
+const Boom = require('@hapi/boom')
 const {
   subDays,
   subMonths,
@@ -134,9 +134,8 @@ async function getListDevices(query, auth) {
     })
     .modify(addConstraints, dataConstraints, {
       device: 'd',
-      showUnapprovedDevices: true,
+      showUnapprovedDevices: false,
     })
-
   // get total count for paging
   const getCount = deviceQuery
     .clone()

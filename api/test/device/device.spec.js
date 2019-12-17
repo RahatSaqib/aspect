@@ -18,7 +18,7 @@ describe('Device routes', () => {
   describe('GET', () => {
     shared.checkToken(server, path)
 
-    it('should return a list of devices when using valid token', done => {
+    it('should return a list of devices when using valid token "approved"', done => {
       server
         .get(path)
         .set('Authorization', `Bearer ${shared.token}`)
@@ -27,7 +27,7 @@ describe('Device routes', () => {
           assert.typeOf(res.body, 'Object')
           assert.property(res.body, 'data')
           assert.typeOf(res.body.data, 'array')
-          assert.equal(res.body.data.length, 3)
+          assert.isAbove(res.body.data.length, 0)
           assert.property(res.body.data[0], 'id')
           assert.property(res.body.data[0], 'name')
           assert.property(res.body.data[0], 'shortName')
@@ -62,7 +62,7 @@ describe('Device routes', () => {
           assert.typeOf(res.body, 'Object')
           assert.property(res.body, 'data')
           assert.typeOf(res.body.data, 'array')
-          assert.equal(res.body.data.length, 2)
+          assert.isAbove(res.body.data.length, 0)
           assert.property(res.body.data[0], 'id')
           assert.property(res.body.data[0], 'name')
           assert.property(res.body.data[0], 'shortName')
@@ -81,7 +81,10 @@ describe('Device routes', () => {
           assert.typeOf(res.body.data[0].availability, 'Object')
           assert.property(res.body.data[0], 'deliveredLastMonth')
           assert.property(res.body.data[0], 'deliveredThisMonth')
-          assert.equal(_.every(res.body.data, d => d.hasResults === 1), true)
+          assert.equal(
+            _.every(res.body.data, d => d.hasResults === 1),
+            true
+          )
           assert.property(res.body, 'total')
           done()
         })
@@ -190,34 +193,35 @@ describe('Device routes', () => {
       let deviceMaintenanceIdsToRestore
       let deviceMaintenanceIdsToDelete = []
 
-      beforeEach(async () => {
+      beforeEach(() =>
         runTest(async knex => {
           const deviceMaintenanceTypeIds = await knex('DeviceMaintenanceType')
             .whereIn('externalId', ['calibration', 'warranty'])
             .select('id')
             .map(x => x.id)
-
           deviceMaintenanceIdsToRestore = await knex('DeviceMaintenance')
             .whereIn('deviceMaintenanceTypeId', deviceMaintenanceTypeIds)
             .where({ deviceId, current: 1 })
             .select('id')
             .map(x => x.id)
         })
-      })
-      afterEach(async () => {
+      )
+      afterEach(() =>
         runTest(async knex => {
           // make sure we delete only new items and not existing, accidentally
           deviceMaintenanceIdsToDelete = deviceMaintenanceIdsToDelete.filter(
             x => !deviceMaintenanceIdsToRestore.includes(x)
           )
+
           await knex('DeviceMaintenance')
             .whereIn('id', deviceMaintenanceIdsToDelete)
             .del()
+
           await knex('DeviceMaintenance')
             .whereIn('id', deviceMaintenanceIdsToRestore)
             .update({ current: 1 })
         })
-      })
+      )
 
       // actual tests
       checkMaintenance('calibration', 'calibrationDate', 'calibrationNotes')

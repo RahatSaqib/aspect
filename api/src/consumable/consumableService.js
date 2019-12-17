@@ -50,11 +50,9 @@ async function listConsumableReasons(request) {
   const { query } = request
 
   // TODO: use dataContraints
-  const consumableReasonQuery = knex('ConsumableReason as cr').modify(
-    filterParams,
-    query,
-    { name: 'cr.name' }
-  )
+  const consumableReasonQuery = knex(
+    'ConsumableReason as cr'
+  ).modify(filterParams, query, { name: 'cr.name' })
 
   // get total count for paging
   const getCount = consumableReasonQuery

@@ -1,7 +1,7 @@
 /**
  * Source: https://www.browserstack.com/automate/nightwatch
  */
-require('dotenv-safe').load()
+require('dotenv-safe').config()
 const Nightwatch = require('nightwatch')
 const browserstack = require('browserstack-local')
 

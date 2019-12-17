@@ -50,6 +50,41 @@
       "i18nKey": "drtb-bxdr"
     },
     {
+      "assays": ["GxMtbRif", "GxMtbRifUltra"],
+      "type": "treatment",
+      "name": "DRTB - Beyond XDR-TB (Individualized)",
+      "externalId": "drtb-bxdr",
+      "i18nKey": "drtb-bxdr"
+    },
+    {
+      "assays": ["abbottM2000PlasmaHivVL", "abbottM2000DBSHivVL", "GxHiv1Vl", "QHivVL", "ReporterHivVL", "assayAlereQHiv12VLPlasma"],
+      "type": "treatment",
+      "name": "Request repeat VL",
+      "externalId": "rrvl",
+      "i18nKey": "rrvl"
+    },
+    {
+      "assays": ["abbottM2000PlasmaHivVL", "abbottM2000DBSHivVL", "GxHiv1Vl", "QHivVL", "ReporterHivVL", "assayAlereQHiv12VLPlasma"],
+      "type": "treatment",
+      "name": "Initiate advanced adherence counselling",
+      "externalId": "iaac",
+      "i18nKey": "iaac"
+    },
+    {
+      "assays": ["abbottM2000PlasmaHivVL", "abbottM2000DBSHivVL", "GxHiv1Vl", "QHivVL", "ReporterHivVL", "assayAlereQHiv12VLPlasma"],
+      "type": "treatment",
+      "name": "Switch to 2nd or 3rd line regime",
+      "externalId": "st2o3lr",
+      "i18nKey": "st2o3lr"
+    },
+    {
+      "assays": ["abbottM2000PlasmaHivVL", "abbottM2000DBSHivVL", "GxHiv1Vl", "QHivVL", "ReporterHivVL", "assayAlereQHiv12VLPlasma"],
+      "type": "treatment",
+      "name": "Maintain current regime",
+      "externalId": "mcr",
+      "i18nKey": "mcr"
+    },
+    {
       "assays": [],
       "type": "outcome",
       "name": "Cured",

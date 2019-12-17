@@ -1,4 +1,4 @@
-require('dotenv-safe').load()
+require('dotenv-safe').config()
 
 module.exports = {
   secret: process.env.secret,

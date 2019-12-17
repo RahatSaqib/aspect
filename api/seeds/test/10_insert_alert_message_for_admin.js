@@ -21,23 +21,20 @@ async function seed(knex) {
     // add sample alert message
     const now = new Date(new Date().toDateString())
     const idTemplate = Math.floor(Math.random() * 9) + 1
-    const insertedid = await knex('AlertMessage')
-      .returning('id')
-      .insert({
-        alertTemplateId: idTemplate,
-        messageStatusId,
-        message: `Test message ${idTemplate}`,
-        personId: userId,
-        siteId: elem.siteId,
-        deviceId: elem.deviceId,
-        createdOn: now,
-        updatedOn: now,
-      })
+    const [alertMessageId] = await knex('AlertMessage').insert({
+      alertTemplateId: idTemplate,
+      messageStatusId,
+      message: `Test message ${idTemplate}`,
+      personId: userId,
+      siteId: elem.siteId,
+      deviceId: elem.deviceId,
+      createdOn: now,
+      updatedOn: now,
+    })
     await knex('Notification').insert(
       Object.assign({
         createdOn: now,
-        alertMessageId: insertedid,
-
+        alertMessageId,
         issueId: elem.id,
         personId: userId,
         notificationTypeId: 1,

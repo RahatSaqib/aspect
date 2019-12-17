@@ -31,16 +31,13 @@ class NotificationTestContext {
       this.partnerId = partnerId
 
       const now = new Date()
-      this.ntId = await knex('NotificationType').insert(
-        {
-          partnerId: this.partnerId,
-          issueTypeId: 2,
-          name: 'Results Delayed',
-          createdOn: now,
-          updatedOn: now,
-        },
-        'id'
-      )
+      this.ntId = await knex('NotificationType').insert({
+        partnerId: this.partnerId,
+        issueTypeId: 2,
+        name: 'Results Delayed',
+        createdOn: now,
+        updatedOn: now,
+      })
 
       assert.isOk(this.ntId)
 

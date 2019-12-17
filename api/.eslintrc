@@ -30,6 +30,7 @@
     "import/no-unresolved": "off",
     "import/no-named-as-default-member": "off",
     "jsx-a11y/anchor-has-content": "off",
+    "max-classes-per-file": ["error", 3],
     "new-cap": ["error", { "properties": false }],
     "newline-per-chained-call": "off",
     "no-nested-ternary": "off",
@@ -38,6 +39,7 @@
     "no-restricted-syntax": "off",
     "no-shadow": "off",
     "no-use-before-define": "off",
+    "prefer-object-spread": "warn",
     "prettier/prettier": ["error", {
       "semi": false,
       "singleQuote": true,

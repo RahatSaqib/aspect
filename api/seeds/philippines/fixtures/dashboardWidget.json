@@ -1,0 +1,47 @@
+{
+  "stat": [
+    {
+      "icon": "place",
+      "title": "Sites",
+      "titleI18nKey": "sitesTitle",
+      "subTitle": null,
+      "subTitleI18nKey": null,
+      "sqlForIndicator":
+        "select count(s.id) as cnt from Site as s left outer join Geography as g on s.geographyId = g.id left outer join State as st on g.stateId = st.id left outer join Lga as l on g.lgaId = l.id",
+      "link": "/browse/site",
+      "sortOrder": 0
+    },
+    {
+      "icon": "computer",
+      "title": "Devices",
+      "titleI18nKey": "devicesTitle",
+      "subTitle": null,
+      "subTitleI18nKey": null,
+      "sqlForIndicator":
+        "select count(d.id) as cnt from Device as d inner join Site as s on s.id = d.siteId inner join DeviceType as dt on dt.id = d.deviceTypeId inner join DeviceTypeCategory as dc on dc.id = dt.deviceTypeCategoryId left outer join Geography as g on s.geographyId = g.id where dc.hasResults = 1",
+      "link": "/browse/device",
+      "sortOrder": 1
+    },
+    {
+      "icon": "assignment",
+      "title": "Results",
+      "titleI18nKey": "resultsTitle",
+      "subTitle": "Last 30 Days",
+      "subTitleI18nKey": "subResultsTitle",
+      "sqlForIndicator":
+        "select ifnull(sum(f.resultCount), 0) as cnt from FactResultsDevice as f inner join Device as d on d.id = f.deviceId inner join Site as s on s.id = d.siteId inner join Partner as p on p.id = s.partnerId left outer join Geography as g on s.geographyId = g.id where f.days = 30",
+      "link": "/browse/result",
+      "sortOrder": 2
+    },
+    {
+      "icon": "perm-identity",
+      "title": "Contacts",
+      "titleI18nKey": "personTitle",
+      "subTitle": null,
+      "subTitleI18nKey": null,
+      "sqlForIndicator": "select count(u.id) as cnt from User as u",
+      "link": "/browse/person",
+      "sortOrder": 3
+    }
+  ]
+}

@@ -1,5 +1,5 @@
 const _ = require('lodash')
-const Boom = require('boom')
+const Boom = require('@hapi/boom')
 const { createFetch, base, method, params } = require('http-client')
 require('isomorphic-fetch')
 
@@ -155,7 +155,7 @@ function proxyGxReport(request, reply) {
     })
     .catch(err => {
       console.error(err) // eslint-disable-line no-console
-      reply(err)
+      throw err
     })
 }
 

@@ -184,9 +184,9 @@ async function mergeResultAndUpdateWorkflowStatus(
 
   const autoAcknowledge =
     index < autoAcknowledgeMaxIndex &&
-    (resultEndedOn != null &&
-      autoAcknowledgeOlderThan != null &&
-      +resultEndedOn < +autoAcknowledgeOlderThan)
+    resultEndedOn != null &&
+    autoAcknowledgeOlderThan != null &&
+    +resultEndedOn < +autoAcknowledgeOlderThan
 
   const resultUpdates = {}
   if (autoAcknowledge) {

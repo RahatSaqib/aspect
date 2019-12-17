@@ -3,9 +3,11 @@ const chai = require('chai')
 const _ = require('lodash')
 const dateFormat = require('date-fns/format')
 const { addMinutes, subMonths, endOfMonth, parseISO } = require('date-fns')
-
 const shared = require('../utils/sharedToken')
-const { runTestWithKnex } = require('../utils/generatorFunctionUtils')
+const {
+  runTestWithKnex,
+  waitForApproximately,
+} = require('../utils/generatorFunctionUtils')
 
 const server = supertest.agent('http://localhost:8080')
 const { assert } = chai
@@ -17,6 +19,16 @@ const {
   getLastResultId,
   getLastResult,
 } = require('../deviceApi/utils')
+
+const getAdminAccessToken = () =>
+  server
+    .post('/api/auth')
+    .send({
+      name: 'admin',
+      password: 'test07',
+      clientName: 'Mocha web',
+    })
+    .then(res => res.body.access)
 
 const getClinicianAccessToken = () =>
   server
@@ -48,7 +60,7 @@ describe('Result routes', () => {
   describe('GET', () => {
     shared.checkToken(server, path)
 
-    it('should return a list of results', () =>
+    it('should return a list of results', async () =>
       runTestWithKnex(async knex => {
         initialResultWorkflowStatusName = await server
           .get(path)
@@ -84,10 +96,12 @@ describe('Result routes', () => {
             return res.body.data[0].resultWorkflowStatus
           })
 
-        initialResultWorkflowStatus = (await knex
-          .from('ResultWorkflowStatus')
-          .where({ name: initialResultWorkflowStatusName })
-          .first('externalId')).externalId
+        initialResultWorkflowStatus = (
+          await knex
+            .from('ResultWorkflowStatus')
+            .where({ name: initialResultWorkflowStatusName })
+            .first('externalId')
+        ).externalId
       }))
 
     it('should return a list of results with assay-specific fields if TB assay is requested', done => {
@@ -499,29 +513,37 @@ describe('Result routes', () => {
       })
     }
 
-    it('Should update result treatment status given a resultId - with externalId', done => {
-      const changedOn = new Date()
-      const updateWithExternalId = {
-        externalId: 'AwaitingTreatment',
-        data: 'should be treated',
-        method: 'sms',
-        changedOn,
-      }
-      // update with external ID
-      server
-        .put(`${path}/treatment-status/${resultId}`)
-        .send(updateWithExternalId)
-        .set('Authorization', `Bearer${shared.token}`)
-        .end((err, res) => {
-          baseTreatmentStatusAssertion(res)
+    it('Should update result treatment status given a resultId - with externalId', () =>
+      runTestWithKnex(async knex => {
+        const changedOn = new Date()
+        const updateWithExternalId = {
+          externalId: 'AwaitingTreatment',
+          data: 'should be treated',
+          method: 'sms',
+          changedOn,
+        }
+        const { testResultId } = await knex('ResultTreatmentStatus as s')
+          .join(
+            'ResultTreatmentStatusLog as l',
+            's.id',
+            'l.resultTreatmentStatusId'
+          )
+          .where('s.externalId', '<>', 'AwaitingTreatment')
+          .first('l.resultId as testResultId')
 
-          const { treatmentStatus } = res.body.data
-          // check the updated fieldName
-          assert.equal(treatmentStatus.externalId, 'AwaitingTreatment')
+        // update with external ID
+        server
+          .put(`${path}/treatment-status/${testResultId}`)
+          .send(updateWithExternalId)
+          .set('Authorization', `Bearer${shared.token}`)
+          .end((err, res) => {
+            baseTreatmentStatusAssertion(res)
 
-          done()
-        })
-    })
+            const { treatmentStatus } = res.body.data
+            // check the updated fieldName
+            assert.equal(treatmentStatus.externalId, 'AwaitingTreatment')
+          })
+      }))
 
     it('Should update result treatment status given a resultId - with resultTreatmentStatusId', done => {
       const changedOn = addMinutes(new Date(), 1)
@@ -788,27 +810,24 @@ describe('Result download routes', () => {
   )
   describe('GET', () => {
     shared.checkToken(server, path)
-
-    it('should return a paged list of results, including all result details', () =>
-      runTestWithKnex(knex => {
-        server
-          .get(`${path}?size=1&deviceType=DaktariVirology`)
+    it('should return a paged list of results and update them to delivered', () =>
+      runTestWithKnex(async knex => {
+        await server
+          .get(`${path}?size=10&deviceType=DaktariVirology`)
           .set('Authorization', `Bearer ${shared.token}`)
-          .end(async (err, res) => {
+          .then(async res => {
             assert.equal(res.status, 200)
             assert.typeOf(res.body, 'Object')
-
             assert.property(res.body, 'ok')
             assert.property(res.body, 'total')
             assert.property(res.body, 'length')
             assert.property(res.body, 'data')
 
             assert.equal(res.body.ok, true)
-            assert.isAtLeast(res.body.total, 2)
-            assert.equal(res.body.length, 1)
+            assert.isAtLeast(res.body.length, 1)
 
             assert.typeOf(res.body.data, 'array')
-            assert.equal(res.body.data.length, 1)
+            assert.isAtLeast(res.body.data.length, 1)
 
             assert.property(res.body.data[0], 'id')
             assert.property(res.body.data[0], 'externalId')
@@ -828,7 +847,6 @@ describe('Result download routes', () => {
               res.body.data[0].workflowStatus.externalId,
               'Delivered'
             )
-
             assert.property(res.body.data[0], 'treatmentStatus')
             assert.property(res.body.data[0], 'patientData')
             assert.property(res.body.data[0], 'resultData')
@@ -861,14 +879,37 @@ describe('Result download routes', () => {
             assert.property(res.body.data[0].followUps[0], 'createdOn')
             assert.property(res.body.data[0].followUps[0], 'updatedOn')
 
-            assert.equal(Object.keys(res.body.data[0]).length, 26)
+            assert.property(res.body.data[0], 'comments')
+            assert.typeOf(res.body.data[0].followUps, 'array')
+            assert.property(res.body.data[0].followUps[0], 'id')
+
+            assert.equal(Object.keys(res.body.data[0]).length, 27)
+            await waitForApproximately(2, 'seconds')
+
             // check if the download is register in the table.
-            const { count: totalResult } = await knex('ResultDownloadLog')
-              .where('resultId', res.body.data[0].id)
-              .count('id as count')
+            const { count: totalResult } = await knex(
+              'ResultDownloadLog as rdl'
+            )
+              .join('Result as r', 'rdl.resultId', 'r.id')
+              .join(
+                'ResultWorkflowLog as rsl',
+                'r.resultWorkflowStatusLogId',
+                'rsl.id'
+              )
+              .join(
+                'ResultWorkflowStatus as rs',
+                'rs.id',
+                'rsl.resultWorkflowStatusId'
+              )
+              .whereIn(
+                'rdl.resultId',
+                _.map(res.body.data, elem => elem.id)
+              )
+              .where('rs.externalId', 'Delivered')
+              .count('rdl.id as count')
               .first()
 
-            assert.isAtLeast(totalResult, 1)
+            assert.isAtLeast(totalResult, res.body.length)
           })
       }))
 
@@ -947,7 +988,11 @@ describe('Result download routes', () => {
           assert.property(res.body.data[0].followUps[0], 'createdOn')
           assert.property(res.body.data[0].followUps[0], 'updatedOn')
 
-          assert.equal(Object.keys(res.body.data[0]).length, 26)
+          assert.property(res.body.data[0], 'comments')
+          assert.typeOf(res.body.data[0].followUps, 'array')
+          assert.property(res.body.data[0].followUps[0], 'id')
+
+          assert.equal(Object.keys(res.body.data[0]).length, 27)
         })
 
       server
@@ -1154,7 +1199,11 @@ describe('Result download routes', () => {
             assert.property(res.body.data[0].followUps[0], 'createdOn')
             assert.property(res.body.data[0].followUps[0], 'updatedOn')
 
-            assert.equal(Object.keys(res.body.data[0]).length, 26)
+            assert.property(res.body.data[0], 'comments')
+            assert.typeOf(res.body.data[0].followUps, 'array')
+            assert.property(res.body.data[0].followUps[0], 'id')
+
+            assert.equal(Object.keys(res.body.data[0]).length, 27)
             // check if the download is register in the table.
             const { count: totalResult } = await knex('ResultDownloadLog')
               .where('resultId', res.body.data[0].id)
@@ -1198,43 +1247,166 @@ describe('Result Treatment', () => {
         })
     })
   })
+})
 
-  describe('Add Result Note - POST', () => {
-    const resultId = 1
+describe('Result Comments', () => {
+  const resultId = 1
 
-    after(async () =>
-      runTestWithKnex(async knex => {
-        await knex('ResultNote')
-          .where('resultId', resultId)
-          .delete()
-      })
-    )
-    const path = '/api/result/result-note'
+  let commentId = null
+  let text = 'Cough confirmed'
+  let clinicianAccessToken = ''
+  let adminAccessToken = ''
+  before(async () =>
+    runTestWithKnex(async knex => {
+      await knex('ResultNote')
+        .where('resultId', resultId)
+        .delete()
 
-    it('Should return list of result note of a particular resultId', done => {
-      const comment = {
-        note: 'Cough confirmed',
-        resultNoteType: 'ResultFollowUp',
-      }
-      server
-        .post(`${path}/${resultId}`)
-        .send(comment)
-        .set('Authorization', `Bearer ${shared.token}`)
-        .end((err, res) => {
-          assert.equal(res.status, 200)
-          assert.typeOf(res.body, 'Object')
-
-          assert.property(res.body, 'data')
-
-          assert.equal(res.body.data.length, 1) // for 6 months
-          assert.property(res.body.data[0], 'createdBy')
-          assert.property(res.body.data[0], 'text')
-          assert.property(res.body.data[0], 'changedOn')
-          assert.property(res.body.data[0], 'createdOn')
-
-          done()
-        })
+      clinicianAccessToken = await getClinicianAccessToken()
+      adminAccessToken = await getAdminAccessToken()
     })
+  )
+
+  // helper func
+  function assertCommentProps(data) {
+    assert.equal(data.length, 1)
+    assert.property(data[0], 'createdBy')
+    assert.property(data[0], 'text')
+    assert.property(data[0], 'noteType')
+    assert.property(data[0], 'changedOn')
+    assert.property(data[0], 'createdOn')
+  }
+
+  it('Should ADD comment and return list of comments of a particular resultId', done => {
+    const comment = {
+      note: text,
+      resultNoteType: 'ResultFollowUp',
+    }
+    server
+      .post(`/api/result/result-note/${resultId}`)
+      .send(comment)
+      .set('Authorization', `Bearer ${adminAccessToken}`)
+      .end((err, res) => {
+        assert.equal(res.status, 200)
+        assert.typeOf(res.body, 'Object')
+
+        assert.property(res.body, 'data')
+        assertCommentProps(res.body.data)
+        assert.equal(res.body.data[0].text, text)
+        assert.equal(res.body.data[0].noteType, 'Result FollowUp')
+
+        commentId = res.body.data[0].id
+
+        done()
+      })
+  })
+
+  it('Should fail on retrieving comments of unknown resultId', done => {
+    server
+      .get(`/api/result/result-all-notes/99999999`)
+      .set('Authorization', `Bearer ${shared.token}`)
+      .end((err, res) => {
+        assert.equal(res.status, 404) // Not Found
+
+        done()
+      })
+  })
+
+  it('Should deny EDIT comment by non-author and non-admin', done => {
+    text += '!'
+    const comment = {
+      note: text,
+      commentId,
+    }
+    server
+      .post(`/api/result/result-note/${resultId}`)
+      .send(comment)
+      .set('Authorization', `Bearer ${clinicianAccessToken}`)
+      .end((err, res) => {
+        assert.equal(res.status, 403) // Forbidden
+
+        done()
+      })
+  })
+
+  it('Should EDIT comment by author', done => {
+    const comment = {
+      note: text,
+      commentId,
+    }
+    server
+      .post(`/api/result/result-note/${resultId}`)
+      .send(comment)
+      .set('Authorization', `Bearer ${adminAccessToken}`)
+      .end((err, res) => {
+        assert.equal(res.status, 200)
+        assert.typeOf(res.body, 'Object')
+
+        assert.property(res.body, 'data')
+        assertCommentProps(res.body.data)
+        assert.equal(res.body.data[0].text, text)
+        assert.equal(res.body.data[0].id, commentId)
+
+        done()
+      })
+  })
+
+  it('Should GET ALL comments of a particular resultId and return array with 1 comment', done => {
+    server
+      .get(`/api/result/result-all-notes/${resultId}`)
+      .set('Authorization', `Bearer ${shared.token}`)
+      .end((err, res) => {
+        assert.equal(res.status, 200)
+        assert.typeOf(res.body, 'Object')
+
+        assert.property(res.body, 'data')
+        assertCommentProps(res.body.data)
+        assert.equal(res.body.data[0].text, text)
+        assert.equal(res.body.data[0].id, commentId)
+
+        done()
+      })
+  })
+
+  it('Should deny DELETE comment by non-author and non-admin', done => {
+    server
+      .delete(`/api/result/result-note/${resultId}/${commentId}`)
+      .set('Authorization', `Bearer ${clinicianAccessToken}`)
+      .end((err, res) => {
+        assert.equal(res.status, 403) // Forbidden
+
+        done()
+      })
+  })
+
+  it('Should DELETE comment and return list of remaining comments of a particular resultId', done => {
+    server
+      .delete(`/api/result/result-note/${resultId}/${commentId}`)
+      .set('Authorization', `Bearer ${adminAccessToken}`)
+      .end((err, res) => {
+        assert.equal(res.status, 200)
+        assert.typeOf(res.body, 'Object')
+
+        assert.property(res.body, 'data')
+        assert.equal(res.body.data.length, 0)
+
+        done()
+      })
+  })
+
+  it('Should GET ALL comments of a particular resultId and return empty array', done => {
+    server
+      .get(`/api/result/result-all-notes/${resultId}`)
+      .set('Authorization', `Bearer ${shared.token}`)
+      .end((err, res) => {
+        assert.equal(res.status, 200)
+        assert.typeOf(res.body, 'Object')
+
+        assert.property(res.body, 'data')
+        assert.equal(res.body.data.length, 0)
+
+        done()
+      })
   })
 })
 
