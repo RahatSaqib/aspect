@@ -269,6 +269,7 @@ describe('DataCategoryLow Issues Endpoint', () => {
             createdBy: myanmarAdminId,
             updatedOn: now,
             updatedBy: myanmarAdminId,
+            reportableSiteId: siteId,
           })
           resultIds.push(resultId)
         })

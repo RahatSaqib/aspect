@@ -729,7 +729,7 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
             .andWhere('st.externalId', finalResult.sample.sampleTypeExternalId)
             .first('s.*')) || {}
         let { id: sampleId } = existingSample
-        const { collectedOn } = existingSample
+        const { collectedOn, originSiteId } = existingSample
         if (!sampleId) {
           ;[sampleId] = await knex('Sample').insert({
             externalId: finalResult.sample.externalId,
@@ -788,6 +788,7 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
             resultSourceId: resultSourceDiagnosticDeviceId,
             resultTypeId: resultTypePatientId,
             sampleId,
+            reportableSiteId: originSiteId,
             resultData: {
               passedQualityControl,
               qualityControlSummary,

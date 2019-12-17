@@ -577,6 +577,7 @@ async function createTestResult(knex, device) {
     geographyId: device.geographyId,
     siteId: device.siteId,
     deviceId: device.id,
+    reportableSiteId: device.siteId,
     resultSourceId,
     resultTypeId,
     sampleId,
