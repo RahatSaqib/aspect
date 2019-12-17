@@ -145,14 +145,11 @@ function mapStateToProps(state, props) {
   )
   const fullAddressInSite = address(props.site)
 
-  const debounced = false
-
   return {
     latLngInForm,
     latLngInSite,
     fullAddressInSite,
     fullAddressInForm,
-    debounced,
   }
 }
 
