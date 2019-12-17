@@ -1,10 +1,9 @@
 // Imports from packages
 import PropTypes from 'prop-types'
 import React from 'react'
-import { connect } from 'react-redux'
 
 import { compose, setPropTypes, pure, withHandlers } from 'recompose'
-import { Field, reduxForm, formValueSelector } from 'redux-form/immutable'
+import { Field, reduxForm } from 'redux-form/immutable'
 import classnames from 'classnames/bind'
 
 // Material-UI
@@ -52,8 +51,6 @@ function validate(values) {
   return errors
 }
 
-const selector = formValueSelector('siteDetail')
-
 const enhance = compose(
   setPropTypes({
     labels: PropTypes.object.isRequired,
@@ -61,26 +58,6 @@ const enhance = compose(
     updateLatLongFromFormAddress: PropTypes.func.isRequired,
   }),
   pure,
-  connect(
-    state => {
-      const latLngInForm = selector(state, 'lat', 'lng')
-      const fullAddressInForm = selector(
-        state,
-        'country',
-        'state',
-        'lga',
-        'city',
-        'address',
-        'address2'
-      )
-
-      return {
-        latLngInForm,
-        fullAddressInForm,
-      }
-    },
-    {}
-  ),
   reduxForm({
     form: 'siteDetail',
     validate,
