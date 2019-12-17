@@ -192,38 +192,25 @@ async function seedStockIssues(knex) {
   // ---------------------------------
   // Inventory Stockout Issue
   // ---------------------------------
-  const [stockoutAlertTemplateId] = await knex('AlertTemplate').insert(
-    Object.assign(
-      {
-        message:
-          'Stock-out expected {{formatDate issue.data.date}} - Order Stock.',
-      },
-      auditFields
-    )
-  )
+  const [stockoutAlertTemplateId] = await knex('AlertTemplate').insert({
+    message: 'Stock-out expected {{formatDate issue.data.date}} - Order Stock.',
+    ...auditFields,
+  })
 
-  const [stockoutSmsTemplateId] = await knex('SmsTemplate').insert(
-    Object.assign(
-      {
-        message:
-          '{{site.name}}: Stock-out expected {{formatDate issue.data.date}} - Order Stock.',
-      },
-      auditFields
-    )
-  )
+  const [stockoutSmsTemplateId] = await knex('SmsTemplate').insert({
+    message:
+      '{{site.name}}: Stock-out expected {{formatDate issue.data.date}} - Order Stock.',
+    ...auditFields,
+  })
 
-  const [stockoutEmailTemplateId] = await knex('EmailTemplate').insert(
-    Object.assign(
-      {
-        subject: '{{site.name}} stockout',
-        body:
-          '{{site.name}}: Stock-out expected {{formatDate issue.data.date}} - Order Stock.',
-        htmlBody:
-          '<em>{{site.name}}:</em> Stock-out expected {{formatDate issue.data.date}} - Order Stock.',
-      },
-      auditFields
-    )
-  )
+  const [stockoutEmailTemplateId] = await knex('EmailTemplate').insert({
+    subject: '{{site.name}} stockout',
+    body:
+      '{{site.name}}: Stock-out expected {{formatDate issue.data.date}} - Order Stock.',
+    htmlBody:
+      '<em>{{site.name}}:</em> Stock-out expected {{formatDate issue.data.date}} - Order Stock.',
+    ...auditFields,
+  })
 
   // ---------------------------------
   // Inventory Stock Expiring Issue
@@ -311,129 +298,109 @@ async function seedStockIssues(knex) {
     // ------------
     // Stockout
     // ------------
-    Object.assign(
-      {
-        name: 'LU Stockout',
-        partnerId,
-        issueTypeId: issueTypes.InventoryStockout.id,
-        jobFunctionId: jobFunctionIdLabUser,
-        level: 1,
-        canAcknowledge: 1,
-        messageTypeId: defaultMessageTypes.InventoryStockout.id,
-      },
-      auditFields
-    ),
-    Object.assign(
-      {
-        name: 'LU Escalated Stockout',
-        partnerId,
-        issueTypeId: issueTypes.InventoryStockout.id,
-        jobFunctionId: jobFunctionIdLabUser,
-        level: 2,
-        canAcknowledge: 0,
-        messageTypeId: defaultMessageTypes.InventoryStockout.id,
-      },
-      auditFields
-    ),
-    Object.assign(
-      {
-        name: 'LU Stockout - RO View',
-        partnerId,
-        issueTypeId: issueTypes.InventoryStockout.id,
-        jobFunctionId: jobFunctionIdRegionalOfficer,
-        level: 1,
-        canAcknowledge: 0,
-        messageTypeId: defaultMessageTypes.InventoryStockout.id,
-      },
-      auditFields
-    ),
-    Object.assign(
-      {
-        name: 'LU Escalated Stockout - RO View',
-        partnerId,
-        issueTypeId: issueTypes.InventoryStockout.id,
-        jobFunctionId: jobFunctionIdRegionalOfficer,
-        level: 2,
-        canAcknowledge: 0,
-        messageTypeId: defaultMessageTypes.InventoryStockout.id,
-      },
-      auditFields
-    ),
-    Object.assign(
-      {
-        name: 'RO Stockout',
-        partnerId,
-        issueTypeId: issueTypes.InventoryStockout.id,
-        jobFunctionId: jobFunctionIdRegionalOfficer,
-        level: 1,
-        canAcknowledge: 1,
-        messageTypeId: defaultMessageTypes.InventoryStockout.id,
-      },
-      auditFields
-    ),
+    {
+      name: 'LU Stockout',
+      partnerId,
+      issueTypeId: issueTypes.InventoryStockout.id,
+      jobFunctionId: jobFunctionIdLabUser,
+      level: 1,
+      canAcknowledge: 1,
+      messageTypeId: defaultMessageTypes.InventoryStockout.id,
+      ...auditFields,
+    },
+    {
+      name: 'LU Escalated Stockout',
+      partnerId,
+      issueTypeId: issueTypes.InventoryStockout.id,
+      jobFunctionId: jobFunctionIdLabUser,
+      level: 2,
+      canAcknowledge: 0,
+      messageTypeId: defaultMessageTypes.InventoryStockout.id,
+      ...auditFields,
+    },
+    {
+      name: 'LU Stockout - RO View',
+      partnerId,
+      issueTypeId: issueTypes.InventoryStockout.id,
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      level: 1,
+      canAcknowledge: 0,
+      messageTypeId: defaultMessageTypes.InventoryStockout.id,
+      ...auditFields,
+    },
+    {
+      name: 'LU Escalated Stockout - RO View',
+      partnerId,
+      issueTypeId: issueTypes.InventoryStockout.id,
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      level: 2,
+      canAcknowledge: 0,
+      messageTypeId: defaultMessageTypes.InventoryStockout.id,
+      ...auditFields,
+    },
+    {
+      name: 'RO Stockout',
+      partnerId,
+      issueTypeId: issueTypes.InventoryStockout.id,
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      level: 1,
+      canAcknowledge: 1,
+      messageTypeId: defaultMessageTypes.InventoryStockout.id,
+      ...auditFields,
+    },
     // ------------
     // StockExpiring
     // ------------
-    Object.assign(
-      {
-        name: 'LU Stock Expiring',
-        partnerId,
-        issueTypeId: issueTypes.InventoryStockExpiring.id,
-        jobFunctionId: jobFunctionIdLabUser,
-        level: 1,
-        canAcknowledge: 1,
-        messageTypeId: defaultMessageTypes.InventoryStockExpiring.id,
-      },
-      auditFields
-    ),
-    Object.assign(
-      {
-        name: 'LU Escalated Stock Expiring',
-        partnerId,
-        issueTypeId: issueTypes.InventoryStockExpiring.id,
-        jobFunctionId: jobFunctionIdLabUser,
-        level: 2,
-        canAcknowledge: 0,
-        messageTypeId: defaultMessageTypes.InventoryStockExpiring.id,
-      },
-      auditFields
-    ),
-    Object.assign(
-      {
-        name: 'LU Stock Expiring - RO View',
-        partnerId,
-        issueTypeId: issueTypes.InventoryStockExpiring.id,
-        jobFunctionId: jobFunctionIdRegionalOfficer,
-        level: 1,
-        canAcknowledge: 0,
-        messageTypeId: defaultMessageTypes.InventoryStockExpiring.id,
-      },
-      auditFields
-    ),
-    Object.assign(
-      {
-        name: 'LU Escalated Stock Expiring - RO View',
-        partnerId,
-        issueTypeId: issueTypes.InventoryStockExpiring.id,
-        jobFunctionId: jobFunctionIdRegionalOfficer,
-        level: 2,
-        canAcknowledge: 0,
-        messageTypeId: defaultMessageTypes.InventoryStockExpiring.id,
-      },
-      auditFields
-    ),
-    Object.assign(
-      {
-        name: 'RO Stock Expiring',
-        partnerId,
-        issueTypeId: issueTypes.InventoryStockExpiring.id,
-        jobFunctionId: jobFunctionIdRegionalOfficer,
-        level: 1,
-        canAcknowledge: 0,
-        messageTypeId: defaultMessageTypes.InventoryStockExpiring.id,
-      },
-      auditFields
-    ),
+    {
+      name: 'LU Stock Expiring',
+      partnerId,
+      issueTypeId: issueTypes.InventoryStockExpiring.id,
+      jobFunctionId: jobFunctionIdLabUser,
+      level: 1,
+      canAcknowledge: 1,
+      messageTypeId: defaultMessageTypes.InventoryStockExpiring.id,
+      ...auditFields,
+    },
+    {
+      name: 'LU Escalated Stock Expiring',
+      partnerId,
+      issueTypeId: issueTypes.InventoryStockExpiring.id,
+      jobFunctionId: jobFunctionIdLabUser,
+      level: 2,
+      canAcknowledge: 0,
+      messageTypeId: defaultMessageTypes.InventoryStockExpiring.id,
+      ...auditFields,
+    },
+    {
+      name: 'LU Stock Expiring - RO View',
+      partnerId,
+      issueTypeId: issueTypes.InventoryStockExpiring.id,
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      level: 1,
+      canAcknowledge: 0,
+      messageTypeId: defaultMessageTypes.InventoryStockExpiring.id,
+      ...auditFields,
+    },
+    {
+      name: 'LU Escalated Stock Expiring - RO View',
+      partnerId,
+      issueTypeId: issueTypes.InventoryStockExpiring.id,
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      level: 2,
+      canAcknowledge: 0,
+      messageTypeId: defaultMessageTypes.InventoryStockExpiring.id,
+      ...auditFields,
+    },
+    {
+      name: 'RO Stock Expiring',
+      partnerId,
+      issueTypeId: issueTypes.InventoryStockExpiring.id,
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      level: 1,
+      canAcknowledge: 0,
+      messageTypeId: defaultMessageTypes.InventoryStockExpiring.id,
+      ...auditFields,
+    },
   ])
 
   // -------------------------------------------
@@ -578,11 +545,10 @@ async function seedStaticDataIssueStatus(knex, { data }) {
       .where('externalId', status.externalId)
       .first('id')
     if (existingStatus == null) {
-      await knex('IssueStatus').insert(
-        Object.assign({}, _.omit(status, ['issueStatusSeverity']), {
-          issueStatusSeverityId: severities[status.issueStatusSeverity].id,
-        })
-      )
+      await knex('IssueStatus').insert({
+        ..._.omit(status, ['issueStatusSeverity']),
+        issueStatusSeverityId: severities[status.issueStatusSeverity].id,
+      })
     }
   }
 }
@@ -657,6 +623,35 @@ async function addFollowUps(knex, partnerIds, { data }) {
   }
 }
 
+async function removeFollowUps(knex, partnerIds) {
+  const followUp = await knex('FollowUp')
+    .select('id')
+    .where('externalId', 'moved')
+    .first()
+  if (followUp) {
+    for (const partnerId of partnerIds) {
+      await knex('FollowUpAssay')
+        .where({
+          followUpId: followUp.id,
+          partnerId,
+        })
+        .del()
+    }
+
+    await knex('ResultFollowUp')
+      .where({
+        followUpId: followUp.id,
+      })
+      .del()
+
+    await knex('FollowUp')
+      .where({
+        id: followUp.id,
+      })
+      .del()
+  }
+}
+
 // Ensures all common triggers for the given partner are set based on notification
 // types triggered for that partner. This will only seed for triggers that do
 // not already exist for given partner, issue type, and issue event status, so
@@ -703,13 +698,12 @@ async function seedIssueEventTriggersForPartner(
           .where(triggerData)
           .first('id')
         if (existingTrigger == null) {
-          await knex('IssueEventTrigger').insert(
-            Object.assign({}, triggerData, {
-              triggerConditions: JSON.stringify(triggerConditions),
-              createdOn: now,
-              updatedOn: now,
-            })
-          )
+          await knex('IssueEventTrigger').insert({
+            ...triggerData,
+            triggerConditions: JSON.stringify(triggerConditions),
+            createdOn: now,
+            updatedOn: now,
+          })
         }
       }
     }
@@ -847,594 +841,496 @@ async function seedNotificationTypes(
   const issueTypes = await rowsAsObject(knex, 'IssueType', 'externalId')
   const defaultMessageTypes = await getDefaultMessageTypes(knex)
   await upsertNotificationTypes(knex, [
-    Object.assign(
-      {
-        name: 'LU Network',
-        partnerId,
-        issueTypeId: issueTypes.DeviceOffline.id,
-        jobFunctionId: jobFunctionIdLabUser,
-        level: 1,
-        canAcknowledge: 1,
-        messageTypeId: defaultMessageTypes.DeviceOffline.id,
-      },
-      auditFields
-    ),
-    Object.assign(
-      {
-        name: 'RO Network',
-        partnerId,
-        issueTypeId: issueTypes.DeviceOffline.id,
-        jobFunctionId: jobFunctionIdRegionalOfficer,
-        level: 2,
-        canAcknowledge: 1,
-        messageTypeId: defaultMessageTypes.DeviceOffline.id,
-      },
-      auditFields
-    ),
-    Object.assign(
-      {
-        name: 'RO Escalated Network',
-        partnerId,
-        issueTypeId: issueTypes.DeviceOffline.id,
-        jobFunctionId: jobFunctionIdRegionalOfficer,
-        level: 3,
-        canAcknowledge: 0,
-        messageTypeId: defaultMessageTypes.DeviceOffline.id,
-      },
-      auditFields
-    ),
-    Object.assign(
-      {
-        name: 'LU No Testing',
-        partnerId,
-        issueTypeId: issueTypes.DeviceNoResults.id,
-        jobFunctionId: jobFunctionIdLabUser,
-        level: 1,
-        canAcknowledge: 1,
-        messageTypeId: defaultMessageTypes.DeviceNoResults.id,
-      },
-      auditFields
-    ),
-    Object.assign(
-      {
-        name: 'RO No Testing',
-        partnerId,
-        issueTypeId: issueTypes.DeviceNoResults.id,
-        jobFunctionId: jobFunctionIdRegionalOfficer,
-        level: 2,
-        canAcknowledge: 1,
-        messageTypeId: defaultMessageTypes.DeviceNoResults.id,
-      },
-      auditFields
-    ),
-    Object.assign(
-      {
-        name: 'RO Escalated No Testing',
-        partnerId,
-        issueTypeId: issueTypes.DeviceNoResults.id,
-        jobFunctionId: jobFunctionIdRegionalOfficer,
-        level: 3,
-        canAcknowledge: 0,
-        messageTypeId: defaultMessageTypes.DeviceNoResults.id,
-      },
-      auditFields
-    ),
-    Object.assign(
-      {
-        name: 'LU Module Failure',
-        partnerId,
-        issueTypeId: issueTypes.ModuleFailureError.id,
-        jobFunctionId: jobFunctionIdLabUser,
-        level: 2,
-        canAcknowledge: 1,
-        messageTypeId: defaultMessageTypes.ModuleFailureError.id,
-      },
-      auditFields
-    ),
-    Object.assign(
-      {
-        name: 'LU Escalated Module Failure',
-        partnerId,
-        issueTypeId: issueTypes.ModuleFailureError.id,
-        jobFunctionId: jobFunctionIdLabUser,
-        level: 2,
-        canAcknowledge: 0,
-        messageTypeId: defaultMessageTypes.ModuleFailureError.id,
-      },
-      auditFields
-    ),
-    Object.assign(
-      {
-        name: 'LU Module Temperature',
-        partnerId,
-        issueTypeId: issueTypes.ModuleTemperatureError.id,
-        jobFunctionId: jobFunctionIdLabUser,
-        level: 1,
-        canAcknowledge: 1,
-        messageTypeId: defaultMessageTypes.ModuleTemperatureError.id,
-      },
-      auditFields
-    ),
-    Object.assign(
-      {
-        name: 'LU Escalated Module Temperature',
-        partnerId,
-        issueTypeId: issueTypes.ModuleTemperatureError.id,
-        jobFunctionId: jobFunctionIdLabUser,
-        level: 2,
-        canAcknowledge: 0,
-        messageTypeId: defaultMessageTypes.ModuleTemperatureError.id,
-      },
-      auditFields
-    ),
-    Object.assign(
-      {
-        name: 'LU Module Power',
-        partnerId,
-        issueTypeId: issueTypes.ModulePowerError.id,
-        jobFunctionId: jobFunctionIdLabUser,
-        level: 1,
-        canAcknowledge: 1,
-        messageTypeId: defaultMessageTypes.ModulePowerError.id,
-      },
-      auditFields
-    ),
-    Object.assign(
-      {
-        name: 'LU Escalated Module Power',
-        partnerId,
-        issueTypeId: issueTypes.ModulePowerError.id,
-        jobFunctionId: jobFunctionIdLabUser,
-        level: 2,
-        canAcknowledge: 0,
-        messageTypeId: defaultMessageTypes.ModulePowerError.id,
-      },
-      auditFields
-    ),
-    Object.assign(
-      {
-        name: 'LU Machine Temperature',
-        partnerId,
-        issueTypeId: issueTypes.MachineTemperatureError.id,
-        jobFunctionId: jobFunctionIdLabUser,
-        level: 1,
-        canAcknowledge: 1,
-        messageTypeId: defaultMessageTypes.MachineTemperatureError.id,
-      },
-      auditFields
-    ),
-    Object.assign(
-      {
-        name: 'LU Escalated Machine Temperature',
-        partnerId,
-        issueTypeId: issueTypes.MachineTemperatureError.id,
-        jobFunctionId: jobFunctionIdLabUser,
-        level: 2,
-        canAcknowledge: 0,
-        messageTypeId: defaultMessageTypes.MachineTemperatureError.id,
-      },
-      auditFields
-    ),
-    Object.assign(
-      {
-        name: 'LU Machine Power',
-        partnerId,
-        issueTypeId: issueTypes.MachinePowerError.id,
-        jobFunctionId: jobFunctionIdLabUser,
-        level: 1,
-        canAcknowledge: 1,
-        messageTypeId: defaultMessageTypes.MachinePowerError.id,
-      },
-      auditFields
-    ),
-    Object.assign(
-      {
-        name: 'LU Escalated Machine Power',
-        partnerId,
-        issueTypeId: issueTypes.MachinePowerError.id,
-        jobFunctionId: jobFunctionIdLabUser,
-        level: 2,
-        canAcknowledge: 0,
-        messageTypeId: defaultMessageTypes.MachinePowerError.id,
-      },
-      auditFields
-    ),
-    Object.assign(
-      {
-        name: 'LU Module Procedural',
-        partnerId,
-        issueTypeId: issueTypes.ModuleProceduralError.id,
-        jobFunctionId: jobFunctionIdLabUser,
-        level: 1,
-        canAcknowledge: 1,
-        messageTypeId: defaultMessageTypes.ModuleProceduralError.id,
-      },
-      auditFields
-    ),
-    Object.assign(
-      {
-        name: 'LU Escalated Module Procedural',
-        partnerId,
-        issueTypeId: issueTypes.ModuleProceduralError.id,
-        jobFunctionId: jobFunctionIdLabUser,
-        level: 2,
-        canAcknowledge: 0,
-        messageTypeId: defaultMessageTypes.ModuleProceduralError.id,
-      },
-      auditFields
-    ),
-    Object.assign(
-      {
-        name: 'LU Machine Procedural',
-        partnerId,
-        issueTypeId: issueTypes.MachineProceduralError.id,
-        jobFunctionId: jobFunctionIdLabUser,
-        level: 1,
-        canAcknowledge: 1,
-        messageTypeId: defaultMessageTypes.MachineProceduralError.id,
-      },
-      auditFields
-    ),
-    Object.assign(
-      {
-        name: 'LU Escalated Machine Procedural',
-        partnerId,
-        issueTypeId: issueTypes.MachineProceduralError.id,
-        jobFunctionId: jobFunctionIdLabUser,
-        level: 2,
-        canAcknowledge: 0,
-        messageTypeId: defaultMessageTypes.MachineProceduralError.id,
-      },
-      auditFields
-    ),
-    Object.assign(
-      {
-        name: 'RO Module',
-        partnerId,
-        issueTypeId: issueTypes.ModuleProceduralError.id,
-        jobFunctionId: jobFunctionIdRegionalOfficer,
-        level: 1,
-        canAcknowledge: 0,
-        messageTypeId: defaultMessageTypes.ModuleProceduralError.id,
-      },
-      auditFields
-    ),
-    Object.assign(
-      {
-        name: 'RO Machine',
-        partnerId,
-        issueTypeId: issueTypes.MachineProceduralError.id,
-        jobFunctionId: jobFunctionIdRegionalOfficer,
-        level: 1,
-        canAcknowledge: 0,
-        messageTypeId: defaultMessageTypes.MachineProceduralError.id,
-      },
-      auditFields
-    ),
-    Object.assign(
-      {
-        name: 'LU Reagent Health',
-        partnerId,
-        issueTypeId: issueTypes.ReagentHealthError.id,
-        jobFunctionId: jobFunctionIdLabUser,
-        level: 1,
-        canAcknowledge: 1,
-        messageTypeId: defaultMessageTypes.ReagentHealthError.id,
-      },
-      auditFields
-    ),
-    Object.assign(
-      {
-        name: 'LU Escalated Reagent Health',
-        partnerId,
-        issueTypeId: issueTypes.ReagentHealthError.id,
-        jobFunctionId: jobFunctionIdLabUser,
-        level: 2,
-        canAcknowledge: 0,
-        messageTypeId: defaultMessageTypes.ReagentHealthError.id,
-      },
-      auditFields
-    ),
-    Object.assign(
-      {
-        name: 'RO Reagent Health',
-        partnerId,
-        issueTypeId: issueTypes.ReagentHealthError.id,
-        jobFunctionId: jobFunctionIdRegionalOfficer,
-        level: 1,
-        canAcknowledge: 0,
-        messageTypeId: defaultMessageTypes.ReagentHealthError.id,
-      },
-      auditFields
-    ),
-    Object.assign(
-      {
-        name: 'LU Stock Level Update',
-        partnerId,
-        issueTypeId: issueTypes.StockLevelUpdate.id,
-        jobFunctionId: jobFunctionIdLabUser,
-        level: 1,
-        canAcknowledge: 0,
-        messageTypeId: defaultMessageTypes.StockLevelUpdate.id,
-      },
-      auditFields
-    ),
-    Object.assign(
-      {
-        name: 'RO Stock Level Update',
-        partnerId,
-        issueTypeId: issueTypes.StockLevelUpdate.id,
-        jobFunctionId: jobFunctionIdRegionalOfficer,
-        level: 1,
-        canAcknowledge: 1,
-        messageTypeId: defaultMessageTypes.StockLevelUpdate.id,
-      },
-      auditFields
-    ),
-    Object.assign(
-      {
-        name: 'LU Data Category Low',
-        partnerId,
-        issueTypeId: issueTypes.DataCategoryLowError.id,
-        jobFunctionId: jobFunctionIdLabUser,
-        level: 1,
-        canAcknowledge: 1,
-        messageTypeId: defaultMessageTypes.DataCategoryLowError.id,
-      },
-      auditFields
-    ),
-    Object.assign(
-      {
-        name: 'RO Data Category Low',
-        partnerId,
-        issueTypeId: issueTypes.DataCategoryLowError.id,
-        jobFunctionId: jobFunctionIdRegionalOfficer,
-        level: 1,
-        canAcknowledge: 1,
-        messageTypeId: defaultMessageTypes.DataCategoryLowError.id,
-      },
-      auditFields
-    ),
-    Object.assign(
-      {
-        name: 'LU Network - RO View',
-        partnerId,
-        issueTypeId: issueTypes.DeviceOffline.id,
-        jobFunctionId: jobFunctionIdRegionalOfficer,
-        level: 1,
-        canAcknowledge: 0,
-        messageTypeId: defaultMessageTypes.DeviceOffline.id,
-      },
-      auditFields
-    ),
-    Object.assign(
-      {
-        name: 'LU No Testing - RO View',
-        partnerId,
-        issueTypeId: issueTypes.DeviceNoResults.id,
-        jobFunctionId: jobFunctionIdRegionalOfficer,
-        level: 1,
-        canAcknowledge: 0,
-        messageTypeId: defaultMessageTypes.DeviceNoResults.id,
-      },
-      auditFields
-    ),
-    Object.assign(
-      {
-        name: 'LU Module Failure - RO View',
-        partnerId,
-        issueTypeId: issueTypes.ModuleFailureError.id,
-        jobFunctionId: jobFunctionIdRegionalOfficer,
-        level: 2,
-        canAcknowledge: 0,
-        messageTypeId: defaultMessageTypes.ModuleFailureError.id,
-      },
-      auditFields
-    ),
-    Object.assign(
-      {
-        name: 'LU Escalated Module Failure - RO View',
-        partnerId,
-        issueTypeId: issueTypes.ModuleFailureError.id,
-        jobFunctionId: jobFunctionIdRegionalOfficer,
-        level: 2,
-        canAcknowledge: 0,
-        messageTypeId: defaultMessageTypes.ModuleFailureError.id,
-      },
-      auditFields
-    ),
-    Object.assign(
-      {
-        name: 'LU Module Temperature - RO View',
-        partnerId,
-        issueTypeId: issueTypes.ModuleTemperatureError.id,
-        jobFunctionId: jobFunctionIdRegionalOfficer,
-        level: 1,
-        canAcknowledge: 0,
-        messageTypeId: defaultMessageTypes.ModuleTemperatureError.id,
-      },
-      auditFields
-    ),
-    Object.assign(
-      {
-        name: 'LU Escalated Module Temperature - RO View',
-        partnerId,
-        issueTypeId: issueTypes.ModuleTemperatureError.id,
-        jobFunctionId: jobFunctionIdRegionalOfficer,
-        level: 2,
-        canAcknowledge: 0,
-        messageTypeId: defaultMessageTypes.ModuleTemperatureError.id,
-      },
-      auditFields
-    ),
-    Object.assign(
-      {
-        name: 'LU Module Power - RO View',
-        partnerId,
-        issueTypeId: issueTypes.ModulePowerError.id,
-        jobFunctionId: jobFunctionIdRegionalOfficer,
-        level: 1,
-        canAcknowledge: 0,
-        messageTypeId: defaultMessageTypes.ModulePowerError.id,
-      },
-      auditFields
-    ),
-    Object.assign(
-      {
-        name: 'LU Escalated Module Power - RO View',
-        partnerId,
-        issueTypeId: issueTypes.ModulePowerError.id,
-        jobFunctionId: jobFunctionIdRegionalOfficer,
-        level: 2,
-        canAcknowledge: 0,
-        messageTypeId: defaultMessageTypes.ModulePowerError.id,
-      },
-      auditFields
-    ),
-    Object.assign(
-      {
-        name: 'LU Machine Temperature - RO View',
-        partnerId,
-        issueTypeId: issueTypes.MachineTemperatureError.id,
-        jobFunctionId: jobFunctionIdRegionalOfficer,
-        level: 1,
-        canAcknowledge: 0,
-        messageTypeId: defaultMessageTypes.MachineTemperatureError.id,
-      },
-      auditFields
-    ),
-    Object.assign(
-      {
-        name: 'LU Escalated Machine Temperature - RO View',
-        partnerId,
-        issueTypeId: issueTypes.MachineTemperatureError.id,
-        jobFunctionId: jobFunctionIdRegionalOfficer,
-        level: 2,
-        canAcknowledge: 0,
-        messageTypeId: defaultMessageTypes.MachineTemperatureError.id,
-      },
-      auditFields
-    ),
-    Object.assign(
-      {
-        name: 'LU Machine Power - RO View',
-        partnerId,
-        issueTypeId: issueTypes.MachinePowerError.id,
-        jobFunctionId: jobFunctionIdRegionalOfficer,
-        level: 1,
-        canAcknowledge: 0,
-        messageTypeId: defaultMessageTypes.MachinePowerError.id,
-      },
-      auditFields
-    ),
-    Object.assign(
-      {
-        name: 'LU Escalated Machine Power - RO View',
-        partnerId,
-        issueTypeId: issueTypes.MachinePowerError.id,
-        jobFunctionId: jobFunctionIdRegionalOfficer,
-        level: 2,
-        canAcknowledge: 0,
-        messageTypeId: defaultMessageTypes.MachinePowerError.id,
-      },
-      auditFields
-    ),
-    Object.assign(
-      {
-        name: 'LU Module Procedural - RO View',
-        partnerId,
-        issueTypeId: issueTypes.ModuleProceduralError.id,
-        jobFunctionId: jobFunctionIdRegionalOfficer,
-        level: 1,
-        canAcknowledge: 0,
-        messageTypeId: defaultMessageTypes.ModuleProceduralError.id,
-      },
-      auditFields
-    ),
-    Object.assign(
-      {
-        name: 'LU Escalated Module Procedural - RO View',
-        partnerId,
-        issueTypeId: issueTypes.ModuleProceduralError.id,
-        jobFunctionId: jobFunctionIdRegionalOfficer,
-        level: 2,
-        canAcknowledge: 0,
-        messageTypeId: defaultMessageTypes.ModuleProceduralError.id,
-      },
-      auditFields
-    ),
-    Object.assign(
-      {
-        name: 'LU Machine Procedural - RO View',
-        partnerId,
-        issueTypeId: issueTypes.MachineProceduralError.id,
-        jobFunctionId: jobFunctionIdRegionalOfficer,
-        level: 1,
-        canAcknowledge: 0,
-        messageTypeId: defaultMessageTypes.MachineProceduralError.id,
-      },
-      auditFields
-    ),
-    Object.assign(
-      {
-        name: 'LU Escalated Machine Procedural - RO View',
-        partnerId,
-        issueTypeId: issueTypes.MachineProceduralError.id,
-        jobFunctionId: jobFunctionIdRegionalOfficer,
-        level: 2,
-        canAcknowledge: 0,
-        messageTypeId: defaultMessageTypes.MachineProceduralError.id,
-      },
-      auditFields
-    ),
-    Object.assign(
-      {
-        name: 'LU Reagent Health - RO View',
-        partnerId,
-        issueTypeId: issueTypes.ReagentHealthError.id,
-        jobFunctionId: jobFunctionIdRegionalOfficer,
-        level: 1,
-        canAcknowledge: 0,
-        messageTypeId: defaultMessageTypes.ReagentHealthError.id,
-      },
-      auditFields
-    ),
-    Object.assign(
-      {
-        name: 'LU Escalated Reagent Health - RO View',
-        partnerId,
-        issueTypeId: issueTypes.ReagentHealthError.id,
-        jobFunctionId: jobFunctionIdRegionalOfficer,
-        level: 2,
-        canAcknowledge: 0,
-        messageTypeId: defaultMessageTypes.ReagentHealthError.id,
-      },
-      auditFields
-    ),
-    Object.assign(
-      {
-        name: 'LU Stock Level Update - RO View',
-        partnerId,
-        issueTypeId: issueTypes.StockLevelUpdate.id,
-        jobFunctionId: jobFunctionIdRegionalOfficer,
-        level: 1,
-        canAcknowledge: 0,
-        messageTypeId: defaultMessageTypes.StockLevelUpdate.id,
-      },
-      auditFields
-    ),
-    Object.assign(
-      {
-        name: 'LU Data Category Low - RO View',
-        partnerId,
-        issueTypeId: issueTypes.DataCategoryLowError.id,
-        jobFunctionId: jobFunctionIdRegionalOfficer,
-        level: 1,
-        canAcknowledge: 0,
-        messageTypeId: defaultMessageTypes.DataCategoryLowError.id,
-      },
-      auditFields
-    ),
+    {
+      name: 'LU Network',
+      partnerId,
+      issueTypeId: issueTypes.DeviceOffline.id,
+      jobFunctionId: jobFunctionIdLabUser,
+      level: 1,
+      canAcknowledge: 1,
+      messageTypeId: defaultMessageTypes.DeviceOffline.id,
+      ...auditFields,
+    },
+    {
+      name: 'RO Network',
+      partnerId,
+      issueTypeId: issueTypes.DeviceOffline.id,
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      level: 2,
+      canAcknowledge: 1,
+      messageTypeId: defaultMessageTypes.DeviceOffline.id,
+      ...auditFields,
+    },
+    {
+      name: 'RO Escalated Network',
+      partnerId,
+      issueTypeId: issueTypes.DeviceOffline.id,
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      level: 3,
+      canAcknowledge: 0,
+      messageTypeId: defaultMessageTypes.DeviceOffline.id,
+      ...auditFields,
+    },
+    {
+      name: 'LU No Testing',
+      partnerId,
+      issueTypeId: issueTypes.DeviceNoResults.id,
+      jobFunctionId: jobFunctionIdLabUser,
+      level: 1,
+      canAcknowledge: 1,
+      messageTypeId: defaultMessageTypes.DeviceNoResults.id,
+      ...auditFields,
+    },
+    {
+      name: 'RO No Testing',
+      partnerId,
+      issueTypeId: issueTypes.DeviceNoResults.id,
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      level: 2,
+      canAcknowledge: 1,
+      messageTypeId: defaultMessageTypes.DeviceNoResults.id,
+      ...auditFields,
+    },
+    {
+      name: 'RO Escalated No Testing',
+      partnerId,
+      issueTypeId: issueTypes.DeviceNoResults.id,
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      level: 3,
+      canAcknowledge: 0,
+      messageTypeId: defaultMessageTypes.DeviceNoResults.id,
+      ...auditFields,
+    },
+    {
+      name: 'LU Module Failure',
+      partnerId,
+      issueTypeId: issueTypes.ModuleFailureError.id,
+      jobFunctionId: jobFunctionIdLabUser,
+      level: 2,
+      canAcknowledge: 1,
+      messageTypeId: defaultMessageTypes.ModuleFailureError.id,
+      ...auditFields,
+    },
+    {
+      name: 'LU Escalated Module Failure',
+      partnerId,
+      issueTypeId: issueTypes.ModuleFailureError.id,
+      jobFunctionId: jobFunctionIdLabUser,
+      level: 2,
+      canAcknowledge: 0,
+      messageTypeId: defaultMessageTypes.ModuleFailureError.id,
+      ...auditFields,
+    },
+    {
+      name: 'LU Module Temperature',
+      partnerId,
+      issueTypeId: issueTypes.ModuleTemperatureError.id,
+      jobFunctionId: jobFunctionIdLabUser,
+      level: 1,
+      canAcknowledge: 1,
+      messageTypeId: defaultMessageTypes.ModuleTemperatureError.id,
+      ...auditFields,
+    },
+    {
+      name: 'LU Escalated Module Temperature',
+      partnerId,
+      issueTypeId: issueTypes.ModuleTemperatureError.id,
+      jobFunctionId: jobFunctionIdLabUser,
+      level: 2,
+      canAcknowledge: 0,
+      messageTypeId: defaultMessageTypes.ModuleTemperatureError.id,
+      ...auditFields,
+    },
+    {
+      name: 'LU Module Power',
+      partnerId,
+      issueTypeId: issueTypes.ModulePowerError.id,
+      jobFunctionId: jobFunctionIdLabUser,
+      level: 1,
+      canAcknowledge: 1,
+      messageTypeId: defaultMessageTypes.ModulePowerError.id,
+      ...auditFields,
+    },
+    {
+      name: 'LU Escalated Module Power',
+      partnerId,
+      issueTypeId: issueTypes.ModulePowerError.id,
+      jobFunctionId: jobFunctionIdLabUser,
+      level: 2,
+      canAcknowledge: 0,
+      messageTypeId: defaultMessageTypes.ModulePowerError.id,
+      ...auditFields,
+    },
+    {
+      name: 'LU Machine Temperature',
+      partnerId,
+      issueTypeId: issueTypes.MachineTemperatureError.id,
+      jobFunctionId: jobFunctionIdLabUser,
+      level: 1,
+      canAcknowledge: 1,
+      messageTypeId: defaultMessageTypes.MachineTemperatureError.id,
+      ...auditFields,
+    },
+    {
+      name: 'LU Escalated Machine Temperature',
+      partnerId,
+      issueTypeId: issueTypes.MachineTemperatureError.id,
+      jobFunctionId: jobFunctionIdLabUser,
+      level: 2,
+      canAcknowledge: 0,
+      messageTypeId: defaultMessageTypes.MachineTemperatureError.id,
+      ...auditFields,
+    },
+    {
+      name: 'LU Machine Power',
+      partnerId,
+      issueTypeId: issueTypes.MachinePowerError.id,
+      jobFunctionId: jobFunctionIdLabUser,
+      level: 1,
+      canAcknowledge: 1,
+      messageTypeId: defaultMessageTypes.MachinePowerError.id,
+      ...auditFields,
+    },
+    {
+      name: 'LU Escalated Machine Power',
+      partnerId,
+      issueTypeId: issueTypes.MachinePowerError.id,
+      jobFunctionId: jobFunctionIdLabUser,
+      level: 2,
+      canAcknowledge: 0,
+      messageTypeId: defaultMessageTypes.MachinePowerError.id,
+      ...auditFields,
+    },
+    {
+      name: 'LU Module Procedural',
+      partnerId,
+      issueTypeId: issueTypes.ModuleProceduralError.id,
+      jobFunctionId: jobFunctionIdLabUser,
+      level: 1,
+      canAcknowledge: 1,
+      messageTypeId: defaultMessageTypes.ModuleProceduralError.id,
+      ...auditFields,
+    },
+    {
+      name: 'LU Escalated Module Procedural',
+      partnerId,
+      issueTypeId: issueTypes.ModuleProceduralError.id,
+      jobFunctionId: jobFunctionIdLabUser,
+      level: 2,
+      canAcknowledge: 0,
+      messageTypeId: defaultMessageTypes.ModuleProceduralError.id,
+      ...auditFields,
+    },
+    {
+      name: 'LU Machine Procedural',
+      partnerId,
+      issueTypeId: issueTypes.MachineProceduralError.id,
+      jobFunctionId: jobFunctionIdLabUser,
+      level: 1,
+      canAcknowledge: 1,
+      messageTypeId: defaultMessageTypes.MachineProceduralError.id,
+      ...auditFields,
+    },
+    {
+      name: 'LU Escalated Machine Procedural',
+      partnerId,
+      issueTypeId: issueTypes.MachineProceduralError.id,
+      jobFunctionId: jobFunctionIdLabUser,
+      level: 2,
+      canAcknowledge: 0,
+      messageTypeId: defaultMessageTypes.MachineProceduralError.id,
+      ...auditFields,
+    },
+    {
+      name: 'RO Module',
+      partnerId,
+      issueTypeId: issueTypes.ModuleProceduralError.id,
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      level: 1,
+      canAcknowledge: 0,
+      messageTypeId: defaultMessageTypes.ModuleProceduralError.id,
+      ...auditFields,
+    },
+    {
+      name: 'RO Machine',
+      partnerId,
+      issueTypeId: issueTypes.MachineProceduralError.id,
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      level: 1,
+      canAcknowledge: 0,
+      messageTypeId: defaultMessageTypes.MachineProceduralError.id,
+      ...auditFields,
+    },
+    {
+      name: 'LU Reagent Health',
+      partnerId,
+      issueTypeId: issueTypes.ReagentHealthError.id,
+      jobFunctionId: jobFunctionIdLabUser,
+      level: 1,
+      canAcknowledge: 1,
+      messageTypeId: defaultMessageTypes.ReagentHealthError.id,
+      ...auditFields,
+    },
+    {
+      name: 'LU Escalated Reagent Health',
+      partnerId,
+      issueTypeId: issueTypes.ReagentHealthError.id,
+      jobFunctionId: jobFunctionIdLabUser,
+      level: 2,
+      canAcknowledge: 0,
+      messageTypeId: defaultMessageTypes.ReagentHealthError.id,
+      ...auditFields,
+    },
+    {
+      name: 'RO Reagent Health',
+      partnerId,
+      issueTypeId: issueTypes.ReagentHealthError.id,
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      level: 1,
+      canAcknowledge: 0,
+      messageTypeId: defaultMessageTypes.ReagentHealthError.id,
+      ...auditFields,
+    },
+    {
+      name: 'LU Stock Level Update',
+      partnerId,
+      issueTypeId: issueTypes.StockLevelUpdate.id,
+      jobFunctionId: jobFunctionIdLabUser,
+      level: 1,
+      canAcknowledge: 0,
+      messageTypeId: defaultMessageTypes.StockLevelUpdate.id,
+      ...auditFields,
+    },
+    {
+      name: 'RO Stock Level Update',
+      partnerId,
+      issueTypeId: issueTypes.StockLevelUpdate.id,
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      level: 1,
+      canAcknowledge: 1,
+      messageTypeId: defaultMessageTypes.StockLevelUpdate.id,
+      ...auditFields,
+    },
+    {
+      name: 'LU Data Category Low',
+      partnerId,
+      issueTypeId: issueTypes.DataCategoryLowError.id,
+      jobFunctionId: jobFunctionIdLabUser,
+      level: 1,
+      canAcknowledge: 1,
+      messageTypeId: defaultMessageTypes.DataCategoryLowError.id,
+      ...auditFields,
+    },
+    {
+      name: 'RO Data Category Low',
+      partnerId,
+      issueTypeId: issueTypes.DataCategoryLowError.id,
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      level: 1,
+      canAcknowledge: 1,
+      messageTypeId: defaultMessageTypes.DataCategoryLowError.id,
+      ...auditFields,
+    },
+    {
+      name: 'LU Network - RO View',
+      partnerId,
+      issueTypeId: issueTypes.DeviceOffline.id,
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      level: 1,
+      canAcknowledge: 0,
+      messageTypeId: defaultMessageTypes.DeviceOffline.id,
+      ...auditFields,
+    },
+    {
+      name: 'LU No Testing - RO View',
+      partnerId,
+      issueTypeId: issueTypes.DeviceNoResults.id,
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      level: 1,
+      canAcknowledge: 0,
+      messageTypeId: defaultMessageTypes.DeviceNoResults.id,
+      ...auditFields,
+    },
+    {
+      name: 'LU Module Failure - RO View',
+      partnerId,
+      issueTypeId: issueTypes.ModuleFailureError.id,
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      level: 2,
+      canAcknowledge: 0,
+      messageTypeId: defaultMessageTypes.ModuleFailureError.id,
+      ...auditFields,
+    },
+    {
+      name: 'LU Escalated Module Failure - RO View',
+      partnerId,
+      issueTypeId: issueTypes.ModuleFailureError.id,
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      level: 2,
+      canAcknowledge: 0,
+      messageTypeId: defaultMessageTypes.ModuleFailureError.id,
+      ...auditFields,
+    },
+    {
+      name: 'LU Module Temperature - RO View',
+      partnerId,
+      issueTypeId: issueTypes.ModuleTemperatureError.id,
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      level: 1,
+      canAcknowledge: 0,
+      messageTypeId: defaultMessageTypes.ModuleTemperatureError.id,
+      ...auditFields,
+    },
+    {
+      name: 'LU Escalated Module Temperature - RO View',
+      partnerId,
+      issueTypeId: issueTypes.ModuleTemperatureError.id,
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      level: 2,
+      canAcknowledge: 0,
+      messageTypeId: defaultMessageTypes.ModuleTemperatureError.id,
+      ...auditFields,
+    },
+    {
+      name: 'LU Module Power - RO View',
+      partnerId,
+      issueTypeId: issueTypes.ModulePowerError.id,
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      level: 1,
+      canAcknowledge: 0,
+      messageTypeId: defaultMessageTypes.ModulePowerError.id,
+      ...auditFields,
+    },
+    {
+      name: 'LU Escalated Module Power - RO View',
+      partnerId,
+      issueTypeId: issueTypes.ModulePowerError.id,
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      level: 2,
+      canAcknowledge: 0,
+      messageTypeId: defaultMessageTypes.ModulePowerError.id,
+      ...auditFields,
+    },
+    {
+      name: 'LU Machine Temperature - RO View',
+      partnerId,
+      issueTypeId: issueTypes.MachineTemperatureError.id,
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      level: 1,
+      canAcknowledge: 0,
+      messageTypeId: defaultMessageTypes.MachineTemperatureError.id,
+      ...auditFields,
+    },
+    {
+      name: 'LU Escalated Machine Temperature - RO View',
+      partnerId,
+      issueTypeId: issueTypes.MachineTemperatureError.id,
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      level: 2,
+      canAcknowledge: 0,
+      messageTypeId: defaultMessageTypes.MachineTemperatureError.id,
+      ...auditFields,
+    },
+    {
+      name: 'LU Machine Power - RO View',
+      partnerId,
+      issueTypeId: issueTypes.MachinePowerError.id,
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      level: 1,
+      canAcknowledge: 0,
+      messageTypeId: defaultMessageTypes.MachinePowerError.id,
+      ...auditFields,
+    },
+    {
+      name: 'LU Escalated Machine Power - RO View',
+      partnerId,
+      issueTypeId: issueTypes.MachinePowerError.id,
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      level: 2,
+      canAcknowledge: 0,
+      messageTypeId: defaultMessageTypes.MachinePowerError.id,
+      ...auditFields,
+    },
+    {
+      name: 'LU Module Procedural - RO View',
+      partnerId,
+      issueTypeId: issueTypes.ModuleProceduralError.id,
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      level: 1,
+      canAcknowledge: 0,
+      messageTypeId: defaultMessageTypes.ModuleProceduralError.id,
+      ...auditFields,
+    },
+    {
+      name: 'LU Escalated Module Procedural - RO View',
+      partnerId,
+      issueTypeId: issueTypes.ModuleProceduralError.id,
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      level: 2,
+      canAcknowledge: 0,
+      messageTypeId: defaultMessageTypes.ModuleProceduralError.id,
+      ...auditFields,
+    },
+    {
+      name: 'LU Machine Procedural - RO View',
+      partnerId,
+      issueTypeId: issueTypes.MachineProceduralError.id,
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      level: 1,
+      canAcknowledge: 0,
+      messageTypeId: defaultMessageTypes.MachineProceduralError.id,
+      ...auditFields,
+    },
+    {
+      name: 'LU Escalated Machine Procedural - RO View',
+      partnerId,
+      issueTypeId: issueTypes.MachineProceduralError.id,
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      level: 2,
+      canAcknowledge: 0,
+      messageTypeId: defaultMessageTypes.MachineProceduralError.id,
+      ...auditFields,
+    },
+    {
+      name: 'LU Reagent Health - RO View',
+      partnerId,
+      issueTypeId: issueTypes.ReagentHealthError.id,
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      level: 1,
+      canAcknowledge: 0,
+      messageTypeId: defaultMessageTypes.ReagentHealthError.id,
+      ...auditFields,
+    },
+    {
+      name: 'LU Escalated Reagent Health - RO View',
+      partnerId,
+      issueTypeId: issueTypes.ReagentHealthError.id,
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      level: 2,
+      canAcknowledge: 0,
+      messageTypeId: defaultMessageTypes.ReagentHealthError.id,
+      ...auditFields,
+    },
+    {
+      name: 'LU Stock Level Update - RO View',
+      partnerId,
+      issueTypeId: issueTypes.StockLevelUpdate.id,
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      level: 1,
+      canAcknowledge: 0,
+      messageTypeId: defaultMessageTypes.StockLevelUpdate.id,
+      ...auditFields,
+    },
+    {
+      name: 'LU Data Category Low - RO View',
+      partnerId,
+      issueTypeId: issueTypes.DataCategoryLowError.id,
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      level: 1,
+      canAcknowledge: 0,
+      messageTypeId: defaultMessageTypes.DataCategoryLowError.id,
+      ...auditFields,
+    },
   ])
 }
 // ***********************************************************************
@@ -1904,130 +1800,110 @@ async function seedUnknownErrorsIssue(knex, { partnerId, auditFields }) {
   // ------------------------------------------
   await upsertNotificationTypes(knex, [
     // Module
-    Object.assign(
-      {
-        name: 'LU Module Unknown Error',
-        partnerId,
-        issueTypeId: moduleIssueTypeId,
-        jobFunctionId: jobFunctionIdLabUser,
-        level: 1,
-        canAcknowledge: 1,
-        messageTypeId: moduleMessageTypeId,
-      },
-      auditFields
-    ),
-    Object.assign(
-      {
-        name: 'LU Escalated Module Unknown Error',
-        partnerId,
-        issueTypeId: moduleIssueTypeId,
-        jobFunctionId: jobFunctionIdLabUser,
-        level: 2,
-        canAcknowledge: 0,
-        messageTypeId: moduleMessageTypeId,
-      },
-      auditFields
-    ),
-    Object.assign(
-      {
-        name: 'RO Escalated Module Unknown Error',
-        partnerId,
-        issueTypeId: moduleIssueTypeId,
-        jobFunctionId: jobFunctionIdRegionalOfficer,
-        level: 3,
-        canAcknowledge: 0,
-        messageTypeId: moduleMessageTypeId,
-      },
-      auditFields
-    ),
+    {
+      name: 'LU Module Unknown Error',
+      partnerId,
+      issueTypeId: moduleIssueTypeId,
+      jobFunctionId: jobFunctionIdLabUser,
+      level: 1,
+      canAcknowledge: 1,
+      messageTypeId: moduleMessageTypeId,
+      ...auditFields,
+    },
+    {
+      name: 'LU Escalated Module Unknown Error',
+      partnerId,
+      issueTypeId: moduleIssueTypeId,
+      jobFunctionId: jobFunctionIdLabUser,
+      level: 2,
+      canAcknowledge: 0,
+      messageTypeId: moduleMessageTypeId,
+      ...auditFields,
+    },
+    {
+      name: 'RO Escalated Module Unknown Error',
+      partnerId,
+      issueTypeId: moduleIssueTypeId,
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      level: 3,
+      canAcknowledge: 0,
+      messageTypeId: moduleMessageTypeId,
+      ...auditFields,
+    },
     // Module - RO View
-    Object.assign(
-      {
-        name: 'LU Module Unknown Error - RO View',
-        partnerId,
-        issueTypeId: moduleIssueTypeId,
-        jobFunctionId: jobFunctionIdRegionalOfficer,
-        level: 1,
-        canAcknowledge: 0,
-        messageTypeId: moduleMessageTypeId,
-      },
-      auditFields
-    ),
-    Object.assign(
-      {
-        name: 'LU Escalated Module Unknown Error - RO View',
-        partnerId,
-        issueTypeId: moduleIssueTypeId,
-        jobFunctionId: jobFunctionIdRegionalOfficer,
-        level: 2,
-        canAcknowledge: 0,
-        messageTypeId: moduleMessageTypeId,
-      },
-      auditFields
-    ),
+    {
+      name: 'LU Module Unknown Error - RO View',
+      partnerId,
+      issueTypeId: moduleIssueTypeId,
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      level: 1,
+      canAcknowledge: 0,
+      messageTypeId: moduleMessageTypeId,
+      ...auditFields,
+    },
+    {
+      name: 'LU Escalated Module Unknown Error - RO View',
+      partnerId,
+      issueTypeId: moduleIssueTypeId,
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      level: 2,
+      canAcknowledge: 0,
+      messageTypeId: moduleMessageTypeId,
+      ...auditFields,
+    },
 
     // Machine
-    Object.assign(
-      {
-        name: 'LU Machine Unknown Error',
-        partnerId,
-        issueTypeId: machineIssueTypeId,
-        jobFunctionId: jobFunctionIdLabUser,
-        level: 1,
-        canAcknowledge: 1,
-        messageTypeId: machineMessageTypeId,
-      },
-      auditFields
-    ),
-    Object.assign(
-      {
-        name: 'LU Escalated Machine Unknown Error',
-        partnerId,
-        issueTypeId: machineIssueTypeId,
-        jobFunctionId: jobFunctionIdLabUser,
-        level: 2,
-        canAcknowledge: 0,
-        messageTypeId: machineMessageTypeId,
-      },
-      auditFields
-    ),
-    Object.assign(
-      {
-        name: 'RO Escalated Machine Unknown Error',
-        partnerId,
-        issueTypeId: machineIssueTypeId,
-        jobFunctionId: jobFunctionIdRegionalOfficer,
-        level: 3,
-        canAcknowledge: 0,
-        messageTypeId: machineMessageTypeId,
-      },
-      auditFields
-    ),
+    {
+      name: 'LU Machine Unknown Error',
+      partnerId,
+      issueTypeId: machineIssueTypeId,
+      jobFunctionId: jobFunctionIdLabUser,
+      level: 1,
+      canAcknowledge: 1,
+      messageTypeId: machineMessageTypeId,
+      ...auditFields,
+    },
+    {
+      name: 'LU Escalated Machine Unknown Error',
+      partnerId,
+      issueTypeId: machineIssueTypeId,
+      jobFunctionId: jobFunctionIdLabUser,
+      level: 2,
+      canAcknowledge: 0,
+      messageTypeId: machineMessageTypeId,
+      ...auditFields,
+    },
+    {
+      name: 'RO Escalated Machine Unknown Error',
+      partnerId,
+      issueTypeId: machineIssueTypeId,
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      level: 3,
+      canAcknowledge: 0,
+      messageTypeId: machineMessageTypeId,
+      ...auditFields,
+    },
     // Machine - RO View
-    Object.assign(
-      {
-        name: 'LU Machine Unknown Error - RO View',
-        partnerId,
-        issueTypeId: machineIssueTypeId,
-        jobFunctionId: jobFunctionIdRegionalOfficer,
-        level: 1,
-        canAcknowledge: 0,
-        messageTypeId: machineMessageTypeId,
-      },
-      auditFields
-    ),
-    Object.assign(
-      {
-        name: 'LU Escalated Machine Unknown Error - RO View',
-        partnerId,
-        issueTypeId: machineIssueTypeId,
-        jobFunctionId: jobFunctionIdRegionalOfficer,
-        level: 2,
-        canAcknowledge: 0,
-        messageTypeId: machineMessageTypeId,
-      },
-      auditFields
-    ),
+    {
+      name: 'LU Machine Unknown Error - RO View',
+      partnerId,
+      issueTypeId: machineIssueTypeId,
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      level: 1,
+      canAcknowledge: 0,
+      messageTypeId: machineMessageTypeId,
+      ...auditFields,
+    },
+    {
+      name: 'LU Escalated Machine Unknown Error - RO View',
+      partnerId,
+      issueTypeId: machineIssueTypeId,
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      level: 2,
+      canAcknowledge: 0,
+      messageTypeId: machineMessageTypeId,
+      ...auditFields,
+    },
   ])
 
   // ------------------------------------------
@@ -2567,4 +2443,5 @@ module.exports = {
   insertSites,
 
   addFollowUps,
+  removeFollowUps,
 }
