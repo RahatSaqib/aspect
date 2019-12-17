@@ -31,14 +31,12 @@ async function seed(knex) {
       createdOn: now,
       updatedOn: now,
     })
-    await knex('Notification').insert(
-      Object.assign({
-        createdOn: now,
-        alertMessageId,
-        issueId: elem.id,
-        personId: userId,
-        notificationTypeId: 1,
-      })
-    )
+    await knex('Notification').insert({
+      createdOn: now,
+      alertMessageId,
+      issueId: elem.id,
+      personId: userId,
+      notificationTypeId: 1,
+    })
   })
 }

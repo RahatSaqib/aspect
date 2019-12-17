@@ -137,7 +137,7 @@ describe('account details service', () => {
       return runTest(service.saveContactDetailsForLoggedInUser, [
         {
           auth: requestData.auth,
-          payload: Object.assign({}, contactDetails, changedRequestProperties),
+          payload: { ...contactDetails, ...changedRequestProperties },
         },
       ])(() => {
         const savePersonQuery = dbSpy.query.withArgs(
@@ -147,17 +147,12 @@ describe('account details service', () => {
         assert.deepEqual(savePersonQuery.where.lastCall.args[0], {
           'p.id': contactDetails.id,
         })
-        assert.deepEqual(
-          savePersonQuery.update.lastCall.args[0],
-          Object.assign(
-            { geographyId },
-            _.omit(changedRequestProperties, ['countryId']),
-            {
-              updatedOn: now,
-              updatedBy: contactDetails.userId,
-            }
-          )
-        )
+        assert.deepEqual(savePersonQuery.update.lastCall.args[0], {
+          geographyId,
+          ..._.omit(changedRequestProperties, ['countryId']),
+          updatedOn: now,
+          updatedBy: contactDetails.userId,
+        })
         clock.restore()
       })
     })
@@ -189,17 +184,16 @@ describe('account details service', () => {
     it('Should return an forbidden response if the account details are not the details of the currently logged in user', () => {
       dbSpy.query
         .for('Get account details for currently logged in user')
-        .resolvesWith(
-          Object.assign({}, contactDetails, { id: contactDetails.id + 5 })
-        )
+        .resolvesWith({ ...contactDetails, id: contactDetails.id + 5 })
 
       return runTest(service.saveContactDetailsForLoggedInUser, [
         {
-          auth: Object.assign({}, requestData.auth, {
+          auth: {
+            ...requestData.auth,
             credentials: {
               name: 'another-user',
             },
-          }),
+          },
           payload: contactDetails,
         },
       ])(response => {
@@ -263,7 +257,7 @@ describe('account details service', () => {
       return runTest(service.saveUserPreferencesForLoggedInUser, [
         {
           auth: requestData.auth,
-          payload: Object.assign({}, userPreferences, changedRequestProperties),
+          payload: { ...userPreferences, ...changedRequestProperties },
         },
       ])(() => {
         const savePersonQuery = dbSpy.query.withArgs(
@@ -273,13 +267,11 @@ describe('account details service', () => {
         assert.deepEqual(savePersonQuery.where.lastCall.args[0], {
           'p.id': userPreferences.id,
         })
-        assert.deepEqual(
-          savePersonQuery.update.lastCall.args[0],
-          Object.assign({}, changedDatabaseProperties, {
-            updatedOn: now,
-            updatedBy: userPreferences.userId,
-          })
-        )
+        assert.deepEqual(savePersonQuery.update.lastCall.args[0], {
+          ...changedDatabaseProperties,
+          updatedOn: now,
+          updatedBy: userPreferences.userId,
+        })
         clock.restore()
       })
     })
@@ -311,17 +303,16 @@ describe('account details service', () => {
     it('Should return an bad request response if the account details are not the details of the currently logged in user', () => {
       dbSpy.query
         .for('Get account details for currently logged in user')
-        .resolvesWith(
-          Object.assign({}, userPreferences, { id: userPreferences.id + 5 })
-        )
+        .resolvesWith({ ...userPreferences, id: userPreferences.id + 5 })
 
       return runTest(service.saveUserPreferencesForLoggedInUser, [
         {
-          auth: Object.assign({}, requestData.auth, {
+          auth: {
+            ...requestData.auth,
             credentials: {
               name: 'another-user',
             },
-          }),
+          },
           payload: userPreferences,
         },
       ])(response => {

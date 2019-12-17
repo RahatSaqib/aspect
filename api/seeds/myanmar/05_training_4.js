@@ -517,39 +517,30 @@ async function seed(knex) {
   await knex('Assay')
     .whereIn('externalId', ['GxMtbRif', 'GxMtbRifUltra', 'GxEbola'])
     .update({
-      resultDataSchema: JSON.stringify(
-        Object.assign(
-          {},
-          geneXpertResultDataSchema,
-          geneXpertResultDataSchemaTbGxEbola
-        )
-      ),
+      resultDataSchema: JSON.stringify({
+        ...geneXpertResultDataSchema,
+        ...geneXpertResultDataSchemaTbGxEbola,
+      }),
       patientDataSchema: geneXpertTBPatientDataSchema,
     })
 
   await knex('Assay')
     .whereIn('externalId', ['GxHiv1Vl', 'GxHiv1Qual'])
     .update({
-      resultDataSchema: JSON.stringify(
-        Object.assign(
-          {},
-          geneXpertResultDataSchema,
-          geneXpertResultDataSchemaHiv
-        )
-      ),
+      resultDataSchema: JSON.stringify({
+        ...geneXpertResultDataSchema,
+        ...geneXpertResultDataSchemaHiv,
+      }),
       patientDataSchema: geneXpertPatientDataSchema,
     })
 
   await knex('Assay')
     .where('externalId', 'GeneXpertHcv')
     .update({
-      resultDataSchema: JSON.stringify(
-        Object.assign(
-          {},
-          geneXpertResultDataSchema,
-          geneXpertResultDataSchemaHcv
-        )
-      ),
+      resultDataSchema: JSON.stringify({
+        ...geneXpertResultDataSchema,
+        ...geneXpertResultDataSchemaHcv,
+      }),
       patientDataSchema: geneXpertPatientDataSchema,
     })
 

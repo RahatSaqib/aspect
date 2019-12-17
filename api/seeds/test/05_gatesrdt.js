@@ -122,20 +122,16 @@ async function seed(knex) {
     .first()
 
   // Assign all features and admin permissions to Admin user
-  const [adminPersonId] = await knex('Person').insert(
-    Object.assign(
-      {
-        userId: adminId,
-        name: 'Gates RDT Admin',
-        lastPartnerId: partnerId,
-        lastCountryId: countryId,
-        geographyId,
-        culture,
-        timezone,
-      },
-      auditFields
-    )
-  )
+  const [adminPersonId] = await knex('Person').insert({
+    userId: adminId,
+    name: 'Gates RDT Admin',
+    lastPartnerId: partnerId,
+    lastCountryId: countryId,
+    geographyId,
+    culture,
+    timezone,
+    ...auditFields,
+  })
 
   const [jobFunctionIdAdmin] = await knex('JobFunction').insert({
     name: 'Admin',
@@ -174,42 +170,30 @@ async function seed(knex) {
 
   // Create WebhookTemplate for downloading images
   const commcareApiKey = _.get(config, 'plugin.commcare.apiKey', '')
-  const [webhookTemplateId] = await knex('WebhookTemplate').insert(
-    Object.assign(
-      {
-        externalId: 'commcareDownloadImage',
-        method: 'GET',
-        url: '{{ result.data.resultImageUrl }}',
-        fileName: '{{ result.data.resultImageFileName }}',
-        fileContentTypeId: await fileContentTypeToId('imageJpg'),
-        headers: JSON.stringify({
-          Authorization: `ApiKey ${commcareApiKey}`,
-        }),
-      },
-      auditFields
-    )
-  )
+  const [webhookTemplateId] = await knex('WebhookTemplate').insert({
+    externalId: 'commcareDownloadImage',
+    method: 'GET',
+    url: '{{ result.data.resultImageUrl }}',
+    fileName: '{{ result.data.resultImageFileName }}',
+    fileContentTypeId: await fileContentTypeToId('imageJpg'),
+    headers: JSON.stringify({
+      Authorization: `ApiKey ${commcareApiKey}`,
+    }),
+    ...auditFields,
+  })
 
-  const [resultPositiveSmsTemplateId] = await knex('SmsTemplate').insert(
-    Object.assign(
-      {
-        phoneNumber: '{{ result.patient.phone }}',
-        message:
-          'Dear participant ID #{{ result.patient.id }}: An HIV self-test is a screening test. Please visit your nearest clinic as your test MUST be confirmed by a healthcare worker as soon as possible',
-      },
-      auditFields
-    )
-  )
-  const [resultNegativeSmsTemplateId] = await knex('SmsTemplate').insert(
-    Object.assign(
-      {
-        phoneNumber: '{{ result.patient.phone }}',
-        message:
-          'Dear participant ID #{{ result.patient.id }}: An HIV self-test is a screening test. Please ensure you re-test in 3 months.',
-      },
-      auditFields
-    )
-  )
+  const [resultPositiveSmsTemplateId] = await knex('SmsTemplate').insert({
+    phoneNumber: '{{ result.patient.phone }}',
+    message:
+      'Dear participant ID #{{ result.patient.id }}: An HIV self-test is a screening test. Please visit your nearest clinic as your test MUST be confirmed by a healthcare worker as soon as possible',
+    ...auditFields,
+  })
+  const [resultNegativeSmsTemplateId] = await knex('SmsTemplate').insert({
+    phoneNumber: '{{ result.patient.phone }}',
+    message:
+      'Dear participant ID #{{ result.patient.id }}: An HIV self-test is a screening test. Please ensure you re-test in 3 months.',
+    ...auditFields,
+  })
 
   const messageSeverityId = await messageSeverityToId('Alert')
   const [resultReceivedMessageTypeId] = await knex('MessageType').insert({
@@ -229,42 +213,36 @@ async function seed(knex) {
 
   // Notifications
   await knex('NotificationType').insert([
-    Object.assign(
-      {
-        name: 'Result Received',
-        partnerId,
-        issueTypeId: issueTypes.ResultReceived.id,
-        jobFunctionId: jobFunctionIdAdmin,
-        level: 1,
-        canAcknowledge: 0,
-        messageTypeId: resultReceivedMessageTypeId,
-      },
-      auditFields
-    ),
-    Object.assign(
-      {
-        name: 'Result Negative',
-        partnerId,
-        issueTypeId: issueTypes.ResultReceived.id,
-        jobFunctionId: jobFunctionIdAdmin,
-        level: 2,
-        canAcknowledge: 0,
-        messageTypeId: resultNegativeMessageTypeId,
-      },
-      auditFields
-    ),
-    Object.assign(
-      {
-        name: 'Result Positive',
-        partnerId,
-        issueTypeId: issueTypes.ResultReceived.id,
-        jobFunctionId: jobFunctionIdAdmin,
-        level: 3,
-        canAcknowledge: 0,
-        messageTypeId: resultPositiveMessageTypeId,
-      },
-      auditFields
-    ),
+    {
+      name: 'Result Received',
+      partnerId,
+      issueTypeId: issueTypes.ResultReceived.id,
+      jobFunctionId: jobFunctionIdAdmin,
+      level: 1,
+      canAcknowledge: 0,
+      messageTypeId: resultReceivedMessageTypeId,
+      ...auditFields,
+    },
+    {
+      name: 'Result Negative',
+      partnerId,
+      issueTypeId: issueTypes.ResultReceived.id,
+      jobFunctionId: jobFunctionIdAdmin,
+      level: 2,
+      canAcknowledge: 0,
+      messageTypeId: resultNegativeMessageTypeId,
+      ...auditFields,
+    },
+    {
+      name: 'Result Positive',
+      partnerId,
+      issueTypeId: issueTypes.ResultReceived.id,
+      jobFunctionId: jobFunctionIdAdmin,
+      level: 3,
+      canAcknowledge: 0,
+      messageTypeId: resultPositiveMessageTypeId,
+      ...auditFields,
+    },
   ])
 
   // Issue Escalation Triggers

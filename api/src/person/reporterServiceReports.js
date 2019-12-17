@@ -1,7 +1,7 @@
 const path = require('path')
-const { listRefreshTokens } = require('./service')
 const { format } = require('date-fns')
 const _ = require('lodash')
+const { listRefreshTokens } = require('./service')
 const {
   generateReport,
   downloadReportFile,

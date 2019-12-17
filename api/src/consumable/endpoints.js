@@ -22,14 +22,12 @@ const routes = [
       notes: 'Pageable and sortable list of consumable types',
       auth: { scope: ['inventory:view', 'inventory:edit'] },
       validate: {
-        query: Object.assign(
-          {
-            name: Joi.string()
-              .allow('')
-              .description('Filter for consumable type'),
-          },
-          validateSortPageParams('name')
-        ),
+        query: {
+          name: Joi.string()
+            .allow('')
+            .description('Filter for consumable type'),
+          ...validateSortPageParams('name'),
+        },
       },
     },
   },
@@ -42,14 +40,12 @@ const routes = [
       notes: 'Pageable and sortable list for reaons that a consumable was used',
       auth: { scope: ['inventory:view', 'inventory:edit'] },
       validate: {
-        query: Object.assign(
-          {
-            name: Joi.string()
-              .allow('')
-              .description('Filter for consumable reason'),
-          },
-          validateSortPageParams('name')
-        ),
+        query: {
+          name: Joi.string()
+            .allow('')
+            .description('Filter for consumable reason'),
+          ...validateSortPageParams('name'),
+        },
       },
     },
   },
