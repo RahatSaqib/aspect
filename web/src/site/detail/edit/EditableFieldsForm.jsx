@@ -73,15 +73,10 @@ const enhance = compose(
         'address',
         'address2'
       )
-      // const fullAddressInSite = address(props.site)
-
-      const debounced = false
 
       return {
         latLngInForm,
-        // fullAddressInSite,
         fullAddressInForm,
-        debounced,
       }
     },
     {}
@@ -147,6 +142,7 @@ export const EditableFieldsForm = ({
       countryIdFieldName="countryId"
       stateIdFieldName="stateId"
       lgaIdFieldName="lgaId"
+      onChangeSelectedState={onSetBasedAddressClick}
     />
     <div className={cssClasses('container')}>
       <Field
@@ -177,6 +173,7 @@ export const EditableFieldsForm = ({
         name="zip"
         label={labels.zip}
         component={renderTextField}
+        onBlur={onSetBasedAddressClick}
       />
     </div>
     <div className={cssClasses('container', 'coordinate')}>
