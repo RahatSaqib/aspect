@@ -33,21 +33,18 @@ async function getDevicesReport(request, reply) {
     devicesData.category !== 'Router'
       ? _.map(
           devices.data,
-          elem =>
-            Object.assign(
-              {
-                availabilityRate: elem.availability.rate * 100,
-                issuesCategories: _.map(
-                  elem.issueCategories,
-                  current => issues[current.key]
-                )
-                  .join(',')
-                  .replace('[')
-                  .replace(']'),
-                errorRate: elem.error.rate * 100,
-              },
-              elem
+          elem => ({
+            availabilityRate: elem.availability.rate * 100,
+            issuesCategories: _.map(
+              elem.issueCategories,
+              current => issues[current.key]
             )
+              .join(',')
+              .replace('[')
+              .replace(']'),
+            errorRate: elem.error.rate * 100,
+            ...elem,
+          })
           // this is the data source to create the reportvalues.
           // It should be an Array of JSON objects, where each must be plained (Without nested properties)
         )

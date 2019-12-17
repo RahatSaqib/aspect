@@ -1826,32 +1826,26 @@ async function listFollowUps(request) {
                     d.resultCategory1Id
                 ),
                 r => `${r.resultCategory1Id}-${r.resultCategory2Id}`
-              ).map(r =>
-                Object.assign(
-                  {
-                    category1: _.mapKeys(
-                      _.pick(r, [
-                        'resultCategory1Id',
-                        'resultCategory1Name',
-                        'resultCategory1ExternalId',
-                        'resultCategory1I18nKey',
-                      ]),
-                      (v, k) => _.lowerFirst(k.replace('resultCategory1', ''))
-                    ),
-                  },
-                  {
-                    category2: _.mapKeys(
-                      _.pick(r, [
-                        'resultCategory2Id',
-                        'resultCategory2Name',
-                        'resultCategory2ExternalId',
-                        'resultCategory2I18nKey',
-                      ]),
-                      (v, k) => _.lowerFirst(k.replace('resultCategory2', ''))
-                    ),
-                  }
-                )
-              ),
+              ).map(r => ({
+                category1: _.mapKeys(
+                  _.pick(r, [
+                    'resultCategory1Id',
+                    'resultCategory1Name',
+                    'resultCategory1ExternalId',
+                    'resultCategory1I18nKey',
+                  ]),
+                  (v, k) => _.lowerFirst(k.replace('resultCategory1', ''))
+                ),
+                category2: _.mapKeys(
+                  _.pick(r, [
+                    'resultCategory2Id',
+                    'resultCategory2Name',
+                    'resultCategory2ExternalId',
+                    'resultCategory2I18nKey',
+                  ]),
+                  (v, k) => _.lowerFirst(k.replace('resultCategory2', ''))
+                ),
+              })),
             }
           )
         ),

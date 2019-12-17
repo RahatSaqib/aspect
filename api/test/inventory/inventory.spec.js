@@ -385,16 +385,14 @@ describe('Inventory Routes', () => {
                 _.max([0, inventoryItem.quantityOnHand - quantityToAdjust])
               )
               transitItem = res.body.data.newInventoryItem
-              assert.deepEqual(
-                transitItem,
-                Object.assign({}, transitItem, {
-                  quantityOnHand: _.max([0, quantityToAdjust]),
-                  inTransitFromSiteId: inventoryItem.siteId,
-                  siteId: destinationSite.id,
-                  lotNumber: inventoryItem.lotNumber,
-                  expiresOn: inventoryItem.expiresOn.toISOString(),
-                })
-              )
+              assert.deepEqual(transitItem, {
+                ...transitItem,
+                quantityOnHand: _.max([0, quantityToAdjust]),
+                inTransitFromSiteId: inventoryItem.siteId,
+                siteId: destinationSite.id,
+                lotNumber: inventoryItem.lotNumber,
+                expiresOn: inventoryItem.expiresOn.toISOString(),
+              })
 
               server
                 .put(`${transferInventoryPath}/${inventoryItem.id}`)
@@ -422,19 +420,17 @@ describe('Inventory Routes', () => {
                     ])
                   )
                   const updatedTransitItem = res.body.data.newInventoryItem
-                  assert.deepEqual(
-                    updatedTransitItem,
-                    Object.assign({}, updatedTransitItem, {
-                      quantityOnHand: _.max([
-                        0,
-                        transitItem.quantityOnHand + quantityToAdjust,
-                      ]),
-                      inTransitFromSiteId: inventoryItem.siteId,
-                      siteId: destinationSite.id,
-                      lotNumber: inventoryItem.lotNumber,
-                      expiresOn: inventoryItem.expiresOn.toISOString(),
-                    })
-                  )
+                  assert.deepEqual(updatedTransitItem, {
+                    ...updatedTransitItem,
+                    quantityOnHand: _.max([
+                      0,
+                      transitItem.quantityOnHand + quantityToAdjust,
+                    ]),
+                    inTransitFromSiteId: inventoryItem.siteId,
+                    siteId: destinationSite.id,
+                    lotNumber: inventoryItem.lotNumber,
+                    expiresOn: inventoryItem.expiresOn.toISOString(),
+                  })
                   done()
                 })
             })
@@ -490,15 +486,13 @@ describe('Inventory Routes', () => {
                   assert.equal(res.status, 200)
                   assert.typeOf(res.body, 'Object')
                   receivedItem = res.body.data
-                  assert.deepEqual(
-                    receivedItem,
-                    Object.assign({}, res.body.data, {
-                      quantityOnHand: _.max([0, quantityToAdjust]),
-                      siteId: destinationSite.id,
-                      lotNumber: inventoryItem.lotNumber,
-                      expiresOn: inventoryItem.expiresOn.toISOString(),
-                    })
-                  )
+                  assert.deepEqual(receivedItem, {
+                    ...res.body.data,
+                    quantityOnHand: _.max([0, quantityToAdjust]),
+                    siteId: destinationSite.id,
+                    lotNumber: inventoryItem.lotNumber,
+                    expiresOn: inventoryItem.expiresOn.toISOString(),
+                  })
                   done()
                 })
             })

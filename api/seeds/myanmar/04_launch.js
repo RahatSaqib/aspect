@@ -117,32 +117,24 @@ async function seed(knex) {
 
   // Add Device Maintenance issue (no notifications for Myanmar, only issue generation)
   const [deviceMaintenanceAlertTemplateId] = await knex('AlertTemplate').insert(
-    Object.assign(
-      {
-        message: 'Device Maintenance',
-      },
-      auditFields
-    )
+    {
+      message: 'Device Maintenance',
+      ...auditFields,
+    }
   )
 
-  const [deviceMaintenanceSmsTemplateId] = await knex('SmsTemplate').insert(
-    Object.assign(
-      {
-        message: '{{site.name}} maintenance',
-      },
-      auditFields
-    )
-  )
+  const [deviceMaintenanceSmsTemplateId] = await knex('SmsTemplate').insert({
+    message: '{{site.name}} maintenance',
+    ...auditFields,
+  })
 
   const [deviceMaintenanceEmailTemplateId] = await knex('EmailTemplate').insert(
-    Object.assign(
-      {
-        subject: '{{site.name}} Maintenance',
-        body: '{{site.name}} maintenance',
-        htmlBody: '{{site.name}} maintenance',
-      },
-      auditFields
-    )
+    {
+      subject: '{{site.name}} Maintenance',
+      body: '{{site.name}} maintenance',
+      htmlBody: '{{site.name}} maintenance',
+      ...auditFields,
+    }
   )
 
   const [deviceMaintenanceMessageTypeId] = await knex('MessageType').insert({

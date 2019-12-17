@@ -83,19 +83,17 @@ async function seed(knex) {
       .first()
 
     // sites
-    const siteData = Object.assign(
-      {
-        partnerId: partner.id,
-        geographyId: siteGeographyId,
-        name: clinic.name,
-        shortName: clinic.shortName,
-        externalId: clinic.externalId,
-        latitude: clinic.latitude,
-        longitude: clinic.longitude,
-        timezoneId: philippinesCountry.timezone,
-      },
-      auditFields
-    )
+    const siteData = {
+      partnerId: partner.id,
+      geographyId: siteGeographyId,
+      name: clinic.name,
+      shortName: clinic.shortName,
+      externalId: clinic.externalId,
+      latitude: clinic.latitude,
+      longitude: clinic.longitude,
+      timezoneId: philippinesCountry.timezone,
+      ...auditFields,
+    }
     const existingSite = await knex('Site')
       .where('externalId', clinic.externalId)
       .orWhere('name', clinic.name)
@@ -127,28 +125,24 @@ async function seed(knex) {
             )
           const deviceTypeId = await deviceTypeToId(device.deviceType)
           if (!existingDevice) {
-            await knex('Device').insert(
-              Object.assign(
-                {
-                  partnerId: partner.id,
-                  geographyId: siteGeographyId,
-                  siteId,
-                  deviceTypeId,
-                  deviceStatusId: await deviceStatusToId('approved'),
-                  name: device.name,
-                  shortName: device.shortName,
-                  serial: device.serial,
-                  macAddress: device.macAddress,
-                  hostId: device.hostId,
-                  culture: philippinesCountry.culture,
-                  timezone: siteData.timezoneId,
-                  configurationData: device.gxAlertDeviceId
-                    ? `{"gxAlertDeviceId":${device.gxAlertDeviceId}}`
-                    : '{}',
-                },
-                auditFields
-              )
-            )
+            await knex('Device').insert({
+              partnerId: partner.id,
+              geographyId: siteGeographyId,
+              siteId,
+              deviceTypeId,
+              deviceStatusId: await deviceStatusToId('approved'),
+              name: device.name,
+              shortName: device.shortName,
+              serial: device.serial,
+              macAddress: device.macAddress,
+              hostId: device.hostId,
+              culture: philippinesCountry.culture,
+              timezone: siteData.timezoneId,
+              configurationData: device.gxAlertDeviceId
+                ? `{"gxAlertDeviceId":${device.gxAlertDeviceId}}`
+                : '{}',
+              ...auditFields,
+            })
           } else {
             const deviceConfigurationData = JSON.parse(
               existingDevice.configurationData

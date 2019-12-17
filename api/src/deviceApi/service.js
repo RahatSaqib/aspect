@@ -246,37 +246,33 @@ async function addDeviceDataWithContext(context) {
   }
 
   if (site) {
-    response = Object.assign(
-      {},
-      response,
-      await updateSiteWithContext(context.withPayload(site))
-    )
+    response = {
+      ...response,
+      ...(await updateSiteWithContext(context.withPayload(site))),
+    }
   }
 
   if (configuration) {
-    response = Object.assign(
-      {},
-      response,
-      await updateDeviceConfigurationWithContext(
+    response = {
+      ...response,
+      ...(await updateDeviceConfigurationWithContext(
         context.withPayload(configuration)
-      )
-    )
+      )),
+    }
   }
 
   if (operation) {
-    response = Object.assign(
-      {},
-      response,
-      await addDeviceOperationWithContext(context.withPayload(operation))
-    )
+    response = {
+      ...response,
+      ...(await addDeviceOperationWithContext(context.withPayload(operation))),
+    }
   }
 
   if (result) {
-    response = Object.assign(
-      {},
-      response,
-      await mergeResultWithContext(context.withPayload(result))
-    )
+    response = {
+      ...response,
+      ...(await mergeResultWithContext(context.withPayload(result))),
+    }
   }
 
   return response
@@ -734,9 +730,7 @@ class DeviceApiContext {
   }
 
   withPayload(payload) {
-    return new DeviceApiContext(
-      Object.assign({}, this, { payload, parent: this })
-    )
+    return new DeviceApiContext({ ...this, payload, parent: this })
   }
 
   addDeviceLogUpdate(prop, value) {

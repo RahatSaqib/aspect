@@ -460,17 +460,15 @@ async function mergeResult(
   // we want to insert but never update and will be passed to
   // plugins for further processing. It should contain all columns
   // from the Result table
-  const processedResult = Object.assign(
-    {
-      externalId: payload.id,
-      deviceId,
-      partnerId: site.partnerId,
-      geographyId: site.geographyId,
-      siteId: site.id,
-      createdOn: now,
-    },
-    result
-  )
+  const processedResult = {
+    externalId: payload.id,
+    deviceId,
+    partnerId: site.partnerId,
+    geographyId: site.geographyId,
+    siteId: site.id,
+    createdOn: now,
+    ...result,
+  }
 
   let resultId
   if (existingResult) {

@@ -229,53 +229,37 @@ async function createNotificationIfNotCreatedAlready(
     }
 
     if (policy.alertTemplateId != null) {
-      const [alertMessageId] = await knex('AlertMessage').insert(
-        Object.assign(
-          {
-            alertTemplateId: policy.alertTemplateId,
-          },
-          sharedMessageProperties
-        )
-      )
+      const [alertMessageId] = await knex('AlertMessage').insert({
+        alertTemplateId: policy.alertTemplateId,
+        ...sharedMessageProperties,
+      })
       notification.alertMessageId = alertMessageId
       context.alertMessageCreated(alertMessageId)
     }
 
     if (policy.emailTemplateId != null) {
-      const [emailMessageId] = await knex('EmailMessage').insert(
-        Object.assign(
-          {
-            emailTemplateId: policy.emailTemplateId,
-          },
-          sharedMessageProperties
-        )
-      )
+      const [emailMessageId] = await knex('EmailMessage').insert({
+        emailTemplateId: policy.emailTemplateId,
+        ...sharedMessageProperties,
+      })
       notification.emailMessageId = emailMessageId
       context.emailMessageCreated(emailMessageId)
     }
 
     if (policy.smsTemplateId != null) {
-      const [smsMessageId] = await knex('SmsMessage').insert(
-        Object.assign(
-          {
-            smsTemplateId: policy.smsTemplateId,
-          },
-          sharedMessageProperties
-        )
-      )
+      const [smsMessageId] = await knex('SmsMessage').insert({
+        smsTemplateId: policy.smsTemplateId,
+        ...sharedMessageProperties,
+      })
       notification.smsMessageId = smsMessageId
       context.smsMessageCreated(smsMessageId)
     }
 
     if (policy.webhookTemplateId != null) {
-      const [webhookMessageId] = await knex('WebhookMessage').insert(
-        Object.assign(
-          {
-            webhookTemplateId: policy.webhookTemplateId,
-          },
-          sharedMessageProperties
-        )
-      )
+      const [webhookMessageId] = await knex('WebhookMessage').insert({
+        webhookTemplateId: policy.webhookTemplateId,
+        ...sharedMessageProperties,
+      })
       notification.webhookMessageId = webhookMessageId
       context.webhookMessageCreated(webhookMessageId)
     }

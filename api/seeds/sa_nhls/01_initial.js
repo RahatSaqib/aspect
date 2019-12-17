@@ -135,7 +135,7 @@ async function seed(knex) {
               const geoData = { countryId, stateId, lgaId }
               const [geographyId] = await knex('Geography').insert(geoData)
               lgaData.geographyId = geographyId
-              geographies.push(Object.assign({ id: geographyId }, geoData))
+              geographies.push({ id: geographyId, ...geoData })
             })
           )
         })
@@ -145,63 +145,47 @@ async function seed(knex) {
   const { culture, timezone, id: countryId, geographyId } = countries.ZANHLS
 
   // create site for Alere FTP Connector device
-  const [southAfricaNhlsAlereFtpConnectorSiteId] = await knex('Site').insert(
-    Object.assign(
-      {
-        name: 'SA NHLS Alere FTP Connector Site',
-        shortName: 'SA NHLS Alere',
-        externalId: 'sa_nhls_alere_ftp',
-        partnerId,
-        geographyId,
-      },
-      auditFields
-    )
-  )
+  const [southAfricaNhlsAlereFtpConnectorSiteId] = await knex('Site').insert({
+    name: 'SA NHLS Alere FTP Connector Site',
+    shortName: 'SA NHLS Alere',
+    externalId: 'sa_nhls_alere_ftp',
+    partnerId,
+    geographyId,
+    ...auditFields,
+  })
 
   // insert SA NHLS Alere q Connector device
   const [southAfricaNhlsAlereFtpConnectorDeviceId] = await knex(
     'Device'
-  ).insert(
-    Object.assign(
-      {
-        name: 'South Africa NHLS Alere FTP Connector',
-        deviceTypeId: deviceTypeAlereFtpConnectorId,
-        deviceStatusId: approvedDeviceStatusId,
-        partnerId,
-        geographyId,
-        siteId: southAfricaNhlsAlereFtpConnectorSiteId,
-      },
-      auditFields
-    )
-  )
+  ).insert({
+    name: 'South Africa NHLS Alere FTP Connector',
+    deviceTypeId: deviceTypeAlereFtpConnectorId,
+    deviceStatusId: approvedDeviceStatusId,
+    partnerId,
+    geographyId,
+    siteId: southAfricaNhlsAlereFtpConnectorSiteId,
+    ...auditFields,
+  })
 
-  await knex('DeviceApiKey').insert(
-    Object.assign(
-      {
-        token: '0dmqueurr7yw8rfr03zg',
-        revoked: 0,
-        partnerId,
-        geographyId,
-        deviceId: southAfricaNhlsAlereFtpConnectorDeviceId,
-      },
-      auditFields
-    )
-  )
+  await knex('DeviceApiKey').insert({
+    token: '0dmqueurr7yw8rfr03zg',
+    revoked: 0,
+    partnerId,
+    geographyId,
+    deviceId: southAfricaNhlsAlereFtpConnectorDeviceId,
+    ...auditFields,
+  })
 
-  const [adminPersonId] = await knex('Person').insert(
-    Object.assign(
-      {
-        userId: adminId,
-        name: 'NHLS EID Admin',
-        lastPartnerId: partnerId,
-        lastCountryId: countryId,
-        geographyId,
-        culture,
-        timezone,
-      },
-      auditFields
-    )
-  )
+  const [adminPersonId] = await knex('Person').insert({
+    userId: adminId,
+    name: 'NHLS EID Admin',
+    lastPartnerId: partnerId,
+    lastCountryId: countryId,
+    geographyId,
+    culture,
+    timezone,
+    ...auditFields,
+  })
 
   const [jobFunctionIdAdmin] = await knex('JobFunction').insert({
     name: 'Admin',
