@@ -32,14 +32,9 @@ const SELECT_LIST_RESULT_CATEGORY_FIELDS = [
 ]
 async function listAssaysResultSchema(request) {
   const { auth } = request
-  const dataConstraints = await getConstraints(auth.credentials)
   const assaysList = await knex('Assay as a')
     .innerJoin('DeviceType as dt', 'a.devicetypeId', 'dt.id')
-    .innerJoin('Device as d', 'dt.id', 'd.deviceTypeId')
     .innerJoin('AssayType as at', 'a.assaytypeId', 'at.id')
-    .modify(addConstraints, dataConstraints, {
-      device: 'd',
-    })
     .select(
       'a.id as assayId',
       'a.externalId',
