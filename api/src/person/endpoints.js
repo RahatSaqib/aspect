@@ -21,6 +21,7 @@ const {
 } = require('./service')
 const { getContactReport } = require('./serviceReports')
 const { contactDetailsPayload, personDetailsResponse } = require('./helpers')
+const { getReport } = require('./reporterServiceReports')
 
 function listContactBaseConfig() {
   return {
@@ -38,6 +39,48 @@ function listContactBaseConfig() {
           .description('File format for exporting data'),
         ...validateAllGeographyFilterParams(),
         ...validateSortPageParams('name', 'level', 'state', 'lga'),
+      },
+    },
+  }
+}
+
+function listReporterBaseConfig() {
+  return {
+    auth: { scope: ['reporter:view', 'reporter:edit'] },
+    validate: {
+      query: {
+        contactNameOrEmail: Joi.string()
+          .allow('')
+          .description('Filter for person name/email'),
+        deviceName: Joi.string()
+          .allow('')
+          .description('Filter for device name'),
+        assayId: Joi.string()
+          .allow('')
+          .description('Filter for assay'),
+        treatmentStatusId: Joi.string()
+          .allow('')
+          .description('Filter for treatment status'),
+        format: Joi.string()
+          .allow('')
+          .description('File format for exporting data'),
+        revoked: Joi.string()
+          .valid('0', '1')
+          .description('Filter for revoked status'),
+        ...validateAllGeographyFilterParams(),
+        ...validateDateRangeParams(),
+        ...validateSortPageParams(
+          'user',
+          'deviceName',
+          'createdOn',
+          'lastSeen',
+          'delivered',
+          'acknowledgedRatio',
+          'confirmFollowUpRatio',
+          'totalFlagged',
+          'revoked',
+          'requiresFollowUp'
+        ),
       },
     },
   }
@@ -79,36 +122,6 @@ const routes = [
     handler: asyncHandler(listRefreshTokens),
     config: {
       description: 'List of all reporter app refresh tokens',
-      auth: { scope: ['reporter:view', 'reporter:edit'] },
-      validate: {
-        query: {
-          contactNameOrEmail: Joi.string()
-            .allow('')
-            .description('Filter for person name/email'),
-          deviceName: Joi.string()
-            .allow('')
-            .description('Filter for device name'),
-          revoked: Joi.string()
-            .valid('0', '1')
-            .description('Filter for revoked status'),
-          ...validateAllGeographyFilterParams(),
-          ...validateDateRangeParams(),
-          ...validateSortPageParams(
-            'user',
-            'deviceName',
-            'createdOn',
-            // TODO: Fix with real data from ResultsDownload table tbd
-            // 'lastSeen',
-            // 'lastMonth',
-            // 'thisMonth',
-            // 'deliveredLastMonth',
-            // 'deliveredThisMonth',
-            // 'acknowledgedRatio',
-            // 'totalFlagged',
-            'revoked'
-          ),
-        },
-      },
       response: {
         options: {
           allowUnknown: false,
@@ -156,25 +169,39 @@ const routes = [
                   ),
                 lastSeen: Joi.date()
                   .required()
+                  .allow(null)
                   .description('The date when the device was last online'),
-                deliveredThisMonth: Joi.number()
-                  .allow(null)
-                  .description('Number of tests delivered in the last 30 days'),
-                deliveredLastMonth: Joi.number()
-                  .allow(null)
-                  .description(
-                    'Number of tests delivered in the 30 days before that'
-                  ),
                 acknowledgedRatio: Joi.number()
                   .required()
+                  .allow(null)
                   .description('The acknowledged ratio'),
+                confirmFollowUpRatio: Joi.number()
+                  .required()
+                  .allow(null)
+                  .description('The confirm follow up ratio'),
                 totalFlagged: Joi.number()
                   .required()
                   .description('The total flagged'),
+                delivered: Joi.number()
+                  .required()
+                  .description('The total result delivered'),
+                requiresFollowUp: Joi.number()
+                  .required()
+                  .description('The total requires followup'),
               })
             ),
         }),
       },
+      ...listReporterBaseConfig(),
+    },
+  },
+  {
+    method: 'GET',
+    path: '/reporter/export',
+    handler: getReport,
+    config: {
+      description: 'Export Reporter List into Excel or CSV',
+      ...listReporterBaseConfig(),
     },
   },
   {
