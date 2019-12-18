@@ -623,6 +623,35 @@ async function addFollowUps(knex, partnerIds, { data }) {
   }
 }
 
+async function removeFollowUps(knex, partnerIds) {
+  const followUp = await knex('FollowUp')
+    .select('id')
+    .where('externalId', 'moved')
+    .first()
+  if (followUp) {
+    for (const partnerId of partnerIds) {
+      await knex('FollowUpAssay')
+        .where({
+          followUpId: followUp.id,
+          partnerId,
+        })
+        .del()
+    }
+
+    await knex('ResultFollowUp')
+      .where({
+        followUpId: followUp.id,
+      })
+      .del()
+
+    await knex('FollowUp')
+      .where({
+        id: followUp.id,
+      })
+      .del()
+  }
+}
+
 // Ensures all common triggers for the given partner are set based on notification
 // types triggered for that partner. This will only seed for triggers that do
 // not already exist for given partner, issue type, and issue event status, so
@@ -2414,4 +2443,5 @@ module.exports = {
   insertSites,
 
   addFollowUps,
+  removeFollowUps,
 }
