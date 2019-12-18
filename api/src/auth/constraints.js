@@ -130,6 +130,7 @@ function getJobContextConstraint(context) {
   if (context.siteId != null) {
     constraint.site = { id: context.siteId }
     constraint.sample = { originSiteId: context.siteId }
+    constraint.result = { reportableSiteId: context.siteId }
   } else if (context.lgaId != null) {
     constraint.geography = { lgaId: context.lgaId }
   } else if (context.stateId != null) {
@@ -192,6 +193,14 @@ function addConstraints(queryBuilder, constraints, aliases) {
         })
       })
     }
+    // leave this until finish this ticket asp1212
+    /* if (constraints.result) {
+      queryBuilder.where(function() {
+        this.whereNull(`${resultAlias}.partnerId`).orWhere({
+          [`${resultAlias}.partnerId`]: constraints.partner.id,
+        })
+      })
+    } */
   } else {
     if (device && !site) {
       site = alias('Site')
