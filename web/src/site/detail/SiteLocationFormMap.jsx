@@ -26,6 +26,7 @@ import styles from './SiteLocationFormMap.css'
  * If no latLng pair is found, it utilize Geocoder to decode full address object
  * into a latLng pair.
  */
+
 export class SiteLocationFormMap extends PureComponent {
   static propTypes = {
     change: PropTypes.func.isRequired, // redux-form
@@ -50,12 +51,8 @@ export class SiteLocationFormMap extends PureComponent {
   // the use just changed some field of address part in the form
   componentWillReceiveProps(nextProps) {
     const noValidLatLng = !this.getValidLatLng(nextProps)
-    const isAddressInFormJustChanged = !_.isEqual(
-      this.props.fullAddressInForm,
-      nextProps.fullAddressInForm
-    )
 
-    if (noValidLatLng || isAddressInFormJustChanged) {
+    if (noValidLatLng) {
       this.handleQueryAddress(nextProps)
     }
   }
