@@ -40,7 +40,7 @@ const getClinicianAccessToken = () =>
     })
     .then(res => res.body.access)
 
-describe.only('Result routes', () => {
+describe('Result routes', () => {
   const path = '/api/result'
   let resultId = 1
   let assayId = 1
@@ -57,7 +57,7 @@ describe.only('Result routes', () => {
     clinicianAccessToken = await getClinicianAccessToken()
   })
 
-  describe.only('GET', () => {
+  describe('GET', () => {
     shared.checkToken(server, path)
 
     it('should return a list of results', async () =>
@@ -195,7 +195,7 @@ describe.only('Result routes', () => {
         })
     })
 
-    it.only('should return a list of results that the clinician has access to via sample origin site', done => {
+    it('should return a list of results that the clinician has access to via sample origin site', done => {
       server
         .get(`${path}?assayId=${assayId}`)
         .set('Authorization', `Bearer ${clinicianAccessToken}`)
