@@ -190,23 +190,46 @@ async function updateSite(request) {
 }
 
 async function listSitesForSelectList(request) {
-  const { auth } = request
-
+  const { auth, query } = request
   // get data constraints
+
   const dataConstraints = await getConstraints(auth.credentials)
 
-  const sites = await knex('Site as s')
+  let sitesQuery = knex('Site as s')
     .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
+    .leftOuterJoin('State as st', 'g.stateId', 'st.id')
+    .leftOuterJoin('Lga as l', 'g.lgaId', 'l.id')
+
+  if (query && query.tags && query.tags.length > 0)
+    sitesQuery = sitesQuery
+      .leftOuterJoin('SiteTag as stg', 's.id', 'stg.siteId')
+      .leftOuterJoin('Tag as t', 'stg.tagId', 't.id')
+      .whereIn('t.title', query.tags)
+
+  sitesQuery = sitesQuery
     .modify(addConstraints, dataConstraints, { site: 's', geography: 'g' })
     .orderBy(['s.name'], 'asc')
     .select(
       's.id',
       's.name',
+      's.shortName',
       's.partnerId',
       'g.countryId',
       'g.stateId',
-      'g.lgaId'
+      'g.lgaId',
+      'l.name as lgaName',
+      'st.name as stateName',
+      's.longitude',
+      's.latitude',
+      's.zip',
+      's.street1',
+      's.street2',
+      's.city',
+      's.externalId'
     )
+    .distinct()
+
+  const sites = await sitesQuery
 
   const countryState = await knex('Country as c')
     .innerJoin('Geography as g', 'g.countryId', 'c.id')
