@@ -158,6 +158,7 @@ describe('Device API Raw Abbott M2000 Data Processor', () => {
     partnerId: 2,
     geographyId: 6,
     siteId: 7,
+    reportableSiteId: 7,
     longitude: 8,
     latitude: 9,
     resultSourceId: 7,

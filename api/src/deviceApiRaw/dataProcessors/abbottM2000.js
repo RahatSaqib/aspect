@@ -788,7 +788,7 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
             resultSourceId: resultSourceDiagnosticDeviceId,
             resultTypeId: resultTypePatientId,
             sampleId,
-            reportableSiteId: originSiteId,
+            reportableSiteId: originSiteId || device.siteId,
             resultData: {
               passedQualityControl,
               qualityControlSummary,
