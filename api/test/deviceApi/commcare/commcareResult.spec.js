@@ -209,7 +209,6 @@ describe('CommCare Result API routes', () => {
           })
 
         result = await getLastResult(knex, deviceId)
-        notification = await getLastNotification(knex, deviceId)
         assert.equal(result.id, '821')
         assert.equal(result.data.resultText, 'negative')
         assert.equal(result.data.hcwConfirmatoryResult, 'positive')
@@ -218,6 +217,8 @@ describe('CommCare Result API routes', () => {
         assert.equal(result.patient.age, 30)
         assert.equal(notification.issueType, 'ResultReceived')
         assert.equal(notification.level, 2)
+        notification = await getLastNotification(knex, deviceId)
+
         assert.equal(
           notification.message,
           'Dear participant ID #study-821: An HIV self-test is a screening test. Please ensure you re-test in 3 months.'
