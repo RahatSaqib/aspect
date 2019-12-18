@@ -288,6 +288,11 @@ function addConstraints(queryBuilder, constraints, aliases) {
         })
         addConstraintWithJobFunction({
           ...getBaseProps(this, constraint),
+          alias: resultAlias,
+          constraint: constraint.result,
+        })
+        addConstraintWithJobFunction({
+          ...getBaseProps(this, constraint),
           alias: sample,
           constraint: constraint.sample,
         })

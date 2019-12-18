@@ -271,7 +271,11 @@ async function getListResults(query, auth, fields = SELECT_LIST_FIELDS) {
       }
     }, query)
     .modify(addPartnerQueryConstraints, dataConstraints)
-    .modify(addConstraints, dataConstraints, { device: 'd', sample: 'sp' })
+    .modify(addConstraints, dataConstraints, {
+      device: 'd',
+      sample: 'sp',
+      result: 'r',
+    })
   // get total count for paging
   const getCount = resultQuery
     .clone()
