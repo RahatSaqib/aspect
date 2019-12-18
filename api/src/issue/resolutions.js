@@ -92,11 +92,10 @@ async function findOpenIssuesToCheckForResolution(knex, issueId) {
       'irt.resolutionConditions as conditions',
       knex.raw('max(triggeredIssueEvent.createdOn) as triggeredOn')
     )
-    .map(issueResolutionTrigger =>
-      Object.assign({}, issueResolutionTrigger, {
-        conditions: JSON.parse(issueResolutionTrigger.conditions),
-      })
-    )
+    .map(issueResolutionTrigger => ({
+      ...issueResolutionTrigger,
+      conditions: JSON.parse(issueResolutionTrigger.conditions),
+    }))
 }
 
 module.exports = {

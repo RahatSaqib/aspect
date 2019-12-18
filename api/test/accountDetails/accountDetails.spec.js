@@ -82,7 +82,7 @@ describe('/account-details', () => {
         ])
         server
           .put(path)
-          .send(Object.assign({}, contactDetails, { title: newJobTitle }))
+          .send({ ...contactDetails, title: newJobTitle })
           .set('Authorization', `Bearer ${shared.token}`)
           .end((err, res) => {
             assert.equal(res.status, 200)
@@ -126,9 +126,7 @@ describe('/account-details', () => {
                 ])
                 server
                   .put(path)
-                  .send(
-                    Object.assign({}, contactDetails, { title: originalTitle })
-                  )
+                  .send({ ...contactDetails, title: originalTitle })
                   .set('Authorization', `Bearer ${shared.token}`)
                   .end((err, res) => {
                     assert.equal(res.body.data.title, originalTitle)
@@ -173,7 +171,7 @@ describe('/account-details', () => {
         ])
         server
           .put(path)
-          .send(Object.assign({}, userPreferences, { timezone: newTimezone }))
+          .send({ ...userPreferences, timezone: newTimezone })
           .set('Authorization', `Bearer ${shared.token}`)
           .end((err, res) => {
             assert.equal(res.status, 200)
@@ -225,11 +223,7 @@ describe('/account-details', () => {
                 ])
                 server
                   .put(path)
-                  .send(
-                    Object.assign({}, userPreferences, {
-                      timezone: originalTimezone,
-                    })
-                  )
+                  .send({ ...userPreferences, timezone: originalTimezone })
                   .set('Authorization', `Bearer ${shared.token}`)
                   .end((err, res) => {
                     assert.equal(res.body.data.timezone, originalTimezone)

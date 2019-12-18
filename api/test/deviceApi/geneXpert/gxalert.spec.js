@@ -133,13 +133,12 @@ describe('Device API routes for GxAlert Device', () => {
                   name: deviceName,
                 }),
               })
-              expect(
-                Object.assign({}, response.body.device, {
-                  configurationData: JSON.parse(
-                    response.body.device.configurationData
-                  ),
-                })
-              ).to.containSubset({
+              expect({
+                ...response.body.device,
+                configurationData: JSON.parse(
+                  response.body.device.configurationData
+                ),
+              }).to.containSubset({
                 name: deviceName,
                 deviceTypeId: geneXpertDeviceType.id,
                 macAddress: null,
@@ -240,13 +239,12 @@ describe('Device API routes for GxAlert Device', () => {
                   },
                 }),
               })
-              expect(
-                Object.assign({}, response.body.device, {
-                  configurationData: JSON.parse(
-                    response.body.device.configurationData
-                  ),
-                })
-              ).to.containSubset({
+              expect({
+                ...response.body.device,
+                configurationData: JSON.parse(
+                  response.body.device.configurationData
+                ),
+              }).to.containSubset({
                 name: deviceName,
                 shortName: deviceShortName,
                 macAddress,
@@ -299,13 +297,12 @@ describe('Device API routes for GxAlert Device', () => {
                     },
                   }),
                 })
-                expect(
-                  Object.assign({}, response.body.device, {
-                    configurationData: JSON.parse(
-                      response.body.device.configurationData
-                    ),
-                  })
-                ).to.containSubset({
+                expect({
+                  ...response.body.device,
+                  configurationData: JSON.parse(
+                    response.body.device.configurationData
+                  ),
+                }).to.containSubset({
                   name: deviceName,
                   shortName: deviceShortName,
                   macAddress,
@@ -457,13 +454,12 @@ describe('Device API routes for GxAlert Device', () => {
                 },
               }),
             })
-            expect(
-              Object.assign({}, response.body.device, {
-                configurationData: JSON.parse(
-                  response.body.device.configurationData
-                ),
-              })
-            ).to.containSubset({
+            expect({
+              ...response.body.device,
+              configurationData: JSON.parse(
+                response.body.device.configurationData
+              ),
+            }).to.containSubset({
               name: deviceName,
               deviceTypeId: geneXpertDeviceType.id,
               macAddress: secondMacAddress,
@@ -551,13 +547,12 @@ describe('Device API routes for GxAlert Device', () => {
                 },
               }),
             })
-            expect(
-              Object.assign({}, response.body.device, {
-                configurationData: JSON.parse(
-                  response.body.device.configurationData
-                ),
-              })
-            ).to.containSubset({
+            expect({
+              ...response.body.device,
+              configurationData: JSON.parse(
+                response.body.device.configurationData
+              ),
+            }).to.containSubset({
               name: deviceName,
               deviceTypeId: geneXpertDeviceType.id,
               macAddress: thirdMacAddress,
@@ -638,13 +633,12 @@ describe('Device API routes for GxAlert Device', () => {
                 },
               }),
             })
-            expect(
-              Object.assign({}, responseForSecondDevice.body.device, {
-                configurationData: JSON.parse(
-                  responseForSecondDevice.body.device.configurationData
-                ),
-              })
-            ).to.containSubset({
+            expect({
+              ...responseForSecondDevice.body.device,
+              configurationData: JSON.parse(
+                responseForSecondDevice.body.device.configurationData
+              ),
+            }).to.containSubset({
               name: deviceName,
               deviceTypeId: geneXpertDeviceType.id,
               macAddress: secondMacAddress,
@@ -702,13 +696,12 @@ describe('Device API routes for GxAlert Device', () => {
                 },
               }),
             })
-            expect(
-              Object.assign({}, responseAfterSecondDeviceUpdate.body.device, {
-                configurationData: JSON.parse(
-                  responseAfterSecondDeviceUpdate.body.device.configurationData
-                ),
-              })
-            ).to.containSubset({
+            expect({
+              ...responseAfterSecondDeviceUpdate.body.device,
+              configurationData: JSON.parse(
+                responseAfterSecondDeviceUpdate.body.device.configurationData
+              ),
+            }).to.containSubset({
               name: deviceName,
               deviceTypeId: geneXpertDeviceType.id,
               macAddress: firstMacAddress,
@@ -772,13 +765,12 @@ describe('Device API routes for GxAlert Device', () => {
                 },
               }),
             })
-            expect(
-              Object.assign({}, response.body.device, {
-                configurationData: JSON.parse(
-                  response.body.device.configurationData
-                ),
-              })
-            ).to.containSubset({
+            expect({
+              ...response.body.device,
+              configurationData: JSON.parse(
+                response.body.device.configurationData
+              ),
+            }).to.containSubset({
               macAddress: validMacAddress,
               configurationData: {
                 gxAlertDeviceId: geneXpertDeviceId,
@@ -806,13 +798,12 @@ describe('Device API routes for GxAlert Device', () => {
                 },
               }),
             })
-            expect(
-              Object.assign({}, nextResponse.body.device, {
-                configurationData: JSON.parse(
-                  nextResponse.body.device.configurationData
-                ),
-              })
-            ).to.containSubset({
+            expect({
+              ...nextResponse.body.device,
+              configurationData: JSON.parse(
+                nextResponse.body.device.configurationData
+              ),
+            }).to.containSubset({
               macAddress: validMacAddress,
               configurationData: {
                 gxAlertDeviceId: geneXpertDeviceId,
@@ -916,13 +907,12 @@ describe('Device API routes for GxAlert Device', () => {
                 },
               }),
             })
-            expect(
-              Object.assign({}, response.body.device, {
-                configurationData: JSON.parse(
-                  response.body.device.configurationData
-                ),
-              })
-            ).to.containSubset({
+            expect({
+              ...response.body.device,
+              configurationData: JSON.parse(
+                response.body.device.configurationData
+              ),
+            }).to.containSubset({
               name: deviceName,
               deviceTypeId: geneXpertDeviceType.id,
               serial: secondDeviceSerial,
@@ -1011,13 +1001,12 @@ describe('Device API routes for GxAlert Device', () => {
                 },
               }),
             })
-            expect(
-              Object.assign({}, response.body.device, {
-                configurationData: JSON.parse(
-                  response.body.device.configurationData
-                ),
-              })
-            ).to.containSubset({
+            expect({
+              ...response.body.device,
+              configurationData: JSON.parse(
+                response.body.device.configurationData
+              ),
+            }).to.containSubset({
               name: deviceName,
               deviceTypeId: geneXpertDeviceType.id,
               serial: thirdDeviceSerial,
@@ -1098,13 +1087,12 @@ describe('Device API routes for GxAlert Device', () => {
                 },
               }),
             })
-            expect(
-              Object.assign({}, responseForSecondDevice.body.device, {
-                configurationData: JSON.parse(
-                  responseForSecondDevice.body.device.configurationData
-                ),
-              })
-            ).to.containSubset({
+            expect({
+              ...responseForSecondDevice.body.device,
+              configurationData: JSON.parse(
+                responseForSecondDevice.body.device.configurationData
+              ),
+            }).to.containSubset({
               name: deviceName,
               deviceTypeId: geneXpertDeviceType.id,
               serial: secondDeviceSerial,
@@ -1162,13 +1150,12 @@ describe('Device API routes for GxAlert Device', () => {
                 },
               }),
             })
-            expect(
-              Object.assign({}, responseAfterSecondDeviceUpdate.body.device, {
-                configurationData: JSON.parse(
-                  responseAfterSecondDeviceUpdate.body.device.configurationData
-                ),
-              })
-            ).to.containSubset({
+            expect({
+              ...responseAfterSecondDeviceUpdate.body.device,
+              configurationData: JSON.parse(
+                responseAfterSecondDeviceUpdate.body.device.configurationData
+              ),
+            }).to.containSubset({
               name: deviceName,
               deviceTypeId: geneXpertDeviceType.id,
               serial: firstDeviceSerial,
@@ -1251,13 +1238,12 @@ describe('Device API routes for GxAlert Device', () => {
                 },
               }),
             })
-            expect(
-              Object.assign({}, response.body.device, {
-                configurationData: JSON.parse(
-                  response.body.device.configurationData
-                ),
-              })
-            ).to.containSubset({
+            expect({
+              ...response.body.device,
+              configurationData: JSON.parse(
+                response.body.device.configurationData
+              ),
+            }).to.containSubset({
               serial: deviceSerialNumber,
               configurationData: {
                 gxAlertDeviceId: geneXpertDeviceId,
@@ -1361,13 +1347,12 @@ describe('Device API routes for GxAlert Device', () => {
                 },
               }),
             })
-            expect(
-              Object.assign({}, response.body.device, {
-                configurationData: JSON.parse(
-                  response.body.device.configurationData
-                ),
-              })
-            ).to.containSubset({
+            expect({
+              ...response.body.device,
+              configurationData: JSON.parse(
+                response.body.device.configurationData
+              ),
+            }).to.containSubset({
               name: deviceName,
               deviceTypeId: geneXpertDeviceType.id,
               hostId: secondHostId,
@@ -1456,13 +1441,12 @@ describe('Device API routes for GxAlert Device', () => {
                 },
               }),
             })
-            expect(
-              Object.assign({}, response.body.device, {
-                configurationData: JSON.parse(
-                  response.body.device.configurationData
-                ),
-              })
-            ).to.containSubset({
+            expect({
+              ...response.body.device,
+              configurationData: JSON.parse(
+                response.body.device.configurationData
+              ),
+            }).to.containSubset({
               name: deviceName,
               deviceTypeId: geneXpertDeviceType.id,
               hostId: thirdHostId,
@@ -1543,13 +1527,12 @@ describe('Device API routes for GxAlert Device', () => {
                 },
               }),
             })
-            expect(
-              Object.assign({}, responseForSecondDevice.body.device, {
-                configurationData: JSON.parse(
-                  responseForSecondDevice.body.device.configurationData
-                ),
-              })
-            ).to.containSubset({
+            expect({
+              ...responseForSecondDevice.body.device,
+              configurationData: JSON.parse(
+                responseForSecondDevice.body.device.configurationData
+              ),
+            }).to.containSubset({
               name: deviceName,
               deviceTypeId: geneXpertDeviceType.id,
               hostId: secondHostId,
@@ -1604,13 +1587,12 @@ describe('Device API routes for GxAlert Device', () => {
                 },
               }),
             })
-            expect(
-              Object.assign({}, responseAfterSecondDeviceUpdate.body.device, {
-                configurationData: JSON.parse(
-                  responseAfterSecondDeviceUpdate.body.device.configurationData
-                ),
-              })
-            ).to.containSubset({
+            expect({
+              ...responseAfterSecondDeviceUpdate.body.device,
+              configurationData: JSON.parse(
+                responseAfterSecondDeviceUpdate.body.device.configurationData
+              ),
+            }).to.containSubset({
               name: deviceName,
               deviceTypeId: geneXpertDeviceType.id,
               hostId: firstHostId,
@@ -1674,13 +1656,12 @@ describe('Device API routes for GxAlert Device', () => {
                 },
               }),
             })
-            expect(
-              Object.assign({}, response.body.device, {
-                configurationData: JSON.parse(
-                  response.body.device.configurationData
-                ),
-              })
-            ).to.containSubset({
+            expect({
+              ...response.body.device,
+              configurationData: JSON.parse(
+                response.body.device.configurationData
+              ),
+            }).to.containSubset({
               hostId: validHostId,
               configurationData: {
                 gxAlertDeviceId: geneXpertDeviceId,
@@ -1708,13 +1689,12 @@ describe('Device API routes for GxAlert Device', () => {
                 },
               }),
             })
-            expect(
-              Object.assign({}, nextResponse.body.device, {
-                configurationData: JSON.parse(
-                  nextResponse.body.device.configurationData
-                ),
-              })
-            ).to.containSubset({
+            expect({
+              ...nextResponse.body.device,
+              configurationData: JSON.parse(
+                nextResponse.body.device.configurationData
+              ),
+            }).to.containSubset({
               hostId: validHostId,
               configurationData: {
                 gxAlertDeviceId: geneXpertDeviceId,

@@ -45,57 +45,55 @@ function listResultsBaseConfig() {
       socket: false,
     },
     validate: {
-      query: Object.assign(
-        {
-          deviceId: Joi.number()
-            .allow('')
-            .description('Filter for device ID'),
-          assayId: Joi.number()
-            .allow('')
-            .description('Filter for assay ID'),
-          resultCategoryId: Joi.number()
-            .allow('')
-            .description('Result Category ID'),
-          errorCode: Joi.string()
-            .allow('')
-            .description('Filter error code'),
-          deviceName: Joi.string()
-            .allow('')
-            .description('Filter for device name'),
-          siteName: Joi.string()
-            .allow('')
-            .description('Filter for site name'),
-          patientOrResearchId: Joi.string()
-            .allow('')
-            .description('Filter for patient/research ID'),
-          sampleId: Joi.string()
-            .allow('')
-            .description('Filter for sample ID'),
-          sampleOriginSite: Joi.string()
-            .allow('')
-            .description('Filter for sample origin site ID'),
-          workflowStatusId: Joi.number()
-            .allow('')
-            .description('Filter for Result Workflow Status ID'),
-          treatmentStatusId: Joi.number()
-            .allow('')
-            .description('Filter for Result Treatment Status ID'),
-          jsonFields: Joi.array()
-            .max(10)
-            .items(Joi.string().max(50))
-            .single()
-            .description(
-              'Specify which fields to select from the resultDataJSON'
-            ),
-          // query param 'format' is applicable only for handler 'exportDevices'
-          format: Joi.string()
-            .allow('')
-            .description('File format for exporting data'),
-        },
-        validateAllGeographyFilterParams(),
-        validateDateRangeParams(),
-        validateSortPageParams()
-      ),
+      query: {
+        deviceId: Joi.number()
+          .allow('')
+          .description('Filter for device ID'),
+        assayId: Joi.number()
+          .allow('')
+          .description('Filter for assay ID'),
+        resultCategoryId: Joi.number()
+          .allow('')
+          .description('Result Category ID'),
+        errorCode: Joi.string()
+          .allow('')
+          .description('Filter error code'),
+        deviceName: Joi.string()
+          .allow('')
+          .description('Filter for device name'),
+        siteName: Joi.string()
+          .allow('')
+          .description('Filter for site name'),
+        patientOrResearchId: Joi.string()
+          .allow('')
+          .description('Filter for patient/research ID'),
+        sampleId: Joi.string()
+          .allow('')
+          .description('Filter for sample ID'),
+        sampleOriginSite: Joi.string()
+          .allow('')
+          .description('Filter for sample origin site ID'),
+        workflowStatusId: Joi.number()
+          .allow('')
+          .description('Filter for Result Workflow Status ID'),
+        treatmentStatusId: Joi.number()
+          .allow('')
+          .description('Filter for Result Treatment Status ID'),
+        jsonFields: Joi.array()
+          .max(10)
+          .items(Joi.string().max(50))
+          .single()
+          .description(
+            'Specify which fields to select from the resultDataJSON'
+          ),
+        // query param 'format' is applicable only for handler 'exportDevices'
+        format: Joi.string()
+          .allow('')
+          .description('File format for exporting data'),
+        ...validateAllGeographyFilterParams(),
+        ...validateDateRangeParams(),
+        ...validateSortPageParams(),
+      },
     },
   }
 }
@@ -147,13 +145,11 @@ const routes = [
     method: 'GET',
     path: '/result',
     handler: asyncHandler(listResults),
-    config: Object.assign(
-      {
-        description: 'Result List',
-        notes: 'Pageable and sortable list of results',
-      },
-      listResultsBaseConfig()
-    ),
+    config: {
+      description: 'Result List',
+      notes: 'Pageable and sortable list of results',
+      ...listResultsBaseConfig(),
+    },
   },
   {
     method: 'GET',
@@ -255,14 +251,12 @@ const routes = [
       notes: 'Pageable and sortable list of results types',
       auth: { scope: ['result:view', 'result:edit'] },
       validate: {
-        query: Object.assign(
-          {
-            name: Joi.string()
-              .allow('')
-              .description('Filter for result type name'),
-          },
-          validateSortPageParams('name')
-        ),
+        query: {
+          name: Joi.string()
+            .allow('')
+            .description('Filter for result type name'),
+          ...validateSortPageParams('name'),
+        },
       },
     },
   },
@@ -450,59 +444,55 @@ const routes = [
     method: 'GET',
     path: '/result/export',
     handler: getResultsReport,
-    config: Object.assign(
-      {
-        description: 'Export Result List into Excel or CSV',
-        notes: 'Filtered and sorted list of devices',
-      },
-      listResultsBaseConfig()
-    ),
+    config: {
+      description: 'Export Result List into Excel or CSV',
+      notes: 'Filtered and sorted list of devices',
+      ...listResultsBaseConfig(),
+    },
   },
   {
     method: 'GET',
     path: '/result/download',
     handler: asyncHandler(downloadResultsList),
-    config: Object.assign({
+    config: {
       description: 'Result Sync',
       notes:
         'Pageable and sortable list of complete results (including all result details). Used for syncing the reporter app',
       auth: { scope: ['result:view', 'result:edit'] },
       validate: {
-        query: Object.assign(
-          {
-            minUpdatedOn: Joi.date()
-              .iso()
-              .allow(null)
-              .description('Updated From Date'),
-            maxUpdatedOn: Joi.date()
-              .iso()
-              .allow(null)
-              .description('Updated To Date'),
-            patientSample: Joi.string()
-              .optional()
-              .description(
-                'Is the string for look for the patient. this string could be the patient id, the sample id or the patient name'
-              ),
-            assayExternalIds: Joi.string()
-              .optional()
-              .description('a csv string with the assay externalId'),
-            resultCategories: Joi.string()
-              .optional()
-              .description('an array with the assay type abbreviation'),
-            workflowStatus: Joi.string()
-              .optional()
-              .description('External Id of the workflow status'),
-            treatmentStatus: Joi.string()
-              .optional()
-              .description('External Id of the treatment status'),
-            deviceType: Joi.string()
-              .optional()
-              .description(
-                'External Id Device type, the default value is CepheidGeneXpert'
-              ),
-          },
-          validateSortPageParams('updatedOn')
-        ),
+        query: {
+          minUpdatedOn: Joi.date()
+            .iso()
+            .allow(null)
+            .description('Updated From Date'),
+          maxUpdatedOn: Joi.date()
+            .iso()
+            .allow(null)
+            .description('Updated To Date'),
+          patientSample: Joi.string()
+            .optional()
+            .description(
+              'Is the string for look for the patient. this string could be the patient id, the sample id or the patient name'
+            ),
+          assayExternalIds: Joi.string()
+            .optional()
+            .description('a csv string with the assay externalId'),
+          resultCategories: Joi.string()
+            .optional()
+            .description('an array with the assay type abbreviation'),
+          workflowStatus: Joi.string()
+            .optional()
+            .description('External Id of the workflow status'),
+          treatmentStatus: Joi.string()
+            .optional()
+            .description('External Id of the treatment status'),
+          deviceType: Joi.string()
+            .optional()
+            .description(
+              'External Id Device type, the default value is CepheidGeneXpert'
+            ),
+          ...validateSortPageParams('updatedOn'),
+        },
       },
       response: {
         options: {
@@ -770,7 +760,7 @@ const routes = [
             ),
         }),
       },
-    }),
+    },
   },
   {
     method: 'GET',
@@ -1161,7 +1151,7 @@ const routes = [
     method: 'GET',
     path: '/result/patientresultsdetails',
     handler: asyncHandler(getPatientResultsDetails),
-    config: Object.assign({
+    config: {
       description: 'Get the patient results with details',
       auth: { scope: ['patient:view', 'patient:edit'] },
       validate: {
@@ -1307,7 +1297,7 @@ const routes = [
             .description('The patient results'),
         }),
       },
-    }),
+    },
   },
 ]
 

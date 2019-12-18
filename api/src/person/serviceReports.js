@@ -37,16 +37,13 @@ async function getContactReport(request, reply) {
     // Also we can find a text for a header instead of create a place holder.
     _.map(
       devices.data,
-      elem =>
-        Object.assign(
-          {
-            tags: _.map(elem.tags, current => tags[current.key])
-              .join(',')
-              .replace('[')
-              .replace(']'),
-          },
-          elem
-        )
+      elem => ({
+        tags: _.map(elem.tags, current => tags[current.key])
+          .join(',')
+          .replace('[')
+          .replace(']'),
+        ...elem,
+      })
       // this is the data source to create the reportvalues.
       // It should be an Array of JSON objects, where each must be plained (Without nested properties)
     ),

@@ -36,27 +36,23 @@ async function seed(knex) {
     .select('s.*')
   await Promise.each(new Array(4), async () => {
     const site = _.sample(sites)
-    await knex('Device').insert(
-      Object.assign(
-        {
-          partnerId: site.partnerId,
-          geographyId: site.geographyId,
-          siteId: site.id,
-          deviceTypeId: deviceType.id,
-          deviceStatusId,
-          name: `${site.name} ${deviceType.name}`,
-          shortName: `D-${_.random(100000, 999999)}`,
-          serial: `S1-D-${_.random(100000, 999999)}`,
-          lastSeenOn: subDays(now, _.random(1, 30)),
-          lastPingOn: subDays(now, _.random(1, 30)),
-          lastPingFromIp: '41.70.127.33',
-          putInService: subMonths(now, 2),
-          putInServiceSource: 'Installed at clinic',
-          configurationData: '{}',
-        },
-        auditFields
-      )
-    )
+    await knex('Device').insert({
+      partnerId: site.partnerId,
+      geographyId: site.geographyId,
+      siteId: site.id,
+      deviceTypeId: deviceType.id,
+      deviceStatusId,
+      name: `${site.name} ${deviceType.name}`,
+      shortName: `D-${_.random(100000, 999999)}`,
+      serial: `S1-D-${_.random(100000, 999999)}`,
+      lastSeenOn: subDays(now, _.random(1, 30)),
+      lastPingOn: subDays(now, _.random(1, 30)),
+      lastPingFromIp: '41.70.127.33',
+      putInService: subMonths(now, 2),
+      putInServiceSource: 'Installed at clinic',
+      configurationData: '{}',
+      ...auditFields,
+    })
   })
 
   // Fill Issue/AlertMessage/Notification table with some mock data
@@ -119,23 +115,19 @@ async function seed(knex) {
                 ? issueStatusActiveId
                 : issueStatusAcknowledgedId
               : issueStatusResolvedId
-          const [issueId] = await knex('Issue').insert(
-            Object.assign(
-              {
-                issueTypeId,
-                issueStatusId,
-                deviceId: isStockIssue ? null : device.id,
-                siteId: device.siteId,
-                geographyId: device.geographyId,
-                createdOn: issueDate,
-                updatedOn: issueDate,
-                consumableId: isStockIssue
-                  ? consumableIds[_.random(consumableIds.length - 1)].id
-                  : null,
-              },
-              issue
-            )
-          )
+          const [issueId] = await knex('Issue').insert({
+            issueTypeId,
+            issueStatusId,
+            deviceId: isStockIssue ? null : device.id,
+            siteId: device.siteId,
+            geographyId: device.geographyId,
+            createdOn: issueDate,
+            updatedOn: issueDate,
+            consumableId: isStockIssue
+              ? consumableIds[_.random(consumableIds.length - 1)].id
+              : null,
+            ...issue,
+          })
           if (
             issueStatusId === issueStatusAcknowledgedId ||
             issueStatusId === issueStatusResolvedId
@@ -196,23 +188,19 @@ async function seed(knex) {
                 ? issueStatusActiveId
                 : issueStatusAcknowledgedId
               : issueStatusResolvedId
-          const [issueId] = await knex('Issue').insert(
-            Object.assign(
-              {
-                issueTypeId,
-                issueStatusId,
-                deviceId: isStockIssue ? null : device.id,
-                siteId: device.siteId,
-                geographyId: device.geographyId,
-                createdOn: issueDate,
-                updatedOn: issueDate,
-                consumableId: isStockIssue
-                  ? consumableIds[_.random(consumableIds.length - 1)].id
-                  : null,
-              },
-              issue
-            )
-          )
+          const [issueId] = await knex('Issue').insert({
+            issueTypeId,
+            issueStatusId,
+            deviceId: isStockIssue ? null : device.id,
+            siteId: device.siteId,
+            geographyId: device.geographyId,
+            createdOn: issueDate,
+            updatedOn: issueDate,
+            consumableId: isStockIssue
+              ? consumableIds[_.random(consumableIds.length - 1)].id
+              : null,
+            ...issue,
+          })
           if (
             issueStatusId === issueStatusAcknowledgedId ||
             issueStatusId === issueStatusResolvedId
@@ -275,15 +263,13 @@ async function seed(knex) {
       createdOn: issue.createdOn,
       updatedOn: issue.createdOn,
     })
-    await knex('Notification').insert(
-      Object.assign({
-        createdOn: issue.createdOn,
-        alertMessageId,
-        issueId: issue.id,
-        personId,
-        notificationTypeId: 1,
-      })
-    )
+    await knex('Notification').insert({
+      createdOn: issue.createdOn,
+      alertMessageId,
+      issueId: issue.id,
+      personId,
+      notificationTypeId: 1,
+    })
   })
 }
 

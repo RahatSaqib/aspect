@@ -190,7 +190,7 @@ function onDeviceUpdateFlag(updates) {
       factGenerateDeviceConnectivity,
     })
     return context.run(async knex => {
-      const flagUpdates = Object.assign({ updatedOn: new Date() }, updates)
+      const flagUpdates = { updatedOn: new Date(), ...updates }
 
       if (
         updates.maintenance === 1 &&
@@ -207,9 +207,7 @@ function onDeviceUpdateFlag(updates) {
         .update(flagUpdates)
       if (updatedRows === 0) {
         // If we don't have a flag for this device yet, create it!
-        await knex('FactDeviceFlag').insert(
-          Object.assign({ deviceId }, flagUpdates)
-        )
+        await knex('FactDeviceFlag').insert({ deviceId, ...flagUpdates })
       }
 
       // flags have been updated, check connectivity again for this device with
