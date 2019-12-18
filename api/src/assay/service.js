@@ -30,8 +30,7 @@ const SELECT_LIST_RESULT_CATEGORY_FIELDS = [
   'rca.emphasize',
   'rca.requirestreatment',
 ]
-async function listAssaysResultSchema(request) {
-  const { auth } = request
+async function listAssaysResultSchema() {
   const assaysList = await knex('Assay as a')
     .innerJoin('DeviceType as dt', 'a.devicetypeId', 'dt.id')
     .innerJoin('AssayType as at', 'a.assaytypeId', 'at.id')
