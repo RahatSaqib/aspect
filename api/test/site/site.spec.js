@@ -1,6 +1,7 @@
 const supertest = require('supertest')
 const chai = require('chai')
 const _ = require('lodash')
+const { knex } = require('../../src/db')
 
 const shared = require('../utils/sharedToken')
 
@@ -140,6 +141,86 @@ describe('Site routes', () => {
     })
 
     describe('/select-list', () => {
+      let siteTags = null
+      const sites = []
+      const tags = []
+      let partnerId = null
+      const clinicTag = { title: '!*Clinic', partnerId: null }
+      const labTag = { title: '!*Lab', partnerId: null }
+      const lab = {
+        name: 'The best lab',
+        externalId: 'The best lab',
+        partnerId: null,
+        geographyId: 38,
+      }
+      const clinic = {
+        name: 'The best clinic',
+        externalId: 'The best clinic',
+        partnerId: null,
+        geographyId: 38,
+      }
+
+      before(async () => {
+        partnerId = await knex('Partner').first().id
+        clinicTag.partnerId = partnerId
+        labTag.partnerId = partnerId
+        clinic.partnerId = partnerId
+        lab.partnerId = partnerId
+
+        // Tags insert
+        const labTagId = await knex('Tag').insert(labTag)
+        labTag.id = labTagId
+        const clinicTagId = await knex('Tag').insert(clinicTag)
+        clinicTag.id = clinicTagId
+
+        // Sites insert
+        const labId = await knex('Site').insert(lab)
+        lab.id = labId
+        sites.push(lab)
+        const clinicId = await knex('Site').insert(clinic)
+        clinic.id = clinicId
+        sites.push(clinic)
+
+        siteTags = [
+          { siteId: labId, tagId: labTagId },
+          { siteId: clinicId, tagId: clinicTagId },
+        ]
+        await knex('SiteTag').insert(siteTags)
+      })
+
+      after(async () => {
+        // SiteTag remove
+        const siteTagsRemove = []
+        siteTags.forEach(st => {
+          siteTagsRemove.push(
+            knex('SiteTag')
+              .where(st)
+              .del()
+          )
+        })
+        await Promise.all(siteTagsRemove)
+        // Tag remove
+        const tagsRemove = []
+        tags.forEach(t => {
+          tagsRemove.push(
+            knex('Tag')
+              .where({ id: t.id })
+              .del()
+          )
+        })
+        await Promise.all(tagsRemove)
+        // Sites remove
+        const sitesRemove = []
+        sites.forEach(s => {
+          sitesRemove.push(
+            knex('Site')
+              .where({ id: s.id })
+              .del()
+          )
+        })
+        await Promise.all(sitesRemove)
+      })
+
       describe('GET', () => {
         it('should return a list of sites names and IDs when using valid token', done => {
           server
@@ -153,6 +234,40 @@ describe('Site routes', () => {
               assert.isAtLeast(res.body.data.length, 2)
               assert.property(res.body.data[0], 'id')
               assert.property(res.body.data[0], 'name')
+              assert.property(res.body.data[0], 'shortName')
+              assert.property(res.body.data[0], 'partnerId')
+              assert.property(res.body.data[0], 'countryId')
+              assert.property(res.body.data[0], 'stateId')
+              assert.property(res.body.data[0], 'lgaId')
+              assert.property(res.body.data[0], 'lgaName')
+              assert.property(res.body.data[0], 'stateName')
+              assert.property(res.body.data[0], 'longitude')
+              assert.property(res.body.data[0], 'latitude')
+              assert.property(res.body.data[0], 'zip')
+              assert.property(res.body.data[0], 'street1')
+              assert.property(res.body.data[0], 'street2')
+              assert.property(res.body.data[0], 'city')
+              assert.property(res.body.data[0], 'externalId')
+              done()
+            })
+        })
+
+        it('should return a list of sites names and IDs when using valid token filtered by tags', done => {
+          server
+            .get(
+              `${path}/select-list?tags=${encodeURIComponent(
+                JSON.stringify([clinicTag.title, labTag.title])
+              )}`
+            )
+            .set('Authorization', `Bearer ${shared.token}`)
+            .end((err, res) => {
+              assert.equal(res.status, 200)
+              assert.typeOf(res.body, 'Object')
+              assert.property(res.body, 'data')
+              assert.typeOf(res.body.data, 'array')
+              assert.equal(res.body.data.length, 2)
+              assert.equal(res.body.data[1].id, lab.id)
+              assert.equal(res.body.data[0].id, clinic.id)
               done()
             })
         })

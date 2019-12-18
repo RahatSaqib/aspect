@@ -198,7 +198,6 @@ export function fetchSitesForSelectList(forceRefresh) {
     if (!shouldFetch) {
       return
     }
-
     dispatch(requestSitesForSelectList())
     return aspectFetch('/site/select-list', {
       errorNotifications: {

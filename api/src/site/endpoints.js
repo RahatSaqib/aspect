@@ -147,7 +147,20 @@ const routes = [
     config: {
       description: 'Sites for Select List',
       notes: "List of site ID's and names",
-      auth: { scope: ['site:view', 'site:edit'] },
+      auth: { scope: ['site:view'] },
+      validate: {
+        query: Object.assign(
+          {
+            tags: [
+              Joi.array()
+                .items(Joi.string())
+                .description('Tag names of sites requested')
+                .optional(),
+            ],
+          },
+          validateSortPageParams('updatedOn')
+        ),
+      },
     },
   },
 ]
