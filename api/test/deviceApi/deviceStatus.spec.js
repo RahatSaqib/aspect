@@ -58,7 +58,7 @@ describe('Device API status tests', () => {
           })
         const configPost1 = await getDeviceConfigurationData(knex, deviceId)
         assert.deepEqual(
-          Object.assign({ shouldChangeThisThing: 'b' }, configPre),
+          { shouldChangeThisThing: 'b', ...configPre },
           configPost1
         )
         const opPost1 = await getLastDeviceOperationData(knex, deviceId)
@@ -73,7 +73,7 @@ describe('Device API status tests', () => {
           })
         const configPost2 = await getDeviceConfigurationData(knex, deviceId)
         assert.deepEqual(
-          Object.assign({ shouldChangeThisThing: 'c' }, configPre),
+          { shouldChangeThisThing: 'c', ...configPre },
           configPost2
         )
 

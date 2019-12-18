@@ -69,7 +69,8 @@ async function listAssaysResultSchema(request) {
     const resultDataSchema = JSON.parse(elem.resultDataSchema)
     const patientDataSchema = JSON.parse(elem.patientDataSchema)
     const categories = resultCategoriesByAssayId[elem.assayId]
-    const assay = Object.assign({}, elem, {
+    const assay = {
+      ...elem,
       resultDataSchema,
       patientDataSchema,
       resultCategories: _.map(categories, category => ({
@@ -79,7 +80,7 @@ async function listAssaysResultSchema(request) {
         emphasize: category.emphasize,
         requirestreatment: category.requirestreatment,
       })),
-    })
+    }
     return assay
   })
   return result

@@ -94,7 +94,11 @@ const renderLgaSelectField = ({ input, meta, ...restProps }) => (
 
 export class LocationSelector extends PureComponent {
   componentWillReceiveProps(nextProps) {
-    const { selectedCountryId, selectedStateId } = this.props
+    const {
+      selectedCountryId,
+      selectedStateId,
+      onChangeSelectedState,
+    } = this.props
     const {
       changeFieldValue,
       formName,
@@ -112,6 +116,7 @@ export class LocationSelector extends PureComponent {
       selectedStateId !== nextProps.selectedStateId
     ) {
       changeFieldValue(formName, lgaIdFieldName, null)
+      onChangeSelectedState()
     }
   }
 

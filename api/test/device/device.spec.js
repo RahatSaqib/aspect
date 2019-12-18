@@ -18,7 +18,7 @@ describe('Device routes', () => {
   describe('GET', () => {
     shared.checkToken(server, path)
 
-    it('should return a list of devices when using valid token', done => {
+    it('should return a list of devices when using valid token "approved"', done => {
       server
         .get(path)
         .set('Authorization', `Bearer ${shared.token}`)
@@ -193,34 +193,35 @@ describe('Device routes', () => {
       let deviceMaintenanceIdsToRestore
       let deviceMaintenanceIdsToDelete = []
 
-      beforeEach(async () => {
+      beforeEach(() =>
         runTest(async knex => {
           const deviceMaintenanceTypeIds = await knex('DeviceMaintenanceType')
             .whereIn('externalId', ['calibration', 'warranty'])
             .select('id')
             .map(x => x.id)
-
           deviceMaintenanceIdsToRestore = await knex('DeviceMaintenance')
             .whereIn('deviceMaintenanceTypeId', deviceMaintenanceTypeIds)
             .where({ deviceId, current: 1 })
             .select('id')
             .map(x => x.id)
         })
-      })
-      afterEach(async () => {
+      )
+      afterEach(() =>
         runTest(async knex => {
           // make sure we delete only new items and not existing, accidentally
           deviceMaintenanceIdsToDelete = deviceMaintenanceIdsToDelete.filter(
             x => !deviceMaintenanceIdsToRestore.includes(x)
           )
+
           await knex('DeviceMaintenance')
             .whereIn('id', deviceMaintenanceIdsToDelete)
             .del()
+
           await knex('DeviceMaintenance')
             .whereIn('id', deviceMaintenanceIdsToRestore)
             .update({ current: 1 })
         })
-      })
+      )
 
       // actual tests
       checkMaintenance('calibration', 'calibrationDate', 'calibrationNotes')

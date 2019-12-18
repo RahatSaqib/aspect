@@ -693,13 +693,11 @@ async function acceptLicense(request) {
   await query('Insert or update accepted license for user').raw(
     'INSERT INTO LicensePerson set ? ON DUPLICATE KEY UPDATE ?',
     [
-      Object.assign(
-        {
-          licenseId,
-          personId: loggedInUser.personId,
-        },
-        licenseUpdates
-      ),
+      {
+        licenseId,
+        personId: loggedInUser.personId,
+        ...licenseUpdates,
+      },
       licenseUpdates,
     ]
   )

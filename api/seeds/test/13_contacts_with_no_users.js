@@ -35,18 +35,16 @@ async function seed(knex) {
 
         const culture = _.sample(['ny-MW', 'ig-NG', 'en-US', 'en'])
         const now = new Date()
-        await knex('Person').insert(
-          Object.assign({
-            name,
-            lastPartnerId,
-            lastCountryId,
-            timezone,
-            culture,
-            geographyId: _.sample(geographies).id,
-            createdOn: now,
-            updatedOn: now,
-          })
-        )
+        await knex('Person').insert({
+          name,
+          lastPartnerId,
+          lastCountryId,
+          timezone,
+          culture,
+          geographyId: _.sample(geographies).id,
+          createdOn: now,
+          updatedOn: now,
+        })
       }
     )
   )

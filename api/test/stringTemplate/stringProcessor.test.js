@@ -182,12 +182,11 @@ describe('stringTemplate', () => {
       payloadTemplate,
       changesToMessageDataSource = {}
     ) {
-      const data = Object.assign(
-        {},
-        messageDataSource,
-        changesToMessageDataSource,
-        { payloadTemplate }
-      )
+      const data = {
+        ...messageDataSource,
+        ...changesToMessageDataSource,
+        payloadTemplate,
+      }
       const templateFields = ['payloadTemplate']
       const options = { dynamic: true }
       return processUsingDataSourceQuery(data, templateFields, options)
@@ -976,7 +975,7 @@ describe('stringTemplate', () => {
           },
         ]
         await Promise.each(useCases, async useCase => {
-          const dataSource = Object.assign({}, messageDataSource, useCase)
+          const dataSource = { ...messageDataSource, ...useCase }
           const formData = JSON.parse(dataSource.resultFormData)
           const message = await runProcessUsingDataSourceQuery(
             template,
@@ -1312,7 +1311,7 @@ describe('stringTemplate', () => {
           },
         ]
         await Promise.each(useCases, async useCase => {
-          const dataSource = Object.assign({}, messageDataSource, useCase)
+          const dataSource = { ...messageDataSource, ...useCase }
           const formData = JSON.parse(dataSource.resultFormData)
           const message = await runProcessUsingDataSourceQuery(
             template,
@@ -1460,7 +1459,7 @@ describe('stringTemplate', () => {
           },
         ]
         await Promise.each(useCases, async useCase => {
-          const dataSource = Object.assign({}, messageDataSource, useCase)
+          const dataSource = { ...messageDataSource, ...useCase }
           const message = await runProcessUsingDataSourceQuery(
             template,
             useCase

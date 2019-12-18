@@ -238,11 +238,6 @@ function addConstraints(queryBuilder, constraints, aliases) {
       })
     }
   }
-
-  if (person && constraints.person && !allowAdminThrough) {
-    queryBuilder.where({ [`${person}.personId`]: constraints.person.id })
-  }
-
   if (device && !showUnapprovedDevices) {
     queryBuilder.leftOuterJoin(
       `DeviceStatus as deviceStatus`,
@@ -250,6 +245,9 @@ function addConstraints(queryBuilder, constraints, aliases) {
       `deviceStatus.id`
     )
     queryBuilder.where({ [`deviceStatus.token`]: 'approved' })
+  }
+  if (person && constraints.person && !allowAdminThrough) {
+    queryBuilder.where({ [`${person}.personId`]: constraints.person.id })
   }
 
   // data filter constraints are ORed

@@ -15,24 +15,22 @@ function listDeviceApiKeysBaseConfig() {
   return {
     auth: { scope: ['deviceApiKey:view', 'deviceApiKey:edit'] },
     validate: {
-      query: Object.assign(
-        {
-          partnerId: Joi.number()
-            .allow('')
-            .description('Filter for partner ID'),
-          siteName: Joi.string()
-            .allow('')
-            .description('Filter for site name'),
-          deviceName: Joi.string()
-            .allow('')
-            .description('Filter for device name'),
-          // query param 'format' is applicable only for handler 'exportDeviceApiKeys'
-          format: Joi.string()
-            .allow('')
-            .description('File format for exporting data'),
-        },
-        validateAllGeographyFilterParams(),
-        validateSortPageParams(
+      query: {
+        partnerId: Joi.number()
+          .allow('')
+          .description('Filter for partner ID'),
+        siteName: Joi.string()
+          .allow('')
+          .description('Filter for site name'),
+        deviceName: Joi.string()
+          .allow('')
+          .description('Filter for device name'),
+        // query param 'format' is applicable only for handler 'exportDeviceApiKeys'
+        format: Joi.string()
+          .allow('')
+          .description('File format for exporting data'),
+        ...validateAllGeographyFilterParams(),
+        ...validateSortPageParams(
           'createdOn',
           'token',
           'partner',
@@ -40,8 +38,8 @@ function listDeviceApiKeysBaseConfig() {
           'site',
           'device',
           'revoked'
-        )
-      ),
+        ),
+      },
     },
   }
 }
@@ -51,25 +49,21 @@ const routes = [
     method: 'GET',
     path: '/deviceApiKey',
     handler: asyncHandler(listDeviceApiKeys),
-    config: Object.assign(
-      {
-        description: 'DeviceApiKey List',
-        notes: 'Pageable and sortable list of deviceApiKeys',
-      },
-      listDeviceApiKeysBaseConfig()
-    ),
+    config: {
+      description: 'DeviceApiKey List',
+      notes: 'Pageable and sortable list of deviceApiKeys',
+      ...listDeviceApiKeysBaseConfig(),
+    },
   },
   {
     method: 'GET',
     path: '/deviceApiKey/export',
     handler: getDeviceAPIKeysReport,
-    config: Object.assign(
-      {
-        description: 'Export DeviceApiKey List into Excel or CSV',
-        notes: 'Filtered and sorted list of deviceApiKeys',
-      },
-      listDeviceApiKeysBaseConfig()
-    ),
+    config: {
+      description: 'Export DeviceApiKey List into Excel or CSV',
+      notes: 'Filtered and sorted list of deviceApiKeys',
+      ...listDeviceApiKeysBaseConfig(),
+    },
   },
   {
     method: 'POST',

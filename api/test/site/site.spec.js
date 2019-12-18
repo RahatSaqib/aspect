@@ -84,7 +84,7 @@ describe('Site routes', () => {
         ])
         server
           .put(`${path}/${siteId}`)
-          .send(Object.assign({}, newSiteData, { street2: newStreet2 }))
+          .send({ ...newSiteData, street2: newStreet2 })
           .set('Authorization', `Bearer${shared.token}`)
           .end((err, res) => {
             assert.equal(res.status, 200)
@@ -126,9 +126,7 @@ describe('Site routes', () => {
                 // Clean Up: Update street2 with the original street address
                 server
                   .put(`${path}/${siteId}`)
-                  .send(
-                    Object.assign({}, newSiteData, { street2: originalStreet2 })
-                  )
+                  .send({ ...newSiteData, street2: originalStreet2 })
                   .set('Authorization', `Bearer${shared.token}`)
                   .end((err, res) => {
                     assert.equal(res.body.data.street2, originalStreet2)
