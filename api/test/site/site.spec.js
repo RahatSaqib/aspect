@@ -2,13 +2,14 @@ const supertest = require('supertest')
 const chai = require('chai')
 const _ = require('lodash')
 const { knex } = require('../../src/db')
+const Promise = require('bluebird')
 
 const shared = require('../utils/sharedToken')
 
 const { assert } = chai
 const server = supertest.agent('http://localhost:8080')
 
-describe('Site routes', () => {
+describe.only('Site routes', () => {
   describe('/site', () => {
     const path = '/api/site'
     let siteId = 1
@@ -189,36 +190,23 @@ describe('Site routes', () => {
       })
 
       after(async () => {
-        // SiteTag remove
-        const siteTagsRemove = []
-        siteTags.forEach(st => {
-          siteTagsRemove.push(
-            knex('SiteTag')
-              .where(st)
-              .del()
-          )
-        })
-        await Promise.all(siteTagsRemove)
-        // Tag remove
-        const tagsRemove = []
-        tags.forEach(t => {
-          tagsRemove.push(
-            knex('Tag')
-              .where({ id: t.id })
-              .del()
-          )
-        })
-        await Promise.all(tagsRemove)
-        // Sites remove
-        const sitesRemove = []
-        sites.forEach(s => {
-          sitesRemove.push(
-            knex('Site')
-              .where({ id: s.id })
-              .del()
-          )
-        })
-        await Promise.all(sitesRemove)
+        await Promise.each(siteTags, st =>
+          knex('SiteTag')
+            .where(st)
+            .del()
+        )
+
+        await Promise.each(tags, tag =>
+          knex('Tag')
+            .where(tag)
+            .del()
+        )
+
+        await Promise.each(sites, site =>
+          knex('Site')
+            .where({ id: site.id })
+            .del()
+        )
       })
 
       describe('GET', () => {
