@@ -18,10 +18,7 @@ const mapDispatchToProps = dispatch => ({
 })
 
 const enhance = compose(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps
-  ),
+  connect(mapStateToProps, mapDispatchToProps),
   withState('anchorEl', 'setAnchorEl', null),
   withHandlers({
     onPopoverClick: ({ setAnchorEl }) => event => {

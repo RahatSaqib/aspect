@@ -7,7 +7,10 @@ import topojson from '../../../map/topo/KE.json'
 describe('CountryMap component', () => {
   const props = {
     countryIsoAlpha2Code: 'KE',
-    extent: [[10, 10], [290, 290]],
+    extent: [
+      [10, 10],
+      [290, 290],
+    ],
     loading: false,
     stroke: () => '#fff',
     fill: () => '#fff',

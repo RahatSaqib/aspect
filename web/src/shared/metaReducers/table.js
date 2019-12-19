@@ -33,7 +33,4 @@ export const Table = Immutable.Record({
   extraColumns: new Immutable.List(),
 })
 
-export const makeTable = _.flowRight(
-  Table,
-  Immutable.fromJS
-)
+export const makeTable = _.flowRight(Table, Immutable.fromJS)

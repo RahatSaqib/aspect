@@ -15,14 +15,6 @@ const styles = () => ({
 })
 
 export class FocusBlurTextField extends PureComponent {
-  static defaultProps = {
-    onBlur: _.noop,
-    onFocus: _.noop,
-    onKeyUp: _.noop,
-    value: '',
-    component: withStyles(styles)(TextField),
-  }
-
   static propTypes = {
     onBlur: PropTypes.func,
     onFocus: PropTypes.func,
@@ -30,6 +22,14 @@ export class FocusBlurTextField extends PureComponent {
     onCommitValue: PropTypes.func.isRequired,
     value: PropTypes.string,
     component: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
+  }
+
+  static defaultProps = {
+    onBlur: _.noop,
+    onFocus: _.noop,
+    onKeyUp: _.noop,
+    value: '',
+    component: withStyles(styles)(TextField),
   }
 
   state = {

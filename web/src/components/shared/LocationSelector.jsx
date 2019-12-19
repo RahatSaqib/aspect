@@ -243,8 +243,5 @@ function mapDispatchToProps(dispatch) {
 
 export default _.flowRight(
   injectIntl,
-  connect(
-    mapStateToProps,
-    mapDispatchToProps
-  )
+  connect(mapStateToProps, mapDispatchToProps)
 )(LocationSelector)

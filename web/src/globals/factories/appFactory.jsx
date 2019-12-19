@@ -143,10 +143,7 @@ export const appFactory = compose(
     )
 
     return React.createFactory(
-      connect(
-        mapStateToProps,
-        mapDispatchToProps
-      )(App)
+      connect(mapStateToProps, mapDispatchToProps)(App)
     )
   },
   routerFactory

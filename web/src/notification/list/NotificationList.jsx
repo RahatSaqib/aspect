@@ -295,7 +295,7 @@ NotificationList.propTypes = {
   pageSize: PropTypes.number.isRequired,
 }
 
-export default connect(
-  mapStateToProps,
-  { fetchNotifications, exportNotifications }
-)(NotificationList)
+export default connect(mapStateToProps, {
+  fetchNotifications,
+  exportNotifications,
+})(NotificationList)
