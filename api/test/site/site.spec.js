@@ -144,15 +144,17 @@ describe.only('Site routes', () => {
       const sites = []
       const tags = []
       let partnerId = null
-      const clinicTag = { title: '!*Clinic', partnerId: null }
-      const labTag = { title: '!*Lab', partnerId: null }
+      const clinicTag = { id: null, title: '!*Clinic', partnerId: null }
+      const labTag = { id: null, title: '!*Lab', partnerId: null }
       const lab = {
+        id: null,
         name: 'The best lab',
         externalId: 'The best lab',
         partnerId: null,
         geographyId: 38,
       }
       const clinic = {
+        id: null,
         name: 'The best clinic',
         externalId: 'The best clinic',
         partnerId: null,
@@ -169,8 +171,10 @@ describe.only('Site routes', () => {
         // Tags insert
         const labTagId = await knex('Tag').insert(labTag)
         labTag.id = labTagId
+        tags.push(labTag)
         const clinicTagId = await knex('Tag').insert(clinicTag)
         clinicTag.id = clinicTagId
+        tags.push(clinicTag)
 
         // Sites insert
         const labId = await knex('Site').insert(lab)
@@ -196,7 +200,7 @@ describe.only('Site routes', () => {
 
         await Promise.each(tags, tag =>
           knex('Tag')
-            .where(tag)
+            .where({ id: tag.id })
             .del()
         )
 
