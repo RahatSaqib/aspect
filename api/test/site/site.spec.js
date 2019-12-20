@@ -1,15 +1,15 @@
 const supertest = require('supertest')
 const chai = require('chai')
 const _ = require('lodash')
-const { knex } = require('../../src/db')
 const Promise = require('bluebird')
+const { knex } = require('../../src/db')
 
 const shared = require('../utils/sharedToken')
 
 const { assert } = chai
 const server = supertest.agent('http://localhost:8080')
 
-describe.only('Site routes', () => {
+describe('Site routes', () => {
   describe('/site', () => {
     const path = '/api/site'
     let siteId = 1
@@ -143,30 +143,28 @@ describe.only('Site routes', () => {
       let siteTags = null
       const sites = []
       const tags = []
-      let partnerId = null
-      const clinicTag = { id: null, title: '!*Clinic', partnerId: null }
-      const labTag = { id: null, title: '!*Lab', partnerId: null }
+      const clinicTag = { title: '!*Clinic' }
+      const labTag = { title: '!*Lab' }
       const lab = {
-        id: null,
         name: 'The best lab',
         externalId: 'The best lab',
-        partnerId: null,
-        geographyId: 38,
       }
       const clinic = {
-        id: null,
         name: 'The best clinic',
         externalId: 'The best clinic',
-        partnerId: null,
-        geographyId: 38,
       }
 
       before(async () => {
-        partnerId = await knex('Partner').first().id
+        const { geographyId } = await knex('Person')
+          .where({ name: 'Admin' })
+          .first()
+        const { id: partnerId } = await knex('Partner').first()
         clinicTag.partnerId = partnerId
         labTag.partnerId = partnerId
         clinic.partnerId = partnerId
+        clinic.geographyId = geographyId
         lab.partnerId = partnerId
+        lab.geographyId = geographyId
 
         // Tags insert
         const labTagId = await knex('Tag').insert(labTag)
