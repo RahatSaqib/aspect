@@ -151,7 +151,6 @@ const routes = [
               .optional(),
           ],
         },
-        ...validateSortPageParams('updatedOn'),
       },
       response: {
         schema: Joi.object().keys({
