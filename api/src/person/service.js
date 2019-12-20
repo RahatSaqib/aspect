@@ -434,7 +434,7 @@ async function listRefreshTokens(request) {
       )
     })
     .groupBy('r.clientId')
-    .select(
+    .distinct(
       'r.clientId as id',
       'p.name as user',
       'r.clientName as deviceName',
@@ -451,7 +451,7 @@ async function listRefreshTokens(request) {
       ),
       knex.raw('count(rdl.id) as delivered'),
       knex.raw(
-        "GREATEST(ifnull(r.updatedOn, r.createdOn), ifnull(max(rdl.createdOn), '')) as lastSeen"
+        'GREATEST(ifnull(r.updatedOn, r.createdOn), (select max(createdOn) from ResultDownloadLog rl where rl.createdBy = r.userId)) as lastSeen'
       ),
       knex.raw(
         "sum(case when rca.requiresTreatment = '1' then 1 else 0 end) as requiresFollowUp"
