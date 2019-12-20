@@ -454,6 +454,7 @@ async function mergeResult(
     ),
     updatedOn: now,
     createdOn: _.get(existingResult, 'createdOn', now),
+    reportableSiteId: sampleOriginSiteId,
   }
 
   // Processed result contains result with additional fields

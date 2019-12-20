@@ -1707,6 +1707,7 @@ async function seed(knex) {
         result.category1 === resultCategoryErrorId
           ? 'Exceeded cycle threshold'
           : null,
+      reportableSiteId: siteData.id,
     })
   })
 

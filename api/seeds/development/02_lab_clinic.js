@@ -766,6 +766,7 @@ async function seed(knex) {
         result.category1 === resultCategoryErrorId
           ? 'Temperature out of acceptable range'
           : null,
+      reportableSiteId: sample.originSiteId || siteData.id,
       patientData: JSON.stringify({
         id: patient.id,
         age: patient.age,
@@ -905,6 +906,7 @@ async function seed(knex) {
       partnerId,
       geographyId: siteData.geographyId,
       siteId: siteData.id,
+      reportableSiteId: sample.originSiteId || siteData.id,
       deviceId: device.id,
       longitude: -33.78725,
       latitude: -13.96692,

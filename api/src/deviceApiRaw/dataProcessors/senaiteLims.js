@@ -624,6 +624,7 @@ class DefaultSenaiteLIMS extends SynchronousDataProcessor {
               .where('id', resultRecord.id)
               .update(resultRecord)
           } else {
+            resultRecord.reportableSiteId = originSiteId
             const [resultId] = await knex('Result').insert(resultRecord)
             if (resultWorkflowStatus) {
               const [resultWorkflowStatusLogId] = await knex(

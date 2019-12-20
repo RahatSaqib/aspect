@@ -233,6 +233,7 @@ async function createResults(
       resultSourceId: resultSourceLimsId,
       resultTypeId: resultTypePatientId,
       sampleId: sample.id,
+      reportableSiteId: sample.originSiteId,
       sampleRunNumber: `${(i % 2) + 1}`,
       sampleGroup: sample.externalId.substring(0, 10),
       resultCategory1: result.category1,

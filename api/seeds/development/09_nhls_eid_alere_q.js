@@ -1174,6 +1174,7 @@ async function seed(knex) {
         partnerId,
         geographyId: cmjahGeographyId,
         siteId: cmjahSiteId,
+        reportableSiteId: cmjahSiteId,
         deviceId: cmjahDeviceId,
         resultSourceId: resultSourceDiagnosticDeviceId,
         resultTypeId: resultTypePatientId,

@@ -1190,6 +1190,7 @@ describe('Fact based issues', () => {
           partnerId: device.partnerId,
           geographyId: device.geographyId,
           siteId: device.siteId,
+          reportableSiteId: device.siteId,
           deviceId: device.id,
           resultSourceId,
           resultTypeId,

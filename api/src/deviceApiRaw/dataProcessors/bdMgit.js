@@ -240,6 +240,7 @@ class DefaultBDMGIT extends SynchronousDataProcessor {
         senderVersion: mgitVersionNumber,
         updatedOn: utcNow,
         resultData: JSON.stringify(resultData),
+        reportableSiteId: site ? site.id : device.siteId,
       }
 
       // add/update sample
