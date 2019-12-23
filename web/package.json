@@ -25,6 +25,11 @@
     "release:patch": "npm version patch && npm publish && git push --follow-tags",
     "bundle-report": "webpack-bundle-analyzer dist/assets/stats.json"
   },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
   "lint-staged": {
     "./cfg/**/*.js": [
       "eslint --fix",
