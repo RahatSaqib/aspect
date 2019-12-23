@@ -50,10 +50,13 @@ async function seed(knex) {
   const jobFunctions = await knex('JobFunction')
     .where({ partnerId })
     .select('id', 'name')
-  
-  const jobFunctionsSetups = jobFunctions.map(async (jf) => {
+
+  const jobFunctionsSetups = jobFunctions.map(async jf => {
     const { id: featureId } = await getFeatureByModule(knex, 'summaryDashboard')
-    await knex('JobFunctionFeature').insert({ jobFunctionId: jf.id, featureId: featureId }),
+    await knex('JobFunctionFeature').insert({
+      jobFunctionId: jf.id,
+      featureId,
+    })
     await knex('JobFunctionDashboardWidget').insert([
       { jobFunctionId: jf.id, widgetId: widgetIds.sites },
       { jobFunctionId: jf.id, widgetId: widgetIds.devices },
@@ -63,4 +66,5 @@ async function seed(knex) {
   })
 
   await Promise.all(jobFunctionsSetups)
+
 }
