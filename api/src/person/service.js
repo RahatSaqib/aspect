@@ -434,7 +434,7 @@ async function listRefreshTokens(request) {
       )
     })
     .groupBy('r.clientId')
-    .distinct(
+    .select(
       'r.clientId as id',
       'p.name as user',
       'r.clientName as deviceName',
@@ -449,16 +449,33 @@ async function listRefreshTokens(request) {
       knex.raw(
         "sum(case when  rts.externalId = 'OnTreatment' AND rca.requiresTreatment = '1' then 1 else 0 end)/sum(case when rca.requiresTreatment = '1' then 1 else 0 end) as confirmFollowUpRatio"
       ),
-      knex.raw('count(rdl.id) as delivered'),
-      knex.raw(
-        'GREATEST(ifnull(r.updatedOn, r.createdOn), (select max(createdOn) from ResultDownloadLog rl where rl.createdBy = r.userId)) as lastSeen'
-      ),
+      knex.raw('count(distinct rdl.resultId) as delivered'),
       knex.raw(
         "sum(case when rca.requiresTreatment = '1' then 1 else 0 end) as requiresFollowUp"
       )
     )
 
-  const [{ count: total }, data] = await Promise.all([getCount, getItems])
+  const getLastSeen = tokenQuery
+    .clone()
+    .leftJoin('ResultDownloadLog as rdl', 'rdl.createdBy', 'r.userId')
+    .select(
+      'r.clientId as id',
+      knex.raw(
+        'GREATEST(ifnull(r.updatedOn, r.createdOn), rdl.createdOn) as lastSeen'
+      )
+    )
+    .groupBy('r.clientId')
+
+  const [{ count: total }, data, refreshTokenItems] = await Promise.all([
+    getCount,
+    getItems,
+    getLastSeen,
+  ])
+
+  data.forEach(element => {
+    const { lastSeen } = refreshTokenItems.find(x => x.id === element.id)
+    element.lastSeen = lastSeen
+  })
 
   return { ok: true, total, length: data.length, data }
 }
