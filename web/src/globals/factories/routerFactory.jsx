@@ -10,7 +10,7 @@ import loggedInFactory from './loggedInFactory'
 import loggedInDetailFactory from './loggedInFactory/detailFactory'
 import { isEnabledFeature } from '../../components/shared/requirePermissions'
 import { reduceNavLinks } from '../../filter/utils'
-import { navigations } from '../../globals/components/BrowseFilters'
+import { navigations } from '../components/BrowseFilters'
 
 // "Pages"
 import LoadableLogin from '../../auth/login/LoadableLogin'

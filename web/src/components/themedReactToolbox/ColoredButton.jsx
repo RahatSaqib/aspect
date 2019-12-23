@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import classnames from 'classnames/bind'
 import React from 'react'
-import AspectButton from '../../components/shared/AspectButton'
+import AspectButton from '../shared/AspectButton'
 
 const cssClasses = classnames.bind(require('./ColoredButton.css'))
 

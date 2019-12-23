@@ -286,6 +286,7 @@ export class ResultDetail extends PureComponent {
       />
     </div>
   )
+
   drawIconNext = isLast => (
     <div className={cssClasses('ButPreview')}>
       <MdChevronRight
@@ -296,6 +297,7 @@ export class ResultDetail extends PureComponent {
       />
     </div>
   )
+
   drawIconClose = () => (
     <div className={cssClasses('ButPreview', 'Close')}>
       <MdClose

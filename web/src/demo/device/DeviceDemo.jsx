@@ -61,7 +61,7 @@ export class DeviceDemo extends PureComponent {
   }
 
   setPosting = posting => {
-    this.setState(Object.assign({}, this.state, { posting }))
+    this.setState({ ...this.state, posting })
   }
 
   handleFetchDevice = () => {
@@ -69,7 +69,7 @@ export class DeviceDemo extends PureComponent {
   }
 
   handleSelectFieldChange = field => ({ target: { value } }) => {
-    this.setState(Object.assign({}, this.state, { [field]: value }))
+    this.setState({ ...this.state, [field]: value })
   }
 
   handlePostResult = () => {

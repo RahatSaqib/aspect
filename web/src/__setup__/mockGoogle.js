@@ -7,6 +7,7 @@ const google = {
     MarkerClusterer: class {},
     Map: class {
       setTilt() {}
+
       fitBounds() {}
     },
     places: {

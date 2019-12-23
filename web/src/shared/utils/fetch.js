@@ -127,7 +127,8 @@ function isIdLike(key) {
 function changeAllIdsToString(data) {
   if (_.isArray(data)) {
     return data.map(changeAllIdsToString)
-  } else if (_.isObject(data)) {
+  }
+  if (_.isObject(data)) {
     return _.mapValues(data, (value, key) =>
       isIdLike(key)
         ? value === null || value === undefined || _.isObject(value)

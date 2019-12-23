@@ -65,7 +65,8 @@ export class SiteLocationFormMap extends PureComponent {
   getValidLatLng({ latLngInForm, latLngInSite }) {
     if (isValidLatLng(latLngInForm)) {
       return latLngInForm
-    } else if (isValidLatLng(latLngInSite)) {
+    }
+    if (isValidLatLng(latLngInSite)) {
       return latLngInSite
     }
     return false

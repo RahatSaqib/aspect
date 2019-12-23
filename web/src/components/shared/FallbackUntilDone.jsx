@@ -67,11 +67,13 @@ class FallbackUntilDone extends PureComponent {
   updateState = (prevState, props) => {
     if (!this.node || prevState.isStable) {
       return {}
-    } else if (props.isDone(this.node)) {
+    }
+    if (props.isDone(this.node)) {
       return {
         isStable: true,
       }
-    } else if (prevState.fallbackIndex + 1 < props.fallbacks.length) {
+    }
+    if (prevState.fallbackIndex + 1 < props.fallbacks.length) {
       return {
         fallbackIndex: prevState.fallbackIndex + 1,
       }
