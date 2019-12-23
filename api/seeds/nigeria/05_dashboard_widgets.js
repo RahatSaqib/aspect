@@ -1,11 +1,13 @@
-module.exports = require('../utils').seed(seed, __filename, {
-  seedsFolder: 'philippines',
-  staticDataFiles: ['AssayType'],
-})
+module.exports = require('../utils').seed(seed, __filename)
 const Promise = require('bluebird')
 const _ = require('lodash')
 
 const dashboardWidget = require('./fixtures/dashboardWidget.json')
+const {
+  // getPartnerByName,
+  getFeatureByModule,
+  // getPermissonByModuleAndActivity,
+} = require('../utils')
 
 async function seed(knex) {
   const { id: partnerId } = await knex('Partner')
@@ -48,12 +50,17 @@ async function seed(knex) {
   const jobFunctions = await knex('JobFunction')
     .where({ partnerId })
     .select('id', 'name')
-  await Promise.each(jobFunctions, async jobFunction => {
+  
+  const jobFunctionsSetups = jobFunctions.map(async (jf) => {
+    const { id: featureId } = await getFeatureByModule(knex, 'summaryDashboard')
+    await knex('JobFunctionFeature').insert({ jobFunctionId: jf.id, featureId: featureId }),
     await knex('JobFunctionDashboardWidget').insert([
-      { jobFunctionId: jobFunction.id, widgetId: widgetIds.sites },
-      { jobFunctionId: jobFunction.id, widgetId: widgetIds.devices },
-      { jobFunctionId: jobFunction.id, widgetId: widgetIds.results },
-      { jobFunctionId: jobFunction.id, widgetId: widgetIds.contacts },
+      { jobFunctionId: jf.id, widgetId: widgetIds.sites },
+      { jobFunctionId: jf.id, widgetId: widgetIds.devices },
+      { jobFunctionId: jf.id, widgetId: widgetIds.results },
+      { jobFunctionId: jf.id, widgetId: widgetIds.contacts },
     ])
   })
+
+  await Promise.all(jobFunctionsSetups)
 }
