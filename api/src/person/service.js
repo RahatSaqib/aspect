@@ -433,7 +433,7 @@ async function listRefreshTokens(request) {
         'rt.assayId'
       )
     })
-    .groupBy('r.clientId')
+    .groupBy('r.clientId', 'p.name', 'r.clientName')
     .select(
       'r.clientId as id',
       'p.name as user',
@@ -458,13 +458,13 @@ async function listRefreshTokens(request) {
   const getLastSeen = tokenQuery
     .clone()
     .leftJoin('ResultDownloadLog as rdl', 'rdl.createdBy', 'r.userId')
+    .groupBy('r.clientId')
     .select(
       'r.clientId as id',
       knex.raw(
-        'GREATEST(ifnull(r.updatedOn, r.createdOn), rdl.createdOn) as lastSeen'
+        'max(GREATEST(ifnull(r.updatedOn, r.createdOn), rdl.createdOn)) as lastSeen'
       )
     )
-    .groupBy('r.clientId')
 
   const [{ count: total }, data, refreshTokenItems] = await Promise.all([
     getCount,
