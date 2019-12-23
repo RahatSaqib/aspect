@@ -32,19 +32,23 @@ export class FocusBlurTextField extends PureComponent {
     component: withStyles(styles)(TextField),
   }
 
-  state = {
-    isFocused: false,
-    pendingValue: this.props.value,
+  constructor(props) {
+    super(props)
+
+    this.state = {
+      isFocused: false,
+      pendingValue: props.value,
+    }
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (!this.state.isFocused) {
-      this.setState({ pendingValue: nextProps.value })
+  componentDidUpdate(prevProps) {
+    if (!this.state.isFocused && prevProps.value !== this.props.value) {
+      this.setState({ pendingValue: this.props.value }) // eslint-disable-line react/no-did-update-set-state
     }
   }
 
   handleBlur = event => {
-    this.setState({ isFocused: false })
+    this.setState({ isFocused: false, pendingValue: this.props.value })
     this.props.onBlur(event)
 
     this.props.onCommitValue(event)

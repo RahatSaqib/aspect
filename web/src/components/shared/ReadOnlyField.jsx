@@ -8,16 +8,15 @@ import FaExternalLink from 'react-icons/lib/fa/external-link'
 
 const cssClasses = classnames.bind(require('./ReadOnlyField.css'))
 
-const enhance = compose(
-  pure,
-  setPropTypes({
-    label: PropTypes.string.isRequired,
-    value: PropTypes.any,
-    lg: PropTypes.bool,
-    format: PropTypes.func,
-    nullText: PropTypes.string,
-  })
-)
+export const readOnlyFieldPropTypes = {
+  label: PropTypes.string.isRequired,
+  value: PropTypes.any,
+  lg: PropTypes.bool,
+  format: PropTypes.func,
+  nullText: PropTypes.string,
+}
+
+const enhance = compose(pure, setPropTypes(readOnlyFieldPropTypes))
 
 export const ReadOnlyField = ({
   label,

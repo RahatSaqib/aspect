@@ -122,9 +122,9 @@ export class PersonDetail extends PureComponent {
     this.handleFetchPerson(this.props)
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (this.props.match.params.personId !== nextProps.match.params.personId) {
-      this.handleFetchPerson(nextProps)
+  componentDidUpdate(prevProps) {
+    if (this.props.match.params.personId !== prevProps.match.params.personId) {
+      this.handleFetchPerson(this.props)
     }
   }
 

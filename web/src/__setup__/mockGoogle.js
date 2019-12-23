@@ -1,3 +1,4 @@
+/* eslint-disable max-classes-per-file */
 // modified from https://github.com/hibiken/react-places-autocomplete/issues/189
 
 const google = {

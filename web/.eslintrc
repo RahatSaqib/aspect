@@ -89,6 +89,8 @@
     "react/static-property-placement": "off",
     "react/jsx-fragments": "off",
     "react/state-in-constructor": "off",
+    "react/jsx-curly-newline": "off",
+    "import/no-cycle": "off",
 
     "require-yield": "off"
   }

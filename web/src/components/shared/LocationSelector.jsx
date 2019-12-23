@@ -93,27 +93,27 @@ const renderLgaSelectField = ({ input, meta, ...restProps }) => (
 )
 
 export class LocationSelector extends PureComponent {
-  componentWillReceiveProps(nextProps) {
+  componentDidUpdate(prevProps) {
     const {
       selectedCountryId,
       selectedStateId,
       onChangeSelectedState,
-    } = this.props
+    } = prevProps
     const {
       changeFieldValue,
       formName,
       stateIdFieldName,
       lgaIdFieldName,
-    } = nextProps
+    } = this.props
     if (
       !_.isEmpty(selectedCountryId) &&
-      selectedCountryId !== nextProps.selectedCountryId
+      selectedCountryId !== this.props.selectedCountryId
     ) {
       changeFieldValue(formName, stateIdFieldName, null)
       changeFieldValue(formName, lgaIdFieldName, null)
     } else if (
       !_.isEmpty(selectedStateId) &&
-      selectedStateId !== nextProps.selectedStateId
+      selectedStateId !== this.props.selectedStateId
     ) {
       changeFieldValue(formName, lgaIdFieldName, null)
       onChangeSelectedState()

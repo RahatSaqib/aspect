@@ -1,3 +1,4 @@
+/* eslint-disable max-classes-per-file */
 import _ from 'lodash'
 import { createFetch, base, header, accept } from 'http-client'
 import { defineMessages } from 'react-intl'

@@ -184,18 +184,22 @@ export class RouterDetail extends PureComponent {
     this.handleFetchRouter()
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (this.props.match.params.routerId !== nextProps.match.params.routerId) {
+  componentDidUpdate(prevProps) {
+    if (this.props.match.params.routerId !== prevProps.match.params.routerId) {
       this.handleFetchRouter()
     }
   }
 
   handleToggleEditDialog = () => {
-    this.setState({ isEditDialogOpen: !this.state.isEditDialogOpen })
+    this.setState(prevState => ({
+      isEditDialogOpen: !prevState.isEditDialogOpen,
+    }))
   }
 
   handleToggleDialog = () => {
-    this.setState({ isDemoDialogOpen: !this.state.isDemoDialogOpen })
+    this.setState(prevState => ({
+      isDemoDialogOpen: !prevState.isDemoDialogOpen,
+    }))
   }
 
   handleFetchRouter = () => {
