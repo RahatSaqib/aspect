@@ -141,7 +141,99 @@ const routes = [
     config: {
       description: 'Sites for Select List',
       notes: "List of site ID's and names",
-      auth: { scope: ['site:view', 'site:edit'] },
+      auth: { scope: ['site:view'] },
+      validate: {
+        query: {
+          tags: [
+            Joi.array()
+              .items(Joi.string())
+              .description('Tag names of sites requested')
+              .optional(),
+          ],
+        },
+      },
+      response: {
+        schema: Joi.object().keys({
+          ok: Joi.bool()
+            .required()
+            .description('False if there was some sort of error'),
+          countryName: Joi.string()
+            .required()
+            .description('Country name of the user that requested the sites'),
+          stateName: Joi.string()
+            .required()
+            .allow(null)
+            .description('State name of the user that requested the sites'),
+          data: Joi.array()
+            .required()
+            .description('The results')
+            .items(
+              Joi.object().keys({
+                id: Joi.number()
+                  .required()
+                  .description('Unique ID of the site'),
+                name: Joi.string()
+                  .required()
+                  .description('Name of the site'),
+                shortName: Joi.string()
+                  .required()
+                  .allow(null)
+                  .description('Short name or abbreviation of the site'),
+                partnerId: Joi.number()
+                  .required()
+                  .allow(null)
+                  .description("Unique ID of the site's partner"),
+                countryId: Joi.number()
+                  .required()
+                  .description("Unique ID of the site's country"),
+                stateId: Joi.number()
+                  .required()
+                  .allow(null)
+                  .description("Unique ID of the site's state"),
+                lgaId: Joi.number()
+                  .required()
+                  .allow(null)
+                  .description("Unique ID of the site's LGA"),
+                lgaName: Joi.string()
+                  .required()
+                  .allow(null)
+                  .description("Name of the site's LGA"),
+                stateName: Joi.string()
+                  .required()
+                  .allow(null)
+                  .description("Name of the site's state"),
+                longitude: Joi.number()
+                  .required()
+                  .allow(null)
+                  .description("Longitude of the site's coordinates"),
+                latitude: Joi.number()
+                  .required()
+                  .allow(null)
+                  .description("Latitude of the site's coordinates"),
+                zip: Joi.string()
+                  .required()
+                  .allow(null)
+                  .description('Zip code of the site'),
+                street1: Joi.string()
+                  .required()
+                  .allow(null)
+                  .description('Street where the site is allocated'),
+                street2: Joi.string()
+                  .required()
+                  .allow(null)
+                  .description('Street where the site is allocated'),
+                city: Joi.string()
+                  .required()
+                  .allow(null)
+                  .description('City where the site is allocated'),
+                externalId: Joi.string()
+                  .required()
+                  .allow(null)
+                  .description('External ID of the site'),
+              })
+            ),
+        }),
+      },
     },
   },
 ]
