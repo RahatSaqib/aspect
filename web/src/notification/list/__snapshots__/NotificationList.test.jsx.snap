@@ -9,7 +9,7 @@ exports[`NotificationList module NotificationList component should render correc
     encodeSpecialCharacters={true}
     title="Notifications"
   />
-  <UNDEFINED
+  <Connect(lifecycle(Component))
     title="Notifications"
   />
   <pure(withProps(withHandlers(Connect(lifecycle(BrowseFilters)))))
@@ -56,11 +56,13 @@ exports[`NotificationList module NotificationList component should render correc
       }
     }
   />
-  <DataTableCard>
+  <DataTableCard
+    key="DataTableCard--table-undefined"
+  >
     <DataTableProgressBar
       disabled={true}
     />
-    <UNDEFINED
+    <Connect(withState(withHandlers(ExportListButton)))
       onCsvClick={[Function]}
       onExcelClick={[Function]}
       reportName="Notifications"

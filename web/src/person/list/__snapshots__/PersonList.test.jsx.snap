@@ -9,7 +9,7 @@ exports[`Person List module PersonList component should shallow render correctly
     encodeSpecialCharacters={true}
     title="Contacts"
   />
-  <UNDEFINED
+  <Connect(lifecycle(Component))
     title="Contacts"
   />
   <pure(withProps(withHandlers(Connect(lifecycle(BrowseFilters)))))
@@ -52,7 +52,9 @@ exports[`Person List module PersonList component should shallow render correctly
       </WithStyles(IconButton)>
     </WithStyles(Tooltip)>
   </DataTableCard>
-  <DataTableCard>
+  <DataTableCard
+    key="DataTableCard--table-undefined"
+  >
     <DataTableProgressBar
       disabled={true}
     />
@@ -79,7 +81,7 @@ exports[`Person List module PersonList component should shallow render correctly
         }
       }
     />
-    <UNDEFINED
+    <Connect(withState(withHandlers(ExportListButton)))
       reportName="Contacts"
     />
   </DataTableCard>

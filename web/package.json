@@ -65,7 +65,10 @@
       "\\.scss$": "<rootDir>/src/__mocks__/globalStyleMock.js",
       "\\.css$": "identity-obj-proxy"
     },
-    "testResultsProcessor": "jest-bamboo-formatter"
+    "testResultsProcessor": "jest-bamboo-formatter",
+    "snapshotSerializers": [
+      "enzyme-to-json/serializer"
+    ]
   },
   "repository": "",
   "keywords": [],
@@ -109,6 +112,7 @@
     "del-webpack-plugin": "^1.2.0",
     "enzyme": "^3.11.0",
     "enzyme-adapter-react-16": "^1.15.2",
+    "enzyme-to-json": "^3.4.3",
     "eslint": "^6.8.0",
     "eslint-config-airbnb": "^18.0.1",
     "eslint-config-prettier": "^6.7.0",

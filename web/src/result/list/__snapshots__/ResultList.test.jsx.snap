@@ -9,7 +9,7 @@ exports[`Result List component should shallow render correctly when filter for a
     encodeSpecialCharacters={true}
     title="Results"
   />
-  <UNDEFINED
+  <Connect(lifecycle(Component))
     title="Results"
   />
   <pure(withProps(withHandlers(Connect(lifecycle(BrowseFilters)))))
@@ -47,11 +47,13 @@ exports[`Result List component should shallow render correctly when filter for a
       }
     }
   />
-  <DataTableCard>
+  <DataTableCard
+    key="DataTableCard--table-undefined"
+  >
     <DataTableProgressBar
       disabled={true}
     />
-    <UNDEFINED
+    <Connect(withState(withHandlers(ExportListButton)))
       reportName="Results"
     />
     <pure(withHandlers(EmptyList))
@@ -101,7 +103,7 @@ exports[`Result List component should shallow render correctly when filter for a
     encodeSpecialCharacters={true}
     title="Results"
   />
-  <UNDEFINED
+  <Connect(lifecycle(Component))
     title="Results"
   />
   <pure(withProps(withHandlers(Connect(lifecycle(BrowseFilters)))))
@@ -139,11 +141,13 @@ exports[`Result List component should shallow render correctly when filter for a
       }
     }
   />
-  <DataTableCard>
+  <DataTableCard
+    key="DataTableCard--table-undefined"
+  >
     <DataTableProgressBar
       disabled={true}
     />
-    <UNDEFINED
+    <Connect(withState(withHandlers(ExportListButton)))
       reportName="Results"
     />
     <pure(withHandlers(EmptyList))
