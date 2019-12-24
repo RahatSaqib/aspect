@@ -405,6 +405,7 @@ async function listRefreshTokens(request) {
         }
       })
     })
+    .leftJoin('ResultDownloadLog as resd', 'r.userId', 'resd.createdBy')
     .leftJoin('Result as rt', 'rt.id', 'rdl.resultId')
     .leftJoin('Assay as a', 'a.id', 'rt.assayId')
     .leftJoin(
@@ -441,6 +442,9 @@ async function listRefreshTokens(request) {
       'r.createdOn',
       'r.revoked',
       knex.raw(
+        'max(GREATEST(ifnull(r.updatedOn, r.createdOn), resd.createdOn)) as lastSeen'
+      ),
+      knex.raw(
         "sum(case rws.externalId when 'Acknowledged' then 1 else 0 end)/sum(case when rca.requiresTreatment = '1' then 1 else 0 end) as acknowledgedRatio"
       ),
       knex.raw(
@@ -455,27 +459,7 @@ async function listRefreshTokens(request) {
       )
     )
 
-  const getLastSeen = tokenQuery
-    .clone()
-    .leftJoin('ResultDownloadLog as rdl', 'rdl.createdBy', 'r.userId')
-    .groupBy('r.clientId')
-    .select(
-      'r.clientId as id',
-      knex.raw(
-        'max(GREATEST(ifnull(r.updatedOn, r.createdOn), rdl.createdOn)) as lastSeen'
-      )
-    )
-
-  const [{ count: total }, data, refreshTokenItems] = await Promise.all([
-    getCount,
-    getItems,
-    getLastSeen,
-  ])
-
-  data.forEach(element => {
-    const { lastSeen } = refreshTokenItems.find(x => x.id === element.id)
-    element.lastSeen = lastSeen
-  })
+  const [{ count: total }, data] = await Promise.all([getCount, getItems])
 
   return { ok: true, total, length: data.length, data }
 }
