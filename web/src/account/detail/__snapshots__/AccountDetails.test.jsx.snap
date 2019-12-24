@@ -9,7 +9,7 @@ exports[`AccountDetails module AccountDetails component should shallow render co
     encodeSpecialCharacters={true}
     title="Account Details"
   />
-  <Connect(lifecycle(Component))
+  <UNDEFINED
     title="Account Details"
   />
   <Switch>

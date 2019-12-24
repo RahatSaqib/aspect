@@ -9,7 +9,7 @@ exports[`PersonDetail module Person Detail component should render correctly 1`]
     encodeSpecialCharacters={true}
     title="Person Detail"
   />
-  <Connect(lifecycle(Component))
+  <UNDEFINED
     title="Person Detail"
   />
   <Switch>

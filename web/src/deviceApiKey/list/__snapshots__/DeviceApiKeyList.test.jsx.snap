@@ -9,7 +9,7 @@ exports[`Device Api Key List module DeviceApiKeyList component should shallow re
     encodeSpecialCharacters={true}
     title="Device API Keys"
   />
-  <Connect(lifecycle(Component))
+  <UNDEFINED
     title="Device API Keys"
   />
   <pure(withProps(withHandlers(Connect(lifecycle(BrowseFilters)))))
@@ -101,7 +101,7 @@ exports[`Device Api Key List module DeviceApiKeyList component should shallow re
     <DataTableProgressBar
       disabled={true}
     />
-    <Connect(withState(withHandlers(ExportListButton)))
+    <UNDEFINED
       onCsvClick={[Function]}
       onExcelClick={[Function]}
       reportName="DeviceApiKey"
@@ -143,7 +143,7 @@ exports[`Device Api Key List module DeviceApiKeyList component should shallow re
     encodeSpecialCharacters={true}
     title="Device API Keys"
   />
-  <Connect(lifecycle(Component))
+  <UNDEFINED
     title="Device API Keys"
   />
   <pure(withProps(withHandlers(Connect(lifecycle(BrowseFilters)))))
@@ -235,7 +235,7 @@ exports[`Device Api Key List module DeviceApiKeyList component should shallow re
     <DataTableProgressBar
       disabled={true}
     />
-    <Connect(withState(withHandlers(ExportListButton)))
+    <UNDEFINED
       onCsvClick={[Function]}
       onExcelClick={[Function]}
       reportName="DeviceApiKey"

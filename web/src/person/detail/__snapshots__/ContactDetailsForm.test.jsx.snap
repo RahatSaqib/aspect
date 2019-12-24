@@ -173,21 +173,21 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable a
       <div
         className="GeographyDropdownGroup"
       >
-        <Connect(CountrySelectField)
+        <UNDEFINED
           allItemText=""
           className="GeographyDropdown"
           floatingLabelFixed={true}
           floatingLabelText="Country"
           onCountryIdChange={[Function]}
         />
-        <Connect(StateSelectField)
+        <UNDEFINED
           allItemText=""
           className="GeographyDropdown"
           floatingLabelFixed={true}
           floatingLabelText="State"
           onStateIdChange={[Function]}
         />
-        <Connect(LgaSelectField)
+        <UNDEFINED
           allItemText="All"
           className="GeographyDropdown"
           floatingLabelFixed={true}
@@ -790,7 +790,7 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable a
       <p>
         Tags
       </p>
-      <Connect(ConnectedTagInput)
+      <UNDEFINED
         allowCreate={true}
         label="Choose tags"
         onTagChange={[Function]}
@@ -987,21 +987,21 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
       <div
         className="GeographyDropdownGroup"
       >
-        <Connect(CountrySelectField)
+        <UNDEFINED
           allItemText=""
           className="GeographyDropdown"
           floatingLabelFixed={true}
           floatingLabelText="Country"
           onCountryIdChange={[Function]}
         />
-        <Connect(StateSelectField)
+        <UNDEFINED
           allItemText=""
           className="GeographyDropdown"
           floatingLabelFixed={true}
           floatingLabelText="State"
           onStateIdChange={[Function]}
         />
-        <Connect(LgaSelectField)
+        <UNDEFINED
           allItemText="All"
           className="GeographyDropdown"
           floatingLabelFixed={true}
@@ -1604,7 +1604,7 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
       <p>
         Tags
       </p>
-      <Connect(ConnectedTagInput)
+      <UNDEFINED
         allowCreate={true}
         label="Choose tags"
         onTagChange={[Function]}
@@ -1801,21 +1801,21 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
       <div
         className="GeographyDropdownGroup"
       >
-        <Connect(CountrySelectField)
+        <UNDEFINED
           allItemText=""
           className="GeographyDropdown"
           floatingLabelFixed={true}
           floatingLabelText="Country"
           onCountryIdChange={[Function]}
         />
-        <Connect(StateSelectField)
+        <UNDEFINED
           allItemText=""
           className="GeographyDropdown"
           floatingLabelFixed={true}
           floatingLabelText="State"
           onStateIdChange={[Function]}
         />
-        <Connect(LgaSelectField)
+        <UNDEFINED
           allItemText="All"
           className="GeographyDropdown"
           floatingLabelFixed={true}
@@ -2418,7 +2418,7 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
       <p>
         Tags
       </p>
-      <Connect(ConnectedTagInput)
+      <UNDEFINED
         allowCreate={true}
         label="Choose tags"
         onTagChange={[Function]}
@@ -2615,21 +2615,21 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
       <div
         className="GeographyDropdownGroup"
       >
-        <Connect(CountrySelectField)
+        <UNDEFINED
           allItemText=""
           className="GeographyDropdown"
           floatingLabelFixed={true}
           floatingLabelText="Country"
           onCountryIdChange={[Function]}
         />
-        <Connect(StateSelectField)
+        <UNDEFINED
           allItemText=""
           className="GeographyDropdown"
           floatingLabelFixed={true}
           floatingLabelText="State"
           onStateIdChange={[Function]}
         />
-        <Connect(LgaSelectField)
+        <UNDEFINED
           allItemText="All"
           className="GeographyDropdown"
           floatingLabelFixed={true}
@@ -3232,7 +3232,7 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
       <p>
         Tags
       </p>
-      <Connect(ConnectedTagInput)
+      <UNDEFINED
         allowCreate={true}
         label="Choose tags"
         onTagChange={[Function]}
@@ -3429,21 +3429,21 @@ exports[`ContactDetailsForm module ContactDetailsForm component should enable th
       <div
         className="GeographyDropdownGroup"
       >
-        <Connect(CountrySelectField)
+        <UNDEFINED
           allItemText=""
           className="GeographyDropdown"
           floatingLabelFixed={true}
           floatingLabelText="Country"
           onCountryIdChange={[Function]}
         />
-        <Connect(StateSelectField)
+        <UNDEFINED
           allItemText=""
           className="GeographyDropdown"
           floatingLabelFixed={true}
           floatingLabelText="State"
           onStateIdChange={[Function]}
         />
-        <Connect(LgaSelectField)
+        <UNDEFINED
           allItemText="All"
           className="GeographyDropdown"
           floatingLabelFixed={true}
@@ -4046,7 +4046,7 @@ exports[`ContactDetailsForm module ContactDetailsForm component should enable th
       <p>
         Tags
       </p>
-      <Connect(ConnectedTagInput)
+      <UNDEFINED
         allowCreate={true}
         label="Choose tags"
         onTagChange={[Function]}
@@ -4243,21 +4243,21 @@ exports[`ContactDetailsForm module ContactDetailsForm component should render co
       <div
         className="GeographyDropdownGroup"
       >
-        <Connect(CountrySelectField)
+        <UNDEFINED
           allItemText=""
           className="GeographyDropdown"
           floatingLabelFixed={true}
           floatingLabelText="Country"
           onCountryIdChange={[Function]}
         />
-        <Connect(StateSelectField)
+        <UNDEFINED
           allItemText=""
           className="GeographyDropdown"
           floatingLabelFixed={true}
           floatingLabelText="State"
           onStateIdChange={[Function]}
         />
-        <Connect(LgaSelectField)
+        <UNDEFINED
           allItemText="All"
           className="GeographyDropdown"
           floatingLabelFixed={true}
@@ -4858,7 +4858,7 @@ exports[`ContactDetailsForm module ContactDetailsForm component should render co
       <p>
         Tags
       </p>
-      <Connect(ConnectedTagInput)
+      <UNDEFINED
         allowCreate={true}
         label="Choose tags"
         onTagChange={[Function]}
@@ -5041,21 +5041,21 @@ exports[`ContactDetailsForm module ContactDetailsForm component should show form
       <div
         className="GeographyDropdownGroup"
       >
-        <Connect(CountrySelectField)
+        <UNDEFINED
           allItemText=""
           className="GeographyDropdown"
           floatingLabelFixed={true}
           floatingLabelText="Country"
           onCountryIdChange={[Function]}
         />
-        <Connect(StateSelectField)
+        <UNDEFINED
           allItemText=""
           className="GeographyDropdown"
           floatingLabelFixed={true}
           floatingLabelText="State"
           onStateIdChange={[Function]}
         />
-        <Connect(LgaSelectField)
+        <UNDEFINED
           allItemText="All"
           className="GeographyDropdown"
           floatingLabelFixed={true}
@@ -5656,7 +5656,7 @@ exports[`ContactDetailsForm module ContactDetailsForm component should show form
       <p>
         Tags
       </p>
-      <Connect(ConnectedTagInput)
+      <UNDEFINED
         allowCreate={true}
         label="Choose tags"
         onTagChange={[Function]}
