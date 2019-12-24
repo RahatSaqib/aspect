@@ -3,11 +3,7 @@ const Promise = require('bluebird')
 const _ = require('lodash')
 
 const dashboardWidget = require('./fixtures/dashboardWidget.json')
-const {
-  // getPartnerByName,
-  getFeatureByModule,
-  // getPermissonByModuleAndActivity,
-} = require('../utils')
+const { getFeatureByModule } = require('../utils')
 
 async function seed(knex) {
   const { id: partnerId } = await knex('Partner')
@@ -66,5 +62,4 @@ async function seed(knex) {
   })
 
   await Promise.all(jobFunctionsSetups)
-
 }
