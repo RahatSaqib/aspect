@@ -94,7 +94,7 @@
     "@babel/register": "^7.7.7",
     "autodll-webpack-plugin": "^0.4.2",
     "babel-core": "^7.0.0-bridge.0",
-    "babel-eslint": "^9.0.0",
+    "babel-eslint": "^10.0.3",
     "babel-jest": "^24.9.0",
     "babel-loader": "^8.0.6",
     "babel-plugin-dynamic-import-node": "^2.3.0",
@@ -117,7 +117,7 @@
     "eslint-plugin-jsx-a11y": "^6.2.3",
     "eslint-plugin-prettier": "^3.1.2",
     "eslint-plugin-react": "^7.17.0",
-    "eslint-plugin-react-hooks": "^1.6.0",
+    "eslint-plugin-react-hooks": "^2.3.0",
     "favicons-webpack-plugin": "^1.0.2",
     "file-loader": "^2.0.0",
     "fs-extra-cli": "0.0.4",
@@ -221,8 +221,8 @@
     "redux-immutable": "^4.0.0",
     "redux-thunk": "^2.3.0",
     "topojson-client": "^3.1.0",
-    "url-search-params-polyfill": "^2.0.0",
-    "warning": "^3.0.0",
-    "whatwg-fetch": "^2.0.3"
+    "url-search-params-polyfill": "^7.0.1",
+    "warning": "^4.0.3",
+    "whatwg-fetch": "^3.0.0"
   }
 }
