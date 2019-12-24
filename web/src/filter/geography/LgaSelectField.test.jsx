@@ -25,7 +25,7 @@ describe('LgaSelectField module', () => {
         }),
       },
       childContextTypes: {
-        muiTheme: PropTypes.object.isRequired,
+        muiTheme: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
       },
     })
 

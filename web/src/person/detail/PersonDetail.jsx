@@ -121,9 +121,10 @@ export class PersonDetail extends PureComponent {
     this.handleFetchPartnersAndJobFunctions(this.props)
     this.handleFetchPerson(this.props)
   }
-  componentWillReceiveProps(nextProps) {
-    if (this.props.match.params.personId !== nextProps.match.params.personId) {
-      this.handleFetchPerson(nextProps)
+
+  componentDidUpdate(prevProps) {
+    if (this.props.match.params.personId !== prevProps.match.params.personId) {
+      this.handleFetchPerson(this.props)
     }
   }
 
@@ -205,6 +206,7 @@ export class PersonDetail extends PureComponent {
       })
     })
   }
+
   addAssignment = values => {
     const { person, addPersonAssignment } = this.props
     const data = {
@@ -219,6 +221,7 @@ export class PersonDetail extends PureComponent {
     }
     addPersonAssignment(data)
   }
+
   deleteAssignment = jobContextId => {
     const { person, deletePersonAssignment } = this.props
     const data = {

@@ -2,12 +2,12 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import { compose, setPropTypes, pure, withProps } from 'recompose'
 
-import ReadOnlyField from './ReadOnlyField'
+import ReadOnlyField, { readOnlyFieldPropTypes } from './ReadOnlyField'
 
 const enhance = compose(
   pure,
   setPropTypes({
-    fields: PropTypes.arrayOf(PropTypes.shape(ReadOnlyField.propTypes))
+    fields: PropTypes.arrayOf(PropTypes.shape(readOnlyFieldPropTypes))
       .isRequired,
   }),
   withProps(({ fields, hideLabel = false }) => ({

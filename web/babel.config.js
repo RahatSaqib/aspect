@@ -1,6 +1,5 @@
 const plugins = [
   ['babel-plugin-lodash', {}],
-  ['react-hot-loader/babel', {}],
   // Stage 3
   '@babel/plugin-syntax-dynamic-import',
   '@babel/plugin-syntax-import-meta',
@@ -39,7 +38,7 @@ module.exports = {
           '@babel/preset-env',
           {
             modules: false,
-            corejs: '2.4.0',
+            corejs: { version: 3, proposals: true },
             useBuiltIns: 'usage',
             targets: {
               browsers: ['last 2 versions'],

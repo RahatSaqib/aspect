@@ -85,6 +85,7 @@ const ExportListButton = ({
       >
         <li>
           <button
+            type="button"
             className={cssClasses('Reports_Button')}
             inverse
             onClick={onMyExport}
@@ -95,6 +96,7 @@ const ExportListButton = ({
         </li>
         <li>
           <button
+            type="button"
             className={cssClasses('Reports_Button')}
             inverse
             onClick={onMyExport}

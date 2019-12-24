@@ -153,7 +153,8 @@ export default class CustomField extends PureComponent {
           </ButtonGroup>
         </FormGroup>
       )
-    } else if (fieldType === 'TextBox') {
+    }
+    if (fieldType === 'TextBox') {
       return (
         <FormGroup
           className={cssClasses('Container')}
@@ -174,7 +175,8 @@ export default class CustomField extends PureComponent {
           />
         </FormGroup>
       )
-    } else if (fieldType === 'DropDown') {
+    }
+    if (fieldType === 'DropDown') {
       return (
         <FormGroup
           className={cssClasses('Container', 'Container___DropDown')}
@@ -196,7 +198,8 @@ export default class CustomField extends PureComponent {
           />
         </FormGroup>
       )
-    } else if (fieldType === 'DateTime') {
+    }
+    if (fieldType === 'DateTime') {
       const fieldDateTime = isValid(fieldValue) ? new Date(fieldValue) : null
       return (
         <FormGroup
