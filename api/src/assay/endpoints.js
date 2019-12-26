@@ -1,4 +1,4 @@
-const Joi = require('joi')
+const Joi = require('@hapi/joi')
 const { asyncHandler, validateSortPageParams } = require('../routes')
 const { listAssays, listAssaysResultSchema } = require('./service')
 
@@ -12,14 +12,12 @@ const routes = [
       notes: 'Pageable and sortable list of assays',
       auth: { scope: ['assay:view', 'assay:edit'] },
       validate: {
-        query: Object.assign(
-          {
-            name: Joi.string()
-              .allow('')
-              .description('Filter for assay name'),
-          },
-          validateSortPageParams('name', 'assayTypeName')
-        ),
+        query: {
+          name: Joi.string()
+            .allow('')
+            .description('Filter for assay name'),
+          ...validateSortPageParams('name', 'assayTypeName'),
+        },
       },
     },
   },

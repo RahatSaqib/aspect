@@ -99,48 +99,36 @@ async function seed(knex) {
     .first()
 
   // create site for Alere FTP Connector device
-  const [southAfricaNhlsAlereFtpConnectorSiteId] = await knex('Site').insert(
-    Object.assign(
-      {
-        name: 'SA NHLS Alere FTP Connector Site',
-        shortName: 'SA NHLS Alere',
-        externalId: 'sa_nhls_alere_ftp',
-        partnerId,
-        geographyId: southAfricaGeographyId,
-      },
-      auditFields
-    )
-  )
+  const [southAfricaNhlsAlereFtpConnectorSiteId] = await knex('Site').insert({
+    name: 'SA NHLS Alere FTP Connector Site',
+    shortName: 'SA NHLS Alere',
+    externalId: 'sa_nhls_alere_ftp',
+    partnerId,
+    geographyId: southAfricaGeographyId,
+    ...auditFields,
+  })
 
   // insert SA NHLS Alere q Connector device
   const [southAfricaNhlsAlereFtpConnectorDeviceId] = await knex(
     'Device'
-  ).insert(
-    Object.assign(
-      {
-        name: 'South Africa NHLS Alere FTP Connector',
-        deviceTypeId: deviceTypes.AlereFtpConnector.id,
-        deviceStatusId: approvedDeviceStatusId,
-        partnerId,
-        geographyId: southAfricaGeographyId,
-        siteId: southAfricaNhlsAlereFtpConnectorSiteId,
-      },
-      auditFields
-    )
-  )
+  ).insert({
+    name: 'South Africa NHLS Alere FTP Connector',
+    deviceTypeId: deviceTypes.AlereFtpConnector.id,
+    deviceStatusId: approvedDeviceStatusId,
+    partnerId,
+    geographyId: southAfricaGeographyId,
+    siteId: southAfricaNhlsAlereFtpConnectorSiteId,
+    ...auditFields,
+  })
 
-  await knex('DeviceApiKey').insert(
-    Object.assign(
-      {
-        token: 'aqcajk92773te5t4dv01',
-        revoked: 0,
-        partnerId,
-        geographyId: southAfricaGeographyId,
-        deviceId: southAfricaNhlsAlereFtpConnectorDeviceId,
-      },
-      auditFields
-    )
-  )
+  await knex('DeviceApiKey').insert({
+    token: 'aqcajk92773te5t4dv01',
+    revoked: 0,
+    partnerId,
+    geographyId: southAfricaGeographyId,
+    deviceId: southAfricaNhlsAlereFtpConnectorDeviceId,
+    ...auditFields,
+  })
 
   const southAfricaProvinces = await knex('Geography as g')
     .innerJoin('State as s', 's.id', 'g.stateId')
@@ -199,19 +187,17 @@ async function seed(knex) {
         .first()
 
       // sites
-      const siteData = Object.assign(
-        {
-          partnerId,
-          geographyId: clinicGeographyId,
-          name: clinic.name,
-          shortName: clinic.shortName,
-          externalId: clinic.externalId,
-          latitude: clinic.latitude,
-          longitude: clinic.longitude,
-          timezoneId: southAfricaCountry.timezone,
-        },
-        auditFields
-      )
+      const siteData = {
+        partnerId,
+        geographyId: clinicGeographyId,
+        name: clinic.name,
+        shortName: clinic.shortName,
+        externalId: clinic.externalId,
+        latitude: clinic.latitude,
+        longitude: clinic.longitude,
+        timezoneId: southAfricaCountry.timezone,
+        ...auditFields,
+      }
       const [siteId] = await knex('Site').insert(siteData)
       siteData.id = siteId
       siteIds[clinic.shortName] = siteId
@@ -219,44 +205,36 @@ async function seed(knex) {
       if (clinic.devices) {
         await Promise.all(
           _.map(clinic.devices, async device =>
-            knex('Device').insert(
-              Object.assign(
-                {
-                  partnerId,
-                  geographyId: clinicGeographyId,
-                  siteId,
-                  deviceTypeId: await deviceTypeToId(device.deviceTypeId),
-                  deviceStatusId: await deviceStatusToId('approved'),
-                  name: `${siteData.shortName} ${device.deviceTypeId}`,
-                  shortName: `${device.deviceTypeId} ${device.deviceSerial}`,
-                  serial: device.deviceSerial,
-                  culture: southAfricaCountry.culture,
-                  timezone: siteData.timezoneId,
-                  configurationData: '{}',
-                },
-                auditFields
-              )
-            )
+            knex('Device').insert({
+              partnerId,
+              geographyId: clinicGeographyId,
+              siteId,
+              deviceTypeId: await deviceTypeToId(device.deviceTypeId),
+              deviceStatusId: await deviceStatusToId('approved'),
+              name: `${siteData.shortName} ${device.deviceTypeId}`,
+              shortName: `${device.deviceTypeId} ${device.deviceSerial}`,
+              serial: device.deviceSerial,
+              culture: southAfricaCountry.culture,
+              timezone: siteData.timezoneId,
+              configurationData: '{}',
+              ...auditFields,
+            })
           )
         )
       }
     })
   )
 
-  const [adminPersonId] = await knex('Person').insert(
-    Object.assign(
-      {
-        userId: adminId,
-        name: 'NHLS EID Admin',
-        lastPartnerId: partnerId,
-        lastCountryId: countryId,
-        geographyId: southAfricaGeographyId,
-        culture,
-        timezone,
-      },
-      auditFields
-    )
-  )
+  const [adminPersonId] = await knex('Person').insert({
+    userId: adminId,
+    name: 'NHLS EID Admin',
+    lastPartnerId: partnerId,
+    lastCountryId: countryId,
+    geographyId: southAfricaGeographyId,
+    culture,
+    timezone,
+    ...auditFields,
+  })
 
   const [jobFunctionIdAdmin] = await knex('JobFunction').insert({
     name: 'Admin',
@@ -329,18 +307,14 @@ async function seed(knex) {
   // create site for lab user
   await Promise.all(
     _.map(['1', '2', '3'], async siteNum => {
-      const [siteId] = await knex('Site').insert(
-        Object.assign(
-          {
-            partnerId,
-            geographyId: southAfricaGeographyId,
-            name: `SA NHLS Site ${siteNum}`,
-            shortName: `SA NHLS Site ${siteNum}`,
-            externalId: `sa_nhls_site${siteNum}`,
-          },
-          auditFields
-        )
-      )
+      const [siteId] = await knex('Site').insert({
+        partnerId,
+        geographyId: southAfricaGeographyId,
+        name: `SA NHLS Site ${siteNum}`,
+        shortName: `SA NHLS Site ${siteNum}`,
+        externalId: `sa_nhls_site${siteNum}`,
+        ...auditFields,
+      })
       const labUserName = `nhls_lab${siteNum}`
       const [labUserId] = await knex('User').insert({
         name: labUserName,
@@ -350,20 +324,16 @@ async function seed(knex) {
         lockedOut: 0,
         failedPasswordAttempts: 0,
       })
-      const [labPersonId] = await knex('Person').insert(
-        Object.assign(
-          {
-            userId: labUserId,
-            name: `NHLS Lab User ${siteNum}`,
-            lastPartnerId: partnerId,
-            lastCountryId: countryId,
-            geographyId: southAfricaGeographyId,
-            culture,
-            timezone,
-          },
-          auditFields
-        )
-      )
+      const [labPersonId] = await knex('Person').insert({
+        userId: labUserId,
+        name: `NHLS Lab User ${siteNum}`,
+        lastPartnerId: partnerId,
+        lastCountryId: countryId,
+        geographyId: southAfricaGeographyId,
+        culture,
+        timezone,
+        ...auditFields,
+      })
       const [jobIdLab] = await knex('Job').insert({
         personId: labPersonId,
         jobFunctionId: jobFunctionIdLabUser,
@@ -1192,37 +1162,37 @@ async function seed(knex) {
         externalId: result.sampleId,
         originSiteId: cmjahSiteId,
       })
-      const [resultId] = await knex('Result').insert(
-        Object.assign({}, auditFields, {
-          externalId: createUniqueIdForResult(
-            cmjahDeviceSerial,
-            result.testStartedOn,
-            result.testEndedOn,
-            result.sampleId
-          ),
-          assayId: alereQHiv12VLPlasmaAssayId,
-          partnerId,
-          geographyId: cmjahGeographyId,
-          siteId: cmjahSiteId,
-          deviceId: cmjahDeviceId,
-          resultSourceId: resultSourceDiagnosticDeviceId,
-          resultTypeId: resultTypePatientId,
-          sampleId,
-          resultCategory1: result.category1,
-          resultCategory2: result.category2,
-          resultData: result.resultData,
-          startedOn: result.testStartedOn,
-          endedOn: result.testEndedOn,
-          createdOn: addMinutes(result.testEndedOn, 10),
-          updatedOn: addMinutes(result.testEndedOn, 30),
-          instrumentSerial: cmjahDeviceSerial,
-          consumableSerial: result.consumableSerial,
-          senderVersion: result.senderVersion,
-          senderOperator: result.senderOperator,
-          rawData: result.rawData,
-          errorCode: result.errorCode,
-        })
-      )
+      const [resultId] = await knex('Result').insert({
+        ...auditFields,
+        externalId: createUniqueIdForResult(
+          cmjahDeviceSerial,
+          result.testStartedOn,
+          result.testEndedOn,
+          result.sampleId
+        ),
+        assayId: alereQHiv12VLPlasmaAssayId,
+        partnerId,
+        geographyId: cmjahGeographyId,
+        siteId: cmjahSiteId,
+        reportableSiteId: cmjahSiteId,
+        deviceId: cmjahDeviceId,
+        resultSourceId: resultSourceDiagnosticDeviceId,
+        resultTypeId: resultTypePatientId,
+        sampleId,
+        resultCategory1: result.category1,
+        resultCategory2: result.category2,
+        resultData: result.resultData,
+        startedOn: result.testStartedOn,
+        endedOn: result.testEndedOn,
+        createdOn: addMinutes(result.testEndedOn, 10),
+        updatedOn: addMinutes(result.testEndedOn, 30),
+        instrumentSerial: cmjahDeviceSerial,
+        consumableSerial: result.consumableSerial,
+        senderVersion: result.senderVersion,
+        senderOperator: result.senderOperator,
+        rawData: result.rawData,
+        errorCode: result.errorCode,
+      })
       const [lastLogId] = await knex('ResultWorkflowLog').insert({
         resultId,
         resultWorkflowStatusId: result.resultWorkflowStatusId || 1,

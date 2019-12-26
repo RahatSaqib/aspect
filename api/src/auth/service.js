@@ -2,7 +2,7 @@ const crypto = require('crypto')
 const jwt = require('jsonwebtoken')
 const uuid = require('node-uuid')
 const { promisify } = require('util')
-const Boom = require('boom')
+const Boom = require('@hapi/boom')
 const _ = require('lodash')
 const bcrypt = require('bcrypt')
 require('isomorphic-fetch')
@@ -693,13 +693,11 @@ async function acceptLicense(request) {
   await query('Insert or update accepted license for user').raw(
     'INSERT INTO LicensePerson set ? ON DUPLICATE KEY UPDATE ?',
     [
-      Object.assign(
-        {
-          licenseId,
-          personId: loggedInUser.personId,
-        },
-        licenseUpdates
-      ),
+      {
+        licenseId,
+        personId: loggedInUser.personId,
+        ...licenseUpdates,
+      },
       licenseUpdates,
     ]
   )

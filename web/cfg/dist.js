@@ -1,7 +1,6 @@
 const webpack = require('webpack')
 const path = require('path')
 const merge = require('webpack-merge')
-const base = require('./base')
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin')
 const CompressionPlugin = require('compression-webpack-plugin')
 const FaviconsWebpackPlugin = require('favicons-webpack-plugin')
@@ -9,6 +8,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin')
 const TerserPlugin = require('terser-webpack-plugin')
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
+const base = require('./base')
 
 const config = () => {
   process.env.ASPECT_TARGET = 'dist'

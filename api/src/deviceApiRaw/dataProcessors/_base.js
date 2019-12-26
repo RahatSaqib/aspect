@@ -1,6 +1,6 @@
 const Promise = require('bluebird')
 const _ = require('lodash')
-const Boom = require('boom')
+const Boom = require('@hapi/boom')
 const { createSalt, encrypt } = require('../../shared/encryption')
 const { getUtcTime } = require('../../shared/date')
 const { deviceApiRawStatusToId } = require('../../shared/dictionary')

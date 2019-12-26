@@ -2,7 +2,7 @@
 // configuration =========
 // =======================
 const _ = require('lodash')
-const Hapi = require('hapi')
+const Hapi = require('@hapi/hapi')
 
 const config = require('./config')
 const { version } = require('./../package.json')
@@ -15,20 +15,26 @@ const { createMessageQueue } = require('./mq')
 const { addSubscriptions } = require('./subscriptions')
 const { startScheduler } = require('./scheduler')
 const { addLoggers } = require('./logger/service')
-const deviceApiKeyPlugin = require('./deviceApi/deviceApiKeyPlugin')
+const {
+  plugin: deviceApiKeyPlugin,
+  validateApiKeyAuthBasic,
+} = require('./deviceApi/deviceApiKeyPlugin')
 const { continueUnprocessedRawData } = require('./deviceApiRaw/service')
 
-const server = new Hapi.Server()
 const port = process.env.PORT || 8080
-const clientApiPath = '/api'
-const deviceApiPath = '/device'
-const deviceApiRawPath = '/device/raw'
-
-server.connection({
+const server = new Hapi.server({
   port,
+  host: '127.0.0.1',
   routes: {
     cors: {
       exposedHeaders: ['WWW-Authenticate', 'Server-Authorization', 'Date'],
+    },
+    validate: {
+      failAction: async (request, h, err) => {
+        // log and respond with the full error
+        console.error(err) // eslint-disable-line no-console
+        throw err
+      },
     },
   },
 })
@@ -42,7 +48,7 @@ const {
 const ravenPlugins = raven
   ? [
       {
-        register: require('hapi-raven'),
+        plugin: require('hapi-raven'),
         options: { dsn: raven.dsn },
       },
     ]
@@ -51,10 +57,10 @@ const ravenPlugins = raven
 // Load Swagger documentation if configured
 const swaggerPlugins = swaggerEnabled
   ? [
-      require('inert'),
+      require('inert'), // eslint-disable-line import/order
       require('vision'), // eslint-disable-line import/order
       {
-        register: require('hapi-swagger'),
+        plugin: require('hapi-swagger'),
         options: {
           info: {
             title: 'Aspect API',
@@ -77,6 +83,43 @@ const swaggerPlugins = swaggerEnabled
     ]
   : []
 
+// Plugin to set payload prior to validation transformation
+const rawPayloadPlugin = {
+  name: 'rawPayload',
+  version,
+  register: async server => {
+    server.ext('onPostAuth', (request, h) => {
+      request.plugins.rawPayload = request.payload
+      return h.continue
+    })
+  },
+}
+
+const messageQueuePlugin = {
+  name: 'messageQueue',
+  version,
+  register: async server =>
+    createMessageQueue('aspect')
+      .then(queue => {
+        addLoggers(server, queue)
+        addSubscriptions(queue)
+        if (config.scheduler.enabled) {
+          startScheduler(queue)
+        }
+        return queue
+      })
+      .then(queue => {
+        return continueUnprocessedRawData(queue).then(() => {
+          server.ext('onPreHandler', (request, h) => {
+            request.plugins.messageContext = queue.createMessageContext(
+              'aspect_request'
+            )
+            return h.continue
+          })
+        })
+      }),
+}
+
 const plugins = [
   ...ravenPlugins,
   require('inert'), // eslint-disable-line import/order
@@ -88,7 +131,7 @@ const plugins = [
   deviceApiKeyPlugin,
 
   // Basic authentication in Device API
-  require('hapi-auth-basic'), // eslint-disable-line import/order
+  require('@hapi/basic'), // eslint-disable-line import/order
 
   // Set payload prior to validation transformation
   rawPayloadPlugin,
@@ -97,193 +140,181 @@ const plugins = [
   messageQueuePlugin,
 ]
 
-function messageQueuePlugin(server, options, next) {
-  createMessageQueue('aspect')
-    .then(queue => {
-      addLoggers(server, queue)
-      addSubscriptions(queue)
-      if (config.scheduler.enabled) {
-        startScheduler(queue)
+const start = async () => {
+  await server.register(plugins)
+
+  if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
+    // ==========================================================================
+    // ==========================================================================
+    // show raw error in log
+    // ==========================================================================
+    // ==========================================================================
+    server.events.on('log', (event, tags) => {
+      if (tags.error) {
+        const { error } = event
+        console.error('-------------------') // eslint-disable-line no-console
+        console.error(error || event) // eslint-disable-line no-console
+        console.error('-------------------') // eslint-disable-line no-console
       }
-      return continueUnprocessedRawData(queue)
-        .then(() => {
-          server.ext('onPreHandler', (request, reply) => {
-            request.plugins.messageContext = queue.createMessageContext(
-              'aspect_request'
-            )
-            reply.continue()
-          })
-          next()
-        })
-        .catch(next)
     })
-    .catch(next)
-}
-messageQueuePlugin.attributes = {
-  name: 'messageQueue',
-  version,
-}
+    server.ext('onPreResponse', function(request, h) {
+      const { response } = request
+      // if error, pass it through server.log
+      // FYI - response.isServer indicates status code >= 500
+      if (response && response.isBoom && response.isServer) {
+        server.log(['error'], response)
+      }
+      return h.continue
+    })
+  }
 
-// Plugin to set payload prior to validation transformation
-function rawPayloadPlugin(server, options, next) {
-  server.ext('onPostAuth', (request, reply) => {
-    request.plugins.rawPayload = request.payload
-    reply.continue()
+  // ==========================================================================
+  // ==========================================================================
+  // Authentication strategies and Authorization Scopes
+  // ==========================================================================
+  // ==========================================================================
+
+  // use config: { auth: false } on route definition to disable authentication
+  // Device API uses API Keys
+  server.auth.strategy('deviceApiKey', 'deviceApiKey')
+  server.auth.strategy('deviceApiBasic', 'basic', {
+    allowEmptyUsername: true,
+    ...validateApiKeyAuthBasic,
   })
-  next()
-}
 
-rawPayloadPlugin.attributes = {
-  name: 'rawPayload',
-  version,
-}
-
-server.register(plugins, err => {
-  if (err) {
-    throw err
-  }
-})
-
-// ================================================
-// Authentication strategy and Authorization Scopes
-// ================================================
-// use config: { auth: false } on route definition to disable authentication
-// Device API uses API Keys
-server.auth.strategy('deviceApiKey', 'deviceApiKey')
-server.auth.strategy('deviceApiBasic', 'basic', {
-  allowEmptyUsername: true,
-  validateFunc: deviceApiKeyPlugin.validateApiKeyAuthBasic,
-})
-
-// Client API uses JWT
-server.auth.strategy('clientApi', 'jwt', {
-  key: config.secret,
-  validateFunc(decoded, request, callback) {
-    let valid = true
-
-    // if user has to accept license, deny all requests except to the license api:
-    if (
-      decoded.hasToAcceptLicenseId &&
-      request.url.path.indexOf('/api/auth/features') === -1 &&
-      request.url.path.indexOf('/api/auth/license') === -1
-    ) {
-      valid = false
-    }
-
-    // can specify either module or permission, e.g. "device" or "device:view"
-    // for authorization scope on routes.
-    // multiple scopes can be specified:
-    // ["device:view"] will authorize anyone with device module and view activity
-    // ["device", "site"] will authorize anyone with device or site modules
-    // ["device", "!site"] will authorize anyone with device but not site modules
-    // ["+device", "site:view", "site:edit"] will authorize anyone with device (required)
-    //   and either "site:view" or "site:edit" permissions
-    const modules = decoded.permissions
-      ? _.uniq(
-          _.map(
-            _.filter(
-              decoded.permissions,
-              permission => permission.indexOf(':') > 0
-            ),
-            permission => permission.substr(0, permission.indexOf(':'))
+  // Client API uses JWT
+  server.auth.strategy('clientApi', 'jwt', {
+    key: config.secret,
+    validate: async (decoded, request) => {
+      let isValid = true
+      // if user has to accept license, deny all requests except to the license api:
+      if (
+        decoded.hasToAcceptLicenseId &&
+        request.url.pathname.indexOf('/api/auth/features') === -1 &&
+        request.url.pathname.indexOf('/api/auth/license') === -1
+      ) {
+        isValid = false
+      }
+      // can specify either module or permission, e.g. "device" or "device:view"
+      // for authorization scope on routes.
+      // multiple scopes can be specified:
+      // ["device:view"] will authorize anyone with device module and view activity
+      // ["device", "site"] will authorize anyone with device or site modules
+      // ["device", "!site"] will authorize anyone with device but not site modules
+      // ["+device", "site:view", "site:edit"] will authorize anyone with device (required)
+      //   and either "site:view" or "site:edit" permissions
+      const modules = decoded.permissions
+        ? _.uniq(
+            _.map(
+              _.filter(
+                decoded.permissions,
+                permission => permission.indexOf(':') > 0
+              ),
+              permission => permission.substr(0, permission.indexOf(':'))
+            )
           )
-        )
-      : []
-    const scope = ['clientApi'].concat(modules, decoded.permissions || [])
-    callback(null, valid, Object.assign({ scope }, decoded))
-  },
-  // TODO JWT verfication algorithm verifyOptions: { algorithms: [ 'HS256' ] }
-})
-
-// =======================
-// routes ================
-// =======================
-
-server.route({
-  method: 'GET',
-  path: '/',
-  handler: (request, reply) => reply('Hello! The API is at /api.'),
-  config: {
-    auth: false,
-  },
-})
-
-// use plugin to mount all API routes at /api
-function clientApiPlugin(server, options, next) {
-  addClientRoutes(server)
-  next()
-}
-clientApiPlugin.attributes = {
-  name: 'clientApi',
-  version,
-}
-server.register(
-  { register: clientApiPlugin },
-  {
-    routes: {
-      prefix: clientApiPath,
+        : []
+      const scope = ['clientApi'].concat(modules, decoded.permissions || [])
+      return { isValid, credentials: { scope, ...decoded } }
     },
-  },
-  err => {
-    if (err) throw err
-  }
-)
+    // TODO JWT verfication algorithm verifyOptions: { algorithms: [ 'HS256' ] }
+  })
 
-// All device API routes mounted under /device
-function deviceApiPlugin(server, options, next) {
-  addDeviceRoutes(server)
-  next()
-}
-deviceApiPlugin.attributes = {
-  name: 'deviceApi',
-  version,
-}
-server.register(
-  { register: deviceApiPlugin },
-  {
-    routes: {
-      prefix: deviceApiPath,
+  // ==========================================================================
+  // ==========================================================================
+  // routes
+  // ==========================================================================
+  // ==========================================================================
+
+  // =======================
+  // echo to see API is alive
+  // =======================
+  server.route({
+    method: 'GET',
+    path: '/',
+    handler: () => 'Hello! The API is at /api.',
+    config: {
+      auth: false,
     },
-  },
-  err => {
-    if (err) throw err
-  }
-)
-
-// Device API raw data route mounted under /device/raw
-function deviceApiRawPlugin(server, options, next) {
-  addDeviceRawRoutes(server)
-  // TODO ZIMBABWE: Try create a test that would have blocked the queue if purgeOnStart hadn't been set
-  // TODO ZIMBABWE: Test if files can be uploaded to RAW device API
-
-  // TODO Raw Device API: Wait for a data processor topic to be created on the message queue before dispatching messages to it.
-  // TODO Raw Device API: Delete topics on the message queue that were completely processed when server starts
-  // TODO Raw Device API: Archive records from the DeviceApiRaw table once they have been processed
-  next()
-}
-deviceApiRawPlugin.attributes = {
-  name: 'deviceApiRaw',
-  version,
-}
-server.register(
-  { register: deviceApiRawPlugin },
-  {
-    routes: {
-      prefix: deviceApiRawPath,
+  })
+  // =======================
+  // use plugin to mount all API routes at /api
+  // =======================
+  await server.register(
+    {
+      name: 'clientApi',
+      version,
+      register: async server =>
+        new Promise(resolve => {
+          addClientRoutes(server)
+          resolve()
+        }).catch(err => {
+          console.error(err) // eslint-disable-line no-console
+          throw err
+        }),
     },
-  },
-  err => {
-    if (err) throw err
-  }
-)
+    {
+      routes: {
+        prefix: '/api',
+      },
+    }
+  )
+  // =======================
+  // All device API routes mounted under /device
+  // =======================
+  await server.register(
+    {
+      name: 'deviceApi',
+      version,
+      register: async server =>
+        new Promise(resolve => {
+          addDeviceRoutes(server)
+          resolve()
+        }).catch(err => {
+          console.error(err) // eslint-disable-line no-console
+          throw err
+        }),
+    },
+    {
+      routes: {
+        prefix: '/device',
+      },
+    }
+  )
+  // =======================
+  // Device API raw data route mounted under /device/raw
+  // =======================
+  await server.register(
+    {
+      name: 'deviceApiRaw',
+      version,
+      register: async server =>
+        new Promise(resolve => {
+          addDeviceRawRoutes(server)
+          // TODO ZIMBABWE: Try create a test that would have blocked the queue if purgeOnStart hadn't been set
+          // TODO ZIMBABWE: Test if files can be uploaded to RAW device API
 
-// =======================
-// start the server ======
-// =======================
-server.start(err => {
-  if (err) {
-    console.error(err) // eslint-disable-line no-console
-    throw err
-  }
+          // TODO Raw Device API: Wait for a data processor topic to be created on the message queue before dispatching messages to it.
+          // TODO Raw Device API: Delete topics on the message queue that were completely processed when server starts
+          // TODO Raw Device API: Archive records from the DeviceApiRaw table once they have been processed
+          resolve()
+        }).catch(err => {
+          console.error(err) // eslint-disable-line no-console
+          throw err
+        }),
+    },
+    {
+      routes: {
+        prefix: '/device/raw',
+      },
+    }
+  )
+
+  // =======================
+  // start the server ======
+  // =======================
+  await server.start()
   console.log(`Magic happens at http://localhost:${port}`) // eslint-disable-line no-console
-})
+}
+
+start()

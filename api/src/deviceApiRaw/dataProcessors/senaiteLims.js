@@ -1,5 +1,5 @@
 const _ = require('lodash')
-const Boom = require('boom')
+const Boom = require('@hapi/boom')
 const Promise = require('bluebird')
 const { knex, transact } = require('../../db')
 const { getRemoteAddress } = require('../../shared/request')
@@ -624,6 +624,7 @@ class DefaultSenaiteLIMS extends SynchronousDataProcessor {
               .where('id', resultRecord.id)
               .update(resultRecord)
           } else {
+            resultRecord.reportableSiteId = originSiteId
             const [resultId] = await knex('Result').insert(resultRecord)
             if (resultWorkflowStatus) {
               const [resultWorkflowStatusLogId] = await knex(

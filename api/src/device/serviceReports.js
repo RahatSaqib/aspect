@@ -1,7 +1,7 @@
 const _ = require('lodash')
 const path = require('path')
-const { listDevices } = require('./service')
 const { format } = require('date-fns')
+const { listDevices } = require('./service')
 const {
   generateReport,
   downloadReportFile,
@@ -14,11 +14,6 @@ const issues = {
   issueCategoryConnectivityHealth: 'Connectivity',
 }
 async function getDevicesReport(request, reply) {
-  // Here is a really good example of the necessity of a data layer.
-  // I tried to call some existing service method for the list of devices,
-  // but everyone has parameters of the API (Request, query, Credentials, etc).
-  // I think if we don't want to repeat code we have to argue a little bit about this architecture.
-
   // get whole dataset - based on current query params (sorting, filtering) and auth constraints
   const devices = await listDevices(request)
   const { query } = request
@@ -38,21 +33,18 @@ async function getDevicesReport(request, reply) {
     devicesData.category !== 'Router'
       ? _.map(
           devices.data,
-          elem =>
-            Object.assign(
-              {
-                availabilityRate: elem.availability.rate * 100,
-                issuesCategories: _.map(
-                  elem.issueCategories,
-                  current => issues[current.key]
-                )
-                  .join(',')
-                  .replace('[')
-                  .replace(']'),
-                errorRate: elem.error.rate * 100,
-              },
-              elem
+          elem => ({
+            availabilityRate: elem.availability.rate * 100,
+            issuesCategories: _.map(
+              elem.issueCategories,
+              current => issues[current.key]
             )
+              .join(',')
+              .replace('[')
+              .replace(']'),
+            errorRate: elem.error.rate * 100,
+            ...elem,
+          })
           // this is the data source to create the reportvalues.
           // It should be an Array of JSON objects, where each must be plained (Without nested properties)
         )

@@ -1,5 +1,6 @@
 module.exports = require('../utils').seed(seed, __filename)
 
+const bcrypt = require('bcrypt')
 const geography = require('./fixtures/geography.json')
 const sites = require('./fixtures/sites.json')
 const {
@@ -16,8 +17,6 @@ const {
 const { allFeatureToId } = require('../../src/shared/dictionary')
 
 const treatmentStatus = require('../fixtures/treatmentStatus.json')
-
-const bcrypt = require('bcrypt')
 
 const config = require('../../src/config')
 

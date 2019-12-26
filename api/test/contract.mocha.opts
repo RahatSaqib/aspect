@@ -3,5 +3,6 @@
 --ui bdd
 --recursive
 --timeout 60000
+--exit
 test/utils/contractTestSetup.js
 test/**/*.spec.js

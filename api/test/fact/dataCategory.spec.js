@@ -249,7 +249,7 @@ describe('DataCategoryLow Issues Endpoint', () => {
             }
           })
 
-          const resultId = await knex('Result').insert({
+          const [resultId] = await knex('Result').insert({
             externalId: `Test-${i}`,
             assayId: assayGeneXpertMtbRifId,
             partnerId,
@@ -269,6 +269,7 @@ describe('DataCategoryLow Issues Endpoint', () => {
             createdBy: myanmarAdminId,
             updatedOn: now,
             updatedBy: myanmarAdminId,
+            reportableSiteId: siteId,
           })
           resultIds.push(resultId)
         })

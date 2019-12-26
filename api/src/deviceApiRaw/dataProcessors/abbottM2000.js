@@ -1,6 +1,6 @@
 const Promise = require('bluebird')
 const _ = require('lodash')
-const Boom = require('boom')
+const Boom = require('@hapi/boom')
 const { convertToTimeZone } = require('date-fns-timezone')
 const { transact } = require('../../db')
 const { getRemoteAddress } = require('../../shared/request')
@@ -80,7 +80,8 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
         return _.get(jsonAstmObject, `${path}.items`).map(i =>
           _.get(jsonAstmObject, `${path}.${i}`)
         )
-      } else if (!_.isEmpty(_.get(jsonAstmObject, `${path}.value`))) {
+      }
+      if (!_.isEmpty(_.get(jsonAstmObject, `${path}.value`))) {
         return [_.get(jsonAstmObject, `${path}`)]
       }
       return []
@@ -136,7 +137,8 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
     const mergeDeep = (baseValue, sourceValue) => {
       if (_.isEmpty(baseValue) && !_.isEmpty(sourceValue)) {
         return sourceValue
-      } else if (!_.isEmpty(baseValue) && _.isEmpty(sourceValue)) {
+      }
+      if (!_.isEmpty(baseValue) && _.isEmpty(sourceValue)) {
         return baseValue
       }
       if (_.isArray(baseValue) && _.isArray(sourceValue)) {
@@ -727,7 +729,7 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
             .andWhere('st.externalId', finalResult.sample.sampleTypeExternalId)
             .first('s.*')) || {}
         let { id: sampleId } = existingSample
-        const { collectedOn } = existingSample
+        const { collectedOn, originSiteId } = existingSample
         if (!sampleId) {
           ;[sampleId] = await knex('Sample').insert({
             externalId: finalResult.sample.externalId,
@@ -786,6 +788,7 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
             resultSourceId: resultSourceDiagnosticDeviceId,
             resultTypeId: resultTypePatientId,
             sampleId,
+            reportableSiteId: originSiteId || device.siteId,
             resultData: {
               passedQualityControl,
               qualityControlSummary,

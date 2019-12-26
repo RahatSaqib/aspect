@@ -90,10 +90,16 @@ describe('Device API Raw routes for Senaite LIMS', () => {
           .select('gr.id', 'gr.sampleId', 's.originSiteId')
       })
     const resultIds = _.uniq(
-      _.map(_.filter(results, result => result.id !== null), 'id')
+      _.map(
+        _.filter(results, result => result.id !== null),
+        'id'
+      )
     )
     const sampleIds = _.uniq(
-      _.map(_.filter(results, result => result.sampleId !== null), 'sampleId')
+      _.map(
+        _.filter(results, result => result.sampleId !== null),
+        'sampleId'
+      )
     )
     const originSiteIds = _.uniq(
       _.map(
@@ -2306,13 +2312,12 @@ describe('Device API Raw routes for Senaite LIMS', () => {
         'a.externalId as assayId',
         'rc1.externalId as result1'
       )
-      .map(result =>
-        Object.assign({}, result, {
-          resultData: JSON.parse(result.resultData),
-          patientData: JSON.parse(result.patientData),
-          sampleCollectedOn: JSON.stringify(result.sampleCollectedOn),
-        })
-      )
+      .map(result => ({
+        ...result,
+        resultData: JSON.parse(result.resultData),
+        patientData: JSON.parse(result.patientData),
+        sampleCollectedOn: JSON.stringify(result.sampleCollectedOn),
+      }))
     const sampleTypeMapping = {
       'Blood plasma': 'Plasma',
       'Dried Blood Spot': 'DBS',

@@ -13,8 +13,9 @@ function oneDirectionalMd5Hash(inputString) {
     .update(inputString)
     .digest('hex')
 }
-
-const encryptionAlgorithm = 'aes-256-cbc-hmac-sha1'
+// cipher 'aes-256-cbc-hmac-sha1' is missing in Node 12.x
+// const encryptionAlgorithm = 'aes-256-cbc-hmac-sha1'
+const encryptionAlgorithm = 'aes-256-cbc'
 const encryptionHashAlgorithm = 'sha1'
 const passwordIterations = 2
 const keySize = 256

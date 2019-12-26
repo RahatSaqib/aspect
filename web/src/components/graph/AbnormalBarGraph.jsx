@@ -46,14 +46,8 @@ const AbnormalBarGraph = ({
   })
 
   // Compose together the scale and accessor functions to get point functions
-  const xPoint = _.flowRight(
-    xScale,
-    x
-  )
-  const yPoint = _.flowRight(
-    yScale,
-    y
-  )
+  const xPoint = _.flowRight(xScale, x)
+  const yPoint = _.flowRight(yScale, y)
 
   const [xFrom, xTo] = xScale.range()
   const lineAtY = _.isNumber(average) ? yPointMax - yScale(average) : 0

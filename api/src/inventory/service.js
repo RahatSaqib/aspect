@@ -1,6 +1,6 @@
 const Promise = require('bluebird')
 const _ = require('lodash')
-const Boom = require('boom')
+const Boom = require('@hapi/boom')
 const { startOfDay } = require('date-fns')
 const { getDateOrDefault, parseDateOrDefault } = require('../shared/date')
 const {
@@ -490,9 +490,10 @@ async function listInventoryItemsGroupedBySite(request) {
     getSiteIds,
   ])
 
-  const inventoryItemFilters = Object.assign({}, request.query, {
+  const inventoryItemFilters = {
+    ...request.query,
     siteId: _.map(sitesData, 'siteId'),
-  })
+  }
 
   const sortDirection = request.query.sortDir === 'desc' ? 'desc' : 'asc'
   const inventoryItems = await inventoryItemsSiteByGeographyQuery
@@ -514,11 +515,12 @@ async function listInventoryItemsGroupedBySite(request) {
   )
   const sitesWithConsumables = _.map(sites, siteRecord => {
     const siteItems = _.filter(inventoryItems, { siteId: siteRecord.siteId })
-    return Object.assign({}, siteRecord, {
+    return {
+      ...siteRecord,
       inventoryItems: _.map(siteItems, siteItem =>
         _.pick(siteItem, inventoryItemFields)
       ),
-    })
+    }
   })
 
   return {

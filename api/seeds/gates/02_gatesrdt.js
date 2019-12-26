@@ -95,20 +95,16 @@ async function seed(knex) {
     .first()
 
   // Assign all features and admin permissions to Admin user
-  const [adminPersonId] = await knex('Person').insert(
-    Object.assign(
-      {
-        userId: adminId,
-        name: 'Gates RDT Admin',
-        lastPartnerId: partnerId,
-        lastCountryId: countryId,
-        geographyId,
-        culture,
-        timezone,
-      },
-      auditFields
-    )
-  )
+  const [adminPersonId] = await knex('Person').insert({
+    userId: adminId,
+    name: 'Gates RDT Admin',
+    lastPartnerId: partnerId,
+    lastCountryId: countryId,
+    geographyId,
+    culture,
+    timezone,
+    ...auditFields,
+  })
 
   const [jobFunctionIdAdmin] = await knex('JobFunction').insert({
     name: 'Admin',
@@ -143,43 +139,34 @@ async function seed(knex) {
   await knex('JobContext').insert({ jobId: jobIdAdmin, geographyId })
 
   // Create initial DeviceAPI Key for CommCare which requires site.
-  const commcareSiteId = await knex('Site').insert(
-    Object.assign({}, auditFields, {
-      name: 'CommCare Site',
-      shortName: 'CommCare Site',
-      externalId: 'commcare',
-      partnerId,
-      geographyId,
-    })
-  )
-  await knex('DeviceApiKey').insert(
-    Object.assign(
-      {
-        token: randomToken(),
-        revoked: 0,
-        partnerId,
-        geographyId,
-        siteId: commcareSiteId,
-      },
-      auditFields
-    )
-  )
+  const commcareSiteId = await knex('Site').insert({
+    ...auditFields,
+    name: 'CommCare Site',
+    shortName: 'CommCare Site',
+    externalId: 'commcare',
+    partnerId,
+    geographyId,
+  })
+  await knex('DeviceApiKey').insert({
+    token: randomToken(),
+    revoked: 0,
+    partnerId,
+    geographyId,
+    siteId: commcareSiteId,
+    ...auditFields,
+  })
 
   // Create WebhookTemplate for downloading images
   const commcareApiKey = _.get(config, 'plugin.commcare.apiKey', '')
-  await knex('WebhookTemplate').insert(
-    Object.assign(
-      {
-        externalId: 'commcareDownloadImage',
-        method: 'GET',
-        url: '{{ result.data.resultImageUrl }}',
-        fileName: '{{ result.data.resultImageFileName }}',
-        fileContentTypeId: await fileContentTypeToId('imageJpg'),
-        headers: JSON.stringify({
-          Authorization: `ApiKey ${commcareApiKey}`,
-        }),
-      },
-      auditFields
-    )
-  )
+  await knex('WebhookTemplate').insert({
+    externalId: 'commcareDownloadImage',
+    method: 'GET',
+    url: '{{ result.data.resultImageUrl }}',
+    fileName: '{{ result.data.resultImageFileName }}',
+    fileContentTypeId: await fileContentTypeToId('imageJpg'),
+    headers: JSON.stringify({
+      Authorization: `ApiKey ${commcareApiKey}`,
+    }),
+    ...auditFields,
+  })
 }

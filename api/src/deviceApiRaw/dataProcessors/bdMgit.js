@@ -1,6 +1,6 @@
 const Promise = require('bluebird')
 const _ = require('lodash')
-const Boom = require('boom')
+const Boom = require('@hapi/boom')
 const dateParse = require('date-fns/parse')
 const { knex, transact } = require('../../db')
 const { getRemoteAddress } = require('../../shared/request')
@@ -240,6 +240,7 @@ class DefaultBDMGIT extends SynchronousDataProcessor {
         senderVersion: mgitVersionNumber,
         updatedOn: utcNow,
         resultData: JSON.stringify(resultData),
+        reportableSiteId: site ? site.id : device.siteId,
       }
 
       // add/update sample

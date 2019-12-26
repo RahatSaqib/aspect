@@ -131,20 +131,16 @@ async function seed(knex) {
   }, {})
 
   // Permissions for Myanmar Admin
-  const [adminPersonId] = await knex('Person').insert(
-    Object.assign(
-      {
-        userId: adminId,
-        name: 'Myanmar Admin',
-        lastPartnerId: partnerId,
-        lastCountryId: countryId,
-        geographyId: myanmarGeographyId,
-        culture: myanmarCountry.culture,
-        timezone: myanmarCountry.timezone,
-      },
-      auditFields
-    )
-  )
+  const [adminPersonId] = await knex('Person').insert({
+    userId: adminId,
+    name: 'Myanmar Admin',
+    lastPartnerId: partnerId,
+    lastCountryId: countryId,
+    geographyId: myanmarGeographyId,
+    culture: myanmarCountry.culture,
+    timezone: myanmarCountry.timezone,
+    ...auditFields,
+  })
 
   const [jobFunctionIdAdmin] = await knex('JobFunction').insert({
     name: 'Admin',
@@ -339,20 +335,16 @@ async function seed(knex) {
         lockedOut: 0,
         failedPasswordAttempts: 0,
       })
-      const [regionPersonId] = await knex('Person').insert(
-        Object.assign(
-          {
-            userId: regionUserId,
-            name: `Myanmar Regional Officer ${region}`,
-            lastPartnerId: partnerId,
-            lastCountryId: countryId,
-            geographyId: myanmarGeographyId,
-            culture: myanmarCountry.culture,
-            timezone: myanmarCountry.timezone,
-          },
-          auditFields
-        )
-      )
+      const [regionPersonId] = await knex('Person').insert({
+        userId: regionUserId,
+        name: `Myanmar Regional Officer ${region}`,
+        lastPartnerId: partnerId,
+        lastCountryId: countryId,
+        geographyId: myanmarGeographyId,
+        culture: myanmarCountry.culture,
+        timezone: myanmarCountry.timezone,
+        ...auditFields,
+      })
       const [jobIdRegion] = await knex('Job').insert({
         personId: regionPersonId,
         jobFunctionId: jobFunctionIdRegionalOfficer,
@@ -483,26 +475,24 @@ async function seed(knex) {
         .first()
 
       // sites
-      const siteData = Object.assign(
-        {
-          partnerId,
-          geographyId: siteGeographyId,
-          name: site.name,
-          shortName: site.shortName,
-          externalId: site.externalId,
-          notes: site.notes,
-          city: site.city,
-          street1: site.street1,
-          street2: site.street2,
-          zip: site.zip,
-          latitude: site.latitude,
-          longitude: site.longitude,
-          timezoneId: site.timezoneId,
-          hoursStart: site.hoursStart,
-          hoursEnd: site.hoursEnd,
-        },
-        auditFields
-      )
+      const siteData = {
+        partnerId,
+        geographyId: siteGeographyId,
+        name: site.name,
+        shortName: site.shortName,
+        externalId: site.externalId,
+        notes: site.notes,
+        city: site.city,
+        street1: site.street1,
+        street2: site.street2,
+        zip: site.zip,
+        latitude: site.latitude,
+        longitude: site.longitude,
+        timezoneId: site.timezoneId,
+        hoursStart: site.hoursStart,
+        hoursEnd: site.hoursEnd,
+        ...auditFields,
+      }
       const [siteId] = await knex('Site').insert(siteData)
       siteData.id = siteId
       siteDatas.push(siteData)
@@ -512,15 +502,12 @@ async function seed(knex) {
       const samples = []
       await Promise.all(
         _.map(_.range(500), async i => {
-          const sample = Object.assign(
-            {},
-            {
-              externalId: `SMP-TB-${i}`,
-              collectedOn: calculateDateForResult(i, 500, millisInMinute),
-              sampleTypeId: sampleTypeDBSId,
-              originSiteId: siteData.id,
-            }
-          )
+          const sample = {
+            externalId: `SMP-TB-${i}`,
+            collectedOn: calculateDateForResult(i, 500, millisInMinute),
+            sampleTypeId: sampleTypeDBSId,
+            originSiteId: siteData.id,
+          }
 
           sample.id = await knex('Sample').insert(sample)
           samples.push(sample)
@@ -570,52 +557,52 @@ async function seed(knex) {
               )
 
               resultData.resultText = result.resultText
-              const [rid] = await knex('Result').insert(
-                Object.assign({}, auditFields, {
-                  externalId: `UQTB-${i}`,
-                  assayId: assays.GxMtbRif.id,
-                  partnerId,
-                  geographyId: siteData.geographyId,
-                  siteId: siteData.id,
-                  deviceId: device.id,
-                  longitude: siteData.latitude,
-                  latitude: siteData.longitude,
-                  resultSourceId,
-                  resultTypeId,
-                  sampleId: sample.id,
-                  sampleRunNumber: `${(i % 2) + 1}`,
-                  sampleGroup: `GRP-TB-${i % 5}`,
-                  resultCategory1: result.category1,
-                  resultCategory2: result.category2,
-                  resultData: JSON.stringify(resultData),
-                  assayVersion: '4',
-                  startedOn: randomDate,
-                  endedOn: addMinutes(randomDate, 100),
-                  createdOn: addMinutes(randomDate, 120),
-                  updatedOn: addMinutes(randomDate, 180),
-                  consumableSerial: `${i}12`,
-                  consumableExpirationDate: new Date(
-                    +now + 200 * i * millisInHour
-                  ),
-                  consumableLot: `Lot ${i % 5}`,
-                  instrumentSerial: `S-1234-${i % 3}`,
-                  moduleName: 'Module A',
-                  moduleSerial: `M-1234-${i % 4}`,
-                  researchId: `R-ID-${i}`,
-                  patientData: JSON.stringify(patients[_.random(99)]),
-                  senderVersion: '4.6b',
-                  senderOperator: 'Marsha',
-                  notes: 'This is a test... result',
-                  errorCode:
-                    result.category1 === resultCategoryErrorId
-                      ? errorCodes[_.random(errorCodes.length)]
-                      : null,
-                  errorNotes:
-                    result.category1 === resultCategoryErrorId
-                      ? 'Exceeded cycle threshold'
-                      : null,
-                })
-              )
+              const [rid] = await knex('Result').insert({
+                ...auditFields,
+                externalId: `UQTB-${i}`,
+                assayId: assays.GxMtbRif.id,
+                partnerId,
+                geographyId: siteData.geographyId,
+                siteId: siteData.id,
+                deviceId: device.id,
+                longitude: siteData.latitude,
+                latitude: siteData.longitude,
+                resultSourceId,
+                resultTypeId,
+                sampleId: sample.id,
+                reportableSiteId: sample.originSiteId,
+                sampleRunNumber: `${(i % 2) + 1}`,
+                sampleGroup: `GRP-TB-${i % 5}`,
+                resultCategory1: result.category1,
+                resultCategory2: result.category2,
+                resultData: JSON.stringify(resultData),
+                assayVersion: '4',
+                startedOn: randomDate,
+                endedOn: addMinutes(randomDate, 100),
+                createdOn: addMinutes(randomDate, 120),
+                updatedOn: addMinutes(randomDate, 180),
+                consumableSerial: `${i}12`,
+                consumableExpirationDate: new Date(
+                  +now + 200 * i * millisInHour
+                ),
+                consumableLot: `Lot ${i % 5}`,
+                instrumentSerial: `S-1234-${i % 3}`,
+                moduleName: 'Module A',
+                moduleSerial: `M-1234-${i % 4}`,
+                researchId: `R-ID-${i}`,
+                patientData: JSON.stringify(patients[_.random(99)]),
+                senderVersion: '4.6b',
+                senderOperator: 'Marsha',
+                notes: 'This is a test... result',
+                errorCode:
+                  result.category1 === resultCategoryErrorId
+                    ? errorCodes[_.random(errorCodes.length)]
+                    : null,
+                errorNotes:
+                  result.category1 === resultCategoryErrorId
+                    ? 'Exceeded cycle threshold'
+                    : null,
+              })
               const [lastLogId] = await knex('ResultWorkflowLog').insert({
                 resultId: rid,
                 resultWorkflowStatusId,
@@ -655,20 +642,16 @@ async function seed(knex) {
         lockedOut: 0,
         failedPasswordAttempts: 0,
       })
-      const [labPersonId] = await knex('Person').insert(
-        Object.assign(
-          {
-            userId: labUserId,
-            name: `Myanmar Lab User ${region}`,
-            lastPartnerId: partnerId,
-            lastCountryId: countryId,
-            geographyId,
-            culture: myanmarCountry.culture,
-            timezone: myanmarCountry.timezone,
-          },
-          auditFields
-        )
-      )
+      const [labPersonId] = await knex('Person').insert({
+        userId: labUserId,
+        name: `Myanmar Lab User ${region}`,
+        lastPartnerId: partnerId,
+        lastCountryId: countryId,
+        geographyId,
+        culture: myanmarCountry.culture,
+        timezone: myanmarCountry.timezone,
+        ...auditFields,
+      })
       const [jobIdLab] = await knex('Job').insert({
         personId: labPersonId,
         jobFunctionId: jobFunctionIdLabUser,
@@ -707,9 +690,10 @@ async function seed(knex) {
         'extraLabel',
         'extraLabelI18nKey',
       ])
-      await knex('DashboardWidgetStat').insert(
-        Object.assign({ dashboardWidgetId: widgetId }, statWidgetData)
-      )
+      await knex('DashboardWidgetStat').insert({
+        dashboardWidgetId: widgetId,
+        ...statWidgetData,
+      })
       statWidgets.push(widgetId)
     })
   )
@@ -732,9 +716,10 @@ async function seed(knex) {
         'thresholdPercentageDataCollection',
         'targetToken',
       ])
-      await knex('DashboardWidgetTarget').insert(
-        Object.assign({ dashboardWidgetId: widgetId }, statWidgetData)
-      )
+      await knex('DashboardWidgetTarget').insert({
+        dashboardWidgetId: widgetId,
+        ...statWidgetData,
+      })
       targetWidgets.push(widgetId)
     })
   )
@@ -769,16 +754,12 @@ async function seed(knex) {
       const siteId = siteData.id
       // TB Cartridges
       if (siteId % 2 === 0) {
-        await knex('InventoryItem').insert(
-          Object.assign(
-            {
-              consumableId: consumableGxTbCartridgeId,
-              siteId,
-              quantityOnHand: _.random(0, 1000),
-            },
-            auditFields
-          )
-        )
+        await knex('InventoryItem').insert({
+          consumableId: consumableGxTbCartridgeId,
+          siteId,
+          quantityOnHand: _.random(0, 1000),
+          ...auditFields,
+        })
       }
     })
   )
@@ -869,21 +850,15 @@ async function seed(knex) {
             issueTypeId === issueTypes.StockLevelUpdate.id
               ? issueStatusOkId
               : issueStatusActiveId
-          const [issueId] = await knex('Issue').insert(
-            Object.assign(
-              {
-                issueTypeId,
-                issueStatusId,
-                deviceId:
-                  issueTypes.StockLevelUpdate.id === issueTypeId
-                    ? null
-                    : device.id,
-                siteId: device.siteId,
-                geographyId: device.geographyId,
-              },
-              issue
-            )
-          )
+          const [issueId] = await knex('Issue').insert({
+            issueTypeId,
+            issueStatusId,
+            deviceId:
+              issueTypes.StockLevelUpdate.id === issueTypeId ? null : device.id,
+            siteId: device.siteId,
+            geographyId: device.geographyId,
+            ...issue,
+          })
           if (issueStatusId === issueStatusAcknowledgedId) {
             await knex('IssueStatusLog').insert({
               issueId,
@@ -934,33 +909,25 @@ async function seed(knex) {
     _.map(luPolicies, async policy => {
       const deviceId = _.get(deviceIds, ['policy.deviceId', 'policy.personId'])
       if (deviceId) {
-        const [alertMessageId] = await knex('AlertMessage').insert(
-          Object.assign(
-            {
-              messageStatusId: messageStatusSentId,
-              message: luAlertMessages[policy.issueTypeId],
-              createdOn: now,
-              updatedOn: now,
-            },
-            _.pick(policy, [
-              'alertTemplateId',
-              'personId',
-              'siteId',
-              'deviceId',
-              'resultId',
-            ])
-          )
-        )
+        const [alertMessageId] = await knex('AlertMessage').insert({
+          messageStatusId: messageStatusSentId,
+          message: luAlertMessages[policy.issueTypeId],
+          createdOn: now,
+          updatedOn: now,
+          ..._.pick(policy, [
+            'alertTemplateId',
+            'personId',
+            'siteId',
+            'deviceId',
+            'resultId',
+          ]),
+        })
 
-        await knex('Notification').insert(
-          Object.assign(
-            {
-              createdOn: now,
-              alertMessageId,
-            },
-            _.pick(policy, ['notificationTypeId', 'issueId', 'personId'])
-          )
-        )
+        await knex('Notification').insert({
+          createdOn: now,
+          alertMessageId,
+          ..._.pick(policy, ['notificationTypeId', 'issueId', 'personId']),
+        })
       }
     })
   )
@@ -998,21 +965,15 @@ async function seed(knex) {
             issueTypeId === issueTypes.StockLevelUpdate.id
               ? issueStatusOkId
               : issueStatusActiveId
-          const [issueId] = await knex('Issue').insert(
-            Object.assign(
-              {
-                issueTypeId,
-                issueStatusId,
-                deviceId:
-                  issueTypes.StockLevelUpdate.id === issueTypeId
-                    ? null
-                    : device.id,
-                siteId: device.siteId,
-                geographyId: device.geographyId,
-              },
-              issue
-            )
-          )
+          const [issueId] = await knex('Issue').insert({
+            issueTypeId,
+            issueStatusId,
+            deviceId:
+              issueTypes.StockLevelUpdate.id === issueTypeId ? null : device.id,
+            siteId: device.siteId,
+            geographyId: device.geographyId,
+            ...issue,
+          })
           if (issueStatusId === issueStatusAcknowledgedId) {
             await knex('IssueStatusLog').insert({
               issueId,
@@ -1069,33 +1030,25 @@ async function seed(knex) {
         const message = policy.notificationTypeName.endsWith('RO View')
           ? luAlertMessages[policy.issueTypeId]
           : roAlertMessages[policy.issueTypeId]
-        const [alertMessageId] = await knex('AlertMessage').insert(
-          Object.assign(
-            {
-              messageStatusId: messageStatusSentId,
-              message,
-              createdOn: now,
-              updatedOn: now,
-            },
-            _.pick(policy, [
-              'alertTemplateId',
-              'personId',
-              'siteId',
-              'deviceId',
-              'resultId',
-            ])
-          )
-        )
+        const [alertMessageId] = await knex('AlertMessage').insert({
+          messageStatusId: messageStatusSentId,
+          message,
+          createdOn: now,
+          updatedOn: now,
+          ..._.pick(policy, [
+            'alertTemplateId',
+            'personId',
+            'siteId',
+            'deviceId',
+            'resultId',
+          ]),
+        })
 
-        await knex('Notification').insert(
-          Object.assign(
-            {
-              createdOn: now,
-              alertMessageId,
-            },
-            _.pick(policy, ['notificationTypeId', 'issueId', 'personId'])
-          )
-        )
+        await knex('Notification').insert({
+          createdOn: now,
+          alertMessageId,
+          ..._.pick(policy, ['notificationTypeId', 'issueId', 'personId']),
+        })
       }
     })
   )

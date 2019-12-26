@@ -84,18 +84,31 @@ export const requirePermissions = ({
       extraPermissions: PropTypes.arrayOf(PropTypes.string),
     }
 
+    static contextTypes = {
+      store: PropTypes.shape({
+        subscribe: PropTypes.func.isRequired,
+        dispatch: PropTypes.func.isRequired,
+        getState: PropTypes.func.isRequired,
+      }).isRequired,
+    }
+
     static defaultProps = {
       overriddenPermissions: [],
       extraPermissions: [],
     }
 
-    static contextTypes = {
-      store: PropTypes.object.isRequired,
-    }
-
     state = this.createState()
 
     unsubscribe = _.noop // eslint-disable-line react/sort-comp
+
+    componentDidMount() {
+      this.unsubscribe = this.context.store.subscribe(this.handleStoreChange)
+    }
+
+    componentWillUnmount() {
+      this.unsubscribe()
+      this.unsubscribe = _.noop
+    }
 
     handleStoreChange = () => {
       if (this.unsubscribe === _.noop) {
@@ -110,15 +123,6 @@ export const requirePermissions = ({
         userPermissions: store.getState().user.jwt.permissions,
         userFeatures: store.getState().user.features,
       }
-    }
-
-    componentWillMount() {
-      this.unsubscribe = this.context.store.subscribe(this.handleStoreChange)
-    }
-
-    componentWillUnmount() {
-      this.unsubscribe()
-      this.unsubscribe = _.noop
     }
 
     render() {

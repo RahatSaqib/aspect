@@ -54,14 +54,14 @@ export class DeviceDemo extends PureComponent {
     this.handleFetchDevice()
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (this.props.match.params.deviceId !== nextProps.match.params.deviceId) {
+  componentDidUpdate(prevProps) {
+    if (this.props.match.params.deviceId !== prevProps.match.params.deviceId) {
       this.handleFetchDevice()
     }
   }
 
   setPosting = posting => {
-    this.setState(Object.assign({}, this.state, { posting }))
+    this.setState({ posting })
   }
 
   handleFetchDevice = () => {
@@ -69,7 +69,7 @@ export class DeviceDemo extends PureComponent {
   }
 
   handleSelectFieldChange = field => ({ target: { value } }) => {
-    this.setState(Object.assign({}, this.state, { [field]: value }))
+    this.setState({ [field]: value })
   }
 
   handlePostResult = () => {

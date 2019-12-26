@@ -1,4 +1,4 @@
-const Joi = require('joi')
+const Joi = require('@hapi/joi')
 const { asyncHandler, validateSortPageParams } = require('../routes')
 const { listTasks, listTasksByStatus, getTask } = require('./service')
 
@@ -12,25 +12,23 @@ const routes = [
       notes: 'Pageable and sortable list of tasks',
       auth: { scope: ['task:view', 'task:edit'] },
       validate: {
-        query: Object.assign(
-          {
-            alertType: Joi.string()
-              .allow('')
-              .description('Filter for alert type'),
-            issueCategory: Joi.string()
-              .allow('')
-              .description('Filter for issue category'),
-            deviceId: Joi.number()
-              .integer()
-              .allow(null)
-              .description('Filter for device id'),
-            siteId: Joi.number()
-              .integer()
-              .allow(null)
-              .description('Filter for site id'),
-          },
-          validateSortPageParams('issueCategory', 'site', 'time')
-        ),
+        query: {
+          alertType: Joi.string()
+            .allow('')
+            .description('Filter for alert type'),
+          issueCategory: Joi.string()
+            .allow('')
+            .description('Filter for issue category'),
+          deviceId: Joi.number()
+            .integer()
+            .allow(null)
+            .description('Filter for device id'),
+          siteId: Joi.number()
+            .integer()
+            .allow(null)
+            .description('Filter for site id'),
+          ...validateSortPageParams('issueCategory', 'site', 'time'),
+        },
       },
       response: {
         options: {
@@ -101,34 +99,30 @@ const routes = [
       notes: 'Pageable and sortable list of tasks',
       auth: { scope: ['task:view', 'task:edit'] },
       validate: {
-        query: Object.assign(
-          {
-            alertType: Joi.string()
-              .allow('')
-              .description('Filter for alert type'),
-            topic: Joi.string()
-              .allow('')
-              .description('Filter for topic'),
-            date: Joi.date()
-              .iso()
-              .description('Filter for the alert date'),
-            categoryId: Joi.number().description(
-              'Filter for the issue category'
-            ),
-            alertTemplateId: Joi.number().description(
-              'Filter for the alert template'
-            ),
-            deviceId: Joi.number()
-              .integer()
-              .allow(null)
-              .description('Filter for device id'),
-            siteId: Joi.number()
-              .integer()
-              .allow(null)
-              .description('Filter for site id'),
-          },
-          validateSortPageParams('topic', 'site', 'time')
-        ),
+        query: {
+          alertType: Joi.string()
+            .allow('')
+            .description('Filter for alert type'),
+          topic: Joi.string()
+            .allow('')
+            .description('Filter for topic'),
+          date: Joi.date()
+            .iso()
+            .description('Filter for the alert date'),
+          categoryId: Joi.number().description('Filter for the issue category'),
+          alertTemplateId: Joi.number().description(
+            'Filter for the alert template'
+          ),
+          deviceId: Joi.number()
+            .integer()
+            .allow(null)
+            .description('Filter for device id'),
+          siteId: Joi.number()
+            .integer()
+            .allow(null)
+            .description('Filter for site id'),
+          ...validateSortPageParams('topic', 'site', 'time'),
+        },
       },
       response: {
         options: {

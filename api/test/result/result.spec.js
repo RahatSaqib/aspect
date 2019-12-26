@@ -83,10 +83,12 @@ describe('Result routes', () => {
             return res.body.data[0].resultWorkflowStatus
           })
 
-        initialResultWorkflowStatus = (await knex
-          .from('ResultWorkflowStatus')
-          .where({ name: initialResultWorkflowStatusName })
-          .first('externalId')).externalId
+        initialResultWorkflowStatus = (
+          await knex
+            .from('ResultWorkflowStatus')
+            .where({ name: initialResultWorkflowStatusName })
+            .first('externalId')
+        ).externalId
       }))
 
     it('should return a list of results with assay-specific fields if TB assay is requested', done => {

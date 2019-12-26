@@ -15,14 +15,6 @@ const styles = () => ({
 })
 
 export class FocusBlurTextField extends PureComponent {
-  static defaultProps = {
-    onBlur: _.noop,
-    onFocus: _.noop,
-    onKeyUp: _.noop,
-    value: '',
-    component: withStyles(styles)(TextField),
-  }
-
   static propTypes = {
     onBlur: PropTypes.func,
     onFocus: PropTypes.func,
@@ -32,19 +24,31 @@ export class FocusBlurTextField extends PureComponent {
     component: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
   }
 
-  state = {
-    isFocused: false,
-    pendingValue: this.props.value,
+  static defaultProps = {
+    onBlur: _.noop,
+    onFocus: _.noop,
+    onKeyUp: _.noop,
+    value: '',
+    component: withStyles(styles)(TextField),
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (!this.state.isFocused) {
-      this.setState({ pendingValue: nextProps.value })
+  constructor(props) {
+    super(props)
+
+    this.state = {
+      isFocused: false,
+      pendingValue: props.value,
+    }
+  }
+
+  componentDidUpdate(prevProps) {
+    if (!this.state.isFocused && prevProps.value !== this.props.value) {
+      this.setState({ pendingValue: this.props.value }) // eslint-disable-line react/no-did-update-set-state
     }
   }
 
   handleBlur = event => {
-    this.setState({ isFocused: false })
+    this.setState({ isFocused: false, pendingValue: this.props.value })
     this.props.onBlur(event)
 
     this.props.onCommitValue(event)

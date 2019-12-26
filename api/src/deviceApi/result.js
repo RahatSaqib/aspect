@@ -1,4 +1,4 @@
-const Boom = require('boom')
+const Boom = require('@hapi/boom')
 const _ = require('lodash')
 
 const { isJson, deepMerge } = require('../shared/json')
@@ -454,23 +454,22 @@ async function mergeResult(
     ),
     updatedOn: now,
     createdOn: _.get(existingResult, 'createdOn', now),
+    reportableSiteId: sampleOriginSiteId,
   }
 
   // Processed result contains result with additional fields
   // we want to insert but never update and will be passed to
   // plugins for further processing. It should contain all columns
   // from the Result table
-  const processedResult = Object.assign(
-    {
-      externalId: payload.id,
-      deviceId,
-      partnerId: site.partnerId,
-      geographyId: site.geographyId,
-      siteId: site.id,
-      createdOn: now,
-    },
-    result
-  )
+  const processedResult = {
+    externalId: payload.id,
+    deviceId,
+    partnerId: site.partnerId,
+    geographyId: site.geographyId,
+    siteId: site.id,
+    createdOn: now,
+    ...result,
+  }
 
   let resultId
   if (existingResult) {
@@ -766,19 +765,20 @@ async function resolveAutoTagging(knex, result) {
 
   const tagsToBeUpdated = _.uniqBy(
     _.filter(existingTags, tag =>
-      includesIgnoreCase(taggingResults.map(title => ({ title })), tag.title)
+      includesIgnoreCase(
+        taggingResults.map(title => ({ title })),
+        tag.title
+      )
     )
   )
 
   _.map(tagsToBeAdded, async tag => {
-    const TagId = await knex('Tag')
-      .returning('id')
-      .insert({
-        title: tag,
-        partnerId: result.partnerId,
-      })
+    const [tagId] = await knex('Tag').insert({
+      title: tag,
+      partnerId: result.partnerId,
+    })
     await knex('ResultTag').insert({
-      tagId: TagId,
+      tagId,
       resultId: result.id,
     })
   })

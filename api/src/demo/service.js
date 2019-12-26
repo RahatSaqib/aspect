@@ -1,5 +1,5 @@
 const _ = require('lodash')
-const Boom = require('boom')
+const Boom = require('@hapi/boom')
 const {
   createFetch,
   base,
@@ -53,9 +53,7 @@ async function getDemoDevice(request) {
         )
         .orderBy('name')
         .limit(1000)
-      result.assays.push(
-        Object.assign({ results: _.sortedUniqBy(results, 'name') }, assay)
-      )
+      result.assays.push({ results: _.sortedUniqBy(results, 'name'), ...assay })
     })
   )
 

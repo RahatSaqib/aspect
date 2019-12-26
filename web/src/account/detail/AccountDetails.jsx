@@ -68,20 +68,25 @@ const enhance = compose(
 )
 
 export class AccountDetails extends PureComponent {
-  state = {
-    currentPasswordInputDialogOpen: false,
+  constructor(props) {
+    super(props)
+
+    this.state = {
+      currentPasswordInputDialogOpen: false,
+    }
   }
 
   componentDidMount() {
     const { fetchAccountDetails } = this.props
     fetchAccountDetails()
+    this.componentDidUpdate()
   }
 
   // FIXME: `incorrectCurrentPasswordEntered` is not a valid field in the `loginDetails`
-  componentWillReceiveProps(newProps) {
+  componentDidUpdate() {
     if (
-      newProps.accountDetails &&
-      newProps.accountDetails.getIn([
+      this.props.accountDetails &&
+      this.props.accountDetails.getIn([
         'loginDetails',
         'incorrectCurrentPasswordEntered',
       ])

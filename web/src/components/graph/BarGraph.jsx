@@ -73,17 +73,11 @@ class BarGraph extends Component {
     })
 
     // Compose together the scale and accessor functions to get point functions
-    const xPoint = _.flowRight(
-      xScale,
-      x
-    )
+    const xPoint = _.flowRight(xScale, x)
 
     const yPoint = []
     for (let i = 0; i < maxLength; i++) {
-      yPoint[i] = _.flowRight(
-        yScale,
-        y[i]
-      )
+      yPoint[i] = _.flowRight(yScale, y[i])
     }
 
     // determine labelling based on props

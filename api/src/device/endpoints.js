@@ -1,4 +1,4 @@
-const Joi = require('joi')
+const Joi = require('@hapi/joi')
 const {
   asyncHandler,
   validateDateRangeParams,
@@ -19,63 +19,59 @@ const {
 } = require('../geography/requestValidation')
 
 function listDevicesBaseConfig() {
-  return Object.assign({}, listDevicesBaseRequest(), listDevicesBaseResponse())
+  return { ...listDevicesBaseRequest(), ...listDevicesBaseResponse() }
 }
 function listDevicesBaseRequest() {
   return {
     auth: { scope: ['device:view', 'device:edit'] },
     validate: {
-      query: Object.assign(
-        {
-          hasResults: Joi.number()
-            .allow('')
-            .min(0)
-            .max(1)
-            .description('Filter for getting devices that can have results'),
-          hasConnectivity: Joi.number()
-            .allow('')
-            .min(0)
-            .max(1)
-            .description(
-              'Filter for getting devices that can have connectivity'
-            ),
-          deviceIds: Joi.string()
-            .allow('')
-            .description('Filter for device ids'),
-          assayId: Joi.number()
-            .allow('')
-            .description('Assay ID'),
-          resultCategoryId: Joi.number()
-            .allow('')
-            .description('Result Category ID'),
-          deviceName: Joi.string()
-            .allow('')
-            .description('Filter for device name'),
-          deviceStatusId: Joi.number()
-            .allow('')
-            .description('Filter for device status ID'),
-          deviceTypeId: Joi.number()
-            .allow('')
-            .description('Filter for device type ID'),
-          category: Joi.string().description('Filter for device type category'),
-          type: Joi.string().description('Filter for device type'),
-          name: Joi.string()
-            .allow('')
-            .description('Filter for device name'),
-          siteName: Joi.string()
-            .allow('')
-            .description('Filter for site name'),
-          siteExternalId: Joi.string()
-            .allow('')
-            .description('Filter for facility code'),
-          // query param 'format' is applicable only for handler 'exportDevices'
-          format: Joi.string()
-            .allow('')
-            .description('File format for exporting data'),
-        },
-        validateAllGeographyFilterParams(),
-        validateDateRangeParams(),
-        validateSortPageParams(
+      query: {
+        hasResults: Joi.number()
+          .allow('')
+          .min(0)
+          .max(1)
+          .description('Filter for getting devices that can have results'),
+        hasConnectivity: Joi.number()
+          .allow('')
+          .min(0)
+          .max(1)
+          .description('Filter for getting devices that can have connectivity'),
+        deviceIds: Joi.string()
+          .allow('')
+          .description('Filter for device ids'),
+        assayId: Joi.number()
+          .allow('')
+          .description('Assay ID'),
+        resultCategoryId: Joi.number()
+          .allow('')
+          .description('Result Category ID'),
+        deviceName: Joi.string()
+          .allow('')
+          .description('Filter for device name'),
+        deviceStatusId: Joi.number()
+          .allow('')
+          .description('Filter for device status ID'),
+        deviceTypeId: Joi.number()
+          .allow('')
+          .description('Filter for device type ID'),
+        category: Joi.string().description('Filter for device type category'),
+        type: Joi.string().description('Filter for device type'),
+        name: Joi.string()
+          .allow('')
+          .description('Filter for device name'),
+        siteName: Joi.string()
+          .allow('')
+          .description('Filter for site name'),
+        siteExternalId: Joi.string()
+          .allow('')
+          .description('Filter for facility code'),
+        // query param 'format' is applicable only for handler 'exportDevices'
+        format: Joi.string()
+          .allow('')
+          .description('File format for exporting data'),
+        ...validateAllGeographyFilterParams(),
+        ...validateDateRangeParams(),
+        ...validateSortPageParams(
           // TODO: Add 'availabilityRate' Sort Page Param
           'name',
           'state',
@@ -89,8 +85,8 @@ function listDevicesBaseRequest() {
           'deliveredThisMonth',
           'acknowledgedRatio',
           'totalFlagged'
-        )
-      ),
+        ),
+      },
     },
   }
 }
@@ -370,21 +366,19 @@ const routes = [
     method: 'GET',
     path: '/device',
     handler: asyncHandler(listDevices),
-    config: Object.assign(
-      {
-        description: 'Device List',
-        notes: 'Pageable and sortable list of devices',
-      },
-      listDevicesBaseConfig()
-    ),
+    config: {
+      description: 'Device List',
+      notes: 'Pageable and sortable list of devices',
+      ...listDevicesBaseConfig(),
+    },
   },
   {
     method: 'GET',
     path: '/device/performance/{deviceId}',
     handler: asyncHandler(getDevicePerformance),
-    config: Object.assign({
+    config: {
       description: 'Historic utilization and error rates for the device',
-    }),
+    },
   },
   {
     method: 'GET',
@@ -457,13 +451,11 @@ const routes = [
     method: 'GET',
     path: '/device/export',
     handler: getDevicesReport,
-    config: Object.assign(
-      {
-        description: 'Export Device List into Excel or CSV',
-        notes: 'Filtered and sorted list of devices',
-      },
-      listDevicesBaseRequest()
-    ),
+    config: {
+      description: 'Export Device List into Excel or CSV',
+      notes: 'Filtered and sorted list of devices',
+      ...listDevicesBaseRequest(),
+    },
   },
   {
     method: 'GET',

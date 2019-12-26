@@ -8,7 +8,7 @@ const logConsoleDataKeys = {
 }
 
 function addLoggers(server, queue) {
-  server.on('response', request => logRequest(queue, request))
+  server.events.on('response', request => logRequest(queue, request))
 }
 
 function getLoggerSubscriptions() {
@@ -30,7 +30,6 @@ function subscribeOnLogCreated(handler) {
 function logRequest(queue, request) {
   const { info, auth, method, url, response } = request
 
-  const { path } = url
   const { statusCode } = response
 
   const userName = auth.isAuthenticated ? auth.credentials.name : ''
@@ -40,7 +39,7 @@ function logRequest(queue, request) {
   const severity = statusCode >= 400 && statusCode <= 599 ? 'error' : 'info'
   const data = {
     method: method.toUpperCase(),
-    path,
+    path: url.pathname,
     statusCode,
     timeElapsed,
     remoteAddress: getRemoteAddress(request),

@@ -61,18 +61,16 @@ async function seed(knex) {
         .first()
 
       // sites
-      const siteData = Object.assign(
-        {
-          partnerId,
-          geographyId: clinicGeographyId,
-          name: clinic.name,
-          shortName: clinic.shortName,
-          externalId: clinic.externalId,
-          latitude: clinic.latitude,
-          longitude: clinic.longitude,
-        },
-        auditFields
-      )
+      const siteData = {
+        partnerId,
+        geographyId: clinicGeographyId,
+        name: clinic.name,
+        shortName: clinic.shortName,
+        externalId: clinic.externalId,
+        latitude: clinic.latitude,
+        longitude: clinic.longitude,
+        ...auditFields,
+      }
       await knex('Site').insert(siteData)
     })
   )
@@ -80,18 +78,16 @@ async function seed(knex) {
   await Promise.all(
     _.map(labClinic.labs, async lab => {
       // every lab has a site, m2000 device and a user assigned to it
-      const siteData = Object.assign(
-        {
-          partnerId,
-          geographyId: cameroonGeographyId,
-          name: lab.name,
-          shortName: lab.shortName,
-          externalId: lab.externalId,
-          latitude: lab.latitude,
-          longitude: lab.longitude,
-        },
-        auditFields
-      )
+      const siteData = {
+        partnerId,
+        geographyId: cameroonGeographyId,
+        name: lab.name,
+        shortName: lab.shortName,
+        externalId: lab.externalId,
+        latitude: lab.latitude,
+        longitude: lab.longitude,
+        ...auditFields,
+      }
       const [siteId] = await knex('Site').insert(siteData)
       siteData.id = siteId
 

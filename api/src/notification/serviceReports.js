@@ -1,7 +1,7 @@
 const _ = require('lodash')
 const path = require('path')
-const { listNotifications } = require('./service')
 const { format } = require('date-fns')
+const { listNotifications } = require('./service')
 const {
   generateReport,
   downloadReportFile,
@@ -14,11 +14,6 @@ const issues = {
   issueCategoryConnectivityHealth: 'Connectivity',
 }
 async function generateNotificationsReport(request, reply) {
-  // Here is a really good example of the necessity of a data layer.
-  // I tried to call some existing service method for the list of devices,
-  // but everyone has parameters of the API (Request, query, Credentials, etc).
-  // I think if we don't want to repeat code we have to argue a little bit about this architecture.
-
   // get whole dataset - based on current query params (sorting, filtering) and auth constraints
   const devices = await listNotifications(request)
   const { query } = request
@@ -33,19 +28,16 @@ async function generateNotificationsReport(request, reply) {
     // Also we can find a text for a header instead of create a place holder.
     _.map(
       devices.data,
-      elem =>
-        Object.assign(
-          {
-            issuesCategories: _.map(
-              elem.issueCategories,
-              current => issues[current.key]
-            )
-              .join(',')
-              .replace('[')
-              .replace(']'),
-          },
-          elem
+      elem => ({
+        issuesCategories: _.map(
+          elem.issueCategories,
+          current => issues[current.key]
         )
+          .join(',')
+          .replace('[')
+          .replace(']'),
+        ...elem,
+      })
       // this is the data source to create the reportvalues.
       // It should be an Array of JSON objects, where each must be plained (Without nested properties)
     ),

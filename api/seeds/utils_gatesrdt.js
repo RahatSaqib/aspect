@@ -82,15 +82,12 @@ async function createUniqueResultIdForDevice(
 
 async function createSample(knex, siteId, sampleTypeId, i) {
   const externalId = await createUniqueSampleIdForSite(knex, 'PRHIVVL', siteId)
-  const sample = Object.assign(
-    {},
-    {
-      externalId,
-      collectedOn: calculateDateForResult(i, resultHivNumber, millisInMinute),
-      sampleTypeId,
-      originSiteId: siteId,
-    }
-  )
+  const sample = {
+    externalId,
+    collectedOn: calculateDateForResult(i, resultHivNumber, millisInMinute),
+    sampleTypeId,
+    originSiteId: siteId,
+  }
 
   sample.id = await knex('Sample').insert(sample)
 
@@ -130,27 +127,23 @@ async function createResults(
       .first('id')) || {}
   if (!deviceId) {
     const lastTime = subMinutes(now, _.random(0, 60))
-    ;[deviceId] = await knex('Device').insert(
-      Object.assign(
-        {
-          partnerId,
-          geographyId,
-          siteId,
-          deviceTypeId,
-          deviceStatusId,
-          name: `Commcare Sample Device`,
-          shortName: `R-${_.random(100000, 999999)}`,
-          serial: `S1-R-${_.random(100000, 999999)}`,
-          lastSeenOn: lastTime,
-          lastPingOn: lastTime,
-          lastPingFromIp: '41.70.127.33',
-          putInService: subMonths(now, 2),
-          putInServiceSource: 'Installed at clinic',
-          configurationData: '{}',
-        },
-        auditFields
-      )
-    )
+    ;[deviceId] = await knex('Device').insert({
+      partnerId,
+      geographyId,
+      siteId,
+      deviceTypeId,
+      deviceStatusId,
+      name: `Commcare Sample Device`,
+      shortName: `R-${_.random(100000, 999999)}`,
+      serial: `S1-R-${_.random(100000, 999999)}`,
+      lastSeenOn: lastTime,
+      lastPingOn: lastTime,
+      lastPingFromIp: '41.70.127.33',
+      putInService: subMonths(now, 2),
+      putInServiceSource: 'Installed at clinic',
+      configurationData: '{}',
+      ...auditFields,
+    })
   }
 
   const {
@@ -227,44 +220,44 @@ async function createResults(
       deviceId
     )
 
-    const resultId = await knex('Result').insert(
-      Object.assign({}, auditFields, {
-        externalId: resultExternalId,
-        assayId,
-        partnerId,
-        geographyId,
-        siteId,
-        deviceId,
-        longitude: -33.78725,
-        latitude: -13.96692,
-        resultSourceId: resultSourceLimsId,
-        resultTypeId: resultTypePatientId,
-        sampleId: sample.id,
-        sampleRunNumber: `${(i % 2) + 1}`,
-        sampleGroup: sample.externalId.substring(0, 10),
-        resultCategory1: result.category1,
-        resultData: JSON.stringify(resultData),
-        assayVersion: '3',
-        startedOn: randomDate,
-        endedOn: addMinutes(randomDate, 100),
-        researchId: `R-ID-${i}`,
-        instrumentSerial: `S-1234-${i % 3}`,
-        moduleName: 'Module A',
-        moduleSerial: `M-1234-${i % 4}`,
-        senderOperator: 'Frank',
-        patientData: JSON.stringify({
-          id: patient.id,
-          age: patient.age,
-          name: patient.firstName,
-          phone: patient.phone,
-          gender: patient.gender ? patient.gender.substring(0, 1) : null,
-          surname: patient.lastName,
-          provider: patient.providerId,
-          artNumber: patient.artHccNumber,
-          dateOfBirth: patient.dob,
-        }),
-      })
-    )
+    const resultId = await knex('Result').insert({
+      ...auditFields,
+      externalId: resultExternalId,
+      assayId,
+      partnerId,
+      geographyId,
+      siteId,
+      deviceId,
+      longitude: -33.78725,
+      latitude: -13.96692,
+      resultSourceId: resultSourceLimsId,
+      resultTypeId: resultTypePatientId,
+      sampleId: sample.id,
+      reportableSiteId: sample.originSiteId,
+      sampleRunNumber: `${(i % 2) + 1}`,
+      sampleGroup: sample.externalId.substring(0, 10),
+      resultCategory1: result.category1,
+      resultData: JSON.stringify(resultData),
+      assayVersion: '3',
+      startedOn: randomDate,
+      endedOn: addMinutes(randomDate, 100),
+      researchId: `R-ID-${i}`,
+      instrumentSerial: `S-1234-${i % 3}`,
+      moduleName: 'Module A',
+      moduleSerial: `M-1234-${i % 4}`,
+      senderOperator: 'Frank',
+      patientData: JSON.stringify({
+        id: patient.id,
+        age: patient.age,
+        name: patient.firstName,
+        phone: patient.phone,
+        gender: patient.gender ? patient.gender.substring(0, 1) : null,
+        surname: patient.lastName,
+        provider: patient.providerId,
+        artNumber: patient.artHccNumber,
+        dateOfBirth: patient.dob,
+      }),
+    })
 
     await knex('ResultWorkflowLog').insert({
       resultId,

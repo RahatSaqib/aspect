@@ -21,17 +21,13 @@ async function seed(knex) {
 
   const [newResultsPushNotificationTemplateId] = await knex(
     'PushNotificationTemplate'
-  ).insert(
-    Object.assign(
-      {
-        title: 'New Results Available',
-        body:
-          'There are {{issue.data.numberOfResults}} new results for {{site.name}} available in Aspect Reporter',
-        data: null,
-      },
-      auditFields
-    )
-  )
+  ).insert({
+    title: 'New Results Available',
+    body:
+      'There are {{issue.data.numberOfResults}} new results for {{site.name}} available in Aspect Reporter',
+    data: null,
+    ...auditFields,
+  })
 
   const { id: messageSeverityId } = await knex('MessageSeverity')
     .where('externalId', 'Recommendation')
@@ -58,49 +54,37 @@ async function seed(knex) {
     .where({ name: 'Partner One' })
     .first()
 
-  await knex('NotificationType').insert(
-    Object.assign(
-      {
-        name: 'New Results Available',
-        partnerId,
-        issueTypeId: newResultsIssueTypeId,
-        level: 1,
-        canAcknowledge: 0,
-        messageTypeId: newResultsMessageTypeId,
-      },
-      auditFields
-    )
-  )
+  await knex('NotificationType').insert({
+    name: 'New Results Available',
+    partnerId,
+    issueTypeId: newResultsIssueTypeId,
+    level: 1,
+    canAcknowledge: 0,
+    messageTypeId: newResultsMessageTypeId,
+    ...auditFields,
+  })
 
   const { id: issueEventStatusId } = await knex('IssueEventStatus')
     .where('externalId', 'Triggered')
     .first('id')
 
-  await knex('IssueEventTrigger').insert(
-    Object.assign(
-      {
-        partnerId,
-        issueTypeId: newResultsIssueTypeId,
-        issueEventStatusId,
-        triggerConditions: JSON.stringify({
-          action: 'FACT_NEW_RESULTS_AVAILABLE',
-        }),
-      },
-      timeStampFields
-    )
-  )
+  await knex('IssueEventTrigger').insert({
+    partnerId,
+    issueTypeId: newResultsIssueTypeId,
+    issueEventStatusId,
+    triggerConditions: JSON.stringify({
+      action: 'FACT_NEW_RESULTS_AVAILABLE',
+    }),
+    ...timeStampFields,
+  })
 
-  await knex('IssueResolutionTrigger').insert(
-    Object.assign(
-      {
-        partnerId,
-        issueTypeId: newResultsIssueTypeId,
-        resolutionConditions: JSON.stringify({
-          evaluationMethod: 'issue-age',
-          evaluationParameter: { minutes: 24 * 60 - 10 },
-        }),
-      },
-      timeStampFields
-    )
-  )
+  await knex('IssueResolutionTrigger').insert({
+    partnerId,
+    issueTypeId: newResultsIssueTypeId,
+    resolutionConditions: JSON.stringify({
+      evaluationMethod: 'issue-age',
+      evaluationParameter: { minutes: 24 * 60 - 10 },
+    }),
+    ...timeStampFields,
+  })
 }

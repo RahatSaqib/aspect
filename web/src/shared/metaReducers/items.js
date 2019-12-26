@@ -24,7 +24,4 @@ export const Items = Immutable.Record({
   currentIdList: Immutable.List(),
 })
 
-export const makeItems = _.flowRight(
-  Items,
-  Immutable.fromJS
-)
+export const makeItems = _.flowRight(Items, Immutable.fromJS)

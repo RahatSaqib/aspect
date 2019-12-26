@@ -1,5 +1,5 @@
 const path = require('path')
-require('dotenv-safe').load()
+require('dotenv-safe').config()
 
 const SCREENSHOT_PATH = require('../nightwatch/utils/testUtils')
 

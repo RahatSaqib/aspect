@@ -119,6 +119,7 @@ export const EditableFieldsForm = ({
       countryIdFieldName="countryId"
       stateIdFieldName="stateId"
       lgaIdFieldName="lgaId"
+      onChangeSelectedState={onSetBasedAddressClick}
     />
     <div className={cssClasses('container')}>
       <Field
@@ -126,12 +127,14 @@ export const EditableFieldsForm = ({
         name="address"
         label={labels.address}
         component={renderTextField}
+        onBlur={onSetBasedAddressClick}
       />
       <Field
         className={cssClasses('container__field')}
         name="address2"
         label={labels.address2}
         component={renderTextField}
+        onBlur={onSetBasedAddressClick}
       />
     </div>
     <div className={cssClasses('container')}>
@@ -140,12 +143,14 @@ export const EditableFieldsForm = ({
         name="city"
         label={labels.city}
         component={renderTextField}
+        onBlur={onSetBasedAddressClick}
       />
       <Field
         className={cssClasses('container__field')}
         name="zip"
         label={labels.zip}
         component={renderTextField}
+        onBlur={onSetBasedAddressClick}
       />
     </div>
     <div className={cssClasses('container', 'coordinate')}>

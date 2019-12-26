@@ -116,9 +116,6 @@ function mapDispatchToProps(dispatch) {
   )
 }
 
-export default _.flowRight(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps
-  )
-)(LgaSelectField)
+export default _.flowRight(connect(mapStateToProps, mapDispatchToProps))(
+  LgaSelectField
+)

@@ -1,4 +1,4 @@
-const Joi = require('joi')
+const Joi = require('@hapi/joi')
 const {
   validateAllGeographyFilterParams,
 } = require('../geography/requestValidation')
@@ -60,35 +60,30 @@ const adjustInventoryCommonPayloadFields = {
     .allow('', null),
 }
 
-const removeInventoryCommonPayloadFields = Object.assign(
-  {},
-  adjustInventoryCommonPayloadFields,
-  {
-    fromSiteId: Joi.number()
-      .integer()
-      .positive()
-      .required(),
-    reasonId: Joi.number()
-      .integer()
-      .positive()
-      .required(),
-  }
-)
+const removeInventoryCommonPayloadFields = {
+  ...adjustInventoryCommonPayloadFields,
+  fromSiteId: Joi.number()
+    .integer()
+    .positive()
+    .required(),
+  reasonId: Joi.number()
+    .integer()
+    .positive()
+    .required(),
+}
 
 function listSuppliesBaseConfig() {
   return {
     auth: { scope: ['inventory:view', 'inventory:edit'] },
     validate: {
-      query: Object.assign(
-        {
-          format: Joi.string()
-            .allow('')
-            .description('File format for exporting data'),
-        },
-        inventoryFilters,
-        validateAllGeographyFilterParams(),
-        validateDateRangeParams(),
-        validateSortPageParams(
+      query: {
+        format: Joi.string()
+          .allow('')
+          .description('File format for exporting data'),
+        ...inventoryFilters,
+        ...validateAllGeographyFilterParams(),
+        ...validateDateRangeParams(),
+        ...validateSortPageParams(
           'consumableName',
           'manufacturer',
           'siteName',
@@ -97,8 +92,8 @@ function listSuppliesBaseConfig() {
           'lgaName',
           'quantityOnHand',
           'expiresOn'
-        )
-      ),
+        ),
+      },
     },
   }
 }
@@ -113,12 +108,11 @@ const routes = [
       notes: 'Pageable and sortable list of inventory items',
       auth: { scope: ['inventory:view', 'inventory:edit'] },
       validate: {
-        query: Object.assign(
-          {},
-          inventoryFilters,
-          validateAllGeographyFilterParams(),
-          validateDateRangeParams(),
-          validateSortPageParams(
+        query: {
+          ...inventoryFilters,
+          ...validateAllGeographyFilterParams(),
+          ...validateDateRangeParams(),
+          ...validateSortPageParams(
             'consumableName',
             'manufacturer',
             'siteName',
@@ -127,8 +121,8 @@ const routes = [
             'lgaName',
             'quantityOnHand',
             'expiresOn'
-          )
-        ),
+          ),
+        },
       },
     },
   },
@@ -136,25 +130,21 @@ const routes = [
     method: 'GET',
     path: '/inventory/group-by-site',
     handler: asyncHandler(listInventoryItemsGroupedBySite),
-    config: Object.assign(
-      {
-        description: 'List of Consumables on Hand Grouped by Site',
-        notes: 'Pageable and sortable list of inventory items grouped by site',
-      },
-      listSuppliesBaseConfig()
-    ),
+    config: {
+      description: 'List of Consumables on Hand Grouped by Site',
+      notes: 'Pageable and sortable list of inventory items grouped by site',
+      ...listSuppliesBaseConfig(),
+    },
   },
   {
     method: 'GET',
     path: '/inventory/export',
     handler: getSuppliesReport,
-    config: Object.assign(
-      {
-        description: 'Export Supplies List into Excel or CSV',
-        notes: 'Filtered and sorted list of supplies',
-      },
-      listSuppliesBaseConfig()
-    ),
+    config: {
+      description: 'Export Supplies List into Excel or CSV',
+      notes: 'Filtered and sorted list of supplies',
+      ...listSuppliesBaseConfig(),
+    },
   },
   {
     method: 'POST',
@@ -165,7 +155,8 @@ const routes = [
       notes: 'Adds an inventory item at a site',
       auth: { scope: ['inventory:edit'] },
       validate: {
-        payload: Object.assign({}, adjustInventoryCommonPayloadFields, {
+        payload: {
+          ...adjustInventoryCommonPayloadFields,
           toSiteId: Joi.number()
             .integer()
             .positive()
@@ -173,7 +164,7 @@ const routes = [
           dateAdjusted: Joi.date()
             .iso()
             .required(),
-        }),
+        },
       },
     },
   },
@@ -244,7 +235,8 @@ const routes = [
       auth: { scope: ['inventory:edit'] },
       validate: {
         params: addRemoveInventoryCommonParams,
-        payload: Object.assign({}, adjustInventoryCommonPayloadFields, {
+        payload: {
+          ...adjustInventoryCommonPayloadFields,
           toSiteId: Joi.number()
             .integer()
             .positive()
@@ -252,7 +244,7 @@ const routes = [
           dateAdjusted: Joi.date()
             .iso()
             .required(),
-        }),
+        },
       },
     },
   },
@@ -267,21 +259,21 @@ const routes = [
       validate: {
         params: addRemoveInventoryCommonParams,
         payload: Joi.alternatives().try(
-          Joi.object().keys(
-            Object.assign({}, removeInventoryCommonPayloadFields, {
-              dateAdjusted: Joi.date()
-                .iso()
-                .required(),
-            })
-          ),
-          Object.assign({}, removeInventoryCommonPayloadFields, {
+          Joi.object().keys({
+            ...removeInventoryCommonPayloadFields,
+            dateAdjusted: Joi.date()
+              .iso()
+              .required(),
+          }),
+          {
+            ...removeInventoryCommonPayloadFields,
             dateAdjustedFrom: Joi.date()
               .iso()
               .required(),
             dateAdjustedTo: Joi.date()
               .iso()
               .required(),
-          })
+          }
         ),
       },
     },
@@ -296,7 +288,8 @@ const routes = [
       auth: { scope: ['inventory:edit'] },
       validate: {
         params: transferReceiveInventoryCommonParams,
-        payload: Object.assign({}, adjustInventoryCommonPayloadFields, {
+        payload: {
+          ...adjustInventoryCommonPayloadFields,
           fromSiteId: Joi.number()
             .integer()
             .positive()
@@ -308,7 +301,7 @@ const routes = [
           dateAdjusted: Joi.date()
             .iso()
             .required(),
-        }),
+        },
       },
     },
   },
@@ -322,7 +315,8 @@ const routes = [
       auth: { scope: ['inventory:edit'] },
       validate: {
         params: transferReceiveInventoryCommonParams,
-        payload: Object.assign({}, adjustInventoryCommonPayloadFields, {
+        payload: {
+          ...adjustInventoryCommonPayloadFields,
           fromSiteId: Joi.number()
             .integer()
             .positive()
@@ -334,7 +328,7 @@ const routes = [
           dateAdjusted: Joi.date()
             .iso()
             .required(),
-        }),
+        },
       },
     },
   },

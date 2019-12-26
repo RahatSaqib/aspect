@@ -17,9 +17,8 @@ function createAlertTestContext(auth) {
 class TaskContextTest {
   constructor(auth) {
     this.auth = auth
-    this.messageId = []
-    this.issueId = []
-    this.insertedid = []
+    this.messageIds = []
+    this.issueIds = []
 
     _.bindAll(this, ['afterEach', 'beforeEach'])
   }
@@ -41,7 +40,7 @@ class TaskContextTest {
         .first('id')
       assert.isOk(alertTemplateId)
 
-      // read 1st Result and coresponding siteId/deviceId
+      // read 1st Result and corresponding siteId/deviceId
       const issues = _.times(100, () => ({
         issueTypeId: 5,
         issueStatusId: 2,
@@ -60,58 +59,52 @@ class TaskContextTest {
 
       await Promise.each(issues, async elem => {
         // add sample alert message
-        const issueId = await knex('Issue')
-          .insert(issues)
-          .returning('id')
+        const [issueId] = await knex('Issue').insert(elem)
         const now = new Date()
-        this.insertedid = await knex('AlertMessage')
-          .returning('id')
-          .insert({
-            alertTemplateId,
-            messageStatusId,
-            message: 'Test message',
-            personId: userId,
-            siteId: '3',
-            deviceId: elem.deviceId,
-            createdOn: now,
-            updatedOn: now,
-          })
-        await knex('Notification').insert(
-          Object.assign({
-            createdOn: now,
-            alertMessageId: this.insertedid,
-            issueId,
-            personId: userId,
-            notificationTypeId: 1,
-          })
-        )
-        this.issueId.push(issueId[0])
-        assert.isOk(this.insertedid)
-        this.messageId.push(this.insertedid[0])
+        const [alertMessageId] = await knex('AlertMessage').insert({
+          alertTemplateId,
+          messageStatusId,
+          message: 'Test message',
+          personId: userId,
+          siteId: '3',
+          deviceId: elem.deviceId,
+          createdOn: now,
+          updatedOn: now,
+        })
+        await knex('Notification').insert({
+          createdOn: now,
+          alertMessageId,
+          issueId,
+          personId: userId,
+          notificationTypeId: 1,
+        })
+        assert.isOk(alertMessageId)
+        this.issueIds.push(issueId)
+        this.messageIds.push(alertMessageId)
       })
     })
   }
 
   getMessageId() {
-    return _.last(this.messageId)
+    return _.last(this.messageIds)
   }
 
   afterEach() {
     return run(async knex => {
       // remove sample message
-      if (this.messageId) {
+      if (this.messageIds.length > 0) {
         await knex('Notification')
-          .whereIn('alertMessageId', this.messageId)
+          .whereIn('alertMessageId', this.messageIds)
           .delete()
         await knex('AlertMessage')
-          .whereIn('id', this.messageId)
+          .whereIn('id', this.messageIds)
           .delete()
         await knex('Issue')
-          .whereIn('id', this.issueId)
+          .whereIn('id', this.issueIds)
           .delete()
       }
 
-      this.messageId = []
+      this.messageIds = []
     })
   }
 }

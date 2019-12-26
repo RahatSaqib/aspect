@@ -3,7 +3,7 @@
 // also has a corresponding endpoint to a single update, for example,
 // POST /device {result: {}} is equivalent to POST /device/result if
 // only result data is posted.
-const Joi = require('joi')
+const Joi = require('@hapi/joi')
 const {
   getDeviceDataHandler,
   getDeviceOperationHandler,
@@ -36,15 +36,12 @@ const logPayload = {
     .description('The source of the log, determined by client'),
 }
 
-const logResponse = Object.assign(
-  {},
-  {
-    createdOn: Joi.date()
-      .iso()
-      .description('Date the log was created, in server time.'),
-  },
-  logPayload
-)
+const logResponse = {
+  createdOn: Joi.date()
+    .iso()
+    .description('Date the log was created, in server time.'),
+  ...logPayload,
+}
 
 const devicePayload = {
   name: Joi.string()
@@ -412,7 +409,8 @@ const routes = [
         options: {
           allowUnknown: true,
         },
-        schema: Object.assign({}, devicePayload, {
+        schema: {
+          ...devicePayload,
           log: Joi.object()
             .keys(logResponse)
             .description('Device Log Data'),
@@ -426,7 +424,7 @@ const routes = [
             .keys(resultPayload)
             .description('Device Result Data.'),
           error: errorPayload,
-        }),
+        },
       },
     },
   },
@@ -443,29 +441,27 @@ const routes = [
         options: {
           allowUnknown: true,
         },
-        payload: Joi.object().keys(
-          Object.assign({}, devicePayload, {
-            log: Joi.object()
-              .allow(null)
-              .keys(logPayload)
-              .description('Device Log Data'),
-            configuration: Joi.object()
-              .allow(null)
-              .keys(configurationPayload)
-              .description('Device Configuration Data'),
-            operation: Joi.object()
-              .allow(null)
-              .keys(operationPayload)
-              .description('Device Operation Data'),
-            result: Joi.object()
-              .allow(null)
-              .keys(resultPayload)
-              .description('Device Result Data.'),
-          })
-        ),
-        failAction(request, reply, source, error) {
-          addDeviceLog(error)(request, reply)
-        },
+        payload: Joi.object().keys({
+          ...devicePayload,
+          log: Joi.object()
+            .allow(null)
+            .keys(logPayload)
+            .description('Device Log Data'),
+          configuration: Joi.object()
+            .allow(null)
+            .keys(configurationPayload)
+            .description('Device Configuration Data'),
+          operation: Joi.object()
+            .allow(null)
+            .keys(operationPayload)
+            .description('Device Operation Data'),
+          result: Joi.object()
+            .allow(null)
+            .keys(resultPayload)
+            .description('Device Result Data.'),
+        }),
+        failAction: async (request, h, error) =>
+          addDeviceLog(error)(request, h),
       },
       response: {
         options: {
@@ -503,14 +499,14 @@ const routes = [
         'Device configuration information, such as firmware revision, software versions,' +
         ' serial numbers, etc.',
       validate: {
-        payload: Object.assign({}, configurationPayload, {
+        payload: {
+          ...configurationPayload,
           log: Joi.object()
             .keys(logPayload)
             .description('Device Log Data'),
-        }),
-        failAction(request, reply, source, error) {
-          addDeviceLog(error)(request, reply)
         },
+        failAction: async (request, h, error) =>
+          addDeviceLog(error)(request, h),
       },
       response: {
         options: {
@@ -558,14 +554,14 @@ const routes = [
         'Devices may deliver operational information to Aspect, such as uptime, communication' +
         ' statistics, status of mechanical systems, calibration information etc. ',
       validate: {
-        payload: Object.assign({}, resultPayload, {
+        payload: {
+          ...resultPayload,
           log: Joi.object()
             .keys(logPayload)
             .description('Device Log Data'),
-        }),
-        failAction(request, reply, source, error) {
-          addDeviceLog(error)(request, reply)
         },
+        failAction: async (request, h, error) =>
+          addDeviceLog(error)(request, h),
       },
       response: {
         options: {
@@ -621,14 +617,14 @@ const routes = [
         options: {
           allowUnknown: true,
         },
-        payload: Object.assign({}, resultPayload, {
+        payload: {
+          ...resultPayload,
           log: Joi.object()
             .keys(logPayload)
             .description('Device Log Data'),
-        }),
-        failAction(request, reply, source, error) {
-          addDeviceLog(error)(request, reply)
         },
+        failAction: async (request, h, error) =>
+          addDeviceLog(error)(request, h),
       },
       response: {
         options: {

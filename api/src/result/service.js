@@ -1,4 +1,4 @@
-const Boom = require('boom')
+const Boom = require('@hapi/boom')
 const _ = require('lodash')
 const dateFormat = require('date-fns/format')
 const { subDays, subMonths, startOfMonth, endOfMonth } = require('date-fns')
@@ -271,7 +271,11 @@ async function getListResults(query, auth, fields = SELECT_LIST_FIELDS) {
       }
     }, query)
     .modify(addPartnerQueryConstraints, dataConstraints)
-    .modify(addConstraints, dataConstraints, { device: 'd', sample: 'sp' })
+    .modify(addConstraints, dataConstraints, {
+      device: 'd',
+      sample: 'sp',
+      result: 'r',
+    })
   // get total count for paging
   const getCount = resultQuery
     .clone()
@@ -631,7 +635,10 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
   const followUps = await knex('ResultFollowUp as rfu')
     .join('FollowUp as fu', 'rfu.followUpId', 'fu.id')
     .join('FollowUpType as fut', 'fu.followUpTypeId', 'fut.id')
-    .whereIn('rfu.resultId', data.map(d => d.id))
+    .whereIn(
+      'rfu.resultId',
+      data.map(d => d.id)
+    )
     .select(
       'rfu.resultId',
       'rfu.id',
@@ -651,7 +658,10 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
     .innerJoin('ResultNoteType as rnt', 'rn.resultNoteTypeId', 'rnt.id')
     .leftOuterJoin('User as uC', 'rn.createdBy', 'uC.id')
     .leftOuterJoin('User as uU', 'rn.updatedBy', 'uU.id')
-    .whereIn('rn.resultId', data.map(d => d.id))
+    .whereIn(
+      'rn.resultId',
+      data.map(d => d.id)
+    )
     .select(
       'rn.resultId',
       'rn.id',
@@ -755,7 +765,7 @@ async function downloadResultsList(request) {
   const { query, auth } = request
   const user = await getUser(auth.credentials.name)
   const result = await getDownloadResultsList(query, auth, true)
-  const myProm = new Promise(async () => {
+  const myProm = async () => {
     const idsToUpdate = _.uniq(
       _.map(
         _.pickBy(result.data, elem => elem.workflowStatus.setDelivered),
@@ -767,9 +777,9 @@ async function downloadResultsList(request) {
       await updateResultStatus(idsToUpdate, user.id)
     if (idsToBeRegistered && idsToBeRegistered.length > 0)
       await addResultDownloadLog(idsToBeRegistered, user.id)
-  })
+  }
   // eslint-disable-next-line no-console
-  myProm.catch(err => console.log(err))
+  await myProm().catch(err => console.log(err))
   return result
 }
 async function addResultDownloadLog(idsToBeRegistered, userId) {
@@ -873,7 +883,7 @@ function downloadFile(request, reply) {
     })
     .catch(err => {
       console.error(err) // eslint-disable-line no-console
-      reply(err)
+      throw err
     })
 }
 
@@ -888,7 +898,7 @@ function downloadFirstImage(request, reply) {
     })
     .catch(err => {
       console.error(err) // eslint-disable-line no-console
-      reply(err)
+      throw err
     })
 }
 
@@ -1452,9 +1462,7 @@ async function updateFormData(request) {
       const undefinedFieldMessage =
         unrecognisedFields.length > 1
           ? `This result cannot accept the following fields in it's form data: [${unrecognisedFields.join()}] because they are not defined in the forms schema.`
-          : `This result cannot accept the following field in it's form data: ${
-              unrecognisedFields[0]
-            } because it is not defined in the forms schema.`
+          : `This result cannot accept the following field in it's form data: ${unrecognisedFields[0]} because it is not defined in the forms schema.`
       return Boom.badRequest(undefinedFieldMessage)
     }
     const fieldValidationErrors = []
@@ -1483,9 +1491,7 @@ async function updateFormData(request) {
             if (!_.isEmpty(illegalValuesEntered)) {
               const validationMessage =
                 illegalValuesEntered.length === 1
-                  ? `${
-                      illegalValuesEntered[0]
-                    } is invalid for ${formFieldKey} because it is not present in the options configured for the field.`
+                  ? `${illegalValuesEntered[0]} is invalid for ${formFieldKey} because it is not present in the options configured for the field.`
                   : `[${illegalValuesEntered.join()}] are invalid for ${formFieldKey} because they are not present in the options configured for the field.`
               fieldValidationErrors.push(validationMessage)
             }
@@ -1824,32 +1830,26 @@ async function listFollowUps(request) {
                     d.resultCategory1Id
                 ),
                 r => `${r.resultCategory1Id}-${r.resultCategory2Id}`
-              ).map(r =>
-                Object.assign(
-                  {
-                    category1: _.mapKeys(
-                      _.pick(r, [
-                        'resultCategory1Id',
-                        'resultCategory1Name',
-                        'resultCategory1ExternalId',
-                        'resultCategory1I18nKey',
-                      ]),
-                      (v, k) => _.lowerFirst(k.replace('resultCategory1', ''))
-                    ),
-                  },
-                  {
-                    category2: _.mapKeys(
-                      _.pick(r, [
-                        'resultCategory2Id',
-                        'resultCategory2Name',
-                        'resultCategory2ExternalId',
-                        'resultCategory2I18nKey',
-                      ]),
-                      (v, k) => _.lowerFirst(k.replace('resultCategory2', ''))
-                    ),
-                  }
-                )
-              ),
+              ).map(r => ({
+                category1: _.mapKeys(
+                  _.pick(r, [
+                    'resultCategory1Id',
+                    'resultCategory1Name',
+                    'resultCategory1ExternalId',
+                    'resultCategory1I18nKey',
+                  ]),
+                  (v, k) => _.lowerFirst(k.replace('resultCategory1', ''))
+                ),
+                category2: _.mapKeys(
+                  _.pick(r, [
+                    'resultCategory2Id',
+                    'resultCategory2Name',
+                    'resultCategory2ExternalId',
+                    'resultCategory2I18nKey',
+                  ]),
+                  (v, k) => _.lowerFirst(k.replace('resultCategory2', ''))
+                ),
+              })),
             }
           )
         ),

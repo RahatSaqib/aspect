@@ -10,7 +10,7 @@ import loggedInFactory from './loggedInFactory'
 import loggedInDetailFactory from './loggedInFactory/detailFactory'
 import { isEnabledFeature } from '../../components/shared/requirePermissions'
 import { reduceNavLinks } from '../../filter/utils'
-import { navigations } from '../../globals/components/BrowseFilters'
+import { navigations } from '../components/BrowseFilters'
 
 // "Pages"
 import LoadableLogin from '../../auth/login/LoadableLogin'
@@ -43,14 +43,11 @@ import NotFound from '../../error/notFound/NotFound'
 import License from '../../auth/license/License'
 import ClinicalHistory from '../../patient/ClinicalHistory'
 
-const notImplementedLoggedInFactory = compose(
-  loggedInFactory,
-  name => () => (
-    <div style={{ padding: 10 }}>
-      <Paper style={{ padding: 10 }}>{name} is not implemented yet</Paper>
-    </div>
-  )
-)
+const notImplementedLoggedInFactory = compose(loggedInFactory, name => () => (
+  <div style={{ padding: 10 }}>
+    <Paper style={{ padding: 10 }}>{name} is not implemented yet</Paper>
+  </div>
+))
 
 const makeRenderRedirectToLoginWithReason = _.memoize(
   reason => ({ location }) => (

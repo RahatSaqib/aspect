@@ -59,10 +59,7 @@ ContactsTag.propTypes = {
   siteId: PropTypes.string.isRequired,
   value: PropTypes.arrayOf(PropTypes.object).isRequired,
 }
-export default connect(
-  mapStateToProps,
-  {
-    fetchAvailablePersons,
-    fetchUpdateSiteContacts,
-  }
-)(ContactsTag)
+export default connect(mapStateToProps, {
+  fetchAvailablePersons,
+  fetchUpdateSiteContacts,
+})(ContactsTag)

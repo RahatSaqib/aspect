@@ -1,4 +1,4 @@
-const Joi = require('joi')
+const Joi = require('@hapi/joi')
 const { asyncHandler, validateSortPageParams } = require('../routes')
 const { listNotifications, onIssueEscalated } = require('./service')
 const { generateNotificationsReport } = require('./serviceReports')
@@ -7,24 +7,22 @@ function listNotificationsBaseConfig() {
   return {
     auth: { scope: ['notification:view', 'notification:edit'] },
     validate: {
-      query: Object.assign(
-        {
-          format: Joi.string()
-            .allow('')
-            .description('File format for exporting data'),
-          notificationName: Joi.string()
-            .allow('')
-            .description('Filter for notification name'),
-        },
-        validateSortPageParams(
+      query: {
+        format: Joi.string()
+          .allow('')
+          .description('File format for exporting data'),
+        notificationName: Joi.string()
+          .allow('')
+          .description('Filter for notification name'),
+        ...validateSortPageParams(
           'name',
           'lastTriggeredOn',
           'alertCount',
           'totalTriggers',
           'emailCount',
           'smsCount'
-        )
-      ),
+        ),
+      },
     },
   }
 }
@@ -34,25 +32,21 @@ const routes = [
     method: 'GET',
     path: '/notification',
     handler: asyncHandler(listNotifications),
-    config: Object.assign(
-      {
-        description: 'Notification List',
-        notes: 'Pageable and sortable list of notifications',
-      },
-      listNotificationsBaseConfig()
-    ),
+    config: {
+      description: 'Notification List',
+      notes: 'Pageable and sortable list of notifications',
+      ...listNotificationsBaseConfig(),
+    },
   },
   {
     method: 'GET',
     path: '/notification/export',
     handler: generateNotificationsReport,
-    config: Object.assign(
-      {
-        description: 'Export Notifications List into Excel or CSV',
-        notes: 'Filtered and sorted list of Notifications',
-      },
-      listNotificationsBaseConfig()
-    ),
+    config: {
+      description: 'Export Notifications List into Excel or CSV',
+      notes: 'Filtered and sorted list of Notifications',
+      ...listNotificationsBaseConfig(),
+    },
   },
 ]
 

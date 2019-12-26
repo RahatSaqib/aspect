@@ -1,4 +1,4 @@
-const Joi = require('joi')
+const Joi = require('@hapi/joi')
 const { asyncHandler, validateSortPageParams } = require('../routes')
 const { listPartners, showPartner } = require('./service')
 
@@ -12,14 +12,12 @@ const routes = [
       notes: 'Pageable and sortable list of partners',
       auth: { scope: ['device', 'site', 'partner'] },
       validate: {
-        query: Object.assign(
-          {
-            name: Joi.string()
-              .allow('')
-              .description('Filter for partner name'),
-          },
-          validateSortPageParams('name', 'partnerTypeName')
-        ),
+        query: {
+          name: Joi.string()
+            .allow('')
+            .description('Filter for partner name'),
+          ...validateSortPageParams('name', 'partnerTypeName'),
+        },
       },
     },
   },

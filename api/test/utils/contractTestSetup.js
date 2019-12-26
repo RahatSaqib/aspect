@@ -1,4 +1,4 @@
-require('dotenv-safe').load()
+require('dotenv-safe').config()
 
 const supertest = require('supertest')
 const jwt = require('jsonwebtoken')

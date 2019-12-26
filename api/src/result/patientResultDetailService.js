@@ -1,7 +1,7 @@
+const Boom = require('@hapi/boom')
+const _ = require('lodash')
 const { knex } = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
-const Boom = require('boom')
-const _ = require('lodash')
 
 async function getPatientResultsDetails(request) {
   const { auth, query } = request
@@ -86,50 +86,47 @@ async function getPatientResultsDetails(request) {
   const followUps = _.uniqBy(results, 'resultFollowUpId')
 
   _.each(uniqResults, async result =>
-    finalResult.push(
-      Object.assign({}, result, {
-        resultData: result.resultData ? JSON.parse(result.resultData) : null,
-        patientData: result.patientData ? JSON.parse(result.patientData) : null,
-        patientDataSchema: result.patientDataSchema
-          ? JSON.parse(result.patientDataSchema)
-          : null,
-        date: result.resultEndedOn,
-        type: 'Result',
-        description:
-          result.resultData.resultText ||
-          `${result.resultCategory1} ${result.resultCategory2 || ''}`,
-      })
-    )
+    finalResult.push({
+      ...result,
+      resultData: result.resultData ? JSON.parse(result.resultData) : null,
+      patientData: result.patientData ? JSON.parse(result.patientData) : null,
+      patientDataSchema: result.patientDataSchema
+        ? JSON.parse(result.patientDataSchema)
+        : null,
+      date: result.resultEndedOn,
+      type: 'Result',
+      description:
+        result.resultData.resultText ||
+        `${result.resultCategory1} ${result.resultCategory2 || ''}`,
+    })
   )
 
   _.each(samples, sample =>
-    finalResult.push(
-      Object.assign({}, sample, {
-        resultData: sample.resultData ? JSON.parse(sample.resultData) : null,
-        patientData: sample.patientData ? JSON.parse(sample.patientData) : null,
-        patientDataSchema: sample.patientDataSchema
-          ? JSON.parse(sample.patientDataSchema)
-          : null,
-        date: sample.sampleCollectedOn,
-        sampleType: sample.sampleType || '-',
-        type: 'Sample',
-        description: 'Sample collected',
-      })
-    )
+    finalResult.push({
+      ...sample,
+      resultData: sample.resultData ? JSON.parse(sample.resultData) : null,
+      patientData: sample.patientData ? JSON.parse(sample.patientData) : null,
+      patientDataSchema: sample.patientDataSchema
+        ? JSON.parse(sample.patientDataSchema)
+        : null,
+      date: sample.sampleCollectedOn,
+      sampleType: sample.sampleType || '-',
+      type: 'Sample',
+      description: 'Sample collected',
+    })
   )
   _.each(followUps, fu => {
     if (fu.followUpTypeExternalId)
-      finalResult.push(
-        Object.assign({}, fu, {
-          resultData: fu.resultData ? JSON.parse(fu.resultData) : null,
-          patientData: fu.patientData ? JSON.parse(fu.patientData) : null,
-          patientDataSchema: fu.patientDataSchema
-            ? JSON.parse(fu.patientDataSchema)
-            : null,
-          date: fu.followUpDate || fu.followUpCreatedOn,
-          type: _.capitalize(fu.followUpTypeExternalId),
-        })
-      )
+      finalResult.push({
+        ...fu,
+        resultData: fu.resultData ? JSON.parse(fu.resultData) : null,
+        patientData: fu.patientData ? JSON.parse(fu.patientData) : null,
+        patientDataSchema: fu.patientDataSchema
+          ? JSON.parse(fu.patientDataSchema)
+          : null,
+        date: fu.followUpDate || fu.followUpCreatedOn,
+        type: _.capitalize(fu.followUpTypeExternalId),
+      })
   })
 
   return {

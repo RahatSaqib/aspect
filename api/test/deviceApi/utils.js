@@ -337,6 +337,7 @@ async function createResult(
     resultData: JSON.stringify({}),
     startedOn: subHours(now, 2),
     endedOn: now,
+    reportableSiteId: siteId,
   })
   const [lastLogId] = await knex('ResultWorkflowLog').insert({
     resultWorkflowStatusId: await resultWorkflowStatusToId('OK'),

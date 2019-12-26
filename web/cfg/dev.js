@@ -1,13 +1,13 @@
 const path = require('path')
 const webpack = require('webpack')
 const merge = require('webpack-merge')
-const base = require('./base')
 const AutoDllPlugin = require('autodll-webpack-plugin')
+const base = require('./base')
 
 // vendor packages so we can create a separate bundle
 const vendor = [
   'classnames',
-  'core-js/shim',
+  'core-js',
   'dom-helpers',
   'email-validator',
   'global',
@@ -46,11 +46,7 @@ const config = () => {
 
   return {
     mode: 'development',
-    entry: [
-      'core-js/es6/symbol',
-      'webpack-dev-server/client?http://localhost:8000',
-      'webpack/hot/only-dev-server',
-    ],
+    entry: [],
     devtool: 'cheap-module-eval-source-map',
     module: {
       rules: [

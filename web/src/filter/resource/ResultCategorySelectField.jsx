@@ -79,9 +79,6 @@ function mapDispatchToProps(dispatch) {
   )
 }
 
-export default _.flowRight(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps
-  )
-)(ResultCategorySelectField)
+export default _.flowRight(connect(mapStateToProps, mapDispatchToProps))(
+  ResultCategorySelectField
+)
