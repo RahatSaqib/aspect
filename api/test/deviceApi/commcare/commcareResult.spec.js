@@ -215,9 +215,10 @@ describe('CommCare Result API routes', () => {
         assert.equal(result.data.hcwTiebreakerResult, 'negative')
         assert.equal(result.patient.gender, 'male')
         assert.equal(result.patient.age, 30)
+        await waitForIdle
+        notification = await getLastNotification(knex, deviceId)
         assert.equal(notification.issueType, 'ResultReceived')
         assert.equal(notification.level, 2)
-        notification = await getLastNotification(knex, deviceId)
 
         assert.equal(
           notification.message,

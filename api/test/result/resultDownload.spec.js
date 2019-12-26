@@ -124,7 +124,10 @@ describe('Result download routes', () => {
                 'rs.id',
                 'rsl.resultWorkflowStatusId'
               )
-              .whereIn('rdl.resultId', _.map(res.body.data, elem => elem.id))
+              .whereIn(
+                'rdl.resultId',
+                _.map(res.body.data, elem => elem.id)
+              )
               .where('rs.externalId', 'Delivered')
               .count('rdl.id as count')
               .first()
