@@ -405,6 +405,7 @@ async function listRefreshTokens(request) {
         }
       })
     })
+    .leftJoin('ResultDownloadLog as resd', 'r.userId', 'resd.createdBy')
     .leftJoin('Result as rt', 'rt.id', 'rdl.resultId')
     .leftJoin('Assay as a', 'a.id', 'rt.assayId')
     .leftJoin(
@@ -433,13 +434,16 @@ async function listRefreshTokens(request) {
         'rt.assayId'
       )
     })
-    .groupBy('r.clientId')
+    .groupBy('r.clientId', 'p.name', 'r.clientName')
     .select(
       'r.clientId as id',
       'p.name as user',
       'r.clientName as deviceName',
       'r.createdOn',
       'r.revoked',
+      knex.raw(
+        'max(GREATEST(ifnull(r.updatedOn, r.createdOn), resd.createdOn)) as lastSeen'
+      ),
       knex.raw(
         "sum(case rws.externalId when 'Acknowledged' then 1 else 0 end)/sum(case when rca.requiresTreatment = '1' then 1 else 0 end) as acknowledgedRatio"
       ),
@@ -449,10 +453,7 @@ async function listRefreshTokens(request) {
       knex.raw(
         "sum(case when  rts.externalId = 'OnTreatment' AND rca.requiresTreatment = '1' then 1 else 0 end)/sum(case when rca.requiresTreatment = '1' then 1 else 0 end) as confirmFollowUpRatio"
       ),
-      knex.raw('count(rdl.id) as delivered'),
-      knex.raw(
-        "GREATEST(ifnull(r.updatedOn, r.createdOn), ifnull(max(rdl.createdOn), '')) as lastSeen"
-      ),
+      knex.raw('count(distinct rdl.resultId) as delivered'),
       knex.raw(
         "sum(case when rca.requiresTreatment = '1' then 1 else 0 end) as requiresFollowUp"
       )
