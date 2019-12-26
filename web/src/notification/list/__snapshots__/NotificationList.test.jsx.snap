@@ -56,7 +56,9 @@ exports[`NotificationList module NotificationList component should render correc
       }
     }
   />
-  <DataTableCard>
+  <DataTableCard
+    key="DataTableCard--table-undefined"
+  >
     <DataTableProgressBar
       disabled={true}
     />

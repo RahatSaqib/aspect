@@ -2,6 +2,7 @@ import _ from 'lodash'
 import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
 import getDisplayName from 'react-display-name'
+import { ReactReduxContext } from 'react-redux'
 
 // Get a permissions list from the combination of permissionsInConfig (from HOC)
 // and overriddenPermissions, extraPermissions that are passed in by props
@@ -97,7 +98,12 @@ export const requirePermissions = ({
       extraPermissions: [],
     }
 
-    state = this.createState()
+    constructor(props, context) {
+      super(props)
+
+      this.context = context
+      this.state = this.createState()
+    }
 
     unsubscribe = _.noop // eslint-disable-line react/sort-comp
 
@@ -116,6 +122,8 @@ export const requirePermissions = ({
       }
       this.setState(this.createState())
     }
+
+    static contextType = ReactReduxContext
 
     createState() {
       const { store } = this.context

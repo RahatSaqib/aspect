@@ -1,6 +1,6 @@
 import Immutable from 'immutable'
 import React from 'react'
-import ReactShallowRenderer from 'react-test-renderer/shallow'
+import { shallow } from 'enzyme'
 import { makeItems } from '../../shared/metaReducers/items'
 import { makeTable } from '../../shared/metaReducers/table'
 
@@ -10,7 +10,6 @@ describe('Device Api Key List module', () => {
   const { DeviceApiKeyList } = require('./DeviceApiKeyList')
 
   describe('DeviceApiKeyList component', () => {
-    const renderer = ReactShallowRenderer.createRenderer()
     let props
     const now = Date.now()
 
@@ -67,13 +66,13 @@ describe('Device Api Key List module', () => {
     })
 
     it('should shallow render correctly', () => {
-      const element = renderer.render(<DeviceApiKeyList {...props} />)
+      const element = shallow(<DeviceApiKeyList {...props} />)
 
       expect(element).toMatchSnapshot()
     })
 
     it('should shallow render with items correctly', () => {
-      const element = renderer.render(
+      const element = shallow(
         <DeviceApiKeyList
           {...props}
           table={makeTable({ total: 1 })}

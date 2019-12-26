@@ -1,5 +1,5 @@
 import React from 'react'
-import ReactShallowRenderer from 'react-test-renderer/shallow'
+import { shallow } from 'enzyme'
 import { IntlProvider } from 'react-intl'
 import Immutable from 'immutable'
 import { NotificationList } from './NotificationList'
@@ -42,10 +42,8 @@ describe('NotificationList module', () => {
   }
 
   describe('NotificationList component', () => {
-    const renderer = ReactShallowRenderer.createRenderer()
-
     it('should render correctly', () => {
-      const element = renderer.render(<NotificationList {...props} />)
+      const element = shallow(<NotificationList {...props} />)
       expect(element).toMatchSnapshot()
     })
   })

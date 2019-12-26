@@ -1,5 +1,5 @@
 import React from 'react'
-import ReactShallowRenderer from 'react-test-renderer/shallow'
+import { shallow } from 'enzyme'
 import { IntlProvider } from 'react-intl'
 import { Table } from '../../shared/metaReducers/table'
 import { Items } from '../../shared/metaReducers/items'
@@ -7,7 +7,6 @@ import { Items } from '../../shared/metaReducers/items'
 import { ResultList } from './ResultList'
 
 describe('Result List component', () => {
-  const renderer = new ReactShallowRenderer()
   const intlProvider = new IntlProvider({ locale: 'en' }, {})
   const { intl } = intlProvider.getChildContext()
 
@@ -18,7 +17,7 @@ describe('Result List component', () => {
   }
 
   it('should shallow render correctly when filter for assay type', () => {
-    const element = renderer.render(
+    const element = shallow(
       <ResultList {...props} location={{ search: '?filters=assayType%3DTB' }} />
     )
 
@@ -26,7 +25,7 @@ describe('Result List component', () => {
   })
 
   it('should shallow render correctly when filter for assay id', () => {
-    const element = renderer.render(
+    const element = shallow(
       <ResultList {...props} location={{ search: '?filters=assayId%3D9' }} />
     )
 
