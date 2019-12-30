@@ -3,7 +3,7 @@ import { compose } from 'recompose'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Drawer from '@material-ui/core/Drawer'
-import FaUser from 'react-icons/lib/fa/user'
+import { FaUser } from 'react-icons/fa'
 
 import LinkNavigation, { makeThemedLink } from './LinkNavigation'
 import { toggleDrawer, closeDrawer } from '../../../auth/AuthRedux'

@@ -8,7 +8,7 @@ import { connect } from 'react-redux'
 import Card from '@material-ui/core/Card'
 import { scaleOrdinal } from '@vx/scale'
 import { LegendOrdinal } from '@vx/legend'
-import MdAssignment from 'react-icons/lib/md/assignment'
+import { MdAssignment } from 'react-icons/md'
 
 import { Unit } from '../../components/pureGrids'
 import requirePermissions from '../../components/shared/requirePermissions'

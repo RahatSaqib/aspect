@@ -1,8 +1,7 @@
 import _ from 'lodash'
 import classnames from 'classnames/bind'
 import React from 'react'
-import FaCircleO from 'react-icons/lib/fa/circle-o'
-import FaCircle from 'react-icons/lib/fa/circle'
+import { FaRegCircle as FaCircleO, FaCircle } from 'react-icons/fa'
 
 const cssClasses = classnames.bind(require('./AlertType.css'))
 

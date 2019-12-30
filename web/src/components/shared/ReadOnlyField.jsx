@@ -4,7 +4,7 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import { compose, setPropTypes, pure } from 'recompose'
 import { Link } from 'react-router-dom'
-import FaExternalLink from 'react-icons/lib/fa/external-link'
+import { FaExternalLinkAlt as FaExternalLink } from 'react-icons/fa'
 
 const cssClasses = classnames.bind(require('./ReadOnlyField.css'))
 

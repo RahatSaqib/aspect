@@ -13,7 +13,7 @@ import {
 import { connect } from 'react-redux'
 import Card from '@material-ui/core/Card'
 import Button from '@material-ui/core/Button'
-import MdAssignmentTurnedIn from 'react-icons/lib/md/assignment-turned-in'
+import { MdAssignmentTurnedIn } from 'react-icons/md'
 
 import { findKeyInTree } from '../../shared/utils/dom'
 import { Unit } from '../../components/pureGrids'

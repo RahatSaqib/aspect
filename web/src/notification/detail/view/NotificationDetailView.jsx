@@ -6,7 +6,7 @@ import { withStateHandlers } from 'recompose'
 import Helmet from 'react-helmet'
 import Card from '@material-ui/core/Card'
 import TextField from '@material-ui/core/TextField'
-import MdRefresh from 'react-icons/lib/md/refresh'
+import { MdRefresh } from 'react-icons/md'
 import TableBody from '@material-ui/core/TableBody'
 
 import { Unit } from '../../../components/pureGrids'

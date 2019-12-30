@@ -3,7 +3,7 @@ import { compose, withState, withHandlers } from 'recompose'
 import React, { Fragment } from 'react'
 import ReactDOM from 'react-dom'
 import { defineMessages } from 'react-intl'
-import MdKeyboardArrowDown from 'react-icons/lib/md/keyboard-arrow-down'
+import { MdKeyboardArrowDown } from 'react-icons/md'
 import Modal from '@material-ui/core/Modal'
 import Card from '@material-ui/core/Card'
 

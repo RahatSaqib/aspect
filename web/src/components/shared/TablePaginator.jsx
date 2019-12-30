@@ -4,10 +4,12 @@ import React from 'react'
 import { defineMessages } from 'react-intl'
 import { compose, withProps, withHandlers, pure } from 'recompose'
 import Button from '@material-ui/core/Button'
-import FaAngleDoubleLeft from 'react-icons/lib/fa/angle-double-left'
-import FaAngleLeft from 'react-icons/lib/fa/angle-left'
-import FaAngleRight from 'react-icons/lib/fa/angle-right'
-import FaAngleDoubleRight from 'react-icons/lib/fa/angle-double-right'
+import {
+  FaAngleDoubleLeft,
+  FaAngleDoubleRight,
+  FaAngleLeft,
+  FaAngleRight,
+} from 'react-icons/fa'
 
 const cssClasses = classnames.bind(require('./TablePaginator.css'))
 
