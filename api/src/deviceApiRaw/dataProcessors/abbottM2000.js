@@ -700,9 +700,13 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
           'Invalid device API key: Cannot determine which device this came from'
         )
       }
-      const device = await knex('Device')
+      const deviceRecord = await knex('Device')
         .where('id', deviceApiKey.deviceId)
         .first()
+      const device = {
+        ...deviceRecord,
+        configurationData: JSON.parse(deviceRecord.configurationData),
+      }
       const site =
         (await knex('Site')
           .where('id', device.siteId)
@@ -714,7 +718,6 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
       this.response.deviceId = device.id
       this.response.deviceLogIds = []
       if (deviceDetailsInPayload.lastSeenOn >= device.lastSeenOn) {
-        device.configurationData = JSON.parse(device.configurationData)
         const deviceUpdates = _.mergeWith(
           _.cloneDeep(device),
           _.cloneDeep(

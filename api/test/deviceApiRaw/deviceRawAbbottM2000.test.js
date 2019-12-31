@@ -7,6 +7,7 @@ const sinon = require('sinon')
 const { convertToTimeZone } = require('date-fns-timezone')
 
 const { parseDateOrDefault, dateEqual } = require('../../src/shared/date')
+const { readTextFile } = require('../../src/shared/io')
 
 const { assert, expect } = chai
 
@@ -90,7 +91,6 @@ L|1`
   })
 
   const utcNow = new Date('2019-09-15T08:09:10.123Z')
-
   const deviceIpAddress = '10.11.12.13'
   const staticDatabaseData = {
     Assay: {
@@ -124,15 +124,65 @@ L|1`
       Error: 19,
     },
   }
+  const databaseRecords = {
+    DeviceApiKey: {
+      id: 1,
+      revoked: false,
+      partnerId: 2,
+      deviceId: 3,
+    },
+    Device: {
+      id: 4,
+      siteId: 5,
+      geographyId: 6,
+      configurationData: '{}',
+      lastSeenOn: new Date(1990, 1, 13, 7, 30),
+    },
+    Site: {
+      id: 7,
+      longitude: 8,
+      latitude: 9,
+    },
+  }
+  const existingSamples = {
+    '36830/19': {
+      id: 571,
+      externalId: '36830/19',
+      collectedOn: new Date(2019, 10, 25, 14, 1),
+      sampleTypeId: 5,
+      originSiteId: null,
+    },
+    '36731/19': {
+      id: 572,
+      externalId: '36731/19',
+      collectedOn: new Date(2019, 10, 22, 11, 44),
+      sampleTypeId: 5,
+      originSiteId: null,
+    },
+    SYS123165: {
+      id: 571,
+      externalId: 'SYS123165',
+      collectedOn: new Date(2013, 10, 25, 14, 1),
+      sampleTypeId: 4,
+      originSiteId: null,
+    },
+    SYS123607: {
+      id: 572,
+      externalId: 'SYS123607',
+      collectedOn: new Date(2013, 10, 22, 11, 44),
+      sampleTypeId: 4,
+      originSiteId: null,
+    },
+  }
 
   describe('Python string PKL DBS HIV VL', () => {
     let dbsHivVlPklPayload = ''
 
-    before(() => {
+    before(async () => {
       // The example below is an obfuscated copy of a PKL taken
       //   from the Abbott M2000 running HIV Viral Load Tests using
       //   the 1mLDBSvOP HIV1.0mlDBS Assay
-      dbsHivVlPklPayload = fs.readFileSync(
+      dbsHivVlPklPayload = await readTextFile(
         path.join(__dirname, 'abbottM2000DbsHivVl.pkl'),
         'utf8'
       )
@@ -146,42 +196,6 @@ L|1`
       assert.isOk(isM2000Payload)
     })
 
-    const databaseRecords = {
-      DeviceApiKey: {
-        id: 1,
-        revoked: false,
-        partnerId: 2,
-        deviceId: 3,
-      },
-      Device: {
-        id: 4,
-        siteId: 5,
-        geographyId: 6,
-        configurationData: '{}',
-        lastSeenOn: new Date(1990, 1, 13, 7, 30),
-      },
-      Site: {
-        id: 7,
-        longitude: 8,
-        latitude: 9,
-      },
-    }
-    const existingSamples = {
-      SYS123165: {
-        id: 571,
-        externalId: 'SYS123165',
-        collectedOn: new Date(2013, 10, 25, 14, 1),
-        sampleTypeId: 4,
-        originSiteId: null,
-      },
-      SYS123607: {
-        id: 572,
-        externalId: 'SYS123607',
-        collectedOn: new Date(2013, 10, 22, 11, 44),
-        sampleTypeId: 4,
-        originSiteId: null,
-      },
-    }
     const existingResultRecord = {
       id: 10,
       instrumentSerial: '275021695',
@@ -283,36 +297,7 @@ L|1`
       notes: '',
       createdOn: '2019-09-14T08:09:10.123Z',
     }
-    const deviceIpAddress = '10.11.12.13'
-    const staticDatabaseData = {
-      Assay: {
-        abbottM2000DBSHivVL: 1,
-        abbottM2000PlasmaHivVL: 2,
-        abbottM2000HIVEID: 3,
-      },
-      SampleType: {
-        DBS: 4,
-        Plasma: 5,
-      },
-      resultTypeId: 6,
-      resultSourceId: 7,
-      ResultCategory: {
-        Detected: 8,
-        NotDetected: 9,
-        LessThan550: 10,
-        MoreThan550: 11,
-        LessThan40: 12,
-        MoreThan40: 13,
-        Error: 14,
-      },
-      ResultWorkflowStatus: {
-        Processed: 15,
-        OK: 16,
-        Ordered: 17,
-        InProgress: 18,
-        Error: 19,
-      },
-    }
+
     function mockOutDefaultAbbottM2000(updateSpy, insertSpy) {
       const buildKnexSpy = (updateSpy, insertSpy) => table => {
         const knex = {
@@ -649,8 +634,8 @@ L|1`
   describe('Raw Plasma HIV VL', () => {
     let plasmaHivVlPayload = ''
 
-    before(() => {
-      plasmaHivVlPayload = fs.readFileSync(
+    before(async () => {
+      plasmaHivVlPayload = await readTextFile(
         path.join(__dirname, 'abbottM2000DbsHivVl.pkl'),
         'utf8'
       )
@@ -664,51 +649,15 @@ L|1`
       assert.isOk(isM2000Payload)
     })
 
-    const databaseRecords = {
-      DeviceApiKey: {
-        id: 1,
-        revoked: false,
-        partnerId: 2,
-        deviceId: 3,
-      },
-      Device: {
-        id: 4,
-        siteId: 5,
-        geographyId: 6,
-        configurationData: '{}',
-        lastSeenOn: new Date(1990, 1, 13, 7, 30),
-      },
-      Site: {
-        id: 7,
-        longitude: 8,
-        latitude: 9,
-      },
-    }
-    const existingSamples = {
-      '36830/19': {
-        id: 571,
-        externalId: '36830/19',
-        collectedOn: new Date(2019, 10, 25, 14, 1),
-        sampleTypeId: 5,
-        originSiteId: null,
-      },
-      '36731/19': {
-        id: 572,
-        externalId: '36731/19',
-        collectedOn: new Date(2019, 10, 22, 11, 44),
-        sampleTypeId: 5,
-        originSiteId: null,
-      },
-    }
     const existingResultRecord = {
       id: 10,
-      instrumentSerial: '275020369',
-      moduleSerial: '275020369',
+      instrumentSerial: '275021695',
+      moduleSerial: '275021695',
       senderVersion: '1',
       resultData: JSON.stringify({
         typeOfMessage: 'Production',
         messageIsComplete: true,
-        assayName: 'HIV0.2ml',
+        assayName: 'HIV1.0mlDBS',
         collectedBy: null,
         actionCode: 'Patient Result',
         reportType: 'Final Result',
@@ -718,7 +667,7 @@ L|1`
         resultText: 'Not detected',
         resultUnit: 'Copies / mL',
         resultStatus: 'Final Result',
-        orderOperatorId: 'fse',
+        orderOperatorId: 'bryan',
         controlConsumableLotNumber: null,
         passedQualityControl: true,
         qualityControlSummary: {
@@ -727,65 +676,65 @@ L|1`
             reportType: 'Final Result',
             abnormalFlags: ['OPEN'],
             result: 'Not detected',
-            moduleName: 'C1',
-            assayCode: 'HIV0.2ml',
-            assayName: 'HIV0.2ml',
-            consumableLot: '488445',
-            consumableSerial: '11763671',
-            controlConsumableLotNumber: '488990',
-            endedOn: '2019-11-15T22:33:51.000Z',
-            moduleSerial: '275020369',
-            orderOperatorId: 'fse',
-            senderOperator: 'Administrator',
+            moduleName: 'A1',
+            assayCode: '1mLDBSvOP',
+            assayName: 'HIV1.0mlDBS',
+            consumableLot: '466746',
+            consumableSerial: '11176551',
+            controlConsumableLotNumber: '468347',
+            endedOn: '2019-08-25T14:53:11.000Z',
+            moduleSerial: '275021695',
+            orderOperatorId: 'bryan',
+            senderOperator: 'bryan',
             cycleNumber: -1,
           },
           lowPositiveControl: {
             passed: true,
             reportType: 'Final Result',
             abnormalFlags: ['OPEN'],
-            result: '832',
+            result: '80332',
             moduleName: 'B1',
-            assayCode: 'HIV0.2ml',
-            assayName: 'HIV0.2ml',
-            consumableLot: '488445',
-            consumableSerial: '11763671',
-            controlConsumableLotNumber: '488990',
-            endedOn: '2019-11-15T22:33:51.000Z',
-            moduleSerial: '275020369',
-            orderOperatorId: 'fse',
-            senderOperator: 'Administrator',
-            cycleNumber: 25.28,
+            assayCode: '1mLDBSvOP',
+            assayName: 'HIV1.0mlDBS',
+            consumableLot: '466746',
+            consumableSerial: '11176551',
+            controlConsumableLotNumber: '468347',
+            endedOn: '2019-08-25T14:53:11.000Z',
+            moduleSerial: '275021695',
+            orderOperatorId: 'bryan',
+            senderOperator: 'bryan',
+            cycleNumber: 22.09,
           },
           highPositiveControl: {
             passed: true,
             reportType: 'Final Result',
             abnormalFlags: ['OPEN'],
-            result: '109603',
-            moduleName: 'A1',
-            assayCode: 'HIV0.2ml',
-            assayName: 'HIV0.2ml',
-            consumableLot: '488445',
-            consumableSerial: '11763671',
-            controlConsumableLotNumber: '488990',
-            endedOn: '2019-11-15T22:33:51.000Z',
-            moduleSerial: '275020369',
-            orderOperatorId: 'fse',
-            senderOperator: 'Administrator',
-            cycleNumber: 18.18,
+            result: '8427744',
+            moduleName: 'C1',
+            assayCode: '1mLDBSvOP',
+            assayName: 'HIV1.0mlDBS',
+            consumableLot: '466746',
+            consumableSerial: '11176551',
+            controlConsumableLotNumber: '468347',
+            endedOn: '2019-08-25T14:53:11.000Z',
+            moduleSerial: '275021695',
+            orderOperatorId: 'bryan',
+            senderOperator: 'bryan',
+            cycleNumber: 15.49,
           },
         },
       }),
       rawData:
         'H|\\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312\\r\\x0394\\r\\n\nP|1\\r\\x0341\\r\\n\nO|1|SYS123165|SYS123165^vl110^D1|^^^1mLDBSvOP^HIV1.0mlDBS|||||||||||||||||||||F\\r\\x037A\\r\\n\nR|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|Not detected|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695\\r\\x03A4\\r\\n\nR|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^I|Target not detected|||||F||bryan^bryan||20190825165311|275021695\\r\\x0393\\r\\n\nR|3|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|-1.00|cycle number||||F||bryan^bryan||20190825165311|275021695\\r\\x03FF\\r\\n\nL|1\\r\\x033A\\r\\n',
-      sampleRunNumber: '594',
-      moduleName: 'A2',
-      externalId: '36717/19|275020369|594|A2|20191115223351',
-      consumableLot: '488445',
-      consumableSerial: '11763671',
-      senderOperator: 'Administrator',
-      endedOn: '2019-11-15T22:33:51.000Z',
+      sampleRunNumber: 'vl110',
+      moduleName: 'D1',
+      externalId: 'SYS123165|275021695|vl110|D1|20190825165311',
+      consumableLot: '466746',
+      consumableSerial: '11176551',
+      senderOperator: 'bryan',
+      endedOn: '2019-08-25T14:53:11.000Z',
       patientData: '{}',
-      assayId: 2,
+      assayId: 1,
       partnerId: 2,
       geographyId: 6,
       siteId: 7,
@@ -794,10 +743,11 @@ L|1`
       resultSourceId: 7,
       resultTypeId: 6,
       sampleId: 1,
-      updatedOn: '2019-11-15T22:33:51.123Z',
-      resultCategory1: 10,
+      updatedOn: '2019-09-15T08:09:10.123Z',
+      resultCategory1: 14,
+      errorCode: 'OPEN',
       notes: '',
-      createdOn: '2019-11-15T22:33:51.123Z',
+      createdOn: '2019-09-14T08:09:10.123Z',
     }
 
     function mockOutDefaultAbbottM2000(updateSpy, insertSpy) {
@@ -816,7 +766,8 @@ L|1`
                 _.get(rest, '1') === existingResultRecord.externalId
               ) {
                 return Promise.resolve(existingResultRecord)
-              } else if (
+              }
+              if (
                 table === 'Sample as s' &&
                 existingSamples[_.get(rest, '1')]
               ) {
@@ -869,7 +820,6 @@ L|1`
     it('should be able to parse a RAW ASTM conversation file into results', async () => {
       const updateSpy = sinon.spy()
       const insertSpy = sinon.spy()
-      // console.log(plasmaHivVlPayload)
       const DefaultAbbottM2000 = mockOutDefaultAbbottM2000(updateSpy, insertSpy)
       const m2000DataProcessorViralLoad = new DefaultAbbottM2000(
         {
@@ -901,7 +851,7 @@ L|1`
         configurationData: {
           comments: [],
           deviceTypeName: 'm2000',
-          deviceVersion: '8.1.9.0',
+          deviceVersion: '8.0.25.0',
           enquiries: [],
           interfaceVersion: 'H1P1O1R1C1L1',
           softwareVersion: '1',
@@ -909,7 +859,7 @@ L|1`
         lastPingFromIp: deviceIpAddress,
         lastPingOn: utcNow,
         lastSeenOn: utcNow,
-        serial: '275020369',
+        serial: '275021695',
         siteId: 5,
         updatedOn: utcNow,
       })
@@ -953,71 +903,71 @@ L|1`
       expect(uniqueRunLevelProperties).to.have.lengthOf(1)
       expect(uniqueRunLevelProperties).to.containSubset([
         {
-          instrumentSerial: '275020369',
-          moduleSerial: '275020369',
+          instrumentSerial: '275021695',
+          moduleSerial: '275021695',
           senderVersion: '1',
           resultData: {
             qualityControlSummary: {
               negativeControl: {
                 passed: true,
                 reportType: 'Final Result',
-                abnormalFlags: [],
+                abnormalFlags: ['OPEN'],
                 result: 'Not detected',
-                moduleName: 'C1',
-                assayCode: 'HIV0.2ml',
-                assayName: 'HIV0.2ml',
-                consumableLot: '488445',
-                consumableSerial: '11763671',
-                controlConsumableLotNumber: '488990',
-                endedOn: convertToTimeZone(new Date(2019, 10, 15, 22, 33, 51), {
+                moduleName: 'A1',
+                assayCode: '1mLDBSvOP',
+                assayName: 'HIV1.0mlDBS',
+                consumableLot: '466746',
+                consumableSerial: '11176551',
+                controlConsumableLotNumber: '468347',
+                endedOn: convertToTimeZone(new Date(2019, 7, 25, 16, 53, 11), {
                   timeZone: 'UTC',
                 }).toISOString(),
-                moduleSerial: '275020369',
-                orderOperatorId: 'fse',
-                senderOperator: 'Administrator',
+                moduleSerial: '275021695',
+                orderOperatorId: 'bryan',
+                senderOperator: 'bryan',
                 cycleNumber: -1,
               },
               lowPositiveControl: {
                 passed: true,
                 reportType: 'Final Result',
-                abnormalFlags: [],
-                result: '832',
+                abnormalFlags: ['OPEN'],
+                result: '80332',
                 moduleName: 'B1',
-                assayCode: 'HIV0.2ml',
-                assayName: 'HIV0.2ml',
-                consumableLot: '488445',
-                consumableSerial: '11763671',
-                controlConsumableLotNumber: '488990',
-                endedOn: convertToTimeZone(new Date(2019, 10, 15, 22, 33, 51), {
+                assayCode: '1mLDBSvOP',
+                assayName: 'HIV1.0mlDBS',
+                consumableLot: '466746',
+                consumableSerial: '11176551',
+                controlConsumableLotNumber: '468347',
+                endedOn: convertToTimeZone(new Date(2019, 7, 25, 16, 53, 11), {
                   timeZone: 'UTC',
                 }).toISOString(),
-                moduleSerial: '275020369',
-                orderOperatorId: 'fse',
-                senderOperator: 'Administrator',
-                cycleNumber: 25.28,
+                moduleSerial: '275021695',
+                orderOperatorId: 'bryan',
+                senderOperator: 'bryan',
+                cycleNumber: 22.09,
               },
               highPositiveControl: {
                 passed: true,
                 reportType: 'Final Result',
-                abnormalFlags: [],
-                result: '109603',
-                moduleName: 'A1',
-                assayCode: 'HIV0.2ml',
-                assayName: 'HIV0.2ml',
-                consumableLot: '488445',
-                consumableSerial: '11763671',
-                controlConsumableLotNumber: '488990',
-                endedOn: convertToTimeZone(new Date(2019, 10, 15, 22, 33, 51), {
+                abnormalFlags: ['OPEN'],
+                result: '8427744',
+                moduleName: 'C1',
+                assayCode: '1mLDBSvOP',
+                assayName: 'HIV1.0mlDBS',
+                consumableLot: '466746',
+                consumableSerial: '11176551',
+                controlConsumableLotNumber: '468347',
+                endedOn: convertToTimeZone(new Date(2019, 7, 25, 16, 53, 11), {
                   timeZone: 'UTC',
                 }).toISOString(),
-                moduleSerial: '275020369',
-                orderOperatorId: 'fse',
-                senderOperator: 'Administrator',
-                cycleNumber: 18.18,
+                moduleSerial: '275021695',
+                orderOperatorId: 'bryan',
+                senderOperator: 'bryan',
+                cycleNumber: 15.49,
               },
             },
           },
-          sampleRunNumber: '594',
+          sampleRunNumber: 'vl110',
           partnerId: databaseRecords.DeviceApiKey.partnerId,
           geographyId: databaseRecords.Device.geographyId,
           siteId: databaseRecords.Site.id,
@@ -1042,7 +992,7 @@ L|1`
             : null,
           formData: result.formData ? JSON.parse(result.formData) : null,
         }))
-      expect(errorResults).to.have.lengthOf(6)
+      expect(errorResults).to.have.lengthOf(1)
       expect(errorResults).to.containSubset([
         {
           resultData: {
@@ -1050,103 +1000,19 @@ L|1`
             comments: [
               {
                 source: 'Instrument',
-                text: '4447 : Insufficient level of Assay reference dye.',
-                type: 'Exception String',
-                rawData:
-                  '\nC|1|I|4447 : Insufficient level of Assay reference dye.|I',
-              },
-            ],
-          },
-          errorCode: '4447',
-          errorNotes: '4447 : Insufficient level of Assay reference dye.',
-          notes: '4447 : Insufficient level of Assay reference dye.',
-        },
-        {
-          resultData: {
-            reportType: 'Test could not be performed',
-            comments: [
-              {
-                source: 'Instrument',
-                text: '4447 : Insufficient level of Assay reference dye.',
-                type: 'Exception String',
-                rawData:
-                  '\nC|1|I|4447 : Insufficient level of Assay reference dye.|I',
-              },
-            ],
-          },
-          errorCode: '4447',
-          errorNotes: '4447 : Insufficient level of Assay reference dye.',
-          notes: '4447 : Insufficient level of Assay reference dye.',
-        },
-        {
-          resultData: {
-            reportType: 'Test could not be performed',
-            comments: [
-              {
-                source: 'Instrument',
-                text: '4447 : Insufficient level of Assay reference dye.',
-                type: 'Exception String',
-                rawData:
-                  '\nC|1|I|4447 : Insufficient level of Assay reference dye.|I',
-              },
-            ],
-          },
-          errorCode: '4447',
-          errorNotes: '4447 : Insufficient level of Assay reference dye.',
-          notes: '4447 : Insufficient level of Assay reference dye.',
-        },
-        {
-          resultData: {
-            reportType: 'Test could not be performed',
-            comments: [
-              {
-                source: 'Instrument',
                 text:
-                  '4442 : Internal control cycle number is too high. Valid range is [20.56, 24.56].',
+                  '4442 : Internal control cycle number is too high. Valid range is [19.22, 23.22].',
                 type: 'Exception String',
                 rawData:
-                  '\nC|1|I|4442 : Internal control cycle number is too high. Valid range is [20.56, 24.56].|I',
+                  '\nC|1|I|4442 : Internal control cycle number is too high. Valid range is [19.22, 23.22].|I',
               },
             ],
           },
           errorCode: '4442',
           errorNotes:
-            '4442 : Internal control cycle number is too high. Valid range is [20.56, 24.56].',
+            '4442 : Internal control cycle number is too high. Valid range is [19.22, 23.22].',
           notes:
-            '4442 : Internal control cycle number is too high. Valid range is [20.56, 24.56].',
-        },
-        {
-          resultData: {
-            reportType: 'Test could not be performed',
-            comments: [
-              {
-                source: 'Instrument',
-                text: '4457 : Internal control failed.',
-                type: 'Exception String',
-                rawData: '\nC|1|I|4457 : Internal control failed.|I',
-              },
-            ],
-          },
-          errorCode: '4457',
-          errorNotes: '4457 : Internal control failed.',
-          notes: '4457 : Internal control failed.',
-        },
-        {
-          resultData: {
-            reportType: 'Test could not be performed',
-            comments: [
-              {
-                source: 'Instrument',
-                text: '4447 : Insufficient level of Assay reference dye.',
-                type: 'Exception String',
-                rawData:
-                  '\nC|1|I|4447 : Insufficient level of Assay reference dye.|I',
-              },
-            ],
-          },
-          errorCode: '4447',
-          errorNotes: '4447 : Insufficient level of Assay reference dye.',
-          notes: '4447 : Insufficient level of Assay reference dye.',
+            '4442 : Internal control cycle number is too high. Valid range is [19.22, 23.22].',
         },
       ])
       expect(
@@ -1172,7 +1038,7 @@ L|1`
           resultData: {
             ...existingResultRecord.resultData,
             messageSentOn: convertToTimeZone(
-              new Date(2019, 10, 15, 22, 33, 52),
+              new Date(2019, 7, 25, 16, 53, 12),
               {
                 timeZone: 'UTC',
               }
@@ -1229,42 +1095,6 @@ L|1`
       assert.isOk(isM2000Payload)
     })
 
-    const databaseRecords = {
-      DeviceApiKey: {
-        id: 1,
-        revoked: false,
-        partnerId: 2,
-        deviceId: 3,
-      },
-      Device: {
-        id: 4,
-        siteId: 5,
-        geographyId: 6,
-        configurationData: '{}',
-        lastSeenOn: new Date(1990, 1, 13, 7, 30),
-      },
-      Site: {
-        id: 7,
-        longitude: 8,
-        latitude: 9,
-      },
-    }
-    const existingSamples = {
-      '444/19': {
-        id: 573,
-        externalId: '444/19',
-        collectedOn: new Date(2019, 10, 25, 14, 1),
-        sampleTypeId: 5,
-        originSiteId: null,
-      },
-      '450/19': {
-        id: 574,
-        externalId: '450/19',
-        collectedOn: new Date(2019, 10, 22, 11, 44),
-        sampleTypeId: 5,
-        originSiteId: null,
-      },
-    }
     const existingResultRecord = {
       id: 17,
       instrumentSerial: '275020369',
@@ -1381,7 +1211,8 @@ L|1`
                 _.get(rest, '1') === existingResultRecord.externalId
               ) {
                 return Promise.resolve(existingResultRecord)
-              } else if (
+              }
+              if (
                 table === 'Sample as s' &&
                 existingSamples[_.get(rest, '1')]
               ) {
@@ -1434,7 +1265,6 @@ L|1`
     it('should be able to parse a RAW ASTM conversation file into results', async () => {
       const updateSpy = sinon.spy()
       const insertSpy = sinon.spy()
-      // console.log(plasmaHivVlPayload)
       const DefaultAbbottM2000 = mockOutDefaultAbbottM2000(updateSpy, insertSpy)
       const m2000DataProcessorViralLoad = new DefaultAbbottM2000(
         {
@@ -1482,7 +1312,7 @@ L|1`
       const insertSampleCalls = insertCalls.filter(
         insertCall => insertCall.args[0] === 'Sample'
       )
-      expect(insertSampleCalls).to.have.lengthOf(43)
+      expect(insertSampleCalls).to.have.lengthOf(45)
       const insertResultCalls = insertCalls.filter(
         insertCall => insertCall.args[0] === 'Result'
       )
