@@ -52,27 +52,27 @@ describe('ASTM parser', () => {
 
   describe('astmE1394MessagesToJson', () => {
     it('Should transform the ASTM payload in the explanatory comment correctly', () => {
-      const astmPayload = `H|\\^&|||Name of Instrument^1.0.0.0|P|1|19930330133346\\r\\x0392\\r\\n
-C|1|I|Example Message Comment|G\\r\\x0343\\r\\n
-P|1|||PIDSID13|Patient^Im^A\\And^This^Is^My^Wife|19320122|F||Dr.Amesbury|ParkClinic\\r\\x033F\\r\\n
-C|1|I|Example Patient Comment|G\\r\\x0343\\r\\n
-O|1|SID13|SID3^A123^5|^^^123^Assay1^UNDILUTED^P|R||20010223081223||F\\r\\x03D0\\r\\n
-C|1|I|Example Order Comment|G\\r\\x0343\\r\\n
-R|1|^^^0021^B-hCG^UNDILUTED^P^47331M100^00788^^F|<1.20|mIU/mL|0.35 TO 4.94|EXP^<|F||19990715081030|I20100\\r\\x03E2\\r\\n
-R|2|^^^0021^B-hCG^UNDILUTED^P^47331M100^00788^^I|NEGATIVE||||F||19990715081030|I20100\\r\\x0343\\r\\n
-R|3|^^^0021^B-hCG^UNDILUTED^P^47331M100^00788^^P|9245|RLU|||F||19990715081030|I20100\\r\\x0343\\r\\n
-C|1|I|Example Result Comment|G\\r\\x0343\\r\\n
-Q|1|^SID12345||^^^ALL||O\\r\\x0343\\r\\n
-L|1\\r\\x033F\\r\\n
-H|\\^&|||Name of Instrument^1.0.0.0|P|1|19930330133346\\r\\x0392\\r\\n
-P|1\\r\\x033F\\r\\n
-O|1|TSHBIORAD 2|TSHBIORAD 2^A123^2|^^^0241^TSH^UNDILUTED^P|R|||Q|F\\r\\x03D0\\r\\n
-R|1|^^^0241^TSH^UNDILUTED^P^0607M200^01824^40080^F|4.6011|mIU/mL|4.292500 TO 5.397300||F|ECB^RY|19990715081030|I20100\\r\\x03E2\\r\\n
-L|1\\r\\x033F\\r\\n`
+      const astmPayload = `H|\\^&|||Name of Instrument^1.0.0.0|P|1|19930330133346
+C|1|I|Example Message Comment|G
+P|1|||PIDSID13|Patient^Im^A\\And^This^Is^My^Wife|19320122|F||Dr.Amesbury|ParkClinic
+C|1|I|Example Patient Comment|G
+O|1|SID13|SID3^A123^5|^^^123^Assay1^UNDILUTED^P|R||20010223081223||F
+C|1|I|Example Order Comment|G
+R|1|^^^0021^B-hCG^UNDILUTED^P^47331M100^00788^^F|<1.20|mIU/mL|0.35 TO 4.94|EXP^<|F||19990715081030|I20100
+R|2|^^^0021^B-hCG^UNDILUTED^P^47331M100^00788^^I|NEGATIVE||||F||19990715081030|I20100
+R|3|^^^0021^B-hCG^UNDILUTED^P^47331M100^00788^^P|9245|RLU|||F||19990715081030|I20100
+C|1|I|Example Result Comment|G
+Q|1|^SID12345||^^^ALL||O
+L|1
+H|\\^&|||Name of Instrument^1.0.0.0|P|1|19930330133346
+P|1
+O|1|TSHBIORAD 2|TSHBIORAD 2^A123^2|^^^0241^TSH^UNDILUTED^P|R|||Q|F
+R|1|^^^0241^TSH^UNDILUTED^P^0607M200^01824^40080^F|4.6011|mIU/mL|4.292500 TO 5.397300||F|ECB^RY|19990715081030|I20100
+L|1`
       const expectedJsonResult = [
         {
           value:
-            'H|\\^&|||Name of Instrument^1.0.0.0|P|1|19930330133346\\r\\x0392\\r\\n\nC|1|I|Example Message Comment|G\\r\\x0343\\r\\n\nP|1|||PIDSID13|Patient^Im^A\\And^This^Is^My^Wife|19320122|F||Dr.Amesbury|ParkClinic\\r\\x033F\\r\\n\nC|1|I|Example Patient Comment|G\\r\\x0343\\r\\n\nO|1|SID13|SID3^A123^5|^^^123^Assay1^UNDILUTED^P|R||20010223081223||F\\r\\x03D0\\r\\n\nC|1|I|Example Order Comment|G\\r\\x0343\\r\\n\nR|1|^^^0021^B-hCG^UNDILUTED^P^47331M100^00788^^F|<1.20|mIU/mL|0.35 TO 4.94|EXP^<|F||19990715081030|I20100\\r\\x03E2\\r\\n\nR|2|^^^0021^B-hCG^UNDILUTED^P^47331M100^00788^^I|NEGATIVE||||F||19990715081030|I20100\\r\\x0343\\r\\n\nR|3|^^^0021^B-hCG^UNDILUTED^P^47331M100^00788^^P|9245|RLU|||F||19990715081030|I20100\\r\\x0343\\r\\n\nC|1|I|Example Result Comment|G\\r\\x0343\\r\\n\nQ|1|^SID12345||^^^ALL||O\\r\\x0343\\r\\n\nL|1\\r\\x033F\\r\\n',
+            'H|\\^&|||Name of Instrument^1.0.0.0|P|1|19930330133346\nC|1|I|Example Message Comment|G\nP|1|||PIDSID13|Patient^Im^A\\And^This^Is^My^Wife|19320122|F||Dr.Amesbury|ParkClinic\nC|1|I|Example Patient Comment|G\nO|1|SID13|SID3^A123^5|^^^123^Assay1^UNDILUTED^P|R||20010223081223||F\nC|1|I|Example Order Comment|G\nR|1|^^^0021^B-hCG^UNDILUTED^P^47331M100^00788^^F|<1.20|mIU/mL|0.35 TO 4.94|EXP^<|F||19990715081030|I20100\nR|2|^^^0021^B-hCG^UNDILUTED^P^47331M100^00788^^I|NEGATIVE||||F||19990715081030|I20100\nR|3|^^^0021^B-hCG^UNDILUTED^P^47331M100^00788^^P|9245|RLU|||F||19990715081030|I20100\nC|1|I|Example Result Comment|G\nQ|1|^SID12345||^^^ALL||O\nL|1',
           H: {
             '1': { value: 'H' },
             '2': {
@@ -94,8 +94,7 @@ L|1\\r\\x033F\\r\\n`
             '5': { value: 'P' },
             '6': { value: '1' },
             '7': { value: '19930330133346' },
-            value:
-              'H|\\^&|||Name of Instrument^1.0.0.0|P|1|19930330133346\\r\\x0392\\r\\n',
+            value: 'H|\\^&|||Name of Instrument^1.0.0.0|P|1|19930330133346',
             P1: {
               '1': { value: 'P' },
               '2': { value: '1' },
@@ -126,7 +125,7 @@ L|1\\r\\x033F\\r\\n`
               '10': { value: 'Dr.Amesbury' },
               '11': { value: 'ParkClinic' },
               value:
-                'P|1|||PIDSID13|Patient^Im^A\\And^This^Is^My^Wife|19320122|F||Dr.Amesbury|ParkClinic\\r\\x033F\\r\\n',
+                'P|1|||PIDSID13|Patient^Im^A\\And^This^Is^My^Wife|19320122|F||Dr.Amesbury|ParkClinic',
               O1: {
                 '1': { value: 'O' },
                 '2': { value: '1' },
@@ -153,7 +152,7 @@ L|1\\r\\x033F\\r\\n`
                 '9': { value: null },
                 '10': { value: 'F' },
                 value:
-                  'O|1|SID13|SID3^A123^5|^^^123^Assay1^UNDILUTED^P|R||20010223081223||F\\r\\x03D0\\r\\n',
+                  'O|1|SID13|SID3^A123^5|^^^123^Assay1^UNDILUTED^P|R||20010223081223||F',
                 R1: {
                   '1': { value: 'R' },
                   '2': { value: '1' },
@@ -184,7 +183,7 @@ L|1\\r\\x033F\\r\\n`
                   '10': { value: '19990715081030' },
                   '11': { value: 'I20100' },
                   value:
-                    'R|1|^^^0021^B-hCG^UNDILUTED^P^47331M100^00788^^F|<1.20|mIU/mL|0.35 TO 4.94|EXP^<|F||19990715081030|I20100\\r\\x03E2\\r\\n',
+                    'R|1|^^^0021^B-hCG^UNDILUTED^P^47331M100^00788^^F|<1.20|mIU/mL|0.35 TO 4.94|EXP^<|F||19990715081030|I20100',
                 },
                 results: ['R1', 'R2', 'R3'],
                 R2: {
@@ -213,7 +212,7 @@ L|1\\r\\x033F\\r\\n`
                   '10': { value: '19990715081030' },
                   '11': { value: 'I20100' },
                   value:
-                    'R|2|^^^0021^B-hCG^UNDILUTED^P^47331M100^00788^^I|NEGATIVE||||F||19990715081030|I20100\\r\\x0343\\r\\n',
+                    'R|2|^^^0021^B-hCG^UNDILUTED^P^47331M100^00788^^I|NEGATIVE||||F||19990715081030|I20100',
                 },
                 R3: {
                   '1': { value: 'R' },
@@ -241,14 +240,14 @@ L|1\\r\\x033F\\r\\n`
                   '10': { value: '19990715081030' },
                   '11': { value: 'I20100' },
                   value:
-                    'R|3|^^^0021^B-hCG^UNDILUTED^P^47331M100^00788^^P|9245|RLU|||F||19990715081030|I20100\\r\\x0343\\r\\n',
+                    'R|3|^^^0021^B-hCG^UNDILUTED^P^47331M100^00788^^P|9245|RLU|||F||19990715081030|I20100',
                   C1: {
                     '1': { value: 'C' },
                     '2': { value: '1' },
                     '3': { value: 'I' },
                     '4': { value: 'Example Result Comment' },
                     '5': { value: 'G' },
-                    value: '\nC|1|I|Example Result Comment|G\\r\\x0343\\r\\n',
+                    value: '\nC|1|I|Example Result Comment|G',
                   },
                   comments: ['C1'],
                 },
@@ -258,7 +257,7 @@ L|1\\r\\x033F\\r\\n`
                   '3': { value: 'I' },
                   '4': { value: 'Example Order Comment' },
                   '5': { value: 'G' },
-                  value: '\nC|1|I|Example Order Comment|G\\r\\x0343\\r\\n',
+                  value: '\nC|1|I|Example Order Comment|G',
                 },
                 comments: ['C1'],
               },
@@ -269,7 +268,7 @@ L|1\\r\\x033F\\r\\n`
                 '3': { value: 'I' },
                 '4': { value: 'Example Patient Comment' },
                 '5': { value: 'G' },
-                value: 'C|1|I|Example Patient Comment|G\\r\\x0343\\r\\n',
+                value: 'C|1|I|Example Patient Comment|G',
               },
               comments: ['C1'],
             },
@@ -292,7 +291,7 @@ L|1\\r\\x033F\\r\\n`
               },
               '6': { value: null },
               '7': { value: 'O' },
-              value: 'Q|1|^SID12345||^^^ALL||O\\r\\x0343\\r\\n',
+              value: 'Q|1|^SID12345||^^^ALL||O',
             },
             enquiries: ['Q1'],
             C1: {
@@ -301,19 +300,19 @@ L|1\\r\\x033F\\r\\n`
               '3': { value: 'I' },
               '4': { value: 'Example Message Comment' },
               '5': { value: 'G' },
-              value: 'C|1|I|Example Message Comment|G\\r\\x0343\\r\\n',
+              value: 'C|1|I|Example Message Comment|G',
             },
             comments: ['C1'],
           },
           L: {
             '1': { value: 'L' },
             '2': { value: '1' },
-            value: 'L|1\\r\\x033F\\r\\n',
+            value: 'L|1',
           },
         },
         {
           value:
-            'H|\\^&|||Name of Instrument^1.0.0.0|P|1|19930330133346\\r\\x0392\\r\\n\nP|1\\r\\x033F\\r\\n\nO|1|TSHBIORAD 2|TSHBIORAD 2^A123^2|^^^0241^TSH^UNDILUTED^P|R|||Q|F\\r\\x03D0\\r\\n\nR|1|^^^0241^TSH^UNDILUTED^P^0607M200^01824^40080^F|4.6011|mIU/mL|4.292500 TO 5.397300||F|ECB^RY|19990715081030|I20100\\r\\x03E2\\r\\n\nL|1\\r\\x033F\\r\\n',
+            'H|\\^&|||Name of Instrument^1.0.0.0|P|1|19930330133346\nP|1\nO|1|TSHBIORAD 2|TSHBIORAD 2^A123^2|^^^0241^TSH^UNDILUTED^P|R|||Q|F\nR|1|^^^0241^TSH^UNDILUTED^P^0607M200^01824^40080^F|4.6011|mIU/mL|4.292500 TO 5.397300||F|ECB^RY|19990715081030|I20100\nL|1',
           H: {
             '1': { value: 'H' },
             '2': {
@@ -335,12 +334,11 @@ L|1\\r\\x033F\\r\\n`
             '5': { value: 'P' },
             '6': { value: '1' },
             '7': { value: '19930330133346' },
-            value:
-              'H|\\^&|||Name of Instrument^1.0.0.0|P|1|19930330133346\\r\\x0392\\r\\n',
+            value: 'H|\\^&|||Name of Instrument^1.0.0.0|P|1|19930330133346',
             P1: {
               '1': { value: 'P' },
               '2': { value: '1' },
-              value: 'P|1\\r\\x033F\\r\\n',
+              value: 'P|1',
               O1: {
                 '1': { value: 'O' },
                 '2': { value: '1' },
@@ -367,7 +365,7 @@ L|1\\r\\x033F\\r\\n`
                 '9': { value: 'Q' },
                 '10': { value: 'F' },
                 value:
-                  'O|1|TSHBIORAD 2|TSHBIORAD 2^A123^2|^^^0241^TSH^UNDILUTED^P|R|||Q|F\\r\\x03D0\\r\\n',
+                  'O|1|TSHBIORAD 2|TSHBIORAD 2^A123^2|^^^0241^TSH^UNDILUTED^P|R|||Q|F',
                 R1: {
                   '1': { value: 'R' },
                   '2': { value: '1' },
@@ -398,7 +396,7 @@ L|1\\r\\x033F\\r\\n`
                   '10': { value: '19990715081030' },
                   '11': { value: 'I20100' },
                   value:
-                    'R|1|^^^0241^TSH^UNDILUTED^P^0607M200^01824^40080^F|4.6011|mIU/mL|4.292500 TO 5.397300||F|ECB^RY|19990715081030|I20100\\r\\x03E2\\r\\n',
+                    'R|1|^^^0241^TSH^UNDILUTED^P^0607M200^01824^40080^F|4.6011|mIU/mL|4.292500 TO 5.397300||F|ECB^RY|19990715081030|I20100',
                 },
                 results: ['R1'],
               },
@@ -409,7 +407,7 @@ L|1\\r\\x033F\\r\\n`
           L: {
             '1': { value: 'L' },
             '2': { value: '1' },
-            value: 'L|1\\r\\x033F\\r\\n',
+            value: 'L|1',
           },
         },
       ]

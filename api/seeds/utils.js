@@ -2053,6 +2053,7 @@ async function updateCategoryAssay(knex) {
         'Detected',
         'Trace Detected',
         'MoreThan40',
+        'MoreThan150',
         'MoreThan550',
         'MoreThan1000',
         'Resistant',
@@ -2090,6 +2091,7 @@ async function updateCategoryAssay(knex) {
       [
         'Success',
         'LessThan40',
+        'LessThan150',
         'LessThan550',
         'LessThan1000',
         'Unknown',
@@ -2122,6 +2124,7 @@ async function updateAssayResultCategoryTreatmentEmphasize(knex) {
         'Detected',
         'Trace Detected',
         'MoreThan40',
+        'MoreThan150',
         'MoreThan550',
         'MoreThan1000',
       ].indexOf(externalId) >= 0

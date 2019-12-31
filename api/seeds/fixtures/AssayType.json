@@ -19,6 +19,12 @@
       "abbreviation":"HIV"
     },
     {
+      "name": "HBV VL",
+      "i18nKey": "assayTypeHbvVl",
+      "externalId": "assayTypeHbvVl",
+      "abbreviation":"HBV"
+    },
+    {
       "name": "HIV Qual",
       "i18nKey": "assayTypeHivQual",
       "externalId": "assayTypeHivQual",

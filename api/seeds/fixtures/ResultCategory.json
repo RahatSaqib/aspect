@@ -61,6 +61,16 @@
       "i18nKey": "resultCategoryMoreThan40"
     },
     {
+      "name": "< 150",
+      "externalId": "LessThan150",
+      "i18nKey": "resultCategoryLessThan150"
+    },
+    {
+      "name": ">= 150",
+      "externalId": "MoreThan150",
+      "i18nKey": "resultCategoryMoreThan150"
+    },
+    {
       "name": "< 550",
       "externalId": "LessThan550",
       "i18nKey": "resultCategoryLessThan550"
