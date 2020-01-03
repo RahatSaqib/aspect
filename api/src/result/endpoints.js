@@ -28,6 +28,7 @@ const {
   addResultNote,
   allResultNotes,
   deleteResultNote,
+  transferResult,
 } = require('./service')
 const { getPatientResultsDetails } = require('./patientResultDetailService')
 const { getResultsReport } = require('./serviceReport')
@@ -1295,6 +1296,45 @@ const routes = [
             )
             .required()
             .description('The patient results'),
+        }),
+      },
+    },
+  },
+  {
+    method: 'POST',
+    path: '/result/transfer/{resultId}',
+    handler: asyncHandler(transferResult),
+    config: {
+      description: 'Transfer result to another clinic',
+      notes: 'Transfer result to a clinic from POST param',
+      auth: { scope: ['result:edit', 'result:admin'] },
+      validate: {
+        params: {
+          resultId: Joi.number()
+            .required()
+            .integer()
+            .positive()
+            .description('Result ID'),
+        },
+        payload: {
+          siteId: Joi.number()
+            .integer()
+            .positive()
+            .description('New Site ID to transfer current result'),
+        },
+      },
+      response: {
+        options: {
+          allowUnknown: false,
+        },
+        schema: Joi.object().keys({
+          ok: Joi.bool()
+            .required()
+            .description('False if there was some sort of error'),
+          data: Joi.object()
+            .required()
+            .description('Return current result')
+            .keys(validateResultResponse()),
         }),
       },
     },

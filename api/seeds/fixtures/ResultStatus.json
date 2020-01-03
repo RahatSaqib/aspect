@@ -1,0 +1,22 @@
+[
+  {
+    "name": "Transfer",
+    "externalId": "Transfer",
+    "i18nKey": "ResultStatusTransfer"
+  },
+  {
+    "name": "FollowUp",
+    "externalId": "FollowUp",
+    "i18nKey": "ResultStatusFollowUp"
+  },
+  {
+    "name": "Workflow",
+    "externalId": "Workflow",
+    "i18nKey": "ResultStatusWorkflow"
+  },
+  {
+    "name": "SignOff",
+    "externalId": "SignOff",
+    "i18nKey": "ResultStatusSignOff"
+  }
+]

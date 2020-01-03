@@ -15,10 +15,12 @@ const { getUser } = require('../auth/service')
 const {
   resultWorkflowStatusToId,
   resultTreatmentStatusToId,
+  resultStatusToId,
 } = require('../shared/dictionary')
 const { oneDirectionalMd5Hash } = require('../shared/encryption')
 const { returnIso8601StringWithoutTimeZoneOffset } = require('../shared/date')
 const { getPathFromFileReferenceId } = require('../file/service')
+const { getSite } = require('../site/service')
 
 const SELECT_LIST_FIELDS = [
   'r.id',
@@ -78,6 +80,8 @@ const SELECT_COMMON_FIELDS = [
   'r.formData',
   'r.siteId',
   'si.name as siteName',
+  'r.reportableSiteId',
+  'siRep.name as reportableSiteName',
   'r.assayVersion',
   'r.consumableSerial',
   'r.consumableLot',
@@ -426,6 +430,7 @@ async function exportResults(query, auth) {
       'rts.id'
     )
     .leftJoin('Site as si', 'r.siteId', 'si.id')
+    .leftJoin('Site as siRep', 'r.reportableSiteId', 'siRep.id')
     .modify(addPartnerQueryConstraints, dataConstraints)
     .modify(addConstraints, dataConstraints, { device: 'd', sample: 'sp' })
     .modify(filterDateRangeParams, query, 'r.endedOn')
@@ -942,6 +947,7 @@ async function getResultByResultId(request, fields = SELECT_SHOW_FIELDS) {
     .innerJoin('Assay as a', 'r.assayId', 'a.id')
     .leftJoin('Geography as g', 'r.geographyId', 'g.id')
     .leftJoin('Site as si', 'r.siteId', 'si.id')
+    .leftJoin('Site as siRep', 'r.reportableSiteId', 'siRep.id')
     .leftJoin('Country as c', 'g.countryId', 'c.id')
     .leftJoin('State as st', 'g.stateId', 'st.id')
     .leftJoin('Lga as lg', 'g.lgaId', 'lg.id')
@@ -2064,6 +2070,51 @@ async function showResultFollowUps(resultId, dataConstraints) {
   return { data: followUps }
 }
 
+async function transferResult(request) {
+  const {
+    auth,
+    params: { resultId },
+    payload: { siteId },
+  } = request
+  const { id: currentUserId } = await getUser(auth.credentials.name)
+
+  // get the result so we can check access
+  let result = await getResultByResultId(request)
+  if (!result.ok) {
+    return Boom.notFound('Result with requested Id is not found')
+  }
+
+  // check if target site exists and current user can access it
+  const dataConstraints = await getConstraints(auth.credentials)
+  const site = await getSite(siteId, dataConstraints)
+  if (!site) {
+    return Boom.notFound(
+      'Requested site not found or can not be accessed by current user'
+    )
+  }
+
+  const resultStatusId = await resultStatusToId('Transfer')
+  if (!resultStatusId) {
+    return Boom.badRequest('Invalid externalId `Transfer`')
+  }
+
+  // update reportableSiteId
+  await knex('Result')
+    .where('id', resultId)
+    .update({ reportableSiteId: siteId })
+
+  // log
+  await knex('ResultStatusLog').insert({
+    resultId,
+    resultStatusId,
+    createdOn: new Date(),
+    createdBy: currentUserId,
+  })
+  result = await getResultByResultId(request)
+
+  return result
+}
+
 module.exports = {
   listResults,
   exportResults,
@@ -2090,4 +2141,5 @@ module.exports = {
   deleteResultNote,
   allResultNotes,
   showResultFollowUps,
+  transferResult,
 }

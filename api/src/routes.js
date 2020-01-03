@@ -317,6 +317,14 @@ function validateResultResponse() {
     siteName: Joi.string()
       .allow(null)
       .description('The name of the site'),
+    reportableSiteId: Joi.number()
+      .allow(null)
+      .integer()
+      .positive()
+      .description('The id of reportable site'),
+    reportableSiteName: Joi.string()
+      .allow(null)
+      .description('The name of reportable site'),
     assayVersion: Joi.string()
       .allow(null)
       .description('The assay Version'),
