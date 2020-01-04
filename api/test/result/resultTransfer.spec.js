@@ -1,7 +1,7 @@
 const supertest = require('supertest')
 const chai = require('chai')
 const { runTestWithKnex } = require('../utils/generatorFunctionUtils')
-const { getAccessToken } = require('../utils/authUtils')
+const shared = require('../utils/sharedToken')
 
 const server = supertest.agent('http://localhost:8080')
 const { assert } = chai
@@ -17,20 +17,13 @@ const assertResult = response => {
   assert.property(response.body.data, 'reportableSiteId')
 }
 
-describe('Result Transfer', () => {
-  let authAccessToken
-  before(() =>
-    runTestWithKnex(async () => {
-      authAccessToken = await getAccessToken('admin', 'test07')
-    })
-  )
-
+describe.only('Result Transfer', () => {
   describe('POST', () => {
     it('Should change result.reportableSiteId and add ResultStatusLog', () =>
       runTestWithKnex(async knex => {
         // get list of results accessible for current user
         let response = await server
-          .set('Authorization', `Bearer ${authAccessToken}`)
+          .set('Authorization', `Bearer ${shared.token}`)
           .get(`/api/result`)
         assert.equal(response.statusCode, 200)
         assert.isAtLeast(response.body.data.length, 1)
@@ -38,7 +31,7 @@ describe('Result Transfer', () => {
 
         // get result by resultId
         response = await server
-          .set('Authorization', `Bearer ${authAccessToken}`)
+          .set('Authorization', `Bearer ${shared.token}`)
           .get(`/api/result/${resultId}`)
         assertResult(response)
         const result = response.body.data
@@ -47,7 +40,7 @@ describe('Result Transfer', () => {
         const { reportableSiteId } = result
         // get list of accessible sites for current user
         response = await server
-          .set('Authorization', `Bearer ${authAccessToken}`)
+          .set('Authorization', `Bearer ${shared.token}`)
           .get(`/api/site`)
         assert.equal(response.statusCode, 200)
         assert.isAtLeast(response.body.data.length, 1)
@@ -60,7 +53,7 @@ describe('Result Transfer', () => {
 
         // transfer result to new siteId
         response = await server
-          .set('Authorization', `Bearer ${authAccessToken}`)
+          .set('Authorization', `Bearer ${shared.token}`)
           .post(`/api/result/transfer/${resultId}`)
           .send({ siteId: newSite.id })
 
@@ -83,7 +76,7 @@ describe('Result Transfer', () => {
 
         // transfer unknown resultId
         const response = await server
-          .set('Authorization', `Bearer ${authAccessToken}`)
+          .set('Authorization', `Bearer ${shared.token}`)
           .post(`/api/result/transfer/${resultId + 1}`)
           .send({ siteId: 1 })
 
