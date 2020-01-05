@@ -17,7 +17,7 @@ const assertResult = response => {
   assert.property(response.body.data, 'reportableSiteId')
 }
 
-describe.only('Result Transfer', () => {
+describe('Result Transfer', () => {
   describe('POST', () => {
     it('Should change result.reportableSiteId and add ResultStatusLog', () =>
       runTestWithKnex(async knex => {
