@@ -17,14 +17,18 @@ const assertResult = response => {
   assert.property(response.body.data, 'reportableSiteId')
 }
 
-describe('Result Transfer', () => {
+describe.only('Result Transfer', () => {
+  const path = '/api/result'
+  shared.checkToken(server, path)
+
   describe('POST', () => {
     it('Should change result.reportableSiteId and add ResultStatusLog', () =>
       runTestWithKnex(async knex => {
         // get list of results accessible for current user
         let response = await server
           .set('Authorization', `Bearer ${shared.token}`)
-          .get(`/api/result`)
+          .get(path)
+
         assert.equal(response.statusCode, 200)
         assert.isAtLeast(response.body.data.length, 1)
         const resultId = response.body.data[0].id
@@ -32,7 +36,8 @@ describe('Result Transfer', () => {
         // get result by resultId
         response = await server
           .set('Authorization', `Bearer ${shared.token}`)
-          .get(`/api/result/${resultId}`)
+          .get(`${path}/${resultId}`)
+
         assertResult(response)
         const result = response.body.data
         assert.isNotNull(result)
@@ -54,7 +59,7 @@ describe('Result Transfer', () => {
         // transfer result to new siteId
         response = await server
           .set('Authorization', `Bearer ${shared.token}`)
-          .post(`/api/result/transfer/${resultId}`)
+          .post(`${path}/transfer/${resultId}`)
           .send({ siteId: newSite.id })
 
         assertResult(response)
@@ -77,7 +82,7 @@ describe('Result Transfer', () => {
         // transfer unknown resultId
         const response = await server
           .set('Authorization', `Bearer ${shared.token}`)
-          .post(`/api/result/transfer/${resultId + 1}`)
+          .post(`${path}/transfer/${resultId + 1}`)
           .send({ siteId: 1 })
 
         assert.equal(response.statusCode, 404)
