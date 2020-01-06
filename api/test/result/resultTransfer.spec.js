@@ -17,7 +17,7 @@ const assertResult = response => {
   assert.property(response.body.data, 'reportableSiteId')
 }
 
-describe.only('Result Transfer', () => {
+describe('Result Transfer', () => {
   const path = '/api/result'
   shared.checkToken(server, path)
 

@@ -2408,10 +2408,18 @@ async function initDataFromFixture(knex, tableName, keyColumn = 'externalId') {
     )
     .select(keyColumn)
   const oldIds = itemsOld.map(x => x[keyColumn])
-  return knex(tableName).insert(
-    // insert only items which not exist in the table
-    itemsNew.filter(x => !oldIds.includes(x[keyColumn]))
-  )
+  const itemsToUpdate = itemsNew.filter(x => oldIds.includes(x[keyColumn]))
+  const itemsToInsert = itemsNew.filter(x => !oldIds.includes(x[keyColumn]))
+  if (itemsToUpdate.length > 0) {
+    // update
+    itemsToUpdate.forEach(async item => {
+      await knex(tableName)
+        .update(_.omit(item, keyColumn))
+        .where(keyColumn, item[keyColumn])
+    })
+  }
+  // insert only items which not exist in the table
+  return knex(tableName).insert(itemsToInsert)
 }
 
 module.exports = {
