@@ -8,7 +8,6 @@ const base = require('./base')
 const vendor = [
   'classnames',
   'core-js',
-  'dom-helpers',
   'email-validator',
   'global',
   'history',

@@ -10,9 +10,7 @@ import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
 
 // Material-UI
-import MdChevronLeft from 'react-icons/lib/md/chevron-left'
-import MdChevronRight from 'react-icons/lib/md/chevron-right'
-import MdClose from 'react-icons/lib/md/clear'
+import { MdChevronLeft, MdChevronRight, MdClose } from 'react-icons/md'
 import Button from '@material-ui/core/Button'
 
 // Our own imports

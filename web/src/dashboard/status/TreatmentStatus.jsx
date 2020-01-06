@@ -17,10 +17,14 @@ import Card from '@material-ui/core/Card'
 
 import { addMonths, endOfMonth, format as dateFormat } from 'date-fns'
 
-import IconTitle from 'react-icons/lib/fa/pie-chart'
-import IconBarChart from 'react-icons/lib/fa/bar-chart'
-import IconArrowLeft from 'react-icons/lib/md/keyboard-arrow-left'
-import IconArrowRight from 'react-icons/lib/md/keyboard-arrow-right'
+import {
+  FaChartPie as IconTitle,
+  FaChartBar as IconBarChart,
+} from 'react-icons/fa'
+import {
+  MdKeyboardArrowLeft as IconArrowLeft,
+  MdKeyboardArrowRight as IconArrowRight,
+} from 'react-icons/md'
 import { ResponsiveBar } from '@nivo/bar'
 
 import { Unit } from '../../components/pureGrids'

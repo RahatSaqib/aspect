@@ -5,7 +5,7 @@ import React, { Fragment } from 'react'
 import { compose, pure, lifecycle } from 'recompose'
 import { Mercator } from '@vx/geo'
 import { Group } from '@vx/group'
-import MdCloudDownload from 'react-icons/lib/md/cloud-download'
+import { MdCloudDownload } from 'react-icons/md'
 import { feature } from 'topojson-client'
 
 const cssClasses = classnames.bind(require('./CountryMap.css'))

@@ -2,7 +2,7 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import classnames from 'classnames/bind'
 import Tooltip from '@material-ui/core/Tooltip'
-import Help from 'react-icons/lib/md/help'
+import { MdHelp } from 'react-icons/md'
 
 const cssClasses = classnames.bind(require('./AspectTooltip.css'))
 
@@ -14,7 +14,7 @@ const AspectTooltip = ({ title, children, showHelpIcon, ...restProps }) => (
   >
     <div>
       <span className={cssClasses('ChildrenContainer')}>{children}</span>
-      {!showHelpIcon || <Help className={cssClasses('HelpIcon')} />}
+      {!showHelpIcon || <MdHelp className={cssClasses('HelpIcon')} />}
     </div>
   </Tooltip>
 )

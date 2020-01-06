@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import classnames from 'classnames/bind'
 import React from 'react'
-import FaCircle from 'react-icons/lib/fa/circle'
+import { FaCircle } from 'react-icons/fa'
 import ColoredButton from '../../../components/themedReactToolbox/ColoredButton'
 
 import {

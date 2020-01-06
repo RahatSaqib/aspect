@@ -1,7 +1,7 @@
 import React from 'react'
 import classnames from 'classnames/bind'
 import { Link } from 'react-router-dom'
-import FaExternalLink from 'react-icons/lib/fa/external-link'
+import { FaExternalLinkAlt as FaExternalLink } from 'react-icons/fa'
 import CloseIcon from '@material-ui/icons/RemoveCircle'
 import { mergeToFiltersParams } from '../../filter/utils'
 import messages from './messages'

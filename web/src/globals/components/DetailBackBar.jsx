@@ -2,7 +2,7 @@ import _ from 'lodash'
 import classnames from 'classnames/bind'
 import React from 'react'
 import Button from '@material-ui/core/Button'
-import KeyboardArrowLeft from 'react-icons/lib/md/keyboard-arrow-left'
+import { MdKeyboardArrowLeft } from 'react-icons/md'
 
 const cssClasses = classnames.bind(require('./DetailBackBar.css'))
 
@@ -15,7 +15,7 @@ export const DetailBackBar = ({ onBackClick, title, children }) => (
       onClick={onBackClick}
       color="primary"
     >
-      <KeyboardArrowLeft />
+      <MdKeyboardArrowLeft />
     </Button>
     <div className={cssClasses('Container__Title')}>{title}</div>
     <div>{children}</div>
