@@ -94,6 +94,18 @@ function listResultsBaseConfig() {
         ...validateAllGeographyFilterParams(),
         ...validateDateRangeParams(),
         ...validateSortPageParams(),
+        // transfer result
+        reportableSiteName: Joi.string()
+          .allow('', null)
+          .description(
+            'The name of reportable site, differ from siteName when transferred'
+          ),
+        transferredOn: Joi.date()
+          .allow(null)
+          .description('When result was transferred to another clinic'),
+        transferredBy: Joi.string()
+          .allow(null)
+          .description('Who transferred result to another clinic'),
       },
     },
   }
@@ -757,6 +769,18 @@ const routes = [
                         .description('Type of comment'),
                     })
                   ),
+                // transfer result
+                reportableSiteName: Joi.string()
+                  .allow('', null)
+                  .description(
+                    'The name of reportable site, differ from siteName when transferred'
+                  ),
+                transferredOn: Joi.date()
+                  .allow(null)
+                  .description('When result was transferred to another clinic'),
+                transferredBy: Joi.string()
+                  .allow(null)
+                  .description('Who transferred result to another clinic'),
               })
             ),
         }),
@@ -1292,6 +1316,18 @@ const routes = [
                   .optional()
                   .allow(null)
                   .description('the follow up type id'),
+                // transfer result
+                reportableSiteName: Joi.string()
+                  .allow('', null)
+                  .description(
+                    'The name of reportable site, differ from siteName when transferred'
+                  ),
+                transferredOn: Joi.date()
+                  .allow(null)
+                  .description('When result was transferred to another clinic'),
+                transferredBy: Joi.string()
+                  .allow(null)
+                  .description('Who transferred result to another clinic'),
               })
             )
             .required()

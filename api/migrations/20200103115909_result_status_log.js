@@ -34,12 +34,25 @@ async function up(knex) {
     x.charset('utf8')
   })
 
+  await knex.schema.alterTable('Result', x => {
+    x.dateTime('transferredOn').index()
+    x.integer('transferredBy')
+      .unsigned()
+      .index()
+      .references('id')
+      .inTable('User')
+  })
+
   await knex.raw('SET foreign_key_checks = 1')
 }
 
 async function down(knex) {
   await knex.raw('SET foreign_key_checks = 0')
 
+  await knex.schema.alterTable('Result', x => {
+    x.dropColumns('transferredOn')
+    x.dropColumns('transferredBy')
+  })
   await knex.schema.dropTableIfExists('ResultStatus')
   await knex.schema.dropTableIfExists('ResultStatusLog')
 

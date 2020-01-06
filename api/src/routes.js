@@ -317,14 +317,6 @@ function validateResultResponse() {
     siteName: Joi.string()
       .allow(null)
       .description('The name of the site'),
-    reportableSiteId: Joi.number()
-      .allow(null)
-      .integer()
-      .positive()
-      .description('The id of reportable site'),
-    reportableSiteName: Joi.string()
-      .allow(null)
-      .description('The name of reportable site'),
     assayVersion: Joi.string()
       .allow(null)
       .description('The assay Version'),
@@ -481,6 +473,25 @@ function validateResultResponse() {
             .description('Translation key for the follow up type'),
         })
       ),
+    // transfer result
+    reportableSiteId: Joi.number()
+      .allow(null)
+      .integer()
+      .positive()
+      .description(
+        'The id of reportable site, differ from siteId when transferred'
+      ),
+    reportableSiteName: Joi.string()
+      .allow(null)
+      .description(
+        'The name of reportable site, differ from siteName when transferred'
+      ),
+    transferredOn: Joi.date()
+      .allow(null)
+      .description('When result was transferred to another clinic'),
+    transferredBy: Joi.string()
+      .allow(null)
+      .description('Who transferred result to another clinic'),
   }
 }
 
