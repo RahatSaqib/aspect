@@ -58,7 +58,7 @@ const SELECT_LIST_FIELDS = [
   'dt.name as deviceTypeName',
   // transfer result
   'sirep.name as reportableSiteName',
-  'r.transferredOn',
+  'rslog.createdOn as transferredOn',
   'ptr.name as transferredBy',
 ]
 const SELECT_COMMON_FIELDS = [
@@ -126,7 +126,7 @@ const SELECT_COMMON_FIELDS = [
   // transfer result
   'r.reportableSiteId',
   'sirep.name as reportableSiteName',
-  'r.transferredOn',
+  'rslog.createdOn as transferredOn',
   'ptr.name as transferredBy',
 ]
 const SELECT_SHOW_FIELDS = _.concat(SELECT_COMMON_FIELDS, 'rf.formSchema')
@@ -257,7 +257,8 @@ async function getListResults(query, auth, fields = SELECT_LIST_FIELDS) {
     )
     .leftJoin('Site as si', 'r.siteId', 'si.id')
     .leftJoin('Site as sirep', 'r.reportableSiteId', 'sirep.id')
-    .leftJoin('Person as ptr', 'r.transferredBy', 'ptr.userId')
+    .leftJoin('ResultStatusLog as rslog', 'r.resultStatusLogId', 'rslog.id')
+    .leftJoin('Person as ptr', 'rslog.createdBy', 'ptr.userId')
     .modify(filterDateRangeParams, query, 'r.endedOn')
     .modify(filterParams, query, {
       deviceId: 'd.id',
@@ -440,7 +441,8 @@ async function exportResults(query, auth) {
     )
     .leftJoin('Site as si', 'r.siteId', 'si.id')
     .leftJoin('Site as sirep', 'r.reportableSiteId', 'sirep.id')
-    .leftJoin('Person as ptr', 'r.transferredBy', 'ptr.userId')
+    .leftJoin('ResultStatusLog as rslog', 'r.resultStatusLogId', 'rslog.id')
+    .leftJoin('Person as ptr', 'rslog.createdBy', 'ptr.userId')
     .modify(addPartnerQueryConstraints, dataConstraints)
     .modify(addConstraints, dataConstraints, { device: 'd', sample: 'sp' })
     .modify(filterDateRangeParams, query, 'r.endedOn')
@@ -515,7 +517,8 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
     .leftJoin('Site as so', 'sp.originSiteId', 'so.id')
     .leftJoin('Site as si', 'r.siteId', 'si.id')
     .leftJoin('Site as sirep', 'r.reportableSiteId', 'sirep.id')
-    .leftJoin('Person as ptr', 'r.transferredBy', 'ptr.userId')
+    .leftJoin('ResultStatusLog as rslog', 'r.resultStatusLogId', 'rslog.id')
+    .leftJoin('Person as ptr', 'rslog.createdBy', 'ptr.userId')
     .leftJoin(
       'ResultTreatmentStatusLog as rtsl',
       'r.treatmentStatusLogId',
@@ -646,7 +649,7 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
       // result transferred
       'r.reportableSiteId',
       'sirep.name as reportableSiteName',
-      'r.transferredOn',
+      'rslog.createdOn as transferredOn',
       'ptr.name as transferredBy'
     )
 
@@ -1012,7 +1015,8 @@ async function getResultByResultId(request, fields = SELECT_SHOW_FIELDS) {
       this.on('r.assayId', 'rf.assayId').andOn('r.partnerId', 'rf.partnerId')
     })
     .leftJoin('Site as sirep', 'r.reportableSiteId', 'sirep.id')
-    .leftJoin('Person as ptr', 'r.transferredBy', 'ptr.userId')
+    .leftJoin('ResultStatusLog as rslog', 'r.resultStatusLogId', 'rslog.id')
+    .leftJoin('Person as ptr', 'rslog.createdBy', 'ptr.userId')
     .where('r.id', +params.resultId)
     .modify(addConstraints, dataConstraints, { device: 'd', sample: 'sp' })
     .select(fields)
@@ -2122,24 +2126,23 @@ async function transferResult(request) {
 
   const now = new Date()
 
-  // update reportableSiteId
-  await knex('Result')
-    .where('id', resultId)
-    .update({
-      reportableSiteId: siteId,
-      transferredOn: now,
-      transferredBy: currentUserId,
-    })
-
   // log
-  await knex('ResultStatusLog').insert({
+  const [resultStatusLogId] = await knex('ResultStatusLog').insert({
     resultId,
     resultStatusId,
     createdOn: now,
     createdBy: currentUserId,
   })
-  result = await getResultByResultId(request)
 
+  // update
+  await knex('Result')
+    .where('id', resultId)
+    .update({
+      reportableSiteId: siteId,
+      resultStatusLogId,
+    })
+
+  result = await getResultByResultId(request)
   return result
 }
 

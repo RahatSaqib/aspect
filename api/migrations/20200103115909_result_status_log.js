@@ -35,12 +35,11 @@ async function up(knex) {
   })
 
   await knex.schema.alterTable('Result', x => {
-    x.dateTime('transferredOn').index()
-    x.integer('transferredBy')
+    x.integer('resultStatusLogId')
       .unsigned()
       .index()
       .references('id')
-      .inTable('User')
+      .inTable('ResultStatusLog')
   })
 
   await knex.raw('SET foreign_key_checks = 1')
@@ -50,8 +49,7 @@ async function down(knex) {
   await knex.raw('SET foreign_key_checks = 0')
 
   await knex.schema.alterTable('Result', x => {
-    x.dropColumns('transferredOn')
-    x.dropColumns('transferredBy')
+    x.dropColumns('resultStatusLogId')
   })
   await knex.schema.dropTableIfExists('ResultStatus')
   await knex.schema.dropTableIfExists('ResultStatusLog')
