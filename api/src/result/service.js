@@ -60,6 +60,7 @@ const SELECT_LIST_FIELDS = [
   'sirep.name as reportableSiteName',
   'rslog.createdOn as transferredOn',
   'ptr.name as transferredBy',
+  'r.resultStatusLogId',
 ]
 const SELECT_COMMON_FIELDS = [
   'r.id',
@@ -128,6 +129,7 @@ const SELECT_COMMON_FIELDS = [
   'sirep.name as reportableSiteName',
   'rslog.createdOn as transferredOn',
   'ptr.name as transferredBy',
+  'r.resultStatusLogId',
 ]
 const SELECT_SHOW_FIELDS = _.concat(SELECT_COMMON_FIELDS, 'rf.formSchema')
 const SORT_FIELDS = [
@@ -650,7 +652,8 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
       'r.reportableSiteId',
       'sirep.name as reportableSiteName',
       'rslog.createdOn as transferredOn',
-      'ptr.name as transferredBy'
+      'ptr.name as transferredBy',
+      'r.resultStatusLogId'
     )
 
   // return result when both queries are finished
@@ -778,6 +781,7 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
     reportableSiteName: d.reportableSiteName,
     transferredOn: d.transferredOn,
     transferredBy: d.transferredBy,
+    resultStatusLogId: d.resultStatusLogId,
   }))
 
   const result = {

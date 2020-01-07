@@ -492,6 +492,13 @@ function validateResultResponse() {
     transferredBy: Joi.string()
       .allow(null)
       .description('Who transferred result to another clinic'),
+    resultStatusLogId: Joi.number()
+      .allow(null)
+      .integer()
+      .positive()
+      .description(
+        'The id of last entry in ResultStatusLog for current result'
+      ),
   }
 }
 

@@ -15,6 +15,8 @@ const assertResult = response => {
   assert.property(response.body.data, 'externalId')
   assert.property(response.body.data, 'resultData')
   assert.property(response.body.data, 'reportableSiteId')
+  assert.property(response.body.data, 'transferredOn')
+  assert.property(response.body.data, 'transferredBy')
 }
 
 describe('Result Transfer', () => {
@@ -42,7 +44,7 @@ describe('Result Transfer', () => {
         const result = response.body.data
         assert.isNotNull(result)
 
-        const { reportableSiteId } = result
+        const { reportableSiteId, resultStatusLogId } = result
         // get list of accessible sites for current user
         response = await server
           .set('Authorization', `Bearer ${shared.token}`)
@@ -63,15 +65,21 @@ describe('Result Transfer', () => {
           .send({ siteId: newSite.id })
 
         assertResult(response)
-        assert.notEqual(response.body.data.reportableSiteId, reportableSiteId)
+        const testResult = response.body.data
+        assert.notEqual(testResult.reportableSiteId, reportableSiteId)
+        // check how Joi.date() handles DateTime - transferredOn should contain 'date' and 'time' parts.
+        // FYI: 'transferredOn' is expected in this format - '2020-01-07T15:27:46.000Z'
+        const { transferredOn } = testResult
+        // number 10 is length of Date portion, 14 - length of Time portion
+        assert.equal(transferredOn.substr(10).length, 14)
 
         // restore initial data
+        await knex('Result')
+          .where('id', result.id)
+          .update({ reportableSiteId, resultStatusLogId })
         await knex('ResultStatusLog')
           .where('id', '>', logId)
           .del()
-        await knex('Result')
-          .where('id', result.id)
-          .update({ reportableSiteId })
       }))
 
     it('should return an error if result does not exist', () =>
