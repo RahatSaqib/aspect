@@ -5,6 +5,7 @@ const {
   filterDateRangeParams,
   sortPageParams,
 } = require('../db')
+const { getUser } = require('../auth/service')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 const { transformGeographyFromUpdates } = require('../geography/service')
 
@@ -190,10 +191,23 @@ async function updateSite(request) {
 }
 
 async function listSitesForSelectList(request) {
-  const { auth, query } = request
-  // get data constraints
+  const { auth, query, params } = request
+  const { mode } = params
 
-  const dataConstraints = await getConstraints(auth.credentials)
+  // get data constraints
+  let dataConstraints = await getConstraints(auth.credentials)
+  if (mode === 'all') {
+    // get all sites in user's country and partner
+    const user = await getUser(auth.credentials.name)
+    dataConstraints = {
+      partner: {
+        id: user.partnerId,
+      },
+      country: {
+        id: user.countryId,
+      },
+    }
+  }
 
   let sitesQuery = knex('Site as s')
     .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
@@ -206,8 +220,12 @@ async function listSitesForSelectList(request) {
       .leftOuterJoin('Tag as t', 'stg.tagId', 't.id')
       .whereIn('t.title', query.tags)
 
+  const aliases = { geography: 'g' }
+  if (mode !== 'all') {
+    aliases.site = 's'
+  }
   sitesQuery = sitesQuery
-    .modify(addConstraints, dataConstraints, { site: 's', geography: 'g' })
+    .modify(addConstraints, dataConstraints, aliases)
     .orderBy(['s.name'], 'asc')
     .select(
       's.id',
