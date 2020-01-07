@@ -20,7 +20,7 @@ const {
 const { oneDirectionalMd5Hash } = require('../shared/encryption')
 const { returnIso8601StringWithoutTimeZoneOffset } = require('../shared/date')
 const { getPathFromFileReferenceId } = require('../file/service')
-const { getSite } = require('../site/service')
+const { getSiteByPartnerCountry } = require('../site/service')
 
 const SELECT_LIST_FIELDS = [
   'r.id',
@@ -2102,7 +2102,9 @@ async function transferResult(request) {
     params: { resultId },
     payload: { siteId },
   } = request
-  const { id: currentUserId } = await getUser(auth.credentials.name)
+  const { partnerId, countryId, id: currentUserId } = await getUser(
+    auth.credentials.name
+  )
 
   // get the result so we can check access
   let result = await getResultByResultId(request)
@@ -2110,13 +2112,10 @@ async function transferResult(request) {
     return Boom.notFound('Result with requested Id is not found')
   }
 
-  // check if target site exists and current user can access it
-  const dataConstraints = await getConstraints(auth.credentials)
-  const site = await getSite(siteId, dataConstraints)
+  // check if target site exists in current user's country and partner
+  const site = await getSiteByPartnerCountry(siteId, { partnerId, countryId })
   if (!site) {
-    return Boom.notFound(
-      'Requested site not found or can not be accessed by current user'
-    )
+    return Boom.notFound('Requested site not found')
   }
 
   const resultStatusId = await resultStatusToId('Transfer')

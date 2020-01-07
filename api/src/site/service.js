@@ -198,13 +198,13 @@ async function listSitesForSelectList(request) {
   let dataConstraints = await getConstraints(auth.credentials)
   if (mode === 'all') {
     // get all sites in user's country and partner
-    const user = await getUser(auth.credentials.name)
+    const { partnerId, countryId } = await getUser(auth.credentials.name)
     dataConstraints = {
       partner: {
-        id: user.partnerId,
+        id: partnerId,
       },
       country: {
-        id: user.countryId,
+        id: countryId,
       },
     }
   }
@@ -220,12 +220,8 @@ async function listSitesForSelectList(request) {
       .leftOuterJoin('Tag as t', 'stg.tagId', 't.id')
       .whereIn('t.title', query.tags)
 
-  const aliases = { geography: 'g' }
-  if (mode !== 'all') {
-    aliases.site = 's'
-  }
   sitesQuery = sitesQuery
-    .modify(addConstraints, dataConstraints, aliases)
+    .modify(addConstraints, dataConstraints, { site: 's', geography: 'g' })
     .orderBy(['s.name'], 'asc')
     .select(
       's.id',
@@ -265,9 +261,29 @@ async function listSitesForSelectList(request) {
   }
 }
 
+function getSiteByPartnerCountry(siteId, { partnerId, countryId }) {
+  const dataConstraints = {
+    partner: {
+      id: partnerId,
+    },
+    country: {
+      id: countryId,
+    },
+  }
+  return knex('Site as s')
+    .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
+    .leftOuterJoin('State as st', 'g.stateId', 'st.id')
+    .leftOuterJoin('Country as ct', 'g.countryId', 'ct.id')
+    .leftOuterJoin('Lga as l', 'g.lgaId', 'l.id')
+    .where('s.id', siteId)
+    .modify(addConstraints, dataConstraints, { site: 's', geography: 'g' })
+    .first(SELECT_SHOW_FIELDS)
+}
+
 module.exports = {
   listSites,
   getSite,
+  getSiteByPartnerCountry,
   showSite,
   updateSite,
   listSitesForSelectList,
