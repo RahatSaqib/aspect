@@ -2132,6 +2132,10 @@ async function transferResult(request) {
     resultStatusId,
     createdOn: now,
     createdBy: currentUserId,
+    data: JSON.stringify({
+      siteId: result.siteId,
+      reportableSiteId: siteId,
+    }),
   })
 
   // update
