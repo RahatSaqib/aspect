@@ -28,6 +28,7 @@ const {
   addResultNote,
   allResultNotes,
   deleteResultNote,
+  transferResult,
 } = require('./service')
 const { getPatientResultsDetails } = require('./patientResultDetailService')
 const { getResultsReport } = require('./serviceReport')
@@ -93,6 +94,25 @@ function listResultsBaseConfig() {
         ...validateAllGeographyFilterParams(),
         ...validateDateRangeParams(),
         ...validateSortPageParams(),
+        // transfer result
+        reportableSiteName: Joi.string()
+          .allow('', null)
+          .description(
+            'The name of reportable site, differ from siteName when transferred'
+          ),
+        transferredOn: Joi.date()
+          .allow(null)
+          .description('When result was transferred to another clinic'),
+        transferredBy: Joi.string()
+          .allow(null)
+          .description('Who transferred result to another clinic'),
+        resultStatusLogId: Joi.number()
+          .allow(null)
+          .integer()
+          .positive()
+          .description(
+            'The id of last entry in ResultStatusLog for current result'
+          ),
       },
     },
   }
@@ -756,6 +776,25 @@ const routes = [
                         .description('Type of comment'),
                     })
                   ),
+                // transfer result
+                reportableSiteName: Joi.string()
+                  .allow('', null)
+                  .description(
+                    'The name of reportable site, differ from siteName when transferred'
+                  ),
+                transferredOn: Joi.date()
+                  .allow(null)
+                  .description('When result was transferred to another clinic'),
+                transferredBy: Joi.string()
+                  .allow(null)
+                  .description('Who transferred result to another clinic'),
+                resultStatusLogId: Joi.number()
+                  .allow(null)
+                  .integer()
+                  .positive()
+                  .description(
+                    'The id of last entry in ResultStatusLog for current result'
+                  ),
               })
             ),
         }),
@@ -1291,10 +1330,68 @@ const routes = [
                   .optional()
                   .allow(null)
                   .description('the follow up type id'),
+                // transfer result
+                reportableSiteName: Joi.string()
+                  .allow('', null)
+                  .description(
+                    'The name of reportable site, differ from siteName when transferred'
+                  ),
+                transferredOn: Joi.date()
+                  .allow(null)
+                  .description('When result was transferred to another clinic'),
+                transferredBy: Joi.string()
+                  .allow(null)
+                  .description('Who transferred result to another clinic'),
+                resultStatusLogId: Joi.number()
+                  .allow(null)
+                  .integer()
+                  .positive()
+                  .description(
+                    'The id of last entry in ResultStatusLog for current result'
+                  ),
               })
             )
             .required()
             .description('The patient results'),
+        }),
+      },
+    },
+  },
+  {
+    method: 'POST',
+    path: '/result/transfer/{resultId}',
+    handler: asyncHandler(transferResult),
+    config: {
+      description: 'Transfer result to another clinic',
+      notes: 'Transfer result to a clinic from POST param',
+      auth: { scope: ['result:edit', 'result:admin'] },
+      validate: {
+        params: {
+          resultId: Joi.number()
+            .required()
+            .integer()
+            .positive()
+            .description('Result ID'),
+        },
+        payload: {
+          siteId: Joi.number()
+            .integer()
+            .positive()
+            .description('New Site ID to transfer current result'),
+        },
+      },
+      response: {
+        options: {
+          allowUnknown: false,
+        },
+        schema: Joi.object().keys({
+          ok: Joi.bool()
+            .required()
+            .description('False if there was some sort of error'),
+          data: Joi.object()
+            .required()
+            .description('Return current result')
+            .keys(validateResultResponse()),
         }),
       },
     },

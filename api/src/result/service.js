@@ -15,10 +15,12 @@ const { getUser } = require('../auth/service')
 const {
   resultWorkflowStatusToId,
   resultTreatmentStatusToId,
+  resultStatusToId,
 } = require('../shared/dictionary')
 const { oneDirectionalMd5Hash } = require('../shared/encryption')
 const { returnIso8601StringWithoutTimeZoneOffset } = require('../shared/date')
 const { getPathFromFileReferenceId } = require('../file/service')
+const { getSiteByPartnerCountry } = require('../site/service')
 
 const SELECT_LIST_FIELDS = [
   'r.id',
@@ -54,6 +56,11 @@ const SELECT_LIST_FIELDS = [
   knex.raw('JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.id")) as patientId'),
   'si.name as siteName',
   'dt.name as deviceTypeName',
+  // transfer result
+  'sirep.name as reportableSiteName',
+  'rslog.createdOn as transferredOn',
+  'ptr.name as transferredBy',
+  'r.resultStatusLogId',
 ]
 const SELECT_COMMON_FIELDS = [
   'r.id',
@@ -117,6 +124,12 @@ const SELECT_COMMON_FIELDS = [
   'rtsl.resultTreatmentStatusId',
   'rtsl.changedOn as resultTreatmentStatusChangedOn',
   'rtsl.createdOn as resultTreatmentStatusCreatedOn',
+  // transfer result
+  'r.reportableSiteId',
+  'sirep.name as reportableSiteName',
+  'rslog.createdOn as transferredOn',
+  'ptr.name as transferredBy',
+  'r.resultStatusLogId',
 ]
 const SELECT_SHOW_FIELDS = _.concat(SELECT_COMMON_FIELDS, 'rf.formSchema')
 const SORT_FIELDS = [
@@ -245,6 +258,9 @@ async function getListResults(query, auth, fields = SELECT_LIST_FIELDS) {
       'rts.id'
     )
     .leftJoin('Site as si', 'r.siteId', 'si.id')
+    .leftJoin('Site as sirep', 'r.reportableSiteId', 'sirep.id')
+    .leftJoin('ResultStatusLog as rslog', 'r.resultStatusLogId', 'rslog.id')
+    .leftJoin('Person as ptr', 'rslog.createdBy', 'ptr.userId')
     .modify(filterDateRangeParams, query, 'r.endedOn')
     .modify(filterParams, query, {
       deviceId: 'd.id',
@@ -426,6 +442,9 @@ async function exportResults(query, auth) {
       'rts.id'
     )
     .leftJoin('Site as si', 'r.siteId', 'si.id')
+    .leftJoin('Site as sirep', 'r.reportableSiteId', 'sirep.id')
+    .leftJoin('ResultStatusLog as rslog', 'r.resultStatusLogId', 'rslog.id')
+    .leftJoin('Person as ptr', 'rslog.createdBy', 'ptr.userId')
     .modify(addPartnerQueryConstraints, dataConstraints)
     .modify(addConstraints, dataConstraints, { device: 'd', sample: 'sp' })
     .modify(filterDateRangeParams, query, 'r.endedOn')
@@ -499,6 +518,9 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
     .leftJoin('SampleType as stp', 'sp.sampleTypeId', 'stp.id')
     .leftJoin('Site as so', 'sp.originSiteId', 'so.id')
     .leftJoin('Site as si', 'r.siteId', 'si.id')
+    .leftJoin('Site as sirep', 'r.reportableSiteId', 'sirep.id')
+    .leftJoin('ResultStatusLog as rslog', 'r.resultStatusLogId', 'rslog.id')
+    .leftJoin('Person as ptr', 'rslog.createdBy', 'ptr.userId')
     .leftJoin(
       'ResultTreatmentStatusLog as rtsl',
       'r.treatmentStatusLogId',
@@ -625,7 +647,13 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
       'rtsl.method as resultTreatmentStatusMethod',
       'rt.name as resultTreatmentStatusName',
       'rt.externalId as resultTreatmentStatusExternalId',
-      'rt.i18nKey as resultTreatmentStatusi18nKey'
+      'rt.i18nKey as resultTreatmentStatusi18nKey',
+      // result transferred
+      'r.reportableSiteId',
+      'sirep.name as reportableSiteName',
+      'rslog.createdOn as transferredOn',
+      'ptr.name as transferredBy',
+      'r.resultStatusLogId'
     )
 
   // return result when both queries are finished
@@ -749,6 +777,11 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
       ['createdOn'],
       ['desc']
     ),
+    // result transferred
+    reportableSiteName: d.reportableSiteName,
+    transferredOn: d.transferredOn,
+    transferredBy: d.transferredBy,
+    resultStatusLogId: d.resultStatusLogId,
   }))
 
   const result = {
@@ -985,6 +1018,9 @@ async function getResultByResultId(request, fields = SELECT_SHOW_FIELDS) {
     .leftJoin('ResultForm as rf', function() {
       this.on('r.assayId', 'rf.assayId').andOn('r.partnerId', 'rf.partnerId')
     })
+    .leftJoin('Site as sirep', 'r.reportableSiteId', 'sirep.id')
+    .leftJoin('ResultStatusLog as rslog', 'r.resultStatusLogId', 'rslog.id')
+    .leftJoin('Person as ptr', 'rslog.createdBy', 'ptr.userId')
     .where('r.id', +params.resultId)
     .modify(addConstraints, dataConstraints, { device: 'd', sample: 'sp' })
     .select(fields)
@@ -2064,6 +2100,59 @@ async function showResultFollowUps(resultId, dataConstraints) {
   return { data: followUps }
 }
 
+async function transferResult(request) {
+  const {
+    auth,
+    params: { resultId },
+    payload: { siteId },
+  } = request
+  const { partnerId, countryId, id: currentUserId } = await getUser(
+    auth.credentials.name
+  )
+
+  // get the result so we can check access
+  let result = await getResultByResultId(request)
+  if (!result.ok) {
+    return Boom.notFound('Result with requested Id is not found')
+  }
+
+  // check if target site exists in current user's country and partner
+  const site = await getSiteByPartnerCountry(siteId, { partnerId, countryId })
+  if (!site) {
+    return Boom.notFound('Requested site not found')
+  }
+
+  const resultStatusId = await resultStatusToId('Transfer')
+  if (!resultStatusId) {
+    return Boom.badRequest('Invalid externalId `Transfer`')
+  }
+
+  const now = new Date()
+
+  // log
+  const [resultStatusLogId] = await knex('ResultStatusLog').insert({
+    resultId,
+    resultStatusId,
+    createdOn: now,
+    createdBy: currentUserId,
+    data: JSON.stringify({
+      siteId: result.siteId,
+      reportableSiteId: siteId,
+    }),
+  })
+
+  // update
+  await knex('Result')
+    .where('id', resultId)
+    .update({
+      reportableSiteId: siteId,
+      resultStatusLogId,
+    })
+
+  result = await getResultByResultId(request)
+  return result
+}
+
 module.exports = {
   listResults,
   exportResults,
@@ -2090,4 +2179,5 @@ module.exports = {
   deleteResultNote,
   allResultNotes,
   showResultFollowUps,
+  transferResult,
 }

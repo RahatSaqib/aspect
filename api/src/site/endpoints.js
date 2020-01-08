@@ -136,12 +136,12 @@ const routes = [
   },
   {
     method: 'GET',
-    path: '/site/select-list',
+    path: '/site/select-list/{mode?}',
     handler: asyncHandler(listSitesForSelectList),
     config: {
       description: 'Sites for Select List',
       notes: "List of site ID's and names",
-      auth: { scope: ['site:view'] },
+      auth: { scope: ['site:view', 'site:edit'] },
       validate: {
         query: {
           tags: [

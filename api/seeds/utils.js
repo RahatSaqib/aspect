@@ -2399,6 +2399,29 @@ async function getGeographyId(knex, countryId, stateId, lgaId) {
   return geographyId
 }
 
+async function initDataFromFixture(knex, tableName, keyColumn = 'externalId') {
+  const itemsNew = await readJson(`./seeds/fixtures/${tableName}.json`)
+  const itemsOld = await knex(tableName)
+    .whereIn(
+      keyColumn,
+      _.map(itemsNew, item => item[keyColumn])
+    )
+    .select(keyColumn)
+  const oldIds = itemsOld.map(x => x[keyColumn])
+  const itemsToUpdate = itemsNew.filter(x => oldIds.includes(x[keyColumn]))
+  const itemsToInsert = itemsNew.filter(x => !oldIds.includes(x[keyColumn]))
+  if (itemsToUpdate.length > 0) {
+    // update
+    itemsToUpdate.forEach(async item => {
+      await knex(tableName)
+        .update(_.omit(item, keyColumn))
+        .where(keyColumn, item[keyColumn])
+    })
+  }
+  // insert only items which not exist in the table
+  return knex(tableName).insert(itemsToInsert)
+}
+
 module.exports = {
   seed,
   seedTable,
@@ -2447,4 +2470,6 @@ module.exports = {
 
   addFollowUps,
   removeFollowUps,
+
+  initDataFromFixture,
 }
