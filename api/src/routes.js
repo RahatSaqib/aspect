@@ -489,6 +489,9 @@ function validateResultResponse() {
     transferredOn: Joi.date()
       .allow(null)
       .description('When result was transferred to another clinic'),
+    firstViewedOn: Joi.date()
+      .allow(null)
+      .description('When transferred result was clicked'),
     transferredBy: Joi.string()
       .allow(null)
       .description('Who transferred result to another clinic'),
