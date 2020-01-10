@@ -588,6 +588,20 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
       if (params.deviceType)
         queryBuilder.where('dt.externalId', params.deviceType)
       else queryBuilder.where('dt.externalId', 'CepheidGeneXpert')
+      //
+      if (params.transferStatus) {
+        // -----------------
+        // TODO: check with Stefan how to handle users of higher level who can see results
+        // from different sites, and TO/FROM is in their list of accessible sites
+        // -----------------
+        if (params.transferStatus === 'to') {
+          // result was transferred to another site (r.reportableSiteId)
+          queryBuilder.whereRaw('r.siteId != r.reportableSiteId')
+        } else if (params.transferStatus === 'from') {
+          // result was transferred from another site (r.siteId)
+          queryBuilder.whereRaw('r.siteId != r.reportableSiteId')
+        }
+      }
     }, query)
     .modify(addConstraints, dataConstraints, {
       device: 'd',
