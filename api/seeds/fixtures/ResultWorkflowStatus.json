@@ -54,11 +54,6 @@
       "name": "Purged",
       "externalId": "Purged",
       "i18nKey": "ResultWorkflowStatusPurged"
-    },
-    {
-      "name": "Transferred",
-      "externalId": "Transferred",
-      "i18nKey": "ResultWorkflowStatusTransferred"
     }
   ]
 }
