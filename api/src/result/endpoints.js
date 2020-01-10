@@ -840,7 +840,7 @@ const routes = [
                     'The id of last entry in ResultStatusLog for current result'
                   ),
                 reportableSiteId: Joi.number()
-                  .allow(null, '')
+                  .allow(null)
                   .description('Reportable siteId of the patient'),
               })
             ),
