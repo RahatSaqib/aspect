@@ -709,10 +709,10 @@ const routes = [
                   .allow(null, '')
                   .description('Any notes entered for the sample'),
                 sampleOriginSiteId: Joi.number()
-                  .allow(null, '')
+                  .allow(null)
                   .description('Sample Origin Site Id for the patient'),
                 firstViewedOn: Joi.date()
-                  .allow(null, '')
+                  .allow(null)
                   .description('date when result first viewed'),
                 errorCode: Joi.string()
                   .allow(null, '')
