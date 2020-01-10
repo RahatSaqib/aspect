@@ -29,6 +29,7 @@ const {
   allResultNotes,
   deleteResultNote,
   transferResult,
+  updateTransferNotification,
 } = require('./service')
 const { getPatientResultsDetails } = require('./patientResultDetailService')
 const { getResultsReport } = require('./serviceReport')
@@ -354,6 +355,29 @@ const routes = [
     },
   },
   {
+    method: 'PUT',
+    path: '/result/transfer/{resultId}',
+    handler: asyncHandler(updateTransferNotification),
+    config: {
+      description: 'Update first viewOn field for transfer result',
+      notes: 'Update first viewOn field for transfer result',
+      auth: { scope: ['result:edit'] },
+      validate: {
+        params: {
+          resultId: Joi.number()
+            .integer()
+            .positive()
+            .description('Result Id'),
+        },
+        payload: {
+          firstViewedOn: Joi.date()
+            .required()
+            .description('first viewed date'),
+        },
+      },
+    },
+  },
+  {
     method: 'POST',
     path: '/result/result-note/{resultId}',
     handler: asyncHandler(addResultNote),
@@ -670,6 +694,15 @@ const routes = [
                 notes: Joi.string()
                   .allow(null, '')
                   .description('Any notes entered for the sample'),
+                sampleOriginSiteId: Joi.number()
+                  .allow(null, '')
+                  .description('Sample Origin Site Id for the patient'),
+                reportableSiteId: Joi.number()
+                  .allow(null, '')
+                  .description('Reportable siteId of the patient'),
+                firstViewedOn: Joi.date()
+                  .allow(null, '')
+                  .description('date when result first viewed'),
                 errorCode: Joi.string()
                   .allow(null, '')
                   .description(
