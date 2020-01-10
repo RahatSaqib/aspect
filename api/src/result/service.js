@@ -261,6 +261,8 @@ async function getListResults(query, auth, fields = SELECT_LIST_FIELDS) {
     .leftJoin('Site as sirep', 'r.reportableSiteId', 'sirep.id')
     .leftJoin('ResultStatusLog as rslog', 'r.resultStatusLogId', 'rslog.id')
     .leftJoin('Person as ptr', 'rslog.createdBy', 'ptr.userId')
+    // return only not-transferred results
+    .whereRaw('sp.originSiteId = r.reportableSiteId')
     .modify(filterDateRangeParams, query, 'r.endedOn')
     .modify(filterParams, query, {
       deviceId: 'd.id',
@@ -582,11 +584,18 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
       }
       if (params.workflowStatus) {
         if (params.workflowStatus === 'Transferred') {
-          queryBuilder.whereRaw('r.siteId != r.reportableSiteId')
+          // return only transferred results
+          queryBuilder.whereRaw('sp.originSiteId != r.reportableSiteId')
         } else {
           queryBuilder.where('rs.externalId', params.workflowStatus)
+          // return only not-transferred results
+          queryBuilder.whereRaw('sp.originSiteId = r.reportableSiteId')
         }
+      } else {
+        // return only not-transferred results
+        queryBuilder.whereRaw('sp.originSiteId = r.reportableSiteId')
       }
+
       if (params.treatmentStatus)
         queryBuilder.where('rt.externalId', params.treatmentStatus)
       if (params.deviceType)
@@ -2142,6 +2151,7 @@ async function transferResult(request) {
     data: JSON.stringify({
       siteId: result.siteId,
       reportableSiteId: siteId,
+      sampleOriginSiteId: result.sampleOriginSiteId,
     }),
   })
 
