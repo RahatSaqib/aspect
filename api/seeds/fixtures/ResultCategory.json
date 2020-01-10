@@ -7,7 +7,7 @@
     },
     {
       "name": "Trace Detected",
-      "externalId": "TraceDetected",
+      "externalId": "Trace Detected",
       "i18nKey": "ResultCategoryTraceDetected"
     },
     {

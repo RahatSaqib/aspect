@@ -2400,7 +2400,8 @@ async function getGeographyId(knex, countryId, stateId, lgaId) {
 }
 
 async function initDataFromFixture(knex, tableName, keyColumn = 'externalId') {
-  const itemsNew = await readJson(`./seeds/fixtures/${tableName}.json`)
+  const fixture = await readJson(`./seeds/fixtures/${tableName}.json`)
+  const itemsNew = fixture.data || fixture
   const itemsOld = await knex(tableName)
     .whereIn(
       keyColumn,

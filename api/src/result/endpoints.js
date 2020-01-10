@@ -506,9 +506,6 @@ const routes = [
           treatmentStatus: Joi.string()
             .optional()
             .description('External Id of the treatment status'),
-          transferStatus: Joi.string()
-            .optional()
-            .description('Token for transfer status - `to`, `from`, ``'),
           deviceType: Joi.string()
             .optional()
             .description(
