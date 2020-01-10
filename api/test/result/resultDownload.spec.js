@@ -109,7 +109,7 @@ describe('Result download routes', () => {
             assert.typeOf(res.body.data[0].followUps, 'array')
             assert.property(res.body.data[0].followUps[0], 'id')
 
-            assert.equal(Object.keys(res.body.data[0]).length, 31)
+            assert.equal(Object.keys(res.body.data[0]).length, 34)
             await waitForApproximately(2, 'seconds')
 
             // check if the download is register in the table.
@@ -221,7 +221,7 @@ describe('Result download routes', () => {
           assert.typeOf(res.body.data[0].followUps, 'array')
           assert.property(res.body.data[0].followUps[0], 'id')
 
-          assert.equal(Object.keys(res.body.data[0]).length, 31)
+          assert.equal(Object.keys(res.body.data[0]).length, 34)
         })
 
       server
@@ -438,7 +438,7 @@ describe('Result download routes', () => {
             assert.typeOf(res.body.data[0].followUps, 'array')
             assert.property(res.body.data[0].followUps[0], 'id')
 
-            assert.equal(Object.keys(res.body.data[0]).length, 31)
+            assert.equal(Object.keys(res.body.data[0]).length, 34)
             // check if the download is register in the table.
             const { count: totalResult } = await knex('ResultDownloadLog')
               .where('resultId', res.body.data[0].id)
