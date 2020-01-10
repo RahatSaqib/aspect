@@ -375,6 +375,20 @@ const routes = [
             .description('first viewed date'),
         },
       },
+      response: {
+        options: {
+          allowUnknown: false,
+        },
+        schema: Joi.object().keys({
+          ok: Joi.bool()
+            .required()
+            .description('False if there was some sort of error'),
+          data: Joi.object()
+            .required()
+            .description('Return current result')
+            .keys(validateResultResponse()),
+        }),
+      },
     },
   },
   {
@@ -697,9 +711,6 @@ const routes = [
                 sampleOriginSiteId: Joi.number()
                   .allow(null, '')
                   .description('Sample Origin Site Id for the patient'),
-                reportableSiteId: Joi.number()
-                  .allow(null, '')
-                  .description('Reportable siteId of the patient'),
                 firstViewedOn: Joi.date()
                   .allow(null, '')
                   .description('date when result first viewed'),
@@ -828,6 +839,9 @@ const routes = [
                   .description(
                     'The id of last entry in ResultStatusLog for current result'
                   ),
+                reportableSiteId: Joi.number()
+                  .allow(null, '')
+                  .description('Reportable siteId of the patient'),
               })
             ),
         }),

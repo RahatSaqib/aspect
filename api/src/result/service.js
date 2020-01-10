@@ -714,7 +714,6 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
     latitude: d.latitude,
     assayExternalId: d.assayExternalId,
     siteName: d.siteName,
-    reportableSiteId: d.reportableSiteId,
     sampleOriginSiteId: d.sampleOriginSiteId,
     firstViewedOn: d.firstViewedOn ? d.firstViewedOn : null,
     deviceName: d.deviceName,
@@ -787,6 +786,7 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
     transferredOn: d.transferredOn,
     transferredBy: d.transferredBy,
     resultStatusLogId: d.resultStatusLogId,
+    reportableSiteId: d.reportableSiteId,
   }))
 
   const result = {
@@ -2171,7 +2171,7 @@ async function updateTransferNotification(request) {
   }
 
   if (result.data.firstViewedOn) {
-    return Boom.badRequest('Result has already be viewed')
+    return Boom.badRequest('Result has already been viewed')
   }
 
   await knex('Result as r')
