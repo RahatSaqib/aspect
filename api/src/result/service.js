@@ -630,7 +630,6 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
       'r.senderVersion',
       'r.senderOperator',
       'r.notes',
-      'r.reportableSiteId',
       'r.errorCode',
       'r.errorNotes',
       'sp.externalId as sampleId',
