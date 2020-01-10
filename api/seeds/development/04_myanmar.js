@@ -570,7 +570,7 @@ async function seed(knex) {
                 resultSourceId,
                 resultTypeId,
                 sampleId: sample.id,
-                reportableSiteId: sample.originSiteId,
+                reportableSiteId: sample.originSiteId || siteData.id,
                 sampleRunNumber: `${(i % 2) + 1}`,
                 sampleGroup: `GRP-TB-${i % 5}`,
                 resultCategory1: result.category1,
