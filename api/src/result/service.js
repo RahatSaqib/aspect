@@ -42,6 +42,7 @@ const SELECT_LIST_FIELDS = [
   knex.raw(
     'GREATEST(IFNULL(rtas.requiresTreatment,0), IFNULL(rtas2.requiresTreatment,0)) as requiresTreatment'
   ),
+  'so.id as sampleOriginSiteId',
   'so.name as sampleOriginSiteName',
   'sp.externalId as sampleId',
   'r.errorCode',
@@ -57,6 +58,7 @@ const SELECT_LIST_FIELDS = [
   'si.name as siteName',
   'dt.name as deviceTypeName',
   // transfer result
+  'sirep.id as reportableSiteId',
   'sirep.name as reportableSiteName',
   'rslog.createdOn as transferredOn',
   'ptr.name as transferredBy',
