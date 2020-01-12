@@ -132,6 +132,7 @@ const SELECT_COMMON_FIELDS = [
   'rslog.createdOn as transferredOn',
   'ptr.name as transferredBy',
   'r.resultStatusLogId',
+  'r.firstViewedOn',
 ]
 const SELECT_SHOW_FIELDS = _.concat(SELECT_COMMON_FIELDS, 'rf.formSchema')
 const SORT_FIELDS = [
@@ -428,6 +429,7 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
     .select(
       'r.id',
       'r.externalId',
+      'r.firstViewedOn',
       'r.startedOn',
       'r.endedOn',
       'r.createdOn',
@@ -531,6 +533,8 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
     latitude: d.latitude,
     assayExternalId: d.assayExternalId,
     siteName: d.siteName,
+    sampleOriginSiteId: d.sampleOriginSiteId,
+    firstViewedOn: d.firstViewedOn ? d.firstViewedOn : null,
     deviceName: d.deviceName,
     resultCategory1ExternalId: d.resultCategory1ExternalId,
     resultCategory2ExternalId: d.resultCategory2ExternalId,
@@ -601,6 +605,7 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
     transferredOn: d.transferredOn,
     transferredBy: d.transferredBy,
     resultStatusLogId: d.resultStatusLogId,
+    reportableSiteId: d.reportableSiteId,
   }))
 
   const result = {
@@ -1938,6 +1943,33 @@ async function transferResult(request) {
   return result
 }
 
+async function updateTransferNotification(request) {
+  const {
+    params: { resultId },
+    payload: { firstViewedOn },
+  } = request
+
+  const result = await getResultByResultId(request)
+
+  if (!result.ok) {
+    return Boom.notFound('Result with requested Id is not found')
+  }
+
+  if (result.data.firstViewedOn) {
+    return Boom.badRequest('Result has already been viewed')
+  }
+
+  await knex('Result as r')
+    .where('r.id', resultId)
+    .update({
+      firstViewedOn,
+    })
+
+  const data = await getResultByResultId(request)
+
+  return data
+}
+
 function getBaseQueryForResults() {
   const resultQuery = knex('Result as r')
     .innerJoin('Assay as a', 'r.assayId', 'a.id')
@@ -2029,6 +2061,7 @@ function getQueryForResults(query, dataConstraints) {
 }
 
 module.exports = {
+  updateTransferNotification,
   listResults,
   exportResults,
   downloadResultsList,

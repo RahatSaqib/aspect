@@ -62,6 +62,9 @@ describe('Result download routes', () => {
             assert.property(res.body.data[0], 'latitude')
             assert.property(res.body.data[0], 'assayExternalId')
             assert.property(res.body.data[0], 'siteName')
+            assert.property(res.body.data[0], 'reportableSiteId')
+            assert.property(res.body.data[0], 'sampleOriginSiteId')
+            assert.property(res.body.data[0], 'firstViewedOn')
             assert.property(res.body.data[0], 'deviceName')
             assert.property(res.body.data[0], 'resultCategory1ExternalId')
             assert.property(res.body.data[0], 'resultCategory2ExternalId')
@@ -106,7 +109,7 @@ describe('Result download routes', () => {
             assert.typeOf(res.body.data[0].followUps, 'array')
             assert.property(res.body.data[0].followUps[0], 'id')
 
-            assert.equal(Object.keys(res.body.data[0]).length, 31)
+            assert.equal(Object.keys(res.body.data[0]).length, 34)
             await waitForApproximately(2, 'seconds')
 
             // check if the download is register in the table.
@@ -177,6 +180,9 @@ describe('Result download routes', () => {
           assert.property(res.body.data[0], 'latitude')
           assert.property(res.body.data[0], 'assayExternalId')
           assert.property(res.body.data[0], 'siteName')
+          assert.property(res.body.data[0], 'reportableSiteId')
+          assert.property(res.body.data[0], 'sampleOriginSiteId')
+          assert.property(res.body.data[0], 'firstViewedOn')
           assert.property(res.body.data[0], 'deviceName')
           assert.property(res.body.data[0], 'resultCategory1ExternalId')
           assert.property(res.body.data[0], 'resultCategory2ExternalId')
@@ -215,7 +221,7 @@ describe('Result download routes', () => {
           assert.typeOf(res.body.data[0].followUps, 'array')
           assert.property(res.body.data[0].followUps[0], 'id')
 
-          assert.equal(Object.keys(res.body.data[0]).length, 31)
+          assert.equal(Object.keys(res.body.data[0]).length, 34)
         })
 
       server
@@ -248,6 +254,9 @@ describe('Result download routes', () => {
           assert.property(res.body.data[0], 'latitude')
           assert.property(res.body.data[0], 'assayExternalId')
           assert.property(res.body.data[0], 'siteName')
+          assert.property(res.body.data[0], 'reportableSiteId')
+          assert.property(res.body.data[0], 'sampleOriginSiteId')
+          assert.property(res.body.data[0], 'firstViewedOn')
           assert.property(res.body.data[0], 'deviceName')
           assert.property(res.body.data[0], 'resultCategory1ExternalId')
           assert.property(res.body.data[0], 'resultCategory2ExternalId')
@@ -382,6 +391,9 @@ describe('Result download routes', () => {
             assert.property(res.body.data[0], 'latitude')
             assert.property(res.body.data[0], 'assayExternalId')
             assert.property(res.body.data[0], 'siteName')
+            assert.property(res.body.data[0], 'reportableSiteId')
+            assert.property(res.body.data[0], 'sampleOriginSiteId')
+            assert.property(res.body.data[0], 'firstViewedOn')
             assert.property(res.body.data[0], 'deviceName')
             assert.property(res.body.data[0], 'resultCategory1ExternalId')
             assert.property(res.body.data[0], 'resultCategory2ExternalId')
@@ -426,7 +438,7 @@ describe('Result download routes', () => {
             assert.typeOf(res.body.data[0].followUps, 'array')
             assert.property(res.body.data[0].followUps[0], 'id')
 
-            assert.equal(Object.keys(res.body.data[0]).length, 31)
+            assert.equal(Object.keys(res.body.data[0]).length, 34)
             // check if the download is register in the table.
             const { count: totalResult } = await knex('ResultDownloadLog')
               .where('resultId', res.body.data[0].id)
