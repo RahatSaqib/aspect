@@ -367,10 +367,10 @@ describe('Result download routes', () => {
             assert.property(res.body, 'data')
 
             assert.equal(res.body.ok, true)
-            assert.equal(res.body.length, 3)
+            assert.equal(res.body.length, 2)
 
             assert.typeOf(res.body.data, 'array')
-            assert.equal(res.body.data.length, 3)
+            assert.equal(res.body.data.length, 2)
 
             assert.property(res.body.data[0], 'id')
             assert.property(res.body.data[0], 'externalId')
