@@ -287,96 +287,6 @@ const addPartnerQueryConstraints = (
   } else if (country) queryBuilder.where('c.id', country.id)
 }
 
-function getBaseQueryForResults() {
-  const resultQuery = knex('Result as r')
-    .innerJoin('Assay as a', 'r.assayId', 'a.id')
-    .innerJoin('AssayType as at', 'a.assayTypeId', 'at.id')
-    .innerJoin('Device as d', 'r.deviceId', 'd.id')
-    .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
-    .leftJoin('Geography as g', 'r.geographyId', 'g.id')
-    .leftJoin('Country as c', 'g.countryId', 'c.id')
-    .leftJoin('State as st', 'g.stateId', 'st.id')
-    .leftJoin('Lga as lg', 'g.lgaId', 'lg.id')
-    .leftJoin('ResultCategory as rc1', 'r.resultCategory1', 'rc1.id')
-    .leftJoin('ResultCategory as rc2', 'r.resultCategory2', 'rc2.id')
-    .leftJoin('Sample as sp', 'r.sampleId', 'sp.id')
-    .leftJoin('SampleType as stp', 'sp.sampleTypeId', 'stp.id')
-    .leftJoin('Site as so', 'sp.originSiteId', 'so.id')
-    .leftJoin(
-      'ResultWorkflowLog as rsl',
-      'r.resultWorkflowStatusLogId',
-      'rsl.id'
-    )
-    .leftJoin(
-      'ResultWorkflowStatus as rs',
-      'rsl.resultWorkflowStatusId',
-      'rs.id'
-    )
-    .leftJoin(
-      'ResultTreatmentStatusLog as rtsl',
-      'r.treatmentStatusLogId',
-      'rtsl.id'
-    )
-    .leftJoin(
-      'ResultTreatmentStatus as rts',
-      'rtsl.resultTreatmentStatusId',
-      'rts.id'
-    )
-    .leftJoin('Site as si', 'r.siteId', 'si.id')
-    .leftJoin('Site as sirep', 'r.reportableSiteId', 'sirep.id')
-    .leftJoin('ResultStatusLog as rslog', 'r.resultStatusLogId', 'rslog.id')
-    .leftJoin('Person as ptr', 'rslog.createdBy', 'ptr.userId')
-
-  return resultQuery
-}
-function getQueryForResults(query, dataConstraints) {
-  const resultQuery = getBaseQueryForResults()
-    .leftJoin('ResultCategoryAssay as rtas', function() {
-      this.on('r.assayId', 'rtas.assayId').andOn(
-        'r.resultCategory1',
-        'rtas.resultCategoryId'
-      )
-    })
-    .leftJoin('ResultCategoryAssay as rtas2', function() {
-      this.on('r.assayId', 'rtas2.assayId').andOn(
-        'r.resultCategory1',
-        'rtas2.resultCategoryId'
-      )
-    })
-    .modify(filterDateRangeParams, query, 'r.endedOn')
-    .modify(filterParams, query, {
-      deviceId: 'd.id',
-      assayId: 'r.assayId',
-      resultCategoryId: 'r.resultCategory1',
-      countryId: 'g.countryId',
-      stateId: 'g.stateId',
-      lgaId: 'g.lgaId',
-      deviceName: 'd.name',
-      siteName: 'si.name',
-      sampleId: 'sp.externalId',
-      sampleOriginSite: 'so.name',
-      errorCode: 'r.errorCode',
-      workflowStatusId: 'rs.id',
-      treatmentStatusId: 'rts.id',
-    })
-    .modify((queryBuilder, params) => {
-      if (params.patientOrResearchId) {
-        queryBuilder
-          .whereRaw('JSON_EXTRACT(r.patientData, "$.id") like ?', [
-            `%${params.patientOrResearchId}%`,
-          ])
-          .orWhere('r.researchId', 'like', `%${params.patientOrResearchId}%`)
-      }
-    }, query)
-    .modify(addPartnerQueryConstraints, dataConstraints)
-    .modify(addConstraints, dataConstraints, {
-      device: 'd',
-      result: 'r',
-    })
-
-  return resultQuery
-}
-
 async function exportResults(query, auth) {
   const selectFields = _.clone(SELECT_COMMON_FIELDS)
   const sortableFields = _.clone(SORT_FIELDS)
@@ -2026,6 +1936,96 @@ async function transferResult(request) {
 
   result = await getResultByResultId(request)
   return result
+}
+
+function getBaseQueryForResults() {
+  const resultQuery = knex('Result as r')
+    .innerJoin('Assay as a', 'r.assayId', 'a.id')
+    .innerJoin('AssayType as at', 'a.assayTypeId', 'at.id')
+    .innerJoin('Device as d', 'r.deviceId', 'd.id')
+    .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
+    .leftJoin('Geography as g', 'r.geographyId', 'g.id')
+    .leftJoin('Country as c', 'g.countryId', 'c.id')
+    .leftJoin('State as st', 'g.stateId', 'st.id')
+    .leftJoin('Lga as lg', 'g.lgaId', 'lg.id')
+    .leftJoin('ResultCategory as rc1', 'r.resultCategory1', 'rc1.id')
+    .leftJoin('ResultCategory as rc2', 'r.resultCategory2', 'rc2.id')
+    .leftJoin('Sample as sp', 'r.sampleId', 'sp.id')
+    .leftJoin('SampleType as stp', 'sp.sampleTypeId', 'stp.id')
+    .leftJoin('Site as so', 'sp.originSiteId', 'so.id')
+    .leftJoin(
+      'ResultWorkflowLog as rsl',
+      'r.resultWorkflowStatusLogId',
+      'rsl.id'
+    )
+    .leftJoin(
+      'ResultWorkflowStatus as rs',
+      'rsl.resultWorkflowStatusId',
+      'rs.id'
+    )
+    .leftJoin(
+      'ResultTreatmentStatusLog as rtsl',
+      'r.treatmentStatusLogId',
+      'rtsl.id'
+    )
+    .leftJoin(
+      'ResultTreatmentStatus as rts',
+      'rtsl.resultTreatmentStatusId',
+      'rts.id'
+    )
+    .leftJoin('Site as si', 'r.siteId', 'si.id')
+    .leftJoin('Site as sirep', 'r.reportableSiteId', 'sirep.id')
+    .leftJoin('ResultStatusLog as rslog', 'r.resultStatusLogId', 'rslog.id')
+    .leftJoin('Person as ptr', 'rslog.createdBy', 'ptr.userId')
+
+  return resultQuery
+}
+function getQueryForResults(query, dataConstraints) {
+  const resultQuery = getBaseQueryForResults()
+    .leftJoin('ResultCategoryAssay as rtas', function() {
+      this.on('r.assayId', 'rtas.assayId').andOn(
+        'r.resultCategory1',
+        'rtas.resultCategoryId'
+      )
+    })
+    .leftJoin('ResultCategoryAssay as rtas2', function() {
+      this.on('r.assayId', 'rtas2.assayId').andOn(
+        'r.resultCategory1',
+        'rtas2.resultCategoryId'
+      )
+    })
+    .modify(filterDateRangeParams, query, 'r.endedOn')
+    .modify(filterParams, query, {
+      deviceId: 'd.id',
+      assayId: 'r.assayId',
+      resultCategoryId: 'r.resultCategory1',
+      countryId: 'g.countryId',
+      stateId: 'g.stateId',
+      lgaId: 'g.lgaId',
+      deviceName: 'd.name',
+      siteName: 'si.name',
+      sampleId: 'sp.externalId',
+      sampleOriginSite: 'so.name',
+      errorCode: 'r.errorCode',
+      workflowStatusId: 'rs.id',
+      treatmentStatusId: 'rts.id',
+    })
+    .modify((queryBuilder, params) => {
+      if (params.patientOrResearchId) {
+        queryBuilder
+          .whereRaw('JSON_EXTRACT(r.patientData, "$.id") like ?', [
+            `%${params.patientOrResearchId}%`,
+          ])
+          .orWhere('r.researchId', 'like', `%${params.patientOrResearchId}%`)
+      }
+    }, query)
+    .modify(addPartnerQueryConstraints, dataConstraints)
+    .modify(addConstraints, dataConstraints, {
+      device: 'd',
+      result: 'r',
+    })
+
+  return resultQuery
 }
 
 module.exports = {
