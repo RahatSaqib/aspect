@@ -215,7 +215,7 @@ async function getListResults(query, auth, fields = SELECT_LIST_FIELDS) {
   // get data constraints
   const dataConstraints = await getConstraints(auth.credentials)
 
-  const resultQuery = getQueryForResults(query, dataConstraints)
+  const resultQuery = getQueryForResultsListAndExport(query, dataConstraints)
 
   // get total count for paging
   const getCount = resultQuery
@@ -323,7 +323,7 @@ async function exportResults(query, auth) {
   // get data constraints
   const dataConstraints = await getConstraints(auth.credentials)
 
-  const resultQuery = getQueryForResults(query, dataConstraints)
+  const resultQuery = getQueryForResultsListAndExport(query, dataConstraints)
   const data = await resultQuery
     .modify(sortPageParams, query, 'endedOn')
     .select(selectFields)
@@ -396,14 +396,12 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
         )
       }
       if (params.workflowStatus) {
-        if (params.workflowStatus === 'Transferred') {
-          // return only results transferred "to ME" (to r.reportableSiteId)
-          queryBuilder.whereRaw('sp.originSiteId != r.reportableSiteId')
-        } else {
-          queryBuilder.where('rs.externalId', params.workflowStatus)
-        }
+        queryBuilder.where('rs.externalId', params.workflowStatus)
       }
-
+      if (params.isTransferred) {
+        // return only results transferred "to ME" (to r.reportableSiteId)
+        queryBuilder.whereRaw('sp.originSiteId != r.reportableSiteId')
+      }
       if (params.treatmentStatus)
         queryBuilder.where('rts.externalId', params.treatmentStatus)
       if (params.deviceType)
@@ -2012,7 +2010,7 @@ function getBaseQueryForResults() {
 
   return resultQuery
 }
-function getQueryForResults(query, dataConstraints) {
+function getQueryForResultsListAndExport(query, dataConstraints) {
   const resultQuery = getBaseQueryForResults()
     .leftJoin('ResultCategoryAssay as rtas', function() {
       this.on('r.assayId', 'rtas.assayId').andOn(

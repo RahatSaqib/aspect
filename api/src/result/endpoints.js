@@ -549,6 +549,10 @@ const routes = [
             .description(
               'External Id Device type, the default value is CepheidGeneXpert'
             ),
+          isTransferred: Joi.boolean()
+            .optional()
+            .allow(null)
+            .description('True to search only among Transferred results'),
           ...validateSortPageParams('updatedOn'),
         },
       },
