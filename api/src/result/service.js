@@ -1893,12 +1893,12 @@ async function transferResult(request) {
     params: { resultId },
     payload: { siteId },
   } = request
-  const { partnerId, countryId, id: currentUserId } = await getUser(
+  const { partnerId, countryId, id: currentUserId, userName } = await getUser(
     auth.credentials.name
   )
 
   // get the result so we can check access
-  let result = await getResultByResultId(request)
+  const result = await getResultByResultId(request)
   if (!result.ok) {
     return Boom.notFound('Result with requested Id is not found')
   }
@@ -1928,6 +1928,9 @@ async function transferResult(request) {
       sampleOriginSiteId: result.sampleOriginSiteId,
     }),
   })
+  const { createdOn: transferredOn } = await knex('ResultStatusLog')
+    .where({ id: resultStatusLogId })
+    .first('createdOn')
 
   // update
   await knex('Result')
@@ -1937,7 +1940,15 @@ async function transferResult(request) {
       resultStatusLogId,
     })
 
-  result = await getResultByResultId(request)
+  // func getResultByResultId(request) does not return now current result because
+  // r.reportableSiteId now has changed and is not equal to sample.originSiteId -
+  // so we here simply update few fields affected by transfer and return old result
+  result.data.reportableSiteId = siteId
+  result.data.reportableSiteName = site.name
+  result.data.transferredOn = transferredOn
+  result.data.transferredBy = userName
+  result.data.resultStatusLogId = resultStatusLogId
+
   return result
 }
 
