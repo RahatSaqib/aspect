@@ -1941,7 +1941,7 @@ async function transferResult(request) {
     })
 
   // func getResultByResultId(request) does not return now current result because
-  // r.reportableSiteId now has changed and is not equal to sample.originSiteId -
+  // r.reportableSiteId now has changed and may not equal to user's siteId's -
   // so we here simply update few fields affected by transfer and return old result
   result.data.reportableSiteId = siteId
   result.data.reportableSiteName = site.name
