@@ -200,7 +200,9 @@ describe('Device API Raw routes for Abbott M2000', () => {
       .orWhere(function() {
         if (resultIds != null && resultIds.length > 0) {
           this.whereRaw(
-            `JSON_EXTRACT(data, "$.resultId") IN (${resultIds.join(',')})`
+            `LOWER(JSON_EXTRACT(data, "$.resultId")) IN (${resultIds
+              .join(',')
+              .toLowerCase()})`
           )
         }
       })

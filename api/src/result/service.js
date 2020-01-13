@@ -280,11 +280,14 @@ async function getListResults(query, auth, fields = SELECT_LIST_FIELDS) {
     })
     .modify((queryBuilder, params) => {
       if (params.patientOrResearchId) {
-        queryBuilder
-          .whereRaw('JSON_EXTRACT(r.patientData, "$.id") like ?', [
-            `%${params.patientOrResearchId}%`,
-          ])
-          .orWhere('r.researchId', 'like', `%${params.patientOrResearchId}%`)
+        queryBuilder.where(builder =>
+          builder
+            .whereRaw(
+              'LOWER(JSON_EXTRACT(r.patientData, "$.id")) like LOWER(JSON_QUOTE(?))',
+              [`%${params.patientOrResearchId}%`]
+            )
+            .orWhere('r.researchId', 'like', `%${params.patientOrResearchId}%`)
+        )
       }
     }, query)
     .modify(addPartnerQueryConstraints, dataConstraints)
@@ -466,11 +469,14 @@ async function exportResults(query, auth) {
     })
     .modify((queryBuilder, params) => {
       if (params.patientOrResearchId) {
-        queryBuilder
-          .whereRaw('JSON_EXTRACT(r.patientData, "$.id") like ?', [
-            `%${params.patientOrResearchId}%`,
-          ])
-          .orWhere('r.researchId', 'like', `%${params.patientOrResearchId}%`)
+        queryBuilder.where(builder =>
+          builder
+            .whereRaw(
+              'LOWER(JSON_EXTRACT(r.patientData, "$.id")) like LOWER(JSON_QUOTE(?))',
+              [`%${params.patientOrResearchId}%`]
+            )
+            .orWhere('r.researchId', 'like', `%${params.patientOrResearchId}%`)
+        )
       }
     }, query)
     .modify(sortPageParams, query, 'endedOn')
@@ -550,24 +556,28 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
           builder
             .where('sp.externalId', 'like', `%${params.patientSample}%`)
             .orWhere(
-              knex.raw('JSON_EXTRACT(patientData,"$.firstName")'),
-              'like',
-              `%${params.patientSample}%`
+              knex.raw(
+                'LOWER(JSON_EXTRACT(patientData,"$.firstName")) like LOWER(JSON_QUOTE(?))',
+                [`%${params.patientSample}%'`]
+              )
             )
             .orWhere(
-              knex.raw('JSON_EXTRACT(patientData,"$.lastName")'),
-              'like',
-              `%${params.patientSample}%`
+              knex.raw(
+                'LOWER(JSON_EXTRACT(patientData,"$.lastName")) like LOWER(JSON_QUOTE(?))',
+                [`%${params.patientSample}%`]
+              )
             )
             .orWhere(
-              knex.raw('JSON_EXTRACT(patientData,"$.name")'),
-              'like',
-              `%${params.patientSample}%`
+              knex.raw(
+                'LOWER(JSON_EXTRACT(patientData,"$.name")) like LOWER(JSON_QUOTE(?))',
+                [`%${params.patientSample}%`]
+              )
             )
             .orWhere(
-              knex.raw('JSON_EXTRACT(patientData,"$.id")'),
-              'like',
-              `%${params.patientSample}%`
+              knex.raw(
+                'LOWER(JSON_EXTRACT(patientData,"$.id")) like LOWER(JSON_QUOTE(?))',
+                [`%${params.patientSample}%`]
+              )
             )
         )
       }

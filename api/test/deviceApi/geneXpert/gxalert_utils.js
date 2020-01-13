@@ -155,7 +155,9 @@ async function deleteGeneXpertDeviceSiteDataAndRefreshTokens(
     .orWhere(function() {
       if (resultIds != null && resultIds.length > 0) {
         this.whereRaw(
-          `JSON_EXTRACT(data, "$.resultId") IN (${resultIds.join(',')})`
+          `LOWER(JSON_EXTRACT(data, "$.resultId")) IN (${resultIds
+            .join(',')
+            .toLowerCase()})`
         )
       }
     })
