@@ -333,7 +333,7 @@ describe('Issue Resolution', () => {
     let messageContext
     const deviceIdsToRemove = []
 
-    before(async () =>
+    before(() =>
       run(async knex => {
         partner = await getPartner(knex, partnerName)
         messageContext = await createMessageContext()
@@ -357,7 +357,7 @@ describe('Issue Resolution', () => {
         deviceIdsToRemove.push(testDeviceId2)
       })
     )
-    after(async () =>
+    after(() =>
       run(async knex => {
         await deleteDeviceAndTestData(knex, deviceIdsToRemove)
       })
@@ -373,7 +373,7 @@ describe('Issue Resolution', () => {
       const devicesToBringBackOnline = []
       const factDeviceFlagsToRemove = []
 
-      before(async () =>
+      before(() =>
         run(async knex => {
           deviceOfflineIssueType = await getIssueType(knex, 'DeviceOffline')
           const device1Details = await getDevice(knex, {
@@ -421,7 +421,7 @@ describe('Issue Resolution', () => {
         })
       )
 
-      after(async () =>
+      after(() =>
         run(async knex => {
           await Promise.all(
             _.map(factDeviceFlagsToRemove, deviceId =>
@@ -441,7 +441,7 @@ describe('Issue Resolution', () => {
         })
       )
 
-      beforeEach(async () =>
+      beforeEach(() =>
         run(async knex => {
           device1OfflineIssueId = await createAndTriggerIssue({
             knex,
@@ -464,7 +464,7 @@ describe('Issue Resolution', () => {
         })
       )
 
-      afterEach(async () =>
+      afterEach(() =>
         run(async knex => {
           await cleanUpIssues(knex, [
             device1OfflineIssueId,
@@ -530,7 +530,7 @@ describe('Issue Resolution', () => {
       })
 
       describe('and then one of the devices come back online', () => {
-        beforeEach(async () =>
+        beforeEach(() =>
           run(async knex => {
             await knex('FactDeviceFlag')
               .where('deviceId', device1.id)
@@ -572,7 +572,7 @@ describe('Issue Resolution', () => {
       })
 
       describe('then both of the devices come back online', () => {
-        beforeEach(async () =>
+        beforeEach(() =>
           run(async knex => {
             await knex('FactDeviceFlag')
               .where('deviceId', device1.id)
@@ -651,7 +651,7 @@ describe('Issue Resolution', () => {
       describe('then a reason is specified for one of the devices being offline', () => {
         let maintenanceReasonEventId
 
-        beforeEach(async () =>
+        beforeEach(() =>
           run(async knex => {
             await knex('FactDeviceFlag')
               .where('deviceId', device1.id)
@@ -671,7 +671,7 @@ describe('Issue Resolution', () => {
           })
         )
 
-        afterEach(async () =>
+        afterEach(() =>
           run(async knex => {
             await knex('FactDeviceFlag')
               .where('deviceId', device1.id)
@@ -719,7 +719,7 @@ describe('Issue Resolution', () => {
         let maintenanceReasonEventId1
         let maintenanceReasonEventId2
 
-        beforeEach(async () =>
+        beforeEach(() =>
           run(async knex => {
             await knex('FactDeviceFlag')
               .where('deviceId', device1.id)
@@ -748,7 +748,7 @@ describe('Issue Resolution', () => {
           })
         )
 
-        afterEach(async () =>
+        afterEach(() =>
           run(async knex => {
             await knex('FactDeviceFlag')
               .where('deviceId', device1.id)
@@ -831,7 +831,7 @@ describe('Issue Resolution', () => {
       })
 
       describe('then one then the devices is decommissioned', () => {
-        beforeEach(async () =>
+        beforeEach(() =>
           run(async knex => {
             await knex('Device')
               .where('id', device1.id)
@@ -842,7 +842,7 @@ describe('Issue Resolution', () => {
           })
         )
 
-        afterEach(async () =>
+        afterEach(() =>
           run(async knex => {
             await knex('Device')
               .where('id', device1.id)
@@ -884,7 +884,7 @@ describe('Issue Resolution', () => {
       })
 
       describe('then both of the devices are decommissioned', () => {
-        beforeEach(async () =>
+        beforeEach(() =>
           run(async knex => {
             await knex('Device')
               .where('id', device1.id)
@@ -895,7 +895,7 @@ describe('Issue Resolution', () => {
           })
         )
 
-        afterEach(async () =>
+        afterEach(() =>
           run(async knex => {
             await knex('Device')
               .where('id', device1.id)
@@ -1035,7 +1035,7 @@ describe('Issue Resolution', () => {
         return resultId
       }
 
-      before(async () =>
+      before(() =>
         run(async knex => {
           deviceNoResultsIssueType = await getIssueType(knex, 'DeviceNoResults')
           const noResultsSince = subDays(
@@ -1112,7 +1112,7 @@ describe('Issue Resolution', () => {
         })
       )
 
-      after(async () =>
+      after(() =>
         run(async knex => {
           await Promise.all(
             _.map(factDeviceFlagsToRemove, deviceId =>
@@ -1132,7 +1132,7 @@ describe('Issue Resolution', () => {
         })
       )
 
-      beforeEach(async () =>
+      beforeEach(() =>
         run(async knex => {
           device1NoResultsIssueId = await createAndTriggerIssue({
             knex,
@@ -1155,7 +1155,7 @@ describe('Issue Resolution', () => {
         })
       )
 
-      afterEach(async () =>
+      afterEach(() =>
         run(async knex => {
           await cleanUpIssues(knex, [
             device1NoResultsIssueId,
@@ -1223,14 +1223,14 @@ describe('Issue Resolution', () => {
       describe('and then one of the devices posts a result', () => {
         const resultIdsToCleanUp = []
 
-        beforeEach(async () =>
+        beforeEach(() =>
           run(async knex => {
             const resultId = await postResult(knex, device1)
             resultIdsToCleanUp.push(resultId)
           })
         )
 
-        afterEach(async () =>
+        afterEach(() =>
           run(async knex =>
             Promise.each(resultIdsToCleanUp, resultId =>
               knex('Result')
@@ -1273,14 +1273,14 @@ describe('Issue Resolution', () => {
       describe('then the other device posts a result', () => {
         const resultIdsToCleanUp = []
 
-        beforeEach(async () =>
+        beforeEach(() =>
           run(async knex => {
             const resultId = await postResult(knex, device2)
             resultIdsToCleanUp.push(resultId)
           })
         )
 
-        afterEach(async () =>
+        afterEach(() =>
           run(async knex =>
             Promise.each(resultIdsToCleanUp, resultId =>
               knex('Result')
@@ -1352,7 +1352,7 @@ describe('Issue Resolution', () => {
       describe('then a reason is specified for one of the devices being inactive', () => {
         let device1ConfigurationData
 
-        beforeEach(async () =>
+        beforeEach(() =>
           run(async knex => {
             await knex('FactDeviceFlag')
               .where('deviceId', device1.id)
@@ -1373,7 +1373,7 @@ describe('Issue Resolution', () => {
           })
         )
 
-        afterEach(async () =>
+        afterEach(() =>
           run(async knex => {
             await knex('FactDeviceFlag')
               .where('deviceId', device1.id)
@@ -1422,7 +1422,7 @@ describe('Issue Resolution', () => {
         let device1ConfigurationData
         let device2ConfigurationData
 
-        beforeEach(async () =>
+        beforeEach(() =>
           run(async knex => {
             await knex('FactDeviceFlag')
               .where('deviceId', device1.id)
@@ -1460,7 +1460,7 @@ describe('Issue Resolution', () => {
           })
         )
 
-        afterEach(async () =>
+        afterEach(() =>
           run(async knex => {
             await knex('FactDeviceFlag')
               .where('deviceId', device1.id)
@@ -1552,7 +1552,7 @@ describe('Issue Resolution', () => {
       })
 
       describe('then one then the devices is decommissioned', () => {
-        beforeEach(async () =>
+        beforeEach(() =>
           run(async knex => {
             await knex('Device')
               .where('id', device1.id)
@@ -1563,7 +1563,7 @@ describe('Issue Resolution', () => {
           })
         )
 
-        afterEach(async () =>
+        afterEach(() =>
           run(async knex => {
             await knex('Device')
               .where('id', device1.id)
@@ -1605,7 +1605,7 @@ describe('Issue Resolution', () => {
       })
 
       describe('then both of the devices are decommissioned', () => {
-        beforeEach(async () =>
+        beforeEach(() =>
           run(async knex => {
             await knex('Device')
               .where('id', device1.id)
@@ -1616,7 +1616,7 @@ describe('Issue Resolution', () => {
           })
         )
 
-        afterEach(async () =>
+        afterEach(() =>
           run(async knex => {
             await knex('Device')
               .where('id', device1.id)

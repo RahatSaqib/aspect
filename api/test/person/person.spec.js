@@ -35,7 +35,7 @@ describe('Person routes', () => {
   describe('PUT', () => {
     let person
     let siteId
-    before(async () =>
+    before(() =>
       run(async knex => {
         const dataConstraints = await getConstraints({ name: 'admin' })
         person = await getTestContact(knex, dataConstraints)
@@ -112,7 +112,7 @@ describe('Person routes', () => {
   describe('POST', () => {
     const testingPersonName = 'TESTING PERSON'
     let testingPersonId
-    after(async () =>
+    after(() =>
       run(async knex => {
         // remove testing person
         if (testingPersonId) {

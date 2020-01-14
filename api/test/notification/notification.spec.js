@@ -21,7 +21,7 @@ describe('Notification routes', () => {
 
   const ntArr = []
 
-  beforeEach(async () =>
+  beforeEach(() =>
     run(async knex => {
       const issueTypes = await rowsAsObject(knex, 'IssueType', 'externalId')
       await Promise.each(sampleIssues, async issue => {
@@ -44,7 +44,7 @@ describe('Notification routes', () => {
     })
   )
 
-  afterEach(async () =>
+  afterEach(() =>
     run(async knex => {
       await Promise.each(ntArr, async ntId => {
         await knex('Notification')

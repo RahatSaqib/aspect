@@ -486,7 +486,6 @@ describe('Authentication routes', () => {
     const path = `${authPath}/update-login-details`
     it('should allow users to login with their new username after they have changed it', async () => {
       const newUsername = 'new-username'
-      console.log(`Bearer ${shared.token}`)
       await server
         .put(path)
         .send({
@@ -569,13 +568,7 @@ describe('Authentication routes', () => {
 
     it('should allow users to login with their new password after they have changed it', async () => {
       const newPassword = '0mgIt5aP@ssw0rd!'
-      console.log(
-        adminPassword,
-        webClientName,
-        newPassword,
-        shared.token,
-        jwToken
-      )
+
       await server
         .put(path)
         .send({

@@ -129,7 +129,7 @@ describe('DataCategoryLow Issues Endpoint', () => {
   const categoryTokenWithIssue = 'PreviouslyTreated'
   const issueType = `DataCategoryLowFor${categoryTokenWithIssue}`
 
-  before(async () =>
+  before(() =>
     run(async knex => {
       // get dataCategory definitions
       const pluginName = partnerName.toLowerCase()
@@ -286,7 +286,7 @@ describe('DataCategoryLow Issues Endpoint', () => {
     })
   )
 
-  after(async () =>
+  after(() =>
     run(async knex => {
       await waitForIdle(2000)
 
@@ -320,8 +320,8 @@ describe('DataCategoryLow Issues Endpoint', () => {
     })
   )
 
-  it('trigger DataCategoryLow issue for testing site', async () => {
-    await runTestWithKnex(async knex => {
+  it('trigger DataCategoryLow issue for testing site', () =>
+    runTestWithKnex(async knex => {
       // last 30 days
       const period = {
         name: 'last 30 days',
@@ -457,6 +457,5 @@ describe('DataCategoryLow Issues Endpoint', () => {
       // see /seeds/dataCategory.js for NotificationType items
       assertNotif(notifLU, USER_LU_NAME_PREFIX, 'Lab User')
       assertNotif(notifLUROView, USER_RO_NAME_PREFIX, 'Regional Officer')
-    })
-  })
+    }))
 })

@@ -15,7 +15,7 @@ describe('Device routes', () => {
   describe('GET', () => {
     shared.checkToken(server, path)
 
-    before(async () =>
+    before(() =>
       run(async knex => {
         const now = new Date()
         const { id: partnerId } = await knex('Partner')
@@ -52,7 +52,7 @@ describe('Device routes', () => {
       })
     )
 
-    after(async () =>
+    after(() =>
       run(async knex => {
         await knex('DeviceApiKey')
           .whereIn('id', deviceApiKeyIds)

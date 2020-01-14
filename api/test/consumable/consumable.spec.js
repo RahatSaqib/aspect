@@ -180,21 +180,21 @@ describe('Assay Consumable Routes', () => {
       const initialQuantity = 0.32
       const updatedQuantity = 5.68
 
-      before(async () =>
+      before(() =>
         run(async knex => {
           assayId = await getTestAssayId(knex)
           consumableId = await createTestConsumable(knex)
         })
       )
 
-      after(async () =>
+      after(() =>
         run(async knex => {
           await cleanUpTestConsumable(knex, consumableId)
         })
       )
 
       describe('POST', () => {
-        afterEach(async () =>
+        afterEach(() =>
           run(async knex => {
             await knex('ConsumableAssay')
               .where({ consumableId, assayId })
@@ -266,7 +266,7 @@ describe('Assay Consumable Routes', () => {
       })
 
       describe('PUT', () => {
-        beforeEach(async () =>
+        beforeEach(() =>
           run(async knex => {
             await knex('ConsumableAssay').insert({
               consumableId,
@@ -275,7 +275,7 @@ describe('Assay Consumable Routes', () => {
             })
           })
         )
-        afterEach(async () =>
+        afterEach(() =>
           run(async knex => {
             await knex('ConsumableAssay')
               .where({ consumableId, assayId })
@@ -320,7 +320,7 @@ describe('Assay Consumable Routes', () => {
       })
 
       describe('DELETE', () => {
-        beforeEach(async () =>
+        beforeEach(() =>
           run(async knex => {
             await knex('ConsumableAssay').insert({
               consumableId,
@@ -329,7 +329,7 @@ describe('Assay Consumable Routes', () => {
             })
           })
         )
-        afterEach(async () =>
+        afterEach(() =>
           run(async knex => {
             await knex('ConsumableAssay')
               .where({ consumableId, assayId })

@@ -99,7 +99,7 @@ describe('Device API routes for GxAlert Device', () => {
             afterCleanUp,
           } = context
 
-          beforeEach(async () =>
+          beforeEach(() =>
             run(async knex => {
               maxDeviceIdBefore = await getMaxDeviceId(knex)
               await beforeCreateGxAlertApiKey()
@@ -219,7 +219,7 @@ describe('Device API routes for GxAlert Device', () => {
           } = context
           let { deviceAuth, basicDevicePayload } = context
 
-          before(async () =>
+          before(() =>
             run(async () => {
               await beforeCreateGxAlertApiKey()
               useGxAlertDeviceId(initialGxAlertDeviceId)
@@ -390,7 +390,7 @@ describe('Device API routes for GxAlert Device', () => {
         afterCleanUp,
       } = context
 
-      beforeEach(async () =>
+      beforeEach(() =>
         run(async knex => {
           maxDeviceIdBefore = await getMaxDeviceId(knex)
           await beforeCreateGxAlertApiKey()
@@ -843,7 +843,7 @@ describe('Device API routes for GxAlert Device', () => {
         afterCleanUp,
       } = context
 
-      beforeEach(async () =>
+      beforeEach(() =>
         run(async knex => {
           maxDeviceIdBefore = await getMaxDeviceId(knex)
           await beforeCreateGxAlertApiKey()
@@ -1283,7 +1283,7 @@ describe('Device API routes for GxAlert Device', () => {
         afterCleanUp,
       } = context
 
-      beforeEach(async () =>
+      beforeEach(() =>
         run(async knex => {
           maxDeviceIdBefore = await getMaxDeviceId(knex)
           await beforeCreateGxAlertApiKey()
@@ -1726,7 +1726,7 @@ describe('Device API routes for GxAlert Device', () => {
         afterCleanUp,
       } = context
 
-      before(async () =>
+      before(() =>
         run(async () => {
           await beforeCreateGxAlertApiKey()
           useGxAlertDeviceId(gxAlertDeviceId)
@@ -1861,7 +1861,7 @@ describe('Device API routes for GxAlert Device', () => {
         return _.merge(logEntry, { data: JSON.parse(logEntry.data) })
       }
 
-      beforeEach(async () =>
+      beforeEach(() =>
         run(async () => {
           await beforeCreateGxAlertApiKey({
             countryAbbreviation: country,
@@ -2270,7 +2270,7 @@ describe('Device API routes for GxAlert Device', () => {
       } = context
       let { deviceAuth, basicDevicePayload } = context
 
-      before(async () =>
+      before(() =>
         run(async () => {
           await beforeCreateGxAlertApiKey()
           useGxAlertDeviceId(deviceIdFromGxAlert)
@@ -2338,7 +2338,7 @@ describe('Device API routes for GxAlert Device', () => {
 
       let standardDevicePayload
 
-      beforeEach(async () =>
+      beforeEach(() =>
         run(async () => {
           await beforeCreateGxAlertApiKey({
             countryAbbreviation: country,
@@ -2736,7 +2736,7 @@ describe('Device API routes for GxAlert Device', () => {
     } = context
     let { deviceAuth, basicDevicePayload } = context
 
-    beforeEach(async () =>
+    beforeEach(() =>
       run(async () => {
         await beforeCreateGxAlertApiKey()
         useGxAlertDeviceId(deviceIdFromGxAlert)
@@ -2848,7 +2848,7 @@ describe('Device API routes for GxAlert Device', () => {
       afterCleanUp,
     } = context
     let { deviceAuth, device: gxAlertDevice } = context
-    beforeEach(async () =>
+    beforeEach(() =>
       run(async () => {
         await beforeCreateGxAlertApiKey()
         useGxAlertDeviceId(gxAlertDeviceId)
@@ -3527,7 +3527,7 @@ describe('Device API routes for GxAlert Device', () => {
 
     describe('when the assay in the result payload is unknown to Aspect', () => {
       const assayName = 'New Assay Type'
-      after(async () =>
+      after(() =>
         run(async knex =>
           knex('Assay')
             .where({ externalId: assayName })
@@ -3598,7 +3598,7 @@ describe('Device API routes for GxAlert Device', () => {
 
     describe('when the assay in the result payload is mapped to a consumable', () => {
       const initialQuantityOnHand = 100
-      beforeEach(async () =>
+      beforeEach(() =>
         run(async () => {
           const { deviceAuth, basicDevicePayload } = context
           await postToDeviceApi({
@@ -4022,7 +4022,7 @@ describe('Device API routes for GxAlert Device', () => {
     })
 
     describe('when the result comes from a site that has location data saved', () => {
-      beforeEach(async () =>
+      beforeEach(() =>
         run(async () => {
           const { deviceAuth, basicDevicePayload } = context
           await postToDeviceApi({
@@ -4408,7 +4408,7 @@ describe('Device API routes for GxAlert Device', () => {
     } = context
     let { deviceAuth, basicDevicePayload } = context
     let geneXpertDevice
-    beforeEach(async () =>
+    beforeEach(() =>
       run(async () => {
         await beforeCreateGxAlertApiKey()
         useGxAlertDeviceId(gxAlertDeviceId)
@@ -4520,7 +4520,7 @@ describe('Device API routes for GxAlert Device', () => {
       }))
 
     describe('inventory update', () => {
-      beforeEach(async () =>
+      beforeEach(() =>
         run(async knex => {
           const consumableAssay = await knex('ConsumableAssay as ca')
             .join('Assay as a', 'ca.assayId', 'a.id')

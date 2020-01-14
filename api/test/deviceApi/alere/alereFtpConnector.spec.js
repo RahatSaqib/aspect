@@ -109,7 +109,7 @@ describe('Device API routes for Alere FTP Connector Device', () => {
           ],
         }
 
-        before(async () =>
+        before(() =>
           run(async knex => {
             maxDeviceIdBefore = await getMaxDeviceId(knex)
             await beforeCreateAlereFtpConnectorApiKey()
@@ -272,7 +272,7 @@ describe('Device API routes for Alere FTP Connector Device', () => {
       ],
     }
 
-    before(async () =>
+    before(() =>
       run(async () => {
         await beforeCreateAlereFtpConnectorApiKey()
         useAlereDeviceSerialNumber(deviceSerial)
