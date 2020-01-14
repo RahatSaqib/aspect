@@ -288,7 +288,7 @@ async function generateResults(
     elem =>
       elem.externalId === 'assayBdMgitAst' ||
       elem.externalId === 'assayBdMgitGnd'
-  ).id
+  )
   // make sure we have at least one result with these status
   let ensureResultIds = [acknowledged, validated, deliverable]
   const possitiveMTBResults = []
