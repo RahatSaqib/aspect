@@ -47,7 +47,7 @@ describe('Result routes', () => {
   describe('GET', () => {
     shared.checkToken(server, path)
 
-    it('should return a list of results', async () =>
+    it('should return a list of results', () =>
       runTestWithKnex(async knex => {
         initialResultWorkflowStatusName = await server
           .get(path)
@@ -91,11 +91,11 @@ describe('Result routes', () => {
         ).externalId
       }))
 
-    it('should return a list of results with assay-specific fields if TB assay is requested', done => {
-      server
+    it('should return a list of results with assay-specific fields if TB assay is requested', async () => {
+      await server
         .get(`${path}?assayId=${assayId}`)
         .set('Authorization', `Bearer ${shared.token}`)
-        .end((err, res) => {
+        .then(res => {
           assert.equal(res.status, 200)
           assert.typeOf(res.body, 'Object')
           assert.property(res.body, 'data')
@@ -118,15 +118,14 @@ describe('Result routes', () => {
           assert.property(res.body.data[0], 'resultWorkflowStatus')
           assert.property(res.body, 'total')
           assert.typeOf(res.body.extraColumns, 'array')
-          done()
         })
     })
 
-    it('should return a single result', done => {
-      server
+    it('should return a single result', async () => {
+      await server
         .get(`${path}/${resultId}`)
         .set('Authorization', `Bearer ${shared.token}`)
-        .end((err, res) => {
+        .then(res => {
           assert.equal(res.status, 200)
           assert.typeOf(res.body, 'Object')
           assert.property(res.body, 'data')
@@ -178,15 +177,14 @@ describe('Result routes', () => {
           assert.property(res.body.data.assay, 'resultDataSchema')
           assert.typeOf(res.body.data.assay.resultDataSchema, 'Object')
           assert.property(res.body.data, 'files')
-          done()
         })
     })
 
-    it('should return a list of results that the clinician has access to via sample origin site', done => {
-      server
+    it('should return a list of results that the clinician has access to via sample origin site', async () => {
+      await server
         .get(`${path}?assayId=${assayId}`)
         .set('Authorization', `Bearer ${clinicianAccessToken}`)
-        .end((err, res) => {
+        .then(res => {
           assert.equal(res.status, 200)
           assert.typeOf(res.body, 'Object')
           assert.property(res.body, 'data')
@@ -214,16 +212,14 @@ describe('Result routes', () => {
           assert.equal(originSites.length, 1)
           assert.equal(originSites[0].sampleOriginSiteName, 'Dayton Ohio')
           ;[{ id: resultId }] = res.body.data
-
-          done()
         })
     })
 
-    it('should return a single result that the clinician has access to via sample origin site', done => {
-      server
+    it('should return a single result that the clinician has access to via sample origin site', async () => {
+      await server
         .get(`${path}/${resultId}`)
         .set('Authorization', `Bearer ${clinicianAccessToken}`)
-        .end((err, res) => {
+        .then(res => {
           assert.equal(res.status, 200)
           assert.typeOf(res.body, 'Object')
           assert.property(res.body, 'data')
@@ -275,7 +271,6 @@ describe('Result routes', () => {
           assert.property(res.body.data.assay, 'resultDataSchema')
           assert.typeOf(res.body.data.assay.resultDataSchema, 'Object')
           assert.property(res.body.data, 'files')
-          done()
         })
     })
   })
@@ -288,7 +283,7 @@ describe('Result routes', () => {
           .delete()
       })
     )
-    it('Should update result status given a resultId', done => {
+    it('Should update result status given a resultId', async () => {
       const updateWithExternalId = {
         resultWorkflowStatusId: null,
         externalId: 'Validated',
@@ -304,11 +299,11 @@ describe('Result routes', () => {
       }
 
       // update with external ID
-      server
+      await server
         .put(`${path}/workflow-status/${resultId}`)
         .send(updateWithExternalId)
         .set('Authorization', `Bearer${shared.token}`)
-        .end((err, res) => {
+        .then(res => {
           assert.equal(res.status, 200)
           assert.typeOf(res.body, 'Object')
           assert.property(res.body, 'data')
@@ -373,83 +368,79 @@ describe('Result routes', () => {
             ),
             dateFormat(changedOn, 'yyyy-MM-dd HH:mm:ss')
           )
+        })
+      // update with resultWorkflowStatusId
+      await server
+        .put(`${path}/workflow-status/${resultId}`)
+        .send(updateWithId)
+        .set('Authorization', `Bearer${shared.token}`)
+        .then(res => {
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+          assert.property(res.body, 'data')
+          assert.typeOf(res.body.data, 'Object')
+          assert.typeOf(res.body.data.assay, 'Object')
+          assert.typeOf(res.body.data.assay.resultDataSchema, 'Object')
+          assert.typeOf(res.body.data.resultData, 'Object')
+          const resultFieldNames = [
+            'id',
+            'endedOn',
+            'deviceName',
+            'countryName',
+            'stateName',
+            'lgaName',
+            'resultCategory1Name',
+            'resultCategory2Name',
+            'resultData',
+            'sampleId',
+            'sampleGroup',
+            'patientId',
+            'siteName',
+            'assayVersion',
+            'consumableSerial',
+            'consumableLot',
+            'consumableExpirationDate',
+            'instrumentSerial',
+            'moduleName',
+            'moduleSerial',
+            'researchId',
+            'senderVersion',
+            'senderOperator',
+            'notes',
+            'errorCode',
+            'errorNotes',
+            'createdOn',
+            'updatedOn',
+            'assayId',
+            'assay',
+          ]
+          _.each(resultFieldNames, fieldName => {
+            assert.property(res.body.data, fieldName)
+          })
 
-          // update with resultWorkflowStatusId
-          server
-            .put(`${path}/workflow-status/${resultId}`)
-            .send(updateWithId)
-            .set('Authorization', `Bearer${shared.token}`)
-            .end((err, res) => {
-              assert.equal(res.status, 200)
-              assert.typeOf(res.body, 'Object')
-              assert.property(res.body, 'data')
-              assert.typeOf(res.body.data, 'Object')
-              assert.typeOf(res.body.data.assay, 'Object')
-              assert.typeOf(res.body.data.assay.resultDataSchema, 'Object')
-              assert.typeOf(res.body.data.resultData, 'Object')
-              const resultFieldNames = [
-                'id',
-                'endedOn',
-                'deviceName',
-                'countryName',
-                'stateName',
-                'lgaName',
-                'resultCategory1Name',
-                'resultCategory2Name',
-                'resultData',
-                'sampleId',
-                'sampleGroup',
-                'patientId',
-                'siteName',
-                'assayVersion',
-                'consumableSerial',
-                'consumableLot',
-                'consumableExpirationDate',
-                'instrumentSerial',
-                'moduleName',
-                'moduleSerial',
-                'researchId',
-                'senderVersion',
-                'senderOperator',
-                'notes',
-                'errorCode',
-                'errorNotes',
-                'createdOn',
-                'updatedOn',
-                'assayId',
-                'assay',
-              ]
-              _.each(resultFieldNames, fieldName => {
-                assert.property(res.body.data, fieldName)
-              })
-
-              // check if resultWorkflowStatus was updated
-              assert.equal(res.body.data.resultWorkflowStatus, 'OK')
-
-              // Check if update persisted
-              server
-                .get(`/api/result/${resultId}`)
-                .set('Authorization', `Bearer${shared.token}`)
-                .end((err, res) => {
-                  assert.equal(res.body.data.resultWorkflowStatus, 'OK')
-
-                  // Clean Up: Update resultWorkflowStatus with original status
-                  server
-                    .put(`${path}/workflow-status/${resultId}`)
-                    .send({
-                      resultWorkflowStatusId: null,
-                      externalId: initialResultWorkflowStatus,
-                    })
-                    .set('Authorization', `Bearer${shared.token}`)
-                    .end((err, res) => {
-                      assert.equal(
-                        res.body.data.resultWorkflowStatus,
-                        initialResultWorkflowStatusName
-                      )
-                      done()
-                    })
-                })
-            })
+          // check if resultWorkflowStatus was updated
+          assert.equal(res.body.data.resultWorkflowStatus, 'OK')
+        })
+      // Check if update persisted
+      await server
+        .get(`/api/result/${resultId}`)
+        .set('Authorization', `Bearer${shared.token}`)
+        .then(res => {
+          assert.equal(res.body.data.resultWorkflowStatus, 'OK')
+        })
+      // Clean Up: Update resultWorkflowStatus with original status
+      await server
+        .put(`${path}/workflow-status/${resultId}`)
+        .send({
+          resultWorkflowStatusId: null,
+          externalId: initialResultWorkflowStatus,
+        })
+        .set('Authorization', `Bearer${shared.token}`)
+        .then(res => {
+          assert.equal(
+            res.body.data.resultWorkflowStatus,
+            initialResultWorkflowStatusName
+          )
         })
     })
 
@@ -532,7 +523,7 @@ describe('Result routes', () => {
           })
       }))
 
-    it('Should update result treatment status given a resultId - with resultTreatmentStatusId', done => {
+    it('Should update result treatment status given a resultId - with resultTreatmentStatusId', async () => {
       const changedOn = addMinutes(new Date(), 1)
       const updateWithId = {
         resultTreatmentStatusId: 2,
@@ -541,23 +532,21 @@ describe('Result routes', () => {
         changedOn,
       }
       // update with resultTreatmentStatusId
-      server
+      await server
         .put(`${path}/treatment-status/${resultId}`)
         .send(updateWithId)
         .set('Authorization', `Bearer${shared.token}`)
-        .end((err, res) => {
+        .then(res => {
           baseTreatmentStatusAssertion(res)
 
           const { treatmentStatus } = res.body.data
 
           // check if resultWorkflowStatus was updated
           assert.equal(treatmentStatus.externalId, 'OnTreatment')
-
-          done()
         })
     })
 
-    it('Should update result treatment status given a resultId - set resultNotes', done => {
+    it('Should update result treatment status given a resultId - set resultNotes', async () => {
       const changedOn = addMinutes(new Date(), 2)
       const updateWithNull = {
         resultTreatmentStatusId: null,
@@ -566,16 +555,14 @@ describe('Result routes', () => {
         changedOn,
       }
       // set to null
-      server
+      await server
         .put(`${path}/treatment-status/${resultId}`)
         .send(updateWithNull)
         .set('Authorization', `Bearer${shared.token}`)
-        .end((err, res) => {
+        .then(res => {
           baseTreatmentStatusAssertion(res)
 
           assert.equal(res.body.data.resultTreatmentData, 'should be treated')
-
-          done()
         })
     })
 

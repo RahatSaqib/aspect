@@ -18,11 +18,11 @@ describe('Device routes', () => {
   describe('GET', () => {
     shared.checkToken(server, path)
 
-    it('should return a list of devices when using valid token "approved"', done => {
-      server
+    it('should return a list of devices when using valid token "approved"', async () => {
+      await server
         .get(path)
         .set('Authorization', `Bearer ${shared.token}`)
-        .end((err, res) => {
+        .then(res => {
           assert.equal(res.status, 200)
           assert.typeOf(res.body, 'Object')
           assert.property(res.body, 'data')
@@ -49,15 +49,14 @@ describe('Device routes', () => {
           assert.property(res.body, 'total')
           // store 'deviceId' for use in POST section below
           deviceId = res.body.data[0].id
-          done()
         })
     })
 
-    it('should return only medical devices if hasResults=1', done => {
-      server
+    it('should return only medical devices if hasResults=1', async () => {
+      await server
         .get(`${path}?hasResults=1&page=0&size=100`)
         .set('Authorization', `Bearer ${shared.token}`)
-        .end((err, res) => {
+        .then(res => {
           assert.equal(res.status, 200)
           assert.typeOf(res.body, 'Object')
           assert.property(res.body, 'data')
@@ -86,15 +85,14 @@ describe('Device routes', () => {
             true
           )
           assert.property(res.body, 'total')
-          done()
         })
     })
 
-    it('should return only devices that have connectivity hardware if hasConnectivity=1', done => {
-      server
+    it('should return only devices that have connectivity hardware if hasConnectivity=1', async () => {
+      await server
         .get(`${path}?hasConnectivity=1&page=0&size=100`)
         .set('Authorization', `Bearer ${shared.token}`)
-        .end((err, res) => {
+        .then(res => {
           assert.equal(res.status, 200)
           assert.typeOf(res.body, 'Object')
           assert.property(res.body, 'data')
@@ -123,15 +121,14 @@ describe('Device routes', () => {
             true
           )
           assert.property(res.body, 'total')
-          done()
         })
     })
 
-    it('should return details of a specific device', done => {
-      server
+    it('should return details of a specific device', async () => {
+      await server
         .get(`${path}/1`)
         .set('Authorization', `Bearer ${shared.token}`)
-        .end((err, res) => {
+        .then(res => {
           assert.equal(res.status, 200)
           assert.typeOf(res.body, 'Object')
           assert.property(res.body, 'data')
@@ -162,15 +159,14 @@ describe('Device routes', () => {
           assert.property(res.body.data, 'errorCountThisMonth')
           assert.property(res.body.data, 'utilizationRateThisMonth')
           assert.property(res.body.data, 'errorRateThisMonth')
-          done()
         })
     })
 
-    it('should return performance report of a specific device', done => {
-      server
+    it('should return performance report of a specific device', async () => {
+      await server
         .get(`${path}/performance/2`)
         .set('Authorization', `Bearer ${shared.token}`)
-        .end((err, res) => {
+        .then(res => {
           assert.equal(res.status, 200)
           assert.typeOf(res.body, 'Object')
           assert.property(res.body, 'utilizationRateAvg')
@@ -183,7 +179,6 @@ describe('Device routes', () => {
           assert.property(res.body.data[0], 'monthTested')
           assert.property(res.body.data[0], 'utilizationRate')
           assert.property(res.body.data[0], 'errorRate')
-          done()
         })
     })
   })
@@ -251,7 +246,7 @@ describe('Device routes', () => {
         deviceMaintenanceIdsToDelete.push(deviceMaintenanceId)
       }
       // -----------------------------
-      function checkMaintenance(externalId, datePropName, notesPropName) {
+      async function checkMaintenance(externalId, datePropName, notesPropName) {
         it(`${externalId} - should create new entry in DeviceMaintenance table, update it, and create another new`, done => {
           const options = { datePropName, notesPropName }
           let notes = 'Some sample notes'

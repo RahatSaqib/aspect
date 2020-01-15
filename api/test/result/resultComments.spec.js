@@ -51,16 +51,16 @@ describe('Result Comments', () => {
     assert.property(data[0], 'createdOn')
   }
 
-  it('Should ADD comment and return list of comments of a particular resultId', done => {
+  it('Should ADD comment and return list of comments of a particular resultId', async () => {
     const comment = {
       note: text,
       resultNoteType: 'ResultFollowUp',
     }
-    server
+    await server
       .post(`/api/result/result-note/${resultId}`)
       .send(comment)
       .set('Authorization', `Bearer ${adminAccessToken}`)
-      .end((err, res) => {
+      .then(res => {
         assert.equal(res.status, 200)
         assert.typeOf(res.body, 'Object')
 
@@ -70,49 +70,43 @@ describe('Result Comments', () => {
         assert.equal(res.body.data[0].noteType, 'Result FollowUp')
 
         commentId = res.body.data[0].id
-
-        done()
       })
   })
 
-  it('Should fail on retrieving comments of unknown resultId', done => {
-    server
+  it('Should fail on retrieving comments of unknown resultId', async () => {
+    await server
       .get(`/api/result/result-all-notes/99999999`)
       .set('Authorization', `Bearer ${shared.token}`)
-      .end((err, res) => {
+      .then(res => {
         assert.equal(res.status, 404) // Not Found
-
-        done()
       })
   })
 
-  it('Should deny EDIT comment by non-author and non-admin', done => {
+  it('Should deny EDIT comment by non-author and non-admin', async () => {
     text += '!'
     const comment = {
       note: text,
       commentId,
     }
-    server
+    await server
       .post(`/api/result/result-note/${resultId}`)
       .send(comment)
       .set('Authorization', `Bearer ${clinicianAccessToken}`)
-      .end((err, res) => {
+      .then(res => {
         assert.equal(res.status, 403) // Forbidden
-
-        done()
       })
   })
 
-  it('Should EDIT comment by author', done => {
+  it('Should EDIT comment by author', async () => {
     const comment = {
       note: text,
       commentId,
     }
-    server
+    await server
       .post(`/api/result/result-note/${resultId}`)
       .send(comment)
       .set('Authorization', `Bearer ${adminAccessToken}`)
-      .end((err, res) => {
+      .then(res => {
         assert.equal(res.status, 200)
         assert.typeOf(res.body, 'Object')
 
@@ -120,16 +114,14 @@ describe('Result Comments', () => {
         assertCommentProps(res.body.data)
         assert.equal(res.body.data[0].text, text)
         assert.equal(res.body.data[0].id, commentId)
-
-        done()
       })
   })
 
-  it('Should GET ALL comments of a particular resultId and return array with 1 comment', done => {
-    server
+  it('Should GET ALL comments of a particular resultId and return array with 1 comment', async () => {
+    await server
       .get(`/api/result/result-all-notes/${resultId}`)
       .set('Authorization', `Bearer ${shared.token}`)
-      .end((err, res) => {
+      .then(res => {
         assert.equal(res.status, 200)
         assert.typeOf(res.body, 'Object')
 
@@ -137,49 +129,41 @@ describe('Result Comments', () => {
         assertCommentProps(res.body.data)
         assert.equal(res.body.data[0].text, text)
         assert.equal(res.body.data[0].id, commentId)
-
-        done()
       })
   })
 
-  it('Should deny DELETE comment by non-author and non-admin', done => {
-    server
+  it('Should deny DELETE comment by non-author and non-admin', async () => {
+    await server
       .delete(`/api/result/result-note/${resultId}/${commentId}`)
       .set('Authorization', `Bearer ${clinicianAccessToken}`)
-      .end((err, res) => {
+      .then(res => {
         assert.equal(res.status, 403) // Forbidden
-
-        done()
       })
   })
 
-  it('Should DELETE comment and return list of remaining comments of a particular resultId', done => {
-    server
+  it('Should DELETE comment and return list of remaining comments of a particular resultId', async () => {
+    await server
       .delete(`/api/result/result-note/${resultId}/${commentId}`)
       .set('Authorization', `Bearer ${adminAccessToken}`)
-      .end((err, res) => {
+      .then(res => {
         assert.equal(res.status, 200)
         assert.typeOf(res.body, 'Object')
 
         assert.property(res.body, 'data')
         assert.equal(res.body.data.length, 0)
-
-        done()
       })
   })
 
-  it('Should GET ALL comments of a particular resultId and return empty array', done => {
-    server
+  it('Should GET ALL comments of a particular resultId and return empty array', async () => {
+    await server
       .get(`/api/result/result-all-notes/${resultId}`)
       .set('Authorization', `Bearer ${shared.token}`)
-      .end((err, res) => {
+      .then(res => {
         assert.equal(res.status, 200)
         assert.typeOf(res.body, 'Object')
 
         assert.property(res.body, 'data')
         assert.equal(res.body.data.length, 0)
-
-        done()
       })
   })
 })
