@@ -57,7 +57,7 @@ describe('Result routes', () => {
             assert.typeOf(res.body, 'Object')
             assert.property(res.body, 'data')
             assert.typeOf(res.body.data, 'array')
-            assert.isAtLeast(res.body.data.length, 5)
+            assert.isAtLeast(res.body.data.length, 3)
             assert.property(res.body.data[0], 'id')
             assert.property(res.body.data[0], 'endedOn')
             assert.property(res.body.data[0], 'deviceName')

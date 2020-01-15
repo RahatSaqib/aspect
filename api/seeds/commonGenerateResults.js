@@ -283,12 +283,12 @@ async function generateResults(
   const {
     DiagnosticDevice: resultSourceDiagnosticId,
   } = await allResultSourceToId()
-  const assayBdMgit = _.find(
+  const assayBdMgit = _.filter(
     assays,
     elem =>
       elem.externalId === 'assayBdMgitAst' ||
       elem.externalId === 'assayBdMgitGnd'
-  ).id
+  )
   // make sure we have at least one result with these status
   let ensureResultIds = [acknowledged, validated, deliverable]
   const possitiveMTBResults = []
@@ -325,7 +325,7 @@ async function generateResults(
       partnerId: partnerOneId,
       geographyId: siteData.geographyId,
       siteId: siteData.id,
-      reportableSiteId: siteData.id,
+      reportableSiteId: sample.originSiteId || siteData.id,
       deviceId: device.id,
       longitude: -81.581222,
       latitude: 28.419348,
@@ -368,7 +368,9 @@ async function generateResults(
     if (
       result.category1 === resultCategoryDetectedId &&
       rnd <= 80 &&
-      devicesMGIT.length > 0
+      devicesMGIT.length > 0 &&
+      assayBdMgit &&
+      assayBdMgit.length > 0
     ) {
       resultElement.id = resultId
       possitiveMTBResults.push(
@@ -393,7 +395,6 @@ async function generateResults(
       .where('id', resultId)
       .update({ resultWorkflowStatusLogId: lastLogId })
   })
-
   // insert 80% of mgit results when tb is possitive on mgit.
   if (possitiveMTBResults.length > 0)
     await knex('Result').insert(possitiveMTBResults)
@@ -541,7 +542,6 @@ async function generateResults(
               ? 'Exceeded cycle threshold'
               : null,
         }
-
         const [resultId] = await knex('Result').insert(resultObject)
         resultsid.push({ id: resultId, createdOn: now })
         const [lastLogId] = await knex('ResultWorkflowLog').insert({
@@ -677,7 +677,6 @@ async function generateResults(
         : _.random(1) < 0.5
         ? validated
         : acknowledged
-
     const resultId = await knex('Result').insert({
       ...auditFields,
       externalId: `UQHIV-${i + lastSampleId}-D`,
@@ -685,7 +684,7 @@ async function generateResults(
       partnerId: partnerOneId,
       geographyId: siteData.geographyId,
       siteId: siteData.id,
-      reportableSiteId: sample.siteId,
+      reportableSiteId: sample.originSiteId || siteData.id,
       deviceId: device.id,
       longitude: -81.581222,
       latitude: 28.419348,
