@@ -189,9 +189,7 @@ describe('Device API Raw routes', () => {
         .orWhere(function() {
           if (resultIds != null && resultIds.length > 0) {
             this.whereRaw(
-              `LOWER(JSON_EXTRACT(data, "$.resultId")) IN (${resultIds
-                .join(',')
-                .toLowerCase()})`
+              `JSON_EXTRACT(data, "$.resultId") IN (${resultIds.join(',')})`
             )
           }
         })
