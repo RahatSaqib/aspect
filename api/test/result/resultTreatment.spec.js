@@ -7,10 +7,11 @@ const shared = require('../utils/sharedToken')
 const server = supertest.agent('http://localhost:8080')
 const { assert } = chai
 
+const path = '/api/result/confirmed-treatment-tracking'
+
 describe('Result Treatment', () => {
   describe('Status Tracking - POST', () => {
-    const path = '/api/result/confirmed-treatment-tracking'
-    shared.checkToken(server, path)
+    before(() => shared.checkToken(server, path))
 
     it('Should return percentages of OnTreatment and Unaccountable', async () => {
       const now = new Date()
@@ -20,7 +21,7 @@ describe('Result Treatment', () => {
         .post(`${path}`)
         .send({ endedOn, siteId })
         .set('Authorization', `Bearer ${shared.token}`)
-        .then((err, res) => {
+        .then(res => {
           assert.equal(res.status, 200)
           assert.typeOf(res.body, 'Object')
 

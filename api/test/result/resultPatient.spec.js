@@ -10,8 +10,7 @@ describe('Result routes', () => {
   const path = '/api/result'
 
   describe('GET', () => {
-    shared.checkToken(server, path)
-
+    before(() => shared.checkToken(server, path))
     it('should return a list of results for the specific patient id', () =>
       runTestWithKnex(async knex => {
         const result = await knex('Result').first('*')
@@ -52,7 +51,7 @@ describe('Result routes', () => {
       await server
         .get(`${path}/patientresultsdetails?patientId=1111111`)
         .set('Authorization', `Bearer ${shared.token}`)
-        .then((_err, res) => {
+        .then(res => {
           assert.equal(res.status, 404)
         })
     })
