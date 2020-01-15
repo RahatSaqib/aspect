@@ -12,11 +12,11 @@ describe('Result Workflow Status Log', () => {
   describe('GET', () => {
     shared.checkToken(server, path)
 
-    it('should return a list of Result Workflow Status Logs (when using valid token)', done => {
-      server
+    it('should return a list of Result Workflow Status Logs (when using valid token)', async () => {
+      await server
         .get(path)
         .set('Authorization', `Bearer ${shared.token}`)
-        .end((err, res) => {
+        .then(res => {
           assert.equal(res.status, 200)
           assert.typeOf(res.body, 'Object')
           assert.property(res.body, 'data')
@@ -27,7 +27,6 @@ describe('Result Workflow Status Log', () => {
           assert.property(res.body.data[0], 'statusName')
           assert.property(res.body.data[0], 'operator')
           assert.property(res.body, 'total')
-          done()
         })
     })
   })

@@ -139,7 +139,7 @@ describe('Result download routes', () => {
           })
       }))
 
-    it('should test querying different results with different optional parameters', done => {
+    it('should test querying different results with different optional parameters', async () => {
       const resultCategories = [
         'Detected',
         'Invalid',
@@ -147,14 +147,14 @@ describe('Result download routes', () => {
         'Acknowledged',
         'Processed',
       ]
-      server
+      await server
         .get(
           `${path}?size=1&deviceType=DaktariVirology&resultCategories=${resultCategories.join(
             ','
           )}`
         )
         .set('Authorization', `Bearer ${shared.token}`)
-        .end((err, res) => {
+        .then(res => {
           assert.equal(res.status, 200)
           assert.typeOf(res.body, 'Object')
 
@@ -224,12 +224,12 @@ describe('Result download routes', () => {
           assert.equal(Object.keys(res.body.data[0]).length, 34)
         })
 
-      server
+      await server
         .get(
           `${path}?size=1&deviceType=DaktariVirology&assayExternalIds=GxMtbRif,GxEbola,GxHiv1Vl,GxHcv,DaktariHivVL`
         )
         .set('Authorization', `Bearer ${shared.token}`)
-        .end((err, res) => {
+        .then(res => {
           assert.equal(res.status, 200)
           assert.typeOf(res.body, 'Object')
 
@@ -274,10 +274,10 @@ describe('Result download routes', () => {
           assert.property(res.body.data[0], 'sample')
           assert.equal(res.body.data[0].workflowStatus.externalId, 'Delivered')
         })
-      server
+      await server
         .get(`${path}?size=1&workflowStatus=OK`)
         .set('Authorization', `Bearer ${shared.token}`)
-        .end((err, res) => {
+        .then(res => {
           assert.equal(res.status, 200)
           assert.typeOf(res.body, 'Object')
 
@@ -293,10 +293,10 @@ describe('Result download routes', () => {
           assert.typeOf(res.body.data, 'array')
           assert.equal(res.body.data.length, 0)
         })
-      server
+      await server
         .get(`${path}?size=1&treatmentStatus=OnTreatment`)
         .set('Authorization', `Bearer ${shared.token}`)
-        .end((err, res) => {
+        .then(res => {
           assert.equal(res.status, 200)
           assert.typeOf(res.body, 'Object')
           assert.property(res.body, 'ok')
@@ -311,10 +311,10 @@ describe('Result download routes', () => {
           assert.typeOf(res.body.data, 'array')
           assert.equal(res.body.data.length, 0)
         })
-      server
+      await server
         .get(`${path}?size=1&patientSample=-&deviceType=DaktariVirology`)
         .set('Authorization', `Bearer ${shared.token}`)
-        .end((err, res) => {
+        .then(res => {
           assert.equal(res.status, 200)
           assert.typeOf(res.body, 'Object')
 
@@ -356,8 +356,6 @@ describe('Result download routes', () => {
           assert.property(res.body.data[0], 'errorCode')
           assert.property(res.body.data[0], 'errorNotes')
           assert.property(res.body.data[0], 'sample')
-
-          done()
         })
     })
 
