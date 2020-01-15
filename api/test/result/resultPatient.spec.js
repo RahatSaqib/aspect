@@ -11,6 +11,7 @@ describe('Result routes', () => {
 
   describe('GET', () => {
     before(() => shared.checkToken(server, path))
+
     it('should return a list of results for the specific patient id', () =>
       runTestWithKnex(async knex => {
         const result = await knex('Result').first('*')
