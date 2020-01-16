@@ -27,6 +27,7 @@ describe('Device API Raw routes for Senaite LIMS', () => {
       .from('Partner')
       .where('name', 'Partner One')
       .first()
+
     const geography = await knex
       .from('Country as c')
       .join('Geography as g', 'g.countryId', 'c.id')

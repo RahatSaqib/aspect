@@ -39,7 +39,10 @@ async function getPatientResultsDetails(request) {
       'rtsl.resultTreatmentStatusId',
       'rts.id'
     )
-    .where(knex.raw('JSON_EXTRACT(r.patientData,"$.id")'), query.patientId)
+    .whereRaw(
+      'LOWER(JSON_EXTRACT(r.patientData,"$.id")) = LOWER(JSON_QUOTE(?))',
+      [query.patientId]
+    )
     .modify(addConstraints, dataConstraints, { sample: 's' })
     .select(
       'r.id as resultId',
