@@ -59,7 +59,7 @@ async function listAssaysResultSchema() {
     .select(SELECT_LIST_RESULT_CATEGORY_FIELDS)
 
   const resultCategoriesByAssayId = _.groupBy(rawResultCategories, 'assayId')
-  const result = _.map(assaysList, elem => {
+  const assays = _.map(assaysList, elem => {
     const resultDataSchema = JSON.parse(elem.resultDataSchema)
     const patientDataSchema = JSON.parse(elem.patientDataSchema)
     const categories = resultCategoriesByAssayId[elem.assayId]
@@ -77,7 +77,7 @@ async function listAssaysResultSchema() {
     }
     return assay
   })
-  return result
+  return assays
 }
 async function listAssays(request) {
   const { query, auth } = request
