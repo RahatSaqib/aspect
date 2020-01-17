@@ -35,7 +35,7 @@ describe('Assay routes', () => {
         })
     })
     describe('GET /assay/resultandpatientschema', () => {
-      it('should return a list of assays patient and result and schema data', async () =>
+      it('should return a list of assays patient and result and schema data', () =>
         runTestWithKnex(async knex => {
           // get an assay with no result/device to make sure it's returned regardless:
           const assayIdsWithDevice = await knex('Result')
@@ -45,10 +45,10 @@ describe('Assay routes', () => {
             .whereNotIn('id', assayIdsWithDevice)
             .first('id')
 
-          server
+          await server
             .get(`${path}/resultandpatientschema`)
             .set('Authorization', `Bearer ${shared.token}`)
-            .end((err, res) => {
+            .then(res => {
               assert.equal(res.status, 200)
               assert.typeOf(res.body, 'Array')
               assert.isAbove(res.body.length, 0)
