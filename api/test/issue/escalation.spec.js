@@ -298,7 +298,7 @@ describe('Issue Escalation', () => {
     let messageContext
     const deviceIdsToRemove = []
 
-    before(async () =>
+    before(() =>
       run(async knex => {
         partner = await getPartner(knex, partnerName)
         messageContext = await createMessageContext()
@@ -316,7 +316,7 @@ describe('Issue Escalation', () => {
         deviceIdsToRemove.push(testDeviceId2)
       })
     )
-    after(async () =>
+    after(() =>
       run(async knex => {
         await deleteDeviceAndTestData(knex, deviceIdsToRemove)
       })
@@ -329,7 +329,7 @@ describe('Issue Escalation', () => {
       let device2
       let device2RegionalOfficer
 
-      before(async () =>
+      before(() =>
         run(async knex => {
           deviceOfflineIssueType = await getIssueType(knex, 'DeviceOffline')
           const device1Details = await getDevice(knex, {
@@ -354,7 +354,7 @@ describe('Issue Escalation', () => {
         let device1OfflineIssueId
         let device2OfflineIssueId
 
-        beforeEach(async () =>
+        beforeEach(() =>
           run(async knex => {
             device1OfflineIssueId = await createAndTriggerIssue(
               knex,
@@ -377,7 +377,7 @@ describe('Issue Escalation', () => {
           })
         )
 
-        afterEach(async () =>
+        afterEach(() =>
           run(async knex => {
             await cleanUpIssues(knex, [
               device1OfflineIssueId,
@@ -488,7 +488,7 @@ describe('Issue Escalation', () => {
         let device1OfflineIssueId
         let device2OfflineIssueId
 
-        beforeEach(async () =>
+        beforeEach(() =>
           run(async knex => {
             const regionalOfficerJobFunction = await getJobJunction(
               knex,
@@ -538,7 +538,7 @@ describe('Issue Escalation', () => {
           })
         )
 
-        afterEach(async () =>
+        afterEach(() =>
           run(async knex => {
             await cleanUpIssues(knex, [
               device1OfflineIssueId,
@@ -641,7 +641,7 @@ describe('Issue Escalation', () => {
         const dateIssueRaised = subDays(new Date(), 29)
         let deviceOfflineIssueId
 
-        beforeEach(async () =>
+        beforeEach(() =>
           run(async knex => {
             deviceOfflineIssueId = await createAndTriggerIssue(
               knex,
@@ -655,7 +655,7 @@ describe('Issue Escalation', () => {
           })
         )
 
-        afterEach(async () =>
+        afterEach(() =>
           run(async knex => {
             await cleanUpIssues(knex, [deviceOfflineIssueId])
           })
@@ -687,7 +687,7 @@ describe('Issue Escalation', () => {
       let device2
       let device2RegionalOfficer
 
-      before(async () =>
+      before(() =>
         run(async knex => {
           deviceNoResultsIssueType = await getIssueType(knex, 'DeviceNoResults')
           const device1Details = await getDevice(knex, {
@@ -712,7 +712,7 @@ describe('Issue Escalation', () => {
         let device1NoResultsIssueId
         let device2NoResultsIssueId
 
-        beforeEach(async () =>
+        beforeEach(() =>
           run(async knex => {
             device1NoResultsIssueId = await createAndTriggerIssue(
               knex,
@@ -735,7 +735,7 @@ describe('Issue Escalation', () => {
           })
         )
 
-        afterEach(async () =>
+        afterEach(() =>
           run(async knex => {
             await cleanUpIssues(knex, [
               device1NoResultsIssueId,
@@ -846,7 +846,7 @@ describe('Issue Escalation', () => {
         let device1NoResultsIssueId
         let device2NoResultsIssueId
 
-        beforeEach(async () =>
+        beforeEach(() =>
           run(async knex => {
             const regionalOfficerJobFunction = await getJobJunction(
               knex,
@@ -896,7 +896,7 @@ describe('Issue Escalation', () => {
           })
         )
 
-        afterEach(async () =>
+        afterEach(() =>
           run(async knex => {
             await cleanUpIssues(knex, [
               device1NoResultsIssueId,
@@ -999,7 +999,7 @@ describe('Issue Escalation', () => {
         const dateIssueRaised = subDays(new Date(), 6)
         let deviceNoResultsIssueId
 
-        beforeEach(async () =>
+        beforeEach(() =>
           run(async knex => {
             deviceNoResultsIssueId = await createAndTriggerIssue(
               knex,
@@ -1013,7 +1013,7 @@ describe('Issue Escalation', () => {
           })
         )
 
-        afterEach(async () =>
+        afterEach(() =>
           run(async knex => {
             await cleanUpIssues(knex, [deviceNoResultsIssueId])
           })
@@ -1045,7 +1045,7 @@ describe('Issue Escalation', () => {
       let device2
       let device2RegionalOfficer
 
-      before(async () =>
+      before(() =>
         run(async knex => {
           modulePowerErrorIssueType = await getIssueType(
             knex,
@@ -1073,7 +1073,7 @@ describe('Issue Escalation', () => {
         let device1ModulePowerErrorIssueId
         let device2ModulePowerErrorIssueId
 
-        beforeEach(async () =>
+        beforeEach(() =>
           run(async knex => {
             device1ModulePowerErrorIssueId = await createAndTriggerIssue(
               knex,
@@ -1096,7 +1096,7 @@ describe('Issue Escalation', () => {
           })
         )
 
-        afterEach(async () =>
+        afterEach(() =>
           run(async knex => {
             await cleanUpIssues(knex, [
               device1ModulePowerErrorIssueId,
@@ -1205,7 +1205,7 @@ describe('Issue Escalation', () => {
         const dateIssueRaised = subDays(new Date(), 29)
         let modulePowerErrorIssueId
 
-        beforeEach(async () =>
+        beforeEach(() =>
           run(async knex => {
             modulePowerErrorIssueId = await createAndTriggerIssue(
               knex,
@@ -1219,7 +1219,7 @@ describe('Issue Escalation', () => {
           })
         )
 
-        afterEach(async () =>
+        afterEach(() =>
           run(async knex => {
             await cleanUpIssues(knex, [modulePowerErrorIssueId])
           })
@@ -1251,7 +1251,7 @@ describe('Issue Escalation', () => {
       let device2
       let device2RegionalOfficer
 
-      before(async () =>
+      before(() =>
         run(async knex => {
           moduleTemperatureErrorIssueType = await getIssueType(
             knex,
@@ -1279,7 +1279,7 @@ describe('Issue Escalation', () => {
         let device1ModuleTemperatureErrorIssueId
         let device2ModuleTemperatureErrorIssueId
 
-        beforeEach(async () =>
+        beforeEach(() =>
           run(async knex => {
             device1ModuleTemperatureErrorIssueId = await createAndTriggerIssue(
               knex,
@@ -1302,7 +1302,7 @@ describe('Issue Escalation', () => {
           })
         )
 
-        afterEach(async () =>
+        afterEach(() =>
           run(async knex => {
             await cleanUpIssues(knex, [
               device1ModuleTemperatureErrorIssueId,
@@ -1413,7 +1413,7 @@ describe('Issue Escalation', () => {
         const dateIssueRaised = subDays(new Date(), 89)
         let moduleTemperatureErrorIssueId
 
-        beforeEach(async () =>
+        beforeEach(() =>
           run(async knex => {
             moduleTemperatureErrorIssueId = await createAndTriggerIssue(
               knex,
@@ -1427,7 +1427,7 @@ describe('Issue Escalation', () => {
           })
         )
 
-        afterEach(async () =>
+        afterEach(() =>
           run(async knex => {
             await cleanUpIssues(knex, [moduleTemperatureErrorIssueId])
           })

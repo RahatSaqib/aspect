@@ -12,11 +12,11 @@ describe('Result Follow Up', () => {
 
     shared.checkToken(server, path)
 
-    it('should return a list of possible result follow ups', done => {
-      server
+    it('should return a list of possible result follow ups', async () => {
+      await server
         .get(path)
         .set('Authorization', `Bearer ${shared.token}`)
-        .end((err, res) => {
+        .then(res => {
           assert.equal(res.status, 200)
           assert.typeOf(res.body, 'Object')
           assert.property(res.body, 'data')
@@ -34,7 +34,6 @@ describe('Result Follow Up', () => {
           assert.property(res.body.data[0].type, 'i18nKey')
           assert.property(res.body.data[0], 'assays')
           assert.typeOf(res.body.data[0].assays, 'array')
-          done()
         })
     })
   })
@@ -101,14 +100,13 @@ describe('Result Follow Up', () => {
         assert.equal(externalId, 'OnTreatment')
       }))
 
-    it('should return an error if result does not exist', done => {
-      server
+    it('should return an error if result does not exist', async () => {
+      await server
         .post('/api/result/follow-up/987654321')
         .send({ externalId: '1234', followUpExternalId: 'drtb-bbsr' })
         .set('Authorization', `Bearer ${shared.token}`)
-        .end((err, res) => {
+        .then(res => {
           assert.equal(res.status, 404)
-          done()
         })
     })
   })
@@ -169,14 +167,13 @@ describe('Result Follow Up', () => {
         assert.equal('drtb-bbsr', updatedFollowUp.externalId)
       }))
 
-    it('should return an error if follow up does not exist', done => {
-      server
+    it('should return an error if follow up does not exist', async () => {
+      await server
         .put(`${path}`)
         .send({ externalId: 'VWXYZ', followUpExternalId: 'drtb-bbsr' })
         .set('Authorization', `Bearer ${shared.token}`)
-        .end((err, res) => {
+        .then(res => {
           assert.equal(res.status, 404)
-          done()
         })
     })
   })

@@ -7,20 +7,21 @@ const shared = require('../utils/sharedToken')
 const server = supertest.agent('http://localhost:8080')
 const { assert } = chai
 
+const path = '/api/result/confirmed-treatment-tracking'
+
 describe('Result Treatment', () => {
   describe('Status Tracking - POST', () => {
-    const path = '/api/result/confirmed-treatment-tracking'
-    shared.checkToken(server, path)
+    before(() => shared.checkToken(server, path))
 
-    it('Should return percentages of OnTreatment and Unaccountable', done => {
+    it('Should return percentages of OnTreatment and Unaccountable', async () => {
       const now = new Date()
       const endedOn = dateFormat(endOfMonth(subMonths(now, 1)), 'yyyy-MM-dd')
       const siteId = null
-      server
+      await server
         .post(`${path}`)
         .send({ endedOn, siteId })
         .set('Authorization', `Bearer ${shared.token}`)
-        .end((err, res) => {
+        .then(res => {
           assert.equal(res.status, 200)
           assert.typeOf(res.body, 'Object')
 
@@ -33,8 +34,6 @@ describe('Result Treatment', () => {
           assert.property(res.body.data[0], 'pcConfirmed')
           assert.property(res.body.data[0], 'cntConfirmed')
           assert.property(res.body.data[0], 'total')
-
-          done()
         })
     })
   })

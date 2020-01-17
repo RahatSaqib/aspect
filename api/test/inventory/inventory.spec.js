@@ -211,7 +211,7 @@ describe('Inventory Routes', () => {
     let siteId
     let transitItem
 
-    beforeEach(async () =>
+    beforeEach(() =>
       run(async knex => {
         const { id: consumableId } = await knex('Consumable')
           .where('name', consumableName)

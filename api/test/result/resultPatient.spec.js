@@ -10,7 +10,7 @@ describe('Result routes', () => {
   const path = '/api/result'
 
   describe('GET', () => {
-    shared.checkToken(server, path)
+    before(() => shared.checkToken(server, path))
 
     it('should return a list of results for the specific patient id', () =>
       runTestWithKnex(async knex => {
@@ -48,13 +48,12 @@ describe('Result routes', () => {
           })
       }))
 
-    it('it should return a 404 for the specific patient id', done => {
-      server
+    it('it should return a 404 for the specific patient id', async () => {
+      await server
         .get(`${path}/patientresultsdetails?patientId=1111111`)
         .set('Authorization', `Bearer ${shared.token}`)
-        .end((_err, res) => {
+        .then(res => {
           assert.equal(res.status, 404)
-          done()
         })
     })
   })
