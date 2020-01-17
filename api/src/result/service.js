@@ -619,15 +619,15 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
 async function downloadResultsList(request) {
   const { query, auth } = request
   const user = await getUser(auth.credentials.name)
-  const result = await getDownloadResultsList(query, auth, true)
+  const results = await getDownloadResultsList(query, auth, true)
   const myProm = async () => {
     const idsToUpdate = _.uniq(
       _.map(
-        _.pickBy(result.data, elem => elem.workflowStatus.setDelivered),
+        _.pickBy(results.data, elem => elem.workflowStatus.setDelivered),
         elem => elem.id
       )
     )
-    const idsToBeRegistered = _.uniq(_.map(result.data, elem => elem.id))
+    const idsToBeRegistered = _.uniq(_.map(results.data, elem => elem.id))
     if (idsToUpdate && idsToUpdate.length > 0)
       await updateResultStatus(idsToUpdate, user.id)
     if (idsToBeRegistered && idsToBeRegistered.length > 0)
@@ -635,7 +635,7 @@ async function downloadResultsList(request) {
   }
   // eslint-disable-next-line no-console
   await myProm().catch(err => console.log(err))
-  return result
+  return results
 }
 async function addResultDownloadLog(idsToBeRegistered, userId) {
   const now = new Date()
@@ -1932,12 +1932,23 @@ async function transferResult(request) {
     .where({ id: resultStatusLogId })
     .first('createdOn')
 
+  await knex('ResultFollowUp')
+    .where({ resultId })
+    .del()
+  // check if we need to keep history of previous treatment statuses in previous clinic,
+  // and if so - remove below deletion
+  await knex('ResultTreatmentStatusLog')
+    .where({ resultId })
+    .del()
+
   // update
   await knex('Result')
     .where('id', resultId)
     .update({
       reportableSiteId: siteId,
       resultStatusLogId,
+      treatmentStatusLogId: null, // reset treatment
+      firstViewedOn: null,
     })
 
   // func getResultByResultId(request) does not return now current result because
@@ -1948,6 +1959,24 @@ async function transferResult(request) {
   result.data.transferredOn = transferredOn
   result.data.transferredBy = userName
   result.data.resultStatusLogId = resultStatusLogId
+  result.data.firstViewedOn = null
+  result.data.treatmentStatus = {
+    changedOn: null,
+    name: null,
+    externalId: null,
+    i18nKey: null,
+    method: null,
+    data: null,
+  }
+  result.data.followUps = []
+
+  // try to get result - if it is `null` then it means result is not accessible by current
+  // user any more and we set new conditional prop `isTransferredAway` to use it for managing
+  // UI changes in ReporterApp for such results which were downloaded to ReporterApp but then transferred
+  const resultNew = await getResultByResultId(request)
+  if (!resultNew) {
+    result.data.isTransferredAway = true
+  }
 
   return result
 }
