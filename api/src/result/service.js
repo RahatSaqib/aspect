@@ -1243,6 +1243,30 @@ async function getLastTreatmentStatusByResult(resultId) {
     .first('rtl.changedOn', 'ts.name', 'ts.externalId', 'ts.i18nKey')
 }
 
+async function getTreatmentStatusByResultId(resultId) {
+  return knex('Result as r')
+    .innerJoin(
+      'ResultTreatmentStatusLog as rtl',
+      'r.treatmentStatusLogId',
+      'rtl.id'
+    )
+    .innerJoin(
+      'ResultTreatmentStatus as ts',
+      'rtl.resultTreatmentStatusId',
+      'ts.id'
+    )
+    .where('rtl.resultId', resultId)
+    .first(
+      'rtl.id as treatmentStatusLogId',
+      'rtl.data',
+      'rtl.method',
+      'rtl.changedOn',
+      'ts.name',
+      'ts.externalId',
+      'ts.i18nKey'
+    )
+}
+
 async function updateFormData(request) {
   const {
     auth,
@@ -1932,14 +1956,36 @@ async function transferResult(request) {
     .where({ id: resultStatusLogId })
     .first('createdOn')
 
+  // ------------
+  // update follow-up and treatment status
+  /* from Stefan response on https://github.com/SystemOneId/aspect/pull/1030#discussion_r368562435:
+  I had a conversation with Chris around this and we landed on resetting the treatment status so that the clinic
+  user that now has access to the result has to confirm it on treatment again.
+  That means deleting ResultFollowUp is correct here, but instead of simply deleting the ResultTreatmentStatusLog,
+  we should add an entry that sets the result back to "Awaiting Treatment" and as "method" set "transfer" so we keep
+  a record of the reset.
+  */
+  // remove from ResultFollowUp
   await knex('ResultFollowUp')
     .where({ resultId })
     .del()
-  // check if we need to keep history of previous treatment statuses in previous clinic,
-  // and if so - remove below deletion
-  await knex('ResultTreatmentStatusLog')
-    .where({ resultId })
-    .del()
+  // add entry to ResultTreatmentStatusLog as "Awaiting Treatment" with details about reason
+  const externalId = 'AwaitingTreatment'
+  const resultTreatmentStatusId = await resultTreatmentStatusToId(externalId)
+  const [treatmentStatusLogId] = await knex('ResultTreatmentStatusLog').insert({
+    resultId,
+    resultTreatmentStatusId,
+    method: 'transfer',
+    data: JSON.stringify({
+      siteId: result.siteId,
+      reportableSiteId: siteId,
+      sampleOriginSiteId: result.sampleOriginSiteId,
+    }),
+    createdOn: now,
+    changedOn: now,
+    createdBy: currentUserId,
+  })
+  // ------------
 
   // update
   await knex('Result')
@@ -1947,9 +1993,13 @@ async function transferResult(request) {
     .update({
       reportableSiteId: siteId,
       resultStatusLogId,
-      treatmentStatusLogId: null, // reset treatment
+      treatmentStatusLogId,
       firstViewedOn: null,
+      updatedBy: currentUserId,
+      updatedOn: now,
     })
+
+  const currTreatmentStatus = await getTreatmentStatusByResultId(resultId)
 
   // func getResultByResultId(request) does not return now current result because
   // r.reportableSiteId now has changed and may not equal to user's siteId's -
@@ -1960,14 +2010,14 @@ async function transferResult(request) {
   result.data.transferredBy = userName
   result.data.resultStatusLogId = resultStatusLogId
   result.data.firstViewedOn = null
-  result.data.treatmentStatus = {
-    changedOn: null,
-    name: null,
-    externalId: null,
-    i18nKey: null,
-    method: null,
-    data: null,
-  }
+  result.data.treatmentStatus = _.pick(currTreatmentStatus, [
+    'changedOn',
+    'name',
+    'externalId',
+    'i18nKey',
+    'method',
+    'data',
+  ])
   result.data.followUps = []
 
   // try to get result - if it is `null` then it means result is not accessible by current
