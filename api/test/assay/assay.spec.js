@@ -1,6 +1,7 @@
 const supertest = require('supertest')
 const chai = require('chai')
 const shared = require('../utils/sharedToken')
+const { runTestWithKnex } = require('../utils/generatorFunctionUtils')
 
 const server = supertest.agent('http://localhost:8080')
 const { assert } = chai
@@ -34,37 +35,48 @@ describe('Assay routes', () => {
         })
     })
     describe('GET /assay/resultandpatientschema', () => {
-      it('should return a list of assays patient and result and schema data', done => {
-        server
-          .get(`${path}/resultandpatientschema`)
-          .set('Authorization', `Bearer ${shared.token}`)
-          .end((err, res) => {
-            assert.equal(res.status, 200)
-            assert.typeOf(res.body, 'Array')
-            assert.isAbove(res.body.length, 0)
-            assert.property(res.body[0], 'assayId')
-            assert.property(res.body[0], 'externalId')
-            assert.property(res.body[0], 'assayTypeId')
-            assert.property(res.body[0], 'name')
-            assert.property(res.body[0], 'assayTypeName')
-            assert.property(res.body[0], 'deviceTypeName')
-            assert.property(res.body[0], 'resultCategory1Label')
-            assert.property(res.body[0], 'resultCategory1i18nKey')
-            assert.property(res.body[0], 'resultCategory2Label')
-            assert.property(res.body[0], 'resultCategory2i18nKey')
-            assert.property(res.body[0], 'deviceTypeExternalId')
-            assert.property(res.body[0], 'resultDataSchema')
-            assert.typeOf(res.body[0].resultDataSchema, 'object')
-            assert.property(res.body[0], 'patientDataSchema')
-            assert.typeOf(res.body[0].patientDataSchema, 'object')
-            assert.property(res.body[0], 'assayTypeAbbreviation')
-            assert.property(res.body[0], 'abbreviation')
-            assert.property(res.body[0], 'resultCategories')
-            assert.typeOf(res.body[0].resultCategories, 'array')
+      it('should return a list of assays patient and result and schema data', () =>
+        runTestWithKnex(async knex => {
+          // get an assay with no result/device to make sure it's returned regardless:
+          const assayIdsWithDevice = await knex('Result')
+            .distinct('assayId')
+            .map(a => a.assayId)
+          const { id: assayIdWithoutDevice } = await knex('Assay')
+            .whereNotIn('id', assayIdsWithDevice)
+            .first('id')
 
-            done()
-          })
-      })
+          await server
+            .get(`${path}/resultandpatientschema`)
+            .set('Authorization', `Bearer ${shared.token}`)
+            .then(res => {
+              assert.equal(res.status, 200)
+              assert.typeOf(res.body, 'Array')
+              assert.isAbove(res.body.length, 0)
+              assert.property(res.body[0], 'assayId')
+              assert.property(res.body[0], 'externalId')
+              assert.property(res.body[0], 'assayTypeId')
+              assert.property(res.body[0], 'name')
+              assert.property(res.body[0], 'assayTypeName')
+              assert.property(res.body[0], 'deviceTypeName')
+              assert.property(res.body[0], 'resultCategory1Label')
+              assert.property(res.body[0], 'resultCategory1i18nKey')
+              assert.property(res.body[0], 'resultCategory2Label')
+              assert.property(res.body[0], 'resultCategory2i18nKey')
+              assert.property(res.body[0], 'deviceTypeExternalId')
+              assert.property(res.body[0], 'resultDataSchema')
+              assert.typeOf(res.body[0].resultDataSchema, 'object')
+              assert.property(res.body[0], 'patientDataSchema')
+              assert.typeOf(res.body[0].patientDataSchema, 'object')
+              assert.property(res.body[0], 'assayTypeAbbreviation')
+              assert.property(res.body[0], 'abbreviation')
+              assert.property(res.body[0], 'resultCategories')
+              assert.typeOf(res.body[0].resultCategories, 'array')
+              assert.typeOf(
+                res.body.find(a => a.assayId === assayIdWithoutDevice),
+                'object'
+              )
+            })
+        }))
     })
   })
 })
