@@ -623,15 +623,15 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
 async function downloadResultsList(request) {
   const { query, auth } = request
   const user = await getUser(auth.credentials.name)
-  const result = await getDownloadResultsList(query, auth, true)
+  const results = await getDownloadResultsList(query, auth, true)
   const myProm = async () => {
     const idsToUpdate = _.uniq(
       _.map(
-        _.pickBy(result.data, elem => elem.workflowStatus.setDelivered),
+        _.pickBy(results.data, elem => elem.workflowStatus.setDelivered),
         elem => elem.id
       )
     )
-    const idsToBeRegistered = _.uniq(_.map(result.data, elem => elem.id))
+    const idsToBeRegistered = _.uniq(_.map(results.data, elem => elem.id))
     if (idsToUpdate && idsToUpdate.length > 0)
       await updateResultStatus(idsToUpdate, user.id)
     if (idsToBeRegistered && idsToBeRegistered.length > 0)
@@ -639,7 +639,7 @@ async function downloadResultsList(request) {
   }
   // eslint-disable-next-line no-console
   await myProm().catch(err => console.log(err))
-  return result
+  return results
 }
 async function addResultDownloadLog(idsToBeRegistered, userId) {
   const now = new Date()
@@ -1245,6 +1245,30 @@ async function getLastTreatmentStatusByResult(resultId) {
     .where('rtl.resultId', resultId)
     .orderBy('rtl.changedOn', 'desc')
     .first('rtl.changedOn', 'ts.name', 'ts.externalId', 'ts.i18nKey')
+}
+
+async function getTreatmentStatusByResultId(resultId) {
+  return knex('Result as r')
+    .innerJoin(
+      'ResultTreatmentStatusLog as rtl',
+      'r.treatmentStatusLogId',
+      'rtl.id'
+    )
+    .innerJoin(
+      'ResultTreatmentStatus as ts',
+      'rtl.resultTreatmentStatusId',
+      'ts.id'
+    )
+    .where('rtl.resultId', resultId)
+    .first(
+      'rtl.id as treatmentStatusLogId',
+      'rtl.data',
+      'rtl.method',
+      'rtl.changedOn',
+      'ts.name',
+      'ts.externalId',
+      'ts.i18nKey'
+    )
 }
 
 async function updateFormData(request) {
@@ -1936,13 +1960,50 @@ async function transferResult(request) {
     .where({ id: resultStatusLogId })
     .first('createdOn')
 
+  // ------------
+  // update follow-up and treatment status
+  /* from Stefan response on https://github.com/SystemOneId/aspect/pull/1030#discussion_r368562435:
+  I had a conversation with Chris around this and we landed on resetting the treatment status so that the clinic
+  user that now has access to the result has to confirm it on treatment again.
+  That means deleting ResultFollowUp is correct here, but instead of simply deleting the ResultTreatmentStatusLog,
+  we should add an entry that sets the result back to "Awaiting Treatment" and as "method" set "transfer" so we keep
+  a record of the reset.
+  */
+  // remove from ResultFollowUp
+  await knex('ResultFollowUp')
+    .where({ resultId })
+    .del()
+  // add entry to ResultTreatmentStatusLog as "Awaiting Treatment" with details about reason
+  const externalId = 'AwaitingTreatment'
+  const resultTreatmentStatusId = await resultTreatmentStatusToId(externalId)
+  const [treatmentStatusLogId] = await knex('ResultTreatmentStatusLog').insert({
+    resultId,
+    resultTreatmentStatusId,
+    method: 'transfer',
+    data: JSON.stringify({
+      siteId: result.siteId,
+      reportableSiteId: siteId,
+      sampleOriginSiteId: result.sampleOriginSiteId,
+    }),
+    createdOn: now,
+    changedOn: now,
+    createdBy: currentUserId,
+  })
+  // ------------
+
   // update
   await knex('Result')
     .where('id', resultId)
     .update({
       reportableSiteId: siteId,
       resultStatusLogId,
+      treatmentStatusLogId,
+      firstViewedOn: null,
+      updatedBy: currentUserId,
+      updatedOn: now,
     })
+
+  const currTreatmentStatus = await getTreatmentStatusByResultId(resultId)
 
   // func getResultByResultId(request) does not return now current result because
   // r.reportableSiteId now has changed and may not equal to user's siteId's -
@@ -1952,6 +2013,16 @@ async function transferResult(request) {
   result.data.transferredOn = transferredOn
   result.data.transferredBy = userName
   result.data.resultStatusLogId = resultStatusLogId
+  result.data.firstViewedOn = null
+  result.data.treatmentStatus = _.pick(currTreatmentStatus, [
+    'changedOn',
+    'name',
+    'externalId',
+    'i18nKey',
+    'method',
+    'data',
+  ])
+  result.data.followUps = []
 
   return result
 }

@@ -302,8 +302,11 @@ async function hasFeature(userId, partnerId, module) {
   return !_.isEmpty(userFeature)
 }
 // generate a new jwt for the given user data
-function getAccessToken({ id, name, partnerId, personId }, clientType = 'web') {
-  return query('Get permissions for user and partner')
+async function getAccessToken(
+  { id, name, partnerId, personId },
+  clientType = 'web'
+) {
+  const permissions = await query('Get permissions for user and partner')
     .from('Permission as p')
     .innerJoin('JobFunctionPermission as jfp', 'p.id', 'jfp.permissionId')
     .innerJoin('JobFunction as jf', 'jfp.jobFunctionId', 'jf.id')
@@ -312,29 +315,63 @@ function getAccessToken({ id, name, partnerId, personId }, clientType = 'web') {
     .where({ 'ps.userId': id, 'jf.partnerId': partnerId })
     .orderBy(['p.module', 'p.activity'])
     .distinct('p.module', 'p.activity')
-    .then(async data => {
-      const applicableLicense = await getApplicableLicense(personId, partnerId)
-      // create a new token
-      const token = jwt.sign(
-        {
-          name,
-          permissions: data.map(p => `${p.module}:${p.activity}`),
-          hasToAcceptLicenseId:
-            clientType.includes(clientTypes.app) ||
-            !applicableLicense ||
-            applicableLicense.acceptedOn
-              ? null
-              : applicableLicense.id,
-        },
-        config.secret,
-        {
-          expiresIn: '1 hour',
-          issuer: 'https://www.aspect.id',
-        }
-      )
+    .then(data => data.map(p => `${p.module}:${p.activity}`))
 
-      return token
-    })
+  const applicableLicense = await getApplicableLicense(personId, partnerId)
+  const geography = await getGeographyAccess(personId, partnerId)
+
+  // create a new token
+  const token = jwt.sign(
+    {
+      name,
+      permissions,
+      geography,
+      hasToAcceptLicenseId:
+        clientType.includes(clientTypes.app) ||
+        !applicableLicense ||
+        applicableLicense.acceptedOn
+          ? null
+          : applicableLicense.id,
+    },
+    config.secret,
+    {
+      expiresIn: '1 hour',
+      issuer: 'https://www.aspect.id',
+    }
+  )
+
+  return token
+}
+
+function getGeographyAccess(personId, partnerId) {
+  return query('Get list of geographies which user can access')
+    .from('JobContext as jc')
+    .innerJoin('Job as j', 'jc.jobId', 'j.id')
+    .innerJoin('JobFunction as jf', 'j.jobFunctionId', 'jf.id')
+    .leftJoin('Geography as g', 'jc.geographyId', 'g.id')
+    .leftJoin('Site as s', 'jc.siteId', 's.id')
+    .leftJoin('Geography as gs', 's.geographyId', 'gs.id')
+    .where('j.personId', personId)
+    .where('jf.partnerId', partnerId)
+    .distinct(
+      // country-state-lga when jc.siteId = null and jc.geographyId != null
+      'g.countryId',
+      'g.stateId',
+      'g.lgaId',
+      // country-state-lga when jc.siteId != null and jc.geographyId = null
+      'jc.siteId',
+      'gs.countryId as siteCountryId',
+      'gs.stateId as siteStateId',
+      'gs.lgaId as siteLgaId'
+    )
+    .then(items =>
+      items.map(item => ({
+        countryId: item.countryId || item.siteCountryId,
+        stateId: item.stateId || item.siteStateId,
+        lgaId: item.lgaId || item.siteLgaId,
+        siteId: item.siteId,
+      }))
+    )
 }
 
 async function getDisplayPreferences({ partnerId }) {
