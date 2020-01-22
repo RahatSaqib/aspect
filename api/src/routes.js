@@ -502,12 +502,6 @@ function validateResultResponse() {
       .description(
         'The id of last entry in ResultStatusLog for current result'
       ),
-    isTransferredAway: Joi.boolean()
-      .optional()
-      .allow(null)
-      .description(
-        '`true` means result was just transferred away of current user, and user can not access it any more'
-      ),
   }
 }
 
