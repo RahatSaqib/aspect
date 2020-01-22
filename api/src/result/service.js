@@ -2020,14 +2020,6 @@ async function transferResult(request) {
   ])
   result.data.followUps = []
 
-  // try to get result - if it is `null` then it means result is not accessible by current
-  // user any more and we set new conditional prop `isTransferredAway` to use it for managing
-  // UI changes in ReporterApp for such results which were downloaded to ReporterApp but then transferred
-  const resultNew = await getResultByResultId(request)
-  if (!resultNew) {
-    result.data.isTransferredAway = true
-  }
-
   return result
 }
 
