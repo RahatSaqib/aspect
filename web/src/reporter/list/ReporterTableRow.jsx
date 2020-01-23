@@ -44,7 +44,14 @@ const ReporterTableRow = ({
           style: 'percent',
         })}
       </TableCell>
-      <TableCell>{intl.formatNumber(reporter.get('totalFlagged'))}</TableCell>
+      <TableCell
+        style={{
+          color: reporter.get('confirmFollowUpRatio') === 1 ? '' : 'red',
+        }}
+      >
+        {intl.formatNumber(reporter.get('onTreatment'))}/
+        {intl.formatNumber(reporter.get('requiresFollowUp'))}
+      </TableCell>
       <TableCell>
         <AspectCheckbox
           name="revoked"
