@@ -49,7 +49,7 @@ const ReporterTableRow = ({
           color: reporter.get('confirmFollowUpRatio') === 1 ? '' : 'red',
         }}
       >
-        {intl.formatNumber(reporter.get('onTreatment'))}/
+        {intl.formatNumber(reporter.get('totalOnTreatment'))}/
         {intl.formatNumber(reporter.get('requiresFollowUp'))}
       </TableCell>
       <TableCell>

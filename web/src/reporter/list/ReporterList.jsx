@@ -78,8 +78,8 @@ const messages = defineMessages({
     id: 'pages.ReporterList.acknowledgedRatio',
     defaultMessage: '% Acknowledged',
   },
-  onTreatment: {
-    id: 'pages.ReporterList.onTreatment',
+  totalOnTreatment: {
+    id: 'pages.ReporterList.totalOnTreatment',
     defaultMessage: 'On Treatment',
   },
   paginatorStatus: {
@@ -120,7 +120,7 @@ const searchSanitizer = makeSearchParamsSanitizer({
     'status',
     'acknowledgedRatio',
     'requiresFollowUp',
-    'onTreatment',
+    'totalOnTreatment',
   ],
 })
 const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
@@ -307,8 +307,8 @@ export const ReporterList = ({
                 sortable: true,
               },
               {
-                key: 'onTreatment',
-                label: intl.formatMessage(messages.onTreatment),
+                key: 'totalOnTreatment',
+                label: intl.formatMessage(messages.totalOnTreatment),
                 sortable: true,
               },
               {
