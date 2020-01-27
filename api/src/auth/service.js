@@ -364,14 +364,16 @@ function getGeographyAccess(personId, partnerId) {
       'gs.stateId as siteStateId',
       'gs.lgaId as siteLgaId'
     )
-    .then(items =>
-      items.map(item => ({
-        countryId: item.countryId || item.siteCountryId,
-        stateId: item.stateId || item.siteStateId,
-        lgaId: item.lgaId || item.siteLgaId,
-        siteId: item.siteId,
-      }))
-    )
+    .then(function(items) {
+      return items
+        ? items.map(item => ({
+            countryId: item.countryId || item.siteCountryId,
+            stateId: item.stateId || item.siteStateId,
+            lgaId: item.lgaId || item.siteLgaId,
+            siteId: item.siteId,
+          }))
+        : []
+    })
 }
 
 async function getDisplayPreferences({ partnerId }) {
