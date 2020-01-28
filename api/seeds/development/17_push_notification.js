@@ -1,4 +1,4 @@
-const { insertPushTemplates } = require('../commonPushNotifications')
+const { insertNewResultPushTemplates } = require('../commonPushNotifications')
 
 module.exports = require('../utils').seed(seed, __filename)
 
@@ -10,5 +10,5 @@ async function seed(knex) {
     .where({ name: 'Partner One' })
     .first()
 
-  insertPushTemplates(knex, adminId, partnerId)
+  await insertNewResultPushTemplates(knex, adminId, partnerId)
 }
