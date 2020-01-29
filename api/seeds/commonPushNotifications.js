@@ -99,7 +99,8 @@ async function insertNewResultPushTemplates(
   await knex('IssueResolutionTrigger').insert({
     partnerId,
     issueTypeId: newResultsIssueTypeId,
-    ...pushNotification.issueResolutionTrigger.resolutionConditions,
+    resolutionConditions:
+      pushNotification.issueResolutionTrigger.resolutionConditions,
     ...timeStampFields,
   })
 }
