@@ -11,7 +11,7 @@ const {
 } = require('../db')
 const { resultUpdated } = require('./actions')
 const { getConstraints, addConstraints } = require('../auth/constraints')
-const { getUser } = require('../auth/service')
+const { getUser, getUserByUserId } = require('../auth/service')
 const {
   resultWorkflowStatusToId,
   resultTreatmentStatusToId,
@@ -1919,7 +1919,7 @@ async function transferResult(request) {
   const {
     auth,
     params: { resultId },
-    payload: { siteId },
+    payload: { siteId, timeStamp },
   } = request
   const { partnerId, countryId, id: currentUserId, userName } = await getUser(
     auth.credentials.name
@@ -1942,66 +1942,96 @@ async function transferResult(request) {
     return Boom.badRequest('Invalid externalId `Transfer`')
   }
 
-  const now = new Date()
-
-  // log
-  const [resultStatusLogId] = await knex('ResultStatusLog').insert({
-    resultId,
-    resultStatusId,
-    createdOn: now,
-    createdBy: currentUserId,
-    data: JSON.stringify({
-      siteId: result.siteId,
-      reportableSiteId: siteId,
-      sampleOriginSiteId: result.sampleOriginSiteId,
-    }),
-  })
-  const { createdOn: transferredOn } = await knex('ResultStatusLog')
-    .where({ id: resultStatusLogId })
-    .first('createdOn')
-
-  // ------------
-  // update follow-up and treatment status
-  /* from Stefan response on https://github.com/SystemOneId/aspect/pull/1030#discussion_r368562435:
-  I had a conversation with Chris around this and we landed on resetting the treatment status so that the clinic
-  user that now has access to the result has to confirm it on treatment again.
-  That means deleting ResultFollowUp is correct here, but instead of simply deleting the ResultTreatmentStatusLog,
-  we should add an entry that sets the result back to "Awaiting Treatment" and as "method" set "transfer" so we keep
-  a record of the reset.
-  */
-  // remove from ResultFollowUp
-  await knex('ResultFollowUp')
+  // get item if timeStamp of prev action is newer than current timeStamp
+  let resultStatusLog = await knex('ResultStatusLog')
+    .where(
+      knex.raw('IFNULL(JSON_EXTRACT(data,"$.timeStamp"),0) > ?', [timeStamp])
+    )
     .where({ resultId })
-    .del()
-  // add entry to ResultTreatmentStatusLog as "Awaiting Treatment" with details about reason
-  const externalId = 'AwaitingTreatment'
-  const resultTreatmentStatusId = await resultTreatmentStatusToId(externalId)
-  const [treatmentStatusLogId] = await knex('ResultTreatmentStatusLog').insert({
-    resultId,
-    resultTreatmentStatusId,
-    method: 'transfer',
-    data: JSON.stringify({
-      siteId: result.siteId,
-      reportableSiteId: siteId,
-      sampleOriginSiteId: result.sampleOriginSiteId,
-    }),
-    createdOn: now,
-    changedOn: now,
-    createdBy: currentUserId,
-  })
-  // ------------
+    .first('createdOn', 'createdBy')
 
-  // update
-  await knex('Result')
-    .where('id', resultId)
-    .update({
-      reportableSiteId: siteId,
-      resultStatusLogId,
-      treatmentStatusLogId,
-      firstViewedOn: null,
-      updatedBy: currentUserId,
-      updatedOn: now,
+  let resultStatusLogId
+  let transferredOn
+  let transferredBy = userName
+  if (resultStatusLog) {
+    // ^^^
+    // prev action is newer than current - get it's props and skip current action
+    // ---
+    resultStatusLogId = resultStatusLog.id
+    // current action is NOT latest - so skip current action and read details for latest one
+    transferredOn = resultStatusLog.createdOn
+    const author = await getUserByUserId(resultStatusLog.createdBy)
+    transferredBy = author ? author.userName : '?'
+  } else {
+    // ^^^
+    // current action is newer
+    // ---
+    const now = new Date()
+
+    // log
+    ;[resultStatusLogId] = await knex('ResultStatusLog').insert({
+      resultId,
+      resultStatusId,
+      createdOn: now,
+      createdBy: currentUserId,
+      data: JSON.stringify({
+        siteId: result.siteId,
+        reportableSiteId: siteId,
+        sampleOriginSiteId: result.sampleOriginSiteId,
+        timeStamp,
+      }),
     })
+    // const { createdOn: transferredOn }
+    resultStatusLog = await knex('ResultStatusLog')
+      .where({ id: resultStatusLogId })
+      .first('createdOn')
+    transferredOn = resultStatusLog.createdOn
+
+    // ------------
+    // update follow-up and treatment status
+    /* from Stefan response on https://github.com/SystemOneId/aspect/pull/1030#discussion_r368562435:
+    I had a conversation with Chris around this and we landed on resetting the treatment status so that the clinic
+    user that now has access to the result has to confirm it on treatment again.
+    That means deleting ResultFollowUp is correct here, but instead of simply deleting the ResultTreatmentStatusLog,
+    we should add an entry that sets the result back to "Awaiting Treatment" and as "method" set "transfer" so we keep
+    a record of the reset.
+    */
+    // remove from ResultFollowUp
+    await knex('ResultFollowUp')
+      .where({ resultId })
+      .del()
+    // add entry to ResultTreatmentStatusLog as "Awaiting Treatment" with details about reason
+    const externalId = 'AwaitingTreatment'
+    const resultTreatmentStatusId = await resultTreatmentStatusToId(externalId)
+    const [treatmentStatusLogId] = await knex(
+      'ResultTreatmentStatusLog'
+    ).insert({
+      resultId,
+      resultTreatmentStatusId,
+      method: 'transfer',
+      data: JSON.stringify({
+        siteId: result.siteId,
+        reportableSiteId: siteId,
+        sampleOriginSiteId: result.sampleOriginSiteId,
+      }),
+      createdOn: now,
+      changedOn: now,
+      createdBy: currentUserId,
+    })
+    // ------------
+
+    // update
+    await knex('Result')
+      .where('id', resultId)
+      .update({
+        reportableSiteId: siteId,
+        resultStatusLogId,
+        treatmentStatusLogId,
+        firstViewedOn: null,
+        updatedBy: currentUserId,
+        updatedOn: now,
+      })
+  }
 
   const currTreatmentStatus = await getTreatmentStatusByResultId(resultId)
 
@@ -2011,7 +2041,7 @@ async function transferResult(request) {
   result.data.reportableSiteId = siteId
   result.data.reportableSiteName = site.name
   result.data.transferredOn = transferredOn
-  result.data.transferredBy = userName
+  result.data.transferredBy = transferredBy
   result.data.resultStatusLogId = resultStatusLogId
   result.data.firstViewedOn = null
   result.data.treatmentStatus = _.pick(currTreatmentStatus, [

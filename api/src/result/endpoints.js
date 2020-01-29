@@ -1429,6 +1429,10 @@ const routes = [
             .integer()
             .positive()
             .description('New Site ID to transfer current result'),
+          timeStamp: Joi.number()
+            .integer()
+            .positive()
+            .description('Timestamp in msecs when action dispatched'),
         },
       },
       response: {

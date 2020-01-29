@@ -26,25 +26,28 @@ async function checkAuthentication() {
   return { message: 'Welcome to the API!' }
 }
 
+const userProps = [
+  'u.lockedOut',
+  'u.failedPasswordAttempts',
+  'u.password',
+  'u.legacyPassword',
+  'u.id',
+  'u.name',
+  'p.name as userName',
+  'p.culture',
+  'p.timezone',
+  'p.id as personId',
+  'p.lastPartnerId as partnerId',
+  'p.lastCountryId as countryId',
+  'p.userId',
+]
+
 function getUser(username) {
   return query('Get basic user details')
     .from('User as u')
     .innerJoin('Person as p', 'u.id', 'p.userId')
     .where({ 'u.name': username })
-    .first(
-      'u.lockedOut',
-      'u.failedPasswordAttempts',
-      'u.password',
-      'u.legacyPassword',
-      'u.id',
-      'u.name',
-      'p.name as userName',
-      'p.culture',
-      'p.timezone',
-      'p.id as personId',
-      'p.lastPartnerId as partnerId',
-      'p.lastCountryId as countryId'
-    )
+    .first(...userProps)
 }
 
 function getUserByPersonId(personId) {
@@ -52,21 +55,15 @@ function getUserByPersonId(personId) {
     .from('Person as p')
     .innerJoin('User as u', 'p.userId', 'u.id')
     .where({ 'p.id': personId })
-    .first(
-      'u.lockedOut',
-      'u.failedPasswordAttempts',
-      'u.password',
-      'u.legacyPassword',
-      'u.id',
-      'u.name',
-      'u.lockedOut',
-      'p.culture',
-      'p.timezone',
-      'p.id as personId',
-      'p.lastPartnerId as partnerId',
-      'p.lastCountryId as countryId',
-      'p.userId'
-    )
+    .first(...userProps)
+}
+
+function getUserByUserId(userId) {
+  return query('Get user details for user')
+    .from('User as u')
+    .innerJoin('Person as p', 'u.id', 'p.userId')
+    .where({ 'u.id': userId })
+    .first(...userProps)
 }
 
 function getUserId(username) {
@@ -764,6 +761,7 @@ async function lockedOutUser(userId, lockedOut) {
 }
 module.exports = {
   getUser,
+  getUserByUserId,
   authenticate,
   checkAuthentication,
   refreshToken,
