@@ -247,11 +247,13 @@ export const ReporterList = ({
     />
     <DataTableCard key={`DataTableCard--table-${location.key}`}>
       <DataTableProgressBar disabled={!table.loading} />
-      <ExportListButton
-        onExcelClick={onExportClick}
-        onCsvClick={onExportClick}
-        reportName="Results"
-      />
+      {!items.currentIdList.isEmpty() && (
+        <ExportListButton
+          onExcelClick={onExportClick}
+          onCsvClick={onExportClick}
+          reportName="Results"
+        />
+      )}
       {items.currentIdList.isEmpty() && (
         <BrowseEmptyList history={history} location={location} intl={intl} />
       )}

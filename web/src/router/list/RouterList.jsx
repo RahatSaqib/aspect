@@ -228,11 +228,13 @@ export const RouterList = ({
     <DataTableCard key={`DataTableCard--table-${location.key}`}>
       <DataTableProgressBar disabled={!table.loading} />
 
-      <ExportListButton
-        onExcelClick={onExcelClick}
-        onCsvClick={onExcelClick}
-        reportName="Routers"
-      />
+      {!items.currentIdList.isEmpty() && (
+        <ExportListButton
+          onExcelClick={onExcelClick}
+          onCsvClick={onExcelClick}
+          reportName="Routers"
+        />
+      )}
 
       {items.currentIdList.isEmpty() && (
         <BrowseEmptyList history={history} location={location} intl={intl} />

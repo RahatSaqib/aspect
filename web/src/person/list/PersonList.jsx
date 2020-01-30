@@ -256,11 +256,13 @@ export const PersonList = ({
         <BrowseEmptyList history={history} location={location} intl={intl} />
       )}
 
-      <ExportListButton
-        onExcelClick={onExcelClick}
-        onCsvClick={onExcelClick}
-        reportName="Contacts"
-      />
+      {!items.currentIdList.isEmpty() && (
+        <ExportListButton
+          onExcelClick={onExcelClick}
+          onCsvClick={onExcelClick}
+          reportName="Contacts"
+        />
+      )}
 
       {!items.currentIdList.isEmpty() && (
         <PersonDataTable

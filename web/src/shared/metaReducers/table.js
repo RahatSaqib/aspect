@@ -31,6 +31,7 @@ export const Table = Immutable.Record({
   pageSize: 10, // Renamed from 'size' since 'size' will conflict with Immutable internal property
   total: 0,
   extraColumns: new Immutable.List(),
+  groupBy: new Immutable.List(),
 })
 
 export const makeTable = _.flowRight(Table, Immutable.fromJS)

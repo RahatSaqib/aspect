@@ -409,11 +409,13 @@ export const InventoryItemsList = ({
     >
       <DataTableProgressBar disabled={!table.loading} />
 
-      <ExportListButton
-        onExcelClick={onExcelClick}
-        onCsvClick={onExcelClick}
-        reportName="Supplies"
-      />
+      {!items.currentIdList.isEmpty() && (
+        <ExportListButton
+          onExcelClick={onExcelClick}
+          onCsvClick={onExcelClick}
+          reportName="Supplies"
+        />
+      )}
 
       {items.currentIdList.isEmpty() && (
         <BrowseEmptyList history={history} location={location} intl={intl} />

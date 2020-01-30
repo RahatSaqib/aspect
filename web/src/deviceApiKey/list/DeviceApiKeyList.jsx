@@ -432,11 +432,13 @@ export const DeviceApiKeyList = ({
     </div>
     <DataTableCard key={`DataTableCard--table-${location.key}`}>
       <DataTableProgressBar disabled={!table.loading} />
-      <ExportListButton
-        onExcelClick={onExportClick}
-        onCsvClick={onExportClick}
-        reportName="DeviceApiKey"
-      />
+      {!items.currentIdList.isEmpty() && (
+        <ExportListButton
+          onExcelClick={onExportClick}
+          onCsvClick={onExportClick}
+          reportName="DeviceApiKey"
+        />
+      )}
       {items.currentIdList.isEmpty() && (
         <BrowseEmptyList history={history} location={location} intl={intl} />
       )}

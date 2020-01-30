@@ -81,8 +81,178 @@ exports[`Person List module PersonList component should shallow render correctly
         }
       }
     />
+  </DataTableCard>
+</div>
+`;
+
+exports[`Person List module PersonList component should shallow render export button 1`] = `
+<div
+  className="Container"
+>
+  <HelmetWrapper
+    defer={true}
+    encodeSpecialCharacters={true}
+    title="Contacts"
+  />
+  <Connect(lifecycle(Component))
+    title="Contacts"
+  />
+  <pure(withProps(withHandlers(Connect(lifecycle(BrowseFilters)))))
+    history={
+      Object {
+        "push": [Function],
+      }
+    }
+    intl={
+      Object {
+        "formatDate": [Function],
+        "formatHTMLMessage": [Function],
+        "formatMessage": [Function],
+        "formatNumber": [Function],
+        "formatPlural": [Function],
+        "formatRelative": [Function],
+        "formatTime": [Function],
+      }
+    }
+    location={
+      Object {
+        "search": "",
+      }
+    }
+  />
+  <DataTableCard
+    className="DataTableCard--action"
+  >
+    <div />
+    <WithStyles(Tooltip)
+      placement="bottom"
+      title="Add Contact"
+    >
+      <WithStyles(IconButton)
+        aria-label="Add Contact"
+      >
+        <pure(AddIcon)
+          fontSize="large"
+        />
+      </WithStyles(IconButton)>
+    </WithStyles(Tooltip)>
+  </DataTableCard>
+  <DataTableCard
+    key="DataTableCard--table-undefined"
+  >
+    <DataTableProgressBar
+      disabled={true}
+    />
     <Connect(withState(withHandlers(ExportListButton)))
+      onCsvClick={[Function]}
+      onExcelClick={[Function]}
       reportName="Contacts"
+    />
+    <WithStyles(Table)
+      className="PersonDataTable"
+      selectable={false}
+    >
+      <BrowseDataTableHead
+        columns={
+          Array [
+            Object {
+              "key": "name",
+              "label": "Name",
+              "sortable": true,
+            },
+            Object {
+              "key": "level",
+              "label": "Job",
+              "sortable": true,
+            },
+            Object {
+              "key": "state",
+              "label": "State",
+              "sortable": true,
+            },
+            Object {
+              "key": "lga",
+              "label": "County",
+              "sortable": true,
+            },
+            Object {
+              "key": "tags",
+              "label": "Tags",
+              "sortable": true,
+            },
+          ]
+        }
+        history={
+          Object {
+            "push": [Function],
+          }
+        }
+        location={
+          Object {
+            "search": "",
+          }
+        }
+        sortColumnDir="desc"
+        sortColumnKey="id"
+      />
+      <WithStyles(TableBody)>
+        <PersonTableRow
+          data-person-id="1"
+          intl={
+            Object {
+              "formatDate": [Function],
+              "formatHTMLMessage": [Function],
+              "formatMessage": [Function],
+              "formatNumber": [Function],
+              "formatPlural": [Function],
+              "formatRelative": [Function],
+              "formatTime": [Function],
+            }
+          }
+          key="1"
+          onClick={[Function]}
+          person={
+            Immutable.Map {
+              "id": "1",
+            }
+          }
+        />
+      </WithStyles(TableBody)>
+    </WithStyles(Table)>
+    <pure(withHandlers(withProps(withHandlers(pure(TablePaginator)))))
+      history={
+        Object {
+          "push": [Function],
+        }
+      }
+      intl={
+        Object {
+          "formatDate": [Function],
+          "formatHTMLMessage": [Function],
+          "formatMessage": [Function],
+          "formatNumber": [Function],
+          "formatPlural": [Function],
+          "formatRelative": [Function],
+          "formatTime": [Function],
+        }
+      }
+      location={
+        Object {
+          "search": "",
+        }
+      }
+      pageAt={0}
+      pageSize={10}
+      paginatorStatus={
+        Object {
+          "defaultMessage": "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural,
+      one {# contact}
+      other {# contacts}
+    }",
+          "id": "pages.PersonList.paginatorStatus",
+        }
+      }
+      total={1}
     />
   </DataTableCard>
 </div>

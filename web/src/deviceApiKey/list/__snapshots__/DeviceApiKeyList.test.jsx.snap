@@ -103,11 +103,6 @@ exports[`Device Api Key List module DeviceApiKeyList component should shallow re
     <DataTableProgressBar
       disabled={true}
     />
-    <Connect(withState(withHandlers(ExportListButton)))
-      onCsvClick={[Function]}
-      onExcelClick={[Function]}
-      reportName="DeviceApiKey"
-    />
     <pure(withHandlers(EmptyList))
       history={
         Object {

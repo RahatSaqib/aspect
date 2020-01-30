@@ -1,0 +1,723 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`InventoryItemList module InventoryItemList component should render correctly 1`] = `
+<div
+  className="Container"
+>
+  <HelmetWrapper
+    defer={true}
+    encodeSpecialCharacters={true}
+    title="Inventory on Hand"
+  />
+  <Connect(lifecycle(Component))
+    title="Inventory on Hand"
+  />
+  <pure(withProps(withHandlers(Connect(lifecycle(BrowseFilters)))))
+    dateFilterLabel="Expires On"
+    history={
+      Object {
+        "push": [Function],
+      }
+    }
+    intl={
+      Object {
+        "defaultFormats": Object {},
+        "defaultLocale": "en",
+        "formatDate": [Function],
+        "formatHTMLMessage": [Function],
+        "formatMessage": [Function],
+        "formatNumber": [Function],
+        "formatPlural": [Function],
+        "formatRelative": [Function],
+        "formatTime": [Function],
+        "formats": Object {},
+        "formatters": Object {
+          "getDateTimeFormat": [Function],
+          "getMessageFormat": [Function],
+          "getNumberFormat": [Function],
+          "getPluralFormat": [Function],
+          "getRelativeFormat": [Function],
+        },
+        "locale": "en",
+        "messages": Object {},
+        "now": [Function],
+        "onError": [Function],
+        "textComponent": "span",
+        "timeZone": null,
+      }
+    }
+    location={
+      Object {
+        "search": "",
+      }
+    }
+  />
+  <DataTableCard
+    className="DataTableCard--action"
+  >
+    <WithStyles(CheckboxField)
+      checked={false}
+      className="Checkbox"
+      label="Group by Site"
+      name="groupBySite"
+      onChange={[Function]}
+    />
+    <WithStyles(Tooltip)
+      placement="bottom"
+      title="Add Inventory"
+    >
+      <WithStyles(IconButton)
+        aria-label="Add Inventory"
+        onClick={[Function]}
+      >
+        <pure(AddIcon)
+          fontSize="large"
+        />
+      </WithStyles(IconButton)>
+    </WithStyles(Tooltip)>
+  </DataTableCard>
+  <DataTableCard
+    className="DataTableCard--table"
+    key="DataTableCard--table-undefined"
+  >
+    <DataTableProgressBar
+      disabled={true}
+    />
+    <pure(withHandlers(EmptyList))
+      history={
+        Object {
+          "push": [Function],
+        }
+      }
+      intl={
+        Object {
+          "defaultFormats": Object {},
+          "defaultLocale": "en",
+          "formatDate": [Function],
+          "formatHTMLMessage": [Function],
+          "formatMessage": [Function],
+          "formatNumber": [Function],
+          "formatPlural": [Function],
+          "formatRelative": [Function],
+          "formatTime": [Function],
+          "formats": Object {},
+          "formatters": Object {
+            "getDateTimeFormat": [Function],
+            "getMessageFormat": [Function],
+            "getNumberFormat": [Function],
+            "getPluralFormat": [Function],
+            "getRelativeFormat": [Function],
+          },
+          "locale": "en",
+          "messages": Object {},
+          "now": [Function],
+          "onError": [Function],
+          "textComponent": "span",
+          "timeZone": null,
+        }
+      }
+      location={
+        Object {
+          "search": "",
+        }
+      }
+    />
+  </DataTableCard>
+  <pure(withProps(withProps(lifecycle(Connect(withProps(recomposeForm(lifecycle(InventoryAdjustmentDialogForm))))))))
+    intl={
+      Object {
+        "defaultFormats": Object {},
+        "defaultLocale": "en",
+        "formatDate": [Function],
+        "formatHTMLMessage": [Function],
+        "formatMessage": [Function],
+        "formatNumber": [Function],
+        "formatPlural": [Function],
+        "formatRelative": [Function],
+        "formatTime": [Function],
+        "formats": Object {},
+        "formatters": Object {
+          "getDateTimeFormat": [Function],
+          "getMessageFormat": [Function],
+          "getNumberFormat": [Function],
+          "getPluralFormat": [Function],
+          "getRelativeFormat": [Function],
+        },
+        "locale": "en",
+        "messages": Object {},
+        "now": [Function],
+        "onError": [Function],
+        "textComponent": "span",
+        "timeZone": null,
+      }
+    }
+    isDialogActive={false}
+    onCancel={[Function]}
+    onSubmit={[Function]}
+  />
+  <pure(withProps(withProps(lifecycle(Connect(withProps(recomposeForm(InventoryAdjustmentDialogForm)))))))
+    intl={
+      Object {
+        "defaultFormats": Object {},
+        "defaultLocale": "en",
+        "formatDate": [Function],
+        "formatHTMLMessage": [Function],
+        "formatMessage": [Function],
+        "formatNumber": [Function],
+        "formatPlural": [Function],
+        "formatRelative": [Function],
+        "formatTime": [Function],
+        "formats": Object {},
+        "formatters": Object {
+          "getDateTimeFormat": [Function],
+          "getMessageFormat": [Function],
+          "getNumberFormat": [Function],
+          "getPluralFormat": [Function],
+          "getRelativeFormat": [Function],
+        },
+        "locale": "en",
+        "messages": Object {},
+        "now": [Function],
+        "onError": [Function],
+        "textComponent": "span",
+        "timeZone": null,
+      }
+    }
+    inventoryItem={Immutable.Map {}}
+    isDialogActive={false}
+    onCancel={[Function]}
+    onSubmit={[Function]}
+  />
+  <pure(withProps(withProps(lifecycle(Connect(withProps(recomposeForm(InventoryAdjustmentDialogForm)))))))
+    intl={
+      Object {
+        "defaultFormats": Object {},
+        "defaultLocale": "en",
+        "formatDate": [Function],
+        "formatHTMLMessage": [Function],
+        "formatMessage": [Function],
+        "formatNumber": [Function],
+        "formatPlural": [Function],
+        "formatRelative": [Function],
+        "formatTime": [Function],
+        "formats": Object {},
+        "formatters": Object {
+          "getDateTimeFormat": [Function],
+          "getMessageFormat": [Function],
+          "getNumberFormat": [Function],
+          "getPluralFormat": [Function],
+          "getRelativeFormat": [Function],
+        },
+        "locale": "en",
+        "messages": Object {},
+        "now": [Function],
+        "onError": [Function],
+        "textComponent": "span",
+        "timeZone": null,
+      }
+    }
+    inventoryItem={Immutable.Map {}}
+    isDialogActive={false}
+    onCancel={[Function]}
+    onSubmit={[Function]}
+  />
+  <pure(withProps(withProps(lifecycle(Connect(withProps(recomposeForm(InventoryAdjustmentDialogForm)))))))
+    intl={
+      Object {
+        "defaultFormats": Object {},
+        "defaultLocale": "en",
+        "formatDate": [Function],
+        "formatHTMLMessage": [Function],
+        "formatMessage": [Function],
+        "formatNumber": [Function],
+        "formatPlural": [Function],
+        "formatRelative": [Function],
+        "formatTime": [Function],
+        "formats": Object {},
+        "formatters": Object {
+          "getDateTimeFormat": [Function],
+          "getMessageFormat": [Function],
+          "getNumberFormat": [Function],
+          "getPluralFormat": [Function],
+          "getRelativeFormat": [Function],
+        },
+        "locale": "en",
+        "messages": Object {},
+        "now": [Function],
+        "onError": [Function],
+        "textComponent": "span",
+        "timeZone": null,
+      }
+    }
+    inventoryItem={Immutable.Map {}}
+    isDialogActive={false}
+    onCancel={[Function]}
+    onSubmit={[Function]}
+  />
+  <pure(withProps(withProps(lifecycle(Connect(withProps(recomposeForm(InventoryAdjustmentDialogForm)))))))
+    intl={
+      Object {
+        "defaultFormats": Object {},
+        "defaultLocale": "en",
+        "formatDate": [Function],
+        "formatHTMLMessage": [Function],
+        "formatMessage": [Function],
+        "formatNumber": [Function],
+        "formatPlural": [Function],
+        "formatRelative": [Function],
+        "formatTime": [Function],
+        "formats": Object {},
+        "formatters": Object {
+          "getDateTimeFormat": [Function],
+          "getMessageFormat": [Function],
+          "getNumberFormat": [Function],
+          "getPluralFormat": [Function],
+          "getRelativeFormat": [Function],
+        },
+        "locale": "en",
+        "messages": Object {},
+        "now": [Function],
+        "onError": [Function],
+        "textComponent": "span",
+        "timeZone": null,
+      }
+    }
+    inventoryItem={Immutable.Map {}}
+    isDialogActive={false}
+    onCancel={[Function]}
+    onSubmit={[Function]}
+  />
+</div>
+`;
+
+exports[`InventoryItemList module InventoryItemList component should render export button 1`] = `
+<div
+  className="Container"
+>
+  <HelmetWrapper
+    defer={true}
+    encodeSpecialCharacters={true}
+    title="Inventory on Hand"
+  />
+  <Connect(lifecycle(Component))
+    title="Inventory on Hand"
+  />
+  <pure(withProps(withHandlers(Connect(lifecycle(BrowseFilters)))))
+    dateFilterLabel="Expires On"
+    history={
+      Object {
+        "push": [Function],
+      }
+    }
+    intl={
+      Object {
+        "defaultFormats": Object {},
+        "defaultLocale": "en",
+        "formatDate": [Function],
+        "formatHTMLMessage": [Function],
+        "formatMessage": [Function],
+        "formatNumber": [Function],
+        "formatPlural": [Function],
+        "formatRelative": [Function],
+        "formatTime": [Function],
+        "formats": Object {},
+        "formatters": Object {
+          "getDateTimeFormat": [Function],
+          "getMessageFormat": [Function],
+          "getNumberFormat": [Function],
+          "getPluralFormat": [Function],
+          "getRelativeFormat": [Function],
+        },
+        "locale": "en",
+        "messages": Object {},
+        "now": [Function],
+        "onError": [Function],
+        "textComponent": "span",
+        "timeZone": null,
+      }
+    }
+    location={
+      Object {
+        "search": "",
+      }
+    }
+  />
+  <DataTableCard
+    className="DataTableCard--action"
+  >
+    <WithStyles(CheckboxField)
+      checked={false}
+      className="Checkbox"
+      label="Group by Site"
+      name="groupBySite"
+      onChange={[Function]}
+    />
+    <WithStyles(Tooltip)
+      placement="bottom"
+      title="Add Inventory"
+    >
+      <WithStyles(IconButton)
+        aria-label="Add Inventory"
+        onClick={[Function]}
+      >
+        <pure(AddIcon)
+          fontSize="large"
+        />
+      </WithStyles(IconButton)>
+    </WithStyles(Tooltip)>
+  </DataTableCard>
+  <DataTableCard
+    className="DataTableCard--table"
+    key="DataTableCard--table-undefined"
+  >
+    <DataTableProgressBar
+      disabled={true}
+    />
+    <Connect(withState(withHandlers(ExportListButton)))
+      reportName="Supplies"
+    />
+    <WithStyles(Table)
+      className="InventoryDataTable"
+    >
+      <BrowseDataTableHead
+        columns={
+          Array [
+            Object {
+              "key": "siteName",
+              "label": "Site Name",
+              "sortable": true,
+            },
+            Object {
+              "key": "consumableName",
+              "label": "Consumable",
+              "sortable": true,
+            },
+            Object {
+              "key": "quantityOnHand",
+              "label": "Quantity on Hand",
+              "sortable": true,
+            },
+            Object {
+              "key": "expiresOn",
+              "label": "Expires On",
+              "sortable": true,
+            },
+            Object {
+              "data-column": "expiresOn",
+              "key": "expiresIn",
+              "label": "Expires",
+              "sortable": true,
+            },
+            Object {
+              "key": "action",
+            },
+          ]
+        }
+        history={
+          Object {
+            "push": [Function],
+          }
+        }
+        location={
+          Object {
+            "search": "",
+          }
+        }
+      />
+      <WithStyles(TableBody)>
+        <InventoryTableRow
+          intl={
+            Object {
+              "defaultFormats": Object {},
+              "defaultLocale": "en",
+              "formatDate": [Function],
+              "formatHTMLMessage": [Function],
+              "formatMessage": [Function],
+              "formatNumber": [Function],
+              "formatPlural": [Function],
+              "formatRelative": [Function],
+              "formatTime": [Function],
+              "formats": Object {},
+              "formatters": Object {
+                "getDateTimeFormat": [Function],
+                "getMessageFormat": [Function],
+                "getNumberFormat": [Function],
+                "getPluralFormat": [Function],
+                "getRelativeFormat": [Function],
+              },
+              "locale": "en",
+              "messages": Object {},
+              "now": [Function],
+              "onError": [Function],
+              "textComponent": "span",
+              "timeZone": null,
+            }
+          }
+          inventoryItem={
+            Immutable.Map {
+              "id": "1",
+            }
+          }
+          key="1"
+        >
+          <WithStyles(IconMenu)
+            icon={<pure(MoreVertIcon) />}
+          >
+            <WithStyles(MenuItem)
+              onClick={[Function]}
+              value="1"
+            >
+              <WithStyles(ListItemIcon)>
+                <pure(AddIcon) />
+              </WithStyles(ListItemIcon)>
+              <WithStyles(ListItemText)
+                inset={true}
+                primary="Add Inventory"
+              />
+            </WithStyles(MenuItem)>
+            <WithStyles(MenuItem)
+              onClick={[Function]}
+              value="1"
+            >
+              <WithStyles(ListItemIcon)>
+                <pure(SwapHorizIcon) />
+              </WithStyles(ListItemIcon)>
+              <WithStyles(ListItemText)
+                inset={true}
+                primary="Transfer Inventory"
+              />
+            </WithStyles(MenuItem)>
+            <WithStyles(MenuItem)
+              onClick={[Function]}
+              value="1"
+            >
+              <WithStyles(ListItemIcon)>
+                <pure(RemoveIcon) />
+              </WithStyles(ListItemIcon)>
+              <WithStyles(ListItemText)
+                inset={true}
+                primary="Remove Inventory"
+              />
+            </WithStyles(MenuItem)>
+          </WithStyles(IconMenu)>
+        </InventoryTableRow>
+      </WithStyles(TableBody)>
+    </WithStyles(Table)>
+    <pure(withHandlers(withProps(withHandlers(pure(TablePaginator)))))
+      history={
+        Object {
+          "push": [Function],
+        }
+      }
+      intl={
+        Object {
+          "defaultFormats": Object {},
+          "defaultLocale": "en",
+          "formatDate": [Function],
+          "formatHTMLMessage": [Function],
+          "formatMessage": [Function],
+          "formatNumber": [Function],
+          "formatPlural": [Function],
+          "formatRelative": [Function],
+          "formatTime": [Function],
+          "formats": Object {},
+          "formatters": Object {
+            "getDateTimeFormat": [Function],
+            "getMessageFormat": [Function],
+            "getNumberFormat": [Function],
+            "getPluralFormat": [Function],
+            "getRelativeFormat": [Function],
+          },
+          "locale": "en",
+          "messages": Object {},
+          "now": [Function],
+          "onError": [Function],
+          "textComponent": "span",
+          "timeZone": null,
+        }
+      }
+      location={
+        Object {
+          "search": "",
+        }
+      }
+      pageAt={0}
+      pageSize={10}
+      paginatorStatus={
+        Object {
+          "defaultMessage": "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural,
+      one {# supply}
+      other {# supplies}
+    }",
+          "id": "pages.InventoryItemsList.paginatorStatus",
+        }
+      }
+      total={1}
+    />
+  </DataTableCard>
+  <pure(withProps(withProps(lifecycle(Connect(withProps(recomposeForm(lifecycle(InventoryAdjustmentDialogForm))))))))
+    intl={
+      Object {
+        "defaultFormats": Object {},
+        "defaultLocale": "en",
+        "formatDate": [Function],
+        "formatHTMLMessage": [Function],
+        "formatMessage": [Function],
+        "formatNumber": [Function],
+        "formatPlural": [Function],
+        "formatRelative": [Function],
+        "formatTime": [Function],
+        "formats": Object {},
+        "formatters": Object {
+          "getDateTimeFormat": [Function],
+          "getMessageFormat": [Function],
+          "getNumberFormat": [Function],
+          "getPluralFormat": [Function],
+          "getRelativeFormat": [Function],
+        },
+        "locale": "en",
+        "messages": Object {},
+        "now": [Function],
+        "onError": [Function],
+        "textComponent": "span",
+        "timeZone": null,
+      }
+    }
+    isDialogActive={false}
+    onCancel={[Function]}
+    onSubmit={[Function]}
+  />
+  <pure(withProps(withProps(lifecycle(Connect(withProps(recomposeForm(InventoryAdjustmentDialogForm)))))))
+    intl={
+      Object {
+        "defaultFormats": Object {},
+        "defaultLocale": "en",
+        "formatDate": [Function],
+        "formatHTMLMessage": [Function],
+        "formatMessage": [Function],
+        "formatNumber": [Function],
+        "formatPlural": [Function],
+        "formatRelative": [Function],
+        "formatTime": [Function],
+        "formats": Object {},
+        "formatters": Object {
+          "getDateTimeFormat": [Function],
+          "getMessageFormat": [Function],
+          "getNumberFormat": [Function],
+          "getPluralFormat": [Function],
+          "getRelativeFormat": [Function],
+        },
+        "locale": "en",
+        "messages": Object {},
+        "now": [Function],
+        "onError": [Function],
+        "textComponent": "span",
+        "timeZone": null,
+      }
+    }
+    inventoryItem={Immutable.Map {}}
+    isDialogActive={false}
+    onCancel={[Function]}
+    onSubmit={[Function]}
+  />
+  <pure(withProps(withProps(lifecycle(Connect(withProps(recomposeForm(InventoryAdjustmentDialogForm)))))))
+    intl={
+      Object {
+        "defaultFormats": Object {},
+        "defaultLocale": "en",
+        "formatDate": [Function],
+        "formatHTMLMessage": [Function],
+        "formatMessage": [Function],
+        "formatNumber": [Function],
+        "formatPlural": [Function],
+        "formatRelative": [Function],
+        "formatTime": [Function],
+        "formats": Object {},
+        "formatters": Object {
+          "getDateTimeFormat": [Function],
+          "getMessageFormat": [Function],
+          "getNumberFormat": [Function],
+          "getPluralFormat": [Function],
+          "getRelativeFormat": [Function],
+        },
+        "locale": "en",
+        "messages": Object {},
+        "now": [Function],
+        "onError": [Function],
+        "textComponent": "span",
+        "timeZone": null,
+      }
+    }
+    inventoryItem={Immutable.Map {}}
+    isDialogActive={false}
+    onCancel={[Function]}
+    onSubmit={[Function]}
+  />
+  <pure(withProps(withProps(lifecycle(Connect(withProps(recomposeForm(InventoryAdjustmentDialogForm)))))))
+    intl={
+      Object {
+        "defaultFormats": Object {},
+        "defaultLocale": "en",
+        "formatDate": [Function],
+        "formatHTMLMessage": [Function],
+        "formatMessage": [Function],
+        "formatNumber": [Function],
+        "formatPlural": [Function],
+        "formatRelative": [Function],
+        "formatTime": [Function],
+        "formats": Object {},
+        "formatters": Object {
+          "getDateTimeFormat": [Function],
+          "getMessageFormat": [Function],
+          "getNumberFormat": [Function],
+          "getPluralFormat": [Function],
+          "getRelativeFormat": [Function],
+        },
+        "locale": "en",
+        "messages": Object {},
+        "now": [Function],
+        "onError": [Function],
+        "textComponent": "span",
+        "timeZone": null,
+      }
+    }
+    inventoryItem={Immutable.Map {}}
+    isDialogActive={false}
+    onCancel={[Function]}
+    onSubmit={[Function]}
+  />
+  <pure(withProps(withProps(lifecycle(Connect(withProps(recomposeForm(InventoryAdjustmentDialogForm)))))))
+    intl={
+      Object {
+        "defaultFormats": Object {},
+        "defaultLocale": "en",
+        "formatDate": [Function],
+        "formatHTMLMessage": [Function],
+        "formatMessage": [Function],
+        "formatNumber": [Function],
+        "formatPlural": [Function],
+        "formatRelative": [Function],
+        "formatTime": [Function],
+        "formats": Object {},
+        "formatters": Object {
+          "getDateTimeFormat": [Function],
+          "getMessageFormat": [Function],
+          "getNumberFormat": [Function],
+          "getPluralFormat": [Function],
+          "getRelativeFormat": [Function],
+        },
+        "locale": "en",
+        "messages": Object {},
+        "now": [Function],
+        "onError": [Function],
+        "textComponent": "span",
+        "timeZone": null,
+      }
+    }
+    inventoryItem={Immutable.Map {}}
+    isDialogActive={false}
+    onCancel={[Function]}
+    onSubmit={[Function]}
+  />
+</div>
+`;

@@ -7,6 +7,9 @@ import Immutable from 'immutable'
 import DataTableProgressBar from '../../components/shared/DataTableProgressBar'
 import { ReporterList } from './ReporterList'
 import DataTableCard from '../../components/shared/DataTableCard'
+import ExportListButton from '../../globals/components/ExportListButton'
+import { Items, makeItems } from '../../shared/metaReducers/items'
+import { Table, makeTable } from '../../shared/metaReducers/table'
 
 describe('ReporterList', () => {
   const intlProvider = new IntlProvider({ locale: 'en' }, {})
@@ -15,18 +18,8 @@ describe('ReporterList', () => {
     intl,
     history: jest.fn(),
     location: { search: '?filters=assayType%3DTB' },
-    table: {
-      loading: false,
-      sortCol: '',
-      sortDir: 'asc',
-      page: 0,
-      pageSize: 10,
-      total: 5,
-    },
-    items: {
-      byId: {},
-      currentIdList: Immutable.List([]),
-    },
+    table: new Table(),
+    items: new Items(),
     sortCol: '',
     sortDir: 'asc',
     pageAt: 1,
@@ -45,5 +38,27 @@ describe('ReporterList', () => {
   })
   it('should render DataTableProgressBar correctly', () => {
     expect(wrapper.find(DataTableProgressBar)).toHaveLength(1)
+  })
+
+  it('should render DataTableProgressBar correctly without export button', () => {
+    expect(wrapper.find(ExportListButton)).toHaveLength(0)
+  })
+
+  it('should render DataTableProgressBar correctly with export button', () => {
+    const wrapper = shallow(
+      <ReporterList
+        {...props}
+        table={makeTable({ total: 1 })}
+        items={makeItems({
+          currentIdList: ['1'],
+          byId: {
+            1: {
+              id: '1',
+            },
+          },
+        })}
+      />
+    )
+    expect(wrapper.find(ExportListButton)).toHaveLength(1)
   })
 })

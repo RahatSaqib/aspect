@@ -177,11 +177,13 @@ export const NotificationList = props => {
       />
       <DataTableCard key={`DataTableCard--table-${location.key}`}>
         <DataTableProgressBar disabled={!table.loading} />
-        <ExportListButton
-          onExcelClick={onExcelClick}
-          onCsvClick={onExcelClick}
-          reportName="Notifications"
-        />
+        {!items.currentIdList.isEmpty() && (
+          <ExportListButton
+            onExcelClick={onExcelClick}
+            onCsvClick={onExcelClick}
+            reportName="Notifications"
+          />
+        )}
         {items.currentIdList.isEmpty() && (
           <BrowseEmptyList history={history} location={location} intl={intl} />
         )}

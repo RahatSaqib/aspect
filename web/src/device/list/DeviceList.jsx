@@ -250,11 +250,13 @@ export const DeviceList = ({
         <BrowseEmptyList history={history} location={location} intl={intl} />
       )}
 
-      <ExportListButton
-        onExcelClick={onExcelClick}
-        onCsvClick={onExcelClick}
-        reportName="Devices"
-      />
+      {!items.currentIdList.isEmpty() && (
+        <ExportListButton
+          onExcelClick={onExcelClick}
+          onCsvClick={onExcelClick}
+          reportName="Devices"
+        />
+      )}
 
       {!items.currentIdList.isEmpty() && (
         <DeviceDataTable
