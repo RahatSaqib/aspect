@@ -249,14 +249,12 @@ export const DeviceList = ({
       {items.currentIdList.isEmpty() && (
         <BrowseEmptyList history={history} location={location} intl={intl} />
       )}
-
-      {!items.currentIdList.isEmpty() && (
-        <ExportListButton
-          onExcelClick={onExcelClick}
-          onCsvClick={onExcelClick}
-          reportName="Devices"
-        />
-      )}
+      <ExportListButton
+        onExcelClick={onExcelClick}
+        onCsvClick={onExcelClick}
+        visible={!items.currentIdList.isEmpty()}
+        reportName="Devices"
+      />
 
       {!items.currentIdList.isEmpty() && (
         <DeviceDataTable

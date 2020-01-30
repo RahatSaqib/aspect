@@ -70,7 +70,7 @@ describe('Device Api Key List module', () => {
       const element = shallow(<DeviceApiKeyList {...props} />)
 
       expect(element).toMatchSnapshot()
-      expect(element.find(ExportListButton)).toHaveLength(0)
+      expect(element.find(ExportListButton)).toHaveLength(1)
     })
 
     it('should shallow render with items correctly', () => {
@@ -97,7 +97,6 @@ describe('Device Api Key List module', () => {
       )
 
       expect(element).toMatchSnapshot()
-      expect(element.find(ExportListButton)).toHaveLength(1)
     })
   })
 })

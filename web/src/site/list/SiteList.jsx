@@ -261,14 +261,12 @@ export const SiteList = ({
       {items.currentIdList.isEmpty() && (
         <BrowseEmptyList history={history} location={location} intl={intl} />
       )}
-
-      {!items.currentIdList.isEmpty() && (
-        <ExportListButton
-          onExcelClick={onExcelClick}
-          onCsvClick={onExcelClick}
-          reportName="Sites"
-        />
-      )}
+      <ExportListButton
+        onExcelClick={onExcelClick}
+        onCsvClick={onExcelClick}
+        visible={!items.currentIdList.isEmpty()}
+        reportName="Sites"
+      />
 
       {!items.currentIdList.isEmpty() && (
         <SiteDataTable

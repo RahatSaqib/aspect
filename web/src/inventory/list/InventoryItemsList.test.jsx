@@ -3,8 +3,8 @@ import { shallow } from 'enzyme'
 import { IntlProvider } from 'react-intl'
 import Immutable from 'immutable'
 import { InventoryItemsList } from './InventoryItemsList'
-import { Items, makeItems } from '../../shared/metaReducers/items'
-import { Table, makeTable } from '../../shared/metaReducers/table'
+import { Items } from '../../shared/metaReducers/items'
+import { Table } from '../../shared/metaReducers/table'
 import ExportListButton from '../../globals/components/ExportListButton'
 
 describe('InventoryItemList module', () => {
@@ -40,25 +40,6 @@ describe('InventoryItemList module', () => {
   describe('InventoryItemList component', () => {
     it('should render correctly', () => {
       const element = shallow(<InventoryItemsList {...props} />)
-      expect(element).toMatchSnapshot()
-      expect(element.find(ExportListButton)).toHaveLength(0)
-    })
-
-    it('should render export button', () => {
-      const element = shallow(
-        <InventoryItemsList
-          {...props}
-          table={makeTable({ total: 1 })}
-          items={makeItems({
-            currentIdList: ['1'],
-            byId: {
-              1: {
-                id: '1',
-              },
-            },
-          })}
-        />
-      )
       expect(element).toMatchSnapshot()
       expect(element.find(ExportListButton)).toHaveLength(1)
     })
