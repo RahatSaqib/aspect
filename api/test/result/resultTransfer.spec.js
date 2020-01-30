@@ -24,63 +24,82 @@ describe('Result Transfer', () => {
   shared.checkToken(server, path)
 
   describe('POST', () => {
-    it('Should change result.reportableSiteId and add ResultStatusLog', () =>
+    let result
+    let newSite1
+    let newSite2
+    let reportableSiteId
+    let resultStatusLogId
+    const timeStampNew = new Date(2020, 1, 20).getTime()
+    const timeStampOld = new Date(2020, 1, 19).getTime()
+    const timeStampNewest = new Date(2020, 1, 21).getTime()
+
+    before(async () => {
+      // get list of results accessible for current user
+      let response = await server
+        .set('Authorization', `Bearer ${shared.token}`)
+        .get(path)
+
+      assert.equal(response.statusCode, 200)
+      assert.isAtLeast(response.body.data.length, 1)
+      const resultId = response.body.data[0].id
+
+      // get result by resultId
+      response = await server
+        .set('Authorization', `Bearer ${shared.token}`)
+        .get(`${path}/${resultId}`)
+
+      assertResult(response)
+      result = response.body.data
+      assert.isNotNull(result)
+
+      // keep original result values which will be changed during the test
+      ;[{ reportableSiteId, resultStatusLogId }] = [result]
+
+      // get list of accessible sites for current user
+      response = await server
+        .set('Authorization', `Bearer ${shared.token}`)
+        .get(`/api/site`)
+      assert.equal(response.statusCode, 200)
+      assert.isAtLeast(response.body.data.length, 1)
+      const sites = response.body.data
+      const otherSites = sites.filter(x => x.id !== reportableSiteId)
+      ;[newSite1, newSite2] = otherSites
+      assert.isNotNull(newSite1)
+      assert.isNotNull(newSite2)
+    })
+
+    after(() =>
       runTestWithKnex(async knex => {
-        // get list of results accessible for current user
-        let response = await server
-          .set('Authorization', `Bearer ${shared.token}`)
-          .get(path)
-
-        assert.equal(response.statusCode, 200)
-        assert.isAtLeast(response.body.data.length, 1)
-        const resultId = response.body.data[0].id
-
-        // get result by resultId
-        response = await server
-          .set('Authorization', `Bearer ${shared.token}`)
-          .get(`${path}/${resultId}`)
-
-        assertResult(response)
-        const result = response.body.data
-        assert.isNotNull(result)
-
-        const { reportableSiteId, resultStatusLogId } = result
-        // get list of accessible sites for current user
-        response = await server
-          .set('Authorization', `Bearer ${shared.token}`)
-          .get(`/api/site`)
-        assert.equal(response.statusCode, 200)
-        assert.isAtLeast(response.body.data.length, 1)
-        const sites = response.body.data
-        const newSite = sites.find(x => x.id !== reportableSiteId)
-        assert.isNotNull(newSite)
-
-        // get last id in ResultStatusLog - to clean log after transfer test
-        const [{ logId }] = await knex('ResultStatusLog').max('id as logId')
-
-        // transfer result to new siteId
-        response = await server
-          .set('Authorization', `Bearer ${shared.token}`)
-          .post(`${path}/transfer/${resultId}`)
-          .send({ siteId: newSite.id })
-
-        assertResult(response)
-        const testResult = response.body.data
-        assert.notEqual(testResult.reportableSiteId, reportableSiteId)
-        // check how Joi.date() handles DateTime - transferredOn should contain 'date' and 'time' parts.
-        // FYI: 'transferredOn' is expected in this format - '2020-01-07T15:27:46.000Z'
-        const { transferredOn } = testResult
-        // number 10 is length of Date portion, 14 - length of Time portion
-        assert.equal(transferredOn.substr(10).length, 14)
-
         // restore initial data
         await knex('Result')
           .where('id', result.id)
           .update({ reportableSiteId, resultStatusLogId })
         await knex('ResultStatusLog')
-          .where('id', '>', logId)
+          // assume resultStatusLogId is 0 if `result` didn't have any record in ResultStatusLog
+          .where('id', '>', resultStatusLogId || 0)
+          .where({ resultId: result.id })
           .del()
-      }))
+      })
+    )
+
+    it('Should change result.reportableSiteId and add ResultStatusLog', async () => {
+      // transfer result to newSite1
+      const response = await server
+        .set('Authorization', `Bearer ${shared.token}`)
+        .post(`${path}/transfer/${result.id}`)
+        .send({ siteId: newSite1.id, timeStamp: timeStampNew })
+
+      assertResult(response)
+      const testResult = response.body.data
+      assert.notEqual(testResult.reportableSiteId, reportableSiteId)
+      assert.equal(testResult.reportableSiteId, newSite1.id)
+
+      // check how Joi.date() handles DateTime - transferredOn should contain 'date' and 'time' parts.
+      // FYI: 'transferredOn' is expected in this format - '2020-01-07T15:27:46.000Z'
+      const { transferredOn } = testResult
+      // number 10 is length of Date portion, 14 - length of Time portion
+      assert.equal(transferredOn.substr(10).length, 14)
+    })
 
     it('should return an error if result does not exist', () =>
       runTestWithKnex(async knex => {
@@ -95,5 +114,33 @@ describe('Result Transfer', () => {
 
         assert.equal(response.statusCode, 404)
       }))
+
+    it('Should NOT transfer result to newSite2 because of older timeStamp', async () => {
+      const response = await server
+        .set('Authorization', `Bearer ${shared.token}`)
+        .post(`${path}/transfer/${result.id}`)
+        // try to transfer same result to 2nd site but pass older timeStamp
+        .send({ siteId: newSite2.id, timeStamp: timeStampOld })
+
+      assertResult(response)
+      const testResult = response.body.data
+      // reportableSiteId is not equal to requested newSite2
+      assert.notEqual(testResult.reportableSiteId, newSite2.id)
+      // reportableSiteId is equal to previously processed newSite1 with newer timeStamp
+      assert.equal(testResult.reportableSiteId, newSite1.id)
+    })
+
+    it('Should transfer result to newSite2 with a newer timeStamp', async () => {
+      const response = await server
+        .set('Authorization', `Bearer ${shared.token}`)
+        .post(`${path}/transfer/${result.id}`)
+        // try transfer same result to 2nd site with newer timeStamp
+        .send({ siteId: newSite2.id, timeStamp: timeStampNewest })
+
+      assertResult(response)
+      const testResult = response.body.data
+      // reportableSiteId is equal to requested newSite2
+      assert.equal(testResult.reportableSiteId, newSite2.id)
+    })
   })
 })
