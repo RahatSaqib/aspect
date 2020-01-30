@@ -51,7 +51,6 @@ describe('DateTimeInput component', () => {
     it('should invoke `onChange` when a option has been selected', () => {
       const wrapper = mount(<DateTimeInput {...props} />)
       let onChange = getMockOnChange(new Date(2006, 2, 18))
-      act(() => {})
       wrapper.setProps({ onChange })
       act(() => {
         const yearSelect = wrapper
