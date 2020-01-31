@@ -114,6 +114,7 @@ describe('requirePermissions', () => {
     return {
       store: {
         subscribe() {},
+        dispatch() {},
         getState() {
           return {
             user: {
