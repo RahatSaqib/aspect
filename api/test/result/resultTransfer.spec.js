@@ -87,7 +87,7 @@ describe('Result Transfer', () => {
       const response = await server
         .set('Authorization', `Bearer ${shared.token}`)
         .post(`${path}/transfer/${result.id}`)
-        .send({ siteId: newSite1.id, timeStamp: timeStampNew })
+        .send({ siteId: newSite1.id, timestamp: timeStampNew })
 
       assertResult(response)
       const testResult = response.body.data
@@ -120,7 +120,7 @@ describe('Result Transfer', () => {
         .set('Authorization', `Bearer ${shared.token}`)
         .post(`${path}/transfer/${result.id}`)
         // try to transfer same result to 2nd site but pass older timeStamp
-        .send({ siteId: newSite2.id, timeStamp: timeStampOld })
+        .send({ siteId: newSite2.id, timestamp: timeStampOld })
 
       assertResult(response)
       const testResult = response.body.data
@@ -135,7 +135,7 @@ describe('Result Transfer', () => {
         .set('Authorization', `Bearer ${shared.token}`)
         .post(`${path}/transfer/${result.id}`)
         // try transfer same result to 2nd site with newer timeStamp
-        .send({ siteId: newSite2.id, timeStamp: timeStampNewest })
+        .send({ siteId: newSite2.id, timestamp: timeStampNewest })
 
       assertResult(response)
       const testResult = response.body.data
