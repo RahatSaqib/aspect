@@ -36,6 +36,7 @@ handlebars.registerHelper({
   and: (...rest) => Array.prototype.slice.call(rest).every(Boolean),
   or: (...rest) => Array.prototype.slice.call(rest, 0, -1).some(Boolean),
 })
+handlebars.registerHelper('customFieldValueFromLabel', customFieldValueFromLabel)
 
 // See unit tests for examples
 // Can include displayPreferences
@@ -444,6 +445,12 @@ function offsetToTimeZone(date, options) {
   }
   const timeZone = findTimeZone(timeZoneName)
   return convertToTimeZone(parsedDate, { timeZone: timeZone.name })
+}
+
+function customFieldValueFromLabel(customFieldData, label) {
+  if (!_.isEmpty(customFieldData)) {
+    return _.get(_.find(Object.values(customFieldData), { label }), ['value'])
+  }
 }
 
 module.exports = {

@@ -366,6 +366,31 @@ describe('stringTemplate', () => {
       })
     })
 
+    describe('customFieldValueFromLabel helper', () => {
+      it('should return the value from the custom field using the label passed to it to identify which field', async () => {
+        const message = await runProcessUsingDataSourceQuery(
+          `Patient Case Number: {{customFieldValueFromLabel result.data.customFieldData 'TB Case No.(Patient ID)'}}`,
+          {
+            resultData: `{"customFieldData":{"1":{"label":"TB Case No.(Patient ID)","value":"TEST-P_CASE"},"2":{"label":"Name of Requesting Facility","value":"BOSTON Lab"}}}`,
+          }
+        )
+        assert.equal(
+          message.payload,
+          'Patient Case Number: TEST-P_CASE',
+        )
+      })
+
+      it("should return a blank string when the custom fields aren't there", async () => {
+        const message = await runProcessUsingDataSourceQuery(
+          `Patient Case Number: {{customFieldValueFromLabel result.data.customFieldData 'TB Case No.(Patient ID)'}}`
+        )
+        assert.equal(
+          message.payload,
+          'Patient Case Number: ',
+        )
+      })
+    })
+
     describe('enclose helper', () => {
       it('should return the value enclosed in the characters specified', async () => {
         const message = await runProcessUsingDataSourceQuery(
