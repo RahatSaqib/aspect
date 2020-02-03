@@ -1958,7 +1958,6 @@ async function transferResult(request) {
     // prev action is newer than current - get it's props and skip current action
     // ---
     resultStatusLogId = resultStatusLog.id
-    // current action is NOT latest - so skip current action and read details for latest one
     transferredOn = resultStatusLog.createdOn
     const author = await getUserByUserId(resultStatusLog.createdBy)
     transferredBy = author ? author.userName : '?'
@@ -1981,22 +1980,13 @@ async function transferResult(request) {
         timeStamp,
       }),
     })
-    // const { createdOn: transferredOn }
     resultStatusLog = await knex('ResultStatusLog')
       .where({ id: resultStatusLogId })
       .first('createdOn')
     transferredOn = resultStatusLog.createdOn
 
-    // ------------
-    // update follow-up and treatment status
-    /* from Stefan response on https://github.com/SystemOneId/aspect/pull/1030#discussion_r368562435:
-    I had a conversation with Chris around this and we landed on resetting the treatment status so that the clinic
-    user that now has access to the result has to confirm it on treatment again.
-    That means deleting ResultFollowUp is correct here, but instead of simply deleting the ResultTreatmentStatusLog,
-    we should add an entry that sets the result back to "Awaiting Treatment" and as "method" set "transfer" so we keep
-    a record of the reset.
-    */
-    // remove from ResultFollowUp
+    // remove ResultFollowUp because we want the user at the clinic that now has access
+    // to the result to confirm the treatment status.
     await knex('ResultFollowUp')
       .where({ resultId })
       .del()

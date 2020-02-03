@@ -1432,7 +1432,7 @@ const routes = [
           timeStamp: Joi.number()
             .integer()
             .positive()
-            .description('Timestamp in msecs when action dispatched'),
+            .description('UTC timestamp'),
         },
       },
       response: {
