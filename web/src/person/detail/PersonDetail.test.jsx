@@ -1,7 +1,7 @@
 import Immutable from 'immutable'
 import _ from 'lodash'
 import React from 'react'
-import ReactShallowRenderer from 'react-test-renderer/shallow'
+import { shallow } from 'enzyme'
 import { IntlProvider } from 'react-intl'
 import { PersonDetail } from './PersonDetail'
 
@@ -44,10 +44,8 @@ describe('PersonDetail module', () => {
   }
 
   describe('Person Detail component', () => {
-    const renderer = ReactShallowRenderer.createRenderer()
-
     it('should render correctly', () => {
-      const element = renderer.render(<PersonDetail {...props} />)
+      const element = shallow(<PersonDetail {...props} />)
       expect(element).toMatchSnapshot()
     })
   })

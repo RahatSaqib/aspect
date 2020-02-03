@@ -1,7 +1,7 @@
 const path = require('path')
-const { listRefreshTokens } = require('./service')
 const { format } = require('date-fns')
 const _ = require('lodash')
+const { listRefreshTokens } = require('./service')
 const {
   generateReport,
   downloadReportFile,
@@ -18,12 +18,12 @@ async function getReport(request, reply) {
     query.format,
     reportFile,
     '<Headers>',
-    _.map(reports.data, elem =>
-      Object.assign(elem, {
-        acknowledgedRatio: _.round(elem.acknowledgedRatio * 100),
-        confirmFollowUpRatio: _.round(elem.confirmFollowUpRatio * 100),
-      })
-    ),
+    _.map(reports.data, elem => {
+      return {
+        ...elem,
+        totalOnTreatment: `${elem.totalOnTreatment}/${elem.requiresFollowUp}`,
+      }
+    }),
     {
       date: format(new Date(), 'yyyy-MM-dd'),
     },

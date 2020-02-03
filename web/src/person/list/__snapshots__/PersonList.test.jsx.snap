@@ -52,7 +52,9 @@ exports[`Person List module PersonList component should shallow render correctly
       </WithStyles(IconButton)>
     </WithStyles(Tooltip)>
   </DataTableCard>
-  <DataTableCard>
+  <DataTableCard
+    key="DataTableCard--table-undefined"
+  >
     <DataTableProgressBar
       disabled={true}
     />

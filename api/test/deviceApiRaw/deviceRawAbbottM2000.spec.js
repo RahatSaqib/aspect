@@ -1,12 +1,12 @@
 const supertest = require('supertest')
 const chai = require('chai')
-const fs = require('fs')
 const path = require('path')
 const _ = require('lodash')
 const { convertToTimeZone } = require('date-fns-timezone')
 const { knex } = require('../../src/db')
 const { getUtcTime } = require('../../src/shared/date')
 const { randomToken } = require('../../src/deviceApi/apiKey')
+const { readTextFile } = require('../../src/shared/io')
 const { waitAsyncComplete } = require('../utils/generatorFunctionUtils')
 
 const server = supertest.agent('http://localhost:8080')
@@ -273,8 +273,8 @@ aa.`
   })
 
   it('should parse the ASTM PKL messages and save the results in the database', async () => {
-    const payload = fs.readFileSync(
-      path.join(__dirname, 'abbotM2000DbsHivVl.pkl'),
+    const payload = await readTextFile(
+      path.join(__dirname, 'abbottM2000DbsHivVl.pkl'),
       'utf8'
     )
 
@@ -393,6 +393,260 @@ aa.`
             orderOperatorId: 'bryan',
             senderOperator: 'bryan',
             cycleNumber: 15.49,
+          },
+        },
+      })
+    })
+  })
+
+  it('should parse the ASTM RAW messages from an HIV Plasma VL plate, using HIV 0.2ml reagent protocol, and save the results in the database', async () => {
+    const payload = await readTextFile(
+      path.join(__dirname, 'abbottM2000PlasmaHivVlRaw.pkl'),
+      'utf8'
+    )
+
+    const response = await server
+      .post(deviceApiRawPath)
+      .set('Authorization', `Bearer ${validApiKeyToken}`)
+      .set('Content-type', 'text/plain')
+      .send(payload)
+    assert.equal(response.statusCode, 200)
+
+    assert.equal(response.body.deviceId, abbottM2000DeviceId)
+    // make sure that result IDs were set in the device log entries
+    const deviceLogs = await knex('DeviceLog')
+      .whereIn('id', response.body.deviceLogIds)
+      .select()
+    // Result update/insert device logs
+    const resultIds = _.uniq(
+      deviceLogs
+        .filter(deviceLog => !_.isNull(deviceLog.resultId))
+        .map(deviceLog => deviceLog.resultId)
+    )
+    expect(resultIds).to.have.lengthOf.above(1)
+    expect(resultIds).to.have.lengthOf(93)
+
+    // inspect that the results that were created have the expected values:
+    const results = await knex('Result')
+      .whereIn('id', resultIds)
+      .select()
+
+    const site = await knex('Site')
+      .where({
+        id: abbottM2000SiteId,
+      })
+      .first()
+    const expectedAssayId = await assayToId('abbottM2000PlasmaHivVL')
+    const expectedResultSourceId = await resultSourceToId('DiagnosticDevice')
+    const expectedResultTypeId = await resultTypeToId('Patient')
+    const errorResultCategoryId = await resultCategoryToId('Error')
+    results.forEach(result => {
+      expect(result.assayId).to.equal(expectedAssayId)
+      expect(result.partnerId).to.equal(site.partnerId)
+      expect(result.geographyId).to.equal(site.geographyId)
+      expect(result.siteId).to.equal(abbottM2000SiteId)
+      expect(result.deviceId).to.equal(abbottM2000DeviceId)
+      expect(result.longitude).to.equal(site.longitude)
+      expect(result.latitude).to.equal(site.latitude)
+      expect(result.resultSourceId).to.equal(expectedResultSourceId)
+      expect(result.resultTypeId).to.equal(expectedResultTypeId)
+      if (result.resultCategory1 !== errorResultCategoryId) {
+        expect(result.endedOn.getTime()).to.equal(
+          convertToTimeZone(new Date(2019, 10, 15, 22, 33, 51), {
+            timeZone: 'UTC',
+          }).getTime()
+        )
+        expect(result.consumableSerial).to.equal('11763671')
+      }
+      expect(result.senderVersion).to.equal('1')
+      expect(result.updatedOn.getTime()).to.be.closeTo(
+        getUtcTime().getTime(),
+        10000
+      )
+      const resultData = JSON.parse(result.resultData)
+      expect(resultData).to.containSubset({
+        typeOfMessage: 'Production',
+        messageIsComplete: true,
+        assayName: 'HIV0.2ml',
+        actionCode: 'Patient Result',
+        resultType: 'Final Result',
+        abnormalFlags: [],
+        passedQualityControl: true,
+        qualityControlSummary: {
+          negativeControl: {
+            passed: true,
+            reportType: 'Final Result',
+            abnormalFlags: [],
+            result: 'Not detected',
+            moduleName: 'C1',
+            assayCode: 'HIV0.2ml',
+            assayName: 'HIV0.2ml',
+            consumableLot: '488445',
+            consumableSerial: '11763671',
+            controlConsumableLotNumber: '488990',
+            moduleSerial: '275020369',
+            orderOperatorId: 'fse',
+            senderOperator: 'Administrator',
+            cycleNumber: -1,
+          },
+          lowPositiveControl: {
+            passed: true,
+            reportType: 'Final Result',
+            abnormalFlags: [],
+            result: '832',
+            moduleName: 'B1',
+            assayCode: 'HIV0.2ml',
+            assayName: 'HIV0.2ml',
+            consumableLot: '488445',
+            consumableSerial: '11763671',
+            controlConsumableLotNumber: '488990',
+            moduleSerial: '275020369',
+            orderOperatorId: 'fse',
+            senderOperator: 'Administrator',
+            cycleNumber: 25.28,
+          },
+          highPositiveControl: {
+            passed: true,
+            reportType: 'Final Result',
+            abnormalFlags: [],
+            result: '109603',
+            moduleName: 'A1',
+            assayCode: 'HIV0.2ml',
+            assayName: 'HIV0.2ml',
+            consumableLot: '488445',
+            consumableSerial: '11763671',
+            controlConsumableLotNumber: '488990',
+            moduleSerial: '275020369',
+            orderOperatorId: 'fse',
+            senderOperator: 'Administrator',
+            cycleNumber: 18.18,
+          },
+        },
+      })
+    })
+  })
+
+  it('should parse the ASTM RAW messages from an HBV Plasma VL plate, using HBV 0.2ml reagent protocol, and save the results in the database', async () => {
+    const payload = await readTextFile(
+      path.join(__dirname, 'abbottM2000PlasmaHbvVlRaw.pkl'),
+      'utf8'
+    )
+
+    const response = await server
+      .post(deviceApiRawPath)
+      .set('Authorization', `Bearer ${validApiKeyToken}`)
+      .set('Content-type', 'text/plain')
+      .send(payload)
+    assert.equal(response.statusCode, 200)
+
+    assert.equal(response.body.deviceId, abbottM2000DeviceId)
+    // make sure that result IDs were set in the device log entries
+    const deviceLogs = await knex('DeviceLog')
+      .whereIn('id', response.body.deviceLogIds)
+      .select()
+    // Result update/insert device logs
+    const resultIds = _.uniq(
+      deviceLogs
+        .filter(deviceLog => !_.isNull(deviceLog.resultId))
+        .map(deviceLog => deviceLog.resultId)
+    )
+    expect(resultIds).to.have.lengthOf.above(1)
+    expect(resultIds).to.have.lengthOf(45)
+
+    // inspect that the results that were created have the expected values:
+    const results = await knex('Result')
+      .whereIn('id', resultIds)
+      .select()
+
+    const site = await knex('Site')
+      .where({
+        id: abbottM2000SiteId,
+      })
+      .first()
+    const expectedAssayId = await assayToId('abbottM2000PlasmaHbvVL')
+    const expectedResultSourceId = await resultSourceToId('DiagnosticDevice')
+    const expectedResultTypeId = await resultTypeToId('Patient')
+    const errorResultCategoryId = await resultCategoryToId('Error')
+    results.forEach(result => {
+      expect(result.assayId).to.equal(expectedAssayId)
+      expect(result.partnerId).to.equal(site.partnerId)
+      expect(result.geographyId).to.equal(site.geographyId)
+      expect(result.siteId).to.equal(abbottM2000SiteId)
+      expect(result.deviceId).to.equal(abbottM2000DeviceId)
+      expect(result.longitude).to.equal(site.longitude)
+      expect(result.latitude).to.equal(site.latitude)
+      expect(result.resultSourceId).to.equal(expectedResultSourceId)
+      expect(result.resultTypeId).to.equal(expectedResultTypeId)
+      if (result.resultCategory1 !== errorResultCategoryId) {
+        expect(result.endedOn.getTime()).to.equal(
+          convertToTimeZone(new Date(2019, 10, 7, 18, 8, 37), {
+            timeZone: 'UTC',
+          }).getTime()
+        )
+        expect(result.consumableSerial).to.equal('11832001')
+      }
+      expect(result.senderVersion).to.equal('1')
+      expect(result.updatedOn.getTime()).to.be.closeTo(
+        getUtcTime().getTime(),
+        10000
+      )
+      const resultData = JSON.parse(result.resultData)
+      expect(resultData).to.containSubset({
+        typeOfMessage: 'Production',
+        messageIsComplete: true,
+        assayName: 'HBV 0.2ml',
+        actionCode: 'Patient Result',
+        resultType: 'Final Result',
+        abnormalFlags: [],
+        passedQualityControl: true,
+        qualityControlSummary: {
+          negativeControl: {
+            passed: true,
+            reportType: 'Final Result',
+            abnormalFlags: [],
+            result: 'Not detected',
+            moduleName: 'C1',
+            assayCode: 'HBV 0.2ml',
+            assayName: 'HBV 0.2ml',
+            consumableLot: '488761',
+            consumableSerial: '11832001',
+            controlConsumableLotNumber: '488125',
+            moduleSerial: '275020369',
+            orderOperatorId: 'fse',
+            senderOperator: 'Administrator',
+            cycleNumber: -1,
+          },
+          lowPositiveControl: {
+            passed: true,
+            reportType: 'Final Result',
+            abnormalFlags: [],
+            result: '664',
+            moduleName: 'B1',
+            assayCode: 'HBV 0.2ml',
+            assayName: 'HBV 0.2ml',
+            consumableLot: '488761',
+            consumableSerial: '11832001',
+            controlConsumableLotNumber: '488125',
+            moduleSerial: '275020369',
+            orderOperatorId: 'fse',
+            senderOperator: 'Administrator',
+            cycleNumber: 33.58,
+          },
+          highPositiveControl: {
+            passed: true,
+            reportType: 'Final Result',
+            abnormalFlags: [],
+            result: '42689',
+            moduleName: 'A1',
+            assayCode: 'HBV 0.2ml',
+            assayName: 'HBV 0.2ml',
+            consumableLot: '488761',
+            consumableSerial: '11832001',
+            controlConsumableLotNumber: '488125',
+            moduleSerial: '275020369',
+            orderOperatorId: 'fse',
+            senderOperator: 'Administrator',
+            cycleNumber: 27.15,
           },
         },
       })

@@ -1,8 +1,7 @@
 import _ from 'lodash'
 import classnames from 'classnames/bind'
 import React from 'react'
-import FaExclamationTriangle from 'react-icons/lib/fa/exclamation-triangle'
-// import MdModeComment from 'react-icons/lib/md/mode-comment'
+import { FaExclamationTriangle } from 'react-icons/fa'
 import ColoredButton from '../../components/themedReactToolbox/ColoredButton'
 import AlertType from '../../components/shared/AlertType'
 import {

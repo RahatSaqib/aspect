@@ -161,7 +161,6 @@ const mapStateToProps = (state, ownProps) => {
   }
 }
 
-export default connect(
-  mapStateToProps,
-  { fetchResultsByPatient }
-)(ClinicalHistory)
+export default connect(mapStateToProps, { fetchResultsByPatient })(
+  ClinicalHistory
+)

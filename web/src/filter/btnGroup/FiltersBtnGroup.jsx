@@ -5,7 +5,7 @@ import { compose, pure } from 'recompose'
 import { defineMessages } from 'react-intl'
 import { connect } from 'react-redux'
 import Button from '@material-ui/core/Button'
-import MdClose from 'react-icons/lib/md/close'
+import { MdClose } from 'react-icons/md'
 import { formatDate } from '../../shared/utils/dateFormat'
 
 const cssClasses = classnames.bind(require('./FiltersBtnGroup.css'))

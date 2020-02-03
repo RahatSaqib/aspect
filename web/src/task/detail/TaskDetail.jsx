@@ -9,7 +9,7 @@ import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
 import Helmet from 'react-helmet'
 import Card from '@material-ui/core/Card'
-import FaArrowUp from 'react-icons/lib/fa/arrow-up'
+import { FaArrowUp } from 'react-icons/fa'
 import { fetchTask } from '../TaskRedux'
 
 // import ButtonGroup from '../../components/themedReactToolbox/ButtonGroup'

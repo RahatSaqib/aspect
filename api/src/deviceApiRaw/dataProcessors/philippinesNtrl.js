@@ -1303,6 +1303,7 @@ class DefaultPhilippinesNtrl extends SynchronousDataProcessor {
             encodedResult: dstResultData,
           }),
           senderOperator: dstResultData.labTech,
+          reportableSiteId: samples[0].originSiteId,
         }
         const resultCategory1Id =
           {
@@ -1442,6 +1443,7 @@ class DefaultPhilippinesNtrl extends SynchronousDataProcessor {
             externalId,
             assayId: assayCultureId,
             sampleId: cultureSample.id,
+            reportableSiteId: cultureSample.originSiteId,
             startedOn: cultureResultData.dateReleased,
             endedOn: cultureResultData.dateReleased,
             resultData: JSON.stringify({
@@ -1538,6 +1540,7 @@ class DefaultPhilippinesNtrl extends SynchronousDataProcessor {
           externalId,
           assayId: assayLpaId,
           sampleId: samples[0].id,
+          reportableSiteId: samples[0].originSiteId,
           startedOn: lpaResultData.dateReleased,
           endedOn: lpaResultData.dateReleased,
           resultData: JSON.stringify({
@@ -1663,6 +1666,7 @@ class DefaultPhilippinesNtrl extends SynchronousDataProcessor {
             externalId,
             assayId: assaySmearId,
             sampleId: smearSample.id,
+            reportableSiteId: smearSample.originSiteId,
             startedOn: smearResultData.dateReleased,
             endedOn: smearResultData.dateReleased,
             resultData: JSON.stringify({
@@ -1784,6 +1788,7 @@ class DefaultPhilippinesNtrl extends SynchronousDataProcessor {
           externalId,
           assayId: assayGeneXpertMtbRifId,
           sampleId: samples[0].id,
+          reportableSiteId: samples[0].originSiteId,
           startedOn: geneXpertResultData.processingDate,
           endedOn: geneXpertResultData.processingDate,
           resultData: JSON.stringify({

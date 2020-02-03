@@ -99,7 +99,7 @@ describe('Device API routes for GxAlert Device', () => {
             afterCleanUp,
           } = context
 
-          beforeEach(async () =>
+          beforeEach(() =>
             run(async knex => {
               maxDeviceIdBefore = await getMaxDeviceId(knex)
               await beforeCreateGxAlertApiKey()
@@ -133,13 +133,12 @@ describe('Device API routes for GxAlert Device', () => {
                   name: deviceName,
                 }),
               })
-              expect(
-                Object.assign({}, response.body.device, {
-                  configurationData: JSON.parse(
-                    response.body.device.configurationData
-                  ),
-                })
-              ).to.containSubset({
+              expect({
+                ...response.body.device,
+                configurationData: JSON.parse(
+                  response.body.device.configurationData
+                ),
+              }).to.containSubset({
                 name: deviceName,
                 deviceTypeId: geneXpertDeviceType.id,
                 macAddress: null,
@@ -220,7 +219,7 @@ describe('Device API routes for GxAlert Device', () => {
           } = context
           let { deviceAuth, basicDevicePayload } = context
 
-          before(async () =>
+          before(() =>
             run(async () => {
               await beforeCreateGxAlertApiKey()
               useGxAlertDeviceId(initialGxAlertDeviceId)
@@ -240,13 +239,12 @@ describe('Device API routes for GxAlert Device', () => {
                   },
                 }),
               })
-              expect(
-                Object.assign({}, response.body.device, {
-                  configurationData: JSON.parse(
-                    response.body.device.configurationData
-                  ),
-                })
-              ).to.containSubset({
+              expect({
+                ...response.body.device,
+                configurationData: JSON.parse(
+                  response.body.device.configurationData
+                ),
+              }).to.containSubset({
                 name: deviceName,
                 shortName: deviceShortName,
                 macAddress,
@@ -299,13 +297,12 @@ describe('Device API routes for GxAlert Device', () => {
                     },
                   }),
                 })
-                expect(
-                  Object.assign({}, response.body.device, {
-                    configurationData: JSON.parse(
-                      response.body.device.configurationData
-                    ),
-                  })
-                ).to.containSubset({
+                expect({
+                  ...response.body.device,
+                  configurationData: JSON.parse(
+                    response.body.device.configurationData
+                  ),
+                }).to.containSubset({
                   name: deviceName,
                   shortName: deviceShortName,
                   macAddress,
@@ -393,7 +390,7 @@ describe('Device API routes for GxAlert Device', () => {
         afterCleanUp,
       } = context
 
-      beforeEach(async () =>
+      beforeEach(() =>
         run(async knex => {
           maxDeviceIdBefore = await getMaxDeviceId(knex)
           await beforeCreateGxAlertApiKey()
@@ -457,13 +454,12 @@ describe('Device API routes for GxAlert Device', () => {
                 },
               }),
             })
-            expect(
-              Object.assign({}, response.body.device, {
-                configurationData: JSON.parse(
-                  response.body.device.configurationData
-                ),
-              })
-            ).to.containSubset({
+            expect({
+              ...response.body.device,
+              configurationData: JSON.parse(
+                response.body.device.configurationData
+              ),
+            }).to.containSubset({
               name: deviceName,
               deviceTypeId: geneXpertDeviceType.id,
               macAddress: secondMacAddress,
@@ -551,13 +547,12 @@ describe('Device API routes for GxAlert Device', () => {
                 },
               }),
             })
-            expect(
-              Object.assign({}, response.body.device, {
-                configurationData: JSON.parse(
-                  response.body.device.configurationData
-                ),
-              })
-            ).to.containSubset({
+            expect({
+              ...response.body.device,
+              configurationData: JSON.parse(
+                response.body.device.configurationData
+              ),
+            }).to.containSubset({
               name: deviceName,
               deviceTypeId: geneXpertDeviceType.id,
               macAddress: thirdMacAddress,
@@ -638,13 +633,12 @@ describe('Device API routes for GxAlert Device', () => {
                 },
               }),
             })
-            expect(
-              Object.assign({}, responseForSecondDevice.body.device, {
-                configurationData: JSON.parse(
-                  responseForSecondDevice.body.device.configurationData
-                ),
-              })
-            ).to.containSubset({
+            expect({
+              ...responseForSecondDevice.body.device,
+              configurationData: JSON.parse(
+                responseForSecondDevice.body.device.configurationData
+              ),
+            }).to.containSubset({
               name: deviceName,
               deviceTypeId: geneXpertDeviceType.id,
               macAddress: secondMacAddress,
@@ -702,13 +696,12 @@ describe('Device API routes for GxAlert Device', () => {
                 },
               }),
             })
-            expect(
-              Object.assign({}, responseAfterSecondDeviceUpdate.body.device, {
-                configurationData: JSON.parse(
-                  responseAfterSecondDeviceUpdate.body.device.configurationData
-                ),
-              })
-            ).to.containSubset({
+            expect({
+              ...responseAfterSecondDeviceUpdate.body.device,
+              configurationData: JSON.parse(
+                responseAfterSecondDeviceUpdate.body.device.configurationData
+              ),
+            }).to.containSubset({
               name: deviceName,
               deviceTypeId: geneXpertDeviceType.id,
               macAddress: firstMacAddress,
@@ -772,13 +765,12 @@ describe('Device API routes for GxAlert Device', () => {
                 },
               }),
             })
-            expect(
-              Object.assign({}, response.body.device, {
-                configurationData: JSON.parse(
-                  response.body.device.configurationData
-                ),
-              })
-            ).to.containSubset({
+            expect({
+              ...response.body.device,
+              configurationData: JSON.parse(
+                response.body.device.configurationData
+              ),
+            }).to.containSubset({
               macAddress: validMacAddress,
               configurationData: {
                 gxAlertDeviceId: geneXpertDeviceId,
@@ -806,13 +798,12 @@ describe('Device API routes for GxAlert Device', () => {
                 },
               }),
             })
-            expect(
-              Object.assign({}, nextResponse.body.device, {
-                configurationData: JSON.parse(
-                  nextResponse.body.device.configurationData
-                ),
-              })
-            ).to.containSubset({
+            expect({
+              ...nextResponse.body.device,
+              configurationData: JSON.parse(
+                nextResponse.body.device.configurationData
+              ),
+            }).to.containSubset({
               macAddress: validMacAddress,
               configurationData: {
                 gxAlertDeviceId: geneXpertDeviceId,
@@ -852,7 +843,7 @@ describe('Device API routes for GxAlert Device', () => {
         afterCleanUp,
       } = context
 
-      beforeEach(async () =>
+      beforeEach(() =>
         run(async knex => {
           maxDeviceIdBefore = await getMaxDeviceId(knex)
           await beforeCreateGxAlertApiKey()
@@ -916,13 +907,12 @@ describe('Device API routes for GxAlert Device', () => {
                 },
               }),
             })
-            expect(
-              Object.assign({}, response.body.device, {
-                configurationData: JSON.parse(
-                  response.body.device.configurationData
-                ),
-              })
-            ).to.containSubset({
+            expect({
+              ...response.body.device,
+              configurationData: JSON.parse(
+                response.body.device.configurationData
+              ),
+            }).to.containSubset({
               name: deviceName,
               deviceTypeId: geneXpertDeviceType.id,
               serial: secondDeviceSerial,
@@ -1011,13 +1001,12 @@ describe('Device API routes for GxAlert Device', () => {
                 },
               }),
             })
-            expect(
-              Object.assign({}, response.body.device, {
-                configurationData: JSON.parse(
-                  response.body.device.configurationData
-                ),
-              })
-            ).to.containSubset({
+            expect({
+              ...response.body.device,
+              configurationData: JSON.parse(
+                response.body.device.configurationData
+              ),
+            }).to.containSubset({
               name: deviceName,
               deviceTypeId: geneXpertDeviceType.id,
               serial: thirdDeviceSerial,
@@ -1098,13 +1087,12 @@ describe('Device API routes for GxAlert Device', () => {
                 },
               }),
             })
-            expect(
-              Object.assign({}, responseForSecondDevice.body.device, {
-                configurationData: JSON.parse(
-                  responseForSecondDevice.body.device.configurationData
-                ),
-              })
-            ).to.containSubset({
+            expect({
+              ...responseForSecondDevice.body.device,
+              configurationData: JSON.parse(
+                responseForSecondDevice.body.device.configurationData
+              ),
+            }).to.containSubset({
               name: deviceName,
               deviceTypeId: geneXpertDeviceType.id,
               serial: secondDeviceSerial,
@@ -1162,13 +1150,12 @@ describe('Device API routes for GxAlert Device', () => {
                 },
               }),
             })
-            expect(
-              Object.assign({}, responseAfterSecondDeviceUpdate.body.device, {
-                configurationData: JSON.parse(
-                  responseAfterSecondDeviceUpdate.body.device.configurationData
-                ),
-              })
-            ).to.containSubset({
+            expect({
+              ...responseAfterSecondDeviceUpdate.body.device,
+              configurationData: JSON.parse(
+                responseAfterSecondDeviceUpdate.body.device.configurationData
+              ),
+            }).to.containSubset({
               name: deviceName,
               deviceTypeId: geneXpertDeviceType.id,
               serial: firstDeviceSerial,
@@ -1251,13 +1238,12 @@ describe('Device API routes for GxAlert Device', () => {
                 },
               }),
             })
-            expect(
-              Object.assign({}, response.body.device, {
-                configurationData: JSON.parse(
-                  response.body.device.configurationData
-                ),
-              })
-            ).to.containSubset({
+            expect({
+              ...response.body.device,
+              configurationData: JSON.parse(
+                response.body.device.configurationData
+              ),
+            }).to.containSubset({
               serial: deviceSerialNumber,
               configurationData: {
                 gxAlertDeviceId: geneXpertDeviceId,
@@ -1297,7 +1283,7 @@ describe('Device API routes for GxAlert Device', () => {
         afterCleanUp,
       } = context
 
-      beforeEach(async () =>
+      beforeEach(() =>
         run(async knex => {
           maxDeviceIdBefore = await getMaxDeviceId(knex)
           await beforeCreateGxAlertApiKey()
@@ -1361,13 +1347,12 @@ describe('Device API routes for GxAlert Device', () => {
                 },
               }),
             })
-            expect(
-              Object.assign({}, response.body.device, {
-                configurationData: JSON.parse(
-                  response.body.device.configurationData
-                ),
-              })
-            ).to.containSubset({
+            expect({
+              ...response.body.device,
+              configurationData: JSON.parse(
+                response.body.device.configurationData
+              ),
+            }).to.containSubset({
               name: deviceName,
               deviceTypeId: geneXpertDeviceType.id,
               hostId: secondHostId,
@@ -1456,13 +1441,12 @@ describe('Device API routes for GxAlert Device', () => {
                 },
               }),
             })
-            expect(
-              Object.assign({}, response.body.device, {
-                configurationData: JSON.parse(
-                  response.body.device.configurationData
-                ),
-              })
-            ).to.containSubset({
+            expect({
+              ...response.body.device,
+              configurationData: JSON.parse(
+                response.body.device.configurationData
+              ),
+            }).to.containSubset({
               name: deviceName,
               deviceTypeId: geneXpertDeviceType.id,
               hostId: thirdHostId,
@@ -1543,13 +1527,12 @@ describe('Device API routes for GxAlert Device', () => {
                 },
               }),
             })
-            expect(
-              Object.assign({}, responseForSecondDevice.body.device, {
-                configurationData: JSON.parse(
-                  responseForSecondDevice.body.device.configurationData
-                ),
-              })
-            ).to.containSubset({
+            expect({
+              ...responseForSecondDevice.body.device,
+              configurationData: JSON.parse(
+                responseForSecondDevice.body.device.configurationData
+              ),
+            }).to.containSubset({
               name: deviceName,
               deviceTypeId: geneXpertDeviceType.id,
               hostId: secondHostId,
@@ -1604,13 +1587,12 @@ describe('Device API routes for GxAlert Device', () => {
                 },
               }),
             })
-            expect(
-              Object.assign({}, responseAfterSecondDeviceUpdate.body.device, {
-                configurationData: JSON.parse(
-                  responseAfterSecondDeviceUpdate.body.device.configurationData
-                ),
-              })
-            ).to.containSubset({
+            expect({
+              ...responseAfterSecondDeviceUpdate.body.device,
+              configurationData: JSON.parse(
+                responseAfterSecondDeviceUpdate.body.device.configurationData
+              ),
+            }).to.containSubset({
               name: deviceName,
               deviceTypeId: geneXpertDeviceType.id,
               hostId: firstHostId,
@@ -1674,13 +1656,12 @@ describe('Device API routes for GxAlert Device', () => {
                 },
               }),
             })
-            expect(
-              Object.assign({}, response.body.device, {
-                configurationData: JSON.parse(
-                  response.body.device.configurationData
-                ),
-              })
-            ).to.containSubset({
+            expect({
+              ...response.body.device,
+              configurationData: JSON.parse(
+                response.body.device.configurationData
+              ),
+            }).to.containSubset({
               hostId: validHostId,
               configurationData: {
                 gxAlertDeviceId: geneXpertDeviceId,
@@ -1708,13 +1689,12 @@ describe('Device API routes for GxAlert Device', () => {
                 },
               }),
             })
-            expect(
-              Object.assign({}, nextResponse.body.device, {
-                configurationData: JSON.parse(
-                  nextResponse.body.device.configurationData
-                ),
-              })
-            ).to.containSubset({
+            expect({
+              ...nextResponse.body.device,
+              configurationData: JSON.parse(
+                nextResponse.body.device.configurationData
+              ),
+            }).to.containSubset({
               hostId: validHostId,
               configurationData: {
                 gxAlertDeviceId: geneXpertDeviceId,
@@ -1746,7 +1726,7 @@ describe('Device API routes for GxAlert Device', () => {
         afterCleanUp,
       } = context
 
-      before(async () =>
+      before(() =>
         run(async () => {
           await beforeCreateGxAlertApiKey()
           useGxAlertDeviceId(gxAlertDeviceId)
@@ -1881,7 +1861,7 @@ describe('Device API routes for GxAlert Device', () => {
         return _.merge(logEntry, { data: JSON.parse(logEntry.data) })
       }
 
-      beforeEach(async () =>
+      beforeEach(() =>
         run(async () => {
           await beforeCreateGxAlertApiKey({
             countryAbbreviation: country,
@@ -2290,7 +2270,7 @@ describe('Device API routes for GxAlert Device', () => {
       } = context
       let { deviceAuth, basicDevicePayload } = context
 
-      before(async () =>
+      before(() =>
         run(async () => {
           await beforeCreateGxAlertApiKey()
           useGxAlertDeviceId(deviceIdFromGxAlert)
@@ -2358,7 +2338,7 @@ describe('Device API routes for GxAlert Device', () => {
 
       let standardDevicePayload
 
-      beforeEach(async () =>
+      beforeEach(() =>
         run(async () => {
           await beforeCreateGxAlertApiKey({
             countryAbbreviation: country,
@@ -2756,7 +2736,7 @@ describe('Device API routes for GxAlert Device', () => {
     } = context
     let { deviceAuth, basicDevicePayload } = context
 
-    beforeEach(async () =>
+    beforeEach(() =>
       run(async () => {
         await beforeCreateGxAlertApiKey()
         useGxAlertDeviceId(deviceIdFromGxAlert)
@@ -2868,7 +2848,7 @@ describe('Device API routes for GxAlert Device', () => {
       afterCleanUp,
     } = context
     let { deviceAuth, device: gxAlertDevice } = context
-    beforeEach(async () =>
+    beforeEach(() =>
       run(async () => {
         await beforeCreateGxAlertApiKey()
         useGxAlertDeviceId(gxAlertDeviceId)
@@ -3547,7 +3527,7 @@ describe('Device API routes for GxAlert Device', () => {
 
     describe('when the assay in the result payload is unknown to Aspect', () => {
       const assayName = 'New Assay Type'
-      after(async () =>
+      after(() =>
         run(async knex =>
           knex('Assay')
             .where({ externalId: assayName })
@@ -3618,7 +3598,7 @@ describe('Device API routes for GxAlert Device', () => {
 
     describe('when the assay in the result payload is mapped to a consumable', () => {
       const initialQuantityOnHand = 100
-      beforeEach(async () =>
+      beforeEach(() =>
         run(async () => {
           const { deviceAuth, basicDevicePayload } = context
           await postToDeviceApi({
@@ -4042,7 +4022,7 @@ describe('Device API routes for GxAlert Device', () => {
     })
 
     describe('when the result comes from a site that has location data saved', () => {
-      beforeEach(async () =>
+      beforeEach(() =>
         run(async () => {
           const { deviceAuth, basicDevicePayload } = context
           await postToDeviceApi({
@@ -4428,7 +4408,7 @@ describe('Device API routes for GxAlert Device', () => {
     } = context
     let { deviceAuth, basicDevicePayload } = context
     let geneXpertDevice
-    beforeEach(async () =>
+    beforeEach(() =>
       run(async () => {
         await beforeCreateGxAlertApiKey()
         useGxAlertDeviceId(gxAlertDeviceId)
@@ -4540,7 +4520,7 @@ describe('Device API routes for GxAlert Device', () => {
       }))
 
     describe('inventory update', () => {
-      beforeEach(async () =>
+      beforeEach(() =>
         run(async knex => {
           const consumableAssay = await knex('ConsumableAssay as ca')
             .join('Assay as a', 'ca.assayId', 'a.id')

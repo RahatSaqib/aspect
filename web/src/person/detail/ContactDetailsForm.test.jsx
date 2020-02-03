@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import React from 'react'
 import Immutable from 'immutable'
-import ReactShallowRenderer from 'react-test-renderer/shallow'
+import { shallow } from 'enzyme'
 
 describe('ContactDetailsForm module', () => {
   const { validate, ContactDetailsForm } = require('./ContactDetailsForm')
@@ -47,24 +47,20 @@ describe('ContactDetailsForm module', () => {
   }
 
   describe('ContactDetailsForm component', () => {
-    const renderer = ReactShallowRenderer.createRenderer()
-
     it('should render correctly', () => {
-      const element = renderer.render(
-        <ContactDetailsForm {...props} form={{}} />
-      )
+      const element = shallow(<ContactDetailsForm {...props} form={{}} />)
       expect(element).toMatchSnapshot()
     })
 
     it('should disable all fields when form is loading', () => {
-      const element = renderer.render(
+      const element = shallow(
         <ContactDetailsForm {...props} form={{}} loading />
       )
       expect(element).toMatchSnapshot()
     })
 
     it('should disable the submit button when the form is pristine, invalid or submitting', () => {
-      let element = renderer.render(
+      let element = shallow(
         <ContactDetailsForm
           {...props}
           form={{ pristine: true, valid: false, submitting: false }}
@@ -72,7 +68,7 @@ describe('ContactDetailsForm module', () => {
       )
       expect(element).toMatchSnapshot()
 
-      element = renderer.render(
+      element = shallow(
         <ContactDetailsForm
           {...props}
           form={{ pristine: false, valid: false, submitting: false }}
@@ -80,7 +76,7 @@ describe('ContactDetailsForm module', () => {
       )
       expect(element).toMatchSnapshot()
 
-      element = renderer.render(
+      element = shallow(
         <ContactDetailsForm
           {...props}
           form={{ pristine: false, valid: true, submitting: true }}
@@ -90,7 +86,7 @@ describe('ContactDetailsForm module', () => {
     })
 
     it('should enable the submit button when the form is dirty, valid and not submitting', () => {
-      const element = renderer.render(
+      const element = shallow(
         <ContactDetailsForm
           {...props}
           form={{ pristine: false, valid: true, submitting: false }}
@@ -100,9 +96,7 @@ describe('ContactDetailsForm module', () => {
     })
 
     it('should show form for New Contact', () => {
-      const element = renderer.render(
-        <ContactDetailsForm {...props} form={{}} isNew />
-      )
+      const element = shallow(<ContactDetailsForm {...props} form={{}} isNew />)
       expect(element).toMatchSnapshot()
     })
   })

@@ -13,7 +13,7 @@ import {
 } from 'recompose'
 import { connect } from 'react-redux'
 import Card from '@material-ui/core/Card'
-import MdDashboard from 'react-icons/lib/md/dashboard'
+import { MdDashboard } from 'react-icons/md'
 
 import { findKeyInTree } from '../../shared/utils/dom'
 import { Unit } from '../../components/pureGrids'

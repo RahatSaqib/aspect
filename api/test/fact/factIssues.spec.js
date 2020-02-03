@@ -58,7 +58,7 @@ describe('Fact based issues', () => {
   let siteName
 
   const { runTest } = context
-  before(async () =>
+  before(() =>
     run(async knex => {
       const { siteId } = await knex('JobContext as jc')
         .innerJoin('Job as j', 'jc.jobId', 'j.id')
@@ -1109,7 +1109,7 @@ describe('Fact based issues', () => {
   describe('New results available', () => {
     let issueId = null
 
-    after(async () =>
+    after(() =>
       run(async knex => {
         await waitForIdle()
 
@@ -1190,6 +1190,7 @@ describe('Fact based issues', () => {
           partnerId: device.partnerId,
           geographyId: device.geographyId,
           siteId: device.siteId,
+          reportableSiteId: device.siteId,
           deviceId: device.id,
           resultSourceId,
           resultTypeId,

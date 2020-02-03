@@ -48,12 +48,16 @@ const enhance = compose(
 )
 
 export class ResetPassword extends PureComponent {
-  state = {
-    emailAddress: '',
-    resetPasswordToken: '',
-    stepIndex: 0,
-    showAdminHelpDialog: false,
-    resettingPassword: false,
+  constructor(props) {
+    super(props)
+
+    this.state = {
+      emailAddress: '',
+      resetPasswordToken: '',
+      stepIndex: 0,
+      showAdminHelpDialog: false,
+      resettingPassword: false,
+    }
   }
 
   componentDidMount() {

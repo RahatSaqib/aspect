@@ -1,8 +1,7 @@
 import _ from 'lodash'
 import classnames from 'classnames/bind'
 import React from 'react'
-import FaCircle from 'react-icons/lib/fa/circle'
-import ArrowLeft from 'react-icons/lib/ti/arrow-right'
+import { FaCircle, FaArrowRight } from 'react-icons/fa'
 import {
   DataTableRow as TableRow,
   DataTableCell as TableCell,
@@ -76,7 +75,7 @@ const ActionTableRow = ({
             data-result-id={action.get('resultId')}
             onClick={onActionListClick}
           >
-            <ArrowLeft className={cssClasses('ArrowLeft')} />
+            <FaArrowRight className={cssClasses('ArrowLeft')} />
           </ActionLinkButton>
         </div>
       </div>

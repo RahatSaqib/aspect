@@ -1,9 +1,9 @@
 module.exports = require('../utils').seed(seed, __filename)
 
-const reporters = require('../fixtures/reporters.json')
 const Promise = require('bluebird')
 const _ = require('lodash')
 const dns = require('date-fns')
+const reporters = require('../fixtures/reporters.json')
 
 async function seed(knex) {
   await Promise.all(

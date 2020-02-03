@@ -2,6 +2,7 @@ import React from 'react'
 import { shallow, mount } from 'enzyme'
 import isDateEqual from 'date-fns/isEqual'
 import Downshift from 'downshift'
+import { act } from 'react-dom/test-utils'
 import DateTimeInput from './DateTimeInput'
 
 describe('DateTimeInput component', () => {
@@ -51,25 +52,31 @@ describe('DateTimeInput component', () => {
       const wrapper = mount(<DateTimeInput {...props} />)
       let onChange = getMockOnChange(new Date(2006, 2, 18))
       wrapper.setProps({ onChange })
-      const yearSelect = wrapper
-        .find(Downshift)
-        .filterWhere(node => node.children().prop('name') === 'Year')
+      act(() => {
+        const yearSelect = wrapper
+          .find(Downshift)
+          .filterWhere(node => node.children().prop('name') === 'Year')
 
-      yearSelect.prop('onSelect')({
-        value: 2006,
-        label: '2006',
+        yearSelect.prop('onSelect')({
+          value: 2006,
+          label: '2006',
+        })
       })
       expect(onChange).toHaveReturnedWith(true)
 
       onChange = getMockOnChange(new Date(2006, 3, 18))
+
       wrapper.setProps({ onChange })
-      const monthSelect = wrapper
-        .find(Downshift)
-        .filterWhere(node => node.children().prop('name') === 'Month')
-      monthSelect.prop('onSelect')({
-        value: 3,
-        label: 'Apr',
+      act(() => {
+        const monthSelect = wrapper
+          .find(Downshift)
+          .filterWhere(node => node.children().prop('name') === 'Month')
+        monthSelect.prop('onSelect')({
+          value: 3,
+          label: 'Apr',
+        })
       })
+
       expect(onChange).toHaveReturnedWith(true)
     })
   })

@@ -27,6 +27,7 @@ describe('Device API Raw routes for Senaite LIMS', () => {
       .from('Partner')
       .where('name', 'Partner One')
       .first()
+
     const geography = await knex
       .from('Country as c')
       .join('Geography as g', 'g.countryId', 'c.id')
@@ -2312,13 +2313,12 @@ describe('Device API Raw routes for Senaite LIMS', () => {
         'a.externalId as assayId',
         'rc1.externalId as result1'
       )
-      .map(result =>
-        Object.assign({}, result, {
-          resultData: JSON.parse(result.resultData),
-          patientData: JSON.parse(result.patientData),
-          sampleCollectedOn: JSON.stringify(result.sampleCollectedOn),
-        })
-      )
+      .map(result => ({
+        ...result,
+        resultData: JSON.parse(result.resultData),
+        patientData: JSON.parse(result.patientData),
+        sampleCollectedOn: JSON.stringify(result.sampleCollectedOn),
+      }))
     const sampleTypeMapping = {
       'Blood plasma': 'Plasma',
       'Dried Blood Spot': 'DBS',

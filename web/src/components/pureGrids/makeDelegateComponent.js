@@ -42,12 +42,12 @@ export function makeDelegateComponent(
   return class extends PureComponent {
     static displayName = componentName
 
+    static propTypes = propTypes
+
     static defaultProps = {
       className: null,
       component: 'div',
     }
-
-    static propTypes = propTypes
 
     render() {
       const restProps = _.omit(this.props, excludedPropList)

@@ -1,5 +1,5 @@
 import React from 'react'
-import ReactShallowRenderer from 'react-test-renderer/shallow'
+import { shallow } from 'enzyme'
 import { Items } from '../../shared/metaReducers/items'
 import { Table } from '../../shared/metaReducers/table'
 
@@ -7,7 +7,6 @@ describe('Person List module', () => {
   const { PersonList } = require('./PersonList')
 
   describe('PersonList component', () => {
-    const renderer = new ReactShallowRenderer()
     let props
 
     beforeEach(() => {
@@ -39,7 +38,7 @@ describe('Person List module', () => {
     })
 
     it('should shallow render correctly', () => {
-      const element = renderer.render(<PersonList {...props} />)
+      const element = shallow(<PersonList {...props} />)
 
       expect(element).toMatchSnapshot()
     })

@@ -44,7 +44,14 @@ const ReporterTableRow = ({
           style: 'percent',
         })}
       </TableCell>
-      <TableCell>{intl.formatNumber(reporter.get('totalFlagged'))}</TableCell>
+      <TableCell
+        style={{
+          color: reporter.get('confirmFollowUpRatio') === 1 ? '' : 'red',
+        }}
+      >
+        {intl.formatNumber(reporter.get('totalOnTreatment'))}/
+        {intl.formatNumber(reporter.get('requiresFollowUp'))}
+      </TableCell>
       <TableCell>
         <AspectCheckbox
           name="revoked"
@@ -65,7 +72,6 @@ const mapStateToProps = state => ({
   disabled: !isEditable(state.user, 'reporter'),
 })
 
-export default connect(
-  mapStateToProps,
-  { updateSingleReporter }
-)(ReporterTableRow)
+export default connect(mapStateToProps, { updateSingleReporter })(
+  ReporterTableRow
+)

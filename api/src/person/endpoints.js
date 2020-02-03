@@ -27,25 +27,19 @@ function listContactBaseConfig() {
   return {
     auth: { scope: ['person:view', 'person:edit'] },
     validate: {
-      query: Object.assign(
-        {
-          contactNameOrEmail: Joi.string()
-            .allow('')
-            .description('Filter for person name/email'),
-        },
-        {
-          siteId: Joi.number()
-            .allow('')
-            .description('Site ID'),
-        },
-        {
-          format: Joi.string()
-            .allow('')
-            .description('File format for exporting data'),
-        },
-        validateAllGeographyFilterParams(),
-        validateSortPageParams('name', 'level', 'state', 'lga')
-      ),
+      query: {
+        contactNameOrEmail: Joi.string()
+          .allow('')
+          .description('Filter for person name/email'),
+        siteId: Joi.number()
+          .allow('')
+          .description('Site ID'),
+        format: Joi.string()
+          .allow('')
+          .description('File format for exporting data'),
+        ...validateAllGeographyFilterParams(),
+        ...validateSortPageParams('name', 'level', 'state', 'lga'),
+      },
     },
   }
 }
@@ -54,30 +48,28 @@ function listReporterBaseConfig() {
   return {
     auth: { scope: ['reporter:view', 'reporter:edit'] },
     validate: {
-      query: Object.assign(
-        {
-          contactNameOrEmail: Joi.string()
-            .allow('')
-            .description('Filter for person name/email'),
-          deviceName: Joi.string()
-            .allow('')
-            .description('Filter for device name'),
-          assayId: Joi.string()
-            .allow('')
-            .description('Filter for assay'),
-          treatmentStatusId: Joi.string()
-            .allow('')
-            .description('Filter for treatment status'),
-          format: Joi.string()
-            .allow('')
-            .description('File format for exporting data'),
-          revoked: Joi.string()
-            .valid('0', '1')
-            .description('Filter for revoked status'),
-        },
-        validateAllGeographyFilterParams(),
-        validateDateRangeParams(),
-        validateSortPageParams(
+      query: {
+        contactNameOrEmail: Joi.string()
+          .allow('')
+          .description('Filter for person name/email'),
+        deviceName: Joi.string()
+          .allow('')
+          .description('Filter for device name'),
+        assayId: Joi.string()
+          .allow('')
+          .description('Filter for assay'),
+        treatmentStatusId: Joi.string()
+          .allow('')
+          .description('Filter for treatment status'),
+        format: Joi.string()
+          .allow('')
+          .description('File format for exporting data'),
+        revoked: Joi.string()
+          .valid('0', '1')
+          .description('Filter for revoked status'),
+        ...validateAllGeographyFilterParams(),
+        ...validateDateRangeParams(),
+        ...validateSortPageParams(
           'user',
           'deviceName',
           'createdOn',
@@ -85,11 +77,11 @@ function listReporterBaseConfig() {
           'delivered',
           'acknowledgedRatio',
           'confirmFollowUpRatio',
-          'totalFlagged',
+          'totalOnTreatment',
           'revoked',
           'requiresFollowUp'
-        )
-      ),
+        ),
+      },
     },
   }
 }
@@ -98,25 +90,21 @@ const routes = [
     method: 'GET',
     path: '/person',
     handler: asyncHandler(listPeople),
-    config: Object.assign(
-      {
-        description: 'People List',
-        notes: 'Pageable and sortable list of people',
-      },
-      listContactBaseConfig()
-    ),
+    config: {
+      description: 'People List',
+      notes: 'Pageable and sortable list of people',
+      ...listContactBaseConfig(),
+    },
   },
   {
     method: 'GET',
     path: '/person/export',
     handler: getContactReport,
-    config: Object.assign(
-      {
-        description: 'Export Contact List into Excel or CSV',
-        notes: 'Filtered and sorted list of Contacts',
-      },
-      listContactBaseConfig()
-    ),
+    config: {
+      description: 'Export Contact List into Excel or CSV',
+      notes: 'Filtered and sorted list of Contacts',
+      ...listContactBaseConfig(),
+    },
   },
   {
     method: 'GET',
@@ -132,93 +120,89 @@ const routes = [
     method: 'GET',
     path: '/person/refresh-token',
     handler: asyncHandler(listRefreshTokens),
-    config: Object.assign(
-      {
-        description: 'List of all reporter app refresh tokens',
-        response: {
-          options: {
-            allowUnknown: false,
-          },
-          schema: Joi.object().keys({
-            ok: Joi.bool()
-              .required()
-              .description('False if there was some sort of error'),
-            total: Joi.number()
-              .required()
-              .description(
-                'The total number of refresh tokens that match the given filters'
-              ),
-            length: Joi.number()
-              .required()
-              .description(
-                'The number of refresh tokens included in this response'
-              ),
-            data: Joi.array()
-              .required()
-              .description('Reporters')
-              .items(
-                Joi.object().keys({
-                  id: Joi.string()
-                    .required()
-                    .description('The Client ID of the refresh token'),
-                  user: Joi.string()
-                    .required()
-                    .description(
-                      'The username of the person logged into the reporter app'
-                    ),
-                  deviceName: Joi.string()
-                    .required()
-                    .description('The name of the mobile device used'),
-                  createdOn: Joi.date()
-                    .required()
-                    .description(
-                      'The data a refresh token was created for the particular device'
-                    ),
-                  revoked: Joi.number()
-                    .valid(0, 1)
-                    .required()
-                    .description(
-                      'Indicator of whether or not a token has been revoked'
-                    ),
-                  lastSeen: Joi.date()
-                    .required()
-                    .allow(null)
-                    .description('The date when the device was last online'),
-                  acknowledgedRatio: Joi.number()
-                    .required()
-                    .allow(null)
-                    .description('The acknowledged ratio'),
-                  confirmFollowUpRatio: Joi.number()
-                    .required()
-                    .allow(null)
-                    .description('The confirm follow up ratio'),
-                  totalFlagged: Joi.number()
-                    .required()
-                    .description('The total flagged'),
-                  delivered: Joi.number()
-                    .required()
-                    .description('The total result delivered'),
-                  requiresFollowUp: Joi.number()
-                    .required()
-                    .description('The total requires followup'),
-                })
-              ),
-          }),
+    config: {
+      description: 'List of all reporter app refresh tokens',
+      response: {
+        options: {
+          allowUnknown: false,
         },
+        schema: Joi.object().keys({
+          ok: Joi.bool()
+            .required()
+            .description('False if there was some sort of error'),
+          total: Joi.number()
+            .required()
+            .description(
+              'The total number of refresh tokens that match the given filters'
+            ),
+          length: Joi.number()
+            .required()
+            .description(
+              'The number of refresh tokens included in this response'
+            ),
+          data: Joi.array()
+            .required()
+            .description('Reporters')
+            .items(
+              Joi.object().keys({
+                id: Joi.string()
+                  .required()
+                  .description('The Client ID of the refresh token'),
+                user: Joi.string()
+                  .required()
+                  .description(
+                    'The username of the person logged into the reporter app'
+                  ),
+                deviceName: Joi.string()
+                  .required()
+                  .description('The name of the mobile device used'),
+                createdOn: Joi.date()
+                  .required()
+                  .description(
+                    'The data a refresh token was created for the particular device'
+                  ),
+                revoked: Joi.number()
+                  .valid(0, 1)
+                  .required()
+                  .description(
+                    'Indicator of whether or not a token has been revoked'
+                  ),
+                lastSeen: Joi.date()
+                  .required()
+                  .allow(null)
+                  .description('The date when the device was last online'),
+                acknowledgedRatio: Joi.number()
+                  .required()
+                  .allow(null)
+                  .description('The acknowledged ratio'),
+                confirmFollowUpRatio: Joi.number()
+                  .required()
+                  .allow(null)
+                  .description('The confirm follow up ratio'),
+                delivered: Joi.number()
+                  .required()
+                  .description('The total result delivered'),
+                requiresFollowUp: Joi.number()
+                  .required()
+                  .description('The total requires followup'),
+                totalOnTreatment: Joi.number()
+                  .required()
+                  .description('The total result on treatment'),
+              })
+            ),
+        }),
       },
-      listReporterBaseConfig()
-    ),
+      ...listReporterBaseConfig(),
+    },
   },
   {
     method: 'GET',
     path: '/reporter/export',
     handler: getReport,
-    config: Object.assign(
-      {
-        description: 'Export Reporter List into Excel or CSV',
-      },
-      listReporterBaseConfig()
-    ),
+    config: {
+      description: 'Export Reporter List into Excel or CSV',
+      ...listReporterBaseConfig(),
+    },
   },
   {
     method: 'PUT',

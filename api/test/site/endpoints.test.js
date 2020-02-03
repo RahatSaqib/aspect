@@ -61,7 +61,7 @@ describe('site endpoints', () => {
       const expectedResponse = { value: 'Expected result' }
 
       beforeEach(() => {
-        endpoint = setupRoute('GET', '/site/select-list', {
+        endpoint = setupRoute('GET', '/site/select-list/{mode?}', {
           async listSitesForSelectList() {
             return expectedResponse
           },

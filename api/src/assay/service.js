@@ -30,16 +30,10 @@ const SELECT_LIST_RESULT_CATEGORY_FIELDS = [
   'rca.emphasize',
   'rca.requirestreatment',
 ]
-async function listAssaysResultSchema(request) {
-  const { auth } = request
-  const dataConstraints = await getConstraints(auth.credentials)
+async function listAssaysResultSchema() {
   const assaysList = await knex('Assay as a')
     .innerJoin('DeviceType as dt', 'a.devicetypeId', 'dt.id')
-    .innerJoin('Device as d', 'dt.id', 'd.deviceTypeId')
     .innerJoin('AssayType as at', 'a.assaytypeId', 'at.id')
-    .modify(addConstraints, dataConstraints, {
-      device: 'd',
-    })
     .select(
       'a.id as assayId',
       'a.externalId',
@@ -65,11 +59,12 @@ async function listAssaysResultSchema(request) {
     .select(SELECT_LIST_RESULT_CATEGORY_FIELDS)
 
   const resultCategoriesByAssayId = _.groupBy(rawResultCategories, 'assayId')
-  const result = _.map(assaysList, elem => {
+  const assays = _.map(assaysList, elem => {
     const resultDataSchema = JSON.parse(elem.resultDataSchema)
     const patientDataSchema = JSON.parse(elem.patientDataSchema)
     const categories = resultCategoriesByAssayId[elem.assayId]
-    const assay = Object.assign({}, elem, {
+    const assay = {
+      ...elem,
       resultDataSchema,
       patientDataSchema,
       resultCategories: _.map(categories, category => ({
@@ -79,10 +74,10 @@ async function listAssaysResultSchema(request) {
         emphasize: category.emphasize,
         requirestreatment: category.requirestreatment,
       })),
-    })
+    }
     return assay
   })
-  return result
+  return assays
 }
 async function listAssays(request) {
   const { query, auth } = request

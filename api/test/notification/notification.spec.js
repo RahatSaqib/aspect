@@ -21,7 +21,7 @@ describe('Notification routes', () => {
 
   const ntArr = []
 
-  beforeEach(async () =>
+  beforeEach(() =>
     run(async knex => {
       const issueTypes = await rowsAsObject(knex, 'IssueType', 'externalId')
       await Promise.each(sampleIssues, async issue => {
@@ -44,7 +44,7 @@ describe('Notification routes', () => {
     })
   )
 
-  afterEach(async () =>
+  afterEach(() =>
     run(async knex => {
       await Promise.each(ntArr, async ntId => {
         await knex('Notification')
@@ -60,11 +60,11 @@ describe('Notification routes', () => {
   describe('GET /notification', () => {
     shared.checkToken(server, path)
 
-    it('should return a list of notifications when using valid token', done => {
-      server
+    it('should return a list of notifications when using valid token', async () => {
+      await server
         .get(path)
         .set('Authorization', `Bearer ${shared.token}`)
-        .end((err, res) => {
+        .then(res => {
           assert.equal(res.status, 200)
           assert.typeOf(res.body, 'Object')
           assert.property(res.body, 'data')
@@ -78,7 +78,6 @@ describe('Notification routes', () => {
             assert.property(notification, 'smsCount')
             assert.property(notification, 'emailCount')
           })
-          done()
         })
     })
   })

@@ -2,6 +2,7 @@ import _ from 'lodash'
 import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
 import getDisplayName from 'react-display-name'
+import { ReactReduxContext } from 'react-redux'
 
 // Get a permissions list from the combination of permissionsInConfig (from HOC)
 // and overriddenPermissions, extraPermissions that are passed in by props
@@ -84,18 +85,36 @@ export const requirePermissions = ({
       extraPermissions: PropTypes.arrayOf(PropTypes.string),
     }
 
+    static contextTypes = {
+      store: PropTypes.shape({
+        subscribe: PropTypes.func.isRequired,
+        dispatch: PropTypes.func.isRequired,
+        getState: PropTypes.func.isRequired,
+      }).isRequired,
+    }
+
     static defaultProps = {
       overriddenPermissions: [],
       extraPermissions: [],
     }
 
-    static contextTypes = {
-      store: PropTypes.object.isRequired,
+    constructor(props, context) {
+      super(props)
+
+      this.context = context
+      this.state = this.createState()
     }
 
-    state = this.createState()
-
     unsubscribe = _.noop // eslint-disable-line react/sort-comp
+
+    componentDidMount() {
+      this.unsubscribe = this.context.store.subscribe(this.handleStoreChange)
+    }
+
+    componentWillUnmount() {
+      this.unsubscribe()
+      this.unsubscribe = _.noop
+    }
 
     handleStoreChange = () => {
       if (this.unsubscribe === _.noop) {
@@ -104,21 +123,14 @@ export const requirePermissions = ({
       this.setState(this.createState())
     }
 
+    static contextType = ReactReduxContext
+
     createState() {
       const { store } = this.context
       return {
         userPermissions: store.getState().user.jwt.permissions,
         userFeatures: store.getState().user.features,
       }
-    }
-
-    componentWillMount() {
-      this.unsubscribe = this.context.store.subscribe(this.handleStoreChange)
-    }
-
-    componentWillUnmount() {
-      this.unsubscribe()
-      this.unsubscribe = _.noop
     }
 
     render() {

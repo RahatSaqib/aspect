@@ -8,11 +8,10 @@ const config = require('../../src/config')
 async function seed(knex) {
   const resultForms = await knex('ResultForm')
     .select()
-    .map(resultForm =>
-      Object.assign({}, resultForm, {
-        formSchema: JSON.parse(resultForm.formSchema),
-      })
-    )
+    .map(resultForm => ({
+      ...resultForm,
+      formSchema: JSON.parse(resultForm.formSchema),
+    }))
   // Skip if form schemas have already been changed
   if (
     _.every(resultForms, resultForm => !_.isNil(resultForm.formSchema.fields))

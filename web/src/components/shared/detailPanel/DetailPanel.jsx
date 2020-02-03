@@ -4,15 +4,15 @@ import Immutable from 'immutable'
 import classnames from 'classnames/bind'
 import { compose, mapProps } from 'recompose'
 import Card from '@material-ui/core/Card'
-import MdAssignment from 'react-icons/lib/md/assignment'
+import { MdAssignment } from 'react-icons/md'
 import { formatDate, formatDateTime } from '../../../shared/utils/dateFormat'
-import CardTitle from '../../../components/shared/CardTitle'
-import ReadOnlyFields from '../../../components/shared/ReadOnlyFields'
+import CardTitle from '../CardTitle'
+import ReadOnlyFields from '../ReadOnlyFields'
 import {
   ExpansionPanel,
   ExpansionPanelHeader,
   ExpansionPanelDetail,
-} from '../../../components/shared/expansionPanel'
+} from '../expansionPanel'
 
 const cssClasses = classnames.bind(require('./DetailPanel.css'))
 

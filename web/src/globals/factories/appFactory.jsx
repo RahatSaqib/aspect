@@ -1,7 +1,6 @@
 import _ from 'lodash'
 import React from 'react'
 import { compose } from 'recompose'
-import { AppContainer } from 'react-hot-loader'
 import { bindActionCreators } from 'redux'
 import { Provider, connect } from 'react-redux'
 import { addLocaleData, IntlProvider } from 'react-intl'
@@ -92,11 +91,7 @@ const mapDispatchToProps = bindActionCreators.bind(null, {
 })
 
 export const appFactory = compose(
-  render => ({ store }) => (
-    <AppContainer>
-      <Provider store={store}>{render()}</Provider>
-    </AppContainer>
-  ),
+  render => ({ store }) => <Provider store={store}>{render()}</Provider>,
   uiProvidersFactory,
   render => {
     const App = ({
@@ -143,10 +138,7 @@ export const appFactory = compose(
     )
 
     return React.createFactory(
-      connect(
-        mapStateToProps,
-        mapDispatchToProps
-      )(App)
+      connect(mapStateToProps, mapDispatchToProps)(App)
     )
   },
   routerFactory

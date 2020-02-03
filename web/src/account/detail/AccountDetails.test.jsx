@@ -1,6 +1,5 @@
 import _ from 'lodash'
 import React from 'react'
-import ReactShallowRenderer from 'react-test-renderer/shallow'
 import { shallow } from 'enzyme'
 import { Route } from 'react-router-dom'
 
@@ -10,7 +9,6 @@ describe('AccountDetails module', () => {
   const { AccountDetails } = require('./AccountDetails')
 
   describe('AccountDetails component', () => {
-    const renderer = new ReactShallowRenderer()
     const props = {
       intl: {
         formatMessage: message => message.defaultMessage,
@@ -29,7 +27,7 @@ describe('AccountDetails module', () => {
     }
 
     it('should shallow render correctly', () => {
-      const element = renderer.render(<AccountDetails {...props} />)
+      const element = shallow(<AccountDetails {...props} />)
 
       expect(element).toMatchSnapshot()
     })

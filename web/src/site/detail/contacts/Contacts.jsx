@@ -3,7 +3,7 @@ import React, { useState, Fragment } from 'react'
 import classnames from 'classnames/bind'
 import { Link } from 'react-router-dom'
 import Button from '@material-ui/core/Button'
-import FaExternalLink from 'react-icons/lib/fa/external-link'
+import { FaExternalLinkAlt as FaExternalLink } from 'react-icons/fa'
 
 // Our own imports
 import ContactsTag from './ContactTags'

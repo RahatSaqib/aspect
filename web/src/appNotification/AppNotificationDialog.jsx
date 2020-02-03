@@ -40,12 +40,7 @@ const genericMessages = defineMessages({
   },
 })
 
-const enhance = _.flowRight(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps
-  )
-)
+const enhance = _.flowRight(connect(mapStateToProps, mapDispatchToProps))
 
 export class AppNotificationDialog extends PureComponent {
   static propTypes = {

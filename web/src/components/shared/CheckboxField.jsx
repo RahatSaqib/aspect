@@ -3,7 +3,7 @@ import React from 'react'
 
 import { withStyles } from '@material-ui/core/styles'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
-import AspectCheckbox from '../../components/shared/AspectCheckbox'
+import AspectCheckbox from './AspectCheckbox'
 
 const styles = {
   root: {

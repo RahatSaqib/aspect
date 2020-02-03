@@ -37,6 +37,7 @@ describe('Result Detail screen', () => {
     formDataSaving: false,
     formDataDirty: false,
     saveResultFormData: sinon.spy(),
+    addResultNote: sinon.spy(),
   }
   function renderResultDetailsScreen(props) {
     return shallow(<ResultDetail {...props} />)

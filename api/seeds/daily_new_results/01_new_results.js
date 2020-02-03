@@ -28,7 +28,6 @@ async function seed(knex) {
     patients,
     errorCodes
   )
-
   const MGITAssays = await knex('Assay')
     .whereIn('externalid', ['assayBdMgitAst', 'assayBdMgitGnd'])
     .select('id')
@@ -49,7 +48,7 @@ async function seed(knex) {
     .select('r.*')
 
   await Promise.each(tbResults, async result => {
-    if (devicesMGIT.length > 0)
+    if (devicesMGIT.length > 0 && MGITAssays && MGITAssays.length > 0)
       return knex('Result').insert(
         await getMGITResultFromTBPossitive(result, MGITAssays, devicesMGIT)
       )

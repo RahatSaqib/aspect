@@ -1316,7 +1316,7 @@ describe('Device API routes for GxConnect Devices', () => {
 
     describe('when the assay in the result payload is unknown to Aspect', () => {
       const assayName = 'New Assay Type'
-      after(async () =>
+      after(() =>
         run(async knex =>
           knex('Assay')
             .where({ externalId: assayName })
@@ -2333,7 +2333,7 @@ describe('Device API routes for GxConnect Devices', () => {
 
     describe('inventory update', () => {
       const initialQuantityOnHand = 100
-      beforeEach(async () =>
+      beforeEach(() =>
         run(async knex => {
           const {
             basicDevicePayload,

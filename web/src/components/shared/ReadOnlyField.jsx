@@ -4,20 +4,19 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import { compose, setPropTypes, pure } from 'recompose'
 import { Link } from 'react-router-dom'
-import FaExternalLink from 'react-icons/lib/fa/external-link'
+import { FaExternalLinkAlt as FaExternalLink } from 'react-icons/fa'
 
 const cssClasses = classnames.bind(require('./ReadOnlyField.css'))
 
-const enhance = compose(
-  pure,
-  setPropTypes({
-    label: PropTypes.string.isRequired,
-    value: PropTypes.any,
-    lg: PropTypes.bool,
-    format: PropTypes.func,
-    nullText: PropTypes.string,
-  })
-)
+export const readOnlyFieldPropTypes = {
+  label: PropTypes.string.isRequired,
+  value: PropTypes.any,
+  lg: PropTypes.bool,
+  format: PropTypes.func,
+  nullText: PropTypes.string,
+}
+
+const enhance = compose(pure, setPropTypes(readOnlyFieldPropTypes))
 
 export const ReadOnlyField = ({
   label,

@@ -76,7 +76,7 @@ describe('CommCare Result API routes', () => {
       await context.createDeviceWithApiKey()
     })
     afterEach(context.afterEach)
-    it('should add and return device results with a normalized myanmar phone', () => {
+    it('should add and return device results with a normalized myanmar phone', () =>
       runTest(async knex => {
         const { apiKey } = context
 
@@ -104,8 +104,7 @@ describe('CommCare Result API routes', () => {
         assert.equal(result.data.hcwConfirmatoryResult, 'positive')
         assert.equal(result.patient.gender, 'male')
         assert.equal(result.patient.phone, '+9512345678')
-      })
-    })
+      }))
   })
   describe('admin result updates', () => {
     const context = createTestContext(server, {
@@ -209,15 +208,16 @@ describe('CommCare Result API routes', () => {
           })
 
         result = await getLastResult(knex, deviceId)
-        notification = await getLastNotification(knex, deviceId)
         assert.equal(result.id, '821')
         assert.equal(result.data.resultText, 'negative')
         assert.equal(result.data.hcwConfirmatoryResult, 'positive')
         assert.equal(result.data.hcwTiebreakerResult, 'negative')
         assert.equal(result.patient.gender, 'male')
         assert.equal(result.patient.age, 30)
+        notification = await getLastNotification(knex, deviceId)
         assert.equal(notification.issueType, 'ResultReceived')
         assert.equal(notification.level, 2)
+
         assert.equal(
           notification.message,
           'Dear participant ID #study-821: An HIV self-test is a screening test. Please ensure you re-test in 3 months.'

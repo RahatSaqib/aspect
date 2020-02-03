@@ -47,7 +47,7 @@ describe('Myanmar Issue endpoints', () => {
     afterCleanUp,
   } = context
   let { deviceAuth } = context
-  beforeEach(async () =>
+  beforeEach(() =>
     run(async () => {
       await beforeCreateGxAlertApiKey({
         countryAbbreviation: 'MM',
@@ -1510,7 +1510,7 @@ describe('Myanmar Issue endpoints', () => {
     }))
 
   describe('should create a machine power issue and resolve when under percent', () => {
-    beforeEach(async () =>
+    beforeEach(() =>
       run(async () => {
         await beforeCreateGxAlertApiKey({
           countryAbbreviation: 'MM',

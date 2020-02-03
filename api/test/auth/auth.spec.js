@@ -46,21 +46,19 @@ describe('Authentication routes', () => {
   const daysToExpire = token =>
     (token.expires - new Date()) / (1000 * 60 * 60 * 24)
 
-  beforeEach(async () =>
-    run(async () => {
-      const webResponse = await getToken(webClientName, webClientType)
-      const appResponse = await getToken(appClientName, appClientType)
-      jwToken = webResponse.access
-      shared.token = jwToken
+  beforeEach(async () => {
+    const webResponse = await getToken(webClientName, webClientType)
+    const appResponse = await getToken(appClientName, appClientType)
+    jwToken = webResponse.access
+    shared.token = jwToken
 
-      webToken = webResponse.refresh
-      webClientId = webResponse.clientId
-      appToken = appResponse.refresh
-      appClientId = appResponse.clientId
-    })
-  )
-  afterEach(async () =>
-    run(async knex => {
+    webToken = webResponse.refresh
+    webClientId = webResponse.clientId
+    appToken = appResponse.refresh
+    appClientId = appResponse.clientId
+  })
+  afterEach(() =>
+    runTestWithKnex(async knex => {
       await knex('RefreshToken')
         .whereIn('clientName', [webClientName, appClientName])
         .delete()
@@ -68,7 +66,7 @@ describe('Authentication routes', () => {
   )
 
   describe('/api/auth', () => {
-    before(async () =>
+    before(() =>
       runTestWithKnex(async knex => {
         const lastPartnerId = 4
         const lastCountryId = 4
@@ -99,7 +97,7 @@ describe('Authentication routes', () => {
         })
       })
     )
-    after(async () =>
+    after(() =>
       runTestWithKnex(async knex => {
         await knex('RefreshToken')
           .whereIn('clientId', ['123123123-123123123', '9999-9999'])
@@ -114,15 +112,15 @@ describe('Authentication routes', () => {
     )
 
     describe('POST', () => {
-      it('should return a JSON message that contains a valid jwt, access token, and client ID if username/password are correct', done => {
-        server
+      it('should return a JSON message that contains a valid jwt, access token, and client ID if username/password are correct', async () => {
+        await server
           .post(authPath)
           .send({
             name: adminUsername,
             password: adminPassword,
             clientName: webClientName,
           })
-          .end((err, res) => {
+          .then(res => {
             assert.equal(res.status, 200)
             assert.isAbove(res.body.access.length, 100)
             assert.isAbove(res.body.refresh.length, 50)
@@ -134,13 +132,11 @@ describe('Authentication routes', () => {
               assert.property(decoded, 'iat')
               assert.property(decoded, 'exp')
               assert.property(decoded, 'iss')
-
-              done()
             })
           })
       })
-      it('should only generate random clientId  if none is sent with the request', done => {
-        server
+      it('should only generate random clientId  if none is sent with the request', async () => {
+        await server
           .post(authPath)
           .send({
             name: adminUsername,
@@ -148,27 +144,26 @@ describe('Authentication routes', () => {
             clientName: webClientName,
             clientId: webClientId,
           })
-          .end((err, res) => {
+          .then(res => {
             assert.equal(res.status, 200)
             assert.isAbove(res.body.access.length, 100)
             assert.isAbove(res.body.refresh.length, 50)
             assert.isAbove(res.body.clientId.length, 32)
             assert.strictEqual(res.body.clientId, webClientId)
           })
-        server
+        await server
           .post(authPath)
           .send({
             name: adminUsername,
             password: adminPassword,
             clientName: webClientName,
           })
-          .end((err, res) => {
+          .then(res => {
             assert.equal(res.status, 200)
             assert.isAbove(res.body.access.length, 100)
             assert.isAbove(res.body.refresh.length, 50)
             assert.isString(res.body.clientId)
             assert.isAbove(res.body.clientId.length, 32)
-            done()
           })
       })
       it('should return the appropriate license status for the user', () =>
@@ -209,7 +204,7 @@ describe('Authentication routes', () => {
             })
         }))
 
-      it('should return a JSON message that contains a valid jwt, access token, and client ID with different expiration for Reporter App', async () =>
+      it('should return a JSON message that contains a valid jwt, access token, and client ID with different expiration for Reporter App', () =>
         runTestWithKnex(async knex => {
           const rt = await knex('RefreshToken')
             .where('token', appToken)
@@ -224,7 +219,7 @@ describe('Authentication routes', () => {
           )
         }))
 
-      it('should return a JSON message that contains a valid jwt, access token, and client ID with different expiration for web', async () =>
+      it('should return a JSON message that contains a valid jwt, access token, and client ID with different expiration for web', () =>
         runTestWithKnex(async knex => {
           const rt = await knex('RefreshToken')
             .where('token', webToken)
@@ -238,76 +233,71 @@ describe('Authentication routes', () => {
             'Expiration days for web'
           )
         }))
-      it('should return 400 and error message if no user name is provided', done => {
-        server
+      it('should return 400 and error message if no user name is provided', async () => {
+        await server
           .post(authPath)
           .send()
-          .end((err, res) => {
+          .then(res => {
             assert.equal(res.status, 400)
             assert.isString(res.body.message)
             assert.notEqual('', res.body.message)
-            done()
           })
       })
 
-      it('should return 400 and error message if username is provided, but password is missing', done => {
-        server
+      it('should return 400 and error message if username is provided, but password is missing', async () => {
+        await server
           .post(authPath)
           .send({ name: adminUsername })
-          .end((err, res) => {
+          .then(res => {
             assert.equal(res.status, 400)
             assert.equal(
               res.body.message,
               'child "password" fails because ["password" is required]'
             )
-            done()
           })
       })
 
-      it('should return 400 and error message if user name and password is provided, but client name is missing', done => {
-        server
+      it('should return 400 and error message if user name and password is provided, but client name is missing', async () => {
+        await server
           .post(authPath)
           .send({ name: adminUsername, password: adminPassword })
-          .end((err, res) => {
+          .then(res => {
             assert.equal(res.status, 400)
             assert.equal(
               res.body.message,
               'child "clientName" fails because ["clientName" is required]'
             )
-            done()
           })
       })
 
-      it('should return 401 if user not found', done => {
-        server
+      it('should return 401 if user not found', async () => {
+        await server
           .post(authPath)
           .send({
             name: 'MickeyMouse',
             password: adminPassword,
             clientName: webClientName,
           })
-          .end((err, res) => {
+          .then(res => {
             // test returns 500 if its run offline
             assert.equal(res.status, 401)
-            done()
           })
       })
 
-      it('should return 401 and error message if incorrect password', done => {
-        server
+      it('should return 401 and error message if incorrect password', async () => {
+        await server
           .post(authPath)
           .send({
             name: adminUsername,
             password: 'password',
             clientName: webClientName,
           })
-          .end((err, res) => {
+          .then(res => {
             assert.equal(res.status, 401)
             assert.equal(
               res.body.message,
               'Authentication failed. Wrong password.'
             )
-            done()
           })
       })
     })
@@ -315,25 +305,24 @@ describe('Authentication routes', () => {
     describe('GET', () => {
       shared.checkToken(server, authPath)
 
-      it('should return 200 and welcome message when using valid token', done => {
-        server
+      it('should return 200 and welcome message when using valid token', async () => {
+        await server
           .get(authPath)
           .set('Authorization', `Bearer ${jwToken}`)
-          .end((err, res) => {
+          .then(res => {
             assert.equal(res.status, 200)
             assert.equal(res.body.message, 'Welcome to the API!')
-            done()
           })
       })
     })
   })
 
   describe('POST to /refresh', () => {
-    it('should return a JSON message that contains a valid jwt, access token, and client ID if clientId/refresh token are valid', done => {
-      server
+    it('should return a JSON message that contains a valid jwt, access token, and client ID if clientId/refresh token are valid', async () => {
+      await server
         .post(`${authPath}/refresh`)
         .send({ clientId: webClientId, token: webToken })
-        .end((err, res) => {
+        .then(res => {
           assert.equal(res.status, 200)
           assert.isAbove(res.body.access.length, 100)
           assert.isAbove(res.body.refresh.length, 50)
@@ -346,13 +335,11 @@ describe('Authentication routes', () => {
             assert.property(decoded, 'iat')
             assert.property(decoded, 'exp')
             assert.property(decoded, 'iss')
-
-            done()
           })
         })
     })
 
-    it('should return a JSON message with a token valid for approximately 7 days for web', async () =>
+    it('should return a JSON message with a token valid for approximately 7 days for web', () =>
       runTestWithKnex(async knex => {
         const newWebToken = await server
           .post(`${authPath}/refresh`)
@@ -375,7 +362,7 @@ describe('Authentication routes', () => {
         )
       }))
 
-    it('should return a JSON message with a token valid for approximately 30 days for reporter app', async () =>
+    it('should return a JSON message with a token valid for approximately 30 days for reporter app', () =>
       runTestWithKnex(async knex => {
         const newAppToken = await server
           .post(`${authPath}/refresh`)
@@ -404,7 +391,7 @@ describe('Authentication routes', () => {
         )
       }))
 
-    it('should store deviceTokenId for reporter app and return a JSON message with a deviceTokenId for reporter app', async () =>
+    it('should store deviceTokenId for reporter app and return a JSON message with a deviceTokenId for reporter app', () =>
       runTestWithKnex(async knex => {
         const deviceTokenId = 'DEVICE_TOKEN_ID'
         const newAppToken = await server
@@ -425,7 +412,7 @@ describe('Authentication routes', () => {
           .first()
         assert.equal(rt.deviceTokenId, deviceTokenId)
       }))
-    it('should not store deviceTokenId for web app and return a JSON message with deviceTokenId = null for web app', async () =>
+    it('should not store deviceTokenId for web app and return a JSON message with deviceTokenId = null for web app', () =>
       runTestWithKnex(async knex => {
         const deviceTokenId = 'DEVICE_TOKEN_ID'
         const newAppToken = await server
@@ -447,62 +434,59 @@ describe('Authentication routes', () => {
         assert.isNull(rt.deviceTokenId)
       }))
 
-    it('should return 400 and error message if no client ID provided', done => {
-      server
+    it('should return 400 and error message if no client ID provided', async () => {
+      await server
         .post(`${authPath}/refresh`)
         .send({
           token: webToken,
         })
-        .end((err, res) => {
+        .then(res => {
           assert.equal(res.status, 400)
           assert.isString(res.body.message)
           assert.equal(
             res.body.message,
             'child "clientId" fails because ["clientId" is required]'
           )
-          done()
         })
     })
 
-    it('should return 400 and error message if client ID is provided, but token is missing', done => {
-      server
+    it('should return 400 and error message if client ID is provided, but token is missing', async () => {
+      await server
         .post(`${authPath}/refresh`)
         .send({
           clientId: webClientId,
         })
-        .end((err, res) => {
+        .then(res => {
           assert.equal(res.status, 400)
           assert.isString(res.body.message)
           assert.equal(
             res.body.message,
             'child "token" fails because ["token" is required]'
           )
-          done()
         })
     })
 
-    it('should return 400 and error message if invalid token or clientId', done => {
-      server
+    it('should return 400 and error message if invalid token or clientId', async () => {
+      await server
         .post(`${authPath}/refresh`)
         .send({
           clientId: 'asdf',
           token: 'TOKEN',
         })
-        .end((err, res) => {
+        .then(res => {
           assert.equal(res.status, 400)
           assert.equal(
             res.body.message,
             'Unable to find token or token revoked'
           )
-          done()
         })
     })
   })
   describe('PUT to /update-login-details', () => {
     const path = `${authPath}/update-login-details`
-    it('should allow users to login with their new username after they have changed it', done => {
+    it('should allow users to login with their new username after they have changed it', async () => {
       const newUsername = 'new-username'
-      server
+      await server
         .put(path)
         .send({
           currentPassword: adminPassword,
@@ -510,7 +494,7 @@ describe('Authentication routes', () => {
           newUsername,
         })
         .set('Authorization', `Bearer ${shared.token}`)
-        .end((err, res) => {
+        .then(res => {
           assert.equal(res.status, 200)
           assert.isTrue(res.body.ok)
           assert.equal(res.body.data.username, newUsername)
@@ -524,75 +508,68 @@ describe('Authentication routes', () => {
             assert.property(decoded, 'iat')
             assert.property(decoded, 'exp')
             assert.property(decoded, 'iss')
-
-            server
-              .post(authPath)
-              .send({
-                name: newUsername,
-                password: adminPassword,
-                clientName: webClientName,
-              })
-              .end((err, res) => {
-                assert.equal(res.status, 200)
-                assert.isAbove(res.body.access.length, 100)
-                assert.isAbove(res.body.refresh.length, 50)
-                assert.isAbove(res.body.clientId.length, 32)
-
-                // get new token for changed credentials
-                jwToken = res.body.access
-                shared.token = res.body.access
-
-                jwt.verify(res.body.access, config.secret, (err, decoded) => {
-                  assert.isNotOk(err) // isNotOk = is falsy
-                  assert.property(decoded, 'name')
-                  assert.equal(decoded.name, newUsername)
-
-                  // Clean Up: Update the user with their old username again
-                  server
-                    .put(path)
-                    .send({
-                      currentPassword: adminPassword,
-                      clientName: webClientName,
-                      newUsername: adminUsername,
-                    })
-                    .set('Authorization', `Bearer ${shared.token}`)
-                    .end((err, res) => {
-                      assert.equal(res.status, 200)
-                      assert.isTrue(res.body.ok)
-                      assert.equal(res.body.data.username, adminUsername)
-                      assert.deepEqual(res.body.data.changedFields, ['name'])
-                      jwt.verify(
-                        res.body.access,
-                        config.secret,
-                        (err, decoded) => {
-                          assert.isNotOk(err) // isNotOk = is falsy
-                          assert.property(decoded, 'name')
-                          assert.equal(decoded.name, adminUsername)
-
-                          // ensure user can login with old credentials
-                          server
-                            .post(authPath)
-                            .send({
-                              name: adminUsername,
-                              password: adminPassword,
-                              clientName: webClientName,
-                            })
-                            .end((err, res) => {
-                              assert.equal(res.status, 200)
-                            })
-                          done()
-                        }
-                      )
-                    })
-                })
-              })
           })
+        })
+      await server
+        .post(authPath)
+        .send({
+          name: newUsername,
+          password: adminPassword,
+          clientName: webClientName,
+        })
+        .then(res => {
+          assert.equal(res.status, 200)
+          assert.isAbove(res.body.access.length, 100)
+          assert.isAbove(res.body.refresh.length, 50)
+          assert.isAbove(res.body.clientId.length, 32)
+
+          // get new token for changed credentials
+          jwToken = res.body.access
+          shared.token = res.body.access
+
+          jwt.verify(res.body.access, config.secret, (err, decoded) => {
+            assert.isNotOk(err) // isNotOk = is falsy
+            assert.property(decoded, 'name')
+            assert.equal(decoded.name, newUsername)
+          })
+        })
+      // Clean Up: Update the user with their old username again
+      await server
+        .put(path)
+        .send({
+          currentPassword: adminPassword,
+          clientName: webClientName,
+          newUsername: adminUsername,
+        })
+        .set('Authorization', `Bearer ${shared.token}`)
+        .then(res => {
+          assert.equal(res.status, 200)
+          assert.isTrue(res.body.ok)
+          assert.equal(res.body.data.username, adminUsername)
+          assert.deepEqual(res.body.data.changedFields, ['name'])
+          jwt.verify(res.body.access, config.secret, (err, decoded) => {
+            assert.isNotOk(err) // isNotOk = is falsy
+            assert.property(decoded, 'name')
+            assert.equal(decoded.name, adminUsername)
+          })
+        })
+      // ensure user can login with old credentials
+      await server
+        .post(authPath)
+        .send({
+          name: adminUsername,
+          password: adminPassword,
+          clientName: webClientName,
+        })
+        .then(res => {
+          assert.equal(res.status, 200)
         })
     })
 
-    it('should allow users to login with their new password after they have changed it', done => {
+    it('should allow users to login with their new password after they have changed it', async () => {
       const newPassword = '0mgIt5aP@ssw0rd!'
-      server
+
+      await server
         .put(path)
         .send({
           currentPassword: adminPassword,
@@ -600,7 +577,7 @@ describe('Authentication routes', () => {
           newPassword,
         })
         .set('Authorization', `Bearer ${shared.token}`)
-        .end((err, res) => {
+        .then(res => {
           assert.equal(res.status, 200)
           assert.isTrue(res.body.ok)
           assert.deepEqual(res.body.data.changedFields, ['password'])
@@ -613,77 +590,67 @@ describe('Authentication routes', () => {
             assert.property(decoded, 'iat')
             assert.property(decoded, 'exp')
             assert.property(decoded, 'iss')
-
-            server
-              .post(authPath)
-              .send({
-                name: adminUsername,
-                password: newPassword,
-                clientName: webClientName,
-              })
-              .end((err, res) => {
-                assert.equal(res.status, 200)
-                assert.isAbove(res.body.access.length, 100)
-                assert.isAbove(res.body.refresh.length, 50)
-                assert.isAbove(res.body.clientId.length, 32)
-
-                // get new token for changed credentials
-                jwToken = res.body.access
-                shared.token = res.body.access
-
-                jwt.verify(res.body.access, config.secret, (err, decoded) => {
-                  assert.isNotOk(err) // isNotOk = is falsy
-                  assert.property(decoded, 'name')
-                  assert.equal(decoded.name, adminUsername)
-
-                  // Clean Up: Revert to previous password
-                  server
-                    .put(path)
-                    .send({
-                      currentPassword: newPassword,
-                      clientName: webClientName,
-                      newPassword: adminPassword,
-                    })
-                    .set('Authorization', `Bearer ${shared.token}`)
-                    .end((err, res) => {
-                      assert.equal(res.status, 200)
-                      assert.isTrue(res.body.ok)
-                      assert.equal(res.body.data.username, adminUsername)
-                      assert.deepEqual(res.body.data.changedFields, [
-                        'password',
-                      ])
-                      jwt.verify(
-                        res.body.access,
-                        config.secret,
-                        (err, decoded) => {
-                          assert.isNotOk(err) // isNotOk = is falsy
-                          assert.property(decoded, 'name')
-                          assert.equal(decoded.name, adminUsername)
-
-                          // ensure user can login with old credentials
-                          server
-                            .post(authPath)
-                            .send({
-                              name: adminUsername,
-                              password: adminPassword,
-                              clientName: webClientName,
-                            })
-                            .end((err, res) => {
-                              assert.equal(res.status, 200)
-                            })
-                          done()
-                        }
-                      )
-                    })
-                })
-              })
           })
         })
+      await server
+        .post(authPath)
+        .send({
+          name: adminUsername,
+          password: newPassword,
+          clientName: webClientName,
+        })
+        .then(res => {
+          assert.equal(res.status, 200)
+          assert.isAbove(res.body.access.length, 100)
+          assert.isAbove(res.body.refresh.length, 50)
+          assert.isAbove(res.body.clientId.length, 32)
+
+          // get new token for changed credentials
+          jwToken = res.body.access
+          shared.token = res.body.access
+
+          jwt.verify(res.body.access, config.secret, (err, decoded) => {
+            assert.isNotOk(err) // isNotOk = is falsy
+            assert.property(decoded, 'name')
+            assert.equal(decoded.name, adminUsername)
+          })
+        })
+      // Clean Up: Revert to previous password
+      await server
+        .put(path)
+        .send({
+          currentPassword: newPassword,
+          clientName: webClientName,
+          newPassword: adminPassword,
+        })
+        .set('Authorization', `Bearer ${shared.token}`)
+        .then(res => {
+          assert.equal(res.status, 200)
+          assert.isTrue(res.body.ok)
+          assert.equal(res.body.data.username, adminUsername)
+          assert.deepEqual(res.body.data.changedFields, ['password'])
+          jwt.verify(res.body.access, config.secret, async (err, decoded) => {
+            assert.isNotOk(err) // isNotOk = is falsy
+            assert.property(decoded, 'name')
+            assert.equal(decoded.name, adminUsername)
+          })
+        })
+      // ensure user can login with old credentials
+      await server
+        .post(authPath)
+        .send({
+          name: adminUsername,
+          password: adminPassword,
+          clientName: webClientName,
+        })
+        .then(res => {
+          assert.equal(res.status, 200)
+        })
     })
-    it('should allow users to login with their new credentials after they have changed them', done => {
+    it('should allow users to login with their new credentials after they have changed them', async () => {
       const newUsername = 'ChangedUsername'
       const newPassword = 'Th3Passw0rdAreDifferent'
-      server
+      await server
         .put(path)
         .send({
           currentPassword: adminPassword,
@@ -692,13 +659,13 @@ describe('Authentication routes', () => {
           newUsername,
         })
         .set('Authorization', `Bearer ${shared.token}`)
-        .end((err, res) => {
+        .then(res => {
           assert.equal(res.status, 200)
           assert.isTrue(res.body.ok)
           assert.equal(res.body.data.username, newUsername)
           assert.deepEqual(res.body.data.changedFields, ['name', 'password'])
 
-          jwt.verify(res.body.access, config.secret, (err, decoded) => {
+          jwt.verify(res.body.access, config.secret, async (err, decoded) => {
             assert.isNotOk(err) // isNotOk = is falsy
             assert.property(decoded, 'name')
             assert.equal(decoded.name, newUsername)
@@ -706,73 +673,62 @@ describe('Authentication routes', () => {
             assert.property(decoded, 'iat')
             assert.property(decoded, 'exp')
             assert.property(decoded, 'iss')
-
-            server
-              .post(authPath)
-              .send({
-                name: newUsername,
-                password: newPassword,
-                clientName: webClientName,
-              })
-              .end((err, res) => {
-                assert.equal(res.status, 200)
-                assert.isAbove(res.body.access.length, 100)
-                assert.isAbove(res.body.refresh.length, 50)
-                assert.isAbove(res.body.clientId.length, 32)
-
-                // get new token for changed credentials
-                jwToken = res.body.access
-                shared.token = res.body.access
-
-                jwt.verify(res.body.access, config.secret, (err, decoded) => {
-                  assert.isNotOk(err) // isNotOk = is falsy
-                  assert.property(decoded, 'name')
-                  assert.equal(decoded.name, newUsername)
-
-                  // Clean Up: Revert to previous credentials
-                  server
-                    .put(path)
-                    .send({
-                      currentPassword: newPassword,
-                      clientName: webClientName,
-                      newPassword: adminPassword,
-                      newUsername: adminUsername,
-                    })
-                    .set('Authorization', `Bearer ${shared.token}`)
-                    .end((err, res) => {
-                      assert.equal(res.status, 200)
-                      assert.isTrue(res.body.ok)
-                      assert.equal(res.body.data.username, adminUsername)
-                      assert.deepEqual(res.body.data.changedFields, [
-                        'name',
-                        'password',
-                      ])
-                      jwt.verify(
-                        res.body.access,
-                        config.secret,
-                        (err, decoded) => {
-                          assert.isNotOk(err) // isNotOk = is falsy
-                          assert.property(decoded, 'name')
-                          assert.equal(decoded.name, adminUsername)
-
-                          // ensure user can login with old credentials
-                          server
-                            .post(authPath)
-                            .send({
-                              name: adminUsername,
-                              password: adminPassword,
-                              clientName: webClientName,
-                            })
-                            .end((err, res) => {
-                              assert.equal(res.status, 200)
-                            })
-                          done()
-                        }
-                      )
-                    })
-                })
-              })
           })
+        })
+      await server
+        .post(authPath)
+        .send({
+          name: newUsername,
+          password: newPassword,
+          clientName: webClientName,
+        })
+        .then(res => {
+          assert.equal(res.status, 200)
+          assert.isAbove(res.body.access.length, 100)
+          assert.isAbove(res.body.refresh.length, 50)
+          assert.isAbove(res.body.clientId.length, 32)
+
+          // get new token for changed credentials
+          jwToken = res.body.access
+          shared.token = res.body.access
+
+          jwt.verify(res.body.access, config.secret, (err, decoded) => {
+            assert.isNotOk(err) // isNotOk = is falsy
+            assert.property(decoded, 'name')
+            assert.equal(decoded.name, newUsername)
+          })
+        })
+      // Clean Up: Revert to previous credentials
+      await server
+        .put(path)
+        .send({
+          currentPassword: newPassword,
+          clientName: webClientName,
+          newPassword: adminPassword,
+          newUsername: adminUsername,
+        })
+        .set('Authorization', `Bearer ${shared.token}`)
+        .then(res => {
+          assert.equal(res.status, 200)
+          assert.isTrue(res.body.ok)
+          assert.equal(res.body.data.username, adminUsername)
+          assert.deepEqual(res.body.data.changedFields, ['name', 'password'])
+          jwt.verify(res.body.access, config.secret, (err, decoded) => {
+            assert.isNotOk(err) // isNotOk = is falsy
+            assert.property(decoded, 'name')
+            assert.equal(decoded.name, adminUsername)
+          })
+        })
+      // ensure user can login with old credentials
+      await server
+        .post(authPath)
+        .send({
+          name: adminUsername,
+          password: adminPassword,
+          clientName: webClientName,
+        })
+        .then(res => {
+          assert.equal(res.status, 200)
         })
     })
   })
@@ -780,15 +736,14 @@ describe('Authentication routes', () => {
   describe('POST to /auth/send-reset-password-token', () => {
     const path = `${authPath}/send-reset-password-token/`
 
-    it('should return an OK response regardless of whether the email address is valid or not', done => {
-      server.post(`${path}brichards@systemone.id`).end((err, res) => {
+    it('should return an OK response regardless of whether the email address is valid or not', async () => {
+      await server.post(`${path}brichards@systemone.id`).then(res => {
         assert.equal(res.status, 200)
         assert.isTrue(res.body.ok)
-        server.post(`${path}invalid_email@example.com`).end((err, res) => {
-          assert.equal(res.status, 200)
-          assert.isTrue(res.body.ok)
-          done()
-        })
+      })
+      await server.post(`${path}invalid_email@example.com`).then(res => {
+        assert.equal(res.status, 200)
+        assert.isTrue(res.body.ok)
       })
     })
   })
@@ -796,21 +751,20 @@ describe('Authentication routes', () => {
   describe('PUT to /auth/update-password', () => {
     const path = `${authPath}/update-password/`
 
-    it("should return a 404 response when token doesn't exist", done => {
-      server
+    it("should return a 404 response when token doesn't exist", async () => {
+      await server
         .put(path + uuid.v4())
         .send({
           newPassword: 'NewPass123!',
           clientName: 'Mocha/Chai',
           clientId: 'Client ID',
         })
-        .end((err, res) => {
+        .then(res => {
           assert.equal(res.status, 404)
           assert.equal(
             res.body.message,
             'The reset password token was not found'
           )
-          done()
         })
     })
   })
@@ -818,11 +772,11 @@ describe('Authentication routes', () => {
   describe('GET to /auth/license', () => {
     const path = `${authPath}/license?licenseId=1`
 
-    it('should return the license text for the given ID', done => {
-      server
+    it('should return the license text for the given ID', async () => {
+      await server
         .get(path)
         .set('Authorization', `Bearer ${jwToken}`)
-        .end((err, res) => {
+        .then(res => {
           assert.equal(res.status, 200)
           assert.typeOf(res.body, 'Object')
           assert.property(res.body, 'data')
@@ -830,7 +784,6 @@ describe('Authentication routes', () => {
           assert.property(res.body.data, 'id')
           assert.property(res.body.data, 'createdOn')
           assert.property(res.body.data, 'content')
-          done()
         })
     })
   })
@@ -838,8 +791,8 @@ describe('Authentication routes', () => {
   describe('POST to /auth/license', () => {
     const path = `${authPath}/license`
 
-    it('should update the license accepted date for the user in the db and return a new JWT', done => {
-      server
+    it('should update the license accepted date for the user in the db and return a new JWT', async () => {
+      await server
         .post(path)
         .set('Authorization', `Bearer ${jwToken}`)
         .send({
@@ -847,7 +800,7 @@ describe('Authentication routes', () => {
           clientId: webClientId,
           token: webToken,
         })
-        .end((err, res) => {
+        .then(res => {
           assert.equal(res.status, 200)
           assert.isAbove(res.body.access.length, 100)
           assert.isAbove(res.body.refresh.length, 50)
@@ -860,8 +813,6 @@ describe('Authentication routes', () => {
             assert.property(decoded, 'iat')
             assert.property(decoded, 'exp')
             assert.property(decoded, 'iss')
-
-            done()
           })
         })
     })

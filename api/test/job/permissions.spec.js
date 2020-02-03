@@ -23,7 +23,7 @@ describe('Permissions', () => {
   let siteName
   let geographyId
 
-  before(async () =>
+  before(() =>
     runTestWithKnex(async knex => {
       ;[{ id: countryId }] = [
         await knex('Country')
@@ -50,7 +50,7 @@ describe('Permissions', () => {
       cleanJob = !job
     })
   )
-  after(async () =>
+  after(() =>
     runTestWithKnex(async knex => {
       if (cleanJob) {
         await knex('Job')
@@ -89,7 +89,7 @@ describe('Permissions', () => {
     and we need to restore original values in after()
     */
     let jobContextsOld
-    before(async () =>
+    before(() =>
       runTestWithKnex(async knex => {
         // keep JobContext entries, if any exists
         jobContextsOld = await knex('JobContext as jc')
@@ -100,7 +100,7 @@ describe('Permissions', () => {
       })
     )
     //
-    after(async () =>
+    after(() =>
       runTestWithKnex(async knex => {
         await Promise.each(jobContextsOld, async jc => {
           const jcOld = await knex('JobContext')
@@ -249,7 +249,7 @@ describe('Permissions', () => {
   describe('Job Context', () => {
     let cleanJobContext = false
     //
-    before(async () =>
+    before(() =>
       runTestWithKnex(async knex => {
         //
         const jobContext = await knex('JobContext')
@@ -260,7 +260,7 @@ describe('Permissions', () => {
       })
     )
     //
-    after(async () =>
+    after(() =>
       runTestWithKnex(async knex => {
         if (cleanJob || cleanJobContext) {
           await knex('JobContext')
@@ -471,7 +471,7 @@ describe('Permissions', () => {
       let items = []
       const totalSampleItems = 5
       //
-      before(async () =>
+      before(() =>
         runTestWithKnex(async knex => {
           allRefIds = await knex(refTable)
             .orderBy('id')
@@ -484,7 +484,7 @@ describe('Permissions', () => {
         })
       )
       //
-      after(async () =>
+      after(() =>
         runTestWithKnex(async knex => {
           // restore to checkpoint
           await knex(tableName)
@@ -556,7 +556,7 @@ describe('Permissions', () => {
       jobContextIds: [],
     }
     //
-    before(async () =>
+    before(() =>
       runTestWithKnex(async knex => {
         ;[{ id: jobFunctionClinicianId }] = [
           await knex('JobFunction')
@@ -586,7 +586,7 @@ describe('Permissions', () => {
       })
     )
     //
-    after(async () =>
+    after(() =>
       runTestWithKnex(async knex => {
         // if Job existed but JobContext didn't exist before this test
         if (toCleanUp.jobContextProps) {

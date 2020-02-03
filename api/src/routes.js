@@ -170,11 +170,10 @@ function asyncHandler(handler) {
 // extracts and sanitizes the parameters related to sorting and paging
 // from the candidate params and returns them as an object
 function getSortPageParams(params, sortColumnMapping, defaultSort) {
-  return Object.assign(
-    {},
-    getSortParams(params, sortColumnMapping, defaultSort),
-    getPageParams(params)
-  )
+  return {
+    ...getSortParams(params, sortColumnMapping, defaultSort),
+    ...getPageParams(params),
+  }
 }
 
 // extracts and sanitizes the parameters related to sorting from the
@@ -473,6 +472,35 @@ function validateResultResponse() {
             .required()
             .description('Translation key for the follow up type'),
         })
+      ),
+    // transfer result
+    reportableSiteId: Joi.number()
+      .allow(null)
+      .integer()
+      .positive()
+      .description(
+        'The id of reportable site, differ from siteId when transferred'
+      ),
+    reportableSiteName: Joi.string()
+      .allow(null)
+      .description(
+        'The name of reportable site, differ from siteName when transferred'
+      ),
+    transferredOn: Joi.date()
+      .allow(null)
+      .description('When result was transferred to another clinic'),
+    firstViewedOn: Joi.date()
+      .allow(null)
+      .description('When transferred result was clicked'),
+    transferredBy: Joi.string()
+      .allow(null)
+      .description('Who transferred result to another clinic'),
+    resultStatusLogId: Joi.number()
+      .allow(null)
+      .integer()
+      .positive()
+      .description(
+        'The id of last entry in ResultStatusLog for current result'
       ),
   }
 }

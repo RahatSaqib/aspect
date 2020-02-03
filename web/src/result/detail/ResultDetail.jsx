@@ -10,9 +10,7 @@ import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
 
 // Material-UI
-import MdChevronLeft from 'react-icons/lib/md/chevron-left'
-import MdChevronRight from 'react-icons/lib/md/chevron-right'
-import MdClose from 'react-icons/lib/md/clear'
+import { MdChevronLeft, MdChevronRight, MdClose } from 'react-icons/md'
 import Button from '@material-ui/core/Button'
 
 // Our own imports
@@ -228,17 +226,6 @@ export class ResultDetail extends PureComponent {
     )
   }
 
-  clickThumbnail(imageIndex) {
-    this.setState({
-      thumbnailMode: THUMBNAIL_MODE_PREVIEW,
-      imageIndex,
-    })
-  }
-
-  handleToggle() {
-    this.setState({ isShown: !this.state.isShown })
-  }
-
   handleFetchResult = () => {
     const {
       match: {
@@ -250,11 +237,6 @@ export class ResultDetail extends PureComponent {
     this.props.fetchResultLog(resultId)
 
     this.props.fetchTags(resultId, 'result')
-  }
-
-  hasResultWithAssay() {
-    const { result } = this.props
-    return result && result.has('assay')
   }
 
   handleOnTreatmentChange = event => {
@@ -286,6 +268,7 @@ export class ResultDetail extends PureComponent {
       />
     </div>
   )
+
   drawIconNext = isLast => (
     <div className={cssClasses('ButPreview')}>
       <MdChevronRight
@@ -296,6 +279,7 @@ export class ResultDetail extends PureComponent {
       />
     </div>
   )
+
   drawIconClose = () => (
     <div className={cssClasses('ButPreview', 'Close')}>
       <MdClose
@@ -319,6 +303,22 @@ export class ResultDetail extends PureComponent {
     } catch (err) {
       return msg
     }
+  }
+
+  hasResultWithAssay() {
+    const { result } = this.props
+    return result && result.has('assay')
+  }
+
+  handleToggle() {
+    this.setState(prevState => ({ isShown: !prevState.isShown }))
+  }
+
+  clickThumbnail(imageIndex) {
+    this.setState({
+      thumbnailMode: THUMBNAIL_MODE_PREVIEW,
+      imageIndex,
+    })
   }
 
   renderTreatmentStatusSection = () => {

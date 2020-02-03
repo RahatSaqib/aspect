@@ -4,6 +4,7 @@ const { knex } = require('../../src/db')
 const { getUtcTime } = require('../../src/shared/date')
 const { randomToken } = require('../../src/deviceApi/apiKey')
 const { waitAsyncComplete } = require('../utils/generatorFunctionUtils')
+const { runTestWithKnex } = require('../utils/generatorFunctionUtils')
 
 const server = supertest.agent('http://localhost:8080')
 const { assert, expect } = chai
@@ -203,27 +204,28 @@ describe('Device API Raw routes for BD MGIT', () => {
       .delete()
   })
 
-  it('should save the request in DeviceApiRaw and respond with the record ID', async () => {
-    const payload = {
-      header:
-        'H|\\^&|||Becton Dickinson|7 Loveton Circle^Sparks^MD^21152||410 316-4000||||P|V1.00|20191019184200',
-      body: `P|1\nO|1|0970038018^1||^^^MGIT_960_AST\nR|1|^^^AST_MGIT^439309967349^EMB^5.0^ug/ml|INST_ONGOING^123|||||P|||20190502115414|20190502135414|MGIT960^^^13^B/A02\nR|2|^^^AST_MGIT^439309967349^RIF^1.0^ug/ml|INST_ONGOING^12|||||P|||20190502115414|20190502135414|MGIT960^^^13^B/A03\nL|1|N`,
-    }
-    const response = await server
-      .post(deviceApiRawPath)
-      .set('Authorization', `Bearer ${validApiKeyToken}`)
-      .set('Content-type', 'application/json')
-      .send(payload)
-    assert.equal(response.statusCode, 200)
-    const deviceApiRawRecord = await knex('DeviceApiRaw')
-      .where({ id: response.body.deviceApiRawId })
-      .first()
-    expect(JSON.parse(deviceApiRawRecord.rawData).payload).to.deep.equal(
-      payload
-    )
-    expect(response.body.deviceId).to.equal(bdMgitDeviceId)
-    expect(response.body.deviceLogId).to.be.above(0)
-  })
+  it('should save the request in DeviceApiRaw and respond with the record ID', () =>
+    runTestWithKnex(async () => {
+      const payload = {
+        header:
+          'H|\\^&|||Becton Dickinson|7 Loveton Circle^Sparks^MD^21152||410 316-4000||||P|V1.00|20191019184200',
+        body: `P|1\nO|1|0970038018^1||^^^MGIT_960_AST\nR|1|^^^AST_MGIT^439309967349^EMB^5.0^ug/ml|INST_ONGOING^123|||||P|||20190502115414|20190502135414|MGIT960^^^13^B/A02\nR|2|^^^AST_MGIT^439309967349^RIF^1.0^ug/ml|INST_ONGOING^12|||||P|||20190502115414|20190502135414|MGIT960^^^13^B/A03\nL|1|N`,
+      }
+      const response = await server
+        .post(deviceApiRawPath)
+        .set('Authorization', `Bearer ${validApiKeyToken}`)
+        .set('Content-type', 'application/json')
+        .send(payload)
+      assert.equal(response.statusCode, 200)
+      const deviceApiRawRecord = await knex('DeviceApiRaw')
+        .where({ id: response.body.deviceApiRawId })
+        .first()
+      expect(JSON.parse(deviceApiRawRecord.rawData).payload).to.deep.equal(
+        payload
+      )
+      expect(response.body.deviceId).to.equal(bdMgitDeviceId)
+      expect(response.body.deviceLogId).to.be.above(0)
+    }))
 
   it('should throw an error on uknown assay', async () => {
     const payload = {
@@ -239,214 +241,218 @@ describe('Device API Raw routes for BD MGIT', () => {
     assert.equal(response.statusCode, 400)
   })
 
-  it('should parse the GND-ASTM message and save the result in the database', async () => {
-    const payload = {
-      header:
-        'H|\\^&|||Becton Dickinson|7 Loveton Circle^Sparks^MD^21152||410 316-4000||||P|V1.00|20191019184200',
-      body: `P|1\nO|1|0970038020||^^^MGIT_960_GND\nR|1|^^^GND_MGIT^430109967351|INST_POSITIVE^1234|||||P|||20190502115414|20190509123456|MGIT960^^42^1^B/A01\nL|1|N`,
-    }
+  it('should parse the GND-ASTM message and save the result in the database', () =>
+    runTestWithKnex(async () => {
+      const payload = {
+        header:
+          'H|\\^&|||Becton Dickinson|7 Loveton Circle^Sparks^MD^21152||410 316-4000||||P|V1.00|20191019184200',
+        body: `P|1\nO|1|0970038020||^^^MGIT_960_GND\nR|1|^^^GND_MGIT^430109967351|INST_POSITIVE^1234|||||P|||20190502115414|20190509123456|MGIT960^^42^1^B/A01\nL|1|N`,
+      }
 
-    const response = await server
-      .post(deviceApiRawPath)
-      .set('Authorization', `Bearer ${validApiKeyToken}`)
-      .set('Content-type', 'application/json')
-      .send(payload)
-    assert.equal(response.statusCode, 200)
+      const response = await server
+        .post(deviceApiRawPath)
+        .set('Authorization', `Bearer ${validApiKeyToken}`)
+        .set('Content-type', 'application/json')
+        .send(payload)
+      assert.equal(response.statusCode, 200)
 
-    // make sure that result ID was set in the device log entry
-    const deviceLogRecord = await knex('DeviceLog')
-      .where({
-        id: response.body.deviceLogId,
-      })
-      .first()
-    expect(deviceLogRecord.resultId).to.be.above(0)
+      // make sure that result ID was set in the device log entry
+      const deviceLogRecord = await knex('DeviceLog')
+        .where({
+          id: response.body.deviceLogId,
+        })
+        .first()
+      expect(deviceLogRecord.resultId).to.be.above(0)
 
-    // inspect that the result that was created has the expected values:
-    const result = await knex('Result')
-      .where({
-        id: deviceLogRecord.resultId,
-      })
-      .first()
+      // inspect that the result that was created has the expected values:
+      const result = await knex('Result')
+        .where({
+          id: deviceLogRecord.resultId,
+        })
+        .first()
 
-    const site = await knex('Site')
-      .where({
-        id: bdMgitSiteId,
-      })
-      .first()
+      const site = await knex('Site')
+        .where({
+          id: bdMgitSiteId,
+        })
+        .first()
 
-    expect(result.assayId).to.equal(await assayToId('assayBdMgitGnd'))
-    expect(result.partnerId).to.equal(site.partnerId)
-    expect(result.geographyId).to.equal(site.geographyId)
-    expect(result.siteId).to.equal(bdMgitSiteId)
-    expect(result.deviceId).to.equal(bdMgitDeviceId)
-    expect(result.longitude).to.equal(site.longitude)
-    expect(result.latitude).to.equal(site.latitude)
-    expect(result.resultSourceId).to.equal(
-      await resultSourceToId('DiagnosticDevice')
-    )
-    expect(result.resultTypeId).to.equal(await resultTypeToId('Patient'))
-    expect(result.resultCategory1).to.equal(
-      await resultCategoryToId('Detected')
-    )
-    expect(result.resultCategory2).to.equal(null)
-    expect(result.startedOn.getTime()).to.equal(
-      new Date(2019, 4, 2, 11, 54, 14).getTime()
-    )
-    expect(result.consumableSerial).to.equal('430109967351')
-    expect(result.senderVersion).to.equal('V1.00')
-    expect(result.updatedOn.getTime()).to.be.closeTo(
-      getUtcTime().getTime(),
-      10000
-    )
+      expect(result.assayId).to.equal(await assayToId('assayBdMgitGnd'))
+      expect(result.partnerId).to.equal(site.partnerId)
+      expect(result.geographyId).to.equal(site.geographyId)
+      expect(result.siteId).to.equal(bdMgitSiteId)
+      expect(result.deviceId).to.equal(bdMgitDeviceId)
+      expect(result.longitude).to.equal(site.longitude)
+      expect(result.latitude).to.equal(site.latitude)
+      expect(result.resultSourceId).to.equal(
+        await resultSourceToId('DiagnosticDevice')
+      )
+      expect(result.resultTypeId).to.equal(await resultTypeToId('Patient'))
+      expect(result.resultCategory1).to.equal(
+        await resultCategoryToId('Detected')
+      )
+      expect(result.resultCategory2).to.equal(null)
+      expect(result.startedOn.getTime()).to.equal(
+        new Date(2019, 4, 2, 11, 54, 14).getTime()
+      )
+      expect(result.consumableSerial).to.equal('430109967351')
+      expect(result.senderVersion).to.equal('V1.00')
+      expect(result.updatedOn.getTime()).to.be.closeTo(
+        getUtcTime().getTime(),
+        10000
+      )
 
-    // inspect result data
-    const resultData = {
-      senderName: 'Becton Dickinson',
-      versionNumber: 'V1.00',
-      messageDateTime: '20191019184200',
-      accessionNumber: '0970038020',
-      testId: 'MGIT_960_GND',
-      resultTypeCode: 'GND_MGIT',
-      consumableSequenceNumber: '430109967351',
-      preliminaryFinalStatus: 'P',
-      testStartDateTime: '20190502115414',
-      testEndedDateTime: '20190509123456',
-      instrumentType: 'MGIT960',
-      protocolLength: '42',
-      instrumentNumber: '1',
-      instrumentLocation: 'B/A01',
-    }
-    expect(JSON.parse(result.resultData)).to.deep.equal(resultData)
+      // inspect result data
+      const resultData = {
+        senderName: 'Becton Dickinson',
+        versionNumber: 'V1.00',
+        messageDateTime: '20191019184200',
+        accessionNumber: '0970038020',
+        testId: 'MGIT_960_GND',
+        resultTypeCode: 'GND_MGIT',
+        consumableSequenceNumber: '430109967351',
+        preliminaryFinalStatus: 'P',
+        testStartDateTime: '20190502115414',
+        testEndedDateTime: '20190509123456',
+        instrumentType: 'MGIT960',
+        protocolLength: '42',
+        instrumentNumber: '1',
+        instrumentLocation: 'B/A01',
+      }
+      expect(JSON.parse(result.resultData)).to.deep.equal(resultData)
 
-    // inspect sample record
-    const sample = await knex('Sample')
-      .where('id', result.sampleId)
-      .first()
-    expect(sample.externalId).to.equal('0970038020')
-    expect(sample.originSiteId).to.equal(bdMgitSiteId)
+      // inspect sample record
+      const sample = await knex('Sample')
+        .where('id', result.sampleId)
+        .first()
+      expect(sample.externalId).to.equal('0970038020')
+      expect(sample.originSiteId).to.equal(bdMgitSiteId)
 
-    // inspect workflow log record
-    const resultWorkflowLog = await knex('ResultWorkflowLog')
-      .where('id', result.resultWorkflowStatusLogId)
-      .first()
+      // inspect workflow log record
+      const resultWorkflowLog = await knex('ResultWorkflowLog')
+        .where('id', result.resultWorkflowStatusLogId)
+        .first()
 
-    expect(resultWorkflowLog.changedOn.getTime()).to.be.closeTo(
-      getUtcTime().getTime(),
-      10000
-    )
-    expect(resultWorkflowLog.createdOn.getTime()).to.be.closeTo(
-      getUtcTime().getTime(),
-      10000
-    )
-  })
+      expect(resultWorkflowLog.changedOn.getTime()).to.be.closeTo(
+        getUtcTime().getTime(),
+        10000
+      )
+      expect(resultWorkflowLog.createdOn.getTime()).to.be.closeTo(
+        getUtcTime().getTime(),
+        10000
+      )
+    }))
 
-  it('should parse the AST-ASTM message and save the result in the database', async () => {
-    const payload = {
-      header:
-        'H|\\^&|||Becton Dickinson|7 Loveton Circle^Sparks^MD^21152||410 316-4000||||P|V1.00|20191019184200',
-      body: `P|1\nO|1|0970038018^1||^^^MGIT_960_AST\nR|1|^^^AST_MGIT^439309967350^EMB^5.0^ug/ml|INST_ONGOING^123|||||P|||20190503115414|20190503135414|MGIT960^^^13^B/A02\nR|2|^^^AST_MGIT^439309967350^RIF^1.0^ug/ml|INST_ONGOING^12|||||P|||20190503115414|20190503135414|MGIT960^^^13^B/A03\nL|1|N`,
-    }
+  it('should parse the AST-ASTM message and save the result in the database', () =>
+    runTestWithKnex(async () => {
+      const payload = {
+        header:
+          'H|\\^&|||Becton Dickinson|7 Loveton Circle^Sparks^MD^21152||410 316-4000||||P|V1.00|20191019184200',
+        body: `P|1\nO|1|0970038018^1||^^^MGIT_960_AST\nR|1|^^^AST_MGIT^439309967350^EMB^5.0^ug/ml|INST_ONGOING^123|||||P|||20190503115414|20190503135414|MGIT960^^^13^B/A02\nR|2|^^^AST_MGIT^439309967350^RIF^1.0^ug/ml|INST_ONGOING^12|||||P|||20190503115414|20190503135414|MGIT960^^^13^B/A03\nL|1|N`,
+      }
 
-    const response = await server
-      .post(deviceApiRawPath)
-      .set('Authorization', `Bearer ${validApiKeyToken}`)
-      .set('Content-type', 'application/json')
-      .send(payload)
-    assert.equal(response.statusCode, 200)
+      const response = await server
+        .post(deviceApiRawPath)
+        .set('Authorization', `Bearer ${validApiKeyToken}`)
+        .set('Content-type', 'application/json')
+        .send(payload)
+      assert.equal(response.statusCode, 200)
 
-    // make sure that result ID was set in the device log entry
-    const deviceLogRecord = await knex('DeviceLog')
-      .where({
-        id: response.body.deviceLogId,
-      })
-      .first()
-    expect(deviceLogRecord.resultId).to.be.above(0)
+      // make sure that result ID was set in the device log entry
+      const deviceLogRecord = await knex('DeviceLog')
+        .where({
+          id: response.body.deviceLogId,
+        })
+        .first()
+      expect(deviceLogRecord.resultId).to.be.above(0)
 
-    // inspect that the result that was created has the expected values:
-    const result = await knex('Result')
-      .where({
-        id: deviceLogRecord.resultId,
-      })
-      .first()
+      // inspect that the result that was created has the expected values:
+      const result = await knex('Result')
+        .where({
+          id: deviceLogRecord.resultId,
+        })
+        .first()
 
-    const site = await knex('Site')
-      .where({
-        id: bdMgitSiteId,
-      })
-      .first()
+      const site = await knex('Site')
+        .where({
+          id: bdMgitSiteId,
+        })
+        .first()
 
-    expect(result.assayId).to.equal(await assayToId('assayBdMgitAst'))
-    expect(result.partnerId).to.equal(site.partnerId)
-    expect(result.geographyId).to.equal(site.geographyId)
-    expect(result.siteId).to.equal(bdMgitSiteId)
-    expect(result.deviceId).to.equal(bdMgitDeviceId)
-    expect(result.longitude).to.equal(site.longitude)
-    expect(result.latitude).to.equal(site.latitude)
-    expect(result.resultSourceId).to.equal(
-      await resultSourceToId('DiagnosticDevice')
-    )
-    expect(result.resultTypeId).to.equal(await resultTypeToId('Patient'))
-    expect(result.resultCategory1).to.equal(await resultCategoryToId('Unknown'))
-    expect(result.resultCategory2).to.equal(null)
-    expect(result.startedOn.getTime()).to.equal(
-      new Date(2019, 4, 3, 11, 54, 14).getTime()
-    )
-    expect(result.consumableSerial).to.equal('439309967350')
-    expect(result.senderVersion).to.equal('V1.00')
-    expect(result.updatedOn.getTime()).to.be.closeTo(
-      getUtcTime().getTime(),
-      10000
-    )
+      expect(result.assayId).to.equal(await assayToId('assayBdMgitAst'))
+      expect(result.partnerId).to.equal(site.partnerId)
+      expect(result.geographyId).to.equal(site.geographyId)
+      expect(result.siteId).to.equal(bdMgitSiteId)
+      expect(result.deviceId).to.equal(bdMgitDeviceId)
+      expect(result.longitude).to.equal(site.longitude)
+      expect(result.latitude).to.equal(site.latitude)
+      expect(result.resultSourceId).to.equal(
+        await resultSourceToId('DiagnosticDevice')
+      )
+      expect(result.resultTypeId).to.equal(await resultTypeToId('Patient'))
+      expect(result.resultCategory1).to.equal(
+        await resultCategoryToId('Unknown')
+      )
+      expect(result.resultCategory2).to.equal(null)
+      expect(result.startedOn.getTime()).to.equal(
+        new Date(2019, 4, 3, 11, 54, 14).getTime()
+      )
+      expect(result.consumableSerial).to.equal('439309967350')
+      expect(result.senderVersion).to.equal('V1.00')
+      expect(result.updatedOn.getTime()).to.be.closeTo(
+        getUtcTime().getTime(),
+        10000
+      )
 
-    // inspect result data
-    const resultData = {
-      EMB: {
-        growthUnits: '123',
-        antibioticConcentration: '5.0',
-        antibioticConcentrationUnits: 'ug/ml',
-      },
-      RIF: {
-        growthUnits: '12',
-        antibioticConcentration: '1.0',
-        antibioticConcentrationUnits: 'ug/ml',
-      },
-      senderName: 'Becton Dickinson',
-      versionNumber: 'V1.00',
-      messageDateTime: '20191019184200',
-      accessionNumber: '0970038018',
-      isolateNumber: '1',
-      testId: 'MGIT_960_AST',
-      resultTypeCode: 'AST_MGIT',
-      consumableSequenceNumber: '439309967350',
-      preliminaryFinalStatus: 'P',
-      testStartDateTime: '20190503115414',
-      testEndedDateTime: '20190503135414',
-      instrumentType: 'MGIT960',
-      protocolLength: '',
-      instrumentNumber: '13',
-      instrumentLocation: 'B/A02',
-    }
-    expect(JSON.parse(result.resultData)).to.deep.equal(resultData)
+      // inspect result data
+      const resultData = {
+        EMB: {
+          growthUnits: '123',
+          antibioticConcentration: '5.0',
+          antibioticConcentrationUnits: 'ug/ml',
+        },
+        RIF: {
+          growthUnits: '12',
+          antibioticConcentration: '1.0',
+          antibioticConcentrationUnits: 'ug/ml',
+        },
+        senderName: 'Becton Dickinson',
+        versionNumber: 'V1.00',
+        messageDateTime: '20191019184200',
+        accessionNumber: '0970038018',
+        isolateNumber: '1',
+        testId: 'MGIT_960_AST',
+        resultTypeCode: 'AST_MGIT',
+        consumableSequenceNumber: '439309967350',
+        preliminaryFinalStatus: 'P',
+        testStartDateTime: '20190503115414',
+        testEndedDateTime: '20190503135414',
+        instrumentType: 'MGIT960',
+        protocolLength: '',
+        instrumentNumber: '13',
+        instrumentLocation: 'B/A02',
+      }
+      expect(JSON.parse(result.resultData)).to.deep.equal(resultData)
 
-    // inspect sample record
-    const sample = await knex('Sample')
-      .where('id', result.sampleId)
-      .first()
-    expect(sample.externalId).to.equal('0970038018')
-    expect(sample.originSiteId).to.equal(bdMgitSiteId)
+      // inspect sample record
+      const sample = await knex('Sample')
+        .where('id', result.sampleId)
+        .first()
+      expect(sample.externalId).to.equal('0970038018')
+      expect(sample.originSiteId).to.equal(bdMgitSiteId)
 
-    // inspect workflow log record
-    const resultWorkflowLog = await knex('ResultWorkflowLog')
-      .where('id', result.resultWorkflowStatusLogId)
-      .first()
+      // inspect workflow log record
+      const resultWorkflowLog = await knex('ResultWorkflowLog')
+        .where('id', result.resultWorkflowStatusLogId)
+        .first()
 
-    expect(resultWorkflowLog.changedOn.getTime()).to.be.closeTo(
-      getUtcTime().getTime(),
-      10000
-    )
-    expect(resultWorkflowLog.createdOn.getTime()).to.be.closeTo(
-      getUtcTime().getTime(),
-      10000
-    )
-  })
+      expect(resultWorkflowLog.changedOn.getTime()).to.be.closeTo(
+        getUtcTime().getTime(),
+        10000
+      )
+      expect(resultWorkflowLog.createdOn.getTime()).to.be.closeTo(
+        getUtcTime().getTime(),
+        10000
+      )
+    }))
 })

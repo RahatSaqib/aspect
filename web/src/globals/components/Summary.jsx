@@ -3,7 +3,7 @@ import classnames from 'classnames/bind'
 import React, { Fragment } from 'react'
 import PropTypes from 'prop-types'
 import { Link } from 'react-router-dom'
-import FaExternalLink from 'react-icons/lib/fa/external-link'
+import { FaExternalLinkAlt as FaExternalLink } from 'react-icons/fa'
 import { Unit } from '../../components/pureGrids'
 
 const cssClasses = classnames.bind(require('./Summary.css'))

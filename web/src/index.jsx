@@ -1,9 +1,7 @@
 // This is the entry point for our app
-import 'core-js/shim'
 import 'whatwg-fetch'
 import 'url-search-params-polyfill'
 import _ from 'lodash'
-import React from 'react'
 import { render } from 'react-dom'
 
 import config from './config'
@@ -27,28 +25,29 @@ if (!window.Intl) {
   require('intl/locale-data/jsonp/en.js')
 }
 
-// eslint-disable-next-line no-constant-condition
-if (process.env.NODE_ENV === 'development' && false) {
-  // TODO: workaround: https://github.com/garbles/why-did-you-update/issues/45
-  // eslint-disable-next-line no-unused-vars
-  let { createClass } = React
-  Object.defineProperty(React, 'createClass', {
-    set: nextCreateClass => {
-      createClass = nextCreateClass
-    },
-  })
-  const { whyDidYouUpdate } = require('why-did-you-update')
-  whyDidYouUpdate(React, {
-    exclude: new RegExp(
-      `^(${[
-        'Themed|Button|MenuItem|Overlay|ProgressBar|Layout|AppBar|Dialog',
-        'AutoLockScrolling|IconMenu|Router|Route|IconButton|ActivableRenderer',
-        'BeforeAfterWrapper|TextField|EnhancedButton|NavigationArrowDropDown',
-        'SvgIcon|TouchRipple|DropDownMenu|SelectField|AutoComplete|Card|Paper',
-      ].join('|')})`
-    ),
-  })
-}
+// --- TODO: re-think below code after finishing upgrade
+// // eslint-disable-next-line no-constant-condition
+// if (process.env.NODE_ENV === 'development' && false) {
+//   // TODO: workaround: https://github.com/garbles/why-did-you-update/issues/45
+//   // eslint-disable-next-line no-unused-vars
+//   let { createClass } = React
+//   Object.defineProperty(React, 'createClass', {
+//     set: nextCreateClass => {
+//       createClass = nextCreateClass
+//     },
+//   })
+//   const { whyDidYouUpdate } = require('why-did-you-update')
+//   whyDidYouUpdate(React, {
+//     exclude: new RegExp(
+//       `^(${[
+//         'Themed|Button|MenuItem|Overlay|ProgressBar|Layout|AppBar|Dialog',
+//         'AutoLockScrolling|IconMenu|Router|Route|IconButton|ActivableRenderer',
+//         'BeforeAfterWrapper|TextField|EnhancedButton|NavigationArrowDropDown',
+//         'SvgIcon|TouchRipple|DropDownMenu|SelectField|AutoComplete|Card|Paper',
+//       ].join('|')})`
+//     ),
+//   })
+// }
 
 const appDom = document.getElementById('app')
 

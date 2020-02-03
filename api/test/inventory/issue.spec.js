@@ -51,7 +51,7 @@ describe('Inventory Stock Issues Endpoint', () => {
   let issueIds = []
   const resultIds = []
 
-  before(async () =>
+  before(() =>
     run(async knex => {
       const partner = await getPartner(knex, partnerName)
       assert.isOk(partner, `Cannot find Partner ${partnerName}`)
@@ -102,7 +102,7 @@ describe('Inventory Stock Issues Endpoint', () => {
     })
   )
 
-  after(async () =>
+  after(() =>
     run(async knex => {
       if (resultIds.length > 0) {
         const deviceIds = await knex('Result')
@@ -125,7 +125,7 @@ describe('Inventory Stock Issues Endpoint', () => {
     })
   )
 
-  afterEach(async () =>
+  afterEach(() =>
     run(async knex => {
       // make sure MQ finished it's job before removing sample message
       await waitForIdle(2000)
@@ -145,8 +145,8 @@ describe('Inventory Stock Issues Endpoint', () => {
     })
   )
 
-  it('makes sure that calculated consumption rates match rates in db for all periods', async () => {
-    await run(async knex => {
+  it('makes sure that calculated consumption rates match rates in db for all periods', () =>
+    run(async knex => {
       const { siteId, consumableId } = baseProps
       // calculate rates
       const totals = await refreshConsumptionRates(knex, siteId, consumableId)
@@ -170,15 +170,14 @@ describe('Inventory Stock Issues Endpoint', () => {
           `Rates do not match for period ${justCalculated.days} days`
         )
       })
-    })
-  })
+    }))
 
   // ---------------------------------------------------------------------------
   // trigger base issues
   // ---------------------------------------------------------------------------
   // Stockout
-  it('should create Stockout issue', async () => {
-    await run(async knex => {
+  it('should create Stockout issue', () =>
+    run(async knex => {
       const stockoutIssueId = await triggerInitialIssue({
         knex,
         ...baseProps, // i.e. siteId, consumableId, issueEventIds, daysDue
@@ -187,12 +186,11 @@ describe('Inventory Stock Issues Endpoint', () => {
         actionCreator: inventoryStockout,
       })
       issueIds.push(stockoutIssueId)
-    })
-  })
+    }))
 
   // StockExpiring
-  it('should create StockExpiring issue', async () => {
-    await run(async knex => {
+  it('should create StockExpiring issue', () =>
+    run(async knex => {
       const stockExpiringIssueId = await triggerInitialIssue({
         knex,
         ...baseProps, // i.e. siteId, consumableId, issueEventIds, daysDue
@@ -201,15 +199,14 @@ describe('Inventory Stock Issues Endpoint', () => {
         actionCreator: inventoryStockExpiring,
       })
       issueIds.push(stockExpiringIssueId)
-    })
-  })
+    }))
 
   // ---------------------------------------------------------------------------
   // escalate issues
   // ---------------------------------------------------------------------------
   describe('Escalate to level 2 of just triggered Stockout issue', () => {
     let issueId
-    beforeEach(async () =>
+    beforeEach(() =>
       run(async knex => {
         const { siteId, consumableId } = baseProps
         // calculate rates
@@ -227,8 +224,8 @@ describe('Inventory Stock Issues Endpoint', () => {
       })
     )
 
-    it('change stock level to make stock lasts for less than 14 days and dispatch escalate issue action', async () => {
-      await run(async knex => {
+    it('change stock level to make stock lasts for less than 14 days and dispatch escalate issue action', () =>
+      run(async knex => {
         const { siteId, consumableId } = await knex('Issue')
           .where('id', issueId)
           .first()
@@ -275,13 +272,12 @@ describe('Inventory Stock Issues Endpoint', () => {
             },
           },
         ])
-      })
-    })
+      }))
   })
 
   describe('Escalate to level 2 of just triggered Stock Expiring issue', () => {
     let issueId
-    beforeEach(async () =>
+    beforeEach(() =>
       run(async knex => {
         const { siteId, consumableId } = baseProps
         // calculate rates
@@ -299,7 +295,7 @@ describe('Inventory Stock Issues Endpoint', () => {
       })
     )
 
-    it('change createdOn value for just triggered Stock Expiring issue and dispatch escalate issue action', async () =>
+    it('change createdOn value for just triggered Stock Expiring issue and dispatch escalate issue action', () =>
       run(async knex => {
         // see seed/utils.js - search for 'knex('IssueEscalationTrigger').insert' -
         // level 2 - evaluationMethod: 'issue-age' and evaluationParameter: { days: 10 }
@@ -577,6 +573,7 @@ async function createTestResult(knex, device) {
     geographyId: device.geographyId,
     siteId: device.siteId,
     deviceId: device.id,
+    reportableSiteId: device.siteId,
     resultSourceId,
     resultTypeId,
     sampleId,
