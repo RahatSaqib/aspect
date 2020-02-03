@@ -47,7 +47,7 @@ function getUser(username) {
     .from('User as u')
     .innerJoin('Person as p', 'u.id', 'p.userId')
     .where({ 'u.name': username })
-    .first(...userProps)
+    .first(userProps)
 }
 
 function getUserByPersonId(personId) {
@@ -55,7 +55,7 @@ function getUserByPersonId(personId) {
     .from('Person as p')
     .innerJoin('User as u', 'p.userId', 'u.id')
     .where({ 'p.id': personId })
-    .first(...userProps)
+    .first(userProps)
 }
 
 function getUserByUserId(userId) {
@@ -63,7 +63,7 @@ function getUserByUserId(userId) {
     .from('User as u')
     .innerJoin('Person as p', 'u.id', 'p.userId')
     .where({ 'u.id': userId })
-    .first(...userProps)
+    .first(userProps)
 }
 
 function getUserId(username) {
