@@ -1946,10 +1946,7 @@ async function transferResult(request) {
   let resultStatusLog = await knex('ResultStatusLog')
     .whereNotNull('timestamp')
     .where('timestamp', '>', timestamp)
-    // .where(
-    //   knex.raw('IFNULL(JSON_EXTRACT(data,"$.timeStamp"),0) > ?', [timeStamp])
-    // )
-    .where({ resultId })
+    .where({ resultId, resultStatusId })
     .first('createdOn', 'createdBy')
 
   let resultStatusLogId
