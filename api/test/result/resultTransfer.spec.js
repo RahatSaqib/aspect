@@ -97,8 +97,8 @@ describe('Result Transfer', () => {
       // check how Joi.date() handles DateTime - transferredOn should contain 'date' and 'time' parts.
       // FYI: 'transferredOn' is expected in this format - '2020-01-07T15:27:46.000Z'
       const { transferredOn } = testResult
-      // number 10 is length of Date portion, 14 - length of Time portion
-      assert.equal(transferredOn.substr(10).length, 14)
+      // length of Date portion = 10, length of Time portion = 14
+      assert.equal(transferredOn.length, 24)
     })
 
     it('should return an error if result does not exist', () =>
