@@ -1,5 +1,6 @@
 const path = require('path')
 const { format } = require('date-fns')
+const _ = require('lodash')
 const { listRefreshTokens } = require('./service')
 const {
   generateReport,
@@ -17,7 +18,12 @@ async function getReport(request, reply) {
     query.format,
     reportFile,
     '<Headers>',
-    reports.data,
+    _.map(reports.data, elem => {
+      return {
+        ...elem,
+        totalOnTreatment: `${elem.totalOnTreatment}/${elem.requiresFollowUp}`,
+      }
+    }),
     {
       date: format(new Date(), 'yyyy-MM-dd'),
     },

@@ -35,6 +35,7 @@ const {
 const { randomToken } = require('../../src/deviceApi/apiKey')
 const geography = require('./fixtures/geography.json')
 const patients = require('./fixtures/patients.json')
+const patientDataSchema = require('../fixtures/MGITPatientDataSchema')
 const dashboardWidget = require('./fixtures/dashboardWidget.json')
 const { errorCodes } = require('./fixtures/errorCodes.js')
 const { updateMGITAssays } = require('../commonTB')
@@ -255,79 +256,7 @@ async function seed(knex) {
       deviceTypeCategoryId: deviceTypeCategoryLab,
     })
   }
-  const patientDataSchema = JSON.stringify({
-    name: {
-      title: 'Name of patient',
-      type: 'string',
-      order: 0,
-    },
-    age: {
-      title: 'Age',
-      type: 'number',
-      order: 1,
-    },
-    gender: {
-      title: 'Sex',
-      type: 'string',
-      order: 2,
-    },
-    dateOfBirth: {
-      title: 'Date of Birth',
-      type: 'string',
-      order: 3,
-    },
-    state: {
-      title: 'Province',
-      type: 'string',
-      order: 4,
-    },
-    site: {
-      title: 'Site',
-      type: 'string',
-      order: 5,
-    },
-    focalPerson: {
-      title: 'Focal Person',
-      type: 'string',
-      order: 6,
-    },
-    contactDetails: {
-      title: 'Contact Details',
-      type: 'string',
-      order: 7,
-    },
-    xpertMtbRifResult: {
-      title: 'XPERT MTB RIF Result',
-      type: 'string',
-      order: 8,
-    },
-    dateStartedOnTreatment: {
-      title: 'Date Started on TX',
-      type: 'string',
-      order: 9,
-    },
-    baselineCulture: {
-      title: 'Baseline Culture',
-      type: 'string',
-      order: 10,
-    },
-    lpaFl: {
-      title: 'LPA FL',
-      type: 'string',
-      order: 5,
-    },
-    lpaSl: {
-      title: 'LPA SL',
-      type: 'string',
-      order: 11,
-    },
-    mgitSire: {
-      title: 'MGIT SIRE',
-      type: 'string',
-      order: 12,
-    },
-  })
-  await updateMGITAssays(knex, deviceTypeBDMGITId, patientDataSchema)
+  await updateMGITAssays(knex, deviceTypeBDMGITId)
   // Units
   const piece = await unitToId('Piece')
 
@@ -769,7 +698,7 @@ async function seed(knex) {
         title: 'Relative Intensity of Band 10',
       },
     }),
-    patientDataSchema,
+    patientDataSchema: JSON.stringify(patientDataSchema),
   }
   let { id: assayGenoTypeMTBCV1Id } =
     (await knex('Assay')
@@ -1666,7 +1595,7 @@ async function seed(knex) {
         title: 'Relative Intensity of Band 27',
       },
     }),
-    patientDataSchema,
+    patientDataSchema: JSON.stringify(patientDataSchema),
   }
   let { id: assayGenoTypeMTBDRplusV2Id } =
     (await knex('Assay')
@@ -2431,7 +2360,7 @@ async function seed(knex) {
         title: 'Relative Intensity of Band 22',
       },
     }),
-    patientDataSchema,
+    patientDataSchema: JSON.stringify(patientDataSchema),
   }
   let { id: assayGenoTypeMTBDRslV1Id } =
     (await knex('Assay')
@@ -3317,7 +3246,7 @@ async function seed(knex) {
         title: 'Relative Intensity of Band 27',
       },
     }),
-    patientDataSchema,
+    patientDataSchema: JSON.stringify(patientDataSchema),
   }
   let { id: assayGenoTypeMTBDRslV2Id } =
     (await knex('Assay')

@@ -77,7 +77,7 @@ function listReporterBaseConfig() {
           'delivered',
           'acknowledgedRatio',
           'confirmFollowUpRatio',
-          'totalFlagged',
+          'totalOnTreatment',
           'revoked',
           'requiresFollowUp'
         ),
@@ -179,15 +179,15 @@ const routes = [
                   .required()
                   .allow(null)
                   .description('The confirm follow up ratio'),
-                totalFlagged: Joi.number()
-                  .required()
-                  .description('The total flagged'),
                 delivered: Joi.number()
                   .required()
                   .description('The total result delivered'),
                 requiresFollowUp: Joi.number()
                   .required()
                   .description('The total requires followup'),
+                totalOnTreatment: Joi.number()
+                  .required()
+                  .description('The total result on treatment'),
               })
             ),
         }),

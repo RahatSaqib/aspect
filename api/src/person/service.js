@@ -448,10 +448,10 @@ async function listRefreshTokens(request) {
         "sum(case rws.externalId when 'Acknowledged' then 1 else 0 end)/sum(case when rca.requiresTreatment = '1' then 1 else 0 end) as acknowledgedRatio"
       ),
       knex.raw(
-        "sum(case rws.externalId when 'Flagged' then 1 else 0 end) as totalFlagged"
+        "sum(case when  rts.externalId = 'OnTreatment' AND rca.requiresTreatment = '1' then 1 else 0 end)/sum(case when rca.requiresTreatment = '1' then 1 else 0 end) as confirmFollowUpRatio"
       ),
       knex.raw(
-        "sum(case when  rts.externalId = 'OnTreatment' AND rca.requiresTreatment = '1' then 1 else 0 end)/sum(case when rca.requiresTreatment = '1' then 1 else 0 end) as confirmFollowUpRatio"
+        "sum(case when  rts.externalId = 'OnTreatment' AND rca.requiresTreatment = '1' then 1 else 0 end) as totalOnTreatment"
       ),
       knex.raw('count(distinct rdl.resultId) as delivered'),
       knex.raw(

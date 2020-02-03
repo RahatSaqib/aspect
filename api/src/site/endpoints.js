@@ -212,23 +212,22 @@ const routes = [
                   .description("Latitude of the site's coordinates"),
                 zip: Joi.string()
                   .required()
-                  .allow(null)
+                  .allow(null, '')
                   .description('Zip code of the site'),
                 street1: Joi.string()
                   .required()
-                  .allow(null)
+                  .allow(null, '')
                   .description('Street where the site is allocated'),
                 street2: Joi.string()
                   .required()
-                  .allow(null)
+                  .allow(null, '')
                   .description('Street where the site is allocated'),
                 city: Joi.string()
                   .required()
-                  .allow(null)
+                  .allow(null, '')
                   .description('City where the site is allocated'),
                 externalId: Joi.string()
                   .required()
-                  .allow(null)
                   .description('External ID of the site'),
               })
             ),
