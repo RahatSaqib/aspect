@@ -1429,7 +1429,7 @@ const routes = [
             .integer()
             .positive()
             .description('New Site ID to transfer current result'),
-          timeStamp: Joi.number()
+          timestamp: Joi.number()
             .integer()
             .positive()
             .description('UTC timestamp'),

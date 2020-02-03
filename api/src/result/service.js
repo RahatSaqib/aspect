@@ -1919,7 +1919,7 @@ async function transferResult(request) {
   const {
     auth,
     params: { resultId },
-    payload: { siteId, timeStamp },
+    payload: { siteId, timestamp },
   } = request
   const { partnerId, countryId, id: currentUserId, userName } = await getUser(
     auth.credentials.name
@@ -1944,9 +1944,11 @@ async function transferResult(request) {
 
   // get item if timeStamp of prev action is newer than current timeStamp
   let resultStatusLog = await knex('ResultStatusLog')
-    .where(
-      knex.raw('IFNULL(JSON_EXTRACT(data,"$.timeStamp"),0) > ?', [timeStamp])
-    )
+    .whereNotNull('timestamp')
+    .where('timestamp', '>', timestamp)
+    // .where(
+    //   knex.raw('IFNULL(JSON_EXTRACT(data,"$.timeStamp"),0) > ?', [timeStamp])
+    // )
     .where({ resultId })
     .first('createdOn', 'createdBy')
 
@@ -1955,7 +1957,7 @@ async function transferResult(request) {
   let transferredBy = userName
   if (resultStatusLog) {
     // ^^^
-    // prev action is newer than current - get it's props and skip current action
+    // prev transfer is newer than current - get its props and skip current action
     // ---
     resultStatusLogId = resultStatusLog.id
     transferredOn = resultStatusLog.createdOn
@@ -1977,8 +1979,8 @@ async function transferResult(request) {
         siteId: result.siteId,
         reportableSiteId: siteId,
         sampleOriginSiteId: result.sampleOriginSiteId,
-        timeStamp,
       }),
+      timestamp,
     })
     resultStatusLog = await knex('ResultStatusLog')
       .where({ id: resultStatusLogId })
