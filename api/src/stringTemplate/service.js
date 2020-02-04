@@ -36,7 +36,10 @@ handlebars.registerHelper({
   and: (...rest) => Array.prototype.slice.call(rest).every(Boolean),
   or: (...rest) => Array.prototype.slice.call(rest, 0, -1).some(Boolean),
 })
-handlebars.registerHelper('customFieldValueFromLabel', customFieldValueFromLabel)
+handlebars.registerHelper(
+  'customFieldValueFromLabel',
+  customFieldValueFromLabel
+)
 
 // See unit tests for examples
 // Can include displayPreferences
@@ -169,6 +172,12 @@ async function getBaseDataSource(data) {
       },
       sample: {
         id: d.sampleExternalId,
+        // TODO: Add Sample Origin Site, Collection Date and Data Here, The ITIS Webhook Notification Needs This
+        //  originSite: {
+        //    id: ...
+        //  },
+        //  collectedOn: ...
+        //  data: d.sampleData == null ? {} : JSON.parse(d.sampleData),
       },
       category1: {
         id: d.resultCategory1ExternalId,
