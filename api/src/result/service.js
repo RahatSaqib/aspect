@@ -11,7 +11,7 @@ const {
 } = require('../db')
 const { resultUpdated } = require('./actions')
 const { getConstraints, addConstraints } = require('../auth/constraints')
-const { getUser } = require('../auth/service')
+const { getUser, getUserByUserId } = require('../auth/service')
 const {
   resultWorkflowStatusToId,
   resultTreatmentStatusToId,
@@ -1919,7 +1919,7 @@ async function transferResult(request) {
   const {
     auth,
     params: { resultId },
-    payload: { siteId },
+    payload: { siteId, timestamp },
   } = request
   const { partnerId, countryId, id: currentUserId, userName } = await getUser(
     auth.credentials.name
@@ -1942,76 +1942,96 @@ async function transferResult(request) {
     return Boom.badRequest('Invalid externalId `Transfer`')
   }
 
-  const now = new Date()
+  // get item if timeStamp of prev action is newer than current timeStamp
+  let resultStatusLog = await knex('ResultStatusLog')
+    .whereNotNull('timestamp')
+    .where('timestamp', '>', timestamp)
+    .where({ resultId, resultStatusId })
+    .first('createdOn', 'createdBy')
 
-  // log
-  const [resultStatusLogId] = await knex('ResultStatusLog').insert({
-    resultId,
-    resultStatusId,
-    createdOn: now,
-    createdBy: currentUserId,
-    data: JSON.stringify({
-      siteId: result.siteId,
-      reportableSiteId: siteId,
-      sampleOriginSiteId: result.sampleOriginSiteId,
-    }),
-  })
-  const { createdOn: transferredOn } = await knex('ResultStatusLog')
-    .where({ id: resultStatusLogId })
-    .first('createdOn')
+  let resultStatusLogId
+  let transferredOn
+  let transferredBy = userName
+  if (resultStatusLog) {
+    // ^^^
+    // prev transfer is newer than current - get its props and skip current action
+    // ---
+    resultStatusLogId = resultStatusLog.id
+    transferredOn = resultStatusLog.createdOn
+    const author = await getUserByUserId(resultStatusLog.createdBy)
+    transferredBy = author ? author.userName : '?'
+  } else {
+    // ^^^
+    // current action is newer
+    // ---
+    const now = new Date()
 
-  // ------------
-  // update follow-up and treatment status
-  /* from Stefan response on https://github.com/SystemOneId/aspect/pull/1030#discussion_r368562435:
-  I had a conversation with Chris around this and we landed on resetting the treatment status so that the clinic
-  user that now has access to the result has to confirm it on treatment again.
-  That means deleting ResultFollowUp is correct here, but instead of simply deleting the ResultTreatmentStatusLog,
-  we should add an entry that sets the result back to "Awaiting Treatment" and as "method" set "transfer" so we keep
-  a record of the reset.
-  */
-  // remove from ResultFollowUp
-  await knex('ResultFollowUp')
-    .where({ resultId })
-    .del()
-  // add entry to ResultTreatmentStatusLog as "Awaiting Treatment" with details about reason
-  const externalId = 'AwaitingTreatment'
-  const resultTreatmentStatusId = await resultTreatmentStatusToId(externalId)
-  const [treatmentStatusLogId] = await knex('ResultTreatmentStatusLog').insert({
-    resultId,
-    resultTreatmentStatusId,
-    method: 'transfer',
-    data: JSON.stringify({
-      siteId: result.siteId,
-      reportableSiteId: siteId,
-      sampleOriginSiteId: result.sampleOriginSiteId,
-    }),
-    createdOn: now,
-    changedOn: now,
-    createdBy: currentUserId,
-  })
-  // ------------
-
-  // update
-  await knex('Result')
-    .where('id', resultId)
-    .update({
-      reportableSiteId: siteId,
-      resultStatusLogId,
-      treatmentStatusLogId,
-      firstViewedOn: null,
-      updatedBy: currentUserId,
-      updatedOn: now,
+    // log
+    ;[resultStatusLogId] = await knex('ResultStatusLog').insert({
+      resultId,
+      resultStatusId,
+      createdOn: now,
+      createdBy: currentUserId,
+      data: JSON.stringify({
+        siteId: result.siteId,
+        reportableSiteId: siteId,
+        sampleOriginSiteId: result.sampleOriginSiteId,
+      }),
+      timestamp,
     })
+    resultStatusLog = await knex('ResultStatusLog')
+      .where({ id: resultStatusLogId })
+      .first('createdOn')
+    transferredOn = resultStatusLog.createdOn
+
+    // remove ResultFollowUp because we want the user at the clinic that now has access
+    // to the result to confirm the treatment status.
+    await knex('ResultFollowUp')
+      .where({ resultId })
+      .del()
+    // add entry to ResultTreatmentStatusLog as "Awaiting Treatment" with details about reason
+    const externalId = 'AwaitingTreatment'
+    const resultTreatmentStatusId = await resultTreatmentStatusToId(externalId)
+    const [treatmentStatusLogId] = await knex(
+      'ResultTreatmentStatusLog'
+    ).insert({
+      resultId,
+      resultTreatmentStatusId,
+      method: 'transfer',
+      data: JSON.stringify({
+        siteId: result.siteId,
+        reportableSiteId: siteId,
+        sampleOriginSiteId: result.sampleOriginSiteId,
+      }),
+      createdOn: now,
+      changedOn: now,
+      createdBy: currentUserId,
+    })
+    // ------------
+
+    // update
+    await knex('Result')
+      .where('id', resultId)
+      .update({
+        reportableSiteId: siteId,
+        resultStatusLogId,
+        treatmentStatusLogId,
+        firstViewedOn: null,
+        updatedBy: currentUserId,
+        updatedOn: now,
+      })
+
+    result.data.reportableSiteId = siteId
+    result.data.reportableSiteName = site.name
+  }
 
   const currTreatmentStatus = await getTreatmentStatusByResultId(resultId)
 
   // func getResultByResultId(request) does not return now current result because
   // r.reportableSiteId now has changed and may not equal to user's siteId's -
   // so we here simply update few fields affected by transfer and return old result
-  result.data.reportableSiteId = siteId
-  result.data.reportableSiteName = site.name
   result.data.transferredOn = transferredOn
-  result.data.transferredBy = userName
+  result.data.transferredBy = transferredBy
   result.data.resultStatusLogId = resultStatusLogId
   result.data.firstViewedOn = null
   result.data.treatmentStatus = _.pick(currTreatmentStatus, [
