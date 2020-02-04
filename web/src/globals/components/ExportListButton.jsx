@@ -64,6 +64,7 @@ export const ExportListButton = ({
       >
         <CloudDownloadIcon style={{ fontSize: '1.25rem' }} />
       </IconButton>
+
       <Popover
         id="simple-popover"
         open={Boolean(anchorEl)}
