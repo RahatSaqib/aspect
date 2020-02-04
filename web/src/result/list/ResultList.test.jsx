@@ -3,6 +3,7 @@ import { shallow } from 'enzyme'
 import { IntlProvider } from 'react-intl'
 import { Table } from '../../shared/metaReducers/table'
 import { Items } from '../../shared/metaReducers/items'
+import ExportListButton from '../../globals/components/ExportListButton'
 
 import { ResultList } from './ResultList'
 
@@ -14,6 +15,9 @@ describe('Result List component', () => {
     intl,
     table: new Table(),
     items: new Items(),
+    location: {
+      search: '',
+    },
   }
 
   it('should shallow render correctly when filter for assay type', () => {
@@ -22,6 +26,7 @@ describe('Result List component', () => {
     )
 
     expect(element).toMatchSnapshot()
+    expect(element.find(ExportListButton)).toHaveLength(1)
   })
 
   it('should shallow render correctly when filter for assay id', () => {

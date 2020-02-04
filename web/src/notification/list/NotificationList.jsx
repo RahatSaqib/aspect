@@ -179,6 +179,7 @@ export const NotificationList = props => {
         <DataTableProgressBar disabled={!table.loading} />
         <ExportListButton
           onExcelClick={onExcelClick}
+          visible={!items.currentIdList.isEmpty()}
           onCsvClick={onExcelClick}
           reportName="Notifications"
         />

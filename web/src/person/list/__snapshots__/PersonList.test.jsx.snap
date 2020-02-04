@@ -82,7 +82,10 @@ exports[`Person List module PersonList component should shallow render correctly
       }
     />
     <Connect(withState(withHandlers(ExportListButton)))
+      onCsvClick={[Function]}
+      onExcelClick={[Function]}
       reportName="Contacts"
+      visible={false}
     />
   </DataTableCard>
 </div>

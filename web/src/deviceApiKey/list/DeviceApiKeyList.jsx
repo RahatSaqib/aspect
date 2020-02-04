@@ -435,6 +435,7 @@ export const DeviceApiKeyList = ({
       <ExportListButton
         onExcelClick={onExportClick}
         onCsvClick={onExportClick}
+        visible={!items.currentIdList.isEmpty()}
         reportName="DeviceApiKey"
       />
       {items.currentIdList.isEmpty() && (

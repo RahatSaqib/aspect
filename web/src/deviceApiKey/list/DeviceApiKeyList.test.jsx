@@ -3,6 +3,7 @@ import React from 'react'
 import { shallow } from 'enzyme'
 import { makeItems } from '../../shared/metaReducers/items'
 import { makeTable } from '../../shared/metaReducers/table'
+import ExportListButton from '../../globals/components/ExportListButton'
 
 jest.mock('@material-ui/core/Checkbox', () => 'StubCheckbox')
 
@@ -69,6 +70,7 @@ describe('Device Api Key List module', () => {
       const element = shallow(<DeviceApiKeyList {...props} />)
 
       expect(element).toMatchSnapshot()
+      expect(element.find(ExportListButton)).toHaveLength(1)
     })
 
     it('should shallow render with items correctly', () => {

@@ -227,10 +227,10 @@ export const RouterList = ({
     />
     <DataTableCard key={`DataTableCard--table-${location.key}`}>
       <DataTableProgressBar disabled={!table.loading} />
-
       <ExportListButton
         onExcelClick={onExcelClick}
         onCsvClick={onExcelClick}
+        visible={!items.currentIdList.isEmpty()}
         reportName="Routers"
       />
 

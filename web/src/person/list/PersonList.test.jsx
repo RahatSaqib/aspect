@@ -2,6 +2,7 @@ import React from 'react'
 import { shallow } from 'enzyme'
 import { Items } from '../../shared/metaReducers/items'
 import { Table } from '../../shared/metaReducers/table'
+import ExportListButton from '../../globals/components/ExportListButton'
 
 describe('Person List module', () => {
   const { PersonList } = require('./PersonList')
@@ -34,6 +35,7 @@ describe('Person List module', () => {
         pageSize: 10,
         onHeadColumnClick: () => {},
         onRowClick: () => {},
+        onExcelClick: () => {},
       }
     })
 
@@ -41,6 +43,7 @@ describe('Person List module', () => {
       const element = shallow(<PersonList {...props} />)
 
       expect(element).toMatchSnapshot()
+      expect(element.find(ExportListButton)).toHaveLength(1)
     })
   })
 })

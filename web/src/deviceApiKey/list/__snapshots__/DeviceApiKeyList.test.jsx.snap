@@ -107,6 +107,7 @@ exports[`Device Api Key List module DeviceApiKeyList component should shallow re
       onCsvClick={[Function]}
       onExcelClick={[Function]}
       reportName="DeviceApiKey"
+      visible={false}
     />
     <pure(withHandlers(EmptyList))
       history={
@@ -243,6 +244,7 @@ exports[`Device Api Key List module DeviceApiKeyList component should shallow re
       onCsvClick={[Function]}
       onExcelClick={[Function]}
       reportName="DeviceApiKey"
+      visible={true}
     />
     <WithStyles(Table)
       className="DeviceApiKeyDataTable"
