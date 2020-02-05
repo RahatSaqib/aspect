@@ -3,55 +3,6 @@
     {
       "assays": ["GxMtbRif", "GxMtbRifUltra"],
       "type": "treatment",
-      "name": "DSTB - 2RHZE",
-      "externalId": "dstb-2rhze",
-      "i18nKey": "dstb-2rhze"
-    },
-    {
-      "assays": ["GxMtbRif", "GxMtbRifUltra"],
-      "type": "treatment",
-      "name": "DSTB - 4RH",
-      "externalId": "dstb-4rh",
-      "i18nKey": "dstb-4rh"
-    },
-    {
-      "assays": ["GxMtbRif", "GxMtbRifUltra"],
-      "type": "treatment",
-      "name": "DRTB - Bedaquiline Based shorter regimen",
-      "externalId": "drtb-bbsr",
-      "i18nKey": "drtb-bbsr"
-    },
-    {
-      "assays": ["GxMtbRif", "GxMtbRifUltra"],
-      "type": "treatment",
-      "name": "DRTB - Injection Based shorter regimen",
-      "externalId": "drtb-ibsr",
-      "i18nKey": "drtb-ibsr"
-    },
-    {
-      "assays": ["GxMtbRif", "GxMtbRifUltra"],
-      "type": "treatment",
-      "name": "DRTB - Long Oral MDT-TB regimen and Pre XDR-TB",
-      "externalId": "drtb-lomr",
-      "i18nKey": "drtb-lomr"
-    },
-    {
-      "assays": ["GxMtbRif", "GxMtbRifUltra"],
-      "type": "treatment",
-      "name": "DRTB - Pre XDR-TB (RES FQ) regimen/XDR-TB",
-      "externalId": "drtb-prexdr",
-      "i18nKey": "drtb-prexdr"
-    },
-    {
-      "assays": ["GxMtbRif", "GxMtbRifUltra"],
-      "type": "treatment",
-      "name": "DRTB - Beyond XDR-TB (Individualized)",
-      "externalId": "drtb-bxdr",
-      "i18nKey": "drtb-bxdr"
-    },
-    {
-      "assays": ["GxMtbRif", "GxMtbRifUltra"],
-      "type": "treatment",
       "name": "Regimen 1: 2HRZE/4HR",
       "externalId": "reg1hrze4hr",
       "i18nKey": "reg1hrze4hr"
@@ -105,34 +56,7 @@
       "externalId": "fr-mdr",
       "i18nKey": "fr-mdr"
     },
-    {
-      "assays": ["abbottM2000PlasmaHivVL", "abbottM2000DBSHivVL", "GxHiv1Vl", "QHivVL", "ReporterHivVL", "assayAlereQHiv12VLPlasma"],
-      "type": "treatment",
-      "name": "Request repeat VL",
-      "externalId": "rrvl",
-      "i18nKey": "rrvl"
-    },
-    {
-      "assays": ["abbottM2000PlasmaHivVL", "abbottM2000DBSHivVL", "GxHiv1Vl", "QHivVL", "ReporterHivVL", "assayAlereQHiv12VLPlasma"],
-      "type": "treatment",
-      "name": "Initiate advanced adherence counselling",
-      "externalId": "iaac",
-      "i18nKey": "iaac"
-    },
-    {
-      "assays": ["abbottM2000PlasmaHivVL", "abbottM2000DBSHivVL", "GxHiv1Vl", "QHivVL", "ReporterHivVL", "assayAlereQHiv12VLPlasma"],
-      "type": "treatment",
-      "name": "Switch to 2nd or 3rd line regime",
-      "externalId": "st2o3lr",
-      "i18nKey": "st2o3lr"
-    },
-    {
-      "assays": ["abbottM2000PlasmaHivVL", "abbottM2000DBSHivVL", "GxHiv1Vl", "QHivVL", "ReporterHivVL", "assayAlereQHiv12VLPlasma"],
-      "type": "treatment",
-      "name": "Maintain current regime",
-      "externalId": "mcr",
-      "i18nKey": "mcr"
-    },
+    
     {
       "assays": [],
       "type": "outcome",
