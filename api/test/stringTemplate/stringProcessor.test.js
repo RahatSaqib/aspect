@@ -1520,7 +1520,7 @@ describe('stringTemplate', () => {
           `/REQUESTING_FACILITY/{{urlEncode (defaultTo result.sample.originSite.id 'NULL')}}` +
           // TODO: Map GxAlert locations to sites loaded into the Aspect Site table with hfacility.id as the externalId
           `/LABORATORY/{{urlEncode (defaultTo site.id 'NULL')}}` +
-          // TODO: Ensure that GxConnect custom fields are correctly mapped to the result patient data as in this template
+          // TODO: Ensure that GxConnect custom field values are correctly sanitized & mapped to the result patient data as in this template
           //       Date of Request -> patient.mrfDateRequested
           //       Name of Person Requesting Test -> patient.requestingPhysician
           //       Last Name of Patient -> patient.lastName
@@ -1536,12 +1536,13 @@ describe('stringTemplate', () => {
           //       Visual Appearance -> sample.data.appearance
           //       Date of Release -> data.dateReleased
           //       Performed by -> data.examiner
+          //       Repeat Test -> patient.treatmentSchedule
           `/DATE_REQUESTED/{{defaultTo (formatDate result.patient.mrfDateRequested formatString='${philippinesITISDateTimeFormat}') 'NULL'}}` +
           `/REQUESTING_PHYSICIAN/{{urlEncode (defaultTo result.patient.requestingPhysician 'NULL')}}` +
           `/LAST_NAME/{{urlEncode (defaultTo result.patient.lastName 'NULL')}}` +
           `/FIRST_NAME/{{urlEncode (defaultTo result.patient.firstName 'NULL')}}` +
           `/MIDDLE_NAME/{{urlEncode (defaultTo result.patient.middleInitialOrName 'NULL')}}` +
-          `/AGE/{{defaultTo result.patient.age 'NULL'}}` +
+          `/AGE/{{defaultTo (extractValueFromRegexCaptureGroup result.patient.age expression='^(\\d*)(.*)$' groupNumber=1) 'NULL'}}` +
           `/STREET_ADDRESS/{{urlEncode (defaultTo result.patient.address 'NULL')}}` +
           // TODO: Find out if GEO_LOCATION refers to the location of the patient or the health facility. If it is the health facility, bring device.data into the device datasource and map geoLocationExternalId with each site
           `/GEO_LOCATION/NULL` +
@@ -1554,55 +1555,6 @@ describe('stringTemplate', () => {
           // Reason for Examination options in:
           //     NTRL/PMDT database: Treatment Schedule: DIAGNOSIS, BAS, Follow up, Post Treatment
           //     GxConnect: Repeat Test: 0 - First or second, 1 - Follow-up, 2 - Repeat Baseline
-          //     Unused GxConnect Field: Reason for Examination:
-          //       - 938492: DIAGNOSIS
-          //       - 938493: BASELINE
-          //       - 938494: BEFORE TREATMENT
-          //       - 938495: 2ND WEEK
-          //       - 938496: 1ST MONTH
-          //       - 938497: 2ND MONTH
-          //       - 938498: 3RD MONTH
-          //       - 938499: 4TH MONTH
-          //       - 938500: 5TH MONTH
-          //       - 938501: 6TH MONTH
-          //       - 938502: 7TH MONTH
-          //       - 938503: 8TH MONTH
-          //       - 938504: 9TH MONTH
-          //       - 938505: 10TH MONTH
-          //       - 938506: 11TH MONTH
-          //       - 938507: 12TH MONTH
-          //       - 938508: 13TH MONTH
-          //       - 938509: 14TH MONTH
-          //       - 938510: 15TH MONTH
-          //       - 938511: 16TH MONTH
-          //       - 938512: 17TH MONTH
-          //       - 938513: 18TH MONTH
-          //       - 938514: 19TH MONTH
-          //       - 938515: 20TH MONTH
-          //       - 938516: 21ST MONTH
-          //       - 938517: 22ND MONTH
-          //       - 938518: 23RD MONTH
-          //       - 938519: 24TH MONTH
-          //       - 938520: 25TH MONTH
-          //       - 938521: 26TH MONTH
-          //       - 938522: 27TH MONTH
-          //       - 938523: 28TH MONTH
-          //       - 938524: 29TH MONTH
-          //       - 938525: 30TH MONTH
-          //       - 938526: 31ST MONTH
-          //       - 938558: 32ND MONTH
-          //       - 938559: 33RD MONTH
-          //       - 938560: 34TH MONTH
-          //       - 938561: 35TH MONTH
-          //       - 938562: 36TH MONTH
-          //       - 938563: 1ST POST FOLLOW-UP
-          //       - 938564: 2ND POST FOLLOW-UP
-          //       - 938565: 3RD POST FOLLOW-UP
-          //       - 938566: 4TH POST FOLLOW-UP
-          //       - 938677: 37TH MONTH
-          //       - 938730: 38TH MONTH
-          //       - 938731: 39TH MONTH
-          //       - 938732: 40TH MONTH
           // ITIS Data Dictionary:
           //       - 938492: DIAGNOSIS
           //       - 938493: BASELINE
@@ -1652,9 +1604,59 @@ describe('stringTemplate', () => {
           //       - 938730: 38TH MONTH
           //       - 938731: 39TH MONTH
           //       - 938732: 40TH MONTH
-          // TODO: Map RepeatTest from GxConnect to patient.treatmentSchedule
-          // TODO: Find out how to map patient.treatmentSchedule to REASON_FOR_EXAMINATION
+          // From GxConnect custom fields use patient.treatmentSchedule
+          //    - patient.treatmentSchedule = 'DIAGNOSIS'
+          //        - Send DIAGNOSIS
+          //    - patient.treatmentSchedule = 'BASELINE'
+          //        - Send BASELINE
+          //      TODO: Sanitize GxConnect custom field payload with 'Follow-up' and standardize on 'Follow up'
+          //    - patient.treatmentSchedule = 'Follow up'
+          //        - Send NULL. This is different from when result comes from PMDT database because we are not assuming that the follow up is on the 2ND WEEK
+          // From PMDT database use patient.treatmentSchedule and patient.monthOfTreatment
+          //    - patient.treatmentSchedule = 'DIAGNOSIS'
+          //        - Send DIAGNOSIS
+          //      TODO: Sanitize PMDT payload with 'BAS' or 'BASE LINE' and standardize on 'BASELINE'
+          //    - patient.treatmentSchedule = 'BAS' or 'BASELINE' or 'BASE LINE'
+          //        - Send BASELINE
+          //      TODO: Sanitize PMDT payload with 'Follow-up' and standardize on 'Follow up'
+          //    - patient.treatmentSchedule = 'Follow up' use patient.monthOfTreatment to determine option:
+          //        - Blank = 2ND WEEK
+          //        - 1, 2, 3... = 1ST MONTH, 2ND MONTH, 3RD MONTH...
+          //        - PT1, PT2, 2ND POST TX... = 1ST POST FOLLOW-UP, 2ND POST FOLLOW-UP...
+          //    - patient.treatmentSchedule = 'Post Treatment' use patient.monthOfTreatment to determine option:
+          //        - 1, 2, 3... = 1ST POST FOLLOW-UP, 2ND POST FOLLOW-UP, 3RD POST FOLLOW-UP...
+          // Patient Serial Number DOes Not Exist, this case comes from GxConnect only
+          `{{#if (eq (defaultTo result.patient.serialNumber 'NULL') 'NULL')}}` +
+          `/REASON_FOR_EXAMINATION/{{defaultTo (mapValue result.patient.treatmentSchedule '{"DIAGNOSIS":"938492","BASELINE":"938493"}') 'NULL'}}` +
+          // Patient Serial Number Exists, this case has been entered into the PMDT database
+          `{{else}}` +
+          `{{#if (eq result.patient.treatmentSchedule 'Follow up')}}` +
+          `{{#if (eq (defaultTo result.patient.monthOfTreatment 'NULL') 'NULL')}}` +
+          // If no Month of Treatment specified, default to 938495: 2ND WEEK
+          `/REASON_FOR_EXAMINATION/938495` +
+          `{{else}}` +
+          `{{#if (isRegexMatch result.patient.monthOfTreatment '^\\s*([1-3]([0-9])?|[1-9]|40)(st|nd|rd|th|St|Nd|Rd|Th|ST|ND|RD|TH)?(\\s*month?)?\\s*$')}}` +
+          `/REASON_FOR_EXAMINATION/{{defaultTo (mapValue (extractValueFromRegexCaptureGroup result.patient.monthOfTreatment expression='^\\s*([1-3]([0-9])?|[1-9]|40)(st|nd|rd|th|St|Nd|Rd|Th|ST|ND|RD|TH)?(\\s*month?)?\\s*$' groupNumber=1) '{"1":"938496","2":"938497","3":"938498","4":"938499","5":"938500","6":"938501","7":"938502","8":"938503","9":"938504","10":"938505","11":"938506","12":"938507","13":"938508","14":"938509","15":"938510","16":"938511","17":"938512","18":"938513","19":"938514","20":"938515","21":"938516","22":"938517","23":"938518","24":"938519","25":"938520","26":"938521","27":"938522","28":"938523","29":"938524","30":"938525","31":"938526","32":"938558","33":"938559","34":"938560","35":"938561","36":"938562","37":"938677","38":"938730","39":"938731","40":"938732"}') 'NULL'}}` +
+          `{{else}}` +
+          `{{#if (isRegexMatch result.patient.monthOfTreatment '^\\s*(PT)?([1-4])(st|nd|rd|th|St|Nd|Rd|Th|ST|ND|RD|TH)?(\\s*POST\\s*)?(\\s*TX\\s*)?(\\s*month|MONTH|Month\\s*)?\\s*$')}}` +
+          `/REASON_FOR_EXAMINATION/{{defaultTo (mapValue (extractValueFromRegexCaptureGroup result.patient.monthOfTreatment expression='^\\s*(PT)?([1-4])(st|nd|rd|th|St|Nd|Rd|Th|ST|ND|RD|TH)?(\\s*POST\\s*)?(\\s*TX\\s*)?(\\s*month|MONTH|Month\\s*)?\\s*$' groupNumber=2) '{"1":"938563","2":"938564","3":"938565","4":"938566"}') 'NULL'}}` +
+          `{{else}}` +
           `/REASON_FOR_EXAMINATION/NULL` +
+          `{{/if}}` +
+          `{{/if}}` +
+          `{{/if}}` +
+          `{{else}}` +
+          `{{#if (eq result.patient.treatmentSchedule 'Post Treatment')}}` +
+          `{{#if (isRegexMatch result.patient.monthOfTreatment '^\\s*(PT)?([1-4])(st|nd|rd|th|St|Nd|Rd|Th|ST|ND|RD|TH)?(\\s*POST\\s*)?(\\s*TX\\s*)?(\\s*month|MONTH|Month\\s*)?\\s*$')}}` +
+          `/REASON_FOR_EXAMINATION/{{defaultTo (mapValue (extractValueFromRegexCaptureGroup result.patient.monthOfTreatment expression='^\\s*(PT)?([1-4])(st|nd|rd|th|St|Nd|Rd|Th|ST|ND|RD|TH)?(\\s*POST\\s*)?(\\s*TX\\s*)?(\\s*month|MONTH|Month\\s*)?\\s*$' groupNumber=2) '{"1":"938563","2":"938564","3":"938565","4":"938566"}') 'NULL'}}` +
+          `{{else}}` +
+          `/REASON_FOR_EXAMINATION/NULL` +
+          `{{/if}}` +
+          `{{else}}` +
+          `/REASON_FOR_EXAMINATION/NULL` +
+          `{{/if}}` +
+          `{{/if}}` +
+          `{{/if}}` +
           // PMDT Database Registration Group Options
           // TODO: Interpret these in patient.registrationGroup as the text that they should be in ITIS (ie: TAF should be saved as TX AFTER FAILURE)
           //  - RELAPSE
@@ -1713,95 +1715,134 @@ describe('stringTemplate', () => {
             resultData: `{"resultText":"ERROR"}`,
           },
           {
+            site: {
+              id: 'NTRL1',
+              name: 'National TB Reference Laboratory',
+              shortName: 'NTRL',
+            },
             assayExternalId: 'GxMtbRif',
             resultCategory1ExternalId: 'Detected',
             resultCategory2ExternalId: 'NotDetected',
-            expectedMtbResult: 'detected',
-            expectedMtbGrade: 'low',
-            expectedRifResult: 'not_detected',
-            expectedTestDate: '2018-08-01 11:38',
-            expectedCartridgeSerial: messageDataSource.consumableSerial,
-            expectedOperator: messageDataSource.senderOperator,
+            resultPatientData: JSON.stringify({
+              id: 'P-11234-239',
+              mrfDateRequested: '2018-08-01 11:38',
+              requestingPhysician: 'Dr Gobetz',
+              lastName: 'Betman',
+              firstName: 'Joan',
+              middleInitialOrName: 'M',
+              age: 26,
+              address: '27A, 16th Street, Hatley, Pleasantville, GB66682',
+              sex: 'Female',
+              serialNumber: '123321',
+              treatmentSchedule: 'DIAGNOSIS',
+              monthOfTreatment: '',
+              registrationGroup: 'NEW',
+              presumptiveDsOrDr: 'Presumptive DS-TB',
+            }),
+            sampleExternalId: 'P-11234-239-1',
+            sampleOriginSiteExternalId: 'SITE1234',
+            sampleCollectedOn: null,
+            sampleData: JSON.stringify({
+              type: 'Sputum',
+              repeatCollection: 'Yes',
+              appearance: 'Muco-purulent',
+            }),
             deviceTypeExternalId: 'CepheidGeneXpert',
-            resultData: `{"resultText":"DETECTED LOW|NOT DETECTED|"}`,
+            resultData: JSON.stringify({
+              customFieldData: [
+                {
+                  label: 'Patient Phone',
+                  value: '011-678-1234',
+                },
+                {
+                  label: "Patient's Landline No.",
+                  value: '8488-765-1212',
+                },
+                {
+                  label: "Patient's Email Address",
+                  value: 'patient@test.com',
+                },
+              ],
+              dateReleased: '2018-08-01 11:38',
+              examiner: 'James Jenson',
+            }),
           },
           {
+            site: {
+              id: 'REMOTE1',
+              name: 'Satellite Treatment Center',
+              shortName: 'STC',
+            },
             assayExternalId: 'GxMtbRifUltra',
             resultCategory1ExternalId: 'Trace Detected',
             resultCategory2ExternalId: 'Indeterminate',
-            expectedMtbResult: 'trace',
-            expectedMtbGrade: '',
-            expectedRifResult: 'indeterminate',
-            expectedTestDate: '2018-08-01 11:38',
-            expectedCartridgeSerial: messageDataSource.consumableSerial,
-            expectedOperator: messageDataSource.senderOperator,
+            resultPatientData: JSON.stringify({
+              id: 'P-293874-292',
+              mrfDateRequested: '2018-06-03 08:13',
+              lastName: 'Mulller',
+              age: '6 Months',
+              address: 'Greater Horwich',
+              sex: 'Male',
+              serialNumber: '92382',
+              treatmentSchedule: 'BASELINE',
+              monthOfTreatment: '6 Months',
+              registrationGroup: 'RELAPSE',
+              presumptiveDsOrDr: 'Presumptive DR-TB',
+            }),
+            sampleExternalId: 'P-293874-292-1',
+            sampleOriginSiteExternalId: 'SITE111',
+            sampleCollectedOn: null,
+            sampleData: JSON.stringify({
+              type: 'Others',
+              repeatCollection: 'No',
+              appearance: 'Blood-stained',
+            }),
             deviceTypeExternalId: 'CepheidGeneXpert',
-            resultData: `{"resultText":"MTB Trace DETECTED|RIF Resistance INDETERMINATE"}`,
+            resultData: JSON.stringify({
+              customFieldData: [],
+              dateReleased: '2018-06-03 08:13',
+              examiner: 'James Jenson',
+            }),
           },
           {
-            assayExternalId: 'GxMtbRif',
-            resultCategory1ExternalId: 'NotDetected',
-            resultCategory2ExternalId: null,
-            expectedMtbResult: 'not_detected',
-            expectedMtbGrade: '',
-            expectedRifResult: 'not_detected',
-            expectedTestDate: '2018-08-01 11:38',
-            expectedCartridgeSerial: messageDataSource.consumableSerial,
-            expectedOperator: messageDataSource.senderOperator,
+            site: {
+              id: 'REMOTE2',
+              name: 'Satellite Treatment Center',
+              shortName: 'STC2',
+            },
+            assayExternalId: 'GxMtbRifUltra',
+            resultCategory1ExternalId: 'Trace Detected',
+            resultCategory2ExternalId: 'Indeterminate',
+            resultPatientData: JSON.stringify({
+              id: 'P-123422-111',
+              mrfDateRequested: '1970-12-16 19:55',
+              lastName: 'Schwartz',
+              firstName: 'Elmarie',
+              age: '22 Years',
+              address: '1 Beckton Avenue, Mulspoort, California, USA',
+              serialNumber: '92382',
+              treatmentSchedule: 'Follow up',
+              monthOfTreatment: '34',
+              registrationGroup: 'TX AFTER LOST TO FF-UP',
+              presumptiveDsOrDr: 'Presumptive DR-TB',
+            }),
+            sampleExternalId: 'P-123422-111',
+            sampleOriginSiteExternalId: 'SITE5',
+            sampleCollectedOn: '1970-12-16',
+            sampleData: JSON.stringify({
+              type: 'Isolates',
+            }),
             deviceTypeExternalId: 'CepheidGeneXpert',
-            resultData: `{"resultText":"MTB NOT DETECTED"}`,
-          },
-          {
-            assayExternalId: 'GxMtbRif',
-            resultCategory1ExternalId: 'Detected',
-            resultCategory2ExternalId: 'NotDetected',
-            expectedMtbResult: 'detected',
-            expectedMtbGrade: 'medium',
-            expectedRifResult: 'not_detected',
-            expectedTestDate: '2018-08-01 11:38',
-            expectedCartridgeSerial: messageDataSource.consumableSerial,
-            expectedOperator: messageDataSource.senderOperator,
-            deviceTypeExternalId: 'CepheidGeneXpert',
-            resultData: `{"resultText":"MTB DÉTECTÉ MOYEN|Rif Resistance NON DÉTECTÉ"}`,
-          },
-          {
-            assayExternalId: 'GxMtbRif',
-            resultCategory1ExternalId: 'Detected',
-            resultCategory2ExternalId: 'NotDetected',
-            expectedMtbResult: 'detected',
-            expectedMtbGrade: 'low',
-            expectedRifResult: 'not_detected',
-            expectedTestDate: '2018-08-01 11:38',
-            expectedCartridgeSerial: messageDataSource.consumableSerial,
-            expectedOperator: messageDataSource.senderOperator,
-            deviceTypeExternalId: 'CepheidGeneXpert',
-            resultData: `{"resultText":"MTB DÉTECTÉ BAS|Rif Resistance NON DÉTECTÉ"}`,
-          },
-          {
-            assayExternalId: 'GxMtbRif',
-            resultCategory1ExternalId: 'Detected',
-            resultCategory2ExternalId: 'NotDetected',
-            expectedMtbResult: 'detected',
-            expectedMtbGrade: 'high',
-            expectedRifResult: 'not_detected',
-            expectedTestDate: '2018-08-01 11:38',
-            expectedCartridgeSerial: messageDataSource.consumableSerial,
-            expectedOperator: messageDataSource.senderOperator,
-            deviceTypeExternalId: 'CepheidGeneXpert',
-            resultData: `{"resultText":"MTB DÉTECTÉ ÉLEVÉ|Rif Resistance NON DÉTECTÉ"}`,
-          },
-          {
-            assayExternalId: 'GxMtbRif',
-            resultCategory1ExternalId: 'Detected',
-            resultCategory2ExternalId: 'NotDetected',
-            expectedMtbResult: 'detected',
-            expectedMtbGrade: 'very_low',
-            expectedRifResult: 'not_detected',
-            expectedTestDate: '2018-08-01 11:38',
-            expectedCartridgeSerial: messageDataSource.consumableSerial,
-            expectedOperator: messageDataSource.senderOperator,
-            deviceTypeExternalId: 'CepheidGeneXpert',
-            resultData: `{"resultText":"MTB DÉTECTÉ TRÈS BAS|Rif Resistance INDÉTERMINÉ"}`,
+            resultData: JSON.stringify({
+              customFieldData: [
+                {
+                  label: "Patient's Email Address",
+                  value: 'isolate@history.geocities.com',
+                },
+              ],
+              dateReleased: '2018-06-03 08:13',
+              examiner: 'Bill Visagie',
+            }),
           },
         ]
         await Promise.each(useCases, async useCase => {
@@ -1815,7 +1856,7 @@ describe('stringTemplate', () => {
           const resultSample = {
             id: dataSource.sampleExternalId,
             originSite: {
-              id: dataSource.sampleOriginSiteId,
+              id: dataSource.sampleOriginSiteExternalId,
             },
             collectedOn: dataSource.sampleCollectedOn,
             data: dataSource.sampleData
@@ -1864,7 +1905,18 @@ describe('stringTemplate', () => {
               `/MIDDLE_NAME/${encodeURIComponent(
                 resultPatientData.middleInitialOrName || 'NULL'
               )}` +
-              `/AGE/${resultPatientData.age || 'NULL'}` +
+              `/AGE/${
+                _.isNil(resultPatientData.age) ||
+                _.isNil(
+                  resultPatientData.age
+                    .toString()
+                    .match(new RegExp(/^(\d*)(.*)$/, 'g'))
+                )
+                  ? 'NULL'
+                  : new RegExp(/^(\d*)(.*)$/, 'g').exec(
+                      resultPatientData.age.toString()
+                    )[1] || 'NULL'
+              }` +
               `/STREET_ADDRESS/${encodeURIComponent(
                 resultPatientData.address || 'NULL'
               )}` +
@@ -1894,7 +1946,106 @@ describe('stringTemplate', () => {
                   ) || {}
                 ).value || 'NULL'
               )}` +
-              `/REASON_FOR_EXAMINATION/NULL` +
+              `/REASON_FOR_EXAMINATION/${
+                resultPatientData.serialNumber
+                  ? resultPatientData.treatmentSchedule === 'Follow up'
+                    ? !resultPatientData.monthOfTreatment
+                      ? '938495'
+                      : resultPatientData.monthOfTreatment.match(
+                          new RegExp(
+                            /^\s*([1-3]([0-9])?|[1-9]|40)(st|nd|rd|th|St|Nd|Rd|Th|ST|ND|RD|TH)?(\s*month?)?\s*$/,
+                            'g'
+                          )
+                        )
+                      ? {
+                          '1': '938496',
+                          '2': '938497',
+                          '3': '938498',
+                          '4': '938499',
+                          '5': '938500',
+                          '6': '938501',
+                          '7': '938502',
+                          '8': '938503',
+                          '9': '938504',
+                          '10': '938505',
+                          '11': '938506',
+                          '12': '938507',
+                          '13': '938508',
+                          '14': '938509',
+                          '15': '938510',
+                          '16': '938511',
+                          '17': '938512',
+                          '18': '938513',
+                          '19': '938514',
+                          '20': '938515',
+                          '21': '938516',
+                          '22': '938517',
+                          '23': '938518',
+                          '24': '938519',
+                          '25': '938520',
+                          '26': '938521',
+                          '27': '938522',
+                          '28': '938523',
+                          '29': '938524',
+                          '30': '938525',
+                          '31': '938526',
+                          '32': '938558',
+                          '33': '938559',
+                          '34': '938560',
+                          '35': '938561',
+                          '36': '938562',
+                          '37': '938677',
+                          '38': '938730',
+                          '39': '938731',
+                          '40': '938732',
+                        }[
+                          new RegExp(
+                            /^\s*([1-3]([0-9])?|[1-9]|40)(st|nd|rd|th|St|Nd|Rd|Th|ST|ND|RD|TH)?(\s*month?)?\s*$/,
+                            'g'
+                          ).exec(resultPatientData.monthOfTreatment)[1]
+                        ] || 'NULL'
+                      : resultPatientData.monthOfTreatment.match(
+                          new RegExp(
+                            /^\s*(PT)?([1-4])(st|nd|rd|th|St|Nd|Rd|Th|ST|ND|RD|TH)?(\s*POST\s*)?(\s*TX\s*)?(\s*month|MONTH|Month\s*)?\s*$/,
+                            'g'
+                          )
+                        )
+                      ? {
+                          '1': '938563',
+                          '2': '938564',
+                          '3': '938565',
+                          '4': '938566',
+                        }[
+                          new RegExp(
+                            /^\s*(PT)?([1-4])(st|nd|rd|th|St|Nd|Rd|Th|ST|ND|RD|TH)?(\s*POST\s*)?(\s*TX\s*)?(\s*month|MONTH|Month\s*)?\s*$/,
+                            'g'
+                          ).exec(resultPatientData.monthOfTreatment)[2]
+                        ] || 'NULL'
+                      : 'NULL'
+                    : resultPatientData.treatmentSchedule === 'Post Treatment'
+                    ? resultPatientData.monthOfTreatment.match(
+                        new RegExp(
+                          /^\s*(PT)?([1-4])(st|nd|rd|th|St|Nd|Rd|Th|ST|ND|RD|TH)?(\s*POST\s*)?(\s*TX\s*)?(\s*month|MONTH|Month\s*)?\s*$/,
+                          'g'
+                        )
+                      )
+                      ? {
+                          '1': '938563',
+                          '2': '938564',
+                          '3': '938565',
+                          '4': '938566',
+                        }[
+                          new RegExp(
+                            /^\s*(PT)?([1-4])(st|nd|rd|th|St|Nd|Rd|Th|ST|ND|RD|TH)?(\s*POST\s*)?(\s*TX\s*)?(\s*month|MONTH|Month\s*)?\s*$/,
+                            'g'
+                          ).exec(resultPatientData.monthOfTreatment)[2]
+                        ] || 'NULL'
+                      : 'NULL'
+                    : 'NULL'
+                  : { DIAGNOSIS: '938492', BASELINE: '938493' }[
+                      resultPatientData.treatmentSchedule
+                    ] || 'NULL'
+              }` +
               `/REGISTRATION_GROUP/${{
                 NEW: '938610',
                 RELAPSE: '938611',

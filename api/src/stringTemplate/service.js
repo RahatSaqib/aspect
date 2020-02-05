@@ -153,10 +153,9 @@ async function getBaseDataSource(data) {
       lastPingOn: d.deviceLastPingOn,
     },
     result: {
-      data: d.resultData == null ? {} : JSON.parse(d.resultData),
-      formData: d.resultFormData == null ? {} : JSON.parse(d.resultFormData),
-      patient:
-        d.resultPatientData == null ? {} : JSON.parse(d.resultPatientData),
+      data: d.resultData ? JSON.parse(d.resultData) : {},
+      formData: d.resultFormData ? JSON.parse(d.resultFormData) : {},
+      patient: d.resultPatientData ? JSON.parse(d.resultPatientData) : {},
       startedOn: d.resultStartedOn,
       endedOn: d.resultEndedOn,
       notes: d.resultNotes,
@@ -172,12 +171,13 @@ async function getBaseDataSource(data) {
       },
       sample: {
         id: d.sampleExternalId,
-        // TODO: Add Sample Origin Site, Collection Date and Data Here, The ITIS Webhook Notification Needs This
-        //  originSite: {
-        //    id: ...
-        //  },
-        //  collectedOn: ...
-        //  data: d.sampleData == null ? {} : JSON.parse(d.sampleData),
+        data: d.sampleData ? JSON.parse(d.sampleData) : {},
+        originSite: {
+          id: d.sampleOriginSiteExternalId,
+        },
+        collectedOn: d.sampleCollectedOn,
+        // TODO: Add data JSON field to Sample table to include Assay specific sample details duch as type, appearance, volume, repeat collection
+        // TODO: Add Sample Origin Site External ID, Collection Date and Data To Base Query, The ITIS Webhook Notification Needs This
       },
       category1: {
         id: d.resultCategory1ExternalId,
@@ -193,7 +193,7 @@ async function getBaseDataSource(data) {
     issue: {
       createdOn: d.issueCreatedOn,
       dueOn: d.issueDueOn,
-      data: d.issueData == null ? {} : JSON.parse(d.issueData),
+      data: d.issueData ? JSON.parse(d.issueData) : {},
     },
     notification: {
       type: d.notificationTypeName,
