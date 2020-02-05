@@ -1,0 +1,193 @@
+{
+  "data": [
+    {
+      "assays": ["GxMtbRif", "GxMtbRifUltra"],
+      "type": "treatment",
+      "name": "DSTB - 2RHZE",
+      "externalId": "dstb-2rhze",
+      "i18nKey": "dstb-2rhze"
+    },
+    {
+      "assays": ["GxMtbRif", "GxMtbRifUltra"],
+      "type": "treatment",
+      "name": "DSTB - 4RH",
+      "externalId": "dstb-4rh",
+      "i18nKey": "dstb-4rh"
+    },
+    {
+      "assays": ["GxMtbRif", "GxMtbRifUltra"],
+      "type": "treatment",
+      "name": "DRTB - Bedaquiline Based shorter regimen",
+      "externalId": "drtb-bbsr",
+      "i18nKey": "drtb-bbsr"
+    },
+    {
+      "assays": ["GxMtbRif", "GxMtbRifUltra"],
+      "type": "treatment",
+      "name": "DRTB - Injection Based shorter regimen",
+      "externalId": "drtb-ibsr",
+      "i18nKey": "drtb-ibsr"
+    },
+    {
+      "assays": ["GxMtbRif", "GxMtbRifUltra"],
+      "type": "treatment",
+      "name": "DRTB - Long Oral MDT-TB regimen and Pre XDR-TB",
+      "externalId": "drtb-lomr",
+      "i18nKey": "drtb-lomr"
+    },
+    {
+      "assays": ["GxMtbRif", "GxMtbRifUltra"],
+      "type": "treatment",
+      "name": "DRTB - Pre XDR-TB (RES FQ) regimen/XDR-TB",
+      "externalId": "drtb-prexdr",
+      "i18nKey": "drtb-prexdr"
+    },
+    {
+      "assays": ["GxMtbRif", "GxMtbRifUltra"],
+      "type": "treatment",
+      "name": "DRTB - Beyond XDR-TB (Individualized)",
+      "externalId": "drtb-bxdr",
+      "i18nKey": "drtb-bxdr"
+    },
+    {
+      "assays": ["GxMtbRif", "GxMtbRifUltra"],
+      "type": "treatment",
+      "name": "Regimen 1: 2HRZE/4HR",
+      "externalId": "reg1hrze4hr",
+      "i18nKey": "reg1hrze4hr"
+    },
+    {
+      "assays": ["GxMtbRif", "GxMtbRifUltra"],
+      "type": "treatment",
+      "name": "Regimen 2: 2HRZE/10HR",
+      "externalId": "2hrze10hr",
+      "i18nKey": "2hrze10hr"
+    },
+    {
+      "assays": ["GxMtbRif", "GxMtbRifUltra"],
+      "type": "treatment",
+      "name": "Regimen 3: SSTR",
+      "externalId": "sst",
+      "i18nKey": "sst"
+    },
+    {
+      "assays": ["GxMtbRif", "GxMtbRifUltra"],
+      "type": "treatment",
+      "name": "Regimen 4: SLOR with FQ-S",
+      "externalId": "swfqs",
+      "i18nKey": "swfqs"
+    },
+    {
+      "assays": ["GxMtbRif", "GxMtbRifUltra"],
+      "type": "treatment",
+      "name": "Regimen 5: SLOR with FQ-R",
+      "externalId": "swfqr",
+      "i18nKey": "swfqr"
+    },
+    {
+      "assays": ["GxMtbRif", "GxMtbRifUltra"],
+      "type": "treatment",
+      "name": "ITR: Individualized Treatment Regimen",
+      "externalId": "itrr",
+      "i18nKey": "itrr"
+    },
+    {
+      "assays": ["GxMtbRif", "GxMtbRifUltra"],
+      "type": "treatment",
+      "name": "Regimen 6: FQ susceptible MDR-TB (__yrs; pedia)",
+      "externalId": "fsmdr-tb",
+      "i18nKey": "fsmdr-tb"
+    },
+    {
+      "assays": ["GxMtbRif", "GxMtbRifUltra"],
+      "type": "treatment",
+      "name": "Regimen 7: FQ resistant MDR-TB (__yrs; pedia)",
+      "externalId": "fr-mdr",
+      "i18nKey": "fr-mdr"
+    },
+    {
+      "assays": ["abbottM2000PlasmaHivVL", "abbottM2000DBSHivVL", "GxHiv1Vl", "QHivVL", "ReporterHivVL", "assayAlereQHiv12VLPlasma"],
+      "type": "treatment",
+      "name": "Request repeat VL",
+      "externalId": "rrvl",
+      "i18nKey": "rrvl"
+    },
+    {
+      "assays": ["abbottM2000PlasmaHivVL", "abbottM2000DBSHivVL", "GxHiv1Vl", "QHivVL", "ReporterHivVL", "assayAlereQHiv12VLPlasma"],
+      "type": "treatment",
+      "name": "Initiate advanced adherence counselling",
+      "externalId": "iaac",
+      "i18nKey": "iaac"
+    },
+    {
+      "assays": ["abbottM2000PlasmaHivVL", "abbottM2000DBSHivVL", "GxHiv1Vl", "QHivVL", "ReporterHivVL", "assayAlereQHiv12VLPlasma"],
+      "type": "treatment",
+      "name": "Switch to 2nd or 3rd line regime",
+      "externalId": "st2o3lr",
+      "i18nKey": "st2o3lr"
+    },
+    {
+      "assays": ["abbottM2000PlasmaHivVL", "abbottM2000DBSHivVL", "GxHiv1Vl", "QHivVL", "ReporterHivVL", "assayAlereQHiv12VLPlasma"],
+      "type": "treatment",
+      "name": "Maintain current regime",
+      "externalId": "mcr",
+      "i18nKey": "mcr"
+    },
+    {
+      "assays": [],
+      "type": "outcome",
+      "name": "Cured",
+      "externalId": "cured",
+      "i18nKey": "cured"
+    },
+    {
+      "assays": [],
+      "type": "outcome",
+      "name": "Died",
+      "externalId": "died",
+      "i18nKey": "died"
+    },
+    {
+      "assays": [],
+      "type": "outcome",
+      "name": "Treatment Completed",
+      "externalId": "tc",
+      "i18nKey": "tc"
+    },
+    {
+      "assays": [],
+      "type": "outcome",
+      "name": "Treatment Failed",
+      "externalId": "tf",
+      "i18nKey": "tf"
+    },
+    {
+      "assays": [],
+      "type": "outcome",
+      "name": "Lost to Follow-up",
+      "externalId": "ltfu",
+      "i18nKey": "ltfu"
+    },
+    {
+      "assays": [],
+      "type": "outcome",
+      "name": "Not Evaluated",
+      "externalId": "noe",
+      "i18nKey": "noe"
+    },
+    {
+      "assays": [],
+      "type": "outcome",
+      "name": "Moved to another facility",
+      "externalId": "mtaf",
+      "i18nKey": "mtaf"
+    },
+    {
+      "assays": [],
+      "type": "outcome",
+      "name": "Treatment Adjusted",
+      "externalId": "tra",
+      "i18nKey": "tra"
+    }
+  ]
+}
