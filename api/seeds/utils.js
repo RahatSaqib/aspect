@@ -15,6 +15,7 @@ const tables = [
   'MessageSeverity',
   'ResultCategory',
   'ResultSource',
+  'ResultStatus',
   'ResultType',
   'ResultWorkflowStatus',
   'SampleType',
