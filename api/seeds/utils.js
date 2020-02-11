@@ -623,10 +623,10 @@ async function addFollowUps(knex, partnerIds, { data }) {
   }
 }
 
-async function removeFollowUps(knex, partnerIds) {
+async function removeFollowUps(knex, partnerIds, externalId = 'moved') {
   const followUp = await knex('FollowUp')
     .select('id')
-    .where('externalId', 'moved')
+    .where('externalId', externalId)
     .first()
   if (followUp) {
     for (const partnerId of partnerIds) {
