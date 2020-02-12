@@ -112,6 +112,15 @@ function configureOptional(config) {
       authKey: checkTbAppWebApiAuthKey,
     }
   }
+
+  const philippinesITISWebApiUrl = process.env['webhook.itis.url']
+  const philippinesITISSystemKey = process.env['webhook.itis.systemKey']
+  if (philippinesITISWebApiUrl && philippinesITISSystemKey) {
+    config.webhook.itis = {
+      url: philippinesITISWebApiUrl,
+      systemKey: philippinesITISSystemKey,
+    }
+  }
 }
 
 function getBooleanOrDefault(key, defaultValue) {
