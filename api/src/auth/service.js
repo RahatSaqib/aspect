@@ -283,6 +283,17 @@ async function getFeatures(id, name, partnerId) {
   return modules
 }
 
+async function getJobFunctions(id, name, partnerId) {
+  return query('Get job functions for user and partner')
+    .from('Person as p')
+    .innerJoin('Job as j', 'p.id', 'j.personId') // 'j.jobFunctionId', 'jf.id')
+    .innerJoin('JobFunction as jf', 'j.jobFunctionId', 'jf.id')
+    .where({ 'p.userId': id, 'jf.partnerId': partnerId })
+    .orderBy(['jf.name'])
+    .distinct('jf.name')
+    .pluck('jf.name')
+}
+
 async function hasFeature(userId, partnerId, module) {
   const userFeature = await query('Get features for user and partner')
     .from('Feature as f')
@@ -761,6 +772,14 @@ async function lockedOutUser(userId, lockedOut) {
       lockedOut,
     })
 }
+
+async function getUserJobFunctions(request) {
+  const { auth } = request
+  const { id, name, partnerId } = await getUser(auth.credentials.name)
+  const jobFunctions = await getJobFunctions(id, name, partnerId)
+  return { ok: true, data: jobFunctions }
+}
+
 module.exports = {
   getUser,
   getUserByUserId,
@@ -778,4 +797,5 @@ module.exports = {
   revokeUsersToken,
   lockedOutUser,
   clientTypes,
+  getUserJobFunctions,
 }
