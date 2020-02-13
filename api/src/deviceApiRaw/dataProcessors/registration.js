@@ -5,6 +5,7 @@ const registeredDataProcessors = [
   require('./philippinesNtrl'),
   require('./bdMgit'),
   require('./senaiteLims'),
+  require('./cobas'),
   require('./default'),
 ]
 
