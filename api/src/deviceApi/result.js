@@ -53,7 +53,8 @@ async function mergeResult(
       'g.countryId',
       's.geographyId',
       's.latitude',
-      's.longitude'
+      's.longitude',
+      'd.defaultReportableSiteId'
     )
 
   // Select ResultType if specified, otherwise Patient
@@ -154,6 +155,7 @@ async function mergeResult(
   }
 
   let sampleOriginSiteId = site.id
+  let reportableSiteId = site.defaultReportableSiteId || site.id
   const payloadOriginSiteId = _.get(payload, 'sample.originSite.id', false)
   if (payloadOriginSiteId) {
     const originSiteStateName = _.get(payload, 'sample.originSite.state')
@@ -287,6 +289,7 @@ async function mergeResult(
         })
     }
     sampleOriginSiteId = sampleOriginSite.id
+    reportableSiteId = sampleOriginSite.id
   }
 
   if (sampleId == null && existingResult == null) {
@@ -454,7 +457,7 @@ async function mergeResult(
     ),
     updatedOn: now,
     createdOn: _.get(existingResult, 'createdOn', now),
-    reportableSiteId: sampleOriginSiteId,
+    reportableSiteId,
   }
 
   // Processed result contains result with additional fields
