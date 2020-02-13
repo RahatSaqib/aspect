@@ -413,6 +413,7 @@ async function seed(knex) {
           partnerId,
           geographyId,
           siteId,
+          defaultReportableSiteId: siteId,
           deviceTypeId: deviceTypeIdReporter,
           deviceStatusId: approvedDeviceStatusId,
           name: `${siteData.name} Reporter`,
@@ -514,6 +515,7 @@ async function seed(knex) {
               deviceData.partnerId = partnerId
               deviceData.geographyId = siteData.geographyId
               deviceData.siteId = siteData.id
+              deviceData.defaultReportableSiteId = siteData.id
               deviceData.deviceTypeId = await deviceTypeToId(
                 device.deviceTypeId
               )

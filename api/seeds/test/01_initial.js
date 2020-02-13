@@ -1555,6 +1555,7 @@ async function seed(knex) {
       partnerId: siteData.partnerId,
       geographyId: siteData.geographyId,
       siteId: siteData.id,
+      defaultReportableSiteId: siteDatas[i + 1] ? siteDatas[i + 1].id : null,
       deviceId: i === 0 ? routerId : null,
       createdOn: new Date(+now - 3 * i * millisInHour),
       updatedOn: new Date(+now - i * millisInHour),
