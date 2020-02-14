@@ -25,6 +25,11 @@ class DefaultCOBAS extends SynchronousDataProcessor {
           .split('\n')[0]
           .split('|')[9]
           .toString()
+          .indexOf('cobas') === 0 ||
+        line
+          .split('\n')[0]
+          .split('|')[4]
+          .toString()
           .indexOf('cobas') === 0
       )
     } catch (ex) {
