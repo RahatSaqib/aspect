@@ -4219,6 +4219,7 @@ async function seed(knex) {
         partnerId: siteData.partnerId,
         geographyId: siteData.geographyId,
         siteId: siteData.id,
+        defaultReportableSiteId: i % 2 === 0 ? siteData.id : null,
         createdOn: new Date(+now - 3 * i * millisInHour),
         updatedOn: new Date(+now - i * millisInHour),
         lastPingOn: new Date(+now - (i * millisInHour) / 3),
@@ -4265,6 +4266,7 @@ async function seed(knex) {
         partnerId: siteData.partnerId,
         geographyId: siteData.geographyId,
         siteId: siteData.id,
+        defaultReportableSiteId: i % 2 === 0 ? siteData.id : null,
         // not all sites will have a router - we only added routers to some site
         deviceId: routerId || null,
         createdOn: new Date(+now - 3 * i * millisInHour),

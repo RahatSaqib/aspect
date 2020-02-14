@@ -1037,7 +1037,11 @@ class DefaultPhilippinesNtrl extends SynchronousDataProcessor {
       const site = await knex('Device as d')
         .join('Site as s', 'd.siteId', 's.id')
         .where('d.id', deviceId)
-        .first('s.*', 'd.name as deviceName')
+        .first(
+          's.*',
+          'd.name as deviceName',
+          'd.defaultReportableSiteId as deviceDefaultReportableSiteId'
+        )
 
       this.messageContext.dispatch(deviceSeen(deviceId))
 
@@ -1105,6 +1109,8 @@ class DefaultPhilippinesNtrl extends SynchronousDataProcessor {
         'yy'
       )}-${payload['Serial Number']}`
       const sampleOriginSiteId = originSite ? originSite.id : null
+      const reportableSiteId =
+        sampleOriginSiteId || site.deviceDefaultReportableSiteId || site.id
       const sampleCollectionDateKeys = [
         'Date Collected 1',
         'Date Collected 2',
@@ -1303,7 +1309,7 @@ class DefaultPhilippinesNtrl extends SynchronousDataProcessor {
             encodedResult: dstResultData,
           }),
           senderOperator: dstResultData.labTech,
-          reportableSiteId: samples[0].originSiteId,
+          reportableSiteId,
         }
         const resultCategory1Id =
           {
@@ -1443,7 +1449,7 @@ class DefaultPhilippinesNtrl extends SynchronousDataProcessor {
             externalId,
             assayId: assayCultureId,
             sampleId: cultureSample.id,
-            reportableSiteId: cultureSample.originSiteId,
+            reportableSiteId,
             startedOn: cultureResultData.dateReleased,
             endedOn: cultureResultData.dateReleased,
             resultData: JSON.stringify({
@@ -1540,7 +1546,7 @@ class DefaultPhilippinesNtrl extends SynchronousDataProcessor {
           externalId,
           assayId: assayLpaId,
           sampleId: samples[0].id,
-          reportableSiteId: samples[0].originSiteId,
+          reportableSiteId,
           startedOn: lpaResultData.dateReleased,
           endedOn: lpaResultData.dateReleased,
           resultData: JSON.stringify({
@@ -1666,7 +1672,7 @@ class DefaultPhilippinesNtrl extends SynchronousDataProcessor {
             externalId,
             assayId: assaySmearId,
             sampleId: smearSample.id,
-            reportableSiteId: smearSample.originSiteId,
+            reportableSiteId,
             startedOn: smearResultData.dateReleased,
             endedOn: smearResultData.dateReleased,
             resultData: JSON.stringify({
@@ -1788,7 +1794,7 @@ class DefaultPhilippinesNtrl extends SynchronousDataProcessor {
           externalId,
           assayId: assayGeneXpertMtbRifId,
           sampleId: samples[0].id,
-          reportableSiteId: samples[0].originSiteId,
+          reportableSiteId,
           startedOn: geneXpertResultData.processingDate,
           endedOn: geneXpertResultData.processingDate,
           resultData: JSON.stringify({

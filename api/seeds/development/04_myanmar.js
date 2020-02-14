@@ -520,6 +520,7 @@ async function seed(knex) {
             partnerId,
             geographyId: siteGeographyId,
             siteId,
+            defaultReportableSiteId: siteId,
             deviceTypeId: deviceTypes.CepheidGeneXpert.id,
             deviceStatusId: await deviceStatusToId('approved'),
             name: deviceSeed.name,
