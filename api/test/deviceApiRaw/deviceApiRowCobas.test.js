@@ -4,7 +4,7 @@ const DefaultCOBAS = require('../../src/deviceApiRaw/dataProcessors/cobas')
 
 const { assert } = chai
 
-describe.only('Device API Raw cobas Data Processor', () => {
+describe('Device API Raw cobas Data Processor', () => {
   const request = {
     payload: {
       header:
