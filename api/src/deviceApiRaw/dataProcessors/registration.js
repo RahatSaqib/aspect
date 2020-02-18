@@ -3,8 +3,9 @@ const Promise = require('bluebird')
 const registeredDataProcessors = [
   require('./abbottM2000'),
   require('./philippinesNtrl'),
-  require('./bdMgit'),
   require('./senaiteLims'),
+  require('./cobas'),
+  require('./bdMgit'),
   require('./default'),
 ]
 
