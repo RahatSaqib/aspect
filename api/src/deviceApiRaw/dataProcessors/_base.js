@@ -171,11 +171,38 @@ class DataProcessor {
         'deviceApiRaw',
         this.listenerEndpoints
       )
-      // TODO: Find out how to check that the queue has been bound to the topic before dispatching DEVICE_RAW_MESSAGE_POSTED
-      await Promise.delay(100)
-      this.messageContext.deviceRawMessagePosted(this.id)
+      // Wait for consumers, for this DataProcessor instance, to be registered on the queue's channel
+      const getDataProcessorConsumersListeningToQueue = () =>
+        Object.values(this.listenerEndpoints[0].actions).map(
+          action =>
+            this.messageContext.queue.channel.consumers[action.consumerTag]
+        )
+      let ensureConsumers = getDataProcessorConsumersListeningToQueue()
+      await Promise.each(_.range(1, 100), async waitMs => {
+        if (_.some(ensureConsumers, consumer => _.isNil(consumer))) {
+          await Promise.delay(waitMs)
+          ensureConsumers = getDataProcessorConsumersListeningToQueue()
+          return Promise.resolve(waitMs)
+        }
+        return Promise.reject(new Error('subscribed'))
+      })
+        .then(waitMsArray => {
+          throw new Error(
+            `${this.name} ${this.id} still unsubscribed after ${_.sum(
+              waitMsArray
+            )} milliseconds`
+          )
+        })
+        .catch(err => {
+          if (err.message === 'subscribed') {
+            this.messageContext.deviceRawMessagePosted(this.id)
+          } else {
+            throw err
+          }
+        })
     } catch (error) {
-      this.messageContext.deviceRawMessageError(this.id, error)
+      await this.onDeviceRawMessageError()
+      throw error
     }
   }
 
