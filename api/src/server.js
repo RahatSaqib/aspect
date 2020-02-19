@@ -109,15 +109,14 @@ const messageQueuePlugin = {
         return queue
       })
       .then(queue => {
-        return continueUnprocessedRawData(queue)
-          .then(() => {
-            server.ext('onPreHandler', (request, h) => {
-              request.plugins.messageContext = queue.createMessageContext(
-                'aspect_request'
-              )
-              return h.continue
-            })
+        return continueUnprocessedRawData(queue).then(() => {
+          server.ext('onPreHandler', (request, h) => {
+            request.plugins.messageContext = queue.createMessageContext(
+              'aspect_request'
+            )
+            return h.continue
           })
+        })
       })
       .catch(err => {
         console.error(err) // eslint-disable-line no-console
@@ -298,7 +297,6 @@ const start = async () => {
           // TODO ZIMBABWE: Try create a test that would have blocked the queue if purgeOnStart hadn't been set
           // TODO ZIMBABWE: Test if files can be uploaded to RAW device API
 
-          // TODO Raw Device API: Wait for a data processor topic to be created on the message queue before dispatching messages to it.
           // TODO Raw Device API: Delete topics on the message queue that were completely processed when server starts
           // TODO Raw Device API: Archive records from the DeviceApiRaw table once they have been processed
           resolve()
@@ -317,8 +315,12 @@ const start = async () => {
   // =======================
   // start the server ======
   // =======================
-  await server.start()
-  console.log(`Magic happens at http://localhost:${port}`) // eslint-disable-line no-console
+  try {
+    await server.start()
+    console.log(`Magic happens at http://localhost:${port}`) // eslint-disable-line no-console
+  } catch (err) {
+    console.error(err)
+  }
 }
 
 start()

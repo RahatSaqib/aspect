@@ -120,7 +120,6 @@ class DataProcessor {
         allowInfiniteListeners: true,
         bindingKey: `${this.id}`,
       }
-      // TODO: Set message expiry on these queues so that they aren't blocked
       this.listenerEndpoints = [
         {
           actions: {
@@ -169,7 +168,8 @@ class DataProcessor {
 
       this.messageContext.queue.subscribe(
         'deviceApiRaw',
-        this.listenerEndpoints
+        this.listenerEndpoints,
+        this.timeoutMilliseconds
       )
       // Wait for consumers, for this DataProcessor instance, to be registered on the queue's channel
       const getDataProcessorConsumersListeningToQueue = () =>
@@ -275,6 +275,7 @@ class DataProcessor {
   async onDeviceRawMessageProcessed() {
     await this.updateDeviceApiRawStatus('Processed')
     // TODO: Archive message?
+    await this.unsubscribe()
   }
 
   async onDeviceRawMessageError() {
@@ -285,17 +286,44 @@ class DataProcessor {
 
   // TODO: FIX: When the server is terminated, running data processors don't call this, leaving messages on the queue and blocking future data processors.
   async unsubscribe() {
-    _.each(this.listenerEndpoints, (listenerEndpoint, index) => {
-      _.each(listenerEndpoint.actions, (messageHandler, type) => {
-        const queueName = `aspect_deviceApiRaw_${index}_actions_${type}`
-        const topic = `aspect.actions.${type}.${messageHandler.bindingKey}`
-        this.messageContext.queue.unsubscribe(
-          queueName,
-          topic,
-          messageHandler.consumerTag
-        )
-      })
-    })
+    await Promise.each(
+      this.listenerEndpoints,
+      async (listenerEndpoint, index) =>
+        Promise.each(listenerEndpoint.actions, async (messageHandler, type) => {
+          const queueName = `aspect_deviceApiRaw_${index}_actions_${type}`
+          const topic = `aspect.actions.${type}.${messageHandler.bindingKey}`
+          this.messageContext.queue.unsubscribe(
+            queueName,
+            topic,
+            messageHandler.consumerTag
+          )
+          await Promise.each(_.range(1, 100), async waitMs => {
+            if (
+              !_.isNil(
+                this.messageContext.queue.channel.consumers[
+                  messageHandler.consumerTag
+                ]
+              )
+            ) {
+              await Promise.delay(waitMs)
+              return Promise.resolve(waitMs)
+            }
+            return Promise.reject(new Error('unsubscribed'))
+          })
+            .then(waitMsArray => {
+              throw new Error(
+                `${this.name} ${this.id} still subscribed to ${
+                  messageHandler.consumerTag
+                } after ${_.sum(waitMsArray)} milliseconds`
+              )
+            })
+            .catch(err => {
+              if (err.message !== 'unsubscribed') {
+                throw err
+              }
+            })
+        })
+    )
   }
 }
 
