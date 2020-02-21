@@ -1655,7 +1655,8 @@ async function seed(knex) {
     const sample = samples[i % samples.length]
     const randomDate = calculateDateForResult(i, resultHcvNumber, 6000)
 
-    const result = possibleResults[_.random(4)]
+    // make sure that at least first 2 results are 'reportable'
+    const result = possibleResults[i <= 1 ? i : _.random(4)]
     let copies = 3200
     let log = 5
     if (result === possibleResults[0]) {

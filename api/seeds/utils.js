@@ -2,7 +2,10 @@ const Promise = require('bluebird')
 const _ = require('lodash')
 const { readJson } = require('fs-extra')
 const path = require('path')
-const { allFeatureToId } = require('../src/shared/dictionary')
+const {
+  allFeatureToId,
+  allResultCategoryToId,
+} = require('../src/shared/dictionary')
 
 const tables = [
   'DeviceApiRawStatus',
@@ -2424,6 +2427,22 @@ async function initDataFromFixture(knex, tableName, keyColumn = 'externalId') {
   return knex(tableName).insert(itemsToInsert)
 }
 
+async function updateReportableInResultCategoryAssay(knex) {
+  // result categories with { reportable: 0 }
+  const resultCategory = await allResultCategoryToId()
+  const resultCategoryIds = [
+    resultCategory.Invalid,
+    resultCategory.NoResult,
+    resultCategory.Error,
+    resultCategory.Rejected,
+    resultCategory.Unknown,
+  ]
+
+  await knex('ResultCategoryAssay')
+    .update({ reportable: 0 })
+    .whereIn('resultCategoryId', resultCategoryIds)
+}
+
 module.exports = {
   seed,
   seedTable,
@@ -2474,4 +2493,5 @@ module.exports = {
   removeFollowUps,
 
   initDataFromFixture,
+  updateReportableInResultCategoryAssay,
 }

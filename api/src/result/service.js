@@ -346,6 +346,22 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
   const dataConstraints = await getConstraints(auth.credentials)
 
   const resultQuery = getBaseQueryForResults()
+    .leftJoin('ResultCategoryAssay as rtas', function() {
+      this.on('r.assayId', 'rtas.assayId').andOn(
+        'r.resultCategory1',
+        'rtas.resultCategoryId'
+      )
+    })
+    .leftJoin('ResultCategoryAssay as rtas2', function() {
+      this.on('r.assayId', 'rtas2.assayId').andOn(
+        'r.resultCategory2',
+        'rtas2.resultCategoryId'
+      )
+    })
+    // only results which are reportable for any ResultCategory
+    .where(builder =>
+      builder.where('rtas.reportable', 1).orWhere('rtas2.reportable', 1)
+    )
     .whereIn('rs.externalId', [
       'Deliverable',
       'Delivered',
@@ -805,7 +821,7 @@ async function getResultByResultId(request, fields = SELECT_SHOW_FIELDS) {
     })
     .leftJoin('ResultCategoryAssay as rtas2', function() {
       this.on('r.assayId', 'rtas2.assayId').andOn(
-        'r.resultCategory1',
+        'r.resultCategory2',
         'rtas2.resultCategoryId'
       )
     })
@@ -2126,7 +2142,7 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
     })
     .leftJoin('ResultCategoryAssay as rtas2', function() {
       this.on('r.assayId', 'rtas2.assayId').andOn(
-        'r.resultCategory1',
+        'r.resultCategory2',
         'rtas2.resultCategoryId'
       )
     })
