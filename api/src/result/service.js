@@ -358,7 +358,7 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
         'rtas2.resultCategoryId'
       )
     })
-    // only results which are reportable for any ResultCategory
+    // only results which are reportable for either ResultCategory
     .where(builder =>
       builder.where('rtas.reportable', 1).orWhere('rtas2.reportable', 1)
     )
