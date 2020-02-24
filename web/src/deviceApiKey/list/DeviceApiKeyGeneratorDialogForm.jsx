@@ -2,7 +2,14 @@
 import _fp from 'lodash/fp'
 import PropTypes from 'prop-types'
 import React from 'react'
-import { compose, pure, setPropTypes } from 'recompose'
+import {
+  compose,
+  withStateHandlers,
+  pure,
+  setPropTypes,
+  lifecycle,
+} from 'recompose'
+import { connect } from 'react-redux'
 import { defineMessages, intlShape } from 'react-intl'
 
 // Material-UI
@@ -45,10 +52,47 @@ const messages = defineMessages({
     id: 'pages.DeviceApiKeyList.siteId',
     defaultMessage: 'Site',
   },
+  countryRequired: {
+    id: 'pages.DeviceApiKeyList.countryRequired',
+    defaultMessage: 'Please select a country',
+  },
+  partnerRequired: {
+    id: 'pages.DeviceApiKeyList.partnerRequired',
+    defaultMessage: 'Please select a partner',
+  },
+})
+
+const getInitialValues = (partnerList, countries) => ({
+  count: 1,
+  partnerId:
+    partnerList && partnerList.size > 0 ? partnerList.first().get('id') : null,
+  countryId:
+    countries && countries.items.size > 0
+      ? countries.items.first().get('id')
+      : null,
 })
 
 const enhance = compose(
   pure,
+  connect((state, props) => {
+    const countries = state.geography.countriesForLocationSelector
+    const partnerList = state.jobs.partnersAndJobFunctionsForSelectList.partners
+    return {
+      partnerList,
+      countries,
+    }
+  }),
+  lifecycle({
+    componentWillMount() {
+      const { partnerList, countries } = this.props
+
+      const onChange = values => this.setState({ values })
+      this.setState({
+        onChange,
+        values: getInitialValues(partnerList, countries),
+      })
+    },
+  }),
   setPropTypes({
     onCancel: PropTypes.func,
     isDialogOpen: PropTypes.bool.isRequired,
@@ -77,8 +121,16 @@ const enhance = compose(
         valueFromChangeEvent: _fp.identity,
       },
     ],
-    validate() {
+    validate({ countryId, partnerId }, { intl }) {
       const errors = {}
+      if (!countryId) {
+        errors.countryId = intl.formatMessage(messages.countryRequired)
+      }
+
+      if (!partnerId) {
+        errors.partnerId = intl.formatMessage(messages.partnerRequired)
+      }
+
       return errors
     },
   })
@@ -110,7 +162,7 @@ export function DeviceApiKeyGeneratorDialogForm({
       {intl.formatMessage(messages.cancel)}
     </Button>,
     <Button
-      disabled={form.pristine || !form.valid || form.submitting}
+      disabled={!form.valid || form.submitting}
       onClick={handleSubmit}
       type="button"
       color="primary"
