@@ -9,6 +9,7 @@ import {
   setPropTypes,
   lifecycle,
 } from 'recompose'
+import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { defineMessages, intlShape } from 'react-intl'
 
@@ -22,6 +23,12 @@ import CountrySelectField from '../../filter/geography/CountrySelectField'
 import PartnerSelectField from '../../filter/partner/PartnerSelectField'
 import SiteSelectField from '../../filter/resource/SiteSelectField'
 import AspectDialog from '../../components/shared/AspectDialog'
+
+import {
+  fetchCountriesForLocationSelector,
+  LazyLoadItems,
+} from '../../geography/GeographyRedux'
+import { fetchPartnersAndJobFunctionsForSelectList } from '../../job/JobRedux'
 
 const messages = defineMessages({
   cancel: {
@@ -74,16 +81,23 @@ const getInitialValues = (partnerList, countries) => ({
 
 const enhance = compose(
   pure,
-  connect((state, props) => {
-    const countries = state.geography.countriesForLocationSelector
-    const partnerList = state.jobs.partnersAndJobFunctionsForSelectList.partners
-    return {
-      partnerList,
-      countries,
-    }
-  }),
+  connect(
+    (state, props) => {
+      const countries = state.geography.countriesForLocationSelector
+      const partnerList =
+        state.jobs.partnersAndJobFunctionsForSelectList.partners
+      return {
+        partnerList,
+        countries,
+      }
+    },
+    bindActionCreators.bind(null, {
+      fetchCountriesForLocationSelector,
+      fetchPartnersAndJobFunctionsForSelectList,
+    })
+  ),
   lifecycle({
-    componentWillMount() {
+    componentWillReceiveProps() {
       const { partnerList, countries } = this.props
 
       const onChange = values => this.setState({ values })
@@ -92,12 +106,23 @@ const enhance = compose(
         values: getInitialValues(partnerList, countries),
       })
     },
+    componentDidMount() {
+      const { countries, partnerList } = this.props
+      if (!countries || countries.items.size === 0) {
+        this.props.fetchCountriesForLocationSelector(countries)
+      }
+      if (!partnerList || partnerList.size === 0) {
+        this.props.fetchPartnersAndJobFunctionsForSelectList()
+      }
+    },
   }),
   setPropTypes({
     onCancel: PropTypes.func,
     isDialogOpen: PropTypes.bool.isRequired,
     values: PropTypes.object.isRequired,
     intl: intlShape.isRequired,
+    countries: PropTypes.objectOf(LazyLoadItems).isRequired,
+    fetchCountriesForLocationSelector: PropTypes.func.isRequired,
   }),
   recomposeForm({
     fields: [
