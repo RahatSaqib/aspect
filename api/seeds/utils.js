@@ -2436,11 +2436,13 @@ async function updateReportableInResultCategoryAssay(knex) {
     resultCategory.Error,
     resultCategory.Rejected,
     resultCategory.Unknown,
-  ]
+  ].filter(x => !!x)
 
-  await knex('ResultCategoryAssay')
-    .update({ reportable: 0 })
-    .whereIn('resultCategoryId', resultCategoryIds)
+  if (resultCategoryIds.length > 0) {
+    await knex('ResultCategoryAssay')
+      .update({ reportable: 0 })
+      .whereIn('resultCategoryId', resultCategoryIds)
+  }
 }
 
 module.exports = {
