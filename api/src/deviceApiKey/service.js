@@ -43,7 +43,6 @@ async function listDeviceApiKeys(request) {
       partner: 'p',
       geography: 'g',
       site: 's',
-      device: 'd',
     })
 
   // get total count for paging
