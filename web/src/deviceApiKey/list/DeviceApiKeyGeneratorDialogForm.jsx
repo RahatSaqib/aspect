@@ -74,7 +74,7 @@ const getInitialValues = (partnerList, countries) => ({
   partnerId:
     partnerList && partnerList.size > 0 ? partnerList.first().get('id') : null,
   countryId:
-    countries && countries.items.size > 0
+    countries && countries.items && countries.items.size > 0
       ? countries.items.first().get('id')
       : null,
 })
