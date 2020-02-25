@@ -72,6 +72,30 @@ async function listDeviceApiKeys(request) {
   return result
 }
 
+async function createDeviceApiKey(request) {
+  const { auth } = request
+  const now = new Date()
+  const user = await knex('Person as p')
+    .join('User as u', 'u.id', 'p.userId')
+    .where('u.name', auth.credentials.name)
+    .first('u.id', 'p.lastPartnerId as partnerId')
+  if (user == null || user.partnerId == null) {
+    return Boom.badRequest('Cannot find partner for user')
+  }
+
+  const apiKey = { token: randomToken() }
+  await knex('DeviceApiKey').insert({
+    token: apiKey.token,
+    revoked: 0,
+    partnerId: user.partnerId,
+    createdOn: now,
+    createdBy: user.id,
+    updatedOn: now,
+    updatedBy: user.id,
+  })
+  return apiKey
+}
+
 async function exportDeviceApiKeys(request) {
   const { query } = request
 
@@ -254,6 +278,7 @@ module.exports = {
   listDeviceApiKeys,
   exportDeviceApiKeys,
   generateDeviceApiKeys,
+  createDeviceApiKey,
   assignDeviceApiKeys,
   revokeDeviceApiKey,
 }

@@ -11,7 +11,7 @@ const {
 
 const { knex } = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
-const { groupToken, randomToken } = require('../deviceApi/apiKey')
+const { groupToken } = require('../deviceApi/apiKey')
 
 async function getDemoDevice(request) {
   const { auth, params } = request
@@ -58,31 +58,6 @@ async function getDemoDevice(request) {
   )
 
   return result
-}
-
-async function createDemoDeviceApiKey(request) {
-  // FIXME Remove demo device api key once key management UI/API available
-  const { auth } = request
-  const now = new Date()
-  const user = await knex('Person as p')
-    .join('User as u', 'u.id', 'p.userId')
-    .where('u.name', auth.credentials.name)
-    .first('u.id', 'p.lastPartnerId as partnerId')
-  if (user == null || user.partnerId == null) {
-    return Boom.badRequest('Cannot find partner for user')
-  }
-
-  const apiKey = { token: randomToken() }
-  await knex('DeviceApiKey').insert({
-    token: apiKey.token,
-    revoked: 0,
-    partnerId: user.partnerId,
-    createdOn: now,
-    createdBy: user.id,
-    updatedOn: now,
-    updatedBy: user.id,
-  })
-  return apiKey
 }
 
 async function getApiKey(deviceId, userConstraints) {
@@ -266,6 +241,5 @@ async function postDemoDeviceResult(request) {
 
 module.exports = {
   getDemoDevice,
-  createDemoDeviceApiKey,
   postDemoDeviceResult,
 }
