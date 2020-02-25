@@ -1649,14 +1649,14 @@ async function seed(knex) {
   }
 
   const resultDatas = []
-  _.map(_.range(devicesDaktari.length * 3), i => {
+  _.map(_.range(devicesDaktari.length * 4), i => {
     const device = devicesDaktari[i % siteDatas.length]
     const siteData = siteDatas.find(site => site.id === device.siteId)
     const sample = samples[i % samples.length]
     const randomDate = calculateDateForResult(i, resultHcvNumber, 6000)
 
-    // make sure that at least first 2 results are 'reportable'
-    const result = possibleResults[i <= 1 ? i : _.random(4)]
+    // make sure that at least first 4 results are 'reportable'
+    const result = possibleResults[i <= 3 ? i % 2 : _.random(4)]
     let copies = 3200
     let log = 5
     if (result === possibleResults[0]) {
