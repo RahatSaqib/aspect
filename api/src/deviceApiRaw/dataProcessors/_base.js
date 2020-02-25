@@ -289,39 +289,44 @@ class DataProcessor {
     await Promise.each(
       this.listenerEndpoints,
       async (listenerEndpoint, index) =>
-        Promise.each(listenerEndpoint.actions, async (messageHandler, type) => {
+        Promise.each(Object.keys(listenerEndpoint.actions), async type => {
+          const action = listenerEndpoint.actions[type]
           const queueName = `aspect_deviceApiRaw_${index}_actions_${type}`
-          const topic = `aspect.actions.${type}.${messageHandler.bindingKey}`
-          this.messageContext.queue.unsubscribe(
-            queueName,
-            topic,
-            messageHandler.consumerTag
-          )
-          await Promise.each(_.range(1, 100), async waitMs => {
-            if (
-              !_.isNil(
-                this.messageContext.queue.channel.consumers[
-                  messageHandler.consumerTag
-                ]
-              )
-            ) {
-              await Promise.delay(waitMs)
-              return Promise.resolve(waitMs)
-            }
-            return Promise.reject(new Error('unsubscribed'))
-          })
-            .then(waitMsArray => {
-              throw new Error(
-                `${this.name} ${this.id} still subscribed to ${
-                  messageHandler.consumerTag
-                } after ${_.sum(waitMsArray)} milliseconds`
-              )
-            })
-            .catch(err => {
-              if (err.message !== 'unsubscribed') {
-                throw err
+          const topic = `aspect.actions.${type}.${action.bindingKey}`
+          if (this.messageContext.queue.channel.consumers[action.consumerTag]) {
+            this.messageContext.queue.unsubscribe(
+              queueName,
+              topic,
+              action.consumerTag
+            )
+            await Promise.each(_.range(1, 100), async waitMs => {
+              if (
+                !_.isNil(
+                  this.messageContext.queue.channel.consumers[
+                    action.consumerTag
+                  ]
+                )
+              ) {
+                await Promise.delay(waitMs)
+                return Promise.resolve(waitMs)
               }
+              return Promise.reject(new Error('unsubscribed'))
             })
+              .then(waitMsArray => {
+                throw new Error(
+                  `${this.name} ${this.id} still subscribed to ${
+                    action.consumerTag
+                  } after ${_.sum(waitMsArray)} milliseconds`
+                )
+              })
+              .catch(err => {
+                if (err.message !== 'unsubscribed') {
+                  throw err
+                }
+              })
+          } else {
+            return Promise.resolve()
+          }
         })
     )
   }

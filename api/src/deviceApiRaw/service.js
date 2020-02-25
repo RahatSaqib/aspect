@@ -43,12 +43,14 @@ async function continueUnprocessedRawData(queue) {
   if (!_.isEmpty(readyDeviceApiRawRecords)) {
     // eslint-disable-next-line no-console
     console.log(
-      `Processing ${readyDeviceApiRawRecords.length} raw messages before starting web server.`
+      `Processing ${readyDeviceApiRawRecords.length} messages from the raw device API before starting web server.`
     )
   }
   await Promise.each(
     readyDeviceApiRawRecords,
     async readyDeviceApiRawRecord => {
+      // eslint-disable-next-line no-console
+      console.log(`ProcessingDeviceApiRaw ${readyDeviceApiRawRecord.id}.`)
       const messageContext = queue.createMessageContext('aspect_request')
       let requestText = readyDeviceApiRawRecord.rawData
       if (readyDeviceApiRawRecord.salt) {

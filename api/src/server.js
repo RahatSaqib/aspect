@@ -319,7 +319,7 @@ const start = async () => {
     await server.start()
     console.log(`Magic happens at http://localhost:${port}`) // eslint-disable-line no-console
   } catch (err) {
-    console.error(err)
+    console.error(err) // eslint-disable-line no-console
   }
 }
 
