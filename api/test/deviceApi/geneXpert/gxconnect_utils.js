@@ -299,7 +299,7 @@ class GxConnectApiTestContext {
 
   requestNewDeviceApiKey(clientAccessToken) {
     return this.server
-      .post('/api/demo/device/api-key')
+      .post('/api/deviceApiKey/api-key')
       .set('Authorization', `Bearer ${clientAccessToken}`)
       .then(res => {
         assert.equal(res.statusCode, 200)
