@@ -81,7 +81,7 @@ describe('deviceApiKey endpoints', () => {
     })
   })
 
-  describe.only('POST', () => {
+  describe('POST', () => {
     describe('/deviceApiKey/api-key', () => {
       let endpoint
       const expectedResponse = { value: 'Expected result' }
