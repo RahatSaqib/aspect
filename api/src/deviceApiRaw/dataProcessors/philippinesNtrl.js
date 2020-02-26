@@ -986,6 +986,10 @@ class DefaultPhilippinesNtrl extends SynchronousDataProcessor {
     ].every(expectedKey => payloadKeys.includes(expectedKey))
   }
 
+  async getResponse() {
+    return Promise.resolve(this.response)
+  }
+
   async processRequest() {
     const { request } = this
     const { auth, payload } = request
