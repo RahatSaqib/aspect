@@ -139,9 +139,7 @@ class MessageQueue {
         const subscribeName = `${queueName}_${name}_actions_${type}`
         const topic = `aspect.actions.${type}${bindingKey}`
         debug(`subscribe ${subscribeName} ${topic}`)
-        const queueOptions = messageTtl
-          ? { arguments: { messageTtl } }
-          : undefined
+        const queueOptions = messageTtl ? { messageTtl } : undefined
         const { queue } = channel.assertQueue(subscribeName, queueOptions)
         this.queues.push(queue)
         channel.bindQueue(queue, exchange, topic)

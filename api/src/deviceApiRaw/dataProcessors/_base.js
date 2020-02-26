@@ -32,9 +32,6 @@ class DataProcessor {
     this.updateDeviceApiRawStatus = this.updateDeviceApiRawStatus.bind(this)
     this.getResponse = this.getResponse.bind(this)
     this.processRequest = this.processRequest.bind(this)
-    this.onDeviceRawMessageProcessed = this.onDeviceRawMessageProcessed.bind(
-      this
-    )
     this.onDeviceRawMessageError = this.onDeviceRawMessageError.bind(this)
     this.unsubscribe = this.unsubscribe.bind(this)
     this.listenerEndpoints = []
@@ -125,7 +122,7 @@ class DataProcessor {
           actions: {
             DEVICE_RAW_MESSAGE_RESPONSE_READY: {
               ...dataProcessorMessageHandlerSpec,
-              handlerFunction: async () => Promise.resolve(),
+              handlerFunction: this.onDeviceRawMessageReady,
               consumerTag: `${this.name}_DEVICE_RAW_MESSAGE_RESPONSE_READY_${this.id}`,
             },
             DEVICE_RAW_MESSAGE_POSTED: {
@@ -136,7 +133,6 @@ class DataProcessor {
                 } catch (error) {
                   this.messageContext.deviceRawMessageError(this.id, error)
                 }
-                await this.unsubscribe()
               },
               consumerTag: `${this.name}_DEVICE_RAW_MESSAGE_POSTED_${this.id}`,
             },
@@ -272,12 +268,6 @@ class DataProcessor {
     return Promise.resolve()
   }
 
-  async onDeviceRawMessageProcessed() {
-    await this.updateDeviceApiRawStatus('Processed')
-    // TODO: Archive message?
-    await this.unsubscribe()
-  }
-
   async onDeviceRawMessageError() {
     await this.updateDeviceApiRawStatus('Error')
     // TODO: Archive message?
@@ -336,6 +326,10 @@ class SynchronousDataProcessor extends DataProcessor {
   constructor(request, messageContext) {
     super(request, messageContext)
     this.handlerFunction = this.handlerFunction.bind(this)
+    this.onDeviceRawMessageProcessed = this.onDeviceRawMessageProcessed.bind(
+      this
+    )
+    this.onDeviceRawMessageReady = this.onDeviceRawMessageReady.bind(this)
   }
 
   static async canProcessRequest() {
@@ -347,6 +341,15 @@ class SynchronousDataProcessor extends DataProcessor {
     this.messageContext.deviceRawMessageProcessed(this.id)
     const response = await this.getResponse()
     this.messageContext.deviceRawMessageResponseReady(this.id, response)
+  }
+
+  async onDeviceRawMessageProcessed() {
+    await this.updateDeviceApiRawStatus('Processed')
+    // TODO: Archive message?
+  }
+
+  async onDeviceRawMessageReady() {
+    return this.unsubscribe()
   }
 }
 
@@ -354,6 +357,10 @@ class AsynchronousDataProcessor extends DataProcessor {
   constructor(request, messageContext) {
     super(request, messageContext)
     this.handlerFunction = this.handlerFunction.bind(this)
+    this.onDeviceRawMessageProcessed = this.onDeviceRawMessageProcessed.bind(
+      this
+    )
+    this.onDeviceRawMessageReady = this.onDeviceRawMessageReady.bind(this)
   }
 
   static async canProcessRequest() {
@@ -365,6 +372,16 @@ class AsynchronousDataProcessor extends DataProcessor {
     this.messageContext.deviceRawMessageResponseReady(this.id, response)
     await this.processRequest()
     this.messageContext.deviceRawMessageProcessed(this.id)
+  }
+
+  async onDeviceRawMessageReady() {
+    return Promise.resolve()
+  }
+
+  async onDeviceRawMessageProcessed() {
+    await this.updateDeviceApiRawStatus('Processed')
+    // TODO: Archive message?
+    await this.unsubscribe()
   }
 }
 
