@@ -63,6 +63,17 @@ const routes = [
     config: {
       description: 'Create New API Key',
       notes: 'Create new API Key',
+      auth: { scope: ['deviceApiKey:edit'] },
+      response: {
+        options: {
+          allowUnknown: false,
+        },
+        schema: Joi.object().keys({
+          token: Joi.string()
+            .required()
+            .description('The device token id'),
+        }),
+      },
     },
   },
   {
