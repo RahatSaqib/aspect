@@ -315,7 +315,6 @@ const enhance = compose(
       onChangeDialogState,
     }) => isInputChecked => {
       const nextDeviceApiKeyIds = isInputChecked ? selectableIds.toJS() : []
-
       onChangeDialogState({
         ...dialogState,
         assignerValues: {
@@ -325,7 +324,7 @@ const enhance = compose(
       })
     },
 
-    onSelectedChange: ({ dialogState, onChangeDialogState }) => (
+    onSelectedChange: ({ dialogState, onChangeDialogState, items }) => (
       {
         target: {
           dataset: { deviceApiKeyId },
@@ -337,12 +336,28 @@ const enhance = compose(
       const nextDeviceApiKeyIds = isInputChecked
         ? [...assignerValues.deviceApiKeyIds, deviceApiKeyId]
         : assignerValues.deviceApiKeyIds.filter(id => id !== deviceApiKeyId)
-
+      let selectedDDL = {}
+      console.log('nextDeviceApiKeyIds', nextDeviceApiKeyIds)
+      if (nextDeviceApiKeyIds.length === 1) {
+        const firstElement = nextDeviceApiKeyIds[0]
+        console.log('firstElement', firstElement)
+        console.log('getfirst', items.byId.get(firstElement).toJS())
+        const { siteId, countryId, partnerId } = items.byId
+          .get(firstElement)
+          .toJS()
+        selectedDDL = {
+          siteId,
+          countryId,
+          partnerId,
+        }
+        console.log('selectedDDL', selectedDDL)
+      }
       onChangeDialogState({
         ...dialogState,
         assignerValues: {
           ...dialogState.assignerValues,
           deviceApiKeyIds: nextDeviceApiKeyIds,
+          ...selectedDDL,
         },
       })
     },

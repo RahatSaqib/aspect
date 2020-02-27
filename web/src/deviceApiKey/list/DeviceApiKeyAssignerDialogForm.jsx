@@ -97,7 +97,7 @@ export function DeviceApiKeyAssignerDialogForm({
   intl,
 }) {
   const { formatMessage } = intl
-
+  console.log('values', values)
   const actions = [
     <Button type="button" color="secondary" onClick={onCancel}>
       {intl.formatMessage(messages.cancel)}
