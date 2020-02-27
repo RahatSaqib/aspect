@@ -12,53 +12,52 @@ describe('Device routes', () => {
   const path = '/api/deviceApiKey'
   const deviceApiKeyIds = []
 
+  before(() =>
+    run(async knex => {
+      const now = new Date()
+      const { id: partnerId } = await knex('Partner')
+        .where('name', 'Partner One')
+        .first('id')
+      const { userId } = await knex('User')
+        .where({ name: 'admin' })
+        .first('id as userId')
+      const { id: geographyId } = await knex('Geography as g')
+        .join('JobContext as jc', 'g.id', 'jc.geographyId')
+        .join('Job as j', 'jc.jobId', 'j.id')
+        .join('Person as p', 'j.personId', 'p.id')
+        .join('User as u', 'p.userId', 'u.id')
+        .where('p.lastPartnerId', partnerId)
+        .andWhere('u.id', userId)
+        .first('g.id')
+
+      await Promise.all(
+        _.map(_.range(3), async () => {
+          const apiKey = { token: randomToken() }
+          const [deviceApiKeyId] = await knex('DeviceApiKey').insert({
+            token: apiKey.token,
+            revoked: 0,
+            partnerId,
+            geographyId,
+            createdOn: now,
+            createdBy: userId,
+            updatedOn: now,
+            updatedBy: userId,
+          })
+          deviceApiKeyIds.push(deviceApiKeyId)
+        })
+      )
+    })
+  )
+
+  after(() =>
+    run(async knex => {
+      await knex('DeviceApiKey')
+        .whereIn('id', deviceApiKeyIds)
+        .delete()
+    })
+  )
   describe('GET', () => {
     shared.checkToken(server, path)
-
-    before(() =>
-      run(async knex => {
-        const now = new Date()
-        const { id: partnerId } = await knex('Partner')
-          .where('name', 'Partner One')
-          .first('id')
-        const { userId } = await knex('User')
-          .where({ name: 'admin' })
-          .first('id as userId')
-        const { id: geographyId } = await knex('Geography as g')
-          .join('JobContext as jc', 'g.id', 'jc.geographyId')
-          .join('Job as j', 'jc.jobId', 'j.id')
-          .join('Person as p', 'j.personId', 'p.id')
-          .join('User as u', 'p.userId', 'u.id')
-          .where('p.lastPartnerId', partnerId)
-          .andWhere('u.id', userId)
-          .first('g.id')
-
-        await Promise.all(
-          _.map(_.range(3), async () => {
-            const apiKey = { token: randomToken() }
-            const [deviceApiKeyId] = await knex('DeviceApiKey').insert({
-              token: apiKey.token,
-              revoked: 0,
-              partnerId,
-              geographyId,
-              createdOn: now,
-              createdBy: userId,
-              updatedOn: now,
-              updatedBy: userId,
-            })
-            deviceApiKeyIds.push(deviceApiKeyId)
-          })
-        )
-      })
-    )
-
-    after(() =>
-      run(async knex => {
-        await knex('DeviceApiKey')
-          .whereIn('id', deviceApiKeyIds)
-          .delete()
-      })
-    )
 
     it('should return a list of deviceApiKeys when using valid token', done => {
       server
@@ -80,6 +79,20 @@ describe('Device routes', () => {
           assert.property(res.body.data[0], 'revoked')
           assert.property(res.body, 'total')
           done()
+        })
+    })
+  })
+  describe('POST', () => {
+    shared.checkToken(server, path)
+
+    it('should generate deviceApiKeys token', async () => {
+      await server
+        .post(`${path}/api-key`)
+        .set('Authorization', `Bearer ${shared.token}`)
+        .then(res => {
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+          assert.property(res.body, 'token')
         })
     })
   })

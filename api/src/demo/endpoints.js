@@ -1,10 +1,6 @@
 const Joi = require('@hapi/joi')
 const { asyncHandler } = require('../routes')
-const {
-  getDemoDevice,
-  createDemoDeviceApiKey,
-  postDemoDeviceResult,
-} = require('./service')
+const { getDemoDevice, postDemoDeviceResult } = require('./service')
 
 const routes = [
   {
@@ -21,15 +17,6 @@ const routes = [
             .required(),
         },
       },
-    },
-  },
-  {
-    method: 'POST',
-    path: '/demo/device/api-key',
-    handler: asyncHandler(createDemoDeviceApiKey),
-    config: {
-      description: 'Create New API Key',
-      notes: 'Create new API Key',
     },
   },
   {
