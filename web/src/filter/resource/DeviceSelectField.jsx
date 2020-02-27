@@ -14,8 +14,7 @@ import { connect } from 'react-redux'
 
 // Material-UI
 import MenuItem from '@material-ui/core/MenuItem'
-import Select from '@material-ui/core/Select'
-
+import SelectField from '../../components/shared/SelectField'
 import { fetchDevicesForSelectList } from '../../device/DeviceRedux'
 
 const enhance = compose(
@@ -58,7 +57,7 @@ const enhance = compose(
     },
   }),
   withHandlers({
-    onChange: props => (event, index, value) => {
+    onChange: props => ({ target: { value } }) => {
       props.onDeviceChange(value)
     },
   }),
@@ -83,13 +82,19 @@ const enhance = compose(
   }))
 )
 
-export function DeviceSelectField({ devicesSelectList, ...restProps }) {
+export function DeviceSelectField({
+  devicesSelectList,
+  onChange,
+  ...restProps
+}) {
   return (
-    <Select {...restProps}>
+    <SelectField {...restProps} onChange={onChange}>
       {devicesSelectList.map(s => (
-        <MenuItem key={s.value} value={s.value} primaryText={s.text} />
+        <MenuItem key={s.value} value={s.value}>
+          {s.text}
+        </MenuItem>
       ))}
-    </Select>
+    </SelectField>
   )
 }
 
