@@ -85,15 +85,25 @@ const enhance = compose(
 export function DeviceSelectField({
   devicesSelectList,
   onChange,
+  disabled,
   ...restProps
 }) {
+  const disable = disabled || devicesSelectList.length === 0
   return (
-    <SelectField {...restProps} onChange={onChange}>
-      {devicesSelectList.map(s => (
-        <MenuItem key={s.value} value={s.value}>
-          {s.text}
-        </MenuItem>
-      ))}
+    <SelectField
+      {...restProps}
+      onChange={onChange}
+      helperText={
+        devicesSelectList.length === 0 ? 'No devices for this site' : ''
+      }
+      disabled={disable}
+    >
+      {devicesSelectList.length > 0 &&
+        devicesSelectList.map(s => (
+          <MenuItem key={s.value} value={s.value}>
+            {s.text}
+          </MenuItem>
+        ))}
     </SelectField>
   )
 }

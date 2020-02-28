@@ -338,7 +338,7 @@ const enhance = compose(
         : assignerValues.deviceApiKeyIds.filter(id => id !== deviceApiKeyId)
       let selectedDDL = {}
       if (nextDeviceApiKeyIds.length === 1) {
-        const firstElementId = nextDeviceApiKeyIds[0]
+        const [firstElementId] = nextDeviceApiKeyIds
         const { siteId, countryId, partnerId } = items.byId
           .get(firstElementId)
           .toJS()
@@ -347,6 +347,17 @@ const enhance = compose(
           countryId,
           partnerId,
         }
+      } else if (nextDeviceApiKeyIds.length > 1) {
+        const selection = []
+        nextDeviceApiKeyIds.forEach(id => {
+          const { partnerId, siteId, countryId } = items.byId.get(id).toJS()
+          selection.push({ partnerId, siteId, countryId })
+        })
+        const [{ countryId, siteId, partnerId }] = _.intersectionWith(
+          selection,
+          _.isEqual
+        )
+        selectedDDL = { countryId, siteId, partnerId }
       }
       onChangeDialogState({
         ...dialogState,
