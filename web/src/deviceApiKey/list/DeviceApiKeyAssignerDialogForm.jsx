@@ -97,7 +97,6 @@ export function DeviceApiKeyAssignerDialogForm({
   intl,
 }) {
   const { formatMessage } = intl
-  console.log('values', values)
   const actions = [
     <Button type="button" color="secondary" onClick={onCancel}>
       {intl.formatMessage(messages.cancel)}
@@ -171,6 +170,7 @@ export function DeviceApiKeyAssignerDialogForm({
           aria-haspopup
         />
         <DeviceSelectField
+          disabled={values.deviceApiKeyIds.length > 1}
           name="deviceId"
           floatingLabelText={formatMessage(messages.deviceId)}
           countryId={values.countryId}

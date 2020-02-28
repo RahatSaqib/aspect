@@ -337,25 +337,20 @@ const enhance = compose(
         ? [...assignerValues.deviceApiKeyIds, deviceApiKeyId]
         : assignerValues.deviceApiKeyIds.filter(id => id !== deviceApiKeyId)
       let selectedDDL = {}
-      console.log('nextDeviceApiKeyIds', nextDeviceApiKeyIds)
       if (nextDeviceApiKeyIds.length === 1) {
-        const firstElement = nextDeviceApiKeyIds[0]
-        console.log('firstElement', firstElement)
-        console.log('getfirst', items.byId.get(firstElement).toJS())
+        const firstElementId = nextDeviceApiKeyIds[0]
         const { siteId, countryId, partnerId } = items.byId
-          .get(firstElement)
+          .get(firstElementId)
           .toJS()
         selectedDDL = {
           siteId,
           countryId,
           partnerId,
         }
-        console.log('selectedDDL', selectedDDL)
       }
       onChangeDialogState({
         ...dialogState,
         assignerValues: {
-          ...dialogState.assignerValues,
           deviceApiKeyIds: nextDeviceApiKeyIds,
           ...selectedDDL,
         },
