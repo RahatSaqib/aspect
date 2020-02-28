@@ -97,7 +97,6 @@ export function DeviceApiKeyAssignerDialogForm({
   intl,
 }) {
   const { formatMessage } = intl
-
   const actions = [
     <Button type="button" color="secondary" onClick={onCancel}>
       {intl.formatMessage(messages.cancel)}
@@ -155,6 +154,7 @@ export function DeviceApiKeyAssignerDialogForm({
         />
         <SiteSelectField
           name="siteId"
+          emptyId="-1"
           floatingLabelText={formatMessage(messages.siteId)}
           countryId={values.countryId}
           partnerId={values.partnerId}
@@ -171,7 +171,9 @@ export function DeviceApiKeyAssignerDialogForm({
           aria-haspopup
         />
         <DeviceSelectField
+          disabled={values.deviceApiKeyIds.length > 1}
           name="deviceId"
+          emptyId="-1"
           floatingLabelText={formatMessage(messages.deviceId)}
           countryId={values.countryId}
           partnerId={values.partnerId}

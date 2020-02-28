@@ -315,7 +315,6 @@ const enhance = compose(
       onChangeDialogState,
     }) => isInputChecked => {
       const nextDeviceApiKeyIds = isInputChecked ? selectableIds.toJS() : []
-
       onChangeDialogState({
         ...dialogState,
         assignerValues: {
@@ -325,7 +324,7 @@ const enhance = compose(
       })
     },
 
-    onSelectedChange: ({ dialogState, onChangeDialogState }) => (
+    onSelectedChange: ({ dialogState, onChangeDialogState, items }) => (
       {
         target: {
           dataset: { deviceApiKeyId },
@@ -337,12 +336,34 @@ const enhance = compose(
       const nextDeviceApiKeyIds = isInputChecked
         ? [...assignerValues.deviceApiKeyIds, deviceApiKeyId]
         : assignerValues.deviceApiKeyIds.filter(id => id !== deviceApiKeyId)
-
+      let selectedDDL = {}
+      if (nextDeviceApiKeyIds.length === 1) {
+        const [firstElementId] = nextDeviceApiKeyIds
+        const { siteId, countryId, partnerId } = items.byId
+          .get(firstElementId)
+          .toJS()
+        selectedDDL = {
+          siteId,
+          countryId,
+          partnerId,
+        }
+      } else if (nextDeviceApiKeyIds.length > 1) {
+        const selection = []
+        nextDeviceApiKeyIds.forEach(id => {
+          const { partnerId, siteId, countryId } = items.byId.get(id).toJS()
+          selection.push({ partnerId, siteId, countryId })
+        })
+        const [{ countryId, siteId, partnerId }] = _.intersectionWith(
+          selection,
+          _.isEqual
+        )
+        selectedDDL = { countryId, siteId, partnerId }
+      }
       onChangeDialogState({
         ...dialogState,
         assignerValues: {
-          ...dialogState.assignerValues,
           deviceApiKeyIds: nextDeviceApiKeyIds,
+          ...selectedDDL,
         },
       })
     },

@@ -17,9 +17,13 @@ const SELECT_LIST_FIELDS = [
   'dak.token',
   'dak.revoked',
   'p.name as partner',
+  'p.id as partnerId',
   'c.name as country',
+  'c.id as countryId',
   's.name as site',
+  's.id as siteId',
   'd.name as device',
+  'd.id as deviceId',
 ]
 
 async function listDeviceApiKeys(request) {
