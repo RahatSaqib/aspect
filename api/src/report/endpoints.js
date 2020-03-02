@@ -1,7 +1,14 @@
 const Joi = require('@hapi/joi')
-const { asyncHandler, validateSortPageParams } = require('../routes')
-const { listReports, proxyGxReport } = require('./service')
-const { getReport } = require('./serviceReports')
+const {
+  asyncHandler,
+  validateDateRangeParams,
+  validateSortPageParams,
+} = require('../routes')
+const { getReports, listReports, proxyGxReport } = require('./service')
+const { createReport, getReport } = require('./serviceReports')
+const {
+  validateAllGeographyFilterParams,
+} = require('../geography/requestValidation')
 
 function listReportBaseConfig() {
   return {
@@ -28,8 +35,53 @@ function listReportBaseConfig() {
     },
   }
 }
+function requestBaseQuery() {
+  return {
+    ...validateAllGeographyFilterParams(),
+    ...validateDateRangeParams(),
+    siteName: Joi.string()
+      .allow('')
+      .description('Filter for site name'),
+  }
+}
 
 const routes = [
+  {
+    method: 'GET',
+    path: '/reports',
+    handler: asyncHandler(getReports),
+    config: {
+      description: 'List of Reports',
+      notes: 'Reports scoped by user permissions, filteravle by geography',
+      auth: { scope: ['report:view', 'report:edit'] },
+      validate: {
+        query: {
+          ...requestBaseQuery(),
+        },
+      },
+    },
+  },
+  {
+    method: 'GET',
+    path: '/reports/{externalId}',
+    handler: createReport,
+    config: {
+      description: 'Report Excel file',
+      notes:
+        'Returns Excel file generated from template corresponding to externalId',
+      auth: { scope: ['report:view', 'report:edit'] },
+      validate: {
+        query: {
+          ...requestBaseQuery(),
+        },
+        params: {
+          externalId: Joi.string()
+            .description('Value of externalId in table Report')
+            .required(),
+        },
+      },
+    },
+  },
   {
     method: 'GET',
     path: '/report',

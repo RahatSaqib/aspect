@@ -28,14 +28,12 @@ async function seed(knex) {
     loggedDetail => loggedDetail.createdOn
   )
 
-  await Promise.all(
-    await Promise.each(resultDownload, async results => {
-      await knex('ResultDownloadLog').insert({
-        method: 'reporter_app',
-        createdOn: _.sample([...reporterCreatedOn]),
-        createdBy: _.random(1, 6),
-        resultId: results.resultId,
-      })
+  await Promise.each(resultDownload, results =>
+    knex('ResultDownloadLog').insert({
+      method: 'reporter_app',
+      createdOn: _.sample([...reporterCreatedOn]),
+      createdBy: _.random(1, 6),
+      resultId: results.resultId,
     })
   )
 }

@@ -205,6 +205,12 @@ export const navigations = [
     ],
     requiredFeatures: ['deviceApiKey'],
   },
+  {
+    value: '/reports',
+    label: 'Reports',
+    requiredPermissions: ['report:view', 'report:admin', 'report:edit'],
+    requiredFeatures: ['report'],
+  },
 ]
 
 export default enhance(BrowseFilters)

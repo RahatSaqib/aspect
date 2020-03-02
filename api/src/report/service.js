@@ -2,10 +2,50 @@ const _ = require('lodash')
 const Boom = require('@hapi/boom')
 const { createFetch, base, method, params } = require('http-client')
 require('isomorphic-fetch')
+const Promise = require('bluebird')
 
 const config = require('../config')
 const { knex } = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
+
+async function getReports(request) {
+  const { auth } = request
+  const dataConstraints = await getConstraints(auth.credentials)
+
+  const reportsQuery = knex('Report as r')
+    .leftOuterJoin('Geography as g', 'r.geographyId', 'g.id')
+    .modify(addConstraints, dataConstraints, { geography: 'g' })
+
+  const getCount = reportsQuery
+    .clone()
+    .count('r.id as count')
+    .first()
+
+  const getItems = reportsQuery
+    .clone()
+    .orderBy('r.orderNumber', 'asc')
+    .select('r.name', 'r.description', 'r.externalId', 'r.orderNumber')
+
+  const [{ count: total }, data] = await Promise.all([getCount, getItems])
+
+  return { ok: true, total, data }
+}
+
+async function getReportDetails(auth, externalId) {
+  const dataConstraints = await getConstraints(auth.credentials)
+  const report = await knex('Report as r')
+    .leftOuterJoin('Geography as g', 'r.geographyId', 'g.id')
+    .modify(addConstraints, dataConstraints, { geography: 'g' })
+    .where('r.externalId', externalId)
+    .select('r.id', 'r.name', 'r.description', 'r.fileNamePrefix')
+    .first()
+
+  report.sheets = await knex('ReportSheet')
+    .where('reportId', report.id)
+    .select('id', 'sheetName', 'title', 'endpoint', 'query')
+
+  return report
+}
 
 async function listReports(request) {
   const { query } = request
@@ -216,6 +256,8 @@ async function proxyGxReportAsync(request) {
 }
 
 module.exports = {
+  getReports,
+  getReportDetails,
   listReports,
   proxyGxReport,
 }
