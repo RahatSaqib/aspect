@@ -33,7 +33,8 @@ function getUser(username, knex) {
       'p.culture',
       'p.timezone',
       'p.lastPartnerId as partnerId',
-      'p.lastCountryId as countryId'
+      'p.lastCountryId as countryId',
+      'p.id as personId'
     )
 }
 // --------------------------------------------------------------------------------------------
