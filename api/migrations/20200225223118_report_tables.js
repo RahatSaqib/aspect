@@ -27,7 +27,7 @@ async function up(knex) {
 
   await knex.schema.createTable('ReportSheet', row => {
     row.increments('id')
-    row.string('sheetName')
+    row.string('sheetName').notNullable()
     row.string('title').notNullable()
     row
       .integer('reportId')

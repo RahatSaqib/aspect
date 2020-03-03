@@ -25,7 +25,7 @@
     "fileName": "DevicesWithErrors",
     "sheets": [
       {
-        "sheetName": "",
+        "sheetName": "Errors By Device",
         "title": "",
         "endpoint": "/api/result"
       }
@@ -39,7 +39,7 @@
     "fileName": "RifResistanceRate",
     "sheets": [
       {
-        "sheetName": "",
+        "sheetName": "Resistance Rates",
         "title": "",
         "endpoint": "/api/result",
         "query": {
@@ -57,7 +57,7 @@
     "fileName": "HIVNotSuppressed",
     "sheets": [
       {
-        "sheetName": "",
+        "sheetName": "HIV Not Suppressed",
         "title": "",
         "endpoint": "/api/result",
         "query": {
