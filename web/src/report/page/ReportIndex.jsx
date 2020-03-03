@@ -18,7 +18,6 @@ import {
 import NavTitle from '../../globals/components/NavTitle'
 import BrowseFilters from '../../globals/components/BrowseFilters'
 import ReportCard from './ReportCard'
-import config from '../../config'
 import { getAspectAccess } from '../../globals/sideEffects/LocalStorage'
 import { fetchReports, getReportFile } from '../ReportRedux'
 
@@ -85,10 +84,6 @@ const enhance = compose(
         getReportFile(externalId, filtersParams)
       }
     },
-    onStaticFile: ({ location }) => fileName => {
-      const linkUrl = `${config.aspectApi}/report/${fileName}?token=${token}`
-      window.location.href = linkUrl
-    },
   }),
   lifecycle({
     componentDidMount() {
@@ -133,7 +128,6 @@ const ReportIndex = ({
   items,
   // --- injected by recompose ---
   onClickDownload,
-  onStaticFile,
   reducedFilters,
 }) => (
   <div className={cssClasses('Container')}>
@@ -160,32 +154,6 @@ const ReportIndex = ({
           />
         )
       })}
-    </Grid>
-    <Grid container>
-      <ReportCard
-        title="MTB Detected RR Detected"
-        description="Contains all MTB Detected/RR Detected cases"
-        onClick={() => onStaticFile('MTB_Detected_RR_Detected.xlsx')}
-        history={history}
-      />
-      <ReportCard
-        title="Critical Errors By Device"
-        description="Includes a list of devices that had at least 2 critical errors"
-        onClick={() => onStaticFile('DevicesWithErrors.xlsx')}
-        history={history}
-      />
-      <ReportCard
-        title="RIF Resistance Rate (%positive results)"
-        description="Listing RIF Resistance Rate for all facilities, ranked highest to lowest."
-        onClick={() => onStaticFile('RifResistanceRate.xlsx')}
-        history={history}
-      />
-      <ReportCard
-        title="Results with HIV Not Suppressed"
-        description="All HIV results where the virus is not suppressed"
-        onClick={() => onStaticFile('HIVNotSuppressed.xlsx')}
-        history={history}
-      />
     </Grid>
   </div>
 )
