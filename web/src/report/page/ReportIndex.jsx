@@ -145,6 +145,7 @@ const ReportIndex = ({
         location={location}
         intl={intl}
         config={reducedFilters}
+        showBrowseDropdown={false}
       />
     )}
     <Grid container>
