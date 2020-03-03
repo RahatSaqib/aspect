@@ -60,6 +60,20 @@ const getCellsByValue = (sheet, value) => {
   })
   return cells
 }
+// ---------------------------------
+// getCellsBySubstring - getting all cells having requested value as substring
+// ---------------------------------
+const getCellsBySubstring = (sheet, value) => {
+  const cells = []
+  sheet.eachRow(row => {
+    row.eachCell(cell => {
+      if (cell.text.includes(value)) {
+        cells.push(cell)
+      }
+    })
+  })
+  return cells
+}
 
 // ---------------------------------
 // read Text file
@@ -74,9 +88,8 @@ async function readTextFile(filePath, encoding = 'utf8') {
 // ---------------------------------
 // read Excel file and return workbook
 async function readExcelFile(fileName) {
-  return await new excel.Workbook().xlsx //eslint-disable-line
-    .readFile(fileName)
-    .then(workbook => workbook)
+  const ExcelWorkbook = new excel.Workbook()
+  return ExcelWorkbook.xlsx.readFile(fileName)
 }
 
 // write workbook into Excel and Csv file
@@ -179,5 +192,6 @@ module.exports = {
   getCellsByValue,
   getContentType,
   getExportDirectory,
+  readExcelFile,
   readTextFile,
 }

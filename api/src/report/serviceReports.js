@@ -11,33 +11,15 @@ const {
   generateReport,
   downloadReportFile,
 } = require('../excelreports/excelManager')
-const { getCellsByValue, getContentType } = require('../shared/io')
+const {
+  getCellsBySubstring,
+  getCellsByValue,
+  getContentType,
+  readExcelFile,
+} = require('../shared/io')
 
 const LANG_DEFAULT = 'en'
-// ----------------------------------------------------------------------------------------------
-function getLabel(labels, lang, key) {
-  let keys = labels[lang]
-  let label = keys[key]
-  if (!label && lang !== LANG_DEFAULT) {
-    keys = labels[LANG_DEFAULT]
-    label = keys[key]
-  }
-  return label
-}
-// ----------------------------------------------------------------------------------------------
-function setTextByCellValue(worksheet, labels, lang, token) {
-  const cells = getCellsByValue(worksheet, token)
-  cells.forEach(cell => {
-    const v = cell.value.trim()
-    if (v[0] === '<' && v[v.length - 1] === '>') {
-      const key = _.trim(v, '< >')
-      const label = getLabel(labels, lang, key)
-      if (label) {
-        cell.value = label
-      }
-    }
-  })
-}
+
 // ----------------------------------------------------------------------------------------------
 function getHeaderRows(sheet, cellTableToken) {
   const row = sheet.getRow(cellTableToken.row)
@@ -82,22 +64,13 @@ async function getSheetData(server, auth, reportQuery, sheet) {
   return []
 }
 // ----------------------------------------------------------------------------------------------
-function getReportLabels(externalId, lang) {
-  const reportLabels = {
-    [LANG_DEFAULT]: require(`../../templates/${externalId}/${LANG_DEFAULT}`) //eslint-disable-line
-  }
-  if (lang !== LANG_DEFAULT) {
-    reportLabels[lang] = require(`../../templates/${externalId}/${lang}`) //eslint-disable-line
-  }
-  return reportLabels
-}
-// ----------------------------------------------------------------------------------------------
-function getSheetLabels(reportLabels, lang, sheetIndex) {
-  const labels = {}
-  _.keys(reportLabels).forEach(langKey => {
-    labels[langKey] = reportLabels[langKey].sheets[sheetIndex]
+async function readTemplateFile(externalId, lang, langDefault) {
+  return readExcelFile(`templates/${externalId}/${lang}.xlsx`).catch(error => {
+    if (langDefault && lang !== langDefault) {
+      return readExcelFile(`templates/${externalId}/${langDefault}.xlsx`)
+    }
+    throw error
   })
-  return labels
 }
 // ----------------------------------------------------------------------------------------------
 async function createReport(request, reply) {
@@ -107,12 +80,9 @@ async function createReport(request, reply) {
   // language
   const { culture } = await getUser(auth.credentials.name)
   const lang = culture.split('-')[0].toLowerCase()
-  const reportLabels = getReportLabels(externalId, lang)
 
   // read file into workbook
-  const templateFileName = `templates/${externalId}/template.xlsx`
-  const ExcelWorkbook = new excel.Workbook()
-  const workbook = await ExcelWorkbook.xlsx.readFile(templateFileName)
+  const workbook = await readTemplateFile(externalId, lang, LANG_DEFAULT)
 
   // process all sheets
   await Promise.each(sheets, async (sheet, sheetIndex) => {
@@ -122,17 +92,14 @@ async function createReport(request, reply) {
     // get data for this sheet
     const dataRows = await getSheetData(server, auth, query, sheet)
 
-    // labels with translations for current sheet
-    const labels = getSheetLabels(reportLabels, lang, sheetIndex)
-
     // get sheet (1-based)
     const worksheet = workbook.getWorksheet(sheetIndex + 1)
     worksheet.name = sheetName || `Sheet${sheetIndex + 1}`
 
-    // process sheet header rows
-    setTextByCellValue(worksheet, labels, lang, '<Title>')
-    setTextByCellValue(worksheet, labels, lang, '<Dates>')
-    setTextByCellValue(worksheet, labels, lang, '<States>')
+    // TODO: replace few placeholders in sheet header
+    // getCellsBySubstring(worksheet, '<Dates>')
+    // getCellsBySubstring(worksheet, '<States>')
+    // getCellsBySubstring(worksheet, '<County>')
 
     // position cell where data table begins
     const cells = getCellsByValue(worksheet, '<Table>')
@@ -145,19 +112,8 @@ async function createReport(request, reply) {
       // use 1st cell only (actually, should not be more than one)
       const cellTableToken = cells[0]
 
-      // process table Header row(s)
+      // get table Header row(s) - for future conditional formatting
       const headerRows = getHeaderRows(worksheet, cellTableToken)
-      headerRows.forEach(headerRow => {
-        headerRow.eachCell(cell => {
-          let v = _.trim(cell.value, ' ')
-          // if cell contains value in format <Xxx> then replace it to corresponding translation
-          if (v[0] === '<' && v[v.length - 1] === '>') {
-            v = _.trim(v, '< >')
-            cell.value = getLabel(labels, lang, v)
-          }
-        })
-      })
-
       //
       const patternRowNumber = cellTableToken.row + 1 + headerRows.length
       const patternRow = worksheet.getRow(patternRowNumber)
