@@ -23,8 +23,8 @@ async function getReports(request) {
 
   const getItems = reportsQuery
     .clone()
-    .orderBy('r.orderNumber', 'asc')
-    .select('r.name', 'r.description', 'r.externalId', 'r.orderNumber')
+    .orderBy('r.sortOrder', 'asc')
+    .select('r.name', 'r.description', 'r.externalId', 'r.sortOrder')
 
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
 
@@ -42,6 +42,7 @@ async function getReportDetails(auth, externalId) {
 
   report.sheets = await knex('ReportSheet')
     .where('reportId', report.id)
+    .orderBy('sortOrder', 'asc')
     .select('id', 'sheetName', 'title', 'endpoint', 'query')
 
   return report

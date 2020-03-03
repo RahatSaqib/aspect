@@ -23,7 +23,7 @@ async function seed(knex) {
       reports,
       async (
         { name, description, i18nKey, externalId, sheets, fileNamePrefix },
-        index
+        reportIndex
       ) => {
         const [reportId] = await knex('Report').insert({
           name,
@@ -31,11 +31,11 @@ async function seed(knex) {
           i18nKey,
           externalId,
           geographyId,
-          orderNumber: index + 1,
+          sortOrder: reportIndex + 1,
           fileNamePrefix,
         })
 
-        await Promise.each(sheets, async sheet => {
+        await Promise.each(sheets, async (sheet, sheetIndex) => {
           const { endpoint, query, sheetName, title } = sheet
           await knex('ReportSheet').insert({
             endpoint,
@@ -43,6 +43,7 @@ async function seed(knex) {
             reportId,
             sheetName,
             title,
+            sortOrder: sheetIndex + 1,
           })
         })
       }

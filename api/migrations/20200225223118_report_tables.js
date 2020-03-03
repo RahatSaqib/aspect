@@ -5,7 +5,7 @@ async function up(knex) {
     row.increments('id')
     row.string('name').notNullable()
     row.string('description').notNullable()
-    row.integer('orderNumber').notNullable()
+    row.integer('sortOrder').notNullable()
     row.string('i18nKey').notNullable()
     row.string('externalId').notNullable()
     row
@@ -37,6 +37,7 @@ async function up(knex) {
       .references('id')
       .inTable('Report')
       .onDelete('CASCADE')
+    row.integer('sortOrder').notNullable()
     row.string('endpoint').notNullable()
     row.string('query')
   })
