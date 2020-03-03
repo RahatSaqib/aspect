@@ -162,7 +162,7 @@ async function createReport(request, reply) {
     const worksheet = workbook.getWorksheet(sheetIndex + 1)
     worksheet.name = sheetName || `Sheet${sheetIndex + 1}`
 
-    // TODO: replace few placeholders in sheet header
+    // replace few placeholders in sheet header
     replaceSubstringInCell(worksheet, '<Dates>', dateRangeString)
     replaceSubstringInCell(worksheet, '<States>', statesString)
     replaceSubstringInCell(worksheet, '<Lgas>', lgasString)
