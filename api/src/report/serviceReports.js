@@ -3,6 +3,7 @@ const path = require('path')
 const { format } = require('date-fns')
 const Promise = require('bluebird')
 const { stringify } = require('querystring')
+const { knex } = require('../db')
 
 const { getUser } = require('../auth/service')
 const { getReportDetails, listReports } = require('./service')
@@ -16,6 +17,7 @@ const {
   getContentType,
   readExcelFile,
 } = require('../shared/io')
+const { formatDateOrDefault } = require('../shared/date')
 
 const LANG_DEFAULT = 'en'
 
@@ -37,10 +39,6 @@ function getHeaderRows(sheet, cellTableToken) {
 async function getSheetData(server, auth, reportQuery, sheet) {
   const { endpoint } = sheet
   const sheetQuery = sheet.query ? JSON.parse(sheet.query) : {}
-console.log('_____________', { 
-reportQuery,
-urlQuery: stringify(reportQuery)
-})
   const { statusCode, result } = await server.inject({
     method: 'GET',
     url: `${endpoint}?${stringify({
@@ -76,23 +74,81 @@ async function readTemplateFile(externalId, lang, langDefault) {
   })
 }
 // ----------------------------------------------------------------------------------------------
+function getDateRange({ minDate, maxDate }) {
+  if (!minDate && !maxDate) {
+    return 'all'
+  }
+  const dates = []
+  if (minDate) {
+    dates.push(minDate ? formatDateOrDefault(minDate) : '')
+  }
+  dates.push(' — ') // long dash
+  if (maxDate) {
+    dates.push(maxDate ? formatDateOrDefault(maxDate) : '')
+  }
+  return dates.join('')
+}
+// ----------------------------------------------------------------------------------------------
+async function getStatesCsv({ countryId, stateId }) {
+  if (!countryId || !stateId) {
+    return 'all'
+  }
+  const { name } = await knex('Geography as g')
+    .leftOuterJoin('State as st', 'g.stateId', 'st.id')
+    .leftOuterJoin('Lga as l', 'g.lgaId', 'l.id')
+    .where('g.countryId', countryId)
+    .where('st.id', stateId)
+    .first('st.name')
+  return name
+}
+// ----------------------------------------------------------------------------------------------
+async function getLgasCsv({ countryId, stateId, lgaId }) {
+  if (!countryId || !stateId) {
+    return 'all'
+  }
+  const items = await knex('Geography as g')
+    .leftOuterJoin('State as st', 'g.stateId', 'st.id')
+    .leftOuterJoin('Lga as l', 'g.lgaId', 'l.id')
+    .where('g.countryId', countryId)
+    .where('st.id', stateId)
+    .whereNotNull('g.lgaId')
+    .where(builder => {
+      if (lgaId) {
+        builder.where('l.id', lgaId)
+      }
+    })
+    .orderBy('l.name')
+    .select('l.name')
+  return items.map(x => x.name).join(', ')
+}
+// ----------------------------------------------------------------------------------------------
+function replaceSubstringInCell(worksheet, token, value) {
+  getCellsBySubstring(worksheet, token).forEach(cell => {
+    cell.value = _.replace(cell.value, token, value)
+  })
+}
+// ----------------------------------------------------------------------------------------------
 async function createReport(request, reply) {
-  const { auth, orig, params, server } = request
+  const { auth, query, orig, params, server } = request
   const { externalId } = params
   const { sheets, fileName } = await getReportDetails(auth, externalId)
   // language
   const { culture } = await getUser(auth.credentials.name)
   const lang = culture.split('-')[0].toLowerCase()
 
-  // can not use request.query because it contains
-  // parsed data, for example for dates it parses them into ISO but we need raw string
-  // to pass it to another endpoint as like it came from client side.
+  // for server.inject we can not use request.query because it contains parsed data,
+  // i.e. Joi.date parses date string into Date object but we
+  // need raw string to pass it to another endpoint as like it arrived from client side.
   // That's why instead of request.query we need request.orig.query which contains all
-  // passed query values as strings which we may then concat together with stringify (see func getSheetData)
+  // passed query values as strings which we concat together with stringify (see func getSheetData)
   const reportQuery = orig.query
 
   // read file into workbook
   const workbook = await readTemplateFile(externalId, lang, LANG_DEFAULT)
+
+  const dateRangeString = getDateRange(query)
+  const statesString = await getStatesCsv(query)
+  const lgasString = await getLgasCsv(query)
 
   // process all sheets
   await Promise.each(sheets, async (sheet, sheetIndex) => {
@@ -107,9 +163,9 @@ async function createReport(request, reply) {
     worksheet.name = sheetName || `Sheet${sheetIndex + 1}`
 
     // TODO: replace few placeholders in sheet header
-    // getCellsBySubstring(worksheet, '<Dates>')
-    // getCellsBySubstring(worksheet, '<States>')
-    // getCellsBySubstring(worksheet, '<County>')
+    replaceSubstringInCell(worksheet, '<Dates>', dateRangeString)
+    replaceSubstringInCell(worksheet, '<States>', statesString)
+    replaceSubstringInCell(worksheet, '<Lgas>', lgasString)
 
     // position cell where data table begins
     const cells = getCellsByValue(worksheet, '<Table>')
