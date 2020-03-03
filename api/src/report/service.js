@@ -37,7 +37,7 @@ async function getReportDetails(auth, externalId) {
     .leftOuterJoin('Geography as g', 'r.geographyId', 'g.id')
     .modify(addConstraints, dataConstraints, { geography: 'g' })
     .where('r.externalId', externalId)
-    .select('r.id', 'r.name', 'r.description', 'r.fileNamePrefix')
+    .select('r.id', 'r.name', 'r.description', 'r.fileName')
     .first()
 
   report.sheets = await knex('ReportSheet')

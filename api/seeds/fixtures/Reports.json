@@ -4,7 +4,7 @@
     "description": "Contains all MTB Detected/RR Detected cases",
     "i18nKey": "MTB_Detected_RR_Detected",
     "externalId": "mtb_detected_rr_detected",
-    "fileNamePrefix": "MTB_Detected_RR_Detected",
+    "fileName": "MTB_Detected_RR_Detected",
     "sheets": [
       {
         "sheetName": "MTB-RIF Detected",
@@ -22,7 +22,7 @@
     "description": "Includes a list of devices that had at least 2 critical errors",
     "i18nKey": "Critical_Errors_By_Device",
     "externalId": "critical_errors_by_device",
-    "fileNamePrefix": "DevicesWithErrors",
+    "fileName": "DevicesWithErrors",
     "sheets": [
       {
         "sheetName": "",
@@ -36,7 +36,7 @@
     "description": "Listing RIF Resistance Rate for all facilities, ranked highest to lowest",
     "i18nKey": "RIF_Resistance_Rate",
     "externalId": "rif_resistance_rate",
-    "fileNamePrefix": "RifResistanceRate",
+    "fileName": "RifResistanceRate",
     "sheets": [
       {
         "sheetName": "",
@@ -54,7 +54,7 @@
     "description": "All HIV results where the virus is not suppressed",
     "i18nKey": "Results_HIV_Not_Suppressed",
     "externalId": "results_hiv_not_suppressed",
-    "fileNamePrefix": "HIVNotSuppressed",
+    "fileName": "HIVNotSuppressed",
     "sheets": [
       {
         "sheetName": "",

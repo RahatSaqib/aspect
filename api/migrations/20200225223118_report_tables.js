@@ -22,7 +22,7 @@ async function up(knex) {
       .references('id')
       .inTable('Geography')
       .onDelete('SET NULL')
-    row.string('fileNamePrefix')
+    row.string('fileName').notNullable()
   })
 
   await knex.schema.createTable('ReportSheet', row => {

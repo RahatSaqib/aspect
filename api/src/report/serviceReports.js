@@ -101,16 +101,16 @@ async function createReport(request, reply) {
   const { auth, query, params, server } = request
   const { externalId } = params
   const reportProfile = await getReportDetails(auth, externalId)
-  const { sheets, fileNamePrefix } = reportProfile
+  const { sheets, fileName } = reportProfile
   // language
   const { culture } = await getUser(auth.credentials.name)
   const lang = culture.split('-')[0].toLowerCase()
   const reportLabels = getReportLabels(externalId, lang)
 
   // read file into workbook
-  let fileName = `templates/${externalId}/template.xlsx`
+  const templateFileName = `templates/${externalId}/template.xlsx`
   const ExcelWorkbook = new excel.Workbook()
-  const workbook = await ExcelWorkbook.xlsx.readFile(fileName)
+  const workbook = await ExcelWorkbook.xlsx.readFile(templateFileName)
 
   // process all sheets
   await Promise.each(sheets, async (sheet, sheetIndex) => {
@@ -194,14 +194,14 @@ async function createReport(request, reply) {
 
   // report file Name
   const ext = 'xlsx'
-  fileName = `${fileNamePrefix}_${new Date().toISOString()}.${ext}`
+  const reportFileName = `${fileName}_${new Date().toISOString()}.${ext}`
 
   // resolve promise by returning any value and respond binary stream with generated Excel file
   return reply
     .response(resultBuffer)
     .encoding('binary')
     .type(getContentType(ext))
-    .header('content-disposition', `attachment; filename=${fileName};`)
+    .header('content-disposition', `attachment; filename=${reportFileName};`)
 }
 // ----------------------------------------------------------------------------------------------
 async function getReport(request, reply) {
