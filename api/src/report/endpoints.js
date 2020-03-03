@@ -52,7 +52,7 @@ const routes = [
     handler: asyncHandler(getReports),
     config: {
       description: 'List of Reports',
-      notes: 'Reports scoped by user permissions, filteravle by geography',
+      notes: 'Reports scoped by user permissions, filterable by geography',
       auth: { scope: ['report:view', 'report:edit'] },
       validate: {
         query: {
