@@ -25,7 +25,7 @@ function getLabel(labels, lang, key) {
   return label
 }
 // ----------------------------------------------------------------------------------------------
-function setText(worksheet, labels, lang, token) {
+function setTextByCellValue(worksheet, labels, lang, token) {
   const cells = getCellsByValue(worksheet, token)
   cells.forEach(cell => {
     const v = cell.value.trim()
@@ -130,9 +130,9 @@ async function createReport(request, reply) {
     worksheet.name = sheetName || `Sheet${sheetIndex + 1}`
 
     // process sheet header rows
-    setText(worksheet, labels, lang, '<Title>')
-    setText(worksheet, labels, lang, '<Dates>')
-    setText(worksheet, labels, lang, '<States>')
+    setTextByCellValue(worksheet, labels, lang, '<Title>')
+    setTextByCellValue(worksheet, labels, lang, '<Dates>')
+    setTextByCellValue(worksheet, labels, lang, '<States>')
 
     // position cell where data table begins
     const cells = getCellsByValue(worksheet, '<Table>')
