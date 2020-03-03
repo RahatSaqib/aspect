@@ -100,8 +100,8 @@ function getSheetLabels(reportLabels, lang, sheetIndex) {
 async function createReport(request, reply) {
   const { auth, query, params, server } = request
   const { externalId } = params
-  const reportProfile = await getReportDetails(auth, externalId)
-  const { sheets, fileName } = reportProfile
+  const reportDetails = await getReportDetails(auth, externalId)
+  const { sheets, fileName } = reportDetails
   // language
   const { culture } = await getUser(auth.credentials.name)
   const lang = culture.split('-')[0].toLowerCase()
