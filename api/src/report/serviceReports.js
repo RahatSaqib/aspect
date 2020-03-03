@@ -37,6 +37,10 @@ function getHeaderRows(sheet, cellTableToken) {
 async function getSheetData(server, auth, reportQuery, sheet) {
   const { endpoint } = sheet
   const sheetQuery = sheet.query ? JSON.parse(sheet.query) : {}
+console.log('_____________', { 
+reportQuery,
+urlQuery: stringify(reportQuery)
+})
   const { statusCode, result } = await server.inject({
     method: 'GET',
     url: `${endpoint}?${stringify({
@@ -73,12 +77,19 @@ async function readTemplateFile(externalId, lang, langDefault) {
 }
 // ----------------------------------------------------------------------------------------------
 async function createReport(request, reply) {
-  const { auth, query, params, server } = request
+  const { auth, orig, params, server } = request
   const { externalId } = params
   const { sheets, fileName } = await getReportDetails(auth, externalId)
   // language
   const { culture } = await getUser(auth.credentials.name)
   const lang = culture.split('-')[0].toLowerCase()
+
+  // can not use request.query because it contains
+  // parsed data, for example for dates it parses them into ISO but we need raw string
+  // to pass it to another endpoint as like it came from client side.
+  // That's why instead of request.query we need request.orig.query which contains all
+  // passed query values as strings which we may then concat together with stringify (see func getSheetData)
+  const reportQuery = orig.query
 
   // read file into workbook
   const workbook = await readTemplateFile(externalId, lang, LANG_DEFAULT)
@@ -89,7 +100,7 @@ async function createReport(request, reply) {
     const { sheetName } = sheet
 
     // get data for this sheet
-    const dataRows = await getSheetData(server, auth, query, sheet)
+    const dataRows = await getSheetData(server, auth, reportQuery, sheet)
 
     // get sheet (1-based)
     const worksheet = workbook.getWorksheet(sheetIndex + 1)
