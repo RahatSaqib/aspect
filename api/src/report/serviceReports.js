@@ -81,10 +81,10 @@ async function getSheetData(server, auth, reportQuery, sheet) {
 // ----------------------------------------------------------------------------------------------
 function getReportLabels(externalId, lang) {
   const reportLabels = {
-    [LANG_DEFAULT]: require(`./templates/${externalId}/${LANG_DEFAULT}`) //eslint-disable-line
+    [LANG_DEFAULT]: require(`../../templates/${externalId}/${LANG_DEFAULT}`) //eslint-disable-line
   }
   if (lang !== LANG_DEFAULT) {
-    reportLabels[lang] = require(`./templates/${externalId}/${lang}`) //eslint-disable-line
+    reportLabels[lang] = require(`../../templates/${externalId}/${lang}`) //eslint-disable-line
   }
   return reportLabels
 }
@@ -108,7 +108,7 @@ async function createReport(request, reply) {
   const reportLabels = getReportLabels(externalId, lang)
 
   // read file into workbook
-  let fileName = `src/report/templates/${externalId}/template.xlsx`
+  let fileName = `templates/${externalId}/template.xlsx`
   const ExcelWorkbook = new excel.Workbook()
   const workbook = await ExcelWorkbook.xlsx.readFile(fileName)
 
