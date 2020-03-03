@@ -28,10 +28,13 @@ function getLabel(labels, lang, key) {
 function setText(worksheet, labels, lang, token) {
   const cells = getCellsByValue(worksheet, token)
   cells.forEach(cell => {
-    const key = _.trim(cell.value, '< >')
-    const label = getLabel(labels, lang, key)
-    if (label) {
-      cell.value = label
+    const v = cell.value.trim()
+    if (v[0] === '<' && v[v.length - 1] === '>') {
+      const key = _.trim(v, '< >')
+      const label = getLabel(labels, lang, key)
+      if (label) {
+        cell.value = label
+      }
     }
   })
 }
