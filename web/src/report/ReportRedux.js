@@ -12,9 +12,9 @@ import {
 import { receivedFileResponse } from '../globals/GlobalsRedux'
 
 export const types = {
-  REQUEST_REPORTS: 'REQUEST_RESULTS',
-  RECEIVE_REPORTS: 'RECEIVE_RESULTS',
-  REJECTED_REPORTS: 'REJECTED_RESULTS',
+  REQUEST_REPORTS: 'REQUEST_REPORTS',
+  RECEIVE_REPORTS: 'RECEIVE_REPORTS',
+  REJECTED_REPORTS: 'REJECTED_REPORTS',
 }
 /*
  * ---------------- Action Creators -----------------
