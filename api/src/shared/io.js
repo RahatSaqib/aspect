@@ -189,6 +189,7 @@ module.exports = {
   createDirectory,
   generateCsvFile,
   generateExcelFile,
+  getCellsBySubstring,
   getCellsByValue,
   getContentType,
   getExportDirectory,

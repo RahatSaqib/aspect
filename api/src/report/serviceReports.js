@@ -3,7 +3,6 @@ const path = require('path')
 const { format } = require('date-fns')
 const Promise = require('bluebird')
 const { stringify } = require('querystring')
-const excel = require('exceljs')
 
 const { getUser } = require('../auth/service')
 const { getReportDetails, listReports } = require('./service')
