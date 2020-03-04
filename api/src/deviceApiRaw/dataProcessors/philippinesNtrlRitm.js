@@ -3,12 +3,7 @@ const Promise = require('bluebird')
 const Boom = require('boom')
 const { transact } = require('../../db')
 const { getRemoteAddress } = require('../../shared/request')
-const {
-  formatDateOrDefault,
-  getDateOrDefault,
-  getUtcTime,
-  dateEqual,
-} = require('../../shared/date')
+const { getDateOrDefault, getUtcTime, dateEqual } = require('../../shared/date')
 const { convertStringToFloat } = require('../../shared/string')
 const { deviceSeen } = require('../../device/actions')
 const { SynchronousDataProcessor } = require('./_base')
@@ -280,33 +275,63 @@ class PhilippinesNtrlRitm extends SynchronousDataProcessor {
         payload.database === 'RITM'
           ? 'RN-19-'
           : `RN-${payload.database.substr(payload.database.length - 2)}-`
-      const ntrlLabRequestId = `${labRequestIdPrefix}-${payload['Serial Code RN-14-']}`
+      const ntrlLabRequestId = `${labRequestIdPrefix}${payload['Serial Code RN-14-']}`
       const sampleOriginSiteId = originSite ? originSite.id : null
       const reportableSiteId =
         sampleOriginSiteId || site.deviceDefaultReportableSiteId || site.id
-      const sample = {
-        externalId: `${ntrlLabRequestId}`,
-        collectedOn: payload['Date and Time of Specimen Collection'],
-        sampleTypeId,
-        originSiteId: sampleOriginSiteId,
-      }
-      const existingSample = await knex('Sample')
-        .where('externalId', sample.externalId)
-        .first()
-      if (
-        existingSample &&
-        (existingSample.sampleTypeId !== sample.sampleTypeId ||
-          !dateEqual(existingSample.collectedOn, sample.collectedOn) ||
-          existingSample.sampleOriginSiteId !== sample.sampleOriginSiteId)
-      ) {
-        sample.id = existingSample.id
-        await knex('Sample')
-          .where('id', existingSample.id)
-          .update(sample)
-      } else {
-        const [sampleId] = await knex('Sample').insert(sample)
-        sample.id = sampleId
-      }
+
+      const numberOfSamples =
+        !!payload['Smear Result 3'] ||
+        !!payload['TBC Test Result 3rd Sample'] ||
+        !!payload['DST Test Result 3rd Sample'] ||
+        !!payload['GX Test Result 3rd Sample'] ||
+        !!payload['Smear Result 3 Date Collected']
+          ? 3
+          : !!payload['Smear Result 2'] ||
+            !!payload['TBC Test Result 2nd Sample'] ||
+            !!payload['Smear Result 2 Date Collected']
+          ? 2
+          : 1
+      const samples = _.range(1, numberOfSamples + 1).map(sampleNumber => {
+        const sample = {
+          externalId:
+            numberOfSamples > 1
+              ? `${ntrlLabRequestId}-${sampleNumber}`
+              : `${ntrlLabRequestId}`,
+          collectedOn:
+            payload[`Smear Result ${sampleNumber} Date Collected`] ||
+            payload['Date and Time of Specimen Collection'],
+          sampleTypeId,
+          originSiteId: sampleOriginSiteId,
+        }
+        return sample
+      })
+      await Promise.each(samples, async (sample, index) => {
+        let existingSample = await knex('Sample')
+          .where('externalId', sample.externalId)
+          .first()
+        if (!existingSample && index === 0) {
+          existingSample = await knex('Sample')
+            .where('externalId', ntrlLabRequestId)
+            .first()
+        }
+        if (
+          existingSample &&
+          (existingSample.externalId !== sample.externalId ||
+            existingSample.sampleTypeId !== sample.sampleTypeId ||
+            !dateEqual(existingSample.collectedOn, sample.collectedOn) ||
+            existingSample.originSiteId !== sample.originSiteId)
+        ) {
+          sample.id = existingSample.id
+          await knex('Sample')
+            .where('id', existingSample.id)
+            .update(sample)
+        } else if (!existingSample) {
+          const [sampleId] = await knex('Sample').insert(sample)
+          sample.id = sampleId
+        }
+      })
+      const sampleIds = samples.map(sample => sample.id)
       let patientNameId = payload['Last Name'] || ''
       if (payload['First Name']) {
         if (patientNameId) {
@@ -399,7 +424,9 @@ class PhilippinesNtrlRitm extends SynchronousDataProcessor {
       }
 
       const objectHasValues = o =>
-        Object.values(o).some(value => !_.isNil(value) && value.trim() !== '')
+        Object.values(o).some(
+          value => !_.isNil(value) && `${value}`.trim() !== ''
+        )
 
       const dstResultData = {
         testRequested: payload['DST Laboratory Test Performed'],
@@ -423,6 +450,17 @@ class PhilippinesNtrlRitm extends SynchronousDataProcessor {
         reviewedBy: payload['DST Validated by'],
         notedBy: payload['DST Noted by'],
       }
+      const dstResultOverwritePriority = [
+        resultCategories.PositiveMTB,
+        resultCategories.PositiveMOTT,
+        resultCategories.Detected,
+        resultCategories.Resistant,
+        resultCategories.Susceptible,
+        resultCategories.Contaminated,
+        resultCategories.Invalid,
+        resultCategories.NotDetected,
+        resultCategories.Missing,
+      ]
       if (
         objectHasValues(
           _.omit(dstResultData, [
@@ -436,14 +474,11 @@ class PhilippinesNtrlRitm extends SynchronousDataProcessor {
         // TODO: Update MGIT Data processor to lookup results for assayGenericDst as well
         const assayBdMgitAstId = await assayToId('assayBdMgitAst')
         const assayGenericDstId = await assayToId('assayGenericDst')
-        const externalId = `${formatDateOrDefault(
-          dstResultData.dateRead || utcNow,
-          'yyyyMMdd'
-        )}_DST_${sample.externalId}`
+        const externalId = `${site.externalId}_${samples[0].externalId}_DST`
         const result = (await knex('Result')
           .where({ externalId, deviceId })
           .orWhere(function() {
-            this.where('sampleId', sample.id)
+            this.whereIn('sampleId', sampleIds)
               .whereIn('assayId', [assayBdMgitAstId, assayGenericDstId])
               .andWhere('siteId', site.id)
           })
@@ -451,10 +486,10 @@ class PhilippinesNtrlRitm extends SynchronousDataProcessor {
           ...baseNewResult,
           externalId,
           assayId:
-            dstResultData.methodUsed === 'Liquid Culture (MGIT 960)'
+            (dstResultData.methodUsed || '').indexOf('MGIT') > -1
               ? assayBdMgitAstId
               : assayGenericDstId,
-          sampleId: sample.id,
+          sampleId: samples[0].id,
           startedOn: dstResultData.dateRead || dstResultData.dateReleased,
           endedOn: dstResultData.dateRead || dstResultData.dateReleased,
           resultData: JSON.stringify({
@@ -463,7 +498,7 @@ class PhilippinesNtrlRitm extends SynchronousDataProcessor {
           senderOperator: dstResultData.labTech,
           reportableSiteId,
         }
-        const resultCategory1Id =
+        const dstResultCategory1Id =
           {
             'Mycobacterium tuberculosis': resultCategories.PositiveMTB,
             ' No growth after 8 weeks': resultCategories.NotDetected,
@@ -476,12 +511,12 @@ class PhilippinesNtrlRitm extends SynchronousDataProcessor {
             'Incomplete: Not submitted 2 samples w/in 3 days':
               resultCategories.Missing,
           }[dstResultData.idResult] || resultCategories.Missing
-        const resultCategory2IdMappings = {
+        const dstResultCategory2IdMappings = {
           RESISTANT: resultCategories.Resistant,
           SUSCEPTIBLE: resultCategories.Susceptible,
           'NOT TESTED': resultCategories.Missing,
         }
-        const resultsForDrugsTested = [
+        const dstResultsForDrugsTested = [
           dstResultData.streptomycin,
           dstResultData.isoniazid,
           dstResultData.rifampicin,
@@ -495,55 +530,44 @@ class PhilippinesNtrlRitm extends SynchronousDataProcessor {
         ]
         let resultCategory2Id = resultCategories.Missing
         if (
-          resultsForDrugsTested.some(
+          dstResultsForDrugsTested.some(
             resultForDrugsTested =>
-              resultCategory2IdMappings[resultForDrugsTested] ===
+              dstResultCategory2IdMappings[resultForDrugsTested] ===
               resultCategories.Resistant
           )
         ) {
           resultCategory2Id = resultCategories.Resistant
         } else if (
-          resultsForDrugsTested.some(
+          dstResultsForDrugsTested.some(
             resultForDrugsTested =>
-              resultCategory2IdMappings[resultForDrugsTested] ===
+              dstResultCategory2IdMappings[resultForDrugsTested] ===
               resultCategories.Contaminated
           )
         ) {
           resultCategory2Id = resultCategories.Contaminated
         } else if (
-          resultsForDrugsTested.some(
+          dstResultsForDrugsTested.some(
             resultForDrugsTested =>
-              resultCategory2IdMappings[resultForDrugsTested] ===
+              dstResultCategory2IdMappings[resultForDrugsTested] ===
               resultCategories.Susceptible
           )
         ) {
           resultCategory2Id = resultCategories.Susceptible
         } else if (
-          resultsForDrugsTested.some(
+          dstResultsForDrugsTested.some(
             resultForDrugsTested =>
-              resultCategory2IdMappings[resultForDrugsTested] ===
+              dstResultCategory2IdMappings[resultForDrugsTested] ===
               resultCategories.Invalid
           )
         ) {
           resultCategory2Id = resultCategories.Invalid
         }
-        const resultOverwritePriority = [
-          resultCategories.PositiveMTB,
-          resultCategories.PositiveMOTT,
-          resultCategories.Detected,
-          resultCategories.Resistant,
-          resultCategories.Susceptible,
-          resultCategories.Contaminated,
-          resultCategories.Invalid,
-          resultCategories.NotDetected,
-          resultCategories.Missing,
-        ]
         await this.upsertResult(
           knex,
           rawMessage,
           site,
           result,
-          resultCategory1Id,
+          dstResultCategory1Id,
           resultCategory2Id,
           dstResultData,
           dstResultData.dateRead,
@@ -554,7 +578,7 @@ class PhilippinesNtrlRitm extends SynchronousDataProcessor {
           utcNow,
           resultCategories,
           resultWorkflowStatuses,
-          resultOverwritePriority
+          dstResultOverwritePriority
         )
       }
 
@@ -579,6 +603,16 @@ class PhilippinesNtrlRitm extends SynchronousDataProcessor {
         // TODO: Update MGIT Data processor to lookup results for assayCulture as well
         const assayBdMgitGndId = await assayToId('assayBdMgitGnd')
         const assayCultureId = await assayToId('assayCulture')
+        const cultureSamples = []
+        if (cultureResultData.result1) {
+          cultureSamples.push(samples[0])
+        }
+        if (cultureResultData.result2 && samples.length > 1) {
+          cultureSamples.push(samples[1])
+        }
+        if (cultureResultData.result3 && samples.length > 2) {
+          cultureSamples.push(samples[2])
+        }
         const resultCategoryMappings = {
           'Mycobacterium tuberculosis': resultCategories.PositiveMTB,
           'No growth after 6 weeks': resultCategories.NotDetected,
@@ -588,72 +622,68 @@ class PhilippinesNtrlRitm extends SynchronousDataProcessor {
           'Non-tuberculous mycobacteria': resultCategories.PositiveMOTT,
           QNS: resultCategories.Invalid,
         }
-        await Promise.each(
-          [
-            cultureResultData.result1,
-            cultureResultData.result2,
-            cultureResultData.result3,
-          ],
-          async (cultureResult, index) => {
-            const externalId = `${formatDateOrDefault(
-              cultureResultData.dateReleased || utcNow,
-              'yyyyMMdd'
-            )}_CULTURE_${sample.externalId}${index > 0 ? `-${index + 1}` : ''}`
-            const result = (await knex('Result')
-              .where({ externalId, deviceId })
-              .orWhere(function() {
-                this.whereIn('assayId', [assayBdMgitGndId, assayCultureId])
-                  .andWhere('sampleId', sample.id)
-                  .andWhere('siteId', site.id)
-              })
-              .first()) || {
-              ...baseNewResult,
-              externalId,
-              assayId: assayCultureId,
-              sampleId: sample.id,
-              reportableSiteId,
-              startedOn: cultureResultData.dateReleased,
-              endedOn: cultureResultData.dateReleased,
-              resultData: JSON.stringify({
-                encodedResult: cultureResultData,
-              }),
-              senderOperator: sample.medTech,
-            }
-            const resultCategory1Id = resultCategoryMappings[cultureResult]
-            const resultCategory2Id =
-              resultCategoryMappings[cultureResultData.finalResult]
-            const resultOverwritePriority = [
-              resultCategories.PositiveMTB,
-              resultCategories.Detected,
-              resultCategories.PositiveMOTT,
-              resultCategories.Resistant,
-              resultCategories.Susceptible,
-              resultCategories.Contaminated,
-              resultCategories.Invalid,
-              resultCategories.NotDetected,
-              resultCategories.NoResult,
-              resultCategories.Missing,
-            ]
-            await this.upsertResult(
-              knex,
-              rawMessage,
-              site,
-              result,
-              resultCategory1Id,
-              resultCategory2Id,
-              cultureResultData,
-              cultureResultData.dateReleased,
-              cultureResultData.dateReleased,
-              cultureResultData.labTech,
-              cultureResultData.remarks,
-              patientData,
-              utcNow,
-              resultCategories,
-              resultWorkflowStatuses,
-              resultOverwritePriority
-            )
+        const cultureResultOverwritePriority = [
+          resultCategories.PositiveMTB,
+          resultCategories.Detected,
+          resultCategories.PositiveMOTT,
+          resultCategories.Resistant,
+          resultCategories.Susceptible,
+          resultCategories.Contaminated,
+          resultCategories.Invalid,
+          resultCategories.NotDetected,
+          resultCategories.NoResult,
+          resultCategories.Missing,
+        ]
+        await Promise.each(cultureSamples, async (cultureSample, index) => {
+          const externalId = `${site.externalId}_${cultureSample.externalId}_CULTURE`
+          const result = (await knex('Result')
+            .where({ externalId, deviceId })
+            .orWhere(function() {
+              this.whereIn('assayId', [assayBdMgitGndId, assayCultureId])
+                .andWhere('sampleId', cultureSample.id)
+                .andWhere('siteId', site.id)
+            })
+            .first()) || {
+            ...baseNewResult,
+            externalId,
+            assayId:
+              (cultureResultData.methodUsed1 || '').indexOf('MGIT') > -1
+                ? assayBdMgitGndId
+                : assayCultureId,
+            sampleId: cultureSample.id,
+            reportableSiteId,
+            startedOn: cultureResultData.dateReleased,
+            endedOn: cultureResultData.dateReleased,
+            resultData: JSON.stringify({
+              encodedResult: cultureResultData,
+            }),
+            senderOperator: cultureResultData.medTech,
           }
-        )
+          const resultCategory1Id =
+            resultCategoryMappings[cultureResultData[`result${index + 1}`]] ||
+            resultCategories.Missing
+          const resultCategory2Id =
+            resultCategoryMappings[cultureResultData.finalResult] ||
+            resultCategories.Missing
+          await this.upsertResult(
+            knex,
+            rawMessage,
+            site,
+            result,
+            resultCategory1Id,
+            resultCategory2Id,
+            cultureResultData,
+            cultureResultData.dateReleased,
+            cultureResultData.dateReleased,
+            cultureResultData.labTech,
+            cultureResultData.remarks,
+            patientData,
+            utcNow,
+            resultCategories,
+            resultWorkflowStatuses,
+            cultureResultOverwritePriority
+          )
+        })
       }
       const smearResultData = {
         smearMethod:
@@ -682,6 +712,16 @@ class PhilippinesNtrlRitm extends SynchronousDataProcessor {
         )
       ) {
         const assaySmearId = await assayToId('assaySmear')
+        const smearSamples = []
+        if (smearResultData.smearResult1) {
+          smearSamples.push(samples[0])
+        }
+        if (smearResultData.smearResult2 && samples.length > 1) {
+          smearSamples.push(samples[1])
+        }
+        if (smearResultData.smearResult3 && samples.length > 2) {
+          smearSamples.push(samples[2])
+        }
         const resultCategoryMappings = {
           '0': resultCategories.NotDetected,
           '+1': resultCategories.Detected,
@@ -722,66 +762,61 @@ class PhilippinesNtrlRitm extends SynchronousDataProcessor {
           'POSITIVE FOR Acid Fast Bacilli': resultCategories.Detected,
           'NEGATIVE FOR Acid Fast Bacilli': resultCategories.NotDetected,
         }
-        await Promise.each(
-          [smearResultData.smearResult1, smearResultData.smearResult2],
-          async (smearResult, index) => {
-            const externalId = `${formatDateOrDefault(
-              smearResultData.dateReleased || utcNow,
-              'yyyyMMdd'
-            )}_SMEAR_${sample.externalId}${index > 0 ? `-${index + 1}` : ''}`
-            const result = (await knex('Result')
-              .where({ externalId, deviceId })
-              .orWhere(function() {
-                this.where('assayId', assaySmearId)
-                  .andWhere('sampleId', sample.id)
-                  .andWhere('siteId', site.id)
-              })
-              .first()) || {
-              ...baseNewResult,
-              externalId,
-              assayId: assaySmearId,
-              sampleId: sample.id,
-              reportableSiteId,
-              startedOn: smearResultData.dateReleased,
-              endedOn: smearResultData.dateReleased,
-              resultData: JSON.stringify({
-                encodedResult: smearResultData,
-              }),
-              senderOperator: smearResultData.laboratoryTechnician,
-            }
-            const resultCategory1Id = resultCategoryMappings[smearResult]
-            const resultCategory2Id =
-              resultCategoryMappings[smearResultData.finalResult]
-            const resultOverwritePriority = [
-              resultCategories.Positive3,
-              resultCategories.Positive2,
-              resultCategories.Positive1,
-              resultCategories.Detected,
-              resultCategories.Invalid,
-              resultCategories.NotDetected,
-              resultCategories.NoResult,
-              resultCategories.Missing,
-            ]
-            await this.upsertResult(
-              knex,
-              rawMessage,
-              site,
-              result,
-              resultCategory1Id,
-              resultCategory2Id,
-              smearResultData,
-              smearResultData.dateReleased,
-              smearResultData.dateReleased,
-              smearResultData.laboratoryTechnician,
-              null,
-              patientData,
-              utcNow,
-              resultCategories,
-              resultWorkflowStatuses,
-              resultOverwritePriority
-            )
+        const smearResultOverwritePriority = [
+          resultCategories.Positive3,
+          resultCategories.Positive2,
+          resultCategories.Positive1,
+          resultCategories.Detected,
+          resultCategories.Invalid,
+          resultCategories.NotDetected,
+          resultCategories.NoResult,
+          resultCategories.Missing,
+        ]
+        await Promise.each(smearSamples, async (smearSample, index) => {
+          const externalId = `${site.externalId}_${smearSample.externalId}_SMEAR`
+          const result = (await knex('Result')
+            .where({ externalId, deviceId })
+            .orWhere(function() {
+              this.where('assayId', assaySmearId)
+                .andWhere('sampleId', smearSample.id)
+                .andWhere('siteId', site.id)
+            })
+            .first()) || {
+            ...baseNewResult,
+            externalId,
+            assayId: assaySmearId,
+            sampleId: smearSample.id,
+            reportableSiteId,
+            startedOn: smearResultData.dateReleased,
+            endedOn: smearResultData.dateReleased,
+            resultData: JSON.stringify({
+              encodedResult: smearResultData,
+            }),
+            senderOperator: smearResultData.laboratoryTechnician,
           }
-        )
+          const resultCategory1Id =
+            resultCategoryMappings[smearResultData[`smearResult${index + 1}`]]
+          const resultCategory2Id =
+            resultCategoryMappings[smearResultData.finalResult]
+          await this.upsertResult(
+            knex,
+            rawMessage,
+            site,
+            result,
+            resultCategory1Id,
+            resultCategory2Id,
+            smearResultData,
+            smearResultData.dateReleased,
+            smearResultData.dateReleased,
+            smearResultData.laboratoryTechnician,
+            null,
+            patientData,
+            utcNow,
+            resultCategories,
+            resultWorkflowStatuses,
+            smearResultOverwritePriority
+          )
+        })
       }
 
       const geneXpertResultData = {
@@ -809,14 +844,11 @@ class PhilippinesNtrlRitm extends SynchronousDataProcessor {
         const assayGeneXpertMtbRifId = await assayToId('GxMtbRif')
         const assayGeneXpertMtbRifUltraId = await assayToId('GxMtbRifUltra')
 
-        const externalId = `${formatDateOrDefault(
-          geneXpertResultData.dateReleased || utcNow,
-          'yyyyMMdd'
-        )}_GX_${sample.externalId}`
+        const externalId = `${site.externalId}_${samples[0].externalId}_GX`
         const result = (await knex('Result')
           .where({ externalId, deviceId })
           .orWhere(function() {
-            this.where('sampleId', sample.id)
+            this.where('sampleId', samples[0].id)
               .whereIn('assayId', [
                 assayGeneXpertMtbRifId,
                 assayGeneXpertMtbRifUltraId,
@@ -827,7 +859,7 @@ class PhilippinesNtrlRitm extends SynchronousDataProcessor {
           ...baseNewResult,
           externalId,
           assayId: assayGeneXpertMtbRifId,
-          sampleId: sample.id,
+          sampleId: samples[0].id,
           reportableSiteId,
           startedOn: geneXpertResultData.dateReleased,
           endedOn: geneXpertResultData.dateReleased,

@@ -3,12 +3,7 @@ const Promise = require('bluebird')
 const Boom = require('boom')
 const { transact } = require('../../db')
 const { getRemoteAddress } = require('../../shared/request')
-const {
-  formatDateOrDefault,
-  getDateOrDefault,
-  getUtcTime,
-  dateEqual,
-} = require('../../shared/date')
+const { getDateOrDefault, getUtcTime, dateEqual } = require('../../shared/date')
 const { deviceSeen } = require('../../device/actions')
 const { SynchronousDataProcessor } = require('./_base')
 const {
@@ -1118,41 +1113,46 @@ class PhilippinesNtrlPmdt extends SynchronousDataProcessor {
         payload.database === 'PMDT'
           ? 'PN-19-'
           : `PN-${payload.database.substr(payload.database.length - 2)}-`
-      const ntrlLabRequestId = `${labRequestIdPrefix}-${payload['Serial Number']}`
+      const ntrlLabRequestId = `${labRequestIdPrefix}${payload['Serial Number']}`
       const sampleOriginSiteId = originSite ? originSite.id : null
       const reportableSiteId =
         sampleOriginSiteId || site.deviceDefaultReportableSiteId || site.id
-      const sampleCollectionDateKeys = [
-        'Date Collected 1',
-        'Date Collected 2',
-        'Date Collected 3',
-      ].filter(dateCollectedKey => !_.isNil(payload[dateCollectedKey]))
-      const samples = sampleCollectionDateKeys.map(dateCollectedKey => {
+
+      const numberOfSamples =
+        !!payload['Date Collected 3'] ||
+        !!payload['Type of Collection 3'] ||
+        !!payload['Volume 3'] ||
+        !!payload['Consistence 3']
+          ? 3
+          : !!payload['Date Collected 2'] ||
+            !!payload['Type of Collection 2'] ||
+            !!payload['Volume 2'] ||
+            !!payload['Consistency 2'] ||
+            !!payload['Smear Method 2'] ||
+            !!payload['Smear Result 2'] ||
+            !!payload['Culture Method 2'] ||
+            !!payload['Culture Result 2'] ||
+            !!payload['Culture Grade 2'] ||
+            !!payload['Culture Remarks 2']
+          ? 2
+          : 1
+      const samples = _.range(1, numberOfSamples + 1).map(sampleNumber => {
         const sample = {
-          externalId: `${ntrlLabRequestId}`,
-          collectedOn: payload[dateCollectedKey],
+          externalId:
+            numberOfSamples > 1
+              ? `${ntrlLabRequestId}-${sampleNumber}`
+              : `${ntrlLabRequestId}`,
+          collectedOn: payload[`Date Collected ${sampleNumber}`],
           sampleTypeId,
           originSiteId: sampleOriginSiteId,
-        }
-        if (sampleCollectionDateKeys.length > 1) {
-          sample.externalId = `${ntrlLabRequestId}-${
-            dateCollectedKey[dateCollectedKey.length - 1]
-          }`
         }
         return sample
       })
-      if (_.isEmpty(samples)) {
-        samples.push({
-          externalId: ntrlLabRequestId,
-          sampleTypeId,
-          originSiteId: sampleOriginSiteId,
-        })
-      }
-      await Promise.each(samples, async sample => {
+      await Promise.each(samples, async (sample, index) => {
         let existingSample = await knex('Sample')
           .where('externalId', sample.externalId)
           .first()
-        if (!existingSample) {
+        if (!existingSample && index === 0) {
           existingSample = await knex('Sample')
             .where('externalId', ntrlLabRequestId)
             .first()
@@ -1162,13 +1162,13 @@ class PhilippinesNtrlPmdt extends SynchronousDataProcessor {
           (existingSample.externalId !== sample.externalId ||
             existingSample.sampleTypeId !== sample.sampleTypeId ||
             !dateEqual(existingSample.collectedOn, sample.collectedOn) ||
-            existingSample.sampleOriginSiteId !== sample.sampleOriginSiteId)
+            existingSample.originSiteId !== sample.originSiteId)
         ) {
           sample.id = existingSample.id
           await knex('Sample')
             .where('id', existingSample.id)
             .update(sample)
-        } else {
+        } else if (!existingSample) {
           const [sampleId] = await knex('Sample').insert(sample)
           sample.id = sampleId
         }
@@ -1260,7 +1260,9 @@ class PhilippinesNtrlPmdt extends SynchronousDataProcessor {
       }
 
       const objectHasValues = o =>
-        Object.values(o).some(value => !_.isNil(value) && value.trim() !== '')
+        Object.values(o).some(
+          value => !_.isNil(value) && `${value}`.trim() !== ''
+        )
 
       const dstResultData = {
         testRequested: payload['DST Test Requested'],
@@ -1279,6 +1281,8 @@ class PhilippinesNtrlPmdt extends SynchronousDataProcessor {
         methodUsed: payload['DST Method Used'],
         otherMethodUsed: payload['DST Method Used Others'],
         remarks: payload['DST Remarks'],
+        dateTransferredToDst: payload['Date transfered to DST'],
+        dstTat: payload['DST TAT'],
         dateRead: payload['DST Date Read'],
         dateReleased: payload['DST Date Released'],
         readBy: payload['DST MT Read'],
@@ -1299,10 +1303,7 @@ class PhilippinesNtrlPmdt extends SynchronousDataProcessor {
         // TODO: Update MGIT Data processor to lookup results for assayGenericDst as well
         const assayBdMgitAstId = await assayToId('assayBdMgitAst')
         const assayGenericDstId = await assayToId('assayGenericDst')
-        const externalId = `${formatDateOrDefault(
-          dstResultData.dateRead || utcNow,
-          'yyyyMMdd'
-        )}_DST_${samples[0].externalId}`
+        const externalId = `${site.externalId}_${samples[0].externalId}_DST`
         const result = (await knex('Result')
           .where({ externalId, deviceId })
           .orWhere(function() {
@@ -1314,12 +1315,18 @@ class PhilippinesNtrlPmdt extends SynchronousDataProcessor {
           ...baseNewResult,
           externalId,
           assayId:
-            dstResultData.methodUsed === 'Liquid Culture (MGIT 960)'
+            (dstResultData.methodUsed || '').indexOf('MGIT') > -1
               ? assayBdMgitAstId
               : assayGenericDstId,
           sampleId: samples[0].id,
-          startedOn: dstResultData.dateRead || dstResultData.dateReleased,
-          endedOn: dstResultData.dateRead || dstResultData.dateReleased,
+          startedOn:
+            dstResultData.dateTransferredToDst ||
+            dstResultData.dateRead ||
+            dstResultData.dateReleased,
+          endedOn:
+            dstResultData.dstTat ||
+            dstResultData.dateRead ||
+            dstResultData.dateReleased,
           resultData: JSON.stringify({
             encodedResult: dstResultData,
           }),
@@ -1448,14 +1455,8 @@ class PhilippinesNtrlPmdt extends SynchronousDataProcessor {
         if (cultureResultData.result2 && samples.length > 1) {
           cultureSamples.push(samples[1])
         }
-        if (cultureResultData.result3 && samples.length > 2) {
-          cultureSamples.push(samples[2])
-        }
         await Promise.each(cultureSamples, async (cultureSample, index) => {
-          const externalId = `${formatDateOrDefault(
-            cultureResultData.dateReleased || utcNow,
-            'yyyyMMdd'
-          )}_CULTURE_${cultureSample.externalId}`
+          const externalId = `${site.externalId}_${cultureSample.externalId}_CULTURE`
           const result = (await knex('Result')
             .where({ externalId, deviceId })
             .orWhere(function() {
@@ -1466,7 +1467,10 @@ class PhilippinesNtrlPmdt extends SynchronousDataProcessor {
             .first()) || {
             ...baseNewResult,
             externalId,
-            assayId: assayCultureId,
+            assayId:
+              (cultureResultData.methodUsed1 || '').indexOf('MGIT') > -1
+                ? assayBdMgitGndId
+                : assayCultureId,
             sampleId: cultureSample.id,
             reportableSiteId,
             startedOn: cultureResultData.dateReleased,
@@ -1474,7 +1478,10 @@ class PhilippinesNtrlPmdt extends SynchronousDataProcessor {
             resultData: JSON.stringify({
               encodedResult: cultureResultData,
             }),
-            senderOperator: cultureSample.medTech,
+            senderOperator:
+              cultureResultData.medTech ||
+              cultureResultData.labTech ||
+              cultureResultData.encodedBy,
           }
           const resultCategoryMappings = {
             'M. tuberculosis': resultCategories.PositiveMTB,
@@ -1490,13 +1497,11 @@ class PhilippinesNtrlPmdt extends SynchronousDataProcessor {
             'Not Done': resultCategories.NoResult,
           }
           const resultCategory1Id =
-            resultCategoryMappings[
-              index === 0
-                ? cultureResultData.result1
-                : cultureResultData.result2
-            ]
+            resultCategoryMappings[cultureResultData[`result${index + 1}`]] ||
+            resultCategories.Missing
           const resultCategory2Id =
-            resultCategoryMappings[cultureResultData.finalResult]
+            resultCategoryMappings[cultureResultData.finalResult] ||
+            resultCategories.Missing
           const resultOverwritePriority = [
             resultCategories.PositiveMTB,
             resultCategories.Detected,
@@ -1549,10 +1554,7 @@ class PhilippinesNtrlPmdt extends SynchronousDataProcessor {
         objectHasValues(_.omit(lpaResultData, ['performedBy', 'reviewedBy']))
       ) {
         const assayLpaId = await assayToId('assayLPA')
-        const externalId = `${formatDateOrDefault(
-          lpaResultData.dateReleased || utcNow,
-          'yyyyMMdd'
-        )}_LPA_${samples[0].externalId}`
+        const externalId = `${site.externalId}_${samples[0].externalId}_LPA`
         const result = (await knex('Result')
           .where({ externalId, deviceId })
           .orWhere(function() {
@@ -1674,11 +1676,48 @@ class PhilippinesNtrlPmdt extends SynchronousDataProcessor {
         if (smearResultData.smearResult2 && samples.length > 1) {
           smearSamples.push(samples[1])
         }
+        const resultCategoryMappings = {
+          '0': resultCategories.NotDetected,
+          '+1': resultCategories.Detected,
+          '+2': resultCategories.Detected,
+          '+3': resultCategories.Detected,
+          '+4': resultCategories.Detected,
+          '+5': resultCategories.Detected,
+          '+6': resultCategories.Detected,
+          '+7': resultCategories.Detected,
+          '+8': resultCategories.Detected,
+          '+9': resultCategories.Detected,
+          '+10': resultCategories.Detected,
+          '+11': resultCategories.Detected,
+          '+12': resultCategories.Detected,
+          '+13': resultCategories.Detected,
+          '+14': resultCategories.Detected,
+          '+15': resultCategories.Detected,
+          '+16': resultCategories.Detected,
+          '+17': resultCategories.Detected,
+          '+18': resultCategories.Detected,
+          '+19': resultCategories.Detected,
+          '+20': resultCategories.Detected,
+          '+21': resultCategories.Detected,
+          '+22': resultCategories.Detected,
+          '+23': resultCategories.Detected,
+          '+24': resultCategories.Detected,
+          '+25': resultCategories.Detected,
+          '+26': resultCategories.Detected,
+          '+27': resultCategories.Detected,
+          '+28': resultCategories.Detected,
+          '+29': resultCategories.Detected,
+          '1+': resultCategories.Positive1,
+          '2+': resultCategories.Positive2,
+          '3+': resultCategories.Positive3,
+          QNS: resultCategories.Invalid,
+          'NON-VIABLE': resultCategories.Invalid,
+          'NOT DONE': resultCategories.NoResult,
+          'POSITIVE FOR Acid Fast Bacilli': resultCategories.Detected,
+          'NEGATIVE FOR Acid Fast Bacilli': resultCategories.NotDetected,
+        }
         await Promise.each(smearSamples, async (smearSample, index) => {
-          const externalId = `${formatDateOrDefault(
-            smearResultData.dateReleased || utcNow,
-            'yyyyMMdd'
-          )}_SMEAR_${smearSample.externalId}`
+          const externalId = `${site.externalId}_${smearSample.externalId}_SMEAR`
           const result = (await knex('Result')
             .where({ externalId, deviceId })
             .orWhere(function() {
@@ -1698,46 +1737,6 @@ class PhilippinesNtrlPmdt extends SynchronousDataProcessor {
               encodedResult: smearResultData,
             }),
             senderOperator: smearResultData.laboratoryTechnician,
-          }
-          const resultCategoryMappings = {
-            '0': resultCategories.NotDetected,
-            '+1': resultCategories.Detected,
-            '+2': resultCategories.Detected,
-            '+3': resultCategories.Detected,
-            '+4': resultCategories.Detected,
-            '+5': resultCategories.Detected,
-            '+6': resultCategories.Detected,
-            '+7': resultCategories.Detected,
-            '+8': resultCategories.Detected,
-            '+9': resultCategories.Detected,
-            '+10': resultCategories.Detected,
-            '+11': resultCategories.Detected,
-            '+12': resultCategories.Detected,
-            '+13': resultCategories.Detected,
-            '+14': resultCategories.Detected,
-            '+15': resultCategories.Detected,
-            '+16': resultCategories.Detected,
-            '+17': resultCategories.Detected,
-            '+18': resultCategories.Detected,
-            '+19': resultCategories.Detected,
-            '+20': resultCategories.Detected,
-            '+21': resultCategories.Detected,
-            '+22': resultCategories.Detected,
-            '+23': resultCategories.Detected,
-            '+24': resultCategories.Detected,
-            '+25': resultCategories.Detected,
-            '+26': resultCategories.Detected,
-            '+27': resultCategories.Detected,
-            '+28': resultCategories.Detected,
-            '+29': resultCategories.Detected,
-            '1+': resultCategories.Positive1,
-            '2+': resultCategories.Positive2,
-            '3+': resultCategories.Positive3,
-            QNS: resultCategories.Invalid,
-            'NON-VIABLE': resultCategories.Invalid,
-            'NOT DONE': resultCategories.NoResult,
-            'POSITIVE FOR Acid Fast Bacilli': resultCategories.Detected,
-            'NEGATIVE FOR Acid Fast Bacilli': resultCategories.NotDetected,
           }
           const resultCategory1Id =
             resultCategoryMappings[
@@ -1794,10 +1793,7 @@ class PhilippinesNtrlPmdt extends SynchronousDataProcessor {
         const assayGeneXpertMtbRifId = await assayToId('GxMtbRif')
         const assayGeneXpertMtbRifUltraId = await assayToId('GxMtbRifUltra')
 
-        const externalId = `${formatDateOrDefault(
-          geneXpertResultData.processingDate || utcNow,
-          'yyyyMMdd'
-        )}_GX_${samples[0].externalId}`
+        const externalId = `${site.externalId}_${samples[0].externalId}_GX`
         const result = (await knex('Result')
           .where({ externalId, deviceId })
           .orWhere(function() {
