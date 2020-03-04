@@ -43,7 +43,7 @@ async function getReportDetails(auth, externalId) {
   report.sheets = await knex('ReportSheet')
     .where('reportId', report.id)
     .orderBy('sortOrder', 'asc')
-    .select('id', 'sheetName', 'title', 'endpoint', 'query')
+    .select('id', 'endpoint', 'query')
 
   return report
 }

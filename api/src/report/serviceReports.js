@@ -39,17 +39,18 @@ function getHeaderRows(sheet, cellTableToken) {
 async function getSheetData(server, auth, reportQuery, sheet) {
   const { endpoint } = sheet
   const sheetQuery = sheet.query ? JSON.parse(sheet.query) : {}
+  const query = {
+    // filters defined on Reports page
+    ...reportQuery,
+    // make sure to report all results (up to 1 million records)
+    page: 0,
+    size: 999999,
+    // specific params for endpoint from ReportSheet table, i.e. sortCol, sortDir
+    ...sheetQuery,
+  }
   const { statusCode, result } = await server.inject({
     method: 'GET',
-    url: `${endpoint}?${stringify({
-      // `query` contains filters defined on Reports page
-      ...reportQuery,
-      // make sure to report all results (up to 1 million records)
-      page: 0,
-      size: 999999,
-      // specific params for endpoint, i.e. sortCol, sortDir
-      ...sheetQuery,
-    })}`,
+    url: `${endpoint}?${stringify(query)}`,
     auth,
   })
 
@@ -152,15 +153,11 @@ async function createReport(request, reply) {
 
   // process all sheets
   await Promise.each(sheets, async (sheet, sheetIndex) => {
-    // get data
-    const { sheetName } = sheet
-
     // get data for this sheet
     const dataRows = await getSheetData(server, auth, reportQuery, sheet)
 
     // get sheet (1-based)
     const worksheet = workbook.getWorksheet(sheetIndex + 1)
-    worksheet.name = sheetName || `Sheet${sheetIndex + 1}`
 
     // replace few placeholders in sheet header
     replaceSubstringInCell(worksheet, '<Dates>', dateRangeString)
@@ -196,18 +193,28 @@ async function createReport(request, reply) {
       })
 
       // fill in array 'rows'
-      const rows = dataRows.map((dataRow, rowIndex) => {
-        return fieldNames.map(fieldName => {
-          if (fieldName === '#') {
-            return rowIndex + 1
-          }
-          let value = (fieldName && dataRow[fieldName]) || ''
-          if (fieldName === 'patientAge' && value === 'null') {
-            value = ''
-          }
-          return value
+      let rows = []
+      if (dataRows.length > 0) {
+        rows = dataRows.map((dataRow, rowIndex) => {
+          return fieldNames.map(fieldName => {
+            if (fieldName === '#') {
+              return rowIndex + 1
+            }
+            let value = (fieldName && dataRow[fieldName]) || ''
+            if (fieldName === 'patientAge' && value === 'null') {
+              value = ''
+            }
+            return value
+          })
         })
-      })
+      } else {
+        rows = [
+          fieldNames.map((fieldName, fieldIndex) => {
+            const value = fieldIndex === 0 ? 'No data' : ''
+            return value
+          }),
+        ]
+      }
 
       // remove pattern row and insert rows from patternRowNumber
       worksheet.spliceRows(patternRowNumber, 1, ...rows)

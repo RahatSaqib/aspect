@@ -59,6 +59,36 @@ const routes = [
           ...requestBaseQuery(),
         },
       },
+      response: {
+        options: {
+          allowUnknown: false,
+        },
+        schema: Joi.object().keys({
+          ok: Joi.bool()
+            .required()
+            .description('False if there was some sort of error'),
+          total: Joi.number().required(),
+          data: Joi.array()
+            .required()
+            .description('List of reports')
+            .items(
+              Joi.object().keys({
+                name: Joi.string()
+                  .required()
+                  .description('Report name'),
+                description: Joi.string()
+                  .required()
+                  .description('Report description'),
+                externalId: Joi.string()
+                  .required()
+                  .description('Report unique externalId'),
+                sortOrder: Joi.number()
+                  .required()
+                  .description('Report sort order'),
+              })
+            ),
+        }),
+      },
     },
   },
   {

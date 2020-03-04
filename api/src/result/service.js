@@ -2155,6 +2155,7 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
       deviceId: 'd.id',
       assayId: 'r.assayId',
       resultCategoryId: 'r.resultCategory1',
+      resultCategory2Id: 'r.resultCategory2',
       countryId: 'g.countryId',
       stateId: 'g.stateId',
       lgaId: 'g.lgaId',

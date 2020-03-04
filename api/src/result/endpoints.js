@@ -56,7 +56,10 @@ function listResultsBaseConfig() {
           .description('Filter for assay ID'),
         resultCategoryId: Joi.number()
           .allow('')
-          .description('Result Category ID'),
+          .description('Result-1 Category ID'),
+        resultCategory2Id: Joi.number()
+          .allow('')
+          .description('Result-2 Category ID'),
         errorCode: Joi.string()
           .allow('')
           .description('Filter error code'),
