@@ -2306,7 +2306,8 @@ describe('Device API Raw Philippines NTRL PMDT Record Data Processor', () => {
             otherMethodUsed: null,
           },
         }),
-        externalId: '20200302_DST_PN-19-8442-1',
+        deviceId: databaseRecords.Device.id,
+        externalId: 'NTRL_PN-19-8442-1_DST',
         senderOperator: 'bryan',
         endedOn: '2019-08-25T14:53:11.000Z',
         patientData: '{}',
@@ -2346,7 +2347,8 @@ describe('Device API Raw Philippines NTRL PMDT Record Data Processor', () => {
             otherMethodUsed: null,
           },
         }),
-        externalId: '20200203_CULTURE_PN-19-8442-1',
+        deviceId: databaseRecords.Device.id,
+        externalId: 'NTRL_PN-19-8442-1_CULTURE',
         senderOperator: 'bryan',
         endedOn: '2019-08-25T14:53:11.000Z',
         patientData: '{}',
@@ -2384,6 +2386,16 @@ describe('Device API Raw Philippines NTRL PMDT Record Data Processor', () => {
                   _.find(existingResultRecords, {
                     externalId: _.get(whereParams, '1'),
                   })
+                )
+              }
+              if (
+                table === 'Result' &&
+                whereParams.length === 1 &&
+                _.isPlainObject(whereParams[0]) &&
+                _.some(existingResultRecords, whereParams[0])
+              ) {
+                return Promise.resolve(
+                  _.find(existingResultRecords, whereParams[0])
                 )
               }
               if (
@@ -3364,6 +3376,27 @@ describe('Device API Raw Philippines NTRL PMDT Record Data Processor', () => {
         .filter(insertCall => insertCall.args[0] === 'Sample')
         .map(insert => insert.lastArg)
       expect(insertedSamples).to.have.lengthOf(0)
+    })
+
+    it('should update existing results', async () => {
+      const {
+        updateSpy,
+        philippinesNTRLPMDT: existingResultProcessor,
+      } = setupPhilippinesNTRLPMDTDataProcessorWithSpies(
+        'some device API key',
+        pmdtRecordPayload8442SmearCultureNegative2Samples
+      )
+      await existingResultProcessor.processRequest()
+      const resultUpdates = updateSpy
+        .getCalls()
+        .filter(
+          updateCall =>
+            updateCall.args[0] === 'Result' &&
+            _.isPlainObject(updateCall.lastArg) &&
+            updateCall.lastArg.id > 0
+        )
+        .map(updateCall => updateCall.lastArg)
+      expect(resultUpdates).to.have.lengthOf(2)
     })
   })
 })
