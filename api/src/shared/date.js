@@ -62,7 +62,9 @@ function dateEqual(date1, date2) {
   if ((!date1 && date2) || (date1 && !date2)) {
     return false
   }
-  return dateFns.isEqual(date1, date2)
+  const typeSafeDate1 = date1 instanceof Date ? date1 : dateFns.parseISO(date1)
+  const typeSafeDate2 = date2 instanceof Date ? date2 : dateFns.parseISO(date2)
+  return dateFns.isEqual(typeSafeDate1, typeSafeDate2)
 }
 
 module.exports = {
