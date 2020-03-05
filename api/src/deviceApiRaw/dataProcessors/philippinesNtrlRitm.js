@@ -490,8 +490,8 @@ class PhilippinesNtrlRitm extends SynchronousDataProcessor {
               ? assayBdMgitAstId
               : assayGenericDstId,
           sampleId: samples[0].id,
-          startedOn: dstResultData.dateRead || dstResultData.dateReleased,
-          endedOn: dstResultData.dateRead || dstResultData.dateReleased,
+          startedOn: dstResultData.dateReleased,
+          endedOn: dstResultData.dateReleased,
           resultData: JSON.stringify({
             encodedResult: dstResultData,
           }),
@@ -685,6 +685,7 @@ class PhilippinesNtrlRitm extends SynchronousDataProcessor {
           )
         })
       }
+
       const smearResultData = {
         smearMethod:
           payload['Laboratory Test Performed Acid Fast Bacili Microscopy'],
@@ -759,8 +760,8 @@ class PhilippinesNtrlRitm extends SynchronousDataProcessor {
           QNS: resultCategories.Invalid,
           'NON-VIABLE': resultCategories.Invalid,
           'NOT DONE': resultCategories.NoResult,
-          'POSITIVE FOR Acid Fast Bacilli': resultCategories.Detected,
-          'NEGATIVE FOR Acid Fast Bacilli': resultCategories.NotDetected,
+          'POSITIVE for Acid Fast Bacilli': resultCategories.Detected,
+          'NEGATIVE for Acid Fast Bacilli': resultCategories.NotDetected,
         }
         const smearResultOverwritePriority = [
           resultCategories.Positive3,
