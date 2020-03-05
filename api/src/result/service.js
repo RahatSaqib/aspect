@@ -419,7 +419,7 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
         queryBuilder.where('rs.externalId', params.workflowStatus)
       }
       if (params.isTransferred) {
-        // return only results transferred "to ME" (to r.reportableSiteId)
+        // return only results transferred "to me" (to r.reportableSiteId)
         queryBuilder.whereRaw('sp.originSiteId != r.reportableSiteId')
       }
       if (params.treatmentStatus)
@@ -448,13 +448,8 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
       'r.id',
       'r.externalId',
       'r.firstViewedOn',
-      'r.startedOn',
       'r.endedOn',
-      'r.createdOn',
       'r.updatedOn',
-      'r.longitude',
-      'r.latitude',
-      'r.treatmentStatusLogId',
       'a.externalId as assayExternalId',
       'si.name as siteName',
       'd.name as deviceName',
@@ -462,37 +457,23 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
       'rc2.externalId as resultCategory2ExternalId',
       'r.patientData',
       'r.resultData',
-      'r.formData',
-      'r.researchId',
-      'r.senderVersion',
-      'r.senderOperator',
-      'r.notes',
-      'r.errorCode',
-      'r.errorNotes',
       'sp.externalId as sampleId',
-      'r.sampleGroup',
-      'sp.collectedOn as sampleCollectedOn',
       'so.id as sampleOriginSiteId',
       'so.externalId as sampleOriginSiteExternalId',
       'so.name as sampleOriginSiteName',
-      'stp.name as sampleTypeName',
       'rs.name as resultWorkflowStatusName',
       'rs.externalId as resultWorkflowStatusExternalId',
       'rs.i18nKey as resultWorkflowStatusi18nKey',
       'rsl.reason as resultWorkflowStatusReason',
       'rsl.changedOn as resultWorkflowStatusChangedOn',
       'rtsl.changedOn as resultTreatmentStatusChangedOn',
-      'rtsl.data as resultTreatmentStatusData',
-      'rtsl.method as resultTreatmentStatusMethod',
       'rts.name as resultTreatmentStatusName',
       'rts.externalId as resultTreatmentStatusExternalId',
       'rts.i18nKey as resultTreatmentStatusi18nKey',
-      // result transferred
       'r.reportableSiteId',
       'sirep.name as reportableSiteName',
       'rslog.createdOn as transferredOn',
-      'ptr.name as transferredBy',
-      'r.resultStatusLogId'
+      'ptr.name as transferredBy'
     )
 
   // return result when both queries are finished
@@ -543,12 +524,8 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
   const transformedData = _.map(data, d => ({
     id: d.id,
     externalId: d.externalId,
-    startedOn: returnIso8601StringWithoutTimeZoneOffset(d.startedOn),
     endedOn: returnIso8601StringWithoutTimeZoneOffset(d.endedOn),
-    createdOn: d.createdOn,
     updatedOn: d.updatedOn,
-    longitude: d.longitude,
-    latitude: d.latitude,
     assayExternalId: d.assayExternalId,
     siteName: d.siteName,
     sampleOriginSiteId: d.sampleOriginSiteId,
@@ -557,19 +534,11 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
     resultCategory1ExternalId: d.resultCategory1ExternalId,
     resultCategory2ExternalId: d.resultCategory2ExternalId,
     patientData: d.patientData ? JSON.parse(d.patientData) : null,
-    resultData: d.resultData ? JSON.parse(d.resultData) : null,
-    formData: d.formData ? JSON.parse(d.formData) : null,
-    researchId: d.researchId,
-    senderVersion: d.senderVersion,
-    senderOperator: d.senderOperator,
-    notes: d.notes,
-    errorCode: d.errorCode,
-    errorNotes: d.errorNotes,
+    resultData: d.resultData
+      ? _.pick(JSON.parse(d.resultData), ['resultText', 'copies', 'log'])
+      : null,
     sample: {
       id: d.sampleId,
-      collectedOn: d.sampleCollectedOn,
-      group: d.sampleGroup,
-      type: d.sampleTypeName,
       originSite: d.sampleOriginSiteId
         ? {
             externalId: d.sampleOriginSiteExternalId,
@@ -606,8 +575,6 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
       name: d.resultTreatmentStatusName,
       externalId: d.resultTreatmentStatusExternalId,
       i18nKey: d.resultTreatmentStatusi18nKey,
-      method: d.resultTreatmentStatusMethod,
-      data: d.resultTreatmentStatusData,
     },
     followUps: _.sortBy(
       _.filter(followUps, { resultId: d.id }).map(f => _.omit(f, 'resultId')),
@@ -622,7 +589,6 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
     reportableSiteName: d.reportableSiteName,
     transferredOn: d.transferredOn,
     transferredBy: d.transferredBy,
-    resultStatusLogId: d.resultStatusLogId,
     reportableSiteId: d.reportableSiteId,
   }))
 
