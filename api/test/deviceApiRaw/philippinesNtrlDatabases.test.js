@@ -83,9 +83,11 @@ describe('Device API Raw Philippines NTRL', () => {
   describe('PMDT Record Data Processor', () => {
     describe('canProcessRequest', () => {
       it('Should be able to recognise a PMDT database record', async () => {
-        const PhilippinesNTRLPMDTDataProcessor = require('../../src/deviceApiRaw/dataProcessors/philippinesNtrlPmdt')
+        const {
+          PhilippinesNtrlPmdt,
+        } = require('../../src/deviceApiRaw/dataProcessors/philippinesNtrlDatabases')
         assert.isOk(
-          await PhilippinesNTRLPMDTDataProcessor.canProcessRequest({
+          await PhilippinesNtrlPmdt.canProcessRequest({
             payload: {
               database: 'PMDT',
               table: 'NTRL DATABASE',
@@ -241,7 +243,7 @@ describe('Device API Raw Philippines NTRL', () => {
         )
 
         assert.isOk(
-          await PhilippinesNTRLPMDTDataProcessor.canProcessRequest({
+          await PhilippinesNtrlPmdt.canProcessRequest({
             payload: {
               database: 'PMDT',
               table: 'NTRL DATABASE',
@@ -400,7 +402,7 @@ describe('Device API Raw Philippines NTRL', () => {
         )
 
         assert.isNotOk(
-          await PhilippinesNTRLPMDTDataProcessor.canProcessRequest({
+          await PhilippinesNtrlPmdt.canProcessRequest({
             payload: {
               database: 'PMDT',
               table: 'NTRL DATABASE',
@@ -2478,7 +2480,7 @@ describe('Device API Raw Philippines NTRL', () => {
         const resolveWith = returnValue => async () =>
           Promise.resolve(returnValue)
         return proxyquire(
-          '../../src/deviceApiRaw/dataProcessors/philippinesNtrlPmdt',
+          '../../src/deviceApiRaw/dataProcessors/philippinesNtrlDatabases',
           {
             '../../db': {
               transact: async transaction =>
@@ -2511,7 +2513,7 @@ describe('Device API Raw Philippines NTRL', () => {
               getRemoteAddress: () => deviceIpAddress,
             },
           }
-        )
+        ).PhilippinesNtrlPmdt
       }
 
       function setupPhilippinesNTRLPMDTDataProcessorWithSpies(
@@ -2521,12 +2523,12 @@ describe('Device API Raw Philippines NTRL', () => {
       ) {
         const updateSpy = sinon.spy()
         const insertSpy = sinon.spy()
-        const PhilippinesNTRLPMDTDataProcessor = mockOutPhilippinesNTRLPMDTDataProcessor(
+        const PhilippinesNtrlPmdt = mockOutPhilippinesNTRLPMDTDataProcessor(
           updateSpy,
           insertSpy,
           existingSamplesInDatabase
         )
-        const philippinesNTRLPMDT = new PhilippinesNTRLPMDTDataProcessor(
+        const philippinesNTRLPMDT = new PhilippinesNtrlPmdt(
           {
             auth: { credentials: { token: deviceApiKeyToken } },
             plugins: { rawPayload: 'the raw message' },
@@ -3416,9 +3418,11 @@ describe('Device API Raw Philippines NTRL', () => {
   describe('RITM Record Data Processor', () => {
     describe('canProcessRequest', () => {
       it('Should be able to recognise a RITM database record', async () => {
-        const PhilippinesNTRLRITMDataProcessor = require('../../src/deviceApiRaw/dataProcessors/philippinesNtrlRitm')
+        const {
+          PhilippinesNtrlRitm,
+        } = require('../../src/deviceApiRaw/dataProcessors/philippinesNtrlDatabases')
         assert.isOk(
-          await PhilippinesNTRLRITMDataProcessor.canProcessRequest({
+          await PhilippinesNtrlRitm.canProcessRequest({
             payload: {
               database: 'RITM_2020',
               table: 'RITM Database',
@@ -3517,7 +3521,7 @@ describe('Device API Raw Philippines NTRL', () => {
         )
 
         assert.isOk(
-          await PhilippinesNTRLRITMDataProcessor.canProcessRequest({
+          await PhilippinesNtrlRitm.canProcessRequest({
             payload: {
               database: 'RITM',
               table: 'RITM Database',
@@ -3617,7 +3621,7 @@ describe('Device API Raw Philippines NTRL', () => {
         )
 
         assert.isNotOk(
-          await PhilippinesNTRLRITMDataProcessor.canProcessRequest({
+          await PhilippinesNtrlRitm.canProcessRequest({
             payload: {
               database: 'RITM',
               table: 'RITM Database',
@@ -4391,7 +4395,7 @@ describe('Device API Raw Philippines NTRL', () => {
         const resolveWith = returnValue => async () =>
           Promise.resolve(returnValue)
         return proxyquire(
-          '../../src/deviceApiRaw/dataProcessors/philippinesNtrlRitm',
+          '../../src/deviceApiRaw/dataProcessors/philippinesNtrlDatabases',
           {
             '../../db': {
               transact: async transaction =>
@@ -4424,7 +4428,7 @@ describe('Device API Raw Philippines NTRL', () => {
               getRemoteAddress: () => deviceIpAddress,
             },
           }
-        )
+        ).PhilippinesNtrlRitm
       }
 
       function setupPhilippinesNTRLRITMDataProcessorWithSpies(
