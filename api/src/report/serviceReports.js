@@ -58,9 +58,7 @@ async function getSheetData(request, sheet) {
   try {
     endpointModule = require(`../${moduleName}`) //eslint-disable-line
   } catch (error) {
-    throw new Error(
-      `Can not load module ${moduleName} with error: ${error.toString()}`
-    )
+    throw new Error(`Can not load module ${moduleName}: ${error.toString()}`)
   }
 
   const dataFunc = endpointModule[functionName]
