@@ -56,7 +56,6 @@ async function getReportDetails(auth, externalId) {
     .map(sheet => ({
       ...sheet,
       query: sheet.query ? JSON.parse(sheet.query) : {},
-      reportExternalId: externalId,
     }))
 
   return report
