@@ -464,10 +464,13 @@ class PhilippinesNtrlRitm extends SynchronousDataProcessor {
       if (
         objectHasValues(
           _.omit(dstResultData, [
+            'methodUsed',
+            'testRequested',
             'readBy',
             'labTech',
             'encodedBy',
             'reviewedBy',
+            'notedBy',
           ])
         )
       ) {

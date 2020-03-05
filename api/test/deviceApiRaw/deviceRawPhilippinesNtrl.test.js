@@ -5010,18 +5010,17 @@ describe('Device API Raw Philippines NTRL', () => {
           reportableSiteId: databaseRecords.Site.id,
         })
       })
-      /*
 
       it('should create a single sample when only one sample has been captured', async () => {
         const payload = JSON.parse(
-          JSON.stringify(pmdtRecordPayload1855SmearRequestedNoResults1Sample)
+          JSON.stringify(ritmRecordPayload0423GeneXpertNotDetected1Sample)
         )
         const {
           insertSpy,
           philippinesNTRLRITM: singleSampleResultProcessor,
         } = setupPhilippinesNTRLRITMDataProcessorWithSpies(
           'some device API key',
-          pmdtRecordPayload1855SmearRequestedNoResults1Sample
+          ritmRecordPayload0423GeneXpertNotDetected1Sample
         )
         await singleSampleResultProcessor.processRequest()
         const insertedSamples = insertSpy
@@ -5035,12 +5034,12 @@ describe('Device API Raw Philippines NTRL', () => {
         }
         const sampleDetailsInPayload = getSamplesFromRITMPayload(payload)[0]
         expect(insertedSample).to.containSubset(sampleDetailsInPayload)
-        expect(insertedSample.externalId).to.match(/PN-\d{2}-\d{4,5}/)
+        expect(insertedSample.externalId).to.match(/RN-\d{2}-\d{4,5}/)
       })
 
       it('should not create/update any results when there are no results', async () => {
         const payload = JSON.parse(
-          JSON.stringify(pmdtRecordPayload1855SmearRequestedNoResults1Sample)
+          JSON.stringify(ritmRecordPayload2068SmearRequestedNoResults1Sample)
         )
         const {
           updateSpy,
@@ -5064,18 +5063,18 @@ describe('Device API Raw Philippines NTRL', () => {
       })
 
       it("should update the initial single sample external ID with a suffix of '-1' when 2nd sample details are added after initial upload", async () => {
-        const pmdtRecordPayload1855LpaRequestedNoResults2Samples = {
-          ...pmdtRecordPayload1855SmearRequestedNoResults1Sample,
-          'Date Collected 2':
-            pmdtRecordPayload1855SmearRequestedNoResults1Sample[
-              'Date Collected 1'
+        const ritmRecordPayload0128CultureDstTbResistant2Samples = {
+          ...ritmRecordPayload0128CultureDstTbResistant1Sample,
+          'TBC Test Result 2nd Sample':
+            ritmRecordPayload0128CultureDstTbResistant1Sample[
+              'TBC Test Result 1st Sample'
             ],
         }
         const payload = JSON.parse(
-          JSON.stringify(pmdtRecordPayload1855LpaRequestedNoResults2Samples)
+          JSON.stringify(ritmRecordPayload0128CultureDstTbResistant2Samples)
         )
         const sampleDetailsInInitialPayload = getSamplesFromRITMPayload(
-          pmdtRecordPayload1855SmearRequestedNoResults1Sample
+          ritmRecordPayload0128CultureDstTbResistant1Sample
         )[0]
         const existingSamplesAfterInitialUpload = JSON.parse(
           JSON.stringify(existingSamples)
@@ -5098,23 +5097,23 @@ describe('Device API Raw Philippines NTRL', () => {
           .filter(updateCall => updateCall.args[0] === 'Sample')
           .map(update => update.lastArg)
         expect(updatedSamples).to.have.lengthOf(1)
-        expect(updatedSamples[0].externalId).to.match(/PN-\d{2}-\d{4,5}-1/)
+        expect(updatedSamples[0].externalId).to.match(/RN-\d{2}-\d{4,5}-1/)
         const insertedSamples = insertSpy
           .getCalls()
           .filter(insertCall => insertCall.args[0] === 'Sample')
           .map(insert => insert.lastArg)
         expect(insertedSamples).to.have.lengthOf(1)
-        expect(insertedSamples[0].externalId).to.match(/PN-\d{2}-\d{4,5}-2/)
+        expect(insertedSamples[0].externalId).to.match(/RN-\d{2}-\d{4,5}-2/)
       })
 
       it("should update the a sample's origin site ID when it becomes known", async () => {
         const payload = JSON.parse(
-          JSON.stringify(ritmRecordPayload8442SmearCultureNegative2Samples)
+          JSON.stringify(ritmRecordPayload3082SmearCultureNegative2Samples)
         )
         const sampleDetailsInInitialPayload = JSON.parse(
           JSON.stringify(
             getSamplesFromRITMPayload(
-              ritmRecordPayload8442SmearCultureNegative2Samples
+              ritmRecordPayload3082SmearCultureNegative2Samples
             )
           )
         )
@@ -5161,12 +5160,12 @@ describe('Device API Raw Philippines NTRL', () => {
 
       it("should not update or insert samples if they haven't changed", async () => {
         const payload = JSON.parse(
-          JSON.stringify(ritmRecordPayload8442SmearCultureNegative2Samples)
+          JSON.stringify(ritmRecordPayload3082SmearCultureNegative2Samples)
         )
         const sampleDetailsInInitialPayload = JSON.parse(
           JSON.stringify(
             getSamplesFromRITMPayload(
-              ritmRecordPayload8442SmearCultureNegative2Samples
+              ritmRecordPayload3082SmearCultureNegative2Samples
             )
           )
         )
@@ -5213,7 +5212,7 @@ describe('Device API Raw Philippines NTRL', () => {
           philippinesNTRLRITM: existingResultProcessor,
         } = setupPhilippinesNTRLRITMDataProcessorWithSpies(
           'some device API key',
-          ritmRecordPayload8442SmearCultureNegative2Samples
+          ritmRecordPayload2630CultureSmearTbPositive2Samples
         )
         await existingResultProcessor.processRequest()
         const resultUpdates = updateSpy
@@ -5227,8 +5226,6 @@ describe('Device API Raw Philippines NTRL', () => {
           .map(updateCall => updateCall.lastArg)
         expect(resultUpdates).to.have.lengthOf(2)
       })
-
-*/
     })
   })
 })
