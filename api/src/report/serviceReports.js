@@ -58,23 +58,26 @@ async function getSheetData(request, sheet) {
   try {
     endpointModule = require(`../${moduleName}`) //eslint-disable-line
   } catch (error) {
-    console.log(`Can not load module ${moduleName}`, { error }) //eslint-disable-line
-    return []
+    throw new Error(
+      `Can not load module ${moduleName} with error: ${error.toString()}`
+    )
   }
 
   const dataFunc = endpointModule[functionName]
   if (!dataFunc) {
-    console.log(`Can not find function ${functionName} in module ${moduleName}`) //eslint-disable-line
+    throw new Error(
+      `Can not find function ${functionName} in module ${moduleName}`
+    )
   }
   const result = await dataFunc(auth, query)
-  const { ok, data, error } = result
+  const { ok, data, errorMessage } = result
   if (ok) {
     return data
   }
 
-  console.log('Error in getting sheet data', { error }) //eslint-disable-line
-
-  return []
+  throw new Error(
+    `Error in function ${functionName} of module ${moduleName} - ${errorMessage}`
+  )
 }
 // ----------------------------------------------------------------------------------------------
 async function readTemplateFile(externalId, lang, langDefault) {
@@ -86,7 +89,7 @@ async function readTemplateFile(externalId, lang, langDefault) {
   })
 }
 // ----------------------------------------------------------------------------------------------
-function getDateRange({ minDate, maxDate }) {
+function getDateRangeString({ minDate, maxDate }) {
   if (!minDate && !maxDate) {
     return 'all'
   }
@@ -101,7 +104,7 @@ function getDateRange({ minDate, maxDate }) {
   return dates.join('')
 }
 // ----------------------------------------------------------------------------------------------
-async function getStatesCsv({ countryId, stateId }) {
+async function getStateNames({ countryId, stateId }) {
   if (!countryId || !stateId) {
     return 'all'
   }
@@ -114,7 +117,7 @@ async function getStatesCsv({ countryId, stateId }) {
   return name
 }
 // ----------------------------------------------------------------------------------------------
-async function getLgasCsv({ countryId, stateId, lgaId }) {
+async function getLgaNamesString({ countryId, stateId, lgaId }) {
   if (!countryId || !stateId) {
     return 'all'
   }
@@ -151,9 +154,9 @@ async function createReport(request, reply) {
   // read file into workbook
   const workbook = await readTemplateFile(externalId, lang, LANG_DEFAULT)
 
-  const dateRangeString = getDateRange(query)
-  const statesString = await getStatesCsv(query)
-  const lgasString = await getLgasCsv(query)
+  const dateRangeString = getDateRangeString(query)
+  const statesString = await getStateNames(query)
+  const lgasString = await getLgaNamesString(query)
 
   // process all sheets
   await Promise.each(sheets, async (sheet, sheetIndex) => {
