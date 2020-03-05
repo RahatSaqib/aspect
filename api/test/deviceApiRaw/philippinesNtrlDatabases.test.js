@@ -80,6 +80,164 @@ describe('Device API Raw Philippines NTRL', () => {
     },
   }
 
+  function mockOutPhilippinesNTRLDatabaseProcessors(
+    existingSamplesInDatabase,
+    existingResultRecords,
+    updateSpy,
+    insertSpy
+  ) {
+    const resolveWith = returnValue => async () => Promise.resolve(returnValue)
+    return proxyquire(
+      '../../src/deviceApiRaw/dataProcessors/philippinesNtrlDatabases',
+      {
+        '../../db': {
+          transact: async transaction =>
+            transaction(table => {
+              const knex = {
+                insert: async (...insertParams) => {
+                  insertSpy(table, ...insertParams)
+                  return Promise.resolve([insertSpy.callCount])
+                },
+              }
+              const where = (...whereParams) => {
+                const finalCall = {
+                  first: async (...firstParams) => {
+                    if (
+                      table === 'Result' &&
+                      _.some(existingResultRecords, {
+                        externalId: _.get(whereParams, '1'),
+                      })
+                    ) {
+                      return Promise.resolve(
+                        _.find(existingResultRecords, {
+                          externalId: _.get(whereParams, '1'),
+                        })
+                      )
+                    }
+                    if (
+                      table === 'Result' &&
+                      whereParams.length === 1 &&
+                      _.isPlainObject(whereParams[0]) &&
+                      _.some(existingResultRecords, whereParams[0])
+                    ) {
+                      return Promise.resolve(
+                        _.find(existingResultRecords, whereParams[0])
+                      )
+                    }
+                    if (
+                      table === 'Sample' &&
+                      existingSamplesInDatabase[_.get(whereParams, '1')]
+                    ) {
+                      return Promise.resolve(
+                        existingSamplesInDatabase[_.get(whereParams, '1')]
+                      )
+                    }
+                    if (
+                      table === 'Device as d' &&
+                      whereParams[0] === 'd.id' &&
+                      whereParams[1] ===
+                        databaseRecords.DeviceApiKey.deviceId &&
+                      _.every(
+                        [
+                          's.*',
+                          'd.name as deviceName',
+                          'd.defaultReportableSiteId as deviceDefaultReportableSiteId',
+                        ],
+                        selectArg => firstParams.includes(selectArg)
+                      )
+                    ) {
+                      return Promise.resolve(databaseRecords.Site)
+                    }
+                    if (
+                      table === 'DeviceApiKey' &&
+                      whereParams[0] === 'token' &&
+                      whereParams[1] === 'bad-token'
+                    ) {
+                      return Promise.resolve({})
+                    }
+                    if (
+                      table === 'Site' &&
+                      whereParams[0] === 'externalId' &&
+                      (whereParams[1] === null ||
+                        whereParams[1] ===
+                          'Some unknown health facility with a really really really really looooooong name' ||
+                        whereParams[1] === 'Unknown health facility')
+                    ) {
+                      return Promise.resolve()
+                    }
+                    if (
+                      table === 'Site' &&
+                      whereParams[0] === 'externalId' &&
+                      whereParams[1] === 'IVA - ANTIPOLO CHO'
+                    ) {
+                      return Promise.resolve({
+                        id: 12,
+                        longitude: null,
+                        latitude: null,
+                        partnerId: 15,
+                        geographyId: 16,
+                        externalId: 'IVA - ANTIPOLO CHO',
+                      })
+                    }
+                    if (
+                      table === 'ResultWorkflowLog' &&
+                      whereParams[0] === 'id' &&
+                      whereParams[1] === 11
+                    ) {
+                      return Promise.resolve({
+                        resultWorkflowStatusId:
+                          staticDatabaseData.ResultWorkflowStatus.Error,
+                      })
+                    }
+                    return Promise.resolve(databaseRecords[table])
+                  },
+                  update: async (...updateParams) => {
+                    updateSpy(table, ...updateParams)
+                    return Promise.resolve()
+                  },
+                }
+                const whereChain = () => finalCall
+                finalCall.andWhere = whereChain
+                finalCall.orWhere = whereChain
+                finalCall.whereNull = whereChain
+                finalCall.whereIn = whereChain
+                return finalCall
+              }
+              knex.where = where
+              const join = () => knex
+              knex.join = join
+              knex.leftJoin = join
+              return knex
+            }),
+        },
+        '../../shared/date': {
+          parseDateOrDefault,
+          getUtcTime: () => utcNow,
+          dateEqual,
+        },
+        '../../shared/dictionary': {
+          assayToId: async assayExternalId =>
+            Promise.resolve(staticDatabaseData.Assay[assayExternalId]),
+          allAssayToId: resolveWith(staticDatabaseData.Assay),
+          sampleTypeToId: async sampleTypeExternalId =>
+            Promise.resolve(
+              staticDatabaseData.SampleType[sampleTypeExternalId]
+            ),
+          allSampleTypeToId: resolveWith(staticDatabaseData.SampleType),
+          resultTypeToId: resolveWith(staticDatabaseData.resultTypeId),
+          resultSourceToId: resolveWith(staticDatabaseData.resultSourceId),
+          allResultCategoryToId: resolveWith(staticDatabaseData.ResultCategory),
+          allResultWorkflowStatusToId: resolveWith(
+            staticDatabaseData.ResultWorkflowStatus
+          ),
+        },
+        '../../shared/request': {
+          getRemoteAddress: () => deviceIpAddress,
+        },
+      }
+    )
+  }
+
   describe('PMDT Record Data Processor', () => {
     describe('canProcessRequest', () => {
       it('Should be able to recognise a PMDT database record', async () => {
@@ -1095,7 +1253,7 @@ describe('Device API Raw Philippines NTRL', () => {
         'Date Received': '2020-01-21T00:00:00.000Z',
         'Gx Rifampicin': null,
         'LPA Isoniazid': null,
-        'Serial Number': '0494',
+        'Serial Number': '0495',
         'Culture Center': 'NTRL',
         'Culture Method': 'Liquid Culture(MGIT)',
         'DST Encoded by': null,
@@ -1154,6 +1312,160 @@ describe('Device API Raw Philippines NTRL', () => {
         'DST Workbook Remarks': null,
         'LPA Fluoroquinolones': 'Resistance Not Detected',
         'LPA Isoniazid Result': 'Resistance Detected',
+        'LPA Mycobacterium Tb': null,
+        'Presumptive DS or DR': null,
+        'Requesting Physician': 'Dr. Bieren',
+        'Test Requested Smear': true,
+        'Type of Collection 1': null,
+        'Type of Collection 2': null,
+        'Type of Collection 3': null,
+        'Cat IV Screening Code': null,
+        'Culture Date Released': null,
+        'Culture Result Status': null,
+        'Gx Laboratory Manager': 'Noel G. Macalalad, MD',
+        'LPA Rifampicin Result': null,
+        'DST Method Used Others': null,
+        'Date transfered to DST': null,
+        'Patient Contact Number': null,
+        'Test Requested Culture': true,
+        'Culture Date Inoculated': null,
+        'Facility Contact Number': null,
+        'LPA Aminoglycosides/ SLI': 'Resistance Not Detected',
+        'Referring Health Facility': null,
+        'Smear Only Test Requested': 'DSSM Only',
+        'DST Releasing Form MedTech': null,
+        'Laboratory Registry Remarks': null,
+        'Smear Only Test Requested 2': 'DSSM Only',
+        'DST Releasing Form Lab Manager': 'Cristina C. Villarico, RMT',
+        'DST Releasing Form Released Date': null,
+        'Laboratory Releasing Form Remarks': null,
+        'DSSM&Culture Releasing Form Med Tech': null,
+        'Gx Laboratory Releasing Form Remarks': null,
+        'Laboratory Releasing Form Gx Remarks': null,
+        'DST Laboratory Releasing Form Remarks': null,
+        'Laboratory Releasing Form Smear Remarks': null,
+        'DSSM&Culture Releasing Form Date Released': null,
+        'DSSM&Culture Releasing Form Laboratory Manager':
+          'Cristina C. Villarico, RMT',
+      }
+      const pmdtRecordPayload0496CultureSmearLpaInvalid2Samples = {
+        Age: 87,
+        Sex: 'Male',
+        Site: 'Pulmonary',
+        table: 'NTRL DATABASE',
+        'Gx MTB': null,
+        'Gx TAT': null,
+        Address: 'North Signal',
+        'DST TAT': null,
+        'LPA TAT': null,
+        Amikacin: null,
+        Enrolled: null,
+        'LPA Male': false,
+        'Lab No 1': 'N-20-4322',
+        'Volume 1': '10ML',
+        'Volume 2': '10ML',
+        'Volume 3': null,
+        database: 'PMDT_2020',
+        'Gx Center': null,
+        Isoniazid: null,
+        Kanamycin: null,
+        'Last Name': 'Gray',
+        Ofloxacin: null,
+        'Smear TAT': null,
+        TimeStamp: '190115',
+        'DST Center': 'NTRL',
+        'Encoded By': 'Jenny B.  Lasprilla',
+        Ethambutol: null,
+        'First Name': 'Benjamin',
+        'Gx Remarks': null,
+        'LPA Center': 'NTRL',
+        Rifampicin: null,
+        Capreomycin: null,
+        'Culture TAT': null,
+        'DST MT Read': null,
+        'DST Remarks': null,
+        'Gx Examiner': null,
+        'LPA Remarks': null,
+        'Month of tx': null,
+        'Prepared by': null,
+        'DST Lab Tech': null,
+        'Date Encoded': '2020-01-21T00:00:00.000Z',
+        'LPA Examiner': null,
+        'LPA Kit Used': 'Hain MTBDRsl ver 2.0',
+        'LPA Remarks:': 'test repeated',
+        Levofloxacin: null,
+        Pyrazinamide: null,
+        'Smear Method': 'Fluorescence Microscopy',
+        Streptomycin: null,
+        Ciprofloxacin: null,
+        'Consistence 3': null,
+        'Consistency 1': 'MS',
+        'Consistency 2': 'MS',
+        'DST Date Read': null,
+        'DST ID Result': null,
+        'Date Dispatch': null,
+        'Date Received': '2020-01-21T00:00:00.000Z',
+        'Gx Rifampicin': null,
+        'LPA Isoniazid': null,
+        'Serial Number': '0496',
+        'Culture Center': 'NTRL',
+        'Culture Method': 'Liquid Culture(MGIT)',
+        'DST Encoded by': null,
+        'LPA Ethambutol': null,
+        'LPA Kit Others': null,
+        'LPA Rifampicin': null,
+        'Middle Initial': 'A.',
+        'Smear Lab Tech': 'Krissha Mae P. Marfil, RMT',
+        'Smear Method 2': null,
+        'Smear Result 1': null,
+        'Smear Result 2': null,
+        'TB Case Number': null,
+        'Culture Grade 1': null,
+        'Culture Grade 2': null,
+        'DST Method Used': null,
+        'LPA Lab Manager': 'Noel G. Macalalad, MD',
+        'LPA MTB Complex': 'M. tb Detected',
+        'LPA Reviewed By': 'Ma. Cecilia G. Ama, MD',
+        'Culture Lab Tech': null,
+        'Culture Med Tech': null,
+        'Culture Method 2': null,
+        'Culture Result 1': null,
+        'Culture Result 2': null,
+        'Date Collected 1': '2020-01-15T00:00:00.000Z',
+        'Date Collected 2': '2020-01-15T00:00:00.000Z',
+        'Date Collected 3': null,
+        'Gx Date Released': null,
+        'LPA Performed By': 'Maria Zahra R. Almadrigo, RMT',
+        'Smear Encoded by': 'Krissha Mae P. Marfil, RMT',
+        'Type of Specimen': 'Sputum',
+        'Culture Remarks 1': null,
+        'Culture Remarks 2': null,
+        'DST Date Released': null,
+        'DST MT Inoculated': null,
+        'LPA Date Released': null,
+        'Test Requested Gx': false,
+        'Culture DST Status': null,
+        'Culture Encoded by': null,
+        'DST Test Requested': null,
+        'Gx Processing Date': null,
+        'LPA Date Processed': null,
+        'MRF Date Requested': '2020-01-17T00:00:00.000Z',
+        'Registration Group': null,
+        'Smear Final Result': 'POSITIVE FOR Acid Fast Bacilli',
+        'Test Requested DST': false,
+        'Test Requested LPA': true,
+        'Treatment Category': null,
+        'Treatment Schedule': 'BAS',
+        '(If Others) Specify': null,
+        'Culture Lab Manager': 'Cristina C. Villarico, RMT',
+        'DST Date Inoculated': null,
+        'LPA Date of Release': '2020-01-29T00:00:00.000Z',
+        'Smear Date Released': '2020-01-23T00:00:00.000Z',
+        'TAT Culture Remarks': null,
+        'Culture Final Result': null,
+        'DST Workbook Remarks': null,
+        'LPA Fluoroquinolones': 'Resistance Not Detected',
+        'LPA Isoniazid Result': 'Invalid',
         'LPA Mycobacterium Tb': null,
         'Presumptive DS or DR': null,
         'Requesting Physician': 'Dr. Bieren',
@@ -1969,7 +2281,7 @@ describe('Device API Raw Philippines NTRL', () => {
         'Last Name': null,
         'First Name': 'Jane',
         'Middle Initial': null,
-        Address: 'Bacoor Cavite',
+        Address: null,
         'Referring Health Facility': null,
         'Culture Center': 'NTRL',
         'Cat IV Screening Code': null,
@@ -2069,6 +2381,160 @@ describe('Device API Raw Philippines NTRL', () => {
         'DST Releasing Form Released Date': null,
         'DST Releasing Form Lab Manager': 'Ma. Cecilia G. Ama, MD',
         'DST Method Used': 'Liquid Culture (MGIT 960)',
+        'DST Method Used Others': null,
+        'DST Workbook Remarks': null,
+        'DST Remarks': null,
+        'DST Encoded by': 'Krissha Mae P. Marfil, RMT',
+        'Gx Processing Date': null,
+        'Gx MTB': null,
+        'Gx Rifampicin': null,
+        'Gx Date Released': null,
+        'Gx Examiner': null,
+        'Gx TAT': null,
+        'Gx Laboratory Manager': 'Noel G. Macalalad, MD',
+        'Gx Center': null,
+        'Gx Laboratory Releasing Form Remarks': null,
+        'LPA Male': false,
+        'Gx Remarks': null,
+        'TB Case Number': null,
+        'LPA Kit Used': null,
+        'LPA Kit Others': null,
+        'LPA Date Processed': null,
+        'LPA MTB Complex': null,
+        'LPA Isoniazid Result': null,
+        'LPA Rifampicin': null,
+        'LPA Isoniazid': null,
+        'LPA Rifampicin Result': null,
+        'LPA Date Released': null,
+        'LPA Ethambutol': null,
+        'LPA Examiner': null,
+        'LPA Fluoroquinolones': null,
+        'LPA Aminoglycosides/ SLI': null,
+        'LPA Mycobacterium Tb': null,
+        'LPA Lab Manager': 'Noel G. Macalalad, MD',
+        'LPA Remarks:': null,
+        'LPA Center': null,
+        'LPA Performed By': null,
+        'LPA Reviewed By': null,
+        'LPA Date of Release': null,
+        'LPA Remarks': null,
+        'LPA TAT': null,
+        'Laboratory Releasing Form Remarks': null,
+        'Laboratory Releasing Form Gx Remarks': null,
+        'Laboratory Releasing Form Smear Remarks': null,
+        'Laboratory Registry Remarks': null,
+        'Facility Contact Number': null,
+        'Patient Contact Number': null,
+        'Date Dispatch': null,
+      }
+      const pmdtRecordPayload0018SmearCultureDstResistant2Samples = {
+        database: 'PMDT_2020',
+        table: 'NTRL DATABASE',
+        TimeStamp: '262005',
+        'Serial Number': '0018',
+        'Last Name': null,
+        'First Name': 'Jane',
+        'Middle Initial': null,
+        Address: 'Bacoor Cavite',
+        'Referring Health Facility': null,
+        'Culture Center': 'NTRL',
+        'Cat IV Screening Code': null,
+        'MRF Date Requested': '2020-01-30T00:00:00.000Z',
+        Age: 1,
+        Sex: null,
+        'DST Center': 'NTRL',
+        'Requesting Physician': 'Dr. Veto',
+        'Treatment Schedule': 'BAS',
+        'Month of tx': null,
+        Enrolled: null,
+        'Registration Group': 'PTOU',
+        'Treatment Category': 'Retreatment',
+        'Type of Specimen': null,
+        '(If Others) Specify': null,
+        Site: 'Pulmonary',
+        'Test Requested Smear': true,
+        'Test Requested Culture': true,
+        'Test Requested DST': false,
+        'Test Requested LPA': false,
+        'Test Requested Gx': false,
+        'Date transfered to DST': null,
+        'Presumptive DS or DR': null,
+        'Lab No 1': null,
+        'Date Collected 1': '2020-01-05T00:00:00.000Z',
+        'Date Collected 2': '2020-01-05T00:00:00.000Z',
+        'Date Collected 3': null,
+        'Type of Collection 1': null,
+        'Type of Collection 2': null,
+        'Type of Collection 3': null,
+        'Volume 1': '3ML',
+        'Volume 2': '3ML',
+        'Volume 3': null,
+        'Consistency 1': 'MP',
+        'Consistency 2': 'MP',
+        'Consistence 3': null,
+        'Prepared by': null,
+        'Date Received': '2020-01-08T00:00:00.000Z',
+        'Encoded By': 'JENNY BRIONES',
+        'Date Encoded': '2020-01-08T00:00:00.000Z',
+        'Smear Method': 'Fluorescence Microscopy',
+        'Smear Method 2': null,
+        'Smear Result 1': '2+',
+        'Smear Result 2': '1+',
+        'Smear Final Result': 'POSITIVE FOR Acid Fast Bacilli',
+        'Smear Date Released': '2020-01-14T00:00:00.000Z',
+        'Smear Only Test Requested': 'DSSM Only',
+        'Smear Only Test Requested 2': 'DSSM Only',
+        'Smear TAT': null,
+        'Smear Lab Tech': 'Kevin Joshua A. Alonzo, RMT',
+        'Smear Encoded by': 'Kevin Joshua A. Alonzo, RMT',
+        'Culture Date Inoculated': null,
+        'Culture Med Tech': null,
+        'Culture Result Status': null,
+        'Culture DST Status': null,
+        'Culture Method': null,
+        'Culture Method 2': null,
+        'Culture Result 1': null,
+        'Culture Grade 1': null,
+        'Culture Result 2': 'M. tuberculosis',
+        'Culture Grade 2': null,
+        'Culture Final Result': null,
+        'Culture Date Released': '2020-02-05T00:00:00.000Z',
+        'Culture Encoded by': 'Krissha Mae P. Marfil, RMT',
+        'Culture Lab Tech': null,
+        'Culture TAT': null,
+        'Culture Lab Manager': 'Ma. Cecilia G. Ama, MD',
+        'Culture Remarks 1': null,
+        'Culture Remarks 2': null,
+        'TAT Culture Remarks': null,
+        'DSSM&Culture Releasing Form Med Tech': null,
+        'DSSM&Culture Releasing Form Date Released': null,
+        'DSSM&Culture Releasing Form Laboratory Manager':
+          'Cristina C. Villarico, RMT',
+        'DST ID Result': null,
+        'DST Date Inoculated': null,
+        'DST MT Inoculated': null,
+        Streptomycin: 'NOT DONE',
+        Isoniazid: 'NOT DONE',
+        Rifampicin: 'NOT DONE',
+        Ethambutol: 'NOT DONE',
+        Kanamycin: 'NON VIABLE',
+        Levofloxacin: null,
+        Amikacin: null,
+        Capreomycin: 'NOT DONE',
+        Pyrazinamide: 'NOT DONE',
+        Ofloxacin: null,
+        Ciprofloxacin: null,
+        'DST Date Read': null,
+        'DST MT Read': null,
+        'DST Date Released': '2020-02-05T00:00:00.000Z',
+        'DST Lab Tech': 'Roeus Vincent Arjay G. Reyes, RMT',
+        'DST TAT': null,
+        'DST Test Requested': 'FLD DST',
+        'DST Laboratory Releasing Form Remarks': null,
+        'DST Releasing Form MedTech': null,
+        'DST Releasing Form Released Date': null,
+        'DST Releasing Form Lab Manager': 'Ma. Cecilia G. Ama, MD',
+        'DST Method Used': null,
         'DST Method Used Others': null,
         'DST Workbook Remarks': null,
         'DST Remarks': null,
@@ -2271,12 +2737,14 @@ describe('Device API Raw Philippines NTRL', () => {
         pmdtRecordPayload1855LpaRequestedNoResults1Sample,
         pmdtRecordPayload0494CultureSmearLpaTbPositive2Samples,
         pmdtRecordPayload0495CultureSmearLpaTbResistant2Samples,
+        pmdtRecordPayload0496CultureSmearLpaInvalid2Samples,
         pmdtRecordPayload0336CultureNoResults1Sample,
         pmdtRecordPayload0350CultureNoResults3Samples,
         pmdtRecordPayload0014SmearCultureMGITDstSusceptible2Samples,
         pmdtRecordPayload0015SmearCultureMGITDstContaminated2Samples,
         pmdtRecordPayload0016SmearCultureMGITDstResistant2Samples,
         pmdtRecordPayload0017SmearCultureMGITDstResistant2Samples,
+        pmdtRecordPayload0018SmearCultureDstResistant2Samples,
         pmdtRecordPayload03694GxPositiveResistant1Sample,
       ]
 
@@ -2319,6 +2787,7 @@ describe('Device API Raw Philippines NTRL', () => {
           sampleId: existingSample.id,
           updatedOn: '2019-09-15T08:09:10.123Z',
           resultCategory1: staticDatabaseData.ResultCategory.Missing,
+          resultWorkflowStatusLogId: 11,
           errorCode: 'OPEN',
           notes: '',
           createdOn: '2019-09-14T08:09:10.123Z',
@@ -2360,173 +2829,27 @@ describe('Device API Raw Philippines NTRL', () => {
           sampleId: existingSample.id,
           updatedOn: '2019-09-15T08:09:10.123Z',
           resultCategory1: staticDatabaseData.ResultCategory.Missing,
+          resultWorkflowStatusLogId: 12,
           errorCode: 'OPEN',
           notes: '',
           createdOn: '2019-09-14T08:09:10.123Z',
         },
       ]
 
-      function mockOutPhilippinesNTRLPMDTDataProcessor(
-        updateSpy,
-        insertSpy,
-        existingSamplesInDatabase = existingSamples
-      ) {
-        const buildKnexSpy = (updateSpy, insertSpy) => table => {
-          const knex = {
-            insert: async (...insertParams) => {
-              insertSpy(table, ...insertParams)
-              return Promise.resolve([insertSpy.callCount])
-            },
-          }
-          const where = (...whereParams) => {
-            const finalCall = {
-              first: async (...firstParams) => {
-                if (
-                  table === 'Result' &&
-                  _.some(existingResultRecords, {
-                    externalId: _.get(whereParams, '1'),
-                  })
-                ) {
-                  return Promise.resolve(
-                    _.find(existingResultRecords, {
-                      externalId: _.get(whereParams, '1'),
-                    })
-                  )
-                }
-                if (
-                  table === 'Result' &&
-                  whereParams.length === 1 &&
-                  _.isPlainObject(whereParams[0]) &&
-                  _.some(existingResultRecords, whereParams[0])
-                ) {
-                  return Promise.resolve(
-                    _.find(existingResultRecords, whereParams[0])
-                  )
-                }
-                if (
-                  table === 'Sample' &&
-                  existingSamplesInDatabase[_.get(whereParams, '1')]
-                ) {
-                  return Promise.resolve(
-                    existingSamplesInDatabase[_.get(whereParams, '1')]
-                  )
-                }
-                if (
-                  table === 'Device as d' &&
-                  whereParams[0] === 'd.id' &&
-                  whereParams[1] === databaseRecords.DeviceApiKey.deviceId &&
-                  _.every(
-                    [
-                      's.*',
-                      'd.name as deviceName',
-                      'd.defaultReportableSiteId as deviceDefaultReportableSiteId',
-                    ],
-                    selectArg => firstParams.includes(selectArg)
-                  )
-                ) {
-                  return Promise.resolve(databaseRecords.Site)
-                }
-                if (
-                  table === 'DeviceApiKey' &&
-                  whereParams[0] === 'token' &&
-                  whereParams[1] === 'bad-token'
-                ) {
-                  return Promise.resolve({})
-                }
-                if (
-                  table === 'Site' &&
-                  whereParams[0] === 'externalId' &&
-                  (whereParams[1] === null ||
-                    whereParams[1] ===
-                      'Some unknown health facility with a really really really really looooooong name' ||
-                    whereParams[1] === 'Unknown health facility')
-                ) {
-                  return Promise.resolve()
-                }
-                if (
-                  table === 'Site' &&
-                  whereParams[0] === 'externalId' &&
-                  whereParams[1] === 'IVA - ANTIPOLO CHO'
-                ) {
-                  return Promise.resolve({
-                    id: 12,
-                    longitude: 13,
-                    latitude: 14,
-                    partnerId: 15,
-                    geographyId: 16,
-                    externalId: 'IVA - ANTIPOLO CHO',
-                  })
-                }
-                return Promise.resolve(databaseRecords[table])
-              },
-              update: async (...updateParams) => {
-                updateSpy(table, ...updateParams)
-                return Promise.resolve()
-              },
-            }
-            const whereChain = () => finalCall
-            finalCall.andWhere = whereChain
-            finalCall.orWhere = whereChain
-            finalCall.whereNull = whereChain
-            finalCall.whereIn = whereChain
-            return finalCall
-          }
-          knex.where = where
-          const join = () => knex
-          knex.join = join
-          knex.leftJoin = join
-          return knex
-        }
-        const resolveWith = returnValue => async () =>
-          Promise.resolve(returnValue)
-        return proxyquire(
-          '../../src/deviceApiRaw/dataProcessors/philippinesNtrlDatabases',
-          {
-            '../../db': {
-              transact: async transaction =>
-                transaction(buildKnexSpy(updateSpy, insertSpy)),
-            },
-            '../../shared/date': {
-              parseDateOrDefault,
-              getUtcTime: () => utcNow,
-              dateEqual,
-            },
-            '../../shared/dictionary': {
-              assayToId: async assayExternalId =>
-                Promise.resolve(staticDatabaseData.Assay[assayExternalId]),
-              allAssayToId: resolveWith(staticDatabaseData.Assay),
-              sampleTypeToId: async sampleTypeExternalId =>
-                Promise.resolve(
-                  staticDatabaseData.SampleType[sampleTypeExternalId]
-                ),
-              allSampleTypeToId: resolveWith(staticDatabaseData.SampleType),
-              resultTypeToId: resolveWith(staticDatabaseData.resultTypeId),
-              resultSourceToId: resolveWith(staticDatabaseData.resultSourceId),
-              allResultCategoryToId: resolveWith(
-                staticDatabaseData.ResultCategory
-              ),
-              allResultWorkflowStatusToId: resolveWith(
-                staticDatabaseData.ResultWorkflowStatus
-              ),
-            },
-            '../../shared/request': {
-              getRemoteAddress: () => deviceIpAddress,
-            },
-          }
-        ).PhilippinesNtrlPmdt
-      }
-
       function setupPhilippinesNTRLPMDTDataProcessorWithSpies(
         deviceApiKeyToken,
         payload,
-        existingSamplesInDatabase
+        existingSamplesInDatabase = existingSamples
       ) {
         const updateSpy = sinon.spy()
         const insertSpy = sinon.spy()
-        const PhilippinesNtrlPmdt = mockOutPhilippinesNTRLPMDTDataProcessor(
+        const {
+          PhilippinesNtrlPmdt,
+        } = mockOutPhilippinesNTRLDatabaseProcessors(
+          existingSamplesInDatabase,
+          existingResultRecords,
           updateSpy,
-          insertSpy,
-          existingSamplesInDatabase
+          insertSpy
         )
         const philippinesNTRLPMDT = new PhilippinesNtrlPmdt(
           {
@@ -3978,7 +4301,7 @@ describe('Device API Raw Philippines NTRL', () => {
         'TBC Test Result 3rd Sample': null,
         'TBC FINAL RESULT': 'Mycobacterium tuberculosis',
         'Date and Time of Release of TBC Result': '2019-12-05T00:00:00.000Z',
-        'TBC Comments': null,
+        'TBC Comments': 'This appears to be a susceptible case',
         'TBC Encoded by': 'Kevin Joshua A. Alonzo, RMT',
         'TBC Performed by': 'Kevin Joshua A. Alonzo, RMT',
         'TBC Validated by': 'Roeus Vincent Arjay G. Reyes, RMT',
@@ -4109,6 +4432,190 @@ describe('Device API Raw Philippines NTRL', () => {
         'Smear Result 2 Date Collected': null,
         'Smear Result 3 Date Collected': null,
       }
+      const ritmRecordPayload0129CultureDstTbResistant1Sample = {
+        database: 'RITM',
+        table: 'RITM Database',
+        TimeStamp: '49820',
+        'Serial Code RN-14-': '0129',
+        'Last Name': 'RAMOS',
+        'First Name': 'Jovil',
+        'Middle Name': 'Martin',
+        'Age / Sex': '60/M',
+        'Date of Birth': '1958-05-08T00:00:00.000Z',
+        'RITM Hospital No': null,
+        'Date of Admission': null,
+        Requisitioner: null,
+        Address: null,
+        'Reason for Examination': null,
+        'History of Treatment': null,
+        'Registration Group': null,
+        'Presumptive DS or DR': null,
+        'Specimen Type': 'Isolate',
+        'Accession No': '19-000975',
+        'Laboratory No': 'R-19-0019',
+        'Culture Method': 'Solid Culture(Modified Kudoh)',
+        'Date and Time of Specimen Collection': '2019-01-13T00:00:00.000Z',
+        'Date and Time of Specimen Receipt': '2019-01-14T00:00:00.000Z',
+        'Encoded by': null,
+        'Date and Time of Release of AFB Result': null,
+        'Laboratory Test Performed Acid Fast Bacili Microscopy': null,
+        'Smear Result 1': null,
+        'Smear Result 2': null,
+        'Smear Result 3': null,
+        'FINAL RESULT': null,
+        Comments: null,
+        'Smear Encoded by': null,
+        'Performed by': null,
+        'Validated by': null,
+        'Noted by': 'Ma. Cecilia G. Ama, MD',
+        OPD: false,
+        Referral: true,
+        INPATIENT: false,
+        'INPATIENT REMARKS': null,
+        'MRF Encoded by': 'JENNY B. LASPRILLA',
+        'MRF Date Encoded': '2019-01-15T00:00:00.000Z',
+        Smear: false,
+        Culture: true,
+        DST: true,
+        GeneXpert: false,
+        'Date transfered to DST': '2019-04-26T00:00:00.000Z',
+        'TBC Laboratory Test Performed': 'Solid Culture',
+        'TBC Test Result 1st Sample': 'Mycobacterium tuberculosis',
+        'TBC Test Result 2nd Sample': null,
+        'TBC Test Result 3rd Sample': null,
+        'TBC FINAL RESULT': 'Mycobacterium tuberculosis',
+        'Date and Time of Release of TBC Result': '2019-06-10T00:00:00.000Z',
+        'TBC Comments': 'Left Pleural Fluid',
+        'TBC Encoded by': 'Michellin Roxanne S. Baje, RMT',
+        'TBC Performed by': 'Michellin Roxanne S. Baje, RMT',
+        'TBC Validated by': 'Roeus Vincent Arjay G. Reyes, RMT',
+        'TBC Noted by': 'Ma. Cecilia G. Ama, MD',
+        'DST Laboratory Test Performed': null,
+        Streptomycin: 'SUSCEPTIBLE',
+        Isoniazid: 'RESISTANT',
+        Rifampicin: 'SUSCEPTIBLE',
+        Ethambutol: 'SUSCEPTIBLE',
+        Pyrazinamide: 'NOT TESTED',
+        Kanamycin: 'SUSCEPTIBLE',
+        Capreomycin: 'SUSCEPTIBLE',
+        Amikacin: 'SUSCEPTIBLE',
+        Ofloxacin: 'NOT TESTED',
+        Levofloxacin: 'SUSCEPTIBLE',
+        'DST Test Result 3rd Sample': null,
+        'DST Final Result': null,
+        'Date and Time of Release of DST Result': '2019-06-10T00:00:00.000Z',
+        'DST Comments': 'Left Pleural Fluid',
+        'DST Encoded by': 'Michellin Roxanne S. Baje, RMT',
+        'DST Performed by': 'Michellin Roxanne S. Baje, RMT',
+        'DST Validated by': 'Roeus Vincent Arjay G. Reyes, RMT',
+        'DST Noted by': 'Ma. Cecilia G. Ama, MD',
+        'GX Laboratory Test Performed': 'GeneXpert',
+        MTB: null,
+        'Rifampicin:': null,
+        'GX Test Result 3rd Sample': null,
+        'Date and Time of Release of Gx Result': null,
+        'GX Comments': null,
+        'GX Encoded by': null,
+        'GX Performed by': null,
+        'GX Validated by': null,
+        'Referring Facility': 'RITM-OPD',
+        'GX Noted by': 'Ma. Cecilia G. Ama, MD',
+        'Smear Result 1 Date Collected': null,
+        'Smear Result 2 Date Collected': null,
+        'Smear Result 3 Date Collected': null,
+      }
+      const ritmRecordPayload0130CultureMGITDstTbResistant1Sample = {
+        database: 'RITM',
+        table: 'RITM Database',
+        TimeStamp: '49820',
+        'Serial Code RN-14-': '0130',
+        'Last Name': 'RAMOS',
+        'First Name': 'Jovil',
+        'Middle Name': 'Martin',
+        'Age / Sex': '60/M',
+        'Date of Birth': '1958-05-08T00:00:00.000Z',
+        'RITM Hospital No': null,
+        'Date of Admission': null,
+        Requisitioner: null,
+        Address: 'C/O ASIAN HOSPITAL AND MEDICAL CENTER',
+        'Reason for Examination': null,
+        'History of Treatment': null,
+        'Registration Group': null,
+        'Presumptive DS or DR': null,
+        'Specimen Type': 'Isolate',
+        'Accession No': '19-000975',
+        'Laboratory No': 'R-19-0019',
+        'Culture Method': 'Liquid Culture (MGIT 960)',
+        'Date and Time of Specimen Collection': '2019-01-13T00:00:00.000Z',
+        'Date and Time of Specimen Receipt': '2019-01-14T00:00:00.000Z',
+        'Encoded by': null,
+        'Date and Time of Release of AFB Result': null,
+        'Laboratory Test Performed Acid Fast Bacili Microscopy': null,
+        'Smear Result 1': null,
+        'Smear Result 2': null,
+        'Smear Result 3': null,
+        'FINAL RESULT': null,
+        Comments: null,
+        'Smear Encoded by': null,
+        'Performed by': null,
+        'Validated by': null,
+        'Noted by': 'Ma. Cecilia G. Ama, MD',
+        OPD: false,
+        Referral: true,
+        INPATIENT: false,
+        'INPATIENT REMARKS': null,
+        'MRF Encoded by': 'JENNY B. LASPRILLA',
+        'MRF Date Encoded': '2019-01-15T00:00:00.000Z',
+        Smear: false,
+        Culture: true,
+        DST: true,
+        GeneXpert: false,
+        'Date transfered to DST': '2019-04-26T00:00:00.000Z',
+        'TBC Laboratory Test Performed': 'Solid Culture',
+        'TBC Test Result 1st Sample': 'Mycobacterium tuberculosis',
+        'TBC Test Result 2nd Sample': null,
+        'TBC Test Result 3rd Sample': null,
+        'TBC FINAL RESULT': 'Mycobacterium tuberculosis',
+        'Date and Time of Release of TBC Result': '2019-06-10T00:00:00.000Z',
+        'TBC Comments': 'Left Pleural Fluid',
+        'TBC Encoded by': 'Michellin Roxanne S. Baje, RMT',
+        'TBC Performed by': 'Michellin Roxanne S. Baje, RMT',
+        'TBC Validated by': 'Roeus Vincent Arjay G. Reyes, RMT',
+        'TBC Noted by': 'Ma. Cecilia G. Ama, MD',
+        'DST Laboratory Test Performed': 'Liquid Culture (MGIT 960)',
+        Streptomycin: 'SUSCEPTIBLE',
+        Isoniazid: 'RESISTANT',
+        Rifampicin: 'SUSCEPTIBLE',
+        Ethambutol: 'SUSCEPTIBLE',
+        Pyrazinamide: 'NOT TESTED',
+        Kanamycin: 'SUSCEPTIBLE',
+        Capreomycin: 'SUSCEPTIBLE',
+        Amikacin: 'SUSCEPTIBLE',
+        Ofloxacin: 'NOT TESTED',
+        Levofloxacin: 'SUSCEPTIBLE',
+        'DST Test Result 3rd Sample': null,
+        'DST Final Result': null,
+        'Date and Time of Release of DST Result': '2019-06-10T00:00:00.000Z',
+        'DST Comments': 'Left Pleural Fluid',
+        'DST Encoded by': 'Michellin Roxanne S. Baje, RMT',
+        'DST Performed by': 'Michellin Roxanne S. Baje, RMT',
+        'DST Validated by': 'Roeus Vincent Arjay G. Reyes, RMT',
+        'DST Noted by': 'Ma. Cecilia G. Ama, MD',
+        'GX Laboratory Test Performed': 'GeneXpert',
+        MTB: null,
+        'Rifampicin:': null,
+        'GX Test Result 3rd Sample': null,
+        'Date and Time of Release of Gx Result': null,
+        'GX Comments': null,
+        'GX Encoded by': null,
+        'GX Performed by': null,
+        'GX Validated by': null,
+        'Referring Facility': 'RITM-OPD',
+        'GX Noted by': 'Ma. Cecilia G. Ama, MD',
+        'Smear Result 1 Date Collected': null,
+        'Smear Result 2 Date Collected': null,
+        'Smear Result 3 Date Collected': null,
+      }
       const ritmRecordPayload0423GeneXpertNotDetected1Sample = {
         database: 'RITM_2020',
         table: 'RITM Database',
@@ -4206,6 +4713,8 @@ describe('Device API Raw Philippines NTRL', () => {
         ritmRecordPayload2068SmearRequestedNoResults1Sample,
         ritmRecordPayload2630CultureSmearTbPositive2Samples,
         ritmRecordPayload0128CultureDstTbResistant1Sample,
+        ritmRecordPayload0129CultureDstTbResistant1Sample,
+        ritmRecordPayload0130CultureMGITDstTbResistant1Sample,
         ritmRecordPayload0423GeneXpertNotDetected1Sample,
       ]
 
@@ -4290,160 +4799,27 @@ describe('Device API Raw Philippines NTRL', () => {
           updatedOn: '2019-09-15T08:09:10.123Z',
           resultCategory1: staticDatabaseData.ResultCategory.Missing,
           errorCode: 'OPEN',
-          notes: '',
+          notes: 'Some notes that were previously entered',
           createdOn: '2019-09-14T08:09:10.123Z',
         },
       ]
 
-      function mockOutPhilippinesNTRLRITMDataProcessor(
-        updateSpy,
-        insertSpy,
-        existingSamplesInDatabase = existingSamples
-      ) {
-        const buildKnexSpy = (updateSpy, insertSpy) => table => {
-          const knex = {
-            insert: async (...insertParams) => {
-              insertSpy(table, ...insertParams)
-              return Promise.resolve([insertSpy.callCount])
-            },
-          }
-          const where = (...whereParams) => {
-            const finalCall = {
-              first: async (...firstParams) => {
-                if (
-                  table === 'Result' &&
-                  _.some(existingResultRecords, {
-                    externalId: _.get(whereParams, '1'),
-                  })
-                ) {
-                  return Promise.resolve(
-                    _.find(existingResultRecords, {
-                      externalId: _.get(whereParams, '1'),
-                    })
-                  )
-                }
-                if (
-                  table === 'Result' &&
-                  whereParams.length === 1 &&
-                  _.isPlainObject(whereParams[0]) &&
-                  _.some(existingResultRecords, whereParams[0])
-                ) {
-                  return Promise.resolve(
-                    _.find(existingResultRecords, whereParams[0])
-                  )
-                }
-                if (
-                  table === 'Sample' &&
-                  existingSamplesInDatabase[_.get(whereParams, '1')]
-                ) {
-                  return Promise.resolve(
-                    existingSamplesInDatabase[_.get(whereParams, '1')]
-                  )
-                }
-                if (
-                  table === 'Device as d' &&
-                  whereParams[0] === 'd.id' &&
-                  whereParams[1] === databaseRecords.DeviceApiKey.deviceId &&
-                  _.every(
-                    [
-                      's.*',
-                      'd.name as deviceName',
-                      'd.defaultReportableSiteId as deviceDefaultReportableSiteId',
-                    ],
-                    selectArg => firstParams.includes(selectArg)
-                  )
-                ) {
-                  return Promise.resolve(databaseRecords.Site)
-                }
-                if (
-                  table === 'DeviceApiKey' &&
-                  whereParams[0] === 'token' &&
-                  whereParams[1] === 'bad-token'
-                ) {
-                  return Promise.resolve({})
-                }
-                if (
-                  table === 'Site' &&
-                  whereParams[0] === 'externalId' &&
-                  (whereParams[1] === null ||
-                    whereParams[1] ===
-                      'Some unknown health facility with a really really really really looooooong name' ||
-                    whereParams[1] === 'Unknown health facility')
-                ) {
-                  return Promise.resolve()
-                }
-                return Promise.resolve(databaseRecords[table])
-              },
-              update: async (...updateParams) => {
-                updateSpy(table, ...updateParams)
-                return Promise.resolve()
-              },
-            }
-            const whereChain = () => finalCall
-            finalCall.andWhere = whereChain
-            finalCall.orWhere = whereChain
-            finalCall.whereNull = whereChain
-            finalCall.whereIn = whereChain
-            return finalCall
-          }
-          knex.where = where
-          const join = () => knex
-          knex.join = join
-          knex.leftJoin = join
-          return knex
-        }
-        const resolveWith = returnValue => async () =>
-          Promise.resolve(returnValue)
-        return proxyquire(
-          '../../src/deviceApiRaw/dataProcessors/philippinesNtrlDatabases',
-          {
-            '../../db': {
-              transact: async transaction =>
-                transaction(buildKnexSpy(updateSpy, insertSpy)),
-            },
-            '../../shared/date': {
-              parseDateOrDefault,
-              getUtcTime: () => utcNow,
-              dateEqual,
-            },
-            '../../shared/dictionary': {
-              assayToId: async assayExternalId =>
-                Promise.resolve(staticDatabaseData.Assay[assayExternalId]),
-              allAssayToId: resolveWith(staticDatabaseData.Assay),
-              sampleTypeToId: async sampleTypeExternalId =>
-                Promise.resolve(
-                  staticDatabaseData.SampleType[sampleTypeExternalId]
-                ),
-              allSampleTypeToId: resolveWith(staticDatabaseData.SampleType),
-              resultTypeToId: resolveWith(staticDatabaseData.resultTypeId),
-              resultSourceToId: resolveWith(staticDatabaseData.resultSourceId),
-              allResultCategoryToId: resolveWith(
-                staticDatabaseData.ResultCategory
-              ),
-              allResultWorkflowStatusToId: resolveWith(
-                staticDatabaseData.ResultWorkflowStatus
-              ),
-            },
-            '../../shared/request': {
-              getRemoteAddress: () => deviceIpAddress,
-            },
-          }
-        ).PhilippinesNtrlRitm
-      }
-
       function setupPhilippinesNTRLRITMDataProcessorWithSpies(
         deviceApiKeyToken,
         payload,
-        existingSamplesInDatabase
+        existingSamplesInDatabase = existingSamples
       ) {
         const updateSpy = sinon.spy()
         const insertSpy = sinon.spy()
-        const PhilippinesNTRLRITMDataProcessor = mockOutPhilippinesNTRLRITMDataProcessor(
+        const {
+          PhilippinesNtrlRitm,
+        } = mockOutPhilippinesNTRLDatabaseProcessors(
+          existingSamplesInDatabase,
+          existingResultRecords,
           updateSpy,
-          insertSpy,
-          existingSamplesInDatabase
+          insertSpy
         )
-        const philippinesNTRLRITM = new PhilippinesNTRLRITMDataProcessor(
+        const philippinesNTRLRITM = new PhilippinesNtrlRitm(
           {
             auth: { credentials: { token: deviceApiKeyToken } },
             plugins: { rawPayload: 'the raw message' },
