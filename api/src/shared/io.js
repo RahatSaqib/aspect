@@ -51,13 +51,15 @@ function getExportDirectory() {
 // ---------------------------------
 const getCellsByValue = (sheet, value) => {
   const cells = []
-  sheet.eachRow(row => {
-    row.eachCell(cell => {
-      if (cell.value === value) {
-        cells.push(cell)
-      }
+  if (sheet) {
+    sheet.eachRow(row => {
+      row.eachCell(cell => {
+        if (cell.value === value) {
+          cells.push(cell)
+        }
+      })
     })
-  })
+  }
   return cells
 }
 // ---------------------------------
@@ -65,13 +67,15 @@ const getCellsByValue = (sheet, value) => {
 // ---------------------------------
 const getCellsBySubstring = (sheet, value) => {
   const cells = []
-  sheet.eachRow(row => {
-    row.eachCell(cell => {
-      if (cell.text.includes(value)) {
-        cells.push(cell)
-      }
+  if (sheet) {
+    sheet.eachRow(row => {
+      row.eachCell(cell => {
+        if (cell.text.includes(value)) {
+          cells.push(cell)
+        }
+      })
     })
-  })
+  }
   return cells
 }
 

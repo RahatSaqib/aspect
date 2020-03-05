@@ -12,7 +12,6 @@ const {
   listDevicesForSelectList,
   updateDeviceMaintenance,
   getDevicePerformance,
-  getDevicesForReport,
 } = require('./service')
 const { getDevicesReport } = require('./serviceReports')
 const {
@@ -516,117 +515,6 @@ const routes = [
           deviceMaintenanceId: Joi.number()
             .required()
             .description('DeviceMaintenance.id for specified deviceId'),
-        }),
-      },
-    },
-  },
-  {
-    method: 'GET',
-    path: '/device/report',
-    handler: asyncHandler(getDevicesForReport),
-    config: {
-      description: 'List of devices for reports',
-      notes: 'Whole list (non-pageable) of devices for reports',
-      // insert request props for 'auth' and 'validate'
-      ...listDevicesBaseRequest(),
-
-      response: {
-        options: {
-          allowUnknown: false,
-        },
-        schema: Joi.object().keys({
-          ok: Joi.bool()
-            .required()
-            .description('False if there was some sort of error'),
-          total: Joi.number()
-            .required()
-            .description(
-              'The total number of devices that match the given filters'
-            ),
-          length: Joi.number()
-            .required()
-            .description('The number of devices included in this response'),
-          data: Joi.array()
-            .required()
-            .description('The devices')
-            .items(
-              Joi.object().keys({
-                id: Joi.number()
-                  .required()
-                  .description('The ID of the device'),
-                name: Joi.string()
-                  .required()
-                  .description('The name of the device'),
-                shortName: Joi.string()
-                  .allow('', null)
-                  .description('The short name of the device'),
-                serial: Joi.string()
-                  .allow('', null)
-                  .description('Device serial'),
-                createdOn: Joi.date()
-                  .required()
-                  .description('When the device was added to the database'),
-                lastPingOn: Joi.date()
-                  .allow(null)
-                  .description('When the device last pinged'),
-                lastSeen: Joi.date()
-                  .allow(null)
-                  .description(
-                    'When the device was last seen. Unlike the ping, this date is also updated whenever the device sends a results, not just on an explicit ping.'
-                  ),
-                lastUploadOn: Joi.date()
-                  .allow(null)
-                  .description(
-                    'When the device last sent any result, including errors'
-                  ),
-                state: Joi.string()
-                  .allow('', null)
-                  .description('The state where the device is located'),
-                type: Joi.string()
-                  .allow('', null)
-                  .description('The type of the device'),
-                siteName: Joi.string()
-                  .allow('', null)
-                  .description(
-                    'The name of the site where the device is located'
-                  ),
-                status: Joi.string()
-                  .required()
-                  .description('The current status of the device'),
-                category: Joi.string()
-                  .required()
-                  .description('The device category'),
-                hasResults: Joi.number()
-                  .required()
-                  .min(0)
-                  .max(1)
-                  .description(
-                    'Does the device have/produce results (i.e. a medical device)?'
-                  ),
-                hasConnectivity: Joi.number()
-                  .required()
-                  .min(0)
-                  .max(1)
-                  .description(
-                    'Does the device have connectivity built-in (i.e. a device with an included router)?'
-                  ),
-                // -------------------------------------------
-                // aggregations
-                // -------------------------------------------
-                totalResults: Joi.number()
-                  .required()
-                  .description('Total results during period'),
-                totalErrors: Joi.number()
-                  .required()
-                  .description('Total errors during period'),
-                totalInvalid: Joi.number()
-                  .required()
-                  .description('Total invalid results during period'),
-                errorRate: Joi.number()
-                  .required()
-                  .description('Error rate during period'),
-              })
-            ),
         }),
       },
     },

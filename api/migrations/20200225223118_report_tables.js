@@ -36,7 +36,8 @@ async function up(knex) {
       .inTable('Report')
       .onDelete('CASCADE')
     row.integer('sortOrder').notNullable()
-    row.string('endpoint').notNullable()
+    row.string('moduleName').notNullable()
+    row.string('functionName').notNullable()
     row.string('query')
   })
 }

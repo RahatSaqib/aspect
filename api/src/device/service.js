@@ -627,10 +627,9 @@ async function getDevicePerformance(request) {
 }
 
 // ---------------------------------
-// getting devices with different aggregations for reports
+// get devices with different aggregations for reports
 // ---------------------------------
-async function getDevicesForReport(request) {
-  const { query, auth } = request
+async function getDevicesForReport(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
   const resultCategoryIds = await allResultCategoryToId()
 

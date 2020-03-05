@@ -16,7 +16,8 @@ async function getBaseReports() {
       fileName: 'MTB_Detected_RR_Detected',
       sheets: [
         {
-          endpoint: '/api/result',
+          moduleName: 'result/service',
+          functionName: 'getResultsForReport',
           query: {
             sortCol: 'endedOn',
             sortDir: 'desc',
@@ -36,7 +37,8 @@ async function getBaseReports() {
       fileName: 'DevicesWithErrors',
       sheets: [
         {
-          endpoint: '/api/device/report',
+          moduleName: 'device/service',
+          functionName: 'getDevicesForReport',
           query: {
             sortCol: 'name',
             sortDir: 'asc',
@@ -55,7 +57,8 @@ async function getBaseReports() {
       fileName: 'RifResistanceRate',
       sheets: [
         {
-          endpoint: '/api/result',
+          moduleName: '',
+          functionName: '',
           query: {
             sortCol: 'endedOn',
             sortDir: 'desc',
@@ -71,7 +74,8 @@ async function getBaseReports() {
       fileName: 'HIVNotSuppressed',
       sheets: [
         {
-          endpoint: '/api/result',
+          moduleName: '',
+          functionName: '',
           query: {
             sortCol: 'endedOn',
             sortDir: 'desc',

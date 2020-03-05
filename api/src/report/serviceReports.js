@@ -2,7 +2,6 @@ const _ = require('lodash')
 const path = require('path')
 const { format } = require('date-fns')
 const Promise = require('bluebird')
-const { stringify } = require('querystring')
 const { knex } = require('../db')
 
 const { getUser } = require('../auth/service')
@@ -36,32 +35,42 @@ function getHeaderRows(sheet, cellTableToken) {
   return headerRows
 }
 // ----------------------------------------------------------------------------------------------
-async function getSheetData(server, auth, reportQuery, sheet) {
-  const { endpoint } = sheet
-  const sheetQuery = sheet.query ? JSON.parse(sheet.query) : {}
+async function getSheetData(request, sheet) {
+  const { auth } = request
+  const { moduleName, functionName } = sheet
   const query = {
     // filters defined on Reports page
-    ...reportQuery,
+    ...request.query,
     // make sure to report all results (up to 1 million records)
     page: 0,
     size: 999999,
     // specific params for endpoint from ReportSheet table, i.e. sortCol, sortDir
-    ...sheetQuery,
+    ...sheet.query,
   }
-  const { statusCode, result } = await server.inject({
-    method: 'GET',
-    url: `${endpoint}?${stringify(query)}`,
-    auth,
-  })
 
-  if (statusCode === 200 && result) {
-    const { ok, data } = result
-    if (ok) {
-      return data
-    }
-  } else {
-    console.log('Error in getting sheet data', { statusCode }) //eslint-disable-line
+  if (!moduleName || !functionName) {
+    return []
   }
+
+  let endpointModule
+  try {
+    endpointModule = require(`../${moduleName}`) //eslint-disable-line
+  } catch (error) {
+    console.log(`Can not load module ${moduleName}`, { error }) //eslint-disable-line
+    return []
+  }
+
+  const dataFunc = endpointModule[functionName]
+  if (!dataFunc) {
+    console.log(`Can not find function ${functionName} in module ${moduleName}`) //eslint-disable-line
+  }
+  const result = await dataFunc(auth, query)
+  const { ok, data, error } = result
+  if (ok) {
+    return data
+  }
+
+  console.log('Error in getting sheet data', { error }) //eslint-disable-line
 
   return []
 }
@@ -130,19 +139,12 @@ function replaceSubstringInCell(worksheet, token, value) {
 }
 // ----------------------------------------------------------------------------------------------
 async function createReport(request, reply) {
-  const { auth, query, orig, params, server } = request
+  const { auth, query, params } = request
   const { externalId } = params
   const { sheets, fileName } = await getReportDetails(auth, externalId)
   // language
   const { culture } = await getUser(auth.credentials.name)
   const lang = culture.split('-')[0].toLowerCase()
-
-  // for server.inject we can not use request.query because it contains parsed data,
-  // i.e. Joi.date parses date string into Date object but we
-  // need raw string to pass it to another endpoint as like it arrived from client side.
-  // That's why instead of request.query we need request.orig.query which contains all
-  // passed query values as strings which we concat together with stringify (see func getSheetData)
-  const reportQuery = orig.query
 
   // read file into workbook
   const workbook = await readTemplateFile(externalId, lang, LANG_DEFAULT)
@@ -153,8 +155,10 @@ async function createReport(request, reply) {
 
   // process all sheets
   await Promise.each(sheets, async (sheet, sheetIndex) => {
+    if (!sheet) return
+
     // get data for this sheet
-    const dataRows = await getSheetData(server, auth, reportQuery, sheet)
+    const dataRows = await getSheetData(request, sheet)
 
     // get sheet (1-based)
     const worksheet = workbook.getWorksheet(sheetIndex + 1)

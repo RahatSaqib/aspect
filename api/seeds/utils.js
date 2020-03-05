@@ -2486,9 +2486,10 @@ async function addReports(knex, countryReports = []) {
         })
 
         await Promise.each(sheets, async (sheet, sheetIndex) => {
-          const { endpoint, query } = sheet
+          const { moduleName, functionName, query } = sheet
           await knex('ReportSheet').insert({
-            endpoint,
+            moduleName,
+            functionName,
             query: query && JSON.stringify(query),
             reportId,
             sortOrder: sheetIndex + 1,

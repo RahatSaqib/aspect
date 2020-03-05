@@ -2188,9 +2188,15 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
   return resultQuery
 }
 
+async function getResultsForReport(auth, query) {
+  // for now call existing function, but later add here a query with different aggregations
+  return getListResults(query, auth)
+}
+
 module.exports = {
   updateTransferNotification,
   listResults,
+  getResultsForReport,
   exportResults,
   downloadResultsList,
   showResult,

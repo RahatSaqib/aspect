@@ -37,13 +37,27 @@ async function getReportDetails(auth, externalId) {
     .leftOuterJoin('Geography as g', 'r.geographyId', 'g.id')
     .modify(addConstraints, dataConstraints, { geography: 'g' })
     .where('r.externalId', externalId)
-    .select('r.id', 'r.name', 'r.description', 'r.fileName')
+    .select(
+      'r.description',
+      'r.externalId',
+      'r.fileName',
+      'r.geographyId',
+      'r.id',
+      'r.i18nKey',
+      'r.name',
+      'r.partnerId'
+    )
     .first()
 
   report.sheets = await knex('ReportSheet')
     .where('reportId', report.id)
     .orderBy('sortOrder', 'asc')
-    .select('id', 'endpoint', 'query')
+    .select('id', 'moduleName', 'functionName', 'query')
+    .map(sheet => ({
+      ...sheet,
+      query: sheet.query ? JSON.parse(sheet.query) : {},
+      reportExternalId: externalId,
+    }))
 
   return report
 }
