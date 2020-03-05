@@ -12,13 +12,13 @@ describe('report endpoints', () => {
   }
 
   describe('GET', () => {
-    describe('/report', () => {
+    describe('/reports', () => {
       let endpoint
       const expectedResponse = { value: 'Expected result' }
 
       beforeEach(() => {
-        endpoint = setupRoute('GET', '/report', {
-          async listReports() {
+        endpoint = setupRoute('GET', '/reports', {
+          async getReports() {
             return expectedResponse
           },
         })
