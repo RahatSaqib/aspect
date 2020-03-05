@@ -49,7 +49,9 @@ async function getSheetData(request, sheet) {
   }
 
   if (!moduleName || !functionName) {
-    return []
+    throw new Error(
+      `Both moduleName ('${moduleName}') and functionName ('${functionName}') are required`
+    )
   }
 
   let endpointModule
