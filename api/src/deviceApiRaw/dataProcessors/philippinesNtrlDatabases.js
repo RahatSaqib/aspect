@@ -3,7 +3,12 @@ const Promise = require('bluebird')
 const Boom = require('boom')
 const { transact } = require('../../db')
 const { getRemoteAddress } = require('../../shared/request')
-const { getDateOrDefault, getUtcTime, dateEqual } = require('../../shared/date')
+const {
+  getDateOrDefault,
+  parseDateOrDefault,
+  getUtcTime,
+  dateEqual,
+} = require('../../shared/date')
 const { convertStringToFloat } = require('../../shared/string')
 const { deviceSeen } = require('../../device/actions')
 const { SynchronousDataProcessor } = require('./_base')
@@ -110,9 +115,9 @@ class PhilippinesNtrlDatabase extends SynchronousDataProcessor {
       result.patientData = JSON.stringify(
         mergeDeep(resultPatientData, patientData)
       )
-      if (result.rawData) {
+      if (result.rawData && result.rawData.indexOf(rawMessage) === -1) {
         result.rawData += `\n${rawMessage}`
-      } else {
+      } else if (!result.rawData) {
         result.rawData = rawMessage
       }
       result.updatedOn = utcNow
@@ -1496,13 +1501,21 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
       }
       if (
         objectHasValues(
-          _.omit(dstResultData, [
-            'readBy',
-            'labTech',
-            'encodedBy',
-            'reviewedBy',
+          _.pick(dstResultData, [
+            'streptomycin',
+            'isoniazid',
+            'rifampicin',
+            'ethambutol',
+            'pyrazinamide',
+            'kanamycin',
+            'levofloxacin',
+            'amikacin',
+            'capreomycin',
+            'dstTat',
+            'dateReleased',
           ])
-        )
+        ) ||
+        payload['DST ID Result']
       ) {
         // TODO: Update MGIT Data processor to lookup results for assayGenericDst as well
         const assayBdMgitAstId = await assayToId('assayBdMgitAst')
@@ -1536,6 +1549,13 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
           }),
           senderOperator: dstResultData.labTech,
           reportableSiteId,
+        }
+        const resultData = JSON.parse(result.resultData)
+        if (resultData.testStartDateTime) {
+          result.startedOn = parseDateOrDefault(resultData.testStartDateTime)
+        }
+        if (resultData.testEndedDateTime) {
+          result.endedOn = parseDateOrDefault(resultData.testEndedDateTime)
         }
         const resultCategory1Id =
           {
@@ -1647,7 +1667,16 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
         labTech: payload['Culture Lab Tech'],
       }
       if (
-        objectHasValues(_.omit(cultureResultData, ['encodedBy', 'labTech']))
+        objectHasValues(
+          _.pick(cultureResultData, [
+            'result1',
+            'grade1',
+            'result2',
+            'grade2',
+            'finalResult',
+            'dateReleased',
+          ])
+        )
       ) {
         // TODO: Update MGIT Data processor to lookup results for assayCulture as well
         const assayBdMgitGndId = await assayToId('assayBdMgitGnd')
@@ -1686,6 +1715,13 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
               cultureResultData.medTech ||
               cultureResultData.labTech ||
               cultureResultData.encodedBy,
+          }
+          const resultData = JSON.parse(result.resultData)
+          if (resultData.testStartDateTime) {
+            result.startedOn = parseDateOrDefault(resultData.testStartDateTime)
+          }
+          if (resultData.testEndedDateTime) {
+            result.endedOn = parseDateOrDefault(resultData.testEndedDateTime)
           }
           const resultCategoryMappings = {
             'M. tuberculosis': resultCategories.PositiveMTB,
@@ -1755,7 +1791,17 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
         reviewedBy: payload['LPA Reviewed By'],
       }
       if (
-        objectHasValues(_.omit(lpaResultData, ['performedBy', 'reviewedBy']))
+        objectHasValues(
+          _.pick(lpaResultData, [
+            'mtbComplex',
+            'rifampicin',
+            'isoniazid',
+            'ethambutol',
+            'fluoroquinolones',
+            'aminoglycoside',
+            'dateReleased',
+          ])
+        )
       ) {
         const assayLpaId = await assayToId('assayLPA')
         const externalId = `${site.externalId}_${samples[0].externalId}_LPA`
@@ -1869,7 +1915,12 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
       }
       if (
         objectHasValues(
-          _.omit(smearResultData, ['encodedBy', 'laboratoryTechnician'])
+          _.pick(smearResultData, [
+            'smearResult1',
+            'smearResult2',
+            'finalResult',
+            'dateReleased',
+          ])
         )
       ) {
         const assaySmearId = await assayToId('assaySmear')
@@ -1992,7 +2043,14 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
         labManager: payload['Gx Laboratory Manager'],
       }
       if (
-        objectHasValues(_.omit(geneXpertResultData, ['examiner', 'labManager']))
+        objectHasValues(
+          _.pick(geneXpertResultData, [
+            'processingDate',
+            'mtb',
+            'rifampicin',
+            'dateReleased',
+          ])
+        )
       ) {
         const assayGeneXpertMtbRifId = await assayToId('GxMtbRif')
         const assayGeneXpertMtbRifUltraId = await assayToId('GxMtbRifUltra')
@@ -2020,6 +2078,13 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
             encodedResult: geneXpertResultData,
           }),
           senderOperator: geneXpertResultData.examiner,
+        }
+        const resultData = JSON.parse(result.resultData)
+        if (resultData.testStartedOn) {
+          result.startedOn = parseDateOrDefault(resultData.testStartedOn)
+        }
+        if (resultData.testEndedOn) {
+          result.endedOn = parseDateOrDefault(resultData.testEndedOn)
         }
         const resultCategory1Id = {
           POSITIVE: resultCategories.Detected,
@@ -2502,16 +2567,21 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
       ]
       if (
         objectHasValues(
-          _.omit(dstResultData, [
-            'methodUsed',
-            'testRequested',
-            'readBy',
-            'labTech',
-            'encodedBy',
-            'reviewedBy',
-            'notedBy',
+          _.pick(dstResultData, [
+            'streptomycin',
+            'isoniazid',
+            'rifampicin',
+            'ethambutol',
+            'pyrazinamide',
+            'kanamycin',
+            'levofloxacin',
+            'amikacin',
+            'capreomycin',
+            'ofloxacin',
+            'dateReleased',
           ])
-        )
+        ) ||
+        payload['DST Final Result']
       ) {
         // TODO: Update MGIT Data processor to lookup results for assayGenericDst as well
         const assayBdMgitAstId = await assayToId('assayBdMgitAst')
@@ -2539,6 +2609,13 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
           }),
           senderOperator: dstResultData.labTech,
           reportableSiteId,
+        }
+        const resultData = JSON.parse(result.resultData)
+        if (resultData.testStartDateTime) {
+          result.startedOn = parseDateOrDefault(resultData.testStartDateTime)
+        }
+        if (resultData.testEndedDateTime) {
+          result.endedOn = parseDateOrDefault(resultData.testEndedDateTime)
         }
         const dstResultCategory1Id =
           {
@@ -2639,7 +2716,13 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
       }
       if (
         objectHasValues(
-          _.omit(cultureResultData, ['methodUsed1', 'encodedBy', 'notedBy'])
+          _.pick(cultureResultData, [
+            'result1',
+            'result2',
+            'result3',
+            'finalResult',
+            'dateReleased',
+          ])
         )
       ) {
         // TODO: Update MGIT Data processor to lookup results for assayCulture as well
@@ -2701,6 +2784,13 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
             }),
             senderOperator: cultureResultData.medTech,
           }
+          const resultData = JSON.parse(result.resultData)
+          if (resultData.testStartDateTime) {
+            result.startedOn = parseDateOrDefault(resultData.testStartDateTime)
+          }
+          if (resultData.testEndedDateTime) {
+            result.endedOn = parseDateOrDefault(resultData.testEndedDateTime)
+          }
           const resultCategory1Id =
             resultCategoryMappings[cultureResultData[`result${index + 1}`]] ||
             resultCategories.Missing
@@ -2747,10 +2837,12 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
       }
       if (
         objectHasValues(
-          _.omit(smearResultData, [
-            'encodedBy',
-            'laboratoryTechnician',
-            'notedBy',
+          _.pick(smearResultData, [
+            'smearResult1',
+            'smearResult2',
+            'smearResult3',
+            'finalResult',
+            'dateReleased',
           ])
         )
       ) {
@@ -2875,13 +2967,7 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
       }
       if (
         objectHasValues(
-          _.omit(geneXpertResultData, [
-            'center',
-            'encodedBy',
-            'examiner',
-            'labManager',
-            'notedBy',
-          ])
+          _.pick(geneXpertResultData, ['mtb', 'rifampicin', 'dateReleased'])
         )
       ) {
         const assayGeneXpertMtbRifId = await assayToId('GxMtbRif')
@@ -2910,6 +2996,13 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
             encodedResult: geneXpertResultData,
           }),
           senderOperator: geneXpertResultData.examiner,
+        }
+        const resultData = JSON.parse(result.resultData)
+        if (resultData.testStartedOn) {
+          result.startedOn = parseDateOrDefault(resultData.testStartedOn)
+        }
+        if (resultData.testEndedOn) {
+          result.endedOn = parseDateOrDefault(resultData.testEndedOn)
         }
         const resultCategory1Id = {
           DETECTED: resultCategories.Detected,
