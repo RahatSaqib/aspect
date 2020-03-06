@@ -27,7 +27,12 @@ const server = new Hapi.server({
   host: '127.0.0.1',
   routes: {
     cors: {
-      exposedHeaders: ['WWW-Authenticate', 'Server-Authorization', 'Date'],
+      exposedHeaders: [
+        'WWW-Authenticate',
+        'Server-Authorization',
+        'Date',
+        'Content-Disposition', // for report files, see 'createReport()' in '/report/serviceReports.js'
+      ],
     },
     validate: {
       failAction: async (request, h, err) => {

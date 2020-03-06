@@ -113,6 +113,7 @@ export const BrowseFilters = ({
   reducedSource,
   userPermissions,
   dateFormat,
+  showBrowseDropdown = true,
   ...restProps
 }) => (
   <div className={cssClasses('Container')}>
@@ -122,11 +123,13 @@ export const BrowseFilters = ({
       onRemoveFilterItem={onRemoveFilterItem}
       className={cssClasses('FiltersBtnGroup')}
     >
-      <BrowseNavDropdown
-        history={history}
-        location={location}
-        source={reducedSource}
-      />
+      {showBrowseDropdown && (
+        <BrowseNavDropdown
+          history={history}
+          location={location}
+          source={reducedSource}
+        />
+      )}
     </FiltersBtnGroup>
     <FiltersPanel
       intl={intl}

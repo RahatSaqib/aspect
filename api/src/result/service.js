@@ -55,6 +55,10 @@ const SELECT_LIST_FIELDS = [
     `IFNULL(JSON_UNQUOTE(JSON_EXTRACT(r.resultData, "$.resultText")), CONCAT(IFNULL(rc1.name, ''), '|', IFNULL(rc2.name, ''))) as resultText`
   ),
   knex.raw('JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.id")) as patientId'),
+  knex.raw(
+    'JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.gender")) as patientGender'
+  ),
+  knex.raw('JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.age")) as patientAge'),
   'si.name as siteName',
   'dt.name as deviceTypeName',
   // transfer result
@@ -2151,6 +2155,7 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
       deviceId: 'd.id',
       assayId: 'r.assayId',
       resultCategoryId: 'r.resultCategory1',
+      resultCategory2Id: 'r.resultCategory2',
       countryId: 'g.countryId',
       stateId: 'g.stateId',
       lgaId: 'g.lgaId',
@@ -2183,9 +2188,15 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
   return resultQuery
 }
 
+async function getResultsForReport(auth, query) {
+  // for now call existing function, but later add here a query with different aggregations
+  return getListResults(query, auth)
+}
+
 module.exports = {
   updateTransferNotification,
   listResults,
+  getResultsForReport,
   exportResults,
   downloadResultsList,
   showResult,

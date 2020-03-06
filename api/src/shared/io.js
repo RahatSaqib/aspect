@@ -51,13 +51,31 @@ function getExportDirectory() {
 // ---------------------------------
 const getCellsByValue = (sheet, value) => {
   const cells = []
-  sheet.eachRow(row => {
-    row.eachCell(cell => {
-      if (cell.value === value) {
-        cells.push(cell)
-      }
+  if (sheet) {
+    sheet.eachRow(row => {
+      row.eachCell(cell => {
+        if (cell.value === value) {
+          cells.push(cell)
+        }
+      })
     })
-  })
+  }
+  return cells
+}
+// ---------------------------------
+// getCellsBySubstring - getting all cells having requested value as substring
+// ---------------------------------
+const getCellsBySubstring = (sheet, value) => {
+  const cells = []
+  if (sheet) {
+    sheet.eachRow(row => {
+      row.eachCell(cell => {
+        if (cell.text.includes(value)) {
+          cells.push(cell)
+        }
+      })
+    })
+  }
   return cells
 }
 
@@ -74,9 +92,8 @@ async function readTextFile(filePath, encoding = 'utf8') {
 // ---------------------------------
 // read Excel file and return workbook
 async function readExcelFile(fileName) {
-  return await new excel.Workbook().xlsx //eslint-disable-line
-    .readFile(fileName)
-    .then(workbook => workbook)
+  const ExcelWorkbook = new excel.Workbook()
+  return ExcelWorkbook.xlsx.readFile(fileName)
 }
 
 // write workbook into Excel and Csv file
@@ -143,12 +160,43 @@ async function generateCsvFile(outputFileName, items, columnNames, fieldNames) {
   const ok = await writeCsvFile(`${dir.full}/${outputFileName}`, workbook)
   return { ok, url: `${dir.url}/${outputFileName}`, message }
 }
+// ----------------------------------------------------------------------------------------------
+function getContentType(fileExt) {
+  if (fileExt[0] === '.') {
+    fileExt = fileExt.substr(1)
+  }
+  switch (fileExt) {
+    case 'pdf':
+      return 'application/pdf'
+    case 'ppt':
+      return 'application/vnd.ms-powerpoint'
+    case 'pptx':
+      return 'application/vnd.openxmlformats-officedocument.preplyentationml.preplyentation'
+    case 'xls':
+      return 'application/vnd.ms-excel'
+    case 'xlsx':
+      return 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    case 'doc':
+      return 'application/msword'
+    case 'docx':
+      return 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+    case 'csv':
+      return 'application/octet-stream'
+    case 'xml':
+      return 'application/xml'
+    default:
+      return ''
+  }
+}
 
 module.exports = {
-  readTextFile,
   createDirectory,
-  getExportDirectory,
-  getCellsByValue,
-  generateExcelFile,
   generateCsvFile,
+  generateExcelFile,
+  getCellsBySubstring,
+  getCellsByValue,
+  getContentType,
+  getExportDirectory,
+  readExcelFile,
+  readTextFile,
 }

@@ -64,9 +64,26 @@ function handleFetchResponseOrError(fetch, input, options = {}) {
       resp => {
         const date = resp.headers.get('date')
         const contentType = resp.headers.get('Content-Type')
+        const contentDisposition = resp.headers.get('Content-Disposition')
         if (date) {
           const store = require('../../store').default
           store.dispatch(setLastServerResponseTime(new Date(date)))
+        }
+        if (
+          contentDisposition &&
+          contentDisposition.indexOf('attachment;') === 0
+        ) {
+          const str = 'filename='
+          const fileName = _.trim(
+            contentDisposition.substr(
+              contentDisposition.indexOf(str) + str.length
+            ),
+            ' ;'
+          )
+          return {
+            blob: resp.blob(), // <--- blob() returns Promise
+            fileName,
+          }
         }
         if (contentType && contentType.indexOf('octet-stream') > 0) {
           return resp.blob()
