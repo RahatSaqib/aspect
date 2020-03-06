@@ -1,10 +1,7 @@
 module.exports = require('../utils').seed(seed, __filename)
 
-const {
-  assayTypeToId,
-  resultSourceToId,
-  deviceTypeCategoryToId,
-} = require('../../src/shared/dictionary')
+const { deviceTypeCategoryToId } = require('../../src/shared/dictionary')
+const { updateMGITAssays, updateCultureAssays } = require('../commonTB')
 
 async function seed(knex) {
   const labDeviceTypeCategoryId = await deviceTypeCategoryToId('Lab')
@@ -38,12 +35,12 @@ async function seed(knex) {
     })
   }
 
-  const { id: deviceTypeSenaiteLimsId } =
+  let { id: deviceTypeSenaiteLimsId } =
     (await knex('DeviceType')
       .where('externalId', 'SenaiteLims')
       .first('id')) || {}
   if (!deviceTypeSenaiteLimsId) {
-    await knex('DeviceType').insert({
+    deviceTypeSenaiteLimsId = await knex('DeviceType').insert({
       externalId: 'SenaiteLims',
       name: 'Senaite LIMS',
       manufacturer: 'Senaite',
@@ -51,53 +48,6 @@ async function seed(knex) {
     })
   }
 
-  const assayBdMgitAst = {
-    name: 'BD MGIT AST',
-    abbreviation: 'MGIT AST',
-    i18nKey: 'assayBdMgitAst',
-    externalId: 'assayBdMgitAst',
-    assayTypeId: await assayTypeToId('TB AST'),
-    deviceTypeId: deviceTypeBDMGITId,
-    resultSourceId: await resultSourceToId('DiagnosticDevice'),
-    resultCategory1Label: 'Result',
-  }
-  let { id: assayBdMgitAstId } =
-    (await knex('Assay')
-      .where('externalId', 'assayBdMgitAst')
-      .first('id')) || {}
-  if (!assayBdMgitAstId) {
-    assayBdMgitAstId = await knex('Assay').insert({
-      ...assayBdMgitAst,
-      externalId: 'assayBdMgitAst',
-    })
-  } else {
-    await knex('Assay')
-      .where('id', assayBdMgitAstId)
-      .update(assayBdMgitAst)
-  }
-
-  const assayBdMgitGnd = {
-    name: 'BD MGIT GND',
-    abbreviation: 'MGIT GND',
-    i18nKey: 'assayBdMgitGnd',
-    externalId: 'assayBdMgitGnd',
-    assayTypeId: await assayTypeToId('TB G&D'),
-    deviceTypeId: deviceTypeBDMGITId,
-    resultSourceId: await resultSourceToId('DiagnosticDevice'),
-    resultCategory1Label: 'Result',
-  }
-  let { id: assayBdMgitGndId } =
-    (await knex('Assay')
-      .where('externalId', 'assayBdMgitGnd')
-      .first('id')) || {}
-  if (!assayBdMgitGndId) {
-    assayBdMgitGndId = await knex('Assay').insert({
-      ...assayBdMgitGnd,
-      externalId: 'assayBdMgitGnd',
-    })
-  } else {
-    await knex('Assay')
-      .where('id', assayBdMgitGndId)
-      .update(assayBdMgitGnd)
-  }
+  await updateMGITAssays(knex, deviceTypeBDMGITId)
+  await updateCultureAssays(knex, deviceTypeSenaiteLimsId)
 }

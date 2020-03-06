@@ -187,11 +187,13 @@ class DefaultBDMGIT extends SynchronousDataProcessor {
       const result = await knex('Result')
         .where(function() {
           this.where('deviceId', deviceId).andWhere('externalId', externalId)
-        })
-        .orWhere(function() {
-          this.where('sampleId', sampleId)
-            .whereIn('assayId', assayIds)
-            .andWhere('siteId', site.id)
+          if (sampleId && !_.isEmpty(assayIds) && site.id) {
+            this.orWhere(function() {
+              this.where('sampleId', sampleId)
+                .whereIn('assayId', assayIds)
+                .andWhere('siteId', site.id)
+            })
+          }
         })
         .first()
 

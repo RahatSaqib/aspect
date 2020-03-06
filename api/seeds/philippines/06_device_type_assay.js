@@ -6,7 +6,10 @@ const {
   resultSourceToId,
   resultCategoryToId,
 } = require('../../src/shared/dictionary')
+const AssayBdMgitAstResultDataSchema = require('../fixtures/AssayBdMgitAstResultDataSchema.json')
+const AssayBdMgitGndResultDataSchema = require('../fixtures/AssayBdMgitGnd.json')
 const { updateAssayResultCategoryTreatmentEmphasize } = require('../utils')
+const { updateMGITAssays, updateCultureAssays } = require('../commonTB')
 
 async function seed(knex) {
   const labDeviceTypeCategoryId = await deviceTypeCategoryToId('Lab')
@@ -42,9 +45,113 @@ async function seed(knex) {
     })
   }
 
-  const patientDataSchema = JSON.stringify(
-    require('./fixtures/dataSchemas/patientDataSchema.json')
-  )
+  const patientDataSchema = require('./fixtures/dataSchemas/patientDataSchema.json')
+
+  const ntrlDatabaseCultureResultDataSchema = {
+    encodedResult: {
+      list: false,
+      order: 0,
+      type: 'object',
+      title: 'Encoded Result',
+      properties: {
+        dateInoculated: {
+          title: 'Date Inoculated',
+          type: 'date',
+          order: 0,
+        },
+        medTech: {
+          title: 'Med Tech',
+          type: 'string',
+          order: 1,
+        },
+        resultStatus: {
+          title: 'Result Status',
+          type: 'string',
+          order: 2,
+        },
+        dstStatus: {
+          title: 'DST Status',
+          type: 'string',
+          order: 3,
+        },
+        methodUsed1: {
+          title: 'Culture Method',
+          type: 'string',
+          order: 4,
+        },
+        result1: {
+          title: 'Result 1',
+          type: 'string',
+          order: 5,
+        },
+        grade1: {
+          title: 'Grade 1',
+          type: 'string',
+          order: 6,
+        },
+        methodUsed2: {
+          title: 'Culture Method 2',
+          type: 'string',
+          order: 7,
+        },
+        result2: {
+          title: 'Result 2',
+          type: 'string',
+          order: 8,
+        },
+        grade2: {
+          title: 'Grade 2',
+          type: 'string',
+          order: 9,
+        },
+        result3: {
+          title: 'Result 3',
+          type: 'string',
+          order: 10,
+        },
+        grade3: {
+          title: 'Grade 3',
+          type: 'string',
+          order: 11,
+        },
+        finalResult: {
+          title: 'Final Result',
+          type: 'string',
+          order: 12,
+        },
+        remarks: {
+          title: 'Remarks',
+          type: 'string',
+          order: 13,
+        },
+        dateReleased: {
+          title: 'Date Released',
+          type: 'date',
+          order: 14,
+        },
+        encodedBy: {
+          title: 'Encoded By',
+          type: 'string',
+          order: 15,
+        },
+        labTech: {
+          title: 'Lab Tech',
+          type: 'string',
+          order: 16,
+        },
+        validatedBy: {
+          title: 'Validated By',
+          type: 'string',
+          order: 17,
+        },
+        notedBy: {
+          title: 'Noted By',
+          type: 'string',
+          order: 18,
+        },
+      },
+    },
+  }
 
   const ntrlDatabaseDstResultDataSchema = {
     encodedResult: {
@@ -177,717 +284,26 @@ async function seed(knex) {
     },
   }
 
-  const mgitResultDataSchema = {
-    protocolLength: {
-      list: false,
-      order: 1,
-      type: 'number',
-      title: 'Protocol Length',
-    },
-    instrumentLocation: {
-      list: false,
-      order: 2,
-      type: 'string',
-      title: 'Specimen Instrument Location',
-    },
-    isolateNumber: {
-      list: false,
-      order: 3,
-      type: 'number',
-      title: 'Isolate Number',
-    },
-    senderName: {
-      list: false,
-      order: 4,
-      type: 'string',
-      title: 'Sender Name',
-    },
-    instrumentType: {
-      list: false,
-      order: 5,
-      type: 'string',
-      title: 'Instrument Type',
-    },
-    instrumentNumber: {
-      list: false,
-      order: 6,
-      type: 'string',
-      title: 'Instrument Number',
-    },
-    versionNumber: {
-      list: false,
-      order: 7,
-      type: 'string',
-      title: 'Version Number',
-    },
-    testId: {
-      list: false,
-      order: 8,
-      type: 'string',
-      title: 'Test ID',
-    },
-    resultTypeCode: {
-      list: false,
-      order: 9,
-      type: 'string',
-      title: 'Result Type Code',
-    },
-    preliminaryFinalStatus: {
-      list: false,
-      order: 10,
-      type: 'string',
-      title: 'Preliminary/Final',
-    },
-    dateInoculated: {
-      list: false,
-      order: 11,
-      type: 'date',
-      title: 'Date Inoculated',
-    },
-    dateFlaggedScanned: {
-      list: false,
-      order: 12,
-      type: 'date',
-      title: 'Date Flagged Positive/Scanned Out',
-    },
-    dateLjGrowth: {
-      list: false,
-      order: 13,
-      type: 'date',
-      title: 'Date LJ Growth',
-    },
-    ljGrowthClCount: {
-      list: false,
-      order: 14,
-      type: 'number',
-      title: 'CL Count',
-    },
-    ljGrowthZn: {
-      list: false,
-      order: 15,
-      type: 'number',
-      title: 'LJ Growth ZN',
-    },
-    mgitTurbidity: {
-      list: false,
-      order: 16,
-      type: 'string',
-      title: 'Turbidity',
-    },
-    ba: {
-      list: false,
-      order: 17,
-      type: 'string',
-      title: 'B/A',
-    },
-    actionTaken: {
-      list: false,
-      order: 18,
-      type: 'string',
-      title: 'Action Taken',
-    },
-    doneBy: {
-      list: false,
-      order: 19,
-      type: 'string',
-      title: 'Done By',
-    },
-  }
-
-  const assayBdMgitAst = {
-    name: 'BD MGIT AST',
-    abbreviation: 'MGIT AST',
-    i18nKey: 'assayBdMgitAst',
-    externalId: 'assayBdMgitAst',
-    assayTypeId: await assayTypeToId('TB AST'),
-    deviceTypeId: deviceTypeBDMGITId,
-    resultSourceId: await resultSourceToId('DiagnosticDevice'),
-    resultCategory1Label: 'MTB',
-    resultCategory1i18nKey: 'resultCategoryMTB',
-    resultCategory2Label: 'Resistance',
-    resultCategory2i18nKey: 'resultCategoryResistance',
-    resultDataSchema: JSON.stringify({
+  await updateMGITAssays(
+    knex,
+    deviceTypeBDMGITId,
+    patientDataSchema,
+    {
       ...ntrlDatabaseDstResultDataSchema,
-      ...mgitResultDataSchema,
-      EMB: {
-        list: false,
-        order: 20,
-        type: 'object',
-        title: 'EMB',
-        properties: {
-          sirStatus: {
-            title: 'SIR Status',
-            type: 'string',
-            order: 0,
-          },
-          growthUnits: {
-            title: 'Growth Units',
-            type: 'number',
-            order: 1,
-          },
-          antibioticConcentration: {
-            title: 'Concentration',
-            type: 'number',
-            order: 2,
-          },
-          antibioticConcentrationUnits: {
-            title: 'Units',
-            type: 'string',
-            order: 3,
-          },
-        },
-      },
-      RIF: {
-        list: false,
-        order: 21,
-        type: 'object',
-        title: 'RIF',
-        properties: {
-          sirStatus: {
-            title: 'SIR Status',
-            type: 'string',
-            order: 0,
-          },
-          growthUnits: {
-            title: 'Growth Units',
-            type: 'number',
-            order: 1,
-          },
-          antibioticConcentration: {
-            title: 'Concentration',
-            type: 'number',
-            order: 2,
-          },
-          antibioticConcentrationUnits: {
-            title: 'Units',
-            type: 'string',
-            order: 3,
-          },
-        },
-      },
-      S: {
-        list: false,
-        order: 22,
-        type: 'object',
-        title: 'S',
-        properties: {
-          sirStatus: {
-            title: 'SIR Status',
-            type: 'string',
-            order: 0,
-          },
-          growthUnits: {
-            title: 'Growth Units',
-            type: 'number',
-            order: 1,
-          },
-          antibioticConcentration: {
-            title: 'Concentration',
-            type: 'number',
-            order: 2,
-          },
-          antibioticConcentrationUnits: {
-            title: 'Units',
-            type: 'string',
-            order: 3,
-          },
-        },
-      },
-      EM: {
-        list: false,
-        order: 23,
-        type: 'object',
-        title: 'EM',
-        properties: {
-          sirStatus: {
-            title: 'SIR Status',
-            type: 'string',
-            order: 0,
-          },
-          growthUnits: {
-            title: 'Growth Units',
-            type: 'number',
-            order: 1,
-          },
-          antibioticConcentration: {
-            title: 'Concentration',
-            type: 'number',
-            order: 2,
-          },
-          antibioticConcentrationUnits: {
-            title: 'Units',
-            type: 'string',
-            order: 3,
-          },
-        },
-      },
-      RA: {
-        list: false,
-        order: 24,
-        type: 'object',
-        title: 'RA',
-        properties: {
-          sirStatus: {
-            title: 'SIR Status',
-            type: 'string',
-            order: 0,
-          },
-          growthUnits: {
-            title: 'Growth Units',
-            type: 'number',
-            order: 1,
-          },
-          antibioticConcentration: {
-            title: 'Concentration',
-            type: 'number',
-            order: 2,
-          },
-          antibioticConcentrationUnits: {
-            title: 'Units',
-            type: 'string',
-            order: 3,
-          },
-        },
-      },
-      INH: {
-        list: false,
-        order: 25,
-        type: 'object',
-        title: 'INH',
-        properties: {
-          sirStatus: {
-            title: 'SIR Status',
-            type: 'string',
-            order: 0,
-          },
-          growthUnits: {
-            title: 'Growth Units',
-            type: 'number',
-            order: 1,
-          },
-          antibioticConcentration: {
-            title: 'Concentration',
-            type: 'number',
-            order: 2,
-          },
-          antibioticConcentrationUnits: {
-            title: 'Units',
-            type: 'string',
-            order: 3,
-          },
-        },
-      },
-    }),
-    patientDataSchema,
-  }
-
-  let { id: assayBdMgitAstId } =
-    (await knex('Assay')
-      .where('externalId', 'assayBdMgitAst')
-      .first('id')) || {}
-  if (!assayBdMgitAstId) {
-    assayBdMgitAstId = await knex('Assay').insert(assayBdMgitAst)
-  } else {
-    await knex('Assay')
-      .where('id', assayBdMgitAstId)
-      .update(assayBdMgitAst)
-  }
-
-  await knex('ResultCategoryAssay').insert({
-    resultCategoryId: await resultCategoryToId('Detected'),
-    assayId: assayBdMgitAstId,
-  })
-
-  await knex('ResultCategoryAssay').insert({
-    resultCategoryId: await resultCategoryToId('PositiveMTB'),
-    assayId: assayBdMgitAstId,
-  })
-
-  await knex('ResultCategoryAssay').insert({
-    resultCategoryId: await resultCategoryToId('NotDetected'),
-    assayId: assayBdMgitAstId,
-  })
-
-  await knex('ResultCategoryAssay').insert({
-    resultCategoryId: await resultCategoryToId('PositiveMOTT'),
-    assayId: assayBdMgitAstId,
-  })
-
-  await knex('ResultCategoryAssay').insert({
-    resultCategoryId: await resultCategoryToId('Success'),
-    assayId: assayBdMgitAstId,
-  })
-
-  await knex('ResultCategoryAssay').insert({
-    resultCategoryId: await resultCategoryToId('Missing'),
-    assayId: assayBdMgitAstId,
-  })
-
-  await knex('ResultCategoryAssay').insert({
-    resultCategoryId: await resultCategoryToId('Error'),
-    assayId: assayBdMgitAstId,
-  })
-
-  await knex('ResultCategoryAssay').insert({
-    resultCategoryId: await resultCategoryToId('Contaminated'),
-    assayId: assayBdMgitAstId,
-  })
-
-  await knex('ResultCategoryAssay').insert({
-    resultCategoryId: await resultCategoryToId('Invalid'),
-    assayId: assayBdMgitAstId,
-  })
-
-  await knex('ResultCategoryAssay').insert({
-    resultCategoryId: await resultCategoryToId('Unknown'),
-    assayId: assayBdMgitAstId,
-  })
-
-  await knex('ResultCategoryAssay').insert({
-    resultCategoryId: await resultCategoryToId('Susceptible'),
-    assayId: assayBdMgitAstId,
-  })
-
-  await knex('ResultCategoryAssay').insert({
-    resultCategoryId: await resultCategoryToId('Resistant'),
-    assayId: assayBdMgitAstId,
-  })
-
-  const assayBdMgitGnd = {
-    name: 'BD MGIT GND',
-    abbreviation: 'MGIT GND',
-    i18nKey: 'assayBdMgitGnd',
-    externalId: 'assayBdMgitGnd',
-    assayTypeId: await assayTypeToId('TB G&D'),
-    deviceTypeId: deviceTypeBDMGITId,
-    resultSourceId: await resultSourceToId('DiagnosticDevice'),
-    resultCategory1Label: 'MTB',
-    resultCategory1i18nKey: 'resultCategoryMTB',
-    resultCategory2Label: 'Resistance',
-    resultCategory2i18nKey: 'resultCategoryResistance',
-    resultDataSchema: JSON.stringify({
-      ...ntrlDatabaseDstResultDataSchema,
-      ...mgitResultDataSchema,
-    }),
-    patientDataSchema,
-  }
-
-  let { id: assayBdMgitGndId } =
-    (await knex('Assay')
-      .where('externalId', 'assayBdMgitGnd')
-      .first('id')) || {}
-  if (!assayBdMgitGndId) {
-    assayBdMgitGndId = await knex('Assay').insert(assayBdMgitGnd)
-  } else {
-    await knex('Assay')
-      .where('id', assayBdMgitGndId)
-      .update(assayBdMgitGnd)
-  }
-
-  await knex('ResultCategoryAssay').insert({
-    resultCategoryId: await resultCategoryToId('Detected'),
-    assayId: assayBdMgitGndId,
-  })
-
-  await knex('ResultCategoryAssay').insert({
-    resultCategoryId: await resultCategoryToId('PositiveMTB'),
-    assayId: assayBdMgitGndId,
-  })
-
-  await knex('ResultCategoryAssay').insert({
-    resultCategoryId: await resultCategoryToId('NotDetected'),
-    assayId: assayBdMgitGndId,
-  })
-
-  await knex('ResultCategoryAssay').insert({
-    resultCategoryId: await resultCategoryToId('PositiveMOTT'),
-    assayId: assayBdMgitGndId,
-  })
-
-  await knex('ResultCategoryAssay').insert({
-    resultCategoryId: await resultCategoryToId('Success'),
-    assayId: assayBdMgitGndId,
-  })
-
-  await knex('ResultCategoryAssay').insert({
-    resultCategoryId: await resultCategoryToId('Missing'),
-    assayId: assayBdMgitGndId,
-  })
-
-  await knex('ResultCategoryAssay').insert({
-    resultCategoryId: await resultCategoryToId('Error'),
-    assayId: assayBdMgitGndId,
-  })
-
-  await knex('ResultCategoryAssay').insert({
-    resultCategoryId: await resultCategoryToId('Contaminated'),
-    assayId: assayBdMgitGndId,
-  })
-
-  await knex('ResultCategoryAssay').insert({
-    resultCategoryId: await resultCategoryToId('Invalid'),
-    assayId: assayBdMgitGndId,
-  })
-
-  await knex('ResultCategoryAssay').insert({
-    resultCategoryId: await resultCategoryToId('Unknown'),
-    assayId: assayBdMgitGndId,
-  })
-
-  const assayGenericDst = {
-    name: 'TB DST',
-    abbreviation: 'GENERIC DST',
-    i18nKey: 'assayGenericDst',
-    externalId: 'assayGenericDst',
-    assayTypeId: await assayTypeToId('TB AST'),
-    deviceTypeId: deviceTypeNTRLDatabaseId,
-    resultSourceId: await resultSourceToId('LIMS'),
-    resultCategory1Label: 'MTB',
-    resultCategory1i18nKey: 'resultCategoryMTB',
-    resultCategory2Label: 'Resistance',
-    resultCategory2i18nKey: 'resultCategoryResistance',
-    resultDataSchema: JSON.stringify(ntrlDatabaseDstResultDataSchema),
-    patientDataSchema,
-  }
-
-  let { id: assayGenericDstId } =
-    (await knex('Assay')
-      .where('externalId', 'assayGenericDst')
-      .first('id')) || {}
-  if (!assayGenericDstId) {
-    assayGenericDstId = await knex('Assay').insert(assayGenericDst)
-  } else {
-    await knex('Assay')
-      .where('id', assayGenericDstId)
-      .update(assayGenericDst)
-  }
-
-  await knex('ResultCategoryAssay').insert({
-    resultCategoryId: await resultCategoryToId('Detected'),
-    assayId: assayGenericDstId,
-  })
-
-  await knex('ResultCategoryAssay').insert({
-    resultCategoryId: await resultCategoryToId('PositiveMTB'),
-    assayId: assayGenericDstId,
-  })
-
-  await knex('ResultCategoryAssay').insert({
-    resultCategoryId: await resultCategoryToId('NotDetected'),
-    assayId: assayGenericDstId,
-  })
-
-  await knex('ResultCategoryAssay').insert({
-    resultCategoryId: await resultCategoryToId('PositiveMOTT'),
-    assayId: assayGenericDstId,
-  })
-
-  await knex('ResultCategoryAssay').insert({
-    resultCategoryId: await resultCategoryToId('Success'),
-    assayId: assayGenericDstId,
-  })
-
-  await knex('ResultCategoryAssay').insert({
-    resultCategoryId: await resultCategoryToId('Missing'),
-    assayId: assayGenericDstId,
-  })
-
-  await knex('ResultCategoryAssay').insert({
-    resultCategoryId: await resultCategoryToId('Error'),
-    assayId: assayGenericDstId,
-  })
-
-  await knex('ResultCategoryAssay').insert({
-    resultCategoryId: await resultCategoryToId('Contaminated'),
-    assayId: assayGenericDstId,
-  })
-
-  await knex('ResultCategoryAssay').insert({
-    resultCategoryId: await resultCategoryToId('Invalid'),
-    assayId: assayGenericDstId,
-  })
-
-  await knex('ResultCategoryAssay').insert({
-    resultCategoryId: await resultCategoryToId('Unknown'),
-    assayId: assayGenericDstId,
-  })
-
-  await knex('ResultCategoryAssay').insert({
-    resultCategoryId: await resultCategoryToId('Susceptible'),
-    assayId: assayGenericDstId,
-  })
-
-  await knex('ResultCategoryAssay').insert({
-    resultCategoryId: await resultCategoryToId('Resistant'),
-    assayId: assayGenericDstId,
-  })
-
-  const assayCulture = {
-    name: 'Culture',
-    abbreviation: 'CULTURE',
-    i18nKey: 'assayCulture',
-    externalId: 'assayCulture',
-    assayTypeId: await assayTypeToId('TB G&D'),
-    deviceTypeId: deviceTypeNTRLDatabaseId,
-    resultSourceId: await resultSourceToId('LIMS'),
-    resultCategory1Label: 'Culture Result',
-    resultCategory1i18nKey: 'resultCategoryCultureResult',
-    resultCategory2Label: 'Final Result',
-    resultCategory2i18nKey: 'resultCategoryFinalResult',
-    resultDataSchema: JSON.stringify({
-      encodedResult: {
-        list: false,
-        order: 0,
-        type: 'object',
-        title: 'Encoded Result',
-        properties: {
-          dateInoculated: {
-            title: 'Date Inoculated',
-            type: 'date',
-            order: 0,
-          },
-          medTech: {
-            title: 'Med Tech',
-            type: 'string',
-            order: 1,
-          },
-          resultStatus: {
-            title: 'Result Status',
-            type: 'string',
-            order: 2,
-          },
-          dstStatus: {
-            title: 'DST Status',
-            type: 'string',
-            order: 3,
-          },
-          methodUsed1: {
-            title: 'Culture Method',
-            type: 'string',
-            order: 4,
-          },
-          result1: {
-            title: 'Result 1',
-            type: 'string',
-            order: 5,
-          },
-          grade1: {
-            title: 'Grade 1',
-            type: 'string',
-            order: 6,
-          },
-          methodUsed2: {
-            title: 'Culture Method 2',
-            type: 'string',
-            order: 7,
-          },
-          result2: {
-            title: 'Result 2',
-            type: 'string',
-            order: 8,
-          },
-          grade2: {
-            title: 'Grade 2',
-            type: 'string',
-            order: 9,
-          },
-          result3: {
-            title: 'Result 3',
-            type: 'string',
-            order: 10,
-          },
-          grade3: {
-            title: 'Grade 3',
-            type: 'string',
-            order: 11,
-          },
-          finalResult: {
-            title: 'Final Result',
-            type: 'string',
-            order: 12,
-          },
-          remarks: {
-            title: 'Remarks',
-            type: 'string',
-            order: 13,
-          },
-          dateReleased: {
-            title: 'Date Released',
-            type: 'date',
-            order: 14,
-          },
-          encodedBy: {
-            title: 'Encoded By',
-            type: 'string',
-            order: 15,
-          },
-          labTech: {
-            title: 'Lab Tech',
-            type: 'string',
-            order: 16,
-          },
-          validatedBy: {
-            title: 'Validated By',
-            type: 'string',
-            order: 17,
-          },
-          notedBy: {
-            title: 'Noted By',
-            type: 'string',
-            order: 18,
-          },
-        },
-      },
-    }),
-    patientDataSchema,
-  }
-
-  let { id: assayCultureId } =
-    (await knex('Assay')
-      .where('externalId', 'assayCulture')
-      .first('id')) || {}
-  if (!assayCultureId) {
-    assayCultureId = await knex('Assay').insert(assayCulture)
-  } else {
-    await knex('Assay')
-      .where('id', assayCultureId)
-      .update(assayCulture)
-  }
-
-  await knex('ResultCategoryAssay').insert({
-    resultCategoryId: await resultCategoryToId('PositiveMTB'),
-    assayId: assayCultureId,
-  })
-
-  await knex('ResultCategoryAssay').insert({
-    resultCategoryId: await resultCategoryToId('NotDetected'),
-    assayId: assayCultureId,
-  })
-
-  await knex('ResultCategoryAssay').insert({
-    resultCategoryId: await resultCategoryToId('PositiveMOTT'),
-    assayId: assayCultureId,
-  })
-
-  await knex('ResultCategoryAssay').insert({
-    resultCategoryId: await resultCategoryToId('Contaminated'),
-    assayId: assayCultureId,
-  })
-
-  await knex('ResultCategoryAssay').insert({
-    resultCategoryId: await resultCategoryToId('Invalid'),
-    assayId: assayCultureId,
-  })
-
-  await knex('ResultCategoryAssay').insert({
-    resultCategoryId: await resultCategoryToId('Missing'),
-    assayId: assayCultureId,
-  })
-
-  await knex('ResultCategoryAssay').insert({
-    resultCategoryId: await resultCategoryToId('Unknown'),
-    assayId: assayCultureId,
-  })
+      ...AssayBdMgitAstResultDataSchema,
+    },
+    {
+      ...ntrlDatabaseCultureResultDataSchema,
+      ...AssayBdMgitGndResultDataSchema,
+    }
+  )
+  await updateCultureAssays(
+    knex,
+    deviceTypeNTRLDatabaseId,
+    ntrlDatabaseDstResultDataSchema,
+    ntrlDatabaseCultureResultDataSchema,
+    patientDataSchema
+  )
 
   const assayLpa = {
     name: 'LPA',
@@ -976,7 +392,7 @@ async function seed(knex) {
         },
       },
     }),
-    patientDataSchema,
+    patientDataSchema: JSON.stringify(patientDataSchema),
   }
 
   let { id: assayLpaId } =
@@ -1118,7 +534,7 @@ async function seed(knex) {
         },
       },
     }),
-    patientDataSchema,
+    patientDataSchema: JSON.stringify(patientDataSchema),
   }
 
   let { id: assaySmearId } =
