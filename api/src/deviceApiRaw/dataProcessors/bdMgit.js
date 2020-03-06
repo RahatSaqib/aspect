@@ -1,10 +1,9 @@
 const Promise = require('bluebird')
 const _ = require('lodash')
 const Boom = require('@hapi/boom')
-const dateParse = require('date-fns/parse')
 const { knex, transact } = require('../../db')
 const { getRemoteAddress } = require('../../shared/request')
-const { getUtcTime } = require('../../shared/date')
+const { getUtcTime, parseDateOrDefault } = require('../../shared/date')
 const { getAstmField } = require('../../shared/astm')
 const { deviceSeen } = require('../../device/actions')
 const { SynchronousDataProcessor } = require('./_base')
@@ -187,16 +186,13 @@ class DefaultBDMGIT extends SynchronousDataProcessor {
       const result = await knex('Result')
         .where(function() {
           this.where('deviceId', deviceId).andWhere('externalId', externalId)
-          if (sampleId && !_.isEmpty(assayIds) && site.id) {
-            this.orWhere(function() {
-              this.where('sampleId', sampleId)
-                .whereIn('assayId', assayIds)
-                .andWhere('siteId', site.id)
-            })
-          }
+        })
+        .orWhere(function() {
+          this.where('sampleId', sampleId)
+            .whereIn('assayId', assayIds)
+            .andWhere('siteId', site.id)
         })
         .first()
-
       // build up result data field:
       const resultData = {
         ...JSON.parse(_.get(result, 'resultData', '{}')),
@@ -264,12 +260,13 @@ class DefaultBDMGIT extends SynchronousDataProcessor {
         resultCategory1,
         resultCategory2,
         startedOn:
-          dateParse(mgitStartedOn, 'yyyyLLddHHmmss', utcNow) ||
-          _.get(result, 'startedOn'),
+          parseDateOrDefault(mgitStartedOn, {
+            formatString: 'yyyyMMddHHmmss',
+          }) || _.get(result, 'startedOn'),
         endedOn:
-          (mgitEndedOn
-            ? dateParse(mgitEndedOn, 'yyyyLLddHHmmss', utcNow)
-            : null) || _.get(result, 'endedOn'),
+          parseDateOrDefault(mgitEndedOn, {
+            formatString: 'yyyyMMddHHmmss',
+          }) || _.get(result, 'endedOn'),
         consumableSerial: mgitConsumableSequenceNumber,
         senderVersion: mgitVersionNumber,
         updatedOn: utcNow,
@@ -282,8 +279,7 @@ class DefaultBDMGIT extends SynchronousDataProcessor {
       if (result) {
         // update result
         await knex('Result')
-          .where('deviceId', deviceId)
-          .where('externalId', externalId)
+          .where('id', result.id)
           .update(resultFields)
 
         resultId = result.id
