@@ -78,15 +78,128 @@ describe('Device API Raw Philippines NTRL', () => {
       geographyId: 11,
       externalId: 'NTRL',
     },
+    ivaAntipoloChoSite: {
+      id: 12,
+      longitude: null,
+      latitude: null,
+      partnerId: 15,
+      geographyId: 16,
+      externalId: 'IVA - ANTIPOLO CHO',
+    },
   }
 
   function mockOutPhilippinesNTRLDatabaseProcessors(
     existingSamplesInDatabase,
-    existingResultRecords,
+    existingResultRecordsInDatabase,
     updateSpy,
     insertSpy
   ) {
     const resolveWith = returnValue => async () => Promise.resolve(returnValue)
+    const selectResults = (table, whereParamsAccumulator, selectParams) => {
+      return whereParamsAccumulator.reduce((queryResults, whereParams) => {
+        let filteredQueryResults
+        if (table === 'Result') {
+          if (whereParams.length === 2 && whereParams[0] === 'externalId') {
+            if (_.isArray(whereParams[1])) {
+              filteredQueryResults = existingResultRecordsInDatabase.filter(
+                existingResultRecord =>
+                  whereParams[1].includes(existingResultRecord.externalId)
+              )
+            } else if (whereParams[1]) {
+              filteredQueryResults = existingResultRecordsInDatabase.filter(
+                existingResultRecord =>
+                  existingResultRecord.externalId === whereParams[1]
+              )
+            }
+          }
+          if (whereParams.length === 1 && _.isPlainObject(whereParams[0])) {
+            filteredQueryResults = _.filter(
+              existingResultRecordsInDatabase,
+              whereParams[0]
+            )
+          }
+          if (whereParams.length === 2 && whereParams[0] === 'sampleId') {
+            if (_.isArray(whereParams[1])) {
+              filteredQueryResults = existingResultRecordsInDatabase.filter(
+                existingResultRecord =>
+                  whereParams[1].includes(existingResultRecord.sampleId)
+              )
+            } else if (whereParams[1]) {
+              filteredQueryResults = existingResultRecordsInDatabase.filter(
+                existingResultRecord =>
+                  existingResultRecord.sampleId === whereParams[1]
+              )
+            }
+          }
+        } else if (table === 'Sample') {
+          if (whereParams.length === 2 && whereParams[0] === 'externalId') {
+            filteredQueryResults = [existingSamplesInDatabase[whereParams[1]]]
+          }
+        } else if (table === 'Device as d') {
+          if (
+            whereParams.length === 2 &&
+            whereParams[0] === 'd.id' &&
+            whereParams[1] === databaseRecords.DeviceApiKey.deviceId &&
+            _.every(
+              [
+                's.*',
+                'd.name as deviceName',
+                'd.defaultReportableSiteId as deviceDefaultReportableSiteId',
+              ],
+              selectArg => selectParams.includes(selectArg)
+            )
+          ) {
+            filteredQueryResults = [databaseRecords.Site]
+          }
+        } else if (table === 'DeviceApiKey') {
+          if (
+            whereParams.length === 2 &&
+            whereParams[0] === 'token' &&
+            whereParams[1] === 'bad-token'
+          ) {
+            filteredQueryResults = null
+          }
+        } else if (table === 'Site') {
+          if (
+            whereParams.length === 2 &&
+            whereParams[0] === 'externalId' &&
+            (whereParams[1] === null ||
+              [
+                'Some unknown health facility with a really really really really looooooong name',
+                'Unknown health facility',
+              ].includes(whereParams[1]))
+          ) {
+            filteredQueryResults = null
+          }
+          if (
+            whereParams.length === 2 &&
+            whereParams[0] === 'externalId' &&
+            whereParams[1] === 'IVA - ANTIPOLO CHO'
+          ) {
+            filteredQueryResults = [databaseRecords.ivaAntipoloChoSite]
+          }
+        } else if (table === 'ResultWorkflowLog') {
+          if (
+            whereParams.length === 2 &&
+            whereParams[0] === 'id' &&
+            whereParams[1] === 11
+          ) {
+            filteredQueryResults = [
+              {
+                resultWorkflowStatusId:
+                  staticDatabaseData.ResultWorkflowStatus.Error,
+              },
+            ]
+          }
+        }
+        if (_.isUndefined(filteredQueryResults)) {
+          filteredQueryResults = [databaseRecords[table]] || []
+        } else if (filteredQueryResults === null) {
+          return []
+        }
+        return _.uniq([...queryResults, ...filteredQueryResults])
+      }, [])
+    }
     return proxyquire(
       '../../src/deviceApiRaw/dataProcessors/philippinesNtrlDatabases',
       {
@@ -100,110 +213,58 @@ describe('Device API Raw Philippines NTRL', () => {
                 },
               }
               const where = (...whereParams) => {
+                const whereParamsAccumulator = []
+                if (whereParams.length === 1 && _.isFunction(whereParams[0])) {
+                  const whereCallback = function(...whereCallbackParams) {
+                    this.push(whereCallbackParams)
+                    return this
+                  }
+                  const boundWhereCallback = whereCallback.bind(
+                    whereParamsAccumulator
+                  )
+                  whereParamsAccumulator.where = boundWhereCallback
+                  whereParamsAccumulator.andWhere = boundWhereCallback
+                  whereParamsAccumulator.orWhere = boundWhereCallback
+                  whereParamsAccumulator.whereNull = boundWhereCallback
+                  whereParamsAccumulator.whereIn = boundWhereCallback
+                  const whereCallbackFunction = whereParams[0].bind(
+                    whereParamsAccumulator
+                  )
+                  whereCallbackFunction()
+                  delete whereParamsAccumulator.where
+                  delete whereParamsAccumulator.andWhere
+                  delete whereParamsAccumulator.orWhere
+                  delete whereParamsAccumulator.whereNull
+                  delete whereParamsAccumulator.whereIn
+                } else {
+                  whereParamsAccumulator.push(whereParams)
+                }
                 const finalCall = {
                   first: async (...firstParams) => {
-                    if (
-                      table === 'Result' &&
-                      _.some(existingResultRecords, {
-                        externalId: _.get(whereParams, '1'),
-                      })
-                    ) {
-                      return Promise.resolve(
-                        _.find(existingResultRecords, {
-                          externalId: _.get(whereParams, '1'),
-                        })
-                      )
-                    }
-                    if (
-                      table === 'Result' &&
-                      whereParams.length === 1 &&
-                      _.isPlainObject(whereParams[0]) &&
-                      _.some(existingResultRecords, whereParams[0])
-                    ) {
-                      return Promise.resolve(
-                        _.find(existingResultRecords, whereParams[0])
-                      )
-                    }
-                    if (
-                      table === 'Sample' &&
-                      existingSamplesInDatabase[_.get(whereParams, '1')]
-                    ) {
-                      return Promise.resolve(
-                        existingSamplesInDatabase[_.get(whereParams, '1')]
-                      )
-                    }
-                    if (
-                      table === 'Device as d' &&
-                      whereParams[0] === 'd.id' &&
-                      whereParams[1] ===
-                        databaseRecords.DeviceApiKey.deviceId &&
-                      _.every(
-                        [
-                          's.*',
-                          'd.name as deviceName',
-                          'd.defaultReportableSiteId as deviceDefaultReportableSiteId',
-                        ],
-                        selectArg => firstParams.includes(selectArg)
-                      )
-                    ) {
-                      return Promise.resolve(databaseRecords.Site)
-                    }
-                    if (
-                      table === 'DeviceApiKey' &&
-                      whereParams[0] === 'token' &&
-                      whereParams[1] === 'bad-token'
-                    ) {
-                      return Promise.resolve({})
-                    }
-                    if (
-                      table === 'Site' &&
-                      whereParams[0] === 'externalId' &&
-                      (whereParams[1] === null ||
-                        whereParams[1] ===
-                          'Some unknown health facility with a really really really really looooooong name' ||
-                        whereParams[1] === 'Unknown health facility')
-                    ) {
-                      return Promise.resolve()
-                    }
-                    if (
-                      table === 'Site' &&
-                      whereParams[0] === 'externalId' &&
-                      whereParams[1] === 'IVA - ANTIPOLO CHO'
-                    ) {
-                      return Promise.resolve({
-                        id: 12,
-                        longitude: null,
-                        latitude: null,
-                        partnerId: 15,
-                        geographyId: 16,
-                        externalId: 'IVA - ANTIPOLO CHO',
-                      })
-                    }
-                    if (
-                      table === 'ResultWorkflowLog' &&
-                      whereParams[0] === 'id' &&
-                      whereParams[1] === 11
-                    ) {
-                      return Promise.resolve({
-                        resultWorkflowStatusId:
-                          staticDatabaseData.ResultWorkflowStatus.Error,
-                      })
-                    }
-                    return Promise.resolve(databaseRecords[table])
+                    const selectQueryResults = selectResults(
+                      table,
+                      whereParamsAccumulator,
+                      firstParams
+                    )
+                    return Promise.resolve(selectQueryResults[0])
                   },
                   update: async (...updateParams) => {
                     updateSpy(table, ...updateParams)
                     return Promise.resolve()
                   },
+                  where,
+                  andWhere: where,
+                  orWhere: where,
+                  whereNull: where,
+                  whereIn: where,
                 }
-                const whereChain = () => finalCall
-                finalCall.andWhere = whereChain
-                finalCall.orWhere = whereChain
-                finalCall.whereNull = whereChain
-                finalCall.whereIn = whereChain
                 return finalCall
               }
               knex.where = where
+              knex.andWhere = where
+              knex.orWhere = where
+              knex.whereNull = where
+              knex.whereIn = where
               const join = () => knex
               knex.join = join
               knex.leftJoin = join
@@ -2881,7 +2942,8 @@ describe('Device API Raw Philippines NTRL', () => {
       function setupPhilippinesNTRLPMDTDataProcessorWithSpies(
         deviceApiKeyToken,
         payload,
-        existingSamplesInDatabase = existingSamples
+        existingSamplesInDatabase = existingSamples,
+        existingResultRecordsInDatabase = existingResultRecords
       ) {
         const updateSpy = sinon.spy()
         const insertSpy = sinon.spy()
@@ -2889,7 +2951,7 @@ describe('Device API Raw Philippines NTRL', () => {
           PhilippinesNtrlPmdt,
         } = mockOutPhilippinesNTRLDatabaseProcessors(
           existingSamplesInDatabase,
-          existingResultRecords,
+          existingResultRecordsInDatabase,
           updateSpy,
           insertSpy
         )
@@ -3282,6 +3344,200 @@ describe('Device API Raw Philippines NTRL', () => {
           endedOn: cultureResults[1].endedOn.toISOString(),
         }
         const sample2ExternalId = getSamplesFromPMDTPayload(payload)[1]
+          .externalId
+        expect(cultureResult2).to.containSubset({
+          partnerId: databaseRecords.Site.partnerId,
+          geographyId: databaseRecords.Site.geographyId,
+          siteId: databaseRecords.Site.id,
+          deviceId: databaseRecords.DeviceApiKey.deviceId,
+          longitude: databaseRecords.Site.longitude,
+          latitude: databaseRecords.Site.latitude,
+          resultSourceId: staticDatabaseData.resultSourceId,
+          resultTypeId: staticDatabaseData.resultTypeId,
+          resultCategory1: staticDatabaseData.ResultCategory.PositiveMTB,
+          resultCategory2: staticDatabaseData.ResultCategory.PositiveMTB,
+          patientData: generatePatientDataFromPMDTPayload(payload),
+          externalId: `${databaseRecords.Site.externalId}_${sample2ExternalId}_CULTURE`,
+          assayId: staticDatabaseData.Assay.assayBdMgitGnd,
+          startedOn: payload['Culture Date Released'],
+          endedOn: payload['Culture Date Released'],
+          resultData: {
+            encodedResult: {
+              dateInoculated: payload['Culture Date Inoculated'],
+              medTech: payload['Culture Med Tech'],
+              resultStatus: payload['Culture Result Status'],
+              dstStatus: payload['Culture DST Status'],
+              methodUsed1: payload['Culture Method'],
+              result1: payload['Culture Result 1'],
+              grade1: payload['Culture Grade 1'],
+              result2: payload['Culture Result 2'],
+              grade2: payload['Culture Grade 2'],
+              finalResult: payload['Culture Final Result'],
+              remarks: payload['Culture Remarks 1'],
+              dateReleased: payload['Culture Date Released'],
+              encodedBy: payload['Culture Encoded by'],
+              labTech: payload['Culture Lab Tech'],
+            },
+          },
+          senderOperator:
+            payload['Culture Med Tech'] ||
+            payload['Culture Lab Tech'] ||
+            payload['Culture Encoded by'],
+          reportableSiteId: databaseRecords.Site.id,
+        })
+      })
+
+      it('should update Culture results what where initially sent by a MGIT device', async () => {
+        const payload = JSON.parse(
+          JSON.stringify(
+            pmdtRecordPayload0015SmearCultureMGITDstContaminated2Samples
+          )
+        )
+        const existingSamplesFromMgit = {
+          'PN-20-0015-1': {
+            id: 998,
+            externalId: 'PN-20-0015-1',
+            collectedOn: new Date(2020, 0, 21),
+            sampleTypeId: staticDatabaseData.SampleType.Sputum,
+            originSiteId: null,
+          },
+          'PN-20-0015-2': {
+            id: 999,
+            externalId: 'PN-20-0015-1',
+            collectedOn: new Date(2020, 0, 21),
+            sampleTypeId: staticDatabaseData.SampleType.Sputum,
+            originSiteId: null,
+          },
+        }
+        const existingMgitResults = [
+          {
+            id: 51,
+            assayId: staticDatabaseData.Assay.assayBdMgitGnd,
+            resultData: JSON.stringify({
+              senderName: 'bryan',
+              versionNumber: 2.2,
+              messageDateTime: '2020-02-05T16:53:11.000Z',
+              accessionNumber: 'PN-20-0015-1',
+              isolateNumber: '123',
+              testId: '16',
+              resultTypeCode: 'GND_MGIT',
+              consumableSequenceNumber: '923802938',
+              preliminaryFinalStatus: 'F',
+              testStartDateTime: '2020-01-23T12:13:11.000Z',
+              testEndedDateTime: '2020-02-05T10:11:12.000Z',
+              instrumentType: 'MGIT',
+              protocolLength: '96',
+              instrumentNumber: '2',
+              instrumentLocation: 'A12',
+            }),
+            deviceId: databaseRecords.Device.id,
+            siteId: databaseRecords.Site.id,
+            externalId: `20200123121311_923802938`,
+            senderOperator: 'bryan',
+            endedOn: '2020-02-05T10:11:12.000Z',
+            patientData: '{}',
+            sampleId: existingSamplesFromMgit['PN-20-0015-1'].id,
+            updatedOn: '2020-02-05T16:57:11.000Z',
+            resultCategory1: staticDatabaseData.ResultCategory.PositiveMTB,
+            resultCategory2: staticDatabaseData.ResultCategory.Detected,
+            errorCode: 'OPEN',
+            notes: '',
+            createdOn: '2020-02-05T16:57:11.000Z',
+          },
+        ]
+        const {
+          insertSpy,
+          updateSpy,
+          philippinesNTRLPMDT: cultureResultProcessor,
+        } = setupPhilippinesNTRLPMDTDataProcessorWithSpies(
+          'some device API key',
+          pmdtRecordPayload0015SmearCultureMGITDstContaminated2Samples,
+          existingSamplesFromMgit,
+          existingMgitResults
+        )
+        await cultureResultProcessor.processRequest()
+        const insertResultCalls = insertSpy
+          .getCalls()
+          .filter(insertCall => insertCall.args[0] === 'Result')
+        const newCultureResults = insertResultCalls
+          .map(insert => insert.lastArg)
+          .filter(
+            resultInsert =>
+              resultInsert.assayId ===
+                staticDatabaseData.Assay.assayBdMgitGnd ||
+              resultInsert.assayId === staticDatabaseData.Assay.assayCulture
+          )
+        expect(newCultureResults).to.have.lengthOf(1)
+        const newCultureResult = {
+          ...newCultureResults[0],
+          patientData: JSON.parse(newCultureResults[0].patientData),
+          resultData: JSON.parse(newCultureResults[0].resultData),
+          startedOn: newCultureResults[0].startedOn.toISOString(),
+          endedOn: newCultureResults[0].endedOn.toISOString(),
+        }
+        const newSampleExternalId = getSamplesFromPMDTPayload(payload)[1]
+          .externalId
+        expect(newCultureResult).to.containSubset({
+          partnerId: databaseRecords.Site.partnerId,
+          geographyId: databaseRecords.Site.geographyId,
+          siteId: databaseRecords.Site.id,
+          deviceId: databaseRecords.DeviceApiKey.deviceId,
+          longitude: databaseRecords.Site.longitude,
+          latitude: databaseRecords.Site.latitude,
+          resultSourceId: staticDatabaseData.resultSourceId,
+          resultTypeId: staticDatabaseData.resultTypeId,
+          resultCategory1: staticDatabaseData.ResultCategory.PositiveMTB,
+          resultCategory2: staticDatabaseData.ResultCategory.PositiveMTB,
+          patientData: generatePatientDataFromPMDTPayload(payload),
+          externalId: `${databaseRecords.Site.externalId}_${newSampleExternalId}_CULTURE`,
+          assayId: staticDatabaseData.Assay.assayBdMgitGnd,
+          startedOn: payload['Culture Date Released'],
+          endedOn: payload['Culture Date Released'],
+          resultData: {
+            encodedResult: {
+              dateInoculated: payload['Culture Date Inoculated'],
+              medTech: payload['Culture Med Tech'],
+              resultStatus: payload['Culture Result Status'],
+              dstStatus: payload['Culture DST Status'],
+              methodUsed1: payload['Culture Method'],
+              result1: payload['Culture Result 1'],
+              grade1: payload['Culture Grade 1'],
+              result2: payload['Culture Result 2'],
+              grade2: payload['Culture Grade 2'],
+              finalResult: payload['Culture Final Result'],
+              remarks: payload['Culture Remarks 1'],
+              dateReleased: payload['Culture Date Released'],
+              encodedBy: payload['Culture Encoded by'],
+              labTech: payload['Culture Lab Tech'],
+            },
+          },
+          senderOperator:
+            payload['Culture Med Tech'] ||
+            payload['Culture Lab Tech'] ||
+            payload['Culture Encoded by'],
+          reportableSiteId: databaseRecords.ivaAntipoloChoSite.id,
+        })
+
+        const updateResultCalls = updateSpy
+          .getCalls()
+          .filter(updateCall => updateCall.args[0] === 'Result')
+        const updatedCultureResults = updateResultCalls
+          .map(update => update.lastArg)
+          .filter(
+            resultUpdate =>
+              resultUpdate.assayId ===
+                staticDatabaseData.Assay.assayBdMgitGnd ||
+              resultUpdate.assayId === staticDatabaseData.Assay.assayCulture
+          )
+        expect(updatedCultureResults).to.have.lengthOf(1)
+        const cultureResult2 = {
+          ...updatedCultureResults[0],
+          patientData: JSON.parse(updatedCultureResults[0].patientData),
+          resultData: JSON.parse(updatedCultureResults[0].resultData),
+          startedOn: updatedCultureResults[0].startedOn.toISOString(),
+          endedOn: updatedCultureResults[0].endedOn.toISOString(),
+        }
+        const sample2ExternalId = getSamplesFromPMDTPayload(payload)[0]
           .externalId
         expect(cultureResult2).to.containSubset({
           partnerId: databaseRecords.Site.partnerId,
@@ -4849,7 +5105,8 @@ describe('Device API Raw Philippines NTRL', () => {
       function setupPhilippinesNTRLRITMDataProcessorWithSpies(
         deviceApiKeyToken,
         payload,
-        existingSamplesInDatabase = existingSamples
+        existingSamplesInDatabase = existingSamples,
+        existingResultRecordsInDatabase = existingResultRecords
       ) {
         const updateSpy = sinon.spy()
         const insertSpy = sinon.spy()
@@ -4857,7 +5114,7 @@ describe('Device API Raw Philippines NTRL', () => {
           PhilippinesNtrlRitm,
         } = mockOutPhilippinesNTRLDatabaseProcessors(
           existingSamplesInDatabase,
-          existingResultRecords,
+          existingResultRecordsInDatabase,
           updateSpy,
           insertSpy
         )

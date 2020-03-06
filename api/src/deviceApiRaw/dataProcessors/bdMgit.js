@@ -10,7 +10,7 @@ const { deviceSeen } = require('../../device/actions')
 const { SynchronousDataProcessor } = require('./_base')
 
 const {
-  assayToId,
+  allAssayToId,
   resultTypeToId,
   resultSourceToId,
   resultCategoryToId,
@@ -99,9 +99,11 @@ class DefaultBDMGIT extends SynchronousDataProcessor {
         throw Boom.badRequest(`Unknown result type: ${mgitResultTypeCode}`)
       }
 
-      const assayId = await assayToId(
-        mgitResultTypeCode === 'AST_MGIT' ? 'assayBdMgitAst' : 'assayBdMgitGnd'
-      )
+      const allAssayIds = await allAssayToId()
+      const assayIds =
+        mgitResultTypeCode === 'AST_MGIT'
+          ? [allAssayIds.assayBdMgitAst, allAssayIds.assayGenericDst]
+          : [allAssayIds.assayBdMgitGnd, allAssayIds.assayCulture]
 
       // Use test status to determine workflow status and result category 1:
       const mgitTestStatus = getAstmField(astm, 'R,4,1,1')
@@ -159,16 +161,43 @@ class DefaultBDMGIT extends SynchronousDataProcessor {
         .where('id', deviceId)
         .first()
 
+      // add/update sample
+      const sampleFields = {
+        externalId: mgitAccessionNumber,
+        originSiteId: site ? site.id : null,
+      }
+      const existingSample = await knex('Sample')
+        .where('externalId', sampleFields.externalId)
+        .first()
+      let sampleId = null
+      if (existingSample) {
+        sampleId = existingSample.id
+        // update sample
+        await knex('Sample')
+          .where('id', existingSample.id)
+          .update(sampleFields)
+      } else {
+        // insert sample
+        sampleId = await knex('Sample').insert(sampleFields)
+      }
+
       // It is possible that a single plastic carrier could be used more than once for a particular access number.
       // The test start date/time, with the sequence number, uniquely identifies a test and its result.
       const externalId = `${mgitStartedOn}_${mgitConsumableSequenceNumber}`
       const result = await knex('Result')
-        .where('deviceId', deviceId)
-        .where('externalId', externalId)
+        .where(function() {
+          this.where('deviceId', deviceId).andWhere('externalId', externalId)
+        })
+        .orWhere(function() {
+          this.where('sampleId', sampleId)
+            .whereIn('assayId', assayIds)
+            .andWhere('siteId', site.id)
+        })
         .first()
 
       // build up result data field:
       const resultData = {
+        ...JSON.parse(_.get(result, 'resultData', '{}')),
         senderName: getAstmField(astm, 'H,5,1,1'),
         versionNumber: mgitVersionNumber,
         messageDateTime: getAstmField(astm, 'H,14,1,1'),
@@ -221,7 +250,7 @@ class DefaultBDMGIT extends SynchronousDataProcessor {
 
       // add/update result
       const resultFields = {
-        assayId,
+        assayId: assayIds[0],
         partnerId: device.partnerId,
         geographyId: site ? site.geographyId : null,
         siteId: site ? site.id : null,
@@ -232,10 +261,13 @@ class DefaultBDMGIT extends SynchronousDataProcessor {
         resultTypeId,
         resultCategory1,
         resultCategory2,
-        startedOn: dateParse(mgitStartedOn, 'yyyyLLddHHmmss', utcNow),
-        endedOn: mgitEndedOn
-          ? dateParse(mgitEndedOn, 'yyyyLLddHHmmss', utcNow)
-          : null,
+        startedOn:
+          dateParse(mgitStartedOn, 'yyyyLLddHHmmss', utcNow) ||
+          _.get(result, 'startedOn'),
+        endedOn:
+          (mgitEndedOn
+            ? dateParse(mgitEndedOn, 'yyyyLLddHHmmss', utcNow)
+            : null) || _.get(result, 'endedOn'),
         consumableSerial: mgitConsumableSequenceNumber,
         senderVersion: mgitVersionNumber,
         updatedOn: utcNow,
@@ -243,20 +275,9 @@ class DefaultBDMGIT extends SynchronousDataProcessor {
         reportableSiteId: device.defaultReportableSiteId || device.siteId,
       }
 
-      // add/update sample
-      const sampleFields = {
-        externalId: mgitAccessionNumber,
-        originSiteId: site ? site.id : null,
-      }
-
       // Insert or update result
       let resultId = null
       if (result) {
-        // update sample
-        await knex('Sample')
-          .where('id', result.sampleId)
-          .update(sampleFields)
-
         // update result
         await knex('Result')
           .where('deviceId', deviceId)
@@ -265,9 +286,6 @@ class DefaultBDMGIT extends SynchronousDataProcessor {
 
         resultId = result.id
       } else {
-        // insert sample
-        const sampleId = await knex('Sample').insert(sampleFields)
-
         // insert result
         ;[resultId] = await knex('Result').insert(
           Object.assign(resultFields, {

@@ -1204,9 +1204,10 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
     const { auth, payload } = request
     this.response = { deviceApiRawId: this.id, resultIds: [] }
     return transact(async knex => {
-      const { deviceId, partnerId, geographyId } = await knex('DeviceApiKey')
-        .where('token', auth.credentials.token)
-        .first('deviceId', 'partnerId', 'geographyId')
+      const { deviceId, partnerId, geographyId } =
+        (await knex('DeviceApiKey')
+          .where('token', auth.credentials.token)
+          .first('deviceId', 'partnerId', 'geographyId')) || {}
       if (!deviceId) {
         throw Boom.badRequest(
           'Invalid device API key: Cannot determine which device this came from'
@@ -2239,9 +2240,10 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
     const { auth, payload } = request
     this.response = { deviceApiRawId: this.id, resultIds: [] }
     return transact(async knex => {
-      const { deviceId, partnerId, geographyId } = await knex('DeviceApiKey')
-        .where('token', auth.credentials.token)
-        .first('deviceId', 'partnerId', 'geographyId')
+      const { deviceId, partnerId, geographyId } =
+        (await knex('DeviceApiKey')
+          .where('token', auth.credentials.token)
+          .first('deviceId', 'partnerId', 'geographyId')) || {}
       if (!deviceId) {
         throw Boom.badRequest(
           'Invalid device API key: Cannot determine which device this came from'
