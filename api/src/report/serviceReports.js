@@ -1,4 +1,5 @@
 const _ = require('lodash')
+const Boom = require('@hapi/boom')
 const path = require('path')
 const { format } = require('date-fns')
 const Promise = require('bluebird')
@@ -49,7 +50,7 @@ async function getSheetData(request, sheet) {
   }
 
   if (!moduleName || !functionName) {
-    throw new Error(
+    return Boom.preconditionFailed(
       `Both moduleName ('${moduleName}') and functionName ('${functionName}') are required`
     )
   }
@@ -58,12 +59,14 @@ async function getSheetData(request, sheet) {
   try {
     endpointModule = require(`../${moduleName}`) //eslint-disable-line
   } catch (error) {
-    throw new Error(`Can not load module ${moduleName}: ${error.toString()}`)
+    return Boom.preconditionFailed(
+      `Can not load module ${moduleName}: ${error.toString()}`
+    )
   }
 
   const dataFunc = endpointModule[functionName]
   if (!dataFunc) {
-    throw new Error(
+    return Boom.preconditionFailed(
       `Can not find function ${functionName} in module ${moduleName}`
     )
   }
@@ -73,7 +76,7 @@ async function getSheetData(request, sheet) {
     return data
   }
 
-  throw new Error(
+  return Boom.preconditionFailed(
     `Error in function ${functionName} of module ${moduleName} - ${errorMessage}`
   )
 }
@@ -156,12 +159,17 @@ async function createReport(request, reply) {
   const statesString = await getStateNames(query)
   const lgasString = await getLgaNamesString(query)
 
+  let boomError
   // process all sheets
   await Promise.each(sheets, async (sheet, sheetIndex) => {
-    if (!sheet) return
+    if (!sheet || boomError) return
 
     // get data for this sheet
     const dataRows = await getSheetData(request, sheet)
+    if (Boom.isBoom(dataRows)) {
+      boomError = dataRows
+      return
+    }
 
     // get sheet (1-based)
     const worksheet = workbook.getWorksheet(sheetIndex + 1)
@@ -227,6 +235,10 @@ async function createReport(request, reply) {
       worksheet.spliceRows(patternRowNumber, 1, ...rows)
     }
   })
+
+  if (boomError) {
+    throw boomError
+  }
 
   const resultBuffer = await workbook.xlsx.writeBuffer()
 
