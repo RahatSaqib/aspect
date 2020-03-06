@@ -99,47 +99,59 @@ describe('Device API Raw Philippines NTRL', () => {
       return whereParamsAccumulator.reduce((queryResults, whereParams) => {
         let filteredQueryResults
         if (table === 'Result') {
-          if (whereParams.length === 2 && whereParams[0] === 'externalId') {
-            if (_.isArray(whereParams[1])) {
+          if (whereParams.length === 3 && whereParams[1] === 'externalId') {
+            if (_.isArray(whereParams[2])) {
               filteredQueryResults = existingResultRecordsInDatabase.filter(
                 existingResultRecord =>
-                  whereParams[1].includes(existingResultRecord.externalId)
+                  whereParams[2].includes(existingResultRecord.externalId)
               )
-            } else if (whereParams[1]) {
+            } else if (whereParams[2]) {
               filteredQueryResults = existingResultRecordsInDatabase.filter(
                 existingResultRecord =>
-                  existingResultRecord.externalId === whereParams[1]
+                  existingResultRecord.externalId === whereParams[2]
               )
             }
           }
-          if (whereParams.length === 1 && _.isPlainObject(whereParams[0])) {
+          if (whereParams.length === 2 && _.isPlainObject(whereParams[1])) {
             filteredQueryResults = _.filter(
               existingResultRecordsInDatabase,
-              whereParams[0]
+              whereParams[1]
             )
           }
-          if (whereParams.length === 2 && whereParams[0] === 'sampleId') {
-            if (_.isArray(whereParams[1])) {
+          if (whereParams.length === 3 && whereParams[1] === 'sampleId') {
+            if (_.isArray(whereParams[2])) {
               filteredQueryResults = existingResultRecordsInDatabase.filter(
                 existingResultRecord =>
-                  whereParams[1].includes(existingResultRecord.sampleId)
+                  whereParams[2].includes(existingResultRecord.sampleId)
               )
-            } else if (whereParams[1]) {
+            } else if (whereParams[2]) {
               filteredQueryResults = existingResultRecordsInDatabase.filter(
                 existingResultRecord =>
-                  existingResultRecord.sampleId === whereParams[1]
+                  existingResultRecord.sampleId === whereParams[2]
               )
             }
           }
+          if (whereParams.length === 3 && whereParams[1] === 'assayId') {
+            if (_.isArray(whereParams[2])) {
+              filteredQueryResults = queryResults.filter(queryResult =>
+                whereParams[2].includes(queryResult.assayId)
+              )
+            }
+          }
+          if (whereParams.length === 3 && whereParams[1] === 'siteId') {
+            filteredQueryResults = queryResults.filter(
+              queryResult => queryResult.siteId === whereParams[2]
+            )
+          }
         } else if (table === 'Sample') {
-          if (whereParams.length === 2 && whereParams[0] === 'externalId') {
-            filteredQueryResults = [existingSamplesInDatabase[whereParams[1]]]
+          if (whereParams.length === 3 && whereParams[1] === 'externalId') {
+            filteredQueryResults = [existingSamplesInDatabase[whereParams[2]]]
           }
         } else if (table === 'Device as d') {
           if (
-            whereParams.length === 2 &&
-            whereParams[0] === 'd.id' &&
-            whereParams[1] === databaseRecords.DeviceApiKey.deviceId &&
+            whereParams.length === 3 &&
+            whereParams[1] === 'd.id' &&
+            whereParams[2] === databaseRecords.DeviceApiKey.deviceId &&
             _.every(
               [
                 's.*',
@@ -153,36 +165,36 @@ describe('Device API Raw Philippines NTRL', () => {
           }
         } else if (table === 'DeviceApiKey') {
           if (
-            whereParams.length === 2 &&
-            whereParams[0] === 'token' &&
-            whereParams[1] === 'bad-token'
+            whereParams.length === 3 &&
+            whereParams[1] === 'token' &&
+            whereParams[2] === 'bad-token'
           ) {
             filteredQueryResults = null
           }
         } else if (table === 'Site') {
           if (
-            whereParams.length === 2 &&
-            whereParams[0] === 'externalId' &&
-            (whereParams[1] === null ||
+            whereParams.length === 3 &&
+            whereParams[1] === 'externalId' &&
+            (whereParams[2] === null ||
               [
                 'Some unknown health facility with a really really really really looooooong name',
                 'Unknown health facility',
-              ].includes(whereParams[1]))
+              ].includes(whereParams[2]))
           ) {
             filteredQueryResults = null
           }
           if (
-            whereParams.length === 2 &&
-            whereParams[0] === 'externalId' &&
-            whereParams[1] === 'IVA - ANTIPOLO CHO'
+            whereParams.length === 3 &&
+            whereParams[1] === 'externalId' &&
+            whereParams[2] === 'IVA - ANTIPOLO CHO'
           ) {
             filteredQueryResults = [databaseRecords.ivaAntipoloChoSite]
           }
         } else if (table === 'ResultWorkflowLog') {
           if (
-            whereParams.length === 2 &&
-            whereParams[0] === 'id' &&
-            whereParams[1] === 11
+            whereParams.length === 3 &&
+            whereParams[1] === 'id' &&
+            whereParams[2] === 11
           ) {
             filteredQueryResults = [
               {
@@ -197,7 +209,11 @@ describe('Device API Raw Philippines NTRL', () => {
         } else if (filteredQueryResults === null) {
           return []
         }
-        return _.uniq([...queryResults, ...filteredQueryResults])
+        return _.uniq(
+          [...queryResults, ...filteredQueryResults].filter(
+            queryResult => !_.isUndefined(queryResult)
+          )
+        )
       }, [])
     }
     return proxyquire(
@@ -206,69 +222,69 @@ describe('Device API Raw Philippines NTRL', () => {
         '../../db': {
           transact: async transaction =>
             transaction(table => {
-              const knex = {
+              const whereParamsAccumulator = []
+              const knexQueryBuilder = {
                 insert: async (...insertParams) => {
                   insertSpy(table, ...insertParams)
                   return Promise.resolve([insertSpy.callCount])
                 },
-              }
-              const where = (...whereParams) => {
-                const whereParamsAccumulator = []
-                if (whereParams.length === 1 && _.isFunction(whereParams[0])) {
-                  const whereCallback = function(...whereCallbackParams) {
-                    this.push(whereCallbackParams)
-                    return this
-                  }
-                  const boundWhereCallback = whereCallback.bind(
-                    whereParamsAccumulator
+                first: async (...firstParams) => {
+                  const selectQueryResults = selectResults(
+                    table,
+                    whereParamsAccumulator,
+                    firstParams
                   )
-                  whereParamsAccumulator.where = boundWhereCallback
-                  whereParamsAccumulator.andWhere = boundWhereCallback
-                  whereParamsAccumulator.orWhere = boundWhereCallback
-                  whereParamsAccumulator.whereNull = boundWhereCallback
-                  whereParamsAccumulator.whereIn = boundWhereCallback
+                  return Promise.resolve(selectQueryResults[0])
+                },
+                update: async (...updateParams) => {
+                  updateSpy(table, ...updateParams)
+                  return Promise.resolve()
+                },
+              }
+              const whereFunctionNames = [
+                'where',
+                'andWhere',
+                'orWhere',
+                'whereNull',
+                'whereIn',
+              ]
+              const whereFunction = whereFunctionName => (...whereParams) => {
+                if (whereParams.length === 1 && _.isFunction(whereParams[0])) {
+                  whereFunctionNames.forEach(whereCallbackFunctionName => {
+                    whereParamsAccumulator[
+                      whereCallbackFunctionName
+                    ] = function(...whereCallbackParams) {
+                      this.push([
+                        whereCallbackFunctionName,
+                        ...whereCallbackParams,
+                      ])
+                      return this
+                    }.bind(whereParamsAccumulator)
+                  })
                   const whereCallbackFunction = whereParams[0].bind(
                     whereParamsAccumulator
                   )
                   whereCallbackFunction()
-                  delete whereParamsAccumulator.where
-                  delete whereParamsAccumulator.andWhere
-                  delete whereParamsAccumulator.orWhere
-                  delete whereParamsAccumulator.whereNull
-                  delete whereParamsAccumulator.whereIn
+                  whereFunctionNames.forEach(whereFunctionName => {
+                    delete whereParamsAccumulator[whereFunctionName]
+                  })
                 } else {
-                  whereParamsAccumulator.push(whereParams)
+                  whereParamsAccumulator.push([
+                    whereFunctionName,
+                    ...whereParams,
+                  ])
                 }
-                const finalCall = {
-                  first: async (...firstParams) => {
-                    const selectQueryResults = selectResults(
-                      table,
-                      whereParamsAccumulator,
-                      firstParams
-                    )
-                    return Promise.resolve(selectQueryResults[0])
-                  },
-                  update: async (...updateParams) => {
-                    updateSpy(table, ...updateParams)
-                    return Promise.resolve()
-                  },
-                  where,
-                  andWhere: where,
-                  orWhere: where,
-                  whereNull: where,
-                  whereIn: where,
-                }
-                return finalCall
+                return knexQueryBuilder
               }
-              knex.where = where
-              knex.andWhere = where
-              knex.orWhere = where
-              knex.whereNull = where
-              knex.whereIn = where
-              const join = () => knex
-              knex.join = join
-              knex.leftJoin = join
-              return knex
+              whereFunctionNames.forEach(whereFunctionName => {
+                knexQueryBuilder[whereFunctionName] = whereFunction(
+                  whereFunctionName
+                )
+              })
+              const join = () => knexQueryBuilder
+              knexQueryBuilder.join = join
+              knexQueryBuilder.leftJoin = join
+              return knexQueryBuilder
             }),
         },
         '../../shared/date': {
@@ -3523,61 +3539,19 @@ describe('Device API Raw Philippines NTRL', () => {
           .filter(updateCall => updateCall.args[0] === 'Result')
         const updatedCultureResults = updateResultCalls
           .map(update => update.lastArg)
-          .filter(
-            resultUpdate =>
-              resultUpdate.assayId ===
-                staticDatabaseData.Assay.assayBdMgitGnd ||
-              resultUpdate.assayId === staticDatabaseData.Assay.assayCulture
-          )
-        expect(updatedCultureResults).to.have.lengthOf(1)
-        const cultureResult2 = {
+          .filter(resultUpdate => resultUpdate.resultData)
+        const updatedCultureResult = {
           ...updatedCultureResults[0],
           patientData: JSON.parse(updatedCultureResults[0].patientData),
           resultData: JSON.parse(updatedCultureResults[0].resultData),
           startedOn: updatedCultureResults[0].startedOn.toISOString(),
           endedOn: updatedCultureResults[0].endedOn.toISOString(),
         }
-        const sample2ExternalId = getSamplesFromPMDTPayload(payload)[0]
-          .externalId
-        expect(cultureResult2).to.containSubset({
-          partnerId: databaseRecords.Site.partnerId,
-          geographyId: databaseRecords.Site.geographyId,
-          siteId: databaseRecords.Site.id,
-          deviceId: databaseRecords.DeviceApiKey.deviceId,
-          longitude: databaseRecords.Site.longitude,
-          latitude: databaseRecords.Site.latitude,
-          resultSourceId: staticDatabaseData.resultSourceId,
-          resultTypeId: staticDatabaseData.resultTypeId,
-          resultCategory1: staticDatabaseData.ResultCategory.PositiveMTB,
-          resultCategory2: staticDatabaseData.ResultCategory.PositiveMTB,
-          patientData: generatePatientDataFromPMDTPayload(payload),
-          externalId: `${databaseRecords.Site.externalId}_${sample2ExternalId}_CULTURE`,
+        expect(updatedCultureResult).to.containSubset({
+          externalId: existingMgitResults[0].externalId,
           assayId: staticDatabaseData.Assay.assayBdMgitGnd,
-          startedOn: payload['Culture Date Released'],
-          endedOn: payload['Culture Date Released'],
-          resultData: {
-            encodedResult: {
-              dateInoculated: payload['Culture Date Inoculated'],
-              medTech: payload['Culture Med Tech'],
-              resultStatus: payload['Culture Result Status'],
-              dstStatus: payload['Culture DST Status'],
-              methodUsed1: payload['Culture Method'],
-              result1: payload['Culture Result 1'],
-              grade1: payload['Culture Grade 1'],
-              result2: payload['Culture Result 2'],
-              grade2: payload['Culture Grade 2'],
-              finalResult: payload['Culture Final Result'],
-              remarks: payload['Culture Remarks 1'],
-              dateReleased: payload['Culture Date Released'],
-              encodedBy: payload['Culture Encoded by'],
-              labTech: payload['Culture Lab Tech'],
-            },
-          },
-          senderOperator:
-            payload['Culture Med Tech'] ||
-            payload['Culture Lab Tech'] ||
-            payload['Culture Encoded by'],
-          reportableSiteId: databaseRecords.Site.id,
+          startedOn: existingMgitResults[0].startedOn.toISOString(),
+          endedOn: existingMgitResults[0].endedOn.toISOString(),
         })
       })
 
@@ -4028,10 +4002,12 @@ describe('Device API Raw Philippines NTRL', () => {
             updateCall =>
               updateCall.args[0] === 'Result' &&
               _.isPlainObject(updateCall.lastArg) &&
+              updateCall.lastArg.resultData &&
               updateCall.lastArg.id > 0
           )
           .map(updateCall => updateCall.lastArg)
-        expect(resultUpdates).to.have.lengthOf(2)
+        // eslint-disable-next-line no-unused-expressions
+        expect(resultUpdates).to.not.be.empty
       })
     })
   })
@@ -5518,23 +5494,22 @@ describe('Device API Raw Philippines NTRL', () => {
         const insertResultCalls = insertSpy
           .getCalls()
           .filter(insertCall => insertCall.args[0] === 'Result')
-        const smearResults = insertResultCalls
+        const insertedSmearResults = insertResultCalls
           .map(insert => insert.lastArg)
           .filter(
             resultInsert =>
               resultInsert.assayId === staticDatabaseData.Assay.assaySmear
           )
-        expect(smearResults).to.have.lengthOf(2)
-        const smearResult1 = {
-          ...smearResults[0],
-          patientData: JSON.parse(smearResults[0].patientData),
-          resultData: JSON.parse(smearResults[0].resultData),
-          startedOn: smearResults[0].startedOn.toISOString(),
-          endedOn: smearResults[0].endedOn.toISOString(),
+        // eslint-disable-next-line no-unused-expressions
+        expect(insertedSmearResults).to.not.be.empty
+        const insertedSmearResult = {
+          ...insertedSmearResults[0],
+          patientData: JSON.parse(insertedSmearResults[0].patientData),
+          resultData: JSON.parse(insertedSmearResults[0].resultData),
+          startedOn: insertedSmearResults[0].startedOn.toISOString(),
+          endedOn: insertedSmearResults[0].endedOn.toISOString(),
         }
-        const sample1ExternalId = getSamplesFromRITMPayload(payload)[0]
-          .externalId
-        expect(smearResult1).to.containSubset({
+        expect(insertedSmearResult).to.containSubset({
           partnerId: databaseRecords.Site.partnerId,
           geographyId: databaseRecords.Site.geographyId,
           siteId: databaseRecords.Site.id,
@@ -5546,56 +5521,6 @@ describe('Device API Raw Philippines NTRL', () => {
           resultCategory1: staticDatabaseData.ResultCategory.Positive1,
           resultCategory2: staticDatabaseData.ResultCategory.Detected,
           patientData: generatePatientDataFromRITMPayload(payload),
-          externalId: `${databaseRecords.Site.externalId}_${sample1ExternalId}_SMEAR`,
-          assayId: staticDatabaseData.Assay.assaySmear,
-          startedOn: payload['Date and Time of Release of AFB Result'],
-          endedOn: payload['Date and Time of Release of AFB Result'],
-          resultData: {
-            encodedResult: {
-              smearMethod:
-                payload[
-                  'Laboratory Test Performed Acid Fast Bacili Microscopy'
-                ],
-              smearDateCollected1: payload['Smear Result 1 Date Collected'],
-              smearResult1: payload['Smear Result 1'],
-              smearDateCollected2: payload['Smear Result 2 Date Collected'],
-              smearResult2: payload['Smear Result 2'],
-              smearDateCollected3: payload['Smear Result 3 Date Collected'],
-              smearResult3: payload['Smear Result 3'],
-              finalResult: payload['FINAL RESULT'],
-              dateReleased: payload['Date and Time of Release of AFB Result'],
-              comments: payload.Comments,
-              encodedBy: payload['Smear Encoded by'],
-              laboratoryTechnician: payload['Performed by'],
-              validatedBy: payload['Validated by'],
-              notedBy: payload['Noted by'],
-            },
-          },
-          senderOperator: payload['Performed by'],
-          reportableSiteId: databaseRecords.Site.id,
-        })
-        const smearResult2 = {
-          ...smearResults[1],
-          patientData: JSON.parse(smearResults[1].patientData),
-          resultData: JSON.parse(smearResults[1].resultData),
-          startedOn: smearResults[1].startedOn.toISOString(),
-          endedOn: smearResults[1].endedOn.toISOString(),
-        }
-        const sample2ExternalId = getSamplesFromRITMPayload(payload)[1]
-          .externalId
-        expect(smearResult2).to.containSubset({
-          partnerId: databaseRecords.Site.partnerId,
-          geographyId: databaseRecords.Site.geographyId,
-          siteId: databaseRecords.Site.id,
-          deviceId: databaseRecords.DeviceApiKey.deviceId,
-          longitude: databaseRecords.Site.longitude,
-          latitude: databaseRecords.Site.latitude,
-          resultSourceId: staticDatabaseData.resultSourceId,
-          resultTypeId: staticDatabaseData.resultTypeId,
-          resultCategory1: staticDatabaseData.ResultCategory.Positive1,
-          resultCategory2: staticDatabaseData.ResultCategory.Detected,
-          patientData: generatePatientDataFromRITMPayload(payload),
-          externalId: `${databaseRecords.Site.externalId}_${sample2ExternalId}_SMEAR`,
           assayId: staticDatabaseData.Assay.assaySmear,
           startedOn: payload['Date and Time of Release of AFB Result'],
           endedOn: payload['Date and Time of Release of AFB Result'],
@@ -5900,10 +5825,12 @@ describe('Device API Raw Philippines NTRL', () => {
             updateCall =>
               updateCall.args[0] === 'Result' &&
               _.isPlainObject(updateCall.lastArg) &&
+              updateCall.lastArg.resultData &&
               updateCall.lastArg.id > 0
           )
           .map(updateCall => updateCall.lastArg)
-        expect(resultUpdates).to.have.lengthOf(2)
+        // eslint-disable-next-line no-unused-expressions
+        expect(resultUpdates).to.not.be.empty
       })
     })
   })
