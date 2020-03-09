@@ -4197,7 +4197,6 @@ async function seed(knex) {
       cell: config.admin.cell,
     })
 
-  console.log('-------------admin', adminId)
   await Promise.each(geography.countries, async country => {
     const countryData = countries[country.abbreviation]
     const siteDatas = countryData.sites

@@ -11,7 +11,6 @@ async function addIssuesAndNotifications(knex) {
     .first('id as lastIssueType')
 
   if (lastIssueType) {
-    console.log('ya existe')
     return
   }
 
