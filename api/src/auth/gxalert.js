@@ -286,13 +286,14 @@ async function setJobContext(knex, jobId, gxUser) {
           stateAbbreviation: deployment.stateAbbreviation,
           lgaName: deployment.lgaName,
         }
+
         const geographyId = await getCreateGeographyIdByGxGeo(knex, options)
         const shortName =
           deployment.shortName || deployment.description || deployment.hostId
 
         let { siteId } =
           (await knex('Device')
-            .where({ geographyId })
+            .where({ geographyId }) // Geography will never be undefined
             .where(function() {
               this.where({ shortName }).orWhere('name', shortName)
             })
@@ -303,17 +304,22 @@ async function setJobContext(knex, jobId, gxUser) {
             (await knex('Site')
               .where({ geographyId })
               .where(function() {
-                this.where({ shortName }).orWhere('name', shortName)
+                this.where({ shortName }).orWhere('name', shortName) // Shortname shouldn't be undefined, too
               })
               .first()) || {}
           siteId = site.id
         }
 
-        if (!siteId) {
-          throw new Error(
-            `No device with shortName or name '${shortName}' found for geographyId ${geographyId}`
-          )
-        }
+        // REVIEWER!!!
+        // If the user has devices that weren't uploaded to Aspect yet, this error will be probably thrown, so better to remove it.
+        // Please, let me know if you are agree and I'll remove these commented lines.
+        // if (!siteId) {
+        //   throw new Error(
+        //     `No device with shortName or name '${shortName}' found for geographyId ${geographyId}`
+        //   )
+        // }
+
+        // REVIEWER!!! If the device is not added, Aspect should let the admin to add devices to users
         if (geographyId && siteId) {
           const { id: jobContextId } =
             (await knex('JobContext')
@@ -331,7 +337,7 @@ async function setJobContext(knex, jobId, gxUser) {
 
   // throw error if no JobContext defined - it will be caught and handled by transaction promise
   if (!hasJobContext) {
-    throw new Error('No JobContext defined')
+    throw new Error("The user doesn't have job context.")
   }
 }
 
