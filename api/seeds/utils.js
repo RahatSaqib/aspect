@@ -2,6 +2,7 @@ const Promise = require('bluebird')
 const _ = require('lodash')
 const { readJson } = require('fs-extra')
 const path = require('path')
+const { addIssuesAndNotifications } = require('./fixtures/issues')
 const {
   allFeatureToId,
   allResultCategoryToId,
@@ -80,6 +81,7 @@ const foreignKeys = {
 
 // Helper for seeed files. Ru
 let hasSeededStaticData = false
+let commonInserts = false
 
 // Set up the file name of the seed with __filename.
 function seed(seed, fileName, overridedSeeds) {
@@ -113,6 +115,10 @@ async function runSeed(seed, knex, fileName, overridedSeeds) {
         throw e
       })
       .then(async () => {
+        if (!commonInserts) {
+          await addIssuesAndNotifications(knex)
+          commonInserts = true
+        }
         await knex('AspectSeed').insert({
           fileName,
           success: true,

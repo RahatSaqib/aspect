@@ -47,6 +47,12 @@ async function insertNewResultPushTemplates(
     createdOn: now,
     updatedOn: now,
   }
+  const lastIssueType = await knex('IssueType')
+    .where({ externalId: 'NewResultsAvailable' })
+    .first('id as lastIssueType')
+
+  // if this value exists in the db means this was already executed
+  if (lastIssueType != null) return
   const [newResultsPushNotificationTemplateId] = await knex(
     'PushNotificationTemplate'
   ).insert({
