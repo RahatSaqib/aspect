@@ -164,6 +164,12 @@ const routes = [
           resultCategory2: Joi.string()
             .allow('')
             .description('Filter for result category 2'),
+          siteName: Joi.string()
+            .allow('')
+            .description('Filter for site'),
+          deviceName: Joi.string()
+            .allow('')
+            .description('Filter for device'),
           groupBy: Joi.alternatives()
             .try(
               Joi.array().items(
