@@ -2,7 +2,7 @@ const Promise = require('bluebird')
 const _ = require('lodash')
 const { readJson } = require('fs-extra')
 const path = require('path')
-const { addIssuesAndNotifications } = require('./fixtures/issues')
+const seedUtils = require('./seedUtils')
 const {
   allFeatureToId,
   allResultCategoryToId,
@@ -116,8 +116,10 @@ async function runSeed(seed, knex, fileName, overridedSeeds) {
       })
       .then(async () => {
         if (!commonInserts) {
-          await addIssuesAndNotifications(knex)
           commonInserts = true
+          await Promise.each(Object.keys(seedUtils), async elem => {
+            commonInserts = commonInserts && (await seedUtils[elem](knex))
+          })
         }
         await knex('AspectSeed').insert({
           fileName,
