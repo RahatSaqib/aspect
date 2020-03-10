@@ -33,7 +33,8 @@ function getUser(username, knex) {
       'p.culture',
       'p.timezone',
       'p.lastPartnerId as partnerId',
-      'p.lastCountryId as countryId'
+      'p.lastCountryId as countryId',
+      'p.id as personId'
     )
 }
 // --------------------------------------------------------------------------------------------
@@ -176,6 +177,7 @@ async function validateUserAtGxAlert(username, password, user) {
       if (!jobId) {
         ;[jobId] = await knex('Job').insert(d)
       }
+
       await setJobContext(knex, jobId, gxUser)
     }
 
@@ -191,7 +193,7 @@ async function validateUserAtGxAlert(username, password, user) {
 
     // catch error from setJobContext() if no site found or JobContext defined
     // and return null
-  }).catch(() => null)
+  })
 }
 
 // --------------------------------------------------------------------------------------------
@@ -328,7 +330,6 @@ async function setJobContext(knex, jobId, gxUser) {
       })
     )
   }
-
   // throw error if no JobContext defined - it will be caught and handled by transaction promise
   if (!hasJobContext) {
     throw new Error('No JobContext defined')
@@ -400,7 +401,6 @@ async function getCountryIdByAbbr(countryAbbreviation) {
       .from('Country')
       .where('abbreviation', countryAbbreviation)
       .first('id')) || {}
-
   return countryId
 }
 
