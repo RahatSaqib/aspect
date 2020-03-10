@@ -310,15 +310,6 @@ async function setJobContext(knex, jobId, gxUser) {
           siteId = site.id
         }
 
-        // REVIEWER!!!
-        // If the user has devices that weren't uploaded to Aspect yet, this error will be probably thrown, so better to remove it.
-        // Please, let me know if you are agree and I'll remove these commented lines.
-        // if (!siteId) {
-        //   throw new Error(
-        //     `No device with shortName or name '${shortName}' found for geographyId ${geographyId}`
-        //   )
-        // }
-
         // REVIEWER!!! If the device is not added, Aspect should let the admin to add devices to users
         if (geographyId && siteId) {
           const { id: jobContextId } =
