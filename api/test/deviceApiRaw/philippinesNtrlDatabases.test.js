@@ -3007,6 +3007,8 @@ describe('Device API Raw Philippines NTRL', () => {
               dateInoculated: null,
               otherMethodUsed: null,
             },
+            testStartDateTime: '2019-08-20T12:13:14.000Z',
+            testEndedDateTime: '2019-08-20T15:16:17.000Z',
           }),
           deviceId: databaseRecords.Device.id,
           externalId: 'NTRL_PN-19-8442-1_DST',
@@ -3049,6 +3051,8 @@ describe('Device API Raw Philippines NTRL', () => {
               dateInoculated: null,
               otherMethodUsed: null,
             },
+            testStartDateTime: '2019-08-20T12:13:14.000Z',
+            testEndedDateTime: '2019-08-20T15:16:17.000Z',
           }),
           deviceId: databaseRecords.Device.id,
           externalId: 'NTRL_PN-19-8442-1_CULTURE',
@@ -3123,11 +3127,12 @@ describe('Device API Raw Philippines NTRL', () => {
             },
             someExistingResultDataKey:
               'This value should remain after an update',
+            testStartedOn: '2019-08-20T12:13:14.000Z',
+            testEndedOn: '2019-08-20T15:16:17.000Z',
           }),
           deviceId: databaseRecords.Device.id,
           externalId: 'NTRL_PN-19-03695_GX',
           senderOperator: 'bryan',
-          endedOn: '2019-08-26T14:53:11.000Z',
           patientData: JSON.stringify({
             someExistingPatientDataKey:
               'This value should remain after an update',
@@ -4239,6 +4244,39 @@ describe('Device API Raw Philippines NTRL', () => {
           'Value came from some other system and should remain after update'
         )
       })
+
+      it('should fall back to the test start and end time sent by the device when updating a result', async () => {
+        const {
+          updateSpy,
+          philippinesNTRLPMDT: existingResultProcessor,
+        } = setupPhilippinesNTRLPMDTDataProcessorWithSpies(
+          'some device API key',
+          pmdtRecordPayload03695GxPositiveResistant1Sample
+        )
+        await existingResultProcessor.processRequest()
+        const resultUpdates = updateSpy
+          .getCalls()
+          .filter(
+            updateCall =>
+              updateCall.args[0] === 'Result' &&
+              _.isPlainObject(updateCall.lastArg) &&
+              updateCall.lastArg.resultData &&
+              updateCall.lastArg.id > 0
+          )
+          .map(updateCall => updateCall.lastArg)
+        expect(resultUpdates).to.have.lengthOf(1)
+        const resultUpdate = {
+          ...resultUpdates[0],
+          patientData: JSON.parse(resultUpdates[0].patientData),
+          resultData: JSON.parse(resultUpdates[0].resultData),
+        }
+        expect(resultUpdate.startedOn.toISOString()).to.equal(
+          resultUpdate.resultData.testStartedOn
+        )
+        expect(resultUpdate.endedOn.toISOString()).to.equal(
+          resultUpdate.resultData.testEndedOn
+        )
+      })
     })
   })
 
@@ -5212,6 +5250,98 @@ describe('Device API Raw Philippines NTRL', () => {
         'Smear Result 2 Date Collected': null,
         'Smear Result 3 Date Collected': null,
       }
+      const ritmRecordPayload0424GeneXpertNotDetected1Sample = {
+        database: 'RITM_2020',
+        table: 'RITM Database',
+        TimeStamp: '446012',
+        'Serial Code RN-14-': '0424',
+        'Last Name': 'REYNOLDS',
+        'First Name': 'ALBERT',
+        'Middle Name': 'DANGER',
+        'Age / Sex': '39/F',
+        'Date of Birth': '1980-11-18T00:00:00.000Z',
+        'RITM Hospital No': '654982',
+        'Date of Admission': null,
+        Requisitioner: 'Dr. Garcia',
+        Address: 'C/O DOTS',
+        'Reason for Examination': 'Diagnosis',
+        'History of Treatment': 'New',
+        'Registration Group': 'New',
+        'Presumptive DS or DR': 'Presumptive DR-TB',
+        'Specimen Type': 'Sputum',
+        'Accession No': null,
+        'Laboratory No': 'D-20-0314',
+        'Culture Method': null,
+        'Date and Time of Specimen Collection': '2020-02-14T00:00:00.000Z',
+        'Date and Time of Specimen Receipt': '2020-02-17T00:00:00.000Z',
+        'Encoded by': null,
+        'Date and Time of Release of AFB Result': null,
+        'Laboratory Test Performed Acid Fast Bacili Microscopy': null,
+        'Smear Result 1': null,
+        'Smear Result 2': null,
+        'Smear Result 3': null,
+        'FINAL RESULT': null,
+        Comments: null,
+        'Smear Encoded by': null,
+        'Performed by': null,
+        'Validated by': null,
+        'Noted by': 'CRISTINA C. VILLARICO, RMT',
+        OPD: true,
+        Referral: false,
+        INPATIENT: false,
+        'INPATIENT REMARKS': null,
+        'MRF Encoded by': 'Jerri Reinald A. Coloma, RMT',
+        'MRF Date Encoded': '2020-02-17T00:00:00.000Z',
+        Smear: false,
+        Culture: false,
+        DST: false,
+        GeneXpert: true,
+        'Date transfered to DST': null,
+        'TBC Laboratory Test Performed': 'TB Culture',
+        'TBC Test Result 1st Sample': null,
+        'TBC Test Result 2nd Sample': null,
+        'TBC Test Result 3rd Sample': null,
+        'TBC FINAL RESULT': null,
+        'Date and Time of Release of TBC Result': null,
+        'TBC Comments': null,
+        'TBC Encoded by': null,
+        'TBC Performed by': null,
+        'TBC Validated by': null,
+        'TBC Noted by': 'CRISTINA C. VILLARICO, RMT',
+        'DST Laboratory Test Performed': 'Drug Susceptibility Test',
+        Streptomycin: null,
+        Isoniazid: null,
+        Rifampicin: null,
+        Ethambutol: null,
+        Pyrazinamide: null,
+        Kanamycin: null,
+        Capreomycin: null,
+        Amikacin: null,
+        Ofloxacin: null,
+        Levofloxacin: null,
+        'DST Test Result 3rd Sample': null,
+        'DST Final Result': null,
+        'Date and Time of Release of DST Result': null,
+        'DST Comments': null,
+        'DST Encoded by': null,
+        'DST Performed by': null,
+        'DST Validated by': null,
+        'DST Noted by': 'CRISTINA C. VILLARICO, RMT',
+        'GX Laboratory Test Performed': 'GeneXpert',
+        MTB: 'NOT DETECTED',
+        'Rifampicin:': 'N/A',
+        'GX Test Result 3rd Sample': null,
+        'Date and Time of Release of Gx Result': '2020-02-17T00:00:00.000Z',
+        'GX Comments': null,
+        'GX Encoded by': 'Erlanegail R. Isla, RMT',
+        'GX Performed by': 'Erlanegail R. Isla, RMT',
+        'GX Validated by': 'Michellin Roxanne S. Baje, RMT',
+        'Referring Facility': 'RITM-DOTS',
+        'GX Noted by': 'CRISTINA C. VILLARICO, RMT',
+        'Smear Result 1 Date Collected': null,
+        'Smear Result 2 Date Collected': null,
+        'Smear Result 3 Date Collected': null,
+      }
       const ritmRecordPayloads = [
         ritmRecordPayload3082SmearCultureNegative2Samples,
         ritmRecordPayload2068SmearRequestedNoResults1Sample,
@@ -5220,6 +5350,7 @@ describe('Device API Raw Philippines NTRL', () => {
         ritmRecordPayload0129CultureDstTbResistant1Sample,
         ritmRecordPayload0130CultureMGITDstTbResistant1Sample,
         ritmRecordPayload0423GeneXpertNotDetected1Sample,
+        ritmRecordPayload0424GeneXpertNotDetected1Sample,
       ]
 
       const existingSample = existingSamples['RN-19-2630-1']
@@ -5252,6 +5383,8 @@ describe('Device API Raw Philippines NTRL', () => {
               dateInoculated: null,
               otherMethodUsed: null,
             },
+            testStartDateTime: '2019-08-20T12:13:14.000Z',
+            testEndedDateTime: '2019-08-20T15:16:17.000Z',
           }),
           deviceId: databaseRecords.Device.id,
           externalId: 'NTRL_RN-19-2630-1_DST',
@@ -5293,6 +5426,8 @@ describe('Device API Raw Philippines NTRL', () => {
               dateInoculated: null,
               otherMethodUsed: null,
             },
+            testStartDateTime: '2019-08-20T12:13:14.000Z',
+            testEndedDateTime: '2019-08-20T15:16:17.000Z',
           }),
           deviceId: databaseRecords.Device.id,
           externalId: 'NTRL_RN-19-2630-1_CULTURE',
@@ -5304,6 +5439,24 @@ describe('Device API Raw Philippines NTRL', () => {
           resultCategory1: staticDatabaseData.ResultCategory.Missing,
           errorCode: 'OPEN',
           notes: 'Some notes that were previously entered',
+          createdOn: '2019-09-14T08:09:10.123Z',
+        },
+        {
+          id: 12,
+          assayId: staticDatabaseData.Assay.GxMtbRif,
+          resultData: JSON.stringify({
+            testStartedOn: '2020-02-16T12:13:14.000Z',
+            testEndedOn: '2020-02-16T15:16:17.000Z',
+          }),
+          deviceId: databaseRecords.Device.id,
+          externalId: 'NTRL_RN-20-0424_GX',
+          senderOperator: 'bryan',
+          endedOn: '2019-08-25T14:53:11.000Z',
+          patientData: '{}',
+          sampleId: existingSample.id,
+          updatedOn: '2020-02-22T08:09:10.123Z',
+          resultCategory1: staticDatabaseData.ResultCategory.Missing,
+          errorCode: 'OPEN',
           createdOn: '2019-09-14T08:09:10.123Z',
         },
       ]
@@ -6061,6 +6214,39 @@ describe('Device API Raw Philippines NTRL', () => {
           .map(updateCall => updateCall.lastArg)
         // eslint-disable-next-line no-unused-expressions
         expect(resultUpdates).to.not.be.empty
+      })
+
+      it('should fall back to the test start and end time sent by the device when updating a result', async () => {
+        const {
+          updateSpy,
+          philippinesNTRLRITM: existingResultProcessor,
+        } = setupPhilippinesNTRLRITMDataProcessorWithSpies(
+          'some device API key',
+          ritmRecordPayload0424GeneXpertNotDetected1Sample
+        )
+        await existingResultProcessor.processRequest()
+        const resultUpdates = updateSpy
+          .getCalls()
+          .filter(
+            updateCall =>
+              updateCall.args[0] === 'Result' &&
+              _.isPlainObject(updateCall.lastArg) &&
+              updateCall.lastArg.resultData &&
+              updateCall.lastArg.id > 0
+          )
+          .map(updateCall => updateCall.lastArg)
+        expect(resultUpdates).to.have.lengthOf(1)
+        const resultUpdate = {
+          ...resultUpdates[0],
+          patientData: JSON.parse(resultUpdates[0].patientData),
+          resultData: JSON.parse(resultUpdates[0].resultData),
+        }
+        expect(resultUpdate.startedOn.toISOString()).to.equal(
+          resultUpdate.resultData.testStartedOn
+        )
+        expect(resultUpdate.endedOn.toISOString()).to.equal(
+          resultUpdate.resultData.testEndedOn
+        )
       })
     })
   })
