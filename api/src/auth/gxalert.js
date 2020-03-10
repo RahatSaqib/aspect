@@ -288,7 +288,6 @@ async function setJobContext(knex, jobId, gxUser) {
           stateAbbreviation: deployment.stateAbbreviation,
           lgaName: deployment.lgaName,
         }
-        console.log(options.countryAbbreviation)
         const geographyId = await getCreateGeographyIdByGxGeo(knex, options)
         const shortName =
           deployment.shortName || deployment.description || deployment.hostId
