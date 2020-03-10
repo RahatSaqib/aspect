@@ -856,7 +856,7 @@ const basicResultPayload = {
       gender: 'Female',
       phone: '0833243682',
     },
-    sample: { id: 'PJM0833243682' },
+    sample: { id: 'PKM0833243689' },
     data: {
       probeData: {},
       customFieldData: {

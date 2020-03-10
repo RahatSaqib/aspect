@@ -13,6 +13,7 @@ let attemptsToConnect = 0
 const { assert } = chai
 chai.should()
 chai.use(require('chai-subset'))
+chai.use(require('chai-as-promised'))
 
 function attemptToConnectAndLogin(done) {
   if (attemptsToConnect === 3) {

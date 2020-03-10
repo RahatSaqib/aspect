@@ -1,0 +1,6253 @@
+const chai = require('chai')
+const Promise = require('bluebird')
+const _ = require('lodash')
+const proxyquire = require('proxyquire')
+const sinon = require('sinon')
+
+const { parseDateOrDefault, dateEqual } = require('../../src/shared/date')
+const { convertStringToFloat } = require('../../src/shared/string')
+
+const { assert, expect } = chai
+
+describe('Device API Raw Philippines NTRL', () => {
+  const utcNow = new Date('2019-09-15T08:09:10.123Z')
+  const deviceIpAddress = '10.11.12.13'
+  const staticDatabaseData = {
+    Assay: {
+      assayBdMgitAst: 1,
+      assayGenericDst: 2,
+      assayBdMgitGnd: 3,
+      assayCulture: 4,
+      assayLPA: 5,
+      assaySmear: 6,
+      GxMtbRif: 7,
+      GxMtbRifUltra: 8,
+    },
+    SampleType: {
+      Sputum: 9,
+      Isolate: 10,
+      Other: 11,
+      CSF: 12,
+      Effusion: 13,
+      'Gastric Lavage': 14,
+      Pus: 15,
+    },
+    resultTypeId: 16,
+    resultSourceId: 18,
+    ResultCategory: {
+      PositiveMTB: 19,
+      PositiveMOTT: 20,
+      Detected: 21,
+      Resistant: 22,
+      Susceptible: 23,
+      Contaminated: 24,
+      Invalid: 25,
+      NotDetected: 26,
+      Missing: 27,
+      Positive1: 28,
+      Positive2: 29,
+      Positive3: 30,
+    },
+    ResultWorkflowStatus: {
+      Processed: 31,
+      OK: 32,
+      Ordered: 33,
+      InProgress: 34,
+      Error: 35,
+    },
+  }
+  const databaseRecords = {
+    DeviceApiKey: {
+      id: 1,
+      revoked: false,
+      partnerId: 2,
+      deviceId: 4,
+    },
+    Device: {
+      id: 4,
+      siteId: 5,
+      geographyId: 6,
+      configurationData: '{}',
+      lastSeenOn: new Date(1990, 1, 13, 7, 30),
+    },
+    Site: {
+      id: 7,
+      longitude: 8,
+      latitude: 9,
+      partnerId: 10,
+      geographyId: 11,
+      externalId: 'NTRL',
+    },
+    ivaAntipoloChoSite: {
+      id: 12,
+      longitude: null,
+      latitude: null,
+      partnerId: 15,
+      geographyId: 16,
+      externalId: 'IVA - ANTIPOLO CHO',
+    },
+  }
+
+  function mockOutPhilippinesNTRLDatabaseProcessors(
+    existingSamplesInDatabase,
+    existingResultRecordsInDatabase,
+    updateSpy,
+    insertSpy
+  ) {
+    const resolveWith = returnValue => async () => Promise.resolve(returnValue)
+    const selectResults = (table, whereParamsAccumulator, selectParams) => {
+      return whereParamsAccumulator.reduce((queryResults, whereParams) => {
+        let filteredQueryResults
+        if (table === 'Result') {
+          if (whereParams.length === 3 && whereParams[1] === 'externalId') {
+            if (_.isArray(whereParams[2])) {
+              filteredQueryResults = existingResultRecordsInDatabase.filter(
+                existingResultRecord =>
+                  whereParams[2].includes(existingResultRecord.externalId)
+              )
+            } else if (whereParams[2]) {
+              filteredQueryResults = existingResultRecordsInDatabase.filter(
+                existingResultRecord =>
+                  existingResultRecord.externalId === whereParams[2]
+              )
+            }
+          }
+          if (whereParams.length === 2 && _.isPlainObject(whereParams[1])) {
+            filteredQueryResults = _.filter(
+              existingResultRecordsInDatabase,
+              whereParams[1]
+            )
+          }
+          if (whereParams.length === 3 && whereParams[1] === 'sampleId') {
+            if (_.isArray(whereParams[2])) {
+              filteredQueryResults = existingResultRecordsInDatabase.filter(
+                existingResultRecord =>
+                  whereParams[2].includes(existingResultRecord.sampleId)
+              )
+            } else if (whereParams[2]) {
+              filteredQueryResults = existingResultRecordsInDatabase.filter(
+                existingResultRecord =>
+                  existingResultRecord.sampleId === whereParams[2]
+              )
+            }
+          }
+          if (whereParams.length === 3 && whereParams[1] === 'assayId') {
+            if (_.isArray(whereParams[2])) {
+              filteredQueryResults = queryResults.filter(queryResult =>
+                whereParams[2].includes(queryResult.assayId)
+              )
+            }
+          }
+          if (whereParams.length === 3 && whereParams[1] === 'siteId') {
+            filteredQueryResults = queryResults.filter(
+              queryResult => queryResult.siteId === whereParams[2]
+            )
+          }
+        } else if (table === 'Sample') {
+          if (whereParams.length === 3 && whereParams[1] === 'externalId') {
+            filteredQueryResults = [existingSamplesInDatabase[whereParams[2]]]
+          }
+        } else if (table === 'Device as d') {
+          if (
+            whereParams.length === 3 &&
+            whereParams[1] === 'd.id' &&
+            whereParams[2] === databaseRecords.DeviceApiKey.deviceId &&
+            _.every(
+              [
+                's.*',
+                'd.name as deviceName',
+                'd.defaultReportableSiteId as deviceDefaultReportableSiteId',
+              ],
+              selectArg => selectParams.includes(selectArg)
+            )
+          ) {
+            filteredQueryResults = [databaseRecords.Site]
+          }
+        } else if (table === 'DeviceApiKey') {
+          if (
+            whereParams.length === 3 &&
+            whereParams[1] === 'token' &&
+            whereParams[2] === 'bad-token'
+          ) {
+            filteredQueryResults = null
+          }
+        } else if (table === 'Site') {
+          if (
+            whereParams.length === 3 &&
+            whereParams[1] === 'externalId' &&
+            (whereParams[2] === null ||
+              [
+                'Some unknown health facility with a really really really really looooooong name',
+                'Unknown health facility',
+              ].includes(whereParams[2]))
+          ) {
+            filteredQueryResults = null
+          }
+          if (
+            whereParams.length === 3 &&
+            whereParams[1] === 'externalId' &&
+            whereParams[2] === 'IVA - ANTIPOLO CHO'
+          ) {
+            filteredQueryResults = [databaseRecords.ivaAntipoloChoSite]
+          }
+        } else if (table === 'ResultWorkflowLog') {
+          if (
+            whereParams.length === 3 &&
+            whereParams[1] === 'id' &&
+            whereParams[2] === 11
+          ) {
+            filteredQueryResults = [
+              {
+                resultWorkflowStatusId:
+                  staticDatabaseData.ResultWorkflowStatus.Error,
+              },
+            ]
+          }
+        }
+        if (_.isUndefined(filteredQueryResults)) {
+          filteredQueryResults = [databaseRecords[table]] || []
+        } else if (filteredQueryResults === null) {
+          return []
+        }
+        return _.uniq(
+          [...queryResults, ...filteredQueryResults].filter(
+            queryResult => !_.isUndefined(queryResult)
+          )
+        )
+      }, [])
+    }
+    return proxyquire(
+      '../../src/deviceApiRaw/dataProcessors/philippinesNtrlDatabases',
+      {
+        '../../db': {
+          transact: async transaction =>
+            transaction(table => {
+              const whereParamsAccumulator = []
+              const knexQueryBuilder = {
+                insert: async (...insertParams) => {
+                  insertSpy(table, ...insertParams)
+                  return Promise.resolve([insertSpy.callCount])
+                },
+                first: async (...firstParams) => {
+                  const selectQueryResults = selectResults(
+                    table,
+                    whereParamsAccumulator,
+                    firstParams
+                  )
+                  return Promise.resolve(selectQueryResults[0])
+                },
+                update: async (...updateParams) => {
+                  updateSpy(table, ...updateParams)
+                  return Promise.resolve()
+                },
+              }
+              const whereFunctionNames = [
+                'where',
+                'andWhere',
+                'orWhere',
+                'whereNull',
+                'whereIn',
+              ]
+              const whereFunction = whereFunctionName => (...whereParams) => {
+                if (whereParams.length === 1 && _.isFunction(whereParams[0])) {
+                  whereFunctionNames.forEach(whereCallbackFunctionName => {
+                    whereParamsAccumulator[
+                      whereCallbackFunctionName
+                    ] = function(...whereCallbackParams) {
+                      this.push([
+                        whereCallbackFunctionName,
+                        ...whereCallbackParams,
+                      ])
+                      return this
+                    }.bind(whereParamsAccumulator)
+                  })
+                  const whereCallbackFunction = whereParams[0].bind(
+                    whereParamsAccumulator
+                  )
+                  whereCallbackFunction()
+                  whereFunctionNames.forEach(whereFunctionName => {
+                    delete whereParamsAccumulator[whereFunctionName]
+                  })
+                } else {
+                  whereParamsAccumulator.push([
+                    whereFunctionName,
+                    ...whereParams,
+                  ])
+                }
+                return knexQueryBuilder
+              }
+              whereFunctionNames.forEach(whereFunctionName => {
+                knexQueryBuilder[whereFunctionName] = whereFunction(
+                  whereFunctionName
+                )
+              })
+              const join = () => knexQueryBuilder
+              knexQueryBuilder.join = join
+              knexQueryBuilder.leftJoin = join
+              return knexQueryBuilder
+            }),
+        },
+        '../../shared/date': {
+          parseDateOrDefault,
+          getUtcTime: () => utcNow,
+          dateEqual,
+        },
+        '../../shared/dictionary': {
+          assayToId: async assayExternalId =>
+            Promise.resolve(staticDatabaseData.Assay[assayExternalId]),
+          allAssayToId: resolveWith(staticDatabaseData.Assay),
+          sampleTypeToId: async sampleTypeExternalId =>
+            Promise.resolve(
+              staticDatabaseData.SampleType[sampleTypeExternalId]
+            ),
+          allSampleTypeToId: resolveWith(staticDatabaseData.SampleType),
+          resultTypeToId: resolveWith(staticDatabaseData.resultTypeId),
+          resultSourceToId: resolveWith(staticDatabaseData.resultSourceId),
+          allResultCategoryToId: resolveWith(staticDatabaseData.ResultCategory),
+          allResultWorkflowStatusToId: resolveWith(
+            staticDatabaseData.ResultWorkflowStatus
+          ),
+        },
+        '../../shared/request': {
+          getRemoteAddress: () => deviceIpAddress,
+        },
+      }
+    )
+  }
+
+  describe('PMDT Record Data Processor', () => {
+    describe('canProcessRequest', () => {
+      it('Should be able to recognise a PMDT database record', async () => {
+        const {
+          PhilippinesNtrlPmdt,
+        } = require('../../src/deviceApiRaw/dataProcessors/philippinesNtrlDatabases')
+        assert.isOk(
+          await PhilippinesNtrlPmdt.canProcessRequest({
+            payload: {
+              database: 'PMDT',
+              table: 'NTRL DATABASE',
+              TimeStamp: '458014',
+              'Serial Number': '00004',
+              'Last Name': 'OMELA',
+              'First Name': 'Mary Ann',
+              'Middle Initial': 'Valle',
+              Address: 'Rizal',
+              'Referring Health Facility': 'BJMP 4A Regional Infirmary TB DOT',
+              'Culture Center': 'NTRL',
+              'Cat IV Screening Code': null,
+              'MRF Date Requested': '2019-01-02T00:00:00.000Z',
+              Age: 41,
+              Sex: 'Female',
+              'DST Center': 'NTRL',
+              'Requesting Physician': 'Dr. Chua',
+              'Treatment Schedule': 'Follow up',
+              'Month of tx': '7',
+              Enrolled: null,
+              'Registration Group': 'New',
+              'Treatment Category': 'New',
+              'Type of Specimen': 'Sputum',
+              '(If Others) Specify': null,
+              Site: 'Pulmonary',
+              'Test Requested Smear': true,
+              'Test Requested Culture': true,
+              'Test Requested DST': false,
+              'Test Requested LPA': false,
+              'Test Requested Gx': false,
+              'Date transfered to DST': null,
+              'Presumptive DS or DR': 'Presumptive DS-TB',
+              'Lab No 1': 'N-19-0004',
+              'Date Collected 1': '2019-01-02T00:00:00.000Z',
+              'Date Collected 2': null,
+              'Date Collected 3': null,
+              'Type of Collection 1': null,
+              'Type of Collection 2': null,
+              'Type of Collection 3': null,
+              'Volume 1': '3ml',
+              'Volume 2': null,
+              'Volume 3': null,
+              'Consistency 1': 'MS',
+              'Consistency 2': null,
+              'Consistence 3': null,
+              'Prepared by': null,
+              'Date Received': '2019-01-04T00:00:00.000Z',
+              'Encoded By': 'Mica Ann Cherene L. Culala',
+              'Date Encoded': '2019-01-04T00:00:00.000Z',
+              'Smear Method': 'Fluorescence Microscopy',
+              'Smear Method 2': null,
+              'Smear Result 1': '0',
+              'Smear Result 2': null,
+              'Smear Final Result': 'NEGATIVE FOR Acid Fast Bacilli',
+              'Smear Date Released': '2019-01-09T00:00:00.000Z',
+              'Smear Only Test Requested': 'DSSM Only',
+              'Smear Only Test Requested 2': 'DSSM Only',
+              'Smear TAT': null,
+              'Smear Lab Tech': 'Krissha Mae P. Marfil, RMT',
+              'Smear Encoded by': 'Krissha Mae P. Marfil, RMT',
+              'Culture Date Inoculated': null,
+              'Culture Med Tech': null,
+              'Culture Result Status': null,
+              'Culture DST Status': null,
+              'Culture Method': 'Solid Culture(Modified Kudoh)',
+              'Culture Method 2': null,
+              'Culture Result 1': 'No growth after 8 weeks',
+              'Culture Grade 1': null,
+              'Culture Result 2': null,
+              'Culture Grade 2': null,
+              'Culture Final Result': 'No growth after 8 weeks',
+              'Culture Date Released': '2019-03-07T00:00:00.000Z',
+              'Culture Encoded by': 'Krissha Mae P. Marfil, RMT',
+              'Culture Lab Tech': 'Krissha Mae P. Marfil, RMT',
+              'Culture TAT': null,
+              'Culture Lab Manager': 'Ma. Cecilia G. Ama, MD',
+              'Culture Remarks 1': null,
+              'Culture Remarks 2': null,
+              'TAT Culture Remarks': null,
+              'DSSM&Culture Releasing Form Med Tech': null,
+              'DSSM&Culture Releasing Form Date Released': null,
+              'DSSM&Culture Releasing Form Laboratory Manager':
+                'Ma. Cecilia G. Ama, MD',
+              'DST ID Result': null,
+              'DST Date Inoculated': null,
+              'DST MT Inoculated': null,
+              Streptomycin: null,
+              Isoniazid: null,
+              Rifampicin: null,
+              Ethambutol: null,
+              Kanamycin: null,
+              Levofloxacin: null,
+              Amikacin: null,
+              Capreomycin: null,
+              Pyrazinamide: null,
+              Ofloxacin: null,
+              Ciprofloxacin: null,
+              'DST Date Read': null,
+              'DST MT Read': null,
+              'DST Date Released': null,
+              'DST Lab Tech': null,
+              'DST TAT': null,
+              'DST Test Requested': null,
+              'DST Laboratory Releasing Form Remarks': null,
+              'DST Releasing Form MedTech': null,
+              'DST Releasing Form Released Date': null,
+              'DST Releasing Form Lab Manager': 'Ma. Cecilia G. Ama, MD',
+              'DST Method Used': null,
+              'DST Method Used Others': null,
+              'DST Workbook Remarks': null,
+              'DST Remarks': null,
+              'DST Encoded by': null,
+              'Gx Processing Date': null,
+              'Gx MTB': null,
+              'Gx Rifampicin': null,
+              'Gx Date Released': null,
+              'Gx Examiner': null,
+              'Gx TAT': null,
+              'Gx Laboratory Manager': 'Noel G. Macalalad, MD',
+              'Gx Center': null,
+              'Gx Laboratory Releasing Form Remarks': null,
+              'LPA Male': false,
+              'Gx Remarks': null,
+              'TB Case Number': null,
+              'LPA Kit Used': null,
+              'LPA Kit Others': null,
+              'LPA Date Processed': null,
+              'LPA MTB Complex': null,
+              'LPA Isoniazid Result': null,
+              'LPA Rifampicin': null,
+              'LPA Isoniazid': null,
+              'LPA Rifampicin Result': null,
+              'LPA Date Released': null,
+              'LPA Ethambutol': null,
+              'LPA Examiner': null,
+              'LPA Fluoroquinolones': null,
+              'LPA Aminoglycosides/ SLI': null,
+              'LPA Mycobacterium Tb': null,
+              'LPA Lab Manager': 'Noel G. Macalalad, MD',
+              'LPA Remarks:': null,
+              'LPA Center': null,
+              'LPA Performed By': null,
+              'LPA Reviewed By': null,
+              'LPA Date of Release': null,
+              'LPA Remarks': null,
+              'LPA TAT': null,
+              'Laboratory Releasing Form Remarks': null,
+              'Laboratory Releasing Form Gx Remarks': null,
+              'Laboratory Releasing Form Smear Remarks': null,
+              'Laboratory Registry Remarks': null,
+            },
+          })
+        )
+
+        assert.isOk(
+          await PhilippinesNtrlPmdt.canProcessRequest({
+            payload: {
+              database: 'PMDT',
+              table: 'NTRL DATABASE',
+              TimeStamp: '458014',
+              'Serial Number': '00004',
+              'Last Name': 'OMELA',
+              'First Name': 'Mary Ann',
+              'Middle Initial': 'Valle',
+              Address: 'Rizal',
+              'Referring Health Facility': 'BJMP 4A Regional Infirmary TB DOT',
+              'Culture Center': 'NTRL',
+              'Cat IV Screening Code': null,
+              'MRF Date Requested': '2019-01-02T00:00:00.000Z',
+              Age: 41,
+              Sex: 'Female',
+              'DST Center': 'NTRL',
+              'Requesting Physician': 'Dr. Chua',
+              'Treatment Schedule': 'Follow up',
+              'Month of tx': '7',
+              Enrolled: null,
+              'Registration Group': 'New',
+              'Treatment Category': 'New',
+              'Type of Specimen': 'Sputum',
+              '(If Others) Specify': null,
+              Site: 'Pulmonary',
+              'Test Requested Smear': true,
+              'Test Requested Culture': true,
+              'Test Requested DST': false,
+              'Test Requested LPA': false,
+              'Test Requested Gx': false,
+              'Date transfered to DST': null,
+              'Presumptive DS or DR': 'Presumptive DS-TB',
+              'Lab No 1': 'N-19-0004',
+              'Date Collected 1': '2019-01-02T00:00:00.000Z',
+              'Date Collected 2': null,
+              'Date Collected 3': null,
+              'Type of Collection 1': null,
+              'Type of Collection 2': null,
+              'Type of Collection 3': null,
+              'Volume 1': '3ml',
+              'Volume 2': null,
+              'Volume 3': null,
+              'Consistency 1': 'MS',
+              'Consistency 2': null,
+              'Consistence 3': null,
+              'Prepared by': null,
+              'Date Received': '2019-01-04T00:00:00.000Z',
+              'Encoded By': 'Mica Ann Cherene L. Culala',
+              'Date Encoded': '2019-01-04T00:00:00.000Z',
+              'Smear Method': 'Fluorescence Microscopy',
+              'Smear Method 2': null,
+              'Smear Result 1': '0',
+              'Smear Result 2': null,
+              'Smear Final Result': 'NEGATIVE FOR Acid Fast Bacilli',
+              'Smear Date Released': '2019-01-09T00:00:00.000Z',
+              'Smear Only Test Requested': 'DSSM Only',
+              'Smear Only Test Requested 2': 'DSSM Only',
+              'Smear TAT': null,
+              'Smear Lab Tech': 'Krissha Mae P. Marfil, RMT',
+              'Smear Encoded by': 'Krissha Mae P. Marfil, RMT',
+              'Culture Date Inoculated': null,
+              'Culture Med Tech': null,
+              'Culture Result Status': null,
+              'Culture DST Status': null,
+              'Culture Method': 'Solid Culture(Modified Kudoh)',
+              'Culture Method 2': null,
+              'Culture Result 1': 'No growth after 8 weeks',
+              'Culture Grade 1': null,
+              'Culture Result 2': null,
+              'Culture Grade 2': null,
+              'Culture Final Result': 'No growth after 8 weeks',
+              'Culture Date Released': '2019-03-07T00:00:00.000Z',
+              'Culture Encoded by': 'Krissha Mae P. Marfil, RMT',
+              'Culture Lab Tech': 'Krissha Mae P. Marfil, RMT',
+              'Culture TAT': null,
+              'Culture Lab Manager': 'Ma. Cecilia G. Ama, MD',
+              'Culture Remarks 1': null,
+              'Culture Remarks 2': null,
+              'TAT Culture Remarks': null,
+              'DSSM&Culture Releasing Form Med Tech': null,
+              'DSSM&Culture Releasing Form Date Released': null,
+              'DSSM&Culture Releasing Form Laboratory Manager':
+                'Ma. Cecilia G. Ama, MD',
+              'DST ID Result': null,
+              'DST Date Inoculated': null,
+              'DST MT Inoculated': null,
+              Streptomycin: null,
+              Isoniazid: null,
+              Rifampicin: null,
+              Ethambutol: null,
+              Kanamycin: null,
+              Levofloxacin: null,
+              Amikacin: null,
+              Capreomycin: null,
+              Pyrazinamide: null,
+              Ofloxacin: null,
+              Ciprofloxacin: null,
+              'DST Date Read': null,
+              'DST MT Read': null,
+              'DST Date Released': null,
+              'DST Lab Tech': null,
+              'DST TAT': null,
+              'DST Test Requested': null,
+              'DST Laboratory Releasing Form Remarks': null,
+              'DST Releasing Form MedTech': null,
+              'DST Releasing Form Released Date': null,
+              'DST Releasing Form Lab Manager': 'Ma. Cecilia G. Ama, MD',
+              'DST Method Used': null,
+              'DST Method Used Others': null,
+              'DST Workbook Remarks': null,
+              'DST Remarks': null,
+              'DST Encoded by': null,
+              'Gx Processing Date': null,
+              'Gx MTB': null,
+              'Gx Rifampicin': null,
+              'Gx Date Released': null,
+              'Gx Examiner': null,
+              'Gx TAT': null,
+              'Gx Laboratory Manager': 'Noel G. Macalalad, MD',
+              'Gx Center': null,
+              'Gx Laboratory Releasing Form Remarks': null,
+              'LPA Male': false,
+              'Gx Remarks': null,
+              'TB Case Number': null,
+              'LPA Kit Used': null,
+              'LPA Kit Others': null,
+              'LPA Date Processed': null,
+              'LPA MTB Complex': null,
+              'LPA Isoniazid Result': null,
+              'LPA Rifampicin': null,
+              'LPA Isoniazid': null,
+              'LPA Rifampicin Result': null,
+              'LPA Date Released': null,
+              'LPA Ethambutol': null,
+              'LPA Examiner': null,
+              'LPA Fluoroquinolones': null,
+              'LPA Aminoglycosides/ SLI': null,
+              'LPA Mycobacterium Tb': null,
+              'LPA Lab Manager': 'Noel G. Macalalad, MD',
+              'LPA Remarks:': null,
+              'LPA Center': null,
+              'LPA Performed By': null,
+              'LPA Reviewed By': null,
+              'LPA Date of Release': null,
+              'LPA Remarks': null,
+              'LPA TAT': null,
+              'Laboratory Releasing Form Remarks': null,
+              'Laboratory Releasing Form Gx Remarks': null,
+              'Laboratory Releasing Form Smear Remarks': null,
+              'Laboratory Registry Remarks': null,
+              'Facility Contact Number': null,
+              'Patient Contact Number': null,
+              'Date Dispatch': null,
+            },
+          })
+        )
+
+        assert.isNotOk(
+          await PhilippinesNtrlPmdt.canProcessRequest({
+            payload: {
+              database: 'PMDT',
+              table: 'NTRL DATABASE',
+              TimeStamp: '458014',
+              'Serial Number': '00004',
+              'Last Name': 'OMELA',
+              'First Name': 'Mary Ann',
+              'Middle Initial': 'Valle',
+              Address: 'Rizal',
+              'Referring Health Facility': 'BJMP 4A Regional Infirmary TB DOT',
+              'Culture Center': 'NTRL',
+              'Cat IV Screening Code': null,
+              'MRF Date Requested': '2019-01-02T00:00:00.000Z',
+              Age: 41,
+              Sex: 'Female',
+              'DST Center': 'NTRL',
+              'Requesting Physician': 'Dr. Chua',
+              'Treatment Schedule': 'Follow up',
+              'Month of tx': '7',
+              Enrolled: null,
+              'Registration Group': 'New',
+              'Treatment Category': 'New',
+              'Type of Specimen': 'Sputum',
+              '(If Others) Specify': null,
+              Site: 'Pulmonary',
+              'Test Requested Smear': true,
+              'Test Requested Culture': true,
+              'Test Requested DST': false,
+              'Test Requested LPA': false,
+              'Test Requested Gx': false,
+              'Date transfered to DST': null,
+              'Presumptive DS or DR': 'Presumptive DS-TB',
+              'Lab No 1': 'N-19-0004',
+              'Date Collected 1': '2019-01-02T00:00:00.000Z',
+              'Date Collected 2': null,
+              'Date Collected 3': null,
+              'Type of Collection 1': null,
+              'Type of Collection 2': null,
+              'Type of Collection 3': null,
+              'Volume 1': '3ml',
+              'Volume 2': null,
+              'Volume 3': null,
+              'Consistency 1': 'MS',
+              'Consistency 2': null,
+              'Consistence 3': null,
+              'Prepared by': null,
+              'Date Received': '2019-01-04T00:00:00.000Z',
+              'Encoded By': 'Mica Ann Cherene L. Culala',
+              'Date Encoded': '2019-01-04T00:00:00.000Z',
+              'Smear Method': 'Fluorescence Microscopy',
+              'Smear Method 2': null,
+              'Smear Result 1': '0',
+              'Smear Result 2': null,
+              'Smear Final Result': 'NEGATIVE FOR Acid Fast Bacilli',
+              'Smear Date Released': '2019-01-09T00:00:00.000Z',
+              'Smear Only Test Requested': 'DSSM Only',
+              'Smear Only Test Requested 2': 'DSSM Only',
+              'Smear TAT': null,
+              'Smear Lab Tech': 'Krissha Mae P. Marfil, RMT',
+              'Smear Encoded by': 'Krissha Mae P. Marfil, RMT',
+              'Culture Date Inoculated': null,
+              'Culture Med Tech': null,
+              'Culture Result Status': null,
+              'Culture DST Status': null,
+              'Culture Method': 'Solid Culture(Modified Kudoh)',
+              'Culture Method 2': null,
+              'Culture Result 1': 'No growth after 8 weeks',
+              'Culture Grade 1': null,
+              'Culture Result 2': null,
+              'Culture Grade 2': null,
+              'Culture Final Result': 'No growth after 8 weeks',
+              'Culture Date Released': '2019-03-07T00:00:00.000Z',
+              'Culture Encoded by': 'Krissha Mae P. Marfil, RMT',
+              'Culture Lab Tech': 'Krissha Mae P. Marfil, RMT',
+              'Culture TAT': null,
+              'Culture Lab Manager': 'Ma. Cecilia G. Ama, MD',
+              'Culture Remarks 1': null,
+              'Culture Remarks 2': null,
+              'TAT Culture Remarks': null,
+              'DSSM&Culture Releasing Form Med Tech': null,
+              'DSSM&Culture Releasing Form Date Released': null,
+              'DSSM&Culture Releasing Form Laboratory Manager':
+                'Ma. Cecilia G. Ama, MD',
+              'DST ID Result': null,
+              'DST Date Inoculated': null,
+              'DST MT Inoculated': null,
+              Streptomycin: null,
+              Isoniazid: null,
+              Rifampicin: null,
+              Ethambutol: null,
+              Kanamycin: null,
+              Levofloxacin: null,
+              Amikacin: null,
+              Capreomycin: null,
+              Pyrazinamide: null,
+              Ofloxacin: null,
+              Ciprofloxacin: null,
+              'DST Date Read': null,
+              'DST MT Read': null,
+              'DST Date Released': null,
+              'DST Lab Tech': null,
+              'DST TAT': null,
+              'DST Test Requested': null,
+              'DST Laboratory Releasing Form Remarks': null,
+              'DST Releasing Form MedTech': null,
+              'DST Releasing Form Released Date': null,
+              'DST Releasing Form Lab Manager': 'Ma. Cecilia G. Ama, MD',
+              'DST Method Used': null,
+              'DST Method Used Others': null,
+              'DST Workbook Remarks': null,
+              'DST Remarks': null,
+              'DST Encoded by': null,
+              'Gx Processing Date': null,
+              'Gx MTB': null,
+              'Gx Rifampicin': null,
+              'Gx Date Released': null,
+              'Gx Examiner': null,
+              'Gx TAT': null,
+              'Gx Laboratory Manager': 'Noel G. Macalalad, MD',
+              'Gx Center': null,
+              'Gx Laboratory Releasing Form Remarks': null,
+              'LPA Male': false,
+              'Gx Remarks': null,
+              'TB Case Number': null,
+              'LPA Kit Used': null,
+              'LPA Kit Others': null,
+              'LPA Date Processed': null,
+              'LPA MTB Complex': null,
+              'LPA Isoniazid Result': null,
+              'LPA Rifampicin': null,
+              'LPA Isoniazid': null,
+              'LPA Rifampicin Result': null,
+              'LPA Date Released': null,
+              'LPA Ethambutol': null,
+              'LPA Examiner': null,
+              'LPA Fluoroquinolones': null,
+              'LPA Aminoglycosides/ SLI': null,
+              'LPA Mycobacterium Tb': null,
+              'LPA Lab Manager': 'Noel G. Macalalad, MD',
+              'LPA Remarks:': null,
+              'LPA Center': null,
+              'LPA Performed By': null,
+              'LPA Reviewed By': null,
+              'LPA Date of Release': null,
+              'LPA Remarks': null,
+              'LPA TAT': null,
+              'Laboratory Releasing Form Remarks': null,
+              'Laboratory Releasing Form Gx Remarks': null,
+              'Laboratory Releasing Form Smear Remarks': null,
+            },
+          })
+        )
+      })
+    })
+
+    const existingSamples = {
+      'PN-19-8442-1': {
+        id: 571,
+        externalId: 'PN-19-8442',
+        collectedOn: new Date(2019, 10, 25, 0, 0),
+        sampleTypeId: staticDatabaseData.SampleType.Sputum,
+        originSiteId: null,
+      },
+      'PN-19-8442-2': {
+        id: 572,
+        externalId: 'PN-19-8442-2',
+        collectedOn: new Date(2019, 10, 25, 0, 0),
+        sampleTypeId: staticDatabaseData.SampleType.Sputum,
+        originSiteId: null,
+      },
+    }
+
+    describe('processRequest', () => {
+      const pmdtRecordPayload8442SmearCultureNegative2Samples = {
+        Age: 45,
+        Sex: 'Male',
+        Site: 'Pulmonary',
+        table: 'NTRL DATABASE',
+        'Gx MTB': null,
+        'Gx TAT': null,
+        Address: null,
+        'DST TAT': null,
+        'LPA TAT': null,
+        Amikacin: null,
+        Enrolled: null,
+        'LPA Male': false,
+        'Lab No 1': 'N-19-8080',
+        'Volume 1': '3 mL',
+        'Volume 2': '1mL',
+        'Volume 3': null,
+        database: 'PMDT',
+        'Gx Center': null,
+        Isoniazid: null,
+        Kanamycin: null,
+        'Last Name': 'RICHARDS',
+        Ofloxacin: null,
+        'Smear TAT': null,
+        TimeStamp: '514007',
+        'DST Center': 'NTRL',
+        'Encoded By': 'Jerri Reinald A. Coloma',
+        Ethambutol: null,
+        'First Name': 'James',
+        'Gx Remarks': null,
+        'LPA Center': null,
+        Rifampicin: null,
+        Capreomycin: null,
+        'Culture TAT': null,
+        'DST MT Read': null,
+        'DST Remarks': null,
+        'Gx Examiner': null,
+        'LPA Remarks': null,
+        'Month of tx': null,
+        'Prepared by': null,
+        'DST Lab Tech': null,
+        'Date Encoded': '2019-12-04T00:00:00.000Z',
+        'LPA Examiner': null,
+        'LPA Kit Used': null,
+        'LPA Remarks:': null,
+        Levofloxacin: null,
+        Pyrazinamide: null,
+        'Smear Method': 'Fluorescence Microscopy',
+        Streptomycin: null,
+        Ciprofloxacin: null,
+        'Consistence 3': null,
+        'Consistency 1': 'MS',
+        'Consistency 2': 'MS',
+        'DST Date Read': null,
+        'DST ID Result': null,
+        'Date Received': '2019-12-03T00:00:00.000Z',
+        'Gx Rifampicin': null,
+        'LPA Isoniazid': null,
+        'Serial Number': '8442',
+        'Culture Center': 'NTRL',
+        'Culture Method': 'Solid Culture(Modified Kudoh)',
+        'DST Encoded by': null,
+        'LPA Ethambutol': null,
+        'LPA Kit Others': null,
+        'LPA Rifampicin': null,
+        'Middle Initial': null,
+        'Smear Lab Tech': 'Kevin Joshua A. Alonzo, RMT',
+        'Smear Method 2': null,
+        'Smear Result 1': '0',
+        'Smear Result 2': '0',
+        'TB Case Number': null,
+        'Culture Grade 1': null,
+        'Culture Grade 2': null,
+        'DST Method Used': null,
+        'LPA Lab Manager': 'Noel G. Macalalad, MD',
+        'LPA MTB Complex': null,
+        'LPA Reviewed By': null,
+        'Culture Lab Tech': 'Kevin Joshua A. Alonzo, RMT',
+        'Culture Med Tech': null,
+        'Culture Method 2': null,
+        'Culture Result 1': 'No growth after 8 weeks',
+        'Culture Result 2': 'No growth after 8 weeks',
+        'Date Collected 1': '2019-11-25T00:00:00.000Z',
+        'Date Collected 2': '2019-11-25T00:00:00.000Z',
+        'Date Collected 3': null,
+        'Gx Date Released': null,
+        'LPA Performed By': null,
+        'Smear Encoded by': 'Kevin Joshua A. Alonzo, RMT',
+        'Type of Specimen': 'Sputum',
+        'Culture Remarks 1': null,
+        'Culture Remarks 2': null,
+        'DST Date Released': null,
+        'DST MT Inoculated': null,
+        'LPA Date Released': null,
+        'Test Requested Gx': false,
+        'Culture DST Status': null,
+        'Culture Encoded by': 'Kevin Joshua A. Alonzo, RMT',
+        'DST Test Requested': null,
+        'Gx Processing Date': null,
+        'LPA Date Processed': null,
+        'MRF Date Requested': '2019-11-20T00:00:00.000Z',
+        'Registration Group': 'New',
+        'Smear Final Result': 'NEGATIVE FOR Acid Fast Bacilli',
+        'Test Requested DST': false,
+        'Test Requested LPA': false,
+        'Treatment Category': 'New',
+        'Treatment Schedule': 'DIAGNOSIS',
+        '(If Others) Specify': null,
+        'Culture Lab Manager': 'Ma. Cecilia G. Ama, MD',
+        'DST Date Inoculated': null,
+        'LPA Date of Release': null,
+        'Smear Date Released': '2019-12-06T00:00:00.000Z',
+        'TAT Culture Remarks': null,
+        'Culture Final Result': 'No growth after 8 weeks',
+        'DST Workbook Remarks': null,
+        'LPA Fluoroquinolones': null,
+        'LPA Isoniazid Result': null,
+        'LPA Mycobacterium Tb': null,
+        'Presumptive DS or DR': 'Presumptive DS-TB',
+        'Requesting Physician': 'Dr. Cruz',
+        'Test Requested Smear': true,
+        'Type of Collection 1': null,
+        'Type of Collection 2': null,
+        'Type of Collection 3': null,
+        'Cat IV Screening Code': null,
+        'Culture Date Released': '2020-02-03T00:00:00.000Z',
+        'Culture Result Status': null,
+        'Gx Laboratory Manager': 'Noel G. Macalalad, MD',
+        'LPA Rifampicin Result': null,
+        'DST Method Used Others': null,
+        'Date transfered to DST': null,
+        'Test Requested Culture': true,
+        'Culture Date Inoculated': null,
+        'LPA Aminoglycosides/ SLI': null,
+        'Referring Health Facility': 'Baguio General Hospital & Medical Center',
+        'Smear Only Test Requested': 'DSSM Only',
+        'DST Releasing Form MedTech': null,
+        'Laboratory Registry Remarks': null,
+        'Smear Only Test Requested 2': 'DSSM Only',
+        'DST Releasing Form Lab Manager': 'Ma. Cecilia G. Ama, MD',
+        'DST Releasing Form Released Date': null,
+        'Laboratory Releasing Form Remarks': null,
+        'DSSM&Culture Releasing Form Med Tech': null,
+        'Gx Laboratory Releasing Form Remarks': null,
+        'Laboratory Releasing Form Gx Remarks': null,
+        'DST Laboratory Releasing Form Remarks': null,
+        'Laboratory Releasing Form Smear Remarks': null,
+        'DSSM&Culture Releasing Form Date Released': null,
+        'DSSM&Culture Releasing Form Laboratory Manager':
+          'Cristina C. Villarico, RMT',
+      }
+      const pmdtRecordPayload1855LpaRequestedNoResults1Sample = {
+        Age: 60,
+        Sex: 'Female',
+        Site: 'Pulmonary',
+        table: 'NTRL DATABASE',
+        'Gx MTB': null,
+        'Gx TAT': null,
+        Address: 'DAVAO CITY',
+        'DST TAT': null,
+        'LPA TAT': null,
+        Amikacin: null,
+        Enrolled: null,
+        'LPA Male': false,
+        'Lab No 1': 'N-20-1234',
+        'Volume 1': '10ML',
+        'Volume 2': null,
+        'Volume 3': null,
+        database: 'PMDT_2020',
+        'Gx Center': null,
+        Isoniazid: null,
+        Kanamycin: null,
+        'Last Name': 'CUNNINGHAM',
+        Ofloxacin: null,
+        'Smear TAT': null,
+        TimeStamp: '398162',
+        'DST Center': 'NTRL',
+        'Encoded By': 'Krissha Mae P. Marfil, RMT',
+        Ethambutol: null,
+        'First Name': 'Wallace',
+        'Gx Remarks': null,
+        'LPA Center': null,
+        Rifampicin: null,
+        Capreomycin: null,
+        'Culture TAT': null,
+        'DST MT Read': null,
+        'DST Remarks': null,
+        'Gx Examiner': null,
+        'LPA Remarks': null,
+        'Month of tx': null,
+        'Prepared by': null,
+        'DST Lab Tech': null,
+        'Date Encoded': '2020-02-14T00:00:00.000Z',
+        'LPA Examiner': null,
+        'LPA Kit Used': null,
+        'LPA Remarks:': null,
+        Levofloxacin: null,
+        Pyrazinamide: null,
+        'Smear Method': null,
+        Streptomycin: null,
+        Ciprofloxacin: null,
+        'Consistence 3': null,
+        'Consistency 1': 'P',
+        'Consistency 2': null,
+        'DST Date Read': null,
+        'DST ID Result': null,
+        'Date Dispatch': null,
+        'Date Received': '2020-02-14T00:00:00.000Z',
+        'Gx Rifampicin': null,
+        'LPA Isoniazid': null,
+        'Serial Number': '1855',
+        'Culture Center': 'NTRL',
+        'Culture Method': null,
+        'DST Encoded by': null,
+        'LPA Ethambutol': null,
+        'LPA Kit Others': null,
+        'LPA Rifampicin': null,
+        'Middle Initial': 'A.',
+        'Smear Lab Tech': null,
+        'Smear Method 2': null,
+        'Smear Result 1': null,
+        'Smear Result 2': null,
+        'TB Case Number': null,
+        'Culture Grade 1': null,
+        'Culture Grade 2': null,
+        'DST Method Used': null,
+        'LPA Lab Manager': 'Noel G. Macalalad, MD',
+        'LPA MTB Complex': null,
+        'LPA Reviewed By': null,
+        'Culture Lab Tech': null,
+        'Culture Med Tech': null,
+        'Culture Method 2': null,
+        'Culture Result 1': null,
+        'Culture Result 2': null,
+        'Date Collected 1': '2020-02-10T00:00:00.000Z',
+        'Date Collected 2': null,
+        'Date Collected 3': null,
+        'Gx Date Released': null,
+        'LPA Performed By': null,
+        'Smear Encoded by': null,
+        'Type of Specimen': 'Sputum',
+        'Culture Remarks 1': null,
+        'Culture Remarks 2': null,
+        'DST Date Released': null,
+        'DST MT Inoculated': null,
+        'LPA Date Released': null,
+        'Test Requested Gx': false,
+        'Culture DST Status': null,
+        'Culture Encoded by': null,
+        'DST Test Requested': null,
+        'Gx Processing Date': null,
+        'LPA Date Processed': null,
+        'MRF Date Requested': '2020-02-10T00:00:00.000Z',
+        'Registration Group': 'TAF',
+        'Smear Final Result': null,
+        'Test Requested DST': false,
+        'Test Requested LPA': true,
+        'Treatment Category': 'Retreatment',
+        'Treatment Schedule': 'BAS',
+        '(If Others) Specify': null,
+        'Culture Lab Manager': 'Cristina C. Villarico, RMT',
+        'DST Date Inoculated': null,
+        'LPA Date of Release': null,
+        'Smear Date Released': null,
+        'TAT Culture Remarks': null,
+        'Culture Final Result': null,
+        'DST Workbook Remarks': null,
+        'LPA Fluoroquinolones': null,
+        'LPA Isoniazid Result': null,
+        'LPA Mycobacterium Tb': null,
+        'Presumptive DS or DR': 'Presumptive DR-TB',
+        'Requesting Physician': 'Dr. Cania',
+        'Test Requested Smear': false,
+        'Type of Collection 1': null,
+        'Type of Collection 2': null,
+        'Type of Collection 3': null,
+        'Cat IV Screening Code': null,
+        'Culture Date Released': null,
+        'Culture Result Status': null,
+        'Gx Laboratory Manager': 'Noel G. Macalalad, MD',
+        'LPA Rifampicin Result': null,
+        'DST Method Used Others': null,
+        'Date transfered to DST': null,
+        'Patient Contact Number': null,
+        'Test Requested Culture': false,
+        'Culture Date Inoculated': null,
+        'Facility Contact Number': null,
+        'LPA Aminoglycosides/ SLI': null,
+        'Referring Health Facility':
+          'Southern Philippines Medical Center PMDT TC',
+        'Smear Only Test Requested': 'DSSM Only',
+        'DST Releasing Form MedTech': null,
+        'Laboratory Registry Remarks': null,
+        'Smear Only Test Requested 2': 'DSSM Only',
+        'DST Releasing Form Lab Manager': 'Cristina C. Villarico, RMT',
+        'DST Releasing Form Released Date': null,
+        'Laboratory Releasing Form Remarks': null,
+        'DSSM&Culture Releasing Form Med Tech': null,
+        'Gx Laboratory Releasing Form Remarks': null,
+        'Laboratory Releasing Form Gx Remarks': null,
+        'DST Laboratory Releasing Form Remarks': null,
+        'Laboratory Releasing Form Smear Remarks': null,
+        'DSSM&Culture Releasing Form Date Released': null,
+        'DSSM&Culture Releasing Form Laboratory Manager':
+          'Cristina C. Villarico, RMT',
+      }
+      const pmdtRecordPayload0494CultureSmearLpaTbPositive2Samples = {
+        Age: 28,
+        Sex: 'Male',
+        Site: 'Pulmonary',
+        table: 'NTRL DATABASE',
+        'Gx MTB': null,
+        'Gx TAT': null,
+        Address: 'North Signal',
+        'DST TAT': null,
+        'LPA TAT': null,
+        Amikacin: null,
+        Enrolled: null,
+        'LPA Male': false,
+        'Lab No 1': 'N-20-4321',
+        'Volume 1': '10ML',
+        'Volume 2': '10ML',
+        'Volume 3': null,
+        database: 'PMDT_2020',
+        'Gx Center': null,
+        Isoniazid: null,
+        Kanamycin: null,
+        'Last Name': 'GOUS',
+        Ofloxacin: null,
+        'Smear TAT': null,
+        TimeStamp: '190105',
+        'DST Center': 'NTRL',
+        'Encoded By': 'Jenny B.  Lasprilla',
+        Ethambutol: null,
+        'First Name': 'Herman',
+        'Gx Remarks': null,
+        'LPA Center': 'NTRL',
+        Rifampicin: null,
+        Capreomycin: null,
+        'Culture TAT': null,
+        'DST MT Read': null,
+        'DST Remarks': null,
+        'Gx Examiner': null,
+        'LPA Remarks': null,
+        'Month of tx': null,
+        'Prepared by': null,
+        'DST Lab Tech': null,
+        'Date Encoded': '2020-01-21T00:00:00.000Z',
+        'LPA Examiner': null,
+        'LPA Kit Used': 'Hain MTBDRsl ver 2.0',
+        'LPA Remarks:': 'test repeated',
+        Levofloxacin: null,
+        Pyrazinamide: null,
+        'Smear Method': 'Fluorescence Microscopy',
+        Streptomycin: null,
+        Ciprofloxacin: null,
+        'Consistence 3': null,
+        'Consistency 1': 'MS',
+        'Consistency 2': 'MS',
+        'DST Date Read': null,
+        'DST ID Result': null,
+        'Date Dispatch': null,
+        'Date Received': '2020-01-21T00:00:00.000Z',
+        'Gx Rifampicin': null,
+        'LPA Isoniazid': null,
+        'Serial Number': '0494',
+        'Culture Center': 'NTRL',
+        'Culture Method': 'Liquid Culture(MGIT)',
+        'DST Encoded by': null,
+        'LPA Ethambutol': null,
+        'LPA Kit Others': null,
+        'LPA Rifampicin': null,
+        'Middle Initial': 'A.',
+        'Smear Lab Tech': 'Krissha Mae P. Marfil, RMT',
+        'Smear Method 2': null,
+        'Smear Result 1': '+3',
+        'Smear Result 2': '+22',
+        'TB Case Number': null,
+        'Culture Grade 1': null,
+        'Culture Grade 2': null,
+        'DST Method Used': null,
+        'LPA Lab Manager': 'Noel G. Macalalad, MD',
+        'LPA MTB Complex': 'M. tb Detected',
+        'LPA Reviewed By': 'Ma. Cecilia G. Ama, MD',
+        'Culture Lab Tech': null,
+        'Culture Med Tech': null,
+        'Culture Method 2': null,
+        'Culture Result 1': null,
+        'Culture Result 2': null,
+        'Date Collected 1': '2020-01-15T00:00:00.000Z',
+        'Date Collected 2': '2020-01-15T00:00:00.000Z',
+        'Date Collected 3': null,
+        'Gx Date Released': null,
+        'LPA Performed By': 'Maria Zahra R. Almadrigo, RMT',
+        'Smear Encoded by': 'Krissha Mae P. Marfil, RMT',
+        'Type of Specimen': 'Sputum',
+        'Culture Remarks 1': null,
+        'Culture Remarks 2': null,
+        'DST Date Released': null,
+        'DST MT Inoculated': null,
+        'LPA Date Released': null,
+        'Test Requested Gx': false,
+        'Culture DST Status': null,
+        'Culture Encoded by': null,
+        'DST Test Requested': null,
+        'Gx Processing Date': null,
+        'LPA Date Processed': null,
+        'MRF Date Requested': '2020-01-17T00:00:00.000Z',
+        'Registration Group': null,
+        'Smear Final Result': 'POSITIVE FOR Acid Fast Bacilli',
+        'Test Requested DST': false,
+        'Test Requested LPA': true,
+        'Treatment Category': null,
+        'Treatment Schedule': 'BAS',
+        '(If Others) Specify': null,
+        'Culture Lab Manager': 'Cristina C. Villarico, RMT',
+        'DST Date Inoculated': null,
+        'LPA Date of Release': '2020-01-29T00:00:00.000Z',
+        'Smear Date Released': '2020-01-23T00:00:00.000Z',
+        'TAT Culture Remarks': null,
+        'Culture Final Result': null,
+        'DST Workbook Remarks': null,
+        'LPA Fluoroquinolones': 'Resistance Not Detected',
+        'LPA Isoniazid Result': null,
+        'LPA Mycobacterium Tb': null,
+        'Presumptive DS or DR': null,
+        'Requesting Physician': 'Dr. Bieren',
+        'Test Requested Smear': true,
+        'Type of Collection 1': null,
+        'Type of Collection 2': null,
+        'Type of Collection 3': null,
+        'Cat IV Screening Code': null,
+        'Culture Date Released': null,
+        'Culture Result Status': null,
+        'Gx Laboratory Manager': 'Noel G. Macalalad, MD',
+        'LPA Rifampicin Result': null,
+        'DST Method Used Others': null,
+        'Date transfered to DST': null,
+        'Patient Contact Number': null,
+        'Test Requested Culture': true,
+        'Culture Date Inoculated': null,
+        'Facility Contact Number': null,
+        'LPA Aminoglycosides/ SLI': 'Resistance Not Detected',
+        'Referring Health Facility': null,
+        'Smear Only Test Requested': 'DSSM Only',
+        'DST Releasing Form MedTech': null,
+        'Laboratory Registry Remarks': null,
+        'Smear Only Test Requested 2': 'DSSM Only',
+        'DST Releasing Form Lab Manager': 'Cristina C. Villarico, RMT',
+        'DST Releasing Form Released Date': null,
+        'Laboratory Releasing Form Remarks': null,
+        'DSSM&Culture Releasing Form Med Tech': null,
+        'Gx Laboratory Releasing Form Remarks': null,
+        'Laboratory Releasing Form Gx Remarks': null,
+        'DST Laboratory Releasing Form Remarks': null,
+        'Laboratory Releasing Form Smear Remarks': null,
+        'DSSM&Culture Releasing Form Date Released': null,
+        'DSSM&Culture Releasing Form Laboratory Manager':
+          'Cristina C. Villarico, RMT',
+      }
+      const pmdtRecordPayload0495CultureSmearLpaTbResistant2Samples = {
+        Age: 87,
+        Sex: 'Male',
+        Site: 'Pulmonary',
+        table: 'NTRL DATABASE',
+        'Gx MTB': null,
+        'Gx TAT': null,
+        Address: 'North Signal',
+        'DST TAT': null,
+        'LPA TAT': null,
+        Amikacin: null,
+        Enrolled: null,
+        'LPA Male': false,
+        'Lab No 1': 'N-20-4322',
+        'Volume 1': '10ML',
+        'Volume 2': '10ML',
+        'Volume 3': null,
+        database: 'PMDT_2020',
+        'Gx Center': null,
+        Isoniazid: null,
+        Kanamycin: null,
+        'Last Name': 'Gray',
+        Ofloxacin: null,
+        'Smear TAT': null,
+        TimeStamp: '190115',
+        'DST Center': 'NTRL',
+        'Encoded By': 'Jenny B.  Lasprilla',
+        Ethambutol: null,
+        'First Name': 'Benjamin',
+        'Gx Remarks': null,
+        'LPA Center': 'NTRL',
+        Rifampicin: null,
+        Capreomycin: null,
+        'Culture TAT': null,
+        'DST MT Read': null,
+        'DST Remarks': null,
+        'Gx Examiner': null,
+        'LPA Remarks': null,
+        'Month of tx': null,
+        'Prepared by': null,
+        'DST Lab Tech': null,
+        'Date Encoded': '2020-01-21T00:00:00.000Z',
+        'LPA Examiner': null,
+        'LPA Kit Used': 'Hain MTBDRsl ver 2.0',
+        'LPA Remarks:': 'test repeated',
+        Levofloxacin: null,
+        Pyrazinamide: null,
+        'Smear Method': 'Fluorescence Microscopy',
+        Streptomycin: null,
+        Ciprofloxacin: null,
+        'Consistence 3': null,
+        'Consistency 1': 'MS',
+        'Consistency 2': 'MS',
+        'DST Date Read': null,
+        'DST ID Result': null,
+        'Date Dispatch': null,
+        'Date Received': '2020-01-21T00:00:00.000Z',
+        'Gx Rifampicin': null,
+        'LPA Isoniazid': null,
+        'Serial Number': '0495',
+        'Culture Center': 'NTRL',
+        'Culture Method': 'Liquid Culture(MGIT)',
+        'DST Encoded by': null,
+        'LPA Ethambutol': null,
+        'LPA Kit Others': null,
+        'LPA Rifampicin': null,
+        'Middle Initial': 'A.',
+        'Smear Lab Tech': 'Krissha Mae P. Marfil, RMT',
+        'Smear Method 2': null,
+        'Smear Result 1': null,
+        'Smear Result 2': null,
+        'TB Case Number': null,
+        'Culture Grade 1': null,
+        'Culture Grade 2': null,
+        'DST Method Used': null,
+        'LPA Lab Manager': 'Noel G. Macalalad, MD',
+        'LPA MTB Complex': 'M. tb Detected',
+        'LPA Reviewed By': 'Ma. Cecilia G. Ama, MD',
+        'Culture Lab Tech': null,
+        'Culture Med Tech': null,
+        'Culture Method 2': null,
+        'Culture Result 1': null,
+        'Culture Result 2': null,
+        'Date Collected 1': '2020-01-15T00:00:00.000Z',
+        'Date Collected 2': '2020-01-15T00:00:00.000Z',
+        'Date Collected 3': null,
+        'Gx Date Released': null,
+        'LPA Performed By': 'Maria Zahra R. Almadrigo, RMT',
+        'Smear Encoded by': 'Krissha Mae P. Marfil, RMT',
+        'Type of Specimen': 'Sputum',
+        'Culture Remarks 1': null,
+        'Culture Remarks 2': null,
+        'DST Date Released': null,
+        'DST MT Inoculated': null,
+        'LPA Date Released': null,
+        'Test Requested Gx': false,
+        'Culture DST Status': null,
+        'Culture Encoded by': null,
+        'DST Test Requested': null,
+        'Gx Processing Date': null,
+        'LPA Date Processed': null,
+        'MRF Date Requested': '2020-01-17T00:00:00.000Z',
+        'Registration Group': null,
+        'Smear Final Result': 'POSITIVE FOR Acid Fast Bacilli',
+        'Test Requested DST': false,
+        'Test Requested LPA': true,
+        'Treatment Category': null,
+        'Treatment Schedule': 'BAS',
+        '(If Others) Specify': null,
+        'Culture Lab Manager': 'Cristina C. Villarico, RMT',
+        'DST Date Inoculated': null,
+        'LPA Date of Release': '2020-01-29T00:00:00.000Z',
+        'Smear Date Released': '2020-01-23T00:00:00.000Z',
+        'TAT Culture Remarks': null,
+        'Culture Final Result': null,
+        'DST Workbook Remarks': null,
+        'LPA Fluoroquinolones': 'Resistance Not Detected',
+        'LPA Isoniazid Result': 'Resistance Detected',
+        'LPA Mycobacterium Tb': null,
+        'Presumptive DS or DR': null,
+        'Requesting Physician': 'Dr. Bieren',
+        'Test Requested Smear': true,
+        'Type of Collection 1': null,
+        'Type of Collection 2': null,
+        'Type of Collection 3': null,
+        'Cat IV Screening Code': null,
+        'Culture Date Released': null,
+        'Culture Result Status': null,
+        'Gx Laboratory Manager': 'Noel G. Macalalad, MD',
+        'LPA Rifampicin Result': null,
+        'DST Method Used Others': null,
+        'Date transfered to DST': null,
+        'Patient Contact Number': null,
+        'Test Requested Culture': true,
+        'Culture Date Inoculated': null,
+        'Facility Contact Number': null,
+        'LPA Aminoglycosides/ SLI': 'Resistance Not Detected',
+        'Referring Health Facility': null,
+        'Smear Only Test Requested': 'DSSM Only',
+        'DST Releasing Form MedTech': null,
+        'Laboratory Registry Remarks': null,
+        'Smear Only Test Requested 2': 'DSSM Only',
+        'DST Releasing Form Lab Manager': 'Cristina C. Villarico, RMT',
+        'DST Releasing Form Released Date': null,
+        'Laboratory Releasing Form Remarks': null,
+        'DSSM&Culture Releasing Form Med Tech': null,
+        'Gx Laboratory Releasing Form Remarks': null,
+        'Laboratory Releasing Form Gx Remarks': null,
+        'DST Laboratory Releasing Form Remarks': null,
+        'Laboratory Releasing Form Smear Remarks': null,
+        'DSSM&Culture Releasing Form Date Released': null,
+        'DSSM&Culture Releasing Form Laboratory Manager':
+          'Cristina C. Villarico, RMT',
+      }
+      const pmdtRecordPayload0496CultureSmearLpaInvalid2Samples = {
+        Age: 87,
+        Sex: 'Male',
+        Site: 'Pulmonary',
+        table: 'NTRL DATABASE',
+        'Gx MTB': null,
+        'Gx TAT': null,
+        Address: 'North Signal',
+        'DST TAT': null,
+        'LPA TAT': null,
+        Amikacin: null,
+        Enrolled: null,
+        'LPA Male': false,
+        'Lab No 1': 'N-20-4322',
+        'Volume 1': '10ML',
+        'Volume 2': '10ML',
+        'Volume 3': null,
+        database: 'PMDT_2020',
+        'Gx Center': null,
+        Isoniazid: null,
+        Kanamycin: null,
+        'Last Name': 'Gray',
+        Ofloxacin: null,
+        'Smear TAT': null,
+        TimeStamp: '190115',
+        'DST Center': 'NTRL',
+        'Encoded By': 'Jenny B.  Lasprilla',
+        Ethambutol: null,
+        'First Name': 'Benjamin',
+        'Gx Remarks': null,
+        'LPA Center': 'NTRL',
+        Rifampicin: null,
+        Capreomycin: null,
+        'Culture TAT': null,
+        'DST MT Read': null,
+        'DST Remarks': null,
+        'Gx Examiner': null,
+        'LPA Remarks': null,
+        'Month of tx': null,
+        'Prepared by': null,
+        'DST Lab Tech': null,
+        'Date Encoded': '2020-01-21T00:00:00.000Z',
+        'LPA Examiner': null,
+        'LPA Kit Used': 'Hain MTBDRsl ver 2.0',
+        'LPA Remarks:': 'test repeated',
+        Levofloxacin: null,
+        Pyrazinamide: null,
+        'Smear Method': 'Fluorescence Microscopy',
+        Streptomycin: null,
+        Ciprofloxacin: null,
+        'Consistence 3': null,
+        'Consistency 1': 'MS',
+        'Consistency 2': 'MS',
+        'DST Date Read': null,
+        'DST ID Result': null,
+        'Date Dispatch': null,
+        'Date Received': '2020-01-21T00:00:00.000Z',
+        'Gx Rifampicin': null,
+        'LPA Isoniazid': null,
+        'Serial Number': '0496',
+        'Culture Center': 'NTRL',
+        'Culture Method': 'Liquid Culture(MGIT)',
+        'DST Encoded by': null,
+        'LPA Ethambutol': null,
+        'LPA Kit Others': null,
+        'LPA Rifampicin': null,
+        'Middle Initial': 'A.',
+        'Smear Lab Tech': 'Krissha Mae P. Marfil, RMT',
+        'Smear Method 2': null,
+        'Smear Result 1': null,
+        'Smear Result 2': null,
+        'TB Case Number': null,
+        'Culture Grade 1': null,
+        'Culture Grade 2': null,
+        'DST Method Used': null,
+        'LPA Lab Manager': 'Noel G. Macalalad, MD',
+        'LPA MTB Complex': 'M. tb Detected',
+        'LPA Reviewed By': 'Ma. Cecilia G. Ama, MD',
+        'Culture Lab Tech': null,
+        'Culture Med Tech': null,
+        'Culture Method 2': null,
+        'Culture Result 1': null,
+        'Culture Result 2': null,
+        'Date Collected 1': '2020-01-15T00:00:00.000Z',
+        'Date Collected 2': '2020-01-15T00:00:00.000Z',
+        'Date Collected 3': null,
+        'Gx Date Released': null,
+        'LPA Performed By': 'Maria Zahra R. Almadrigo, RMT',
+        'Smear Encoded by': 'Krissha Mae P. Marfil, RMT',
+        'Type of Specimen': 'Sputum',
+        'Culture Remarks 1': null,
+        'Culture Remarks 2': null,
+        'DST Date Released': null,
+        'DST MT Inoculated': null,
+        'LPA Date Released': null,
+        'Test Requested Gx': false,
+        'Culture DST Status': null,
+        'Culture Encoded by': null,
+        'DST Test Requested': null,
+        'Gx Processing Date': null,
+        'LPA Date Processed': null,
+        'MRF Date Requested': '2020-01-17T00:00:00.000Z',
+        'Registration Group': null,
+        'Smear Final Result': 'POSITIVE FOR Acid Fast Bacilli',
+        'Test Requested DST': false,
+        'Test Requested LPA': true,
+        'Treatment Category': null,
+        'Treatment Schedule': 'BAS',
+        '(If Others) Specify': null,
+        'Culture Lab Manager': 'Cristina C. Villarico, RMT',
+        'DST Date Inoculated': null,
+        'LPA Date of Release': '2020-01-29T00:00:00.000Z',
+        'Smear Date Released': '2020-01-23T00:00:00.000Z',
+        'TAT Culture Remarks': null,
+        'Culture Final Result': null,
+        'DST Workbook Remarks': null,
+        'LPA Fluoroquinolones': 'Resistance Not Detected',
+        'LPA Isoniazid Result': 'Invalid',
+        'LPA Mycobacterium Tb': null,
+        'Presumptive DS or DR': null,
+        'Requesting Physician': 'Dr. Bieren',
+        'Test Requested Smear': true,
+        'Type of Collection 1': null,
+        'Type of Collection 2': null,
+        'Type of Collection 3': null,
+        'Cat IV Screening Code': null,
+        'Culture Date Released': null,
+        'Culture Result Status': null,
+        'Gx Laboratory Manager': 'Noel G. Macalalad, MD',
+        'LPA Rifampicin Result': null,
+        'DST Method Used Others': null,
+        'Date transfered to DST': null,
+        'Patient Contact Number': null,
+        'Test Requested Culture': true,
+        'Culture Date Inoculated': null,
+        'Facility Contact Number': null,
+        'LPA Aminoglycosides/ SLI': 'Resistance Not Detected',
+        'Referring Health Facility': null,
+        'Smear Only Test Requested': 'DSSM Only',
+        'DST Releasing Form MedTech': null,
+        'Laboratory Registry Remarks': null,
+        'Smear Only Test Requested 2': 'DSSM Only',
+        'DST Releasing Form Lab Manager': 'Cristina C. Villarico, RMT',
+        'DST Releasing Form Released Date': null,
+        'Laboratory Releasing Form Remarks': null,
+        'DSSM&Culture Releasing Form Med Tech': null,
+        'Gx Laboratory Releasing Form Remarks': null,
+        'Laboratory Releasing Form Gx Remarks': null,
+        'DST Laboratory Releasing Form Remarks': null,
+        'Laboratory Releasing Form Smear Remarks': null,
+        'DSSM&Culture Releasing Form Date Released': null,
+        'DSSM&Culture Releasing Form Laboratory Manager':
+          'Cristina C. Villarico, RMT',
+      }
+      const pmdtRecordPayload0336CultureNoResults1Sample = {
+        Age: 40,
+        Sex: 'Male',
+        Site: 'Pulmonary',
+        table: 'NTRL DATABASE',
+        'Gx MTB': null,
+        'Gx TAT': null,
+        Address: 'Aniban, Bacoor City',
+        'DST TAT': null,
+        'LPA TAT': null,
+        Amikacin: null,
+        Enrolled: null,
+        'LPA Male': false,
+        'Lab No 1': 'SLH-19-1616',
+        'Volume 1': null,
+        'Volume 2': null,
+        'Volume 3': null,
+        database: 'PMDT_2020',
+        'Gx Center': null,
+        Isoniazid: null,
+        Kanamycin: null,
+        'Last Name': 'BAUMGARTNER',
+        Ofloxacin: null,
+        'Smear TAT': null,
+        TimeStamp: '70062',
+        'DST Center': 'NTRL',
+        'Encoded By': 'Jenny B.  Lasprilla',
+        Ethambutol: null,
+        'First Name': 'Darlene',
+        'Gx Remarks': null,
+        'LPA Center': null,
+        Rifampicin: null,
+        Capreomycin: null,
+        'Culture TAT': null,
+        'DST MT Read': null,
+        'DST Remarks': null,
+        'Gx Examiner': null,
+        'LPA Remarks': null,
+        'Month of tx': null,
+        'Prepared by': null,
+        'DST Lab Tech': null,
+        'Date Encoded': '2020-01-17T00:00:00.000Z',
+        'LPA Examiner': null,
+        'LPA Kit Used': null,
+        'LPA Remarks:': null,
+        Levofloxacin: null,
+        Pyrazinamide: null,
+        'Smear Method': null,
+        Streptomycin: null,
+        Ciprofloxacin: null,
+        'Consistence 3': null,
+        'Consistency 1': null,
+        'Consistency 2': null,
+        'DST Date Read': null,
+        'DST ID Result': null,
+        'Date Dispatch': null,
+        'Date Received': '2020-01-17T00:00:00.000Z',
+        'Gx Rifampicin': null,
+        'LPA Isoniazid': null,
+        'Serial Number': '0336',
+        'Culture Center': 'SLH',
+        'Culture Method': 'Solid Culture(Modified Kudoh)',
+        'DST Encoded by': null,
+        'LPA Ethambutol': null,
+        'LPA Kit Others': null,
+        'LPA Rifampicin': null,
+        'Middle Initial': 'B.',
+        'Smear Lab Tech': null,
+        'Smear Method 2': null,
+        'Smear Result 1': null,
+        'Smear Result 2': null,
+        'TB Case Number': '179-19-0018',
+        'Culture Grade 1': null,
+        'Culture Grade 2': null,
+        'DST Method Used': null,
+        'LPA Lab Manager': 'Noel G. Macalalad, MD',
+        'LPA MTB Complex': null,
+        'LPA Reviewed By': null,
+        'Culture Lab Tech': null,
+        'Culture Med Tech': null,
+        'Culture Method 2': null,
+        'Culture Result 1': null,
+        'Culture Result 2': null,
+        'Date Collected 1': '2019-06-17T00:00:00.000Z',
+        'Date Collected 2': '2019-06-17T00:00:00.000Z',
+        'Date Collected 3': null,
+        'Gx Date Released': null,
+        'LPA Performed By': null,
+        'Smear Encoded by': null,
+        'Type of Specimen': 'Isolates',
+        'Culture Remarks 1': null,
+        'Culture Remarks 2': null,
+        'DST Date Released': null,
+        'DST MT Inoculated': null,
+        'LPA Date Released': null,
+        'Test Requested Gx': false,
+        'Culture DST Status': null,
+        'Culture Encoded by': null,
+        'DST Test Requested': null,
+        'Gx Processing Date': null,
+        'LPA Date Processed': null,
+        'MRF Date Requested': '2019-10-05T00:00:00.000Z',
+        'Registration Group': 'New',
+        'Smear Final Result': null,
+        'Test Requested DST': true,
+        'Test Requested LPA': false,
+        'Treatment Category': 'New',
+        'Treatment Schedule': 'BAS',
+        '(If Others) Specify': null,
+        'Culture Lab Manager': 'Cristina C. Villarico, RMT',
+        'DST Date Inoculated': null,
+        'LPA Date of Release': null,
+        'Smear Date Released': null,
+        'TAT Culture Remarks': null,
+        'Culture Final Result': null,
+        'DST Workbook Remarks': null,
+        'LPA Fluoroquinolones': null,
+        'LPA Isoniazid Result': null,
+        'LPA Mycobacterium Tb': null,
+        'Presumptive DS or DR': 'Presumptive DR-TB',
+        'Requesting Physician': 'Dr. Mamaril',
+        'Test Requested Smear': true,
+        'Type of Collection 1': null,
+        'Type of Collection 2': null,
+        'Type of Collection 3': null,
+        'Cat IV Screening Code': null,
+        'Culture Date Released': null,
+        'Culture Result Status': null,
+        'Gx Laboratory Manager': 'Noel G. Macalalad, MD',
+        'LPA Rifampicin Result': null,
+        'DST Method Used Others': null,
+        'Date transfered to DST': null,
+        'Patient Contact Number': null,
+        'Test Requested Culture': true,
+        'Culture Date Inoculated': null,
+        'Facility Contact Number': null,
+        'LPA Aminoglycosides/ SLI': null,
+        'Referring Health Facility': 'Unknown health facility',
+        'Smear Only Test Requested': 'DSSM Only',
+        'DST Releasing Form MedTech': null,
+        'Laboratory Registry Remarks': null,
+        'Smear Only Test Requested 2': 'DSSM Only',
+        'DST Releasing Form Lab Manager': 'Cristina C. Villarico, RMT',
+        'DST Releasing Form Released Date': null,
+        'Laboratory Releasing Form Remarks': null,
+        'DSSM&Culture Releasing Form Med Tech': null,
+        'Gx Laboratory Releasing Form Remarks': null,
+        'Laboratory Releasing Form Gx Remarks': null,
+        'DST Laboratory Releasing Form Remarks': null,
+        'Laboratory Releasing Form Smear Remarks': null,
+        'DSSM&Culture Releasing Form Date Released': null,
+        'DSSM&Culture Releasing Form Laboratory Manager':
+          'Cristina C. Villarico, RMT',
+      }
+      const pmdtRecordPayload0350CultureNoResults3Samples = {
+        Age: 43,
+        Sex: 'Male',
+        Site: 'Pulmonary',
+        table: 'NTRL DATABASE',
+        'Gx MTB': null,
+        'Gx TAT': null,
+        Address: 'Santa Cruz, Laguna',
+        'DST TAT': null,
+        'LPA TAT': null,
+        Amikacin: null,
+        Enrolled: null,
+        'LPA Male': false,
+        'Lab No 1': 'SLH-19-9999',
+        'Volume 1': null,
+        'Volume 2': null,
+        'Volume 3': null,
+        database: 'PMDT_2020',
+        'Gx Center': null,
+        Isoniazid: null,
+        Kanamycin: null,
+        'Last Name': 'POTGIETER',
+        Ofloxacin: null,
+        'Smear TAT': null,
+        TimeStamp: '74066',
+        'DST Center': 'NTRL',
+        'Encoded By': 'Jenny B.  Lasprilla',
+        Ethambutol: null,
+        'First Name': 'Emma',
+        'Gx Remarks': null,
+        'LPA Center': null,
+        Rifampicin: null,
+        Capreomycin: null,
+        'Culture TAT': null,
+        'DST MT Read': null,
+        'DST Remarks': null,
+        'Gx Examiner': null,
+        'LPA Remarks': null,
+        'Month of tx': null,
+        'Prepared by': null,
+        'DST Lab Tech': null,
+        'Date Encoded': '2020-01-20T00:00:00.000Z',
+        'LPA Examiner': null,
+        'LPA Kit Used': null,
+        'LPA Remarks:': null,
+        Levofloxacin: null,
+        Pyrazinamide: null,
+        'Smear Method': null,
+        Streptomycin: null,
+        Ciprofloxacin: null,
+        'Consistence 3': 'Mucopurulent',
+        'Consistency 1': null,
+        'Consistency 2': null,
+        'DST Date Read': null,
+        'DST ID Result': null,
+        'Date Dispatch': null,
+        'Date Received': '2020-01-17T00:00:00.000Z',
+        'Gx Rifampicin': null,
+        'LPA Isoniazid': null,
+        'Serial Number': '0350',
+        'Culture Center': 'SLH',
+        'Culture Method': 'Solid Culture(Modified Kudoh)',
+        'DST Encoded by': null,
+        'LPA Ethambutol': null,
+        'LPA Kit Others': null,
+        'LPA Rifampicin': null,
+        'Middle Initial': 'A.',
+        'Smear Lab Tech': null,
+        'Smear Method 2': null,
+        'Smear Result 1': null,
+        'Smear Result 2': null,
+        'TB Case Number': '77-19-0011',
+        'Culture Grade 1': null,
+        'Culture Grade 2': null,
+        'DST Method Used': null,
+        'LPA Lab Manager': 'Noel G. Macalalad, MD',
+        'LPA MTB Complex': null,
+        'LPA Reviewed By': null,
+        'Culture Lab Tech': null,
+        'Culture Med Tech': null,
+        'Culture Method 2': null,
+        'Culture Result 1': null,
+        'Culture Result 2': null,
+        'Date Collected 1': '2019-06-23T00:00:00.000Z',
+        'Date Collected 2': '2019-06-23T00:00:00.000Z',
+        'Date Collected 3': null,
+        'Gx Date Released': null,
+        'LPA Performed By': null,
+        'Smear Encoded by': null,
+        'Type of Specimen': 'Isolates',
+        'Culture Remarks 1': null,
+        'Culture Remarks 2': null,
+        'DST Date Released': null,
+        'DST MT Inoculated': null,
+        'LPA Date Released': null,
+        'Test Requested Gx': false,
+        'Culture DST Status': null,
+        'Culture Encoded by': null,
+        'DST Test Requested': null,
+        'Gx Processing Date': null,
+        'LPA Date Processed': null,
+        'MRF Date Requested': '2019-06-24T00:00:00.000Z',
+        'Registration Group': 'RELAPSE',
+        'Smear Final Result': null,
+        'Test Requested DST': true,
+        'Test Requested LPA': false,
+        'Treatment Category': 'Retreatment',
+        'Treatment Schedule': 'BAS',
+        '(If Others) Specify': null,
+        'Culture Lab Manager': 'Cristina C. Villarico, RMT',
+        'DST Date Inoculated': null,
+        'LPA Date of Release': null,
+        'Smear Date Released': null,
+        'TAT Culture Remarks': null,
+        'Culture Final Result': null,
+        'DST Workbook Remarks': null,
+        'LPA Fluoroquinolones': null,
+        'LPA Isoniazid Result': null,
+        'LPA Mycobacterium Tb': null,
+        'Presumptive DS or DR': 'Presumptive DR-TB',
+        'Requesting Physician': null,
+        'Test Requested Smear': true,
+        'Type of Collection 1': null,
+        'Type of Collection 2': null,
+        'Type of Collection 3': null,
+        'Cat IV Screening Code': null,
+        'Culture Date Released': null,
+        'Culture Result Status': null,
+        'Gx Laboratory Manager': 'Noel G. Macalalad, MD',
+        'LPA Rifampicin Result': null,
+        'DST Method Used Others': null,
+        'Date transfered to DST': null,
+        'Patient Contact Number': null,
+        'Test Requested Culture': true,
+        'Culture Date Inoculated': null,
+        'Facility Contact Number': null,
+        'LPA Aminoglycosides/ SLI': null,
+        'Referring Health Facility': 'Pagsanjan Rural Health Unit',
+        'Smear Only Test Requested': 'DSSM Only',
+        'DST Releasing Form MedTech': null,
+        'Laboratory Registry Remarks': null,
+        'Smear Only Test Requested 2': 'DSSM Only',
+        'DST Releasing Form Lab Manager': 'Cristina C. Villarico, RMT',
+        'DST Releasing Form Released Date': null,
+        'Laboratory Releasing Form Remarks': null,
+        'DSSM&Culture Releasing Form Med Tech': null,
+        'Gx Laboratory Releasing Form Remarks': null,
+        'Laboratory Releasing Form Gx Remarks': null,
+        'DST Laboratory Releasing Form Remarks': null,
+        'Laboratory Releasing Form Smear Remarks': null,
+        'DSSM&Culture Releasing Form Date Released': null,
+        'DSSM&Culture Releasing Form Laboratory Manager':
+          'Cristina C. Villarico, RMT',
+      }
+      const pmdtRecordPayload0014SmearCultureMGITDstSusceptible2Samples = {
+        database: 'PMDT_2020',
+        table: 'NTRL DATABASE',
+        TimeStamp: '262002',
+        'Serial Number': '0014',
+        'Last Name': 'MITCHEL',
+        'First Name': 'LEE',
+        'Middle Initial': 'M.',
+        Address: 'Bacoor Cavite',
+        'Referring Health Facility':
+          'Some unknown health facility with a really really really really looooooong name',
+        'Culture Center': 'NTRL',
+        'Cat IV Screening Code': null,
+        'MRF Date Requested': '2020-01-06T00:00:00.000Z',
+        Age: 33,
+        Sex: 'Male',
+        'DST Center': 'NTRL',
+        'Requesting Physician': 'Dr. Veto',
+        'Treatment Schedule': 'BAS',
+        'Month of tx': null,
+        Enrolled: null,
+        'Registration Group': 'PTOU',
+        'Treatment Category': 'Retreatment',
+        'Type of Specimen': null,
+        '(If Others) Specify': null,
+        Site: 'Pulmonary',
+        'Test Requested Smear': true,
+        'Test Requested Culture': true,
+        'Test Requested DST': false,
+        'Test Requested LPA': false,
+        'Test Requested Gx': false,
+        'Date transfered to DST': null,
+        'Presumptive DS or DR': null,
+        'Lab No 1': 'N-20-0014',
+        'Date Collected 1': '2020-01-05T00:00:00.000Z',
+        'Date Collected 2': '2020-01-05T00:00:00.000Z',
+        'Date Collected 3': null,
+        'Type of Collection 1': null,
+        'Type of Collection 2': null,
+        'Type of Collection 3': null,
+        'Volume 1': '3ML',
+        'Volume 2': '3ML',
+        'Volume 3': null,
+        'Consistency 1': 'MP',
+        'Consistency 2': 'MP',
+        'Consistence 3': null,
+        'Prepared by': null,
+        'Date Received': '2020-01-08T00:00:00.000Z',
+        'Encoded By': 'JENNY BRIONES',
+        'Date Encoded': '2020-01-08T00:00:00.000Z',
+        'Smear Method': 'Fluorescence Microscopy',
+        'Smear Method 2': null,
+        'Smear Result 1': '2+',
+        'Smear Result 2': '1+',
+        'Smear Final Result': 'POSITIVE FOR Acid Fast Bacilli',
+        'Smear Date Released': '2020-01-14T00:00:00.000Z',
+        'Smear Only Test Requested': 'DSSM Only',
+        'Smear Only Test Requested 2': 'DSSM Only',
+        'Smear TAT': null,
+        'Smear Lab Tech': 'Kevin Joshua A. Alonzo, RMT',
+        'Smear Encoded by': 'Kevin Joshua A. Alonzo, RMT',
+        'Culture Date Inoculated': null,
+        'Culture Med Tech': null,
+        'Culture Result Status': null,
+        'Culture DST Status': null,
+        'Culture Method': 'Liquid Culture(MGIT)',
+        'Culture Method 2': null,
+        'Culture Result 1': 'M. tuberculosis',
+        'Culture Grade 1': null,
+        'Culture Result 2': 'M. tuberculosis',
+        'Culture Grade 2': null,
+        'Culture Final Result': 'M. tuberculosis',
+        'Culture Date Released': '2020-02-05T00:00:00.000Z',
+        'Culture Encoded by': 'Krissha Mae P. Marfil, RMT',
+        'Culture Lab Tech': 'Krissha Mae P. Marfil, RMT',
+        'Culture TAT': null,
+        'Culture Lab Manager': 'Ma. Cecilia G. Ama, MD',
+        'Culture Remarks 1': null,
+        'Culture Remarks 2': null,
+        'TAT Culture Remarks': null,
+        'DSSM&Culture Releasing Form Med Tech': null,
+        'DSSM&Culture Releasing Form Date Released': null,
+        'DSSM&Culture Releasing Form Laboratory Manager':
+          'Cristina C. Villarico, RMT',
+        'DST ID Result': null,
+        'DST Date Inoculated': null,
+        'DST MT Inoculated': null,
+        Streptomycin: 'SUSCEPTIBLE',
+        Isoniazid: 'SUSCEPTIBLE',
+        Rifampicin: 'SUSCEPTIBLE',
+        Ethambutol: 'SUSCEPTIBLE',
+        Kanamycin: null,
+        Levofloxacin: null,
+        Amikacin: null,
+        Capreomycin: null,
+        Pyrazinamide: 'SUSCEPTIBLE',
+        Ofloxacin: null,
+        Ciprofloxacin: null,
+        'DST Date Read': null,
+        'DST MT Read': null,
+        'DST Date Released': '2020-02-05T00:00:00.000Z',
+        'DST Lab Tech': 'Roeus Vincent Arjay G. Reyes, RMT',
+        'DST TAT': null,
+        'DST Test Requested': 'FLD DST',
+        'DST Laboratory Releasing Form Remarks': null,
+        'DST Releasing Form MedTech': null,
+        'DST Releasing Form Released Date': null,
+        'DST Releasing Form Lab Manager': 'Ma. Cecilia G. Ama, MD',
+        'DST Method Used': 'Liquid Culture (MGIT 960)',
+        'DST Method Used Others': null,
+        'DST Workbook Remarks': null,
+        'DST Remarks': null,
+        'DST Encoded by': 'Krissha Mae P. Marfil, RMT',
+        'Gx Processing Date': null,
+        'Gx MTB': null,
+        'Gx Rifampicin': null,
+        'Gx Date Released': null,
+        'Gx Examiner': null,
+        'Gx TAT': null,
+        'Gx Laboratory Manager': 'Noel G. Macalalad, MD',
+        'Gx Center': null,
+        'Gx Laboratory Releasing Form Remarks': null,
+        'LPA Male': false,
+        'Gx Remarks': null,
+        'TB Case Number': null,
+        'LPA Kit Used': null,
+        'LPA Kit Others': null,
+        'LPA Date Processed': null,
+        'LPA MTB Complex': null,
+        'LPA Isoniazid Result': null,
+        'LPA Rifampicin': null,
+        'LPA Isoniazid': null,
+        'LPA Rifampicin Result': null,
+        'LPA Date Released': null,
+        'LPA Ethambutol': null,
+        'LPA Examiner': null,
+        'LPA Fluoroquinolones': null,
+        'LPA Aminoglycosides/ SLI': null,
+        'LPA Mycobacterium Tb': null,
+        'LPA Lab Manager': 'Noel G. Macalalad, MD',
+        'LPA Remarks:': null,
+        'LPA Center': null,
+        'LPA Performed By': null,
+        'LPA Reviewed By': null,
+        'LPA Date of Release': null,
+        'LPA Remarks': null,
+        'LPA TAT': null,
+        'Laboratory Releasing Form Remarks': null,
+        'Laboratory Releasing Form Gx Remarks': null,
+        'Laboratory Releasing Form Smear Remarks': null,
+        'Laboratory Registry Remarks': null,
+        'Facility Contact Number': null,
+        'Patient Contact Number': null,
+        'Date Dispatch': null,
+      }
+      const pmdtRecordPayload0015SmearCultureMGITDstContaminated2Samples = {
+        database: 'PMDT_2020',
+        table: 'NTRL DATABASE',
+        TimeStamp: '262003',
+        'Serial Number': '0015',
+        'Last Name': null,
+        'First Name': null,
+        'Middle Initial': null,
+        Address: 'Bacoor Cavite',
+        'Referring Health Facility': 'antipolo city health office',
+        'Culture Center': 'NTRL',
+        'Cat IV Screening Code': null,
+        'MRF Date Requested': '2020-01-30T00:00:00.000Z',
+        Age: 1,
+        Sex: 'Female',
+        'DST Center': 'NTRL',
+        'Requesting Physician': 'Dr. Veto',
+        'Treatment Schedule': 'BAS',
+        'Month of tx': null,
+        Enrolled: null,
+        'Registration Group': 'PTOU',
+        'Treatment Category': 'Retreatment',
+        'Type of Specimen': null,
+        '(If Others) Specify': null,
+        Site: 'Pulmonary',
+        'Test Requested Smear': true,
+        'Test Requested Culture': true,
+        'Test Requested DST': false,
+        'Test Requested LPA': false,
+        'Test Requested Gx': false,
+        'Date transfered to DST': null,
+        'Presumptive DS or DR': null,
+        'Lab No 1': 'N-20-0014',
+        'Date Collected 1': '2020-01-05T00:00:00.000Z',
+        'Date Collected 2': '2020-01-05T00:00:00.000Z',
+        'Date Collected 3': null,
+        'Type of Collection 1': null,
+        'Type of Collection 2': null,
+        'Type of Collection 3': null,
+        'Volume 1': '3ML',
+        'Volume 2': '3ML',
+        'Volume 3': null,
+        'Consistency 1': 'MP',
+        'Consistency 2': 'MP',
+        'Consistence 3': null,
+        'Prepared by': null,
+        'Date Received': '2020-01-08T00:00:00.000Z',
+        'Encoded By': 'JENNY BRIONES',
+        'Date Encoded': '2020-01-08T00:00:00.000Z',
+        'Smear Method': 'Fluorescence Microscopy',
+        'Smear Method 2': null,
+        'Smear Result 1': '2+',
+        'Smear Result 2': '1+',
+        'Smear Final Result': 'POSITIVE FOR Acid Fast Bacilli',
+        'Smear Date Released': '2020-01-14T00:00:00.000Z',
+        'Smear Only Test Requested': 'DSSM Only',
+        'Smear Only Test Requested 2': 'DSSM Only',
+        'Smear TAT': null,
+        'Smear Lab Tech': 'Kevin Joshua A. Alonzo, RMT',
+        'Smear Encoded by': 'Kevin Joshua A. Alonzo, RMT',
+        'Culture Date Inoculated': null,
+        'Culture Med Tech': null,
+        'Culture Result Status': null,
+        'Culture DST Status': null,
+        'Culture Method': 'Liquid Culture(MGIT)',
+        'Culture Method 2': null,
+        'Culture Result 1': 'M. tuberculosis',
+        'Culture Grade 1': null,
+        'Culture Result 2': 'M. tuberculosis',
+        'Culture Grade 2': null,
+        'Culture Final Result': 'M. tuberculosis',
+        'Culture Date Released': '2020-02-05T00:00:00.000Z',
+        'Culture Encoded by': 'Krissha Mae P. Marfil, RMT',
+        'Culture Lab Tech': 'Krissha Mae P. Marfil, RMT',
+        'Culture TAT': null,
+        'Culture Lab Manager': 'Ma. Cecilia G. Ama, MD',
+        'Culture Remarks 1': null,
+        'Culture Remarks 2': null,
+        'TAT Culture Remarks': null,
+        'DSSM&Culture Releasing Form Med Tech': null,
+        'DSSM&Culture Releasing Form Date Released': null,
+        'DSSM&Culture Releasing Form Laboratory Manager':
+          'Cristina C. Villarico, RMT',
+        'DST ID Result': null,
+        'DST Date Inoculated': null,
+        'DST MT Inoculated': null,
+        Streptomycin: 'CONTAMINATED',
+        Isoniazid: 'SUSCEPTIBLE',
+        Rifampicin: 'SUSCEPTIBLE',
+        Ethambutol: 'SUSCEPTIBLE',
+        Kanamycin: null,
+        Levofloxacin: null,
+        Amikacin: null,
+        Capreomycin: null,
+        Pyrazinamide: 'SUSCEPTIBLE',
+        Ofloxacin: null,
+        Ciprofloxacin: null,
+        'DST Date Read': null,
+        'DST MT Read': null,
+        'DST Date Released': '2020-02-05T00:00:00.000Z',
+        'DST Lab Tech': 'Roeus Vincent Arjay G. Reyes, RMT',
+        'DST TAT': null,
+        'DST Test Requested': 'FLD DST',
+        'DST Laboratory Releasing Form Remarks': null,
+        'DST Releasing Form MedTech': null,
+        'DST Releasing Form Released Date': null,
+        'DST Releasing Form Lab Manager': 'Ma. Cecilia G. Ama, MD',
+        'DST Method Used': 'Liquid Culture (MGIT 960)',
+        'DST Method Used Others': null,
+        'DST Workbook Remarks': null,
+        'DST Remarks': null,
+        'DST Encoded by': 'Krissha Mae P. Marfil, RMT',
+        'Gx Processing Date': null,
+        'Gx MTB': null,
+        'Gx Rifampicin': null,
+        'Gx Date Released': null,
+        'Gx Examiner': null,
+        'Gx TAT': null,
+        'Gx Laboratory Manager': 'Noel G. Macalalad, MD',
+        'Gx Center': null,
+        'Gx Laboratory Releasing Form Remarks': null,
+        'LPA Male': false,
+        'Gx Remarks': null,
+        'TB Case Number': null,
+        'LPA Kit Used': null,
+        'LPA Kit Others': null,
+        'LPA Date Processed': null,
+        'LPA MTB Complex': null,
+        'LPA Isoniazid Result': null,
+        'LPA Rifampicin': null,
+        'LPA Isoniazid': null,
+        'LPA Rifampicin Result': null,
+        'LPA Date Released': null,
+        'LPA Ethambutol': null,
+        'LPA Examiner': null,
+        'LPA Fluoroquinolones': null,
+        'LPA Aminoglycosides/ SLI': null,
+        'LPA Mycobacterium Tb': null,
+        'LPA Lab Manager': 'Noel G. Macalalad, MD',
+        'LPA Remarks:': null,
+        'LPA Center': null,
+        'LPA Performed By': null,
+        'LPA Reviewed By': null,
+        'LPA Date of Release': null,
+        'LPA Remarks': null,
+        'LPA TAT': null,
+        'Laboratory Releasing Form Remarks': null,
+        'Laboratory Releasing Form Gx Remarks': null,
+        'Laboratory Releasing Form Smear Remarks': null,
+        'Laboratory Registry Remarks': null,
+        'Facility Contact Number': null,
+        'Patient Contact Number': null,
+        'Date Dispatch': null,
+      }
+      const pmdtRecordPayload0016SmearCultureMGITDstResistant2Samples = {
+        database: 'PMDT_2020',
+        table: 'NTRL DATABASE',
+        TimeStamp: '262004',
+        'Serial Number': '0016',
+        'Last Name': null,
+        'First Name': null,
+        'Middle Initial': null,
+        Address: 'Bacoor Cavite',
+        'Referring Health Facility': null,
+        'Culture Center': 'NTRL',
+        'Cat IV Screening Code': null,
+        'MRF Date Requested': '2020-01-30T00:00:00.000Z',
+        Age: 1,
+        Sex: 'Female',
+        'DST Center': 'NTRL',
+        'Requesting Physician': 'Dr. Veto',
+        'Treatment Schedule': 'BAS',
+        'Month of tx': null,
+        Enrolled: null,
+        'Registration Group': 'PTOU',
+        'Treatment Category': 'Retreatment',
+        'Type of Specimen': null,
+        '(If Others) Specify': null,
+        Site: 'Pulmonary',
+        'Test Requested Smear': true,
+        'Test Requested Culture': true,
+        'Test Requested DST': false,
+        'Test Requested LPA': false,
+        'Test Requested Gx': false,
+        'Date transfered to DST': null,
+        'Presumptive DS or DR': null,
+        'Lab No 1': null,
+        'Date Collected 1': '2020-01-05T00:00:00.000Z',
+        'Date Collected 2': '2020-01-05T00:00:00.000Z',
+        'Date Collected 3': null,
+        'Type of Collection 1': null,
+        'Type of Collection 2': null,
+        'Type of Collection 3': null,
+        'Volume 1': '3ML',
+        'Volume 2': '3ML',
+        'Volume 3': null,
+        'Consistency 1': 'MP',
+        'Consistency 2': 'MP',
+        'Consistence 3': null,
+        'Prepared by': null,
+        'Date Received': '2020-01-08T00:00:00.000Z',
+        'Encoded By': 'JENNY BRIONES',
+        'Date Encoded': '2020-01-08T00:00:00.000Z',
+        'Smear Method': 'Fluorescence Microscopy',
+        'Smear Method 2': null,
+        'Smear Result 1': '2+',
+        'Smear Result 2': '1+',
+        'Smear Final Result': 'POSITIVE FOR Acid Fast Bacilli',
+        'Smear Date Released': '2020-01-14T00:00:00.000Z',
+        'Smear Only Test Requested': 'DSSM Only',
+        'Smear Only Test Requested 2': 'DSSM Only',
+        'Smear TAT': null,
+        'Smear Lab Tech': 'Kevin Joshua A. Alonzo, RMT',
+        'Smear Encoded by': 'Kevin Joshua A. Alonzo, RMT',
+        'Culture Date Inoculated': null,
+        'Culture Med Tech': null,
+        'Culture Result Status': null,
+        'Culture DST Status': null,
+        'Culture Method': 'Liquid Culture(MGIT)',
+        'Culture Method 2': null,
+        'Culture Result 1': 'M. tuberculosis',
+        'Culture Grade 1': null,
+        'Culture Result 2': 'M. tuberculosis',
+        'Culture Grade 2': null,
+        'Culture Final Result': null,
+        'Culture Date Released': '2020-02-05T00:00:00.000Z',
+        'Culture Encoded by': 'Krissha Mae P. Marfil, RMT',
+        'Culture Lab Tech': 'Krissha Mae P. Marfil, RMT',
+        'Culture TAT': null,
+        'Culture Lab Manager': 'Ma. Cecilia G. Ama, MD',
+        'Culture Remarks 1': null,
+        'Culture Remarks 2': null,
+        'TAT Culture Remarks': null,
+        'DSSM&Culture Releasing Form Med Tech': null,
+        'DSSM&Culture Releasing Form Date Released': null,
+        'DSSM&Culture Releasing Form Laboratory Manager':
+          'Cristina C. Villarico, RMT',
+        'DST ID Result': null,
+        'DST Date Inoculated': null,
+        'DST MT Inoculated': null,
+        Streptomycin: 'SUSCEPTIBLE',
+        Isoniazid: 'RESISTANT',
+        Rifampicin: 'SUSCEPTIBLE',
+        Ethambutol: 'SUSCEPTIBLE',
+        Kanamycin: null,
+        Levofloxacin: null,
+        Amikacin: null,
+        Capreomycin: 'RESISTANT',
+        Pyrazinamide: 'SUSCEPTIBLE',
+        Ofloxacin: null,
+        Ciprofloxacin: null,
+        'DST Date Read': null,
+        'DST MT Read': null,
+        'DST Date Released': '2020-02-05T00:00:00.000Z',
+        'DST Lab Tech': 'Roeus Vincent Arjay G. Reyes, RMT',
+        'DST TAT': null,
+        'DST Test Requested': 'FLD DST',
+        'DST Laboratory Releasing Form Remarks': null,
+        'DST Releasing Form MedTech': null,
+        'DST Releasing Form Released Date': null,
+        'DST Releasing Form Lab Manager': 'Ma. Cecilia G. Ama, MD',
+        'DST Method Used': 'Liquid Culture (MGIT 960)',
+        'DST Method Used Others': null,
+        'DST Workbook Remarks': null,
+        'DST Remarks': null,
+        'DST Encoded by': 'Krissha Mae P. Marfil, RMT',
+        'Gx Processing Date': null,
+        'Gx MTB': null,
+        'Gx Rifampicin': null,
+        'Gx Date Released': null,
+        'Gx Examiner': null,
+        'Gx TAT': null,
+        'Gx Laboratory Manager': 'Noel G. Macalalad, MD',
+        'Gx Center': null,
+        'Gx Laboratory Releasing Form Remarks': null,
+        'LPA Male': false,
+        'Gx Remarks': null,
+        'TB Case Number': null,
+        'LPA Kit Used': null,
+        'LPA Kit Others': null,
+        'LPA Date Processed': null,
+        'LPA MTB Complex': null,
+        'LPA Isoniazid Result': null,
+        'LPA Rifampicin': null,
+        'LPA Isoniazid': null,
+        'LPA Rifampicin Result': null,
+        'LPA Date Released': null,
+        'LPA Ethambutol': null,
+        'LPA Examiner': null,
+        'LPA Fluoroquinolones': null,
+        'LPA Aminoglycosides/ SLI': null,
+        'LPA Mycobacterium Tb': null,
+        'LPA Lab Manager': 'Noel G. Macalalad, MD',
+        'LPA Remarks:': null,
+        'LPA Center': null,
+        'LPA Performed By': null,
+        'LPA Reviewed By': null,
+        'LPA Date of Release': null,
+        'LPA Remarks': null,
+        'LPA TAT': null,
+        'Laboratory Releasing Form Remarks': null,
+        'Laboratory Releasing Form Gx Remarks': null,
+        'Laboratory Releasing Form Smear Remarks': null,
+        'Laboratory Registry Remarks': null,
+        'Facility Contact Number': null,
+        'Patient Contact Number': null,
+        'Date Dispatch': null,
+      }
+      const pmdtRecordPayload0017SmearCultureMGITDstResistant2Samples = {
+        database: 'PMDT_2020',
+        table: 'NTRL DATABASE',
+        TimeStamp: '262005',
+        'Serial Number': '0017',
+        'Last Name': null,
+        'First Name': 'Jane',
+        'Middle Initial': null,
+        Address: null,
+        'Referring Health Facility': null,
+        'Culture Center': 'NTRL',
+        'Cat IV Screening Code': null,
+        'MRF Date Requested': '2020-01-30T00:00:00.000Z',
+        Age: 1,
+        Sex: null,
+        'DST Center': 'NTRL',
+        'Requesting Physician': 'Dr. Veto',
+        'Treatment Schedule': 'BAS',
+        'Month of tx': null,
+        Enrolled: null,
+        'Registration Group': 'PTOU',
+        'Treatment Category': 'Retreatment',
+        'Type of Specimen': null,
+        '(If Others) Specify': null,
+        Site: 'Pulmonary',
+        'Test Requested Smear': true,
+        'Test Requested Culture': true,
+        'Test Requested DST': false,
+        'Test Requested LPA': false,
+        'Test Requested Gx': false,
+        'Date transfered to DST': null,
+        'Presumptive DS or DR': null,
+        'Lab No 1': null,
+        'Date Collected 1': '2020-01-05T00:00:00.000Z',
+        'Date Collected 2': '2020-01-05T00:00:00.000Z',
+        'Date Collected 3': null,
+        'Type of Collection 1': null,
+        'Type of Collection 2': null,
+        'Type of Collection 3': null,
+        'Volume 1': '3ML',
+        'Volume 2': '3ML',
+        'Volume 3': null,
+        'Consistency 1': 'MP',
+        'Consistency 2': 'MP',
+        'Consistence 3': null,
+        'Prepared by': null,
+        'Date Received': '2020-01-08T00:00:00.000Z',
+        'Encoded By': 'JENNY BRIONES',
+        'Date Encoded': '2020-01-08T00:00:00.000Z',
+        'Smear Method': 'Fluorescence Microscopy',
+        'Smear Method 2': null,
+        'Smear Result 1': '2+',
+        'Smear Result 2': '1+',
+        'Smear Final Result': 'POSITIVE FOR Acid Fast Bacilli',
+        'Smear Date Released': '2020-01-14T00:00:00.000Z',
+        'Smear Only Test Requested': 'DSSM Only',
+        'Smear Only Test Requested 2': 'DSSM Only',
+        'Smear TAT': null,
+        'Smear Lab Tech': 'Kevin Joshua A. Alonzo, RMT',
+        'Smear Encoded by': 'Kevin Joshua A. Alonzo, RMT',
+        'Culture Date Inoculated': null,
+        'Culture Med Tech': null,
+        'Culture Result Status': null,
+        'Culture DST Status': null,
+        'Culture Method': null,
+        'Culture Method 2': null,
+        'Culture Result 1': null,
+        'Culture Grade 1': null,
+        'Culture Result 2': 'M. tuberculosis',
+        'Culture Grade 2': null,
+        'Culture Final Result': null,
+        'Culture Date Released': '2020-02-05T00:00:00.000Z',
+        'Culture Encoded by': 'Krissha Mae P. Marfil, RMT',
+        'Culture Lab Tech': null,
+        'Culture TAT': null,
+        'Culture Lab Manager': 'Ma. Cecilia G. Ama, MD',
+        'Culture Remarks 1': null,
+        'Culture Remarks 2': null,
+        'TAT Culture Remarks': null,
+        'DSSM&Culture Releasing Form Med Tech': null,
+        'DSSM&Culture Releasing Form Date Released': null,
+        'DSSM&Culture Releasing Form Laboratory Manager':
+          'Cristina C. Villarico, RMT',
+        'DST ID Result': null,
+        'DST Date Inoculated': null,
+        'DST MT Inoculated': null,
+        Streptomycin: 'NOT DONE',
+        Isoniazid: 'NOT DONE',
+        Rifampicin: 'NOT DONE',
+        Ethambutol: 'NOT DONE',
+        Kanamycin: 'NON VIABLE',
+        Levofloxacin: null,
+        Amikacin: null,
+        Capreomycin: 'NOT DONE',
+        Pyrazinamide: 'NOT DONE',
+        Ofloxacin: null,
+        Ciprofloxacin: null,
+        'DST Date Read': null,
+        'DST MT Read': null,
+        'DST Date Released': '2020-02-05T00:00:00.000Z',
+        'DST Lab Tech': 'Roeus Vincent Arjay G. Reyes, RMT',
+        'DST TAT': null,
+        'DST Test Requested': 'FLD DST',
+        'DST Laboratory Releasing Form Remarks': null,
+        'DST Releasing Form MedTech': null,
+        'DST Releasing Form Released Date': null,
+        'DST Releasing Form Lab Manager': 'Ma. Cecilia G. Ama, MD',
+        'DST Method Used': 'Liquid Culture (MGIT 960)',
+        'DST Method Used Others': null,
+        'DST Workbook Remarks': null,
+        'DST Remarks': null,
+        'DST Encoded by': 'Krissha Mae P. Marfil, RMT',
+        'Gx Processing Date': null,
+        'Gx MTB': null,
+        'Gx Rifampicin': null,
+        'Gx Date Released': null,
+        'Gx Examiner': null,
+        'Gx TAT': null,
+        'Gx Laboratory Manager': 'Noel G. Macalalad, MD',
+        'Gx Center': null,
+        'Gx Laboratory Releasing Form Remarks': null,
+        'LPA Male': false,
+        'Gx Remarks': null,
+        'TB Case Number': null,
+        'LPA Kit Used': null,
+        'LPA Kit Others': null,
+        'LPA Date Processed': null,
+        'LPA MTB Complex': null,
+        'LPA Isoniazid Result': null,
+        'LPA Rifampicin': null,
+        'LPA Isoniazid': null,
+        'LPA Rifampicin Result': null,
+        'LPA Date Released': null,
+        'LPA Ethambutol': null,
+        'LPA Examiner': null,
+        'LPA Fluoroquinolones': null,
+        'LPA Aminoglycosides/ SLI': null,
+        'LPA Mycobacterium Tb': null,
+        'LPA Lab Manager': 'Noel G. Macalalad, MD',
+        'LPA Remarks:': null,
+        'LPA Center': null,
+        'LPA Performed By': null,
+        'LPA Reviewed By': null,
+        'LPA Date of Release': null,
+        'LPA Remarks': null,
+        'LPA TAT': null,
+        'Laboratory Releasing Form Remarks': null,
+        'Laboratory Releasing Form Gx Remarks': null,
+        'Laboratory Releasing Form Smear Remarks': null,
+        'Laboratory Registry Remarks': null,
+        'Facility Contact Number': null,
+        'Patient Contact Number': null,
+        'Date Dispatch': null,
+      }
+      const pmdtRecordPayload0018SmearCultureDstResistant2Samples = {
+        database: 'PMDT_2020',
+        table: 'NTRL DATABASE',
+        TimeStamp: '262005',
+        'Serial Number': '0018',
+        'Last Name': null,
+        'First Name': 'Jane',
+        'Middle Initial': null,
+        Address: 'Bacoor Cavite',
+        'Referring Health Facility': null,
+        'Culture Center': 'NTRL',
+        'Cat IV Screening Code': null,
+        'MRF Date Requested': '2020-01-30T00:00:00.000Z',
+        Age: 1,
+        Sex: null,
+        'DST Center': 'NTRL',
+        'Requesting Physician': 'Dr. Veto',
+        'Treatment Schedule': 'BAS',
+        'Month of tx': null,
+        Enrolled: null,
+        'Registration Group': 'PTOU',
+        'Treatment Category': 'Retreatment',
+        'Type of Specimen': null,
+        '(If Others) Specify': null,
+        Site: 'Pulmonary',
+        'Test Requested Smear': true,
+        'Test Requested Culture': true,
+        'Test Requested DST': false,
+        'Test Requested LPA': false,
+        'Test Requested Gx': false,
+        'Date transfered to DST': null,
+        'Presumptive DS or DR': null,
+        'Lab No 1': null,
+        'Date Collected 1': '2020-01-05T00:00:00.000Z',
+        'Date Collected 2': '2020-01-05T00:00:00.000Z',
+        'Date Collected 3': null,
+        'Type of Collection 1': null,
+        'Type of Collection 2': null,
+        'Type of Collection 3': null,
+        'Volume 1': '3ML',
+        'Volume 2': '3ML',
+        'Volume 3': null,
+        'Consistency 1': 'MP',
+        'Consistency 2': 'MP',
+        'Consistence 3': null,
+        'Prepared by': null,
+        'Date Received': '2020-01-08T00:00:00.000Z',
+        'Encoded By': 'JENNY BRIONES',
+        'Date Encoded': '2020-01-08T00:00:00.000Z',
+        'Smear Method': 'Fluorescence Microscopy',
+        'Smear Method 2': null,
+        'Smear Result 1': '2+',
+        'Smear Result 2': '1+',
+        'Smear Final Result': 'POSITIVE FOR Acid Fast Bacilli',
+        'Smear Date Released': '2020-01-14T00:00:00.000Z',
+        'Smear Only Test Requested': 'DSSM Only',
+        'Smear Only Test Requested 2': 'DSSM Only',
+        'Smear TAT': null,
+        'Smear Lab Tech': 'Kevin Joshua A. Alonzo, RMT',
+        'Smear Encoded by': 'Kevin Joshua A. Alonzo, RMT',
+        'Culture Date Inoculated': null,
+        'Culture Med Tech': null,
+        'Culture Result Status': null,
+        'Culture DST Status': null,
+        'Culture Method': null,
+        'Culture Method 2': null,
+        'Culture Result 1': null,
+        'Culture Grade 1': null,
+        'Culture Result 2': 'M. tuberculosis',
+        'Culture Grade 2': null,
+        'Culture Final Result': null,
+        'Culture Date Released': '2020-02-05T00:00:00.000Z',
+        'Culture Encoded by': 'Krissha Mae P. Marfil, RMT',
+        'Culture Lab Tech': null,
+        'Culture TAT': null,
+        'Culture Lab Manager': 'Ma. Cecilia G. Ama, MD',
+        'Culture Remarks 1': null,
+        'Culture Remarks 2': null,
+        'TAT Culture Remarks': null,
+        'DSSM&Culture Releasing Form Med Tech': null,
+        'DSSM&Culture Releasing Form Date Released': null,
+        'DSSM&Culture Releasing Form Laboratory Manager':
+          'Cristina C. Villarico, RMT',
+        'DST ID Result': null,
+        'DST Date Inoculated': null,
+        'DST MT Inoculated': null,
+        Streptomycin: 'NOT DONE',
+        Isoniazid: 'NOT DONE',
+        Rifampicin: 'NOT DONE',
+        Ethambutol: 'NOT DONE',
+        Kanamycin: 'NON VIABLE',
+        Levofloxacin: null,
+        Amikacin: null,
+        Capreomycin: 'NOT DONE',
+        Pyrazinamide: 'NOT DONE',
+        Ofloxacin: null,
+        Ciprofloxacin: null,
+        'DST Date Read': null,
+        'DST MT Read': null,
+        'DST Date Released': '2020-02-05T00:00:00.000Z',
+        'DST Lab Tech': 'Roeus Vincent Arjay G. Reyes, RMT',
+        'DST TAT': null,
+        'DST Test Requested': 'FLD DST',
+        'DST Laboratory Releasing Form Remarks': null,
+        'DST Releasing Form MedTech': null,
+        'DST Releasing Form Released Date': null,
+        'DST Releasing Form Lab Manager': 'Ma. Cecilia G. Ama, MD',
+        'DST Method Used': null,
+        'DST Method Used Others': null,
+        'DST Workbook Remarks': null,
+        'DST Remarks': null,
+        'DST Encoded by': 'Krissha Mae P. Marfil, RMT',
+        'Gx Processing Date': null,
+        'Gx MTB': null,
+        'Gx Rifampicin': null,
+        'Gx Date Released': null,
+        'Gx Examiner': null,
+        'Gx TAT': null,
+        'Gx Laboratory Manager': 'Noel G. Macalalad, MD',
+        'Gx Center': null,
+        'Gx Laboratory Releasing Form Remarks': null,
+        'LPA Male': false,
+        'Gx Remarks': null,
+        'TB Case Number': null,
+        'LPA Kit Used': null,
+        'LPA Kit Others': null,
+        'LPA Date Processed': null,
+        'LPA MTB Complex': null,
+        'LPA Isoniazid Result': null,
+        'LPA Rifampicin': null,
+        'LPA Isoniazid': null,
+        'LPA Rifampicin Result': null,
+        'LPA Date Released': null,
+        'LPA Ethambutol': null,
+        'LPA Examiner': null,
+        'LPA Fluoroquinolones': null,
+        'LPA Aminoglycosides/ SLI': null,
+        'LPA Mycobacterium Tb': null,
+        'LPA Lab Manager': 'Noel G. Macalalad, MD',
+        'LPA Remarks:': null,
+        'LPA Center': null,
+        'LPA Performed By': null,
+        'LPA Reviewed By': null,
+        'LPA Date of Release': null,
+        'LPA Remarks': null,
+        'LPA TAT': null,
+        'Laboratory Releasing Form Remarks': null,
+        'Laboratory Releasing Form Gx Remarks': null,
+        'Laboratory Releasing Form Smear Remarks': null,
+        'Laboratory Registry Remarks': null,
+        'Facility Contact Number': null,
+        'Patient Contact Number': null,
+        'Date Dispatch': null,
+      }
+      const pmdtRecordPayload03694GxPositiveResistant1Sample = {
+        database: 'PMDT',
+        table: 'NTRL DATABASE',
+        TimeStamp: '59575',
+        'Serial Number': '03694',
+        'Last Name': 'Olerowahu',
+        'First Name': 'Gondo',
+        'Middle Initial': null,
+        Address: null,
+        'Referring Health Facility': 'Chung Hua Hosp.',
+        'Culture Center': 'NTRL',
+        'Cat IV Screening Code': null,
+        'MRF Date Requested': '2019-06-07T00:00:00.000Z',
+        Age: 31,
+        Sex: 'Male',
+        'DST Center': 'NTRL',
+        'Requesting Physician': null,
+        'Treatment Schedule': null,
+        'Month of tx': null,
+        Enrolled: null,
+        'Registration Group': 'New',
+        'Treatment Category': 'New',
+        'Type of Specimen': 'Others',
+        '(If Others) Specify': 'ABCESS',
+        Site: 'Extrapulmonary',
+        'Test Requested Smear': false,
+        'Test Requested Culture': false,
+        'Test Requested DST': false,
+        'Test Requested LPA': false,
+        'Test Requested Gx': true,
+        'Date transfered to DST': null,
+        'Presumptive DS or DR': null,
+        'Lab No 1': 'N-19-3694',
+        'Date Collected 1': '2019-06-07T00:00:00.000Z',
+        'Date Collected 2': null,
+        'Date Collected 3': null,
+        'Type of Collection 1': null,
+        'Type of Collection 2': null,
+        'Type of Collection 3': null,
+        'Volume 1': '3ML',
+        'Volume 2': null,
+        'Volume 3': null,
+        'Consistency 1': null,
+        'Consistency 2': null,
+        'Consistence 3': null,
+        'Prepared by': null,
+        'Date Received': '2019-06-17T00:00:00.000Z',
+        'Encoded By': 'Jenny B.  Lasprilla',
+        'Date Encoded': '2019-06-17T00:00:00.000Z',
+        'Smear Method': null,
+        'Smear Method 2': null,
+        'Smear Result 1': null,
+        'Smear Result 2': null,
+        'Smear Final Result': null,
+        'Smear Date Released': null,
+        'Smear Only Test Requested': 'DSSM Only',
+        'Smear Only Test Requested 2': 'DSSM Only',
+        'Smear TAT': null,
+        'Smear Lab Tech': null,
+        'Smear Encoded by': null,
+        'Culture Date Inoculated': null,
+        'Culture Med Tech': null,
+        'Culture Result Status': null,
+        'Culture DST Status': null,
+        'Culture Method': null,
+        'Culture Method 2': null,
+        'Culture Result 1': null,
+        'Culture Grade 1': null,
+        'Culture Result 2': null,
+        'Culture Grade 2': null,
+        'Culture Final Result': null,
+        'Culture Date Released': null,
+        'Culture Encoded by': null,
+        'Culture Lab Tech': null,
+        'Culture TAT': null,
+        'Culture Lab Manager': 'Ma. Cecilia G. Ama, MD',
+        'Culture Remarks 1': null,
+        'Culture Remarks 2': null,
+        'TAT Culture Remarks': null,
+        'DSSM&Culture Releasing Form Med Tech': null,
+        'DSSM&Culture Releasing Form Date Released': null,
+        'DSSM&Culture Releasing Form Laboratory Manager':
+          'Ma. Cecilia G. Ama, MD',
+        'DST ID Result': null,
+        'DST Date Inoculated': null,
+        'DST MT Inoculated': null,
+        Streptomycin: null,
+        Isoniazid: null,
+        Rifampicin: null,
+        Ethambutol: null,
+        Kanamycin: null,
+        Levofloxacin: null,
+        Amikacin: null,
+        Capreomycin: null,
+        Pyrazinamide: null,
+        Ofloxacin: null,
+        Ciprofloxacin: null,
+        'DST Date Read': null,
+        'DST MT Read': null,
+        'DST Date Released': null,
+        'DST Lab Tech': null,
+        'DST TAT': null,
+        'DST Test Requested': null,
+        'DST Laboratory Releasing Form Remarks': null,
+        'DST Releasing Form MedTech': null,
+        'DST Releasing Form Released Date': null,
+        'DST Releasing Form Lab Manager': 'Ma. Cecilia G. Ama, MD',
+        'DST Method Used': null,
+        'DST Method Used Others': null,
+        'DST Workbook Remarks': null,
+        'DST Remarks': null,
+        'DST Encoded by': null,
+        'Gx Processing Date': '2019-06-19T00:00:00.000Z',
+        'Gx MTB': 'POSITIVE',
+        'Gx Rifampicin': 'RESISTANT',
+        'Gx Date Released': '2019-06-20T00:00:00.000Z',
+        'Gx Examiner': 'Kevin Joshua A. Alonzo, RMT',
+        'Gx TAT': null,
+        'Gx Laboratory Manager': 'Noel G. Macalalad, MD',
+        'Gx Center': null,
+        'Gx Laboratory Releasing Form Remarks': null,
+        'LPA Male': false,
+        'Gx Remarks': null,
+        'TB Case Number': null,
+        'LPA Kit Used': null,
+        'LPA Kit Others': null,
+        'LPA Date Processed': null,
+        'LPA MTB Complex': null,
+        'LPA Isoniazid Result': null,
+        'LPA Rifampicin': null,
+        'LPA Isoniazid': null,
+        'LPA Rifampicin Result': null,
+        'LPA Date Released': null,
+        'LPA Ethambutol': null,
+        'LPA Examiner': null,
+        'LPA Fluoroquinolones': null,
+        'LPA Aminoglycosides/ SLI': null,
+        'LPA Mycobacterium Tb': null,
+        'LPA Lab Manager': 'Noel G. Macalalad, MD',
+        'LPA Remarks:': null,
+        'LPA Center': null,
+        'LPA Performed By': null,
+        'LPA Reviewed By': null,
+        'LPA Date of Release': null,
+        'LPA Remarks': null,
+        'LPA TAT': null,
+        'Laboratory Releasing Form Remarks': null,
+        'Laboratory Releasing Form Gx Remarks': null,
+        'Laboratory Releasing Form Smear Remarks': null,
+        'Laboratory Registry Remarks': null,
+      }
+      const pmdtRecordPayload03695GxPositiveResistant1Sample = {
+        database: 'PMDT',
+        table: 'NTRL DATABASE',
+        TimeStamp: '59576',
+        'Serial Number': '03695',
+        'Last Name': 'Snyman',
+        'First Name': 'Phillip',
+        'Middle Initial': null,
+        Address: null,
+        'Referring Health Facility': 'New facility',
+        'Culture Center': 'NTRL',
+        'Cat IV Screening Code': null,
+        'MRF Date Requested': '2019-06-07T00:00:00.000Z',
+        Age: 10,
+        Sex: 'Male',
+        'DST Center': 'NTRL',
+        'Requesting Physician': null,
+        'Treatment Schedule': null,
+        'Month of tx': null,
+        Enrolled: null,
+        'Registration Group': 'New',
+        'Treatment Category': 'New',
+        'Type of Specimen': 'Others',
+        '(If Others) Specify': 'ABCESS',
+        Site: 'Extrapulmonary',
+        'Test Requested Smear': false,
+        'Test Requested Culture': false,
+        'Test Requested DST': false,
+        'Test Requested LPA': false,
+        'Test Requested Gx': true,
+        'Date transfered to DST': null,
+        'Presumptive DS or DR': null,
+        'Lab No 1': 'N-19-3694',
+        'Date Collected 1': '2019-06-07T00:00:00.000Z',
+        'Date Collected 2': null,
+        'Date Collected 3': null,
+        'Type of Collection 1': null,
+        'Type of Collection 2': null,
+        'Type of Collection 3': null,
+        'Volume 1': '3ML',
+        'Volume 2': null,
+        'Volume 3': null,
+        'Consistency 1': null,
+        'Consistency 2': null,
+        'Consistence 3': null,
+        'Prepared by': null,
+        'Date Received': '2019-06-17T00:00:00.000Z',
+        'Encoded By': 'Jenny B.  Lasprilla',
+        'Date Encoded': '2019-06-17T00:00:00.000Z',
+        'Smear Method': null,
+        'Smear Method 2': null,
+        'Smear Result 1': null,
+        'Smear Result 2': null,
+        'Smear Final Result': null,
+        'Smear Date Released': null,
+        'Smear Only Test Requested': 'DSSM Only',
+        'Smear Only Test Requested 2': 'DSSM Only',
+        'Smear TAT': null,
+        'Smear Lab Tech': null,
+        'Smear Encoded by': null,
+        'Culture Date Inoculated': null,
+        'Culture Med Tech': null,
+        'Culture Result Status': null,
+        'Culture DST Status': null,
+        'Culture Method': null,
+        'Culture Method 2': null,
+        'Culture Result 1': null,
+        'Culture Grade 1': null,
+        'Culture Result 2': null,
+        'Culture Grade 2': null,
+        'Culture Final Result': null,
+        'Culture Date Released': null,
+        'Culture Encoded by': null,
+        'Culture Lab Tech': null,
+        'Culture TAT': null,
+        'Culture Lab Manager': 'Ma. Cecilia G. Ama, MD',
+        'Culture Remarks 1': null,
+        'Culture Remarks 2': null,
+        'TAT Culture Remarks': null,
+        'DSSM&Culture Releasing Form Med Tech': null,
+        'DSSM&Culture Releasing Form Date Released': null,
+        'DSSM&Culture Releasing Form Laboratory Manager':
+          'Ma. Cecilia G. Ama, MD',
+        'DST ID Result': null,
+        'DST Date Inoculated': null,
+        'DST MT Inoculated': null,
+        Streptomycin: null,
+        Isoniazid: null,
+        Rifampicin: null,
+        Ethambutol: null,
+        Kanamycin: null,
+        Levofloxacin: null,
+        Amikacin: null,
+        Capreomycin: null,
+        Pyrazinamide: null,
+        Ofloxacin: null,
+        Ciprofloxacin: null,
+        'DST Date Read': null,
+        'DST MT Read': null,
+        'DST Date Released': null,
+        'DST Lab Tech': null,
+        'DST TAT': null,
+        'DST Test Requested': null,
+        'DST Laboratory Releasing Form Remarks': null,
+        'DST Releasing Form MedTech': null,
+        'DST Releasing Form Released Date': null,
+        'DST Releasing Form Lab Manager': 'Ma. Cecilia G. Ama, MD',
+        'DST Method Used': null,
+        'DST Method Used Others': null,
+        'DST Workbook Remarks': null,
+        'DST Remarks': null,
+        'DST Encoded by': null,
+        'Gx Processing Date': '2019-06-19T00:00:00.000Z',
+        'Gx MTB': 'POSITIVE',
+        'Gx Rifampicin': 'RESISTANT',
+        'Gx Date Released': '2019-06-20T00:00:00.000Z',
+        'Gx Examiner': 'Kevin Joshua A. Alonzo, RMT',
+        'Gx TAT': null,
+        'Gx Laboratory Manager': 'Noel G. Macalalad, MD',
+        'Gx Center': null,
+        'Gx Laboratory Releasing Form Remarks': null,
+        'LPA Male': false,
+        'Gx Remarks': null,
+        'TB Case Number': null,
+        'LPA Kit Used': null,
+        'LPA Kit Others': null,
+        'LPA Date Processed': null,
+        'LPA MTB Complex': null,
+        'LPA Isoniazid Result': null,
+        'LPA Rifampicin': null,
+        'LPA Isoniazid': null,
+        'LPA Rifampicin Result': null,
+        'LPA Date Released': null,
+        'LPA Ethambutol': null,
+        'LPA Examiner': null,
+        'LPA Fluoroquinolones': null,
+        'LPA Aminoglycosides/ SLI': null,
+        'LPA Mycobacterium Tb': null,
+        'LPA Lab Manager': 'Noel G. Macalalad, MD',
+        'LPA Remarks:': null,
+        'LPA Center': null,
+        'LPA Performed By': null,
+        'LPA Reviewed By': null,
+        'LPA Date of Release': null,
+        'LPA Remarks': null,
+        'LPA TAT': null,
+        'Laboratory Releasing Form Remarks': null,
+        'Laboratory Releasing Form Gx Remarks': null,
+        'Laboratory Releasing Form Smear Remarks': null,
+        'Laboratory Registry Remarks': null,
+      }
+      const pmdtRecordPayloads = [
+        pmdtRecordPayload8442SmearCultureNegative2Samples,
+        pmdtRecordPayload1855LpaRequestedNoResults1Sample,
+        pmdtRecordPayload0494CultureSmearLpaTbPositive2Samples,
+        pmdtRecordPayload0495CultureSmearLpaTbResistant2Samples,
+        pmdtRecordPayload0496CultureSmearLpaInvalid2Samples,
+        pmdtRecordPayload0336CultureNoResults1Sample,
+        pmdtRecordPayload0350CultureNoResults3Samples,
+        pmdtRecordPayload0014SmearCultureMGITDstSusceptible2Samples,
+        pmdtRecordPayload0015SmearCultureMGITDstContaminated2Samples,
+        pmdtRecordPayload0016SmearCultureMGITDstResistant2Samples,
+        pmdtRecordPayload0017SmearCultureMGITDstResistant2Samples,
+        pmdtRecordPayload0018SmearCultureDstResistant2Samples,
+        pmdtRecordPayload03694GxPositiveResistant1Sample,
+        pmdtRecordPayload03695GxPositiveResistant1Sample,
+      ]
+
+      const existingSample = existingSamples['PN-19-8442-1']
+      const existingResultRecords = [
+        {
+          id: 10,
+          assayId: staticDatabaseData.Assay.assayGenericDst,
+          resultData: JSON.stringify({
+            encodedResult: {
+              readBy: null,
+              labTech: null,
+              remarks: null,
+              amikacin: null,
+              dateRead: null,
+              idResult: 'No growth after 8 weeks',
+              encodedBy: null,
+              isoniazid: null,
+              kanamycin: null,
+              ethambutol: null,
+              methodUsed: null,
+              reviewedBy: 'Ma. Cecilia G. Ama, MD',
+              rifampicin: null,
+              capreomycin: null,
+              dateReleased: null,
+              inoculatedBy: null,
+              levofloxacin: null,
+              pyrazinamide: null,
+              streptomycin: null,
+              testRequested: null,
+              dateInoculated: null,
+              otherMethodUsed: null,
+            },
+            testStartDateTime: '2019-08-20T12:13:14.000Z',
+            testEndedDateTime: '2019-08-20T15:16:17.000Z',
+          }),
+          deviceId: databaseRecords.Device.id,
+          externalId: 'NTRL_PN-19-8442-1_DST',
+          senderOperator: 'bryan',
+          endedOn: '2019-08-25T14:53:11.000Z',
+          patientData: '{}',
+          sampleId: existingSample.id,
+          updatedOn: '2019-09-15T08:09:10.123Z',
+          resultCategory1: staticDatabaseData.ResultCategory.Missing,
+          resultWorkflowStatusLogId: 11,
+          errorCode: 'OPEN',
+          notes: '',
+          createdOn: '2019-09-14T08:09:10.123Z',
+        },
+        {
+          id: 11,
+          assayId: staticDatabaseData.Assay.assayCulture,
+          resultData: JSON.stringify({
+            encodedResult: {
+              readBy: null,
+              labTech: null,
+              remarks: null,
+              amikacin: null,
+              dateRead: null,
+              idResult: 'No growth after 8 weeks',
+              encodedBy: null,
+              isoniazid: null,
+              kanamycin: null,
+              ethambutol: null,
+              methodUsed: null,
+              reviewedBy: 'Ma. Cecilia G. Ama, MD',
+              rifampicin: null,
+              capreomycin: null,
+              dateReleased: null,
+              inoculatedBy: null,
+              levofloxacin: null,
+              pyrazinamide: null,
+              streptomycin: null,
+              testRequested: null,
+              dateInoculated: null,
+              otherMethodUsed: null,
+            },
+            testStartDateTime: '2019-08-20T12:13:14.000Z',
+            testEndedDateTime: '2019-08-20T15:16:17.000Z',
+          }),
+          deviceId: databaseRecords.Device.id,
+          externalId: 'NTRL_PN-19-8442-1_CULTURE',
+          senderOperator: 'bryan',
+          endedOn: '2019-08-25T14:53:11.000Z',
+          patientData: '{}',
+          sampleId: existingSample.id,
+          updatedOn: '2019-09-15T08:09:10.123Z',
+          resultCategory1: staticDatabaseData.ResultCategory.Missing,
+          resultWorkflowStatusLogId: 12,
+          errorCode: 'OPEN',
+          notes: '',
+          createdOn: '2019-09-14T08:09:10.123Z',
+        },
+        {
+          id: 12,
+          assayId: staticDatabaseData.Assay.assayCulture,
+          resultData: JSON.stringify({
+            encodedResult: {
+              readBy: null,
+              labTech: null,
+              remarks: null,
+              amikacin: null,
+              dateRead: null,
+              idResult: 'No growth after 8 weeks',
+              encodedBy: null,
+              isoniazid: null,
+              kanamycin: null,
+              ethambutol: null,
+              methodUsed: null,
+              reviewedBy: 'Ma. Cecilia G. Ama, MD',
+              rifampicin: null,
+              capreomycin: null,
+              dateReleased: null,
+              inoculatedBy: null,
+              levofloxacin: null,
+              pyrazinamide: null,
+              streptomycin: null,
+              testRequested: null,
+              dateInoculated: null,
+              otherMethodUsed: null,
+            },
+          }),
+          deviceId: databaseRecords.Device.id,
+          externalId: 'NTRL_PN-19-8442-2_CULTURE',
+          senderOperator: 'bryan',
+          endedOn: '2019-08-26T14:53:11.000Z',
+          patientData: '{}',
+          sampleId: existingSample.id,
+          updatedOn: '2019-09-16T08:09:10.123Z',
+          resultCategory1: staticDatabaseData.ResultCategory.Missing,
+          resultWorkflowStatusLogId: 12,
+          errorCode: 'OPEN',
+          notes: '',
+          createdOn: '2019-09-14T08:09:10.123Z',
+        },
+        {
+          id: 13,
+          assayId: staticDatabaseData.Assay.GxMtbRif,
+          resultData: JSON.stringify({
+            encodedResult: {
+              center: null,
+              processingDate: null,
+              mtb: null,
+              rifampicin: null,
+              remarks: null,
+              dateReleased: null,
+              examiner: 'This should be replaced by the value in the payload',
+              unknownKey:
+                'Value came from some other system and should remain after update',
+              labManager: null,
+            },
+            someExistingResultDataKey:
+              'This value should remain after an update',
+            testStartedOn: '2019-08-20T12:13:14.000Z',
+            testEndedOn: '2019-08-20T15:16:17.000Z',
+          }),
+          deviceId: databaseRecords.Device.id,
+          externalId: 'NTRL_PN-19-03695_GX',
+          senderOperator: 'bryan',
+          patientData: JSON.stringify({
+            someExistingPatientDataKey:
+              'This value should remain after an update',
+          }),
+          sampleId: existingSample.id,
+          updatedOn: '2019-09-16T08:09:10.123Z',
+          resultCategory1: staticDatabaseData.ResultCategory.Missing,
+          resultWorkflowStatusLogId: 12,
+          errorCode: 'OPEN',
+          notes: '',
+          createdOn: '2019-09-14T08:09:10.123Z',
+        },
+      ]
+
+      function setupPhilippinesNTRLPMDTDataProcessorWithSpies(
+        deviceApiKeyToken,
+        payload,
+        existingSamplesInDatabase = existingSamples,
+        existingResultRecordsInDatabase = existingResultRecords
+      ) {
+        const updateSpy = sinon.spy()
+        const insertSpy = sinon.spy()
+        const {
+          PhilippinesNtrlPmdt,
+        } = mockOutPhilippinesNTRLDatabaseProcessors(
+          existingSamplesInDatabase,
+          existingResultRecordsInDatabase,
+          updateSpy,
+          insertSpy
+        )
+        const philippinesNTRLPMDT = new PhilippinesNtrlPmdt(
+          {
+            auth: { credentials: { token: deviceApiKeyToken } },
+            plugins: { rawPayload: 'the raw message' },
+            payload,
+          },
+          { dispatch: () => {} }
+        )
+        return {
+          updateSpy,
+          insertSpy,
+          philippinesNTRLPMDT,
+        }
+      }
+
+      function getNtrlLabRequestIdFromPayload(payload) {
+        const labRequestIdPrefix =
+          payload.database === 'PMDT'
+            ? 'PN-19-'
+            : `PN-${payload.database.substr(payload.database.length - 2)}-`
+        return `${labRequestIdPrefix}${payload['Serial Number']}`
+      }
+
+      function generatePatientDataFromPMDTPayload(payload) {
+        let patientNameId = payload['Last Name'] || ''
+        if (payload['First Name']) {
+          if (patientNameId) {
+            patientNameId += ', '
+          }
+          patientNameId += payload['First Name']
+        }
+        if (patientNameId && payload['Middle Initial']) {
+          patientNameId += ` ${payload['Middle Initial']}`
+        }
+        const ntrlLabRequestId = getNtrlLabRequestIdFromPayload(payload)
+        return {
+          id:
+            payload['TB Case Number'] ||
+            patientNameId ||
+            payload['Lab No 1'] ||
+            ntrlLabRequestId,
+          serialNumber: payload['Serial Number'],
+          mrfDateRequested: payload['MRF Date Requested'],
+          referringHealthFacility: payload['Referring Health Facility'],
+          requestingPhysician: payload['Requesting Physician'],
+          facilityContactNumber: payload['Facility Contact Number'],
+          lastName: payload['Last Name'],
+          firstName: payload['First Name'],
+          middleInitialOrName: payload['Middle Initial'],
+          age: payload.Age,
+          sex: payload.Sex,
+          address: payload.Address,
+          phone: payload['Patient Contact Number'],
+          cultureCenter: payload['Culture Center'],
+          dstCenter: payload['DST Center'],
+          treatmentCategory: payload['Treatment Category'],
+          registrationGroup: payload['Registration Group'],
+          treatmentSchedule: payload['Treatment Schedule'],
+          monthOfTreatment: payload['Month of tx'],
+          typeOfSpecimen: payload['Type of Specimen'],
+          ifOthersSpecify: payload['(If Others) Specify'],
+          site: payload.Site,
+          testRequestedSmear: payload['Test Requested Smear'],
+          testRequestedCulture: payload['Test Requested Culture'],
+          testRequestedDst: payload['Test Requested DST'],
+          testRequestedLpa: payload['Test Requested LPA'],
+          testRequestedGx: payload['Test Requested Gx'],
+          dateTransferedToDst: payload['Date transfered to DST'],
+          cultureMethod: payload['Culture Method'],
+          presumptiveDsOrDr: payload['Presumptive DS or DR'],
+          dateReceived: payload['Date Received'],
+          labNo1: payload['Lab No 1'],
+          tbCaseNumber: payload['TB Case Number'],
+          dateCollected1: payload['Date Collected 1'],
+          dateCollected2: payload['Date Collected 2'],
+          dateCollected3: payload['Date Collected 3'],
+          dateDispatched: payload['Date Dispatch'],
+          volume1: payload['Volume 1'],
+          volume2: payload['Volume 2'],
+          volume3: payload['Volume 3'],
+          consistency1: payload['Consistency 1'],
+          consistency2: payload['Consistency 3'],
+          consistency3: payload['Consistency 4'],
+          encodedBy: payload['Encoded By'],
+          dateEncoded: payload['Date Encoded'],
+          healthCareSystem: 'PMDT',
+        }
+      }
+
+      function getSamplesFromPMDTPayload(payload) {
+        const sampleTypeMapping = {
+          Sputum: 'Sputum',
+          Isolates: 'Isolate',
+          Others: 'Other',
+        }
+        const sampleTypeId =
+          staticDatabaseData.SampleType[
+            sampleTypeMapping[payload['Type of Specimen']] || 'Other'
+          ]
+        const numberOfSamples =
+          !!payload['Date Collected 3'] ||
+          !!payload['Type of Collection 3'] ||
+          !!payload['Volume 3'] ||
+          !!payload['Consistence 3']
+            ? 3
+            : !!payload['Date Collected 2'] ||
+              !!payload['Type of Collection 2'] ||
+              !!payload['Volume 2'] ||
+              !!payload['Consistency 2'] ||
+              !!payload['Smear Method 2'] ||
+              !!payload['Smear Result 2'] ||
+              !!payload['Culture Method 2'] ||
+              !!payload['Culture Result 2'] ||
+              !!payload['Culture Grade 2'] ||
+              !!payload['Culture Remarks 2']
+            ? 2
+            : 1
+        const ntrlLabRequestId = getNtrlLabRequestIdFromPayload(payload)
+        return _.range(1, numberOfSamples + 1).map(sampleNumber => {
+          const sample = {
+            externalId:
+              numberOfSamples > 1
+                ? `${ntrlLabRequestId}-${sampleNumber}`
+                : `${ntrlLabRequestId}`,
+            collectedOn: payload[`Date Collected ${sampleNumber}`],
+            sampleTypeId,
+          }
+          return sample
+        })
+      }
+
+      it('should throw a bad request when the device API key cannot be reconciled with a device', async () => {
+        const {
+          philippinesNTRLPMDT,
+        } = setupPhilippinesNTRLPMDTDataProcessorWithSpies('bad-token', {})
+        await expect(philippinesNTRLPMDT.processRequest()).to.be.rejectedWith(
+          'Invalid device API key: Cannot determine which device this came from'
+        )
+      })
+
+      it('should update device lastSeenOn & updatedOn', async () => {
+        await Promise.each(pmdtRecordPayloads, async pmdtRecordPayload => {
+          const {
+            updateSpy,
+            philippinesNTRLPMDT,
+          } = setupPhilippinesNTRLPMDTDataProcessorWithSpies(
+            'some device API key',
+            pmdtRecordPayload
+          )
+          await philippinesNTRLPMDT.processRequest()
+          const response = await philippinesNTRLPMDT.getResponse()
+          assert.equal(response.deviceId, databaseRecords.Device.id)
+          const updateDeviceCalls = updateSpy
+            .getCalls()
+            .filter(updateCall => updateCall.args[0] === 'Device')
+          expect(updateDeviceCalls).to.have.lengthOf(1)
+          const actualDeviceUpdates = updateDeviceCalls[0].args[1]
+          expect(actualDeviceUpdates).to.containSubset({
+            lastSeenOn: utcNow,
+            updatedOn: utcNow,
+          })
+        })
+      })
+
+      it('should update existing samples', async () => {
+        const {
+          insertSpy,
+          updateSpy,
+          philippinesNTRLPMDT: existingSampleProcessor,
+        } = setupPhilippinesNTRLPMDTDataProcessorWithSpies(
+          'some device API key',
+          pmdtRecordPayload8442SmearCultureNegative2Samples
+        )
+        await existingSampleProcessor.processRequest()
+        const insertSampleCalls = insertSpy
+          .getCalls()
+          .filter(insertCall => insertCall.args[0] === 'Sample')
+        const updateSampleCalls = updateSpy
+          .getCalls()
+          .filter(updateCall => updateCall.args[0] === 'Sample')
+        expect(insertSampleCalls).to.have.lengthOf(0)
+        expect(updateSampleCalls).to.have.lengthOf(2)
+        expect(updateSampleCalls[0].args[1].collectedOn.toISOString()).to.equal(
+          '2019-11-25T00:00:00.000Z'
+        )
+        expect(updateSampleCalls[1].args[1].collectedOn.toISOString()).to.equal(
+          '2019-11-25T00:00:00.000Z'
+        )
+      })
+
+      it('should insert new samples', async () => {
+        const payload = JSON.parse(
+          JSON.stringify(pmdtRecordPayload0494CultureSmearLpaTbPositive2Samples)
+        )
+        const {
+          insertSpy,
+          updateSpy,
+          philippinesNTRLPMDT: newSampleProcessor,
+        } = setupPhilippinesNTRLPMDTDataProcessorWithSpies(
+          'some device API key',
+          payload
+        )
+        await newSampleProcessor.processRequest()
+        const insertSampleCalls = insertSpy
+          .getCalls()
+          .filter(insertCall => insertCall.args[0] === 'Sample')
+        const updateSampleCalls = updateSpy
+          .getCalls()
+          .filter(updateCall => updateCall.args[0] === 'Sample')
+        expect(insertSampleCalls).to.have.lengthOf(2)
+        expect(updateSampleCalls).to.have.lengthOf(0)
+        expect(insertSampleCalls[0].args[1].collectedOn.toISOString()).to.equal(
+          '2020-01-15T00:00:00.000Z'
+        )
+        expect(insertSampleCalls[1].args[1].collectedOn.toISOString()).to.equal(
+          '2020-01-15T00:00:00.000Z'
+        )
+      })
+
+      it('should insert MGIT DST result when DST values are in the record and the DST method used contains the word MGIT', async () => {
+        const payload = JSON.parse(
+          JSON.stringify(
+            pmdtRecordPayload0014SmearCultureMGITDstSusceptible2Samples
+          )
+        )
+        const {
+          insertSpy,
+          philippinesNTRLPMDT: dstResultProcessor,
+        } = setupPhilippinesNTRLPMDTDataProcessorWithSpies(
+          'some device API key',
+          pmdtRecordPayload0014SmearCultureMGITDstSusceptible2Samples
+        )
+        await dstResultProcessor.processRequest()
+        const insertResultCalls = insertSpy
+          .getCalls()
+          .filter(insertCall => insertCall.args[0] === 'Result')
+        const dstResults = insertResultCalls
+          .map(insert => insert.lastArg)
+          .filter(
+            resultInsert =>
+              resultInsert.assayId === staticDatabaseData.Assay.assayBdMgitAst
+          )
+        expect(dstResults).to.have.lengthOf(1)
+        const dstResult = {
+          ...dstResults[0],
+          patientData: JSON.parse(dstResults[0].patientData),
+          resultData: JSON.parse(dstResults[0].resultData),
+          startedOn: dstResults[0].startedOn.toISOString(),
+          endedOn: dstResults[0].endedOn.toISOString(),
+        }
+        const sampleExternalId = getSamplesFromPMDTPayload(payload)[0]
+          .externalId
+        expect(dstResult).to.containSubset({
+          partnerId: databaseRecords.Site.partnerId,
+          geographyId: databaseRecords.Site.geographyId,
+          siteId: databaseRecords.Site.id,
+          deviceId: databaseRecords.DeviceApiKey.deviceId,
+          longitude: databaseRecords.Site.longitude,
+          latitude: databaseRecords.Site.latitude,
+          resultSourceId: staticDatabaseData.resultSourceId,
+          resultTypeId: staticDatabaseData.resultTypeId,
+          resultCategory1: staticDatabaseData.ResultCategory.PositiveMTB,
+          resultCategory2: staticDatabaseData.ResultCategory.Susceptible,
+          patientData: generatePatientDataFromPMDTPayload(payload),
+          externalId: `${databaseRecords.Site.externalId}_${sampleExternalId}_DST`,
+          assayId: staticDatabaseData.Assay.assayBdMgitAst,
+          startedOn:
+            payload['Date transfered to DST'] ||
+            payload['DST Date Read'] ||
+            payload['DST Date Released'],
+          endedOn:
+            payload['DST TAT'] ||
+            payload['DST Date Read'] ||
+            payload['DST Date Released'],
+          resultData: {
+            encodedResult: {
+              testRequested: payload['DST Test Requested'],
+              dateInoculated: payload['DST Date Inoculated'],
+              inoculatedBy: payload['DST MT Inoculated'],
+              idResult:
+                payload['DST ID Result'] || payload['Culture Final Result'], // There is a mis-mapping in the NTRL database that uses the Culture Final Result in the DST result encoding form
+              streptomycin: payload.Streptomycin,
+              isoniazid: payload.Isoniazid,
+              rifampicin: payload.Rifampicin,
+              ethambutol: payload.Ethambutol,
+              pyrazinamide: payload.Pyrazinamide,
+              kanamycin: payload.Kanamycin,
+              levofloxacin: payload.Levofloxacin,
+              amikacin: payload.Amikacin,
+              capreomycin: payload.Capreomycin,
+              methodUsed: payload['DST Method Used'],
+              otherMethodUsed: payload['DST Method Used Others'],
+              remarks: payload['DST Remarks'],
+              dateTransferredToDst: payload['Date transfered to DST'],
+              dstTat: payload['DST TAT'],
+              dateRead: payload['DST Date Read'],
+              dateReleased: payload['DST Date Released'],
+              readBy: payload['DST MT Read'],
+              labTech: payload['DST Lab Tech'],
+              encodedBy: payload['DST Encoded by'],
+              reviewedBy: payload['DST Releasing Form Lab Manager'],
+            },
+          },
+          senderOperator: payload['DST Lab Tech'],
+          reportableSiteId: databaseRecords.Site.id,
+        })
+      })
+
+      it('should insert Culture results when Culture values are in the record', async () => {
+        const payload = JSON.parse(
+          JSON.stringify(
+            pmdtRecordPayload0014SmearCultureMGITDstSusceptible2Samples
+          )
+        )
+        const {
+          insertSpy,
+          philippinesNTRLPMDT: cultureResultProcessor,
+        } = setupPhilippinesNTRLPMDTDataProcessorWithSpies(
+          'some device API key',
+          pmdtRecordPayload0014SmearCultureMGITDstSusceptible2Samples
+        )
+        await cultureResultProcessor.processRequest()
+        const insertResultCalls = insertSpy
+          .getCalls()
+          .filter(insertCall => insertCall.args[0] === 'Result')
+        const cultureResults = insertResultCalls
+          .map(insert => insert.lastArg)
+          .filter(
+            resultInsert =>
+              resultInsert.assayId === staticDatabaseData.Assay.assayBdMgitGnd
+          )
+        expect(cultureResults).to.have.lengthOf(2)
+        const cultureResult1 = {
+          ...cultureResults[0],
+          patientData: JSON.parse(cultureResults[0].patientData),
+          resultData: JSON.parse(cultureResults[0].resultData),
+          startedOn: cultureResults[0].startedOn.toISOString(),
+          endedOn: cultureResults[0].endedOn.toISOString(),
+        }
+        const sample1ExternalId = getSamplesFromPMDTPayload(payload)[0]
+          .externalId
+        expect(cultureResult1).to.containSubset({
+          partnerId: databaseRecords.Site.partnerId,
+          geographyId: databaseRecords.Site.geographyId,
+          siteId: databaseRecords.Site.id,
+          deviceId: databaseRecords.DeviceApiKey.deviceId,
+          longitude: databaseRecords.Site.longitude,
+          latitude: databaseRecords.Site.latitude,
+          resultSourceId: staticDatabaseData.resultSourceId,
+          resultTypeId: staticDatabaseData.resultTypeId,
+          resultCategory1: staticDatabaseData.ResultCategory.PositiveMTB,
+          resultCategory2: staticDatabaseData.ResultCategory.PositiveMTB,
+          patientData: generatePatientDataFromPMDTPayload(payload),
+          externalId: `${databaseRecords.Site.externalId}_${sample1ExternalId}_CULTURE`,
+          assayId: staticDatabaseData.Assay.assayBdMgitGnd,
+          startedOn: payload['Culture Date Released'],
+          endedOn: payload['Culture Date Released'],
+          resultData: {
+            encodedResult: {
+              dateInoculated: payload['Culture Date Inoculated'],
+              medTech: payload['Culture Med Tech'],
+              resultStatus: payload['Culture Result Status'],
+              dstStatus: payload['Culture DST Status'],
+              methodUsed1: payload['Culture Method'],
+              result1: payload['Culture Result 1'],
+              grade1: payload['Culture Grade 1'],
+              result2: payload['Culture Result 2'],
+              grade2: payload['Culture Grade 2'],
+              finalResult: payload['Culture Final Result'],
+              remarks: payload['Culture Remarks 1'],
+              dateReleased: payload['Culture Date Released'],
+              encodedBy: payload['Culture Encoded by'],
+              labTech: payload['Culture Lab Tech'],
+            },
+          },
+          senderOperator:
+            payload['Culture Med Tech'] ||
+            payload['Culture Lab Tech'] ||
+            payload['Culture Encoded by'],
+          reportableSiteId: databaseRecords.Site.id,
+        })
+        const cultureResult2 = {
+          ...cultureResults[1],
+          patientData: JSON.parse(cultureResults[1].patientData),
+          resultData: JSON.parse(cultureResults[1].resultData),
+          startedOn: cultureResults[1].startedOn.toISOString(),
+          endedOn: cultureResults[1].endedOn.toISOString(),
+        }
+        const sample2ExternalId = getSamplesFromPMDTPayload(payload)[1]
+          .externalId
+        expect(cultureResult2).to.containSubset({
+          partnerId: databaseRecords.Site.partnerId,
+          geographyId: databaseRecords.Site.geographyId,
+          siteId: databaseRecords.Site.id,
+          deviceId: databaseRecords.DeviceApiKey.deviceId,
+          longitude: databaseRecords.Site.longitude,
+          latitude: databaseRecords.Site.latitude,
+          resultSourceId: staticDatabaseData.resultSourceId,
+          resultTypeId: staticDatabaseData.resultTypeId,
+          resultCategory1: staticDatabaseData.ResultCategory.PositiveMTB,
+          resultCategory2: staticDatabaseData.ResultCategory.PositiveMTB,
+          patientData: generatePatientDataFromPMDTPayload(payload),
+          externalId: `${databaseRecords.Site.externalId}_${sample2ExternalId}_CULTURE`,
+          assayId: staticDatabaseData.Assay.assayBdMgitGnd,
+          startedOn: payload['Culture Date Released'],
+          endedOn: payload['Culture Date Released'],
+          resultData: {
+            encodedResult: {
+              dateInoculated: payload['Culture Date Inoculated'],
+              medTech: payload['Culture Med Tech'],
+              resultStatus: payload['Culture Result Status'],
+              dstStatus: payload['Culture DST Status'],
+              methodUsed1: payload['Culture Method'],
+              result1: payload['Culture Result 1'],
+              grade1: payload['Culture Grade 1'],
+              result2: payload['Culture Result 2'],
+              grade2: payload['Culture Grade 2'],
+              finalResult: payload['Culture Final Result'],
+              remarks: payload['Culture Remarks 1'],
+              dateReleased: payload['Culture Date Released'],
+              encodedBy: payload['Culture Encoded by'],
+              labTech: payload['Culture Lab Tech'],
+            },
+          },
+          senderOperator:
+            payload['Culture Med Tech'] ||
+            payload['Culture Lab Tech'] ||
+            payload['Culture Encoded by'],
+          reportableSiteId: databaseRecords.Site.id,
+        })
+      })
+
+      it('should update Culture results what where initially sent by a MGIT device', async () => {
+        const payload = JSON.parse(
+          JSON.stringify(
+            pmdtRecordPayload0015SmearCultureMGITDstContaminated2Samples
+          )
+        )
+        const existingSamplesFromMgit = {
+          'PN-20-0015-1': {
+            id: 998,
+            externalId: 'PN-20-0015-1',
+            collectedOn: new Date(2020, 0, 21),
+            sampleTypeId: staticDatabaseData.SampleType.Sputum,
+            originSiteId: null,
+          },
+          'PN-20-0015-2': {
+            id: 999,
+            externalId: 'PN-20-0015-1',
+            collectedOn: new Date(2020, 0, 21),
+            sampleTypeId: staticDatabaseData.SampleType.Sputum,
+            originSiteId: null,
+          },
+        }
+        const existingMgitResults = [
+          {
+            id: 51,
+            assayId: staticDatabaseData.Assay.assayBdMgitGnd,
+            resultData: JSON.stringify({
+              senderName: 'bryan',
+              versionNumber: 2.2,
+              messageDateTime: '2020-02-05T16:53:11.000Z',
+              accessionNumber: 'PN-20-0015-1',
+              isolateNumber: '123',
+              testId: '16',
+              resultTypeCode: 'GND_MGIT',
+              consumableSequenceNumber: '923802938',
+              preliminaryFinalStatus: 'F',
+              testStartDateTime: '2020-01-23T12:13:11.000Z',
+              testEndedDateTime: '2020-02-05T10:11:12.000Z',
+              instrumentType: 'MGIT',
+              protocolLength: '96',
+              instrumentNumber: '2',
+              instrumentLocation: 'A12',
+            }),
+            deviceId: databaseRecords.Device.id,
+            siteId: databaseRecords.Site.id,
+            externalId: `20200123121311_923802938`,
+            senderOperator: 'bryan',
+            endedOn: '2020-02-05T10:11:12.000Z',
+            patientData: '{}',
+            sampleId: existingSamplesFromMgit['PN-20-0015-1'].id,
+            updatedOn: '2020-02-05T16:57:11.000Z',
+            resultCategory1: staticDatabaseData.ResultCategory.PositiveMTB,
+            resultCategory2: staticDatabaseData.ResultCategory.Detected,
+            errorCode: 'OPEN',
+            notes: '',
+            createdOn: '2020-02-05T16:57:11.000Z',
+          },
+        ]
+        const {
+          insertSpy,
+          updateSpy,
+          philippinesNTRLPMDT: cultureResultProcessor,
+        } = setupPhilippinesNTRLPMDTDataProcessorWithSpies(
+          'some device API key',
+          pmdtRecordPayload0015SmearCultureMGITDstContaminated2Samples,
+          existingSamplesFromMgit,
+          existingMgitResults
+        )
+        await cultureResultProcessor.processRequest()
+        const insertResultCalls = insertSpy
+          .getCalls()
+          .filter(insertCall => insertCall.args[0] === 'Result')
+        const newCultureResults = insertResultCalls
+          .map(insert => insert.lastArg)
+          .filter(
+            resultInsert =>
+              resultInsert.assayId ===
+                staticDatabaseData.Assay.assayBdMgitGnd ||
+              resultInsert.assayId === staticDatabaseData.Assay.assayCulture
+          )
+        expect(newCultureResults).to.have.lengthOf(1)
+        const newCultureResult = {
+          ...newCultureResults[0],
+          patientData: JSON.parse(newCultureResults[0].patientData),
+          resultData: JSON.parse(newCultureResults[0].resultData),
+          startedOn: newCultureResults[0].startedOn.toISOString(),
+          endedOn: newCultureResults[0].endedOn.toISOString(),
+        }
+        const newSampleExternalId = getSamplesFromPMDTPayload(payload)[1]
+          .externalId
+        expect(newCultureResult).to.containSubset({
+          partnerId: databaseRecords.Site.partnerId,
+          geographyId: databaseRecords.Site.geographyId,
+          siteId: databaseRecords.Site.id,
+          deviceId: databaseRecords.DeviceApiKey.deviceId,
+          longitude: databaseRecords.Site.longitude,
+          latitude: databaseRecords.Site.latitude,
+          resultSourceId: staticDatabaseData.resultSourceId,
+          resultTypeId: staticDatabaseData.resultTypeId,
+          resultCategory1: staticDatabaseData.ResultCategory.PositiveMTB,
+          resultCategory2: staticDatabaseData.ResultCategory.PositiveMTB,
+          patientData: generatePatientDataFromPMDTPayload(payload),
+          externalId: `${databaseRecords.Site.externalId}_${newSampleExternalId}_CULTURE`,
+          assayId: staticDatabaseData.Assay.assayBdMgitGnd,
+          startedOn: payload['Culture Date Released'],
+          endedOn: payload['Culture Date Released'],
+          resultData: {
+            encodedResult: {
+              dateInoculated: payload['Culture Date Inoculated'],
+              medTech: payload['Culture Med Tech'],
+              resultStatus: payload['Culture Result Status'],
+              dstStatus: payload['Culture DST Status'],
+              methodUsed1: payload['Culture Method'],
+              result1: payload['Culture Result 1'],
+              grade1: payload['Culture Grade 1'],
+              result2: payload['Culture Result 2'],
+              grade2: payload['Culture Grade 2'],
+              finalResult: payload['Culture Final Result'],
+              remarks: payload['Culture Remarks 1'],
+              dateReleased: payload['Culture Date Released'],
+              encodedBy: payload['Culture Encoded by'],
+              labTech: payload['Culture Lab Tech'],
+            },
+          },
+          senderOperator:
+            payload['Culture Med Tech'] ||
+            payload['Culture Lab Tech'] ||
+            payload['Culture Encoded by'],
+          reportableSiteId: databaseRecords.ivaAntipoloChoSite.id,
+        })
+
+        const updateResultCalls = updateSpy
+          .getCalls()
+          .filter(updateCall => updateCall.args[0] === 'Result')
+        const updatedCultureResults = updateResultCalls
+          .map(update => update.lastArg)
+          .filter(resultUpdate => resultUpdate.resultData)
+        const updatedCultureResult = {
+          ...updatedCultureResults[0],
+          patientData: JSON.parse(updatedCultureResults[0].patientData),
+          resultData: JSON.parse(updatedCultureResults[0].resultData),
+          startedOn: updatedCultureResults[0].startedOn.toISOString(),
+          endedOn: updatedCultureResults[0].endedOn.toISOString(),
+        }
+        expect(updatedCultureResult).to.containSubset({
+          externalId: existingMgitResults[0].externalId,
+          assayId: staticDatabaseData.Assay.assayBdMgitGnd,
+          startedOn: existingMgitResults[0].startedOn.toISOString(),
+          endedOn: existingMgitResults[0].endedOn.toISOString(),
+        })
+      })
+
+      it('should insert a LPA result when LPA values are in the record', async () => {
+        const payload = JSON.parse(
+          JSON.stringify(pmdtRecordPayload0494CultureSmearLpaTbPositive2Samples)
+        )
+        const {
+          insertSpy,
+          philippinesNTRLPMDT: lpaResultProcessor,
+        } = setupPhilippinesNTRLPMDTDataProcessorWithSpies(
+          'some device API key',
+          pmdtRecordPayload0494CultureSmearLpaTbPositive2Samples
+        )
+        await lpaResultProcessor.processRequest()
+        const insertResultCalls = insertSpy
+          .getCalls()
+          .filter(insertCall => insertCall.args[0] === 'Result')
+        const lpaResults = insertResultCalls
+          .map(insert => insert.lastArg)
+          .filter(
+            resultInsert =>
+              resultInsert.assayId === staticDatabaseData.Assay.assayLPA
+          )
+        expect(lpaResults).to.have.lengthOf(1)
+        const lpaResult = {
+          ...lpaResults[0],
+          patientData: JSON.parse(lpaResults[0].patientData),
+          resultData: JSON.parse(lpaResults[0].resultData),
+          startedOn: lpaResults[0].startedOn.toISOString(),
+          endedOn: lpaResults[0].endedOn.toISOString(),
+        }
+        const sampleExternalId = getSamplesFromPMDTPayload(payload)[0]
+          .externalId
+        expect(lpaResult).to.containSubset({
+          partnerId: databaseRecords.Site.partnerId,
+          geographyId: databaseRecords.Site.geographyId,
+          siteId: databaseRecords.Site.id,
+          deviceId: databaseRecords.DeviceApiKey.deviceId,
+          longitude: databaseRecords.Site.longitude,
+          latitude: databaseRecords.Site.latitude,
+          resultSourceId: staticDatabaseData.resultSourceId,
+          resultTypeId: staticDatabaseData.resultTypeId,
+          resultCategory1: staticDatabaseData.ResultCategory.Detected,
+          resultCategory2: staticDatabaseData.ResultCategory.Susceptible,
+          patientData: generatePatientDataFromPMDTPayload(payload),
+          externalId: `${databaseRecords.Site.externalId}_${sampleExternalId}_LPA`,
+          assayId: staticDatabaseData.Assay.assayLPA,
+          startedOn: payload['LPA Date of Release'],
+          endedOn: payload['LPA Date of Release'],
+          resultData: {
+            encodedResult: {
+              center: payload['LPA Center'],
+              lpaKit: payload['LPA Kit Used'],
+              lpaKitOther: payload['LPA Kit Others'],
+              mtbComplex: payload['LPA MTB Complex'],
+              rifampicin: payload['LPA Rifampicin Result'],
+              isoniazid: payload['LPA Isoniazid Result'],
+              ethambutol: payload['LPA Ethambutol'],
+              fluoroquinolones: payload['LPA Fluoroquinolones'],
+              aminoglycoside: payload['LPA Aminoglycosides/ SLI'],
+              remarks: payload['LPA Remarks:'],
+              dateReleased: payload['LPA Date of Release'],
+              performedBy: payload['LPA Performed By'],
+              reviewedBy: payload['LPA Reviewed By'],
+            },
+          },
+          senderOperator: payload['LPA Performed By'],
+          reportableSiteId: databaseRecords.Site.id,
+        })
+      })
+
+      it('should insert Smear results when Smear values are in the record', async () => {
+        const payload = JSON.parse(
+          JSON.stringify(
+            pmdtRecordPayload0014SmearCultureMGITDstSusceptible2Samples
+          )
+        )
+        const {
+          insertSpy,
+          philippinesNTRLPMDT: smearResultProcessor,
+        } = setupPhilippinesNTRLPMDTDataProcessorWithSpies(
+          'some device API key',
+          pmdtRecordPayload0014SmearCultureMGITDstSusceptible2Samples
+        )
+        await smearResultProcessor.processRequest()
+        const insertResultCalls = insertSpy
+          .getCalls()
+          .filter(insertCall => insertCall.args[0] === 'Result')
+        const smearResults = insertResultCalls
+          .map(insert => insert.lastArg)
+          .filter(
+            resultInsert =>
+              resultInsert.assayId === staticDatabaseData.Assay.assaySmear
+          )
+        expect(smearResults).to.have.lengthOf(2)
+        const smearResult1 = {
+          ...smearResults[0],
+          patientData: JSON.parse(smearResults[0].patientData),
+          resultData: JSON.parse(smearResults[0].resultData),
+          startedOn: smearResults[0].startedOn.toISOString(),
+          endedOn: smearResults[0].endedOn.toISOString(),
+        }
+        const sample1ExternalId = getSamplesFromPMDTPayload(payload)[0]
+          .externalId
+        expect(smearResult1).to.containSubset({
+          partnerId: databaseRecords.Site.partnerId,
+          geographyId: databaseRecords.Site.geographyId,
+          siteId: databaseRecords.Site.id,
+          deviceId: databaseRecords.DeviceApiKey.deviceId,
+          longitude: databaseRecords.Site.longitude,
+          latitude: databaseRecords.Site.latitude,
+          resultSourceId: staticDatabaseData.resultSourceId,
+          resultTypeId: staticDatabaseData.resultTypeId,
+          resultCategory1: staticDatabaseData.ResultCategory.Positive2,
+          resultCategory2: staticDatabaseData.ResultCategory.Detected,
+          patientData: generatePatientDataFromPMDTPayload(payload),
+          externalId: `${databaseRecords.Site.externalId}_${sample1ExternalId}_SMEAR`,
+          assayId: staticDatabaseData.Assay.assaySmear,
+          startedOn: payload['Smear Date Released'],
+          endedOn: payload['Smear Date Released'],
+          resultData: {
+            encodedResult: {
+              smearMethod: payload['Smear Method'],
+              smearResult1: payload['Smear Result 1'],
+              smearResult2: payload['Smear Result 2'],
+              finalResult: payload['Smear Final Result'],
+              dateReleased: payload['Smear Date Released'],
+              encodedBy: payload['Smear Encoded by'],
+              laboratoryTechnician: payload['Smear Lab Tech'],
+            },
+          },
+          senderOperator: payload['Smear Lab Tech'],
+          reportableSiteId: databaseRecords.Site.id,
+        })
+        const smearResult2 = {
+          ...smearResults[1],
+          patientData: JSON.parse(smearResults[1].patientData),
+          resultData: JSON.parse(smearResults[1].resultData),
+          startedOn: smearResults[1].startedOn.toISOString(),
+          endedOn: smearResults[1].endedOn.toISOString(),
+        }
+        const sample2ExternalId = getSamplesFromPMDTPayload(payload)[1]
+          .externalId
+        expect(smearResult2).to.containSubset({
+          partnerId: databaseRecords.Site.partnerId,
+          geographyId: databaseRecords.Site.geographyId,
+          siteId: databaseRecords.Site.id,
+          deviceId: databaseRecords.DeviceApiKey.deviceId,
+          longitude: databaseRecords.Site.longitude,
+          latitude: databaseRecords.Site.latitude,
+          resultSourceId: staticDatabaseData.resultSourceId,
+          resultTypeId: staticDatabaseData.resultTypeId,
+          resultCategory1: staticDatabaseData.ResultCategory.Positive1,
+          resultCategory2: staticDatabaseData.ResultCategory.Detected,
+          patientData: generatePatientDataFromPMDTPayload(payload),
+          externalId: `${databaseRecords.Site.externalId}_${sample2ExternalId}_SMEAR`,
+          assayId: staticDatabaseData.Assay.assaySmear,
+          startedOn: payload['Smear Date Released'],
+          endedOn: payload['Smear Date Released'],
+          resultData: {
+            encodedResult: {
+              smearMethod: payload['Smear Method'],
+              smearResult1: payload['Smear Result 1'],
+              smearResult2: payload['Smear Result 2'],
+              finalResult: payload['Smear Final Result'],
+              dateReleased: payload['Smear Date Released'],
+              encodedBy: payload['Smear Encoded by'],
+              laboratoryTechnician: payload['Smear Lab Tech'],
+            },
+          },
+          senderOperator: payload['Smear Lab Tech'],
+          reportableSiteId: databaseRecords.Site.id,
+        })
+      })
+
+      it('should insert a GeneXpert result when GeneXpert values are in the record', async () => {
+        const payload = JSON.parse(
+          JSON.stringify(pmdtRecordPayload03694GxPositiveResistant1Sample)
+        )
+        const {
+          insertSpy,
+          philippinesNTRLPMDT: geneXpertResultProcessor,
+        } = setupPhilippinesNTRLPMDTDataProcessorWithSpies(
+          'some device API key',
+          pmdtRecordPayload03694GxPositiveResistant1Sample
+        )
+        await geneXpertResultProcessor.processRequest()
+        const insertResultCalls = insertSpy
+          .getCalls()
+          .filter(insertCall => insertCall.args[0] === 'Result')
+        const gxResults = insertResultCalls
+          .map(insert => insert.lastArg)
+          .filter(
+            resultInsert =>
+              resultInsert.assayId === staticDatabaseData.Assay.GxMtbRif
+          )
+        expect(gxResults).to.have.lengthOf(1)
+        const gxResult = {
+          ...gxResults[0],
+          patientData: JSON.parse(gxResults[0].patientData),
+          resultData: JSON.parse(gxResults[0].resultData),
+          startedOn: gxResults[0].startedOn.toISOString(),
+          endedOn: gxResults[0].endedOn.toISOString(),
+        }
+        const sampleExternalId = getSamplesFromPMDTPayload(payload)[0]
+          .externalId
+        expect(gxResult).to.containSubset({
+          partnerId: databaseRecords.Site.partnerId,
+          geographyId: databaseRecords.Site.geographyId,
+          siteId: databaseRecords.Site.id,
+          deviceId: databaseRecords.DeviceApiKey.deviceId,
+          longitude: databaseRecords.Site.longitude,
+          latitude: databaseRecords.Site.latitude,
+          resultSourceId: staticDatabaseData.resultSourceId,
+          resultTypeId: staticDatabaseData.resultTypeId,
+          resultCategory1: staticDatabaseData.ResultCategory.Detected,
+          resultCategory2: staticDatabaseData.ResultCategory.Detected,
+          patientData: generatePatientDataFromPMDTPayload(payload),
+          externalId: `${databaseRecords.Site.externalId}_${sampleExternalId}_GX`,
+          assayId: staticDatabaseData.Assay.GxMtbRif,
+          startedOn: payload['Gx Processing Date'],
+          endedOn: payload['Gx Processing Date'],
+          resultData: {
+            encodedResult: {
+              center: payload['Gx Center'],
+              processingDate: payload['Gx Processing Date'],
+              mtb: payload['Gx MTB'],
+              rifampicin: payload['Gx Rifampicin'],
+              remarks: payload['Gx Remarks'],
+              dateReleased: payload['Gx Date Released'],
+              examiner: payload['Gx Examiner'],
+              labManager: payload['Gx Laboratory Manager'],
+            },
+          },
+          senderOperator: payload['Gx Examiner'],
+          reportableSiteId: databaseRecords.Site.id,
+        })
+      })
+
+      it('should create a single sample when only one sample has been captured', async () => {
+        const payload = JSON.parse(
+          JSON.stringify(pmdtRecordPayload1855LpaRequestedNoResults1Sample)
+        )
+        const {
+          insertSpy,
+          philippinesNTRLPMDT: singleSampleResultProcessor,
+        } = setupPhilippinesNTRLPMDTDataProcessorWithSpies(
+          'some device API key',
+          pmdtRecordPayload1855LpaRequestedNoResults1Sample
+        )
+        await singleSampleResultProcessor.processRequest()
+        const insertedSamples = insertSpy
+          .getCalls()
+          .filter(insertCall => insertCall.args[0] === 'Sample')
+          .map(insert => insert.lastArg)
+        expect(insertedSamples).to.have.lengthOf(1)
+        const insertedSample = {
+          ...insertedSamples[0],
+          collectedOn: insertedSamples[0].collectedOn.toISOString(),
+        }
+        const sampleDetailsInPayload = getSamplesFromPMDTPayload(payload)[0]
+        expect(insertedSample).to.containSubset(sampleDetailsInPayload)
+        expect(insertedSample.externalId).to.match(/PN-\d{2}-\d{4,5}/)
+      })
+
+      it('should not create/update any results when there are no results', async () => {
+        const payload = JSON.parse(
+          JSON.stringify(pmdtRecordPayload1855LpaRequestedNoResults1Sample)
+        )
+        const {
+          updateSpy,
+          insertSpy,
+          philippinesNTRLPMDT: noResultsProcessor,
+        } = setupPhilippinesNTRLPMDTDataProcessorWithSpies(
+          'some device API key',
+          payload
+        )
+        await noResultsProcessor.processRequest()
+        const insertedResults = insertSpy
+          .getCalls()
+          .filter(insertCall => insertCall.args[0] === 'Result')
+          .map(insert => insert.lastArg)
+        expect(insertedResults).to.have.lengthOf(0)
+        const updatedResults = updateSpy
+          .getCalls()
+          .filter(updateCall => updateCall.args[0] === 'Result')
+          .map(update => update.lastArg)
+        expect(updatedResults).to.have.lengthOf(0)
+      })
+
+      it("should update the initial single sample external ID with a suffix of '-1' when 2nd sample details are added after initial upload", async () => {
+        const pmdtRecordPayload1855LpaRequestedNoResults2Samples = {
+          ...pmdtRecordPayload1855LpaRequestedNoResults1Sample,
+          'Date Collected 2':
+            pmdtRecordPayload1855LpaRequestedNoResults1Sample[
+              'Date Collected 1'
+            ],
+        }
+        const payload = JSON.parse(
+          JSON.stringify(pmdtRecordPayload1855LpaRequestedNoResults2Samples)
+        )
+        const sampleDetailsInInitialPayload = getSamplesFromPMDTPayload(
+          pmdtRecordPayload1855LpaRequestedNoResults1Sample
+        )[0]
+        const existingSamplesAfterInitialUpload = JSON.parse(
+          JSON.stringify(existingSamples)
+        )
+        existingSamplesAfterInitialUpload[
+          sampleDetailsInInitialPayload.externalId
+        ] = sampleDetailsInInitialPayload
+        const {
+          updateSpy,
+          insertSpy,
+          philippinesNTRLPMDT: updateSampleResultProcessor,
+        } = setupPhilippinesNTRLPMDTDataProcessorWithSpies(
+          'some device API key',
+          payload,
+          existingSamplesAfterInitialUpload
+        )
+        await updateSampleResultProcessor.processRequest()
+        const updatedSamples = updateSpy
+          .getCalls()
+          .filter(updateCall => updateCall.args[0] === 'Sample')
+          .map(update => update.lastArg)
+        expect(updatedSamples).to.have.lengthOf(1)
+        expect(updatedSamples[0].externalId).to.match(/PN-\d{2}-\d{4,5}-1/)
+        const insertedSamples = insertSpy
+          .getCalls()
+          .filter(insertCall => insertCall.args[0] === 'Sample')
+          .map(insert => insert.lastArg)
+        expect(insertedSamples).to.have.lengthOf(1)
+        expect(insertedSamples[0].externalId).to.match(/PN-\d{2}-\d{4,5}-2/)
+      })
+
+      it("should update the a sample's origin site ID when it becomes known", async () => {
+        const payload = JSON.parse(
+          JSON.stringify(pmdtRecordPayload8442SmearCultureNegative2Samples)
+        )
+        const sampleDetailsInInitialPayload = JSON.parse(
+          JSON.stringify(
+            getSamplesFromPMDTPayload(
+              pmdtRecordPayload8442SmearCultureNegative2Samples
+            )
+          )
+        )
+        const existingSamplesAfterInitialUpload = JSON.parse(
+          JSON.stringify(existingSamples)
+        )
+        existingSamplesAfterInitialUpload[
+          sampleDetailsInInitialPayload[0].externalId
+        ] = {
+          ...sampleDetailsInInitialPayload[0],
+          originSiteId: 123,
+        }
+        existingSamplesAfterInitialUpload[
+          sampleDetailsInInitialPayload[1].externalId
+        ] = {
+          ...sampleDetailsInInitialPayload[1],
+          originSiteId: databaseRecords.Site.id,
+        }
+        const {
+          updateSpy,
+          insertSpy,
+          philippinesNTRLPMDT: updateSampleResultProcessor,
+        } = setupPhilippinesNTRLPMDTDataProcessorWithSpies(
+          'some device API key',
+          payload,
+          existingSamplesAfterInitialUpload
+        )
+        await updateSampleResultProcessor.processRequest()
+        const updatedSamples = updateSpy
+          .getCalls()
+          .filter(updateCall => updateCall.args[0] === 'Sample')
+          .map(update => update.lastArg)
+        expect(updatedSamples).to.have.lengthOf(1)
+        expect(updatedSamples[0]).to.containSubset({
+          externalId: sampleDetailsInInitialPayload[0].externalId,
+          originSiteId: databaseRecords.Site.id,
+        })
+        const insertedSamples = insertSpy
+          .getCalls()
+          .filter(insertCall => insertCall.args[0] === 'Sample')
+          .map(insert => insert.lastArg)
+        expect(insertedSamples).to.have.lengthOf(0)
+      })
+
+      it("should not update or insert samples if they haven't changed", async () => {
+        const payload = JSON.parse(
+          JSON.stringify(pmdtRecordPayload8442SmearCultureNegative2Samples)
+        )
+        const sampleDetailsInInitialPayload = JSON.parse(
+          JSON.stringify(
+            getSamplesFromPMDTPayload(
+              pmdtRecordPayload8442SmearCultureNegative2Samples
+            )
+          )
+        )
+        const existingSamplesAfterInitialUpload = JSON.parse(
+          JSON.stringify(existingSamples)
+        )
+        existingSamplesAfterInitialUpload[
+          sampleDetailsInInitialPayload[0].externalId
+        ] = {
+          ...sampleDetailsInInitialPayload[0],
+          originSiteId: databaseRecords.Site.id,
+        }
+        existingSamplesAfterInitialUpload[
+          sampleDetailsInInitialPayload[1].externalId
+        ] = {
+          ...sampleDetailsInInitialPayload[1],
+          originSiteId: databaseRecords.Site.id,
+        }
+        const {
+          updateSpy,
+          insertSpy,
+          philippinesNTRLPMDT: updateSampleResultProcessor,
+        } = setupPhilippinesNTRLPMDTDataProcessorWithSpies(
+          'some device API key',
+          payload,
+          existingSamplesAfterInitialUpload
+        )
+        await updateSampleResultProcessor.processRequest()
+        const updatedSamples = updateSpy
+          .getCalls()
+          .filter(updateCall => updateCall.args[0] === 'Sample')
+          .map(update => update.lastArg)
+        expect(updatedSamples).to.have.lengthOf(0)
+        const insertedSamples = insertSpy
+          .getCalls()
+          .filter(insertCall => insertCall.args[0] === 'Sample')
+          .map(insert => insert.lastArg)
+        expect(insertedSamples).to.have.lengthOf(0)
+      })
+
+      it('should update existing results', async () => {
+        const {
+          updateSpy,
+          philippinesNTRLPMDT: existingResultProcessor,
+        } = setupPhilippinesNTRLPMDTDataProcessorWithSpies(
+          'some device API key',
+          pmdtRecordPayload8442SmearCultureNegative2Samples
+        )
+        await existingResultProcessor.processRequest()
+        const resultUpdates = updateSpy
+          .getCalls()
+          .filter(
+            updateCall =>
+              updateCall.args[0] === 'Result' &&
+              _.isPlainObject(updateCall.lastArg) &&
+              updateCall.lastArg.resultData &&
+              updateCall.lastArg.id > 0
+          )
+          .map(updateCall => updateCall.lastArg)
+        // eslint-disable-next-line no-unused-expressions
+        expect(resultUpdates).to.not.be.empty
+      })
+
+      it("should merge existing results' resultsData and patient data", async () => {
+        const {
+          updateSpy,
+          philippinesNTRLPMDT: existingResultProcessor,
+        } = setupPhilippinesNTRLPMDTDataProcessorWithSpies(
+          'some device API key',
+          pmdtRecordPayload03695GxPositiveResistant1Sample
+        )
+        await existingResultProcessor.processRequest()
+        const resultUpdates = updateSpy
+          .getCalls()
+          .filter(
+            updateCall =>
+              updateCall.args[0] === 'Result' &&
+              _.isPlainObject(updateCall.lastArg) &&
+              updateCall.lastArg.resultData &&
+              updateCall.lastArg.id > 0
+          )
+          .map(updateCall => updateCall.lastArg)
+        expect(resultUpdates).to.have.lengthOf(1)
+        const resultUpdate = {
+          ...resultUpdates[0],
+          patientData: JSON.parse(resultUpdates[0].patientData),
+          resultData: JSON.parse(resultUpdates[0].resultData),
+        }
+        expect(resultUpdate.patientData.someExistingPatientDataKey).to.equal(
+          'This value should remain after an update'
+        )
+        expect(resultUpdate.resultData.someExistingResultDataKey).to.equal(
+          'This value should remain after an update'
+        )
+        // eslint-disable-next-line no-unused-expressions
+        expect(resultUpdate.resultData.encodedResult.examiner).to.not.be
+          .undefined
+        expect(resultUpdate.resultData.encodedResult.examiner).to.not.equal(
+          'This should be replaced by the value in the payload'
+        )
+        // eslint-disable-next-line no-unused-expressions
+        expect(resultUpdate.resultData.encodedResult.unknownKey).to.equal(
+          'Value came from some other system and should remain after update'
+        )
+      })
+
+      it('should fall back to the test start and end time sent by the device when updating a result', async () => {
+        const {
+          updateSpy,
+          philippinesNTRLPMDT: existingResultProcessor,
+        } = setupPhilippinesNTRLPMDTDataProcessorWithSpies(
+          'some device API key',
+          pmdtRecordPayload03695GxPositiveResistant1Sample
+        )
+        await existingResultProcessor.processRequest()
+        const resultUpdates = updateSpy
+          .getCalls()
+          .filter(
+            updateCall =>
+              updateCall.args[0] === 'Result' &&
+              _.isPlainObject(updateCall.lastArg) &&
+              updateCall.lastArg.resultData &&
+              updateCall.lastArg.id > 0
+          )
+          .map(updateCall => updateCall.lastArg)
+        expect(resultUpdates).to.have.lengthOf(1)
+        const resultUpdate = {
+          ...resultUpdates[0],
+          patientData: JSON.parse(resultUpdates[0].patientData),
+          resultData: JSON.parse(resultUpdates[0].resultData),
+        }
+        expect(resultUpdate.startedOn.toISOString()).to.equal(
+          resultUpdate.resultData.testStartedOn
+        )
+        expect(resultUpdate.endedOn.toISOString()).to.equal(
+          resultUpdate.resultData.testEndedOn
+        )
+      })
+    })
+  })
+
+  describe('RITM Record Data Processor', () => {
+    describe('canProcessRequest', () => {
+      it('Should be able to recognise a RITM database record', async () => {
+        const {
+          PhilippinesNtrlRitm,
+        } = require('../../src/deviceApiRaw/dataProcessors/philippinesNtrlDatabases')
+        assert.isOk(
+          await PhilippinesNtrlRitm.canProcessRequest({
+            payload: {
+              database: 'RITM_2020',
+              table: 'RITM Database',
+              TimeStamp: '446006',
+              'Serial Code RN-14-': '0409',
+              'Last Name': 'SANCHEZ',
+              'First Name': 'Andrei Jahn',
+              'Middle Name': null,
+              'Age / Sex': '19/M',
+              'Date of Birth': '2000-07-12T00:00:00.000Z',
+              'RITM Hospital No': '776660',
+              'Date of Admission': null,
+              Requisitioner: 'Dr. Delgado',
+              Address: 'C/O DOTS',
+              'Reason for Examination': 'Diagnosis',
+              'History of Treatment': 'Retreatment',
+              'Registration Group': 'Relapse',
+              'Presumptive DS or DR': 'Presumptive DR-TB',
+              'Specimen Type': 'Sputum',
+              'Accession No': null,
+              'Laboratory No': 'D-20-0306',
+              'Culture Method': null,
+              'Date and Time of Specimen Collection':
+                '2020-02-13T00:00:00.000Z',
+              'Date and Time of Specimen Receipt': '2020-02-14T00:00:00.000Z',
+              'Encoded by': null,
+              'Date and Time of Release of AFB Result': null,
+              'Laboratory Test Performed Acid Fast Bacili Microscopy': null,
+              'Smear Result 1': null,
+              'Smear Result 2': null,
+              'Smear Result 3': null,
+              'FINAL RESULT': null,
+              Comments: null,
+              'Smear Encoded by': null,
+              'Performed by': null,
+              'Validated by': null,
+              'Noted by': 'CRISTINA C. VILLARICO, RMT',
+              OPD: true,
+              Referral: false,
+              INPATIENT: false,
+              'INPATIENT REMARKS': null,
+              'MRF Encoded by': 'Erlanegail R. Isla, RMT',
+              'MRF Date Encoded': '2020-02-14T00:00:00.000Z',
+              Smear: false,
+              Culture: false,
+              DST: false,
+              GeneXpert: true,
+              'Date transfered to DST': null,
+              'TBC Laboratory Test Performed': 'TB Culture',
+              'TBC Test Result 1st Sample': null,
+              'TBC Test Result 2nd Sample': null,
+              'TBC Test Result 3rd Sample': null,
+              'TBC FINAL RESULT': null,
+              'Date and Time of Release of TBC Result': null,
+              'TBC Comments': null,
+              'TBC Encoded by': null,
+              'TBC Performed by': null,
+              'TBC Validated by': null,
+              'TBC Noted by': 'CRISTINA C. VILLARICO, RMT',
+              'DST Laboratory Test Performed': 'Drug Susceptibility Test',
+              Streptomycin: null,
+              Isoniazid: null,
+              Rifampicin: null,
+              Ethambutol: null,
+              Pyrazinamide: null,
+              Kanamycin: null,
+              Capreomycin: null,
+              Amikacin: null,
+              Ofloxacin: null,
+              Levofloxacin: null,
+              'DST Test Result 3rd Sample': null,
+              'DST Final Result': null,
+              'Date and Time of Release of DST Result': null,
+              'DST Comments': null,
+              'DST Encoded by': null,
+              'DST Performed by': null,
+              'DST Validated by': null,
+              'DST Noted by': 'CRISTINA C. VILLARICO, RMT',
+              'GX Laboratory Test Performed': 'GeneXpert',
+              MTB: 'DETECTED',
+              'Rifampicin:': 'DETECTED',
+              'GX Test Result 3rd Sample': null,
+              'Date and Time of Release of Gx Result':
+                '2020-02-17T00:00:00.000Z',
+              'GX Comments': null,
+              'GX Encoded by': 'Erlanegail R. Isla, RMT',
+              'GX Performed by': 'Erlanegail R. Isla, RMT',
+              'GX Validated by': 'Michellin Roxanne S. Baje, RMT',
+              'Referring Facility': 'RITM-DOTS',
+              'GX Noted by': 'CRISTINA C. VILLARICO, RMT',
+              'Smear Result 1 Date Collected': null,
+              'Smear Result 2 Date Collected': null,
+              'Smear Result 3 Date Collected': null,
+            },
+          })
+        )
+
+        assert.isOk(
+          await PhilippinesNtrlRitm.canProcessRequest({
+            payload: {
+              database: 'RITM',
+              table: 'RITM Database',
+              TimeStamp: '378008',
+              'Serial Code RN-14-': '2653',
+              'Last Name': 'AMBE',
+              'First Name': 'Marlon',
+              'Middle Name': 'R.',
+              'Age / Sex': '27/M',
+              'Date of Birth': '1992-06-18T00:00:00.000Z',
+              'RITM Hospital No': '790527',
+              'Date of Admission': null,
+              Requisitioner: 'Dr. Sales',
+              Address: 'LAS PIÑAS CITY',
+              'Reason for Examination': null,
+              'History of Treatment': null,
+              'Registration Group': null,
+              'Presumptive DS or DR': null,
+              'Specimen Type': 'Abscess Aspirate (R. Neck)',
+              'Accession No': null,
+              'Laboratory No': 'R-19-0616',
+              'Culture Method': null,
+              'Date and Time of Specimen Collection':
+                '2019-10-23T00:00:00.000Z',
+              'Date and Time of Specimen Receipt': '2019-10-25T00:00:00.000Z',
+              'Encoded by': null,
+              'Date and Time of Release of AFB Result':
+                '2019-10-29T00:00:00.000Z',
+              'Laboratory Test Performed Acid Fast Bacili Microscopy':
+                'Ziehl Neelsen',
+              'Smear Result 1': '3+',
+              'Smear Result 2': null,
+              'Smear Result 3': null,
+              'FINAL RESULT': 'POSITIVE for Acid Fast Bacilli',
+              Comments: null,
+              'Smear Encoded by': 'Krissha Mae P. Marfil, RMT',
+              'Performed by': 'Krissha Mae P. Marfil, RMT',
+              'Validated by': 'Ralph Jason G. Esteban, RMT',
+              'Noted by': 'Ma. Cecilia G. Ama, MD',
+              OPD: true,
+              Referral: false,
+              INPATIENT: false,
+              'INPATIENT REMARKS': null,
+              'MRF Encoded by': 'Jenny B. Lasprilla',
+              'MRF Date Encoded': '2019-10-25T00:00:00.000Z',
+              Smear: true,
+              Culture: true,
+              DST: true,
+              GeneXpert: false,
+              'Date transfered to DST': '2020-01-28T00:00:00.000Z',
+              'TBC Laboratory Test Performed': 'TB Culture',
+              'TBC Test Result 1st Sample': null,
+              'TBC Test Result 2nd Sample': null,
+              'TBC Test Result 3rd Sample': null,
+              'TBC FINAL RESULT': null,
+              'Date and Time of Release of TBC Result': null,
+              'TBC Comments': null,
+              'TBC Encoded by': null,
+              'TBC Performed by': null,
+              'TBC Validated by': null,
+              'TBC Noted by': 'Ma. Cecilia G. Ama, MD',
+              'DST Laboratory Test Performed': 'Drug Susceptibility Test',
+              Streptomycin: null,
+              Isoniazid: null,
+              Rifampicin: null,
+              Ethambutol: null,
+              Pyrazinamide: null,
+              Kanamycin: null,
+              Capreomycin: null,
+              Amikacin: null,
+              Ofloxacin: null,
+              Levofloxacin: null,
+              'DST Test Result 3rd Sample': null,
+              'DST Final Result': null,
+              'Date and Time of Release of DST Result': null,
+              'DST Comments': null,
+              'DST Encoded by': null,
+              'DST Performed by': null,
+              'DST Validated by': null,
+              'DST Noted by': 'Ma. Cecilia G. Ama, MD',
+              'GX Laboratory Test Performed': 'GeneXpert',
+              MTB: null,
+              'Rifampicin:': null,
+              'GX Test Result 3rd Sample': null,
+              'Date and Time of Release of Gx Result': null,
+              'GX Comments': null,
+              'GX Encoded by': null,
+              'GX Performed by': null,
+              'GX Validated by': null,
+              'Referring Facility': 'RITM-OPD',
+              'GX Noted by': 'Ma. Cecilia G. Ama, MD',
+              'Smear Result 1 Date Collected': null,
+              'Smear Result 2 Date Collected': null,
+              'Smear Result 3 Date Collected': null,
+            },
+          })
+        )
+
+        assert.isNotOk(
+          await PhilippinesNtrlRitm.canProcessRequest({
+            payload: {
+              database: 'RITM',
+              table: 'RITM Database',
+              TimeStamp: '378008',
+              'Last Name': 'AMBE',
+              'First Name': 'Marlon',
+              'Middle Name': 'R.',
+              'Age / Sex': '27/M',
+              'Date of Birth': '1992-06-18T00:00:00.000Z',
+              'RITM Hospital No': '790527',
+              'Date of Admission': null,
+              Requisitioner: 'Dr. Sales',
+              Address: 'LAS PIÑAS CITY',
+              'Reason for Examination': null,
+              'History of Treatment': null,
+              'Registration Group': null,
+              'Presumptive DS or DR': null,
+              'Specimen Type': 'Abscess Aspirate (R. Neck)',
+              'Accession No': null,
+              'Laboratory No': 'R-19-0616',
+              'Culture Method': null,
+              'Date and Time of Specimen Collection':
+                '2019-10-23T00:00:00.000Z',
+              'Date and Time of Specimen Receipt': '2019-10-25T00:00:00.000Z',
+              'Encoded by': null,
+              'Date and Time of Release of AFB Result':
+                '2019-10-29T00:00:00.000Z',
+              'Laboratory Test Performed Acid Fast Bacili Microscopy':
+                'Ziehl Neelsen',
+              'Smear Result 1': '3+',
+              'Smear Result 2': null,
+              'Smear Result 3': null,
+              'FINAL RESULT': 'POSITIVE for Acid Fast Bacilli',
+              Comments: null,
+              'Smear Encoded by': 'Krissha Mae P. Marfil, RMT',
+              'Performed by': 'Krissha Mae P. Marfil, RMT',
+              'Validated by': 'Ralph Jason G. Esteban, RMT',
+              'Noted by': 'Ma. Cecilia G. Ama, MD',
+              OPD: true,
+              Referral: false,
+              INPATIENT: false,
+              'INPATIENT REMARKS': null,
+              'MRF Encoded by': 'Jenny B. Lasprilla',
+              'MRF Date Encoded': '2019-10-25T00:00:00.000Z',
+              Smear: true,
+              Culture: true,
+              DST: true,
+              GeneXpert: false,
+              'Date transfered to DST': '2020-01-28T00:00:00.000Z',
+              'TBC Laboratory Test Performed': 'TB Culture',
+              'TBC Test Result 1st Sample': null,
+              'TBC Test Result 2nd Sample': null,
+              'TBC Test Result 3rd Sample': null,
+              'TBC FINAL RESULT': null,
+              'Date and Time of Release of TBC Result': null,
+              'TBC Comments': null,
+              'TBC Encoded by': null,
+              'TBC Performed by': null,
+              'TBC Validated by': null,
+              'TBC Noted by': 'Ma. Cecilia G. Ama, MD',
+              'DST Laboratory Test Performed': 'Drug Susceptibility Test',
+              Streptomycin: null,
+              Isoniazid: null,
+              Rifampicin: null,
+              Ethambutol: null,
+              Pyrazinamide: null,
+              Kanamycin: null,
+              Capreomycin: null,
+              Amikacin: null,
+              Ofloxacin: null,
+              Levofloxacin: null,
+              'DST Test Result 3rd Sample': null,
+              'DST Final Result': null,
+              'Date and Time of Release of DST Result': null,
+              'DST Comments': null,
+              'DST Encoded by': null,
+              'DST Performed by': null,
+              'DST Validated by': null,
+              'DST Noted by': 'Ma. Cecilia G. Ama, MD',
+              'GX Laboratory Test Performed': 'GeneXpert',
+              MTB: null,
+              'Rifampicin:': null,
+              'GX Test Result 3rd Sample': null,
+              'Date and Time of Release of Gx Result': null,
+              'GX Comments': null,
+              'GX Encoded by': null,
+              'GX Performed by': null,
+              'GX Validated by': null,
+              'Referring Facility': 'RITM-OPD',
+              'GX Noted by': 'Ma. Cecilia G. Ama, MD',
+              'Smear Result 1 Date Collected': null,
+              'Smear Result 2 Date Collected': null,
+              'Smear Result 3 Date Collected': null,
+            },
+          })
+        )
+      })
+    })
+
+    const existingSamples = {
+      'RN-19-2630-1': {
+        id: 571,
+        externalId: 'RN-19-2630-1',
+        collectedOn: new Date(2019, 9, 23, 0, 0),
+        sampleTypeId: staticDatabaseData.SampleType.Sputum,
+        originSiteId: null,
+      },
+      'RN-19-2630-2': {
+        id: 572,
+        externalId: 'RN-19-2630-2',
+        collectedOn: new Date(2019, 9, 23, 0, 0),
+        sampleTypeId: staticDatabaseData.SampleType.Sputum,
+        originSiteId: null,
+      },
+    }
+
+    describe('processRequest', () => {
+      const ritmRecordPayload3082SmearCultureNegative2Samples = {
+        database: 'RITM',
+        table: 'RITM Database',
+        TimeStamp: '406005',
+        'Serial Code RN-14-': '3082',
+        'Last Name': 'LARIVEE',
+        'First Name': 'CAROL',
+        'Middle Name': 'Aguilay',
+        'Age / Sex': '3/F',
+        'Date of Birth': '1985-05-24T00:00:00.000Z',
+        'RITM Hospital No': null,
+        'Date of Admission': null,
+        Requisitioner: null,
+        Address: 'C/O ASIAN HOSPITAL AND MEDICAL CENTER',
+        'Reason for Examination': null,
+        'History of Treatment': null,
+        'Registration Group': null,
+        'Presumptive DS or DR': null,
+        'Specimen Type': 'Sputum',
+        'Accession No': '19-020390',
+        'Laboratory No': 'R-19-0703',
+        'Culture Method': 'Solid Culture(Modified Kudoh)',
+        'Date and Time of Specimen Collection': '2019-12-19T00:00:00.000Z',
+        'Date and Time of Specimen Receipt': '2019-12-23T00:00:00.000Z',
+        'Encoded by': null,
+        'Date and Time of Release of AFB Result': '2019-12-26T00:00:00.000Z',
+        'Laboratory Test Performed Acid Fast Bacili Microscopy':
+          'Fluorescence Microscopy',
+        'Smear Result 1': '0',
+        'Smear Result 2': '0',
+        'Smear Result 3': null,
+        'FINAL RESULT': 'NEGATIVE for Acid Fast Bacilli',
+        Comments: null,
+        'Smear Encoded by': 'Michellin Roxanne S. Baje, RMT',
+        'Performed by': 'Michellin Roxanne S. Baje, RMT',
+        'Validated by': 'Catherine Ann PL Sacopon, RMT',
+        'Noted by': 'CRISTINA C. VILLARICO, RMT',
+        OPD: false,
+        Referral: true,
+        INPATIENT: false,
+        'INPATIENT REMARKS': null,
+        'MRF Encoded by': 'Jerri Reinald A. Coloma, RMT',
+        'MRF Date Encoded': '2019-12-23T00:00:00.000Z',
+        Smear: true,
+        Culture: true,
+        DST: false,
+        GeneXpert: false,
+        'Date transfered to DST': null,
+        'TBC Laboratory Test Performed': 'Modified Kudoh',
+        'TBC Test Result 1st Sample': 'Mycobacterium tuberculosis',
+        'TBC Test Result 2nd Sample': 'No growth after 8 weeks',
+        'TBC Test Result 3rd Sample': null,
+        'TBC FINAL RESULT': 'Mycobacterium tuberculosis',
+        'Date and Time of Release of TBC Result': '2020-02-12T00:00:00.000Z',
+        'TBC Comments': null,
+        'TBC Encoded by': 'Kevin Joshua A. Alonzo, RMT',
+        'TBC Performed by': 'Kevin Joshua A. Alonzo, RMT',
+        'TBC Validated by': 'Roeus Vincent Arjay G. Reyes, RMT',
+        'TBC Noted by': 'CRISTINA C. VILLARICO, RMT',
+        'DST Laboratory Test Performed': 'Drug Susceptibility Test',
+        Streptomycin: null,
+        Isoniazid: null,
+        Rifampicin: null,
+        Ethambutol: null,
+        Pyrazinamide: null,
+        Kanamycin: null,
+        Capreomycin: null,
+        Amikacin: null,
+        Ofloxacin: null,
+        Levofloxacin: null,
+        'DST Test Result 3rd Sample': null,
+        'DST Final Result': null,
+        'Date and Time of Release of DST Result': null,
+        'DST Comments': null,
+        'DST Encoded by': null,
+        'DST Performed by': null,
+        'DST Validated by': null,
+        'DST Noted by': 'CRISTINA C. VILLARICO, RMT',
+        'GX Laboratory Test Performed': 'GeneXpert',
+        MTB: null,
+        'Rifampicin:': null,
+        'GX Test Result 3rd Sample': null,
+        'Date and Time of Release of Gx Result': null,
+        'GX Comments': null,
+        'GX Encoded by': null,
+        'GX Performed by': null,
+        'GX Validated by': null,
+        'Referring Facility': 'RITM-OPD',
+        'GX Noted by': 'CRISTINA C. VILLARICO, RMT',
+        'Smear Result 1 Date Collected': null,
+        'Smear Result 2 Date Collected': null,
+        'Smear Result 3 Date Collected': null,
+      }
+      const ritmRecordPayload2068SmearRequestedNoResults1Sample = {
+        database: 'RITM',
+        table: 'RITM Database',
+        TimeStamp: '47871',
+        'Serial Code RN-14-': '2068',
+        'Last Name': 'BLOCK',
+        'First Name': 'Graham',
+        'Middle Name': 'E',
+        'Age / Sex': '61/M',
+        'Date of Birth': '1974-02-17T00:00:00.000Z',
+        'RITM Hospital No': '776298',
+        'Date of Admission': null,
+        Requisitioner: 'Dr. Rivera',
+        Address: 'C/O DOTS',
+        'Reason for Examination': null,
+        'History of Treatment': null,
+        'Registration Group': null,
+        'Presumptive DS or DR': null,
+        'Specimen Type': 'Sputum',
+        'Accession No': null,
+        'Laboratory No': 'D-19-1582',
+        'Culture Method': null,
+        'Date and Time of Specimen Collection': '2019-08-22T00:00:00.000Z',
+        'Date and Time of Specimen Receipt': '2019-08-22T00:00:00.000Z',
+        'Encoded by': null,
+        'Date and Time of Release of AFB Result': null,
+        'Laboratory Test Performed Acid Fast Bacili Microscopy': null,
+        'Smear Result 1': null,
+        'Smear Result 2': null,
+        'Smear Result 3': null,
+        'FINAL RESULT': null,
+        Comments: null,
+        'Smear Encoded by': null,
+        'Performed by': null,
+        'Validated by': null,
+        'Noted by': 'Ma. Cecilia G. Ama, MD',
+        OPD: true,
+        Referral: false,
+        INPATIENT: false,
+        'INPATIENT REMARKS': null,
+        'MRF Encoded by': 'Jerri Reinald A. Coloma',
+        'MRF Date Encoded': '2019-08-23T00:00:00.000Z',
+        Smear: true,
+        Culture: false,
+        DST: false,
+        GeneXpert: false,
+        'Date transfered to DST': null,
+        'TBC Laboratory Test Performed': 'TB Culture',
+        'TBC Test Result 1st Sample': null,
+        'TBC Test Result 2nd Sample': null,
+        'TBC Test Result 3rd Sample': null,
+        'TBC FINAL RESULT': null,
+        'Date and Time of Release of TBC Result': null,
+        'TBC Comments': null,
+        'TBC Encoded by': null,
+        'TBC Performed by': null,
+        'TBC Validated by': null,
+        'TBC Noted by': 'Ma. Cecilia G. Ama, MD',
+        'DST Laboratory Test Performed': 'Drug Susceptibility Test',
+        Streptomycin: null,
+        Isoniazid: null,
+        Rifampicin: null,
+        Ethambutol: null,
+        Pyrazinamide: null,
+        Kanamycin: null,
+        Capreomycin: null,
+        Amikacin: null,
+        Ofloxacin: null,
+        Levofloxacin: null,
+        'DST Test Result 3rd Sample': null,
+        'DST Final Result': null,
+        'Date and Time of Release of DST Result': null,
+        'DST Comments': null,
+        'DST Encoded by': null,
+        'DST Performed by': null,
+        'DST Validated by': null,
+        'DST Noted by': 'Ma. Cecilia G. Ama, MD',
+        'GX Laboratory Test Performed': 'GeneXpert',
+        MTB: null,
+        'Rifampicin:': null,
+        'GX Test Result 3rd Sample': null,
+        'Date and Time of Release of Gx Result': null,
+        'GX Comments': null,
+        'GX Encoded by': null,
+        'GX Performed by': null,
+        'GX Validated by': null,
+        'Referring Facility': 'RITM-DOTS',
+        'GX Noted by': 'Ma. Cecilia G. Ama, MD',
+        'Smear Result 1 Date Collected': null,
+        'Smear Result 2 Date Collected': null,
+        'Smear Result 3 Date Collected': null,
+      }
+      const ritmRecordPayload2630CultureSmearTbPositive2Samples = {
+        database: 'RITM',
+        table: 'RITM Database',
+        TimeStamp: '374004',
+        'Serial Code RN-14-': '2630',
+        'Last Name': 'GHANDI',
+        'First Name': 'MAHATMA',
+        'Middle Name': 'A.',
+        'Age / Sex': '113/M',
+        'Date of Birth': '1971-07-19T00:00:00.000Z',
+        'RITM Hospital No': '791181',
+        'Date of Admission': null,
+        Requisitioner: 'Dr. Bumanglag',
+        Address: 'NO DATA',
+        'Reason for Examination': null,
+        'History of Treatment': null,
+        'Registration Group': null,
+        'Presumptive DS or DR': null,
+        'Specimen Type': 'Sputum',
+        'Accession No': null,
+        'Laboratory No': 'R-19-0608',
+        'Culture Method': 'Solid Culture(Modified Kudoh)',
+        'Date and Time of Specimen Collection': '2019-10-23T00:00:00.000Z',
+        'Date and Time of Specimen Receipt': '2019-10-24T00:00:00.000Z',
+        'Encoded by': null,
+        'Date and Time of Release of AFB Result': '2019-10-24T00:00:00.000Z',
+        'Laboratory Test Performed Acid Fast Bacili Microscopy':
+          'Fluorescence Microscopy',
+        'Smear Result 1': '1+',
+        'Smear Result 2': '1+',
+        'Smear Result 3': null,
+        'FINAL RESULT': 'POSITIVE for Acid Fast Bacilli',
+        Comments: null,
+        'Smear Encoded by': 'Kevin Joshua A. Alonzo, RMT',
+        'Performed by': 'Kevin Joshua A. Alonzo, RMT',
+        'Validated by': 'Roeus Vincent Arjay G. Reyes, RMT',
+        'Noted by': 'Ma. Cecilia G. Ama, MD',
+        OPD: true,
+        Referral: false,
+        INPATIENT: false,
+        'INPATIENT REMARKS': null,
+        'MRF Encoded by': 'Jenny B. Lasprilla',
+        'MRF Date Encoded': '2019-10-24T00:00:00.000Z',
+        Smear: true,
+        Culture: true,
+        DST: true,
+        GeneXpert: false,
+        'Date transfered to DST': '2019-12-04T00:00:00.000Z',
+        'TBC Laboratory Test Performed': 'Modified Kudoh',
+        'TBC Test Result 1st Sample': 'Mycobacterium tuberculosis',
+        'TBC Test Result 2nd Sample': 'Mycobacterium tuberculosis',
+        'TBC Test Result 3rd Sample': null,
+        'TBC FINAL RESULT': 'Mycobacterium tuberculosis',
+        'Date and Time of Release of TBC Result': '2019-12-05T00:00:00.000Z',
+        'TBC Comments': 'This appears to be a susceptible case',
+        'TBC Encoded by': 'Kevin Joshua A. Alonzo, RMT',
+        'TBC Performed by': 'Kevin Joshua A. Alonzo, RMT',
+        'TBC Validated by': 'Roeus Vincent Arjay G. Reyes, RMT',
+        'TBC Noted by': 'Ma. Cecilia G. Ama, MD',
+        'DST Laboratory Test Performed': 'LJ Proportion Method',
+        Streptomycin: 'SUSCEPTIBLE',
+        Isoniazid: 'SUSCEPTIBLE',
+        Rifampicin: 'SUSCEPTIBLE',
+        Ethambutol: 'SUSCEPTIBLE',
+        Pyrazinamide: 'NOT TESTED',
+        Kanamycin: 'SUSCEPTIBLE',
+        Capreomycin: 'SUSCEPTIBLE',
+        Amikacin: 'SUSCEPTIBLE',
+        Ofloxacin: 'NOT TESTED',
+        Levofloxacin: 'SUSCEPTIBLE',
+        'DST Test Result 3rd Sample': null,
+        'DST Final Result': null,
+        'Date and Time of Release of DST Result': '2020-01-24T00:00:00.000Z',
+        'DST Comments': null,
+        'DST Encoded by': 'Michellin Roxanne S. Baje, RMT',
+        'DST Performed by': 'Michellin Roxanne S. Baje, RMT',
+        'DST Validated by': 'Roeus Vincent Arjay G. Reyes, RMT',
+        'DST Noted by': 'Ma. Cecilia G. Ama, MD',
+        'GX Laboratory Test Performed': 'GeneXpert',
+        MTB: null,
+        'Rifampicin:': null,
+        'GX Test Result 3rd Sample': null,
+        'Date and Time of Release of Gx Result': null,
+        'GX Comments': null,
+        'GX Encoded by': null,
+        'GX Performed by': null,
+        'GX Validated by': null,
+        'Referring Facility': 'RITM-OPD',
+        'GX Noted by': 'Ma. Cecilia G. Ama, MD',
+        'Smear Result 1 Date Collected': null,
+        'Smear Result 2 Date Collected': null,
+        'Smear Result 3 Date Collected': null,
+      }
+      const ritmRecordPayload0128CultureDstTbResistant1Sample = {
+        database: 'RITM',
+        table: 'RITM Database',
+        TimeStamp: '49820',
+        'Serial Code RN-14-': '0128',
+        'Last Name': 'RAMOS',
+        'First Name': 'Jovil',
+        'Middle Name': 'Martin',
+        'Age / Sex': '60/M',
+        'Date of Birth': '1958-05-08T00:00:00.000Z',
+        'RITM Hospital No': null,
+        'Date of Admission': null,
+        Requisitioner: null,
+        Address: 'C/O ASIAN HOSPITAL AND MEDICAL CENTER',
+        'Reason for Examination': null,
+        'History of Treatment': null,
+        'Registration Group': null,
+        'Presumptive DS or DR': null,
+        'Specimen Type': 'Isolate',
+        'Accession No': '19-000975',
+        'Laboratory No': 'R-19-0019',
+        'Culture Method': 'Solid Culture(Modified Kudoh)',
+        'Date and Time of Specimen Collection': '2019-01-13T00:00:00.000Z',
+        'Date and Time of Specimen Receipt': '2019-01-14T00:00:00.000Z',
+        'Encoded by': null,
+        'Date and Time of Release of AFB Result': null,
+        'Laboratory Test Performed Acid Fast Bacili Microscopy': null,
+        'Smear Result 1': null,
+        'Smear Result 2': null,
+        'Smear Result 3': null,
+        'FINAL RESULT': null,
+        Comments: null,
+        'Smear Encoded by': null,
+        'Performed by': null,
+        'Validated by': null,
+        'Noted by': 'Ma. Cecilia G. Ama, MD',
+        OPD: false,
+        Referral: true,
+        INPATIENT: false,
+        'INPATIENT REMARKS': null,
+        'MRF Encoded by': 'JENNY B. LASPRILLA',
+        'MRF Date Encoded': '2019-01-15T00:00:00.000Z',
+        Smear: false,
+        Culture: true,
+        DST: true,
+        GeneXpert: false,
+        'Date transfered to DST': '2019-04-26T00:00:00.000Z',
+        'TBC Laboratory Test Performed': 'Solid Culture',
+        'TBC Test Result 1st Sample': 'Mycobacterium tuberculosis',
+        'TBC Test Result 2nd Sample': null,
+        'TBC Test Result 3rd Sample': null,
+        'TBC FINAL RESULT': 'Mycobacterium tuberculosis',
+        'Date and Time of Release of TBC Result': '2019-06-10T00:00:00.000Z',
+        'TBC Comments': 'Left Pleural Fluid',
+        'TBC Encoded by': 'Michellin Roxanne S. Baje, RMT',
+        'TBC Performed by': 'Michellin Roxanne S. Baje, RMT',
+        'TBC Validated by': 'Roeus Vincent Arjay G. Reyes, RMT',
+        'TBC Noted by': 'Ma. Cecilia G. Ama, MD',
+        'DST Laboratory Test Performed': 'LJ Proportion Method',
+        Streptomycin: 'SUSCEPTIBLE',
+        Isoniazid: 'RESISTANT',
+        Rifampicin: 'SUSCEPTIBLE',
+        Ethambutol: 'SUSCEPTIBLE',
+        Pyrazinamide: 'NOT TESTED',
+        Kanamycin: 'SUSCEPTIBLE',
+        Capreomycin: 'SUSCEPTIBLE',
+        Amikacin: 'SUSCEPTIBLE',
+        Ofloxacin: 'NOT TESTED',
+        Levofloxacin: 'SUSCEPTIBLE',
+        'DST Test Result 3rd Sample': null,
+        'DST Final Result': null,
+        'Date and Time of Release of DST Result': '2019-06-10T00:00:00.000Z',
+        'DST Comments': 'Left Pleural Fluid',
+        'DST Encoded by': 'Michellin Roxanne S. Baje, RMT',
+        'DST Performed by': 'Michellin Roxanne S. Baje, RMT',
+        'DST Validated by': 'Roeus Vincent Arjay G. Reyes, RMT',
+        'DST Noted by': 'Ma. Cecilia G. Ama, MD',
+        'GX Laboratory Test Performed': 'GeneXpert',
+        MTB: null,
+        'Rifampicin:': null,
+        'GX Test Result 3rd Sample': null,
+        'Date and Time of Release of Gx Result': null,
+        'GX Comments': null,
+        'GX Encoded by': null,
+        'GX Performed by': null,
+        'GX Validated by': null,
+        'Referring Facility': 'RITM-OPD',
+        'GX Noted by': 'Ma. Cecilia G. Ama, MD',
+        'Smear Result 1 Date Collected': null,
+        'Smear Result 2 Date Collected': null,
+        'Smear Result 3 Date Collected': null,
+      }
+      const ritmRecordPayload0129CultureDstTbResistant1Sample = {
+        database: 'RITM',
+        table: 'RITM Database',
+        TimeStamp: '49820',
+        'Serial Code RN-14-': '0129',
+        'Last Name': 'RAMOS',
+        'First Name': 'Jovil',
+        'Middle Name': 'Martin',
+        'Age / Sex': '60/M',
+        'Date of Birth': '1958-05-08T00:00:00.000Z',
+        'RITM Hospital No': null,
+        'Date of Admission': null,
+        Requisitioner: null,
+        Address: null,
+        'Reason for Examination': null,
+        'History of Treatment': null,
+        'Registration Group': null,
+        'Presumptive DS or DR': null,
+        'Specimen Type': 'Isolate',
+        'Accession No': '19-000975',
+        'Laboratory No': 'R-19-0019',
+        'Culture Method': 'Solid Culture(Modified Kudoh)',
+        'Date and Time of Specimen Collection': '2019-01-13T00:00:00.000Z',
+        'Date and Time of Specimen Receipt': '2019-01-14T00:00:00.000Z',
+        'Encoded by': null,
+        'Date and Time of Release of AFB Result': null,
+        'Laboratory Test Performed Acid Fast Bacili Microscopy': null,
+        'Smear Result 1': null,
+        'Smear Result 2': null,
+        'Smear Result 3': null,
+        'FINAL RESULT': null,
+        Comments: null,
+        'Smear Encoded by': null,
+        'Performed by': null,
+        'Validated by': null,
+        'Noted by': 'Ma. Cecilia G. Ama, MD',
+        OPD: false,
+        Referral: true,
+        INPATIENT: false,
+        'INPATIENT REMARKS': null,
+        'MRF Encoded by': 'JENNY B. LASPRILLA',
+        'MRF Date Encoded': '2019-01-15T00:00:00.000Z',
+        Smear: false,
+        Culture: true,
+        DST: true,
+        GeneXpert: false,
+        'Date transfered to DST': '2019-04-26T00:00:00.000Z',
+        'TBC Laboratory Test Performed': 'Solid Culture',
+        'TBC Test Result 1st Sample': 'Mycobacterium tuberculosis',
+        'TBC Test Result 2nd Sample': null,
+        'TBC Test Result 3rd Sample': null,
+        'TBC FINAL RESULT': 'Mycobacterium tuberculosis',
+        'Date and Time of Release of TBC Result': '2019-06-10T00:00:00.000Z',
+        'TBC Comments': 'Left Pleural Fluid',
+        'TBC Encoded by': 'Michellin Roxanne S. Baje, RMT',
+        'TBC Performed by': 'Michellin Roxanne S. Baje, RMT',
+        'TBC Validated by': 'Roeus Vincent Arjay G. Reyes, RMT',
+        'TBC Noted by': 'Ma. Cecilia G. Ama, MD',
+        'DST Laboratory Test Performed': null,
+        Streptomycin: 'SUSCEPTIBLE',
+        Isoniazid: 'RESISTANT',
+        Rifampicin: 'SUSCEPTIBLE',
+        Ethambutol: 'SUSCEPTIBLE',
+        Pyrazinamide: 'NOT TESTED',
+        Kanamycin: 'SUSCEPTIBLE',
+        Capreomycin: 'SUSCEPTIBLE',
+        Amikacin: 'SUSCEPTIBLE',
+        Ofloxacin: 'NOT TESTED',
+        Levofloxacin: 'SUSCEPTIBLE',
+        'DST Test Result 3rd Sample': null,
+        'DST Final Result': null,
+        'Date and Time of Release of DST Result': '2019-06-10T00:00:00.000Z',
+        'DST Comments': 'Left Pleural Fluid',
+        'DST Encoded by': 'Michellin Roxanne S. Baje, RMT',
+        'DST Performed by': 'Michellin Roxanne S. Baje, RMT',
+        'DST Validated by': 'Roeus Vincent Arjay G. Reyes, RMT',
+        'DST Noted by': 'Ma. Cecilia G. Ama, MD',
+        'GX Laboratory Test Performed': 'GeneXpert',
+        MTB: null,
+        'Rifampicin:': null,
+        'GX Test Result 3rd Sample': null,
+        'Date and Time of Release of Gx Result': null,
+        'GX Comments': null,
+        'GX Encoded by': null,
+        'GX Performed by': null,
+        'GX Validated by': null,
+        'Referring Facility': 'RITM-OPD',
+        'GX Noted by': 'Ma. Cecilia G. Ama, MD',
+        'Smear Result 1 Date Collected': null,
+        'Smear Result 2 Date Collected': null,
+        'Smear Result 3 Date Collected': null,
+      }
+      const ritmRecordPayload0130CultureMGITDstTbResistant1Sample = {
+        database: 'RITM',
+        table: 'RITM Database',
+        TimeStamp: '49820',
+        'Serial Code RN-14-': '0130',
+        'Last Name': 'RAMOS',
+        'First Name': 'Jovil',
+        'Middle Name': 'Martin',
+        'Age / Sex': '60/M',
+        'Date of Birth': '1958-05-08T00:00:00.000Z',
+        'RITM Hospital No': null,
+        'Date of Admission': null,
+        Requisitioner: null,
+        Address: 'C/O ASIAN HOSPITAL AND MEDICAL CENTER',
+        'Reason for Examination': null,
+        'History of Treatment': null,
+        'Registration Group': null,
+        'Presumptive DS or DR': null,
+        'Specimen Type': 'Isolate',
+        'Accession No': '19-000975',
+        'Laboratory No': 'R-19-0019',
+        'Culture Method': 'Liquid Culture (MGIT 960)',
+        'Date and Time of Specimen Collection': '2019-01-13T00:00:00.000Z',
+        'Date and Time of Specimen Receipt': '2019-01-14T00:00:00.000Z',
+        'Encoded by': null,
+        'Date and Time of Release of AFB Result': null,
+        'Laboratory Test Performed Acid Fast Bacili Microscopy': null,
+        'Smear Result 1': null,
+        'Smear Result 2': null,
+        'Smear Result 3': null,
+        'FINAL RESULT': null,
+        Comments: null,
+        'Smear Encoded by': null,
+        'Performed by': null,
+        'Validated by': null,
+        'Noted by': 'Ma. Cecilia G. Ama, MD',
+        OPD: false,
+        Referral: true,
+        INPATIENT: false,
+        'INPATIENT REMARKS': null,
+        'MRF Encoded by': 'JENNY B. LASPRILLA',
+        'MRF Date Encoded': '2019-01-15T00:00:00.000Z',
+        Smear: false,
+        Culture: true,
+        DST: true,
+        GeneXpert: false,
+        'Date transfered to DST': '2019-04-26T00:00:00.000Z',
+        'TBC Laboratory Test Performed': 'Solid Culture',
+        'TBC Test Result 1st Sample': 'Mycobacterium tuberculosis',
+        'TBC Test Result 2nd Sample': null,
+        'TBC Test Result 3rd Sample': null,
+        'TBC FINAL RESULT': 'Mycobacterium tuberculosis',
+        'Date and Time of Release of TBC Result': '2019-06-10T00:00:00.000Z',
+        'TBC Comments': 'Left Pleural Fluid',
+        'TBC Encoded by': 'Michellin Roxanne S. Baje, RMT',
+        'TBC Performed by': 'Michellin Roxanne S. Baje, RMT',
+        'TBC Validated by': 'Roeus Vincent Arjay G. Reyes, RMT',
+        'TBC Noted by': 'Ma. Cecilia G. Ama, MD',
+        'DST Laboratory Test Performed': 'Liquid Culture (MGIT 960)',
+        Streptomycin: 'SUSCEPTIBLE',
+        Isoniazid: 'RESISTANT',
+        Rifampicin: 'SUSCEPTIBLE',
+        Ethambutol: 'SUSCEPTIBLE',
+        Pyrazinamide: 'NOT TESTED',
+        Kanamycin: 'SUSCEPTIBLE',
+        Capreomycin: 'SUSCEPTIBLE',
+        Amikacin: 'SUSCEPTIBLE',
+        Ofloxacin: 'NOT TESTED',
+        Levofloxacin: 'SUSCEPTIBLE',
+        'DST Test Result 3rd Sample': null,
+        'DST Final Result': null,
+        'Date and Time of Release of DST Result': '2019-06-10T00:00:00.000Z',
+        'DST Comments': 'Left Pleural Fluid',
+        'DST Encoded by': 'Michellin Roxanne S. Baje, RMT',
+        'DST Performed by': 'Michellin Roxanne S. Baje, RMT',
+        'DST Validated by': 'Roeus Vincent Arjay G. Reyes, RMT',
+        'DST Noted by': 'Ma. Cecilia G. Ama, MD',
+        'GX Laboratory Test Performed': 'GeneXpert',
+        MTB: null,
+        'Rifampicin:': null,
+        'GX Test Result 3rd Sample': null,
+        'Date and Time of Release of Gx Result': null,
+        'GX Comments': null,
+        'GX Encoded by': null,
+        'GX Performed by': null,
+        'GX Validated by': null,
+        'Referring Facility': 'RITM-OPD',
+        'GX Noted by': 'Ma. Cecilia G. Ama, MD',
+        'Smear Result 1 Date Collected': null,
+        'Smear Result 2 Date Collected': null,
+        'Smear Result 3 Date Collected': null,
+      }
+      const ritmRecordPayload0423GeneXpertNotDetected1Sample = {
+        database: 'RITM_2020',
+        table: 'RITM Database',
+        TimeStamp: '446011',
+        'Serial Code RN-14-': '0423',
+        'Last Name': 'REYNOLDS',
+        'First Name': 'ALBERT',
+        'Middle Name': 'DANGER',
+        'Age / Sex': '39/F',
+        'Date of Birth': '1980-11-18T00:00:00.000Z',
+        'RITM Hospital No': '654982',
+        'Date of Admission': null,
+        Requisitioner: 'Dr. Garcia',
+        Address: 'C/O DOTS',
+        'Reason for Examination': 'Diagnosis',
+        'History of Treatment': 'New',
+        'Registration Group': 'New',
+        'Presumptive DS or DR': 'Presumptive DR-TB',
+        'Specimen Type': 'Sputum',
+        'Accession No': null,
+        'Laboratory No': 'D-20-0314',
+        'Culture Method': null,
+        'Date and Time of Specimen Collection': '2020-02-14T00:00:00.000Z',
+        'Date and Time of Specimen Receipt': '2020-02-17T00:00:00.000Z',
+        'Encoded by': null,
+        'Date and Time of Release of AFB Result': null,
+        'Laboratory Test Performed Acid Fast Bacili Microscopy': null,
+        'Smear Result 1': null,
+        'Smear Result 2': null,
+        'Smear Result 3': null,
+        'FINAL RESULT': null,
+        Comments: null,
+        'Smear Encoded by': null,
+        'Performed by': null,
+        'Validated by': null,
+        'Noted by': 'CRISTINA C. VILLARICO, RMT',
+        OPD: true,
+        Referral: false,
+        INPATIENT: false,
+        'INPATIENT REMARKS': null,
+        'MRF Encoded by': 'Jerri Reinald A. Coloma, RMT',
+        'MRF Date Encoded': '2020-02-17T00:00:00.000Z',
+        Smear: false,
+        Culture: false,
+        DST: false,
+        GeneXpert: true,
+        'Date transfered to DST': null,
+        'TBC Laboratory Test Performed': 'TB Culture',
+        'TBC Test Result 1st Sample': null,
+        'TBC Test Result 2nd Sample': null,
+        'TBC Test Result 3rd Sample': null,
+        'TBC FINAL RESULT': null,
+        'Date and Time of Release of TBC Result': null,
+        'TBC Comments': null,
+        'TBC Encoded by': null,
+        'TBC Performed by': null,
+        'TBC Validated by': null,
+        'TBC Noted by': 'CRISTINA C. VILLARICO, RMT',
+        'DST Laboratory Test Performed': 'Drug Susceptibility Test',
+        Streptomycin: null,
+        Isoniazid: null,
+        Rifampicin: null,
+        Ethambutol: null,
+        Pyrazinamide: null,
+        Kanamycin: null,
+        Capreomycin: null,
+        Amikacin: null,
+        Ofloxacin: null,
+        Levofloxacin: null,
+        'DST Test Result 3rd Sample': null,
+        'DST Final Result': null,
+        'Date and Time of Release of DST Result': null,
+        'DST Comments': null,
+        'DST Encoded by': null,
+        'DST Performed by': null,
+        'DST Validated by': null,
+        'DST Noted by': 'CRISTINA C. VILLARICO, RMT',
+        'GX Laboratory Test Performed': 'GeneXpert',
+        MTB: 'NOT DETECTED',
+        'Rifampicin:': 'N/A',
+        'GX Test Result 3rd Sample': null,
+        'Date and Time of Release of Gx Result': '2020-02-17T00:00:00.000Z',
+        'GX Comments': null,
+        'GX Encoded by': 'Erlanegail R. Isla, RMT',
+        'GX Performed by': 'Erlanegail R. Isla, RMT',
+        'GX Validated by': 'Michellin Roxanne S. Baje, RMT',
+        'Referring Facility': 'RITM-DOTS',
+        'GX Noted by': 'CRISTINA C. VILLARICO, RMT',
+        'Smear Result 1 Date Collected': null,
+        'Smear Result 2 Date Collected': null,
+        'Smear Result 3 Date Collected': null,
+      }
+      const ritmRecordPayload0424GeneXpertNotDetected1Sample = {
+        database: 'RITM_2020',
+        table: 'RITM Database',
+        TimeStamp: '446012',
+        'Serial Code RN-14-': '0424',
+        'Last Name': 'REYNOLDS',
+        'First Name': 'ALBERT',
+        'Middle Name': 'DANGER',
+        'Age / Sex': '39/F',
+        'Date of Birth': '1980-11-18T00:00:00.000Z',
+        'RITM Hospital No': '654982',
+        'Date of Admission': null,
+        Requisitioner: 'Dr. Garcia',
+        Address: 'C/O DOTS',
+        'Reason for Examination': 'Diagnosis',
+        'History of Treatment': 'New',
+        'Registration Group': 'New',
+        'Presumptive DS or DR': 'Presumptive DR-TB',
+        'Specimen Type': 'Sputum',
+        'Accession No': null,
+        'Laboratory No': 'D-20-0314',
+        'Culture Method': null,
+        'Date and Time of Specimen Collection': '2020-02-14T00:00:00.000Z',
+        'Date and Time of Specimen Receipt': '2020-02-17T00:00:00.000Z',
+        'Encoded by': null,
+        'Date and Time of Release of AFB Result': null,
+        'Laboratory Test Performed Acid Fast Bacili Microscopy': null,
+        'Smear Result 1': null,
+        'Smear Result 2': null,
+        'Smear Result 3': null,
+        'FINAL RESULT': null,
+        Comments: null,
+        'Smear Encoded by': null,
+        'Performed by': null,
+        'Validated by': null,
+        'Noted by': 'CRISTINA C. VILLARICO, RMT',
+        OPD: true,
+        Referral: false,
+        INPATIENT: false,
+        'INPATIENT REMARKS': null,
+        'MRF Encoded by': 'Jerri Reinald A. Coloma, RMT',
+        'MRF Date Encoded': '2020-02-17T00:00:00.000Z',
+        Smear: false,
+        Culture: false,
+        DST: false,
+        GeneXpert: true,
+        'Date transfered to DST': null,
+        'TBC Laboratory Test Performed': 'TB Culture',
+        'TBC Test Result 1st Sample': null,
+        'TBC Test Result 2nd Sample': null,
+        'TBC Test Result 3rd Sample': null,
+        'TBC FINAL RESULT': null,
+        'Date and Time of Release of TBC Result': null,
+        'TBC Comments': null,
+        'TBC Encoded by': null,
+        'TBC Performed by': null,
+        'TBC Validated by': null,
+        'TBC Noted by': 'CRISTINA C. VILLARICO, RMT',
+        'DST Laboratory Test Performed': 'Drug Susceptibility Test',
+        Streptomycin: null,
+        Isoniazid: null,
+        Rifampicin: null,
+        Ethambutol: null,
+        Pyrazinamide: null,
+        Kanamycin: null,
+        Capreomycin: null,
+        Amikacin: null,
+        Ofloxacin: null,
+        Levofloxacin: null,
+        'DST Test Result 3rd Sample': null,
+        'DST Final Result': null,
+        'Date and Time of Release of DST Result': null,
+        'DST Comments': null,
+        'DST Encoded by': null,
+        'DST Performed by': null,
+        'DST Validated by': null,
+        'DST Noted by': 'CRISTINA C. VILLARICO, RMT',
+        'GX Laboratory Test Performed': 'GeneXpert',
+        MTB: 'NOT DETECTED',
+        'Rifampicin:': 'N/A',
+        'GX Test Result 3rd Sample': null,
+        'Date and Time of Release of Gx Result': '2020-02-17T00:00:00.000Z',
+        'GX Comments': null,
+        'GX Encoded by': 'Erlanegail R. Isla, RMT',
+        'GX Performed by': 'Erlanegail R. Isla, RMT',
+        'GX Validated by': 'Michellin Roxanne S. Baje, RMT',
+        'Referring Facility': 'RITM-DOTS',
+        'GX Noted by': 'CRISTINA C. VILLARICO, RMT',
+        'Smear Result 1 Date Collected': null,
+        'Smear Result 2 Date Collected': null,
+        'Smear Result 3 Date Collected': null,
+      }
+      const ritmRecordPayloads = [
+        ritmRecordPayload3082SmearCultureNegative2Samples,
+        ritmRecordPayload2068SmearRequestedNoResults1Sample,
+        ritmRecordPayload2630CultureSmearTbPositive2Samples,
+        ritmRecordPayload0128CultureDstTbResistant1Sample,
+        ritmRecordPayload0129CultureDstTbResistant1Sample,
+        ritmRecordPayload0130CultureMGITDstTbResistant1Sample,
+        ritmRecordPayload0423GeneXpertNotDetected1Sample,
+        ritmRecordPayload0424GeneXpertNotDetected1Sample,
+      ]
+
+      const existingSample = existingSamples['RN-19-2630-1']
+      const existingResultRecords = [
+        {
+          id: 10,
+          assayId: staticDatabaseData.Assay.assayGenericDst,
+          resultData: JSON.stringify({
+            encodedResult: {
+              readBy: null,
+              labTech: null,
+              remarks: null,
+              amikacin: null,
+              dateRead: null,
+              idResult: 'No growth after 8 weeks',
+              encodedBy: null,
+              isoniazid: null,
+              kanamycin: null,
+              ethambutol: null,
+              methodUsed: null,
+              reviewedBy: 'Ma. Cecilia G. Ama, MD',
+              rifampicin: null,
+              capreomycin: null,
+              dateReleased: null,
+              inoculatedBy: null,
+              levofloxacin: null,
+              pyrazinamide: null,
+              streptomycin: null,
+              testRequested: null,
+              dateInoculated: null,
+              otherMethodUsed: null,
+            },
+            testStartDateTime: '2019-08-20T12:13:14.000Z',
+            testEndedDateTime: '2019-08-20T15:16:17.000Z',
+          }),
+          deviceId: databaseRecords.Device.id,
+          externalId: 'NTRL_RN-19-2630-1_DST',
+          senderOperator: 'bryan',
+          endedOn: '2019-08-25T14:53:11.000Z',
+          patientData: '{}',
+          sampleId: existingSample.id,
+          updatedOn: '2019-09-15T08:09:10.123Z',
+          resultCategory1: staticDatabaseData.ResultCategory.Missing,
+          errorCode: 'OPEN',
+          notes: '',
+          createdOn: '2019-09-14T08:09:10.123Z',
+        },
+        {
+          id: 11,
+          assayId: staticDatabaseData.Assay.assayCulture,
+          resultData: JSON.stringify({
+            encodedResult: {
+              readBy: null,
+              labTech: null,
+              remarks: null,
+              amikacin: null,
+              dateRead: null,
+              idResult: 'No growth after 8 weeks',
+              encodedBy: null,
+              isoniazid: null,
+              kanamycin: null,
+              ethambutol: null,
+              methodUsed: null,
+              reviewedBy: 'Ma. Cecilia G. Ama, MD',
+              rifampicin: null,
+              capreomycin: null,
+              dateReleased: null,
+              inoculatedBy: null,
+              levofloxacin: null,
+              pyrazinamide: null,
+              streptomycin: null,
+              testRequested: null,
+              dateInoculated: null,
+              otherMethodUsed: null,
+            },
+            testStartDateTime: '2019-08-20T12:13:14.000Z',
+            testEndedDateTime: '2019-08-20T15:16:17.000Z',
+          }),
+          deviceId: databaseRecords.Device.id,
+          externalId: 'NTRL_RN-19-2630-1_CULTURE',
+          senderOperator: 'bryan',
+          endedOn: '2019-08-25T14:53:11.000Z',
+          patientData: '{}',
+          sampleId: existingSample.id,
+          updatedOn: '2019-09-15T08:09:10.123Z',
+          resultCategory1: staticDatabaseData.ResultCategory.Missing,
+          errorCode: 'OPEN',
+          notes: 'Some notes that were previously entered',
+          createdOn: '2019-09-14T08:09:10.123Z',
+        },
+        {
+          id: 12,
+          assayId: staticDatabaseData.Assay.GxMtbRif,
+          resultData: JSON.stringify({
+            testStartedOn: '2020-02-16T12:13:14.000Z',
+            testEndedOn: '2020-02-16T15:16:17.000Z',
+          }),
+          deviceId: databaseRecords.Device.id,
+          externalId: 'NTRL_RN-20-0424_GX',
+          senderOperator: 'bryan',
+          endedOn: '2019-08-25T14:53:11.000Z',
+          patientData: '{}',
+          sampleId: existingSample.id,
+          updatedOn: '2020-02-22T08:09:10.123Z',
+          resultCategory1: staticDatabaseData.ResultCategory.Missing,
+          errorCode: 'OPEN',
+          createdOn: '2019-09-14T08:09:10.123Z',
+        },
+      ]
+
+      function setupPhilippinesNTRLRITMDataProcessorWithSpies(
+        deviceApiKeyToken,
+        payload,
+        existingSamplesInDatabase = existingSamples,
+        existingResultRecordsInDatabase = existingResultRecords
+      ) {
+        const updateSpy = sinon.spy()
+        const insertSpy = sinon.spy()
+        const {
+          PhilippinesNtrlRitm,
+        } = mockOutPhilippinesNTRLDatabaseProcessors(
+          existingSamplesInDatabase,
+          existingResultRecordsInDatabase,
+          updateSpy,
+          insertSpy
+        )
+        const philippinesNTRLRITM = new PhilippinesNtrlRitm(
+          {
+            auth: { credentials: { token: deviceApiKeyToken } },
+            plugins: { rawPayload: 'the raw message' },
+            payload,
+          },
+          { dispatch: () => {} }
+        )
+        return {
+          updateSpy,
+          insertSpy,
+          philippinesNTRLRITM,
+        }
+      }
+
+      function getNtrlLabRequestIdFromPayload(payload) {
+        const labRequestIdPrefix =
+          payload.database === 'RITM'
+            ? 'RN-19-'
+            : `RN-${payload.database.substr(payload.database.length - 2)}-`
+        return `${labRequestIdPrefix}${payload['Serial Code RN-14-']}`
+      }
+
+      function generatePatientDataFromRITMPayload(payload) {
+        let patientNameId = payload['Last Name'] || ''
+        if (payload['First Name']) {
+          if (patientNameId) {
+            patientNameId += ', '
+          }
+          patientNameId += payload['First Name']
+        }
+        if (patientNameId && payload['Middle Name']) {
+          patientNameId += ` ${payload['Middle Name']}`
+        }
+        const ntrlLabRequestId = getNtrlLabRequestIdFromPayload(payload)
+
+        const ageSex = payload['Age / Sex']
+        let age = null
+        let sex = null
+        if (ageSex) {
+          const ageSexRegex = new RegExp(
+            '(\\d*)(\\s?[|m|o|s]*)(\\/|\\?)(m|f)',
+            'gi'
+          )
+          const ageSexRegexMatch = ageSexRegex.exec(ageSex)
+          if (ageSexRegexMatch) {
+            age = convertStringToFloat(ageSexRegexMatch[1])
+            if (age && ageSexRegexMatch[2]) {
+              age /= 10
+            }
+            if (ageSexRegexMatch[4]) {
+              sex = { M: 'Male', F: 'Female' }[ageSexRegexMatch[4]]
+            }
+          }
+        }
+        return {
+          id:
+            payload['RITM Hospital No'] ||
+            patientNameId ||
+            payload['Laboratory No'] ||
+            ntrlLabRequestId,
+          serialNumber: payload['Serial Code RN-14-'],
+          referringHealthFacility:
+            payload.Address || payload['Referring Facility'],
+          requestingPhysician: payload.Requisitioner,
+          lastName: payload['Last Name'],
+          firstName: payload['First Name'],
+          middleInitialOrName: payload['Middle Name'],
+          dateOfAdmission: payload['Date of Admission'],
+          age,
+          sex,
+          dateOfBirth: payload['Date of Birth'],
+          address: payload.Address,
+          treatmentCategory: payload['History of Treatment'],
+          registrationGroup: payload['Registration Group'],
+          treatmentSchedule: payload['Reason for Examination'],
+          typeOfSpecimen: payload['Specimen Type'],
+          accessionNo: payload['Accession No'],
+          testRequestedSmear: payload.Smear,
+          testRequestedCulture: payload.Culture,
+          testRequestedDst: payload.DST,
+          testRequestedGx: payload.GeneXpert,
+          dateTransferedToDst: payload['Date transfered to DST'],
+          cultureMethod: payload['Culture Method'],
+          presumptiveDsOrDr: payload['Presumptive DS or DR'],
+          dateReceived: payload['Date and Time of Specimen Receipt'],
+          labNo1: payload['Laboratory No'],
+          tbCaseNumber: payload['RITM Hospital No'],
+          dateCollected1: payload['Date and Time of Specimen Collection'],
+          encodedBy: payload['MRF Encoded by'],
+          dateEncoded: payload['MRF Date Encoded'],
+          healthCareSystem: 'RITM',
+        }
+      }
+
+      function getSamplesFromRITMPayload(payload) {
+        const sampleTypeMapping = {
+          Sputum: 'Sputum',
+          CSF: 'CSF',
+          'Pleural Fluid': 'Effusion',
+          'Ascitic Fluid': 'Effusion',
+          'Pericardial Fluid': 'Effusion',
+          'Peritoneal Fluid': 'Effusion',
+          'Pleural Fluid (L.)': 'Effusion',
+          'Pleural Effusion Aspirate': 'Effusion',
+          'Pleural Fluid (Left)': 'Effusion',
+          'Pleural Fluid (Right)': 'Effusion',
+          'Pleural Effusion': 'Effusion',
+          'Retroperitoneal Fluid': 'Effusion',
+          'Pleural Fluid (R.)': 'Effusion',
+          'Gastric Aspirate': 'Gastric Lavage',
+          'Gastric fluid': 'Gastric Lavage',
+          'Wound Discharge': 'Pus',
+          'Wound Secretion': 'Pus',
+          Isolates: 'Isolate',
+          Others: 'Other',
+        }
+        const sampleTypeId =
+          staticDatabaseData.SampleType[
+            sampleTypeMapping[payload['Specimen Type']] || 'Other'
+          ]
+        const labRequestIdPrefix =
+          payload.database === 'RITM'
+            ? 'RN-19-'
+            : `RN-${payload.database.substr(payload.database.length - 2)}-`
+        const ntrlLabRequestId = `${labRequestIdPrefix}${payload['Serial Code RN-14-']}`
+        const numberOfSamples =
+          !!payload['Smear Result 3'] ||
+          !!payload['TBC Test Result 3rd Sample'] ||
+          !!payload['DST Test Result 3rd Sample'] ||
+          !!payload['GX Test Result 3rd Sample'] ||
+          !!payload['Smear Result 3 Date Collected']
+            ? 3
+            : !!payload['Smear Result 2'] ||
+              !!payload['TBC Test Result 2nd Sample'] ||
+              !!payload['Smear Result 2 Date Collected']
+            ? 2
+            : 1
+        return _.range(1, numberOfSamples + 1).map(sampleNumber => {
+          const sample = {
+            externalId:
+              numberOfSamples > 1
+                ? `${ntrlLabRequestId}-${sampleNumber}`
+                : `${ntrlLabRequestId}`,
+            collectedOn:
+              payload[`Smear Result ${sampleNumber} Date Collected`] ||
+              payload['Date and Time of Specimen Collection'],
+            sampleTypeId,
+          }
+          return sample
+        })
+      }
+
+      it('should throw a bad request when the device API key cannot be reconciled with a device', async () => {
+        const {
+          philippinesNTRLRITM,
+        } = setupPhilippinesNTRLRITMDataProcessorWithSpies('bad-token', {})
+        await expect(philippinesNTRLRITM.processRequest()).to.be.rejectedWith(
+          'Invalid device API key: Cannot determine which device this came from'
+        )
+      })
+
+      it('should update device lastSeenOn & updatedOn', async () => {
+        await Promise.each(ritmRecordPayloads, async ritmRecordPayload => {
+          const {
+            updateSpy,
+            philippinesNTRLRITM,
+          } = setupPhilippinesNTRLRITMDataProcessorWithSpies(
+            'some device API key',
+            ritmRecordPayload
+          )
+          await philippinesNTRLRITM.processRequest()
+          const response = await philippinesNTRLRITM.getResponse()
+          assert.equal(response.deviceId, databaseRecords.Device.id)
+          const updateDeviceCalls = updateSpy
+            .getCalls()
+            .filter(updateCall => updateCall.args[0] === 'Device')
+          expect(updateDeviceCalls).to.have.lengthOf(1)
+          const actualDeviceUpdates = updateDeviceCalls[0].args[1]
+          expect(actualDeviceUpdates).to.containSubset({
+            lastSeenOn: utcNow,
+            updatedOn: utcNow,
+          })
+        })
+      })
+
+      it('should update existing samples', async () => {
+        const {
+          insertSpy,
+          updateSpy,
+          philippinesNTRLRITM: existingSampleProcessor,
+        } = setupPhilippinesNTRLRITMDataProcessorWithSpies(
+          'some device API key',
+          ritmRecordPayload2630CultureSmearTbPositive2Samples
+        )
+        await existingSampleProcessor.processRequest()
+        const insertSampleCalls = insertSpy
+          .getCalls()
+          .filter(insertCall => insertCall.args[0] === 'Sample')
+        const updateSampleCalls = updateSpy
+          .getCalls()
+          .filter(updateCall => updateCall.args[0] === 'Sample')
+        expect(insertSampleCalls).to.have.lengthOf(0)
+        expect(updateSampleCalls).to.have.lengthOf(2)
+        expect(updateSampleCalls[0].args[1].collectedOn.toISOString()).to.equal(
+          '2019-10-23T00:00:00.000Z'
+        )
+        expect(updateSampleCalls[1].args[1].collectedOn.toISOString()).to.equal(
+          '2019-10-23T00:00:00.000Z'
+        )
+      })
+
+      it('should insert new samples', async () => {
+        const payload = JSON.parse(
+          JSON.stringify(ritmRecordPayload3082SmearCultureNegative2Samples)
+        )
+        const {
+          insertSpy,
+          updateSpy,
+          philippinesNTRLRITM: newSampleProcessor,
+        } = setupPhilippinesNTRLRITMDataProcessorWithSpies(
+          'some device API key',
+          payload
+        )
+        await newSampleProcessor.processRequest()
+        const insertSampleCalls = insertSpy
+          .getCalls()
+          .filter(insertCall => insertCall.args[0] === 'Sample')
+        const updateSampleCalls = updateSpy
+          .getCalls()
+          .filter(updateCall => updateCall.args[0] === 'Sample')
+        expect(insertSampleCalls).to.have.lengthOf(2)
+        expect(updateSampleCalls).to.have.lengthOf(0)
+        expect(insertSampleCalls[0].args[1].collectedOn.toISOString()).to.equal(
+          '2019-12-19T00:00:00.000Z'
+        )
+        expect(insertSampleCalls[1].args[1].collectedOn.toISOString()).to.equal(
+          '2019-12-19T00:00:00.000Z'
+        )
+      })
+
+      it('should insert a DST result when DST values are in the record', async () => {
+        const payload = JSON.parse(
+          JSON.stringify(ritmRecordPayload0128CultureDstTbResistant1Sample)
+        )
+        const {
+          insertSpy,
+          philippinesNTRLRITM: dstResultProcessor,
+        } = setupPhilippinesNTRLRITMDataProcessorWithSpies(
+          'some device API key',
+          ritmRecordPayload0128CultureDstTbResistant1Sample
+        )
+        await dstResultProcessor.processRequest()
+        const insertResultCalls = insertSpy
+          .getCalls()
+          .filter(insertCall => insertCall.args[0] === 'Result')
+        const dstResults = insertResultCalls
+          .map(insert => insert.lastArg)
+          .filter(
+            resultInsert =>
+              resultInsert.assayId === staticDatabaseData.Assay.assayGenericDst
+          )
+        expect(dstResults).to.have.lengthOf(1)
+        const dstResult = {
+          ...dstResults[0],
+          patientData: JSON.parse(dstResults[0].patientData),
+          resultData: JSON.parse(dstResults[0].resultData),
+          startedOn: dstResults[0].startedOn.toISOString(),
+          endedOn: dstResults[0].endedOn.toISOString(),
+        }
+        const sampleExternalId = getSamplesFromRITMPayload(payload)[0]
+          .externalId
+        expect(dstResult).to.containSubset({
+          partnerId: databaseRecords.Site.partnerId,
+          geographyId: databaseRecords.Site.geographyId,
+          siteId: databaseRecords.Site.id,
+          deviceId: databaseRecords.DeviceApiKey.deviceId,
+          longitude: databaseRecords.Site.longitude,
+          latitude: databaseRecords.Site.latitude,
+          resultSourceId: staticDatabaseData.resultSourceId,
+          resultTypeId: staticDatabaseData.resultTypeId,
+          resultCategory1: staticDatabaseData.ResultCategory.PositiveMTB,
+          resultCategory2: staticDatabaseData.ResultCategory.Resistant,
+          patientData: generatePatientDataFromRITMPayload(payload),
+          externalId: `${databaseRecords.Site.externalId}_${sampleExternalId}_DST`,
+          assayId: staticDatabaseData.Assay.assayGenericDst,
+          startedOn: payload['Date and Time of Release of DST Result'],
+          endedOn: payload['Date and Time of Release of DST Result'],
+          resultData: {
+            encodedResult: {
+              testRequested: payload['DST Laboratory Test Performed'],
+              idResult:
+                payload['DST Final Result'] || payload['TBC FINAL RESULT'],
+              streptomycin: payload.Streptomycin,
+              isoniazid: payload.Isoniazid,
+              rifampicin: payload.Rifampicin,
+              ethambutol: payload.Ethambutol,
+              pyrazinamide: payload.Pyrazinamide,
+              kanamycin: payload.Kanamycin,
+              levofloxacin: payload.Levofloxacin,
+              amikacin: payload.Amikacin,
+              capreomycin: payload.Capreomycin,
+              ofloxacin: payload.Ofloxacin,
+              methodUsed: payload['DST Laboratory Test Performed'],
+              remarks: payload['DST Comments'],
+              dateReleased: payload['Date and Time of Release of DST Result'],
+              readBy: payload['DST MT Read'],
+              labTech: payload['DST Performed by'],
+              encodedBy: payload['DST Encoded by'],
+              reviewedBy: payload['DST Validated by'],
+              notedBy: payload['DST Noted by'],
+            },
+          },
+          senderOperator: payload['DST Performed by'],
+          reportableSiteId: databaseRecords.Site.id,
+        })
+      })
+
+      it('should insert Culture results when Culture values are in the record', async () => {
+        const payload = JSON.parse(
+          JSON.stringify(ritmRecordPayload0128CultureDstTbResistant1Sample)
+        )
+        const {
+          insertSpy,
+          philippinesNTRLRITM: cultureResultProcessor,
+        } = setupPhilippinesNTRLRITMDataProcessorWithSpies(
+          'some device API key',
+          ritmRecordPayload0128CultureDstTbResistant1Sample
+        )
+        await cultureResultProcessor.processRequest()
+        const insertResultCalls = insertSpy
+          .getCalls()
+          .filter(insertCall => insertCall.args[0] === 'Result')
+        const cultureResults = insertResultCalls
+          .map(insert => insert.lastArg)
+          .filter(
+            resultInsert =>
+              resultInsert.assayId === staticDatabaseData.Assay.assayCulture
+          )
+        expect(cultureResults).to.have.lengthOf(1)
+        const cultureResult = {
+          ...cultureResults[0],
+          patientData: JSON.parse(cultureResults[0].patientData),
+          resultData: JSON.parse(cultureResults[0].resultData),
+          startedOn: cultureResults[0].startedOn.toISOString(),
+          endedOn: cultureResults[0].endedOn.toISOString(),
+        }
+        const sampleExternalId = getSamplesFromRITMPayload(payload)[0]
+          .externalId
+        expect(cultureResult).to.containSubset({
+          partnerId: databaseRecords.Site.partnerId,
+          geographyId: databaseRecords.Site.geographyId,
+          siteId: databaseRecords.Site.id,
+          deviceId: databaseRecords.DeviceApiKey.deviceId,
+          longitude: databaseRecords.Site.longitude,
+          latitude: databaseRecords.Site.latitude,
+          resultSourceId: staticDatabaseData.resultSourceId,
+          resultTypeId: staticDatabaseData.resultTypeId,
+          resultCategory1: staticDatabaseData.ResultCategory.PositiveMTB,
+          resultCategory2: staticDatabaseData.ResultCategory.PositiveMTB,
+          patientData: generatePatientDataFromRITMPayload(payload),
+          externalId: `${databaseRecords.Site.externalId}_${sampleExternalId}_CULTURE`,
+          assayId: staticDatabaseData.Assay.assayCulture,
+          startedOn: payload['Date and Time of Release of TBC Result'],
+          endedOn: payload['Date and Time of Release of TBC Result'],
+          resultData: {
+            encodedResult: {
+              medTech: payload['TBC Performed by'],
+              methodUsed1: payload['TBC Laboratory Test Performed'],
+              result1: payload['TBC Test Result 1st Sample'],
+              result2: payload['TBC Test Result 2nd Sample'],
+              result3: payload['TBC Test Result 3rd Sample'],
+              finalResult: payload['TBC FINAL RESULT'],
+              remarks: payload['TBC Comments'],
+              dateReleased: payload['Date and Time of Release of TBC Result'],
+              encodedBy: payload['TBC Encoded by'],
+              validatedBy: payload['TBC Validated by'],
+              notedBy: payload['TBC Noted by'],
+            },
+          },
+          senderOperator: payload['TBC Performed by'],
+          reportableSiteId: databaseRecords.Site.id,
+        })
+      })
+
+      it('should insert Smear results when Smear values are in the record', async () => {
+        const payload = JSON.parse(
+          JSON.stringify(ritmRecordPayload2630CultureSmearTbPositive2Samples)
+        )
+        const {
+          insertSpy,
+          philippinesNTRLRITM: smearResultProcessor,
+        } = setupPhilippinesNTRLRITMDataProcessorWithSpies(
+          'some device API key',
+          ritmRecordPayload2630CultureSmearTbPositive2Samples
+        )
+        await smearResultProcessor.processRequest()
+        const insertResultCalls = insertSpy
+          .getCalls()
+          .filter(insertCall => insertCall.args[0] === 'Result')
+        const insertedSmearResults = insertResultCalls
+          .map(insert => insert.lastArg)
+          .filter(
+            resultInsert =>
+              resultInsert.assayId === staticDatabaseData.Assay.assaySmear
+          )
+        // eslint-disable-next-line no-unused-expressions
+        expect(insertedSmearResults).to.not.be.empty
+        const insertedSmearResult = {
+          ...insertedSmearResults[0],
+          patientData: JSON.parse(insertedSmearResults[0].patientData),
+          resultData: JSON.parse(insertedSmearResults[0].resultData),
+          startedOn: insertedSmearResults[0].startedOn.toISOString(),
+          endedOn: insertedSmearResults[0].endedOn.toISOString(),
+        }
+        expect(insertedSmearResult).to.containSubset({
+          partnerId: databaseRecords.Site.partnerId,
+          geographyId: databaseRecords.Site.geographyId,
+          siteId: databaseRecords.Site.id,
+          deviceId: databaseRecords.DeviceApiKey.deviceId,
+          longitude: databaseRecords.Site.longitude,
+          latitude: databaseRecords.Site.latitude,
+          resultSourceId: staticDatabaseData.resultSourceId,
+          resultTypeId: staticDatabaseData.resultTypeId,
+          resultCategory1: staticDatabaseData.ResultCategory.Positive1,
+          resultCategory2: staticDatabaseData.ResultCategory.Detected,
+          patientData: generatePatientDataFromRITMPayload(payload),
+          assayId: staticDatabaseData.Assay.assaySmear,
+          startedOn: payload['Date and Time of Release of AFB Result'],
+          endedOn: payload['Date and Time of Release of AFB Result'],
+          resultData: {
+            encodedResult: {
+              smearMethod:
+                payload[
+                  'Laboratory Test Performed Acid Fast Bacili Microscopy'
+                ],
+              smearDateCollected1: payload['Smear Result 1 Date Collected'],
+              smearResult1: payload['Smear Result 1'],
+              smearDateCollected2: payload['Smear Result 2 Date Collected'],
+              smearResult2: payload['Smear Result 2'],
+              smearDateCollected3: payload['Smear Result 3 Date Collected'],
+              smearResult3: payload['Smear Result 3'],
+              finalResult: payload['FINAL RESULT'],
+              dateReleased: payload['Date and Time of Release of AFB Result'],
+              comments: payload.Comments,
+              encodedBy: payload['Smear Encoded by'],
+              laboratoryTechnician: payload['Performed by'],
+              validatedBy: payload['Validated by'],
+              notedBy: payload['Noted by'],
+            },
+          },
+          senderOperator: payload['Performed by'],
+          reportableSiteId: databaseRecords.Site.id,
+        })
+      })
+
+      it('should insert a GeneXpert result when GeneXpert values are in the record', async () => {
+        const payload = JSON.parse(
+          JSON.stringify(ritmRecordPayload0423GeneXpertNotDetected1Sample)
+        )
+        const {
+          insertSpy,
+          philippinesNTRLRITM: geneXpertResultProcessor,
+        } = setupPhilippinesNTRLRITMDataProcessorWithSpies(
+          'some device API key',
+          ritmRecordPayload0423GeneXpertNotDetected1Sample
+        )
+        await geneXpertResultProcessor.processRequest()
+        const insertResultCalls = insertSpy
+          .getCalls()
+          .filter(insertCall => insertCall.args[0] === 'Result')
+        const gxResults = insertResultCalls
+          .map(insert => insert.lastArg)
+          .filter(
+            resultInsert =>
+              resultInsert.assayId === staticDatabaseData.Assay.GxMtbRif
+          )
+        expect(gxResults).to.have.lengthOf(1)
+        const gxResult = {
+          ...gxResults[0],
+          patientData: JSON.parse(gxResults[0].patientData),
+          resultData: JSON.parse(gxResults[0].resultData),
+          startedOn: gxResults[0].startedOn.toISOString(),
+          endedOn: gxResults[0].endedOn.toISOString(),
+        }
+        const sampleExternalId = getSamplesFromRITMPayload(payload)[0]
+          .externalId
+        expect(gxResult).to.containSubset({
+          partnerId: databaseRecords.Site.partnerId,
+          geographyId: databaseRecords.Site.geographyId,
+          siteId: databaseRecords.Site.id,
+          deviceId: databaseRecords.DeviceApiKey.deviceId,
+          longitude: databaseRecords.Site.longitude,
+          latitude: databaseRecords.Site.latitude,
+          resultSourceId: staticDatabaseData.resultSourceId,
+          resultTypeId: staticDatabaseData.resultTypeId,
+          resultCategory1: staticDatabaseData.ResultCategory.NotDetected,
+          resultCategory2: staticDatabaseData.ResultCategory.NotDetected,
+          patientData: generatePatientDataFromRITMPayload(payload),
+          externalId: `${databaseRecords.Site.externalId}_${sampleExternalId}_GX`,
+          assayId: staticDatabaseData.Assay.GxMtbRif,
+          startedOn: payload['Date and Time of Release of Gx Result'],
+          endedOn: payload['Date and Time of Release of Gx Result'],
+          resultData: {
+            encodedResult: {
+              center: payload['GX Laboratory Test Performed'],
+              mtb: payload.MTB,
+              rifampicin: payload['Rifampicin:'],
+              remarks: payload['GX Comments'],
+              dateReleased: payload['Date and Time of Release of Gx Result'],
+              encodedBy: payload['GX Encoded by'],
+              examiner: payload['GX Performed by'],
+              labManager: payload['GX Validated by'],
+              notedBy: payload['GX Noted by'],
+            },
+          },
+          senderOperator: payload['GX Performed by'],
+          reportableSiteId: databaseRecords.Site.id,
+        })
+      })
+
+      it('should create a single sample when only one sample has been captured', async () => {
+        const payload = JSON.parse(
+          JSON.stringify(ritmRecordPayload0423GeneXpertNotDetected1Sample)
+        )
+        const {
+          insertSpy,
+          philippinesNTRLRITM: singleSampleResultProcessor,
+        } = setupPhilippinesNTRLRITMDataProcessorWithSpies(
+          'some device API key',
+          ritmRecordPayload0423GeneXpertNotDetected1Sample
+        )
+        await singleSampleResultProcessor.processRequest()
+        const insertedSamples = insertSpy
+          .getCalls()
+          .filter(insertCall => insertCall.args[0] === 'Sample')
+          .map(insert => insert.lastArg)
+        expect(insertedSamples).to.have.lengthOf(1)
+        const insertedSample = {
+          ...insertedSamples[0],
+          collectedOn: insertedSamples[0].collectedOn.toISOString(),
+        }
+        const sampleDetailsInPayload = getSamplesFromRITMPayload(payload)[0]
+        expect(insertedSample).to.containSubset(sampleDetailsInPayload)
+        expect(insertedSample.externalId).to.match(/RN-\d{2}-\d{4,5}/)
+      })
+
+      it('should not create/update any results when there are no results', async () => {
+        const payload = JSON.parse(
+          JSON.stringify(ritmRecordPayload2068SmearRequestedNoResults1Sample)
+        )
+        const {
+          updateSpy,
+          insertSpy,
+          philippinesNTRLRITM: noResultsProcessor,
+        } = setupPhilippinesNTRLRITMDataProcessorWithSpies(
+          'some device API key',
+          payload
+        )
+        await noResultsProcessor.processRequest()
+        const insertedResults = insertSpy
+          .getCalls()
+          .filter(insertCall => insertCall.args[0] === 'Result')
+          .map(insert => insert.lastArg)
+        expect(insertedResults).to.have.lengthOf(0)
+        const updatedResults = updateSpy
+          .getCalls()
+          .filter(updateCall => updateCall.args[0] === 'Result')
+          .map(update => update.lastArg)
+        expect(updatedResults).to.have.lengthOf(0)
+      })
+
+      it("should update the initial single sample external ID with a suffix of '-1' when 2nd sample details are added after initial upload", async () => {
+        const ritmRecordPayload0128CultureDstTbResistant2Samples = {
+          ...ritmRecordPayload0128CultureDstTbResistant1Sample,
+          'TBC Test Result 2nd Sample':
+            ritmRecordPayload0128CultureDstTbResistant1Sample[
+              'TBC Test Result 1st Sample'
+            ],
+        }
+        const payload = JSON.parse(
+          JSON.stringify(ritmRecordPayload0128CultureDstTbResistant2Samples)
+        )
+        const sampleDetailsInInitialPayload = getSamplesFromRITMPayload(
+          ritmRecordPayload0128CultureDstTbResistant1Sample
+        )[0]
+        const existingSamplesAfterInitialUpload = JSON.parse(
+          JSON.stringify(existingSamples)
+        )
+        existingSamplesAfterInitialUpload[
+          sampleDetailsInInitialPayload.externalId
+        ] = sampleDetailsInInitialPayload
+        const {
+          updateSpy,
+          insertSpy,
+          philippinesNTRLRITM: updateSampleResultProcessor,
+        } = setupPhilippinesNTRLRITMDataProcessorWithSpies(
+          'some device API key',
+          payload,
+          existingSamplesAfterInitialUpload
+        )
+        await updateSampleResultProcessor.processRequest()
+        const updatedSamples = updateSpy
+          .getCalls()
+          .filter(updateCall => updateCall.args[0] === 'Sample')
+          .map(update => update.lastArg)
+        expect(updatedSamples).to.have.lengthOf(1)
+        expect(updatedSamples[0].externalId).to.match(/RN-\d{2}-\d{4,5}-1/)
+        const insertedSamples = insertSpy
+          .getCalls()
+          .filter(insertCall => insertCall.args[0] === 'Sample')
+          .map(insert => insert.lastArg)
+        expect(insertedSamples).to.have.lengthOf(1)
+        expect(insertedSamples[0].externalId).to.match(/RN-\d{2}-\d{4,5}-2/)
+      })
+
+      it("should update the a sample's origin site ID when it becomes known", async () => {
+        const payload = JSON.parse(
+          JSON.stringify(ritmRecordPayload3082SmearCultureNegative2Samples)
+        )
+        const sampleDetailsInInitialPayload = JSON.parse(
+          JSON.stringify(
+            getSamplesFromRITMPayload(
+              ritmRecordPayload3082SmearCultureNegative2Samples
+            )
+          )
+        )
+        const existingSamplesAfterInitialUpload = JSON.parse(
+          JSON.stringify(existingSamples)
+        )
+        existingSamplesAfterInitialUpload[
+          sampleDetailsInInitialPayload[0].externalId
+        ] = {
+          ...sampleDetailsInInitialPayload[0],
+          originSiteId: 123,
+        }
+        existingSamplesAfterInitialUpload[
+          sampleDetailsInInitialPayload[1].externalId
+        ] = {
+          ...sampleDetailsInInitialPayload[1],
+          originSiteId: databaseRecords.Site.id,
+        }
+        const {
+          updateSpy,
+          insertSpy,
+          philippinesNTRLRITM: updateSampleResultProcessor,
+        } = setupPhilippinesNTRLRITMDataProcessorWithSpies(
+          'some device API key',
+          payload,
+          existingSamplesAfterInitialUpload
+        )
+        await updateSampleResultProcessor.processRequest()
+        const updatedSamples = updateSpy
+          .getCalls()
+          .filter(updateCall => updateCall.args[0] === 'Sample')
+          .map(update => update.lastArg)
+        expect(updatedSamples).to.have.lengthOf(1)
+        expect(updatedSamples[0]).to.containSubset({
+          externalId: sampleDetailsInInitialPayload[0].externalId,
+          originSiteId: databaseRecords.Site.id,
+        })
+        const insertedSamples = insertSpy
+          .getCalls()
+          .filter(insertCall => insertCall.args[0] === 'Sample')
+          .map(insert => insert.lastArg)
+        expect(insertedSamples).to.have.lengthOf(0)
+      })
+
+      it("should not update or insert samples if they haven't changed", async () => {
+        const payload = JSON.parse(
+          JSON.stringify(ritmRecordPayload3082SmearCultureNegative2Samples)
+        )
+        const sampleDetailsInInitialPayload = JSON.parse(
+          JSON.stringify(
+            getSamplesFromRITMPayload(
+              ritmRecordPayload3082SmearCultureNegative2Samples
+            )
+          )
+        )
+        const existingSamplesAfterInitialUpload = JSON.parse(
+          JSON.stringify(existingSamples)
+        )
+        existingSamplesAfterInitialUpload[
+          sampleDetailsInInitialPayload[0].externalId
+        ] = {
+          ...sampleDetailsInInitialPayload[0],
+          originSiteId: databaseRecords.Site.id,
+        }
+        existingSamplesAfterInitialUpload[
+          sampleDetailsInInitialPayload[1].externalId
+        ] = {
+          ...sampleDetailsInInitialPayload[1],
+          originSiteId: databaseRecords.Site.id,
+        }
+        const {
+          updateSpy,
+          insertSpy,
+          philippinesNTRLRITM: updateSampleResultProcessor,
+        } = setupPhilippinesNTRLRITMDataProcessorWithSpies(
+          'some device API key',
+          payload,
+          existingSamplesAfterInitialUpload
+        )
+        await updateSampleResultProcessor.processRequest()
+        const updatedSamples = updateSpy
+          .getCalls()
+          .filter(updateCall => updateCall.args[0] === 'Sample')
+          .map(update => update.lastArg)
+        expect(updatedSamples).to.have.lengthOf(0)
+        const insertedSamples = insertSpy
+          .getCalls()
+          .filter(insertCall => insertCall.args[0] === 'Sample')
+          .map(insert => insert.lastArg)
+        expect(insertedSamples).to.have.lengthOf(0)
+      })
+
+      it('should update existing results', async () => {
+        const {
+          updateSpy,
+          philippinesNTRLRITM: existingResultProcessor,
+        } = setupPhilippinesNTRLRITMDataProcessorWithSpies(
+          'some device API key',
+          ritmRecordPayload2630CultureSmearTbPositive2Samples
+        )
+        await existingResultProcessor.processRequest()
+        const resultUpdates = updateSpy
+          .getCalls()
+          .filter(
+            updateCall =>
+              updateCall.args[0] === 'Result' &&
+              _.isPlainObject(updateCall.lastArg) &&
+              updateCall.lastArg.resultData &&
+              updateCall.lastArg.id > 0
+          )
+          .map(updateCall => updateCall.lastArg)
+        // eslint-disable-next-line no-unused-expressions
+        expect(resultUpdates).to.not.be.empty
+      })
+
+      it('should fall back to the test start and end time sent by the device when updating a result', async () => {
+        const {
+          updateSpy,
+          philippinesNTRLRITM: existingResultProcessor,
+        } = setupPhilippinesNTRLRITMDataProcessorWithSpies(
+          'some device API key',
+          ritmRecordPayload0424GeneXpertNotDetected1Sample
+        )
+        await existingResultProcessor.processRequest()
+        const resultUpdates = updateSpy
+          .getCalls()
+          .filter(
+            updateCall =>
+              updateCall.args[0] === 'Result' &&
+              _.isPlainObject(updateCall.lastArg) &&
+              updateCall.lastArg.resultData &&
+              updateCall.lastArg.id > 0
+          )
+          .map(updateCall => updateCall.lastArg)
+        expect(resultUpdates).to.have.lengthOf(1)
+        const resultUpdate = {
+          ...resultUpdates[0],
+          patientData: JSON.parse(resultUpdates[0].patientData),
+          resultData: JSON.parse(resultUpdates[0].resultData),
+        }
+        expect(resultUpdate.startedOn.toISOString()).to.equal(
+          resultUpdate.resultData.testStartedOn
+        )
+        expect(resultUpdate.endedOn.toISOString()).to.equal(
+          resultUpdate.resultData.testEndedOn
+        )
+      })
+    })
+  })
+})

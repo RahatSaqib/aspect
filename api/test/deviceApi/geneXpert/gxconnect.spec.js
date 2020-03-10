@@ -988,7 +988,7 @@ describe('Device API routes for GxConnect Devices', () => {
                   serial: 'CEPH-PC-7813',
                 },
                 sample: {
-                  id: "Bryan's Sputum",
+                  id: "Bryan's Sputum 2",
                 },
                 data: { a: 'b' },
                 assay: { id: 'GxHiv1Vl' },
@@ -1038,7 +1038,7 @@ describe('Device API routes for GxConnect Devices', () => {
                 startedOn: subMinutes(now, 5),
                 endedOn: now,
                 sample: {
-                  id: "Bryan's Sputum",
+                  id: "Bryan's Sputum 2",
                   type: {
                     id: 'Plasma',
                   },
@@ -1210,7 +1210,7 @@ describe('Device API routes for GxConnect Devices', () => {
 
         assert.notEqual(result2.siteId, result2Sample.originSiteId)
         assert.equal(result2SampleSite.id, result2Sample.originSiteId)
-        assert.equal(result2Sample.externalId, "Bryan's Sputum")
+        assert.equal(result2Sample.externalId, "Bryan's Sputum 2")
 
         const [result2Category1, result2Category2] = await knex(
           'ResultCategory as rt'
@@ -1228,6 +1228,7 @@ describe('Device API routes for GxConnect Devices', () => {
         const sendResult = async (
           resultId,
           assay,
+          sampleId,
           resultText,
           expectedResultCategory1,
           expectedResultCategory2,
@@ -1256,6 +1257,7 @@ describe('Device API routes for GxConnect Devices', () => {
                     assay: _.assign({}, basicResultPayload.result.assay, {
                       id: assay,
                     }),
+                    sample: { id: sampleId },
                     data: _.assign({}, basicResultPayload.result.data, {
                       resultText,
                     }),
@@ -1287,7 +1289,7 @@ describe('Device API routes for GxConnect Devices', () => {
         let runNumber = 1
         await Promise.each(
           Object.keys(resultTextToResultCategoryMapping),
-          async resultText => {
+          async (resultText, index) => {
             if (
               resultText &&
               !_.isEmpty(resultTextToResultCategoryMapping[resultText])
@@ -1302,6 +1304,7 @@ describe('Device API routes for GxConnect Devices', () => {
               await sendResult(
                 resultId,
                 assay,
+                `PKM0833243689-${index}`,
                 resultText,
                 resultCategory1,
                 resultCategory2,

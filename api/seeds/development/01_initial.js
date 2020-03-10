@@ -38,7 +38,7 @@ const patients = require('./fixtures/patients.json')
 const patientDataSchema = require('../fixtures/MGITPatientDataSchema')
 const dashboardWidget = require('./fixtures/dashboardWidget.json')
 const { errorCodes } = require('./fixtures/errorCodes.js')
-const { updateMGITAssays } = require('../commonTB')
+const { updateMGITAssays, updateCultureAssays } = require('../commonTB')
 const { getRandomTBPatientData } = require('../commonTbresults')
 
 const millisInHour = 1000 * 60 * 60
@@ -218,12 +218,12 @@ async function seed(knex) {
     deviceTypeCategoryId: deviceTypeCategoryInformationSystem,
   })
 
-  const { id: deviceTypeSenaiteLimsId } =
+  let { id: deviceTypeSenaiteLimsId } =
     (await knex('DeviceType')
       .where('externalId', 'SenaiteLims')
       .first('id')) || {}
   if (!deviceTypeSenaiteLimsId) {
-    await knex('DeviceType').insert({
+    deviceTypeSenaiteLimsId = await knex('DeviceType').insert({
       externalId: 'SenaiteLims',
       name: 'Senaite LIMS',
       manufacturer: 'Senaite',
@@ -257,6 +257,7 @@ async function seed(knex) {
     })
   }
   await updateMGITAssays(knex, deviceTypeBDMGITId)
+  await updateCultureAssays(knex, deviceTypeSenaiteLimsId, {}, {})
   // Units
   const piece = await unitToId('Piece')
 
