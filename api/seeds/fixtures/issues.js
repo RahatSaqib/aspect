@@ -110,9 +110,10 @@ async function getBaseIssues(auditFields) {
         externalId: 'ModuleFailureError',
         i18nKey: 'issueStatusModuleFailureError',
         issueCategoryId: issueCategories.DeviceHealth,
-        // defaultMessageTypeId: moduleFailureErrorTypeId,
       },
-      messageSeverityId: messageSeverities.Alert,
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
       AlertTemplate: {
         message:
           'Module {{issue.data.moduleName}}: Critical errors; notify R.O.',
@@ -260,6 +261,9 @@ async function getBaseIssues(auditFields) {
         externalId: 'ModuleProceduralError',
         i18nKey: 'issueStatusModuleProceduralError',
         issueCategoryId: issueCategories.DeviceHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
       },
       AlertTemplate: {
         message:
