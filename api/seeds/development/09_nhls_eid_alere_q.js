@@ -4,7 +4,7 @@ const _ = require('lodash')
 const bcrypt = require('bcrypt')
 const Promise = require('bluebird')
 const { addMinutes } = require('date-fns')
-
+const { upsertJobFunction } = require('../common')
 const config = require('../../src/config')
 const southAfricaLabClinic = require('./fixtures/southAfricaLabClinic.json')
 const { rowsAsObject, getPermissionModules } = require('../utils')
@@ -235,11 +235,7 @@ async function seed(knex) {
     timezone,
     ...auditFields,
   })
-
-  const [jobFunctionIdAdmin] = await knex('JobFunction').insert({
-    name: 'Admin',
-    partnerId,
-  })
+  const jobFunctionIdAdmin = await upsertJobFunction(knex, 'Admin', partnerId)
   await knex('JobFunctionPermission').insert([
     { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.browse.view },
     { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.result.admin },
@@ -260,10 +256,12 @@ async function seed(knex) {
     geographyId: southAfricaGeographyId,
   })
 
-  const [jobFunctionIdRegionalOfficer] = await knex('JobFunction').insert({
-    name: 'Regional Officer',
-    partnerId,
-  })
+  const jobFunctionIdRegionalOfficer = await upsertJobFunction(
+    knex,
+    'Regional Officer',
+    partnerId
+  )
+
   await knex('JobFunctionPermission').insert([
     {
       jobFunctionId: jobFunctionIdRegionalOfficer,
@@ -288,10 +286,12 @@ async function seed(knex) {
     { jobFunctionId: jobFunctionIdRegionalOfficer, featureId: features.site },
   ])
 
-  const [jobFunctionIdLabUser] = await knex('JobFunction').insert({
-    name: 'Lab User',
-    partnerId,
-  })
+  const jobFunctionIdLabUser = await upsertJobFunction(
+    knex,
+    'Lab User',
+    partnerId
+  )
+
   await knex('JobFunctionPermission').insert([
     { jobFunctionId: jobFunctionIdLabUser, permissionId: modules.browse.view },
     { jobFunctionId: jobFunctionIdLabUser, permissionId: modules.result.admin },

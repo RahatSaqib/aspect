@@ -8,6 +8,7 @@ const {
   upsertAssayResultCategories,
   upsertJobFunctionPermission,
   upsertJobFeatures,
+  upsertJobFunction,
 } = require('../common')
 const {
   updateAssayResultCategoryTreatmentEmphasize,
@@ -214,10 +215,11 @@ async function seed(knex) {
     .where('name', 'admin')
     .first('id')
 
-  const [jobFunctionIdClinician] = await knex('JobFunction').insert({
-    name: 'Clinician',
-    partnerId,
-  })
+  const jobFunctionIdClinician = await upsertJobFunction(
+    knex,
+    'Clinician',
+    partnerId
+  )
 
   const [modules, features] = await Promise.all([
     getPermissionModules(knex),
