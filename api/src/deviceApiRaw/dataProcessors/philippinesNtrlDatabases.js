@@ -62,7 +62,10 @@ class PhilippinesNtrlDatabase extends SynchronousDataProcessor {
         return [...(baseValue || []), ...(sourceValue || [])]
       }
       if (_.isPlainObject(baseValue) || _.isPlainObject(sourceValue)) {
-        return
+        return {
+          ...baseValue,
+          ...sourceValue,
+        }
       }
       return sourceValue || baseValue
     }

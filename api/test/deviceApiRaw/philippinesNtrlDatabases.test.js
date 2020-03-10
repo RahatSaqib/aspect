@@ -2809,6 +2809,157 @@ describe('Device API Raw Philippines NTRL', () => {
         'Laboratory Releasing Form Smear Remarks': null,
         'Laboratory Registry Remarks': null,
       }
+      const pmdtRecordPayload03695GxPositiveResistant1Sample = {
+        database: 'PMDT',
+        table: 'NTRL DATABASE',
+        TimeStamp: '59576',
+        'Serial Number': '03695',
+        'Last Name': 'Snyman',
+        'First Name': 'Phillip',
+        'Middle Initial': null,
+        Address: null,
+        'Referring Health Facility': 'New facility',
+        'Culture Center': 'NTRL',
+        'Cat IV Screening Code': null,
+        'MRF Date Requested': '2019-06-07T00:00:00.000Z',
+        Age: 10,
+        Sex: 'Male',
+        'DST Center': 'NTRL',
+        'Requesting Physician': null,
+        'Treatment Schedule': null,
+        'Month of tx': null,
+        Enrolled: null,
+        'Registration Group': 'New',
+        'Treatment Category': 'New',
+        'Type of Specimen': 'Others',
+        '(If Others) Specify': 'ABCESS',
+        Site: 'Extrapulmonary',
+        'Test Requested Smear': false,
+        'Test Requested Culture': false,
+        'Test Requested DST': false,
+        'Test Requested LPA': false,
+        'Test Requested Gx': true,
+        'Date transfered to DST': null,
+        'Presumptive DS or DR': null,
+        'Lab No 1': 'N-19-3694',
+        'Date Collected 1': '2019-06-07T00:00:00.000Z',
+        'Date Collected 2': null,
+        'Date Collected 3': null,
+        'Type of Collection 1': null,
+        'Type of Collection 2': null,
+        'Type of Collection 3': null,
+        'Volume 1': '3ML',
+        'Volume 2': null,
+        'Volume 3': null,
+        'Consistency 1': null,
+        'Consistency 2': null,
+        'Consistence 3': null,
+        'Prepared by': null,
+        'Date Received': '2019-06-17T00:00:00.000Z',
+        'Encoded By': 'Jenny B.  Lasprilla',
+        'Date Encoded': '2019-06-17T00:00:00.000Z',
+        'Smear Method': null,
+        'Smear Method 2': null,
+        'Smear Result 1': null,
+        'Smear Result 2': null,
+        'Smear Final Result': null,
+        'Smear Date Released': null,
+        'Smear Only Test Requested': 'DSSM Only',
+        'Smear Only Test Requested 2': 'DSSM Only',
+        'Smear TAT': null,
+        'Smear Lab Tech': null,
+        'Smear Encoded by': null,
+        'Culture Date Inoculated': null,
+        'Culture Med Tech': null,
+        'Culture Result Status': null,
+        'Culture DST Status': null,
+        'Culture Method': null,
+        'Culture Method 2': null,
+        'Culture Result 1': null,
+        'Culture Grade 1': null,
+        'Culture Result 2': null,
+        'Culture Grade 2': null,
+        'Culture Final Result': null,
+        'Culture Date Released': null,
+        'Culture Encoded by': null,
+        'Culture Lab Tech': null,
+        'Culture TAT': null,
+        'Culture Lab Manager': 'Ma. Cecilia G. Ama, MD',
+        'Culture Remarks 1': null,
+        'Culture Remarks 2': null,
+        'TAT Culture Remarks': null,
+        'DSSM&Culture Releasing Form Med Tech': null,
+        'DSSM&Culture Releasing Form Date Released': null,
+        'DSSM&Culture Releasing Form Laboratory Manager':
+          'Ma. Cecilia G. Ama, MD',
+        'DST ID Result': null,
+        'DST Date Inoculated': null,
+        'DST MT Inoculated': null,
+        Streptomycin: null,
+        Isoniazid: null,
+        Rifampicin: null,
+        Ethambutol: null,
+        Kanamycin: null,
+        Levofloxacin: null,
+        Amikacin: null,
+        Capreomycin: null,
+        Pyrazinamide: null,
+        Ofloxacin: null,
+        Ciprofloxacin: null,
+        'DST Date Read': null,
+        'DST MT Read': null,
+        'DST Date Released': null,
+        'DST Lab Tech': null,
+        'DST TAT': null,
+        'DST Test Requested': null,
+        'DST Laboratory Releasing Form Remarks': null,
+        'DST Releasing Form MedTech': null,
+        'DST Releasing Form Released Date': null,
+        'DST Releasing Form Lab Manager': 'Ma. Cecilia G. Ama, MD',
+        'DST Method Used': null,
+        'DST Method Used Others': null,
+        'DST Workbook Remarks': null,
+        'DST Remarks': null,
+        'DST Encoded by': null,
+        'Gx Processing Date': '2019-06-19T00:00:00.000Z',
+        'Gx MTB': 'POSITIVE',
+        'Gx Rifampicin': 'RESISTANT',
+        'Gx Date Released': '2019-06-20T00:00:00.000Z',
+        'Gx Examiner': 'Kevin Joshua A. Alonzo, RMT',
+        'Gx TAT': null,
+        'Gx Laboratory Manager': 'Noel G. Macalalad, MD',
+        'Gx Center': null,
+        'Gx Laboratory Releasing Form Remarks': null,
+        'LPA Male': false,
+        'Gx Remarks': null,
+        'TB Case Number': null,
+        'LPA Kit Used': null,
+        'LPA Kit Others': null,
+        'LPA Date Processed': null,
+        'LPA MTB Complex': null,
+        'LPA Isoniazid Result': null,
+        'LPA Rifampicin': null,
+        'LPA Isoniazid': null,
+        'LPA Rifampicin Result': null,
+        'LPA Date Released': null,
+        'LPA Ethambutol': null,
+        'LPA Examiner': null,
+        'LPA Fluoroquinolones': null,
+        'LPA Aminoglycosides/ SLI': null,
+        'LPA Mycobacterium Tb': null,
+        'LPA Lab Manager': 'Noel G. Macalalad, MD',
+        'LPA Remarks:': null,
+        'LPA Center': null,
+        'LPA Performed By': null,
+        'LPA Reviewed By': null,
+        'LPA Date of Release': null,
+        'LPA Remarks': null,
+        'LPA TAT': null,
+        'Laboratory Releasing Form Remarks': null,
+        'Laboratory Releasing Form Gx Remarks': null,
+        'Laboratory Releasing Form Smear Remarks': null,
+        'Laboratory Registry Remarks': null,
+      }
       const pmdtRecordPayloads = [
         pmdtRecordPayload8442SmearCultureNegative2Samples,
         pmdtRecordPayload1855LpaRequestedNoResults1Sample,
@@ -2823,6 +2974,7 @@ describe('Device API Raw Philippines NTRL', () => {
         pmdtRecordPayload0017SmearCultureMGITDstResistant2Samples,
         pmdtRecordPayload0018SmearCultureDstResistant2Samples,
         pmdtRecordPayload03694GxPositiveResistant1Sample,
+        pmdtRecordPayload03695GxPositiveResistant1Sample,
       ]
 
       const existingSample = existingSamples['PN-19-8442-1']
@@ -2945,6 +3097,40 @@ describe('Device API Raw Philippines NTRL', () => {
           senderOperator: 'bryan',
           endedOn: '2019-08-26T14:53:11.000Z',
           patientData: '{}',
+          sampleId: existingSample.id,
+          updatedOn: '2019-09-16T08:09:10.123Z',
+          resultCategory1: staticDatabaseData.ResultCategory.Missing,
+          resultWorkflowStatusLogId: 12,
+          errorCode: 'OPEN',
+          notes: '',
+          createdOn: '2019-09-14T08:09:10.123Z',
+        },
+        {
+          id: 13,
+          assayId: staticDatabaseData.Assay.GxMtbRif,
+          resultData: JSON.stringify({
+            encodedResult: {
+              center: null,
+              processingDate: null,
+              mtb: null,
+              rifampicin: null,
+              remarks: null,
+              dateReleased: null,
+              examiner: 'This should be replaced by the value in the payload',
+              unknownKey: 'This key should disappear after an update',
+              labManager: null,
+            },
+            someExistingResultDataKey:
+              'This value should remain after an update',
+          }),
+          deviceId: databaseRecords.Device.id,
+          externalId: 'NTRL_PN-19-03695_GX',
+          senderOperator: 'bryan',
+          endedOn: '2019-08-26T14:53:11.000Z',
+          patientData: JSON.stringify({
+            someExistingPatientDataKey:
+              'This value should remain after an update',
+          }),
           sampleId: existingSample.id,
           updatedOn: '2019-09-16T08:09:10.123Z',
           resultCategory1: staticDatabaseData.ResultCategory.Missing,
@@ -4008,6 +4194,47 @@ describe('Device API Raw Philippines NTRL', () => {
           .map(updateCall => updateCall.lastArg)
         // eslint-disable-next-line no-unused-expressions
         expect(resultUpdates).to.not.be.empty
+      })
+
+      it("should merge existing results' resultsData and patient data", async () => {
+        const {
+          updateSpy,
+          philippinesNTRLPMDT: existingResultProcessor,
+        } = setupPhilippinesNTRLPMDTDataProcessorWithSpies(
+          'some device API key',
+          pmdtRecordPayload03695GxPositiveResistant1Sample
+        )
+        await existingResultProcessor.processRequest()
+        const resultUpdates = updateSpy
+          .getCalls()
+          .filter(
+            updateCall =>
+              updateCall.args[0] === 'Result' &&
+              _.isPlainObject(updateCall.lastArg) &&
+              updateCall.lastArg.resultData &&
+              updateCall.lastArg.id > 0
+          )
+          .map(updateCall => updateCall.lastArg)
+        expect(resultUpdates).to.have.lengthOf(1)
+        const resultUpdate = {
+          ...resultUpdates[0],
+          patientData: JSON.parse(resultUpdates[0].patientData),
+          resultData: JSON.parse(resultUpdates[0].resultData),
+        }
+        expect(resultUpdate.patientData.someExistingPatientDataKey).to.equal(
+          'This value should remain after an update'
+        )
+        expect(resultUpdate.resultData.someExistingResultDataKey).to.equal(
+          'This value should remain after an update'
+        )
+        // eslint-disable-next-line no-unused-expressions
+        expect(resultUpdate.resultData.encodedResult.examiner).to.not.be
+          .undefined
+        expect(resultUpdate.resultData.encodedResult.examiner).to.not.equal(
+          'This should be replaced by the value in the payload'
+        )
+        // eslint-disable-next-line no-unused-expressions
+        expect(resultUpdate.resultData.encodedResult.unknownKey).to.be.undefined
       })
     })
   })
