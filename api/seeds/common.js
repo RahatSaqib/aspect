@@ -211,6 +211,7 @@ async function upsertJobFunction(
   if (!jobFunctionId) {
     ;[jobFunctionId] = await knex('JobFunction').insert({
       name: jobFunctionName,
+      externalId: _.camelCase(jobFunctionName),
       partnerId,
     })
   }
