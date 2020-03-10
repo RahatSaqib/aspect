@@ -3117,7 +3117,8 @@ describe('Device API Raw Philippines NTRL', () => {
               remarks: null,
               dateReleased: null,
               examiner: 'This should be replaced by the value in the payload',
-              unknownKey: 'This key should disappear after an update',
+              unknownKey:
+                'Value came from some other system and should remain after update',
               labManager: null,
             },
             someExistingResultDataKey:
@@ -4234,7 +4235,9 @@ describe('Device API Raw Philippines NTRL', () => {
           'This should be replaced by the value in the payload'
         )
         // eslint-disable-next-line no-unused-expressions
-        expect(resultUpdate.resultData.encodedResult.unknownKey).to.be.undefined
+        expect(resultUpdate.resultData.encodedResult.unknownKey).to.equal(
+          'Value came from some other system and should remain after update'
+        )
       })
     })
   })

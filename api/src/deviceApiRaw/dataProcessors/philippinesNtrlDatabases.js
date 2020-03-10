@@ -61,11 +61,17 @@ class PhilippinesNtrlDatabase extends SynchronousDataProcessor {
       if (_.isArray(baseValue) && _.isArray(sourceValue)) {
         return [...(baseValue || []), ...(sourceValue || [])]
       }
-      if (_.isPlainObject(baseValue) || _.isPlainObject(sourceValue)) {
-        return {
+      if (_.isPlainObject(baseValue) && _.isPlainObject(sourceValue)) {
+        const mergedValue = {
           ...baseValue,
-          ...sourceValue,
         }
+        Object.keys(sourceValue).forEach(sourceValueKey => {
+          mergedValue[sourceValueKey] = mergeDeep(
+            mergedValue[sourceValueKey],
+            sourceValue[sourceValueKey]
+          )
+        })
+        return mergedValue
       }
       return sourceValue || baseValue
     }
@@ -111,8 +117,9 @@ class PhilippinesNtrlDatabase extends SynchronousDataProcessor {
       if (!result.endedOn) {
         result.endedOn = resultEndedOn
       }
-      const resultData = JSON.parse(result.resultData || '{}')
-      resultData.encodedResult = newResultData
+      const resultData = mergeDeep(JSON.parse(result.resultData || '{}'), {
+        encodedResult: newResultData,
+      })
       result.resultData = JSON.stringify(resultData)
       const resultPatientData = JSON.parse(result.patientData || '{}')
       result.patientData = JSON.stringify(
