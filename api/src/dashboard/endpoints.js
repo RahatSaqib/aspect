@@ -13,7 +13,19 @@ const {
   siteDashboard,
   operationalDashboard,
   actionDashboard,
+  clinicalIndicatorsDashboard,
 } = require('./service')
+
+const clinicalIndicatorsValidGroups = [
+  'resultCategory1',
+  'resultCategory2',
+  'week',
+  'month',
+  'year',
+  'gender',
+  'age',
+  'state',
+]
 
 const routes = [
   {
@@ -125,6 +137,41 @@ const routes = [
             'deviceName',
             'message'
           ),
+        },
+      },
+    },
+  },
+  {
+    method: 'GET',
+    path: '/dashboard/clinical-indicators',
+    handler: asyncHandler(clinicalIndicatorsDashboard),
+    config: {
+      description: 'Clinical Indicators Dashboard',
+      notes: 'Data for most of the graphs on the clinical indicators page',
+      auth: { scope: ['site', 'result'] },
+      validate: {
+        query: {
+          ...validateDateRangeParams(),
+          assayType: Joi.string()
+            .allow('')
+            .description('Filter for assay type'),
+          assay: Joi.string()
+            .allow('')
+            .description('Filter for assay'),
+          resultCategory1: Joi.string()
+            .allow('')
+            .description('Filter for result category 1'),
+          resultCategory2: Joi.string()
+            .allow('')
+            .description('Filter for result category 2'),
+          groupBy: Joi.alternatives()
+            .try(
+              Joi.array().items(
+                Joi.string().valid(clinicalIndicatorsValidGroups)
+              ),
+              Joi.string().valid(clinicalIndicatorsValidGroups)
+            )
+            .description('Array of fields to group by'),
         },
       },
     },
