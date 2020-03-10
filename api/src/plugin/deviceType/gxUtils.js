@@ -115,6 +115,20 @@ async function preProcessMergeResult({ knex, deviceId, payload }) {
     generatedExternalId
   )
   const geneXpertTestId = _.get(payload, 'id') || _.get(payload, 'data.id')
+
+  const potentialAssayIds = [_.get(payload, 'assay.id')]
+  if (
+    potentialAssayIds.includes('GxMtbRif') &&
+    !potentialAssayIds.includes('GxMtbRifUltra')
+  ) {
+    potentialAssayIds.push('GxMtbRifUltra')
+  }
+  if (
+    potentialAssayIds.includes('GxMtbRifUltra') &&
+    !potentialAssayIds.includes('GxMtbRif')
+  ) {
+    potentialAssayIds.push('GxMtbRif')
+  }
   const existingResult = await findExistingResult(
     {
       partnerId: device.partnerId,
@@ -122,6 +136,9 @@ async function preProcessMergeResult({ knex, deviceId, payload }) {
       gxAlertUniqueId,
       cartridgeSerial,
       instrumentSerial,
+      potentialSampleIds: [sampleId],
+      siteId: device.siteId,
+      potentialAssayIds,
     },
     knex
   )
@@ -447,18 +464,26 @@ async function findExistingResult(availableResultDetails, knex) {
     gxAlertUniqueId = null, // GxConnect/Listener -> GxAlert -> Aspect: result.data.gxAlertTestUniqueId
     cartridgeSerial = null, // GxAlert -> Aspect: result.consumable.serial
     instrumentSerial = null, // GxAlert -> Aspect: result.instrument.serial
+    potentialSampleIds = [],
+    siteId = null,
+    potentialAssayIds = [],
   } = availableResultDetails
   const selectFields = [
     'r.id',
     'r.externalId',
     'r.resultData',
+    'r.siteId',
     'rc1.externalId as resultCategory1',
     'rc2.externalId as resultCategory2',
+    'a.externalId as assayId',
+    's.externalId as sampleId',
   ]
   const queryStart = knex
     .from('Result as r')
     .leftJoin('ResultCategory as rc1', 'r.resultCategory1', 'rc1.id')
     .leftJoin('ResultCategory as rc2', 'r.resultCategory2', 'rc2.id')
+    .leftJoin('Assay as a', 'r.assayId', 'a.id')
+    .leftJoin('Sample as s', 'r.sampleId', 's.id')
     .where('r.partnerId', partnerId)
   let matchingResults = []
   let matchingResult = null
@@ -545,6 +570,68 @@ async function findExistingResult(availableResultDetails, knex) {
           _.get(JSON.parse(result.resultData), 'geneXpertTestId') ===
           geneXpertTestId
       )
+      if (matchingResults.length === 1) {
+        ;[matchingResult] = matchingResults
+      }
+    }
+  }
+
+  if (
+    _.isEmpty(matchingResult) &&
+    !_.isEmpty(potentialSampleIds) &&
+    siteId &&
+    !_.isEmpty(potentialAssayIds)
+  ) {
+    matchingResults = await queryStart
+      .clone()
+      .whereIn('s.externalId', potentialSampleIds)
+      .andWhere('r.siteId', siteId)
+      .whereIn('a.externalId', potentialAssayIds)
+      .select(selectFields)
+    if (matchingResults.length === 1) {
+      ;[matchingResult] = matchingResults
+    } else if (matchingResults.length > 1) {
+      if (geneXpertTestId) {
+        matchingResults = _.filter(
+          matchingResults,
+          result =>
+            _.get(JSON.parse(result.resultData), 'geneXpertTestId') ===
+            geneXpertTestId
+        )
+      }
+      if (matchingResults.length > 1) {
+        if (geneXpertTestId) {
+          matchingResults = _.filter(
+            matchingResults,
+            result => result.externalId === geneXpertTestId
+          )
+        }
+      }
+      if (matchingResults.length > 1) {
+        if (
+          !_.isEmpty(potentialSampleIds) &&
+          siteId &&
+          !_.isEmpty(potentialAssayIds)
+        ) {
+          matchingResults = _.filter(
+            matchingResults,
+            result =>
+              potentialSampleIds.includes(result.sampleId) &&
+              result.siteId === siteId &&
+              potentialAssayIds.includes(result.assayId)
+          )
+        }
+      }
+      if (matchingResults.length > 1) {
+        if (cartridgeSerial && instrumentSerial) {
+          matchingResults = _.filter(
+            matchingResults,
+            result =>
+              result.consumableSerial === cartridgeSerial &&
+              result.instrumentSerial === instrumentSerial
+          )
+        }
+      }
       if (matchingResults.length === 1) {
         ;[matchingResult] = matchingResults
       }
