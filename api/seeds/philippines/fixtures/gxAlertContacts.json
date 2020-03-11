@@ -14,7 +14,7 @@
   {
     "personName": "Maria Althea Perez",
     "personTitle": "Lab Contact",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Lab User"],
     "personEmailAddress": "perezalthea@gmail.com",
     "personCell": "+639178388432",
     "username": "altheaperez",
@@ -27,8 +27,8 @@
   },
   {
     "personName": "Hunter Kit Sabio",
-    "personTitle": "Lab Contact",
-    "jobFunctions": ["Admin"],
+    "personTitle": "ITIS Specialist",
+    "jobFunctions": ["Data Viewer"],
     "personEmailAddress": "scatteredpuzzle28@gmail.com",
     "personCell": "+639055310708",
     "username": "hksabio",
@@ -41,8 +41,8 @@
   },
   {
     "personName": "Andro Gutierrez",
-    "personTitle": "Installer",
-    "jobFunctions": ["Admin"],
+    "personTitle": "ITIS Specialist",
+    "jobFunctions": ["Data Viewer"],
     "personEmailAddress": "andro.gutierrez@gmail.com",
     "personCell": "+639156291048",
     "username": "andro",
@@ -56,7 +56,7 @@
   {
     "personName": "Maria Santa Portillo",
     "personTitle": "Lab Contact",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Lab User"],
     "personEmailAddress": "msportillo17@gmail.com",
     "personCell": "+639175137997",
     "username": "mariaportillo",
@@ -69,8 +69,8 @@
   },
   {
     "personName": "Virgil A. Belen",
-    "personTitle": "Mr.",
-    "jobFunctions": ["Admin"],
+    "personTitle": "",
+    "jobFunctions": ["Data Viewer"],
     "personEmailAddress": "virgilbelen@gmail.com",
     "personCell": "+63 9285596861",
     "username": "vbelen",
@@ -83,8 +83,8 @@
   },
   {
     "personName": "Ruth Orillaza-Chi",
-    "personTitle": "Dr.",
-    "jobFunctions": ["Admin"],
+    "personTitle": "",
+    "jobFunctions": ["Data Viewer"],
     "personEmailAddress": "rochi@impact.org.ph",
     "username": "rochi",
     "timezone": "Taipei Standard Time",
@@ -97,7 +97,7 @@
   {
     "personName": "Angelito L. Santiago",
     "personTitle": "eM Health Specialist",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Data Viewer"],
     "personEmailAddress": "alsantiago@impact.org.ph",
     "personCell": "+63 9174873986",
     "username": "alsantiago",
@@ -111,7 +111,7 @@
   {
     "personName": "Anna Marie Celina Garfin",
     "personTitle": "Dr.",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Data Viewer"],
     "personEmailAddress": "garfinamnc@gmail.com",
     "username": "cgarfin",
     "timezone": "Taipei Standard Time",
@@ -124,7 +124,7 @@
   {
     "personName": "Mariquita Mantala",
     "personTitle": "Dr.",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Data Viewer"],
     "personEmailAddress": "marljmantala@yahoo.com",
     "username": "mmantala",
     "timezone": "Taipei Standard Time",
@@ -137,7 +137,7 @@
   {
     "personName": "Mary Rosary T. Santiago",
     "personTitle": "Dr.",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Data Viewer"],
     "personEmailAddress": "maryrosarytaguinod0@gmail.com",
     "username": "mrsantiago",
     "timezone": "Taipei Standard Time",
@@ -150,7 +150,7 @@
   {
     "personName": "Donna Mae G. Gaviola",
     "personTitle": "Ms.",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Data Viewer"],
     "personEmailAddress": "atjimeyl@gmail.com",
     "username": "dgaviola",
     "timezone": "Taipei Standard Time",
@@ -163,7 +163,7 @@
   {
     "personName": "Leveriza P. Coprada",
     "personTitle": "Ms.",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Data Viewer"],
     "personEmailAddress": "lpcoprada@gmail.com",
     "personCell": "+63 9214468383",
     "username": "lcoprada",
@@ -605,7 +605,7 @@
   {
     "personName": "Ronalyn Joy T. Armijo",
     "personTitle": "Ms.",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Data Viewer"],
     "personEmailAddress": "ronalynjoyarmijo.08@gmail.com",
     "username": "rjarmijo",
     "timezone": "Taipei Standard Time",
@@ -618,7 +618,7 @@
   {
     "personName": "Ramon P. Basilio",
     "personTitle": "Dr.",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Admin", "Lab Manager"],
     "personEmailAddress": "monbasilio@gmail.com",
     "username": "rbasilio",
     "timezone": "Taipei Standard Time",
@@ -631,7 +631,7 @@
   {
     "personName": "Ian Carlo D. Bustamante",
     "personTitle": "Mr.",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Data Viewer"],
     "personEmailAddress": "isaaczeus.zeus15@gmail.com",
     "username": "icbustamante",
     "timezone": "Taipei Standard Time",
@@ -976,7 +976,7 @@
   {
     "personName": "Christopher Romano",
     "personTitle": "Mr.",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Data Viewer"],
     "personEmailAddress": "christophertr7716@gmail.com",
     "username": "ctromano",
     "timezone": "Taipei Standard Time",
@@ -1005,7 +1005,7 @@
   {
     "personName": "Eddie Sistoso Jr.",
     "personTitle": "Mr.",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Data Viewer"],
     "personEmailAddress": "sistosojr.eddie@gmail.com",
     "username": "evsistoso",
     "timezone": "Taipei Standard Time",
@@ -1064,11 +1064,266 @@
     }]
   },
   {
-    "personName": "Lorenz Reyes",
-    "personTitle": "Lab Contact",
-    "jobFunctions": ["Lab User","Lab Services Manager"],
-    "personEmailAddress": "lorenzoreyes71@yahoo.com",
+    "personName": "Lorenzo Reyes",
+    "personTitle": "Lab Services Manager",
+    "jobFunctions": ["Lab Manager"],
+    "personEmailAddress": "lorenzo2525reyes@gmail.com",
     "personCell": "+639189479276",
+    "timezone": "Taipei Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "NTRL"
+    }]
+  },
+  {
+    "personName": "ALMA PALPARAN",
+    "personTitle": "SSRS",
+    "jobFunctions": ["Lab Supervisor"],
+    "personEmailAddress": "almagpalparan@yahoo.com",
+    "personCell": "+639178471028",
+    "timezone": "Taipei Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "NTRL"
+    }]
+  },
+  {
+    "personName": "CATHERINE ANN SACOPON",
+    "personTitle": "SRS II",
+    "jobFunctions": ["Lab Supervisor", "Lab Manager"],
+    "personEmailAddress": "cathsacopon@yahoo.com.ph",
+    "personCell": "+639178949310",
+    "timezone": "Taipei Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "NTRL"
+    }]
+  },
+  {
+    "personName": "MICHELLIN ROXANNE S. BAJE",
+    "personTitle": "SRS II",
+    "jobFunctions": ["Lab Manager"],
+    "personEmailAddress": "michellinbaje@yahoo.com",
+    "personCell": "+639778232011",
+    "timezone": "Taipei Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "NTRL"
+    }]
+  },
+  {
+    "personName": "RALPH JASON G. ESTEBAN",
+    "personTitle": "MED TECH II",
+    "jobFunctions": ["Lab Supervisor"],
+    "personEmailAddress": "rjgesteban@gmail.com",
+    "personCell": "+639178063320",
+    "timezone": "Taipei Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "NTRL"
+    }]
+  },
+  {
+    "personName": "ROEUS VINCENT ARJAY G. REYES",
+    "personTitle": "SRS I",
+    "jobFunctions": ["Lab Supervisor", "Lab Manager"],
+    "personEmailAddress": "roeusvincent@gmail.com",
+    "personCell": "+639365915639",
+    "timezone": "Taipei Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "NTRL"
+    }]
+  },
+  {
+    "personName": "MARIA ZAHRA ALMADRIGO",
+    "personTitle": "SRS I",
+    "jobFunctions": ["Med Tech", "Lab Supervisor"],
+    "personEmailAddress": "zahraalmadrigo@gmail.com",
+    "personCell": "+639272141522",
+    "timezone": "Taipei Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "NTRL"
+    }]
+  },
+  {
+    "personName": "MERC EMIL P. MATIENZO",
+    "personTitle": "Mol. Bio.",
+    "jobFunctions": ["Med Tech", "Lab Supervisor"],
+    "personEmailAddress": "mpmatienzo.pbsp@gmail.com",
+    "personCell": "+639390271462",
+    "timezone": "Taipei Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "NTRL"
+    }]
+  },
+  {
+    "personName": "GLENN S. TALAOC",
+    "personTitle": "Med Tech",
+    "jobFunctions": ["Med Tech"],
+    "personEmailAddress": "glennhectortalaoc@yahoo.com",
+    "personCell": "+639174816921",
+    "timezone": "Taipei Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "NTRL"
+    }]
+  },
+  {
+    "personName": "KRISSHA MAE P. MARFIL",
+    "personTitle": "Med Tech",
+    "jobFunctions": ["Med Tech"],
+    "personEmailAddress": "isha.pbsp@gmail.com",
+    "personCell": "+639173718830",
+    "timezone": "Taipei Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "NTRL"
+    }]
+  },
+  {
+    "personName": "KEVIN JOSHUA A. ALONZO",
+    "personTitle": "Med Tech",
+    "jobFunctions": ["Med Tech"],
+    "personEmailAddress": "akevinjoshua@gmail.com",
+    "personCell": "+639430367207",
+    "timezone": "Taipei Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "NTRL"
+    }]
+  },
+  {
+    "personName": "ROSAMER ANNE S. PLAN",
+    "personTitle": "Med Tech",
+    "jobFunctions": ["Med Tech"],
+    "personEmailAddress": "rplan_rmt@yahoo.com",
+    "personCell": "+639163649782",
+    "timezone": "Taipei Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "NTRL"
+    }]
+  },
+  {
+    "personName": "STEPHEN PAUL B. ORTIA",
+    "personTitle": "Med Tech",
+    "jobFunctions": ["Med Tech"],
+    "personEmailAddress": "stephenortia.rmt@gmail.com",
+    "personCell": "+639177942991",
+    "timezone": "Taipei Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "NTRL"
+    }]
+  },
+  {
+    "personName": "ERLANEGAIL R. ISLA",
+    "personTitle": "Med Tech",
+    "jobFunctions": ["Med Tech"],
+    "personEmailAddress": "ierlanegail@yahoo.com",
+    "personCell": "+639955859658",
+    "timezone": "Taipei Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "NTRL"
+    }]
+  },
+  {
+    "personName": "JERRI REINALD A. COLOMA",
+    "personTitle": "LAB. AIDE II",
+    "jobFunctions": ["Med Tech"],
+    "personEmailAddress": "jerricoloma@gmail.com",
+    "personCell": "+639155222811",
+    "timezone": "Taipei Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "NTRL"
+    }]
+  },
+  {
+    "personName": "JANICE E. DELGADO",
+    "personTitle": "LAB. AIDE II",
+    "jobFunctions": ["Data Viewer"],
+    "personEmailAddress": "jajakambal.06@gmail.com",
+    "personCell": "+639101897994",
+    "timezone": "Taipei Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "NTRL"
+    }]
+  },
+  {
+    "personName": "MAR ALREY JUMARANG",
+    "personTitle": "LAB. AIDE II",
+    "jobFunctions": ["Data Viewer"],
+    "personEmailAddress": "aljumarang@yahoo.com",
+    "personCell": "+639174895453",
+    "timezone": "Taipei Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "NTRL"
+    }]
+  },
+  {
+    "personName": "JENNY LASPRILLA",
+    "personTitle": "LAB. AIDE II",
+    "jobFunctions": ["Data Viewer"],
+    "personEmailAddress": "151923jennybriones@gmail.com",
+    "personCell": "+639298146782",
     "timezone": "Taipei Standard Time",
     "hidePatientId": false,
     "hideSampleId": false,
@@ -1081,7 +1336,7 @@
   {
     "personName": "Jeff Louine Jamir T. Domingo",
     "personTitle": "Installer",
-    "jobFunctions": ["Lab User"],
+    "jobFunctions": ["Lab User", "Med Tech"],
     "personEmailAddress": "domingojeff44@gmail.com",
     "personCell": "+639770980800",
     "timezone": "Taipei Standard Time",
@@ -1388,7 +1643,7 @@
   {
     "personName": "PBSP IMPACT",
     "personTitle": "Organization",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Data Viewer"],
     "personEmailAddress": "aingesantiago@gmail.com",
     "personCell": "+63 9172448788",
     "username": "PBSPIMPACT",
