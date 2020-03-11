@@ -274,6 +274,10 @@ export const messages = defineMessages({
     id: 'pages.Status.treatmentTitle',
     defaultMessage: 'Confirmed Follow-up',
   },
+  resultsByCategoryTitle: {
+    id: 'pages.Status.resultsByCategoryTitle',
+    defaultMessage: 'Result Categories',
+  },
   treatmentAllSites: {
     id: 'pages.Status.treatmentAllSites',
     defaultMessage: 'All Sites',
