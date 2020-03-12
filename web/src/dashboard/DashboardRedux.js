@@ -22,6 +22,11 @@ export const RECEIVE_TARGET_DASHBOARD = 'RECEIVE_TARGET_DASHBOARD'
 export const REQUEST_RESULT_DASHBOARD = 'REQUEST_RESULT_DASHBOARD'
 export const RECEIVE_RESULT_DASHBOARD = 'RECEIVE_RESULT_DASHBOARD'
 
+export const REQUEST_RESULTS_BY_CATEGORY_DASHBOARD =
+  'REQUEST_RESULTS_BY_CATEGORY_DASHBOARD'
+export const RECEIVE_RESULTS_BY_CATEGORY_DASHBOARD =
+  'RECEIVE_RESULTS_BY_CATEGORY_DASHBOARD'
+
 export const REQUEST_INVENTORY_ITEM_DASHBOARD =
   'REQUEST_INVENTORY_ITEM_DASHBOARD'
 export const RECEIVE_INVENTORY_ITEM_DASHBOARD =
@@ -454,6 +459,47 @@ function receiveTreatmentDashboard(requestedAt, data) {
   }
 }
 
+// -------------------------------------------------------------------
+export function fetchResultsByCategoryDashboard() {
+  return dispatch => {
+    const requestedAt = `results_${Date.now()}`
+    dispatch(requestResultsByCategoryDashboard({ requestedAt }))
+
+    return aspectFetch('/dashboard/clinical-indicators', {
+      method: 'GET',
+      errorNotifications: {
+        default: errorPleaseTryAgainInAFewMinutes(
+          defineMessages({
+            title: {
+              id:
+                'errorResponseMessages.fetchResultsByCategoryDashboard.GET.default.title',
+              defaultMessage: 'Error Loading Dashboard Results By Category',
+            },
+          })
+        ),
+      },
+    }).then(json => {
+      console.log(json)
+      return dispatch(receiveResultsByCategoryDashboard(requestedAt, json))
+    })
+  }
+}
+function requestResultsByCategoryDashboard(payload) {
+  return {
+    type: REQUEST_RESULTS_BY_CATEGORY_DASHBOARD,
+    ...payload,
+  }
+}
+function receiveResultsByCategoryDashboard(requestedAt, data) {
+  console.log(requestedAt, data)
+
+  return {
+    type: RECEIVE_RESULTS_BY_CATEGORY_DASHBOARD,
+    requestedAt,
+    data,
+  }
+}
+
 export function fetchInventoryDashboard() {
   return dispatch => {
     const requestedAt = `inventoryItem_${Date.now()}`
@@ -512,12 +558,24 @@ const Summary = Immutable.Record({
   operational: Immutable.Map(),
   actionSummaryMap: Immutable.Map(),
   treatmentStatus: Immutable.Map(),
+  resultsByCategory: Immutable.Map(),
   inventoryItems: Immutable.List(),
 })
 
 const initialState = new Summary()
 
 const onRequested = (action, mutState, cb) => {
+  if (
+    action &&
+    action.type
+    // action.type === "RECEIVE_RESULTS_BY_CATEGORY_DASHBOARD"
+  ) {
+    console.log(action)
+    console.log(action.requestedAt)
+    console.log(mutState.hasIn(['requestedAtSet', action.requestedAt]))
+    // cb();
+  }
+
   if (mutState.hasIn(['requestedAtSet', action.requestedAt])) {
     mutState.set(
       'requestedAtSet',
@@ -532,6 +590,7 @@ export default function dashboardReducer(state = initialState, action) {
     case REQUEST_STAT_DASHBOARD:
     case REQUEST_TARGET_DASHBOARD:
     case REQUEST_RESULT_DASHBOARD:
+    case REQUEST_RESULTS_BY_CATEGORY_DASHBOARD:
     case REQUEST_INVENTORY_ITEM_DASHBOARD:
     case REQUEST_DEVICE_DASHBOARD:
     case REQUEST_SITE_DASHBOARD:
@@ -662,6 +721,17 @@ export default function dashboardReducer(state = initialState, action) {
             item.pcNotConfirmed = item.total > 0 ? Math.round(10 * pc) / 10 : 0
           })
           mutState.set('treatmentStatus', new Immutable.fromJS(payload))
+        })
+      })
+    }
+    case RECEIVE_RESULTS_BY_CATEGORY_DASHBOARD: {
+      return state.withMutations(mutState => {
+        console.log('fired!')
+        onRequested(action, mutState, () => {
+          console.log('fired2!')
+          const payload = action.data
+          console.log(action, mutState)
+          mutState.set('resultsByCategory', new Immutable.fromJS(payload))
         })
       })
     }

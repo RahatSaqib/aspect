@@ -29,17 +29,14 @@ import { ResponsiveBar } from '@nivo/bar'
 
 import { Unit } from '../../components/pureGrids'
 import requirePermissions from '../../components/shared/requirePermissions'
-import { fetchSitesForSelectList } from '../../site/SiteRedux'
-import { fetchTreatmentDashboard } from '../DashboardRedux'
-import AspectTooltip from '../../components/shared/AspectTooltip'
+import { fetchResultsByCategoryDashboard } from '../DashboardRedux'
 import Title from './Title'
 import messages from './messages'
-import StyledDropdown from '../../components/shared/StyledDropdown'
 
 const cssClasses = classnames.bind(require('./Status.css'))
 
 const changePeriod = (props, shift) => {
-  const { lastOn, siteId, fetchTreatmentDashboard } = props
+  const { lastOn, siteId, fetchResultsByCategoryDashboard } = props
   let { endedOn } = props
 
   const last = Date.parse(`${lastOn}`)
@@ -48,8 +45,9 @@ const changePeriod = (props, shift) => {
     finish = last
   }
   endedOn = dateFormat(finish, 'yyyy-MM-dd')
-  fetchTreatmentDashboard({ siteId, endedOn })
+  fetchResultsByCategoryDashboard({ siteId, endedOn })
 }
+
 const enhance = compose(
   pure,
   withState('resultCategoryId', 'setResultCategoryId', ''),
@@ -65,28 +63,26 @@ const enhance = compose(
   }),
   connect(
     state => {
-      const treatmentStatus = state.dashboard.treatmentStatus.toJS()
+      const resultsByCategory = state.dashboard.resultsByCategory.toJS()
       return {
         sitesSelectList: state.site.selectList,
         assayResultCategoryList: state.dashboard.assayResultCategoryList,
-        ..._.pick(treatmentStatus, ['siteId', 'endedOn', 'lastOn', 'data']),
+        ..._.pick(resultsByCategory, ['siteId', 'endedOn', 'lastOn', 'data']),
       }
     },
     bindActionCreators.bind(null, {
-      fetchSitesForSelectList,
-      fetchTreatmentDashboard,
+      fetchResultsByCategoryDashboard,
     })
   ),
   lifecycle({
     componentDidMount() {
-      this.props.fetchSitesForSelectList()
-      this.props.fetchTreatmentDashboard()
+      this.props.fetchResultsByCategoryDashboard()
     },
   }),
   withHandlers({
     onChange: ({
       endedOn,
-      fetchTreatmentDashboard,
+      fetchResultsByCategoryDashboard,
       setResultCategoryId,
       setAssayTypeId,
       assayTypeId,
@@ -109,7 +105,7 @@ const enhance = compose(
 
       siteId = selectedValue.length === 1 ? value : siteId
 
-      fetchTreatmentDashboard({
+      fetchResultsByCategoryDashboard({
         siteId: siteId || null,
         assayTypeId,
         resultCategoryId,
@@ -167,26 +163,6 @@ const enhance = compose(
 function getColorWithAlpha(color, opacity) {
   const y = Math.floor(opacity * 255)
   return color + (y < 16 ? '0' : '') + y.toString(16)
-}
-
-function filterDropDownField(fieldList, fieldItem, otherProps) {
-  return (
-    <div
-      className={cssClasses(
-        'FiltersGroup__Child',
-        'FiltersGroup__Child--dropdown'
-      )}
-    >
-      {fieldList.length > 1 &&
-        (fieldItem ? (
-          <div className={cssClasses('SiteDropdown__Label')}>
-            {fieldList[1].label}
-          </div>
-        ) : (
-          <StyledDropdown displayEmpty source={fieldList} {...otherProps} />
-        ))}
-    </div>
-  )
 }
 
 export const ResultsByCategoryStatus = ({
