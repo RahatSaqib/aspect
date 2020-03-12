@@ -40,6 +40,7 @@ const userProps = [
   'p.lastPartnerId as partnerId',
   'p.lastCountryId as countryId',
   'p.userId',
+  'p.id as personId',
 ]
 
 function getUser(username) {
