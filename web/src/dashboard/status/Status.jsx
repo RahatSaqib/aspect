@@ -15,6 +15,7 @@ import TargetStatus from './TargetStatus'
 import Reports from './Reports'
 import BrowseSiteDropdown from '../../globals/components/BrowseSiteDropdown'
 import TreatmentStatus from './TreatmentStatus'
+import ResultsByCategoryStatus from './ResultsByCategoryStatus'
 
 const cssClasses = classnames.bind(require('./Status.css'))
 
@@ -70,6 +71,14 @@ const Status = ({
       location={location}
       className={cssClasses('Section--withDropdown')}
       title={intl.formatMessage(messages.treatmentTitle)}
+    />
+
+    <ResultsByCategoryStatus
+      intl={intl}
+      history={history}
+      location={location}
+      className={cssClasses('Section')}
+      title={intl.formatMessage(messages.resultsByCategoryTitle)}
     />
 
     <TargetStatus
