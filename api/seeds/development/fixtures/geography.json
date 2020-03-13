@@ -13,152 +13,152 @@
       "exportColumns": "DeploymentDescription|TestEndedOn|AssayName|AssayVersion|User|Result1|Result2|HIV|DRSuspect|PatientAge|PatientGender|PatientLGA|ReagentLotID|ExpirationDate|CartridgeSerial|ModuleSerial|SoftwareVersion|ErrorCode|ErrorCategory|ErrorDescription|SampleId|Notes|ProbeA",
       "inventoryDaysThreshold": 21,
       "monthStartsOnDay": 1,
-      "states":[
+      "states": [
         {
-          "name":"Adamaoua",
-          "lgas":[
-            {
-              "name":"Vina"
-            },
-            {
-              "name":"Mbéré"
-            },
-            {
-              "name":"Mayo-Banyo"
-            },
-            {
-              "name":"Faro-et-Déo"
-            },
-            {
-              "name":"Djérem"
-            }
-          ]
-        },
-        {
-          "name":"Centre",
+          "name": "Adamaoua",
           "lgas": [
             {
-              "name":"Haute-Sanaga"
+              "name": "Vina"
             },
             {
-              "name":"Lekié"
+              "name": "Mbéré"
             },
             {
-              "name":"Mbam-et-Inoubou"
+              "name": "Mayo-Banyo"
             },
             {
-              "name":"Mbam-et-Kim"
+              "name": "Faro-et-Déo"
             },
             {
-              "name":"Méfou-et-Afamba"
-            },
-            {
-              "name":"Méfou-et-Akono"
-            },
-            {
-              "name":"Mfoundi"
-            },
-            {
-              "name":"Nyong-et-Kéllé"
-            },
-            {
-              "name":"Nyong-et-Mfoumou"
-            },
-            {
-              "name":"Nyong-et-So'o"
+              "name": "Djérem"
             }
           ]
         },
         {
-          "name":"Est",
-          "lgas":[
+          "name": "Centre",
+          "lgas": [
             {
-              "name":"Boumba-et-Ngoko"
+              "name": "Haute-Sanaga"
             },
             {
-              "name":"Haut-Nyong"
+              "name": "Lekié"
             },
             {
-              "name":"Kadey"
+              "name": "Mbam-et-Inoubou"
             },
             {
-              "name":"Lom-et-Djérem"
+              "name": "Mbam-et-Kim"
+            },
+            {
+              "name": "Méfou-et-Afamba"
+            },
+            {
+              "name": "Méfou-et-Akono"
+            },
+            {
+              "name": "Mfoundi"
+            },
+            {
+              "name": "Nyong-et-Kéllé"
+            },
+            {
+              "name": "Nyong-et-Mfoumou"
+            },
+            {
+              "name": "Nyong-et-So'o"
             }
           ]
         },
         {
-          "name":"Extreme-Nord",
-          "lgas":[
+          "name": "Est",
+          "lgas": [
             {
-              "name":"Diamaré"
+              "name": "Boumba-et-Ngoko"
             },
             {
-              "name":"Logone-et-Chari"
+              "name": "Haut-Nyong"
             },
             {
-              "name":"Mayo-Danay"
+              "name": "Kadey"
             },
             {
-              "name":"Mayo-Kani"
-            },
-            {
-              "name":"Mayo-Sava"
-            },
-            {
-              "name":"Mayo-Tsanaga"
+              "name": "Lom-et-Djérem"
             }
           ]
         },
         {
-          "name":"Littoral",
-          "lgas":[
+          "name": "Extreme-Nord",
+          "lgas": [
             {
-              "name":"Moungo"
+              "name": "Diamaré"
             },
             {
-              "name":"Nkam"
+              "name": "Logone-et-Chari"
             },
             {
-              "name":"Sanaga-Maritime"
+              "name": "Mayo-Danay"
             },
             {
-              "name":"Wouri"
+              "name": "Mayo-Kani"
+            },
+            {
+              "name": "Mayo-Sava"
+            },
+            {
+              "name": "Mayo-Tsanaga"
             }
           ]
         },
         {
-          "name":"Nord",
-          "lgas":[
+          "name": "Littoral",
+          "lgas": [
             {
-              "name":"Bénoué"
+              "name": "Moungo"
             },
             {
-              "name":"Faro"
+              "name": "Nkam"
             },
             {
-              "name":"Mayo-Louti"
+              "name": "Sanaga-Maritime"
             },
             {
-              "name":"Mayo-Rey"
+              "name": "Wouri"
             }
           ]
         },
         {
-          "name":"Nord-Ouest",
-          "lgas":[
+          "name": "Nord",
+          "lgas": [
             {
-              "name":"Mezam"
+              "name": "Bénoué"
+            },
+            {
+              "name": "Faro"
+            },
+            {
+              "name": "Mayo-Louti"
+            },
+            {
+              "name": "Mayo-Rey"
             }
           ]
         },
         {
-          "name":"Ouest"
+          "name": "Nord-Ouest",
+          "lgas": [
+            {
+              "name": "Mezam"
+            }
+          ]
         },
         {
-          "name":"Sud"
+          "name": "Ouest"
         },
         {
-          "name":"Sud-Ouest"
+          "name": "Sud"
+        },
+        {
+          "name": "Sud-Ouest"
         }
       ]
     },
@@ -176,34 +176,90 @@
       "inventoryDaysThreshold": 21,
       "monthStartsOnDay": 1,
       "states": [
-        { "name": "Dedza" },
-        { "name": "Dowa" },
-        { "name": "Kasungu" },
-        { "name": "Lilongwe" },
-        { "name": "Mchinji" },
-        { "name": "Nkhotakota" },
-        { "name": "Ntcheu" },
-        { "name": "Ntchisi" },
-        { "name": "Salima" },
-        { "name": "Chitipa" },
-        { "name": "Karonga" },
-        { "name": "Likoma" },
-        { "name": "Mzimba" },
-        { "name": "Nkhata Bay" },
-        { "name": "Rumphi" },
-        { "name": "Balaka" },
-        { "name": "Blantyre" },
-        { "name": "Chikwawa" },
-        { "name": "Chiradzulu" },
-        { "name": "Machinga" },
-        { "name": "Mangochi" },
-        { "name": "Mulanje" },
-        { "name": "Mwanza" },
-        { "name": "Nsanje" },
-        { "name": "Thyolo" },
-        { "name": "Phalombe" },
-        { "name": "Zomba" },
-        { "name": "Neno" }
+        {
+          "name": "Dedza"
+        },
+        {
+          "name": "Dowa"
+        },
+        {
+          "name": "Kasungu"
+        },
+        {
+          "name": "Lilongwe"
+        },
+        {
+          "name": "Mchinji"
+        },
+        {
+          "name": "Nkhotakota"
+        },
+        {
+          "name": "Ntcheu"
+        },
+        {
+          "name": "Ntchisi"
+        },
+        {
+          "name": "Salima"
+        },
+        {
+          "name": "Chitipa"
+        },
+        {
+          "name": "Karonga"
+        },
+        {
+          "name": "Likoma"
+        },
+        {
+          "name": "Mzimba"
+        },
+        {
+          "name": "Nkhata Bay"
+        },
+        {
+          "name": "Rumphi"
+        },
+        {
+          "name": "Balaka"
+        },
+        {
+          "name": "Blantyre"
+        },
+        {
+          "name": "Chikwawa"
+        },
+        {
+          "name": "Chiradzulu"
+        },
+        {
+          "name": "Machinga"
+        },
+        {
+          "name": "Mangochi"
+        },
+        {
+          "name": "Mulanje"
+        },
+        {
+          "name": "Mwanza"
+        },
+        {
+          "name": "Nsanje"
+        },
+        {
+          "name": "Thyolo"
+        },
+        {
+          "name": "Phalombe"
+        },
+        {
+          "name": "Zomba"
+        },
+        {
+          "name": "Neno"
+        }
       ]
     },
     {
@@ -222,11 +278,28 @@
       "states": [
         {
           "name": "Lagos",
-          "lgas": [{ "name": "Apapa" }, { "name": "Mushin" }, { "name": "Ojo" }]
+          "lgas": [
+            {
+              "name": "Apapa"
+            },
+            {
+              "name": "Mushin"
+            },
+            {
+              "name": "Ojo"
+            }
+          ]
         },
         {
           "name": "Ogun",
-          "lgas": [{ "name": "Ifo" }, { "name": "Ipokia" }]
+          "lgas": [
+            {
+              "name": "Ifo"
+            },
+            {
+              "name": "Ipokia"
+            }
+          ]
         }
       ]
     },
@@ -294,15 +367,33 @@
           "lgas": [
             {
               "name": "Winston",
-              "cities": ["Winston", "Mobile", "Selma", "Independence", "Durham"]
+              "cities": [
+                "Winston",
+                "Mobile",
+                "Selma",
+                "Independence",
+                "Durham"
+              ]
             },
             {
               "name": "Pike",
-              "cities": ["Pike", "Warren", "Turner", "Carter", "West Pike"]
+              "cities": [
+                "Pike",
+                "Warren",
+                "Turner",
+                "Carter",
+                "West Pike"
+              ]
             },
             {
               "name": "Lawrence",
-              "cities": ["Lawrence", "Crenshaw", "Morristown", "Colton", "East Lawrence"]
+              "cities": [
+                "Lawrence",
+                "Crenshaw",
+                "Morristown",
+                "Colton",
+                "East Lawrence"
+              ]
             }
           ],
           "lat": 32.806671,
@@ -320,19 +411,43 @@
           "lgas": [
             {
               "name": "Phoenix",
-              "cities": ["Phoenix", "Palmdale", "Desert Springs", "Wilder", "Charleston"]
+              "cities": [
+                "Phoenix",
+                "Palmdale",
+                "Desert Springs",
+                "Wilder",
+                "Charleston"
+              ]
             },
             {
               "name": "Tucson",
-              "cities": ["Tucson", "Middleton", "Wyler", "Madrid", "Louden"]
+              "cities": [
+                "Tucson",
+                "Middleton",
+                "Wyler",
+                "Madrid",
+                "Louden"
+              ]
             },
             {
               "name": "Yuma",
-              "cities": ["Yuma", "Littleton", "Cooperstown", "Marlboro", "Raleigh"]
+              "cities": [
+                "Yuma",
+                "Littleton",
+                "Cooperstown",
+                "Marlboro",
+                "Raleigh"
+              ]
             },
             {
               "name": "Maricopa",
-              "cities": ["Maricopa", "Saunter", "Simi", "Lima", "Clarendon"]
+              "cities": [
+                "Maricopa",
+                "Saunter",
+                "Simi",
+                "Lima",
+                "Clarendon"
+              ]
             }
           ],
           "lat": 33.729759,
@@ -378,8 +493,26 @@
           "abbreviation": "GA",
           "name": "Georgia",
           "lgas": [
-            { "name": "Atlanta", "cities": ["Atlanta", "Peachtown", "Cobbler", "Norton", "Peachtree"] },
-            { "name": "Clayton", "cities": ["Clayton", "New Berlin", "Athens", "Savannah", "Naples"] }
+            {
+              "name": "Atlanta",
+              "cities": [
+                "Atlanta",
+                "Peachtown",
+                "Cobbler",
+                "Norton",
+                "Peachtree"
+              ]
+            },
+            {
+              "name": "Clayton",
+              "cities": [
+                "Clayton",
+                "New Berlin",
+                "Athens",
+                "Savannah",
+                "Naples"
+              ]
+            }
           ],
           "lat": 33.040619,
           "lng": -83.643074
@@ -400,8 +533,26 @@
           "abbreviation": "ID",
           "name": "Idaho",
           "lgas": [
-            { "name": "Clearwater", "cities": ["Clearwater", "Idaho Falls", "Rome", "Chestnut Hill", "Idaho City"] },
-            { "name": "Gooding", "cities": ["Gooding", "Cordon", "College Station", "Oden", "West Gooding"] }
+            {
+              "name": "Clearwater",
+              "cities": [
+                "Clearwater",
+                "Idaho Falls",
+                "Rome",
+                "Chestnut Hill",
+                "Idaho City"
+              ]
+            },
+            {
+              "name": "Gooding",
+              "cities": [
+                "Gooding",
+                "Cordon",
+                "College Station",
+                "Oden",
+                "West Gooding"
+              ]
+            }
           ],
           "lat": 44.240459,
           "lng": -114.478828
@@ -454,11 +605,23 @@
           "lgas": [
             {
               "name": "Franklin",
-              "cities": ["Northampton", "Deerfield", "Amherst", "Belchertown", "South Deerfield"]
+              "cities": [
+                "Northampton",
+                "Deerfield",
+                "Amherst",
+                "Belchertown",
+                "South Deerfield"
+              ]
             },
             {
               "name": "Suffolk",
-              "cities": ["Boston", "Peabody", "Lowell", "Worcester", "Gloucester"]
+              "cities": [
+                "Boston",
+                "Peabody",
+                "Lowell",
+                "Worcester",
+                "Gloucester"
+              ]
             }
           ],
           "lat": 42.230171,
@@ -512,15 +675,33 @@
           "lgas": [
             {
               "name": "Hall",
-              "cities": ["Hall", "Palmer", "West Hall", "Lincoln", "East Lincoln"]
+              "cities": [
+                "Hall",
+                "Palmer",
+                "West Hall",
+                "Lincoln",
+                "East Lincoln"
+              ]
             },
             {
               "name": "Gage",
-              "cities": ["Gage", "East Gage", "Rearden", "South Hampton", "Noylen"]
+              "cities": [
+                "Gage",
+                "East Gage",
+                "Rearden",
+                "South Hampton",
+                "Noylen"
+              ]
             },
             {
               "name": "Lancaster",
-              "cities": ["Lancaster", "Hampton", "Franklin", "Marden", "Exeter"]
+              "cities": [
+                "Lancaster",
+                "Hampton",
+                "Franklin",
+                "Marden",
+                "Exeter"
+              ]
             }
           ],
           "lat": 41.12537,
@@ -568,11 +749,23 @@
           "lgas": [
             {
               "name": "Wayne",
-              "cities": ["Wooster", "Mansfield", "Croydon", "Wayne", "Oberlin"]
+              "cities": [
+                "Wooster",
+                "Mansfield",
+                "Croydon",
+                "Wayne",
+                "Oberlin"
+              ]
             },
             {
               "name": "Cuyahoga",
-              "cities": ["Cleveland", "Cleveland Heights", "Cherry Hill", "Erie", "Kenyon"]
+              "cities": [
+                "Cleveland",
+                "Cleveland Heights",
+                "Cherry Hill",
+                "Erie",
+                "Kenyon"
+              ]
             }
           ],
           "lat": 40.388783,
@@ -584,11 +777,23 @@
           "lgas": [
             {
               "name": "Clackamas",
-              "cities": ["Beaverton", "Portland", "Clackamas", "Woodrow", "East Portland"]
+              "cities": [
+                "Beaverton",
+                "Portland",
+                "Clackamas",
+                "Woodrow",
+                "East Portland"
+              ]
             },
             {
               "name": "Sherman",
-              "cities": ["Sherman", "East Sherman", "Holden", "York", "West Sherman"]
+              "cities": [
+                "Sherman",
+                "East Sherman",
+                "Holden",
+                "York",
+                "West Sherman"
+              ]
             }
           ],
           "lat": 44.572021,
@@ -692,216 +897,444 @@
           "name": "Ayeyarwady",
           "abbreviation": "AYY",
           "lgas": [
-            { "name": "Hinthada" },
-            { "name": "Labutta" },
-            { "name": "Maubin" },
-            { "name": "Myaungmya" },
-            { "name": "Pathein" },
-            { "name": "Pyapon" }
+            {
+              "name": "Hinthada"
+            },
+            {
+              "name": "Labutta"
+            },
+            {
+              "name": "Maubin"
+            },
+            {
+              "name": "Myaungmya"
+            },
+            {
+              "name": "Pathein"
+            },
+            {
+              "name": "Pyapon"
+            }
           ]
         },
         {
           "name": "Bago",
           "abbreviation": "BGO",
           "lgas": [
-            { "name": "Bago" },
-            { "name": "Pyay" },
-            { "name": "Taungoo" },
-            { "name": "Thayarwady" }
+            {
+              "name": "Bago"
+            },
+            {
+              "name": "Pyay"
+            },
+            {
+              "name": "Taungoo"
+            },
+            {
+              "name": "Thayarwady"
+            }
           ]
         },
         {
           "name": "Chin",
           "abbreviation": "CHN",
           "lgas": [
-            { "name": "Falam" },
-            { "name": "Hakha" },
-            { "name": "Mindat" }
+            {
+              "name": "Falam"
+            },
+            {
+              "name": "Hakha"
+            },
+            {
+              "name": "Mindat"
+            }
           ]
         },
         {
           "name": "Kachin",
           "abbreviation": "KCN",
           "lgas": [
-            { "name": "Bhamo" },
-            { "name": "Mohnyin" },
-            { "name": "Myitkyina" },
-            { "name": "Puta-O" }
+            {
+              "name": "Bhamo"
+            },
+            {
+              "name": "Mohnyin"
+            },
+            {
+              "name": "Myitkyina"
+            },
+            {
+              "name": "Puta-O"
+            }
           ]
         },
         {
           "name": "Kayah",
           "abbreviation": "KYH",
           "lgas": [
-            { "name": "Bawlake" },
-            { "name": "Loikaw" }
+            {
+              "name": "Bawlake"
+            },
+            {
+              "name": "Loikaw"
+            }
           ]
         },
         {
           "name": "Kayin",
           "abbreviation": "KYN",
           "lgas": [
-            { "name": "Hpa-An" },
-            { "name": "Hpapun" },
-            { "name": "Kawkareik" },
-            { "name": "Myawaddy" }
+            {
+              "name": "Hpa-An"
+            },
+            {
+              "name": "Hpapun"
+            },
+            {
+              "name": "Kawkareik"
+            },
+            {
+              "name": "Myawaddy"
+            }
           ]
         },
         {
           "name": "Magway",
           "abbreviation": "MGY",
           "lgas": [
-            { "name": "Gangaw" },
-            { "name": "Magway" },
-            { "name": "Minbu" },
-            { "name": "Pakokku" },
-            { "name": "Thayet" }
+            {
+              "name": "Gangaw"
+            },
+            {
+              "name": "Magway"
+            },
+            {
+              "name": "Minbu"
+            },
+            {
+              "name": "Pakokku"
+            },
+            {
+              "name": "Thayet"
+            }
           ]
         },
         {
           "name": "Mandalay",
           "abbreviation": "MDY",
           "lgas": [
-            { "name": "Kyaukse" },
-            { "name": "Mandalay" },
-            { "name": "Meiktila" },
-            { "name": "Myingyan" },
-            { "name": "Nyaung-U" },
-            { "name": "Pyinoolwin" },
-            { "name": "Yamethin" }
+            {
+              "name": "Kyaukse"
+            },
+            {
+              "name": "Mandalay"
+            },
+            {
+              "name": "Meiktila"
+            },
+            {
+              "name": "Myingyan"
+            },
+            {
+              "name": "Nyaung-U"
+            },
+            {
+              "name": "Pyinoolwin"
+            },
+            {
+              "name": "Yamethin"
+            }
           ]
         },
         {
           "name": "Mon",
           "abbreviation": "MON",
           "lgas": [
-            { "name": "Mawlamyine" },
-            { "name": "Thaton" }
+            {
+              "name": "Mawlamyine"
+            },
+            {
+              "name": "Thaton"
+            }
           ]
         },
         {
           "name": "Naypyitaw Union Territoriality",
           "abbreviation": "NPW",
           "lgas": [
-            { "name": "Detkhina" },
-            { "name": "Oketara" }
+            {
+              "name": "Detkhina"
+            },
+            {
+              "name": "Oketara"
+            }
           ]
         },
         {
           "name": "Rakhine",
           "abbreviation": "RKE",
           "lgas": [
-            { "name": "Kyaukpyu" },
-            { "name": "Maungdaw" },
-            { "name": "Mrauk-U" },
-            { "name": "Sittwe" },
-            { "name": "Thandwe" }
+            {
+              "name": "Kyaukpyu"
+            },
+            {
+              "name": "Maungdaw"
+            },
+            {
+              "name": "Mrauk-U"
+            },
+            {
+              "name": "Sittwe"
+            },
+            {
+              "name": "Thandwe"
+            }
           ]
         },
         {
           "name": "Sagaing",
           "abbreviation": "SGG",
           "lgas": [
-            { "name": "Hkamti" },
-            { "name": "Kale" },
-            { "name": "Katha" },
-            { "name": "Mawlaik" },
-            { "name": "Monywa" },
-            { "name": "Sagaing" },
-            { "name": "Shwebo" },
-            { "name": "Tamu" },
-            { "name": "Yinmarbin" }
+            {
+              "name": "Hkamti"
+            },
+            {
+              "name": "Kale"
+            },
+            {
+              "name": "Katha"
+            },
+            {
+              "name": "Mawlaik"
+            },
+            {
+              "name": "Monywa"
+            },
+            {
+              "name": "Sagaing"
+            },
+            {
+              "name": "Shwebo"
+            },
+            {
+              "name": "Tamu"
+            },
+            {
+              "name": "Yinmarbin"
+            }
           ]
         },
         {
           "name": "Shan (East)",
           "abbreviation": "SHN",
           "lgas": [
-            { "name": "Hopang" },
-            { "name": "Kengtung" },
-            { "name": "Kunlong" },
-            { "name": "Kyaukme" },
-            { "name": "Langkho" },
-            { "name": "Lashio" },
-            { "name": "Laukkaing" },
-            { "name": "Laukkaing (Kokang SAZ)" },
-            { "name": "Loilen" },
-            { "name": "Matman" },
-            { "name": "Mong Maw (Wa SAD)" },
-            { "name": "Mong Pawk (Wa SAD)" },
-            { "name": "Monghpyak" },
-            { "name": "Monghsat" },
-            { "name": "Muse" },
-            { "name": "Tachileik" },
-            { "name": "Taunggyi" },
-            { "name": "Wein Kawng (Wein Kao) (Wa SAD)" }
+            {
+              "name": "Hopang"
+            },
+            {
+              "name": "Kengtung"
+            },
+            {
+              "name": "Kunlong"
+            },
+            {
+              "name": "Kyaukme"
+            },
+            {
+              "name": "Langkho"
+            },
+            {
+              "name": "Lashio"
+            },
+            {
+              "name": "Laukkaing"
+            },
+            {
+              "name": "Laukkaing (Kokang SAZ)"
+            },
+            {
+              "name": "Loilen"
+            },
+            {
+              "name": "Matman"
+            },
+            {
+              "name": "Mong Maw (Wa SAD)"
+            },
+            {
+              "name": "Mong Pawk (Wa SAD)"
+            },
+            {
+              "name": "Monghpyak"
+            },
+            {
+              "name": "Monghsat"
+            },
+            {
+              "name": "Muse"
+            },
+            {
+              "name": "Tachileik"
+            },
+            {
+              "name": "Taunggyi"
+            },
+            {
+              "name": "Wein Kawng (Wein Kao) (Wa SAD)"
+            }
           ]
         },
         {
           "name": "Shan (North)",
           "abbreviation": "SHN",
           "lgas": [
-            { "name": "Hopang" },
-            { "name": "Kengtung" },
-            { "name": "Kunlong" },
-            { "name": "Kyaukme" },
-            { "name": "Langkho" },
-            { "name": "Lashio" },
-            { "name": "Laukkaing" },
-            { "name": "Laukkaing (Kokang SAZ)" },
-            { "name": "Loilen" },
-            { "name": "Matman" },
-            { "name": "Mong Maw (Wa SAD)" },
-            { "name": "Mong Pawk (Wa SAD)" },
-            { "name": "Monghpyak" },
-            { "name": "Monghsat" },
-            { "name": "Muse" },
-            { "name": "Tachileik" },
-            { "name": "Taunggyi" },
-            { "name": "Wein Kawng (Wein Kao) (Wa SAD)" }
+            {
+              "name": "Hopang"
+            },
+            {
+              "name": "Kengtung"
+            },
+            {
+              "name": "Kunlong"
+            },
+            {
+              "name": "Kyaukme"
+            },
+            {
+              "name": "Langkho"
+            },
+            {
+              "name": "Lashio"
+            },
+            {
+              "name": "Laukkaing"
+            },
+            {
+              "name": "Laukkaing (Kokang SAZ)"
+            },
+            {
+              "name": "Loilen"
+            },
+            {
+              "name": "Matman"
+            },
+            {
+              "name": "Mong Maw (Wa SAD)"
+            },
+            {
+              "name": "Mong Pawk (Wa SAD)"
+            },
+            {
+              "name": "Monghpyak"
+            },
+            {
+              "name": "Monghsat"
+            },
+            {
+              "name": "Muse"
+            },
+            {
+              "name": "Tachileik"
+            },
+            {
+              "name": "Taunggyi"
+            },
+            {
+              "name": "Wein Kawng (Wein Kao) (Wa SAD)"
+            }
           ]
         },
         {
           "name": "Shan (South)",
           "abbreviation": "SHN",
           "lgas": [
-            { "name": "Hopang" },
-            { "name": "Kengtung" },
-            { "name": "Kunlong" },
-            { "name": "Kyaukme" },
-            { "name": "Langkho" },
-            { "name": "Lashio" },
-            { "name": "Laukkaing" },
-            { "name": "Laukkaing (Kokang SAZ)" },
-            { "name": "Loilen" },
-            { "name": "Matman" },
-            { "name": "Mong Maw (Wa SAD)" },
-            { "name": "Mong Pawk (Wa SAD)" },
-            { "name": "Monghpyak" },
-            { "name": "Monghsat" },
-            { "name": "Muse" },
-            { "name": "Tachileik" },
-            { "name": "Taunggyi" },
-            { "name": "Wein Kawng (Wein Kao) (Wa SAD)" }
+            {
+              "name": "Hopang"
+            },
+            {
+              "name": "Kengtung"
+            },
+            {
+              "name": "Kunlong"
+            },
+            {
+              "name": "Kyaukme"
+            },
+            {
+              "name": "Langkho"
+            },
+            {
+              "name": "Lashio"
+            },
+            {
+              "name": "Laukkaing"
+            },
+            {
+              "name": "Laukkaing (Kokang SAZ)"
+            },
+            {
+              "name": "Loilen"
+            },
+            {
+              "name": "Matman"
+            },
+            {
+              "name": "Mong Maw (Wa SAD)"
+            },
+            {
+              "name": "Mong Pawk (Wa SAD)"
+            },
+            {
+              "name": "Monghpyak"
+            },
+            {
+              "name": "Monghsat"
+            },
+            {
+              "name": "Muse"
+            },
+            {
+              "name": "Tachileik"
+            },
+            {
+              "name": "Taunggyi"
+            },
+            {
+              "name": "Wein Kawng (Wein Kao) (Wa SAD)"
+            }
           ]
         },
         {
           "name": "Tanintharyi",
           "abbreviation": "TNI",
           "lgas": [
-            { "name": "Dawei" },
-            { "name": "Kawthoung" },
-            { "name": "Myeik" }
+            {
+              "name": "Dawei"
+            },
+            {
+              "name": "Kawthoung"
+            },
+            {
+              "name": "Myeik"
+            }
           ]
         },
         {
           "name": "Yangon",
           "abbreviation": "YGN",
           "lgas": [
-            { "name": "Yangon (East)" },
-            { "name": "Yangon (North)" },
-            { "name": "Yangon (South)" },
-            { "name": "Yangon (West)" }
+            {
+              "name": "Yangon (East)"
+            },
+            {
+              "name": "Yangon (North)"
+            },
+            {
+              "name": "Yangon (South)"
+            },
+            {
+              "name": "Yangon (West)"
+            }
           ]
         }
       ]
@@ -976,227 +1409,782 @@
       "exportColumns": "DeploymentDescription|TestEndedOn|AssayName|AssayVersion|User|Result1|Result2|ResultText|PatientId|ReagentLotID|ExpirationDate|CartridgeSerial|ModuleSerial|SoftwareVersion|ErrorCode|ErrorCategory|ErrorDescription|SampleId|Notes|ProbeDCt|ProbeCCt|ProbeECt|ProbeBCt|Qc1Ct|Qc2Ct",
       "inventoryDaysThreshold": 21,
       "monthStartsOnDay": 1,
-      "states":[{
-        "name":"Adamaoua",
-        "lgas":[
-          {
-            "name":"Vina"
-          },
-          {
-            "name":"Mbéré"
-          },
-          {
-            "name":"Mayo-Banyo"
-          },
-          {
-            "name":"Faro-et-Déo"
-          },
-          {
-            "name":"Djérem"
-          }
-        ]
-      },
+      "states": [
         {
-          "name":"Centre",
+          "name": "Adamaoua",
           "lgas": [
             {
-              "name":"Haute-Sanaga"
+              "name": "Vina"
             },
             {
-              "name":"Lekié"
+              "name": "Mbéré"
             },
             {
-              "name":"Mbam-et-Inoubou"
+              "name": "Mayo-Banyo"
             },
             {
-              "name":"Mbam-et-Kim"
+              "name": "Faro-et-Déo"
             },
             {
-              "name":"Méfou-et-Afamba"
-            },
-            {
-              "name":"Méfou-et-Akono"
-            },
-            {
-              "name":"Mfoundi"
-            },
-            {
-              "name":"Nyong-et-Kéllé"
-            },
-            {
-              "name":"Nyong-et-Mfoumou"
-            },
-            {
-              "name":"Nyong-et-So'o"
+              "name": "Djérem"
             }
           ]
         },
         {
-          "name":"Est",
-          "lgas":[
+          "name": "Centre",
+          "lgas": [
             {
-              "name":"Boumba-et-Ngoko"
+              "name": "Haute-Sanaga"
             },
             {
-              "name":"Haut-Nyong"
+              "name": "Lekié"
             },
             {
-              "name":"Kadey"
+              "name": "Mbam-et-Inoubou"
             },
             {
-              "name":"Lom-et-Djérem"
+              "name": "Mbam-et-Kim"
+            },
+            {
+              "name": "Méfou-et-Afamba"
+            },
+            {
+              "name": "Méfou-et-Akono"
+            },
+            {
+              "name": "Mfoundi"
+            },
+            {
+              "name": "Nyong-et-Kéllé"
+            },
+            {
+              "name": "Nyong-et-Mfoumou"
+            },
+            {
+              "name": "Nyong-et-So'o"
             }
           ]
         },
         {
-          "name":"Extreme-Nord",
-          "lgas":[
+          "name": "Est",
+          "lgas": [
             {
-              "name":"Diamaré"
+              "name": "Boumba-et-Ngoko"
             },
             {
-              "name":"Logone-et-Chari"
+              "name": "Haut-Nyong"
             },
             {
-              "name":"Mayo-Danay"
+              "name": "Kadey"
             },
             {
-              "name":"Mayo-Kani"
-            },
-            {
-              "name":"Mayo-Sava"
-            },
-            {
-              "name":"Mayo-Tsanaga"
+              "name": "Lom-et-Djérem"
             }
           ]
         },
         {
-          "name":"Littoral",
-          "lgas":[
+          "name": "Extreme-Nord",
+          "lgas": [
             {
-              "name":"Moungo"
+              "name": "Diamaré"
             },
             {
-              "name":"Nkam"
+              "name": "Logone-et-Chari"
             },
             {
-              "name":"Sanaga-Maritime"
+              "name": "Mayo-Danay"
             },
             {
-              "name":"Wouri"
+              "name": "Mayo-Kani"
+            },
+            {
+              "name": "Mayo-Sava"
+            },
+            {
+              "name": "Mayo-Tsanaga"
             }
           ]
         },
         {
-          "name":"Nord",
-          "lgas":[
+          "name": "Littoral",
+          "lgas": [
             {
-              "name":"Bénoué"
+              "name": "Moungo"
             },
             {
-              "name":"Faro"
+              "name": "Nkam"
             },
             {
-              "name":"Mayo-Louti"
+              "name": "Sanaga-Maritime"
             },
             {
-              "name":"Mayo-Rey"
+              "name": "Wouri"
             }
           ]
         },
         {
-          "name":"Nord-Ouest",
-          "lgas":[
+          "name": "Nord",
+          "lgas": [
             {
-              "name":"Boyo"
+              "name": "Bénoué"
             },
             {
-              "name":"Bui"
+              "name": "Faro"
             },
             {
-              "name":"Donga-Mantung"
+              "name": "Mayo-Louti"
             },
             {
-              "name":"Menchum"
-            },
-            {
-              "name":"Mezam"
-            },
-            {
-              "name":"Momo"
-            },
-            {
-              "name":"Ngo-Ketunjia"
+              "name": "Mayo-Rey"
             }
           ]
         },
         {
-          "name":"Ouest",
-          "lgas":[
+          "name": "Nord-Ouest",
+          "lgas": [
             {
-              "name":"Bamboutos"
+              "name": "Boyo"
             },
             {
-              "name":"Haut-Nkam"
+              "name": "Bui"
             },
             {
-              "name":"Hauts-Plateaux"
+              "name": "Donga-Mantung"
             },
             {
-              "name":"Koung-Khi"
+              "name": "Menchum"
             },
             {
-              "name":"Ménoua"
+              "name": "Mezam"
             },
             {
-              "name":"Mifi"
+              "name": "Momo"
             },
             {
-              "name":"Ndé"
-            },
-            {
-              "name":"Noun"
+              "name": "Ngo-Ketunjia"
             }
           ]
         },
         {
-          "name":"Sud",
-          "lgas":[
+          "name": "Ouest",
+          "lgas": [
             {
-              "name":"Ambam"
+              "name": "Bamboutos"
             },
             {
-              "name":"Mvila"
+              "name": "Haut-Nkam"
             },
             {
-              "name":"Océan"
+              "name": "Hauts-Plateaux"
             },
             {
-              "name":"Vallée-du-Ntem"
+              "name": "Koung-Khi"
+            },
+            {
+              "name": "Ménoua"
+            },
+            {
+              "name": "Mifi"
+            },
+            {
+              "name": "Ndé"
+            },
+            {
+              "name": "Noun"
             }
           ]
         },
         {
-          "name":"Sud-Ouest",
-          "lgas":[
+          "name": "Sud",
+          "lgas": [
             {
-              "name":"Fako"
+              "name": "Ambam"
             },
             {
-              "name":"Koupé-Manengouba"
+              "name": "Mvila"
             },
             {
-              "name":"Lebialem"
+              "name": "Océan"
             },
             {
-              "name":"Manyu"
+              "name": "Vallée-du-Ntem"
+            }
+          ]
+        },
+        {
+          "name": "Sud-Ouest",
+          "lgas": [
+            {
+              "name": "Fako"
             },
             {
-              "name":"Meme"
+              "name": "Koupé-Manengouba"
             },
             {
-              "name":"Ndian"
+              "name": "Lebialem"
+            },
+            {
+              "name": "Manyu"
+            },
+            {
+              "name": "Meme"
+            },
+            {
+              "name": "Ndian"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "abbreviation": "MZ",
+      "name": "Mozambique",
+      "a3": "MOZ",
+      "culture": "pt-PT",
+      "countryCode": "258",
+      "stateLabel": "Provincia",
+      "lgaLabel": "Distrito",
+      "timezone": "South Africa Standard Time",
+      "portNumber": 3012,
+      "exportColumns": "DeploymentDescription|TestEndedOn|AssayName|AssayVersion|User|Result1|Result2|HIV|DRSuspect|PatientAge|PatientGender|PatientLGA|ReagentLotID|ExpirationDate|CartridgeSerial|ModuleSerial|SoftwareVersion|ErrorCode|ErrorCategory|ErrorDescription|SampleId|Notes|ProbeA",
+      "inventoryDaysThreshold": 21,
+      "monthStartsOnDay": 1,
+      "states": [
+        {
+          "name": "Cabo Delgado",
+          "lgas": [
+            {
+              "name": "Ancuabe"
+            },
+            {
+              "name": "Balama"
+            },
+            {
+              "name": "Chiure District"
+            },
+            {
+              "name": "Ibo District"
+            },
+            {
+              "name": "Macomia District"
+            },
+            {
+              "name": "Mecufi District"
+            },
+            {
+              "name": "Meluco District"
+            },
+            {
+              "name": "Mocimboa a Praia District"
+            },
+            {
+              "name": "Mocimboa da Praia"
+            },
+            {
+              "name": "Montepuez"
+            },
+            {
+              "name": "Montepuez District"
+            },
+            {
+              "name": "Mueda District"
+            },
+            {
+              "name": "Muidumbe District"
+            },
+            {
+              "name": "Namuno District"
+            },
+            {
+              "name": "Nangade District"
+            },
+            {
+              "name": "Palma District"
+            },
+            {
+              "name": "Pemba"
+            },
+            {
+              "name": "Pemba-Metuge District"
+            },
+            {
+              "name": "Quissanga District"
+            }
+          ]
+        },
+        {
+          "name": "Gaza",
+          "lgas": [
+            {
+              "name": "Belene Macia District"
+            },
+            {
+              "name": "Chibuto"
+            },
+            {
+              "name": "Chibuto District"
+            },
+            {
+              "name": "Chicualacuala District"
+            },
+            {
+              "name": "Chigubo District"
+            },
+            {
+              "name": "Chokwe"
+            },
+            {
+              "name": "Chokwe District"
+            },
+            {
+              "name": "Guija District"
+            },
+            {
+              "name": "Mabalane District"
+            },
+            {
+              "name": "Macia"
+            },
+            {
+              "name": "Manjacaze"
+            },
+            {
+              "name": "Manjacaze District"
+            },
+            {
+              "name": "Massagena District"
+            },
+            {
+              "name": "Massingir District"
+            },
+            {
+              "name": "Xai-Xai"
+            },
+            {
+              "name": "Xai-Xai District"
+            }
+          ]
+        },
+        {
+          "name": "Inhambane",
+          "lgas": [
+            {
+              "name": "Funhalouro District"
+            },
+            {
+              "name": "Govuro District"
+            },
+            {
+              "name": "Homoine District"
+            },
+            {
+              "name": "Inharrime District"
+            },
+            {
+              "name": "Inhassoro District"
+            },
+            {
+              "name": "Jangamo District"
+            },
+            {
+              "name": "Mabote District"
+            },
+            {
+              "name": "Massinga District"
+            },
+            {
+              "name": "Morrumbene District"
+            },
+            {
+              "name": "Panda District"
+            },
+            {
+              "name": "Vilankulo District"
+            },
+            {
+              "name": "Zavala District"
+            }
+          ]
+        },
+        {
+          "name": "Manica",
+          "lgas": [
+            {
+              "name": "Barue District"
+            },
+            {
+              "name": "C. Chimoio"
+            },
+            {
+              "name": "Gondola District"
+            },
+            {
+              "name": "Guro District"
+            },
+            {
+              "name": "Machaze District"
+            },
+            {
+              "name": "Macossa District"
+            },
+            {
+              "name": "Manica District"
+            },
+            {
+              "name": "Mossurize District"
+            },
+            {
+              "name": "Sussundenga District"
+            },
+            {
+              "name": "Tambara District"
+            }
+          ]
+        },
+        {
+          "name": "Maputo City",
+          "lgas": [
+            {
+              "name": "KaMavota"
+            },
+            {
+              "name": "KaMaxaquene"
+            },
+            {
+              "name": "KaMpfumo"
+            },
+            {
+              "name": "KaMubukwana"
+            },
+            {
+              "name": "KaNyaka"
+            },
+            {
+              "name": "KaTembe"
+            },
+            {
+              "name": "Nlhamankulu"
+            }
+          ]
+        },
+        {
+          "name": "Maputo Province",
+          "lgas": [
+            {
+              "name": "Boane District"
+            },
+            {
+              "name": "Magude District"
+            },
+            {
+              "name": "Manhica"
+            },
+            {
+              "name": "Manhica District"
+            },
+            {
+              "name": "Marracuene District"
+            },
+            {
+              "name": "Matola"
+            },
+            {
+              "name": "Matutuine District"
+            },
+            {
+              "name": "Moamba District"
+            },
+            {
+              "name": "Namaacha"
+            },
+            {
+              "name": "Namaacha District"
+            }
+          ]
+        },
+        {
+          "name": "Nampula",
+          "lgas": [
+            {
+              "name": "Angoche"
+            },
+            {
+              "name": "Angoche District"
+            },
+            {
+              "name": "Erati District"
+            },
+            {
+              "name": "Ilha de Mocambique"
+            },
+            {
+              "name": "Lalaua District"
+            },
+            {
+              "name": "Malema District"
+            },
+            {
+              "name": "Meconta District"
+            },
+            {
+              "name": "Mecuburi District"
+            },
+            {
+              "name": "Memba District"
+            },
+            {
+              "name": "Mogincual District"
+            },
+            {
+              "name": "Mogovolas District"
+            },
+            {
+              "name": "Moma District"
+            },
+            {
+              "name": "Monapo"
+            },
+            {
+              "name": "Monapo District"
+            },
+            {
+              "name": "Mossuril District"
+            },
+            {
+              "name": "Muecate District"
+            },
+            {
+              "name": "Murrupula District"
+            },
+            {
+              "name": "Nacala"
+            },
+            {
+              "name": "Nacala-a-Velha District"
+            },
+            {
+              "name": "Nacaroa District"
+            },
+            {
+              "name": "Nampula"
+            },
+            {
+              "name": "Nampula District"
+            },
+            {
+              "name": "Ribaue District"
+            }
+          ]
+        },
+        {
+          "name": "Niassa",
+          "lgas": [
+            {
+              "name": "Cuamba"
+            },
+            {
+              "name": "Cuamba District"
+            },
+            {
+              "name": "Lago District"
+            },
+            {
+              "name": "Lichinga"
+            },
+            {
+              "name": "Lichinga District"
+            },
+            {
+              "name": "Majune District"
+            },
+            {
+              "name": "Mandimba District"
+            },
+            {
+              "name": "Marrupa District"
+            },
+            {
+              "name": "Maua District"
+            },
+            {
+              "name": "Mavagoago District"
+            },
+            {
+              "name": "Mecenhelas District"
+            },
+            {
+              "name": "Mecula District"
+            },
+            {
+              "name": "Metangula"
+            },
+            {
+              "name": "Metarica District"
+            },
+            {
+              "name": "Muembe District"
+            },
+            {
+              "name": "N'gauma District"
+            },
+            {
+              "name": "Nipepe District"
+            },
+            {
+              "name": "Sanga District"
+            }
+          ]
+        },
+        {
+          "name": "Sofala",
+          "lgas": [
+            {
+              "name": "Buzi District"
+            },
+            {
+              "name": "C. Beira"
+            },
+            {
+              "name": "Caia District"
+            },
+            {
+              "name": "Chemba District"
+            },
+            {
+              "name": "Cheringoma District"
+            },
+            {
+              "name": "Chibabava District"
+            },
+            {
+              "name": "Dondo District"
+            },
+            {
+              "name": "Gorongosa District"
+            },
+            {
+              "name": "Machanga District"
+            },
+            {
+              "name": "Maringue District"
+            },
+            {
+              "name": "Marromeu District"
+            },
+            {
+              "name": "Muanza District"
+            },
+            {
+              "name": "Nhamatanda District"
+            }
+          ]
+        },
+        {
+          "name": "Tete",
+          "lgas": [
+            {
+              "name": "Angonia District"
+            },
+            {
+              "name": "Cahora-Bassa District"
+            },
+            {
+              "name": "Changara District"
+            },
+            {
+              "name": "Chifunde District"
+            },
+            {
+              "name": "Chiuta District"
+            },
+            {
+              "name": "Doa District"
+            },
+            {
+              "name": "Macanga District"
+            },
+            {
+              "name": "Magoe District"
+            },
+            {
+              "name": "Marara District"
+            },
+            {
+              "name": "Maravia District"
+            },
+            {
+              "name": "Moatize District"
+            },
+            {
+              "name": "Mutarara District"
+            },
+            {
+              "name": "Tete District"
+            },
+            {
+              "name": "Tsangano District"
+            },
+            {
+              "name": "Zumbo District"
+            }
+          ]
+        },
+        {
+          "name": "Zambezia",
+          "lgas": [
+            {
+              "name": "Alto Molocue District"
+            },
+            {
+              "name": "Chinde District"
+            },
+            {
+              "name": "Gile District"
+            },
+            {
+              "name": "Gurue District"
+            },
+            {
+              "name": "Ile District"
+            },
+            {
+              "name": "Inhassunge District"
+            },
+            {
+              "name": "Lugela District"
+            },
+            {
+              "name": "Maganja da Costa District"
+            },
+            {
+              "name": "Milange District"
+            },
+            {
+              "name": "Mocuba District"
+            },
+            {
+              "name": "Mopeia District"
+            },
+            {
+              "name": "Morrumbala District"
+            },
+            {
+              "name": "Namacurra District"
+            },
+            {
+              "name": "Namarroi District"
+            },
+            {
+              "name": "Nicoadala District"
+            },
+            {
+              "name": "Pebane District"
+            },
+            {
+              "name": "Quelimane"
+            },
+            {
+              "name": "Quelimane District"
             }
           ]
         }
