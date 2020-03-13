@@ -432,7 +432,7 @@ export function fetchTreatmentDashboard({
             title: {
               id:
                 'errorResponseMessages.fetchTreatmentDashboard.POST.403.title',
-              defaultMessage: 'Insufficient Permissions',
+              defaultMessage: 'Permissions Conflict',
             },
           })
         ),
