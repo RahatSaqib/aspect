@@ -24,7 +24,7 @@ export function errorInsufficientScope(messageDescriptors, messageValues) {
       resolution: {
         id: 'errorResponseMessages.common.insufficientScope.resolution',
         defaultMessage:
-          'Please contact your administrator to grant access permissions.',
+          'There was a conflict with your permissions. Please, contact your administrator for support.',
       },
     }),
     ...messageDescriptors,

@@ -427,6 +427,15 @@ export function fetchTreatmentDashboard({
       method: 'POST',
       body: JSON.stringify({ siteId, endedOn, assayTypeId, resultCategoryId }),
       errorNotifications: {
+        403: errorInsufficientScope(
+          defineMessages({
+            title: {
+              id:
+                'errorResponseMessages.fetchTreatmentDashboard.POST.403.title',
+              defaultMessage: 'Insufficient Permissions',
+            },
+          })
+        ),
         default: errorPleaseTryAgainInAFewMinutes(
           defineMessages({
             title: {
