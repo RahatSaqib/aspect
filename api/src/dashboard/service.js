@@ -1546,8 +1546,10 @@ async function clinicalIndicatorsDashboard(request) {
     week: knex.raw('DATE_FORMAT(r.endedOn, "%x-%v") as week'),
     month: knex.raw('DATE_FORMAT(r.endedOn, "%Y-%m") as month'),
     year: knex.raw('DATE_FORMAT(r.endedOn, "%Y") as year'),
-    gender: knex.raw('r.patientData ->> "$.gender" as gender'),
-    age: knex.raw('r.patientData ->> "$.age" as age'),
+    gender: knex.raw(
+      'replace(r.patientData ->> "$.gender", "null", null) as gender'
+    ),
+    age: knex.raw('replace(r.patientData ->> "$.age", "null", null) as age'),
     state: 'st.name as state',
   }
 
