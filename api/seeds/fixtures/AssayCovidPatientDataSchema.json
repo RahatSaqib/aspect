@@ -1,0 +1,22 @@
+{
+	"testReason": {
+		"title": "Reason for test",
+		"type": "string",
+		"order": 0
+	},
+	"uniqueCaseIdentifier": {
+		"title": "Unique Case Identifier",
+		"type": "string",
+		"order": 1
+	},
+	"age": {
+		"title": "Age",
+		"type": "number",
+		"order": 2
+	},
+	"gender": {
+		"title": "Sex",
+		"type": "string",
+		"order": 3
+	}
+}

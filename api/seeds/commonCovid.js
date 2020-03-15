@@ -3,52 +3,42 @@ const Promise = require('bluebird')
 const {
   assayTypeToId,
   resultSourceToId,
+  deviceTypeCategoryToId,
   resultCategoryToId,
 } = require('../src/shared/dictionary')
-const AssayCovidResultDataSchema = require('./fixtures/AssayCovidResultDataSchema.json')
+const { updateAssayResultCategoryTreatmentEmphasize } = require('./utils')
 const AssayCovidPatientDataSchema = require('./fixtures/AssayCovidPatientDataSchema.json')
 
 async function upsertCovidAssay(
   knex,
-  patientDataSchema = AssayCovidPatientDataSchema,
-  resultDataSchema = AssayCovidResultDataSchema
+  patientDataSchema = AssayCovidPatientDataSchema
 ) {
-  const { id: deviceTypeCategoryLab } = await knex('DeviceTypeCategory')
-    .where('externalId', 'lab')
-    .first('id')
-
-  const [deviceTypeCovidId] = await knex('DeviceType').insert({
-    externalId: 'genericCovid19',
-    name: 'COVID-19 Device',
+  const deviceTypeCovidId = await knex('DeviceType').insert({
+    deviceTypeCategoryId: await deviceTypeCategoryToId('Lab'),
+    externalId: 'GenericCovid19',
+    name: 'COVID-19 Diagnostic',
     manufacturer: 'Generic',
-    deviceTypeCategoryId: deviceTypeCategoryLab,
   })
-
-  // TODO: assay type
-
-  // TODO: SCHEMAS
 
   const assayGenericCovid19 = {
     name: 'COVID-19',
     abbreviation: 'COVID-19',
     i18nKey: 'assayGenericCovid19',
     externalId: 'assayGenericCovid19',
-    assayTypeId: await assayTypeToId('genericCovid19'),
+    assayTypeId: await assayTypeToId('Generic COVID-19 Test'),
     deviceTypeId: deviceTypeCovidId,
     resultSourceId: await resultSourceToId('EnteredByHand'),
     resultCategory1Label: 'COVID-19',
-    resultDataSchema: JSON.stringify(resultDataSchema),
     patientDataSchema: JSON.stringify(patientDataSchema),
   }
+
   let { id: assayCovidId } =
     (await knex('Assay')
       .where('externalId', 'assayGenericCovid19')
       .first('id')) || {}
+
   if (!assayCovidId) {
-    assayCovidId = await knex('Assay').insert({
-      ...assayGenericCovid19,
-      externalId: 'assayGenericCovid19',
-    })
+    assayCovidId = await knex('Assay').insert(assayGenericCovid19)
   } else {
     await knex('Assay')
       .where('id', assayCovidId)
@@ -81,6 +71,8 @@ async function upsertCovidAssay(
       assayId: assayCovidId,
     })
   )
+
+  await updateAssayResultCategoryTreatmentEmphasize(knex)
 }
 
 module.exports = {

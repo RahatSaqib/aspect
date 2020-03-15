@@ -10,6 +10,8 @@ const {
 } = require('../../src/shared/dictionary')
 const geography = require('./fixtures/geography.json')
 const { commonUpserts } = require('../common')
+const { upsertCovidAssay } = require('../commonCovid')
+
 // const {
 //   getRandomResults,
 //   createDevicesForAllMissingTypes,
@@ -182,6 +184,8 @@ async function seed(knex) {
     },
     { jobFunctionId: jobFunctionIdLabUser, permissionId: modules.patient.edit },
   ])
+
+  await upsertCovidAssay(knex)
 
   // const auditFields = {
   //   createdOn: now,
