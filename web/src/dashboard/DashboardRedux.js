@@ -1,6 +1,7 @@
 /* eslint-disable linebreak-style */
 import { stringify } from 'querystring'
-import _ from 'lodash'
+import fromPairs from 'lodash/fromPairs'
+import omit from 'lodash/omit'
 import { defineMessages } from 'react-intl'
 import Immutable from 'immutable'
 
@@ -74,7 +75,7 @@ export function fetchStatDashboard(rawFiltersParams) {
     filtersParams.set('siteId', rawFiltersParams.get('siteId'))
   }
   return dispatch => {
-    const filters = _.fromPairs([...filtersParams.entries()])
+    const filters = fromPairs([...filtersParams.entries()])
     const requestedAt = `summary_${Date.now()}`
     dispatch(requestStatDashboard(requestedAt))
 
@@ -125,7 +126,7 @@ export function fetchTargetDashboard(rawFiltersParams) {
     filtersParams.set('maxDate', rawFiltersParams.get('maxDate'))
   }
   return dispatch => {
-    const filters = _.fromPairs([...filtersParams.entries()])
+    const filters = fromPairs([...filtersParams.entries()])
     const requestedAt = `target_${Date.now()}`
     dispatch(requestTargetDashboard(requestedAt))
 
@@ -320,7 +321,7 @@ function receiveOperationalStatus(requestedAt, data) {
 
 export function fetchOperationalStatus(filtersParams) {
   return dispatch => {
-    const filters = _.fromPairs([...filtersParams.entries()])
+    const filters = fromPairs([...filtersParams.entries()])
     const requestedAt = `operational_${Date.now()}`
     dispatch(requestOperationalStatus(requestedAt))
 
@@ -374,7 +375,7 @@ export function fetchActionDashboard(rawFiltersParams, sortCol, sortDir) {
     filtersParams.set('siteId', rawFiltersParams.get('siteId'))
   }
   return dispatch => {
-    const filters = _.fromPairs([...filtersParams.entries()])
+    const filters = fromPairs([...filtersParams.entries()])
     const requestedAt = `action_${Date.now()}`
     dispatch(requestActionDashboard(requestedAt))
 
@@ -460,14 +461,25 @@ function receiveTreatmentDashboard(requestedAt, data) {
 }
 
 // -------------------------------------------------------------------
-export function fetchResultsByCategoryDashboard() {
+export function fetchResultsByCategoryDashboard(params) {
+  const { assay, type: dataType } = params
   return dispatch => {
     const requestedAt = `results_${Date.now()}`
     dispatch(requestResultsByCategoryDashboard({ requestedAt }))
 
     return aspectFetch('/dashboard/clinical-indicators', {
       method: 'GET',
+      params: omit(params, ['type']),
       errorNotifications: {
+        403: errorInsufficientScope(
+          defineMessages({
+            title: {
+              id:
+                'errorResponseMessages.fetchResultsByCategoryDashboard.GET.403.title',
+              defaultMessage: 'Insufficient Permissions',
+            },
+          })
+        ),
         default: errorPleaseTryAgainInAFewMinutes(
           defineMessages({
             title: {
@@ -478,10 +490,11 @@ export function fetchResultsByCategoryDashboard() {
           })
         ),
       },
-    }).then(json => {
-      console.log(json)
-      return dispatch(receiveResultsByCategoryDashboard(requestedAt, json))
-    })
+    }).then(json =>
+      dispatch(
+        receiveResultsByCategoryDashboard(assay, dataType, requestedAt, json)
+      )
+    )
   }
 }
 function requestResultsByCategoryDashboard(payload) {
@@ -490,13 +503,13 @@ function requestResultsByCategoryDashboard(payload) {
     ...payload,
   }
 }
-function receiveResultsByCategoryDashboard(requestedAt, data) {
-  console.log(requestedAt, data)
-
+function receiveResultsByCategoryDashboard(assay, dataType, requestedAt, data) {
   return {
     type: RECEIVE_RESULTS_BY_CATEGORY_DASHBOARD,
     requestedAt,
     data,
+    assay,
+    dataType,
   }
 }
 
@@ -565,17 +578,6 @@ const Summary = Immutable.Record({
 const initialState = new Summary()
 
 const onRequested = (action, mutState, cb) => {
-  if (
-    action &&
-    action.type
-    // action.type === "RECEIVE_RESULTS_BY_CATEGORY_DASHBOARD"
-  ) {
-    console.log(action)
-    console.log(action.requestedAt)
-    console.log(mutState.hasIn(['requestedAtSet', action.requestedAt]))
-    // cb();
-  }
-
   if (mutState.hasIn(['requestedAtSet', action.requestedAt])) {
     mutState.set(
       'requestedAtSet',
@@ -726,12 +728,18 @@ export default function dashboardReducer(state = initialState, action) {
     }
     case RECEIVE_RESULTS_BY_CATEGORY_DASHBOARD: {
       return state.withMutations(mutState => {
-        console.log('fired!')
         onRequested(action, mutState, () => {
-          console.log('fired2!')
-          const payload = action.data
-          console.log(action, mutState)
-          mutState.set('resultsByCategory', new Immutable.fromJS(payload))
+          const { assay, data, dataType } = action
+          const currentState = state.resultsByCategory.toJS()
+          const currentAssayData = currentState[assay]
+          // console.log('fired2!', currentState, currentState[assay]);
+          mutState.set(
+            'resultsByCategory',
+            new Immutable.fromJS({
+              ...currentState,
+              [assay]: { ...currentAssayData, [dataType]: { ...data } },
+            })
+          )
         })
       })
     }
