@@ -1531,11 +1531,8 @@ async function clinicalIndicatorsDashboard(request) {
 
   // if no group is specified, use result category
   if (!query.groupBy) {
-    query.groupBy = 'resultCategory1'
-  }
-
-  // convert group by to array for consistent handling
-  if (!Array.isArray(query.groupBy)) {
+    query.groupBy = ['resultCategory1']
+  } else if (!Array.isArray(query.groupBy)) {
     query.groupBy = [query.groupBy]
   }
 

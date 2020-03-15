@@ -508,6 +508,7 @@ describe('Dashboard routes', () => {
     describe('/dashboard/clinical-indicators', () => {
       const clinicalIndicatorsPath = '/api/dashboard/clinical-indicators'
       let resultsForUser = null
+      let reportableResultCategories = null
 
       shared.checkToken(server, clinicalIndicatorsPath)
 
@@ -517,9 +518,16 @@ describe('Dashboard routes', () => {
           .set('Authorization', `Bearer ${shared.token}`)
           .then(res => res.body.data)
 
-      before(async () => {
-        resultsForUser = await getResultsForUser()
-      })
+      before(() =>
+        runTestWithKnex(async knex => {
+          resultsForUser = await getResultsForUser()
+          reportableResultCategories = await knex('ResultCategoryAssay as rca')
+            .join('ResultCategory as rc', 'rca.resultCategoryId', 'rc.id')
+            .where('rca.reportable', true)
+            .distinct('rc.externalId')
+            .pluck('externalId')
+        })
+      )
 
       it('should return all reportable results grouped by the default (resultCategory1) if query string is empty', async () =>
         server
@@ -532,9 +540,7 @@ describe('Dashboard routes', () => {
               }))
               .filter(function(o) {
                 return (
-                  // only reportable should be included
-                  o.resultCategory1 === 'Detected' ||
-                  o.resultCategory1 === 'NotDetected'
+                  reportableResultCategories.indexOf(o.resultCategory1) > -1
                 )
               })
               .groupBy('resultCategory1')
@@ -556,9 +562,9 @@ describe('Dashboard routes', () => {
             const expectedResponse = _.chain(resultsForUser)
               .filter(function(o) {
                 return (
-                  // only reportable should be included
-                  o.resultCategory1Name === 'Detected' ||
-                  o.resultCategory1Name === 'Not Detected'
+                  reportableResultCategories.indexOf(
+                    o.resultCategory1Name.replace(' ', '')
+                  ) > -1
                 )
               })
               .map(o => ({
@@ -589,9 +595,9 @@ describe('Dashboard routes', () => {
               .filter(function(o) {
                 return (
                   // only reportable should be included
-                  (o.resultCategory1Name === 'Detected' ||
-                    o.resultCategory1Name === 'Not Detected') &&
-                  o.siteName.indexOf('Cuyahoga') >= 0
+                  reportableResultCategories.indexOf(
+                    o.resultCategory1Name.replace(' ', '')
+                  ) > -1 && o.siteName.indexOf('Cuyahoga') >= 0
                 )
               })
               .map(o => ({
