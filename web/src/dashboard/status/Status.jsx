@@ -73,13 +73,25 @@ const Status = ({
       title={intl.formatMessage(messages.treatmentTitle)}
     />
 
+    {/* Loop through diseases user has access to start */}
     <ResultsByCategoryStatus
       intl={intl}
       history={history}
       location={location}
-      className={cssClasses('Section')}
+      className={cssClasses('Section--withStatus')}
+      assayTypeId="GxHiv1Vl"
       title={intl.formatMessage(messages.resultsByCategoryTitle)}
     />
+
+    <ResultsByCategoryStatus
+      intl={intl}
+      history={history}
+      location={location}
+      className={cssClasses('Section--withStatus')}
+      assayTypeId="GxMtbRif"
+      title={intl.formatMessage(messages.resultsByCategoryTitle)}
+    />
+    {/* Loop through diseases user has access to end */}
 
     <TargetStatus
       intl={intl}
