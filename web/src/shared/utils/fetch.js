@@ -1,6 +1,6 @@
 /* eslint-disable max-classes-per-file */
 import _ from 'lodash'
-import { createFetch, base, header, accept } from 'http-client'
+import { createFetch, base, header, accept, params } from 'http-client'
 import { defineMessages } from 'react-intl'
 import { showError } from '../../appNotification/AppNotificationRedux'
 import { setLastServerResponseTime } from '../../globals/GlobalsRedux'
@@ -20,6 +20,7 @@ export const aspectFetch = createFetch(
   accept('application/json'),
   header('Content-Type', 'application/json'),
   addAuthHeaderMiddleware,
+  addGetParamsMiddleware,
   handleFetchResponseOrError
 )
 
@@ -31,6 +32,26 @@ function addAuthHeaderMiddleware(fetch, input, options = {}) {
     _.set(options, 'headers.Authorization', `Bearer ${token}`)
   }
   return fetch(input, options)
+}
+
+function addGetParamsMiddleware(fetch, input, options = {}) {
+  const { method, params } = options
+  let index = 0
+  let queryString = `${input}`
+  if (method && method === 'GET' && params) {
+    for (const [key, value] of Object.entries(params)) {
+      const append = index === 0 ? '?' : '&'
+      if (Array.isArray(value)) {
+        value.map(v => {
+          queryString += `${append}${key}=${v}`
+        })
+      } else {
+        queryString += `${append}${key}=${value}`
+      }
+      index++
+    }
+  }
+  return fetch(queryString, options)
 }
 
 class APIApplicationError extends Error {
