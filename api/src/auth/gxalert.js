@@ -57,7 +57,7 @@ async function validateUserAtGxAlert(username, password, user) {
 
   const resp = await gxFetch('/auth')
   if (resp.status !== 200) {
-    return null
+    throw new Error("Couldn't connect to GxAlert service")
   }
 
   // user profile from GxAlert
@@ -66,7 +66,7 @@ async function validateUserAtGxAlert(username, password, user) {
   // exit if no country found in Aspect
   // 'null' means username and/or password did not match in GxAlert
   if (!countryId) {
-    return null
+    throw new Error("Unexistent country for user's credentials")
   }
 
   // -------------------------------------------
@@ -81,7 +81,7 @@ async function validateUserAtGxAlert(username, password, user) {
     .distinct('s.partnerId', 'p.plugin')
   // exit if not exactly 1 partner in this country
   if (!partners || partners.length !== 1) {
-    return null
+    throw new Error("Unexistent partner for user's credentials")
   }
 
   const { id: partnerId, plugin: partnerPlugin } = partners[0]
@@ -112,7 +112,7 @@ async function validateUserAtGxAlert(username, password, user) {
   const jobFunctionId = jobFunction ? jobFunction.id : null
   // exit if no jobFunction found
   if (!jobFunctionId) {
-    return null
+    throw new Error("Unexistent job function for user's credentials")
   }
 
   // -------------------------------------------
