@@ -66,7 +66,9 @@ async function validateUserAtGxAlert(username, password, user) {
   // exit if no country found in Aspect
   // 'null' means username and/or password did not match in GxAlert
   if (!countryId) {
-    throw new Error("Unexistent country for user's credentials")
+    throw new Error(
+      `Unexistent country ${gxUser.country.abbreviation} for user's credentials`
+    )
   }
 
   // -------------------------------------------
@@ -81,7 +83,9 @@ async function validateUserAtGxAlert(username, password, user) {
     .distinct('s.partnerId', 'p.plugin')
   // exit if not exactly 1 partner in this country
   if (!partners || partners.length !== 1) {
-    throw new Error("Unexistent partner for user's credentials")
+    throw new Error(
+      `Unexistent partner for user's credentials. Please, check that there's any sites for the country ${gxUser.country.abbreviation} and they have geography and partner assigned.`
+    )
   }
 
   const { id: partnerId, plugin: partnerPlugin } = partners[0]
@@ -112,7 +116,9 @@ async function validateUserAtGxAlert(username, password, user) {
   const jobFunctionId = jobFunction ? jobFunction.id : null
   // exit if no jobFunction found
   if (!jobFunctionId) {
-    throw new Error("Unexistent job function for user's credentials")
+    throw new Error(
+      `Unexistent job function for user's credentials. Please, check that there's any partners for the country ${gxUser.country.abbreviation}, and that they have job functions, too.`
+    )
   }
 
   // -------------------------------------------

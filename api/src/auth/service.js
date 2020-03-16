@@ -91,12 +91,19 @@ async function authenticate(request) {
       // no user with such username in Aspect yet - check it in GxAlert
       user = await validateUserAtGxAlert(payload.name, payload.password)
       if (!user) {
-        return Boom.unauthorized('Authentication failed. Wrong password.')
+        return Boom.unauthorized(
+          'Authentication failed. Wrong username or password.'
+        )
       }
     } catch (err) {
-      // We should log the catched error
+      const data = {
+        userName: payload.name,
+        message: err.message,
+      }
+
       return Boom.internal(
-        'Authentication failed because an internal server error'
+        'Authentication failed because an internal server error',
+        data
       )
     }
   }
