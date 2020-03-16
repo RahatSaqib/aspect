@@ -4011,7 +4011,7 @@ async function seed(knex) {
   // Create geographic hierarchy
   const countries = {}
   const geographies = []
-  const preventRandomSitesForCountries = ['ZANHLS']
+  const preventRandomSitesForCountries = ['ZANHLS', 'MZ']
   await Promise.all(
     _.map(geography.countries, async country => {
       const countryData = _.pick(country, [

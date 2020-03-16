@@ -1731,7 +1731,8 @@
               "name": "Chigubo District"
             },
             {
-              "name": "Chokwe"
+              "name": "Chokwe",
+              "cities": ["Carmelo", "Chokwe"]
             },
             {
               "name": "Chokwe District"
@@ -1743,7 +1744,8 @@
               "name": "Mabalane District"
             },
             {
-              "name": "Macia"
+              "name": "Macia",
+              "cities": ["Chissano", "Macia"]
             },
             {
               "name": "Manjacaze"
@@ -1758,7 +1760,8 @@
               "name": "Massingir District"
             },
             {
-              "name": "Xai-Xai"
+              "name": "Xai-Xai",
+              "cities": ["Centro de Saude Marien Ngoaby", "Xai-Xai"]
             },
             {
               "name": "Xai-Xai District"
@@ -1790,7 +1793,8 @@
               "name": "Mabote District"
             },
             {
-              "name": "Massinga District"
+              "name": "Massinga District",
+              "cities": ["Massinga"]
             },
             {
               "name": "Morrumbene District"
@@ -1828,7 +1832,8 @@
               "name": "Macossa District"
             },
             {
-              "name": "Manica District"
+              "name": "Manica District",
+              "cities": ["CISM 2", "Hospital Rural de Xinavane"]
             },
             {
               "name": "Mossurize District"
@@ -1845,13 +1850,16 @@
           "name": "Maputo City",
           "lgas": [
             {
-              "name": "KaMavota"
+              "name": "KaMavota",
+              "cities": ["CISPOC", "C.S de Mavalane"]
             },
             {
-              "name": "KaMaxaquene"
+              "name": "KaMaxaquene",
+              "cities": ["CS 1 de Maio"]
             },
             {
-              "name": "KaMpfumo"
+              "name": "KaMpfumo",
+              "cities": ["Alto Mae", "HG Mavalane INS", "Hospital Militar Maputo", "LNRT Antigo", "HCM"]
             },
             {
               "name": "KaMubukwana"
@@ -1886,7 +1894,8 @@
               "name": "Marracuene District"
             },
             {
-              "name": "Matola"
+              "name": "Matola",
+              "cities": ["Machava2", "Ndlavela"]
             },
             {
               "name": "Matutuine District"
@@ -1966,7 +1975,8 @@
               "name": "Nacaroa District"
             },
             {
-              "name": "Nampula"
+              "name": "Nampula",
+              "cities": ["Cidade LR", "Hospital Militar"]
             },
             {
               "name": "Nampula District"
@@ -2042,7 +2052,8 @@
               "name": "Buzi District"
             },
             {
-              "name": "C. Beira"
+              "name": "C. Beira",
+              "cities": ["CS Dream", "CS Ponta Gea", "HC Beira", "Hospital Militar da Beira"]
             },
             {
               "name": "Caia District"
@@ -2060,7 +2071,8 @@
               "name": "Dondo District"
             },
             {
-              "name": "Gorongosa District"
+              "name": "Gorongosa District",
+              "cities": ["CS de Gorongosa"]
             },
             {
               "name": "Machanga District"
@@ -2083,7 +2095,8 @@
           "name": "Tete",
           "lgas": [
             {
-              "name": "Angonia District"
+              "name": "Angonia District",
+              "cities": ["H.R Ulongue"]
             },
             {
               "name": "Cahora-Bassa District"
@@ -2154,10 +2167,12 @@
               "name": "Lugela District"
             },
             {
-              "name": "Maganja da Costa District"
+              "name": "Maganja da Costa District",
+              "cities": ["HD M.Costa"]
             },
             {
-              "name": "Milange District"
+              "name": "Milange District",
+              "cities": ["Zambézia: C.S Urbano de Milange"]
             },
             {
               "name": "Mocuba District"
@@ -2181,7 +2196,8 @@
               "name": "Pebane District"
             },
             {
-              "name": "Quelimane"
+              "name": "Quelimane",
+              "cities": ["HPQ"]
             },
             {
               "name": "Quelimane District"
