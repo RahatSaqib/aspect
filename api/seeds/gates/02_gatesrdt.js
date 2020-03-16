@@ -1,7 +1,7 @@
 module.exports = require('../utils').seed(seed, __filename)
 const _ = require('lodash')
 const bcrypt = require('bcrypt')
-
+const { upsertJobFunction } = require('../common')
 const config = require('../../src/config')
 const { randomToken } = require('../../src/deviceApi/apiKey')
 const { getPermissionModules } = require('../utils')
@@ -106,10 +106,7 @@ async function seed(knex) {
     ...auditFields,
   })
 
-  const [jobFunctionIdAdmin] = await knex('JobFunction').insert({
-    name: 'Admin',
-    partnerId,
-  })
+  const jobFunctionIdAdmin = await upsertJobFunction(knex, 'Admin', partnerId)
 
   const [modules, features] = await Promise.all([
     getPermissionModules(knex),

@@ -13,7 +13,7 @@ const {
   subMinutes,
   subMonths,
 } = require('date-fns')
-
+const { upsertJobFunction } = require('../common')
 const patients = require('./fixtures/patients.json')
 const config = require('../../src/config')
 const { randomToken } = require('../../src/deviceApi/apiKey')
@@ -269,15 +269,13 @@ async function seed(knex) {
     ...auditFields,
   })
 
-  const [jobFunctionIdAdmin] = await knex('JobFunction').insert({
-    name: 'Admin',
-    partnerId,
-  })
+  const jobFunctionIdAdmin = await upsertJobFunction(knex, 'Admin', partnerId)
 
-  const [jobFunctionIdLabAdmin] = await knex('JobFunction').insert({
-    name: 'Lab Admin',
-    partnerId,
-  })
+  const jobFunctionIdLabAdmin = await upsertJobFunction(
+    knex,
+    'Lab Admin',
+    partnerId
+  )
 
   await assignAllFeaturesToJobFunctionIds(knex, [
     jobFunctionIdLabAdmin,
