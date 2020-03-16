@@ -52,7 +52,7 @@ async function insertNewResultPushTemplates(
     .first('id as lastIssueType')
 
   // if this value exists in the db means this was already executed
-  if (lastIssueType != null) return
+  if (lastIssueType) return
   const [newResultsPushNotificationTemplateId] = await knex(
     'PushNotificationTemplate'
   ).insert({
