@@ -1531,11 +1531,8 @@ async function clinicalIndicatorsDashboard(request) {
 
   // if no group is specified, use result category
   if (!query.groupBy) {
-    query.groupBy = 'resultCategory1'
-  }
-
-  // convert group by to array for consistent handling
-  if (!Array.isArray(query.groupBy)) {
+    query.groupBy = ['resultCategory1']
+  } else if (!Array.isArray(query.groupBy)) {
     query.groupBy = [query.groupBy]
   }
 
@@ -1546,8 +1543,10 @@ async function clinicalIndicatorsDashboard(request) {
     week: knex.raw('DATE_FORMAT(r.endedOn, "%x-%v") as week'),
     month: knex.raw('DATE_FORMAT(r.endedOn, "%Y-%m") as month'),
     year: knex.raw('DATE_FORMAT(r.endedOn, "%Y") as year'),
-    gender: knex.raw('r.patientData ->> "$.gender" as gender'),
-    age: knex.raw('r.patientData ->> "$.age" as age'),
+    gender: knex.raw(
+      'replace(r.patientData ->> "$.gender", "null", null) as gender'
+    ),
+    age: knex.raw('replace(r.patientData ->> "$.age", "null", null) as age'),
     state: 'st.name as state',
   }
 
