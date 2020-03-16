@@ -1180,6 +1180,11 @@ async function seed(knex) {
   })
 
   await knex('ResultCategoryAssay').insert({
+    resultCategoryId: resultCategoryNotDetectedId,
+    assayId: assayDaktariHivVlId,
+  })
+
+  await knex('ResultCategoryAssay').insert({
     resultCategoryId: resultCategoryLessThan1000,
     assayId: assayDaktariHivVlId,
   })
