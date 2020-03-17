@@ -13,18 +13,27 @@ const { getBaseIssues } = require('./relatedObjects/issues')
 
 // the idea is to place fixed and static data which shouldn't be executed directly from static data.
 
-async function addIssueTypes(knex) {
+async function addIssueTypes(knex, _partnerId, _adminId) {
   // here is preferible to add an enviroment variable just
   // for defining the admin user name and remove the hardcoded one
-
-  // eslint-disable-next-line prefer-const
-  let { adminId, partnerId } = await knex('User as u')
-    .leftJoin('Person as p', 'u.id', 'p.userId')
-    .where('u.name', 'admin')
-    .first('u.id as adminId', 'p.lastPartnerId as partnerId')
-  if (!adminId) return false
-  if (!partnerId) {
-    ;({ partnerId } = await knex('Partner as p').first('id as partnerId'))
+  let adminId = _adminId
+  let partnerId = _partnerId
+  if (!partnerId && !adminId) {
+    try {
+      // eslint-disable-next-line prefer-const
+      ;({ adminId, partnerId } = await knex('User as u')
+        .join('Person as p', 'u.id', 'p.userId')
+        .join('Job as j', 'p.id', 'j.personId')
+        .join('JobFunction as jf', 'j.jobFunctionId', 'jf.id')
+        .where('jf.name', 'admin')
+        .first('u.id as adminId', 'p.lastPartnerId as partnerId'))
+      if (!adminId) return false
+      if (!partnerId) {
+        ;({ partnerId } = await knex('Partner as p').first('id as partnerId'))
+      }
+    } catch (e) {
+      return false
+    }
   }
   const auditFields = {
     createdOn: now,

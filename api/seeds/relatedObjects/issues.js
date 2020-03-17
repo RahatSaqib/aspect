@@ -396,6 +396,55 @@ async function getBaseIssues(auditFields) {
         ...auditFields,
       },
     },
+    MachineGenericError: {
+      issueType: {
+        name: 'Machine Generic Error',
+        externalId: 'MachineGenericError',
+        i18nKey: 'issueStatusMachineGenericError',
+        issueCategoryId: issueCategories.DeviceHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+
+      AlertTemplate: {
+        message: 'Generic errors across machine, conduct troubleshooting',
+      },
+
+      SmsTemplate: {
+        message: 'Generic errors across machine, conduct troubleshooting',
+      },
+
+      EmailTemplate: {
+        subject: 'Generic Errors',
+        body: 'Generic errors across machine, conduct troubleshooting',
+        htmlBody: 'Generic errors across machine, conduct troubleshooting',
+      },
+    },
+    ModuleGenericError: {
+      issueType: {
+        name: 'Module Generic Error',
+        externalId: 'ModuleGenericError',
+        i18nKey: 'issueStatusModuleGenericError',
+        issueCategoryId: issueCategories.DeviceHealth,
+      },
+      AlertTemplate: {
+        message: 'Module {{module.moduleName}} errors, conduct troubleshooting',
+      },
+
+      SmsTemplate: {
+        message: 'Module {{result.moduleName}} errors, conduct troubleshooting',
+      },
+      EmailTemplate: {
+        subject: 'Machine Temperature Errors',
+        body: 'Module {{result.moduleName}} errors, conduct troubleshooting',
+        htmlBody:
+          'Module <em>{{result.moduleName}}</em> errors, conduct troubleshooting',
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+    },
     ModuleReplaced: {
       issueType: {
         name: 'Module Replaced',
