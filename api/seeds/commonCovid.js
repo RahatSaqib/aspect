@@ -8,10 +8,12 @@ const {
 } = require('../src/shared/dictionary')
 const { updateAssayResultCategoryTreatmentEmphasize } = require('./utils')
 const AssayCovidPatientDataSchema = require('./fixtures/AssayCovidPatientDataSchema.json')
+const AssayCovidResultDataSchema = require('./fixtures/AssayCovidResultDataSchema.json')
 
 async function upsertCovidAssay(
   knex,
-  patientDataSchema = AssayCovidPatientDataSchema
+  patientDataSchema = AssayCovidPatientDataSchema,
+  resultDataSchema = AssayCovidResultDataSchema
 ) {
   const deviceTypeCovidId = await knex('DeviceType').insert({
     deviceTypeCategoryId: await deviceTypeCategoryToId('Lab'),
@@ -29,6 +31,8 @@ async function upsertCovidAssay(
     deviceTypeId: deviceTypeCovidId,
     resultSourceId: await resultSourceToId('EnteredByHand'),
     resultCategory1Label: 'COVID-19',
+    resultCategory1i18nKey: 'resultCategoryCovid19',
+    resultDataSchema: JSON.stringify(resultDataSchema),
     patientDataSchema: JSON.stringify(patientDataSchema),
   }
 

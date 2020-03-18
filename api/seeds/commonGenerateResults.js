@@ -11,9 +11,11 @@ const {
   addMilliseconds,
   addMinutes,
   addHours,
+  addDays,
   subHours,
   subDays,
   format,
+  differenceInDays,
 } = require('date-fns')
 
 const { getMGITResultFromTBPossitive } = require('./commonTB')
@@ -719,7 +721,12 @@ async function generateResults(
           ? 'Exceeded cycle threshold'
           : null,
     })
-    resultsid.push({ id: resultId, createdOn: now })
+    resultsid.push({
+      id: resultId,
+      createdOn: now,
+      assayId: assayGeneXpertHiv1VlId,
+      createdBy: auditFields.createdBy,
+    })
 
     const [lastLogId] = await knex('ResultWorkflowLog').insert({
       resultId,
@@ -742,25 +749,95 @@ async function setTreatmentStatusToResults(
   resultsToUpdate,
   treatmentStatus
 ) {
+  const followUps = await knex('FollowUp as f')
+    .join('FollowUpType as fut', 'f.followUpTypeId', 'fut.id')
+    .leftOuterJoin('FollowUpAssay as fa', 'f.id', 'fa.followUpId')
+    .select(
+      'f.id',
+      'fa.assayId',
+      'f.externalId',
+      'fut.externalId as followUpTypeExternalId'
+    )
+
   await Promise.each(resultsToUpdate, async result => {
+    const randomTreatmentStatusExternalId = _.sample(treatmentStatus)
     const treatment = treatmentStatus
-      ? await resultTreatmentStatusToId(
-          treatmentStatus[_.random(0, treatmentStatus.length - 1)]
-        )
+      ? await resultTreatmentStatusToId(randomTreatmentStatusExternalId)
       : null
+
+    const treatmentDateTime = addMinutes(result.createdOn, 90)
+
     const [treatmentStatusLogId] = treatment
       ? await knex('ResultTreatmentStatusLog').insert({
           resultId: result.id,
           resultTreatmentStatusId: treatment,
-          changedOn: addMinutes(result.createdOn, 90),
-          createdOn: addMinutes(result.createdOn, 90),
+          changedOn: treatmentDateTime,
+          createdOn: treatmentDateTime,
         })
       : [null]
+
     await knex('Result')
       .where('id', result.id)
       .update({
         treatmentStatusLogId,
       })
+
+    // add a follow up treatment if on treatment
+    if (
+      followUps.length > 0 &&
+      randomTreatmentStatusExternalId === 'OnTreatment'
+    ) {
+      const followUp = _.sample(
+        _.filter(followUps, f => {
+          return (
+            f.followUpTypeExternalId === 'treatment' &&
+            (f.assayId === result.assayId || !f.assayId)
+          )
+        })
+      )
+
+      await knex('ResultFollowUp').insert({
+        resultId: result.id,
+        externalId: followUp.externalId,
+        followUpId: followUp.id,
+        date: treatmentDateTime,
+        createdOn: treatmentDateTime,
+        createdBy: result.createdBy,
+        updatedOn: treatmentDateTime,
+        updatedBy: result.createdBy,
+      })
+    }
+
+    // add random outcomes for some results (80%)
+    // outcome really only makes sense if it's been a while since treatmnent
+    if (
+      _.random() < 0.8 &&
+      differenceInDays(now, treatmentDateTime) > 7 &&
+      followUps.length > 0
+    ) {
+      const outcome = _.sample(
+        _.filter(followUps, f => {
+          return (
+            f.followUpTypeExternalId === 'outcome' &&
+            (f.assayId === result.assayId || !f.assayId)
+          )
+        })
+      )
+      const outcomeDateTime =
+        addDays(treatmentDateTime, 7) > now
+          ? now
+          : addDays(treatmentDateTime, 7)
+      await knex('ResultFollowUp').insert({
+        resultId: result.id,
+        externalId: outcome.externalId,
+        followUpId: outcome.id,
+        date: outcomeDateTime,
+        createdOn: outcomeDateTime,
+        createdBy: result.createdBy,
+        updatedOn: outcomeDateTime,
+        updatedBy: result.createdBy,
+      })
+    }
   })
 }
 async function getTreatmentDistributionByPartner(knex, partnerId, month) {

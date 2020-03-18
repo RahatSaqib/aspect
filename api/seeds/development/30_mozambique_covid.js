@@ -5,7 +5,11 @@ const bcrypt = require('bcrypt')
 const { addHours, addMilliseconds, addMinutes, subDays } = require('date-fns')
 const Promise = require('bluebird')
 
-const utils = require('../utils')
+const { commonUpserts } = require('../common')
+const { upsertCovidAssay } = require('../commonCovid')
+const {
+  normalizeTreatmentStatusDistributionByResults,
+} = require('../commonGenerateResults')
 const config = require('../../src/config')
 const {
   allFeatureToId,
@@ -17,16 +21,15 @@ const {
   resultTypeToId,
   resultWorkflowStatusToId,
 } = require('../../src/shared/dictionary')
-const geography = require('./fixtures/geography.json')
-const { commonUpserts } = require('../common')
-const { upsertCovidAssay } = require('../commonCovid')
+const utils = require('../utils')
 
-module.exports = require('../utils').seed(seed, __filename)
+const geography = require('./fixtures/geography.json')
+const followUp = require('../fixtures/FollowUp.json')
 
 const millisInHour = 1000 * 60 * 60
 const millisInMinute = 1000 * 60
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
-const resultTimeFrameInDays = 365
+const resultTimeFrameInDays = 60
 const resultMultiplier = process.env['seeds.resultMultiplier'] || 100
 const resultNumber = resultMultiplier * 10
 const now = new Date()
@@ -36,9 +39,8 @@ function calculateDateForResult(
   totalResults,
   randomMillisToAdd
 ) {
-  const daysToSubtract =
-    resultTimeFrameInDays -
-    Math.ceil((currentResult / totalResults) * resultTimeFrameInDays)
+  // unlike TB and HIV, we want to generate an exponential curve here
+  const daysToSubtract = Math.ceil(Math.random() ** 4 * resultTimeFrameInDays)
 
   return addMilliseconds(
     subDays(now, daysToSubtract),
@@ -337,10 +339,87 @@ async function seed(knex) {
     })
   )
 
-  // seed dummy results
-  const { id: assayCovidId } = await knex('Assay')
+  // add result form
+  const { id: assayId } = await knex('Assay')
     .where('externalId', 'assayGenericCovid19')
     .first('id')
+  const formSchema = JSON.stringify({
+    fields: {
+      testReason: {
+        i18nLabel: 'testReasonCovid19',
+        control: {
+          type: 'DropDown',
+          options: [
+            {
+              i18nText: 'contactOfACase',
+              value: '1',
+            },
+            {
+              i18nText: 'illSeekingHealthcare',
+              value: '2',
+            },
+            {
+              i18nText: 'detectedAtPointOfEntry',
+              value: '3',
+            },
+            {
+              i18nText: 'repatriation',
+              value: '4',
+            },
+            {
+              i18nText: 'routineRespiratorySurveillance',
+              value: '5',
+            },
+            {
+              i18nText: 'unknown',
+              value: '6',
+            },
+          ],
+        },
+        order: 1,
+      },
+      caseId: {
+        i18nLabel: 'caseId',
+        control: {
+          type: 'TextBox',
+        },
+        order: 2,
+      },
+      age: {
+        i18nLabel: 'age',
+        control: {
+          type: 'TextBox',
+        },
+        order: 3,
+      },
+      gender: {
+        i18nLabel: 'gender',
+        control: {
+          type: 'DropDown',
+          options: [
+            {
+              i18nText: 'male',
+              value: '1',
+            },
+            {
+              i18nText: 'female',
+              value: '2',
+            },
+          ],
+        },
+        order: 4,
+      },
+    },
+    sendChangesOn: 'change',
+  })
+
+  await knex('ResultForm').insert({
+    partnerId,
+    assayId,
+    formSchema,
+  })
+
+  // seed dummy results
   const { NasalSwab: sampleTypeNasalSwab } = await allSampleTypeToId()
   const {
     Positive: resultCategoryPositiveId,
@@ -376,24 +455,28 @@ async function seed(knex) {
       category2: null,
       minLikelihood: 0,
       maxLikelihood: 30,
+      resultText: 'Positive',
     },
     {
       category1: resultCategoryNegativeId,
       category2: null,
       minLikelihood: 31,
       maxLikelihood: 90,
+      resultText: 'Negative',
     },
     {
       category1: resultCategoryInconclusiveId,
       category2: null,
       minLikelihood: 91,
       maxLikelihood: 96,
+      resultText: 'Inconclusive',
     },
     {
       category1: resultCategoryUnknownId,
       category2: null,
       minLikelihood: 97,
       maxLikelihood: 100,
+      resultText: 'Unknown',
     },
   ]
 
@@ -408,10 +491,18 @@ async function seed(knex) {
       possibleResults,
       r => rnd >= r.minLikelihood && rnd <= r.maxLikelihood
     )
+
+    const formData = JSON.stringify({
+      age: rnd,
+      caseId: `COVID-${_.random(1000, 9999)}-ID`,
+      gender: _.random(1, 2),
+      testReason: _.random(1, 6),
+    })
+
     const resultId = await knex('Result').insert({
       ...auditFields,
       externalId: `COVID-${i}`,
-      assayId: assayCovidId,
+      assayId,
       partnerId,
       geographyId: siteData.geographyId,
       siteId: siteData.id,
@@ -426,6 +517,9 @@ async function seed(knex) {
       sampleGroup: `GRP-COVID-${i % 5}`,
       resultCategory1: result.category1,
       resultCategory2: result.category2,
+      resultData: JSON.stringify({ resultText: result.resultText }),
+      formData,
+      patientData: formData,
       startedOn: randomDate,
       endedOn: addMinutes(randomDate, 100),
       createdOn: addMinutes(randomDate, 120),
@@ -464,7 +558,7 @@ async function seed(knex) {
             data: {
               ...auditFields,
               externalId: `COVID-${i}`,
-              assayId: assayCovidId,
+              assayId,
               partnerId,
               geographyId: siteData.geographyId,
               siteId: siteData.id,
@@ -477,6 +571,7 @@ async function seed(knex) {
               sampleGroup: `GRP-COVID-${i % 5}`,
               resultCategory1: result.category1,
               resultCategory2: result.category2,
+              resultData: JSON.stringify({ resultText: result.resultText }),
               startedOn: randomDate,
               endedOn: addMinutes(randomDate, 100),
               consumableSerial: `${i}12`,
@@ -491,4 +586,22 @@ async function seed(knex) {
       resultId,
     })
   })
+
+  // assign treatment status
+  await normalizeTreatmentStatusDistributionByResults(
+    knex,
+    await knex('Result as r')
+      .join('ResultCategoryAssay as rca', function() {
+        this.on('r.assayId', 'rca.assayId').andOn(
+          'r.resultCategory1',
+          'rca.resultCategoryId'
+        )
+      })
+      .where('r.assayId', assayId)
+      .where('rca.requiresTreatment', true)
+      .select('r.id', 'r.createdOn', 'r.assayId', 'r.createdBy')
+  )
+
+  // add follow ups
+  await utils.addFollowUps(knex, [partnerId], followUp)
 }
