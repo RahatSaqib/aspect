@@ -47,10 +47,10 @@ const i18nKeys = {
   deviceCalibrationsUpToDate: 'deviceCalibrationsUpToDate',
 }
 
-function getDashboardWidget({ id, partnerId }, layout) {
+async function getDashboardWidget({ id, partnerId }, layout) {
   const tableName =
     layout === 'target' ? 'DashboardWidgetTarget' : 'DashboardWidgetStat'
-  return knex('DashboardWidget as w')
+  const widgets = knex('DashboardWidget as w')
     .innerJoin(`${tableName} as sw`, 'w.id', 'sw.dashboardWidgetId')
     .innerJoin('JobFunctionDashboardWidget as jfw', 'w.id', 'jfw.widgetId')
     .innerJoin('JobFunction as jf', 'jfw.jobFunctionId', 'jf.id')
@@ -62,6 +62,8 @@ function getDashboardWidget({ id, partnerId }, layout) {
     })
     .select(['w.*', 'sw.*'])
     .orderBy(['w.sortOrder'])
+  console.log('widgets', widgets.toString())
+  return widgets
 }
 
 function getTableAlias(sql) {
@@ -127,7 +129,7 @@ async function summaryDashboard(request) {
 
   const user = await getUser(auth.credentials.name)
   const widgets = await getDashboardWidget(user, 'stat')
-
+  console.log('widgets', widgets)
   const data = await Promise.all(
     widgets.map(async widget => {
       const count = await queryCount(
