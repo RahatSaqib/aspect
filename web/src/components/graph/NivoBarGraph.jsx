@@ -1,26 +1,22 @@
 import React, { useState, useEffect } from 'react'
 import { ResponsiveBar } from '@nivo/bar'
 
-const NivoBarGraph = ({ data }) => {
+const NivoBarGraph = ({ data, keys }) => {
   const [graphs, setGraphs] = useState(false)
 
   useEffect(() => {
-    if (!graphs && data.length) {
-      setGraphs({
-        data,
-        legendAxisBottom: null,
-        indexBy: 'label',
-      })
+    if (!graphs && data && data.length) {
+      console.log(data)
+      setGraphs(data)
     }
-  }, [data, graphs])
+  }, [data])
 
-  if (graphs && graphs.data && graphs.data.length) {
-    const { data, indexBy, legendAxisBottom } = graphs
+  if (graphs) {
     return (
       <ResponsiveBar
-        data={data}
-        keys={['>=1000', '41-999', '<=4']}
-        indexBy={indexBy}
+        data={graphs}
+        keys={keys}
+        indexBy="month"
         enableLabel={false}
         enableGridY={false}
         margin={{ top: 50, right: 130, bottom: 50, left: 60 }}
@@ -34,7 +30,7 @@ const NivoBarGraph = ({ data }) => {
           tickSize: 5,
           tickPadding: 5,
           tickRotation: 0,
-          legend: legendAxisBottom,
+          legend: null,
           legendPosition: 'middle',
           legendOffset: 32,
         }}

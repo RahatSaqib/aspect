@@ -80,6 +80,7 @@ const Status = ({
       location={location}
       className={cssClasses('Section--withStatus')}
       assayTypeId="GxHiv1Vl"
+      keys={['LessThan1000', 'MoreThan1000', 'NotDetected']}
       title={intl.formatMessage(messages.resultsByCategoryTitle)}
     />
 
@@ -89,6 +90,7 @@ const Status = ({
       location={location}
       className={cssClasses('Section--withStatus')}
       assayTypeId="GxMtbRif"
+      keys={['Detected', 'NotDetected']}
       title={intl.formatMessage(messages.resultsByCategoryTitle)}
     />
     {/* Loop through diseases user has access to end */}

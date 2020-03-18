@@ -511,4 +511,9 @@
   width: 200px;
   height: 200px;
 }
+
+.resultsContainer--byMonth {
+  width: 100%;
+  height: 200px;
+}
 /* Results by Category End */
