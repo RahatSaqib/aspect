@@ -727,6 +727,16 @@ async function getDevicesForReport(auth, query) {
         )
         .max('rl.changedOn')
         .as('lastUploadOn'),
+      queryResults
+        .clone()
+        .where('r.resultCategory1', resultCategoryIds.Detected)
+        .countDistinct('r.id')
+        .as('totalResult1'),
+      queryResults
+        .clone()
+        .where('r.resultCategory2', resultCategoryIds.Detected)
+        .countDistinct('r.id')
+        .as('totalResult2'),
     ])
 
   // return result when both queries are finished
@@ -737,6 +747,10 @@ async function getDevicesForReport(auth, query) {
     const errorPercentage = Math.round(
       100 * (it.totalResults ? it.totalErrors / it.totalResults : 0)
     )
+    const rifResistancePercentage =
+      100 * (it.totalResult1 ? it.totalResult2 / it.totalResult1 : 0)
+
+    it.rifResistance = rifResistancePercentage
     it.errorRate = errorPercentage / 100
   })
 

@@ -189,6 +189,7 @@ async function createReport(request, reply) {
 
     // position cell where data table begins
     const cells = getCellsByValue(worksheet, '<Table>')
+
     if (cells.length > 0) {
       // empty cells
       cells.forEach(cell => {
