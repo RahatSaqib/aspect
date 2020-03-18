@@ -5,7 +5,11 @@ const bcrypt = require('bcrypt')
 const { addHours, addMilliseconds, addMinutes, subDays } = require('date-fns')
 const Promise = require('bluebird')
 
-const { commonUpserts } = require('../common')
+const {
+  commonUpserts,
+  upsertJobFunctionPermission,
+  upsertJobFeatures,
+} = require('../common')
 const { upsertCovidAssay } = require('../commonCovid')
 const {
   normalizeTreatmentStatusDistributionByResults,
@@ -101,131 +105,69 @@ async function seed(knex) {
   )
 
   // Give permission to dashboard, browse, sites, results, devices, reporters
+  const features = await allFeatureToId()
+  const modules = await utils.getPermissionModules(knex)
+
   const { id: jobFunctionIdAdmin } = await knex('JobFunction')
     .where('name', 'Admin')
     .where({ partnerId })
     .first('id')
+
+  await upsertJobFunctionPermission(knex, jobFunctionIdAdmin, [
+    modules.demo.admin,
+    modules.deviceApiKey.admin,
+    modules.issue.admin,
+    modules.inventory.admin,
+    modules.task.admin,
+    modules.patient.admin,
+  ])
+
+  await upsertJobFeatures(knex, jobFunctionIdAdmin, [
+    features.summaryDashboard,
+    features.account,
+    features.resultDashboard,
+  ])
 
   const { id: jobFunctionIdRegionalOfficer } = await knex('JobFunction')
     .where('name', 'Regional Officer')
     .where({ partnerId })
     .first('id')
 
+  await upsertJobFunctionPermission(knex, jobFunctionIdRegionalOfficer, [
+    modules.device.admin,
+    modules.result.admin,
+    modules.site.admin,
+    modules.issue.admin,
+    modules.inventory.admin,
+    modules.task.admin,
+    modules.patient.admin,
+  ])
+
+  await upsertJobFeatures(knex, jobFunctionIdRegionalOfficer, [
+    features.summaryDashboard,
+    features.account,
+    features.resultDashboard,
+  ])
+
   const { id: jobFunctionIdLabUser } = await knex('JobFunction')
     .where('name', 'Lab User')
     .where({ partnerId })
     .first('id')
 
-  const featureModules = await allFeatureToId()
-  await knex('JobFunctionFeature').insert([
-    // Admin Permissions
-    {
-      jobFunctionId: jobFunctionIdAdmin,
-      featureId: featureModules.summaryDashboard,
-    },
-    {
-      jobFunctionId: jobFunctionIdAdmin,
-      featureId: featureModules.account,
-    },
-    {
-      jobFunctionId: jobFunctionIdAdmin,
-      featureId: featureModules.resultDashboard,
-    },
-    // Regional Officer Permissions
-    {
-      jobFunctionId: jobFunctionIdRegionalOfficer,
-      featureId: featureModules.summaryDashboard,
-    },
-    {
-      jobFunctionId: jobFunctionIdRegionalOfficer,
-      featureId: featureModules.account,
-    },
-    {
-      jobFunctionId: jobFunctionIdRegionalOfficer,
-      featureId: featureModules.resultDashboard,
-    },
-    // Lab User Permissions
-    {
-      jobFunctionId: jobFunctionIdLabUser,
-      featureId: featureModules.summaryDashboard,
-    },
-    {
-      jobFunctionId: jobFunctionIdLabUser,
-      featureId: featureModules.account,
-    },
-    {
-      jobFunctionId: jobFunctionIdLabUser,
-      featureId: featureModules.resultDashboard,
-    },
+  await upsertJobFunctionPermission(knex, jobFunctionIdLabUser, [
+    modules.device.edit,
+    modules.result.edit,
+    modules.site.edit,
+    modules.issue.edit,
+    modules.inventory.edit,
+    modules.task.edit,
+    modules.patient.edit,
   ])
 
-  const modules = await utils.getPermissionModules(knex)
-  await knex('JobFunctionPermission').insert([
-    // Admin Permissions
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.demo.admin },
-    {
-      jobFunctionId: jobFunctionIdAdmin,
-      permissionId: modules.deviceApiKey.admin,
-    },
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.issue.admin },
-    {
-      jobFunctionId: jobFunctionIdAdmin,
-      permissionId: modules.inventory.admin,
-    },
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.task.admin },
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.patient.admin },
-    // Regional Officer Permissions
-    {
-      jobFunctionId: jobFunctionIdRegionalOfficer,
-      permissionId: modules.device.admin,
-    },
-    {
-      jobFunctionId: jobFunctionIdRegionalOfficer,
-      permissionId: modules.result.admin,
-    },
-    {
-      jobFunctionId: jobFunctionIdRegionalOfficer,
-      permissionId: modules.site.admin,
-    },
-    {
-      jobFunctionId: jobFunctionIdRegionalOfficer,
-      permissionId: modules.issue.admin,
-    },
-    {
-      jobFunctionId: jobFunctionIdRegionalOfficer,
-      permissionId: modules.inventory.admin,
-    },
-    {
-      jobFunctionId: jobFunctionIdRegionalOfficer,
-      permissionId: modules.task.admin,
-    },
-    {
-      jobFunctionId: jobFunctionIdRegionalOfficer,
-      permissionId: modules.patient.edit,
-    },
-    // Lab User Permissions
-    {
-      jobFunctionId: jobFunctionIdLabUser,
-      permissionId: modules.device.admin,
-    },
-    {
-      jobFunctionId: jobFunctionIdLabUser,
-      permissionId: modules.result.admin,
-    },
-    {
-      jobFunctionId: jobFunctionIdLabUser,
-      permissionId: modules.site.admin,
-    },
-    { jobFunctionId: jobFunctionIdLabUser, permissionId: modules.issue.admin },
-    {
-      jobFunctionId: jobFunctionIdLabUser,
-      permissionId: modules.inventory.admin,
-    },
-    {
-      jobFunctionId: jobFunctionIdLabUser,
-      permissionId: modules.task.admin,
-    },
-    { jobFunctionId: jobFunctionIdLabUser, permissionId: modules.patient.edit },
+  await upsertJobFeatures(knex, jobFunctionIdLabUser, [
+    features.summaryDashboard,
+    features.account,
+    features.resultDashboard,
   ])
 
   await upsertCovidAssay(knex)
