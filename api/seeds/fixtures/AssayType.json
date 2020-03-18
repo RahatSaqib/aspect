@@ -101,7 +101,7 @@
       "name": "Generic COVID-19 Test",
       "i18nKey": "genericCovid19",
       "externalId": "genericCovid19",
-      "abbreviation":"GC19"
+      "abbreviation":"CV"
     }
   ]
 }

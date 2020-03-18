@@ -1002,10 +1002,16 @@ async function normalizeTreatmentStatusDistribution(
     })
   }
 }
-async function normalizeTreatmentStatusDistributionByResults(knex, resultsId) {
+async function normalizeTreatmentStatusDistributionByResults(
+  knex,
+  resultsId,
+  minPercentOnTreatment = 40,
+  maxPercentTreatment = 50
+) {
   if (resultsId.length > 0) {
     const inTreatment = Math.floor(
-      (_.random(40, 50) / 100.0) * resultsId.length
+      (_.random(minPercentOnTreatment, maxPercentTreatment) / 100.0) *
+        resultsId.length
     )
     const notPossible = Math.floor(
       (_.random(10, 20) / 100.0) * resultsId.length

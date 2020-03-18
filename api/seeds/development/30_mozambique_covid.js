@@ -599,7 +599,9 @@ async function seed(knex) {
       })
       .where('r.assayId', assayId)
       .where('rca.requiresTreatment', true)
-      .select('r.id', 'r.createdOn', 'r.assayId', 'r.createdBy')
+      .select('r.id', 'r.createdOn', 'r.assayId', 'r.createdBy'),
+    85,
+    90
   )
 
   // add follow ups
