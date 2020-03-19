@@ -25,14 +25,17 @@ const LANG_DEFAULT = 'en'
 function getHeaderRows(sheet, cellTableToken) {
   const row = sheet.getRow(cellTableToken.row)
   const cell = row.findCell(cellTableToken.col + 1)
-  const v = cell.value
-  const num = parseInt(v, 10)
-  const numRowsInHeader = !Number.isInteger(num) || num <= 0 ? 1 : num
+  let numRowsInHeader = 1
+  if (cell) {
+    const v = cell.value
+    const num = parseInt(v, 10)
+    numRowsInHeader = !Number.isInteger(num) || num <= 0 ? 1 : num
+    cell.value = ''
+  }
   const headerRows = []
   for (let j = 1; j <= numRowsInHeader; j++) {
-    headerRows.push(sheet.getRow(cell.row + j))
+    headerRows.push(sheet.getRow(cellTableToken.row + j))
   }
-  cell.value = ''
   return headerRows
 }
 // ----------------------------------------------------------------------------------------------
@@ -159,6 +162,12 @@ async function createReport(request, reply) {
   const statesString = await getStateNames(query)
   const lgasString = await getLgaNamesString(query)
 
+  // get worksheets (this also works - workbook.worksheets - but it is not specified in API doc)
+  const worksheets = []
+  workbook.eachSheet(worksheet => {
+    worksheets.push(worksheet)
+  })
+
   let boomError
   // process all sheets
   await Promise.each(sheets, async (sheet, sheetIndex) => {
@@ -171,9 +180,8 @@ async function createReport(request, reply) {
       return
     }
 
-    // get sheet (1-based)
-    const worksheet = workbook.getWorksheet(sheetIndex + 1)
-
+    // get sheet
+    const worksheet = worksheets[sheetIndex]
     // replace few placeholders in sheet header
     replaceSubstringInCell(worksheet, '<Dates>', dateRangeString)
     replaceSubstringInCell(worksheet, '<States>', statesString)

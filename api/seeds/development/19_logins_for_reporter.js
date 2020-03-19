@@ -1,6 +1,6 @@
 const Promise = require('bluebird')
 const bcrypt = require('bcrypt')
-
+const { upsertJobFunction } = require('../common')
 const config = require('../../src/config')
 module.exports = require('../utils').seed(seed, __filename)
 
@@ -95,10 +95,11 @@ async function seed(knex) {
     jobFunctionNames.ResultViewerNo,
   ]
   await Promise.each(jfNames, async jobFunctionName => {
-    const [jobFunctionId] = await knex('JobFunction').insert({
-      name: jobFunctionName,
-      partnerId,
-    })
+    const jobFunctionId = await upsertJobFunction(
+      knex,
+      jobFunctionName,
+      partnerId
+    )
     // --------
     const jobFunctions = await knex('JobFunction')
       .where({ partnerId })
