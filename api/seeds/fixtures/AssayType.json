@@ -98,9 +98,9 @@
       "abbreviation":"GTTS"
     },
     {
-      "name": "Generic COVID-19 Test",
-      "i18nKey": "genericCovid19",
-      "externalId": "genericCovid19",
+      "name": "COVID-19 Test",
+      "i18nKey": "covid19",
+      "externalId": "covid19",
       "abbreviation":"CV"
     }
   ]

@@ -1637,570 +1637,116 @@
       ]
     },
     {
-      "abbreviation": "MZ",
-      "name": "Mozambique",
-      "a3": "MOZ",
-      "culture": "pt-PT",
-      "countryCode": "258",
-      "stateLabel": "Provincia",
-      "lgaLabel": "Distrito",
+      "abbreviation": "WK",
+      "name": "Wakanda",
+      "a3": "WKA",
+      "culture": "en-US",
+      "countryCode": "999",
+      "stateLabel": "Province",
+      "lgaLabel": "District",
       "timezone": "South Africa Standard Time",
-      "portNumber": 3012,
+      "portNumber": 9999,
       "exportColumns": "DeploymentDescription|TestEndedOn|AssayName|AssayVersion|User|Result1|Result2|HIV|DRSuspect|PatientAge|PatientGender|PatientLGA|ReagentLotID|ExpirationDate|CartridgeSerial|ModuleSerial|SoftwareVersion|ErrorCode|ErrorCategory|ErrorDescription|SampleId|Notes|ProbeA",
       "inventoryDaysThreshold": 21,
       "monthStartsOnDay": 1,
       "states": [
         {
-          "name": "Cabo Delgado",
+          "name": "Central Province",
           "lgas": [
             {
-              "name": "Ancuabe"
+              "name": "Delmarva",
+              "cities": ["Kamara", "Hill Valley"]
             },
             {
-              "name": "Balama"
+              "name": "Keystone",
+              "cities": ["Emerald City", "Haddonfield"]
             },
             {
-              "name": "Chiure District"
-            },
-            {
-              "name": "Ibo District"
-            },
-            {
-              "name": "Macomia District"
-            },
-            {
-              "name": "Mecufi District"
-            },
-            {
-              "name": "Meluco District"
-            },
-            {
-              "name": "Mocimboa a Praia District"
-            },
-            {
-              "name": "Mocimboa da Praia"
-            },
-            {
-              "name": "Montepuez"
-            },
-            {
-              "name": "Montepuez District"
-            },
-            {
-              "name": "Mueda District"
-            },
-            {
-              "name": "Muidumbe District"
-            },
-            {
-              "name": "Namuno District"
-            },
-            {
-              "name": "Nangade District"
-            },
-            {
-              "name": "Palma District"
-            },
-            {
-              "name": "Pemba"
-            },
-            {
-              "name": "Pemba-Metuge District"
-            },
-            {
-              "name": "Quissanga District"
+              "name": "Alderney",
+              "cities": ["Sunnydale", "Bedrock"]
             }
           ]
         },
         {
-          "name": "Gaza",
+          "name": "Great Plateau",
           "lgas": [
             {
-              "name": "Belene Macia District"
+              "name": "Liberty",
+              "cities": ["Castle Rock", "Amber"]
             },
             {
-              "name": "Chibuto"
+              "name": "Lemoyne",
+              "cities": ["Ultar", "Antigo"]
             },
             {
-              "name": "Chibuto District"
-            },
-            {
-              "name": "Chicualacuala District"
-            },
-            {
-              "name": "Chigubo District"
-            },
-            {
-              "name": "Chokwe",
-              "cities": ["Carmelo", "Chokwe"]
-            },
-            {
-              "name": "Chokwe District"
-            },
-            {
-              "name": "Guija District"
-            },
-            {
-              "name": "Mabalane District"
-            },
-            {
-              "name": "Macia",
-              "cities": ["Chissano", "Macia"]
-            },
-            {
-              "name": "Manjacaze"
-            },
-            {
-              "name": "Manjacaze District"
-            },
-            {
-              "name": "Massagena District"
-            },
-            {
-              "name": "Massingir District"
-            },
-            {
-              "name": "Xai-Xai",
-              "cities": ["Centro de Saude Marien Ngoaby", "Xai-Xai"]
-            },
-            {
-              "name": "Xai-Xai District"
+              "name": "Catawba",
+              "cities": ["Kakariko", "Seaside Town"]
             }
           ]
         },
         {
-          "name": "Inhambane",
+          "name": "Mount Kanda",
           "lgas": [
             {
-              "name": "Funhalouro District"
-            },
-            {
-              "name": "Govuro District"
-            },
-            {
-              "name": "Homoine District"
-            },
-            {
-              "name": "Inharrime District"
-            },
-            {
-              "name": "Inhassoro District"
-            },
-            {
-              "name": "Jangamo District"
-            },
-            {
-              "name": "Mabote District"
-            },
-            {
-              "name": "Massinga District",
-              "cities": ["Massinga"]
-            },
-            {
-              "name": "Morrumbene District"
-            },
-            {
-              "name": "Panda District"
-            },
-            {
-              "name": "Vilankulo District"
-            },
-            {
-              "name": "Zavala District"
+              "name": "Fremont",
+              "cities": ["Islesa"]
             }
           ]
         },
         {
-          "name": "Manica",
+          "name": "Mount Wakanda",
           "lgas": [
             {
-              "name": "Barue District"
-            },
-            {
-              "name": "C. Chimoio"
-            },
-            {
-              "name": "Gondola District"
-            },
-            {
-              "name": "Guro District"
-            },
-            {
-              "name": "Machaze District"
-            },
-            {
-              "name": "Macossa District"
-            },
-            {
-              "name": "Manica District",
-              "cities": ["CISM 2", "Hospital Rural de Xinavane"]
-            },
-            {
-              "name": "Mossurize District"
-            },
-            {
-              "name": "Sussundenga District"
-            },
-            {
-              "name": "Tambara District"
+              "name": "Udana",
+              "cities": ["Uyrore", "Clacwell"]
             }
           ]
         },
         {
-          "name": "Maputo City",
+          "name": "N'Zadaha",
           "lgas": [
             {
-              "name": "KaMavota",
-              "cities": ["CISPOC", "C.S de Mavalane"]
-            },
-            {
-              "name": "KaMaxaquene",
-              "cities": ["CS 1 de Maio"]
-            },
-            {
-              "name": "KaMpfumo",
-              "cities": ["Alto Mae", "HG Mavalane INS", "Hospital Militar Maputo", "LNRT Antigo", "HCM"]
-            },
-            {
-              "name": "KaMubukwana"
-            },
-            {
-              "name": "KaNyaka"
-            },
-            {
-              "name": "KaTembe"
-            },
-            {
-              "name": "Nlhamankulu"
+              "name": "Midlands",
+              "cities": ["Floni", "Agosridge"]
             }
           ]
         },
         {
-          "name": "Maputo Province",
+          "name": "Panther Island",
           "lgas": [
             {
-              "name": "Boane District"
+              "name": "Lowlands",
+              "cities": ["Aletol", "Verton"]
             },
             {
-              "name": "Magude District"
+              "name": "Groveland",
+              "cities": ["Shuledo"]
             },
             {
-              "name": "Manhica"
-            },
-            {
-              "name": "Manhica District"
-            },
-            {
-              "name": "Marracuene District"
-            },
-            {
-              "name": "Matola",
-              "cities": ["Machava2", "Ndlavela"]
-            },
-            {
-              "name": "Matutuine District"
-            },
-            {
-              "name": "Moamba District"
-            },
-            {
-              "name": "Namaacha"
-            },
-            {
-              "name": "Namaacha District"
+              "name": "Cabot Cove",
+              "cities": ["Glord", "Ardmouth", "Zagos"]
             }
           ]
         },
         {
-          "name": "Nampula",
+          "name": "River Province",
           "lgas": [
             {
-              "name": "Angoche"
-            },
-            {
-              "name": "Angoche District"
-            },
-            {
-              "name": "Erati District"
-            },
-            {
-              "name": "Ilha de Mocambique"
-            },
-            {
-              "name": "Lalaua District"
-            },
-            {
-              "name": "Malema District"
-            },
-            {
-              "name": "Meconta District"
-            },
-            {
-              "name": "Mecuburi District"
-            },
-            {
-              "name": "Memba District"
-            },
-            {
-              "name": "Mogincual District"
-            },
-            {
-              "name": "Mogovolas District"
-            },
-            {
-              "name": "Moma District"
-            },
-            {
-              "name": "Monapo"
-            },
-            {
-              "name": "Monapo District"
-            },
-            {
-              "name": "Mossuril District"
-            },
-            {
-              "name": "Muecate District"
-            },
-            {
-              "name": "Murrupula District"
-            },
-            {
-              "name": "Nacala"
-            },
-            {
-              "name": "Nacala-a-Velha District"
-            },
-            {
-              "name": "Nacaroa District"
-            },
-            {
-              "name": "Nampula",
-              "cities": ["Cidade LR", "Hospital Militar"]
-            },
-            {
-              "name": "Nampula District"
-            },
-            {
-              "name": "Ribaue District"
+              "name": "Mayberry",
+              "cities": ["Aneson", "Temledo"]
             }
           ]
         },
         {
-          "name": "Niassa",
+          "name": "Serpent Valley",
           "lgas": [
             {
-              "name": "Cuamba"
+              "name": "Ambridge",
+              "cities": ["Gidon", "Uslonio"]
             },
             {
-              "name": "Cuamba District"
-            },
-            {
-              "name": "Lago District"
-            },
-            {
-              "name": "Lichinga"
-            },
-            {
-              "name": "Lichinga District"
-            },
-            {
-              "name": "Majune District"
-            },
-            {
-              "name": "Mandimba District"
-            },
-            {
-              "name": "Marrupa District"
-            },
-            {
-              "name": "Maua District"
-            },
-            {
-              "name": "Mavagoago District"
-            },
-            {
-              "name": "Mecenhelas District"
-            },
-            {
-              "name": "Mecula District"
-            },
-            {
-              "name": "Metangula"
-            },
-            {
-              "name": "Metarica District"
-            },
-            {
-              "name": "Muembe District"
-            },
-            {
-              "name": "N'gauma District"
-            },
-            {
-              "name": "Nipepe District"
-            },
-            {
-              "name": "Sanga District"
-            }
-          ]
-        },
-        {
-          "name": "Sofala",
-          "lgas": [
-            {
-              "name": "Buzi District"
-            },
-            {
-              "name": "C. Beira",
-              "cities": ["CS Dream", "CS Ponta Gea", "HC Beira", "Hospital Militar da Beira"]
-            },
-            {
-              "name": "Caia District"
-            },
-            {
-              "name": "Chemba District"
-            },
-            {
-              "name": "Cheringoma District"
-            },
-            {
-              "name": "Chibabava District"
-            },
-            {
-              "name": "Dondo District"
-            },
-            {
-              "name": "Gorongosa District",
-              "cities": ["CS de Gorongosa"]
-            },
-            {
-              "name": "Machanga District"
-            },
-            {
-              "name": "Maringue District"
-            },
-            {
-              "name": "Marromeu District"
-            },
-            {
-              "name": "Muanza District"
-            },
-            {
-              "name": "Nhamatanda District"
-            }
-          ]
-        },
-        {
-          "name": "Tete",
-          "lgas": [
-            {
-              "name": "Angonia District",
-              "cities": ["H.R Ulongue"]
-            },
-            {
-              "name": "Cahora-Bassa District"
-            },
-            {
-              "name": "Changara District"
-            },
-            {
-              "name": "Chifunde District"
-            },
-            {
-              "name": "Chiuta District"
-            },
-            {
-              "name": "Doa District"
-            },
-            {
-              "name": "Macanga District"
-            },
-            {
-              "name": "Magoe District"
-            },
-            {
-              "name": "Marara District"
-            },
-            {
-              "name": "Maravia District"
-            },
-            {
-              "name": "Moatize District"
-            },
-            {
-              "name": "Mutarara District"
-            },
-            {
-              "name": "Tete District"
-            },
-            {
-              "name": "Tsangano District"
-            },
-            {
-              "name": "Zumbo District"
-            }
-          ]
-        },
-        {
-          "name": "Zambezia",
-          "lgas": [
-            {
-              "name": "Alto Molocue District"
-            },
-            {
-              "name": "Chinde District"
-            },
-            {
-              "name": "Gile District"
-            },
-            {
-              "name": "Gurue District"
-            },
-            {
-              "name": "Ile District"
-            },
-            {
-              "name": "Inhassunge District"
-            },
-            {
-              "name": "Lugela District"
-            },
-            {
-              "name": "Maganja da Costa District",
-              "cities": ["HD M.Costa"]
-            },
-            {
-              "name": "Milange District",
-              "cities": ["Zambézia: C.S Urbano de Milange"]
-            },
-            {
-              "name": "Mocuba District"
-            },
-            {
-              "name": "Mopeia District"
-            },
-            {
-              "name": "Morrumbala District"
-            },
-            {
-              "name": "Namacurra District"
-            },
-            {
-              "name": "Namarroi District"
-            },
-            {
-              "name": "Nicoadala District"
-            },
-            {
-              "name": "Pebane District"
-            },
-            {
-              "name": "Quelimane",
-              "cities": ["HPQ"]
-            },
-            {
-              "name": "Quelimane District"
+              "name": "Wobegon",
+              "cities": ["Doton", "Gelava"]
             }
           ]
         }

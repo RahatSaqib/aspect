@@ -2,7 +2,7 @@ module.exports = require('../utils').seed(seed, __filename)
 
 const _ = require('lodash')
 const bcrypt = require('bcrypt')
-const { addHours, addMilliseconds, addMinutes, subDays } = require('date-fns')
+const { addMilliseconds, addMinutes, subDays } = require('date-fns')
 const Promise = require('bluebird')
 
 const {
@@ -30,7 +30,6 @@ const utils = require('../utils')
 const geography = require('./fixtures/geography.json')
 const followUp = require('../fixtures/FollowUp.json')
 
-const millisInHour = 1000 * 60 * 60
 const millisInMinute = 1000 * 60
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
 const resultTimeFrameInDays = 60
@@ -57,8 +56,8 @@ async function seed(knex) {
 
   // Create admin user and audit fields
   const [adminId] = await knex('User').insert({
-    name: 'moz_admin',
-    password: bcrypt.hashSync('moz123', saltRounds),
+    name: 'covid_admin',
+    password: bcrypt.hashSync('covid', saltRounds),
     approved: 1,
     createdOn: now,
     lockedOut: 0,
@@ -66,20 +65,20 @@ async function seed(knex) {
   })
 
   const [partnerId] = await knex('Partner').insert({
-    name: 'Mozambique',
+    name: 'Wakanda',
     partnerTypeId: await partnerTypeToId('Operating'),
     deviceLogHistoryDays: 365,
     maxDaysDeviceOffline: 7,
     maxDaysDeviceNoResults: 14,
     serverUrl: 'http://localhost:8000/',
-    plugin: 'mozambique',
+    plugin: 'wakanda',
   })
 
-  const countryMozambique = geography.countries.find(
-    country => country.abbreviation === 'MZ'
+  const countryWakanda = geography.countries.find(
+    country => country.abbreviation === 'WK'
   )
 
-  const countryData = _.pick(countryMozambique, [
+  const countryData = _.pick(countryWakanda, [
     'abbreviation',
     'name',
     'a3',
@@ -99,9 +98,9 @@ async function seed(knex) {
     partnerId,
     adminId,
     {
-      countries: [countryMozambique],
+      countries: [countryWakanda],
     },
-    'MZ'
+    'WK'
   )
 
   // Give permission to dashboard, browse, sites, results, devices, reporters
@@ -184,13 +183,13 @@ async function seed(knex) {
   countryData.clinics = []
   countryData.devices = []
 
-  const { id: deviceTypeCovidId } = await knex('DeviceType')
-    .where('externalId', 'GenericCovid19')
+  const { id: deviceTypeAspectResultEntryId } = await knex('DeviceType')
+    .where('externalId', 'AspectResultEntry')
     .first('id')
   const deviceStatusApprovedId = await deviceStatusToId('approved')
 
   await Promise.all(
-    _.map(countryMozambique.states, async state => {
+    _.map(countryWakanda.states, async state => {
       await Promise.all(
         _.map(state.lgas, async lga => {
           if (lga.cities) {
@@ -211,6 +210,8 @@ async function seed(knex) {
               shortName: `${lga.name} Lab`,
               city: lga.name,
               street1: `${state.name} Street`,
+              longitude: _.random(9, 12, true),
+              latitude: _.random(-20, -23, true),
               ...auditFields,
             }
 
@@ -221,9 +222,9 @@ async function seed(knex) {
             // add device to the lab
             const device = {
               ...auditFields,
-              name: `${labData.name} COVID-19 Device`,
-              shortName: `${labData.externalId}_covid_19`,
-              deviceTypeId: deviceTypeCovidId,
+              name: `${labData.name} Aspect`,
+              shortName: `${labData.externalId}_aspect`,
+              deviceTypeId: deviceTypeAspectResultEntryId,
               deviceStatusId: deviceStatusApprovedId,
               partnerId: labData.partnerId,
               geographyId: labData.geographyId,
@@ -267,6 +268,8 @@ async function seed(knex) {
                   shortName: `${city} Clinic`,
                   city,
                   street1: `${lga.name} Street`,
+                  longitude: _.random(9, 12, true),
+                  latitude: _.random(-20, -23, true),
                   ...auditFields,
                 }
 
@@ -283,9 +286,9 @@ async function seed(knex) {
 
   // add result form
   const { id: assayId } = await knex('Assay')
-    .where('externalId', 'assayGenericCovid19')
+    .where('externalId', 'assayAspectResultEntryCovid19')
     .first('id')
-  const formSchema = JSON.stringify({
+  const formSchema = {
     fields: {
       testReason: {
         i18nLabel: 'testReasonCovid19',
@@ -293,26 +296,33 @@ async function seed(knex) {
           type: 'DropDown',
           options: [
             {
+              title: 'Contact of a case',
               i18nText: 'contactOfACase',
               value: '1',
             },
             {
+              title: 'Ill Seeking Healthcare due to suspicion of COVID-19',
               i18nText: 'illSeekingHealthcare',
               value: '2',
             },
             {
+              title: 'Detected at point of entry',
               i18nText: 'detectedAtPointOfEntry',
               value: '3',
             },
             {
+              title: 'Repatriation',
               i18nText: 'repatriation',
               value: '4',
             },
             {
+              title:
+                'Routine respiratory disease surveillance systems (e.g influenza)',
               i18nText: 'routineRespiratorySurveillance',
               value: '5',
             },
             {
+              title: 'Unknown',
               i18nText: 'unknown',
               value: '6',
             },
@@ -340,10 +350,12 @@ async function seed(knex) {
           type: 'DropDown',
           options: [
             {
+              title: 'Male',
               i18nText: 'male',
               value: '1',
             },
             {
+              title: 'Female',
               i18nText: 'female',
               value: '2',
             },
@@ -353,12 +365,12 @@ async function seed(knex) {
       },
     },
     sendChangesOn: 'change',
-  })
+  }
 
   await knex('ResultForm').insert({
     partnerId,
     assayId,
-    formSchema,
+    formSchema: JSON.stringify(formSchema),
   })
 
   // seed dummy results
@@ -371,6 +383,12 @@ async function seed(knex) {
   } = await allResultCategoryToId()
   const resultSourceEnteredByHandId = await resultSourceToId('EnteredByHand')
   const resultTypePatientId = await resultTypeToId('Patient')
+  const resultWorkflowStatusProcessedId = await resultWorkflowStatusToId(
+    'Processed'
+  )
+  const resultWorkflowStatusValidatedId = await resultWorkflowStatusToId(
+    'Validated'
+  )
   const resultWorkflowStatusDeliverableId = await resultWorkflowStatusToId(
     'Deliverable'
   )
@@ -427,6 +445,9 @@ async function seed(knex) {
     const siteData = countryData.labs.find(site => site.id === device.siteId)
     const sample = samples[i % samples.length]
     const randomDate = calculateDateForResult(i, resultNumber, 6000)
+    const reportableSite = sample.originSiteId
+      ? _.find(countryData.clinics, c => c.id === sample.originSiteId)
+      : siteData
 
     const rnd = _.random(0, 100)
     const result = _.find(
@@ -434,12 +455,12 @@ async function seed(knex) {
       r => rnd >= r.minLikelihood && rnd <= r.maxLikelihood
     )
 
-    const formData = JSON.stringify({
+    const formData = {
       age: rnd,
       caseId: `COVID-${_.random(1000, 9999)}-ID`,
       gender: _.random(1, 2),
       testReason: _.random(1, 6),
-    })
+    }
 
     const resultId = await knex('Result').insert({
       ...auditFields,
@@ -448,33 +469,43 @@ async function seed(knex) {
       partnerId,
       geographyId: siteData.geographyId,
       siteId: siteData.id,
-      reportableSiteId: sample.siteOriginId || siteData.id,
+      reportableSiteId: reportableSite.id,
       deviceId: device.id,
-      longitude: -81.581222,
-      latitude: 28.419348,
+      longitude: reportableSite.longitude,
+      latitude: reportableSite.latitude,
       resultSourceId: resultSourceEnteredByHandId,
       resultTypeId: resultTypePatientId,
       sampleId: sample.id,
-      sampleRunNumber: `${(i % 2) + 1}`,
-      sampleGroup: `GRP-COVID-${i % 5}`,
       resultCategory1: result.category1,
       resultCategory2: result.category2,
       resultData: JSON.stringify({ resultText: result.resultText }),
-      formData,
-      patientData: formData,
+      formData: JSON.stringify(formData),
+      patientData: JSON.stringify({
+        age: formData.age,
+        caseId: formData.caseId,
+        gender:
+          formSchema.fields.gender.control.options[formData.gender - 1].title,
+        testReason:
+          formSchema.fields.testReason.control.options[formData.testReason - 1]
+            .title,
+      }),
       startedOn: randomDate,
       endedOn: addMinutes(randomDate, 100),
       createdOn: addMinutes(randomDate, 120),
       updatedOn: addMinutes(randomDate, 180),
-      consumableSerial: `${i}12`,
-      consumableExpirationDate: new Date(+now + 200 * i * millisInHour),
-      consumableLot: `Lot ${i % 5}`,
-      researchId: `R-ID-${i}`,
     })
+
+    const rndWorkflow = _.random(0, 100)
+    const resultWorkflowStatusId =
+      rndWorkflow < 20
+        ? resultWorkflowStatusProcessedId
+        : rndWorkflow < 30
+        ? resultWorkflowStatusValidatedId
+        : resultWorkflowStatusDeliverableId
 
     const [lastLogId] = await knex('ResultWorkflowLog').insert({
       resultId,
-      resultWorkflowStatusId: resultWorkflowStatusDeliverableId,
+      resultWorkflowStatusId,
       operator: 'John',
       changedOn: addMinutes(randomDate, 120),
       createdOn: addMinutes(randomDate, 120),
@@ -484,49 +515,6 @@ async function seed(knex) {
     await knex('Result')
       .where('id', resultId)
       .update({ resultWorkflowStatusLogId: lastLogId })
-
-    await knex('DeviceLog').insert({
-      deviceId: device.id,
-      createdOn: addHours(randomDate, 1),
-      senderIp: '0.0.0.0',
-      source: 'seed data',
-      rawMessage: JSON.stringify({
-        type: {
-          id: 'GenericCovid19',
-          site: {
-            id: siteData.externalId,
-          },
-          result: {
-            data: {
-              ...auditFields,
-              externalId: `COVID-${i}`,
-              assayId,
-              partnerId,
-              geographyId: siteData.geographyId,
-              siteId: siteData.id,
-              reportableSiteId: sample.siteOriginId || siteData.id,
-              deviceId: device.id,
-              resultSourceId: resultSourceEnteredByHandId,
-              resultTypeId: resultTypePatientId,
-              sampleId: sample.id,
-              sampleRunNumber: `${(i % 2) + 1}`,
-              sampleGroup: `GRP-COVID-${i % 5}`,
-              resultCategory1: result.category1,
-              resultCategory2: result.category2,
-              resultData: JSON.stringify({ resultText: result.resultText }),
-              startedOn: randomDate,
-              endedOn: addMinutes(randomDate, 100),
-              consumableSerial: `${i}12`,
-              consumableExpirationDate: new Date(+now + 200 * i * millisInHour),
-              consumableLot: `Lot ${i % 5}`,
-              researchId: `R-ID-${i}`,
-            },
-          },
-        },
-      }),
-      deviceConfigurationUpdated: 0,
-      resultId,
-    })
   })
 
   // assign treatment status

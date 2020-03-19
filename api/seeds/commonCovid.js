@@ -16,18 +16,18 @@ async function upsertCovidAssay(
   resultDataSchema = AssayCovidResultDataSchema
 ) {
   const deviceTypeCovidId = await knex('DeviceType').insert({
-    deviceTypeCategoryId: await deviceTypeCategoryToId('Lab'),
-    externalId: 'GenericCovid19',
-    name: 'COVID-19 Diagnostic',
-    manufacturer: 'Generic',
+    deviceTypeCategoryId: await deviceTypeCategoryToId('Information System'),
+    externalId: 'AspectResultEntry',
+    name: 'Aspect Result Entry',
+    manufacturer: 'SystemOne',
   })
 
-  const assayGenericCovid19 = {
+  const assayAspectResultEntryCovid19 = {
     name: 'COVID-19',
     abbreviation: 'COVID-19',
-    i18nKey: 'assayGenericCovid19',
-    externalId: 'assayGenericCovid19',
-    assayTypeId: await assayTypeToId('Generic COVID-19 Test'),
+    i18nKey: 'assayAspectResultEntryCovid19',
+    externalId: 'assayAspectResultEntryCovid19',
+    assayTypeId: await assayTypeToId('COVID-19 Test'),
     deviceTypeId: deviceTypeCovidId,
     resultSourceId: await resultSourceToId('EnteredByHand'),
     resultCategory1Label: 'COVID-19',
@@ -38,15 +38,15 @@ async function upsertCovidAssay(
 
   let { id: assayCovidId } =
     (await knex('Assay')
-      .where('externalId', 'assayGenericCovid19')
+      .where('externalId', 'assayAspectResultEntryCovid19')
       .first('id')) || {}
 
   if (!assayCovidId) {
-    assayCovidId = await knex('Assay').insert(assayGenericCovid19)
+    assayCovidId = await knex('Assay').insert(assayAspectResultEntryCovid19)
   } else {
     await knex('Assay')
       .where('id', assayCovidId)
-      .update(assayGenericCovid19)
+      .update(assayAspectResultEntryCovid19)
   }
 
   const values = await Promise.all([
