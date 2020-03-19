@@ -854,7 +854,15 @@ const routes = [
       description: 'Aggregated data for Treatment Graph on dashboard',
       notes:
         'Set of percentages of Confirmed and Unaccountable percentage for few months',
-      auth: { scope: ['result:view', 'result:edit'] },
+      auth: {
+        scope: [
+          'treatmentStatus:view',
+          'treatmentStatus:edit',
+          'treatmentStatus:admin',
+          'result:view',
+          'result:edit',
+        ],
+      },
       validate: {
         payload: {
           siteId: Joi.number()
