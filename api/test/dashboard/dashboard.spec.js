@@ -505,7 +505,7 @@ describe('Dashboard routes', () => {
       })
     })
 
-    describe('/dashboard/clinical-indicators', () => {
+    describe.only('/dashboard/clinical-indicators', () => {
       const clinicalIndicatorsPath = '/api/dashboard/clinical-indicators'
       let resultsForUser = null
       let reportableResultCategories = null
@@ -579,6 +579,20 @@ describe('Dashboard routes', () => {
                 month: key.substring(key.indexOf('_') + 1),
                 cnt: value.length,
               }))
+              .value()
+            assert.equal(res.status, 200)
+            assert.deepEqual(res.body.data, expectedResponse)
+          }))
+
+      it('should return all results grouped by day if specified in query string', async () =>
+        server
+          .get(`${clinicalIndicatorsPath}?groupBy=day`)
+          .set('Authorization', `Bearer ${shared.token}`)
+          .then(res => {
+            const expectedResponse = _.chain(resultsForUser)
+              .map(o => ({ day: format(new Date(o.endedOn), 'yyyy-MM-dd') }))
+              .groupBy('day')
+              .map((value, key) => ({ day: key, cnt: value.length }))
               .value()
             assert.equal(res.status, 200)
             assert.deepEqual(res.body.data, expectedResponse)
