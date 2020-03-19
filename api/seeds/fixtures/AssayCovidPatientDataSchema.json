@@ -1,0 +1,22 @@
+{
+	"testReason": {
+		"title": "Why tested for COVID-19",
+		"type": "string",
+		"order": 0
+	},
+	"caseId": {
+		"title": "Unique Case Identifier",
+		"type": "string",
+		"order": 1
+	},
+	"age": {
+		"title": "Age",
+		"type": "number",
+		"order": 2
+	},
+	"gender": {
+		"title": "Sex at birth",
+		"type": "string",
+		"order": 3
+	}
+}

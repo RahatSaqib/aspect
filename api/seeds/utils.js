@@ -2066,6 +2066,7 @@ async function updateCategoryAssay(knex) {
         'Positive3',
         'Scanty',
         'PositiveMTB',
+        'Positive',
       ].indexOf(externalId) >= 0
     ) {
       json = {
@@ -2101,6 +2102,7 @@ async function updateCategoryAssay(knex) {
         'Unknown',
         'NotDetected',
         'Negative',
+        'Inconclusive',
       ].indexOf(externalId) >= 0
     ) {
       json = {
@@ -2131,6 +2133,7 @@ async function updateAssayResultCategoryTreatmentEmphasize(knex) {
         'MoreThan150',
         'MoreThan550',
         'MoreThan1000',
+        'Positive',
       ].indexOf(externalId) >= 0
     ) {
       json = {
@@ -2147,6 +2150,7 @@ async function updateAssayResultCategoryTreatmentEmphasize(knex) {
         'Discordant',
         'Rejected',
         'Missing',
+        'Inconclusive',
       ].indexOf(externalId) >= 0
     ) {
       json = {
