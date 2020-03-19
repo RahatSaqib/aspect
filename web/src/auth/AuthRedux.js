@@ -108,6 +108,40 @@ export function loginStart({ user, password }) {
         clientName: getClientName(),
       }),
       errorNotifications: {
+        409: {
+          "Couldn't connect to GxAlert": {
+            severity: 'warn',
+            ...defineMessages({
+              title: {
+                id:
+                  'errorResponseMessages.loginStart.POST.409.couldntConnectToGxAlert.title',
+                defaultMessage: "Couldn't connect to GxAlert",
+              },
+              message: {
+                id:
+                  'errorResponseMessages.loginStart.POST.409.couldntConnectToGxAlert.message',
+                defaultMessage:
+                  'If your credentials are from GxAlert, please, try again later or contact your administrator for support. If not, try again.',
+              },
+            }),
+          },
+          'There was a conflict with your credentials': {
+            severity: 'warn',
+            ...defineMessages({
+              title: {
+                id:
+                  'errorResponseMessages.loginStart.POST.409.thereWasAConflictWithYourCredentials.title',
+                defaultMessage: "Couldn't login with your credentials",
+              },
+              message: {
+                id:
+                  'errorResponseMessages.loginStart.POST.409.thereWasAConflictWithYourCredentials.message',
+                defaultMessage:
+                  'There was a conflict with your credentials. Please, contact and administrator for support.',
+              },
+            }),
+          },
+        },
         401: {
           'Your account is locked.': {
             severity: 'warn',

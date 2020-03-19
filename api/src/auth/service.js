@@ -100,6 +100,14 @@ async function authenticate(request) {
         userName: payload.name,
         message: err.message,
       }
+      if (err.isConnectionError) {
+        const boomMessage = err.isConnectionError
+          ? "Couldn't connect to GxAlert"
+          : 'There was a conflict with your credentials'
+        // "Couldn't connect to GxAlert. Please, try again later or contact your administrator for support."
+        // 'There was a conflict with your credentials. Please, contact and administrator for support.'
+        return Boom.conflict(boomMessage, data)
+      }
 
       return Boom.internal(
         'Authentication failed because an internal server error',

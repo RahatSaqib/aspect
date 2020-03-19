@@ -18,6 +18,13 @@ const { query, transact } = require('../db')
 
 const bcryptHash = promisify(bcrypt.hash)
 
+class GxAlertLoginError extends Error {
+  constructor(message, isConnectionError) {
+    super(message)
+    this.isConnectionError = isConnectionError
+  }
+}
+
 function getUser(username, knex) {
   return knex
     .from('User as u')
@@ -55,9 +62,18 @@ async function validateUserAtGxAlert(username, password, user) {
     body(JSON.stringify({ username, password }), 'application/json')
   )
 
-  const resp = await gxFetch('/auth')
+  let resp = null
+  try {
+    resp = await gxFetch('/auth')
+  } catch (err) {
+    throw new GxAlertLoginError("GxAlert service isn't available", true)
+  }
+
   if (resp.status !== 200) {
-    throw new Error("Couldn't connect to GxAlert service")
+    throw new GxAlertLoginError(
+      'GxAlert service is available, but an error happened while authenticating',
+      true
+    )
   }
 
   // user profile from GxAlert
@@ -66,8 +82,9 @@ async function validateUserAtGxAlert(username, password, user) {
   // exit if no country found in Aspect
   // 'null' means username and/or password did not match in GxAlert
   if (!countryId) {
-    throw new Error(
-      `Unexistent country ${gxUser.country.abbreviation} for user's credentials`
+    throw new GxAlertLoginError(
+      `Unexistent country ${gxUser.country.abbreviation} for user's credentials`,
+      false
     )
   }
 
@@ -83,8 +100,9 @@ async function validateUserAtGxAlert(username, password, user) {
     .distinct('s.partnerId', 'p.plugin')
   // exit if not exactly 1 partner in this country
   if (!partners || partners.length !== 1) {
-    throw new Error(
-      `Unexistent partner for user's credentials. Please, check that there's any sites for the country ${gxUser.country.abbreviation} and they have geography and partner assigned.`
+    throw new GxAlertLoginError(
+      `Unexistent partner for user's credentials. Please, check that there's any sites for the country ${gxUser.country.abbreviation} and they have geography and partner assigned.`,
+      false
     )
   }
 
@@ -116,8 +134,9 @@ async function validateUserAtGxAlert(username, password, user) {
   const jobFunctionId = jobFunction ? jobFunction.id : null
   // exit if no jobFunction found
   if (!jobFunctionId) {
-    throw new Error(
-      `Unexistent job function for user's credentials. Please, check that there's any partners for the country ${gxUser.country.abbreviation}, and that they have job functions, too.`
+    throw new GxAlertLoginError(
+      `Unexistent job function for user's credentials. Please, check that there's any partners for the country ${gxUser.country.abbreviation}, and that they have job functions, too.`,
+      false
     )
   }
 
@@ -549,4 +568,5 @@ async function updateTagsForPerson(
 
 module.exports = {
   validateUserAtGxAlert,
+  GxAlertLoginError,
 }
