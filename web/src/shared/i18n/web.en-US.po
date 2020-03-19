@@ -4469,6 +4469,34 @@ msgstr ""
 msgid "Your user account has been locked"
 msgstr ""
 
+#. [errorResponseMessages.loginStart.POST.409.couldntConnectToGxAlert.title]
+#. defaultMessage is:
+#. Couldn't connect to GxAlert
+#: i18n/src/auth/AuthRedux.json
+msgid "Couldn't connect to GxAlert"
+msgstr ""
+
+#. [errorResponseMessages.loginStart.POST.409.couldntConnectToGxAlert.message]
+#. defaultMessage is:
+#. Couldn't connect to GxAlert. Please, try again later or contact your administrator for support.
+#: i18n/src/auth/AuthRedux.json
+msgid "Couldn't connect to GxAlert. Please, try again later or contact your administrator for support."
+msgstr ""
+
+#. [errorResponseMessages.loginStart.POST.409.thereWasAConflictWithYourCredentials.title]
+#. defaultMessage is:
+#. Couldn't login with your credentials
+#: i18n/src/auth/AuthRedux.json
+msgid "Couldn't login with your credentials"
+msgstr ""
+
+#. [errorResponseMessages.loginStart.POST.409.thereWasAConflictWithYourCredentials.message]
+#. defaultMessage is:
+#. There was a conflict with your credentials. Please, contact and administrator for support.
+#: i18n/src/auth/AuthRedux.json
+msgid "There was a conflict with your credentials. Please, contact and administrator for support."
+msgstr ""
+
 #. [pages.SiteDetail.fieldZip]
 #. defaultMessage is:
 #. Zip

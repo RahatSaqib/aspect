@@ -554,7 +554,7 @@ describe('Dashboard routes', () => {
             assert.deepEqual(res.body.data, expectedResponse)
           }))
 
-      it('should return all results grouped by month and state if specified in query string', async () =>
+      it.only('should return all results grouped by month and state if specified in query string', async () =>
         server
           .get(`${clinicalIndicatorsPath}?groupBy=month&groupBy=state`)
           .set('Authorization', `Bearer ${shared.token}`)

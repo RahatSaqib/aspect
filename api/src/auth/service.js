@@ -104,8 +104,6 @@ async function authenticate(request) {
         const boomMessage = err.isConnectionError
           ? "Couldn't connect to GxAlert"
           : 'There was a conflict with your credentials'
-        // "Couldn't connect to GxAlert. Please, try again later or contact your administrator for support."
-        // 'There was a conflict with your credentials. Please, contact and administrator for support.'
         return Boom.conflict(boomMessage, data)
       }
 
