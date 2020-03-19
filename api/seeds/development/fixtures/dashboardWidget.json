@@ -42,6 +42,59 @@
       "sqlForIndicator": "select count(u.id) as cnt from User as u",
       "link": "/browse/person",
       "sortOrder": 3
+    },
+    {
+      "icon": "virus",
+      "title": "Confirmed cases",
+      "titleI18nKey": "dashboardWidgetTitleConfirmedCases",
+      "subTitle": null,
+      "subTitleI18nKey": null,
+      "sqlForIndicator":
+        "SELECT IFNULL(SUM(f.resultCount), 0) AS cnt FROM factresultsdevicebycategory1 AS f INNER JOIN Device AS d ON d.id = f.deviceId INNER JOIN Site AS s ON s.id = d.siteId INNER JOIN Partner AS p ON p.id = s.partnerId INNER JOIN assay a ON f.`assayId`= a.`id` INNER JOIN ResultCategory rc ON f.resultCategory1 = rc.`id` LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id WHERE rc.externalid='Positive'",
+      "link": null,
+      "sortOrder": 4
+    },
+    {
+      "icon": "clipboardcheck",
+      "title": "Active cases",
+      "titleI18nKey": "dashboardWidgetTitleTotalActiveCases",
+      "subTitle": null,
+      "subTitleI18nKey": null,
+      "sqlForIndicator":
+        "SELECT IFNULL(COUNT(DISTINCT f.id), 0) AS cnt FROM Result AS f INNER JOIN Device AS d ON d.id = f.deviceId INNER JOIN Site AS s ON s.id = d.siteId INNER JOIN Partner AS p ON p.id = s.partnerId INNER JOIN assay a ON f.`assayId`= a.`id` INNER JOIN ResultCategory rc ON f.resultCategory1 = rc.`id` LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id WHERE rc.externalid='Positive' AND NOT EXISTS (SELECT * FROM ResultFollowUp rfu INNER JOIN followup fu ON fu.`id`=rfu.`followUpId` INNER JOIN followuptype ft ON fu.`followUpTypeId` =ft.id WHERE ft.externalid='outcome' AND rfu.resultId=f.id)",
+      "link": null,
+      "sortOrder": 5
+    },
+    {
+      "icon": "arrowup",
+      "title": "Recovered cases",
+      "titleI18nKey": "dashboardWidgetTitleTotalRecoveredCases",
+      "subTitle": null,
+      "subTitleI18nKey": null,
+      "sqlForIndicator":
+        "SELECT IFNULL(COUNT(DISTINCT r.id),0) AS cnt FROM Result AS r INNER JOIN Device AS d ON d.id = r.deviceId INNER JOIN Site AS s ON s.id = d.siteId INNER JOIN Partner AS p ON p.id = s.partnerId INNER JOIN assay a ON r.`assayId` = a.`id` INNER JOIN ResultCategory rc ON r.resultCategory1 = rc.`id` LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id WHERE rc.externalid = 'Positive' AND EXISTS (SELECT * FROM ResultFollowUp rfu INNER JOIN followup fu ON fu.`id` = rfu.`followUpId` INNER JOIN followuptype ft ON fu.`followUpTypeId` = ft.id WHERE ft.externalid = 'outcome' AND rfu.`resultId` = r.`id` AND fu.`externalId`='Recovered')",
+      "sqlForStatUnit":
+          "SELECT IFNULL(SUM(CASE WHEN r.startedOn>=NOW()-INTERVAL 7 DAY THEN 1 ELSE 0 END - CASE WHEN r.startedOn<=NOW()-INTERVAL 7 DAY THEN 1 ELSE 0 END),0) AS cnt FROM Result AS r INNER JOIN Device AS d ON d.id = r.deviceId INNER JOIN Site AS s ON s.id = d.siteId INNER JOIN Partner AS p ON p.id = s.partnerId INNER JOIN assay a ON r.`assayId` = a.`id` INNER JOIN ResultCategory rc ON r.resultCategory1 = rc.`id` INNER JOIN ResultFollowUp rfu ON rfu.`resultId`=r.`id` INNER JOIN followup fu ON fu.`id` = rfu.`followUpId` INNER JOIN followuptype ft ON fu.`followUpTypeId` = ft.id LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id WHERE rc.externalid = 'Positive' AND r.`startedOn`>= NOW()-INTERVAL 14 DAY AND ft.externalid = 'outcome' AND fu.`externalId` = 'Recovered'",
+      "statUnit": "{unit} since last week",
+      "statUnitI18nKey": "dashboardWidgetUnitDeathCases",
+      "link": null,
+      "sortOrder": 6
+    },
+
+    {
+      "icon": "arrowdown",
+      "title": "Deaths",
+      "titleI18nKey": "dashboardWidgetTitleTotalDeaths",
+      "subTitle": null,
+      "subTitleI18nKey": null,
+      "sqlForIndicator":
+        "SELECT IFNULL(COUNT(DISTINCT r.id),0) AS cnt  from Result AS r INNER JOIN Device AS d ON d.id = r.deviceId INNER JOIN Site AS s ON s.id = d.siteId INNER JOIN Partner AS p ON p.id = s.partnerId INNER JOIN assay a ON r.`assayId` = a.`id` INNER JOIN ResultCategory rc ON r.resultCategory1 = rc.`id` JOIN ResultFollowUp rfu ON r.id=rfu.`resultId` INNER JOIN followup fu ON fu.`id` = rfu.`followUpId` INNER JOIN followuptype ft ON fu.`followUpTypeId` = ft.id LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id WHERE rc.externalid = 'Positive' AND ft.externalid = 'outcome' AND fu.`externalId`='died'",
+      "sqlForStatUnit":
+         "SELECT IFNULL(SUM(CASE WHEN r.startedOn>=NOW()-INTERVAL 7 DAY THEN 1 ELSE 0 END - CASE WHEN r.startedOn<=NOW()-INTERVAL 7 DAY THEN 1 ELSE 0 END),0) AS cnt  from Result AS r INNER JOIN Device AS d ON d.id = r.deviceId INNER JOIN Site AS s ON s.id = d.siteId INNER JOIN Partner AS p ON p.id = s.partnerId INNER JOIN assay a ON r.`assayId` = a.`id` INNER JOIN ResultCategory rc ON r.resultCategory1 = rc.`id` JOIN ResultFollowUp rfu ON r.id=rfu.`resultId` INNER JOIN followup fu ON fu.`id` = rfu.`followUpId` INNER JOIN followuptype ft ON fu.`followUpTypeId` = ft.id LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id WHERE rc.externalid = 'Positive' AND ft.externalid = 'outcome' AND fu.`externalId`='died' and r.`startedOn`>= NOW()-INTERVAL 14 DAY" ,
+      "statUnit": "{unit} since last week",
+      "statUnitI18nKey": "dashboardWidgetUnitDeathCases",
+      "link": null,
+      "sortOrder": 7
     }
   ]
 }
