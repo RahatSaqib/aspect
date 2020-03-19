@@ -4480,7 +4480,7 @@ msgstr ""
 #. defaultMessage is:
 #. Couldn't connect to GxAlert. Please, try again later or contact your administrator for support.
 #: i18n/src/auth/AuthRedux.json
-msgid "Couldn't connect to GxAlert. Please, try again later or contact your administrator for support."
+msgid "If your credentials are from GxAlert, please contact your administrator for support. If they're not, try to login again."
 msgstr ""
 
 #. [errorResponseMessages.loginStart.POST.409.thereWasAConflictWithYourCredentials.title]
@@ -4494,7 +4494,7 @@ msgstr ""
 #. defaultMessage is:
 #. There was a conflict with your credentials. Please, contact and administrator for support.
 #: i18n/src/auth/AuthRedux.json
-msgid "There was a conflict with your credentials. Please, contact and administrator for support."
+msgid "There was a conflict with your credentials. Please, contact an administrator for support."
 msgstr ""
 
 #. [pages.SiteDetail.fieldZip]

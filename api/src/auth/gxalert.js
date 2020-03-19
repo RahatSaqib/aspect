@@ -21,6 +21,10 @@ const bcryptHash = promisify(bcrypt.hash)
 class GxAlertLoginError extends Error {
   constructor(message, isConnectionError) {
     super(message)
+
+    if (isConnectionError === null || isConnectionError === undefined)
+      throw new Error('The parameter isConnectionError cannot be null')
+
     this.isConnectionError = isConnectionError
   }
 }

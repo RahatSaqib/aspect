@@ -100,7 +100,7 @@ async function authenticate(request) {
         userName: payload.name,
         message: err.message,
       }
-      if (err.isConnectionError) {
+      if (err.isConnectionError !== undefined) {
         const boomMessage = err.isConnectionError
           ? "Couldn't connect to GxAlert"
           : 'There was a conflict with your credentials'

@@ -121,7 +121,7 @@ export function loginStart({ user, password }) {
                 id:
                   'errorResponseMessages.loginStart.POST.409.couldntConnectToGxAlert.message',
                 defaultMessage:
-                  'If your credentials are from GxAlert, please, try again later or contact your administrator for support. If not, try again.',
+                  "If your credentials are from GxAlert, please contact your administrator for support. If they're not, try to login again.",
               },
             }),
           },
@@ -137,7 +137,7 @@ export function loginStart({ user, password }) {
                 id:
                   'errorResponseMessages.loginStart.POST.409.thereWasAConflictWithYourCredentials.message',
                 defaultMessage:
-                  'There was a conflict with your credentials. Please, contact and administrator for support.',
+                  'There was a conflict with your credentials. Please, contact an administrator for support.',
               },
             }),
           },
