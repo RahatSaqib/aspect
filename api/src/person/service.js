@@ -23,13 +23,15 @@ async function listPeople(request) {
   const { auth, query } = request
   const dataConstraints = await getConstraints(auth.credentials)
 
-  const personQuery = getPeople().modify(filterParams, query, {
-    countryId: 'g.countryId',
-    stateId: 'g.stateId',
-    lgaId: 'g.lgaId',
-    contactNameOrEmail: ['p.name', 'p.email', 'p.email2'],
-    siteId: 'jc.siteId',
-  })
+  const personQuery = getPeople()
+    .modify(filterParams, query, {
+      countryId: 'g.countryId',
+      stateId: 'g.stateId',
+      lgaId: 'g.lgaId',
+      contactNameOrEmail: ['p.name', 'p.email', 'p.email2'],
+      siteId: 'jc.siteId',
+    })
+    .modify(addConstraints, dataConstraints, { geography: 'g' })
 
   // get total count for paging
   const getCount = personQuery

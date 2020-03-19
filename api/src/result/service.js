@@ -430,7 +430,11 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
         queryBuilder.where('rts.externalId', params.treatmentStatus)
       if (params.deviceType)
         queryBuilder.where('dt.externalId', params.deviceType)
-      else queryBuilder.where('dt.externalId', 'CepheidGeneXpert')
+      else
+        queryBuilder.whereIn('dt.externalId', [
+          'CepheidGeneXpert',
+          'GenericCovid19',
+        ])
     }, query)
     .modify(addConstraints, dataConstraints, {
       device: 'd',
