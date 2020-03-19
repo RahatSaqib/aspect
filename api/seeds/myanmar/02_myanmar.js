@@ -61,12 +61,9 @@ async function seed(knex) {
     maxDaysDeviceOffline: 7,
     serverUrl: 'https://myanmar.aspect.id',
   })
-  await addIssueTypes(knex, partnerId, adminId)
+  await addIssueTypes(knex, partnerId, adminId, null)
   // Reuse previously seeded "static" data
-  const [issueTypes, defaultMessageTypes] = await Promise.all([
-    rowsAsObject(knex, 'IssueType', 'externalId'),
-    getDefaultMessageTypes(knex),
-  ])
+  const defaultMessageTypes = await getDefaultMessageTypes(knex)
   const [myanmarCountry] = await knex('Country as c')
     .where({ 'c.a3': 'MMR' })
     .select('c.id', 'c.culture', 'c.timezone')
@@ -418,6 +415,8 @@ async function seed(knex) {
       ])
     })
   )
+  const issueTypes = await rowsAsObject(knex, 'IssueType', 'externalId')
+
   // Notifications
   await knex('NotificationType').insert([
     {

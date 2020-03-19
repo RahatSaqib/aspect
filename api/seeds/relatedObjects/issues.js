@@ -456,6 +456,28 @@ async function getBaseIssues(auditFields) {
         messageSeverityId: messageSeverities.Alert,
       },
     },
+    InventoryStockExpiring: {
+      issueType: {
+        name: 'Inventory Stock Expiring',
+        externalId: 'InventoryStockExpiring',
+        i18nKey: 'issueStatusInventoryStockExpiring',
+        issueCategoryId: issueCategories.ReagentHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      AlertTemplate: {
+        message: '{{issue.data.totalWasted}} consumables likely to expire.',
+      },
+      SmsTemplate: {
+        message: '{{issue.data.totalWasted}} consumables likely to expire.',
+      },
+      EmailTemplate: {
+        subject: 'stock expiring at {{site.name}}',
+        htmlBody: '{{issue.data.totalWasted}} consumables likely to expire.',
+        body: '{{issue.data.totalWasted}} consumables likely to expire.',
+      },
+    },
   }
   return IssueDefinition
 }

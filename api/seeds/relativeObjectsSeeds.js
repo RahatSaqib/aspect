@@ -13,7 +13,17 @@ const { getBaseIssues } = require('./relatedObjects/issues')
 
 // the idea is to place fixed and static data which shouldn't be executed directly from static data.
 
-async function addIssueTypes(knex, _partnerId, _adminId) {
+async function addIssueTypes(
+  knex,
+  _partnerId,
+  _adminId,
+  defaultIssues = [
+    'DeviceOffline',
+    'DeviceNoResults',
+    'InventoryStockExpiring',
+    'NewResultsAvailable',
+  ]
+) {
   // here is preferible to add an enviroment variable just
   // for defining the admin user name and remove the hardcoded one
   let adminId = _adminId
@@ -47,7 +57,11 @@ async function addIssueTypes(knex, _partnerId, _adminId) {
   )
   const issues = await getBaseIssues(auditFields)
   await Promise.each(Object.keys(issues), async elem => {
-    if (insertedIssueTypes.indexOf(elem) === -1) {
+    // if defaultissues is null all are inserted
+    if (
+      insertedIssueTypes.indexOf(elem) === -1 &&
+      (!defaultIssues || defaultIssues.indexOf(elem) >= 0)
+    ) {
       let alertTemplateId
       let smsTemplateId
       let emailTemplateId
@@ -97,7 +111,9 @@ async function addIssueTypes(knex, _partnerId, _adminId) {
       })
     }
   })
-  await insertNewResultPushTemplates(knex, adminId, partnerId)
+
+  if (!defaultIssues || defaultIssues.indexOf('NewResultsAvailable') >= 0)
+    await insertNewResultPushTemplates(knex, adminId, partnerId)
   return true
 }
 
