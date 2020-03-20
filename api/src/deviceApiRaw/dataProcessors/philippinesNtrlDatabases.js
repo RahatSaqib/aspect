@@ -150,13 +150,14 @@ class PhilippinesNtrlDatabase extends SynchronousDataProcessor {
       rawMessage,
       utcNow
     )
-    const resultWorkflowStatusLogId = await this.appendResultWorkflowLog(
+    const resultWorkflowStatusLogId = await this.appendResultWorkflowLogs(
       knex,
       result,
       site,
       operator,
       utcNow,
       resultCategories,
+      resultSignOff,
       resultWorkflowStatuses
     )
     if (resultWorkflowStatusLogId) {
@@ -167,13 +168,14 @@ class PhilippinesNtrlDatabase extends SynchronousDataProcessor {
     this.response.resultIds = [...this.response.resultIds, result.id]
   }
 
-  async appendResultWorkflowLog(
+  async appendResultWorkflowLogs(
     knex,
     result,
     site,
     operator,
     utcNow,
     resultCategories,
+    resultSignOff,
     resultWorkflowStatuses
   ) {
     const resultWorkflowStatusId =
@@ -189,15 +191,7 @@ class PhilippinesNtrlDatabase extends SynchronousDataProcessor {
       changedOn: utcNow,
       createdOn: utcNow,
     }
-    if (!result.id || !result.resultWorkflowStatusLogId) {
-      const [resultWorkflowStatusLogId] = await knex(
-        'ResultWorkflowLog'
-      ).insert(resultWorkflowLog)
-      return resultWorkflowStatusLogId
-    }
-    const existingResultWorkflowLog = await knex('ResultWorkflowLog')
-      .where('id', result.resultWorkflowStatusLogId)
-      .first()
+    let resultWorkflowStatusLogId = null
     const resultWorkflowStatusPriority = [
       resultWorkflowStatuses.Purged,
       resultWorkflowStatuses.Flagged,
@@ -211,19 +205,58 @@ class PhilippinesNtrlDatabase extends SynchronousDataProcessor {
       resultWorkflowStatuses.Ordered,
       resultWorkflowStatuses.OK,
     ]
-    if (
-      !existingResultWorkflowLog ||
-      resultWorkflowStatusPriority.indexOf(resultWorkflowStatusId) <
-        resultWorkflowStatusPriority.indexOf(
-          existingResultWorkflowLog.resultWorkflowStatusId
+    if (!result.resultWorkflowStatusLogId) {
+      ;[resultWorkflowStatusLogId] = await knex('ResultWorkflowLog').insert(
+        resultWorkflowLog
+      )
+    } else {
+      const existingResultWorkflowLog = await knex('ResultWorkflowLog')
+        .where('id', result.resultWorkflowStatusLogId)
+        .first()
+      if (
+        !existingResultWorkflowLog ||
+        resultWorkflowStatusPriority.indexOf(resultWorkflowStatusId) <
+          resultWorkflowStatusPriority.indexOf(
+            existingResultWorkflowLog.resultWorkflowStatusId
+          )
+      ) {
+        ;[resultWorkflowStatusLogId] = await knex('ResultWorkflowLog').insert(
+          resultWorkflowLog
         )
-    ) {
-      const [resultWorkflowStatusLogId] = await knex(
-        'ResultWorkflowLog'
-      ).insert(resultWorkflowLog)
-      return resultWorkflowStatusLogId
+      }
     }
-    return Promise.resolve()
+    if (
+      resultSignOff &&
+      resultSignOff.laboratoryTechnician &&
+      resultSignOff.laboratorySupervisor &&
+      resultSignOff.laboratoryManager
+    ) {
+      const mostRecentResultWorkflowStatusLogId =
+        resultWorkflowStatusLogId || result.resultWorkflowStatusLogId
+      let mostRecentResultWorkflowLog = null
+      if (mostRecentResultWorkflowStatusLogId) {
+        mostRecentResultWorkflowLog = await knex('ResultWorkflowLog')
+          .where('id', mostRecentResultWorkflowStatusLogId)
+          .first()
+      }
+      if (
+        !mostRecentResultWorkflowLog ||
+        resultWorkflowStatusPriority.indexOf(resultWorkflowStatuses.Validated) <
+          resultWorkflowStatusPriority.indexOf(
+            mostRecentResultWorkflowLog.resultWorkflowStatusId
+          )
+      ) {
+        ;[resultWorkflowStatusLogId] = await knex('ResultWorkflowLog').insert({
+          resultId: result.id,
+          resultWorkflowStatusId: resultWorkflowStatuses.Validated,
+          operator: resultSignOff.laboratoryManager,
+          reason: `Data from ${site.deviceName}`,
+          changedOn: utcNow,
+          createdOn: utcNow,
+        })
+      }
+    }
+    return Promise.resolve(resultWorkflowStatusLogId)
   }
 
   async appendDeviceLog(knex, deviceId, resultId, rawMessage, utcNow) {
