@@ -10,7 +10,6 @@ const {
   assayTypeToId,
   deviceTypeToId,
   fileContentTypeToId,
-  partnerTypeToId,
   resultSourceToId,
 } = require('../../src/shared/dictionary')
 
@@ -41,13 +40,11 @@ async function seed(knex) {
     updatedBy: adminId,
   }
 
-  const [partnerId] = await knex('Partner').insert({
-    name: 'GatesRDT',
-    partnerTypeId: await partnerTypeToId('Operating'),
-    deviceLogHistoryDays: 365,
-    maxDaysDeviceOffline: 7,
-    maxDaysDeviceNoResults: 14,
-  })
+  const { partnerId } = await knex('Partner')
+    .where({
+      name: 'GatesRDT',
+    })
+    .first('id as partnerId')
 
   await knex('Assay').insert({
     name: 'CommCare Gates RDT',

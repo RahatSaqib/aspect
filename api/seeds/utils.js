@@ -2,6 +2,7 @@ const Promise = require('bluebird')
 const _ = require('lodash')
 const { readJson } = require('fs-extra')
 const path = require('path')
+const relativeObjectsSeeds = require('./relativeObjectsSeeds')
 const {
   allFeatureToId,
   allResultCategoryToId,
@@ -80,6 +81,7 @@ const foreignKeys = {
 
 // Helper for seeed files. Ru
 let hasSeededStaticData = false
+let commonInserts = false
 
 // Set up the file name of the seed with __filename.
 function seed(seed, fileName, overridedSeeds) {
@@ -113,6 +115,13 @@ async function runSeed(seed, knex, fileName, overridedSeeds) {
         throw e
       })
       .then(async () => {
+        if (!commonInserts) {
+          commonInserts = true
+          await Promise.each(Object.keys(relativeObjectsSeeds), async elem => {
+            commonInserts =
+              commonInserts && (await relativeObjectsSeeds[elem](knex))
+          })
+        }
         await knex('AspectSeed').insert({
           fileName,
           success: true,
@@ -2453,7 +2462,7 @@ async function addReports(knex, countryReports = []) {
   const countries = await knex('Country').select('id')
 
   // globally defined reports applicable to all countries/seeds
-  const { getBaseReports } = require('./fixtures/reports')
+  const { getBaseReports } = require('./relatedObjects/reports')
   const baseReports = (await getBaseReports()) || []
 
   // add reports for each country
