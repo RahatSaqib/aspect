@@ -62,7 +62,6 @@ async function getDashboardWidget({ id, partnerId }, layout) {
     })
     .select(['w.*', 'sw.*'])
     .orderBy(['w.sortOrder'])
-  console.log('widgets', widgets.toString())
   return widgets
 }
 
@@ -129,7 +128,6 @@ async function summaryDashboard(request) {
 
   const user = await getUser(auth.credentials.name)
   const widgets = await getDashboardWidget(user, 'stat')
-  console.log('widgets', widgets)
   const data = await Promise.all(
     widgets.map(async widget => {
       const count = await queryCount(

@@ -42,7 +42,6 @@
       "sqlForIndicator": "select count(u.id) as cnt from User as u",
       "link": "/browse/person",
       "sortOrder": 3
-    }
-   
+    }   
   ]
 }
