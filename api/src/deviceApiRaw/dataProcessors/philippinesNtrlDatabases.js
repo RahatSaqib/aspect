@@ -1248,7 +1248,8 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
         'Laboratory Releasing Form Smear Remarks',
         'Laboratory Registry Remarks',
       ].every(expectedKey => payloadKeys.includes(expectedKey)) &&
-      payload.database.indexOf('PMDT') === 0
+      (payload.database.indexOf('PMDT') === 0 ||
+        payload.table.indexOf('RECORDS_WITH_SIGN_OFFS_PMDT') === 0)
     )
   }
 
@@ -1373,9 +1374,12 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
         }
       }
       const labRequestIdPrefix =
-        payload.database === 'PMDT'
+        payload.database === 'PMDT' ||
+        payload.table === 'RECORDS_WITH_SIGN_OFFS_PMDT'
           ? 'PN-19-'
-          : `PN-${payload.database.substr(payload.database.length - 2)}-`
+          : payload.database.indexOf('PMDT') === 0
+          ? `PN-${payload.database.substr(payload.database.length - 2)}-`
+          : `PN-${payload.table.substr(payload.table.length - 2)}-`
       const ntrlLabRequestId = `${labRequestIdPrefix}${payload['Serial Number']}`
       const sampleOriginSiteId = originSite ? originSite.id : null
       const reportableSiteId =
@@ -2299,7 +2303,8 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
         'Smear Result 2 Date Collected',
         'Smear Result 3 Date Collected',
       ].every(expectedKey => payloadKeys.includes(expectedKey)) &&
-      payload.database.indexOf('RITM') === 0
+      (payload.database.indexOf('RITM') === 0 ||
+        payload.table.indexOf('RECORDS_WITH_SIGN_OFFS_RITM') === 0)
     )
   }
 
@@ -2446,9 +2451,12 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
         }
       }
       const labRequestIdPrefix =
-        payload.database === 'RITM'
+        payload.database === 'RITM' ||
+        payload.table === 'RECORDS_WITH_SIGN_OFFS_RITM'
           ? 'RN-19-'
-          : `RN-${payload.database.substr(payload.database.length - 2)}-`
+          : payload.database.indexOf('RITM') === 0
+          ? `RN-${payload.database.substr(payload.database.length - 2)}-`
+          : `RN-${payload.table.substr(payload.table.length - 2)}-`
       const ntrlLabRequestId = `${labRequestIdPrefix}${payload['Serial Code RN-14-']}`
       const sampleOriginSiteId = originSite ? originSite.id : null
       const reportableSiteId =

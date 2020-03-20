@@ -795,8 +795,8 @@ describe('Device API Raw Philippines NTRL', () => {
         assert.isOk(
           await PhilippinesNtrlPmdt.canProcessRequest({
             payload: {
-              database: 'PMDT',
-              table: 'NTRL DATABASE',
+              database: 'RecordSignOffDatabase',
+              table: 'RECORDS_WITH_SIGN_OFFS_PMDT',
               TimeStamp: '458014',
               'Serial Number': '00004',
               'Last Name': 'OMELA',
@@ -972,8 +972,8 @@ describe('Device API Raw Philippines NTRL', () => {
         assert.isOk(
           await PhilippinesNtrlPmdt.canProcessRequest({
             payload: {
-              database: 'PMDT',
-              table: 'NTRL DATABASE',
+              database: 'RecordSignOffDatabase',
+              table: 'RECORDS_WITH_SIGN_OFFS_PMDT_2020',
               TimeStamp: '458014',
               'Serial Number': '00004',
               'Last Name': 'OMELA',
@@ -1152,8 +1152,8 @@ describe('Device API Raw Philippines NTRL', () => {
         assert.isNotOk(
           await PhilippinesNtrlPmdt.canProcessRequest({
             payload: {
-              database: 'PMDT',
-              table: 'NTRL DATABASE',
+              database: 'RecordSignOffDatabase',
+              table: 'RECORDS_WITH_SIGN_OFFS_PMDT',
               TimeStamp: '458014',
               'Serial Number': '00004',
               'Last Name': 'OMELA',
@@ -2422,8 +2422,8 @@ describe('Device API Raw Philippines NTRL', () => {
           'Cristina C. Villarico, RMT',
       }
       const pmdtRecordPayload0014SmearCultureMGITDstSusceptible2Samples = {
-        database: 'PMDT_2020',
-        table: 'NTRL DATABASE',
+        database: 'RecordSignOffDatabase',
+        table: 'RECORDS_WITH_SIGN_OFFS_PMDT_2020',
         TimeStamp: '262002',
         'Serial Number': '0014',
         'Last Name': 'MITCHEL',
@@ -3735,9 +3735,12 @@ describe('Device API Raw Philippines NTRL', () => {
 
       function getNtrlLabRequestIdFromPayload(payload) {
         const labRequestIdPrefix =
-          payload.database === 'PMDT'
+          payload.database === 'PMDT' ||
+          payload.table === 'RECORDS_WITH_SIGN_OFFS_PMDT'
             ? 'PN-19-'
-            : `PN-${payload.database.substr(payload.database.length - 2)}-`
+            : payload.database.indexOf('PMDT') === 0
+            ? `PN-${payload.database.substr(payload.database.length - 2)}-`
+            : `PN-${payload.table.substr(payload.table.length - 2)}-`
         return `${labRequestIdPrefix}${payload['Serial Number']}`
       }
 
@@ -5823,8 +5826,8 @@ describe('Device API Raw Philippines NTRL', () => {
         'Smear Result 3 Date Collected': null,
       }
       const ritmRecordPayload0423GeneXpertNotDetected1Sample = {
-        database: 'RITM_2020',
-        table: 'RITM Database',
+        database: 'RecordSignOffDatabase',
+        table: 'RECORDS_WITH_SIGN_OFFS_RITM_2020',
         TimeStamp: '446011',
         'Serial Code RN-14-': '0423',
         'Last Name': 'REYNOLDS',
@@ -6179,9 +6182,12 @@ describe('Device API Raw Philippines NTRL', () => {
 
       function getNtrlLabRequestIdFromPayload(payload) {
         const labRequestIdPrefix =
-          payload.database === 'RITM'
+          payload.database === 'RITM' ||
+          payload.table === 'RECORDS_WITH_SIGN_OFFS_RITM'
             ? 'RN-19-'
-            : `RN-${payload.database.substr(payload.database.length - 2)}-`
+            : payload.database.indexOf('RITM') === 0
+            ? `RN-${payload.database.substr(payload.database.length - 2)}-`
+            : `RN-${payload.table.substr(payload.table.length - 2)}-`
         return `${labRequestIdPrefix}${payload['Serial Code RN-14-']}`
       }
 
@@ -6283,11 +6289,7 @@ describe('Device API Raw Philippines NTRL', () => {
           staticDatabaseData.SampleType[
             sampleTypeMapping[payload['Specimen Type']] || 'Other'
           ]
-        const labRequestIdPrefix =
-          payload.database === 'RITM'
-            ? 'RN-19-'
-            : `RN-${payload.database.substr(payload.database.length - 2)}-`
-        const ntrlLabRequestId = `${labRequestIdPrefix}${payload['Serial Code RN-14-']}`
+        const ntrlLabRequestId = getNtrlLabRequestIdFromPayload(payload)
         const numberOfSamples =
           !!payload['Smear Result 3'] ||
           !!payload['TBC Test Result 3rd Sample'] ||
