@@ -640,6 +640,7 @@ async function getDevicesForReport(auth, query) {
     .innerJoin('Site as s', 'd.siteId', 's.id')
     .leftJoin('Geography as g', 's.geographyId', 'g.id')
     .leftJoin('State as st', 'g.stateId', 'st.id')
+    .leftJoin('Lga as lg', 'g.stateId', 'lg.id')
     .where(function() {
       if (!query.deviceIds) {
         return
@@ -704,6 +705,7 @@ async function getDevicesForReport(auth, query) {
     .select([
       ...SELECT_LIST_FIELDS,
       'd.serial',
+      'lg.name as county',
       queryResults
         .clone()
         .countDistinct('r.id')
