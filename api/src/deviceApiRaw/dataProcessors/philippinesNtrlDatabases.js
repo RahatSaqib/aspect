@@ -41,6 +41,7 @@ class PhilippinesNtrlDatabase extends SynchronousDataProcessor {
     resultCategory1Id,
     resultCategory2Id,
     newResultData,
+    resultSignOff,
     resultStartedOn,
     resultEndedOn,
     operator,
@@ -119,6 +120,7 @@ class PhilippinesNtrlDatabase extends SynchronousDataProcessor {
       }
       const resultData = mergeDeep(JSON.parse(result.resultData || '{}'), {
         encodedResult: newResultData,
+        resultSignOff,
       })
       result.resultData = JSON.stringify(resultData)
       const resultPatientData = JSON.parse(result.patientData || '{}')
@@ -238,6 +240,14 @@ class PhilippinesNtrlDatabase extends SynchronousDataProcessor {
       this.response.deviceLogIds = []
     }
     this.response.deviceLogIds = [...this.response.deviceLogIds, deviceLogId]
+  }
+
+  getResultSignOff(testType, payload) {
+    return {
+      laboratoryTechnician: payload[`${testType}SignedOffBy1`],
+      laboratorySupervisor: payload[`${testType}SignedOffBy2`],
+      laboratoryManager: payload[`${testType}SignedOffBy3`],
+    }
   }
 }
 
@@ -1532,6 +1542,7 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
         const assayBdMgitAstId = await assayToId('assayBdMgitAst')
         const assayGenericDstId = await assayToId('assayGenericDst')
         const externalId = `${site.externalId}_${samples[0].externalId}_DST`
+        const resultSignOff = this.getResultSignOff('DST', payload)
         const result = (await knex('Result')
           .where({ externalId, deviceId })
           .orWhere(function() {
@@ -1557,6 +1568,7 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
             dstResultData.dateReleased,
           resultData: JSON.stringify({
             encodedResult: dstResultData,
+            resultSignOff,
           }),
           senderOperator: dstResultData.labTech,
           reportableSiteId,
@@ -1649,6 +1661,7 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
           resultCategory1Id,
           resultCategory2Id,
           dstResultData,
+          resultSignOff,
           dstResultData.dateRead,
           dstResultData.dateRead,
           dstResultData.readBy,
@@ -1699,6 +1712,7 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
         if (cultureResultData.result2 && samples.length > 1) {
           cultureSamples.push(samples[1])
         }
+        const resultSignOff = this.getResultSignOff('Culture', payload)
         await Promise.each(cultureSamples, async (cultureSample, index) => {
           const externalId = `${site.externalId}_${cultureSample.externalId}_CULTURE`
           const result = (await knex('Result')
@@ -1721,6 +1735,7 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
             endedOn: cultureResultData.dateReleased,
             resultData: JSON.stringify({
               encodedResult: cultureResultData,
+              resultSignOff,
             }),
             senderOperator:
               cultureResultData.medTech ||
@@ -1773,6 +1788,7 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
             resultCategory1Id,
             resultCategory2Id,
             cultureResultData,
+            resultSignOff,
             cultureResultData.dateReleased,
             cultureResultData.dateReleased,
             cultureResultData.labTech,
@@ -1816,6 +1832,7 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
       ) {
         const assayLpaId = await assayToId('assayLPA')
         const externalId = `${site.externalId}_${samples[0].externalId}_LPA`
+        const resultSignOff = this.getResultSignOff('LPA', payload)
         const result = (await knex('Result')
           .where({ externalId, deviceId })
           .orWhere(function() {
@@ -1833,6 +1850,7 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
           endedOn: lpaResultData.dateReleased,
           resultData: JSON.stringify({
             encodedResult: lpaResultData,
+            resultSignOff,
           }),
           senderOperator: lpaResultData.performedBy,
         }
@@ -1903,6 +1921,7 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
           resultCategory1Id,
           resultCategory2Id,
           lpaResultData,
+          resultSignOff,
           lpaResultData.dateReleased,
           lpaResultData.dateReleased,
           lpaResultData.performedBy,
@@ -1982,6 +2001,7 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
           'POSITIVE FOR Acid Fast Bacilli': resultCategories.Detected,
           'NEGATIVE FOR Acid Fast Bacilli': resultCategories.NotDetected,
         }
+        const resultSignOff = this.getResultSignOff('Smear', payload)
         await Promise.each(smearSamples, async (smearSample, index) => {
           const externalId = `${site.externalId}_${smearSample.externalId}_SMEAR`
           const result = (await knex('Result')
@@ -2001,6 +2021,7 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
             endedOn: smearResultData.dateReleased,
             resultData: JSON.stringify({
               encodedResult: smearResultData,
+              resultSignOff,
             }),
             senderOperator: smearResultData.laboratoryTechnician,
           }
@@ -2030,6 +2051,7 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
             resultCategory1Id,
             resultCategory2Id,
             smearResultData,
+            resultSignOff,
             smearResultData.dateReleased,
             smearResultData.dateReleased,
             smearResultData.laboratoryTechnician,
@@ -2067,6 +2089,7 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
         const assayGeneXpertMtbRifUltraId = await assayToId('GxMtbRifUltra')
 
         const externalId = `${site.externalId}_${samples[0].externalId}_GX`
+        const resultSignOff = this.getResultSignOff('GeneXpert', payload)
         const result = (await knex('Result')
           .where({ externalId, deviceId })
           .orWhere(function() {
@@ -2087,6 +2110,7 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
           endedOn: geneXpertResultData.processingDate,
           resultData: JSON.stringify({
             encodedResult: geneXpertResultData,
+            resultSignOff,
           }),
           senderOperator: geneXpertResultData.examiner,
         }
@@ -2123,6 +2147,7 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
           resultCategory1Id,
           resultCategory2Id,
           geneXpertResultData,
+          resultSignOff,
           geneXpertResultData.processingDate,
           geneXpertResultData.processingDate,
           geneXpertResultData.examiner,
@@ -2599,6 +2624,7 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
         const assayBdMgitAstId = await assayToId('assayBdMgitAst')
         const assayGenericDstId = await assayToId('assayGenericDst')
         const externalId = `${site.externalId}_${samples[0].externalId}_DST`
+        const resultSignOff = this.getResultSignOff('DST', payload)
         const result = (await knex('Result')
           .where({ externalId, deviceId })
           .orWhere(function() {
@@ -2618,6 +2644,7 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
           endedOn: dstResultData.dateReleased,
           resultData: JSON.stringify({
             encodedResult: dstResultData,
+            resultSignOff,
           }),
           senderOperator: dstResultData.labTech,
           reportableSiteId,
@@ -2701,6 +2728,7 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
           dstResultCategory1Id,
           resultCategory2Id,
           dstResultData,
+          resultSignOff,
           dstResultData.dateRead,
           dstResultData.dateRead,
           dstResultData.readBy,
@@ -2771,6 +2799,7 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
           resultCategories.NoResult,
           resultCategories.Missing,
         ]
+        const resultSignOff = this.getResultSignOff('Culture', payload)
         await Promise.each(cultureSamples, async (cultureSample, index) => {
           const externalId = `${site.externalId}_${cultureSample.externalId}_CULTURE`
           const result = (await knex('Result')
@@ -2793,6 +2822,7 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
             endedOn: cultureResultData.dateReleased,
             resultData: JSON.stringify({
               encodedResult: cultureResultData,
+              resultSignOff,
             }),
             senderOperator: cultureResultData.medTech,
           }
@@ -2817,6 +2847,7 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
             resultCategory1Id,
             resultCategory2Id,
             cultureResultData,
+            resultSignOff,
             cultureResultData.dateReleased,
             cultureResultData.dateReleased,
             cultureResultData.labTech,
@@ -2919,6 +2950,7 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
           resultCategories.NoResult,
           resultCategories.Missing,
         ]
+        const resultSignOff = this.getResultSignOff('Smear', payload)
         await Promise.each(smearSamples, async (smearSample, index) => {
           const externalId = `${site.externalId}_${smearSample.externalId}_SMEAR`
           const result = (await knex('Result')
@@ -2938,6 +2970,7 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
             endedOn: smearResultData.dateReleased,
             resultData: JSON.stringify({
               encodedResult: smearResultData,
+              resultSignOff,
             }),
             senderOperator: smearResultData.laboratoryTechnician,
           }
@@ -2953,6 +2986,7 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
             resultCategory1Id,
             resultCategory2Id,
             smearResultData,
+            resultSignOff,
             smearResultData.dateReleased,
             smearResultData.dateReleased,
             smearResultData.laboratoryTechnician,
@@ -2986,6 +3020,7 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
         const assayGeneXpertMtbRifUltraId = await assayToId('GxMtbRifUltra')
 
         const externalId = `${site.externalId}_${samples[0].externalId}_GX`
+        const resultSignOff = this.getResultSignOff('GeneXpert', payload)
         const result = (await knex('Result')
           .where({ externalId, deviceId })
           .orWhere(function() {
@@ -3006,6 +3041,7 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
           endedOn: geneXpertResultData.dateReleased,
           resultData: JSON.stringify({
             encodedResult: geneXpertResultData,
+            resultSignOff,
           }),
           senderOperator: geneXpertResultData.examiner,
         }
@@ -3049,6 +3085,7 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
           resultCategory1Id,
           resultCategory2Id,
           geneXpertResultData,
+          resultSignOff,
           geneXpertResultData.dateReleased,
           geneXpertResultData.dateReleased,
           geneXpertResultData.examiner,
