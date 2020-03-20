@@ -114,7 +114,7 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
     }
     const parseDate = value => {
       const parsedValue = parseDateOrDefault(value, {
-        formatString: 'yyyyLLdd',
+        formatString: 'yyyyMMdd',
       })
       return parsedValue
         ? convertToTimeZone(parsedValue, { timeZone: 'UTC' })
@@ -122,7 +122,7 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
     }
     const parseTime = value => {
       const parsedValue = parseDateOrDefault(value, {
-        formatString: 'yyyyLLddHHmmss',
+        formatString: 'yyyyMMddHHmmss',
       })
       return parsedValue
         ? convertToTimeZone(parsedValue, { timeZone: 'UTC' })

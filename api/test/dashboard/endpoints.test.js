@@ -32,4 +32,27 @@ describe('dashboard endpoint', () => {
         .execute()
     })
   })
+
+  describe('/dashboard/clinical-indicators', () => {
+    let endpoint
+    const expectedResponse = { value: 'Expected result' }
+
+    beforeEach(() => {
+      endpoint = setupRoute('GET', '/dashboard/clinical-indicators', {
+        async clinicalIndicatorsDashboard() {
+          return expectedResponse
+        },
+      })
+    })
+
+    it('Should respond with the data returned from the service', done => {
+      endpointUtils
+        .callHandlerOn(endpoint)
+        .handleResponseWith(response => {
+          assert.deepEqual(response, expectedResponse)
+        })
+        .thenCall(done)
+        .execute()
+    })
+  })
 })

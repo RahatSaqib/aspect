@@ -30,9 +30,9 @@
         "type": "string",
         "order": 4
       },
-      "dateReleased": {
-        "title": "Date Released" ,
-        "type": "date",
+      "encodedBy": {
+        "title": "Encoded by" ,
+        "type": "string",
         "order": 5
       },
       "examiner": {
@@ -44,6 +44,16 @@
         "title": "Lab Manager" ,
         "type": "string",
         "order": 7
+      },
+      "notedBy": {
+        "title": "Noted By",
+        "type": "string",
+        "order": 8
+      },
+      "dateReleased": {
+        "title": "Date Released" ,
+        "type": "date",
+        "order": 9
       }
     }
   },

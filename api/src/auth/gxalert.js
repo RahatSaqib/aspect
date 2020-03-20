@@ -33,7 +33,8 @@ function getUser(username, knex) {
       'p.culture',
       'p.timezone',
       'p.lastPartnerId as partnerId',
-      'p.lastCountryId as countryId'
+      'p.lastCountryId as countryId',
+      'p.id as personId'
     )
 }
 // --------------------------------------------------------------------------------------------
@@ -96,17 +97,17 @@ async function validateUserAtGxAlert(username, password, user) {
   // items from 'my_aspnet_roles': readonly, write, inventory, service, report
   // items from 'role': deployment, lga, state, national
   if (gxUser.dotNetRoles.includes('admin') || gxUser.role === 'national') {
-    jobFunction = allJobFunctions.find(x => x.name === 'Admin')
+    jobFunction = allJobFunctions.find(x => x.externalId === 'Admin')
   }
   if (!jobFunction && (gxUser.role === 'state' || gxUser.role === 'lga')) {
     jobFunction =
-      allJobFunctions.find(x => x.name === 'Regional Officer') ||
-      allJobFunctions.find(x => x.name === 'Manager')
+      allJobFunctions.find(x => x.externalId === 'Regional Officer') ||
+      allJobFunctions.find(x => x.externalId === 'Manager')
   }
   if (!jobFunction) {
     jobFunction =
-      allJobFunctions.find(x => x.name === 'Clinician') ||
-      allJobFunctions.find(x => x.name === 'Lab User')
+      allJobFunctions.find(x => x.externalId === 'Clinician') ||
+      allJobFunctions.find(x => x.externalId === 'Lab User')
   }
   const jobFunctionId = jobFunction ? jobFunction.id : null
   // exit if no jobFunction found
@@ -176,6 +177,7 @@ async function validateUserAtGxAlert(username, password, user) {
       if (!jobId) {
         ;[jobId] = await knex('Job').insert(d)
       }
+
       await setJobContext(knex, jobId, gxUser)
     }
 
@@ -191,7 +193,7 @@ async function validateUserAtGxAlert(username, password, user) {
 
     // catch error from setJobContext() if no site found or JobContext defined
     // and return null
-  }).catch(() => null)
+  })
 }
 
 // --------------------------------------------------------------------------------------------
@@ -286,13 +288,14 @@ async function setJobContext(knex, jobId, gxUser) {
           stateAbbreviation: deployment.stateAbbreviation,
           lgaName: deployment.lgaName,
         }
+
         const geographyId = await getCreateGeographyIdByGxGeo(knex, options)
         const shortName =
           deployment.shortName || deployment.description || deployment.hostId
 
         let { siteId } =
           (await knex('Device')
-            .where({ geographyId })
+            .where({ geographyId }) // Geography will never be undefined
             .where(function() {
               this.where({ shortName }).orWhere('name', shortName)
             })
@@ -303,17 +306,13 @@ async function setJobContext(knex, jobId, gxUser) {
             (await knex('Site')
               .where({ geographyId })
               .where(function() {
-                this.where({ shortName }).orWhere('name', shortName)
+                this.where({ shortName }).orWhere('name', shortName) // Shortname shouldn't be undefined, too
               })
               .first()) || {}
           siteId = site.id
         }
 
-        if (!siteId) {
-          throw new Error(
-            `No device with shortName or name '${shortName}' found for geographyId ${geographyId}`
-          )
-        }
+        // REVIEWER!!! If the device is not added, Aspect should let the admin to add devices to users
         if (geographyId && siteId) {
           const { id: jobContextId } =
             (await knex('JobContext')
@@ -328,10 +327,9 @@ async function setJobContext(knex, jobId, gxUser) {
       })
     )
   }
-
   // throw error if no JobContext defined - it will be caught and handled by transaction promise
   if (!hasJobContext) {
-    throw new Error('No JobContext defined')
+    throw new Error("The user doesn't have job context.")
   }
 }
 
@@ -400,7 +398,6 @@ async function getCountryIdByAbbr(countryAbbreviation) {
       .from('Country')
       .where('abbreviation', countryAbbreviation)
       .first('id')) || {}
-
   return countryId
 }
 

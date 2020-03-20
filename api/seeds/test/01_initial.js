@@ -4,7 +4,7 @@ const _ = require('lodash')
 const bcrypt = require('bcrypt')
 const Promise = require('bluebird')
 const { addMilliseconds, addMinutes, subMinutes, subDays } = require('date-fns')
-
+const { upsertJobFunction } = require('../common')
 const config = require('../../src/config')
 const {
   getPermissionModules,
@@ -1178,6 +1178,11 @@ async function seed(knex) {
   })
 
   await knex('ResultCategoryAssay').insert({
+    resultCategoryId: resultCategoryNotDetectedId,
+    assayId: assayDaktariHivVlId,
+  })
+
+  await knex('ResultCategoryAssay').insert({
     resultCategoryId: resultCategoryLessThan1000,
     assayId: assayDaktariHivVlId,
   })
@@ -1728,25 +1733,29 @@ async function seed(knex) {
   })
 
   // Job Functions
-  const [jobFunctionIdAdmin] = await knex('JobFunction').insert({
-    name: 'Admin',
-    partnerId: partnerOneId,
-  })
+  const jobFunctionIdAdmin = await upsertJobFunction(
+    knex,
+    'Admin',
+    partnerOneId
+  )
 
-  const [jobFunctionIdManager] = await knex('JobFunction').insert({
-    name: 'Manager',
-    partnerId: partnerOneId,
-  })
+  const jobFunctionIdManager = await upsertJobFunction(
+    knex,
+    'Manager',
+    partnerOneId
+  )
 
-  const [jobFunctionIdClinician] = await knex('JobFunction').insert({
-    name: 'Clinician',
-    partnerId: partnerOneId,
-  })
+  const jobFunctionIdClinician = await upsertJobFunction(
+    knex,
+    'Clinician',
+    partnerOneId
+  )
 
-  const [jobFunctionIdPartnerTwo] = await knex('JobFunction').insert({
-    name: 'Lab Manager',
-    partnerId: partnerTwoId,
-  })
+  const jobFunctionIdPartnerTwo = await upsertJobFunction(
+    knex,
+    'Lab Manager',
+    partnerTwoId
+  )
 
   let featureBlacklist = ['clinicalIndicators', 'operationalData']
 

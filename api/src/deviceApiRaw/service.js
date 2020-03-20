@@ -50,7 +50,7 @@ async function continueUnprocessedRawData(queue) {
     readyDeviceApiRawRecords,
     async readyDeviceApiRawRecord => {
       // eslint-disable-next-line no-console
-      console.log(`ProcessingDeviceApiRaw ${readyDeviceApiRawRecord.id}.`)
+      console.log(`Processing DeviceApiRaw ID: ${readyDeviceApiRawRecord.id}.`)
       const messageContext = queue.createMessageContext('aspect_request')
       let requestText = readyDeviceApiRawRecord.rawData
       if (readyDeviceApiRawRecord.salt) {

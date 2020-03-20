@@ -3,11 +3,10 @@ module.exports = require('../utils').seed(seed, __filename)
 const bcrypt = require('bcrypt')
 const _ = require('lodash')
 const Promise = require('bluebird')
-
 const config = require('../../src/config')
 const myanmarSites = require('./fixtures/myanmarSites.json')
 const dashboardWidget = require('./fixtures/myanmarDashboardWidget.json')
-
+const { upsertJobFunction } = require('../common')
 const {
   rowsAsObject,
   getPermissionModules,
@@ -113,20 +112,19 @@ async function seed(knex) {
     ...auditFields,
   })
 
-  const [jobFunctionIdAdmin] = await knex('JobFunction').insert({
-    name: 'Admin',
-    partnerId,
-  })
+  const jobFunctionIdAdmin = await upsertJobFunction(knex, 'Admin', partnerId)
 
-  const [jobFunctionIdRegionalOfficer] = await knex('JobFunction').insert({
-    name: 'Regional Officer',
-    partnerId,
-  })
+  const jobFunctionIdRegionalOfficer = await upsertJobFunction(
+    knex,
+    'Regional Officer',
+    partnerId
+  )
 
-  const [jobFunctionIdLabUser] = await knex('JobFunction').insert({
-    name: 'Lab User',
-    partnerId,
-  })
+  const jobFunctionIdLabUser = await upsertJobFunction(
+    knex,
+    'Lab User',
+    partnerId
+  )
 
   const jobFunctionIds = {
     jobFunctionIdAdmin,

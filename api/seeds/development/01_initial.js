@@ -36,8 +36,9 @@ const patients = require('./fixtures/patients.json')
 const patientDataSchema = require('../fixtures/MGITPatientDataSchema')
 const dashboardWidget = require('./fixtures/dashboardWidget.json')
 const { errorCodes } = require('./fixtures/errorCodes.js')
-const { updateMGITAssays } = require('../commonTB')
+const { updateMGITAssays, updateCultureAssays } = require('../commonTB')
 const { getRandomTBPatientData } = require('../commonTbresults')
+const { upsertJobFunction } = require('../common')
 
 const millisInHour = 1000 * 60 * 60
 const millisInMinute = 1000 * 60
@@ -216,12 +217,12 @@ async function seed(knex) {
     deviceTypeCategoryId: deviceTypeCategoryInformationSystem,
   })
 
-  const { id: deviceTypeSenaiteLimsId } =
+  let { id: deviceTypeSenaiteLimsId } =
     (await knex('DeviceType')
       .where('externalId', 'SenaiteLims')
       .first('id')) || {}
   if (!deviceTypeSenaiteLimsId) {
-    await knex('DeviceType').insert({
+    deviceTypeSenaiteLimsId = await knex('DeviceType').insert({
       externalId: 'SenaiteLims',
       name: 'Senaite LIMS',
       manufacturer: 'Senaite',
@@ -255,6 +256,7 @@ async function seed(knex) {
     })
   }
   await updateMGITAssays(knex, deviceTypeBDMGITId)
+  await updateCultureAssays(knex, deviceTypeSenaiteLimsId, {}, {})
   // Units
   const piece = await unitToId('Piece')
 
@@ -4008,7 +4010,7 @@ async function seed(knex) {
   // Create geographic hierarchy
   const countries = {}
   const geographies = []
-  const preventRandomSitesForCountries = ['ZANHLS']
+  const preventRandomSitesForCountries = ['ZANHLS', 'MZ']
   await Promise.all(
     _.map(geography.countries, async country => {
       const countryData = _.pick(country, [
@@ -5159,25 +5161,29 @@ async function seed(knex) {
   }) // end of 'await Promise.each(geography.countries'
 
   // Job Functions
-  const [jobFunctionIdAdmin] = await knex('JobFunction').insert({
-    name: 'Admin',
-    partnerId: partnerOneId,
-  })
+  const jobFunctionIdAdmin = await upsertJobFunction(
+    knex,
+    'Admin',
+    partnerOneId
+  )
 
-  const [jobFunctionIdManager] = await knex('JobFunction').insert({
-    name: 'Manager',
-    partnerId: partnerOneId,
-  })
+  const jobFunctionIdManager = await upsertJobFunction(
+    knex,
+    'Manager',
+    partnerOneId
+  )
 
-  const [jobFunctionIdClinician] = await knex('JobFunction').insert({
-    name: 'Clinician',
-    partnerId: partnerOneId,
-  })
+  const jobFunctionIdClinician = await upsertJobFunction(
+    knex,
+    'Clinician',
+    partnerOneId
+  )
 
-  const [jobFunctionIdPartnerTwo] = await knex('JobFunction').insert({
-    name: 'Lab Manager',
-    partnerId: partnerTwoId,
-  })
+  const jobFunctionIdPartnerTwo = await upsertJobFunction(
+    knex,
+    'Lab Manager',
+    partnerTwoId
+  )
 
   let featureBlacklist = ['clinicalIndicators', 'operationalData']
 

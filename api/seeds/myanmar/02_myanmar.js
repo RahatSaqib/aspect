@@ -8,7 +8,7 @@ const RO_PW = 'u4W9wupFBA'
 
 const bcrypt = require('bcrypt')
 const _ = require('lodash')
-
+const { upsertJobFunction } = require('../common')
 const config = require('../../src/config')
 const dashboardWidget = require('./fixtures/dashboardWidget.json')
 const {
@@ -128,20 +128,19 @@ async function seed(knex) {
     ...auditFields,
   })
 
-  const [jobFunctionIdAdmin] = await knex('JobFunction').insert({
-    name: 'Admin',
-    partnerId,
-  })
+  const jobFunctionIdAdmin = await upsertJobFunction(knex, 'Admin', partnerId)
 
-  const [jobFunctionIdRegionalOfficer] = await knex('JobFunction').insert({
-    name: 'Regional Officer',
-    partnerId,
-  })
+  const jobFunctionIdRegionalOfficer = await upsertJobFunction(
+    knex,
+    'Regional Officer',
+    partnerId
+  )
 
-  const [jobFunctionIdLabUser] = await knex('JobFunction').insert({
-    name: 'Lab User',
-    partnerId,
-  })
+  const jobFunctionIdLabUser = await upsertJobFunction(
+    knex,
+    'Lab User',
+    partnerId
+  )
 
   const featureModules = await allFeatureToId()
   await knex('JobFunctionFeature').insert([

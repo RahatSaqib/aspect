@@ -14,16 +14,18 @@ function parseDateOrDefault(
   if (date == null || date === '') {
     return defaultValue
   }
-  const parsedDate =
-    date instanceof Date
-      ? date
-      : options && options.formatString
-      ? dateFns.parse(
-          date,
-          options.formatString,
-          options.backupDate || getUtcTime()
-        )
-      : dateFns.toDate(dateFns.parseISO(date))
+  let parsedDate
+  if (date instanceof Date) {
+    parsedDate = date
+  } else if (options && options.formatString) {
+    parsedDate = dateFns.parse(
+      date,
+      options.formatString,
+      options.backupDate || getUtcTime()
+    )
+  } else {
+    parsedDate = dateFns.toDate(dateFns.parseISO(date))
+  }
   return dateFns.isValid(parsedDate) ? parsedDate : defaultValue
 }
 
@@ -62,7 +64,9 @@ function dateEqual(date1, date2) {
   if ((!date1 && date2) || (date1 && !date2)) {
     return false
   }
-  return dateFns.isEqual(date1, date2)
+  const typeSafeDate1 = date1 instanceof Date ? date1 : dateFns.parseISO(date1)
+  const typeSafeDate2 = date2 instanceof Date ? date2 : dateFns.parseISO(date2)
+  return dateFns.isEqual(typeSafeDate1, typeSafeDate2)
 }
 
 module.exports = {
