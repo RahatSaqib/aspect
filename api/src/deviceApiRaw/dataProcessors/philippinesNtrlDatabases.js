@@ -11,6 +11,7 @@ const {
 } = require('../../shared/date')
 const { convertStringToFloat } = require('../../shared/string')
 const { deviceSeen } = require('../../device/actions')
+const { resultUpdated, resultLogged } = require('../../result/actions')
 const { SynchronousDataProcessor } = require('./_base')
 const {
   sampleTypeToId,
@@ -143,7 +144,7 @@ class PhilippinesNtrlDatabase extends SynchronousDataProcessor {
         .where('id', result.id)
         .update(result)
     }
-    await this.appendDeviceLog(
+    const deviceLogId = await this.appendDeviceLog(
       knex,
       result.deviceId,
       result.id,
@@ -158,13 +159,15 @@ class PhilippinesNtrlDatabase extends SynchronousDataProcessor {
       utcNow,
       resultCategories,
       resultSignOff,
-      resultWorkflowStatuses
+      resultWorkflowStatuses,
+      deviceLogId
     )
     if (resultWorkflowStatusLogId) {
       await knex('Result')
         .where('id', result.id)
         .update({ resultWorkflowStatusLogId })
     }
+    this.messageContext.dispatch(resultUpdated(result.id, deviceLogId))
     this.response.resultIds = [...this.response.resultIds, result.id]
   }
 
@@ -176,7 +179,8 @@ class PhilippinesNtrlDatabase extends SynchronousDataProcessor {
     utcNow,
     resultCategories,
     resultSignOff,
-    resultWorkflowStatuses
+    resultWorkflowStatuses,
+    deviceLogId
   ) {
     const resultWorkflowStatusId =
       result.resultCategory1 === resultCategories.Missing &&
@@ -209,6 +213,7 @@ class PhilippinesNtrlDatabase extends SynchronousDataProcessor {
       ;[resultWorkflowStatusLogId] = await knex('ResultWorkflowLog').insert(
         resultWorkflowLog
       )
+      this.messageContext.dispatch(resultLogged(result.id, deviceLogId))
     } else {
       const existingResultWorkflowLog = await knex('ResultWorkflowLog')
         .where('id', result.resultWorkflowStatusLogId)
@@ -223,6 +228,7 @@ class PhilippinesNtrlDatabase extends SynchronousDataProcessor {
         ;[resultWorkflowStatusLogId] = await knex('ResultWorkflowLog').insert(
           resultWorkflowLog
         )
+        this.messageContext.dispatch(resultLogged(result.id, deviceLogId))
       }
     }
     if (
@@ -254,6 +260,7 @@ class PhilippinesNtrlDatabase extends SynchronousDataProcessor {
           changedOn: utcNow,
           createdOn: utcNow,
         })
+        this.messageContext.dispatch(resultLogged(result.id, deviceLogId))
       }
     }
     return Promise.resolve(resultWorkflowStatusLogId)
@@ -273,6 +280,7 @@ class PhilippinesNtrlDatabase extends SynchronousDataProcessor {
       this.response.deviceLogIds = []
     }
     this.response.deviceLogIds = [...this.response.deviceLogIds, deviceLogId]
+    return deviceLogId
   }
 
   getResultSignOff(testType, payload) {
