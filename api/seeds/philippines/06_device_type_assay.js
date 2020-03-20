@@ -7,7 +7,7 @@ const {
   resultCategoryToId,
 } = require('../../src/shared/dictionary')
 const AssayBdMgitAstResultDataSchema = require('../fixtures/AssayBdMgitAstResultDataSchema.json')
-const AssayBdMgitGndResultDataSchema = require('../fixtures/AssayBdMgitGnd.json')
+const AssayBdMgitGndResultDataSchema = require('../fixtures/AssayBdMgitGndResultDataSchema.json')
 const { updateAssayResultCategoryTreatmentEmphasize } = require('../utils')
 const { updateMGITAssays, updateCultureAssays } = require('../commonTB')
 
@@ -46,6 +46,32 @@ async function seed(knex) {
   }
 
   const patientDataSchema = require('./fixtures/dataSchemas/patientDataSchema.json')
+
+  const resultSignOffResultDataSchema = {
+    resultSignOff: {
+      list: false,
+      order: 1,
+      type: 'object',
+      title: 'Result Sign Off',
+      properties: {
+        laboratoryTechnician: {
+          title: 'Med Tech',
+          type: 'string',
+          order: 0,
+        },
+        laboratorySupervisor: {
+          title: 'Lab Supervisor',
+          type: 'string',
+          order: 1,
+        },
+        laboratoryManager: {
+          title: 'Lab Manager',
+          type: 'string',
+          order: 2,
+        },
+      },
+    },
+  }
 
   const ntrlDatabaseCultureResultDataSchema = {
     encodedResult: {
@@ -151,6 +177,7 @@ async function seed(knex) {
         },
       },
     },
+    ...resultSignOffResultDataSchema,
   }
 
   const ntrlDatabaseDstResultDataSchema = {
@@ -282,6 +309,7 @@ async function seed(knex) {
         },
       },
     },
+    ...resultSignOffResultDataSchema,
   }
 
   await updateMGITAssays(
@@ -391,6 +419,7 @@ async function seed(knex) {
           },
         },
       },
+      ...resultSignOffResultDataSchema,
     }),
     patientDataSchema: JSON.stringify(patientDataSchema),
   }
@@ -533,6 +562,7 @@ async function seed(knex) {
           },
         },
       },
+      ...resultSignOffResultDataSchema,
     }),
     patientDataSchema: JSON.stringify(patientDataSchema),
   }

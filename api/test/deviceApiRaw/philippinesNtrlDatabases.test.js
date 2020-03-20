@@ -17,7 +17,7 @@ describe('Device API Raw Philippines NTRL', () => {
       assayBdMgitAst: 1,
       assayGenericDst: 2,
       assayBdMgitGnd: 3,
-      assayCulture: 4,
+      assayGenericCulture: 4,
       assayLPA: 5,
       assaySmear: 6,
       GxMtbRif: 7,
@@ -3025,7 +3025,7 @@ describe('Device API Raw Philippines NTRL', () => {
         },
         {
           id: 11,
-          assayId: staticDatabaseData.Assay.assayCulture,
+          assayId: staticDatabaseData.Assay.assayGenericCulture,
           resultData: JSON.stringify({
             encodedResult: {
               readBy: null,
@@ -3069,7 +3069,7 @@ describe('Device API Raw Philippines NTRL', () => {
         },
         {
           id: 12,
-          assayId: staticDatabaseData.Assay.assayCulture,
+          assayId: staticDatabaseData.Assay.assayGenericCulture,
           resultData: JSON.stringify({
             encodedResult: {
               readBy: null,
@@ -3673,7 +3673,8 @@ describe('Device API Raw Philippines NTRL', () => {
             resultInsert =>
               resultInsert.assayId ===
                 staticDatabaseData.Assay.assayBdMgitGnd ||
-              resultInsert.assayId === staticDatabaseData.Assay.assayCulture
+              resultInsert.assayId ===
+                staticDatabaseData.Assay.assayGenericCulture
           )
         expect(newCultureResults).to.have.lengthOf(1)
         const newCultureResult = {
@@ -5400,7 +5401,7 @@ describe('Device API Raw Philippines NTRL', () => {
         },
         {
           id: 11,
-          assayId: staticDatabaseData.Assay.assayCulture,
+          assayId: staticDatabaseData.Assay.assayGenericCulture,
           resultData: JSON.stringify({
             encodedResult: {
               readBy: null,
@@ -5814,7 +5815,8 @@ describe('Device API Raw Philippines NTRL', () => {
           .map(insert => insert.lastArg)
           .filter(
             resultInsert =>
-              resultInsert.assayId === staticDatabaseData.Assay.assayCulture
+              resultInsert.assayId ===
+              staticDatabaseData.Assay.assayGenericCulture
           )
         expect(cultureResults).to.have.lengthOf(1)
         const cultureResult = {
@@ -5839,7 +5841,7 @@ describe('Device API Raw Philippines NTRL', () => {
           resultCategory2: staticDatabaseData.ResultCategory.PositiveMTB,
           patientData: generatePatientDataFromRITMPayload(payload),
           externalId: `${databaseRecords.Site.externalId}_${sampleExternalId}_CULTURE`,
-          assayId: staticDatabaseData.Assay.assayCulture,
+          assayId: staticDatabaseData.Assay.assayGenericCulture,
           startedOn: payload['Date and Time of Release of TBC Result'],
           endedOn: payload['Date and Time of Release of TBC Result'],
           resultData: {

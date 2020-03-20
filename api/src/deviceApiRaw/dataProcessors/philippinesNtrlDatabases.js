@@ -1689,9 +1689,9 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
           ])
         )
       ) {
-        // TODO: Update MGIT Data processor to lookup results for assayCulture as well
+        // TODO: Update MGIT Data processor to lookup results for assayGenericCulture as well
         const assayBdMgitGndId = await assayToId('assayBdMgitGnd')
-        const assayCultureId = await assayToId('assayCulture')
+        const assayGenericCultureId = await assayToId('assayGenericCulture')
         const cultureSamples = []
         if (cultureResultData.result1) {
           cultureSamples.push(samples[0])
@@ -1704,7 +1704,7 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
           const result = (await knex('Result')
             .where({ externalId, deviceId })
             .orWhere(function() {
-              this.whereIn('assayId', [assayBdMgitGndId, assayCultureId])
+              this.whereIn('assayId', [assayBdMgitGndId, assayGenericCultureId])
                 .andWhere('sampleId', cultureSample.id)
                 .andWhere('siteId', site.id)
             })
@@ -1714,7 +1714,7 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
             assayId:
               (cultureResultData.methodUsed1 || '').indexOf('MGIT') > -1
                 ? assayBdMgitGndId
-                : assayCultureId,
+                : assayGenericCultureId,
             sampleId: cultureSample.id,
             reportableSiteId,
             startedOn: cultureResultData.dateReleased,
@@ -2737,9 +2737,9 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
           ])
         )
       ) {
-        // TODO: Update MGIT Data processor to lookup results for assayCulture as well
+        // TODO: Update MGIT Data processor to lookup results for assayGenericCulture as well
         const assayBdMgitGndId = await assayToId('assayBdMgitGnd')
-        const assayCultureId = await assayToId('assayCulture')
+        const assayGenericCultureId = await assayToId('assayGenericCulture')
         const cultureSamples = []
         if (cultureResultData.result1) {
           cultureSamples.push(samples[0])
@@ -2776,7 +2776,7 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
           const result = (await knex('Result')
             .where({ externalId, deviceId })
             .orWhere(function() {
-              this.whereIn('assayId', [assayBdMgitGndId, assayCultureId])
+              this.whereIn('assayId', [assayBdMgitGndId, assayGenericCultureId])
                 .andWhere('sampleId', cultureSample.id)
                 .andWhere('siteId', site.id)
             })
@@ -2786,7 +2786,7 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
             assayId:
               (cultureResultData.methodUsed1 || '').indexOf('MGIT') > -1
                 ? assayBdMgitGndId
-                : assayCultureId,
+                : assayGenericCultureId,
             sampleId: cultureSample.id,
             reportableSiteId,
             startedOn: cultureResultData.dateReleased,
