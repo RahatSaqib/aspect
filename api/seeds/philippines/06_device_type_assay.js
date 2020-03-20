@@ -73,7 +73,7 @@ async function seed(knex) {
     },
   }
 
-  const ntrlDatabaseCultureResultDataSchema = {
+  const ntrlDatabaseGenericCultureResultDataSchema = {
     encodedResult: {
       list: false,
       order: 0,
@@ -177,10 +177,10 @@ async function seed(knex) {
         },
       },
     },
-    ...resultSignOffResultDataSchema,
+    ...JSON.parse(JSON.stringify(resultSignOffResultDataSchema)),
   }
 
-  const ntrlDatabaseDstResultDataSchema = {
+  const ntrlDatabaseGenericDstResultDataSchema = {
     encodedResult: {
       list: false,
       order: 0,
@@ -309,28 +309,50 @@ async function seed(knex) {
         },
       },
     },
-    ...resultSignOffResultDataSchema,
+    ...JSON.parse(JSON.stringify(resultSignOffResultDataSchema)),
   }
+
+  const ntrlDatabaseMGITCultureResultDataSchema = {
+    ...AssayBdMgitGndResultDataSchema,
+    ...JSON.parse(JSON.stringify(ntrlDatabaseGenericCultureResultDataSchema)),
+  }
+  const maxOrderFromBdMgitGndResultDataSchema = Math.max(
+    ...Object.values(AssayBdMgitGndResultDataSchema)
+      .filter(mgitDataValue => typeof mgitDataValue.order !== 'undefined')
+      .map(mgitDataValue => mgitDataValue.order)
+  )
+  ntrlDatabaseMGITCultureResultDataSchema.encodedResult.order =
+    maxOrderFromBdMgitGndResultDataSchema + 1
+  ntrlDatabaseMGITCultureResultDataSchema.resultSignOff.order =
+    maxOrderFromBdMgitGndResultDataSchema + 2
+
+  const ntrlDatabaseMGITDstResultDataSchema = {
+    ...AssayBdMgitAstResultDataSchema,
+    ...JSON.parse(JSON.stringify(ntrlDatabaseGenericDstResultDataSchema)),
+  }
+  const maxOrderFromBdMgitAstResultDataSchema = Math.max(
+    ...Object.values(AssayBdMgitAstResultDataSchema)
+      .filter(mgitDataValue => typeof mgitDataValue.order !== 'undefined')
+      .map(mgitDataValue => mgitDataValue.order)
+  )
+  ntrlDatabaseMGITDstResultDataSchema.encodedResult.order =
+    maxOrderFromBdMgitAstResultDataSchema + 1
+  ntrlDatabaseMGITDstResultDataSchema.resultSignOff.order =
+    maxOrderFromBdMgitAstResultDataSchema + 2
 
   await updateMGITAssays(
     knex,
     deviceTypeBDMGITId,
     patientDataSchema,
-    {
-      ...ntrlDatabaseDstResultDataSchema,
-      ...AssayBdMgitAstResultDataSchema,
-    },
-    {
-      ...ntrlDatabaseCultureResultDataSchema,
-      ...AssayBdMgitGndResultDataSchema,
-    }
+    ntrlDatabaseMGITCultureResultDataSchema,
+    ntrlDatabaseMGITDstResultDataSchema
   )
   await updateCultureAssays(
     knex,
     deviceTypeNTRLDatabaseId,
-    ntrlDatabaseDstResultDataSchema,
-    ntrlDatabaseCultureResultDataSchema,
-    patientDataSchema
+    patientDataSchema,
+    ntrlDatabaseGenericCultureResultDataSchema,
+    ntrlDatabaseGenericDstResultDataSchema
   )
 
   const assayLpa = {

@@ -37,8 +37,8 @@ async function updateMGITAssays(
   knex,
   deviceTypeBDMGITId,
   patientDataSchema = MGITPatientDataSchema,
-  assayBdMgitAstResultDataSchema = AssayBdMgitAstResultDataSchema,
-  assayBdMgitGndResultDataSchema = AssayBdMgitGndResultDataSchema
+  assayBdMgitGndResultDataSchema = AssayBdMgitGndResultDataSchema,
+  assayBdMgitAstResultDataSchema = AssayBdMgitAstResultDataSchema
 ) {
   const assayBdMgitAst = {
     name: 'BD MGIT AST',
@@ -197,9 +197,9 @@ function getNewMgitResultData(isAST) {
 async function updateCultureAssays(
   knex,
   deviceTypeLIMSId,
-  dstResultDataSchema = AssayBdMgitAstResultDataSchema,
+  patientDataSchema = MGITPatientDataSchema,
   cultureResultDataSchema = AssayBdMgitGndResultDataSchema,
-  patientDataSchema = MGITPatientDataSchema
+  dstResultDataSchema = AssayBdMgitAstResultDataSchema
 ) {
   const assayGenericDst = {
     name: 'TB DST',
