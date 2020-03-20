@@ -33,7 +33,9 @@ export class AssaySelectField extends PureComponent {
   }
 
   render() {
-    const { allItemText, assayItems, value } = this.props
+    const { allItemText, assayItems } = this.props
+    let { value } = this.props
+
     const restProps = _.omit(this.props, [
       'allItemText',
       'fetchAssays',
@@ -43,8 +45,17 @@ export class AssaySelectField extends PureComponent {
     ])
     const validAssays = assayItems.filter(a => a.get('hasResults'))
 
+    // If there's only one available assay, that unique assay will be set as value
+    const isUniqueAssay = validAssays.size === 1
+    value = isUniqueAssay ? validAssays.first().get('id') : null
+
     return (
-      <SelectField {...restProps} value={value} onChange={this.handleChange}>
+      <SelectField
+        {...restProps}
+        value={value}
+        onChange={this.handleChange}
+        disabled={isUniqueAssay}
+      >
         {allItemText && <MenuItem value="all">{allItemText}</MenuItem>}
         {validAssays.map(a => (
           <MenuItem key={a.get('id')} value={a.get('id')}>
