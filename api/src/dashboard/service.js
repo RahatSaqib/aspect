@@ -1558,7 +1558,6 @@ async function clinicalIndicatorsDashboard(request) {
       qb.orderBy(g)
     })
   })
-
   return {
     data: await resultQuery,
   }

@@ -14,7 +14,7 @@ const { getAccessToken } = require('../utils/authUtils')
 const server = supertest.agent('http://localhost:8080')
 const { assert, expect } = chai
 
-describe('Dashboard routes', () => {
+describe.only('Dashboard routes', () => {
   const path = '/api/dashboard/summary'
 
   describe('GET', () => {
@@ -505,7 +505,7 @@ describe('Dashboard routes', () => {
       })
     })
 
-    describe.only('/dashboard/clinical-indicators', () => {
+    describe('/dashboard/clinical-indicators', () => {
       const clinicalIndicatorsPath = '/api/dashboard/clinical-indicators'
       let resultsForUser = null
       let reportableResultCategories = null
@@ -590,6 +590,13 @@ describe('Dashboard routes', () => {
           .set('Authorization', `Bearer ${shared.token}`)
           .then(res => {
             const expectedResponse = _.chain(resultsForUser)
+              .filter(function(o) {
+                return (
+                  reportableResultCategories.indexOf(
+                    o.resultCategory1Name.replace(' ', '')
+                  ) > -1
+                )
+              })
               .map(o => ({ day: format(new Date(o.endedOn), 'yyyy-MM-dd') }))
               .groupBy('day')
               .map((value, key) => ({ day: key, cnt: value.length }))
