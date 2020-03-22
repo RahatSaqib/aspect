@@ -23,11 +23,11 @@ describe('/account-details', () => {
       const path = '/api/account-details/current'
       shared.checkToken(server, path)
 
-      it('should return the account details for the currently logged in user', done => {
-        server
+      it('should return the account details for the currently logged in user', async () => {
+        await server
           .get(path)
           .set('Authorization', `Bearer ${shared.token}`)
-          .end((err, res) => {
+          .then(res => {
             assert.equal(res.status, 200)
             assert.typeOf(res.body, 'Object')
             assert.property(res.body, 'data')
@@ -51,7 +51,6 @@ describe('/account-details', () => {
             _.each(accountDetailsFieldNames, fieldName => {
               assert.property(res.body.data, fieldName)
             })
-            done()
           })
       })
     })
@@ -66,7 +65,7 @@ describe('/account-details', () => {
         accountDetails = await getAccountDetails()
       })
 
-      it('should update account details for the currently logged in user and return them', done => {
+      it('should update account details for the currently logged in user and return them', async () => {
         const originalTitle = accountDetails.title
         const newJobTitle = 'New Job Title'
         assert.notEqual(
@@ -80,11 +79,11 @@ describe('/account-details', () => {
           'timezone',
           'culture',
         ])
-        server
+        await server
           .put(path)
           .send({ ...contactDetails, title: newJobTitle })
           .set('Authorization', `Bearer ${shared.token}`)
-          .end((err, res) => {
+          .then(res => {
             assert.equal(res.status, 200)
             assert.typeOf(res.body, 'Object')
             assert.property(res.body, 'data')
@@ -109,30 +108,28 @@ describe('/account-details', () => {
               assert.property(res.body.data, fieldName)
             })
             assert.equal(res.body.data.title, newJobTitle)
+          })
+        // Make sure the data has been persisted
+        await server
+          .get('/api/account-details/current')
+          .set('Authorization', `Bearer ${shared.token}`)
+          .then(res => {
+            assert.equal(res.body.data.title, newJobTitle)
 
-            // Make sure the data has been persisted
-            server
-              .get('/api/account-details/current')
-              .set('Authorization', `Bearer ${shared.token}`)
-              .end((err, res) => {
-                assert.equal(res.body.data.title, newJobTitle)
-
-                // Clean Up: Update the user with their old title again
-                contactDetails = _.omit(accountDetails, [
-                  'userId',
-                  'username',
-                  'timezone',
-                  'culture',
-                ])
-                server
-                  .put(path)
-                  .send({ ...contactDetails, title: originalTitle })
-                  .set('Authorization', `Bearer ${shared.token}`)
-                  .end((err, res) => {
-                    assert.equal(res.body.data.title, originalTitle)
-                    done()
-                  })
-              })
+            // Clean Up: Update the user with their old title again
+            contactDetails = _.omit(accountDetails, [
+              'userId',
+              'username',
+              'timezone',
+              'culture',
+            ])
+          })
+        await server
+          .put(path)
+          .send({ ...contactDetails, title: originalTitle })
+          .set('Authorization', `Bearer ${shared.token}`)
+          .then(res => {
+            assert.equal(res.body.data.title, originalTitle)
           })
       })
     })
@@ -147,7 +144,7 @@ describe('/account-details', () => {
         accountDetails = await getAccountDetails()
       })
 
-      it('should update user preferences for the currently logged in user and return them', done => {
+      it('should update user preferences for the currently logged in user and return them', async () => {
         const originalTimezone = accountDetails.timezone
         const newTimezone = 'South African Standard Time'
         assert.notEqual(
@@ -169,11 +166,11 @@ describe('/account-details', () => {
           'lgaId',
           'zip',
         ])
-        server
+        await server
           .put(path)
           .send({ ...userPreferences, timezone: newTimezone })
           .set('Authorization', `Bearer ${shared.token}`)
-          .end((err, res) => {
+          .then(res => {
             assert.equal(res.status, 200)
             assert.typeOf(res.body, 'Object')
             assert.property(res.body, 'data')
@@ -198,38 +195,36 @@ describe('/account-details', () => {
               assert.property(res.body.data, fieldName)
             })
             assert.equal(res.body.data.timezone, newTimezone)
+          })
+        // Make sure the data has been persisted
+        await server
+          .get('/api/account-details/current')
+          .set('Authorization', `Bearer ${shared.token}`)
+          .then(res => {
+            assert.equal(res.body.data.timezone, newTimezone)
 
-            // Make sure the data has been persisted
-            server
-              .get('/api/account-details/current')
-              .set('Authorization', `Bearer ${shared.token}`)
-              .end((err, res) => {
-                assert.equal(res.body.data.timezone, newTimezone)
-
-                // Clean Up: Update the user with their old title again
-                userPreferences = _.omit(accountDetails, [
-                  'userId',
-                  'username',
-                  'name',
-                  'title',
-                  'email',
-                  'email2',
-                  'phone',
-                  'cell',
-                  'countryId',
-                  'stateId',
-                  'lgaId',
-                  'zip',
-                ])
-                server
-                  .put(path)
-                  .send({ ...userPreferences, timezone: originalTimezone })
-                  .set('Authorization', `Bearer ${shared.token}`)
-                  .end((err, res) => {
-                    assert.equal(res.body.data.timezone, originalTimezone)
-                    done()
-                  })
-              })
+            // Clean Up: Update the user with their old title again
+            userPreferences = _.omit(accountDetails, [
+              'userId',
+              'username',
+              'name',
+              'title',
+              'email',
+              'email2',
+              'phone',
+              'cell',
+              'countryId',
+              'stateId',
+              'lgaId',
+              'zip',
+            ])
+          })
+        await server
+          .put(path)
+          .send({ ...userPreferences, timezone: originalTimezone })
+          .set('Authorization', `Bearer ${shared.token}`)
+          .then(res => {
+            assert.equal(res.body.data.timezone, originalTimezone)
           })
       })
     })

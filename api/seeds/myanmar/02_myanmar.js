@@ -1,3 +1,6 @@
+// eslint-disable-next-line import/order
+const { addIssueTypes } = require('../relativeObjectsSeeds')
+
 module.exports = require('../utils').seed(seed, __filename)
 
 const ADMIN_PW = '8v5TMxkpzP'
@@ -49,12 +52,6 @@ async function seed(knex) {
     updatedBy: adminId,
   }
 
-  // Reuse previously seeded "static" data
-  const [issueTypes, defaultMessageTypes] = await Promise.all([
-    rowsAsObject(knex, 'IssueType', 'externalId'),
-    getDefaultMessageTypes(knex),
-  ])
-
   const [partnerId] = await knex('Partner').insert({
     name: 'Myanmar',
     partnerTypeId: await partnerTypeToId('Operating'),
@@ -64,7 +61,9 @@ async function seed(knex) {
     maxDaysDeviceOffline: 7,
     serverUrl: 'https://myanmar.aspect.id',
   })
-
+  await addIssueTypes(knex, partnerId, adminId, null)
+  // Reuse previously seeded "static" data
+  const defaultMessageTypes = await getDefaultMessageTypes(knex)
   const [myanmarCountry] = await knex('Country as c')
     .where({ 'c.a3': 'MMR' })
     .select('c.id', 'c.culture', 'c.timezone')
@@ -415,6 +414,7 @@ async function seed(knex) {
       ])
     })
   )
+  const issueTypes = await rowsAsObject(knex, 'IssueType', 'externalId')
 
   // Notifications
   await knex('NotificationType').insert([
