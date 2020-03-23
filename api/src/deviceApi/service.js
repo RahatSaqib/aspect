@@ -826,11 +826,11 @@ async function onResultLogged(action, context) {
         'p.plugin as partnerPluginName',
         'dt.plugin as deviceTypePluginName'
       )
-    const onResultLogged = await loadPlugin(
+    const pluginOnResultLogged = await loadPlugin(
       [partnerPluginName, deviceTypePluginName],
       'onResultLogged'
     )
-    return onResultLogged(action, context)
+    return pluginOnResultLogged(action, context)
   })
 }
 

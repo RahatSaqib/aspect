@@ -121,7 +121,7 @@ const plugins = {
     issueResolutions: require('./partner/Cameroon/issueResolutionConditions'),
   },
   aspectresultentry: {
-    onResultUpdated: require('./deviceType/AspectResultEntry/onResultUpdated.js'),
+    onResultLogged: require('./deviceType/AspectResultEntry/onResultLogged.js'),
   },
 }
 

@@ -1354,11 +1354,11 @@ async function updateFormData(request) {
     if (!_.isEmpty(fieldValidationErrors)) {
       return Boom.badRequest(fieldValidationErrors.join('\n'))
     }
-    const { id: currentUserId } = await getUser(auth.credentials.name)
-    const boundMessageContext = messageContext.bindActionCreators({
+    messageContext.bindActionCreators({
       resultUpdated,
     })
-    await boundMessageContext.transact(async knex => {
+    const { id: currentUserId } = await getUser(auth.credentials.name)
+    await messageContext.transact(async knex => {
       await knex('Result')
         .where('id', resultId)
         .update({
@@ -1366,8 +1366,7 @@ async function updateFormData(request) {
           updatedBy: currentUserId,
           updatedOn: now,
         })
-      console.log('ResultUpdated', boundMessageContext.resultUpdated)
-      await boundMessageContext.resultUpdated(resultId)
+      messageContext.resultUpdated(resultId)
     })
   }
   const response = await showResult(request)

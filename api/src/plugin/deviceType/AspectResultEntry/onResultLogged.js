@@ -1,7 +1,7 @@
 const _ = require('lodash')
 const { resultUpdated } = require('../../../result/actions')
 
-async function onResultUpdated({ resultId }, { messageContext }) {
+async function onResultLogged({ resultId }, { messageContext }) {
   const context = messageContext.bindActionCreators({ resultUpdated })
   console.log(resultId)
   return context.transact(async knex => {
@@ -60,4 +60,4 @@ async function onResultUpdated({ resultId }, { messageContext }) {
   })
 }
 
-module.exports = onResultUpdated
+module.exports = onResultLogged
