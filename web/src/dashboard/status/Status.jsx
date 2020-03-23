@@ -73,20 +73,7 @@ const Status = ({
       title={intl.formatMessage(messages.treatmentTitle)}
     />
 
-    {/* Loop through diseases user has access to start */}
     <ClinicalIndicators intl={intl} history={history} location={location} />
-
-    {/* <ResultsByCategoryStatus
-      intl={intl}
-      history={history}
-      location={location}
-      className={cssClasses('Section--withStatus')}
-      assayTypeId="GxHiv1Vl"
-      assayTypeId="GxMtbRif"
-      keys={['Detected', 'NotDetected']}
-      title={intl.formatMessage(messages.resultsByCategoryTitle)}
-    /> */}
-    {/* Loop through diseases user has access to end */}
 
     <TargetStatus
       intl={intl}
