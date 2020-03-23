@@ -184,7 +184,7 @@ async function commonUpserts(
     ],
     [features.device, features.result, features.site]
   )
-  if (deviceApiToken)
+  if (deviceApiToken) {
     await upsertGxAlertDevice(
       knex,
       countryId,
@@ -192,6 +192,8 @@ async function commonUpserts(
       auditFields,
       deviceApiToken
     )
+  }
+  await upsertAspectDevice(knex, countryId, partnerId, auditFields)
 }
 
 async function upsertJobFunction(
@@ -359,6 +361,74 @@ async function upsertGxAlertDevice(
         updatedOn: auditFields.updatedOn,
       })
   }
+}
+
+async function upsertAspectDevice(knex, countryId, partnerId, auditFields) {
+  let { id: deviceTypeId } =
+    (await knex('DeviceType')
+      .where('externalId', 'Aspect')
+      .first('id')) || {}
+  if (!deviceTypeId) {
+    const deviceTypeCategoryInformationSystem = await deviceTypeCategoryToId(
+      'Information System'
+    )
+    ;[deviceTypeId] = await knex('DeviceType').insert({
+      externalId: 'Aspect',
+      name: 'Aspect',
+      manufacturer: 'SystemOne',
+      plugin: 'aspectresultentry',
+      deviceTypeCategoryId: deviceTypeCategoryInformationSystem,
+    })
+  }
+  const { countryGeographyId } = await knex('Geography')
+    .where({ countryId })
+    .whereNull('stateId', 'lgaId')
+    .first('id as countryGeographyId')
+
+  let { id: aspectSiteId } =
+    (await knex('Site')
+      .where({
+        externalId: 'aspect',
+        partnerId,
+        geographyId: countryGeographyId,
+      })
+      .first('id')) || {}
+  if (!aspectSiteId) {
+    ;[aspectSiteId] = await knex('Site').insert({
+      ...auditFields,
+      name: 'Aspect Site',
+      shortName: 'Aspect Site',
+      externalId: 'aspect',
+      partnerId,
+      geographyId: countryGeographyId,
+      createdOn: new Date(),
+      updatedOn: new Date(),
+    })
+  }
+
+  let { id: aspectDeviceId } =
+    (await knex('Device')
+      .where({
+        deviceTypeId,
+        partnerId,
+        geographyId: countryGeographyId,
+        siteId: aspectSiteId,
+      })
+      .first('id')) || {}
+  if (!aspectDeviceId) {
+    ;[aspectDeviceId] = await knex('Device').insert({
+      ...auditFields,
+      name: 'Aspect',
+      deviceStatusId: await deviceStatusToId('approved'),
+      partnerId,
+      geographyId: countryGeographyId,
+      siteId: aspectSiteId,
+      lastPingOn: new Date(),
+      lastSeenOn: new Date(),
+      deviceTypeId,
+    })
+  }
+  return aspectDeviceId
 }
 
 async function upsertGeneXpertDeviceTypeAndAssays(

@@ -1,39 +1,48 @@
 module.exports = require('../utils').seed(seed, __filename)
 
+const Promise = require('bluebird')
+
+const { commonUpserts } = require('../common')
+const { upsertCovidDeviceTypes } = require('../commonCovid')
 const utils = require('../utils')
+
+const geography = require('./fixtures/geography.json')
+const AssayCovidResultFormSchema = require('../fixtures/AssayCovidResultFormSchema.json')
 
 async function seed(knex) {
   utils.hasSeededStaticData = true
-  await knex('DeviceType')
-    .where('externalId', 'AspectResultEntry')
-    .whereNull('plugin')
-    .update({ plugin: 'aspectresultentry' })
 
-  const { id: assayAspectResultEntryCovid19Id } = await knex('Assay')
-    .where('externalId', 'assayAspectResultEntryCovid19')
-    .first('id')
   const { id: partnerId } = await knex('Partner')
     .where('name', 'Wakanda')
     .first('id')
-  const covidResultForm = await knex('ResultForm')
-    .where({
-      partnerId,
-      assayId: assayAspectResultEntryCovid19Id,
-    })
-    .first()
 
-  if (covidResultForm && covidResultForm.formSchema) {
-    const formSchema = JSON.parse(covidResultForm.formSchema)
-    if (formSchema.sendChangesOn !== 'submit') {
-      formSchema.sendChangesOn = 'submit'
-      await knex('ResultForm')
-        .where({
-          partnerId,
-          assayId: assayAspectResultEntryCovid19Id,
-        })
-        .update({
-          formSchema: JSON.stringify(formSchema),
-        })
-    }
-  }
+  const covidDeviceTypes = await upsertCovidDeviceTypes(
+    knex,
+    partnerId,
+    AssayCovidResultFormSchema
+  )
+  await Promise.each(
+    covidDeviceTypes.map(deviceType => deviceType.id),
+    async deviceTypeId =>
+      knex('DeviceType')
+        .where('id', deviceTypeId)
+        .whereNull('plugin')
+        .update({ plugin: 'aspectresultentry' })
+  )
+
+  const { id: adminId } = await knex('User')
+    .where('name', 'covid_admin')
+    .first('id')
+  const countryWakanda = geography.countries.find(
+    country => country.abbreviation === 'WK'
+  )
+  await commonUpserts(
+    knex,
+    partnerId,
+    adminId,
+    {
+      countries: [countryWakanda],
+    },
+    'WK'
+  )
 }

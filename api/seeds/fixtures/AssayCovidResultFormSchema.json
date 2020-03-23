@@ -1,0 +1,67 @@
+{
+  "fields": {
+    "testReason": {
+      "i18nLabel": "testReasonCovid19",
+      "control": {
+        "type": "DropDown",
+        "options": [{
+          "title": "Contact of a case",
+          "i18nText": "contactOfACase",
+          "value": "1"
+        }, {
+          "title": "Ill Seeking Healthcare due to suspicion of COVID-19",
+          "i18nText": "illSeekingHealthcare",
+          "value": "2"
+        }, {
+          "title": "Detected at point of entry",
+          "i18nText": "detectedAtPointOfEntry",
+          "value": "3"
+        }, {
+          "title": "Repatriation",
+          "i18nText": "repatriation",
+          "value": "4"
+        }, {
+          "title": "Routine respiratory disease surveillance systems (e.g influenza)",
+          "i18nText": "routineRespiratorySurveillance",
+          "value": "5"
+        }, {
+          "title": "Unknown",
+          "i18nText": "unknown",
+          "value": "6"
+        }]
+      },
+     "order": 1
+    },
+    "caseId": {
+      "i18nLabel": "caseId",
+      "control": {
+        "type": "TextBox"
+      },
+     "order": 2
+    },
+    "age": {
+      "i18nLabel": "age",
+      "control": {
+        "type": "TextBox"
+      },
+     "order": 3
+    },
+    "gender": {
+      "i18nLabel": "gender",
+      "control": {
+        "type": "DropDown",
+        "options": [{
+          "title": "Male",
+          "i18nText": "male",
+          "value": "1"
+        }, {
+          "title": "Female",
+          "i18nText": "female",
+          "value": "2"
+        }]
+      },
+     "order": 4
+    }
+  },
+  "sendChangesOn": "submit"
+}
