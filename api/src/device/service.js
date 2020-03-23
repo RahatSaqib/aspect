@@ -626,13 +626,7 @@ async function getDevicePerformance(request) {
   }
 }
 
-// ---------------------------------
-// get devices with different aggregations for reports
-// ---------------------------------
-async function getDevicesForReport(auth, query) {
-  const dataConstraints = await getConstraints(auth.credentials)
-  const resultCategoryIds = await allResultCategoryToId()
-
+function getDeviceQuery(query, dataConstraints) {
   const deviceQuery = knex('Device as d')
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .innerJoin('DeviceStatus as ds', 'd.deviceStatusId', 'ds.id')
@@ -687,6 +681,17 @@ async function getDevicesForReport(auth, query) {
       device: 'd',
       showUnapprovedDevices: false,
     })
+  return deviceQuery
+}
+
+// ---------------------------------
+// get devices with different aggregations for reports
+// ---------------------------------
+async function getDevicesForReport(auth, query) {
+  const dataConstraints = await getConstraints(auth.credentials)
+  const resultCategoryIds = await allResultCategoryToId()
+  const deviceQuery = getDeviceQuery(query, dataConstraints)
+
   // get total count for paging
   const getCount = deviceQuery
     .clone()
@@ -705,7 +710,6 @@ async function getDevicesForReport(auth, query) {
     .select([
       ...SELECT_LIST_FIELDS,
       'd.serial',
-      'lg.name as county',
       queryResults
         .clone()
         .countDistinct('r.id')
@@ -729,16 +733,6 @@ async function getDevicesForReport(auth, query) {
         )
         .max('rl.changedOn')
         .as('lastUploadOn'),
-      queryResults
-        .clone()
-        .where('r.resultCategory1', resultCategoryIds.Detected)
-        .countDistinct('r.id')
-        .as('totalDetected1'),
-      queryResults
-        .clone()
-        .where('r.resultCategory2', resultCategoryIds.Detected)
-        .countDistinct('r.id')
-        .as('totalDetected2'),
     ])
 
   // return result when both queries are finished
@@ -757,6 +751,60 @@ async function getDevicesForReport(auth, query) {
   return result
 }
 
+async function getDevicesForRifResistanceReport(auth, query) {
+  const dataConstraints = await getConstraints(auth.credentials)
+  const resultCategoryIds = await allResultCategoryToId()
+  const deviceQuery = getDeviceQuery(query, dataConstraints)
+
+  // get total count for paging
+  const getCount = deviceQuery
+    .clone()
+    .count('d.id as count')
+    .first()
+
+  const queryResults = knex('Result as r')
+    .innerJoin('Sample as s', 'r.sampleId', 's.id')
+    .whereRaw('s.originSiteId = d.siteId')
+    .modify(filterDateRangeParams, query, 'r.endedOn')
+
+  // get rows
+  const getItems = deviceQuery
+    .clone()
+    .modify(sortPageParams, query, 'name')
+    .select([
+      'd.name',
+      'lg.name as county',
+      queryResults
+        .clone()
+        .countDistinct('r.id')
+        .as('totalResults'),
+      queryResults
+        .clone()
+        .where('r.resultCategory1', resultCategoryIds.Detected)
+        .countDistinct('r.id')
+        .as('totalDetected1'),
+      queryResults
+        .clone()
+        .where('r.resultCategory2', resultCategoryIds.Detected)
+        .countDistinct('r.id')
+        .as('totalDetected2'),
+    ])
+
+  // return result when both queries are finished
+  const [{ count: total }, data] = await Promise.all([getCount, getItems])
+
+  // add more fields which depend on aggregations
+  data.forEach(async it => {
+    it.rifResistanceRate = it.totalDetected1
+      ? it.totalDetected2 / it.totalDetected1
+      : 0
+  })
+
+  const result = { ok: true, total, length: data.length, data }
+
+  return result
+}
+
 module.exports = {
   listDevices,
   showDevice,
@@ -767,4 +815,5 @@ module.exports = {
   updateDeviceMaintenance,
   getDevicePerformance,
   getDevicesForReport,
+  getDevicesForRifResistanceReport,
 }

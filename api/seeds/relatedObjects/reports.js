@@ -58,7 +58,7 @@ async function getBaseReports() {
       sheets: [
         {
           moduleName: 'device/service',
-          functionName: 'getDevicesForReport',
+          functionName: 'getDevicesForRifResistanceReport',
           query: {
             sortCol: 'name',
             sortDir: 'asc',

@@ -158,8 +158,6 @@ async function createReport(request, reply) {
   // read file into workbook
   const workbook = await readTemplateFile(externalId, lang, LANG_DEFAULT)
 
-  workbook.calcProperties.fullCalcOnLoad = true
-
   const dateRangeString = getDateRangeString(query)
   const statesString = await getStateNames(query)
   const lgasString = await getLgaNamesString(query)
