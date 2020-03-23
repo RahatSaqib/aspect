@@ -45,6 +45,7 @@ export const types = {
   RECEIVE_RESULT_LOG: 'RECEIVE_RESULT_LOG',
 
   SAVING_RESULT_FORM_DATA: 'SAVING_RESULT_FORM_DATA',
+  SAVING_RESULT_FORM_DATA_COMPLETE: 'SAVING_RESULT_FORM_DATA_COMPLETE',
   SET_RESULT_FORM_DATA_VALUE: 'SET_RESULT_FORM_DATA_VALUE',
 }
 /*
@@ -372,6 +373,13 @@ function savingSingleResultFormData(resultId) {
   }
 }
 
+function savingSingleResultFormDataComplete(resultId) {
+  return {
+    type: types.SAVING_RESULT_FORM_DATA_COMPLETE,
+    resultId,
+  }
+}
+
 function sendUpdatedResultFormData(dispatch, resultId, formData) {
   return aspectFetch(`/result/form-data/${resultId}`, {
     method: 'PUT',
@@ -388,7 +396,12 @@ function sendUpdatedResultFormData(dispatch, resultId, formData) {
         })
       ),
     },
-  }).then(json => dispatch(receiveUpdatedSingleResult(json.data)))
+  })
+    .then(json => dispatch(receiveUpdatedSingleResult(json.data)))
+    .catch(err => {
+      dispatch(savingSingleResultFormDataComplete(resultId))
+      return err
+    })
 }
 
 export function saveResultFormDataValue(resultId, formFieldKey, value) {
@@ -607,6 +620,10 @@ export default function resultReducer(state = initialState, action) {
     case types.SAVING_RESULT_FORM_DATA:
       return state.merge({
         formDataSaving: true,
+      })
+    case types.SAVING_RESULT_FORM_DATA_COMPLETE:
+      return state.merge({
+        formDataSaving: false,
       })
     case types.REQUEST_RESULT_LOG:
       return state.merge({

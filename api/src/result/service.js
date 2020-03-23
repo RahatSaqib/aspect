@@ -282,6 +282,7 @@ function getResultTreatmentStatus(response) {
     response.treatmentStatusInfo = null
   }
 }
+
 const addPartnerQueryConstraints = (
   queryBuilder,
   { partner, country, geography, site }
@@ -1342,7 +1343,7 @@ async function updateFormData(request) {
                   : `[${illegalValuesEntered.join()}] are invalid for ${formFieldKey} because they are not present in the options configured for the field.`
               fieldValidationErrors.push(validationMessage)
             }
-          } else if (!allowedValues.includes(formFieldValue)) {
+          } else if (!allowedValues.includes(formFieldValue.toString())) {
             fieldValidationErrors.push(
               `${formFieldValue} is invalid for ${formFieldKey} because it is not present in the options configured for the field.`
             )
@@ -1353,11 +1354,11 @@ async function updateFormData(request) {
     if (!_.isEmpty(fieldValidationErrors)) {
       return Boom.badRequest(fieldValidationErrors.join('\n'))
     }
-    messageContext.bindActionCreators({
+    const { id: currentUserId } = await getUser(auth.credentials.name)
+    const boundMessageContext = messageContext.bindActionCreators({
       resultUpdated,
     })
-    const { id: currentUserId } = await getUser(auth.credentials.name)
-    await messageContext.transact(async knex => {
+    await boundMessageContext.transact(async knex => {
       await knex('Result')
         .where('id', resultId)
         .update({
@@ -1365,7 +1366,8 @@ async function updateFormData(request) {
           updatedBy: currentUserId,
           updatedOn: now,
         })
-      messageContext.resultUpdated(resultId)
+      console.log('ResultUpdated', boundMessageContext.resultUpdated)
+      await boundMessageContext.resultUpdated(resultId)
     })
   }
   const response = await showResult(request)
