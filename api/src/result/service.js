@@ -13,6 +13,7 @@ const { resultUpdated } = require('./actions')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 const { getUser, getUserByUserId } = require('../auth/service')
 const {
+  deviceTypeToId,
   resultWorkflowStatusToId,
   resultTreatmentStatusToId,
   resultStatusToId,
@@ -21,6 +22,7 @@ const { oneDirectionalMd5Hash } = require('../shared/encryption')
 const { returnIso8601StringWithoutTimeZoneOffset } = require('../shared/date')
 const { getPathFromFileReferenceId } = require('../file/service')
 const { getSiteByPartnerCountry } = require('../site/service')
+const { getRemoteAddress } = require('../shared/request')
 
 const SELECT_LIST_FIELDS = [
   'r.id',
@@ -1366,7 +1368,29 @@ async function updateFormData(request) {
           updatedBy: currentUserId,
           updatedOn: now,
         })
-      messageContext.resultUpdated(resultId)
+
+      const { id: deviceId } = await knex('Device')
+        .where({
+          partnerId: result.data.partnerId,
+          deviceTypeId: await deviceTypeToId('Aspect'),
+        })
+        .first()
+      let deviceLogId
+      if (deviceId) {
+        ;[deviceLogId] = await knex('DeviceLog').insert({
+          deviceId,
+          resultId,
+          source: 'AspectFormDataSubmitted',
+          createdOn: now,
+          senderIp: getRemoteAddress(request),
+          rawMessage: JSON.stringify({
+            auth: { credentials: { name: auth.credentials.name } },
+            params,
+            payload,
+          }),
+        })
+      }
+      messageContext.resultUpdated(resultId, deviceLogId)
     })
   }
   const response = await showResult(request)
