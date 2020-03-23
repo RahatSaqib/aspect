@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { ResponsiveBar } from '@nivo/bar';
+import React, { useEffect, useState } from 'react'
+import { ResponsiveBar } from '@nivo/bar'
 
-import { groupByKey, normaliseKeys, getKeysFromResults } from './Helpers';
+import { groupByKey, normaliseKeys, getKeysFromResults } from './Helpers'
 
 const BarGraph = ({
   data,
@@ -11,23 +11,24 @@ const BarGraph = ({
   resultCategory,
   formatDate,
   legend,
-  colours
+  colours,
 }) => {
-  const [graph, setGraph] = useState(false);
-  const [keys, setKeys] = useState(false);
+  const [graph, setGraph] = useState(false)
+  const [keys, setKeys] = useState(false)
+
+  useEffect(() => {
+    if (!keysFromProps && graph) {
+      const keys = getKeysFromResults(graph, indexBy, orderBy)
+      setKeys(keys)
+    }
+  }, [graph, indexBy, keysFromProps, orderBy])
 
   useEffect(() => {
     if (!graph && data.length) {
-      const grouped = groupByKey(data, indexBy, resultCategory, formatDate);
-      setGraph([...normaliseKeys(grouped)]);
+      const grouped = groupByKey(data, indexBy, resultCategory, formatDate)
+      setGraph([...normaliseKeys(grouped)])
     }
-  }, [data]);
-
-  useEffect(() => {
-    !keysFromProps && graph
-      ? setKeys(getKeysFromResults(graph, indexBy, orderBy))
-      : setKeys(keysFromProps);
-  }, [graph, keysFromProps]);
+  }, [data, formatDate, graph, indexBy, resultCategory])
 
   return (
     <ResponsiveBar
@@ -47,7 +48,7 @@ const BarGraph = ({
         tickPadding: 10,
         tickRotation: 0,
         legendPosition: 'middle',
-        legendOffset: 32
+        legendOffset: 32,
       }}
       labelSkipWidth={12}
       labelSkipHeight={12}
@@ -75,15 +76,15 @@ const BarGraph = ({
               {
                 on: 'hover',
                 style: {
-                  itemOpacity: 1
-                }
-              }
-            ]
-          }
+                  itemOpacity: 1,
+                },
+              },
+            ],
+          },
         ]
       }
     />
-  );
-};
+  )
+}
 
-export default BarGraph;
+export default BarGraph

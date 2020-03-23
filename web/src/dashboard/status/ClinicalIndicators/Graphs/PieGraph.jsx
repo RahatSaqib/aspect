@@ -1,32 +1,32 @@
-import React, { useEffect, useState } from 'react';
-import { ResponsivePie } from '@nivo/pie';
-import classnames from 'classnames/bind';
+import React, { useEffect, useState } from 'react'
+import { ResponsivePie } from '@nivo/pie'
+import classnames from 'classnames/bind'
 import {
   formatDataForPie,
   getAverageFromData,
-  sortByInputArray
-} from './Helpers';
+  sortByInputArray,
+} from './Helpers'
 
-const cssClasses = classnames.bind(require('./Graphs.css'));
+const cssClasses = classnames.bind(require('./Graphs.css'))
 
 const LegendIndicator = ({ averages, data }) => {
-  const { title, key } = averages;
-  const [average, setAverage] = useState(0);
+  const { title, key } = averages
+  const [average, setAverage] = useState(0)
 
   useEffect(() => {
     if (!average && data) {
-      const calculated = getAverageFromData(data, key, 'value');
-      setAverage(calculated);
+      const calculated = getAverageFromData(data, key, 'value')
+      setAverage(calculated)
     }
-  }, [data]);
+  }, [average, data, key])
 
   return (
     <div className={cssClasses('legend__container')}>
       <div className={cssClasses('legend__average')}>{average}%</div>
       <div className={cssClasses('legend__title')}>{title}</div>
     </div>
-  );
-};
+  )
+}
 
 const PieGraph = ({
   data,
@@ -35,22 +35,17 @@ const PieGraph = ({
   resultCategory,
   legend,
   averages,
-  colours
+  colours,
 }) => {
-  const [graph, setGraph] = useState(false);
+  const [graph, setGraph] = useState(false)
 
   useEffect(() => {
     if (!graph && data.length) {
-      const formatted = formatDataForPie(
-        data,
-        resultCategory,
-        indexBy,
-        orderBy
-      );
-      const sorted = sortByInputArray(formatted, orderBy, 'id');
-      setGraph(formatted);
+      const formatted = formatDataForPie(data, resultCategory, indexBy, orderBy)
+      const sorted = sortByInputArray(formatted, orderBy, 'id')
+      setGraph(formatted)
     }
-  }, [data]);
+  }, [data, graph, indexBy, orderBy, resultCategory])
 
   return (
     <div className={cssClasses('pie__container')}>
@@ -77,13 +72,13 @@ const PieGraph = ({
         radialLabelsLinkColor={{ from: 'color' }}
         slicesLabelsSkipAngle={10}
         slicesLabelsTextColor="#333333"
-        animate={true}
+        animate
         motionStiffness={90}
         motionDamping={15}
       />
       {averages && <LegendIndicator averages={averages} data={graph} />}
     </div>
-  );
-};
+  )
+}
 
-export default PieGraph;
+export default PieGraph

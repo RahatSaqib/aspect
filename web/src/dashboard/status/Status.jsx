@@ -15,7 +15,7 @@ import TargetStatus from './TargetStatus'
 import Reports from './Reports'
 import BrowseSiteDropdown from '../../globals/components/BrowseSiteDropdown'
 import TreatmentStatus from './TreatmentStatus'
-import ResultsByCategoryStatus from './ResultsByCategoryStatus'
+import ClinicalIndicators from './ClinicalIndicators/ClinicalIndicators'
 
 const cssClasses = classnames.bind(require('./Status.css'))
 
@@ -74,25 +74,18 @@ const Status = ({
     />
 
     {/* Loop through diseases user has access to start */}
-    <ResultsByCategoryStatus
+    <ClinicalIndicators intl={intl} history={history} location={location} />
+
+    {/* <ResultsByCategoryStatus
       intl={intl}
       history={history}
       location={location}
       className={cssClasses('Section--withStatus')}
       assayTypeId="GxHiv1Vl"
-      keys={['LessThan1000', 'MoreThan1000', 'NotDetected']}
-      title={intl.formatMessage(messages.resultsByCategoryTitle)}
-    />
-
-    <ResultsByCategoryStatus
-      intl={intl}
-      history={history}
-      location={location}
-      className={cssClasses('Section--withStatus')}
       assayTypeId="GxMtbRif"
       keys={['Detected', 'NotDetected']}
       title={intl.formatMessage(messages.resultsByCategoryTitle)}
-    />
+    /> */}
     {/* Loop through diseases user has access to end */}
 
     <TargetStatus

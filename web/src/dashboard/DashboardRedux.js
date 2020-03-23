@@ -23,10 +23,10 @@ export const RECEIVE_TARGET_DASHBOARD = 'RECEIVE_TARGET_DASHBOARD'
 export const REQUEST_RESULT_DASHBOARD = 'REQUEST_RESULT_DASHBOARD'
 export const RECEIVE_RESULT_DASHBOARD = 'RECEIVE_RESULT_DASHBOARD'
 
-export const REQUEST_RESULTS_BY_CATEGORY_DASHBOARD =
-  'REQUEST_RESULTS_BY_CATEGORY_DASHBOARD'
-export const RECEIVE_RESULTS_BY_CATEGORY_DASHBOARD =
-  'RECEIVE_RESULTS_BY_CATEGORY_DASHBOARD'
+export const REQUEST_CLINICAL_INDICATORS_DASHBOARD =
+  'REQUEST_CLINICAL_INDICATORS_DASHBOARD'
+export const RECEIVE_CLINICAL_INDICATORS_DASHBOARD =
+  'RECEIVE_CLINICAL_INDICATORS_DASHBOARD'
 
 export const REQUEST_INVENTORY_ITEM_DASHBOARD =
   'REQUEST_INVENTORY_ITEM_DASHBOARD'
@@ -470,11 +470,11 @@ function receiveTreatmentDashboard(requestedAt, data) {
 }
 
 // -------------------------------------------------------------------
-export function fetchResultsByCategoryDashboard(params) {
+export function fetchClinicalIndicatorsDashboard(params) {
   const { assay, type: dataType } = params
   return dispatch => {
     const requestedAt = `results_${Date.now()}`
-    dispatch(requestResultsByCategoryDashboard({ requestedAt }))
+    dispatch(requestClinicalIndicatorsDashboard({ requestedAt }))
 
     return aspectFetch('/dashboard/clinical-indicators', {
       method: 'GET',
@@ -484,7 +484,7 @@ export function fetchResultsByCategoryDashboard(params) {
           defineMessages({
             title: {
               id:
-                'errorResponseMessages.fetchResultsByCategoryDashboard.GET.403.title',
+                'errorResponseMessages.fetchClinicalIndicatorsDashboard.GET.403.title',
               defaultMessage: 'Insufficient Permissions',
             },
           })
@@ -493,7 +493,7 @@ export function fetchResultsByCategoryDashboard(params) {
           defineMessages({
             title: {
               id:
-                'errorResponseMessages.fetchResultsByCategoryDashboard.GET.default.title',
+                'errorResponseMessages.fetchClinicalIndicatorsDashboard.GET.default.title',
               defaultMessage: 'Error Loading Dashboard Results By Category',
             },
           })
@@ -501,20 +501,25 @@ export function fetchResultsByCategoryDashboard(params) {
       },
     }).then(json =>
       dispatch(
-        receiveResultsByCategoryDashboard(assay, dataType, requestedAt, json)
+        receiveClinicalIndicatorsDashboard(assay, dataType, requestedAt, json)
       )
     )
   }
 }
-function requestResultsByCategoryDashboard(payload) {
+function requestClinicalIndicatorsDashboard(payload) {
   return {
-    type: REQUEST_RESULTS_BY_CATEGORY_DASHBOARD,
+    type: REQUEST_CLINICAL_INDICATORS_DASHBOARD,
     ...payload,
   }
 }
-function receiveResultsByCategoryDashboard(assay, dataType, requestedAt, data) {
+function receiveClinicalIndicatorsDashboard(
+  assay,
+  dataType,
+  requestedAt,
+  data
+) {
   return {
-    type: RECEIVE_RESULTS_BY_CATEGORY_DASHBOARD,
+    type: RECEIVE_CLINICAL_INDICATORS_DASHBOARD,
     requestedAt,
     data,
     assay,
@@ -580,7 +585,7 @@ const Summary = Immutable.Record({
   operational: Immutable.Map(),
   actionSummaryMap: Immutable.Map(),
   treatmentStatus: Immutable.Map(),
-  resultsByCategory: Immutable.Map(),
+  clinicalIndicators: Immutable.Map(),
   inventoryItems: Immutable.List(),
 })
 
@@ -601,7 +606,7 @@ export default function dashboardReducer(state = initialState, action) {
     case REQUEST_STAT_DASHBOARD:
     case REQUEST_TARGET_DASHBOARD:
     case REQUEST_RESULT_DASHBOARD:
-    case REQUEST_RESULTS_BY_CATEGORY_DASHBOARD:
+    case REQUEST_CLINICAL_INDICATORS_DASHBOARD:
     case REQUEST_INVENTORY_ITEM_DASHBOARD:
     case REQUEST_DEVICE_DASHBOARD:
     case REQUEST_SITE_DASHBOARD:
@@ -735,15 +740,14 @@ export default function dashboardReducer(state = initialState, action) {
         })
       })
     }
-    case RECEIVE_RESULTS_BY_CATEGORY_DASHBOARD: {
+    case RECEIVE_CLINICAL_INDICATORS_DASHBOARD: {
       return state.withMutations(mutState => {
         onRequested(action, mutState, () => {
           const { assay, data, dataType } = action
-          const currentState = state.resultsByCategory.toJS()
+          const currentState = state.clinicalIndicators.toJS()
           const currentAssayData = currentState[assay]
-          // console.log('fired2!', currentState, currentState[assay]);
           mutState.set(
-            'resultsByCategory',
+            'clinicalIndicators',
             new Immutable.fromJS({
               ...currentState,
               [assay]: { ...currentAssayData, [dataType]: { ...data } },
