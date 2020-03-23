@@ -13,7 +13,7 @@ const sortByInputArray = (data, sortExample, sortKey) =>
 
 const getKeysFromResults = (data, keyToOmit, orderBy) => {
   const res = sortByInputArrayFlat(
-    uniq(data.flatMap(x => Object.keys(x))),
+    uniq(data.flatMap(a => Object.keys(a))),
     orderBy
   )
   return keyToOmit ? without(res, keyToOmit) : res
