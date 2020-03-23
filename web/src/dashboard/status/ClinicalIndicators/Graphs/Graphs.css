@@ -1,0 +1,26 @@
+.pie__container {
+  position: relative;
+  width: 380px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.legend__container {
+  position: absolute;
+  text-align: center;
+  width: 100%;
+  flex-wrap: wrap;
+  max-width: 170px;
+}
+
+.legend__title {
+  font-size: 18px;
+  color: #333333;
+}
+
+.legend__average {
+  font-size: 48px;
+  font-weight: 900;
+  color: #00ca1c;
+}
