@@ -2,7 +2,7 @@
 /* eslint-disable no-loop-func */
 /* eslint-env es6 */
 import _ from 'lodash'
-import { createFetch, base, header, accept, params } from 'http-client'
+import { createFetch, base, header, accept } from 'http-client'
 import { defineMessages } from 'react-intl'
 import { showError } from '../../appNotification/AppNotificationRedux'
 import { setLastServerResponseTime } from '../../globals/GlobalsRedux'
@@ -39,7 +39,7 @@ function addAuthHeaderMiddleware(fetch, input, options = {}) {
 function addGetParamsMiddleware(fetch, input, options = {}) {
   const { method, params } = options
   let index = 0
-  // TODO: dpo - fix no-loop-func
+  // TODO: dpo - fix no-loop-func eslint
   let queryString = `${input}`
   if (method && method === 'GET' && params) {
     for (const [key, value] of Object.entries(params)) {

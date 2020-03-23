@@ -274,10 +274,6 @@ export const messages = defineMessages({
     id: 'pages.Status.treatmentTitle',
     defaultMessage: 'Confirmed Follow-up',
   },
-  clinicalIndicators: {
-    id: 'pages.Status.clinicalIndicators',
-    defaultMessage: 'Clinical Indicators',
-  },
   treatmentAllSites: {
     id: 'pages.Status.treatmentAllSites',
     defaultMessage: 'All Sites',
