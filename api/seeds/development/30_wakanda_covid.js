@@ -364,7 +364,7 @@ async function seed(knex) {
         order: 4,
       },
     },
-    sendChangesOn: 'change',
+    sendChangesOn: 'submit',
   }
 
   await knex('ResultForm').insert({

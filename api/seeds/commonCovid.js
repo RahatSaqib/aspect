@@ -20,6 +20,7 @@ async function upsertCovidAssay(
     externalId: 'AspectResultEntry',
     name: 'Aspect Result Entry',
     manufacturer: 'SystemOne',
+    plugin: 'aspectresultentry',
   })
 
   const assayAspectResultEntryCovid19 = {

@@ -120,6 +120,9 @@ const plugins = {
     issueTriggers: require('./partner/Cameroon/issueTriggers'),
     issueResolutions: require('./partner/Cameroon/issueResolutionConditions'),
   },
+  aspectresultentry: {
+    onResultUpdated: require('./deviceType/AspectResultEntry/onResultUpdated.js'),
+  },
 }
 
 /**
