@@ -25,7 +25,7 @@ const types = {
  * associated with a device log entry (NOTE if not specified,
  * device API listener will create one)
  */
-function resultUpdated(resultId, deviceLogId) {
+function resultUpdated(resultId, deviceLogId, userId) {
   if (!resultId) {
     throw new Error('Must specify resultId for resultUpdated')
   }
@@ -33,6 +33,7 @@ function resultUpdated(resultId, deviceLogId) {
     type: types.RESULT_UPDATED,
     resultId,
     deviceLogId,
+    userId,
   }
 }
 

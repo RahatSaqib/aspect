@@ -177,9 +177,11 @@ async function seed(knex) {
   await Promise.each(
     covidDeviceTypes.map(deviceType => deviceType.id),
     async deviceTypeId => {
-      deviceTypeAssays[deviceTypeId] = await knex('Assay')
-        .where({ deviceTypeId })
-        .first()
+      deviceTypeAssays[deviceTypeId] = await knex('Assay as a')
+        .join('AssayType as at', 'a.assayTypeId', 'at.id')
+        .where('a.deviceTypeId', deviceTypeId)
+        .andWhere('at.externalId', 'covid19')
+        .first('a.*')
     }
   )
 

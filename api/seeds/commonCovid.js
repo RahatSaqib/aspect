@@ -161,19 +161,21 @@ async function upsertCovidDeviceTypes(
           assayId: assayCovidId,
           formSchema: JSON.stringify(resultFormSchema),
         })
-      } else if (resultForm.formSchema) {
-        const formSchema = JSON.parse(resultForm.formSchema)
-        if (formSchema.sendChangesOn !== resultForm.sendChangesOn) {
-          formSchema.sendChangesOn = resultForm.sendChangesOn
-          await knex('ResultForm')
-            .where({
-              partnerId,
-              assayId: assayCovidId,
-            })
-            .update({
-              formSchema: JSON.stringify(formSchema),
-            })
+      } else {
+        const existingFormSchema = JSON.parse(resultForm.formSchema || '{}')
+        if (
+          existingFormSchema.sendChangesOn !== resultFormSchema.sendChangesOn
+        ) {
+          existingFormSchema.sendChangesOn = resultFormSchema.sendChangesOn
         }
+        await knex('ResultForm')
+          .where({
+            partnerId,
+            assayId: assayCovidId,
+          })
+          .update({
+            formSchema: JSON.stringify(existingFormSchema),
+          })
       }
       covidDeviceTypes.push(deviceType)
     }
