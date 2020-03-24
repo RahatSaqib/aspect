@@ -626,7 +626,7 @@ async function getDevicePerformance(request) {
   }
 }
 
-function getDeviceQuery(query, dataConstraints) {
+function getDeviceBaseQuery(query, dataConstraints) {
   const deviceQuery = knex('Device as d')
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .innerJoin('DeviceStatus as ds', 'd.deviceStatusId', 'ds.id')
@@ -690,7 +690,7 @@ function getDeviceQuery(query, dataConstraints) {
 async function getDevicesForReport(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
   const resultCategoryIds = await allResultCategoryToId()
-  const deviceQuery = getDeviceQuery(query, dataConstraints)
+  const deviceQuery = getDeviceBaseQuery(query, dataConstraints)
 
   // get total count for paging
   const getCount = deviceQuery
@@ -754,7 +754,7 @@ async function getDevicesForReport(auth, query) {
 async function getDevicesForRifResistanceReport(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
   const resultCategoryIds = await allResultCategoryToId()
-  const deviceQuery = getDeviceQuery(query, dataConstraints)
+  const deviceQuery = getDeviceBaseQuery(query, dataConstraints)
 
   // get total count for paging
   const getCount = deviceQuery
@@ -772,6 +772,7 @@ async function getDevicesForRifResistanceReport(auth, query) {
     .clone()
     .modify(sortPageParams, query, 'name')
     .select([
+      'st.name as state',
       'd.name',
       'lg.name as county',
       queryResults

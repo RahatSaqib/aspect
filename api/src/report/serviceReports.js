@@ -224,9 +224,10 @@ async function createReport(request, reply) {
             if (fieldName === '#') {
               return rowIndex + 1
             }
-            let value = (fieldName && dataRow[fieldName]) || 0
+            let value = fieldName && dataRow[fieldName]
+            value = _.isNil(value) ? '' : value
             if (fieldName === 'patientAge' && value === 'null') {
-              value = 0
+              value = ''
             }
             return value
           })
