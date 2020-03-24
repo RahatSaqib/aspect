@@ -385,7 +385,7 @@ async function seed(knex) {
     )
 
     const formData = {
-      age: rnd,
+      ageYears: rnd,
       caseId: `COVID-${_.random(1000, 9999)}-ID`,
       gender: _.random(1, 2),
       testReason: _.random(1, 6),

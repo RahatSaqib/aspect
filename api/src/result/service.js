@@ -1397,7 +1397,7 @@ async function updateFormData(request) {
       messageContext.resultUpdated(resultId, deviceLogId, currentUserId)
     })
   }
-
+  await Promise.delay(2000)
   const response = await showResult(request)
   return response
 }

@@ -392,8 +392,7 @@ const messages = defineMessages({
   },
   resultsOfLastTest: {
     id: 'pages.ResultDetail.formFields.resultsOfLastTest',
-    defaultMessage:
-      'Result of last test',
+    defaultMessage: 'Result of last test',
   },
   totalNumberOfContactsFollowedForThisCase: {
     id:

@@ -45,4 +45,24 @@ async function seed(knex) {
     },
     'WK'
   )
+  const covidResultFormData = await knex('AssayType as at')
+    .join('Assay as a', 'at.id', 'a.assayTypeId')
+    .join('Result as r', 'a.id', 'r.assayId')
+    .where('at.externalId', 'covid19')
+    .whereNotNull('r.formData')
+    .select('r.id', 'r.formData')
+    .map(result => ({
+      id: result.id,
+      formData: JSON.parse(result.formData),
+    }))
+  await Promise.each(covidResultFormData, async result => {
+    if (result.formData.age) {
+      result.formData.ageYears = result.formData.age
+      delete result.formData.age
+      return knex('Result')
+        .where('id', result.id)
+        .update({ formData: JSON.stringify(result.formData) })
+    }
+    return Promise.resolve()
+  })
 }

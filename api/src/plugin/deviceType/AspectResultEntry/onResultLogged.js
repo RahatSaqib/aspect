@@ -1,6 +1,10 @@
 const _ = require('lodash')
 const { resultUpdated } = require('../../../result/actions')
-const { resultSourceToId } = require('../../../shared/dictionary')
+const {
+  resultCategoryToId,
+  resultSourceToId,
+} = require('../../../shared/dictionary')
+const { parseDateOrDefault } = require('../../../shared/date')
 
 async function onResultLogged(
   { resultId, deviceLogId, userId },
@@ -49,7 +53,10 @@ async function updateCovidResultFromFormData(
         'a.resultSourceId',
         'r.formData',
         'r.patientData',
-        'rf.formSchema'
+        'r.resultData',
+        'rf.formSchema',
+        'r.resultCategory1',
+        'r.endedOn'
       )
     if (!result) {
       return
@@ -58,8 +65,11 @@ async function updateCovidResultFromFormData(
       assayExternalId,
       resultSourceId,
       formData,
+      resultData,
       patientData,
       formSchema,
+      resultCategory1,
+      endedOn,
     } = result
     const covid19AssayExternalIds = await knex('AssayType as at')
       .join('Assay as a', 'at.id', 'a.assayTypeId')
@@ -77,8 +87,16 @@ async function updateCovidResultFromFormData(
       return
     }
     let patientDataObject = {}
+    let originalPatientDataObject = {}
     if (patientData) {
       patientDataObject = JSON.parse(patientData)
+      originalPatientDataObject = JSON.parse(patientData)
+    }
+    let resultDataObject = {}
+    let originalResultDataObject = {}
+    if (resultData) {
+      resultDataObject = JSON.parse(resultData)
+      originalResultDataObject = JSON.parse(resultData)
     }
     let formSchemaObject = {}
     if (formSchema) {
@@ -113,7 +131,9 @@ async function updateCovidResultFromFormData(
         testReasonOptions.find(testReasonOption =>
           _.isEqual(testReasonOption.value, formDataObject.testReason)
         ) || {}
-      ).title || formDataObject.testReason
+      ).title ||
+      formDataObject.testReasonOther ||
+      formDataObject.testReason
     patientDataObject.age =
       formDataObject.age ||
       (formDataObject.ageYears ? `${formDataObject.ageYears} years` : null) ||
@@ -129,7 +149,55 @@ async function updateCovidResultFromFormData(
           _.isEqual(genderOption.value, formDataObject.gender)
         ) || {}
       ).title || formDataObject.gender
-    resultUpdates.patientData = JSON.stringify(patientDataObject)
+    if (!_.isEqual(patientDataObject, originalPatientDataObject)) {
+      resultUpdates.patientData = JSON.stringify(patientDataObject)
+    }
+    const resultsOfLastTestOptions =
+      _.get(formSchemaObject, 'fields.resultsOfLastTest.control.options') || []
+    const selectedResultText = (
+      resultsOfLastTestOptions.find(resultsOfLastTestOption =>
+        _.isEqual(
+          resultsOfLastTestOption.value,
+          formDataObject.resultsOfLastTest
+        )
+      ) || {}
+    ).title
+    let testDate
+    if (formDataObject.dateOfFirstLaboratoryConfirmationTest) {
+      testDate = parseDateOrDefault(
+        formDataObject.dateOfFirstLaboratoryConfirmationTest
+      )
+    }
+    if (canOverwriteDiagnosticDataByHand) {
+      resultDataObject.resultText =
+        selectedResultText || resultDataObject.resultText
+      if (testDate) {
+        resultUpdates.endedOn = testDate || endedOn
+      }
+    } else if (selectedResultText) {
+      resultDataObject.resultText =
+        resultDataObject.resultText || selectedResultText
+      if (
+        resultDataObject.resultText === 'Unknown' &&
+        selectedResultText !== 'Unknown'
+      ) {
+        resultDataObject.resultText = selectedResultText
+      }
+      if (testDate) {
+        resultUpdates.endedOn = endedOn || testDate
+      }
+    }
+    if (!_.isEqual(resultDataObject, originalResultDataObject)) {
+      if (resultDataObject.resultText) {
+        const resultCategoryId = await resultCategoryToId(
+          resultDataObject.resultText
+        )
+        if (resultCategoryId && resultCategoryId !== resultCategory1) {
+          resultUpdates.resultCategory1 = resultCategoryId
+        }
+      }
+      resultUpdates.resultData = JSON.stringify(resultDataObject)
+    }
     if (_.isEmpty(resultUpdates)) {
       return
     }
