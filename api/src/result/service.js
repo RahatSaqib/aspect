@@ -1369,26 +1369,30 @@ async function updateFormData(request) {
           updatedOn: now,
         })
 
-      const { id: deviceId } = await knex('Device')
-        .where({
-          partnerId: result.data.partnerId,
-          deviceTypeId: await deviceTypeToId('Aspect'),
-        })
-        .first()
       let deviceLogId
-      if (deviceId) {
-        ;[deviceLogId] = await knex('DeviceLog').insert({
-          deviceId,
-          resultId,
-          source: 'AspectFormDataSubmitted',
-          createdOn: now,
-          senderIp: getRemoteAddress(request),
-          rawMessage: JSON.stringify({
-            auth: { credentials: { name: auth.credentials.name } },
-            params,
-            payload,
-          }),
-        })
+      const aspectDeviceTypeId = await deviceTypeToId('Aspect')
+      if (aspectDeviceTypeId) {
+        const { id: deviceId } =
+          (await knex('Device')
+            .where({
+              partnerId: result.data.partnerId,
+              deviceTypeId: aspectDeviceTypeId,
+            })
+            .first()) || {}
+        if (deviceId) {
+          ;[deviceLogId] = await knex('DeviceLog').insert({
+            deviceId,
+            resultId,
+            source: 'Result Edited in Aspect',
+            createdOn: now,
+            senderIp: getRemoteAddress(request),
+            rawMessage: JSON.stringify({
+              auth: { credentials: { name: auth.credentials.name } },
+              params,
+              payload,
+            }),
+          })
+        }
       }
       messageContext.resultUpdated(resultId, deviceLogId, currentUserId)
     })
