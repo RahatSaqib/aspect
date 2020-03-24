@@ -114,7 +114,13 @@ async function updateCovidResultFromFormData(
           _.isEqual(testReasonOption.value, formDataObject.testReason)
         ) || {}
       ).title || formDataObject.testReason
-    patientDataObject.age = formDataObject.age
+    patientDataObject.age =
+      formDataObject.age ||
+      (formDataObject.ageYears ? `${formDataObject.ageYears} years` : null) ||
+      (formDataObject.ageMonths
+        ? `${formDataObject.ageMonths} months`
+        : null) ||
+      (formDataObject.ageDays ? `${formDataObject.ageDays} days` : null)
     const genderOptions =
       _.get(formSchemaObject, 'fields.gender.control.options') || []
     patientDataObject.gender =

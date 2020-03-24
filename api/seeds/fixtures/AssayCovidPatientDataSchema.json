@@ -16,7 +16,7 @@
 	},
 	"age": {
 		"title": "Age",
-		"type": "number",
+		"type": "string",
 		"order": 3
 	},
 	"gender": {
