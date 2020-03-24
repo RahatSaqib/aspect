@@ -7,8 +7,17 @@ async function onResultLogged(
   { messageContext }
 ) {
   const context = messageContext.bindActionCreators({ resultUpdated })
-  return context.transact(async knex => {
-    const now = new Date()
+  await updateCovidResultFromFormData(
+    { resultId, deviceLogId, userId },
+    { messageContext: context }
+  )
+}
+
+async function updateCovidResultFromFormData(
+  { resultId, deviceLogId, userId },
+  { messageContext }
+) {
+  return messageContext.transact(async knex => {
     const { externalId: deviceLogDeviceTypeExternalId } =
       (await knex('DeviceLog as dl')
         .join('Device as d', 'dl.deviceId', 'd.id')
@@ -22,6 +31,9 @@ async function onResultLogged(
         })
         .orderBy('dl.id', 'desc')
         .first('dt.externalId')) || {}
+    if (deviceLogDeviceTypeExternalId !== 'Aspect') {
+      return
+    }
     const result = await knex('Result as r')
       .join('Assay as a', 'r.assayId', 'a.id')
       .join('Device as d', 'r.deviceId', 'd.id')
@@ -39,89 +51,88 @@ async function onResultLogged(
         'r.patientData',
         'rf.formSchema'
       )
-    if (result) {
-      const {
-        assayExternalId,
-        resultSourceId,
-        formData,
-        patientData,
-        formSchema,
-      } = result
-      const resultUpdates = {}
-
-      let formDataObject
-      if (formData) {
-        formDataObject = JSON.parse(formData)
-      }
-      let patientDataObject = {}
-      if (patientData) {
-        patientDataObject = JSON.parse(patientData)
-      }
-      let formSchemaObject = {}
-      if (formSchema) {
-        formSchemaObject = JSON.parse(formSchema)
-      }
-      if (formDataObject && !_.isEmpty(formDataObject)) {
-        const covid19AssayExternalIds = await knex('AssayType as at')
-          .join('Assay as a', 'at.id', 'a.assayTypeId')
-          .where('at.externalId', 'covid19')
-          .pluck('a.externalId')
-        if (
-          deviceLogDeviceTypeExternalId === 'Aspect' &&
-          covid19AssayExternalIds.includes(assayExternalId)
-        ) {
-          const enteredByHandResultSourceId = await resultSourceToId(
-            'EnteredByHand'
-          )
-          const diagnosticDeviceResoultSourceId = await resultSourceToId(
-            'DiagnosticDevice'
-          )
-          const deviceLogCountFromDiagnosticDevice = await knex(
-            'DeviceLog as dl'
-          )
-            .join('Device as d', 'dl.deviceId', 'd.id')
-            .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
-            .join('Assay as a', 'dt.id', 'a.deviceTypeId')
-            .where('dl.resultId', resultId)
-            .andWhere('a.resultSourceId', diagnosticDeviceResoultSourceId)
-            .count()
-          const canOverwriteDiagnosticDataByHand =
-            resultSourceId === enteredByHandResultSourceId ||
-            deviceLogCountFromDiagnosticDevice === 0
-          if (canOverwriteDiagnosticDataByHand) {
-            patientDataObject.id = formDataObject.caseId
-          } else if (formDataObject.caseId) {
-            patientDataObject.id = patientDataObject.id || formDataObject.caseId
-          }
-          patientDataObject.caseId = formDataObject.caseId
-          const testReasonOptions =
-            _.get(formSchemaObject, 'fields.testReason.control.options') || []
-          patientDataObject.testReason =
-            (
-              testReasonOptions.find(testReasonOption =>
-                _.isEqual(testReasonOption.value, formDataObject.testReason)
-              ) || {}
-            ).title || formDataObject.testReason
-          patientDataObject.age = formDataObject.age
-          const genderOptions =
-            _.get(formSchemaObject, 'fields.gender.control.options') || []
-          patientDataObject.gender =
-            (
-              genderOptions.find(genderOption =>
-                _.isEqual(genderOption.value, formDataObject.gender)
-              ) || {}
-            ).title || formDataObject.gender
-          resultUpdates.patientData = JSON.stringify(patientDataObject)
-        }
-      }
-      if (!_.isEmpty(resultUpdates)) {
-        resultUpdates.updatedOn = now
-        resultUpdates.updatedBy = userId
-        await knex('Result')
-          .where('id', resultId)
-          .update(resultUpdates)
-      }
+    if (!result) {
+      return
     }
+    const {
+      assayExternalId,
+      resultSourceId,
+      formData,
+      patientData,
+      formSchema,
+    } = result
+    const covid19AssayExternalIds = await knex('AssayType as at')
+      .join('Assay as a', 'at.id', 'a.assayTypeId')
+      .where('at.externalId', 'covid19')
+      .pluck('a.externalId')
+    if (!covid19AssayExternalIds.includes(assayExternalId)) {
+      return
+    }
+    const resultUpdates = {}
+    let formDataObject
+    if (formData) {
+      formDataObject = JSON.parse(formData)
+    }
+    if (_.isEmpty(formDataObject)) {
+      return
+    }
+    let patientDataObject = {}
+    if (patientData) {
+      patientDataObject = JSON.parse(patientData)
+    }
+    let formSchemaObject = {}
+    if (formSchema) {
+      formSchemaObject = JSON.parse(formSchema)
+    }
+    const enteredByHandResultSourceId = await resultSourceToId('EnteredByHand')
+    const diagnosticDeviceResoultSourceId = await resultSourceToId(
+      'DiagnosticDevice'
+    )
+    const [{ deviceLogCountFromDiagnosticDevice }] = await knex(
+      'DeviceLog as dl'
+    )
+      .join('Device as d', 'dl.deviceId', 'd.id')
+      .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
+      .join('Assay as a', 'dt.id', 'a.deviceTypeId')
+      .where('dl.resultId', resultId)
+      .andWhere('a.resultSourceId', diagnosticDeviceResoultSourceId)
+      .count('dl.id as deviceLogCountFromDiagnosticDevice')
+    const canOverwriteDiagnosticDataByHand =
+      resultSourceId === enteredByHandResultSourceId ||
+      deviceLogCountFromDiagnosticDevice === 0
+    if (canOverwriteDiagnosticDataByHand) {
+      patientDataObject.id = formDataObject.caseId
+    } else if (formDataObject.caseId) {
+      patientDataObject.id = patientDataObject.id || formDataObject.caseId
+    }
+    patientDataObject.caseId = formDataObject.caseId
+    const testReasonOptions =
+      _.get(formSchemaObject, 'fields.testReason.control.options') || []
+    patientDataObject.testReason =
+      (
+        testReasonOptions.find(testReasonOption =>
+          _.isEqual(testReasonOption.value, formDataObject.testReason)
+        ) || {}
+      ).title || formDataObject.testReason
+    patientDataObject.age = formDataObject.age
+    const genderOptions =
+      _.get(formSchemaObject, 'fields.gender.control.options') || []
+    patientDataObject.gender =
+      (
+        genderOptions.find(genderOption =>
+          _.isEqual(genderOption.value, formDataObject.gender)
+        ) || {}
+      ).title || formDataObject.gender
+    resultUpdates.patientData = JSON.stringify(patientDataObject)
+    if (_.isEmpty(resultUpdates)) {
+      return
+    }
+    const now = new Date()
+    resultUpdates.updatedOn = now
+    resultUpdates.updatedBy = userId
+    await knex('Result')
+      .where('id', resultId)
+      .update(resultUpdates)
   })
 }
 
