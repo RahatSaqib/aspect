@@ -61,21 +61,34 @@ async function onResultLogged(
       if (formSchema) {
         formSchemaObject = JSON.parse(formSchema)
       }
-      if (
-        formDataObject &&
-        !_.isEmpty(formDataObject) &&
-        [
-          'assayPCRCovid19',
-          'assayMP96Covid19',
-          'assayQS7Covid19',
-          'assayGXCovid19',
-        ].includes(assayExternalId)
-      ) {
-        if (deviceLogDeviceTypeExternalId === 'Aspect') {
+      if (formDataObject && !_.isEmpty(formDataObject)) {
+        const covid19AssayExternalIds = await knex('AssayType as at')
+          .join('Assay as a', 'at.id', 'a.assayTypeId')
+          .where('at.externalId', 'covid19')
+          .pluck('a.externalId')
+        if (
+          deviceLogDeviceTypeExternalId === 'Aspect' &&
+          covid19AssayExternalIds.includes(assayExternalId)
+        ) {
           const enteredByHandResultSourceId = await resultSourceToId(
             'EnteredByHand'
           )
-          if (resultSourceId === enteredByHandResultSourceId) {
+          const diagnosticDeviceResoultSourceId = await resultSourceToId(
+            'DiagnosticDevice'
+          )
+          const deviceLogCountFromDiagnosticDevice = await knex(
+            'DeviceLog as dl'
+          )
+            .join('Device as d', 'dl.deviceId', 'd.id')
+            .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
+            .join('Assay as a', 'dt.id', 'a.deviceTypeId')
+            .where('dl.resultId', resultId)
+            .andWhere('a.resultSourceId', diagnosticDeviceResoultSourceId)
+            .count()
+          const canOverwriteDiagnosticDataByHand =
+            resultSourceId === enteredByHandResultSourceId ||
+            deviceLogCountFromDiagnosticDevice === 0
+          if (canOverwriteDiagnosticDataByHand) {
             patientDataObject.id = formDataObject.caseId
           } else if (formDataObject.caseId) {
             patientDataObject.id = patientDataObject.id || formDataObject.caseId

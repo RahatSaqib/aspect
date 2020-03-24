@@ -237,8 +237,11 @@ async function seed(knex) {
               ]
             const device = {
               ...auditFields,
-              name: `${labData.name} Aspect`,
-              shortName: `${labData.externalId}_aspect`,
+              name: `${labData.name} ${deviceType.name}`.substr(0, 255),
+              shortName: `${labData.externalId}_${deviceType.externalId}`.substr(
+                0,
+                45
+              ),
               deviceTypeId: deviceType.id,
               deviceStatusId: deviceStatusApprovedId,
               partnerId: labData.partnerId,
