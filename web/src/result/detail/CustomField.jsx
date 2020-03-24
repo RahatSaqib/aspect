@@ -399,6 +399,34 @@ const messages = defineMessages({
       'pages.ResultDetail.formFields.totalNumberOfContactsFollowedForThisCase',
     defaultMessage: 'Total number of contacts followed for this case',
   },
+  testType: {
+    id: 'pages.ResultDetail.formFields.testType',
+    defaultMessage: 'Type of test',
+  },
+  pcr: {
+    id: 'pages.ResultDetail.formFields.pcr',
+    defaultMessage: 'PCR/molecular',
+  },
+  immunoassay: {
+    id: 'pages.ResultDetail.formFields.immunoassay',
+    defaultMessage: 'Immunoassay',
+  },
+  rapidDiagnosticTest: {
+    id: 'pages.ResultDetail.formFields.rapidDiagnosticTest',
+    defaultMessage: 'Rapid diagnostic test',
+  },
+  digitalXRay: {
+    id: 'pages.ResultDetail.formFields.digitalXRay',
+    defaultMessage: 'Digital X-Ray',
+  },
+  dateAndTimeOfTest: {
+    id: 'pages.ResultDetail.formFields.dateAndTimeOfTest',
+    defaultMessage: 'Date and time of test',
+  },
+  testResult: {
+    id: 'pages.ResultDetail.formFields.testResult',
+    defaultMessage: 'Test result',
+  },
 })
 
 export default class CustomField extends PureComponent {

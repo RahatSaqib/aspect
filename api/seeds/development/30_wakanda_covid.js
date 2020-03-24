@@ -29,7 +29,7 @@ const utils = require('../utils')
 
 const geography = require('./fixtures/geography.json')
 const followUp = require('../fixtures/FollowUp.json')
-const AssayCovidResultFormSchema = require('../fixtures/AssayCovidResultFormSchema.json')
+const wakandaCovidResultFormSchema = require('./fixtures/wakandaCovidResultFormSchema.json')
 
 const millisInMinute = 1000 * 60
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
@@ -171,7 +171,7 @@ async function seed(knex) {
   ])
 
   const covidDeviceTypes = (
-    await upsertCovidDeviceTypes(knex, partnerId, AssayCovidResultFormSchema)
+    await upsertCovidDeviceTypes(knex, partnerId, wakandaCovidResultFormSchema)
   ).filter(deviceType => deviceType.externalId !== 'Aspect')
   const deviceTypeAssays = {}
   await Promise.each(
@@ -413,11 +413,11 @@ async function seed(knex) {
         age: formData.age,
         caseId: formData.caseId,
         gender:
-          AssayCovidResultFormSchema.fields.gender.control.options[
+          wakandaCovidResultFormSchema.fields.gender.control.options[
             formData.gender - 1
           ].title,
         testReason:
-          AssayCovidResultFormSchema.fields.testReason.control.options[
+          wakandaCovidResultFormSchema.fields.testReason.control.options[
             formData.testReason - 1
           ].title,
       }),

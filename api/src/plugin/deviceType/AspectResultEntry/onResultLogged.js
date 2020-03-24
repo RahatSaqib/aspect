@@ -152,21 +152,16 @@ async function updateCovidResultFromFormData(
     if (!_.isEqual(patientDataObject, originalPatientDataObject)) {
       resultUpdates.patientData = JSON.stringify(patientDataObject)
     }
-    const resultsOfLastTestOptions =
-      _.get(formSchemaObject, 'fields.resultsOfLastTest.control.options') || []
+    const testResultOptions =
+      _.get(formSchemaObject, 'fields.testResult.control.options') || []
     const selectedResultText = (
-      resultsOfLastTestOptions.find(resultsOfLastTestOption =>
-        _.isEqual(
-          resultsOfLastTestOption.value,
-          formDataObject.resultsOfLastTest
-        )
+      testResultOptions.find(testResultOption =>
+        _.isEqual(testResultOption.value, formDataObject.testResult)
       ) || {}
     ).title
     let testDate
-    if (formDataObject.dateOfFirstLaboratoryConfirmationTest) {
-      testDate = parseDateOrDefault(
-        formDataObject.dateOfFirstLaboratoryConfirmationTest
-      )
+    if (formDataObject.dateAndTimeOfTest) {
+      testDate = parseDateOrDefault(formDataObject.dateAndTimeOfTest)
     }
     if (canOverwriteDiagnosticDataByHand) {
       resultDataObject.resultText =
@@ -186,6 +181,17 @@ async function updateCovidResultFromFormData(
       if (testDate) {
         resultUpdates.endedOn = endedOn || testDate
       }
+    }
+    if (assayExternalId === 'assayGenericCovid19') {
+      const testTypeOptions =
+        _.get(formSchemaObject, 'fields.testTypeOptions.control.options') || []
+      const selectedTestType = (
+        testTypeOptions.find(testTypeOption =>
+          _.isEqual(testTypeOption.value, formDataObject.testType)
+        ) || {}
+      ).title
+      resultDataObject.typeOfTest =
+        selectedTestType || resultDataObject.typeOfTest
     }
     if (!_.isEqual(resultDataObject, originalResultDataObject)) {
       if (resultDataObject.resultText) {

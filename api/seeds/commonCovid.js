@@ -106,7 +106,15 @@ async function upsertCovidDeviceTypes(
         resultSourceId: deviceTypeSpec.resultSourceId,
         resultCategory1Label: 'COVID-19',
         resultCategory1i18nKey: 'resultCategoryCovid19',
-        resultDataSchema: JSON.stringify(resultDataSchema),
+        resultDataSchema: JSON.stringify(
+          deviceTypeSpec.abbreviation === 'Generic' &&
+            !resultDataSchema.typeOfTest
+            ? {
+                ...resultDataSchema,
+                typeOfTest: { type: 'string', title: 'Type of Test' },
+              }
+            : resultDataSchema
+        ),
         patientDataSchema: JSON.stringify(patientDataSchema),
       }
 
@@ -155,18 +163,61 @@ async function upsertCovidDeviceTypes(
           assayId: assayCovidId,
         })
         .first()
+      const assayResultFormSchema = JSON.parse(JSON.stringify(resultFormSchema))
+      if (deviceTypeSpec.abbreviation === 'Generic') {
+        Object.keys(assayResultFormSchema.fields).forEach(
+          assayResultFormSchemaFieldKey => {
+            assayResultFormSchema.fields[
+              assayResultFormSchemaFieldKey
+            ].order += 1
+          }
+        )
+        const minFieldOrder = Math.min(
+          Object.values(assayResultFormSchema.fields).map(field => field.order)
+        )
+        assayResultFormSchema.fields.testType = {
+          i18nLabel: 'testType',
+          control: {
+            type: 'DropDown',
+            options: [
+              {
+                title: 'PCR/molecular',
+                i18nText: 'pcr',
+                value: 'pcr',
+              },
+              {
+                title: 'Immunoassay',
+                i18nText: 'immunoassay',
+                value: 'immunoassay',
+              },
+              {
+                title: 'Rapid diagnostic test',
+                i18nText: 'rapidDiagnosticTest',
+                value: 'rapidDiagnosticTest',
+              },
+              {
+                title: 'Digital X-Ray',
+                i18nText: 'digitalXRay',
+                value: 'digitalXRay',
+              },
+            ],
+          },
+          order: minFieldOrder - 1,
+        }
+      }
       if (!resultForm) {
         await knex('ResultForm').insert({
           partnerId,
           assayId: assayCovidId,
-          formSchema: JSON.stringify(resultFormSchema),
+          formSchema: JSON.stringify(assayResultFormSchema),
         })
       } else {
         const existingFormSchema = JSON.parse(resultForm.formSchema || '{}')
         if (
-          existingFormSchema.sendChangesOn !== resultFormSchema.sendChangesOn
+          existingFormSchema.sendChangesOn !==
+          assayResultFormSchema.sendChangesOn
         ) {
-          existingFormSchema.sendChangesOn = resultFormSchema.sendChangesOn
+          existingFormSchema.sendChangesOn = assayResultFormSchema.sendChangesOn
         }
         await knex('ResultForm')
           .where({

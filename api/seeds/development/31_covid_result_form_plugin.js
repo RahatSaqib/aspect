@@ -7,7 +7,7 @@ const { upsertCovidDeviceTypes } = require('../commonCovid')
 const utils = require('../utils')
 
 const geography = require('./fixtures/geography.json')
-const AssayCovidResultFormSchema = require('../fixtures/AssayCovidResultFormSchema.json')
+const wakandaCovidResultFormSchema = require('./fixtures/wakandaCovidResultFormSchema.json')
 
 async function seed(knex) {
   utils.hasSeededStaticData = true
@@ -19,7 +19,7 @@ async function seed(knex) {
   const covidDeviceTypes = await upsertCovidDeviceTypes(
     knex,
     partnerId,
-    AssayCovidResultFormSchema
+    wakandaCovidResultFormSchema
   )
   await Promise.each(
     covidDeviceTypes.map(deviceType => deviceType.id),
@@ -65,4 +65,65 @@ async function seed(knex) {
     }
     return Promise.resolve()
   })
+  const aspectGenericResultForm = await knex('Assay as a')
+    .join('ResultForm as rf', 'a.id', 'rf.assayId')
+    .where('a.externalId', 'assayGenericCovid19')
+    .andWhere('rf.partnerId', partnerId)
+    .first('rf.*')
+  if (aspectGenericResultForm) {
+    const aspectGenericResultFormSchema = JSON.parse(
+      aspectGenericResultForm.formSchema
+    )
+    if (!aspectGenericResultFormSchema.fields.testType) {
+      Object.keys(aspectGenericResultFormSchema.fields).forEach(
+        assayResultFormSchemaFieldKey => {
+          aspectGenericResultFormSchema.fields[
+            assayResultFormSchemaFieldKey
+          ].order += 1
+        }
+      )
+      const minFieldOrder = Math.min(
+        Object.values(aspectGenericResultFormSchema.fields).map(
+          field => field.order
+        )
+      )
+      aspectGenericResultFormSchema.fields.testType = {
+        i18nLabel: 'testType',
+        control: {
+          type: 'DropDown',
+          options: [
+            {
+              title: 'PCR/molecular',
+              i18nText: 'pcr',
+              value: 'pcr',
+            },
+            {
+              title: 'Immunoassay',
+              i18nText: 'immunoassay',
+              value: 'immunoassay',
+            },
+            {
+              title: 'Rapid diagnostic test',
+              i18nText: 'rapidDiagnosticTest',
+              value: 'rapidDiagnosticTest',
+            },
+            {
+              title: 'Digital X-Ray',
+              i18nText: 'digitalXRay',
+              value: 'digitalXRay',
+            },
+          ],
+        },
+        order: minFieldOrder - 1,
+      }
+      await knex('ResultForm')
+        .where({
+          assayId: aspectGenericResultForm.assayId,
+          partner: aspectGenericResultForm.partnerId,
+        })
+        .update({
+          formSchema: JSON.stringify(aspectGenericResultFormSchema),
+        })
+    }
+  }
 }
