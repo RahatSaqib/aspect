@@ -35,7 +35,8 @@ const PieGraph = ({
   resultCategory,
   legend,
   averages,
-  colours,
+  colors,
+  componentClass,
 }) => {
   const [graph, setGraph] = useState(false)
 
@@ -48,18 +49,18 @@ const PieGraph = ({
   }, [data, graph, indexBy, orderBy, resultCategory])
 
   return (
-    <div className={cssClasses('pie__container')}>
+    <div className={cssClasses(componentClass)}>
       <ResponsivePie
         data={graph}
         keys={orderBy}
-        margin={{ top: 10, right: 10, bottom: 10, left: 10 }}
+        margin={{ top: 30, right: 30, bottom: 30, left: 30 }}
         innerRadius={0.85}
         enableRadialLabels={false}
         enableSlicesLabels={false}
         padAngle={-1}
         startAngle={-90}
         cornerRadius={3}
-        colors={colours}
+        colors={colors}
         borderWidth={1}
         borderColor={{ from: 'color', modifiers: [['darker', 0.2]] }}
         radialLabelsSkipAngle={10}

@@ -1,9 +1,17 @@
-.pie__container {
+.clinicalIndicators__pie {
+  background: #f6f6f6;
+  border-radius: 6px;
   position: relative;
-  width: 380px;
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-grow: 1;
+  height: 75%;
+  /* align-self: center; */
+}
+
+.clinicalIndicators__bar {
+  flex-grow: 2;
 }
 
 .legend__container {
