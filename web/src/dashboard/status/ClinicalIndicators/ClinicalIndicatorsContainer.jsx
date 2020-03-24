@@ -17,7 +17,6 @@ const cssClinicalIndicators = classnames.bind(require('./Clinical.css'))
 const GraphContainer = ({ title, children, className }) => (
   <div className={cssClinicalIndicators('resultsgraph__container')}>
     <div className={cssClinicalIndicators(className)}>
-      <div className={cssClinicalIndicators('results__title')}>{title}</div>
       <div className={cssClinicalIndicators('results__graph')}>{children}</div>
     </div>
   </div>
@@ -69,7 +68,7 @@ const ClinicalIndicatorsContainer = ({
   data = false,
   ...props
 }) => {
-  const { graphTitle, colours, graphType, orderBy } = props.assay
+  const { graphContainerClass, colors, graphType, orderBy } = props.assay
 
   return (
     <Card className={className}>
@@ -85,7 +84,9 @@ const ClinicalIndicatorsContainer = ({
       <div style={{ marginTop: 30 }}>
         <div className={cssClinicalIndicators('results__container')}>
           {data && Object.keys(data).length === graphType.length ? (
-            <GraphContainer title={graphTitle} className="results__bar">
+            <GraphContainer
+              className={cssClinicalIndicators(graphContainerClass)}
+            >
               {graphType.map(
                 ({
                   dataKey,
@@ -95,6 +96,8 @@ const ClinicalIndicatorsContainer = ({
                   legend = false,
                   averages = false,
                   component: Component,
+                  componentClass,
+                  displayMethod = 'percentage',
                 }) => (
                   <Component
                     data={data[dataKey].data}
@@ -104,7 +107,9 @@ const ClinicalIndicatorsContainer = ({
                     legend={legend}
                     averages={averages}
                     formatDate={formatDate}
-                    colours={colours}
+                    colors={colors}
+                    componentClass={componentClass}
+                    displayMethod={displayMethod}
                   />
                 )
               )}

@@ -26,12 +26,15 @@ export const ClinicalIndicators = ({ intl }) => {
        * setAssays: array with config params to drive graph generation.
        * @param  {String} id The assay ID to pass to the endpoint
        * @param  {String} name Name of the disease to show
-       * @param  {String} graphTitle Name of the graph
-       * @param  {Array} colours Colours per data point, order is important!
+       * @param  {String} graphContainerClass Class to apply to container component
+       * @param  {Array} colors colors per data point, order is important!
        * @param  {Array} orderBy Order of datapoints within the graph, order is important!
        * @param  {Array} graphType Array of grouped graphs to generate. Order matters.
        *    @param  {String} dataKey Key to match state tree in Redux
        *    @param  {Function} component Graph component to render, passed from imports
+       *    @param  {String [n='percentage']} displayMethod Accepts 'percentage': consistent height and
+       *         - split by percentage and 'actual': shows actual count split (Bargraph only)
+       *    @param  {String} componentClass Class you wish to apply to downstream graph
        *    @param  {String} indexBy Key in state to use as index for the graph
        *    @param  {String} resultCategory Key to match naming convention from endpoint
        *    @param  {Array} groupBy Keys to pass to endopoint for data retrieval
@@ -46,13 +49,15 @@ export const ClinicalIndicators = ({ intl }) => {
         {
           id: 'GxHiv1Vl',
           name: intl.formatMessage(messages.clinicalIndicators.HIV.name),
-          graphTitle: intl.formatMessage(messages.clinicalIndicators.HIV.title),
-          colours: ['#D60000', '#FFC9C4', '#00CA1C'],
+          graphContainerClass: 'clinicalIndicator__graphs',
+          colors: ['#D60000', '#FFC9C4', '#00CA1C'],
           orderBy: ['MoreThan1000', 'LessThan1000', 'NotDetected'],
           graphType: [
             {
               dataKey: 'byMonth',
               component: BarGraph,
+              displayMethod: 'percentage',
+              componentClass: 'clinicalIndicators__bar',
               indexBy: 'month',
               resultCategory: 'resultCategory1',
               groupBy: ['month', 'resultCategory1'],
@@ -65,6 +70,7 @@ export const ClinicalIndicators = ({ intl }) => {
             {
               dataKey: 'aggregate',
               component: PieGraph,
+              componentClass: 'clinicalIndicators__pie',
               indexBy: 'cnt',
               resultCategory: 'resultCategory1',
               groupBy: ['resultCategory1'],
@@ -82,13 +88,14 @@ export const ClinicalIndicators = ({ intl }) => {
         {
           id: 'GxMtbRif',
           name: intl.formatMessage(messages.clinicalIndicators.TB.name),
-          graphTitle: intl.formatMessage(messages.clinicalIndicators.TB.title),
-          colours: ['#D60000', '#00CA1C'],
+          graphContainerClass: 'clinicalIndicator__graphs',
+          colors: ['#D60000', '#00CA1C'],
           orderBy: ['Detected', 'NotDetected'],
           graphType: [
             {
               dataKey: 'aggregate',
               component: PieGraph,
+              componentClass: 'clinicalIndicators__pie',
               indexBy: 'cnt',
               resultCategory: 'resultCategory1',
               groupBy: ['resultCategory1'],
@@ -104,6 +111,8 @@ export const ClinicalIndicators = ({ intl }) => {
             {
               dataKey: 'byMonth',
               component: BarGraph,
+              displayMethod: 'actual',
+              componentClass: 'clinicalIndicators__bar',
               indexBy: 'month',
               resultCategory: 'resultCategory1',
               groupBy: ['month', 'resultCategory1'],
@@ -122,10 +131,10 @@ export const ClinicalIndicators = ({ intl }) => {
   return assays
     ? assays.map(assay => {
         const { name } = assay
-        const title = intl.formatMessage(messages.clinicalIndicators)
+        const title = intl.formatMessage(messages.clinicalIndicators.HIV.title)
         return (
           <ClinicalIndicatorsContainer
-            title={`${title}: ${name}`}
+            title={title}
             className={cssClassesStatus('Section--withStatus')}
             assay={assay}
           />
