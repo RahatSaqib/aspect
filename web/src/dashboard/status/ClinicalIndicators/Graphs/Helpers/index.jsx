@@ -1,8 +1,11 @@
 import without from 'lodash/without'
+import omit from 'lodash/omit'
 import uniq from 'lodash/uniq'
 import round from 'lodash/round'
 import filter from 'lodash/filter'
 import sortBy from 'lodash/sortBy'
+import sum from 'lodash/sum'
+import values from 'lodash/values'
 import { format } from 'date-fns'
 
 const sortByInputArrayFlat = (data, sortExample) =>
@@ -51,11 +54,28 @@ const getAverageFromData = (data, key, value) => {
   return round((total[0][value] / sum) * 100)
 }
 
+const calcPercentageSplit = (data, keyToOmitDuringCalc) =>
+  data.reduce((acc, curr, index) => {
+    const dataPoints = omit(curr, keyToOmitDuringCalc)
+    const total = sum(values(dataPoints))
+
+    acc.push({
+      [keyToOmitDuringCalc]: curr[keyToOmitDuringCalc],
+    })
+
+    for (const [key, value] of Object.entries(dataPoints)) {
+      acc[index][key] = ((value / total) * 100).toFixed(2)
+    }
+
+    return acc
+  }, [])
+
 export {
+  calcPercentageSplit,
   formatDataForPie,
   getAverageFromData,
   groupByKey,
-  normaliseKeys,
   getKeysFromResults,
+  normaliseKeys,
   sortByInputArray,
 }
