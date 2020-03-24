@@ -5,7 +5,10 @@ const bcrypt = require('bcrypt')
 
 const config = require('../../src/config')
 const geography = require('./fixtures/geography.json')
-const { deviceTypeCategoryToId } = require('../../src/shared/dictionary')
+const {
+  deviceTypeCategoryToId,
+  partnerTypeToId,
+} = require('../../src/shared/dictionary')
 
 const now = new Date()
 
@@ -27,6 +30,14 @@ async function seed(knex) {
     createdOn: now,
     lockedOut: 0,
     failedPasswordAttempts: 0,
+  })
+
+  await knex('Partner').insert({
+    name: 'GatesRDT',
+    partnerTypeId: await partnerTypeToId('Operating'),
+    deviceLogHistoryDays: 365,
+    maxDaysDeviceOffline: 7,
+    maxDaysDeviceNoResults: 14,
   })
   const auditFields = {
     createdOn: now,

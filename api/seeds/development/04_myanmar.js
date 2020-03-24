@@ -20,6 +20,7 @@ const {
   seedNotificationTypes,
   seedIssues,
 } = require('../utils')
+const { addIssueTypes } = require('../relativeObjectsSeeds')
 const {
   allFeatureToId,
   allResultCategoryToId,
@@ -72,7 +73,6 @@ async function seed(knex) {
     rowsAsObject(knex, 'DeviceType', 'externalId'),
     rowsAsObject(knex, 'Assay', 'externalId'),
   ])
-  const issueTypes = await rowsAsObject(knex, 'IssueType', 'externalId')
 
   const maxDaysDeviceNoResults = 14
   const [partnerId] = await knex('Partner').insert({
@@ -739,7 +739,7 @@ async function seed(knex) {
       ])
     })
   )
-
+  await addIssueTypes(knex, partnerId, adminId, null)
   // Notification Types
   await seedNotificationTypes(knex, baseProps)
 
@@ -782,6 +782,8 @@ async function seed(knex) {
     createdOn: now,
     updatedOn: now,
   }
+  const issueTypes = await rowsAsObject(knex, 'IssueType', 'externalId')
+
   let issueIds = []
   const luIssueTypeIds = [
     issueTypes.DeviceOffline.id,

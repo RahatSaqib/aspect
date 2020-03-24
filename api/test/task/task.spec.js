@@ -13,17 +13,17 @@ describe('Task Routes', () => {
   describe('/taskbystatus', () => {
     const path = '/api/taskbystatus'
     describe('GET', () => {
-      it('should return a list of alerts and issues by specific date, siteid and issuestatus', done => {
+      it('should return a list of alerts and issues by specific date, siteid and issuestatus', async () => {
         const alertTemplateId = 1
         const date = new Date().toISOString()
-        const statusId = 1
+        const statusId = 3
 
-        server
+        await server
           .get(
             `${path}?alertTemplateId=${alertTemplateId}&date=${date}&categoryId=${statusId}`
           )
           .set('Authorization', `Bearer ${shared.token}`)
-          .end((err, res) => {
+          .then(res => {
             assert.isNotNull(res.body.data)
             assert.isAbove(res.body.data.length, 1)
 
@@ -37,8 +37,6 @@ describe('Task Routes', () => {
             assert.property(res.body, 'total')
             assert.property(res.body, 'countByAlert')
             assert.typeOf(res.body.countByAlert, 'Object')
-
-            done()
           })
       })
     })
