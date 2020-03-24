@@ -156,8 +156,8 @@ const routes = [
           assayType: Joi.string()
             .allow('')
             .description('Filter for assay type'),
-          assay: Joi.string()
-            .allow('')
+          assay: Joi.alternatives()
+            .try(Joi.array(), Joi.string())
             .description('Filter for assay'),
           resultCategory1: Joi.string()
             .allow('')

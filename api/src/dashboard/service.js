@@ -1476,6 +1476,10 @@ async function clinicalIndicatorsDashboard(request) {
     throw Boom.unauthorized('You do not have access to results')
   }
 
+  if (query.assay && !Array.isArray(query.assay)) {
+    query.assay = [query.assay]
+  }
+
   // get data constraints
   const dataConstraints = await getConstraints(auth.credentials)
 
@@ -1513,7 +1517,7 @@ async function clinicalIndicatorsDashboard(request) {
         qb.where('r.endedOn', '<=', query.maxDate)
       }
       if (query.assay) {
-        qb.where('a.externalId', '=', query.assay)
+        qb.whereIn('a.externalId', query.assay)
       }
       if (query.assayType) {
         qb.where('at.externalId', '=', query.assayType)
