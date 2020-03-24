@@ -536,4 +536,18 @@ async function seed(knex) {
 
   // add follow ups
   await utils.addFollowUps(knex, [partnerId], followUp)
+
+  const statWidgets = await knex('DashboardWidget')
+    .whereIn('titleI18nKey', [
+      'dashboardWidgetTitleConfirmedCases',
+      'dashboardWidgetTitleTotalActiveCases',
+      'dashboardWidgetTitleTotalRecoveredCases',
+      'dashboardWidgetTitleTotalDeaths',
+    ])
+    .select('id as widgetId')
+  await Promise.each(statWidgets, async elem =>
+    knex('JobFunctionDashboardWidget').insert([
+      { jobFunctionId: jobFunctionIdAdmin, widgetId: elem.widgetId },
+    ])
+  )
 }
