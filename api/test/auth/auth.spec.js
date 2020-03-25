@@ -270,7 +270,7 @@ describe('Authentication routes', () => {
           })
       })
 
-      it('should return 401 if user not found', async () => {
+      it("should return 409 if user not found and GxAlert isn't available", async () => {
         await server
           .post(authPath)
           .send({
@@ -280,7 +280,7 @@ describe('Authentication routes', () => {
           })
           .then(res => {
             // test returns 500 if its run offline
-            assert.equal(res.status, 401)
+            assert.equal(res.status, 409)
           })
       })
 

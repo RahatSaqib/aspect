@@ -584,6 +584,27 @@ describe('Dashboard routes', () => {
             assert.deepEqual(res.body.data, expectedResponse)
           }))
 
+      it('should return all results grouped by day if specified in query string', async () =>
+        server
+          .get(`${clinicalIndicatorsPath}?groupBy=day`)
+          .set('Authorization', `Bearer ${shared.token}`)
+          .then(res => {
+            const expectedResponse = _.chain(resultsForUser)
+              .filter(function(o) {
+                return (
+                  reportableResultCategories.indexOf(
+                    o.resultCategory1Name.replace(' ', '')
+                  ) > -1
+                )
+              })
+              .map(o => ({ day: format(new Date(o.endedOn), 'yyyy-MM-dd') }))
+              .groupBy('day')
+              .map((value, key) => ({ day: key, cnt: value.length }))
+              .value()
+            assert.equal(res.status, 200)
+            assert.deepEqual(res.body.data, expectedResponse)
+          }))
+
       it('should return all results grouped by month and category and filtered by site if specified in query string', async () =>
         server
           .get(

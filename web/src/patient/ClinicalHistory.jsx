@@ -26,7 +26,7 @@ const messages = defineMessages({
     defaultMessage: 'Patient',
   },
   patientData: {
-    id: 'pages.ClinicalHistory.patient',
+    id: 'pages.ClinicalHistory.patientData',
     defaultMessage: 'Patient Data',
   },
 })

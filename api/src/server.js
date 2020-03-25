@@ -195,12 +195,15 @@ const start = async () => {
     key: config.secret,
     validate: async (decoded, request) => {
       let isValid = true
+      let errorMessage = null
       // if user has to accept license, deny all requests except to the license api:
       if (
         decoded.hasToAcceptLicenseId &&
         request.url.pathname.indexOf('/api/auth/features') === -1 &&
         request.url.pathname.indexOf('/api/auth/license') === -1
       ) {
+        errorMessage =
+          "The user you're trying to login didn't accept the license"
         isValid = false
       }
       // can specify either module or permission, e.g. "device" or "device:view"
@@ -223,7 +226,7 @@ const start = async () => {
           )
         : []
       const scope = ['clientApi'].concat(modules, decoded.permissions || [])
-      return { isValid, credentials: { scope, ...decoded } }
+      return { isValid, errorMessage, credentials: { scope, ...decoded } }
     },
     // TODO JWT verfication algorithm verifyOptions: { algorithms: [ 'HS256' ] }
   })
