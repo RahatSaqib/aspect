@@ -1,0 +1,94 @@
+module.exports = require('../utils').seed(seed, __filename)
+const _ = require('lodash')
+const Promise = require('bluebird')
+
+const { upsertAspectDevice } = require('../common')
+const { upsertCovidDeviceTypes } = require('../commonCovid')
+const { deviceStatusToId } = require('../../src/shared/dictionary')
+
+const now = new Date()
+async function seed(knex) {
+  const {
+    partnerId,
+    labGeographyId,
+    labSiteId,
+    labName,
+    labExternalId,
+    countryId,
+  } = await knex('Partner as p')
+    .join('Device as d', 'p.id', 'd.partnerId')
+    .join('Site as s', 's.id', 'd.siteId')
+    .join('Geography as g', 's.geographyId', 's.geographyId')
+    .join('Country as c', 'g.countryId', 'c.id')
+    .where('p.name', 'Partner One')
+    .andWhere('c.abbreviation', 'US')
+    .first(
+      'd.partnerId',
+      's.geographyId as labGeographyId',
+      'd.siteId as labSiteId',
+      's.name as labName',
+      's.externalId as labExternalId',
+      'g.countryId'
+    )
+
+  const { id: adminId } = await knex('User')
+    .where({ name: 'admin' })
+    .first('id')
+  const auditFields = {
+    createdOn: now,
+    createdBy: adminId,
+    updatedOn: now,
+    updatedBy: adminId,
+  }
+
+  const covidDeviceTypes = (
+    await upsertCovidDeviceTypes(knex, partnerId)
+  ).filter(deviceType => deviceType.externalId !== 'Aspect')
+  await upsertAspectDevice(knex, countryId, partnerId, auditFields)
+  const deviceTypeAssays = {}
+  await Promise.each(
+    covidDeviceTypes.map(deviceType => deviceType.id),
+    async deviceTypeId => {
+      deviceTypeAssays[deviceTypeId] = await knex('Assay as a')
+        .join('AssayType as at', 'a.assayTypeId', 'at.id')
+        .where('a.deviceTypeId', deviceTypeId)
+        .andWhere('at.externalId', 'covid19')
+        .first('a.*')
+    }
+  )
+  const deviceStatusApprovedId = await deviceStatusToId('approved')
+  await Promise.each(covidDeviceTypes, async covidDeviceType => {
+    const device = await knex('Device')
+      .where({
+        deviceTypeId: covidDeviceType.id,
+        siteId: labSiteId,
+        deviceStatusId: deviceStatusApprovedId,
+      })
+      .first('id')
+    if (!device) {
+      await knex('Device').insert({
+        ...auditFields,
+        name: `${labName} ${covidDeviceType.name}`.substr(0, 255),
+        shortName: `${labExternalId}_${covidDeviceType.externalId}`.substr(
+          0,
+          45
+        ),
+        deviceTypeId: covidDeviceType.id,
+        deviceStatusId: deviceStatusApprovedId,
+        partnerId,
+        geographyId: labGeographyId,
+        siteId: labSiteId,
+        defaultReportableSiteId: labSiteId,
+        ...auditFields,
+        lastPingOn: new Date(+now),
+        lastSeenOn: new Date(+now),
+        hostId: _.times(8, () =>
+          String.fromCharCode(65 + _.random(25) + (_.random(1) > 0 ? 32 : 0))
+        ).join(''),
+        serial: _.times(24, () =>
+          String.fromCharCode(65 + _.random(25) + (_.random(1) > 0 ? 32 : 0))
+        ).join(''),
+      })
+    }
+  })
+}

@@ -754,6 +754,7 @@ async function upsertAssayResultCategories(knex, assayId, categories) {
 module.exports = {
   commonUpserts,
   upsertGxAlertDevice,
+  upsertAspectDevice,
   upsertJobFunctionPermission,
   upsertJobFeatures,
   upsertGeneXpertDeviceTypeAndAssays,
