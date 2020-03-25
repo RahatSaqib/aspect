@@ -11,6 +11,8 @@ import messages from './messages'
 
 const cssClasses = classnames.bind(require('./PersonDetail.css'))
 
+const hasError = field => field.touched && field.error
+
 export function validate(
   { username, newPassword, confirmNewPassword, currentPassword },
   { intl, currentPasswordInputDialogOpen }
@@ -150,7 +152,6 @@ export const LoginDetailsForm = ({
   onCurrentPasswordKeyPress,
   handleSubmit,
 }) => {
-  const hasError = field => field.touched && field.error
   const usernameHasError = hasError(meta.username)
   const newPasswordHasError = hasError(meta.newPassword)
   const confirmNewPasswordHasError = hasError(meta.confirmNewPassword)
