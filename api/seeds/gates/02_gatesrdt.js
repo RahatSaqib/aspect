@@ -1,7 +1,7 @@
 module.exports = require('../utils').seed(seed, __filename)
 const _ = require('lodash')
 const bcrypt = require('bcrypt')
-
+const { upsertJobFunction } = require('../common')
 const config = require('../../src/config')
 const { randomToken } = require('../../src/deviceApi/apiKey')
 const { getPermissionModules } = require('../utils')
@@ -10,7 +10,6 @@ const {
   assayTypeToId,
   deviceTypeToId,
   fileContentTypeToId,
-  partnerTypeToId,
   resultSourceToId,
 } = require('../../src/shared/dictionary')
 
@@ -41,13 +40,11 @@ async function seed(knex) {
     updatedBy: adminId,
   }
 
-  const [partnerId] = await knex('Partner').insert({
-    name: 'GatesRDT',
-    partnerTypeId: await partnerTypeToId('Operating'),
-    deviceLogHistoryDays: 365,
-    maxDaysDeviceOffline: 7,
-    maxDaysDeviceNoResults: 14,
-  })
+  const { partnerId } = await knex('Partner')
+    .where({
+      name: 'GatesRDT',
+    })
+    .first('id as partnerId')
 
   await knex('Assay').insert({
     name: 'CommCare Gates RDT',
@@ -106,10 +103,7 @@ async function seed(knex) {
     ...auditFields,
   })
 
-  const [jobFunctionIdAdmin] = await knex('JobFunction').insert({
-    name: 'Admin',
-    partnerId,
-  })
+  const jobFunctionIdAdmin = await upsertJobFunction(knex, 'Admin', partnerId)
 
   const [modules, features] = await Promise.all([
     getPermissionModules(knex),

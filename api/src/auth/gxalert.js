@@ -123,17 +123,17 @@ async function validateUserAtGxAlert(username, password, user) {
   // items from 'my_aspnet_roles': readonly, write, inventory, service, report
   // items from 'role': deployment, lga, state, national
   if (gxUser.dotNetRoles.includes('admin') || gxUser.role === 'national') {
-    jobFunction = allJobFunctions.find(x => x.name === 'Admin')
+    jobFunction = allJobFunctions.find(x => x.externalId === 'Admin')
   }
   if (!jobFunction && (gxUser.role === 'state' || gxUser.role === 'lga')) {
     jobFunction =
-      allJobFunctions.find(x => x.name === 'Regional Officer') ||
-      allJobFunctions.find(x => x.name === 'Manager')
+      allJobFunctions.find(x => x.externalId === 'Regional Officer') ||
+      allJobFunctions.find(x => x.externalId === 'Manager')
   }
   if (!jobFunction) {
     jobFunction =
-      allJobFunctions.find(x => x.name === 'Clinician') ||
-      allJobFunctions.find(x => x.name === 'Lab User')
+      allJobFunctions.find(x => x.externalId === 'Clinician') ||
+      allJobFunctions.find(x => x.externalId === 'Lab User')
   }
   const jobFunctionId = jobFunction ? jobFunction.id : null
   // exit if no jobFunction found

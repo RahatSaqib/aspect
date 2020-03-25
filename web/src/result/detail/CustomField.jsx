@@ -81,6 +81,55 @@ const messages = defineMessages({
     id: 'pages.ResultDetail.formFields.timeInstrumentResulted',
     defaultMessage: 'Time Instrument Resulted',
   },
+  testReasonCovid19: {
+    id: 'pages.ResultDetail.formFields.testReasonCovid19',
+    defaultMessage: 'Why tested for COVID-19',
+  },
+  contactOfACase: {
+    id: 'pages.ResultDetail.formFields.contactOfACase',
+    defaultMessage: 'Contact of a case',
+  },
+  illSeekingHealthcare: {
+    id: 'pages.ResultDetail.formOptions.illSeekingHealthcare',
+    defaultMessage: 'Ill Seeking Healthcare due to suspicion of COVID-19',
+  },
+  detectedAtPointOfEntry: {
+    id: 'pages.ResultDetail.formOptions.detectedAtPointOfEntry',
+    defaultMessage: 'Detected at point of entry',
+  },
+  repatriation: {
+    id: 'pages.ResultDetail.formOptions.repatriation',
+    defaultMessage: 'Repatriation',
+  },
+  routineRespiratorySurveillance: {
+    id: 'pages.ResultDetail.formOptions.routineRespiratorySurveillance',
+    defaultMessage:
+      'Routine respiratory disease surveillance systems (e.g influenza)',
+  },
+  unknown: {
+    id: 'pages.ResultDetail.formFields.unknown',
+    defaultMessage: 'Unknown',
+  },
+  caseId: {
+    id: 'pages.ResultDetail.formFields.caseId',
+    defaultMessage: 'Unique Case Identifier',
+  },
+  age: {
+    id: 'pages.ResultDetail.formFields.age',
+    defaultMessage: 'Age',
+  },
+  gender: {
+    id: 'pages.ResultDetail.formFields.gender',
+    defaultMessage: 'Sex at birth',
+  },
+  male: {
+    id: 'pages.ResultDetail.formFields.male',
+    defaultMessage: 'Male',
+  },
+  female: {
+    id: 'pages.ResultDetail.formFields.female',
+    defaultMessage: 'Female',
+  },
 })
 
 export default class CustomField extends PureComponent {

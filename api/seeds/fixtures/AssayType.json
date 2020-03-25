@@ -96,6 +96,12 @@
       "i18nKey": "genoTypeTestStrip",
       "externalId": "genoTypeTestStrip",
       "abbreviation":"GTTS"
+    },
+    {
+      "name": "COVID-19 Test",
+      "i18nKey": "covid19",
+      "externalId": "covid19",
+      "abbreviation":"CV"
     }
   ]
 }

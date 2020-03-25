@@ -3,17 +3,17 @@ module.exports = require('../utils').seed(seed, __filename)
 const bcrypt = require('bcrypt')
 const _ = require('lodash')
 const Promise = require('bluebird')
-
 const config = require('../../src/config')
 const myanmarSites = require('./fixtures/myanmarSites.json')
 const dashboardWidget = require('./fixtures/myanmarDashboardWidget.json')
-
+const { upsertJobFunction } = require('../common')
 const {
   rowsAsObject,
   getPermissionModules,
   seedNotificationTypes,
   seedIssues,
 } = require('../utils')
+const { addIssueTypes } = require('../relativeObjectsSeeds')
 const {
   allFeatureToId,
   deviceStatusToId,
@@ -53,7 +53,6 @@ async function seed(knex) {
     updatedBy: adminId,
   }
   // Reuse previously seeded "static" data
-  const issueTypes = await rowsAsObject(knex, 'IssueType', 'externalId')
 
   const maxDaysDeviceNoResults = 14
   const [partnerId] = await knex('Partner').insert({
@@ -113,20 +112,19 @@ async function seed(knex) {
     ...auditFields,
   })
 
-  const [jobFunctionIdAdmin] = await knex('JobFunction').insert({
-    name: 'Admin',
-    partnerId,
-  })
+  const jobFunctionIdAdmin = await upsertJobFunction(knex, 'Admin', partnerId)
 
-  const [jobFunctionIdRegionalOfficer] = await knex('JobFunction').insert({
-    name: 'Regional Officer',
-    partnerId,
-  })
+  const jobFunctionIdRegionalOfficer = await upsertJobFunction(
+    knex,
+    'Regional Officer',
+    partnerId
+  )
 
-  const [jobFunctionIdLabUser] = await knex('JobFunction').insert({
-    name: 'Lab User',
-    partnerId,
-  })
+  const jobFunctionIdLabUser = await upsertJobFunction(
+    knex,
+    'Lab User',
+    partnerId
+  )
 
   const jobFunctionIds = {
     jobFunctionIdAdmin,
@@ -503,7 +501,7 @@ async function seed(knex) {
       { jobFunctionId: jobFunctionIdRegionalOfficer, widgetId },
     ])
   })
-
+  await addIssueTypes(knex, partnerId, adminId, null)
   // Notification Types
   await seedNotificationTypes(knex, baseProps)
 
@@ -524,6 +522,8 @@ async function seed(knex) {
     createdOn: now,
     updatedOn: now,
   }
+  const issueTypes = await rowsAsObject(knex, 'IssueType', 'externalId')
+
   let issueIds = []
   const luIssueTypeIds = [
     issueTypes.DeviceOffline.id,

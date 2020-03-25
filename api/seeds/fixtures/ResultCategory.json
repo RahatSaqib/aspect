@@ -154,6 +154,16 @@
       "name": "Positive MTB",
       "i18nKey": "resultCategoryPositiveMTB",
       "externalId": "PositiveMTB"
+    },
+    {
+      "name": "Inconclusive",
+      "i18nKey": "resultCategoryInconclusive",
+      "externalId": "Inconclusive"
+    },
+    {
+      "name": "Positive",
+      "i18nKey": "resultCategoryPositive",
+      "externalId": "Positive"
     }
   ]
 }

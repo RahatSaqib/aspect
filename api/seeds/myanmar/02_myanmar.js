@@ -1,3 +1,6 @@
+// eslint-disable-next-line import/order
+const { addIssueTypes } = require('../relativeObjectsSeeds')
+
 module.exports = require('../utils').seed(seed, __filename)
 
 const ADMIN_PW = '8v5TMxkpzP'
@@ -5,7 +8,7 @@ const RO_PW = 'u4W9wupFBA'
 
 const bcrypt = require('bcrypt')
 const _ = require('lodash')
-
+const { upsertJobFunction } = require('../common')
 const config = require('../../src/config')
 const dashboardWidget = require('./fixtures/dashboardWidget.json')
 const {
@@ -49,12 +52,6 @@ async function seed(knex) {
     updatedBy: adminId,
   }
 
-  // Reuse previously seeded "static" data
-  const [issueTypes, defaultMessageTypes] = await Promise.all([
-    rowsAsObject(knex, 'IssueType', 'externalId'),
-    getDefaultMessageTypes(knex),
-  ])
-
   const [partnerId] = await knex('Partner').insert({
     name: 'Myanmar',
     partnerTypeId: await partnerTypeToId('Operating'),
@@ -64,7 +61,9 @@ async function seed(knex) {
     maxDaysDeviceOffline: 7,
     serverUrl: 'https://myanmar.aspect.id',
   })
-
+  await addIssueTypes(knex, partnerId, adminId, null)
+  // Reuse previously seeded "static" data
+  const defaultMessageTypes = await getDefaultMessageTypes(knex)
   const [myanmarCountry] = await knex('Country as c')
     .where({ 'c.a3': 'MMR' })
     .select('c.id', 'c.culture', 'c.timezone')
@@ -129,20 +128,19 @@ async function seed(knex) {
     ...auditFields,
   })
 
-  const [jobFunctionIdAdmin] = await knex('JobFunction').insert({
-    name: 'Admin',
-    partnerId,
-  })
+  const jobFunctionIdAdmin = await upsertJobFunction(knex, 'Admin', partnerId)
 
-  const [jobFunctionIdRegionalOfficer] = await knex('JobFunction').insert({
-    name: 'Regional Officer',
-    partnerId,
-  })
+  const jobFunctionIdRegionalOfficer = await upsertJobFunction(
+    knex,
+    'Regional Officer',
+    partnerId
+  )
 
-  const [jobFunctionIdLabUser] = await knex('JobFunction').insert({
-    name: 'Lab User',
-    partnerId,
-  })
+  const jobFunctionIdLabUser = await upsertJobFunction(
+    knex,
+    'Lab User',
+    partnerId
+  )
 
   const featureModules = await allFeatureToId()
   await knex('JobFunctionFeature').insert([
@@ -416,6 +414,7 @@ async function seed(knex) {
       ])
     })
   )
+  const issueTypes = await rowsAsObject(knex, 'IssueType', 'externalId')
 
   // Notifications
   await knex('NotificationType').insert([

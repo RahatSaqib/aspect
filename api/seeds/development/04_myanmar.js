@@ -8,7 +8,7 @@ const {
   subDays,
   differenceInDays,
 } = require('date-fns')
-
+const { upsertJobFunction } = require('../common')
 const config = require('../../src/config')
 const myanmarSites = require('./fixtures/myanmarSites.json')
 let patients = require('./fixtures/patients.json')
@@ -20,6 +20,7 @@ const {
   seedNotificationTypes,
   seedIssues,
 } = require('../utils')
+const { addIssueTypes } = require('../relativeObjectsSeeds')
 const {
   allFeatureToId,
   allResultCategoryToId,
@@ -72,7 +73,6 @@ async function seed(knex) {
     rowsAsObject(knex, 'DeviceType', 'externalId'),
     rowsAsObject(knex, 'Assay', 'externalId'),
   ])
-  const issueTypes = await rowsAsObject(knex, 'IssueType', 'externalId')
 
   const maxDaysDeviceNoResults = 14
   const [partnerId] = await knex('Partner').insert({
@@ -142,20 +142,19 @@ async function seed(knex) {
     ...auditFields,
   })
 
-  const [jobFunctionIdAdmin] = await knex('JobFunction').insert({
-    name: 'Admin',
-    partnerId,
-  })
+  const jobFunctionIdAdmin = await upsertJobFunction(knex, 'Admin', partnerId)
 
-  const [jobFunctionIdRegionalOfficer] = await knex('JobFunction').insert({
-    name: 'Regional Officer',
-    partnerId,
-  })
+  const jobFunctionIdRegionalOfficer = await upsertJobFunction(
+    knex,
+    'Regional Officer',
+    partnerId
+  )
 
-  const [jobFunctionIdLabUser] = await knex('JobFunction').insert({
-    name: 'Lab User',
-    partnerId,
-  })
+  const jobFunctionIdLabUser = await upsertJobFunction(
+    knex,
+    'Lab User',
+    partnerId
+  )
 
   const jobFunctionIds = {
     jobFunctionIdAdmin,
@@ -740,7 +739,7 @@ async function seed(knex) {
       ])
     })
   )
-
+  await addIssueTypes(knex, partnerId, adminId, null)
   // Notification Types
   await seedNotificationTypes(knex, baseProps)
 
@@ -783,6 +782,8 @@ async function seed(knex) {
     createdOn: now,
     updatedOn: now,
   }
+  const issueTypes = await rowsAsObject(knex, 'IssueType', 'externalId')
+
   let issueIds = []
   const luIssueTypeIds = [
     issueTypes.DeviceOffline.id,
