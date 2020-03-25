@@ -871,5 +871,5 @@
       "order": 75
     }
   },
-  "sendChangesOn": "submit"
+  "sendChangesOn": "change"
 }
