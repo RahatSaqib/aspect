@@ -405,12 +405,23 @@ function sendUpdatedResultFormData(dispatch, resultId, formData) {
 }
 
 export function saveResultFormDataValue(resultId, formFieldKey, value) {
-  return dispatch => {
-    dispatch(setSingleResultFormDataValue(resultId, formFieldKey, value))
-    dispatch(savingSingleResultFormData(resultId))
-    const formData = {}
-    formData[formFieldKey] = value
-    return sendUpdatedResultFormData(dispatch, resultId, formData)
+  return (dispatch, getState) => {
+    const originalFieldValue =
+      getState().getIn([
+        'result',
+        'items',
+        'byId',
+        resultId,
+        'formData',
+        formFieldKey,
+      ]) || ''
+    if (value !== originalFieldValue) {
+      dispatch(setSingleResultFormDataValue(resultId, formFieldKey, value))
+      dispatch(savingSingleResultFormData(resultId))
+      const formData = {}
+      formData[formFieldKey] = value
+      return sendUpdatedResultFormData(dispatch, resultId, formData)
+    }
   }
 }
 
@@ -617,6 +628,17 @@ export default function resultReducer(state = initialState, action) {
           formDataSaving: false,
           formDataDirty: false,
         })
+    case types.SET_RESULT_FORM_DATA_VALUE:
+      return state
+        .withMutations(mutState => {
+          const formData = {}
+          formData[action.formFieldKey] = action.value
+          mutState.set(
+            'items',
+            mutState.items.mergeDeepIn(['byId', action.resultId], { formData })
+          )
+        })
+        .merge({ formDataDirty: true })
     case types.SAVING_RESULT_FORM_DATA:
       return state.merge({
         formDataSaving: true,
@@ -656,17 +678,6 @@ export default function resultReducer(state = initialState, action) {
         mutState.set('workflowLog', workflowLog)
       })
 
-    case types.SET_RESULT_FORM_DATA_VALUE:
-      return state
-        .withMutations(mutState => {
-          const formData = {}
-          formData[action.formFieldKey] = action.value
-          mutState.set(
-            'items',
-            mutState.items.mergeDeepIn(['byId', action.resultId], { formData })
-          )
-        })
-        .merge({ formDataDirty: true })
     case types.RECEIVE_CREATING_TREATMENT_STATUS_LOG:
       return state.withMutations(mutState => {
         const {
