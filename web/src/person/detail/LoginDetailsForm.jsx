@@ -1,5 +1,5 @@
 import classnames from 'classnames/bind'
-import React, { PureComponent } from 'react'
+import React from 'react'
 import { compose, lifecycle, withHandlers, pure } from 'recompose'
 import Button from '@material-ui/core/Button'
 import TextField from '@material-ui/core/TextField'
