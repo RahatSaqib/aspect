@@ -152,10 +152,7 @@ export const LoginDetailsForm = ({
   onCurrentPasswordKeyPress,
   handleSubmit,
 }) => {
-  const usernameHasError = hasError(meta.username)
-  const newPasswordHasError = hasError(meta.newPassword)
-  const confirmNewPasswordHasError = hasError(meta.confirmNewPassword)
-  const currentPasswordHasError = hasError(meta.currentPassword)
+  const { username, newPassword, confirmNewPassword, currentPassword } = meta
   return (
     <form onSubmit={onSubmit} className={cssClasses('Form')}>
       <div className={cssClasses('Form__Content')}>
@@ -168,8 +165,8 @@ export const LoginDetailsForm = ({
           value={values.username}
           onChange={onUsernameChange}
           disabled={loading}
-          error={usernameHasError}
-          helperText={usernameHasError}
+          error={hasError(username)}
+          helperText={hasError(username)}
           inputProps={{ maxLength: 255 }}
           margin="normal"
           FormHelperTextProps={{
@@ -183,7 +180,7 @@ export const LoginDetailsForm = ({
             onChange: onNewPasswordChange,
           }}
           disabled={loading}
-          meta={meta.newPassword}
+          meta={newPassword}
           textFieldProps={{
             floatingLabelText: intl.formatMessage(messages.newPassword),
             type: 'password',
@@ -192,8 +189,8 @@ export const LoginDetailsForm = ({
             autoFocus: true,
             fullWidth: true,
             label: intl.formatMessage(messages.newPassword),
-            helperText: newPasswordHasError,
-            error: newPasswordHasError,
+            helperText: hasError(newPassword),
+            error: hasError(newPassword),
           }}
           popOverProps={{}}
         />
@@ -207,8 +204,8 @@ export const LoginDetailsForm = ({
           value={values.confirmNewPassword}
           onChange={onConfirmNewPasswordChange}
           disabled={loading}
-          error={confirmNewPasswordHasError}
-          helperText={confirmNewPasswordHasError}
+          error={hasError(confirmNewPassword)}
+          helperText={hasError(confirmNewPassword)}
           inputProps={{ maxLength: 100 }}
         />
         {canModify && (
@@ -264,8 +261,8 @@ export const LoginDetailsForm = ({
           onChange={onCurrentPasswordChange}
           onKeyPress={onCurrentPasswordKeyPress}
           disabled={loading}
-          error={currentPasswordHasError}
-          helperText={currentPasswordHasError}
+          error={hasError(currentPassword)}
+          helperText={hasError(currentPassword)}
           inputProps={{ maxLength: 100 }}
           margin="normal"
           FormHelperTextProps={{
