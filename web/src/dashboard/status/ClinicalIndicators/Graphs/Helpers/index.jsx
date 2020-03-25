@@ -88,11 +88,13 @@ const translateKeys = (data, assayFromState) => {
     const newItem = {}
     for (const [key, value] of Object.entries(item)) {
       const newKey = resultCategories.filter(r => r.externalId === key)[0]
-      newKey && newKey.name
-        ? (newItem[newKey.name] = value)
-        : (newItem[key] = value)
+      if (newKey && newKey.name) {
+        newItem[newKey.name] = value
+      } else {
+        newItem[key] = value
+      }
     }
-    reduced.push({ ...newItem })
+    return reduced.push({ ...newItem })
   })
 
   return reduced

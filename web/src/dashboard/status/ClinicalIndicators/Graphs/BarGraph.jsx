@@ -1,17 +1,17 @@
-import React, { useEffect, useState } from 'react';
-import classnames from 'classnames/bind';
-import { ResponsiveBar } from '@nivo/bar';
-import CircularProgress from '@material-ui/core/CircularProgress';
+import React, { useEffect, useState } from 'react'
+import classnames from 'classnames/bind'
+import { ResponsiveBar } from '@nivo/bar'
+import CircularProgress from '@material-ui/core/CircularProgress'
 
 import {
   calcPercentageSplit,
   groupByKey,
   normaliseKeys,
   getKeysFromResults,
-  translateKeys
-} from './Helpers';
+  translateKeys,
+} from './Helpers'
 
-const cssClasses = classnames.bind(require('./Graphs.css'));
+const cssClasses = classnames.bind(require('./Graphs.css'))
 
 const BarGraph = ({
   data,
@@ -24,29 +24,29 @@ const BarGraph = ({
   colors,
   componentClass,
   displayMethod,
-  assayFromState
+  assayFromState,
 }) => {
-  const [graph, setGraph] = useState(false);
-  const [keys, setKeys] = useState(false);
+  const [graph, setGraph] = useState(false)
+  const [keys, setKeys] = useState(false)
 
   useEffect(() => {
     if (!keysFromProps && graph) {
-      const keys = getKeysFromResults(graph, indexBy, orderBy);
-      setKeys(keys);
+      const keys = getKeysFromResults(graph, indexBy, orderBy)
+      setKeys(keys)
     }
-  }, [graph, indexBy, keysFromProps, orderBy]);
+  }, [graph, indexBy, keysFromProps, orderBy])
 
   useEffect(() => {
     if (!graph && data.length && assayFromState && assayFromState.length) {
-      const grouped = groupByKey(data, indexBy, resultCategory, formatDate);
-      const normalised = normaliseKeys(grouped);
-      const translated = translateKeys(normalised, assayFromState);
+      const grouped = groupByKey(data, indexBy, resultCategory, formatDate)
+      const normalised = normaliseKeys(grouped)
+      const translated = translateKeys(normalised, assayFromState)
       const display =
         displayMethod === 'percentage'
           ? calcPercentageSplit(translated, indexBy)
-          : translated;
+          : translated
 
-      setGraph([...display]);
+      setGraph([...display])
     }
   }, [
     data,
@@ -55,8 +55,8 @@ const BarGraph = ({
     graph,
     indexBy,
     resultCategory,
-    assayFromState
-  ]);
+    assayFromState,
+  ])
 
   return (
     <div className={cssClasses(componentClass)}>
@@ -82,7 +82,7 @@ const BarGraph = ({
             tickPadding: 10,
             tickRotation: 0,
             legendPosition: 'middle',
-            legendOffset: 32
+            legendOffset: 32,
           }}
           axisLeft={displayMethod === 'percentage' ? null : {}}
           labelSkipWidth={12}
@@ -110,11 +110,11 @@ const BarGraph = ({
                   {
                     on: 'hover',
                     style: {
-                      itemOpacity: 1
-                    }
-                  }
-                ]
-              }
+                      itemOpacity: 1,
+                    },
+                  },
+                ],
+              },
             ]
           }
         />
@@ -122,7 +122,7 @@ const BarGraph = ({
         <CircularProgress />
       )}
     </div>
-  );
-};
+  )
+}
 
-export default BarGraph;
+export default BarGraph
