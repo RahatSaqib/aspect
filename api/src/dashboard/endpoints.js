@@ -25,6 +25,7 @@ const clinicalIndicatorsValidGroups = [
   'gender',
   'age',
   'state',
+  'day',
 ]
 
 const routes = [

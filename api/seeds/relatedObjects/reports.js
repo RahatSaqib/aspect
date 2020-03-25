@@ -57,11 +57,15 @@ async function getBaseReports() {
       fileName: 'RifResistanceRate',
       sheets: [
         {
-          moduleName: '',
-          functionName: '',
+          moduleName: 'device/service',
+          functionName: 'getDevicesForRifResistanceReport',
           query: {
-            sortCol: 'endedOn',
-            sortDir: 'desc',
+            sortCol: 'name',
+            sortDir: 'asc',
+            hasResults: 1,
+            assayId: assayIds.GxMtbRif,
+            resultCategoryId: resultCategoryIds.Detected,
+            resultCategory2Id: resultCategoryIds.Detected,
           },
         },
       ],

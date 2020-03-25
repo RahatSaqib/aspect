@@ -1543,6 +1543,7 @@ async function clinicalIndicatorsDashboard(request) {
     week: knex.raw('DATE_FORMAT(r.endedOn, "%x-%v") as week'),
     month: knex.raw('DATE_FORMAT(r.endedOn, "%Y-%m") as month'),
     year: knex.raw('DATE_FORMAT(r.endedOn, "%Y") as year'),
+    day: knex.raw('DATE_FORMAT(r.endedOn, "%Y-%m-%d") as day'),
     gender: knex.raw(
       'replace(r.patientData ->> "$.gender", "null", null) as gender'
     ),
@@ -1557,7 +1558,6 @@ async function clinicalIndicatorsDashboard(request) {
       qb.orderBy(g)
     })
   })
-
   return {
     data: await resultQuery,
   }
