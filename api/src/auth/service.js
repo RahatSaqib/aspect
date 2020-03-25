@@ -85,13 +85,35 @@ function getTokenExpiry(clientType, currentTime) {
 async function authenticate(request) {
   const { payload } = request
   let user = await getUser(payload.name)
+
   if (!user) {
-    // no user with such username in Aspect yet - check it in GxAlert
-    user = await validateUserAtGxAlert(payload.name, payload.password)
-    if (!user) {
-      return Boom.unauthorized('Authentication failed. Wrong password.')
+    try {
+      // no user with such username in Aspect yet - check it in GxAlert
+      user = await validateUserAtGxAlert(payload.name, payload.password)
+      if (!user) {
+        return Boom.unauthorized(
+          'Authentication failed. Wrong username or password.'
+        )
+      }
+    } catch (err) {
+      const data = {
+        userName: payload.name,
+        message: err.message,
+      }
+      if (err.isConnectionError !== undefined) {
+        const boomMessage = err.isConnectionError
+          ? "Couldn't connect to GxAlert"
+          : 'There was a conflict with your credentials'
+        return Boom.conflict(boomMessage, data)
+      }
+
+      return Boom.internal(
+        'Authentication failed because an internal server error',
+        data
+      )
     }
   }
+
   if (user.lockedOut === 1) {
     return Boom.unauthorized('Your account is locked.')
   }

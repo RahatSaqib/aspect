@@ -283,12 +283,12 @@ describe('auth endpoints', () => {
       })
     })
 
-    describe('When a user is not found', () => {
+    describe("When a user is not found and GxAlert's is not available", () => {
       beforeEach(() => {
         dbSpy.query.for('Get basic user details').resolvesWith()
       })
 
-      it('Should respond with 401', done => {
+      it('Should respond with 409', done => {
         const requestData = {
           payload: {
             name: 'nonexistant',
@@ -300,7 +300,7 @@ describe('auth endpoints', () => {
           .callHandlerOn(endpoint)
           .with(requestData)
           .handleResponseWith(responseData => {
-            assert.equal(responseData.output.statusCode, 401)
+            assert.equal(responseData.output.statusCode, 409)
           })
           .thenCall(done)
           .execute()
