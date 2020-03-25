@@ -65,7 +65,7 @@
     "dateAndTimeOfTest": {
       "i18nLabel": "dateAndTimeOfTest",
       "control": {
-        "type": "DateTime"
+        "type": "Date"
       },
       "order": 5
     },

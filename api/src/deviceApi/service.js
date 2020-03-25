@@ -784,11 +784,14 @@ function addDeviceLogResultConstraints(queryBuilder) {
     .where('rws.externalId', '<>', 'Purged')
 }
 
-async function onResultUpdated({ resultId, deviceLogId }, { messageContext }) {
+async function onResultUpdated(
+  { resultId, deviceLogId, userId },
+  { messageContext }
+) {
   const context = messageContext.bindActionCreators({ resultLogged })
   if (deviceLogId) {
     // we've already created device logs originating here, so ignore
-    return context.resultLogged(resultId, deviceLogId)
+    return context.resultLogged(resultId, deviceLogId, userId)
   }
   return context.transact(async knex => {
     // TODO dispatch from client API using plugin so
@@ -809,7 +812,7 @@ async function onResultUpdated({ resultId, deviceLogId }, { messageContext }) {
           rawMessage: '',
         })
       )
-    context.resultLogged(resultId, deviceLogId)
+    context.resultLogged(resultId, deviceLogId, userId)
   })
 }
 

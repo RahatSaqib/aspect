@@ -399,7 +399,7 @@ async function seed(knex) {
   const genericAssay = await knex('Assay')
     .where('externalId', 'assayGenericCovid19')
     .first()
-  await Promise.each(_.range(resultNumber / 4), async i => {
+  await Promise.each(_.range(resultNumber), async i => {
     const resultCapturedInAspect = i % 7 === 0
     const device = resultCapturedInAspect
       ? aspectDevice
@@ -418,22 +418,25 @@ async function seed(knex) {
       possibleResults,
       r => rnd >= r.minLikelihood && rnd <= r.maxLikelihood
     )
-
-    const selectedTestType =
-      genericTestTypes[_.random(0, genericTestTypes.length - 1)]
     const formData = {
       ageYears: rnd,
       caseId: `COVID-${_.random(1000, 9999)}-ID`,
       gender: _.random(1, 2),
       testReason: _.random(1, 6),
-      testType: selectedTestType.value,
       dateAndTimeOfTest: addMinutes(randomDate, 100),
+    }
+    const selectedTestType =
+      genericTestTypes[_.random(0, genericTestTypes.length - 1)]
+    if (resultCapturedInAspect) {
+      formData.testType = selectedTestType.value
     }
 
     const resultId = await knex('Result').insert({
       ...auditFields,
-      externalId: `COVID-GENERIC-${i}`,
-      assayId: genericAssay.id,
+      externalId: `COVID-${i}`,
+      assayId: resultCapturedInAspect
+        ? genericAssay.id
+        : deviceTypeAssays[device.deviceTypeId].id,
       partnerId,
       geographyId: siteData.geographyId,
       siteId: siteData.id,
@@ -446,10 +449,16 @@ async function seed(knex) {
       sampleId: sample.id,
       resultCategory1: result.category1,
       resultCategory2: result.category2,
-      resultData: JSON.stringify({
-        resultText: result.resultText,
-        typeOfTest: selectedTestType.title,
-      }),
+      resultData: JSON.stringify(
+        resultCapturedInAspect
+          ? {
+              resultText: result.resultText,
+              typeOfTest: selectedTestType.title,
+            }
+          : {
+              resultText: result.resultText,
+            }
+      ),
       formData: JSON.stringify(formData),
       patientData: JSON.stringify({
         age: formData.age,
@@ -463,7 +472,7 @@ async function seed(knex) {
             formData.testReason - 1
           ].title,
       }),
-      startedOn: randomDate,
+      startedOn: resultCapturedInAspect ? null : randomDate,
       endedOn: addMinutes(randomDate, 100),
       createdOn: addMinutes(randomDate, 120),
       updatedOn: addMinutes(randomDate, 180),

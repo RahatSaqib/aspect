@@ -43,8 +43,9 @@ function resultUpdated(resultId, deviceLogId, userId) {
  *
  * resultId is required
  * deviceLogId is required
+ * userId is not required
  */
-function resultLogged(resultId, deviceLogId) {
+function resultLogged(resultId, deviceLogId, userId) {
   if (!resultId || !deviceLogId) {
     throw new Error('Must specify resultId and deviceLogId for resultLogged')
   }
@@ -52,6 +53,7 @@ function resultLogged(resultId, deviceLogId) {
     type: types.RESULT_LOGGED,
     resultId,
     deviceLogId,
+    userId,
   }
 }
 

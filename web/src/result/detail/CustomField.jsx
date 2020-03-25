@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react'
 import classnames from 'classnames/bind'
 import { defineMessages } from 'react-intl'
-import isValid from 'date-fns/isValid'
+import { isValid, parseISO, set as setDateComponents } from 'date-fns'
 import Input from '@material-ui/core/Input'
 import DateTimeInput from '../../components/shared/DateTimeInput'
 import FocusBlurTextField from '../../components/shared/FocusBlurTextField'
@@ -545,23 +545,38 @@ export default class CustomField extends PureComponent {
         </FormGroup>
       )
     }
-    if (fieldType === 'DateTime') {
-      const fieldDateTime = isValid(fieldValue) ? new Date(fieldValue) : null
+    if (fieldType === 'DateTime' || fieldType === 'Date') {
+      const parsedFieldValue =
+        typeof fieldValue === 'string' ? parseISO(fieldValue) : fieldValue
+      let fieldDateTime = isValid(parsedFieldValue)
+        ? new Date(fieldValue)
+        : null
+      if (fieldDateTime && isValid(fieldDateTime) && fieldType === 'Date') {
+        fieldDateTime = setDateComponents(fieldDateTime, {
+          hours: 0,
+          minutes: 0,
+          seconds: 0,
+          milliseconds: 0,
+        })
+      }
+      const dateTimeInputProps = {
+        showNowButton: fieldType === 'DateTime',
+        className: cssClasses('DateTime'),
+        dateFormat,
+        intl: { formatMessage },
+        value: fieldDateTime,
+        onChange: this.onUpdateData,
+      }
+      if (fieldType === 'DateTime') {
+        dateTimeInputProps.timeFormat = timeFormat
+      }
       return (
         <FormGroup
           className={cssClasses('Container')}
           label={fieldLabel}
           key={formFieldKey}
         >
-          <DateTimeInput
-            showNowButton
-            className={cssClasses('DateTime')}
-            dateFormat={dateFormat}
-            timeFormat={timeFormat}
-            intl={{ formatMessage }}
-            value={fieldDateTime}
-            onChange={this.onUpdateData}
-          />
+          <DateTimeInput {...dateTimeInputProps} />
         </FormGroup>
       )
     }

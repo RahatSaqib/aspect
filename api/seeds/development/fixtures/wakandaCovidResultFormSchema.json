@@ -93,7 +93,7 @@
     "dateAndTimeOfTest": {
       "i18nLabel": "dateOfFirstLaboratoryConfirmationTest",
       "control": {
-        "type": "DateTime"
+        "type": "Date"
       },
       "order": 9
     },
@@ -120,7 +120,7 @@
     "dateOfOnsetOfSymptoms": {
       "i18nLabel": "ifYesDateOfOnsetOfSymptoms",
       "control": {
-        "type": "DateTime"
+        "type": "Date"
       },
       "order": 11
     },
@@ -341,7 +341,7 @@
     "healthStatusAtTimeOfReportingFirstDateOfAdmissionToHospital": {
       "i18nLabel": "firstDateOfAdmissionToHospital",
       "control": {
-        "type": "DateTime"
+        "type": "Date"
       },
       "order": 26
     },
@@ -428,7 +428,7 @@
     "healthStatusAtTimeOfReportingDateOfIsolation": {
       "i18nLabel": "dateOfIsolation",
       "control": {
-        "type": "DateTime"
+        "type": "Date"
       },
       "order": 31
     },
@@ -510,7 +510,7 @@
     "exposureRiskHasTravelledInThe14DaysPriorToSymptomOnsetDateOfDeparture1": {
       "i18nLabel": "dateOfDeparture",
       "control": {
-        "type": "DateTime"
+        "type": "Date"
       },
       "order": 39
     },
@@ -531,7 +531,7 @@
     "exposureRiskHasTravelledInThe14DaysPriorToSymptomOnsetDateOfDeparture2": {
       "i18nLabel": "dateOfDeparture",
       "control": {
-        "type": "DateTime"
+        "type": "Date"
       },
       "order": 42
     },
@@ -552,7 +552,7 @@
     "exposureRiskHasTravelledInThe14DaysPriorToSymptomOnsetDateOfDeparture3": {
       "i18nLabel": "dateOfDeparture",
       "control": {
-        "type": "DateTime"
+        "type": "Date"
       },
       "order": 45
     },
@@ -613,14 +613,14 @@
     "exposureRiskHasHadContactWithAConfirmedCaseThe14DaysPriorToSymptomOnsetContact1DateFirst": {
       "i18nLabel": "firstDateOfContact",
       "control": {
-        "type": "DateTime"
+        "type": "Date"
       },
       "order": 50
     },
     "exposureRiskHasHadContactWithAConfirmedCaseThe14DaysPriorToSymptomOnsetContact1DateLast": {
       "i18nLabel": "lastDateOfContact",
       "control": {
-        "type": "DateTime"
+        "type": "Date"
       },
       "order": 51
     },
@@ -634,14 +634,14 @@
     "exposureRiskHasHadContactWithAConfirmedCaseThe14DaysPriorToSymptomOnsetContact2DateFirst": {
       "i18nLabel": "firstDateOfContact",
       "control": {
-        "type": "DateTime"
+        "type": "Date"
       },
       "order": 53
     },
     "exposureRiskHasHadContactWithAConfirmedCaseThe14DaysPriorToSymptomOnsetContact2DateLast": {
       "i18nLabel": "lastDateOfContact",
       "control": {
-        "type": "DateTime"
+        "type": "Date"
       },
       "order": 54
     },
@@ -655,14 +655,14 @@
     "exposureRiskHasHadContactWithAConfirmedCaseThe14DaysPriorToSymptomOnsetContact3DateFirst": {
       "i18nLabel": "firstDateOfContact",
       "control": {
-        "type": "DateTime"
+        "type": "Date"
       },
       "order": 56
     },
     "exposureRiskHasHadContactWithAConfirmedCaseThe14DaysPriorToSymptomOnsetContact3DateLast": {
       "i18nLabel": "lastDateOfContact",
       "control": {
-        "type": "DateTime"
+        "type": "Date"
       },
       "order": 57
     },
@@ -676,14 +676,14 @@
     "exposureRiskHasHadContactWithAConfirmedCaseThe14DaysPriorToSymptomOnsetContact4DateFirst": {
       "i18nLabel": "firstDateOfContact",
       "control": {
-        "type": "DateTime"
+        "type": "Date"
       },
       "order": 59
     },
     "exposureRiskHasHadContactWithAConfirmedCaseThe14DaysPriorToSymptomOnsetContact4DateLast": {
       "i18nLabel": "lastDateOfContact",
       "control": {
-        "type": "DateTime"
+        "type": "Date"
       },
       "order": 60
     },
@@ -697,14 +697,14 @@
     "exposureRiskHasHadContactWithAConfirmedCaseThe14DaysPriorToSymptomOnsetContact5DateFirst": {
       "i18nLabel": "firstDateOfContact",
       "control": {
-        "type": "DateTime"
+        "type": "Date"
       },
       "order": 62
     },
     "exposureRiskHasHadContactWithAConfirmedCaseThe14DaysPriorToSymptomOnsetContact5DateLast": {
       "i18nLabel": "lastDateOfContact",
       "control": {
-        "type": "DateTime"
+        "type": "Date"
       },
       "order": 63
     },
@@ -718,7 +718,7 @@
     "resubmission30DaysAfterInitialReport": {
       "i18nLabel": "dateOfReSubmissionOfThisReport",
       "control": {
-        "type": "DateTime"
+        "type": "Date"
       },
       "order": 65
     },
@@ -745,7 +745,7 @@
     "resubmission30DaysAfterInitialReportDateOfOnsetOfSignsOfIllness": {
       "i18nLabel": "ifYesDateOfOnsetOfSignsOfIllness",
       "control": {
-        "type": "DateTime"
+        "type": "Date"
       },
       "order": 67
     },
@@ -772,7 +772,7 @@
     "resubmission30DaysAfterInitialReportFirstDateOfAdmissionToHospital": {
       "i18nLabel": "firstDateOfAdmissionToHospital",
       "control": {
-        "type": "DateTime"
+        "type": "Date"
       },
       "order": 69
     },
@@ -839,7 +839,7 @@
     "ifReleasedFromHospitalIsolationDateOfLastLaboratoryTest": {
       "i18nLabel": "ifReleasedFromHospitalIsolationDateOfLastLaboratoryTest",
       "control": {
-        "type": "DateTime"
+        "type": "Date"
       },
       "order": 73
     },

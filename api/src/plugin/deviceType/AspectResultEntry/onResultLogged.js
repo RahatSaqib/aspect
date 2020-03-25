@@ -1,5 +1,4 @@
 const _ = require('lodash')
-const { resultUpdated } = require('../../../result/actions')
 const {
   resultCategoryToId,
   resultSourceToId,
@@ -10,10 +9,9 @@ async function onResultLogged(
   { resultId, deviceLogId, userId },
   { messageContext }
 ) {
-  const context = messageContext.bindActionCreators({ resultUpdated })
   await updateCovidResultFromFormData(
     { resultId, deviceLogId, userId },
-    { messageContext: context }
+    { messageContext }
   )
 }
 
@@ -56,6 +54,7 @@ async function updateCovidResultFromFormData(
         'r.resultData',
         'rf.formSchema',
         'r.resultCategory1',
+        'r.startedOn',
         'r.endedOn'
       )
     if (!result) {
@@ -69,6 +68,7 @@ async function updateCovidResultFromFormData(
       patientData,
       formSchema,
       resultCategory1,
+      startedOn,
       endedOn,
     } = result
     const covid19AssayExternalIds = await knex('AssayType as at')
@@ -168,6 +168,7 @@ async function updateCovidResultFromFormData(
         selectedResultText || resultDataObject.resultText
       if (testDate) {
         resultUpdates.endedOn = testDate || endedOn
+        resultUpdates.startedOn = testDate || startedOn
       }
     } else if (selectedResultText) {
       resultDataObject.resultText =
@@ -180,11 +181,12 @@ async function updateCovidResultFromFormData(
       }
       if (testDate) {
         resultUpdates.endedOn = endedOn || testDate
+        resultUpdates.startedOn = startedOn || testDate
       }
     }
     if (assayExternalId === 'assayGenericCovid19') {
       const testTypeOptions =
-        _.get(formSchemaObject, 'fields.testTypeOptions.control.options') || []
+        _.get(formSchemaObject, 'fields.testType.control.options') || []
       const selectedTestType = (
         testTypeOptions.find(testTypeOption =>
           _.isEqual(testTypeOption.value, formDataObject.testType)
