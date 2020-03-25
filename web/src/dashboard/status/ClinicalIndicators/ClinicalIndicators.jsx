@@ -11,7 +11,7 @@ import messages from './messages'
 
 const cssClassesStatus = classnames.bind(require('../Status.css'))
 
-export const ClinicalIndicators = ({ intl }) => {
+export const ClinicalIndicators = ({ intl, assays: assaysFromState }) => {
   const [assays, setAssays] = useState(false)
   const [months] = useState(5)
 
@@ -45,88 +45,51 @@ export const ClinicalIndicators = ({ intl }) => {
        * @return {Array} Passed to ClinicalIndicatorsContainer will generate the UI
        */
 
-      setAssays([
-        {
-          id: 'GxHiv1Vl',
-          name: intl.formatMessage(messages.clinicalIndicators.HIV.name),
+      const barGraphType = {
+        dataKey: 'byMonth',
+        component: BarGraph,
+        displayMethod: 'percentage',
+        componentClass: 'clinicalIndicators__bar',
+        indexBy: 'month',
+        resultCategory: 'resultCategory1',
+        groupBy: ['month', 'resultCategory1'],
+        legend: true,
+        formatDate: intl.formatMessage(messages.clinicalIndicators.dateFormat),
+        minDate,
+      }
+
+      const pieGraphType = {
+        dataKey: 'aggregate',
+        component: PieGraph,
+        componentClass: 'clinicalIndicators__pie',
+        indexBy: 'cnt',
+        resultCategory: 'resultCategory1',
+        groupBy: ['resultCategory1'],
+        legend: false,
+        averages: {
+          title: intl.formatMessage(messages.clinicalIndicators.HIV.pie.legend),
+        },
+        minDate,
+      }
+
+      const buildAssays = []
+
+      assaysFromState.map(assay => {
+        const { externalId, name } = assay
+        return buildAssays.push({
+          id: externalId,
+          name,
           graphContainerClass: 'clinicalIndicator__graphs',
           colors: ['#D60000', '#FFC9C4', '#00CA1C'],
           orderBy: ['MoreThan1000', 'LessThan1000', 'NotDetected'],
-          graphType: [
-            {
-              dataKey: 'byMonth',
-              component: BarGraph,
-              displayMethod: 'percentage',
-              componentClass: 'clinicalIndicators__bar',
-              indexBy: 'month',
-              resultCategory: 'resultCategory1',
-              groupBy: ['month', 'resultCategory1'],
-              legend: true,
-              formatDate: intl.formatMessage(
-                messages.clinicalIndicators.dateFormat
-              ),
-              minDate,
-            },
-            {
-              dataKey: 'aggregate',
-              component: PieGraph,
-              componentClass: 'clinicalIndicators__pie',
-              indexBy: 'cnt',
-              resultCategory: 'resultCategory1',
-              groupBy: ['resultCategory1'],
-              legend: false,
-              averages: {
-                title: intl.formatMessage(
-                  messages.clinicalIndicators.HIV.pie.legend
-                ),
-                key: 'LessThan1000',
-              },
-              minDate,
-            },
-          ],
-        },
-        {
-          id: 'GxMtbRif',
-          name: intl.formatMessage(messages.clinicalIndicators.TB.name),
-          graphContainerClass: 'clinicalIndicator__graphs',
-          colors: ['#00CA1C', '#D60000'],
-          orderBy: ['NotDetected', 'Detected'],
-          graphType: [
-            {
-              dataKey: 'aggregate',
-              component: PieGraph,
-              componentClass: 'clinicalIndicators__pie',
-              indexBy: 'cnt',
-              resultCategory: 'resultCategory1',
-              groupBy: ['resultCategory1'],
-              legend: false,
-              averages: {
-                title: intl.formatMessage(
-                  messages.clinicalIndicators.TB.pie.legend
-                ),
-                key: 'NotDetected',
-              },
-              minDate,
-            },
-            {
-              dataKey: 'byMonth',
-              component: BarGraph,
-              displayMethod: 'actual',
-              componentClass: 'clinicalIndicators__bar',
-              indexBy: 'month',
-              resultCategory: 'resultCategory1',
-              groupBy: ['month', 'resultCategory1'],
-              formatDate: intl.formatMessage(
-                messages.clinicalIndicators.dateFormat
-              ),
-              legend: true,
-              minDate,
-            },
-          ],
-        },
-      ])
+          graphType: [barGraphType, pieGraphType],
+          assayFromState: assay,
+        })
+      })
+
+      setAssays(buildAssays)
     }
-  }, [assays, intl, months])
+  }, [assays, assaysFromState, intl, months])
 
   return assays
     ? assays.map(assay => {
@@ -134,7 +97,7 @@ export const ClinicalIndicators = ({ intl }) => {
         const title = intl.formatMessage(messages.clinicalIndicators.HIV.title)
         return (
           <ClinicalIndicatorsContainer
-            title={title}
+            title={name}
             className={cssClassesStatus('Section--withStatus')}
             assay={assay}
           />

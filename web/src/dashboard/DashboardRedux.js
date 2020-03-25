@@ -746,13 +746,15 @@ export default function dashboardReducer(state = initialState, action) {
           const { assay, data, dataType } = action
           const currentState = state.clinicalIndicators.toJS()
           const currentAssayData = currentState[assay]
-          mutState.set(
-            'clinicalIndicators',
-            new Immutable.fromJS({
-              ...currentState,
-              [assay]: { ...currentAssayData, [dataType]: { ...data } },
-            })
-          )
+          if (data.data && data.data.length) {
+            mutState.set(
+              'clinicalIndicators',
+              new Immutable.fromJS({
+                ...currentState,
+                [assay]: { ...currentAssayData, [dataType]: { ...data } },
+              })
+            )
+          }
         })
       })
     }

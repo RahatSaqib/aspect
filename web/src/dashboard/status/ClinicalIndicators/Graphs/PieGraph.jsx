@@ -18,7 +18,7 @@ const LegendIndicator = ({ averages, data }) => {
 
   useEffect(() => {
     if (!average && data) {
-      const calculated = getAverageFromData(data, key, 'value')
+      const calculated = getAverageFromData(data, 'value')
       setAverage(calculated)
     }
   }, [average, data, key])
@@ -45,7 +45,12 @@ const PieGraph = ({
   const [graph, setGraph] = useState(false)
 
   useEffect(() => {
-    if (!graph && data.length && assayFromState && assayFromState.length) {
+    if (
+      !graph &&
+      data.length &&
+      assayFromState &&
+      Object.keys(assayFromState).length
+    ) {
       const formatted = formatDataForPie(
         data,
         resultCategory,

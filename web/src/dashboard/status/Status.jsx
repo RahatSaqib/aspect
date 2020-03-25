@@ -6,6 +6,7 @@ import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
 import { showAcknowledgement } from '../../appNotification/AppNotificationRedux'
+import { fetchAssays } from '../../assay/AssayRedux'
 import messages from './messages'
 import SummaryStatus from './SummaryStatus'
 import InventoryStatus from './InventoryStatus'
@@ -21,11 +22,16 @@ const cssClasses = classnames.bind(require('./Status.css'))
 
 const enhance = compose(
   connect(
-    state => ({
-      userName: state.user.jwt.name,
-      countryIsoAlpha2Code: state.user.culture.substring(3, 5),
-    }),
+    state => {
+      const assayItems = state.assay.items.toJS()
+      return {
+        userName: state.user.jwt.name,
+        countryIsoAlpha2Code: state.user.culture.substring(3, 5),
+        assays: assayItems.filter(a => a.hasResults),
+      }
+    },
     bindActionCreators.bind(null, {
+      fetchAssays,
       showAcknowledgement,
     })
   ),
@@ -41,6 +47,9 @@ const enhance = compose(
         })
       }
     },
+    componentDidMount() {
+      this.props.fetchAssays(false)
+    },
   }),
   withState('marginBottom', 'setMarginBottom', 0)
 )
@@ -52,6 +61,7 @@ const Status = ({
   marginBottom,
   setMarginBottom,
   countryIsoAlpha2Code,
+  assays,
 }) => (
   <div className={cssClasses('Container')} style={{ marginBottom }}>
     <Helmet title="Status" />
@@ -73,7 +83,14 @@ const Status = ({
       title={intl.formatMessage(messages.treatmentTitle)}
     />
 
-    <ClinicalIndicators intl={intl} history={history} location={location} />
+    {assays && assays.length ? (
+      <ClinicalIndicators
+        intl={intl}
+        history={history}
+        location={location}
+        assays={assays}
+      />
+    ) : null}
 
     <TargetStatus
       intl={intl}

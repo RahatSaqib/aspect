@@ -37,7 +37,12 @@ const BarGraph = ({
   }, [graph, indexBy, keysFromProps, orderBy])
 
   useEffect(() => {
-    if (!graph && data.length && assayFromState && assayFromState.length) {
+    if (
+      !graph &&
+      data.length &&
+      assayFromState &&
+      Object.keys(assayFromState).length
+    ) {
       const grouped = groupByKey(data, indexBy, resultCategory, formatDate)
       const normalised = normaliseKeys(grouped)
       const translated = translateKeys(normalised, assayFromState)
@@ -45,7 +50,6 @@ const BarGraph = ({
         displayMethod === 'percentage'
           ? calcPercentageSplit(translated, indexBy)
           : translated
-
       setGraph([...display])
     }
   }, [
@@ -57,6 +61,8 @@ const BarGraph = ({
     resultCategory,
     assayFromState,
   ])
+
+  // console.log(graph);
 
   return (
     <div className={cssClasses(componentClass)}>

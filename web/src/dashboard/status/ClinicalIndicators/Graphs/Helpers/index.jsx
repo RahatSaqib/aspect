@@ -48,7 +48,7 @@ const formatDataForPie = (
   orderBy = false,
   assayFromState
 ) => {
-  const { resultCategories } = assayFromState[0]
+  const { resultCategories } = assayFromState
 
   return data.reduce((acc, curr) => {
     const newKey = resultCategories.filter(r => r.externalId === curr[key])[0]
@@ -58,8 +58,8 @@ const formatDataForPie = (
   }, [])
 }
 
-const getAverageFromData = (data, key, value) => {
-  const total = filter(data, ['id', key])
+const getAverageFromData = (data, value) => {
+  const total = filter(data, ['id', data[0].id])
   const sum = data.reduce((acc, curr) => acc + curr.value, 0)
   return round((total[0][value] / sum) * 100)
 }
@@ -82,7 +82,7 @@ const calcPercentageSplit = (data, keyToOmitDuringCalc) =>
 
 const translateKeys = (data, assayFromState) => {
   const reduced = []
-  const { resultCategories } = assayFromState[0]
+  const { resultCategories } = assayFromState
 
   data.map(item => {
     const newItem = {}

@@ -4,11 +4,10 @@ import { bindActionCreators } from 'redux'
 import { compose, lifecycle, pure } from 'recompose'
 import { connect } from 'react-redux'
 import { FaChartArea as IconTitle } from 'react-icons/fa'
-
 import Card from '@material-ui/core/Card'
+
 import requirePermissions from '../../../components/shared/requirePermissions'
 import { fetchClinicalIndicatorsDashboard } from '../../DashboardRedux'
-import { fetchAssays } from '../../../assay/AssayRedux'
 
 import Title from '../Title'
 
@@ -22,8 +21,6 @@ const GraphContainer = ({ title, children, className }) => (
     </div>
   </div>
 )
-
-const Loader = () => <div>Loading...</div>
 
 const enhance = compose(
   pure,
@@ -41,23 +38,19 @@ const enhance = compose(
   connect(
     (state, props) => {
       const { id } = props.assay
-      const assays = state.assay.items.toJS()
       const clinicalIndicators = state.dashboard.clinicalIndicators.toJS()
 
       return {
         data: clinicalIndicators[id],
-        assayFromState: assays.filter(a => a.externalId === id),
       }
     },
     bindActionCreators.bind(null, {
-      fetchAssays,
       fetchClinicalIndicatorsDashboard,
     })
   ),
   lifecycle({
     componentDidMount() {
       const { id: assay, graphType } = this.props.assay
-      this.props.fetchAssays(false)
       graphType.map(graph => {
         const { dataKey: type, groupBy, minDate } = graph
         return this.props.fetchClinicalIndicatorsDashboard({
@@ -75,12 +68,18 @@ const ClinicalIndicatorsContainer = ({
   className,
   title,
   data = false,
-  assayFromState = false,
   ...props
 }) => {
-  const { graphContainerClass, colors, graphType, orderBy } = props.assay
+  const {
+    id,
+    graphContainerClass,
+    colors,
+    graphType,
+    orderBy,
+    assayFromState,
+  } = props.assay
 
-  return (
+  return data && Object.keys(data).length === graphType.length ? (
     <Card className={className}>
       <div
         className={cssClasses('TitleContainer', 'Treatment--TitleContainer')}
@@ -93,45 +92,41 @@ const ClinicalIndicatorsContainer = ({
 
       <div style={{ marginTop: 30 }}>
         <div className={cssClinicalIndicators('results__container')}>
-          {data && Object.keys(data).length === graphType.length ? (
-            <GraphContainer
-              className={cssClinicalIndicators(graphContainerClass)}
-            >
-              {graphType.map(
-                ({
-                  dataKey,
-                  indexBy,
-                  resultCategory,
-                  formatDate = false,
-                  legend = false,
-                  averages = false,
-                  component: Component,
-                  componentClass,
-                  displayMethod = 'percentage',
-                }) => (
-                  <Component
-                    data={data[dataKey].data}
-                    indexBy={indexBy}
-                    orderBy={orderBy}
-                    resultCategory={resultCategory}
-                    legend={legend}
-                    averages={averages}
-                    formatDate={formatDate}
-                    colors={colors}
-                    componentClass={componentClass}
-                    displayMethod={displayMethod}
-                    assayFromState={assayFromState}
-                  />
-                )
-              )}
-            </GraphContainer>
-          ) : (
-            <Loader />
-          )}
+          <GraphContainer
+            className={cssClinicalIndicators(graphContainerClass)}
+          >
+            {graphType.map(
+              ({
+                dataKey,
+                indexBy,
+                resultCategory,
+                formatDate = false,
+                legend = false,
+                averages = false,
+                component: Component,
+                componentClass,
+                displayMethod = 'percentage',
+              }) => (
+                <Component
+                  data={data[dataKey].data}
+                  indexBy={indexBy}
+                  orderBy={orderBy}
+                  resultCategory={resultCategory}
+                  legend={legend}
+                  averages={averages}
+                  formatDate={formatDate}
+                  colors={colors}
+                  componentClass={componentClass}
+                  displayMethod={displayMethod}
+                  assayFromState={assayFromState}
+                />
+              )
+            )}
+          </GraphContainer>
         </div>
       </div>
     </Card>
-  )
+  ) : null
 }
 
 export default enhance(ClinicalIndicatorsContainer)
