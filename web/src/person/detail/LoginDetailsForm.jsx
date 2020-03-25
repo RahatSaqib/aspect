@@ -41,7 +41,6 @@ export function validate(
       )
     }
   } else {
-    // if (shouldPrefill && !newPassword) {
     errors.newPassword = intl.formatMessage(messages.newPasswordRequired)
   }
   return errors
