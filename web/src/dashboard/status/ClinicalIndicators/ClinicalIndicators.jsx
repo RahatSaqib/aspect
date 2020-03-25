@@ -89,8 +89,8 @@ export const ClinicalIndicators = ({ intl }) => {
           id: 'GxMtbRif',
           name: intl.formatMessage(messages.clinicalIndicators.TB.name),
           graphContainerClass: 'clinicalIndicator__graphs',
-          colors: ['#D60000', '#00CA1C'],
-          orderBy: ['Detected', 'NotDetected'],
+          colors: ['#00CA1C', '#D60000'],
+          orderBy: ['NotDetected', 'Detected'],
           graphType: [
             {
               dataKey: 'aggregate',

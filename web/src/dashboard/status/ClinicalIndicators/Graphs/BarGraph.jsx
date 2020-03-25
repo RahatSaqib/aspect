@@ -67,7 +67,11 @@ const BarGraph = ({
           indexBy={indexBy}
           enableLabel={false}
           enableGridY={false}
-          margin={{ top: 10, right: 25, bottom: 110, left: 50 }}
+          margin={
+            displayMethod === 'percentage'
+              ? { top: 5, right: 10, bottom: 110, left: 5 }
+              : { top: 10, right: 10, bottom: 110, left: 25 }
+          }
           padding={0.3}
           colors={colors}
           borderColor={{ from: 'color', modifiers: [['darker', 1.6]] }}
@@ -96,7 +100,7 @@ const BarGraph = ({
                 translateX: -25,
                 translateY: 60,
                 itemsSpacing: 2,
-                itemWidth: 120,
+                itemWidth: 98,
                 itemHeight: 20,
                 itemDirection: 'right-to-left',
                 itemOpacity: 0.85,

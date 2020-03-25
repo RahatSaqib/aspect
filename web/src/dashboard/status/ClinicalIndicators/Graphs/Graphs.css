@@ -5,13 +5,17 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-grow: 1;
+  flex: 1 1 30%;
   height: 75%;
   /* align-self: center; */
 }
 
 .clinicalIndicators__bar {
-  flex-grow: 2;
+  flex: 1 1 70%;
+  height: 100%;
+  /* display: flex;
+  justify-content: center;
+  align-items: center; */
 }
 
 .legend__container {
@@ -31,4 +35,12 @@
   font-size: 48px;
   font-weight: 900;
   color: #00ca1c;
+}
+
+@media screen and (min-width: 300px) and (max-width: 1024px) {
+  .clinicalIndicators__pie,
+  .clinicalIndicators__bar {
+    height: 50%;
+    flex: 1 1 100%;
+  }
 }
