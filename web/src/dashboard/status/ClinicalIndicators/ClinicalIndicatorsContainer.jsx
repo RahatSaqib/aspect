@@ -1,18 +1,19 @@
-import React from 'react'
-import classnames from 'classnames/bind'
-import { bindActionCreators } from 'redux'
-import { compose, lifecycle, pure } from 'recompose'
-import { connect } from 'react-redux'
-import { FaChartArea as IconTitle } from 'react-icons/fa'
+import React from 'react';
+import classnames from 'classnames/bind';
+import { bindActionCreators } from 'redux';
+import { compose, lifecycle, pure } from 'recompose';
+import { connect } from 'react-redux';
+import { FaChartArea as IconTitle } from 'react-icons/fa';
 
-import Card from '@material-ui/core/Card'
-import requirePermissions from '../../../components/shared/requirePermissions'
-import { fetchClinicalIndicatorsDashboard } from '../../DashboardRedux'
+import Card from '@material-ui/core/Card';
+import requirePermissions from '../../../components/shared/requirePermissions';
+import { fetchClinicalIndicatorsDashboard } from '../../DashboardRedux';
+import { fetchAssays } from '../../../assay/AssayRedux';
 
-import Title from '../Title'
+import Title from '../Title';
 
-const cssClasses = classnames.bind(require('../Status.css'))
-const cssClinicalIndicators = classnames.bind(require('./Clinical.css'))
+const cssClasses = classnames.bind(require('../Status.css'));
+const cssClinicalIndicators = classnames.bind(require('./Clinical.css'));
 
 const GraphContainer = ({ title, children, className }) => (
   <div className={cssClinicalIndicators('resultsgraph__container')}>
@@ -20,9 +21,9 @@ const GraphContainer = ({ title, children, className }) => (
       <div className={cssClinicalIndicators('results__graph')}>{children}</div>
     </div>
   </div>
-)
+);
 
-const Loader = () => <div>Loading...</div>
+const Loader = () => <div>Loading...</div>;
 
 const enhance = compose(
   pure,
@@ -33,45 +34,51 @@ const enhance = compose(
       'treatmentStatus:edit',
       'result:admin',
       'result:view',
-      'result:edit',
+      'result:edit'
     ],
-    features: ['summaryDashboard', 'siteDashboard', 'deviceDashboard'],
+    features: ['summaryDashboard', 'siteDashboard', 'deviceDashboard']
   }),
   connect(
     (state, props) => {
-      const { id } = props.assay
-      const clinicalIndicators = state.dashboard.clinicalIndicators.toJS()
+      const { id } = props.assay;
+      const assays = state.assay.items.toJS();
+      const clinicalIndicators = state.dashboard.clinicalIndicators.toJS();
+
       return {
         data: clinicalIndicators[id],
-      }
+        assayFromState: assays.filter(a => a.externalId === id)
+      };
     },
     bindActionCreators.bind(null, {
-      fetchClinicalIndicatorsDashboard,
+      fetchAssays,
+      fetchClinicalIndicatorsDashboard
     })
   ),
   lifecycle({
     componentDidMount() {
-      const { id: assay, graphType } = this.props.assay
+      const { id: assay, graphType } = this.props.assay;
+      this.props.fetchAssays(false);
       graphType.map(graph => {
-        const { dataKey: type, groupBy, minDate } = graph
+        const { dataKey: type, groupBy, minDate } = graph;
         return this.props.fetchClinicalIndicatorsDashboard({
           assay,
           minDate,
           groupBy,
-          type,
-        })
-      })
-    },
+          type
+        });
+      });
+    }
   })
-)
+);
 
 const ClinicalIndicatorsContainer = ({
   className,
   title,
   data = false,
+  assayFromState = false,
   ...props
 }) => {
-  const { graphContainerClass, colors, graphType, orderBy } = props.assay
+  const { graphContainerClass, colors, graphType, orderBy } = props.assay;
 
   return (
     <Card className={className}>
@@ -100,7 +107,7 @@ const ClinicalIndicatorsContainer = ({
                   averages = false,
                   component: Component,
                   componentClass,
-                  displayMethod = 'percentage',
+                  displayMethod = 'percentage'
                 }) => (
                   <Component
                     data={data[dataKey].data}
@@ -113,6 +120,7 @@ const ClinicalIndicatorsContainer = ({
                     colors={colors}
                     componentClass={componentClass}
                     displayMethod={displayMethod}
+                    assayFromState={assayFromState}
                   />
                 )
               )}
@@ -123,7 +131,7 @@ const ClinicalIndicatorsContainer = ({
         </div>
       </div>
     </Card>
-  )
-}
+  );
+};
 
-export default enhance(ClinicalIndicatorsContainer)
+export default enhance(ClinicalIndicatorsContainer);

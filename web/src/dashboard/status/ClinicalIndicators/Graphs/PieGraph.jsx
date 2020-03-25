@@ -1,32 +1,35 @@
-import React, { useEffect, useState } from 'react'
-import { ResponsivePie } from '@nivo/pie'
-import classnames from 'classnames/bind'
+import React, { Fragment, useEffect, useState } from 'react';
+import { ResponsivePie } from '@nivo/pie';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import classnames from 'classnames/bind';
+
 import {
   formatDataForPie,
   getAverageFromData,
   sortByInputArray,
-} from './Helpers'
+  translateKeys
+} from './Helpers';
 
-const cssClasses = classnames.bind(require('./Graphs.css'))
+const cssClasses = classnames.bind(require('./Graphs.css'));
 
 const LegendIndicator = ({ averages, data }) => {
-  const { title, key } = averages
-  const [average, setAverage] = useState(0)
+  const { title, key } = averages;
+  const [average, setAverage] = useState(0);
 
   useEffect(() => {
     if (!average && data) {
-      const calculated = getAverageFromData(data, key, 'value')
-      setAverage(calculated)
+      const calculated = getAverageFromData(data, key, 'value');
+      setAverage(calculated);
     }
-  }, [average, data, key])
+  }, [average, data, key]);
 
   return (
     <div className={cssClasses('legend__container')}>
       <div className={cssClasses('legend__average')}>{average}%</div>
       <div className={cssClasses('legend__title')}>{title}</div>
     </div>
-  )
-}
+  );
+};
 
 const PieGraph = ({
   data,
@@ -37,49 +40,62 @@ const PieGraph = ({
   averages,
   colors,
   componentClass,
+  assayFromState
 }) => {
-  const [graph, setGraph] = useState(false)
+  const [graph, setGraph] = useState(false);
 
   useEffect(() => {
-    if (!graph && data.length) {
-      const formatted = formatDataForPie(data, resultCategory, indexBy, orderBy)
-      const sorted = sortByInputArray(formatted, orderBy, 'id')
-      setGraph(formatted)
+    if (!graph && data.length && assayFromState && assayFromState.length) {
+      const formatted = formatDataForPie(
+        data,
+        resultCategory,
+        indexBy,
+        orderBy,
+        assayFromState
+      );
+      const sorted = sortByInputArray(formatted, orderBy, 'id');
+      setGraph(formatted);
     }
-  }, [data, graph, indexBy, orderBy, resultCategory])
+  }, [data, graph, indexBy, orderBy, resultCategory, assayFromState]);
 
   return (
     <div className={cssClasses(componentClass)}>
-      <ResponsivePie
-        data={graph}
-        keys={orderBy}
-        margin={{ top: 30, right: 30, bottom: 30, left: 30 }}
-        innerRadius={0.85}
-        enableRadialLabels={false}
-        enableSlicesLabels={false}
-        padAngle={-1}
-        startAngle={-90}
-        cornerRadius={3}
-        colors={colors}
-        borderWidth={1}
-        borderColor={{ from: 'color', modifiers: [['darker', 0.2]] }}
-        radialLabelsSkipAngle={10}
-        radialLabelsTextXOffset={6}
-        radialLabelsTextColor="#333333"
-        radialLabelsLinkOffset={0}
-        radialLabelsLinkDiagonalLength={16}
-        radialLabelsLinkHorizontalLength={24}
-        radialLabelsLinkStrokeWidth={1}
-        radialLabelsLinkColor={{ from: 'color' }}
-        slicesLabelsSkipAngle={10}
-        slicesLabelsTextColor="#333333"
-        animate
-        motionStiffness={90}
-        motionDamping={15}
-      />
-      {averages && <LegendIndicator averages={averages} data={graph} />}
+      {graph && graph.length ? (
+        <Fragment>
+          <ResponsivePie
+            data={graph}
+            keys={orderBy}
+            margin={{ top: 30, right: 30, bottom: 30, left: 30 }}
+            innerRadius={0.85}
+            enableRadialLabels={false}
+            enableSlicesLabels={false}
+            padAngle={-1}
+            startAngle={-90}
+            cornerRadius={3}
+            colors={colors}
+            borderWidth={1}
+            borderColor={{ from: 'color', modifiers: [['darker', 0.2]] }}
+            radialLabelsSkipAngle={10}
+            radialLabelsTextXOffset={6}
+            radialLabelsTextColor="#333333"
+            radialLabelsLinkOffset={0}
+            radialLabelsLinkDiagonalLength={16}
+            radialLabelsLinkHorizontalLength={24}
+            radialLabelsLinkStrokeWidth={1}
+            radialLabelsLinkColor={{ from: 'color' }}
+            slicesLabelsSkipAngle={10}
+            slicesLabelsTextColor="#333333"
+            animate
+            motionStiffness={90}
+            motionDamping={15}
+          />
+          {averages && <LegendIndicator averages={averages} data={graph} />}
+        </Fragment>
+      ) : (
+        <CircularProgress />
+      )}
     </div>
-  )
-}
+  );
+};
 
-export default PieGraph
+export default PieGraph;
