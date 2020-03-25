@@ -143,7 +143,7 @@ export const LoginDetailsForm = ({
   onSubmit,
   form,
   values,
-  meta,
+  meta: { username, newPassword, confirmNewPassword, currentPassword },
   onUsernameChange,
   onNewPasswordChange,
   onUserLockedOutChange,
@@ -152,7 +152,6 @@ export const LoginDetailsForm = ({
   onCurrentPasswordKeyPress,
   handleSubmit,
 }) => {
-  const { username, newPassword, confirmNewPassword, currentPassword } = meta
   return (
     <form onSubmit={onSubmit} className={cssClasses('Form')}>
       <div className={cssClasses('Form__Content')}>
