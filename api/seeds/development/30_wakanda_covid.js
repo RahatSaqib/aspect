@@ -369,9 +369,44 @@ async function seed(knex) {
     },
   ]
 
-  await Promise.each(_.range(resultNumber), async i => {
-    const device = countryData.devices[i % countryData.devices.length]
-    const siteData = countryData.labs.find(site => site.id === device.siteId)
+  const { id: aspectDeviceTypeId } = await knex('DeviceType')
+    .where('externalId', 'Aspect')
+    .first('id')
+  const aspectDevice = await knex('Device')
+    .where({
+      partnerId,
+      deviceTypeId: aspectDeviceTypeId,
+    })
+    .first()
+  const genericTestTypes = [
+    {
+      title: 'PCR/molecular',
+      value: 'pcr',
+    },
+    {
+      title: 'Immunoassay',
+      value: 'immunoassay',
+    },
+    {
+      title: 'Rapid diagnostic test',
+      value: 'rapidDiagnosticTest',
+    },
+    {
+      title: 'Digital X-Ray',
+      value: 'digitalXRay',
+    },
+  ]
+  const genericAssay = await knex('Assay')
+    .where('externalId', 'assayGenericCovid19')
+    .first()
+  await Promise.each(_.range(resultNumber / 4), async i => {
+    const resultCapturedInAspect = i % 7 === 0
+    const device = resultCapturedInAspect
+      ? aspectDevice
+      : countryData.devices[i % countryData.devices.length]
+    const siteData = resultCapturedInAspect
+      ? countryData.labs[i % countryData.labs.length]
+      : countryData.labs.find(site => site.id === device.siteId)
     const sample = samples[i % samples.length]
     const randomDate = calculateDateForResult(i, resultNumber, 6000)
     const reportableSite = sample.originSiteId
@@ -384,17 +419,21 @@ async function seed(knex) {
       r => rnd >= r.minLikelihood && rnd <= r.maxLikelihood
     )
 
+    const selectedTestType =
+      genericTestTypes[_.random(0, genericTestTypes.length - 1)]
     const formData = {
       ageYears: rnd,
       caseId: `COVID-${_.random(1000, 9999)}-ID`,
       gender: _.random(1, 2),
       testReason: _.random(1, 6),
+      testType: selectedTestType.value,
+      dateAndTimeOfTest: addMinutes(randomDate, 100),
     }
 
     const resultId = await knex('Result').insert({
       ...auditFields,
-      externalId: `COVID-${i}`,
-      assayId: deviceTypeAssays[device.deviceTypeId].id,
+      externalId: `COVID-GENERIC-${i}`,
+      assayId: genericAssay.id,
       partnerId,
       geographyId: siteData.geographyId,
       siteId: siteData.id,
@@ -407,7 +446,10 @@ async function seed(knex) {
       sampleId: sample.id,
       resultCategory1: result.category1,
       resultCategory2: result.category2,
-      resultData: JSON.stringify({ resultText: result.resultText }),
+      resultData: JSON.stringify({
+        resultText: result.resultText,
+        typeOfTest: selectedTestType.title,
+      }),
       formData: JSON.stringify(formData),
       patientData: JSON.stringify({
         age: formData.age,

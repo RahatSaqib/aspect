@@ -1378,7 +1378,7 @@ async function updateFormData(request) {
               partnerId: result.data.partnerId,
               deviceTypeId: aspectDeviceTypeId,
             })
-            .first()) || {}
+            .first('id')) || {}
         if (deviceId) {
           ;[deviceLogId] = await knex('DeviceLog').insert({
             deviceId,
