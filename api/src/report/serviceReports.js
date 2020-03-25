@@ -189,6 +189,7 @@ async function createReport(request, reply) {
 
     // position cell where data table begins
     const cells = getCellsByValue(worksheet, '<Table>')
+
     if (cells.length > 0) {
       // empty cells
       cells.forEach(cell => {
@@ -223,7 +224,8 @@ async function createReport(request, reply) {
             if (fieldName === '#') {
               return rowIndex + 1
             }
-            let value = (fieldName && dataRow[fieldName]) || ''
+            let value = fieldName && dataRow[fieldName]
+            value = _.isNil(value) ? '' : value
             if (fieldName === 'patientAge' && value === 'null') {
               value = ''
             }
