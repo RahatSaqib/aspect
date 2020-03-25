@@ -151,126 +151,122 @@ export const LoginDetailsForm = ({
   onCurrentPasswordChange,
   onCurrentPasswordKeyPress,
   handleSubmit,
-}) => {
-  return (
-    <form onSubmit={onSubmit} className={cssClasses('Form')}>
-      <div className={cssClasses('Form__Content')}>
-        <TextField
-          autoFocus
-          fullWidth
-          type="text"
-          name="username"
-          label={intl.formatMessage(messages.username)}
-          value={values.username}
-          onChange={onUsernameChange}
-          disabled={loading}
-          error={hasError(username)}
-          helperText={hasError(username)}
-          inputProps={{ maxLength: 255 }}
-          margin="normal"
-          FormHelperTextProps={{
-            margin: 'dense',
-          }}
+}) => (
+  <form onSubmit={onSubmit} className={cssClasses('Form')}>
+    <div className={cssClasses('Form__Content')}>
+      <TextField
+        autoFocus
+        fullWidth
+        type="text"
+        name="username"
+        label={intl.formatMessage(messages.username)}
+        value={values.username}
+        onChange={onUsernameChange}
+        disabled={loading}
+        error={hasError(username)}
+        helperText={hasError(username)}
+        inputProps={{ maxLength: 255 }}
+        margin="normal"
+        FormHelperTextProps={{
+          margin: 'dense',
+        }}
+      />
+      <StrongPasswordInput
+        intl={intl}
+        input={{
+          value: values.newPassword,
+          onChange: onNewPasswordChange,
+        }}
+        disabled={loading}
+        meta={newPassword}
+        textFieldProps={{
+          floatingLabelText: intl.formatMessage(messages.newPassword),
+          type: 'password',
+          name: 'newPassword',
+          maxLength: 100,
+          autoFocus: true,
+          fullWidth: true,
+          label: intl.formatMessage(messages.newPassword),
+          helperText: hasError(newPassword),
+          error: hasError(newPassword),
+        }}
+        popOverProps={{}}
+      />
+      <br />
+      <TextField
+        autoFocus
+        fullWidth
+        type="password"
+        name="confirmNewPassword"
+        label={intl.formatMessage(messages.confirmNewPassword)}
+        value={values.confirmNewPassword}
+        onChange={onConfirmNewPasswordChange}
+        disabled={loading}
+        error={hasError(confirmNewPassword)}
+        helperText={hasError(confirmNewPassword)}
+        inputProps={{ maxLength: 100 }}
+      />
+      {canModify && (
+        <AspectSwitch
+          name="userLockedOut"
+          checked={values.userLockedOut}
+          onChange={onUserLockedOutChange}
+          labelText={intl.formatMessage(messages.userLockedOutLabel)}
         />
-        <StrongPasswordInput
-          intl={intl}
-          input={{
-            value: values.newPassword,
-            onChange: onNewPasswordChange,
-          }}
-          disabled={loading}
-          meta={newPassword}
-          textFieldProps={{
-            floatingLabelText: intl.formatMessage(messages.newPassword),
-            type: 'password',
-            name: 'newPassword',
-            maxLength: 100,
-            autoFocus: true,
-            fullWidth: true,
-            label: intl.formatMessage(messages.newPassword),
-            helperText: hasError(newPassword),
-            error: hasError(newPassword),
-          }}
-          popOverProps={{}}
-        />
-        <br />
-        <TextField
-          autoFocus
-          fullWidth
-          type="password"
-          name="confirmNewPassword"
-          label={intl.formatMessage(messages.confirmNewPassword)}
-          value={values.confirmNewPassword}
-          onChange={onConfirmNewPasswordChange}
-          disabled={loading}
-          error={hasError(confirmNewPassword)}
-          helperText={hasError(confirmNewPassword)}
-          inputProps={{ maxLength: 100 }}
-        />
-        {canModify && (
-          <AspectSwitch
-            name="userLockedOut"
-            checked={values.userLockedOut}
-            onChange={onUserLockedOutChange}
-            labelText={intl.formatMessage(messages.userLockedOutLabel)}
-          />
-        )}
-      </div>
-      <div className={cssClasses('Form__ActionRow')}>
-        <Button
-          type="submit"
-          color="primary"
-          variant="contained"
-          disabled={loading || form.pristine || !form.valid || form.submitting}
-        >
-          {intl.formatMessage(messages.save)}
-        </Button>
-      </div>
-      <AspectDialog
-        actions={[
-          <Button
-            color="primary"
-            disabled={loading}
-            onClick={closeCurrentPasswordInputDialog}
-          >
-            {intl.formatMessage(messages.cancelCurrentPassword)}
-          </Button>,
-          <Button
-            color="primary"
-            disabled={
-              loading || form.pristine || !form.valid || form.submitting
-            }
-            onClick={handleSubmit}
-          >
-            {intl.formatMessage(messages.submitCurrentPassword)}
-          </Button>,
-        ]}
-        open={currentPasswordInputDialogOpen || false}
-        onEscapeKeyDown={closeCurrentPasswordInputDialog}
-        onClose={closeCurrentPasswordInputDialog}
-        title={intl.formatMessage(messages.currentPasswordDialogHeader)}
+      )}
+    </div>
+    <div className={cssClasses('Form__ActionRow')}>
+      <Button
+        type="submit"
+        color="primary"
+        variant="contained"
+        disabled={loading || form.pristine || !form.valid || form.submitting}
       >
-        <p>{intl.formatMessage(messages.currentPasswordDialogMessage)}</p>
-        <TextField
-          autoFocus
-          fullWidth
-          type="password"
-          name="currentPassword"
-          value={values.currentPassword}
-          onChange={onCurrentPasswordChange}
-          onKeyPress={onCurrentPasswordKeyPress}
+        {intl.formatMessage(messages.save)}
+      </Button>
+    </div>
+    <AspectDialog
+      actions={[
+        <Button
+          color="primary"
           disabled={loading}
-          error={hasError(currentPassword)}
-          helperText={hasError(currentPassword)}
-          inputProps={{ maxLength: 100 }}
-          margin="normal"
-          FormHelperTextProps={{
-            margin: 'dense',
-          }}
-        />
-      </AspectDialog>
-    </form>
-  )
-}
+          onClick={closeCurrentPasswordInputDialog}
+        >
+          {intl.formatMessage(messages.cancelCurrentPassword)}
+        </Button>,
+        <Button
+          color="primary"
+          disabled={loading || form.pristine || !form.valid || form.submitting}
+          onClick={handleSubmit}
+        >
+          {intl.formatMessage(messages.submitCurrentPassword)}
+        </Button>,
+      ]}
+      open={currentPasswordInputDialogOpen || false}
+      onEscapeKeyDown={closeCurrentPasswordInputDialog}
+      onClose={closeCurrentPasswordInputDialog}
+      title={intl.formatMessage(messages.currentPasswordDialogHeader)}
+    >
+      <p>{intl.formatMessage(messages.currentPasswordDialogMessage)}</p>
+      <TextField
+        autoFocus
+        fullWidth
+        type="password"
+        name="currentPassword"
+        value={values.currentPassword}
+        onChange={onCurrentPasswordChange}
+        onKeyPress={onCurrentPasswordKeyPress}
+        disabled={loading}
+        error={hasError(currentPassword)}
+        helperText={hasError(currentPassword)}
+        inputProps={{ maxLength: 100 }}
+        margin="normal"
+        FormHelperTextProps={{
+          margin: 'dense',
+        }}
+      />
+    </AspectDialog>
+  </form>
+)
 
 export default enhance(LoginDetailsForm)
