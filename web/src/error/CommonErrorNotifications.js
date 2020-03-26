@@ -9,7 +9,8 @@ export function errorPleaseTryAgainInAFewMinutes(
     ...defineMessages({
       resolution: {
         id: 'errorResponseMessages.common.tryAgainLater.resolution',
-        defaultMessage: 'Please try again in a few minutes',
+        defaultMessage:
+          'Please, try again in a few minutes. If the error persists, contact your administrator for support.',
       },
     }),
     ...messageDescriptors,
