@@ -2165,7 +2165,6 @@ async function getResultsForReport(auth, query) {
 
 async function getDevicesForHIVVLNonSupressedReport(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
-  // const resultCategoryIds = await allResultCategoryToId()
 
   const resultQuery = getBaseQueryForResults(auth, query)
     .modify(queryBuilder => {
