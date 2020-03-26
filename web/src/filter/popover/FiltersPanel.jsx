@@ -302,11 +302,11 @@ const messages = defineMessages({
     defaultMessage: 'Select status...',
   },
   treatmentStatus: {
-    id: 'filter.popover.workflowStatus',
+    id: 'filter.popover.treatmentStatus',
     defaultMessage: 'Treatment Status',
   },
   selectTreatmentStatus: {
-    id: 'filter.popover.selectWorkflowStatus',
+    id: 'filter.popover.selectTreatmentStatus',
     defaultMessage: 'Select status...',
   },
   deviceStatus: {
