@@ -135,6 +135,10 @@ export default defineMessages({
     id: 'pages.UpdateLoginDetails.newPassword',
     defaultMessage: 'New Password',
   },
+  newPasswordRequired: {
+    id: 'pages.ResetPassword.newPasswordRequired',
+    defaultMessage: 'Please enter a new password',
+  },
   confirmNewPassword: {
     id: 'pages.UpdateLoginDetails.confirmNewPassword',
     defaultMessage: 'Confirm New Password',
