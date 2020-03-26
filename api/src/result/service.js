@@ -2163,6 +2163,87 @@ async function getResultsForReport(auth, query) {
   return getListResults(query, auth)
 }
 
+async function getDevicesForHIVVLNonSupressedReport(auth, query) {
+  const dataConstraints = await getConstraints(auth.credentials)
+  // const resultCategoryIds = await allResultCategoryToId()
+
+  const resultQuery = getBaseQueryForResults(auth, query)
+    .modify(queryBuilder => {
+      if (!query.resultCategoryId) {
+        return
+      }
+      queryBuilder
+        .innerJoin('ResultCategoryAssay as rca', 'a.id', 'rca.assayId')
+        .where('rca.resultCategoryId', query.resultCategoryId)
+
+      if (!query.resultCategory2Id) {
+        return
+      }
+      queryBuilder
+        .innerJoin('ResultCategoryAssay as rca2', 'a.id', 'rca2.assayId')
+        .where('rca2.resultCategoryId', query.resultCategory2Id)
+    })
+    .modify(filterDateRangeParams, query, 'r.endedOn')
+    .modify(filterParams, query, {
+      deviceId: 'd.id',
+      countryId: 'g.countryId',
+      stateId: 'g.stateId',
+      lgaId: 'g.lgaId',
+      deviceName: 'd.name',
+      siteName: 'si.name',
+      sampleId: 'sp.externalId',
+      sampleOriginSite: 'so.name',
+      errorCode: 'r.errorCode',
+      workflowStatusId: 'rs.id',
+      treatmentStatusId: 'rts.id',
+      siteExternalId: 'si.externalId',
+    })
+    .modify(addConstraints, dataConstraints, {
+      device: 'd',
+      result: 'r',
+      showUnapprovedDevices: false,
+    })
+
+  // get total count for paging
+  const getCount = resultQuery
+    .clone()
+    .count('r.id as count')
+    .first()
+  // get rows
+  const getItems = resultQuery
+    .clone()
+    .modify(sortPageParams, query, 'endedOn')
+    .select([
+      'd.name',
+      'r.sampleId',
+      'r.endedOn',
+      'r.patientData',
+      'r.resultData',
+      'r.notes',
+    ])
+
+  // return result when both queries are finished
+  const [{ count: total }, data] = await Promise.all([getCount, getItems])
+
+  data.forEach(async it => {
+    const { id, age } = JSON.parse(it.patientData)
+    it.patientId = id
+    it.patientAge = age
+
+    const { copies } = JSON.parse(it.resultData)
+    it.copies = copies
+  })
+
+  const result = {
+    ok: true,
+    total,
+    length: data.length,
+    data,
+  }
+
+  return result
+}
+
 module.exports = {
   updateTransferNotification,
   listResults,
@@ -2192,4 +2273,5 @@ module.exports = {
   allResultNotes,
   showResultFollowUps,
   transferResult,
+  getDevicesForHIVVLNonSupressedReport,
 }

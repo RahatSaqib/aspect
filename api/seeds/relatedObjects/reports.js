@@ -78,11 +78,13 @@ async function getBaseReports() {
       fileName: 'HIVNotSuppressed',
       sheets: [
         {
-          moduleName: '',
-          functionName: '',
+          moduleName: 'result/service',
+          functionName: 'getDevicesForHIVVLNonSupressedReport',
           query: {
             sortCol: 'endedOn',
             sortDir: 'desc',
+            resultCategoryId: resultCategoryIds.MoreThan1000,
+            resultCategory2Id: resultCategoryIds.MoreThan1000,
           },
         },
       ],
