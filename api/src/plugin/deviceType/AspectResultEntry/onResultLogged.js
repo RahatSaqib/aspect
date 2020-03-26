@@ -123,7 +123,6 @@ async function updateCovidResultFromFormData(
     } else if (formDataObject.caseId) {
       patientDataObject.id = patientDataObject.id || formDataObject.caseId
     }
-    patientDataObject.caseId = formDataObject.caseId
     const testReasonOptions =
       _.get(formSchemaObject, 'fields.testReason.control.options') || []
     patientDataObject.testReason =
