@@ -1476,8 +1476,11 @@ async function clinicalIndicatorsDashboard(request) {
     throw Boom.unauthorized('You do not have access to results')
   }
 
+  let assay = null
   if (query.assay && !Array.isArray(query.assay)) {
-    query.assay = [query.assay]
+    assay = [query.assay]
+  } else if (query.assay) {
+    assay = query.assay
   }
 
   // get data constraints
@@ -1516,8 +1519,8 @@ async function clinicalIndicatorsDashboard(request) {
       if (query.maxDate) {
         qb.where('r.endedOn', '<=', query.maxDate)
       }
-      if (query.assay) {
-        qb.whereIn('a.externalId', query.assay)
+      if (assay) {
+        qb.whereIn('a.externalId', assay)
       }
       if (query.assayType) {
         qb.where('at.externalId', '=', query.assayType)
@@ -1534,10 +1537,13 @@ async function clinicalIndicatorsDashboard(request) {
     .count('r.id as cnt')
 
   // if no group is specified, use result category
+  let groupBy = null
   if (!query.groupBy) {
-    query.groupBy = ['resultCategory1']
+    groupBy = ['resultCategory1']
   } else if (!Array.isArray(query.groupBy)) {
-    query.groupBy = [query.groupBy]
+    groupBy = [query.groupBy]
+  } else {
+    groupBy = query.groupBy
   }
 
   // handle possible groups:
@@ -1555,7 +1561,7 @@ async function clinicalIndicatorsDashboard(request) {
     state: 'st.name as state',
   }
 
-  query.groupBy.forEach(g => {
+  groupBy.forEach(g => {
     resultQuery.modify(qb => {
       qb.select(paramToDb[g])
       qb.groupBy(g)

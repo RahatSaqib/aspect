@@ -505,7 +505,7 @@ describe('Dashboard routes', () => {
       })
     })
 
-    describe('/dashboard/clinical-indicators', () => {
+    describe.only('/dashboard/clinical-indicators', () => {
       const clinicalIndicatorsPath = '/api/dashboard/clinical-indicators'
       let resultsForUser = null
       let reportableResultCategories = null
