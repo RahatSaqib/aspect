@@ -201,6 +201,9 @@ async function upsertJobFunction(
   permissions,
   features
 ) {
+  if (!permissions) permissions = []
+  if (!features) features = []
+
   let { id: jobFunctionId } =
     (await knex('JobFunction')
       .where({
@@ -211,6 +214,7 @@ async function upsertJobFunction(
   if (!jobFunctionId) {
     ;[jobFunctionId] = await knex('JobFunction').insert({
       name: jobFunctionName,
+      externalId: _.camelCase(jobFunctionName),
       partnerId,
     })
   }

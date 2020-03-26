@@ -66,6 +66,7 @@ exports[`NotificationList module NotificationList component should render correc
       onCsvClick={[Function]}
       onExcelClick={[Function]}
       reportName="Notifications"
+      visible={false}
     />
     <pure(withHandlers(EmptyList))
       history={

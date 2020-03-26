@@ -26,7 +26,7 @@ const messages = defineMessages({
     defaultMessage: 'Patient',
   },
   patientData: {
-    id: 'pages.ClinicalHistory.patient',
+    id: 'pages.ClinicalHistory.patientData',
     defaultMessage: 'Patient Data',
   },
 })
@@ -100,8 +100,8 @@ export const ClinicalHistory = props => {
         title={`${intl.formatMessage(messages.patient)} ${patientId}`}
       />
       <section className={cssClasses('Section', 'Section--first')}>
-        <Grid container spacing={4} alignItems="stretch" direction="row">
-          <Grid item xs={4}>
+        <Grid container spacing={16}>
+          <Grid item xs={12} sm={12} md={3}>
             <Paper style={{ height: '100%' }}>
               <section style={{ padding: 20 }}>
                 <p data-panel-title>
@@ -109,12 +109,18 @@ export const ClinicalHistory = props => {
                 </p>
               </section>
               <div style={{ padding: '0px 0px 20px 20px' }}>
-                {patientDataSchema &&
-                  patientDataSchema.map(elem => [<ReadOnlyField {...elem} />])}
+                <Grid container>
+                  {patientDataSchema &&
+                    patientDataSchema.map(elem => [
+                      <Grid item xs={6} s={6} md={12}>
+                        <ReadOnlyField {...elem} />
+                      </Grid>,
+                    ])}
+                </Grid>
               </div>
             </Paper>
           </Grid>
-          <Grid item xs={8} sm container style={{ marginLeft: 10 }}>
+          <Grid item xs sm md container>
             <Paper style={{ width: '100%' }}>
               <AspectTimeline
                 items={timelineItems}

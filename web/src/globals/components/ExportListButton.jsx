@@ -44,70 +44,73 @@ const enhance = compose(
   })
 )
 
-const ExportListButton = ({
+export const ExportListButton = ({
   onMyExport,
+  visible = false,
 
   // --- injected by recompose ---
   onPopoverClick,
   onPopoverClose,
   anchorEl,
   downloadStarted,
-}) => (
-  <div>
-    {downloadStarted && <LinearProgress />}
-    <IconButton
-      variant="contained"
-      onClick={onPopoverClick}
-      className={cssClasses('DownloadButton')}
-    >
-      <CloudDownloadIcon style={{ fontSize: '1.25rem' }} />
-    </IconButton>
-    <Popover
-      id="simple-popover"
-      open={Boolean(anchorEl)}
-      anchorOrigin={{
-        vertical: 'bottom',
-        horizontal: 'left',
-      }}
-      anchorEl={anchorEl}
-      transformOrigin={{
-        vertical: 'top',
-        horizontal: 'left',
-      }}
-      onClose={onPopoverClose}
-    >
-      <ol
-        style={{
-          listStyleType: 'none',
-          padding: '5px',
-          margin: '5px 30px 5px 30px',
-        }}
+}) =>
+  visible && (
+    <div>
+      {downloadStarted && <LinearProgress />}
+      <IconButton
+        variant="contained"
+        onClick={onPopoverClick}
+        className={cssClasses('DownloadButton')}
       >
-        <li>
-          <button
-            type="button"
-            className={cssClasses('Reports_Button')}
-            inverse
-            onClick={onMyExport}
-            id="xlsx"
-          >
-            Excel
-          </button>
-        </li>
-        <li>
-          <button
-            type="button"
-            className={cssClasses('Reports_Button')}
-            inverse
-            onClick={onMyExport}
-            id="csv"
-          >
-            CSV
-          </button>
-        </li>
-      </ol>
-    </Popover>
-  </div>
-)
+        <CloudDownloadIcon style={{ fontSize: '1.25rem' }} />
+      </IconButton>
+
+      <Popover
+        id="simple-popover"
+        open={Boolean(anchorEl)}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'left',
+        }}
+        anchorEl={anchorEl}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'left',
+        }}
+        onClose={onPopoverClose}
+      >
+        <ol
+          style={{
+            listStyleType: 'none',
+            padding: '5px',
+            margin: '5px 30px 5px 30px',
+          }}
+        >
+          <li>
+            <button
+              type="button"
+              className={cssClasses('Reports_Button')}
+              inverse
+              onClick={onMyExport}
+              id="xlsx"
+            >
+              Excel
+            </button>
+          </li>
+          <li>
+            <button
+              type="button"
+              className={cssClasses('Reports_Button')}
+              inverse
+              onClick={onMyExport}
+              id="csv"
+            >
+              CSV
+            </button>
+          </li>
+        </ol>
+      </Popover>
+    </div>
+  )
 
 export default enhance(ExportListButton)

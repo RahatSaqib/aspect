@@ -2,7 +2,11 @@ const Promise = require('bluebird')
 const _ = require('lodash')
 const { readJson } = require('fs-extra')
 const path = require('path')
-const { allFeatureToId } = require('../src/shared/dictionary')
+const relativeObjectsSeeds = require('./relativeObjectsSeeds')
+const {
+  allFeatureToId,
+  allResultCategoryToId,
+} = require('../src/shared/dictionary')
 
 const tables = [
   'DeviceApiRawStatus',
@@ -15,6 +19,7 @@ const tables = [
   'MessageSeverity',
   'ResultCategory',
   'ResultSource',
+  'ResultStatus',
   'ResultType',
   'ResultWorkflowStatus',
   'SampleType',
@@ -76,6 +81,7 @@ const foreignKeys = {
 
 // Helper for seeed files. Ru
 let hasSeededStaticData = false
+let commonInserts = false
 
 // Set up the file name of the seed with __filename.
 function seed(seed, fileName, overridedSeeds) {
@@ -109,6 +115,13 @@ async function runSeed(seed, knex, fileName, overridedSeeds) {
         throw e
       })
       .then(async () => {
+        if (!commonInserts) {
+          commonInserts = true
+          await Promise.each(Object.keys(relativeObjectsSeeds), async elem => {
+            commonInserts =
+              commonInserts && (await relativeObjectsSeeds[elem](knex))
+          })
+        }
         await knex('AspectSeed').insert({
           fileName,
           success: true,
@@ -623,10 +636,10 @@ async function addFollowUps(knex, partnerIds, { data }) {
   }
 }
 
-async function removeFollowUps(knex, partnerIds) {
+async function removeFollowUps(knex, partnerIds, externalId = 'moved') {
   const followUp = await knex('FollowUp')
     .select('id')
-    .where('externalId', 'moved')
+    .where('externalId', externalId)
     .first()
   if (followUp) {
     for (const partnerId of partnerIds) {
@@ -2062,6 +2075,7 @@ async function updateCategoryAssay(knex) {
         'Positive3',
         'Scanty',
         'PositiveMTB',
+        'Positive',
       ].indexOf(externalId) >= 0
     ) {
       json = {
@@ -2097,6 +2111,7 @@ async function updateCategoryAssay(knex) {
         'Unknown',
         'NotDetected',
         'Negative',
+        'Inconclusive',
       ].indexOf(externalId) >= 0
     ) {
       json = {
@@ -2127,6 +2142,7 @@ async function updateAssayResultCategoryTreatmentEmphasize(knex) {
         'MoreThan150',
         'MoreThan550',
         'MoreThan1000',
+        'Positive',
       ].indexOf(externalId) >= 0
     ) {
       json = {
@@ -2143,6 +2159,7 @@ async function updateAssayResultCategoryTreatmentEmphasize(knex) {
         'Discordant',
         'Rejected',
         'Missing',
+        'Inconclusive',
       ].indexOf(externalId) >= 0
     ) {
       json = {
@@ -2400,7 +2417,8 @@ async function getGeographyId(knex, countryId, stateId, lgaId) {
 }
 
 async function initDataFromFixture(knex, tableName, keyColumn = 'externalId') {
-  const itemsNew = await readJson(`./seeds/fixtures/${tableName}.json`)
+  const fixtureData = await readJson(`./seeds/fixtures/${tableName}.json`)
+  const itemsNew = fixtureData.data || fixtureData
   const itemsOld = await knex(tableName)
     .whereIn(
       keyColumn,
@@ -2422,7 +2440,82 @@ async function initDataFromFixture(knex, tableName, keyColumn = 'externalId') {
   return knex(tableName).insert(itemsToInsert)
 }
 
+async function updateReportableInResultCategoryAssay(knex) {
+  // result categories with { reportable: 0 }
+  const resultCategory = await allResultCategoryToId()
+  const resultCategoryIds = [
+    resultCategory.Invalid,
+    resultCategory.NoResult,
+    resultCategory.Error,
+    resultCategory.Rejected,
+    resultCategory.Unknown,
+  ].filter(x => !!x)
+
+  if (resultCategoryIds.length > 0) {
+    await knex('ResultCategoryAssay')
+      .update({ reportable: 0 })
+      .whereIn('resultCategoryId', resultCategoryIds)
+  }
+}
+
+async function addReports(knex, countryReports = []) {
+  const countries = await knex('Country').select('id')
+
+  // globally defined reports applicable to all countries/seeds
+  const { getBaseReports } = require('./relatedObjects/reports')
+  const baseReports = (await getBaseReports()) || []
+
+  // add reports for each country
+  await Promise.each(countries, async ({ id: countryId }) => {
+    let geographyId
+    const geography = await knex('Geography')
+      .where({ countryId })
+      .whereNull('stateId')
+      .whereNull('lgaId')
+      .first('id')
+    if (geography) {
+      geographyId = geography.id
+    } else {
+      ;[geographyId] = await knex('Geography').insert({ countryId })
+    }
+
+    // merge global and country-specific reports
+    const reports = [...baseReports, ...countryReports]
+
+    await Promise.each(
+      reports,
+      async (
+        { name, description, i18nKey, externalId, sheets, fileName },
+        reportIndex
+      ) => {
+        const [reportId] = await knex('Report').insert({
+          name,
+          description,
+          i18nKey,
+          externalId,
+          geographyId,
+          sortOrder: reportIndex + 1,
+          fileName,
+        })
+
+        await Promise.each(sheets, async (sheet, sheetIndex) => {
+          const { moduleName, functionName, query } = sheet
+          await knex('ReportSheet').insert({
+            moduleName,
+            functionName,
+            query: query && JSON.stringify(query),
+            reportId,
+            sortOrder: sheetIndex + 1,
+          })
+        })
+      }
+    )
+  })
+}
+
 module.exports = {
+  addReports,
+
   seed,
   seedTable,
   getSeedsRan,
@@ -2472,4 +2565,5 @@ module.exports = {
   removeFollowUps,
 
   initDataFromFixture,
+  updateReportableInResultCategoryAssay,
 }

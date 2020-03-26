@@ -29,15 +29,13 @@ const styles = {
   },
 }
 
-const reportCardStyleless = ({ classes, title, description, linkUrl }) => {
-  // eslint-disable-next-line no-return-assign
-  const downloadFunc = () => (window.location.href = linkUrl)
+const reportCardStyleless = ({ classes, description, onClick, title }) => {
   return (
     <Grid component={Card} xs className={classes.card}>
       <Card className={classes.formatCard}>
-        <CardActionArea onClick={downloadFunc}>
+        <CardActionArea onClick={onClick}>
           <CardContent>
-            <Typography gutterBottom variant="h5" component="h4">
+            <Typography gutterBottom variant="h6" component="h4">
               {title}
             </Typography>
             <Typography variant="body2" color="textSecondary" component="p">
@@ -46,7 +44,7 @@ const reportCardStyleless = ({ classes, title, description, linkUrl }) => {
           </CardContent>
         </CardActionArea>
         <CardActions className={classes.actions}>
-          <Button size="small" color="primary" onClick={downloadFunc}>
+          <Button size="small" color="primary" onClick={onClick}>
             Download
           </Button>
         </CardActions>

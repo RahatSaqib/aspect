@@ -85,12 +85,16 @@ const createFieldListHandlers = _fp.reduce(
         if (!nextState.form.valid) {
           return
         }
-        const result = this.props.onSubmit(this.props.values)
-        if (!isPromise(result)) {
-          return
-        }
         this.handleSubmitting()
-        result.then(this.handleSubmitSucceed, this.handleSubmitFailed)
+        try {
+          const result = this.props.onSubmit(this.props.values)
+          if (!isPromise(result)) {
+            return
+          }
+          result.then(this.handleSubmitSucceed, this.handleSubmitFailed)
+        } catch (err) {
+          this.handleSubmitFailed()
+        }
       },
     },
   }

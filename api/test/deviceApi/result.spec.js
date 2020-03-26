@@ -2,6 +2,7 @@ const supertest = require('supertest')
 const chai = require('chai')
 const _ = require('lodash')
 const { subDays, addDays, startOfDay } = require('date-fns')
+const { run } = require('../../src/db')
 const { parseDateOrDefault } = require('../../src/shared/date')
 const { getResult } = require('../../src/deviceApi/result')
 const {
@@ -1352,6 +1353,254 @@ describe('Device Result API routes', () => {
 
         await setResultAsDeliverableAndApprove(context, _.last(resultIds))
       }))
+
+    describe('the reportable site of a result', () => {
+      const resultIds = []
+
+      afterEach(async () => {
+        run(async knex => {
+          await knex('InventoryLog')
+            .whereIn('resultId', resultIds)
+            .delete()
+          await knex('ResultWorkflowLog')
+            .whereIn('resultId', resultIds)
+            .delete()
+          await knex('Result')
+            .whereIn('id', resultIds)
+            .delete()
+        })
+      })
+
+      it('should be set to the site of the device if the result does not specify an origin site and the device does not have a default reportable site', () =>
+        runTest(async knex => {
+          const { now } = context
+
+          const deviceWithNoDefaultReportableSiteId = await knex('Device as d')
+            .join('DeviceApiKey as dak', 'dak.deviceId', 'd.id')
+            .whereNull('defaultReportableSiteId')
+            .first(
+              'd.id',
+              'd.siteId',
+              'dak.token',
+              'd.PartnerId',
+              'd.defaultReportableSiteId'
+            )
+
+          const resultPayload = {
+            startedOn: now,
+            data: { a: 'b' },
+            assay: { id: 'DaktariHivVl' },
+            instrument: { serial: '9879879' },
+            sample: {
+              id: '493284729-REPORTABLE',
+            },
+          }
+          const response = await server
+            .post(devicePath)
+            .set(
+              'Authorization',
+              `Bearer ${deviceWithNoDefaultReportableSiteId.token}`
+            )
+            .send({
+              name: 'Device Name',
+              result: resultPayload,
+            })
+          assert.equal(response.status, 200)
+          assert.typeOf(response.body, 'Object')
+
+          const resultId = await getLastResultId(
+            knex,
+            deviceWithNoDefaultReportableSiteId.id
+          )
+          if (resultId && !resultIds.includes(resultId)) {
+            resultIds.push(resultId)
+          }
+          const { reportableSiteId: resultReportableSiteId } = await knex(
+            'Result as r'
+          )
+            .where('r.id', resultId)
+            .first('r.reportableSiteId')
+          assert.equal(
+            resultReportableSiteId,
+            deviceWithNoDefaultReportableSiteId.siteId
+          )
+        }))
+
+      it('should be set to the origin site of the result if specified if the device does not have a default reportable site', () =>
+        runTest(async knex => {
+          const { now } = context
+
+          const deviceWithNoDefaultReportableSiteId = await knex('Device as d')
+            .join('DeviceApiKey as dak', 'dak.deviceId', 'd.id')
+            .whereNull('defaultReportableSiteId')
+            .first(
+              'd.id',
+              'dak.token',
+              'd.PartnerId',
+              'd.defaultReportableSiteId'
+            )
+
+          const reportableSiteExternalId = 'ReportableSite'
+          const reportableSiteId = await createSite(knex, {
+            partner: context.partner,
+            user: context.user,
+            site: reportableSiteExternalId,
+          })
+          context.siteIds.push(reportableSiteId)
+
+          const resultPayload = {
+            startedOn: now,
+            data: { a: 'b' },
+            assay: { id: 'DaktariHivVl' },
+            instrument: { serial: '9879879' },
+            sample: {
+              id: '493284729-REPORTABLE',
+              originSite: {
+                id: reportableSiteExternalId,
+              },
+            },
+          }
+          const response = await server
+            .post(devicePath)
+            .set(
+              'Authorization',
+              `Bearer ${deviceWithNoDefaultReportableSiteId.token}`
+            )
+            .send({
+              name: 'Device Name',
+              result: resultPayload,
+            })
+          assert.equal(response.status, 200)
+          assert.typeOf(response.body, 'Object')
+
+          const resultId = await getLastResultId(
+            knex,
+            deviceWithNoDefaultReportableSiteId.id
+          )
+          if (resultId && !resultIds.includes(resultId)) {
+            resultIds.push(resultId)
+          }
+          const { reportableSiteId: resultReportableSiteId } = await knex(
+            'Result as r'
+          )
+            .where('r.id', resultId)
+            .first('r.reportableSiteId')
+          assert.equal(resultReportableSiteId, reportableSiteId)
+        }))
+
+      it('should be set to the origin site of the result if specified, even if the device has a default reportable site', () =>
+        runTest(async knex => {
+          const { now } = context
+
+          const deviceWithDefaultReportableSiteId = await knex('Device as d')
+            .join('DeviceApiKey as dak', 'dak.deviceId', 'd.id')
+            .whereNotNull('defaultReportableSiteId')
+            .where('defaultReportableSiteId', '!=', 'siteId')
+            .first('d.id', 'dak.token', 'd.PartnerId')
+
+          const reportableSiteExternalId = 'ReportableSite'
+          const reportableSiteId = await createSite(knex, {
+            partner: context.partner,
+            user: context.user,
+            site: reportableSiteExternalId,
+          })
+          context.siteIds.push(reportableSiteId)
+
+          const resultPayload = {
+            startedOn: now,
+            data: { a: 'b' },
+            assay: { id: 'DaktariHivVl' },
+            instrument: { serial: '9879879' },
+            sample: {
+              id: '493284729-REPORTABLE',
+              originSite: {
+                id: reportableSiteExternalId,
+              },
+            },
+          }
+          const response = await server
+            .post(devicePath)
+            .set(
+              'Authorization',
+              `Bearer ${deviceWithDefaultReportableSiteId.token}`
+            )
+            .send({
+              name: 'Device Name',
+              result: resultPayload,
+            })
+          assert.equal(response.status, 200)
+          assert.typeOf(response.body, 'Object')
+
+          const resultId = await getLastResultId(
+            knex,
+            deviceWithDefaultReportableSiteId.id
+          )
+          if (resultId && !resultIds.includes(resultId)) {
+            resultIds.push(resultId)
+          }
+          const { reportableSiteId: resultReportableSiteId } = await knex(
+            'Result as r'
+          )
+            .where('r.id', resultId)
+            .first('r.reportableSiteId')
+          assert.equal(resultReportableSiteId, reportableSiteId)
+        }))
+
+      it('should be set to the default reportable site of the device if it has one and the result does not specify', () =>
+        runTest(async knex => {
+          const { now } = context
+
+          const deviceWithDefaultReportableSiteId = await knex('Device as d')
+            .join('DeviceApiKey as dak', 'dak.deviceId', 'd.id')
+            .whereNotNull('defaultReportableSiteId')
+            .where('defaultReportableSiteId', '!=', 'siteId')
+            .first(
+              'd.id',
+              'dak.token',
+              'd.PartnerId',
+              'd.defaultReportableSiteId'
+            )
+
+          const resultPayload = {
+            startedOn: now,
+            data: { a: 'b' },
+            assay: { id: 'DaktariHivVl' },
+            instrument: { serial: '9879879' },
+            sample: {
+              id: '493284729-REPORTABLE',
+            },
+          }
+          const response = await server
+            .post(devicePath)
+            .set(
+              'Authorization',
+              `Bearer ${deviceWithDefaultReportableSiteId.token}`
+            )
+            .send({
+              name: 'Device Name',
+              result: resultPayload,
+            })
+          assert.equal(response.status, 200)
+          assert.typeOf(response.body, 'Object')
+
+          const resultId = await getLastResultId(
+            knex,
+            deviceWithDefaultReportableSiteId.id
+          )
+          if (resultId && !resultIds.includes(resultId)) {
+            resultIds.push(resultId)
+          }
+          const { reportableSiteId: resultReportableSiteId } = await knex(
+            'Result as r'
+          )
+            .where('r.id', resultId)
+            .first('r.reportableSiteId')
+          assert.equal(
+            resultReportableSiteId,
+            deviceWithDefaultReportableSiteId.defaultReportableSiteId
+          )
+        }))
+    })
 
     describe('inventory management', () => {
       async function getInventoryItemsAtSite(knex, siteId) {

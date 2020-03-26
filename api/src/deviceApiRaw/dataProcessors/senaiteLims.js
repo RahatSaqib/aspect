@@ -56,6 +56,7 @@ class DefaultSenaiteLIMS extends SynchronousDataProcessor {
         latitude,
         geographyId,
         countryId,
+        defaultReportableSiteId,
       } = await knex('DeviceApiKey as dak')
         .leftJoin('Site as s1', 'dak.siteId', 's1.id')
         .leftJoin('Device as d', 'dak.deviceId', 'd.id')
@@ -76,7 +77,8 @@ class DefaultSenaiteLIMS extends SynchronousDataProcessor {
           ),
           knex.raw(
             'COALESCE(g1.countryId, g2.countryId, g3.countryId, g4.countryId) as countryId'
-          )
+          ),
+          'd.defaultReportableSiteId'
         )
       const remoteAddress = getRemoteAddress(request)
       if (!deviceId) {
@@ -148,6 +150,7 @@ class DefaultSenaiteLIMS extends SynchronousDataProcessor {
         }
       }
       let originSiteId = null
+      let reportableSiteId = defaultReportableSiteId || siteId
       const limsFacilityId = payload.ClientUID // "354b7f04781c4bbeaf87500031b82b11"
       const facilityName = payload.Client // "Henderson Clinic"
       if (limsFacilityId) {
@@ -159,6 +162,7 @@ class DefaultSenaiteLIMS extends SynchronousDataProcessor {
             .andWhere('s.externalId', limsFacilityId)
             .first('s.id', 'g.stateId', 'g.lgaId', 's.name')) || {}
         originSiteId = originSite.id
+        reportableSiteId = originSiteId
         if (!stateId) {
           ;({ stateId } = originSite)
         }
@@ -193,6 +197,7 @@ class DefaultSenaiteLIMS extends SynchronousDataProcessor {
             partnerId,
             geographyId: originSiteGeographyId,
           })
+          reportableSiteId = originSiteId
         } else if (
           (!originSite.stateId && stateId) ||
           (!originSite.lgaId && lgaId) ||
@@ -624,7 +629,7 @@ class DefaultSenaiteLIMS extends SynchronousDataProcessor {
               .where('id', resultRecord.id)
               .update(resultRecord)
           } else {
-            resultRecord.reportableSiteId = originSiteId
+            resultRecord.reportableSiteId = reportableSiteId
             const [resultId] = await knex('Result').insert(resultRecord)
             if (resultWorkflowStatus) {
               const [resultWorkflowStatusLogId] = await knex(

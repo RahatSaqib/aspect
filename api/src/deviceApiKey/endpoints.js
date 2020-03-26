@@ -5,6 +5,7 @@ const {
   generateDeviceApiKeys,
   assignDeviceApiKeys,
   revokeDeviceApiKey,
+  createDeviceApiKey,
 } = require('./service')
 const {
   validateAllGeographyFilterParams,
@@ -53,6 +54,26 @@ const routes = [
       description: 'DeviceApiKey List',
       notes: 'Pageable and sortable list of deviceApiKeys',
       ...listDeviceApiKeysBaseConfig(),
+    },
+  },
+  {
+    method: 'POST',
+    path: '/deviceApiKey/api-key',
+    handler: asyncHandler(createDeviceApiKey),
+    config: {
+      description: 'Create New API Key',
+      notes: 'Create new API Key',
+      auth: { scope: ['deviceApiKey:edit'] },
+      response: {
+        options: {
+          allowUnknown: false,
+        },
+        schema: Joi.object().keys({
+          token: Joi.string()
+            .required()
+            .description('The device token id'),
+        }),
+      },
     },
   },
   {

@@ -1,4 +1,5 @@
-[
+{
+  "data": [
   {
     "name": "Transfer",
     "externalId": "Transfer",
@@ -19,4 +20,4 @@
     "externalId": "SignOff",
     "i18nKey": "ResultStatusSignOff"
   }
-]
+]}

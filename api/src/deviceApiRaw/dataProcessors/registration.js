@@ -1,10 +1,16 @@
 const Promise = require('bluebird')
 
+const {
+  PhilippinesNtrlPmdt,
+  PhilippinesNtrlRitm,
+} = require('./philippinesNtrlDatabases')
 const registeredDataProcessors = [
   require('./abbottM2000'),
-  require('./philippinesNtrl'),
-  require('./bdMgit'),
+  PhilippinesNtrlPmdt,
+  PhilippinesNtrlRitm,
   require('./senaiteLims'),
+  require('./cobas'),
+  require('./bdMgit'),
   require('./default'),
 ]
 

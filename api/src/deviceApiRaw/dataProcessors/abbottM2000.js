@@ -114,7 +114,7 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
     }
     const parseDate = value => {
       const parsedValue = parseDateOrDefault(value, {
-        formatString: 'yyyyLLdd',
+        formatString: 'yyyyMMdd',
       })
       return parsedValue
         ? convertToTimeZone(parsedValue, { timeZone: 'UTC' })
@@ -122,7 +122,7 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
     }
     const parseTime = value => {
       const parsedValue = parseDateOrDefault(value, {
-        formatString: 'yyyyLLddHHmmss',
+        formatString: 'yyyyMMddHHmmss',
       })
       return parsedValue
         ? convertToTimeZone(parsedValue, { timeZone: 'UTC' })
@@ -859,7 +859,8 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
             resultSourceId: resultSourceDiagnosticDeviceId,
             resultTypeId: resultTypePatientId,
             sampleId,
-            reportableSiteId: originSiteId || device.siteId,
+            reportableSiteId:
+              originSiteId || device.defaultReportableSiteId || device.siteId,
             resultData: {
               passedQualityControl,
               qualityControlSummary,

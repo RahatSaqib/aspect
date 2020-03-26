@@ -11,7 +11,7 @@ const {
 } = require('../db')
 const { resultUpdated } = require('./actions')
 const { getConstraints, addConstraints } = require('../auth/constraints')
-const { getUser } = require('../auth/service')
+const { getUser, getUserByUserId } = require('../auth/service')
 const {
   resultWorkflowStatusToId,
   resultTreatmentStatusToId,
@@ -55,6 +55,10 @@ const SELECT_LIST_FIELDS = [
     `IFNULL(JSON_UNQUOTE(JSON_EXTRACT(r.resultData, "$.resultText")), CONCAT(IFNULL(rc1.name, ''), '|', IFNULL(rc2.name, ''))) as resultText`
   ),
   knex.raw('JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.id")) as patientId'),
+  knex.raw(
+    'JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.gender")) as patientGender'
+  ),
+  knex.raw('JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.age")) as patientAge'),
   'si.name as siteName',
   'dt.name as deviceTypeName',
   // transfer result
@@ -346,6 +350,22 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
   const dataConstraints = await getConstraints(auth.credentials)
 
   const resultQuery = getBaseQueryForResults()
+    .leftJoin('ResultCategoryAssay as rtas', function() {
+      this.on('r.assayId', 'rtas.assayId').andOn(
+        'r.resultCategory1',
+        'rtas.resultCategoryId'
+      )
+    })
+    .leftJoin('ResultCategoryAssay as rtas2', function() {
+      this.on('r.assayId', 'rtas2.assayId').andOn(
+        'r.resultCategory2',
+        'rtas2.resultCategoryId'
+      )
+    })
+    // only results which are reportable for either ResultCategory
+    .where(builder =>
+      builder.where('rtas.reportable', 1).orWhere('rtas2.reportable', 1)
+    )
     .whereIn('rs.externalId', [
       'Deliverable',
       'Delivered',
@@ -403,14 +423,18 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
         queryBuilder.where('rs.externalId', params.workflowStatus)
       }
       if (params.isTransferred) {
-        // return only results transferred "to ME" (to r.reportableSiteId)
+        // return only results transferred "to me" (to r.reportableSiteId)
         queryBuilder.whereRaw('sp.originSiteId != r.reportableSiteId')
       }
       if (params.treatmentStatus)
         queryBuilder.where('rts.externalId', params.treatmentStatus)
       if (params.deviceType)
         queryBuilder.where('dt.externalId', params.deviceType)
-      else queryBuilder.where('dt.externalId', 'CepheidGeneXpert')
+      else
+        queryBuilder.whereIn('dt.externalId', [
+          'CepheidGeneXpert',
+          'AspectResultEntry',
+        ])
     }, query)
     .modify(addConstraints, dataConstraints, {
       device: 'd',
@@ -432,13 +456,8 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
       'r.id',
       'r.externalId',
       'r.firstViewedOn',
-      'r.startedOn',
       'r.endedOn',
-      'r.createdOn',
       'r.updatedOn',
-      'r.longitude',
-      'r.latitude',
-      'r.treatmentStatusLogId',
       'a.externalId as assayExternalId',
       'si.name as siteName',
       'd.name as deviceName',
@@ -446,37 +465,23 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
       'rc2.externalId as resultCategory2ExternalId',
       'r.patientData',
       'r.resultData',
-      'r.formData',
-      'r.researchId',
-      'r.senderVersion',
-      'r.senderOperator',
-      'r.notes',
-      'r.errorCode',
-      'r.errorNotes',
       'sp.externalId as sampleId',
-      'r.sampleGroup',
-      'sp.collectedOn as sampleCollectedOn',
       'so.id as sampleOriginSiteId',
       'so.externalId as sampleOriginSiteExternalId',
       'so.name as sampleOriginSiteName',
-      'stp.name as sampleTypeName',
       'rs.name as resultWorkflowStatusName',
       'rs.externalId as resultWorkflowStatusExternalId',
       'rs.i18nKey as resultWorkflowStatusi18nKey',
       'rsl.reason as resultWorkflowStatusReason',
       'rsl.changedOn as resultWorkflowStatusChangedOn',
       'rtsl.changedOn as resultTreatmentStatusChangedOn',
-      'rtsl.data as resultTreatmentStatusData',
-      'rtsl.method as resultTreatmentStatusMethod',
       'rts.name as resultTreatmentStatusName',
       'rts.externalId as resultTreatmentStatusExternalId',
       'rts.i18nKey as resultTreatmentStatusi18nKey',
-      // result transferred
       'r.reportableSiteId',
       'sirep.name as reportableSiteName',
       'rslog.createdOn as transferredOn',
-      'ptr.name as transferredBy',
-      'r.resultStatusLogId'
+      'ptr.name as transferredBy'
     )
 
   // return result when both queries are finished
@@ -527,12 +532,8 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
   const transformedData = _.map(data, d => ({
     id: d.id,
     externalId: d.externalId,
-    startedOn: returnIso8601StringWithoutTimeZoneOffset(d.startedOn),
     endedOn: returnIso8601StringWithoutTimeZoneOffset(d.endedOn),
-    createdOn: d.createdOn,
     updatedOn: d.updatedOn,
-    longitude: d.longitude,
-    latitude: d.latitude,
     assayExternalId: d.assayExternalId,
     siteName: d.siteName,
     sampleOriginSiteId: d.sampleOriginSiteId,
@@ -541,19 +542,11 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
     resultCategory1ExternalId: d.resultCategory1ExternalId,
     resultCategory2ExternalId: d.resultCategory2ExternalId,
     patientData: d.patientData ? JSON.parse(d.patientData) : null,
-    resultData: d.resultData ? JSON.parse(d.resultData) : null,
-    formData: d.formData ? JSON.parse(d.formData) : null,
-    researchId: d.researchId,
-    senderVersion: d.senderVersion,
-    senderOperator: d.senderOperator,
-    notes: d.notes,
-    errorCode: d.errorCode,
-    errorNotes: d.errorNotes,
+    resultData: d.resultData
+      ? _.pick(JSON.parse(d.resultData), ['resultText', 'copies', 'log'])
+      : null,
     sample: {
       id: d.sampleId,
-      collectedOn: d.sampleCollectedOn,
-      group: d.sampleGroup,
-      type: d.sampleTypeName,
       originSite: d.sampleOriginSiteId
         ? {
             externalId: d.sampleOriginSiteExternalId,
@@ -590,8 +583,6 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
       name: d.resultTreatmentStatusName,
       externalId: d.resultTreatmentStatusExternalId,
       i18nKey: d.resultTreatmentStatusi18nKey,
-      method: d.resultTreatmentStatusMethod,
-      data: d.resultTreatmentStatusData,
     },
     followUps: _.sortBy(
       _.filter(followUps, { resultId: d.id }).map(f => _.omit(f, 'resultId')),
@@ -606,7 +597,6 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
     reportableSiteName: d.reportableSiteName,
     transferredOn: d.transferredOn,
     transferredBy: d.transferredBy,
-    resultStatusLogId: d.resultStatusLogId,
     reportableSiteId: d.reportableSiteId,
   }))
 
@@ -805,7 +795,7 @@ async function getResultByResultId(request, fields = SELECT_SHOW_FIELDS) {
     })
     .leftJoin('ResultCategoryAssay as rtas2', function() {
       this.on('r.assayId', 'rtas2.assayId').andOn(
-        'r.resultCategory1',
+        'r.resultCategory2',
         'rtas2.resultCategoryId'
       )
     })
@@ -1919,7 +1909,7 @@ async function transferResult(request) {
   const {
     auth,
     params: { resultId },
-    payload: { siteId },
+    payload: { siteId, timestamp },
   } = request
   const { partnerId, countryId, id: currentUserId, userName } = await getUser(
     auth.credentials.name
@@ -1942,76 +1932,96 @@ async function transferResult(request) {
     return Boom.badRequest('Invalid externalId `Transfer`')
   }
 
-  const now = new Date()
+  // get item if timeStamp of prev action is newer than current timeStamp
+  let resultStatusLog = await knex('ResultStatusLog')
+    .whereNotNull('timestamp')
+    .where('timestamp', '>', timestamp)
+    .where({ resultId, resultStatusId })
+    .first('createdOn', 'createdBy')
 
-  // log
-  const [resultStatusLogId] = await knex('ResultStatusLog').insert({
-    resultId,
-    resultStatusId,
-    createdOn: now,
-    createdBy: currentUserId,
-    data: JSON.stringify({
-      siteId: result.siteId,
-      reportableSiteId: siteId,
-      sampleOriginSiteId: result.sampleOriginSiteId,
-    }),
-  })
-  const { createdOn: transferredOn } = await knex('ResultStatusLog')
-    .where({ id: resultStatusLogId })
-    .first('createdOn')
+  let resultStatusLogId
+  let transferredOn
+  let transferredBy = userName
+  if (resultStatusLog) {
+    // ^^^
+    // prev transfer is newer than current - get its props and skip current action
+    // ---
+    resultStatusLogId = resultStatusLog.id
+    transferredOn = resultStatusLog.createdOn
+    const author = await getUserByUserId(resultStatusLog.createdBy)
+    transferredBy = author ? author.userName : '?'
+  } else {
+    // ^^^
+    // current action is newer
+    // ---
+    const now = new Date()
 
-  // ------------
-  // update follow-up and treatment status
-  /* from Stefan response on https://github.com/SystemOneId/aspect/pull/1030#discussion_r368562435:
-  I had a conversation with Chris around this and we landed on resetting the treatment status so that the clinic
-  user that now has access to the result has to confirm it on treatment again.
-  That means deleting ResultFollowUp is correct here, but instead of simply deleting the ResultTreatmentStatusLog,
-  we should add an entry that sets the result back to "Awaiting Treatment" and as "method" set "transfer" so we keep
-  a record of the reset.
-  */
-  // remove from ResultFollowUp
-  await knex('ResultFollowUp')
-    .where({ resultId })
-    .del()
-  // add entry to ResultTreatmentStatusLog as "Awaiting Treatment" with details about reason
-  const externalId = 'AwaitingTreatment'
-  const resultTreatmentStatusId = await resultTreatmentStatusToId(externalId)
-  const [treatmentStatusLogId] = await knex('ResultTreatmentStatusLog').insert({
-    resultId,
-    resultTreatmentStatusId,
-    method: 'transfer',
-    data: JSON.stringify({
-      siteId: result.siteId,
-      reportableSiteId: siteId,
-      sampleOriginSiteId: result.sampleOriginSiteId,
-    }),
-    createdOn: now,
-    changedOn: now,
-    createdBy: currentUserId,
-  })
-  // ------------
-
-  // update
-  await knex('Result')
-    .where('id', resultId)
-    .update({
-      reportableSiteId: siteId,
-      resultStatusLogId,
-      treatmentStatusLogId,
-      firstViewedOn: null,
-      updatedBy: currentUserId,
-      updatedOn: now,
+    // log
+    ;[resultStatusLogId] = await knex('ResultStatusLog').insert({
+      resultId,
+      resultStatusId,
+      createdOn: now,
+      createdBy: currentUserId,
+      data: JSON.stringify({
+        siteId: result.siteId,
+        reportableSiteId: siteId,
+        sampleOriginSiteId: result.sampleOriginSiteId,
+      }),
+      timestamp,
     })
+    resultStatusLog = await knex('ResultStatusLog')
+      .where({ id: resultStatusLogId })
+      .first('createdOn')
+    transferredOn = resultStatusLog.createdOn
+
+    // remove ResultFollowUp because we want the user at the clinic that now has access
+    // to the result to confirm the treatment status.
+    await knex('ResultFollowUp')
+      .where({ resultId })
+      .del()
+    // add entry to ResultTreatmentStatusLog as "Awaiting Treatment" with details about reason
+    const externalId = 'AwaitingTreatment'
+    const resultTreatmentStatusId = await resultTreatmentStatusToId(externalId)
+    const [treatmentStatusLogId] = await knex(
+      'ResultTreatmentStatusLog'
+    ).insert({
+      resultId,
+      resultTreatmentStatusId,
+      method: 'transfer',
+      data: JSON.stringify({
+        siteId: result.siteId,
+        reportableSiteId: siteId,
+        sampleOriginSiteId: result.sampleOriginSiteId,
+      }),
+      createdOn: now,
+      changedOn: now,
+      createdBy: currentUserId,
+    })
+    // ------------
+
+    // update
+    await knex('Result')
+      .where('id', resultId)
+      .update({
+        reportableSiteId: siteId,
+        resultStatusLogId,
+        treatmentStatusLogId,
+        firstViewedOn: null,
+        updatedBy: currentUserId,
+        updatedOn: now,
+      })
+
+    result.data.reportableSiteId = siteId
+    result.data.reportableSiteName = site.name
+  }
 
   const currTreatmentStatus = await getTreatmentStatusByResultId(resultId)
 
   // func getResultByResultId(request) does not return now current result because
   // r.reportableSiteId now has changed and may not equal to user's siteId's -
   // so we here simply update few fields affected by transfer and return old result
-  result.data.reportableSiteId = siteId
-  result.data.reportableSiteName = site.name
   result.data.transferredOn = transferredOn
-  result.data.transferredBy = userName
+  result.data.transferredBy = transferredBy
   result.data.resultStatusLogId = resultStatusLogId
   result.data.firstViewedOn = null
   result.data.treatmentStatus = _.pick(currTreatmentStatus, [
@@ -2106,7 +2116,7 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
     })
     .leftJoin('ResultCategoryAssay as rtas2', function() {
       this.on('r.assayId', 'rtas2.assayId').andOn(
-        'r.resultCategory1',
+        'r.resultCategory2',
         'rtas2.resultCategoryId'
       )
     })
@@ -2115,6 +2125,7 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
       deviceId: 'd.id',
       assayId: 'r.assayId',
       resultCategoryId: 'r.resultCategory1',
+      resultCategory2Id: 'r.resultCategory2',
       countryId: 'g.countryId',
       stateId: 'g.stateId',
       lgaId: 'g.lgaId',
@@ -2147,9 +2158,15 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
   return resultQuery
 }
 
+async function getResultsForReport(auth, query) {
+  // for now call existing function, but later add here a query with different aggregations
+  return getListResults(query, auth)
+}
+
 module.exports = {
   updateTransferNotification,
   listResults,
+  getResultsForReport,
   exportResults,
   downloadResultsList,
   showResult,

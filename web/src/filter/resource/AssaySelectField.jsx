@@ -10,6 +10,9 @@ import MenuItem from '@material-ui/core/MenuItem'
 import SelectField from '../../components/shared/SelectField'
 import { fetchAssays } from '../../assay/AssayRedux'
 
+let validAssays
+let isSingleAssay
+
 export class AssaySelectField extends PureComponent {
   static propTypes = {
     allItemText: PropTypes.string,
@@ -24,8 +27,23 @@ export class AssaySelectField extends PureComponent {
     value: '',
   }
 
+  constructor(props) {
+    super()
+
+    props.fetchAssays(false)
+
+    const { assayItems } = props
+    validAssays = assayItems.filter(a => a.get('hasResults'))
+    // If there's only one available assay, that unique assay will be set as value
+    isSingleAssay = validAssays.size === 1
+  }
+
   componentDidMount() {
-    this.props.fetchAssays(false)
+    this.setValueIfSingleAssay()
+  }
+
+  setValueIfSingleAssay = () => {
+    if (isSingleAssay) this.props.value = validAssays.first().get('id')
   }
 
   handleChange = ({ target: { value } }) => {
@@ -33,7 +51,7 @@ export class AssaySelectField extends PureComponent {
   }
 
   render() {
-    const { allItemText, assayItems, value } = this.props
+    const { allItemText } = this.props
     const restProps = _.omit(this.props, [
       'allItemText',
       'fetchAssays',
@@ -41,10 +59,16 @@ export class AssaySelectField extends PureComponent {
       'onAssayChange',
       'value',
     ])
-    const validAssays = assayItems.filter(a => a.get('hasResults'))
+    this.setValueIfSingleAssay()
+    const { value } = this.props
 
     return (
-      <SelectField {...restProps} value={value} onChange={this.handleChange}>
+      <SelectField
+        {...restProps}
+        value={value}
+        onChange={this.handleChange}
+        disabled={isSingleAssay}
+      >
         {allItemText && <MenuItem value="all">{allItemText}</MenuItem>}
         {validAssays.map(a => (
           <MenuItem key={a.get('id')} value={a.get('id')}>

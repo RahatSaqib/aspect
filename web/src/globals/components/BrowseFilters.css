@@ -22,5 +22,6 @@
 
   .FiltersPanel {
     flex-grow: 0;
+    margin: 5px 0;
   }
 }

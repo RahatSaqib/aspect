@@ -2,7 +2,15 @@
 import _fp from 'lodash/fp'
 import PropTypes from 'prop-types'
 import React from 'react'
-import { compose, pure, setPropTypes } from 'recompose'
+import {
+  compose,
+  withStateHandlers,
+  pure,
+  setPropTypes,
+  lifecycle,
+} from 'recompose'
+import { bindActionCreators } from 'redux'
+import { connect } from 'react-redux'
 import { defineMessages, intlShape } from 'react-intl'
 
 // Material-UI
@@ -15,6 +23,12 @@ import CountrySelectField from '../../filter/geography/CountrySelectField'
 import PartnerSelectField from '../../filter/partner/PartnerSelectField'
 import SiteSelectField from '../../filter/resource/SiteSelectField'
 import AspectDialog from '../../components/shared/AspectDialog'
+
+import {
+  fetchCountriesForLocationSelector,
+  LazyLoadItems,
+} from '../../geography/GeographyRedux'
+import { fetchPartnersAndJobFunctionsForSelectList } from '../../job/JobRedux'
 
 const messages = defineMessages({
   cancel: {
@@ -45,15 +59,70 @@ const messages = defineMessages({
     id: 'pages.DeviceApiKeyList.siteId',
     defaultMessage: 'Site',
   },
+  countryRequired: {
+    id: 'pages.DeviceApiKeyList.countryRequired',
+    defaultMessage: 'Please select a country',
+  },
+  partnerRequired: {
+    id: 'pages.DeviceApiKeyList.partnerRequired',
+    defaultMessage: 'Please select a partner',
+  },
+})
+
+const getInitialValues = (partnerList, countries) => ({
+  count: 1,
+  partnerId:
+    partnerList && partnerList.size > 0 ? partnerList.first().get('id') : null,
+  countryId:
+    countries && countries.items && countries.items.size > 0
+      ? countries.items.first().get('id')
+      : null,
 })
 
 const enhance = compose(
   pure,
+  connect(
+    (state, props) => {
+      const countries = state.geography.countriesForLocationSelector
+      const partnerList =
+        state.jobs.partnersAndJobFunctionsForSelectList.partners
+      return {
+        partnerList,
+        countries,
+      }
+    },
+    bindActionCreators.bind(null, {
+      fetchCountriesForLocationSelector,
+      fetchPartnersAndJobFunctionsForSelectList,
+    })
+  ),
+  lifecycle({
+    componentWillReceiveProps() {
+      const { partnerList, countries } = this.props
+
+      const onChange = values => this.setState({ values })
+      this.setState({
+        onChange,
+        values: getInitialValues(partnerList, countries),
+      })
+    },
+    componentDidMount() {
+      const { countries, partnerList } = this.props
+      if (!countries || countries.items.size === 0) {
+        this.props.fetchCountriesForLocationSelector(countries)
+      }
+      if (!partnerList || partnerList.size === 0) {
+        this.props.fetchPartnersAndJobFunctionsForSelectList()
+      }
+    },
+  }),
   setPropTypes({
     onCancel: PropTypes.func,
     isDialogOpen: PropTypes.bool.isRequired,
     values: PropTypes.object.isRequired,
     intl: intlShape.isRequired,
+    countries: PropTypes.objectOf(LazyLoadItems).isRequired,
+    fetchCountriesForLocationSelector: PropTypes.func.isRequired,
   }),
   recomposeForm({
     fields: [
@@ -77,8 +146,16 @@ const enhance = compose(
         valueFromChangeEvent: _fp.identity,
       },
     ],
-    validate() {
+    validate({ countryId, partnerId }, { intl }) {
       const errors = {}
+      if (!countryId) {
+        errors.countryId = intl.formatMessage(messages.countryRequired)
+      }
+
+      if (!partnerId) {
+        errors.partnerId = intl.formatMessage(messages.partnerRequired)
+      }
+
       return errors
     },
   })
@@ -110,7 +187,7 @@ export function DeviceApiKeyGeneratorDialogForm({
       {intl.formatMessage(messages.cancel)}
     </Button>,
     <Button
-      disabled={form.pristine || !form.valid || form.submitting}
+      disabled={!form.valid || form.submitting}
       onClick={handleSubmit}
       type="button"
       color="primary"

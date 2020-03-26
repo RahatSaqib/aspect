@@ -255,10 +255,10 @@ export const PersonList = ({
       {items.currentIdList.isEmpty() && (
         <BrowseEmptyList history={history} location={location} intl={intl} />
       )}
-
       <ExportListButton
         onExcelClick={onExcelClick}
         onCsvClick={onExcelClick}
+        visible={!items.currentIdList.isEmpty()}
         reportName="Contacts"
       />
 

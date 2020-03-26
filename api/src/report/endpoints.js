@@ -1,7 +1,14 @@
 const Joi = require('@hapi/joi')
-const { asyncHandler, validateSortPageParams } = require('../routes')
-const { listReports, proxyGxReport } = require('./service')
-const { getReport } = require('./serviceReports')
+const {
+  asyncHandler,
+  validateDateRangeParams,
+  validateSortPageParams,
+} = require('../routes')
+const { getReports, listReports, proxyGxReport } = require('./service')
+const { createReport, getReport } = require('./serviceReports')
+const {
+  validateAllGeographyFilterParams,
+} = require('../geography/requestValidation')
 
 function listReportBaseConfig() {
   return {
@@ -28,8 +35,83 @@ function listReportBaseConfig() {
     },
   }
 }
+function requestBaseQuery() {
+  return {
+    ...validateAllGeographyFilterParams(),
+    ...validateDateRangeParams(),
+    siteName: Joi.string()
+      .allow('')
+      .description('Filter for site name'),
+  }
+}
 
 const routes = [
+  {
+    method: 'GET',
+    path: '/reports',
+    handler: asyncHandler(getReports),
+    config: {
+      description: 'List of Reports',
+      notes: 'Reports scoped by user permissions, filterable by geography',
+      auth: { scope: ['report:view', 'report:edit'] },
+      validate: {
+        query: {
+          ...requestBaseQuery(),
+        },
+      },
+      response: {
+        options: {
+          allowUnknown: false,
+        },
+        schema: Joi.object().keys({
+          ok: Joi.bool()
+            .required()
+            .description('False if there was some sort of error'),
+          total: Joi.number().required(),
+          data: Joi.array()
+            .required()
+            .description('List of reports')
+            .items(
+              Joi.object().keys({
+                name: Joi.string()
+                  .required()
+                  .description('Report name'),
+                description: Joi.string()
+                  .required()
+                  .description('Report description'),
+                externalId: Joi.string()
+                  .required()
+                  .description('Report unique externalId'),
+                sortOrder: Joi.number()
+                  .required()
+                  .description('Report sort order'),
+              })
+            ),
+        }),
+      },
+    },
+  },
+  {
+    method: 'GET',
+    path: '/reports/{externalId}',
+    handler: createReport,
+    config: {
+      description: 'Report Excel file',
+      notes:
+        'Returns Excel file generated from template corresponding to externalId',
+      auth: { scope: ['report:view', 'report:edit'] },
+      validate: {
+        query: {
+          ...requestBaseQuery(),
+        },
+        params: {
+          externalId: Joi.string()
+            .description('Value of externalId in table Report')
+            .required(),
+        },
+      },
+    },
+  },
   {
     method: 'GET',
     path: '/report',

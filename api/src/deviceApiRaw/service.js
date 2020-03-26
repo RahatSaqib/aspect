@@ -40,9 +40,17 @@ async function continueUnprocessedRawData(queue) {
   const readyDeviceApiRawRecords = await knex('DeviceApiRaw')
     .where('deviceApiRawStatusId', readyId)
     .select()
+  if (!_.isEmpty(readyDeviceApiRawRecords)) {
+    // eslint-disable-next-line no-console
+    console.log(
+      `Processing ${readyDeviceApiRawRecords.length} messages from the raw device API before starting web server.`
+    )
+  }
   await Promise.each(
     readyDeviceApiRawRecords,
     async readyDeviceApiRawRecord => {
+      // eslint-disable-next-line no-console
+      console.log(`Processing DeviceApiRaw ID: ${readyDeviceApiRawRecord.id}.`)
       const messageContext = queue.createMessageContext('aspect_request')
       let requestText = readyDeviceApiRawRecord.rawData
       if (readyDeviceApiRawRecord.salt) {
@@ -72,6 +80,10 @@ async function continueUnprocessedRawData(queue) {
       })
     }
   )
+  if (!_.isEmpty(readyDeviceApiRawRecords)) {
+    // eslint-disable-next-line no-console
+    console.log('Done.')
+  }
 }
 
 module.exports = { addDeviceRawDataHandler, continueUnprocessedRawData }

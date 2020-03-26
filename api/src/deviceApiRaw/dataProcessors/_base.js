@@ -32,9 +32,6 @@ class DataProcessor {
     this.updateDeviceApiRawStatus = this.updateDeviceApiRawStatus.bind(this)
     this.getResponse = this.getResponse.bind(this)
     this.processRequest = this.processRequest.bind(this)
-    this.onDeviceRawMessageProcessed = this.onDeviceRawMessageProcessed.bind(
-      this
-    )
     this.onDeviceRawMessageError = this.onDeviceRawMessageError.bind(this)
     this.unsubscribe = this.unsubscribe.bind(this)
     this.listenerEndpoints = []
@@ -120,13 +117,12 @@ class DataProcessor {
         allowInfiniteListeners: true,
         bindingKey: `${this.id}`,
       }
-      // TODO: Set message expiry on these queues so that they aren't blocked
       this.listenerEndpoints = [
         {
           actions: {
             DEVICE_RAW_MESSAGE_RESPONSE_READY: {
               ...dataProcessorMessageHandlerSpec,
-              handlerFunction: async () => Promise.resolve(),
+              handlerFunction: this.onDeviceRawMessageReady,
               consumerTag: `${this.name}_DEVICE_RAW_MESSAGE_RESPONSE_READY_${this.id}`,
             },
             DEVICE_RAW_MESSAGE_POSTED: {
@@ -137,7 +133,6 @@ class DataProcessor {
                 } catch (error) {
                   this.messageContext.deviceRawMessageError(this.id, error)
                 }
-                await this.unsubscribe()
               },
               consumerTag: `${this.name}_DEVICE_RAW_MESSAGE_POSTED_${this.id}`,
             },
@@ -169,13 +164,41 @@ class DataProcessor {
 
       this.messageContext.queue.subscribe(
         'deviceApiRaw',
-        this.listenerEndpoints
+        this.listenerEndpoints,
+        this.timeoutMilliseconds
       )
-      // TODO: Find out how to check that the queue has been bound to the topic before dispatching DEVICE_RAW_MESSAGE_POSTED
-      await Promise.delay(100)
-      this.messageContext.deviceRawMessagePosted(this.id)
+      // Wait for consumers, for this DataProcessor instance, to be registered on the queue's channel
+      const getDataProcessorConsumersListeningToQueue = () =>
+        Object.values(this.listenerEndpoints[0].actions).map(
+          action =>
+            this.messageContext.queue.channel.consumers[action.consumerTag]
+        )
+      let ensureConsumers = getDataProcessorConsumersListeningToQueue()
+      await Promise.each(_.range(1, 100), async waitMs => {
+        if (_.some(ensureConsumers, consumer => _.isNil(consumer))) {
+          await Promise.delay(waitMs)
+          ensureConsumers = getDataProcessorConsumersListeningToQueue()
+          return Promise.resolve(waitMs)
+        }
+        return Promise.reject(new Error('subscribed'))
+      })
+        .then(waitMsArray => {
+          throw new Error(
+            `${this.name} ${this.id} still unsubscribed after ${_.sum(
+              waitMsArray
+            )} milliseconds`
+          )
+        })
+        .catch(err => {
+          if (err.message === 'subscribed') {
+            this.messageContext.deviceRawMessagePosted(this.id)
+          } else {
+            throw err
+          }
+        })
     } catch (error) {
-      this.messageContext.deviceRawMessageError(this.id, error)
+      await this.onDeviceRawMessageError()
+      throw error
     }
   }
 
@@ -245,11 +268,6 @@ class DataProcessor {
     return Promise.resolve()
   }
 
-  async onDeviceRawMessageProcessed() {
-    await this.updateDeviceApiRawStatus('Processed')
-    // TODO: Archive message?
-  }
-
   async onDeviceRawMessageError() {
     await this.updateDeviceApiRawStatus('Error')
     // TODO: Archive message?
@@ -258,17 +276,49 @@ class DataProcessor {
 
   // TODO: FIX: When the server is terminated, running data processors don't call this, leaving messages on the queue and blocking future data processors.
   async unsubscribe() {
-    _.each(this.listenerEndpoints, (listenerEndpoint, index) => {
-      _.each(listenerEndpoint.actions, (messageHandler, type) => {
-        const queueName = `aspect_deviceApiRaw_${index}_actions_${type}`
-        const topic = `aspect.actions.${type}.${messageHandler.bindingKey}`
-        this.messageContext.queue.unsubscribe(
-          queueName,
-          topic,
-          messageHandler.consumerTag
-        )
-      })
-    })
+    await Promise.each(
+      this.listenerEndpoints,
+      async (listenerEndpoint, index) =>
+        Promise.each(Object.keys(listenerEndpoint.actions), async type => {
+          const action = listenerEndpoint.actions[type]
+          const queueName = `aspect_deviceApiRaw_${index}_actions_${type}`
+          const topic = `aspect.actions.${type}.${action.bindingKey}`
+          if (this.messageContext.queue.channel.consumers[action.consumerTag]) {
+            this.messageContext.queue.unsubscribe(
+              queueName,
+              topic,
+              action.consumerTag
+            )
+            await Promise.each(_.range(1, 100), async waitMs => {
+              if (
+                !_.isNil(
+                  this.messageContext.queue.channel.consumers[
+                    action.consumerTag
+                  ]
+                )
+              ) {
+                await Promise.delay(waitMs)
+                return Promise.resolve(waitMs)
+              }
+              return Promise.reject(new Error('unsubscribed'))
+            })
+              .then(waitMsArray => {
+                throw new Error(
+                  `${this.name} ${this.id} still subscribed to ${
+                    action.consumerTag
+                  } after ${_.sum(waitMsArray)} milliseconds`
+                )
+              })
+              .catch(err => {
+                if (err.message !== 'unsubscribed') {
+                  throw err
+                }
+              })
+          } else {
+            return Promise.resolve()
+          }
+        })
+    )
   }
 }
 
@@ -276,6 +326,10 @@ class SynchronousDataProcessor extends DataProcessor {
   constructor(request, messageContext) {
     super(request, messageContext)
     this.handlerFunction = this.handlerFunction.bind(this)
+    this.onDeviceRawMessageProcessed = this.onDeviceRawMessageProcessed.bind(
+      this
+    )
+    this.onDeviceRawMessageReady = this.onDeviceRawMessageReady.bind(this)
   }
 
   static async canProcessRequest() {
@@ -287,6 +341,15 @@ class SynchronousDataProcessor extends DataProcessor {
     this.messageContext.deviceRawMessageProcessed(this.id)
     const response = await this.getResponse()
     this.messageContext.deviceRawMessageResponseReady(this.id, response)
+  }
+
+  async onDeviceRawMessageProcessed() {
+    await this.updateDeviceApiRawStatus('Processed')
+    // TODO: Archive message?
+  }
+
+  async onDeviceRawMessageReady() {
+    return this.unsubscribe()
   }
 }
 
@@ -294,6 +357,10 @@ class AsynchronousDataProcessor extends DataProcessor {
   constructor(request, messageContext) {
     super(request, messageContext)
     this.handlerFunction = this.handlerFunction.bind(this)
+    this.onDeviceRawMessageProcessed = this.onDeviceRawMessageProcessed.bind(
+      this
+    )
+    this.onDeviceRawMessageReady = this.onDeviceRawMessageReady.bind(this)
   }
 
   static async canProcessRequest() {
@@ -305,6 +372,16 @@ class AsynchronousDataProcessor extends DataProcessor {
     this.messageContext.deviceRawMessageResponseReady(this.id, response)
     await this.processRequest()
     this.messageContext.deviceRawMessageProcessed(this.id)
+  }
+
+  async onDeviceRawMessageReady() {
+    return Promise.resolve()
+  }
+
+  async onDeviceRawMessageProcessed() {
+    await this.updateDeviceApiRawStatus('Processed')
+    // TODO: Archive message?
+    await this.unsubscribe()
   }
 }
 

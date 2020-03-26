@@ -27,7 +27,12 @@ const server = new Hapi.server({
   host: '127.0.0.1',
   routes: {
     cors: {
-      exposedHeaders: ['WWW-Authenticate', 'Server-Authorization', 'Date'],
+      exposedHeaders: [
+        'WWW-Authenticate',
+        'Server-Authorization',
+        'Date',
+        'Content-Disposition', // for report files, see 'createReport()' in '/report/serviceReports.js'
+      ],
     },
     validate: {
       failAction: async (request, h, err) => {
@@ -117,6 +122,9 @@ const messageQueuePlugin = {
             return h.continue
           })
         })
+      })
+      .catch(err => {
+        console.error(err) // eslint-disable-line no-console
       }),
 }
 
@@ -187,12 +195,15 @@ const start = async () => {
     key: config.secret,
     validate: async (decoded, request) => {
       let isValid = true
+      let errorMessage = null
       // if user has to accept license, deny all requests except to the license api:
       if (
         decoded.hasToAcceptLicenseId &&
         request.url.pathname.indexOf('/api/auth/features') === -1 &&
         request.url.pathname.indexOf('/api/auth/license') === -1
       ) {
+        errorMessage =
+          "The user you're trying to login didn't accept the license"
         isValid = false
       }
       // can specify either module or permission, e.g. "device" or "device:view"
@@ -215,7 +226,7 @@ const start = async () => {
           )
         : []
       const scope = ['clientApi'].concat(modules, decoded.permissions || [])
-      return { isValid, credentials: { scope, ...decoded } }
+      return { isValid, errorMessage, credentials: { scope, ...decoded } }
     },
     // TODO JWT verfication algorithm verifyOptions: { algorithms: [ 'HS256' ] }
   })
@@ -294,7 +305,6 @@ const start = async () => {
           // TODO ZIMBABWE: Try create a test that would have blocked the queue if purgeOnStart hadn't been set
           // TODO ZIMBABWE: Test if files can be uploaded to RAW device API
 
-          // TODO Raw Device API: Wait for a data processor topic to be created on the message queue before dispatching messages to it.
           // TODO Raw Device API: Delete topics on the message queue that were completely processed when server starts
           // TODO Raw Device API: Archive records from the DeviceApiRaw table once they have been processed
           resolve()
@@ -313,8 +323,12 @@ const start = async () => {
   // =======================
   // start the server ======
   // =======================
-  await server.start()
-  console.log(`Magic happens at http://localhost:${port}`) // eslint-disable-line no-console
+  try {
+    await server.start()
+    console.log(`Magic happens at http://localhost:${port}`) // eslint-disable-line no-console
+  } catch (err) {
+    console.error(err) // eslint-disable-line no-console
+  }
 }
 
 start()

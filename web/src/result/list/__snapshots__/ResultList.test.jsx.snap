@@ -55,6 +55,7 @@ exports[`Result List component should shallow render correctly when filter for a
     />
     <Connect(withState(withHandlers(ExportListButton)))
       reportName="Results"
+      visible={false}
     />
     <pure(withHandlers(EmptyList))
       intl={
@@ -149,6 +150,7 @@ exports[`Result List component should shallow render correctly when filter for a
     />
     <Connect(withState(withHandlers(ExportListButton)))
       reportName="Results"
+      visible={false}
     />
     <pure(withHandlers(EmptyList))
       intl={

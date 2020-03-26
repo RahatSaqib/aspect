@@ -56,7 +56,10 @@ function listResultsBaseConfig() {
           .description('Filter for assay ID'),
         resultCategoryId: Joi.number()
           .allow('')
-          .description('Result Category ID'),
+          .description('Result-1 Category ID'),
+        resultCategory2Id: Joi.number()
+          .allow('')
+          .description('Result-2 Category ID'),
         errorCode: Joi.string()
           .allow('')
           .description('Filter error code'),
@@ -587,35 +590,15 @@ const routes = [
                   .description(
                     'Unique ID of the result for this diagnostic device'
                   ),
-                startedOn: Joi.date()
-                  .required()
-                  .description(
-                    'When sample processing started. Note that the zone designator is empty because this is the local date/time as reported by the device. This should be shown as is and not converted to the user time zone.'
-                  ),
                 endedOn: Joi.date()
                   .required()
                   .description(
                     'When sample processing ended. Note that the zone designator is empty because this is the local date/time as reported by the device. This should be shown as is and not converted to the user time zone.'
                   ),
-                createdOn: Joi.date()
-                  .required()
-                  .description(
-                    'When the result was added to the Aspect database. This can be converted to the user time zone.'
-                  ),
                 updatedOn: Joi.date()
                   .required()
                   .description(
                     'When the result was last updated in the Aspect database. This can be converted to the user time zone.'
-                  ),
-                longitude: Joi.number()
-                  .allow(null)
-                  .description(
-                    'Longitude of the device at the time the sample was processed'
-                  ),
-                latitude: Joi.number()
-                  .allow(null)
-                  .description(
-                    'Latitude of the device at the time the sample was processed'
                   ),
                 assayExternalId: Joi.string()
                   .required()
@@ -680,16 +663,6 @@ const routes = [
                     name: Joi.string()
                       .description('Name of the treatment status')
                       .allow(null),
-                    method: Joi.string()
-                      .description(
-                        'The method that was used to update the treatment status'
-                      )
-                      .allow(null),
-                    data: Joi.string()
-                      .description(
-                        'Any additional data related to the treamtent status'
-                      )
-                      .allow(null),
                   }),
                 patientData: Joi.object()
                   .allow(null)
@@ -697,54 +670,18 @@ const routes = [
                 resultData: Joi.object()
                   .allow(null)
                   .description('Data about the result'),
-                researchId: Joi.string()
-                  .allow(null)
-                  .description('An optional research ID for the patient'),
-                formData: Joi.object()
-                  .allow(null)
-                  .description('Form data that was entered in the Aspect UI'),
-                senderVersion: Joi.string()
-                  .allow(null)
-                  .description('Version of the device software'),
-                senderOperator: Joi.string()
-                  .allow(null)
-                  .description('Operator of the device'),
-                notes: Joi.string()
-                  .allow(null, '')
-                  .description('Any notes entered for the sample'),
                 sampleOriginSiteId: Joi.number()
                   .allow(null)
                   .description('Sample Origin Site Id for the patient'),
                 firstViewedOn: Joi.date()
                   .allow(null)
                   .description('date when result first viewed'),
-                errorCode: Joi.string()
-                  .allow(null, '')
-                  .description(
-                    'If an error occurred, contains the error code from the device'
-                  ),
-                errorNotes: Joi.string()
-                  .allow(null)
-                  .description('Contains any details about the error'),
                 sample: Joi.object()
                   .description('The sample that the result is based on')
                   .keys({
                     id: Joi.string()
                       .allow(null)
                       .description('ID of the sample'),
-                    collectedOn: Joi.date()
-                      .allow(null)
-                      .description('When the sample was collected'),
-                    group: Joi.string()
-                      .allow(null)
-                      .description(
-                        'The group of samples that this sample is a part of'
-                      ),
-                    type: Joi.string()
-                      .allow(null)
-                      .description(
-                        'Type of the sample ("DBS", "Sputum", etc.)'
-                      ),
                     originSite: Joi.object()
                       .allow(null)
                       .description('The site where the sample was taken')
@@ -917,7 +854,15 @@ const routes = [
       description: 'Aggregated data for Treatment Graph on dashboard',
       notes:
         'Set of percentages of Confirmed and Unaccountable percentage for few months',
-      auth: { scope: ['result:view', 'result:edit'] },
+      auth: {
+        scope: [
+          'treatmentStatus:view',
+          'treatmentStatus:edit',
+          'treatmentStatus:admin',
+          'result:view',
+          'result:edit',
+        ],
+      },
       validate: {
         payload: {
           siteId: Joi.number()
@@ -1429,6 +1374,10 @@ const routes = [
             .integer()
             .positive()
             .description('New Site ID to transfer current result'),
+          timestamp: Joi.number()
+            .integer()
+            .positive()
+            .description('UTC timestamp'),
         },
       },
       response: {

@@ -336,11 +336,12 @@ const buttonBy = {
 
 const FiltersBtnGroup = ({ className, children, ...restProps }) => (
   <div className={cssClasses(className, 'FiltersBtnGroup')}>
-    {Children.map(children, child =>
-      React.cloneElement(child, {
-        className: cssClasses('FiltersBtnGroup__Child'),
-      })
-    )}
+    {children &&
+      Children.map(children, child =>
+        React.cloneElement(child, {
+          className: cssClasses('FiltersBtnGroup__Child'),
+        })
+      )}
     {Immutable.Map(restProps.filters)
       .keySeq()
       .sortBy(filterKey => filtersOrdering[filterKey])

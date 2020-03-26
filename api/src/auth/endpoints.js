@@ -14,6 +14,7 @@ const {
   getUserFeatures,
   getLicense,
   acceptLicense,
+  getUserJobFunctions,
 } = require('./service')
 
 const routes = [
@@ -197,6 +198,15 @@ const routes = [
     config: {
       description: 'Get UI features of the logged in user',
       notes: 'Returns a list of feature object',
+    },
+  },
+  {
+    method: 'GET',
+    path: '/auth/job-functions',
+    handler: asyncHandler(getUserJobFunctions),
+    config: {
+      description: 'Get the job functions of the logged in user',
+      notes: 'Returns a list of job function names',
     },
   },
   {

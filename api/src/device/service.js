@@ -9,10 +9,16 @@ const {
   getDaysInMonth,
 } = require('date-fns')
 
-const { knex, filterParams, sortPageParams } = require('../db')
+const {
+  knex,
+  filterParams,
+  filterDateRangeParams,
+  sortPageParams,
+} = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 const { getUser } = require('../auth/service')
 const {
+  allResultCategoryToId,
   deviceStatusToId,
   resultCategoryToId,
   deviceMaintenanceTypeToId,
@@ -620,6 +626,186 @@ async function getDevicePerformance(request) {
   }
 }
 
+function getDeviceBaseQuery(query, dataConstraints) {
+  const deviceQuery = knex('Device as d')
+    .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
+    .innerJoin('DeviceStatus as ds', 'd.deviceStatusId', 'ds.id')
+    .innerJoin('DeviceTypeCategory as dc', 'dt.deviceTypeCategoryId', 'dc.id')
+    .innerJoin('Site as s', 'd.siteId', 's.id')
+    .leftJoin('Geography as g', 's.geographyId', 'g.id')
+    .leftJoin('State as st', 'g.stateId', 'st.id')
+    .leftJoin('Lga as lg', 'g.stateId', 'lg.id')
+    .where(function() {
+      if (!query.deviceIds) {
+        return
+      }
+      this.whereIn('d.id', query.deviceIds.split(','))
+    })
+    .modify(queryBuilder => {
+      if (!query.assayId) {
+        return
+      }
+      queryBuilder
+        .innerJoin('Assay as a', 'dt.id', 'a.deviceTypeId')
+        .where('a.id', query.assayId)
+
+      if (!query.resultCategoryId) {
+        return
+      }
+      queryBuilder
+        .innerJoin('ResultCategoryAssay as rca', 'a.id', 'rca.assayId')
+        .where('rca.resultCategoryId', query.resultCategoryId)
+
+      if (!query.resultCategory2Id) {
+        return
+      }
+      queryBuilder
+        .innerJoin('ResultCategoryAssay as rca2', 'a.id', 'rca2.assayId')
+        .where('rca2.resultCategoryId', query.resultCategory2Id)
+    })
+    .modify(filterParams, query, {
+      countryId: 'g.countryId',
+      stateId: 'g.stateId',
+      lgaId: 'g.lgaId',
+      deviceName: 'd.name',
+      deviceStatusId: 'd.deviceStatusId',
+      deviceTypeId: 'd.deviceTypeId',
+      hasConnectivity: 'dc.hasConnectivity',
+      hasResults: 'dc.hasResults',
+      category: 'dc.name',
+      type: 'dt.name',
+      siteExternalId: 's.externalId',
+      siteName: 's.name',
+    })
+    .modify(addConstraints, dataConstraints, {
+      device: 'd',
+      showUnapprovedDevices: false,
+    })
+  return deviceQuery
+}
+
+// ---------------------------------
+// get devices with different aggregations for reports
+// ---------------------------------
+async function getDevicesForReport(auth, query) {
+  const dataConstraints = await getConstraints(auth.credentials)
+  const resultCategoryIds = await allResultCategoryToId()
+  const deviceQuery = getDeviceBaseQuery(query, dataConstraints)
+
+  // get total count for paging
+  const getCount = deviceQuery
+    .clone()
+    .count('d.id as count')
+    .first()
+
+  const queryResults = knex('Result as r')
+    .innerJoin('Sample as s', 'r.sampleId', 's.id')
+    .whereRaw('s.originSiteId = d.siteId')
+    .modify(filterDateRangeParams, query, 'r.endedOn')
+
+  // get rows
+  const getItems = deviceQuery
+    .clone()
+    .modify(sortPageParams, query, 'name')
+    .select([
+      ...SELECT_LIST_FIELDS,
+      'd.serial',
+      queryResults
+        .clone()
+        .countDistinct('r.id')
+        .as('totalResults'),
+      queryResults
+        .clone()
+        .where('r.resultCategory1', resultCategoryIds.Error)
+        .countDistinct('r.id')
+        .as('totalErrors'),
+      queryResults
+        .clone()
+        .where('r.resultCategory1', resultCategoryIds.Invalid)
+        .countDistinct('r.id')
+        .as('totalInvalid'),
+      queryResults
+        .clone()
+        .innerJoin(
+          'ResultWorkflowLog as rl',
+          'r.resultWorkflowStatusLogId',
+          'rl.id'
+        )
+        .max('rl.changedOn')
+        .as('lastUploadOn'),
+    ])
+
+  // return result when both queries are finished
+  const [{ count: total }, data] = await Promise.all([getCount, getItems])
+
+  // add more fields which depend on aggregations
+  data.forEach(async it => {
+    const errorPercentage = Math.round(
+      100 * (it.totalResults ? it.totalErrors / it.totalResults : 0)
+    )
+    it.errorRate = errorPercentage / 100
+  })
+
+  const result = { ok: true, total, length: data.length, data }
+
+  return result
+}
+
+async function getDevicesForRifResistanceReport(auth, query) {
+  const dataConstraints = await getConstraints(auth.credentials)
+  const resultCategoryIds = await allResultCategoryToId()
+  const deviceQuery = getDeviceBaseQuery(query, dataConstraints)
+
+  // get total count for paging
+  const getCount = deviceQuery
+    .clone()
+    .count('d.id as count')
+    .first()
+
+  const queryResults = knex('Result as r')
+    .innerJoin('Sample as s', 'r.sampleId', 's.id')
+    .whereRaw('s.originSiteId = d.siteId')
+    .modify(filterDateRangeParams, query, 'r.endedOn')
+
+  // get rows
+  const getItems = deviceQuery
+    .clone()
+    .modify(sortPageParams, query, 'name')
+    .select([
+      'st.name as state',
+      'd.name',
+      'lg.name as county',
+      queryResults
+        .clone()
+        .countDistinct('r.id')
+        .as('totalResults'),
+      queryResults
+        .clone()
+        .where('r.resultCategory1', resultCategoryIds.Detected)
+        .countDistinct('r.id')
+        .as('totalDetected1'),
+      queryResults
+        .clone()
+        .where('r.resultCategory2', resultCategoryIds.Detected)
+        .countDistinct('r.id')
+        .as('totalDetected2'),
+    ])
+
+  // return result when both queries are finished
+  const [{ count: total }, data] = await Promise.all([getCount, getItems])
+
+  // add more fields which depend on aggregations
+  data.forEach(async it => {
+    it.rifResistanceRate = it.totalDetected1
+      ? it.totalDetected2 / it.totalDetected1
+      : 0
+  })
+
+  const result = { ok: true, total, length: data.length, data }
+
+  return result
+}
+
 module.exports = {
   listDevices,
   showDevice,
@@ -629,4 +815,6 @@ module.exports = {
   getDevice,
   updateDeviceMaintenance,
   getDevicePerformance,
+  getDevicesForReport,
+  getDevicesForRifResistanceReport,
 }

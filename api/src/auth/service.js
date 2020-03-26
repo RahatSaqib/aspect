@@ -26,25 +26,29 @@ async function checkAuthentication() {
   return { message: 'Welcome to the API!' }
 }
 
+const userProps = [
+  'u.lockedOut',
+  'u.failedPasswordAttempts',
+  'u.password',
+  'u.legacyPassword',
+  'u.id',
+  'u.name',
+  'p.name as userName',
+  'p.culture',
+  'p.timezone',
+  'p.id as personId',
+  'p.lastPartnerId as partnerId',
+  'p.lastCountryId as countryId',
+  'p.userId',
+  'p.id as personId',
+]
+
 function getUser(username) {
   return query('Get basic user details')
     .from('User as u')
     .innerJoin('Person as p', 'u.id', 'p.userId')
     .where({ 'u.name': username })
-    .first(
-      'u.lockedOut',
-      'u.failedPasswordAttempts',
-      'u.password',
-      'u.legacyPassword',
-      'u.id',
-      'u.name',
-      'p.name as userName',
-      'p.culture',
-      'p.timezone',
-      'p.id as personId',
-      'p.lastPartnerId as partnerId',
-      'p.lastCountryId as countryId'
-    )
+    .first(userProps)
 }
 
 function getUserByPersonId(personId) {
@@ -52,21 +56,15 @@ function getUserByPersonId(personId) {
     .from('Person as p')
     .innerJoin('User as u', 'p.userId', 'u.id')
     .where({ 'p.id': personId })
-    .first(
-      'u.lockedOut',
-      'u.failedPasswordAttempts',
-      'u.password',
-      'u.legacyPassword',
-      'u.id',
-      'u.name',
-      'u.lockedOut',
-      'p.culture',
-      'p.timezone',
-      'p.id as personId',
-      'p.lastPartnerId as partnerId',
-      'p.lastCountryId as countryId',
-      'p.userId'
-    )
+    .first(userProps)
+}
+
+function getUserByUserId(userId) {
+  return query('Get user details for user')
+    .from('User as u')
+    .innerJoin('Person as p', 'u.id', 'p.userId')
+    .where({ 'u.id': userId })
+    .first(userProps)
 }
 
 function getUserId(username) {
@@ -87,13 +85,35 @@ function getTokenExpiry(clientType, currentTime) {
 async function authenticate(request) {
   const { payload } = request
   let user = await getUser(payload.name)
+
   if (!user) {
-    // no user with such username in Aspect yet - check it in GxAlert
-    user = await validateUserAtGxAlert(payload.name, payload.password)
-    if (!user) {
-      return Boom.unauthorized('Authentication failed. Wrong password.')
+    try {
+      // no user with such username in Aspect yet - check it in GxAlert
+      user = await validateUserAtGxAlert(payload.name, payload.password)
+      if (!user) {
+        return Boom.unauthorized(
+          'Authentication failed. Wrong username or password.'
+        )
+      }
+    } catch (err) {
+      const data = {
+        userName: payload.name,
+        message: err.message,
+      }
+      if (err.isConnectionError !== undefined) {
+        const boomMessage = err.isConnectionError
+          ? "Couldn't connect to GxAlert"
+          : 'There was a conflict with your credentials'
+        return Boom.conflict(boomMessage, data)
+      }
+
+      return Boom.internal(
+        'Authentication failed because an internal server error',
+        data
+      )
     }
   }
+
   if (user.lockedOut === 1) {
     return Boom.unauthorized('Your account is locked.')
   }
@@ -284,6 +304,17 @@ async function getFeatures(id, name, partnerId) {
     .orderBy(['f.module'])
     .distinct('f.module')
   return modules
+}
+
+async function getJobFunctions(id, name, partnerId) {
+  return query('Get job functions for user and partner')
+    .from('Person as p')
+    .innerJoin('Job as j', 'p.id', 'j.personId') // 'j.jobFunctionId', 'jf.id')
+    .innerJoin('JobFunction as jf', 'j.jobFunctionId', 'jf.id')
+    .where({ 'p.userId': id, 'jf.partnerId': partnerId })
+    .orderBy(['jf.name'])
+    .distinct('jf.name')
+    .pluck('jf.name')
 }
 
 async function hasFeature(userId, partnerId, module) {
@@ -764,8 +795,17 @@ async function lockedOutUser(userId, lockedOut) {
       lockedOut,
     })
 }
+
+async function getUserJobFunctions(request) {
+  const { auth } = request
+  const { id, name, partnerId } = await getUser(auth.credentials.name)
+  const jobFunctions = await getJobFunctions(id, name, partnerId)
+  return { ok: true, data: jobFunctions }
+}
+
 module.exports = {
   getUser,
+  getUserByUserId,
   authenticate,
   checkAuthentication,
   refreshToken,
@@ -780,4 +820,5 @@ module.exports = {
   revokeUsersToken,
   lockedOutUser,
   clientTypes,
+  getUserJobFunctions,
 }

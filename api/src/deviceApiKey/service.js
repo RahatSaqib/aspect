@@ -17,9 +17,13 @@ const SELECT_LIST_FIELDS = [
   'dak.token',
   'dak.revoked',
   'p.name as partner',
+  'p.id as partnerId',
   'c.name as country',
+  'c.id as countryId',
   's.name as site',
+  's.id as siteId',
   'd.name as device',
+  'd.id as deviceId',
 ]
 
 async function listDeviceApiKeys(request) {
@@ -43,7 +47,6 @@ async function listDeviceApiKeys(request) {
       partner: 'p',
       geography: 'g',
       site: 's',
-      device: 'd',
     })
 
   // get total count for paging
@@ -70,6 +73,30 @@ async function listDeviceApiKeys(request) {
   const result = { ok: true, total, length: data.length, data }
 
   return result
+}
+
+async function createDeviceApiKey(request) {
+  const { auth } = request
+  const now = new Date()
+  const user = await knex('Person as p')
+    .join('User as u', 'u.id', 'p.userId')
+    .where('u.name', auth.credentials.name)
+    .first('u.id', 'p.lastPartnerId as partnerId')
+  if (user == null || user.partnerId == null) {
+    return Boom.badRequest('Cannot find partner for user')
+  }
+
+  const apiKey = { token: randomToken() }
+  await knex('DeviceApiKey').insert({
+    token: apiKey.token,
+    revoked: 0,
+    partnerId: user.partnerId,
+    createdOn: now,
+    createdBy: user.id,
+    updatedOn: now,
+    updatedBy: user.id,
+  })
+  return apiKey
 }
 
 async function exportDeviceApiKeys(request) {
@@ -254,6 +281,7 @@ module.exports = {
   listDeviceApiKeys,
   exportDeviceApiKeys,
   generateDeviceApiKeys,
+  createDeviceApiKey,
   assignDeviceApiKeys,
   revokeDeviceApiKey,
 }

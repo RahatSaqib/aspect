@@ -250,6 +250,7 @@ export const ReporterList = ({
       <ExportListButton
         onExcelClick={onExportClick}
         onCsvClick={onExportClick}
+        visible={!items.currentIdList.isEmpty()}
         reportName="Results"
       />
       {items.currentIdList.isEmpty() && (
