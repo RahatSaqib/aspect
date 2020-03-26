@@ -827,7 +827,8 @@ describe('Result routes', () => {
         async function createCovid19Result(
           deviceTypeExternalId,
           resultDetails = {},
-          sampleDetails = {}
+          sampleDetails = {},
+          createDeviceLogFromInstrument = false
         ) {
           const device = covidDeviceTypeDevices[deviceTypeExternalId]
           const site = await knex('Site')
@@ -874,6 +875,17 @@ describe('Result routes', () => {
             updatedBy: otherUserId,
             ...resultDetails,
           })
+          if (createDeviceLogFromInstrument) {
+            await knex('DeviceLog').insert({
+              createdOn: randomDate,
+              deviceConfigurationUpdated: 0,
+              deviceId: device.id,
+              rawMessage: `Some raw message from ${device.name}`,
+              resultId,
+              senderIp: '127.0.0.1',
+              source: device.name,
+            })
+          }
           resultIdsInserted.push(resultId)
           return resultId
         }
@@ -959,6 +971,7 @@ describe('Result routes', () => {
               expect(result).to.containSubset({
                 patientData: {
                   id: caseId,
+                  caseId,
                   age,
                   gender: genderText,
                   testReason: testReasonText,
@@ -973,6 +986,258 @@ describe('Result routes', () => {
                 resultCategory1: resultCategories[resultText],
                 updatedBy: adminId,
               })
+            }
+          )
+        })
+
+        it('Should create a device log from Aspect when saving each result', async () => {
+          const dateAndTimeOfTest = new Date(2020, 3, 22)
+          const testReasonText = 'Unknown'
+          const testReason = getOptionValueFromTitle(
+            AssayCovidResultFormSchema.fields.testReason.control.options,
+            testReasonText
+          )
+          const age = 27
+          const genderText = 'Male'
+          const gender = getOptionValueFromTitle(
+            AssayCovidResultFormSchema.fields.gender.control.options,
+            genderText
+          )
+          const resultText = 'Negative'
+          const testResult = getOptionValueFromTitle(
+            AssayCovidResultFormSchema.fields.testResult.control.options,
+            resultText
+          )
+          await Promise.each(
+            Object.keys(covidDeviceTypeDevices),
+            async deviceTypeId => {
+              const caseId = `${deviceTypeId} TEST-CASE-ID`
+              let testTypeText
+              let testType
+              const resultId = await createCovid19Result(deviceTypeId)
+              const formDataToSend = {
+                caseId,
+                testReason,
+                age,
+                gender,
+                testResult,
+                dateAndTimeOfTest,
+              }
+              if (deviceTypeId === 'Aspect') {
+                testTypeText = 'Digital X-Ray'
+                testType = getOptionValueFromTitle(
+                  [
+                    {
+                      title: 'PCR/molecular',
+                      value: 'pcr',
+                    },
+                    {
+                      title: 'Immunoassay',
+                      value: 'immunoassay',
+                    },
+                    {
+                      title: 'Rapid diagnostic test',
+                      value: 'rapidDiagnosticTest',
+                    },
+                    {
+                      title: 'Digital X-Ray',
+                      value: 'digitalXRay',
+                    },
+                  ],
+                  testTypeText
+                )
+                formDataToSend.testType = testType
+              }
+              const response = await server
+                .put(`${path}/form-data/${resultId}`)
+                .send(formDataToSend)
+                .set('Authorization', shared.token)
+              expect(response.body.data.id).to.equal(resultId)
+              const result = await getResult(resultId)
+              result.patientData = JSON.parse(result.patientData)
+              result.resultData = JSON.parse(result.resultData)
+              result.formData = JSON.parse(result.formData)
+              expect(result).to.containSubset({
+                patientData: {
+                  id: caseId,
+                  caseId,
+                  age,
+                  gender: genderText,
+                  testReason: testReasonText,
+                },
+                resultData: { resultText, typeOfTest: testTypeText },
+                formData: {
+                  ...formDataToSend,
+                  dateAndTimeOfTest: formDataToSend.dateAndTimeOfTest.toISOString(),
+                },
+                startedOn: dateAndTimeOfTest,
+                endedOn: dateAndTimeOfTest,
+                resultCategory1: resultCategories[resultText],
+                updatedBy: adminId,
+              })
+              const deviceLogsForResult = await knex('DeviceLog')
+                .where({ resultId })
+                .select()
+              expect(deviceLogsForResult).to.have.lengthOf(1)
+              expect(deviceLogsForResult).to.containSubset([
+                {
+                  deviceId: covidDeviceTypeDevices.Aspect.id,
+                  source: 'Result Edited in Aspect',
+                  rawMessage: JSON.stringify({
+                    auth: { credentials: { name: 'admin' } },
+                    params: { resultId },
+                    payload: formDataToSend,
+                  }),
+                },
+              ])
+            }
+          )
+        })
+
+        it('Should NOT overwrite diagnostic data if the result has already come from an instrument', async () => {
+          const dateAndTimeOfTest = new Date(2020, 3, 14)
+          const testReasonText =
+            'Ill Seeking Healthcare due to suspicion of COVID-19'
+          const testReason = getOptionValueFromTitle(
+            AssayCovidResultFormSchema.fields.testReason.control.options,
+            testReasonText
+          )
+          const age = 78
+          const genderText = 'Male'
+          const gender = getOptionValueFromTitle(
+            AssayCovidResultFormSchema.fields.gender.control.options,
+            genderText
+          )
+          const resultText = 'Negative'
+          const testResult = getOptionValueFromTitle(
+            AssayCovidResultFormSchema.fields.testResult.control.options,
+            resultText
+          )
+          await Promise.each(
+            Object.keys(covidDeviceTypeDevices),
+            async deviceTypeId => {
+              const patientDataFromInstrument = {
+                id: `PATIENT-ID-FROM-${deviceTypeId}`,
+                caseId: 'CASE-ID-FROM-INSTRUMENT',
+              }
+              const resultDataFromInstrument = {
+                resultText: `Positive`,
+              }
+              const resultFromInstrument = {
+                patientData: JSON.stringify(patientDataFromInstrument),
+                resultData: JSON.stringify(resultDataFromInstrument),
+                resultCategory1: resultCategories.Positive,
+                startedOn: addMinutes(dateAndTimeOfTest, 123),
+                endedOn: addMinutes(dateAndTimeOfTest, 223),
+              }
+              const caseId = `${deviceTypeId} TEST-CASE-ID`
+              let testTypeText
+              let testType
+              const resultId = await createCovid19Result(
+                deviceTypeId,
+                resultFromInstrument,
+                {},
+                true
+              )
+              const formDataToSend = {
+                caseId,
+                testReason,
+                age,
+                gender,
+                testResult,
+                dateAndTimeOfTest,
+              }
+              if (deviceTypeId === 'Aspect') {
+                testTypeText = 'Digital X-Ray'
+                testType = getOptionValueFromTitle(
+                  [
+                    {
+                      title: 'PCR/molecular',
+                      value: 'pcr',
+                    },
+                    {
+                      title: 'Immunoassay',
+                      value: 'immunoassay',
+                    },
+                    {
+                      title: 'Rapid diagnostic test',
+                      value: 'rapidDiagnosticTest',
+                    },
+                    {
+                      title: 'Digital X-Ray',
+                      value: 'digitalXRay',
+                    },
+                  ],
+                  testTypeText
+                )
+                formDataToSend.testType = testType
+              }
+              const response = await server
+                .put(`${path}/form-data/${resultId}`)
+                .send(formDataToSend)
+                .set('Authorization', shared.token)
+              expect(response.body.data.id).to.equal(resultId)
+              const result = await getResult(resultId)
+              result.patientData = JSON.parse(result.patientData)
+              result.resultData = JSON.parse(result.resultData)
+              result.formData = JSON.parse(result.formData)
+              if (deviceTypeId !== 'Aspect') {
+                expect(result).to.containSubset({
+                  patientData: {
+                    id: patientDataFromInstrument.id,
+                    caseId,
+                    age,
+                    gender: genderText,
+                    testReason: testReasonText,
+                  },
+                  resultData: {
+                    resultText: resultDataFromInstrument.resultText,
+                    typeOfTest: testTypeText,
+                  },
+                  formData: {
+                    ...formDataToSend,
+                    dateAndTimeOfTest: formDataToSend.dateAndTimeOfTest.toISOString(),
+                  },
+                  startedOn: resultFromInstrument.startedOn,
+                  endedOn: resultFromInstrument.endedOn,
+                  resultCategory1: resultFromInstrument.resultCategory1,
+                  updatedBy: adminId,
+                })
+              } else {
+                expect(result).to.containSubset({
+                  patientData: {
+                    id: caseId,
+                    caseId,
+                    age,
+                    gender: genderText,
+                    testReason: testReasonText,
+                  },
+                  resultData: { resultText, typeOfTest: testTypeText },
+                  formData: {
+                    ...formDataToSend,
+                    dateAndTimeOfTest: formDataToSend.dateAndTimeOfTest.toISOString(),
+                  },
+                  startedOn: dateAndTimeOfTest,
+                  endedOn: dateAndTimeOfTest,
+                  resultCategory1: resultCategories[resultText],
+                  updatedBy: adminId,
+                })
+              }
+              const deviceLogsForResult = await knex('DeviceLog')
+                .where({ resultId })
+                .select()
+              expect(deviceLogsForResult).to.have.lengthOf(2)
+              expect(deviceLogsForResult).to.containSubset([
+                {
+                  deviceId: covidDeviceTypeDevices.Aspect.id,
+                  source: 'Result Edited in Aspect',
+                  rawMessage: JSON.stringify({
+                    auth: { credentials: { name: 'admin' } },
+                    params: { resultId },
+                    payload: formDataToSend,
+                  }),
+                },
+              ])
             }
           )
         })

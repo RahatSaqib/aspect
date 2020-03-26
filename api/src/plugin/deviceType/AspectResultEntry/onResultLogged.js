@@ -62,7 +62,6 @@ async function updateCovidResultFromFormData(
     }
     const {
       assayExternalId,
-      resultSourceId,
       formData,
       resultData,
       patientData,
@@ -102,7 +101,6 @@ async function updateCovidResultFromFormData(
     if (formSchema) {
       formSchemaObject = JSON.parse(formSchema)
     }
-    const enteredByHandResultSourceId = await resultSourceToId('EnteredByHand')
     const diagnosticDeviceResoultSourceId = await resultSourceToId(
       'DiagnosticDevice'
     )
@@ -116,8 +114,8 @@ async function updateCovidResultFromFormData(
       .andWhere('a.resultSourceId', diagnosticDeviceResoultSourceId)
       .count('dl.id as deviceLogCountFromDiagnosticDevice')
     const canOverwriteDiagnosticDataByHand =
-      resultSourceId === enteredByHandResultSourceId ||
       deviceLogCountFromDiagnosticDevice === 0
+    patientDataObject.caseId = formDataObject.caseId
     if (canOverwriteDiagnosticDataByHand) {
       patientDataObject.id = formDataObject.caseId
     } else if (formDataObject.caseId) {

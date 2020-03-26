@@ -48,7 +48,7 @@ async function upsertCovidDeviceTypes(
         manufacturer: 'Roche',
         plugin: 'aspectresultentry',
         abbreviation: 'MP96',
-        resultSourceId: await resultSourceToId('EnteredByHand'),
+        resultSourceId: await resultSourceToId('DiagnosticDevice'),
       },
       {
         deviceTypeCategoryId: await deviceTypeCategoryToId('Lab'),
@@ -57,7 +57,7 @@ async function upsertCovidDeviceTypes(
         manufacturer: 'Applied Biosystems',
         plugin: 'aspectresultentry',
         abbreviation: 'QS7',
-        resultSourceId: await resultSourceToId('EnteredByHand'),
+        resultSourceId: await resultSourceToId('DiagnosticDevice'),
       },
       {
         deviceTypeCategoryId: await deviceTypeCategoryToId('Lab'),
