@@ -99,60 +99,60 @@
       "i18nKey": "died"
     },
     {
-      "assays": ["assayGenericCovid19"],
+      "assays": ["assayAspectResultEntryCovid19"],
       "type": "outcome",
       "name": "Recovered",
       "externalId": "recovered",
       "i18nKey": "recovered"
     },
     {
-      "assays": ["assayGenericCovid19"],
+      "assays": ["assayAspectResultEntryCovid19"],
       "type": "outcome",
       "name": "Not Recovered",
       "externalId": "notRecovered",
       "i18nKey": "notRecovered"
     },
     {
-      "assays": ["assayGenericCovid19"],
+      "assays": ["assayAspectResultEntryCovid19"],
       "type": "outcome",
       "name": "Unknown",
       "externalId": "unknown",
       "i18nKey": "unknown"
     },
     {
-      "assays": ["assayGenericCovid19"],
+      "assays": ["assayAspectResultEntryCovid19"],
       "type": "outcome",
       "name": "Other",
       "externalId": "other",
       "i18nKey": "other"
     },
     {
-      "assays": ["assayGenericCovid19"],
+      "assays": ["assayAspectResultEntryCovid19"],
       "type": "treatment",
       "name": "Admission to Hospital",
       "externalId": "admissionToHospital",
       "i18nKey": "admissionToHospital"
     },
     {
-      "assays": ["assayGenericCovid19"],
+      "assays": ["assayAspectResultEntryCovid19"],
       "type": "treatment",
       "name": "Admission to Hospital ICU",
       "externalId": "admissionToHospitalIcu",
       "i18nKey": "admissionToHospitalIcu"
     },
     {
-      "assays": ["assayGenericCovid19"],
+      "assays": ["assayAspectResultEntryCovid19"],
       "type": "treatment",
       "name": "Quarantine",
       "externalId": "quarantine",
       "i18nKey": "quarantine"
     },
     {
-      "assays": ["assayGenericCovid19"],
+      "assays": ["assayAspectResultEntryCovid19"],
       "type": "treatment",
       "name": "Self-Quarantine",
-      "externalId": "quarantine",
-      "i18nKey": "quarantine"
+      "externalId": "selfQuarantine",
+      "i18nKey": "selfQuarantine"
     }
   ]
 }

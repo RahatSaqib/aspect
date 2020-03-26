@@ -433,7 +433,7 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
       else
         queryBuilder.whereIn('dt.externalId', [
           'CepheidGeneXpert',
-          'GenericCovid19',
+          'AspectResultEntry',
         ])
     }, query)
     .modify(addConstraints, dataConstraints, {
