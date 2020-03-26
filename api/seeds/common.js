@@ -193,7 +193,7 @@ async function commonUpserts(
       deviceApiToken
     )
   }
-  await upsertAspectDevice(knex, countryId, partnerId, auditFields)
+  await ensureAspectDeviceExists(knex, countryId, partnerId, auditFields)
 }
 
 async function upsertJobFunction(
@@ -268,83 +268,30 @@ async function upsertGxAlertDevice(
   auditFields,
   deviceApiToken
 ) {
-  let { id: deviceTypeId } =
-    (await knex('DeviceType')
-      .where('externalId', 'GxAlert')
-      .first('id')) || {}
-  if (!deviceTypeId) {
-    const deviceTypeCategoryInformationSystem = await deviceTypeCategoryToId(
-      'Information System'
-    )
-    ;[deviceTypeId] = await knex('DeviceType').insert({
+  const device = await ensureCountryLevelInformationSystemExists(
+    knex,
+    countryId,
+    partnerId,
+    {
       externalId: 'GxAlert',
       name: 'GxAlert',
       manufacturer: 'SystemOne',
       plugin: 'gxalert',
-      deviceTypeCategoryId: deviceTypeCategoryInformationSystem,
-    })
-  }
-  const { countryGeographyId } = await knex('Geography')
-    .where({ countryId })
-    .whereNull('stateId', 'lgaId')
-    .first('id as countryGeographyId')
-
-  let { id: gxAlertSiteId } =
-    (await knex('Site')
-      .where({
-        externalId: 'gxalert',
-        partnerId,
-        geographyId: countryGeographyId,
-      })
-      .first('id')) || {}
-  if (!gxAlertSiteId) {
-    ;[gxAlertSiteId] = await knex('Site').insert({
-      ...auditFields,
-      name: 'GxAlert Site',
-      shortName: 'GxA Site',
-      externalId: 'gxalert',
-      partnerId,
-      geographyId: countryGeographyId,
-      createdOn: new Date(),
-      updatedOn: new Date(),
-    })
-  }
-
-  let { id: gxAlertDeviceId } =
-    (await knex('Device')
-      .where({
-        deviceTypeId,
-        partnerId,
-        geographyId: countryGeographyId,
-        siteId: gxAlertSiteId,
-      })
-      .first('id')) || {}
-  if (!gxAlertDeviceId) {
-    ;[gxAlertDeviceId] = await knex('Device').insert({
-      ...auditFields,
-      name: 'GxAlert',
-      deviceStatusId: await deviceStatusToId('approved'),
-      partnerId,
-      geographyId: countryGeographyId,
-      siteId: gxAlertSiteId,
-      lastPingOn: new Date(),
-      lastSeenOn: new Date(),
-      deviceTypeId,
-    })
-  }
-
+    },
+    auditFields
+  )
   const deviceApiKey = {
     token: deviceApiToken,
     revoked: 0,
     partnerId,
-    geographyId: countryGeographyId,
-    deviceId: gxAlertDeviceId,
+    geographyId: device.geographyId,
+    deviceId: device.id,
   }
   const { id: gxAlertDeviceApiKeyId } =
     (await knex('DeviceApiKey')
       .where({
         token: deviceApiToken,
-        deviceId: gxAlertDeviceId,
+        deviceId: device.id,
       })
       .first('id')) || {}
   if (!gxAlertDeviceApiKeyId) {
@@ -363,20 +310,47 @@ async function upsertGxAlertDevice(
   }
 }
 
-async function upsertAspectDevice(knex, countryId, partnerId, auditFields) {
+async function ensureAspectDeviceExists(
+  knex,
+  countryId,
+  partnerId,
+  auditFields
+) {
+  return ensureCountryLevelInformationSystemExists(
+    knex,
+    countryId,
+    partnerId,
+    {
+      externalId: 'Aspect',
+      name: 'Aspect',
+      manufacturer: 'SystemOne',
+      plugin: 'aspectresultentry',
+    },
+    auditFields
+  )
+}
+
+async function ensureCountryLevelInformationSystemExists(
+  knex,
+  countryId,
+  partnerId,
+  deviceType,
+  auditFields
+) {
+  const { externalId, name, manufacturer, plugin } = deviceType
   let { id: deviceTypeId } =
     (await knex('DeviceType')
-      .where('externalId', 'Aspect')
+      .where('externalId', externalId)
       .first('id')) || {}
   if (!deviceTypeId) {
     const deviceTypeCategoryInformationSystem = await deviceTypeCategoryToId(
       'Information System'
     )
     ;[deviceTypeId] = await knex('DeviceType').insert({
-      externalId: 'Aspect',
-      name: 'Aspect',
-      manufacturer: 'SystemOne',
-      plugin: 'aspectresultentry',
+      externalId,
+      name,
+      manufacturer,
+      plugin,
       deviceTypeCategoryId: deviceTypeCategoryInformationSystem,
     })
   }
@@ -384,51 +358,42 @@ async function upsertAspectDevice(knex, countryId, partnerId, auditFields) {
     .where({ countryId })
     .whereNull('stateId', 'lgaId')
     .first('id as countryGeographyId')
-
-  let { id: aspectSiteId } =
-    (await knex('Site')
+  const device =
+    (await knex('Device')
       .where({
-        externalId: 'aspect',
+        deviceTypeId,
         partnerId,
         geographyId: countryGeographyId,
       })
-      .first('id')) || {}
-  if (!aspectSiteId) {
-    ;[aspectSiteId] = await knex('Site').insert({
+      .first()) || {}
+  let { siteId } = device
+  if (!siteId) {
+    ;[siteId] = await knex('Site').insert({
       ...auditFields,
-      name: 'Aspect Site',
-      shortName: 'Aspect Site',
-      externalId: 'aspect',
+      name,
+      shortName: name.substr(0, 45),
+      externalId,
       partnerId,
       geographyId: countryGeographyId,
       createdOn: new Date(),
       updatedOn: new Date(),
     })
   }
-
-  let { id: aspectDeviceId } =
-    (await knex('Device')
-      .where({
-        deviceTypeId,
-        partnerId,
-        geographyId: countryGeographyId,
-        siteId: aspectSiteId,
-      })
-      .first('id')) || {}
-  if (!aspectDeviceId) {
-    ;[aspectDeviceId] = await knex('Device').insert({
+  if (!device.id) {
+    const [deviceId] = await knex('Device').insert({
       ...auditFields,
-      name: 'Aspect',
+      name,
       deviceStatusId: await deviceStatusToId('approved'),
       partnerId,
       geographyId: countryGeographyId,
-      siteId: aspectSiteId,
+      siteId,
       lastPingOn: new Date(),
       lastSeenOn: new Date(),
       deviceTypeId,
     })
+    device.id = deviceId
   }
-  return aspectDeviceId
+  return device
 }
 
 async function upsertGeneXpertDeviceTypeAndAssays(
@@ -754,7 +719,7 @@ async function upsertAssayResultCategories(knex, assayId, categories) {
 module.exports = {
   commonUpserts,
   upsertGxAlertDevice,
-  upsertAspectDevice,
+  ensureAspectDeviceExists,
   upsertJobFunctionPermission,
   upsertJobFeatures,
   upsertGeneXpertDeviceTypeAndAssays,

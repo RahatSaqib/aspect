@@ -2,7 +2,7 @@ module.exports = require('../utils').seed(seed, __filename)
 const _ = require('lodash')
 const Promise = require('bluebird')
 
-const { upsertAspectDevice } = require('../common')
+const { ensureAspectDeviceExists } = require('../common')
 const { upsertCovidDeviceTypes } = require('../commonCovid')
 const { deviceStatusToId } = require('../../src/shared/dictionary')
 
@@ -44,7 +44,7 @@ async function seed(knex) {
   const covidDeviceTypes = (
     await upsertCovidDeviceTypes(knex, partnerId)
   ).filter(deviceType => deviceType.externalId !== 'Aspect')
-  await upsertAspectDevice(knex, countryId, partnerId, auditFields)
+  await ensureAspectDeviceExists(knex, countryId, partnerId, auditFields)
   const deviceTypeAssays = {}
   await Promise.each(
     covidDeviceTypes.map(deviceType => deviceType.id),
