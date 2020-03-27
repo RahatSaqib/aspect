@@ -1,4 +1,3 @@
-import _ from 'lodash'
 import without from 'lodash/without'
 import omit from 'lodash/omit'
 import uniq from 'lodash/uniq'
