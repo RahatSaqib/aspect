@@ -5,10 +5,9 @@ import CircularProgress from '@material-ui/core/CircularProgress'
 
 import {
   calcPercentageSplit,
-  groupByKey,
   getKeysFromResults,
+  groupByKey,
   normaliseKeys,
-  setColors,
   translateKeys,
 } from './Helpers'
 
@@ -22,7 +21,6 @@ const BarGraph = ({
   resultCategory,
   formatDate,
   legend,
-  colors,
   componentClass,
   displayMethod,
   assayFromState,
@@ -32,8 +30,6 @@ const BarGraph = ({
 
   useEffect(() => {
     if (!keysFromProps && graph) {
-      console.log(graph)
-
       const keys = getKeysFromResults(graph, indexBy, orderBy)
       setKeys(keys)
     }
@@ -48,15 +44,13 @@ const BarGraph = ({
     ) {
       const grouped = groupByKey(data, indexBy, resultCategory, formatDate)
       const normalised = normaliseKeys(grouped)
-      // const colors = setColors(normalised);
-      const translated = translateKeys(normalised, assayFromState, true)
-      console.log(translated)
-
       const display =
         displayMethod === 'percentage'
-          ? calcPercentageSplit(translated, indexBy)
-          : translated
-      setGraph([...display])
+          ? calcPercentageSplit(normalised, indexBy)
+          : normalised
+
+      const translated = translateKeys(display, assayFromState, true)
+      setGraph([...translated])
     }
   }, [
     data,
@@ -68,17 +62,14 @@ const BarGraph = ({
     assayFromState,
   ])
 
-  console.log(graph)
-  // console.log(keys);
-
   return (
     <div className={cssClasses(componentClass)}>
       {graph && graph.length ? (
         <ResponsiveBar
           data={graph}
-          // keys={['Not Detected', 'Detected']}
           keys={keys}
-          // indexBy="month"
+          indexBy={indexBy}
+          colors={d => d.data[`${d.id}Color`]}
           enableLabel={false}
           enableGridY={false}
           margin={

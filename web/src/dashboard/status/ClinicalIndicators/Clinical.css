@@ -1,5 +1,3 @@
-@import '../../../globals/variables.css';
-
 .results__container {
   display: flex;
   width: 100%;
@@ -23,16 +21,13 @@
 .results__bar {
   width: 100%;
 }
-.results__title {
-}
+
 .results__graph {
   width: 100%;
   height: 400px;
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  /* justify-content: center;
-  align-items: center; */
 }
 
 @media screen and (max-width: 1024px) {
