@@ -78,11 +78,13 @@ async function getBaseReports() {
       fileName: 'HIVNotSuppressed',
       sheets: [
         {
-          moduleName: '',
-          functionName: '',
+          moduleName: 'result/service',
+          functionName: 'getResultsForReport',
           query: {
             sortCol: 'endedOn',
             sortDir: 'desc',
+            assayId: assayIds.GxHiv1Vl,
+            resultCategoryId: resultCategoryIds.MoreThan1000,
           },
         },
       ],
