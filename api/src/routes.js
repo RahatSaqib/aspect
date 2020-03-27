@@ -238,6 +238,7 @@ function validateDateRangeParams() {
       .description('To Date'),
   }
 }
+
 function validateResultResponse() {
   return {
     id: Joi.number()

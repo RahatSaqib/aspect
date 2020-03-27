@@ -43,6 +43,7 @@ async function getQuery(request, query, queryBuilder) {
     .paginate(query.size || 10, query.page || 0, true)
   return result
 }
+
 async function listTasksByStatus(request) {
   const { query } = request
   const issueCategoryId = query.categoryId
@@ -73,6 +74,7 @@ async function listTasksByStatus(request) {
 
   return result
 }
+
 async function listTasks(request) {
   const { query } = request
 
@@ -123,6 +125,7 @@ function processTaskResults(dataWithFilteredIssueCategory, total) {
 
   return result
 }
+
 async function getTask(request) {
   const {
     params: { taskId },
@@ -150,6 +153,7 @@ async function getPersonsBySite(siteId) {
     .select('jobperson.name as jobPersons', 'jobperson.id as jobPersonsId')
   return query
 }
+
 async function getTaskDetailsQuery(taskId, userId) {
   const query = await knex('AlertMessage as am')
     .join('Person as p', 'am.personId', 'p.Id')

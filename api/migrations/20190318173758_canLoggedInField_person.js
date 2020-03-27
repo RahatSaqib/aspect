@@ -5,6 +5,7 @@ async function up(knex) {
     table.boolean('canLogIn').defaultTo(0)
   })
 }
+
 async function down(knex) {
   await knex.schema.alterTable('Person', table => {
     table.dropColumn('canLogIn')

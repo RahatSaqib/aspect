@@ -34,6 +34,7 @@ async function auditInventoryStockout({
     escalator,
   })
 }
+
 // -----------------------------
 // totalDaysUnexpiredInventoryItemsLast - is used also in plugin Myanmar/issueResolutions.js
 // -----------------------------
@@ -84,6 +85,7 @@ async function totalDaysUnexpiredInventoryItemsLast({
 
   return days
 }
+
 // -----------------------------
 // auditInventoryStockExpiring
 // -----------------------------
@@ -116,6 +118,7 @@ async function auditInventoryStockExpiring({
     escalator,
   })
 }
+
 // -----------------------------
 // totalWastedInventoryItems - is used also in plugin Myanmar/issueResolutions.js
 // -----------------------------
@@ -158,6 +161,7 @@ async function totalWastedInventoryItems({
 
   return totalWasted
 }
+
 // -----------------------------
 // resolveEscalate
 // -----------------------------

@@ -49,6 +49,7 @@ async function getJobFunctionsForSelectList(request) {
     data: partners,
   }
 }
+
 // ----------------------------------------------------------------------------------------
 // permissions for specified 'person' for this 'partner'
 async function getPermissions(request) {
@@ -265,6 +266,7 @@ async function manageJobContext(request, mode) {
     )
   return { ok: true, data: jobContexts }
 }
+
 // ----------------------------------------------------------------------------------------
 // helper function for JobFunctionDashboardWidget, JobFunctionFeature, JobFunctionPermission
 // ----------------------------------------------------------------------------------------
@@ -343,6 +345,7 @@ async function manageJobFunctionBaseItems(request, tableName, mode, err) {
     .select('jobFunctionId', fieldName)
   return { ok: true, data }
 }
+
 // ----------------------------------------------------------------------------------------
 async function assignJobFunctionDashboardWidgets(request) {
   return manageJobFunctionBaseItems(
@@ -352,6 +355,7 @@ async function assignJobFunctionDashboardWidgets(request) {
     'Only Admin with same partnerId as JobFunction may assign user to widget'
   )
 }
+
 async function unassignJobFunctionDashboardWidgets(request) {
   return manageJobFunctionBaseItems(
     request,
@@ -360,6 +364,7 @@ async function unassignJobFunctionDashboardWidgets(request) {
     'Only Admin with same partnerId as JobFunction may unassign user from widget'
   )
 }
+
 // ----------------------------------------------------------------------------------------
 async function assignJobFunctionFeatures(request) {
   return manageJobFunctionBaseItems(
@@ -369,6 +374,7 @@ async function assignJobFunctionFeatures(request) {
     'Only Admin with same partnerId as JobFunction can assign user to features'
   )
 }
+
 async function unassignJobFunctionFeatures(request) {
   return manageJobFunctionBaseItems(
     request,
@@ -377,6 +383,7 @@ async function unassignJobFunctionFeatures(request) {
     'Only Admin with same partnerId as JobFunction can remove user from features'
   )
 }
+
 // ----------------------------------------------------------------------------------------
 async function assignJobFunctionPermissions(request) {
   return manageJobFunctionBaseItems(
@@ -386,6 +393,7 @@ async function assignJobFunctionPermissions(request) {
     'Only Admin with same partnerId as JobFunction may assign permissions to JobFunction'
   )
 }
+
 async function unassignJobFunctionPermissions(request) {
   return manageJobFunctionBaseItems(
     request,
@@ -394,6 +402,7 @@ async function unassignJobFunctionPermissions(request) {
     'Only Admin with same partnerId as JobFunction may unassign permissions from JobFunction'
   )
 }
+
 // ----------------------------------------------------------------------------------------
 async function assignPersonTo(request) {
   const { payload } = request
@@ -458,6 +467,7 @@ async function assignPersonTo(request) {
   const personAssignments = await getAssignments({ auth, personId })
   return { ok: true, data: personAssignments }
 }
+
 // ----------------------------------------------------------------------------------------
 async function getPersonAssignments(request) {
   const {
@@ -467,6 +477,7 @@ async function getPersonAssignments(request) {
   const personAssignments = await getAssignments({ auth, personId })
   return { ok: true, data: personAssignments }
 }
+
 // ----------------------------------------------------------------------------------------
 async function getAssignments({ auth, personId }) {
   const dataConstraints = await getConstraints(auth.credentials)
@@ -555,6 +566,7 @@ async function getAssignments({ auth, personId }) {
     })
   return personAssignments
 }
+
 // ----------------------------------------------------------------------------------------
 async function validateJobData({ personId, jobFunctionId, auth }) {
   const { partnerId, countryId } = await getUser(auth.credentials.name)
@@ -584,6 +596,7 @@ async function validateJobData({ personId, jobFunctionId, auth }) {
 
   return true
 }
+
 // ----------------------------------------------------------------------------------------
 async function removePersonAssignment(request) {
   const {

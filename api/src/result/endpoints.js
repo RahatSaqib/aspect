@@ -121,6 +121,7 @@ function listResultsBaseConfig() {
     },
   }
 }
+
 // -----------------------------------------------------
 function getResponseForComments() {
   return {

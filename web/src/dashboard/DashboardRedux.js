@@ -455,6 +455,7 @@ function requestTreatmentDashboard(payload) {
     ...payload,
   }
 }
+
 function receiveTreatmentDashboard(requestedAt, data) {
   return {
     type: RECEIVE_TREATMENT_DASHBOARD,

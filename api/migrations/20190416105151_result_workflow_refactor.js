@@ -21,6 +21,7 @@ async function up(knex) {
       .onDelete('SET NULL')
   })
 }
+
 async function down(knex) {
   await knex.schema.alterTable('Result', t => {
     t.dropForeign('resultWorkflowStatusLogId')

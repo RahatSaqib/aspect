@@ -25,6 +25,7 @@ function findContentInExcelRow(
   }
   return null
 }
+
 function findContentInExcelSheet(
   worksheet,
   placeHolderTag,
@@ -65,6 +66,7 @@ function replaceContentInExcelSheet(
   )
   if (cell != null) cell.value = stringToReplace
 }
+
 function setColumnsKeysAndBindData(
   worksheet,
   placeHolderTag,
@@ -140,6 +142,7 @@ function setColumnsKeysByPlaceHolder(worksheet, placeHolderTag, rowsNext = 0) {
     return cell.rowNumber + rowsNext
   }
 }
+
 // This functions manage everything about the report template.
 // the parameters are:
 // The format (csv or xlsx)
@@ -182,6 +185,7 @@ async function generateReport(
 
   return generateReportFile(workbook, format)
 }
+
 async function generateWorkbookByDataSource(
   format,
   data,
@@ -239,11 +243,13 @@ async function generateWorkbookByDataSource(
 
   return generateReportFile(workbook, format)
 }
+
 async function generateReportFile(workbook, format) {
   if (format && format.toLowerCase() !== 'csv')
     return workbook.xlsx.writeBuffer()
   return workbook.csv.writeBuffer()
 }
+
 async function downloadReportFile(
   reportFunction,
   reply,

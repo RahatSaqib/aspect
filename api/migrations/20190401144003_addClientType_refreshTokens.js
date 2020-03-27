@@ -8,6 +8,7 @@ async function up(knex) {
       .defaultTo('Web')
   })
 }
+
 async function down(knex) {
   await knex.schema.alterTable('RefreshToken', table => {
     table.dropColumn('clientType')
