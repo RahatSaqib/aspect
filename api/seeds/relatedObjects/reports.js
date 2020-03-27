@@ -79,12 +79,11 @@ async function getBaseReports() {
       sheets: [
         {
           moduleName: 'result/service',
-          functionName: 'getDevicesForHIVVLNonSupressedReport',
+          functionName: 'getResultsForReport',
           query: {
             sortCol: 'endedOn',
             sortDir: 'desc',
             resultCategoryId: resultCategoryIds.MoreThan1000,
-            resultCategory2Id: resultCategoryIds.MoreThan1000,
           },
         },
       ],
