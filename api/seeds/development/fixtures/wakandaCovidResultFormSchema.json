@@ -1,5 +1,32 @@
 {
   "fields": {
+    "testResult": {
+      "i18nLabel": "testResult",
+      "control": {
+        "type": "DropDown",
+        "options": [{
+          "title": "Positive",
+          "i18nText": "positive",
+          "value": "Positive"
+        }, {
+          "title": "Negative",
+          "i18nText": "negative",
+          "value": "Negative"
+        }, {
+          "title": "Unknown",
+          "i18nText": "unknown",
+          "value": "Unknown"
+        }]
+      },
+      "order": 1
+    },
+    "dateAndTimeOfTest": {
+      "i18nLabel": "dateAndTimeOfTest",
+      "control": {
+        "type": "Date"
+      },
+      "order": 2
+    },
     "testReason": {
       "i18nLabel": "testReasonCovid19",
       "control": {
@@ -30,42 +57,42 @@
           "value": "6"
         }]
       },
-      "order": 1
+      "order": 3
     },
     "testReasonOther": {
       "i18nLabel": "ifNoneOfTheAbovePleaseExplain",
       "control": {
         "type": "TextBox"
       },
-      "order": 2
+      "order": 4
     },
     "caseId": {
       "i18nLabel": "caseId",
       "control": {
         "type": "TextBox"
       },
-     "order": 3
+     "order": 5
     },
     "ageYears": {
       "i18nLabel": "ageYears",
       "control": {
         "type": "TextBox"
       },
-     "order": 4
+     "order": 6
     },
     "ageMonths": {
       "i18nLabel": "ageMonths",
       "control": {
         "type": "TextBox"
       },
-      "order": 5
+      "order": 7
     },
     "ageDays": {
       "i18nLabel": "ageDays",
       "control": {
         "type": "TextBox"
       },
-      "order": 6
+      "order": 8
     },
     "gender": {
       "i18nLabel": "gender",
@@ -81,21 +108,14 @@
           "value": "2"
         }]
       },
-     "order": 7
+     "order": 9
     },
     "usualCountryOfResidency": {
       "i18nLabel": "usualCountryOfResidency",
       "control": {
         "type": "TextBox"
       },
-      "order": 8
-    },
-    "dateAndTimeOfTest": {
-      "i18nLabel": "dateOfFirstLaboratoryConfirmationTest",
-      "control": {
-        "type": "Date"
-      },
-      "order": 9
+      "order": 10
     },
     "anySymptomsOrSignsAtTimeOfSpecimenCollection": {
       "i18nLabel": "anySymptomsOrSignsAtTimeOfSpecimenCollection",
@@ -115,14 +135,14 @@
           "value": "unknown"
         }]
       },
-      "order": 10
+      "order": 11
     },
     "dateOfOnsetOfSymptoms": {
       "i18nLabel": "ifYesDateOfOnsetOfSymptoms",
       "control": {
         "type": "Date"
       },
-      "order": 11
+      "order": 12
     },
     "underlyingConditionsAndComorbidity": {
       "i18nLabel": "underlyingConditionsAndComorbidity",
@@ -142,7 +162,7 @@
           "value": "unknown"
         }]
       },
-      "order": 12
+      "order": 13
     },
     "underlyingConditionsPregnancy": {
       "i18nLabel": "pregnancy",
@@ -158,14 +178,14 @@
           "value": "yes"
         }]
       },
-      "order": 13
+      "order": 14
     },
     "underlyingConditionsPregnancyTrimester": {
       "i18nLabel": "trimester",
       "control": {
         "type": "TextBox"
       },
-      "order": 14
+      "order": 15
     },
     "underlyingConditionsPostPartum": {
       "i18nLabel": "postPartum",
@@ -181,7 +201,7 @@
           "value": "yes"
         }]
       },
-      "order": 15
+      "order": 16
     },
     "underlyingConditionsCardiovascularDiseaseIncludingHypertension": {
       "i18nLabel": "cardiovascularDiseaseIncludingHypertension",
@@ -197,7 +217,7 @@
           "value": "yes"
         }]
       },
-      "order": 16
+      "order": 17
     },
     "underlyingConditionsImmunodeficiencyIncludingHIV": {
       "i18nLabel": "immunodeficiencyIncludingHIV",
@@ -213,7 +233,7 @@
           "value": "yes"
         }]
       },
-      "order": 17
+      "order": 18
     },
     "underlyingConditionsDiabetes": {
       "i18nLabel": "diabetes",
@@ -229,7 +249,7 @@
           "value": "yes"
         }]
       },
-      "order": 18
+      "order": 19
     },
     "underlyingConditionsRenalDisease": {
       "i18nLabel": "renalDisease",
@@ -245,7 +265,7 @@
           "value": "yes"
         }]
       },
-      "order": 19
+      "order": 20
     },
     "underlyingConditionsLiverDisease": {
       "i18nLabel": "liverDisease",
@@ -261,7 +281,7 @@
           "value": "yes"
         }]
       },
-      "order": 20
+      "order": 21
     },
     "underlyingConditionsChronicLungDisease": {
       "i18nLabel": "chronicLungDisease",
@@ -277,7 +297,7 @@
           "value": "yes"
         }]
       },
-      "order": 21
+      "order": 22
     },
     "underlyingConditionsChronicNeurologicalOrNeuromuscularDisease": {
       "i18nLabel": "chronicNeurologicalOrNeuromuscularDisease",
@@ -293,7 +313,7 @@
           "value": "yes"
         }]
       },
-      "order": 22
+      "order": 23
     },
     "underlyingConditionsMalignancy": {
       "i18nLabel": "malignancy",
@@ -309,14 +329,14 @@
           "value": "yes"
         }]
       },
-      "order": 23
+      "order": 24
     },
     "underlyingConditionsOthers": {
       "i18nLabel": "others",
       "control": {
         "type": "TextBox"
       },
-      "order": 24
+      "order": 25
     },
     "healthStatusAtTimeOfReportingAdmissionToHospital": {
       "i18nLabel": "admissionToHospital",
@@ -336,14 +356,14 @@
           "value": "unknown"
         }]
       },
-      "order": 25
+      "order": 26
     },
     "healthStatusAtTimeOfReportingFirstDateOfAdmissionToHospital": {
       "i18nLabel": "firstDateOfAdmissionToHospital",
       "control": {
         "type": "Date"
       },
-      "order": 26
+      "order": 27
     },
     "healthStatusAtTimeOfReportingDidTheCaseReceiveCareInAnICU": {
       "i18nLabel": "didTheCaseReceiveCareInAnICU",
@@ -363,7 +383,7 @@
           "value": "unknown"
         }]
       },
-      "order": 27
+      "order": 28
     },
     "healthStatusAtTimeOfReportingDidTheCaseReceiveVentilation": {
       "i18nLabel": "didTheCaseReceiveVentilation",
@@ -383,7 +403,7 @@
           "value": "unknown"
         }]
       },
-      "order": 28
+      "order": 29
     },
     "healthStatusAtTimeOfReportingDidTheCaseReceiveExtracorporealMembraneOxygenation": {
       "i18nLabel": "didTheCaseReceiveExtracorporealMembraneOxygenation",
@@ -403,7 +423,7 @@
           "value": "unknown"
         }]
       },
-      "order": 29
+      "order": 30
     },
     "healthStatusAtTimeOfReportingIsCaseInIsolationWithInfectionControlPracticeInPlace": {
       "i18nLabel": "isCaseInIsolationWithInfectionControlPracticeInPlace",
@@ -423,14 +443,14 @@
           "value": "unknown"
         }]
       },
-      "order": 30
+      "order": 31
     },
     "healthStatusAtTimeOfReportingDateOfIsolation": {
       "i18nLabel": "dateOfIsolation",
       "control": {
         "type": "Date"
       },
-      "order": 31
+      "order": 32
     },
     "exposureRiskIsCaseAHealthCareWorker": {
       "i18nLabel": "isCaseAHealthCareWorker",
@@ -450,28 +470,28 @@
           "value": "unknown"
         }]
       },
-      "order": 32
+      "order": 33
     },
     "exposureRiskHealthcareWorkerCountry": {
       "i18nLabel": "ifYesCountry",
       "control": {
         "type": "TextBox"
       },
-      "order": 33
+      "order": 34
     },
     "exposureRiskHealthcareWorkerCity": {
       "i18nLabel": "city",
       "control": {
         "type": "TextBox"
       },
-      "order": 34
+      "order": 35
     },
     "exposureRiskHealthcareWorkerFacility": {
       "i18nLabel": "nameOfFacility",
       "control": {
         "type": "TextBox"
       },
-      "order": 35
+      "order": 36
     },
     "exposureRiskHasTravelledInThe14DaysPriorToSymptomOnset": {
       "i18nLabel": "hasTheCaseTravelledInThe14DaysPriorToSymptomOnset",
@@ -491,70 +511,70 @@
           "value": "unknown"
         }]
       },
-      "order": 36
+      "order": 37
     },
     "exposureRiskHasTravelledInThe14DaysPriorToSymptomOnsetCountry1": {
       "i18nLabel": "oneCountry",
       "control": {
         "type": "TextBox"
       },
-      "order": 37
+      "order": 38
     },
     "exposureRiskHasTravelledInThe14DaysPriorToSymptomOnsetCity1": {
       "i18nLabel": "city",
       "control": {
         "type": "TextBox"
       },
-      "order": 38
+      "order": 39
     },
     "exposureRiskHasTravelledInThe14DaysPriorToSymptomOnsetDateOfDeparture1": {
       "i18nLabel": "dateOfDeparture",
       "control": {
         "type": "Date"
       },
-      "order": 39
+      "order": 40
     },
     "exposureRiskHasTravelledInThe14DaysPriorToSymptomOnsetCountry2": {
       "i18nLabel": "twoCountry",
       "control": {
         "type": "TextBox"
       },
-      "order": 40
+      "order": 41
     },
     "exposureRiskHasTravelledInThe14DaysPriorToSymptomOnsetCity2": {
       "i18nLabel": "city",
       "control": {
         "type": "TextBox"
       },
-      "order": 41
+      "order": 42
     },
     "exposureRiskHasTravelledInThe14DaysPriorToSymptomOnsetDateOfDeparture2": {
       "i18nLabel": "dateOfDeparture",
       "control": {
         "type": "Date"
       },
-      "order": 42
+      "order": 43
     },
     "exposureRiskHasTravelledInThe14DaysPriorToSymptomOnsetCountry3": {
       "i18nLabel": "threeCountry",
       "control": {
         "type": "TextBox"
       },
-      "order": 43
+      "order": 44
     },
     "exposureRiskHasTravelledInThe14DaysPriorToSymptomOnsetCity3": {
       "i18nLabel": "city",
       "control": {
         "type": "TextBox"
       },
-      "order": 44
+      "order": 45
     },
     "exposureRiskHasTravelledInThe14DaysPriorToSymptomOnsetDateOfDeparture3": {
       "i18nLabel": "dateOfDeparture",
       "control": {
         "type": "Date"
       },
-      "order": 45
+      "order": 46
     },
     "exposureRiskHasVisitedHealthCareFacilityThe14DaysPriorToSymptomOnset": {
       "i18nLabel": "hasCaseVisitedAnyHealthCareFacilityInThe14DaysPriorToSymptomOnset",
@@ -574,7 +594,7 @@
           "value": "unknown"
         }]
       },
-      "order": 46
+      "order": 47
     },
     "exposureRiskHasHadContactWithAConfirmedCaseThe14DaysPriorToSymptomOnset": {
       "i18nLabel": "hasCaseHadContactWithAConfirmedCaseInThe14DaysPriorToSymptomOnset",
@@ -594,133 +614,133 @@
           "value": "unknown"
         }]
       },
-      "order": 47
+      "order": 48
     },
     "exposureRiskHasHadContactWithAConfirmedCaseThe14DaysPriorToSymptomOnsetSetting": {
       "i18nLabel": "ifYesPleaseExplainContactSetting",
       "control": {
         "type": "TextBox"
       },
-      "order": 48
+      "order": 49
     },
     "exposureRiskHasHadContactWithAConfirmedCaseThe14DaysPriorToSymptomOnsetContact1": {
       "i18nLabel": "oneContact",
       "control": {
         "type": "TextBox"
       },
-      "order": 49
+      "order": 50
     },
     "exposureRiskHasHadContactWithAConfirmedCaseThe14DaysPriorToSymptomOnsetContact1DateFirst": {
       "i18nLabel": "firstDateOfContact",
       "control": {
         "type": "Date"
       },
-      "order": 50
+      "order": 51
     },
     "exposureRiskHasHadContactWithAConfirmedCaseThe14DaysPriorToSymptomOnsetContact1DateLast": {
       "i18nLabel": "lastDateOfContact",
       "control": {
         "type": "Date"
       },
-      "order": 51
+      "order": 52
     },
     "exposureRiskHasHadContactWithAConfirmedCaseThe14DaysPriorToSymptomOnsetContact2": {
       "i18nLabel": "twoContact",
       "control": {
         "type": "TextBox"
       },
-      "order": 52
+      "order": 53
     },
     "exposureRiskHasHadContactWithAConfirmedCaseThe14DaysPriorToSymptomOnsetContact2DateFirst": {
       "i18nLabel": "firstDateOfContact",
       "control": {
         "type": "Date"
       },
-      "order": 53
+      "order": 54
     },
     "exposureRiskHasHadContactWithAConfirmedCaseThe14DaysPriorToSymptomOnsetContact2DateLast": {
       "i18nLabel": "lastDateOfContact",
       "control": {
         "type": "Date"
       },
-      "order": 54
+      "order": 55
     },
     "exposureRiskHasHadContactWithAConfirmedCaseThe14DaysPriorToSymptomOnsetContact3": {
       "i18nLabel": "threeContact",
       "control": {
         "type": "TextBox"
       },
-      "order": 55
+      "order": 56
     },
     "exposureRiskHasHadContactWithAConfirmedCaseThe14DaysPriorToSymptomOnsetContact3DateFirst": {
       "i18nLabel": "firstDateOfContact",
       "control": {
         "type": "Date"
       },
-      "order": 56
+      "order": 57
     },
     "exposureRiskHasHadContactWithAConfirmedCaseThe14DaysPriorToSymptomOnsetContact3DateLast": {
       "i18nLabel": "lastDateOfContact",
       "control": {
         "type": "Date"
       },
-      "order": 57
+      "order": 58
     },
     "exposureRiskHasHadContactWithAConfirmedCaseThe14DaysPriorToSymptomOnsetContact4": {
       "i18nLabel": "fourContact",
       "control": {
         "type": "TextBox"
       },
-      "order": 58
+      "order": 59
     },
     "exposureRiskHasHadContactWithAConfirmedCaseThe14DaysPriorToSymptomOnsetContact4DateFirst": {
       "i18nLabel": "firstDateOfContact",
       "control": {
         "type": "Date"
       },
-      "order": 59
+      "order": 60
     },
     "exposureRiskHasHadContactWithAConfirmedCaseThe14DaysPriorToSymptomOnsetContact4DateLast": {
       "i18nLabel": "lastDateOfContact",
       "control": {
         "type": "Date"
       },
-      "order": 60
+      "order": 61
     },
     "exposureRiskHasHadContactWithAConfirmedCaseThe14DaysPriorToSymptomOnsetContact5": {
       "i18nLabel": "fiveContact",
       "control": {
         "type": "TextBox"
       },
-      "order": 61
+      "order": 62
     },
     "exposureRiskHasHadContactWithAConfirmedCaseThe14DaysPriorToSymptomOnsetContact5DateFirst": {
       "i18nLabel": "firstDateOfContact",
       "control": {
         "type": "Date"
       },
-      "order": 62
+      "order": 63
     },
     "exposureRiskHasHadContactWithAConfirmedCaseThe14DaysPriorToSymptomOnsetContact5DateLast": {
       "i18nLabel": "lastDateOfContact",
       "control": {
         "type": "Date"
       },
-      "order": 63
+      "order": 64
     },
     "mostLikelyCountryOfExposure": {
       "i18nLabel": "mostLikelyCountryOfExposure",
       "control": {
         "type": "TextBox"
       },
-      "order": 64
+      "order": 65
     },
     "resubmission30DaysAfterInitialReport": {
       "i18nLabel": "dateOfReSubmissionOfThisReport",
       "control": {
         "type": "Date"
       },
-      "order": 65
+      "order": 66
     },
     "resubmission30DaysAfterInitialReportDidTheCaseDevelopAnySymptoms": {
       "i18nLabel": "didTheCaseDevelopAnySymptoms",
@@ -740,14 +760,14 @@
           "value": "unknown"
         }]
       },
-      "order": 66
+      "order": 67
     },
     "resubmission30DaysAfterInitialReportDateOfOnsetOfSignsOfIllness": {
       "i18nLabel": "ifYesDateOfOnsetOfSignsOfIllness",
       "control": {
         "type": "Date"
       },
-      "order": 67
+      "order": 68
     },
     "resubmission30DaysAfterInitialReportAdmissionToHospital": {
       "i18nLabel": "admissionToHospitalMayHaveBeenPreviouslyReported",
@@ -767,14 +787,14 @@
           "value": "unknown"
         }]
       },
-      "order": 68
+      "order": 69
     },
     "resubmission30DaysAfterInitialReportFirstDateOfAdmissionToHospital": {
       "i18nLabel": "firstDateOfAdmissionToHospital",
       "control": {
         "type": "Date"
       },
-      "order": 69
+      "order": 70
     },
     "resubmission30DaysAfterInitialReportDidTheCaseReceiveCareInAnICU": {
       "i18nLabel": "didTheCaseReceiveCareInAnICU",
@@ -794,7 +814,7 @@
           "value": "unknown"
         }]
       },
-      "order": 70
+      "order": 71
     },
     "resubmission30DaysAfterInitialReportDidTheCaseReceiveVentilation": {
       "i18nLabel": "didTheCaseReceiveVentilation",
@@ -814,7 +834,7 @@
           "value": "unknown"
         }]
       },
-      "order": 71
+      "order": 72
     },
     "resubmission30DaysAfterInitialReportDidTheCaseReceiveExtracorporealMembraneOxygenation": {
       "i18nLabel": "didTheCaseReceiveExtracorporealMembraneOxygenation",
@@ -834,32 +854,12 @@
           "value": "unknown"
         }]
       },
-      "order": 72
+      "order": 73
     },
     "ifReleasedFromHospitalIsolationDateOfLastLaboratoryTest": {
       "i18nLabel": "ifReleasedFromHospitalIsolationDateOfLastLaboratoryTest",
       "control": {
         "type": "Date"
-      },
-      "order": 73
-    },
-    "testResult": {
-      "i18nLabel": "resultsOfLastTest",
-      "control": {
-        "type": "DropDown",
-        "options": [{
-          "title": "Positive",
-          "i18nText": "positive",
-          "value": "Positive"
-        }, {
-          "title": "Negative",
-          "i18nText": "negative",
-          "value": "Negative"
-        }, {
-          "title": "Unknown",
-          "i18nText": "unknown",
-          "value": "Unknown"
-        }]
       },
       "order": 74
     },

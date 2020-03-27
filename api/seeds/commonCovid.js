@@ -164,16 +164,28 @@ async function upsertCovidDeviceTypes(
         })
         .first()
       const assayResultFormSchema = JSON.parse(JSON.stringify(resultFormSchema))
-      if (deviceTypeSpec.abbreviation === 'Generic') {
+      if (
+        deviceTypeSpec.abbreviation === 'Generic' &&
+        !assayResultFormSchema.fields.testType
+      ) {
+        const testTypeOrder = assayResultFormSchema.fields.testResult
+          ? assayResultFormSchema.fields.testResult.order + 1
+          : Math.min(
+              Object.values(assayResultFormSchema.fields).map(
+                field => field.order
+              )
+            )
         Object.keys(assayResultFormSchema.fields).forEach(
           assayResultFormSchemaFieldKey => {
-            assayResultFormSchema.fields[
-              assayResultFormSchemaFieldKey
-            ].order += 1
+            if (
+              assayResultFormSchema.fields[assayResultFormSchemaFieldKey]
+                .order >= testTypeOrder
+            ) {
+              assayResultFormSchema.fields[
+                assayResultFormSchemaFieldKey
+              ].order += 1
+            }
           }
-        )
-        const minFieldOrder = Math.min(
-          Object.values(assayResultFormSchema.fields).map(field => field.order)
         )
         assayResultFormSchema.fields.testType = {
           i18nLabel: 'testType',
@@ -202,7 +214,7 @@ async function upsertCovidDeviceTypes(
               },
             ],
           },
-          order: minFieldOrder - 1,
+          order: testTypeOrder,
         }
       }
       if (!resultForm) {

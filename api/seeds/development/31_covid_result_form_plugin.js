@@ -74,20 +74,27 @@ async function seed(knex) {
     const aspectGenericResultFormSchema = JSON.parse(
       aspectGenericResultForm.formSchema
     )
-    if (!aspectGenericResultFormSchema.fields.testType) {
-      Object.keys(aspectGenericResultFormSchema.fields).forEach(
+    if (!assayResultFormSchema.fields.testType) {
+      const testTypeOrder = assayResultFormSchema.fields.testResult
+        ? assayResultFormSchema.fields.testResult.order + 1
+        : Math.min(
+            Object.values(assayResultFormSchema.fields).map(
+              field => field.order
+            )
+          )
+      Object.keys(assayResultFormSchema.fields).forEach(
         assayResultFormSchemaFieldKey => {
-          aspectGenericResultFormSchema.fields[
-            assayResultFormSchemaFieldKey
-          ].order += 1
+          if (
+            assayResultFormSchema.fields[assayResultFormSchemaFieldKey].order >=
+            testTypeOrder
+          ) {
+            assayResultFormSchema.fields[
+              assayResultFormSchemaFieldKey
+            ].order += 1
+          }
         }
       )
-      const minFieldOrder = Math.min(
-        Object.values(aspectGenericResultFormSchema.fields).map(
-          field => field.order
-        )
-      )
-      aspectGenericResultFormSchema.fields.testType = {
+      assayResultFormSchema.fields.testType = {
         i18nLabel: 'testType',
         control: {
           type: 'DropDown',
@@ -114,7 +121,7 @@ async function seed(knex) {
             },
           ],
         },
-        order: minFieldOrder - 1,
+        order: testTypeOrder,
       }
       await knex('ResultForm')
         .where({
