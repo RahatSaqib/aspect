@@ -68,7 +68,9 @@ function resultLogged(resultId, deviceLogId, userId) {
  */
 function resultLoggedProcessed(resultId, deviceLogId) {
   if (!resultId || !deviceLogId) {
-    throw new Error('Must specify resultId and deviceLogId for resultLogged')
+    throw new Error(
+      'Must specify resultId and deviceLogId for resultLoggedProcessed'
+    )
   }
   return {
     type: types.RESULT_LOGGED_PROCESSED,

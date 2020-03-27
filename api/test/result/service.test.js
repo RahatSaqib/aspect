@@ -81,6 +81,9 @@ describe('result/service', () => {
             bindActionCreators: () => {},
             transact: async transaction => transaction(knex),
             resultUpdated: sinon.spy(),
+            queue: {
+              waitForAction: async () => Promise.resolve(),
+            },
           },
         },
       },
