@@ -41,7 +41,10 @@ async function seed(knex) {
     .join('AssayType as at', 'a.assayTypeId', 'at.id')
     .whereIn(
       'r.id',
-      _.map(results, elem => elem.id)
+      _.map(
+        _.filter(results, elem => elem),
+        elem => elem.id
+      )
     )
     .where('at.externalId', 'assayTypeMtbRif')
     .where('r.resultCategory1', await resultCategoryToId('Detected'))
