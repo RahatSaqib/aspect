@@ -9,7 +9,7 @@ const {
   filterDateRangeParams,
   sortPageParams,
 } = require('../db')
-const { resultUpdated } = require('./actions')
+const { resultUpdated, resultLoggedProcessed } = require('./actions')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 const { getUser, getUserByUserId } = require('../auth/service')
 const {
@@ -1360,6 +1360,7 @@ async function updateFormData(request) {
       resultUpdated,
     })
     const { id: currentUserId } = await getUser(auth.credentials.name)
+    let deviceLogId
     await messageContext.transact(async knex => {
       await knex('Result')
         .where('id', resultId)
@@ -1368,8 +1369,6 @@ async function updateFormData(request) {
           updatedBy: currentUserId,
           updatedOn: now,
         })
-
-      let deviceLogId
       const aspectDeviceTypeId = await deviceTypeToId('Aspect')
       if (aspectDeviceTypeId) {
         const { id: deviceId } =
@@ -1396,8 +1395,11 @@ async function updateFormData(request) {
       }
       messageContext.resultUpdated(resultId, deviceLogId, currentUserId)
     })
+    await messageContext.queue.waitForAction(
+      resultLoggedProcessed(resultId, deviceLogId),
+      1000
+    )
   }
-  await Promise.delay(1000)
   const response = await showResult(request)
   return response
 }

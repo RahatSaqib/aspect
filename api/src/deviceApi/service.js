@@ -7,6 +7,7 @@ const { deviceStatusToId, deviceTypeToPlugin } = require('../shared/dictionary')
 const {
   resultUpdated,
   resultLogged,
+  resultLoggedProcessed,
   types: { RESULT_UPDATED },
 } = require('../result/actions')
 
@@ -833,7 +834,14 @@ async function onResultLogged(action, context) {
       [partnerPluginName, deviceTypePluginName],
       'onResultLogged'
     )
-    return pluginOnResultLogged(action, context)
+    await pluginOnResultLogged(action, context)
+    context.messageContext.queue.dispatch(
+      resultLoggedProcessed(action.resultId, action.deviceLogId),
+      undefined,
+      {
+        expiration: 60000,
+      }
+    )
   })
 }
 

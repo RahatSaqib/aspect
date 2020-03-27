@@ -2,6 +2,7 @@
 const types = {
   RESULT_UPDATED: 'RESULT_UPDATED',
   RESULT_LOGGED: 'RESULT_LOGGED',
+  RESULT_LOGGED_PROCESSED: 'RESULT_LOGGED_PROCESSED',
   RESULT_MODULE_TEMPERATURE_ERROR: 'RESULT_MODULE_TEMPERATURE_ERROR',
   RESULT_MODULE_POWER_ERROR: 'RESULT_MODULE_POWER_ERROR',
   RESULT_MODULE_FAILURE_ERROR: 'RESULT_MODULE_FAILURE_ERROR',
@@ -54,6 +55,25 @@ function resultLogged(resultId, deviceLogId, userId) {
     resultId,
     deviceLogId,
     userId,
+  }
+}
+
+/**
+ * Creates an action to notify the result & device log
+ * with given ids have been processed by any onResultLogged
+ * plugins that have been configured
+ *
+ * resultId is required
+ * deviceLogId is required
+ */
+function resultLoggedProcessed(resultId, deviceLogId) {
+  if (!resultId || !deviceLogId) {
+    throw new Error('Must specify resultId and deviceLogId for resultLogged')
+  }
+  return {
+    type: types.RESULT_LOGGED_PROCESSED,
+    resultId,
+    deviceLogId,
   }
 }
 
@@ -241,6 +261,7 @@ module.exports = {
   types,
   resultUpdated,
   resultLogged,
+  resultLoggedProcessed,
   resultModuleTemperatureError,
   resultModulePowerError,
   resultModuleFailureError,
