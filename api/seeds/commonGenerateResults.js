@@ -385,7 +385,12 @@ async function generateResults(
       )
     }
 
-    resultsid.push({ id: resultId, createdOn: now })
+    resultsid.push({
+      id: resultId,
+      createdOn: now,
+      assayId: resultElement.assayId,
+      ...auditFields,
+    })
     const [lastLogId] = await knex('ResultWorkflowLog').insert({
       resultId,
       resultWorkflowStatusId: resultStatus,
@@ -546,7 +551,12 @@ async function generateResults(
               : null,
         }
         const [resultId] = await knex('Result').insert(resultObject)
-        resultsid.push({ id: resultId, createdOn: now })
+        resultsid.push({
+          id: resultId,
+          createdOn: now,
+          assayId: assayGeneXpertEbolaId,
+          ...auditFields,
+        })
         const [lastLogId] = await knex('ResultWorkflowLog').insert({
           resultId,
           resultWorkflowStatusId: processed,
@@ -726,7 +736,7 @@ async function generateResults(
       id: resultId,
       createdOn: now,
       assayId: assayGeneXpertHiv1VlId,
-      createdBy: auditFields.createdBy,
+      ...auditFields,
     })
 
     const [lastLogId] = await knex('ResultWorkflowLog').insert({
@@ -796,7 +806,6 @@ async function setTreatmentStatusToResults(
           )
         })
       )
-
       await knex('ResultFollowUp').insert({
         resultId: result.id,
         externalId: followUp.externalId,
