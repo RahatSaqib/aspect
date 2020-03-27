@@ -130,7 +130,7 @@ async function updateCovidResultFromFormData(
         ) || {}
       ).title ||
       formDataObject.testReasonOther ||
-      formDataObject.testReason
+      patientDataObject.testReason
     patientDataObject.age =
       formDataObject.age ||
       (formDataObject.ageYears ? `${formDataObject.ageYears} years` : null) ||
@@ -145,7 +145,7 @@ async function updateCovidResultFromFormData(
         genderOptions.find(genderOption =>
           _.isEqual(genderOption.value, formDataObject.gender)
         ) || {}
-      ).title || formDataObject.gender
+      ).title || patientDataObject.gender
     if (!_.isEqual(patientDataObject, originalPatientDataObject)) {
       resultUpdates.patientData = JSON.stringify(patientDataObject)
     }
