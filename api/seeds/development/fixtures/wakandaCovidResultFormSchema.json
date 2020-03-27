@@ -1,7 +1,7 @@
 {
   "fields": {
     "testResult": {
-      "i18nLabel": "testResult",
+      "i18nLabel": "resultOfTest",
       "control": {
         "type": "DropDown",
         "options": [{
@@ -21,7 +21,7 @@
       "order": 1
     },
     "dateAndTimeOfTest": {
-      "i18nLabel": "dateAndTimeOfTest",
+      "i18nLabel": "dateOfTest",
       "control": {
         "type": "Date"
       },

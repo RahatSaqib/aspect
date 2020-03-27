@@ -427,6 +427,14 @@ const messages = defineMessages({
     id: 'pages.ResultDetail.formFields.testResult',
     defaultMessage: 'Test result',
   },
+  resultOfTest: {
+    id: 'pages.ResultDetail.formFields.resultOfTest',
+    defaultMessage: 'Result of test',
+  },
+  dateOfTest: {
+    id: 'pages.ResultDetail.formFields.dateOfTest',
+    defaultMessage: 'Date of test',
+  },
 })
 
 export default class CustomField extends PureComponent {
