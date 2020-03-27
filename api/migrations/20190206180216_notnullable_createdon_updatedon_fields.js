@@ -53,6 +53,7 @@ async function up(knex) {
     })
   )
 }
+
 async function down(knex) {
   await Promise.each(createdOnFieldTables, element =>
     knex.schema.alterTable(element, table => {

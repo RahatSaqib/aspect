@@ -27,6 +27,7 @@ async function up(knex) {
     t.index(['partnerId', 'geographyId'])
   })
 }
+
 async function down(knex) {
   await knex.schema.alterTable('Result', t => {
     t.dropForeign('partnerId')

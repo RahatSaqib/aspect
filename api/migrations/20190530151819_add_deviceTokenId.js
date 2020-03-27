@@ -8,6 +8,7 @@ async function up(knex) {
       .index()
   })
 }
+
 async function down(knex) {
   await knex.schema.alterTable('RefreshToken', t => {
     t.dropColumn('deviceTokenId')

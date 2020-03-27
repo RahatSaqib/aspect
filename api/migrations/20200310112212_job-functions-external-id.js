@@ -30,6 +30,7 @@ async function up(knex) {
       .alter()
   })
 }
+
 async function down(knex) {
   await knex.schema.alterTable(tblName, assayType => {
     assayType.dropColumn('externalId')

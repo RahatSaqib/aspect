@@ -89,6 +89,7 @@ async function getResultsReport(request, reply) {
   )
   return downloadReportFile(report, reply, request.format)
 }
+
 async function getAssaySchema(query, partnerId, headers) {
   const assaySchema = await getAllAssaySchemas(partnerId, query.assayId)
   let resultSchema = {}
@@ -114,6 +115,7 @@ async function getAssaySchema(query, partnerId, headers) {
       })
   })
 }
+
 async function getResultFormData(partnerId, headers) {
   const formSchema = await knex('ResultForm')
     .where('partnerId', partnerId)

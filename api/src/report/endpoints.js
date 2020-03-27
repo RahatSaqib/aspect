@@ -35,6 +35,7 @@ function listReportBaseConfig() {
     },
   }
 }
+
 function requestBaseQuery() {
   return {
     ...validateAllGeographyFilterParams(),

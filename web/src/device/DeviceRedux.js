@@ -408,6 +408,7 @@ function requestPerformanceReport(deviceId) {
     deviceId,
   }
 }
+
 function receivePerformanceReport(data) {
   return {
     type: types.RECEIVE_DEVICES_FOR_PERFORMANCE_REPORT,

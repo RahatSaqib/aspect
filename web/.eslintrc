@@ -91,7 +91,14 @@
     "react/state-in-constructor": "off",
     "react/jsx-curly-newline": "off",
     "import/no-cycle": "off",
-
-    "require-yield": "off"
+    "require-yield": "off",
+    "padding-line-between-statements": [
+      "error",
+      {
+        "blankLine": "always",
+        "prev": "function",
+        "next": "function"
+      }
+    ]
   }
 }

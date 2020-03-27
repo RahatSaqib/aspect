@@ -35,6 +35,7 @@ async function up(knex) {
       : null
   }
 }
+
 async function down(knex) {
   await knex.schema.alterTable('RefreshToken', refreshToken => {
     refreshToken.dropColumn('updatedOn')

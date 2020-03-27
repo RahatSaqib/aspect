@@ -99,6 +99,7 @@ async function createDevicesForAllMissingTypes(
     })
   }
 }
+
 async function generateResults(
   knex,
   adminId,
@@ -840,6 +841,7 @@ async function setTreatmentStatusToResults(
     }
   })
 }
+
 async function getTreatmentDistributionByPartner(knex, partnerId, month) {
   const conditionBuilder = (builder, partId, specificMonth) => {
     if (partnerId) builder.where('r.partnerId', partId)
@@ -1002,6 +1004,7 @@ async function normalizeTreatmentStatusDistribution(
     })
   }
 }
+
 async function normalizeTreatmentStatusDistributionByResults(
   knex,
   resultsId,
@@ -1033,6 +1036,7 @@ async function normalizeTreatmentStatusDistributionByResults(
     }
   }
 }
+
 async function getRandomResults(
   knex,
   queryBuilder,

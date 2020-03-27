@@ -910,6 +910,7 @@ async function getNotificationsByCountry(knex) {
     .groupBy('c.abbreviation', 'c.a3', 'c.name', 'Date')
     .orderBy('Date', 'asc')
 }
+
 async function getCountriesHealthStats(knex) {
   return knex('Device as d')
     .join('Geography as g', 'd.geographyId', 'g.id')

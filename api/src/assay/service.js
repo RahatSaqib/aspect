@@ -79,6 +79,7 @@ async function listAssaysResultSchema() {
   })
   return assays
 }
+
 async function listAssays(request) {
   const { query, auth } = request
 
@@ -133,6 +134,7 @@ async function listAssays(request) {
 
   return result
 }
+
 async function getAllAssaySchemas(partnerId, assayId = null) {
   const query = knex('Assay as a')
     .innerJoin('DeviceType as dt', 'a.deviceTypeId', 'dt.id')

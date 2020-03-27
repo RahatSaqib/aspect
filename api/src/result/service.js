@@ -25,6 +25,7 @@ const { getSiteByPartnerCountry } = require('../site/service')
 const SELECT_LIST_FIELDS = [
   'r.id',
   'r.externalId',
+  'r.notes',
   knex.raw(
     "case when GREATEST(IFNULL(rtas.requiresTreatment,0), IFNULL(rtas2.requiresTreatment,0)) = 0 then null else case when rts.externalId= 'OnTreatment' then 'ok' when rts.externalId = 'NotPossible' then 'na' when r.endedOn<DATE_SUB(NOW(),INTERVAL 32 DAY) then 'alert' when r.endedOn<=DATE_SUB(NOW(),INTERVAL 16 DAY) and r.endedOn>=DATE_SUB(NOW(),INTERVAL 32 DAY) then 'warning' else 'na' end end as treatmentStatusInfo"
   ),
@@ -55,6 +56,7 @@ const SELECT_LIST_FIELDS = [
     `IFNULL(JSON_UNQUOTE(JSON_EXTRACT(r.resultData, "$.resultText")), CONCAT(IFNULL(rc1.name, ''), '|', IFNULL(rc2.name, ''))) as resultText`
   ),
   knex.raw('JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.id")) as patientId'),
+  knex.raw('JSON_UNQUOTE(JSON_EXTRACT(r.resultData, "$.copies")) as copies'),
   knex.raw(
     'JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.gender")) as patientGender'
   ),
@@ -339,6 +341,7 @@ async function exportResults(query, auth) {
 
   return result
 }
+
 async function listResults(request) {
   const { query, auth } = request
   const result = await getListResults(query, auth)
@@ -631,6 +634,7 @@ async function downloadResultsList(request) {
   await myProm().catch(err => console.log(err))
   return results
 }
+
 async function addResultDownloadLog(idsToBeRegistered, userId) {
   const now = new Date()
 
@@ -642,6 +646,7 @@ async function addResultDownloadLog(idsToBeRegistered, userId) {
     })
   })
 }
+
 async function updateResultStatus(idsToUpdate, userId) {
   const { id: DeliveredId } = await knex('ResultWorkflowStatus')
     .where('externalId', 'Delivered')
@@ -664,6 +669,7 @@ async function updateResultStatus(idsToUpdate, userId) {
       .update({ resultWorkflowStatusLogId })
   })
 }
+
 async function showResult(request) {
   const result = await getResultByResultId(request)
   return result.ok ? result : Boom.notFound()
@@ -2106,6 +2112,7 @@ function getBaseQueryForResults() {
 
   return resultQuery
 }
+
 function getQueryForResultsListAndExport(query, dataConstraints) {
   const resultQuery = getBaseQueryForResults()
     .leftJoin('ResultCategoryAssay as rtas', function() {

@@ -38,6 +38,7 @@ function getHeaderRows(sheet, cellTableToken) {
   }
   return headerRows
 }
+
 // ----------------------------------------------------------------------------------------------
 async function getSheetData(request, sheet) {
   const { auth } = request
@@ -83,6 +84,7 @@ async function getSheetData(request, sheet) {
     `Error in function ${functionName} of module ${moduleName} - ${errorMessage}`
   )
 }
+
 // ----------------------------------------------------------------------------------------------
 async function readTemplateFile(externalId, lang, langDefault) {
   return readExcelFile(`templates/${externalId}/${lang}.xlsx`).catch(error => {
@@ -92,6 +94,7 @@ async function readTemplateFile(externalId, lang, langDefault) {
     throw error
   })
 }
+
 // ----------------------------------------------------------------------------------------------
 function getDateRangeString({ minDate, maxDate }) {
   if (!minDate && !maxDate) {
@@ -107,6 +110,7 @@ function getDateRangeString({ minDate, maxDate }) {
   }
   return dates.join('')
 }
+
 // ----------------------------------------------------------------------------------------------
 async function getStateNames({ countryId, stateId }) {
   if (!countryId || !stateId) {
@@ -120,6 +124,7 @@ async function getStateNames({ countryId, stateId }) {
     .first('st.name')
   return name
 }
+
 // ----------------------------------------------------------------------------------------------
 async function getLgaNamesString({ countryId, stateId, lgaId }) {
   if (!countryId || !stateId) {
@@ -140,12 +145,14 @@ async function getLgaNamesString({ countryId, stateId, lgaId }) {
     .select('l.name')
   return items.map(x => x.name).join(', ')
 }
+
 // ----------------------------------------------------------------------------------------------
 function replaceSubstringInCell(worksheet, token, value) {
   getCellsBySubstring(worksheet, token).forEach(cell => {
     cell.value = _.replace(cell.value, token, value)
   })
 }
+
 // ----------------------------------------------------------------------------------------------
 async function createReport(request, reply) {
   const { auth, query, params } = request
@@ -263,6 +270,7 @@ async function createReport(request, reply) {
     .type(getContentType(ext))
     .header('content-disposition', `attachment; filename=${reportFileName};`)
 }
+
 // ----------------------------------------------------------------------------------------------
 async function getReport(request, reply) {
   // get whole dataset - based on current query params (sorting, filtering) and auth constraints

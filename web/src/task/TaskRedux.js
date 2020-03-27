@@ -82,6 +82,7 @@ function receiveTask(json) {
     ...json,
   }
 }
+
 function receiveDetailedTasks(json) {
   return {
     type: types.RECEIVE_TASKSBYSTATUS,

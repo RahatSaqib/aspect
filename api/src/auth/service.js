@@ -332,6 +332,7 @@ async function hasFeature(userId, partnerId, module) {
     .first('f.module')
   return !_.isEmpty(userFeature)
 }
+
 // generate a new jwt for the given user data
 async function getAccessToken(
   { id, name, partnerId, personId },
@@ -775,6 +776,7 @@ async function acceptLicense(request) {
   // need to return a new JWT, now without hasToAcceptLicenseId
   return refreshToken(request)
 }
+
 // / Revoke/Grantt access to specific user
 async function revokeUsersToken(userId, revoke) {
   await query(
@@ -786,6 +788,7 @@ async function revokeUsersToken(userId, revoke) {
       revoked: revoke,
     })
 }
+
 // Lockedout and grant access to login to specific user.
 async function lockedOutUser(userId, lockedOut) {
   await query('change Lockout state for the specific user ')
