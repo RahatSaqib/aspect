@@ -11,8 +11,10 @@ import messages from './messages'
 
 const cssClasses = classnames.bind(require('./PersonDetail.css'))
 
+const hasError = field => field.touched && field.error
+
 export function validate(
-  { username, newPassword, confirmNewPassword, currentPassword, shouldPrefill },
+  { username, newPassword, confirmNewPassword, currentPassword },
   { intl, currentPasswordInputDialogOpen }
 ) {
   const errors = {}
@@ -40,11 +42,8 @@ export function validate(
         messages.passwordsDoNotMatch
       )
     }
-  }
-  if (shouldPrefill && !newPassword) {
-    errors.currentPassword = intl.formatMessage(
-      messages.currentPasswordRequired
-    )
+  } else {
+    errors.newPassword = intl.formatMessage(messages.newPasswordRequired)
   }
   return errors
 }
@@ -100,13 +99,13 @@ const enhance = compose(
         fieldName: 'username',
         valueFromChangeEvent: it => it.target.value,
       },
-      'newPassword',
+      'currentPassword',
       {
         fieldName: 'confirmNewPassword',
         valueFromChangeEvent: it => it.target.value,
       },
       {
-        fieldName: 'currentPassword',
+        fieldName: 'newPassword',
         valueFromChangeEvent: it => it.target.value,
       },
       {
@@ -144,7 +143,7 @@ export const LoginDetailsForm = ({
   onSubmit,
   form,
   values,
-  meta,
+  meta: { username, newPassword, confirmNewPassword, currentPassword },
   onUsernameChange,
   onNewPasswordChange,
   onUserLockedOutChange,
@@ -164,15 +163,14 @@ export const LoginDetailsForm = ({
         value={values.username}
         onChange={onUsernameChange}
         disabled={loading}
-        error={meta.username.touched && meta.username.error}
-        helperText={meta.username.touched && meta.username.error}
+        error={hasError(username)}
+        helperText={hasError(username)}
         inputProps={{ maxLength: 255 }}
         margin="normal"
         FormHelperTextProps={{
           margin: 'dense',
         }}
       />
-      <br />
       <StrongPasswordInput
         intl={intl}
         input={{
@@ -180,7 +178,7 @@ export const LoginDetailsForm = ({
           onChange: onNewPasswordChange,
         }}
         disabled={loading}
-        meta={meta.newPassword}
+        meta={newPassword}
         textFieldProps={{
           floatingLabelText: intl.formatMessage(messages.newPassword),
           type: 'password',
@@ -188,9 +186,13 @@ export const LoginDetailsForm = ({
           maxLength: 100,
           autoFocus: true,
           fullWidth: true,
+          label: intl.formatMessage(messages.newPassword),
+          helperText: hasError(newPassword),
+          error: hasError(newPassword),
         }}
         popOverProps={{}}
       />
+      <br />
       <TextField
         autoFocus
         fullWidth
@@ -200,10 +202,8 @@ export const LoginDetailsForm = ({
         value={values.confirmNewPassword}
         onChange={onConfirmNewPasswordChange}
         disabled={loading}
-        error={meta.confirmNewPassword.touched && meta.confirmNewPassword.error}
-        helperText={
-          meta.confirmNewPassword.touched && meta.confirmNewPassword.error
-        }
+        error={hasError(confirmNewPassword)}
+        helperText={hasError(confirmNewPassword)}
         inputProps={{ maxLength: 100 }}
       />
       {canModify && (
@@ -257,8 +257,8 @@ export const LoginDetailsForm = ({
         onChange={onCurrentPasswordChange}
         onKeyPress={onCurrentPasswordKeyPress}
         disabled={loading}
-        error={meta.currentPassword.touched && meta.currentPassword.error}
-        helperText={meta.currentPassword.touched && meta.currentPassword.error}
+        error={hasError(currentPassword)}
+        helperText={hasError(currentPassword)}
         inputProps={{ maxLength: 100 }}
         margin="normal"
         FormHelperTextProps={{

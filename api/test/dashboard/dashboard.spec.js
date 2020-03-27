@@ -554,9 +554,40 @@ describe('Dashboard routes', () => {
             assert.deepEqual(res.body.data, expectedResponse)
           }))
 
+      it('should return all results grouped by month and should allow multiple assays', async () =>
+        server
+          .get(
+            `${clinicalIndicatorsPath}?groupBy=month&assay=DaktariHivVL&assay=DaktariHcv`
+          )
+          .set('Authorization', `Bearer ${shared.token}`)
+          .then(res => {
+            const expectedResponse = _.chain(resultsForUser)
+              .filter(function(o) {
+                return (
+                  // only reportable should be included
+                  reportableResultCategories.indexOf(
+                    o.resultCategory1Name.replace(' ', '')
+                  ) > -1
+                )
+              })
+              .map(o => ({
+                month: format(new Date(o.endedOn), 'yyyy-MM'),
+              }))
+              .groupBy('month')
+              .map((value, key) => ({
+                month: key,
+                cnt: value.length,
+              }))
+              .value()
+            assert.equal(res.status, 200)
+            assert.deepEqual(res.body.data, expectedResponse)
+          }))
+
       it('should return all results grouped by month and state if specified in query string', async () =>
         server
-          .get(`${clinicalIndicatorsPath}?groupBy=month&groupBy=state`)
+          .get(
+            `${clinicalIndicatorsPath}?groupBy=month&groupBy=state&assay=DaktariHivVL`
+          )
           .set('Authorization', `Bearer ${shared.token}`)
           .then(res => {
             const expectedResponse = _.chain(resultsForUser)
