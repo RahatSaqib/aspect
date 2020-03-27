@@ -8,6 +8,7 @@ import PieGraph from './Graphs/PieGraph'
 import ClinicalIndicatorsContainer from './ClinicalIndicatorsContainer'
 
 import messages from './messages'
+import { canProcessRequest } from '../../../../../api/src/deviceApiRaw/dataProcessors/default'
 
 const cssClassesStatus = classnames.bind(require('../Status.css'))
 
@@ -90,6 +91,8 @@ export const ClinicalIndicators = ({ intl, assays: assaysFromState }) => {
       setAssays(buildAssays)
     }
   }, [assays, assaysFromState, intl, months])
+
+  console.log(assays)
 
   return assays
     ? assays.map(assay => {

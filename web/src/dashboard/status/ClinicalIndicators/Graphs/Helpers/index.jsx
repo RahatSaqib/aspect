@@ -6,7 +6,19 @@ import filter from 'lodash/filter'
 import sortBy from 'lodash/sortBy'
 import sum from 'lodash/sum'
 import values from 'lodash/values'
+import includes from 'lodash/includes'
 import { format } from 'date-fns'
+
+const graphColorMap = [
+  { id: '1', externalId: 'Detected', color: 'hsl(0, 100%, 42%)' },
+  { id: '3', externalId: 'NotDetected', color: 'hsl(10, 100%, 39.6%)' },
+  { id: '4', externalId: 'Indeterminate', color: 'hsl(5, 100%, 88.4%)' },
+  { id: '5', externalId: 'Invalid', color: 'hsl(42, 100%, 50%)' },
+  { id: '6', externalId: 'NoResult', color: 'hsl(0, 0%, 92.5%)' },
+  { id: '7', externalId: 'Error', color: 'hsl(42, 100%, 50%)' },
+  { id: '17', externalId: 'LessThan1000', color: 'hsl(5, 100%, 88.4%)' },
+  { id: '18', externalId: 'MoreThan1000', color: 'hsl(0, 100%, 42%)' },
+]
 
 const sortByInputArrayFlat = (data, sortExample) =>
   data.sort((a, b) => sortExample.indexOf(a) - sortExample.indexOf(b))
@@ -15,11 +27,20 @@ const sortByInputArray = (data, sortExample, sortKey) =>
   sortBy(data, item => sortExample.indexOf(item[sortKey]))
 
 const getKeysFromResults = (data, keyToOmit, orderBy) => {
+  // const newdata = data;
+  // const filtered = newdata.filter(d => !includes(d, 'Color'));
+
+  console.log(data)
+
   const res = sortByInputArrayFlat(
     uniq(data.flatMap(a => Object.keys(a))),
     orderBy
   )
-  return keyToOmit ? without(res, keyToOmit) : res
+  const dud = keyToOmit ? without(res, keyToOmit) : res
+
+  // console.log(dud, includes(dud, 'Color'));
+
+  return dud
 }
 
 const groupByKey = (data, key, cntKey, formatDate = false) => {
@@ -36,6 +57,8 @@ const groupByKey = (data, key, cntKey, formatDate = false) => {
 const normaliseKeys = data => {
   const normalised = []
   for (const [key, value] of Object.entries(data)) {
+    console.log(value)
+
     normalised.push({ ...value })
   }
   return normalised
@@ -80,33 +103,46 @@ const calcPercentageSplit = (data, keyToOmitDuringCalc) =>
     return acc
   }, [])
 
-const translateKeys = (data, assayFromState) => {
-  const reduced = []
+const translateKeys = (data, assayFromState, colorise = false) => {
+  const translated = []
   const { resultCategories } = assayFromState
 
   data.map(item => {
     const newItem = {}
     for (const [key, value] of Object.entries(item)) {
-      const newKey = resultCategories.filter(r => r.externalId === key)[0]
-      if (newKey && newKey.name) {
-        newItem[newKey.name] = value
-      } else {
-        newItem[key] = value
+      const matchedKey = resultCategories.filter(r => r.externalId === key)[0]
+      const newKey = matchedKey && matchedKey.name ? matchedKey.name : key
+
+      if (colorise) {
+        const colorKey = graphColorMap.filter(c => c.externalId === key)[0]
+        if (colorKey && colorKey.color) {
+          newItem[`${newKey}Color`] = colorKey.color
+        }
       }
+
+      newItem[`${newKey}`] = value
+      // newItem[key] = value;
     }
-    return reduced.push({ ...newItem })
+    return translated.push({ ...newItem })
   })
 
-  return reduced
+  return translated
+}
+
+const setColors = data => {
+  console.log(data)
+
+  return data
 }
 
 export {
   calcPercentageSplit,
   formatDataForPie,
   getAverageFromData,
-  groupByKey,
   getKeysFromResults,
+  groupByKey,
   normaliseKeys,
+  setColors,
   sortByInputArray,
   translateKeys,
 }

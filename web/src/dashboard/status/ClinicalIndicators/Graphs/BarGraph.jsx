@@ -6,8 +6,9 @@ import CircularProgress from '@material-ui/core/CircularProgress'
 import {
   calcPercentageSplit,
   groupByKey,
-  normaliseKeys,
   getKeysFromResults,
+  normaliseKeys,
+  setColors,
   translateKeys,
 } from './Helpers'
 
@@ -31,6 +32,8 @@ const BarGraph = ({
 
   useEffect(() => {
     if (!keysFromProps && graph) {
+      console.log(graph)
+
       const keys = getKeysFromResults(graph, indexBy, orderBy)
       setKeys(keys)
     }
@@ -45,7 +48,10 @@ const BarGraph = ({
     ) {
       const grouped = groupByKey(data, indexBy, resultCategory, formatDate)
       const normalised = normaliseKeys(grouped)
-      const translated = translateKeys(normalised, assayFromState)
+      // const colors = setColors(normalised);
+      const translated = translateKeys(normalised, assayFromState, true)
+      console.log(translated)
+
       const display =
         displayMethod === 'percentage'
           ? calcPercentageSplit(translated, indexBy)
@@ -62,15 +68,17 @@ const BarGraph = ({
     assayFromState,
   ])
 
-  // console.log(graph);
+  console.log(graph)
+  // console.log(keys);
 
   return (
     <div className={cssClasses(componentClass)}>
       {graph && graph.length ? (
         <ResponsiveBar
           data={graph}
+          // keys={['Not Detected', 'Detected']}
           keys={keys}
-          indexBy={indexBy}
+          // indexBy="month"
           enableLabel={false}
           enableGridY={false}
           margin={
@@ -79,7 +87,6 @@ const BarGraph = ({
               : { top: 10, right: 10, bottom: 110, left: 25 }
           }
           padding={0.3}
-          colors={colors}
           borderColor={{ from: 'color', modifiers: [['darker', 1.6]] }}
           axisTop={null}
           axisRight={null}
