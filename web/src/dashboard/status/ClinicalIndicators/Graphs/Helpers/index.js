@@ -72,7 +72,13 @@ const formatDataForPie = (data, key, value, assayFromState) => {
   return data.reduce((acc, curr) => {
     const newKey = resultCategories.filter(r => r.externalId === curr[key])[0]
     const label = (newKey && newKey.name) || curr[key]
-    acc.push({ id: curr[key], label, value: curr[value] })
+    const colorKey = graphColorMap.filter(c => c.externalId === curr[key])[0]
+    acc.push({
+      id: curr[key],
+      label,
+      value: curr[value],
+      color: colorKey.color || false,
+    })
     return acc
   }, [])
 }

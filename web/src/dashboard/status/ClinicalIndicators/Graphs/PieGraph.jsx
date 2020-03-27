@@ -31,9 +31,7 @@ const PieGraph = ({
   indexBy,
   orderBy,
   resultCategory,
-  legend,
   averages,
-  colors,
   componentClass,
   assayFromState,
 }) => {
@@ -52,6 +50,7 @@ const PieGraph = ({
         indexBy,
         assayFromState
       )
+
       setGraph(formatted)
     }
   }, [data, graph, indexBy, orderBy, resultCategory, assayFromState])
@@ -70,7 +69,7 @@ const PieGraph = ({
             padAngle={-1}
             startAngle={-90}
             cornerRadius={3}
-            colors={colors}
+            colors={d => d.color}
             borderWidth={1}
             borderColor={{ from: 'color', modifiers: [['darker', 0.2]] }}
             radialLabelsSkipAngle={10}

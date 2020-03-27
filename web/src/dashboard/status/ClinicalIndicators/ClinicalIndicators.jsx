@@ -85,8 +85,6 @@ export const ClinicalIndicators = ({ intl, assays: assaysFromState }) => {
           id: externalId,
           name,
           graphContainerClass: 'clinicalIndicator__graphs',
-          colors: ['#D60000', '#FFC9C4', '#00CA1C'],
-          orderBy: ['MoreThan1000', 'LessThan1000', 'NotDetected'],
           graphType: [barGraphType, pieGraphType],
           assayFromState: assay,
         })
