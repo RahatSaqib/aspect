@@ -70,6 +70,7 @@ const BarGraph = ({
           keys={keys}
           indexBy={indexBy}
           colors={d => d.data[`${d.id}Color`]}
+          colorBy="index"
           enableLabel={false}
           enableGridY={false}
           margin={

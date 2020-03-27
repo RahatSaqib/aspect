@@ -3,12 +3,7 @@ import { ResponsivePie } from '@nivo/pie'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import classnames from 'classnames/bind'
 
-import {
-  formatDataForPie,
-  getAverageFromData,
-  sortByInputArray,
-  translateKeys,
-} from './Helpers'
+import { formatDataForPie, getAverageFromData } from './Helpers'
 
 const cssClasses = classnames.bind(require('./Graphs.css'))
 
@@ -55,10 +50,8 @@ const PieGraph = ({
         data,
         resultCategory,
         indexBy,
-        orderBy,
         assayFromState
       )
-      const sorted = sortByInputArray(formatted, orderBy, 'id')
       setGraph(formatted)
     }
   }, [data, graph, indexBy, orderBy, resultCategory, assayFromState])
