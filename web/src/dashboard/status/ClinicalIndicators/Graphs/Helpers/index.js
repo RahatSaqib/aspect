@@ -104,6 +104,7 @@ const calcPercentageSplit = (data, keyToOmitDuringCalc) => {
     return acc
   }, [])
 }
+
 const translateKeys = (data, assayFromState, colorise = false) => {
   const translated = []
   const { resultCategories } = assayFromState
@@ -126,11 +127,9 @@ const translateKeys = (data, assayFromState, colorise = false) => {
     return translated.push({ ...newItem })
   })
 
-  const sortedTranslated = translated.sort(function(a, b) {
-    return (Object.keys(a)[0] > Object.keys(b)[0]) - 0.5
-  })
-
-  return translated
+  return translated.sort(
+    (a, b) => (Object.keys(a)[0] > Object.keys(b)[0]) - 0.5
+  )
 }
 
 export {
