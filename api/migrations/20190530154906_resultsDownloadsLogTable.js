@@ -25,6 +25,7 @@ async function up(knex) {
       .inTable('Result')
   })
 }
+
 async function down(knex) {
   await knex.schema.dropTable('ResultDownloadLog')
 }

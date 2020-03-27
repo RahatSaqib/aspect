@@ -6,6 +6,7 @@ async function up(knex) {
     table.boolean('requiresTreatment').defaultTo(0)
   })
 }
+
 async function down(knex) {
   await knex.schema.alterTable('ResultCategoryAssay', table => {
     table.dropColumn('emphasize')

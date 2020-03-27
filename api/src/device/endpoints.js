@@ -21,6 +21,7 @@ const {
 function listDevicesBaseConfig() {
   return { ...listDevicesBaseRequest(), ...listDevicesBaseResponse() }
 }
+
 function listDevicesBaseRequest() {
   return {
     auth: { scope: ['device:view', 'device:edit'] },

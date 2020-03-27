@@ -811,6 +811,7 @@ async function upsertItems(knex, tableName, whereKeys, items) {
     await Promise.all(queries)
   }
 }
+
 // ***********************************************************************
 async function upsertSingle(knex, tableName, whereClause, item) {
   if (typeof whereClause === 'string') {
@@ -833,6 +834,7 @@ async function upsertSingle(knex, tableName, whereClause, item) {
   }
   return q.first()
 }
+
 // ***********************************************************************
 async function upsertNotificationTypes(knex, items) {
   await upsertItems(
@@ -842,6 +844,7 @@ async function upsertNotificationTypes(knex, items) {
     items
   )
 }
+
 // ***********************************************************************
 async function seedNotificationTypes(
   knex,
@@ -1346,6 +1349,7 @@ async function seedNotificationTypes(
     },
   ])
 }
+
 // ***********************************************************************
 async function upsertIssueEscalationTrigger(knex, items) {
   await upsertItems(
@@ -1355,6 +1359,7 @@ async function upsertIssueEscalationTrigger(knex, items) {
     items
   )
 }
+
 // ***********************************************************************
 async function seedIssueEscalationTrigger(
   knex,
@@ -1500,6 +1505,7 @@ async function seedIssueEscalationTrigger(
     },
   ])
 }
+
 // ***********************************************************************
 async function upsertIssueResolutionTrigger(knex, items) {
   await upsertItems(
@@ -1509,6 +1515,7 @@ async function upsertIssueResolutionTrigger(knex, items) {
     items
   )
 }
+
 // ***********************************************************************
 async function seedIssueResolutionTrigger(
   knex,
@@ -1660,6 +1667,7 @@ async function seedIssueResolutionTrigger(
     },
   ])
 }
+
 // ***********************************************************************
 async function seedUnknownErrorsIssue(knex, { partnerId, auditFields }) {
   const auditDates = _.pick(auditFields, ['createdOn', 'updatedOn'])
@@ -1967,6 +1975,7 @@ async function seedUnknownErrorsIssue(knex, { partnerId, auditFields }) {
     },
   ])
 }
+
 // ***********************************************************************
 async function updateUnknownErrorOnModuleMessage(knex) {
   await knex('AlertTemplate')
@@ -2001,6 +2010,7 @@ async function updateUnknownErrorOnModuleMessage(knex) {
         '{{device.name}}: Possible failure on module <em>{{issue.data.moduleName}}</em> - unknown error - contact engineer',
     })
 }
+
 // ***********************************************************************
 async function seedIssues(
   knex,
@@ -2024,12 +2034,14 @@ async function seedIssues(
   await seedIssueEscalationTrigger(knex, { partnerId, pluginName, auditFields })
   await seedIssueResolutionTrigger(knex, { partnerId, pluginName, auditFields })
 }
+
 // ***********************************************************************
 async function addUniqueKey(knex, tableName) {
   await knex.schema.alterTable(tableName, table => {
     table.unique(uniqueKeys[tableName], `${tableName}_unique`)
   })
 }
+
 async function dropUniqueKey(knex, tableName) {
   await Promise.all(
     _.map(foreignKeys[tableName], async ({ column }) => {
@@ -2278,6 +2290,7 @@ async function setCapacityForExistingDevices(knex) {
     }
   })
 }
+
 async function getSeedsRan(knex) {
   return knex('AspectSeed as ap')
     .where({ success: true })

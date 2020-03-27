@@ -12,6 +12,7 @@ async function up(knex) {
     seeds.text('errorMessage').nullable()
   })
 }
+
 async function down(knex) {
   await knex.schema.dropTable('AspectSeed')
 }

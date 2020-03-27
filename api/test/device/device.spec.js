@@ -245,6 +245,7 @@ describe('Device routes', () => {
 
         deviceMaintenanceIdsToDelete.push(deviceMaintenanceId)
       }
+
       // -----------------------------
       async function checkMaintenance(externalId, datePropName, notesPropName) {
         it(`${externalId} - should create new entry in DeviceMaintenance table, update it, and create another new`, done => {

@@ -205,6 +205,7 @@ async function addPermission(knex, jobFunctionId, permissionId) {
     await knex('JobFunctionPermission').insert(props)
   }
 }
+
 // delete job function permission if exists
 async function delPermission(knex, jobFunctionId, permissionId) {
   const props = { jobFunctionId, permissionId }

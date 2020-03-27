@@ -339,6 +339,7 @@ async function exportResults(query, auth) {
 
   return result
 }
+
 async function listResults(request) {
   const { query, auth } = request
   const result = await getListResults(query, auth)
@@ -631,6 +632,7 @@ async function downloadResultsList(request) {
   await myProm().catch(err => console.log(err))
   return results
 }
+
 async function addResultDownloadLog(idsToBeRegistered, userId) {
   const now = new Date()
 
@@ -642,6 +644,7 @@ async function addResultDownloadLog(idsToBeRegistered, userId) {
     })
   })
 }
+
 async function updateResultStatus(idsToUpdate, userId) {
   const { id: DeliveredId } = await knex('ResultWorkflowStatus')
     .where('externalId', 'Delivered')
@@ -664,6 +667,7 @@ async function updateResultStatus(idsToUpdate, userId) {
       .update({ resultWorkflowStatusLogId })
   })
 }
+
 async function showResult(request) {
   const result = await getResultByResultId(request)
   return result.ok ? result : Boom.notFound()
@@ -2106,6 +2110,7 @@ function getBaseQueryForResults() {
 
   return resultQuery
 }
+
 function getQueryForResultsListAndExport(query, dataConstraints) {
   const resultQuery = getBaseQueryForResults()
     .leftJoin('ResultCategoryAssay as rtas', function() {

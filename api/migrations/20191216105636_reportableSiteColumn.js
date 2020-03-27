@@ -35,6 +35,7 @@ async function up(knex) {
       .alter()
   })
 }
+
 async function down(knex) {
   await knex.schema.alterTable('Result', result => {
     result.dropColumns('reportableSiteId')

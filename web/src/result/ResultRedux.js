@@ -216,6 +216,7 @@ function receiveSingleResult(item) {
     item,
   }
 }
+
 // request device log
 function requestDeviceLogs() {
   return {

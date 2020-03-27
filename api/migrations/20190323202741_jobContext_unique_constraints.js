@@ -6,6 +6,7 @@ async function up(knex) {
     jobContext.unique(['jobId', 'geographyId'], 'unique_jobId_geographyId')
   })
 }
+
 async function down(knex) {
   await knex.schema.alterTable('JobContext', jobContext => {
     jobContext.dropUnique(['jobId', 'siteId'], 'unique_jobId_siteId')

@@ -5,6 +5,7 @@ async function up(knex) {
     table.string('serverUrl').nullable()
   })
 }
+
 async function down(knex) {
   await knex.schema.alterTable('Partner', table => {
     table.dropColumn('serverUrl')

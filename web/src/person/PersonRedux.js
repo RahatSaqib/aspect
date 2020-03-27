@@ -90,6 +90,7 @@ function receivePersons(json) {
     total: json.total,
   }
 }
+
 function transformToUser(canLogIn, personId) {
   return {
     type: types.CAN_LOG_IN_PERSON,
@@ -97,6 +98,7 @@ function transformToUser(canLogIn, personId) {
     personId,
   }
 }
+
 function rejectPersons() {
   return {
     type: types.REJECTED_PERSONS,
@@ -171,6 +173,7 @@ function requestAvailablePersons() {
     type: types.REQUEST_AVAILABLE_PERSONS,
   }
 }
+
 // receive possible contacts
 function receiveAvailablePersons(items) {
   return {
@@ -259,6 +262,7 @@ function requestSiteContacts(siteId) {
     siteId,
   }
 }
+
 // receive possible contacts
 function receiveSiteContacts(siteId, items) {
   return {
@@ -620,6 +624,7 @@ function requestPersonAssignments(personId) {
     personId,
   }
 }
+
 function receivePersonAssignments(personId, items) {
   return {
     type: types.RECEIVE_ASSIGNMENTS,

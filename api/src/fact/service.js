@@ -517,6 +517,7 @@ function onFactCalculateInventoryConsumptionRates(action, { messageContext }) {
     })
   })
 }
+
 // ------------------------------
 // recalculates rates for provided siteId and consumableId
 async function refreshConsumptionRates(knex, siteId, consumableId) {

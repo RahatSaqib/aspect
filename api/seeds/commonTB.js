@@ -32,6 +32,7 @@ async function getMGITResultFromTBPossitive(result, assaysMGIT, devicesMGIT) {
     _.omit(result, ['treatmentStatusExternalId', 'id'])
   )
 }
+
 async function updateMGITAssays(
   knex,
   deviceTypeBDMGITId,

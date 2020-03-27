@@ -41,6 +41,7 @@ async function up(knex) {
     }
   )
 }
+
 async function down(knex) {
   await knex.schema.alterTable(
     'ResultTreatmentStatusLog',

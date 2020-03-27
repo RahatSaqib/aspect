@@ -12,6 +12,7 @@ async function up(knex) {
       .alter()
   })
 }
+
 async function down(knex) {
   await knex.schema.alterTable('ResultTag', table => {
     table.dropForeign('resultId')
