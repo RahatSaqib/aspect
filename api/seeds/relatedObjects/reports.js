@@ -83,6 +83,7 @@ async function getBaseReports() {
           query: {
             sortCol: 'endedOn',
             sortDir: 'desc',
+            assayId: assayIds.GxHiv1Vl,
             resultCategoryId: resultCategoryIds.MoreThan1000,
           },
         },
