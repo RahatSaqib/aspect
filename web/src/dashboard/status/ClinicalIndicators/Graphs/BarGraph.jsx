@@ -70,6 +70,13 @@ const BarGraph = ({
           keys={keys}
           indexBy={indexBy}
           colors={d => d.data[`${d.id}Color`]}
+          tooltipFormat={value =>
+            displayMethod === 'percentage'
+              ? `${Number(value).toLocaleString('en-US', {
+                  minimumFractionDigits: 2,
+                })}%`
+              : false
+          }
           colorBy="index"
           enableLabel={false}
           enableGridY={false}

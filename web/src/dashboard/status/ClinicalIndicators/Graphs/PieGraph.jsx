@@ -70,6 +70,11 @@ const PieGraph = ({
             startAngle={-90}
             cornerRadius={3}
             colors={d => d.color}
+            tooltipFormat={value =>
+              `${Number(value).toLocaleString('en-US', {
+                minimumFractionDigits: 2,
+              })}%`
+            }
             borderWidth={1}
             borderColor={{ from: 'color', modifiers: [['darker', 0.2]] }}
             radialLabelsSkipAngle={10}
