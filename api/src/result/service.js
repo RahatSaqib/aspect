@@ -1396,10 +1396,9 @@ async function updateFormData(request) {
       messageContext.resultUpdated(resultId, deviceLogId, currentUserId)
     })
     if (deviceLogId) {
-      await messageContext.queue.waitForAction(
-        resultLoggedProcessed(resultId, deviceLogId),
-        1000
-      )
+      await messageContext.queue
+        .waitForAction(resultLoggedProcessed(resultId, deviceLogId), 1000)
+        .catch(_.noop)
     }
   }
   const response = await showResult(request)
