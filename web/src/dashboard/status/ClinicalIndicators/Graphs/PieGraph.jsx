@@ -28,6 +28,7 @@ const LegendIndicator = ({ averages, data }) => {
 
 const PieGraph = ({
   data,
+  displayMethod,
   indexBy,
   orderBy,
   resultCategory,
@@ -48,12 +49,21 @@ const PieGraph = ({
         data,
         resultCategory,
         indexBy,
-        assayFromState
+        assayFromState,
+        displayMethod
       )
 
       setGraph(formatted)
     }
-  }, [data, graph, indexBy, orderBy, resultCategory, assayFromState])
+  }, [
+    data,
+    graph,
+    indexBy,
+    orderBy,
+    resultCategory,
+    assayFromState,
+    displayMethod,
+  ])
 
   return (
     <div className={cssClasses(componentClass)}>
@@ -71,9 +81,7 @@ const PieGraph = ({
             cornerRadius={3}
             colors={d => d.color}
             tooltipFormat={value =>
-              `${Number(value).toLocaleString('en-US', {
-                minimumFractionDigits: 2,
-              })}%`
+              `${Number(value)}${displayMethod === 'percentage' ? '%' : ''}`
             }
             borderWidth={1}
             borderColor={{ from: 'color', modifiers: [['darker', 0.2]] }}

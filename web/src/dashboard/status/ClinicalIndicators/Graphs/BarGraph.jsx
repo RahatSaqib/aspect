@@ -4,7 +4,7 @@ import { ResponsiveBar } from '@nivo/bar'
 import CircularProgress from '@material-ui/core/CircularProgress'
 
 import {
-  calcPercentageSplit,
+  calcPercentageSplitBar,
   getKeysFromResults,
   groupByKey,
   normaliseKeys,
@@ -46,7 +46,7 @@ const BarGraph = ({
       const normalised = normaliseKeys(grouped)
       const display =
         displayMethod === 'percentage'
-          ? calcPercentageSplit(normalised, indexBy)
+          ? calcPercentageSplitBar(normalised, indexBy)
           : normalised
 
       const translated = translateKeys(display, assayFromState, true)
@@ -71,11 +71,7 @@ const BarGraph = ({
           indexBy={indexBy}
           colors={d => d.data[`${d.id}Color`]}
           tooltipFormat={value =>
-            displayMethod === 'percentage'
-              ? `${Number(value).toLocaleString('en-US', {
-                  minimumFractionDigits: 2,
-                })}%`
-              : false
+            `${Number(value)}${displayMethod === 'percentage' ? '%' : ''}`
           }
           colorBy="index"
           enableLabel={false}
