@@ -35,8 +35,10 @@ const PieGraph = ({
   averages,
   componentClass,
   assayFromState,
+  filter = false,
 }) => {
   const [graph, setGraph] = useState(false)
+  const [filterResults] = useState(filter)
 
   useEffect(() => {
     if (
@@ -50,7 +52,8 @@ const PieGraph = ({
         resultCategory,
         indexBy,
         assayFromState,
-        displayMethod
+        displayMethod,
+        filterResults
       )
 
       setGraph(formatted)
@@ -63,6 +66,7 @@ const PieGraph = ({
     resultCategory,
     assayFromState,
     displayMethod,
+    filterResults,
   ])
 
   return (

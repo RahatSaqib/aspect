@@ -40,6 +40,14 @@ export const messages = defineMessages({
         },
       },
     },
+    CV: {
+      pie: {
+        legend: {
+          id: 'pages.Status.clinicalIndicators.CV.pie.legend',
+          defaultMessage: 'Average Recovery Rate',
+        },
+      },
+    },
   },
 })
 

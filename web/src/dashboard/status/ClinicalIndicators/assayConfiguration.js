@@ -11,6 +11,7 @@ const assayConfiguration = (intl, assaysFromState, BarGraph, PieGraph) => {
    * @param  {String} graphContainerClass Class to apply to container component
    * @param  {Array} colors colors per data point, order is important!
    * @param  {Array} orderBy Order of datapoints within the graph, order is important!
+   * @param  {Array} filter Pass an array along to filter results by keys (optional)
    * @param  {Array} graphType Array of grouped graphs to generate. Order matters.
    *    @param  {String} dataKey Key to match state tree in Redux
    *    @param  {Function} component Graph component to render, passed from imports
@@ -33,13 +34,16 @@ const assayConfiguration = (intl, assaysFromState, BarGraph, PieGraph) => {
   const BARCLASS = 'clinicalIndicators__bar'
   const PIECLASS = 'clinicalIndicators__pie'
   const PIEINDEX = { count: 'cnt' }
+  const GENDER = { male: 'male', female: 'female', index: 'gender' }
   const RESULT = { result1: 'resultCategory1', result2: 'resultCategory1' }
 
   const DAY = {
     single: 'day',
     plural: 'days',
     index: 'byDay',
+    stack: 'byDayStacked',
     format: 'dd MMM',
+    formatShort: 'dd/M',
   }
 
   const MONTH = {
@@ -65,6 +69,59 @@ const assayConfiguration = (intl, assaysFromState, BarGraph, PieGraph) => {
           legend: true,
           formatDate: MONTH.format,
           minDate: getTimePeriod(5, MONTH.plural, 'yyyy-MM-dd'),
+        },
+        {
+          dataKey: PIEDATAKEY.aggregate,
+          component: PieGraph,
+          componentClass: PIECLASS,
+          displayMethod: CALCMETHOD.percentage,
+          resultCategory: RESULT.result1,
+          indexBy: PIEINDEX.count,
+          groupBy: [RESULT.result1],
+          legend: false,
+          averages: {
+            title: intl.formatMessage(
+              messages.clinicalIndicators.HIV.pie.legend
+            ),
+          },
+          minDate: getTimePeriod(5, MONTH.plural, 'yyyy-MM-dd'),
+        },
+      ],
+    },
+    {
+      id: 'assayAspectResultEntryCovid19',
+      period: DAY.plural,
+      graphType: [
+        {
+          dataKey: DAY.index,
+          filter: ['Positive'],
+          component: BarGraph,
+          componentClass: BARCLASS,
+          displayMethod: CALCMETHOD.actual,
+          resultCategory: RESULT.result1,
+          indexBy: DAY.single,
+          groupBy: [DAY.single, RESULT.result1],
+          legend: true,
+          formatDate: DAY.formatShort,
+          minDate: getTimePeriod(31, DAY.plural, 'yyyy-MM-dd'),
+        },
+      ],
+    },
+    {
+      id: 'assayAspectResultEntryCovid19',
+      period: DAY.plural,
+      graphType: [
+        {
+          dataKey: DAY.stack,
+          component: BarGraph,
+          componentClass: BARCLASS,
+          displayMethod: CALCMETHOD.actual,
+          resultCategory: RESULT.result1,
+          indexBy: DAY.single,
+          groupBy: [DAY.single, RESULT.result1],
+          legend: true,
+          formatDate: DAY.format,
+          minDate: getTimePeriod(15, DAY.plural, 'yyyy-MM-dd'),
         },
         {
           dataKey: PIEDATAKEY.aggregate,

@@ -24,9 +24,11 @@ const BarGraph = ({
   componentClass,
   displayMethod,
   assayFromState,
+  filter = false,
 }) => {
   const [graph, setGraph] = useState(false)
   const [keys, setKeys] = useState(false)
+  const [filterResults] = useState(filter)
 
   useEffect(() => {
     if (!keysFromProps && graph) {
@@ -43,7 +45,8 @@ const BarGraph = ({
       Object.keys(assayFromState).length
     ) {
       const grouped = groupByKey(data, indexBy, resultCategory, formatDate)
-      const normalised = normaliseKeys(grouped)
+      const normalised = normaliseKeys(grouped, filterResults, indexBy)
+
       const display =
         displayMethod === 'percentage'
           ? calcPercentageSplitBar(normalised, indexBy)
@@ -60,6 +63,7 @@ const BarGraph = ({
     indexBy,
     resultCategory,
     assayFromState,
+    filterResults,
   ])
 
   return (

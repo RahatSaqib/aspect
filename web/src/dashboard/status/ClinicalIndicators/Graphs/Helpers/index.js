@@ -6,6 +6,7 @@ import filter from 'lodash/filter'
 import sum from 'lodash/sum'
 import values from 'lodash/values'
 import includes from 'lodash/includes'
+import pickBy from 'lodash/pickBy'
 import subDays from 'date-fns/subDays'
 import subMonths from 'date-fns/subMonths'
 import startOfMonth from 'date-fns/startOfMonth'
@@ -19,9 +20,13 @@ const graphColorMap = [
   { id: 3, externalId: 'Indeterminate', color: '#00CA1C' },
   { id: 4, externalId: 'Detected', color: '#D60000' },
   { id: 5, externalId: 'NotDetected', color: '#00CA1C' },
-  { id: 6, externalId: 'Invalid', color: '#ECECEC' },
+  { id: 6, externalId: 'Invalid', color: defaultColor },
   { id: 7, externalId: 'NoResult', color: '#FFC9C4' },
   { id: 8, externalId: 'Error', color: '#000000' },
+  { id: 9, externalId: 'Positive', color: '#FFB300' },
+  { id: 10, externalId: 'Inconclusive', color: '#FFC9C4' },
+  { id: 11, externalId: 'Unknown', color: defaultColor },
+  { id: 12, externalId: 'Negative', color: '#00CA1C' },
 ]
 
 const getKeysFromResults = (data, keyToOmit, orderBy) => {
@@ -62,10 +67,14 @@ const groupByKey = (data, key, cntKey, formatDate = false) => {
     }, {})
 }
 
-const normaliseKeys = data => {
+const normaliseKeys = (data, filterResults = false, indexBy) => {
   const normalised = []
   for (const [key, value] of Object.entries(data)) {
-    normalised.push({ ...value })
+    const newValue = filterResults
+      ? pickBy(value, (v, k) => includes([...filterResults, indexBy], k))
+      : value
+
+    normalised.push({ ...newValue })
   }
   return normalised
 }
@@ -75,12 +84,17 @@ const formatDataForPie = (
   key,
   value,
   assayFromState,
-  displayMethod = 'percentage'
+  displayMethod = 'percentage',
+  filterResults
 ) => {
   const { resultCategories } = assayFromState
 
-  return data.reduce((acc, curr) => {
-    const total = data.reduce((acc, curr) => acc + curr.cnt, 0)
+  const dataToConsume = filterResults
+    ? data.filter(d => filterResults.includes(d[key]))
+    : data
+
+  return dataToConsume.reduce((acc, curr) => {
+    const total = dataToConsume.reduce((acc, curr) => acc + curr.cnt, 0)
     const newKey = resultCategories.filter(r => r.externalId === curr[key])[0]
     const label = (newKey && newKey.name) || curr[key]
     const colorKey = graphColorMap.filter(c => c.externalId === curr[key])[0]
