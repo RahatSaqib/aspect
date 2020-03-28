@@ -33,7 +33,7 @@ const assayConfiguration = (intl, assaysFromState, BarGraph, PieGraph) => {
   const BARCLASS = 'clinicalIndicators__bar'
   const PIECLASS = 'clinicalIndicators__pie'
   const PIEINDEX = { count: 'cnt' }
-  const RESULT1 = 'resultCategory1'
+  const RESULT = { result1: 'resultCategory1', result2: 'resultCategory1' }
 
   const DAY = {
     single: 'day',
@@ -59,9 +59,9 @@ const assayConfiguration = (intl, assaysFromState, BarGraph, PieGraph) => {
           component: BarGraph,
           componentClass: BARCLASS,
           displayMethod: CALCMETHOD.percentage,
-          resultCategory: RESULT1,
+          resultCategory: RESULT.result1,
           indexBy: MONTH.single,
-          groupBy: [MONTH.single, RESULT1],
+          groupBy: [MONTH.single, RESULT.result1],
           legend: true,
           formatDate: MONTH.format,
           minDate: getTimePeriod(5, MONTH.plural, 'yyyy-MM-dd'),
@@ -71,9 +71,9 @@ const assayConfiguration = (intl, assaysFromState, BarGraph, PieGraph) => {
           component: PieGraph,
           componentClass: PIECLASS,
           displayMethod: CALCMETHOD.percentage,
-          resultCategory: RESULT1,
+          resultCategory: RESULT.result1,
           indexBy: PIEINDEX.count,
-          groupBy: [RESULT1],
+          groupBy: [RESULT.result1],
           legend: false,
           averages: {
             title: intl.formatMessage(

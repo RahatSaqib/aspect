@@ -1,17 +1,17 @@
-import without from 'lodash/without';
-import omit from 'lodash/omit';
-import uniq from 'lodash/uniq';
-import round from 'lodash/round';
-import filter from 'lodash/filter';
-import sum from 'lodash/sum';
-import values from 'lodash/values';
-import includes from 'lodash/includes';
-import subDays from 'date-fns/subDays';
-import subMonths from 'date-fns/subMonths';
-import startOfMonth from 'date-fns/startOfMonth';
-import format from 'date-fns/format';
+import without from 'lodash/without'
+import omit from 'lodash/omit'
+import uniq from 'lodash/uniq'
+import round from 'lodash/round'
+import filter from 'lodash/filter'
+import sum from 'lodash/sum'
+import values from 'lodash/values'
+import includes from 'lodash/includes'
+import subDays from 'date-fns/subDays'
+import subMonths from 'date-fns/subMonths'
+import startOfMonth from 'date-fns/startOfMonth'
+import format from 'date-fns/format'
 
-const defaultColor = '#ECECEC';
+const defaultColor = '#ECECEC'
 
 const graphColorMap = [
   { id: 1, externalId: 'MoreThan1000', color: '#D60000' },
@@ -21,31 +21,31 @@ const graphColorMap = [
   { id: 5, externalId: 'NotDetected', color: '#00CA1C' },
   { id: 6, externalId: 'Invalid', color: '#ECECEC' },
   { id: 7, externalId: 'NoResult', color: '#FFC9C4' },
-  { id: 8, externalId: 'Error', color: '#000000' }
-];
+  { id: 8, externalId: 'Error', color: '#000000' },
+]
 
 const getKeysFromResults = (data, keyToOmit, orderBy) => {
-  const newdata = [];
+  const newdata = []
   data.filter(d => {
     for (const [key, value] of Object.entries(d)) {
       if (!includes(key, 'Color')) {
-        newdata.push({ [key]: value });
+        newdata.push({ [key]: value })
       }
     }
-    return newdata;
-  });
+    return newdata
+  })
 
-  const res = uniq(newdata.flatMap(a => Object.keys(a)));
+  const res = uniq(newdata.flatMap(a => Object.keys(a)))
 
-  return keyToOmit ? without(res, keyToOmit) : res;
-};
+  return keyToOmit ? without(res, keyToOmit) : res
+}
 
 const groupByKey = (data, key, cntKey, formatDate = false) => {
   const flatMapSortMap = graphColorMap.reduce((acc, curr) => {
-    const newCurr = omit(curr, 'id', 'color');
-    acc.push(newCurr.externalId);
-    return acc;
-  }, []);
+    const newCurr = omit(curr, 'id', 'color')
+    acc.push(newCurr.externalId)
+    return acc
+  }, [])
 
   return data
     .sort(
@@ -56,19 +56,19 @@ const groupByKey = (data, key, cntKey, formatDate = false) => {
       acc[curr[key]] = {
         ...acc[curr[key]],
         [key]: formatDate ? format(new Date(curr[key]), formatDate) : curr[key],
-        [curr[cntKey]]: curr.cnt
-      };
-      return acc;
-    }, {});
-};
+        [curr[cntKey]]: curr.cnt,
+      }
+      return acc
+    }, {})
+}
 
 const normaliseKeys = data => {
-  const normalised = [];
+  const normalised = []
   for (const [key, value] of Object.entries(data)) {
-    normalised.push({ ...value });
+    normalised.push({ ...value })
   }
-  return normalised;
-};
+  return normalised
+}
 
 const formatDataForPie = (
   data,
@@ -77,13 +77,13 @@ const formatDataForPie = (
   assayFromState,
   displayMethod = 'percentage'
 ) => {
-  const { resultCategories } = assayFromState;
+  const { resultCategories } = assayFromState
 
   return data.reduce((acc, curr) => {
-    const total = data.reduce((acc, curr) => acc + curr.cnt, 0);
-    const newKey = resultCategories.filter(r => r.externalId === curr[key])[0];
-    const label = (newKey && newKey.name) || curr[key];
-    const colorKey = graphColorMap.filter(c => c.externalId === curr[key])[0];
+    const total = data.reduce((acc, curr) => acc + curr.cnt, 0)
+    const newKey = resultCategories.filter(r => r.externalId === curr[key])[0]
+    const label = (newKey && newKey.name) || curr[key]
+    const colorKey = graphColorMap.filter(c => c.externalId === curr[key])[0]
     acc.push({
       id: curr[key],
       label,
@@ -91,91 +91,92 @@ const formatDataForPie = (
         displayMethod === 'percentage'
           ? round((curr[value] / total) * 100)
           : curr[value],
-      color: (colorKey && colorKey.color) || defaultColor
-    });
-    return acc;
-  }, []);
-};
+      color: (colorKey && colorKey.color) || defaultColor,
+    })
+    return acc
+  }, [])
+}
 
 const getAverageFromData = (data, value) => {
-  const total = filter(data, ['id', data[0].id]);
-  const sum = data.reduce((acc, curr) => acc + curr.value, 0);
+  const total = filter(data, ['id', data[0].id])
+  const sum = data.reduce((acc, curr) => acc + curr.value, 0)
 
-  return round((total[0][value] / sum) * 100);
-};
+  return round((total[0][value] / sum) * 100)
+}
 
 const calcPercentageSplitBar = (data, keyToOmitDuringCalc) => {
   return data.reduce((acc, curr, index) => {
-    const dataPoints = omit(curr, keyToOmitDuringCalc);
-    const total = sum(values(dataPoints));
+    const dataPoints = omit(curr, keyToOmitDuringCalc)
+    const total = sum(values(dataPoints))
 
     acc.push({
-      [keyToOmitDuringCalc]: curr[keyToOmitDuringCalc]
-    });
+      [keyToOmitDuringCalc]: curr[keyToOmitDuringCalc],
+    })
 
     for (const [key, value] of Object.entries(dataPoints)) {
-      const val = parseInt(value, 11);
-      acc[index][key] = ((val / total) * 100).toFixed(2);
+      const val = parseInt(value, 11)
+      acc[index][key] = ((val / total) * 100).toFixed(2)
     }
 
-    return acc;
-  }, []);
-};
+    return acc
+  }, [])
+}
 
 const translateKeys = (data, assayFromState, colorise = false) => {
-  const translated = [];
-  const { resultCategories } = assayFromState;
+  const translated = []
+  const { resultCategories } = assayFromState
 
   data.map(item => {
-    const newItem = {};
+    const newItem = {}
     for (const [key, value] of Object.entries(item)) {
-      const matchedKey = resultCategories.filter(r => r.externalId === key)[0];
-      const newKey = matchedKey && matchedKey.name ? matchedKey.name : key;
+      const matchedKey = resultCategories.filter(r => r.externalId === key)[0]
+      const newKey = matchedKey && matchedKey.name ? matchedKey.name : key
 
       if (colorise) {
-        const colorKey = graphColorMap.filter(c => c.externalId === key)[0];
-        newItem[`${newKey}Color`] =
-          (colorKey && colorKey.color) || defaultColor;
+        const colorKey = graphColorMap.filter(c => c.externalId === key)[0]
+        newItem[`${newKey}Color`] = (colorKey && colorKey.color) || defaultColor
       }
 
-      newItem[`${newKey}`] = value;
+      newItem[`${newKey}`] = value
     }
-    return translated.push({ ...newItem });
-  });
+    return translated.push({ ...newItem })
+  })
 
-  return translated;
-};
+  return translated
+}
 
 const getTimePeriod = (cnt, period, dateFormat) => {
-  let timePeriod;
+  let timePeriod
+  const dateNow = new Date()
   switch (true) {
     case period === 'hours':
-      timePeriod = subDays(new Date(), cnt);
-      break;
+      timePeriod = subDays(dateNow, cnt)
+      break
     case period === 'days':
-      timePeriod = subDays(new Date(), cnt);
-      break;
+      timePeriod = subDays(dateNow, cnt)
+      break
     case period === 'months':
-      timePeriod = startOfMonth(subMonths(new Date(), cnt));
-      break;
+      timePeriod = startOfMonth(subMonths(dateNow, cnt))
+      break
 
     default:
-      new Date();
-      break;
+      timePeriod = dateNow
+      break
   }
 
-  return format(timePeriod, dateFormat);
-};
+  return format(timePeriod, dateFormat)
+}
 
 const buildAssaysFromWhitelist = (data, whiteList) =>
   data.reduce((acc, curr) => {
     whiteList.filter(w => {
       if (w.id === curr.externalId) {
-        acc.push({ ...w, ...curr });
+        acc.push({ ...w, ...curr })
       }
-    });
-    return acc;
-  }, []);
+      return acc
+    })
+    return acc
+  }, [])
 
 export {
   buildAssaysFromWhitelist,
@@ -186,5 +187,5 @@ export {
   getKeysFromResults,
   groupByKey,
   normaliseKeys,
-  translateKeys
-};
+  translateKeys,
+}
