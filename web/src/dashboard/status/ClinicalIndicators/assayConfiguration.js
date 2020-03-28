@@ -1,0 +1,105 @@
+import capitalize from 'lodash/capitalize'
+import { getTimePeriod, buildAssaysFromWhitelist } from './Graphs/Helpers'
+
+import messages from './messages'
+
+const assayConfiguration = (intl, assaysFromState, BarGraph, PieGraph) => {
+  /**
+   * setAssays: array with config params to drive graph generation.
+   * @param  {String} id The assay ID to pass to the endpoint
+   * @param  {String} name Name of the disease to show
+   * @param  {String} graphContainerClass Class to apply to container component
+   * @param  {Array} colors colors per data point, order is important!
+   * @param  {Array} orderBy Order of datapoints within the graph, order is important!
+   * @param  {Array} graphType Array of grouped graphs to generate. Order matters.
+   *    @param  {String} dataKey Key to match state tree in Redux
+   *    @param  {Function} component Graph component to render, passed from imports
+   *    @param  {String [n='percentage']} displayMethod Accepts 'percentage': consistent height and
+   *         - split by percentage and 'actual': shows actual count split (Bargraph only)
+   *    @param  {String} componentClass Class you wish to apply to downstream graph
+   *    @param  {String} indexBy Key in state to use as index for the graph
+   *    @param  {String} resultCategory Key to match naming convention from endpoint
+   *    @param  {Array} groupBy Keys to pass to endopoint for data retrieval
+   *    @param  {Bool} legend Bool to show/hide graph legend (Currently Bar only)
+   *    @param  {Object} averages Show/hide average message in Pie charts
+   *       @param  {String} title Title of averages message
+   *       @param  {String} key Key to use as count/sum for averages
+   * @return {Array} Passed to ClinicalIndicatorsContainer will generate the UI
+   */
+
+  const buildAssays = []
+  const CALCMETHOD = { percentage: 'percentage', actual: 'actual' }
+  const PIEDATAKEY = { aggregate: 'aggregate' }
+  const BARCLASS = 'clinicalIndicators__bar'
+  const PIECLASS = 'clinicalIndicators__pie'
+  const PIEINDEX = { count: 'cnt' }
+  const RESULT1 = 'resultCategory1'
+
+  const DAY = {
+    single: 'day',
+    plural: 'days',
+    index: 'byDay',
+    format: 'dd MMM',
+  }
+
+  const MONTH = {
+    single: 'month',
+    plural: 'months',
+    index: 'byMonth',
+    format: 'MMM yyyy',
+  }
+
+  const whiteList = [
+    {
+      id: 'GxHiv1Vl',
+      period: MONTH.plural,
+      graphType: [
+        {
+          dataKey: MONTH.index,
+          component: BarGraph,
+          componentClass: BARCLASS,
+          displayMethod: CALCMETHOD.percentage,
+          resultCategory: RESULT1,
+          indexBy: MONTH.single,
+          groupBy: [MONTH.single, RESULT1],
+          legend: true,
+          formatDate: MONTH.format,
+          minDate: getTimePeriod(5, MONTH.plural, 'yyyy-MM-dd'),
+        },
+        {
+          dataKey: PIEDATAKEY.aggregate,
+          component: PieGraph,
+          componentClass: PIECLASS,
+          displayMethod: CALCMETHOD.percentage,
+          resultCategory: RESULT1,
+          indexBy: PIEINDEX.count,
+          groupBy: [RESULT1],
+          legend: false,
+          averages: {
+            title: intl.formatMessage(
+              messages.clinicalIndicators.HIV.pie.legend
+            ),
+          },
+          minDate: getTimePeriod(5, MONTH.plural, 'yyyy-MM-dd'),
+        },
+      ],
+    },
+  ]
+
+  const allowedAssays = buildAssaysFromWhitelist(assaysFromState, whiteList)
+
+  allowedAssays.map(assay => {
+    const { externalId: id, name, graphType } = assay
+    return buildAssays.push({
+      id,
+      name,
+      graphContainerClass: 'clinicalIndicator__graphs',
+      graphType,
+      assayFromState: assay,
+    })
+  })
+
+  return buildAssays
+}
+
+export default assayConfiguration
