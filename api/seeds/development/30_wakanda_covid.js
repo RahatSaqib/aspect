@@ -2,7 +2,7 @@ module.exports = require('../utils').seed(seed, __filename)
 
 const _ = require('lodash')
 const bcrypt = require('bcrypt')
-const { addMilliseconds, addMinutes, subDays } = require('date-fns')
+const { addMinutes } = require('date-fns')
 const Promise = require('bluebird')
 
 const {
@@ -33,24 +33,9 @@ const wakandaCovidResultFormSchema = require('./fixtures/wakandaCovidResultFormS
 
 const millisInMinute = 1000 * 60
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
-const resultTimeFrameInDays = 60
 const resultMultiplier = process.env['seeds.resultMultiplier'] || 100
 const resultNumber = resultMultiplier * 10
 const now = new Date()
-
-function calculateDateForResult(
-  currentResult,
-  totalResults,
-  randomMillisToAdd
-) {
-  // unlike TB and HIV, we want to generate an exponential curve here
-  const daysToSubtract = Math.ceil(Math.random() ** 4 * resultTimeFrameInDays)
-
-  return addMilliseconds(
-    subDays(now, daysToSubtract),
-    _.random(randomMillisToAdd)
-  )
-}
 
 async function seed(knex) {
   utils.hasSeededStaticData = true
@@ -328,7 +313,11 @@ async function seed(knex) {
     const siteData = countryData.clinics[i % countryData.clinics.length]
     const sample = {
       externalId: `SMP-CV-${i}`,
-      collectedOn: calculateDateForResult(i, resultNumber, millisInMinute),
+      collectedOn: utils.calculateDateForResult(
+        i,
+        resultNumber,
+        millisInMinute
+      ),
       sampleTypeId: sampleTypeNasalSwab,
       originSiteId: siteData.id,
     }
@@ -408,7 +397,7 @@ async function seed(knex) {
       ? countryData.labs[i % countryData.labs.length]
       : countryData.labs.find(site => site.id === device.siteId)
     const sample = samples[i % samples.length]
-    const randomDate = calculateDateForResult(i, resultNumber, 6000)
+    const randomDate = utils.calculateDateForResult(i, resultNumber, 6000)
     const reportableSite = sample.originSiteId
       ? _.find(countryData.clinics, c => c.id === sample.originSiteId)
       : siteData
