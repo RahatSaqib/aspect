@@ -152,6 +152,14 @@ async function seed(knex) {
       return cities
     }, {})
 
+  const aspectGenericResultForm = (await knex('Assay as a')
+    .join('ResultForm as rf', 'a.id', 'rf.assayId')
+    .where('a.externalId', 'assayGenericCovid19')
+    .andWhere('rf.partnerId', partnerId)
+    .first('rf.*')) || { formSchema: '{}' }
+  const aspectGenericResultFormSchema = JSON.parse(
+    aspectGenericResultForm.formSchema
+  )
   await Promise.each(covidResultFormData, async result => {
     const underlyingConditionsAndComorbidity = randomYesNoUnknown()
     const exposureRiskIsCaseAHealthCareWorker = randomYesNoUnknown()
@@ -270,76 +278,99 @@ async function seed(knex) {
         [addDays(covidResultFormData.endedOn, _.random(5, 10))]
       ),
     }
+    result.patientData = {
+      ...result.patientData,
+      id: result.formData.caseId,
+      age: result.formData.age,
+      caseId: result.formData.caseId,
+      gender: result.formData.gender
+        ? aspectGenericResultFormSchema.fields.gender.control.options.find(
+            option => option.value == result.formData.gender // eslint-disable-line eqeqeq
+          ).title
+        : undefined,
+      testReason: result.formData.testReason
+        ? aspectGenericResultFormSchema.fields.testReason.control.options.find(
+            option => option.value == result.formData.testReason // eslint-disable-line eqeqeq
+          ).title
+        : undefined,
+    }
+    result.resultData = {
+      ...result.resultData,
+      resultText: result.formData.testResult
+        ? aspectGenericResultFormSchema.fields.testResult.control.options.find(
+            option => option.value == result.formData.testResult // eslint-disable-line eqeqeq
+          ).title
+        : undefined,
+      typeOfTest: result.formData.testType
+        ? aspectGenericResultFormSchema.fields.testType.control.options.find(
+            option => option.value == result.formData.testType // eslint-disable-line eqeqeq
+          ).title
+        : undefined,
+    }
     return knex('Result')
       .where('id', result.id)
       .update({ formData: JSON.stringify(result.formData) })
   })
-  const aspectGenericResultForm = await knex('Assay as a')
-    .join('ResultForm as rf', 'a.id', 'rf.assayId')
-    .where('a.externalId', 'assayGenericCovid19')
-    .andWhere('rf.partnerId', partnerId)
-    .first('rf.*')
-  if (aspectGenericResultForm) {
-    const aspectGenericResultFormSchema = JSON.parse(
-      aspectGenericResultForm.formSchema
-    )
-    if (!aspectGenericResultFormSchema.fields.testType) {
-      const testTypeOrder = aspectGenericResultFormSchema.fields.testResult
-        ? aspectGenericResultFormSchema.fields.testResult.order + 1
-        : Math.min(
-            Object.values(aspectGenericResultFormSchema.fields).map(
-              field => field.order
-            )
+  if (
+    aspectGenericResultForm.assayId &&
+    aspectGenericResultForm.partnerId &&
+    !aspectGenericResultFormSchema.fields.testType
+  ) {
+    const testTypeOrder = aspectGenericResultFormSchema.fields.testResult
+      ? aspectGenericResultFormSchema.fields.testResult.order + 1
+      : Math.min(
+          Object.values(aspectGenericResultFormSchema.fields).map(
+            field => field.order
           )
-      Object.keys(aspectGenericResultFormSchema.fields).forEach(
-        assayResultFormSchemaFieldKey => {
-          if (
-            aspectGenericResultFormSchema.fields[assayResultFormSchemaFieldKey]
-              .order >= testTypeOrder
-          ) {
-            aspectGenericResultFormSchema.fields[
-              assayResultFormSchemaFieldKey
-            ].order += 1
-          }
+        )
+    Object.keys(aspectGenericResultFormSchema.fields).forEach(
+      assayResultFormSchemaFieldKey => {
+        if (
+          aspectGenericResultFormSchema.fields[assayResultFormSchemaFieldKey]
+            .order >= testTypeOrder
+        ) {
+          aspectGenericResultFormSchema.fields[
+            assayResultFormSchemaFieldKey
+          ].order += 1
         }
-      )
-      aspectGenericResultFormSchema.fields.testType = {
-        i18nLabel: 'testType',
-        control: {
-          type: 'DropDown',
-          options: [
-            {
-              title: 'PCR/molecular',
-              i18nText: 'pcr',
-              value: 'pcr',
-            },
-            {
-              title: 'Immunoassay',
-              i18nText: 'immunoassay',
-              value: 'immunoassay',
-            },
-            {
-              title: 'Rapid diagnostic test',
-              i18nText: 'rapidDiagnosticTest',
-              value: 'rapidDiagnosticTest',
-            },
-            {
-              title: 'Digital X-Ray',
-              i18nText: 'digitalXRay',
-              value: 'digitalXRay',
-            },
-          ],
-        },
-        order: testTypeOrder,
       }
-      await knex('ResultForm')
-        .where({
-          assayId: aspectGenericResultForm.assayId,
-          partner: aspectGenericResultForm.partnerId,
-        })
-        .update({
-          formSchema: JSON.stringify(aspectGenericResultFormSchema),
-        })
+    )
+    aspectGenericResultFormSchema.fields.testType = {
+      i18nLabel: 'testType',
+      control: {
+        type: 'DropDown',
+        options: [
+          {
+            title: 'PCR/molecular',
+            i18nText: 'pcr',
+            value: 'pcr',
+          },
+          {
+            title: 'Immunoassay',
+            i18nText: 'immunoassay',
+            value: 'immunoassay',
+          },
+          {
+            title: 'Rapid diagnostic test',
+            i18nText: 'rapidDiagnosticTest',
+            value: 'rapidDiagnosticTest',
+          },
+          {
+            title: 'Digital X-Ray',
+            i18nText: 'digitalXRay',
+            value: 'digitalXRay',
+          },
+        ],
+      },
+      order: testTypeOrder,
     }
+    await knex('ResultForm')
+      .where({
+        assayId: aspectGenericResultForm.assayId,
+        partner: aspectGenericResultForm.partnerId,
+      })
+      .update({
+        formSchema: JSON.stringify(aspectGenericResultFormSchema),
+      })
   }
 }

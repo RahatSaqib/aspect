@@ -897,8 +897,8 @@ describe('Result routes', () => {
         }
 
         function getOptionValueFromTitle(options, title) {
-          return (options.find(option => _.isEqual(option.title, title)) || {})
-            .value
+          // eslint-disable-next-line eqeqeq
+          return (options.find(option => option.title == title) || {}).value
         }
 
         it('Should update result details when relevant form fields are saved', async () => {

@@ -125,8 +125,8 @@ async function updateCovidResultFromFormData(
       _.get(formSchemaObject, 'fields.testReason.control.options') || []
     patientDataObject.testReason =
       (
-        testReasonOptions.find(testReasonOption =>
-          _.isEqual(testReasonOption.value, formDataObject.testReason)
+        testReasonOptions.find(
+          option => option.value == formDataObject.testReason // eslint-disable-line eqeqeq
         ) || {}
       ).title ||
       formDataObject.testReasonOther ||
@@ -142,8 +142,8 @@ async function updateCovidResultFromFormData(
       _.get(formSchemaObject, 'fields.gender.control.options') || []
     patientDataObject.gender =
       (
-        genderOptions.find(genderOption =>
-          _.isEqual(genderOption.value, formDataObject.gender)
+        genderOptions.find(
+          option => option.value == formDataObject.gender // eslint-disable-line eqeqeq
         ) || {}
       ).title || patientDataObject.gender
     if (!_.isEqual(patientDataObject, originalPatientDataObject)) {
@@ -152,8 +152,8 @@ async function updateCovidResultFromFormData(
     const testResultOptions =
       _.get(formSchemaObject, 'fields.testResult.control.options') || []
     const selectedResultText = (
-      testResultOptions.find(testResultOption =>
-        _.isEqual(testResultOption.value, formDataObject.testResult)
+      testResultOptions.find(
+        option => option.value == formDataObject.testResult // eslint-disable-line eqeqeq
       ) || {}
     ).title
     let testDate
@@ -185,8 +185,8 @@ async function updateCovidResultFromFormData(
       const testTypeOptions =
         _.get(formSchemaObject, 'fields.testType.control.options') || []
       const selectedTestType = (
-        testTypeOptions.find(testTypeOption =>
-          _.isEqual(testTypeOption.value, formDataObject.testType)
+        testTypeOptions.find(
+          option => option.value == formDataObject.testType // eslint-disable-line eqeqeq
         ) || {}
       ).title
       resultDataObject.typeOfTest =

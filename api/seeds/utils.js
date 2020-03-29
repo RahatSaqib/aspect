@@ -8,7 +8,6 @@ const {
   allFeatureToId,
   allResultCategoryToId,
 } = require('../src/shared/dictionary')
-const config = require('../src/config')
 
 const tables = [
   'DeviceApiRawStatus',

@@ -450,16 +450,19 @@ async function seed(knex) {
       ),
       formData: JSON.stringify(formData),
       patientData: JSON.stringify({
+        id: formData.caseId,
         age: formData.age,
         caseId: formData.caseId,
-        gender:
-          wakandaCovidResultFormSchema.fields.gender.control.options[
-            formData.gender - 1
-          ].title,
-        testReason:
-          wakandaCovidResultFormSchema.fields.testReason.control.options[
-            formData.testReason - 1
-          ].title,
+        gender: formData.gender
+          ? wakandaCovidResultFormSchema.fields.gender.control.options.find(
+              option => option.value == formData.gender // eslint-disable-line eqeqeq
+            ).title
+          : undefined,
+        testReason: formData.testReason
+          ? wakandaCovidResultFormSchema.fields.testReason.control.options.find(
+              option => option.value == formData.testReason // eslint-disable-line eqeqeq
+            ).title
+          : undefined,
       }),
       startedOn: resultCapturedInAspect ? null : randomDate,
       endedOn: addMinutes(randomDate, 100),
