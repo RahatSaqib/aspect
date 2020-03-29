@@ -13,6 +13,10 @@
           "i18nText": "negative",
           "value": "Negative"
         }, {
+          "title": "Inconclusive",
+          "i18nText": "inconclusive",
+          "value": "Inconclusive"
+        }, {
           "title": "Unknown",
           "i18nText": "unknown",
           "value": "Unknown"

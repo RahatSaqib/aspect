@@ -106,6 +106,10 @@ const messages = defineMessages({
     defaultMessage:
       'Routine respiratory disease surveillance systems (e.g influenza)',
   },
+  inconclusive: {
+    id: 'pages.ResultDetail.formFields.inconclusive',
+    defaultMessage: 'Inconclusive',
+  },
   unknown: {
     id: 'pages.ResultDetail.formFields.unknown',
     defaultMessage: 'Unknown',
