@@ -439,7 +439,9 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
       else
         queryBuilder.whereIn('dt.externalId', [
           'CepheidGeneXpert',
-          'AspectResultEntry',
+          'Aspect',
+          'rocheMagnaPure96',
+          'appliedBiosystemsQuantStudio7Flex',
         ])
     }, query)
     .modify(addConstraints, dataConstraints, {
