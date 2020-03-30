@@ -1,6 +1,7 @@
 /* eslint-disable linebreak-style */
 import { stringify } from 'querystring'
-import _ from 'lodash'
+import fromPairs from 'lodash/fromPairs'
+import omit from 'lodash/omit'
 import { defineMessages } from 'react-intl'
 import Immutable from 'immutable'
 
@@ -21,6 +22,11 @@ export const RECEIVE_TARGET_DASHBOARD = 'RECEIVE_TARGET_DASHBOARD'
 
 export const REQUEST_RESULT_DASHBOARD = 'REQUEST_RESULT_DASHBOARD'
 export const RECEIVE_RESULT_DASHBOARD = 'RECEIVE_RESULT_DASHBOARD'
+
+export const REQUEST_CLINICAL_INDICATORS_DASHBOARD =
+  'REQUEST_CLINICAL_INDICATORS_DASHBOARD'
+export const RECEIVE_CLINICAL_INDICATORS_DASHBOARD =
+  'RECEIVE_CLINICAL_INDICATORS_DASHBOARD'
 
 export const REQUEST_INVENTORY_ITEM_DASHBOARD =
   'REQUEST_INVENTORY_ITEM_DASHBOARD'
@@ -69,7 +75,7 @@ export function fetchStatDashboard(rawFiltersParams) {
     filtersParams.set('siteId', rawFiltersParams.get('siteId'))
   }
   return dispatch => {
-    const filters = _.fromPairs([...filtersParams.entries()])
+    const filters = fromPairs([...filtersParams.entries()])
     const requestedAt = `summary_${Date.now()}`
     dispatch(requestStatDashboard(requestedAt))
 
@@ -120,7 +126,7 @@ export function fetchTargetDashboard(rawFiltersParams) {
     filtersParams.set('maxDate', rawFiltersParams.get('maxDate'))
   }
   return dispatch => {
-    const filters = _.fromPairs([...filtersParams.entries()])
+    const filters = fromPairs([...filtersParams.entries()])
     const requestedAt = `target_${Date.now()}`
     dispatch(requestTargetDashboard(requestedAt))
 
@@ -315,7 +321,7 @@ function receiveOperationalStatus(requestedAt, data) {
 
 export function fetchOperationalStatus(filtersParams) {
   return dispatch => {
-    const filters = _.fromPairs([...filtersParams.entries()])
+    const filters = fromPairs([...filtersParams.entries()])
     const requestedAt = `operational_${Date.now()}`
     dispatch(requestOperationalStatus(requestedAt))
 
@@ -369,7 +375,7 @@ export function fetchActionDashboard(rawFiltersParams, sortCol, sortDir) {
     filtersParams.set('siteId', rawFiltersParams.get('siteId'))
   }
   return dispatch => {
-    const filters = _.fromPairs([...filtersParams.entries()])
+    const filters = fromPairs([...filtersParams.entries()])
     const requestedAt = `action_${Date.now()}`
     dispatch(requestActionDashboard(requestedAt))
 
@@ -464,6 +470,66 @@ function receiveTreatmentDashboard(requestedAt, data) {
   }
 }
 
+// -------------------------------------------------------------------
+export function fetchClinicalIndicatorsDashboard(params) {
+  const { assay, type: dataType } = params
+  return dispatch => {
+    const requestedAt = `results_${Date.now()}`
+    dispatch(requestClinicalIndicatorsDashboard({ requestedAt }))
+
+    return aspectFetch('/dashboard/clinical-indicators', {
+      method: 'GET',
+      params: omit(params, ['type']),
+      errorNotifications: {
+        403: errorInsufficientScope(
+          defineMessages({
+            title: {
+              id:
+                'errorResponseMessages.fetchClinicalIndicatorsDashboard.GET.403.title',
+              defaultMessage: 'Insufficient Permissions',
+            },
+          })
+        ),
+        default: errorPleaseTryAgainInAFewMinutes(
+          defineMessages({
+            title: {
+              id:
+                'errorResponseMessages.fetchClinicalIndicatorsDashboard.GET.default.title',
+              defaultMessage: 'Error Loading Dashboard Results By Category',
+            },
+          })
+        ),
+      },
+    }).then(json =>
+      dispatch(
+        receiveClinicalIndicatorsDashboard(assay, dataType, requestedAt, json)
+      )
+    )
+  }
+}
+
+function requestClinicalIndicatorsDashboard(payload) {
+  return {
+    type: REQUEST_CLINICAL_INDICATORS_DASHBOARD,
+    ...payload,
+  }
+}
+
+function receiveClinicalIndicatorsDashboard(
+  assay,
+  dataType,
+  requestedAt,
+  data
+) {
+  return {
+    type: RECEIVE_CLINICAL_INDICATORS_DASHBOARD,
+    requestedAt,
+    data,
+    assay,
+    dataType,
+  }
+}
+
 export function fetchInventoryDashboard() {
   return dispatch => {
     const requestedAt = `inventoryItem_${Date.now()}`
@@ -522,6 +588,7 @@ const Summary = Immutable.Record({
   operational: Immutable.Map(),
   actionSummaryMap: Immutable.Map(),
   treatmentStatus: Immutable.Map(),
+  clinicalIndicators: Immutable.Map(),
   inventoryItems: Immutable.List(),
 })
 
@@ -542,6 +609,7 @@ export default function dashboardReducer(state = initialState, action) {
     case REQUEST_STAT_DASHBOARD:
     case REQUEST_TARGET_DASHBOARD:
     case REQUEST_RESULT_DASHBOARD:
+    case REQUEST_CLINICAL_INDICATORS_DASHBOARD:
     case REQUEST_INVENTORY_ITEM_DASHBOARD:
     case REQUEST_DEVICE_DASHBOARD:
     case REQUEST_SITE_DASHBOARD:
@@ -672,6 +740,24 @@ export default function dashboardReducer(state = initialState, action) {
             item.pcNotConfirmed = item.total > 0 ? Math.round(10 * pc) / 10 : 0
           })
           mutState.set('treatmentStatus', new Immutable.fromJS(payload))
+        })
+      })
+    }
+    case RECEIVE_CLINICAL_INDICATORS_DASHBOARD: {
+      return state.withMutations(mutState => {
+        onRequested(action, mutState, () => {
+          const { assay, data, dataType } = action
+          const currentState = state.clinicalIndicators.toJS()
+          const currentAssayData = currentState[assay]
+          if (data.data && data.data.length) {
+            mutState.set(
+              'clinicalIndicators',
+              new Immutable.fromJS({
+                ...currentState,
+                [assay]: { ...currentAssayData, [dataType]: { ...data } },
+              })
+            )
+          }
         })
       })
     }

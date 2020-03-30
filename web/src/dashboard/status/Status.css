@@ -492,3 +492,28 @@
   justify-content: flex-end;
   padding-right: 20px;
 }
+
+/* Results by Category Start */
+.results--container {
+  display: flex;
+  justify-content: center;
+  align-content: center;
+}
+
+.results--graphContainer {
+  width: 900px;
+  display: flex;
+  justify-content: space-between;
+  align-content: center;
+}
+
+.resultsContainer--aggregate {
+  width: 200px;
+  height: 200px;
+}
+
+.resultsContainer--byMonth {
+  width: 100%;
+  height: 200px;
+}
+/* Results by Category End */
