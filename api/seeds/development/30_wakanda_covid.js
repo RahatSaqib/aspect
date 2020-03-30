@@ -2,9 +2,7 @@ module.exports = require('../utils').seed(seed, __filename)
 
 const _ = require('lodash')
 const bcrypt = require('bcrypt')
-const { addMinutes } = require('date-fns')
 const Promise = require('bluebird')
-
 const {
   commonUpserts,
   upsertJobFunctionPermission,
@@ -13,17 +11,13 @@ const {
 const { upsertCovidDeviceTypes } = require('../commonCovid')
 const {
   normalizeTreatmentStatusDistributionByResults,
+  addCovidResults,
 } = require('../commonGenerateResults')
 const config = require('../../src/config')
 const {
   allFeatureToId,
   partnerTypeToId,
   deviceStatusToId,
-  allSampleTypeToId,
-  allResultCategoryToId,
-  resultSourceToId,
-  resultTypeToId,
-  resultWorkflowStatusToId,
 } = require('../../src/shared/dictionary')
 const utils = require('../utils')
 
@@ -31,7 +25,6 @@ const geography = require('./fixtures/geography.json')
 const followUp = require('../fixtures/FollowUp.json')
 const wakandaCovidResultFormSchema = require('./fixtures/wakandaCovidResultFormSchema.json')
 
-const millisInMinute = 1000 * 60
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
 const resultMultiplier = process.env['seeds.resultMultiplier'] || 100
 const resultNumber = resultMultiplier * 10
@@ -287,210 +280,108 @@ async function seed(knex) {
     })
   )
 
-  // seed dummy results
-  const { NasalSwab: sampleTypeNasalSwab } = await allSampleTypeToId()
-  const {
-    Positive: resultCategoryPositiveId,
-    Negative: resultCategoryNegativeId,
-    Inconclusive: resultCategoryInconclusiveId,
-    Unknown: resultCategoryUnknownId,
-  } = await allResultCategoryToId()
-  const resultSourceEnteredByHandId = await resultSourceToId('EnteredByHand')
-  const resultTypePatientId = await resultTypeToId('Patient')
-  const resultWorkflowStatusProcessedId = await resultWorkflowStatusToId(
-    'Processed'
-  )
-  const resultWorkflowStatusValidatedId = await resultWorkflowStatusToId(
-    'Validated'
-  )
-  const resultWorkflowStatusDeliverableId = await resultWorkflowStatusToId(
-    'Deliverable'
-  )
+  const assays = await knex('Assay')
+    .where('externalId', 'assayAspectResultEntryCovid19')
+    .select('*')
 
-  // seed samples
-  const samples = []
-  await Promise.each(_.range(resultNumber), async i => {
-    const siteData = countryData.clinics[i % countryData.clinics.length]
-    const sample = {
-      externalId: `SMP-CV-${i}`,
-      collectedOn: utils.calculateDateForResult(
-        i,
-        resultNumber,
-        millisInMinute
-      ),
-      sampleTypeId: sampleTypeNasalSwab,
-      originSiteId: siteData.id,
-    }
+  // add result form
+  const assayId = assays[0].id
 
-    sample.id = await knex('Sample').insert(sample)
+  const formSchema = {
+    fields: {
+      testReason: {
+        i18nLabel: 'testReasonCovid19',
+        control: {
+          type: 'DropDown',
+          options: [
+            {
+              title: 'Contact of a case',
+              i18nText: 'contactOfACase',
+              value: '1',
+            },
+            {
+              title: 'Ill Seeking Healthcare due to suspicion of COVID-19',
+              i18nText: 'illSeekingHealthcare',
+              value: '2',
+            },
+            {
+              title: 'Detected at point of entry',
+              i18nText: 'detectedAtPointOfEntry',
+              value: '3',
+            },
+            {
+              title: 'Repatriation',
+              i18nText: 'repatriation',
+              value: '4',
+            },
+            {
+              title:
+                'Routine respiratory disease surveillance systems (e.g influenza)',
+              i18nText: 'routineRespiratorySurveillance',
+              value: '5',
+            },
+            {
+              title: 'Unknown',
+              i18nText: 'unknown',
+              value: '6',
+            },
+          ],
+        },
+        order: 1,
+      },
+      caseId: {
+        i18nLabel: 'caseId',
+        control: {
+          type: 'TextBox',
+        },
+        order: 2,
+      },
+      age: {
+        i18nLabel: 'age',
+        control: {
+          type: 'TextBox',
+        },
+        order: 3,
+      },
+      gender: {
+        i18nLabel: 'gender',
+        control: {
+          type: 'DropDown',
+          options: [
+            {
+              title: 'Male',
+              i18nText: 'male',
+              value: '1',
+            },
+            {
+              title: 'Female',
+              i18nText: 'female',
+              value: '2',
+            },
+          ],
+        },
+        order: 4,
+      },
+    },
+    sendChangesOn: 'change',
+  }
 
-    samples.push(sample)
+  await knex('ResultForm').insert({
+    partnerId,
+    assayId,
+    formSchema: JSON.stringify(formSchema),
   })
 
-  const possibleResults = [
-    {
-      category1: resultCategoryPositiveId,
-      category2: null,
-      minLikelihood: 0,
-      maxLikelihood: 30,
-      resultText: 'Positive',
-    },
-    {
-      category1: resultCategoryNegativeId,
-      category2: null,
-      minLikelihood: 31,
-      maxLikelihood: 90,
-      resultText: 'Negative',
-    },
-    {
-      category1: resultCategoryInconclusiveId,
-      category2: null,
-      minLikelihood: 91,
-      maxLikelihood: 96,
-      resultText: 'Inconclusive',
-    },
-    {
-      category1: resultCategoryUnknownId,
-      category2: null,
-      minLikelihood: 97,
-      maxLikelihood: 100,
-      resultText: 'Unknown',
-    },
-  ]
-
-  const { id: aspectDeviceTypeId } = await knex('DeviceType')
-    .where('externalId', 'Aspect')
-    .first('id')
-  const aspectDevice = await knex('Device')
-    .where({
-      partnerId,
-      deviceTypeId: aspectDeviceTypeId,
-    })
-    .first()
-  const genericTestTypes = [
-    {
-      title: 'PCR/molecular',
-      value: 'pcr',
-    },
-    {
-      title: 'Immunoassay',
-      value: 'immunoassay',
-    },
-    {
-      title: 'Rapid diagnostic test',
-      value: 'rapidDiagnosticTest',
-    },
-    {
-      title: 'Digital X-Ray',
-      value: 'digitalXRay',
-    },
-  ]
-  const genericAssay = await knex('Assay')
-    .where('externalId', 'assayGenericCovid19')
-    .first()
-  await Promise.each(_.range(resultNumber), async i => {
-    const resultCapturedInAspect = i % 7 === 0
-    const device = resultCapturedInAspect
-      ? aspectDevice
-      : countryData.devices[i % countryData.devices.length]
-    const siteData = resultCapturedInAspect
-      ? countryData.labs[i % countryData.labs.length]
-      : countryData.labs.find(site => site.id === device.siteId)
-    const sample = samples[i % samples.length]
-    const randomDate = utils.calculateDateForResult(i, resultNumber, 6000)
-    const reportableSite = sample.originSiteId
-      ? _.find(countryData.clinics, c => c.id === sample.originSiteId)
-      : siteData
-
-    const rnd = _.random(0, 100)
-    const result = _.find(
-      possibleResults,
-      r => rnd >= r.minLikelihood && rnd <= r.maxLikelihood
-    )
-    const formData = {
-      age: rnd,
-      caseId: `COVID-${_.random(1000, 9999)}-ID`,
-      gender: _.random(1, 2),
-      testReason: _.random(1, 6),
-      dateAndTimeOfTest: addMinutes(randomDate, 100),
-    }
-    const selectedTestType =
-      genericTestTypes[_.random(0, genericTestTypes.length - 1)]
-    if (resultCapturedInAspect) {
-      formData.testType = selectedTestType.value
-    }
-
-    const resultId = await knex('Result').insert({
-      ...auditFields,
-      externalId: `COVID-${i}`,
-      assayId: resultCapturedInAspect
-        ? genericAssay.id
-        : deviceTypeAssays[device.deviceTypeId].id,
-      partnerId,
-      geographyId: siteData.geographyId,
-      siteId: siteData.id,
-      reportableSiteId: reportableSite.id,
-      deviceId: device.id,
-      longitude: reportableSite.longitude,
-      latitude: reportableSite.latitude,
-      resultSourceId: resultSourceEnteredByHandId,
-      resultTypeId: resultTypePatientId,
-      sampleId: sample.id,
-      resultCategory1: result.category1,
-      resultCategory2: result.category2,
-      resultData: JSON.stringify(
-        resultCapturedInAspect
-          ? {
-              resultText: result.resultText,
-              typeOfTest: selectedTestType.title,
-            }
-          : {
-              resultText: result.resultText,
-            }
-      ),
-      formData: JSON.stringify(formData),
-      patientData: JSON.stringify({
-        id: formData.caseId,
-        age: formData.age,
-        caseId: formData.caseId,
-        gender: formData.gender
-          ? wakandaCovidResultFormSchema.fields.gender.control.options.find(
-              option => option.value == formData.gender // eslint-disable-line eqeqeq
-            ).title
-          : undefined,
-        testReason: formData.testReason
-          ? wakandaCovidResultFormSchema.fields.testReason.control.options.find(
-              option => option.value == formData.testReason // eslint-disable-line eqeqeq
-            ).title
-          : undefined,
-      }),
-      startedOn: resultCapturedInAspect ? null : randomDate,
-      endedOn: addMinutes(randomDate, 100),
-      createdOn: addMinutes(randomDate, 120),
-      updatedOn: addMinutes(randomDate, 180),
-    })
-
-    const rndWorkflow = _.random(0, 100)
-    const resultWorkflowStatusId =
-      rndWorkflow < 20
-        ? resultWorkflowStatusProcessedId
-        : rndWorkflow < 30
-        ? resultWorkflowStatusValidatedId
-        : resultWorkflowStatusDeliverableId
-
-    const [lastLogId] = await knex('ResultWorkflowLog').insert({
-      resultId,
-      resultWorkflowStatusId,
-      operator: 'John',
-      changedOn: addMinutes(randomDate, 120),
-      createdOn: addMinutes(randomDate, 120),
-      createdBy: adminId,
-    })
-
-    await knex('Result')
-      .where('id', resultId)
-      .update({ resultWorkflowStatusLogId: lastLogId })
-  })
+  const siteDatas = [...countryData.clinics, ...countryData.labs]
+  await addCovidResults(
+    knex,
+    resultNumber,
+    assays,
+    auditFields,
+    siteDatas,
+    partnerId,
+    countryData.devices
+  )
 
   // assign treatment status
   await normalizeTreatmentStatusDistributionByResults(
