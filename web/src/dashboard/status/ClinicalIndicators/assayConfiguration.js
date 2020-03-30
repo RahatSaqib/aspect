@@ -48,9 +48,8 @@ const assayConfiguration = (intl, assaysFromState, BarGraph, PieGraph) => {
   const DAY = {
     single: 'day',
     plural: 'days',
-
     format: 'dd MMM',
-    formatShort: 'dd/M',
+    formatShort: 'MMM dd',
   }
 
   const MONTH = {
@@ -73,7 +72,7 @@ const assayConfiguration = (intl, assaysFromState, BarGraph, PieGraph) => {
           groupBy: [DAY.single],
           legend: false,
           formatDate: DAY.formatShort,
-          minDate: getTimePeriod(31, DAY.plural, 'yyyy-MM-dd'),
+          minDate: getTimePeriod(14, DAY.plural, 'yyyy-MM-dd'),
         },
       ],
     },
