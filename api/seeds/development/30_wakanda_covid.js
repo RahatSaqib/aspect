@@ -2,7 +2,7 @@ module.exports = require('../utils').seed(seed, __filename)
 
 const _ = require('lodash')
 const bcrypt = require('bcrypt')
-const { addMilliseconds, addMinutes, subDays } = require('date-fns')
+const { addMinutes } = require('date-fns')
 const Promise = require('bluebird')
 
 const {
@@ -10,7 +10,7 @@ const {
   upsertJobFunctionPermission,
   upsertJobFeatures,
 } = require('../common')
-const { upsertCovidAssay } = require('../commonCovid')
+const { upsertCovidDeviceTypes } = require('../commonCovid')
 const {
   normalizeTreatmentStatusDistributionByResults,
 } = require('../commonGenerateResults')
@@ -29,27 +29,13 @@ const utils = require('../utils')
 
 const geography = require('./fixtures/geography.json')
 const followUp = require('../fixtures/FollowUp.json')
+const wakandaCovidResultFormSchema = require('./fixtures/wakandaCovidResultFormSchema.json')
 
 const millisInMinute = 1000 * 60
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
-const resultTimeFrameInDays = 60
 const resultMultiplier = process.env['seeds.resultMultiplier'] || 100
 const resultNumber = resultMultiplier * 10
 const now = new Date()
-
-function calculateDateForResult(
-  currentResult,
-  totalResults,
-  randomMillisToAdd
-) {
-  // unlike TB and HIV, we want to generate an exponential curve here
-  const daysToSubtract = Math.ceil(Math.random() ** 4 * resultTimeFrameInDays)
-
-  return addMilliseconds(
-    subDays(now, daysToSubtract),
-    _.random(randomMillisToAdd)
-  )
-}
 
 async function seed(knex) {
   utils.hasSeededStaticData = true
@@ -169,7 +155,20 @@ async function seed(knex) {
     features.resultDashboard,
   ])
 
-  await upsertCovidAssay(knex)
+  const covidDeviceTypes = (
+    await upsertCovidDeviceTypes(knex, partnerId, wakandaCovidResultFormSchema)
+  ).filter(deviceType => deviceType.externalId !== 'Aspect')
+  const deviceTypeAssays = {}
+  await Promise.each(
+    covidDeviceTypes.map(deviceType => deviceType.id),
+    async deviceTypeId => {
+      deviceTypeAssays[deviceTypeId] = await knex('Assay as a')
+        .join('AssayType as at', 'a.assayTypeId', 'at.id')
+        .where('a.deviceTypeId', deviceTypeId)
+        .andWhere('at.externalId', 'covid19')
+        .first('a.*')
+    }
+  )
 
   const auditFields = {
     createdOn: now,
@@ -183,9 +182,6 @@ async function seed(knex) {
   countryData.clinics = []
   countryData.devices = []
 
-  const { id: deviceTypeAspectResultEntryId } = await knex('DeviceType')
-    .where('externalId', 'AspectResultEntry')
-    .first('id')
   const deviceStatusApprovedId = await deviceStatusToId('approved')
 
   await Promise.all(
@@ -220,11 +216,18 @@ async function seed(knex) {
             countryData.labs.push(labData)
 
             // add device to the lab
+            const deviceType =
+              covidDeviceTypes[
+                state.lgas.indexOf(lga) % covidDeviceTypes.length
+              ]
             const device = {
               ...auditFields,
-              name: `${labData.name} Aspect`,
-              shortName: `${labData.externalId}_aspect`,
-              deviceTypeId: deviceTypeAspectResultEntryId,
+              name: `${labData.name} ${deviceType.name}`.substr(0, 255),
+              shortName: `${labData.externalId}_${deviceType.externalId}`.substr(
+                0,
+                45
+              ),
+              deviceTypeId: deviceType.id,
               deviceStatusId: deviceStatusApprovedId,
               partnerId: labData.partnerId,
               geographyId: labData.geographyId,
@@ -284,95 +287,6 @@ async function seed(knex) {
     })
   )
 
-  // add result form
-  const { id: assayId } = await knex('Assay')
-    .where('externalId', 'assayAspectResultEntryCovid19')
-    .first('id')
-  const formSchema = {
-    fields: {
-      testReason: {
-        i18nLabel: 'testReasonCovid19',
-        control: {
-          type: 'DropDown',
-          options: [
-            {
-              title: 'Contact of a case',
-              i18nText: 'contactOfACase',
-              value: '1',
-            },
-            {
-              title: 'Ill Seeking Healthcare due to suspicion of COVID-19',
-              i18nText: 'illSeekingHealthcare',
-              value: '2',
-            },
-            {
-              title: 'Detected at point of entry',
-              i18nText: 'detectedAtPointOfEntry',
-              value: '3',
-            },
-            {
-              title: 'Repatriation',
-              i18nText: 'repatriation',
-              value: '4',
-            },
-            {
-              title:
-                'Routine respiratory disease surveillance systems (e.g influenza)',
-              i18nText: 'routineRespiratorySurveillance',
-              value: '5',
-            },
-            {
-              title: 'Unknown',
-              i18nText: 'unknown',
-              value: '6',
-            },
-          ],
-        },
-        order: 1,
-      },
-      caseId: {
-        i18nLabel: 'caseId',
-        control: {
-          type: 'TextBox',
-        },
-        order: 2,
-      },
-      age: {
-        i18nLabel: 'age',
-        control: {
-          type: 'TextBox',
-        },
-        order: 3,
-      },
-      gender: {
-        i18nLabel: 'gender',
-        control: {
-          type: 'DropDown',
-          options: [
-            {
-              title: 'Male',
-              i18nText: 'male',
-              value: '1',
-            },
-            {
-              title: 'Female',
-              i18nText: 'female',
-              value: '2',
-            },
-          ],
-        },
-        order: 4,
-      },
-    },
-    sendChangesOn: 'change',
-  }
-
-  await knex('ResultForm').insert({
-    partnerId,
-    assayId,
-    formSchema: JSON.stringify(formSchema),
-  })
-
   // seed dummy results
   const { NasalSwab: sampleTypeNasalSwab } = await allSampleTypeToId()
   const {
@@ -399,7 +313,11 @@ async function seed(knex) {
     const siteData = countryData.clinics[i % countryData.clinics.length]
     const sample = {
       externalId: `SMP-CV-${i}`,
-      collectedOn: calculateDateForResult(i, resultNumber, millisInMinute),
+      collectedOn: utils.calculateDateForResult(
+        i,
+        resultNumber,
+        millisInMinute
+      ),
       sampleTypeId: sampleTypeNasalSwab,
       originSiteId: siteData.id,
     }
@@ -440,11 +358,46 @@ async function seed(knex) {
     },
   ]
 
+  const { id: aspectDeviceTypeId } = await knex('DeviceType')
+    .where('externalId', 'Aspect')
+    .first('id')
+  const aspectDevice = await knex('Device')
+    .where({
+      partnerId,
+      deviceTypeId: aspectDeviceTypeId,
+    })
+    .first()
+  const genericTestTypes = [
+    {
+      title: 'PCR/molecular',
+      value: 'pcr',
+    },
+    {
+      title: 'Immunoassay',
+      value: 'immunoassay',
+    },
+    {
+      title: 'Rapid diagnostic test',
+      value: 'rapidDiagnosticTest',
+    },
+    {
+      title: 'Digital X-Ray',
+      value: 'digitalXRay',
+    },
+  ]
+  const genericAssay = await knex('Assay')
+    .where('externalId', 'assayGenericCovid19')
+    .first()
   await Promise.each(_.range(resultNumber), async i => {
-    const device = countryData.devices[i % countryData.devices.length]
-    const siteData = countryData.labs.find(site => site.id === device.siteId)
+    const resultCapturedInAspect = i % 7 === 0
+    const device = resultCapturedInAspect
+      ? aspectDevice
+      : countryData.devices[i % countryData.devices.length]
+    const siteData = resultCapturedInAspect
+      ? countryData.labs[i % countryData.labs.length]
+      : countryData.labs.find(site => site.id === device.siteId)
     const sample = samples[i % samples.length]
-    const randomDate = calculateDateForResult(i, resultNumber, 6000)
+    const randomDate = utils.calculateDateForResult(i, resultNumber, 6000)
     const reportableSite = sample.originSiteId
       ? _.find(countryData.clinics, c => c.id === sample.originSiteId)
       : siteData
@@ -454,18 +407,25 @@ async function seed(knex) {
       possibleResults,
       r => rnd >= r.minLikelihood && rnd <= r.maxLikelihood
     )
-
     const formData = {
       age: rnd,
       caseId: `COVID-${_.random(1000, 9999)}-ID`,
       gender: _.random(1, 2),
       testReason: _.random(1, 6),
+      dateAndTimeOfTest: addMinutes(randomDate, 100),
+    }
+    const selectedTestType =
+      genericTestTypes[_.random(0, genericTestTypes.length - 1)]
+    if (resultCapturedInAspect) {
+      formData.testType = selectedTestType.value
     }
 
     const resultId = await knex('Result').insert({
       ...auditFields,
       externalId: `COVID-${i}`,
-      assayId,
+      assayId: resultCapturedInAspect
+        ? genericAssay.id
+        : deviceTypeAssays[device.deviceTypeId].id,
       partnerId,
       geographyId: siteData.geographyId,
       siteId: siteData.id,
@@ -478,18 +438,33 @@ async function seed(knex) {
       sampleId: sample.id,
       resultCategory1: result.category1,
       resultCategory2: result.category2,
-      resultData: JSON.stringify({ resultText: result.resultText }),
+      resultData: JSON.stringify(
+        resultCapturedInAspect
+          ? {
+              resultText: result.resultText,
+              typeOfTest: selectedTestType.title,
+            }
+          : {
+              resultText: result.resultText,
+            }
+      ),
       formData: JSON.stringify(formData),
       patientData: JSON.stringify({
+        id: formData.caseId,
         age: formData.age,
         caseId: formData.caseId,
-        gender:
-          formSchema.fields.gender.control.options[formData.gender - 1].title,
-        testReason:
-          formSchema.fields.testReason.control.options[formData.testReason - 1]
-            .title,
+        gender: formData.gender
+          ? wakandaCovidResultFormSchema.fields.gender.control.options.find(
+              option => option.value == formData.gender // eslint-disable-line eqeqeq
+            ).title
+          : undefined,
+        testReason: formData.testReason
+          ? wakandaCovidResultFormSchema.fields.testReason.control.options.find(
+              option => option.value == formData.testReason // eslint-disable-line eqeqeq
+            ).title
+          : undefined,
       }),
-      startedOn: randomDate,
+      startedOn: resultCapturedInAspect ? null : randomDate,
       endedOn: addMinutes(randomDate, 100),
       createdOn: addMinutes(randomDate, 120),
       updatedOn: addMinutes(randomDate, 180),
@@ -527,8 +502,11 @@ async function seed(knex) {
           'rca.resultCategoryId'
         )
       })
-      .where('r.assayId', assayId)
-      .where('rca.requiresTreatment', true)
+      .whereIn(
+        'r.assayId',
+        Object.values(deviceTypeAssays).map(assay => assay.id)
+      )
+      .andWhere('rca.requiresTreatment', true)
       .select('r.id', 'r.createdOn', 'r.assayId', 'r.createdBy'),
     85,
     90

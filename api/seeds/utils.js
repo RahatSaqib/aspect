@@ -2,6 +2,7 @@ const Promise = require('bluebird')
 const _ = require('lodash')
 const { readJson } = require('fs-extra')
 const path = require('path')
+const { addMilliseconds, subDays } = require('date-fns')
 const relativeObjectsSeeds = require('./relativeObjectsSeeds')
 const {
   allFeatureToId,
@@ -2526,6 +2527,67 @@ async function addReports(knex, countryReports = []) {
   })
 }
 
+const resultTimeFrameInDays = 60
+const now = new Date()
+
+function calculateDateForResult(
+  currentResult,
+  totalResults,
+  randomMillisToAdd
+) {
+  // unlike TB and HIV, we want to generate an exponential curve here
+  const daysToSubtract = Math.ceil(Math.random() ** 4 * resultTimeFrameInDays)
+
+  return addMilliseconds(
+    subDays(now, daysToSubtract),
+    _.random(randomMillisToAdd)
+  )
+}
+
+function randomOption(availableOptions, required = false) {
+  if (_.isEmpty(availableOptions)) {
+    return
+  }
+  if (_.isArray(availableOptions)) {
+    if (availableOptions.length === 1 && required) {
+      return availableOptions[0]
+    }
+    availableOptions = availableOptions.reduce(
+      (optionsWithProbability, option) => {
+        optionsWithProbability[option] =
+          100 /
+          (required ? availableOptions.length : availableOptions.length + 1)
+        return optionsWithProbability
+      }
+    )
+  }
+  let maxPercent = _.sum(Object.values(availableOptions))
+  if (maxPercent < 100 && !required) {
+    maxPercent = 100
+  }
+  let lastOptionMaxPercentile = 0
+  const options = Object.keys(availableOptions)
+  options.forEach(option => {
+    const optionProbability = availableOptions[option]
+    availableOptions[option] = [lastOptionMaxPercentile, optionProbability]
+    lastOptionMaxPercentile = optionProbability
+  })
+  const randomPercentile = _.random(0.0001, maxPercent)
+  for (let i = 0; i < options.length; i++) {
+    const option = options[i]
+    const optionPercentileRange = availableOptions[option]
+    if (
+      randomPercentile > optionPercentileRange[0] &&
+      randomPercentile <= optionPercentileRange[1]
+    ) {
+      return option
+    }
+  }
+  if (required) {
+    return options[options.length - 1]
+  }
+}
+
 module.exports = {
   addReports,
 
@@ -2579,4 +2641,7 @@ module.exports = {
 
   initDataFromFixture,
   updateReportableInResultCategoryAssay,
+
+  calculateDateForResult,
+  randomOption,
 }

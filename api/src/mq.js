@@ -63,7 +63,7 @@ class MessageQueue {
   /**
    * Dispatch an action created by an action creator
    */
-  dispatch(action, bindingKey) {
+  dispatch(action, bindingKey, options) {
     if (!_.isString(action.type)) {
       throw new Error('Actions must be object with string type')
     }
@@ -72,7 +72,7 @@ class MessageQueue {
       ? `aspect.actions.${action.type}.${bindingKey}`
       : `aspect.actions.${action.type}`
     debug(`dispatch ${this.name} ${message}`)
-    this.channel.publish(exchange, topic, Buffer.from(message))
+    this.channel.publish(exchange, topic, Buffer.from(message), options)
   }
 
   /**

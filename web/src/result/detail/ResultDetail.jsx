@@ -430,9 +430,9 @@ export class ResultDetail extends PureComponent {
     if (_.isEmpty(fieldKeys)) {
       return false
     }
-    const showSubmitButton =
+    const onlySaveOnSubmit =
       result.getIn(['formSchema', 'sendChangesOn']) === 'submit'
-    const updateFormData = showSubmitButton
+    const updateFormData = onlySaveOnSubmit
       ? setResultFormDataValue
       : saveResultFormDataValue
     const sectionLabel =
@@ -476,7 +476,7 @@ export class ResultDetail extends PureComponent {
                 </Unit>
               )
             })}
-            {showSubmitButton && (
+            {onlySaveOnSubmit && (
               <Button
                 disabled={!formDataDirty}
                 variant="contained"
