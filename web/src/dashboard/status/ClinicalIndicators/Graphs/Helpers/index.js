@@ -88,9 +88,10 @@ const formatDataForPie = (
   filterResults
 ) => {
   const { resultCategories } = assayFromState
+  const { key: filterKey, value: filterValue } = filterResults
 
   const dataToConsume = filterResults
-    ? data.filter(d => filterResults.includes(d[key]))
+    ? filter(data, [filterKey, filterValue])
     : data
 
   return dataToConsume.reduce((acc, curr) => {
@@ -111,11 +112,10 @@ const formatDataForPie = (
   }, [])
 }
 
-const getAverageFromData = (data, value) => {
-  const total = filter(data, ['id', data[0].id])
+const getAverageFromData = (data, value, which) => {
+  const total = filter(data, ['label', which])
   const sum = data.reduce((acc, curr) => acc + curr.value, 0)
-
-  return round((total[0][value] / sum) * 100)
+  return { avg: round((total[0][value] / sum) * 100), color: total[0].color }
 }
 
 const calcPercentageSplitBar = (data, keyToOmitDuringCalc) => {

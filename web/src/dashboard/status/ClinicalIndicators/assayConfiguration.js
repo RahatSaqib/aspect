@@ -30,18 +30,25 @@ const assayConfiguration = (intl, assaysFromState, BarGraph, PieGraph) => {
 
   const buildAssays = []
   const CALCMETHOD = { percentage: 'percentage', actual: 'actual' }
-  const PIEDATAKEY = { aggregate: 'aggregate' }
   const BARCLASS = 'clinicalIndicators__bar'
   const PIECLASS = 'clinicalIndicators__pie'
   const PIEINDEX = { count: 'cnt' }
   const GENDER = { male: 'male', female: 'female', index: 'gender' }
   const RESULT = { result1: 'resultCategory1', result2: 'resultCategory1' }
 
+  const DATAKEYS = {
+    day: 'byDay',
+    stack: 'byDayStacked',
+    month: 'byMonth',
+    male: 'byMale',
+    female: 'byFemale',
+    aggregate: 'aggregate',
+  }
+
   const DAY = {
     single: 'day',
     plural: 'days',
-    index: 'byDay',
-    stack: 'byDayStacked',
+
     format: 'dd MMM',
     formatShort: 'dd/M',
   }
@@ -49,51 +56,16 @@ const assayConfiguration = (intl, assaysFromState, BarGraph, PieGraph) => {
   const MONTH = {
     single: 'month',
     plural: 'months',
-    index: 'byMonth',
     format: 'MMM yyyy',
   }
 
   const whiteList = [
     {
-      id: 'GxHiv1Vl',
-      period: MONTH.plural,
-      graphType: [
-        {
-          dataKey: MONTH.index,
-          component: BarGraph,
-          componentClass: BARCLASS,
-          displayMethod: CALCMETHOD.percentage,
-          resultCategory: RESULT.result1,
-          indexBy: MONTH.single,
-          groupBy: [MONTH.single, RESULT.result1],
-          legend: true,
-          formatDate: MONTH.format,
-          minDate: getTimePeriod(5, MONTH.plural, 'yyyy-MM-dd'),
-        },
-        {
-          dataKey: PIEDATAKEY.aggregate,
-          component: PieGraph,
-          componentClass: PIECLASS,
-          displayMethod: CALCMETHOD.percentage,
-          resultCategory: RESULT.result1,
-          indexBy: PIEINDEX.count,
-          groupBy: [RESULT.result1],
-          legend: false,
-          averages: {
-            title: intl.formatMessage(
-              messages.clinicalIndicators.HIV.pie.legend
-            ),
-          },
-          minDate: getTimePeriod(5, MONTH.plural, 'yyyy-MM-dd'),
-        },
-      ],
-    },
-    {
       id: 'assayAspectResultEntryCovid19',
       period: DAY.plural,
       graphType: [
         {
-          dataKey: DAY.index,
+          dataKey: DATAKEYS.day,
           filter: ['Positive'],
           component: BarGraph,
           componentClass: BARCLASS,
@@ -112,7 +84,7 @@ const assayConfiguration = (intl, assaysFromState, BarGraph, PieGraph) => {
       period: DAY.plural,
       graphType: [
         {
-          dataKey: DAY.stack,
+          dataKey: DATAKEYS.stack,
           component: BarGraph,
           componentClass: BARCLASS,
           displayMethod: CALCMETHOD.actual,
@@ -124,7 +96,42 @@ const assayConfiguration = (intl, assaysFromState, BarGraph, PieGraph) => {
           minDate: getTimePeriod(15, DAY.plural, 'yyyy-MM-dd'),
         },
         {
-          dataKey: PIEDATAKEY.aggregate,
+          dataKey: DATAKEYS.aggregate,
+          component: PieGraph,
+          componentClass: PIECLASS,
+          displayMethod: CALCMETHOD.percentage,
+          resultCategory: RESULT.result1,
+          indexBy: PIEINDEX.count,
+          groupBy: [RESULT.result1],
+          legend: false,
+          averages: {
+            title: intl.formatMessage(
+              messages.clinicalIndicators.CV.pie.legend
+            ),
+            key: 'Positive',
+          },
+          minDate: getTimePeriod(5, MONTH.plural, 'yyyy-MM-dd'),
+        },
+      ],
+    },
+    {
+      id: 'GxHiv1Vl',
+      period: MONTH.plural,
+      graphType: [
+        {
+          dataKey: DATAKEYS.month,
+          component: BarGraph,
+          componentClass: BARCLASS,
+          displayMethod: CALCMETHOD.percentage,
+          resultCategory: RESULT.result1,
+          indexBy: MONTH.single,
+          groupBy: [MONTH.single, RESULT.result1],
+          legend: true,
+          formatDate: MONTH.format,
+          minDate: getTimePeriod(5, MONTH.plural, 'yyyy-MM-dd'),
+        },
+        {
+          dataKey: DATAKEYS.aggregate,
           component: PieGraph,
           componentClass: PIECLASS,
           displayMethod: CALCMETHOD.percentage,
@@ -136,6 +143,45 @@ const assayConfiguration = (intl, assaysFromState, BarGraph, PieGraph) => {
             title: intl.formatMessage(
               messages.clinicalIndicators.HIV.pie.legend
             ),
+            key: 'Not Detected',
+          },
+          minDate: getTimePeriod(5, MONTH.plural, 'yyyy-MM-dd'),
+        },
+      ],
+    },
+    {
+      id: 'assayAspectResultEntryCovid19',
+      period: MONTH.plural,
+      graphType: [
+        {
+          dataKey: DATAKEYS.female,
+          filter: { key: 'gender', value: 'Female' },
+          component: PieGraph,
+          componentClass: PIECLASS,
+          displayMethod: CALCMETHOD.percentage,
+          resultCategory: RESULT.result1,
+          indexBy: PIEINDEX.count,
+          groupBy: [RESULT.result1, GENDER.index],
+          legend: false,
+          averages: {
+            title: 'Female Recovery Rate',
+            key: 'Negative',
+          },
+          minDate: getTimePeriod(5, MONTH.plural, 'yyyy-MM-dd'),
+        },
+        {
+          dataKey: DATAKEYS.male,
+          filter: { key: 'gender', value: 'Male' },
+          component: PieGraph,
+          componentClass: PIECLASS,
+          displayMethod: CALCMETHOD.percentage,
+          resultCategory: RESULT.result1,
+          indexBy: PIEINDEX.count,
+          groupBy: [RESULT.result1, GENDER.index],
+          legend: false,
+          averages: {
+            title: 'Male Recovery Rate',
+            key: 'Negative',
           },
           minDate: getTimePeriod(5, MONTH.plural, 'yyyy-MM-dd'),
         },

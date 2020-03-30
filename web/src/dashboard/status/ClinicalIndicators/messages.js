@@ -44,7 +44,7 @@ export const messages = defineMessages({
       pie: {
         legend: {
           id: 'pages.Status.clinicalIndicators.CV.pie.legend',
-          defaultMessage: 'Average Recovery Rate',
+          defaultMessage: 'Average Positive Rate',
         },
       },
     },
