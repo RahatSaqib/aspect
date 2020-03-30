@@ -470,9 +470,14 @@ function receiveTreatmentDashboard(requestedAt, data) {
   }
 }
 
+const removeEmptyParams = params => {
+  Object.keys(params).forEach(key => params[key] == null && delete params[key])
+  return params
+}
+
 // -------------------------------------------------------------------
 export function fetchClinicalIndicatorsDashboard(params) {
-  const { assay, type: dataType } = params
+  const { assay, type: dataType } = removeEmptyParams(params)
   return dispatch => {
     const requestedAt = `results_${Date.now()}`
     dispatch(requestClinicalIndicatorsDashboard({ requestedAt }))
@@ -513,6 +518,7 @@ function requestClinicalIndicatorsDashboard(payload) {
     ...payload,
   }
 }
+
 function receiveClinicalIndicatorsDashboard(
   assay,
   dataType,

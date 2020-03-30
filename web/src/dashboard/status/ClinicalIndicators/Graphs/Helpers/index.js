@@ -27,9 +27,10 @@ const graphColorMap = [
   { id: 10, externalId: 'Inconclusive', color: '#FFC9C4' },
   { id: 11, externalId: 'Unknown', color: defaultColor },
   { id: 12, externalId: 'Negative', color: '#00CA1C' },
+  { id: 99, externalId: 'Cases', color: '#00CA1C' },
 ]
 
-const getKeysFromResults = (data, keyToOmit, orderBy) => {
+const getKeysFromResults = (data, keyToOmit) => {
   const newdata = []
   data.filter(d => {
     for (const [key, value] of Object.entries(d)) {
@@ -45,26 +46,32 @@ const getKeysFromResults = (data, keyToOmit, orderBy) => {
   return keyToOmit ? without(res, keyToOmit) : res
 }
 
-const groupByKey = (data, key, cntKey, formatDate = false) => {
+const groupByKey = (data, key, cntKey = false, formatDate = false) => {
   const flatMapSortMap = graphColorMap.reduce((acc, curr) => {
     const newCurr = omit(curr, 'id', 'color')
     acc.push(newCurr.externalId)
     return acc
   }, [])
 
-  return data
-    .sort(
-      (a, b) =>
-        flatMapSortMap.indexOf(a[cntKey]) - flatMapSortMap.indexOf(b[cntKey])
-    )
-    .reduce((acc, curr) => {
-      acc[curr[key]] = {
-        ...acc[curr[key]],
-        [key]: formatDate ? format(new Date(curr[key]), formatDate) : curr[key],
-        [curr[cntKey]]: curr.cnt,
-      }
-      return acc
-    }, {})
+  const dataToConsume = cntKey
+    ? data.sort(
+        (a, b) =>
+          flatMapSortMap.indexOf(a[cntKey]) - flatMapSortMap.indexOf(b[cntKey])
+      )
+    : data
+
+  return dataToConsume.reduce((acc, curr) => {
+    const countKey = cntKey
+      ? curr[cntKey]
+      : filter(graphColorMap, ['id', 99])[0].externalId
+    acc[curr[key]] = {
+      ...acc[curr[key]],
+      [key]: formatDate ? format(new Date(curr[key]), formatDate) : curr[key],
+      [countKey]: curr.cnt,
+    }
+
+    return acc
+  }, {})
 }
 
 const normaliseKeys = (data, filterResults = false, indexBy) => {

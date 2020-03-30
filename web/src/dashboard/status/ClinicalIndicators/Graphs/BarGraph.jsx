@@ -53,6 +53,7 @@ const BarGraph = ({
           : normalised
 
       const translated = translateKeys(display, assayFromState, true)
+
       setGraph([...translated])
     }
   }, [
@@ -82,8 +83,8 @@ const BarGraph = ({
           enableGridY={false}
           margin={
             displayMethod === 'percentage'
-              ? { top: 5, right: 10, bottom: 110, left: 5 }
-              : { top: 10, right: 10, bottom: 110, left: 25 }
+              ? { top: 5, right: 10, bottom: 110, left: 8 }
+              : { top: 10, right: 10, bottom: 110, left: 32 }
           }
           padding={0.3}
           borderColor={{ from: 'color', modifiers: [['darker', 1.6]] }}
@@ -103,31 +104,33 @@ const BarGraph = ({
           motionStiffness={90}
           motionDamping={15}
           legends={
-            legend && [
-              {
-                dataFrom: 'keys',
-                anchor: 'bottom-right',
-                direction: 'row',
-                justify: false,
-                translateX: -25,
-                translateY: 60,
-                itemsSpacing: 2,
-                itemWidth: 98,
-                itemHeight: 20,
-                itemDirection: 'right-to-left',
-                itemOpacity: 0.85,
-                symbolSize: 20,
-                symbolShape: 'circle',
-                effects: [
+            legend
+              ? [
                   {
-                    on: 'hover',
-                    style: {
-                      itemOpacity: 1,
-                    },
+                    dataFrom: 'keys',
+                    anchor: 'bottom-right',
+                    direction: 'row',
+                    justify: false,
+                    translateX: -25,
+                    translateY: 60,
+                    itemsSpacing: 2,
+                    itemWidth: 98,
+                    itemHeight: 20,
+                    itemDirection: 'right-to-left',
+                    itemOpacity: 0.85,
+                    symbolSize: 20,
+                    symbolShape: 'circle',
+                    effects: [
+                      {
+                        on: 'hover',
+                        style: {
+                          itemOpacity: 1,
+                        },
+                      },
+                    ],
                   },
-                ],
-              },
-            ]
+                ]
+              : []
           }
         />
       ) : (
