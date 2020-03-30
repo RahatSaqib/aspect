@@ -408,7 +408,7 @@ async function seed(knex) {
       r => rnd >= r.minLikelihood && rnd <= r.maxLikelihood
     )
     const formData = {
-      ageYears: rnd,
+      age: rnd,
       caseId: `COVID-${_.random(1000, 9999)}-ID`,
       gender: _.random(1, 2),
       testReason: _.random(1, 6),
