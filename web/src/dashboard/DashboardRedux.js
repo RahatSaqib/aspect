@@ -512,6 +512,7 @@ export function fetchClinicalIndicatorsDashboard(params) {
     )
   }
 }
+
 function requestClinicalIndicatorsDashboard(payload) {
   return {
     type: REQUEST_CLINICAL_INDICATORS_DASHBOARD,
