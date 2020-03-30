@@ -43,13 +43,13 @@ function addGetParamsMiddleware(fetch, input, options = {}) {
   let queryString = `${input}`
   if (method && method === 'GET' && params) {
     for (const [key, value] of Object.entries(params)) {
-      const append = index === 0 ? '?' : '&'
       if (Array.isArray(value)) {
         value.forEach(v => {
-          queryString = `${queryString}${append}${key}=${v}`
+          queryString = `${queryString}${index === 0 ? '?' : '&'}${key}=${v}`
+          index += 1
         })
       } else {
-        queryString = `${queryString}${append}${key}=${value}`
+        queryString = `${queryString}${index === 0 ? '?' : '&'}${key}=${value}`
       }
       index += 1
     }

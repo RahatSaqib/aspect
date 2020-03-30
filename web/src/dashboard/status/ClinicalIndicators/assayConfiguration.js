@@ -11,6 +11,7 @@ const assayConfiguration = (intl, assaysFromState, BarGraph, PieGraph) => {
    * @param  {String} graphContainerClass Class to apply to container component
    * @param  {Array} colors colors per data point, order is important!
    * @param  {Array} orderBy Order of datapoints within the graph, order is important!
+   * @param  {Array} filter Pass an array along to filter results by keys (optional)
    * @param  {Array} graphType Array of grouped graphs to generate. Order matters.
    *    @param  {String} dataKey Key to match state tree in Redux
    *    @param  {Function} component Graph component to render, passed from imports
@@ -29,33 +30,65 @@ const assayConfiguration = (intl, assaysFromState, BarGraph, PieGraph) => {
 
   const buildAssays = []
   const CALCMETHOD = { percentage: 'percentage', actual: 'actual' }
-  const PIEDATAKEY = { aggregate: 'aggregate' }
   const BARCLASS = 'clinicalIndicators__bar'
   const PIECLASS = 'clinicalIndicators__pie'
   const PIEINDEX = { count: 'cnt' }
+  const GENDER = { male: 'male', female: 'female', index: 'gender' }
   const RESULT = { result1: 'resultCategory1', result2: 'resultCategory1' }
+
+  const DATAKEYS = {
+    day: 'byDay',
+    stack: 'byDayStacked',
+    month: 'byMonth',
+    male: 'byMale',
+    female: 'byFemale',
+    aggregate: 'aggregate',
+  }
 
   const DAY = {
     single: 'day',
     plural: 'days',
-    index: 'byDay',
     format: 'dd MMM',
+    formatShort: 'MMM dd',
   }
 
   const MONTH = {
     single: 'month',
     plural: 'months',
-    index: 'byMonth',
     format: 'MMM yyyy',
   }
 
   const whiteList = [
     {
+      id: [
+        'assayGenericCovid19',
+        'assayGXCovid19',
+        'assayMP96Covid19',
+        'assayQS7Covid19',
+      ],
+      period: DAY.plural,
+      graphType: [
+        {
+          dataKey: DATAKEYS.stack,
+          component: BarGraph,
+          componentClass: BARCLASS,
+          displayMethod: CALCMETHOD.actual,
+          resultCategory: RESULT.result1,
+          indexBy: DAY.single,
+          groupBy: [DAY.single, RESULT.result1],
+          legend: true,
+          formatDate: DAY.format,
+          filter: ['Positive'],
+          minDate: getTimePeriod(15, DAY.plural, 'yyyy-MM-dd'),
+        },
+      ],
+    },
+    {
       id: 'GxHiv1Vl',
       period: MONTH.plural,
       graphType: [
         {
-          dataKey: MONTH.index,
+          dataKey: DATAKEYS.month,
           component: BarGraph,
           componentClass: BARCLASS,
           displayMethod: CALCMETHOD.percentage,
@@ -67,7 +100,7 @@ const assayConfiguration = (intl, assaysFromState, BarGraph, PieGraph) => {
           minDate: getTimePeriod(5, MONTH.plural, 'yyyy-MM-dd'),
         },
         {
-          dataKey: PIEDATAKEY.aggregate,
+          dataKey: DATAKEYS.aggregate,
           component: PieGraph,
           componentClass: PIECLASS,
           displayMethod: CALCMETHOD.percentage,
@@ -79,6 +112,7 @@ const assayConfiguration = (intl, assaysFromState, BarGraph, PieGraph) => {
             title: intl.formatMessage(
               messages.clinicalIndicators.HIV.pie.legend
             ),
+            key: 'Not Detected',
           },
           minDate: getTimePeriod(5, MONTH.plural, 'yyyy-MM-dd'),
         },

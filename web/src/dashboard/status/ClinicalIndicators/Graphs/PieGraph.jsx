@@ -13,14 +13,19 @@ const LegendIndicator = ({ averages, data }) => {
 
   useEffect(() => {
     if (!average && data) {
-      const calculated = getAverageFromData(data, 'value')
+      const calculated = getAverageFromData(data, 'value', key)
       setAverage(calculated)
     }
-  }, [average, data, key])
+  }, [average, averages, data, key])
 
   return (
     <div className={cssClasses('legend__container')}>
-      <div className={cssClasses('legend__average')}>{average}%</div>
+      <div
+        className={cssClasses('legend__average')}
+        style={{ color: average.color }}
+      >
+        {average.avg}%
+      </div>
       <div className={cssClasses('legend__title')}>{title}</div>
     </div>
   )
@@ -35,8 +40,10 @@ const PieGraph = ({
   averages,
   componentClass,
   assayFromState,
+  filter = false,
 }) => {
   const [graph, setGraph] = useState(false)
+  const [filterResults] = useState(filter)
 
   useEffect(() => {
     if (
@@ -50,9 +57,9 @@ const PieGraph = ({
         resultCategory,
         indexBy,
         assayFromState,
-        displayMethod
+        displayMethod,
+        filterResults
       )
-
       setGraph(formatted)
     }
   }, [
@@ -63,6 +70,7 @@ const PieGraph = ({
     resultCategory,
     assayFromState,
     displayMethod,
+    filterResults,
   ])
 
   return (
