@@ -1,4 +1,6 @@
 /* eslint-disable max-classes-per-file */
+/* eslint-disable no-loop-func */
+/* eslint-env es6 */
 import _ from 'lodash'
 import { createFetch, base, header, accept } from 'http-client'
 import { defineMessages } from 'react-intl'
@@ -20,6 +22,7 @@ export const aspectFetch = createFetch(
   accept('application/json'),
   header('Content-Type', 'application/json'),
   addAuthHeaderMiddleware,
+  addGetParamsMiddleware,
   handleFetchResponseOrError
 )
 
@@ -31,6 +34,27 @@ function addAuthHeaderMiddleware(fetch, input, options = {}) {
     _.set(options, 'headers.Authorization', `Bearer ${token}`)
   }
   return fetch(input, options)
+}
+
+function addGetParamsMiddleware(fetch, input, options = {}) {
+  const { method, params } = options
+  let index = 0
+  // TODO: dpo - fix no-loop-func eslint
+  let queryString = `${input}`
+  if (method && method === 'GET' && params) {
+    for (const [key, value] of Object.entries(params)) {
+      const append = index === 0 ? '?' : '&'
+      if (Array.isArray(value)) {
+        value.forEach(v => {
+          queryString = `${queryString}${append}${key}=${v}`
+        })
+      } else {
+        queryString = `${queryString}${append}${key}=${value}`
+      }
+      index += 1
+    }
+  }
+  return fetch(queryString, options)
 }
 
 class APIApplicationError extends Error {
