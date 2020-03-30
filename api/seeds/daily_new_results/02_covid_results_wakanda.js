@@ -52,6 +52,4 @@ async function seed(knex) {
     85,
     90
   )
-  //  generate random treatment
-  await normalizeTreatmentStatusDistributionByResults(knex, results)
 }
