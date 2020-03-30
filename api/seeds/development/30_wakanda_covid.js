@@ -2,7 +2,6 @@ module.exports = require('../utils').seed(seed, __filename)
 
 const _ = require('lodash')
 const bcrypt = require('bcrypt')
-const { addMilliseconds, addMinutes, subDays } = require('date-fns')
 const Promise = require('bluebird')
 
 const {
@@ -13,43 +12,23 @@ const {
 const { upsertCovidAssay } = require('../commonCovid')
 const {
   normalizeTreatmentStatusDistributionByResults,
+  addCovidResults,
 } = require('../commonGenerateResults')
 const config = require('../../src/config')
 const {
   allFeatureToId,
   partnerTypeToId,
   deviceStatusToId,
-  allSampleTypeToId,
-  allResultCategoryToId,
-  resultSourceToId,
-  resultTypeToId,
-  resultWorkflowStatusToId,
 } = require('../../src/shared/dictionary')
 const utils = require('../utils')
 
 const geography = require('./fixtures/geography.json')
 const followUp = require('../fixtures/FollowUp.json')
 
-const millisInMinute = 1000 * 60
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
-const resultTimeFrameInDays = 60
 const resultMultiplier = process.env['seeds.resultMultiplier'] || 100
 const resultNumber = resultMultiplier * 10
 const now = new Date()
-
-function calculateDateForResult(
-  currentResult,
-  totalResults,
-  randomMillisToAdd
-) {
-  // unlike TB and HIV, we want to generate an exponential curve here
-  const daysToSubtract = Math.ceil(Math.random() ** 4 * resultTimeFrameInDays)
-
-  return addMilliseconds(
-    subDays(now, daysToSubtract),
-    _.random(randomMillisToAdd)
-  )
-}
 
 async function seed(knex) {
   utils.hasSeededStaticData = true
@@ -284,10 +263,13 @@ async function seed(knex) {
     })
   )
 
-  // add result form
-  const { id: assayId } = await knex('Assay')
+  const assays = await knex('Assay')
     .where('externalId', 'assayAspectResultEntryCovid19')
-    .first('id')
+    .select('*')
+
+  // add result form
+  const assayId = assays[0].id
+
   const formSchema = {
     fields: {
       testReason: {
@@ -373,149 +355,16 @@ async function seed(knex) {
     formSchema: JSON.stringify(formSchema),
   })
 
-  // seed dummy results
-  const { NasalSwab: sampleTypeNasalSwab } = await allSampleTypeToId()
-  const {
-    Positive: resultCategoryPositiveId,
-    Negative: resultCategoryNegativeId,
-    Inconclusive: resultCategoryInconclusiveId,
-    Unknown: resultCategoryUnknownId,
-  } = await allResultCategoryToId()
-  const resultSourceEnteredByHandId = await resultSourceToId('EnteredByHand')
-  const resultTypePatientId = await resultTypeToId('Patient')
-  const resultWorkflowStatusProcessedId = await resultWorkflowStatusToId(
-    'Processed'
+  const siteDatas = [...countryData.clinics, ...countryData.labs]
+  await addCovidResults(
+    knex,
+    resultNumber,
+    assays,
+    auditFields,
+    siteDatas,
+    partnerId,
+    countryData.devices
   )
-  const resultWorkflowStatusValidatedId = await resultWorkflowStatusToId(
-    'Validated'
-  )
-  const resultWorkflowStatusDeliverableId = await resultWorkflowStatusToId(
-    'Deliverable'
-  )
-
-  // seed samples
-  const samples = []
-  await Promise.each(_.range(resultNumber), async i => {
-    const siteData = countryData.clinics[i % countryData.clinics.length]
-    const sample = {
-      externalId: `SMP-CV-${i}`,
-      collectedOn: calculateDateForResult(i, resultNumber, millisInMinute),
-      sampleTypeId: sampleTypeNasalSwab,
-      originSiteId: siteData.id,
-    }
-
-    sample.id = await knex('Sample').insert(sample)
-
-    samples.push(sample)
-  })
-
-  const possibleResults = [
-    {
-      category1: resultCategoryPositiveId,
-      category2: null,
-      minLikelihood: 0,
-      maxLikelihood: 30,
-      resultText: 'Positive',
-    },
-    {
-      category1: resultCategoryNegativeId,
-      category2: null,
-      minLikelihood: 31,
-      maxLikelihood: 90,
-      resultText: 'Negative',
-    },
-    {
-      category1: resultCategoryInconclusiveId,
-      category2: null,
-      minLikelihood: 91,
-      maxLikelihood: 96,
-      resultText: 'Inconclusive',
-    },
-    {
-      category1: resultCategoryUnknownId,
-      category2: null,
-      minLikelihood: 97,
-      maxLikelihood: 100,
-      resultText: 'Unknown',
-    },
-  ]
-
-  await Promise.each(_.range(resultNumber), async i => {
-    const device = countryData.devices[i % countryData.devices.length]
-    const siteData = countryData.labs.find(site => site.id === device.siteId)
-    const sample = samples[i % samples.length]
-    const randomDate = calculateDateForResult(i, resultNumber, 6000)
-    const reportableSite = sample.originSiteId
-      ? _.find(countryData.clinics, c => c.id === sample.originSiteId)
-      : siteData
-
-    const rnd = _.random(0, 100)
-    const result = _.find(
-      possibleResults,
-      r => rnd >= r.minLikelihood && rnd <= r.maxLikelihood
-    )
-
-    const formData = {
-      age: rnd,
-      caseId: `COVID-${_.random(1000, 9999)}-ID`,
-      gender: _.random(1, 2),
-      testReason: _.random(1, 6),
-    }
-
-    const resultId = await knex('Result').insert({
-      ...auditFields,
-      externalId: `COVID-${i}`,
-      assayId,
-      partnerId,
-      geographyId: siteData.geographyId,
-      siteId: siteData.id,
-      reportableSiteId: reportableSite.id,
-      deviceId: device.id,
-      longitude: reportableSite.longitude,
-      latitude: reportableSite.latitude,
-      resultSourceId: resultSourceEnteredByHandId,
-      resultTypeId: resultTypePatientId,
-      sampleId: sample.id,
-      resultCategory1: result.category1,
-      resultCategory2: result.category2,
-      resultData: JSON.stringify({ resultText: result.resultText }),
-      formData: JSON.stringify(formData),
-      patientData: JSON.stringify({
-        age: formData.age,
-        caseId: formData.caseId,
-        gender:
-          formSchema.fields.gender.control.options[formData.gender - 1].title,
-        testReason:
-          formSchema.fields.testReason.control.options[formData.testReason - 1]
-            .title,
-      }),
-      startedOn: randomDate,
-      endedOn: addMinutes(randomDate, 100),
-      createdOn: addMinutes(randomDate, 120),
-      updatedOn: addMinutes(randomDate, 180),
-    })
-
-    const rndWorkflow = _.random(0, 100)
-    const resultWorkflowStatusId =
-      rndWorkflow < 20
-        ? resultWorkflowStatusProcessedId
-        : rndWorkflow < 30
-        ? resultWorkflowStatusValidatedId
-        : resultWorkflowStatusDeliverableId
-
-    const [lastLogId] = await knex('ResultWorkflowLog').insert({
-      resultId,
-      resultWorkflowStatusId,
-      operator: 'John',
-      changedOn: addMinutes(randomDate, 120),
-      createdOn: addMinutes(randomDate, 120),
-      createdBy: adminId,
-    })
-
-    await knex('Result')
-      .where('id', resultId)
-      .update({ resultWorkflowStatusLogId: lastLogId })
-  })
 
   // assign treatment status
   await normalizeTreatmentStatusDistributionByResults(

@@ -5,7 +5,6 @@ const Promise = require('bluebird')
 const treatmentStatuses = ['OnTreatment', 'AwaitingTreatment', 'NotPossible']
 const millisInHour = 1000 * 60 * 60
 const millisInMinute = 1000 * 60
-const resultTimeFrameInDays = 365
 const now = new Date()
 const {
   addMilliseconds,
@@ -33,11 +32,28 @@ const {
 
 const { getRandomTBPatientData } = require('./commonTbresults')
 
+function calculateDateForResultForCovid(
+  currentResult,
+  totalResults,
+  randomMillisToAdd
+) {
+  const resultTimeFrameInDays = 60
+
+  // unlike TB and HIV, we want to generate an exponential curve here
+  const daysToSubtract = Math.ceil(Math.random() ** 4 * resultTimeFrameInDays)
+
+  return addMilliseconds(
+    subDays(now, daysToSubtract),
+    _.random(randomMillisToAdd)
+  )
+}
 function calculateDateForResult(
   currentResult,
   totalResults,
   randomMillisToAdd
 ) {
+  const resultTimeFrameInDays = 365
+
   const daysToSubtract =
     resultTimeFrameInDays -
     Math.ceil((currentResult / totalResults) * resultTimeFrameInDays)
@@ -238,7 +254,6 @@ async function generateResults(
       .whereIn('d.siteId', _.map(siteDatas, 'id'))
       .select('d.*')
   )
-  console.log('covid', covidResults)
   return [].concat(tbResults, ebolaResults, hivResults, covidResults)
 }
 async function addCovidResults(
@@ -279,10 +294,16 @@ async function addCovidResults(
   // seed samples
   const samples = []
   await Promise.each(_.range(resultCovidNumber), async i => {
-    const siteData = _.sample(siteDatas)
+    const siteData = _.sample(
+      _.filter(siteDatas, sites => sites.externalId.indexOf('_clinic') >= 0)
+    )
     const sample = {
       externalId: `SMP-CV-${format(new Date(), 'TT')}`,
-      collectedOn: calculateDateForResult(i, resultCovidNumber, millisInMinute),
+      collectedOn: calculateDateForResultForCovid(
+        i,
+        resultCovidNumber,
+        millisInMinute
+      ),
       sampleTypeId: sampleTypeNasalSwab,
       originSiteId: siteData.id,
     }
@@ -325,9 +346,16 @@ async function addCovidResults(
 
   await Promise.each(_.range(resultCovidNumber), async i => {
     const device = _.sample(devices)
-    const siteData = _.find(siteDatas, site => site.id === device.siteId)
+    const siteData = _.find(
+      _.filter(siteDatas, site => site.externalId.indexOf('_lab') >= 0),
+      site => site.id === device.siteId
+    )
     const sample = samples[i % samples.length]
-    const randomDate = calculateDateForResult(i, resultCovidNumber, 6000)
+    const randomDate = calculateDateForResultForCovid(
+      i,
+      resultCovidNumber,
+      6000
+    )
     const reportableSite = sample.originSiteId
       ? _.find(siteDatas, c => c.id === sample.originSiteId)
       : siteData
@@ -1409,6 +1437,7 @@ async function getRandomResults(
 module.exports = {
   generateResults,
   getRandomResults,
+  addCovidResults,
   createDevicesForAllMissingTypes,
   setTreatmentStatusToResults,
   getTreatmentDistributionByPartner,
