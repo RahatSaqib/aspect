@@ -200,6 +200,7 @@ const buildAssaysFromWhitelist = (data, whiteList) =>
             if (i === curr.externalId) {
               return acc[0].externalId.push(curr.externalId);
             }
+            return;
           });
         } else {
           acc.push({ id: id[0], ...w, ...curr });
