@@ -21,6 +21,7 @@ async function seed(knex) {
     .join('Person as p', 'p.userId', 'u.id')
     .where('p.lastPartnerId', partnerId)
     .first('u.id as adminId')
+
   const results = await generateResults(
     knex,
     adminId,
