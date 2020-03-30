@@ -60,22 +60,46 @@ const assayConfiguration = (intl, assaysFromState, BarGraph, PieGraph) => {
 
   const whiteList = [
     {
-      id: 'assayAspectResultEntryCovid19',
+      id: [
+        'assayGenericCovid19',
+        'assayGXCovid19',
+        'assayMP96Covid19',
+        'assayQS7Covid19',
+      ],
       period: DAY.plural,
       graphType: [
         {
-          dataKey: DATAKEYS.day,
+          dataKey: DATAKEYS.stack,
           component: BarGraph,
           componentClass: BARCLASS,
           displayMethod: CALCMETHOD.actual,
+          resultCategory: RESULT.result1,
           indexBy: DAY.single,
-          groupBy: [DAY.single],
-          legend: false,
-          formatDate: DAY.formatShort,
-          minDate: getTimePeriod(14, DAY.plural, 'yyyy-MM-dd'),
+          groupBy: [DAY.single, RESULT.result1],
+          legend: true,
+          formatDate: DAY.format,
+          filter: ['Positive'],
+          minDate: getTimePeriod(15, DAY.plural, 'yyyy-MM-dd'),
         },
       ],
     },
+    // {
+    //   id: 'assayGenericCovid19',
+    //   period: DAY.plural,
+    //   graphType: [
+    //     {
+    //       dataKey: DATAKEYS.day,
+    //       component: BarGraph,
+    //       componentClass: BARCLASS,
+    //       displayMethod: CALCMETHOD.actual,
+    //       indexBy: DAY.single,
+    //       groupBy: [DAY.single],
+    //       legend: false,
+    //       formatDate: DAY.formatShort,
+    //       minDate: getTimePeriod(14, DAY.plural, 'yyyy-MM-dd')
+    //     }
+    //   ]
+    // },
     {
       id: 'GxHiv1Vl',
       period: MONTH.plural,

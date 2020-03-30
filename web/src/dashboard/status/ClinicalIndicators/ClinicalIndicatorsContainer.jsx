@@ -51,6 +51,7 @@ const enhance = compose(
   lifecycle({
     componentDidMount() {
       const { id: assay, graphType } = this.props.assay
+
       graphType.map(graph => {
         const { dataKey: type, groupBy, minDate } = graph
         return this.props.fetchClinicalIndicatorsDashboard({
