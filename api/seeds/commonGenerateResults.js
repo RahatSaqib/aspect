@@ -31,6 +31,7 @@ const {
 } = require('../src/shared/dictionary')
 
 const { getRandomTBPatientData } = require('./commonTbresults')
+const wakandaCovidResultFormSchema = require('./development/fixtures/wakandaCovidResultFormSchema.json')
 
 function calculateDateForResultForCovid(
   currentResult,
@@ -270,9 +271,15 @@ async function addCovidResults(
 ) {
   if (resultCovidNumber === 0) return
   const resultsid = []
-  const assayId = _.find(
+  const assayId = _.filter(
     assays,
-    it => it.externalId === 'assayAspectResultEntryCovid19'
+    it =>
+      [
+        'assayGenericCovid19',
+        'assayMP96Covid19',
+        'assayQS7Covid19',
+        'assayGXCovid19',
+      ].indexOf(it.externalId) >= 0
   ).id
   // seed dummy results
   const { NasalSwab: sampleTypeNasalSwab } = await allSampleTypeToId()
@@ -346,13 +353,49 @@ async function addCovidResults(
       resultText: 'Unknown',
     },
   ]
-
+  const { id: aspectDeviceTypeId } = await knex('DeviceType')
+    .where('externalId', 'Aspect')
+    .first('id')
+  const aspectDevice = await knex('Device')
+    .where({
+      partnerId,
+      deviceTypeId: aspectDeviceTypeId,
+    })
+    .first()
+  const genericTestTypes = [
+    {
+      title: 'PCR/molecular',
+      value: 'pcr',
+    },
+    {
+      title: 'Immunoassay',
+      value: 'immunoassay',
+    },
+    {
+      title: 'Rapid diagnostic test',
+      value: 'rapidDiagnosticTest',
+    },
+    {
+      title: 'Digital X-Ray',
+      value: 'digitalXRay',
+    },
+  ]
+  const genericAssay = await knex('Assay')
+    .where('externalId', 'assayGenericCovid19')
+    .first()
+  const elegiblesSites = _.filter(
+    siteDatas,
+    site => site.externalId.indexOf('_lab') >= 0
+  )
+  console.log(elegiblesSites)
   await Promise.each(_.range(resultCovidNumber), async i => {
-    const device = _.sample(devices)
-    const siteData = _.find(
-      _.filter(siteDatas, site => site.externalId.indexOf('_lab') >= 0),
-      site => site.id === device.siteId
-    )
+    const resultCapturedInAspect = i % 7 === 0
+
+    const device = resultCapturedInAspect ? aspectDevice : _.sample(devices)
+
+    const siteData = resultCapturedInAspect
+      ? elegiblesSites[i % elegiblesSites.length]
+      : _.find(elegiblesSites, site => site.id === device.siteId)
     const sample = samples[i % samples.length]
     const randomDate = calculateDateForResultForCovid(
       i,
@@ -374,21 +417,20 @@ async function addCovidResults(
       caseId: `COVID-${_.random(1000, 9999)}-ID`,
       gender: _.random(1, 2),
       testReason: _.random(1, 6),
+      dateAndTimeOfTest: addMinutes(randomDate, 100),
     }
-
-    let { formSchema } = await knex('ResultForm')
-      .where({
-        partnerId,
-        assayId,
-      })
-      .first('formSchema')
-
-    formSchema = JSON.parse(formSchema)
+    const selectedTestType =
+      genericTestTypes[_.random(0, genericTestTypes.length - 1)]
+    if (resultCapturedInAspect) {
+      formData.testType = selectedTestType.value
+    }
 
     const [resultId] = await knex('Result').insert({
       ...auditFields,
       externalId: `COVID-${format(new Date(), 'TT')}`,
-      assayId,
+      assayId: resultCapturedInAspect
+        ? genericAssay.id
+        : _.find(assays, elem => elem.deviceTypeId === device.deviceTypeId).id,
       partnerId,
       geographyId: siteData.geographyId,
       siteId: siteData.id,
@@ -404,15 +446,21 @@ async function addCovidResults(
       resultData: JSON.stringify({ resultText: result.resultText }),
       formData: JSON.stringify(formData),
       patientData: JSON.stringify({
+        id: formData.caseId,
         age: formData.age,
         caseId: formData.caseId,
-        gender:
-          formSchema.fields.gender.control.options[formData.gender - 1].title,
-        testReason:
-          formSchema.fields.testReason.control.options[formData.testReason - 1]
-            .title,
+        gender: formData.gender
+          ? wakandaCovidResultFormSchema.fields.gender.control.options.find(
+              option => option.value == formData.gender // eslint-disable-line eqeqeq
+            ).title
+          : undefined,
+        testReason: formData.testReason
+          ? wakandaCovidResultFormSchema.fields.testReason.control.options.find(
+              option => option.value == formData.testReason // eslint-disable-line eqeqeq
+            ).title
+          : undefined,
       }),
-      startedOn: randomDate,
+      startedOn: resultCapturedInAspect ? null : randomDate,
       endedOn: addMinutes(randomDate, 100),
       createdOn: addMinutes(randomDate, 120),
       updatedOn: addMinutes(randomDate, 180),

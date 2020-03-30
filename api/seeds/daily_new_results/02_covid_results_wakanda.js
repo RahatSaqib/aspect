@@ -14,17 +14,17 @@ module.exports = require('../utils').seed(
 
 async function seed(knex) {
   // Create admin user and audit fields
-  const { partnerOneId } = await knex('Partner as p')
+  const { partnerId } = await knex('Partner as p')
     .where('p.name', 'Wakanda')
-    .first('p.id as partnerOneId')
+    .first('p.id as partnerId')
   const { adminId } = await knex('User as u')
     .join('Person as p', 'p.userId', 'u.id')
-    .where('p.lastPartnerId', partnerOneId)
+    .where('p.lastPartnerId', partnerId)
     .first('u.id as adminId')
   const results = await generateResults(
     knex,
     adminId,
-    partnerOneId,
+    partnerId,
     patients,
     errorCodes,
     'WK',
