@@ -7,6 +7,7 @@ const { deviceStatusToId, deviceTypeToPlugin } = require('../shared/dictionary')
 const {
   resultUpdated,
   resultLogged,
+  resultLoggedProcessed,
   types: { RESULT_UPDATED },
 } = require('../result/actions')
 
@@ -784,11 +785,14 @@ function addDeviceLogResultConstraints(queryBuilder) {
     .where('rws.externalId', '<>', 'Purged')
 }
 
-async function onResultUpdated({ resultId, deviceLogId }, { messageContext }) {
+async function onResultUpdated(
+  { resultId, deviceLogId, userId },
+  { messageContext }
+) {
   const context = messageContext.bindActionCreators({ resultLogged })
   if (deviceLogId) {
     // we've already created device logs originating here, so ignore
-    return context.resultLogged(resultId, deviceLogId)
+    return context.resultLogged(resultId, deviceLogId, userId)
   }
   return context.transact(async knex => {
     // TODO dispatch from client API using plugin so
@@ -809,7 +813,7 @@ async function onResultUpdated({ resultId, deviceLogId }, { messageContext }) {
           rawMessage: '',
         })
       )
-    context.resultLogged(resultId, deviceLogId)
+    context.resultLogged(resultId, deviceLogId, userId)
   })
 }
 
@@ -826,11 +830,18 @@ async function onResultLogged(action, context) {
         'p.plugin as partnerPluginName',
         'dt.plugin as deviceTypePluginName'
       )
-    const onResultLogged = await loadPlugin(
+    const pluginOnResultLogged = await loadPlugin(
       [partnerPluginName, deviceTypePluginName],
       'onResultLogged'
     )
-    return onResultLogged(action, context)
+    await pluginOnResultLogged(action, context)
+    context.messageContext.queue.dispatch(
+      resultLoggedProcessed(action.resultId, action.deviceLogId),
+      undefined,
+      {
+        expiration: 60000,
+      }
+    )
   })
 }
 

@@ -9,10 +9,11 @@ const {
   filterDateRangeParams,
   sortPageParams,
 } = require('../db')
-const { resultUpdated } = require('./actions')
+const { resultUpdated, resultLoggedProcessed } = require('./actions')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 const { getUser, getUserByUserId } = require('../auth/service')
 const {
+  deviceTypeToId,
   resultWorkflowStatusToId,
   resultTreatmentStatusToId,
   resultStatusToId,
@@ -21,6 +22,7 @@ const { oneDirectionalMd5Hash } = require('../shared/encryption')
 const { returnIso8601StringWithoutTimeZoneOffset } = require('../shared/date')
 const { getPathFromFileReferenceId } = require('../file/service')
 const { getSiteByPartnerCountry } = require('../site/service')
+const { getRemoteAddress } = require('../shared/request')
 
 const SELECT_LIST_FIELDS = [
   'r.id',
@@ -282,6 +284,7 @@ function getResultTreatmentStatus(response) {
     response.treatmentStatusInfo = null
   }
 }
+
 const addPartnerQueryConstraints = (
   queryBuilder,
   { partner, country, geography, site }
@@ -1342,7 +1345,7 @@ async function updateFormData(request) {
                   : `[${illegalValuesEntered.join()}] are invalid for ${formFieldKey} because they are not present in the options configured for the field.`
               fieldValidationErrors.push(validationMessage)
             }
-          } else if (!allowedValues.includes(formFieldValue)) {
+          } else if (!allowedValues.includes(formFieldValue.toString())) {
             fieldValidationErrors.push(
               `${formFieldValue} is invalid for ${formFieldKey} because it is not present in the options configured for the field.`
             )
@@ -1357,6 +1360,7 @@ async function updateFormData(request) {
       resultUpdated,
     })
     const { id: currentUserId } = await getUser(auth.credentials.name)
+    let deviceLogId
     await messageContext.transact(async knex => {
       await knex('Result')
         .where('id', resultId)
@@ -1365,8 +1369,37 @@ async function updateFormData(request) {
           updatedBy: currentUserId,
           updatedOn: now,
         })
-      messageContext.resultUpdated(resultId)
+      const aspectDeviceTypeId = await deviceTypeToId('Aspect')
+      if (aspectDeviceTypeId) {
+        const { id: deviceId } =
+          (await knex('Device')
+            .where({
+              partnerId: result.data.partnerId,
+              deviceTypeId: aspectDeviceTypeId,
+            })
+            .first('id')) || {}
+        if (deviceId) {
+          ;[deviceLogId] = await knex('DeviceLog').insert({
+            deviceId,
+            resultId,
+            source: 'Result Edited in Aspect',
+            createdOn: now,
+            senderIp: getRemoteAddress(request),
+            rawMessage: JSON.stringify({
+              auth: { credentials: { name: auth.credentials.name } },
+              params,
+              payload,
+            }),
+          })
+        }
+      }
+      messageContext.resultUpdated(resultId, deviceLogId, currentUserId)
     })
+    if (deviceLogId) {
+      await messageContext.queue
+        .waitForAction(resultLoggedProcessed(resultId, deviceLogId), 1000)
+        .catch(_.noop)
+    }
   }
   const response = await showResult(request)
   return response

@@ -45,6 +45,7 @@ export const types = {
   RECEIVE_RESULT_LOG: 'RECEIVE_RESULT_LOG',
 
   SAVING_RESULT_FORM_DATA: 'SAVING_RESULT_FORM_DATA',
+  SAVING_RESULT_FORM_DATA_COMPLETE: 'SAVING_RESULT_FORM_DATA_COMPLETE',
   SET_RESULT_FORM_DATA_VALUE: 'SET_RESULT_FORM_DATA_VALUE',
 }
 /*
@@ -372,6 +373,13 @@ function savingSingleResultFormData(resultId) {
   }
 }
 
+function savingSingleResultFormDataComplete(resultId) {
+  return {
+    type: types.SAVING_RESULT_FORM_DATA_COMPLETE,
+    resultId,
+  }
+}
+
 function sendUpdatedResultFormData(dispatch, resultId, formData) {
   return aspectFetch(`/result/form-data/${resultId}`, {
     method: 'PUT',
@@ -388,16 +396,32 @@ function sendUpdatedResultFormData(dispatch, resultId, formData) {
         })
       ),
     },
-  }).then(json => dispatch(receiveUpdatedSingleResult(json.data)))
+  })
+    .then(json => dispatch(receiveUpdatedSingleResult(json.data)))
+    .catch(err => {
+      dispatch(savingSingleResultFormDataComplete(resultId))
+      return err
+    })
 }
 
 export function saveResultFormDataValue(resultId, formFieldKey, value) {
-  return dispatch => {
-    dispatch(setSingleResultFormDataValue(resultId, formFieldKey, value))
-    dispatch(savingSingleResultFormData(resultId))
-    const formData = {}
-    formData[formFieldKey] = value
-    return sendUpdatedResultFormData(dispatch, resultId, formData)
+  return (dispatch, getState) => {
+    const originalFieldValue =
+      getState().getIn([
+        'result',
+        'items',
+        'byId',
+        resultId,
+        'formData',
+        formFieldKey,
+      ]) || ''
+    if (value !== originalFieldValue) {
+      dispatch(setSingleResultFormDataValue(resultId, formFieldKey, value))
+      dispatch(savingSingleResultFormData(resultId))
+      const formData = {}
+      formData[formFieldKey] = value
+      return sendUpdatedResultFormData(dispatch, resultId, formData)
+    }
   }
 }
 
@@ -604,9 +628,24 @@ export default function resultReducer(state = initialState, action) {
           formDataSaving: false,
           formDataDirty: false,
         })
+    case types.SET_RESULT_FORM_DATA_VALUE:
+      return state
+        .withMutations(mutState => {
+          const formData = {}
+          formData[action.formFieldKey] = action.value
+          mutState.set(
+            'items',
+            mutState.items.mergeDeepIn(['byId', action.resultId], { formData })
+          )
+        })
+        .merge({ formDataDirty: true })
     case types.SAVING_RESULT_FORM_DATA:
       return state.merge({
         formDataSaving: true,
+      })
+    case types.SAVING_RESULT_FORM_DATA_COMPLETE:
+      return state.merge({
+        formDataSaving: false,
       })
     case types.REQUEST_RESULT_LOG:
       return state.merge({
@@ -639,17 +678,6 @@ export default function resultReducer(state = initialState, action) {
         mutState.set('workflowLog', workflowLog)
       })
 
-    case types.SET_RESULT_FORM_DATA_VALUE:
-      return state
-        .withMutations(mutState => {
-          const formData = {}
-          formData[action.formFieldKey] = action.value
-          mutState.set(
-            'items',
-            mutState.items.mergeDeepIn(['byId', action.resultId], { formData })
-          )
-        })
-        .merge({ formDataDirty: true })
     case types.RECEIVE_CREATING_TREATMENT_STATUS_LOG:
       return state.withMutations(mutState => {
         const {

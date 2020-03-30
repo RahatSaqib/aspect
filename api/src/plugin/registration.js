@@ -77,6 +77,7 @@ const plugins = {
     postProcessAddDeviceOperation: require('./deviceType/CepheidGeneXpert/postProcessAddDeviceOperation'),
     transformMergeResultPayload: require('./deviceType/CepheidGeneXpert/transformMergeResultPayload'),
     preProcessMergeResult: require('./deviceType/CepheidGeneXpert/preProcessMergeResult'),
+    onResultLogged: require('./deviceType/AspectResultEntry/onResultLogged.js'),
   },
   gxalert: {
     getDeviceSeenOn: require('./deviceType/GxAlert/getDeviceSeenOn'),
@@ -88,6 +89,7 @@ const plugins = {
     transformMergeResultPayload: require('./deviceType/GxAlert/transformMergeResultPayload'),
     preProcessMergeResult: require('./deviceType/GxAlert/preProcessMergeResult'),
     postProcessMergeResult: require('./deviceType/GxAlert/postProcessMergeResult'),
+    onResultLogged: require('./deviceType/AspectResultEntry/onResultLogged.js'),
   },
   myanmar: {
     settings: require('./partner/Myanmar/settings'),
@@ -119,6 +121,9 @@ const plugins = {
   cameroon: {
     issueTriggers: require('./partner/Cameroon/issueTriggers'),
     issueResolutions: require('./partner/Cameroon/issueResolutionConditions'),
+  },
+  aspectresultentry: {
+    onResultLogged: require('./deviceType/AspectResultEntry/onResultLogged.js'),
   },
 }
 

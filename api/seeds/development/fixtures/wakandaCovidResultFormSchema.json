@@ -1,0 +1,569 @@
+{
+  "fields": {
+    "testResult": {
+      "i18nLabel": "resultOfTest",
+      "control": {
+        "type": "DropDown",
+        "options": [{
+          "title": "Positive",
+          "i18nText": "positive",
+          "value": "Positive"
+        }, {
+          "title": "Negative",
+          "i18nText": "negative",
+          "value": "Negative"
+        }, {
+          "title": "Inconclusive",
+          "i18nText": "inconclusive",
+          "value": "Inconclusive"
+        }, {
+          "title": "Unknown",
+          "i18nText": "unknown",
+          "value": "Unknown"
+        }]
+      },
+      "order": 1
+    },
+    "dateAndTimeOfTest": {
+      "i18nLabel": "dateOfTest",
+      "control": {
+        "type": "Date"
+      },
+      "order": 2
+    },
+    "testReason": {
+      "i18nLabel": "testReasonCovid19",
+      "control": {
+        "type": "DropDown",
+        "options": [{
+          "title": "Contact of a case",
+          "i18nText": "contactOfACase",
+          "value": "1"
+        }, {
+          "title": "Ill Seeking Healthcare due to suspicion of COVID-19",
+          "i18nText": "illSeekingHealthcare",
+          "value": "2"
+        }, {
+          "title": "Detected at point of entry",
+          "i18nText": "detectedAtPointOfEntry",
+          "value": "3"
+        }, {
+          "title": "Repatriation",
+          "i18nText": "repatriation",
+          "value": "4"
+        }, {
+          "title": "Routine respiratory disease surveillance systems (e.g influenza)",
+          "i18nText": "routineRespiratorySurveillance",
+          "value": "5"
+        }, {
+          "title": "Unknown",
+          "i18nText": "unknown",
+          "value": "6"
+        }]
+      },
+      "order": 3
+    },
+    "testReasonOther": {
+      "i18nLabel": "ifNoneOfTheAbovePleaseExplain",
+      "control": {
+        "type": "TextBox"
+      },
+      "order": 4
+    },
+    "caseId": {
+      "i18nLabel": "caseId",
+      "control": {
+        "type": "TextBox"
+      },
+     "order": 5
+    },
+    "age": {
+      "i18nLabel": "age",
+      "control": {
+        "type": "TextBox"
+      },
+     "order": 6
+    },
+    "gender": {
+      "i18nLabel": "gender",
+      "control": {
+        "type": "DropDown",
+        "options": [{
+          "title": "Male",
+          "i18nText": "male",
+          "value": "1"
+        }, {
+          "title": "Female",
+          "i18nText": "female",
+          "value": "2"
+        }]
+      },
+     "order": 7
+    },
+    "usualCountryOfResidency": {
+      "i18nLabel": "usualCountryOfResidency",
+      "control": {
+        "type": "TextBox"
+      },
+      "order": 8
+    },
+    "anySymptomsOrSignsAtTimeOfSpecimenCollection": {
+      "i18nLabel": "anySymptomsOrSignsAtTimeOfSpecimenCollection",
+      "control": {
+        "type": "ButtonGroup",
+        "options": [{
+          "title": "No (i.e., asymptomatic)",
+          "i18nText": "no",
+          "value": "no"
+        }, {
+          "title": "Yes",
+          "i18nText": "yes",
+          "value": "yes"
+        }, {
+          "title": "Unknown",
+          "i18nText": "unknown",
+          "value": "unknown"
+        }]
+      },
+      "order": 9
+    },
+    "dateOfOnsetOfSymptoms": {
+      "i18nLabel": "ifYesDateOfOnsetOfSymptoms",
+      "control": {
+        "type": "Date"
+      },
+      "order": 10
+    },
+    "underlyingConditionsAndComorbidity": {
+      "i18nLabel": "underlyingConditionsAndComorbidity",
+      "control": {
+        "type": "ButtonGroup",
+        "options": [{
+          "title": "No",
+          "i18nText": "no",
+          "value": "no"
+        }, {
+          "title": "Yes",
+          "i18nText": "yes",
+          "value": "yes"
+        }, {
+          "title": "Unknown",
+          "i18nText": "unknown",
+          "value": "unknown"
+        }]
+      },
+      "order": 11
+    },
+    "underlyingConditionsPregnancy": {
+      "i18nLabel": "pregnancy",
+      "control": {
+        "type": "ButtonGroup",
+        "options": [{
+          "title": "No",
+          "i18nText": "no",
+          "value": "no"
+        }, {
+          "title": "Yes",
+          "i18nText": "yes",
+          "value": "yes"
+        }]
+      },
+      "order": 12
+    },
+    "underlyingConditionsPostPartum": {
+      "i18nLabel": "postPartum",
+      "control": {
+        "type": "ButtonGroup",
+        "options": [{
+          "title": "No",
+          "i18nText": "no",
+          "value": "no"
+        }, {
+          "title": "Yes",
+          "i18nText": "yes",
+          "value": "yes"
+        }]
+      },
+      "order": 13
+    },
+    "underlyingConditionsCardiovascularDiseaseIncludingHypertension": {
+      "i18nLabel": "cardiovascularDiseaseIncludingHypertension",
+      "control": {
+        "type": "ButtonGroup",
+        "options": [{
+          "title": "No",
+          "i18nText": "no",
+          "value": "no"
+        }, {
+          "title": "Yes",
+          "i18nText": "yes",
+          "value": "yes"
+        }]
+      },
+      "order": 14
+    },
+    "underlyingConditionsImmunodeficiencyIncludingHIV": {
+      "i18nLabel": "immunodeficiencyIncludingHIV",
+      "control": {
+        "type": "ButtonGroup",
+        "options": [{
+          "title": "No",
+          "i18nText": "no",
+          "value": "no"
+        }, {
+          "title": "Yes",
+          "i18nText": "yes",
+          "value": "yes"
+        }]
+      },
+      "order": 15
+    },
+    "underlyingConditionsDiabetes": {
+      "i18nLabel": "diabetes",
+      "control": {
+        "type": "ButtonGroup",
+        "options": [{
+          "title": "No",
+          "i18nText": "no",
+          "value": "no"
+        }, {
+          "title": "Yes",
+          "i18nText": "yes",
+          "value": "yes"
+        }]
+      },
+      "order": 16
+    },
+    "underlyingConditionsRenalDisease": {
+      "i18nLabel": "renalDisease",
+      "control": {
+        "type": "ButtonGroup",
+        "options": [{
+          "title": "No",
+          "i18nText": "no",
+          "value": "no"
+        }, {
+          "title": "Yes",
+          "i18nText": "yes",
+          "value": "yes"
+        }]
+      },
+      "order": 17
+    },
+    "underlyingConditionsLiverDisease": {
+      "i18nLabel": "liverDisease",
+      "control": {
+        "type": "ButtonGroup",
+        "options": [{
+          "title": "No",
+          "i18nText": "no",
+          "value": "no"
+        }, {
+          "title": "Yes",
+          "i18nText": "yes",
+          "value": "yes"
+        }]
+      },
+      "order": 18
+    },
+    "underlyingConditionsChronicLungDisease": {
+      "i18nLabel": "chronicLungDisease",
+      "control": {
+        "type": "ButtonGroup",
+        "options": [{
+          "title": "No",
+          "i18nText": "no",
+          "value": "no"
+        }, {
+          "title": "Yes",
+          "i18nText": "yes",
+          "value": "yes"
+        }]
+      },
+      "order": 19
+    },
+    "underlyingConditionsChronicNeurologicalOrNeuromuscularDisease": {
+      "i18nLabel": "chronicNeurologicalOrNeuromuscularDisease",
+      "control": {
+        "type": "ButtonGroup",
+        "options": [{
+          "title": "No",
+          "i18nText": "no",
+          "value": "no"
+        }, {
+          "title": "Yes",
+          "i18nText": "yes",
+          "value": "yes"
+        }]
+      },
+      "order": 20
+    },
+    "underlyingConditionsMalignancy": {
+      "i18nLabel": "malignancy",
+      "control": {
+        "type": "ButtonGroup",
+        "options": [{
+          "title": "No",
+          "i18nText": "no",
+          "value": "no"
+        }, {
+          "title": "Yes",
+          "i18nText": "yes",
+          "value": "yes"
+        }]
+      },
+      "order": 21
+    },
+    "underlyingConditionsOthers": {
+      "i18nLabel": "others",
+      "control": {
+        "type": "TextBox"
+      },
+      "order": 22
+    },
+    "exposureRiskIsCaseAHealthCareWorker": {
+      "i18nLabel": "isCaseAHealthCareWorker",
+      "control": {
+        "type": "ButtonGroup",
+        "options": [{
+          "title": "No",
+          "i18nText": "no",
+          "value": "no"
+        }, {
+          "title": "Yes",
+          "i18nText": "yes",
+          "value": "yes"
+        }, {
+          "title": "Unknown",
+          "i18nText": "unknown",
+          "value": "unknown"
+        }]
+      },
+      "order": 23
+    },
+    "exposureRiskHealthcareWorkerCountry": {
+      "i18nLabel": "ifYesCountry",
+      "control": {
+        "type": "TextBox"
+      },
+      "order": 24
+    },
+    "exposureRiskHealthcareWorkerCity": {
+      "i18nLabel": "city",
+      "control": {
+        "type": "TextBox"
+      },
+      "order": 25
+    },
+    "exposureRiskHealthcareWorkerFacility": {
+      "i18nLabel": "nameOfFacility",
+      "control": {
+        "type": "TextBox"
+      },
+      "order": 26
+    },
+    "exposureRiskHasTravelledInThe14DaysPriorToSymptomOnset": {
+      "i18nLabel": "hasTheCaseTravelledInThe14DaysPriorToSymptomOnset",
+      "control": {
+        "type": "ButtonGroup",
+        "options": [{
+          "title": "No",
+          "i18nText": "no",
+          "value": "no"
+        }, {
+          "title": "Yes",
+          "i18nText": "yes",
+          "value": "yes"
+        }, {
+          "title": "Unknown",
+          "i18nText": "unknown",
+          "value": "unknown"
+        }]
+      },
+      "order": 27
+    },
+    "exposureRiskHasVisitedHealthCareFacilityThe14DaysPriorToSymptomOnset": {
+      "i18nLabel": "hasCaseVisitedAnyHealthCareFacilityInThe14DaysPriorToSymptomOnset",
+      "control": {
+        "type": "ButtonGroup",
+        "options": [{
+          "title": "No",
+          "i18nText": "no",
+          "value": "no"
+        }, {
+          "title": "Yes",
+          "i18nText": "yes",
+          "value": "yes"
+        }, {
+          "title": "Unknown",
+          "i18nText": "unknown",
+          "value": "unknown"
+        }]
+      },
+      "order": 28
+    },
+    "exposureRiskHasHadContactWithAConfirmedCaseThe14DaysPriorToSymptomOnset": {
+      "i18nLabel": "hasCaseHadContactWithAConfirmedCaseInThe14DaysPriorToSymptomOnset",
+      "control": {
+        "type": "ButtonGroup",
+        "options": [{
+          "title": "No",
+          "i18nText": "no",
+          "value": "no"
+        }, {
+          "title": "Yes",
+          "i18nText": "yes",
+          "value": "yes"
+        }, {
+          "title": "Unknown",
+          "i18nText": "unknown",
+          "value": "unknown"
+        }]
+      },
+      "order": 29
+    },
+    "exposureRiskHasHadContactWithAConfirmedCaseThe14DaysPriorToSymptomOnsetSetting": {
+      "i18nLabel": "ifYesPleaseExplainContactSetting",
+      "control": {
+        "type": "TextBox"
+      },
+      "order": 30
+    },
+    "mostLikelyCountryOfExposure": {
+      "i18nLabel": "mostLikelyCountryOfExposure",
+      "control": {
+        "type": "TextBox"
+      },
+      "order": 31
+    },
+    "resubmission30DaysAfterInitialReport": {
+      "i18nLabel": "dateOfReSubmissionOfThisReport",
+      "control": {
+        "type": "Date"
+      },
+      "order": 32
+    },
+    "resubmission30DaysAfterInitialReportDidTheCaseDevelopAnySymptoms": {
+      "i18nLabel": "didTheCaseDevelopAnySymptoms",
+      "control": {
+        "type": "DropDown",
+        "options": [{
+          "title": "No",
+          "i18nText": "noCaseRemainsAsymptomatic",
+          "value": "no"
+        }, {
+          "title": "Yes",
+          "i18nText": "yesDevelopedSignsOfIllness",
+          "value": "yes"
+        }, {
+          "title": "Unknown",
+          "i18nText": "unknown",
+          "value": "unknown"
+        }]
+      },
+      "order": 33
+    },
+    "resubmission30DaysAfterInitialReportDateOfOnsetOfSignsOfIllness": {
+      "i18nLabel": "ifYesDateOfOnsetOfSignsOfIllness",
+      "control": {
+        "type": "Date"
+      },
+      "order": 34
+    },
+    "resubmission30DaysAfterInitialReportAdmissionToHospital": {
+      "i18nLabel": "admissionToHospitalMayHaveBeenPreviouslyReported",
+      "control": {
+        "type": "ButtonGroup",
+        "options": [{
+          "title": "No",
+          "i18nText": "no",
+          "value": "no"
+        }, {
+          "title": "Yes",
+          "i18nText": "yes",
+          "value": "yes"
+        }, {
+          "title": "Unknown",
+          "i18nText": "unknown",
+          "value": "unknown"
+        }]
+      },
+      "order": 35
+    },
+    "resubmission30DaysAfterInitialReportFirstDateOfAdmissionToHospital": {
+      "i18nLabel": "firstDateOfAdmissionToHospital",
+      "control": {
+        "type": "Date"
+      },
+      "order": 36
+    },
+    "resubmission30DaysAfterInitialReportDidTheCaseReceiveCareInAnICU": {
+      "i18nLabel": "didTheCaseReceiveCareInAnICU",
+      "control": {
+        "type": "ButtonGroup",
+        "options": [{
+          "title": "No",
+          "i18nText": "no",
+          "value": "no"
+        }, {
+          "title": "Yes",
+          "i18nText": "yes",
+          "value": "yes"
+        }, {
+          "title": "Unknown",
+          "i18nText": "unknown",
+          "value": "unknown"
+        }]
+      },
+      "order": 37
+    },
+    "resubmission30DaysAfterInitialReportDidTheCaseReceiveVentilation": {
+      "i18nLabel": "didTheCaseReceiveVentilation",
+      "control": {
+        "type": "ButtonGroup",
+        "options": [{
+          "title": "No",
+          "i18nText": "no",
+          "value": "no"
+        }, {
+          "title": "Yes",
+          "i18nText": "yes",
+          "value": "yes"
+        }, {
+          "title": "Unknown",
+          "i18nText": "unknown",
+          "value": "unknown"
+        }]
+      },
+      "order": 38
+    },
+    "resubmission30DaysAfterInitialReportDidTheCaseReceiveExtracorporealMembraneOxygenation": {
+      "i18nLabel": "didTheCaseReceiveExtracorporealMembraneOxygenation",
+      "control": {
+        "type": "ButtonGroup",
+        "options": [{
+          "title": "No",
+          "i18nText": "no",
+          "value": "no"
+        }, {
+          "title": "Yes",
+          "i18nText": "yes",
+          "value": "yes"
+        }, {
+          "title": "Unknown",
+          "i18nText": "unknown",
+          "value": "unknown"
+        }]
+      },
+      "order": 39
+    },
+    "ifReleasedFromHospitalIsolationDateOfLastLaboratoryTest": {
+      "i18nLabel": "ifReleasedFromHospitalIsolationDateOfLastLaboratoryTest",
+      "control": {
+        "type": "Date"
+      },
+      "order": 40
+    }
+  },
+  "sendChangesOn": "change"
+}

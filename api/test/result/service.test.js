@@ -22,6 +22,8 @@ describe('result/service', () => {
           : [_.cloneDeep(getResultByResultId)]
       } else if (tableName === 'ResultForm') {
         firstResult = _.cloneDeep(assayForm)
+      } else if (tableName === 'Device') {
+        firstResult = { id: 1 }
       }
       this.join = () => this
       this.innerJoin = () => this
@@ -37,6 +39,7 @@ describe('result/service', () => {
       }
       this.first = () => Promise.resolve(firstResult)
       this.update = () => Promise.resolve()
+      this.insert = () => Promise.resolve([1])
       this.from = () => this
       this.whereIn = () => this
       this.groupBy = () => this
@@ -61,6 +64,15 @@ describe('result/service', () => {
             userName: 'Admin',
           }),
       },
+      '../shared/dictionary': {
+        deviceTypeToId: async externalId => {
+          let returnValue
+          if (externalId === 'Aspect') {
+            returnValue = 1
+          }
+          return Promise.resolve(returnValue)
+        },
+      },
     })
     resultService.knex = fakeKnex
     sinon.spy(resultService, 'knex')
@@ -81,6 +93,9 @@ describe('result/service', () => {
             bindActionCreators: () => {},
             transact: async transaction => transaction(knex),
             resultUpdated: sinon.spy(),
+            queue: {
+              waitForAction: async () => Promise.reject(),
+            },
           },
         },
       },
