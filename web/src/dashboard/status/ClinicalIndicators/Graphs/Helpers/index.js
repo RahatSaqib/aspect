@@ -195,11 +195,10 @@ const buildAssaysFromWhitelist = (data, whiteList) =>
       if (multiAssay) {
         const { id } = w
         if (acc.length) {
-          id.map(i => {
-            if (i === curr.externalId) {
-              return acc[0].externalId.push(curr.externalId)
-            }
-          })
+          id.map(
+            i =>
+              i === curr.externalId && acc[0].externalId.push(curr.externalId)
+          )
         } else {
           acc.push({ id: id[0], ...w, ...curr })
           acc[index].externalId = [id[0]]
