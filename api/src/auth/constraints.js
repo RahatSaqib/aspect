@@ -1,6 +1,6 @@
 const _ = require('lodash')
 const { knex } = require('../db')
-const { getUser } = require('./service')
+const { getUser, getUserByUserId, getUserByPersonId } = require('./service')
 
 // A prefix for joined table aliases intended to avoid
 // conflict with caller supplied table aliases
@@ -10,7 +10,16 @@ function alias(table) {
 }
 
 async function getConstraints(credentials, forModule = null) {
-  const user = await getUser(credentials.name)
+  const user = credentials.name
+    ? await getUser(credentials.name)
+    : credentials.userId
+    ? await getUserByUserId(credentials.userId)
+    : credentials.personId
+    ? await getUserByPersonId(credentials.personId)
+    : null
+  if (!user) {
+    return Promise.resolve()
+  }
   const constraints = {
     partner: {
       id: user.partnerId,
