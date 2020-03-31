@@ -99,56 +99,56 @@
       "i18nKey": "died"
     },
     {
-      "assays": ["assayAspectResultEntryCovid19"],
+      "assays": ["assayGenericCovid19", "assayMP96Covid19", "assayQS7Covid19", "assayGXCovid19"],
       "type": "outcome",
       "name": "Recovered",
       "externalId": "recovered",
       "i18nKey": "recovered"
     },
     {
-      "assays": ["assayAspectResultEntryCovid19"],
+      "assays": ["assayGenericCovid19", "assayMP96Covid19", "assayQS7Covid19", "assayGXCovid19"],
       "type": "outcome",
       "name": "Not Recovered",
       "externalId": "notRecovered",
       "i18nKey": "notRecovered"
     },
     {
-      "assays": ["assayAspectResultEntryCovid19"],
+      "assays": ["assayGenericCovid19", "assayMP96Covid19", "assayQS7Covid19", "assayGXCovid19"],
       "type": "outcome",
       "name": "Unknown",
       "externalId": "unknown",
       "i18nKey": "unknown"
     },
     {
-      "assays": ["assayAspectResultEntryCovid19"],
+      "assays": ["assayGenericCovid19", "assayMP96Covid19", "assayQS7Covid19", "assayGXCovid19"],
       "type": "outcome",
       "name": "Other",
       "externalId": "other",
       "i18nKey": "other"
     },
     {
-      "assays": ["assayAspectResultEntryCovid19"],
+      "assays": ["assayGenericCovid19", "assayMP96Covid19", "assayQS7Covid19", "assayGXCovid19"],
       "type": "treatment",
       "name": "Admission to Hospital",
       "externalId": "admissionToHospital",
       "i18nKey": "admissionToHospital"
     },
     {
-      "assays": ["assayAspectResultEntryCovid19"],
+      "assays": ["assayGenericCovid19", "assayMP96Covid19", "assayQS7Covid19", "assayGXCovid19"],
       "type": "treatment",
       "name": "Admission to Hospital ICU",
       "externalId": "admissionToHospitalIcu",
       "i18nKey": "admissionToHospitalIcu"
     },
     {
-      "assays": ["assayAspectResultEntryCovid19"],
+      "assays": ["assayGenericCovid19", "assayMP96Covid19", "assayQS7Covid19", "assayGXCovid19"],
       "type": "treatment",
       "name": "Quarantine",
       "externalId": "quarantine",
       "i18nKey": "quarantine"
     },
     {
-      "assays": ["assayAspectResultEntryCovid19"],
+      "assays": ["assayGenericCovid19", "assayMP96Covid19", "assayQS7Covid19", "assayGXCovid19"],
       "type": "treatment",
       "name": "Self-Quarantine",
       "externalId": "selfQuarantine",

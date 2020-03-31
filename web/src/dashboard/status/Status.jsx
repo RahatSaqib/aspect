@@ -75,14 +75,6 @@ const Status = ({
       className={cssClasses('Section--summary')}
     />
 
-    <TreatmentStatus
-      intl={intl}
-      history={history}
-      location={location}
-      className={cssClasses('Section--withDropdown')}
-      title={intl.formatMessage(messages.treatmentTitle)}
-    />
-
     {assays && assays.length ? (
       <ClinicalIndicators
         intl={intl}
@@ -91,6 +83,14 @@ const Status = ({
         assays={assays}
       />
     ) : null}
+
+    <TreatmentStatus
+      intl={intl}
+      history={history}
+      location={location}
+      className={cssClasses('Section--withDropdown')}
+      title={intl.formatMessage(messages.treatmentTitle)}
+    />
 
     <TargetStatus
       intl={intl}

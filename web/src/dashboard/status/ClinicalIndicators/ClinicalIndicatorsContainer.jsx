@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import classnames from 'classnames/bind'
 import { bindActionCreators } from 'redux'
 import { compose, lifecycle, pure } from 'recompose'
@@ -51,6 +51,7 @@ const enhance = compose(
   lifecycle({
     componentDidMount() {
       const { id: assay, graphType } = this.props.assay
+
       graphType.map(graph => {
         const { dataKey: type, groupBy, minDate } = graph
         return this.props.fetchClinicalIndicatorsDashboard({
@@ -71,15 +72,21 @@ const ClinicalIndicatorsContainer = ({
   ...props
 }) => {
   const {
-    id,
     graphContainerClass,
     colors,
     graphType,
     orderBy,
     assayFromState,
   } = props.assay
+  const [graphData, setGraphData] = useState(false)
 
-  return data && Object.keys(data).length === graphType.length ? (
+  useEffect(() => {
+    if (graphData !== data) {
+      setGraphData(data)
+    }
+  }, [data, graphData])
+
+  return graphData ? (
     <Card className={className}>
       <div
         className={cssClasses('TitleContainer', 'Treatment--TitleContainer')}
@@ -106,9 +113,10 @@ const ClinicalIndicatorsContainer = ({
                 component: Component,
                 componentClass,
                 displayMethod = 'percentage',
+                filter = false,
               }) => (
                 <Component
-                  data={data[dataKey].data}
+                  data={(data[dataKey] && data[dataKey].data) || []}
                   indexBy={indexBy}
                   orderBy={orderBy}
                   resultCategory={resultCategory}
@@ -119,6 +127,7 @@ const ClinicalIndicatorsContainer = ({
                   componentClass={componentClass}
                   displayMethod={displayMethod}
                   assayFromState={assayFromState}
+                  filter={filter}
                 />
               )
             )}
