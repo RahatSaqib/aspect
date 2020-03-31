@@ -30,7 +30,10 @@ async function down(knex) {
   await knex.schema.alterTable('JobContext', jobContext => {
     jobContext.dropUnique(['jobId', 'assayTypeId'], 'unique_jobId_assayTypeId')
     jobContext.dropUnique(['jobId', 'assayId'], 'unique_jobId_assayId')
-    jobContext.dropUnique(['jobId', 'deviceTypeId'], 'unique_jobId_deviceTypeId')
+    jobContext.dropUnique(
+      ['jobId', 'deviceTypeId'],
+      'unique_jobId_deviceTypeId'
+    )
     jobContext.dropColumn('assayTypeId')
     jobContext.dropColumn('assayId')
     jobContext.dropColumn('deviceTypeId')
