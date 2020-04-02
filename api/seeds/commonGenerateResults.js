@@ -127,6 +127,7 @@ async function generateResults(
   patients,
   errorCodes,
   countryAbbreviation = 'US',
+  insertMissingDevicesForPartner = true,
   resultMtbNumber = 20,
   resultHivVlNumber = 20,
   resultEbolaNumber = 0,
@@ -159,20 +160,19 @@ async function generateResults(
 
   const deviceTypes = await knex('DeviceType').select()
   const assays = await knex('Assay').select()
-
   const deviceTypeGeneXpertId = _.find(
     deviceTypes,
     elem => elem.externalId === 'CepheidGeneXpert'
   ).id
-  createDevicesForAllMissingTypes(
-    knex,
-    siteDatas,
-    partnerOneId,
-    auditFields,
-    1,
-    ['BDMGIT', 'CepheidGeneXpert', 'GxMtbRif', 'AspectResultEntry']
-  )
-
+  if (insertMissingDevicesForPartner)
+    await createDevicesForAllMissingTypes(
+      knex,
+      siteDatas,
+      partnerOneId,
+      auditFields,
+      1,
+      ['BDMGIT', 'CepheidGeneXpert', 'GxMtbRif', 'AspectResultEntry']
+    )
   const devices = await knex('Device')
     .where({ deviceTypeId: deviceTypeGeneXpertId, partnerId: partnerOneId })
     .whereIn('siteId', _.map(siteDatas, 'id'))
@@ -504,6 +504,7 @@ async function addHivVlResults(
   devicesGeneXpert,
   resultCategories
 ) {
+  if (resultHivVlNumber) return []
   // Result Workflow Status
   const {
     Validated: validated,
@@ -715,6 +716,7 @@ async function addTBResults(
   devicesGeneXpert,
   resultCategories
 ) {
+  if (resultMtbNumber === 0) return []
   const deviceTypes = await knex('DeviceType').select()
 
   const { DBS: sampleTypeDBSId } = await allSampleTypeToId()
@@ -970,6 +972,7 @@ async function addEbolaResults(
   devicesGeneXpert,
   resultCategories
 ) {
+  if (resultEbolaNumber) return []
   const { Plasma: sampleTypePlasmaId } = await allSampleTypeToId()
   const resultsid = []
 

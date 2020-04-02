@@ -8,8 +8,7 @@ const {
 } = require('../commonGenerateResults')
 module.exports = require('../utils').seed(
   seed,
-  `$
-    {__filename}-${format(new Date(), 'yyyy-MM-dd')}`
+  `${__filename}-${format(new Date(), 'yyyy-MM-dd')}`
 )
 
 async function seed(knex) {
@@ -29,12 +28,12 @@ async function seed(knex) {
     patients,
     errorCodes,
     'WK',
+    false,
     0,
     0,
     0,
     20
   )
-
   await normalizeTreatmentStatusDistributionByResults(
     knex,
     await knex('Result as r')
