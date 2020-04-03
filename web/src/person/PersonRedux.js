@@ -568,7 +568,7 @@ export function addPersonAssignment(data) {
   return dispatch => {
     const { personId } = data
     dispatch(requestPersonAssignments(personId))
-    return aspectFetch(`/job-function/assign-person-to-job-and-site`, {
+    return aspectFetch(`/job-function/assign-person-to-job-and-context`, {
       method: 'POST',
       body: JSON.stringify(data),
       errorNotifications: {

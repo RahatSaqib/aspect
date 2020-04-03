@@ -69,7 +69,7 @@ async function getResultsReport(request, reply) {
   const results = await exportResults(query, auth)
 
   // / this is for generate the headers and key for each row.
-  await getAssaySchema(query, user.partnerId, headers)
+  await getAssaySchema(query, user.partnerId, user.id, headers)
   await getResultFormData(user.partnerId, headers)
   const report = generateWorkbookByDataSource(
     query.format, // xlsx or csv
@@ -90,8 +90,8 @@ async function getResultsReport(request, reply) {
   return downloadReportFile(report, reply, request.format)
 }
 
-async function getAssaySchema(query, partnerId, headers) {
-  const assaySchema = await getAllAssaySchemas(partnerId, query.assayId)
+async function getAssaySchema(query, partnerId, userId, headers) {
+  const assaySchema = await getAllAssaySchemas(partnerId, userId, query.assayId)
   let resultSchema = {}
   let patientSchema = {}
   assaySchema.forEach(element => {

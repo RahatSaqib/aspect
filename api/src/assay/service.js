@@ -30,10 +30,18 @@ const SELECT_LIST_RESULT_CATEGORY_FIELDS = [
   'rca.emphasize',
   'rca.requirestreatment',
 ]
-async function listAssaysResultSchema() {
+
+async function listAssaysResultSchema(request) {
+  const { auth } = request
+  const dataConstraints = await getConstraints(auth.credentials)
   const assaysList = await knex('Assay as a')
     .innerJoin('DeviceType as dt', 'a.devicetypeId', 'dt.id')
     .innerJoin('AssayType as at', 'a.assaytypeId', 'at.id')
+    .modify(addConstraints, dataConstraints, {
+      assayType: 'at',
+      assay: 'a',
+      deviceType: 'dt',
+    })
     .select(
       'a.id as assayId',
       'a.externalId',
@@ -96,6 +104,11 @@ async function listAssays(request) {
   const assayQuery = knex('Assay as a')
     .innerJoin('AssayType as at', 'a.assayTypeId', 'at.id')
     .innerJoin('DeviceType as dt', 'a.deviceTypeId', 'dt.id')
+    .modify(addConstraints, dataConstraints, {
+      assayType: 'at',
+      assay: 'a',
+      deviceType: 'dt',
+    })
     .modify(filterParams, query, { name: 'a.name' })
 
   // get total count for paging
@@ -135,13 +148,19 @@ async function listAssays(request) {
   return result
 }
 
-async function getAllAssaySchemas(partnerId, assayId = null) {
+async function getAllAssaySchemas(partnerId, userId, assayId = null) {
+  const dataConstraints = await getConstraints({ userId })
   const query = knex('Assay as a')
     .innerJoin('DeviceType as dt', 'a.deviceTypeId', 'dt.id')
     .innerJoin('Device as d', 'dt.id', 'd.deviceTypeId')
     .modify((queryBuilder, assayId) => {
       if (assayId) queryBuilder.where('a.id', assayId)
     }, assayId)
+    .modify(addConstraints, dataConstraints, {
+      assay: 'a',
+      device: 'd',
+      deviceType: 'dt',
+    })
     .where('d.partnerId', partnerId)
     .select(
       'a.name',
@@ -151,6 +170,7 @@ async function getAllAssaySchemas(partnerId, assayId = null) {
     )
   return query
 }
+
 module.exports = {
   listAssays,
   getAllAssaySchemas,

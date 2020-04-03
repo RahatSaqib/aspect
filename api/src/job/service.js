@@ -498,6 +498,14 @@ async function getAssignments({ auth, personId }) {
     .leftOuterJoin('Country as c2', 'g2.countryId', 'c2.id')
     .leftOuterJoin('State as st2', 'g2.stateId', 'st2.id')
     .leftOuterJoin('Lga as l2', 'g2.lgaId', 'l2.id')
+    // JobContext with assayTypeId
+    .leftOuterJoin('AssayType as at', 'jc.assayTypeId', 'at.id')
+    // JobContext with deviceTypeId
+    .leftOuterJoin('DeviceType as dt', 'jc.deviceTypeId', 'dt.id')
+    // JobContext with assayId
+    .leftOuterJoin('Assay as a', 'jc.assayId', 'a.id')
+    .leftOuterJoin('AssayType as at2', 'a.assayTypeId', 'at2.id')
+    .leftOuterJoin('DeviceType as dt2', 'a.deviceTypeId', 'dt2.id')
     //
     .where('j.personId', personId)
     .orderBy(['jf.name', 's.name', 'c.name', 'st.name', 'l.name'])
@@ -525,11 +533,35 @@ async function getAssignments({ auth, personId }) {
       'st2.id as stateId2',
       'st2.name as stateName2',
       'l2.id as lgaId2',
-      'l2.name as lgaName2'
+      'l2.name as lgaName2',
+      // JobContext with assayTypeId
+      'at.id as assayTypeId',
+      'at.name as assayTypeName',
+      // JobContext with deviceTypeId
+      'dt.id as deviceTypeId',
+      'dt.name as deviceTypeName',
+      // JobContext with assayId
+      'a.id as assayId',
+      'a.name as assayName',
+      'at2.id as assayTypeId2',
+      'at2.name as assayTypeName2',
+      'dt2.id as deviceTypeId2',
+      'dt2.name as deviceTypeName2'
     )
     .map(item => {
-      const { siteId } = item
-      let { countryId, countryName, stateId, stateName, lgaId, lgaName } = item
+      const { siteId, assayId } = item
+      let {
+        countryId,
+        countryName,
+        stateId,
+        stateName,
+        lgaId,
+        lgaName,
+        assayTypeId,
+        assayTypeName,
+        deviceTypeId,
+        deviceTypeName,
+      } = item
 
       // if siteId is used by JobContext - then get site's geography props
       if (siteId) {
@@ -544,6 +576,17 @@ async function getAssignments({ auth, personId }) {
           },
         ] = [item]
       }
+      // if assayId is used by JobContext - then get assay's assay & device type props
+      if (assayId) {
+        ;[
+          {
+            assayTypeId2: assayTypeId,
+            assayTypeName2: assayTypeName,
+            deviceTypeId2: deviceTypeId,
+            deviceTypeName2: deviceTypeName,
+          },
+        ] = [item]
+      }
       return {
         ..._.pick(item, [
           'personId',
@@ -555,6 +598,8 @@ async function getAssignments({ auth, personId }) {
           'siteId',
           'siteName',
           'geographyId',
+          'assayId',
+          'assayName',
         ]),
         countryId,
         countryName,
@@ -562,6 +607,10 @@ async function getAssignments({ auth, personId }) {
         stateName,
         lgaId,
         lgaName,
+        assayTypeId,
+        assayTypeName,
+        deviceTypeId,
+        deviceTypeName,
       }
     })
   return personAssignments

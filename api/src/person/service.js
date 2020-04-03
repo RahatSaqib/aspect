@@ -31,7 +31,7 @@ async function listPeople(request) {
       contactNameOrEmail: ['p.name', 'p.email', 'p.email2'],
       siteId: 'jc.siteId',
     })
-    .modify(addConstraints, dataConstraints, { geography: 'g' })
+    .modify(addConstraints, dataConstraints, { geography: 'g', site: 's' })
 
   // get total count for paging
   const getCount = personQuery
@@ -137,7 +137,7 @@ function getSite(siteId, dataConstraints) {
   return query('Get site to add contact to')
     .from('Site as s')
     .leftJoin('Geography as g', 's.geographyId', 'g.id')
-    .modify(addConstraints, dataConstraints, { geography: 'g' })
+    .modify(addConstraints, dataConstraints, { geography: 'g', site: 's' })
     .where('s.id', '=', siteId)
 }
 
@@ -376,7 +376,7 @@ async function listRefreshTokens(request) {
     .innerJoin('Partner as prt', 'p.lastPartnerId', 'prt.id')
     .leftJoin('Geography as g', 'p.geographyId', 'g.id')
     .where({ clientType: clientTypes.app })
-    .modify(addConstraints, dataConstraints, { partner: 'prt' })
+    .modify(addConstraints, dataConstraints, { partner: 'prt', geography: 'g' })
 
   const getCount = tokenQuery
     .clone()

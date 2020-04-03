@@ -350,7 +350,7 @@ function addConstraints(queryBuilder, constraints, aliases) {
     queryBuilder.where({ [`deviceStatus.token`]: 'approved' })
   }
   if (person && constraints.person && !allowAdminThrough) {
-    queryBuilder.where({ [`${person}.personId`]: constraints.person.id })
+    queryBuilder.where({ [`${person}.id`]: constraints.person.id })
   }
 
   // data filter constraints are ORed

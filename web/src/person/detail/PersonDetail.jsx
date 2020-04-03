@@ -217,6 +217,9 @@ export class PersonDetail extends PureComponent {
         'stateId',
         'lgaId',
         'siteId',
+        'deviceTypeId',
+        'assayTypeId',
+        'assayId',
       ]),
     }
     addPersonAssignment(data)

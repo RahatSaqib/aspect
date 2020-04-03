@@ -230,13 +230,54 @@ async function mergeResult(
     let sampleOriginSite = await knex('Site')
       .where({ partnerId: site.partnerId, externalId: payloadOriginSiteId })
       .first()
+    let siteGeography = {}
+    if (sampleOriginSite.geographyId) {
+      siteGeography = await knex('Geography')
+        .where('id', sampleOriginSite.geographyId)
+        .first()
+    }
+    if (originSiteGeographyId) {
+      const originSiteGeography =
+        (await knex('Geography')
+          .where('id', originSiteGeographyId)
+          .first()) || {}
+      if (originSiteGeography.countryId && !siteGeography.countryId) {
+        siteGeography.countryId = originSiteGeography.countryId
+        if (originSiteGeography.stateId && !siteGeography.stateId) {
+          siteGeography.stateId = originSiteGeography.stateId
+          if (originSiteGeography.lgaId && !siteGeography.lgaId) {
+            siteGeography.lgaId = originSiteGeography.lgaId
+          }
+        }
+      }
+    }
+    if (siteGeography.countryId) {
+      siteGeography =
+        (await knex('Geography')
+          .where('countryId', siteGeography.countryId)
+          .andWhere(function() {
+            if (siteGeography.stateId) {
+              this.where('stateId', siteGeography.stateId)
+            } else {
+              this.whereNull('stateId')
+            }
+          })
+          .andWhere(function() {
+            if (siteGeography.lgaId) {
+              this.where('lgaId', siteGeography.lgaId)
+            } else {
+              this.whereNull('lgaId')
+            }
+          })
+          .first()) || {}
+    }
     const sampleOriginSiteName = _.get(payload, 'sample.originSite.name')
     const sampleOriginSiteDetailsInPayload = {
       name: sampleOriginSiteName,
       shortName: _.get(payload, 'sample.originSite.shortName'),
       notes: _.get(payload, 'sample.originSite.notes'),
       partnerId: site.partnerId,
-      geographyId: originSiteGeographyId,
+      geographyId: siteGeography.id || originSiteGeographyId,
       city: _.get(payload, 'sample.originSite.city'),
       street1: _.get(payload, 'sample.originSite.street1'),
       street2: _.get(payload, 'sample.originSite.street2'),

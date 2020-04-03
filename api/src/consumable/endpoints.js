@@ -38,7 +38,7 @@ const routes = [
     config: {
       description: 'Consumable Reason',
       notes: 'Pageable and sortable list for reaons that a consumable was used',
-      auth: { scope: ['inventory:view', 'inventory:edit'] },
+      auth: { scope: ['inventory:view', 'inventory:edit', 'inventory:admin'] },
       validate: {
         query: {
           name: Joi.string()
@@ -57,7 +57,7 @@ const routes = [
       description:
         'Gets the consumable quantities for each assay for a specific consumable',
       notes: 'Returns a list of assay consumable records',
-      auth: { scope: ['assay:view'] },
+      auth: { scope: ['assay:view', 'assay:edit', 'assay:admin'] },
       validate: {
         params: {
           consumableId: Joi.number()
@@ -75,7 +75,7 @@ const routes = [
     config: {
       description: 'Gets the consumable quantities used by an assay run',
       notes: 'Returns a list of assay consumable records',
-      auth: { scope: ['assay:view'] },
+      auth: { scope: ['assay:view', 'assay:edit', 'assay:admin'] },
       validate: {
         params: {
           assayId: Joi.number()
@@ -93,7 +93,7 @@ const routes = [
     config: {
       description: 'Creates a new consumable quantity record for an assay',
       notes: 'Returns the created assay consumable record',
-      auth: { scope: ['assay:view', 'assay:edit'] },
+      auth: { scope: ['assay:view', 'assay:edit', 'assay:admin'] },
       validate: {
         payload: {
           assayId: Joi.number()
@@ -122,7 +122,7 @@ const routes = [
     config: {
       description: 'Updates the quantity of a consumable used by an assay run',
       notes: 'Returns the updated assay consumable record',
-      auth: { scope: ['assay:view', 'assay:edit'] },
+      auth: { scope: ['assay:view', 'assay:edit', 'assay:admin'] },
       validate: {
         params: {
           assayId: Joi.number()
@@ -153,7 +153,7 @@ const routes = [
     config: {
       description: 'Deletes a consumable quantity record for an assay',
       notes: 'Returns ok: true when successfully deleted',
-      auth: { scope: ['assay:view', 'assay:edit'] },
+      auth: { scope: ['assay:view', 'assay:edit', 'assay:admin'] },
       validate: {
         params: {
           assayId: Joi.number()

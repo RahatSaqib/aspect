@@ -1,18 +1,19 @@
 const _ = require('lodash')
 const { knex } = require('../db')
 const setupPaginator = require('../shared/knex-paginator')
-
 const { getAccountDetailsForUsername } = require('../accountDetails/service')
+const { getConstraints, addConstraints } = require('../auth/constraints')
 
 setupPaginator(knex)
 
 const RESOLVED_ISSUE_STATUS = 'Resolved'
 const OK_ISSUE_STATUS = 'Ok'
 
-async function getQuery(request, query, queryBuilder) {
+async function baseAlertMessagesQuery(request, query, queryBuilder) {
   const loggedUserName = request.auth.credentials.name
   const accountDetails = await getAccountDetailsForUsername(loggedUserName)
   const sortColumn = query.sortCol ? query.sortCol : 'time'
+  const dataConstraints = await getConstraints(request.auth.credentials)
   const result = await knex('AlertMessage as am')
     .join('Notification as notif', 'am.id', 'notif.alertMessageId')
     .join('Site as site', 'am.siteId', 'site.id')
@@ -38,6 +39,7 @@ async function getQuery(request, query, queryBuilder) {
         .where('am.personId', accountDetails.id)
         .whereNotIn('is.externalid', [RESOLVED_ISSUE_STATUS, OK_ISSUE_STATUS])
     })
+    .modify(addConstraints, dataConstraints, { device: 'd', site: 'site' })
     .modify(queryBuilder)
     .orderBy(sortColumn, query.sortDir)
     .paginate(query.size || 10, query.page || 0, true)
@@ -49,7 +51,7 @@ async function listTasksByStatus(request) {
   const issueCategoryId = query.categoryId
   const { date, alertTemplateId } = query
   const sqlDate = new Date(date).toISOString().split('T')[0]
-  const queryKnex = await getQuery(request, query, builder => {
+  const queryKnex = await baseAlertMessagesQuery(request, query, builder => {
     builder
       .where('ic.Id', issueCategoryId)
       .where('am.alertTemplateId', alertTemplateId)
@@ -78,34 +80,40 @@ async function listTasksByStatus(request) {
 async function listTasks(request) {
   const { query } = request
 
-  const queryKnex = await getQuery(request, query, queryBuilder => {
-    queryBuilder
-      .select(
-        knex.raw('max(am.id) as id'),
-        'am.alertTemplateId',
-        knex.raw("group_concat(DISTINCT site.name separator ', ') as site"),
-        'is.name as issueStatus',
-        'am.alertTemplateId',
-        'is.Id as issueStatusId',
-        'ic.shortname as issueCategory',
-        'ic.Id as issueCategoryId',
-        'ic.externalId as issueCategoryExternalId',
-        knex.raw('date(am.createdOn) as time'),
-        'am.message',
-        knex.raw('sum(case when i.id is null then 0 else 1 end) as issueCount'),
-        knex.raw(
-          "group_concat(DISTINCT ifnull(d.name,site.name) separator ', ') as title"
+  const queryKnex = await baseAlertMessagesQuery(
+    request,
+    query,
+    queryBuilder => {
+      queryBuilder
+        .select(
+          knex.raw('max(am.id) as id'),
+          'am.alertTemplateId',
+          knex.raw("group_concat(DISTINCT site.name separator ', ') as site"),
+          'is.name as issueStatus',
+          'am.alertTemplateId',
+          'is.Id as issueStatusId',
+          'ic.shortname as issueCategory',
+          'ic.Id as issueCategoryId',
+          'ic.externalId as issueCategoryExternalId',
+          knex.raw('date(am.createdOn) as time'),
+          'am.message',
+          knex.raw(
+            'sum(case when i.id is null then 0 else 1 end) as issueCount'
+          ),
+          knex.raw(
+            "group_concat(DISTINCT ifnull(d.name,site.name) separator ', ') as title"
+          )
         )
-      )
-      .groupBy(
-        'is.id',
-        'am.alertTemplateId',
-        'ic.name',
-        'ic.id',
-        'ic.externalId',
-        knex.raw('date(am.createdOn)')
-      )
-  })
+        .groupBy(
+          'is.id',
+          'am.alertTemplateId',
+          'ic.name',
+          'ic.id',
+          'ic.externalId',
+          knex.raw('date(am.createdOn)')
+        )
+    }
+  )
 
   const result = processTaskResults(queryKnex.data, queryKnex.total || 0)
   return result
@@ -155,7 +163,8 @@ async function getPersonsBySite(siteId) {
 }
 
 async function getTaskDetailsQuery(taskId, userId) {
-  const query = await knex('AlertMessage as am')
+  const dataConstraints = await getConstraints({ userId })
+  return knex('AlertMessage as am')
     .join('Person as p', 'am.personId', 'p.Id')
     .join('Notification as notif', 'am.id', 'notif.alertMessageId')
     .join('Site as site', 'am.siteId', 'site.id')
@@ -164,6 +173,10 @@ async function getTaskDetailsQuery(taskId, userId) {
     .leftJoin('IssueStatus as is', 'i.issueStatusId', 'is.id')
     .leftJoin('IssueType as it', 'i.issueTypeId', 'it.id')
     .leftJoin('IssueCategory as ic', 'it.issueCategoryId', 'ic.id')
+    .modify(addConstraints, dataConstraints, {
+      device: 'd',
+      site: 'site',
+    })
     .where('am.Id', taskId)
     .where('am.personId', userId)
     .first(
@@ -196,8 +209,8 @@ async function getTaskDetailsQuery(taskId, userId) {
       'am.message',
       'title'
     )
-  return query
 }
+
 module.exports = {
   listTasks,
   listTasksByStatus,

@@ -1,6 +1,6 @@
 const _ = require('lodash')
 const Boom = require('@hapi/boom')
-const { getConstraints } = require('../auth/constraints')
+const { getConstraints, addConstraints } = require('../auth/constraints')
 const { knex, query } = require('../db')
 
 const SELECT_LIST_FIELDS = [
@@ -33,13 +33,14 @@ async function getConsumableAssays(request) {
         knex.raw(dataConstraints.partner.id)
       )
     })
+    .modify(addConstraints, dataConstraints, { assay: 'a' })
     .where('ca.consumableId', consumableId)
     .select(SELECT_LIST_FIELDS)
 
   return { ok: true, data: assayConsumables }
 }
 
-function selectAssayConsumables(knex, partnerId, assayId, consumableId) {
+function selectAssayConsumables(knex, dataConstraints, assayId, consumableId) {
   return (
     knex('ConsumableAssay as ca')
       .join('Consumable as c', 'ca.consumableId', 'c.id')
@@ -48,9 +49,10 @@ function selectAssayConsumables(knex, partnerId, assayId, consumableId) {
       .leftJoin('PartnerConsumable as pc', function() {
         this.on('ca.consumableId', 'pc.consumableId').andOn(
           'pc.partnerId',
-          knex.raw(partnerId)
+          knex.raw(dataConstraints.partner.id)
         )
       })
+      .modify(addConstraints, dataConstraints, { assay: 'a' })
       .where(function() {
         this.where('ca.assayId', assayId)
         if (consumableId) {
@@ -60,8 +62,8 @@ function selectAssayConsumables(knex, partnerId, assayId, consumableId) {
       // TODO: Revisit once permissions system allows the use of partnerId only in addConstraints
       .andWhere(function() {
         this.whereNull('pc.partnerId')
-        if (partnerId) {
-          this.orWhere({ 'pc.partnerId': partnerId })
+        if (dataConstraints.partner.id) {
+          this.orWhere({ 'pc.partnerId': dataConstraints.partner.id })
         }
       })
       .select(SELECT_LIST_FIELDS)
@@ -74,13 +76,10 @@ async function getAssayConsumables(request) {
     params: { assayId },
   } = request
 
-  const {
-    partner: { id: partnerId },
-  } = await getConstraints(auth.credentials)
-
+  const dataContraints = await getConstraints(auth.credentials)
   const assayConsumables = await selectAssayConsumables(
     query('Get assay consumable'),
-    partnerId,
+    dataContraints,
     assayId
   )
 
@@ -110,7 +109,7 @@ async function createAssayConsumable(request) {
 
   const assayConsumables = await selectAssayConsumables(
     query('Get assay consumable'),
-    dataConstraints.partner.id,
+    dataConstraints,
     assayId,
     consumableId
   )
@@ -135,7 +134,7 @@ async function updateAssayConsumableQuantity(request) {
 
   const assayConsumables = await selectAssayConsumables(
     query('Get assay consumable'),
-    dataConstraints.partner.id,
+    dataConstraints,
     assayId,
     consumableId
   )

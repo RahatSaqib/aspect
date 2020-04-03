@@ -2,38 +2,109 @@ const supertest = require('supertest')
 const chai = require('chai')
 const shared = require('../utils/sharedToken')
 const { runTestWithKnex } = require('../utils/generatorFunctionUtils')
+const { getAccessToken, createUser, removeUser } = require('../utils/authUtils')
 
 const server = supertest.agent('http://localhost:8080')
-const { assert } = chai
+const { assert, expect } = chai
 
 describe('Assay routes', () => {
   const path = '/api/assay'
   shared.checkToken(server, path)
   describe('GET', () => {
-    it('should return a list of assays when using valid token', done => {
-      server
+    it('should return a list of assays when using valid token', async () => {
+      const assayResponse = await server
         .get(path)
         .set('Authorization', `Bearer ${shared.token}`)
-        .end((err, res) => {
-          assert.equal(res.status, 200)
-          assert.typeOf(res.body, 'Object')
-          assert.property(res.body, 'data')
-          assert.typeOf(res.body.data, 'array')
-          assert.isAtLeast(res.body.data.length, 3)
-          assert.property(res.body.data[0], 'id')
-          assert.property(res.body.data[0], 'assayTypeId')
-          assert.property(res.body.data[0], 'deviceTypeId')
-          assert.property(res.body.data[0], 'name')
-          assert.property(res.body.data[0], 'assayTypeName')
-          assert.property(res.body.data[0], 'deviceTypeName')
-          assert.property(res.body.data[0], 'hasResults')
-          assert.property(res.body.data[0], 'resultDataSchema')
-          assert.property(res.body.data[0], 'assayTypeAbbreviation')
-          assert.property(res.body.data[0], 'abbreviation')
-          assert.property(res.body, 'total')
-          done()
-        })
+      assert.equal(assayResponse.status, 200)
+      assert.typeOf(assayResponse.body, 'Object')
+      assert.property(assayResponse.body, 'data')
+      assert.typeOf(assayResponse.body.data, 'array')
+      assert.isAtLeast(assayResponse.body.data.length, 3)
+      assert.property(assayResponse.body.data[0], 'id')
+      assert.property(assayResponse.body.data[0], 'assayTypeId')
+      assert.property(assayResponse.body.data[0], 'deviceTypeId')
+      assert.property(assayResponse.body.data[0], 'name')
+      assert.property(assayResponse.body.data[0], 'assayTypeName')
+      assert.property(assayResponse.body.data[0], 'deviceTypeName')
+      assert.property(assayResponse.body.data[0], 'hasResults')
+      assert.property(assayResponse.body.data[0], 'resultDataSchema')
+      assert.property(assayResponse.body.data[0], 'assayTypeAbbreviation')
+      assert.property(assayResponse.body.data[0], 'abbreviation')
+      assert.property(assayResponse.body, 'total')
+      expect(assayResponse.body.data).to.containSubset([
+        {
+          assayTypeName: 'MTB/Rif',
+        },
+        {
+          assayTypeName: 'HIV VL',
+        },
+      ])
     })
+
+    const hivManagerUsername = 'hiv_manager'
+    const hivManagerPassword = 'hiv-manager-pass'
+    let hivManagerUserId
+    let hivManagerAuthAccessToken
+    before(async () => {
+      hivManagerUserId = await createUser(
+        'Partner One',
+        'US',
+        hivManagerUsername,
+        hivManagerPassword,
+        [
+          {
+            jobFunctionExternalId: 'manager',
+            stateName: null,
+            lgaName: null,
+            siteExternalId: null,
+            assayExternalId: null,
+            assayTypeExternalId: 'assayTypeCD4',
+            deviceTypeExternalId: null,
+          },
+          {
+            jobFunctionExternalId: 'manager',
+            stateName: null,
+            lgaName: null,
+            siteExternalId: null,
+            assayExternalId: null,
+            assayTypeExternalId: 'assayTypeHivQual',
+            deviceTypeExternalId: null,
+          },
+          {
+            jobFunctionExternalId: 'manager',
+            stateName: null,
+            lgaName: null,
+            siteExternalId: null,
+            assayExternalId: null,
+            assayTypeExternalId: 'assayTypeHivVl',
+            deviceTypeExternalId: null,
+          },
+        ]
+      )
+      hivManagerAuthAccessToken = await getAccessToken(
+        hivManagerUsername,
+        hivManagerPassword
+      )
+    })
+
+    after(async () => removeUser(hivManagerUserId))
+
+    it("should constrain assays returned based on the user's job context", async () => {
+      const assayResponse = await server
+        .get(path)
+        .set('Authorization', `Bearer ${hivManagerAuthAccessToken}`)
+      expect(assayResponse.body.data).to.containSubset([
+        {
+          assayTypeName: 'HIV VL',
+        },
+      ])
+      expect(assayResponse.body.data).to.not.containSubset([
+        {
+          assayTypeName: 'MTB/Rif',
+        },
+      ])
+    })
+
     describe('GET /assay/resultandpatientschema', () => {
       it('should return a list of assays patient and result and schema data', () =>
         runTestWithKnex(async knex => {
