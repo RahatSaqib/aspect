@@ -41,6 +41,10 @@ export const messages = defineMessages({
       },
     },
     CV: {
+      name: {
+        id: 'pages.Status.clinicalIndicators.CV.name',
+        defaultMessage: 'Daily Confirmed Cases',
+      },
       pie: {
         legend: {
           id: 'pages.Status.clinicalIndicators.CV.pie.legend',

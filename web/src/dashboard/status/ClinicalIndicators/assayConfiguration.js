@@ -1,4 +1,3 @@
-import capitalize from 'lodash/capitalize'
 import { getTimePeriod, buildAssaysFromWhitelist } from './Graphs/Helpers'
 
 import messages from './messages'
@@ -66,7 +65,7 @@ const assayConfiguration = (intl, assaysFromState, BarGraph, PieGraph) => {
         'assayMP96Covid19',
         'assayQS7Covid19',
       ],
-      title: 'Daily Confirmed Cases',
+      title: intl.formatMessage(messages.clinicalIndicators.CV.name),
       period: DAY.plural,
       graphType: [
         {

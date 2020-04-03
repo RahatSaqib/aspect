@@ -73,7 +73,7 @@ const groupByKey = (
     acc[curr[key]] = {
       ...acc[curr[key]],
       [key]: formatDate ? format(new Date(curr[key]), formatDate) : curr[key],
-      [countKey]: curr.cnt,
+      [countKey]: curr.cnt * 89,
     }
 
     return acc
