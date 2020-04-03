@@ -9,8 +9,8 @@ const { runTestWithKnex } = require('../utils/generatorFunctionUtils')
 const server = supertest.agent('http://localhost:8080')
 const { assert } = chai
 
-describe.only('Result Aggregations for reports', () => {
-  const path = '/api/result/aggregations'
+describe('Result Follow-Up Aggregations for reports', () => {
+  const path = '/api/result/follow-up-report'
 
   describe('GET', () => {
     shared.checkToken(server, path)
