@@ -66,6 +66,7 @@ const assayConfiguration = (intl, assaysFromState, BarGraph, PieGraph) => {
         'assayMP96Covid19',
         'assayQS7Covid19',
       ],
+      title: 'Daily Confirmed Cases',
       period: DAY.plural,
       graphType: [
         {
@@ -76,7 +77,7 @@ const assayConfiguration = (intl, assaysFromState, BarGraph, PieGraph) => {
           resultCategory: RESULT.result1,
           indexBy: DAY.single,
           groupBy: [DAY.single, RESULT.result1],
-          legend: true,
+          legend: false,
           formatDate: DAY.format,
           filter: ['Positive'],
           minDate: getTimePeriod(15, DAY.plural, 'yyyy-MM-dd'),
@@ -123,10 +124,10 @@ const assayConfiguration = (intl, assaysFromState, BarGraph, PieGraph) => {
   const allowedAssays = buildAssaysFromWhitelist(assaysFromState, whiteList)
 
   allowedAssays.map(assay => {
-    const { externalId: id, name, graphType } = assay
+    const { externalId: id, name, title = false, graphType } = assay
     return buildAssays.push({
       id,
-      name,
+      name: title || name,
       graphContainerClass: 'clinicalIndicator__graphs',
       graphType,
       assayFromState: assay,

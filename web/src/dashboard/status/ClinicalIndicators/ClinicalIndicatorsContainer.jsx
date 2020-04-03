@@ -71,13 +71,14 @@ const ClinicalIndicatorsContainer = ({
   data = false,
   ...props
 }) => {
+  const { assay, intl } = props
   const {
     graphContainerClass,
     colors,
     graphType,
     orderBy,
     assayFromState,
-  } = props.assay
+  } = assay
   const [graphData, setGraphData] = useState(false)
 
   useEffect(() => {
@@ -128,6 +129,7 @@ const ClinicalIndicatorsContainer = ({
                   displayMethod={displayMethod}
                   assayFromState={assayFromState}
                   filter={filter}
+                  intl={intl}
                 />
               )
             )}
