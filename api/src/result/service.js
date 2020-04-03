@@ -10,11 +10,7 @@ const {
   sortPageParams,
 } = require('../db')
 const { resultUpdated, resultLoggedProcessed } = require('./actions')
-const {
-  addConstraints,
-  canViewResults,
-  getConstraints,
-} = require('../auth/constraints')
+const { addConstraints, getConstraints } = require('../auth/constraints')
 const { getUser, getUserByUserId } = require('../auth/service')
 const {
   deviceTypeToId,
@@ -2209,126 +2205,6 @@ async function getResultsForReport(auth, query) {
   return getListResults(query, auth)
 }
 
-async function resultAggregationsForReport(request) {
-  const { auth, query } = request
-
-  if (!canViewResults(auth)) {
-    throw Boom.unauthorized('You do not have access to results')
-  }
-
-  let { assay } = query
-  if (assay && !Array.isArray(assay)) {
-    assay = [assay]
-  }
-
-  // get data constraints
-  const dataConstraints = await getConstraints(auth.credentials)
-
-  const resultQuery = knex('Result as r')
-    .innerJoin('Device as d', 'd.id', 'r.deviceId')
-    // .innerJoin('Site as s', 's.id', 'r.siteId')
-    .innerJoin('Assay as a', 'a.id', 'r.assayId')
-    .innerJoin('AssayType as at', 'at.id', 'a.assayTypeId')
-    .innerJoin('ResultCategory as rc1', 'rc1.id', 'r.resultCategory1')
-    .leftJoin('ResultCategory as rc2', 'rc2.id', 'r.resultCategory2')
-    // .leftJoin('Geography as g', 's.geographyId', 'g.id')
-    // .leftJoin('State as st', 'st.id', 'g.stateId')
-    .leftJoin('Sample as sp', 'r.sampleId', 'sp.id')
-    .leftJoin('SampleType as stp', 'sp.sampleTypeId', 'stp.id')
-    .leftJoin('Site as so', 'sp.originSiteId', 'so.id')
-    .leftJoin('Geography as g', 'so.geographyId', 'g.id')
-    .leftJoin('State as st', 'st.id', 'g.stateId')
-    .innerJoin('ResultCategoryAssay as rca', function() {
-      this.on('r.assayId', 'rca.assayId').andOn(
-        'r.resultCategory1',
-        'rca.resultCategoryId'
-      )
-    })
-    .leftJoin('ResultCategoryAssay as rсa2', function() {
-      this.on('r.assayId', 'rсa2.assayId').andOn(
-        'r.resultCategory2',
-        'rсa2.resultCategoryId'
-      )
-    })
-    .leftJoin('ResultFollowUp as rfu', 'r.id', 'rfu.resultId')
-    .leftJoin('FollowUp as fu', 'rfu.followUpId', 'fu.id')
-    .leftJoin('FollowUpType as fut', 'fu.followUpTypeId', 'fut.id')
-    .modify(addConstraints, dataConstraints, {
-      device: 'd',
-      geography: 'g',
-      site: 'so', // origin site
-    })
-    .modify(filterParams, query, {
-      countryId: 'g.countryId',
-      deviceName: 'd.name',
-      partnerId: 'g.partnerId',
-      siteName: 'so.name', // origin site
-    })
-    .modify(qb => {
-      if (assay) {
-        qb.whereIn('a.externalId', assay)
-      }
-      if (query.assayType) {
-        qb.where('at.externalId', '=', query.assayType)
-      }
-      if (query.followUp) {
-        qb.where('fu.externalId', '=', query.followUp)
-      }
-      if (query.followUpType) {
-        qb.where('fut.externalId', '=', query.followUpType)
-      }
-      if (query.minDate) {
-        qb.where('r.endedOn', '>=', query.minDate)
-      }
-      if (query.maxDate) {
-        qb.where('r.endedOn', '<=', query.maxDate)
-      }
-      if (query.resultCategory1) {
-        qb.where('rc1.externalId', '=', query.resultCategory1)
-      }
-      if (query.resultCategory2) {
-        qb.where('rc2.externalId', '=', query.resultCategory2)
-      }
-    })
-    .where('rca.reportable', true)
-    .orderBy('r.endedOn')
-    .count('r.id as cnt')
-
-  // if no group is specified, use result category
-  let { groupBy } = query
-  if (!groupBy) {
-    groupBy = ['resultCategory1']
-  } else if (!Array.isArray(groupBy)) {
-    groupBy = [groupBy]
-  }
-
-  // handle possible groups:
-  const paramToDb = {
-    resultCategory1: 'rc1.externalId as resultCategory1',
-    resultCategory2: 'rc2.externalId as resultCategory2',
-    week: knex.raw('DATE_FORMAT(r.endedOn, "%x-%v") as week'),
-    month: knex.raw('DATE_FORMAT(r.endedOn, "%Y-%m") as month'),
-    year: knex.raw('DATE_FORMAT(r.endedOn, "%Y") as year'),
-    day: knex.raw('DATE_FORMAT(r.endedOn, "%Y-%m-%d") as day'),
-    gender: knex.raw(
-      'replace(r.patientData ->> "$.gender", "null", null) as gender'
-    ),
-    age: knex.raw('replace(r.patientData ->> "$.age", "null", null) as age'),
-    state: 'st.name as state',
-  }
-
-  groupBy.forEach(g => {
-    resultQuery.modify(qb => {
-      qb.select(paramToDb[g])
-      qb.groupBy(g)
-      qb.orderBy(g)
-    })
-  })
-  return {
-    data: await resultQuery,
-  }
-}
-
 module.exports = {
   updateTransferNotification,
   listResults,
@@ -2358,5 +2234,4 @@ module.exports = {
   allResultNotes,
   showResultFollowUps,
   transferResult,
-  resultAggregationsForReport,
 }
