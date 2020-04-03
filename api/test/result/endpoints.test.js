@@ -364,4 +364,27 @@ describe('result endpoints', () => {
       })
     })
   })
+
+  describe('/result/aggregations', () => {
+    let endpoint
+    const expectedResponse = { value: 'Expected result' }
+
+    beforeEach(() => {
+      endpoint = setupRoute('GET', '/result/aggregations', {
+        async resultAggregationsForReport() {
+          return expectedResponse
+        },
+      })
+    })
+
+    it('Should respond with the data returned from the service', done => {
+      endpointUtils
+        .callHandlerOn(endpoint)
+        .handleResponseWith(response => {
+          assert.deepEqual(response, expectedResponse)
+        })
+        .thenCall(done)
+        .execute()
+    })
+  })
 })

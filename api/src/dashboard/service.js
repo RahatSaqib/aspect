@@ -1476,11 +1476,9 @@ async function clinicalIndicatorsDashboard(request) {
     throw Boom.unauthorized('You do not have access to results')
   }
 
-  let assay = null
-  if (query.assay && !Array.isArray(query.assay)) {
-    assay = [query.assay]
-  } else if (query.assay) {
-    assay = query.assay
+  let { assay } = query
+  if (assay && !Array.isArray(assay)) {
+    assay = [assay]
   }
 
   // get data constraints
