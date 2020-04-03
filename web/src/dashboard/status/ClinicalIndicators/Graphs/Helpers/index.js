@@ -46,7 +46,13 @@ const getKeysFromResults = (data, keyToOmit) => {
   return keyToOmit ? without(res, keyToOmit) : res
 }
 
-const groupByKey = (data, key, cntKey = false, formatDate = false) => {
+const groupByKey = (
+  data,
+  key,
+  cntKey = false,
+  formatDate = false,
+  intl = false
+) => {
   const flatMapSortMap = graphColorMap.reduce((acc, curr) => {
     const newCurr = omit(curr, 'id', 'color')
     acc.push(newCurr.externalId)
