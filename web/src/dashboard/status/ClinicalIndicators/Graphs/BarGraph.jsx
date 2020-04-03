@@ -52,7 +52,6 @@ const BarGraph = ({
         formatDate,
         intl
       )
-      console.log(grouped)
 
       const normalised = normaliseKeys(grouped, filterResults, indexBy)
 
