@@ -8,6 +8,7 @@ const {
   commonUpserts,
   upsertJobFunctionPermission,
   upsertJobFeatures,
+  upsertJobFunction,
 } = require('../common')
 const { upsertCovidDeviceTypes } = require('../commonCovid')
 const {
@@ -33,6 +34,10 @@ const now = new Date()
 
 async function seed(knex) {
   utils.hasSeededStaticData = true
+
+  const { id: countryId } = await knex('Country')
+    .where('name', 'Wakanda')
+    .first('id')
 
   // Create admin user and audit fields
   const [adminId] = await knex('User').insert({
@@ -294,6 +299,120 @@ async function seed(knex) {
     partnerId,
     countryData.devices
   )
+  const clinicList = countryData.clinics
+  const firstClinic = clinicList[0]
+  const secondClinic = clinicList[1]
+
+  const jobFunctionIdClinician = await upsertJobFunction(
+    knex,
+    'Clinician',
+    partnerId
+  )
+
+  await upsertJobFunctionPermission(knex, jobFunctionIdClinician, [
+    modules.browse.view,
+    modules.result.edit,
+    modules.assay.edit,
+    modules.device.view,
+    modules.task.view,
+    modules.treatmentStatus.edit,
+    modules.site.view,
+  ])
+
+  // permissions
+  await upsertJobFeatures(knex, jobFunctionIdClinician, [
+    features.device,
+    features.result,
+    features.site,
+    features.summaryDashboard,
+    features.account,
+    features.resultDashboard,
+  ])
+
+  // Create User
+  const [userIdFirstClinic] = await knex('User').insert({
+    name: 'covid_clinic_1',
+    password: bcrypt.hashSync('covid', saltRounds),
+    approved: 1,
+    createdOn: now,
+    lockedOut: 0,
+    failedPasswordAttempts: 0,
+  })
+
+  const { id: siteIdFirstClinic } = await knex('Site')
+    .where('externalId', firstClinic.externalId)
+    .first('id')
+
+  // create Person
+  const [personIdFirstClinic] = await knex('Person').insert({
+    userId: userIdFirstClinic,
+    geographyId: firstClinic.geographyId,
+    name: firstClinic.name,
+    lastPartnerId: partnerId,
+    lastCountryId: countryId,
+    timezone: countryData.timezone,
+    culture: 'en',
+    canLogin: true,
+    createdBy: adminId,
+    createdOn: now,
+    updatedBy: adminId,
+    updatedOn: now,
+  })
+
+  // job function for user
+  const [jobIdFirstClinic] = await knex('Job').insert({
+    personId: personIdFirstClinic,
+    jobFunctionId: jobFunctionIdClinician,
+  })
+
+  // context for user
+  await knex('JobContext').insert({
+    jobId: jobIdFirstClinic,
+    siteId: siteIdFirstClinic,
+  })
+
+  // Create User
+  const [userIdSecondClinic] = await knex('User').insert({
+    name: 'covid_clinic_2',
+    password: bcrypt.hashSync('covid', saltRounds),
+    approved: 1,
+    createdOn: now,
+    lockedOut: 0,
+    failedPasswordAttempts: 0,
+  })
+
+  const { id: siteIdSecondClinic } = await knex('Site')
+    .where('externalId', secondClinic.externalId)
+    .first('id')
+
+  // create Person
+  const [personIdSecondClinic] = await knex('Person').insert({
+    userId: userIdSecondClinic,
+    geographyId: secondClinic.geographyId,
+    name: secondClinic.name,
+    lastPartnerId: partnerId,
+    lastCountryId: countryId,
+    timezone: countryData.timezone,
+    culture: 'en',
+    canLogin: true,
+    createdBy: adminId,
+    createdOn: now,
+    updatedBy: adminId,
+    updatedOn: now,
+  })
+
+  // job function for user
+  const [jobIdSecondClinic] = await knex('Job').insert({
+    personId: personIdSecondClinic,
+    jobFunctionId: jobFunctionIdClinician,
+  })
+
+  // context for user
+  await knex('JobContext').insert({
+    jobId: jobIdSecondClinic,
+    siteId: siteIdSecondClinic,
+  })
+
   // assign treatment status
   await normalizeTreatmentStatusDistributionByResults(
     knex,
@@ -328,6 +447,7 @@ async function seed(knex) {
   await Promise.each(statWidgets, async elem =>
     knex('JobFunctionDashboardWidget').insert([
       { jobFunctionId: jobFunctionIdAdmin, widgetId: elem.widgetId },
+      { jobFunctionId: jobFunctionIdClinician, widgetId: elem.widgetId },
     ])
   )
 }
