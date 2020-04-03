@@ -3,7 +3,7 @@ const { assert } = require('chai')
 const _ = require('lodash')
 const endpointUtils = require('../utils/endpointUtils')
 
-describe('dashboard endpoint', () => {
+describe.only('dashboard endpoint', () => {
   function setupRoute(method, path, serviceStub) {
     const endpoints = proxyquire('../../src/dashboard/endpoints', {
       './service': serviceStub,
@@ -34,6 +34,12 @@ describe('dashboard endpoint', () => {
   })
 
   describe('/dashboard/clinical-indicators', () => {
+    function setupRoute(method, path, serviceStub) {
+      const endpoints = proxyquire('../../src/dashboard/endpoints', {
+        '../result/service': serviceStub,
+      })
+      return _.find(endpoints.routes, { method, path })
+    }
     let endpoint
     const expectedResponse = { value: 'Expected result' }
 

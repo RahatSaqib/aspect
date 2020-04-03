@@ -14,11 +14,19 @@ const {
   operationalDashboard,
   actionDashboard,
 } = require('./service')
-const {
-  resultAggregations,
-  responseResultAggregationsItem,
-  validateResultAggregations,
-} = require('../shared/requests/resultAggregations')
+const { clinicalIndicatorsDashboard } = require('../result/service')
+
+const clinicalIndicatorsValidGroups = [
+  'resultCategory1',
+  'resultCategory2',
+  'week',
+  'month',
+  'year',
+  'gender',
+  'age',
+  'state',
+  'day',
+]
 
 const routes = [
   {
@@ -137,14 +145,41 @@ const routes = [
   {
     method: 'GET',
     path: '/dashboard/clinical-indicators',
-    handler: asyncHandler(resultAggregations),
+    handler: asyncHandler(clinicalIndicatorsDashboard),
     config: {
       description: 'Clinical Indicators Dashboard',
       notes: 'Data for most of the graphs on the clinical indicators page',
       auth: { scope: ['site', 'result'] },
       validate: {
         query: {
-          ...validateResultAggregations(),
+          ...validateDateRangeParams(),
+          assayType: Joi.string()
+            .allow('')
+            .description('Filter for assay type'),
+          assay: Joi.alternatives()
+            .try(Joi.array(), Joi.string())
+            .description('Filter for assay'),
+          resultCategory1: Joi.string()
+            .allow('')
+            .description('Filter for result category 1'),
+          resultCategory2: Joi.string()
+            .allow('')
+            .description('Filter for result category 2'),
+          siteName: Joi.string()
+            .allow('')
+            .description('Filter for site'),
+          deviceName: Joi.string()
+            .allow('')
+            .description('Filter for device'),
+          groupBy: Joi.alternatives()
+            .allow('', null)
+            .try(
+              Joi.array().items(
+                Joi.string().valid(clinicalIndicatorsValidGroups)
+              ),
+              Joi.string().valid(clinicalIndicatorsValidGroups)
+            )
+            .description('Array of fields to group by'),
         },
       },
       response: {
@@ -157,7 +192,36 @@ const routes = [
             .description('List of reports')
             .items(
               Joi.object().keys({
-                ...responseResultAggregationsItem(),
+                cnt: Joi.number()
+                  .required()
+                  .description('The count of results in the group'),
+                resultCategory1: Joi.string()
+                  .allow(null)
+                  .description('Result Category 1 that count is grouped by'),
+                resultCategory2: Joi.string()
+                  .allow(null)
+                  .description('Result Category 2 that count is grouped by'),
+                week: Joi.string().description(
+                  'The week that the count is grouped by'
+                ),
+                month: Joi.string().description(
+                  'The month that the count is grouped by'
+                ),
+                year: Joi.string().description(
+                  'The year that the count is grouped by'
+                ),
+                day: Joi.string().description(
+                  'The day that the count is grouped by'
+                ),
+                gender: Joi.string()
+                  .allow(null)
+                  .description('The gender that the count is grouped by'),
+                age: Joi.number()
+                  .allow(null)
+                  .description('The age that the count is grouped by'),
+                state: Joi.string()
+                  .allow(null)
+                  .description('The state that the count is grouped by'),
               })
             ),
         }),
