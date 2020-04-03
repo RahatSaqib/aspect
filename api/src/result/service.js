@@ -10,7 +10,7 @@ const {
   sortPageParams,
 } = require('../db')
 const { resultUpdated, resultLoggedProcessed } = require('./actions')
-const { addConstraints, getConstraints } = require('../auth/constraints')
+const { getConstraints, addConstraints } = require('../auth/constraints')
 const { getUser, getUserByUserId } = require('../auth/service')
 const {
   deviceTypeToId,
