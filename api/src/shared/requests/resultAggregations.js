@@ -162,11 +162,13 @@ async function resultAggregations(request) {
     .count('r.id as cnt')
 
   // if no group is specified, use result category
-  let { groupBy } = query
-  if (!groupBy) {
+  let groupBy = null
+  if (!query.groupBy) {
     groupBy = ['resultCategory1']
-  } else if (!Array.isArray(groupBy)) {
-    groupBy = [groupBy]
+  } else if (!Array.isArray(query.groupBy)) {
+    groupBy = [query.groupBy]
+  } else {
+    groupBy = query.groupBy
   }
 
   // handle possible groups:
