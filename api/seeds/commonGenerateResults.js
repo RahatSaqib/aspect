@@ -178,10 +178,17 @@ async function generateResults(
     .whereIn('siteId', _.map(siteDatas, 'id'))
     .select()
 
+  const tbAssays = _.filter(
+    assays,
+    elem =>
+      elem.externalId === 'assayBdMgitAst' ||
+      elem.externalId === 'assayBdMgitGnd' ||
+      elem.externalId === 'GxMtbRif'
+  )
   const tbResults = await addTBResults(
     knex,
     resultMtbNumber,
-    assays,
+    tbAssays,
     patients,
     auditFields,
     siteDatas,
@@ -199,10 +206,11 @@ async function generateResults(
       resultCategoryErrorId,
     ]
   )
+  const ebolaAssays = _.filter(assays, elem => elem.externalId === 'GxEbola')
   const ebolaResults = await addEbolaResults(
     knex,
     resultEbolaNumber,
-    assays,
+    ebolaAssays,
     patients,
     auditFields,
     siteDatas,
@@ -219,12 +227,16 @@ async function generateResults(
       resultCategoryNoResultId,
       resultCategoryErrorId,
     ]
+  )
+  const hivAssays = _.filter(
+    assays,
+    elem => ['GxHiv1Vl', 'GxHiv1Qual'].indexOf(elem.externalId) >= 0
   )
 
-  const hivResults = await addHivVlResults(
+  const hivVlResults = await addHivVlResults(
     knex,
     resultHivVlNumber,
-    assays,
+    hivAssays,
     patients,
     auditFields,
     siteDatas,
@@ -242,7 +254,7 @@ async function generateResults(
       resultCategoryErrorId,
     ]
   )
-  const covidDevices = knex('Device as d')
+  const covidDevices = await knex('Device as d')
     .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .join('Assay as a', 'dt.id', 'a.deviceTypeId')
     .join('AssayType as at', 'a.assayTypeId', 'at.id')
@@ -250,16 +262,26 @@ async function generateResults(
     .andWhere('at.externalId', 'covid19')
     .select('d.*')
 
+  const covidAssays = _.filter(
+    assays,
+    elem =>
+      [
+        'assayGenericCovid19',
+        'assayMP96Covid19',
+        'assayQS7Covid19',
+        'assayGXCovid19',
+      ].indexOf(elem.externalId) >= 0
+  )
   const covidResults = await addCovidResults(
     knex,
     resultCovidNumber,
-    assays,
+    covidAssays,
     auditFields,
     siteDatas,
     partnerOneId,
     await covidDevices
   )
-  return [].concat(tbResults, ebolaResults, hivResults, covidResults)
+  return [].concat(tbResults, ebolaResults, hivVlResults, covidResults)
 }
 
 async function addCovidResults(
@@ -421,6 +443,7 @@ async function addCovidResults(
     const assayId = resultCapturedInAspect
       ? genericAssay.id
       : _.find(assays, elem => elem.deviceTypeId === device.deviceTypeId).id
+
     const [resultId] = await knex('Result').insert({
       ...auditFields,
       externalId: `COVID-${format(new Date(), 'TT')}`,
