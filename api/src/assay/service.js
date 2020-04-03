@@ -88,7 +88,7 @@ async function listAssays(request) {
   const usedAssayIds = await knex('Result as r')
     .innerJoin('Device as d', 'r.deviceId', 'd.id')
     .leftJoin('Sample as sp', 'r.sampleId', 'sp.id')
-    .modify(addConstraints, dataConstraints, { device: 'd', sample: 'sp' })
+    .modify(addConstraints, dataConstraints, { device: 'd', result: 'r' })
     .distinct('r.assayId')
     .pluck('assayId')
 
