@@ -2351,7 +2351,20 @@ async function followUpAggregations(request) {
         'rсa2.resultCategoryId'
       )
     })
-    .leftJoin('ResultFollowUp as rfu', 'r.id', 'rfu.resultId')
+    .leftJoin(
+      knex('ResultFollowUp as rfu')
+        .innerJoin(
+          knex('ResultFollowUp')
+            .select(knex.raw('MAX(id) as id'))
+            .groupBy('resultId')
+            .as('rfuLastIds'),
+          'rfu.id',
+          'rfuLastIds.id'
+        )
+        .select('rfu.resultId', 'rfu.followUpId'),
+      'r.id',
+      'rfu.resultId'
+    )
     .leftJoin('FollowUp as fu', 'rfu.followUpId', 'fu.id')
     .leftJoin('FollowUpType as fut', 'fu.followUpTypeId', 'fut.id')
     .modify(addConstraints, dataConstraints, {
@@ -2418,6 +2431,8 @@ async function followUpAggregations(request) {
     ),
     age: knex.raw('replace(r.patientData ->> "$.age", "null", null) as age'),
     state: 'st.name as state',
+    followUp: 'fu.externalId as followUp',
+    followUpType: 'fut.externalId as followUpType',
   }
 
   groupBy.forEach(g => {

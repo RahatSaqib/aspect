@@ -48,6 +48,8 @@ const followUpAggregationsValidGroups = [
   'age',
   'state',
   'day',
+  'followUp',
+  'followUpType',
 ]
 
 // -----------------------------------------------------
