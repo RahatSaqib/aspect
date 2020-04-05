@@ -229,6 +229,11 @@ async function getListResults(query, auth, fields = SELECT_LIST_FIELDS) {
 
   const resultQuery = getQueryForResultsListAndExport(query, dataConstraints)
 
+  if (query.withFollowUp) {
+    selectFields.push('fu.externalId as followUp')
+    selectFields.push('fut.externalId as followUpType')
+  }
+
   // get total count for paging
   const getCount = resultQuery
     .clone()
@@ -237,6 +242,17 @@ async function getListResults(query, auth, fields = SELECT_LIST_FIELDS) {
   // get rows
   const getItems = resultQuery
     .clone()
+    .modify(qb => {
+      if (query.withFollowUp) {
+        qb.leftJoin(
+          queryResultFollowUpLastItems().as('rfu'),
+          'r.id',
+          'rfu.resultId'
+        )
+          .leftJoin('FollowUp as fu', 'rfu.followUpId', 'fu.id')
+          .leftJoin('FollowUpType as fut', 'fu.followUpTypeId', 'fut.id')
+      }
+    })
     .modify(sortPageParams, query, 'endedOn')
     .select(selectFields)
   // return result when both queries are finished
@@ -2313,6 +2329,17 @@ async function clinicalIndicatorsDashboard(request) {
   }
 }
 
+function queryResultFollowUpLastItems() {
+  // sub queries for getting latest ResultFollowUp entry for each resultId
+  const rfuLastIds = knex('ResultFollowUp')
+    .select(knex.raw('MAX(id) as id'))
+    .groupBy('resultId')
+  const rfuLastItems = knex('ResultFollowUp as rfuItems')
+    .innerJoin(rfuLastIds.as('rfuLastIds'), 'rfuItems.id', 'rfuLastIds.id')
+    .select('rfuItems.resultId', 'rfuItems.followUpId')
+  return rfuLastItems
+}
+
 async function followUpAggregations(request) {
   const { auth, query } = request
 
@@ -2329,14 +2356,6 @@ async function followUpAggregations(request) {
 
   // get data constraints
   const dataConstraints = await getConstraints(auth.credentials)
-
-  // sub queries for getting latest ResultFollowUp entries for each resultId
-  const rfuLastIds = knex('ResultFollowUp')
-    .select(knex.raw('MAX(id) as id'))
-    .groupBy('resultId')
-  const rfuLastItems = knex('ResultFollowUp as rfuItems')
-    .innerJoin(rfuLastIds.as('rfuLastIds'), 'rfuItems.id', 'rfuLastIds.id')
-    .select('rfuItems.resultId', 'rfuItems.followUpId')
 
   const resultQuery = knex('Result as r')
     .innerJoin('Device as d', 'd.id', 'r.deviceId')
@@ -2359,7 +2378,7 @@ async function followUpAggregations(request) {
         'rсa2.resultCategoryId'
       )
     })
-    .leftJoin(rfuLastItems.as('rfu'), 'r.id', 'rfu.resultId')
+    .leftJoin(queryResultFollowUpLastItems().as('rfu'), 'r.id', 'rfu.resultId')
     .leftJoin('FollowUp as fu', 'rfu.followUpId', 'fu.id')
     .leftJoin('FollowUpType as fut', 'fu.followUpTypeId', 'fut.id')
     .modify(addConstraints, dataConstraints, {

@@ -23,6 +23,9 @@ describe('Result Follow-Up Aggregations for reports', () => {
     const getResultsForUser = () =>
       server
         .get('/api/result')
+        .query({
+          withFollowUp: true,
+        })
         .set('Authorization', `Bearer ${shared.token}`)
         .then(res => res.body.data)
 
@@ -62,7 +65,11 @@ describe('Result Follow-Up Aggregations for reports', () => {
 
     it('should return all results grouped by month and should allow multiple assays', async () =>
       server
-        .get(`${path}?groupBy=month&assay=DaktariHivVL&assay=DaktariHcv`)
+        .get(path)
+        .query({
+          groupBy: ['month'],
+          assay: ['DaktariHivVL', 'DaktariHcv'],
+        })
         .set('Authorization', `Bearer ${shared.token}`)
         .then(res => {
           const expectedResponse = _.chain(resultsForUser)
@@ -89,7 +96,11 @@ describe('Result Follow-Up Aggregations for reports', () => {
 
     it('should return all results grouped by month and state if specified in query string', async () =>
       server
-        .get(`${path}?groupBy=month&groupBy=state&assay=DaktariHivVL`)
+        .get(path)
+        .query({
+          groupBy: ['month', 'state'],
+          assay: 'DaktariHivVL',
+        })
         .set('Authorization', `Bearer ${shared.token}`)
         .then(res => {
           const expectedResponse = _.chain(resultsForUser)
@@ -119,7 +130,10 @@ describe('Result Follow-Up Aggregations for reports', () => {
 
     it('should return all results grouped by day if specified in query string', async () =>
       server
-        .get(`${path}?groupBy=day`)
+        .get(path)
+        .query({
+          groupBy: ['day'],
+        })
         .set('Authorization', `Bearer ${shared.token}`)
         .then(res => {
           const expectedResponse = _.chain(resultsForUser)
@@ -140,7 +154,11 @@ describe('Result Follow-Up Aggregations for reports', () => {
 
     it('should return all results grouped by month and category and filtered by site if specified in query string', async () =>
       server
-        .get(`${path}?groupBy=month&groupBy=resultCategory1&siteName=Cuyahoga`)
+        .get(path)
+        .query({
+          groupBy: ['month', 'resultCategory1'],
+          siteName: 'Cuyahoga',
+        })
         .set('Authorization', `Bearer ${shared.token}`)
         .then(res => {
           const expectedResponse = _.chain(resultsForUser)
@@ -179,6 +197,46 @@ describe('Result Follow-Up Aggregations for reports', () => {
             res.body.message.substring(0, 21),
             'child "groupBy" fails'
           )
+        }))
+
+    it('should return all results grouped by month, category, followUp and followUpType and filtered by site if specified in query string', async () =>
+      server
+        .get(path)
+        .query({
+          groupBy: ['month', 'resultCategory1', 'followUp', 'followUpType'],
+          siteName: 'Cuyahoga',
+        })
+        .set('Authorization', `Bearer ${shared.token}`)
+        .then(res => {
+          const expectedResponse = _.chain(resultsForUser)
+            .filter(function(o) {
+              return (
+                // only reportable should be included
+                reportableResultCategories.indexOf(
+                  o.resultCategory1Name.replace(' ', '')
+                ) > -1 && o.siteName.indexOf('Cuyahoga') >= 0
+              )
+            })
+            .map(o => ({
+              joinedValues: `${o.resultCategory1Name.replace(' ', '')}_${format(
+                new Date(o.endedOn),
+                'yyyy-MM'
+              )}_${o.followUp}_${o.followUpType}`,
+            }))
+            .groupBy('joinedValues')
+            .map((value, key) => {
+              const groups = key.split('_')
+              return {
+                resultCategory1: groups[0],
+                month: groups[1],
+                followUp: groups[2],
+                followUpType: groups[3],
+                cnt: value.length,
+              }
+            })
+            .value()
+          assert.equal(res.status, 200)
+          assert.deepEqual(res.body.data, expectedResponse)
         }))
   })
 })

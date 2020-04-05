@@ -133,6 +133,11 @@ function listResultsBaseConfig() {
           .description(
             'The id of last entry in ResultStatusLog for current result'
           ),
+        withFollowUp: Joi.boolean()
+          .allow(null)
+          .description(
+            'When TRUE - add joins for latest FollowUp per result and corresponding response fields'
+          ),
       },
     },
   }
@@ -1499,6 +1504,12 @@ const routes = [
                 state: Joi.string()
                   .allow(null)
                   .description('The state that the count is grouped by'),
+                followUp: Joi.string()
+                  .allow(null)
+                  .description('The followUp that the count is grouped by'),
+                followUpType: Joi.string()
+                  .allow(null)
+                  .description('The followUpType that the count is grouped by'),
               })
             ),
         }),
