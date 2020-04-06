@@ -1505,6 +1505,7 @@ async function clinicalIndicatorsDashboard(request) {
       device: 'd',
       site: 's',
       geography: 'g',
+      result: 'r',
     })
     .modify(filterParams, query, {
       countryId: 'g.countryId',
