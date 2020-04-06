@@ -243,12 +243,20 @@ async function mergeResult(
           .first()) || {}
       if (originSiteGeography.countryId && !siteGeography.countryId) {
         siteGeography.countryId = originSiteGeography.countryId
-        if (originSiteGeography.stateId && !siteGeography.stateId) {
-          siteGeography.stateId = originSiteGeography.stateId
-          if (originSiteGeography.lgaId && !siteGeography.lgaId) {
-            siteGeography.lgaId = originSiteGeography.lgaId
-          }
-        }
+      }
+      if (
+        siteGeography.countryId &&
+        originSiteGeography.stateId &&
+        !siteGeography.stateId
+      ) {
+        siteGeography.stateId = originSiteGeography.stateId
+      }
+      if (
+        siteGeography.stateId &&
+        originSiteGeography.lgaId &&
+        !siteGeography.lgaId
+      ) {
+        siteGeography.lgaId = originSiteGeography.lgaId
       }
     }
     if (siteGeography.countryId) {

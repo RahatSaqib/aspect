@@ -22,7 +22,7 @@ async function getConsumableAssays(request) {
 
   const dataConstraints = await getConstraints(auth.credentials)
 
-  const assayConsumables = await query('Get assay consumables')
+  const assayConsumablesQ = query('Get assay consumables')
     .from('ConsumableAssay as ca')
     .join('Consumable as c', 'ca.consumableId', 'c.id')
     .join('Unit as u', 'c.unit', 'u.id')
@@ -36,7 +36,7 @@ async function getConsumableAssays(request) {
     .modify(addConstraints, dataConstraints, { assay: 'a' })
     .where('ca.consumableId', consumableId)
     .select(SELECT_LIST_FIELDS)
-
+  const assayConsumables = await assayConsumablesQ
   return { ok: true, data: assayConsumables }
 }
 

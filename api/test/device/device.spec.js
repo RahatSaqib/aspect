@@ -197,11 +197,6 @@ describe('Device routes', () => {
         [
           {
             jobFunctionExternalId: 'manager',
-            stateName: null,
-            lgaName: null,
-            siteExternalId: null,
-            assayExternalId: null,
-            assayTypeExternalId: null,
             deviceTypeExternalId: daktariVirologyDeviceTypeExternalId,
           },
         ]

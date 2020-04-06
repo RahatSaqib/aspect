@@ -309,12 +309,7 @@ describe('Result routes', () => {
         [
           {
             jobFunctionExternalId: 'clinician',
-            stateName: null,
-            lgaName: null,
-            siteExternalId: null,
             assayExternalId: assayBdMgitGndAssayExternalId,
-            assayTypeExternalId: null,
-            deviceTypeExternalId: null,
           },
         ]
       )
@@ -331,12 +326,7 @@ describe('Result routes', () => {
         [
           {
             jobFunctionExternalId: 'clinician',
-            stateName: null,
-            lgaName: null,
-            siteExternalId: null,
             assayExternalId: assayDaktariHivVlExternalId,
-            assayTypeExternalId: null,
-            deviceTypeExternalId: null,
           },
         ]
       )

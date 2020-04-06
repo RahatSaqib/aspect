@@ -34,6 +34,7 @@ async function createUser(
       assayExternalId: null,
       assayTypeExternalId: null,
       deviceTypeExternalId: null,
+      diseaseExternalId: null,
     },
   ]
 ) {
@@ -110,21 +111,32 @@ async function createUser(
     )
     await Promise.each(jobFunctionJobs, async jobFunctionJob => {
       let jobGeography = {}
-      if (jobFunctionJob.stateName || jobFunctionJob.lgaName) {
+      const job = {
+        jobFunctionExternalId: 'admin',
+        stateName: null,
+        lgaName: null,
+        siteExternalId: null,
+        assayExternalId: null,
+        assayTypeExternalId: null,
+        deviceTypeExternalId: null,
+        diseaseExternalId: null,
+        ...jobFunctionJob,
+      }
+      if (job.stateName || job.lgaName) {
         jobGeography = await knex('Geography as g')
           .leftJoin('State as s', 'g.stateId', 's.id')
           .leftJoin('Lga as l', 'g.lgaId', 'l.id')
           .where('countryId', country.id)
           .andWhere(function() {
-            if (jobFunctionJob.stateName) {
-              this.where('s.name', jobFunctionJob.stateName)
+            if (job.stateName) {
+              this.where('s.name', job.stateName)
             } else {
               this.whereNull('g.stateId')
             }
           })
           .andWhere(function() {
-            if (jobFunctionJob.lgaName) {
-              this.where('l.name', jobFunctionJob.lgaName)
+            if (job.lgaName) {
+              this.where('l.name', job.lgaName)
             } else {
               this.whereNull('g.lgaId')
             }
@@ -133,21 +145,24 @@ async function createUser(
       }
       const site =
         (await knex('Site')
-          .where('externalId', jobFunctionJob.siteExternalId)
+          .where('externalId', job.siteExternalId)
           .first()) || {}
       const deviceType =
         (await knex('DeviceType')
-          .where('externalId', jobFunctionJob.deviceTypeExternalId)
+          .where('externalId', job.deviceTypeExternalId)
           .first()) || {}
       const assayType =
         (await knex('AssayType')
-          .where('externalId', jobFunctionJob.assayTypeExternalId)
+          .where('externalId', job.assayTypeExternalId)
           .first()) || {}
       const assay =
         (await knex('Assay')
-          .where('externalId', jobFunctionJob.assayExternalId)
+          .where('externalId', job.assayExternalId)
           .first()) || {}
-
+      const disease =
+        (await knex('Disease')
+          .where('externalId', job.diseaseExternalId)
+          .first()) || {}
       await knex('JobContext').insert({
         jobId,
         geographyId: jobGeography.id,
@@ -155,6 +170,7 @@ async function createUser(
         assayTypeId: assayType.id,
         assayId: assay.id,
         deviceTypeId: deviceType.id,
+        diseaseId: disease.id,
       })
     })
   })
@@ -162,6 +178,20 @@ async function createUser(
 }
 
 async function removeUser(userId) {
+  const personIds = await knex('Person')
+    .where({ userId })
+    .select('id')
+    .pluck('id')
+  const jobIds = await knex('Job')
+    .whereIn('personId', personIds)
+    .select('id')
+    .pluck('id')
+  await knex('JobContext')
+    .whereIn('jobId', jobIds)
+    .del()
+  await knex('Job')
+    .whereIn('id', jobIds)
+    .del()
   await knex('Person')
     .where({ userId })
     .del()

@@ -41,58 +41,68 @@ describe('Assay routes', () => {
       ])
     })
 
-    const hivManagerUsername = 'hiv_manager'
-    const hivManagerPassword = 'hiv-manager-pass'
-    let hivManagerUserId
-    let hivManagerAuthAccessToken
+    const tbDiseaseManagerUsername = 'tb_disease_manager'
+    const tbDiseaseManagerPassword = 'tb-disease-manager-pass'
+    let tbDiseaseManagerUserId
+    let tbDiseaseManagerAuthAccessToken
+
+    const hivAssaysManagerUsername = 'hiv_assay_manager'
+    const hivAssaysManagerPassword = 'hiv-assay-manager-pass'
+    let hivAssaysManagerUserId
+    let hivAssaysManagerAuthAccessToken
     before(async () => {
-      hivManagerUserId = await createUser(
+      tbDiseaseManagerUserId = await createUser(
         'Partner One',
         'US',
-        hivManagerUsername,
-        hivManagerPassword,
+        tbDiseaseManagerUsername,
+        tbDiseaseManagerPassword,
         [
           {
             jobFunctionExternalId: 'manager',
-            stateName: null,
-            lgaName: null,
-            siteExternalId: null,
-            assayExternalId: null,
-            assayTypeExternalId: 'assayTypeCD4',
-            deviceTypeExternalId: null,
-          },
-          {
-            jobFunctionExternalId: 'manager',
-            stateName: null,
-            lgaName: null,
-            siteExternalId: null,
-            assayExternalId: null,
-            assayTypeExternalId: 'assayTypeHivQual',
-            deviceTypeExternalId: null,
-          },
-          {
-            jobFunctionExternalId: 'manager',
-            stateName: null,
-            lgaName: null,
-            siteExternalId: null,
-            assayExternalId: null,
-            assayTypeExternalId: 'assayTypeHivVl',
-            deviceTypeExternalId: null,
+            diseaseExternalId: 'tb',
           },
         ]
       )
-      hivManagerAuthAccessToken = await getAccessToken(
-        hivManagerUsername,
-        hivManagerPassword
+      tbDiseaseManagerAuthAccessToken = await getAccessToken(
+        tbDiseaseManagerUsername,
+        tbDiseaseManagerPassword
+      )
+
+      hivAssaysManagerUserId = await createUser(
+        'Partner One',
+        'US',
+        hivAssaysManagerUsername,
+        hivAssaysManagerPassword,
+        [
+          {
+            jobFunctionExternalId: 'manager',
+            assayTypeExternalId: 'assayTypeCD4',
+          },
+          {
+            jobFunctionExternalId: 'manager',
+            assayTypeExternalId: 'assayTypeHivQual',
+          },
+          {
+            jobFunctionExternalId: 'manager',
+            assayTypeExternalId: 'assayTypeHivVl',
+          },
+        ]
+      )
+      hivAssaysManagerAuthAccessToken = await getAccessToken(
+        hivAssaysManagerUsername,
+        hivAssaysManagerPassword
       )
     })
 
-    after(async () => removeUser(hivManagerUserId))
+    after(async () => {
+      await removeUser(hivAssaysManagerUserId)
+      await removeUser(tbDiseaseManagerUserId)
+    })
 
-    it("should constrain assays returned based on the user's job context", async () => {
+    it("should constrain assays returned based on the assays specified in the user's job context", async () => {
       const assayResponse = await server
         .get(path)
-        .set('Authorization', `Bearer ${hivManagerAuthAccessToken}`)
+        .set('Authorization', `Bearer ${hivAssaysManagerAuthAccessToken}`)
       expect(assayResponse.body.data).to.containSubset([
         {
           assayTypeName: 'HIV VL',
@@ -101,6 +111,22 @@ describe('Assay routes', () => {
       expect(assayResponse.body.data).to.not.containSubset([
         {
           assayTypeName: 'MTB/Rif',
+        },
+      ])
+    })
+
+    it("should constrain assays returned based on the diseases specified in the user's job context", async () => {
+      const assayResponse = await server
+        .get(path)
+        .set('Authorization', `Bearer ${tbDiseaseManagerAuthAccessToken}`)
+      expect(assayResponse.body.data).to.containSubset([
+        {
+          assayTypeName: 'MTB/Rif',
+        },
+      ])
+      expect(assayResponse.body.data).to.not.containSubset([
+        {
+          assayTypeName: 'HIV VL',
         },
       ])
     })
