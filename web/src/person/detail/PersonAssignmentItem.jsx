@@ -94,6 +94,28 @@ export default ({ assignment, showLinks, onAskConfirmation, intl }) => {
           </Link>
         )}
       </div>
+      <div>
+        <span>
+          {assignment.diseaseName || intl.formatMessage(messages.allDiseases)}
+        </span>
+      </div>
+      <div>
+        <span>
+          {assignment.deviceTypeName ||
+            intl.formatMessage(messages.allDeviceTypes)}
+        </span>
+      </div>
+      <div>
+        <span>
+          {assignment.assayTypeName ||
+            intl.formatMessage(messages.allAssayTypes)}
+        </span>
+      </div>
+      <div>
+        <span>
+          {assignment.assayName || intl.formatMessage(messages.allAssays)}
+        </span>
+      </div>
     </div>
   )
 }

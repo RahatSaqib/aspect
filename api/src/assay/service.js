@@ -6,6 +6,7 @@ const SELECT_LIST_FIELDS = [
   'a.id',
   'a.externalId',
   'at.id as assayTypeId',
+  'd.id as diseaseId',
   'a.name',
   'at.name as assayTypeName',
   'dt.id as deviceTypeId',
@@ -103,11 +104,13 @@ async function listAssays(request) {
   // no get the assays with a field for hasResults
   const assayQuery = knex('Assay as a')
     .innerJoin('AssayType as at', 'a.assayTypeId', 'at.id')
+    .leftJoin('Disease as d', 'at.diseaseId', 'd.id')
     .innerJoin('DeviceType as dt', 'a.deviceTypeId', 'dt.id')
     .modify(addConstraints, dataConstraints, {
       assayType: 'at',
       assay: 'a',
       deviceType: 'dt',
+      disease: 'd',
     })
     .modify(filterParams, query, { name: 'a.name' })
 
@@ -148,6 +151,23 @@ async function listAssays(request) {
   return result
 }
 
+async function listAssayTypes(request) {
+  const { auth } = request
+  const dataConstraints = await getConstraints(auth.credentials)
+  const assayTypes = await knex('AssayType as at')
+    .modify(addConstraints, dataConstraints, {
+      assayType: 'at',
+    })
+    .select()
+  const result = {
+    ok: true,
+    total: assayTypes.length,
+    length: assayTypes.length,
+    data: assayTypes,
+  }
+  return result
+}
+
 async function getAllAssaySchemas(partnerId, userId, assayId = null) {
   const dataConstraints = await getConstraints({ userId })
   const query = knex('Assay as a')
@@ -173,6 +193,7 @@ async function getAllAssaySchemas(partnerId, userId, assayId = null) {
 
 module.exports = {
   listAssays,
+  listAssayTypes,
   getAllAssaySchemas,
   listAssaysResultSchema,
 }

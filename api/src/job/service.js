@@ -428,9 +428,18 @@ async function assignPersonTo(request) {
   // ----------------
   // siteId or geographyId
   // ----------------
-  const { countryId, stateId = null, lgaId = null, siteId = null } = payload
+  const {
+    countryId,
+    stateId = null,
+    lgaId = null,
+    siteId = null,
+    diseaseId = null,
+    deviceTypeId = null,
+    assayTypeId = null,
+    assayId = null,
+  } = payload
   let geographyId
-  if (!siteId) {
+  if (!siteId && (countryId || stateId || lgaId)) {
     // ----------------
     // geographyId
     // ----------------
@@ -448,18 +457,43 @@ async function assignPersonTo(request) {
   // JobContext
   // ----------------
   // create JobContext entry if missing
-  const jobContext = await knex('JobContext')
-    .where({ jobId })
-    .where(function() {
-      if (siteId) {
-        this.where({ siteId })
-      } else if (geographyId) {
-        this.where({ geographyId })
-      }
-    })
-    .first()
-  if (!jobContext) {
-    await knex('JobContext').insert({ jobId, geographyId, siteId })
+  if (siteId || geographyId) {
+    const { id: jobContextId } =
+      (await knex('JobContext')
+        .where({ jobId })
+        .andWhere(function() {
+          if (siteId) {
+            this.where({ siteId })
+          } else if (geographyId) {
+            this.where({ geographyId })
+          }
+        })
+        .andWhere(function() {
+          if (assayId) {
+            this.where({ assayId })
+          }
+          if (deviceTypeId) {
+            this.where({ deviceTypeId })
+          }
+          if (assayTypeId) {
+            this.where({ assayTypeId })
+          }
+          if (diseaseId) {
+            this.where({ diseaseId })
+          }
+        })
+        .first('id')) || {}
+    if (!jobContextId) {
+      await knex('JobContext').insert({
+        jobId,
+        geographyId,
+        siteId,
+        diseaseId,
+        deviceTypeId,
+        assayTypeId,
+        assayId,
+      })
+    }
   }
   // ----------------
   // return list of person assignments for showing in right side of Person Job Assignment tab

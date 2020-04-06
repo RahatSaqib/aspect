@@ -14,6 +14,11 @@ import StateSelectField from '../../filter/geography/StateSelectField'
 import LgaSelectField from '../../filter/geography/LgaSelectField'
 import SiteSelectField from '../../filter/resource/SiteSelectField'
 import SelectField from '../../components/shared/SelectField'
+import DiseaseSelectField from '../../filter/resource/DiseaseSelectField'
+import DeviceTypeSelectField from '../../filter/resource/DeviceTypeSelectField'
+import AssayTypeSelectField from '../../filter/resource/AssayTypeSelectField'
+import AssaySelectField from '../../filter/resource/AssaySelectField'
+
 import PersonAssignments from './PersonAssignments'
 
 const cssClasses = classnames.bind(require('./PersonDetail.css'))
@@ -24,6 +29,10 @@ const DEFAULT_VALUES = {
   stateId: undefined,
   lgaId: undefined,
   siteId: undefined,
+  diseaseId: undefined,
+  deviceTypeId: undefined,
+  assayTypeId: undefined,
+  assayId: undefined,
 }
 
 const validate = ({ jobFunctionId }, { intl }) => {
@@ -51,6 +60,10 @@ const enhance = compose(
       { fieldName: 'stateId', valueFromChangeEvent: _.identity },
       { fieldName: 'lgaId', valueFromChangeEvent: _.identity },
       { fieldName: 'siteId', valueFromChangeEvent: _.identity },
+      { fieldName: 'diseaseId', valueFromChangeEvent: _.identity },
+      { fieldName: 'deviceTypeId', valueFromChangeEvent: _.identity },
+      { fieldName: 'assayTypeId', valueFromChangeEvent: _.identity },
+      { fieldName: 'assayId', valueFromChangeEvent: _.identity },
     ],
     validate,
   }),
@@ -73,12 +86,16 @@ const enhance = compose(
       values.stateId = undefined
       values.lgaId = undefined
       values.siteId = undefined
+      values.diseaseId = undefined
+      values.deviceTypeId = undefined
+      values.assayTypeId = undefined
+      values.assayId = undefined
       form.valid = false
     },
   })
 )
 
-export const JobAssignemntForm = ({
+export const JobAssignmentForm = ({
   intl,
   loading,
   form,
@@ -88,6 +105,10 @@ export const JobAssignemntForm = ({
   onStateIdChange,
   onLgaIdChange,
   onSiteIdChange,
+  onDiseaseIdChange,
+  onDeviceTypeIdChange,
+  onAssayTypeIdChange,
+  onAssayIdChange,
   handleSubmit,
   jobFunctions = [],
   assignments,
@@ -163,6 +184,35 @@ export const JobAssignemntForm = ({
               stateId={values.stateId}
               lgaId={values.lgaId}
             />
+            <DiseaseSelectField
+              {...baseProps}
+              intl={intl}
+              floatingLabelText={intl.formatMessage(messages.disease)}
+              value={values.diseaseId}
+              onDiseaseIdChange={onDiseaseIdChange}
+            />
+            <DeviceTypeSelectField
+              {...baseProps}
+              floatingLabelText={intl.formatMessage(messages.deviceType)}
+              value={values.deviceTypeId}
+              onDeviceTypeChange={onDeviceTypeIdChange}
+            />
+            <AssayTypeSelectField
+              {...baseProps}
+              intl={intl}
+              floatingLabelText={intl.formatMessage(messages.assayType)}
+              value={values.assayTypeId}
+              diseaseId={values.diseaseId}
+              onAssayTypeIdChange={onAssayTypeIdChange}
+            />
+            <AssaySelectField
+              {...baseProps}
+              floatingLabelText={intl.formatMessage(messages.assay)}
+              diseaseId={values.diseaseId}
+              assayTypeId={values.assayTypeId}
+              value={values.assayId}
+              onAssayChange={onAssayIdChange}
+            />
           </section>
           <div className={cssClasses('Form__ActionRow')}>
             <Button
@@ -190,4 +240,4 @@ export const JobAssignemntForm = ({
   )
 }
 
-export default enhance(JobAssignemntForm)
+export default enhance(JobAssignmentForm)

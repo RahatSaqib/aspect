@@ -370,7 +370,6 @@ function addConstraints(queryBuilder, constraints, aliases) {
       })
     }
     if (constraints.disease) {
-      console.log(assayType)
       if (assayType) {
         queryBuilder.where(function() {
           this.whereNull(`${assayType}.diseaseId`).orWhere({

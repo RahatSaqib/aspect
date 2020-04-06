@@ -19,11 +19,17 @@ export class AssaySelectField extends PureComponent {
     fetchAssays: PropTypes.func.isRequired,
     assayItems: PropTypes.instanceOf(Immutable.List).isRequired,
     onAssayChange: PropTypes.func.isRequired,
+    diseaseId: PropTypes.string,
+    assayTypeId: PropTypes.string,
+    deviceTypeId: PropTypes.string,
     value: PropTypes.string,
   }
 
   static defaultProps = {
     allItemText: 'All',
+    diseaseId: '',
+    assayTypeId: '',
+    deviceTypeId: '',
     value: '',
   }
 
@@ -60,8 +66,7 @@ export class AssaySelectField extends PureComponent {
       'value',
     ])
     this.setValueIfSingleAssay()
-    const { value } = this.props
-
+    const { value, diseaseId, assayTypeId, deviceTypeId } = this.props
     return (
       <SelectField
         {...restProps}
@@ -70,11 +75,24 @@ export class AssaySelectField extends PureComponent {
         disabled={isSingleAssay}
       >
         {allItemText && <MenuItem value="all">{allItemText}</MenuItem>}
-        {validAssays.map(a => (
-          <MenuItem key={a.get('id')} value={a.get('id')}>
-            {a.get('name')}
-          </MenuItem>
-        ))}
+        {validAssays
+          .filter(
+            a =>
+              !diseaseId ||
+              !a.get('diseaseId') ||
+              a.get('diseaseId').toString() === diseaseId ||
+              !assayTypeId ||
+              !a.get('assayTypeId') ||
+              a.get('assayTypeId').toString() === assayTypeId ||
+              !deviceTypeId ||
+              !a.get('deviceTypeId') ||
+              a.get('deviceTypeId').toString() === deviceTypeId
+          )
+          .map(a => (
+            <MenuItem key={a.get('id')} value={a.get('id')}>
+              {a.get('name')}
+            </MenuItem>
+          ))}
       </SelectField>
     )
   }

@@ -13,7 +13,7 @@ import Paper from '@material-ui/core/Paper'
 import LinearProgress from '@material-ui/core/LinearProgress'
 import ContactDetailsForm from './ContactDetailsForm'
 import LoginDetailsForm from './LoginDetailsForm'
-import JobAssignemntForm from './JobAssignmentForm'
+import JobAssignmentForm from './JobAssignmentForm'
 import PersonDetailBackBar from './PersonDetailsBackBar'
 
 import NavTitle from '../../globals/components/NavTitle'
@@ -217,6 +217,7 @@ export class PersonDetail extends PureComponent {
         'stateId',
         'lgaId',
         'siteId',
+        'diseaseId',
         'deviceTypeId',
         'assayTypeId',
         'assayId',
@@ -352,7 +353,7 @@ export class PersonDetail extends PureComponent {
                 />
 
                 <Paper className={styles.ContactDetailsForm}>
-                  <JobAssignemntForm
+                  <JobAssignmentForm
                     intl={intl}
                     loading={loading}
                     contactDetails={contactDetails}

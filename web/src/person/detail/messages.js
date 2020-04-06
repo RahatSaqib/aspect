@@ -267,4 +267,36 @@ export default defineMessages({
     id: 'pages.JobAssignments.allSites',
     defaultMessage: 'All sites',
   },
+  disease: {
+    id: 'pages.JobAssignments.disease',
+    defaultMessage: 'Disease',
+  },
+  allDiseases: {
+    id: 'pages.JobAssignments.allDiseases',
+    defaultMessage: 'All diseases',
+  },
+  deviceType: {
+    id: 'pages.JobAssignments.deviceType',
+    defaultMessage: 'Device Type',
+  },
+  allDeviceTypes: {
+    id: 'pages.JobAssignments.allDeviceTypes',
+    defaultMessage: 'All device types',
+  },
+  assayType: {
+    id: 'pages.JobAssignments.assayType',
+    defaultMessage: 'Assay Type',
+  },
+  allAssayTypes: {
+    id: 'pages.JobAssignments.allAssayTypes',
+    defaultMessage: 'All assay types',
+  },
+  assay: {
+    id: 'pages.JobAssignments.assay',
+    defaultMessage: 'Assay',
+  },
+  allAssays: {
+    id: 'pages.JobAssignments.allAssays',
+    defaultMessage: 'All assays',
+  },
 })

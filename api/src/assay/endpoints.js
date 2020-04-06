@@ -1,6 +1,10 @@
 const Joi = require('@hapi/joi')
 const { asyncHandler, validateSortPageParams } = require('../routes')
-const { listAssays, listAssaysResultSchema } = require('./service')
+const {
+  listAssays,
+  listAssayTypes,
+  listAssaysResultSchema,
+} = require('./service')
 
 const routes = [
   {
@@ -10,7 +14,7 @@ const routes = [
     config: {
       description: 'Assay List',
       notes: 'Pageable and sortable list of assays',
-      auth: { scope: ['assay:view', 'assay:edit'] },
+      auth: { scope: ['assay:view', 'assay:edit', 'assay:admin'] },
       validate: {
         query: {
           name: Joi.string()
@@ -19,6 +23,16 @@ const routes = [
           ...validateSortPageParams('name', 'assayTypeName'),
         },
       },
+    },
+  },
+  {
+    method: 'GET',
+    path: '/assay-type',
+    handler: asyncHandler(listAssayTypes),
+    config: {
+      description: 'Assay Type List',
+      notes: 'List of assay types',
+      auth: { scope: ['assay:view', 'assay:edit', 'assay:admin'] },
     },
   },
   // GET /assayresultandpatientschema

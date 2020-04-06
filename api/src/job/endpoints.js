@@ -541,6 +541,7 @@ const routes = [
           // site
           siteId: Joi.number().allow(null),
           // device/assay type
+          diseaseId: Joi.number().allow(null),
           deviceTypeId: Joi.number().allow(null),
           assayTypeId: Joi.number().allow(null),
           assayId: Joi.number().allow(null),
