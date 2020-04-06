@@ -3,7 +3,7 @@ module.exports = require('../utils').seed(seed, __filename)
 const _ = require('lodash')
 const bcrypt = require('bcrypt')
 const Promise = require('bluebird')
-
+const { resultCategoryToId } = require('../../src/shared/dictionary')
 const {
   commonUpserts,
   upsertJobFunctionPermission,
@@ -34,7 +34,7 @@ const now = new Date()
 
 async function seed(knex) {
   utils.hasSeededStaticData = true
-
+  const resultCategoryPositiveId = await resultCategoryToId('Positive')
   const { id: countryId } = await knex('Country')
     .where('name', 'Wakanda')
     .first('id')
@@ -287,7 +287,7 @@ async function seed(knex) {
   )
 
   const siteDatas = [...countryData.labs, ...countryData.clinics]
-  await addCovidResults(
+  const covidResults = await addCovidResults(
     knex,
     resultNumber,
     await knex('Assay as a')
@@ -299,6 +299,23 @@ async function seed(knex) {
     partnerId,
     countryData.devices
   )
+  await addCovidResults(
+    knex,
+    resultNumber,
+    await knex('Assay as a')
+      .join('AssayType as at', 'a.assayTypeId', 'at.id')
+      .where('at.externalId', 'covid19')
+      .select('a.*'),
+    auditFields,
+    siteDatas,
+    partnerId,
+    countryData.devices,
+    _.filter(
+      covidResults,
+      result => result.resultCategory1 === resultCategoryPositiveId
+    )
+  )
+
   const clinicList = countryData.clinics
   const firstClinic = clinicList[0]
   const secondClinic = clinicList[1]
