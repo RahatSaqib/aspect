@@ -1,5 +1,6 @@
 const Excel = require('exceljs')
 const _ = require('lodash')
+const { getContentType } = require('../shared/io')
 
 function findContentInExcelRow(
   row,
@@ -253,25 +254,18 @@ async function generateReportFile(workbook, format) {
 async function downloadReportFile(
   reportFunction,
   reply,
-  format,
+  format = 'xlsx',
   fileName = 'report_'
 ) {
-  return reportFunction
-    .then(resp =>
-      reply
-        .response(resp)
-        .encoding('binary')
-        .type('application/octet-stream')
-        .header(
-          'content-disposition',
-          `attachment; filename=${fileName}_${new Date().toISOString()}.${format};`
-        )
-    )
+  const ext = format || 'xlsx'
+  const reportFileName = `${fileName}_${new Date().toISOString()}.${ext}`
 
-    .catch(err => {
-      console.error('Error ', err) // eslint-disable-line no-console
-      throw err
-    })
+  // resolve promise by returning any value and respond binary stream with generated Excel file
+  return reply
+    .response(await reportFunction)
+    .encoding('binary')
+    .type(getContentType(ext))
+    .header('content-disposition', `attachment; filename=${reportFileName};`)
 }
 
 module.exports = {

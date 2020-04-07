@@ -313,8 +313,8 @@ export function exportDevices(
         },
       }
     ).then(async elem => {
-      const file = await elem
-      dispatch(receivedExportResponse(file, fileFormat, reportName))
+      const file = await elem.blob
+      dispatch(receivedExportResponse(file, fileFormat, elem.fileName))
     })
   }
 }
