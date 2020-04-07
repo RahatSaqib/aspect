@@ -10,7 +10,6 @@ import { Unit } from '../../components/pureGrids'
 import ColumnGraph from '../../components/graph/ColumnGraph'
 import { DelayShowingProgressCircular } from '../../components/shared/DelayShowingProgressBar'
 import AspectButton from '../../components/shared/AspectButton'
-// import FiltersPanel from '../../filter/popover/FiltersPanel'
 import Title from '../status/Title'
 import { fetchOperationalStatus } from '../DashboardRedux'
 import AbnormalBarChart from './AbnormalBarChart'
@@ -220,25 +219,7 @@ export const OperationalData = ({
         >
           60 days
         </AspectButton>
-        {/* <Button
-          className={cssClasses('Button')}
-          primary
-          raised
-          inverse
-          label="Date range"
-        /> */}
       </div>
-      {/* <div className={cssClasses('FiltersGroup__Child')}>
-        <FiltersPanel
-          history={history}
-          location={location}
-          intl={intl}
-          config={{}}
-          filters={{}}
-          onChangeFilters={_.noop}
-          disabled
-        />
-      </div> */}
     </div>
     <div className={cssClasses({ 'Content--loading': loading })}>
       <SectionAbnormalCollection
