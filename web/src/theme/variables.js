@@ -17,13 +17,13 @@ const theme = createMuiTheme({
       light: lightGreen[500],
       main: lightGreen[600],
       dark: lightGreen[700],
-      contrastText: '#fff',
+      contrastText: customPropertiesVariables['--aspect-color-white'],
     },
     secondary: {
       light: lightGreen[300],
       main: orange[700],
       dark: orange[700],
-      contrastText: '#fff',
+      contrastText: customPropertiesVariables['--aspect-color-white'],
     },
   },
   shape: {
@@ -33,8 +33,8 @@ const theme = createMuiTheme({
 })
 
 const themedColors = {
-  text: '#fff',
-  primary: customPropertiesVariables['--ming'],
+  text: customPropertiesVariables['--aspect-color-white'],
+  primary: customPropertiesVariables['--aspect-color-chill-blue-1'],
   secondary: customPropertiesVariables['--aspect-button-accent-color'],
   buttonBorderRadius:
     customPropertiesVariables['--aspect-button-border-radius'],
