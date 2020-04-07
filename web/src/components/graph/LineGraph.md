@@ -1,8 +1,8 @@
 ### Usage
 
 ```js static
-import ChartContainer from 'src/components/graph/ChartContainer';
-import LineGraph from 'src/components/graph/LineGraph';
+import ChartContainer from 'src/components/graph/ChartContainer'
+import LineGraph from 'src/components/graph/LineGraph'
 ```
 
 It's themed according to default settings, requiring only data to render. Data should be defined as follows, with each value of the data array representing a line (all value[0] data are points on one line, all value[1] data are points on another line):
@@ -19,7 +19,7 @@ const lineData2 = [
   { date: 'Site 6', value: [3, 4, 3] },
   { date: 'Site 7', value: [1, 1, 5] },
   { date: 'Site 8', value: [2, 3, 8] }
-];
+]
 ```
 
 ### Variations
