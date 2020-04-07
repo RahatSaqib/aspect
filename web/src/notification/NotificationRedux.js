@@ -157,7 +157,7 @@ export function exportNotifications(
       }
     ).then(async elem => {
       const file = await elem.blob
-      dispatch(receivedExportResponse(file, fileFormat, elem.fileName))
+      dispatch(receivedExportResponse(file, fileFormat, reportName))
     })
   }
 }
