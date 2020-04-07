@@ -17,6 +17,7 @@ import Reports from './Reports'
 import BrowseSiteDropdown from '../../globals/components/BrowseSiteDropdown'
 import TreatmentStatus from './TreatmentStatus'
 import ClinicalIndicators from './ClinicalIndicators/ClinicalIndicators'
+import ColorDemo from './ColorDemo/ColorDemo'
 
 const cssClasses = classnames.bind(require('./Status.css'))
 
@@ -62,6 +63,7 @@ const Status = ({
   setMarginBottom,
   countryIsoAlpha2Code,
   assays,
+  colorDemo = true,
 }) => (
   <div className={cssClasses('Container')} style={{ marginBottom }}>
     <Helmet title="Status" />
@@ -74,7 +76,7 @@ const Status = ({
       location={location}
       className={cssClasses('Section--summary')}
     />
-
+    {colorDemo && <ColorDemo vars={process.env} />}
     {assays && assays.length ? (
       <ClinicalIndicators
         intl={intl}
@@ -83,7 +85,6 @@ const Status = ({
         assays={assays}
       />
     ) : null}
-
     <TreatmentStatus
       intl={intl}
       history={history}
@@ -91,7 +92,6 @@ const Status = ({
       className={cssClasses('Section--withDropdown')}
       title={intl.formatMessage(messages.treatmentTitle)}
     />
-
     <TargetStatus
       intl={intl}
       history={history}
@@ -99,7 +99,6 @@ const Status = ({
       className={cssClasses('Section--withDropdown')}
       title={intl.formatMessage(messages.targetsTitle)}
     />
-
     <ActionStatus
       intl={intl}
       history={history}
@@ -109,7 +108,6 @@ const Status = ({
       marginBottom={marginBottom}
       setMarginBottom={setMarginBottom}
     />
-
     {/* ========Commenting out as per ASP-940 ==============
     <ResultStatus
       intl={intl}
@@ -117,7 +115,6 @@ const Status = ({
       className={cssClasses('Section--withStatus')}
       title={intl.formatMessage(messages.clinicalTitle)}
     /> */}
-
     <SiteStatus
       history={history}
       intl={intl}
@@ -132,7 +129,6 @@ const Status = ({
       className={cssClasses('Section--withStatus')}
       title={intl.formatMessage(messages.consumableTitle)}
     />
-
     <Reports
       intl={intl}
       location={location}
