@@ -63,7 +63,7 @@ const Status = ({
   setMarginBottom,
   countryIsoAlpha2Code,
   assays,
-  colorDemo = true,
+  colorDemo = false,
 }) => (
   <div className={cssClasses('Container')} style={{ marginBottom }}>
     <Helmet title="Status" />
