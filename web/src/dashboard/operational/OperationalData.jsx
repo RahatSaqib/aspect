@@ -146,162 +146,150 @@ export const OperationalData = ({
   onAssayTypeClick,
   onDateRangeClick,
   onDataReportClick,
-}) => (
-  <div className={cssClasses('Container')}>
-    <Helmet title="Operational Data" />
-    <div className={cssClasses('FiltersGroup')}>
-      <div className={cssClasses('FiltersGroup__Child')}>
-        <AspectButton
-          className={cssClasses('Button')}
-          color="primary"
-          variant="contained"
-          inverse={assayType !== 'all'}
-          data-assay-type="all"
-          onClick={onAssayTypeClick}
-        >
-          All diseases
-        </AspectButton>
+}) => {
+  const {
+    '--aspect-color-mandy': colorMandy,
+    '--aspect-color-mantis': colorMantis,
+  } = process.env
+  return (
+    <div className={cssClasses('Container')}>
+      <Helmet title="Operational Data" />
+      <div className={cssClasses('FiltersGroup')}>
+        <div className={cssClasses('FiltersGroup__Child')}>
+          <AspectButton
+            className={cssClasses('Button')}
+            color="primary"
+            variant="contained"
+            inverse={assayType !== 'all'}
+            data-assay-type="all"
+            onClick={onAssayTypeClick}
+          >
+            All diseases
+          </AspectButton>
 
-        <AspectButton
-          className={cssClasses('Button')}
-          color="primary"
-          variant="contained"
-          inverse={assayType !== 'TB'}
-          data-assay-type="TB"
-          onClick={onAssayTypeClick}
-        >
-          TB
-        </AspectButton>
-        <AspectButton
-          className={cssClasses('Button')}
-          color="primary"
-          variant="contained"
-          inverse={assayType !== 'HIV'}
-          data-assay-type="HIV"
-          onClick={onAssayTypeClick}
-        >
-          HIV
-        </AspectButton>
-        <AspectButton
-          className={cssClasses('Button')}
-          color="primary"
-          variant="contained"
-          inverse={assayType !== 'HCV'}
-          data-assay-type="HCV"
-          onClick={onAssayTypeClick}
-        >
-          HCV
-        </AspectButton>
+          <AspectButton
+            className={cssClasses('Button')}
+            color="primary"
+            variant="contained"
+            inverse={assayType !== 'TB'}
+            data-assay-type="TB"
+            onClick={onAssayTypeClick}
+          >
+            TB
+          </AspectButton>
+          <AspectButton
+            className={cssClasses('Button')}
+            color="primary"
+            variant="contained"
+            inverse={assayType !== 'HIV'}
+            data-assay-type="HIV"
+            onClick={onAssayTypeClick}
+          >
+            HIV
+          </AspectButton>
+          <AspectButton
+            className={cssClasses('Button')}
+            color="primary"
+            variant="contained"
+            inverse={assayType !== 'HCV'}
+            data-assay-type="HCV"
+            onClick={onAssayTypeClick}
+          >
+            HCV
+          </AspectButton>
+        </div>
+        <div className={cssClasses('FiltersGroup__Child')}>
+          <AspectButton
+            className={cssClasses('Button')}
+            color="primary"
+            variant="contained"
+            inverse={dateRange !== '30'}
+            data-date-range="30"
+            onClick={onDateRangeClick}
+          >
+            30 days
+          </AspectButton>
+          <AspectButton
+            className={cssClasses('Button')}
+            color="primary"
+            variant="contained"
+            inverse={dateRange !== '60'}
+            data-date-range="60"
+            onClick={onDateRangeClick}
+          >
+            60 days
+          </AspectButton>
+        </div>
       </div>
-      <div className={cssClasses('FiltersGroup__Child')}>
-        <AspectButton
-          className={cssClasses('Button')}
-          color="primary"
-          variant="contained"
-          inverse={dateRange !== '30'}
-          data-date-range="30"
-          onClick={onDateRangeClick}
-        >
-          30 days
-        </AspectButton>
-        <AspectButton
-          className={cssClasses('Button')}
-          color="primary"
-          variant="contained"
-          inverse={dateRange !== '60'}
-          data-date-range="60"
-          onClick={onDateRangeClick}
-        >
-          60 days
-        </AspectButton>
-        {/* <Button
-          className={cssClasses('Button')}
-          primary
-          raised
-          inverse
-          label="Date range"
-        /> */}
-      </div>
-      {/* <div className={cssClasses('FiltersGroup__Child')}>
-        <FiltersPanel
-          history={history}
-          location={location}
+      <div className={cssClasses({ 'Content--loading': loading })}>
+        <SectionAbnormalCollection
           intl={intl}
-          config={{}}
-          filters={{}}
-          onChangeFilters={_.noop}
-          disabled
+          title="Consumables"
+          colorClassName={cssClasses('Title__Color--inventory')}
+          collection={operational.get('inventory', [])}
+          onDataReportClick={onDataReportClick}
         />
-      </div> */}
-    </div>
-    <div className={cssClasses({ 'Content--loading': loading })}>
-      <SectionAbnormalCollection
-        intl={intl}
-        title="Consumables"
-        colorClassName={cssClasses('Title__Color--inventory')}
-        collection={operational.get('inventory', [])}
-        onDataReportClick={onDataReportClick}
-      />
-      <SectionAbnormalCollection
-        intl={intl}
-        title="Devices"
-        colorClassName={cssClasses('Title__Color--device')}
-        collection={operational.get('device', [])}
-        onDataReportClick={onDataReportClick}
-      />
-      <div className={cssClasses('Section')}>
-        <Card className={cssClasses('Section__Content')}>
-          <div className={cssClasses('TitleContainer')}>
-            <Title
-              className={cssClasses('TitleContainer__Title')}
-              colorClassName={cssClasses('Title__Color--site')}
-              title="Sites"
-            />
-            <AspectButton
-              className={cssClasses('Button')}
-              variant="contained"
-              onClick={onDataReportClick}
-            >
-              Data and reports
-            </AspectButton>
-          </div>
-          <div>
-            {operational.get('site', []).map(c => (
-              <Unit
-                sm="1-2"
-                lg="1-4"
-                className={cssClasses('Graph')}
-                key={c.get('key')}
+        <SectionAbnormalCollection
+          intl={intl}
+          title="Devices"
+          colorClassName={cssClasses('Title__Color--device')}
+          collection={operational.get('device', [])}
+          onDataReportClick={onDataReportClick}
+        />
+        <div className={cssClasses('Section')}>
+          <Card className={cssClasses('Section__Content')}>
+            <div className={cssClasses('TitleContainer')}>
+              <Title
+                className={cssClasses('TitleContainer__Title')}
+                colorClassName={cssClasses('Title__Color--site')}
+                title="Sites"
+              />
+              <AspectButton
+                className={cssClasses('Button')}
+                variant="contained"
+                onClick={onDataReportClick}
               >
-                <div className={cssClasses('Graph__Title')}>
-                  {c.get('title')}
-                </div>
-                <ColumnGraph
-                  data={c.get('data').toJS()}
-                  color={['#e85164', '#fcb124', '#73d449']}
-                  spacing={0.4}
-                  hideAxes
-                  rightLabel
-                  hideLabel={false}
-                />
-              </Unit>
-            ))}
-          </div>
-        </Card>
+                Data and reports
+              </AspectButton>
+            </div>
+            <div>
+              {operational.get('site', []).map(c => (
+                <Unit
+                  sm="1-2"
+                  lg="1-4"
+                  className={cssClasses('Graph')}
+                  key={c.get('key')}
+                >
+                  <div className={cssClasses('Graph__Title')}>
+                    {c.get('title')}
+                  </div>
+                  <ColumnGraph
+                    data={c.get('data').toJS()}
+                    color={['#e85164', '#fcb124', colorMantis]}
+                    spacing={0.4}
+                    hideAxes
+                    rightLabel
+                    hideLabel={false}
+                  />
+                </Unit>
+              ))}
+            </div>
+          </Card>
+        </div>
+        <SectionAbnormalCollection
+          intl={intl}
+          title="Staff"
+          collection={operational.get('staff', [])}
+          onDataReportClick={onDataReportClick}
+        />
       </div>
-      <SectionAbnormalCollection
-        intl={intl}
-        title="Staff"
-        collection={operational.get('staff', [])}
-        onDataReportClick={onDataReportClick}
+      <DelayShowingProgressCircular
+        disabled={!loading}
+        variant="indeterminate"
+        className={cssClasses('DelayShowingProgressCircular--indeterminate')}
       />
     </div>
-    <DelayShowingProgressCircular
-      disabled={!loading}
-      variant="indeterminate"
-      className={cssClasses('DelayShowingProgressCircular--indeterminate')}
-    />
-  </div>
-)
+  )
+}
 
 export default enhance(OperationalData)

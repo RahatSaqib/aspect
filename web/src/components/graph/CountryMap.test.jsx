@@ -5,6 +5,7 @@ import { CountryMap } from './CountryMap'
 import topojson from '../../../map/topo/KE.json'
 
 describe('CountryMap component', () => {
+  const { '--aspect-color-white': colorWhite } = process.env
   const props = {
     countryIsoAlpha2Code: 'KE',
     extent: [
@@ -12,8 +13,8 @@ describe('CountryMap component', () => {
       [290, 290],
     ],
     loading: false,
-    stroke: () => '#fff',
-    fill: () => '#fff',
+    stroke: () => colorWhite,
+    fill: () => colorWhite,
     projectionFunc: () => <div />,
     topojson,
   }

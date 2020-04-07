@@ -480,6 +480,7 @@ const PerformanceReport = enhance(({ performanceReport, culture }) => {
   const avgUtilizationRate = payload.utilizationRateAvg
   const avgErrorRate = payload.errorRateAvg
   const { data } = payload
+  const { '--aspect-color-white': colorWhite } = process.env
   const utilizationRateSeries = [
     {
       label: 'Utilization Rate',
@@ -489,7 +490,7 @@ const PerformanceReport = enhance(({ performanceReport, culture }) => {
     {
       label: 'Above Target Utilization Rate',
       key: 'exceededUtilizationRate',
-      color: '#FFFFFF',
+      color: colorWhite,
     },
   ]
   const errorRateSeries = [
@@ -501,7 +502,7 @@ const PerformanceReport = enhance(({ performanceReport, culture }) => {
     {
       label: 'Above Average Error Rate',
       key: 'exceededErrorRate',
-      color: '#FFFFFF',
+      color: colorWhite,
     },
   ]
 

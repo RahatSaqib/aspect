@@ -34,7 +34,7 @@ const theme = createMuiTheme({
 
 const themedColors = {
   text: '#fff',
-  primary: customPropertiesVariables['--aspect-color-chill-blue-1'],
+  primary: customPropertiesVariables['--ming'],
   secondary: customPropertiesVariables['--aspect-button-accent-color'],
   buttonBorderRadius:
     customPropertiesVariables['--aspect-button-border-radius'],

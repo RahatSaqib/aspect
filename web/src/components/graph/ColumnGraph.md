@@ -1,11 +1,13 @@
 ### Usage
 
 ```js static
-import ChartContainer from 'src/components/graph/ChartContainer'
-import ColumnGraph from 'src/components/graph/ColumnGraph'
+import ChartContainer from 'src/components/graph/ChartContainer';
+import ColumnGraph from 'src/components/graph/ColumnGraph';
 ```
 
 It's themed according to default settings, requiring only data to render. Data should be defined as follows, with each value of the data array representing a single color on the stacked bar:
+
+Although color is represented with hex numbers here, please use the CSS variable names (eg: `--aspect-color-cyan`) from `web/cfg/variables.js`
 
 ```js static
 const exData1 = [
@@ -16,8 +18,8 @@ const exData1 = [
   { name: 'Site name 5', data: [3, 4, 6] },
   { name: 'Site name 6', data: [1, 4, 10] },
   { name: 'Site name 7', data: [2, 5, 9] },
-  { name: 'Site name 8', data: [4, 3, 8] },
-]
+  { name: 'Site name 8', data: [4, 3, 8] }
+];
 ```
 
 ### Variations
