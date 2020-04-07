@@ -532,14 +532,18 @@ async function getAssignments({ auth, personId }) {
     .leftOuterJoin('Country as c2', 'g2.countryId', 'c2.id')
     .leftOuterJoin('State as st2', 'g2.stateId', 'st2.id')
     .leftOuterJoin('Lga as l2', 'g2.lgaId', 'l2.id')
+    // JobContext with diseaseId
+    .leftOuterJoin('Disease as d', 'jc.diseaseId', 'd.id')
     // JobContext with assayTypeId
     .leftOuterJoin('AssayType as at', 'jc.assayTypeId', 'at.id')
+    .leftOuterJoin('Disease as d2', 'at.diseaseId', 'd2.id')
     // JobContext with deviceTypeId
     .leftOuterJoin('DeviceType as dt', 'jc.deviceTypeId', 'dt.id')
     // JobContext with assayId
     .leftOuterJoin('Assay as a', 'jc.assayId', 'a.id')
     .leftOuterJoin('AssayType as at2', 'a.assayTypeId', 'at2.id')
     .leftOuterJoin('DeviceType as dt2', 'a.deviceTypeId', 'dt2.id')
+    .leftOuterJoin('Disease as d3', 'at2.diseaseId', 'd3.id')
     //
     .where('j.personId', personId)
     .orderBy(['jf.name', 's.name', 'c.name', 'st.name', 'l.name'])
@@ -568,9 +572,14 @@ async function getAssignments({ auth, personId }) {
       'st2.name as stateName2',
       'l2.id as lgaId2',
       'l2.name as lgaName2',
+      // JobContext with diseaseId
+      'd.id as diseaseId',
+      'd.name as diseaseName',
       // JobContext with assayTypeId
       'at.id as assayTypeId',
       'at.name as assayTypeName',
+      'd2.id as diseaseId2',
+      'd2.name as diseaseName2',
       // JobContext with deviceTypeId
       'dt.id as deviceTypeId',
       'dt.name as deviceTypeName',
@@ -580,7 +589,9 @@ async function getAssignments({ auth, personId }) {
       'at2.id as assayTypeId2',
       'at2.name as assayTypeName2',
       'dt2.id as deviceTypeId2',
-      'dt2.name as deviceTypeName2'
+      'dt2.name as deviceTypeName2',
+      'd3.id as diseaseId3',
+      'd3.name as diseaseName3'
     )
     .map(item => {
       const { siteId, assayId } = item
@@ -591,6 +602,8 @@ async function getAssignments({ auth, personId }) {
         stateName,
         lgaId,
         lgaName,
+        diseaseId,
+        diseaseName,
         assayTypeId,
         assayTypeName,
         deviceTypeId,
@@ -610,6 +623,15 @@ async function getAssignments({ auth, personId }) {
           },
         ] = [item]
       }
+      // if assayTypeId is used by JobContext - then get assay type's disease props
+      if (assayTypeId) {
+        ;[
+          {
+            diseaseId2: diseaseId,
+            diseaseName2: diseaseName,
+          },
+        ] = [item]
+      }
       // if assayId is used by JobContext - then get assay's assay & device type props
       if (assayId) {
         ;[
@@ -618,6 +640,8 @@ async function getAssignments({ auth, personId }) {
             assayTypeName2: assayTypeName,
             deviceTypeId2: deviceTypeId,
             deviceTypeName2: deviceTypeName,
+            diseaseId3: diseaseId,
+            diseaseName3: diseaseName,
           },
         ] = [item]
       }
@@ -641,6 +665,8 @@ async function getAssignments({ auth, personId }) {
         stateName,
         lgaId,
         lgaName,
+        diseaseId,
+        diseaseName,
         assayTypeId,
         assayTypeName,
         deviceTypeId,

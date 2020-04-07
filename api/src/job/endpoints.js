@@ -162,6 +162,12 @@ const personAssignmentsResponse = {
           deviceTypeName: Joi.string()
             .allow(null, '')
             .description('DeviceType.name'),
+          diseaseId: Joi.number()
+            .allow(null)
+            .description('Disease.id'),
+          diseaseName: Joi.string()
+            .allow(null, '')
+            .description('Disease.name'),
           assayTypeId: Joi.number()
             .allow(null)
             .description('AssayType.id'),

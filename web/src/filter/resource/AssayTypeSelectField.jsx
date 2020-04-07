@@ -135,7 +135,7 @@ export const AssayTypeSelectField = ({
         at =>
           !diseaseId ||
           !at.get('diseaseId') ||
-          at.get('diseaseId').toString() === diseaseId
+          at.get('diseaseId').toString() === diseaseId.toString()
       )
       .map(at => (
         <MenuItem key={at.get('id')} value={at.get('id')}>

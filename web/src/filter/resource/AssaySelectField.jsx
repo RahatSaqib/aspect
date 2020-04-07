@@ -78,15 +78,15 @@ export class AssaySelectField extends PureComponent {
         {validAssays
           .filter(
             a =>
-              !diseaseId ||
-              !a.get('diseaseId') ||
-              a.get('diseaseId').toString() === diseaseId ||
-              !assayTypeId ||
-              !a.get('assayTypeId') ||
-              a.get('assayTypeId').toString() === assayTypeId ||
-              !deviceTypeId ||
-              !a.get('deviceTypeId') ||
-              a.get('deviceTypeId').toString() === deviceTypeId
+              (!diseaseId ||
+                !a.get('diseaseId') ||
+                a.get('diseaseId').toString() === diseaseId.toString()) &&
+              (!assayTypeId ||
+                !a.get('assayTypeId') ||
+                a.get('assayTypeId').toString() === assayTypeId.toString()) &&
+              (!deviceTypeId ||
+                !a.get('deviceTypeId') ||
+                a.get('deviceTypeId').toString() === deviceTypeId.toString())
           )
           .map(a => (
             <MenuItem key={a.get('id')} value={a.get('id')}>
