@@ -1,8 +1,8 @@
 ### Usage
 
 ```js static
-import ChartContainer from 'src/components/graph/ChartContainer';
-import BarGraph from 'src/components/graph/BarGraph';
+import ChartContainer from 'src/components/graph/ChartContainer'
+import BarGraph from 'src/components/graph/BarGraph'
 ```
 
 It's themed according to default settings, requiring only data to render. Data should be defined as follows, with each value of the data array representing a single color on the stacked bar:
@@ -19,7 +19,7 @@ const exData1 = [
   { name: 'Site name 6', data: [1, 4, 10] },
   { name: 'Site name 7', data: [2, 5, 9] },
   { name: 'Site name 8', data: [4, 3, 8] }
-];
+]
 ```
 
 ### Variations
