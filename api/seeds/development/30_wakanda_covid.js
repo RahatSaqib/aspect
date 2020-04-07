@@ -299,21 +299,23 @@ async function seed(knex) {
     partnerId,
     countryData.devices
   )
+  const covidAssays = await knex('Assay as a')
+    .join('AssayType as at', 'a.assayTypeId', 'at.id')
+    .where('at.externalId', 'covid19')
+    .select('a.*')
+  const covidPositiveResults = _.filter(
+    covidResults,
+    result => result.resultCategory1 === resultCategoryPositiveId
+  )
   await addCovidResults(
     knex,
     resultNumber,
-    await knex('Assay as a')
-      .join('AssayType as at', 'a.assayTypeId', 'at.id')
-      .where('at.externalId', 'covid19')
-      .select('a.*'),
+    covidAssays,
     auditFields,
     siteDatas,
     partnerId,
     countryData.devices,
-    _.filter(
-      covidResults,
-      result => result.resultCategory1 === resultCategoryPositiveId
-    )
+    covidPositiveResults
   )
 
   const clinicList = countryData.clinics

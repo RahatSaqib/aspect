@@ -282,7 +282,10 @@ async function generateResults(
     partnerOneId,
     covidDevices
   )
-
+  const covidPositiveResults = _.filter(
+    covidResults,
+    result => result.resultCategory1 === resultCategoryPositiveId
+  )
   await addCovidResults(
     knex,
     resultCovidNumber,
@@ -291,10 +294,7 @@ async function generateResults(
     siteDatas,
     partnerOneId,
     covidDevices,
-    _.filter(
-      covidResults,
-      result => result.resultCategory1 === resultCategoryPositiveId
-    )
+    covidPositiveResults
   )
   return [].concat(tbResults, ebolaResults, hivVlResults, covidResults)
 }
@@ -471,17 +471,17 @@ async function addCovidResults(
       const rndDays = _.random(10, 20)
       result = _.find(possibleResults, r => r.resultText === 'Negative')
       linkedResult = _.sample(positiveResults)
-      linkedResult.formData.dateAndTimeOfTest = addDays(
-        linkedResult.formData.dateAndTimeOfTest,
+      const newStart = addDays(
+        Math.max(linkedResult.startedOn, linkedResult.endedOn),
         rndDays
       )
-
+      linkedResult.formData.dateAndTimeOfTest = newStart
       resultToInsert = _.assign({}, _.omit(linkedResult, ['id']), {
-        startedOn: addDays(linkedResult.startedOn || randomDate, rndDays),
+        startedOn: newStart,
         formData: linkedResult.formData,
-        endedOn: addMinutes(linkedResult.startedOn, 100),
-        createdOn: addMinutes(linkedResult.startedOn, 120),
-        updatedOn: addMinutes(linkedResult.startedOn, 180),
+        endedOn: addMinutes(newStart, 100),
+        createdOn: addMinutes(newStart, 120),
+        updatedOn: addMinutes(newStart, 180),
       })
     }
 
