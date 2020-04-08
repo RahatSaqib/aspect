@@ -1420,7 +1420,7 @@ const routes = [
   },
   {
     method: 'GET',
-    path: '/result/follow-up-report',
+    path: '/result/follow-up-aggregations',
     handler: asyncHandler(followUpAggregations),
     config: {
       description: 'Follow-up aggregations for report',

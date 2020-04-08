@@ -10,7 +10,7 @@ const server = supertest.agent('http://localhost:8080')
 const { assert } = chai
 
 describe('Result Follow-Up Aggregations for reports', () => {
-  const path = '/api/result/follow-up-report'
+  const path = '/api/result/follow-up-aggregations'
 
   describe('GET', () => {
     shared.checkToken(server, path)

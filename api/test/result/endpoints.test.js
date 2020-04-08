@@ -225,12 +225,12 @@ describe('result endpoints', () => {
       })
     })
 
-    describe('/result/follow-up-report', () => {
+    describe('/result/follow-up-aggregations', () => {
       let endpoint
       const expectedResponse = { value: 'Expected result' }
 
       beforeEach(() => {
-        endpoint = setupRoute('GET', '/result/follow-up-report', {
+        endpoint = setupRoute('GET', '/result/follow-up-aggregations', {
           async followUpAggregations() {
             return expectedResponse
           },
