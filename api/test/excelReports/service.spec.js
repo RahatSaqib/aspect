@@ -25,7 +25,11 @@ describe('Excel reports', () => {
         .get(query)
         .set('Authorization', `Bearer ${shared.token}`)
       assert.equal(res.status, 200)
-      assert.instanceOf(res.body, Buffer)
+      assert.equal(
+        res.type,
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+      )
+      assert.isObject(res.body)
     })
   })
 })
