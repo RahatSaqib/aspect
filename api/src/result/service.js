@@ -33,7 +33,7 @@ const SELECT_LIST_FIELDS = [
   'r.externalId',
   'r.notes',
   knex.raw(
-    "case when GREATEST(IFNULL(rtas.requiresTreatment,0), IFNULL(rtas2.requiresTreatment,0)) = 0 then null else case when rts.externalId= 'OnTreatment' then 'ok' when rts.externalId = 'NotPossible' then 'na' when r.endedOn<DATE_SUB(NOW(),INTERVAL 32 DAY) then 'alert' when r.endedOn<=DATE_SUB(NOW(),INTERVAL 16 DAY) and r.endedOn>=DATE_SUB(NOW(),INTERVAL 32 DAY) then 'warning' else 'na' end end as treatmentStatusInfo"
+    "case when GREATEST(IFNULL(rca.requiresTreatment,0), IFNULL(rca2.requiresTreatment,0)) = 0 then null else case when rts.externalId= 'OnTreatment' then 'ok' when rts.externalId = 'NotPossible' then 'na' when r.endedOn<DATE_SUB(NOW(),INTERVAL 32 DAY) then 'alert' when r.endedOn<=DATE_SUB(NOW(),INTERVAL 16 DAY) and r.endedOn>=DATE_SUB(NOW(),INTERVAL 32 DAY) then 'warning' else 'na' end end as treatmentStatusInfo"
   ),
   knex.raw('IFNULL(r.endedOn, r.startedOn) as endedOn'),
   'd.name as deviceName',
@@ -47,7 +47,7 @@ const SELECT_LIST_FIELDS = [
   'rtsl.changedOn as resultTreatmentStatusChangedOn',
   knex.raw('ifnull(rts.name, "N/A") as resultTreatmentStatusName'),
   knex.raw(
-    'GREATEST(IFNULL(rtas.requiresTreatment,0), IFNULL(rtas2.requiresTreatment,0)) as requiresTreatment'
+    'GREATEST(IFNULL(rca.requiresTreatment,0), IFNULL(rca2.requiresTreatment,0)) as requiresTreatment'
   ),
   'so.id as sampleOriginSiteId',
   'so.name as sampleOriginSiteName',
@@ -123,10 +123,10 @@ const SELECT_COMMON_FIELDS = [
   'stp.name as sampleTypeName',
   knex.raw('JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.id")) as patientId'),
   knex.raw(
-    'GREATEST(IFNULL(rtas.requiresTreatment,0), IFNULL(rtas2.requiresTreatment,0)) as requiresTreatment'
+    'GREATEST(IFNULL(rca.requiresTreatment,0), IFNULL(rca2.requiresTreatment,0)) as requiresTreatment'
   ),
   knex.raw(
-    "case when GREATEST(IFNULL(rtas.requiresTreatment,0), IFNULL(rtas2.requiresTreatment,0)) = 0 then null else case when rts.externalId= 'OnTreatment' then 'ok' when rts.externalId = 'NotPossible' then 'na' when r.endedOn<DATE_SUB(NOW(),INTERVAL 32 DAY) then 'alert' when r.endedOn<=DATE_SUB(NOW(),INTERVAL 16 DAY) and r.endedOn>=DATE_SUB(NOW(),INTERVAL 32 DAY) then 'warning' else 'na' end end as treatmentStatusInfo"
+    "case when GREATEST(IFNULL(rca.requiresTreatment,0), IFNULL(rca2.requiresTreatment,0)) = 0 then null else case when rts.externalId= 'OnTreatment' then 'ok' when rts.externalId = 'NotPossible' then 'na' when r.endedOn<DATE_SUB(NOW(),INTERVAL 32 DAY) then 'alert' when r.endedOn<=DATE_SUB(NOW(),INTERVAL 16 DAY) and r.endedOn>=DATE_SUB(NOW(),INTERVAL 32 DAY) then 'warning' else 'na' end end as treatmentStatusInfo"
   ),
   'r.patientData',
   'rsl.reason as resultWorkflowLogReason',
@@ -232,6 +232,7 @@ async function getListResults(query, auth, fields = SELECT_LIST_FIELDS) {
   if (query.withFollowUp) {
     selectFields.push('fu.externalId as followUp')
     selectFields.push('fut.externalId as followUpType')
+    selectFields.push('rca.reportable')
   }
 
   // get total count for paging
@@ -376,21 +377,21 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
   const dataConstraints = await getConstraints(auth.credentials)
 
   const resultQuery = getBaseQueryForResults()
-    .leftJoin('ResultCategoryAssay as rtas', function() {
-      this.on('r.assayId', 'rtas.assayId').andOn(
+    .leftJoin('ResultCategoryAssay as rca', function() {
+      this.on('r.assayId', 'rca.assayId').andOn(
         'r.resultCategory1',
-        'rtas.resultCategoryId'
+        'rca.resultCategoryId'
       )
     })
-    .leftJoin('ResultCategoryAssay as rtas2', function() {
-      this.on('r.assayId', 'rtas2.assayId').andOn(
+    .leftJoin('ResultCategoryAssay as rca2', function() {
+      this.on('r.assayId', 'rca2.assayId').andOn(
         'r.resultCategory2',
-        'rtas2.resultCategoryId'
+        'rca2.resultCategoryId'
       )
     })
     // only results which are reportable for either ResultCategory
     .where(builder =>
-      builder.where('rtas.reportable', 1).orWhere('rtas2.reportable', 1)
+      builder.where('rca.reportable', 1).orWhere('rca2.reportable', 1)
     )
     .whereIn('rs.externalId', [
       'Deliverable',
@@ -818,16 +819,16 @@ async function getResultByResultId(request, fields = SELECT_SHOW_FIELDS) {
   const { userName } = await getUser(auth.credentials.name)
 
   const results = await getBaseQueryForResults()
-    .leftJoin('ResultCategoryAssay as rtas', function() {
-      this.on('r.assayId', 'rtas.assayId').andOn(
+    .leftJoin('ResultCategoryAssay as rca', function() {
+      this.on('r.assayId', 'rca.assayId').andOn(
         'r.resultCategory1',
-        'rtas.resultCategoryId'
+        'rca.resultCategoryId'
       )
     })
-    .leftJoin('ResultCategoryAssay as rtas2', function() {
-      this.on('r.assayId', 'rtas2.assayId').andOn(
+    .leftJoin('ResultCategoryAssay as rca2', function() {
+      this.on('r.assayId', 'rca2.assayId').andOn(
         'r.resultCategory2',
-        'rtas2.resultCategoryId'
+        'rca2.resultCategoryId'
       )
     })
     .leftJoin('ResultForm as rf', function() {
@@ -2170,16 +2171,16 @@ function getBaseQueryForResults() {
 
 function getQueryForResultsListAndExport(query, dataConstraints) {
   const resultQuery = getBaseQueryForResults()
-    .leftJoin('ResultCategoryAssay as rtas', function() {
-      this.on('r.assayId', 'rtas.assayId').andOn(
+    .leftJoin('ResultCategoryAssay as rca', function() {
+      this.on('r.assayId', 'rca.assayId').andOn(
         'r.resultCategory1',
-        'rtas.resultCategoryId'
+        'rca.resultCategoryId'
       )
     })
-    .leftJoin('ResultCategoryAssay as rtas2', function() {
-      this.on('r.assayId', 'rtas2.assayId').andOn(
+    .leftJoin('ResultCategoryAssay as rca2', function() {
+      this.on('r.assayId', 'rca2.assayId').andOn(
         'r.resultCategory2',
-        'rtas2.resultCategoryId'
+        'rca2.resultCategoryId'
       )
     })
     .modify(filterDateRangeParams, query, 'r.endedOn')
@@ -2423,10 +2424,10 @@ async function followUpAggregations(request) {
     .orderBy('r.endedOn')
     .count('r.id as cnt')
 
-  // if no group is specified, use result category
+  // if no group is specified, use followUp
   let groupBy = null
   if (!query.groupBy) {
-    groupBy = ['resultCategory1']
+    groupBy = ['followUp']
   } else if (!Array.isArray(query.groupBy)) {
     groupBy = [query.groupBy]
   } else {
