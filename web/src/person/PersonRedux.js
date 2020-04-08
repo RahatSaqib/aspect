@@ -232,7 +232,7 @@ export function exportContacts(
         },
       }
     ).then(async elem => {
-      const file = await elem
+      const file = await elem.blob
       dispatch(receivedExportResponse(file, fileFormat, reportName))
     })
   }
