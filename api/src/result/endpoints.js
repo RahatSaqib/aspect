@@ -30,6 +30,7 @@ const {
   deleteResultNote,
   transferResult,
   updateTransferNotification,
+  clinicalIndicatorAggregations,
   followUpAggregations,
 } = require('./service')
 const { getPatientResultsDetails } = require('./patientResultDetailService')
@@ -37,20 +38,6 @@ const { getResultsReport } = require('./serviceReport')
 const {
   validateAllGeographyFilterParams,
 } = require('../geography/requestValidation')
-
-const followUpAggregationsValidGroups = [
-  'resultCategory1',
-  'resultCategory2',
-  'week',
-  'month',
-  'year',
-  'gender',
-  'age',
-  'state',
-  'day',
-  'followUp',
-  'followUpType',
-]
 
 // -----------------------------------------------------
 // helper functions
@@ -181,6 +168,76 @@ function getResponseForComments() {
         ),
     }),
   }
+}
+// -----------------------------------------------------
+const resultAggregationsValidGroups = [
+  'resultCategory1',
+  'resultCategory2',
+  'week',
+  'month',
+  'year',
+  'gender',
+  'age',
+  'state',
+  'day',
+]
+const clinicalIndicatorsValidGroups = [...resultAggregationsValidGroups]
+const followUpAggregationsValidGroups = [
+  ...resultAggregationsValidGroups,
+  'followUp',
+  'followUpType',
+]
+const getResultAggregationsValidate = validGroups => ({
+  ...validateDateRangeParams(),
+  assayType: Joi.string()
+    .allow('')
+    .description('Filter for assay type'),
+  assay: Joi.alternatives()
+    .try(Joi.array(), Joi.string())
+    .description('Filter for assay'),
+  resultCategory1: Joi.string()
+    .allow('')
+    .description('Filter for result category 1'),
+  resultCategory2: Joi.string()
+    .allow('')
+    .description('Filter for result category 2'),
+  siteName: Joi.string()
+    .allow('')
+    .description('Filter for site'),
+  deviceName: Joi.string()
+    .allow('')
+    .description('Filter for device'),
+  groupBy: Joi.alternatives()
+    .allow('', null)
+    .try(
+      Joi.array().items(Joi.string().valid(validGroups)),
+      Joi.string().valid(validGroups)
+    )
+    .description('Array of fields to group by'),
+})
+const resultAggregationsResponseItem = {
+  cnt: Joi.number()
+    .required()
+    .description('The count of results in the group'),
+  resultCategory1: Joi.string()
+    .allow(null)
+    .description('Result Category 1 that count is grouped by'),
+  resultCategory2: Joi.string()
+    .allow(null)
+    .description('Result Category 2 that count is grouped by'),
+  week: Joi.string().description('The week that the count is grouped by'),
+  month: Joi.string().description('The month that the count is grouped by'),
+  year: Joi.string().description('The year that the count is grouped by'),
+  day: Joi.string().description('The day that the count is grouped by'),
+  gender: Joi.string()
+    .allow(null)
+    .description('The gender that the count is grouped by'),
+  age: Joi.number()
+    .allow(null)
+    .description('The age that the count is grouped by'),
+  state: Joi.string()
+    .allow(null)
+    .description('The state that the count is grouped by'),
 }
 
 // -----------------------------------------------------
@@ -1420,6 +1477,36 @@ const routes = [
   },
   {
     method: 'GET',
+    path: '/result/clinical-indicators',
+    handler: asyncHandler(clinicalIndicatorAggregations),
+    config: {
+      description: 'Clinical Indicators Dashboard',
+      notes: 'Data for most of the graphs on the clinical indicators page',
+      auth: { scope: ['site', 'result'] },
+      validate: {
+        query: {
+          ...getResultAggregationsValidate(clinicalIndicatorsValidGroups),
+        },
+      },
+      response: {
+        options: {
+          allowUnknown: false,
+        },
+        schema: Joi.object().keys({
+          data: Joi.array()
+            .required()
+            .description('List of counts of grouped/filtered results')
+            .items(
+              Joi.object().keys({
+                ...resultAggregationsResponseItem,
+              })
+            ),
+        }),
+      },
+    },
+  },
+  {
+    method: 'GET',
     path: '/result/follow-up-aggregations',
     handler: asyncHandler(followUpAggregations),
     config: {
@@ -1428,34 +1515,7 @@ const routes = [
       auth: { scope: ['site', 'result'] },
       validate: {
         query: {
-          ...validateDateRangeParams(),
-          assayType: Joi.string()
-            .allow('')
-            .description('Filter for assay type'),
-          assay: Joi.alternatives()
-            .try(Joi.array(), Joi.string())
-            .description('Filter for assay'),
-          resultCategory1: Joi.string()
-            .allow('')
-            .description('Filter for result category 1'),
-          resultCategory2: Joi.string()
-            .allow('')
-            .description('Filter for result category 2'),
-          siteName: Joi.string()
-            .allow('')
-            .description('Filter for site'),
-          deviceName: Joi.string()
-            .allow('')
-            .description('Filter for device'),
-          groupBy: Joi.alternatives()
-            .allow('', null)
-            .try(
-              Joi.array().items(
-                Joi.string().valid(followUpAggregationsValidGroups)
-              ),
-              Joi.string().valid(followUpAggregationsValidGroups)
-            )
-            .description('Array of fields to group by'),
+          ...getResultAggregationsValidate(followUpAggregationsValidGroups),
           followUp: Joi.string()
             .allow('')
             .description('Filter for result follow-up'),
@@ -1474,36 +1534,7 @@ const routes = [
             .description('List of reports')
             .items(
               Joi.object().keys({
-                cnt: Joi.number()
-                  .required()
-                  .description('The count of results in the group'),
-                resultCategory1: Joi.string()
-                  .allow(null)
-                  .description('Result Category 1 that count is grouped by'),
-                resultCategory2: Joi.string()
-                  .allow(null)
-                  .description('Result Category 2 that count is grouped by'),
-                week: Joi.string().description(
-                  'The week that the count is grouped by'
-                ),
-                month: Joi.string().description(
-                  'The month that the count is grouped by'
-                ),
-                year: Joi.string().description(
-                  'The year that the count is grouped by'
-                ),
-                day: Joi.string().description(
-                  'The day that the count is grouped by'
-                ),
-                gender: Joi.string()
-                  .allow(null)
-                  .description('The gender that the count is grouped by'),
-                age: Joi.number()
-                  .allow(null)
-                  .description('The age that the count is grouped by'),
-                state: Joi.string()
-                  .allow(null)
-                  .description('The state that the count is grouped by'),
+                ...resultAggregationsResponseItem,
                 followUp: Joi.string()
                   .allow(null)
                   .description('The followUp that the count is grouped by'),

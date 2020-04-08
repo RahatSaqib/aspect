@@ -482,7 +482,7 @@ export function fetchClinicalIndicatorsDashboard(params) {
     const requestedAt = `results_${Date.now()}`
     dispatch(requestClinicalIndicatorsDashboard({ requestedAt }))
 
-    return aspectFetch('/dashboard/clinical-indicators', {
+    return aspectFetch('/result/clinical-indicators', {
       method: 'GET',
       params: omit(params, ['type']),
       errorNotifications: {

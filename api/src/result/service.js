@@ -2225,7 +2225,7 @@ async function getResultsForReport(auth, query) {
   return getListResults(query, auth)
 }
 
-async function clinicalIndicatorsDashboard(request) {
+async function clinicalIndicatorAggregations(request) {
   const { auth, query } = request
 
   if (!canViewResults(auth)) {
@@ -2491,6 +2491,6 @@ module.exports = {
   allResultNotes,
   showResultFollowUps,
   transferResult,
-  clinicalIndicatorsDashboard,
+  clinicalIndicatorAggregations,
   followUpAggregations,
 }
