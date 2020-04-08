@@ -1477,7 +1477,7 @@ const routes = [
   },
   {
     method: 'GET',
-    path: '/result/clinical-indicators',
+    path: '/result/clinical-indicator-aggregations',
     handler: asyncHandler(clinicalIndicatorAggregations),
     config: {
       description: 'Clinical Indicators Dashboard',

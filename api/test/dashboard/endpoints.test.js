@@ -32,33 +32,4 @@ describe('dashboard endpoint', () => {
         .execute()
     })
   })
-
-  describe('/dashboard/clinical-indicators', () => {
-    function setupRoute(method, path, serviceStub) {
-      const endpoints = proxyquire('../../src/dashboard/endpoints', {
-        '../result/service': serviceStub,
-      })
-      return _.find(endpoints.routes, { method, path })
-    }
-    let endpoint
-    const expectedResponse = { value: 'Expected result' }
-
-    beforeEach(() => {
-      endpoint = setupRoute('GET', '/dashboard/clinical-indicators', {
-        async clinicalIndicatorsDashboard() {
-          return expectedResponse
-        },
-      })
-    })
-
-    it('Should respond with the data returned from the service', done => {
-      endpointUtils
-        .callHandlerOn(endpoint)
-        .handleResponseWith(response => {
-          assert.deepEqual(response, expectedResponse)
-        })
-        .thenCall(done)
-        .execute()
-    })
-  })
 })

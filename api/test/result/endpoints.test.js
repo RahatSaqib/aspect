@@ -3,7 +3,7 @@ const { assert } = require('chai')
 const _ = require('lodash')
 const endpointUtils = require('../utils/endpointUtils')
 
-describe('result endpoints', () => {
+describe.only('result endpoints', () => {
   function setupRoute(method, path, serviceStub) {
     const endpoints = proxyquire('../../src/result/endpoints', {
       './service': serviceStub,
@@ -214,6 +214,33 @@ describe('result endpoints', () => {
           },
         })
       })
+      it('Should respond with the data returned from the service', done => {
+        endpointUtils
+          .callHandlerOn(endpoint)
+          .handleResponseWith(response => {
+            assert.deepEqual(response, expectedResponse)
+          })
+          .thenCall(done)
+          .execute()
+      })
+    })
+
+    describe('/result/clinical-indicator-aggregations', () => {
+      let endpoint
+      const expectedResponse = { value: 'Expected result' }
+
+      beforeEach(() => {
+        endpoint = setupRoute(
+          'GET',
+          '/result/clinical-indicator-aggregations',
+          {
+            async clinicalIndicatorAggregations() {
+              return expectedResponse
+            },
+          }
+        )
+      })
+
       it('Should respond with the data returned from the service', done => {
         endpointUtils
           .callHandlerOn(endpoint)
