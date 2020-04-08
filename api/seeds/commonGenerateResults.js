@@ -149,6 +149,7 @@ async function generateResults(
   // result categories
   const {
     Detected: resultCategoryDetectedId,
+    Positive: resultCategoryPositiveId,
     NotDetected: resultCategoryNotDetectedId,
     LessThan1000: resultCategoryLessThan1000,
     MoreThan1000: resultCategoryMoreThan1000,
@@ -279,7 +280,21 @@ async function generateResults(
     auditFields,
     siteDatas,
     partnerOneId,
-    await covidDevices
+    covidDevices
+  )
+  const covidPositiveResults = _.filter(
+    covidResults,
+    result => result.resultCategory1 === resultCategoryPositiveId
+  )
+  await addCovidResults(
+    knex,
+    resultCovidNumber,
+    covidAssays,
+    auditFields,
+    siteDatas,
+    partnerOneId,
+    covidDevices,
+    covidPositiveResults
   )
   return [].concat(tbResults, ebolaResults, hivVlResults, covidResults)
 }
@@ -291,10 +306,11 @@ async function addCovidResults(
   auditFields,
   siteDatas,
   partnerId,
-  devices
+  devices,
+  positiveResults = null
 ) {
   if (resultCovidNumber === 0) return
-  const resultsid = []
+  const results = []
 
   // seed dummy results
   const { NasalSwab: sampleTypeNasalSwab } = await allSampleTypeToId()
@@ -316,9 +332,12 @@ async function addCovidResults(
     'Deliverable'
   )
 
+  const quantity = positiveResults
+    ? Math.ceil(positiveResults.length * _.random(0.4, 0.8))
+    : resultCovidNumber
   // seed samples
   const samples = []
-  await Promise.each(_.range(resultCovidNumber), async i => {
+  await Promise.each(_.range(quantity), async i => {
     const siteData = _.sample(
       _.filter(siteDatas, sites => sites.externalId.indexOf('_clinic') >= 0)
     )
@@ -402,7 +421,7 @@ async function addCovidResults(
     siteDatas,
     site => site.externalId.indexOf('_lab') >= 0
   )
-  await Promise.each(_.range(resultCovidNumber), async i => {
+  await Promise.each(_.range(quantity), async i => {
     const resultCapturedInAspect = i % 7 === 0
 
     const device = resultCapturedInAspect ? aspectDevice : _.sample(devices)
@@ -412,43 +431,94 @@ async function addCovidResults(
       : _.find(siteDatas, site => site.id === device.siteId)
 
     const sample = samples[i % samples.length]
+    const uid = _.random(100000, 999999)
+    const caseExternalId = `CASE-${uid}-ID`
+    const reportableSite = sample.originSiteId
+      ? _.find(siteDatas, c => c.id === sample.originSiteId)
+      : siteData
+    let result
+    let formData = {}
     const randomDate = calculateDateForResultForCovid(
       i,
       resultCovidNumber,
       6000
     )
-    const reportableSite = sample.originSiteId
-      ? _.find(siteDatas, c => c.id === sample.originSiteId)
-      : siteData
-
-    const rnd = _.random(0, 100)
-    const result = _.find(
-      possibleResults,
-      r => rnd >= r.minLikelihood && rnd <= r.maxLikelihood
-    )
-
-    const formData = {
-      age: rnd,
-      caseId: `COVID-${_.random(1000, 9999)}-ID`,
-      gender: _.random(1, 2),
-      testReason: _.random(1, 6),
-      dateAndTimeOfTest: addMinutes(randomDate, 100),
-    }
-    const selectedTestType =
-      genericTestTypes[_.random(0, genericTestTypes.length - 1)]
-    if (resultCapturedInAspect) {
-      formData.testType = selectedTestType.value
-    }
-
+    let linkedResult
+    let resultToInsert = {}
     const assayId = resultCapturedInAspect
       ? genericAssay.id
       : _.find(assays, elem => elem.deviceTypeId === device.deviceTypeId).id
+    if (!positiveResults) {
+      const rnd = _.random(0, 100)
+      result = _.find(
+        possibleResults,
+        r => rnd >= r.minLikelihood && rnd <= r.maxLikelihood
+      )
 
-    const [resultId] = await knex('Result').insert({
+      formData = {
+        age: rnd,
+        caseId: caseExternalId,
+        gender: _.random(1, 2),
+        testReason: _.random(1, 6),
+        dateAndTimeOfTest: addMinutes(randomDate, 100),
+      }
+      const selectedTestType =
+        genericTestTypes[_.random(0, genericTestTypes.length - 1)]
+      if (resultCapturedInAspect) {
+        formData.testType = selectedTestType.value
+      }
+    } else {
+      const rndDays = _.random(10, 20)
+      result = _.find(possibleResults, r => r.resultText === 'Negative')
+      linkedResult = _.sample(positiveResults)
+      const newStart = addDays(
+        Math.max(linkedResult.startedOn, linkedResult.endedOn),
+        rndDays
+      )
+      linkedResult.formData.dateAndTimeOfTest = newStart
+      resultToInsert = _.assign({}, _.omit(linkedResult, ['id']), {
+        startedOn: newStart,
+        formData: linkedResult.formData,
+        endedOn: addMinutes(newStart, 100),
+        createdOn: addMinutes(newStart, 120),
+        updatedOn: addMinutes(newStart, 180),
+      })
+    }
+
+    if (!positiveResults) {
+      const caseId = await knex('Case').insert({
+        externalId: caseExternalId,
+      })
+
+      resultToInsert = {
+        assayId,
+        caseId,
+        partnerId,
+        formData: JSON.stringify(formData),
+        startedOn: resultCapturedInAspect ? null : randomDate,
+        endedOn: addMinutes(randomDate, 100),
+        createdOn: addMinutes(randomDate, 120),
+        updatedOn: addMinutes(randomDate, 180),
+        patientData: JSON.stringify({
+          id: formData.caseId,
+          age: formData.age,
+          caseId: formData.caseId,
+          gender: formData.gender
+            ? wakandaCovidResultFormSchema.fields.gender.control.options.find(
+                option => option.value == formData.gender // eslint-disable-line eqeqeq
+              ).title
+            : undefined,
+          testReason: formData.testReason
+            ? wakandaCovidResultFormSchema.fields.testReason.control.options.find(
+                option => option.value == formData.testReason // eslint-disable-line eqeqeq
+              ).title
+            : undefined,
+        }),
+      }
+    }
+    resultToInsert = _.assign({}, resultToInsert, {
       ...auditFields,
       externalId: `COVID-${format(new Date(), 'TT')}`,
-      assayId,
-      partnerId,
       geographyId: siteData.geographyId,
       siteId: siteData.id,
       reportableSiteId: reportableSite.id,
@@ -461,35 +531,12 @@ async function addCovidResults(
       resultCategory1: result.category1,
       resultCategory2: result.category2,
       resultData: JSON.stringify({ resultText: result.resultText }),
-      formData: JSON.stringify(formData),
-      patientData: JSON.stringify({
-        id: formData.caseId,
-        age: formData.age,
-        caseId: formData.caseId,
-        gender: formData.gender
-          ? wakandaCovidResultFormSchema.fields.gender.control.options.find(
-              option => option.value == formData.gender // eslint-disable-line eqeqeq
-            ).title
-          : undefined,
-        testReason: formData.testReason
-          ? wakandaCovidResultFormSchema.fields.testReason.control.options.find(
-              option => option.value == formData.testReason // eslint-disable-line eqeqeq
-            ).title
-          : undefined,
-      }),
-      startedOn: resultCapturedInAspect ? null : randomDate,
-      endedOn: addMinutes(randomDate, 100),
-      createdOn: addMinutes(randomDate, 120),
-      updatedOn: addMinutes(randomDate, 180),
     })
+    const [resultId] = await knex('Result').insert(resultToInsert)
 
-    const resultInserted = {
-      id: resultId,
-      createdOn: now,
-      assayId,
-      ...auditFields,
-    }
-    resultsid.push(resultInserted)
+    resultToInsert.id = resultId
+
+    results.push(resultToInsert)
     const rndWorkflow = _.random(0, 100)
     const resultWorkflowStatusId =
       rndWorkflow < 20
@@ -512,7 +559,7 @@ async function addCovidResults(
       .update({ resultWorkflowStatusLogId: lastLogId })
   })
 
-  return resultsid
+  return results
 }
 
 async function addHivVlResults(
