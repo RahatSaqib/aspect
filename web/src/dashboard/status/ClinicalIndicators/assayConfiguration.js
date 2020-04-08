@@ -4,36 +4,46 @@ import messages from './messages'
 
 const assayConfiguration = (intl, assaysFromState, BarGraph, PieGraph) => {
   /**
-   * setAssays: array with config params to drive graph generation.
-   * @param  {String} id The assay ID to pass to the endpoint
-   * @param  {String} name Name of the disease to show
-   * @param  {String} graphContainerClass Class to apply to container component
-   * @param  {Array} colors colors per data point, order is important!
-   * @param  {Array} orderBy Order of datapoints within the graph, order is important!
-   * @param  {Array} filter Pass an array along to filter results by keys (optional)
-   * @param  {Array} graphType Array of grouped graphs to generate. Order matters.
-   *    @param  {String} dataKey Key to match state tree in Redux
-   *    @param  {Function} component Graph component to render, passed from imports
-   *    @param  {String [n='percentage']} displayMethod Accepts 'percentage': consistent height and
-   *         - split by percentage and 'actual': shows actual count split (Bargraph only)
-   *    @param  {String} componentClass Class you wish to apply to downstream graph
-   *    @param  {String} indexBy Key in state to use as index for the graph
-   *    @param  {String} resultCategory Key to match naming convention from endpoint
-   *    @param  {Array} groupBy Keys to pass to endopoint for data retrieval
-   *    @param  {Bool} legend Bool to show/hide graph legend (Currently Bar only)
-   *    @param  {Object} averages Show/hide average message in Pie charts
-   *       @param  {String} title Title of averages message
-   *       @param  {String} key Key to use as count/sum for averages
+   * @param  {String | Array} id The assay ID to pass to the endpoint. Can be single or multiple as array
+   * @param  {String} [title] By default the title will reflect the assay name, but this can be manually set
+   * @param  {String} period Period to filter result on - passed to the endpoint
+   * @param  {Array} graphType Array containing config objects for all the graphs you want to display
+   *
+   * graphType Array config:
+   * @param  {String} dataKey Redux key name for state retrieval
+   * @param  {Function} component Graph component you want to display
+   * @param  {String} componentClass Custom classes to send along to the graph component
+   * @param  {String=percentage|actual} displayMethod BarGraph only: choose to show compound stack or actual stack
+   * @param  {String=resultCategory1|resultCategory2} resultCategory Result catorgory to pass along to the endpoint
+   * @param  {String} indexBy Bargraph: X axes tick increments (Show each bar as day, month, week, etc)
+   * @param  {String | Array} [groupBy] Optional param to be sent to endpoint for data aggregation
+   * @param  {Boolean} legend Option to show the legend explanation or not
+   * @param  {String} formatDate If the x axes is a date, how do you want the date displayed
+   * @param  {Array} [filter] Optional to reduce the results to filter on a key on data retrieved from endpoint
+   * @param  {Function} minDate Function to calc date range, needs amount, date increment (day, week, months, etc), and format
+   *
    * @return {Array} Passed to ClinicalIndicatorsContainer will generate the UI
    */
 
   const buildAssays = []
-  const CALCMETHOD = { percentage: 'percentage', actual: 'actual' }
+  const CALCMETHOD = {
+    percentage: 'percentage',
+    actual: 'actual',
+  }
   const BARCLASS = 'clinicalIndicators__bar'
   const PIECLASS = 'clinicalIndicators__pie'
-  const PIEINDEX = { count: 'cnt' }
-  const GENDER = { male: 'male', female: 'female', index: 'gender' }
-  const RESULT = { result1: 'resultCategory1', result2: 'resultCategory1' }
+  const PIEINDEX = {
+    count: 'cnt',
+  }
+  const GENDER = {
+    male: 'male',
+    female: 'female',
+    index: 'gender',
+  }
+  const RESULT = {
+    result1: 'resultCategory1',
+    result2: 'resultCategory2',
+  }
 
   const DATAKEYS = {
     day: 'byDay',
@@ -65,7 +75,7 @@ const assayConfiguration = (intl, assaysFromState, BarGraph, PieGraph) => {
         'assayMP96Covid19',
         'assayQS7Covid19',
       ],
-      title: intl.formatMessage(messages.clinicalIndicators.CV.name),
+      title: intl.formatMessage(messages.clinicalIndicatorsCovidName),
       period: DAY.plural,
       graphType: [
         {
@@ -109,9 +119,7 @@ const assayConfiguration = (intl, assaysFromState, BarGraph, PieGraph) => {
           groupBy: [RESULT.result1],
           legend: false,
           averages: {
-            title: intl.formatMessage(
-              messages.clinicalIndicators.HIV.pie.legend
-            ),
+            title: intl.formatMessage(messages.clinicalIndicatorsPieLegend),
             key: 'Not Detected',
           },
           minDate: getTimePeriod(5, MONTH.plural, 'yyyy-MM-dd'),
