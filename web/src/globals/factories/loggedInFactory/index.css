@@ -32,12 +32,12 @@
 }
 
 .AppBar__appBar {
-  background-color: #ffffff;
+  background-color: var(--aspect-color-white);
   position: static;
 }
 
 .AppBar__leftIcon:not([disabled]).AppBar__leftIcon:not([disabled]) {
-  color: #6d6f7d;
+  color: var(--aspect-color-grey-3);
 }
 
 .AppBar__appBar--xs {
@@ -86,7 +86,7 @@
 }
 
 .Link__link {
-  color: #000;
+  color: var(--aspect-color-black);
   font-size: var(--aspect-font-size-sm);
 }
 

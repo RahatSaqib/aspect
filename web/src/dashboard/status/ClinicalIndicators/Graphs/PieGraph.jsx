@@ -91,8 +91,8 @@ const PieGraph = ({
             tooltipFormat={value =>
               `${Number(value)}${displayMethod === 'percentage' ? '%' : ''}`
             }
-            borderWidth={1}
-            borderColor={{ from: 'color', modifiers: [['darker', 0.2]] }}
+            borderWidth={0}
+            borderColor={{ from: 'color', modifiers: [['darker', 0.8]] }}
             radialLabelsSkipAngle={10}
             radialLabelsTextXOffset={6}
             radialLabelsTextColor="#333333"

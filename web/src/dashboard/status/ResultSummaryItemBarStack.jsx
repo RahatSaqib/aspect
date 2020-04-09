@@ -10,16 +10,25 @@ import {
   CustomizedAxisBottom,
 } from '../../components/graph/CustomizedAxis'
 
+const {
+  '--aspect-color-shakespeare': colorShakespeare,
+  '--aspect-color-mountain': colorMountain,
+  '--aspect-color-grey-3': colorGrey3,
+  '--aspect-color-mandy': colorMandy,
+  '--aspect-color-supernova': colorSupernova,
+  '--aspect-color-mantis': colorMantis,
+} = process.env
+
 export const colorByResultCategoryExternalId = {
-  Detected: process.env['--aspect-color-shakespeare'],
-  NotDetected: process.env['--aspect-color-mantis'],
-  Indeterminate: process.env['--aspect-color-mountain'],
-  Invalid: process.env['--aspect-color-supernova'],
-  NoResult: process.env['--aspect-color-grey-3'],
-  Error: process.env['--aspect-color-mandy'],
-  LessThan1000: process.env['--aspect-color-mantis'],
-  MoreThan1000: process.env['--aspect-color-shakespeare'],
-  CollectNewSample: process.env['--aspect-color-mountain'],
+  Detected: colorShakespeare,
+  NotDetected: colorMantis,
+  Indeterminate: colorMountain,
+  Invalid: colorSupernova,
+  NoResult: colorGrey3,
+  Error: colorMandy,
+  LessThan1000: colorMantis,
+  MoreThan1000: colorShakespeare,
+  CollectNewSample: colorMountain,
 }
 
 const enhance = compose(

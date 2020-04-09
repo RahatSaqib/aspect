@@ -1,5 +1,5 @@
 .clinicalIndicators__pie {
-  background: #f6f6f6;
+  background: var(--aspect-color-white-2);
   border-radius: 6px;
   position: relative;
   display: flex;
@@ -24,7 +24,7 @@
 
 .legend__title {
   font-size: 18px;
-  color: #333333;
+  color: var(--aspect-color-black-2);
 }
 
 .legend__average {

@@ -72,7 +72,7 @@
     var(--aspect-color-shakespeare),
     var(--aspect-color-shakespeare) 5px,
     var(--aspect-color-shakespeare) 5px,
-    #ffffff 7px
+    var(--aspect-color-white) 7px
   );
 }
 
@@ -90,7 +90,7 @@
     var(--aspect-color-mandy),
     var(--aspect-color-mandy) 5px,
     var(--aspect-color-mandy) 5px,
-    #ffffff 7px
+    var(--aspect-color-white) 7px
   );
 }
 

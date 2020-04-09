@@ -28,19 +28,25 @@ import messages from './messages'
 
 const cssClasses = classnames.bind(require('./Status.css'))
 
+const {
+  '--aspect-color-mandy': colorMandy,
+  '--aspect-color-supernova': colorSupernova,
+  '--aspect-color-mantis': colorMantis,
+} = process.env
+
 const getIssueIdsFromSummaryList = (key, summaryList) =>
   _fp.pipe(_fp.flatMap(_fp.prop([key])), _fp.uniq)(summaryList)
 
 function getFillColor({ id, activeSiteIds, issueSiteIds }) {
   if (_.includes(activeSiteIds, id)) {
-    return process.env['--aspect-color-mandy']
+    return colorMandy
   }
 
   if (_.includes(issueSiteIds, id)) {
-    return process.env['--aspect-color-supernova']
+    return colorSupernova
   }
 
-  return process.env['--aspect-color-mantis']
+  return colorMantis
 }
 
 const enhance = compose(
@@ -109,9 +115,14 @@ const enhance = compose(
       inventoryConsumableSummaryList.toJS()
     ).map(id => String(id))
 
+    const {
+      '--aspect-color-scooter-blue-1': colorScooterBlue1,
+      '--aspect-color-scooter-blue-4': colorScooterBlue4,
+    } = process.env
+
     return {
       fill: ({ properties: { postal } }) =>
-        siteStateAbbrs.has(postal) ? '#00c4e0' : '#a4e6f2',
+        siteStateAbbrs.has(postal) ? colorScooterBlue1 : colorScooterBlue4,
       points: siteList
         .map(it => ({
           id: it.get('name'),
