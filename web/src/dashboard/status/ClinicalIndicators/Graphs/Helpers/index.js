@@ -11,6 +11,7 @@ import subDays from 'date-fns/subDays'
 import subMonths from 'date-fns/subMonths'
 import startOfMonth from 'date-fns/startOfMonth'
 import format from 'date-fns/format'
+import addDays from 'date-fns/addDays'
 
 const {
   '--aspect-color-black': colorBlack,
@@ -35,6 +36,8 @@ const graphColorMap = [
   { id: 12, externalId: 'Negative', color: colorMantis },
   { id: 99, externalId: 'Cases', color: colorMantis },
 ]
+
+const getDayFromToday = cnt => format(addDays(new Date(), cnt), 'yyyy-MM-dd')
 
 const getKeysFromResults = (data, keyToOmit) => {
   const newdata = []
@@ -200,34 +203,43 @@ const getTimePeriod = (cnt, period, dateFormat) => {
   return format(timePeriod, dateFormat)
 }
 
-const buildAssaysFromWhitelist = (data, whiteList) =>
-  data.reduce((acc, curr, index) => {
-    whiteList.filter(w => {
-      const multiAssay = Array.isArray(w.id)
-      if (multiAssay) {
-        const { id } = w
-        if (acc.length) {
-          id.map(
-            i =>
-              i === curr.externalId && acc[0].externalId.push(curr.externalId)
-          )
-        } else {
-          acc.push({ id: id[0], ...w, ...curr })
-          acc[index].externalId = [id[0]]
+const buildAssaysFromWhitelist = (data, whiteList) => {
+  const isAllowed = inID => data.filter(d => inID === d.externalId)
+
+  return whiteList.reduce((acc, curr) => {
+    const { id } = curr
+    if (Array.isArray(id)) {
+      const tempAssayIds = []
+      const tempAssay = []
+      id.map(i => {
+        if (isAllowed(i).length > 0) {
+          tempAssayIds.push(i)
+          if (tempAssay.length < 1) {
+            tempAssay.push({ ...isAllowed(i)[0] })
+          }
         }
-      } else if (w.id === curr.externalId) {
-        acc.push({ ...w, ...curr })
+        return tempAssay
+      })
+      if (tempAssayIds.length && tempAssay.length) {
+        acc.push({
+          ...curr,
+          ...tempAssay[0],
+          externalId: tempAssayIds,
+        })
       }
-      return acc
-    })
+    } else if (isAllowed(id).length > 0) {
+      acc.push({ id, ...curr, ...isAllowed(id)[0], externalId: id })
+    }
     return acc
   }, [])
+}
 
 export {
   buildAssaysFromWhitelist,
   calcPercentageSplitBar,
   formatDataForPie,
   getAverageFromData,
+  getDayFromToday,
   getTimePeriod,
   getKeysFromResults,
   groupByKey,
