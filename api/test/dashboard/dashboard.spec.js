@@ -12,6 +12,8 @@ const { runTestWithKnex } = require('../utils/generatorFunctionUtils')
 const { getAccessToken } = require('../utils/authUtils')
 
 const server = supertest.agent('http://localhost:8080')
+const { getListResults } = require('../../src/result/service')
+
 const { assert, expect } = chai
 
 describe('Dashboard routes', () => {
@@ -505,22 +507,23 @@ describe('Dashboard routes', () => {
       })
     })
 
-    describe('/dashboard/clinical-indicators', () => {
+    describe('/dashboard/clinical-indicators', async () => {
       const clinicalIndicatorsPath = '/api/dashboard/clinical-indicators'
       let resultsForUser = null
       let reportableResultCategories = null
 
       shared.checkToken(server, clinicalIndicatorsPath)
-
-      const getResultsForUser = () =>
-        server
-          .get('/api/result')
-          .set('Authorization', `Bearer ${shared.token}`)
-          .then(res => res.body.data)
+      // const getResultsForUser = () =>
+      //   server
+      //     .get('/api/result')
+      //     .set('Authorization', `Bearer ${shared.token}`)
+      //     .then(res => res.body.data)
 
       before(() =>
         runTestWithKnex(async knex => {
-          resultsForUser = await getResultsForUser()
+          resultsForUser = (
+            await getListResults({}, { credentials: { name: 'admin' } })
+          ).data
           reportableResultCategories = await knex('ResultCategoryAssay as rca')
             .join('ResultCategory as rc', 'rca.resultCategoryId', 'rc.id')
             .where('rca.reportable', true)

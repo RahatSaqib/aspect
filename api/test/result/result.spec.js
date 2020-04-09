@@ -30,6 +30,7 @@ const {
   getLastResultId,
   getLastResult,
 } = require('../deviceApi/utils')
+const { getFirstResultAssayId } = require('./utils')
 
 const getClinicianAccessToken = () =>
   server
@@ -56,6 +57,7 @@ describe('Result routes', () => {
   let clinicianAccessToken = ''
   before(async () => {
     clinicianAccessToken = await getClinicianAccessToken()
+    assayId = await getFirstResultAssayId(knex)
   })
 
   describe('GET', () => {
@@ -73,24 +75,21 @@ describe('Result routes', () => {
             assert.typeOf(res.body.data, 'array')
             assert.isAtLeast(res.body.data.length, 3)
             assert.property(res.body.data[0], 'id')
+            assert.property(res.body.data[0], 'externalId')
             assert.property(res.body.data[0], 'endedOn')
             assert.property(res.body.data[0], 'deviceName')
             assert.property(res.body.data[0], 'sampleOriginSiteName')
-            assert.property(res.body.data[0], 'countryName')
-            assert.property(res.body.data[0], 'stateName')
-            assert.property(res.body.data[0], 'lgaName')
             assert.property(res.body.data[0], 'sampleId')
-            assert.property(res.body.data[0], 'errorCode')
-            assert.property(res.body.data[0], 'sampleOriginSiteName')
             assert.property(res.body.data[0], 'resultText')
+            assert.property(res.body.data[0], 'errorCode')
             assert.property(res.body.data[0], 'resultWorkflowStatus')
+            assert.property(res.body.data[0], 'resultTreatmentStatus')
+            assert.property(res.body.data[0], 'treatmentStatusInfo')
             assert.property(res.body.data[0], 'patientId')
-            assert.property(res.body.data[0], 'assayName')
             assert.property(res.body, 'total')
             ;[
               {
                 id: resultId,
-                assayId,
                 resultWorkflowStatus: initialResultWorkflowStatus,
               },
             ] = res.body.data
@@ -116,20 +115,17 @@ describe('Result routes', () => {
           assert.typeOf(res.body.data, 'array')
           assert.isAtLeast(res.body.data.length, 5)
           assert.property(res.body.data[0], 'id')
+          assert.property(res.body.data[0], 'externalId')
           assert.property(res.body.data[0], 'endedOn')
           assert.property(res.body.data[0], 'deviceName')
-          assert.property(res.body.data[0], 'countryName')
-          assert.property(res.body.data[0], 'stateName')
-          assert.property(res.body.data[0], 'lgaName')
-          assert.property(res.body.data[0], 'sampleId')
-          assert.property(res.body.data[0], 'errorCode')
           assert.property(res.body.data[0], 'sampleOriginSiteName')
-          assert.property(res.body.data[0], 'patientId')
-          assert.property(res.body.data[0], 'assayName')
-          assert.property(res.body.data[0], 'resultCategory1Name')
-          assert.property(res.body.data[0], 'resultCategory2Name')
+          assert.property(res.body.data[0], 'sampleId')
           assert.property(res.body.data[0], 'resultText')
+          assert.property(res.body.data[0], 'errorCode')
           assert.property(res.body.data[0], 'resultWorkflowStatus')
+          assert.property(res.body.data[0], 'resultTreatmentStatus')
+          assert.property(res.body.data[0], 'treatmentStatusInfo')
+          assert.property(res.body.data[0], 'patientId')
           assert.property(res.body, 'total')
           assert.typeOf(res.body.extraColumns, 'array')
         })
@@ -205,20 +201,17 @@ describe('Result routes', () => {
           assert.typeOf(res.body.data, 'array')
           assert.isAtLeast(res.body.data.length, 3)
           assert.property(res.body.data[0], 'id')
+          assert.property(res.body.data[0], 'externalId')
           assert.property(res.body.data[0], 'endedOn')
           assert.property(res.body.data[0], 'deviceName')
-          assert.property(res.body.data[0], 'countryName')
-          assert.property(res.body.data[0], 'stateName')
-          assert.property(res.body.data[0], 'lgaName')
-          assert.property(res.body.data[0], 'sampleId')
-          assert.property(res.body.data[0], 'errorCode')
           assert.property(res.body.data[0], 'sampleOriginSiteName')
-          assert.property(res.body.data[0], 'patientId')
-          assert.property(res.body.data[0], 'assayName')
-          assert.property(res.body.data[0], 'resultCategory1Name')
-          assert.property(res.body.data[0], 'resultCategory2Name')
+          assert.property(res.body.data[0], 'sampleId')
           assert.property(res.body.data[0], 'resultText')
+          assert.property(res.body.data[0], 'errorCode')
           assert.property(res.body.data[0], 'resultWorkflowStatus')
+          assert.property(res.body.data[0], 'resultTreatmentStatus')
+          assert.property(res.body.data[0], 'treatmentStatusInfo')
+          assert.property(res.body.data[0], 'patientId')
           assert.property(res.body, 'total')
           assert.typeOf(res.body.extraColumns, 'array')
 
