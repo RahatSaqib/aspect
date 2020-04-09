@@ -4,7 +4,7 @@
 }
 .Reports_Button {
   background-color: transparent;
-  color: #000;
+  color: var(--aspect-color-black);
   font-size: 15px;
   border: 0px;
   padding: 0px;

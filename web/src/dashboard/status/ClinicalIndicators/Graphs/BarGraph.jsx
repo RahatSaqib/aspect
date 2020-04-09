@@ -98,6 +98,7 @@ const BarGraph = ({
               : { top: 10, right: 10, bottom: 110, left: 80 }
           }
           padding={0.3}
+          borderWidth={0}
           borderColor={{ from: 'color', modifiers: [['darker', 1.6]] }}
           axisTop={null}
           axisRight={null}

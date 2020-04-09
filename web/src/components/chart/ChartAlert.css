@@ -2,7 +2,7 @@
   display: inline-block;
   width: 17px;
   height: 17px;
-  background: #e85164;
+  background: var(--aspect-color-mandy);
   border-radius: 50px;
   vertical-align: middle;
   margin-left: 20px;
@@ -12,7 +12,7 @@
   display: inline-block;
   width: 17px;
   height: 17px;
-  background-color: #fcb124;
+  background-color: var(--aspect-color-supernova);
   border-radius: 50px;
   vertical-align: middle;
   margin-left: 20px;
@@ -22,7 +22,7 @@
   display: inline-block;
   width: 17px;
   height: 17px;
-  background-color: #73d449;
+  background-color: var(--aspect-color-mantis);
   border-radius: 50px;
   vertical-align: middle;
   margin-left: 20px;

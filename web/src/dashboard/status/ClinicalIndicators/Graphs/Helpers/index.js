@@ -12,22 +12,28 @@ import subMonths from 'date-fns/subMonths'
 import startOfMonth from 'date-fns/startOfMonth'
 import format from 'date-fns/format'
 
-const defaultColor = '#ECECEC'
+const {
+  '--aspect-color-black': colorBlack,
+  '--aspect-color-mandy': colorMandy,
+  '--aspect-color-mantis': colorMantis,
+  '--aspect-color-pink': colorPink,
+  '--aspect-color-white-4': colorWhite4,
+} = process.env
 
 const graphColorMap = [
-  { id: 1, externalId: 'MoreThan1000', color: '#D60000' },
-  { id: 2, externalId: 'LessThan1000', color: '#FFC9C4' },
-  { id: 3, externalId: 'Indeterminate', color: '#00CA1C' },
-  { id: 4, externalId: 'Detected', color: '#D60000' },
-  { id: 5, externalId: 'NotDetected', color: '#00CA1C' },
-  { id: 6, externalId: 'Invalid', color: defaultColor },
-  { id: 7, externalId: 'NoResult', color: '#FFC9C4' },
-  { id: 8, externalId: 'Error', color: '#000000' },
-  { id: 9, externalId: 'Positive', color: '#00CA1C' },
-  { id: 10, externalId: 'Inconclusive', color: '#FFC9C4' },
-  { id: 11, externalId: 'Unknown', color: defaultColor },
-  { id: 12, externalId: 'Negative', color: '#00CA1C' },
-  { id: 99, externalId: 'Cases', color: '#00CA1C' },
+  { id: 1, externalId: 'MoreThan1000', color: colorMandy },
+  { id: 2, externalId: 'LessThan1000', color: colorPink },
+  { id: 3, externalId: 'Indeterminate', color: colorMantis },
+  { id: 4, externalId: 'Detected', color: colorMandy },
+  { id: 5, externalId: 'NotDetected', color: colorMantis },
+  { id: 6, externalId: 'Invalid', color: colorWhite4 },
+  { id: 7, externalId: 'NoResult', color: colorPink },
+  { id: 8, externalId: 'Error', color: colorBlack },
+  { id: 9, externalId: 'Positive', color: colorMantis },
+  { id: 10, externalId: 'Inconclusive', color: colorPink },
+  { id: 11, externalId: 'Unknown', color: colorWhite4 },
+  { id: 12, externalId: 'Negative', color: colorMantis },
+  { id: 99, externalId: 'Cases', color: colorMantis },
 ]
 
 const getKeysFromResults = (data, keyToOmit) => {
@@ -119,7 +125,7 @@ const formatDataForPie = (
         displayMethod === 'percentage'
           ? round((curr[value] / total) * 100)
           : curr[value],
-      color: (colorKey && colorKey.color) || defaultColor,
+      color: (colorKey && colorKey.color) || colorWhite4,
     })
     return acc
   }, [])
@@ -161,7 +167,7 @@ const translateKeys = (data, assayFromState, colorise = false) => {
 
       if (colorise) {
         const colorKey = graphColorMap.filter(c => c.externalId === key)[0]
-        newItem[`${newKey}Color`] = (colorKey && colorKey.color) || defaultColor
+        newItem[`${newKey}Color`] = (colorKey && colorKey.color) || colorWhite4
       }
 
       newItem[`${newKey}`] = value

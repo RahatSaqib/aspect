@@ -165,8 +165,12 @@ const enhance = compose(
 )
 
 function getColorWithAlpha(color, opacity) {
+  const regex = /[a-f0-9]{3,6}/gi
+  const colorToProcess = color.includes('var')
+    ? `#${regex.exec(color)[0]}`
+    : color
   const y = Math.floor(opacity * 255)
-  return color + (y < 16 ? '0' : '') + y.toString(16)
+  return colorToProcess + (y < 16 ? '0' : '') + y.toString(16)
 }
 
 function filterDropDownField(fieldList, fieldItem, otherProps) {
@@ -207,18 +211,23 @@ export const TreatmentStatus = ({
   onBack,
   ...restProps
 }) => {
+  const {
+    '--aspect-color-grey-5': colorGrey5,
+    '--aspect-color-mandy': colorMandy,
+    '--aspect-color-mantis': colorMantis,
+  } = process.env
   const series = [
     {
       label: 'Confirmed',
       key: 'pcConfirmed',
       color: process.env['--aspect-color-mantis'], // green
-      colorFade: getColorWithAlpha(process.env['--aspect-color-mantis'], 0.5),
+      colorFade: getColorWithAlpha(colorMantis, 0.5),
     },
     {
       label: 'Not Confirmed',
       key: 'pcNotConfirmed', // calculated value, see reducer for case RECEIVE_TREATMENT_DASHBOARD
       color: process.env['--aspect-color-mandy'], // red
-      colorFade: getColorWithAlpha(process.env['--aspect-color-mandy'], 0.5),
+      colorFade: getColorWithAlpha(colorMandy, 0.5),
     },
   ]
   const tickSeparatorX = `-${50 / data.length}%`
@@ -287,7 +296,7 @@ export const TreatmentStatus = ({
                   >
                     {tick.tickIndex > 0 && (
                       <line
-                        stroke="#b7b7be"
+                        stroke={colorGrey5}
                         strokeWidth={1}
                         y1={-20}
                         y2={15}

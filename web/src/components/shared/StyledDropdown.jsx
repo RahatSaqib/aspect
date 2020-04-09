@@ -17,7 +17,7 @@ const styles = theme => ({
     lineHeight: '20px',
     fontSize: theme.customPropertiesVariables['--aspect-font-size-sm'],
     fontWeight: theme.typography.fontWeightBold,
-    color: '#fff',
+    color: theme.customPropertiesVariables['--aspect-color-white'],
     backgroundColor:
       theme.customPropertiesVariables['--aspect-color-chill-blue-1'],
     borderRadius:
