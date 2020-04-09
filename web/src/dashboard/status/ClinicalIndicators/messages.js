@@ -9,6 +9,14 @@ export const messages = defineMessages({
     id: 'pages.Status.clinicalIndicatorsCovidName',
     defaultMessage: 'Daily Confirmed Cases',
   },
+  clinicalIndicatorsVLTitle: {
+    id: 'pages.Status.clinicalIndicatorsVL.title',
+    defaultMessage: 'VL Outcomes',
+  },
+  clinicalIndicatorsTBTitle: {
+    id: 'pages.Status.clinicalIndicatorsTB.title',
+    defaultMessage: 'TB Outcomes',
+  },
 })
 
 export default messages
