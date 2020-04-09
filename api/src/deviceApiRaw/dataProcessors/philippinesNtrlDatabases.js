@@ -2517,17 +2517,18 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
               .where('externalId', ntrlLabRequestId)
               .first()
           }
-          if (
-            existingSample &&
-            (existingSample.externalId !== sample.externalId ||
+          if (existingSample) {
+            sample.id = existingSample.id
+            if (
+              existingSample.externalId !== sample.externalId ||
               existingSample.sampleTypeId !== sample.sampleTypeId ||
               !dateEqual(existingSample.collectedOn, sample.collectedOn) ||
-              existingSample.originSiteId !== sample.originSiteId)
-          ) {
-            sample.id = existingSample.id
-            await knex('Sample')
-              .where('id', existingSample.id)
-              .update(sample)
+              existingSample.originSiteId !== sample.originSiteId
+            ) {
+              await knex('Sample')
+                .where('id', existingSample.id)
+                .update(sample)
+            }
           } else if (!existingSample) {
             const [sampleId] = await knex('Sample').insert(sample)
             sample.id = sampleId
