@@ -120,11 +120,6 @@ function listResultsBaseConfig() {
           .description(
             'The id of last entry in ResultStatusLog for current result'
           ),
-        withFollowUp: Joi.boolean()
-          .allow(null)
-          .description(
-            'When TRUE - add joins for latest FollowUp per result and corresponding response fields'
-          ),
       },
     },
   }

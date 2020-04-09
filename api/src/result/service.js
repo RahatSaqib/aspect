@@ -229,12 +229,6 @@ async function getListResults(query, auth, fields = SELECT_LIST_FIELDS) {
 
   const resultQuery = getQueryForResultsListAndExport(query, dataConstraints)
 
-  if (query.withFollowUp) {
-    selectFields.push('fu.externalId as followUp')
-    selectFields.push('fut.externalId as followUpType')
-    selectFields.push('rca.reportable')
-  }
-
   // get total count for paging
   const getCount = resultQuery
     .clone()
@@ -243,17 +237,6 @@ async function getListResults(query, auth, fields = SELECT_LIST_FIELDS) {
   // get rows
   const getItems = resultQuery
     .clone()
-    .modify(qb => {
-      if (query.withFollowUp) {
-        qb.leftJoin(
-          queryResultFollowUpLastItems().as('rfu'),
-          'r.id',
-          'rfu.resultId'
-        )
-          .leftJoin('FollowUp as fu', 'rfu.followUpId', 'fu.id')
-          .leftJoin('FollowUpType as fut', 'fu.followUpTypeId', 'fut.id')
-      }
-    })
     .modify(sortPageParams, query, 'endedOn')
     .select(selectFields)
   // return result when both queries are finished
@@ -2494,4 +2477,6 @@ module.exports = {
   transferResult,
   clinicalIndicatorAggregations,
   followUpAggregations,
+  getQueryForResultsListAndExport,
+  queryResultFollowUpLastItems,
 }

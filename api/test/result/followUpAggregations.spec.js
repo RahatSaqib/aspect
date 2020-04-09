@@ -2,9 +2,15 @@ const supertest = require('supertest')
 const chai = require('chai')
 const _ = require('lodash')
 const { format } = require('date-fns')
+const jwtDecode = require('jwt-decode')
 
 const shared = require('../utils/sharedToken')
 const { runTestWithKnex } = require('../utils/generatorFunctionUtils')
+const {
+  getQueryForResultsListAndExport,
+  queryResultFollowUpLastItems,
+} = require('../../src/result/service')
+const { getConstraints } = require('../../src/auth/constraints')
 
 const server = supertest.agent('http://localhost:8080')
 const { assert } = chai
@@ -16,22 +22,41 @@ describe('Result Follow-Up Aggregations for reports', () => {
 
   let resultsForUser = null
 
-  shared.checkToken(server, path)
-
-  // get list of results with 3 additional fields - followUp, followUpType, reportable,
-  // and filter out by 'reportable' only
-  const getResultsForUser = () =>
-    server
-      .get('/api/result')
-      .query({
-        withFollowUp: true,
-      })
-      .set('Authorization', `Bearer ${shared.token}`)
-      .then(res => res.body.data.filter(x => x.followUp && x.reportable))
-
   before(() =>
-    runTestWithKnex(async () => {
-      resultsForUser = await getResultsForUser()
+    runTestWithKnex(async knex => {
+      // get actual username from shared token
+      const { name } = jwtDecode(shared.token)
+      // get data constraints
+      const dataConstraints = await getConstraints({ name })
+      const resultQuery = getQueryForResultsListAndExport({}, dataConstraints)
+      resultsForUser = await resultQuery
+        .clone()
+        .leftJoin(
+          queryResultFollowUpLastItems().as('rfu'),
+          'r.id',
+          'rfu.resultId'
+        )
+        .leftJoin('FollowUp as fu', 'rfu.followUpId', 'fu.id')
+        .leftJoin('FollowUpType as fut', 'fu.followUpTypeId', 'fut.id')
+        .where('rca.reportable', true)
+        .whereNotNull('fu.externalId')
+        .select([
+          'r.id',
+          knex.raw('IFNULL(r.endedOn, r.startedOn) as endedOn'),
+          'd.name as deviceName',
+          'c.name as countryName',
+          'st.name as stateName',
+          'lg.name as lgaName',
+          'rc1.name as resultCategory1Name',
+          'rc2.name as resultCategory2Name',
+          'a.name as assayName',
+          'a.id as assayId',
+          'r.deviceId',
+          'si.name as siteName',
+          'dt.name as deviceTypeName',
+          'fu.externalId as followUp',
+          'fut.externalId as followUpType',
+        ])
     })
   )
 
