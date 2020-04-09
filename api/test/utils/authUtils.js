@@ -60,55 +60,123 @@ async function createUser(
   const user = await knex('User')
     .where('name', username)
     .first()
+  let userId
   if (user) {
-    throw new Error(`username ${username} already exists in the database`)
-  }
-  const [userId] = await knex('User').insert({
-    name: username,
-    password: bcrypt.hashSync(password, saltRounds),
-    legacyPassword: 0,
-    approved: 1,
-    lockedOut: 0,
-    createdOn: new Date(),
-    failedPasswordAttempts: 0,
-  })
-
-  const [personId] = await knex('Person').insert({
-    userId,
-    name: username,
-    lastPartnerId: partner.id,
-    lastCountryId: country.id,
-    timezone: country.timezone,
-    culture: country.culture,
-    createdOn: new Date(),
-    updatedOn: new Date(),
-    geographyId: geography.id,
-  })
-  const licenseIds = await knex('License')
-    .whereNull('partnerId')
-    .orWhere('partnerId', partner.id)
-    .select()
-    .pluck('id')
-  await Promise.each(licenseIds, async licenseId =>
-    knex('LicensePerson').insert({
-      licenseId,
-      personId,
-      acceptedOn: new Date(),
-      ip: '1.2.3.4',
+    userId = user.id
+    await knex('User')
+      .where('id', userId)
+      .update({
+        name: username,
+        password: bcrypt.hashSync(password, saltRounds),
+        legacyPassword: 0,
+        approved: 1,
+        lockedOut: 0,
+        createdOn: new Date(),
+        failedPasswordAttempts: 0,
+      })
+  } else {
+    ;[userId] = await knex('User').insert({
+      name: username,
+      password: bcrypt.hashSync(password, saltRounds),
+      legacyPassword: 0,
+      approved: 1,
+      lockedOut: 0,
+      createdOn: new Date(),
+      failedPasswordAttempts: 0,
     })
-  )
+  }
+
+  const person = await knex('Person')
+    .where({ userId })
+    .first()
+  let personId
+  if (person) {
+    personId = person.id
+    await knex('Person')
+      .where('id', personId)
+      .update({
+        userId,
+        name: username,
+        lastPartnerId: partner.id,
+        lastCountryId: country.id,
+        timezone: country.timezone,
+        culture: country.culture,
+        createdOn: new Date(),
+        updatedOn: new Date(),
+        geographyId: geography.id,
+      })
+  } else {
+    ;[personId] = await knex('Person').insert({
+      userId,
+      name: username,
+      lastPartnerId: partner.id,
+      lastCountryId: country.id,
+      timezone: country.timezone,
+      culture: country.culture,
+      createdOn: new Date(),
+      updatedOn: new Date(),
+      geographyId: geography.id,
+    })
+  }
+  const licenseIds = await knex('License as l')
+    .whereNull('l.partnerId')
+    .orWhere('l.partnerId', partner.id)
+    .select()
+    .pluck('l.id')
+  await Promise.each(licenseIds, async licenseId => {
+    const licensePerson = await knex('LicensePerson')
+      .where({
+        licenseId,
+        personId,
+      })
+      .select()
+    if (_.isEmpty(licensePerson)) {
+      await knex('LicensePerson').insert({
+        licenseId,
+        personId,
+        acceptedOn: new Date(),
+        ip: '1.2.3.4',
+      })
+    } else {
+      await Promise.each(licensePerson, async lp => {
+        if (lp.acceptedOn && lp.ip) {
+          return Promise.resolve()
+        }
+        await knex('LicensePerson')
+          .where(_.pick(lp, ['licenseId', 'personId']))
+          .update({
+            acceptedOn: new Date(),
+            ip: '1.2.3.4',
+          })
+      })
+    }
+  })
   const jobFunctions = _.uniq(jobs.map(job => job.jobFunctionExternalId))
   await Promise.each(jobFunctions, async jobFunctionExternalId => {
     const jobFunction = await knex('JobFunction')
       .where('externalId', jobFunctionExternalId)
       .first()
-    const [jobId] = await knex('Job').insert({
-      personId,
-      jobFunctionId: jobFunction.id,
-    })
+    let jobId
+    const job = await knex('Job')
+      .where({
+        personId,
+        jobFunctionId: jobFunction.id,
+      })
+      .first()
+    if (job) {
+      jobId = job.id
+    } else {
+      ;[jobId] = await knex('Job').insert({
+        personId,
+        jobFunctionId: jobFunction.id,
+      })
+    }
     const jobFunctionJobs = jobs.filter(
       job => job.jobFunctionExternalId === jobFunctionExternalId
     )
+    await knex('JobContext')
+      .where({ jobId })
+      .del()
     await Promise.each(jobFunctionJobs, async jobFunctionJob => {
       let jobGeography = {}
       const job = {
@@ -178,6 +246,9 @@ async function createUser(
 }
 
 async function removeUser(userId) {
+  if (!userId) {
+    return Promise.resolve()
+  }
   const personIds = await knex('Person')
     .where({ userId })
     .select('id')
@@ -191,6 +262,9 @@ async function removeUser(userId) {
     .del()
   await knex('Job')
     .whereIn('id', jobIds)
+    .del()
+  await knex('LicensePerson')
+    .whereIn('personId', personIds)
     .del()
   await knex('Person')
     .where({ userId })
