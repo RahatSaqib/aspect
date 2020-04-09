@@ -95,23 +95,31 @@ export default ({ assignment, showLinks, onAskConfirmation, intl }) => {
         )}
       </div>
       <div>
+        <strong>Disease</strong>
+        &nbsp;
         <span>
           {assignment.diseaseName || intl.formatMessage(messages.allDiseases)}
         </span>
       </div>
       <div>
+        <strong>Device Type</strong>
+        &nbsp;
         <span>
           {assignment.deviceTypeName ||
             intl.formatMessage(messages.allDeviceTypes)}
         </span>
       </div>
       <div>
+        <strong>Assay Type</strong>
+        &nbsp;
         <span>
           {assignment.assayTypeName ||
             intl.formatMessage(messages.allAssayTypes)}
         </span>
       </div>
       <div>
+        <strong>Assay</strong>
+        &nbsp;
         <span>
           {assignment.assayName || intl.formatMessage(messages.allAssays)}
         </span>
