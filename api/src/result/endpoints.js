@@ -179,8 +179,8 @@ const resultAggregationsValidGroups = [
 const clinicalIndicatorsValidGroups = [...resultAggregationsValidGroups]
 const followUpAggregationsValidGroups = [
   ...resultAggregationsValidGroups,
-  'followUp',
-  'followUpType',
+  'treatment',
+  'outcome',
 ]
 const getResultAggregationsValidate = validGroups => ({
   ...validateDateRangeParams(),
@@ -1511,12 +1511,12 @@ const routes = [
       validate: {
         query: {
           ...getResultAggregationsValidate(followUpAggregationsValidGroups),
-          followUp: Joi.string()
-            .allow('')
-            .description('Filter for result follow-up'),
-          followUpType: Joi.string()
-            .allow('')
-            .description('Filter for result follow-up type'),
+          treatment: Joi.string()
+            .allow('', null)
+            .description('Filter by result treatment (FollowUp.externalId)'),
+          outcome: Joi.string()
+            .allow('', null)
+            .description('Filter by result outcome (FollowUp.externalId)'),
         },
       },
       response: {
@@ -1530,12 +1530,12 @@ const routes = [
             .items(
               Joi.object().keys({
                 ...resultAggregationsResponseItem,
-                followUp: Joi.string()
+                treatment: Joi.string()
                   .allow(null)
-                  .description('The followUp that the count is grouped by'),
-                followUpType: Joi.string()
+                  .description('The treatment that the count is grouped by'),
+                outcome: Joi.string()
                   .allow(null)
-                  .description('The followUpType that the count is grouped by'),
+                  .description('The outcome that the count is grouped by'),
               })
             ),
         }),

@@ -6,11 +6,8 @@ const jwtDecode = require('jwt-decode')
 
 const shared = require('../utils/sharedToken')
 const { runTestWithKnex } = require('../utils/generatorFunctionUtils')
-const {
-  getQueryForResultsListAndExport,
-  queryResultFollowUpLastItems,
-} = require('../../src/result/service')
-const { getConstraints } = require('../../src/auth/constraints')
+const { queryResultFollowUpLastItems } = require('../../src/result/service')
+const { addConstraints, getConstraints } = require('../../src/auth/constraints')
 
 const server = supertest.agent('http://localhost:8080')
 const { assert } = chai
@@ -20,67 +17,112 @@ describe('Result Follow-Up Aggregations for reports', () => {
 
   shared.checkToken(server, path)
 
+  const getValue = groupKey => {
+    return groupKey === 'null' ? null : groupKey
+  }
   let resultsForUser = null
 
   before(() =>
     runTestWithKnex(async knex => {
       // get actual username from shared token
       const { name } = jwtDecode(shared.token)
+
+      const followUpTypes = (
+        await knex('FollowUpType').select('externalId')
+      ).map(x => x.externalId)
       // get data constraints
       const dataConstraints = await getConstraints({ name })
-      const resultQuery = getQueryForResultsListAndExport({}, dataConstraints)
-      resultsForUser = await resultQuery
-        .clone()
+      resultsForUser = await knex('Result as r')
+        .innerJoin('Device as d', 'd.id', 'r.deviceId')
+        .innerJoin('Site as s', 's.id', 'r.siteId')
+        .innerJoin('Assay as a', 'a.id', 'r.assayId')
+        .innerJoin('AssayType as at', 'at.id', 'a.assayTypeId')
+        .innerJoin('ResultCategory as rc1', 'rc1.id', 'r.resultCategory1')
+        .leftJoin('ResultCategory as rc2', 'rc2.id', 'r.resultCategory2')
+        .leftJoin('Geography as g', 's.geographyId', 'g.id')
+        .leftJoin('State as st', 'st.id', 'g.stateId')
+        .innerJoin('ResultCategoryAssay as rca', function() {
+          this.on('r.assayId', 'rca.assayId').andOn(
+            'r.resultCategory1',
+            'rca.resultCategoryId'
+          )
+        })
+        .leftJoin('ResultCategoryAssay as rсa2', function() {
+          this.on('r.assayId', 'rсa2.assayId').andOn(
+            'r.resultCategory2',
+            'rсa2.resultCategoryId'
+          )
+        })
         .leftJoin(
-          queryResultFollowUpLastItems().as('rfu'),
+          queryResultFollowUpLastItems(followUpTypes).as('rfu'),
           'r.id',
           'rfu.resultId'
         )
-        .leftJoin('FollowUp as fu', 'rfu.followUpId', 'fu.id')
-        .leftJoin('FollowUpType as fut', 'fu.followUpTypeId', 'fut.id')
+        .modify(qb => {
+          followUpTypes.forEach(followUpType => {
+            qb.leftJoin(
+              `ResultFollowUp as ${followUpType}ResultFollowUp`,
+              `rfu.${followUpType}ResultFollowUpId`,
+              `${followUpType}ResultFollowUp.id`
+            ).leftJoin(
+              `FollowUp as ${followUpType}FollowUp`,
+              `${followUpType}ResultFollowUp.followUpId`,
+              `${followUpType}FollowUp.id`
+            )
+          })
+        })
+        .modify(addConstraints, dataConstraints, {
+          device: 'd',
+          geography: 'g',
+          site: 's',
+        })
         .where('rca.reportable', true)
-        .whereNotNull('fu.externalId')
         .select([
           'r.id',
           knex.raw('IFNULL(r.endedOn, r.startedOn) as endedOn'),
           'd.name as deviceName',
-          'c.name as countryName',
           'st.name as stateName',
-          'lg.name as lgaName',
-          'rc1.name as resultCategory1Name',
-          'rc2.name as resultCategory2Name',
+          's.name as siteName',
+          'rc1.externalId as resultCategory1',
+          'rc2.externalId as resultCategory2',
           'a.name as assayName',
-          'a.id as assayId',
-          'r.deviceId',
-          'si.name as siteName',
-          'dt.name as deviceTypeName',
-          'fu.externalId as followUp',
-          'fut.externalId as followUpType',
+          // add fields like
+          // `treatmentFollowUp.externalId as treatment` and
+          // `outcomeFollowUp.externalId as outcome`
+          ...followUpTypes.map(
+            followUpType =>
+              `${followUpType}FollowUp.externalId as ${followUpType}`
+          ),
         ])
     })
   )
 
-  it('should return all reportable results grouped by the default (followUp) if query string is empty', async () =>
+  it('should return all reportable results grouped by the default followUpType (treatment) if query string is empty', async () =>
     server
       .get(path)
       .set('Authorization', `Bearer ${shared.token}`)
       .then(res => {
         const expectedResponse = _.chain(resultsForUser)
-          .groupBy('followUp')
+          .groupBy('treatment')
           .map((value, key) => ({
-            followUp: key,
+            treatment: getValue(key),
             cnt: value.length,
           }))
+          .orderBy('treatment')
           .value()
+
         assert.equal(res.status, 200)
-        assert.deepEqual(res.body.data, expectedResponse)
+        const orderedResponse = _.chain(res.body.data)
+          .orderBy('treatment')
+          .value()
+        assert.deepEqual(orderedResponse, expectedResponse)
       }))
 
-  it('should return all results grouped by followUp and month and should allow multiple assays', async () =>
+  it('should return all results grouped by `treatment` followUpType and month and should allow multiple assays', async () =>
     server
       .get(path)
       .query({
-        groupBy: ['followUp', 'month'],
+        groupBy: ['treatment', 'month'],
         assay: ['DaktariHivVL', 'DaktariHcv'],
       })
       .set('Authorization', `Bearer ${shared.token}`)
@@ -88,28 +130,32 @@ describe('Result Follow-Up Aggregations for reports', () => {
         const expectedResponse = _.chain(resultsForUser)
           .map(o => ({
             joinedValues: `${format(new Date(o.endedOn), 'yyyy-MM')}_${
-              o.followUp
+              o.treatment
             }`,
           }))
           .groupBy('joinedValues')
           .map((value, key) => {
             const groups = key.split('_')
             return {
-              month: groups[0],
-              followUp: groups[1],
+              month: getValue(groups[0]),
+              treatment: getValue(groups[1]),
               cnt: value.length,
             }
           })
+          .orderBy(['treatment', 'month'])
           .value()
         assert.equal(res.status, 200)
-        assert.deepEqual(res.body.data, expectedResponse)
+        const orderedResponse = _.chain(res.body.data)
+          .orderBy(['treatment', 'month'])
+          .value()
+        assert.deepEqual(orderedResponse, expectedResponse)
       }))
 
-  it('should return all results grouped by followUp, month and state if specified in query string', async () =>
+  it('should return all results grouped by `treatment` followUpType, month and state if specified in query string', async () =>
     server
       .get(path)
       .query({
-        groupBy: ['followUp', 'month', 'state'],
+        groupBy: ['treatment', 'month', 'state'],
         assay: 'DaktariHivVL',
       })
       .set('Authorization', `Bearer ${shared.token}`)
@@ -117,57 +163,68 @@ describe('Result Follow-Up Aggregations for reports', () => {
         const expectedResponse = _.chain(resultsForUser)
           .map(o => ({
             joinedValues: `${format(new Date(o.endedOn), 'yyyy-MM')}_${
-              o.followUp
+              o.treatment
             }_${o.stateName}`,
           }))
           .groupBy('joinedValues')
           .map((value, key) => {
             const groups = key.split('_')
             return {
-              month: groups[0],
-              followUp: groups[1],
-              state: groups[2],
+              month: getValue(groups[0]),
+              treatment: getValue(groups[1]),
+              state: getValue(groups[2]),
               cnt: value.length,
             }
           })
+          .orderBy(['treatment', 'month', 'state'])
           .value()
         assert.equal(res.status, 200)
-        assert.deepEqual(res.body.data, expectedResponse)
+        const orderedResponse = _.chain(res.body.data)
+          .orderBy(['treatment', 'month', 'state'])
+          .value()
+        assert.deepEqual(orderedResponse, expectedResponse)
       }))
 
-  it('should return all results grouped by followUp and day if specified in query string', async () =>
-    server
+  it('should return all results grouped by `treatment` followUpType and day if specified in query string', async () => {
+    const groupNames = ['treatment', 'day']
+    return server
       .get(path)
       .query({
-        groupBy: ['followUp', 'day'],
+        groupBy: groupNames,
       })
       .set('Authorization', `Bearer ${shared.token}`)
       .then(res => {
         const expectedResponse = _.chain(resultsForUser)
           .map(o => ({
             joinedValues: `${format(new Date(o.endedOn), 'yyyy-MM-dd')}_${
-              o.followUp
+              o.treatment
             }`,
           }))
           .groupBy('joinedValues')
           .map((value, key) => {
             const groups = key.split('_')
             return {
-              day: groups[0],
-              followUp: groups[1],
+              day: getValue(groups[0]),
+              treatment: getValue(groups[1]),
               cnt: value.length,
             }
           })
+          .orderBy(groupNames)
           .value()
         assert.equal(res.status, 200)
-        assert.deepEqual(res.body.data, expectedResponse)
-      }))
+        const orderedResponse = _.chain(res.body.data)
+          .orderBy(groupNames)
+          .value()
+        assert.deepEqual(orderedResponse, expectedResponse)
+      })
+  })
 
-  it('should return all results grouped by followUp, month and category and filtered by site if specified in query string', async () =>
-    server
+  it('should return all results grouped by `treatment` followUpType, month and category and filtered by site if specified in query string', async () => {
+    const groupNames = ['treatment', 'month', 'resultCategory1']
+    return server
       .get(path)
       .query({
-        groupBy: ['followUp', 'month', 'resultCategory1'],
+        groupBy: groupNames,
         siteName: 'Cuyahoga',
       })
       .set('Authorization', `Bearer ${shared.token}`)
@@ -176,23 +233,28 @@ describe('Result Follow-Up Aggregations for reports', () => {
           .filter(o => o.siteName.indexOf('Cuyahoga') >= 0)
           .map(o => ({
             joinedValues: `${format(new Date(o.endedOn), 'yyyy-MM')}_${
-              o.followUp
-            }_${o.resultCategory1Name.replace(' ', '')}`,
+              o.treatment
+            }_${o.resultCategory1}`,
           }))
           .groupBy('joinedValues')
           .map((value, key) => {
             const groups = key.split('_')
             return {
-              month: groups[0],
-              followUp: groups[1],
-              resultCategory1: groups[2],
+              month: getValue(groups[0]),
+              treatment: getValue(groups[1]),
+              resultCategory1: getValue(groups[2]),
               cnt: value.length,
             }
           })
+          .orderBy(groupNames)
           .value()
         assert.equal(res.status, 200)
-        assert.deepEqual(res.body.data, expectedResponse)
-      }))
+        const orderedResponse = _.chain(res.body.data)
+          .orderBy(groupNames)
+          .value()
+        assert.deepEqual(orderedResponse, expectedResponse)
+      })
+  })
 
   it('should throw an error if groupBy is not supported', async () =>
     server
@@ -203,11 +265,12 @@ describe('Result Follow-Up Aggregations for reports', () => {
         assert.equal(res.body.message.substring(0, 21), 'child "groupBy" fails')
       }))
 
-  it('should return all results grouped by month, followUp and followUpType and filtered by site', async () =>
-    server
+  it('should return all results grouped by month, `outcome` followUpType and filtered by site', async () => {
+    const groupNames = ['month', 'outcome']
+    return server
       .get(path)
       .query({
-        groupBy: ['month', 'followUp', 'followUpType'],
+        groupBy: groupNames,
         siteName: 'Cuyahoga',
       })
       .set('Authorization', `Bearer ${shared.token}`)
@@ -216,21 +279,25 @@ describe('Result Follow-Up Aggregations for reports', () => {
           .filter(o => o.siteName.indexOf('Cuyahoga') >= 0)
           .map(o => ({
             joinedValues: `${format(new Date(o.endedOn), 'yyyy-MM')}_${
-              o.followUp
-            }_${o.followUpType}`,
+              o.outcome
+            }`,
           }))
           .groupBy('joinedValues')
           .map((value, key) => {
             const groups = key.split('_')
             return {
-              month: groups[0],
-              followUp: groups[1],
-              followUpType: groups[2],
+              month: getValue(groups[0]),
+              outcome: getValue(groups[1]),
               cnt: value.length,
             }
           })
+          .orderBy(groupNames)
           .value()
         assert.equal(res.status, 200)
-        assert.deepEqual(res.body.data, expectedResponse)
-      }))
+        const orderedResponse = _.chain(res.body.data)
+          .orderBy(groupNames)
+          .value()
+        assert.deepEqual(orderedResponse, expectedResponse)
+      })
+  })
 })
