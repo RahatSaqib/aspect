@@ -165,7 +165,7 @@ const assayConfiguration = (intl, assaysFromState, BarGraph, PieGraph) => {
           groupBy: [RESULT.result1],
           legend: false,
           averages: {
-            title: 'Average Monthly Rif Resistance Rate',
+            title: intl.formatMessage(messages.clinicalIndicatorsTBPieLegend),
             key: 'Not Detected',
           },
           minDate: getTimePeriod(5, MONTH.plural, 'yyyy-MM-dd'),

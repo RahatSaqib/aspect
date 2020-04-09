@@ -17,6 +17,10 @@ export const messages = defineMessages({
     id: 'pages.Status.clinicalIndicatorsTB.title',
     defaultMessage: 'TB Outcomes',
   },
+  clinicalIndicatorsTBPieLegend: {
+    id: 'pages.Status.clinicalIndicatorsTB.pie',
+    defaultMessage: 'Average Monthly Rif Resistance Rate',
+  },
 })
 
 export default messages
