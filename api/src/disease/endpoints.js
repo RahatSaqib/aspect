@@ -9,7 +9,7 @@ const routes = [
     config: {
       description: 'Disease List',
       notes: 'List of assay types',
-      auth: { scope: ['assay:view', 'assay:edit', 'assay:admin'] },
+      auth: { scope: ['assay'] },
     },
   },
 ]

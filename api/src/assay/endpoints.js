@@ -14,7 +14,7 @@ const routes = [
     config: {
       description: 'Assay List',
       notes: 'Pageable and sortable list of assays',
-      auth: { scope: ['assay:view', 'assay:edit', 'assay:admin'] },
+      auth: { scope: ['assay'] },
       validate: {
         query: {
           name: Joi.string()
@@ -32,7 +32,7 @@ const routes = [
     config: {
       description: 'Assay Type List',
       notes: 'List of assay types',
-      auth: { scope: ['assay:view', 'assay:edit', 'assay:admin'] },
+      auth: { scope: ['assay'] },
     },
   },
   // GET /assayresultandpatientschema

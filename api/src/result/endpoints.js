@@ -41,7 +41,7 @@ const {
 // -----------------------------------------------------
 function listResultsBaseConfig() {
   return {
-    auth: { scope: ['result:view', 'result:edit', 'result:admin'] },
+    auth: { scope: ['result'] },
     timeout: {
       server: 360000,
       socket: false,

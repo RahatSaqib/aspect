@@ -41,6 +41,7 @@ async function getConsumableAssays(request) {
 }
 
 function selectAssayConsumables(knex, dataConstraints, assayId, consumableId) {
+  const { partner: { id: partnerId } = {} } = dataConstraints
   return (
     knex('ConsumableAssay as ca')
       .join('Consumable as c', 'ca.consumableId', 'c.id')
@@ -49,7 +50,7 @@ function selectAssayConsumables(knex, dataConstraints, assayId, consumableId) {
       .leftJoin('PartnerConsumable as pc', function() {
         this.on('ca.consumableId', 'pc.consumableId').andOn(
           'pc.partnerId',
-          knex.raw(dataConstraints.partner.id)
+          knex.raw(partnerId)
         )
       })
       .modify(addConstraints, dataConstraints, { assay: 'a' })
@@ -62,8 +63,8 @@ function selectAssayConsumables(knex, dataConstraints, assayId, consumableId) {
       // TODO: Revisit once permissions system allows the use of partnerId only in addConstraints
       .andWhere(function() {
         this.whereNull('pc.partnerId')
-        if (dataConstraints.partner.id) {
-          this.orWhere({ 'pc.partnerId': dataConstraints.partner.id })
+        if (partnerId) {
+          this.orWhere('pc.partnerId', partnerId)
         }
       })
       .select(SELECT_LIST_FIELDS)
