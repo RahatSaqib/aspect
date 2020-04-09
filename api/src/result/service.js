@@ -1,13 +1,15 @@
 const Boom = require('@hapi/boom')
 const _ = require('lodash')
-const { DEFAULT_FIELDS,
-  SELECT_COMMON_FIELDS,
-  SELECT_SHOW_FIELDS,
-  SORT_FIELDS,
-  REPORT_COMMON_FIELDS } = require('./querySelectors')
 const dateFormat = require('date-fns/format')
 const { subDays, subMonths, startOfMonth, endOfMonth } = require('date-fns')
 const Promise = require('bluebird')
+const {
+  DEFAULT_FIELDS,
+  SELECT_COMMON_FIELDS,
+  SELECT_SHOW_FIELDS,
+  SORT_FIELDS,
+  REPORT_COMMON_FIELDS,
+} = require('./querySelectors')
 const {
   knex,
   filterParams,
@@ -32,7 +34,7 @@ const { getRemoteAddress } = require('../shared/request')
 async function getListResults(query, auth, fields = DEFAULT_FIELDS) {
   const selectFields = _.clone(fields)
   const sortableFields = _.clone(SORT_FIELDS)
-  
+
   const assayColumns = []
   if (query.assayId) {
     const assay = await knex('Assay as a')
@@ -103,6 +105,7 @@ async function getListResults(query, auth, fields = DEFAULT_FIELDS) {
     .clone()
     .modify(sortPageParams, query, 'endedOn')
     .select(selectFields)
+
   // return result when both queries are finished
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
   // if assay specified columns from the resultData field, parse them to valid JSON
@@ -124,7 +127,6 @@ async function getListResults(query, auth, fields = DEFAULT_FIELDS) {
     data,
     extraColumns: assayColumns,
   }
-
   return result
 }
 
@@ -214,7 +216,7 @@ async function exportResults(query, auth) {
 }
 
 async function listResults(request) {
-  const { query, auth, selector: selector } = request
+  const { query, auth, selector } = request
   const result = await getListResults(query, auth, selector)
   return result
 }
@@ -2102,4 +2104,5 @@ module.exports = {
   allResultNotes,
   showResultFollowUps,
   transferResult,
+  getListResults,
 }

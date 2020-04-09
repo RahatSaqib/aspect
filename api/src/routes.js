@@ -157,17 +157,16 @@ function decorateAPI({ scope, strategies }) {
 }
 
 function asyncHandler(handler, extraParams) {
-  return (request, reply) =>
-    {
-      const params = { ...request, ...extraParams }
-      return handler(params)
-        .then(reply)
-        .catch(err => {
-          // Log err stack and Rethrow to Hapi handles error case and Boom.500
-          console.error(err) // eslint-disable-line no-console
-          throw err
-        })
-    }
+  return (request, reply) => {
+    const params = { ...request, ...extraParams }
+    return handler(params)
+      .then(reply)
+      .catch(err => {
+        // Log err stack and Rethrow to Hapi handles error case and Boom.500
+        console.error(err) // eslint-disable-line no-console
+        throw err
+      })
+  }
 }
 
 // extracts and sanitizes the parameters related to sorting and paging
