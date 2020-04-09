@@ -8,6 +8,7 @@ import Card from '@material-ui/core/Card'
 
 import requirePermissions from '../../../components/shared/requirePermissions'
 import { fetchClinicalIndicatorsDashboard } from '../../DashboardRedux'
+import { getDayFromToday } from './Graphs/Helpers'
 
 import Title from '../Title'
 
@@ -53,10 +54,16 @@ const enhance = compose(
       const { id: assay, graphType } = this.props.assay
 
       graphType.map(graph => {
-        const { dataKey: type, groupBy, minDate } = graph
+        const {
+          dataKey: type,
+          groupBy,
+          minDate,
+          maxDate = getDayFromToday(0),
+        } = graph
         return this.props.fetchClinicalIndicatorsDashboard({
           assay,
           minDate,
+          maxDate,
           groupBy,
           type,
         })
