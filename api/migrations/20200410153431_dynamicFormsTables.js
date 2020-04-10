@@ -7,11 +7,12 @@ async function up(knex) {
     row.string('i18nKey').notNullable()
     row.string('externalId').notNullable()
   })
+  await knex.schema.createTable('FormDefinitionSchema', row => {
+    row.increments('id')
+    row.json('jsonSchema').notNullable()
+  })
   await knex.schema.createTable('FormDefinition', row => {
     row.increments('id')
-    row.string('title').notNullable()
-    row.string('subTitle').nullable()
-    row.string('description').nullable()
     row
       .integer('formTypeId')
       .unsigned()
@@ -19,10 +20,6 @@ async function up(knex) {
       .references('id')
       .inTable('FormType')
       .onDelete('SET NULL')
-    row.string('i18nKeyTitle').notNullable()
-    row.string('i18nKeySubTitle').nullable()
-    row.string('i18nKeyDescription').nullable()
-    row.string('externalId').notNullable()
     row
       .integer('partnerId')
       .unsigned()
@@ -46,23 +43,44 @@ async function up(knex) {
       .index()
       .references('id')
       .inTable('Assay')
-  })
-  await knex.schema.alterTable('Result', row => {
+    row.string('title').notNullable()
+    row.string('i18nKeyTitle').notNullable()
+    row.string('subTitle').nullable()
+    row.string('i18nKeySubTitle').nullable()
+    row.string('description').nullable()
+    row.string('i18nKeyDescription').nullable()
+    row.string('externalId').notNullable()
     row
-      .integer('caseId')
+      .integer('formDefinitionSchemaId')
       .unsigned()
       .index()
       .references('id')
-      .inTable('Case')
+      .inTable('FormDefinitionSchema')
+  })
+  await knex.schema.createTable('FormData', row => {
+    row.increments('id')
+    row
+      .integer('resultId')
+      .unsigned()
+      .nullable()
+      .index()
+      .references('id')
+      .inTable('Result')
       .onDelete('SET NULL')
+    row
+      .integer('caseId')
+      .unsigned()
+      .nullable()
+      .index()
+      .references('id')
+      .inTable('Case')
+    row.json('data').notNullable()
   })
 }
 
 async function down(knex) {
-  await knex.schema.dropTable('Case')
-
-  await knex.schema.alterTable('Result', row => {
-    row.dropForeign('caseId')
-    row.dropColumns('caseId')
-  })
+  await knex.schema.dropTable('FormDefinition')
+  await knex.schema.dropTable('FormType')
+  await knex.schema.dropTable('FormDefinitionSchema')
+  await knex.schema.dropTable('FormData')
 }
