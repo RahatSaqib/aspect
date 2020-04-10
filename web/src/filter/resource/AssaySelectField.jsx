@@ -30,11 +30,11 @@ const messages = defineMessages({
   },
   assayAlereQHiv12Detect: {
     id: 'filter.AssaySelectField.assayAlereQHiv12Detect',
-    defaultMessage: 'Alere q HIV-1/2 Detect',
+    defaultMessage: 'Alere Q HIV-1/2 Detect',
   },
   assayAlereQHiv12VLPlasma: {
     id: 'filter.AssaySelectField.assayAlereQHiv12VLPlasma',
-    defaultMessage: 'Alere q HIV-1/2 VL plasma',
+    defaultMessage: 'Alere Q HIV-1/2 VL plasma',
   },
   assayBdMgitAst: {
     id: 'filter.AssaySelectField.assayBdMgitAst',
@@ -119,6 +119,22 @@ const messages = defineMessages({
   assayGeneXpertUnknown: {
     id: 'filter.AssaySelectField.assayGeneXpertUnknown',
     defaultMessage: 'GeneXpert Unknown',
+  },
+  assayGenoTypeMTBCV1: {
+    id: 'filter.AssaySelectField.assayGenoTypeMTBCV1',
+    defaultMessage: 'GenoType MTBC VER 1.X',
+  },
+  assayGenoTypeMTBDRplusV2: {
+    id: 'filter.AssaySelectField.assayGenoTypeMTBDRplusV2',
+    defaultMessage: 'GenoType MTBDRplus VER 2.0',
+  },
+  assayGenoTypeMTBDRslV1: {
+    id: 'filter.AssaySelectField.assayGenoTypeMTBDRslV1',
+    defaultMessage: 'GenoType MTBDRsl VER 1.0',
+  },
+  assayGenoTypeMTBDRslV2: {
+    id: 'filter.AssaySelectField.assayGenoTypeMTBDRslV2',
+    defaultMessage: 'GenoType MTBDRsl VER 2.0',
   },
   assayMP96Covid19: {
     id: 'filter.AssaySelectField.assayMP96Covid19',

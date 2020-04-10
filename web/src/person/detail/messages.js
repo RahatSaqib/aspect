@@ -431,9 +431,25 @@ export default defineMessages({
     id: 'filter.AssaySelectField.assayBdMgitGnd',
     defaultMessage: 'BD MGIT GND',
   },
+  AssayChaiEid: {
+    id: 'filter.AssaySelectField.AssayChaiEid',
+    defaultMessage: 'CHAI EID',
+  },
+  AssayChaiHivVl: {
+    id: 'filter.AssaySelectField.AssayChaiHivVl',
+    defaultMessage: 'CHAI HIV VL',
+  },
   assayCobasHivVl: {
     id: 'filter.AssaySelectField.assayCobasHivVl',
     defaultMessage: 'COBAS 4800 VL',
+  },
+  assayCommCareGatesRDT: {
+    id: 'filter.AssaySelectField.assayCommCareGatesRDT',
+    defaultMessage: 'CommCare Gates RDT',
+  },
+  commCareHiv: {
+    id: 'filter.AssaySelectField.commCareHiv',
+    defaultMessage: 'CommCare HIV',
   },
   assayGenericCovid19: {
     id: 'filter.AssaySelectField.assayGenericCovid19',
@@ -442,6 +458,22 @@ export default defineMessages({
   assayCulture: {
     id: 'filter.AssaySelectField.assayCulture',
     defaultMessage: 'Culture',
+  },
+  assayDaktariCD4: {
+    id: 'filter.AssaySelectField.assayDaktariCD4',
+    defaultMessage: 'Daktari CD4',
+  },
+  assayDaktariHcv: {
+    id: 'filter.AssaySelectField.assayDaktariHcv',
+    defaultMessage: 'Daktari HCV',
+  },
+  assayDaktariHivVl: {
+    id: 'filter.AssaySelectField.assayDaktariHivVl',
+    defaultMessage: 'Daktari HIV-VL',
+  },
+  genericRdt: {
+    id: 'filter.AssaySelectField.genericRdt',
+    defaultMessage: 'Generic RDT',
   },
   assayGXCovid19: {
     id: 'filter.AssaySelectField.assayGXCovid19',

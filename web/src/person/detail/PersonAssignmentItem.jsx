@@ -28,7 +28,7 @@ export default ({ assignment, showLinks, onAskConfirmation, intl }) => {
   const { formatMessage } = intl
 
   const textForAssignmentItem = (i18nKey, name) => {
-    return (messages[i18nKey] ? formatMessage(i18nKey) : name) || name
+    return (messages[i18nKey] ? formatMessage(messages[i18nKey]) : name) || name
   }
   return (
     <div className={cssClasses('Assignment__Section')}>
