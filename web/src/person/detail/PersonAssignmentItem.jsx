@@ -27,6 +27,9 @@ export default ({ assignment, showLinks, onAskConfirmation, intl }) => {
   const searchLgaParams = getSearch({ countryId, stateId, lgaId })
   const { formatMessage } = intl
 
+  const textForAssignmentItem = (i18nKey, name) => {
+    return (messages[i18nKey] ? formatMessage(i18nKey) : name) || name
+  }
   return (
     <div className={cssClasses('Assignment__Section')}>
       <div className={cssClasses('Assignment__Title')}>
@@ -94,9 +97,10 @@ export default ({ assignment, showLinks, onAskConfirmation, intl }) => {
           <strong>{formatMessage(messages.disease)}&nbsp;</strong>
         )}
         <span>
-          {formatMessage(assignment.diseasei18nKey) ||
-            assignment.diseaseName ||
-            formatMessage(messages.allDiseases)}
+          {textForAssignmentItem(
+            assignment.diseasei18nKey,
+            assignment.diseaseName
+          ) || formatMessage(messages.allDiseases)}
         </span>
       </div>
       <div>
@@ -112,9 +116,10 @@ export default ({ assignment, showLinks, onAskConfirmation, intl }) => {
           <strong>{formatMessage(messages.assayType)}&nbsp;</strong>
         )}
         <span>
-          {formatMessage(assignment.assayTypei18nKey) ||
-            assignment.assayTypeName ||
-            formatMessage(messages.allAssayTypes)}
+          {textForAssignmentItem(
+            assignment.assayTypei18nKey,
+            assignment.assayTypeName
+          ) || formatMessage(messages.allAssayTypes)}
         </span>
       </div>
       <div>
@@ -122,9 +127,10 @@ export default ({ assignment, showLinks, onAskConfirmation, intl }) => {
           <strong>{formatMessage(messages.assay)}&nbsp;</strong>
         )}
         <span>
-          {formatMessage(assignment.assayi18nKey) ||
-            assignment.assayName ||
-            formatMessage(messages.allAssays)}
+          {textForAssignmentItem(
+            assignment.assayi18nKey,
+            assignment.assayName
+          ) || formatMessage(messages.allAssays)}
         </span>
       </div>
     </div>

@@ -30,11 +30,11 @@ const messages = defineMessages({
   },
   assayAlereQHiv12Detect: {
     id: 'filter.AssaySelectField.assayAlereQHiv12Detect',
-    defaultMessage: 'Alere Q HIV-1/2 Detect',
+    defaultMessage: 'Alere q HIV-1/2 Detect',
   },
   assayAlereQHiv12VLPlasma: {
     id: 'filter.AssaySelectField.assayAlereQHiv12VLPlasma',
-    defaultMessage: 'Alere Q HIV-1/2 VL plasma',
+    defaultMessage: 'Alere q HIV-1/2 VL plasma',
   },
   assayBdMgitAst: {
     id: 'filter.AssaySelectField.assayBdMgitAst',
@@ -44,9 +44,25 @@ const messages = defineMessages({
     id: 'filter.AssaySelectField.assayBdMgitGnd',
     defaultMessage: 'BD MGIT GND',
   },
+  AssayChaiEid: {
+    id: 'filter.AssaySelectField.AssayChaiEid',
+    defaultMessage: 'CHAI EID',
+  },
+  AssayChaiHivVl: {
+    id: 'filter.AssaySelectField.AssayChaiHivVl',
+    defaultMessage: 'CHAI HIV VL',
+  },
   assayCobasHivVl: {
     id: 'filter.AssaySelectField.assayCobasHivVl',
     defaultMessage: 'COBAS 4800 VL',
+  },
+  assayCommCareGatesRDT: {
+    id: 'filter.AssaySelectField.assayCommCareGatesRDT',
+    defaultMessage: 'CommCare Gates RDT',
+  },
+  commCareHiv: {
+    id: 'filter.AssaySelectField.commCareHiv',
+    defaultMessage: 'CommCare HIV',
   },
   assayGenericCovid19: {
     id: 'filter.AssaySelectField.assayGenericCovid19',
@@ -55,6 +71,22 @@ const messages = defineMessages({
   assayCulture: {
     id: 'filter.AssaySelectField.assayCulture',
     defaultMessage: 'Culture',
+  },
+  assayDaktariCD4: {
+    id: 'filter.AssaySelectField.assayDaktariCD4',
+    defaultMessage: 'Daktari CD4',
+  },
+  assayDaktariHcv: {
+    id: 'filter.AssaySelectField.assayDaktariHcv',
+    defaultMessage: 'Daktari HCV',
+  },
+  assayDaktariHivVl: {
+    id: 'filter.AssaySelectField.assayDaktariHivVl',
+    defaultMessage: 'Daktari HIV-VL',
+  },
+  genericRdt: {
+    id: 'filter.AssaySelectField.genericRdt',
+    defaultMessage: 'Generic RDT',
   },
   assayGXCovid19: {
     id: 'filter.AssaySelectField.assayGXCovid19',
@@ -87,22 +119,6 @@ const messages = defineMessages({
   assayGeneXpertUnknown: {
     id: 'filter.AssaySelectField.assayGeneXpertUnknown',
     defaultMessage: 'GeneXpert Unknown',
-  },
-  assayGenoTypeMTBCV1: {
-    id: 'filter.AssaySelectField.assayGenoTypeMTBCV1',
-    defaultMessage: 'GenoType MTBC VER 1.X',
-  },
-  assayGenoTypeMTBDRplusV2: {
-    id: 'filter.AssaySelectField.assayGenoTypeMTBDRplusV2',
-    defaultMessage: 'GenoType MTBDRplus VER 2.0',
-  },
-  assayGenoTypeMTBDRslV1: {
-    id: 'filter.AssaySelectField.assayGenoTypeMTBDRslV1',
-    defaultMessage: 'GenoType MTBDRsl VER 1.0',
-  },
-  assayGenoTypeMTBDRslV2: {
-    id: 'filter.AssaySelectField.assayGenoTypeMTBDRslV2',
-    defaultMessage: 'GenoType MTBDRsl VER 2.0',
   },
   assayMP96Covid19: {
     id: 'filter.AssaySelectField.assayMP96Covid19',
@@ -206,6 +222,13 @@ export class AssaySelectField extends PureComponent {
     ])
     this.setValueIfSingleAssay()
     const { value, diseaseId, assayTypeId, deviceTypeId } = this.props
+    const textForAssayItem = assayItem => {
+      return (
+        (messages[assayItem.get('i18nKey')]
+          ? formatMessage(messages[assayItem.get('i18nKey')])
+          : assayItem.get('name')) || assayItem.get('name')
+      )
+    }
     return (
       <SelectField
         {...restProps}
@@ -229,7 +252,7 @@ export class AssaySelectField extends PureComponent {
           )
           .map(a => (
             <MenuItem key={a.get('id')} value={a.get('id')}>
-              {formatMessage(messages[a.get('i18nKey')]) || a.get('name')}
+              {textForAssayItem(a)}
             </MenuItem>
           ))}
       </SelectField>

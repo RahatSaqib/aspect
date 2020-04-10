@@ -76,6 +76,14 @@ const enhance = compose(
   })
 )
 
+const textForDiseaseItem = (diseaseItem, formatMessage) => {
+  return (
+    (messages[diseaseItem.get('i18nKey')]
+      ? formatMessage(messages[diseaseItem.get('i18nKey')])
+      : diseaseItem.get('name')) || diseaseItem.get('name')
+  )
+}
+
 export const DiseaseSelectField = ({
   allItemText,
   intl,
@@ -94,9 +102,7 @@ export const DiseaseSelectField = ({
     {allItemText && <MenuItem value="all">{allItemText}</MenuItem>}
     {diseases.items.map(d => (
       <MenuItem key={d.get('id')} value={d.get('id')}>
-        {messages[d.get('i18nKey')]
-          ? intl.formatMessage(messages[d.get('i18nKey')])
-          : d.get('name')}
+        {textForDiseaseItem(d, intl.formatMessage)}
       </MenuItem>
     ))}
   </SelectField>

@@ -208,6 +208,7 @@ export const JobAssignmentForm = ({
             <AssaySelectField
               {...baseProps}
               floatingLabelText={intl.formatMessage(messages.assay)}
+              intl={intl}
               diseaseId={values.diseaseId}
               assayTypeId={values.assayTypeId}
               value={values.assayId}

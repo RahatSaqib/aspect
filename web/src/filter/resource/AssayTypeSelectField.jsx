@@ -113,6 +113,14 @@ const enhance = compose(
   })
 )
 
+const textForAssayTypeItem = (assayTypeItem, formatMessage) => {
+  return (
+    (messages[assayTypeItem.get('i18nKey')]
+      ? formatMessage(messages[assayTypeItem.get('i18nKey')])
+      : assayTypeItem.get('name')) || assayTypeItem.get('name')
+  )
+}
+
 export const AssayTypeSelectField = ({
   allItemText,
   intl,
@@ -139,9 +147,7 @@ export const AssayTypeSelectField = ({
       )
       .map(at => (
         <MenuItem key={at.get('id')} value={at.get('id')}>
-          {messages[at.get('i18nKey')]
-            ? intl.formatMessage(messages[at.get('i18nKey')])
-            : at.get('name')}
+          {textForAssayTypeItem(at, intl.formatMessage)}
         </MenuItem>
       ))}
   </SelectField>
