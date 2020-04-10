@@ -43,7 +43,7 @@ const routes = [
     config: {
       description: 'Assay List for patient and result data',
       notes: 'Get all the patient and results ',
-      auth: { scope: ['assay:view', 'assay:edit'] },
+      auth: { scope: ['assay'] },
       response: {
         options: {
           allowUnknown: true,
