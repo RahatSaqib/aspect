@@ -74,6 +74,8 @@ describe('Device Result API routes', () => {
     return setResultAsDeliverable(context, resultId)
   }
 
+
+  
   describe('admin result updates', () => {
     const context = createTestContext(server, {
       user: 'admin',
