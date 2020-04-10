@@ -96,12 +96,10 @@ const assayConfiguration = (intl, assaysFromState, BarGraph, PieGraph) => {
     {
       id: [
         'abbottM2000DBSHivVL',
-        'abbottM2000HIVEID',
         'abbottM2000PlasmaHivVL',
         'assayAlereQHiv12Detect',
         'assayAlereQHiv12VLPlasma',
         'assayCobasHivVl',
-        'GxHiv1Qual',
         'GxHiv1Vl',
         'QHivVL',
         'ReporterHivVL',
@@ -139,7 +137,7 @@ const assayConfiguration = (intl, assaysFromState, BarGraph, PieGraph) => {
       ],
     },
     {
-      id: ['GxMtbRif', 'assayBdMgitAst'],
+      id: ['GxMtbRif', 'GxMtbRifUltra'],
       period: MONTH.plural,
       title: intl.formatMessage(messages.clinicalIndicatorsTBTitle),
       graphType: [
@@ -147,8 +145,9 @@ const assayConfiguration = (intl, assaysFromState, BarGraph, PieGraph) => {
           dataKey: DATAKEYS.month,
           component: BarGraph,
           componentClass: BARCLASS,
-          displayMethod: CALCMETHOD.percentage,
+          displayMethod: CALCMETHOD.actual,
           resultCategory: RESULT.result1,
+          resultCategory1: 'Detected',
           indexBy: MONTH.single,
           groupBy: [MONTH.single, RESULT.result1],
           legend: true,
