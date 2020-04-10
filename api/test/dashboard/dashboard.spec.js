@@ -513,11 +513,6 @@ describe('Dashboard routes', () => {
       let reportableResultCategories = null
 
       shared.checkToken(server, clinicalIndicatorsPath)
-      // const getResultsForUser = () =>
-      //   server
-      //     .get('/api/result')
-      //     .set('Authorization', `Bearer ${shared.token}`)
-      //     .then(res => res.body.data)
 
       before(() =>
         runTestWithKnex(async knex => {
@@ -652,7 +647,7 @@ describe('Dashboard routes', () => {
                   // only reportable should be included
                   reportableResultCategories.indexOf(
                     o.resultCategory1Name.replace(' ', '')
-                  ) > -1 && o.siteName.indexOf('Cuyahoga') >= 0
+                  ) > -1 && o.deviceName.indexOf('Cuyahoga') >= 0
                 )
               })
               .map(o => ({

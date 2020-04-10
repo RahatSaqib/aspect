@@ -30,7 +30,6 @@ const {
   getLastResultId,
   getLastResult,
 } = require('../deviceApi/utils')
-const { getFirstResultAssayId } = require('./utils')
 
 const getClinicianAccessToken = () =>
   server
@@ -57,7 +56,6 @@ describe('Result routes', () => {
   let clinicianAccessToken = ''
   before(async () => {
     clinicianAccessToken = await getClinicianAccessToken()
-    assayId = await getFirstResultAssayId(knex)
   })
 
   describe('GET', () => {
@@ -86,11 +84,13 @@ describe('Result routes', () => {
             assert.property(res.body.data[0], 'resultTreatmentStatus')
             assert.property(res.body.data[0], 'treatmentStatusInfo')
             assert.property(res.body.data[0], 'patientId')
+            assert.property(res.body.data[0], 'assayId')
             assert.property(res.body, 'total')
             ;[
               {
                 id: resultId,
                 resultWorkflowStatus: initialResultWorkflowStatus,
+                assayId,
               },
             ] = res.body.data
             return res.body.data[0].resultWorkflowStatus

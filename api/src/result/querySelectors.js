@@ -17,9 +17,12 @@ const LIST_FIELDS = [
     "case when GREATEST(IFNULL(rtas.requiresTreatment,0), IFNULL(rtas2.requiresTreatment,0)) = 0 then null else case when rts.externalId= 'OnTreatment' then 'ok' when rts.externalId = 'NotPossible' then 'na' when r.endedOn<DATE_SUB(NOW(),INTERVAL 32 DAY) then 'alert' when r.endedOn<=DATE_SUB(NOW(),INTERVAL 16 DAY) and r.endedOn>=DATE_SUB(NOW(),INTERVAL 32 DAY) then 'warning' else 'na' end end as treatmentStatusInfo"
   ),
   knex.raw('JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.id")) as patientId'),
+  'r.assayId',
+  'rc1.name as resultCategory1Name',
+  'st.name as stateName',
 ]
 
-// Fields used for reports no-referrer-when-downgrade and results_hiv_not_suppressed
+// Fields used for reports mtb-detected-rr-detected and results_hiv_not_suppressed
 const REPORT_COMMON_FIELDS = [
   knex.raw('JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.id")) as patientId'),
   'sp.externalId as sampleId',
@@ -36,54 +39,6 @@ const REPORT_COMMON_FIELDS = [
   knex.raw('JSON_UNQUOTE(JSON_EXTRACT(r.resultData, "$.copies")) as copies'),
 ]
 
-const DEFAULT_FIELDS = [
-  'r.id',
-  'r.externalId',
-  'r.notes',
-  knex.raw(
-    "case when GREATEST(IFNULL(rtas.requiresTreatment,0), IFNULL(rtas2.requiresTreatment,0)) = 0 then null else case when rts.externalId= 'OnTreatment' then 'ok' when rts.externalId = 'NotPossible' then 'na' when r.endedOn<DATE_SUB(NOW(),INTERVAL 32 DAY) then 'alert' when r.endedOn<=DATE_SUB(NOW(),INTERVAL 16 DAY) and r.endedOn>=DATE_SUB(NOW(),INTERVAL 32 DAY) then 'warning' else 'na' end end as treatmentStatusInfo"
-  ),
-  knex.raw('IFNULL(r.endedOn, r.startedOn) as endedOn'),
-  'd.name as deviceName',
-  'c.name as countryName',
-  'st.name as stateName',
-  'lg.name as lgaName',
-  'rc1.name as resultCategory1Name',
-  'rc2.name as resultCategory2Name',
-  'rs.name as resultWorkflowStatus',
-  'rts.externalId as resultTreatmentStatus',
-  'rtsl.changedOn as resultTreatmentStatusChangedOn',
-  knex.raw('ifnull(rts.name, "N/A") as resultTreatmentStatusName'),
-  knex.raw(
-    'GREATEST(IFNULL(rtas.requiresTreatment,0), IFNULL(rtas2.requiresTreatment,0)) as requiresTreatment'
-  ),
-  'so.id as sampleOriginSiteId',
-  'so.name as sampleOriginSiteName',
-  'sp.externalId as sampleId',
-  'r.errorCode',
-  'sp.collectedOn as sampleCollectedOn',
-  'a.name as assayName',
-  'a.id as assayId',
-  'r.deviceId',
-  'stp.name as sampleTypeName',
-  knex.raw(
-    `IFNULL(JSON_UNQUOTE(JSON_EXTRACT(r.resultData, "$.resultText")), CONCAT(IFNULL(rc1.name, ''), '|', IFNULL(rc2.name, ''))) as resultText`
-  ),
-  knex.raw('JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.id")) as patientId'),
-  knex.raw('JSON_UNQUOTE(JSON_EXTRACT(r.resultData, "$.copies")) as copies'),
-  knex.raw(
-    'JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.gender")) as patientGender'
-  ),
-  knex.raw('JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.age")) as patientAge'),
-  'si.name as siteName',
-  'dt.name as deviceTypeName',
-  // transfer result
-  'sirep.id as reportableSiteId',
-  'sirep.name as reportableSiteName',
-  'rslog.createdOn as transferredOn',
-  'ptr.name as transferredBy',
-  'r.resultStatusLogId',
-]
 const SELECT_COMMON_FIELDS = [
   'r.id',
   'r.externalId',
@@ -176,7 +131,6 @@ const SORT_FIELDS = [
 module.exports = {
   LIST_FIELDS,
   REPORT_COMMON_FIELDS,
-  DEFAULT_FIELDS,
   SELECT_COMMON_FIELDS,
   SELECT_SHOW_FIELDS,
   SORT_FIELDS,

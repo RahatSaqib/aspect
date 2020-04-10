@@ -31,7 +31,6 @@ const {
   transferResult,
   updateTransferNotification,
 } = require('./service')
-const { LIST_FIELDS } = require('./querySelectors')
 const { getPatientResultsDetails } = require('./patientResultDetailService')
 const { getResultsReport } = require('./serviceReport')
 const {
@@ -170,7 +169,7 @@ const routes = [
   {
     method: 'GET',
     path: '/result',
-    handler: asyncHandler(listResults, { selector: LIST_FIELDS }),
+    handler: asyncHandler(listResults),
     config: {
       description: 'Result List',
       notes: 'Pageable and sortable list of results',

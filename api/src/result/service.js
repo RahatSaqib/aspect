@@ -4,11 +4,11 @@ const dateFormat = require('date-fns/format')
 const { subDays, subMonths, startOfMonth, endOfMonth } = require('date-fns')
 const Promise = require('bluebird')
 const {
-  DEFAULT_FIELDS,
   SELECT_COMMON_FIELDS,
   SELECT_SHOW_FIELDS,
   SORT_FIELDS,
   REPORT_COMMON_FIELDS,
+  LIST_FIELDS,
 } = require('./querySelectors')
 const {
   knex,
@@ -31,7 +31,7 @@ const { getPathFromFileReferenceId } = require('../file/service')
 const { getSiteByPartnerCountry } = require('../site/service')
 const { getRemoteAddress } = require('../shared/request')
 
-async function getListResults(query, auth, fields = DEFAULT_FIELDS) {
+async function getListResults(query, auth, fields = LIST_FIELDS) {
   const selectFields = _.clone(fields)
   const sortableFields = _.clone(SORT_FIELDS)
 
@@ -216,8 +216,8 @@ async function exportResults(query, auth) {
 }
 
 async function listResults(request) {
-  const { query, auth, selector } = request
-  const result = await getListResults(query, auth, selector)
+  const { query, auth } = request
+  const result = await getListResults(query, auth)
   return result
 }
 
