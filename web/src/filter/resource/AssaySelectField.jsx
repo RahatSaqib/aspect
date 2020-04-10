@@ -147,7 +147,10 @@ let isSingleAssay
 
 export class AssaySelectField extends PureComponent {
   static propTypes = {
-    intl: PropTypes.object.isRequired,
+    // eslint-disable-next-line react/require-default-props
+    intl: PropTypes.shape({
+      formatMessage: PropTypes.func,
+    }),
     allItemText: PropTypes.string,
     fetchAssays: PropTypes.func.isRequired,
     assayItems: PropTypes.instanceOf(Immutable.List).isRequired,

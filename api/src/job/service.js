@@ -633,7 +633,13 @@ async function getAssignments({ auth, personId }) {
       }
       // if assayTypeId is used by JobContext - then get assay type's disease props
       if (assayTypeId) {
-        ;[{ diseaseId2: diseaseId, diseaseName2: diseaseName, diseasei18nKey2: diseasei18nKey }] = [item]
+        ;[
+          {
+            diseaseId2: diseaseId,
+            diseaseName2: diseaseName,
+            diseasei18nKey2: diseasei18nKey,
+          },
+        ] = [item]
       }
       // if assayId is used by JobContext - then get assay's assay & device type props
       if (assayId) {
@@ -672,8 +678,10 @@ async function getAssignments({ auth, personId }) {
         lgaId,
         lgaName,
         diseaseId,
+        diseasei18nKey,
         diseaseName,
         assayTypeId,
+        assayTypei18nKey,
         assayTypeName,
         deviceTypeId,
         deviceTypeName,
