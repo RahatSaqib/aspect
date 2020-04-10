@@ -11,49 +11,57 @@ import SelectField from '../../components/shared/SelectField'
 import { fetchAssayTypes } from '../../assay/AssayTypeRedux'
 
 const messages = defineMessages({
-  assayTypeMtbRif: {
-    id: 'filter.AssayTypeSelectField.assayTypeMtbRif',
-    defaultMessage: 'MTB/Rif',
+  assayTypeCD4: {
+    id: 'filter.AssayTypeSelectField.assayTypeCD4',
+    defaultMessage: 'CD4 Count',
+  },
+  covid19: {
+    id: 'filter.AssayTypeSelectField.covid19',
+    defaultMessage: 'COVID-19 Test',
+  },
+  assayTypeDengue: {
+    id: 'filter.AssayTypeSelectField.assayTypeDengue',
+    defaultMessage: 'Dengue',
   },
   assayTypeEbola: {
     id: 'filter.AssayTypeSelectField.assayTypeEbola',
     defaultMessage: 'Ebola',
   },
-  assayTypeHivVl: {
-    id: 'filter.AssayTypeSelectField.assayTypeHivVl',
-    defaultMessage: 'HIV VL',
+  assayTypeEid: {
+    id: 'filter.AssayTypeSelectField.assayTypeEid',
+    defaultMessage: 'EID',
+  },
+  genericRDT: {
+    id: 'filter.AssayTypeSelectField.genericRDT',
+    defaultMessage: 'Generic RDT',
+  },
+  genoTypeTestStrip: {
+    id: 'filter.AssayTypeSelectField.genoTypeTestStrip',
+    defaultMessage: 'GenoType Test Strip',
   },
   assayTypeHbvVl: {
     id: 'filter.AssayTypeSelectField.assayTypeHbvVl',
     defaultMessage: 'HBV VL',
   },
+  assayTypeHcv: {
+    id: 'filter.AssayTypeSelectField.assayTypeHcv',
+    defaultMessage: 'HCV',
+  },
   assayTypeHivQual: {
     id: 'filter.AssayTypeSelectField.assayTypeHivQual',
     defaultMessage: 'HIV Qual',
   },
-  assayTypeCD4: {
-    id: 'filter.AssayTypeSelectField.assayTypeCD4',
-    defaultMessage: 'CD4 Count',
-  },
-  assayTypeEid: {
-    id: 'filter.AssayTypeSelectField.assayTypeEid',
-    defaultMessage: 'EID',
-  },
-  assayTypeHcv: {
-    id: 'filter.AssayTypeSelectField.assayTypeHcv',
-    defaultMessage: 'HCV',
+  assayTypeHivVl: {
+    id: 'filter.AssayTypeSelectField.assayTypeHivVl',
+    defaultMessage: 'HIV VL',
   },
   assayTypeLipidPanel: {
     id: 'filter.AssayTypeSelectField.assayTypeLipidPanel',
     defaultMessage: 'Lipid Panel',
   },
-  assayTypeZika: {
-    id: 'filter.AssayTypeSelectField.assayTypeZika',
-    defaultMessage: 'Zika',
-  },
-  assayTypeDengue: {
-    id: 'filter.AssayTypeSelectField.assayTypeDengue',
-    defaultMessage: 'Dengue',
+  assayTypeMtbRif: {
+    id: 'filter.AssayTypeSelectField.assayTypeMtbRif',
+    defaultMessage: 'MTB/Rif',
   },
   assayTypeTbAst: {
     id: 'filter.AssayTypeSelectField.assayTypeTbAst',
@@ -67,17 +75,9 @@ const messages = defineMessages({
     id: 'filter.AssayTypeSelectField.assayTypeUnknown',
     defaultMessage: 'Unknown',
   },
-  genericRDT: {
-    id: 'filter.AssayTypeSelectField.genericRDT',
-    defaultMessage: 'Generic RDT',
-  },
-  genoTypeTestStrip: {
-    id: 'filter.AssayTypeSelectField.genoTypeTestStrip',
-    defaultMessage: 'GenoType Test Strip',
-  },
-  covid19: {
-    id: 'filter.AssayTypeSelectField.covid19',
-    defaultMessage: 'COVID-19 Test',
+  assayTypeZika: {
+    id: 'filter.AssayTypeSelectField.assayTypeZika',
+    defaultMessage: 'Zika',
   },
 })
 

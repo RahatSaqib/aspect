@@ -574,23 +574,29 @@ async function getAssignments({ auth, personId }) {
       'l2.name as lgaName2',
       // JobContext with diseaseId
       'd.id as diseaseId',
+      'd.i18nKey as diseasei18nKey',
       'd.name as diseaseName',
       // JobContext with assayTypeId
       'at.id as assayTypeId',
+      'at.i18nKey as assayTypei18nKey',
       'at.name as assayTypeName',
       'd2.id as diseaseId2',
+      'd2.i18nKey as diseasei18nKey2',
       'd2.name as diseaseName2',
       // JobContext with deviceTypeId
       'dt.id as deviceTypeId',
       'dt.name as deviceTypeName',
       // JobContext with assayId
       'a.id as assayId',
+      'a.i18nKey as assayi18nKey',
       'a.name as assayName',
       'at2.id as assayTypeId2',
+      'at2.i18nKey as assayTypei18nKey2',
       'at2.name as assayTypeName2',
       'dt2.id as deviceTypeId2',
       'dt2.name as deviceTypeName2',
       'd3.id as diseaseId3',
+      'd3.i18nKey as diseasei18nKey3',
       'd3.name as diseaseName3'
     )
     .map(item => {
@@ -603,8 +609,10 @@ async function getAssignments({ auth, personId }) {
         lgaId,
         lgaName,
         diseaseId,
+        diseasei18nKey,
         diseaseName,
         assayTypeId,
+        assayTypei18nKey,
         assayTypeName,
         deviceTypeId,
         deviceTypeName,
@@ -625,17 +633,19 @@ async function getAssignments({ auth, personId }) {
       }
       // if assayTypeId is used by JobContext - then get assay type's disease props
       if (assayTypeId) {
-        ;[{ diseaseId2: diseaseId, diseaseName2: diseaseName }] = [item]
+        ;[{ diseaseId2: diseaseId, diseaseName2: diseaseName, diseasei18nKey2: diseasei18nKey }] = [item]
       }
       // if assayId is used by JobContext - then get assay's assay & device type props
       if (assayId) {
         ;[
           {
             assayTypeId2: assayTypeId,
+            assayTypei18nKey2: assayTypei18nKey,
             assayTypeName2: assayTypeName,
             deviceTypeId2: deviceTypeId,
             deviceTypeName2: deviceTypeName,
             diseaseId3: diseaseId,
+            diseasei18nKey3: diseasei18nKey,
             diseaseName3: diseaseName,
           },
         ] = [item]
@@ -652,6 +662,7 @@ async function getAssignments({ auth, personId }) {
           'siteName',
           'geographyId',
           'assayId',
+          'assayi18nKey',
           'assayName',
         ]),
         countryId,

@@ -5,6 +5,7 @@ const { getConstraints, addConstraints } = require('../auth/constraints')
 const SELECT_LIST_FIELDS = [
   'a.id',
   'a.externalId',
+  'a.i18nKey',
   'at.id as assayTypeId',
   'd.id as diseaseId',
   'a.name',

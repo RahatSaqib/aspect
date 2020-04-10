@@ -165,18 +165,27 @@ const personAssignmentsResponse = {
           diseaseId: Joi.number()
             .allow(null)
             .description('Disease.id'),
+          diseasei18nKey: Joi.string()
+            .allow(null, '')
+            .description('Disease.i18nKey'),
           diseaseName: Joi.string()
             .allow(null, '')
             .description('Disease.name'),
           assayTypeId: Joi.number()
             .allow(null)
             .description('AssayType.id'),
+          assayTypei18nKey: Joi.string()
+            .allow(null, '')
+            .description('AssayType.i18nKey'),
           assayTypeName: Joi.string()
             .allow(null, '')
             .description('AssayType.name'),
           assayId: Joi.number()
             .allow(null)
             .description('Assay.id'),
+          assayi18nKey: Joi.string()
+            .allow(null, '')
+            .description('Assay.i18nKey'),
           assayName: Joi.string()
             .allow(null, '')
             .description('Assay.name'),

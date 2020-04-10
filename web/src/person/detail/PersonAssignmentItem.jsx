@@ -25,6 +25,7 @@ export default ({ assignment, showLinks, onAskConfirmation, intl }) => {
   const searchCountryParams = getSearch({ countryId })
   const searchStateParams = getSearch({ countryId, stateId })
   const searchLgaParams = getSearch({ countryId, stateId, lgaId })
+  const { formatMessage } = intl
 
   return (
     <div className={cssClasses('Assignment__Section')}>
@@ -52,9 +53,7 @@ export default ({ assignment, showLinks, onAskConfirmation, intl }) => {
         )}
       </div>
       <div>
-        <span>
-          {assignment.stateName || intl.formatMessage(messages.allStates)}
-        </span>
+        <span>{assignment.stateName || formatMessage(messages.allStates)}</span>
         {showLinks && (
           <Link
             to={`/browse/site?${searchStateParams.toString()}`}
@@ -65,9 +64,7 @@ export default ({ assignment, showLinks, onAskConfirmation, intl }) => {
         )}
       </div>
       <div>
-        <span>
-          {assignment.lgaName || intl.formatMessage(messages.allAreas)}
-        </span>
+        <span>{assignment.lgaName || formatMessage(messages.allAreas)}</span>
         {showLinks && (
           <Link
             to={`/browse/site?${searchLgaParams.toString()}`}
@@ -78,9 +75,7 @@ export default ({ assignment, showLinks, onAskConfirmation, intl }) => {
         )}
       </div>
       <div>
-        <span>
-          {assignment.siteName || intl.formatMessage(messages.allSites)}
-        </span>
+        <span>{assignment.siteName || formatMessage(messages.allSites)}</span>
         {showLinks && (
           <Link
             to={
@@ -95,29 +90,41 @@ export default ({ assignment, showLinks, onAskConfirmation, intl }) => {
         )}
       </div>
       <div>
-        {assignment.diseaseName && <strong>Disease:&nbsp;</strong>}
+        {assignment.diseaseName && (
+          <strong>{formatMessage(messages.disease)}&nbsp;</strong>
+        )}
         <span>
-          {assignment.diseaseName || intl.formatMessage(messages.allDiseases)}
+          {formatMessage(assignment.diseasei18nKey) ||
+            assignment.diseaseName ||
+            formatMessage(messages.allDiseases)}
         </span>
       </div>
       <div>
-        {assignment.deviceTypeName && <strong>Device Type:&nbsp;</strong>}
+        {assignment.deviceTypeName && (
+          <strong>{formatMessage(messages.deviceType)}&nbsp;</strong>
+        )}
         <span>
-          {assignment.deviceTypeName ||
-            intl.formatMessage(messages.allDeviceTypes)}
+          {assignment.deviceTypeName || formatMessage(messages.allDeviceTypes)}
         </span>
       </div>
       <div>
-        {assignment.assayTypeName && <strong>Assay Type:&nbsp;</strong>}
+        {assignment.assayTypeName && (
+          <strong>{formatMessage(messages.assayType)}&nbsp;</strong>
+        )}
         <span>
-          {assignment.assayTypeName ||
-            intl.formatMessage(messages.allAssayTypes)}
+          {formatMessage(assignment.assayTypei18nKey) ||
+            assignment.assayTypeName ||
+            formatMessage(messages.allAssayTypes)}
         </span>
       </div>
       <div>
-        {assignment.assayName && <strong>Assay:&nbsp;</strong>}
+        {assignment.assayName && (
+          <strong>{formatMessage(messages.assay)}&nbsp;</strong>
+        )}
         <span>
-          {assignment.assayName || intl.formatMessage(messages.allAssays)}
+          {formatMessage(assignment.assayi18nKey) ||
+            assignment.assayName ||
+            formatMessage(messages.allAssays)}
         </span>
       </div>
     </div>

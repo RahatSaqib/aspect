@@ -11,37 +11,37 @@ import SelectField from '../../components/shared/SelectField'
 import { fetchDiseases } from '../../disease/DiseaseRedux'
 
 const messages = defineMessages({
-  diseaseNameTuberculosis: {
-    id: 'filter.AssayTypeSelectField.diseaseNameTuberculosis',
-    defaultMessage: 'Tuberculosis',
+  diseaseNameDengueFever: {
+    id: 'filter.DiseaseSelectField.diseaseNameDengueFever',
+    defaultMessage: 'Dengue Fever',
   },
   diseaseNameEbola: {
-    id: 'filter.AssayTypeSelectField.diseaseNameEbola',
+    id: 'filter.DiseaseSelectField.diseaseNameEbola',
     defaultMessage: 'Ebola',
   },
-  diseaseNameHIVAIDS: {
-    id: 'filter.AssayTypeSelectField.diseaseNameHIVAIDS',
-    defaultMessage: 'HIV/AIDS',
-  },
   diseaseNameHepatitisB: {
-    id: 'filter.AssayTypeSelectField.diseaseNameHepatitisB',
+    id: 'filter.DiseaseSelectField.diseaseNameHepatitisB',
     defaultMessage: 'Hepatitis B',
   },
   diseaseNameHepatitisC: {
-    id: 'filter.AssayTypeSelectField.diseaseNameHepatitisC',
+    id: 'filter.DiseaseSelectField.diseaseNameHepatitisC',
     defaultMessage: 'Hepatitis C',
   },
-  diseaseNameZikaFever: {
-    id: 'filter.AssayTypeSelectField.diseaseNameZikaFever',
-    defaultMessage: 'Zika Fever',
-  },
-  diseaseNameDengueFever: {
-    id: 'filter.AssayTypeSelectField.diseaseNameDengueFever',
-    defaultMessage: 'Dengue Fever',
+  diseaseNameHIVAIDS: {
+    id: 'filter.DiseaseSelectField.diseaseNameHIVAIDS',
+    defaultMessage: 'HIV/AIDS',
   },
   diseaseNameCovid19: {
-    id: 'filter.AssayTypeSelectField.diseaseNameCovid19',
+    id: 'filter.DiseaseSelectField.diseaseNameCovid19',
     defaultMessage: 'SARS-CoV-2 (COVID-19)',
+  },
+  diseaseNameTuberculosis: {
+    id: 'filter.DiseaseSelectField.diseaseNameTuberculosis',
+    defaultMessage: 'Tuberculosis',
+  },
+  diseaseNameZikaFever: {
+    id: 'filter.DiseaseSelectField.diseaseNameZikaFever',
+    defaultMessage: 'Zika Fever',
   },
 })
 
