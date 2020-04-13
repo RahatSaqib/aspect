@@ -102,14 +102,20 @@ async function assignContact(request) {
     })
   }
 
-  const newContact = { jobId, siteId }
+  const newJobContext = { jobId, siteId }
 
-  try {
-    const response = await knex('JobContext').insert(newContact)
-    if (response) return { ok: true, data: await siteContacts(siteId) }
-  } catch (e) {
+  const existingJobContext = await knex('JobContext')
+    .where(newJobContext)
+    .whereNull('assayTypeId')
+    .whereNull('assayId')
+    .whereNull('deviceTypeId')
+    .whereNull('diseaseId')
+    .first()
+  if (existingJobContext) {
     return Boom.conflict('Contact is already assigned to site')
   }
+  const response = await knex('JobContext').insert(newJobContext)
+  if (response) return { ok: true, data: await siteContacts(siteId) }
 }
 
 async function unAssignContact(request) {
@@ -122,6 +128,10 @@ async function unAssignContact(request) {
   const contact = { jobId: personDetails.jobId, siteId }
   const jcRecord = await knex('JobContext')
     .where(contact)
+    .whereNull('assayTypeId')
+    .whereNull('assayId')
+    .whereNull('deviceTypeId')
+    .whereNull('diseaseId')
     .first()
   if (!jcRecord) {
     return Boom.notFound()

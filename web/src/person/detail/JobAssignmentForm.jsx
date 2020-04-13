@@ -115,12 +115,13 @@ export const JobAssignmentForm = ({
   loadedAssignments,
   onDeleteAssignment,
 }) => {
+  const { formatMessage } = intl
   const baseProps = {
-    allItemText: intl.formatMessage(messages.all),
+    allItemText: formatMessage(messages.all),
     disabled: form.submitting,
     floatingLabelFixed: true,
     fullWidth: true,
-    hintText: intl.formatMessage(messages.all),
+    hintText: formatMessage(messages.all),
   }
   return (
     <div className={cssClasses('Job__Assignment', 'Form__Content')}>
@@ -131,13 +132,13 @@ export const JobAssignmentForm = ({
         >
           <SelectField
             fullWidth
-            hintText={intl.formatMessage(messages.selectJob)}
+            hintText={formatMessage(messages.selectJob)}
             value={values.jobFunctionId}
             onChange={({ target: { value } }) => {
               onJobFunctionIdChange(value === 'all' ? undefined : value)
             }}
             floatingLabelFixed
-            floatingLabelText={intl.formatMessage(messages.job)}
+            floatingLabelText={formatMessage(messages.job)}
             errorStyle={{
               float: 'left',
               whiteSpace: 'nowrap',
@@ -152,20 +153,20 @@ export const JobAssignmentForm = ({
             ))}
           </SelectField>
           <section>
-            <h1>{intl.formatMessage(messages.assignmentDetails)}</h1>
+            <h1>{formatMessage(messages.assignmentDetails)}</h1>
             <CountrySelectField
               disabled
-              allItemText={intl.formatMessage(messages.all)}
+              allItemText={formatMessage(messages.all)}
               countryId={values.countryId}
               floatingLabelFixed
-              floatingLabelText={intl.formatMessage(messages.country)}
+              floatingLabelText={formatMessage(messages.country)}
             />
             <StateSelectField
               {...baseProps}
               onStateIdChange={onStateIdChange}
               countryId={values.countryId}
               stateId={values.stateId}
-              floatingLabelText={intl.formatMessage(messages.state)}
+              floatingLabelText={formatMessage(messages.state)}
             />
             <LgaSelectField
               {...baseProps}
@@ -173,11 +174,11 @@ export const JobAssignmentForm = ({
               countryId={values.countryId}
               stateId={values.stateId}
               lgaId={values.lgaId}
-              floatingLabelText={intl.formatMessage(messages.lga)}
+              floatingLabelText={formatMessage(messages.lga)}
             />
             <SiteSelectField
               {...baseProps}
-              floatingLabelText={intl.formatMessage(messages.site)}
+              floatingLabelText={formatMessage(messages.site)}
               value={values.siteId}
               onSiteChange={onSiteIdChange}
               countryId={values.countryId}
@@ -187,27 +188,27 @@ export const JobAssignmentForm = ({
             <DiseaseSelectField
               {...baseProps}
               intl={intl}
-              floatingLabelText={intl.formatMessage(messages.disease)}
+              floatingLabelText={formatMessage(messages.disease)}
               value={values.diseaseId}
               onDiseaseIdChange={onDiseaseIdChange}
             />
             <DeviceTypeSelectField
               {...baseProps}
-              floatingLabelText={intl.formatMessage(messages.deviceType)}
+              floatingLabelText={formatMessage(messages.deviceType)}
               value={values.deviceTypeId}
               onDeviceTypeChange={onDeviceTypeIdChange}
             />
             <AssayTypeSelectField
               {...baseProps}
               intl={intl}
-              floatingLabelText={intl.formatMessage(messages.assayType)}
+              floatingLabelText={formatMessage(messages.assayType)}
               value={values.assayTypeId}
               diseaseId={values.diseaseId}
               onAssayTypeIdChange={onAssayTypeIdChange}
             />
             <AssaySelectField
               {...baseProps}
-              floatingLabelText={intl.formatMessage(messages.assay)}
+              floatingLabelText={formatMessage(messages.assay)}
               intl={intl}
               diseaseId={values.diseaseId}
               assayTypeId={values.assayTypeId}
@@ -224,7 +225,7 @@ export const JobAssignmentForm = ({
                 loading || form.pristine || !form.valid || form.submitting
               }
             >
-              {intl.formatMessage(messages.save)}
+              {formatMessage(messages.save)}
             </Button>
           </div>
         </form>

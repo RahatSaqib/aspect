@@ -43,22 +43,47 @@ async function up(knex) {
       .index()
       .references('id')
       .inTable('Disease')
-    jobContext.unique(['jobId', 'assayTypeId'], 'unique_jobId_assayTypeId')
-    jobContext.unique(['jobId', 'assayId'], 'unique_jobId_assayId')
-    jobContext.unique(['jobId', 'deviceTypeId'], 'unique_jobId_deviceTypeId')
-    jobContext.unique(['jobId', 'diseaseId'], 'unique_jobId_diseaseId')
+    jobContext.dropUnique(['jobId', 'siteId'], 'unique_jobId_siteId')
+    jobContext.dropUnique(['jobId', 'geographyId'], 'unique_jobId_geographyId')
+    jobContext.unique(
+      ['jobId', 'siteId', 'geographyId', 'assayTypeId'],
+      'unique_jobId_assayTypeId'
+    )
+    jobContext.unique(
+      ['jobId', 'siteId', 'geographyId', 'assayId'],
+      'unique_jobId_assayId'
+    )
+    jobContext.unique(
+      ['jobId', 'siteId', 'geographyId', 'deviceTypeId'],
+      'unique_jobId_deviceTypeId'
+    )
+    jobContext.unique(
+      ['jobId', 'siteId', 'geographyId', 'diseaseId'],
+      'unique_jobId_diseaseId'
+    )
   })
 }
 
 async function down(knex) {
   await knex.schema.alterTable('JobContext', jobContext => {
-    jobContext.dropUnique(['jobId', 'assayTypeId'], 'unique_jobId_assayTypeId')
-    jobContext.dropUnique(['jobId', 'assayId'], 'unique_jobId_assayId')
     jobContext.dropUnique(
-      ['jobId', 'deviceTypeId'],
+      ['jobId', 'siteId', 'geographyId', 'assayTypeId'],
+      'unique_jobId_assayTypeId'
+    )
+    jobContext.dropUnique(
+      ['jobId', 'siteId', 'geographyId', 'assayId'],
+      'unique_jobId_assayId'
+    )
+    jobContext.dropUnique(
+      ['jobId', 'siteId', 'geographyId', 'deviceTypeId'],
       'unique_jobId_deviceTypeId'
     )
-    jobContext.dropUnique(['jobId', 'diseaseId'], 'unique_jobId_diseaseId')
+    jobContext.dropUnique(
+      ['jobId', 'siteId', 'geographyId', 'diseaseId'],
+      'unique_jobId_diseaseId'
+    )
+    jobContext.unique(['jobId', 'siteId'], 'unique_jobId_siteId')
+    jobContext.unique(['jobId', 'geographyId'], 'unique_jobId_geographyId')
     jobContext.dropForeign('assayTypeId')
     jobContext.dropForeign('assayId')
     jobContext.dropForeign('deviceTypeId')
