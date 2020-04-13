@@ -223,7 +223,7 @@ export class PersonDetail extends PureComponent {
         'assayId',
       ]),
     }
-    addPersonAssignment(data)
+    return addPersonAssignment(data)
   }
 
   deleteAssignment = jobContextId => {

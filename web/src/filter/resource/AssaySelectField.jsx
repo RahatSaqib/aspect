@@ -174,9 +174,6 @@ const messages = defineMessages({
   },
 })
 
-let validAssays
-let isSingleAssay
-
 export class AssaySelectField extends PureComponent {
   static propTypes = {
     // eslint-disable-next-line react/require-default-props
@@ -203,21 +200,7 @@ export class AssaySelectField extends PureComponent {
 
   constructor(props) {
     super()
-
     props.fetchAssays(false)
-
-    const { assayItems } = props
-    validAssays = assayItems.filter(a => a.get('hasResults'))
-    // If there's only one available assay, that unique assay will be set as value
-    isSingleAssay = validAssays.size === 1
-  }
-
-  componentDidMount() {
-    this.setValueIfSingleAssay()
-  }
-
-  setValueIfSingleAssay = () => {
-    if (isSingleAssay) this.props.value = validAssays.first().get('id')
   }
 
   handleChange = ({ target: { value } }) => {
@@ -228,7 +211,12 @@ export class AssaySelectField extends PureComponent {
     const {
       allItemText,
       intl: { formatMessage },
+      assayItems,
+      onAssayChange,
     } = this.props
+
+    const validAssays = assayItems.filter(a => a.get('hasResults'))
+    const isSingleAssay = validAssays.size === 1
     const restProps = _.omit(this.props, [
       'allItemText',
       'fetchAssays',
@@ -236,8 +224,10 @@ export class AssaySelectField extends PureComponent {
       'onAssayChange',
       'value',
     ])
-    this.setValueIfSingleAssay()
     const { value, diseaseId, assayTypeId, deviceTypeId } = this.props
+    if (isSingleAssay && value !== validAssays.first().get('id')) {
+      onAssayChange(validAssays.first().get('id'))
+    } else if (validAssays.size === 0 && value) onAssayChange()
     const textForAssayItem = assayItem => {
       return (
         (messages[assayItem.get('i18nKey')]
