@@ -27,13 +27,13 @@ async function getTags(auth, tagType) {
   const tableName = tagTableName(tagType)
 
   const refQuery = knex(tableName).distinct('tagId')
-  const data = await knex('Tag as t')
+  const tags = await knex('Tag as t')
     .join('Partner as p', 't.partnerId', 'p.id')
     .whereIn('t.id', refQuery)
     .modify(addConstraints, dataConstraints, { partner: 'p' })
     .select(SELECT_LIST_FIELDS)
 
-  return data
+  return tags
 }
 
 async function listTagsByType(request) {

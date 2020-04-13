@@ -2,7 +2,8 @@ const supertest = require('supertest')
 const chai = require('chai')
 const _ = require('lodash')
 const shared = require('../utils/sharedToken')
-const { run } = require('../../src/db')
+const { knex, run } = require('../../src/db')
+const { getAccessToken, createUser, removeUser } = require('../utils/authUtils')
 
 const server = supertest.agent('http://localhost:8080')
 const { assert } = chai
@@ -180,6 +181,45 @@ describe('Device routes', () => {
           assert.property(res.body.data[0], 'utilizationRate')
           assert.property(res.body.data[0], 'errorRate')
         })
+    })
+
+    const daktariVirologyDeviceTypeExternalId = 'DaktariVirology'
+    const daktariManagerUsername = 'daktari_manager'
+    const daktariManagerPassword = 'daktari-manager-pass'
+    let daktariManagerUserId
+    let daktariManagerAuthAccessToken
+    before(async () => {
+      daktariManagerUserId = await createUser(
+        'Partner One',
+        'US',
+        daktariManagerUsername,
+        daktariManagerPassword,
+        [
+          {
+            jobFunctionExternalId: 'manager',
+            deviceTypeExternalId: daktariVirologyDeviceTypeExternalId,
+          },
+        ]
+      )
+      daktariManagerAuthAccessToken = await getAccessToken(
+        daktariManagerUsername,
+        daktariManagerPassword
+      )
+    })
+
+    after(async () => removeUser(daktariManagerUserId))
+
+    it("should constrain devices returned based on the user's job context", async () => {
+      const devicesReponse = await server
+        .get(path)
+        .set('Authorization', `Bearer ${daktariManagerAuthAccessToken}`)
+      assert.isAbove(devicesReponse.body.data.length, 0)
+      const { name: daktariVirologyDeviceTypeName } = await knex('DeviceType')
+        .where('externalId', daktariVirologyDeviceTypeExternalId)
+        .first('name')
+      devicesReponse.body.data.forEach(device => {
+        assert.equal(device.type, daktariVirologyDeviceTypeName)
+      })
     })
   })
 

@@ -4046,12 +4046,8 @@ describe('Device API routes for GxAlert Device', () => {
             const { id: geographyId } = await knex('Geography as g')
               .join('Country as c')
               .where('c.abbreviation', geneXpertDevice.countryAbbreviation)
-              .andWhere(function() {
-                this.whereNotNull('g.stateId')
-              })
-              .andWhere(function() {
-                this.whereNotNull('g.lgaId')
-              })
+              .whereNotNull('g.stateId')
+              .whereNotNull('g.lgaId')
               .first('g.id')
             await knex('Site')
               .where({ id: geneXpertDevice.siteId })
@@ -4104,12 +4100,8 @@ describe('Device API routes for GxAlert Device', () => {
             const { id: geographyId } = await knex('Geography as g')
               .join('Country as c')
               .where('c.abbreviation', geneXpertDevice.countryAbbreviation)
-              .andWhere(function() {
-                this.whereNotNull('g.stateId')
-              })
-              .andWhere(function() {
-                this.whereNotNull('g.lgaId')
-              })
+              .whereNotNull('g.stateId')
+              .whereNotNull('g.lgaId')
               .first('g.id')
             await knex('Site')
               .where({ id: geneXpertDevice.siteId })
