@@ -2261,6 +2261,8 @@ async function clinicalIndicatorAggregations(request) {
       )
     })
     .modify(addConstraints, dataConstraints, {
+      assay: 'a',
+      assayType: 'at',
       device: 'd',
       site: 's',
       geography: 'g',
