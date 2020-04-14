@@ -11,6 +11,8 @@ const { runTestWithKnex } = require('../utils/generatorFunctionUtils')
 const { getAccessToken } = require('../utils/authUtils')
 
 const server = supertest.agent('http://localhost:8080')
+const { getListResults } = require('../../src/result/service')
+
 const { assert, expect } = chai
 
 describe('Dashboard routes', () => {
