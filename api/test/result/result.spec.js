@@ -7,6 +7,7 @@ const {
   parseISO,
   format: dateFormat,
 } = require('date-fns')
+
 const Promise = require('bluebird')
 const shared = require('../utils/sharedToken')
 const { runTestWithKnex } = require('../utils/generatorFunctionUtils')
