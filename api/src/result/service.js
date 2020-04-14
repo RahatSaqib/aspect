@@ -2314,24 +2314,12 @@ async function clinicalIndicatorAggregations(request) {
   }
 }
 
-function queryResultFollowUpLastItems(followUpTypes) {
-  const fields = []
-  followUpTypes.forEach(followUpType => {
-    fields.push(
-      // largest ResultFollowUp.id for specified 'followUpType'
-      knex.raw(
-        `MAX(case when _fut.externalId='${followUpType}' then _rfu.id else null end) as ${followUpType}ResultFollowUpId`
-      )
-    )
-  })
+function queryResultFollowUpLastItems(followUpType) {
   const rfuLastIds = knex('ResultFollowUp as _rfu')
     .innerJoin('FollowUp as _fu', '_rfu.followUpId', '_fu.id')
     .innerJoin('FollowUpType as _fut', '_fu.followUpTypeId', '_fut.id')
-    .select([
-      '_rfu.resultId',
-      // 'treatmentResultFollowUpId', 'outcomeResultFollowUpId', etc
-      ...fields,
-    ])
+    .select(['_rfu.resultId', knex.raw('MAX(_rfu.id) as _id')])
+    .where('_fut.externalId', followUpType)
     .groupBy('_rfu.resultId')
 
   return rfuLastIds
@@ -2351,9 +2339,15 @@ async function followUpAggregations(request) {
     assay = query.assay
   }
 
+  // get followUpType from query, or set it to 1st item ('treatment') from followUpTypes
   const followUpTypes = (await knex('FollowUpType').select('externalId')).map(
     x => x.externalId
   )
+  const [treatmentFollowUpType] = followUpTypes
+  let followUpType = query.followUpType || treatmentFollowUpType
+  if (!followUpTypes.includes(query.followUpType)) {
+    followUpType = treatmentFollowUpType
+  }
 
   // get data constraints
   const dataConstraints = await getConstraints(auth.credentials)
@@ -2380,23 +2374,13 @@ async function followUpAggregations(request) {
       )
     })
     .leftJoin(
-      queryResultFollowUpLastItems(followUpTypes).as('rfu'),
+      queryResultFollowUpLastItems(followUpType).as('_rfu'),
       'r.id',
-      'rfu.resultId'
+      '_rfu.resultId'
     )
-    .modify(qb => {
-      followUpTypes.forEach(followUpType => {
-        qb.leftJoin(
-          `ResultFollowUp as ${followUpType}ResultFollowUp`,
-          `rfu.${followUpType}ResultFollowUpId`,
-          `${followUpType}ResultFollowUp.id`
-        ).leftJoin(
-          `FollowUp as ${followUpType}FollowUp`,
-          `${followUpType}ResultFollowUp.followUpId`,
-          `${followUpType}FollowUp.id`
-        )
-      })
-    })
+    .leftJoin(`ResultFollowUp as rfu`, `_rfu._id`, `rfu.id`)
+    .leftJoin(`FollowUp as fu`, `rfu.followUpId`, `fu.id`)
+    .leftJoin('FollowUpType as fut', 'fu.followUpTypeId', 'fut.id')
     .modify(addConstraints, dataConstraints, {
       device: 'd',
       geography: 'g',
@@ -2415,17 +2399,9 @@ async function followUpAggregations(request) {
       if (query.assayType) {
         qb.where('at.externalId', '=', query.assayType)
       }
-      // filter by followUpTypes fields, like
-      // `treatmentFollowUp.externalId`, `outcomeFollowUp.externalId`
-      followUpTypes.forEach(followUpType => {
-        if (query[followUpType]) {
-          qb.where(
-            `${followUpType}FollowUp.externalId`,
-            '=',
-            query[followUpType]
-          )
-        }
-      })
+      if (query.followUp) {
+        qb.where(`fu.externalId`, '=', query.followUp)
+      }
       if (query.minDate) {
         qb.where('r.endedOn', '>=', query.minDate)
       }
@@ -2440,17 +2416,22 @@ async function followUpAggregations(request) {
       }
     })
     .where('rca.reportable', true)
+    .where(`fut.externalId`, '=', followUpType)
     .orderBy('r.endedOn')
     .count('r.id as cnt')
 
   // if no group is specified, use followUp
   let groupBy = null
   if (!query.groupBy) {
-    groupBy = ['treatment']
+    groupBy = ['followUp']
   } else if (!Array.isArray(query.groupBy)) {
     groupBy = [query.groupBy]
   } else {
     groupBy = query.groupBy
+  }
+  // group also by 'followUp' if missed
+  if (!groupBy.includes('followUp')) {
+    groupBy.push('followUp')
   }
 
   // handle possible groups:
@@ -2466,15 +2447,8 @@ async function followUpAggregations(request) {
     ),
     age: knex.raw('replace(r.patientData ->> "$.age", "null", null) as age'),
     state: 'st.name as state',
+    followUp: `fu.externalId as followUp`,
   }
-
-  // add fields like
-  // `treatmentFollowUp.externalId as treatment`,
-  // `outcomeFollowUp.externalId as outcome`
-  followUpTypes.forEach(followUpType => {
-    const fieldName = `${followUpType}FollowUp.externalId as ${followUpType}`
-    paramToDb[followUpType] = fieldName
-  })
 
   groupBy.forEach(g => {
     resultQuery.modify(qb => {

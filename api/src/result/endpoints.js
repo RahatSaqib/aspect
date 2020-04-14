@@ -179,8 +179,7 @@ const resultAggregationsValidGroups = [
 const clinicalIndicatorsValidGroups = [...resultAggregationsValidGroups]
 const followUpAggregationsValidGroups = [
   ...resultAggregationsValidGroups,
-  'treatment',
-  'outcome',
+  'followUp',
 ]
 const getResultAggregationsValidate = validGroups => ({
   ...validateDateRangeParams(),
@@ -1511,12 +1510,14 @@ const routes = [
       validate: {
         query: {
           ...getResultAggregationsValidate(followUpAggregationsValidGroups),
-          treatment: Joi.string()
+          followUpType: Joi.string()
+            .required()
+            .description(
+              'Filter by result followUpType (FollowUpType.externalId)'
+            ),
+          followUp: Joi.string()
             .allow('', null)
-            .description('Filter by result treatment (FollowUp.externalId)'),
-          outcome: Joi.string()
-            .allow('', null)
-            .description('Filter by result outcome (FollowUp.externalId)'),
+            .description('Filter by result followUp (FollowUp.externalId)'),
         },
       },
       response: {
@@ -1530,12 +1531,9 @@ const routes = [
             .items(
               Joi.object().keys({
                 ...resultAggregationsResponseItem,
-                treatment: Joi.string()
+                followUp: Joi.string()
                   .allow(null)
-                  .description('The treatment that the count is grouped by'),
-                outcome: Joi.string()
-                  .allow(null)
-                  .description('The outcome that the count is grouped by'),
+                  .description('The followUp that the count is grouped by'),
               })
             ),
         }),
