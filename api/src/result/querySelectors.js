@@ -14,7 +14,7 @@ const LIST_FIELDS = [
   'rs.name as resultWorkflowStatus',
   'rts.externalId as resultTreatmentStatus',
   knex.raw(
-    "case when GREATEST(IFNULL(rtas.requiresTreatment,0), IFNULL(rtas2.requiresTreatment,0)) = 0 then null else case when rts.externalId= 'OnTreatment' then 'ok' when rts.externalId = 'NotPossible' then 'na' when r.endedOn<DATE_SUB(NOW(),INTERVAL 32 DAY) then 'alert' when r.endedOn<=DATE_SUB(NOW(),INTERVAL 16 DAY) and r.endedOn>=DATE_SUB(NOW(),INTERVAL 32 DAY) then 'warning' else 'na' end end as treatmentStatusInfo"
+    "case when GREATEST(IFNULL(rca.requiresTreatment,0), IFNULL(rca2.requiresTreatment,0)) = 0 then null else case when rts.externalId= 'OnTreatment' then 'ok' when rts.externalId = 'NotPossible' then 'na' when r.endedOn<DATE_SUB(NOW(),INTERVAL 32 DAY) then 'alert' when r.endedOn<=DATE_SUB(NOW(),INTERVAL 16 DAY) and r.endedOn>=DATE_SUB(NOW(),INTERVAL 32 DAY) then 'warning' else 'na' end end as treatmentStatusInfo"
   ),
   knex.raw('JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.id")) as patientId'),
   'r.assayId',
@@ -86,10 +86,10 @@ const SELECT_COMMON_FIELDS = [
   'stp.name as sampleTypeName',
   knex.raw('JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.id")) as patientId'),
   knex.raw(
-    'GREATEST(IFNULL(rtas.requiresTreatment,0), IFNULL(rtas2.requiresTreatment,0)) as requiresTreatment'
+    'GREATEST(IFNULL(rca.requiresTreatment,0), IFNULL(rca2.requiresTreatment,0)) as requiresTreatment'
   ),
   knex.raw(
-    "case when GREATEST(IFNULL(rtas.requiresTreatment,0), IFNULL(rtas2.requiresTreatment,0)) = 0 then null else case when rts.externalId= 'OnTreatment' then 'ok' when rts.externalId = 'NotPossible' then 'na' when r.endedOn<DATE_SUB(NOW(),INTERVAL 32 DAY) then 'alert' when r.endedOn<=DATE_SUB(NOW(),INTERVAL 16 DAY) and r.endedOn>=DATE_SUB(NOW(),INTERVAL 32 DAY) then 'warning' else 'na' end end as treatmentStatusInfo"
+    "case when GREATEST(IFNULL(rca.requiresTreatment,0), IFNULL(rca2.requiresTreatment,0)) = 0 then null else case when rts.externalId= 'OnTreatment' then 'ok' when rts.externalId = 'NotPossible' then 'na' when r.endedOn<DATE_SUB(NOW(),INTERVAL 32 DAY) then 'alert' when r.endedOn<=DATE_SUB(NOW(),INTERVAL 16 DAY) and r.endedOn>=DATE_SUB(NOW(),INTERVAL 32 DAY) then 'warning' else 'na' end end as treatmentStatusInfo"
   ),
   'r.patientData',
   'rsl.reason as resultWorkflowLogReason',
