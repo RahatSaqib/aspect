@@ -20,6 +20,7 @@ const LIST_FIELDS = [
   'r.assayId',
   'rc1.name as resultCategory1Name',
   'st.name as stateName',
+  'si.name as siteName',
 ]
 
 // Fields used for reports mtb-detected-rr-detected and results_hiv_not_suppressed
