@@ -4,6 +4,13 @@ const dateFormat = require('date-fns/format')
 const { subDays, subMonths, startOfMonth, endOfMonth } = require('date-fns')
 const Promise = require('bluebird')
 const {
+  SELECT_COMMON_FIELDS,
+  SELECT_SHOW_FIELDS,
+  SORT_FIELDS,
+  REPORT_COMMON_FIELDS,
+  LIST_FIELDS,
+} = require('./querySelectors')
+const {
   knex,
   filterParams,
   filterDateRangeParams,
@@ -24,144 +31,7 @@ const { getPathFromFileReferenceId } = require('../file/service')
 const { getSiteByPartnerCountry } = require('../site/service')
 const { getRemoteAddress } = require('../shared/request')
 
-const SELECT_LIST_FIELDS = [
-  'r.id',
-  'r.externalId',
-  'r.notes',
-  knex.raw(
-    "case when GREATEST(IFNULL(rtas.requiresTreatment,0), IFNULL(rtas2.requiresTreatment,0)) = 0 then null else case when rts.externalId= 'OnTreatment' then 'ok' when rts.externalId = 'NotPossible' then 'na' when r.endedOn<DATE_SUB(NOW(),INTERVAL 32 DAY) then 'alert' when r.endedOn<=DATE_SUB(NOW(),INTERVAL 16 DAY) and r.endedOn>=DATE_SUB(NOW(),INTERVAL 32 DAY) then 'warning' else 'na' end end as treatmentStatusInfo"
-  ),
-  knex.raw('IFNULL(r.endedOn, r.startedOn) as endedOn'),
-  'd.name as deviceName',
-  'c.name as countryName',
-  'st.name as stateName',
-  'lg.name as lgaName',
-  'rc1.name as resultCategory1Name',
-  'rc2.name as resultCategory2Name',
-  'rs.name as resultWorkflowStatus',
-  'rts.externalId as resultTreatmentStatus',
-  'rtsl.changedOn as resultTreatmentStatusChangedOn',
-  knex.raw('ifnull(rts.name, "N/A") as resultTreatmentStatusName'),
-  knex.raw(
-    'GREATEST(IFNULL(rtas.requiresTreatment,0), IFNULL(rtas2.requiresTreatment,0)) as requiresTreatment'
-  ),
-  'so.id as sampleOriginSiteId',
-  'so.name as sampleOriginSiteName',
-  'sp.externalId as sampleId',
-  'r.errorCode',
-  'sp.collectedOn as sampleCollectedOn',
-  'a.name as assayName',
-  'a.id as assayId',
-  'r.deviceId',
-  'stp.name as sampleTypeName',
-  knex.raw(
-    `IFNULL(JSON_UNQUOTE(JSON_EXTRACT(r.resultData, "$.resultText")), CONCAT(IFNULL(rc1.name, ''), '|', IFNULL(rc2.name, ''))) as resultText`
-  ),
-  knex.raw('JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.id")) as patientId'),
-  knex.raw('JSON_UNQUOTE(JSON_EXTRACT(r.resultData, "$.copies")) as copies'),
-  knex.raw(
-    'JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.gender")) as patientGender'
-  ),
-  knex.raw('JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.age")) as patientAge'),
-  'si.name as siteName',
-  'dt.name as deviceTypeName',
-  // transfer result
-  'sirep.id as reportableSiteId',
-  'sirep.name as reportableSiteName',
-  'rslog.createdOn as transferredOn',
-  'ptr.name as transferredBy',
-  'r.resultStatusLogId',
-]
-const SELECT_COMMON_FIELDS = [
-  'r.id',
-  'r.externalId',
-  'r.startedOn',
-  'r.endedOn',
-  'r.deviceId',
-  'd.name as deviceName',
-  'd.serial as deviceSerial',
-  'c.name as countryName',
-  'st.name as stateName',
-  'lg.name as lgaName',
-  'rc1.name as resultCategory1Name',
-  'rc2.name as resultCategory2Name',
-  'rs.id as resultWorkflowStatusId',
-  'rs.name as resultWorkflowStatus',
-  'rs.externalId as resultWorkflowStatusExternalId',
-  'rsl.changedOn as resultWorkflowChangedOn',
-  'rts.id as resultTreatmentStatusId',
-  'rts.externalId as resultTreatmentStatus',
-  'r.resultData',
-  'r.formData',
-  'r.siteId',
-  'si.name as siteName',
-  'r.assayVersion',
-  'r.consumableSerial',
-  'r.consumableLot',
-  'r.consumableExpirationDate',
-  'r.instrumentSerial',
-  'r.moduleName',
-  'r.moduleSerial',
-  'r.researchId',
-  'r.senderVersion',
-  'r.senderOperator',
-  'r.notes',
-  'r.errorCode',
-  'r.errorNotes',
-  'r.createdOn',
-  'r.updatedOn',
-  'r.assayId',
-  'sp.externalId as sampleId',
-  'r.sampleGroup',
-  'sp.originSiteId as sampleOriginSiteId',
-  'sp.collectedOn as sampleCollectedOn',
-  'so.name as sampleOriginSiteName',
-  'stp.name as sampleTypeName',
-  knex.raw('JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.id")) as patientId'),
-  knex.raw(
-    'GREATEST(IFNULL(rtas.requiresTreatment,0), IFNULL(rtas2.requiresTreatment,0)) as requiresTreatment'
-  ),
-  knex.raw(
-    "case when GREATEST(IFNULL(rtas.requiresTreatment,0), IFNULL(rtas2.requiresTreatment,0)) = 0 then null else case when rts.externalId= 'OnTreatment' then 'ok' when rts.externalId = 'NotPossible' then 'na' when r.endedOn<DATE_SUB(NOW(),INTERVAL 32 DAY) then 'alert' when r.endedOn<=DATE_SUB(NOW(),INTERVAL 16 DAY) and r.endedOn>=DATE_SUB(NOW(),INTERVAL 32 DAY) then 'warning' else 'na' end end as treatmentStatusInfo"
-  ),
-  'r.patientData',
-  'rsl.reason as resultWorkflowLogReason',
-  'rsl.operator as resultWorkflowLogOperator',
-  'rsl.createdOn as resultWorkflowLogCreatedOn',
-  'rsl.changedOn as resultWorkflowLogChangedOn',
-  'rtsl.method as resultTreatmentMethod',
-  'rtsl.data as resultTreatmentData',
-  'rtsl.resultTreatmentStatusId',
-  'rtsl.changedOn as resultTreatmentStatusChangedOn',
-  'rtsl.createdOn as resultTreatmentStatusCreatedOn',
-  // transfer result
-  'r.reportableSiteId',
-  'sirep.name as reportableSiteName',
-  'rslog.createdOn as transferredOn',
-  'ptr.name as transferredBy',
-  'r.resultStatusLogId',
-  'r.firstViewedOn',
-]
-const SELECT_SHOW_FIELDS = _.concat(SELECT_COMMON_FIELDS, 'rf.formSchema')
-const SORT_FIELDS = [
-  'endedOn',
-  'deviceName',
-  'sampleOriginSiteName',
-  'stateName',
-  'lgaName',
-  'sampleId',
-  'errorCode',
-  'resultText',
-  'resultWorkflowStatus',
-  'treatmentStatusInfo',
-  'resultTreatmentStatusChangedOn',
-  'requiresTreatment',
-  'resultCategory1Name',
-  'resultCategory2Name',
-  'patientId',
-]
-
-async function getListResults(query, auth, fields = SELECT_LIST_FIELDS) {
+async function getListResults(query, auth, fields = LIST_FIELDS) {
   const selectFields = _.clone(fields)
   const sortableFields = _.clone(SORT_FIELDS)
 
@@ -235,6 +105,7 @@ async function getListResults(query, auth, fields = SELECT_LIST_FIELDS) {
     .clone()
     .modify(sortPageParams, query, 'endedOn')
     .select(selectFields)
+
   // return result when both queries are finished
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
   // if assay specified columns from the resultData field, parse them to valid JSON
@@ -256,7 +127,6 @@ async function getListResults(query, auth, fields = SELECT_LIST_FIELDS) {
     data,
     extraColumns: assayColumns,
   }
-
   return result
 }
 
@@ -2221,7 +2091,7 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
 
 async function getResultsForReport(auth, query) {
   // for now call existing function, but later add here a query with different aggregations
-  return getListResults(query, auth)
+  return getListResults(query, auth, REPORT_COMMON_FIELDS)
 }
 
 module.exports = {
@@ -2253,4 +2123,5 @@ module.exports = {
   allResultNotes,
   showResultFollowUps,
   transferResult,
+  getListResults,
 }

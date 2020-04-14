@@ -12,6 +12,8 @@ const { runTestWithKnex } = require('../utils/generatorFunctionUtils')
 const { getAccessToken } = require('../utils/authUtils')
 
 const server = supertest.agent('http://localhost:8080')
+const { getListResults } = require('../../src/result/service')
+
 const { assert, expect } = chai
 
 describe('Dashboard routes', () => {
@@ -505,22 +507,18 @@ describe('Dashboard routes', () => {
       })
     })
 
-    describe('/dashboard/clinical-indicators', () => {
+    describe('/dashboard/clinical-indicators', async () => {
       const clinicalIndicatorsPath = '/api/dashboard/clinical-indicators'
       let resultsForUser = null
       let reportableResultCategories = null
 
       shared.checkToken(server, clinicalIndicatorsPath)
 
-      const getResultsForUser = () =>
-        server
-          .get('/api/result')
-          .set('Authorization', `Bearer ${shared.token}`)
-          .then(res => res.body.data)
-
       before(() =>
         runTestWithKnex(async knex => {
-          resultsForUser = await getResultsForUser()
+          resultsForUser = (
+            await getListResults({}, { credentials: { name: 'admin' } })
+          ).data
           reportableResultCategories = await knex('ResultCategoryAssay as rca')
             .join('ResultCategory as rc', 'rca.resultCategoryId', 'rc.id')
             .where('rca.reportable', true)
@@ -638,29 +636,28 @@ describe('Dashboard routes', () => {
             `${clinicalIndicatorsPath}?groupBy=month&groupBy=resultCategory1&siteName=Cuyahoga`
           )
           .set('Authorization', `Bearer ${shared.token}`)
-        const expectedResponse = _.chain(resultsForUser)
-          .filter(
-            r =>
-              // only reportable should be included
-              reportableResultCategories.indexOf(
-                r.resultCategory1Name.replace(' ', '')
-              ) > -1 && r.siteName.indexOf('Cuyahoga') >= 0
-          )
-          .map(r => ({
-            categoryMonth: `${r.resultCategory1Name.replace(' ', '')}_${format(
-              new Date(r.endedOn),
-              'yyyy-MM'
-            )}`,
-          }))
-          .groupBy('categoryMonth')
-          .map((value, key) => ({
-            resultCategory1: key.substring(0, key.indexOf('_')),
-            month: key.substring(key.indexOf('_') + 1),
-            cnt: value.length,
-          }))
-          .value()
-        assert.equal(clinicalIndicators.status, 200)
-        assert.deepEqual(clinicalIndicators.body.data, expectedResponse)
+          .then(res => {
+            const expectedResponse = _.chain(resultsForUser)
+              .filter(r =>
+                // only reportable should be included
+                reportableResultCategories.indexOf(
+                  r.resultCategory1Name.replace(' ', '')
+                ) > -1 && r.siteName.indexOf('Cuyahoga') >= 0)
+              .map(r => ({
+              categoryMonth: `${r.resultCategory1Name.replace(' ', '')}_${format(
+                new Date(r.endedOn),
+                'yyyy-MM'
+              )}`,
+              }))
+              .groupBy('categoryMonth')
+              .map((value, key) => ({
+                resultCategory1: key.substring(0, key.indexOf('_')),
+                month: key.substring(key.indexOf('_') + 1),
+                cnt: value.length,
+              }))
+              .value()
+            assert.equal(res.status, 200)
+            assert.deepEqual(res.body.data, expectedResponse)
       })
 
       it('should throw an error if groupby is not supported', async () => {
