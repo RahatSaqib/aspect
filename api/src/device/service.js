@@ -103,6 +103,7 @@ async function getListDevices(query, auth) {
     })
     .leftJoin('Geography as g', 's.geographyId', 'g.id')
     .leftJoin('State as st', 'g.stateId', 'st.id')
+    .leftJoin('Assay as a', 'dt.id', 'a.deviceTypeId')
     .where(function() {
       if (!query.deviceIds) {
         return
@@ -113,9 +114,7 @@ async function getListDevices(query, auth) {
       if (!query.assayId) {
         return
       }
-      queryBuilder
-        .innerJoin('Assay as a', 'dt.id', 'a.deviceTypeId')
-        .where('a.id', query.assayId)
+      queryBuilder.where('a.id', query.assayId)
 
       if (!query.resultCategoryId) {
         return
@@ -139,8 +138,11 @@ async function getListDevices(query, auth) {
       siteName: 's.name',
     })
     .modify(addConstraints, dataConstraints, {
+      assay: 'a',
       device: 'd',
-      showUnapprovedDevices: false,
+      deviceType: 'dt',
+      geography: 'g',
+      site: 's',
     })
   // get total count for paging
   const getCount = deviceQuery
@@ -172,6 +174,10 @@ async function getListDevices(query, auth) {
           'rl.resultWorkflowStatusId',
           'rw.id'
         )
+        .modify(addConstraints, dataConstraints, {
+          result: 'r',
+          sample: 's',
+        })
         .whereRaw('s.originSiteId = d.siteId')
         .whereBetween('rl.changedOn', [last60Day, last30Day])
         .where('rw.externalId', '=', 'Delivered')
@@ -185,6 +191,10 @@ async function getListDevices(query, auth) {
           'rl.resultWorkflowStatusId',
           'rw.id'
         )
+        .modify(addConstraints, dataConstraints, {
+          result: 'r',
+          sample: 's',
+        })
         .whereRaw('s.originSiteId = d.siteId')
         .where('rl.changedOn', '>=', last30Day)
         .where('rw.externalId', '=', 'Delivered')
@@ -296,6 +306,8 @@ async function getDeviceByDeviceId({
     .where('d.id', +deviceId)
     .modify(addConstraints, dataConstraints, {
       device: 'd',
+      deviceType: 'dt',
+      site: 's',
       showUnapprovedDevices: true,
     })
     .first(fields)
@@ -431,7 +443,7 @@ async function listDevicesForSelectList(request) {
 
   const devices = await knex('Device as d')
     .leftOuterJoin('Geography as g', 'd.geographyId', 'g.id')
-    .modify(addConstraints, dataConstraints, { device: 'd' })
+    .modify(addConstraints, dataConstraints, { device: 'd', geography: 'g' })
     .modify(filterParams, query, {
       countryId: 'g.countryId',
       partnerId: 'd.partnerId',
@@ -555,6 +567,7 @@ async function getDevicePerformance(request) {
   const [deviceCountry] = await knex('Device as d')
     .leftOuterJoin('Geography as g', 'd.geographyId', 'g.id')
     .leftOuterJoin('Country as c', 'g.countryId', 'c.id')
+    .modify(addConstraints, dataConstraints, { geography: 'g' })
     .where('d.id', deviceId)
 
   const [{ countryTotalResult, countryTotalErrorCount }] = await knex(
@@ -564,6 +577,7 @@ async function getDevicePerformance(request) {
     .leftJoin('ResultCategory as rc2', 'rc2.id', 'r.resultCategory2')
     .leftOuterJoin('Geography as g', 'r.geographyId', 'g.id')
     .leftOuterJoin('Country as c', 'g.countryId', 'c.id')
+    .modify(addConstraints, dataConstraints, { result: 'r', geography: 'g' })
     .where('r.endedOn', '>=', startedOn)
     .where('r.endedOn', '<=', endedOn)
     .where('c.id', deviceCountry.countryId)
@@ -678,8 +692,11 @@ function getDeviceBaseQuery(query, dataConstraints) {
       siteName: 's.name',
     })
     .modify(addConstraints, dataConstraints, {
+      assay: 'a',
       device: 'd',
-      showUnapprovedDevices: false,
+      deviceType: 'dt',
+      geography: 'g',
+      site: 's',
     })
   return deviceQuery
 }
@@ -700,6 +717,10 @@ async function getDevicesForReport(auth, query) {
 
   const queryResults = knex('Result as r')
     .innerJoin('Sample as s', 'r.sampleId', 's.id')
+    .modify(addConstraints, dataConstraints, {
+      result: 'r',
+      sample: 's',
+    })
     .whereRaw('s.originSiteId = d.siteId')
     .modify(filterDateRangeParams, query, 'r.endedOn')
 
@@ -764,6 +785,10 @@ async function getDevicesForRifResistanceReport(auth, query) {
 
   const queryResults = knex('Result as r')
     .innerJoin('Sample as s', 'r.sampleId', 's.id')
+    .modify(addConstraints, dataConstraints, {
+      result: 'r',
+      sample: 's',
+    })
     .whereRaw('s.originSiteId = d.siteId')
     .modify(filterDateRangeParams, query, 'r.endedOn')
 

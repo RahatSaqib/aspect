@@ -23,7 +23,7 @@ async function getDemoDevice(request) {
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .innerJoin('DeviceTypeCategory as dc', 'dt.deviceTypeCategoryId', 'dc.id')
     .where('d.id', deviceId)
-    .modify(addConstraints, dataConstraints, { device: 'd' })
+    .modify(addConstraints, dataConstraints, { device: 'd', deviceType: 'dt' })
     .first('d.id', 'd.name', 'd.deviceTypeId')
   if (!device) {
     return Boom.notFound()
@@ -34,6 +34,7 @@ async function getDemoDevice(request) {
 
   const assays = await knex('Assay as a')
     .innerJoin('DeviceType as dt', 'dt.id', 'a.deviceTypeId')
+    .modify(addConstraints, dataConstraints, { assay: 'a', deviceType: 'dt' })
     .where({ 'dt.id': device.deviceTypeId })
     .orderBy('a.name')
     .select('a.id', 'a.name')
@@ -44,7 +45,7 @@ async function getDemoDevice(request) {
       const results = await knex('Result as r')
         .innerJoin('Device as d', 'r.deviceId', 'd.id')
         .where('r.assayId', assay.id)
-        .modify(addConstraints, dataConstraints, { device: 'd' })
+        .modify(addConstraints, dataConstraints, { device: 'd', result: 'r' })
         .distinct(
           'r.id',
           knex.raw(
@@ -98,7 +99,13 @@ async function postDemoDeviceResult(request) {
       'rsl.resultWorkflowStatusId',
       'rs.id'
     )
-    .modify(addConstraints, userConstraints, { device: 'd' })
+    .modify(addConstraints, userConstraints, {
+      assay: 'a',
+      device: 'd',
+      result: 'r',
+      sample: 's',
+      site: 'sos',
+    })
     .where({ 'r.id': resultId })
     .first(
       'r.resultData',

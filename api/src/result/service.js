@@ -315,7 +315,11 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
         ])
     }, query)
     .modify(addConstraints, dataConstraints, {
+      assay: 'a',
+      assayType: 'at',
       device: 'd',
+      deviceType: 'dt',
+      sample: 'sp',
       geography: 'g',
       result: 'r',
       country: 'c',
@@ -371,7 +375,7 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
     .join('FollowUpType as fut', 'fu.followUpTypeId', 'fut.id')
     .whereIn(
       'rfu.resultId',
-      data.map(d => d.id)
+      data.map(r => r.id)
     )
     .select(
       'rfu.resultId',
@@ -394,7 +398,7 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
     .leftOuterJoin('User as uU', 'rn.updatedBy', 'uU.id')
     .whereIn(
       'rn.resultId',
-      data.map(d => d.id)
+      data.map(r => r.id)
     )
     .select(
       'rn.resultId',
@@ -589,7 +593,11 @@ async function showFileReferences(request) {
     .join('Device as d', 'r.deviceId', 'd.id')
     .where('rf.resultId', resultId)
     .orderBy('f.id', 'asc')
-    .modify(addConstraints, dataConstraints, { device: 'd', result: 'r' })
+    .modify(addConstraints, dataConstraints, {
+      device: 'd',
+      result: 'r',
+      sample: 'sp',
+    })
     .select(
       'f.id',
       'f.name',
@@ -780,10 +788,6 @@ async function listResultTypes(request) {
 
   return result
 }
-
-// ---------------------------------
-// exporting Results data
-// ---------------------------------
 
 async function updateWorkflowStatus(request) {
   const { auth, params, payload } = request
@@ -1420,24 +1424,26 @@ async function confirmedTreatmentTracking(request) {
     .innerJoin('Device as d', 'r.deviceId', 'd.id')
     .leftOuterJoin('Geography as g', 'r.geographyId', 'g.id')
     .innerJoin('Sample as sp', 'r.sampleId', 'sp.id')
+    .innerJoin('Assay as a', 'a.id', 'r.assayId')
+    .modify(queryBuilder => {
+      if (assayTypeId && resultCategoryId) {
+        queryBuilder
+          .where('a.assayTypeId', assayTypeId)
+          .where('r.resultCategory1', resultCategoryId)
+      }
+    })
     .modify(addConstraints, dataConstraints, {
-      site: 's',
-      geography: 'g',
+      assay: 'a',
       device: 'd',
+      geography: 'g',
       result: 'r',
+      site: 's',
+      sample: 'sp',
     })
     // if 'siteId' specified - filter by siteId
     .where(function() {
       if (siteId) {
         this.where('s.id', siteId)
-      }
-    })
-    .modify(queryBuilder => {
-      if (assayTypeId && resultCategoryId) {
-        queryBuilder
-          .innerJoin('Assay as a', 'a.id', 'r.assayId')
-          .where('a.assayTypeId', assayTypeId)
-          .where('r.resultCategory1', resultCategoryId)
       }
     })
     // filter by date range, inclusive
@@ -1496,8 +1502,11 @@ async function listFollowUps(request) {
     .leftJoin('Assay as a', 'fua.assayId', 'a.id')
     .leftJoin('ResultCategory as rc1', 'fua.resultCategory1', 'rc1.id')
     .leftJoin('ResultCategory as rc2', 'fua.resultCategory2', 'rc2.id')
-    .orderBy('fu.id', 'a.id', 'rc1.id', 'rc2.id')
     .where('fua.partnerId', dataConstraints.partner.id)
+    .modify(addConstraints, dataConstraints, {
+      assay: 'a',
+    })
+    .orderBy('fu.id', 'a.id', 'rc1.id', 'rc2.id')
     .select(
       'fu.id',
       'fu.name',
@@ -1799,7 +1808,11 @@ async function showResultFollowUps(resultId, dataConstraints) {
     .join('FollowUpType as fut', 'fu.followUpTypeId', 'fut.id')
     .where('rfu.resultId', resultId)
     .orderBy('rfu.date', 'rfu.updatedOn')
-    .modify(addConstraints, dataConstraints, { device: 'd', result: 'r' })
+    .modify(addConstraints, dataConstraints, {
+      device: 'd',
+      result: 'r',
+      sample: 'sp',
+    })
     .select(
       'rfu.id',
       'rfu.externalId',
@@ -2063,8 +2076,14 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
     }, query)
     .modify(addPartnerQueryConstraints, dataConstraints)
     .modify(addConstraints, dataConstraints, {
+      assay: 'a',
+      assayType: 'at',
       device: 'd',
+      deviceType: 'dt',
+      sample: 'sp',
+      geography: 'g',
       result: 'r',
+      country: 'c',
     })
 
   return resultQuery

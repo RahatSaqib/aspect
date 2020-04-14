@@ -1,6 +1,6 @@
 const _ = require('lodash')
 const { knex } = require('../db')
-const { getUser } = require('./service')
+const { getUser, getUserByUserId, getUserByPersonId } = require('./service')
 
 // A prefix for joined table aliases intended to avoid
 // conflict with caller supplied table aliases
@@ -10,7 +10,16 @@ function alias(table) {
 }
 
 async function getConstraints(credentials, forModule = null) {
-  const user = await getUser(credentials.name)
+  const user = credentials.name
+    ? await getUser(credentials.name)
+    : credentials.userId
+    ? await getUserByUserId(credentials.userId)
+    : credentials.personId
+    ? await getUserByPersonId(credentials.personId)
+    : null
+  if (!user) {
+    return Promise.resolve()
+  }
   const constraints = {
     partner: {
       id: user.partnerId,
@@ -52,6 +61,10 @@ async function getConstraints(credentials, forModule = null) {
       'g.stateId',
       'g.lgaId',
       'jc.siteId',
+      'jc.diseaseId',
+      'jc.assayTypeId',
+      'jc.assayId',
+      'jc.deviceTypeId',
       'j.jobFunctionId',
       forModule
         ? knex.raw(
@@ -72,6 +85,10 @@ async function getJobConstraints(personId, jobFunctionId, forModule = null) {
   const jobContexts = await knex('JobContext as jc')
     .leftJoin('Site as s', 'jc.siteId', 's.id')
     .leftJoin('Geography as g', 'jc.geographyId', 'g.id')
+    .leftJoin('Disease as d', 'jc.diseaseId', 'd.id')
+    .leftJoin('AssayType as at', 'jc.assayTypeId', 'at.id')
+    .leftJoin('Assay as a', 'jc.assayId', 'a.id')
+    .leftJoin('DeviceType as dt', 'jc.deviceTypeId', 'dt.id')
     .innerJoin('Job as j', 'jc.jobId', 'j.id')
     .innerJoin('JobFunction as jf', 'j.jobFunctionId', 'jf.id')
     .modify(queryBuilder => {
@@ -99,6 +116,10 @@ async function getJobConstraints(personId, jobFunctionId, forModule = null) {
       'g.stateId',
       'g.lgaId',
       's.id as siteId',
+      'd.id as diseaseId',
+      'at.id as assayTypeId',
+      'a.id as assayId',
+      'dt.id as deviceTypeId',
       'j.jobFunctionId',
       forModule
         ? knex.raw(
@@ -138,6 +159,37 @@ function getJobContextConstraint(context) {
     constraint.geography = { countryId: context.countryId }
   }
 
+  // constrain to assay type/assay
+  if (context.assayId != null) {
+    constraint.assay = { id: context.assayId }
+    constraint.result = {
+      ...(constraint.result || {}),
+      assayId: context.assayId,
+    }
+  } else if (context.assayTypeId != null) {
+    constraint.assayType = { id: context.assayTypeId }
+    constraint.assay = {
+      ...(constraint.assay || {}),
+      assayTypeId: context.assayTypeId,
+    }
+  } else if (context.diseaseId != null) {
+    constraint.disease = { id: context.diseaseId }
+    constraint.assayType = {
+      ...(constraint.assayType || {}),
+      diseaseId: context.diseaseId,
+    }
+  }
+
+  // constrain to device type
+  if (context.deviceTypeId != null) {
+    constraint.deviceType = { id: context.deviceTypeId }
+    constraint.device = { deviceTypeId: context.deviceTypeId }
+    constraint.assay = {
+      ...(constraint.assay || {}),
+      deviceTypeId: context.deviceTypeId,
+    }
+  }
+
   if (context.jobFunctionId) {
     constraint.jobFunction = {
       id: context.jobFunctionId,
@@ -149,15 +201,17 @@ function getJobContextConstraint(context) {
 }
 
 function addConstraints(queryBuilder, constraints, aliases) {
-  let { partner, geography, site } = aliases
+  let { assay, assayType, geography, partner, site } = aliases
   const {
-    device,
-    sample,
-    person,
-    showUnapprovedDevices = false,
-    jobFunction,
     allowAdminThrough = false,
+    disease,
     country,
+    device,
+    deviceType,
+    jobFunction,
+    person,
+    sample,
+    showUnapprovedDevices = false,
     result: resultAlias,
   } = aliases
 
@@ -177,6 +231,14 @@ function addConstraints(queryBuilder, constraints, aliases) {
         )
       })
     }
+    if (constraints.assay) {
+      queryBuilder.where(function() {
+        this.whereNull(`${resultAlias}.assayId`).orWhere(
+          `${resultAlias}.assayId`,
+          constraints.assay.id
+        )
+      })
+    }
     if (!geography) {
       geography = alias('Geography')
       queryBuilder.leftOuterJoin(
@@ -192,14 +254,55 @@ function addConstraints(queryBuilder, constraints, aliases) {
         })
       })
     }
-    // leave this until finish this ticket asp1212
-    /* if (constraints.result) {
+    if (constraints.result) {
       queryBuilder.where(function() {
         this.whereNull(`${resultAlias}.partnerId`).orWhere({
           [`${resultAlias}.partnerId`]: constraints.partner.id,
         })
       })
-    } */
+    }
+    if (
+      (constraints.disease ||
+        constraints.assayType ||
+        constraints.deviceType) &&
+      !assay
+    ) {
+      assay = alias('Assay')
+      queryBuilder.leftOuterJoin(
+        `Assay as ${assay}`,
+        `${resultAlias}.assayId`,
+        `${assay}.id`
+      )
+    }
+    if (constraints.disease && !assayType) {
+      assayType = alias('AssayType')
+      queryBuilder.leftOuterJoin(
+        `AssayType as ${assayType}`,
+        `${assay}.assayTypeId`,
+        `${assayType}.id`
+      )
+    }
+    if (constraints.disease) {
+      queryBuilder.where(function() {
+        this.whereNull(`${assayType}.diseaseId`).orWhere({
+          [`${assayType}.diseaseId`]: constraints.disease.id,
+        })
+      })
+    }
+    if (constraints.assayType) {
+      queryBuilder.where(function() {
+        this.whereNull(`${assay}.assayTypeId`).orWhere({
+          [`${assay}.assayTypeId`]: constraints.assayType.id,
+        })
+      })
+    }
+    if (constraints.deviceType) {
+      queryBuilder.where(function() {
+        this.whereNull(`${assay}.deviceTypeId`).orWhere({
+          [`${assay}.deviceTypeId`]: constraints.deviceType.id,
+        })
+      })
+    }
   } else {
     if (device && !site) {
       site = alias('Site')
@@ -245,6 +348,48 @@ function addConstraints(queryBuilder, constraints, aliases) {
         [`${geography}.countryId`]: constraints.country.id,
       })
     }
+    if (device && constraints.deviceType) {
+      queryBuilder.where(function() {
+        this.whereNull(`${device}.deviceTypeId`).orWhere({
+          [`${device}.deviceTypeId`]: constraints.deviceType.id,
+        })
+      })
+    }
+    if (assay && constraints.assayType) {
+      queryBuilder.where(function() {
+        this.whereNull(`${assay}.assayTypeId`).orWhere({
+          [`${assay}.assayTypeId`]: constraints.assayType.id,
+        })
+      })
+    }
+    if (assay && constraints.deviceType) {
+      queryBuilder.where(function() {
+        this.whereNull(`${assay}.deviceTypeId`).orWhere({
+          [`${assay}.deviceTypeId`]: constraints.deviceType.id,
+        })
+      })
+    }
+    if (constraints.disease) {
+      if (assayType) {
+        queryBuilder.where(function() {
+          this.whereNull(`${assayType}.diseaseId`).orWhere({
+            [`${assayType}.diseaseId`]: constraints.disease.id,
+          })
+        })
+      } else if (assay) {
+        assayType = alias('AssayType')
+        queryBuilder.leftOuterJoin(
+          `AssayType as ${assayType}`,
+          `${assay}.assayTypeId`,
+          `${assayType}.id`
+        )
+        queryBuilder.where(function() {
+          this.whereNull(`${assayType}.diseaseId`).orWhere({
+            [`${assayType}.diseaseId`]: constraints.disease.id,
+          })
+        })
+      }
+    }
   }
   if (device && !showUnapprovedDevices) {
     queryBuilder.leftOuterJoin(
@@ -255,7 +400,7 @@ function addConstraints(queryBuilder, constraints, aliases) {
     queryBuilder.where({ [`deviceStatus.token`]: 'approved' })
   }
   if (person && constraints.person && !allowAdminThrough) {
-    queryBuilder.where({ [`${person}.personId`]: constraints.person.id })
+    queryBuilder.where({ [`${person}.id`]: constraints.person.id })
   }
 
   // data filter constraints are ORed
@@ -268,6 +413,16 @@ function addConstraints(queryBuilder, constraints, aliases) {
       personConstraint: constraint.person,
       allowAdminThrough,
     })
+    for (const constraint of constraints.$or) {
+      if (constraint.disease && assay && !disease && !assayType) {
+        assayType = alias('AssayType')
+        this.leftOuterJoin(
+          `AssayType as ${assayType}`,
+          `${assay}.assayTypeId`,
+          `${assayType}.id`
+        )
+      }
+    }
     queryBuilder.where(function() {
       for (const constraint of constraints.$or) {
         addConstraintWithJobFunction({
@@ -299,6 +454,26 @@ function addConstraints(queryBuilder, constraints, aliases) {
           ...getBaseProps(this, constraint),
           alias: person,
           constraint: constraint.person,
+        })
+        addConstraintWithJobFunction({
+          ...getBaseProps(this, constraint),
+          alias: assayType,
+          constraint: constraint.assayType,
+        })
+        addConstraintWithJobFunction({
+          ...getBaseProps(this, constraint),
+          alias: assay,
+          constraint: constraint.assay,
+        })
+        addConstraintWithJobFunction({
+          ...getBaseProps(this, constraint),
+          alias: deviceType,
+          constraint: constraint.deviceType,
+        })
+        addConstraintWithJobFunction({
+          ...getBaseProps(this, constraint),
+          alias: disease,
+          constraint: constraint.disease,
         })
       }
     })

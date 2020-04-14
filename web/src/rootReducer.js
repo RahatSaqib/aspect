@@ -13,12 +13,14 @@ import deviceApiKey from './deviceApiKey/DeviceApiKeyRedux'
 import deviceOperation from './deviceOperation/DeviceOperationRedux'
 import deviceStatus from './deviceStatus/DeviceStatusRedux'
 import deviceType from './deviceType/DeviceTypeRedux'
+import disease from './disease/DiseaseRedux'
 import site from './site/SiteRedux'
 import result from './result/ResultRedux'
 import person from './person/PersonRedux'
 import accountDetails from './account/AccountRedux'
 import geography from './geography/GeographyRedux'
 import assay from './assay/AssayRedux'
+import assayType from './assay/AssayTypeRedux'
 import consumable from './consumable/ConsumableRedux'
 import inventory from './inventory/InventoryRedux'
 import notification from './notification/NotificationRedux'
@@ -46,12 +48,14 @@ const appReducer = combineReducers({
   deviceOperation,
   deviceStatus,
   deviceType,
+  disease,
   site,
   person,
   accountDetails,
   result,
   geography,
   assay,
+  assayType,
   jobs,
   consumable,
   inventory,
@@ -80,11 +84,13 @@ const App = Immutable.Record({
   deviceOperation: undefined,
   deviceStatus: undefined,
   deviceType: undefined,
+  disease: undefined,
   site: undefined,
   person: undefined,
   accountDetails: undefined,
   geography: undefined,
   assay: undefined,
+  assayType: undefined,
   notification: undefined,
   tag: undefined,
   task: undefined,

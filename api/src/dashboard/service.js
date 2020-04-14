@@ -252,6 +252,7 @@ async function resultDashboard(request) {
               device: 'd',
               site: 's',
               geography: 'g',
+              assay: 'a',
             })
             .groupBy('rc.externalId', 'a.assayTypeId', 'd.siteId')
             .select(
@@ -264,6 +265,10 @@ async function resultDashboard(request) {
             .innerJoin('Assay as a', 'at.id', 'a.assayTypeId')
             .leftJoin('ResultCategoryAssay as rca', 'a.id', 'rca.assayId')
             .innerJoin('ResultCategory as rc', 'rca.resultCategoryId', 'rc.id')
+            .modify(addConstraints, dataConstraints, {
+              assayType: 'at',
+              assay: 'a',
+            })
             .groupBy('at.id')
             .select(
               'at.id',
@@ -407,6 +412,7 @@ async function getConsumablesList(auth, dataConstraints) {
     .modify(addConstraints, dataConstraints, {
       site: 's',
       device: 'd',
+      assay: 'a',
     })
     .groupBy('c.id', 's.id')
     .select(
@@ -536,6 +542,7 @@ async function getDeviceList(auth, dataConstraints) {
       site: 's',
       geography: 'g',
       device: 'd',
+      deviceType: 'dt',
     })
     .groupBy('d.id')
     .select(
@@ -664,7 +671,9 @@ async function siteDashboard(request) {
   const dataConstraints = await getConstraints(auth.credentials)
 
   const siteList = await getSiteList(auth, dataConstraints)
-  const assayResultCategoryList = await getAssayResultCategoryList()
+  const assayResultCategoryList = await getAssayResultCategoryList(
+    dataConstraints
+  )
   const deviceList = await getDeviceList(auth, dataConstraints)
   const inventoryItemList = await getInventoryItemList(auth, dataConstraints)
 
@@ -1453,11 +1462,15 @@ async function addStockLevelUpdateActions(
   }
 }
 
-async function getAssayResultCategoryList() {
+async function getAssayResultCategoryList(dataConstraints) {
   const assayResultCategory = await knex('ResultCategoryAssay as rca')
     .innerJoin('Assay as a', 'a.id', 'rca.assayId')
     .innerJoin('AssayType as at', 'at.id', 'a.assayTypeId')
     .innerJoin('ResultCategory as rc', 'rca.resultCategoryId', 'rc.id')
+    .modify(addConstraints, dataConstraints, {
+      assay: 'a',
+      assayType: 'at',
+    })
     .where('rca.requiresTreatment', 1)
     .groupBy('at.id', 'at.name', 'rc.name')
     .orderBy('at.name', 'rc.name')
@@ -1502,6 +1515,8 @@ async function clinicalIndicatorsDashboard(request) {
       )
     })
     .modify(addConstraints, dataConstraints, {
+      assay: 'a',
+      assayType: 'at',
       device: 'd',
       site: 's',
       geography: 'g',
