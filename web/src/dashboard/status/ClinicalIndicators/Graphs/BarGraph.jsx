@@ -25,6 +25,7 @@ const BarGraph = ({
   displayMethod,
   assayFromState,
   filter = false,
+  intl,
 }) => {
   const [graph, setGraph] = useState(false)
   const [keys, setKeys] = useState(false)
@@ -35,7 +36,7 @@ const BarGraph = ({
       const keys = getKeysFromResults(graph, indexBy, orderBy)
       setKeys(keys)
     }
-  }, [graph, indexBy, keysFromProps, orderBy])
+  }, [graph, indexBy, keysFromProps, orderBy, intl])
 
   useEffect(() => {
     if (
@@ -44,7 +45,14 @@ const BarGraph = ({
       assayFromState &&
       Object.keys(assayFromState).length
     ) {
-      const grouped = groupByKey(data, indexBy, resultCategory, formatDate)
+      const grouped = groupByKey(
+        data,
+        indexBy,
+        resultCategory,
+        formatDate,
+        intl
+      )
+
       const normalised = normaliseKeys(grouped, filterResults, indexBy)
 
       const display =
@@ -65,6 +73,7 @@ const BarGraph = ({
     resultCategory,
     assayFromState,
     filterResults,
+    intl,
   ])
 
   return (
@@ -76,17 +85,20 @@ const BarGraph = ({
           indexBy={indexBy}
           colors={d => d.data[`${d.id}Color`]}
           tooltipFormat={value =>
-            `${Number(value)}${displayMethod === 'percentage' ? '%' : ''}`
+            displayMethod === 'percentage'
+              ? `${Number(value).toFixed(2)}%`
+              : intl.formatNumber(Number(value))
           }
           colorBy="index"
           enableLabel={false}
           enableGridY={false}
           margin={
             displayMethod === 'percentage'
-              ? { top: 5, right: 10, bottom: 110, left: 8 }
-              : { top: 10, right: 10, bottom: 110, left: 32 }
+              ? { top: 5, right: 10, bottom: 110, left: 80 }
+              : { top: 10, right: 10, bottom: 110, left: 80 }
           }
           padding={0.3}
+          borderWidth={0}
           borderColor={{ from: 'color', modifiers: [['darker', 1.6]] }}
           axisTop={null}
           axisRight={null}
@@ -97,7 +109,13 @@ const BarGraph = ({
             legendPosition: 'middle',
             legendOffset: 32,
           }}
-          axisLeft={displayMethod === 'percentage' ? null : {}}
+          axisLeft={
+            displayMethod === 'percentage'
+              ? null
+              : {
+                  format: v => intl.formatNumber(v),
+                }
+          }
           labelSkipWidth={12}
           labelSkipHeight={12}
           animate

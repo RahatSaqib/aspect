@@ -1835,12 +1835,8 @@ describe('Device API routes for GxConnect Devices', () => {
               )
             const { id: geographyId } = await knex('Geography')
               .where('countryId', deviceLocationDetails.countryId)
-              .andWhere(function() {
-                this.whereNotNull('stateId')
-              })
-              .andWhere(function() {
-                this.whereNotNull('lgaId')
-              })
+              .whereNotNull('stateId')
+              .whereNotNull('lgaId')
               .orderBy('id', 'desc')
               .first('id')
             await knex('Site')
@@ -1912,12 +1908,8 @@ describe('Device API routes for GxConnect Devices', () => {
               )
             const { id: geographyId } = await knex('Geography')
               .where('countryId', deviceLocationDetails.countryId)
-              .andWhere(function() {
-                this.whereNotNull('stateId')
-              })
-              .andWhere(function() {
-                this.whereNotNull('lgaId')
-              })
+              .whereNotNull('stateId')
+              .whereNotNull('lgaId')
               .orderBy('id', 'desc')
               .first('id')
             await knex('Site')

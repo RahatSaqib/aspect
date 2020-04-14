@@ -10,6 +10,7 @@ const SELECT_LIST_FIELDS = [
   'c.manufacturer',
   knex.raw('coalesce(pc.autoInclude, 0) as autoInclude'),
 ]
+
 async function listConsumableTypes(request) {
   const { query, auth } = request
 

@@ -37,6 +37,7 @@ export const ClinicalIndicators = ({ intl, assays: assaysFromState }) => {
             title={name}
             className={cssClassesStatus('Section--withStatus')}
             assay={assay}
+            intl={intl}
           />
         )
       })

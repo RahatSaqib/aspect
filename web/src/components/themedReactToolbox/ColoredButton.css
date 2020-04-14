@@ -2,24 +2,24 @@
 
 .ColoredButton--ship-cove.ColoredButton--neutral:not([disabled]).ColoredButton--raised {
   background-color: var(--aspect-color-ship-cove);
-  color: #ffffff;
+  color: var(--aspect-color-white);
   margin-right: 5px;
 }
 
 .ColoredButton--shakespeare.ColoredButton--neutral:not([disabled]).ColoredButton--raised {
   background-color: var(--aspect-color-shakespeare);
-  color: #ffffff;
+  color: var(--aspect-color-white);
   margin-right: 5px;
 }
 
 .ColoredButton--mountain.ColoredButton--neutral:not([disabled]).ColoredButton--raised {
   background-color: var(--aspect-color-mountain);
-  color: #ffffff;
+  color: var(--aspect-color-white);
   margin-right: 5px;
 }
 
 .ColoredButton--brink.ColoredButton--neutral:not([disabled]).ColoredButton--raised {
   background-color: var(--aspect-color-brink);
-  color: #ffffff;
+  color: var(--aspect-color-white);
   margin-right: 5px;
 }

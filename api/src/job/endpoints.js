@@ -81,6 +81,15 @@ const jobContextResponse = {
           siteId: Joi.number()
             .allow(null)
             .description('JobContext.siteId'),
+          deviceTypeId: Joi.number()
+            .allow(null)
+            .description('JobContext.deviceTypeId'),
+          assayTypeId: Joi.number()
+            .allow(null)
+            .description('JobContext.assayTypeId'),
+          assayId: Joi.number()
+            .allow(null)
+            .description('JobContext.assayId'),
         })
       ),
   }),
@@ -147,6 +156,39 @@ const personAssignmentsResponse = {
           lgaName: Joi.string()
             .allow(null, '')
             .description('Lga.name'),
+          deviceTypeId: Joi.number()
+            .allow(null)
+            .description('DeviceType.id'),
+          deviceTypeName: Joi.string()
+            .allow(null, '')
+            .description('DeviceType.name'),
+          diseaseId: Joi.number()
+            .allow(null)
+            .description('Disease.id'),
+          diseasei18nKey: Joi.string()
+            .allow(null, '')
+            .description('Disease.i18nKey'),
+          diseaseName: Joi.string()
+            .allow(null, '')
+            .description('Disease.name'),
+          assayTypeId: Joi.number()
+            .allow(null)
+            .description('AssayType.id'),
+          assayTypei18nKey: Joi.string()
+            .allow(null, '')
+            .description('AssayType.i18nKey'),
+          assayTypeName: Joi.string()
+            .allow(null, '')
+            .description('AssayType.name'),
+          assayId: Joi.number()
+            .allow(null)
+            .description('Assay.id'),
+          assayi18nKey: Joi.string()
+            .allow(null, '')
+            .description('Assay.i18nKey'),
+          assayName: Joi.string()
+            .allow(null, '')
+            .description('Assay.name'),
         })
       ),
   }),
@@ -310,6 +352,9 @@ const routes = [
           jobFunctionId: Joi.number(),
           geographyId: Joi.number(),
           siteId: Joi.number(),
+          deviceTypeId: Joi.number(),
+          assayTypeId: Joi.number(),
+          assayId: Joi.number(),
           removeJob: Joi.boolean(),
         },
       },
@@ -331,6 +376,9 @@ const routes = [
           jobFunctionId: Joi.number(),
           geographyId: Joi.number(),
           siteId: Joi.number(),
+          deviceTypeId: Joi.number(),
+          assayTypeId: Joi.number(),
+          assayId: Joi.number(),
           removeJob: Joi.boolean(),
         },
       },
@@ -489,7 +537,7 @@ const routes = [
   // ------------
   {
     method: 'POST',
-    path: '/job-function/assign-person-to-job-and-site',
+    path: '/job-function/assign-person-to-job-and-context',
     handler: asyncHandler(assignPersonTo),
     config: {
       description:
@@ -507,6 +555,11 @@ const routes = [
           lgaId: Joi.number().allow(null),
           // site
           siteId: Joi.number().allow(null),
+          // device/assay type
+          diseaseId: Joi.number().allow(null),
+          deviceTypeId: Joi.number().allow(null),
+          assayTypeId: Joi.number().allow(null),
+          assayId: Joi.number().allow(null),
         },
       },
       response: personAssignmentsResponse,

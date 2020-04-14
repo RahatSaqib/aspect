@@ -428,9 +428,18 @@ async function assignPersonTo(request) {
   // ----------------
   // siteId or geographyId
   // ----------------
-  const { countryId, stateId = null, lgaId = null, siteId = null } = payload
+  const {
+    countryId,
+    stateId = null,
+    lgaId = null,
+    siteId = null,
+    diseaseId = null,
+    deviceTypeId = null,
+    assayTypeId = null,
+    assayId = null,
+  } = payload
   let geographyId
-  if (!siteId) {
+  if (!siteId && (countryId || stateId || lgaId)) {
     // ----------------
     // geographyId
     // ----------------
@@ -448,18 +457,43 @@ async function assignPersonTo(request) {
   // JobContext
   // ----------------
   // create JobContext entry if missing
-  const jobContext = await knex('JobContext')
-    .where({ jobId })
-    .where(function() {
-      if (siteId) {
-        this.where({ siteId })
-      } else if (geographyId) {
-        this.where({ geographyId })
-      }
-    })
-    .first()
-  if (!jobContext) {
-    await knex('JobContext').insert({ jobId, geographyId, siteId })
+  if (siteId || geographyId) {
+    const { id: jobContextId } =
+      (await knex('JobContext')
+        .where({ jobId })
+        .andWhere(function() {
+          if (siteId) {
+            this.where({ siteId })
+          } else if (geographyId) {
+            this.where({ geographyId })
+          }
+        })
+        .andWhere(function() {
+          if (assayId) {
+            this.where({ assayId })
+          }
+          if (deviceTypeId) {
+            this.where({ deviceTypeId })
+          }
+          if (assayTypeId) {
+            this.where({ assayTypeId })
+          }
+          if (diseaseId) {
+            this.where({ diseaseId })
+          }
+        })
+        .first('id')) || {}
+    if (!jobContextId) {
+      await knex('JobContext').insert({
+        jobId,
+        geographyId,
+        siteId,
+        diseaseId,
+        deviceTypeId,
+        assayTypeId,
+        assayId,
+      })
+    }
   }
   // ----------------
   // return list of person assignments for showing in right side of Person Job Assignment tab
@@ -498,6 +532,18 @@ async function getAssignments({ auth, personId }) {
     .leftOuterJoin('Country as c2', 'g2.countryId', 'c2.id')
     .leftOuterJoin('State as st2', 'g2.stateId', 'st2.id')
     .leftOuterJoin('Lga as l2', 'g2.lgaId', 'l2.id')
+    // JobContext with diseaseId
+    .leftOuterJoin('Disease as d', 'jc.diseaseId', 'd.id')
+    // JobContext with assayTypeId
+    .leftOuterJoin('AssayType as at', 'jc.assayTypeId', 'at.id')
+    .leftOuterJoin('Disease as d2', 'at.diseaseId', 'd2.id')
+    // JobContext with deviceTypeId
+    .leftOuterJoin('DeviceType as dt', 'jc.deviceTypeId', 'dt.id')
+    // JobContext with assayId
+    .leftOuterJoin('Assay as a', 'jc.assayId', 'a.id')
+    .leftOuterJoin('AssayType as at2', 'a.assayTypeId', 'at2.id')
+    .leftOuterJoin('DeviceType as dt2', 'a.deviceTypeId', 'dt2.id')
+    .leftOuterJoin('Disease as d3', 'at2.diseaseId', 'd3.id')
     //
     .where('j.personId', personId)
     .orderBy(['jf.name', 's.name', 'c.name', 'st.name', 'l.name'])
@@ -525,11 +571,52 @@ async function getAssignments({ auth, personId }) {
       'st2.id as stateId2',
       'st2.name as stateName2',
       'l2.id as lgaId2',
-      'l2.name as lgaName2'
+      'l2.name as lgaName2',
+      // JobContext with diseaseId
+      'd.id as diseaseId',
+      'd.i18nKey as diseasei18nKey',
+      'd.name as diseaseName',
+      // JobContext with assayTypeId
+      'at.id as assayTypeId',
+      'at.i18nKey as assayTypei18nKey',
+      'at.name as assayTypeName',
+      'd2.id as diseaseId2',
+      'd2.i18nKey as diseasei18nKey2',
+      'd2.name as diseaseName2',
+      // JobContext with deviceTypeId
+      'dt.id as deviceTypeId',
+      'dt.name as deviceTypeName',
+      // JobContext with assayId
+      'a.id as assayId',
+      'a.i18nKey as assayi18nKey',
+      'a.name as assayName',
+      'at2.id as assayTypeId2',
+      'at2.i18nKey as assayTypei18nKey2',
+      'at2.name as assayTypeName2',
+      'dt2.id as deviceTypeId2',
+      'dt2.name as deviceTypeName2',
+      'd3.id as diseaseId3',
+      'd3.i18nKey as diseasei18nKey3',
+      'd3.name as diseaseName3'
     )
     .map(item => {
-      const { siteId } = item
-      let { countryId, countryName, stateId, stateName, lgaId, lgaName } = item
+      const { siteId, assayId } = item
+      let {
+        countryId,
+        countryName,
+        stateId,
+        stateName,
+        lgaId,
+        lgaName,
+        diseaseId,
+        diseasei18nKey,
+        diseaseName,
+        assayTypeId,
+        assayTypei18nKey,
+        assayTypeName,
+        deviceTypeId,
+        deviceTypeName,
+      } = item
 
       // if siteId is used by JobContext - then get site's geography props
       if (siteId) {
@@ -544,6 +631,31 @@ async function getAssignments({ auth, personId }) {
           },
         ] = [item]
       }
+      // if assayTypeId is used by JobContext - then get assay type's disease props
+      if (assayTypeId) {
+        ;[
+          {
+            diseaseId2: diseaseId,
+            diseaseName2: diseaseName,
+            diseasei18nKey2: diseasei18nKey,
+          },
+        ] = [item]
+      }
+      // if assayId is used by JobContext - then get assay's assay & device type props
+      if (assayId) {
+        ;[
+          {
+            assayTypeId2: assayTypeId,
+            assayTypei18nKey2: assayTypei18nKey,
+            assayTypeName2: assayTypeName,
+            deviceTypeId2: deviceTypeId,
+            deviceTypeName2: deviceTypeName,
+            diseaseId3: diseaseId,
+            diseasei18nKey3: diseasei18nKey,
+            diseaseName3: diseaseName,
+          },
+        ] = [item]
+      }
       return {
         ..._.pick(item, [
           'personId',
@@ -555,6 +667,9 @@ async function getAssignments({ auth, personId }) {
           'siteId',
           'siteName',
           'geographyId',
+          'assayId',
+          'assayi18nKey',
+          'assayName',
         ]),
         countryId,
         countryName,
@@ -562,6 +677,14 @@ async function getAssignments({ auth, personId }) {
         stateName,
         lgaId,
         lgaName,
+        diseaseId,
+        diseasei18nKey,
+        diseaseName,
+        assayTypeId,
+        assayTypei18nKey,
+        assayTypeName,
+        deviceTypeId,
+        deviceTypeName,
       }
     })
   return personAssignments

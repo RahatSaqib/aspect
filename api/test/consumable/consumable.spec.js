@@ -2,6 +2,7 @@ const _ = require('lodash')
 const supertest = require('supertest')
 const chai = require('chai')
 const shared = require('../utils/sharedToken')
+const { getAccessToken, createUser, removeUser } = require('../utils/authUtils')
 const { run } = require('../../src/db')
 
 const server = supertest.agent('http://localhost:8080')
@@ -71,40 +72,161 @@ describe('Assay Consumable Routes', () => {
       const path = '/api/consumable-assays/'
 
       describe('GET', () => {
-        it('should return a list of assay consumables when using valid token and an assay id', done => {
-          server
+        const tbDiseaseManagerUsername = 'tb_disease_manager'
+        const tbDiseaseManagerPassword = 'tb-disease-manager-pass'
+        let tbDiseaseManagerUserId
+        let tbDiseaseManagerAuthAccessToken
+
+        const hivManagerUsername = 'hiv_manager'
+        const hivManagerPassword = 'hiv-manager-pass'
+        let hivManagerUserId
+        let hivManagerAuthAccessToken
+        before(async () => {
+          tbDiseaseManagerUserId = await createUser(
+            'Partner One',
+            'US',
+            tbDiseaseManagerUsername,
+            tbDiseaseManagerPassword,
+            [
+              {
+                jobFunctionExternalId: 'manager',
+                diseaseExternalId: 'tb',
+              },
+            ]
+          )
+          tbDiseaseManagerAuthAccessToken = await getAccessToken(
+            tbDiseaseManagerUsername,
+            tbDiseaseManagerPassword
+          )
+
+          hivManagerUserId = await createUser(
+            'Partner One',
+            'US',
+            hivManagerUsername,
+            hivManagerPassword,
+            [
+              {
+                jobFunctionExternalId: 'manager',
+                assayTypeExternalId: 'assayTypeCD4',
+              },
+              {
+                jobFunctionExternalId: 'manager',
+                assayTypeExternalId: 'assayTypeHivQual',
+              },
+              {
+                jobFunctionExternalId: 'manager',
+                assayTypeExternalId: 'assayTypeHivVl',
+              },
+            ]
+          )
+          hivManagerAuthAccessToken = await getAccessToken(
+            hivManagerUsername,
+            hivManagerPassword
+          )
+        })
+
+        after(async () => {
+          await removeUser(hivManagerUserId)
+          await removeUser(tbDiseaseManagerUserId)
+        })
+
+        it('should return a list of assay consumables when using valid token and an assay id', async () => {
+          const consumableTypesResponse = await server
             .get('/api/inventory/consumable-types')
             .set('Authorization', `Bearer ${shared.token}`)
-            .end((err, res) => {
-              const gxMtbCartridge = _.find(res.body.data, {
-                name: 'GeneXpert TB Cartridge',
-              })
-              server
-                .get(`${path}${gxMtbCartridge.id}`)
-                .set('Authorization', `Bearer ${shared.token}`)
-                .end((err, res) => {
-                  assert.equal(res.status, 200)
-                  assert.typeOf(res.body, 'Object')
-                  assert.isTrue(res.body.ok)
-                  assert.property(res.body, 'data')
-                  assert.typeOf(res.body.data, 'array')
-                  assert.isAtLeast(res.body.data.length, 1)
-                  res.body.data.forEach(assayConsumable => {
-                    assert.equal(
-                      assayConsumable.consumableId,
-                      gxMtbCartridge.id
-                    )
-                    assert.property(assayConsumable, 'assayId')
-                    assert.property(assayConsumable, 'quantity')
-                    assert.property(assayConsumable, 'consumableName')
-                    assert.property(assayConsumable, 'unitName')
-                    assert.property(assayConsumable, 'unitShortName')
-                    assert.property(assayConsumable, 'assayName')
-                    assert.property(assayConsumable, 'assayI18nKey')
-                  })
-                  done()
-                })
-            })
+          const gxMtbCartridge = _.find(consumableTypesResponse.body.data, {
+            name: 'GeneXpert TB Cartridge',
+          })
+
+          const consumableAssaysResponse = await server
+            .get(`${path}${gxMtbCartridge.id}`)
+            .set('Authorization', `Bearer ${shared.token}`)
+          assert.equal(consumableAssaysResponse.status, 200)
+          assert.typeOf(consumableAssaysResponse.body, 'Object')
+          assert.isTrue(consumableAssaysResponse.body.ok)
+          assert.property(consumableAssaysResponse.body, 'data')
+          assert.typeOf(consumableAssaysResponse.body.data, 'array')
+          assert.isAtLeast(consumableAssaysResponse.body.data.length, 1)
+          consumableAssaysResponse.body.data.forEach(assayConsumable => {
+            assert.equal(assayConsumable.consumableId, gxMtbCartridge.id)
+            assert.property(assayConsumable, 'assayId')
+            assert.property(assayConsumable, 'quantity')
+            assert.property(assayConsumable, 'consumableName')
+            assert.property(assayConsumable, 'unitName')
+            assert.property(assayConsumable, 'unitShortName')
+            assert.property(assayConsumable, 'assayName')
+            assert.property(assayConsumable, 'assayI18nKey')
+          })
+        })
+
+        it("should constrain consumables returned based on the diseases specified in the user's job context", async () => {
+          const consumableTypesResponse = await server
+            .get('/api/inventory/consumable-types')
+            .set('Authorization', `Bearer ${tbDiseaseManagerAuthAccessToken}`)
+          const gxHivVlCartridge = _.find(consumableTypesResponse.body.data, {
+            name: 'Xpert HIV-1 Qual Cartridge',
+          })
+          const gxHivVlCartridgeAssaysResponse = await server
+            .get(`${path}${gxHivVlCartridge.id}`)
+            .set('Authorization', `Bearer ${tbDiseaseManagerAuthAccessToken}`)
+          assert.equal(gxHivVlCartridgeAssaysResponse.body.data.length, 0)
+          const gxMtbCartridge = _.find(consumableTypesResponse.body.data, {
+            name: 'GeneXpert TB Cartridge',
+          })
+          const gxMtbCartridgeAssaysResponse = await server
+            .get(`${path}${gxMtbCartridge.id}`)
+            .set('Authorization', `Bearer ${tbDiseaseManagerAuthAccessToken}`)
+          assert.equal(gxMtbCartridgeAssaysResponse.status, 200)
+          assert.typeOf(gxMtbCartridgeAssaysResponse.body, 'Object')
+          assert.isTrue(gxMtbCartridgeAssaysResponse.body.ok)
+          assert.property(gxMtbCartridgeAssaysResponse.body, 'data')
+          assert.typeOf(gxMtbCartridgeAssaysResponse.body.data, 'array')
+          assert.isAtLeast(gxMtbCartridgeAssaysResponse.body.data.length, 1)
+          gxMtbCartridgeAssaysResponse.body.data.forEach(assayConsumable => {
+            assert.equal(assayConsumable.consumableId, gxMtbCartridge.id)
+            assert.property(assayConsumable, 'assayId')
+            assert.property(assayConsumable, 'quantity')
+            assert.property(assayConsumable, 'consumableName')
+            assert.property(assayConsumable, 'unitName')
+            assert.property(assayConsumable, 'unitShortName')
+            assert.property(assayConsumable, 'assayName')
+            assert.property(assayConsumable, 'assayI18nKey')
+          })
+        })
+
+        it("should constrain consumables returned based on the assays specified in the user's job context", async () => {
+          const consumableTypesResponse = await server
+            .get('/api/inventory/consumable-types')
+            .set('Authorization', `Bearer ${hivManagerAuthAccessToken}`)
+          const gxMtbCartridge = _.find(consumableTypesResponse.body.data, {
+            name: 'GeneXpert TB Cartridge',
+          })
+          const gxTbCartridgeAssaysResponse = await server
+            .get(`${path}${gxMtbCartridge.id}`)
+            .set('Authorization', `Bearer ${hivManagerAuthAccessToken}`)
+          assert.equal(gxTbCartridgeAssaysResponse.body.data.length, 0)
+          const gxHivVlCartridge = _.find(consumableTypesResponse.body.data, {
+            name: 'Xpert HIV-1 Qual Cartridge',
+          })
+          const gxHivVlCartridgeAssaysResponse = await server
+            .get(`${path}${gxHivVlCartridge.id}`)
+            .set('Authorization', `Bearer ${hivManagerAuthAccessToken}`)
+          assert.equal(gxHivVlCartridgeAssaysResponse.status, 200)
+          assert.typeOf(gxHivVlCartridgeAssaysResponse.body, 'Object')
+          assert.isTrue(gxHivVlCartridgeAssaysResponse.body.ok)
+          assert.property(gxHivVlCartridgeAssaysResponse.body, 'data')
+          assert.typeOf(gxHivVlCartridgeAssaysResponse.body.data, 'array')
+          assert.isAtLeast(gxHivVlCartridgeAssaysResponse.body.data.length, 1)
+          gxHivVlCartridgeAssaysResponse.body.data.forEach(assayConsumable => {
+            assert.equal(assayConsumable.consumableId, gxHivVlCartridge.id)
+            assert.property(assayConsumable, 'assayId')
+            assert.property(assayConsumable, 'quantity')
+            assert.property(assayConsumable, 'consumableName')
+            assert.property(assayConsumable, 'unitName')
+            assert.property(assayConsumable, 'unitShortName')
+            assert.property(assayConsumable, 'assayName')
+            assert.property(assayConsumable, 'assayI18nKey')
+          })
         })
       })
     })

@@ -135,6 +135,8 @@ class Map extends Component {
       onMouseLeave,
     } = this.props
 
+    const { '--aspect-color-white': colorWhite } = process.env
+
     return (
       // eslint-disable-next-line jsx-a11y/click-events-have-key-events
       <div
@@ -182,7 +184,7 @@ class Map extends Component {
                           key={`point-${id}`}
                           data-point-id={id}
                           fill={fill}
-                          stroke="#ffffff"
+                          stroke={colorWhite}
                           strokeWidth={1.5}
                           cx={left}
                           cy={top}
@@ -196,7 +198,7 @@ class Map extends Component {
               </Group>
             )}
             fill={fill}
-            stroke={_.constant('#ffffff')}
+            stroke={_.constant(colorWhite)}
           />
         </ScaleSVG>
       </div>

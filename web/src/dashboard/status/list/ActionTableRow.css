@@ -48,7 +48,7 @@
 .Button__Acknowledge {
   background-color: var(--aspect-color-grey-5);
   font-weight: var(--lato-font-weight-bold);
-  color: #ffffff;
+  color: var(--aspect-color-white);
 }
 
 .Button__Link {
