@@ -34,7 +34,7 @@ function queryResultFollowUpLastItems(knex, followUpTypes) {
   return rfuLastIds
 }
 
-describe.only('Result Follow-Up Aggregations for reports', () => {
+describe('Result Follow-Up Aggregations for reports', () => {
   const path = '/api/result/follow-up-aggregations'
 
   shared.checkToken(server, path)
