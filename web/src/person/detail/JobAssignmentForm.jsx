@@ -14,6 +14,11 @@ import StateSelectField from '../../filter/geography/StateSelectField'
 import LgaSelectField from '../../filter/geography/LgaSelectField'
 import SiteSelectField from '../../filter/resource/SiteSelectField'
 import SelectField from '../../components/shared/SelectField'
+import DiseaseSelectField from '../../filter/resource/DiseaseSelectField'
+import DeviceTypeSelectField from '../../filter/resource/DeviceTypeSelectField'
+import AssayTypeSelectField from '../../filter/resource/AssayTypeSelectField'
+import AssaySelectField from '../../filter/resource/AssaySelectField'
+
 import PersonAssignments from './PersonAssignments'
 
 const cssClasses = classnames.bind(require('./PersonDetail.css'))
@@ -24,6 +29,10 @@ const DEFAULT_VALUES = {
   stateId: undefined,
   lgaId: undefined,
   siteId: undefined,
+  diseaseId: undefined,
+  deviceTypeId: undefined,
+  assayTypeId: undefined,
+  assayId: undefined,
 }
 
 const validate = ({ jobFunctionId }, { intl }) => {
@@ -51,6 +60,10 @@ const enhance = compose(
       { fieldName: 'stateId', valueFromChangeEvent: _.identity },
       { fieldName: 'lgaId', valueFromChangeEvent: _.identity },
       { fieldName: 'siteId', valueFromChangeEvent: _.identity },
+      { fieldName: 'diseaseId', valueFromChangeEvent: _.identity },
+      { fieldName: 'deviceTypeId', valueFromChangeEvent: _.identity },
+      { fieldName: 'assayTypeId', valueFromChangeEvent: _.identity },
+      { fieldName: 'assayId', valueFromChangeEvent: _.identity },
     ],
     validate,
   }),
@@ -73,12 +86,16 @@ const enhance = compose(
       values.stateId = undefined
       values.lgaId = undefined
       values.siteId = undefined
+      values.diseaseId = undefined
+      values.deviceTypeId = undefined
+      values.assayTypeId = undefined
+      values.assayId = undefined
       form.valid = false
     },
   })
 )
 
-export const JobAssignemntForm = ({
+export const JobAssignmentForm = ({
   intl,
   loading,
   form,
@@ -88,18 +105,23 @@ export const JobAssignemntForm = ({
   onStateIdChange,
   onLgaIdChange,
   onSiteIdChange,
+  onDiseaseIdChange,
+  onDeviceTypeIdChange,
+  onAssayTypeIdChange,
+  onAssayIdChange,
   handleSubmit,
   jobFunctions = [],
   assignments,
   loadedAssignments,
   onDeleteAssignment,
 }) => {
+  const { formatMessage } = intl
   const baseProps = {
-    allItemText: intl.formatMessage(messages.all),
+    allItemText: formatMessage(messages.all),
     disabled: form.submitting,
     floatingLabelFixed: true,
     fullWidth: true,
-    hintText: intl.formatMessage(messages.all),
+    hintText: formatMessage(messages.all),
   }
   return (
     <div className={cssClasses('Job__Assignment', 'Form__Content')}>
@@ -110,13 +132,13 @@ export const JobAssignemntForm = ({
         >
           <SelectField
             fullWidth
-            hintText={intl.formatMessage(messages.selectJob)}
+            hintText={formatMessage(messages.selectJob)}
             value={values.jobFunctionId}
             onChange={({ target: { value } }) => {
               onJobFunctionIdChange(value === 'all' ? undefined : value)
             }}
             floatingLabelFixed
-            floatingLabelText={intl.formatMessage(messages.job)}
+            floatingLabelText={formatMessage(messages.job)}
             errorStyle={{
               float: 'left',
               whiteSpace: 'nowrap',
@@ -131,20 +153,20 @@ export const JobAssignemntForm = ({
             ))}
           </SelectField>
           <section>
-            <h1>{intl.formatMessage(messages.assignmentDetails)}</h1>
+            <h1>{formatMessage(messages.assignmentDetails)}</h1>
             <CountrySelectField
               disabled
-              allItemText={intl.formatMessage(messages.all)}
+              allItemText={formatMessage(messages.all)}
               countryId={values.countryId}
               floatingLabelFixed
-              floatingLabelText={intl.formatMessage(messages.country)}
+              floatingLabelText={formatMessage(messages.country)}
             />
             <StateSelectField
               {...baseProps}
               onStateIdChange={onStateIdChange}
               countryId={values.countryId}
               stateId={values.stateId}
-              floatingLabelText={intl.formatMessage(messages.state)}
+              floatingLabelText={formatMessage(messages.state)}
             />
             <LgaSelectField
               {...baseProps}
@@ -152,16 +174,46 @@ export const JobAssignemntForm = ({
               countryId={values.countryId}
               stateId={values.stateId}
               lgaId={values.lgaId}
-              floatingLabelText={intl.formatMessage(messages.lga)}
+              floatingLabelText={formatMessage(messages.lga)}
             />
             <SiteSelectField
               {...baseProps}
-              floatingLabelText={intl.formatMessage(messages.site)}
+              floatingLabelText={formatMessage(messages.site)}
               value={values.siteId}
               onSiteChange={onSiteIdChange}
               countryId={values.countryId}
               stateId={values.stateId}
               lgaId={values.lgaId}
+            />
+            <DiseaseSelectField
+              {...baseProps}
+              intl={intl}
+              floatingLabelText={formatMessage(messages.disease)}
+              value={values.diseaseId}
+              onDiseaseIdChange={onDiseaseIdChange}
+            />
+            <DeviceTypeSelectField
+              {...baseProps}
+              floatingLabelText={formatMessage(messages.deviceType)}
+              value={values.deviceTypeId}
+              onDeviceTypeChange={onDeviceTypeIdChange}
+            />
+            <AssayTypeSelectField
+              {...baseProps}
+              intl={intl}
+              floatingLabelText={formatMessage(messages.assayType)}
+              value={values.assayTypeId}
+              diseaseId={values.diseaseId}
+              onAssayTypeIdChange={onAssayTypeIdChange}
+            />
+            <AssaySelectField
+              {...baseProps}
+              floatingLabelText={formatMessage(messages.assay)}
+              intl={intl}
+              diseaseId={values.diseaseId}
+              assayTypeId={values.assayTypeId}
+              value={values.assayId}
+              onAssayChange={onAssayIdChange}
             />
           </section>
           <div className={cssClasses('Form__ActionRow')}>
@@ -173,7 +225,7 @@ export const JobAssignemntForm = ({
                 loading || form.pristine || !form.valid || form.submitting
               }
             >
-              {intl.formatMessage(messages.save)}
+              {formatMessage(messages.save)}
             </Button>
           </div>
         </form>
@@ -190,4 +242,4 @@ export const JobAssignemntForm = ({
   )
 }
 
-export default enhance(JobAssignemntForm)
+export default enhance(JobAssignmentForm)

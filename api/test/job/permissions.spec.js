@@ -35,7 +35,6 @@ describe('Permissions', () => {
           .where({ partnerId: partner1 })
           .first(),
       ]
-      //
       ;[{ id: siteId, name: siteName, geographyId }] = [
         await knex('Site as s')
           .join('Geography as g', 's.geographyId', 'g.id')
@@ -555,7 +554,7 @@ describe('Permissions', () => {
       jobContextProps: null,
       jobContextIds: [],
     }
-    //
+
     before(() =>
       runTestWithKnex(async knex => {
         ;[{ id: jobFunctionClinicianId }] = [
@@ -585,7 +584,7 @@ describe('Permissions', () => {
         }
       })
     )
-    //
+
     after(() =>
       runTestWithKnex(async knex => {
         // if Job existed but JobContext didn't exist before this test
@@ -607,6 +606,7 @@ describe('Permissions', () => {
         }
       })
     )
+
     function assertItemProperties(item) {
       assert.property(item, 'personId')
       assert.property(item, 'partnerId')
@@ -642,9 +642,10 @@ describe('Permissions', () => {
           done()
         })
     })
+
     it('should assign person to site as Clinician', done => {
       server
-        .post(`${path}/assign-person-to-job-and-site`)
+        .post(`${path}/assign-person-to-job-and-context`)
         .send({ personId, jobFunctionId: jobFunctionClinicianId, siteId })
         .set('Authorization', `Bearer ${shared.token}`)
         .end((err, res) => {

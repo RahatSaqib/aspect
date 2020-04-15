@@ -43,7 +43,11 @@ async function getPatientResultsDetails(request) {
       'LOWER(JSON_EXTRACT(r.patientData,"$.id")) = LOWER(JSON_QUOTE(?))',
       [query.patientId]
     )
-    .modify(addConstraints, dataConstraints, { sample: 's' })
+    .modify(addConstraints, dataConstraints, {
+      assay: 'a',
+      result: 'r',
+      sample: 's',
+    })
     .select(
       'r.id as resultId',
       'rc1.name as resultCategory1',

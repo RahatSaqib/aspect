@@ -31,7 +31,7 @@ async function listPeople(request) {
       contactNameOrEmail: ['p.name', 'p.email', 'p.email2'],
       siteId: 'jc.siteId',
     })
-    .modify(addConstraints, dataConstraints, { geography: 'g' })
+    .modify(addConstraints, dataConstraints, { geography: 'g', site: 's' })
 
   // get total count for paging
   const getCount = personQuery
@@ -102,14 +102,20 @@ async function assignContact(request) {
     })
   }
 
-  const newContact = { jobId, siteId }
+  const newJobContext = { jobId, siteId }
 
-  try {
-    const response = await knex('JobContext').insert(newContact)
-    if (response) return { ok: true, data: await siteContacts(siteId) }
-  } catch (e) {
+  const existingJobContext = await knex('JobContext')
+    .where(newJobContext)
+    .whereNull('assayTypeId')
+    .whereNull('assayId')
+    .whereNull('deviceTypeId')
+    .whereNull('diseaseId')
+    .first()
+  if (existingJobContext) {
     return Boom.conflict('Contact is already assigned to site')
   }
+  const response = await knex('JobContext').insert(newJobContext)
+  if (response) return { ok: true, data: await siteContacts(siteId) }
 }
 
 async function unAssignContact(request) {
@@ -122,6 +128,10 @@ async function unAssignContact(request) {
   const contact = { jobId: personDetails.jobId, siteId }
   const jcRecord = await knex('JobContext')
     .where(contact)
+    .whereNull('assayTypeId')
+    .whereNull('assayId')
+    .whereNull('deviceTypeId')
+    .whereNull('diseaseId')
     .first()
   if (!jcRecord) {
     return Boom.notFound()
@@ -137,7 +147,7 @@ function getSite(siteId, dataConstraints) {
   return query('Get site to add contact to')
     .from('Site as s')
     .leftJoin('Geography as g', 's.geographyId', 'g.id')
-    .modify(addConstraints, dataConstraints, { geography: 'g' })
+    .modify(addConstraints, dataConstraints, { geography: 'g', site: 's' })
     .where('s.id', '=', siteId)
 }
 
@@ -376,7 +386,7 @@ async function listRefreshTokens(request) {
     .innerJoin('Partner as prt', 'p.lastPartnerId', 'prt.id')
     .leftJoin('Geography as g', 'p.geographyId', 'g.id')
     .where({ clientType: clientTypes.app })
-    .modify(addConstraints, dataConstraints, { partner: 'prt' })
+    .modify(addConstraints, dataConstraints, { partner: 'prt', geography: 'g' })
 
   const getCount = tokenQuery
     .clone()
