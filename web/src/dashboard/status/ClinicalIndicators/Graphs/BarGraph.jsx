@@ -18,7 +18,7 @@ const BarGraph = ({
   keys: keysFromProps = false,
   indexBy,
   orderBy,
-  resultCategory,
+  keyToConsume,
   formatDate,
   legend,
   componentClass,
@@ -45,13 +45,7 @@ const BarGraph = ({
       assayFromState &&
       Object.keys(assayFromState).length
     ) {
-      const grouped = groupByKey(
-        data,
-        indexBy,
-        resultCategory,
-        formatDate,
-        intl
-      )
+      const grouped = groupByKey(data, indexBy, keyToConsume, formatDate, intl)
 
       const normalised = normaliseKeys(grouped, filterResults, indexBy)
 
@@ -70,11 +64,13 @@ const BarGraph = ({
     formatDate,
     graph,
     indexBy,
-    resultCategory,
+    keyToConsume,
     assayFromState,
     filterResults,
     intl,
   ])
+
+  // console.log(graph);
 
   return (
     <div className={cssClasses(componentClass)}>

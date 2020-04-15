@@ -59,6 +59,8 @@ const enhance = compose(
           groupBy,
           minDate,
           maxDate = getDayFromToday(0),
+          resultCategory1 = null,
+          resultCategory2 = null,
         } = graph
         return this.props.fetchClinicalIndicatorsDashboard({
           assay,
@@ -66,6 +68,8 @@ const enhance = compose(
           maxDate,
           groupBy,
           type,
+          resultCategory1,
+          resultCategory2,
         })
       })
     },
@@ -114,7 +118,7 @@ const ClinicalIndicatorsContainer = ({
               ({
                 dataKey,
                 indexBy,
-                resultCategory,
+                keyToConsume,
                 formatDate = false,
                 legend = false,
                 averages = false,
@@ -127,7 +131,7 @@ const ClinicalIndicatorsContainer = ({
                   data={(data[dataKey] && data[dataKey].data) || []}
                   indexBy={indexBy}
                   orderBy={orderBy}
-                  resultCategory={resultCategory}
+                  keyToConsume={keyToConsume}
                   legend={legend}
                   averages={averages}
                   formatDate={formatDate}

@@ -7,6 +7,7 @@ import sum from 'lodash/sum'
 import values from 'lodash/values'
 import includes from 'lodash/includes'
 import pickBy from 'lodash/pickBy'
+import sortBy from 'lodash/sortBy'
 import subDays from 'date-fns/subDays'
 import subMonths from 'date-fns/subMonths'
 import startOfMonth from 'date-fns/startOfMonth'
@@ -24,8 +25,8 @@ const {
 const graphColorMap = [
   { id: 1, externalId: 'MoreThan1000', color: colorMandy },
   { id: 2, externalId: 'LessThan1000', color: colorPink },
-  { id: 3, externalId: 'Indeterminate', color: colorMantis },
-  { id: 4, externalId: 'Detected', color: colorMandy },
+  { id: 3, externalId: 'Detected', color: colorMandy },
+  { id: 4, externalId: 'Indeterminate', color: colorPink },
   { id: 5, externalId: 'NotDetected', color: colorMantis },
   { id: 6, externalId: 'Invalid', color: colorWhite4 },
   { id: 7, externalId: 'NoResult', color: colorPink },
@@ -55,36 +56,16 @@ const getKeysFromResults = (data, keyToOmit) => {
   return keyToOmit ? without(res, keyToOmit) : res
 }
 
-const groupByKey = (
-  data,
-  key,
-  cntKey = false,
-  formatDate = false,
-  intl = false
-) => {
-  const flatMapSortMap = graphColorMap.reduce((acc, curr) => {
-    const newCurr = omit(curr, 'id', 'color')
-    acc.push(newCurr.externalId)
-    return acc
-  }, [])
-
-  const dataToConsume = cntKey
-    ? data.sort(
-        (a, b) =>
-          flatMapSortMap.indexOf(a[cntKey]) - flatMapSortMap.indexOf(b[cntKey])
-      )
-    : data
-
-  return dataToConsume.reduce((acc, curr) => {
-    const countKey = cntKey
-      ? curr[cntKey]
+const groupByKey = (data, key, keyToConsume = false, formatDate = false) => {
+  return data.reduce((acc, curr) => {
+    const countKey = keyToConsume
+      ? curr[keyToConsume]
       : filter(graphColorMap, ['id', 99])[0].externalId
     acc[curr[key]] = {
       ...acc[curr[key]],
       [key]: formatDate ? format(new Date(curr[key]), formatDate) : curr[key],
       [countKey]: curr.cnt,
     }
-
     return acc
   }, {})
 }
@@ -126,7 +107,7 @@ const formatDataForPie = (
       label,
       value:
         displayMethod === 'percentage'
-          ? round((curr[value] / total) * 100)
+          ? round((curr[value] / total) * 100, 1)
           : curr[value],
       color: (colorKey && colorKey.color) || colorWhite4,
     })
@@ -135,9 +116,26 @@ const formatDataForPie = (
 }
 
 const getAverageFromData = (data, value, which) => {
-  const total = filter(data, ['label', which])
+  let total = []
+  if (Array.isArray(which)) {
+    const rangeTotal = which.reduce((acc, curr) => {
+      const item = filter(data, ['label', curr])[0]
+      if (acc && acc.id) {
+        acc[value] += item[value]
+      } else {
+        acc = { ...item }
+      }
+      return acc
+    }, {})
+    total.push(rangeTotal)
+  } else {
+    total = filter(data, ['label', which])
+  }
   const sum = data.reduce((acc, curr) => acc + curr.value, 0)
-  return { avg: round((total[0][value] / sum) * 100), color: total[0].color }
+  return {
+    avg: round((total[0][value] / sum) * 100),
+    color: total[0].color,
+  }
 }
 
 const calcPercentageSplitBar = (data, keyToOmitDuringCalc) => {
@@ -158,6 +156,23 @@ const calcPercentageSplitBar = (data, keyToOmitDuringCalc) => {
   }, [])
 }
 
+const sortByColourID = data => {
+  const sorted = []
+  data.map(item => {
+    const newItem = {}
+    const keys = Object.keys(item).sort(function(a, b) {
+      return item[a] - item[b]
+    })
+    keys.map(key => {
+      newItem[key] = item[key]
+      return newItem
+    })
+    return sorted.push(newItem)
+  })
+
+  return sorted
+}
+
 const translateKeys = (data, assayFromState, colorise = false) => {
   const translated = []
   const { resultCategories } = assayFromState
@@ -170,6 +185,7 @@ const translateKeys = (data, assayFromState, colorise = false) => {
 
       if (colorise) {
         const colorKey = graphColorMap.filter(c => c.externalId === key)[0]
+        newItem[`${newKey}Color Order`] = (colorKey && colorKey.id) || 0
         newItem[`${newKey}Color`] = (colorKey && colorKey.color) || colorWhite4
       }
 
@@ -178,7 +194,7 @@ const translateKeys = (data, assayFromState, colorise = false) => {
     return translated.push({ ...newItem })
   })
 
-  return translated
+  return sortByColourID(translated)
 }
 
 const getTimePeriod = (cnt, period, dateFormat) => {
