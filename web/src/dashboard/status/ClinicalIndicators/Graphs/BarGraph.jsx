@@ -70,8 +70,6 @@ const BarGraph = ({
     intl,
   ])
 
-  // console.log(graph);
-
   return (
     <div className={cssClasses(componentClass)}>
       {graph && graph.length ? (
