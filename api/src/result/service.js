@@ -1291,6 +1291,7 @@ async function updateFormData(request) {
     return Boom.notFound()
   }
   const existingFormData = _.get(result.data, 'formData', {})
+
   const mergedFormData = _.merge({}, existingFormData, payload)
   if (!_.isEqual(existingFormData, mergedFormData)) {
     const resultForm = await knex('ResultForm')
@@ -1364,13 +1365,15 @@ async function updateFormData(request) {
     const { id: currentUserId } = await getUser(auth.credentials.name)
     let deviceLogId
     await messageContext.transact(async knex => {
+      const updatedResult = {
+        formData: JSON.stringify(mergedFormData),
+        updatedBy: currentUserId,
+        updatedOn: now,
+      }
+
       await knex('Result')
         .where('id', resultId)
-        .update({
-          formData: JSON.stringify(mergedFormData),
-          updatedBy: currentUserId,
-          updatedOn: now,
-        })
+        .update(updatedResult)
       const aspectDeviceTypeId = await deviceTypeToId('Aspect')
       if (aspectDeviceTypeId) {
         const { id: deviceId } =
