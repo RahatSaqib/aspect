@@ -36,7 +36,7 @@ const PieGraph = ({
   displayMethod,
   indexBy,
   orderBy,
-  resultCategory,
+  keyToConsume,
   averages,
   componentClass,
   assayFromState,
@@ -54,7 +54,7 @@ const PieGraph = ({
     ) {
       const formatted = formatDataForPie(
         data,
-        resultCategory,
+        keyToConsume,
         indexBy,
         assayFromState,
         displayMethod,
@@ -67,7 +67,7 @@ const PieGraph = ({
     graph,
     indexBy,
     orderBy,
-    resultCategory,
+    keyToConsume,
     assayFromState,
     displayMethod,
     filterResults,
