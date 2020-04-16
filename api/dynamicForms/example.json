@@ -1,0 +1,32 @@
+{
+    "fields": [
+      {
+        "name": "field1",
+        "i18nKey": "i18nNameKey",
+        "fieldType": "decimal",
+        "order": 1,
+        "caption": "tooltip to display in this field",
+        "i18nKeyCaption": "i18nCaptionKey",
+        "controlType": "checkBox",
+        "required": true,
+        "encrypted": false,
+        "validation": [],
+        "condition": [],
+        "typeOfOptionSource": "fixedList",
+        "optionValues": [
+          {
+            "key": "ABCDEFGHIJKLMNOPQRS",
+            "value": "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+          }
+        ],
+        "customUrlMappingFields": {
+          "key": "ABCDEFGHIJKLMNOPQRSTUVW",
+          "value": "ABCDEF"
+        },
+        "customUrlResponseType": "json | xml",
+        "functionModule": "ABCDEFGHIJKLMNOPQRSTUVWXYZABC",
+        "functionName": "ABCDEFGHIJKLMNOPQRSTUVWXYZA"
+      }
+    ],
+    "refForms": []
+  }
