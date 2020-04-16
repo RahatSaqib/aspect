@@ -2,7 +2,7 @@ const { assert } = require('chai')
 const { getFirstCase, getFirstPartnerId } = require('./utils')
 const { getCaseId, removeCase, addCase } = require('../../src/case/service')
 
-describe.only('case/service', () => {
+describe('case/service', () => {
   let partnerId = null
 
   before(async () => {
