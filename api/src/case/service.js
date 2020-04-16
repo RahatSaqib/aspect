@@ -9,7 +9,7 @@ const tblName = 'Case'
  * @return {int} The case id
  */
 async function getCaseId(_case, createIfNonExistent) {
-  if (!_case.externalId) return null
+  if (!_case.externalId) throw 'externalId must be provided'
 
   let { caseId } = (await knex(tblName)
     .where(_case)
