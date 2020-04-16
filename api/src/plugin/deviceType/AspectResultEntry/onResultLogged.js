@@ -38,11 +38,18 @@ async function updateCovidResultFromFormData(
     }
     const result = await knex('Result as r')
       .join('Assay as a', 'r.assayId', 'a.id')
+      .join('AssayType as at', 'a.assayTypeId', 'at.id')
       .join('Device as d', 'r.deviceId', 'd.id')
       .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
       .join('Sample as s', 'r.sampleId', 's.id')
       .join('ResultForm as rf', function() {
         this.on('a.id', 'rf.assayId').andOn('r.partnerId', 'rf.partnerId')
+      })
+      .leftJoin('PartnerDisease as pd', function() {
+        this.on('at.diseaseId', 'pd.diseaseId').andOn(
+          'r.partnerId',
+          'pd.partnerId'
+        )
       })
       .where({ 'r.id': resultId })
       .first(
@@ -55,7 +62,8 @@ async function updateCovidResultFromFormData(
         'rf.formSchema',
         'r.resultCategory1',
         'r.startedOn',
-        'r.endedOn'
+        'r.endedOn',
+        'pd.canAutoAssignResultByCaseId'
       )
     if (!result) {
       return
@@ -69,6 +77,7 @@ async function updateCovidResultFromFormData(
       resultCategory1,
       startedOn,
       endedOn,
+      canAutoAssignResultByCaseId,
     } = result
     const covid19AssayExternalIds = await knex('AssayType as at')
       .join('Assay as a', 'at.id', 'a.assayTypeId')
@@ -115,12 +124,24 @@ async function updateCovidResultFromFormData(
       .count('dl.id as deviceLogCountFromDiagnosticDevice')
     const canOverwriteDiagnosticDataByHand =
       deviceLogCountFromDiagnosticDevice === 0
-    patientDataObject.caseId = formDataObject.caseId
-    if (canOverwriteDiagnosticDataByHand) {
-      patientDataObject.id = formDataObject.caseId
-    } else if (formDataObject.caseId) {
-      patientDataObject.id = patientDataObject.id || formDataObject.caseId
+
+    const caseExternalId = formDataObject.caseId
+    if (canAutoAssignResultByCaseId && caseExternalId) {
+      const [caseId] = await knex('Case')
+        .where('externalId', caseExternalId)
+        .pluck('id')
+      if (!caseId) {
+        // TODO: auto create entry in table Case - check if needed
+      }
+      resultUpdates.caseId = caseId || null
     }
+    patientDataObject.caseId = caseExternalId
+    if (canOverwriteDiagnosticDataByHand) {
+      patientDataObject.id = caseExternalId
+    } else if (caseExternalId) {
+      patientDataObject.id = patientDataObject.id || caseExternalId
+    }
+
     const testReasonOptions =
       _.get(formSchemaObject, 'fields.testReason.control.options') || []
     patientDataObject.testReason =

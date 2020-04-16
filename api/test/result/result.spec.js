@@ -830,7 +830,9 @@ describe('Result routes', () => {
         let resultTypePatientId
         const sampleIdsInserted = []
         const resultIdsInserted = []
-
+        const casesInserted = []
+        const getCaseIdByDeviceTypeId = deviceTypeId =>
+          `${deviceTypeId} TEST-CASE-ID`
         before(async () => {
           partnerId = (
             await knex('Partner')
@@ -880,6 +882,16 @@ describe('Result routes', () => {
             'DiagnosticDevice'
           )
           resultTypePatientId = await resultTypeToId('Patient')
+
+          // insert Cases for each deviceTypeId
+          await Promise.each(
+            Object.keys(covidDeviceTypeDevices),
+            async deviceTypeId => {
+              const externalId = getCaseIdByDeviceTypeId(deviceTypeId)
+              const [caseId] = await knex('Case').insert({ externalId })
+              casesInserted.push({ id: caseId, externalId })
+            }
+          )
         })
 
         after(async () => {
@@ -891,6 +903,12 @@ describe('Result routes', () => {
           if (!_.isEmpty(sampleIdsInserted)) {
             await knex('Sample')
               .whereIn('id', sampleIdsInserted)
+              .del()
+          }
+          if (!_.isEmpty(casesInserted)) {
+            const caseIds = casesInserted.map(x => x.id)
+            await knex('Case')
+              .whereIn('id', caseIds)
               .del()
           }
           return Promise.resolve()
@@ -999,7 +1017,7 @@ describe('Result routes', () => {
           await Promise.each(
             Object.keys(covidDeviceTypeDevices),
             async deviceTypeId => {
-              const caseId = `${deviceTypeId} TEST-CASE-ID`
+              const caseId = getCaseIdByDeviceTypeId(deviceTypeId)
               let testTypeText
               let testType
               const resultId = await createCovid19Result(deviceTypeId)
@@ -1011,6 +1029,7 @@ describe('Result routes', () => {
                 testResult,
                 dateAndTimeOfTest,
               }
+              const resultAspectExpected = {}
               if (deviceTypeId === 'Aspect') {
                 testTypeText = 'Digital X-Ray'
                 testType = getOptionValueFromTitle(
@@ -1035,6 +1054,9 @@ describe('Result routes', () => {
                   testTypeText
                 )
                 formDataToSend.testType = testType
+                resultAspectExpected.caseId = casesInserted.find(
+                  x => x.externalId === caseId
+                ).id
               }
               const response = await server
                 .put(`${path}/form-data/${resultId}`)
@@ -1062,6 +1084,7 @@ describe('Result routes', () => {
                 endedOn: dateAndTimeOfTest,
                 resultCategory1: resultCategories[resultText],
                 updatedBy: adminId,
+                ...resultAspectExpected,
               })
             }
           )
@@ -1088,7 +1111,7 @@ describe('Result routes', () => {
           await Promise.each(
             Object.keys(covidDeviceTypeDevices),
             async deviceTypeId => {
-              const caseId = `${deviceTypeId} TEST-CASE-ID`
+              const caseId = getCaseIdByDeviceTypeId(deviceTypeId)
               let testTypeText
               let testType
               const resultId = await createCovid19Result(deviceTypeId)
@@ -1100,6 +1123,7 @@ describe('Result routes', () => {
                 testResult,
                 dateAndTimeOfTest,
               }
+              const resultAspectExpected = {}
               if (deviceTypeId === 'Aspect') {
                 testTypeText = 'Digital X-Ray'
                 testType = getOptionValueFromTitle(
@@ -1124,6 +1148,9 @@ describe('Result routes', () => {
                   testTypeText
                 )
                 formDataToSend.testType = testType
+                resultAspectExpected.caseId = casesInserted.find(
+                  x => x.externalId === caseId
+                ).id
               }
               const response = await server
                 .put(`${path}/form-data/${resultId}`)
@@ -1151,6 +1178,7 @@ describe('Result routes', () => {
                 endedOn: dateAndTimeOfTest,
                 resultCategory1: resultCategories[resultText],
                 updatedBy: adminId,
+                ...resultAspectExpected,
               })
               const deviceLogsForResult = await knex('DeviceLog')
                 .where({ resultId })
@@ -1207,7 +1235,7 @@ describe('Result routes', () => {
                 startedOn: addMinutes(dateAndTimeOfTest, 123),
                 endedOn: addMinutes(dateAndTimeOfTest, 223),
               }
-              const caseId = `${deviceTypeId} TEST-CASE-ID`
+              const caseId = getCaseIdByDeviceTypeId(deviceTypeId)
               let testTypeText
               let testType
               const resultId = await createCovid19Result(
@@ -1224,6 +1252,7 @@ describe('Result routes', () => {
                 testResult,
                 dateAndTimeOfTest,
               }
+              const resultAspectExpected = {}
               if (deviceTypeId === 'Aspect') {
                 testTypeText = 'Digital X-Ray'
                 testType = getOptionValueFromTitle(
@@ -1248,6 +1277,9 @@ describe('Result routes', () => {
                   testTypeText
                 )
                 formDataToSend.testType = testType
+                resultAspectExpected.caseId = casesInserted.find(
+                  x => x.externalId === caseId
+                ).id
               }
               const response = await server
                 .put(`${path}/form-data/${resultId}`)
@@ -1279,6 +1311,7 @@ describe('Result routes', () => {
                   endedOn: resultFromInstrument.endedOn,
                   resultCategory1: resultFromInstrument.resultCategory1,
                   updatedBy: adminId,
+                  ...resultAspectExpected,
                 })
               } else {
                 expect(result).to.containSubset({
@@ -1298,6 +1331,7 @@ describe('Result routes', () => {
                   endedOn: dateAndTimeOfTest,
                   resultCategory1: resultCategories[resultText],
                   updatedBy: adminId,
+                  ...resultAspectExpected,
                 })
               }
               const deviceLogsForResult = await knex('DeviceLog')
