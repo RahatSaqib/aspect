@@ -1,6 +1,6 @@
 module.exports = require('../src/db').migration(up, down)
 
-const tblCase = 'case'
+const tblCase = 'Case'
 
 async function up(knex) {
   await knex.schema.alterTable(tblCase, tbl => {
