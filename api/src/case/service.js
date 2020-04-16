@@ -2,6 +2,17 @@ const { knex } = require('../db')
 
 const tblName = 'Case'
 
+function validateCaseIdentifier() {
+  let errors = ''
+  if (!_case.externalId)
+    errors +=
+      'You must provide the externalId field /n'
+  if (!_case.partnerId)
+    errors +=
+      'You must provide the partnerId field /n'
+  if (errors) throw new Error(errors)
+}
+
 /**
  * Gets the case id related to the external id and partner provided
  * @param  {object} _case The case filter
@@ -9,14 +20,7 @@ const tblName = 'Case'
  * @return {int} The case id
  */
 async function getCaseId(_case, createIfNonExistent) {
-  let errors = ''
-  if (!_case.externalId)
-    errors +=
-      'You must provide the externalId field for getting the case identifier /n'
-  if (!_case.partnerId)
-    errors +=
-      'You must provide the partnerId field for getting the case identifier /n'
-  if (errors) throw new Error(errors)
+  validateCaseIdentifier()
 
   let { caseId } = (await knex(tblName)
     .where({
@@ -52,8 +56,13 @@ async function removeCase(_case) {
 }
 
 async function getCase(_case) {
+  validateCaseIdentifier()
+
   return knex(tblName)
-    .where(_case)
+    .where({ 
+      externalId: _case.externalId,
+      partnerId: _case.partnerId,
+    })
     .first()
 }
 
