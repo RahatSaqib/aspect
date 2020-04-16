@@ -9,10 +9,20 @@ const tblName = 'Case'
  * @return {int} The case id
  */
 async function getCaseId(_case, createIfNonExistent) {
-  if (!_case.externalId) throw 'externalId must be provided'
+  let errors = ''
+  if (!_case.externalId)
+    errors +=
+      'You must provide the externalId field for getting the case identifier /n'
+  if (!_case.partnerId)
+    errors +=
+      'You must provide the partnerId field for getting the case identifier /n'
+  if (errors) throw new Error(errors)
 
   let { caseId } = (await knex(tblName)
-    .where(_case)
+    .where({
+      externalId: _case.externalId,
+      partnerId: _case.partnerId,
+    })
     .first('id as caseId')) || { caseId: null }
 
   if (!caseId && createIfNonExistent) caseId = await addCase(_case)
@@ -30,10 +40,6 @@ async function addCase(_case) {
   return caseId
 }
 
-async function getFirstCase() {
-  return knex(tblName).first()
-}
-
 /**
  * Removes the cases associated to the provided filter
  * @param  {object} _case The case filter
@@ -43,9 +49,6 @@ async function removeCase(_case) {
   await knex(tblName)
     .where(_case)
     .del()
-  const result = (await getCase(_case)) == null
-
-  return result
 }
 
 async function getCase(_case) {
@@ -57,7 +60,6 @@ async function getCase(_case) {
 module.exports = {
   getCaseId,
   addCase,
-  getFirstCase,
   removeCase,
   getCase,
 }

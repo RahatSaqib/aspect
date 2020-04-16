@@ -5,7 +5,7 @@ const tblCase = 'Case'
 async function up(knex) {
   await knex.schema.alterTable(tblCase, tbl => {
     tbl.integer('partnerId').nullable()
-    tbl.index(['externalId', 'partnerId'])
+    tbl.unique(['externalId', 'partnerId'])
   })
 }
 

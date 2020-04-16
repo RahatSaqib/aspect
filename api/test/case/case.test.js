@@ -1,79 +1,77 @@
 const { assert } = require('chai')
-const { runTest } = require('../utils/generatorFunctionUtils')
-const {
-  getCaseId,
-  removeCase,
-  getFirstCase,
-  addCase,
-} = require('../../src/case/service')
+const { getFirstCase, getFirstPartnerId } = require('./utils')
+const { getCaseId, removeCase, addCase } = require('../../src/case/service')
 
-describe('case/service', () => {
+describe.only('case/service', () => {
+  let partnerId = null
+
+  before(async () => {
+    partnerId = await getFirstPartnerId()
+  })
+
   describe('add', () => {
-    it('Should add case', async () => {
+    it('Should add case and return the id', async () => {
       const objCase = {
         externalId: `non existent externalId ${Math.floor(
           Math.random() * 10000
         )}`,
+        partnerId,
       }
-      return runTest(addCase, [objCase])(response => {
-        assert.isNotNull(response)
-      })
+      const caseId = await addCase(objCase)
+      assert.isNotNull(caseId)
     })
   })
 
-  describe.only('remove', () => {
+  describe('remove', () => {
     it('Should remove case', async () => {
       const objCase = {
         externalId: `non existent externalId ${Math.floor(
           Math.random() * 10000
         )}`,
+        partnerId,
       }
       await addCase(objCase)
-      return runTest(removeCase, [objCase])(response => {
-        assert.isTrue(response)
-      })
+      await removeCase(objCase)
+      const caseId = await getCaseId(objCase)
+      assert.isNull(caseId)
     })
   })
 
-  describe.only('getCaseId', () => {
+  describe('getCaseId', () => {
     it('Providing an existent externalId and partnerId, should return the id of the case', async () => {
       const existentCase = await getFirstCase()
-      return runTest(getCaseId, [
-        {
-          externalId: existentCase.externalId,
-          partnerId: existentCase.partnerId,
-        },
-      ])(response => {
-        assert.equal(response, existentCase.id)
+      const caseId = await getCaseId({
+        externalId: existentCase.externalId,
+        partnerId: existentCase.partnerId,
       })
+      assert.equal(caseId, existentCase.id)
     })
 
-    it("Providing a non existent externalId and allowing create it, should create a new case and return it's id", async () => {
+    it("Providing a non existent externalId, partnerId and allowing create it, should create a new case and return it's id", async () => {
       const createIfNonExistent = true
       const objCase = {
         externalId: `non existent externalId ${Math.floor(
           Math.random() * 10000
         )}`,
+        partnerId,
       }
 
-      return runTest(getCaseId, [objCase, createIfNonExistent])(response => {
-        removeCase(objCase)
-        assert.isNotNull(response)
-      })
+      const caseId = await getCaseId(objCase, createIfNonExistent)
+      await removeCase(objCase)
+      assert.isNotNull(caseId)
     })
 
-    it("Providing a non existent externalId and not allowing create it, shouldn't create a new case and return null", async () => {
+    it("Providing a non existent externalId, partnerId and not allowing create it, shouldn't create a new case and return null", async () => {
       const createIfNonExistent = false
       const objCase = {
         externalId: `non existent externalId ${Math.floor(
           Math.random() * 10000
         )}`,
+        partnerId,
       }
 
-      return runTest(getCaseId, [objCase, createIfNonExistent])(response => {
-        if (response) removeCase()
-        assert.isNull(response)
-      })
+      const caseId = await getCaseId(objCase, createIfNonExistent)
+      assert.isNull(caseId)
     })
   })
 })
