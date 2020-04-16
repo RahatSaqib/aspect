@@ -7,8 +7,8 @@ const {
   addCase,
 } = require('../../src/case/service')
 
-describe.only('case/service', () => {
-  describe.only('add', () => {
+describe('case/service', () => {
+  describe('add', () => {
     it('Should add case', async () => {
       const objCase = {
         externalId: `non existent externalId ${Math.floor(
