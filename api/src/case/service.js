@@ -26,8 +26,7 @@ async function getCaseId(_case, createIfNonExistent) {
  * @return {int} The created case id
  */
 async function addCase(_case) {
-  await knex(tblName).insert(_case)
-  const caseId = await getCaseId(_case, false)
+  const [caseId] = await knex(tblName).insert(_case)
   return caseId
 }
 
