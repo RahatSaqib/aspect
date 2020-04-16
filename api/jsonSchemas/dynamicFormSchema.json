@@ -60,7 +60,7 @@
                         "type": "string",
                         "title": "Field type",
                         "description": "Type of the data to be stored",
-						"enum":["text", "int", "date", "decimal", "binary", "boolean", "list"]
+						"enum":["text", "integer", "date", "decimal", "binary", "boolean", "list"]
                     },
                     "order": {
                         "$id": "#/properties/fields/items/properties/order",
@@ -111,8 +111,8 @@
                                 "validationType": {
                                     "$id": "#/properties/fields/items/properties/validation/items/validatinType",
                                     "type": "string",
-                                    "title": "Encrypted Field",
-                                    "description": "This property is true if the field value is encrypted",
+                                    "title": "The type of the validation",
+                                    "description": "This property is for defying the type of the validation we are going to perform",
                                     "default": "regex",
                                     "enum":["regex","float","integer", "datetime"]
                                 },
@@ -122,7 +122,7 @@
                                     "title": "Regular Expression to validate",
                                     "description": "The regular expression to be matched",
                                     "dependencies": {
-                                        "typeOfOptionSource": { "required": ["regex"] }
+                                        "validationType": { "required": ["regex"] }
                                     }
                                 },
                                 "minumun": {
@@ -131,7 +131,7 @@
                                     "title": "the minumun value",
                                     "description": "The minimun value of the field",
                                     "dependencies": {
-                                        "typeOfOptionSource": { "required": ["integer", "float"] }
+                                        "validationType": { "required": ["integer", "float"] }
                                     }
                                 },
                                 "maximun": {
@@ -140,25 +140,29 @@
                                     "title": "the maximun value",
                                     "description": "The maximun value for the number field",
                                     "dependencies": {
-                                        "typeOfOptionSource": { "required": ["integer", "float"] }
+                                        "validationType": { "required": ["integer", "float"] }
                                     }
                                 },
                                 "errorMessage":{
                                     "$id": "#/properties/fields/items/properties/validation/items/errorMessage",
-                                    "type": "integer",
+                                    "type": "string",
                                     "title": "the error message",
                                     "description": "The error message when validation fails"
+                                },
+                                "errorMessageI18n":{
+                                    "$id": "#/properties/fields/items/properties/validation/items/errorMessageI18n",
+                                    "type": "string",
+                                    "title": "the error message",
+                                    "description": "The error message when validation fails i18nkey"
                                 }
                             }
                         }
-                        
-                       
                     },
                     "condition": {
                         "$id": "#/properties/fields/items/properties/condition",
                         "type": "array",
                         "title": "Condition for field visibility",
-                        "minItems":1,
+                        "minItems":0,
                         "description": "these are the conditions for rendering the specific field",
                         "default": [],
                         "items": {
