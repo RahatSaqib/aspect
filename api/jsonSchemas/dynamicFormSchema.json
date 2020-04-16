@@ -9,6 +9,14 @@
         "fields"
     ],
     "properties": {
+        "refForms":{
+            "$id": "#/properties/refForms",
+            "type": "array",
+            "minItems": 0,
+            "title": "The list of externalId from others forms, that this form need to render.",
+            "description": "the idea is to reference other forms, when you need other forms data for rendering the field with some condition. This is going to be used just for check if the forms referenced are present in the complete JSON object",
+            "default": []
+        },
         "fields": {
             "$id": "#/properties/fields",
             "type": "array",
@@ -93,11 +101,10 @@
                     },
                     "validation": {
                         "$id": "#/properties/fields/items/properties/validation",
-                        
                         "title": "validation field method",
                         "description": "A how to validate the field value",
                         "type": "array",
-                        "minItems":1,
+                        "minItems":0,
                         "default": [],
                         "items": {
                             "$id": "#/properties/fields/items/properties/validation/items",
@@ -125,7 +132,7 @@
                                         "validationType": { "required": ["regex"] }
                                     }
                                 },
-                                "minumun": {
+                                "min": {
                                     "$id": "#/properties/fields/items/properties/validation/items/minimun",
                                     "type": "integer",
                                     "title": "the minumun value",
@@ -134,7 +141,7 @@
                                         "validationType": { "required": ["integer", "float"] }
                                     }
                                 },
-                                "maximun": {
+                                "max": {
                                     "$id": "#/properties/fields/items/properties/validation/items/minimun",
                                     "type": "integer",
                                     "title": "the maximun value",
@@ -410,34 +417,6 @@
                             "typeOfOptionSource": { "required": ["function"] }
                         }
 
-                    },
-                    "i18nValues": {
-                        "$id": "#/properties/i18nValues",
-                        "type": "array",
-                        "title": "The I18nvalues in the different languages",
-                        "description": "The i18n values label in all the supported languages",
-                        "items": {
-                            "$id": "#/properties/i18nValues/items",
-                            "type": "object",
-                            "title": "The Items Schema",
-                            "description": "Each object it is going to be a supported language",
-                            "default": {},
-                            "examples": [
-                                {
-                                    "en": {
-                                        "name":"value",
-                                        "caption":"value"
-
-                                    }
-                                },
-                                {
-                                    "pt":{
-                                        "name":"value",
-                                        "caption":"value"
-                                    }
-                                }
-                            ]
-                        }
                     }
                 }
             }

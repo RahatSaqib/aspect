@@ -9,7 +9,7 @@ async function up(knex) {
   })
   await knex.schema.createTable('FormDefinitionSchema', row => {
     row.increments('id')
-    row.json('jsonSchema').notNullable()
+    row.string('jsonSchemaFile').notNullable()
   })
   await knex.schema.createTable('FormDefinition', row => {
     row.increments('id')
@@ -36,6 +36,10 @@ async function up(knex) {
       .references('id')
       .inTable('Disease')
 
+    row
+      .integer('order')
+      .notNullable()
+      .default(0)
     row
       .integer('assayId')
       .unsigned()
