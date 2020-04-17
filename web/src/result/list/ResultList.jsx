@@ -8,7 +8,6 @@ import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
 import TableBody from '@material-ui/core/TableBody'
-
 import {
   makeSortPageSelector,
   makeSearchParamsSanitizer,
@@ -42,6 +41,10 @@ const messages = defineMessages({
   resultsTitle: {
     id: 'pages.ResultList.title',
     defaultMessage: 'Results',
+  },
+  newResult: {
+    id: 'pages.ResultList.newResult',
+    defaultMessage: 'NEW RESULT',
   },
   endedOn: {
     id: 'pages.ResultList.EndedOn',
@@ -179,7 +182,9 @@ const enhance = compose(
         fetchResults(filtersParams, sortCol, sortDir, pageAt, pageSize)
       }
     },
-
+    onAddNewButtonClick: ({ history }) => {
+      history.push('/browse/result/add')
+    },
     onExportClick: ({
       location,
       exportResults,
@@ -269,6 +274,7 @@ export const ResultList = ({
   pageAt,
   pageSize,
   onExportClick,
+  onAddNewButtonClick,
   onRowClick,
   reducedFilters,
 }) => (
@@ -282,6 +288,8 @@ export const ResultList = ({
       config={reducedFilters}
       onClickExport={onExportClick}
       askConfirmationForExport={table.total > 1000}
+      addNewButtonText={intl.formatMessage(messages.newResult)}
+      onAddNewButtonClick={onAddNewButtonClick}
     />
     <DataTableCard key={`DataTableCard--table-${location.key}`}>
       <DataTableProgressBar disabled={!table.loading} />

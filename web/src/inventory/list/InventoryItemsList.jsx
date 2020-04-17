@@ -105,7 +105,7 @@ const messages = defineMessages({
   },
   addInventory: {
     id: 'pages.InventoryItemsList.addInventory',
-    defaultMessage: 'Add Inventory',
+    defaultMessage: 'ADD INVENTORY',
   },
   transferInventory: {
     id: 'pages.InventoryItemsList.transferInventory',
@@ -382,7 +382,10 @@ export const InventoryItemsList = ({
       intl={intl}
       config={reducedFilters}
       dateFilterLabel={intl.formatMessage(messages.expiresOn)}
+      addNewButtonText={intl.formatMessage(messages.addInventory)}
+      onAddNewButtonClick={showNewInventoryDialog}
     />
+
     <DataTableCard className={cssClasses('DataTableCard--action')}>
       <CheckboxField
         className={cssClasses('Checkbox')}
@@ -391,17 +394,6 @@ export const InventoryItemsList = ({
         label={intl.formatMessage(messages.groupBySite)}
         onChange={onGroupBySiteChange}
       />
-      <Tooltip
-        title={intl.formatMessage(messages.addInventory)}
-        placement="bottom"
-      >
-        <IconButton
-          aria-label={intl.formatMessage(messages.addInventory)}
-          onClick={showNewInventoryDialog}
-        >
-          <AddIcon fontSize="large" />
-        </IconButton>
-      </Tooltip>
     </DataTableCard>
     <DataTableCard
       key={`DataTableCard--table-${location.key}`}

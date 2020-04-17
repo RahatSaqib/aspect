@@ -1,3 +1,5 @@
+/*@import '../variables.css';*/
+
 .Container {
   display: flex;
   flex-flow: column;
@@ -18,6 +20,12 @@
     display: flex;
     flex-flow: row wrap;
     align-items: baseline;
+  }
+  .AddButton {
+    margin-right: 1.5em;
+    font-weight: 700;
+    padding-right: 2.5em;
+    padding-left: 2.5em;
   }
 
   .FiltersPanel {

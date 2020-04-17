@@ -4,6 +4,7 @@ import React from 'react'
 import { compose, withProps, withHandlers, pure, lifecycle } from 'recompose'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
+import AspectButton from '../../components/shared/AspectButton'
 import Report from '../../dashboard/status/Reports'
 import BrowseNavDropdown from './BrowseNavDropdown'
 import { mergeToFiltersParams, reduceNavLinks } from '../../filter/utils'
@@ -114,6 +115,8 @@ export const BrowseFilters = ({
   userPermissions,
   dateFormat,
   showBrowseDropdown = true,
+  addNewButtonText,
+  onAddNewButtonClick,
   ...restProps
 }) => (
   <div className={cssClasses('Container')}>
@@ -131,6 +134,17 @@ export const BrowseFilters = ({
         />
       )}
     </FiltersBtnGroup>
+    {onAddNewButtonClick && (
+      <AspectButton
+        type="button"
+        color="primary"
+        variant="contained"
+        className={cssClasses('AddButton')}
+        onClick={onAddNewButtonClick}
+      >
+        {addNewButtonText}
+      </AspectButton>
+    )}
     <FiltersPanel
       intl={intl}
       className={cssClasses('FiltersPanel')}

@@ -72,7 +72,7 @@ const messages = defineMessages({
   },
   addContact: {
     id: 'pages.PersonList.addContact',
-    defaultMessage: 'Add Contact',
+    defaultMessage: 'ADD CONTACT',
   },
 })
 
@@ -235,21 +235,9 @@ export const PersonList = ({
       location={location}
       intl={intl}
       config={reducedFilters}
+      addNewButtonText={intl.formatMessage(messages.addContact)}
+      onAddNewButtonClick={showNewContactPage}
     />
-    <DataTableCard className={cssClasses('DataTableCard--action')}>
-      <div />
-      <Tooltip
-        title={intl.formatMessage(messages.addContact)}
-        placement="bottom"
-      >
-        <IconButton
-          aria-label={intl.formatMessage(messages.addContact)}
-          onClick={showNewContactPage}
-        >
-          <AddIcon fontSize="large" />
-        </IconButton>
-      </Tooltip>
-    </DataTableCard>
     <DataTableCard key={`DataTableCard--table-${location.key}`}>
       <DataTableProgressBar disabled={!table.loading} />
       {items.currentIdList.isEmpty() && (
