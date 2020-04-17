@@ -44,8 +44,9 @@ async function listDeviceApiKeys(request) {
       deviceName: 'd.name',
     })
     .modify(addConstraints, dataConstraints, {
-      partner: 'p',
+      device: 'd',
       geography: 'g',
+      partner: 'p',
       site: 's',
     })
 

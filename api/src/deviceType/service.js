@@ -10,7 +10,7 @@ async function listDeviceTypesForSelectList(request) {
   // only get the device types for which the partner has at least one device
   const data = await knex('DeviceType as dt')
     .innerJoin('Device as d', 'dt.id', 'd.deviceTypeId')
-    .modify(addConstraints, dataConstraints, { device: 'd' })
+    .modify(addConstraints, dataConstraints, { device: 'd', deviceType: 'dt' })
     .select(SELECT_LIST_FIELDS)
     .orderBy('dt.name', 'asc')
     .distinct()

@@ -11,6 +11,8 @@ const {
 
 const tables = [
   'DeviceApiRawStatus',
+  'Disease',
+  'AssayType',
   'FileContentType',
   'IssueCategory',
   'IssueEventStatus',
@@ -27,7 +29,6 @@ const tables = [
   'FollowUpType',
   'ResultNoteType',
   // TODO ASP-757 Standardize static data key on externalId
-  ['AssayType', 'name'],
   ['ConsumableReason', 'name'],
   ['DeviceStatus', 'token'],
   ['PartnerType', 'name'],
@@ -80,7 +81,7 @@ const foreignKeys = {
   ],
 }
 
-// Helper for seeed files. Ru
+// Helper for seed files. Ru
 let hasSeededStaticData = false
 let commonInserts = false
 
@@ -513,16 +514,38 @@ async function seedTable(knex, fixtureItem, overridedSeeds) {
   if (_.isFunction(keyColumn)) {
     await keyColumn(knex, fixture)
   } else {
-    for (const datum of fixture.data) {
-      // eslint-disable-next-line no-await-in-loop
+    await Promise.each(fixture.data || [], async datum => {
       const existingDatum = await knex(table)
         .where(keyColumn, datum[keyColumn])
         .first('id')
       if (existingDatum == null) {
-        // eslint-disable-next-line no-await-in-loop
         await knex(table).insert(datum)
       }
-    }
+    })
+    await Promise.each(fixture.relationships || [], async relationship => {
+      const updates = {}
+      const existingDatum = await knex(table)
+        .where(_.pick(relationship, [keyColumn]))
+        .first()
+      await Promise.each(
+        Object.keys(_.omit(relationship, [keyColumn])),
+        async foreignKeyColumnName => {
+          const foreignKey = relationship[foreignKeyColumnName]
+          const existingRelatedDatum =
+            (await knex(foreignKey.table)
+              .where(_.omit(foreignKey, ['table']))
+              .first('id')) || {}
+          if (existingDatum[foreignKeyColumnName] !== existingRelatedDatum.id) {
+            updates[foreignKeyColumnName] = existingRelatedDatum.id
+          }
+        }
+      )
+      if (!_.isEmpty(updates)) {
+        await knex(table)
+          .where(_.pick(relationship, [keyColumn]))
+          .update(updates)
+      }
+    })
   }
 }
 

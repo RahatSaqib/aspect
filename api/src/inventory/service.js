@@ -84,7 +84,7 @@ async function consumeInventoryForResult(
   const now = new Date()
   const assayConsumables = await selectAssayConsumables(
     knex,
-    partnerId,
+    { partner: { id: partnerId } },
     assayId
   )
 
@@ -568,7 +568,7 @@ async function getDaysByLocation(request) {
       ),
       // expiresInDays - when inventory expires, in days
       knex.raw(`
-        CASE 
+        CASE
         WHEN ii.quantityOnHand IS NULL THEN NULL
         ELSE CAST(GREATEST(DATEDIFF(ii.expiresOn, NOW()), 0) AS SIGNED INTEGER)
         END AS expiresInDays
@@ -577,9 +577,9 @@ async function getDaysByLocation(request) {
       knex.raw('CAST(rate1.rate AS DECIMAL(10, 6)) AS dailyRate'),
       // lastsInDays - how long the 'quantityOnHand' lasts, in days
       knex.raw(`
-        CASE 
-        WHEN IFNULL(ii.quantityOnHand,0) > 0 and IFNULL(rate1.rate, 0) > 0 THEN CAST(ii.quantityOnHand / rate1.rate AS SIGNED) 
-        ELSE NULL 
+        CASE
+        WHEN IFNULL(ii.quantityOnHand,0) > 0 and IFNULL(rate1.rate, 0) > 0 THEN CAST(ii.quantityOnHand / rate1.rate AS SIGNED)
+        ELSE NULL
         END AS lastsInDays
       `)
     )
@@ -619,7 +619,7 @@ async function getDaysByLocation(request) {
     .select(
       't1.*',
       knex.raw(`
-      CASE 
+      CASE
         WHEN quantityOnHand IS NULL THEN NULL
         WHEN quantityOnHand <= 0 THEN 0
         WHEN expiresInDays > lastsInDays OR expirationDate IS NULL OR dailyRate IS NULL

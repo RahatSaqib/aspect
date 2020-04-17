@@ -69,6 +69,7 @@ function addDataSourceToQuery(queryBuilder, aliases) {
       .leftJoin('ResultCategory as rc1', `r.resultCategory1`, 'rc1.id')
       .leftJoin('ResultCategory as rc2', `r.resultCategory2`, 'rc2.id')
       .leftJoin('Partner as pu', 'pu.id', 'p.lastPartnerId')
+      .leftJoin('Partner as pr', 'pr.id', 'r.partnerId')
       .select(
         's.externalId as siteExternalId',
         's.name as siteName',

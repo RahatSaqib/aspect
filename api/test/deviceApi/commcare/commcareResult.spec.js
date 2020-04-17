@@ -236,5 +236,6 @@ async function getLastNotification(knex, deviceId) {
     .where('i.resultId', resultId)
     .orderBy('i.id', 'desc')
     .first('it.externalId as issueType', 'i.level', 's.message')
+
   return notification
 }
