@@ -147,7 +147,7 @@ async function getListDevices(query, auth) {
   // get total count for paging
   const getCount = deviceQuery
     .clone()
-    .count('d.id as count')
+    .countDistinct('d.id as count')
     .first()
 
   const last30Day = subDays(new Date(), 30)
@@ -211,6 +211,7 @@ async function getListDevices(query, auth) {
         .select(knex.raw(`GROUP_CONCAT(DISTINCT ic.i18nKey)`))
         .as('issueCategories'),
     ])
+    .distinct()
 
   // return result when both queries are finished
   const [{ count: total }, data] = await Promise.all([getCount, getItems])

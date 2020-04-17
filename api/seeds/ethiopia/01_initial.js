@@ -11,7 +11,6 @@ const jobFunctions = require('./fixtures/jobFunctions.json')
 const contactsFromGxAlert = require('./fixtures/contactsFromGxAlert.json')
 const customFieldsFromGxAlert = require('./fixtures/customFieldsFromGxAlert.json')
 const labClinic = require('./fixtures/labClinic.json')
-
 const { baseGxAlertMigration, seedLabClinicFixture } = require('../common')
 const { seedAbbottM2000AndAssays } = require('../utils_abbott_m2000')
 
