@@ -4,12 +4,11 @@ const tblName = 'Case'
 
 function validateCaseIdentifier(_case) {
   let errors = ''
-  if (!_case.externalId)
-    errors +=
-      'You must provide the externalId field /n'
-  if (!_case.partnerId)
-    errors +=
-      'You must provide the partnerId field /n'
+
+  if (!_case.externalId) errors += 'You must provide the externalId field /n'
+
+  if (!_case.partnerId) errors += 'You must provide the partnerId field /n'
+
   if (errors) throw new Error(errors)
 }
 
@@ -59,7 +58,7 @@ async function getCase(_case) {
   validateCaseIdentifier()
 
   return knex(tblName)
-    .where({ 
+    .where({
       externalId: _case.externalId,
       partnerId: _case.partnerId,
     })

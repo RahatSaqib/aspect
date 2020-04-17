@@ -6,7 +6,6 @@ async function getFirstCase() {
 
 async function getFirstPartnerId() {
   const { id } = await knex('Partner').first()
-  console.log(id)
   return id
 }
 
