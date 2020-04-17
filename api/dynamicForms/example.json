@@ -3,7 +3,7 @@
       {
         "name": "field1",
         "i18nKey": "i18nNameKey",
-        "fieldType": "decimal",
+        "fieldType": "number",
         "order": 1,
         "caption": "tooltip to display in this field",
         "i18nKeyCaption": "i18nCaptionKey",
