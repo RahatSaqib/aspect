@@ -1433,9 +1433,6 @@ async function baseGxAlertMigration(
     }
     if (!_.isEmpty(person.jobFunctions)) {
       await Promise.each(person.jobFunctions, async jobFunctionName => {
-        if (!jobFunctions[jobFunctionName]) {
-          console.log('TEST 1', jobFunctionName)
-        }
         const existingJob = await knex('Job')
           .where({ personId, jobFunctionId: jobFunctions[jobFunctionName] })
           .first()

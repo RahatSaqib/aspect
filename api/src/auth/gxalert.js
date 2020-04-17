@@ -75,7 +75,6 @@ async function validateUserAtGxAlert(username, password, user) {
   }
 
   if (resp.status !== 200) {
-    console.log(resp)
     throw new GxAlertLoginError(
       'GxAlert service is available, but an error happened while authenticating',
       true

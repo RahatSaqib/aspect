@@ -2482,14 +2482,14 @@ async function initDataFromFixture(knex, tableName, keyColumn = 'externalId') {
   const itemsToUpdate = itemsNew.filter(x => oldIds.includes(x[keyColumn]))
   const itemsToInsert = itemsNew.filter(x => !oldIds.includes(x[keyColumn]))
   if (itemsToUpdate.length > 0) {
-    const updatedRecord = _.omit(item, keyColumn)
-    if (!_.isEmpty(updatedRecord)) {
-      itemsToUpdate.forEach(async item => {
+    await Promise.each(itemsToUpdate, async item => {
+      const updatedRecord = _.omit(item, keyColumn)
+      if (!_.isEmpty(updatedRecord)) {
         await knex(tableName)
           .update(updatedRecord)
           .where(keyColumn, item[keyColumn])
-      })
-    }
+      }
+    })
   }
   // insert only items which not exist in the table
   return knex(tableName).insert(itemsToInsert)
