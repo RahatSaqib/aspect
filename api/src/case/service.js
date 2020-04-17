@@ -2,7 +2,7 @@ const { knex } = require('../db')
 
 const tblName = 'Case'
 
-function validateCaseIdentifier() {
+function validateCaseIdentifier(_case) {
   let errors = ''
   if (!_case.externalId)
     errors +=
@@ -20,7 +20,7 @@ function validateCaseIdentifier() {
  * @return {int} The case id
  */
 async function getCaseId(_case, createIfNonExistent) {
-  validateCaseIdentifier()
+  validateCaseIdentifier(_case)
 
   let { caseId } = (await knex(tblName)
     .where({
