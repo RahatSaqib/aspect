@@ -538,7 +538,10 @@ async function seedTable(knex, fixtureItem, overridedSeeds) {
             (await knex(foreignKey.table)
               .where(_.omit(foreignKey, ['table']))
               .first('id')) || {}
-          if (existingDatum[foreignKeyColumnName] !== existingRelatedDatum.id) {
+          if (
+            existingDatum[foreignKeyColumnName] !== existingRelatedDatum.id &&
+            typeof existingRelatedDatum.id !== 'undefined'
+          ) {
             updates[foreignKeyColumnName] = existingRelatedDatum.id
           }
         }
@@ -830,12 +833,16 @@ async function upsertItems(knex, tableName, whereKeys, items) {
   if (itemsToUpdate.length) {
     const queries = []
     itemsToUpdate.forEach(item => {
-      const query = knex(tableName)
-        .where(getWhereItem(item, whereKeys))
-        .update(item)
-      queries.push(query)
+      if (!_.isEmpty(item)) {
+        const query = knex(tableName)
+          .where(getWhereItem(item, whereKeys))
+          .update(item)
+        queries.push(query)
+      }
     })
-    await Promise.all(queries)
+    if (!_.isEmpty(queries)) {
+      await Promise.all(queries)
+    }
   }
 }
 
@@ -854,10 +861,12 @@ async function upsertSingle(knex, tableName, whereClause, item) {
   }
   const q = knex(tableName).where(whereClause)
   const existingItem = await q.first()
-  if (existingItem) {
-    await q.clone().update(item)
-  } else {
-    await knex(tableName).insert(item)
+  if (!_.isEmpty(item)) {
+    if (existingItem) {
+      await q.clone().update(item)
+    } else {
+      await knex(tableName).insert(item)
+    }
   }
   return q.first()
 }
@@ -2158,9 +2167,11 @@ async function updateCategoryAssay(knex) {
         emphasize: false,
       }
     }
-    await knex('ResultCategoryAssay')
-      .where('resultCategoryId', id)
-      .update(json)
+    if (!_.isEmpty(json)) {
+      await knex('ResultCategoryAssay')
+        .where('resultCategoryId', id)
+        .update(json)
+    }
   })
 }
 
@@ -2211,9 +2222,11 @@ async function updateAssayResultCategoryTreatmentEmphasize(knex) {
         emphasize: false,
       }
     }
-    await knex('ResultCategoryAssay')
-      .where('resultCategoryId', id)
-      .update(json)
+    if (!_.isEmpty(json)) {
+      await knex('ResultCategoryAssay')
+        .where('resultCategoryId', id)
+        .update(json)
+    }
   })
 }
 
@@ -2309,7 +2322,7 @@ async function setCapacityForExistingDevices(knex) {
       deviceCapacities,
       dc => dc.partnerId === partnerId && dc.deviceTypeId === deviceTypeId
     )
-    if (deviceCapacityByPartnerId) {
+    if (deviceCapacityByPartnerId && deviceCapacityByPartnerId.id) {
       await knex('Device')
         .where({ partnerId })
         .where({ deviceTypeId })
@@ -2469,12 +2482,14 @@ async function initDataFromFixture(knex, tableName, keyColumn = 'externalId') {
   const itemsToUpdate = itemsNew.filter(x => oldIds.includes(x[keyColumn]))
   const itemsToInsert = itemsNew.filter(x => !oldIds.includes(x[keyColumn]))
   if (itemsToUpdate.length > 0) {
-    // update
-    itemsToUpdate.forEach(async item => {
-      await knex(tableName)
-        .update(_.omit(item, keyColumn))
-        .where(keyColumn, item[keyColumn])
-    })
+    const updatedRecord = _.omit(item, keyColumn)
+    if (!_.isEmpty(updatedRecord)) {
+      itemsToUpdate.forEach(async item => {
+        await knex(tableName)
+          .update(updatedRecord)
+          .where(keyColumn, item[keyColumn])
+      })
+    }
   }
   // insert only items which not exist in the table
   return knex(tableName).insert(itemsToInsert)
