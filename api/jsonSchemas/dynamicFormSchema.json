@@ -68,7 +68,8 @@
                         "type": "string",
                         "title": "Field type",
                         "description": "Type of the data to be stored",
-						"enum":["text", "integer", "date", "decimal", "binary", "boolean", "list"]
+                        "default": "text",
+						"enum":["text", "password","email", "number", "tel", "url"]
                     },
                     "order": {
                         "$id": "#/properties/fields/items/properties/order",
@@ -84,7 +85,7 @@
                         "title": "The Controltype Schema",
                         "description": "An explanation about the purpose of this instance.",
                         "default": "",
-    					"enum": ["textBox", "comboBox", "textArea", "radioButton", "checkBox", "list", "autoComplete","datePicker", "filePicker", "camera"]                    
+    					"enum": ["textBox", "textArea","comboBox", "radioButton", "checkBox", "list", "autoComplete","datePicker", "filePicker", "camera"]                    
                     },
                     "required": {
                         "$id": "#/properties/fields/items/properties/required",
@@ -121,7 +122,7 @@
                                     "title": "The type of the validation",
                                     "description": "This property is for defying the type of the validation we are going to perform",
                                     "default": "regex",
-                                    "enum":["regex","float","integer", "datetime"]
+                                    "enum":["regex","float","integer", "datetime", "string"]
                                 },
                                 "regex": {
                                     "$id": "#/properties/fields/items/properties/validation/items/regex",
@@ -133,7 +134,7 @@
                                     }
                                 },
                                 "min": {
-                                    "$id": "#/properties/fields/items/properties/validation/items/minimun",
+                                    "$id": "#/properties/fields/items/properties/validation/items/min",
                                     "type": "integer",
                                     "title": "the minumun value",
                                     "description": "The minimun value of the field",
@@ -142,12 +143,20 @@
                                     }
                                 },
                                 "max": {
-                                    "$id": "#/properties/fields/items/properties/validation/items/minimun",
+                                    "$id": "#/properties/fields/items/properties/validation/items/max",
                                     "type": "integer",
                                     "title": "the maximun value",
                                     "description": "The maximun value for the number field",
                                     "dependencies": {
                                         "validationType": { "required": ["integer", "float"] }
+                                    }
+                                },
+                                "email": {
+                                    "$id": "#/properties/fields/items/properties/validation/items/email",
+                                    "type": "integer",
+                                    "title": "the email validation value value",
+                                    "dependencies": {
+                                        "validationType": { "required": ["string"] }
                                     }
                                 },
                                 "errorMessage":{
@@ -156,8 +165,8 @@
                                     "title": "the error message",
                                     "description": "The error message when validation fails"
                                 },
-                                "errorMessageI18n":{
-                                    "$id": "#/properties/fields/items/properties/validation/items/errorMessageI18n",
+                                "errorMessageI18nKey":{
+                                    "$id": "#/properties/fields/items/properties/validation/items/errorMessageI18nKey",
                                     "type": "string",
                                     "title": "the error message",
                                     "description": "The error message when validation fails i18nkey"
@@ -180,8 +189,8 @@
                             "examples": [
                                 {
                                     "conjunction": "AND",
-                                    "propToCompare": "propName",
-                                    "valueToCompare": "value",
+                                    "propToCompare": "firstName",
+                                    "valueToCompare": "David",
                                     "operator": "=",
                                     "conjunctionGroupName":"groupName"
                                 }
@@ -286,16 +295,6 @@
                         "title": "Mapped case field",
                         "description": "The name of an existing field into the sample table"
                     },
-                    "optionSource": {
-                        "$id": "#/properties/fields/items/properties/optionSource",
-                        "type": "string",
-                        "title": "Url of an existing endpoint",
-                        "description": "url for an existing endpoint (Aspect or thirdparty one) for filling a list",
-                        "default": "https://demo.aspect.id/api",
-                        "dependencies": {
-                            "typeOfOptionSource": { "required": ["aspectUrl", "customUrl"] }
-                        }
-                    },
                     "typeOfOptionSource": {
                         "$id": "#/properties/fields/items/properties/typeOfOptionSource",
                         "type": "string",
@@ -305,6 +304,16 @@
                         "enum": [
                             "aspectUrl", "customUrl",  "fixedList", "function"
                         ]
+                    },
+                    "optionSource": {
+                        "$id": "#/properties/fields/items/properties/optionSource",
+                        "type": "string",
+                        "title": "Url of an existing endpoint",
+                        "description": "url for an existing endpoint (Aspect or thirdparty one) for filling a list",
+                        "default": "https://demo.aspect.id/api",
+                        "dependencies": {
+                            "typeOfOptionSource": { "required": ["aspectUrl", "customUrl"] }
+                        }
                     },
                     "optionValues": {
                         "$id": "#/properties/fields/items/properties/optionValues",
