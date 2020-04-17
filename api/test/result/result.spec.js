@@ -7,6 +7,7 @@ const {
   parseISO,
   format: dateFormat,
 } = require('date-fns')
+
 const Promise = require('bluebird')
 const shared = require('../utils/sharedToken')
 const { runTestWithKnex } = require('../utils/generatorFunctionUtils')
@@ -19,6 +20,7 @@ const {
 } = require('../../src/shared/dictionary')
 const { knex } = require('../../src/db')
 const AssayCovidResultFormSchema = require('../../seeds/fixtures/AssayCovidResultFormSchema.json')
+const { getAccessToken, createUser, removeUser } = require('../utils/authUtils')
 
 const server = supertest.agent('http://localhost:8080')
 const { assert, expect } = chai
@@ -73,25 +75,24 @@ describe('Result routes', () => {
             assert.typeOf(res.body.data, 'array')
             assert.isAtLeast(res.body.data.length, 3)
             assert.property(res.body.data[0], 'id')
+            assert.property(res.body.data[0], 'externalId')
             assert.property(res.body.data[0], 'endedOn')
             assert.property(res.body.data[0], 'deviceName')
             assert.property(res.body.data[0], 'sampleOriginSiteName')
-            assert.property(res.body.data[0], 'countryName')
-            assert.property(res.body.data[0], 'stateName')
-            assert.property(res.body.data[0], 'lgaName')
             assert.property(res.body.data[0], 'sampleId')
-            assert.property(res.body.data[0], 'errorCode')
-            assert.property(res.body.data[0], 'sampleOriginSiteName')
             assert.property(res.body.data[0], 'resultText')
+            assert.property(res.body.data[0], 'errorCode')
             assert.property(res.body.data[0], 'resultWorkflowStatus')
+            assert.property(res.body.data[0], 'resultTreatmentStatus')
+            assert.property(res.body.data[0], 'treatmentStatusInfo')
             assert.property(res.body.data[0], 'patientId')
-            assert.property(res.body.data[0], 'assayName')
+            assert.property(res.body.data[0], 'assayId')
             assert.property(res.body, 'total')
             ;[
               {
                 id: resultId,
-                assayId,
                 resultWorkflowStatus: initialResultWorkflowStatus,
+                assayId,
               },
             ] = res.body.data
             return res.body.data[0].resultWorkflowStatus
@@ -116,20 +117,17 @@ describe('Result routes', () => {
           assert.typeOf(res.body.data, 'array')
           assert.isAtLeast(res.body.data.length, 5)
           assert.property(res.body.data[0], 'id')
+          assert.property(res.body.data[0], 'externalId')
           assert.property(res.body.data[0], 'endedOn')
           assert.property(res.body.data[0], 'deviceName')
-          assert.property(res.body.data[0], 'countryName')
-          assert.property(res.body.data[0], 'stateName')
-          assert.property(res.body.data[0], 'lgaName')
-          assert.property(res.body.data[0], 'sampleId')
-          assert.property(res.body.data[0], 'errorCode')
           assert.property(res.body.data[0], 'sampleOriginSiteName')
-          assert.property(res.body.data[0], 'patientId')
-          assert.property(res.body.data[0], 'assayName')
-          assert.property(res.body.data[0], 'resultCategory1Name')
-          assert.property(res.body.data[0], 'resultCategory2Name')
+          assert.property(res.body.data[0], 'sampleId')
           assert.property(res.body.data[0], 'resultText')
+          assert.property(res.body.data[0], 'errorCode')
           assert.property(res.body.data[0], 'resultWorkflowStatus')
+          assert.property(res.body.data[0], 'resultTreatmentStatus')
+          assert.property(res.body.data[0], 'treatmentStatusInfo')
+          assert.property(res.body.data[0], 'patientId')
           assert.property(res.body, 'total')
           assert.typeOf(res.body.extraColumns, 'array')
         })
@@ -205,20 +203,17 @@ describe('Result routes', () => {
           assert.typeOf(res.body.data, 'array')
           assert.isAtLeast(res.body.data.length, 3)
           assert.property(res.body.data[0], 'id')
+          assert.property(res.body.data[0], 'externalId')
           assert.property(res.body.data[0], 'endedOn')
           assert.property(res.body.data[0], 'deviceName')
-          assert.property(res.body.data[0], 'countryName')
-          assert.property(res.body.data[0], 'stateName')
-          assert.property(res.body.data[0], 'lgaName')
-          assert.property(res.body.data[0], 'sampleId')
-          assert.property(res.body.data[0], 'errorCode')
           assert.property(res.body.data[0], 'sampleOriginSiteName')
-          assert.property(res.body.data[0], 'patientId')
-          assert.property(res.body.data[0], 'assayName')
-          assert.property(res.body.data[0], 'resultCategory1Name')
-          assert.property(res.body.data[0], 'resultCategory2Name')
+          assert.property(res.body.data[0], 'sampleId')
           assert.property(res.body.data[0], 'resultText')
+          assert.property(res.body.data[0], 'errorCode')
           assert.property(res.body.data[0], 'resultWorkflowStatus')
+          assert.property(res.body.data[0], 'resultTreatmentStatus')
+          assert.property(res.body.data[0], 'treatmentStatusInfo')
+          assert.property(res.body.data[0], 'patientId')
           assert.property(res.body, 'total')
           assert.typeOf(res.body.extraColumns, 'array')
 
@@ -286,6 +281,88 @@ describe('Result routes', () => {
           assert.typeOf(res.body.data.assay.resultDataSchema, 'Object')
           assert.property(res.body.data, 'files')
         })
+    })
+
+    const assayBdMgitGndAssayExternalId = 'assayBdMgitGnd'
+    const bdmgitGndClinicianUsername = 'mgit_gnd_clinician'
+    const bdmgitGndClinicianPassword = 'mgit-gnd-clinician-pass'
+    let bdmgitGndClinicianUserId
+    let bdmgitGndClinicianAuthAccessToken
+
+    const assayDaktariHivVlExternalId = 'DaktariHivVL'
+    const daktariHivVlClinicianUsername = 'dak_vl_clinician'
+    const daktariHivVlClinicianPassword = 'vl-vl-clinician-pass'
+    let daktariHivVlClinicianUserId
+    let daktariHivVlClinicianAuthAccessToken
+    before(async () => {
+      bdmgitGndClinicianUserId = await createUser(
+        'Partner One',
+        'US',
+        bdmgitGndClinicianUsername,
+        bdmgitGndClinicianPassword,
+        [
+          {
+            jobFunctionExternalId: 'clinician',
+            assayExternalId: assayBdMgitGndAssayExternalId,
+          },
+        ]
+      )
+      bdmgitGndClinicianAuthAccessToken = await getAccessToken(
+        bdmgitGndClinicianUsername,
+        bdmgitGndClinicianPassword
+      )
+
+      daktariHivVlClinicianUserId = await createUser(
+        'Partner One',
+        'US',
+        daktariHivVlClinicianUsername,
+        daktariHivVlClinicianPassword,
+        [
+          {
+            jobFunctionExternalId: 'clinician',
+            assayExternalId: assayDaktariHivVlExternalId,
+          },
+        ]
+      )
+      daktariHivVlClinicianAuthAccessToken = await getAccessToken(
+        daktariHivVlClinicianUsername,
+        daktariHivVlClinicianPassword
+      )
+    })
+
+    after(async () => {
+      removeUser(bdmgitGndClinicianUserId)
+      removeUser(daktariHivVlClinicianUserId)
+    })
+
+    it("should constrain results returned based on the user's job context", async () => {
+      const mgitUserResultsResponse = await server
+        .get(path)
+        .set('Authorization', `Bearer ${bdmgitGndClinicianAuthAccessToken}`)
+      assert.equal(mgitUserResultsResponse.status, 200)
+      assert.typeOf(mgitUserResultsResponse.body, 'Object')
+      assert.property(mgitUserResultsResponse.body, 'data')
+      assert.typeOf(mgitUserResultsResponse.body.data, 'array')
+      assert.equal(mgitUserResultsResponse.body.data.length, 0)
+      assert.property(mgitUserResultsResponse.body, 'total')
+      assert.typeOf(mgitUserResultsResponse.body.extraColumns, 'array')
+
+      const daktariHivVlUserResultsResponse = await server
+        .get(path)
+        .set('Authorization', `Bearer ${daktariHivVlClinicianAuthAccessToken}`)
+      assert.equal(daktariHivVlUserResultsResponse.status, 200)
+      assert.typeOf(daktariHivVlUserResultsResponse.body, 'Object')
+      assert.property(daktariHivVlUserResultsResponse.body, 'data')
+      assert.typeOf(daktariHivVlUserResultsResponse.body.data, 'array')
+      assert.isAtLeast(daktariHivVlUserResultsResponse.body.data.length, 5)
+      const { name: daktariHivVlAssayName } = await knex('Assay')
+        .where('externalId', assayDaktariHivVlExternalId)
+        .first()
+      daktariHivVlUserResultsResponse.body.data.forEach(result => {
+        assert.equal(result.assayName, daktariHivVlAssayName)
+      })
+      assert.property(daktariHivVlUserResultsResponse.body, 'total')
+      assert.typeOf(daktariHivVlUserResultsResponse.body.extraColumns, 'array')
     })
   })
 

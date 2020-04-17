@@ -809,6 +809,7 @@ async function getUserJobFunctions(request) {
 module.exports = {
   getUser,
   getUserByUserId,
+  getUserByPersonId,
   authenticate,
   checkAuthentication,
   refreshToken,

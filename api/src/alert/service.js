@@ -4,6 +4,7 @@ const {
   addDataSourceToQuery,
   processUsingDataSourceQuery,
 } = require('../stringTemplate/service')
+const { getConstraints, addConstraints } = require('../auth/constraints')
 
 function onAlertMessageCreated({ alertMessageId }, { messageContext }) {
   const context = messageContext.bindActionCreators({ alertMessageSent })
@@ -69,13 +70,31 @@ function onAlertMessageUpdateAfterIssueDataChanged(
 // helper functions
 // --------------------------------------
 async function createAlertMessageFromTemplate(knex, alertMessageId) {
+  const { personId } = await knex('AlertMessage')
+    .where('id', alertMessageId)
+    .first('personId')
+  const dataConstraints = await getConstraints({ personId })
   const data = await knex('AlertMessage as m')
     .innerJoin('AlertTemplate as tmpl', 'm.alertTemplateId', 'tmpl.id')
     .leftJoin('Notification as n', 'n.alertMessageId', 'm.id')
     .modify(addDataSourceToQuery, { message: 'm', notification: 'n' })
+    .modify(addConstraints, dataConstraints, {
+      assay: 'a',
+      partner: 'pr',
+      device: 'd',
+      deviceType: 'dt',
+      person: 'p',
+      /*
+      result: 'r',
+      ^^^ Leaving this commented out to  highlight the fact that adding these
+          constraints will break the RO notifications configured for Myanmar
+      */
+      sample: 'sample',
+      site: 's',
+      showUnapprovedDevices: true,
+    })
     .where({ 'm.id': alertMessageId })
     .first('tmpl.message as messageTemplate')
-
   const { message } = await processUsingDataSourceQuery(
     data,
     ['messageTemplate'],

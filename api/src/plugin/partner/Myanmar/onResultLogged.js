@@ -466,7 +466,7 @@ async function createInventoryReagentHealthIssue(
 ) {
   const assayConsumables = await selectAssayConsumables(
     knex,
-    partnerId,
+    { partner: { id: partnerId } },
     assayId
   )
   _.map(assayConsumables, async assayConsumable => {
