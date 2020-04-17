@@ -158,31 +158,31 @@ export const BrowseFilters = ({
 export const navigations = [
   {
     value: '/browse/device',
-    label: 'Devices',
+    label: 'DEVICES',
     requiredPermissions: ['device:view', 'device:admin', 'device:edit'],
     requiredFeatures: ['device'],
   },
   {
     value: '/browse/result',
-    label: 'Results',
+    label: 'RESULTS',
     requiredPermissions: ['result:view', 'result:admin', 'result:edit'],
     requiredFeatures: ['result'],
   },
   {
     value: '/browse/person',
-    label: 'Contacts',
+    label: 'CONTACTS',
     requiredPermissions: ['person:view', 'person:admin', 'person:edit'],
     requiredFeatures: ['person'],
   },
   {
     value: '/browse/site',
-    label: 'Sites',
+    label: 'SITES',
     requiredPermissions: ['site:view', 'site:admin', 'site:edit'],
     requiredFeatures: ['site'],
   },
   {
     value: '/browse/inventory',
-    label: 'Supplies',
+    label: 'SUPPLIES',
     requiredPermissions: [
       'inventory:view',
       'inventory:admin',
@@ -192,13 +192,13 @@ export const navigations = [
   },
   {
     value: '/browse/router',
-    label: 'Routers',
+    label: 'ROUTERS',
     requiredPermissions: ['device:view', 'device:admin', 'device:edit'],
     requiredFeatures: ['router'],
   },
   {
     value: '/browse/reporter',
-    label: 'Reporters',
+    label: 'REPORTERS',
     requiredPermissions: ['device:view', 'device:admin', 'device:edit'],
     requiredFeatures: ['reporter'],
   },
@@ -214,7 +214,7 @@ export const navigations = [
   },
   {
     value: '/browse/deviceApiKey',
-    label: 'Device API Keys',
+    label: 'DEVICE API KEYS',
     requiredPermissions: [
       'deviceApiKey:view',
       'deviceApiKey:admin',

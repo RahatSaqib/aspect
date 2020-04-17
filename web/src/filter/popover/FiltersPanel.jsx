@@ -3,7 +3,7 @@ import { compose, withState, withHandlers } from 'recompose'
 import React, { Fragment } from 'react'
 import ReactDOM from 'react-dom'
 import { defineMessages } from 'react-intl'
-import { MdKeyboardArrowDown } from 'react-icons/md'
+import { GoPlus } from 'react-icons/go'
 import Modal from '@material-ui/core/Modal'
 import Card from '@material-ui/core/Card'
 
@@ -150,7 +150,7 @@ const clickExport = (
 const messages = defineMessages({
   moreFilters: {
     id: 'filter.popover.moreFilters',
-    defaultMessage: 'More filters',
+    defaultMessage: 'MORE FILTERS',
   },
   close: {
     id: 'filter.popover.close',
@@ -405,7 +405,7 @@ export const FiltersPanel = ({
           {intl.formatMessage(messages.moreFilters)}
         </span>
       </span>
-      <MdKeyboardArrowDown
+      <GoPlus
         className={cssClasses('Button__icon', {
           'Button__icon--shown': isShown,
         })}
