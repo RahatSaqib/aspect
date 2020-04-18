@@ -130,7 +130,7 @@ const SORT_FIELDS = [
   'requiresTreatment',
   'resultCategory1Name',
   'resultCategory2Name',
-  'patientId','r.caseId',
+  'patientId',
   'ca.externalId as caseExternalId',
 ]
 

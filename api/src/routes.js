@@ -392,6 +392,12 @@ function validateResultResponse() {
     patientData: Joi.object()
       .allow(null)
       .description('The patient data'),
+    caseId: Joi.number()
+      .allow(null)
+      .description('The case ID'),
+    caseExternalId: Joi.string()
+      .allow(null)
+      .description('The external case ID'),
     formSchema: Joi.object()
       .allow(null)
       .description('The form data object'),
