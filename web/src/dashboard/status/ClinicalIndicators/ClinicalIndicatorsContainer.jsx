@@ -62,6 +62,7 @@ const enhance = compose(
           resultCategory1 = null,
           resultCategory2 = null,
         } = graph
+
         return this.props.fetchClinicalIndicatorsDashboard({
           assay,
           minDate,

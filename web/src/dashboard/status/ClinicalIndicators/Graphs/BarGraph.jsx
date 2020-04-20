@@ -46,14 +46,11 @@ const BarGraph = ({
       Object.keys(assayFromState).length
     ) {
       const grouped = groupByKey(data, indexBy, keyToConsume, formatDate, intl)
-
       const normalised = normaliseKeys(grouped, filterResults, indexBy)
-
       const display =
         displayMethod === 'percentage'
           ? calcPercentageSplitBar(normalised, indexBy)
           : normalised
-
       const translated = translateKeys(display, assayFromState, true)
 
       setGraph([...translated])
