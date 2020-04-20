@@ -131,7 +131,6 @@ const SORT_FIELDS = [
   'resultCategory1Name',
   'resultCategory2Name',
   'patientId',
-  'ca.externalId as caseExternalId',
 ]
 
 module.exports = {
