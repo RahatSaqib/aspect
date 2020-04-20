@@ -13,13 +13,6 @@ exports[`Result List component should shallow render correctly when filter for a
     title="Results"
   />
   <pure(withProps(withHandlers(Connect(lifecycle(BrowseFilters)))))
-    addNewButtonPermissions={
-      Array [
-        "result:edit",
-        "result:admin",
-      ]
-    }
-    addNewButtonText="NEW RESULT"
     askConfirmationForExport={false}
     intl={
       Object {
@@ -53,7 +46,18 @@ exports[`Result List component should shallow render correctly when filter for a
         "search": "?filters=assayId%3D9",
       }
     }
-  />
+  >
+    <requirePermissions(AspectButton)
+      className="BrowseAddButton"
+      color="primary"
+      extraPermissions={Array []}
+      overriddenPermissions={Array []}
+      type="button"
+      variant="contained"
+    >
+      NEW RESULT
+    </requirePermissions(AspectButton)>
+  </pure(withProps(withHandlers(Connect(lifecycle(BrowseFilters)))))>
   <DataTableCard
     key="DataTableCard--table-undefined"
   >
@@ -115,13 +119,6 @@ exports[`Result List component should shallow render correctly when filter for a
     title="Results"
   />
   <pure(withProps(withHandlers(Connect(lifecycle(BrowseFilters)))))
-    addNewButtonPermissions={
-      Array [
-        "result:edit",
-        "result:admin",
-      ]
-    }
-    addNewButtonText="NEW RESULT"
     askConfirmationForExport={false}
     intl={
       Object {
@@ -155,7 +152,18 @@ exports[`Result List component should shallow render correctly when filter for a
         "search": "?filters=assayType%3DTB",
       }
     }
-  />
+  >
+    <requirePermissions(AspectButton)
+      className="BrowseAddButton"
+      color="primary"
+      extraPermissions={Array []}
+      overriddenPermissions={Array []}
+      type="button"
+      variant="contained"
+    >
+      NEW RESULT
+    </requirePermissions(AspectButton)>
+  </pure(withProps(withHandlers(Connect(lifecycle(BrowseFilters)))))>
   <DataTableCard
     key="DataTableCard--table-undefined"
   >

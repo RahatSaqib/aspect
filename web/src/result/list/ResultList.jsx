@@ -28,12 +28,13 @@ import DataTableCard from '../../components/shared/DataTableCard'
 import DataTableProgressBar from '../../components/shared/DataTableProgressBar'
 import { fetchResults, exportResults } from '../ResultRedux'
 import ExportListButton from '../../globals/components/ExportListButton'
-
+import requirePermissions from '../../components/shared/requirePermissions'
 import {
   ResultDataTable,
   ResultDataTableHead,
   ResultDataTableRow,
 } from './ResultDataTable'
+import AspectButton from '../../components/shared/AspectButton'
 
 const cssClasses = classnames.bind(require('./ResultList.css'))
 
@@ -277,137 +278,149 @@ export const ResultList = ({
   onAddNewButtonClick,
   onRowClick,
   reducedFilters,
-}) => (
-  <div className={cssClasses('Container')}>
-    <Helmet title={intl.formatMessage(messages.resultsTitle)} />
-    <NavTitle title={intl.formatMessage(messages.resultsTitle)} />
-    <BrowseFilters
-      history={history}
-      location={location}
-      intl={intl}
-      config={reducedFilters}
-      onClickExport={onExportClick}
-      askConfirmationForExport={table.total > 1000}
-      addNewButtonText={intl.formatMessage(messages.newResult)}
-      onAddNewButtonClick={onAddNewButtonClick}
-      addNewButtonPermissions={['result:edit', 'result:admin']}
-    />
-    <DataTableCard key={`DataTableCard--table-${location.key}`}>
-      <DataTableProgressBar disabled={!table.loading} />
-      <ExportListButton
-        onExcelClick={onExportClick}
-        onCsvClick={onExportClick}
-        visible={!items.currentIdList.isEmpty()}
-        reportName="Results"
-      />
-      {items.currentIdList.isEmpty() && (
-        <BrowseEmptyList history={history} location={location} intl={intl} />
-      )}
-      {!items.currentIdList.isEmpty() && (
-        <ResultDataTable
-          selectable={false}
-          className={cssClasses('ResultDataTable')}
+}) => {
+  const AddNewButton = requirePermissions({
+    permissions: ['result:edit', 'result:admin'],
+  })(AspectButton)
+  return (
+    <div className={cssClasses('Container')}>
+      <Helmet title={intl.formatMessage(messages.resultsTitle)} />
+      <NavTitle title={intl.formatMessage(messages.resultsTitle)} />
+      <BrowseFilters
+        history={history}
+        location={location}
+        intl={intl}
+        config={reducedFilters}
+        onClickExport={onExportClick}
+        askConfirmationForExport={table.total > 1000}
+      >
+        <AddNewButton
+          type="button"
+          color="primary"
+          variant="contained"
+          className={cssClasses('BrowseAddButton')}
+          onClick={onAddNewButtonClick}
         >
-          <ResultDataTableHead
+          {intl.formatMessage(messages.newResult)}
+        </AddNewButton>
+      </BrowseFilters>
+      <DataTableCard key={`DataTableCard--table-${location.key}`}>
+        <DataTableProgressBar disabled={!table.loading} />
+        <ExportListButton
+          onExcelClick={onExportClick}
+          onCsvClick={onExportClick}
+          visible={!items.currentIdList.isEmpty()}
+          reportName="Results"
+        />
+        {items.currentIdList.isEmpty() && (
+          <BrowseEmptyList history={history} location={location} intl={intl} />
+        )}
+        {!items.currentIdList.isEmpty() && (
+          <ResultDataTable
+            selectable={false}
+            className={cssClasses('ResultDataTable')}
+          >
+            <ResultDataTableHead
+              history={history}
+              location={location}
+              sortColumnKey={sortCol}
+              sortColumnDir={sortDir}
+              columns={Immutable.List([
+                {
+                  key: 'endedOn',
+                  label: intl.formatMessage(messages.endedOn),
+                  sortable: true,
+                },
+                {
+                  key: 'deviceName',
+                  label: intl.formatMessage(messages.deviceName),
+                  sortable: true,
+                  hiddenOn: 'sm',
+                },
+                {
+                  key: 'sampleOriginSiteName',
+                  label: intl.formatMessage(messages.sampleOriginSiteName),
+                  sortable: true,
+                  hiddenOn: 'sm',
+                },
+                {
+                  key: 'sampleId',
+                  label: intl.formatMessage(messages.sampleId),
+                  sortable: true,
+                },
+                {
+                  key: 'resultText',
+                  label: intl.formatMessage(messages.resultText),
+                  sortable: true,
+                },
+                {
+                  key: 'errorCode',
+                  label: intl.formatMessage(messages.errorCode),
+                  sortable: true,
+                  hiddenOn: 'md',
+                },
+                {
+                  key: 'resultWorkflowStatus',
+                  label: intl.formatMessage(messages.resultWorkflowStatus),
+                  sortable: true,
+                  hiddenOn: 'sm',
+                },
+                {
+                  key: 'treatmentStatusInfo',
+                  label: intl.formatMessage(messages.resultTreatmentStatus),
+                  sortable: true,
+                  hiddenOn: 'sm',
+                },
+                {
+                  key: 'patientId',
+                  label: intl.formatMessage(messages.patiendId),
+                  sortable: true,
+                  hiddenOn: 'xs',
+                },
+              ]).concat(
+                table.extraColumns.map(column => ({
+                  key: column.get('db'),
+                  label: messageByI18nKey(column.get('i18nKey'))(
+                    column.get('title'),
+                    intl
+                  ),
+                  sortable: true,
+                  hiddenOn: 'md',
+                }))
+              )}
+            />
+            <TableBody>
+              {items.currentIdList
+                .map(id => items.byId.get(id))
+                .map(result => (
+                  <ResultDataTableRow
+                    key={result.get('id')}
+                    intl={intl}
+                    extraColumns={table.extraColumns}
+                    result={result}
+                    onClick={onRowClick}
+                    data-result-id={result.get('id')}
+                  />
+                ))}
+            </TableBody>
+          </ResultDataTable>
+        )}
+        {!items.currentIdList.isEmpty() && (
+          <BrowseTablePaginator
             history={history}
             location={location}
-            sortColumnKey={sortCol}
-            sortColumnDir={sortDir}
-            columns={Immutable.List([
-              {
-                key: 'endedOn',
-                label: intl.formatMessage(messages.endedOn),
-                sortable: true,
-              },
-              {
-                key: 'deviceName',
-                label: intl.formatMessage(messages.deviceName),
-                sortable: true,
-                hiddenOn: 'sm',
-              },
-              {
-                key: 'sampleOriginSiteName',
-                label: intl.formatMessage(messages.sampleOriginSiteName),
-                sortable: true,
-                hiddenOn: 'sm',
-              },
-              {
-                key: 'sampleId',
-                label: intl.formatMessage(messages.sampleId),
-                sortable: true,
-              },
-              {
-                key: 'resultText',
-                label: intl.formatMessage(messages.resultText),
-                sortable: true,
-              },
-              {
-                key: 'errorCode',
-                label: intl.formatMessage(messages.errorCode),
-                sortable: true,
-                hiddenOn: 'md',
-              },
-              {
-                key: 'resultWorkflowStatus',
-                label: intl.formatMessage(messages.resultWorkflowStatus),
-                sortable: true,
-                hiddenOn: 'sm',
-              },
-              {
-                key: 'treatmentStatusInfo',
-                label: intl.formatMessage(messages.resultTreatmentStatus),
-                sortable: true,
-                hiddenOn: 'sm',
-              },
-              {
-                key: 'patientId',
-                label: intl.formatMessage(messages.patiendId),
-                sortable: true,
-                hiddenOn: 'xs',
-              },
-            ]).concat(
-              table.extraColumns.map(column => ({
-                key: column.get('db'),
-                label: messageByI18nKey(column.get('i18nKey'))(
-                  column.get('title'),
-                  intl
-                ),
-                sortable: true,
-                hiddenOn: 'md',
-              }))
-            )}
+            intl={intl}
+            timedMessageUsed={sortCol === 'endedOn'}
+            paginatorStatus={messages.paginatorStatus}
+            total={table.total}
+            pageAt={pageAt}
+            pageSize={pageSize}
+            pageSizeButtonKeys={RESULT_PAGE_SIZE_BUTTON_KEYS}
           />
-          <TableBody>
-            {items.currentIdList
-              .map(id => items.byId.get(id))
-              .map(result => (
-                <ResultDataTableRow
-                  key={result.get('id')}
-                  intl={intl}
-                  extraColumns={table.extraColumns}
-                  result={result}
-                  onClick={onRowClick}
-                  data-result-id={result.get('id')}
-                />
-              ))}
-          </TableBody>
-        </ResultDataTable>
-      )}
-      {!items.currentIdList.isEmpty() && (
-        <BrowseTablePaginator
-          history={history}
-          location={location}
-          intl={intl}
-          timedMessageUsed={sortCol === 'endedOn'}
-          paginatorStatus={messages.paginatorStatus}
-          total={table.total}
-          pageAt={pageAt}
-          pageSize={pageSize}
-          pageSizeButtonKeys={RESULT_PAGE_SIZE_BUTTON_KEYS}
-        />
-      )}
-    </DataTableCard>
-  </div>
-)
+        )}
+      </DataTableCard>
+    </div>
+  )
+}
 
 export default enhance(ResultList)

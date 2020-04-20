@@ -4,7 +4,6 @@ import React from 'react'
 import { compose, withProps, withHandlers, pure, lifecycle } from 'recompose'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import AspectButton from '../../components/shared/AspectButton'
 import Report from '../../dashboard/status/Reports'
 import BrowseNavDropdown from './BrowseNavDropdown'
 import { mergeToFiltersParams, reduceNavLinks } from '../../filter/utils'
@@ -17,7 +16,6 @@ import {
   beginListExportProcessing,
 } from '../../filter/FilterRedux'
 import { getAspectDisplayPreferences } from '../sideEffects/LocalStorage'
-import requirePermissions from '../../components/shared/requirePermissions'
 
 const cssClasses = classnames.bind(require('./BrowseFilters.css'))
 
@@ -108,6 +106,7 @@ const enhance = compose(
 )
 
 export const BrowseFilters = ({
+  children,
   history,
   location,
   intl,
@@ -116,15 +115,8 @@ export const BrowseFilters = ({
   userPermissions,
   dateFormat,
   showBrowseDropdown = true,
-  addNewButtonText,
-  onAddNewButtonClick,
-  addNewButtonPermissions,
   ...restProps
 }) => {
-  const AddNewButton = requirePermissions({
-    permissions: addNewButtonPermissions,
-  })(AspectButton)
-
   return (
     <div className={cssClasses('Container')}>
       <FiltersBtnGroup
@@ -141,17 +133,7 @@ export const BrowseFilters = ({
           />
         )}
       </FiltersBtnGroup>
-      {onAddNewButtonClick && (
-        <AddNewButton
-          type="button"
-          color="primary"
-          variant="contained"
-          className={cssClasses('AddButton')}
-          onClick={onAddNewButtonClick}
-        >
-          {addNewButtonText}
-        </AddNewButton>
-      )}
+      {children}
 
       <FiltersPanel
         intl={intl}

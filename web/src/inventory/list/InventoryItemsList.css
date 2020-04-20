@@ -10,6 +10,13 @@
   justify-content: space-between;
 }
 
+.BrowseAddButton {
+  margin-right: 1.5em;
+  font-weight: 700;
+  padding-right: 2.5em;
+  padding-left: 2.5em;
+}
+
 .DataTableCard--table {
   overflow: visible; /* For IconMenu at last row to be visible */
 }
