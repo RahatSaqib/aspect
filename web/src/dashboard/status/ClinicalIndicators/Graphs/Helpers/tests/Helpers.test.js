@@ -1,4 +1,3 @@
-import { shallow } from 'enzyme'
 import expect from 'expect.js'
 
 import { calcPercentageSplitBar, groupByKey, normaliseKeys } from '../index'
