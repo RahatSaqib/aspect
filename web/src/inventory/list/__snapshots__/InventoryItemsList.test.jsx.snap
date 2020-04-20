@@ -13,6 +13,13 @@ exports[`InventoryItemList module InventoryItemList component should render corr
     title="Inventory on Hand"
   />
   <pure(withProps(withHandlers(Connect(lifecycle(BrowseFilters)))))
+    addNewButtonPermissions={
+      Array [
+        "inventory:edit",
+        "inventory:admin",
+      ]
+    }
+    addNewButtonText="ADD INVENTORY"
     dateFilterLabel="Expires On"
     history={
       Object {
@@ -51,6 +58,7 @@ exports[`InventoryItemList module InventoryItemList component should render corr
         "search": "",
       }
     }
+    onAddNewButtonClick={[Function]}
   />
   <DataTableCard
     className="DataTableCard--action"
@@ -62,19 +70,6 @@ exports[`InventoryItemList module InventoryItemList component should render corr
       name="groupBySite"
       onChange={[Function]}
     />
-    <WithStyles(Tooltip)
-      placement="bottom"
-      title="Add Inventory"
-    >
-      <WithStyles(IconButton)
-        aria-label="Add Inventory"
-        onClick={[Function]}
-      >
-        <pure(AddIcon)
-          fontSize="large"
-        />
-      </WithStyles(IconButton)>
-    </WithStyles(Tooltip)>
   </DataTableCard>
   <DataTableCard
     className="DataTableCard--table"

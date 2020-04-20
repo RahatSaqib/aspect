@@ -13,6 +13,13 @@ exports[`Result List component should shallow render correctly when filter for a
     title="Results"
   />
   <pure(withProps(withHandlers(Connect(lifecycle(BrowseFilters)))))
+    addNewButtonPermissions={
+      Array [
+        "result:edit",
+        "result:admin",
+      ]
+    }
+    addNewButtonText="NEW RESULT"
     askConfirmationForExport={false}
     intl={
       Object {
@@ -108,6 +115,13 @@ exports[`Result List component should shallow render correctly when filter for a
     title="Results"
   />
   <pure(withProps(withHandlers(Connect(lifecycle(BrowseFilters)))))
+    addNewButtonPermissions={
+      Array [
+        "result:edit",
+        "result:admin",
+      ]
+    }
+    addNewButtonText="NEW RESULT"
     askConfirmationForExport={false}
     intl={
       Object {

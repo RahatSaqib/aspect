@@ -13,6 +13,13 @@ exports[`Person List module PersonList component should shallow render correctly
     title="Contacts"
   />
   <pure(withProps(withHandlers(Connect(lifecycle(BrowseFilters)))))
+    addNewButtonPermissions={
+      Array [
+        "person:edit",
+        "person:admin",
+      ]
+    }
+    addNewButtonText="ADD CONTACT"
     history={
       Object {
         "push": [Function],
@@ -35,23 +42,6 @@ exports[`Person List module PersonList component should shallow render correctly
       }
     }
   />
-  <DataTableCard
-    className="DataTableCard--action"
-  >
-    <div />
-    <WithStyles(Tooltip)
-      placement="bottom"
-      title="Add Contact"
-    >
-      <WithStyles(IconButton)
-        aria-label="Add Contact"
-      >
-        <pure(AddIcon)
-          fontSize="large"
-        />
-      </WithStyles(IconButton)>
-    </WithStyles(Tooltip)>
-  </DataTableCard>
   <DataTableCard
     key="DataTableCard--table-undefined"
   >
