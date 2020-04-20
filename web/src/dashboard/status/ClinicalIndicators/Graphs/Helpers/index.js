@@ -7,7 +7,8 @@ import sum from 'lodash/sum'
 import values from 'lodash/values'
 import includes from 'lodash/includes'
 import pickBy from 'lodash/pickBy'
-import sortBy from 'lodash/sortBy'
+import addMinutes from 'date-fns/addMinutes'
+import subMinutes from 'date-fns/subMinutes'
 import subDays from 'date-fns/subDays'
 import subMonths from 'date-fns/subMonths'
 import startOfMonth from 'date-fns/startOfMonth'
@@ -43,6 +44,15 @@ const graphColorMap = [
 
 const getDayFromToday = cnt => format(addDays(new Date(), cnt), 'yyyy-MM-dd')
 
+const negateTimeZoneOffset = dateString => {
+  const date = new Date(dateString)
+  const offset = date.getTimezoneOffset()
+
+  return Math.sign(offset) !== -1
+    ? addMinutes(date, offset)
+    : subMinutes(date, Math.abs(offset))
+}
+
 const getKeysFromResults = (data, keyToOmit) => {
   const newdata = []
   data.filter(d => {
@@ -64,9 +74,14 @@ const groupByKey = (data, key, keyToConsume = false, formatDate = false) => {
     const countKey = keyToConsume
       ? curr[keyToConsume]
       : filter(graphColorMap, ['id', 99])[0].externalId
+
+    const dateFormatted = formatDate
+      ? format(negateTimeZoneOffset(curr[key]), formatDate)
+      : curr[key]
+
     acc[curr[key]] = {
       ...acc[curr[key]],
-      [key]: formatDate ? format(new Date(curr[key]), formatDate) : curr[key],
+      [key]: dateFormatted,
       [countKey]: curr.cnt,
     }
     return acc
@@ -151,8 +166,7 @@ const calcPercentageSplitBar = (data, keyToOmitDuringCalc) => {
     })
 
     for (const [key, value] of Object.entries(dataPoints)) {
-      const val = parseInt(value, 11)
-      acc[index][key] = ((val / total) * 100).toFixed(2)
+      acc[index][key] = ((value / total) * 100).toPrecision(6)
     }
 
     return acc
