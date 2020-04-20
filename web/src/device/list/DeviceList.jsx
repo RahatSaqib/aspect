@@ -243,6 +243,7 @@ export const DeviceList = ({
       config={reducedFilters}
       onClickExport={onExportClick}
       askConfirmationForExport={table.total > 1000}
+      addNewButtonPermissions={['device:edit', 'device:admin']}
     />
     <DataTableCard key={`DataTableCard--table-${location.key}`}>
       <DataTableProgressBar disabled={!table.loading} />

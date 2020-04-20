@@ -237,6 +237,7 @@ export const PersonList = ({
       config={reducedFilters}
       addNewButtonText={intl.formatMessage(messages.addContact)}
       onAddNewButtonClick={showNewContactPage}
+      addNewButtonPermissions={['person:edit', 'person:admin']}
     />
     <DataTableCard key={`DataTableCard--table-${location.key}`}>
       <DataTableProgressBar disabled={!table.loading} />

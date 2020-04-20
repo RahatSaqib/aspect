@@ -17,6 +17,7 @@ import {
   beginListExportProcessing,
 } from '../../filter/FilterRedux'
 import { getAspectDisplayPreferences } from '../sideEffects/LocalStorage'
+import requirePermissions from '../../components/shared/requirePermissions'
 
 const cssClasses = classnames.bind(require('./BrowseFilters.css'))
 
@@ -117,43 +118,51 @@ export const BrowseFilters = ({
   showBrowseDropdown = true,
   addNewButtonText,
   onAddNewButtonClick,
+  addNewButtonPermissions,
   ...restProps
-}) => (
-  <div className={cssClasses('Container')}>
-    <FiltersBtnGroup
-      intl={intl}
-      filters={restProps.filters}
-      onRemoveFilterItem={onRemoveFilterItem}
-      className={cssClasses('FiltersBtnGroup')}
-    >
-      {showBrowseDropdown && (
-        <BrowseNavDropdown
-          history={history}
-          location={location}
-          source={reducedSource}
-        />
-      )}
-    </FiltersBtnGroup>
-    {onAddNewButtonClick && (
-      <AspectButton
-        type="button"
-        color="primary"
-        variant="contained"
-        className={cssClasses('AddButton')}
-        onClick={onAddNewButtonClick}
+}) => {
+  const AddNewButton = requirePermissions({
+    permissions: addNewButtonPermissions,
+  })(AspectButton)
+
+  return (
+    <div className={cssClasses('Container')}>
+      <FiltersBtnGroup
+        intl={intl}
+        filters={restProps.filters}
+        onRemoveFilterItem={onRemoveFilterItem}
+        className={cssClasses('FiltersBtnGroup')}
       >
-        {addNewButtonText}
-      </AspectButton>
-    )}
-    <FiltersPanel
-      intl={intl}
-      className={cssClasses('FiltersPanel')}
-      dateFormat={dateFormat}
-      {...restProps}
-    />
-    <Report />
-  </div>
-)
+        {showBrowseDropdown && (
+          <BrowseNavDropdown
+            history={history}
+            location={location}
+            source={reducedSource}
+          />
+        )}
+      </FiltersBtnGroup>
+      {onAddNewButtonClick && (
+        <AddNewButton
+          type="button"
+          color="primary"
+          variant="contained"
+          className={cssClasses('AddButton')}
+          onClick={onAddNewButtonClick}
+        >
+          {addNewButtonText}
+        </AddNewButton>
+      )}
+
+      <FiltersPanel
+        intl={intl}
+        className={cssClasses('FiltersPanel')}
+        dateFormat={dateFormat}
+        {...restProps}
+      />
+      <Report />
+    </div>
+  )
+}
 
 export const navigations = [
   {
@@ -204,7 +213,7 @@ export const navigations = [
   },
   {
     value: '/browse/notification',
-    label: 'Notifications',
+    label: 'NOTIFICATIONS',
     requiredPermissions: [
       'notification:view',
       'notification:admin',

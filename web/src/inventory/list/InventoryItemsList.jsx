@@ -383,6 +383,7 @@ export const InventoryItemsList = ({
       config={reducedFilters}
       dateFilterLabel={intl.formatMessage(messages.expiresOn)}
       addNewButtonText={intl.formatMessage(messages.addInventory)}
+      addNewButtonPermissions={['inventory:edit', 'inventory:admin']}
       onAddNewButtonClick={showNewInventoryDialog}
     />
 

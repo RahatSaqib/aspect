@@ -290,6 +290,7 @@ export const ResultList = ({
       askConfirmationForExport={table.total > 1000}
       addNewButtonText={intl.formatMessage(messages.newResult)}
       onAddNewButtonClick={onAddNewButtonClick}
+      addNewButtonPermissions={['result:edit', 'result:admin']}
     />
     <DataTableCard key={`DataTableCard--table-${location.key}`}>
       <DataTableProgressBar disabled={!table.loading} />

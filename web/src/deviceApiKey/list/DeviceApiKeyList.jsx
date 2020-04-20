@@ -422,6 +422,7 @@ export const DeviceApiKeyList = ({
       intl={intl}
       config={reducedFilters}
       onClickExport={onExportClick}
+      addNewButtonPermissions={['deviceApiKey:edit', 'deviceApiKey:admin']}
     />
     <div>
       <Button onClick={onOpenGeneratorDialog}>
