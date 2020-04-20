@@ -149,31 +149,31 @@ export const BrowseFilters = ({
 export const navigations = [
   {
     value: '/browse/device',
-    label: 'DEVICES',
+    label: 'Devices',
     requiredPermissions: ['device:view', 'device:admin', 'device:edit'],
     requiredFeatures: ['device'],
   },
   {
     value: '/browse/result',
-    label: 'RESULTS',
+    label: 'Results',
     requiredPermissions: ['result:view', 'result:admin', 'result:edit'],
     requiredFeatures: ['result'],
   },
   {
     value: '/browse/person',
-    label: 'CONTACTS',
+    label: 'Contacts',
     requiredPermissions: ['person:view', 'person:admin', 'person:edit'],
     requiredFeatures: ['person'],
   },
   {
     value: '/browse/site',
-    label: 'SITES',
+    label: 'Sites',
     requiredPermissions: ['site:view', 'site:admin', 'site:edit'],
     requiredFeatures: ['site'],
   },
   {
     value: '/browse/inventory',
-    label: 'SUPPLIES',
+    label: 'Supplies',
     requiredPermissions: [
       'inventory:view',
       'inventory:admin',
@@ -183,19 +183,19 @@ export const navigations = [
   },
   {
     value: '/browse/router',
-    label: 'ROUTERS',
+    label: 'Routers',
     requiredPermissions: ['device:view', 'device:admin', 'device:edit'],
     requiredFeatures: ['router'],
   },
   {
     value: '/browse/reporter',
-    label: 'REPORTERS',
+    label: 'Reporters',
     requiredPermissions: ['device:view', 'device:admin', 'device:edit'],
     requiredFeatures: ['reporter'],
   },
   {
     value: '/browse/notification',
-    label: 'NOTIFICATIONS',
+    label: 'Notifications',
     requiredPermissions: [
       'notification:view',
       'notification:admin',
@@ -205,7 +205,7 @@ export const navigations = [
   },
   {
     value: '/browse/deviceApiKey',
-    label: 'DEVICE API KEYS',
+    label: 'Device Api Key',
     requiredPermissions: [
       'deviceApiKey:view',
       'deviceApiKey:admin',

@@ -47,6 +47,7 @@ import {
   DeviceApiKeyDataTableRow,
 } from './DeviceApiKeyDataTable'
 import ExportListButton from '../../globals/components/ExportListButton'
+import AspectButton from '../../components/shared/AspectButton'
 
 const cssClasses = classnames.bind(require('./DeviceApiKeyList.css'))
 
@@ -423,17 +424,28 @@ export const DeviceApiKeyList = ({
       config={reducedFilters}
       onClickExport={onExportClick}
       addNewButtonPermissions={['deviceApiKey:edit', 'deviceApiKey:admin']}
-    />
-    <div>
-      <Button onClick={onOpenGeneratorDialog}>
+    >
+      <AspectButton onClick={onOpenGeneratorDialog}
+        type="button"
+        color="primary"
+        variant="contained"
+        className={cssClasses('BrowseAddButton')}
+      >
         {intl.formatMessage(messages.generate)}
-      </Button>
-      <Button
+      </AspectButton>
+      <AspectButton
+        type="button"
+        color="primary"
+        variant="contained"
+        className={cssClasses('BrowseAddButton')}
         onClick={onOpenAssignerDialog}
         disabled={_.isEmpty(assignerValues.deviceApiKeyIds)}
       >
         {intl.formatMessage(messages.assign)}
-      </Button>
+      </AspectButton>
+    </BrowseFilters>
+    <div>
+      
       <DeviceApiKeyGeneratorDialogForm
         isDialogOpen={isGeneratorDialogOpen}
         onChange={onGeneratorFormChange}

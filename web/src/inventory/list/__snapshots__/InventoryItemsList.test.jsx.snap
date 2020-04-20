@@ -61,7 +61,7 @@ exports[`InventoryItemList module InventoryItemList component should render corr
       type="button"
       variant="contained"
     >
-      ADD INVENTORY
+      Add Inventory
     </requirePermissions(AspectButton)>
   </pure(withProps(withHandlers(Connect(lifecycle(BrowseFilters)))))>
   <DataTableCard

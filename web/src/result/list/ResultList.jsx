@@ -45,7 +45,7 @@ const messages = defineMessages({
   },
   newResult: {
     id: 'pages.ResultList.newResult',
-    defaultMessage: 'NEW RESULT',
+    defaultMessage: 'New Result',
   },
   endedOn: {
     id: 'pages.ResultList.EndedOn',

@@ -107,7 +107,7 @@ const messages = defineMessages({
   },
   addInventory: {
     id: 'pages.InventoryItemsList.addInventory',
-    defaultMessage: 'ADD INVENTORY',
+    defaultMessage: 'Add Inventory',
   },
   transferInventory: {
     id: 'pages.InventoryItemsList.transferInventory',

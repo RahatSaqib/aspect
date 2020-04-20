@@ -74,7 +74,7 @@ const messages = defineMessages({
   },
   addContact: {
     id: 'pages.PersonList.addContact',
-    defaultMessage: 'ADD CONTACT',
+    defaultMessage: 'New Contact',
   },
 })
 

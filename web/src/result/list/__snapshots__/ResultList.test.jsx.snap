@@ -55,7 +55,7 @@ exports[`Result List component should shallow render correctly when filter for a
       type="button"
       variant="contained"
     >
-      NEW RESULT
+      New Result
     </requirePermissions(AspectButton)>
   </pure(withProps(withHandlers(Connect(lifecycle(BrowseFilters)))))>
   <DataTableCard
@@ -161,7 +161,7 @@ exports[`Result List component should shallow render correctly when filter for a
       type="button"
       variant="contained"
     >
-      NEW RESULT
+      New Result
     </requirePermissions(AspectButton)>
   </pure(withProps(withHandlers(Connect(lifecycle(BrowseFilters)))))>
   <DataTableCard
