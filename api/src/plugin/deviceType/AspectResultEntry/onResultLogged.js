@@ -137,7 +137,7 @@ async function updateCovidResultFromFormData(
         // TODO: may be need to have another IF statement here whether to add entry to Case table or not
         caseId = await addCase({ partnerId, externalId: caseExternalId })
       }
-      resultUpdates.caseId = caseId || null
+      resultUpdates.caseId = caseId
     }
     if (canOverwriteDiagnosticDataByHand) {
       patientDataObject.id = caseExternalId
