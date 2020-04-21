@@ -451,8 +451,6 @@ const mockData = Immutable.fromJS({
     },
   },
   schema: {
-    title: 'Test Result',
-    icon: 'document',
     groups: {
       site: {
         order: 0,

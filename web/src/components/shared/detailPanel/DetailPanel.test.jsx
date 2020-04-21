@@ -29,8 +29,6 @@ describe('DetailPanel module', () => {
 })
 
 const screenSchema = Immutable.fromJS({
-  title: 'Test Result',
-  icon: 'document',
   groups: {
     patientData: {
       order: 4,
