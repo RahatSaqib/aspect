@@ -144,33 +144,35 @@ const formatDataForPie = (
 }
 
 const getAverageFromData = (data, value, which) => {
-  let total = []
-  if (Array.isArray(which)) {
-    const rangeTotal = which.reduce((acc, curr) => {
-      const item = filter(data, ['label', curr])[0]
-      if (acc && acc.id) {
-        acc[value] += parseFloat(item[value])
-      } else {
-        acc = { ...item, [value]: parseFloat(item[value]) }
-      }
-      return acc
-    }, {})
-    total.push(rangeTotal)
-  } else {
-    total = filter(data, ['label', which])
-  }
+  if (data.length && which) {
+    let total = []
+    if (Array.isArray(which)) {
+      const rangeTotal = which.reduce((acc, curr) => {
+        const item = filter(data, ['label', curr])[0]
+        if (acc && acc.id) {
+          acc[value] += parseFloat(item[value])
+        } else {
+          acc = { ...item, [value]: parseFloat(item[value]) }
+        }
+        return acc
+      }, {})
+      total.push(rangeTotal)
+    } else {
+      total = filter(data, ['label', which])
+    }
 
-  const sum = data.reduce((acc, curr) => acc + parseFloat(curr.value), 0)
-  const avg = calcPercentageForGraphs(
-    parseFloat(total[0][value]),
-    round(sum),
-    1
-  )
-
-  return {
-    avg: parseFloat(avg),
-    color: total[0].color,
+    const sum = data.reduce((acc, curr) => acc + parseFloat(curr.value), 0)
+    const avg = calcPercentageForGraphs(
+      parseFloat(total[0][value]),
+      round(sum),
+      1
+    )
+    return {
+      avg: parseFloat(avg),
+      color: total[0].color,
+    }
   }
+  return {}
 }
 
 const calcPercentageSplitBar = (data, keyToOmitDuringCalc) => {

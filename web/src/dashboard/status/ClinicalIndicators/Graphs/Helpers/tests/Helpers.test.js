@@ -210,5 +210,32 @@ describe('Clinical Indicators Helpers', () => {
         )
       })
     })
+
+    describe('Scenario 4', () => {
+      it('should return {} when empty: Scenario 4', () => {
+        Object.assign(process.env, variables.customPropertiesVariables)
+        const keyToConsume = 'resultCategory1'
+        const indexBy = 'cnt'
+        const displayMethod = 'percentage'
+        const filterResults = false
+        const valueKey = 'value'
+        const valueToConsume = ['Not Detected', '< 1000']
+        const scenarioCase = 'case4'
+        const formatted = formatDataForPie(
+          aggregateDataCategory1DetectedIn[scenarioCase],
+          keyToConsume,
+          indexBy,
+          assayFromState,
+          displayMethod,
+          filterResults
+        )
+        const calculated = getAverageFromData(
+          formatted,
+          valueKey,
+          valueToConsume
+        )
+        expect(calculated).to.eql({})
+      })
+    })
   })
 })

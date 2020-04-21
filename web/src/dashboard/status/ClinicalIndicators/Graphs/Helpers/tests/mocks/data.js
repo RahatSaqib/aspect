@@ -258,6 +258,7 @@ const aggregateDataCategory1DetectedIn = {
     { cnt: 48, resultCategory1: 'LessThan1000' },
     { cnt: 13, resultCategory1: 'NotDetected' },
   ],
+  case4: [],
 }
 
 const aggregateDataCategory1DetectedExpectedOut = {
