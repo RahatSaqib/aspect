@@ -135,7 +135,6 @@ async function updateCovidResultFromFormData(
       }
       resultUpdates.caseId = caseId || null
     }
-    patientDataObject.caseId = caseExternalId
     if (canOverwriteDiagnosticDataByHand) {
       patientDataObject.id = caseExternalId
     } else if (caseExternalId) {
