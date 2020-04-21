@@ -224,7 +224,126 @@ const byMonthResultCategory1DetectedExpectedOut = {
 
 /** ___________________________________________ */
 
+/**
+ * Case 1 & 2
+ * localhost:8080/api/result/clinical-indicator-aggregations
+ * ?assay=GxHiv1Vl
+ * &minDate=2019-11-01
+ * &maxDate=2020-04-21
+ * &groupBy=resultCategory1
+ */
+
+/**
+ * Case 3
+ * localhost:8080/api/result/clinical-indicator-aggregations
+ * ?assay=GxHiv1Vl
+ * &minDate=2019-11-01
+ * &maxDate=2020-04-21
+ * &groupBy=resultCategory1
+ */
+
+const aggregateDataCategory1DetectedIn = {
+  case1: [
+    { cnt: 3, resultCategory1: 'Detected', resultCategory2: 'Indeterminate' },
+    { cnt: 18, resultCategory1: 'Detected', resultCategory2: 'NotDetected' },
+    { cnt: 6, resultCategory1: 'Detected', resultCategory2: 'Detected' },
+  ],
+  case2: [
+    { cnt: 10, resultCategory2: 'NotDetected' },
+    { cnt: 1, resultCategory2: 'Detected' },
+    { cnt: 1, resultCategory2: 'Indeterminate' },
+  ],
+  case3: [
+    { cnt: 39, resultCategory1: 'MoreThan1000' },
+    { cnt: 48, resultCategory1: 'LessThan1000' },
+    { cnt: 13, resultCategory1: 'NotDetected' },
+  ],
+}
+
+const aggregateDataCategory1DetectedExpectedOut = {
+  case1: [
+    {
+      id: 'Indeterminate',
+      label: 'Indeterminate',
+      value: '11.1111',
+      color: 'var(--your-pink, #ffc9c4)',
+    },
+    {
+      id: 'NotDetected',
+      label: 'Not Detected',
+      value: '66.6667',
+      color: 'var(--malachite, #00ca1c)',
+    },
+    {
+      id: 'Detected',
+      label: 'Detected',
+      value: '22.2222',
+      color: 'var(--guardsman-red, #d60000)',
+    },
+  ],
+  case2: [
+    {
+      id: 'Indeterminate',
+      label: 'Indeterminate',
+      value: '8.33333',
+      color: 'var(--your-pink, #ffc9c4)',
+    },
+    {
+      id: 'NotDetected',
+      label: 'Not Detected',
+      value: '83.3333',
+      color: 'var(--malachite, #00ca1c)',
+    },
+    {
+      id: 'Detected',
+      label: 'Detected',
+      value: '8.33333',
+      color: 'var(--guardsman-red, #d60000)',
+    },
+  ],
+  case3: [
+    {
+      id: 'MoreThan1000',
+      label: '>= 1000',
+      value: '39.0000',
+      color: 'var(--guardsman-red, #d60000)',
+    },
+    {
+      id: 'LessThan1000',
+      label: '< 1000',
+      value: '48.0000',
+      color: 'var(--your-pink, #ffc9c4)',
+    },
+    {
+      id: 'NotDetected',
+      label: 'Not Detected',
+      value: '13.0000',
+      color: 'var(--malachite, #00ca1c)',
+    },
+  ],
+}
+
+const aggregateDataCategory1DetectedAverageLegendExpectedOut = {
+  case1: {
+    avg: 22,
+    color: 'var(--guardsman-red, #d60000)',
+  },
+  case2: {
+    avg: 8,
+    color: 'var(--guardsman-red, #d60000)',
+  },
+  case3: {
+    avg: 61,
+    color: 'var(--malachite, #00ca1c)',
+  },
+}
+
+/** ___________________________________________ */
+
 export {
+  aggregateDataCategory1DetectedIn,
+  aggregateDataCategory1DetectedExpectedOut,
+  aggregateDataCategory1DetectedAverageLegendExpectedOut,
   byMonthSimpleGroupByIn,
   byMonthSimpleGroupByExpectedOut,
   normalisedByMonthSimpleOutExpected,

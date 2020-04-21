@@ -12,7 +12,7 @@
     "test": "cross-env ASPECT_TARGET=test BABEL_ENV=test JEST_FILE=mocha.json jest --coverage",
     "test:snapshot": "npm run test -- -u",
     "test:watch": "npm run test -- --watch",
-    "simpletest": "jest test --watch",
+    "simpletest": "ASPECT_TARGET=test jest test --watch",
     "posttest": "npm run lint",
     "preupdatemessages:start": "cross-env BABEL_ENV=message babel --quiet --out-dir ./i18n/dist ./src",
     "updatemessages:start": "rip json2pot \"./i18n/src/**/*.json\" -o ./src/shared/i18n/diff.pot",
