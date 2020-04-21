@@ -58,6 +58,7 @@ async function updateCovidResultFromFormData(
         'a.externalId as assayExternalId',
         'a.resultSourceId',
         'r.formData',
+        'r.partnerId',
         'r.patientData',
         'r.resultData',
         'rf.formSchema',
