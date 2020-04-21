@@ -18,6 +18,7 @@ const {
   resultSourceToId,
   resultTypeToId,
 } = require('../../src/shared/dictionary')
+const { getCaseId } = require('../../src/case/service')
 const { knex } = require('../../src/db')
 const AssayCovidResultFormSchema = require('../../seeds/fixtures/AssayCovidResultFormSchema.json')
 const { getAccessToken, createUser, removeUser } = require('../utils/authUtils')
@@ -888,8 +889,8 @@ describe('Result routes', () => {
             Object.keys(covidDeviceTypeDevices),
             async deviceTypeId => {
               const externalId = getCaseIdByDeviceTypeId(deviceTypeId)
-              const [caseId] = await knex('Case').insert({ externalId })
-              casesInserted.push({ id: caseId, externalId })
+              const caseId = await getCaseId({ externalId, partnerId }, true)
+              casesInserted.push({ id: caseId, externalId, partnerId })
             }
           )
         })
@@ -1070,7 +1071,6 @@ describe('Result routes', () => {
               expect(result).to.containSubset({
                 patientData: {
                   id: caseId,
-                  caseId,
                   age,
                   gender: genderText,
                   testReason: testReasonText,
@@ -1164,7 +1164,6 @@ describe('Result routes', () => {
               expect(result).to.containSubset({
                 patientData: {
                   id: caseId,
-                  caseId,
                   age,
                   gender: genderText,
                   testReason: testReasonText,
@@ -1294,7 +1293,6 @@ describe('Result routes', () => {
                 expect(result).to.containSubset({
                   patientData: {
                     id: patientDataFromInstrument.id,
-                    caseId,
                     age,
                     gender: genderText,
                     testReason: testReasonText,
@@ -1317,7 +1315,6 @@ describe('Result routes', () => {
                 expect(result).to.containSubset({
                   patientData: {
                     id: caseId,
-                    caseId,
                     age,
                     gender: genderText,
                     testReason: testReasonText,
