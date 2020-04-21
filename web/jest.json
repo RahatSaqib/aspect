@@ -2092,9 +2092,31 @@
       "fullTitle": "ColumnGraph component should shallow render without crash",
       "duration": 552,
       "errorCount": 0
-    }
-  ],
-  "skipped": [
+    },
+    {
+      "title": "should return {} when empty: Scenario 4",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 4 should return {} when empty: Scenario 4",
+      "duration": 572,
+      "errorCount": 0
+    },
+    {
+      "title": "should group data by key correctly",
+      "fullTitle": "Clinical Indicators Helpers,groupByKey,byMonthSimpleGroupBy should group data by key correctly",
+      "duration": 567,
+      "errorCount": 0
+    },
+    {
+      "title": "should group data by key correctly",
+      "fullTitle": "Clinical Indicators Helpers,groupByKey,groupByKeyMonthResultCategory1Detected should group data by key correctly",
+      "duration": 567,
+      "errorCount": 0
+    },
+    {
+      "title": "should transpose the keys and data correctly",
+      "fullTitle": "Clinical Indicators Helpers,normaliseKeys,byMonthSimpleGroupBy should transpose the keys and data correctly",
+      "duration": 567,
+      "errorCount": 0
+    },
     {
       "title": "Should dispatch a RECEIVE_UPDATED_LOGIN_DETAILS action with the account details received",
       "fullTitle": "AccountRedux module,action creators,saveLoginDetails,when the server responds successfully,when a response is received from the server Should dispatch a RECEIVE_UPDATED_LOGIN_DETAILS action with the account details received",
