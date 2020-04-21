@@ -48,7 +48,7 @@ exports[`Result List component should shallow render correctly when filter for a
     }
   >
     <requirePermissions(AspectButton)
-      className="BrowseAddButton"
+      browseButton={true}
       color="primary"
       extraPermissions={Array []}
       overriddenPermissions={Array []}
@@ -154,7 +154,7 @@ exports[`Result List component should shallow render correctly when filter for a
     }
   >
     <requirePermissions(AspectButton)
-      className="BrowseAddButton"
+      browseButton={true}
       color="primary"
       extraPermissions={Array []}
       overriddenPermissions={Array []}

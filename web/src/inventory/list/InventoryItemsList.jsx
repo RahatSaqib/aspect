@@ -393,8 +393,8 @@ export const InventoryItemsList = ({
           type="button"
           color="primary"
           variant="contained"
-          className={cssClasses('BrowseAddButton')}
           onClick={showNewInventoryDialog}
+          browseButton
         >
           {intl.formatMessage(messages.addInventory)}
         </AddNewButton>

@@ -13,12 +13,6 @@ exports[`Device Api Key List module DeviceApiKeyList component should shallow re
     title="Device API Keys"
   />
   <pure(withProps(withHandlers(Connect(lifecycle(BrowseFilters)))))
-    addNewButtonPermissions={
-      Array [
-        "deviceApiKey:edit",
-        "deviceApiKey:admin",
-      ]
-    }
     history={
       Object {
         "push": [Function],
@@ -44,7 +38,7 @@ exports[`Device Api Key List module DeviceApiKeyList component should shallow re
     onClickExport={[Function]}
   >
     <AspectButton
-      className="BrowseAddButton"
+      browseButton={true}
       color="primary"
       onClick={[Function]}
       type="button"
@@ -53,7 +47,7 @@ exports[`Device Api Key List module DeviceApiKeyList component should shallow re
       Generate
     </AspectButton>
     <AspectButton
-      className="BrowseAddButton"
+      browseButton={true}
       color="primary"
       disabled={true}
       onClick={[Function]}
@@ -165,12 +159,6 @@ exports[`Device Api Key List module DeviceApiKeyList component should shallow re
     title="Device API Keys"
   />
   <pure(withProps(withHandlers(Connect(lifecycle(BrowseFilters)))))
-    addNewButtonPermissions={
-      Array [
-        "deviceApiKey:edit",
-        "deviceApiKey:admin",
-      ]
-    }
     history={
       Object {
         "push": [Function],
@@ -196,7 +184,7 @@ exports[`Device Api Key List module DeviceApiKeyList component should shallow re
     onClickExport={[Function]}
   >
     <AspectButton
-      className="BrowseAddButton"
+      browseButton={true}
       color="primary"
       onClick={[Function]}
       type="button"
@@ -205,7 +193,7 @@ exports[`Device Api Key List module DeviceApiKeyList component should shallow re
       Generate
     </AspectButton>
     <AspectButton
-      className="BrowseAddButton"
+      browseButton={true}
       color="primary"
       disabled={true}
       onClick={[Function]}

@@ -53,7 +53,7 @@ exports[`InventoryItemList module InventoryItemList component should render corr
     }
   >
     <requirePermissions(AspectButton)
-      className="BrowseAddButton"
+      browseButton={true}
       color="primary"
       extraPermissions={Array []}
       onClick={[Function]}

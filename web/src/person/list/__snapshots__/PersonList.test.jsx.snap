@@ -36,7 +36,7 @@ exports[`Person List module PersonList component should shallow render correctly
     }
   >
     <requirePermissions(AspectButton)
-      className="BrowseAddButton"
+      browseButton={true}
       color="primary"
       extraPermissions={Array []}
       overriddenPermissions={Array []}

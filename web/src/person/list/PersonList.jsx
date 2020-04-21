@@ -246,7 +246,7 @@ export const PersonList = ({
           type="button"
           color="primary"
           variant="contained"
-          className={cssClasses('BrowseAddButton')}
+          browseButton
           onClick={showNewContactPage}
         >
           {intl.formatMessage(messages.addContact)}

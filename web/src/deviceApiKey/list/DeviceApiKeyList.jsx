@@ -423,13 +423,12 @@ export const DeviceApiKeyList = ({
       intl={intl}
       config={reducedFilters}
       onClickExport={onExportClick}
-      addNewButtonPermissions={['deviceApiKey:edit', 'deviceApiKey:admin']}
     >
       <AspectButton onClick={onOpenGeneratorDialog}
         type="button"
         color="primary"
         variant="contained"
-        className={cssClasses('BrowseAddButton')}
+        browseButton
       >
         {intl.formatMessage(messages.generate)}
       </AspectButton>
@@ -437,9 +436,9 @@ export const DeviceApiKeyList = ({
         type="button"
         color="primary"
         variant="contained"
-        className={cssClasses('BrowseAddButton')}
         onClick={onOpenAssignerDialog}
         disabled={_.isEmpty(assignerValues.deviceApiKeyIds)}
+        browseButton
       >
         {intl.formatMessage(messages.assign)}
       </AspectButton>

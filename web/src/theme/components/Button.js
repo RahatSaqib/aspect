@@ -5,6 +5,12 @@ export default ({ theme, themedColors }) => ({
     root: {
       borderRadius: themedColors.buttonBorderRadius,
       textTransform: 'inherit',
+      '&.browseButton':{
+        marginRight: '1.5em',
+        fontWeight: 700,
+        paddingRight: '2.5em',
+        paddingLeft: '2.5em',
+      },
     },
     contained: {
       color: theme.palette.common.white,

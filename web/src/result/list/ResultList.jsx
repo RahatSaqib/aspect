@@ -298,7 +298,7 @@ export const ResultList = ({
           type="button"
           color="primary"
           variant="contained"
-          className={cssClasses('BrowseAddButton')}
+          browseButton
           onClick={onAddNewButtonClick}
         >
           {intl.formatMessage(messages.newResult)}
