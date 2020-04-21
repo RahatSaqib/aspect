@@ -134,7 +134,7 @@ const percentageSplitByMonthSimpleExpectedOut = [
     month: 'Feb 2020',
     MoreThan1000: '27.7778',
     LessThan1000: '66.6667',
-    NotDetected: '5.55556',
+    NotDetected: '5.5556',
   },
   {
     month: 'Mar 2020',
@@ -146,7 +146,7 @@ const percentageSplitByMonthSimpleExpectedOut = [
     month: 'Apr 2020',
     LessThan1000: '50.0000',
     MoreThan1000: '41.6667',
-    NotDetected: '8.33333',
+    NotDetected: '8.3333',
   },
 ]
 
@@ -325,11 +325,11 @@ const aggregateDataCategory1DetectedExpectedOut = {
 
 const aggregateDataCategory1DetectedAverageLegendExpectedOut = {
   case1: {
-    avg: 22,
+    avg: 22.2,
     color: 'var(--guardsman-red, #d60000)',
   },
   case2: {
-    avg: 8,
+    avg: 8.3,
     color: 'var(--guardsman-red, #d60000)',
   },
   case3: {
