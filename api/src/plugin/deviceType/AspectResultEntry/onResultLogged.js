@@ -4,6 +4,7 @@ const {
   resultSourceToId,
 } = require('../../../shared/dictionary')
 const { parseDateOrDefault } = require('../../../shared/date')
+const { addCase } = require('../../../case/service')
 
 async function onResultLogged(
   { resultId, deviceLogId, userId },
@@ -70,14 +71,15 @@ async function updateCovidResultFromFormData(
     }
     const {
       assayExternalId,
-      formData,
-      resultData,
-      patientData,
-      formSchema,
-      resultCategory1,
-      startedOn,
-      endedOn,
       canAutoAssignResultByCaseId,
+      endedOn,
+      formData,
+      formSchema,
+      partnerId,
+      patientData,
+      resultCategory1,
+      resultData,
+      startedOn,
     } = result
     const covid19AssayExternalIds = await knex('AssayType as at')
       .join('Assay as a', 'at.id', 'a.assayTypeId')
@@ -127,11 +129,13 @@ async function updateCovidResultFromFormData(
 
     const caseExternalId = formDataObject.caseId
     if (canAutoAssignResultByCaseId && caseExternalId) {
-      const [caseId] = await knex('Case')
-        .where('externalId', caseExternalId)
+      const caseKeys = { partnerId, externalId: caseExternalId }
+      let [caseId] = await knex('Case')
+        .where(caseKeys)
         .pluck('id')
       if (!caseId) {
-        // TODO: auto create entry in table Case - check if needed
+        // TODO: may be need to have another IF statement here whether to add entry to Case table or not
+        caseId = await addCase({ partnerId, externalId: caseExternalId })
       }
       resultUpdates.caseId = caseId || null
     }
