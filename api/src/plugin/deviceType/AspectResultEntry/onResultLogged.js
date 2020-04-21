@@ -4,7 +4,7 @@ const {
   resultSourceToId,
 } = require('../../../shared/dictionary')
 const { parseDateOrDefault } = require('../../../shared/date')
-const { addCase } = require('../../../case/service')
+const { getCaseId } = require('../../../case/service')
 
 async function onResultLogged(
   { resultId, deviceLogId, userId },
@@ -130,14 +130,7 @@ async function updateCovidResultFromFormData(
 
     const caseExternalId = formDataObject.caseId
     if (canAutoAssignResultByCaseId && caseExternalId) {
-      const caseKeys = { partnerId, externalId: caseExternalId }
-      let [caseId] = await knex('Case')
-        .where(caseKeys)
-        .pluck('id')
-      if (!caseId) {
-        // TODO: may be need to have another IF statement here whether to add entry to Case table or not
-        caseId = await addCase({ partnerId, externalId: caseExternalId })
-      }
+      const caseId = getCaseId({ partnerId, externalId: caseExternalId }, true)
       resultUpdates.caseId = caseId
     }
     if (canOverwriteDiagnosticDataByHand) {
