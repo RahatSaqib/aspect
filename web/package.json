@@ -12,6 +12,7 @@
     "test": "cross-env ASPECT_TARGET=test BABEL_ENV=test JEST_FILE=mocha.json jest --coverage",
     "test:snapshot": "npm run test -- -u",
     "test:watch": "npm run test -- --watch",
+    "simpletest": "ASPECT_TARGET=test jest test --watch",
     "posttest": "npm run lint",
     "preupdatemessages:start": "cross-env BABEL_ENV=message babel --quiet --out-dir ./i18n/dist ./src",
     "updatemessages:start": "rip json2pot \"./i18n/src/**/*.json\" -o ./src/shared/i18n/diff.pot",
@@ -68,6 +69,9 @@
     "testResultsProcessor": "jest-bamboo-formatter",
     "snapshotSerializers": [
       "enzyme-to-json/serializer"
+    ],
+    "watchPathIgnorePatterns": [
+      "<rootDir>/jest.json"
     ]
   },
   "repository": "",
@@ -122,6 +126,7 @@
     "eslint-plugin-prettier": "^3.1.2",
     "eslint-plugin-react": "^7.17.0",
     "eslint-plugin-react-hooks": "^2.3.0",
+    "expect.js": "^0.3.1",
     "favicons-webpack-plugin": "^2.0.0",
     "file-loader": "^5.0.2",
     "fs-extra-cli": "0.0.4",
