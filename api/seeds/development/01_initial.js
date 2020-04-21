@@ -5218,6 +5218,7 @@ async function seed(knex) {
     { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.device.admin },
     { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.person.admin },
     { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.result.admin },
+    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.case.admin },
     { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.site.admin },
     { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.assay.admin },
     {
@@ -5281,6 +5282,10 @@ async function seed(knex) {
     {
       jobFunctionId: jobFunctionIdClinician,
       permissionId: modules.result.edit,
+    },
+    {
+      jobFunctionId: jobFunctionIdClinician,
+      permissionId: modules.case.edit,
     },
     {
       jobFunctionId: jobFunctionIdClinician,

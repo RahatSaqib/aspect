@@ -53,6 +53,10 @@
       "activities": ["view", "edit", "admin"]
     },
     {
+      "name": "case",
+      "activities": ["view", "edit", "admin"]
+    },
+    {
       "name": "browse",
       "activities": ["view"]
     },

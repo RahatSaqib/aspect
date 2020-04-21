@@ -1811,6 +1811,10 @@ async function seed(knex) {
       jobFunctionId: jobFunctionIdAdmin,
       permissionId: modules.result.admin,
     },
+    {
+      jobFunctionId: jobFunctionIdAdmin,
+      permissionId: modules.case.admin,
+    },
     { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.site.admin },
     {
       jobFunctionId: jobFunctionIdAdmin,
@@ -1891,6 +1895,10 @@ async function seed(knex) {
     {
       jobFunctionId: jobFunctionIdClinician,
       permissionId: modules.result.edit,
+    },
+    {
+      jobFunctionId: jobFunctionIdClinician,
+      permissionId: modules.case.edit,
     },
     {
       jobFunctionId: jobFunctionIdClinician,
