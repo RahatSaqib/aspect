@@ -1,3 +1,5 @@
+/* eslint no-console: ["error", { allow: ["error"] }] */
+
 import without from 'lodash/without'
 import omit from 'lodash/omit'
 import uniq from 'lodash/uniq'
@@ -48,6 +50,9 @@ const graphColorMap = [
   { id: 15, externalId: 'Negative', color: colorMantis },
   { id: 99, externalId: 'Cases', color: colorMantis },
 ]
+
+const assayConfigurationFile =
+  'web/src/dashboard/status/ClinicalIndicators/assayConfiguration.js'
 
 const getDayFromToday = cnt => format(addDays(new Date(), cnt), 'yyyy-MM-dd')
 
@@ -149,28 +154,46 @@ const getAverageFromData = (data, value, which) => {
     if (Array.isArray(which)) {
       const rangeTotal = which.reduce((acc, curr) => {
         const item = filter(data, ['label', curr])[0]
-        if (acc && acc.id) {
-          acc[value] += parseFloat(item[value])
+        if (item) {
+          if (acc && acc.id) {
+            acc[value] += parseFloat(item[value])
+          } else {
+            acc = { ...item, [value]: parseFloat(item[value]) }
+          }
         } else {
-          acc = { ...item, [value]: parseFloat(item[value]) }
+          console.error(
+            `There are no results to match your 'assayConfiguration.graphType.averages.key' 
+assertion of [${curr}] to. Please check ${assayConfigurationFile}`
+          )
         }
         return acc
       }, {})
-      total.push(rangeTotal)
+
+      if (
+        Object.keys(rangeTotal).length !== 0 &&
+        rangeTotal.constructor === Object
+      ) {
+        total.push(rangeTotal)
+      }
     } else {
-      total = filter(data, ['label', which])
+      total = filter(data, ['label', which]) || [{ [value]: 0 }]
     }
 
-    const sum = data.reduce((acc, curr) => acc + parseFloat(curr.value), 0)
-    const avg = calcPercentageForGraphs(
-      parseFloat(total[0][value]),
-      round(sum),
-      1
-    )
-    return {
-      avg: parseFloat(avg),
-      color: total[0].color,
+    if (total && total.length) {
+      const sum = data.reduce((acc, curr) => acc + parseFloat(curr.value), 0)
+      const avg = calcPercentageForGraphs(
+        parseFloat(total[0][value]),
+        round(sum),
+        1
+      )
+      return {
+        avg: parseFloat(avg),
+        color: total[0].color,
+      }
     }
+    console.error(`No data available for percentage label. 
+Please check the key(s) specified in your 'assayConfiguration.graphType.averages.key' assertion: [${which}]. 
+${assayConfigurationFile}`)
   }
   return {}
 }

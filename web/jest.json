@@ -3,386 +3,2064 @@
     "tests": 9,
     "passes": 9,
     "failures": 0,
-    "duration": 887,
-    "start": "2020-04-21T10:32:39.216Z",
-    "end": "2020-04-21T10:32:40.103Z"
+    "duration": 183,
+    "start": "2020-04-21T12:34:16.483Z",
+    "end": "2020-04-21T12:34:16.666Z"
   },
   "failures": [
     {
-      "title": "should format data correctly for Pie graphs: Scenario 4",
-      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 4 should format data correctly for Pie graphs: Scenario 4",
-      "duration": 720,
+      "title": "should format data correctly for Pie graphs: Scenario 3",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 3 should format data correctly for Pie graphs: Scenario 3",
+      "duration": 654,
       "errorCount": 1,
-      "error": "1 failure: \n1 failed: TypeError: Cannot read property 'value' of undefined\n    at /Users/david/Sites/SystemOne/aspect/web/src/dashboard/status/ClinicalIndicators/Graphs/Helpers/index.js:154:50\n    at Array.reduce (<anonymous>)\n    at reduce (/Users/david/Sites/SystemOne/aspect/web/src/dashboard/status/ClinicalIndicators/Graphs/Helpers/index.js:149:30)\n    at Object.<anonymous> (/Users/david/Sites/SystemOne/aspect/web/src/dashboard/status/ClinicalIndicators/Graphs/Helpers/tests/Helpers.test.js:232:28)\n    at Object.asyncJestTest (/Users/david/Sites/SystemOne/aspect/web/node_modules/jest-jasmine2/build/jasmineAsyncInstall.js:102:37)\n    at resolve (/Users/david/Sites/SystemOne/aspect/web/node_modules/jest-jasmine2/build/queueRunner.js:43:12)\n    at new Promise (<anonymous>)\n    at mapper (/Users/david/Sites/SystemOne/aspect/web/node_modules/jest-jasmine2/build/queueRunner.js:26:19)\n    at promise.then (/Users/david/Sites/SystemOne/aspect/web/node_modules/jest-jasmine2/build/queueRunner.js:73:41)\n    at process._tickCallback (internal/process/next_tick.js:68:7)"
-    },
-    {
-      "title": "should format data correctly for Pie graphs: Scenario 4",
-      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 4 should format data correctly for Pie graphs: Scenario 4",
-      "duration": 1224,
-      "errorCount": 1,
-      "error": "1 failure: \n1 failed: TypeError: Cannot read property 'value' of undefined\n    at getAverageFromData (/Users/david/Sites/SystemOne/aspect/web/src/dashboard/status/ClinicalIndicators/Graphs/Helpers/index.js:165:16)\n    at Object.<anonymous> (/Users/david/Sites/SystemOne/aspect/web/src/dashboard/status/ClinicalIndicators/Graphs/Helpers/tests/Helpers.test.js:232:28)\n    at Object.asyncJestTest (/Users/david/Sites/SystemOne/aspect/web/node_modules/jest-jasmine2/build/jasmineAsyncInstall.js:102:37)\n    at resolve (/Users/david/Sites/SystemOne/aspect/web/node_modules/jest-jasmine2/build/queueRunner.js:43:12)\n    at new Promise (<anonymous>)\n    at mapper (/Users/david/Sites/SystemOne/aspect/web/node_modules/jest-jasmine2/build/queueRunner.js:26:19)\n    at promise.then (/Users/david/Sites/SystemOne/aspect/web/node_modules/jest-jasmine2/build/queueRunner.js:73:41)\n    at process._tickCallback (internal/process/next_tick.js:68:7)"
-    },
-    {
-      "title": "should format data correctly for Pie graphs: Scenario 4",
-      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 4 should format data correctly for Pie graphs: Scenario 4",
-      "duration": 892,
-      "errorCount": 1,
-      "error": "1 failure: \n1 failed: Error: expected undefined to sort of equal {}\n    at Assertion.Object.<anonymous>.Assertion.assert (/Users/david/Sites/SystemOne/aspect/web/node_modules/expect.js/index.js:96:13)\n    at Assertion.Object.<anonymous>.Assertion.eql (/Users/david/Sites/SystemOne/aspect/web/node_modules/expect.js/index.js:230:10)\n    at Object.eql (/Users/david/Sites/SystemOne/aspect/web/src/dashboard/status/ClinicalIndicators/Graphs/Helpers/tests/Helpers.test.js:237:31)\n    at Object.asyncJestTest (/Users/david/Sites/SystemOne/aspect/web/node_modules/jest-jasmine2/build/jasmineAsyncInstall.js:102:37)\n    at resolve (/Users/david/Sites/SystemOne/aspect/web/node_modules/jest-jasmine2/build/queueRunner.js:43:12)\n    at new Promise (<anonymous>)\n    at mapper (/Users/david/Sites/SystemOne/aspect/web/node_modules/jest-jasmine2/build/queueRunner.js:26:19)\n    at promise.then (/Users/david/Sites/SystemOne/aspect/web/node_modules/jest-jasmine2/build/queueRunner.js:73:41)\n    at process._tickCallback (internal/process/next_tick.js:68:7)"
+      "error": "1 failure: \n1 failed: TypeError: Cannot read property 'value' of undefined\n    at getAverageFromData (/Users/david/Sites/SystemOne/aspect/web/src/dashboard/status/ClinicalIndicators/Graphs/Helpers/index.js:176:18)\n    at Object.<anonymous> (/Users/david/Sites/SystemOne/aspect/web/src/dashboard/status/ClinicalIndicators/Graphs/Helpers/tests/Helpers.test.js:203:28)\n    at Object.asyncJestTest (/Users/david/Sites/SystemOne/aspect/web/node_modules/jest-jasmine2/build/jasmineAsyncInstall.js:102:37)\n    at resolve (/Users/david/Sites/SystemOne/aspect/web/node_modules/jest-jasmine2/build/queueRunner.js:43:12)\n    at new Promise (<anonymous>)\n    at mapper (/Users/david/Sites/SystemOne/aspect/web/node_modules/jest-jasmine2/build/queueRunner.js:26:19)\n    at promise.then (/Users/david/Sites/SystemOne/aspect/web/node_modules/jest-jasmine2/build/queueRunner.js:73:41)\n    at process._tickCallback (internal/process/next_tick.js:68:7)"
     }
   ],
   "passes": [
     {
       "title": "should group data by key correctly",
       "fullTitle": "Clinical Indicators Helpers,groupByKey,byMonthSimpleGroupBy should group data by key correctly",
-      "duration": 1020,
+      "duration": 1093,
       "errorCount": 0
     },
     {
       "title": "should group data by key correctly",
       "fullTitle": "Clinical Indicators Helpers,groupByKey,groupByKeyMonthResultCategory1Detected should group data by key correctly",
-      "duration": 1020,
+      "duration": 1093,
       "errorCount": 0
     },
     {
       "title": "should transpose the keys and data correctly",
       "fullTitle": "Clinical Indicators Helpers,normaliseKeys,byMonthSimpleGroupBy should transpose the keys and data correctly",
-      "duration": 1020,
+      "duration": 1093,
       "errorCount": 0
     },
     {
       "title": "should calculate percentages correctly and add up close to 100%",
       "fullTitle": "Clinical Indicators Helpers,calcPercentageSplitBar,byMonthSimpleGroupBy should calculate percentages correctly and add up close to 100%",
-      "duration": 1020,
+      "duration": 1093,
       "errorCount": 0
     },
     {
       "title": "should format data correctly for Pie graphs",
       "fullTitle": "Clinical Indicators Helpers,formatDataForPie,Scenario 1 should format data correctly for Pie graphs",
-      "duration": 1020,
+      "duration": 1093,
       "errorCount": 0
     },
     {
       "title": "should format data correctly for Pie graphs: Scenario 1",
       "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 1 should format data correctly for Pie graphs: Scenario 1",
-      "duration": 1020,
+      "duration": 1093,
       "errorCount": 0
     },
     {
       "title": "should format data correctly for Pie graphs: Scenario 2",
       "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 2 should format data correctly for Pie graphs: Scenario 2",
-      "duration": 1020,
+      "duration": 1093,
       "errorCount": 0
     },
     {
       "title": "should format data correctly for Pie graphs: Scenario 3",
       "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 3 should format data correctly for Pie graphs: Scenario 3",
-      "duration": 1020,
-      "errorCount": 0
-    },
-    {
-      "title": "should group data by key correctly",
-      "fullTitle": "Clinical Indicators Helpers,groupByKey,byMonthSimpleGroupBy should group data by key correctly",
-      "duration": 720,
-      "errorCount": 0
-    },
-    {
-      "title": "should group data by key correctly",
-      "fullTitle": "Clinical Indicators Helpers,groupByKey,groupByKeyMonthResultCategory1Detected should group data by key correctly",
-      "duration": 720,
-      "errorCount": 0
-    },
-    {
-      "title": "should transpose the keys and data correctly",
-      "fullTitle": "Clinical Indicators Helpers,normaliseKeys,byMonthSimpleGroupBy should transpose the keys and data correctly",
-      "duration": 720,
-      "errorCount": 0
-    },
-    {
-      "title": "should calculate percentages correctly and add up close to 100%",
-      "fullTitle": "Clinical Indicators Helpers,calcPercentageSplitBar,byMonthSimpleGroupBy should calculate percentages correctly and add up close to 100%",
-      "duration": 720,
-      "errorCount": 0
-    },
-    {
-      "title": "should format data correctly for Pie graphs",
-      "fullTitle": "Clinical Indicators Helpers,formatDataForPie,Scenario 1 should format data correctly for Pie graphs",
-      "duration": 720,
-      "errorCount": 0
-    },
-    {
-      "title": "should format data correctly for Pie graphs: Scenario 1",
-      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 1 should format data correctly for Pie graphs: Scenario 1",
-      "duration": 720,
-      "errorCount": 0
-    },
-    {
-      "title": "should format data correctly for Pie graphs: Scenario 2",
-      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 2 should format data correctly for Pie graphs: Scenario 2",
-      "duration": 720,
-      "errorCount": 0
-    },
-    {
-      "title": "should format data correctly for Pie graphs: Scenario 3",
-      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 3 should format data correctly for Pie graphs: Scenario 3",
-      "duration": 720,
-      "errorCount": 0
-    },
-    {
-      "title": "should group data by key correctly",
-      "fullTitle": "Clinical Indicators Helpers,groupByKey,byMonthSimpleGroupBy should group data by key correctly",
-      "duration": 1224,
-      "errorCount": 0
-    },
-    {
-      "title": "should group data by key correctly",
-      "fullTitle": "Clinical Indicators Helpers,groupByKey,groupByKeyMonthResultCategory1Detected should group data by key correctly",
-      "duration": 1224,
-      "errorCount": 0
-    },
-    {
-      "title": "should transpose the keys and data correctly",
-      "fullTitle": "Clinical Indicators Helpers,normaliseKeys,byMonthSimpleGroupBy should transpose the keys and data correctly",
-      "duration": 1224,
-      "errorCount": 0
-    },
-    {
-      "title": "should calculate percentages correctly and add up close to 100%",
-      "fullTitle": "Clinical Indicators Helpers,calcPercentageSplitBar,byMonthSimpleGroupBy should calculate percentages correctly and add up close to 100%",
-      "duration": 1224,
-      "errorCount": 0
-    },
-    {
-      "title": "should format data correctly for Pie graphs",
-      "fullTitle": "Clinical Indicators Helpers,formatDataForPie,Scenario 1 should format data correctly for Pie graphs",
-      "duration": 1224,
-      "errorCount": 0
-    },
-    {
-      "title": "should format data correctly for Pie graphs: Scenario 1",
-      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 1 should format data correctly for Pie graphs: Scenario 1",
-      "duration": 1224,
-      "errorCount": 0
-    },
-    {
-      "title": "should format data correctly for Pie graphs: Scenario 2",
-      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 2 should format data correctly for Pie graphs: Scenario 2",
-      "duration": 1224,
-      "errorCount": 0
-    },
-    {
-      "title": "should format data correctly for Pie graphs: Scenario 3",
-      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 3 should format data correctly for Pie graphs: Scenario 3",
-      "duration": 1224,
-      "errorCount": 0
-    },
-    {
-      "title": "should group data by key correctly",
-      "fullTitle": "Clinical Indicators Helpers,groupByKey,byMonthSimpleGroupBy should group data by key correctly",
-      "duration": 1072,
-      "errorCount": 0
-    },
-    {
-      "title": "should group data by key correctly",
-      "fullTitle": "Clinical Indicators Helpers,groupByKey,groupByKeyMonthResultCategory1Detected should group data by key correctly",
-      "duration": 1072,
-      "errorCount": 0
-    },
-    {
-      "title": "should transpose the keys and data correctly",
-      "fullTitle": "Clinical Indicators Helpers,normaliseKeys,byMonthSimpleGroupBy should transpose the keys and data correctly",
-      "duration": 1072,
-      "errorCount": 0
-    },
-    {
-      "title": "should calculate percentages correctly and add up close to 100%",
-      "fullTitle": "Clinical Indicators Helpers,calcPercentageSplitBar,byMonthSimpleGroupBy should calculate percentages correctly and add up close to 100%",
-      "duration": 1072,
-      "errorCount": 0
-    },
-    {
-      "title": "should format data correctly for Pie graphs",
-      "fullTitle": "Clinical Indicators Helpers,formatDataForPie,Scenario 1 should format data correctly for Pie graphs",
-      "duration": 1072,
-      "errorCount": 0
-    },
-    {
-      "title": "should format data correctly for Pie graphs: Scenario 1",
-      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 1 should format data correctly for Pie graphs: Scenario 1",
-      "duration": 1072,
-      "errorCount": 0
-    },
-    {
-      "title": "should format data correctly for Pie graphs: Scenario 2",
-      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 2 should format data correctly for Pie graphs: Scenario 2",
-      "duration": 1072,
-      "errorCount": 0
-    },
-    {
-      "title": "should format data correctly for Pie graphs: Scenario 3",
-      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 3 should format data correctly for Pie graphs: Scenario 3",
-      "duration": 1072,
-      "errorCount": 0
-    },
-    {
-      "title": "should format data correctly for Pie graphs: Scenario 4",
-      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 4 should format data correctly for Pie graphs: Scenario 4",
-      "duration": 1072,
-      "errorCount": 0
-    },
-    {
-      "title": "should group data by key correctly",
-      "fullTitle": "Clinical Indicators Helpers,groupByKey,byMonthSimpleGroupBy should group data by key correctly",
-      "duration": 892,
-      "errorCount": 0
-    },
-    {
-      "title": "should group data by key correctly",
-      "fullTitle": "Clinical Indicators Helpers,groupByKey,groupByKeyMonthResultCategory1Detected should group data by key correctly",
-      "duration": 892,
-      "errorCount": 0
-    },
-    {
-      "title": "should transpose the keys and data correctly",
-      "fullTitle": "Clinical Indicators Helpers,normaliseKeys,byMonthSimpleGroupBy should transpose the keys and data correctly",
-      "duration": 892,
-      "errorCount": 0
-    },
-    {
-      "title": "should calculate percentages correctly and add up close to 100%",
-      "fullTitle": "Clinical Indicators Helpers,calcPercentageSplitBar,byMonthSimpleGroupBy should calculate percentages correctly and add up close to 100%",
-      "duration": 892,
-      "errorCount": 0
-    },
-    {
-      "title": "should format data correctly for Pie graphs",
-      "fullTitle": "Clinical Indicators Helpers,formatDataForPie,Scenario 1 should format data correctly for Pie graphs",
-      "duration": 892,
-      "errorCount": 0
-    },
-    {
-      "title": "should format data correctly for Pie graphs: Scenario 1",
-      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 1 should format data correctly for Pie graphs: Scenario 1",
-      "duration": 892,
-      "errorCount": 0
-    },
-    {
-      "title": "should format data correctly for Pie graphs: Scenario 2",
-      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 2 should format data correctly for Pie graphs: Scenario 2",
-      "duration": 892,
-      "errorCount": 0
-    },
-    {
-      "title": "should format data correctly for Pie graphs: Scenario 3",
-      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 3 should format data correctly for Pie graphs: Scenario 3",
-      "duration": 892,
-      "errorCount": 0
-    },
-    {
-      "title": "should group data by key correctly",
-      "fullTitle": "Clinical Indicators Helpers,groupByKey,byMonthSimpleGroupBy should group data by key correctly",
-      "duration": 571,
-      "errorCount": 0
-    },
-    {
-      "title": "should group data by key correctly",
-      "fullTitle": "Clinical Indicators Helpers,groupByKey,groupByKeyMonthResultCategory1Detected should group data by key correctly",
-      "duration": 571,
-      "errorCount": 0
-    },
-    {
-      "title": "should transpose the keys and data correctly",
-      "fullTitle": "Clinical Indicators Helpers,normaliseKeys,byMonthSimpleGroupBy should transpose the keys and data correctly",
-      "duration": 571,
-      "errorCount": 0
-    },
-    {
-      "title": "should calculate percentages correctly and add up close to 100%",
-      "fullTitle": "Clinical Indicators Helpers,calcPercentageSplitBar,byMonthSimpleGroupBy should calculate percentages correctly and add up close to 100%",
-      "duration": 571,
-      "errorCount": 0
-    },
-    {
-      "title": "should format data correctly for Pie graphs",
-      "fullTitle": "Clinical Indicators Helpers,formatDataForPie,Scenario 1 should format data correctly for Pie graphs",
-      "duration": 571,
-      "errorCount": 0
-    },
-    {
-      "title": "should format data correctly for Pie graphs: Scenario 1",
-      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 1 should format data correctly for Pie graphs: Scenario 1",
-      "duration": 571,
-      "errorCount": 0
-    },
-    {
-      "title": "should format data correctly for Pie graphs: Scenario 2",
-      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 2 should format data correctly for Pie graphs: Scenario 2",
-      "duration": 571,
-      "errorCount": 0
-    },
-    {
-      "title": "should format data correctly for Pie graphs: Scenario 3",
-      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 3 should format data correctly for Pie graphs: Scenario 3",
-      "duration": 571,
-      "errorCount": 0
-    },
-    {
-      "title": "should format data correctly for Pie graphs: Scenario 4",
-      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 4 should format data correctly for Pie graphs: Scenario 4",
-      "duration": 571,
-      "errorCount": 0
-    },
-    {
-      "title": "should group data by key correctly",
-      "fullTitle": "Clinical Indicators Helpers,groupByKey,byMonthSimpleGroupBy should group data by key correctly",
-      "duration": 517,
-      "errorCount": 0
-    },
-    {
-      "title": "should group data by key correctly",
-      "fullTitle": "Clinical Indicators Helpers,groupByKey,groupByKeyMonthResultCategory1Detected should group data by key correctly",
-      "duration": 517,
-      "errorCount": 0
-    },
-    {
-      "title": "should transpose the keys and data correctly",
-      "fullTitle": "Clinical Indicators Helpers,normaliseKeys,byMonthSimpleGroupBy should transpose the keys and data correctly",
-      "duration": 517,
-      "errorCount": 0
-    },
-    {
-      "title": "should calculate percentages correctly and add up close to 100%",
-      "fullTitle": "Clinical Indicators Helpers,calcPercentageSplitBar,byMonthSimpleGroupBy should calculate percentages correctly and add up close to 100%",
-      "duration": 517,
-      "errorCount": 0
-    },
-    {
-      "title": "should format data correctly for Pie graphs",
-      "fullTitle": "Clinical Indicators Helpers,formatDataForPie,Scenario 1 should format data correctly for Pie graphs",
-      "duration": 517,
-      "errorCount": 0
-    },
-    {
-      "title": "should format data correctly for Pie graphs: Scenario 1",
-      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 1 should format data correctly for Pie graphs: Scenario 1",
-      "duration": 517,
-      "errorCount": 0
-    },
-    {
-      "title": "should format data correctly for Pie graphs: Scenario 2",
-      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 2 should format data correctly for Pie graphs: Scenario 2",
-      "duration": 517,
-      "errorCount": 0
-    },
-    {
-      "title": "should format data correctly for Pie graphs: Scenario 3",
-      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 3 should format data correctly for Pie graphs: Scenario 3",
-      "duration": 517,
+      "duration": 1093,
       "errorCount": 0
     },
     {
       "title": "should return {} when empty: Scenario 4",
       "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 4 should return {} when empty: Scenario 4",
-      "duration": 517,
+      "duration": 1093,
+      "errorCount": 0
+    },
+    {
+      "title": "should group data by key correctly",
+      "fullTitle": "Clinical Indicators Helpers,groupByKey,byMonthSimpleGroupBy should group data by key correctly",
+      "duration": 654,
+      "errorCount": 0
+    },
+    {
+      "title": "should group data by key correctly",
+      "fullTitle": "Clinical Indicators Helpers,groupByKey,groupByKeyMonthResultCategory1Detected should group data by key correctly",
+      "duration": 654,
+      "errorCount": 0
+    },
+    {
+      "title": "should transpose the keys and data correctly",
+      "fullTitle": "Clinical Indicators Helpers,normaliseKeys,byMonthSimpleGroupBy should transpose the keys and data correctly",
+      "duration": 654,
+      "errorCount": 0
+    },
+    {
+      "title": "should calculate percentages correctly and add up close to 100%",
+      "fullTitle": "Clinical Indicators Helpers,calcPercentageSplitBar,byMonthSimpleGroupBy should calculate percentages correctly and add up close to 100%",
+      "duration": 654,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs",
+      "fullTitle": "Clinical Indicators Helpers,formatDataForPie,Scenario 1 should format data correctly for Pie graphs",
+      "duration": 654,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 1",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 1 should format data correctly for Pie graphs: Scenario 1",
+      "duration": 654,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 2",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 2 should format data correctly for Pie graphs: Scenario 2",
+      "duration": 654,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 3",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 3 should format data correctly for Pie graphs: Scenario 3",
+      "duration": 654,
+      "errorCount": 0
+    },
+    {
+      "title": "should return {} when empty: Scenario 4",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 4 should return {} when empty: Scenario 4",
+      "duration": 654,
+      "errorCount": 0
+    },
+    {
+      "title": "should group data by key correctly",
+      "fullTitle": "Clinical Indicators Helpers,groupByKey,byMonthSimpleGroupBy should group data by key correctly",
+      "duration": 319,
+      "errorCount": 0
+    },
+    {
+      "title": "should group data by key correctly",
+      "fullTitle": "Clinical Indicators Helpers,groupByKey,groupByKeyMonthResultCategory1Detected should group data by key correctly",
+      "duration": 319,
+      "errorCount": 0
+    },
+    {
+      "title": "should transpose the keys and data correctly",
+      "fullTitle": "Clinical Indicators Helpers,normaliseKeys,byMonthSimpleGroupBy should transpose the keys and data correctly",
+      "duration": 319,
+      "errorCount": 0
+    },
+    {
+      "title": "should calculate percentages correctly and add up close to 100%",
+      "fullTitle": "Clinical Indicators Helpers,calcPercentageSplitBar,byMonthSimpleGroupBy should calculate percentages correctly and add up close to 100%",
+      "duration": 319,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs",
+      "fullTitle": "Clinical Indicators Helpers,formatDataForPie,Scenario 1 should format data correctly for Pie graphs",
+      "duration": 319,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 1",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 1 should format data correctly for Pie graphs: Scenario 1",
+      "duration": 319,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 2",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 2 should format data correctly for Pie graphs: Scenario 2",
+      "duration": 319,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 3",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 3 should format data correctly for Pie graphs: Scenario 3",
+      "duration": 319,
+      "errorCount": 0
+    },
+    {
+      "title": "should return {} when empty: Scenario 4",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 4 should return {} when empty: Scenario 4",
+      "duration": 319,
+      "errorCount": 0
+    },
+    {
+      "title": "should group data by key correctly",
+      "fullTitle": "Clinical Indicators Helpers,groupByKey,byMonthSimpleGroupBy should group data by key correctly",
+      "duration": 311,
+      "errorCount": 0
+    },
+    {
+      "title": "should group data by key correctly",
+      "fullTitle": "Clinical Indicators Helpers,groupByKey,groupByKeyMonthResultCategory1Detected should group data by key correctly",
+      "duration": 311,
+      "errorCount": 0
+    },
+    {
+      "title": "should transpose the keys and data correctly",
+      "fullTitle": "Clinical Indicators Helpers,normaliseKeys,byMonthSimpleGroupBy should transpose the keys and data correctly",
+      "duration": 311,
+      "errorCount": 0
+    },
+    {
+      "title": "should calculate percentages correctly and add up close to 100%",
+      "fullTitle": "Clinical Indicators Helpers,calcPercentageSplitBar,byMonthSimpleGroupBy should calculate percentages correctly and add up close to 100%",
+      "duration": 311,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs",
+      "fullTitle": "Clinical Indicators Helpers,formatDataForPie,Scenario 1 should format data correctly for Pie graphs",
+      "duration": 311,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 1",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 1 should format data correctly for Pie graphs: Scenario 1",
+      "duration": 311,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 2",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 2 should format data correctly for Pie graphs: Scenario 2",
+      "duration": 311,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 3",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 3 should format data correctly for Pie graphs: Scenario 3",
+      "duration": 311,
+      "errorCount": 0
+    },
+    {
+      "title": "should return {} when empty: Scenario 4",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 4 should return {} when empty: Scenario 4",
+      "duration": 311,
+      "errorCount": 0
+    },
+    {
+      "title": "should group data by key correctly",
+      "fullTitle": "Clinical Indicators Helpers,groupByKey,byMonthSimpleGroupBy should group data by key correctly",
+      "duration": 311,
+      "errorCount": 0
+    },
+    {
+      "title": "should group data by key correctly",
+      "fullTitle": "Clinical Indicators Helpers,groupByKey,groupByKeyMonthResultCategory1Detected should group data by key correctly",
+      "duration": 311,
+      "errorCount": 0
+    },
+    {
+      "title": "should transpose the keys and data correctly",
+      "fullTitle": "Clinical Indicators Helpers,normaliseKeys,byMonthSimpleGroupBy should transpose the keys and data correctly",
+      "duration": 311,
+      "errorCount": 0
+    },
+    {
+      "title": "should calculate percentages correctly and add up close to 100%",
+      "fullTitle": "Clinical Indicators Helpers,calcPercentageSplitBar,byMonthSimpleGroupBy should calculate percentages correctly and add up close to 100%",
+      "duration": 311,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs",
+      "fullTitle": "Clinical Indicators Helpers,formatDataForPie,Scenario 1 should format data correctly for Pie graphs",
+      "duration": 311,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 1",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 1 should format data correctly for Pie graphs: Scenario 1",
+      "duration": 311,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 2",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 2 should format data correctly for Pie graphs: Scenario 2",
+      "duration": 311,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 3",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 3 should format data correctly for Pie graphs: Scenario 3",
+      "duration": 311,
+      "errorCount": 0
+    },
+    {
+      "title": "should return {} when empty: Scenario 4",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 4 should return {} when empty: Scenario 4",
+      "duration": 311,
+      "errorCount": 0
+    },
+    {
+      "title": "should group data by key correctly",
+      "fullTitle": "Clinical Indicators Helpers,groupByKey,byMonthSimpleGroupBy should group data by key correctly",
+      "duration": 631,
+      "errorCount": 0
+    },
+    {
+      "title": "should group data by key correctly",
+      "fullTitle": "Clinical Indicators Helpers,groupByKey,groupByKeyMonthResultCategory1Detected should group data by key correctly",
+      "duration": 631,
+      "errorCount": 0
+    },
+    {
+      "title": "should transpose the keys and data correctly",
+      "fullTitle": "Clinical Indicators Helpers,normaliseKeys,byMonthSimpleGroupBy should transpose the keys and data correctly",
+      "duration": 631,
+      "errorCount": 0
+    },
+    {
+      "title": "should calculate percentages correctly and add up close to 100%",
+      "fullTitle": "Clinical Indicators Helpers,calcPercentageSplitBar,byMonthSimpleGroupBy should calculate percentages correctly and add up close to 100%",
+      "duration": 631,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs",
+      "fullTitle": "Clinical Indicators Helpers,formatDataForPie,Scenario 1 should format data correctly for Pie graphs",
+      "duration": 631,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 1",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 1 should format data correctly for Pie graphs: Scenario 1",
+      "duration": 631,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 2",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 2 should format data correctly for Pie graphs: Scenario 2",
+      "duration": 631,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 3",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 3 should format data correctly for Pie graphs: Scenario 3",
+      "duration": 631,
+      "errorCount": 0
+    },
+    {
+      "title": "should return {} when empty: Scenario 4",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 4 should return {} when empty: Scenario 4",
+      "duration": 631,
+      "errorCount": 0
+    },
+    {
+      "title": "should group data by key correctly",
+      "fullTitle": "Clinical Indicators Helpers,groupByKey,byMonthSimpleGroupBy should group data by key correctly",
+      "duration": 383,
+      "errorCount": 0
+    },
+    {
+      "title": "should group data by key correctly",
+      "fullTitle": "Clinical Indicators Helpers,groupByKey,groupByKeyMonthResultCategory1Detected should group data by key correctly",
+      "duration": 383,
+      "errorCount": 0
+    },
+    {
+      "title": "should transpose the keys and data correctly",
+      "fullTitle": "Clinical Indicators Helpers,normaliseKeys,byMonthSimpleGroupBy should transpose the keys and data correctly",
+      "duration": 383,
+      "errorCount": 0
+    },
+    {
+      "title": "should calculate percentages correctly and add up close to 100%",
+      "fullTitle": "Clinical Indicators Helpers,calcPercentageSplitBar,byMonthSimpleGroupBy should calculate percentages correctly and add up close to 100%",
+      "duration": 383,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs",
+      "fullTitle": "Clinical Indicators Helpers,formatDataForPie,Scenario 1 should format data correctly for Pie graphs",
+      "duration": 383,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 1",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 1 should format data correctly for Pie graphs: Scenario 1",
+      "duration": 383,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 2",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 2 should format data correctly for Pie graphs: Scenario 2",
+      "duration": 383,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 3",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 3 should format data correctly for Pie graphs: Scenario 3",
+      "duration": 383,
+      "errorCount": 0
+    },
+    {
+      "title": "should return {} when empty: Scenario 4",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 4 should return {} when empty: Scenario 4",
+      "duration": 383,
+      "errorCount": 0
+    },
+    {
+      "title": "should group data by key correctly",
+      "fullTitle": "Clinical Indicators Helpers,groupByKey,byMonthSimpleGroupBy should group data by key correctly",
+      "duration": 567,
+      "errorCount": 0
+    },
+    {
+      "title": "should group data by key correctly",
+      "fullTitle": "Clinical Indicators Helpers,groupByKey,groupByKeyMonthResultCategory1Detected should group data by key correctly",
+      "duration": 567,
+      "errorCount": 0
+    },
+    {
+      "title": "should transpose the keys and data correctly",
+      "fullTitle": "Clinical Indicators Helpers,normaliseKeys,byMonthSimpleGroupBy should transpose the keys and data correctly",
+      "duration": 567,
+      "errorCount": 0
+    },
+    {
+      "title": "should calculate percentages correctly and add up close to 100%",
+      "fullTitle": "Clinical Indicators Helpers,calcPercentageSplitBar,byMonthSimpleGroupBy should calculate percentages correctly and add up close to 100%",
+      "duration": 567,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs",
+      "fullTitle": "Clinical Indicators Helpers,formatDataForPie,Scenario 1 should format data correctly for Pie graphs",
+      "duration": 567,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 1",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 1 should format data correctly for Pie graphs: Scenario 1",
+      "duration": 567,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 2",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 2 should format data correctly for Pie graphs: Scenario 2",
+      "duration": 567,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 3",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 3 should format data correctly for Pie graphs: Scenario 3",
+      "duration": 567,
+      "errorCount": 0
+    },
+    {
+      "title": "should return {} when empty: Scenario 4",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 4 should return {} when empty: Scenario 4",
+      "duration": 567,
+      "errorCount": 0
+    },
+    {
+      "title": "should group data by key correctly",
+      "fullTitle": "Clinical Indicators Helpers,groupByKey,byMonthSimpleGroupBy should group data by key correctly",
+      "duration": 372,
+      "errorCount": 0
+    },
+    {
+      "title": "should group data by key correctly",
+      "fullTitle": "Clinical Indicators Helpers,groupByKey,groupByKeyMonthResultCategory1Detected should group data by key correctly",
+      "duration": 372,
+      "errorCount": 0
+    },
+    {
+      "title": "should transpose the keys and data correctly",
+      "fullTitle": "Clinical Indicators Helpers,normaliseKeys,byMonthSimpleGroupBy should transpose the keys and data correctly",
+      "duration": 372,
+      "errorCount": 0
+    },
+    {
+      "title": "should calculate percentages correctly and add up close to 100%",
+      "fullTitle": "Clinical Indicators Helpers,calcPercentageSplitBar,byMonthSimpleGroupBy should calculate percentages correctly and add up close to 100%",
+      "duration": 372,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs",
+      "fullTitle": "Clinical Indicators Helpers,formatDataForPie,Scenario 1 should format data correctly for Pie graphs",
+      "duration": 372,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 1",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 1 should format data correctly for Pie graphs: Scenario 1",
+      "duration": 372,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 2",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 2 should format data correctly for Pie graphs: Scenario 2",
+      "duration": 372,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 3",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 3 should format data correctly for Pie graphs: Scenario 3",
+      "duration": 372,
+      "errorCount": 0
+    },
+    {
+      "title": "should return {} when empty: Scenario 4",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 4 should return {} when empty: Scenario 4",
+      "duration": 372,
+      "errorCount": 0
+    },
+    {
+      "title": "should group data by key correctly",
+      "fullTitle": "Clinical Indicators Helpers,groupByKey,byMonthSimpleGroupBy should group data by key correctly",
+      "duration": 422,
+      "errorCount": 0
+    },
+    {
+      "title": "should group data by key correctly",
+      "fullTitle": "Clinical Indicators Helpers,groupByKey,groupByKeyMonthResultCategory1Detected should group data by key correctly",
+      "duration": 422,
+      "errorCount": 0
+    },
+    {
+      "title": "should transpose the keys and data correctly",
+      "fullTitle": "Clinical Indicators Helpers,normaliseKeys,byMonthSimpleGroupBy should transpose the keys and data correctly",
+      "duration": 422,
+      "errorCount": 0
+    },
+    {
+      "title": "should calculate percentages correctly and add up close to 100%",
+      "fullTitle": "Clinical Indicators Helpers,calcPercentageSplitBar,byMonthSimpleGroupBy should calculate percentages correctly and add up close to 100%",
+      "duration": 422,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs",
+      "fullTitle": "Clinical Indicators Helpers,formatDataForPie,Scenario 1 should format data correctly for Pie graphs",
+      "duration": 422,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 1",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 1 should format data correctly for Pie graphs: Scenario 1",
+      "duration": 422,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 2",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 2 should format data correctly for Pie graphs: Scenario 2",
+      "duration": 422,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 3",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 3 should format data correctly for Pie graphs: Scenario 3",
+      "duration": 422,
+      "errorCount": 0
+    },
+    {
+      "title": "should return {} when empty: Scenario 4",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 4 should return {} when empty: Scenario 4",
+      "duration": 422,
+      "errorCount": 0
+    },
+    {
+      "title": "should group data by key correctly",
+      "fullTitle": "Clinical Indicators Helpers,groupByKey,byMonthSimpleGroupBy should group data by key correctly",
+      "duration": 521,
+      "errorCount": 0
+    },
+    {
+      "title": "should group data by key correctly",
+      "fullTitle": "Clinical Indicators Helpers,groupByKey,groupByKeyMonthResultCategory1Detected should group data by key correctly",
+      "duration": 521,
+      "errorCount": 0
+    },
+    {
+      "title": "should transpose the keys and data correctly",
+      "fullTitle": "Clinical Indicators Helpers,normaliseKeys,byMonthSimpleGroupBy should transpose the keys and data correctly",
+      "duration": 521,
+      "errorCount": 0
+    },
+    {
+      "title": "should calculate percentages correctly and add up close to 100%",
+      "fullTitle": "Clinical Indicators Helpers,calcPercentageSplitBar,byMonthSimpleGroupBy should calculate percentages correctly and add up close to 100%",
+      "duration": 521,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs",
+      "fullTitle": "Clinical Indicators Helpers,formatDataForPie,Scenario 1 should format data correctly for Pie graphs",
+      "duration": 521,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 1",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 1 should format data correctly for Pie graphs: Scenario 1",
+      "duration": 521,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 2",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 2 should format data correctly for Pie graphs: Scenario 2",
+      "duration": 521,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 3",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 3 should format data correctly for Pie graphs: Scenario 3",
+      "duration": 521,
+      "errorCount": 0
+    },
+    {
+      "title": "should return {} when empty: Scenario 4",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 4 should return {} when empty: Scenario 4",
+      "duration": 521,
+      "errorCount": 0
+    },
+    {
+      "title": "should group data by key correctly",
+      "fullTitle": "Clinical Indicators Helpers,groupByKey,byMonthSimpleGroupBy should group data by key correctly",
+      "duration": 558,
+      "errorCount": 0
+    },
+    {
+      "title": "should group data by key correctly",
+      "fullTitle": "Clinical Indicators Helpers,groupByKey,groupByKeyMonthResultCategory1Detected should group data by key correctly",
+      "duration": 558,
+      "errorCount": 0
+    },
+    {
+      "title": "should transpose the keys and data correctly",
+      "fullTitle": "Clinical Indicators Helpers,normaliseKeys,byMonthSimpleGroupBy should transpose the keys and data correctly",
+      "duration": 558,
+      "errorCount": 0
+    },
+    {
+      "title": "should calculate percentages correctly and add up close to 100%",
+      "fullTitle": "Clinical Indicators Helpers,calcPercentageSplitBar,byMonthSimpleGroupBy should calculate percentages correctly and add up close to 100%",
+      "duration": 558,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs",
+      "fullTitle": "Clinical Indicators Helpers,formatDataForPie,Scenario 1 should format data correctly for Pie graphs",
+      "duration": 558,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 1",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 1 should format data correctly for Pie graphs: Scenario 1",
+      "duration": 558,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 2",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 2 should format data correctly for Pie graphs: Scenario 2",
+      "duration": 558,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 3",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 3 should format data correctly for Pie graphs: Scenario 3",
+      "duration": 558,
+      "errorCount": 0
+    },
+    {
+      "title": "should return {} when empty: Scenario 4",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 4 should return {} when empty: Scenario 4",
+      "duration": 558,
+      "errorCount": 0
+    },
+    {
+      "title": "should group data by key correctly",
+      "fullTitle": "Clinical Indicators Helpers,groupByKey,byMonthSimpleGroupBy should group data by key correctly",
+      "duration": 463,
+      "errorCount": 0
+    },
+    {
+      "title": "should group data by key correctly",
+      "fullTitle": "Clinical Indicators Helpers,groupByKey,groupByKeyMonthResultCategory1Detected should group data by key correctly",
+      "duration": 463,
+      "errorCount": 0
+    },
+    {
+      "title": "should transpose the keys and data correctly",
+      "fullTitle": "Clinical Indicators Helpers,normaliseKeys,byMonthSimpleGroupBy should transpose the keys and data correctly",
+      "duration": 463,
+      "errorCount": 0
+    },
+    {
+      "title": "should calculate percentages correctly and add up close to 100%",
+      "fullTitle": "Clinical Indicators Helpers,calcPercentageSplitBar,byMonthSimpleGroupBy should calculate percentages correctly and add up close to 100%",
+      "duration": 463,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs",
+      "fullTitle": "Clinical Indicators Helpers,formatDataForPie,Scenario 1 should format data correctly for Pie graphs",
+      "duration": 463,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 1",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 1 should format data correctly for Pie graphs: Scenario 1",
+      "duration": 463,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 2",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 2 should format data correctly for Pie graphs: Scenario 2",
+      "duration": 463,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 3",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 3 should format data correctly for Pie graphs: Scenario 3",
+      "duration": 463,
+      "errorCount": 0
+    },
+    {
+      "title": "should return {} when empty: Scenario 4",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 4 should return {} when empty: Scenario 4",
+      "duration": 463,
+      "errorCount": 0
+    },
+    {
+      "title": "should group data by key correctly",
+      "fullTitle": "Clinical Indicators Helpers,groupByKey,byMonthSimpleGroupBy should group data by key correctly",
+      "duration": 332,
+      "errorCount": 0
+    },
+    {
+      "title": "should group data by key correctly",
+      "fullTitle": "Clinical Indicators Helpers,groupByKey,groupByKeyMonthResultCategory1Detected should group data by key correctly",
+      "duration": 332,
+      "errorCount": 0
+    },
+    {
+      "title": "should transpose the keys and data correctly",
+      "fullTitle": "Clinical Indicators Helpers,normaliseKeys,byMonthSimpleGroupBy should transpose the keys and data correctly",
+      "duration": 332,
+      "errorCount": 0
+    },
+    {
+      "title": "should calculate percentages correctly and add up close to 100%",
+      "fullTitle": "Clinical Indicators Helpers,calcPercentageSplitBar,byMonthSimpleGroupBy should calculate percentages correctly and add up close to 100%",
+      "duration": 332,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs",
+      "fullTitle": "Clinical Indicators Helpers,formatDataForPie,Scenario 1 should format data correctly for Pie graphs",
+      "duration": 332,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 1",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 1 should format data correctly for Pie graphs: Scenario 1",
+      "duration": 332,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 2",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 2 should format data correctly for Pie graphs: Scenario 2",
+      "duration": 332,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 3",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 3 should format data correctly for Pie graphs: Scenario 3",
+      "duration": 332,
+      "errorCount": 0
+    },
+    {
+      "title": "should return {} when empty: Scenario 4",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 4 should return {} when empty: Scenario 4",
+      "duration": 332,
+      "errorCount": 0
+    },
+    {
+      "title": "should group data by key correctly",
+      "fullTitle": "Clinical Indicators Helpers,groupByKey,byMonthSimpleGroupBy should group data by key correctly",
+      "duration": 370,
+      "errorCount": 0
+    },
+    {
+      "title": "should group data by key correctly",
+      "fullTitle": "Clinical Indicators Helpers,groupByKey,groupByKeyMonthResultCategory1Detected should group data by key correctly",
+      "duration": 370,
+      "errorCount": 0
+    },
+    {
+      "title": "should transpose the keys and data correctly",
+      "fullTitle": "Clinical Indicators Helpers,normaliseKeys,byMonthSimpleGroupBy should transpose the keys and data correctly",
+      "duration": 370,
+      "errorCount": 0
+    },
+    {
+      "title": "should calculate percentages correctly and add up close to 100%",
+      "fullTitle": "Clinical Indicators Helpers,calcPercentageSplitBar,byMonthSimpleGroupBy should calculate percentages correctly and add up close to 100%",
+      "duration": 370,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs",
+      "fullTitle": "Clinical Indicators Helpers,formatDataForPie,Scenario 1 should format data correctly for Pie graphs",
+      "duration": 370,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 1",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 1 should format data correctly for Pie graphs: Scenario 1",
+      "duration": 370,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 2",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 2 should format data correctly for Pie graphs: Scenario 2",
+      "duration": 370,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 3",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 3 should format data correctly for Pie graphs: Scenario 3",
+      "duration": 370,
+      "errorCount": 0
+    },
+    {
+      "title": "should return {} when empty: Scenario 4",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 4 should return {} when empty: Scenario 4",
+      "duration": 370,
+      "errorCount": 0
+    },
+    {
+      "title": "should group data by key correctly",
+      "fullTitle": "Clinical Indicators Helpers,groupByKey,byMonthSimpleGroupBy should group data by key correctly",
+      "duration": 695,
+      "errorCount": 0
+    },
+    {
+      "title": "should group data by key correctly",
+      "fullTitle": "Clinical Indicators Helpers,groupByKey,groupByKeyMonthResultCategory1Detected should group data by key correctly",
+      "duration": 695,
+      "errorCount": 0
+    },
+    {
+      "title": "should transpose the keys and data correctly",
+      "fullTitle": "Clinical Indicators Helpers,normaliseKeys,byMonthSimpleGroupBy should transpose the keys and data correctly",
+      "duration": 695,
+      "errorCount": 0
+    },
+    {
+      "title": "should calculate percentages correctly and add up close to 100%",
+      "fullTitle": "Clinical Indicators Helpers,calcPercentageSplitBar,byMonthSimpleGroupBy should calculate percentages correctly and add up close to 100%",
+      "duration": 695,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs",
+      "fullTitle": "Clinical Indicators Helpers,formatDataForPie,Scenario 1 should format data correctly for Pie graphs",
+      "duration": 695,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 1",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 1 should format data correctly for Pie graphs: Scenario 1",
+      "duration": 695,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 2",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 2 should format data correctly for Pie graphs: Scenario 2",
+      "duration": 695,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 3",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 3 should format data correctly for Pie graphs: Scenario 3",
+      "duration": 695,
+      "errorCount": 0
+    },
+    {
+      "title": "should return {} when empty: Scenario 4",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 4 should return {} when empty: Scenario 4",
+      "duration": 695,
+      "errorCount": 0
+    },
+    {
+      "title": "should group data by key correctly",
+      "fullTitle": "Clinical Indicators Helpers,groupByKey,byMonthSimpleGroupBy should group data by key correctly",
+      "duration": 654,
+      "errorCount": 0
+    },
+    {
+      "title": "should group data by key correctly",
+      "fullTitle": "Clinical Indicators Helpers,groupByKey,groupByKeyMonthResultCategory1Detected should group data by key correctly",
+      "duration": 654,
+      "errorCount": 0
+    },
+    {
+      "title": "should transpose the keys and data correctly",
+      "fullTitle": "Clinical Indicators Helpers,normaliseKeys,byMonthSimpleGroupBy should transpose the keys and data correctly",
+      "duration": 654,
+      "errorCount": 0
+    },
+    {
+      "title": "should calculate percentages correctly and add up close to 100%",
+      "fullTitle": "Clinical Indicators Helpers,calcPercentageSplitBar,byMonthSimpleGroupBy should calculate percentages correctly and add up close to 100%",
+      "duration": 654,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs",
+      "fullTitle": "Clinical Indicators Helpers,formatDataForPie,Scenario 1 should format data correctly for Pie graphs",
+      "duration": 654,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 1",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 1 should format data correctly for Pie graphs: Scenario 1",
+      "duration": 654,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 2",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 2 should format data correctly for Pie graphs: Scenario 2",
+      "duration": 654,
+      "errorCount": 0
+    },
+    {
+      "title": "should return {} when empty: Scenario 4",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 4 should return {} when empty: Scenario 4",
+      "duration": 654,
+      "errorCount": 0
+    },
+    {
+      "title": "should group data by key correctly",
+      "fullTitle": "Clinical Indicators Helpers,groupByKey,byMonthSimpleGroupBy should group data by key correctly",
+      "duration": 626,
+      "errorCount": 0
+    },
+    {
+      "title": "should group data by key correctly",
+      "fullTitle": "Clinical Indicators Helpers,groupByKey,groupByKeyMonthResultCategory1Detected should group data by key correctly",
+      "duration": 626,
+      "errorCount": 0
+    },
+    {
+      "title": "should transpose the keys and data correctly",
+      "fullTitle": "Clinical Indicators Helpers,normaliseKeys,byMonthSimpleGroupBy should transpose the keys and data correctly",
+      "duration": 626,
+      "errorCount": 0
+    },
+    {
+      "title": "should calculate percentages correctly and add up close to 100%",
+      "fullTitle": "Clinical Indicators Helpers,calcPercentageSplitBar,byMonthSimpleGroupBy should calculate percentages correctly and add up close to 100%",
+      "duration": 626,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs",
+      "fullTitle": "Clinical Indicators Helpers,formatDataForPie,Scenario 1 should format data correctly for Pie graphs",
+      "duration": 626,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 1",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 1 should format data correctly for Pie graphs: Scenario 1",
+      "duration": 626,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 2",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 2 should format data correctly for Pie graphs: Scenario 2",
+      "duration": 626,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 3",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 3 should format data correctly for Pie graphs: Scenario 3",
+      "duration": 626,
+      "errorCount": 0
+    },
+    {
+      "title": "should return {} when empty: Scenario 4",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 4 should return {} when empty: Scenario 4",
+      "duration": 626,
+      "errorCount": 0
+    },
+    {
+      "title": "should group data by key correctly",
+      "fullTitle": "Clinical Indicators Helpers,groupByKey,byMonthSimpleGroupBy should group data by key correctly",
+      "duration": 693,
+      "errorCount": 0
+    },
+    {
+      "title": "should group data by key correctly",
+      "fullTitle": "Clinical Indicators Helpers,groupByKey,groupByKeyMonthResultCategory1Detected should group data by key correctly",
+      "duration": 693,
+      "errorCount": 0
+    },
+    {
+      "title": "should transpose the keys and data correctly",
+      "fullTitle": "Clinical Indicators Helpers,normaliseKeys,byMonthSimpleGroupBy should transpose the keys and data correctly",
+      "duration": 693,
+      "errorCount": 0
+    },
+    {
+      "title": "should calculate percentages correctly and add up close to 100%",
+      "fullTitle": "Clinical Indicators Helpers,calcPercentageSplitBar,byMonthSimpleGroupBy should calculate percentages correctly and add up close to 100%",
+      "duration": 693,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs",
+      "fullTitle": "Clinical Indicators Helpers,formatDataForPie,Scenario 1 should format data correctly for Pie graphs",
+      "duration": 693,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 1",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 1 should format data correctly for Pie graphs: Scenario 1",
+      "duration": 693,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 2",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 2 should format data correctly for Pie graphs: Scenario 2",
+      "duration": 693,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 3",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 3 should format data correctly for Pie graphs: Scenario 3",
+      "duration": 693,
+      "errorCount": 0
+    },
+    {
+      "title": "should return {} when empty: Scenario 4",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 4 should return {} when empty: Scenario 4",
+      "duration": 693,
+      "errorCount": 0
+    },
+    {
+      "title": "should group data by key correctly",
+      "fullTitle": "Clinical Indicators Helpers,groupByKey,byMonthSimpleGroupBy should group data by key correctly",
+      "duration": 532,
+      "errorCount": 0
+    },
+    {
+      "title": "should group data by key correctly",
+      "fullTitle": "Clinical Indicators Helpers,groupByKey,groupByKeyMonthResultCategory1Detected should group data by key correctly",
+      "duration": 532,
+      "errorCount": 0
+    },
+    {
+      "title": "should transpose the keys and data correctly",
+      "fullTitle": "Clinical Indicators Helpers,normaliseKeys,byMonthSimpleGroupBy should transpose the keys and data correctly",
+      "duration": 532,
+      "errorCount": 0
+    },
+    {
+      "title": "should calculate percentages correctly and add up close to 100%",
+      "fullTitle": "Clinical Indicators Helpers,calcPercentageSplitBar,byMonthSimpleGroupBy should calculate percentages correctly and add up close to 100%",
+      "duration": 532,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs",
+      "fullTitle": "Clinical Indicators Helpers,formatDataForPie,Scenario 1 should format data correctly for Pie graphs",
+      "duration": 532,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 1",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 1 should format data correctly for Pie graphs: Scenario 1",
+      "duration": 532,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 2",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 2 should format data correctly for Pie graphs: Scenario 2",
+      "duration": 532,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 3",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 3 should format data correctly for Pie graphs: Scenario 3",
+      "duration": 532,
+      "errorCount": 0
+    },
+    {
+      "title": "should return {} when empty: Scenario 4",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 4 should return {} when empty: Scenario 4",
+      "duration": 532,
+      "errorCount": 0
+    },
+    {
+      "title": "should group data by key correctly",
+      "fullTitle": "Clinical Indicators Helpers,groupByKey,byMonthSimpleGroupBy should group data by key correctly",
+      "duration": 535,
+      "errorCount": 0
+    },
+    {
+      "title": "should group data by key correctly",
+      "fullTitle": "Clinical Indicators Helpers,groupByKey,groupByKeyMonthResultCategory1Detected should group data by key correctly",
+      "duration": 535,
+      "errorCount": 0
+    },
+    {
+      "title": "should transpose the keys and data correctly",
+      "fullTitle": "Clinical Indicators Helpers,normaliseKeys,byMonthSimpleGroupBy should transpose the keys and data correctly",
+      "duration": 535,
+      "errorCount": 0
+    },
+    {
+      "title": "should calculate percentages correctly and add up close to 100%",
+      "fullTitle": "Clinical Indicators Helpers,calcPercentageSplitBar,byMonthSimpleGroupBy should calculate percentages correctly and add up close to 100%",
+      "duration": 535,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs",
+      "fullTitle": "Clinical Indicators Helpers,formatDataForPie,Scenario 1 should format data correctly for Pie graphs",
+      "duration": 535,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 1",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 1 should format data correctly for Pie graphs: Scenario 1",
+      "duration": 535,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 2",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 2 should format data correctly for Pie graphs: Scenario 2",
+      "duration": 535,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 3",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 3 should format data correctly for Pie graphs: Scenario 3",
+      "duration": 535,
+      "errorCount": 0
+    },
+    {
+      "title": "should return {} when empty: Scenario 4",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 4 should return {} when empty: Scenario 4",
+      "duration": 535,
+      "errorCount": 0
+    },
+    {
+      "title": "should group data by key correctly",
+      "fullTitle": "Clinical Indicators Helpers,groupByKey,byMonthSimpleGroupBy should group data by key correctly",
+      "duration": 499,
+      "errorCount": 0
+    },
+    {
+      "title": "should group data by key correctly",
+      "fullTitle": "Clinical Indicators Helpers,groupByKey,groupByKeyMonthResultCategory1Detected should group data by key correctly",
+      "duration": 499,
+      "errorCount": 0
+    },
+    {
+      "title": "should transpose the keys and data correctly",
+      "fullTitle": "Clinical Indicators Helpers,normaliseKeys,byMonthSimpleGroupBy should transpose the keys and data correctly",
+      "duration": 499,
+      "errorCount": 0
+    },
+    {
+      "title": "should calculate percentages correctly and add up close to 100%",
+      "fullTitle": "Clinical Indicators Helpers,calcPercentageSplitBar,byMonthSimpleGroupBy should calculate percentages correctly and add up close to 100%",
+      "duration": 499,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs",
+      "fullTitle": "Clinical Indicators Helpers,formatDataForPie,Scenario 1 should format data correctly for Pie graphs",
+      "duration": 499,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 1",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 1 should format data correctly for Pie graphs: Scenario 1",
+      "duration": 499,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 2",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 2 should format data correctly for Pie graphs: Scenario 2",
+      "duration": 499,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 3",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 3 should format data correctly for Pie graphs: Scenario 3",
+      "duration": 499,
+      "errorCount": 0
+    },
+    {
+      "title": "should return {} when empty: Scenario 4",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 4 should return {} when empty: Scenario 4",
+      "duration": 499,
+      "errorCount": 0
+    },
+    {
+      "title": "should group data by key correctly",
+      "fullTitle": "Clinical Indicators Helpers,groupByKey,byMonthSimpleGroupBy should group data by key correctly",
+      "duration": 531,
+      "errorCount": 0
+    },
+    {
+      "title": "should group data by key correctly",
+      "fullTitle": "Clinical Indicators Helpers,groupByKey,groupByKeyMonthResultCategory1Detected should group data by key correctly",
+      "duration": 531,
+      "errorCount": 0
+    },
+    {
+      "title": "should transpose the keys and data correctly",
+      "fullTitle": "Clinical Indicators Helpers,normaliseKeys,byMonthSimpleGroupBy should transpose the keys and data correctly",
+      "duration": 531,
+      "errorCount": 0
+    },
+    {
+      "title": "should calculate percentages correctly and add up close to 100%",
+      "fullTitle": "Clinical Indicators Helpers,calcPercentageSplitBar,byMonthSimpleGroupBy should calculate percentages correctly and add up close to 100%",
+      "duration": 531,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs",
+      "fullTitle": "Clinical Indicators Helpers,formatDataForPie,Scenario 1 should format data correctly for Pie graphs",
+      "duration": 531,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 1",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 1 should format data correctly for Pie graphs: Scenario 1",
+      "duration": 531,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 2",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 2 should format data correctly for Pie graphs: Scenario 2",
+      "duration": 531,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 3",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 3 should format data correctly for Pie graphs: Scenario 3",
+      "duration": 531,
+      "errorCount": 0
+    },
+    {
+      "title": "should return {} when empty: Scenario 4",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 4 should return {} when empty: Scenario 4",
+      "duration": 531,
+      "errorCount": 0
+    },
+    {
+      "title": "should group data by key correctly",
+      "fullTitle": "Clinical Indicators Helpers,groupByKey,byMonthSimpleGroupBy should group data by key correctly",
+      "duration": 254,
+      "errorCount": 0
+    },
+    {
+      "title": "should group data by key correctly",
+      "fullTitle": "Clinical Indicators Helpers,groupByKey,groupByKeyMonthResultCategory1Detected should group data by key correctly",
+      "duration": 254,
+      "errorCount": 0
+    },
+    {
+      "title": "should transpose the keys and data correctly",
+      "fullTitle": "Clinical Indicators Helpers,normaliseKeys,byMonthSimpleGroupBy should transpose the keys and data correctly",
+      "duration": 254,
+      "errorCount": 0
+    },
+    {
+      "title": "should calculate percentages correctly and add up close to 100%",
+      "fullTitle": "Clinical Indicators Helpers,calcPercentageSplitBar,byMonthSimpleGroupBy should calculate percentages correctly and add up close to 100%",
+      "duration": 254,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs",
+      "fullTitle": "Clinical Indicators Helpers,formatDataForPie,Scenario 1 should format data correctly for Pie graphs",
+      "duration": 254,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 1",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 1 should format data correctly for Pie graphs: Scenario 1",
+      "duration": 254,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 2",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 2 should format data correctly for Pie graphs: Scenario 2",
+      "duration": 254,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 3",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 3 should format data correctly for Pie graphs: Scenario 3",
+      "duration": 254,
+      "errorCount": 0
+    },
+    {
+      "title": "should return {} when empty: Scenario 4",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 4 should return {} when empty: Scenario 4",
+      "duration": 254,
+      "errorCount": 0
+    },
+    {
+      "title": "should group data by key correctly",
+      "fullTitle": "Clinical Indicators Helpers,groupByKey,byMonthSimpleGroupBy should group data by key correctly",
+      "duration": 566,
+      "errorCount": 0
+    },
+    {
+      "title": "should group data by key correctly",
+      "fullTitle": "Clinical Indicators Helpers,groupByKey,groupByKeyMonthResultCategory1Detected should group data by key correctly",
+      "duration": 566,
+      "errorCount": 0
+    },
+    {
+      "title": "should transpose the keys and data correctly",
+      "fullTitle": "Clinical Indicators Helpers,normaliseKeys,byMonthSimpleGroupBy should transpose the keys and data correctly",
+      "duration": 566,
+      "errorCount": 0
+    },
+    {
+      "title": "should calculate percentages correctly and add up close to 100%",
+      "fullTitle": "Clinical Indicators Helpers,calcPercentageSplitBar,byMonthSimpleGroupBy should calculate percentages correctly and add up close to 100%",
+      "duration": 566,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs",
+      "fullTitle": "Clinical Indicators Helpers,formatDataForPie,Scenario 1 should format data correctly for Pie graphs",
+      "duration": 566,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 1",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 1 should format data correctly for Pie graphs: Scenario 1",
+      "duration": 566,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 2",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 2 should format data correctly for Pie graphs: Scenario 2",
+      "duration": 566,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 3",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 3 should format data correctly for Pie graphs: Scenario 3",
+      "duration": 566,
+      "errorCount": 0
+    },
+    {
+      "title": "should return {} when empty: Scenario 4",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 4 should return {} when empty: Scenario 4",
+      "duration": 566,
+      "errorCount": 0
+    },
+    {
+      "title": "should group data by key correctly",
+      "fullTitle": "Clinical Indicators Helpers,groupByKey,byMonthSimpleGroupBy should group data by key correctly",
+      "duration": 509,
+      "errorCount": 0
+    },
+    {
+      "title": "should group data by key correctly",
+      "fullTitle": "Clinical Indicators Helpers,groupByKey,groupByKeyMonthResultCategory1Detected should group data by key correctly",
+      "duration": 509,
+      "errorCount": 0
+    },
+    {
+      "title": "should transpose the keys and data correctly",
+      "fullTitle": "Clinical Indicators Helpers,normaliseKeys,byMonthSimpleGroupBy should transpose the keys and data correctly",
+      "duration": 509,
+      "errorCount": 0
+    },
+    {
+      "title": "should calculate percentages correctly and add up close to 100%",
+      "fullTitle": "Clinical Indicators Helpers,calcPercentageSplitBar,byMonthSimpleGroupBy should calculate percentages correctly and add up close to 100%",
+      "duration": 509,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs",
+      "fullTitle": "Clinical Indicators Helpers,formatDataForPie,Scenario 1 should format data correctly for Pie graphs",
+      "duration": 509,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 1",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 1 should format data correctly for Pie graphs: Scenario 1",
+      "duration": 509,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 2",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 2 should format data correctly for Pie graphs: Scenario 2",
+      "duration": 509,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 3",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 3 should format data correctly for Pie graphs: Scenario 3",
+      "duration": 509,
+      "errorCount": 0
+    },
+    {
+      "title": "should return {} when empty: Scenario 4",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 4 should return {} when empty: Scenario 4",
+      "duration": 509,
+      "errorCount": 0
+    },
+    {
+      "title": "should group data by key correctly",
+      "fullTitle": "Clinical Indicators Helpers,groupByKey,byMonthSimpleGroupBy should group data by key correctly",
+      "duration": 570,
+      "errorCount": 0
+    },
+    {
+      "title": "should group data by key correctly",
+      "fullTitle": "Clinical Indicators Helpers,groupByKey,groupByKeyMonthResultCategory1Detected should group data by key correctly",
+      "duration": 570,
+      "errorCount": 0
+    },
+    {
+      "title": "should transpose the keys and data correctly",
+      "fullTitle": "Clinical Indicators Helpers,normaliseKeys,byMonthSimpleGroupBy should transpose the keys and data correctly",
+      "duration": 570,
+      "errorCount": 0
+    },
+    {
+      "title": "should calculate percentages correctly and add up close to 100%",
+      "fullTitle": "Clinical Indicators Helpers,calcPercentageSplitBar,byMonthSimpleGroupBy should calculate percentages correctly and add up close to 100%",
+      "duration": 570,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs",
+      "fullTitle": "Clinical Indicators Helpers,formatDataForPie,Scenario 1 should format data correctly for Pie graphs",
+      "duration": 570,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 1",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 1 should format data correctly for Pie graphs: Scenario 1",
+      "duration": 570,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 2",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 2 should format data correctly for Pie graphs: Scenario 2",
+      "duration": 570,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 3",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 3 should format data correctly for Pie graphs: Scenario 3",
+      "duration": 570,
+      "errorCount": 0
+    },
+    {
+      "title": "should return {} when empty: Scenario 4",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 4 should return {} when empty: Scenario 4",
+      "duration": 570,
+      "errorCount": 0
+    },
+    {
+      "title": "should group data by key correctly",
+      "fullTitle": "Clinical Indicators Helpers,groupByKey,byMonthSimpleGroupBy should group data by key correctly",
+      "duration": 498,
+      "errorCount": 0
+    },
+    {
+      "title": "should group data by key correctly",
+      "fullTitle": "Clinical Indicators Helpers,groupByKey,groupByKeyMonthResultCategory1Detected should group data by key correctly",
+      "duration": 498,
+      "errorCount": 0
+    },
+    {
+      "title": "should transpose the keys and data correctly",
+      "fullTitle": "Clinical Indicators Helpers,normaliseKeys,byMonthSimpleGroupBy should transpose the keys and data correctly",
+      "duration": 498,
+      "errorCount": 0
+    },
+    {
+      "title": "should calculate percentages correctly and add up close to 100%",
+      "fullTitle": "Clinical Indicators Helpers,calcPercentageSplitBar,byMonthSimpleGroupBy should calculate percentages correctly and add up close to 100%",
+      "duration": 498,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs",
+      "fullTitle": "Clinical Indicators Helpers,formatDataForPie,Scenario 1 should format data correctly for Pie graphs",
+      "duration": 498,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 1",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 1 should format data correctly for Pie graphs: Scenario 1",
+      "duration": 498,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 2",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 2 should format data correctly for Pie graphs: Scenario 2",
+      "duration": 498,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 3",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 3 should format data correctly for Pie graphs: Scenario 3",
+      "duration": 498,
+      "errorCount": 0
+    },
+    {
+      "title": "should return {} when empty: Scenario 4",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 4 should return {} when empty: Scenario 4",
+      "duration": 498,
+      "errorCount": 0
+    },
+    {
+      "title": "should group data by key correctly",
+      "fullTitle": "Clinical Indicators Helpers,groupByKey,byMonthSimpleGroupBy should group data by key correctly",
+      "duration": 600,
+      "errorCount": 0
+    },
+    {
+      "title": "should group data by key correctly",
+      "fullTitle": "Clinical Indicators Helpers,groupByKey,groupByKeyMonthResultCategory1Detected should group data by key correctly",
+      "duration": 600,
+      "errorCount": 0
+    },
+    {
+      "title": "should transpose the keys and data correctly",
+      "fullTitle": "Clinical Indicators Helpers,normaliseKeys,byMonthSimpleGroupBy should transpose the keys and data correctly",
+      "duration": 600,
+      "errorCount": 0
+    },
+    {
+      "title": "should calculate percentages correctly and add up close to 100%",
+      "fullTitle": "Clinical Indicators Helpers,calcPercentageSplitBar,byMonthSimpleGroupBy should calculate percentages correctly and add up close to 100%",
+      "duration": 600,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs",
+      "fullTitle": "Clinical Indicators Helpers,formatDataForPie,Scenario 1 should format data correctly for Pie graphs",
+      "duration": 600,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 1",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 1 should format data correctly for Pie graphs: Scenario 1",
+      "duration": 600,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 2",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 2 should format data correctly for Pie graphs: Scenario 2",
+      "duration": 600,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 3",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 3 should format data correctly for Pie graphs: Scenario 3",
+      "duration": 600,
+      "errorCount": 0
+    },
+    {
+      "title": "should return {} when empty: Scenario 4",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 4 should return {} when empty: Scenario 4",
+      "duration": 600,
+      "errorCount": 0
+    },
+    {
+      "title": "should group data by key correctly",
+      "fullTitle": "Clinical Indicators Helpers,groupByKey,byMonthSimpleGroupBy should group data by key correctly",
+      "duration": 538,
+      "errorCount": 0
+    },
+    {
+      "title": "should group data by key correctly",
+      "fullTitle": "Clinical Indicators Helpers,groupByKey,groupByKeyMonthResultCategory1Detected should group data by key correctly",
+      "duration": 538,
+      "errorCount": 0
+    },
+    {
+      "title": "should transpose the keys and data correctly",
+      "fullTitle": "Clinical Indicators Helpers,normaliseKeys,byMonthSimpleGroupBy should transpose the keys and data correctly",
+      "duration": 538,
+      "errorCount": 0
+    },
+    {
+      "title": "should calculate percentages correctly and add up close to 100%",
+      "fullTitle": "Clinical Indicators Helpers,calcPercentageSplitBar,byMonthSimpleGroupBy should calculate percentages correctly and add up close to 100%",
+      "duration": 538,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs",
+      "fullTitle": "Clinical Indicators Helpers,formatDataForPie,Scenario 1 should format data correctly for Pie graphs",
+      "duration": 538,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 1",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 1 should format data correctly for Pie graphs: Scenario 1",
+      "duration": 538,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 2",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 2 should format data correctly for Pie graphs: Scenario 2",
+      "duration": 538,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 3",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 3 should format data correctly for Pie graphs: Scenario 3",
+      "duration": 538,
+      "errorCount": 0
+    },
+    {
+      "title": "should return {} when empty: Scenario 4",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 4 should return {} when empty: Scenario 4",
+      "duration": 538,
+      "errorCount": 0
+    },
+    {
+      "title": "should group data by key correctly",
+      "fullTitle": "Clinical Indicators Helpers,groupByKey,byMonthSimpleGroupBy should group data by key correctly",
+      "duration": 537,
+      "errorCount": 0
+    },
+    {
+      "title": "should group data by key correctly",
+      "fullTitle": "Clinical Indicators Helpers,groupByKey,groupByKeyMonthResultCategory1Detected should group data by key correctly",
+      "duration": 537,
+      "errorCount": 0
+    },
+    {
+      "title": "should transpose the keys and data correctly",
+      "fullTitle": "Clinical Indicators Helpers,normaliseKeys,byMonthSimpleGroupBy should transpose the keys and data correctly",
+      "duration": 537,
+      "errorCount": 0
+    },
+    {
+      "title": "should calculate percentages correctly and add up close to 100%",
+      "fullTitle": "Clinical Indicators Helpers,calcPercentageSplitBar,byMonthSimpleGroupBy should calculate percentages correctly and add up close to 100%",
+      "duration": 537,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs",
+      "fullTitle": "Clinical Indicators Helpers,formatDataForPie,Scenario 1 should format data correctly for Pie graphs",
+      "duration": 537,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 1",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 1 should format data correctly for Pie graphs: Scenario 1",
+      "duration": 537,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 2",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 2 should format data correctly for Pie graphs: Scenario 2",
+      "duration": 537,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 3",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 3 should format data correctly for Pie graphs: Scenario 3",
+      "duration": 537,
+      "errorCount": 0
+    },
+    {
+      "title": "should return {} when empty: Scenario 4",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 4 should return {} when empty: Scenario 4",
+      "duration": 537,
+      "errorCount": 0
+    },
+    {
+      "title": "should group data by key correctly",
+      "fullTitle": "Clinical Indicators Helpers,groupByKey,byMonthSimpleGroupBy should group data by key correctly",
+      "duration": 359,
+      "errorCount": 0
+    },
+    {
+      "title": "should group data by key correctly",
+      "fullTitle": "Clinical Indicators Helpers,groupByKey,groupByKeyMonthResultCategory1Detected should group data by key correctly",
+      "duration": 359,
+      "errorCount": 0
+    },
+    {
+      "title": "should transpose the keys and data correctly",
+      "fullTitle": "Clinical Indicators Helpers,normaliseKeys,byMonthSimpleGroupBy should transpose the keys and data correctly",
+      "duration": 359,
+      "errorCount": 0
+    },
+    {
+      "title": "should calculate percentages correctly and add up close to 100%",
+      "fullTitle": "Clinical Indicators Helpers,calcPercentageSplitBar,byMonthSimpleGroupBy should calculate percentages correctly and add up close to 100%",
+      "duration": 359,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs",
+      "fullTitle": "Clinical Indicators Helpers,formatDataForPie,Scenario 1 should format data correctly for Pie graphs",
+      "duration": 359,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 1",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 1 should format data correctly for Pie graphs: Scenario 1",
+      "duration": 359,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 2",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 2 should format data correctly for Pie graphs: Scenario 2",
+      "duration": 359,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 3",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 3 should format data correctly for Pie graphs: Scenario 3",
+      "duration": 359,
+      "errorCount": 0
+    },
+    {
+      "title": "should return {} when empty: Scenario 4",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 4 should return {} when empty: Scenario 4",
+      "duration": 359,
+      "errorCount": 0
+    },
+    {
+      "title": "should group data by key correctly",
+      "fullTitle": "Clinical Indicators Helpers,groupByKey,byMonthSimpleGroupBy should group data by key correctly",
+      "duration": 286,
+      "errorCount": 0
+    },
+    {
+      "title": "should group data by key correctly",
+      "fullTitle": "Clinical Indicators Helpers,groupByKey,groupByKeyMonthResultCategory1Detected should group data by key correctly",
+      "duration": 286,
+      "errorCount": 0
+    },
+    {
+      "title": "should transpose the keys and data correctly",
+      "fullTitle": "Clinical Indicators Helpers,normaliseKeys,byMonthSimpleGroupBy should transpose the keys and data correctly",
+      "duration": 286,
+      "errorCount": 0
+    },
+    {
+      "title": "should calculate percentages correctly and add up close to 100%",
+      "fullTitle": "Clinical Indicators Helpers,calcPercentageSplitBar,byMonthSimpleGroupBy should calculate percentages correctly and add up close to 100%",
+      "duration": 286,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs",
+      "fullTitle": "Clinical Indicators Helpers,formatDataForPie,Scenario 1 should format data correctly for Pie graphs",
+      "duration": 286,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 1",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 1 should format data correctly for Pie graphs: Scenario 1",
+      "duration": 286,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 2",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 2 should format data correctly for Pie graphs: Scenario 2",
+      "duration": 286,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 3",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 3 should format data correctly for Pie graphs: Scenario 3",
+      "duration": 286,
+      "errorCount": 0
+    },
+    {
+      "title": "should return {} when empty: Scenario 4",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 4 should return {} when empty: Scenario 4",
+      "duration": 286,
+      "errorCount": 0
+    },
+    {
+      "title": "should group data by key correctly",
+      "fullTitle": "Clinical Indicators Helpers,groupByKey,byMonthSimpleGroupBy should group data by key correctly",
+      "duration": 496,
+      "errorCount": 0
+    },
+    {
+      "title": "should group data by key correctly",
+      "fullTitle": "Clinical Indicators Helpers,groupByKey,groupByKeyMonthResultCategory1Detected should group data by key correctly",
+      "duration": 496,
+      "errorCount": 0
+    },
+    {
+      "title": "should transpose the keys and data correctly",
+      "fullTitle": "Clinical Indicators Helpers,normaliseKeys,byMonthSimpleGroupBy should transpose the keys and data correctly",
+      "duration": 496,
+      "errorCount": 0
+    },
+    {
+      "title": "should calculate percentages correctly and add up close to 100%",
+      "fullTitle": "Clinical Indicators Helpers,calcPercentageSplitBar,byMonthSimpleGroupBy should calculate percentages correctly and add up close to 100%",
+      "duration": 496,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs",
+      "fullTitle": "Clinical Indicators Helpers,formatDataForPie,Scenario 1 should format data correctly for Pie graphs",
+      "duration": 496,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 1",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 1 should format data correctly for Pie graphs: Scenario 1",
+      "duration": 496,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 2",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 2 should format data correctly for Pie graphs: Scenario 2",
+      "duration": 496,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 3",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 3 should format data correctly for Pie graphs: Scenario 3",
+      "duration": 496,
+      "errorCount": 0
+    },
+    {
+      "title": "should return {} when empty: Scenario 4",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 4 should return {} when empty: Scenario 4",
+      "duration": 496,
+      "errorCount": 0
+    },
+    {
+      "title": "should group data by key correctly",
+      "fullTitle": "Clinical Indicators Helpers,groupByKey,byMonthSimpleGroupBy should group data by key correctly",
+      "duration": 572,
+      "errorCount": 0
+    },
+    {
+      "title": "should group data by key correctly",
+      "fullTitle": "Clinical Indicators Helpers,groupByKey,groupByKeyMonthResultCategory1Detected should group data by key correctly",
+      "duration": 572,
+      "errorCount": 0
+    },
+    {
+      "title": "should transpose the keys and data correctly",
+      "fullTitle": "Clinical Indicators Helpers,normaliseKeys,byMonthSimpleGroupBy should transpose the keys and data correctly",
+      "duration": 572,
+      "errorCount": 0
+    },
+    {
+      "title": "should calculate percentages correctly and add up close to 100%",
+      "fullTitle": "Clinical Indicators Helpers,calcPercentageSplitBar,byMonthSimpleGroupBy should calculate percentages correctly and add up close to 100%",
+      "duration": 572,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs",
+      "fullTitle": "Clinical Indicators Helpers,formatDataForPie,Scenario 1 should format data correctly for Pie graphs",
+      "duration": 572,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 1",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 1 should format data correctly for Pie graphs: Scenario 1",
+      "duration": 572,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 2",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 2 should format data correctly for Pie graphs: Scenario 2",
+      "duration": 572,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 3",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 3 should format data correctly for Pie graphs: Scenario 3",
+      "duration": 572,
+      "errorCount": 0
+    },
+    {
+      "title": "should return {} when empty: Scenario 4",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 4 should return {} when empty: Scenario 4",
+      "duration": 572,
+      "errorCount": 0
+    },
+    {
+      "title": "should group data by key correctly",
+      "fullTitle": "Clinical Indicators Helpers,groupByKey,byMonthSimpleGroupBy should group data by key correctly",
+      "duration": 567,
+      "errorCount": 0
+    },
+    {
+      "title": "should group data by key correctly",
+      "fullTitle": "Clinical Indicators Helpers,groupByKey,groupByKeyMonthResultCategory1Detected should group data by key correctly",
+      "duration": 567,
+      "errorCount": 0
+    },
+    {
+      "title": "should transpose the keys and data correctly",
+      "fullTitle": "Clinical Indicators Helpers,normaliseKeys,byMonthSimpleGroupBy should transpose the keys and data correctly",
+      "duration": 567,
+      "errorCount": 0
+    },
+    {
+      "title": "should calculate percentages correctly and add up close to 100%",
+      "fullTitle": "Clinical Indicators Helpers,calcPercentageSplitBar,byMonthSimpleGroupBy should calculate percentages correctly and add up close to 100%",
+      "duration": 567,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs",
+      "fullTitle": "Clinical Indicators Helpers,formatDataForPie,Scenario 1 should format data correctly for Pie graphs",
+      "duration": 567,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 1",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 1 should format data correctly for Pie graphs: Scenario 1",
+      "duration": 567,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 2",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 2 should format data correctly for Pie graphs: Scenario 2",
+      "duration": 567,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 3",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 3 should format data correctly for Pie graphs: Scenario 3",
+      "duration": 567,
+      "errorCount": 0
+    },
+    {
+      "title": "should return {} when empty: Scenario 4",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 4 should return {} when empty: Scenario 4",
+      "duration": 567,
+      "errorCount": 0
+    },
+    {
+      "title": "should group data by key correctly",
+      "fullTitle": "Clinical Indicators Helpers,groupByKey,byMonthSimpleGroupBy should group data by key correctly",
+      "duration": 271,
+      "errorCount": 0
+    },
+    {
+      "title": "should group data by key correctly",
+      "fullTitle": "Clinical Indicators Helpers,groupByKey,groupByKeyMonthResultCategory1Detected should group data by key correctly",
+      "duration": 271,
+      "errorCount": 0
+    },
+    {
+      "title": "should transpose the keys and data correctly",
+      "fullTitle": "Clinical Indicators Helpers,normaliseKeys,byMonthSimpleGroupBy should transpose the keys and data correctly",
+      "duration": 271,
+      "errorCount": 0
+    },
+    {
+      "title": "should calculate percentages correctly and add up close to 100%",
+      "fullTitle": "Clinical Indicators Helpers,calcPercentageSplitBar,byMonthSimpleGroupBy should calculate percentages correctly and add up close to 100%",
+      "duration": 271,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs",
+      "fullTitle": "Clinical Indicators Helpers,formatDataForPie,Scenario 1 should format data correctly for Pie graphs",
+      "duration": 271,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 1",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 1 should format data correctly for Pie graphs: Scenario 1",
+      "duration": 271,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 2",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 2 should format data correctly for Pie graphs: Scenario 2",
+      "duration": 271,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 3",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 3 should format data correctly for Pie graphs: Scenario 3",
+      "duration": 271,
+      "errorCount": 0
+    },
+    {
+      "title": "should return {} when empty: Scenario 4",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 4 should return {} when empty: Scenario 4",
+      "duration": 271,
+      "errorCount": 0
+    },
+    {
+      "title": "should group data by key correctly",
+      "fullTitle": "Clinical Indicators Helpers,groupByKey,byMonthSimpleGroupBy should group data by key correctly",
+      "duration": 91,
+      "errorCount": 0
+    },
+    {
+      "title": "should group data by key correctly",
+      "fullTitle": "Clinical Indicators Helpers,groupByKey,groupByKeyMonthResultCategory1Detected should group data by key correctly",
+      "duration": 91,
+      "errorCount": 0
+    },
+    {
+      "title": "should transpose the keys and data correctly",
+      "fullTitle": "Clinical Indicators Helpers,normaliseKeys,byMonthSimpleGroupBy should transpose the keys and data correctly",
+      "duration": 91,
+      "errorCount": 0
+    },
+    {
+      "title": "should calculate percentages correctly and add up close to 100%",
+      "fullTitle": "Clinical Indicators Helpers,calcPercentageSplitBar,byMonthSimpleGroupBy should calculate percentages correctly and add up close to 100%",
+      "duration": 91,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs",
+      "fullTitle": "Clinical Indicators Helpers,formatDataForPie,Scenario 1 should format data correctly for Pie graphs",
+      "duration": 91,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 1",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 1 should format data correctly for Pie graphs: Scenario 1",
+      "duration": 91,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 2",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 2 should format data correctly for Pie graphs: Scenario 2",
+      "duration": 91,
+      "errorCount": 0
+    },
+    {
+      "title": "should format data correctly for Pie graphs: Scenario 3",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 3 should format data correctly for Pie graphs: Scenario 3",
+      "duration": 91,
+      "errorCount": 0
+    },
+    {
+      "title": "should return {} when empty: Scenario 4",
+      "fullTitle": "Clinical Indicators Helpers,getAverageFromData,Scenario 4 should return {} when empty: Scenario 4",
+      "duration": 91,
       "errorCount": 0
     }
   ],
