@@ -121,6 +121,7 @@ function onIssueEventResolve(issueType) {
       const issue = await findOpenIssue(knex, issueType, action)
       const hasTrigger =
         issue != null &&
+        issue.partnerId &&
         (await hasIssueEventTrigger(knex, {
           partnerId: issue.partnerId,
           issueType,
@@ -189,18 +190,21 @@ async function createNewIssue(knex, issueType, action) {
   }
 
   // populate context from action data
+  let issueContext = {}
   if (action.resultId) {
     issue.resultId = action.resultId
-    const issueContext = await knex('Result')
+    issueContext = await knex('Result')
       .where({ id: issue.resultId })
       .first('deviceId', 'siteId', 'geographyId', 'partnerId')
+  }
+  if (!_.isEmpty(issueContext)) {
     issue.deviceId = issueContext.deviceId
     issue.siteId = issueContext.siteId
     issue.geographyId = issueContext.geographyId
     issue.partnerId = issueContext.partnerId
   } else if (action.deviceId) {
     issue.deviceId = action.deviceId
-    const issueContext = await knex('Device as d')
+    issueContext = await knex('Device as d')
       .leftJoin('Site as s', 's.id', 'd.siteId')
       .where({ 'd.id': issue.deviceId })
       .first(
@@ -208,12 +212,13 @@ async function createNewIssue(knex, issueType, action) {
         'd.siteId',
         knex.raw('coalesce(d.geographyId, s.geographyId) as geographyId')
       )
-    issue.siteId = issueContext.siteId
-    issue.geographyId = issueContext.geographyId
-    issue.partnerId = issueContext.partnerId
+    if (!_.isEmpty(issueContext)) {
+      issue.siteId = issueContext.siteId
+      issue.geographyId = issueContext.geographyId
+      issue.partnerId = issueContext.partnerId
+    }
   } else if (action.siteId) {
     issue.siteId = action.siteId
-    let issueContext
     if (action.consumableId != null) {
       issueContext = await knex('InventoryItem as ii')
         .innerJoin('Site as s', 'ii.siteId', 's.id')
@@ -235,8 +240,10 @@ async function createNewIssue(knex, issueType, action) {
         .where({ id: issue.siteId })
         .first('geographyId', 'partnerId')
     }
-    issue.geographyId = issueContext.geographyId
-    issue.partnerId = issueContext.partnerId
+    if (!_.isEmpty(issueContext)) {
+      issue.geographyId = issueContext.geographyId
+      issue.partnerId = issueContext.partnerId
+    }
   }
 
   if (action.geographyId) {
@@ -248,12 +255,15 @@ async function createNewIssue(knex, issueType, action) {
   }
 
   // Now that we know partnerId, check to see if we have a trigger
-  const hasTrigger = await hasIssueEventTrigger(knex, {
-    partnerId: issue.partnerId,
-    issueType,
-    action,
-    issueEventStatus: 'Triggered',
-  })
+  const hasTrigger =
+    issue != null &&
+    issue.partnerId &&
+    (await hasIssueEventTrigger(knex, {
+      partnerId: issue.partnerId,
+      issueType,
+      action,
+      issueEventStatus: 'Triggered',
+    }))
   if (!hasTrigger) {
     return null
   }
@@ -284,7 +294,6 @@ async function hasIssueEventTrigger(
 ) {
   const issueTypeId = await issueTypeToId(issueType)
   const issueEventStatusId = await issueEventStatusToId(issueEventStatus)
-
   const issueEventTrigger = await knex('IssueEventTrigger')
     .where({ partnerId, issueTypeId, issueEventStatusId })
     .first('triggerConditions')
