@@ -15,13 +15,20 @@ import startOfMonth from 'date-fns/startOfMonth'
 import format from 'date-fns/format'
 import addDays from 'date-fns/addDays'
 
+import variables from '../../../../../../cfg/variables.js'
+
+const envSource =
+  process.env && process.env.initialised
+    ? process.env
+    : Object.assign(process.env, variables.customPropertiesVariables)
+
 const {
   '--aspect-color-black': colorBlack,
   '--aspect-color-mandy': colorMandy,
   '--aspect-color-mantis': colorMantis,
   '--aspect-color-pink': colorPink,
   '--aspect-color-white-4': colorWhite4,
-} = process.env
+} = envSource
 
 const graphColorMap = [
   { id: 1, externalId: 'MoreThan1000', color: colorMandy },
@@ -52,6 +59,9 @@ const negateTimeZoneOffset = dateString => {
     ? addMinutes(date, offset)
     : subMinutes(date, Math.abs(offset))
 }
+
+const calcPercentageForGraphs = (value, total, precision = 4) =>
+  ((value / total) * 100).toFixed(precision)
 
 const getKeysFromResults = (data, keyToOmit) => {
   const newdata = []
@@ -125,7 +135,7 @@ const formatDataForPie = (
       label,
       value:
         displayMethod === 'percentage'
-          ? round((curr[value] / total) * 100, 1)
+          ? calcPercentageForGraphs(curr[value], total)
           : curr[value],
       color: (colorKey && colorKey.color) || colorWhite4,
     })
@@ -139,9 +149,9 @@ const getAverageFromData = (data, value, which) => {
     const rangeTotal = which.reduce((acc, curr) => {
       const item = filter(data, ['label', curr])[0]
       if (acc && acc.id) {
-        acc[value] += item[value]
+        acc[value] += parseFloat(item[value])
       } else {
-        acc = { ...item }
+        acc = { ...item, [value]: parseFloat(item[value]) }
       }
       return acc
     }, {})
@@ -149,9 +159,16 @@ const getAverageFromData = (data, value, which) => {
   } else {
     total = filter(data, ['label', which])
   }
-  const sum = data.reduce((acc, curr) => acc + curr.value, 0)
+
+  const sum = data.reduce((acc, curr) => acc + parseFloat(curr.value), 0)
+  const avg = calcPercentageForGraphs(
+    parseFloat(total[0][value]),
+    round(sum),
+    1
+  )
+
   return {
-    avg: round((total[0][value] / sum) * 100),
+    avg: parseFloat(avg),
     color: total[0].color,
   }
 }
@@ -166,7 +183,7 @@ const calcPercentageSplitBar = (data, keyToOmitDuringCalc) => {
     })
 
     for (const [key, value] of Object.entries(dataPoints)) {
-      acc[index][key] = ((value / total) * 100).toPrecision(6)
+      acc[index][key] = calcPercentageForGraphs(value, total)
     }
 
     return acc
