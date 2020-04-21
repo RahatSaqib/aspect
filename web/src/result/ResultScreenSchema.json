@@ -11,7 +11,7 @@
             "type": "string",
             "row": 0,
             "order": 0,
-            "title": "Deployment Full Name"
+            "title": "Site"
           }
         }
       },
@@ -22,7 +22,7 @@
             "type": "string",
             "row": 0,
             "order": 0,
-            "title": "Deployment Full Name",
+            "title": "Site",
             "link": "/browse/site/<%= siteId %>"
           },
           "deviceId": {
@@ -252,7 +252,11 @@
             "type": "string",
             "row": 0,
             "order": 0,
-            "title": "Patient ID"
+            "title": "Patient ID",
+            "linkButton":{
+              "to": "/browse/patient/<%= patientId %>",
+              "text": "Clinical History"
+            }
           }
         }
       },

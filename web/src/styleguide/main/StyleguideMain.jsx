@@ -463,7 +463,7 @@ const mockData = Immutable.fromJS({
               type: 'string',
               row: 0,
               order: 0,
-              title: 'Deployment Full Name',
+              title: 'Site',
             },
           },
         },
@@ -474,7 +474,7 @@ const mockData = Immutable.fromJS({
               type: 'string',
               row: 0,
               order: 0,
-              title: 'Deployment Full Name',
+              title: 'Site',
               link: '/browse/site/<%= siteId %>',
             },
             countryName: {
