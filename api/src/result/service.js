@@ -2390,4 +2390,5 @@ module.exports = {
   getQueryForResultsListAndExport,
   queryResultFollowUpLastItems,
   getListResults,
+  addPartnerQueryConstraints,
 }

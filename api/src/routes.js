@@ -72,7 +72,10 @@ function addClientRoutes(server) {
     require('./server/endpoints').routes.map(decorateClientAPI('server'))
   )
   server.route(
-    require('./disease/endpoints').routes.map(decorateClientAPI('device'))
+    require('./disease/endpoints').routes.map(decorateClientAPI('device')) //<<<<<<<<<< Is the 'device' literal OK here? 
+  )
+  server.route(
+    require('./case/endpoints').routes.map(decorateClientAPI('case'))
   )
 }
 
