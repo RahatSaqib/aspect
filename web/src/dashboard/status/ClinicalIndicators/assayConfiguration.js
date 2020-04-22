@@ -14,7 +14,9 @@ const assayConfiguration = (intl, assaysFromState, BarGraph, PieGraph) => {
    * @param  {Function} component Graph component you want to display
    * @param  {String} componentClass Custom classes to send along to the graph component
    * @param  {String=percentage|actual} displayMethod BarGraph only: choose to show compound stack or actual stack
-   * @param  {String=resultCategory1|resultCategory2} resultCategory Result catorgory to pass along to the endpoint
+   * @param  {String=resultCategory1|resultCategory2} keyToConsume Result category used by graphs to extract counts
+   * @param  {String} [resultCategory1] Specific result terms to send to the endpoint for result filter
+   * @param  {String} [resultCategory2] Specific result terms to send to the endpoint for result filter
    * @param  {String} indexBy Bargraph: X axes tick increments (Show each bar as day, month, week, etc)
    * @param  {String | Array} [groupBy] Optional param to be sent to endpoint for data aggregation
    * @param  {Boolean} legend Option to show the legend explanation or not
@@ -83,7 +85,7 @@ const assayConfiguration = (intl, assaysFromState, BarGraph, PieGraph) => {
           component: BarGraph,
           componentClass: BARCLASS,
           displayMethod: CALCMETHOD.actual,
-          resultCategory: RESULT.result1,
+          keyToConsume: RESULT.result1,
           indexBy: DAY.single,
           groupBy: [DAY.single, RESULT.result1],
           legend: false,
@@ -94,15 +96,25 @@ const assayConfiguration = (intl, assaysFromState, BarGraph, PieGraph) => {
       ],
     },
     {
-      id: 'GxHiv1Vl',
+      id: [
+        'abbottM2000DBSHivVL',
+        'abbottM2000PlasmaHivVL',
+        'assayAlereQHiv12Detect',
+        'assayAlereQHiv12VLPlasma',
+        'assayCobasHivVl',
+        'GxHiv1Vl',
+        'QHivVL',
+        'ReporterHivVL',
+      ],
       period: MONTH.plural,
+      title: intl.formatMessage(messages.clinicalIndicatorsVLTitle),
       graphType: [
         {
           dataKey: DATAKEYS.month,
           component: BarGraph,
           componentClass: BARCLASS,
           displayMethod: CALCMETHOD.percentage,
-          resultCategory: RESULT.result1,
+          keyToConsume: RESULT.result1,
           indexBy: MONTH.single,
           groupBy: [MONTH.single, RESULT.result1],
           legend: true,
@@ -114,13 +126,49 @@ const assayConfiguration = (intl, assaysFromState, BarGraph, PieGraph) => {
           component: PieGraph,
           componentClass: PIECLASS,
           displayMethod: CALCMETHOD.percentage,
-          resultCategory: RESULT.result1,
+          keyToConsume: RESULT.result1,
           indexBy: PIEINDEX.count,
           groupBy: [RESULT.result1],
           legend: false,
           averages: {
             title: intl.formatMessage(messages.clinicalIndicatorsPieLegend),
-            key: 'Not Detected',
+            key: ['Not Detected', '< 1000'],
+          },
+          minDate: getTimePeriod(5, MONTH.plural, 'yyyy-MM-dd'),
+        },
+      ],
+    },
+    {
+      id: ['GxMtbRif', 'GxMtbRifUltra'],
+      period: MONTH.plural,
+      title: intl.formatMessage(messages.clinicalIndicatorsTBTitle),
+      graphType: [
+        {
+          dataKey: DATAKEYS.month,
+          component: BarGraph,
+          componentClass: BARCLASS,
+          displayMethod: CALCMETHOD.percentage,
+          keyToConsume: RESULT.result2,
+          resultCategory1: 'Detected',
+          indexBy: MONTH.single,
+          groupBy: [MONTH.single, RESULT.result1, RESULT.result2],
+          legend: true,
+          formatDate: MONTH.format,
+          minDate: getTimePeriod(5, MONTH.plural, 'yyyy-MM-dd'),
+        },
+        {
+          dataKey: DATAKEYS.aggregate,
+          component: PieGraph,
+          componentClass: PIECLASS,
+          displayMethod: CALCMETHOD.percentage,
+          keyToConsume: RESULT.result2,
+          resultCategory1: 'Detected',
+          indexBy: PIEINDEX.count,
+          groupBy: [RESULT.result1, RESULT.result2],
+          legend: false,
+          averages: {
+            title: intl.formatMessage(messages.clinicalIndicatorsTBPieLegend),
+            key: 'Detected',
           },
           minDate: getTimePeriod(5, MONTH.plural, 'yyyy-MM-dd'),
         },

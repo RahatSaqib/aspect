@@ -116,6 +116,8 @@ exports.customPropertiesVariables = {
   '--aspect-font-size-lg': '24px',
 
   '--aspect-button-border-radius': '3px',
+
+  initialised: true, // only for test runner to work
 }
 
 exports.definePluginVariables = transform(
