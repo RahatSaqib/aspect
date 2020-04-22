@@ -46,7 +46,18 @@ exports[`Result List component should shallow render correctly when filter for a
         "search": "?filters=assayId%3D9",
       }
     }
-  />
+  >
+    <requirePermissions(AspectButton)
+      browseButton={true}
+      color="primary"
+      extraPermissions={Array []}
+      overriddenPermissions={Array []}
+      type="button"
+      variant="contained"
+    >
+      New Result
+    </requirePermissions(AspectButton)>
+  </pure(withProps(withHandlers(Connect(lifecycle(BrowseFilters)))))>
   <DataTableCard
     key="DataTableCard--table-undefined"
   >
@@ -141,7 +152,18 @@ exports[`Result List component should shallow render correctly when filter for a
         "search": "?filters=assayType%3DTB",
       }
     }
-  />
+  >
+    <requirePermissions(AspectButton)
+      browseButton={true}
+      color="primary"
+      extraPermissions={Array []}
+      overriddenPermissions={Array []}
+      type="button"
+      variant="contained"
+    >
+      New Result
+    </requirePermissions(AspectButton)>
+  </pure(withProps(withHandlers(Connect(lifecycle(BrowseFilters)))))>
   <DataTableCard
     key="DataTableCard--table-undefined"
   >

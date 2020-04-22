@@ -12,6 +12,7 @@ const {
 
 const tables = [
   'DeviceApiRawStatus',
+  'FormType',
   'Disease',
   'AssayType',
   'FileContentType',
