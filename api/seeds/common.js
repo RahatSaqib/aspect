@@ -227,7 +227,7 @@ async function upsertJobFunction(
 
 async function clonePermissions(knex, fromFeature, toFeature) {
   const { id: featureId } = await knex
-    .from('Features')
+    .from('Feature')
     .where({ module: toFeature })
     .first()
 
