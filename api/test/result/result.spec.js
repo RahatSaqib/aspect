@@ -87,6 +87,7 @@ describe('Result routes', () => {
             assert.property(res.body.data[0], 'treatmentStatusInfo')
             assert.property(res.body.data[0], 'patientId')
             assert.property(res.body.data[0], 'assayId')
+            assert.property(res.body.data[0], 'caseExternalId')
             assert.property(res.body, 'total')
             ;[
               {
@@ -132,6 +133,38 @@ describe('Result routes', () => {
           assert.typeOf(res.body.extraColumns, 'array')
         })
     })
+
+    it('should return a list of results with case-specific', () =>
+      runTestWithKnex(async knex => {
+        const { caseId } = await knex('Result')
+          .join('Case', 'caseId', 'Case.Id')
+          .first('Case.externalId as caseId')
+        await server
+          .get(`${path}?caseId=${caseId}`)
+          .set('Authorization', `Bearer ${shared.token}`)
+          .then(res => {
+            assert.equal(res.status, 200)
+            assert.typeOf(res.body, 'Object')
+            assert.property(res.body, 'data')
+            assert.typeOf(res.body.data, 'array')
+            assert.isAtLeast(res.body.data.length, 1)
+            assert.property(res.body.data[0], 'id')
+            assert.property(res.body.data[0], 'externalId')
+            assert.property(res.body.data[0], 'endedOn')
+            assert.property(res.body.data[0], 'deviceName')
+            assert.property(res.body.data[0], 'sampleOriginSiteName')
+            assert.property(res.body.data[0], 'sampleId')
+            assert.property(res.body.data[0], 'resultText')
+            assert.property(res.body.data[0], 'errorCode')
+            assert.property(res.body.data[0], 'resultWorkflowStatus')
+            assert.property(res.body.data[0], 'resultTreatmentStatus')
+            assert.property(res.body.data[0], 'treatmentStatusInfo')
+            assert.property(res.body.data[0], 'patientId')
+            assert.property(res.body.data[0], 'caseExternalId')
+            assert.property(res.body, 'total')
+            assert.typeOf(res.body.extraColumns, 'array')
+          })
+      }))
 
     it('should return a single result', async () => {
       await server

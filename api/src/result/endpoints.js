@@ -120,6 +120,12 @@ function listResultsBaseConfig() {
           .description(
             'The id of last entry in ResultStatusLog for current result'
           ),
+        caseId: Joi.string()
+          .allow('')
+          .optional()
+          .description(
+            'Case externalid for filtering only Results related with'
+          ),
       },
     },
   }
