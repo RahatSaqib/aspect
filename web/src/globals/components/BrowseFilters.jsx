@@ -106,6 +106,7 @@ const enhance = compose(
 )
 
 export const BrowseFilters = ({
+  children,
   history,
   location,
   intl,
@@ -115,31 +116,35 @@ export const BrowseFilters = ({
   dateFormat,
   showBrowseDropdown = true,
   ...restProps
-}) => (
-  <div className={cssClasses('Container')}>
-    <FiltersBtnGroup
-      intl={intl}
-      filters={restProps.filters}
-      onRemoveFilterItem={onRemoveFilterItem}
-      className={cssClasses('FiltersBtnGroup')}
-    >
-      {showBrowseDropdown && (
-        <BrowseNavDropdown
-          history={history}
-          location={location}
-          source={reducedSource}
-        />
-      )}
-    </FiltersBtnGroup>
-    <FiltersPanel
-      intl={intl}
-      className={cssClasses('FiltersPanel')}
-      dateFormat={dateFormat}
-      {...restProps}
-    />
-    <Report />
-  </div>
-)
+}) => {
+  return (
+    <div className={cssClasses('Container')}>
+      <FiltersBtnGroup
+        intl={intl}
+        filters={restProps.filters}
+        onRemoveFilterItem={onRemoveFilterItem}
+        className={cssClasses('FiltersBtnGroup')}
+      >
+        {showBrowseDropdown && (
+          <BrowseNavDropdown
+            history={history}
+            location={location}
+            source={reducedSource}
+          />
+        )}
+      </FiltersBtnGroup>
+      {children}
+
+      <FiltersPanel
+        intl={intl}
+        className={cssClasses('FiltersPanel')}
+        dateFormat={dateFormat}
+        {...restProps}
+      />
+      <Report />
+    </div>
+  )
+}
 
 export const navigations = [
   {
@@ -200,7 +205,7 @@ export const navigations = [
   },
   {
     value: '/browse/deviceApiKey',
-    label: 'Device API Keys',
+    label: 'Device Api Key',
     requiredPermissions: [
       'deviceApiKey:view',
       'deviceApiKey:admin',
