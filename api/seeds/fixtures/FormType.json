@@ -1,0 +1,30 @@
+{
+  "data": [
+    {
+      "name": "Gx Connect Form",
+      "i18nKey": "gxConnectForm",
+      "externalId": "gxConnectForm"
+    },
+    {
+      "name": "Result Form web",
+      "i18nKey": "resultFormWeb",
+      "externalId": "resultFormWeb"
+    },
+    {
+      "name": "Result Form Reporter",
+      "i18nKey": "resultFormReporter",
+      "externalId": "resultFormReporter"
+    },
+    {
+      "name": "Case Demographic Data",
+      "i18nKey": "caseDemographicForm",
+      "externalId": "caseDemographicForm"
+    },
+    {
+      "name": "Clinical Response",
+      "i18nKey": "clinicalResponseForm",
+      "externalId": "clinicalResponseForm"
+    }
+
+  ]
+}
