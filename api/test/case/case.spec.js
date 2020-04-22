@@ -1,12 +1,47 @@
+const supertest = require('supertest')
 const { assert } = require('chai')
 const { getFirstCase, getFirstPartnerId } = require('./utils')
+const { getAccessToken } = require('../utils/authUtils')
 const { getCaseId, removeCase, addCase } = require('../../src/case/service')
 
-describe('case/service', () => {
+const server = supertest.agent('http://localhost:8080')
+
+describe.only('case/service', () => {
   let partnerId = null
 
   before(async () => {
     partnerId = await getFirstPartnerId()
+  })
+
+  describe.only('Case Routes', () => {
+    const path = '/api/case'
+    
+    it('GET', async () => {
+      const accessToken = await getAccessToken('admin', 'test07')
+
+      const res = await server
+        .get(path)
+        .set('Authorization', `Bearer ${accessToken}`)
+      assert.equal(res.status, 200)
+      assert.typeOf(res.body, 'Object')
+      assert.property(res.body, 'data')
+      assert.typeOf(res.body.data, 'array')
+      // assert.isAtLeast(res.body.data.length, 3)
+      // assert.property(res.body.data[0], 'id')
+      // assert.property(res.body.data[0], 'externalId')
+      // assert.property(res.body.data[0], 'endedOn')
+      // assert.property(res.body.data[0], 'deviceName')
+      // assert.property(res.body.data[0], 'sampleOriginSiteName')
+      // assert.property(res.body.data[0], 'sampleId')
+      // assert.property(res.body.data[0], 'resultText')
+      // assert.property(res.body.data[0], 'errorCode')
+      // assert.property(res.body.data[0], 'resultWorkflowStatus')
+      // assert.property(res.body.data[0], 'resultTreatmentStatus')
+      // assert.property(res.body.data[0], 'treatmentStatusInfo')
+      // assert.property(res.body.data[0], 'patientId')
+      // assert.property(res.body.data[0], 'assayId')
+      // assert.property(res.body, 'total')
+    })
   })
 
   describe('add', () => {
