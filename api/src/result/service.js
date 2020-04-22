@@ -32,7 +32,8 @@ const {
 const { oneDirectionalMd5Hash } = require('../shared/encryption')
 const { returnIso8601StringWithoutTimeZoneOffset } = require('../shared/date')
 const { getPathFromFileReferenceId } = require('../file/service')
-const { getSiteByPartnerCountry } = require('../site/service')
+const { getSiteByPartnerCountry, getSite } = require('../site/service')
+const { getAllAssaySchemas } = require('../assay/service')
 const { getRemoteAddress } = require('../shared/request')
 
 async function getListResults(query, auth, fields = LIST_FIELDS) {
@@ -554,7 +555,7 @@ async function updateResultStatus(idsToUpdate, userId) {
 }
 
 async function showResult(request) {
-  const result = await getResultByResultId(request)
+  const result = await getResultByResultId(request, +request.params.resultId)
   return result.ok ? result : Boom.notFound()
 }
 
@@ -674,8 +675,12 @@ async function downloadFileAsync({ auth, params }) {
   return getPathFromFileReferenceId(knex, fileReference.id)
 }
 
-async function getResultByResultId(request, fields = SELECT_SHOW_FIELDS) {
-  const { auth, params } = request
+async function getResultByResultId(
+  request,
+  resultId,
+  fields = SELECT_SHOW_FIELDS
+) {
+  const { auth } = request
   const dataConstraints = await getConstraints(auth.credentials)
   const { userName } = await getUser(auth.credentials.name)
 
@@ -695,7 +700,7 @@ async function getResultByResultId(request, fields = SELECT_SHOW_FIELDS) {
     .leftJoin('ResultForm as rf', function() {
       this.on('r.assayId', 'rf.assayId').andOn('r.partnerId', 'rf.partnerId')
     })
-    .where('r.id', +params.resultId)
+    .where('r.id', resultId)
     .modify(addConstraints, dataConstraints, { device: 'd', result: 'r' })
     .select(fields)
 
@@ -733,7 +738,7 @@ async function getResultByResultId(request, fields = SELECT_SHOW_FIELDS) {
     data.files = files
 
     const { data: followUps } = await showResultFollowUps(
-      params.resultId,
+      resultId,
       dataConstraints
     )
     data.followUps = followUps
@@ -741,7 +746,7 @@ async function getResultByResultId(request, fields = SELECT_SHOW_FIELDS) {
 
   if (data) {
     getResultTreatmentStatus(data)
-    data.resultNotes = await getResultNotesByResultId(+params.resultId)
+    data.resultNotes = await getResultNotesByResultId(resultId)
     data.resultTreatmentStatusCreatedBy = userName
   }
 
@@ -799,7 +804,7 @@ async function updateWorkflowStatus(request) {
   const { resultId } = params
   const { id: currentUserId } = await getUser(auth.credentials.name)
   // get the result so we can check access and if status changed
-  const result = await getResultByResultId(request)
+  const result = await getResultByResultId(request, +request.params.resultId)
   if (!result.ok) {
     return Boom.notFound()
   }
@@ -870,7 +875,7 @@ async function updateTreatmentStatusPost(request) {
   const { id: currentUserId } = await getUser(auth.credentials.name)
 
   // get the result so we can check access and if status changed
-  const result = await getResultByResultId(request)
+  const result = await getResultByResultId(request, +request.params.resultId)
   if (!result.ok) {
     Boom.notFound()
   }
@@ -1001,7 +1006,7 @@ async function addResultNote(request) {
   const { id: currentUserId } = await getUser(auth.credentials.name)
 
   // get the result so we can check access and if status changed
-  const result = await getResultByResultId(request)
+  const result = await getResultByResultId(request, +request.params.resultId)
   if (!result.ok) {
     return Boom.notFound()
   }
@@ -1063,7 +1068,7 @@ async function deleteResultNote(request) {
   const { resultId, commentId } = params
 
   // get the result so we can check access
-  const result = await getResultByResultId(request)
+  const result = await getResultByResultId(request, +request.params.resultId)
   if (!result.ok) {
     return Boom.notFound()
   }
@@ -1095,7 +1100,7 @@ async function allResultNotes(request) {
   const { params } = request
 
   // get the result so we can check access and if status changed
-  const result = await getResultByResultId(request)
+  const result = await getResultByResultId(request, +request.params.resultId)
   if (!result.ok) {
     return Boom.notFound()
   }
@@ -1160,7 +1165,7 @@ async function updateFormData(request) {
   const now = new Date()
   const { resultId } = params
 
-  const result = await getResultByResultId(request, [
+  const result = await getResultByResultId(request, +request.params.resultId, [
     'r.assayId',
     'r.partnerId',
     'r.formData',
@@ -1642,7 +1647,7 @@ async function setResultFollowUp(request) {
   const { id: currentUserId } = await getUser(auth.credentials.name)
 
   // get the result so we can check access and if status changed
-  const result = await getResultByResultId(request)
+  const result = await getResultByResultId(request, +request.params.resultId)
   if (!result.ok) {
     return Boom.notFound()
   }
@@ -1701,7 +1706,7 @@ async function updateResultFollowUp(request) {
   const { id: currentUserId } = await getUser(auth.credentials.name)
 
   // get the result so we can check access and if status changed
-  const result = await getResultByResultId(request)
+  const result = await getResultByResultId(request, +request.params.resultId)
   if (!result.ok) {
     return Boom.notFound()
   }
@@ -1748,7 +1753,7 @@ async function deleteResultFollowUp(request) {
   const { id: currentUserId } = await getUser(auth.credentials.name)
 
   // get the result so we can check access
-  const result = await getResultByResultId(request)
+  const result = await getResultByResultId(request, +request.params.resultId)
   if (!result.ok) {
     return Boom.notFound()
   }
@@ -1847,7 +1852,7 @@ async function transferResult(request) {
   )
 
   // get the result so we can check access
-  const result = await getResultByResultId(request)
+  const result = await getResultByResultId(request, +request.params.resultId)
   if (!result.ok) {
     return Boom.notFound('Result with requested Id is not found')
   }
@@ -1974,7 +1979,7 @@ async function updateTransferNotification(request) {
     payload: { firstViewedOn },
   } = request
 
-  const result = await getResultByResultId(request)
+  const result = await getResultByResultId(request, +request.params.resultId)
 
   if (!result.ok) {
     return Boom.notFound('Result with requested Id is not found')
@@ -1990,7 +1995,7 @@ async function updateTransferNotification(request) {
       firstViewedOn,
     })
 
-  const data = await getResultByResultId(request)
+  const data = await getResultByResultId(request, +request.params.resultId)
 
   return data
 }
@@ -2356,6 +2361,53 @@ async function followUpAggregations(request) {
   }
 }
 
+async function createResult(request) {
+  return updateOrCreateResult(request)
+}
+
+async function updateResult(request) {
+  const result = await getResultByResultId(request, +request.params.resultId)
+  if (!result.ok) {
+    return Boom.notFound(
+      'This result does not exist or you do not have access.'
+    )
+  }
+  return updateOrCreateResult(request, result.data)
+}
+
+async function updateOrCreateResult(request, result = {}) {
+  const { auth, payload } = request
+  const { id: userId, partnerId } = await getUser(auth.credentials.name)
+  const dataConstraints = await getConstraints(auth.credentials)
+
+  // check that user has access to site
+  const site = await getSite(payload.siteId, dataConstraints)
+  if (!site) {
+    return Boom.notFound('This site does not exist or you do not have access.')
+  }
+  result.siteId = site.id
+
+  // check that user has access to the assay
+  const assay = await getAllAssaySchemas(partnerId, userId, payload.assayId)
+  if (!assay) {
+    return Boom.notFound('This assay does not exist or you do not have access.')
+  }
+  result.assayId = assay.id
+
+  // can start filling in the result details now
+
+  // looks like all's well. create or update result
+  if (!result.id) {
+    result.id = await knex('Result').insert(result)
+  } else {
+    await knex('Result')
+      .update(result)
+      .where('id', result.id)
+  }
+
+  return getResultByResultId(request, result.id)
+}
+
 module.exports = {
   updateTransferNotification,
   listResults,
@@ -2390,4 +2442,6 @@ module.exports = {
   getQueryForResultsListAndExport,
   queryResultFollowUpLastItems,
   getListResults,
+  createResult,
+  updateResult,
 }
