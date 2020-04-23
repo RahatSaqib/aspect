@@ -102,7 +102,7 @@ class DefaultBDMGIT extends SynchronousDataProcessor {
       const assayIds =
         mgitResultTypeCode === 'AST_MGIT'
           ? [allAssayIds.assayBdMgitAst, allAssayIds.assayGenericDst]
-          : [allAssayIds.assayBdMgitGnd, allAssayIds.assayCulture]
+          : [allAssayIds.assayBdMgitGnd, allAssayIds.assayGenericCulture]
 
       // Use test status to determine workflow status and result category 1:
       const mgitTestStatus = getAstmField(astm, 'R,4,1,1')
