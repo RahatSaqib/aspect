@@ -352,7 +352,7 @@ export class ResultDetail extends PureComponent {
       ? formatMessage(messages.someFieldsNotEditable)
       : editable
       ? formatMessage(messages.resultNotEditableConfiguration, {
-          assayName: result.get('name'),
+          assayName: result.getIn(['assay', 'name']),
         })
       : formatMessage(messages.resultNotEditablePermissions)
     return (
