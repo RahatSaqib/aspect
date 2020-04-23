@@ -30,6 +30,27 @@
   flex-wrap: wrap;
 }
 
+.Section--withStatus--half {
+  background-color: red;
+}
+
+.Grid__Item {
+  padding: 5px 12px 1px !important;
+}
+
+.Grid__Item--half:nth-child(odd) {
+  padding: 5px 0 0 12px;
+}
+
+.Grid__Item--half:nth-child(even) {
+  padding: 5px 12px 0 0;
+}
+
+.Grid__Item:last-child,
+.Grid__Item--half:last-child {
+  margin-bottom: 7px;
+}
+
 @media screen and (max-width: 1024px) {
   .results__graph {
     height: 600px;

@@ -1,17 +1,47 @@
-import React, { useEffect, useState } from 'react'
-import classnames from 'classnames/bind'
-import { ResponsiveBar } from '@nivo/bar'
-import CircularProgress from '@material-ui/core/CircularProgress'
+import React, { Fragment, useEffect, useState } from 'react';
+import classnames from 'classnames/bind';
+import { ResponsiveBar } from '@nivo/bar';
+import { BoxLegendSvg } from '@nivo/legends';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 import {
   calcPercentageSplitBar,
   getKeysFromResults,
   groupByKey,
+  makeProperCase,
   normaliseKeys,
-  translateKeys,
-} from './Helpers'
+  translateKeys
+} from './Helpers';
 
-const cssClasses = classnames.bind(require('./Graphs.css'))
+const cssClasses = classnames.bind(require('./Graphs.css'));
+
+const getTextWidth = (text, font) => {
+  // re-use canvas object for better performance
+  var canvas =
+    getTextWidth.canvas ||
+    (getTextWidth.canvas = document.createElement('canvas'));
+  var context = canvas.getContext('2d');
+  context.font = font;
+  var metrics = context.measureText(text);
+  return Math.round(metrics.width);
+};
+
+const BarLegend = ({ height, legends, width }) => {
+  console.log(height, legends, width);
+
+  return (
+    <Fragment>
+      {legends.map(legend => (
+        <BoxLegendSvg
+          key={JSON.stringify(legend.data.map(({ id }) => id))}
+          {...legend}
+          containerHeight={height}
+          containerWidth={width}
+        />
+      ))}
+    </Fragment>
+  );
+};
 
 const BarGraph = ({
   data,
@@ -25,18 +55,18 @@ const BarGraph = ({
   displayMethod,
   assayFromState,
   filter = false,
-  intl,
+  intl
 }) => {
-  const [graph, setGraph] = useState(false)
-  const [keys, setKeys] = useState(false)
-  const [filterResults] = useState(filter)
+  const [graph, setGraph] = useState(false);
+  const [keys, setKeys] = useState(false);
+  const [filterResults] = useState(filter);
 
   useEffect(() => {
     if (!keysFromProps && graph) {
-      const keys = getKeysFromResults(graph, indexBy, orderBy)
-      setKeys(keys)
+      const keys = getKeysFromResults(graph, indexBy, orderBy);
+      setKeys(keys);
     }
-  }, [graph, indexBy, keysFromProps, orderBy, intl])
+  }, [graph, indexBy, keysFromProps, orderBy, intl]);
 
   useEffect(() => {
     if (
@@ -45,27 +75,20 @@ const BarGraph = ({
       assayFromState &&
       Object.keys(assayFromState).length
     ) {
-      const grouped = groupByKey(data, indexBy, keyToConsume, formatDate, intl)
-      const normalised = normaliseKeys(grouped, filterResults, indexBy)
+      const grouped = groupByKey(data, indexBy, keyToConsume, formatDate, intl);
+      const normalised = normaliseKeys(grouped, filterResults, indexBy);
       const display =
         displayMethod === 'percentage'
           ? calcPercentageSplitBar(normalised, indexBy)
-          : normalised
-      const translated = translateKeys(display, assayFromState, true)
+          : normalised;
+      const translated = translateKeys(display, assayFromState, true);
+      // console.log(data, indexBy, keyToConsume, normalised, translated);
 
-      setGraph([...translated])
+      setGraph([...translated]);
     }
-  }, [
-    data,
-    displayMethod,
-    formatDate,
-    graph,
-    indexBy,
-    keyToConsume,
-    assayFromState,
-    filterResults,
-    intl,
-  ])
+  }, [data]);
+
+  console.log(keys);
 
   return (
     <div className={cssClasses(componentClass)}>
@@ -98,13 +121,13 @@ const BarGraph = ({
             tickPadding: 10,
             tickRotation: 0,
             legendPosition: 'middle',
-            legendOffset: 32,
+            legendOffset: 32
           }}
           axisLeft={
             displayMethod === 'percentage'
               ? null
               : {
-                  format: v => intl.formatNumber(v),
+                  format: v => intl.formatNumber(v)
                 }
           }
           labelSkipWidth={12}
@@ -112,6 +135,7 @@ const BarGraph = ({
           animate
           motionStiffness={90}
           motionDamping={15}
+          layers={['grid', 'axes', 'bars', 'markers', BarLegend]}
           legends={
             legend
               ? [
@@ -123,7 +147,21 @@ const BarGraph = ({
                     translateX: -25,
                     translateY: 60,
                     itemsSpacing: 2,
-                    itemWidth: 98,
+                    itemWidth:
+                      keys &&
+                      keys.map(k => {
+                        console.log(k, getTextWidth(k, 'bold 12pt arial'));
+                        return getTextWidth(k, 'bold 12pt arial');
+                      }),
+
+                    data:
+                      keys &&
+                      keys.map(k => {
+                        console.log(k);
+                        return {
+                          label: makeProperCase(k)
+                        };
+                      }),
                     itemHeight: 20,
                     itemDirection: 'right-to-left',
                     itemOpacity: 0.85,
@@ -133,11 +171,11 @@ const BarGraph = ({
                       {
                         on: 'hover',
                         style: {
-                          itemOpacity: 1,
-                        },
-                      },
-                    ],
-                  },
+                          itemOpacity: 1
+                        }
+                      }
+                    ]
+                  }
                 ]
               : []
           }
@@ -146,7 +184,7 @@ const BarGraph = ({
         <CircularProgress />
       )}
     </div>
-  )
-}
+  );
+};
 
-export default BarGraph
+export default BarGraph;

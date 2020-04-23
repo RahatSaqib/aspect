@@ -1,19 +1,20 @@
-import React, { useState, useEffect } from 'react'
-import classnames from 'classnames/bind'
-import { bindActionCreators } from 'redux'
-import { compose, lifecycle, pure } from 'recompose'
-import { connect } from 'react-redux'
-import { FaChartArea as IconTitle } from 'react-icons/fa'
-import Card from '@material-ui/core/Card'
+import React, { useState, useEffect } from 'react';
+import classnames from 'classnames/bind';
+import { bindActionCreators } from 'redux';
+import { compose, lifecycle, pure } from 'recompose';
+import { connect } from 'react-redux';
+import { FaChartArea as IconTitle } from 'react-icons/fa';
+import Grid from '@material-ui/core/Grid';
+import Card from '@material-ui/core/Card';
 
-import requirePermissions from '../../../components/shared/requirePermissions'
-import { fetchClinicalIndicatorsDashboard } from '../../DashboardRedux'
-import { getDayFromToday } from './Graphs/Helpers'
+import requirePermissions from '../../../components/shared/requirePermissions';
+import { fetchClinicalIndicatorsDashboard } from '../../DashboardRedux';
+import { getDayFromToday } from './Graphs/Helpers';
 
-import Title from '../Title'
+import Title from '../Title';
 
-const cssClasses = classnames.bind(require('../Status.css'))
-const cssClinicalIndicators = classnames.bind(require('./Clinical.css'))
+const cssClasses = classnames.bind(require('../Status.css'));
+const cssClinicalIndicators = classnames.bind(require('./Clinical.css'));
 
 const GraphContainer = ({ title, children, className }) => (
   <div className={cssClinicalIndicators('resultsgraph__container')}>
@@ -21,7 +22,7 @@ const GraphContainer = ({ title, children, className }) => (
       <div className={cssClinicalIndicators('results__graph')}>{children}</div>
     </div>
   </div>
-)
+);
 
 const enhance = compose(
   pure,
@@ -32,50 +33,37 @@ const enhance = compose(
       'treatmentStatus:edit',
       'result:admin',
       'result:view',
-      'result:edit',
+      'result:edit'
     ],
-    features: ['summaryDashboard', 'siteDashboard', 'deviceDashboard'],
+    features: ['summaryDashboard', 'siteDashboard', 'deviceDashboard']
   }),
   connect(
     (state, props) => {
-      const { id } = props.assay
-      const clinicalIndicators = state.dashboard.clinicalIndicators.toJS()
+      const { stateName = props.assay.id } = props.assay;
+      const clinicalIndicators = state.dashboard.clinicalIndicators.toJS();
 
       return {
-        data: clinicalIndicators[id],
-      }
+        data: clinicalIndicators[stateName]
+      };
     },
     bindActionCreators.bind(null, {
-      fetchClinicalIndicatorsDashboard,
+      fetchClinicalIndicatorsDashboard
     })
   ),
   lifecycle({
     componentDidMount() {
-      const { id: assay, graphType } = this.props.assay
-
-      graphType.map(graph => {
-        const {
-          dataKey: type,
-          groupBy,
-          minDate,
-          maxDate = getDayFromToday(0),
-          resultCategory1 = null,
-          resultCategory2 = null,
-        } = graph
-
-        return this.props.fetchClinicalIndicatorsDashboard({
+      const { stateName = assay, id: assay, graphType } = this.props.assay;
+      graphType.map(graph =>
+        this.props.fetchClinicalIndicatorsDashboard({
+          stateName,
+          maxDate: getDayFromToday(0),
           assay,
-          minDate,
-          maxDate,
-          groupBy,
-          type,
-          resultCategory1,
-          resultCategory2,
+          ...graph
         })
-      })
-    },
+      );
+    }
   })
-)
+);
 
 const ClinicalIndicatorsContainer = ({
   className,
@@ -83,73 +71,84 @@ const ClinicalIndicatorsContainer = ({
   data = false,
   ...props
 }) => {
-  const { assay, intl } = props
+  const { assay, intl } = props;
   const {
     graphContainerClass,
     colors,
     graphType,
     orderBy,
     assayFromState,
-  } = assay
-  const [graphData, setGraphData] = useState(false)
+    sectionGrid = 12
+  } = assay;
+  const [graphData, setGraphData] = useState(false);
 
   useEffect(() => {
     if (graphData !== data) {
-      setGraphData(data)
+      setGraphData(data);
     }
-  }, [data, graphData])
+  }, [data, graphData]);
 
   return graphData ? (
-    <Card className={className}>
-      <div
-        className={cssClasses('TitleContainer', 'Treatment--TitleContainer')}
-      >
-        <Title
-          title={title}
-          icon={<IconTitle className={cssClasses('Title__Icon')} />}
-        />
-      </div>
-
-      <div style={{ marginTop: 30 }}>
-        <div className={cssClinicalIndicators('results__container')}>
-          <GraphContainer
-            className={cssClinicalIndicators(graphContainerClass)}
-          >
-            {graphType.map(
-              ({
-                dataKey,
-                indexBy,
-                keyToConsume,
-                formatDate = false,
-                legend = false,
-                averages = false,
-                component: Component,
-                componentClass,
-                displayMethod = 'percentage',
-                filter = false,
-              }) => (
-                <Component
-                  data={(data[dataKey] && data[dataKey].data) || []}
-                  indexBy={indexBy}
-                  orderBy={orderBy}
-                  keyToConsume={keyToConsume}
-                  legend={legend}
-                  averages={averages}
-                  formatDate={formatDate}
-                  colors={colors}
-                  componentClass={componentClass}
-                  displayMethod={displayMethod}
-                  assayFromState={assayFromState}
-                  filter={filter}
-                  intl={intl}
-                />
-              )
-            )}
-          </GraphContainer>
+    <Grid
+      item
+      lg={sectionGrid}
+      className={cssClinicalIndicators(
+        sectionGrid === 6 ? 'Grid__Item--half' : 'Grid__Item'
+      )}
+    >
+      <Card className={className} style={{ margin: '0 3px' }}>
+        <div
+          className={cssClasses('TitleContainer', 'Treatment--TitleContainer')}
+        >
+          <Title
+            title={title}
+            icon={<IconTitle className={cssClasses('Title__Icon')} />}
+          />
         </div>
-      </div>
-    </Card>
-  ) : null
-}
 
-export default enhance(ClinicalIndicatorsContainer)
+        <div style={{ marginTop: 30 }}>
+          <div className={cssClinicalIndicators('results__container')}>
+            <GraphContainer
+              className={cssClinicalIndicators(graphContainerClass)}
+            >
+              {graphType.map(
+                ({
+                  dataKey,
+                  indexBy,
+                  keyToConsume,
+                  formatDate = false,
+                  legend = false,
+                  averages = false,
+                  component: Component,
+                  componentClass,
+                  displayMethod = 'percentage',
+                  filter = false
+                }) => {
+                  return (
+                    <Component
+                      data={(data[dataKey] && data[dataKey].data) || []}
+                      indexBy={indexBy}
+                      orderBy={orderBy}
+                      keyToConsume={keyToConsume}
+                      legend={legend}
+                      averages={averages}
+                      formatDate={formatDate}
+                      colors={colors}
+                      componentClass={componentClass}
+                      displayMethod={displayMethod}
+                      assayFromState={assayFromState}
+                      filter={filter}
+                      intl={intl}
+                    />
+                  );
+                }
+              )}
+            </GraphContainer>
+          </div>
+        </div>
+      </Card>
+    </Grid>
+  ) : null;
+};
+
+export default enhance(ClinicalIndicatorsContainer);

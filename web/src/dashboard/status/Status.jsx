@@ -1,59 +1,60 @@
 /* eslint-disable linebreak-style */
-import classnames from 'classnames/bind'
-import React from 'react'
-import { compose, lifecycle, withState } from 'recompose'
-import { bindActionCreators } from 'redux'
-import { connect } from 'react-redux'
-import Helmet from 'react-helmet'
-import { showAcknowledgement } from '../../appNotification/AppNotificationRedux'
-import { fetchAssays } from '../../assay/AssayRedux'
-import messages from './messages'
-import SummaryStatus from './SummaryStatus'
-import InventoryStatus from './InventoryStatus'
-import SiteStatus from './SiteStatus'
-import ActionStatus from './ActionStatus'
-import TargetStatus from './TargetStatus'
-import Reports from './Reports'
-import BrowseSiteDropdown from '../../globals/components/BrowseSiteDropdown'
-import TreatmentStatus from './TreatmentStatus'
-import ClinicalIndicators from './ClinicalIndicators/ClinicalIndicators'
-import ColorDemo from './ColorDemo/ColorDemo'
+import classnames from 'classnames/bind';
+import React from 'react';
+import { compose, lifecycle, withState } from 'recompose';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import Helmet from 'react-helmet';
 
-const cssClasses = classnames.bind(require('./Status.css'))
+import { showAcknowledgement } from '../../appNotification/AppNotificationRedux';
+import { fetchAssays } from '../../assay/AssayRedux';
+import messages from './messages';
+import SummaryStatus from './SummaryStatus';
+import InventoryStatus from './InventoryStatus';
+import SiteStatus from './SiteStatus';
+import ActionStatus from './ActionStatus';
+import TargetStatus from './TargetStatus';
+import Reports from './Reports';
+import BrowseSiteDropdown from '../../globals/components/BrowseSiteDropdown';
+import TreatmentStatus from './TreatmentStatus';
+import ClinicalIndicators from './ClinicalIndicators/ClinicalIndicators';
+import ColorDemo from './ColorDemo/ColorDemo';
+
+const cssClasses = classnames.bind(require('./Status.css'));
 
 const enhance = compose(
   connect(
     state => {
-      const assayItems = state.assay.items.toJS()
+      const assayItems = state.assay.items.toJS();
       return {
         userName: state.user.jwt.name,
         countryIsoAlpha2Code: state.user.culture.substring(3, 5),
-        assays: assayItems.filter(a => a.hasResults),
-      }
+        assays: assayItems.filter(a => a.hasResults)
+      };
     },
     bindActionCreators.bind(null, {
       fetchAssays,
-      showAcknowledgement,
+      showAcknowledgement
     })
   ),
   lifecycle({
     componentWillReceiveProps(nextProps) {
-      const { location, showAcknowledgement, userName } = nextProps
-      const search = new URLSearchParams(location.search)
+      const { location, showAcknowledgement, userName } = nextProps;
+      const search = new URLSearchParams(location.search);
 
       if (search.has('fl') && nextProps.userName !== this.props.userName) {
         showAcknowledgement({
           title: messages.welcome,
-          messageValues: { userName },
-        })
+          messageValues: { userName }
+        });
       }
     },
     componentDidMount() {
-      this.props.fetchAssays(false)
-    },
+      this.props.fetchAssays(false);
+    }
   }),
   withState('marginBottom', 'setMarginBottom', 0)
-)
+);
 
 const Status = ({
   history,
@@ -63,7 +64,7 @@ const Status = ({
   setMarginBottom,
   countryIsoAlpha2Code,
   assays,
-  colorDemo = false,
+  colorDemo = false
 }) => (
   <div className={cssClasses('Container')} style={{ marginBottom }}>
     <Helmet title="Status" />
@@ -136,6 +137,6 @@ const Status = ({
       title={intl.formatMessage(messages.reportsTitle)}
     />
   </div>
-)
+);
 
-export default enhance(Status)
+export default enhance(Status);

@@ -1,22 +1,22 @@
-import React, { Fragment, useEffect, useState } from 'react'
-import { ResponsivePie } from '@nivo/pie'
-import CircularProgress from '@material-ui/core/CircularProgress'
-import classnames from 'classnames/bind'
+import React, { Fragment, useEffect, useState } from 'react';
+import { ResponsivePie } from '@nivo/pie';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import classnames from 'classnames/bind';
 
-import { formatDataForPie, getAverageFromData } from './Helpers'
+import { formatDataForPie, getAverageFromData } from './Helpers';
 
-const cssClasses = classnames.bind(require('./Graphs.css'))
+const cssClasses = classnames.bind(require('./Graphs.css'));
 
 const LegendIndicator = ({ averages, data }) => {
-  const { title, key } = averages
-  const [average, setAverage] = useState(0)
+  const { title, key } = averages;
+  const [average, setAverage] = useState(0);
 
   useEffect(() => {
     if (!average && data) {
-      const calculated = getAverageFromData(data, 'value', key)
-      setAverage(calculated)
+      const calculated = getAverageFromData(data, 'value', key);
+      setAverage(calculated);
     }
-  }, [average, averages, data, key])
+  }, [average, averages, data, key]);
 
   return (
     <div className={cssClasses('legend__container')}>
@@ -28,8 +28,8 @@ const LegendIndicator = ({ averages, data }) => {
       </div>
       <div className={cssClasses('legend__title')}>{title}</div>
     </div>
-  )
-}
+  );
+};
 
 const PieGraph = ({
   data,
@@ -40,10 +40,10 @@ const PieGraph = ({
   averages: averagesConfig,
   componentClass,
   assayFromState,
-  filter = false,
+  filter = false
 }) => {
-  const [graph, setGraph] = useState(false)
-  const [filterResults] = useState(filter)
+  const [graph, setGraph] = useState(false);
+  const [filterResults] = useState(filter);
 
   useEffect(() => {
     if (
@@ -59,9 +59,19 @@ const PieGraph = ({
         assayFromState,
         displayMethod,
         filterResults
-      )
+      );
 
-      setGraph(formatted)
+      // console.log(
+      //   data,
+      //   keyToConsume,
+      //   indexBy,
+      //   assayFromState,
+      //   displayMethod,
+      //   filterResults,
+      //   formatted
+      // );
+
+      setGraph(formatted);
     }
   }, [
     data,
@@ -71,8 +81,8 @@ const PieGraph = ({
     keyToConsume,
     assayFromState,
     displayMethod,
-    filterResults,
-  ])
+    filterResults
+  ]);
 
   return (
     <div className={cssClasses(componentClass)}>
@@ -118,7 +128,7 @@ const PieGraph = ({
         <CircularProgress />
       )}
     </div>
-  )
-}
+  );
+};
 
-export default PieGraph
+export default PieGraph;

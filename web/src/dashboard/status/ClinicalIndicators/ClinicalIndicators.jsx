@@ -1,37 +1,31 @@
-import React, { useEffect, useState } from 'react'
-import classnames from 'classnames/bind'
+import React, { useEffect, useState } from 'react';
+import Grid from '@material-ui/core/Grid';
+import classnames from 'classnames/bind';
 
-import BarGraph from './Graphs/BarGraph'
-import PieGraph from './Graphs/PieGraph'
+import ClinicalIndicatorsContainer from './ClinicalIndicatorsContainer';
 
-import ClinicalIndicatorsContainer from './ClinicalIndicatorsContainer'
+import assaysConfiguration from './AssaysConfiguration';
 
-import assayConfiguration from './assayConfiguration'
-
-const cssClassesStatus = classnames.bind(require('../Status.css'))
+const cssClassesStatus = classnames.bind(require('../Status.css'));
 
 export const ClinicalIndicators = ({ intl, assays: assaysFromState }) => {
-  const [assays, setAssays] = useState(false)
-  const [months] = useState(5)
+  const [assays, setAssays] = useState(false);
+  const [months] = useState(5);
 
   useEffect(() => {
     if (!assays) {
-      const whiteListedAssays = assayConfiguration(
-        intl,
-        assaysFromState,
-        BarGraph,
-        PieGraph
-      )
+      const whiteListedAssays = assaysConfiguration(intl, assaysFromState);
 
       return whiteListedAssays && whiteListedAssays.length
         ? setAssays(whiteListedAssays)
-        : setAssays(false)
+        : setAssays(false);
     }
-  }, [assays, assaysFromState, intl, months])
+  }, [assays, assaysFromState, intl, months]);
 
-  return assays
-    ? assays.map(assay => {
-        const { name } = assay
+  return assays ? (
+    <Grid container spacing={24}>
+      {assays.map(assay => {
+        const { name } = assay;
         return (
           <ClinicalIndicatorsContainer
             title={name}
@@ -39,9 +33,10 @@ export const ClinicalIndicators = ({ intl, assays: assaysFromState }) => {
             assay={assay}
             intl={intl}
           />
-        )
-      })
-    : null
-}
+        );
+      })}
+    </Grid>
+  ) : null;
+};
 
-export default ClinicalIndicators
+export default ClinicalIndicators;
