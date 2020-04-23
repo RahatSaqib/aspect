@@ -329,6 +329,7 @@ export class ResultDetail extends PureComponent {
       match: {
         params: { resultId },
       },
+      intl,
     } = this.props
     return (
       <ResultTreatmentPanel
@@ -338,6 +339,7 @@ export class ResultDetail extends PureComponent {
         userPermission={userPermission}
         addResultNote={addResultNote}
         resultId={resultId}
+        intl={intl}
       />
     )
   }

@@ -199,10 +199,12 @@
 
 .TreatmentNoteExpansionPanelContainer {
   padding-bottom: 10px;
+  flex-wrap: wrap;
 }
 
 .Treatment {
   display: flex;
+  padding-top: 1em;
 }
 
 .TreatmentInfo h3 {
@@ -221,8 +223,14 @@
   margin-top: 30px;
 }
 
-.TreatmentLinkLayout div {
-  max-width: 30em;
+.TreatmentLinkLayout {
+  width: 100%;
+  justify-content: space-around;
+  flex-wrap: wrap;
+}
+
+.TreatmentLinkLayout:first-child {
+  display: inline-flex;
 }
 
 .TreatmentTitle {
@@ -234,21 +242,35 @@
 }
 
 .TreatmentCheckBox {
-  display: flex;
-  width: 22em;
-  justify-content: space-between;
+  display: inline-flex;
+  padding: 0;
+  flex-wrap: wrap;
 }
 
-.TreatmentCheckBox button {
+.TreatmentCheckBox > span {
+  padding: 0;
+}
+
+.TreatmentCheckBox > label {
+  width: 9em;
+}
+
+.LinkButton {
   background-color: var(--aspect-color-chill-blue-2);
   color: white;
-  padding: 10px 9px 8px 9px;
   border-radius: 21px;
   position: relative;
-  margin-top: 6px;
+  padding: 0 1.5em;
+  margin: 1em 0;
+  font-size: 12px;
+  font-weight: 700;
+  height: 28px;
+  display: inline-flex;
+  text-wrap: none;
+  white-space: nowrap;
 }
 
-.TreatmentCheckBox button:hover {
+.LinkButton button:hover {
   background-color: var(--aspect-color-chill-blue-2);
 }
 

@@ -2,8 +2,10 @@ import React from 'react'
 import PermIdentity from '@material-ui/icons/PermIdentity'
 import { format as date, differenceInCalendarDays, parseISO } from 'date-fns'
 import { compose, pure, withHandlers, withState } from 'recompose'
-import requirePermission from '../../components/shared/requirePermissions'
+import classnames from 'classnames/bind'
+import { defineMessages } from 'react-intl'
 
+import requirePermission from '../../components/shared/requirePermissions'
 import {
   ExpansionPanel,
   ExpansionPanelHeader,
@@ -12,6 +14,41 @@ import {
 import CheckboxField from '../../components/shared/CheckboxField'
 import AspectButton from '../../components/shared/AspectButton'
 import ResultTreatmentNoteModal from './ResultTreatmentNoteModal'
+
+const cssClasses = classnames.bind(
+  require('../../components/shared/ReadOnlyField.css')
+)
+
+const messages = defineMessages({
+  linkedToTreatment: {
+    id: 'pages.resultTreatmentPanel.linkedToTreatment',
+    defaultMessage: 'Linked to treatment',
+  },
+  confirm: {
+    id: 'pages.resultTreatmentPanel.confirm',
+    defaultMessage: 'Confirm',
+  },
+  notPossible: {
+    id: 'pages.resultTreatmentPanel.notPossible',
+    defaultMessage: 'Not possible',
+  },
+  notYetConfirmedOnTreatment: {
+    id: 'pages.resultTreatmentPanel.notYetConfirmedOnTreatment',
+    defaultMessage: 'Not yet confirmed on treatment',
+  },
+  days: {
+    id: 'pages.resultTreatmentPanel.days',
+    defaultMessage: 'days',
+  },
+  addNote: {
+    id: 'pages.resultTreatmentPanel.addNote',
+    defaultMessage: 'Add Note',
+  },
+  note: {
+    id: 'pages.resultTreatmentPanel.note',
+    defaultMessage: 'NOTE:',
+  },
+})
 
 const enhance = compose(
   pure,
@@ -42,19 +79,24 @@ const enhance = compose(
     },
   })
 )
-const ResultTreatmentPanel = ({ styles, data, ...restProps }) => {
+const ResultTreatmentPanel = ({
+  styles,
+  data,
+  intl: { formatMessage },
+  ...restProps
+}) => {
   const treatmentCheckBoxList = [
     {
       id: 'OnTreatment',
-      label: 'Confirmed',
+      label: formatMessage(messages.confirm),
     },
     {
       id: 'NotPossible',
-      label: 'Not possible',
+      label: formatMessage(messages.notPossible),
     },
     {
       id: 'AwaitingTreatment',
-      label: 'Not yet confirmed on treatment',
+      label: formatMessage(messages.notYetConfirmedOnTreatment),
     },
   ]
 
@@ -77,7 +119,7 @@ const ResultTreatmentPanel = ({ styles, data, ...restProps }) => {
 
               <div className={styles.TreatmentInfo}>
                 {!data.get('resultTreatmentStatus') && (
-                  <h4>Not yet confirmed on treatment</h4>
+                  <h4>{formatMessage(messages.notYetConfirmedOnTreatment)}</h4>
                 )}
                 {treatmentCheckBoxList.map(
                   treatmentStatus =>
@@ -105,7 +147,7 @@ const ResultTreatmentPanel = ({ styles, data, ...restProps }) => {
                       new Date(),
                       parseISO(data.get('endedOn'))
                     )}
-                    &nbsp;days
+                    &nbsp;{formatMessage(messages.days)}
                   </h3>
                 )}
               </div>
@@ -113,42 +155,48 @@ const ResultTreatmentPanel = ({ styles, data, ...restProps }) => {
           }
         >
           <div className={styles.TreatmentLinkLayout}>
-            <div className={styles.TreatmentTitle}>
-              <p>Link to Treatment</p>
+            <div>
+              <p className={cssClasses('Container__Label')}>
+                {formatMessage(messages.linkedToTreatment)}
+              </p>
+              <div className={styles.TreatmentCheckBox}>
+                {treatmentCheckBoxList.map(
+                  treatmentCheckbox =>
+                    treatmentCheckbox.id !== 'AwaitingTreatment' && (
+                      <CheckboxField
+                        onChange={restProps.onTreatmentChange}
+                        id={treatmentCheckbox.id}
+                        disabled={
+                          !restProps.userPermission.includes(
+                            'treatmentStatus:admin'
+                          ) &&
+                          !restProps.userPermission.includes(
+                            'treatmentStatus:edit'
+                          )
+                        }
+                        checked={
+                          treatmentCheckbox.id ===
+                          data.get('resultTreatmentStatus')
+                        }
+                        label={treatmentCheckbox.label}
+                        className={styles.TreatmentCheckBox}
+                      />
+                    )
+                )}
+              </div>
             </div>
-            <div className={styles.TreatmentCheckBox}>
-              {treatmentCheckBoxList.map(
-                treatmentCheckbox =>
-                  treatmentCheckbox.id !== 'AwaitingTreatment' && (
-                    <CheckboxField
-                      onChange={restProps.onTreatmentChange}
-                      id={treatmentCheckbox.id}
-                      disabled={
-                        !restProps.userPermission.includes(
-                          'treatmentStatus:admin'
-                        ) &&
-                        !restProps.userPermission.includes(
-                          'treatmentStatus:edit'
-                        )
-                      }
-                      checked={
-                        treatmentCheckbox.id ===
-                        data.get('resultTreatmentStatus')
-                      }
-                      label={treatmentCheckbox.label}
-                    />
-                  )
-              )}
-              <AspectButton onClick={restProps.onToggleShown}>
-                Add Note
-              </AspectButton>
-            </div>
+            <AspectButton
+              className={styles.LinkButton}
+              onClick={restProps.onToggleShown}
+            >
+              {formatMessage(messages.addNote)}
+            </AspectButton>
           </div>
         </ExpansionPanelHeader>
         {resultNotes.length > 0 && (
           <ExpansionPanelDetail className={styles.TreatmentNoteContainer}>
             <div className={styles.TreatmentNoteHeader}>
-              <p>NOTE:</p>
+              <p>{formatMessage(messages.note)}</p>
             </div>
             {resultNotes.map(resultNote => (
               <div className={styles.TreatmentNoteComment}>
