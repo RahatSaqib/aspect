@@ -52,6 +52,7 @@ import {
 
 import styles from './ResultDetail.css'
 import ResultDetailsBackBar from './ResultDetailsBackBar'
+import AspectButton from '../../components/shared/AspectButton'
 
 const cssClasses = classnames.bind(styles)
 
@@ -126,6 +127,10 @@ const messages = defineMessages({
   resultWorkflowLogCreatedOn: {
     id: 'pages.ResultDetail.resultWorkflowLogCreatedOn',
     defaultMessage: 'Created On',
+  },
+  editResult: {
+    id: 'pages.ResultDetail.editResult',
+    defaultMessage: 'Edit Result',
   },
 })
 
@@ -319,6 +324,34 @@ export class ResultDetail extends PureComponent {
       thumbnailMode: THUMBNAIL_MODE_PREVIEW,
       imageIndex,
     })
+  }
+
+  renderRightTitle = () => {
+    const {
+      editable,
+      intl: { formatMessage },
+      result,
+      history,
+    } = this.props
+    return (
+      editable && (
+        <div>
+          <i className={cssClasses('Title__SomeFieldsNotEditable')}>
+            Some fields may not be editable
+          </i>
+          <AspectButton
+            type="button"
+            color="primary"
+            variant="contained"
+            onClick={() => {
+              history.push(`/browse/result/${result.get('id')}/edit`)
+            }}
+          >
+            {formatMessage(messages.editResult)}
+          </AspectButton>
+        </div>
+      )
+    )
   }
 
   renderTreatmentStatusSection = () => {
@@ -638,6 +671,7 @@ export class ResultDetail extends PureComponent {
           data={result}
           schema={screenSchema}
           className={cssClasses('FieldsContainer')}
+          renderRightTitle={this.renderRightTitle}
           titleSection={this.renderTreatmentStatusSection()}
         >
           {/* Render lower-level sections in assay schema in cards */}

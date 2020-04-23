@@ -4,6 +4,12 @@
   padding: 10px;
 }
 
+.Title__SomeFieldsNotEditable {
+  font-size: 1em;
+  color: var(--aspect-color-grey-3);
+  margin-right: 2em;
+}
+
 .FieldsContainer {
   border-radius: 0;
 }

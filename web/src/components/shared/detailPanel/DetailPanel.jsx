@@ -4,7 +4,9 @@ import Immutable from 'immutable'
 import classnames from 'classnames/bind'
 import { compose, mapProps } from 'recompose'
 import Card from '@material-ui/core/Card'
+import { MdAssignment } from 'react-icons/md'
 import { formatDate, formatDateTime } from '../../../shared/utils/dateFormat'
+import CardTitle from '../CardTitle'
 import ReadOnlyFields from '../ReadOnlyFields'
 import {
   ExpansionPanel,
@@ -163,11 +165,20 @@ export const DetailPanel = ({
   intl,
   data,
   schema,
+  renderRightTitle,
   titleSection,
   ...restProps
 }) => (
   <Card {...restProps}>
+    <CardTitle
+      title={schema.get('title')}
+      icon={<MdAssignment className={cssClasses('Title__Icon')} />}
+      className={cssClasses('Title')}
+      renderRight={renderRightTitle}
+    />
+
     {titleSection}
+
     {schema
       .get('groups')
       .sortBy(value => value.get('order'))

@@ -1,4 +1,6 @@
 {
+  "title": "Result Details",
+  "icon": "document",
   "groups": {
     "site": {
       "order": 0,
