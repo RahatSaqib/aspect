@@ -138,14 +138,35 @@ async function listAssays(request) {
 
   const resultCategoriesByAssayId = _.groupBy(rawResultCategories, 'assayId')
 
+  const rawPartnerAssays = await knex('PartnerAssay as pa')
+    .innerJoin('Partner as p', 'pa.partnerId', 'p.id')
+    .whereIn('pa.assayId', _.map(rawAssays, 'id'))
+    .distinct(
+      'pa.assayId',
+      'pa.partnerId',
+      'p.name as partnerName',
+      'pa.canCreate',
+      'pa.canDelete',
+      'pa.canEdit'
+    )
+  const abilitiesByAssayId = _.groupBy(rawPartnerAssays, 'assayId')
+
   // map rawAssays with extra values
-  const assays = _.map(rawAssays, d =>
-    _.assign({}, d, {
-      hasResults: usedAssayIds.includes(d.id),
-      resultDataSchema: JSON.parse(d.resultDataSchema),
-      resultCategories: resultCategoriesByAssayId[d.id],
-    })
-  )
+  const assays = _.map(rawAssays, assay => {
+    const abilities = abilitiesByAssayId[assay.id].map(ability => ({
+      ...ability,
+      canCreate: ability.canCreate === 1,
+      canDelete: ability.canDelete === 1,
+      canEdit: ability.canEdit === 1,
+    }))
+    return {
+      ...assay,
+      hasResults: usedAssayIds.includes(assay.id),
+      resultDataSchema: JSON.parse(assay.resultDataSchema),
+      resultCategories: resultCategoriesByAssayId[assay.id],
+      abilities,
+    }
+  })
 
   const result = { ok: true, total, length: assays.length, data: assays }
 
