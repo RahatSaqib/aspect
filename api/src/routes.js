@@ -506,6 +506,9 @@ function validateResultResponse() {
       .description(
         'The id of last entry in ResultStatusLog for current result'
       ),
+    caseExternalId: Joi.string()
+      .allow(null, '')
+      .description('The id of the case'),
   }
 }
 
