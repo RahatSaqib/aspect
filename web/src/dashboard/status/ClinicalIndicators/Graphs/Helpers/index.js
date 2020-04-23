@@ -1,3 +1,5 @@
+/* eslint no-console: ["error", { allow: ["error"] }] */
+
 import without from 'lodash/without'
 import omit from 'lodash/omit'
 import uniq from 'lodash/uniq'
@@ -7,10 +9,20 @@ import sum from 'lodash/sum'
 import values from 'lodash/values'
 import includes from 'lodash/includes'
 import pickBy from 'lodash/pickBy'
+import addMinutes from 'date-fns/addMinutes'
+import subMinutes from 'date-fns/subMinutes'
 import subDays from 'date-fns/subDays'
 import subMonths from 'date-fns/subMonths'
 import startOfMonth from 'date-fns/startOfMonth'
 import format from 'date-fns/format'
+import addDays from 'date-fns/addDays'
+
+import variables from '../../../../../../cfg/variables.js'
+
+const envSource =
+  process.env && process.env.initialised
+    ? process.env
+    : Object.assign(process.env, variables.customPropertiesVariables)
 
 const {
   '--aspect-color-black': colorBlack,
@@ -18,23 +30,43 @@ const {
   '--aspect-color-mantis': colorMantis,
   '--aspect-color-pink': colorPink,
   '--aspect-color-white-4': colorWhite4,
-} = process.env
+} = envSource
 
 const graphColorMap = [
   { id: 1, externalId: 'MoreThan1000', color: colorMandy },
   { id: 2, externalId: 'LessThan1000', color: colorPink },
-  { id: 3, externalId: 'Indeterminate', color: colorMantis },
-  { id: 4, externalId: 'Detected', color: colorMandy },
-  { id: 5, externalId: 'NotDetected', color: colorMantis },
-  { id: 6, externalId: 'Invalid', color: colorWhite4 },
-  { id: 7, externalId: 'NoResult', color: colorPink },
-  { id: 8, externalId: 'Error', color: colorBlack },
-  { id: 9, externalId: 'Positive', color: colorMantis },
-  { id: 10, externalId: 'Inconclusive', color: colorPink },
-  { id: 11, externalId: 'Unknown', color: colorWhite4 },
-  { id: 12, externalId: 'Negative', color: colorMantis },
+  { id: 3, externalId: 'LessThan150', color: colorPink },
+  { id: 4, externalId: 'LessThan40', color: colorPink },
+  { id: 5, externalId: 'MoreThan40', color: colorPink },
+  { id: 6, externalId: 'Detected', color: colorMandy },
+  { id: 7, externalId: 'Indeterminate', color: colorPink },
+  { id: 8, externalId: 'NotDetected', color: colorMantis },
+  { id: 9, externalId: 'Invalid', color: colorWhite4 },
+  { id: 10, externalId: 'NoResult', color: colorPink },
+  { id: 11, externalId: 'Error', color: colorBlack },
+  { id: 12, externalId: 'Positive', color: colorMantis },
+  { id: 13, externalId: 'Inconclusive', color: colorPink },
+  { id: 14, externalId: 'Unknown', color: colorWhite4 },
+  { id: 15, externalId: 'Negative', color: colorMantis },
   { id: 99, externalId: 'Cases', color: colorMantis },
 ]
+
+const assayConfigurationFile =
+  'web/src/dashboard/status/ClinicalIndicators/assayConfiguration.js'
+
+const getDayFromToday = cnt => format(addDays(new Date(), cnt), 'yyyy-MM-dd')
+
+const negateTimeZoneOffset = dateString => {
+  const date = new Date(dateString)
+  const offset = date.getTimezoneOffset()
+
+  return Math.sign(offset) !== -1
+    ? addMinutes(date, offset)
+    : subMinutes(date, Math.abs(offset))
+}
+
+const calcPercentageForGraphs = (value, total, precision = 4) =>
+  ((value / total) * 100).toFixed(precision)
 
 const getKeysFromResults = (data, keyToOmit) => {
   const newdata = []
@@ -52,36 +84,21 @@ const getKeysFromResults = (data, keyToOmit) => {
   return keyToOmit ? without(res, keyToOmit) : res
 }
 
-const groupByKey = (
-  data,
-  key,
-  cntKey = false,
-  formatDate = false,
-  intl = false
-) => {
-  const flatMapSortMap = graphColorMap.reduce((acc, curr) => {
-    const newCurr = omit(curr, 'id', 'color')
-    acc.push(newCurr.externalId)
-    return acc
-  }, [])
-
-  const dataToConsume = cntKey
-    ? data.sort(
-        (a, b) =>
-          flatMapSortMap.indexOf(a[cntKey]) - flatMapSortMap.indexOf(b[cntKey])
-      )
-    : data
-
-  return dataToConsume.reduce((acc, curr) => {
-    const countKey = cntKey
-      ? curr[cntKey]
+const groupByKey = (data, key, keyToConsume = false, formatDate = false) => {
+  return data.reduce((acc, curr) => {
+    const countKey = keyToConsume
+      ? curr[keyToConsume]
       : filter(graphColorMap, ['id', 99])[0].externalId
+
+    const dateFormatted = formatDate
+      ? format(negateTimeZoneOffset(curr[key]), formatDate)
+      : curr[key]
+
     acc[curr[key]] = {
       ...acc[curr[key]],
-      [key]: formatDate ? format(new Date(curr[key]), formatDate) : curr[key],
+      [key]: dateFormatted,
       [countKey]: curr.cnt,
     }
-
     return acc
   }, {})
 }
@@ -123,7 +140,7 @@ const formatDataForPie = (
       label,
       value:
         displayMethod === 'percentage'
-          ? round((curr[value] / total) * 100)
+          ? calcPercentageForGraphs(curr[value], total)
           : curr[value],
       color: (colorKey && colorKey.color) || colorWhite4,
     })
@@ -132,9 +149,53 @@ const formatDataForPie = (
 }
 
 const getAverageFromData = (data, value, which) => {
-  const total = filter(data, ['label', which])
-  const sum = data.reduce((acc, curr) => acc + curr.value, 0)
-  return { avg: round((total[0][value] / sum) * 100), color: total[0].color }
+  if (data.length && which) {
+    let total = []
+    if (Array.isArray(which)) {
+      const rangeTotal = which.reduce((acc, curr) => {
+        const item = filter(data, ['label', curr])[0]
+        if (item) {
+          if (acc && acc.id) {
+            acc[value] += parseFloat(item[value])
+          } else {
+            acc = { ...item, [value]: parseFloat(item[value]) }
+          }
+        } else {
+          console.error(
+            `There are no results to match your 'assayConfiguration.graphType.averages.key' 
+assertion of [${curr}] to. Please check ${assayConfigurationFile}`
+          )
+        }
+        return acc
+      }, {})
+
+      if (
+        Object.keys(rangeTotal).length !== 0 &&
+        rangeTotal.constructor === Object
+      ) {
+        total.push(rangeTotal)
+      }
+    } else {
+      total = filter(data, ['label', which]) || [{ [value]: 0 }]
+    }
+
+    if (total && total.length) {
+      const sum = data.reduce((acc, curr) => acc + parseFloat(curr.value), 0)
+      const avg = calcPercentageForGraphs(
+        parseFloat(total[0][value]),
+        round(sum),
+        1
+      )
+      return {
+        avg: parseFloat(avg),
+        color: total[0].color,
+      }
+    }
+    console.error(`No data available for percentage label. 
+Please check the key(s) specified in your 'assayConfiguration.graphType.averages.key' assertion: [${which}]. 
+${assayConfigurationFile}`)
+  }
+  return {}
 }
 
 const calcPercentageSplitBar = (data, keyToOmitDuringCalc) => {
@@ -147,12 +208,28 @@ const calcPercentageSplitBar = (data, keyToOmitDuringCalc) => {
     })
 
     for (const [key, value] of Object.entries(dataPoints)) {
-      const val = parseInt(value, 11)
-      acc[index][key] = ((val / total) * 100).toFixed(2)
+      acc[index][key] = calcPercentageForGraphs(value, total)
     }
 
     return acc
   }, [])
+}
+
+const sortByColourID = data => {
+  const sorted = []
+  data.map(item => {
+    const newItem = {}
+    const keys = Object.keys(item).sort(function(a, b) {
+      return item[a] - item[b]
+    })
+    keys.map(key => {
+      newItem[key] = item[key]
+      return newItem
+    })
+    return sorted.push(newItem)
+  })
+
+  return sorted
 }
 
 const translateKeys = (data, assayFromState, colorise = false) => {
@@ -167,6 +244,7 @@ const translateKeys = (data, assayFromState, colorise = false) => {
 
       if (colorise) {
         const colorKey = graphColorMap.filter(c => c.externalId === key)[0]
+        newItem[`${newKey}Color Order`] = (colorKey && colorKey.id) || 0
         newItem[`${newKey}Color`] = (colorKey && colorKey.color) || colorWhite4
       }
 
@@ -175,7 +253,7 @@ const translateKeys = (data, assayFromState, colorise = false) => {
     return translated.push({ ...newItem })
   })
 
-  return translated
+  return sortByColourID(translated)
 }
 
 const getTimePeriod = (cnt, period, dateFormat) => {
@@ -200,34 +278,43 @@ const getTimePeriod = (cnt, period, dateFormat) => {
   return format(timePeriod, dateFormat)
 }
 
-const buildAssaysFromWhitelist = (data, whiteList) =>
-  data.reduce((acc, curr, index) => {
-    whiteList.filter(w => {
-      const multiAssay = Array.isArray(w.id)
-      if (multiAssay) {
-        const { id } = w
-        if (acc.length) {
-          id.map(
-            i =>
-              i === curr.externalId && acc[0].externalId.push(curr.externalId)
-          )
-        } else {
-          acc.push({ id: id[0], ...w, ...curr })
-          acc[index].externalId = [id[0]]
+const buildAssaysFromWhitelist = (data, whiteList) => {
+  const isAllowed = inID => data.filter(d => inID === d.externalId)
+
+  return whiteList.reduce((acc, curr) => {
+    const { id } = curr
+    if (Array.isArray(id)) {
+      const tempAssayIds = []
+      const tempAssay = []
+      id.map(i => {
+        if (isAllowed(i).length > 0) {
+          tempAssayIds.push(i)
+          if (tempAssay.length < 1) {
+            tempAssay.push({ ...isAllowed(i)[0] })
+          }
         }
-      } else if (w.id === curr.externalId) {
-        acc.push({ ...w, ...curr })
+        return tempAssay
+      })
+      if (tempAssayIds.length && tempAssay.length) {
+        acc.push({
+          ...curr,
+          ...tempAssay[0],
+          externalId: tempAssayIds,
+        })
       }
-      return acc
-    })
+    } else if (isAllowed(id).length > 0) {
+      acc.push({ id, ...curr, ...isAllowed(id)[0], externalId: id })
+    }
     return acc
   }, [])
+}
 
 export {
   buildAssaysFromWhitelist,
   calcPercentageSplitBar,
   formatDataForPie,
   getAverageFromData,
+  getDayFromToday,
   getTimePeriod,
   getKeysFromResults,
   groupByKey,

@@ -9,6 +9,18 @@ export const messages = defineMessages({
     id: 'pages.Status.clinicalIndicatorsCovidName',
     defaultMessage: 'Daily Confirmed Cases',
   },
+  clinicalIndicatorsVLTitle: {
+    id: 'pages.Status.clinicalIndicatorsVL.title',
+    defaultMessage: 'VL Outcomes',
+  },
+  clinicalIndicatorsTBTitle: {
+    id: 'pages.Status.clinicalIndicatorsTB.title',
+    defaultMessage: 'TB Rif Resistance',
+  },
+  clinicalIndicatorsTBPieLegend: {
+    id: 'pages.Status.clinicalIndicatorsTB.pie',
+    defaultMessage: 'Average Monthly Rif Resistance Rate',
+  },
 })
 
 export default messages
