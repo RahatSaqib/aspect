@@ -6,6 +6,7 @@ const { addMilliseconds, subDays } = require('date-fns')
 const relativeObjectsSeeds = require('./relativeObjectsSeeds')
 const {
   allAssayTypeToId,
+  allDiseaseToId,
   allFeatureToId,
   allResultCategoryToId,
 } = require('../src/shared/dictionary')
@@ -2641,6 +2642,31 @@ async function seedPartnerAssay(knex) {
   await Promise.all(queries)
 }
 
+async function seedPartnerDisease(knex) {
+  const { covid19: diseaseCovid19Id } = await allDiseaseToId()
+
+  const partners = await knex('Partner').select('id')
+  const diseases = await knex('Disease').select('id')
+
+  const queries = []
+  // for all Partners ...
+  _.each(partners, ({ id: partnerId }) => {
+    // ... and all Diseases
+    _.each(diseases, ({ id: diseaseId }) => {
+      // ... add entry to PartnerDisease
+      queries.push(
+        knex('PartnerDisease').insert({
+          partnerId,
+          diseaseId,
+          // allow auto-assigning Result to Case only for Covid-19 disease
+          canAutoAssignResultByCaseId: diseaseId === diseaseCovid19Id,
+        })
+      )
+    })
+  })
+  await Promise.all(queries)
+}
+
 module.exports = {
   addReports,
 
@@ -2699,4 +2725,5 @@ module.exports = {
   randomOption,
 
   seedPartnerAssay,
+  seedPartnerDisease,
 }
