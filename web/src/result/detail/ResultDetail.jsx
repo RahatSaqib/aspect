@@ -334,7 +334,8 @@ export class ResultDetail extends PureComponent {
       history,
     } = this.props
     return (
-      editable && (
+      editable &&
+      result.get('canEdit') && (
         <div>
           <i className={cssClasses('Title__SomeFieldsNotEditable')}>
             Some fields may not be editable

@@ -2003,6 +2003,9 @@ function getBaseQueryForResults() {
     .innerJoin('AssayType as at', 'a.assayTypeId', 'at.id')
     .innerJoin('Device as d', 'r.deviceId', 'd.id')
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
+    .leftJoin('PartnerAssay as pa', function() {
+      this.on('r.assayId', 'pa.assayId').andOn('r.partnerId', 'pa.partnerId')
+    })
     .leftJoin('Geography as g', 'r.geographyId', 'g.id')
     .leftJoin('Country as c', 'g.countryId', 'c.id')
     .leftJoin('State as st', 'g.stateId', 'st.id')
