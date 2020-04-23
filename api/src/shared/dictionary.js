@@ -22,6 +22,7 @@ const cacheConfig = {
   DeviceTypeCategory: {
     keyColumn: 'name',
   },
+  Disease: {},
   Feature: {
     keyColumn: 'module',
   },

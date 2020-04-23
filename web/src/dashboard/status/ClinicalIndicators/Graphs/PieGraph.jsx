@@ -36,8 +36,8 @@ const PieGraph = ({
   displayMethod,
   indexBy,
   orderBy,
-  resultCategory,
-  averages,
+  keyToConsume,
+  averages: averagesConfig,
   componentClass,
   assayFromState,
   filter = false,
@@ -54,12 +54,13 @@ const PieGraph = ({
     ) {
       const formatted = formatDataForPie(
         data,
-        resultCategory,
+        keyToConsume,
         indexBy,
         assayFromState,
         displayMethod,
         filterResults
       )
+
       setGraph(formatted)
     }
   }, [
@@ -67,7 +68,7 @@ const PieGraph = ({
     graph,
     indexBy,
     orderBy,
-    resultCategory,
+    keyToConsume,
     assayFromState,
     displayMethod,
     filterResults,
@@ -89,7 +90,9 @@ const PieGraph = ({
             cornerRadius={3}
             colors={d => d.color}
             tooltipFormat={value =>
-              `${Number(value)}${displayMethod === 'percentage' ? '%' : ''}`
+              `${Number(value).toFixed(value % 1 !== 0 ? 2 : 1)}${
+                displayMethod === 'percentage' ? '%' : ''
+              }`
             }
             borderWidth={0}
             borderColor={{ from: 'color', modifiers: [['darker', 0.8]] }}
@@ -107,7 +110,9 @@ const PieGraph = ({
             motionStiffness={90}
             motionDamping={15}
           />
-          {averages && <LegendIndicator averages={averages} data={graph} />}
+          {averagesConfig && (
+            <LegendIndicator averages={averagesConfig} data={graph} />
+          )}
         </Fragment>
       ) : (
         <CircularProgress />

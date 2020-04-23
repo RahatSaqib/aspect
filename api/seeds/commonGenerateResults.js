@@ -488,6 +488,7 @@ async function addCovidResults(
     if (!positiveResults) {
       const caseId = await knex('Case').insert({
         externalId: caseExternalId,
+        partnerId,
       })
 
       resultToInsert = {
