@@ -133,6 +133,7 @@ export const DetailGroup = compose(
           .getIn(['detail', 'rows'], EMPTY_MAP)
           .filter(it => it.get('row') > 0)
           .filter(it => conditionsMet(it, rawData))
+          .delete('id')
           .sortBy(value => value.get('order'))
           .groupBy(x => x.get('row'))
           .valueSeq()
