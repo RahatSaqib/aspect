@@ -719,8 +719,9 @@ async function getResultByResultId(request, fields = SELECT_SHOW_FIELDS) {
     }
     if (data.assayId) {
       data.assay = await knex('Assay as a')
+        .join('DeviceType as dt', 'dt.id', 'a.deviceTypeId')
         .where('a.id', data.assayId)
-        .first()
+        .first('a.*', 'dt.externalId as deviceTypeExternalId')
       if (data.assay.resultDataSchema) {
         data.assay.resultDataSchema = JSON.parse(data.assay.resultDataSchema)
       }
@@ -2034,6 +2035,7 @@ function getBaseQueryForResults() {
     .leftJoin('Site as sirep', 'r.reportableSiteId', 'sirep.id')
     .leftJoin('ResultStatusLog as rslog', 'r.resultStatusLogId', 'rslog.id')
     .leftJoin('Person as ptr', 'rslog.createdBy', 'ptr.userId')
+    .leftJoin('Case as ca', 'ca.id', 'r.caseId')
 
   return resultQuery
 }
