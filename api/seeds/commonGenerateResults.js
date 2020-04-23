@@ -533,7 +533,6 @@ async function addCovidResults(
       resultCategory2: result.category2,
       resultData: JSON.stringify({ resultText: result.resultText }),
     })
-
     const [resultId] = await knex('Result').insert(resultToInsert)
 
     resultToInsert.id = resultId
