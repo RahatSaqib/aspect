@@ -132,6 +132,20 @@ const messages = defineMessages({
     id: 'pages.ResultDetail.editResult',
     defaultMessage: 'Edit Result',
   },
+  someFieldsNotEditable: {
+    id: 'pages.ResultDetail.someFieldsNotEditable',
+    defaultMessage: 'Some fields may not be editable',
+  },
+  resultNotEditablePermissions: {
+    id: 'pages.ResultDetail.resultNotEditablePermissions',
+    defaultMessage:
+      'This result is not editable because you do not have the edit permissions for results',
+  },
+  resultNotEditableConfiguration: {
+    id: 'pages.ResultDetail.resultNotEditableConfiguration',
+    defaultMessage:
+      'This result is not editable because {assayName} results are configured to be read-only',
+  },
 })
 
 const enhance = compose(
@@ -333,25 +347,31 @@ export class ResultDetail extends PureComponent {
       result,
       history,
     } = this.props
+    const canEditResult = editable && result.get('canEdit')
+    const editMessage = canEditResult
+      ? formatMessage(messages.someFieldsNotEditable)
+      : editable
+      ? formatMessage(messages.resultNotEditableConfiguration, {
+          assayName: result.get('name'),
+        })
+      : formatMessage(messages.resultNotEditablePermissions)
     return (
-      editable &&
-      result.get('canEdit') && (
-        <div>
-          <i className={cssClasses('Title__SomeFieldsNotEditable')}>
-            Some fields may not be editable
-          </i>
-          <AspectButton
-            type="button"
-            color="primary"
-            variant="contained"
-            onClick={() => {
-              history.push(`/browse/result/${result.get('id')}/edit`)
-            }}
-          >
-            {formatMessage(messages.editResult)}
-          </AspectButton>
-        </div>
-      )
+      <div>
+        <i className={cssClasses('Title__SomeFieldsNotEditable')}>
+          {editMessage}
+        </i>
+        <AspectButton
+          type="button"
+          color="primary"
+          variant="contained"
+          disabled={!canEditResult}
+          onClick={() => {
+            history.push(`/browse/result/${result.get('id')}/edit`)
+          }}
+        >
+          {formatMessage(messages.editResult)}
+        </AspectButton>
+      </div>
     )
   }
 
