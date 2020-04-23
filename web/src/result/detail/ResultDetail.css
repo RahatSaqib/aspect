@@ -241,6 +241,11 @@
   padding: 8px 10px 0 0;
 }
 
+.TreatmentCheckBoxLabel {
+  color: var(--aspect-color-shakespeare);
+  font-size: 14px;
+}
+
 .TreatmentCheckBox {
   display: inline-flex;
   padding: 0;
@@ -276,10 +281,10 @@
 
 .TreatmentNoteContainer {
   background-color: var(--aspect-color-grey-7);
-  width: 23em;
-  margin-left: 20.5%;
   margin-top: 5px;
-  padding: 0 19px 0 12px;
+  max-height: 17em;
+  overflow-y: auto;
+  padding: 0.3em 0.7em 0 0.4em;
 }
 
 .TreatmentNoteContainer > div:first-child {
@@ -291,10 +296,7 @@
 }
 
 .TreatmentNoteContainer > div:nth-child(2) {
-  padding: 10px 0;
-  max-height: 200px;
-  max-width: 500px;
-  overflow: scroll;
+  overflow-wrap: break-spaces;
 }
 
 .TreatmentNoteContainer svg {

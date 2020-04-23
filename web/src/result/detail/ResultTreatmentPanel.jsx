@@ -156,7 +156,7 @@ const ResultTreatmentPanel = ({
         >
           <div className={styles.TreatmentLinkLayout}>
             <div>
-              <p className={cssClasses('Container__Label')}>
+              <p className={styles.TreatmentCheckBoxLabel}>
                 {formatMessage(messages.linkedToTreatment)}
               </p>
               <div className={styles.TreatmentCheckBox}>
@@ -194,27 +194,29 @@ const ResultTreatmentPanel = ({
           </div>
         </ExpansionPanelHeader>
         {resultNotes.length > 0 && (
-          <ExpansionPanelDetail className={styles.TreatmentNoteContainer}>
-            <div className={styles.TreatmentNoteHeader}>
-              <p>{formatMessage(messages.note)}</p>
-            </div>
-            {resultNotes.map(resultNote => (
-              <div className={styles.TreatmentNoteComment}>
-                <div className={styles.TreatmentNoteBody}>
-                  {resultNote.text}
-                </div>
-                <div className={styles.TreatmentNoteFooter}>
-                  <span>Note added by: </span>
-                  <span>
-                    {' '}
-                    {`${resultNote.createdBy} - ${date(
-                      parseISO(resultNote.createdOn),
-                      'dd/MM/yyyy'
-                    )}`}{' '}
-                  </span>
-                </div>
+          <ExpansionPanelDetail>
+            <div className={styles.TreatmentNoteContainer}>
+              <div className={styles.TreatmentNoteHeader}>
+                <p>{formatMessage(messages.note)}</p>
               </div>
-            ))}
+              {resultNotes.map(resultNote => (
+                <div className={styles.TreatmentNoteComment}>
+                  <div className={styles.TreatmentNoteBody}>
+                    {resultNote.text}
+                  </div>
+                  <div className={styles.TreatmentNoteFooter}>
+                    <span>Note added by: </span>
+                    <span>
+                      {' '}
+                      {`${resultNote.createdBy} - ${date(
+                        parseISO(resultNote.createdOn),
+                        'dd/MM/yyyy'
+                      )}`}{' '}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
           </ExpansionPanelDetail>
         )}
       </ExpansionPanel>
