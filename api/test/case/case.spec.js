@@ -8,17 +8,18 @@ const server = supertest.agent('http://localhost:8080')
 
 describe.only('case/service', () => {
   let partnerId = null
+  let accessToken = null
 
   before(async () => {
     partnerId = await getFirstPartnerId()
+    accessToken = await getAccessToken('admin', 'test07')
   })
 
-  describe.only('Case Routes', () => {
+  describe.only('GET', () => {
     const path = '/api/case'
+    let caseToTest = null
     
-    it('GET', async () => {
-      const accessToken = await getAccessToken('admin', 'test07')
-
+    it('Should return a list of cases', async () => {
       const res = await server
         .get(path)
         .set('Authorization', `Bearer ${accessToken}`)
@@ -26,21 +27,37 @@ describe.only('case/service', () => {
       assert.typeOf(res.body, 'Object')
       assert.property(res.body, 'data')
       assert.typeOf(res.body.data, 'array')
-      // assert.isAtLeast(res.body.data.length, 3)
-      // assert.property(res.body.data[0], 'id')
-      // assert.property(res.body.data[0], 'externalId')
-      // assert.property(res.body.data[0], 'endedOn')
-      // assert.property(res.body.data[0], 'deviceName')
-      // assert.property(res.body.data[0], 'sampleOriginSiteName')
-      // assert.property(res.body.data[0], 'sampleId')
-      // assert.property(res.body.data[0], 'resultText')
-      // assert.property(res.body.data[0], 'errorCode')
-      // assert.property(res.body.data[0], 'resultWorkflowStatus')
-      // assert.property(res.body.data[0], 'resultTreatmentStatus')
-      // assert.property(res.body.data[0], 'treatmentStatusInfo')
-      // assert.property(res.body.data[0], 'patientId')
-      // assert.property(res.body.data[0], 'assayId')
-      // assert.property(res.body, 'total')
+      assert.isNotNull(res.body.data)
+      assert.isAtLeast(res.body.data.length, 1)
+      assert.property(res.body.data[0], 'id')
+      assert.property(res.body.data[0], 'externalId')
+      assert.property(res.body.data[0], 'attendingClinic')
+      assert.property(res.body.data[0], 'outcome')
+      assert.property(res.body.data[0], 'patientId')
+      caseToTest = res.body.data[0]
+    })
+
+    it('Should return a list of cases filtered by sampleOriginSite and patientOrResearchId', async () => {
+      console.log(caseToTest)
+
+      const res = await server
+        .get(`${path}?sampleOriginSite=${caseToTest.attendingClinic}&patientOrResearchId=${caseToTest.patientId}`)
+        .set('Authorization', `Bearer ${accessToken}`)
+
+      console.log(res.body.data)
+
+      assert.equal(res.status, 200)
+      assert.typeOf(res.body, 'Object')
+      assert.property(res.body, 'data')
+      assert.typeOf(res.body.data, 'array')
+      assert.isNotNull(res.body.data)
+      assert.isAtLeast(res.body.data.length, 1)
+      assert.property(res.body.data[0], 'id')
+      assert.property(res.body.data[0], 'externalId')
+      assert.property(res.body.data[0], 'attendingClinic')
+      assert.property(res.body.data[0], 'outcome')
+      assert.property(res.body.data[0], 'patientId')
+      assert.equal(res.body.data[0].id, caseToTest.id)
     })
   })
 

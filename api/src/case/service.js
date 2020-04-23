@@ -2,7 +2,7 @@ const { knex, filterParams, sortPageParams } = require('../db')
 const { getConstraints } = require('../auth/constraints')
 const { addPartnerQueryConstraints } = require('../result/service')
 
-const tblName = 'Case as c'
+const tblName = 'Case as cs'
 
 function validateCaseIdentifier(_case) {
   let errors = ''
@@ -69,20 +69,28 @@ async function getCase(_case) {
 
 async function getCases(query, auth) {
   const dataConstraints = await getConstraints(auth.credentials)
-  
-  /*
-OK >>> Country: dropdown (by id) (use result > geography)
-OK >>> State: dropdown (by id) (use result > geography)
-OK >>> LGA: dropdown (by id) (use result > geography)
-OK >>> Disease: dropdown (by id) (use result > assay > assayType > disease)
-OK >>> Case ID/Patient ID: one textbox for both (use result[resultData])
-OK >>> Attending clinic: textbox (use result > sample > site)
-OK >>> PartnerId: this is a fixed filter because it's related to the logged user.
-*/
 
+  // Querying the last result for each case that has a sample origin site
+  const lastResults = knex(tblName)
+    .innerJoin('Result as r', 'cs.id', 'r.caseId')
+    .innerJoin('Sample as s', 'r.sampleId', 's.id')
+    .innerJoin('Site as sos', 's.originSiteId', 'sos.id')
+    .groupBy('cs.id')
+    .select('cs.id as caseId', knex.raw('max(r.id) as lastResultId'))
+    .as('lr')
+
+  // Main query only works with each last result per case
   const casesQuery = knex(tblName)
-    .innerJoin('Result as r', 'c.id', 'r.caseId')
+    .innerJoin(lastResults, 'cs.id', 'lr.caseId')
+    .innerJoin('Result as r', 'lr.lastResultId', 'r.id')
     .innerJoin('Geography as g', 'r.geographyId', 'g.id')
+    // I don't like the next three lines
+    // They're necessary because filterParams adds a filter for c.id, lg.id and st.id.
+    // We could do that directly using g.countryId, g.lgaId and g.stateId, but it probably needs a refactor
+    // Those joins don't add any value and makes the query to be unnecessary larger
+    .leftJoin('Country as c', 'g.countryId', 'c.id')
+    .leftJoin('State as st', 'g.stateId', 'st.id') 
+    .leftJoin('Lga as lg', 'g.lgaId', 'lg.id')
     .innerJoin('Assay as a', 'r.assayId', 'a.id')
     .innerJoin('AssayType as at', 'a.assayTypeId', 'at.id')
     .innerJoin('Disease as d', 'at.diseaseId', 'd.id')
@@ -101,21 +109,18 @@ OK >>> PartnerId: this is a fixed filter because it's related to the logged user
         queryBuilder.where(builder =>
           builder
             .whereRaw(
-              'LOWER(c.externalId) like LOWER(?) || LOWER(JSON_EXTRACT(r.patientData, "$.id")) like LOWER(JSON_QUOTE(?))',
-              [
-                `%${params.patientOrResearchId}%`,
-                `%${params.patientOrResearchId}%`,
-              ]
+              `LOWER(cs.externalId) like LOWER('${params.patientOrResearchId}') || LOWER(JSON_EXTRACT(r.patientData, "$.id")) like LOWER(JSON_QUOTE('${params.patientOrResearchId}'))`,
             )
-            .orWhere('r.researchId', 'like', `%${params.patientOrResearchId}%`)
+            .orWhereRaw(`r.researchId like '%${params.patientOrResearchId}%'`)
         )
       }
     }, query)
     .select(
-      'c.externalId',
-      'sos.name',
-      knex.raw(`'Active' as Outcome`),
-      knex.raw('LOWER(JSON_EXTRACT(r.patientData, "$.id"))')
+      'cs.id',
+      'cs.externalId as externalId',
+      'sos.name as attendingClinic',
+      knex.raw(`'Active' as outcome`),
+      knex.raw('JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.id")) as patientId')
     )
     .distinct()
 
@@ -123,14 +128,12 @@ OK >>> PartnerId: this is a fixed filter because it's related to the logged user
     .clone()
     .count('r.id as count')
     .first()
-  // get rows
+    
   const getItems = casesQuery
-    .clone()
-    .modify(sortPageParams, query, 'endedOn')
-    .select()
-
-  console.log(getItems.toString())
-
+  .clone()
+  .modify(sortPageParams, query, 'endedOn')
+  .select()
+  
   // return result when both queries are finished
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
 
