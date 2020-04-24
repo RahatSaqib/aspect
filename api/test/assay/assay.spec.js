@@ -19,26 +19,58 @@ describe('Assay routes', () => {
       assert.typeOf(assayResponse.body, 'Object')
       assert.property(assayResponse.body, 'data')
       assert.typeOf(assayResponse.body.data, 'array')
-      assert.isAtLeast(assayResponse.body.data.length, 3)
-      assert.property(assayResponse.body.data[0], 'id')
-      assert.property(assayResponse.body.data[0], 'assayTypeId')
-      assert.property(assayResponse.body.data[0], 'deviceTypeId')
-      assert.property(assayResponse.body.data[0], 'name')
-      assert.property(assayResponse.body.data[0], 'assayTypeName')
-      assert.property(assayResponse.body.data[0], 'deviceTypeName')
-      assert.property(assayResponse.body.data[0], 'hasResults')
-      assert.property(assayResponse.body.data[0], 'resultDataSchema')
-      assert.property(assayResponse.body.data[0], 'assayTypeAbbreviation')
-      assert.property(assayResponse.body.data[0], 'abbreviation')
+      const { data } = assayResponse.body
+      assert.isAtLeast(data.length, 3)
+      const [assay] = data
+      assert.property(assay, 'id')
+      assert.property(assay, 'assayTypeId')
+      assert.property(assay, 'deviceTypeId')
+      assert.property(assay, 'name')
+      assert.property(assay, 'assayTypeName')
+      assert.property(assay, 'deviceTypeName')
+      assert.property(assay, 'hasResults')
+      assert.property(assay, 'resultDataSchema')
+      assert.property(assay, 'assayTypeAbbreviation')
+      assert.property(assay, 'abbreviation')
+      assert.property(assay, 'abilities')
       assert.property(assayResponse.body, 'total')
-      expect(assayResponse.body.data).to.containSubset([
+      expect(data).to.containSubset([
         {
           assayTypeName: 'MTB/Rif',
         },
         {
           assayTypeName: 'HIV VL',
         },
+        {
+          assayTypeName: 'COVID-19 Test',
+        },
       ])
+
+      const assertAbilities = (
+        assayTypeName,
+        canCreate,
+        canDelete,
+        canEdit
+      ) => {
+        const assay = data.find(
+          a =>
+            a.assayTypeName === assayTypeName &&
+            a.abilities &&
+            a.abilities.length
+        )
+        assert.isObject(assay)
+        assert.isNotEmpty(assay)
+        const ability = assay.abilities.find(
+          a =>
+            a.canCreate === canCreate &&
+            a.canDelete === canDelete &&
+            a.canEdit === canEdit
+        )
+        assert.isObject(ability)
+        assert.isNotEmpty(ability)
+      }
+      assertAbilities('MTB/Rif', false, false, false)
+      assertAbilities('COVID-19 Test', true, true, true)
     })
 
     const tbDiseaseManagerUsername = 'tb_disease_manager'

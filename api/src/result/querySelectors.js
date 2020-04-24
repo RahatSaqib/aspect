@@ -39,6 +39,7 @@ const REPORT_COMMON_FIELDS = [
   ),
   'r.errorCode',
   knex.raw('JSON_UNQUOTE(JSON_EXTRACT(r.resultData, "$.copies")) as copies'),
+  'ca.externalId as caseExternalId',
 ]
 
 const SELECT_COMMON_FIELDS = [
@@ -110,6 +111,8 @@ const SELECT_COMMON_FIELDS = [
   'ptr.name as transferredBy',
   'r.resultStatusLogId',
   'r.firstViewedOn',
+  'r.caseId',
+  'ca.externalId as caseExternalId',
 ]
 const SELECT_SHOW_FIELDS = [...SELECT_COMMON_FIELDS, 'rf.formSchema']
 const SORT_FIELDS = [

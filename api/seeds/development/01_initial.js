@@ -256,7 +256,7 @@ async function seed(knex) {
     })
   }
   await updateMGITAssays(knex, deviceTypeBDMGITId)
-  await updateCultureAssays(knex, deviceTypeSenaiteLimsId, {}, {})
+  await updateCultureAssays(knex, deviceTypeSenaiteLimsId)
   // Units
   const piece = await unitToId('Piece')
 
