@@ -54,7 +54,11 @@ export function fetchCases(filtersParams, sortCol, sortDir, page, pageSize) {
   return dispatch => {
     const filters = _.fromPairs([...filtersParams.entries()])
     dispatch(requestCases(sortCol, sortDir, page, pageSize, filters))
+<<<<<<< HEAD
     sortCol = sortCol || 'externalId'
+=======
+    sortCol = sortCol || 'caseId'
+>>>>>>> Created files for case listing
 
     return aspectFetch(
       `/case?${stringify({
