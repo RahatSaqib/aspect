@@ -2085,7 +2085,7 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
       }
       if (params.caseId) {
         queryBuilder.whereRaw('UPPER(ca.externalId)=?', [
-          query.caseId.toUpperCase(),
+          params.caseId.toUpperCase(),
         ])
       }
     }, query)
