@@ -3,7 +3,7 @@ const {
   asyncHandler,
   validateSortPageParams,
   validateFullResultResponse,
-  minimumResultResponse,
+  baseResultResponse,
 } = require('../routes')
 const {
   listResults,
@@ -45,7 +45,7 @@ const {
 } = require('./endpointHelpers')
 
 const resultResponse = {
-  ...minimumResultResponse,
+  ...baseResultResponse,
   assayName: Joi.string()
     .description('The name of the assay performed to this result')
     .allow('', null),

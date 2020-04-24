@@ -105,9 +105,6 @@ async function getListResults(query, auth, fields = LIST_FIELDS) {
     .count('r.id as count')
     .first()
 
-  // add case fields.
-
-  selectFields.push('case.externalId as caseExternalId')
   // get rows
   const getItems = resultQuery
     .clone()
@@ -2058,14 +2055,6 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
         'rca2.resultCategoryId'
       )
     })
-    .leftOuterJoin('Case as case', function() {
-      this.on('r.caseId', 'case.id')
-      if (query.caseId) {
-        this.andOn(
-          knex.raw('UPPER(case.externalId)=?', query.caseId.toUpperCase())
-        )
-      }
-    })
     .modify(filterDateRangeParams, query, 'r.endedOn')
     .modify(filterParams, query, {
       deviceId: 'd.id',
@@ -2092,6 +2081,11 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
               [`%${params.patientOrResearchId}%`]
             )
             .orWhere('r.researchId', 'like', `%${params.patientOrResearchId}%`)
+        )
+      }
+      if (params.caseId) {
+        this.andOn(
+          knex.raw('UPPER(ca.externalId)=?', query.caseId.toUpperCase())
         )
       }
     }, query)

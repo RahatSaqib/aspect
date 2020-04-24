@@ -241,7 +241,7 @@ function validateDateRangeParams() {
       .description('To Date'),
   }
 }
-const minimumResultResponse = {
+const baseResultResponse = {
   id: Joi.number()
     .required()
     .description('Unique ID of the result for this instance of Aspect'),
@@ -304,7 +304,7 @@ const minimumResultResponse = {
 
 function validateFullResultResponse() {
   return {
-    ...minimumResultResponse,
+    ...baseResultResponse,
     createdOn: Joi.date()
       .required()
       .description(
@@ -533,5 +533,5 @@ module.exports = {
   validateSortPageParams,
   validateDateRangeParams,
   validateFullResultResponse,
-  minimumResultResponse,
+  baseResultResponse,
 }
