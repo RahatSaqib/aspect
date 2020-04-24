@@ -226,31 +226,37 @@ async function upsertJobFunction(
 }
 
 async function clonePermissions(knex, fromFeature, toFeature) {
-  const { id: featureId } = await knex
-    .from('Feature')
-    .where({ module: toFeature })
-    .first()
+  await knex.transaction(async function(trx) {
+    const { id: featureId } = await knex
+      .from('Feature')
+      .where({ module: toFeature })
+      .first()
 
-  await knex.from('JobFunctionFeature').insert(function() {
-    this.from('JobFunction as jf')
-      .innerJoin('JobFunctionFeature as jff', 'jf.id', 'jff.jobFunctionId')
-      .innerJoin('Feature as f', 'jff.featureId', 'f.id')
-      .where('f.module', knex.raw('?', [fromFeature]))
-      .select('jf.id as jobFunctionId', knex.raw('?', [featureId]))
-  })
+    await knex.from('JobFunctionFeature')
+      .transacting(trx)
+      .insert(function() {
+        this.from('JobFunction as jf')
+          .innerJoin('JobFunctionFeature as jff', 'jf.id', 'jff.jobFunctionId')
+          .innerJoin('Feature as f', 'jff.featureId', 'f.id')
+          .where('f.module', knex.raw('?', [fromFeature]))
+          .select('jf.id as jobFunctionId', knex.raw('?', [featureId]))
+    })
 
-  await knex.from('JobFunctionPermission').insert(function() {
-    this.from('JobFunction as jf')
-      .innerJoin('JobFunctionPermission as jfp', 'jf.id', 'jfp.jobFunctionId')
-      .innerJoin('Permission as p', 'jfp.permissionId', 'p.id')
-      .innerJoin('Permission as pCase', function() {
-        this.on('pCase.module', knex.raw('?', [toFeature])).on(
-          'p.activity',
-          'pCase.activity'
-        )
-      })
-      .where('p.module', knex.raw('?', [fromFeature]))
-      .select('jf.id as jobFunctionId', 'pCase.id as permissionId')
+    await knex.from('JobFunctionPermission')
+      .transacting(trx)
+      .insert(function() {
+        this.from('JobFunction as jf')
+          .innerJoin('JobFunctionPermission as jfp', 'jf.id', 'jfp.jobFunctionId')
+          .innerJoin('Permission as p', 'jfp.permissionId', 'p.id')
+          .innerJoin('Permission as pCase', function() {
+            this.on('pCase.module', knex.raw('?', [toFeature])).on(
+              'p.activity',
+              'pCase.activity'
+            )
+          })
+        .where('p.module', knex.raw('?', [fromFeature]))
+        .select('jf.id as jobFunctionId', 'pCase.id as permissionId')
+    })
   })
 }
 
