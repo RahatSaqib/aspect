@@ -519,7 +519,7 @@ async function addCovidResults(
     }
     resultToInsert = _.assign({}, resultToInsert, {
       ...auditFields,
-      externalId: `COVID-${format(new Date(), 'TT')}`,
+      externalId: `COVID-${uid}-ID`,
       geographyId: siteData.geographyId,
       siteId: siteData.id,
       reportableSiteId: reportableSite.id,
