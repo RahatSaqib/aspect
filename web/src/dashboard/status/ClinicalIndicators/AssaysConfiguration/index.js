@@ -29,10 +29,13 @@ const assaysConfiguration = (intl, assaysFromState) => {
   covidRecoveryByGenderAssayConfig.title = intl.formatMessage(
     clinicalIndicatorsCovidDistributionByGenderTitle
   );
+
+  console.log(covidDailyConfirmedAssayConfig);
+
   const allowedAssays = buildAssaysFromWhitelist(assaysFromState, [
-    covidOutcomeDistributionAssayConfig,
+    // covidOutcomeDistributionAssayConfig,
     // covidDailyConfirmedAssayConfig,
-    covidDailyOutcomeAssayConfig
+    // covidDailyOutcomeAssayConfig
     // covidRecoveryByGenderAssayConfig
     // covidRecoveryByGenderAssayConfig,
   ]);
