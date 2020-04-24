@@ -134,5 +134,28 @@
         "order": 13
       }
     }
+  },
+  "resultSignOff": {
+    "list": false,
+    "order": 2,
+    "type": "object" ,
+    "title": "Result Sign Off" ,
+    "properties": {
+      "laboratoryTechnician": {
+        "title": "Med Tech" ,
+        "type": "string",
+        "order": 0
+      },
+      "laboratorySupervisor": {
+        "title": "Lab Supervisor" ,
+        "type": "string",
+        "order": 1
+      },
+      "laboratoryManager": {
+        "title": "Lab Manager" ,
+        "type": "string",
+        "order": 2
+      }
+    }
   }
 }
