@@ -7,10 +7,8 @@ const {
   parseISO,
   format: dateFormat,
 } = require('date-fns')
-
 const Promise = require('bluebird')
 const shared = require('../utils/sharedToken')
-const { runTestWithKnex } = require('../utils/generatorFunctionUtils')
 const {
   deviceStatusToId,
   sampleTypeToId,
@@ -64,48 +62,48 @@ describe('Result routes', () => {
   describe('GET', () => {
     shared.checkToken(server, path)
 
-    it('should return a list of results', () =>
-      runTestWithKnex(async knex => {
-        initialResultWorkflowStatusName = await server
-          .get(path)
-          .set('Authorization', `Bearer ${shared.token}`)
-          .then(res => {
-            assert.equal(res.status, 200)
-            assert.typeOf(res.body, 'Object')
-            assert.property(res.body, 'data')
-            assert.typeOf(res.body.data, 'array')
-            assert.isAtLeast(res.body.data.length, 3)
-            assert.property(res.body.data[0], 'id')
-            assert.property(res.body.data[0], 'externalId')
-            assert.property(res.body.data[0], 'endedOn')
-            assert.property(res.body.data[0], 'deviceName')
-            assert.property(res.body.data[0], 'sampleOriginSiteName')
-            assert.property(res.body.data[0], 'sampleId')
-            assert.property(res.body.data[0], 'resultText')
-            assert.property(res.body.data[0], 'errorCode')
-            assert.property(res.body.data[0], 'resultWorkflowStatus')
-            assert.property(res.body.data[0], 'resultTreatmentStatus')
-            assert.property(res.body.data[0], 'treatmentStatusInfo')
-            assert.property(res.body.data[0], 'patientId')
-            assert.property(res.body.data[0], 'assayId')
-            assert.property(res.body, 'total')
-            ;[
-              {
-                id: resultId,
-                resultWorkflowStatus: initialResultWorkflowStatus,
-                assayId,
-              },
-            ] = res.body.data
-            return res.body.data[0].resultWorkflowStatus
-          })
+    it('should return a list of results', async () => {
+      initialResultWorkflowStatusName = await server
+        .get(path)
+        .set('Authorization', `Bearer ${shared.token}`)
+        .then(res => {
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+          assert.property(res.body, 'data')
+          assert.typeOf(res.body.data, 'array')
+          assert.isAtLeast(res.body.data.length, 3)
+          assert.property(res.body.data[0], 'id')
+          assert.property(res.body.data[0], 'externalId')
+          assert.property(res.body.data[0], 'endedOn')
+          assert.property(res.body.data[0], 'deviceName')
+          assert.property(res.body.data[0], 'sampleOriginSiteName')
+          assert.property(res.body.data[0], 'sampleId')
+          assert.property(res.body.data[0], 'resultText')
+          assert.property(res.body.data[0], 'errorCode')
+          assert.property(res.body.data[0], 'resultWorkflowStatus')
+          assert.property(res.body.data[0], 'resultTreatmentStatus')
+          assert.property(res.body.data[0], 'treatmentStatusInfo')
+          assert.property(res.body.data[0], 'patientId')
+          assert.property(res.body.data[0], 'assayId')
+          assert.property(res.body.data[0], 'caseExternalId')
+          assert.property(res.body, 'total')
+          ;[
+            {
+              id: resultId,
+              resultWorkflowStatus: initialResultWorkflowStatus,
+              assayId,
+            },
+          ] = res.body.data
+          return res.body.data[0].resultWorkflowStatus
+        })
 
-        initialResultWorkflowStatus = (
-          await knex
-            .from('ResultWorkflowStatus')
-            .where({ name: initialResultWorkflowStatusName })
-            .first('externalId')
-        ).externalId
-      }))
+      initialResultWorkflowStatus = (
+        await knex
+          .from('ResultWorkflowStatus')
+          .where({ name: initialResultWorkflowStatusName })
+          .first('externalId')
+      ).externalId
+    })
 
     it('should return a list of results with assay-specific fields if TB assay is requested', async () => {
       await server
@@ -129,6 +127,37 @@ describe('Result routes', () => {
           assert.property(res.body.data[0], 'resultTreatmentStatus')
           assert.property(res.body.data[0], 'treatmentStatusInfo')
           assert.property(res.body.data[0], 'patientId')
+          assert.property(res.body, 'total')
+          assert.typeOf(res.body.extraColumns, 'array')
+        })
+    })
+
+    it('should return a list of results with case-specific', async () => {
+      const { caseId } = await knex('Result')
+        .join('Case', 'caseId', 'Case.Id')
+        .first('Case.externalId as caseId')
+      await server
+        .get(`${path}?caseId=${caseId}`)
+        .set('Authorization', `Bearer ${shared.token}`)
+        .then(res => {
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+          assert.property(res.body, 'data')
+          assert.typeOf(res.body.data, 'array')
+          assert.isAtLeast(res.body.data.length, 1)
+          assert.property(res.body.data[0], 'id')
+          assert.property(res.body.data[0], 'externalId')
+          assert.property(res.body.data[0], 'endedOn')
+          assert.property(res.body.data[0], 'deviceName')
+          assert.property(res.body.data[0], 'sampleOriginSiteName')
+          assert.property(res.body.data[0], 'sampleId')
+          assert.property(res.body.data[0], 'resultText')
+          assert.property(res.body.data[0], 'errorCode')
+          assert.property(res.body.data[0], 'resultWorkflowStatus')
+          assert.property(res.body.data[0], 'resultTreatmentStatus')
+          assert.property(res.body.data[0], 'treatmentStatusInfo')
+          assert.property(res.body.data[0], 'patientId')
+          assert.property(res.body.data[0], 'caseExternalId')
           assert.property(res.body, 'total')
           assert.typeOf(res.body.extraColumns, 'array')
         })
@@ -370,13 +399,12 @@ describe('Result routes', () => {
   })
 
   describe('PUT', () => {
-    after(() =>
-      runTestWithKnex(async knex => {
-        await knex('ResultTreatmentStatusLog')
-          .where('resultId', resultId)
-          .delete()
-      })
-    )
+    after(async () => {
+      await knex('ResultTreatmentStatusLog')
+        .where('resultId', resultId)
+        .delete()
+    })
+
     it('Should update result status given a resultId', async () => {
       const updateWithExternalId = {
         resultWorkflowStatusId: null,
@@ -585,37 +613,36 @@ describe('Result routes', () => {
       })
     }
 
-    it('Should update result treatment status given a resultId - with externalId', async () =>
-      runTestWithKnex(async knex => {
-        const changedOn = new Date()
-        const updateWithExternalId = {
-          externalId: 'AwaitingTreatment',
-          data: 'should be treated',
-          method: 'sms',
-          changedOn,
-        }
-        const { testResultId } = await knex('ResultTreatmentStatus as s')
-          .join(
-            'ResultTreatmentStatusLog as l',
-            's.id',
-            'l.resultTreatmentStatusId'
-          )
-          .where('s.externalId', '<>', 'AwaitingTreatment')
-          .first('l.resultId as testResultId')
+    it('Should update result treatment status given a resultId - with externalId', async () => {
+      const changedOn = new Date()
+      const updateWithExternalId = {
+        externalId: 'AwaitingTreatment',
+        data: 'should be treated',
+        method: 'sms',
+        changedOn,
+      }
+      const { testResultId } = await knex('ResultTreatmentStatus as s')
+        .join(
+          'ResultTreatmentStatusLog as l',
+          's.id',
+          'l.resultTreatmentStatusId'
+        )
+        .where('s.externalId', '<>', 'AwaitingTreatment')
+        .first('l.resultId as testResultId')
 
-        // update with external ID
-        return server
-          .put(`${path}/treatment-status/${testResultId}`)
-          .send(updateWithExternalId)
-          .set('Authorization', `Bearer${shared.token}`)
-          .then(res => {
-            baseTreatmentStatusAssertion(res)
+      // update with external ID
+      return server
+        .put(`${path}/treatment-status/${testResultId}`)
+        .send(updateWithExternalId)
+        .set('Authorization', `Bearer${shared.token}`)
+        .then(res => {
+          baseTreatmentStatusAssertion(res)
 
-            const { treatmentStatus } = res.body.data
-            // check the updated fieldName
-            assert.equal(treatmentStatus.externalId, 'AwaitingTreatment')
-          })
-      }))
+          const { treatmentStatus } = res.body.data
+          // check the updated fieldName
+          assert.equal(treatmentStatus.externalId, 'AwaitingTreatment')
+        })
+    })
 
     it('Should update result treatment status given a resultId - with resultTreatmentStatusId', async () => {
       const changedOn = addMinutes(new Date(), 1)
@@ -704,109 +731,106 @@ describe('Result routes', () => {
 
         afterEach(context.afterEach)
 
-        it('Should save values to the formData field in the result', () =>
-          runTestWithKnex(async knex => {
-            let response = await server
-              .put(`${path}/form-data/${resultId}`)
-              .send({
-                expertInterpretation: 'positive',
-              })
-              .set('Authorization', context.clientAuth)
-            assert.deepEqual(response.body.data.formData, {
+        it('Should save values to the formData field in the result', async () => {
+          let response = await server
+            .put(`${path}/form-data/${resultId}`)
+            .send({
               expertInterpretation: 'positive',
             })
-            assert.equal(response.body.data.id, resultId)
-            let resultFromDatabase = await knex('Result')
-              .where('id', resultId)
-              .first('formData')
-            assert.deepEqual(
-              response.body.data.formData,
-              JSON.parse(resultFromDatabase.formData)
-            )
+            .set('Authorization', context.clientAuth)
+          assert.deepEqual(response.body.data.formData, {
+            expertInterpretation: 'positive',
+          })
+          assert.equal(response.body.data.id, resultId)
+          let resultFromDatabase = await knex('Result')
+            .where('id', resultId)
+            .first('formData')
+          assert.deepEqual(
+            response.body.data.formData,
+            JSON.parse(resultFromDatabase.formData)
+          )
 
-            response = await server
-              .put(`${path}/form-data/${resultId}`)
-              .send({
-                expertInterpretation: null,
-              })
-              .set('Authorization', context.clientAuth)
-            assert.deepEqual(response.body.data.formData, {
+          response = await server
+            .put(`${path}/form-data/${resultId}`)
+            .send({
               expertInterpretation: null,
             })
-            assert.equal(response.body.data.id, resultId)
-            resultFromDatabase = await knex('Result')
-              .where('id', resultId)
-              .first('formData')
-            assert.deepEqual(
-              response.body.data.formData,
-              JSON.parse(resultFromDatabase.formData)
-            )
+            .set('Authorization', context.clientAuth)
+          assert.deepEqual(response.body.data.formData, {
+            expertInterpretation: null,
+          })
+          assert.equal(response.body.data.id, resultId)
+          resultFromDatabase = await knex('Result')
+            .where('id', resultId)
+            .first('formData')
+          assert.deepEqual(
+            response.body.data.formData,
+            JSON.parse(resultFromDatabase.formData)
+          )
 
-            response = await server
-              .put(`${path}/form-data/${resultId}`)
-              .send({
-                expertInterpretation: 'negative',
-              })
-              .set('Authorization', context.clientAuth)
-            assert.deepEqual(response.body.data.formData, {
+          response = await server
+            .put(`${path}/form-data/${resultId}`)
+            .send({
               expertInterpretation: 'negative',
             })
-            assert.equal(response.body.data.id, resultId)
-            resultFromDatabase = await knex('Result')
-              .where('id', resultId)
-              .first('formData')
-            assert.deepEqual(
-              response.body.data.formData,
-              JSON.parse(resultFromDatabase.formData)
-            )
+            .set('Authorization', context.clientAuth)
+          assert.deepEqual(response.body.data.formData, {
+            expertInterpretation: 'negative',
+          })
+          assert.equal(response.body.data.id, resultId)
+          resultFromDatabase = await knex('Result')
+            .where('id', resultId)
+            .first('formData')
+          assert.deepEqual(
+            response.body.data.formData,
+            JSON.parse(resultFromDatabase.formData)
+          )
 
-            response = await server
-              .put(`${path}/form-data/${resultId}`)
-              .send({})
-              .set('Authorization', context.clientAuth)
-            assert.deepEqual(response.body.data.formData, {
-              expertInterpretation: 'negative',
+          response = await server
+            .put(`${path}/form-data/${resultId}`)
+            .send({})
+            .set('Authorization', context.clientAuth)
+          assert.deepEqual(response.body.data.formData, {
+            expertInterpretation: 'negative',
+          })
+          assert.equal(response.body.data.id, resultId)
+          resultFromDatabase = await knex('Result')
+            .where('id', resultId)
+            .first('formData')
+          assert.deepEqual(
+            response.body.data.formData,
+            JSON.parse(resultFromDatabase.formData)
+          )
+        })
+
+        it("Should NOT save values to the formData field in the result when field sent is not in the assay's form schema", async () => {
+          const response = await server
+            .put(`${path}/form-data/${resultId}`)
+            .send({
+              someUndefinedField: 'positive',
+              anotherUndefinedField: 'another value',
             })
-            assert.equal(response.body.data.id, resultId)
-            resultFromDatabase = await knex('Result')
-              .where('id', resultId)
-              .first('formData')
-            assert.deepEqual(
-              response.body.data.formData,
-              JSON.parse(resultFromDatabase.formData)
-            )
-          }))
+            .set('Authorization', context.clientAuth)
+          assert.equal(response.statusCode, 400)
+          const resultFromDatabase = await knex('Result')
+            .where('id', resultId)
+            .first('formData')
+          assert.isNull(resultFromDatabase.formData)
+        })
 
-        it("Should NOT save values to the formData field in the result when field sent is not in the assay's form schema", () =>
-          runTestWithKnex(async knex => {
-            const response = await server
-              .put(`${path}/form-data/${resultId}`)
-              .send({
-                someUndefinedField: 'positive',
-                anotherUndefinedField: 'another value',
-              })
-              .set('Authorization', context.clientAuth)
-            assert.equal(response.statusCode, 400)
-            const resultFromDatabase = await knex('Result')
-              .where('id', resultId)
-              .first('formData')
-            assert.isNull(resultFromDatabase.formData)
-          }))
-
-        it("Should NOT save values to the formData field in the result when value is not in the selector field's options list", () =>
-          runTestWithKnex(async knex => {
-            const response = await server
-              .put(`${path}/form-data/${resultId}`)
-              .send({
-                expertInterpretation: 'unknown option',
-              })
-              .set('Authorization', context.clientAuth)
-            assert.equal(response.statusCode, 400)
-            const resultFromDatabase = await knex('Result')
-              .where('id', resultId)
-              .first('formData')
-            assert.isNull(resultFromDatabase.formData)
-          }))
+        it("Should NOT save values to the formData field in the result when value is not in the selector field's options list", async () => {
+          const response = await server
+            .put(`${path}/form-data/${resultId}`)
+            .send({
+              expertInterpretation: 'unknown option',
+            })
+            .set('Authorization', context.clientAuth)
+          assert.equal(response.statusCode, 400)
+          const resultFromDatabase = await knex('Result')
+            .where('id', resultId)
+            .first('formData')
+          assert.isNull(resultFromDatabase.formData)
+        })
       })
 
       describe('COVID-19 Result Updates', () => {
