@@ -2084,9 +2084,9 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
         )
       }
       if (params.caseId) {
-        this.andOn(
-          knex.raw('UPPER(ca.externalId)=?', query.caseId.toUpperCase())
-        )
+        queryBuilder.whereRaw('UPPER(ca.externalId)=?', [
+          query.caseId.toUpperCase(),
+        ])
       }
     }, query)
     .modify(addPartnerQueryConstraints, dataConstraints)
