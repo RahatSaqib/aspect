@@ -1,4 +1,5 @@
 const _ = require('lodash')
+const Promise = require('bluebird')
 const Boom = require('@hapi/boom')
 
 const {
@@ -180,6 +181,8 @@ async function createNewIssue(knex, issueType, action) {
   const issueStatusId = await issueStatusToId('Active')
   const { consumableId = null } = action
 
+  const issueContext = await lookupIssueContext(action, knex)
+
   const issue = {
     issueStatusId,
     issueTypeId,
@@ -187,71 +190,14 @@ async function createNewIssue(knex, issueType, action) {
     level: 1,
     createdOn: now,
     updatedOn: now,
-  }
-
-  // populate context from action data
-  let issueContext = {}
-  if (action.resultId) {
-    issue.resultId = action.resultId
-    issueContext = await knex('Result')
-      .where({ id: issue.resultId })
-      .first('deviceId', 'siteId', 'geographyId', 'partnerId')
-  }
-  if (!_.isEmpty(issueContext)) {
-    issue.deviceId = issueContext.deviceId
-    issue.siteId = issueContext.siteId
-    issue.geographyId = issueContext.geographyId
-    issue.partnerId = issueContext.partnerId
-  } else if (action.deviceId) {
-    issue.deviceId = action.deviceId
-    issueContext = await knex('Device as d')
-      .leftJoin('Site as s', 's.id', 'd.siteId')
-      .where({ 'd.id': issue.deviceId })
-      .first(
-        'd.partnerId',
-        'd.siteId',
-        knex.raw('coalesce(d.geographyId, s.geographyId) as geographyId')
-      )
-    if (!_.isEmpty(issueContext)) {
-      issue.siteId = issueContext.siteId
-      issue.geographyId = issueContext.geographyId
-      issue.partnerId = issueContext.partnerId
-    }
-  } else if (action.siteId) {
-    issue.siteId = action.siteId
-    if (action.consumableId != null) {
-      issueContext = await knex('InventoryItem as ii')
-        .innerJoin('Site as s', 'ii.siteId', 's.id')
-        .innerJoin('Consumable as c', 'ii.consumableId', 'c.id')
-        .leftJoin('PartnerConsumable as pc', function() {
-          this.on('pc.consumableId', 'c.id').andOn(
-            'pc.partnerId',
-            's.partnerId'
-          )
-        })
-        .where('s.id', issue.siteId)
-        .where('ii.consumableId', action.consumableId)
-        .first(
-          's.geographyId',
-          knex.raw('COALESCE(pc.partnerId, s.partnerId) as partnerId')
-        )
-    } else {
-      issueContext = await knex('Site')
-        .where({ id: issue.siteId })
-        .first('geographyId', 'partnerId')
-    }
-    if (!_.isEmpty(issueContext)) {
-      issue.geographyId = issueContext.geographyId
-      issue.partnerId = issueContext.partnerId
-    }
-  }
-
-  if (action.geographyId) {
-    issue.geographyId = action.geographyId
-  }
-
-  if (action.partnerId) {
-    issue.partnerId = action.partnerId
+    ..._.pick(issueContext, ['deviceId', 'siteId', 'geographyId', 'partnerId']),
+    ..._.pick(action, [
+      'resultId',
+      'deviceId',
+      'siteId',
+      'geographyId',
+      'partnerId',
+    ]),
   }
 
   // Now that we know partnerId, check to see if we have a trigger
@@ -286,6 +232,50 @@ async function createNewIssue(knex, issueType, action) {
   })
 
   return issue
+}
+
+async function lookupIssueContext(
+  { resultId, deviceId, siteId, consumableId },
+  knex
+) {
+  if (resultId) {
+    return knex('Result')
+      .where({ id: resultId })
+      .first('deviceId', 'siteId', 'geographyId', 'partnerId')
+  }
+  if (deviceId) {
+    return knex('Device as d')
+      .leftJoin('Site as s', 's.id', 'd.siteId')
+      .where({ 'd.id': deviceId })
+      .first(
+        'd.partnerId',
+        'd.siteId',
+        knex.raw('coalesce(d.geographyId, s.geographyId) as geographyId')
+      )
+  }
+  if (siteId) {
+    if (consumableId != null) {
+      return knex('InventoryItem as ii')
+        .innerJoin('Site as s', 'ii.siteId', 's.id')
+        .innerJoin('Consumable as c', 'ii.consumableId', 'c.id')
+        .leftJoin('PartnerConsumable as pc', function() {
+          this.on('pc.consumableId', 'c.id').andOn(
+            'pc.partnerId',
+            's.partnerId'
+          )
+        })
+        .where('s.id', siteId)
+        .andWhere('ii.consumableId', consumableId)
+        .first(
+          's.geographyId',
+          knex.raw('COALESCE(pc.partnerId, s.partnerId) as partnerId')
+        )
+    }
+    return knex('Site')
+      .where({ id: siteId })
+      .first('geographyId', 'partnerId')
+  }
+  return Promise.resolve({})
 }
 
 async function hasIssueEventTrigger(
