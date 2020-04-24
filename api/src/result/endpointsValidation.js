@@ -127,6 +127,9 @@ const resultCreatePayload = {
   siteId: Joi.number()
     .required()
     .description('The site where the test was run'),
+  deviceId: Joi.number()
+    .allow(null)
+    .description('The device that ran the test'),
   assayId: Joi.number()
     .required()
     .description('The assay of the test that was run'),
