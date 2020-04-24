@@ -38,7 +38,7 @@ const dashboardWidget = require('./fixtures/dashboardWidget.json')
 const { errorCodes } = require('./fixtures/errorCodes.js')
 const { updateMGITAssays, updateCultureAssays } = require('../commonTB')
 const { getRandomTBPatientData } = require('../commonTbresults')
-const { upsertJobFunction } = require('../common')
+const { upsertJobFunction, upsertJobFunctionPermission } = require('../common')
 
 const millisInHour = 1000 * 60 * 60
 const millisInMinute = 1000 * 60
@@ -5209,93 +5209,134 @@ async function seed(knex) {
 
   // assign permissions to job functions
   const modules = await getPermissionModules(knex)
-  await knex('JobFunctionPermission').insert([
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.demo.admin },
-    {
-      jobFunctionId: jobFunctionIdAdmin,
-      permissionId: modules.deviceApiKey.admin,
-    },
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.device.admin },
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.person.admin },
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.result.admin },
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.case.admin },
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.site.admin },
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.assay.admin },
-    {
-      jobFunctionId: jobFunctionIdAdmin,
-      permissionId: modules.inventory.admin,
-    },
-    {
-      jobFunctionId: jobFunctionIdAdmin,
-      permissionId: modules.notification.admin,
-    },
-    {
-      jobFunctionId: jobFunctionIdAdmin,
-      permissionId: modules.issue.admin,
-    },
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.task.admin },
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.report.admin },
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.browse.view },
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.reporter.admin },
-
-    {
-      jobFunctionId: jobFunctionIdAdmin,
-      permissionId: modules.treatmentStatus.admin,
-    },
-    {
-      jobFunctionId: jobFunctionIdManager,
-      permissionId: modules.treatmentStatus.admin,
-    },
-    {
-      jobFunctionId: jobFunctionIdPartnerTwo,
-      permissionId: modules.treatmentStatus.admin,
-    },
-
-    { jobFunctionId: jobFunctionIdManager, permissionId: modules.site.edit },
-    { jobFunctionId: jobFunctionIdManager, permissionId: modules.device.edit },
-    { jobFunctionId: jobFunctionIdManager, permissionId: modules.assay.edit },
-    {
-      jobFunctionId: jobFunctionIdManager,
-      permissionId: modules.inventory.edit,
-    },
-    {
-      jobFunctionId: jobFunctionIdManager,
-      permissionId: modules.reporter.edit,
-    },
-
-    { jobFunctionId: jobFunctionIdPartnerTwo, permissionId: modules.site.edit },
-    {
-      jobFunctionId: jobFunctionIdPartnerTwo,
-      permissionId: modules.device.edit,
-    },
-
-    { jobFunctionId: jobFunctionIdClinician, permissionId: modules.site.view },
-    {
-      jobFunctionId: jobFunctionIdClinician,
-      permissionId: modules.device.view,
-    },
-    { jobFunctionId: jobFunctionIdClinician, permissionId: modules.assay.view },
-    {
-      jobFunctionId: jobFunctionIdClinician,
-      permissionId: modules.inventory.view,
-    },
-    {
-      jobFunctionId: jobFunctionIdClinician,
-      permissionId: modules.result.edit,
-    },
-    {
-      jobFunctionId: jobFunctionIdClinician,
-      permissionId: modules.case.edit,
-    },
-    {
-      jobFunctionId: jobFunctionIdClinician,
-      permissionId: modules.browse.view,
-    },
-    {
-      jobFunctionId: jobFunctionIdClinician,
-      permissionId: modules.treatmentStatus.edit,
-    },
+  await upsertJobFunctionPermission(knex, jobFunctionIdAdmin, [
+    modules.demo.admin,
+    modules.deviceApiKey.admin,
+    modules.device.admin,
+    modules.person.admin,
+    modules.result.admin,
+    modules.case.admin,
+    modules.site.admin,
+    modules.assay.admin,
+    modules.inventory.admin,
+    modules.notification.admin,
+    modules.issue.admin,
+    modules.task.admin,
+    modules.report.admin,
+    modules.browse.view,
+    modules.reporter.admin,
+    modules.treatmentStatus.admin,
   ])
+  await upsertJobFunctionPermission(knex, jobFunctionIdManager, [
+    modules.treatmentStatus.admin,
+    modules.site.edit,
+    modules.device.edit,
+    modules.assay.edit,
+    modules.inventory.edit,
+    modules.reporter.edit,
+  ])
+  await upsertJobFunctionPermission(knex, jobFunctionIdPartnerTwo, [
+    modules.treatmentStatus.admin,
+    modules.site.edit,
+    modules.device.edit,
+  ])
+  await upsertJobFunctionPermission(knex, jobFunctionIdClinician, [
+    modules.site.view,
+    modules.device.view,
+    modules.assay.view,
+    modules.inventory.view,
+    modules.result.edit,
+    modules.case.edit,
+    modules.browse.view,
+    modules.treatmentStatus.edit,
+  ])
+  // await knex('JobFunctionPermission').insert([
+  //   { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.demo.admin },
+  //   {
+  //     jobFunctionId: jobFunctionIdAdmin,
+  //     permissionId: modules.deviceApiKey.admin,
+  //   },
+  //   { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.device.admin },
+  //   { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.person.admin },
+  //   { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.result.admin },
+  //   { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.case.admin },
+  //   { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.site.admin },
+  //   { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.assay.admin },
+  //   {
+  //     jobFunctionId: jobFunctionIdAdmin,
+  //     permissionId: modules.inventory.admin,
+  //   },
+  //   {
+  //     jobFunctionId: jobFunctionIdAdmin,
+  //     permissionId: modules.notification.admin,
+  //   },
+  //   {
+  //     jobFunctionId: jobFunctionIdAdmin,
+  //     permissionId: modules.issue.admin,
+  //   },
+  //   { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.task.admin },
+  //   { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.report.admin },
+  //   { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.browse.view },
+  //   { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.reporter.admin },
+
+  //   {
+  //     jobFunctionId: jobFunctionIdAdmin,
+  //     permissionId: modules.treatmentStatus.admin,
+  //   },
+  //   {
+  //     jobFunctionId: jobFunctionIdManager,
+  //     permissionId: modules.treatmentStatus.admin,
+  //   },
+  //   {
+  //     jobFunctionId: jobFunctionIdPartnerTwo,
+  //     permissionId: modules.treatmentStatus.admin,
+  //   },
+
+  //   { jobFunctionId: jobFunctionIdManager, permissionId: modules.site.edit },
+  //   { jobFunctionId: jobFunctionIdManager, permissionId: modules.device.edit },
+  //   { jobFunctionId: jobFunctionIdManager, permissionId: modules.assay.edit },
+  //   {
+  //     jobFunctionId: jobFunctionIdManager,
+  //     permissionId: modules.inventory.edit,
+  //   },
+  //   {
+  //     jobFunctionId: jobFunctionIdManager,
+  //     permissionId: modules.reporter.edit,
+  //   },
+
+  //   { jobFunctionId: jobFunctionIdPartnerTwo, permissionId: modules.site.edit },
+  //   {
+  //     jobFunctionId: jobFunctionIdPartnerTwo,
+  //     permissionId: modules.device.edit,
+  //   },
+
+  //   { jobFunctionId: jobFunctionIdClinician, permissionId: modules.site.view },
+  //   {
+  //     jobFunctionId: jobFunctionIdClinician,
+  //     permissionId: modules.device.view,
+  //   },
+  //   { jobFunctionId: jobFunctionIdClinician, permissionId: modules.assay.view },
+  //   {
+  //     jobFunctionId: jobFunctionIdClinician,
+  //     permissionId: modules.inventory.view,
+  //   },
+  //   {
+  //     jobFunctionId: jobFunctionIdClinician,
+  //     permissionId: modules.result.edit,
+  //   },
+  //   {
+  //     jobFunctionId: jobFunctionIdClinician,
+  //     permissionId: modules.case.edit,
+  //   },
+  //   {
+  //     jobFunctionId: jobFunctionIdClinician,
+  //     permissionId: modules.browse.view,
+  //   },
+  //   {
+  //     jobFunctionId: jobFunctionIdClinician,
+  //     permissionId: modules.treatmentStatus.edit,
+  //   },
+  // ])
 
   // crate jobs for users
   const jobIdAdmin = await knex('Job').insert({
