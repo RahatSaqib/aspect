@@ -4,6 +4,7 @@ const {
   resultSourceToId,
 } = require('../../../shared/dictionary')
 const { parseDateOrDefault } = require('../../../shared/date')
+const { getCaseId } = require('../../../case/service')
 
 async function onResultLogged(
   { resultId, deviceLogId, userId },
@@ -38,11 +39,18 @@ async function updateCovidResultFromFormData(
     }
     const result = await knex('Result as r')
       .join('Assay as a', 'r.assayId', 'a.id')
+      .join('AssayType as at', 'a.assayTypeId', 'at.id')
       .join('Device as d', 'r.deviceId', 'd.id')
       .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
       .join('Sample as s', 'r.sampleId', 's.id')
       .join('ResultForm as rf', function() {
         this.on('a.id', 'rf.assayId').andOn('r.partnerId', 'rf.partnerId')
+      })
+      .leftJoin('PartnerDisease as pd', function() {
+        this.on('at.diseaseId', 'pd.diseaseId').andOn(
+          'r.partnerId',
+          'pd.partnerId'
+        )
       })
       .where({ 'r.id': resultId })
       .first(
@@ -50,25 +58,29 @@ async function updateCovidResultFromFormData(
         'a.externalId as assayExternalId',
         'a.resultSourceId',
         'r.formData',
+        'r.partnerId',
         'r.patientData',
         'r.resultData',
         'rf.formSchema',
         'r.resultCategory1',
         'r.startedOn',
-        'r.endedOn'
+        'r.endedOn',
+        'pd.canAutoAssignResultByCaseId'
       )
     if (!result) {
       return
     }
     const {
       assayExternalId,
-      formData,
-      resultData,
-      patientData,
-      formSchema,
-      resultCategory1,
-      startedOn,
+      canAutoAssignResultByCaseId,
       endedOn,
+      formData,
+      formSchema,
+      partnerId,
+      patientData,
+      resultCategory1,
+      resultData,
+      startedOn,
     } = result
     const covid19AssayExternalIds = await knex('AssayType as at')
       .join('Assay as a', 'at.id', 'a.assayTypeId')
@@ -115,12 +127,21 @@ async function updateCovidResultFromFormData(
       .count('dl.id as deviceLogCountFromDiagnosticDevice')
     const canOverwriteDiagnosticDataByHand =
       deviceLogCountFromDiagnosticDevice === 0
-    patientDataObject.caseId = formDataObject.caseId
-    if (canOverwriteDiagnosticDataByHand) {
-      patientDataObject.id = formDataObject.caseId
-    } else if (formDataObject.caseId) {
-      patientDataObject.id = patientDataObject.id || formDataObject.caseId
+
+    const caseExternalId = formDataObject.caseId
+    if (canAutoAssignResultByCaseId && caseExternalId) {
+      const caseId = await getCaseId(
+        { partnerId, externalId: caseExternalId },
+        true
+      )
+      resultUpdates.caseId = caseId
     }
+    if (canOverwriteDiagnosticDataByHand) {
+      patientDataObject.id = caseExternalId
+    } else if (caseExternalId) {
+      patientDataObject.id = patientDataObject.id || caseExternalId
+    }
+
     const testReasonOptions =
       _.get(formSchemaObject, 'fields.testReason.control.options') || []
     patientDataObject.testReason =

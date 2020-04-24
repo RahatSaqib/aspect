@@ -51,7 +51,19 @@ exports[`InventoryItemList module InventoryItemList component should render corr
         "search": "",
       }
     }
-  />
+  >
+    <requirePermissions(AspectButton)
+      browseButton={true}
+      color="primary"
+      extraPermissions={Array []}
+      onClick={[Function]}
+      overriddenPermissions={Array []}
+      type="button"
+      variant="contained"
+    >
+      Add Inventory
+    </requirePermissions(AspectButton)>
+  </pure(withProps(withHandlers(Connect(lifecycle(BrowseFilters)))))>
   <DataTableCard
     className="DataTableCard--action"
   >
@@ -62,19 +74,6 @@ exports[`InventoryItemList module InventoryItemList component should render corr
       name="groupBySite"
       onChange={[Function]}
     />
-    <WithStyles(Tooltip)
-      placement="bottom"
-      title="Add Inventory"
-    >
-      <WithStyles(IconButton)
-        aria-label="Add Inventory"
-        onClick={[Function]}
-      >
-        <pure(AddIcon)
-          fontSize="large"
-        />
-      </WithStyles(IconButton)>
-    </WithStyles(Tooltip)>
   </DataTableCard>
   <DataTableCard
     className="DataTableCard--table"

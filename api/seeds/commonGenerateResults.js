@@ -501,7 +501,7 @@ async function addCovidResults(
         createdOn: addMinutes(randomDate, 120),
         updatedOn: addMinutes(randomDate, 180),
         patientData: JSON.stringify({
-          id: formData.caseId,
+          id: formData.caseId.replace('CASE', 'P'),
           age: formData.age,
           caseId: formData.caseId,
           gender: formData.gender
