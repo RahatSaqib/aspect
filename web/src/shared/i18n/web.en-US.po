@@ -4983,3 +4983,61 @@ msgstr ""
 #: i18n/src/dashboard/operational/messages.json
 msgid "{count} site with problems"
 msgstr ""
+
+#. [errorResponseMessages.fetchCases.GET.400.title]
+#. defaultMessage is:
+#. Searching Cases Failed
+#: i18n/src/case/CaseRedux.json
+msgid "Searching Cases Failed"
+msgstr ""
+
+#. [errorResponseMessages.fetchCases.GET.default.title]
+#. defaultMessage is:
+#. Loading Cases Failed
+#: i18n/src/case/CaseRedux.json
+msgid "Loading Cases Failed"
+msgstr ""
+
+#. [pages.CaseList.title]
+#. defaultMessage is:
+#. Cases
+#: i18n/src/result/list/CaseList.json
+msgid "Cases"
+msgstr ""
+
+#. [pages.CaseList.code]
+#. defaultMessage is:
+#. Code
+#: i18n/src/result/list/CaseList.json
+msgid "Code"
+msgstr ""
+
+#. [pages.CaseList.attendingClinic]
+#. defaultMessage is:
+#. Attending Clinic
+#: i18n/src/result/list/CaseList.json
+msgid "Attending Clinic"
+msgstr ""
+
+#. [pages.CaseList.outcomeStatus]
+#. defaultMessage is:
+#. Outcome/Status
+#: i18n/src/result/list/CaseList.json
+msgid "Outcome/Status"
+msgstr ""
+
+#. [pages.CaseList.patientId]
+#. defaultMessage is:
+#. Patient ID
+#: i18n/src/result/list/CaseList.json
+msgid "Patient ID"
+msgstr ""
+
+#. [pages.CaseList.paginatorStatus]
+#. defaultMessage is:
+#. Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# case} other {# cases}}
+#: i18n/src/case/list/CaseList.json
+msgid ""
+"Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
+"case} other {# cases}}"
+msgstr ""
