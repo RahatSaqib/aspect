@@ -296,34 +296,44 @@ const getTimePeriod = (cnt, period, dateFormat) => {
 
 const buildAssaysFromWhitelist = (data, whiteList) => {
   const isAllowed = inID => data.filter(d => inID === d.externalId);
+  console.log(isAllowed);
 
   return whiteList.reduce((acc, curr) => {
-    const { id } = curr;
-    if (Array.isArray(id)) {
-      const tempAssayIds = [];
-      const tempAssay = [];
-      id.map(i => {
-        if (isAllowed(i).length > 0) {
-          tempAssayIds.push(i);
-          if (tempAssay.length < 1) {
-            tempAssay.push({ ...isAllowed(i)[0] });
-          }
-        }
-        return tempAssay;
-      });
-      if (tempAssayIds.length && tempAssay.length) {
-        acc.push({
-          ...curr,
-          ...tempAssay[0],
-          externalId: tempAssayIds
-        });
-      }
-    } else if (isAllowed(id).length > 0) {
-      acc.push({ id, ...curr, ...isAllowed(id)[0], externalId: id });
-    }
+    console.log(acc, curr);
+
     return acc;
   }, []);
 };
+// const buildAssaysFromWhitelist = (data, whiteList) => {
+//   const isAllowed = inID => data.filter(d => inID === d.externalId);
+
+//   return whiteList.reduce((acc, curr) => {
+//     const { id } = curr;
+//     if (Array.isArray(id)) {
+//       const tempAssayIds = [];
+//       const tempAssay = [];
+//       id.map(i => {
+//         if (isAllowed(i).length > 0) {
+//           tempAssayIds.push(i);
+//           if (tempAssay.length < 1) {
+//             tempAssay.push({ ...isAllowed(i)[0] });
+//           }
+//         }
+//         return tempAssay;
+//       });
+//       if (tempAssayIds.length && tempAssay.length) {
+//         acc.push({
+//           ...curr,
+//           ...tempAssay[0],
+//           externalId: tempAssayIds
+//         });
+//       }
+//     } else if (isAllowed(id).length > 0) {
+//       acc.push({ id, ...curr, ...isAllowed(id)[0], externalId: id });
+//     }
+//     return acc;
+//   }, []);
+// };
 
 export {
   buildAssaysFromWhitelist,
