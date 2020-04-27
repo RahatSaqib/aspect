@@ -795,6 +795,8 @@ SELECT ']}' AS countryJSON;
   },
   sitesFromGxAlert: [],
   /* -- Query Sites in GxAlert
+  TODO: These queries belong is a more comprehensive document that explains how to migrate a customer from GxAlert to Aspect
+        https://ops.systemone.id/browse/ASP-1373
 SET SQL_SAFE_UPDATES = 0;
 UPDATE location SET externalId = name WHERE externalId IS NULL;
 SET SQL_SAFE_UPDATES = 1;
@@ -826,6 +828,8 @@ GROUP BY deployment.DeploymentId
   jobFunctions: [],
   contactsFromGxAlert: [],
   /* -- Query Contacts in GxAlert
+  TODO: These queries belong is a more comprehensive document that explains how to migrate a customer from GxAlert to Aspect
+        https://ops.systemone.id/browse/ASP-1373
 SELECT CONCAT(
 '{ "personName": "',  person.Name,
 COALESCE(CONCAT('", "personTitle": "', person.Title), ''),
@@ -872,6 +876,8 @@ GROUP BY person.PersonId
   ],
   customFieldsFromGxAlert: [],
   /* -- Query Custom Fields in GxAlert
+  TODO: These queries belong is a more comprehensive document that explains how to migrate a customer from GxAlert to Aspect
+        https://ops.systemone.id/browse/ASP-1373
 SELECT CONCAT('{"title":"', CustomField.Label,
 '","type":"', CustomField.Type,
 '","order":', CustomField.DisplayOrder,
