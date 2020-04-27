@@ -123,7 +123,6 @@ async function validateUserAtGxAlert(username, password, user) {
   let jobFunction
   // items from 'my_aspnet_roles': readonly, write, inventory, service, report
   // items from 'role': deployment, lga, state, national
-  console.log(gxUser, allJobFunctions, partnerId)
   if (gxUser.dotNetRoles.includes('admin') || gxUser.role === 'national') {
     jobFunction = allJobFunctions.find(x => x.externalId === 'admin')
   }

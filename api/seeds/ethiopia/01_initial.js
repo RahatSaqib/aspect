@@ -10,13 +10,13 @@ const customFieldsFromGxAlert = require('./fixtures/customFieldsFromGxAlert.json
 const labClinic = require('./fixtures/labClinic.json')
 const { baseGxAlertMigration, seedLabClinicFixture } = require('../common')
 const { seedAbbottM2000AndAssays } = require('../utils_abbott_m2000')
+const { seedPartnerAssay, seedPartnerDisease } = require('../utils')
 
 async function seed(knex) {
-  const partnerName = 'Ethiopia EPHI'
   const migrationSeededData = await baseGxAlertMigration(
     {
       partner: {
-        name: partnerName,
+        name: 'Ethiopia EPHI',
         serverUrl: 'https://ethiopia.aspect.id:8093',
       },
       geographyFromGxAlert,
@@ -42,4 +42,7 @@ async function seed(knex) {
     ]),
     knex
   )
+
+  await seedPartnerAssay(knex)
+  await seedPartnerDisease(knex)
 }
