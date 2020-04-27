@@ -39,7 +39,10 @@ const { getSiteByPartnerCountry, getSite } = require('../site/service')
 const { getDeviceByDeviceId } = require('../device/service')
 const { updateTagsById } = require('../tag/service')
 const { getCaseId } = require('../case/service')
-const { getAllAssaySchemas } = require('../assay/service')
+const {
+  getAllAssaySchemas,
+  getAssayResultCategories,
+} = require('../assay/service')
 const { getRemoteAddress } = require('../shared/request')
 
 async function getListResults(query, auth, fields = LIST_FIELDS) {
@@ -599,6 +602,11 @@ async function showFileReferences(request) {
     params: { resultId },
     auth,
   } = request
+
+  return showFileReferencesById(auth, resultId)
+}
+
+async function showFileReferencesById(auth, resultId) {
   const dataConstraints = await getConstraints(auth.credentials)
   const fileReferences = await knex('ResultFileReference as rf')
     .join('FileReference as f', 'f.id', 'rf.fileReferenceId')
@@ -711,7 +719,10 @@ async function getResultByResultId(
       this.on('r.assayId', 'rf.assayId').andOn('r.partnerId', 'rf.partnerId')
     })
     .where('r.id', resultId)
-    .modify(addConstraints, dataConstraints, { device: 'd', result: 'r' })
+    .modify(addConstraints, dataConstraints, {
+      device: 'd',
+      result: 'r',
+    })
     .select(fields)
 
   let data = null
@@ -744,7 +755,7 @@ async function getResultByResultId(
       }
     }
     // select files attached to this result
-    const { data: files } = await showFileReferences(request)
+    const { data: files } = await showFileReferencesById(auth, resultId)
     data.files = files
 
     const { data: followUps } = await showResultFollowUps(
@@ -861,7 +872,6 @@ async function updateResultWorkflowStatusByResultId(
     resultWorkflowStatusId = await resultWorkflowStatusToId(
       resultWorkflowStatusExternalId
     )
-
     if (!resultWorkflowStatusId) {
       return 'Invalid ResultWorkflowStatus ID'
     }
@@ -1361,7 +1371,7 @@ async function updateFormDataByResultId(
         ;[deviceLogId] = await knex('DeviceLog').insert({
           deviceId,
           resultId,
-          source: 'Result Edited in Aspect',
+          source: 'Result Form Edited in Aspect',
           createdOn: now,
           senderIp,
           rawMessage: JSON.stringify({
@@ -2471,7 +2481,12 @@ async function createResult(request) {
 }
 
 async function updateResult(request) {
-  const result = await getResultByResultId(request, +request.params.resultId)
+  const result = await getResultByResultId(request, +request.params.resultId, [
+    'r.id',
+    'r.siteId',
+    'r.assayId',
+    'r.deviceId',
+  ])
   if (!result.ok) {
     return Boom.notFound(
       'This result does not exist or you do not have access.'
@@ -2488,23 +2503,33 @@ async function updateOrCreateResult(request, result = {}) {
   } = request
   const { id: userId, partnerId } = await getUser(auth.credentials.name)
   const dataConstraints = await getConstraints(auth.credentials)
-  const updating = !result.id
+  const updating = result.id
   const now = new Date()
 
   // check that user has access to site
   const site = await getSite(payload.siteId || result.siteId, dataConstraints)
-  if (!site) {
+  if (_.isEmpty(site)) {
     return Boom.notFound('This site does not exist or you do not have access.')
   }
 
   // check that user has access to the assay
-  const assay = await getAllAssaySchemas(
+  const [assay] = await getAllAssaySchemas(
     partnerId,
     userId,
     payload.assayId || result.assayId
   )
-  if (!assay) {
+  if (_.isEmpty(assay)) {
     return Boom.notFound('This assay does not exist or you do not have access.')
+  }
+
+  // is the selected category valid for the assay?
+  const validCategories = _.map(await getAssayResultCategories(assay.id), 'id')
+  if (
+    validCategories.indexOf(payload.resultCategory1) === -1 ||
+    (payload.resultCategory2 &&
+      validCategories.indexOf(payload.resultCategory2) === -1)
+  ) {
+    return Boom.badRequest('The selected result is not valid for this assay.')
   }
 
   // deviceId is optional. if null and creating a result, it has to be an assay that is for manual entry only
@@ -2516,9 +2541,12 @@ async function updateOrCreateResult(request, result = {}) {
       assay.externalId
     )
   }
-
   // check that user has access to device
-  const device = await getDeviceByDeviceId(deviceId, dataConstraints)
+  const device = await getDeviceByDeviceId({
+    deviceId,
+    credentials: auth.credentials,
+  })
+
   if (!device) {
     return Boom.notFound(
       'This device does not exist or you do not have access.'
@@ -2538,6 +2566,7 @@ async function updateOrCreateResult(request, result = {}) {
     result.resultTypeId = await resultTypeToId('Patient')
     result.createdOn = now
     result.createdBy = userId
+    result.resultData = '{}'
   }
 
   result.resultCategory1 = payload.resultCategory1
@@ -2559,18 +2588,23 @@ async function updateOrCreateResult(request, result = {}) {
   )
 
   // create case entry or update it
-  result.caseId = await getCaseId(
-    { externalId: payload.caseId, partnerId },
-    true
-  )
+  if (!updating && payload.caseId) {
+    result.caseId = await getCaseId(
+      { externalId: payload.caseId, partnerId },
+      true
+    )
+  } else if (updating && !payload.caseId) {
+    result.caseId = null
+  }
 
   // looks like all's well. create or update result now so we have a result id for tags, form data, etc.
+  // TODO: Log any changes (see ASP-1371)
   if (updating) {
     await knex('Result')
       .update(result)
       .where('id', result.id)
   } else {
-    result.id = await knex('Result').insert(result)
+    ;[result.id] = await knex('Result').insert(result)
   }
 
   // update or insert tags
@@ -2595,14 +2629,14 @@ async function updateOrCreateResult(request, result = {}) {
       : 'Deliverable'
   await updateResultWorkflowStatusByResultId(
     result.id,
-    null,
     resultWorkflowStatusId,
-    result.data.resultWorkflowStatusId,
-    result.data.resultWorkflowChangedOn,
+    null,
+    result.resultWorkflowStatusId,
+    result.resultWorkflowChangedOn,
     now,
     null,
     'Manual Result Entry',
-    now,
+    null,
     userId
   )
 
@@ -2623,7 +2657,8 @@ async function updateOrCreateResult(request, result = {}) {
     )
   }
 
-  return getResultByResultId(request, result.id)
+  const r = await getResultByResultId(request, result.id)
+  return r
 }
 
 async function getDeviceIdForResultCreation(
@@ -2635,15 +2670,15 @@ async function getDeviceIdForResultCreation(
     return payload.deviceId
   }
   // TODO: configure this in the db instead of hardcoding
-  const assaysForManualEntry = ['assayGenericCovid19', 'GenericRDT']
-  if (!_.includes(assaysForManualEntry, assayExternalId)) {
-    return Boom.badRequest(
+  const assaysForManualEntry = ['assayGenericCovid19', 'GenericRDT', 'GxMtbRif']
+  if (assaysForManualEntry.indexOf(assayExternalId) === -1) {
+    throw Boom.badRequest(
       'You did not select a device and this assay can not be entered manually without a device. Please specify a device.'
     )
   }
   const aspectDeviceId = await getAspectDeviceId(partnerId)
   if (!aspectDeviceId) {
-    return Boom.internal(
+    throw Boom.internal(
       'Could not find Aspect device for assigning this result.'
     )
   }
@@ -2671,7 +2706,7 @@ async function updateOrCreateSample(
     return sampleId
   }
 
-  return [knex('Sample').insert(sampleData)]
+  return [await knex('Sample').insert(sampleData)]
 }
 
 module.exports = {

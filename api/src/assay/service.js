@@ -184,6 +184,7 @@ async function getAllAssaySchemas(partnerId, userId, assayId = null) {
     })
     .where('d.partnerId', partnerId)
     .select(
+      'a.id',
       'a.name',
       'a.externalId',
       'a.resultDataSchema',
@@ -192,9 +193,17 @@ async function getAllAssaySchemas(partnerId, userId, assayId = null) {
   return query
 }
 
+async function getAssayResultCategories(assayId) {
+  return knex('ResultCategory as rc')
+    .innerJoin('ResultCategoryAssay as rca', 'rc.id', 'rca.resultCategoryId')
+    .where('rca.assayId', assayId)
+    .select(SELECT_LIST_RESULT_CATEGORY_FIELDS)
+}
+
 module.exports = {
   listAssays,
   listAssayTypes,
   getAllAssaySchemas,
   listAssaysResultSchema,
+  getAssayResultCategories,
 }

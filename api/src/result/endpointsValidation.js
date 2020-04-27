@@ -263,6 +263,7 @@ function validateResultResponse() {
       .integer()
       .description('The id of the assay'),
     sampleOriginSiteId: Joi.number()
+      .allow(null)
       .integer()
       .description('the id of the original site'),
     sampleId: Joi.string()

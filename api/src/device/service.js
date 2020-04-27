@@ -842,4 +842,5 @@ module.exports = {
   getDevicePerformance,
   getDevicesForReport,
   getDevicesForRifResistanceReport,
+  getDeviceByDeviceId,
 }
