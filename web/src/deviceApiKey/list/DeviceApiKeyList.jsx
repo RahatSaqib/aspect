@@ -424,7 +424,8 @@ export const DeviceApiKeyList = ({
       config={reducedFilters}
       onClickExport={onExportClick}
     >
-      <AspectButton onClick={onOpenGeneratorDialog}
+      <AspectButton
+        onClick={onOpenGeneratorDialog}
         type="button"
         color="primary"
         variant="contained"
@@ -444,7 +445,6 @@ export const DeviceApiKeyList = ({
       </AspectButton>
     </BrowseFilters>
     <div>
-      
       <DeviceApiKeyGeneratorDialogForm
         isDialogOpen={isGeneratorDialogOpen}
         onChange={onGeneratorFormChange}
