@@ -894,6 +894,9 @@ async function baseGxAlertMigration(
   variables = defaultGxAlertMigrationVariables,
   knex
 ) {
+  // -----------------------------------------------
+  // Supplement passed variables with default values
+  // -----------------------------------------------
   const variablesWithDefaults = _.merge(
     { ...defaultGxAlertMigrationVariables },
     variables
@@ -915,6 +918,10 @@ async function baseGxAlertMigration(
     admin.legacyPassword = 1
   }
   const { countries } = geographyFromGxAlert
+
+  // -------------------------
+  // Validate passed variables
+  // -------------------------
   const missingVariables = []
   if (!admin.password && !gxAlertAdmin.getPasswordFromGxAlert) {
     missingVariables.push('admin.password')
@@ -956,6 +963,10 @@ async function baseGxAlertMigration(
       )}`
     )
   }
+
+  // ---------------------------
+  // Seed admin user and partner
+  // ---------------------------
   const now = new Date()
   let { id: adminId } =
     (await knex('User')
@@ -988,6 +999,10 @@ async function baseGxAlertMigration(
     adminId,
     partnerId,
   }
+
+  // --------------------
+  // Common general seeds
+  // --------------------
   await commonUpserts(
     knex,
     partnerId,
@@ -996,6 +1011,10 @@ async function baseGxAlertMigration(
     countries[0].abbreviation,
     gxAlertDevice.deviceApiKeyToken
   )
+
+  // --------------------------------------------
+  // Country, States & LGAs from GxAlert instance
+  // --------------------------------------------
   const country = await knex('Country as c')
     .where('c.abbreviation', countries[0].abbreviation)
     .first('c.id', 'c.culture', 'c.timezone')
@@ -1032,6 +1051,10 @@ async function baseGxAlertMigration(
     return stateMemo
   }, {})
   returnValue.statesByName = statesByName
+
+  // --------------------------------------------------------------------------------
+  // GeneXpert Assays with Patient and Result Data Schemas from GxAlert Custom Fields
+  // --------------------------------------------------------------------------------
   const patientDbColumns = [
     'HivStatus',
     'DrSuspect',
@@ -1148,6 +1171,10 @@ async function baseGxAlertMigration(
       }
     }
   )
+
+  // -----------------------------------
+  // Seed Sites from GxAlert Deployments
+  // -----------------------------------
   const auditFields = {
     createdOn: now,
     createdBy: adminId,
@@ -1289,6 +1316,20 @@ async function baseGxAlertMigration(
       )
     }
   })
+  const siteIds = await knex('Geography as g')
+    .join('Site as s', 'g.id', 's.geographyId')
+    .where('g.countryId', countryId)
+    .select('s.id', 's.shortName')
+    .distinct('s.id', 's.shortName')
+    .reduce((siteMap, site) => {
+      siteMap[site.shortName] = site.id
+      return siteMap
+    }, {})
+  returnValue.siteIds = siteIds
+
+  // -----------------------------
+  // Job Functions and Permissions
+  // -----------------------------
   const { getFeatureByModule, getPermissonByModuleAndActivity } = utils
   await Promise.each(jobFunctionsFixture, async jf => {
     const jobFunction = _.omit(jf, ['features', 'permissions'])
@@ -1322,16 +1363,10 @@ async function baseGxAlertMigration(
       jobFunctionMap[jobFunction.name] = jobFunction.id
       return jobFunctionMap
     }, {})
-  const siteIds = await knex('Geography as g')
-    .join('Site as s', 'g.id', 's.geographyId')
-    .where('g.countryId', countryId)
-    .select('s.id', 's.shortName')
-    .distinct('s.id', 's.shortName')
-    .reduce((siteMap, site) => {
-      siteMap[site.shortName] = site.id
-      return siteMap
-    }, {})
-  returnValue.siteIds = siteIds
+
+  // -------------------------------------
+  // Contacts & User Accounts from GxAlert
+  // -------------------------------------
   await Promise.each(contactsFromGxAlert, async person => {
     let userId = null
     if (person.username) {
@@ -1505,6 +1540,7 @@ async function baseGxAlertMigration(
       })
     }
   })
+
   return returnValue
 }
 
