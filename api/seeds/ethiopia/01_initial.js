@@ -1,7 +1,4 @@
-module.exports = require('../utils').seed(seed, __filename, {
-  seedsFolder: 'ethiopia',
-  staticDataFiles: ['Disease', 'AssayType'],
-})
+module.exports = require('../utils').seed(seed, __filename)
 
 const _ = require('lodash')
 
