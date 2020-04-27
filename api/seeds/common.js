@@ -951,21 +951,33 @@ async function baseGxAlertMigration(
     )
   }
   const now = new Date()
-  const [adminId] = await knex('User').insert({
-    approved: 1,
-    createdOn: now,
-    lockedOut: 0,
-    failedPasswordAttempts: 0,
-    ...admin,
-    password: bcrypt.hashSync(admin.password || '', saltRounds),
-  })
-  const [partnerId] = await knex('Partner').insert({
-    partnerTypeId: await partnerTypeToId('Operating'),
-    deviceLogHistoryDays: 365,
-    maxDaysDeviceOffline: 7,
-    maxDaysDeviceNoResults: 14,
-    ...partner,
-  })
+  let { id: adminId } =
+    (await knex('User')
+      .where('name', admin.name)
+      .first('id')) || {}
+  if (!adminId) {
+    ;[adminId] = await knex('User').insert({
+      approved: 1,
+      createdOn: now,
+      lockedOut: 0,
+      failedPasswordAttempts: 0,
+      ...admin,
+      password: bcrypt.hashSync(admin.password || '', saltRounds),
+    })
+  }
+  let { id: partnerId } =
+    (await knex('Partner')
+      .where('name', partner.name)
+      .first('id')) || {}
+  if (!partnerId) {
+    ;[partnerId] = await knex('Partner').insert({
+      partnerTypeId: await partnerTypeToId('Operating'),
+      deviceLogHistoryDays: 365,
+      maxDaysDeviceOffline: 7,
+      maxDaysDeviceNoResults: 14,
+      ...partner,
+    })
+  }
   const returnValue = {
     adminId,
     partnerId,
