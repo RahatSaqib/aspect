@@ -2632,18 +2632,19 @@ function randomOption(availableOptions, required = false) {
 async function seedPartnerAssay(knex) {
   const { 'COVID-19 Test': assayTypeCovid19Id } = await allAssayTypeToId()
 
-  const partners = await knex('Partner').select('id')
-  const assays = await knex('Assay').select('*')
+  const partnerIds = await knex('Partner').pluck('id')
+  const assays = await knex('Assay').select('id', 'assayTypeId')
 
-  const queries = []
   // for all Partners ...
-  _.each(partners, ({ id: partnerId }) => {
-    // ... and all Assays
-    _.each(assays, ({ id: assayId, assayTypeId }) => {
+  await Promise.each(partnerIds, async partnerId =>
+    Promise.each(assays, async ({ id: assayId, assayTypeId }) => {
       const isCovid19 = assayTypeId === assayTypeCovid19Id
-      // ... add entry to PartnerAssay
-      queries.push(
-        knex('PartnerAssay').insert({
+      // ... upsert entry to PartnerAssay
+      const partnerAssay = await knex('PartnerAssay')
+        .where({ partnerId, assayId })
+        .first()
+      if (!partnerAssay) {
+        await knex('PartnerAssay').insert({
           partnerId,
           assayId,
 
@@ -2651,35 +2652,34 @@ async function seedPartnerAssay(knex) {
           canDelete: isCovid19,
           canEdit: isCovid19,
         })
-      )
+      }
     })
-  })
-  await Promise.all(queries)
+  )
 }
 
 async function seedPartnerDisease(knex) {
   const { covid19: diseaseCovid19Id } = await allDiseaseToId()
 
-  const partners = await knex('Partner').select('id')
-  const diseases = await knex('Disease').select('id')
+  const partnerIds = await knex('Partner').pluck('id')
+  const diseaseIds = await knex('Disease').pluck('id')
 
-  const queries = []
   // for all Partners ...
-  _.each(partners, ({ id: partnerId }) => {
-    // ... and all Diseases
-    _.each(diseases, ({ id: diseaseId }) => {
-      // ... add entry to PartnerDisease
-      queries.push(
-        knex('PartnerDisease').insert({
+  await Promise.each(partnerIds, async partnerId =>
+    Promise.each(diseaseIds, async diseaseId => {
+      // ... upsert entry to PartnerDisease table
+      const partnerDisease = await knex('PartnerDisease')
+        .where({ partnerId, diseaseId })
+        .first()
+      if (!partnerDisease) {
+        await knex('PartnerDisease').insert({
           partnerId,
           diseaseId,
           // allow auto-assigning Result to Case only for Covid-19 disease
           canAutoAssignResultByCaseId: diseaseId === diseaseCovid19Id,
         })
-      )
+      }
     })
-  })
-  await Promise.all(queries)
+  )
 }
 
 module.exports = {

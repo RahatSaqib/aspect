@@ -4,6 +4,7 @@ const {
   deviceTypeCategoryToId,
   resultSourceToId,
 } = require('../src/shared/dictionary')
+const { seedPartnerAssay, seedPartnerDisease } = require('./utils')
 
 async function seedAbbottM2000AndAssays(knex) {
   const m2000ConfigurationDataSchema = JSON.stringify({
@@ -675,6 +676,9 @@ async function seedAbbottM2000AndAssays(knex) {
       externalId: 'Error',
     },
   ])
+
+  await seedPartnerAssay(knex)
+  await seedPartnerDisease(knex)
 }
 
 module.exports = {

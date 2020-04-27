@@ -613,6 +613,9 @@ async function upsertGeneXpertDeviceTypeAndAssays(
   }
 
   await utils.updateAssayResultCategoryTreatmentEmphasize(knex)
+
+  await utils.seedPartnerAssay(knex)
+  await utils.seedPartnerDisease(knex)
 }
 
 async function createAssay(
