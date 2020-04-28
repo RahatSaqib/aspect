@@ -26,17 +26,17 @@ import BrowseTablePaginator, {
 } from '../../globals/components/BrowseTablePaginator'
 import DataTableCard from '../../components/shared/DataTableCard'
 import DataTableProgressBar from '../../components/shared/DataTableProgressBar'
-import { fetchResults, exportResults } from '../ResultRedux'
+import { fetchCases } from '../CaseRedux'
 import ExportListButton from '../../globals/components/ExportListButton'
 import requirePermissions from '../../components/shared/requirePermissions'
 import {
-  ResultDataTable,
-  ResultDataTableHead,
-  ResultDataTableRow,
-} from './ResultDataTable'
+  CaseDataTable,
+  CaseDataTableHead,
+  CaseDataTableRow,
+} from './CaseDataTable'
 import AspectButton from '../../components/shared/AspectButton'
 
-const cssClasses = classnames.bind(require('./ResultList.css'))
+const cssClasses = classnames.bind(require('./CaseList.css'))
 
 const messages = defineMessages({
   resultsTitle: {
@@ -69,44 +69,44 @@ const messages = defineMessages({
 })
 
 const FILTERS_CONFIG = [
-  {
-    assayAndResultCategory: true,
-    requiredPermissions: ['assay:view', 'assay:admin', 'assay:edit'],
-  },
-  { geography: true, requiredPermissions: [] },
-  { state: true, requiredPermissions: [] },
-  { lga: true, requiredPermissions: [] },
-  { date: true, requiredPermissions: [] },
-  { patientOrResearchId: true, requiredPermissions: [] },
-  { sampleId: true, requiredPermissions: [] },
-  { errorCode: true, requiredPermissions: [] },
-  {
-    siteName: true,
-    requiredPermissions: ['site:view', 'site:admin', 'site:edit'],
-  },
-  { sampleOriginSite: true, requiredPermissions: [] },
-  { workflowStatus: true, requiredPermissions: [] },
-  { treatmentStatus: true, requiredPermissions: [] },
+  // {
+  //   assayAndResultCategory: true,
+  //   requiredPermissions: ['assay:view', 'assay:admin', 'assay:edit'],
+  // },
+  // { geography: true, requiredPermissions: [] },
+  // { state: true, requiredPermissions: [] },
+  // { lga: true, requiredPermissions: [] },
+  // { date: true, requiredPermissions: [] },
+  // { patientOrResearchId: true, requiredPermissions: [] },
+  // { sampleId: true, requiredPermissions: [] },
+  // { errorCode: true, requiredPermissions: [] },
+  // {
+  //   siteName: true,
+  //   requiredPermissions: ['site:view', 'site:admin', 'site:edit'],
+  // },
+  // { sampleOriginSite: true, requiredPermissions: [] },
+  // { workflowStatus: true, requiredPermissions: [] },
+  // { treatmentStatus: true, requiredPermissions: [] },
 ]
 
 const searchSanitizer = makeSearchParamsSanitizer({
-  availableSortCol: [
-    'endedOn',
-    'deviceName',
-    'sampleOriginSiteName',
-    'sampleId',
-    'errorCode',
-    'patientId',
-    'resultText',
-    'resultWorkflowStatus',
-    'treatmentStatusInfo',
-    /* --- table.extraColumns BEGIN --- */
-    'resultCategory1Name',
-    'resultCategory2Name',
-    'count',
-    'copies',
-    /* --- table.extraColumns END --- */
-  ],
+  // availableSortCol: [
+  //   'endedOn',
+  //   'deviceName',
+  //   'sampleOriginSiteName',
+  //   'sampleId',
+  //   'errorCode',
+  //   'patientId',
+  //   'resultText',
+  //   'resultWorkflowStatus',
+  //   'treatmentStatusInfo',
+  //   /* --- table.extraColumns BEGIN --- */
+  //   'resultCategory1Name',
+  //   'resultCategory2Name',
+  //   'count',
+  //   'copies',
+  //   /* --- table.extraColumns END --- */
+  // ],
 })
 const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
 const filtersFromLocation = composeSanitizer(
@@ -128,19 +128,18 @@ const enhance = compose(
   ),
   connect(
     state => ({
-      items: state.result.items,
-      table: state.result.table,
+      items: state.case.items,
+      table: state.case.table,
       userPermissions: state.user.jwt.permissions,
     }),
     bindActionCreators.bind(null, {
-      fetchResults,
-      exportResults,
+      fetchCases,
     })
   ),
   withHandlers({
     onInitialLoad: ({
       location,
-      fetchResults,
+      fetchCases,
       sortCol,
       sortDir,
       pageAt,
@@ -148,40 +147,9 @@ const enhance = compose(
     }) => () => {
       const { sanitized, value: filtersParams } = filtersFromLocation(location)
       if (!sanitized) {
-        fetchResults(filtersParams, sortCol, sortDir, pageAt, pageSize)
+        fetchCases(filtersParams, sortCol, sortDir, pageAt, pageSize)
       }
     },
-    onAddNewButtonClick: ({ history }) => {
-      history.push('/browse/result/add')
-    },
-    onExportClick: ({
-      location,
-      exportResults,
-      sortCol,
-      sortDir,
-      pageAt,
-      pageSize,
-    }) => formatType => {
-      const { sanitized, value: filtersParams } = filtersFromLocation(location)
-      if (!sanitized) {
-        exportResults(
-          filtersParams,
-          formatType.id,
-          sortCol,
-          sortDir,
-          pageAt,
-          pageSize,
-          formatType.id,
-          'results'
-        )
-      }
-    },
-
-    onRowClick: ({ history }) => ({
-      currentTarget: {
-        dataset: { resultId },
-      },
-    }) => history.push(`/browse/result/${resultId}`),
   }),
   lifecycle({
     componentWillMount() {
@@ -231,7 +199,7 @@ const messageByI18nKey = _.partial(
   }
 )
 
-export const ResultList = ({
+export const CaseList = ({
   intl,
   history,
   location,
@@ -242,14 +210,38 @@ export const ResultList = ({
   sortDir,
   pageAt,
   pageSize,
-  onExportClick,
-  onAddNewButtonClick,
   onRowClick,
   reducedFilters,
 }) => {
   const AddNewButton = requirePermissions({
-    permissions: ['result:edit', 'result:admin'],
+    permissions: ['case:edit', 'case:admin'],
   })(AspectButton)
+
+  const columns = [
+    {
+      key: 'code',
+      label: intl.formatMessage(messages.code),
+      sortable: true,
+    },
+    {
+      key: 'attendingClinic',
+      label: intl.formatMessage(messages.attendingClinic),
+      sortable: true,
+      hiddenOn: 'sm',
+    },
+    {
+      key: 'patientId',
+      label: intl.formatMessage(messages.patientId),
+      sortable: true,
+      hiddenOn: 'sm',
+    },
+    {
+      key: 'outcomeStatus',
+      label: intl.formatMessage(messages.outcomeStatus),
+      sortable: true,
+    },
+  ]
+
   return (
     <div className={cssClasses('Container')}>
       <Helmet title={intl.formatMessage(messages.resultsTitle)} />
@@ -259,119 +251,39 @@ export const ResultList = ({
         location={location}
         intl={intl}
         config={reducedFilters}
-        onClickExport={onExportClick}
         askConfirmationForExport={table.total > 1000}
-      >
-        <AddNewButton
-          type="button"
-          color="primary"
-          variant="contained"
-          browseButton
-          onClick={onAddNewButtonClick}
-        >
-          {intl.formatMessage(messages.newResult)}
-        </AddNewButton>
-      </BrowseFilters>
+      />
       <DataTableCard key={`DataTableCard--table-${location.key}`}>
         <DataTableProgressBar disabled={!table.loading} />
-        <ExportListButton
-          onExcelClick={onExportClick}
-          onCsvClick={onExportClick}
-          visible={!items.currentIdList.isEmpty()}
-          reportName="Results"
-        />
         {items.currentIdList.isEmpty() && (
           <BrowseEmptyList history={history} location={location} intl={intl} />
         )}
         {!items.currentIdList.isEmpty() && (
-          <ResultDataTable
+          <CaseDataTable
             selectable={false}
-            className={cssClasses('ResultDataTable')}
+            className={cssClasses('CaseDataTable')}
           >
-            <ResultDataTableHead
+            <CaseDataTableHead
               history={history}
               location={location}
               sortColumnKey={sortCol}
               sortColumnDir={sortDir}
-              columns={Immutable.List([
-                {
-                  key: 'endedOn',
-                  label: intl.formatMessage(messages.endedOn),
-                  sortable: true,
-                },
-                {
-                  key: 'deviceName',
-                  label: intl.formatMessage(messages.deviceName),
-                  sortable: true,
-                  hiddenOn: 'sm',
-                },
-                {
-                  key: 'sampleOriginSiteName',
-                  label: intl.formatMessage(messages.sampleOriginSiteName),
-                  sortable: true,
-                  hiddenOn: 'sm',
-                },
-                {
-                  key: 'sampleId',
-                  label: intl.formatMessage(messages.sampleId),
-                  sortable: true,
-                },
-                {
-                  key: 'resultText',
-                  label: intl.formatMessage(messages.resultText),
-                  sortable: true,
-                },
-                {
-                  key: 'errorCode',
-                  label: intl.formatMessage(messages.errorCode),
-                  sortable: true,
-                  hiddenOn: 'md',
-                },
-                {
-                  key: 'resultWorkflowStatus',
-                  label: intl.formatMessage(messages.resultWorkflowStatus),
-                  sortable: true,
-                  hiddenOn: 'sm',
-                },
-                {
-                  key: 'treatmentStatusInfo',
-                  label: intl.formatMessage(messages.resultTreatmentStatus),
-                  sortable: true,
-                  hiddenOn: 'sm',
-                },
-                {
-                  key: 'patientId',
-                  label: intl.formatMessage(messages.patiendId),
-                  sortable: true,
-                  hiddenOn: 'xs',
-                },
-              ]).concat(
-                table.extraColumns.map(column => ({
-                  key: column.get('db'),
-                  label: messageByI18nKey(column.get('i18nKey'))(
-                    column.get('title'),
-                    intl
-                  ),
-                  sortable: true,
-                  hiddenOn: 'md',
-                }))
-              )}
+              columns={Immutable.List(columns)}
             />
             <TableBody>
               {items.currentIdList
                 .map(id => items.byId.get(id))
-                .map(result => (
-                  <ResultDataTableRow
-                    key={result.get('id')}
+                .map(_case => (
+                  <CaseDataTableRow
+                    key={_case.get('id')}
                     intl={intl}
-                    extraColumns={table.extraColumns}
-                    result={result}
+                    _case={_case}
                     onClick={onRowClick}
-                    data-result-id={result.get('id')}
+                    data-result-id={_case.get('id')}
                   />
                 ))}
             </TableBody>
-          </ResultDataTable>
+          </CaseDataTable>
         )}
         {!items.currentIdList.isEmpty() && (
           <BrowseTablePaginator
@@ -391,4 +303,4 @@ export const ResultList = ({
   )
 }
 
-export default enhance(ResultList)
+export default enhance(CaseList)
