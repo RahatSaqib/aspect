@@ -2,7 +2,8 @@ const { knex, filterParams, sortPageParams } = require('../db')
 const { getConstraints } = require('../auth/constraints')
 const { addPartnerQueryConstraints } = require('../result/service')
 
-const tblName = 'Case as cs'
+const tblName = 'Case'
+const tblSelector = `${tblName} as cs`
 
 function validateCaseIdentifier(_case) {
   let errors = ''
@@ -71,7 +72,7 @@ async function getCases(query, auth) {
   const dataConstraints = await getConstraints(auth.credentials)
 
   // Querying the last result for each case that has a sample origin site
-  const lastResults = knex(tblName)
+  const lastResults = knex(tblSelector)
     .innerJoin('Result as r', 'cs.id', 'r.caseId')
     .innerJoin('Sample as s', 'r.sampleId', 's.id')
     .innerJoin('Site as sos', 's.originSiteId', 'sos.id')
@@ -80,7 +81,7 @@ async function getCases(query, auth) {
     .as('lr')
 
   // Main query only works with each last result per case
-  const casesQuery = knex(tblName)
+  const casesQuery = knex(tblSelector)
     .innerJoin(lastResults, 'cs.id', 'lr.caseId')
     .innerJoin('Result as r', 'lr.lastResultId', 'r.id')
     .innerJoin('Geography as g', 'r.geographyId', 'g.id')
