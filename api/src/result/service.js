@@ -1371,7 +1371,7 @@ async function updateFormDataByResultId(
         ;[deviceLogId] = await knex('DeviceLog').insert({
           deviceId,
           resultId,
-          source: 'Result Form Edited in Aspect',
+          source: 'Result Edited in Aspect',
           createdOn: now,
           senderIp,
           rawMessage: JSON.stringify({
@@ -2486,13 +2486,26 @@ async function updateResult(request) {
     'r.siteId',
     'r.assayId',
     'r.deviceId',
+    'r.sampleId',
+    'r.partnerId',
   ])
   if (!result.ok) {
     return Boom.notFound(
       'This result does not exist or you do not have access.'
     )
   }
-  return updateOrCreateResult(request, result.data)
+
+  return updateOrCreateResult(
+    request,
+    _.pick(result.data, [
+      'id',
+      'siteId',
+      'assayId',
+      'deviceId',
+      'sampleId',
+      'partnerId',
+    ])
+  )
 }
 
 async function updateOrCreateResult(request, result = {}) {
@@ -2553,6 +2566,12 @@ async function updateOrCreateResult(request, result = {}) {
     )
   }
 
+  if (!device.hasResults) {
+    return Boom.badRequest(
+      'This device does not generate results. Make sure that you have selected the correct device.'
+    )
+  }
+
   // we can start filling in the result details now
   if (!updating) {
     result.assayId = assay.id
@@ -2588,12 +2607,12 @@ async function updateOrCreateResult(request, result = {}) {
   )
 
   // create case entry or update it
-  if (!updating && payload.caseId) {
+  if (payload.caseId) {
     result.caseId = await getCaseId(
       { externalId: payload.caseId, partnerId },
       true
     )
-  } else if (updating && !payload.caseId) {
+  } else if (!payload.caseId) {
     result.caseId = null
   }
 
@@ -2670,7 +2689,7 @@ async function getDeviceIdForResultCreation(
     return payload.deviceId
   }
   // TODO: configure this in the db instead of hardcoding
-  const assaysForManualEntry = ['assayGenericCovid19', 'GenericRDT', 'GxMtbRif']
+  const assaysForManualEntry = ['assayGenericCovid19', 'GenericRDT']
   if (assaysForManualEntry.indexOf(assayExternalId) === -1) {
     throw Boom.badRequest(
       'You did not select a device and this assay can not be entered manually without a device. Please specify a device.'
@@ -2692,7 +2711,7 @@ async function updateOrCreateSample(
   collectedOn,
   originSiteId
 ) {
-  const sampleData = {
+  let sampleData = {
     externalId,
     collectedOn,
     sampleTypeId,
@@ -2700,12 +2719,15 @@ async function updateOrCreateSample(
   }
 
   if (sampleId) {
-    await knex('Sample')
-      .update(sampleData)
-      .where({ sampleId })
+    // remove undefined (= not part of the POST fields) for updating
+    sampleData = _.omitBy(sampleData, _.isUndefined)
+    if (!_.isEmpty(sampleData)) {
+      await knex('Sample')
+        .update(sampleData)
+        .where({ id: sampleId })
+    }
     return sampleId
   }
-
   return [await knex('Sample').insert(sampleData)]
 }
 

@@ -79,9 +79,6 @@ const resultAggregationsResponseItem = {
 }
 
 const resultUpdatePayload = {
-  deviceId: Joi.number()
-    .allow(null)
-    .description('The device that ran the test'),
   endedOn: Joi.date()
     .iso()
     .required()
