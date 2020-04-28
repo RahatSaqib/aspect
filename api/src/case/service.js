@@ -89,7 +89,7 @@ async function getCases(query, auth) {
     // We could do that directly using g.countryId, g.lgaId and g.stateId, but it probably needs a refactor
     // Those joins don't add any value and makes the query to be unnecessary larger
     .leftJoin('Country as c', 'g.countryId', 'c.id')
-    .leftJoin('State as st', 'g.stateId', 'st.id') 
+    .leftJoin('State as st', 'g.stateId', 'st.id')
     .leftJoin('Lga as lg', 'g.lgaId', 'lg.id')
     .innerJoin('Assay as a', 'r.assayId', 'a.id')
     .innerJoin('AssayType as at', 'a.assayTypeId', 'at.id')
@@ -109,7 +109,7 @@ async function getCases(query, auth) {
         queryBuilder.where(builder =>
           builder
             .whereRaw(
-              `LOWER(cs.externalId) like LOWER('${params.patientOrResearchId}') || LOWER(JSON_EXTRACT(r.patientData, "$.id")) like LOWER(JSON_QUOTE('${params.patientOrResearchId}'))`,
+              `LOWER(cs.externalId) like LOWER('${params.patientOrResearchId}') || LOWER(JSON_EXTRACT(r.patientData, "$.id")) like LOWER(JSON_QUOTE('${params.patientOrResearchId}'))`
             )
             .orWhereRaw(`r.researchId like '%${params.patientOrResearchId}%'`)
         )
@@ -128,12 +128,12 @@ async function getCases(query, auth) {
     .clone()
     .count('r.id as count')
     .first()
-    
+
   const getItems = casesQuery
-  .clone()
-  .modify(sortPageParams, query, 'endedOn')
-  .select()
-  
+    .clone()
+    .modify(sortPageParams, query, 'endedOn')
+    .select()
+
   // return result when both queries are finished
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
 

@@ -11,9 +11,9 @@ const routes = [
     path: '/case',
     handler: asyncHandler(getCases),
     config: {
-      description: 'Result List',
-      notes: 'Pageable and sortable list of results',
-      auth: { scope: ['result'] },
+      description: 'Case List',
+      notes: 'Pageable and sortable list of cases',
+      auth: { scope: ['case'] },
       timeout: {
         server: 360000,
         socket: false,
@@ -26,7 +26,7 @@ const routes = [
           sampleOriginSite: Joi.string()
             .allow('')
             .description('Filter for sample origin site ID'),
-          diseaseId: Joi.string()
+          diseaseId: Joi.number()
             .allow('')
             .description('Filter for disease ID'),
           ...validateAllGeographyFilterParams(),

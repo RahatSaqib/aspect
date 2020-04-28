@@ -1,24 +1,30 @@
 const supertest = require('supertest')
 const { assert } = require('chai')
-const { getFirstCase, getFirstPartnerId } = require('./utils')
+const {
+  getFirstCase,
+  getFirstPartnerId,
+  getFirstDiseaseId,
+} = require('./utils')
 const { getAccessToken } = require('../utils/authUtils')
 const { getCaseId, removeCase, addCase } = require('../../src/case/service')
 
 const server = supertest.agent('http://localhost:8080')
 
-describe.only('case/service', () => {
+describe('case/service', () => {
   let partnerId = null
+  let diseaseId = null
   let accessToken = null
+  const path = '/api/case'
 
   before(async () => {
     partnerId = await getFirstPartnerId()
+    diseaseId = await getFirstDiseaseId(partnerId)
     accessToken = await getAccessToken('admin', 'test07')
   })
 
-  describe.only('GET', () => {
-    const path = '/api/case'
+  describe('GET', () => {
     let caseToTest = null
-    
+
     it('Should return a list of cases', async () => {
       const res = await server
         .get(path)
@@ -34,17 +40,15 @@ describe.only('case/service', () => {
       assert.property(res.body.data[0], 'attendingClinic')
       assert.property(res.body.data[0], 'outcome')
       assert.property(res.body.data[0], 'patientId')
-      caseToTest = res.body.data[0]
+      ;[caseToTest] = res.body.data
     })
 
     it('Should return a list of cases filtered by sampleOriginSite and patientOrResearchId', async () => {
-      console.log(caseToTest)
-
       const res = await server
-        .get(`${path}?sampleOriginSite=${caseToTest.attendingClinic}&patientOrResearchId=${caseToTest.patientId}`)
+        .get(
+          `${path}?sampleOriginSite=${caseToTest.attendingClinic}&patientOrResearchId=${caseToTest.patientId}`
+        )
         .set('Authorization', `Bearer ${accessToken}`)
-
-      console.log(res.body.data)
 
       assert.equal(res.status, 200)
       assert.typeOf(res.body, 'Object')
@@ -58,6 +62,24 @@ describe.only('case/service', () => {
       assert.property(res.body.data[0], 'outcome')
       assert.property(res.body.data[0], 'patientId')
       assert.equal(res.body.data[0].id, caseToTest.id)
+    })
+
+    it('Should return a list of cases filtered by diseaseId', async () => {
+      const res = await server
+        .get(`${path}?diseaseId=${diseaseId}`)
+        .set('Authorization', `Bearer ${accessToken}`)
+
+      assert.equal(res.status, 200)
+      assert.typeOf(res.body, 'Object')
+      assert.property(res.body, 'data')
+      assert.typeOf(res.body.data, 'array')
+      assert.isNotNull(res.body.data)
+      assert.isAtLeast(res.body.data.length, 1)
+      assert.property(res.body.data[0], 'id')
+      assert.property(res.body.data[0], 'externalId')
+      assert.property(res.body.data[0], 'attendingClinic')
+      assert.property(res.body.data[0], 'outcome')
+      assert.property(res.body.data[0], 'patientId')
     })
   })
 
