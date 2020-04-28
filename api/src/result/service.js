@@ -1517,6 +1517,8 @@ async function listFollowUps(request) {
     .join('FollowUpType as fut', 'fu.followUpTypeId', 'fut.id')
     .join('FollowUpAssay as fua', 'fu.id', 'fua.followUpId')
     .leftJoin('Assay as a', 'fua.assayId', 'a.id')
+    .leftJoin('AssayType as at', 'a.assayTypeId', 'at.id')
+    .leftJoin('Disease as dis', 'at.diseaseId', 'dis.id')
     .leftJoin('ResultCategory as rc1', 'fua.resultCategory1', 'rc1.id')
     .leftJoin('ResultCategory as rc2', 'fua.resultCategory2', 'rc2.id')
     .where(queryBuilder => {
