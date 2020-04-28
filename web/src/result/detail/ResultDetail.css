@@ -4,6 +4,12 @@
   padding: 10px;
 }
 
+.Title__SomeFieldsNotEditable {
+  font-size: 1em;
+  color: var(--aspect-color-grey-3);
+  margin-right: 2em;
+}
+
 .FieldsContainer {
   border-radius: 0;
 }
@@ -199,10 +205,12 @@
 
 .TreatmentNoteExpansionPanelContainer {
   padding-bottom: 10px;
+  flex-wrap: wrap;
 }
 
 .Treatment {
   display: flex;
+  padding-top: 1em;
 }
 
 .TreatmentInfo h3 {
@@ -221,8 +229,14 @@
   margin-top: 30px;
 }
 
-.TreatmentLinkLayout div {
-  max-width: 30em;
+.TreatmentLinkLayout {
+  width: 100%;
+  justify-content: space-around;
+  flex-wrap: wrap;
+}
+
+.TreatmentLinkLayout:first-child {
+  display: inline-flex;
 }
 
 .TreatmentTitle {
@@ -233,31 +247,50 @@
   padding: 8px 10px 0 0;
 }
 
-.TreatmentCheckBox {
-  display: flex;
-  width: 22em;
-  justify-content: space-between;
+.TreatmentCheckBoxLabel {
+  color: var(--aspect-color-shakespeare);
+  font-size: 14px;
 }
 
-.TreatmentCheckBox button {
+.TreatmentCheckBox {
+  display: inline-flex;
+  padding: 0;
+  flex-wrap: wrap;
+}
+
+.TreatmentCheckBox > span {
+  padding: 0;
+}
+
+.TreatmentCheckBox > label {
+  width: 9em;
+}
+
+.LinkButton {
   background-color: var(--aspect-color-chill-blue-2);
   color: white;
-  padding: 10px 9px 8px 9px;
   border-radius: 21px;
   position: relative;
-  margin-top: 6px;
+  padding: 0 1.5em;
+  margin: 1em 0;
+  font-size: 12px;
+  font-weight: 700;
+  height: 28px;
+  display: inline-flex;
+  text-wrap: none;
+  white-space: nowrap;
 }
 
-.TreatmentCheckBox button:hover {
+.LinkButton button:hover {
   background-color: var(--aspect-color-chill-blue-2);
 }
 
 .TreatmentNoteContainer {
   background-color: var(--aspect-color-grey-7);
-  width: 23em;
-  margin-left: 20.5%;
   margin-top: 5px;
-  padding: 0 19px 0 12px;
+  max-height: 17em;
+  overflow-y: auto;
+  padding: 0.3em 0.7em 0 0.4em;
 }
 
 .TreatmentNoteContainer > div:first-child {
@@ -269,10 +302,7 @@
 }
 
 .TreatmentNoteContainer > div:nth-child(2) {
-  padding: 10px 0;
-  max-height: 200px;
-  max-width: 500px;
-  overflow: scroll;
+  overflow-wrap: break-spaces;
 }
 
 .TreatmentNoteContainer svg {

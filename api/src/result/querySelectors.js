@@ -115,7 +115,12 @@ const SELECT_COMMON_FIELDS = [
   'r.caseId',
   'ca.externalId as caseExternalId',
 ]
-const SELECT_SHOW_FIELDS = [...SELECT_COMMON_FIELDS, 'rf.formSchema']
+const SELECT_SHOW_FIELDS = [
+  ...SELECT_COMMON_FIELDS,
+  'rf.formSchema',
+  knex.raw('IFNULL(pa.canEdit, 0) AS canEdit'),
+  knex.raw('IFNULL(pa.canDelete, 0) AS canDelete'),
+]
 const SORT_FIELDS = [
   'endedOn',
   'deviceName',

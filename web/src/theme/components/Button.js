@@ -5,8 +5,7 @@ export default ({ theme, themedColors }) => ({
     root: {
       borderRadius: themedColors.buttonBorderRadius,
       textTransform: 'inherit',
-      '&.browseButton':{
-
+      '&.browseButton': {
         marginRight: '1.5em',
         fontWeight: 700,
         paddingRight: '2.5em',

@@ -519,6 +519,16 @@ function validateFullResultResponse() {
       .description(
         'The id of last entry in ResultStatusLog for current result'
       ),
+    canEdit: Joi.number()
+      .allow(null)
+      .description(
+        "Is the result's assay configured to allow editing of results?"
+      ),
+    canDelete: Joi.number()
+      .allow(null)
+      .description(
+        "Is the result's assay configured to allow deleting of results?"
+      ),
   }
 }
 

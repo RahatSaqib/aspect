@@ -1,0 +1,38 @@
+{
+    "resultText": {
+      "title": "Result Text",
+      "type": "string",
+      "i18nKey": "resultText"
+    },
+    "probes": {
+      "title": "Probes",
+      "type": "object",
+      "i18nKey": "probes",
+      "properties": {
+        "eCt": {
+          "title": "E Ct",
+          "type": "number"
+        },
+        "eEndPt": {
+          "title": "E Endpt",
+          "type": "number"
+        },
+        "n2Ct": {
+          "title": "N2 Ct",
+          "type": "number"
+        },
+        "n2EndPt": {
+          "title": "N2 EndPt",
+          "type": "number"
+        },
+        "probeSpcCt": {
+          "title": "Probe Spc Ct",
+          "type": "number"
+        },
+        "probeSpcEndpt": {
+          "title": "Probe Spc Endpt",
+          "type": "number"
+        }
+      }
+    }
+  }

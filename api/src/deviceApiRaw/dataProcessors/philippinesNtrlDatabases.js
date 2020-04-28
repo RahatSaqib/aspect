@@ -2212,6 +2212,7 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
           )
         }
       } catch (e) {
+        // eslint-disable-next-line no-console
         console.log(payload)
         throw e
       }
@@ -3165,6 +3166,7 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
           )
         }
       } catch (e) {
+        // eslint-disable-next-line no-console
         console.log(payload)
         throw e
       }

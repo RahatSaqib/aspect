@@ -538,7 +538,10 @@ async function seedTable(knex, fixtureItem, overridedSeeds) {
             (await knex(foreignKey.table)
               .where(_.omit(foreignKey, ['table']))
               .first('id')) || {}
-          if (existingDatum[foreignKeyColumnName] !== existingRelatedDatum.id) {
+          if (
+            existingDatum[foreignKeyColumnName] !== existingRelatedDatum.id &&
+            typeof existingRelatedDatum.id !== 'undefined'
+          ) {
             updates[foreignKeyColumnName] = existingRelatedDatum.id
           }
         }
@@ -830,12 +833,16 @@ async function upsertItems(knex, tableName, whereKeys, items) {
   if (itemsToUpdate.length) {
     const queries = []
     itemsToUpdate.forEach(item => {
-      const query = knex(tableName)
-        .where(getWhereItem(item, whereKeys))
-        .update(item)
-      queries.push(query)
+      if (!_.isEmpty(item)) {
+        const query = knex(tableName)
+          .where(getWhereItem(item, whereKeys))
+          .update(item)
+        queries.push(query)
+      }
     })
-    await Promise.all(queries)
+    if (!_.isEmpty(queries)) {
+      await Promise.all(queries)
+    }
   }
 }
 
@@ -854,10 +861,12 @@ async function upsertSingle(knex, tableName, whereClause, item) {
   }
   const q = knex(tableName).where(whereClause)
   const existingItem = await q.first()
-  if (existingItem) {
-    await q.clone().update(item)
-  } else {
-    await knex(tableName).insert(item)
+  if (!_.isEmpty(item)) {
+    if (existingItem) {
+      await q.clone().update(item)
+    } else {
+      await knex(tableName).insert(item)
+    }
   }
   return q.first()
 }
@@ -2158,9 +2167,11 @@ async function updateCategoryAssay(knex) {
         emphasize: false,
       }
     }
-    await knex('ResultCategoryAssay')
-      .where('resultCategoryId', id)
-      .update(json)
+    if (!_.isEmpty(json)) {
+      await knex('ResultCategoryAssay')
+        .where('resultCategoryId', id)
+        .update(json)
+    }
   })
 }
 
@@ -2211,9 +2222,11 @@ async function updateAssayResultCategoryTreatmentEmphasize(knex) {
         emphasize: false,
       }
     }
-    await knex('ResultCategoryAssay')
-      .where('resultCategoryId', id)
-      .update(json)
+    if (!_.isEmpty(json)) {
+      await knex('ResultCategoryAssay')
+        .where('resultCategoryId', id)
+        .update(json)
+    }
   })
 }
 
@@ -2309,7 +2322,7 @@ async function setCapacityForExistingDevices(knex) {
       deviceCapacities,
       dc => dc.partnerId === partnerId && dc.deviceTypeId === deviceTypeId
     )
-    if (deviceCapacityByPartnerId) {
+    if (deviceCapacityByPartnerId && deviceCapacityByPartnerId.id) {
       await knex('Device')
         .where({ partnerId })
         .where({ deviceTypeId })
@@ -2469,11 +2482,13 @@ async function initDataFromFixture(knex, tableName, keyColumn = 'externalId') {
   const itemsToUpdate = itemsNew.filter(x => oldIds.includes(x[keyColumn]))
   const itemsToInsert = itemsNew.filter(x => !oldIds.includes(x[keyColumn]))
   if (itemsToUpdate.length > 0) {
-    // update
-    itemsToUpdate.forEach(async item => {
-      await knex(tableName)
-        .update(_.omit(item, keyColumn))
-        .where(keyColumn, item[keyColumn])
+    await Promise.each(itemsToUpdate, async item => {
+      const updatedRecord = _.omit(item, keyColumn)
+      if (!_.isEmpty(updatedRecord)) {
+        await knex(tableName)
+          .update(updatedRecord)
+          .where(keyColumn, item[keyColumn])
+      }
     })
   }
   // insert only items which not exist in the table
@@ -2617,18 +2632,19 @@ function randomOption(availableOptions, required = false) {
 async function seedPartnerAssay(knex) {
   const { 'COVID-19 Test': assayTypeCovid19Id } = await allAssayTypeToId()
 
-  const partners = await knex('Partner').select('id')
-  const assays = await knex('Assay').select('*')
+  const partnerIds = await knex('Partner').pluck('id')
+  const assays = await knex('Assay').select('id', 'assayTypeId')
 
-  const queries = []
   // for all Partners ...
-  _.each(partners, ({ id: partnerId }) => {
-    // ... and all Assays
-    _.each(assays, ({ id: assayId, assayTypeId }) => {
+  await Promise.each(partnerIds, async partnerId =>
+    Promise.each(assays, async ({ id: assayId, assayTypeId }) => {
       const isCovid19 = assayTypeId === assayTypeCovid19Id
-      // ... add entry to PartnerAssay
-      queries.push(
-        knex('PartnerAssay').insert({
+      // ... upsert entry to PartnerAssay
+      const partnerAssay = await knex('PartnerAssay')
+        .where({ partnerId, assayId })
+        .first()
+      if (!partnerAssay) {
+        await knex('PartnerAssay').insert({
           partnerId,
           assayId,
 
@@ -2636,35 +2652,34 @@ async function seedPartnerAssay(knex) {
           canDelete: isCovid19,
           canEdit: isCovid19,
         })
-      )
+      }
     })
-  })
-  await Promise.all(queries)
+  )
 }
 
 async function seedPartnerDisease(knex) {
   const { covid19: diseaseCovid19Id } = await allDiseaseToId()
 
-  const partners = await knex('Partner').select('id')
-  const diseases = await knex('Disease').select('id')
+  const partnerIds = await knex('Partner').pluck('id')
+  const diseaseIds = await knex('Disease').pluck('id')
 
-  const queries = []
   // for all Partners ...
-  _.each(partners, ({ id: partnerId }) => {
-    // ... and all Diseases
-    _.each(diseases, ({ id: diseaseId }) => {
-      // ... add entry to PartnerDisease
-      queries.push(
-        knex('PartnerDisease').insert({
+  await Promise.each(partnerIds, async partnerId =>
+    Promise.each(diseaseIds, async diseaseId => {
+      // ... upsert entry to PartnerDisease table
+      const partnerDisease = await knex('PartnerDisease')
+        .where({ partnerId, diseaseId })
+        .first()
+      if (!partnerDisease) {
+        await knex('PartnerDisease').insert({
           partnerId,
           diseaseId,
           // allow auto-assigning Result to Case only for Covid-19 disease
           canAutoAssignResultByCaseId: diseaseId === diseaseCovid19Id,
         })
-      )
+      }
     })
-  })
-  await Promise.all(queries)
+  )
 }
 
 module.exports = {
