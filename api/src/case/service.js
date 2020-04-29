@@ -85,13 +85,7 @@ async function getCases(query, auth) {
     .innerJoin(lastResults, 'cs.id', 'lr.caseId')
     .innerJoin('Result as r', 'lr.lastResultId', 'r.id')
     .innerJoin('Geography as g', 'r.geographyId', 'g.id')
-    // I don't like the next three lines
-    // They're necessary because filterParams adds a filter for c.id, lg.id and st.id.
-    // We could do that directly using g.countryId, g.lgaId and g.stateId, but it probably needs a refactor
-    // Those joins don't add any value and makes the query to be unnecessary larger
     .leftJoin('Country as c', 'g.countryId', 'c.id')
-    .leftJoin('State as st', 'g.stateId', 'st.id')
-    .leftJoin('Lga as lg', 'g.lgaId', 'lg.id')
     .innerJoin('Assay as a', 'r.assayId', 'a.id')
     .innerJoin('AssayType as at', 'a.assayTypeId', 'at.id')
     .innerJoin('Disease as d', 'at.diseaseId', 'd.id')
