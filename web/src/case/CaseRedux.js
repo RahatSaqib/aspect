@@ -18,7 +18,11 @@ import {
 import screenSchema from './CaseScreenSchema.json'
 
 export const types = {
+<<<<<<< HEAD
   REQUEST_CASES: 'REQUEST_CASES',
+=======
+  REQUEST_CASESS: 'REQUEST_CASES',
+>>>>>>> d91e0de6b... CaseList rebased
   RECEIVE_CASES: 'RECEIVE_CASES',
   REJECTED_CASES: 'REJECTED_CASES',
 }
@@ -54,7 +58,12 @@ export function fetchCases(filtersParams, sortCol, sortDir, page, pageSize) {
   return dispatch => {
     const filters = _.fromPairs([...filtersParams.entries()])
     dispatch(requestCases(sortCol, sortDir, page, pageSize, filters))
+<<<<<<< HEAD
     sortCol = sortCol || 'externalId'
+=======
+    sortCol = sortCol || 'caseId'
+
+>>>>>>> d91e0de6b... CaseList rebased
     return aspectFetch(
       `/case?${stringify({
         sortCol,
