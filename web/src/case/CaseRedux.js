@@ -39,17 +39,8 @@ function requestCases(sortCol, sortDir, page, size, filters) {
 function receiveCases(json) {
   return {
     type: types.RECEIVE_CASES,
-    // items: json.data,
-    items: [
-      {
-        externalId: 'asdf',
-        attendingClinic: 'a clinic',
-        patientId: 'a patientId',
-        outcome: 'Active',
-      },
-    ],
-    total: 2,
-    // total: json.total,
+    items: json.data,
+    total: json.total,
   }
 }
 
@@ -64,6 +55,10 @@ export function fetchCases(filtersParams, sortCol, sortDir, page, pageSize) {
     const filters = _.fromPairs([...filtersParams.entries()])
     dispatch(requestCases(sortCol, sortDir, page, pageSize, filters))
     sortCol = sortCol || 'externalId'
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0ae84abbd... Solved typo errors
     return aspectFetch(
       `/case?${stringify({
         sortCol,

@@ -94,6 +94,7 @@ const FILTERS_CONFIG = [
 ]
 
 const searchSanitizer = makeSearchParamsSanitizer({
+<<<<<<< HEAD
   availableSortCol: [
     'externalId',
     'attendingClinic',
@@ -101,6 +102,9 @@ const searchSanitizer = makeSearchParamsSanitizer({
     'diseaseName',
     'status',
   ],
+=======
+  availableSortCol: ['externalId', 'attendingClinic', 'patientId', 'status'],
+>>>>>>> 0ae84abbd... Solved typo errors
 })
 const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
 const filtersFromLocation = composeSanitizer(
@@ -230,12 +234,15 @@ export const CaseList = ({
       hiddenOn: 'sm',
     },
     {
+<<<<<<< HEAD
       key: 'diseaseName',
       label: intl.formatMessage(messages.diseaseName),
       sortable: true,
       hiddenOn: 'sm',
     },
     {
+=======
+>>>>>>> 0ae84abbd... Solved typo errors
       key: 'status',
       label: intl.formatMessage(messages.status),
       sortable: true,
