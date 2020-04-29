@@ -33,6 +33,44 @@ const routes = [
           ...validateSortPageParams(),
         },
       },
+      response: {
+        options: {
+          allowUnknown: true,
+        },
+        schema: Joi.object().keys({
+          ok: Joi.bool()
+            .required()
+            .description('False if there was some sort of error'),
+          total: Joi.number()
+            .required()
+            .description(
+              'The total number of cases that match the given filters'
+            ),
+          length: Joi.number()
+            .required()
+            .description('The number of cases included in this response'),
+          data: Joi.array()
+            .required()
+            .description('The cases')
+            .items(
+              Joi.object().keys({
+                id: Joi.number().description('The id of the case'),
+                externalId: Joi.string().description(
+                  'The external id of the case'
+                ),
+                attendingClinic: Joi.string().description(
+                  "The attending clinic or sample's origin site of the case's last result"
+                ),
+                outcome: Joi.string().description(
+                  'The outcome status of the case'
+                ),
+                patientId: Joi.string().description(
+                  "The patient id of the case's last result"
+                ),
+              })
+            ),
+        }),
+      },
     },
   },
 ]

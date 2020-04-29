@@ -22,7 +22,7 @@ describe('case/service', () => {
     accessToken = await getAccessToken('admin', 'test07')
   })
 
-  describe('GET', () => {
+  describe.only('GET', () => {
     let caseToTest = null
 
     it('Should return a list of cases', async () => {
