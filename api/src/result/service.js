@@ -293,7 +293,8 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
       if (params.assayExternalIds) {
         queryBuilder.whereIn('a.externalId', params.assayExternalIds.split(','))
       }
-      if (params.diseaseId) queryBuilder.where('dis.id', params.diseaseId)
+      if (params.diseaseExternalId)
+        queryBuilder.where('dis.externalId', 'like', `%${params.diseaseId}%`)
       if (params.resultCategories) {
         queryBuilder.where(builder =>
           builder
