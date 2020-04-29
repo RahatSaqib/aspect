@@ -80,6 +80,9 @@
     },
     {
       "module": "siteFilterDashboard"
+    },
+    {
+      "module": "case"
     }
   ]
 }

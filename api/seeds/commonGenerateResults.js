@@ -431,6 +431,7 @@ async function addCovidResults(
       : _.find(siteDatas, site => site.id === device.siteId)
 
     const sample = samples[i % samples.length]
+
     const uid = _.times(6, () => _.toUpper(_.random(36).toString(36))).join('')
     const caseExternalId = `CASE-${uid}-ID`
     const reportableSite = sample.originSiteId
