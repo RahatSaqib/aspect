@@ -823,6 +823,11 @@ const routes = [
             .integer()
             .allow(null)
             .description('ID of the assay'),
+          diseaseId: Joi.number()
+            .integer()
+            .positive()
+            .optional()
+            .description('The disease ID'),
           resultCategory1: Joi.number()
             .integer()
             .allow(null)
@@ -1157,6 +1162,11 @@ const routes = [
                 assayId: Joi.string()
                   .required()
                   .description('The assay id'),
+                diseaseId: Joi.number()
+                  .integer()
+                  .positive()
+                  .optional()
+                  .description('The disease ID'),
                 resultData: Joi.object()
                   .required()
                   .description('The result data'),

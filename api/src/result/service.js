@@ -1511,7 +1511,10 @@ async function listFollowUps(request) {
     .leftJoin('Assay as a', 'fua.assayId', 'a.id')
     .leftJoin('ResultCategory as rc1', 'fua.resultCategory1', 'rc1.id')
     .leftJoin('ResultCategory as rc2', 'fua.resultCategory2', 'rc2.id')
-    .where('fua.partnerId', dataConstraints.partner.id)
+    .where(queryBuilder => {
+      queryBuilder.where('fua.partnerId', dataConstraints.partner.id)
+      if (query.diseaseId) queryBuilder.where('dis.id', query.diseaseId)
+    })
     .modify(addConstraints, dataConstraints, {
       assay: 'a',
     })
@@ -2074,6 +2077,7 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
       errorCode: 'r.errorCode',
       workflowStatusId: 'rs.id',
       treatmentStatusId: 'rts.id',
+      diseaseId: 'dis.id',
     })
     .modify((queryBuilder, params) => {
       if (params.patientOrResearchId) {

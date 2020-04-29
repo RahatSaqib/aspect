@@ -105,10 +105,8 @@ async function getListDevices(query, auth) {
     .leftJoin('State as st', 'g.stateId', 'st.id')
     .leftJoin('Assay as a', 'dt.id', 'a.deviceTypeId')
     .where(function() {
-      if (!query.deviceIds) {
-        return
-      }
-      this.whereIn('d.id', query.deviceIds.split(','))
+      if (query.deviceIds) this.whereIn('d.id', query.deviceIds.split(','))
+      if (query.diseaseId) this.where('dis.id', query.diseaseId)
     })
     .modify(queryBuilder => {
       if (!query.assayId) {

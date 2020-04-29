@@ -405,6 +405,7 @@ async function listRefreshTokens(request) {
       contactNameOrEmail: ['p.name', 'p.email', 'p.email2'],
       deviceName: 'r.clientName',
       revoked: 'r.revoked',
+      diseaseId: 'dis.id',
     })
     .leftJoin('ResultDownloadLog as rdl', function() {
       this.on(function() {

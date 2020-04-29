@@ -39,14 +39,18 @@ async function getPatientResultsDetails(request) {
       'rtsl.resultTreatmentStatusId',
       'rts.id'
     )
-    .whereRaw(
-      'LOWER(JSON_EXTRACT(r.patientData,"$.id")) = LOWER(JSON_QUOTE(?))',
-      [query.patientId]
-    )
+    .where(queryBuilder => {
+      queryBuilder.whereRaw(
+        'LOWER(JSON_EXTRACT(r.patientData,"$.id")) = LOWER(JSON_QUOTE(?))',
+        [query.patientId]
+      )
+      if (query.diseaseId) queryBuilder.whereRaw('dis.id', query.diseaseId)
+    })
     .modify(addConstraints, dataConstraints, {
       assay: 'a',
       result: 'r',
       sample: 's',
+      disease: 'dis',
     })
     .select(
       'r.id as resultId',
