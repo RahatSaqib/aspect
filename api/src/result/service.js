@@ -294,7 +294,11 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
         queryBuilder.whereIn('a.externalId', params.assayExternalIds.split(','))
       }
       if (params.diseaseExternalId)
-        queryBuilder.where('dis.externalId', 'like', `%${params.diseaseId}%`)
+        queryBuilder.whereIn(
+          'dis.externalId',
+          params.diseaseExternalIds.split(',')
+        )
+
       if (params.resultCategories) {
         queryBuilder.where(builder =>
           builder
@@ -354,6 +358,8 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
       'rc2.externalId as resultCategory2ExternalId',
       'r.patientData',
       'r.resultData',
+      'dis.externalid as diseaseExternalId',
+      'dis.name as diseaseName',
       'sp.externalId as sampleId',
       'so.id as sampleOriginSiteId',
       'so.externalId as sampleOriginSiteExternalId',
@@ -487,8 +493,9 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
     transferredOn: d.transferredOn,
     transferredBy: d.transferredBy,
     reportableSiteId: d.reportableSiteId,
+    diseaseExternalId: d.diseaseExternalId,
+    diseaseName: d.diseaseName,
   }))
-
   const result = {
     ok: true,
     total,

@@ -449,10 +449,10 @@ const routes = [
             .iso()
             .allow(null)
             .description('Updated From Date'),
-          diseaseExternalId: Joi.string()
+          diseaseExternalIds: Joi.string()
             .allow(null)
             .optional()
-            .description('The disease external ID'),
+            .description('A csv of the diseases external ID'),
           maxUpdatedOn: Joi.date()
             .iso()
             .allow(null)
@@ -530,6 +530,13 @@ const routes = [
                 assayExternalId: Joi.string()
                   .required()
                   .description('Unique ID of the Assay'),
+                diseaseName: Joi.string()
+                  .allow('', null)
+                  .description('Disease name'),
+                diseaseExternalId: Joi.string()
+                  .allow('', null)
+                  .required()
+                  .description('Unique ID of the disease'),
                 siteName: Joi.string()
                   .required()
                   .description(
