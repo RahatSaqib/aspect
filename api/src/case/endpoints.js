@@ -61,7 +61,7 @@ const routes = [
                 attendingClinic: Joi.string().description(
                   "The attending clinic or sample's origin site of the case's last result"
                 ),
-                outcome: Joi.string().description(
+                status: Joi.string().description(
                   'The outcome status of the case'
                 ),
                 patientId: Joi.string().description(

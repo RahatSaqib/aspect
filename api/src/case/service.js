@@ -111,7 +111,7 @@ async function getCases(query, auth) {
       'cs.id',
       'cs.externalId as externalId',
       'sos.name as attendingClinic',
-      knex.raw(`'Active' as outcome`),
+      knex.raw(`'Active' as status`),
       knex.raw('JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.id")) as patientId')
     )
     .distinct()

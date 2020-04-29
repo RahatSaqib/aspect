@@ -10,7 +10,7 @@ const { getCaseId, removeCase, addCase } = require('../../src/case/service')
 
 const server = supertest.agent('http://localhost:8080')
 
-describe('case/service', () => {
+describe.only('case/service', () => {
   let partnerId = null
   let diseaseId = null
   let accessToken = null
@@ -22,7 +22,7 @@ describe('case/service', () => {
     accessToken = await getAccessToken('admin', 'test07')
   })
 
-  describe.only('GET', () => {
+  describe('GET', () => {
     let caseToTest = null
 
     it('Should return a list of cases', async () => {
@@ -38,7 +38,7 @@ describe('case/service', () => {
       assert.property(res.body.data[0], 'id')
       assert.property(res.body.data[0], 'externalId')
       assert.property(res.body.data[0], 'attendingClinic')
-      assert.property(res.body.data[0], 'outcome')
+      assert.property(res.body.data[0], 'status')
       assert.property(res.body.data[0], 'patientId')
       ;[caseToTest] = res.body.data
     })
@@ -59,7 +59,7 @@ describe('case/service', () => {
       assert.property(res.body.data[0], 'id')
       assert.property(res.body.data[0], 'externalId')
       assert.property(res.body.data[0], 'attendingClinic')
-      assert.property(res.body.data[0], 'outcome')
+      assert.property(res.body.data[0], 'status')
       assert.property(res.body.data[0], 'patientId')
       assert.equal(res.body.data[0].id, caseToTest.id)
     })
@@ -78,7 +78,7 @@ describe('case/service', () => {
       assert.property(res.body.data[0], 'id')
       assert.property(res.body.data[0], 'externalId')
       assert.property(res.body.data[0], 'attendingClinic')
-      assert.property(res.body.data[0], 'outcome')
+      assert.property(res.body.data[0], 'status')
       assert.property(res.body.data[0], 'patientId')
     })
 
