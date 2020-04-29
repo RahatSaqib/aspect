@@ -81,6 +81,21 @@ describe('case/service', () => {
       assert.property(res.body.data[0], 'outcome')
       assert.property(res.body.data[0], 'patientId')
     })
+
+    it('Should return an empty list', async () => {
+      const unexistentClinic = 'An unexistent clinic 123456'
+
+      const res = await server
+        .get(`${path}?sampleOriginSite=${unexistentClinic}`)
+        .set('Authorization', `Bearer ${accessToken}`)
+
+      assert.equal(res.status, 200)
+      assert.typeOf(res.body, 'Object')
+      assert.property(res.body, 'data')
+      assert.typeOf(res.body.data, 'array')
+      assert.isNotNull(res.body.data)
+      assert.equal(res.body.data.length, 0)
+    })
   })
 
   describe('add', () => {

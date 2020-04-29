@@ -2,8 +2,6 @@ const { knex, filterParams, sortPageParams } = require('../db')
 const { getConstraints } = require('../auth/constraints')
 const { addPartnerQueryConstraints } = require('../result/service')
 
-const 'Case as cs' = `${'Case'} as cs`
-
 function validateCaseIdentifier(_case) {
   let errors = ''
 
