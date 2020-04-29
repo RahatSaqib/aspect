@@ -1,4 +1,5 @@
 const supertest = require('supertest')
+const _ = require('lodash')
 const { assert } = require('chai')
 const {
   getFirstCase,
@@ -10,7 +11,7 @@ const { getCaseId, removeCase, addCase } = require('../../src/case/service')
 
 const server = supertest.agent('http://localhost:8080')
 
-describe.only('case/service', () => {
+describe('case/service', () => {
   let partnerId = null
   let diseaseId = null
   let accessToken = null
@@ -43,10 +44,10 @@ describe.only('case/service', () => {
       ;[caseToTest] = res.body.data
     })
 
-    it('Should return a list of cases filtered by sampleOriginSite and patientOrResearchId', async () => {
+    it('Should return a list of cases filtered by patientOrResearchId', async () => {
       const res = await server
         .get(
-          `${path}?sampleOriginSite=${caseToTest.attendingClinic}&patientOrResearchId=${caseToTest.patientId}`
+          `${path}?patientOrResearchId=${caseToTest.patientId}`
         )
         .set('Authorization', `Bearer ${accessToken}`)
 
@@ -83,10 +84,10 @@ describe.only('case/service', () => {
     })
 
     it('Should return an empty list', async () => {
-      const unexistentClinic = 'An unexistent clinic 123456'
+      const unexistentClinicId = _.random(1000000, 9999999)
 
       const res = await server
-        .get(`${path}?sampleOriginSite=${unexistentClinic}`)
+        .get(`${path}?sampleOriginSiteId=${unexistentClinicId}`)
         .set('Authorization', `Bearer ${accessToken}`)
 
       assert.equal(res.status, 200)

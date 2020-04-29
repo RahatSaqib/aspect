@@ -93,7 +93,7 @@ async function getCases(query, auth) {
       countryId: 'g.countryId',
       stateId: 'g.stateId',
       lgaId: 'g.lgaId',
-      sampleOriginSite: 'sos.name',
+      sampleOriginSiteId: 'sos.id',
       diseaseId: 'd.id',
     })
     .modify((queryBuilder, params) => {
@@ -101,7 +101,7 @@ async function getCases(query, auth) {
         queryBuilder.where(builder =>
           builder
             .whereRaw(
-              `LOWER(cs.externalId) like LOWER('${params.patientOrResearchId}') || LOWER(JSON_EXTRACT(r.patientData, "$.id")) like LOWER(JSON_QUOTE('${params.patientOrResearchId}'))`
+              `LOWER(cs.externalId) like LOWER('%${params.patientOrResearchId}%') || LOWER(JSON_EXTRACT(r.patientData, "$.id")) like LOWER(JSON_QUOTE('%${params.patientOrResearchId}%'))`
             )
             .orWhereRaw(`r.researchId like '%${params.patientOrResearchId}%'`)
         )
