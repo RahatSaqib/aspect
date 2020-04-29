@@ -39,8 +39,17 @@ function requestCases(sortCol, sortDir, page, size, filters) {
 function receiveCases(json) {
   return {
     type: types.RECEIVE_CASES,
-    items: json.data,
-    total: json.total,
+    // items: json.data,
+    items: [
+      {
+        externalId: 'asdf',
+        attendingClinic: 'a clinic',
+        patientId: 'a patientId',
+        outcome: 'Active',
+      },
+    ],
+    total: 2,
+    // total: json.total,
   }
 }
 
@@ -56,45 +65,47 @@ export function fetchCases(filtersParams, sortCol, sortDir, page, pageSize) {
     dispatch(requestCases(sortCol, sortDir, page, pageSize, filters))
     sortCol = sortCol || 'externalId'
 
-    return aspectFetch(
-      `/case?${stringify({
-        sortCol,
-        sortDir,
-        page,
-        size: pageSize,
-        ...filters,
-      })}`,
-      {
-        errorNotifications: {
-          400: filterFieldsRejectedError(
-            defineMessages({
-              title: {
-                id: 'errorResponseMessages.fetchCases.GET.400.title',
-                defaultMessage: 'Searching Cases Failed',
-              },
-            })
-          ),
-          403: errorInsufficientScope(
-            defineMessages({
-              title: {
-                id: 'errorResponseMessages.fetchPersons.GET.403.title',
-                defaultMessage: 'Insufficient Permissions',
-              },
-            })
-          ),
-          default: errorPleaseTryAgainInAFewMinutes(
-            defineMessages({
-              title: {
-                id: 'errorResponseMessages.fetchCases.GET.default.title',
-                defaultMessage: 'Loading Cases Failed',
-              },
-            })
-          ),
-        },
-      }
-    )
-      .then(json => dispatch(receiveCases(json)))
-      .catch(() => dispatch(rejectCases()))
+    // return aspectFetch(
+    //   `/case?${stringify({
+    //     sortCol,
+    //     sortDir,
+    //     page,
+    //     size: pageSize,
+    //     ...filters,
+    //   })}`,
+    //   {
+    //     errorNotifications: {
+    //       400: filterFieldsRejectedError(
+    //         defineMessages({
+    //           title: {
+    //             id: 'errorResponseMessages.fetchCases.GET.400.title',
+    //             defaultMessage: 'Searching Cases Failed',
+    //           },
+    //         })
+    //       ),
+    //       403: errorInsufficientScope(
+    //         defineMessages({
+    //           title: {
+    //             id: 'errorResponseMessages.fetchPersons.GET.403.title',
+    //             defaultMessage: 'Insufficient Permissions',
+    //           },
+    //         })
+    //       ),
+    //       default: errorPleaseTryAgainInAFewMinutes(
+    //         defineMessages({
+    //           title: {
+    //             id: 'errorResponseMessages.fetchCases.GET.default.title',
+    //             defaultMessage: 'Loading Cases Failed',
+    //           },
+    //         })
+    //       ),
+    //     },
+    //   }
+    // )
+    //   .then(json => dispatch(receiveCases(json)))
+    //   .catch(() => dispatch(rejectCases()))
+
+    dispatch(receiveCases())
   }
 }
 
