@@ -99,6 +99,7 @@ async function getListResults(query, auth, fields = LIST_FIELDS) {
 
   const resultQuery = getQueryForResultsListAndExport(query, dataConstraints)
 
+  console.log('resultquery', resultQuery.toString())
   // get total count for paging
   const getCount = resultQuery
     .clone()
@@ -2116,6 +2117,7 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
       geography: 'g',
       result: 'r',
       country: 'c',
+      disease: 'dis',
     })
 
   return resultQuery

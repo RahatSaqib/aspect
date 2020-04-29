@@ -11,6 +11,7 @@ describe('Excel reports', () => {
   it('should return a files when using valid token', async () => {
     const queries = [
       '/device/export?sortCol=name&sortDir=asc&page=0&size=10&format=&hasResults=1',
+      '/device/export?sortCol=name&sortDir=asc&page=0&size=10&format=&diseaseId=1', // check device export filtered by disease
       '/inventory/export?sortCol=siteName&sortDir=asc&page=0&size=10&format',
       '/person/export?sortCol=name&sortDir=asc&page=0&size=10&format=',
       '/site/export?sortCol=name&sortDir=asc&page=0&size=10&format=',
