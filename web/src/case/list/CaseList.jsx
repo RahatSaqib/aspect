@@ -51,9 +51,9 @@ const messages = defineMessages({
     id: 'pages.CasesList.attendingClinic',
     defaultMessage: 'Attending Clinic',
   },
-  outcomeStatus: {
-    id: 'pages.CasesList.outcomeStatus',
-    defaultMessage: 'Outcome/Status',
+  status: {
+    id: 'pages.CasesList.status',
+    defaultMessage: 'Status',
   },
   patientId: {
     id: 'pages.CasesList.patientId',
@@ -73,40 +73,24 @@ const FILTERS_CONFIG = [
   //   assayAndResultCategory: true,
   //   requiredPermissions: ['assay:view', 'assay:admin', 'assay:edit'],
   // },
-  // { geography: true, requiredPermissions: [] },
-  // { state: true, requiredPermissions: [] },
-  // { lga: true, requiredPermissions: [] },
+  { geography: true, requiredPermissions: [] },
+  { state: true, requiredPermissions: [] },
+  { lga: true, requiredPermissions: [] },
   // { date: true, requiredPermissions: [] },
-  // { patientOrResearchId: true, requiredPermissions: [] },
+  { patientOrResearchId: true, requiredPermissions: [] },
   // { sampleId: true, requiredPermissions: [] },
   // { errorCode: true, requiredPermissions: [] },
   // {
   //   siteName: true,
   //   requiredPermissions: ['site:view', 'site:admin', 'site:edit'],
   // },
-  // { sampleOriginSite: true, requiredPermissions: [] },
+  { sampleOriginSite: true, requiredPermissions: [] },
   // { workflowStatus: true, requiredPermissions: [] },
   // { treatmentStatus: true, requiredPermissions: [] },
 ]
 
 const searchSanitizer = makeSearchParamsSanitizer({
-  // availableSortCol: [
-  //   'endedOn',
-  //   'deviceName',
-  //   'sampleOriginSiteName',
-  //   'sampleId',
-  //   'errorCode',
-  //   'patientId',
-  //   'resultText',
-  //   'resultWorkflowStatus',
-  //   'treatmentStatusInfo',
-  //   /* --- table.extraColumns BEGIN --- */
-  //   'resultCategory1Name',
-  //   'resultCategory2Name',
-  //   'count',
-  //   'copies',
-  //   /* --- table.extraColumns END --- */
-  // ],
+  availableSortCol: ['externalId', 'attendingClinic', 'patientId', 'status'],
 })
 const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
 const filtersFromLocation = composeSanitizer(
@@ -122,7 +106,7 @@ const RESULT_PAGE_SIZE_BUTTON_KEYS = _.without(PAGE_SIZE_BUTTON_KEYS, ALL_KEY)
 const enhance = compose(
   withProps(
     makeSortPageSelector({
-      sortCol: 'endedOn',
+      sortCol: 'externalId',
       sortDir: 'desc',
     })
   ),
@@ -236,8 +220,8 @@ export const CaseList = ({
       hiddenOn: 'sm',
     },
     {
-      key: 'outcomeStatus',
-      label: intl.formatMessage(messages.outcomeStatus),
+      key: 'status',
+      label: intl.formatMessage(messages.status),
       sortable: true,
     },
   ]
