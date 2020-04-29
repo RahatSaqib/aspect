@@ -33,9 +33,6 @@ const routes = [
         },
       },
       response: {
-        options: {
-          allowUnknown: true,
-        },
         schema: Joi.object().keys({
           ok: Joi.bool()
             .required()
