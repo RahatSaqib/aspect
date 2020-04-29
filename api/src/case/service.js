@@ -93,7 +93,7 @@ async function getCases(query, auth) {
       countryId: 'g.countryId',
       stateId: 'g.stateId',
       lgaId: 'g.lgaId',
-      sampleOriginSiteId: 'sos.id',
+      sampleOriginSite: 'sos.id',
       diseaseId: 'd.id',
     })
     .modify((queryBuilder, params) => {

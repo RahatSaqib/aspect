@@ -23,7 +23,7 @@ const routes = [
           patientOrResearchId: Joi.string()
             .allow('')
             .description('Filter for patient/research ID'),
-          sampleOriginSiteId: Joi.number()
+          sampleOriginSite: Joi.number()
             .description('Filter for sample origin site ID'),
           diseaseId: Joi.number()
             .allow('')
