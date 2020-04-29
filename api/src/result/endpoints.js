@@ -449,6 +449,12 @@ const routes = [
             .iso()
             .allow(null)
             .description('Updated From Date'),
+          diseaseId: Joi.number()
+            .integer()
+            .allow(null)
+            .positive()
+            .optional()
+            .description('The disease ID'),
           maxUpdatedOn: Joi.date()
             .iso()
             .allow(null)

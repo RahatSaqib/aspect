@@ -293,6 +293,7 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
       if (params.assayExternalIds) {
         queryBuilder.whereIn('a.externalId', params.assayExternalIds.split(','))
       }
+      if (params.diseaseId) queryBuilder.where('dis.id', params.diseaseId)
       if (params.resultCategories) {
         queryBuilder.where(builder =>
           builder
@@ -1517,6 +1518,7 @@ async function listFollowUps(request) {
     })
     .modify(addConstraints, dataConstraints, {
       assay: 'a',
+      disease: 'dis',
     })
     .orderBy('fu.id', 'a.id', 'rc1.id', 'rc2.id')
     .select(
