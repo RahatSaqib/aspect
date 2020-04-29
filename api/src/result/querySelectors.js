@@ -22,6 +22,7 @@ const LIST_FIELDS = [
   'st.name as stateName',
   'si.name as siteName',
   'a.name as assayName',
+  'ca.externalId as caseExternalId',
 ]
 
 // Fields used for reports mtb-detected-rr-detected and results_hiv_not_suppressed

@@ -104,6 +104,7 @@ async function getListResults(query, auth, fields = LIST_FIELDS) {
     .clone()
     .count('r.id as count')
     .first()
+
   // get rows
   const getItems = resultQuery
     .clone()
@@ -2081,6 +2082,11 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
             )
             .orWhere('r.researchId', 'like', `%${params.patientOrResearchId}%`)
         )
+      }
+      if (params.caseId) {
+        queryBuilder.whereRaw('UPPER(ca.externalId)=?', [
+          params.caseId.toUpperCase(),
+        ])
       }
     }, query)
     .modify(addPartnerQueryConstraints, dataConstraints)

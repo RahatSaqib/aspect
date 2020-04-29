@@ -1,11 +1,7 @@
-/* eslint-disable linebreak-style */
+import React, { useEffect, useState } from 'react';
 import classnames from 'classnames/bind';
-import React from 'react';
-import { compose, lifecycle, withState } from 'recompose';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import Helmet from 'react-helmet';
-
 import { showAcknowledgement } from '../../appNotification/AppNotificationRedux';
 import { fetchAssays } from '../../assay/AssayRedux';
 import messages from './messages';
@@ -17,126 +13,110 @@ import TargetStatus from './TargetStatus';
 import Reports from './Reports';
 import BrowseSiteDropdown from '../../globals/components/BrowseSiteDropdown';
 import TreatmentStatus from './TreatmentStatus';
-import ClinicalIndicators from './ClinicalIndicators/ClinicalIndicators';
+import ClinicalIndicator from './ClinicalIndicators/ClinicalIndicator';
+import GraphsContainer from '../../MigratedComponents/GraphsContainer';
 import ColorDemo from './ColorDemo/ColorDemo';
 
 const cssClasses = classnames.bind(require('./Status.css'));
 
-const enhance = compose(
-  connect(
-    state => {
-      const assayItems = state.assay.items.toJS();
-      return {
-        userName: state.user.jwt.name,
-        countryIsoAlpha2Code: state.user.culture.substring(3, 5),
-        assays: assayItems.filter(a => a.hasResults)
-      };
-    },
-    bindActionCreators.bind(null, {
-      fetchAssays,
-      showAcknowledgement
-    })
-  ),
-  lifecycle({
-    componentWillReceiveProps(nextProps) {
-      const { location, showAcknowledgement, userName } = nextProps;
-      const search = new URLSearchParams(location.search);
+const Status = ({ history, location, intl, colorDemo = true }) => {
+  const [marginBottom, setMarginBottom] = useState(0);
+  const dispatch = useDispatch();
+  const userName = useSelector(({ user }) => user.jwt.name);
+  const countryIsoAlpha2Code = useSelector(({ user }) =>
+    user.culture.substring(3, 5)
+  );
+  const assays = useSelector(({ assay }) =>
+    assay.items.toJS().filter(a => a.hasResults)
+  );
 
-      if (search.has('fl') && nextProps.userName !== this.props.userName) {
-        showAcknowledgement({
-          title: messages.welcome,
-          messageValues: { userName }
-        });
-      }
-    },
-    componentDidMount() {
-      this.props.fetchAssays(false);
+  useEffect(() => {
+    dispatch(fetchAssays(false));
+  }, []);
+
+  useEffect(() => {
+    const { search } = location;
+    const searchParams = new URLSearchParams(search);
+
+    if (searchParams.has('fl')) {
+      showAcknowledgement({
+        title: messages.welcome,
+        messageValues: { userName }
+      });
     }
-  }),
-  withState('marginBottom', 'setMarginBottom', 0)
-);
+  }, [userName, location]);
 
-const Status = ({
-  history,
-  location,
-  intl,
-  marginBottom,
-  setMarginBottom,
-  countryIsoAlpha2Code,
-  assays,
-  colorDemo = false
-}) => (
-  <div className={cssClasses('Container')} style={{ marginBottom }}>
-    <Helmet title="Status" />
-    <div className={cssClasses('FiltersGroup')}>
-      <BrowseSiteDropdown intl={intl} history={history} location={location} />
-    </div>
-    <SummaryStatus
-      intl={intl}
-      history={history}
-      location={location}
-      className={cssClasses('Section--summary')}
-    />
-    {colorDemo && <ColorDemo vars={process.env} />}
-    {assays && assays.length ? (
-      <ClinicalIndicators
+  return (
+    <div className={cssClasses('Container')} style={{ marginBottom }}>
+      <Helmet title="Status" />
+      <div className={cssClasses('FiltersGroup')}>
+        <BrowseSiteDropdown intl={intl} history={history} location={location} />
+      </div>
+      <SummaryStatus
+        intl={intl}
+        history={history}
+        location={location}
+        className={cssClasses('Section--summary')}
+      />
+
+      <GraphsContainer
         intl={intl}
         history={history}
         location={location}
         assays={assays}
       />
-    ) : null}
-    <TreatmentStatus
-      intl={intl}
-      history={history}
-      location={location}
-      className={cssClasses('Section--withDropdown')}
-      title={intl.formatMessage(messages.treatmentTitle)}
-    />
-    <TargetStatus
-      intl={intl}
-      history={history}
-      location={location}
-      className={cssClasses('Section--withDropdown')}
-      title={intl.formatMessage(messages.targetsTitle)}
-    />
-    <ActionStatus
-      intl={intl}
-      history={history}
-      location={location}
-      className={cssClasses('Section--withDropdown')}
-      title={intl.formatMessage(messages.actionTitle)}
-      marginBottom={marginBottom}
-      setMarginBottom={setMarginBottom}
-    />
-    {/* ========Commenting out as per ASP-940 ==============
-    <ResultStatus
-      intl={intl}
-      countryIsoAlpha2Code={countryIsoAlpha2Code}
-      className={cssClasses('Section--withStatus')}
-      title={intl.formatMessage(messages.clinicalTitle)}
-    /> */}
-    <SiteStatus
-      history={history}
-      intl={intl}
-      countryIsoAlpha2Code={countryIsoAlpha2Code}
-      className={cssClasses('Section--withStatus')}
-      title={intl.formatMessage(messages.sitesTitle)}
-    />
-    <InventoryStatus
-      history={history}
-      intl={intl}
-      countryIsoAlpha2Code={countryIsoAlpha2Code}
-      className={cssClasses('Section--withStatus')}
-      title={intl.formatMessage(messages.consumableTitle)}
-    />
-    <Reports
-      intl={intl}
-      location={location}
-      className={cssClasses('Section--withStatus')}
-      title={intl.formatMessage(messages.reportsTitle)}
-    />
-  </div>
-);
+      {/* <ClinicalIndicator
+        intl={intl}
+        history={history}
+        location={location}
+        assays={assays}
+      /> */}
+      <TreatmentStatus
+        intl={intl}
+        history={history}
+        location={location}
+        className={cssClasses('Section--withDropdown')}
+        title={intl.formatMessage(messages.treatmentTitle)}
+      />
+      {colorDemo && <ColorDemo vars={process.env} />}
+      <TargetStatus
+        intl={intl}
+        history={history}
+        location={location}
+        className={cssClasses('Section--withDropdown')}
+        title={intl.formatMessage(messages.targetsTitle)}
+      />
+      <ActionStatus
+        intl={intl}
+        history={history}
+        location={location}
+        className={cssClasses('Section--withDropdown')}
+        title={intl.formatMessage(messages.actionTitle)}
+        marginBottom={marginBottom}
+        setMarginBottom={setMarginBottom}
+      />
+      <SiteStatus
+        history={history}
+        intl={intl}
+        countryIsoAlpha2Code={countryIsoAlpha2Code}
+        className={cssClasses('Section--withStatus')}
+        title={intl.formatMessage(messages.sitesTitle)}
+      />
+      <InventoryStatus
+        history={history}
+        intl={intl}
+        countryIsoAlpha2Code={countryIsoAlpha2Code}
+        className={cssClasses('Section--withStatus')}
+        title={intl.formatMessage(messages.consumableTitle)}
+      />
+      <Reports
+        intl={intl}
+        location={location}
+        className={cssClasses('Section--withStatus')}
+        title={intl.formatMessage(messages.reportsTitle)}
+      />
+    </div>
+  );
+};
 
-export default enhance(Status);
+export default Status;

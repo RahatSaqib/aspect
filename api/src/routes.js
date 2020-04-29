@@ -241,28 +241,70 @@ function validateDateRangeParams() {
       .description('To Date'),
   }
 }
+const baseResultResponse = {
+  id: Joi.number()
+    .required()
+    .description('Unique ID of the result for this instance of Aspect'),
+  deviceName: Joi.string()
+    .allow('')
+    .description('Filter for device name'),
+  sampleId: Joi.string()
+    .allow(null)
+    .description('Sample id'),
+  externalId: Joi.string()
+    .allow(null)
+    .description('Unique ID of the result for this diagnostic device'),
+  startedOn: Joi.date()
+    .allow(null)
+    .description(
+      'When sample processing started. Note that the zone designator is empty because this is the local date/time as reported by the device. This should be shown as is and not converted to the user time zone.'
+    ),
+  endedOn: Joi.date()
+    .allow(null)
+    .description(
+      'When sample processing ended. Note that the zone designator is empty because this is the local date/time as reported by the device. This should be shown as is and not converted to the user time zone.'
+    ),
+  stateName: Joi.string()
+    .allow(null)
+    .description("The device's state name"),
+  resultCategory1Name: Joi.string()
+    .allow(null)
+    .description("The result's category 1 name"),
+  resultCategory2Name: Joi.string()
+    .allow(null)
+    .description("The result's category 2 name"),
+  siteName: Joi.string()
+    .allow(null)
+    .description('The name of the site'),
+  assayId: Joi.number()
+    .integer()
+    .description('The id of the assay'),
+  sampleOriginSiteName: Joi.string()
+    .allow(null)
+    .description('Sample original site name'),
+  patientId: Joi.string()
+    .allow(null)
+    .description('The patient Id'),
+  treatmentStatusInfo: Joi.string()
+    .allow(null, '')
+    .description('treatment status info'),
+  errorCode: Joi.string()
+    .allow(null)
+    .description(
+      'If an error occurred, contains the error code from the device'
+    ),
+  resultWorkflowStatus: Joi.string()
+    .allow(null)
+    .description("The result's Workflow status name"),
+  caseExternalId: Joi.string()
+    .optional()
+    .allow(null, '')
+    .description('The id of the case'),
+}
 
-function validateResultResponse() {
+function validateFullResultResponse() {
   return {
-    id: Joi.number()
-      .required()
-      .description('Unique ID of the result for this instance of Aspect'),
-    deviceName: Joi.string()
-      .allow('')
-      .description('Filter for device name'),
-    externalId: Joi.string()
-      .allow(null)
-      .description('Unique ID of the result for this diagnostic device'),
-    startedOn: Joi.date()
-      .allow(null)
-      .description(
-        'When sample processing started. Note that the zone designator is empty because this is the local date/time as reported by the device. This should be shown as is and not converted to the user time zone.'
-      ),
-    endedOn: Joi.date()
-      .allow(null)
-      .description(
-        'When sample processing ended. Note that the zone designator is empty because this is the local date/time as reported by the device. This should be shown as is and not converted to the user time zone.'
-      ),
+    ...baseResultResponse,
     createdOn: Joi.date()
       .required()
       .description(
@@ -282,27 +324,15 @@ function validateResultResponse() {
       .allow(null, '')
       .description('The device serial number'),
     countryName: Joi.string().description("The device's country name"),
-    stateName: Joi.string()
-      .allow(null)
-      .description("The device's state name"),
     lgaName: Joi.string()
       .allow(null)
       .description("The device's lga name"),
     resultWorkflowChangedOn: Joi.date()
       .allow(null)
       .description('The date when status was changed'),
-    resultCategory1Name: Joi.string()
-      .allow(null)
-      .description("The result's category 1 name"),
-    resultCategory2Name: Joi.string()
-      .allow(null)
-      .description("The result's category 2 name"),
     resultWorkflowStatusId: Joi.number()
       .integer()
       .description("The result's workflow status id"),
-    resultWorkflowStatus: Joi.string()
-      .allow(null)
-      .description("The result's Workflow status name"),
     resultWorkflowStatusExternalId: Joi.string()
       .allow(null)
       .description("The result's Workflow status name"),
@@ -318,9 +348,6 @@ function validateResultResponse() {
     resultTreatmentStatusCreatedBy: Joi.string()
       .allow(null)
       .description('The name of the user that created the note'),
-    siteName: Joi.string()
-      .allow(null)
-      .description('The name of the site'),
     assayVersion: Joi.string()
       .allow(null)
       .description('The assay Version'),
@@ -357,38 +384,21 @@ function validateResultResponse() {
     notes: Joi.string()
       .allow(null)
       .description('Any notes entered for the sample'),
-    errorCode: Joi.string()
-      .allow(null)
-      .description(
-        'If an error occurred, contains the error code from the device'
-      ),
     errorNotes: Joi.string()
       .allow(null)
       .description('Contains any details about the error'),
-    assayId: Joi.number()
-      .integer()
-      .description('The id of the assay'),
     sampleOriginSiteId: Joi.number()
       .integer()
       .description('the id of the original site'),
-    sampleId: Joi.string()
-      .allow(null)
-      .description('Sample id'),
     sampleGroup: Joi.string()
       .allow(null)
       .description('Sample group'),
     sampleCollectedOn: Joi.date()
       .allow(null)
       .description('The date when the sample has been collected'),
-    sampleOriginSiteName: Joi.string()
-      .allow(null)
-      .description('Sample original site name'),
     sampleTypeName: Joi.string()
       .allow(null)
       .description('Sample type name'),
-    patientId: Joi.string()
-      .allow(null)
-      .description('The patient Id'),
     patientData: Joi.object()
       .allow(null)
       .description('The patient data'),
@@ -434,9 +444,6 @@ function validateResultResponse() {
     resultTreatmentStatus: Joi.string()
       .allow(null, '')
       .description('ExternalId of the result treatment status'),
-    treatmentStatusInfo: Joi.string()
-      .allow(null, '')
-      .description('treatment status info'),
     resultTreatmentData: Joi.string()
       .allow(null, '')
       .description('Operator from latest ResultTreatmentWorkflowLog'),
@@ -525,5 +532,6 @@ module.exports = {
   getSortPageParams,
   validateSortPageParams,
   validateDateRangeParams,
-  validateResultResponse,
+  validateFullResultResponse,
+  baseResultResponse,
 }
