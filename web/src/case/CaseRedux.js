@@ -1,0 +1,151 @@
+import { stringify } from 'querystring'
+import _ from 'lodash'
+import Immutable from 'immutable'
+import { defineMessages } from 'react-intl'
+
+import { aspectFetch } from '../shared/utils/fetch'
+import {
+  filterFieldsRejectedError,
+  errorPleaseTryAgainInAFewMinutes,
+  errorInsufficientScope,
+} from '../error/CommonErrorNotifications'
+import { receiveList, Items } from '../shared/metaReducers/items'
+import {
+  requestTable,
+  receiveTableItems,
+  Table,
+} from '../shared/metaReducers/table'
+import screenSchema from './CaseScreenSchema.json'
+
+export const types = {
+  REQUEST_CASESS: 'REQUEST_CASES',
+  RECEIVE_CASES: 'RECEIVE_CASES',
+  REJECTED_CASES: 'REJECTED_CASES',
+}
+/*
+ * ---------------- Action Creators -----------------
+ */
+function requestCases(sortCol, sortDir, page, size, filters) {
+  return {
+    type: types.REQUEST_CASES,
+    sortCol,
+    sortDir,
+    page,
+    size,
+    filters,
+  }
+}
+
+function receiveCases(json) {
+  return {
+    type: types.RECEIVE_CASES,
+    // items: json.data,
+    items: [
+      {
+        externalId: 'asdf',
+        attendingClinic: 'a clinic',
+        patientId: 'a patientId',
+        outcome: 'Active',
+      },
+    ],
+    total: 2,
+    // total: json.total,
+  }
+}
+
+function rejectCases() {
+  return {
+    type: types.REJECTED_CASES,
+  }
+}
+
+export function fetchCases(filtersParams, sortCol, sortDir, page, pageSize) {
+  return dispatch => {
+    // const filters = _.fromPairs([...filtersParams.entries()])
+    // dispatch(requestCases(sortCol, sortDir, page, pageSize, filters))
+    // sortCol = sortCol || 'caseId'
+
+    // return aspectFetch(
+    //   `/case?${stringify({
+    //     sortCol,
+    //     sortDir,
+    //     page,
+    //     size: pageSize,
+    //     ...filters,
+    //   })}`,
+    //   {
+    //     errorNotifications: {
+    //       400: filterFieldsRejectedError(
+    //         defineMessages({
+    //           title: {
+    //             id: 'errorResponseMessages.fetchCases.GET.400.title',
+    //             defaultMessage: 'Searching Cases Failed',
+    //           },
+    //         })
+    //       ),
+    //       403: errorInsufficientScope(
+    //         defineMessages({
+    //           title: {
+    //             id: 'errorResponseMessages.fetchPersons.GET.403.title',
+    //             defaultMessage: 'Insufficient Permissions',
+    //           },
+    //         })
+    //       ),
+    //       default: errorPleaseTryAgainInAFewMinutes(
+    //         defineMessages({
+    //           title: {
+    //             id: 'errorResponseMessages.fetchCases.GET.default.title',
+    //             defaultMessage: 'Loading Cases Failed',
+    //           },
+    //         })
+    //       ),
+    //     },
+    //   }
+    // )
+    //   .then(json => dispatch(receiveCases(json)))
+    //   .catch(() => dispatch(rejectCases()))
+
+    dispatch(receiveCases())
+  }
+}
+
+export const Case = Immutable.Record({
+  items: new Items(),
+  table: new Table({
+    sortCol: 'externalId',
+    sortDir: 'desc',
+    pageSize: 10,
+    filters: Immutable.fromJS({
+      countryId: null,
+      stateId: null,
+      lgaId: null,
+      diseaseId: null,
+      sampleOriginSiteId: null,
+      caseId: '',
+    }),
+  }),
+  screenSchema: new Immutable.fromJS(screenSchema),
+  loading: true,
+})
+
+const initialState = new Case()
+
+export default function caseReducer(state = initialState, action) {
+  switch (action.type) {
+    case types.REQUEST_CASES:
+      return state.set('table', requestTable(state.table, action))
+    case types.RECEIVE_CASES:
+      return state.withMutations(mutState => {
+        const immutList = Immutable.fromJS(action.items)
+        mutState.set('items', receiveList(mutState.items, immutList))
+        mutState.set('table', receiveTableItems(mutState.table, action.total))
+      })
+    case types.REJECTED_CASES:
+      return state.withMutations(mutState => {
+        mutState.set('items', mutState.get('items').clear())
+        mutState.set('table', mutState.get('table').clear())
+      })
+    default:
+      return state
+  }
+}

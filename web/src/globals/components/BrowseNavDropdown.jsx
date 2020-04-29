@@ -13,6 +13,7 @@ const navigations = [
   { value: '/browse/notification', label: 'Notifications' },
   { value: '/browse/report', label: 'Reports' },
   { value: '/browse/deviceApiKey', label: 'Device API Keys' },
+  { value: '/browse/case', label: 'Cases' },
 ]
 
 const enhance = compose(
