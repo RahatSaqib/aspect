@@ -2,8 +2,7 @@ const { knex, filterParams, sortPageParams } = require('../db')
 const { getConstraints } = require('../auth/constraints')
 const { addPartnerQueryConstraints } = require('../result/service')
 
-const tblName = 'Case'
-const tblSelector = `${tblName} as cs`
+const 'Case as cs' = `${'Case'} as cs`
 
 function validateCaseIdentifier(_case) {
   let errors = ''
@@ -24,7 +23,7 @@ function validateCaseIdentifier(_case) {
 async function getCaseId(_case, createIfNonExistent) {
   validateCaseIdentifier(_case)
 
-  let { caseId } = (await knex(tblName)
+  let { caseId } = (await knex('Case')
     .where({
       externalId: _case.externalId,
       partnerId: _case.partnerId,
@@ -42,7 +41,7 @@ async function getCaseId(_case, createIfNonExistent) {
  * @return {int} The created case id
  */
 async function addCase(_case) {
-  const [caseId] = await knex(tblName).insert(_case)
+  const [caseId] = await knex('Case').insert(_case)
   return caseId
 }
 
@@ -52,7 +51,7 @@ async function addCase(_case) {
  * @return {boolean} True if the action was successful
  */
 async function removeCase(_case) {
-  await knex(tblName)
+  await knex('Case')
     .where(_case)
     .del()
 }
@@ -60,7 +59,7 @@ async function removeCase(_case) {
 async function getCase(_case) {
   validateCaseIdentifier()
 
-  return knex(tblName)
+  return knex('Case')
     .where({
       externalId: _case.externalId,
       partnerId: _case.partnerId,
@@ -72,7 +71,7 @@ async function getCases(query, auth) {
   const dataConstraints = await getConstraints(auth.credentials)
 
   // Querying the last result for each case that has a sample origin site
-  const lastResults = knex(tblSelector)
+  const lastResults = knex('Case as cs')
     .innerJoin('Result as r', 'cs.id', 'r.caseId')
     .innerJoin('Sample as s', 'r.sampleId', 's.id')
     .innerJoin('Site as sos', 's.originSiteId', 'sos.id')
@@ -81,7 +80,7 @@ async function getCases(query, auth) {
     .as('lr')
 
   // Main query only works with each last result per case
-  const casesQuery = knex(tblSelector)
+  const casesQuery = knex('Case as cs')
     .innerJoin(lastResults, 'cs.id', 'lr.caseId')
     .innerJoin('Result as r', 'lr.lastResultId', 'r.id')
     .innerJoin('Geography as g', 'r.geographyId', 'g.id')
