@@ -39,17 +39,8 @@ function requestCases(sortCol, sortDir, page, size, filters) {
 function receiveCases(json) {
   return {
     type: types.RECEIVE_CASES,
-    // items: json.data,
-    items: [
-      {
-        externalId: 'asdf',
-        attendingClinic: 'a clinic',
-        patientId: 'a patientId',
-        outcome: 'Active',
-      },
-    ],
-    total: 2,
-    // total: json.total,
+    items: json.data,
+    total: json.total,
   }
 }
 
