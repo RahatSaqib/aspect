@@ -69,34 +69,21 @@ const messages = defineMessages({
 })
 
 const FILTERS_CONFIG = [
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> Showing cases table using a mock
   // {
   //   assayAndResultCategory: true,
   //   requiredPermissions: ['assay:view', 'assay:admin', 'assay:edit'],
   // },
-<<<<<<< HEAD
   { geography: true, requiredPermissions: [] },
   { state: true, requiredPermissions: [] },
   { lga: true, requiredPermissions: [] },
   // { date: true, requiredPermissions: [] },
   { patientOrResearchId: true, requiredPermissions: [] },
-=======
-  // { geography: true, requiredPermissions: [] },
-  // { state: true, requiredPermissions: [] },
-  // { lga: true, requiredPermissions: [] },
-  // { date: true, requiredPermissions: [] },
-  // { patientOrResearchId: true, requiredPermissions: [] },
->>>>>>> Showing cases table using a mock
   // { sampleId: true, requiredPermissions: [] },
   // { errorCode: true, requiredPermissions: [] },
   // {
   //   siteName: true,
   //   requiredPermissions: ['site:view', 'site:admin', 'site:edit'],
   // },
-<<<<<<< HEAD
   { sampleOriginSite: true, requiredPermissions: [] },
   // { workflowStatus: true, requiredPermissions: [] },
   // { treatmentStatus: true, requiredPermissions: [] },
@@ -104,71 +91,6 @@ const FILTERS_CONFIG = [
 
 const searchSanitizer = makeSearchParamsSanitizer({
   availableSortCol: ['externalId', 'attendingClinic', 'patientId', 'status'],
-=======
-  {
-    assayAndResultCategory: true,
-    requiredPermissions: ['assay:view', 'assay:admin', 'assay:edit'],
-  },
-  { geography: true, requiredPermissions: [] },
-  { state: true, requiredPermissions: [] },
-  { lga: true, requiredPermissions: [] },
-  { date: true, requiredPermissions: [] },
-  { patientOrResearchId: true, requiredPermissions: [] },
-  { sampleId: true, requiredPermissions: [] },
-  { errorCode: true, requiredPermissions: [] },
-  {
-    siteName: true,
-    requiredPermissions: ['site:view', 'site:admin', 'site:edit'],
-  },
-  { sampleOriginSite: true, requiredPermissions: [] },
-  { workflowStatus: true, requiredPermissions: [] },
-  { treatmentStatus: true, requiredPermissions: [] },
-]
-
-const searchSanitizer = makeSearchParamsSanitizer({
-  availableSortCol: [
-    'endedOn',
-    'deviceName',
-    'sampleOriginSiteName',
-    'sampleId',
-    'errorCode',
-    'patientId',
-    'resultText',
-    'resultWorkflowStatus',
-    'treatmentStatusInfo',
-    /* --- table.extraColumns BEGIN --- */
-    'resultCategory1Name',
-    'resultCategory2Name',
-    'count',
-    'copies',
-    /* --- table.extraColumns END --- */
-  ],
->>>>>>> Created files for case listing
-=======
-  // { sampleOriginSite: true, requiredPermissions: [] },
-  // { workflowStatus: true, requiredPermissions: [] },
-  // { treatmentStatus: true, requiredPermissions: [] },
-]
-
-const searchSanitizer = makeSearchParamsSanitizer({
-  // availableSortCol: [
-  //   'endedOn',
-  //   'deviceName',
-  //   'sampleOriginSiteName',
-  //   'sampleId',
-  //   'errorCode',
-  //   'patientId',
-  //   'resultText',
-  //   'resultWorkflowStatus',
-  //   'treatmentStatusInfo',
-  //   /* --- table.extraColumns BEGIN --- */
-  //   'resultCategory1Name',
-  //   'resultCategory2Name',
-  //   'count',
-  //   'copies',
-  //   /* --- table.extraColumns END --- */
-  // ],
->>>>>>> Showing cases table using a mock
 })
 const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
 const filtersFromLocation = composeSanitizer(
@@ -184,55 +106,24 @@ const RESULT_PAGE_SIZE_BUTTON_KEYS = _.without(PAGE_SIZE_BUTTON_KEYS, ALL_KEY)
 const enhance = compose(
   withProps(
     makeSortPageSelector({
-<<<<<<< HEAD
       sortCol: 'externalId',
-=======
-      sortCol: 'endedOn',
->>>>>>> Created files for case listing
       sortDir: 'desc',
     })
   ),
   connect(
     state => ({
-<<<<<<< HEAD
-<<<<<<< HEAD
       items: state.case.items,
       table: state.case.table,
       userPermissions: state.user.jwt.permissions,
     }),
     bindActionCreators.bind(null, {
       fetchCases,
-=======
-      items: state.result.items,
-      table: state.result.table,
-      userPermissions: state.user.jwt.permissions,
-    }),
-    bindActionCreators.bind(null, {
-      fetchResults,
-      exportResults,
->>>>>>> Created files for case listing
-=======
-      items: state.case.items,
-      table: state.case.table,
-      userPermissions: state.user.jwt.permissions,
-    }),
-    bindActionCreators.bind(null, {
-      fetchCases,
->>>>>>> Showing cases table using a mock
     })
   ),
   withHandlers({
     onInitialLoad: ({
       location,
-<<<<<<< HEAD
-<<<<<<< HEAD
       fetchCases,
-=======
-      fetchResults,
->>>>>>> Created files for case listing
-=======
-      fetchCases,
->>>>>>> Showing cases table using a mock
       sortCol,
       sortDir,
       pageAt,
@@ -240,52 +131,9 @@ const enhance = compose(
     }) => () => {
       const { sanitized, value: filtersParams } = filtersFromLocation(location)
       if (!sanitized) {
-<<<<<<< HEAD
-<<<<<<< HEAD
         fetchCases(filtersParams, sortCol, sortDir, pageAt, pageSize)
       }
     },
-=======
-        fetchResults(filtersParams, sortCol, sortDir, pageAt, pageSize)
-      }
-    },
-    onAddNewButtonClick: ({ history }) => {
-      history.push('/browse/result/add')
-    },
-    onExportClick: ({
-      location,
-      exportResults,
-      sortCol,
-      sortDir,
-      pageAt,
-      pageSize,
-    }) => formatType => {
-      const { sanitized, value: filtersParams } = filtersFromLocation(location)
-      if (!sanitized) {
-        exportResults(
-          filtersParams,
-          formatType.id,
-          sortCol,
-          sortDir,
-          pageAt,
-          pageSize,
-          formatType.id,
-          'results'
-        )
-      }
-    },
-
-    onRowClick: ({ history }) => ({
-      currentTarget: {
-        dataset: { resultId },
-      },
-    }) => history.push(`/browse/result/${resultId}`),
->>>>>>> Created files for case listing
-=======
-        fetchCases(filtersParams, sortCol, sortDir, pageAt, pageSize)
-      }
-    },
->>>>>>> Showing cases table using a mock
   }),
   lifecycle({
     componentWillMount() {
@@ -335,15 +183,7 @@ const messageByI18nKey = _.partial(
   }
 )
 
-<<<<<<< HEAD
-<<<<<<< HEAD
 export const CaseList = ({
-=======
-export const ResultList = ({
->>>>>>> Created files for case listing
-=======
-export const CaseList = ({
->>>>>>> Showing cases table using a mock
   intl,
   history,
   location,
@@ -354,20 +194,10 @@ export const CaseList = ({
   sortDir,
   pageAt,
   pageSize,
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-  onExportClick,
-  onAddNewButtonClick,
->>>>>>> Created files for case listing
-=======
->>>>>>> Showing cases table using a mock
   onRowClick,
   reducedFilters,
 }) => {
   const AddNewButton = requirePermissions({
-<<<<<<< HEAD
-<<<<<<< HEAD
     permissions: ['case:edit', 'case:admin'],
   })(AspectButton)
 
@@ -396,40 +226,6 @@ export const CaseList = ({
     },
   ]
 
-=======
-    permissions: ['result:edit', 'result:admin'],
-  })(AspectButton)
->>>>>>> Created files for case listing
-=======
-    permissions: ['case:edit', 'case:admin'],
-  })(AspectButton)
-
-  const columns = [
-    {
-      key: 'code',
-      label: intl.formatMessage(messages.code),
-      sortable: true,
-    },
-    {
-      key: 'attendingClinic',
-      label: intl.formatMessage(messages.attendingClinic),
-      sortable: true,
-      hiddenOn: 'sm',
-    },
-    {
-      key: 'patientId',
-      label: intl.formatMessage(messages.patientId),
-      sortable: true,
-      hiddenOn: 'sm',
-    },
-    {
-      key: 'outcomeStatus',
-      label: intl.formatMessage(messages.outcomeStatus),
-      sortable: true,
-    },
-  ]
-
->>>>>>> Showing cases table using a mock
   return (
     <div className={cssClasses('Container')}>
       <Helmet title={intl.formatMessage(messages.resultsTitle)} />
@@ -439,136 +235,28 @@ export const CaseList = ({
         location={location}
         intl={intl}
         config={reducedFilters}
-<<<<<<< HEAD
-<<<<<<< HEAD
         askConfirmationForExport={table.total > 1000}
       />
       <DataTableCard key={`DataTableCard--table-${location.key}`}>
         <DataTableProgressBar disabled={!table.loading} />
-=======
-        onClickExport={onExportClick}
-=======
->>>>>>> Showing cases table using a mock
-        askConfirmationForExport={table.total > 1000}
-      />
-      <DataTableCard key={`DataTableCard--table-${location.key}`}>
-        <DataTableProgressBar disabled={!table.loading} />
-<<<<<<< HEAD
-        <ExportListButton
-          onExcelClick={onExportClick}
-          onCsvClick={onExportClick}
-          visible={!items.currentIdList.isEmpty()}
-          reportName="Results"
-        />
->>>>>>> Created files for case listing
-=======
->>>>>>> Showing cases table using a mock
         {items.currentIdList.isEmpty() && (
           <BrowseEmptyList history={history} location={location} intl={intl} />
         )}
         {!items.currentIdList.isEmpty() && (
-<<<<<<< HEAD
-<<<<<<< HEAD
           <CaseDataTable
             selectable={false}
             className={cssClasses('CaseDataTable')}
           >
             <CaseDataTableHead
-=======
-          <ResultDataTable
-=======
-          <CaseDataTable
->>>>>>> Showing cases table using a mock
-            selectable={false}
-            className={cssClasses('CaseDataTable')}
-          >
-<<<<<<< HEAD
-            <ResultDataTableHead
->>>>>>> Created files for case listing
-=======
-            <CaseDataTableHead
->>>>>>> Showing cases table using a mock
               history={history}
               location={location}
               sortColumnKey={sortCol}
               sortColumnDir={sortDir}
-<<<<<<< HEAD
-<<<<<<< HEAD
               columns={Immutable.List(columns)}
-=======
-              columns={Immutable.List([
-                {
-                  key: 'endedOn',
-                  label: intl.formatMessage(messages.endedOn),
-                  sortable: true,
-                },
-                {
-                  key: 'deviceName',
-                  label: intl.formatMessage(messages.deviceName),
-                  sortable: true,
-                  hiddenOn: 'sm',
-                },
-                {
-                  key: 'sampleOriginSiteName',
-                  label: intl.formatMessage(messages.sampleOriginSiteName),
-                  sortable: true,
-                  hiddenOn: 'sm',
-                },
-                {
-                  key: 'sampleId',
-                  label: intl.formatMessage(messages.sampleId),
-                  sortable: true,
-                },
-                {
-                  key: 'resultText',
-                  label: intl.formatMessage(messages.resultText),
-                  sortable: true,
-                },
-                {
-                  key: 'errorCode',
-                  label: intl.formatMessage(messages.errorCode),
-                  sortable: true,
-                  hiddenOn: 'md',
-                },
-                {
-                  key: 'resultWorkflowStatus',
-                  label: intl.formatMessage(messages.resultWorkflowStatus),
-                  sortable: true,
-                  hiddenOn: 'sm',
-                },
-                {
-                  key: 'treatmentStatusInfo',
-                  label: intl.formatMessage(messages.resultTreatmentStatus),
-                  sortable: true,
-                  hiddenOn: 'sm',
-                },
-                {
-                  key: 'patientId',
-                  label: intl.formatMessage(messages.patiendId),
-                  sortable: true,
-                  hiddenOn: 'xs',
-                },
-              ]).concat(
-                table.extraColumns.map(column => ({
-                  key: column.get('db'),
-                  label: messageByI18nKey(column.get('i18nKey'))(
-                    column.get('title'),
-                    intl
-                  ),
-                  sortable: true,
-                  hiddenOn: 'md',
-                }))
-              )}
->>>>>>> Created files for case listing
-=======
-              columns={Immutable.List(columns)}
->>>>>>> Showing cases table using a mock
             />
             <TableBody>
               {items.currentIdList
                 .map(id => items.byId.get(id))
-<<<<<<< HEAD
-<<<<<<< HEAD
                 .map(_case => (
                   <CaseDataTableRow
                     key={_case.get('id')}
@@ -580,28 +268,6 @@ export const CaseList = ({
                 ))}
             </TableBody>
           </CaseDataTable>
-=======
-                .map(result => (
-                  <ResultDataTableRow
-                    key={result.get('id')}
-=======
-                .map(_case => (
-                  <CaseDataTableRow
-                    key={_case.get('id')}
->>>>>>> Showing cases table using a mock
-                    intl={intl}
-                    _case={_case}
-                    onClick={onRowClick}
-                    data-result-id={_case.get('id')}
-                  />
-                ))}
-            </TableBody>
-<<<<<<< HEAD
-          </ResultDataTable>
->>>>>>> Created files for case listing
-=======
-          </CaseDataTable>
->>>>>>> Showing cases table using a mock
         )}
         {!items.currentIdList.isEmpty() && (
           <BrowseTablePaginator
@@ -621,12 +287,4 @@ export const CaseList = ({
   )
 }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
 export default enhance(CaseList)
-=======
-export default enhance(ResultList)
->>>>>>> Created files for case listing
-=======
-export default enhance(CaseList)
->>>>>>> Showing cases table using a mock
