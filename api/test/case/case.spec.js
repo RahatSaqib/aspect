@@ -87,7 +87,7 @@ describe('case/service', () => {
       const unexistentClinicId = _.random(1000000, 9999999)
 
       const res = await server
-        .get(`${path}?sampleOriginSiteId=${unexistentClinicId}`)
+        .get(`${path}?sampleOriginSite=${unexistentClinicId}`)
         .set('Authorization', `Bearer ${accessToken}`)
 
       assert.equal(res.status, 200)
