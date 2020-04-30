@@ -126,7 +126,7 @@ async function getCases({ query, auth }) {
 
   const getItems = casesQuery
     .clone()
-    .modify(sortPageParams, query, 'endedOn')
+    .modify(sortPageParams, query, 'externalId')
     .select()
 
   // return result when both queries are finished
