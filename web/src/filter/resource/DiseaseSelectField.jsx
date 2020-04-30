@@ -96,7 +96,10 @@ export const DiseaseSelectField = ({
     {...restProps}
     onChange={onChange}
     disabled={
-      restProps.disabled || diseases.loading || diseases.items.isEmpty()
+      restProps.disabled ||
+      diseases.loading ||
+      diseases.items.isEmpty() ||
+      diseases.items.size <= 1
     }
   >
     {allItemText && <MenuItem value="all">{allItemText}</MenuItem>}

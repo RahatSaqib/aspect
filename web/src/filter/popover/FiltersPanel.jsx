@@ -14,6 +14,7 @@ import StateSelectField from '../geography/StateSelectField'
 import LgaSelectField from '../geography/LgaSelectField'
 import PartnerSelectField from '../partner/PartnerSelectField'
 import AssaySelectField from '../resource/AssaySelectField'
+import DiseaseSelectField from '../resource/DiseaseSelectField'
 import ResultCategorySelectField from '../resource/ResultCategorySelectField'
 import ConsumableSelectField from '../resource/ConsumableSelectField'
 import SiteAutoCompleteField from '../resource/SiteAutoCompleteField'
@@ -34,7 +35,8 @@ const enhance = compose(
 
     onAssayChange: ({ onChangeFilters }) => assayId =>
       onChangeFilters({ assayId }),
-
+    onDiseaseChange: ({ onChangeFilters }) => diseaseId =>
+      onChangeFilters({ diseaseId }),
     onDateChange: ({ onChangeFilters }) => dateValues =>
       onChangeFilters(dateValues),
 
@@ -256,6 +258,14 @@ const messages = defineMessages({
     id: 'filter.popover.selectAssay',
     defaultMessage: 'Select assay...',
   },
+  disease: {
+    id: 'filter.popover.disease',
+    defaultMessage: 'Disease',
+  },
+  selectDisease: {
+    id: 'filter.popover.selectDisease',
+    defaultMessage: 'Select Disease...',
+  },
   lga: {
     id: 'filter.popover.lga',
     defaultMessage: 'Area',
@@ -356,7 +366,6 @@ export const FiltersPanel = ({
   className,
   disabled,
   contentClassName,
-
   filters,
   config,
   dateFilterLabel,
@@ -368,6 +377,7 @@ export const FiltersPanel = ({
   onStateIdChange,
   onLgaIdChange,
   onAssayChange,
+  onDiseaseChange,
   onResultCategoryChange,
   onConsumableIdChange,
   onPartnerIdChange,
@@ -492,10 +502,26 @@ export const FiltersPanel = ({
         )}
         {config.assayAndResultCategory && (
           <div className={cssClasses('Control')}>
+            <DiseaseSelectField
+              allItemText={intl.formatMessage(messages.all)}
+              value={filters.diseaseId}
+              onDiseaseIdChange={onDiseaseChange}
+              floatingLabelFixed
+              hintText={intl.formatMessage(messages.selectDisease)}
+              floatingLabelText={intl.formatMessage(messages.disease)}
+              intl={intl}
+              style={{ verticalAlign: 'bottom' }}
+            />
+          </div>
+        )}
+
+        {config.assayAndResultCategory && (
+          <div className={cssClasses('Control')}>
             <AssaySelectField
               allItemText={intl.formatMessage(messages.all)}
               value={filters.assayId}
               onAssayChange={onAssayChange}
+              diseaseId={filters.diseaseId}
               floatingLabelFixed
               hintText={intl.formatMessage(messages.selectAssay)}
               floatingLabelText={intl.formatMessage(messages.assay)}

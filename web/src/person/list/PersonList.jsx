@@ -186,7 +186,6 @@ const enhance = compose(
       } = filtersSanitizer(searchParams.get('filters') || '')
       if (sanitized || filtersSanitized) {
         searchParams.set('filters', filtersParams)
-
         this.props.history.replace({
           ...this.props.location,
           search: searchParams.toString(),
@@ -196,6 +195,7 @@ const enhance = compose(
         FILTERS_CONFIG,
         this.props.userPermissions
       )
+
       this.setState({
         reducedFilters,
       })

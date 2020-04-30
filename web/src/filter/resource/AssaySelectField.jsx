@@ -228,6 +228,19 @@ export class AssaySelectField extends PureComponent {
     if (isSingleAssay && value !== validAssays.first().get('id')) {
       onAssayChange(validAssays.first().get('id'))
     } else if (validAssays.size === 0 && value) onAssayChange()
+    const validFilteredAssays = assayItems =>
+      assayItems.filter(
+        a =>
+          (!diseaseId ||
+            !a.get('diseaseId') ||
+            a.get('diseaseId').toString() === diseaseId.toString()) &&
+          (!assayTypeId ||
+            !a.get('assayTypeId') ||
+            a.get('assayTypeId').toString() === assayTypeId.toString()) &&
+          (!deviceTypeId ||
+            !a.get('deviceTypeId') ||
+            a.get('deviceTypeId').toString() === deviceTypeId.toString())
+      )
     const textForAssayItem = assayItem => {
       return (
         (messages[assayItem.get('i18nKey')]
@@ -240,27 +253,14 @@ export class AssaySelectField extends PureComponent {
         {...restProps}
         value={value}
         onChange={this.handleChange}
-        disabled={isSingleAssay}
+        disabled={isSingleAssay || validFilteredAssays(validAssays).size <= 1}
       >
         {allItemText && <MenuItem value="all">{allItemText}</MenuItem>}
-        {validAssays
-          .filter(
-            a =>
-              (!diseaseId ||
-                !a.get('diseaseId') ||
-                a.get('diseaseId').toString() === diseaseId.toString()) &&
-              (!assayTypeId ||
-                !a.get('assayTypeId') ||
-                a.get('assayTypeId').toString() === assayTypeId.toString()) &&
-              (!deviceTypeId ||
-                !a.get('deviceTypeId') ||
-                a.get('deviceTypeId').toString() === deviceTypeId.toString())
-          )
-          .map(a => (
-            <MenuItem key={a.get('id')} value={a.get('id')}>
-              {textForAssayItem(a)}
-            </MenuItem>
-          ))}
+        {validFilteredAssays(validAssays).map(a => (
+          <MenuItem key={a.get('id')} value={a.get('id')}>
+            {textForAssayItem(a)}
+          </MenuItem>
+        ))}
       </SelectField>
     )
   }

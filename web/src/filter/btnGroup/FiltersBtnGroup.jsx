@@ -119,6 +119,7 @@ const enhance = compose(
       treatmentStatusItems: state.resultTreatmentStatus.items,
       deviceStatusItems: state.deviceStatus.items,
       deviceTypeItems: state.deviceType.selectList.items,
+      diseaseItems: state.disease.diseases.items,
     }),
     null
   )
@@ -127,6 +128,7 @@ const enhance = compose(
 const filtersOrdering = {
   // Manually keep this in sync with the components ordering in FiltersPanel
   assayId: 4,
+  diseaseId: 3,
   countryId: 1,
   stateId: 2,
   lgaId: 3,
@@ -169,6 +171,11 @@ const buttonBy = {
   assayId: makeButton(({ assayItems }, assayId) =>
     assayItems
       .find(it => it.get('id') === assayId, EMPTY_CONTEXT, EMPTY_MAP)
+      .get('name')
+  ),
+  diseaseId: makeButton(({ diseaseItems }, diseaseId) =>
+    diseaseItems
+      .find(it => it.get('id') === diseaseId, EMPTY_CONTEXT, EMPTY_MAP)
       .get('name')
   ),
   countryId: makeButton(({ countryItems }, countryId) =>

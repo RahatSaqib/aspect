@@ -11,8 +11,8 @@ export function nonEmptyFilterValue(x) {
   return !_.isNull(x) && !_.isUndefined(x) && x !== ''
 }
 
-export const mergeToFiltersParams = (filters, filtersParams) =>
-  _.reduce(
+export const mergeToFiltersParams = (filters, filtersParams) => {
+  return _.reduce(
     filters,
     (filtersParams, v, k) => {
       if (nonEmptyFilterValue(v)) {
@@ -24,6 +24,7 @@ export const mergeToFiltersParams = (filters, filtersParams) =>
     },
     filtersParams
   )
+}
 
 const defaultSanitizer = (a, k) => {
   const { value } = a
@@ -42,7 +43,11 @@ const makeArraySanitizer = keys => a => keys.reduce(defaultSanitizer, a)
 const makeKeySanitizer = k => a => defaultSanitizer(a, k)
 
 const sanitizerByConfigKey = {
-  assayAndResultCategory: makeArraySanitizer(['assayId', 'resultCategoryId']),
+  assayAndResultCategory: makeArraySanitizer([
+    'assayId',
+    'resultCategoryId',
+    'diseaseId',
+  ]),
   geography: makeArraySanitizer(['countryId', 'stateId', 'lgaId']),
   state: _.identity,
   lga: _.identity,

@@ -33,7 +33,6 @@ const enhance = compose(
   withHandlers({
     onChangeFilters: ({ history, location }) => nextFilters => {
       const searchParams = new URLSearchParams(location.search)
-
       const filtersParams = mergeToFiltersParams(
         nextFilters,
         new URLSearchParams(searchParams.get('filters') || '')
@@ -41,7 +40,6 @@ const enhance = compose(
 
       searchParams.set('filters', filtersParams)
       searchParams.delete('pageAt')
-
       history.replace({
         ...location,
         search: searchParams.toString(),
