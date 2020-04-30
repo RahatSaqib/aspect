@@ -98,8 +98,6 @@ async function getListResults(query, auth, fields = LIST_FIELDS) {
   const dataConstraints = await getConstraints(auth.credentials)
 
   const resultQuery = getQueryForResultsListAndExport(query, dataConstraints)
-
-  console.log('resultquery', resultQuery.toString())
   // get total count for paging
   const getCount = resultQuery
     .clone()

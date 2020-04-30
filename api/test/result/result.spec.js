@@ -42,7 +42,7 @@ const getClinicianAccessToken = () =>
     })
     .then(res => res.body.access)
 
-describe.only('Result routes', () => {
+describe('Result routes', () => {
   const path = '/api/result'
   let resultId = 1
   let assayId = 1
@@ -132,8 +132,11 @@ describe.only('Result routes', () => {
         })
     })
     it('should return a list of results filtered by  disease', async () => {
+      const { diseaseId } = await knex('Disease')
+        .where({ externalId: 'hiv' })
+        .first('id as diseaseId')
       await server
-        .get(`${path}?diseaseId=1`)
+        .get(`${path}?diseaseId=${diseaseId}`)
         .set('Authorization', `Bearer ${shared.token}`)
         .then(res => {
           assert.equal(res.status, 200)
