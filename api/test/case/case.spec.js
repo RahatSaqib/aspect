@@ -11,7 +11,7 @@ const { getCaseId, removeCase, addCase } = require('../../src/case/service')
 
 const server = supertest.agent('http://localhost:8080')
 
-describe('case/service', () => {
+describe.only('case/service', () => {
   let partnerId = null
   let diseaseId = null
   let accessToken = null
@@ -87,7 +87,7 @@ describe('case/service', () => {
       const unexistentClinicId = _.random(1000000, 9999999)
 
       const res = await server
-        .get(`${path}?sampleOriginSiteId=${unexistentClinicId}`)
+        .get(`${path}?sampleOriginSite=${unexistentClinicId}`)
         .set('Authorization', `Bearer ${accessToken}`)
 
       assert.equal(res.status, 200)

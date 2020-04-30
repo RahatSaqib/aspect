@@ -65,7 +65,7 @@ async function getCase(_case) {
     .first()
 }
 
-async function getCases(query, auth) {
+async function getCases({ query, auth }) {
   const dataConstraints = await getConstraints(auth.credentials)
 
   // Querying the last result for each case that has a sample origin site

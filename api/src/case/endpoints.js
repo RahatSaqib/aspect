@@ -3,7 +3,7 @@ const { asyncHandler, validateSortPageParams } = require('../routes')
 const {
   validateAllGeographyFilterParams,
 } = require('../geography/requestValidation')
-const { getCases } = require('./proxies')
+const { getCases } = require('./service')
 
 const routes = [
   {
