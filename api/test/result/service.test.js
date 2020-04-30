@@ -49,31 +49,38 @@ describe('result/service', () => {
     return _.merge(fakeKnexFunction, fakeKnexFunction())
   }
 
-  function resultServiceWithFakes(knexResults) {
+  function resultServiceWithFakes(knexResults, extraServices = {}) {
     const fakeKnex = createFakeKnex(knexResults)
-    const resultService = proxyquire('../../src/result/service', {
-      '../db': { knex: fakeKnex },
-      '../auth/constraints': {
-        getConstraints: () => {},
-        addConstraints: () => {},
-      },
-      '../auth/service': {
-        getUser: () =>
-          Promise.resolve({
-            id: 1,
-            userName: 'Admin',
-          }),
-      },
-      '../shared/dictionary': {
-        deviceTypeToId: async externalId => {
-          let returnValue
-          if (externalId === 'Aspect') {
-            returnValue = 1
-          }
-          return Promise.resolve(returnValue)
+    const resultService = proxyquire(
+      '../../src/result/service',
+      _.merge(
+        {
+          '../db': { knex: fakeKnex },
+          '../auth/constraints': {
+            getConstraints: () => {},
+            addConstraints: () => {},
+          },
+          '../auth/service': {
+            getUser: () =>
+              Promise.resolve({
+                id: 1,
+                userName: 'Admin',
+                partnerId: 1,
+              }),
+          },
+          '../shared/dictionary': {
+            deviceTypeToId: async externalId => {
+              let returnValue
+              if (externalId === 'Aspect') {
+                returnValue = 3
+              }
+              return Promise.resolve(returnValue)
+            },
+          },
         },
-      },
-    })
+        extraServices
+      )
+    )
     resultService.knex = fakeKnex
     sinon.spy(resultService, 'knex')
     return resultService
@@ -523,6 +530,233 @@ describe('result/service', () => {
           )
           assert.isOk(response.ok)
         })
+      })
+    })
+  })
+
+  function siteServiceMock() {
+    return {
+      getSite: () =>
+        Promise.resolve({
+          id: 1,
+        }),
+    }
+  }
+
+  function assayServiceMock() {
+    return {
+      getAllAssaySchemas: () =>
+        Promise.resolve([
+          {
+            id: 1,
+          },
+        ]),
+      getAssayResultCategories: () =>
+        Promise.resolve([
+          {
+            id: 1,
+          },
+        ]),
+    }
+  }
+
+  describe('updateResult', () => {
+    function resultUpdatePayload(extraPayload = {}) {
+      const payload = _.merge({}, extraPayload)
+      return { payload }
+    }
+
+    function basicResultForUpdate(extraDetails = {}) {
+      return _.merge(
+        {
+          id: 1,
+          siteId: 1,
+          deviceId: 1,
+          assayId: 1,
+          partnerId: 1,
+        },
+        extraDetails
+      )
+    }
+
+    it('should return a 404 response when the result cannot be found', () => {
+      const resultService = resultServiceWithFakes()
+
+      return runTest(resultService.updateResult, [
+        basicRequest(resultUpdatePayload()),
+      ])(response => {
+        assert.equal(response.output.statusCode, 404)
+        assert.equal(
+          response.output.payload.message,
+          'This result does not exist or you do not have access.'
+        )
+      })
+    })
+
+    it('should return a 404 response when the site cannot be found', () => {
+      const resultService = resultServiceWithFakes({
+        getResultByResultId: basicResultForUpdate(),
+      })
+
+      return runTest(resultService.updateResult, [
+        basicRequest(resultUpdatePayload()),
+      ])(response => {
+        assert.equal(response.output.statusCode, 404)
+        assert.equal(
+          response.output.payload.message,
+          'This site does not exist or you do not have access.'
+        )
+      })
+    })
+
+    it('should return a 404 response when the assay cannot be found', () => {
+      const resultService = resultServiceWithFakes(
+        {
+          getResultByResultId: basicResultForUpdate(),
+        },
+        {
+          '../site/service': siteServiceMock(),
+        }
+      )
+
+      return runTest(resultService.updateResult, [
+        basicRequest(resultUpdatePayload()),
+      ])(response => {
+        assert.equal(response.output.statusCode, 404)
+        assert.equal(
+          response.output.payload.message,
+          'This assay does not exist or you do not have access.'
+        )
+      })
+    })
+
+    it('should return a 400 response when the selected result does not apply to the assay', () => {
+      const resultService = resultServiceWithFakes(
+        {
+          getResultByResultId: basicResultForUpdate(),
+        },
+        {
+          '../site/service': siteServiceMock(),
+          '../assay/service': assayServiceMock(),
+        }
+      )
+
+      return runTest(resultService.updateResult, [
+        basicRequest(resultUpdatePayload({ resultCategory1: 99 })),
+      ])(response => {
+        assert.equal(response.output.statusCode, 400)
+        assert.equal(
+          response.output.payload.message,
+          'The selected result is not valid for this assay.'
+        )
+      })
+    })
+
+    it('should return a 404 response when the device cannot be found', () => {
+      const resultService = resultServiceWithFakes(
+        {
+          getResultByResultId: basicResultForUpdate(),
+        },
+        {
+          '../site/service': siteServiceMock(),
+          '../assay/service': assayServiceMock(),
+        }
+      )
+
+      return runTest(resultService.updateResult, [
+        basicRequest(resultUpdatePayload({ resultCategory1: 1, deviceId: 99 })),
+      ])(response => {
+        assert.equal(response.output.statusCode, 404)
+        assert.equal(
+          response.output.payload.message,
+          'This device does not exist or you do not have access.'
+        )
+      })
+    })
+  })
+
+  describe('createResult', () => {
+    function resultCreatePayload(extraPayload = {}) {
+      const payload = _.merge(
+        {
+          assayId: 1,
+          siteId: 1,
+        },
+        extraPayload
+      )
+      return { payload }
+    }
+
+    it('should return a 404 response when the site cannot be found', () => {
+      const resultService = resultServiceWithFakes({})
+
+      return runTest(resultService.createResult, [
+        basicRequest(resultCreatePayload()),
+      ])(response => {
+        assert.equal(response.output.statusCode, 404)
+        assert.equal(
+          response.output.payload.message,
+          'This site does not exist or you do not have access.'
+        )
+      })
+    })
+
+    it('should return a 404 response when the assay cannot be found', () => {
+      const resultService = resultServiceWithFakes(
+        {},
+        {
+          '../site/service': siteServiceMock(),
+        }
+      )
+
+      return runTest(resultService.createResult, [
+        basicRequest(resultCreatePayload()),
+      ])(response => {
+        assert.equal(response.output.statusCode, 404)
+        assert.equal(
+          response.output.payload.message,
+          'This assay does not exist or you do not have access.'
+        )
+      })
+    })
+
+    it('should return a 400 response when the selected result does not apply to the assay', () => {
+      const resultService = resultServiceWithFakes(
+        {},
+        {
+          '../site/service': siteServiceMock(),
+          '../assay/service': assayServiceMock(),
+        }
+      )
+
+      return runTest(resultService.createResult, [
+        basicRequest(resultCreatePayload({ resultCategory1: 99 })),
+      ])(response => {
+        assert.equal(response.output.statusCode, 400)
+        assert.equal(
+          response.output.payload.message,
+          'The selected result is not valid for this assay.'
+        )
+      })
+    })
+
+    it('should return a 404 response when the device cannot be found', () => {
+      const resultService = resultServiceWithFakes(
+        {},
+        {
+          '../site/service': siteServiceMock(),
+          '../assay/service': assayServiceMock(),
+        }
+      )
+
+      return runTest(resultService.createResult, [
+        basicRequest(resultCreatePayload({ resultCategory1: 1, deviceId: 99 })),
+      ])(response => {
+        assert.equal(response.output.statusCode, 404)
+        assert.equal(
+          response.output.payload.message,
+          'This device does not exist or you do not have access.'
+        )
       })
     })
   })
