@@ -677,6 +677,38 @@ async function seedAbbottM2000AndAssays(knex) {
     },
   ])
 
+  const abbottM2000SARSCoV2Id = await ensureAssay(
+    'abbottM2000SARSCoV2',
+    'Abbott m2000 SARS-CoV-2',
+    'AssayAbbottM2000SARSCoV2',
+    'SARS-CoV-2',
+    'resultCategorySARSCoV2',
+    'COVID-19 Test',
+    'm2000 SARS-CoV-2'
+  )
+  await ensureResultCategories(abbottM2000SARSCoV2Id, [
+    {
+      name: 'Not Detected',
+      i18nKey: 'resultCategoryNotDetected',
+      externalId: 'NotDetected',
+    },
+    {
+      name: 'Detected',
+      i18nKey: 'resultCategoryDetected',
+      externalId: 'Detected',
+    },
+    {
+      name: 'Indeterminate',
+      i18nKey: 'resultCategoryIndeterminate',
+      externalId: 'Indeterminate',
+    },
+    {
+      name: 'Error',
+      i18nKey: 'resultCategoryError',
+      externalId: 'Error',
+    },
+  ])
+
   await seedPartnerAssay(knex)
   await seedPartnerDisease(knex)
 }
