@@ -16,6 +16,7 @@ const CaseTableRow = ({ intl, _case, ...restProps }) => (
     <TableCell>{_case.get('externalId')}</TableCell>
     <TableCell>{_case.get('attendingClinic')}</TableCell>
     <TableCell>{_case.get('patientId')}</TableCell>
+    <TableCell>{_case.get('diseaseName')}</TableCell>
     <TableCell>{_case.get('status')}</TableCell>
   </TableRow>
 )
