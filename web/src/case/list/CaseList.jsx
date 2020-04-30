@@ -69,24 +69,11 @@ const messages = defineMessages({
 })
 
 const FILTERS_CONFIG = [
-  // {
-  //   assayAndResultCategory: true,
-  //   requiredPermissions: ['assay:view', 'assay:admin', 'assay:edit'],
-  // },
   { geography: true, requiredPermissions: [] },
   { state: true, requiredPermissions: [] },
   { lga: true, requiredPermissions: [] },
-  // { date: true, requiredPermissions: [] },
   { patientOrResearchId: true, requiredPermissions: [] },
-  // { sampleId: true, requiredPermissions: [] },
-  // { errorCode: true, requiredPermissions: [] },
-  // {
-  //   siteName: true,
-  //   requiredPermissions: ['site:view', 'site:admin', 'site:edit'],
-  // },
   { sampleOriginSite: true, requiredPermissions: [] },
-  // { workflowStatus: true, requiredPermissions: [] },
-  // { treatmentStatus: true, requiredPermissions: [] },
 ]
 
 const searchSanitizer = makeSearchParamsSanitizer({
