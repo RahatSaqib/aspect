@@ -23,11 +23,6 @@ export const RECEIVE_TARGET_DASHBOARD = 'RECEIVE_TARGET_DASHBOARD';
 export const REQUEST_RESULT_DASHBOARD = 'REQUEST_RESULT_DASHBOARD';
 export const RECEIVE_RESULT_DASHBOARD = 'RECEIVE_RESULT_DASHBOARD';
 
-export const REQUEST_CLINICAL_INDICATORS_DASHBOARD =
-  'REQUEST_CLINICAL_INDICATORS_DASHBOARD';
-export const RECEIVE_CLINICAL_INDICATORS_DASHBOARD =
-  'RECEIVE_CLINICAL_INDICATORS_DASHBOARD';
-
 export const REQUEST_INVENTORY_ITEM_DASHBOARD =
   'REQUEST_INVENTORY_ITEM_DASHBOARD';
 export const RECEIVE_INVENTORY_ITEM_DASHBOARD =
@@ -470,95 +465,6 @@ function receiveTreatmentDashboard(requestedAt, data) {
   };
 }
 
-// -------------------------------------------------------------------
-const removeEmptyParams = params => {
-  Object.keys(params).forEach(key => params[key] == null && delete params[key]);
-  return params;
-};
-
-const sanitiseParams = params =>
-  omit(params, [
-    'averages',
-    'dataKey',
-    'endpoint',
-    'component',
-    'componentClass',
-    'displayMethod',
-    'keyToConsume',
-    'indexBy',
-    'filter',
-    'legend',
-    'stateName',
-    'formatDate'
-  ]);
-
-export function fetchClinicalIndicatorsDashboard(params) {
-  const {
-    stateName,
-    dataKey: dataType,
-    endpoint = 'clinical-indicator-aggregations'
-  } = removeEmptyParams(params);
-  return dispatch => {
-    const requestedAt = `results_${Date.now()}`;
-    dispatch(requestClinicalIndicatorsDashboard({ requestedAt }));
-    return aspectFetch(`/result/${endpoint}`, {
-      method: 'GET',
-      params: sanitiseParams(params),
-      errorNotifications: {
-        403: errorInsufficientScope(
-          defineMessages({
-            title: {
-              id:
-                'errorResponseMessages.fetchClinicalIndicatorsDashboard.GET.403.title',
-              defaultMessage: 'Insufficient Permissions'
-            }
-          })
-        ),
-        default: errorPleaseTryAgainInAFewMinutes(
-          defineMessages({
-            title: {
-              id:
-                'errorResponseMessages.fetchClinicalIndicatorsDashboard.GET.default.title',
-              defaultMessage: 'Error Loading Dashboard Results By Category'
-            }
-          })
-        )
-      }
-    }).then(json =>
-      dispatch(
-        receiveClinicalIndicatorsDashboard(
-          stateName,
-          dataType,
-          requestedAt,
-          json
-        )
-      )
-    );
-  };
-}
-
-function requestClinicalIndicatorsDashboard(payload) {
-  return {
-    type: REQUEST_CLINICAL_INDICATORS_DASHBOARD,
-    ...payload
-  };
-}
-
-function receiveClinicalIndicatorsDashboard(
-  stateName,
-  dataType,
-  requestedAt,
-  data
-) {
-  return {
-    stateName,
-    dataType,
-    requestedAt,
-    data,
-    type: RECEIVE_CLINICAL_INDICATORS_DASHBOARD
-  };
-}
-
 export function fetchInventoryDashboard() {
   return dispatch => {
     const requestedAt = `inventoryItem_${Date.now()}`;
@@ -638,7 +544,6 @@ export default function dashboardReducer(state = initialState, action) {
     case REQUEST_STAT_DASHBOARD:
     case REQUEST_TARGET_DASHBOARD:
     case REQUEST_RESULT_DASHBOARD:
-    case REQUEST_CLINICAL_INDICATORS_DASHBOARD:
     case REQUEST_INVENTORY_ITEM_DASHBOARD:
     case REQUEST_DEVICE_DASHBOARD:
     case REQUEST_SITE_DASHBOARD:
@@ -769,24 +674,6 @@ export default function dashboardReducer(state = initialState, action) {
             item.pcNotConfirmed = item.total > 0 ? Math.round(10 * pc) / 10 : 0;
           });
           mutState.set('treatmentStatus', new Immutable.fromJS(payload));
-        });
-      });
-    }
-    case RECEIVE_CLINICAL_INDICATORS_DASHBOARD: {
-      return state.withMutations(mutState => {
-        onRequested(action, mutState, () => {
-          const { stateName, data, dataType } = action;
-          const currentState = state.clinicalIndicators.toJS();
-          const currentAssayData = currentState[stateName];
-          if (data.data && data.data.length) {
-            mutState.set(
-              'clinicalIndicators',
-              new Immutable.fromJS({
-                ...currentState,
-                [stateName]: { ...currentAssayData, [dataType]: { ...data } }
-              })
-            );
-          }
         });
       });
     }
