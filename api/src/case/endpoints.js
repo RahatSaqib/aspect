@@ -63,6 +63,18 @@ const routes = [
                 patientId: Joi.string().description(
                   "The patient id of the case's last result"
                 ),
+                diseaseName: Joi.string().description(
+                  "The disease name of the case's last result"
+                ),
+                diseaseId: Joi.number().description(
+                  "The disease id of the case's last result"
+                ),
+                diseaseExternalId: Joi.string().description(
+                  "The disease external id of the case's last result"
+                ),
+                patientId: Joi.string().description(
+                  "The patient id of the case's last result"
+                ),
               })
             ),
         }),
