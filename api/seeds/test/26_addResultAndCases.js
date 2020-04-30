@@ -1,4 +1,5 @@
 module.exports = require('../utils').seed(seed, __filename)
+const { getUniqueId } = require('../utils')
 const _ = require('lodash')
 const Promise = require('bluebird')
 
@@ -7,9 +8,7 @@ async function seed(knex) {
   const cases = []
   await Promise.each(results, async result => {
     if (_.random(100) <= 50) {
-      const caseExternalId = `CASE-${_.times(6, () =>
-        _.toUpper(_.random(36).toString(36))
-      ).join('')}-ID`
+      const caseExternalId = `CASE-${getUniqueId()}-ID`
       const caseId = await knex('Case').insert({
         externalId: caseExternalId,
         partnerId: result.partnerId,

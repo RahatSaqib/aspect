@@ -2682,6 +2682,10 @@ async function seedPartnerDisease(knex) {
   )
 }
 
+function getUniqueId() {
+  return _.times(6, () => _.toUpper(_.random(36).toString(36))).join('')
+}
+
 module.exports = {
   addReports,
 
@@ -2741,4 +2745,6 @@ module.exports = {
 
   seedPartnerAssay,
   seedPartnerDisease,
+
+  getUniqueId,
 }
