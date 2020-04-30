@@ -1,46 +1,48 @@
-import Immutable from 'immutable'
-import { reducer as formReducer } from 'redux-form/immutable'
-import { combineReducers } from 'redux-immutable'
+import Immutable from 'immutable';
+import { reducer as formReducer } from 'redux-form/immutable';
+import { combineReducers } from 'redux-immutable';
 
-import globals from './globals/GlobalsRedux'
-import appNotification from './appNotification/AppNotificationRedux'
-import filter from './filter/FilterRedux'
-import user, { types as authTypes } from './auth/AuthRedux'
-import dashboard from './dashboard/DashboardRedux'
-import demo from './demo/DemoRedux'
-import device from './device/DeviceRedux'
-import deviceApiKey from './deviceApiKey/DeviceApiKeyRedux'
-import deviceOperation from './deviceOperation/DeviceOperationRedux'
-import deviceStatus from './deviceStatus/DeviceStatusRedux'
-import deviceType from './deviceType/DeviceTypeRedux'
-import disease from './disease/DiseaseRedux'
-import site from './site/SiteRedux'
-import result from './result/ResultRedux'
-import person from './person/PersonRedux'
-import accountDetails from './account/AccountRedux'
-import geography from './geography/GeographyRedux'
-import assay from './assay/AssayRedux'
-import assayType from './assay/AssayTypeRedux'
-import consumable from './consumable/ConsumableRedux'
-import inventory from './inventory/InventoryRedux'
-import notification from './notification/NotificationRedux'
-import tag from './tag/TagRedux'
-import task from './task/TaskRedux'
-import idle from './idle/IdleRedux'
-import jobs from './job/JobRedux'
-import router from './router/RouterRedux'
-import resultWorkflowStatus from './resultWorkflowStatus/ResultWorkflowStatusRedux'
-import resultTreatmentStatus from './resultTreatmentStatus/ResultTreatmentStatusRedux'
-import report from './report/ReportRedux'
-import reporter from './reporter/ReporterRedux'
-import patient from './patient/PatientRedux'
+import globals from './globals/GlobalsRedux';
+import appNotification from './appNotification/AppNotificationRedux';
+import filter from './filter/FilterRedux';
+import user, { types as authTypes } from './auth/AuthRedux';
+import dashboard from './dashboard/DashboardRedux';
+import demo from './demo/DemoRedux';
+import device from './device/DeviceRedux';
+import deviceApiKey from './deviceApiKey/DeviceApiKeyRedux';
+import deviceOperation from './deviceOperation/DeviceOperationRedux';
+import deviceStatus from './deviceStatus/DeviceStatusRedux';
+import deviceType from './deviceType/DeviceTypeRedux';
+import disease from './disease/DiseaseRedux';
+import site from './site/SiteRedux';
+import result from './result/ResultRedux';
+import person from './person/PersonRedux';
+import accountDetails from './account/AccountRedux';
+import geography from './geography/GeographyRedux';
+import assay from './assay/AssayRedux';
+import assayType from './assay/AssayTypeRedux';
+import consumable from './consumable/ConsumableRedux';
+import inventory from './inventory/InventoryRedux';
+import notification from './notification/NotificationRedux';
+import tag from './tag/TagRedux';
+import task from './task/TaskRedux';
+import idle from './idle/IdleRedux';
+import jobs from './job/JobRedux';
+import router from './router/RouterRedux';
+import resultWorkflowStatus from './resultWorkflowStatus/ResultWorkflowStatusRedux';
+import resultTreatmentStatus from './resultTreatmentStatus/ResultTreatmentStatusRedux';
+import report from './report/ReportRedux';
+import reporter from './reporter/ReporterRedux';
+import patient from './patient/PatientRedux';
+import clinicalIndicators from './MigratedComponents/Graphs/GraphRender/Redux/';
 
 const appReducer = combineReducers({
-  form: formReducer,
-  globals,
+  accountDetails,
   appNotification,
-  filter,
-  user,
+  assay,
+  assayType,
+  clinicalIndicators,
+  consumable,
   dashboard,
   demo,
   device,
@@ -49,34 +51,35 @@ const appReducer = combineReducers({
   deviceStatus,
   deviceType,
   disease,
-  site,
-  person,
-  accountDetails,
-  result,
+  filter,
+  form: formReducer,
   geography,
-  assay,
-  assayType,
-  jobs,
-  consumable,
-  inventory,
+  globals,
   idle,
+  inventory,
+  jobs,
   notification,
-  tag,
-  task,
-  router,
-  resultWorkflowStatus,
-  resultTreatmentStatus,
+  patient,
+  person,
   report,
   reporter,
-  patient,
-})
+  result,
+  resultTreatmentStatus,
+  resultWorkflowStatus,
+  router,
+  site,
+  tag,
+  task,
+  user
+});
 
 const App = Immutable.Record({
-  form: undefined,
-  globals: undefined,
+  accountDetails: undefined,
   appNotification: undefined,
-  filter: undefined,
-  user: undefined,
+  assay: undefined,
+  assayType: undefined,
+  clinicalIndicators: undefined,
+  consumable: undefined,
   dashboard: undefined,
   demo: undefined,
   device: undefined,
@@ -85,36 +88,36 @@ const App = Immutable.Record({
   deviceStatus: undefined,
   deviceType: undefined,
   disease: undefined,
-  site: undefined,
-  person: undefined,
-  accountDetails: undefined,
+  filter: undefined,
+  form: undefined,
   geography: undefined,
-  assay: undefined,
-  assayType: undefined,
+  globals: undefined,
+  idle: undefined,
+  inventory: undefined,
+  jobs: undefined,
   notification: undefined,
+  patient: undefined,
+  person: undefined,
+  report: undefined,
+  reporter: undefined,
+  result: undefined,
+  resultTreatmentStatus: undefined,
+  resultWorkflowStatus: undefined,
+  router: undefined,
+  site: undefined,
   tag: undefined,
   task: undefined,
-  report: undefined,
-  result: undefined,
-  jobs: undefined,
-  consumable: undefined,
-  inventory: undefined,
-  idle: undefined,
-  router: undefined,
-  resultWorkflowStatus: undefined,
-  resultTreatmentStatus: undefined,
-  reporter: undefined,
-  patient: undefined,
-})
+  user: undefined
+});
 
-const initialState = new App()
+const initialState = new App();
 
 export default function rootReducer(state = initialState, action) {
-  let nextState = state
+  let nextState = state;
   // on logout, empty state
   if (action.type === authTypes.LOGOUT) {
-    nextState = initialState
+    nextState = initialState;
   }
 
-  return appReducer(nextState, action)
+  return appReducer(nextState, action);
 }
