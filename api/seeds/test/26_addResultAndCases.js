@@ -1,7 +1,7 @@
 module.exports = require('../utils').seed(seed, __filename)
-const { getUniqueId } = require('../utils')
 const _ = require('lodash')
 const Promise = require('bluebird')
+const { getUniqueId } = require('../utils')
 
 async function seed(knex) {
   const results = await knex('Result').whereNull('caseId')

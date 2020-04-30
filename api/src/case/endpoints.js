@@ -23,8 +23,9 @@ const routes = [
           patientOrResearchId: Joi.string()
             .allow('')
             .description('Filter for patient/research ID'),
-          sampleOriginSite: Joi.number()
-            .description('Filter for sample origin site ID'),
+          sampleOriginSite: Joi.number().description(
+            'Filter for sample origin site ID'
+          ),
           diseaseId: Joi.number()
             .allow('')
             .description('Filter for disease ID'),
@@ -71,9 +72,6 @@ const routes = [
                 ),
                 diseaseExternalId: Joi.string().description(
                   "The disease external id of the case's last result"
-                ),
-                patientId: Joi.string().description(
-                  "The patient id of the case's last result"
                 ),
               })
             ),

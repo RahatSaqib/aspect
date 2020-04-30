@@ -49,9 +49,7 @@ describe('case/service', () => {
 
     it('Should return a list of cases filtered by patientOrResearchId', async () => {
       const res = await server
-        .get(
-          `${path}?patientOrResearchId=${caseToTest.patientId}`
-        )
+        .get(`${path}?patientOrResearchId=${caseToTest.patientId}`)
         .set('Authorization', `Bearer ${accessToken}`)
 
       assert.equal(res.status, 200)
