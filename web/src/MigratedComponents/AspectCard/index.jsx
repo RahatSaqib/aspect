@@ -1,5 +1,3 @@
-// eslint-enable react/prop-types
-
 import React from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames/bind';
@@ -25,11 +23,16 @@ const AspectCard = ({ children, justify, innerSize, title }) => (
   </Card>
 );
 
+AspectCard.defaultProps = {
+  justify: 'center',
+  innerSize: 12
+};
+
 AspectCard.protoTypes = {
-  children: PropTypes.object,
+  children: PropTypes.object.isRequired,
   justify: PropTypes.string,
   innerSize: PropTypes.instanceOf,
-  title: PropTypes.string
+  title: PropTypes.string.isRequired
 };
 
 export default AspectCard;

@@ -13,9 +13,10 @@ import TargetStatus from './TargetStatus';
 import Reports from './Reports';
 import BrowseSiteDropdown from '../../globals/components/BrowseSiteDropdown';
 import TreatmentStatus from './TreatmentStatus';
-import ClinicalIndicator from './ClinicalIndicators/ClinicalIndicator';
-import GraphsContainer from '../../MigratedComponents/GraphsContainer';
+import GraphContainer from '../../MigratedComponents/Graphs/GraphContainer';
 import ColorDemo from './ColorDemo/ColorDemo';
+
+import covidGraphs from './GraphConfigurations/Covid';
 
 const cssClasses = classnames.bind(require('./Status.css'));
 
@@ -59,11 +60,20 @@ const Status = ({ history, location, intl, colorDemo = true }) => {
         className={cssClasses('Section--summary')}
       />
 
-      <GraphsContainer
+      <GraphContainer
         intl={intl}
         history={history}
         location={location}
-        assays={assays}
+        assaysFromState={assays}
+        config={covidGraphs.covidMortalityAndRecoveryConfig}
+      />
+
+      <GraphContainer
+        intl={intl}
+        history={history}
+        location={location}
+        assaysFromState={assays}
+        config={covidGraphs.covidRecoveryByGender}
       />
       {/* <ClinicalIndicator
         intl={intl}
