@@ -59,6 +59,10 @@ const messages = defineMessages({
     id: 'pages.CasesList.patientId',
     defaultMessage: 'Patient ID',
   },
+  diseaseName: {
+    id: 'pages.CasesList.diseaseName',
+    defaultMessage: 'Disease',
+  },
   paginatorStatus: {
     id: 'pages.CaseList.paginatorStatus',
     defaultMessage: `Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural,
@@ -90,7 +94,13 @@ const FILTERS_CONFIG = [
 ]
 
 const searchSanitizer = makeSearchParamsSanitizer({
-  availableSortCol: ['externalId', 'attendingClinic', 'patientId', 'status'],
+  availableSortCol: [
+    'externalId',
+    'attendingClinic',
+    'patientId',
+    'diseaseName',
+    'status',
+  ],
 })
 const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
 const filtersFromLocation = composeSanitizer(
@@ -216,6 +226,12 @@ export const CaseList = ({
     {
       key: 'patientId',
       label: intl.formatMessage(messages.patientId),
+      sortable: true,
+      hiddenOn: 'sm',
+    },
+    {
+      key: 'diseaseName',
+      label: intl.formatMessage(messages.diseaseName),
       sortable: true,
       hiddenOn: 'sm',
     },
