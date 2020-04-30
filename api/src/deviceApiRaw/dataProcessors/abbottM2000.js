@@ -265,6 +265,8 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
                           'HIV0.6ml': 'Plasma',
                           'HIV0.2ml': 'Plasma',
                           'HBV 0.2ml': 'Plasma',
+                          'Daan nCOVID-19 ORF LDA': 'Other',
+                          'Daan Target N gene LDA': 'Other',
                         }[_.get(jsonAstmOrder, '5.4.value')],
                       },
                       assay: {
@@ -410,6 +412,8 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
       'HIV0.2ml': assayIds.abbottM2000PlasmaHivVL,
       HIVQLDRDBS: assayIds.abbottM2000HIVEID,
       'HBV 0.2ml': assayIds.abbottM2000PlasmaHbvVL,
+      'Daan nCOVID-19 ORF LDA': assayIds.abbottM2000DaanNCOVID19,
+      'Daan Target N gene LDA': assayIds.abbottM2000DaanNCOVID19,
     }
     const resultCategories = await allResultCategoryToId()
     const resultCategoryMapping = {
@@ -463,6 +467,26 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
           Numeric: resultCategories.MoreThan15,
         },
       },
+      'Daan nCOVID-19 ORF LDA': {
+        I: {
+          Negative: resultCategories.NotDetected,
+          Positive: resultCategories.Detected,
+        },
+        F: {
+          'Not detected': resultCategories.NotDetected,
+          Detected: resultCategories.Detected,
+        },
+      },
+      'Daan Target N gene LDA': {
+        I: {
+          Negative: resultCategories.NotDetected,
+          Positive: resultCategories.Detected,
+        },
+        F: {
+          'Not detected': resultCategories.NotDetected,
+          Detected: resultCategories.Detected,
+        },
+      },
     }
     const resultCategoryErrorId = resultCategories.Error
     const sampleTypeIds = await allSampleTypeToId()
@@ -490,11 +514,11 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
         'Quality Control Result'
     )
     const vlQualityControlResultsToSummary = (
-      hivQualityControlResults,
+      vlQualityControlResults,
       passFinalResult,
       passCycleNumber
     ) => {
-      const finalResult = hivQualityControlResults.find(
+      const finalResult = vlQualityControlResults.find(
         result => result.resultData.resultType === 'Final Result'
       )
       const qualityControlSummary = {}
@@ -517,7 +541,7 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
           senderOperator: finalResult.senderOperator,
         })
       }
-      const cycleNumberResult = hivQualityControlResults.find(
+      const cycleNumberResult = vlQualityControlResults.find(
         result => result.resultData.resultType === 'Preliminary Result'
       )
       if (cycleNumberResult) {
@@ -641,6 +665,48 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
             if (!_.isEmpty(highPositiveResults)) {
               qualityControlSummaryForAssay.highPositiveControl = vlQualityControlResultsToSummary(
                 highPositiveResults,
+                finalResult =>
+                  finalResult.resultData.reportType === 'Final Result' &&
+                  (finalResult.resultData.resultText === 'Passed' ||
+                    isNumeric(finalResult.resultData.resultText)),
+                cycleNumberResult =>
+                  cycleNumberResult.resultData.reportType === 'Final Result'
+              )
+            }
+          } else if (
+            ['Daan Target N gene LDA', 'Daan nCOVID-19 ORF LDA'].includes(
+              assayCode
+            )
+          ) {
+            const negResults = qualityControlResultsForRun.filter(
+              result => result.sample.externalId === 'CoV_NEG'
+            )
+            if (!_.isEmpty(negResults)) {
+              const negControlComment = (_.uniq(
+                _.flatten(
+                  negResults.map(
+                    negResult => _.get(negResult, 'resultData.comments') || []
+                  )
+                ).map(negResultComment => _.get(negResultComment, 'text'))
+              ) || [])[0]
+              qualityControlSummaryForAssay.negativeControl = {
+                passed:
+                  negControlComment === '4957 : Negative control is reactive.',
+                reportType: negResults[0].resultData.reportType,
+                abnormalFlags: negResults[0].resultData.abnormalFlags,
+                moduleName: negResults[0].moduleName,
+                assayCode: negResults[0].assay.code,
+                assayName: negResults[0].resultData.assayName,
+                endedOn: negResults[0].endedOn,
+                moduleSerial: negResults[0].moduleSerial,
+              }
+            }
+            const positiveResults = qualityControlResultsForRun.filter(
+              result => result.sample.externalId === 'CoV_POS'
+            )
+            if (!_.isEmpty(positiveResults)) {
+              qualityControlSummaryForAssay.positiveControl = vlQualityControlResultsToSummary(
+                positiveResults,
                 finalResult =>
                   finalResult.resultData.reportType === 'Final Result' &&
                   (finalResult.resultData.resultText === 'Passed' ||
