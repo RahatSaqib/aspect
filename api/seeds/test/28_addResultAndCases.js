@@ -4,7 +4,9 @@ const Promise = require('bluebird')
 const { addCase } = require('../../src/case/service')
 
 async function seed(knex) {
-  const { id: userId } = await knex('User').where({ name: 'admin' }).first('id')
+  const { id: userId } = await knex('User')
+    .where({ name: 'admin' })
+    .first('id')
   const results = await knex('Result').whereNull('caseId')
   const cases = []
   // From the 100% of the results it will take the 50% of them to assign a caseid

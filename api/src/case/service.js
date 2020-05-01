@@ -58,6 +58,8 @@ async function getCase(_case) {
   validateCaseIdentifier()
 
   return knex('Case')
+    .innerJoin('User as uc', 'cs.createdBy', 'u.id')
+    .innerJoin('User as uu', 'cs.updatedBy', 'u.id')
     .where({
       externalId: _case.externalId,
       partnerId: _case.partnerId,
@@ -66,7 +68,9 @@ async function getCase(_case) {
 }
 
 async function updateCase(whereFields, updateFields) {
-  await knex('Case').where(whereFields).update(updateFields)
+  await knex('Case')
+    .where(whereFields)
+    .update(updateFields)
 }
 
 async function getCases({ query, auth }) {
@@ -92,6 +96,8 @@ async function getCases({ query, auth }) {
     .innerJoin('Disease as d', 'at.diseaseId', 'd.id')
     .innerJoin('Sample as s', 'r.sampleId', 's.id')
     .innerJoin('Site as sos', 's.originSiteId', 'sos.id')
+    .innerJoin('User as uc', 'cs.createdBy', 'u.id')
+    .innerJoin('User as uu', 'cs.updatedBy', 'u.id')
     .modify(addPartnerQueryConstraints, dataConstraints)
     .modify(filterParams, query, {
       countryId: 'g.countryId',
@@ -119,7 +125,13 @@ async function getCases({ query, auth }) {
       'd.id as diseaseId',
       'd.externalId as diseaseExternalId',
       knex.raw(`'Active' as status`),
-      knex.raw('JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.id")) as patientId')
+      knex.raw(
+        'JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.id")) as patientId'
+      ),
+      'cs.createdOn',
+      'cs.updatedOn',
+      'uc.name as createdBy',
+      'uu.name as updatedBy'
     )
     .distinct()
 

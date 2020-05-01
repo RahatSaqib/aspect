@@ -11,6 +11,21 @@ const { getCaseId, removeCase, addCase } = require('../../src/case/service')
 
 const server = supertest.agent('http://localhost:8080')
 
+function assertPropsOnList(res) {
+  assert.property(res.body.data[0], 'id')
+  assert.property(res.body.data[0], 'externalId')
+  assert.property(res.body.data[0], 'attendingClinic')
+  assert.property(res.body.data[0], 'diseaseName')
+  assert.property(res.body.data[0], 'diseaseId')
+  assert.property(res.body.data[0], 'diseaseExternalId')
+  assert.property(res.body.data[0], 'status')
+  assert.property(res.body.data[0], 'patientId')
+  assert.property(res.body.data[0], 'createdBy')
+  assert.property(res.body.data[0], 'updatedBy')
+  assert.property(res.body.data[0], 'createdOn')
+  assert.property(res.body.data[0], 'updatedOn')
+}
+
 describe('case/service', () => {
   let partnerId = null
   let diseaseId = null
@@ -36,14 +51,7 @@ describe('case/service', () => {
       assert.typeOf(res.body.data, 'array')
       assert.isNotNull(res.body.data)
       assert.isAtLeast(res.body.data.length, 1)
-      assert.property(res.body.data[0], 'id')
-      assert.property(res.body.data[0], 'externalId')
-      assert.property(res.body.data[0], 'attendingClinic')
-      assert.property(res.body.data[0], 'diseaseName')
-      assert.property(res.body.data[0], 'diseaseId')
-      assert.property(res.body.data[0], 'diseaseExternalId')
-      assert.property(res.body.data[0], 'status')
-      assert.property(res.body.data[0], 'patientId')
+      assertPropsOnList(res)
       ;[caseToTest] = res.body.data
     })
 
@@ -58,14 +66,7 @@ describe('case/service', () => {
       assert.typeOf(res.body.data, 'array')
       assert.isNotNull(res.body.data)
       assert.isAtLeast(res.body.data.length, 1)
-      assert.property(res.body.data[0], 'id')
-      assert.property(res.body.data[0], 'externalId')
-      assert.property(res.body.data[0], 'attendingClinic')
-      assert.property(res.body.data[0], 'diseaseName')
-      assert.property(res.body.data[0], 'diseaseId')
-      assert.property(res.body.data[0], 'diseaseExternalId')
-      assert.property(res.body.data[0], 'status')
-      assert.property(res.body.data[0], 'patientId')
+      assertPropsOnList(res)
       assert.equal(res.body.data[0].id, caseToTest.id)
     })
 
@@ -80,14 +81,7 @@ describe('case/service', () => {
       assert.typeOf(res.body.data, 'array')
       assert.isNotNull(res.body.data)
       assert.isAtLeast(res.body.data.length, 1)
-      assert.property(res.body.data[0], 'id')
-      assert.property(res.body.data[0], 'externalId')
-      assert.property(res.body.data[0], 'attendingClinic')
-      assert.property(res.body.data[0], 'diseaseName')
-      assert.property(res.body.data[0], 'diseaseId')
-      assert.property(res.body.data[0], 'diseaseExternalId')
-      assert.property(res.body.data[0], 'status')
-      assert.property(res.body.data[0], 'patientId')
+      assertPropsOnList(res)
     })
 
     it('Should return an empty list', async () => {
