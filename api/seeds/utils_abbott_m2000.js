@@ -6,7 +6,7 @@ const {
 } = require('../src/shared/dictionary')
 const { seedPartnerAssay, seedPartnerDisease } = require('./utils')
 
-async function seedAbbottM2000AndAssays(knex) {
+async function seedAbbottM2000AndAssays(knex, updateExistingAssays) {
   const m2000ConfigurationDataSchema = JSON.stringify({
     deviceTypeName: {
       title: 'Device Type',
@@ -272,6 +272,21 @@ async function seedAbbottM2000AndAssays(knex) {
         patientDataSchema: JSON.stringify(abbottM2000PatientDataSchema),
         abbreviation,
       })
+    } else if (updateExistingAssays) {
+      await knex('Assay')
+        .where({ id })
+        .update({
+          name,
+          i18nKey,
+          assayTypeId: assayTypes[assayType],
+          deviceTypeId: deviceTypeM2000Id,
+          resultSourceId: resultSourceDiagnosticId,
+          resultCategory1Label,
+          resultCategory1i18nKey,
+          resultDataSchema: JSON.stringify(resultDataSchema),
+          patientDataSchema: JSON.stringify(abbottM2000PatientDataSchema),
+          abbreviation,
+        })
     }
     return id
   }
