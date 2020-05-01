@@ -1,21 +1,21 @@
 /* eslint-disable max-classes-per-file */
 /* eslint-disable no-loop-func */
 /* eslint-env es6 */
-import _ from 'lodash';
-import { createFetch, base, header, accept } from 'http-client';
-import { defineMessages } from 'react-intl';
-import { showError } from '../../appNotification/AppNotificationRedux';
-import { setLastServerResponseTime } from '../../globals/GlobalsRedux';
+import _ from 'lodash'
+import { createFetch, base, header, accept } from 'http-client'
+import { defineMessages } from 'react-intl'
+import { showError } from '../../appNotification/AppNotificationRedux'
+import { setLastServerResponseTime } from '../../globals/GlobalsRedux'
 
-import config from '../../config';
-import { getAspectAccess } from '../../globals/sideEffects/LocalStorage';
+import config from '../../config'
+import { getAspectAccess } from '../../globals/sideEffects/LocalStorage'
 
 export const aspectFetchFile = createFetch(
   base(config.aspectApi),
   header('Content-Type', 'application/octet-stream'),
   addAuthHeaderMiddleware,
   handleFetchResponseOrError
-);
+)
 
 export const aspectFetch = createFetch(
   base(config.aspectApi),
@@ -24,63 +24,62 @@ export const aspectFetch = createFetch(
   addAuthHeaderMiddleware,
   addGetParamsMiddleware,
   handleFetchResponseOrError
-);
+)
 
-export default aspectFetch;
+export default aspectFetch
 
 function addAuthHeaderMiddleware(fetch, input, options = {}) {
-  const token = getAspectAccess();
+  const token = getAspectAccess()
   if (token) {
-    _.set(options, 'headers.Authorization', `Bearer ${token}`);
+    _.set(options, 'headers.Authorization', `Bearer ${token}`)
   }
-  return fetch(input, options);
+  return fetch(input, options)
 }
 
 function addGetParamsMiddleware(fetch, input, options = {}) {
-  const { method, params } = options;
-  let index = 0;
+  const { method, params } = options
+  let index = 0
   // TODO: dpo - fix no-loop-func eslint
-  let queryString = `${input}`;
+  let queryString = `${input}`
   if (method && method === 'GET' && params) {
     for (const [key, value] of Object.entries(params)) {
       if (Array.isArray(value)) {
         value.forEach(v => {
-          queryString = `${queryString}${index === 0 ? '?' : '&'}${key}=${v}`;
-          index += 1;
-        });
+          queryString = `${queryString}${index === 0 ? '?' : '&'}${key}=${v}`
+          index += 1
+        })
       } else {
-        queryString = `${queryString}${index === 0 ? '?' : '&'}${key}=${value}`;
+        queryString = `${queryString}${index === 0 ? '?' : '&'}${key}=${value}`
       }
-      index += 1;
+      index += 1
     }
   }
-  console.log(queryString);
 
-  return fetch(queryString, options);
+  return fetch(queryString, options)
 }
 
 class APIApplicationError extends Error {
   constructor(...args) {
-    super(...args);
+    super(...args)
     // make `instanceof APIApplicationError` work in ES5 for Jest
-    this.constructor = APIApplicationError;
-    this.__proto__ = APIApplicationError.prototype; // eslint-disable-line no-proto
+    this.constructor = APIApplicationError
+    this.__proto__ = APIApplicationError.prototype // eslint-disable-line no-proto
     if (Error.captureStackTrace) {
-      Error.captureStackTrace(this, APIApplicationError);
+      Error.captureStackTrace(this, APIApplicationError)
     }
   }
 }
 
 class ConnectionError extends Error {
   constructor(...args) {
-    super(...args);
+    super(...args)
     // make `instanceof ConnectionError` work in ES5 for Jest
-    this.constructor = ConnectionError;
-    this.__proto__ = ConnectionError.prototype; // eslint-disable-line no-proto
+    this.constructor = ConnectionError
+    this.__proto__ = ConnectionError.prototype // eslint-disable-line no-proto
     if (Error.captureStackTrace) {
-      Error.captureStackTrace(this, ConnectionError);
+      Error.captureStackTrace(this, ConnectionError)
     }
-    this.statusCode = 0;
+    this.statusCode = 0
   }
 }
 
@@ -88,43 +87,43 @@ function handleFetchResponseOrError(fetch, input, options = {}) {
   return fetch(input, options)
     .then(
       resp => {
-        const date = resp.headers.get('date');
-        const contentType = resp.headers.get('Content-Type');
-        const contentDisposition = resp.headers.get('Content-Disposition');
+        const date = resp.headers.get('date')
+        const contentType = resp.headers.get('Content-Type')
+        const contentDisposition = resp.headers.get('Content-Disposition')
         if (date) {
-          const store = require('../../store').default;
-          store.dispatch(setLastServerResponseTime(new Date(date)));
+          const store = require('../../store').default
+          store.dispatch(setLastServerResponseTime(new Date(date)))
         }
         if (
           contentDisposition &&
           contentDisposition.indexOf('attachment;') === 0
         ) {
-          const str = 'filename=';
+          const str = 'filename='
           const fileName = _.trim(
             contentDisposition.substr(
               contentDisposition.indexOf(str) + str.length
             ),
             ' ;'
-          );
+          )
           return {
             blob: resp.blob(), // <--- blob() returns Promise
-            fileName
-          };
+            fileName,
+          }
         }
         if (contentType && contentType.indexOf('octet-stream') > 0) {
-          return resp.blob();
+          return resp.blob()
         }
         if (resp.ok) {
           // HTTP Status === 2xx
-          return resp.json().then(changeAllIdsToString);
+          return resp.json().then(changeAllIdsToString)
         }
         // HTTP Status !== 2xx
         return resp.json().then(data => {
-          const error = new APIApplicationError(data.message);
+          const error = new APIApplicationError(data.message)
           error.statusCode =
-            data.statusCode; /* HAPI always responds with statusCode */
-          throw error;
-        });
+            data.statusCode /* HAPI always responds with statusCode */
+          throw error
+        })
       },
       () => Promise.reject(new ConnectionError('Connection Error'))
     )
@@ -133,36 +132,36 @@ function handleFetchResponseOrError(fetch, input, options = {}) {
         options,
         `errorNotifications.${err.statusCode}`,
         _.get(options, 'errorNotifications.default')
-      );
+      )
 
       if (errorNotification) {
         if (errorNotification[err.message]) {
-          errorNotification = errorNotification[err.message];
+          errorNotification = errorNotification[err.message]
         } else if (errorNotification.default) {
-          errorNotification = errorNotification.default;
+          errorNotification = errorNotification.default
         }
-        const store = require('../../store').default;
+        const store = require('../../store').default
         if (err.statusCode === 0) {
           errorNotification = {
             ...defineMessages({
               message: {
                 id: 'errorResponseMessages.disconnected.default.message',
                 defaultMessage:
-                  'Either your computer has been disconnected from the internet or our server has failed to respond.'
-              }
+                  'Either your computer has been disconnected from the internet or our server has failed to respond.',
+              },
             }),
-            ...errorNotification
-          };
+            ...errorNotification,
+          }
         }
-        store.dispatch(showError(errorNotification, err));
+        store.dispatch(showError(errorNotification, err))
       }
-      return Promise.reject(err);
-    });
+      return Promise.reject(err)
+    })
 }
 
 // check if a property looks like an ID (key is equal to 'id' or ends with 'Id')
 function isIdLike(key) {
-  return key === 'id' || key.match(/.+Id$/);
+  return key === 'id' || key.match(/.+Id$/)
 }
 
 // change data type of IDs to a string
@@ -170,7 +169,7 @@ function isIdLike(key) {
 // so this saves us from having to do conversions throught the app
 function changeAllIdsToString(data) {
   if (_.isArray(data)) {
-    return data.map(changeAllIdsToString);
+    return data.map(changeAllIdsToString)
   }
   if (_.isObject(data)) {
     return _.mapValues(data, (value, key) =>
@@ -179,7 +178,7 @@ function changeAllIdsToString(data) {
           ? value
           : String(value)
         : changeAllIdsToString(value)
-    );
+    )
   }
-  return data;
+  return data
 }
