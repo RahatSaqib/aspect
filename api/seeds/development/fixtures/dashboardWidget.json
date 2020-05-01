@@ -50,9 +50,9 @@
       "subTitle": null,
       "subTitleI18nKey": null,
       "sqlForIndicator":
-        "SELECT IFNULL(SUM(f.resultCount), 0) AS cnt FROM FactResultsDeviceByCategory1 AS f INNER JOIN Device AS d ON d.id = f.deviceId INNER JOIN Site AS s ON s.id = d.siteId INNER JOIN Partner AS p ON p.id = s.partnerId INNER JOIN Assay a ON f.`assayId`= a.`id` INNER JOIN ResultCategory rc ON f.resultCategory1 = rc.`id` LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id WHERE rc.externalid='Positive' and f.days=9999",
+        "SELECT COUNT(DISTINCT COALESCE(CONCAT('caseId',r.caseId),r.patientData->\"$.id\", r.externalId,CONCAT('resultId',r.id))) AS cnt FROM Result AS r INNER JOIN Device AS d ON d.id = r.deviceId INNER JOIN Site AS s ON s.id = d.siteId INNER JOIN Partner AS p ON p.id = s.partnerId INNER JOIN Assay a ON r.`assayId` = a.`id` INNER JOIN ResultCategory rc ON r.resultCategory1 = rc.`id` LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id WHERE rc.externalid = 'Positive'",
       "sqlForStatUnit":
-        "SELECT IFNULL(SUM(f.resultCount), 0) AS cnt FROM FactResultsDeviceByCategory1 AS f INNER JOIN Device AS d ON d.id = f.deviceId INNER JOIN Site AS s ON s.id = d.siteId INNER JOIN Partner AS p ON p.id = s.partnerId INNER JOIN Assay a ON f.`assayId`= a.`id` INNER JOIN ResultCategory rc ON f.resultCategory1 = rc.`id` LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id WHERE rc.externalid='Positive' and f.days=7",
+        "SELECT COUNT(DISTINCT COALESCE(CONCAT('caseId',r.caseId),r.patientData->\"$.id\", r.externalId,CONCAT('resultId',r.id))) AS cnt FROM Result AS r INNER JOIN Device AS d ON d.id = r.deviceId INNER JOIN Site AS s ON s.id = d.siteId INNER JOIN Partner AS p ON p.id = s.partnerId INNER JOIN Assay a ON r.`assayId` = a.`id` INNER JOIN ResultCategory rc ON r.resultCategory1 = rc.`id` LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id WHERE rc.externalid = 'Positive' and r.`endedOn` >= DATE_SUB(NOW(), INTERVAL 7 DAY)",
       "statUnit": "{unit} since last week",
       "statUnitI18nKey": "dashboardWidgetUnitConfirmedCases",
       "link":"/browse/result",
@@ -65,9 +65,9 @@
       "subTitle": null,
       "subTitleI18nKey": null,
       "sqlForIndicator":
-        "SELECT IFNULL(COUNT(f.id), 0) AS cnt FROM Result AS f INNER JOIN Device AS d ON d.id = f.deviceId INNER JOIN Site AS s ON s.id = d.siteId INNER JOIN Partner AS p ON p.id = s.partnerId INNER JOIN Assay a ON f.`assayId`= a.`id` INNER JOIN ResultCategory rc ON f.resultCategory1 = rc.`id` LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id WHERE rc.externalid='Positive' AND NOT EXISTS (SELECT * FROM ResultFollowUp rfu INNER JOIN FollowUp fu ON fu.`id`=rfu.`followUpId` INNER JOIN FollowUpType ft ON fu.`followUpTypeId` =ft.id WHERE ft.externalid='outcome' AND rfu.resultId=f.id)",
+        "SELECT IFNULL(COUNT(DISTINCT COALESCE(CONCAT('caseId',r.caseId),r.patientData->\"$.id\", r.externalId,CONCAT('resultId',r.id))), 0) AS cnt FROM Result AS r INNER JOIN Device AS d ON d.id = r.deviceId INNER JOIN Site AS s ON s.id = d.siteId INNER JOIN Partner AS p ON p.id = s.partnerId INNER JOIN Assay a ON r.`assayId` = a.`id` INNER JOIN ResultCategory rc ON r.resultCategory1 = rc.`id` LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id WHERE rc.externalid = 'Positive' AND NOT EXISTS (SELECT * FROM ResultFollowUp rfu INNER JOIN FollowUp fu ON fu.`id` = rfu.`followUpId` INNER JOIN FollowUpType ft ON fu.`followUpTypeId` = ft.id WHERE ft.externalid = 'outcome' AND rfu.resultId = r.id)",
       "sqlForStatUnit":
-        "SELECT IFNULL(COUNT(f.id), 0) AS cnt FROM Result AS f INNER JOIN Device AS d ON d.id = f.deviceId INNER JOIN Site AS s ON s.id = d.siteId INNER JOIN Partner AS p ON p.id = s.partnerId INNER JOIN Assay a ON f.`assayId`= a.`id` INNER JOIN ResultCategory rc ON f.resultCategory1 = rc.`id` LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id WHERE rc.externalid='Positive' and f.createdOn >= DATE_SUB(NOW(), INTERVAL 7 DAY) AND NOT EXISTS (SELECT * FROM ResultFollowUp rfu INNER JOIN FollowUp fu ON fu.`id`=rfu.`followUpId` INNER JOIN FollowUpType ft ON fu.`followUpTypeId` =ft.id WHERE ft.externalid='outcome' AND rfu.resultId=f.id)",
+        "SELECT IFNULL(COUNT(DISTINCT COALESCE(CONCAT('caseId',r.caseId),r.patientData->\"$.id\", r.externalId,CONCAT('resultId',r.id))), 0) AS cnt FROM Result AS r INNER JOIN Device AS d ON d.id = r.deviceId INNER JOIN Site AS s ON s.id = d.siteId INNER JOIN Partner AS p ON p.id = s.partnerId INNER JOIN Assay a ON r.`assayId` = a.`id` INNER JOIN ResultCategory rc ON r.resultCategory1 = rc.`id` LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id WHERE rc.externalid = 'Positive' AND r.`endedOn` >= DATE_SUB(NOW(), INTERVAL 7 DAY) AND NOT EXISTS (SELECT * FROM ResultFollowUp rfu INNER JOIN FollowUp fu ON fu.`id` = rfu.`followUpId` INNER JOIN FollowUpType ft ON fu.`followUpTypeId` = ft.id WHERE ft.externalid = 'outcome' AND rfu.resultId = r.id)",
       "statUnit": "{unit} since last week",
       "statUnitI18nKey": "dashboardWidgetUnitActiveCases",
       "link": "/browse/result",
@@ -80,9 +80,9 @@
       "subTitle": null,
       "subTitleI18nKey": null,
       "sqlForIndicator":
-          "SELECT COUNT(rfu.resultId) as cnt FROM ResultFollowUp AS rfu INNER JOIN FollowUp AS fu ON fu.id = rfu.followUpId INNER JOIN FollowUpType AS ft ON fu.followUpTypeId = ft.id INNER JOIN Result AS r ON rfu.resultId = r.id INNER JOIN Device AS d ON d.id = r.deviceId INNER JOIN Site AS s ON s.id = d.siteId INNER JOIN Partner AS p ON p.id = s.partnerId WHERE ft.externalid = 'outcome' AND fu.externalId='Recovered'",
+          "SELECT COUNT(DISTINCT COALESCE(CONCAT('caseId',r.caseId),r.patientData->\"$.id\", r.externalId,CONCAT('resultId',r.id))) AS cnt FROM ResultFollowUp AS rfu INNER JOIN FollowUp AS fu ON fu.id = rfu.followUpId INNER JOIN FollowUpType AS ft ON fu.followUpTypeId = ft.id INNER JOIN Result AS r ON rfu.resultId = r.id INNER JOIN Device AS d ON d.id = r.deviceId INNER JOIN Site AS s ON s.id = d.siteId INNER JOIN Partner AS p ON p.id = s.partnerId WHERE ft.externalid = 'outcome' AND fu.externalId = 'Recovered'",
       "sqlForStatUnit":
-          "SELECT COUNT(rfu.resultId) as cnt FROM ResultFollowUp AS rfu INNER JOIN FollowUp AS fu ON fu.id = rfu.followUpId INNER JOIN FollowUpType AS ft ON fu.followUpTypeId = ft.id INNER JOIN Result AS r ON rfu.resultId = r.id INNER JOIN Device AS d ON d.id = r.deviceId INNER JOIN Site AS s ON s.id = d.siteId INNER JOIN Partner AS p ON p.id = s.partnerId WHERE ft.externalid = 'outcome' AND fu.externalId='Recovered' AND rfu.createdOn >= DATE_SUB(NOW(), INTERVAL 7 DAY)",
+          "SELECT COUNT(DISTINCT COALESCE(CONCAT('caseId',r.caseId),r.patientData->\"$.id\", r.externalId,CONCAT('resultId',r.id))) AS cnt FROM ResultFollowUp AS rfu INNER JOIN FollowUp AS fu ON fu.id = rfu.followUpId INNER JOIN FollowUpType AS ft ON fu.followUpTypeId = ft.id INNER JOIN Result AS r ON rfu.resultId = r.id INNER JOIN Device AS d ON d.id = r.deviceId INNER JOIN Site AS s ON s.id = d.siteId INNER JOIN Partner AS p ON p.id = s.partnerId WHERE ft.externalid = 'outcome' AND fu.externalId = 'Recovered' and rfu.createdOn >= DATE_SUB(NOW(), INTERVAL 7 DAY)",
       "statUnit": "{unit} since last week",
       "statUnitI18nKey": "dashboardWidgetUnitRecoveredCases",
       "link": "/browse/result",
@@ -95,9 +95,9 @@
       "subTitle": null,
       "subTitleI18nKey": null,
       "sqlForIndicator":
-        "SELECT COUNT(rfu.resultId) as cnt FROM ResultFollowUp AS rfu INNER JOIN FollowUp AS fu ON fu.id = rfu.followUpId INNER JOIN FollowUpType AS ft ON fu.followUpTypeId = ft.id INNER JOIN Result AS r ON rfu.resultId = r.id INNER JOIN Device AS d ON d.id = r.deviceId INNER JOIN Site AS s ON s.id = d.siteId INNER JOIN Partner AS p ON p.id = s.partnerId WHERE fu.externalId='Died'",
+        "SELECT COUNT(DISTINCT COALESCE(CONCAT('caseId',r.caseId),r.patientData->\"$.id\", r.externalId,CONCAT('resultId',r.id))) AS cnt FROM ResultFollowUp AS rfu INNER JOIN FollowUp AS fu ON fu.id = rfu.followUpId INNER JOIN FollowUpType AS ft ON fu.followUpTypeId = ft.id INNER JOIN Result AS r ON rfu.resultId = r.id INNER JOIN Device AS d ON d.id = r.deviceId INNER JOIN Site AS s ON s.id = d.siteId INNER JOIN Partner AS p ON p.id = s.partnerId WHERE fu.externalId = 'Died'",
       "sqlForStatUnit":
-         "SELECT COUNT(rfu.resultId) as cnt FROM ResultFollowUp AS rfu INNER JOIN FollowUp AS fu ON fu.id = rfu.followUpId INNER JOIN FollowUpType AS ft ON fu.followUpTypeId = ft.id INNER JOIN Result AS r ON rfu.resultId = r.id INNER JOIN Device AS d ON d.id = r.deviceId INNER JOIN Site AS s ON s.id = d.siteId INNER JOIN Partner AS p ON p.id = s.partnerId WHERE fu.externalId='Died' AND rfu.createdOn >= DATE_SUB(NOW(), INTERVAL 7 DAY)" ,
+         "SELECT COUNT(DISTINCT COALESCE(CONCAT('caseId',r.caseId),r.patientData->\"$.id\", r.externalId,CONCAT('resultId',r.id))) AS cnt FROM ResultFollowUp AS rfu INNER JOIN FollowUp AS fu ON fu.id = rfu.followUpId INNER JOIN FollowUpType AS ft ON fu.followUpTypeId = ft.id INNER JOIN Result AS r ON rfu.resultId = r.id INNER JOIN Device AS d ON d.id = r.deviceId INNER JOIN Site AS s ON s.id = d.siteId INNER JOIN Partner AS p ON p.id = s.partnerId WHERE fu.externalId = 'Died' and rfu.createdOn >= DATE_SUB(NOW(), INTERVAL 7 DAY)" ,
       "statUnit": "{unit} since last week",
       "statUnitI18nKey": "dashboardWidgetUnitDeathUnitCases",
       "link": "/browse/result",

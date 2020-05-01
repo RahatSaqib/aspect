@@ -10,6 +10,7 @@ const {
 const AssayBdMgitAstResultDataSchema = require('./fixtures/AssayBdMgitAstResultDataSchema.json')
 const AssayBdMgitGndResultDataSchema = require('./fixtures/AssayBdMgitGndResultDataSchema.json')
 const MGITPatientDataSchema = require('./fixtures/MGITPatientDataSchema.json')
+const { seedPartnerAssay, seedPartnerDisease } = require('./utils')
 
 async function getMGITResultFromTBPossitive(result, assaysMGIT, devicesMGIT) {
   const randomDateMgit = addDays(result.endedOn, _.random(5))
@@ -141,6 +142,9 @@ async function updateMGITAssays(
       assayId: assayBdMgitGndId,
     })
   )
+
+  await seedPartnerAssay(knex)
+  await seedPartnerDisease(knex)
 }
 
 function getNewMgitResultData(isAST) {
@@ -312,6 +316,9 @@ async function updateCultureAssays(
       assayId: assayGenericCultureId,
     })
   )
+
+  await seedPartnerAssay(knex)
+  await seedPartnerDisease(knex)
 }
 
 module.exports = {
