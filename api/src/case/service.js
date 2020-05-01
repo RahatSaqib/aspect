@@ -65,6 +65,10 @@ async function getCase(_case) {
     .first()
 }
 
+async function updateCase(whereFields, updateFields) {
+  await knex('Case').where(whereFields).update(updateFields)
+}
+
 async function getCases({ query, auth }) {
   const dataConstraints = await getConstraints(auth.credentials)
 
