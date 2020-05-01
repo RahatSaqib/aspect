@@ -18,12 +18,14 @@ import ColorDemo from './ColorDemo/ColorDemo'
 
 import covidGraphs from './GraphConfigurations/Covid'
 import hivGraphs from './GraphConfigurations/HIV'
+import tbGraphs from './GraphConfigurations/TB'
 
 const cssClasses = classnames.bind(require('./Status.css'))
 
 const Status = ({ history, location, intl, colorDemo = true }) => {
   const { covidRecoveryByGender, covidMortalityAndRecoveryConfig } = covidGraphs
   const { hivResults } = hivGraphs
+  const { tbResults } = tbGraphs
   const [marginBottom, setMarginBottom] = useState(0)
   const dispatch = useDispatch()
   const userName = useSelector(({ user }) => user.jwt.name)
@@ -69,6 +71,14 @@ const Status = ({ history, location, intl, colorDemo = true }) => {
         location={location}
         assaysFromState={assays}
         config={hivResults}
+      />
+
+      <GraphContainer
+        intl={intl}
+        history={history}
+        location={location}
+        assaysFromState={assays}
+        config={tbResults}
       />
 
       <GraphContainer
