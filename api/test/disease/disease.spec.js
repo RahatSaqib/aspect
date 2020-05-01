@@ -24,7 +24,11 @@ describe('Disease routes', () => {
       assert.typeOf(diseaseResponse.body.data, 'array')
 
       const { data } = diseaseResponse.body
+      assert.isTrue(!_.isNil(data))
+
       assert.isAtLeast(_.filter(data, elem => elem.hasResults).length, 1)
+      assert.isTrue(!_.isNil(data.length))
+
       assert.isAtLeast(data.length, 8)
       const [disease] = data
       assert.property(disease, 'id')

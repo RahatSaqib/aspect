@@ -5,11 +5,11 @@ const { getConstraints, addConstraints } = require('../auth/constraints')
 async function listDiseases(request) {
   const { auth } = request
   const dataConstraints = await getConstraints(auth.credentials)
-  const usedDiseaseIds = await knex('Result as r')
+  const usedDiseaseIdsQuery = knex('Result as r')
     .innerJoin('Device as d', 'r.deviceId', 'd.id')
     .innerJoin('Assay as a', 'r.assayId', 'a.id')
-    .leftJoin('AssayType as at', 'a.assayTypeId', 'at.id')
-    .leftJoin('Disease as dis', 'at.diseaseId', 'dis.id')
+    .innerJoin('AssayType as at', 'a.assayTypeId', 'at.id')
+    .innerJoin('Disease as dis', 'at.diseaseId', 'dis.id')
     .modify(addConstraints, dataConstraints, {
       device: 'd',
       result: 'r',
@@ -23,6 +23,7 @@ async function listDiseases(request) {
       disease: 'd',
     })
     .select()
+  const usedDiseaseIds = await usedDiseaseIdsQuery
   const result = {
     ok: true,
     total: diseases.length,
