@@ -15,7 +15,7 @@ const routes = [
         options: {
           allowUnknown: false,
         },
-        schema: Joi.array().items({
+        schema: Joi.object().keys({
           ok: Joi.bool()
             .required()
             .description('False if there was some sort of error'),
