@@ -2013,6 +2013,7 @@ function getBaseQueryForResults() {
   const resultQuery = knex('Result as r')
     .innerJoin('Assay as a', 'r.assayId', 'a.id')
     .innerJoin('AssayType as at', 'a.assayTypeId', 'at.id')
+    .innerJoin('Disease as dis', 'at.diseaseId', 'dis.id')
     .innerJoin('Device as d', 'r.deviceId', 'd.id')
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .leftJoin('PartnerAssay as pa', function() {

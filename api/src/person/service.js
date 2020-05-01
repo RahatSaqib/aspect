@@ -421,6 +421,8 @@ async function listRefreshTokens(request) {
     .leftJoin('ResultDownloadLog as resd', 'r.userId', 'resd.createdBy')
     .leftJoin('Result as rt', 'rt.id', 'rdl.resultId')
     .leftJoin('Assay as a', 'a.id', 'rt.assayId')
+    .leftJoin('AssayType as at', 'a.assayTypeId', 'at.id')
+    .leftJoin('Disease as dis', 'at.diseaseId', 'dis.id')
     .leftJoin(
       'ResultTreatmentStatusLog as rtsl',
       'rtsl.id',

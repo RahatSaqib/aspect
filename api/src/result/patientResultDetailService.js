@@ -12,6 +12,8 @@ async function getPatientResultsDetails(request) {
     .join('Site as originsite', 's.originSiteId', 'originsite.id')
     .join('Site as resultSite', 's.originSiteId', 'resultSite.id')
     .join('Assay as a', 'r.assayId', 'a.id')
+    .leftJoin('AssayType as at', 'a.assayTypeId', 'at.id')
+    .leftJoin('Disease as dis', 'at.diseaseId', 'dis.id')
     .join('ResultCategory as rc1', 'r.resultCategory1', 'rc1.id')
     .leftJoin('ResultCategory as rc2', 'r.resultCategory2', 'rc2.id')
     .leftJoin('ResultFollowUp as rfu', 'r.id', 'rfu.resultId')
