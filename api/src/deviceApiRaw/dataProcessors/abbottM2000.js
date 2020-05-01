@@ -595,13 +595,9 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
           // If this is an HIV Assay
           const qualityControlSummaryForAssay = {}
           if (
-            [
-              '1mLDBSvOP',
-              'HIV1mlDBS',
-              'HIV0.6ml',
-              'HIV0.2ml',
-              'HIVQLDRDBS',
-            ].includes(assayCode)
+            ['1mLDBSvOP', 'HIV1mlDBS', 'HIV0.6ml', 'HIV0.2ml'].includes(
+              assayCode
+            )
           ) {
             const negResults = qualityControlResultsForRun.filter(
               result => result.sample.externalId === 'HIV_NEG'
@@ -691,9 +687,11 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
               )
             }
           } else if (
-            ['Daan Target N gene LDA', 'Daan nCOVID-19 ORF LDA'].includes(
-              assayCode
-            )
+            [
+              'HIVQLDRDBS',
+              'Daan Target N gene LDA',
+              'Daan nCOVID-19 ORF LDA',
+            ].includes(assayCode)
           ) {
             const negResults = qualityControlResultsForRun.filter(
               result => result.sample.externalId === 'CoV_NEG'
