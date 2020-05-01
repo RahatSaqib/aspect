@@ -560,6 +560,13 @@ describe('result/service', () => {
     }
   }
 
+  function assayMissingServiceMock() {
+    return {
+      getAllAssaySchemas: () => Promise.resolve([]),
+      getAssayResultCategories: () => Promise.resolve([]),
+    }
+  }
+
   describe('updateResult', () => {
     function resultUpdatePayload(extraPayload = {}) {
       const payload = _.merge({}, extraPayload)
@@ -616,6 +623,7 @@ describe('result/service', () => {
         },
         {
           '../site/service': siteServiceMock(),
+          '../assay/service': assayMissingServiceMock(),
         }
       )
 
@@ -706,6 +714,7 @@ describe('result/service', () => {
         {},
         {
           '../site/service': siteServiceMock(),
+          '../assay/service': assayMissingServiceMock(),
         }
       )
 
