@@ -1,0 +1,4 @@
+.graph__containerGrid {
+  display: flex;
+  justify-content: space-between;
+}
