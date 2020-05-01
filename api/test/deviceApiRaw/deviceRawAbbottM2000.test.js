@@ -1824,7 +1824,6 @@ L|1`
           resultData: {
             typeOfMessage: 'Production',
             messageIsComplete: true,
-            messageSentOn: '2020-04-29T23:49:04.000Z',
             assayName: 'Daan nCOVID-19 ORF LDA',
             collectedBy: null,
             actionCode: 'Patient Result',
@@ -1865,7 +1864,6 @@ L|1`
           resultData: {
             typeOfMessage: 'Production',
             messageIsComplete: true,
-            messageSentOn: '2020-04-29T23:49:04.000Z',
             assayName: 'Daan nCOVID-19 ORF LDA',
             collectedBy: null,
             actionCode: 'Patient Result',
@@ -1906,7 +1904,6 @@ L|1`
           resultData: {
             typeOfMessage: 'Production',
             messageIsComplete: true,
-            messageSentOn: '2020-04-29T23:49:04.000Z',
             assayName: 'Daan nCOVID-19 ORF LDA',
             collectedBy: null,
             actionCode: 'Patient Result',
