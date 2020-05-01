@@ -1,9 +1,23 @@
+const _ = require('lodash')
 const { knex } = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 
 async function listDiseases(request) {
   const { auth } = request
   const dataConstraints = await getConstraints(auth.credentials)
+  const usedDiseaseIds = await knex('Result as r')
+    .innerJoin('Device as d', 'r.deviceId', 'd.id')
+    .innerJoin('Assay as a', 'r.assayId', 'a.id')
+    .leftJoin('AssayType as at', 'a.assayTypeId', 'at.id')
+    .leftJoin('Disease as dis', 'at.diseaseId', 'dis.id')
+    .modify(addConstraints, dataConstraints, {
+      device: 'd',
+      result: 'r',
+      disease: 'dis',
+      assay: 'a',
+    })
+    .distinct('dis.id as diseaseId')
+    .pluck('diseaseId')
   const diseases = await knex('Disease as d')
     .modify(addConstraints, dataConstraints, {
       disease: 'd',
@@ -13,7 +27,10 @@ async function listDiseases(request) {
     ok: true,
     total: diseases.length,
     length: diseases.length,
-    data: diseases,
+    data: _.map(diseases, elem => ({
+      ...elem,
+      hasResults: usedDiseaseIds.includes(elem.id),
+    })),
   }
   return result
 }
