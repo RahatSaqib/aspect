@@ -88,27 +88,35 @@ export const DiseaseSelectField = ({
   allItemText,
   intl,
   fetchDiseases,
+  onlyWithResults,
   diseases,
   onChange,
   ...restProps
-}) => (
-  <SelectField
-    {...restProps}
-    onChange={onChange}
-    disabled={
-      restProps.disabled ||
-      diseases.loading ||
-      diseases.items.isEmpty() ||
-      diseases.items.size <= 1
-    }
-  >
-    {allItemText && <MenuItem value="all">{allItemText}</MenuItem>}
-    {diseases.items.map(d => (
-      <MenuItem key={d.get('id')} value={d.get('id')}>
-        {textForDiseaseItem(d, intl.formatMessage)}
-      </MenuItem>
-    ))}
-  </SelectField>
-)
+}) => {
+  const validDisease = onlyWithResults
+    ? diseases.items.filter(a => a.get('hasResults'))
+    : diseases.items
+  const isSingleDisease = validDisease.size <= 1
+
+  return (
+    <SelectField
+      {...restProps}
+      onChange={onChange}
+      disabled={
+        restProps.disabled ||
+        diseases.loading ||
+        validDisease.isEmpty() ||
+        validDisease.size <= 1
+      }
+    >
+      {allItemText && <MenuItem value="all">{allItemText}</MenuItem>}
+      {validDisease.map(d => (
+        <MenuItem key={d.get('id')} value={d.get('id')}>
+          {textForDiseaseItem(d, intl.formatMessage)}
+        </MenuItem>
+      ))}
+    </SelectField>
+  )
+}
 
 export default enhance(DiseaseSelectField)

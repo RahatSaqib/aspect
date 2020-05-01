@@ -506,6 +506,7 @@ export const FiltersPanel = ({
               allItemText={intl.formatMessage(messages.all)}
               value={filters.diseaseId}
               onDiseaseIdChange={onDiseaseChange}
+              onlyWithResults
               floatingLabelFixed
               hintText={intl.formatMessage(messages.selectDisease)}
               floatingLabelText={intl.formatMessage(messages.disease)}
