@@ -54,19 +54,6 @@ async function removeCase(_case) {
     .del()
 }
 
-async function getCase(_case) {
-  validateCaseIdentifier()
-
-  return knex('Case')
-    .innerJoin('User as uc', 'cs.createdBy', 'u.id')
-    .innerJoin('User as uu', 'cs.updatedBy', 'u.id')
-    .where({
-      externalId: _case.externalId,
-      partnerId: _case.partnerId,
-    })
-    .first()
-}
-
 async function updateCase(whereFields, updateFields) {
   await knex('Case')
     .where(whereFields)
@@ -161,7 +148,6 @@ module.exports = {
   getCaseId,
   addCase,
   removeCase,
-  getCase,
   getCases,
   updateCase,
 }
