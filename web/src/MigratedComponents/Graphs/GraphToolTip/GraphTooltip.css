@@ -1,0 +1,21 @@
+.tooltip__container {
+  color: inherit;
+}
+
+.tooltip__row {
+  display: flex;
+}
+
+.tooltip__color {
+  display: block;
+  width: 17px;
+  height: 17px;
+}
+
+.tooltip__text {
+  color: inherit;
+}
+
+.tooltip__value {
+  font-weight: 900;
+}

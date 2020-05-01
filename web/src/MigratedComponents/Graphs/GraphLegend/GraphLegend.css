@@ -1,0 +1,19 @@
+.legend__container {
+  position: absolute;
+  text-align: center;
+  width: 100%;
+  flex-wrap: wrap;
+  max-width: 170px;
+}
+
+.legend__title,
+.legend__subTotals,
+.legend__subTitle {
+  font-size: 18px;
+  color: var(--aspect-color-black-2);
+}
+
+.legend__average {
+  font-size: 48px;
+  font-weight: 900;
+}
