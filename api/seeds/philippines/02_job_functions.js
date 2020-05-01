@@ -11,7 +11,10 @@ const {
   getPermissonByModuleAndActivity,
 } = require('../utils')
 const jobFunctions = require('./fixtures/jobFunctions.json')
-const { ensureResultTreatmentStatuses, upsertJobFunction } = require('../common')
+const {
+  ensureResultTreatmentStatuses,
+  upsertJobFunction,
+} = require('../common')
 
 async function seed(knex) {
   await ensureResultTreatmentStatuses(knex)

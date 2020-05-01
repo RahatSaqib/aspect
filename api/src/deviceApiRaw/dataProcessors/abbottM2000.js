@@ -262,6 +262,7 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
                         sampleTypeExternalId: {
                           HIVQLDRDBS: 'DBS',
                           '1mLDBSvOP': 'DBS',
+                          HIV1mlDBS: 'DBS',
                           'HIV0.6ml': 'Plasma',
                           'HIV0.2ml': 'Plasma',
                           'HBV 0.2ml': 'Plasma',
@@ -408,6 +409,7 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
     const resultWorkflowStatuses = await allResultWorkflowStatusToId()
     const m2000AspectAssayIdMapping = {
       '1mLDBSvOP': assayIds.abbottM2000DBSHivVL,
+      HIV1mlDBS: assayIds.abbottM2000DBSHivVL,
       'HIV0.6ml': assayIds.abbottM2000PlasmaHivVL,
       'HIV0.2ml': assayIds.abbottM2000PlasmaHivVL,
       HIVQLDRDBS: assayIds.abbottM2000HIVEID,
@@ -418,6 +420,17 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
     const resultCategories = await allResultCategoryToId()
     const resultCategoryMapping = {
       '1mLDBSvOP': {
+        I: {
+          Detected: resultCategories.Detected,
+          'Target not detected': resultCategories.NotDetected,
+        },
+        F: {
+          'Not detected': resultCategories.NotDetected,
+          '< 550': resultCategories.LessThan550,
+          Numeric: resultCategories.MoreThan550,
+        },
+      },
+      HIV1mlDBS: {
         I: {
           Detected: resultCategories.Detected,
           'Target not detected': resultCategories.NotDetected,
@@ -582,9 +595,13 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
           // If this is an HIV Assay
           const qualityControlSummaryForAssay = {}
           if (
-            ['1mLDBSvOP', 'HIV0.6ml', 'HIV0.2ml', 'HIVQLDRDBS'].includes(
-              assayCode
-            )
+            [
+              '1mLDBSvOP',
+              'HIV1mlDBS',
+              'HIV0.6ml',
+              'HIV0.2ml',
+              'HIVQLDRDBS',
+            ].includes(assayCode)
           ) {
             const negResults = qualityControlResultsForRun.filter(
               result => result.sample.externalId === 'HIV_NEG'

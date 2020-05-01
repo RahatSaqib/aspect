@@ -1784,9 +1784,14 @@ async function seedLabClinicFixture(
   )
 }
 
-async function ensureResultTreatmentStatuses(knex, treatmentStatuses = resultTreatmentStatuses) {
+async function ensureResultTreatmentStatuses(
+  knex,
+  treatmentStatuses = resultTreatmentStatuses
+) {
   await Promise.each(treatmentStatuses, async resultTreatmentStatus => {
-    const existingResultTreatmentStatus = await knex('ResultTreatmentStatus').where('externalId', resultTreatmentStatus.externalId).first()
+    const existingResultTreatmentStatus = await knex('ResultTreatmentStatus')
+      .where('externalId', resultTreatmentStatus.externalId)
+      .first()
     if (!existingResultTreatmentStatus) {
       await knex('ResultTreatmentStatus').insert(resultTreatmentStatus)
     }

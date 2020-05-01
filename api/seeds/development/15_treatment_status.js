@@ -5,4 +5,3 @@ const { ensureResultTreatmentStatuses } = require('../common')
 async function seed(knex) {
   await ensureResultTreatmentStatuses(knex)
 }
-
