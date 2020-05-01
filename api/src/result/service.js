@@ -2627,7 +2627,7 @@ async function updateOrCreateResult(request, result = {}) {
   }
 
   // update or insert tags
-  await updateTagsById(result.id, 'result', result.tags, auth)
+  await updateTagsById(result.id, 'result', payload.tags, auth)
 
   // update result form data
   await updateFormDataByResultId(
@@ -2689,7 +2689,11 @@ async function getDeviceIdForResultCreation(
     return payload.deviceId
   }
   // TODO: configure this in the db instead of hardcoding
-  const assaysForManualEntry = ['assayGenericCovid19', 'GenericRDT']
+  const assaysForManualEntry = [
+    'assayGenericCovid19',
+    'GenericRDT',
+    'DaktariHivVL',
+  ]
   if (assaysForManualEntry.indexOf(assayExternalId) === -1) {
     throw Boom.badRequest(
       'You did not select a device and this assay can not be entered manually without a device. Please specify a device.'
