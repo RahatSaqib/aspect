@@ -147,4 +147,5 @@ module.exports = {
   removeCase,
   getCase,
   getCases,
+  updateCase,
 }
