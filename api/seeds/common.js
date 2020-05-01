@@ -17,6 +17,7 @@ const geneXpertResultDataSchemaHivQual = require('./fixtures/geneXpertDevice/gen
 const geneXpertResultDataSchemaHcv = require('./fixtures/geneXpertDevice/geneXpertResultDataSchemaHcv.json')
 const geneXpertResultDataSchemaEbola = require('./fixtures/geneXpertDevice/geneXpertResultDataSchemaEbola.json')
 const geneXpertResultDataSchemaSarsCoV2 = require('./fixtures/geneXpertDevice/geneXpertResultDataSchemaSarsCoV2.json')
+const resultTreatmentStatuses = require('./fixtures/ResultTreatmentStatus.json')
 const {
   allFeatureToId,
   deviceStatusToId,
@@ -204,6 +205,7 @@ async function commonUpserts(
     )
   }
   await ensureAspectDeviceExists(knex, countryId, partnerId, auditFields)
+  await ensureResultTreatmentStatuses(knex)
 }
 
 async function upsertJobFunction(
@@ -1782,6 +1784,15 @@ async function seedLabClinicFixture(
   )
 }
 
+async function ensureResultTreatmentStatuses(knex, treatmentStatuses = resultTreatmentStatuses) {
+  await Promise.each(treatmentStatuses, async resultTreatmentStatus => {
+    const existingResultTreatmentStatus = await knex('ResultTreatmentStatus').where('externalId', resultTreatmentStatus.externalId).first()
+    if (!existingResultTreatmentStatus) {
+      await knex('ResultTreatmentStatus').insert(resultTreatmentStatus)
+    }
+  })
+}
+
 module.exports = {
   commonUpserts,
   upsertGxAlertDevice,
@@ -1795,4 +1806,5 @@ module.exports = {
   clonePermissions,
   baseGxAlertMigration,
   seedLabClinicFixture,
+  ensureResultTreatmentStatuses,
 }
