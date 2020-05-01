@@ -65,9 +65,14 @@ async function getCase(_case) {
     .first()
 }
 
+async function updateCase(whereFields, updatedFields) {
+  await knex('Case').where(whereFields).update(updatedFields)
+}
+
 module.exports = {
   getCaseId,
   addCase,
   removeCase,
   getCase,
+  updateCase,
 }
