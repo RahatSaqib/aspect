@@ -28,8 +28,7 @@ const PieInnerLegend = ({ averages, data }) => {
 
   useEffect(() => {
     if (!average && data) {
-      const calculated = getAverageFromData(data, 'value', key)
-      setAverage(calculated)
+      setAverage(getAverageFromData(data, 'value', key))
     }
   }, [average, averages, data, key])
 

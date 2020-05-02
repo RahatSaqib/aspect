@@ -23,87 +23,74 @@ const GraphRender = ({ assays, id: parentId, config }) => {
     tickValuesY,
     displayMethod,
     displayLegend = true,
+    filterResults = false,
     formatDate,
     type,
     averages,
   } = config
-  const { whitelisted, assaysFromState } = assays
   const dispatch = useDispatch()
-  const [data, setData] = useState(false)
+  const { whitelisted, assaysFromState } = assays
   const [graphData, setGraphData] = useState(false)
   const [graphKeys, setGraphKeys] = useState(false)
 
-  const culture = useSelector(({ user }) => {
+  const { culture, graphState } = useSelector(state => {
+    const { user, clinicalIndicators } = state
     const { culture } = user.toJS()
-    return culture
-  })
-
-  const graphStore = useSelector(({ clinicalIndicators }) => {
     const { [parentId]: parentState = false } = clinicalIndicators.toJS()
     const { [id]: graphState = false } = parentState
-    return graphState
+    return { culture, graphState }
   })
 
   useEffect(() => {
-    if (!data) {
+    if (!graphState) {
       dispatch(
         fetchClinicalIndicatorsDashboard({ parentId, id, whitelisted, api })
       )
-    }
-  }, [api, data, dispatch, id, parentId, whitelisted])
+    } else {
+      const { data } = graphState
+      if (data && data.length && !graphData) {
+        let grouped
+        switch (type) {
+          case 'bar':
+            grouped = groupByKey(
+              data,
+              indexBy,
+              keyToConsume,
+              displayMethod,
+              formatDate
+            )
+            break
 
-  useEffect(() => {
-    if (!data && Object.keys(graphStore).length > 0) {
-      return graphStore && setData(graphStore)
-    }
-  }, [data, graphStore])
+          case 'pie':
+            grouped = groupForPie(data, keyToConsume, indexBy, filterResults)
+            break
 
-  useEffect(() => {
-    if (data && !graphData) {
-      let grouped
-      const inData = data && data.data
-      switch (type) {
-        case 'bar':
-          grouped = groupByKey(
-            inData,
-            indexBy,
-            keyToConsume,
-            displayMethod,
-            formatDate
-          )
-          break
+          default:
+            grouped = false
+            break
+        }
 
-        case 'pie':
-          grouped = groupForPie(
-            inData,
-            keyToConsume,
-            indexBy,
-            assaysFromState,
-            displayMethod,
-            'filterResults'
-          )
-          break
-
-        default:
-          grouped = false
-          break
-      }
-
-      if (grouped) {
-        const keysFromGrouped = getGraphKeysFromResults(grouped, indexBy)
-        setGraphData(grouped)
-        setGraphKeys(keysFromGrouped)
+        if (grouped) {
+          const keysFromGrouped = getGraphKeysFromResults(grouped, indexBy)
+          setGraphData(grouped)
+          setGraphKeys(keysFromGrouped)
+        }
       }
     }
   }, [
-    assaysFromState,
-    data,
+    api,
+    dispatch,
     displayMethod,
+    filterResults,
     formatDate,
     graphData,
+    graphState,
+    id,
     indexBy,
     keyToConsume,
+    parentId,
     type,
+    whitelisted,
   ])
 
   return (

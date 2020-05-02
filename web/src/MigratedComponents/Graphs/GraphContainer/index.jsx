@@ -4,7 +4,6 @@ import classnames from 'classnames/bind'
 import Grid from '@material-ui/core/Grid'
 import AspectCard from '../../AspectCard'
 import GraphRender from '../GraphRender'
-// import assayFromState from '../Helpers/tests/mocks/assayFromState';
 
 const cssClasses = classnames.bind(require('./GraphContainer.css'))
 
@@ -17,6 +16,7 @@ const GraphContainer = ({
 }) => {
   const whitelisted = []
   const { assays, graphType, id } = config
+
   assays.map(a =>
     assaysFromState.filter(
       ({ externalId, hasResults }) =>
@@ -43,8 +43,9 @@ const GraphContainer = ({
     </AspectCard>
   ) : null
 }
+
 GraphContainer.defaultProps = {
-  assays: {},
+  assays: [],
   config: {},
 }
 
@@ -52,8 +53,8 @@ GraphContainer.propTypes = {
   intl: PropTypes.object.isRequired,
   history: PropTypes.object.isRequired,
   location: PropTypes.object.isRequired,
-  assaysFromState: PropTypes.object.isRequired,
-  assays: PropTypes.object,
+  assaysFromState: PropTypes.array.isRequired,
+  assays: PropTypes.array,
   config: PropTypes.object,
 }
 
