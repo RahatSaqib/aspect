@@ -30,7 +30,7 @@ const PieInnerLegend = ({ averages, data }) => {
     if (!average && data) {
       setAverage(getAverageFromData(data, 'value', key))
     }
-  }, [average, averages, data, key])
+  }, [averages, data])
 
   return (
     <div className={cssClasses('legend__container')}>
