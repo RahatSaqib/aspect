@@ -9,6 +9,7 @@ import {
   generateTickVales,
   generateToolTip,
   generateLegend,
+  percentageOrActualForPie,
 } from '../Helpers/Formatters'
 
 import GraphToolTip from '../GraphToolTip'
@@ -26,7 +27,7 @@ const PieGraph = ({
   return (
     <div className={cssClasses('piegraph__container')}>
       <ResponsivePie
-        data={data}
+        data={percentageOrActualForPie(data, displayMethod, culture)}
         keys={keys}
         margin={{ top: 30, right: 30, bottom: 30, left: 30 }}
         innerRadius={0.8}
