@@ -96,12 +96,7 @@ const Status = ({ history, location, intl, colorDemo = true }) => {
         assaysFromState={assays}
         config={covidRecoveryByGender}
       />
-      {/* <ClinicalIndicator
-        intl={intl}
-        history={history}
-        location={location}
-        assays={assays}
-      /> */}
+
       <TreatmentStatus
         intl={intl}
         history={history}

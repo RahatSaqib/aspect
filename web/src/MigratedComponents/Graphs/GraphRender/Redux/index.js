@@ -43,7 +43,6 @@ export function fetchClinicalIndicatorsDashboard(config) {
   return dispatch => {
     const requestedAt = `results_${Date.now()}`
     dispatch(requestClinicalIndicatorsDashboard({ requestedAt }))
-    console.log(`/${endpoint}?${assayParams}&${endpointParams}`)
     return aspectFetch(`/${endpoint}?${assayParams}&${endpointParams}`, {
       method: 'GET',
       errorNotifications: {
@@ -66,11 +65,11 @@ export function fetchClinicalIndicatorsDashboard(config) {
           })
         ),
       },
-    }).then(json => {
-      return dispatch(
+    }).then(json =>
+      dispatch(
         receiveClinicalIndicatorsDashboard(parentId, id, requestedAt, json)
       )
-    })
+    )
   }
 }
 

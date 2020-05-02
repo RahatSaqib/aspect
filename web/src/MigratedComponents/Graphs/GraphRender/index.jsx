@@ -38,17 +38,27 @@ const GraphRender = ({ assays, id: parentId, config }) => {
     const { culture } = user.toJS()
     const { [parentId]: parentState = false } = clinicalIndicators.toJS()
     const { [id]: graphState = false } = parentState
-    return { culture, graphState }
+    return {
+      culture,
+      graphState,
+    }
   })
 
   useEffect(() => {
     if (!graphState) {
       dispatch(
-        fetchClinicalIndicatorsDashboard({ parentId, id, whitelisted, api })
+        fetchClinicalIndicatorsDashboard({
+          parentId,
+          id,
+          whitelisted,
+          api,
+        })
       )
-    } else {
+    }
+
+    if (graphState && (!graphData || !graphKeys)) {
       const { data } = graphState
-      if (data && data.length && !graphData) {
+      if (data && data.length) {
         let grouped
         switch (type) {
           case 'bar':
@@ -77,25 +87,17 @@ const GraphRender = ({ assays, id: parentId, config }) => {
         }
       }
     }
-  }, [
-    api,
-    dispatch,
-    displayMethod,
-    filterResults,
-    formatDate,
-    graphData,
-    graphState,
-    id,
-    indexBy,
-    keyToConsume,
-    parentId,
-    type,
-    whitelisted,
-  ])
+    // https://github.com/facebook/react/issues/16313#issuecomment-587149109
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [graphState])
 
   return (
     <Grid item lg={size}>
-      <div style={{ height: '350px' }}>
+      <div
+        style={{
+          height: '350px',
+        }}
+      >
         {graphData && graphKeys ? (
           <Component
             data={graphData}
@@ -106,7 +108,10 @@ const GraphRender = ({ assays, id: parentId, config }) => {
             culture={culture}
             averages={averages}
             assaysFromState={assaysFromState}
-            tickValues={{ tickValuesX, tickValuesY }}
+            tickValues={{
+              tickValuesX,
+              tickValuesY,
+            }}
           />
         ) : (
           <CircularProgress />

@@ -12,13 +12,6 @@ import includes from 'lodash/includes'
 import pick from 'lodash/pick'
 import pickBy from 'lodash/pickBy'
 import startCase from 'lodash/startCase'
-import addMinutes from 'date-fns/addMinutes'
-import subMinutes from 'date-fns/subMinutes'
-import subDays from 'date-fns/subDays'
-import subMonths from 'date-fns/subMonths'
-import startOfMonth from 'date-fns/startOfMonth'
-import format from 'date-fns/format'
-import addDays from 'date-fns/addDays'
 import first from 'lodash/first'
 import last from 'lodash/last'
 import maxBy from 'lodash/maxBy'
@@ -27,6 +20,14 @@ import sortBy from 'lodash/sortBy'
 import valuesIn from 'lodash/valuesIn'
 import forOwn from 'lodash/forOwn'
 import keys from 'lodash/keys'
+import toNumber from 'lodash/toNumber'
+import addMinutes from 'date-fns/addMinutes'
+import subMinutes from 'date-fns/subMinutes'
+import subDays from 'date-fns/subDays'
+import subMonths from 'date-fns/subMonths'
+import startOfMonth from 'date-fns/startOfMonth'
+import format from 'date-fns/format'
+import addDays from 'date-fns/addDays'
 
 import graphColorMap from '../Variables'
 
@@ -44,6 +45,28 @@ const negateTimeZoneOffset = dateString => {
   return Math.sign(offset) !== -1
     ? addMinutes(date, offset)
     : subMinutes(date, Math.abs(offset))
+}
+
+const getTimePeriod = (cnt, period, dateFormat) => {
+  let timePeriod
+  const dateNow = new Date()
+  switch (true) {
+    case period === 'hours':
+      timePeriod = subDays(dateNow, cnt)
+      break
+    case period === 'days':
+      timePeriod = subDays(dateNow, cnt)
+      break
+    case period === 'months':
+      timePeriod = startOfMonth(subMonths(dateNow, cnt))
+      break
+
+    default:
+      timePeriod = dateNow
+      break
+  }
+
+  return format(timePeriod, dateFormat)
 }
 
 const normaliseKeys = (data, indexBy, filterResults = false) => {
@@ -90,28 +113,18 @@ const groupByKey = (
   )
 }
 
-const groupForPie = (
-  data,
-  keyToConsume,
-  indexBy,
-  displayMethod = 'percentage',
-  filterResults = false
-) => {
+const groupForPie = (data, keyToConsume, indexBy, filterResults) => {
   const { key: filterKey, value: filterValue } = filterResults
   const dataToConsume = filterResults
     ? filter(data, [filterKey, filterValue])
     : data
 
   return dataToConsume.reduce((acc, curr) => {
-    const total = dataToConsume.reduce((acc, curr) => acc + curr.cnt, 0)
     const label = curr[keyToConsume]
     acc.push({
       id: curr[keyToConsume],
       label,
-      value:
-        displayMethod === 'percentage'
-          ? calcPercentageForGraphs(curr[indexBy], total)
-          : curr[indexBy],
+      value: curr[indexBy],
     })
     return acc
   }, [])
@@ -130,12 +143,12 @@ const orderKeysById = keys => {
 
 const getGraphKeysFromResults = (data, keyToOmit) => {
   const newdata = []
-  data.filter(d => {
-    return forOwn(
+  data.filter(d =>
+    forOwn(
       d,
       (value, key) => keyToOmit === key || newdata.push({ [key]: value })
     )
-  })
+  )
   return orderKeysById(uniq(newdata.flatMap(a => keys(a))))
 }
 
@@ -149,12 +162,12 @@ const clubsandwich = (boundaries, rounded = false) => {
 const getBoundaries = (data, keys, whichAxes, zeroOut = true) => {
   const keySumValues = zeroOut ? [0] : []
   if (whichAxes === 'Y') {
-    data.map(d => keySumValues.push(sum(values(pick(d, keys)))))
+    data.map(d => keySumValues.push(sum(values(pick(d, keys)).map(Number))))
   } else {
     data.map(d => keySumValues.push(...valuesIn(pick(d, keys))))
   }
   const sorted = keySumValues.sort((a, b) => a - b)
-  return [first(sorted), last(sorted)]
+  return [Math.round(first(sorted)), Math.round(last(sorted))]
 }
 
 const generateTickVales = (data, axesTicks, keys, whichAxes, zeroOut) => {
@@ -204,7 +217,7 @@ const calcPercentageSplitBar = (data, keyToOmit, displayMethod) => {
 const generateMargin = (tickValuesY, legend) => {
   const shouldMargin = tickValuesY !== 'none'
   const margin = {
-    top: shouldMargin ? 10 : 0,
+    top: shouldMargin ? 5 : 0,
     right: shouldMargin ? 20 : 0,
     bottom: legend ? 60 : 0,
     left: shouldMargin ? 40 : 0,
@@ -252,9 +265,24 @@ const generateLegend = (string, assaysFromState) => {
   }
 }
 
+const percentageOrActualForPie = (data, displayMethod, culture) => {
+  let newData = []
+  if (displayMethod === 'percentage') {
+    const total = data.reduce((acc, curr) => acc + curr.value, 0)
+    data.map((d, i) =>
+      newData.push({ ...d, value: calcPercentageForGraphs(d.value, total) })
+    )
+  } else {
+    newData = data
+  }
+  return newData
+}
+
 const getAverageFromData = (data, value, which, culture) => {
   if (data.length && which) {
-    let total = []
+    let totalForFilter = []
+    const total = []
+    data.map(d => total.push(sum(values(pick(d, value)).map(Number))))
     if (Array.isArray(which)) {
       const rangeTotal = which.reduce((acc, curr) => {
         const item = filter(data, ['label', curr])[0]
@@ -266,7 +294,7 @@ const getAverageFromData = (data, value, which, culture) => {
           }
         } else {
           console.error(
-            `There are no results to match your config. item: ${item}`
+            `There are no results to match your config for item: ${curr}`
           )
         }
         return acc
@@ -276,25 +304,28 @@ const getAverageFromData = (data, value, which, culture) => {
         Object.keys(rangeTotal).length !== 0 &&
         rangeTotal.constructor === Object
       ) {
-        total.push(rangeTotal)
+        totalForFilter.push(rangeTotal)
       }
     } else {
-      total = filter(data, ['label', which]) || [{ [value]: 0 }]
+      totalForFilter = filter(data, ['label', which]) || [{ [value]: 0 }]
     }
 
-    if (total && total.length) {
-      const sum = data.reduce((acc, curr) => acc + parseFloat(curr.value), 0)
+    if (totalForFilter && totalForFilter.length) {
+      const sumData = data.reduce(
+        (acc, curr) => acc + parseFloat(curr.value),
+        0
+      )
       const avg = calcPercentageForGraphs(
-        parseFloat(total[0][value]),
-        round(sum),
+        parseFloat(totalForFilter[0][value]),
+        round(sumData),
         1
       )
       return {
         avg: parseFloat(avg),
-        color: filterColour(total[0].id),
+        color: filterColour(totalForFilter[0].id),
         totals: new Intl.NumberFormat(culture, {
           notation: 'standard',
-        }).format(Number(total[0].value)),
+        }).format(Number(sum(total))),
       }
     }
     console.error('There are no data that match your config')
@@ -304,16 +335,18 @@ const getAverageFromData = (data, value, which, culture) => {
 
 export {
   calcPercentageSplitBar,
-  getAverageFromData,
-  getDayFromToday,
-  graphColorMap,
   generateColorForLegend,
   generateColorForValue,
   generateLegend,
   generateMargin,
   generateTickVales,
   generateToolTip,
+  getAverageFromData,
+  getDayFromToday,
   getGraphKeysFromResults,
+  getTimePeriod,
+  graphColorMap,
   groupByKey,
   groupForPie,
+  percentageOrActualForPie,
 }
