@@ -87,8 +87,6 @@ const GraphRender = ({ assays, id: parentId, config }) => {
         }
       }
     }
-    // https://github.com/facebook/react/issues/16313#issuecomment-587149109
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [graphState])
 
   return (
