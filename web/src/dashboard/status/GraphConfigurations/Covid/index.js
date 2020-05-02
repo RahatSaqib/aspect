@@ -1,5 +1,6 @@
 import BarGraph from '../../../../MigratedComponents/Graphs/BarGraph'
 import PieGraph from '../../../../MigratedComponents/Graphs/PieGraph'
+import { getTimePeriod } from '../../../../MigratedComponents/Graphs/Helpers/Formatters'
 
 const covidGraphs = {
   covidMortalityAndRecoveryConfig: {
@@ -22,8 +23,8 @@ const covidGraphs = {
             groupBy: ['day'],
             followUp: 'died',
             followUpType: 'outcome',
-            minDate: '2019-11-01',
-            maxDate: '2020-04-30',
+            minDate: getTimePeriod(6, 'months', 'yyyy-MM-dd'),
+            maxDate: getTimePeriod(0, 'months', 'yyyy-MM-dd'),
           },
         },
         indexBy: 'day',
@@ -43,8 +44,8 @@ const covidGraphs = {
             groupBy: ['day'],
             followUp: 'recovered',
             followUpType: 'outcome',
-            minDate: '2019-11-01',
-            maxDate: '2020-04-30',
+            minDate: getTimePeriod(6, 'months', 'yyyy-MM-dd'),
+            maxDate: getTimePeriod(0, 'months', 'yyyy-MM-dd'),
           },
         },
         indexBy: 'day',
@@ -75,8 +76,8 @@ const covidGraphs = {
             groupBy: ['day', 'gender'],
             followUp: 'recovered',
             followUpType: 'outcome',
-            minDate: '2019-11-01',
-            maxDate: '2020-04-30',
+            minDate: getTimePeriod(6, 'months', 'yyyy-MM-dd'),
+            maxDate: getTimePeriod(0, 'months', 'yyyy-MM-dd'),
           },
         },
         indexBy: 'day',

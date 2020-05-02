@@ -1,5 +1,6 @@
 import BarGraph from '../../../../MigratedComponents/Graphs/BarGraph'
 import PieGraph from '../../../../MigratedComponents/Graphs/PieGraph'
+import { getTimePeriod } from '../../../../MigratedComponents/Graphs/Helpers/Formatters'
 
 const tbGraphs = {
   tbResults: {
@@ -16,8 +17,8 @@ const tbGraphs = {
           endpoint: 'result/clinical-indicator-aggregations',
           params: {
             groupBy: ['month', 'resultCategory1'],
-            minDate: '2019-11-01',
-            maxDate: '2020-04-30',
+            minDate: getTimePeriod(6, 'months', 'yyyy-MM-dd'),
+            maxDate: getTimePeriod(0, 'months', 'yyyy-MM-dd'),
           },
         },
         indexBy: 'month',
@@ -37,16 +38,17 @@ const tbGraphs = {
           endpoint: 'result/clinical-indicator-aggregations',
           params: {
             groupBy: ['resultCategory1'],
-            minDate: '2019-11-01',
-            maxDate: '2020-04-30',
+            minDate: getTimePeriod(6, 'months', 'yyyy-MM-dd'),
+            maxDate: getTimePeriod(0, 'months', 'yyyy-MM-dd'),
           },
         },
         indexBy: 'cnt',
         keyToConsume: 'resultCategory1',
+        displayMethod: 'percentage',
         averages: {
           showTotal: true,
           title: 'Fix me please',
-          key: ['NotDetected', 'LessThan1000'],
+          key: ['NotDetected'],
           subTitle: 'Total Cases',
         },
       },
