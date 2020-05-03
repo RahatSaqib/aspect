@@ -156,18 +156,25 @@ const clubsandwich = (boundaries, rounded = false) => {
   const low = first(boundaries)
   const high = last(boundaries)
   const middle = high / 2
-  return [low, rounded ? Math.round(middle) : middle, high]
+  return [low, rounded ? roundIfNumber(middle) : middle, high]
 }
+
+const roundIfNumber = value =>
+  Number.isInteger(value) ? Math.round(value) : value
 
 const getBoundaries = (data, keys, whichAxes, zeroOut = true) => {
   const keySumValues = zeroOut ? [0] : []
-  if (whichAxes === 'Y') {
-    data.map(d => keySumValues.push(sum(values(pick(d, keys)).map(Number))))
-  } else {
-    data.map(d => keySumValues.push(...valuesIn(pick(d, keys))))
+  switch (whichAxes) {
+    case 'Y':
+      data.map(d => keySumValues.push(sum(values(pick(d, keys)).map(Number))))
+      break
+
+    default:
+      data.map(d => keySumValues.push(...valuesIn(pick(d, keys))))
+      break
   }
-  const sorted = keySumValues.sort((a, b) => a - b)
-  return [Math.round(first(sorted)), Math.round(last(sorted))]
+  const sorted = [...new Set(keySumValues.sort((a, b) => a - b))]
+  return [roundIfNumber(first(sorted)), roundIfNumber(last(sorted))]
 }
 
 const generateTickVales = (data, axesTicks, keys, whichAxes, zeroOut) => {

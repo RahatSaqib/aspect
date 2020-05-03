@@ -1,14 +1,14 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import classnames from 'classnames/bind';
-import Card from '@material-ui/core/Card';
-import Grid from '@material-ui/core/Grid';
+import React from 'react'
+import PropTypes from 'prop-types'
+import classnames from 'classnames/bind'
+import Card from '@material-ui/core/Card'
+import Grid from '@material-ui/core/Grid'
 
-import AspectTitle from '../AspectTitle';
+import AspectTitle from '../AspectTitle'
 
-const cssClasses = classnames.bind(require('./Card.css'));
+const cssClasses = classnames.bind(require('./Card.css'))
 
-const AspectCard = ({ children, justify, innerSize, title }) => (
+const AspectCard = ({ children, justify, outerSize, innerSize, title }) => (
   <Card className={cssClasses('card__container')}>
     <Grid container justify={justify} className={cssClasses('card__grid')}>
       {title ? (
@@ -21,18 +21,18 @@ const AspectCard = ({ children, justify, innerSize, title }) => (
       </Grid>
     </Grid>
   </Card>
-);
+)
 
 AspectCard.defaultProps = {
   justify: 'center',
-  innerSize: 12
-};
+  innerSize: 12,
+}
 
 AspectCard.protoTypes = {
   children: PropTypes.object.isRequired,
   justify: PropTypes.string,
   innerSize: PropTypes.instanceOf,
-  title: PropTypes.string.isRequired
-};
+  title: PropTypes.string.isRequired,
+}
 
-export default AspectCard;
+export default AspectCard

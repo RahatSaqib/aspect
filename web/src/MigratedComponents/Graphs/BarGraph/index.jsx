@@ -23,7 +23,6 @@ const BarGraph = ({
   tickValues,
 }) => {
   const { tickValuesY, tickValuesX } = tickValues
-
   return (
     <ResponsiveBar
       data={data}

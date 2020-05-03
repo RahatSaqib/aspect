@@ -13,19 +13,12 @@ import TargetStatus from './TargetStatus'
 import Reports from './Reports'
 import BrowseSiteDropdown from '../../globals/components/BrowseSiteDropdown'
 import TreatmentStatus from './TreatmentStatus'
-import GraphContainer from '../../MigratedComponents/Graphs/GraphContainer'
+import GraphsContainer from '../../MigratedComponents/Graphs/GraphsContainer'
 import ColorDemo from './ColorDemo/ColorDemo'
-
-import covidGraphs from './GraphConfigurations/Covid'
-import hivGraphs from './GraphConfigurations/HIV'
-import tbGraphs from './GraphConfigurations/TB'
 
 const cssClasses = classnames.bind(require('./Status.css'))
 
 const Status = ({ history, location, intl, colorDemo = true }) => {
-  const { covidRecoveryByGender, covidMortalityAndRecoveryConfig } = covidGraphs
-  const { hivResults } = hivGraphs
-  const { tbResults } = tbGraphs
   const [marginBottom, setMarginBottom] = useState(0)
   const dispatch = useDispatch()
   const userName = useSelector(({ user }) => user.jwt.name)
@@ -65,36 +58,11 @@ const Status = ({ history, location, intl, colorDemo = true }) => {
         className={cssClasses('Section--summary')}
       />
 
-      <GraphContainer
+      <GraphsContainer
         intl={intl}
         history={history}
         location={location}
         assaysFromState={assays}
-        config={hivResults}
-      />
-
-      <GraphContainer
-        intl={intl}
-        history={history}
-        location={location}
-        assaysFromState={assays}
-        config={tbResults}
-      />
-
-      <GraphContainer
-        intl={intl}
-        history={history}
-        location={location}
-        assaysFromState={assays}
-        config={covidMortalityAndRecoveryConfig}
-      />
-
-      <GraphContainer
-        intl={intl}
-        history={history}
-        location={location}
-        assaysFromState={assays}
-        config={covidRecoveryByGender}
       />
 
       <TreatmentStatus
