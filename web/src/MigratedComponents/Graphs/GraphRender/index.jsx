@@ -12,24 +12,17 @@ import {
 } from '../Helpers/Formatters'
 
 const GraphRender = ({ assays, id: parentId, config }) => {
-  const {
-    id,
-    size,
-    component: Component,
-    api,
-    indexBy,
-    keyToConsume,
-    tickValuesX,
-    tickValuesY,
-    displayMethod,
-    displayLegend = true,
-    filterResults = false,
-    formatDate,
-    type,
-    averages,
-  } = config
   const dispatch = useDispatch()
   const { whitelisted, assaysFromState } = assays
+  const { id, size, api, type, averages } = config
+  const {
+    component: Component,
+    displayMethod,
+    formatDate,
+    filterResults = false,
+    indexBy,
+    keyToConsume,
+  } = config
   const [graphData, setGraphData] = useState(false)
   const [graphKeys, setGraphKeys] = useState(false)
 
@@ -100,16 +93,10 @@ const GraphRender = ({ assays, id: parentId, config }) => {
           <Component
             data={graphData}
             keys={graphKeys}
-            indexBy={indexBy}
-            displayMethod={displayMethod}
-            displayLegend={displayLegend}
+            config={config}
             culture={culture}
             averages={averages}
             assaysFromState={assaysFromState}
-            tickValues={{
-              tickValuesX,
-              tickValuesY,
-            }}
           />
         ) : (
           <CircularProgress />
@@ -117,6 +104,12 @@ const GraphRender = ({ assays, id: parentId, config }) => {
       </div>
     </Grid>
   )
+}
+
+GraphRender.propTypes = {
+  assays: PropTypes.oneOfType([PropTypes.array]).isRequired,
+  config: PropTypes.oneOfType([PropTypes.object]).isRequired,
+  id: PropTypes.string.isRequired,
 }
 
 export default GraphRender

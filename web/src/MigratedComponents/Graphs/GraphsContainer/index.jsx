@@ -66,10 +66,10 @@ const GraphsContainer = ({ intl, history, location, assaysFromState }) => {
 }
 
 GraphsContainer.propTypes = {
-  intl: PropTypes.object.isRequired,
-  history: PropTypes.object.isRequired,
-  location: PropTypes.object.isRequired,
-  assaysFromState: PropTypes.array.isRequired,
+  intl: PropTypes.oneOfType([PropTypes.object]).isRequired,
+  history: PropTypes.oneOfType([PropTypes.object]).isRequired,
+  location: PropTypes.oneOfType([PropTypes.object]).isRequired,
+  assaysFromState: PropTypes.oneOfType([PropTypes.array]).isRequired,
 }
 
 export default GraphsContainer

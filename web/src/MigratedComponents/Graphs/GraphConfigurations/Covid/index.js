@@ -117,6 +117,7 @@ const covidGraphs = {
         },
         indexBy: 'day',
         keyToConsume: 'resultCategory1',
+        filter: 'Positive',
         tickValuesY: 'clubsandwich', // bookends, clubsandwich, all, none
         tickValuesX: 'all', // bookends, all, none
         displayMethod: 'actual',
