@@ -1,10 +1,10 @@
-module.exports = require('../utils').seed(seed, __filename);
-const Promise = require('bluebird');
-const sampleSize = require('lodash/sampleSize');
-const sample = require('lodash/sample');
+module.exports = require('../utils').seed(seed, __filename)
+const Promise = require('bluebird')
+const sampleSize = require('lodash/sampleSize')
+const sample = require('lodash/sample')
 
-const resultSampleSize = process.env['seeds.resultSampleSize'] || 25;
-const resultMultiplier = process.env['seeds.resultMultiplier'] || 100;
+const resultSampleSize = process.env['seeds.resultSampleSize'] || 25
+const resultMultiplier = process.env['seeds.resultMultiplier'] || 100
 
 async function seed(knex) {
   const results = await knex('ResultFollowUp').select(
@@ -12,52 +12,52 @@ async function seed(knex) {
     'followUpId',
     'externalId',
     'updatedBy'
-  );
-  const followUps = await knex('FollowUp').select('id', 'externalId');
+  )
+  const followUps = await knex('FollowUp').select('id', 'externalId')
   /** Grab random sample from current outcomes equaling % of mulitplier */
   const resultsSample = sampleSize(
     results,
     (resultSampleSize / 100) * resultMultiplier
-  );
+  )
 
   const randomOutcomeResult = ({ externalId }) => {
-    let updated = {};
+    let updated = {}
 
     switch (externalId) {
       case 'admissionToHospital':
         updated = followUps.filter(
           m => m.externalId === sample(['died', 'recovered', 'recovered'])
-        );
-        break;
+        )
+        break
 
       case 'admissionToHospitalIcu':
         updated = followUps.filter(
           m => m.externalId === sample(['died', 'died', 'died', 'recovered'])
-        );
-        break;
+        )
+        break
 
       case 'quarantine':
         updated = followUps.filter(
           m => m.externalId === sample(['died', 'recovered', 'unknown'])
-        );
-        break;
+        )
+        break
 
       case 'selfQuarantine':
         updated = followUps.filter(
           m => m.externalId === sample(['recovered', 'unknown'])
-        );
-        break;
+        )
+        break
 
       default:
-        updated = followUps.filter(m => m.externalId === externalId);
-        break;
+        updated = followUps.filter(m => m.externalId === externalId)
+        break
     }
-    return updated;
-  };
+    return updated
+  }
 
   await Promise.each(resultsSample, async r => {
-    const newOutcome = await randomOutcomeResult(r);
-    const { id, externalId } = newOutcome[0] || false;
+    const newOutcome = await randomOutcomeResult(r)
+    const { id, externalId } = newOutcome[0] || false
     if ((id, externalId))
       return knex('ResultFollowUp')
         .where({ resultId: r.resultId })
@@ -65,9 +65,9 @@ async function seed(knex) {
           externalId,
           followUpId: id,
           updatedOn: new Date(),
-          updatedBy: r.updatedBy
-        });
+          updatedBy: r.updatedBy,
+        })
   }).catch(rejection => {
-    throw new Error(rejection);
-  });
+    throw new Error(rejection)
+  })
 }
