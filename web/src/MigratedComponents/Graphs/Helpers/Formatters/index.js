@@ -1,34 +1,32 @@
-import assign from 'lodash/assign'
-import without from 'lodash/without'
-import omit from 'lodash/omit'
-import map from 'lodash/map'
-import uniq from 'lodash/uniq'
-import uniqBy from 'lodash/uniqBy'
-import round from 'lodash/round'
+import Ajv from 'ajv'
+
 import filter from 'lodash/filter'
-import sum from 'lodash/sum'
-import values from 'lodash/values'
+import first from 'lodash/first'
+import forOwn from 'lodash/forOwn'
 import includes from 'lodash/includes'
+import omit from 'lodash/omit'
+import keys from 'lodash/keys'
+import last from 'lodash/last'
+import map from 'lodash/map'
 import pick from 'lodash/pick'
 import pickBy from 'lodash/pickBy'
-import startCase from 'lodash/startCase'
-import first from 'lodash/first'
-import last from 'lodash/last'
-import maxBy from 'lodash/maxBy'
-import minBy from 'lodash/minBy'
+import round from 'lodash/round'
 import sortBy from 'lodash/sortBy'
+import startCase from 'lodash/startCase'
+import sum from 'lodash/sum'
+import uniq from 'lodash/uniq'
+import uniqBy from 'lodash/uniqBy'
+import values from 'lodash/values'
 import valuesIn from 'lodash/valuesIn'
-import forOwn from 'lodash/forOwn'
-import keys from 'lodash/keys'
-import toNumber from 'lodash/toNumber'
+import addDays from 'date-fns/addDays'
 import addMinutes from 'date-fns/addMinutes'
+import format from 'date-fns/format'
+import startOfMonth from 'date-fns/startOfMonth'
 import subMinutes from 'date-fns/subMinutes'
 import subDays from 'date-fns/subDays'
 import subMonths from 'date-fns/subMonths'
-import startOfMonth from 'date-fns/startOfMonth'
-import format from 'date-fns/format'
-import addDays from 'date-fns/addDays'
 
+import graphSchema from '../Schemas/graphSchema'
 import graphColorMap from '../Variables'
 
 const makeProperCase = string => startCase(string)
@@ -340,6 +338,22 @@ const getAverageFromData = (data, value, which, culture) => {
   return {}
 }
 
+const validateGraphConfig = config => {
+  return new Promise((res, rej) => {
+    const ajv = new Ajv()
+    const { id } = config
+    const CLASSES = { Function }
+
+    ajv.addKeyword('instanceof', {
+      compile: schema => data => data instanceof CLASSES[schema],
+    })
+
+    return ajv.validate(graphSchema, config)
+      ? res(true)
+      : console.error(`Graph config error for ${id}: ${ajv.errorsText()}`)
+  })
+}
+
 export {
   calcPercentageSplitBar,
   generateColorForLegend,
@@ -356,4 +370,5 @@ export {
   groupByKey,
   groupForPie,
   percentageOrActualForPie,
+  validateGraphConfig,
 }
