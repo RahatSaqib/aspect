@@ -5,6 +5,7 @@ import { getTimePeriod } from '../../Helpers/Formatters'
 const tbGraphs = {
   tbResults: {
     id: 'tbResults',
+    title: 'clinicalIndicatorsTBTitle',
     assays: ['GxMtbRif', 'GxMtbRifUltra'],
     graphType: [
       {
@@ -48,10 +49,10 @@ const tbGraphs = {
         displayMethod: 'percentage',
         formatDate: 'MMM yy',
         averages: {
-          showTotal: true,
-          title: 'Fix me please',
+          showTotal: false,
+          title: 'clinicalIndicatorsTBPieLegend',
           key: ['NotDetected'],
-          subTitle: 'Total Cases',
+          subTitle: 'clinicalIndicatorsPieSubLegend',
         },
       },
     ],

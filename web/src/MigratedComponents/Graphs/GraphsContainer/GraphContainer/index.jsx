@@ -4,12 +4,18 @@ import classnames from 'classnames/bind'
 import Grid from '@material-ui/core/Grid'
 import AspectCard from '../../../AspectCard'
 import GraphRender from '../../GraphRender'
+import IntlContext from '../../Helpers/Context/i18n'
+
+import messages from '../messages'
 
 import { validateGraphConfig } from '../../Helpers/Formatters'
 
 const cssClasses = classnames.bind(require('../GraphsContainer.css'))
 
 const GraphContainer = ({ config, size, assaysFromState }) => {
+  console.log(config)
+
+  const { title } = config
   const { assays, graphType, id } = config
   const { innerSize, outerSize } = size
   const [whiteListed, setwhiteListed] = useState(false)
@@ -27,30 +33,36 @@ const GraphContainer = ({ config, size, assaysFromState }) => {
     })
   }, [config, assays, assaysFromState])
 
-  return whiteListed && whiteListed.length ? (
-    <Grid item xs={12} lg={outerSize}>
-      <AspectCard
-        title="This is new and shiny"
-        innerSize={innerSize}
-        justify="center"
-      >
-        <Grid
-          container
-          spacing={8}
-          className={cssClasses('graph__containerGrid')}
-        >
-          {graphType &&
-            graphType.map(graph => (
-              <GraphRender
-                assays={{ whiteListed, assaysFromState }}
-                config={graph}
-                id={id}
-              />
-            ))}
-        </Grid>
-      </AspectCard>
-    </Grid>
-  ) : null
+  return (
+    <IntlContext.Consumer>
+      {({ formatMessage }) => {
+        return whiteListed && whiteListed.length ? (
+          <Grid item xs={12} lg={outerSize}>
+            <AspectCard
+              title={formatMessage(messages[title])}
+              innerSize={innerSize}
+              justify="center"
+            >
+              <Grid
+                container
+                spacing={8}
+                className={cssClasses('graph__containerGrid')}
+              >
+                {graphType &&
+                  graphType.map(graph => (
+                    <GraphRender
+                      assays={{ whiteListed, assaysFromState }}
+                      config={graph}
+                      id={id}
+                    />
+                  ))}
+              </Grid>
+            </AspectCard>
+          </Grid>
+        ) : null
+      }}
+    </IntlContext.Consumer>
+  )
 }
 
 GraphContainer.protoTypes = {

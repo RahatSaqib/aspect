@@ -13,6 +13,10 @@
   color: var(--aspect-color-black-2);
 }
 
+.legend__subTitle {
+  font-weight: 700;
+}
+
 .legend__average {
   font-size: 48px;
   font-weight: 900;

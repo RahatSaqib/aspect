@@ -5,6 +5,7 @@ import { getTimePeriod } from '../../Helpers/Formatters'
 const covidGraphs = {
   covidMortalityAndRecoveryConfig: {
     id: 'covidMortalityAndRecoveryConfig',
+    title: 'covidGraphDailyMortalityAndrecovery',
     assays: [
       'assayGenericCovid19',
       'assayGXCovid19',
@@ -62,8 +63,9 @@ const covidGraphs = {
       },
     ],
   },
-  covidRecoveryByGender: {
-    id: 'covidRecoveryByGender',
+  covidCasesByAgeAndGender: {
+    id: 'covidCasesByAgeAndGender',
+    title: 'covidGraphDailyMortalityAndrecovery',
     assays: [
       'assayGenericCovid19',
       'assayGXCovid19',
@@ -74,7 +76,7 @@ const covidGraphs = {
       {
         id: 'outcomeByGender',
         component: BarGraph,
-        type: 'bar',
+        type: 'grouped',
         size: 12,
         componentClasses: ['BARCLASS'],
         api: {
@@ -89,9 +91,9 @@ const covidGraphs = {
         },
         indexBy: 'day',
         keyToConsume: 'gender',
-        tickValuesY: 'none',
+        tickValuesY: 'all',
         tickValuesX: 'all',
-        displayMethod: 'percentage',
+        displayMethod: 'actual',
         displayLegend: true,
         formatDate: 'dd MMM',
       },
@@ -99,6 +101,7 @@ const covidGraphs = {
   },
   covidDailyConfirmed: {
     id: 'covidDailyConfirmed',
+    title: 'clinicalIndicatorsCovidName',
     assays: [
       'assayGenericCovid19',
       'assayGXCovid19',
@@ -122,12 +125,86 @@ const covidGraphs = {
         },
         indexBy: 'day',
         keyToConsume: 'resultCategory1',
-        filterBy: ['Positive', 'Unknown'],
+        filterBy: {
+          resultCategory1: { values: ['Positive'] },
+        },
         tickValuesY: 'clubsandwich',
         tickValuesX: 'all',
         displayMethod: 'actual',
         displayLegend: true,
         formatDate: 'dd MMM',
+      },
+    ],
+  },
+  covidMortalityAndrecoveryByGender: {
+    id: 'covidMortalityAndrecoveryByGender',
+    title: 'clinicalIndicatorsCovidName',
+    assays: [
+      'assayGenericCovid19',
+      'assayGXCovid19',
+      'assayMP96Covid19',
+      'assayQS7Covid19',
+    ],
+    graphType: [
+      {
+        id: 'splitByFemale',
+        component: PieGraph,
+        type: 'pie',
+        size: 6,
+        componentClasses: ['BARCLASS'],
+        api: {
+          endpoint: 'result/follow-up-aggregations',
+          params: {
+            groupBy: ['day', 'gender'],
+            followUpType: 'outcome',
+            minDate: getTimePeriod(6, 'months', 'yyyy-MM-dd'),
+            maxDate: getTimePeriod(0, 'months', 'yyyy-MM-dd'),
+          },
+        },
+        indexBy: 'cnt',
+        keyToConsume: 'followUp',
+        filterBy: {
+          followUp: { values: ['died', 'recovered'] },
+          gender: { values: ['Female'] },
+        },
+        displayMethod: 'percentage',
+        formatDate: 'MMM yy',
+        averages: {
+          showTotal: true,
+          title: 'covidGraphDailyMortalityAndRecoveryByGenderTests',
+          key: ['recovered'],
+          subTitle: 'covidGraphDailyMortalityAndRecoveryByGenderFemale',
+        },
+      },
+      {
+        id: 'splitByMale',
+        component: PieGraph,
+        type: 'pie',
+        size: 6,
+        componentClasses: ['BARCLASS'],
+        api: {
+          endpoint: 'result/follow-up-aggregations',
+          params: {
+            groupBy: ['day', 'gender'],
+            followUpType: 'outcome',
+            minDate: getTimePeriod(6, 'months', 'yyyy-MM-dd'),
+            maxDate: getTimePeriod(0, 'months', 'yyyy-MM-dd'),
+          },
+        },
+        indexBy: 'cnt',
+        keyToConsume: 'followUp',
+        filterBy: {
+          followUp: { values: ['died', 'recovered'] },
+          gender: { values: ['Male'] },
+        },
+        displayMethod: 'percentage',
+        formatDate: 'MMM yy',
+        averages: {
+          showTotal: true,
+          title: 'covidGraphDailyMortalityAndRecoveryByGenderTests',
+          key: ['recovered'],
+          subTitle: 'covidGraphDailyMortalityAndRecoveryByGenderMale',
+        },
       },
     ],
   },

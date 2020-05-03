@@ -24,15 +24,47 @@ const AspectResponsiveBar = ({
   keys,
   tickValuesY,
   tickValuesX,
+  groupMode = 'grouped',
 }) => {
+  console.log(data)
+
+  const newData = [
+    {
+      day: '1-10',
+      Male: 14,
+      Female: -7,
+    },
+    {
+      day: '11-20',
+      Male: 3,
+      Female: -9,
+    },
+    {
+      day: '21-30',
+      Male: 8,
+      Female: -4,
+    },
+    {
+      day: '31-40',
+      Male: 19,
+      Female: -12,
+    },
+  ]
+
   return (
     <ResponsiveBar
-      data={data}
+      data={newData}
       keys={keys}
       indexBy={indexBy}
       colorBy="index"
       enableLabel={false}
       enableGridY={false}
+      // fomr here
+      layout="horizontal"
+      minValue={-100}
+      maxValue={100}
+      // groupMode={groupMode}
+      // to here
       padding={0.3}
       borderWidth={0}
       borderColor={{ from: 'color', modifiers: [['darker', 1.6]] }}
@@ -125,6 +157,7 @@ const AspectResponsiveBar = ({
 AspectResponsiveBar.defaultProps = {
   tickValuesY: 'all',
   tickValuesX: 'all',
+  groupMode: 'bar',
 }
 
 AspectResponsiveBar.propTypes = {
@@ -137,6 +170,7 @@ AspectResponsiveBar.propTypes = {
   keys: PropTypes.oneOfType([PropTypes.array]).isRequired,
   tickValuesY: PropTypes.oneOf(['bookends', 'clubsandwich', 'all', 'none']),
   tickValuesX: PropTypes.oneOf(['bookends', 'all', 'none']),
+  groupMode: PropTypes.oneOf(['bar', 'stack', 'group']),
 }
 
 export default AspectResponsiveBar

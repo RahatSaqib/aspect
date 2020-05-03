@@ -18,7 +18,7 @@ import ColorDemo from './ColorDemo/ColorDemo'
 
 const cssClasses = classnames.bind(require('./Status.css'))
 
-const Status = ({ history, location, intl, colorDemo = true }) => {
+const Status = ({ history, location, intl, colorDemo = false }) => {
   const [marginBottom, setMarginBottom] = useState(0)
   const dispatch = useDispatch()
   const userName = useSelector(({ user }) => user.jwt.name)

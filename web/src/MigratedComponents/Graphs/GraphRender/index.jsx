@@ -55,6 +55,18 @@ const GraphRender = ({ assays, id: parentId, config }) => {
         let grouped
         switch (type) {
           case 'bar':
+          case 'stacked':
+            grouped = groupByKey(
+              data,
+              indexBy,
+              keyToConsume,
+              displayMethod,
+              formatDate,
+              filterBy
+            )
+            break
+
+          case 'grouped':
             grouped = groupByKey(
               data,
               indexBy,

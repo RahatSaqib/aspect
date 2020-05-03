@@ -5,6 +5,7 @@ import { getTimePeriod } from '../../Helpers/Formatters'
 const hivGraphs = {
   hivResults: {
     id: 'hivResults',
+    title: 'clinicalIndicatorsVLTitle',
     assays: [
       'abbottM2000DBSHivVL',
       'abbottM2000PlasmaHivVL',
@@ -32,7 +33,7 @@ const hivGraphs = {
         },
         indexBy: 'month',
         keyToConsume: 'resultCategory1',
-        tickValuesY: 'clubsandwich',
+        tickValuesY: 'none',
         tickValuesX: 'all',
         displayMethod: 'percentage',
         displayLegend: true,
@@ -58,9 +59,9 @@ const hivGraphs = {
         formatDate: 'MMM yy',
         averages: {
           showTotal: false,
-          title: 'to fix: i18n Strings',
-          key: ['LessThan1000'],
-          subTitle: 'Total Cases',
+          title: 'clinicalIndicatorsPieLegend',
+          key: ['NotDetected', 'LessThan1000'],
+          subTitle: 'clinicalIndicatorsPieSubLegend',
         },
       },
     ],

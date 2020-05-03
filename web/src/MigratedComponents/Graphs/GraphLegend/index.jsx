@@ -2,6 +2,9 @@ import React, { Fragment, useEffect, useState } from 'react'
 import { BoxLegendSvg } from '@nivo/legends'
 import classnames from 'classnames/bind'
 import { getAverageFromData } from '../Helpers/Formatters'
+import IntlContext from '../Helpers/Context/i18n'
+
+import messages from '../GraphsContainer/messages'
 
 const cssClasses = classnames.bind(require('./GraphLegend.css'))
 
@@ -33,24 +36,35 @@ const PieInnerLegend = ({ averages, data }) => {
   }, [average, averages, data, key])
 
   return (
-    <div className={cssClasses('legend__container')}>
-      <div
-        className={cssClasses('legend__average')}
-        style={{ color: average.color }}
-      >
-        {average.avg}%
-      </div>
-      {showTotal ? (
-        <Fragment>
-          <div className={cssClasses('legend__subTotals')}>
-            {average.totals}
+    <IntlContext.Consumer>
+      {({ formatMessage }) => {
+        return (
+          <div className={cssClasses('legend__container')}>
+            <div
+              className={cssClasses('legend__average')}
+              style={{ color: average.color }}
+            >
+              {average.avg}%
+            </div>
+            {showTotal ? (
+              <Fragment>
+                <div className={cssClasses('legend__subTotals')}>
+                  {average.totals}&nbsp;
+                  {formatMessage(messages[title])}
+                </div>
+                <div className={cssClasses('legend__subTitle')}>
+                  {formatMessage(messages[subTitle])}
+                </div>
+              </Fragment>
+            ) : (
+              <div className={cssClasses('legend__title')}>
+                {formatMessage(messages[title])}
+              </div>
+            )}
           </div>
-          <div className={cssClasses('legend__subTitle')}>{subTitle}</div>
-        </Fragment>
-      ) : (
-        <div className={cssClasses('legend__title')}>{title}</div>
-      )}
-    </div>
+        )
+      }}
+    </IntlContext.Consumer>
   )
 }
 
