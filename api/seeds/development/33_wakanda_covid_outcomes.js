@@ -3,8 +3,8 @@ const Promise = require('bluebird');
 const sampleSize = require('lodash/sampleSize');
 const sample = require('lodash/sample');
 
-const resultMultiplier = process.env['seeds.resultMultiplier'] || 100;
 const resultSampleSize = process.env['seeds.resultSampleSize'] || 25;
+const resultMultiplier = process.env['seeds.resultMultiplier'] || 100;
 
 async function seed(knex) {
   const results = await knex('ResultFollowUp').select(
