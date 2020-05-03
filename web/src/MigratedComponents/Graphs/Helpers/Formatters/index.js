@@ -222,9 +222,9 @@ const calcPercentageSplitBar = (data, keyToOmit, displayMethod) => {
 const generateMargin = (tickValuesY, legend) => {
   const shouldMargin = tickValuesY !== 'none'
   const margin = {
-    top: shouldMargin ? 5 : 0,
+    top: shouldMargin ? 10 : 0,
     right: shouldMargin ? 20 : 0,
-    bottom: legend ? 60 : 0,
+    bottom: legend ? 60 : 10,
     left: shouldMargin ? 40 : 0,
   }
 
