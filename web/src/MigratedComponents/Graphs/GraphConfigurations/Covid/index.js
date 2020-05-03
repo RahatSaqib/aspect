@@ -31,8 +31,9 @@ const covidGraphs = {
         indexBy: 'day',
         keyToConsume: 'followUp',
         displayMethod: 'actual',
-        tickValuesY: 'clubsandwich', // bookends, clubsandwich, all, none
-        tickValuesX: 'bookends', // bookends, all, none
+        displayLegend: true,
+        tickValuesY: 'clubsandwich',
+        tickValuesX: 'bookends',
         formatDate: 'dd MMM',
       },
       {
@@ -54,8 +55,9 @@ const covidGraphs = {
         indexBy: 'day',
         keyToConsume: 'followUp',
         displayMethod: 'actual',
-        tickValuesY: 'bookends', // bookends, clubsandwich, all, none
-        tickValuesX: 'bookends', // bookends, all, none
+        displayLegend: true,
+        tickValuesY: 'bookends',
+        tickValuesX: 'bookends',
         formatDate: 'dd MMM',
       },
     ],
@@ -87,10 +89,10 @@ const covidGraphs = {
         },
         indexBy: 'day',
         keyToConsume: 'gender',
-
-        tickValuesY: 'none', // bookends, clubsandwich, all, none
-        tickValuesX: 'all', // bookends, all, none
+        tickValuesY: 'none',
+        tickValuesX: 'all',
         displayMethod: 'percentage',
+        displayLegend: true,
         formatDate: 'dd MMM',
       },
     ],
@@ -120,10 +122,11 @@ const covidGraphs = {
         },
         indexBy: 'day',
         keyToConsume: 'resultCategory1',
-        filter: 'Positive',
-        tickValuesY: 'clubsandwich', // bookends, clubsandwich, all, none
-        tickValuesX: 'all', // bookends, all, none
+        filterBy: ['Positive', 'Unknown'],
+        tickValuesY: 'clubsandwich',
+        tickValuesX: 'all',
         displayMethod: 'actual',
+        displayLegend: true,
         formatDate: 'dd MMM',
       },
     ],

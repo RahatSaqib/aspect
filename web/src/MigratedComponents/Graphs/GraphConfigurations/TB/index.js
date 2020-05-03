@@ -23,9 +23,10 @@ const tbGraphs = {
         },
         indexBy: 'month',
         keyToConsume: 'resultCategory1',
-        tickValuesY: 'none', // bookends, clubsandwich, all, none
-        tickValuesX: 'all', // bookends, all, none
+        tickValuesY: 'none',
+        tickValuesX: 'all',
         displayMethod: 'percentage',
+        displayLegend: true,
         formatDate: 'MMM yy',
       },
       {

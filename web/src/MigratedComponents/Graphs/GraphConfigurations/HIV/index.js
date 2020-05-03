@@ -32,9 +32,10 @@ const hivGraphs = {
         },
         indexBy: 'month',
         keyToConsume: 'resultCategory1',
-        tickValuesY: 'clubsandwich', // bookends, clubsandwich, all, none
-        tickValuesX: 'all', // bookends, all, none
+        tickValuesY: 'clubsandwich',
+        tickValuesX: 'all',
         displayMethod: 'percentage',
+        displayLegend: true,
         formatDate: 'MMM yy',
       },
       {
@@ -58,7 +59,7 @@ const hivGraphs = {
         averages: {
           showTotal: false,
           title: 'to fix: i18n Strings',
-          key: ['NotDetected', 'LessThan1000'],
+          key: ['LessThan1000'],
           subTitle: 'Total Cases',
         },
       },

@@ -107,6 +107,10 @@ const graphItemsSchema = {
       type: 'string',
       emum: ['percentage', 'actual'],
     },
+    displayLegend: {
+      $id: `${graphItemsSchemaId}/properties/displayMethod`,
+      type: 'boolean',
+    },
     formatDate: {
       $id: `${graphItemsSchemaId}/properties/formatDate`,
       type: 'string',

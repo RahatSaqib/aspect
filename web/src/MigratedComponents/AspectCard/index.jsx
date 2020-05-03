@@ -8,15 +8,15 @@ import AspectTitle from '../AspectTitle'
 
 const cssClasses = classnames.bind(require('./Card.css'))
 
-const AspectCard = ({ children, justify, outerSize, innerSize, title }) => (
+const AspectCard = ({ children, justify, innerSize, title }) => (
   <Card className={cssClasses('card__container')}>
     <Grid container justify={justify} className={cssClasses('card__grid')}>
       {title ? (
-        <Grid item lg={12} className={cssClasses('card__title')}>
+        <Grid item xs={12} lg={12} className={cssClasses('card__title')}>
           <AspectTitle title={title} />
         </Grid>
       ) : null}
-      <Grid item lg={innerSize} xs={12}>
+      <Grid item xs={12} lg={innerSize}>
         {children}
       </Grid>
     </Grid>

@@ -19,7 +19,7 @@ const GraphRender = ({ assays, id: parentId, config }) => {
     component: Component,
     displayMethod,
     formatDate,
-    filterResults = false,
+    filterBy = false,
     indexBy,
     keyToConsume,
   } = config
@@ -60,12 +60,13 @@ const GraphRender = ({ assays, id: parentId, config }) => {
               indexBy,
               keyToConsume,
               displayMethod,
-              formatDate
+              formatDate,
+              filterBy
             )
             break
 
           case 'pie':
-            grouped = groupForPie(data, keyToConsume, indexBy, filterResults)
+            grouped = groupForPie(data, keyToConsume, indexBy, filterBy)
             break
 
           default:
@@ -83,7 +84,7 @@ const GraphRender = ({ assays, id: parentId, config }) => {
   }, [graphState])
 
   return (
-    <Grid item lg={size}>
+    <Grid item xs={12} lg={size}>
       <div
         style={{
           height: '350px',

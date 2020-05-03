@@ -9,7 +9,7 @@ import GraphToolTip from '../GraphToolTip'
 import {
   generateColorForValue,
   generateMargin,
-  generateTickVales,
+  generateTickValues,
   generateToolTip,
   generateLegend,
 } from '../Helpers/Formatters'
@@ -53,7 +53,25 @@ const AspectResponsiveBar = ({
       )}
       axisLeft={{
         tickSize: 5,
-        tickValues: generateTickVales(data, tickValuesY, keys, 'Y', true),
+        tickValues: generateTickValues(
+          data,
+          tickValuesY,
+          keys,
+          'Y',
+          culture,
+          true
+        ),
+        format: v =>
+          displayMethod === 'percentage'
+            ? new Intl.NumberFormat(culture, {
+                style: 'percent',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 2,
+              }).format(Number(v / 100))
+            : new Intl.NumberFormat(culture, {
+                notation: 'compact',
+                compactDisplay: 'short',
+              }).format(Number(v)),
       }}
       axisBottom={{
         tickSize: 5,
@@ -61,7 +79,14 @@ const AspectResponsiveBar = ({
         tickRotation: 0,
         legendPosition: 'middle',
         legendOffset: 32,
-        tickValues: generateTickVales(data, tickValuesX, indexBy, 'X', false),
+        tickValues: generateTickValues(
+          data,
+          tickValuesX,
+          indexBy,
+          'X',
+          culture,
+          false
+        ),
       }}
       legends={
         displayLegend

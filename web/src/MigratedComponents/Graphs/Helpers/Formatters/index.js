@@ -1,8 +1,10 @@
 import Ajv from 'ajv'
 
+import _ from 'lodash'
 import filter from 'lodash/filter'
 import first from 'lodash/first'
 import forOwn from 'lodash/forOwn'
+import groupBy from 'lodash/groupBy'
 import includes from 'lodash/includes'
 import omit from 'lodash/omit'
 import keys from 'lodash/keys'
@@ -14,6 +16,7 @@ import round from 'lodash/round'
 import sortBy from 'lodash/sortBy'
 import startCase from 'lodash/startCase'
 import sum from 'lodash/sum'
+import sumBy from 'lodash/sumBy'
 import uniq from 'lodash/uniq'
 import uniqBy from 'lodash/uniqBy'
 import values from 'lodash/values'
@@ -67,15 +70,18 @@ const getTimePeriod = (cnt, period, dateFormat) => {
   return format(timePeriod, dateFormat)
 }
 
-const normaliseKeys = (data, indexBy, filterResults = false) => {
+const normaliseKeys = data => {
   const normalised = []
   for (const [key, value] of Object.entries(data)) {
-    const newValue = filterResults
-      ? pickBy(value, (v, k) => includes([...filterResults, indexBy], k))
-      : value
-    normalised.push({ ...newValue })
+    normalised.push({ ...value })
   }
   return normalised
+}
+
+const filterByMultiple = (data, filterBy) => {
+  return data.filter(d =>
+    keys(filterBy).every(f => includes(filterBy[f].values, d[f]))
+  )
 }
 
 const groupByKey = (
@@ -84,9 +90,13 @@ const groupByKey = (
   keyToConsume = false,
   displayMethod = 'actual',
   formatDate = false,
-  intl = false
+  filterBy
 ) => {
-  const grouped = data.reduce((acc, curr) => {
+  console.log(filterBy)
+
+  const filtered = filterBy ? filterByMultiple(data, filterBy) : data
+
+  const grouped = filtered.reduce((acc, curr) => {
     const countKey = keyToConsume
       ? curr[keyToConsume]
       : filter(graphColorMap, ['id', 99])[0].externalId
@@ -104,28 +114,22 @@ const groupByKey = (
     return acc
   }, {})
 
-  return calcPercentageSplitBar(
-    normaliseKeys(grouped, indexBy),
-    indexBy,
-    displayMethod
-  )
+  return calcPercentageSplitBar(normaliseKeys(grouped), indexBy, displayMethod)
 }
 
-const groupForPie = (data, keyToConsume, indexBy, filterResults) => {
-  const { key: filterKey, value: filterValue } = filterResults
-  const dataToConsume = filterResults
-    ? filter(data, [filterKey, filterValue])
-    : data
+const groupForPie = (data, keyToConsume, indexBy, filterBy) => {
+  const grouped = []
+  const filtered = filterBy ? filterByMultiple(data, filterBy) : data
 
-  return dataToConsume.reduce((acc, curr) => {
-    const label = curr[keyToConsume]
-    acc.push({
-      id: curr[keyToConsume],
-      label,
-      value: curr[indexBy],
+  map(groupBy(filtered, keyToConsume), g =>
+    grouped.push({
+      id: g[0][keyToConsume],
+      label: g[0][keyToConsume],
+      value: sumBy(g, indexBy),
     })
-    return acc
-  }, [])
+  )
+
+  return grouped
 }
 
 const orderKeysById = keys => {
@@ -158,10 +162,10 @@ const clubsandwich = (boundaries, rounded = false) => {
 }
 
 const roundIfNumber = value =>
-  Number.isInteger(value) ? Math.round(value) : value
+  typeof value === 'number' ? Math.round(value) : value
 
 const getBoundaries = (data, keys, whichAxes, zeroOut = true) => {
-  const keySumValues = zeroOut ? [0] : []
+  const keySumValues = zeroOut && whichAxes === 'Y' ? [0] : []
   switch (whichAxes) {
     case 'Y':
       data.map(d => keySumValues.push(sum(values(pick(d, keys)).map(Number))))
@@ -175,7 +179,7 @@ const getBoundaries = (data, keys, whichAxes, zeroOut = true) => {
   return [roundIfNumber(first(sorted)), roundIfNumber(last(sorted))]
 }
 
-const generateTickVales = (data, axesTicks, keys, whichAxes, zeroOut) => {
+const generateTickValues = (data, axesTicks, keys, whichAxes, zeroOut) => {
   const boundaries = getBoundaries(data, keys, whichAxes, zeroOut)
   let values
   switch (axesTicks) {
@@ -222,9 +226,9 @@ const calcPercentageSplitBar = (data, keyToOmit, displayMethod) => {
 const generateMargin = (tickValuesY, legend) => {
   const shouldMargin = tickValuesY !== 'none'
   const margin = {
-    top: shouldMargin ? 10 : 0,
+    top: 5,
     right: shouldMargin ? 20 : 0,
-    bottom: legend ? 60 : 10,
+    bottom: legend ? 60 : 0,
     left: shouldMargin ? 40 : 0,
   }
 
@@ -360,7 +364,7 @@ export {
   generateColorForValue,
   generateLegend,
   generateMargin,
-  generateTickVales,
+  generateTickValues,
   generateToolTip,
   getAverageFromData,
   getDayFromToday,

@@ -28,7 +28,7 @@ const GraphContainer = ({ config, size, assaysFromState }) => {
   }, [config, assays, assaysFromState])
 
   return whiteListed && whiteListed.length ? (
-    <Grid item lg={outerSize}>
+    <Grid item xs={12} lg={outerSize}>
       <AspectCard
         title="This is new and shiny"
         innerSize={innerSize}
