@@ -13,7 +13,7 @@ import {
 
 const GraphRender = ({ assays, id: parentId, config }) => {
   const dispatch = useDispatch()
-  const { whitelisted, assaysFromState } = assays
+  const { whiteListed, assaysFromState } = assays
   const { id, size, api, type, averages } = config
   const {
     component: Component,
@@ -43,7 +43,7 @@ const GraphRender = ({ assays, id: parentId, config }) => {
         fetchClinicalIndicatorsDashboard({
           parentId,
           id,
-          whitelisted,
+          whiteListed,
           api,
         })
       )

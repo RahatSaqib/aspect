@@ -30,6 +30,7 @@ const covidGraphs = {
         },
         indexBy: 'day',
         keyToConsume: 'followUp',
+        displayMethod: 'actual',
         tickValuesY: 'clubsandwich', // bookends, clubsandwich, all, none
         tickValuesX: 'bookends', // bookends, all, none
         formatDate: 'dd MMM',
@@ -52,6 +53,7 @@ const covidGraphs = {
         },
         indexBy: 'day',
         keyToConsume: 'followUp',
+        displayMethod: 'actual',
         tickValuesY: 'bookends', // bookends, clubsandwich, all, none
         tickValuesX: 'bookends', // bookends, all, none
         formatDate: 'dd MMM',
@@ -85,6 +87,7 @@ const covidGraphs = {
         },
         indexBy: 'day',
         keyToConsume: 'gender',
+
         tickValuesY: 'none', // bookends, clubsandwich, all, none
         tickValuesX: 'all', // bookends, all, none
         displayMethod: 'percentage',

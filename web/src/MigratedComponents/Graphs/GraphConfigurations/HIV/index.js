@@ -53,6 +53,8 @@ const hivGraphs = {
         },
         indexBy: 'cnt',
         keyToConsume: 'resultCategory1',
+        displayMethod: 'percentage',
+        formatDate: 'MMM yy',
         averages: {
           showTotal: false,
           title: 'to fix: i18n Strings',

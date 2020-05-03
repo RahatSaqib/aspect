@@ -45,6 +45,7 @@ const tbGraphs = {
         indexBy: 'cnt',
         keyToConsume: 'resultCategory1',
         displayMethod: 'percentage',
+        formatDate: 'MMM yy',
         averages: {
           showTotal: true,
           title: 'Fix me please',

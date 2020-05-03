@@ -1,23 +1,33 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import classnames from 'classnames/bind'
 import Grid from '@material-ui/core/Grid'
 import AspectCard from '../../../AspectCard'
 import GraphRender from '../../GraphRender'
 
+import { validateGraphConfig } from '../../Helpers/Formatters'
+
 const cssClasses = classnames.bind(require('../GraphsContainer.css'))
 
 const GraphContainer = ({ config, size, assaysFromState }) => {
-  const whitelisted = []
   const { assays, graphType, id } = config
   const { innerSize, outerSize } = size
-  assays.map(a =>
-    assaysFromState.filter(
-      ({ externalId, hasResults }) =>
-        externalId === a && hasResults && whitelisted.push(a)
-    )
-  )
-  return whitelisted && whitelisted.length ? (
+  const [whiteListed, setwhiteListed] = useState(false)
+
+  useEffect(() => {
+    const allowed = []
+    validateGraphConfig(config).then(() => {
+      assays.map(a =>
+        assaysFromState.filter(
+          ({ externalId, hasResults }) =>
+            externalId === a && hasResults && allowed.push(a)
+        )
+      )
+      setwhiteListed(allowed)
+    })
+  }, [config, assays, assaysFromState])
+
+  return whiteListed && whiteListed.length ? (
     <Grid item lg={outerSize}>
       <AspectCard
         title="This is new and shiny"
@@ -32,7 +42,7 @@ const GraphContainer = ({ config, size, assaysFromState }) => {
           {graphType &&
             graphType.map(graph => (
               <GraphRender
-                assays={{ whitelisted, assaysFromState }}
+                assays={{ whiteListed, assaysFromState }}
                 config={graph}
                 id={id}
               />
