@@ -1,6 +1,6 @@
-import BarGraph from '../../../../MigratedComponents/Graphs/BarGraph'
-import PieGraph from '../../../../MigratedComponents/Graphs/PieGraph'
-import { getTimePeriod } from '../../../../MigratedComponents/Graphs/Helpers/Formatters'
+import BarGraph from '../../BarGraph'
+import PieGraph from '../../PieGraph'
+import { getTimePeriod } from '../../Helpers/Formatters'
 
 const covidGraphs = {
   covidMortalityAndRecoveryConfig: {
@@ -15,6 +15,7 @@ const covidGraphs = {
       {
         id: 'deathsPerDay',
         component: BarGraph,
+        type: 'bar',
         size: 6,
         componentClasses: ['BARCLASS'],
         api: {
@@ -36,6 +37,7 @@ const covidGraphs = {
       {
         id: 'recoveriesPerDay',
         component: BarGraph,
+        type: 'bar',
         size: 6,
         componentClasses: ['BARCLASS'],
         api: {
@@ -68,6 +70,7 @@ const covidGraphs = {
       {
         id: 'outcomeByGender',
         component: BarGraph,
+        type: 'bar',
         size: 12,
         componentClasses: ['BARCLASS'],
         api: {
@@ -85,6 +88,38 @@ const covidGraphs = {
         tickValuesY: 'none', // bookends, clubsandwich, all, none
         tickValuesX: 'all', // bookends, all, none
         displayMethod: 'percentage',
+        formatDate: 'dd MMM',
+      },
+    ],
+  },
+  covidDailyConfirmed: {
+    id: 'covidDailyConfirmed',
+    assays: [
+      'assayGenericCovid19',
+      'assayGXCovid19',
+      'assayMP96Covid19',
+      'assayQS7Covid19',
+    ],
+    graphType: [
+      {
+        id: 'dailyConfirmed',
+        component: BarGraph,
+        type: 'bar',
+        size: 12,
+        componentClasses: ['BARCLASS'],
+        api: {
+          endpoint: 'result/clinical-indicator-aggregations',
+          params: {
+            groupBy: ['day', 'resultCategory1'],
+            minDate: getTimePeriod(15, 'days', 'yyyy-MM-dd'),
+            maxDate: getTimePeriod(0, 'days', 'yyyy-MM-dd'),
+          },
+        },
+        indexBy: 'day',
+        keyToConsume: 'resultCategory1',
+        tickValuesY: 'clubsandwich', // bookends, clubsandwich, all, none
+        tickValuesX: 'all', // bookends, all, none
+        displayMethod: 'actual',
         formatDate: 'dd MMM',
       },
     ],

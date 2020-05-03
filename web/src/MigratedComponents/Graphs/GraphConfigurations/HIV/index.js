@@ -1,6 +1,6 @@
-import BarGraph from '../../../../MigratedComponents/Graphs/BarGraph'
-import PieGraph from '../../../../MigratedComponents/Graphs/PieGraph'
-import { getTimePeriod } from '../../../../MigratedComponents/Graphs/Helpers/Formatters'
+import BarGraph from '../../BarGraph'
+import PieGraph from '../../PieGraph'
+import { getTimePeriod } from '../../Helpers/Formatters'
 
 const hivGraphs = {
   hivResults: {
