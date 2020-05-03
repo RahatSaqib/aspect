@@ -107,7 +107,7 @@ AspectResponsiveBar.propTypes = {
   culture: PropTypes.string.isRequired,
   data: PropTypes.oneOfType([PropTypes.array]).isRequired,
   displayLegend: PropTypes.bool.isRequired,
-  displayMethod: PropTypes.string.isRequired,
+  displayMethod: PropTypes.oneOf(['percentage', 'actual']).isRequired,
   indexBy: PropTypes.string.isRequired,
   keys: PropTypes.oneOfType([PropTypes.array]).isRequired,
   tickValuesY: PropTypes.oneOf(['bookends', 'clubsandwich', 'all', 'none']),

@@ -30,7 +30,7 @@ const graphColorMap = [
   { id: 9, externalId: 'Invalid', color: colorWhite4 },
   { id: 10, externalId: 'NoResult', color: colorPink },
   { id: 11, externalId: 'Error', color: colorBlack },
-  { id: 12, externalId: 'Positive', color: colorMantis },
+  { id: 12, externalId: 'Positive', color: colorSuperNova },
   { id: 13, externalId: 'Inconclusive', color: colorPink },
   { id: 14, externalId: 'Unknown', color: colorWhite4 },
   { id: 15, externalId: 'Negative', color: colorMantis },

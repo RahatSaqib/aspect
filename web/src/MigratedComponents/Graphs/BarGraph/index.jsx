@@ -23,8 +23,6 @@ const BarGraph = ({
     displayLegend,
     formatDate,
   } = config
-  console.log(config)
-
   return (
     <AspectResponsiveBar
       assaysFromState={assaysFromState}
