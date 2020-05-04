@@ -1,15 +1,18 @@
 import Ajv from 'ajv'
 
 import _ from 'lodash'
+import chunk from 'lodash/chunk'
 import filter from 'lodash/filter'
 import first from 'lodash/first'
 import forOwn from 'lodash/forOwn'
 import groupBy from 'lodash/groupBy'
 import includes from 'lodash/includes'
+import indexOf from 'lodash/indexOf'
 import omit from 'lodash/omit'
 import keys from 'lodash/keys'
 import last from 'lodash/last'
 import map from 'lodash/map'
+import max from 'lodash/max'
 import pick from 'lodash/pick'
 import pickBy from 'lodash/pickBy'
 import round from 'lodash/round'
@@ -17,6 +20,7 @@ import sortBy from 'lodash/sortBy'
 import startCase from 'lodash/startCase'
 import sum from 'lodash/sum'
 import sumBy from 'lodash/sumBy'
+import times from 'lodash/times'
 import uniq from 'lodash/uniq'
 import uniqBy from 'lodash/uniqBy'
 import values from 'lodash/values'
@@ -92,10 +96,7 @@ const groupByKey = (
   formatDate = false,
   filterBy
 ) => {
-  console.log(filterBy)
-
   const filtered = filterBy ? filterByMultiple(data, filterBy) : data
-
   const grouped = filtered.reduce((acc, curr) => {
     const countKey = keyToConsume
       ? curr[keyToConsume]
@@ -121,15 +122,65 @@ const groupForPie = (data, keyToConsume, indexBy, filterBy) => {
   const grouped = []
   const filtered = filterBy ? filterByMultiple(data, filterBy) : data
 
-  map(groupBy(filtered, keyToConsume), g =>
+  map(groupBy(filtered, keyToConsume), group =>
     grouped.push({
-      id: g[0][keyToConsume],
-      label: g[0][keyToConsume],
-      value: sumBy(g, indexBy),
+      id: group[0][keyToConsume],
+      label: group[0][keyToConsume],
+      value: sumBy(group, indexBy),
     })
   )
 
   return grouped
+}
+
+const transformForDivergent = (data, indexBy, keyToConsume, filterBy) => {
+  const divergences = []
+  const ranges = []
+  uniqBy(data, keyToConsume).map(d => divergences.push(d[keyToConsume]))
+
+  const filtered = filterBy ? filterByMultiple(data, filterBy) : data
+  chunk(times(110), 110 / 11).map(r =>
+    ranges.push({ rangeId: `${first(r)}-${last(r)}`, values: r })
+  )
+  const grouped = filtered.reduce((acc, curr) => {
+    const { rangeId } =
+      ranges.filter(({ values }) => values.includes(Number(curr.age)))[0] ||
+      false
+    curr = { ...curr, inRange: rangeId }
+
+    const divergentIndex = indexOf(divergences, curr[keyToConsume])
+    const currentRange =
+      { ...acc[curr[indexBy]] }[curr[keyToConsume]] || curr.cnt
+    const sumCount =
+      divergentIndex === 1
+        ? -Math.abs(curr.cnt) + -Math.abs(currentRange)
+        : currentRange + curr.cnt
+
+    acc[curr[indexBy]] = {
+      ...acc[curr[indexBy]],
+      [indexBy]: curr[indexBy],
+      [curr[keyToConsume]]: sumCount,
+    }
+    return acc
+  }, {})
+
+  return normaliseKeys(grouped)
+}
+
+const formatValuesForGraphs = value => {
+  return value
+
+  // format: v =>
+  //   displayMethod === 'percentage'
+  //     ? new Intl.NumberFormat(culture, {
+  //         style: 'percent',
+  //         minimumFractionDigits: 0,
+  //         maximumFractionDigits: 2
+  //       }).format(Number(v / 100))
+  //     : new Intl.NumberFormat(culture, {
+  //         notation: 'compact',
+  //         compactDisplay: 'short'
+  //       }).format(Number(Math.abs(v)))
 }
 
 const orderKeysById = keys => {
@@ -159,6 +210,15 @@ const clubsandwich = (boundaries, rounded = false) => {
   const high = last(boundaries)
   const middle = high / 2
   return [low, rounded ? roundIfNumber(middle) : middle, high]
+}
+
+const getMaxValueForDivergent = data => {
+  const keyValues = []
+  data.map(d =>
+    values(d).map(v => Number.isInteger(v) && keyValues.push(Math.abs(v)))
+  )
+  const maxVal = max(keyValues) % 2 === 0 ? max(keyValues) : max(keyValues) + 1
+  return { minValue: -maxVal, maxValue: maxVal }
 }
 
 const roundIfNumber = value =>
@@ -360,6 +420,7 @@ const validateGraphConfig = config => {
 
 export {
   calcPercentageSplitBar,
+  formatValuesForGraphs,
   generateColorForLegend,
   generateColorForValue,
   generateLegend,
@@ -369,10 +430,12 @@ export {
   getAverageFromData,
   getDayFromToday,
   getGraphKeysFromResults,
+  getMaxValueForDivergent,
   getTimePeriod,
   graphColorMap,
   groupByKey,
   groupForPie,
   percentageOrActualForPie,
+  transformForDivergent,
   validateGraphConfig,
 }

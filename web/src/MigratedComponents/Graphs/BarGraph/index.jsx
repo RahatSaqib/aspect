@@ -10,18 +10,12 @@ const BarGraph = ({
   assaysFromState,
 }) => {
   const {
-    id,
-    type,
-    size,
-    componentClasses,
-    api,
     indexBy,
-    keyToConsume,
     tickValuesY,
     tickValuesX,
     displayMethod,
     displayLegend,
-    formatDate,
+    type,
   } = config
   return (
     <AspectResponsiveBar
@@ -33,7 +27,7 @@ const BarGraph = ({
       tickValuesX={tickValuesX}
       displayMethod={displayMethod}
       displayLegend={displayLegend}
-      culture={culture}
+      type={type}
     />
   )
 }
