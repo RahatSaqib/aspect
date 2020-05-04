@@ -29,7 +29,7 @@ AspectCard.defaultProps = {
 }
 
 AspectCard.protoTypes = {
-  children: PropTypes.object.isRequired,
+  children: PropTypes.oneOfType([PropTypes.object]).isRequired,
   justify: PropTypes.string,
   innerSize: PropTypes.instanceOf,
   title: PropTypes.string.isRequired,

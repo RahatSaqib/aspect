@@ -5,6 +5,9 @@ const cssClasses = classnames.bind(require('./GraphTooltip.css'))
 
 const ToolTip = ({ values }) => {
   const { color, displayId, indexValue = false, displayValue } = values
+  const positiveDisplayValue = Number.isInteger(displayValue)
+    ? Math.abs(displayValue)
+    : displayValue
   return (
     <div className={cssClasses('tooltip__container')}>
       <div className={cssClasses('tooltip__row')}>
@@ -15,7 +18,9 @@ const ToolTip = ({ values }) => {
         <div className={cssClasses('tooltip__text')}>
           &nbsp;{`${displayId}${indexValue ? ` - ${indexValue}` : ''}:`}
         </div>
-        <div className={cssClasses('tooltip__value')}>&nbsp;{displayValue}</div>
+        <div className={cssClasses('tooltip__value')}>
+          &nbsp;{positiveDisplayValue}
+        </div>
       </div>
     </div>
   )

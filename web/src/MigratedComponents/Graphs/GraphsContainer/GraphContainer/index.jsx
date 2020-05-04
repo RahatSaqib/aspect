@@ -13,7 +13,7 @@ import { validateGraphConfig } from '../../Helpers/Formatters'
 const cssClasses = classnames.bind(require('../GraphsContainer.css'))
 
 const GraphContainer = ({ config, size, assaysFromState }) => {
-  console.log(config)
+  // console.log(config)
 
   const { title } = config
   const { assays, graphType, id } = config
@@ -66,9 +66,9 @@ const GraphContainer = ({ config, size, assaysFromState }) => {
 }
 
 GraphContainer.protoTypes = {
-  config: PropTypes.object.isRequired,
-  size: PropTypes.object.isRequired,
-  assaysFromState: PropTypes.array.isRequired,
+  config: PropTypes.oneOfType([PropTypes.object]).isRequired,
+  size: PropTypes.oneOfType([PropTypes.object]).isRequired,
+  assaysFromState: PropTypes.oneOfType([PropTypes.array]).isRequired,
 }
 
 export default GraphContainer

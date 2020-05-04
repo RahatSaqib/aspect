@@ -9,6 +9,7 @@ import {
   groupByKey,
   groupForPie,
   getGraphKeysFromResults,
+  transformForDivergent,
 } from '../Helpers/Formatters'
 
 const GraphRender = ({ assays, id: parentId, config }) => {
@@ -66,13 +67,11 @@ const GraphRender = ({ assays, id: parentId, config }) => {
             )
             break
 
-          case 'grouped':
-            grouped = groupByKey(
+          case 'divergent':
+            grouped = transformForDivergent(
               data,
               indexBy,
               keyToConsume,
-              displayMethod,
-              formatDate,
               filterBy
             )
             break

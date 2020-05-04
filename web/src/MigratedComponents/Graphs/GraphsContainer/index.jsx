@@ -27,26 +27,26 @@ const GraphsContainer = ({ intl, history, location, assaysFromState }) => {
   const { full, half } = spacing
 
   const graphsToRender = [
-    // {
-    //   config: hivResults,
-    //   size: full,
-    //   group: 'hiv'
-    // },
-    // {
-    //   config: tbResults,
-    //   size: full,
-    //   group: 'tb'
-    // },
-    // {
-    //   config: covidDailyConfirmed,
-    //   size: full,
-    //   group: 'covid'
-    // },
-    // {
-    //   config: covidMortalityAndRecoveryConfig,
-    //   size: full,
-    //   group: 'covid'
-    // },
+    {
+      config: hivResults,
+      size: full,
+      group: 'hiv',
+    },
+    {
+      config: tbResults,
+      size: full,
+      group: 'tb',
+    },
+    {
+      config: covidDailyConfirmed,
+      size: full,
+      group: 'covid',
+    },
+    {
+      config: covidMortalityAndRecoveryConfig,
+      size: full,
+      group: 'covid',
+    },
     {
       config: covidMortalityAndrecoveryByGender,
       size: half,
