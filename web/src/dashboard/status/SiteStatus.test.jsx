@@ -1,16 +1,14 @@
 import Immutable from 'immutable'
 import React from 'react'
 import ReactShallowRenderer from 'react-test-renderer/shallow'
-import { IntlProvider } from 'react-intl'
+import { createIntl } from 'react-intl'
 import { SiteStatus } from './SiteStatus'
 
 describe('Site Status component', () => {
   const renderer = new ReactShallowRenderer()
-  const intlProvider = new IntlProvider({ locale: 'en' }, {})
-  const { intl } = intlProvider.getChildContext()
 
   const props = {
-    intl,
+    intl: createIntl({ locale: 'en' }),
     title: 'Sites',
     cssClasses: 'Section__Content',
     siteSummaryMap: Immutable.fromJS({

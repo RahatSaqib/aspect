@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import { compose, setPropTypes } from 'recompose'
 import { connect } from 'react-redux'
-import { defineMessages } from 'react-intl'
+import { defineMessages, injectIntl } from 'react-intl'
 import AspectDialog from '../../components/shared/AspectDialog'
 
 const messages = defineMessages({
@@ -25,6 +25,7 @@ function mapStateToProps(state) {
 }
 
 const enhance = compose(
+  injectIntl,
   connect(mapStateToProps),
   setPropTypes({
     idleStatus: PropTypes.string.isRequired,

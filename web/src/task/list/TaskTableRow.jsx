@@ -8,6 +8,7 @@ import {
   DataTableRow as TableRow,
   DataTableCell as TableCell,
 } from '../../components/shared/tableBody'
+import { formatRelative } from '../../shared/utils/dateFormat'
 
 const cssClasses = classnames.bind(require('./TaskTableRow.css'))
 
@@ -73,7 +74,7 @@ const TaskTableRow = ({ intl, messages, task, ...restProps }) => (
       {addEllipsis(task.get('site'))}
     </TableCell>
     <TableCell className={cssClasses('TableCell')}>
-      {intl.formatRelative(task.get('time'))}
+      {formatRelative(intl, task.get('time'))}
     </TableCell>
   </TableRow>
 )

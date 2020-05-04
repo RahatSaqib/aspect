@@ -9,6 +9,7 @@ import {
 import isEditable from '../../shared/selectors/isEditable'
 import AspectCheckbox from '../../components/shared/AspectCheckbox'
 import { updateSingleReporter } from '../ReporterRedux'
+import { formatRelative } from '../../shared/utils/dateFormat'
 
 const cssClasses = classnames.bind(
   require('../../components/shared/DataTableRow.css')
@@ -28,8 +29,8 @@ const ReporterTableRow = ({
     <TableRow {...restProps} className={cssClasses(restProps.className)}>
       <TableCell>{reporter.get('user')}</TableCell>
       <TableCell>{reporter.get('deviceName')}</TableCell>
-      <TableCell>{intl.formatRelative(reporter.get('createdOn'))}</TableCell>
-      <TableCell>{intl.formatRelative(reporter.get('lastSeen'))}</TableCell>
+      <TableCell>{formatRelative(intl, reporter.get('createdOn'))}</TableCell>
+      <TableCell>{formatRelative(intl, reporter.get('lastSeen'))}</TableCell>
       <TableCell>{intl.formatNumber(reporter.get('delivered'))}</TableCell>
       <TableCell>
         {intl.formatNumber(reporter.get('requiresFollowUp'))}

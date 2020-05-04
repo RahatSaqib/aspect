@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import classnames from 'classnames/bind'
 import React, { Fragment } from 'react'
-import { defineMessages } from 'react-intl'
+import { defineMessages, injectIntl } from 'react-intl'
 import { compose, withProps, withHandlers, lifecycle } from 'recompose'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
@@ -20,7 +20,7 @@ import {
   makeSearchParamsSanitizer,
   composeSanitizer,
 } from '../../../shared/selectors/searchParams'
-import { formatDate } from '../../../shared/utils/dateFormat'
+import { formatDate, formatRelative } from '../../../shared/utils/dateFormat'
 import { sanitizeFiltersStringBy } from '../../../filter/utils'
 import DataTableProgressBar from '../../../components/shared/DataTableProgressBar'
 import ColoredNumber from '../../../components/shared/ColoredNumber'
@@ -195,6 +195,7 @@ const formatMaintenanceDate = (intl, date) => {
 }
 
 const enhance = compose(
+  injectIntl,
   connect(
     state => {
       const { activeDialog, performanceReport } = state.device
@@ -786,7 +787,7 @@ export const DeviceDetailProfile = ({
             <Summary
               title={intl.formatMessage(messages.connectivity)}
               description={intl.formatMessage(messages.lastSeen, {
-                lastSeen: intl.formatRelative(device.get('lastSeen')),
+                lastSeen: formatRelative(intl, device.get('lastSeen')),
               })}
             />
             <Summary

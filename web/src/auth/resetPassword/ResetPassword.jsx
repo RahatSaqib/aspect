@@ -3,7 +3,7 @@ import { compose, withProps } from 'recompose'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
-import { FormattedHTMLMessage } from 'react-intl'
+import { FormattedMessage } from 'react-intl'
 import { Link } from 'react-router-dom'
 
 // Material-UI
@@ -229,7 +229,7 @@ export class ResetPassword extends PureComponent {
                   )}
                   {stepIndex === 1 && (
                     <div className={styles.Form}>
-                      <FormattedHTMLMessage
+                      <FormattedMessage
                         {...messages.checkEmailContent}
                         values={{ emailAddress }}
                       />
@@ -262,7 +262,7 @@ export class ResetPassword extends PureComponent {
                   )}
                   {stepIndex === 3 && (
                     <div className={styles.Form}>
-                      <FormattedHTMLMessage {...messages.finishContent} />
+                      <FormattedMessage {...messages.finishContent} />
                       <div className={styles.Form__ActionRow}>
                         <Link to="login">
                           <Button color="primary">
@@ -301,7 +301,7 @@ export class ResetPassword extends PureComponent {
                       </StepLabel>
                       <StepContent>
                         <div className={styles.Form}>
-                          <FormattedHTMLMessage
+                          <FormattedMessage
                             {...messages.checkEmailContent}
                             values={{ emailAddress }}
                           />
@@ -336,7 +336,7 @@ export class ResetPassword extends PureComponent {
                       <StepLabel>{formatMessage(messages.finish)}</StepLabel>
                       <StepContent>
                         <div className={styles.Form}>
-                          <FormattedHTMLMessage {...messages.finishContent} />
+                          <FormattedMessage {...messages.finishContent} />
                           <div className={styles.Form__ActionRow}>
                             <Link to="login">
                               <Button color="primary">
@@ -360,7 +360,7 @@ export class ResetPassword extends PureComponent {
           open={this.state.showAdminHelpDialog}
           onRequestClose={this.closeAdminHelpDialog}
         >
-          <FormattedHTMLMessage
+          <FormattedMessage
             {...messages.adminHelpContent}
             values={{
               supportEmail: config.supportEmail,
