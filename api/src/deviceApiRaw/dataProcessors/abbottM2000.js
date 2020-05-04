@@ -1015,7 +1015,7 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
             ).join('\n')
           }
           const resultWorkflowStatusLog =
-            (await knex('ResultWorkflowStatusLog')
+            (await knex('ResultWorkflowLog')
               .where('id', existingResult.resultWorkflowStatusLogId)
               .first()) || {}
           if (
