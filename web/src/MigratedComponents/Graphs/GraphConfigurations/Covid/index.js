@@ -76,21 +76,23 @@ const covidGraphs = {
       {
         id: 'outcomeByGender',
         component: BarGraph,
-        type: 'grouped',
+        type: 'divergent',
         size: 12,
         componentClasses: ['BARCLASS'],
         api: {
           endpoint: 'result/follow-up-aggregations',
           params: {
-            groupBy: ['day', 'gender'],
-            followUp: 'recovered',
+            groupBy: ['day', 'gender', 'age'],
             followUpType: 'outcome',
             minDate: getTimePeriod(6, 'months', 'yyyy-MM-dd'),
             maxDate: getTimePeriod(0, 'months', 'yyyy-MM-dd'),
           },
         },
-        indexBy: 'day',
+        indexBy: 'inRange',
         keyToConsume: 'gender',
+        filterBy: {
+          followUp: { values: ['died', 'recovered'] },
+        },
         tickValuesY: 'all',
         tickValuesX: 'all',
         displayMethod: 'actual',
