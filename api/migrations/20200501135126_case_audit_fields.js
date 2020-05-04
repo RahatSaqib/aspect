@@ -2,11 +2,7 @@ module.exports = require('../src/db').migration(up, down)
 const { updateCase } = require('../src/case/service')
 
 async function up(knex) {
-  const adminUser = await knex('User')
-    .where({ name: 'admin' })
-    .first('id')
-
-  await knex.schema.alterTable('Case', async tblCase => {
+  await knex.schema.table('Case', async tblCase => {
     tblCase
       .datetime('createdOn')
       .notNullable()
@@ -16,19 +12,20 @@ async function up(knex) {
       .notNullable()
       .defaultTo(knex.fn.now())
 
-    tblCase
-      .integer('createdBy')
-      .nullable()
-    tblCase
-      .integer('updatedBy')
-      .nullable()
+    tblCase.integer('createdBy').nullable()
+    tblCase.integer('updatedBy').nullable()
+  });
 
-    if (adminUser) {
-      const { id: adminId } = adminUser
-      await updateCase({ createdBy: null }, { createdBy: adminId })
-      await updateCase({ updatedBy: null }, { updatedBy: adminId })
-    }
+  const adminUser = await knex('User')
+    .where({ name: 'admin' })
+    .first('id')
+  if (adminUser) {
+    const { id: adminId } = adminUser
+    await updateCase({ createdBy: null }, { createdBy: adminId })
+    await updateCase({ updatedBy: null }, { updatedBy: adminId })
+  }
 
+  await knex.schema.alterTable('Case', async tblCase => {
     tblCase
       .integer('createdBy')
       .unsigned()
