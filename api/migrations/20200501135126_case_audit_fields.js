@@ -12,9 +12,14 @@ async function up(knex) {
       .notNullable()
       .defaultTo(knex.fn.now())
 
-    tblCase.integer('createdBy').nullable()
-    tblCase.integer('updatedBy').nullable()
-  });
+    tblCase
+      .integer('createdBy')
+      .nullable()
+
+    tblCase
+      .integer('updatedBy')
+      .nullable()
+  })
 
   const adminUser = await knex('User')
     .where({ name: 'admin' })
