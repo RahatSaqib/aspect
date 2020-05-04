@@ -29,7 +29,6 @@ async function up(knex) {
       await updateCase({ updatedBy: null }, { updatedBy: adminId })
     }
 
-    
     tblCase
       .integer('createdBy')
       .unsigned()
