@@ -16,8 +16,12 @@ async function up(knex) {
       .notNullable()
       .defaultTo(knex.fn.now())
 
-    tblCase.integer('createdBy')
-    tblCase.integer('updatedBy')
+    tblCase
+      .integer('createdBy')
+      .nullable()
+    tblCase
+      .integer('updatedBy')
+      .nullable()
 
     if (adminUser) {
       const { id: adminId } = adminUser
