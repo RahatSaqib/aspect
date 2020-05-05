@@ -1,12 +1,109 @@
+const supertest = require('supertest')
+const _ = require('lodash')
 const { assert } = require('chai')
-const { getFirstCase, getFirstPartnerId } = require('./utils')
+const {
+  getFirstCase,
+  getFirstPartnerId,
+  getFirstDiseaseId,
+} = require('./utils')
+const { getAccessToken } = require('../utils/authUtils')
 const { getCaseId, removeCase, addCase } = require('../../src/case/service')
+
+const server = supertest.agent('http://localhost:8080')
 
 describe('case/service', () => {
   let partnerId = null
+  let diseaseId = null
+  let accessToken = null
+  const path = '/api/case'
 
   before(async () => {
     partnerId = await getFirstPartnerId()
+    diseaseId = await getFirstDiseaseId(partnerId)
+    accessToken = await getAccessToken('admin', 'test07')
+  })
+
+  describe('GET', () => {
+    let caseToTest = null
+
+    it('Should return a list of cases', async () => {
+      const res = await server
+        .get(path)
+        .set('Authorization', `Bearer ${accessToken}`)
+      assert.equal(res.status, 200)
+      assert.typeOf(res.body, 'Object')
+      assert.property(res.body, 'data')
+      assert.typeOf(res.body.data, 'array')
+      assert.isNotNull(res.body.data)
+      assert.isAtLeast(res.body.data.length, 1)
+      assert.property(res.body.data[0], 'id')
+      assert.property(res.body.data[0], 'externalId')
+      assert.property(res.body.data[0], 'attendingClinic')
+      assert.property(res.body.data[0], 'diseaseName')
+      assert.property(res.body.data[0], 'diseaseId')
+      assert.property(res.body.data[0], 'diseaseExternalId')
+      assert.property(res.body.data[0], 'status')
+      assert.property(res.body.data[0], 'patientId')
+      ;[caseToTest] = res.body.data
+    })
+
+    it('Should return a list of cases filtered by patientOrResearchId', async () => {
+      const res = await server
+        .get(`${path}?patientOrResearchId=${caseToTest.patientId}`)
+        .set('Authorization', `Bearer ${accessToken}`)
+
+      assert.equal(res.status, 200)
+      assert.typeOf(res.body, 'Object')
+      assert.property(res.body, 'data')
+      assert.typeOf(res.body.data, 'array')
+      assert.isNotNull(res.body.data)
+      assert.isAtLeast(res.body.data.length, 1)
+      assert.property(res.body.data[0], 'id')
+      assert.property(res.body.data[0], 'externalId')
+      assert.property(res.body.data[0], 'attendingClinic')
+      assert.property(res.body.data[0], 'diseaseName')
+      assert.property(res.body.data[0], 'diseaseId')
+      assert.property(res.body.data[0], 'diseaseExternalId')
+      assert.property(res.body.data[0], 'status')
+      assert.property(res.body.data[0], 'patientId')
+      assert.equal(res.body.data[0].id, caseToTest.id)
+    })
+
+    it('Should return a list of cases filtered by diseaseId', async () => {
+      const res = await server
+        .get(`${path}?diseaseId=${diseaseId}`)
+        .set('Authorization', `Bearer ${accessToken}`)
+
+      assert.equal(res.status, 200)
+      assert.typeOf(res.body, 'Object')
+      assert.property(res.body, 'data')
+      assert.typeOf(res.body.data, 'array')
+      assert.isNotNull(res.body.data)
+      assert.isAtLeast(res.body.data.length, 1)
+      assert.property(res.body.data[0], 'id')
+      assert.property(res.body.data[0], 'externalId')
+      assert.property(res.body.data[0], 'attendingClinic')
+      assert.property(res.body.data[0], 'diseaseName')
+      assert.property(res.body.data[0], 'diseaseId')
+      assert.property(res.body.data[0], 'diseaseExternalId')
+      assert.property(res.body.data[0], 'status')
+      assert.property(res.body.data[0], 'patientId')
+    })
+
+    it('Should return an empty list', async () => {
+      const unexistentClinicId = _.random(1000000, 9999999)
+
+      const res = await server
+        .get(`${path}?sampleOriginSite=${unexistentClinicId}`)
+        .set('Authorization', `Bearer ${accessToken}`)
+
+      assert.equal(res.status, 200)
+      assert.typeOf(res.body, 'Object')
+      assert.property(res.body, 'data')
+      assert.typeOf(res.body.data, 'array')
+      assert.isNotNull(res.body.data)
+      assert.equal(res.body.data.length, 0)
+    })
   })
 
   describe('add', () => {

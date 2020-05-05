@@ -74,6 +74,9 @@ function addClientRoutes(server) {
   server.route(
     require('./disease/endpoints').routes.map(decorateClientAPI('device'))
   )
+  server.route(
+    require('./case/endpoints').routes.map(decorateClientAPI('case'))
+  )
 }
 
 function addDeviceRoutes(server) {
