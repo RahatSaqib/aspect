@@ -379,9 +379,13 @@ const getAverageFromData = (data, value, which, culture) => {
           if (acc && acc.id) {
             acc[value] += parseFloat(item[value])
           } else {
-            acc = { ...item, [value]: parseFloat(item[value]) }
+            acc = {
+              ...item,
+              [value]: parseFloat(item[value]),
+            }
           }
         } else {
+          // eslint-disable-next-line no-console
           console.error(
             `There are no results to match your config for item: ${curr}`
           )
@@ -417,6 +421,7 @@ const getAverageFromData = (data, value, which, culture) => {
         }).format(Number(sum(total))),
       }
     }
+    // eslint-disable-next-line no-console
     console.error('There are no data that match your config')
   }
   return {}
