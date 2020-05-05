@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import PropTypes from 'prop-types'
 import classnames from 'classnames/bind'
 import { useSelector, useDispatch } from 'react-redux'
 import Helmet from 'react-helmet'
@@ -18,7 +19,7 @@ import ColorDemo from './ColorDemo/ColorDemo'
 
 const cssClasses = classnames.bind(require('./Status.css'))
 
-const Status = ({ history, location, intl, colorDemo = false }) => {
+const Status = ({ history, location, intl, colorDemo }) => {
   const [marginBottom, setMarginBottom] = useState(0)
   const dispatch = useDispatch()
   const userName = useSelector(({ user }) => user.jwt.name)
@@ -111,6 +112,17 @@ const Status = ({ history, location, intl, colorDemo = false }) => {
       />
     </div>
   )
+}
+
+Status.defaultProps = {
+  colorDemo: false,
+}
+
+Status.propTypes = {
+  colorDemo: PropTypes.bool,
+  history: PropTypes.oneOfType([PropTypes.object]).isRequired,
+  location: PropTypes.oneOfType([PropTypes.object]).isRequired,
+  intl: PropTypes.oneOfType([PropTypes.object]).isRequired,
 }
 
 export default Status

@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import classnames from 'classnames/bind'
 
 const cssClasses = classnames.bind(require('./GraphTooltip.css'))
@@ -19,6 +20,10 @@ const GraphToolTip = ({ values }) => {
       </div>
     </div>
   )
+}
+
+GraphToolTip.propTypes = {
+  values: PropTypes.oneOfType([PropTypes.object]).isRequired,
 }
 
 export default GraphToolTip
