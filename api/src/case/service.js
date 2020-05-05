@@ -16,10 +16,16 @@ function validateCaseIdentifier(_case) {
  * Gets the case id related to the external id and partner provided
  * @param  {object} _case The case filter
  * @param  {boolean} createIfNonExistent If true, if the case doesn't exist, it will create a new case before returning the caseId
+ * @param  {int} userId (only necessary if createIfNonExistent is true) The userId that creates the case
  * @return {int} The case id
  */
-async function getCaseId(_case, createIfNonExistent) {
+async function getCaseId(_case, createIfNonExistent, userId) {
   validateCaseIdentifier(_case)
+
+  if (createIfNonExistent && !userId)
+    throw new Error(
+      "For creating the case if it doesn't exist, you should provide a userId"
+    )
 
   let { caseId } = (await knex('Case')
     .where({
@@ -28,7 +34,11 @@ async function getCaseId(_case, createIfNonExistent) {
     })
     .first('id as caseId')) || { caseId: null }
 
-  if (!caseId && createIfNonExistent) caseId = await addCase(_case)
+  if (!caseId && createIfNonExistent) {
+    _case.createdBy = userId
+    _case.updatedBy = userId
+    caseId = await addCase(_case)
+  }
 
   return caseId
 }
@@ -54,15 +64,10 @@ async function removeCase(_case) {
     .del()
 }
 
-async function getCase(_case) {
-  validateCaseIdentifier()
-
-  return knex('Case')
-    .where({
-      externalId: _case.externalId,
-      partnerId: _case.partnerId,
-    })
-    .first()
+async function updateCase(whereFields, updateFields) {
+  await knex('Case')
+    .where(whereFields)
+    .update(updateFields)
 }
 
 async function getCases({ query, auth }) {
@@ -88,6 +93,8 @@ async function getCases({ query, auth }) {
     .innerJoin('Disease as d', 'at.diseaseId', 'd.id')
     .innerJoin('Sample as s', 'r.sampleId', 's.id')
     .innerJoin('Site as sos', 's.originSiteId', 'sos.id')
+    .innerJoin('User as uc', 'cs.createdBy', 'uc.id')
+    .innerJoin('User as uu', 'cs.updatedBy', 'uu.id')
     .modify(addPartnerQueryConstraints, dataConstraints)
     .modify(filterParams, query, {
       countryId: 'g.countryId',
@@ -115,7 +122,13 @@ async function getCases({ query, auth }) {
       'd.id as diseaseId',
       'd.externalId as diseaseExternalId',
       knex.raw(`'Active' as status`),
-      knex.raw('JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.id")) as patientId')
+      knex.raw(
+        'JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.id")) as patientId'
+      ),
+      'cs.createdOn',
+      'cs.updatedOn',
+      'uc.name as createdBy',
+      'uu.name as updatedBy'
     )
     .distinct()
 
@@ -145,6 +158,6 @@ module.exports = {
   getCaseId,
   addCase,
   removeCase,
-  getCase,
   getCases,
+  updateCase,
 }

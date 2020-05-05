@@ -4,6 +4,7 @@ const bcrypt = require('bcrypt')
 const geography = require('./fixtures/geography.json')
 const sites = require('./fixtures/sites.json')
 const {
+  ensureResultTreatmentStatuses,
   upsertStatesAndLgas,
   upsertAssayResultCategories,
   upsertJobFunctionPermission,
@@ -16,9 +17,6 @@ const {
   getPermissionModules,
 } = require('../utils')
 const { allFeatureToId } = require('../../src/shared/dictionary')
-
-const treatmentStatus = require('../fixtures/treatmentStatus.json')
-
 const config = require('../../src/config')
 
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
@@ -26,7 +24,7 @@ const saltRounds = parseInt(config.passwordSaltRounds, 10)
 async function seed(knex) {
   const now = new Date()
 
-  await knex('ResultTreatmentStatus').insert(treatmentStatus)
+  await ensureResultTreatmentStatuses(knex)
 
   const { id: countryId } = await knex('Country')
     .where('name', 'Nigeria')

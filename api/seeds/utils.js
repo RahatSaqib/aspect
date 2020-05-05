@@ -27,6 +27,7 @@ const tables = [
   'ResultSource',
   'ResultStatus',
   'ResultType',
+  'ResultTreatmentStatus',
   'ResultWorkflowStatus',
   'SampleType',
   'FollowUpType',
