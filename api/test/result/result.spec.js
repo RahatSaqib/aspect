@@ -33,6 +33,7 @@ const {
 } = require('../deviceApi/utils')
 const { getAdminId } = require('../utils/authUtils')
 
+// asdfsadf
 const getClinicianAccessToken = () =>
   server
     .post('/api/auth')
