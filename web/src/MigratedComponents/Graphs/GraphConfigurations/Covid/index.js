@@ -1,5 +1,6 @@
 import BarGraph from '../../BarGraph'
 import PieGraph from '../../PieGraph'
+import CalendarGraph from '../../CalendarGraph'
 import { getTimePeriod } from '../../Helpers/Formatters'
 
 const covidGraphs = {
@@ -65,7 +66,7 @@ const covidGraphs = {
   },
   covidCasesByAgeAndGender: {
     id: 'covidCasesByAgeAndGender',
-    title: 'covidGraphDailyMortalityAndrecovery',
+    title: 'covidGraphDailyMortalityAndRecoveryByGenderAndGender',
     assays: [
       'assayGenericCovid19',
       'assayGXCovid19',
@@ -138,9 +139,9 @@ const covidGraphs = {
       },
     ],
   },
-  covidMortalityAndrecoveryByGender: {
-    id: 'covidMortalityAndrecoveryByGender',
-    title: 'clinicalIndicatorsCovidName',
+  covidMortalityAndRecoveryByGender: {
+    id: 'covidMortalityAndRecoveryByGender',
+    title: 'clinicalIndicatorsCovidGenderRecoveryRates',
     assays: [
       'assayGenericCovid19',
       'assayGXCovid19',
@@ -207,6 +208,45 @@ const covidGraphs = {
           key: ['recovered'],
           subTitle: 'covidGraphDailyMortalityAndRecoveryByGenderMale',
         },
+      },
+    ],
+  },
+  covidGenderByCalendar: {
+    id: 'covidGenderByCalendar',
+    title: 'clinicalIndicatorsCovidName',
+    assays: [
+      'assayGenericCovid19',
+      'assayGXCovid19',
+      'assayMP96Covid19',
+      'assayQS7Covid19',
+    ],
+    graphType: [
+      {
+        id: 'dailyConfirmedFemale',
+        component: CalendarGraph,
+        type: 'calendar',
+        size: 12,
+        componentClasses: ['BARCLASS'],
+        api: {
+          endpoint: 'result/follow-up-aggregations',
+          params: {
+            groupBy: ['day', 'gender'],
+            followUpType: 'outcome',
+            minDate: getTimePeriod(6, 'months', 'yyyy-MM-dd'),
+            maxDate: getTimePeriod(0, 'months', 'yyyy-MM-dd'),
+          },
+        },
+        indexBy: 'day',
+        keyToConsume: 'followUp',
+        filterBy: {
+          gender: { values: ['Female'] },
+          followUp: { values: ['died', 'recovered'] },
+        },
+        tickValuesY: 'clubsandwich',
+        tickValuesX: 'all',
+        displayMethod: 'actual',
+        displayLegend: true,
+        formatDate: 'dd MMM',
       },
     ],
   },

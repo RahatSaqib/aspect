@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
+import classnames from 'classnames/bind'
 import { useSelector, useDispatch } from 'react-redux'
 import Grid from '@material-ui/core/Grid'
 import CircularProgress from '@material-ui/core/CircularProgress'
@@ -11,6 +12,8 @@ import {
   getGraphKeysFromResults,
   transformForDivergent,
 } from '../Helpers/Formatters'
+
+const cssClasses = classnames.bind(require('./GraphRender.css'))
 
 const GraphRender = ({ assays, id: parentId, config }) => {
   const dispatch = useDispatch()
@@ -56,6 +59,7 @@ const GraphRender = ({ assays, id: parentId, config }) => {
         let grouped
         switch (type) {
           case 'bar':
+          case 'calendar':
           case 'stacked':
             grouped = groupByKey(
               data,
@@ -96,11 +100,7 @@ const GraphRender = ({ assays, id: parentId, config }) => {
 
   return (
     <Grid item xs={12} lg={size}>
-      <div
-        style={{
-          height: '350px',
-        }}
-      >
+      <div className={cssClasses('graphrender__container')}>
         {graphData && graphKeys ? (
           <Component
             data={graphData}
@@ -111,7 +111,9 @@ const GraphRender = ({ assays, id: parentId, config }) => {
             assaysFromState={assaysFromState}
           />
         ) : (
-          <CircularProgress />
+          <div className={cssClasses('graphrender__spinner')}>
+            <CircularProgress />
+          </div>
         )}
       </div>
     </Grid>

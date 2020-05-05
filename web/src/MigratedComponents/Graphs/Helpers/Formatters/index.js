@@ -167,20 +167,31 @@ const transformForDivergent = (data, indexBy, keyToConsume, filterBy) => {
   return normaliseKeys(grouped)
 }
 
-const formatValuesForGraphs = value => {
-  return value
+const formatValuesForGraphs = (value, displayMethod, formatNumber) => {
+  let formatted
+  switch (true) {
+    case (typeof value === 'number' || !Number.isNaN(value)) &&
+      displayMethod === 'actual':
+      formatted = formatNumber(Math.abs(value), {
+        notation: 'compact',
+        compactDisplay: 'short',
+      })
+      break
 
-  // format: v =>
-  //   displayMethod === 'percentage'
-  //     ? new Intl.NumberFormat(culture, {
-  //         style: 'percent',
-  //         minimumFractionDigits: 0,
-  //         maximumFractionDigits: 2
-  //       }).format(Number(v / 100))
-  //     : new Intl.NumberFormat(culture, {
-  //         notation: 'compact',
-  //         compactDisplay: 'short'
-  //       }).format(Number(Math.abs(v)))
+    case (typeof value === 'number' || !Number.isNaN(value)) &&
+      displayMethod === 'percentage':
+      formatted = formatNumber(Number(value / 100), {
+        style: 'percent',
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 2,
+      })
+      break
+
+    default:
+      formatted = value
+      break
+  }
+  return formatted
 }
 
 const orderKeysById = keys => {
@@ -224,7 +235,15 @@ const getMaxValueForDivergent = data => {
 const roundIfNumber = value =>
   typeof value === 'number' ? Math.round(value) : value
 
-const getBoundaries = (data, keys, whichAxes, zeroOut = true) => {
+const sortByValue = values => {
+  const collator = new Intl.Collator(undefined, {
+    numeric: true,
+    sensitivity: 'base',
+  })
+  return values.sort(collator.compare)
+}
+
+const getBoundaries = (data, keys, whichAxes, zeroOut = true, all = false) => {
   const keySumValues = zeroOut && whichAxes === 'Y' ? [0] : []
   switch (whichAxes) {
     case 'Y':
@@ -235,13 +254,17 @@ const getBoundaries = (data, keys, whichAxes, zeroOut = true) => {
       data.map(d => keySumValues.push(...valuesIn(pick(d, keys))))
       break
   }
-  const sorted = [...new Set(keySumValues.sort((a, b) => a - b))]
-  return [roundIfNumber(first(sorted)), roundIfNumber(last(sorted))]
+
+  const sorted = sortByValue(keySumValues)
+
+  return all
+    ? sorted
+    : [(roundIfNumber(first(sorted)), roundIfNumber(last(sorted)))]
 }
 
 const generateTickValues = (data, axesTicks, keys, whichAxes, zeroOut) => {
-  const boundaries = getBoundaries(data, keys, whichAxes, zeroOut)
   let values
+  const boundaries = getBoundaries(data, keys, whichAxes, zeroOut)
   switch (axesTicks) {
     case 'none':
       values = 0
@@ -256,8 +279,10 @@ const generateTickValues = (data, axesTicks, keys, whichAxes, zeroOut) => {
       break
 
     default:
+      // values = getBoundaries(data, keys, whichAxes, zeroOut, true);
       break
   }
+
   return values
 }
 
@@ -295,21 +320,16 @@ const generateMargin = (tickValuesY, legend) => {
   return margin
 }
 
-const generateToolTip = (item, culture, displayMethod, assaysFromState) => {
+const generateToolTip = (
+  item,
+  culture,
+  displayMethod,
+  assaysFromState,
+  formatNumber
+) => {
   const { color, id, indexValue, value } = item
   const displayId = translateLabel(id, assaysFromState)
-  const displayValue =
-    displayMethod === 'percentage'
-      ? new Intl.NumberFormat(culture, {
-          style: 'percent',
-          minimumFractionDigits: 0,
-          maximumFractionDigits: 2,
-        }).format(Number(value / 100))
-      : new Intl.NumberFormat(culture, {
-          notation: 'compact',
-          compactDisplay: 'short',
-        }).format(Number(value))
-
+  const displayValue = formatValuesForGraphs(value, displayMethod, formatNumber)
   return { color, displayId, indexValue, displayValue }
 }
 
@@ -414,7 +434,8 @@ const validateGraphConfig = config => {
 
     return ajv.validate(graphSchema, config)
       ? res(true)
-      : console.error(`Graph config error for ${id}: ${ajv.errorsText()}`)
+      : // eslint-disable-next-line no-console
+        console.error(`Graph config error for ${id}: ${ajv.errorsText()}`)
   })
 }
 

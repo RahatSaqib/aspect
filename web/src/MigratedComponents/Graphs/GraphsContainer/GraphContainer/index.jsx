@@ -13,8 +13,6 @@ import { validateGraphConfig } from '../../Helpers/Formatters'
 const cssClasses = classnames.bind(require('../GraphsContainer.css'))
 
 const GraphContainer = ({ config, size, assaysFromState }) => {
-  // console.log(config)
-
   const { title } = config
   const { assays, graphType, id } = config
   const { innerSize, outerSize } = size

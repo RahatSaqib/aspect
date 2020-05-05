@@ -4,6 +4,9 @@
 
 .tooltip__row {
   display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
 .tooltip__color {
@@ -13,9 +16,13 @@
 }
 
 .tooltip__text {
+  margin-right: auto;
+  padding-left: 3px;
   color: inherit;
 }
 
 .tooltip__value {
+  padding-left: 3px;
   font-weight: 900;
+  margin-left: auto;
 }

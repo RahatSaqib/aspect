@@ -13,6 +13,10 @@ export const messages = defineMessages({
     id: 'pages.Status.clinicalIndicatorsCovidName',
     defaultMessage: 'Daily Confirmed Cases',
   },
+  clinicalIndicatorsCovidGenderRecoveryRates: {
+    id: 'pages.Status.clinicalIndicatorsCovidGenderRecoveryRates',
+    defaultMessage: 'Recovery Rates by Gender',
+  },
   clinicalIndicatorsVLTitle: {
     id: 'pages.Status.clinicalIndicatorsVL.title',
     defaultMessage: 'VL Outcomes',
@@ -40,6 +44,11 @@ export const messages = defineMessages({
   covidGraphDailyMortalityAndRecoveryByGenderTests: {
     id: 'pages.Status.covidGraphDailyMortalityAndRecoveryByGenderTests.pie',
     defaultMessage: 'Tests',
+  },
+  covidGraphDailyMortalityAndRecoveryByGenderAndGender: {
+    id:
+      'pages.Status.covidGraphDailyMortalityAndRecoveryByGenderAndGender.graph',
+    defaultMessage: 'Age and Gender',
   },
 })
 

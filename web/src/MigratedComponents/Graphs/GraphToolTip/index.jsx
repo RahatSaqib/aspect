@@ -3,11 +3,8 @@ import classnames from 'classnames/bind'
 
 const cssClasses = classnames.bind(require('./GraphTooltip.css'))
 
-const ToolTip = ({ values }) => {
+const GraphToolTip = ({ values }) => {
   const { color, displayId, indexValue = false, displayValue } = values
-  const positiveDisplayValue = Number.isInteger(displayValue)
-    ? Math.abs(displayValue)
-    : displayValue
   return (
     <div className={cssClasses('tooltip__container')}>
       <div className={cssClasses('tooltip__row')}>
@@ -16,14 +13,12 @@ const ToolTip = ({ values }) => {
           style={{ background: color }}
         />
         <div className={cssClasses('tooltip__text')}>
-          &nbsp;{`${displayId}${indexValue ? ` - ${indexValue}` : ''}:`}
+          {`${displayId}${indexValue ? ` - ${indexValue}` : ''}: `}
         </div>
-        <div className={cssClasses('tooltip__value')}>
-          &nbsp;{positiveDisplayValue}
-        </div>
+        <div className={cssClasses('tooltip__value')}>{displayValue}</div>
       </div>
     </div>
   )
 }
 
-export default ToolTip
+export default GraphToolTip

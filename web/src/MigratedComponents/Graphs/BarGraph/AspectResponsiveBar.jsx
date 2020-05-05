@@ -30,13 +30,13 @@ const AspectResponsiveBar = ({
 }) => {
   const yTickvalues = generateTickValues(
     data,
-    tickValuesX,
-    indexBy,
-    'X',
+    tickValuesY,
+    keys,
+    'Y',
     culture,
     false
   )
-  const xTickVsalues = generateTickValues(
+  const xTickValues = generateTickValues(
     data,
     tickValuesX,
     indexBy,
@@ -82,13 +82,6 @@ const AspectResponsiveBar = ({
       ]
     : []
 
-  /* console.log(
-    formatNumber(898398, {
-      notation: 'compact',
-      compactDisplay: 'long'
-    })
-  ); */
-
   return (
     <IntlContext.Consumer>
       {({ formatNumber }) => {
@@ -120,14 +113,16 @@ const AspectResponsiveBar = ({
                   v,
                   culture,
                   displayMethod,
-                  assaysFromState
+                  assaysFromState,
+                  formatNumber
                 )}
               />
             )}
             axisLeft={{
               tickSize: 5,
               tickValues: yTickvalues,
-              format: v => formatValuesForGraphs(v),
+              format: v =>
+                formatValuesForGraphs(v, displayMethod, formatNumber),
             }}
             axisBottom={{
               tickSize: 5,
@@ -135,8 +130,9 @@ const AspectResponsiveBar = ({
               tickRotation: 0,
               legendPosition: 'middle',
               legendOffset: 32,
-              tickValues: xTickVsalues,
-              format: v => formatValuesForGraphs(v),
+              tickValues: xTickValues,
+              format: v =>
+                formatValuesForGraphs(v, displayMethod, formatNumber),
             }}
             legends={legends}
           />

@@ -22,7 +22,6 @@ export const aspectFetch = createFetch(
   accept('application/json'),
   header('Content-Type', 'application/json'),
   addAuthHeaderMiddleware,
-  addGetParamsMiddleware,
   handleFetchResponseOrError
 )
 
@@ -34,28 +33,6 @@ function addAuthHeaderMiddleware(fetch, input, options = {}) {
     _.set(options, 'headers.Authorization', `Bearer ${token}`)
   }
   return fetch(input, options)
-}
-
-function addGetParamsMiddleware(fetch, input, options = {}) {
-  const { method, params } = options
-  let index = 0
-  // TODO: dpo - fix no-loop-func eslint
-  let queryString = `${input}`
-  if (method && method === 'GET' && params) {
-    for (const [key, value] of Object.entries(params)) {
-      if (Array.isArray(value)) {
-        value.forEach(v => {
-          queryString = `${queryString}${index === 0 ? '?' : '&'}${key}=${v}`
-          index += 1
-        })
-      } else {
-        queryString = `${queryString}${index === 0 ? '?' : '&'}${key}=${value}`
-      }
-      index += 1
-    }
-  }
-
-  return fetch(queryString, options)
 }
 
 class APIApplicationError extends Error {
