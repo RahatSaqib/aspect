@@ -132,7 +132,8 @@ async function updateCovidResultFromFormData(
     if (canAutoAssignResultByCaseId && caseExternalId) {
       const caseId = await getCaseId(
         { partnerId, externalId: caseExternalId },
-        true
+        true,
+        userId
       )
       resultUpdates.caseId = caseId
     }
