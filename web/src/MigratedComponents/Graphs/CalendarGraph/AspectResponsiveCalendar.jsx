@@ -24,8 +24,8 @@ const AspectResponsiveCalendar = ({
   displayMethod,
   indexBy,
   keys,
-  tickValuesY,
-  tickValuesX,
+  tickValuesYShape,
+  tickValuesXShape,
   type,
 }) => {
   const legends = displayLegend
@@ -58,7 +58,7 @@ const AspectResponsiveCalendar = ({
     : []
   return (
     <IntlContext.Consumer>
-      {({ formatNumber }) => {
+      {({ formatNumber: intlFormatNumber }) => {
         return (
           <ResponsiveCalendar
             data={data}
@@ -79,7 +79,7 @@ const AspectResponsiveCalendar = ({
             motionDamping={15}
             layers={['grid', 'axes', 'bars', 'markers', GraphLegend]}
             colors={v => generateColorForValue(v)}
-            margin={generateMargin(tickValuesY, displayLegend)}
+            margin={generateMargin(tickValuesYShape, displayLegend)}
             tooltip={v => (
               <GraphToolTip
                 values={generateToolTip(
@@ -87,7 +87,7 @@ const AspectResponsiveCalendar = ({
                   culture,
                   displayMethod,
                   assaysFromState,
-                  formatNumber
+                  intlFormatNumber
                 )}
               />
             )}
@@ -100,8 +100,8 @@ const AspectResponsiveCalendar = ({
 }
 
 AspectResponsiveCalendar.defaultProps = {
-  tickValuesY: 'all',
-  tickValuesX: 'all',
+  tickValuesYShape: 'all',
+  tickValuesXShape: 'all',
   type: 'bar',
 }
 
@@ -113,8 +113,13 @@ AspectResponsiveCalendar.propTypes = {
   displayMethod: PropTypes.oneOf(['percentage', 'actual']).isRequired,
   indexBy: PropTypes.string.isRequired,
   keys: PropTypes.oneOfType([PropTypes.array]).isRequired,
-  tickValuesY: PropTypes.oneOf(['bookends', 'clubsandwich', 'all', 'none']),
-  tickValuesX: PropTypes.oneOf(['bookends', 'all', 'none']),
+  tickValuesYShape: PropTypes.oneOf([
+    'bookends',
+    'clubsandwich',
+    'all',
+    'none',
+  ]),
+  tickValuesXShape: PropTypes.oneOf(['bookends', 'all', 'none']),
   type: PropTypes.oneOf(['bar', 'stack', 'group']),
 }
 

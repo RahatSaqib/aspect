@@ -37,7 +37,7 @@ const PieInnerLegend = ({ averages, data }) => {
 
   return (
     <IntlContext.Consumer>
-      {({ formatMessage }) => {
+      {({ formatMessage: intlFormatMessage }) => {
         return (
           <div className={cssClasses('legend__container')}>
             <div
@@ -50,15 +50,15 @@ const PieInnerLegend = ({ averages, data }) => {
               <Fragment>
                 <div className={cssClasses('legend__subTotals')}>
                   {average.totals}&nbsp;
-                  {formatMessage(messages[title])}
+                  {intlFormatMessage(messages[title])}
                 </div>
                 <div className={cssClasses('legend__subTitle')}>
-                  {formatMessage(messages[subTitle])}
+                  {intlFormatMessage(messages[subTitle])}
                 </div>
               </Fragment>
             ) : (
               <div className={cssClasses('legend__title')}>
-                {formatMessage(messages[title])}
+                {intlFormatMessage(messages[title])}
               </div>
             )}
           </div>

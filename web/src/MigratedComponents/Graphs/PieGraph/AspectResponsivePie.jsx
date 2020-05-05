@@ -19,18 +19,17 @@ const cssClasses = classnames.bind(require('./PieGraph.css'))
 const AspectResponsivePie = ({
   assaysFromState,
   averages,
-  culture,
   data,
   displayMethod,
   keys,
 }) => {
   return (
     <IntlContext.Consumer>
-      {({ formatNumber }) => {
+      {({ formatNumber: intlFormatNumber }) => {
         return (
           <div className={cssClasses('piegraph__container')}>
             <ResponsivePie
-              data={percentageOrActualForPie(data, displayMethod, culture)}
+              data={percentageOrActualForPie(data, displayMethod)}
               keys={keys}
               margin={{ top: 30, right: 30, bottom: 30, left: 30 }}
               innerRadius={0.8}
@@ -58,10 +57,9 @@ const AspectResponsivePie = ({
                 <GraphToolTip
                   values={generateToolTip(
                     v,
-                    culture,
                     displayMethod,
                     assaysFromState,
-                    formatNumber
+                    intlFormatNumber
                   )}
                 />
               )}
@@ -78,7 +76,6 @@ const AspectResponsivePie = ({
 AspectResponsivePie.propTypes = {
   assaysFromState: PropTypes.oneOfType([PropTypes.array]).isRequired,
   averages: PropTypes.oneOfType([PropTypes.object]).isRequired,
-  culture: PropTypes.string.isRequired,
   data: PropTypes.oneOfType([PropTypes.array]).isRequired,
   displayMethod: PropTypes.oneOf(['percentage', 'actual']).isRequired,
   keys: PropTypes.oneOfType([PropTypes.array]).isRequired,

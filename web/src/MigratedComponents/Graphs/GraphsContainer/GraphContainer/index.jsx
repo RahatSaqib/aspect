@@ -33,11 +33,11 @@ const GraphContainer = ({ config, size, assaysFromState }) => {
 
   return (
     <IntlContext.Consumer>
-      {({ formatMessage }) => {
+      {({ formatMessage: intlFormatMessage }) => {
         return whiteListed && whiteListed.length ? (
           <Grid item xs={12} lg={outerSize}>
             <AspectCard
-              title={formatMessage(messages[title])}
+              title={intlFormatMessage(messages[title])}
               innerSize={innerSize}
               justify="center"
             >

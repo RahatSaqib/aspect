@@ -10,7 +10,7 @@ import {
   groupByKey,
   groupForPie,
   getGraphKeysFromResults,
-  transformForDivergent,
+  groupForDivergent,
 } from '../Helpers/Formatters'
 
 const cssClasses = classnames.bind(require('./GraphRender.css'))
@@ -72,12 +72,7 @@ const GraphRender = ({ assays, id: parentId, config }) => {
             break
 
           case 'divergent':
-            grouped = transformForDivergent(
-              data,
-              indexBy,
-              keyToConsume,
-              filterBy
-            )
+            grouped = groupForDivergent(data, indexBy, keyToConsume, filterBy)
             break
 
           case 'pie':

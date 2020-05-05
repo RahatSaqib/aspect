@@ -15,48 +15,46 @@ const spacing = {
   full: { innerSize: 9, outerSize: 12 },
 }
 
+const { hivResults } = hivGraphs
+const { tbResults } = tbGraphs
 const {
   covidDailyConfirmed,
   covidCasesByAgeAndGender,
-  covidGenderByCalendar,
   covidMortalityAndRecoveryConfig,
   covidMortalityAndRecoveryByGender,
 } = covidGraphs
 
 const GraphsContainer = ({ intl, history, location, assaysFromState }) => {
-  const { hivResults } = hivGraphs
-  const { tbResults } = tbGraphs
   const { full, half } = spacing
-
   const graphsToRender = [
-    // {
-    //   config: hivResults,
-    //   size: full,
-    //   group: 'hiv'
-    // },
-    // {
-    //   config: tbResults,
-    //   size: full,
-    //   group: 'tb'
-    // },
+    {
+      config: hivResults,
+      size: full,
+      group: 'hiv',
+    },
+    {
+      config: tbResults,
+      size: full,
+      group: 'tb',
+    },
     {
       config: covidDailyConfirmed,
       size: full,
       group: 'covid',
     },
-    // {
-    //   config: covidMortalityAndRecoveryConfig,
-    //   size: full,
-    //   group: 'covid'
-    // },
-    // {
-    //   config: covidMortalityAndRecoveryByGender,
-    //   size: half,
-    //   group: 'covid'
-    // },
+    {
+      config: covidMortalityAndRecoveryConfig,
+      size: full,
+      group: 'covid',
+    },
+    {
+      config: covidMortalityAndRecoveryByGender,
+      size: half,
+      group: 'covid',
+    },
     {
       config: covidCasesByAgeAndGender,
-      size: full,
+      size: half,
       group: 'covid',
     },
   ]

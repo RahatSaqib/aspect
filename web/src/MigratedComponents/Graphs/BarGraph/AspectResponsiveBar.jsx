@@ -18,34 +18,21 @@ import {
 
 const AspectResponsiveBar = ({
   assaysFromState,
-  culture,
   data,
   displayLegend,
   displayMethod,
   indexBy,
   keys,
-  tickValuesY,
-  tickValuesX,
+  tickValuesYShape,
+  tickValuesXShape,
   type,
 }) => {
-  const yTickvalues = generateTickValues(
-    data,
-    tickValuesY,
-    keys,
-    'Y',
-    culture,
-    false
-  )
-  const xTickValues = generateTickValues(
-    data,
-    tickValuesX,
-    indexBy,
-    'X',
-    culture,
-    false
-  )
-
-  const divergent =
+  const yTickvalues =
+    type === 'divergent'
+      ? generateTickValues(data, tickValuesXShape, indexBy, 'X')
+      : generateTickValues(data, tickValuesYShape, keys, 'Y', true)
+  const xTickValues = generateTickValues(data, tickValuesXShape, indexBy, 'X')
+  const divergentExtraConfig =
     type === 'divergent'
       ? {
           ...getMaxValueForDivergent(data, 'value'),
@@ -84,7 +71,7 @@ const AspectResponsiveBar = ({
 
   return (
     <IntlContext.Consumer>
-      {({ formatNumber }) => {
+      {({ formatNumber: intlFormatNumber }) => {
         return (
           <ResponsiveBar
             data={data}
@@ -93,7 +80,7 @@ const AspectResponsiveBar = ({
             colorBy="index"
             enableLabel={false}
             enableGridY={false}
-            {...divergent}
+            {...divergentExtraConfig}
             padding={0.3}
             borderWidth={0}
             borderColor={{ from: 'color', modifiers: [['darker', 1.6]] }}
@@ -106,15 +93,14 @@ const AspectResponsiveBar = ({
             motionDamping={15}
             layers={['grid', 'axes', 'bars', 'markers', GraphLegend]}
             colors={v => generateColorForValue(v)}
-            margin={generateMargin(tickValuesY, displayLegend)}
+            margin={generateMargin(tickValuesYShape, displayLegend)}
             tooltip={v => (
               <GraphToolTip
                 values={generateToolTip(
                   v,
-                  culture,
                   displayMethod,
                   assaysFromState,
-                  formatNumber
+                  intlFormatNumber
                 )}
               />
             )}
@@ -122,7 +108,7 @@ const AspectResponsiveBar = ({
               tickSize: 5,
               tickValues: yTickvalues,
               format: v =>
-                formatValuesForGraphs(v, displayMethod, formatNumber),
+                formatValuesForGraphs(v, displayMethod, intlFormatNumber),
             }}
             axisBottom={{
               tickSize: 5,
@@ -132,7 +118,7 @@ const AspectResponsiveBar = ({
               legendOffset: 32,
               tickValues: xTickValues,
               format: v =>
-                formatValuesForGraphs(v, displayMethod, formatNumber),
+                formatValuesForGraphs(v, displayMethod, intlFormatNumber),
             }}
             legends={legends}
           />
@@ -143,21 +129,25 @@ const AspectResponsiveBar = ({
 }
 
 AspectResponsiveBar.defaultProps = {
-  tickValuesY: 'all',
-  tickValuesX: 'all',
+  tickValuesYShape: 'all',
+  tickValuesXShape: 'all',
   type: 'bar',
 }
 
 AspectResponsiveBar.propTypes = {
   assaysFromState: PropTypes.oneOfType([PropTypes.array]).isRequired,
-  culture: PropTypes.string.isRequired,
   data: PropTypes.oneOfType([PropTypes.array]).isRequired,
   displayLegend: PropTypes.bool.isRequired,
   displayMethod: PropTypes.oneOf(['percentage', 'actual']).isRequired,
   indexBy: PropTypes.string.isRequired,
   keys: PropTypes.oneOfType([PropTypes.array]).isRequired,
-  tickValuesY: PropTypes.oneOf(['bookends', 'clubsandwich', 'all', 'none']),
-  tickValuesX: PropTypes.oneOf(['bookends', 'all', 'none']),
+  tickValuesYShape: PropTypes.oneOf([
+    'bookends',
+    'clubsandwich',
+    'all',
+    'none',
+  ]),
+  tickValuesXShape: PropTypes.oneOf(['bookends', 'all', 'none']),
   type: PropTypes.oneOf(['bar', 'stack', 'group']),
 }
 

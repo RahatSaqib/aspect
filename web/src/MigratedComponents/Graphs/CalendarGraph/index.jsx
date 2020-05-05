@@ -11,8 +11,8 @@ const CalendarGraph = ({
 }) => {
   const {
     indexBy,
-    tickValuesY,
-    tickValuesX,
+    tickValuesYShape,
+    tickValuesXShape,
     displayMethod,
     displayLegend,
     type,
@@ -24,8 +24,8 @@ const CalendarGraph = ({
       data={data}
       keys={keys}
       indexBy={indexBy}
-      tickValuesY={tickValuesY}
-      tickValuesX={tickValuesX}
+      tickValuesYShape={tickValuesYShape}
+      tickValuesXShape={tickValuesXShape}
       displayMethod={displayMethod}
       displayLegend={displayLegend}
       type={type}

@@ -15,7 +15,6 @@ import {
 } from '../../Helpers/Redux'
 
 const initialState = Immutable.Map()
-// const initialState = new Summary();
 
 export const REQUEST_CLINICAL_INDICATORS_DASHBOARD =
   'REQUEST_CLINICAL_INDICATORS_DASHBOARD'

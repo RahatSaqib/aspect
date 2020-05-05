@@ -114,7 +114,6 @@ const groupByKey = (
 
     return acc
   }, {})
-
   return calcPercentageSplitBar(normaliseKeys(grouped), indexBy, displayMethod)
 }
 
@@ -133,7 +132,7 @@ const groupForPie = (data, keyToConsume, indexBy, filterBy) => {
   return grouped
 }
 
-const transformForDivergent = (data, indexBy, keyToConsume, filterBy) => {
+const groupForDivergent = (data, indexBy, keyToConsume, filterBy) => {
   const divergences = []
   const ranges = []
   uniqBy(data, keyToConsume).map(d => divergences.push(d[keyToConsume]))
@@ -163,14 +162,13 @@ const transformForDivergent = (data, indexBy, keyToConsume, filterBy) => {
     }
     return acc
   }, {})
-
-  return normaliseKeys(grouped)
+  return sortBy(normaliseKeys(grouped), ['inRange'])
 }
 
 const formatValuesForGraphs = (value, displayMethod, formatNumber) => {
   let formatted
   switch (true) {
-    case (typeof value === 'number' || !Number.isNaN(value)) &&
+    case (typeof value === 'number' || !Number.isNaN(Number(value))) &&
       displayMethod === 'actual':
       formatted = formatNumber(Math.abs(value), {
         notation: 'compact',
@@ -178,7 +176,7 @@ const formatValuesForGraphs = (value, displayMethod, formatNumber) => {
       })
       break
 
-    case (typeof value === 'number' || !Number.isNaN(value)) &&
+    case (typeof value === 'number' || !Number.isNaN(Number(value))) &&
       displayMethod === 'percentage':
       formatted = formatNumber(Number(value / 100), {
         style: 'percent',
@@ -216,13 +214,6 @@ const getGraphKeysFromResults = (data, keyToOmit) => {
   return orderKeysById(uniq(newdata.flatMap(a => keys(a))))
 }
 
-const clubsandwich = (boundaries, rounded = false) => {
-  const low = first(boundaries)
-  const high = last(boundaries)
-  const middle = high / 2
-  return [low, rounded ? roundIfNumber(middle) : middle, high]
-}
-
 const getMaxValueForDivergent = data => {
   const keyValues = []
   data.map(d =>
@@ -233,7 +224,7 @@ const getMaxValueForDivergent = data => {
 }
 
 const roundIfNumber = value =>
-  typeof value === 'number' ? Math.round(value) : value
+  typeof value === 'number' && value > 0 ? Math.round(value) : value
 
 const sortByValue = values => {
   const collator = new Intl.Collator(undefined, {
@@ -243,26 +234,37 @@ const sortByValue = values => {
   return values.sort(collator.compare)
 }
 
-const getBoundaries = (data, keys, whichAxes, zeroOut = true, all = false) => {
-  const keySumValues = zeroOut && whichAxes === 'Y' ? [0] : []
+const clubsandwich = (boundaries, rounded = false) => {
+  const low = first(boundaries)
+  const high = last(boundaries)
+  const middle = high / 2
+  return [low, rounded ? roundIfNumber(middle) : middle, high]
+}
+
+const getBoundaries = (data, keys, whichAxes, zeroOut = true) => {
+  let dataOut
+  const dataOutTemp = zeroOut && whichAxes === 'Y' ? [0] : []
   switch (whichAxes) {
     case 'Y':
-      data.map(d => keySumValues.push(sum(values(pick(d, keys)).map(Number))))
+      data.map(d => dataOutTemp.push(sum(values(pick(d, keys)).map(Number))))
+      dataOut = sortByValue(dataOutTemp)
       break
 
     default:
-      data.map(d => keySumValues.push(...valuesIn(pick(d, keys))))
+      data.map(d => dataOutTemp.push(...valuesIn(pick(d, keys))))
+      dataOut = dataOutTemp
       break
   }
-
-  const sorted = sortByValue(keySumValues)
-
-  return all
-    ? sorted
-    : [(roundIfNumber(first(sorted)), roundIfNumber(last(sorted)))]
+  return [roundIfNumber(first(dataOut)), roundIfNumber(last(dataOut))]
 }
 
-const generateTickValues = (data, axesTicks, keys, whichAxes, zeroOut) => {
+const generateTickValues = (
+  data,
+  axesTicks,
+  keys,
+  whichAxes,
+  zeroOut = false
+) => {
   let values
   const boundaries = getBoundaries(data, keys, whichAxes, zeroOut)
   switch (axesTicks) {
@@ -279,10 +281,8 @@ const generateTickValues = (data, axesTicks, keys, whichAxes, zeroOut) => {
       break
 
     default:
-      // values = getBoundaries(data, keys, whichAxes, zeroOut, true);
       break
   }
-
   return values
 }
 
@@ -308,8 +308,8 @@ const calcPercentageSplitBar = (data, keyToOmit, displayMethod) => {
       })
 }
 
-const generateMargin = (tickValuesY, legend) => {
-  const shouldMargin = tickValuesY !== 'none'
+const generateMargin = (tickValuesYShape, legend) => {
+  const shouldMargin = tickValuesYShape !== 'none'
   const margin = {
     top: 5,
     right: shouldMargin ? 20 : 0,
@@ -322,7 +322,6 @@ const generateMargin = (tickValuesY, legend) => {
 
 const generateToolTip = (
   item,
-  culture,
   displayMethod,
   assaysFromState,
   formatNumber
@@ -354,7 +353,7 @@ const generateLegend = (string, assaysFromState) => {
   }
 }
 
-const percentageOrActualForPie = (data, displayMethod, culture) => {
+const percentageOrActualForPie = (data, displayMethod) => {
   let newData = []
   if (displayMethod === 'percentage') {
     const total = data.reduce((acc, curr) => acc + curr.value, 0)
@@ -460,8 +459,9 @@ export {
   getTimePeriod,
   graphColorMap,
   groupByKey,
+  groupForDivergent,
   groupForPie,
+  normaliseKeys,
   percentageOrActualForPie,
-  transformForDivergent,
   validateGraphConfig,
 }

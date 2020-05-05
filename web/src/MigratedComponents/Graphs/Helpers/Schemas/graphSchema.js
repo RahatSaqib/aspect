@@ -96,13 +96,13 @@ const graphItemsSchema = {
       $id: `${graphItemsSchemaId}/properties/keyToConsume`,
       type: 'string',
     },
-    tickValuesY: {
-      $id: `${graphItemsSchemaId}/properties/tickValuesY`,
+    tickValuesYShape: {
+      $id: `${graphItemsSchemaId}/properties/tickValuesYShape`,
       type: 'string',
       enum: ['bookends', 'clubsandwich', 'all', 'none'],
     },
-    tickValuesX: {
-      $id: `${graphItemsSchemaId}/properties/tickValuesX`,
+    tickValuesXShape: {
+      $id: `${graphItemsSchemaId}/properties/tickValuesXShape`,
       type: 'string',
       enum: ['bookends', 'all', 'none'],
     },
