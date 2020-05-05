@@ -37,17 +37,6 @@ import {
 import AspectButton from '../../components/shared/AspectButton'
 
 const cssClasses = classnames.bind(require('./CaseList.css'))
-import { fetchCases } from '../CaseRedux'
-import ExportListButton from '../../globals/components/ExportListButton'
-import requirePermissions from '../../components/shared/requirePermissions'
-import {
-  CaseDataTable,
-  CaseDataTableHead,
-  CaseDataTableRow,
-} from './CaseDataTable'
-import AspectButton from '../../components/shared/AspectButton'
-
-const cssClasses = classnames.bind(require('./CaseList.css'))
 
 const messages = defineMessages({
   resultsTitle: {
@@ -121,7 +110,6 @@ const enhance = compose(
   ),
   connect(
     state => ({
-
       items: state.case.items,
       table: state.case.table,
       userPermissions: state.user.jwt.permissions,
@@ -255,7 +243,6 @@ export const CaseList = ({
       />
       <DataTableCard key={`DataTableCard--table-${location.key}`}>
         <DataTableProgressBar disabled={!table.loading} />
-
         {items.currentIdList.isEmpty() && (
           <BrowseEmptyList history={history} location={location} intl={intl} />
         )}
