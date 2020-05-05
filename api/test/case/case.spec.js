@@ -6,6 +6,7 @@ const {
   getFirstPartnerId,
   getFirstDiseaseId,
 } = require('./utils')
+const { getAdminId } = require('../utils/authUtils')
 const { getAccessToken } = require('../utils/authUtils')
 const { getCaseId, removeCase, addCase } = require('../../src/case/service')
 
@@ -30,12 +31,23 @@ describe('case/service', () => {
   let partnerId = null
   let diseaseId = null
   let accessToken = null
+  let adminId = null
   const path = '/api/case'
+
+  const mockCase = externalId => {
+    return {
+      createdBy: adminId,
+      updatedBy: adminId,
+      partnerId,
+      externalId,
+    }
+  }
 
   before(async () => {
     partnerId = await getFirstPartnerId()
     diseaseId = await getFirstDiseaseId(partnerId)
     accessToken = await getAccessToken('admin', 'test07')
+    adminId = await getAdminId()
   })
 
   describe('GET', () => {
@@ -102,12 +114,10 @@ describe('case/service', () => {
 
   describe('add', () => {
     it('Should add case and return the id', async () => {
-      const objCase = {
-        externalId: `non existent externalId ${Math.floor(
-          Math.random() * 10000
-        )}`,
-        partnerId,
-      }
+      const objCase = mockCase(
+        `non existent externalId ${Math.floor(Math.random() * 10000)}`
+      )
+
       const caseId = await addCase(objCase)
       assert.isNotNull(caseId)
     })
@@ -115,12 +125,10 @@ describe('case/service', () => {
 
   describe('remove', () => {
     it('Should remove case', async () => {
-      const objCase = {
-        externalId: `non existent externalId ${Math.floor(
-          Math.random() * 10000
-        )}`,
-        partnerId,
-      }
+      const objCase = mockCase(
+        `non existent externalId ${Math.floor(Math.random() * 10000)}`
+      )
+
       await addCase(objCase)
       await removeCase(objCase)
       const caseId = await getCaseId(objCase)
@@ -140,26 +148,21 @@ describe('case/service', () => {
 
     it("Providing a non existent externalId, partnerId and allowing create it, should create a new case and return it's id", async () => {
       const createIfNonExistent = true
-      const objCase = {
-        externalId: `non existent externalId ${Math.floor(
-          Math.random() * 10000
-        )}`,
-        partnerId,
-      }
+      const objCase = mockCase(
+        `non existent externalId ${Math.floor(Math.random() * 10000)}`
+      )
 
-      const caseId = await getCaseId(objCase, createIfNonExistent)
+      const caseId = await getCaseId(objCase, createIfNonExistent, adminId)
       await removeCase(objCase)
       assert.isNotNull(caseId)
     })
 
     it("Providing a non existent externalId, partnerId and not allowing create it, shouldn't create a new case and return null", async () => {
       const createIfNonExistent = false
-      const objCase = {
-        externalId: `non existent externalId ${Math.floor(
-          Math.random() * 10000
-        )}`,
-        partnerId,
-      }
+
+      const objCase = mockCase(
+        `non existent externalId ${Math.floor(Math.random() * 10000)}`
+      )
 
       const caseId = await getCaseId(objCase, createIfNonExistent)
       assert.isNull(caseId)

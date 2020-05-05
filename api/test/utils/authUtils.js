@@ -277,8 +277,16 @@ async function removeUser(userId) {
     .del()
 }
 
+async function getAdminId() {
+  const { id: adminId } = await knex('User')
+    .where({ name: 'admin' })
+    .first()
+  return adminId
+}
+
 module.exports = {
   getAccessToken,
   createUser,
   removeUser,
+  getAdminId,
 }
