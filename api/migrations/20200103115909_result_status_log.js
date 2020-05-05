@@ -49,6 +49,7 @@ async function down(knex) {
   await knex.raw('SET foreign_key_checks = 0')
 
   await knex.schema.alterTable('Result', x => {
+    x.dropForeign('resultStatusLogId')
     x.dropColumns('resultStatusLogId')
   })
   await knex.schema.dropTableIfExists('ResultStatus')

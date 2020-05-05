@@ -5,6 +5,9 @@ const { getUniqueId } = require('../utils')
 
 async function seed(knex) {
   const results = await knex('Result').whereNull('caseId')
+  const { id: adminId } = await knex('User')
+    .where({ name: 'admin' })
+    .first('id')
   const cases = []
   await Promise.each(results, async result => {
     if (_.random(100) <= 50) {
@@ -12,6 +15,8 @@ async function seed(knex) {
       const caseId = await knex('Case').insert({
         externalId: caseExternalId,
         partnerId: result.partnerId,
+        createdBy: adminId,
+        updatedBy: adminId,
       })
       cases.push(caseId)
       if (_.random(100) <= 50) {

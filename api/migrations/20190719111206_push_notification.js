@@ -83,10 +83,12 @@ async function up(knex) {
 
 async function down(knex) {
   await knex.schema.alterTable('MessageType', t => {
+    t.dropForeign('pushNotificationTemplateId')
     t.dropColumn('pushNotificationTemplateId')
   })
 
   await knex.schema.alterTable('Notification', t => {
+    t.dropForeign('pushNotificationMessageId')
     t.dropColumn('pushNotificationMessageId')
   })
   await knex.schema.dropTableIfExists('PushNotificationMessage')

@@ -112,8 +112,8 @@ async function up(knex) {
 }
 
 async function down(knex) {
+  await knex.schema.dropTable('ResultFollowUp')
   await knex.schema.dropTable('FollowUpAssay')
   await knex.schema.dropTable('FollowUp')
   await knex.schema.dropTable('FollowUpType')
-  await knex.schema.dropTable('ResultFollowUp')
 }

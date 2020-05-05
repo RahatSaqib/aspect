@@ -6,21 +6,48 @@ const {
   getFirstPartnerId,
   getFirstDiseaseId,
 } = require('./utils')
+const { getAdminId } = require('../utils/authUtils')
 const { getAccessToken } = require('../utils/authUtils')
 const { getCaseId, removeCase, addCase } = require('../../src/case/service')
 
 const server = supertest.agent('http://localhost:8080')
 
+function assertPropsOnList(res) {
+  assert.property(res.body.data[0], 'id')
+  assert.property(res.body.data[0], 'externalId')
+  assert.property(res.body.data[0], 'attendingClinic')
+  assert.property(res.body.data[0], 'diseaseName')
+  assert.property(res.body.data[0], 'diseaseId')
+  assert.property(res.body.data[0], 'diseaseExternalId')
+  assert.property(res.body.data[0], 'status')
+  assert.property(res.body.data[0], 'patientId')
+  assert.property(res.body.data[0], 'createdBy')
+  assert.property(res.body.data[0], 'updatedBy')
+  assert.property(res.body.data[0], 'createdOn')
+  assert.property(res.body.data[0], 'updatedOn')
+}
+
 describe('case/service', () => {
   let partnerId = null
   let diseaseId = null
   let accessToken = null
+  let adminId = null
   const path = '/api/case'
+
+  const mockCase = externalId => {
+    return {
+      createdBy: adminId,
+      updatedBy: adminId,
+      partnerId,
+      externalId,
+    }
+  }
 
   before(async () => {
     partnerId = await getFirstPartnerId()
     diseaseId = await getFirstDiseaseId(partnerId)
     accessToken = await getAccessToken('admin', 'test07')
+    adminId = await getAdminId()
   })
 
   describe('GET', () => {
@@ -36,14 +63,7 @@ describe('case/service', () => {
       assert.typeOf(res.body.data, 'array')
       assert.isNotNull(res.body.data)
       assert.isAtLeast(res.body.data.length, 1)
-      assert.property(res.body.data[0], 'id')
-      assert.property(res.body.data[0], 'externalId')
-      assert.property(res.body.data[0], 'attendingClinic')
-      assert.property(res.body.data[0], 'diseaseName')
-      assert.property(res.body.data[0], 'diseaseId')
-      assert.property(res.body.data[0], 'diseaseExternalId')
-      assert.property(res.body.data[0], 'status')
-      assert.property(res.body.data[0], 'patientId')
+      assertPropsOnList(res)
       ;[caseToTest] = res.body.data
     })
 
@@ -58,14 +78,7 @@ describe('case/service', () => {
       assert.typeOf(res.body.data, 'array')
       assert.isNotNull(res.body.data)
       assert.isAtLeast(res.body.data.length, 1)
-      assert.property(res.body.data[0], 'id')
-      assert.property(res.body.data[0], 'externalId')
-      assert.property(res.body.data[0], 'attendingClinic')
-      assert.property(res.body.data[0], 'diseaseName')
-      assert.property(res.body.data[0], 'diseaseId')
-      assert.property(res.body.data[0], 'diseaseExternalId')
-      assert.property(res.body.data[0], 'status')
-      assert.property(res.body.data[0], 'patientId')
+      assertPropsOnList(res)
       assert.equal(res.body.data[0].id, caseToTest.id)
     })
 
@@ -80,14 +93,7 @@ describe('case/service', () => {
       assert.typeOf(res.body.data, 'array')
       assert.isNotNull(res.body.data)
       assert.isAtLeast(res.body.data.length, 1)
-      assert.property(res.body.data[0], 'id')
-      assert.property(res.body.data[0], 'externalId')
-      assert.property(res.body.data[0], 'attendingClinic')
-      assert.property(res.body.data[0], 'diseaseName')
-      assert.property(res.body.data[0], 'diseaseId')
-      assert.property(res.body.data[0], 'diseaseExternalId')
-      assert.property(res.body.data[0], 'status')
-      assert.property(res.body.data[0], 'patientId')
+      assertPropsOnList(res)
     })
 
     it('Should return an empty list', async () => {
@@ -108,12 +114,10 @@ describe('case/service', () => {
 
   describe('add', () => {
     it('Should add case and return the id', async () => {
-      const objCase = {
-        externalId: `non existent externalId ${Math.floor(
-          Math.random() * 10000
-        )}`,
-        partnerId,
-      }
+      const objCase = mockCase(
+        `non existent externalId ${Math.floor(Math.random() * 10000)}`
+      )
+
       const caseId = await addCase(objCase)
       assert.isNotNull(caseId)
     })
@@ -121,12 +125,10 @@ describe('case/service', () => {
 
   describe('remove', () => {
     it('Should remove case', async () => {
-      const objCase = {
-        externalId: `non existent externalId ${Math.floor(
-          Math.random() * 10000
-        )}`,
-        partnerId,
-      }
+      const objCase = mockCase(
+        `non existent externalId ${Math.floor(Math.random() * 10000)}`
+      )
+
       await addCase(objCase)
       await removeCase(objCase)
       const caseId = await getCaseId(objCase)
@@ -146,26 +148,21 @@ describe('case/service', () => {
 
     it("Providing a non existent externalId, partnerId and allowing create it, should create a new case and return it's id", async () => {
       const createIfNonExistent = true
-      const objCase = {
-        externalId: `non existent externalId ${Math.floor(
-          Math.random() * 10000
-        )}`,
-        partnerId,
-      }
+      const objCase = mockCase(
+        `non existent externalId ${Math.floor(Math.random() * 10000)}`
+      )
 
-      const caseId = await getCaseId(objCase, createIfNonExistent)
+      const caseId = await getCaseId(objCase, createIfNonExistent, adminId)
       await removeCase(objCase)
       assert.isNotNull(caseId)
     })
 
     it("Providing a non existent externalId, partnerId and not allowing create it, shouldn't create a new case and return null", async () => {
       const createIfNonExistent = false
-      const objCase = {
-        externalId: `non existent externalId ${Math.floor(
-          Math.random() * 10000
-        )}`,
-        partnerId,
-      }
+
+      const objCase = mockCase(
+        `non existent externalId ${Math.floor(Math.random() * 10000)}`
+      )
 
       const caseId = await getCaseId(objCase, createIfNonExistent)
       assert.isNull(caseId)
