@@ -11,7 +11,7 @@ async function up(knex) {
 
 async function down(knex) {
   await knex.schema.alterTable(tblCase, tbl => {
-    tbl.dropIndex(['externalId', 'partnerId'])
+    tbl.dropUnique(['externalId', 'partnerId'])
     tbl.dropColumn('partnerId')
   })
 }

@@ -73,6 +73,18 @@ const routes = [
                 diseaseExternalId: Joi.string().description(
                   "The disease external id of the case's last result"
                 ),
+                createdOn: Joi.date().description(
+                  'The creation date of the case'
+                ),
+                updatedOn: Joi.date().description(
+                  'The update date of the case'
+                ),
+                createdBy: Joi.string().description(
+                  "The username responsible of case's creation"
+                ),
+                updatedBy: Joi.string().description(
+                  "The username responsible of case's update"
+                ),
               })
             ),
         }),
