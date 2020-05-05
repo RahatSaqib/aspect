@@ -1,39 +1,48 @@
 import React from 'react'
 import { shallow } from 'enzyme'
-import { IntlProvider } from 'react-intl'
-import { Table } from '../../shared/metaReducers/table'
 import { Items } from '../../shared/metaReducers/items'
+import { Table } from '../../shared/metaReducers/table'
 import ExportListButton from '../../globals/components/ExportListButton'
 
-import { ResultList } from './ResultList'
+describe('Person List module', () => {
+  const { CaseList } = require('./CaseList')
 
-describe('Result List component', () => {
-  const intlProvider = new IntlProvider({ locale: 'en' }, {})
-  const { intl } = intlProvider.getChildContext()
+  describe('CaseList component', () => {
+    let props
 
-  const props = {
-    intl,
-    table: new Table(),
-    items: new Items(),
-    location: {
-      search: '',
-    },
-  }
+    beforeEach(() => {
+      props = {
+        intl: {
+          formatMessage: message => message.defaultMessage,
+          formatDate: date => JSON.stringify(date),
+          formatTime: time => JSON.stringify(time),
+          formatRelative: value => JSON.stringify(value),
+          formatNumber: value => JSON.stringify(value),
+          formatPlural: value => JSON.stringify(value),
+          formatHTMLMessage: value => JSON.stringify(value),
+        },
+        history: {
+          push: () => {},
+        },
+        location: {
+          search: '',
+        },
+        table: new Table(),
+        items: new Items(),
+        sortCol: 'id',
+        sortDir: 'desc',
+        pageAt: 0,
+        pageSize: 10,
+        onHeadColumnClick: () => {},
+        onRowClick: () => {},
+        onExcelClick: () => {},
+      }
+    })
 
-  it('should shallow render correctly when filter for assay type', () => {
-    const element = shallow(
-      <ResultList {...props} location={{ search: '?filters=assayType%3DTB' }} />
-    )
+    it('should shallow render correctly', () => {
+      const element = shallow(<CaseList {...props} />)
 
-    expect(element).toMatchSnapshot()
-    expect(element.find(ExportListButton)).toHaveLength(1)
-  })
-
-  it('should shallow render correctly when filter for assay id', () => {
-    const element = shallow(
-      <ResultList {...props} location={{ search: '?filters=assayId%3D9' }} />
-    )
-
-    expect(element).toMatchSnapshot()
+      expect(element).toMatchSnapshot()
+    })
   })
 })
