@@ -1,4 +1,5 @@
 import React, { Fragment, useEffect, useState } from 'react'
+import PropTypes from 'prop-types'
 import { BoxLegendSvg } from '@nivo/legends'
 import classnames from 'classnames/bind'
 import { getAverageFromData } from '../Helpers/Formatters'
@@ -23,6 +24,12 @@ const GraphLegend = ({ height, legends, width }) => {
         : null}
     </Fragment>
   )
+}
+
+GraphLegend.propTypes = {
+  height: PropTypes.string.isRequired,
+  legends: PropTypes.bool.isRequired,
+  width: PropTypes.string.isRequired,
 }
 
 const PieInnerLegend = ({ averages, data }) => {

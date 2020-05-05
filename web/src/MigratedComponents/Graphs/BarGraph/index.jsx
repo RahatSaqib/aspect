@@ -1,14 +1,8 @@
-import React, { Fragment, useEffect, useState } from 'react'
+import React from 'react'
+import PropTypes from 'prop-types'
 import AspectResponsiveBar from './AspectResponsiveBar'
 
-const BarGraph = ({
-  data,
-  keys,
-  config,
-  culture,
-  averages,
-  assaysFromState,
-}) => {
+const BarGraph = ({ data, keys, config, assaysFromState }) => {
   const {
     indexBy,
     tickValuesYShape,
@@ -30,6 +24,13 @@ const BarGraph = ({
       type={type}
     />
   )
+}
+
+BarGraph.propTypes = {
+  data: PropTypes.oneOfType([PropTypes.array]).isRequired,
+  keys: PropTypes.oneOfType([PropTypes.array]).isRequired,
+  config: PropTypes.oneOfType([PropTypes.object]).isRequired,
+  assaysFromState: PropTypes.oneOfType([PropTypes.array]).isRequired,
 }
 
 export default BarGraph

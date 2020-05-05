@@ -1,13 +1,23 @@
-import React from 'react';
-import classnames from 'classnames/bind';
+import React from 'react'
+import PropTypes from 'prop-types'
+import classnames from 'classnames/bind'
 
-const cssClasses = classnames.bind(require('./Title.css'));
+const cssClasses = classnames.bind(require('./Title.css'))
 
 export const Title = ({ icon, title }) => (
   <div className={cssClasses('title__container')}>
     {icon}
     <span className={cssClasses('title__label')}>{title}</span>
   </div>
-);
+)
 
-export default Title;
+Title.defaultProps = {
+  icon: () => false,
+}
+
+Title.defaultProps = {
+  icon: PropTypes.func,
+  title: PropTypes.string.isRequired,
+}
+
+export default Title

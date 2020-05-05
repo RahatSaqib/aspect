@@ -1,12 +1,12 @@
-import thunk from 'redux-thunk';
-import { createStore, compose, applyMiddleware } from 'redux';
-import { createLogger } from 'redux-logger';
+import thunk from 'redux-thunk'
+import { createStore, compose, applyMiddleware } from 'redux'
+import { createLogger } from 'redux-logger'
 
-import rootReducer from './rootReducer';
+import rootReducer from './rootReducer'
 
-import { middleware as idleMiddleware } from './idle/IdleRedux';
+import { middleware as idleMiddleware } from './idle/IdleRedux'
 
-const middleware = [thunk, idleMiddleware];
+const middleware = [thunk, idleMiddleware]
 
 if (process.env.ASPECT_TARGET === 'local') {
   // middleware.push(createLogger({ collapsed: true }));
@@ -20,16 +20,16 @@ const createStoreWithDevTools = compose(
     ? // eslint-disable-next-line no-underscore-dangle
       window.__REDUX_DEVTOOLS_EXTENSION__()
     : f => f
-)(createStore);
+)(createStore)
 
-const store = createStoreWithDevTools(rootReducer);
+const store = createStoreWithDevTools(rootReducer)
 
 // enable hot reload for reducers
 if (module.hot) {
   module.hot.accept('./rootReducer', () => {
-    const nextRootReducer = require('./rootReducer').default;
-    store.replaceReducer(nextRootReducer);
-  });
+    const nextRootReducer = require('./rootReducer').default
+    store.replaceReducer(nextRootReducer)
+  })
 }
 
-export default store;
+export default store

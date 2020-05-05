@@ -148,7 +148,7 @@ AspectResponsiveBar.propTypes = {
     'none',
   ]),
   tickValuesXShape: PropTypes.oneOf(['bookends', 'all', 'none']),
-  type: PropTypes.oneOf(['bar', 'stack', 'group']),
+  type: PropTypes.oneOf(['bar', 'stack', 'group', 'divergent']),
 }
 
 export default AspectResponsiveBar

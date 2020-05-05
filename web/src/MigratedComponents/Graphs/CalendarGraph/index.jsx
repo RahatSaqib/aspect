@@ -1,14 +1,8 @@
-import React, { Fragment, useEffect, useState } from 'react'
+import React from 'react'
+import PropTypes from 'prop-types'
 import AspectResponsiveCalendar from './AspectResponsiveCalendar'
 
-const CalendarGraph = ({
-  data,
-  keys,
-  config,
-  culture,
-  averages,
-  assaysFromState,
-}) => {
+const CalendarGraph = ({ data, keys, config, assaysFromState }) => {
   const {
     indexBy,
     tickValuesYShape,
@@ -31,6 +25,13 @@ const CalendarGraph = ({
       type={type}
     />
   )
+}
+
+CalendarGraph.propTypes = {
+  data: PropTypes.oneOfType([PropTypes.array]).isRequired,
+  keys: PropTypes.oneOfType([PropTypes.array]).isRequired,
+  config: PropTypes.oneOfType([PropTypes.object]).isRequired,
+  assaysFromState: PropTypes.oneOfType([PropTypes.array]).isRequired,
 }
 
 export default CalendarGraph
