@@ -660,7 +660,7 @@ export class ResultDetail extends PureComponent {
       'resultWorkflowLogCreatedOn',
     ].map((fieldName, key) => {
       let value = result.get(fieldName)
-      if (fieldName.includes('CreatedOn')) {
+      if (fieldName.includes('CreatedOn') && value) {
         value = formatDate(value)
       }
       return {

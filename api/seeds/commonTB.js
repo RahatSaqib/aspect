@@ -10,10 +10,14 @@ const {
 const AssayBdMgitAstResultDataSchema = require('./fixtures/AssayBdMgitAstResultDataSchema.json')
 const AssayBdMgitGndResultDataSchema = require('./fixtures/AssayBdMgitGndResultDataSchema.json')
 const MGITPatientDataSchema = require('./fixtures/MGITPatientDataSchema.json')
-const { seedPartnerAssay, seedPartnerDisease } = require('./utils')
+const {
+  seedPartnerAssay,
+  seedPartnerDisease,
+  getLinkedResultDate,
+} = require('./utils')
 
 async function getMGITResultFromTBPossitive(result, assaysMGIT, devicesMGIT) {
-  const randomDateMgit = addDays(result.endedOn, _.random(5))
+  const randomDateMgit = getLinkedResultDate(result)
   const now = new Date()
   const assay = _.sample(assaysMGIT)
   const assayId = await assayToId('assayBdMgitAst')

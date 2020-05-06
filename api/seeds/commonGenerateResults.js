@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars */
 const _ = require('lodash')
 const Promise = require('bluebird')
+const moment = require('moment')
 
 const treatmentStatuses = ['OnTreatment', 'AwaitingTreatment', 'NotPossible']
 const millisInHour = 1000 * 60 * 60
@@ -17,6 +18,7 @@ const {
   differenceInDays,
 } = require('date-fns')
 
+const { getLinkedResultDate } = require('./utils')
 const { getMGITResultFromTBPossitive } = require('./commonTB')
 const {
   allResultCategoryToId,
@@ -469,13 +471,12 @@ async function addCovidResults(
         formData.testType = selectedTestType.value
       }
     } else {
-      const rndDays = _.random(10, 20)
       result = _.find(possibleResults, r => r.resultText === 'Negative')
+
       linkedResult = _.sample(positiveResults)
-      const newStart = addDays(
-        Math.max(linkedResult.startedOn, linkedResult.endedOn),
-        rndDays
-      )
+
+      const newStart = getLinkedResultDate(linkedResult)
+
       linkedResult.formData.dateAndTimeOfTest = newStart
       resultToInsert = _.assign({}, _.omit(linkedResult, ['id']), {
         startedOn: newStart,
@@ -996,7 +997,7 @@ async function addTBResults(
     const [resultId] = await knex('Result').insert(resultElement)
 
     if (
-      result.category1 === resultCategories.resultCategoryDetectedId &&
+      resultElement.category1 === resultCategories.resultCategoryDetectedId &&
       rnd <= 80 &&
       devicesMGIT.length > 0 &&
       assayBdMgit &&

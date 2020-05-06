@@ -1,8 +1,9 @@
 const Promise = require('bluebird')
 const _ = require('lodash')
+const moment = require('moment')
 const { readJson } = require('fs-extra')
 const path = require('path')
-const { addMilliseconds, subDays } = require('date-fns')
+const { addMilliseconds, subDays, addMinutes, format } = require('date-fns')
 const relativeObjectsSeeds = require('./relativeObjectsSeeds')
 const {
   allAssayTypeToId,
@@ -2687,6 +2688,33 @@ function getUniqueId() {
   return _.times(6, () => _.toUpper(_.random(36).toString(36))).join('')
 }
 
+/**
+ * Gets a random date for a result linked to the previous one provided.
+ * @param  {[object]} previousResult The previous result
+ * @return {[date]} A random date next to the previous result's endedOn field
+ */
+function getLinkedResultDate(previousResult) {
+  const previousResultDate = Math.max(
+    previousResult.startedOn,
+    previousResult.endedOn
+  )
+
+  const now = new Date()
+  const nowMillis = format(addMinutes(now, now.getTimezoneOffset()), 'T')
+
+  if (previousResultDate > nowMillis)
+    throw new Error("Previous result's date can't be greater than today")
+
+  const endedOn = moment(previousResultDate)
+  const diff = moment.duration(endedOn.diff(now))
+  const diffInMinutes = diff.asMinutes()
+
+  const rndMinutes = _.random(1, diffInMinutes)
+  const newStartDate = addMinutes(previousResultDate, rndMinutes)
+
+  return newStartDate
+}
+
 module.exports = {
   addReports,
 
@@ -2748,4 +2776,5 @@ module.exports = {
   seedPartnerDisease,
 
   getUniqueId,
+  getLinkedResultDate,
 }
