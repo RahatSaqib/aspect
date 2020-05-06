@@ -102,8 +102,10 @@ export const formatRelative = (intl, date) => {
   const timeDiffInMilliseconds = dateInMilliseconds - Date.now()
   const { denom, unit } = getParams(timeDiffInMilliseconds)
 
+  // see details - https://formatjs.io/docs/react-intl/api#formatrelativetime
   return intl.formatRelativeTime(
     Math.round(timeDiffInMilliseconds / denom),
-    unit
+    unit,
+    { number: 'auto' }
   )
 }
