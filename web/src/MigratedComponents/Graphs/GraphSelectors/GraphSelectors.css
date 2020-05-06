@@ -1,0 +1,7 @@
+.selectors__container {
+  background: red;
+  flex-direction: row;
+  justify-content: flex-end;
+  margin: 10px 0;
+  padding: 10px 0;
+}
