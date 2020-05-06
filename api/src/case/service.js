@@ -1,6 +1,8 @@
 const { knex, filterParams, sortPageParams } = require('../db')
 const { getConstraints } = require('../auth/constraints')
 const { addPartnerQueryConstraints } = require('../result/service')
+const { caseAdded, caseUpdated } = require('./actions')
+const config = require('../config')
 
 function validateCaseIdentifier(_case) {
   let errors = ''
@@ -48,8 +50,17 @@ async function getCaseId(_case, createIfNonExistent, userId) {
  * @param  {object} _case
  * @return {int} The created case id
  */
-async function addCase(_case) {
+async function addCase(_case, { messageContext } = {}) {
   const [caseId] = await knex('Case').insert(_case)
+
+  if (config.scheduler.enabled && messageContext) {
+    // queue message
+    if (!messageContext.caseAdded) {
+      messageContext = messageContext.bindActionCreators({ caseAdded })
+    }
+    messageContext.caseAdded(caseId)
+  }
+
   return caseId
 }
 
@@ -64,10 +75,22 @@ async function removeCase(_case) {
     .del()
 }
 
-async function updateCase(whereFields, updateFields) {
+async function updateCase(whereFields, updateFields, { messageContext } = {}) {
   await knex('Case')
     .where(whereFields)
     .update(updateFields)
+  const caseIds = await knex('Case')
+    .where(whereFields)
+    .select('id')
+    .pluck('id')
+  if (config.scheduler.enabled && messageContext && caseIds.length) {
+    // queue message for each affected Case row
+    if (!messageContext.caseUpdated) {
+      messageContext = messageContext.bindActionCreators({ caseUpdated })
+    }
+    caseIds.forEach(id => messageContext.caseUpdated(id))
+  }
+  return caseIds
 }
 
 async function getCases({ query, auth }) {
@@ -154,10 +177,21 @@ async function getCases({ query, auth }) {
   return result
 }
 
+async function onCaseUpdated(/* { caseId }, { messageContext } */) {
+  // placeholder for CASE_UPDATED message queue
+}
+
+async function onCaseAdded(/* { caseId }, { messageContext } */) {
+  // placeholder handler for MQ action CASE_ADDED
+}
+
 module.exports = {
   getCaseId,
   addCase,
   removeCase,
   getCases,
   updateCase,
+  // MQ consumers (subscription event handlers)
+  onCaseAdded,
+  onCaseUpdated,
 }
