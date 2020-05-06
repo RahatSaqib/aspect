@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
 import { Switch, Route, Redirect } from 'react-router-dom'
 import { compose, setPropTypes } from 'recompose'
-import { intlShape } from 'react-intl'
+import { injectIntl } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
@@ -35,11 +35,13 @@ import {
 } from '../PersonRedux'
 import { fetchPartnersAndJobFunctionsForSelectList } from '../../job/JobRedux'
 import { showAcknowledgement } from '../../appNotification/AppNotificationRedux'
+import PropTypeOf from '../../shared/types'
 
 import messages from './messages'
 import styles from './PersonDetail.css'
 
 const enhance = compose(
+  injectIntl,
   setPropTypes({
     match: PropTypes.shape({
       params: PropTypes.shape({
@@ -99,7 +101,7 @@ const enhance = compose(
       )
   ),
   setPropTypes({
-    intl: intlShape.isRequired,
+    intl: PropTypeOf.intl.isRequired,
     editable: PropTypes.bool.isRequired,
     user: PropTypes.object.isRequired,
     person: PropTypes.object.isRequired,

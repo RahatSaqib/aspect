@@ -3,12 +3,11 @@ import Immutable from 'immutable'
 import classnames from 'classnames/bind'
 import React from 'react'
 import { compose, withProps, withHandlers, lifecycle } from 'recompose'
-import { defineMessages } from 'react-intl'
+import { defineMessages, injectIntl } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
-import IconButton from '@material-ui/core/IconButton'
-import Tooltip from '@material-ui/core/Tooltip'
+
 import MenuItem from '@material-ui/core/MenuItem'
 import ListItemIcon from '@material-ui/core/ListItemIcon'
 import ListItemText from '@material-ui/core/ListItemText'
@@ -165,6 +164,7 @@ const filtersFromLocation = composeSanitizer(
 )
 
 const enhance = compose(
+  injectIntl,
   withProps(
     makeSortPageSelector({
       sortCol: 'siteName',

@@ -1,15 +1,12 @@
 import Immutable from 'immutable'
 import React from 'react'
 import { shallow } from 'enzyme'
-import { IntlProvider } from 'react-intl'
+import { createIntl } from 'react-intl'
 import { SummaryStatus } from './SummaryStatus'
 
 describe('Summary Status component', () => {
-  const intlProvider = new IntlProvider({ locale: 'en' }, {})
-  const { intl } = intlProvider.getChildContext()
-
   const props = {
-    intl,
+    intl: createIntl({ locale: 'en' }),
     summary: Immutable.fromJS([
       {
         id: 13,

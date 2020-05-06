@@ -4,7 +4,7 @@ import React, { PureComponent } from 'react'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { compose, setPropTypes, pure } from 'recompose'
-import { injectIntl, defineMessages, intlShape } from 'react-intl'
+import { injectIntl, defineMessages } from 'react-intl'
 import Helmet from 'react-helmet'
 
 // Our own imports
@@ -19,6 +19,7 @@ import ConnectedTagInput from '../../tag/ConnectedTagInput'
 import { fetchTags, updateTags } from '../../tag/TagRedux'
 
 import DetailPanel from '../../components/shared/detailPanel/DetailPanel'
+import PropTypeOf from '../../shared/types'
 
 const messages = defineMessages({
   title: {
@@ -48,7 +49,7 @@ const enhance = compose(
   ),
   injectIntl,
   setPropTypes({
-    intl: intlShape.isRequired,
+    intl: PropTypeOf.intl.isRequired,
   })
 )
 
