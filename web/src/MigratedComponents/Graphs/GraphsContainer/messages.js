@@ -1,55 +1,67 @@
-import { defineMessages } from 'react-intl'
+import { defineMessages } from 'react-intl';
 
 export const messages = defineMessages({
   clinicalIndicatorsPieLegend: {
     id: 'pages.Status.clinicalIndicatorsPieLegend',
-    defaultMessage: 'Average Monthly Suppression Rate',
+    defaultMessage: 'Average Monthly Suppression Rate'
   },
   clinicalIndicatorsPieSubLegend: {
     id: 'pages.Status.clinicalIndicatorsPieLegend',
-    defaultMessage: 'Total Cases',
+    defaultMessage: 'Total Cases'
   },
   clinicalIndicatorsCovidName: {
     id: 'pages.Status.clinicalIndicatorsCovidName',
-    defaultMessage: 'Daily Confirmed Cases',
+    defaultMessage: 'Daily Confirmed Cases'
   },
   clinicalIndicatorsCovidGenderRecoveryRates: {
     id: 'pages.Status.clinicalIndicatorsCovidGenderRecoveryRates',
-    defaultMessage: 'Recovery Rates by Gender',
+    defaultMessage: 'Recovery Rates by Gender'
   },
   clinicalIndicatorsVLTitle: {
     id: 'pages.Status.clinicalIndicatorsVL.title',
-    defaultMessage: 'VL Outcomes',
+    defaultMessage: 'VL Outcomes'
   },
   clinicalIndicatorsTBTitle: {
     id: 'pages.Status.clinicalIndicatorsTB.title',
-    defaultMessage: 'TB Rif Resistance',
+    defaultMessage: 'TB Rif Resistance'
   },
   clinicalIndicatorsTBPieLegend: {
     id: 'pages.Status.clinicalIndicatorsTB.pie',
-    defaultMessage: 'Average Monthly Rif Resistance Rate',
+    defaultMessage: 'Average Monthly Rif Resistance Rate'
   },
   covidGraphDailyMortalityAndrecovery: {
     id: 'pages.Status.covidGraphDailyMortalityAndrecovery.pie',
-    defaultMessage: 'Daily Mortality and Recovery',
+    defaultMessage: 'Daily Mortality and Recovery'
   },
   covidGraphDailyMortalityAndRecoveryByGenderMale: {
     id: 'pages.Status.covidGraphDailyMortalityAndRecoveryByGenderMale.pie',
-    defaultMessage: 'Male',
+    defaultMessage: 'Male'
   },
   covidGraphDailyMortalityAndRecoveryByGenderFemale: {
     id: 'pages.Status.covidGraphDailyMortalityAndRecoveryByGenderFemale.pi',
-    defaultMessage: 'Female',
+    defaultMessage: 'Female'
   },
   covidGraphDailyMortalityAndRecoveryByGenderTests: {
     id: 'pages.Status.covidGraphDailyMortalityAndRecoveryByGenderTests.pie',
-    defaultMessage: 'Tests',
+    defaultMessage: 'Tests'
   },
   covidGraphDailyMortalityAndRecoveryByGenderAndGender: {
     id:
       'pages.Status.covidGraphDailyMortalityAndRecoveryByGenderAndGender.graph',
-    defaultMessage: 'Age and Gender',
+    defaultMessage: 'Age and Gender'
   },
-})
+  treatmentGraphStatusMonthly: {
+    id: 'pages.Status.treatmentGraphStatusMonthly.graph',
+    defaultMessage: 'Confirmed Response'
+  },
+  treatmentStatusTotalTitle: {
+    id: 'pages.Status.treatmentStatusTotalTitle.graph',
+    defaultMessage: 'Total'
+  },
+  treatmentStatusTotalValidTitle: {
+    id: 'pages.Status.treatmentStatusTotalValidTitle.graph',
+    defaultMessage: 'Valid Tests'
+  }
+});
 
-export default messages
+export default messages;

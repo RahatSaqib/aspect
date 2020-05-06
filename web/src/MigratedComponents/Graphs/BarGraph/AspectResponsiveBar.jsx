@@ -1,10 +1,10 @@
-import React from 'react'
-import PropTypes from 'prop-types'
-import classnames from 'classnames/bind'
-import { ResponsiveBar } from '@nivo/bar'
-import IntlContext from '../Helpers/Context/i18n'
-import { GraphLegend } from '../GraphLegend'
-import GraphToolTip from '../GraphToolTip'
+import React from 'react';
+import PropTypes from 'prop-types';
+import classnames from 'classnames/bind';
+import { ResponsiveBar } from '@nivo/bar';
+import IntlContext from '../Helpers/Context/i18n';
+import { GraphLegend } from '../GraphLegend';
+import GraphToolTip from '../GraphToolTip';
 
 import {
   formatValuesForGraphs,
@@ -13,8 +13,8 @@ import {
   generateTickValues,
   generateToolTip,
   generateLegend,
-  getMaxValueForDivergent,
-} from '../Helpers/Formatters'
+  getMaxValueForDivergent
+} from '../Helpers/Formatters';
 
 const AspectResponsiveBar = ({
   assaysFromState,
@@ -25,20 +25,20 @@ const AspectResponsiveBar = ({
   keys,
   tickValuesYShape,
   tickValuesXShape,
-  type,
+  type
 }) => {
   const yTickvalues =
     type === 'divergent'
       ? generateTickValues(data, tickValuesXShape, indexBy, 'X')
-      : generateTickValues(data, tickValuesYShape, keys, 'Y', true)
-  const xTickValues = generateTickValues(data, tickValuesXShape, indexBy, 'X')
+      : generateTickValues(data, tickValuesYShape, keys, 'Y', true);
+  const xTickValues = generateTickValues(data, tickValuesXShape, indexBy, 'X');
   const divergentExtraConfig =
     type === 'divergent'
       ? {
           ...getMaxValueForDivergent(data, 'value'),
-          layout: 'horizontal',
+          layout: 'horizontal'
         }
-      : {}
+      : {};
 
   const legends = displayLegend
     ? [
@@ -61,13 +61,13 @@ const AspectResponsiveBar = ({
             {
               on: 'hover',
               style: {
-                itemOpacity: 1,
-              },
-            },
-          ],
-        },
+                itemOpacity: 1
+              }
+            }
+          ]
+        }
       ]
-    : []
+    : [];
 
   return (
     <IntlContext.Consumer>
@@ -108,7 +108,7 @@ const AspectResponsiveBar = ({
               tickSize: 5,
               tickValues: yTickvalues,
               format: v =>
-                formatValuesForGraphs(v, displayMethod, intlFormatNumber),
+                formatValuesForGraphs(v, displayMethod, intlFormatNumber)
             }}
             axisBottom={{
               tickSize: 5,
@@ -118,21 +118,21 @@ const AspectResponsiveBar = ({
               legendOffset: 32,
               tickValues: xTickValues,
               format: v =>
-                formatValuesForGraphs(v, displayMethod, intlFormatNumber),
+                formatValuesForGraphs(v, displayMethod, intlFormatNumber)
             }}
             legends={legends}
           />
-        )
+        );
       }}
     </IntlContext.Consumer>
-  )
-}
+  );
+};
 
 AspectResponsiveBar.defaultProps = {
   tickValuesYShape: 'all',
   tickValuesXShape: 'all',
-  type: 'bar',
-}
+  type: 'bar'
+};
 
 AspectResponsiveBar.propTypes = {
   assaysFromState: PropTypes.oneOfType([PropTypes.array]).isRequired,
@@ -145,10 +145,16 @@ AspectResponsiveBar.propTypes = {
     'bookends',
     'clubsandwich',
     'all',
-    'none',
+    'none'
   ]),
   tickValuesXShape: PropTypes.oneOf(['bookends', 'all', 'none']),
-  type: PropTypes.oneOf(['bar', 'stack', 'group', 'divergent']),
-}
+  type: PropTypes.oneOf([
+    'bar',
+    'stack',
+    'group',
+    'divergent',
+    'barLegacyTreatment'
+  ])
+};
 
-export default AspectResponsiveBar
+export default AspectResponsiveBar;

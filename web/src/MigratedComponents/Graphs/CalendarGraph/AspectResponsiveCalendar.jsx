@@ -1,10 +1,10 @@
-import React from 'react'
-import PropTypes from 'prop-types'
-import classnames from 'classnames/bind'
-import { ResponsiveCalendar } from '@nivo/calendar'
-import IntlContext from '../Helpers/Context/i18n'
-import { GraphLegend } from '../GraphLegend'
-import GraphToolTip from '../GraphToolTip'
+import React from 'react';
+import PropTypes from 'prop-types';
+import classnames from 'classnames/bind';
+import { ResponsiveCalendar } from '@nivo/calendar';
+import IntlContext from '../Helpers/Context/i18n';
+import { GraphLegend } from '../GraphLegend';
+import GraphToolTip from '../GraphToolTip';
 
 import {
   formatValuesForGraphs,
@@ -13,8 +13,8 @@ import {
   generateTickValues,
   generateToolTip,
   generateLegend,
-  getMaxValueForDivergent,
-} from '../Helpers/Formatters'
+  getMaxValueForDivergent
+} from '../Helpers/Formatters';
 
 const AspectResponsiveCalendar = ({
   assaysFromState,
@@ -26,7 +26,7 @@ const AspectResponsiveCalendar = ({
   keys,
   tickValuesYShape,
   tickValuesXShape,
-  type,
+  type
 }) => {
   const legends = displayLegend
     ? [
@@ -49,13 +49,13 @@ const AspectResponsiveCalendar = ({
             {
               on: 'hover',
               style: {
-                itemOpacity: 1,
-              },
-            },
-          ],
-        },
+                itemOpacity: 1
+              }
+            }
+          ]
+        }
       ]
-    : []
+    : [];
   return (
     <IntlContext.Consumer>
       {({ formatNumber: intlFormatNumber }) => {
@@ -93,17 +93,17 @@ const AspectResponsiveCalendar = ({
             )}
             legends={legends}
           />
-        )
+        );
       }}
     </IntlContext.Consumer>
-  )
-}
+  );
+};
 
 AspectResponsiveCalendar.defaultProps = {
   tickValuesYShape: 'all',
   tickValuesXShape: 'all',
-  type: 'bar',
-}
+  type: 'bar'
+};
 
 AspectResponsiveCalendar.propTypes = {
   assaysFromState: PropTypes.oneOfType([PropTypes.array]).isRequired,
@@ -117,10 +117,10 @@ AspectResponsiveCalendar.propTypes = {
     'bookends',
     'clubsandwich',
     'all',
-    'none',
+    'none'
   ]),
   tickValuesXShape: PropTypes.oneOf(['bookends', 'all', 'none']),
-  type: PropTypes.oneOf(['bar', 'stack', 'group']),
-}
+  type: PropTypes.oneOf(['bar', 'stacked', 'divergent', 'barLegacyTreatment'])
+};
 
-export default AspectResponsiveCalendar
+export default AspectResponsiveCalendar;
