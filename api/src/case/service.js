@@ -50,10 +50,10 @@ async function getCaseId(_case, createIfNonExistent, userId) {
  * @param  {object} _case
  * @return {int} The created case id
  */
-async function addCase(_case, { messageContext } = {}) {
+async function addCase(_case, { messageContext, skipMQ } = {}) {
   const [caseId] = await knex('Case').insert(_case)
 
-  if (config.scheduler.enabled && messageContext) {
+  if (config.scheduler.enabled && messageContext && !skipMQ) {
     // queue message
     if (!messageContext.caseAdded) {
       messageContext = messageContext.bindActionCreators({ caseAdded })
@@ -75,7 +75,11 @@ async function removeCase(_case) {
     .del()
 }
 
-async function updateCase(whereFields, updateFields, { messageContext } = {}) {
+async function updateCase(
+  whereFields,
+  updateFields,
+  { messageContext, skipMQ } = {}
+) {
   await knex('Case')
     .where(whereFields)
     .update(updateFields)
@@ -83,7 +87,7 @@ async function updateCase(whereFields, updateFields, { messageContext } = {}) {
     .where(whereFields)
     .select('id')
     .pluck('id')
-  if (config.scheduler.enabled && messageContext && caseIds.length) {
+  if (config.scheduler.enabled && messageContext && caseIds.length && !skipMQ) {
     // queue message for each affected Case row
     if (!messageContext.caseUpdated) {
       messageContext = messageContext.bindActionCreators({ caseUpdated })
