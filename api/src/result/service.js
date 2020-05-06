@@ -836,17 +836,22 @@ async function updateWorkflowStatus(request) {
   const { resultWorkflowStatusId } = payload
   const { changedOn, operator, reason, updatedOn } = payload
 
-  const errorMessage = await updateResultWorkflowStatusByResultId(
+  const resultWorkflowLogEntry = {
     resultId,
-    payload.externalId,
     resultWorkflowStatusId,
-    result.data.resultWorkflowStatusId,
-    result.data.resultWorkflowChangedOn,
-    changedOn,
+    createdBy: currentUserId,
     operator,
     reason,
+    changedOn: changedOn || new Date(),
+  }
+
+  const errorMessage = await updateResultWorkflowStatusByResultId(
+    knex,
+    resultWorkflowLogEntry,
+    payload.externalId,
     updatedOn,
-    currentUserId
+    result.data.resultWorkflowStatusId,
+    result.data.resultWorkflowChangedOn
   )
 
   if (errorMessage) {
@@ -858,47 +863,40 @@ async function updateWorkflowStatus(request) {
 }
 
 async function updateResultWorkflowStatusByResultId(
-  resultId,
+  knex,
+  resultWorkflowLogEntry,
   resultWorkflowStatusExternalId,
-  resultWorkflowStatusId,
-  currentResultWorkflowStatusId,
-  resultWorkflowChangedOn,
-  changedOn,
-  operator,
-  reason,
   updatedOn,
-  currentUserId
+  currentResultWorkflowStatusId,
+  resultWorkflowChangedOn
 ) {
   const now = new Date()
 
   // check if a externalId is provided
   if (resultWorkflowStatusExternalId) {
-    resultWorkflowStatusId = await resultWorkflowStatusToId(
+    resultWorkflowLogEntry.resultWorkflowStatusId = await resultWorkflowStatusToId(
       resultWorkflowStatusExternalId
     )
-    if (!resultWorkflowStatusId) {
+    if (!resultWorkflowLogEntry.resultWorkflowStatusId) {
       return 'Invalid ResultWorkflowStatus ID'
     }
   }
 
   // update the resultWorkflowStatusId.
-  if (resultWorkflowStatusId !== currentResultWorkflowStatusId) {
-    const [lastLogId] = await knex('ResultWorkflowLog').insert({
-      resultId,
-      resultWorkflowStatusId,
-      createdBy: currentUserId,
-      operator,
-      reason,
-      changedOn: changedOn || now,
-      createdOn: now,
-    })
+  if (
+    resultWorkflowLogEntry.resultWorkflowStatusId !==
+    currentResultWorkflowStatusId
+  ) {
+    const [lastLogId] = await knex('ResultWorkflowLog').insert(
+      resultWorkflowLogEntry
+    )
 
     if (!updatedOn || resultWorkflowChangedOn < updatedOn) {
       await knex('Result')
-        .where('id', resultId)
+        .where('id', resultWorkflowLogEntry.resultId)
         .update({
           resultWorkflowStatusLogId: lastLogId,
-          updatedBy: currentUserId,
+          updatedBy: resultWorkflowLogEntry.createdBy,
           updatedOn: now,
         })
     }
@@ -2659,21 +2657,26 @@ async function updateOrCreateResult(request, result = {}) {
   )
 
   // update/insert workflow status
-  const resultWorkflowStatusId =
+  const resultWorkflowStatusExternalId =
     result.resultCategory1 === (await resultCategoryToId('Error'))
       ? 'Error'
       : 'Deliverable'
+
+  const resultWorkflowLogEntry = {
+    resultId: result.id,
+    createdBy: userId,
+    operator: null,
+    reason: 'Manual Result Entry',
+    changedOn: now,
+    createdOn: now,
+  }
   await updateResultWorkflowStatusByResultId(
-    result.id,
-    resultWorkflowStatusId,
+    knex,
+    resultWorkflowLogEntry,
+    resultWorkflowStatusExternalId,
     null,
     result.resultWorkflowStatusId,
-    result.resultWorkflowChangedOn,
-    now,
-    null,
-    'Manual Result Entry',
-    null,
-    userId
+    result.resultWorkflowChangedOn
   )
 
   // insert treatment status (can't be changed manually, so only do on insert)
