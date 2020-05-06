@@ -568,7 +568,12 @@ async function updateResultWorkflowStatus(
 }
 
 async function showResult(request) {
-  const result = await getResultByResultId(request, +request.params.resultId)
+  const {
+    params: { resultId },
+    auth,
+  } = request
+
+  const result = await getResultByResultId(auth, resultId)
   return result.ok ? result : Boom.notFound()
 }
 
@@ -694,11 +699,10 @@ async function downloadFileAsync({ auth, params }) {
 }
 
 async function getResultByResultId(
-  request,
+  auth,
   resultId,
   fields = SELECT_SHOW_FIELDS
 ) {
-  const { auth } = request
   const dataConstraints = await getConstraints(auth.credentials)
   const { userName } = await getUser(auth.credentials.name)
 
@@ -825,7 +829,7 @@ async function updateWorkflowStatus(request) {
   const { id: currentUserId } = await getUser(auth.credentials.name)
 
   // get the result so we can check access and if status changed
-  const result = await getResultByResultId(request, +request.params.resultId)
+  const result = await getResultByResultId(auth, resultId)
   if (!result.ok) {
     return Boom.notFound()
   }
@@ -925,11 +929,15 @@ async function listTreatmentStatusTypes() {
 }
 
 async function updateTreatmentStatusPost(request) {
-  const { auth, payload } = request
+  const {
+    auth,
+    payload,
+    params: { resultId },
+  } = request
   const { id: currentUserId } = await getUser(auth.credentials.name)
 
   // get the result so we can check access and if status changed
-  const result = await getResultByResultId(request, +request.params.resultId)
+  const result = await getResultByResultId(auth, resultId)
   if (!result.ok) {
     Boom.notFound()
   }
@@ -1085,7 +1093,7 @@ async function addResultNote(request) {
   const { id: currentUserId } = await getUser(auth.credentials.name)
 
   // get the result so we can check access and if status changed
-  const result = await getResultByResultId(request, +request.params.resultId)
+  const result = await getResultByResultId(auth, resultId)
   if (!result.ok) {
     return Boom.notFound()
   }
@@ -1133,7 +1141,7 @@ async function addResultNote(request) {
     })
   }
 
-  const resultNotes = await getResultNotesByResultId(+params.resultId)
+  const resultNotes = await getResultNotesByResultId(resultId)
 
   return {
     ok: true,
@@ -1147,7 +1155,7 @@ async function deleteResultNote(request) {
   const { resultId, commentId } = params
 
   // get the result so we can check access
-  const result = await getResultByResultId(request, +request.params.resultId)
+  const result = await getResultByResultId(auth, resultId)
   if (!result.ok) {
     return Boom.notFound()
   }
@@ -1166,7 +1174,7 @@ async function deleteResultNote(request) {
     .where('resultId', resultId)
     .del()
 
-  const resultNotes = await getResultNotesByResultId(+params.resultId)
+  const resultNotes = await getResultNotesByResultId(resultId)
 
   return {
     ok: true,
@@ -1176,15 +1184,18 @@ async function deleteResultNote(request) {
 }
 
 async function allResultNotes(request) {
-  const { params } = request
+  const {
+    params: { resultId },
+    auth,
+  } = request
 
   // get the result so we can check access and if status changed
-  const result = await getResultByResultId(request, +request.params.resultId)
+  const result = await getResultByResultId(auth, resultId)
   if (!result.ok) {
     return Boom.notFound()
   }
 
-  const resultNotes = await getResultNotesByResultId(+params.resultId)
+  const resultNotes = await getResultNotesByResultId(resultId)
 
   return {
     ok: true,
@@ -1243,7 +1254,7 @@ async function updateFormData(request) {
   } = request
   const { resultId } = params
 
-  const result = await getResultByResultId(request, +request.params.resultId, [
+  const result = await getResultByResultId(auth, resultId, [
     'r.assayId',
     'r.partnerId',
     'r.formData',
@@ -1462,7 +1473,7 @@ async function getWorkflowStatusLogByResultId(request) {
       'log.resultWorkflowStatusId',
       'rs.id'
     )
-    .where('log.resultId', +params.resultId)
+    .where('log.resultId', params.resultId)
 
   // get total count for paging
   const getCount = resultQuery
@@ -1762,7 +1773,7 @@ async function setResultFollowUp(request) {
   const { id: currentUserId } = await getUser(auth.credentials.name)
 
   // get the result so we can check access and if status changed
-  const result = await getResultByResultId(request, +request.params.resultId)
+  const result = await getResultByResultId(auth, resultId)
   if (!result.ok) {
     return Boom.notFound()
   }
@@ -1821,7 +1832,7 @@ async function updateResultFollowUp(request) {
   const { id: currentUserId } = await getUser(auth.credentials.name)
 
   // get the result so we can check access and if status changed
-  const result = await getResultByResultId(request, +request.params.resultId)
+  const result = await getResultByResultId(auth, resultId)
   if (!result.ok) {
     return Boom.notFound()
   }
@@ -1868,7 +1879,7 @@ async function deleteResultFollowUp(request) {
   const { id: currentUserId } = await getUser(auth.credentials.name)
 
   // get the result so we can check access
-  const result = await getResultByResultId(request, +request.params.resultId)
+  const result = await getResultByResultId(auth, resultId)
   if (!result.ok) {
     return Boom.notFound()
   }
@@ -1967,7 +1978,7 @@ async function transferResult(request) {
   )
 
   // get the result so we can check access
-  const result = await getResultByResultId(request, +request.params.resultId)
+  const result = await getResultByResultId(auth, resultId)
   if (!result.ok) {
     return Boom.notFound('Result with requested Id is not found')
   }
@@ -2092,9 +2103,10 @@ async function updateTransferNotification(request) {
   const {
     params: { resultId },
     payload: { firstViewedOn },
+    auth,
   } = request
 
-  const result = await getResultByResultId(request, +request.params.resultId)
+  const result = await getResultByResultId(auth, resultId)
 
   if (!result.ok) {
     return Boom.notFound('Result with requested Id is not found')
@@ -2110,7 +2122,7 @@ async function updateTransferNotification(request) {
       firstViewedOn,
     })
 
-  const data = await getResultByResultId(request, +request.params.resultId)
+  const data = await getResultByResultId(auth, resultId)
 
   return data
 }
@@ -2481,7 +2493,12 @@ async function createResult(request) {
 }
 
 async function updateResult(request) {
-  const result = await getResultByResultId(request, +request.params.resultId, [
+  const {
+    params: { resultId },
+    auth,
+  } = request
+
+  const result = await getResultByResultId(auth, resultId, [
     'r.id',
     'r.siteId',
     'r.assayId',
@@ -2676,7 +2693,7 @@ async function updateOrCreateResult(request, result = {}) {
     )
   }
 
-  const r = await getResultByResultId(request, result.id)
+  const r = await getResultByResultId(auth, result.id)
   return r
 }
 
