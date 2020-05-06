@@ -98,10 +98,12 @@ L|1`
       abbottM2000PlasmaHivVL: 2,
       abbottM2000HIVEID: 3,
       abbottM2000PlasmaHbvVL: 4,
+      abbottM2000DaanNCOVID19: 5,
     },
     SampleType: {
       DBS: 4,
       Plasma: 5,
+      Other: 6,
     },
     resultTypeId: 6,
     resultSourceId: 7,
@@ -171,6 +173,13 @@ L|1`
       externalId: 'SYS123607',
       collectedOn: new Date(2013, 10, 22, 11, 44),
       sampleTypeId: 4,
+      originSiteId: null,
+    },
+    '130/20': {
+      id: 987,
+      externalId: '130/20',
+      collectedOn: new Date(2020, 3, 25, 9, 31),
+      sampleTypeId: 6,
       originSiteId: null,
     },
   }
@@ -1488,6 +1497,487 @@ L|1`
         insertCall => insertCall.args[0] === 'ResultWorkflowLog'
       )
       expect(insertResultWorkflowLogCalls).to.have.lengthOf(45)
+      const insertDeviceLogCalls = insertCalls.filter(
+        insertCall => insertCall.args[0] === 'DeviceLog'
+      )
+      expect(insertDeviceLogCalls).to.have.lengthOf(
+        insertResultWorkflowLogCalls.length + 1
+      )
+    })
+  })
+
+  describe('Raw Daan nCOVID-19', () => {
+    let covid19DaanNPayload = ''
+
+    before(async () => {
+      covid19DaanNPayload = await readTextFile(
+        path.join(__dirname, 'abbottM2000Covid19.pkl'),
+        'utf8'
+      )
+    })
+
+    it('should be able to identify whether the payload is a PKL from an M2000 connector', async () => {
+      const DefaultAbbottM2000 = require('../../src/deviceApiRaw/dataProcessors/abbottM2000')
+      const isM2000Payload = await DefaultAbbottM2000.canProcessRequest({
+        payload: covid19DaanNPayload,
+      })
+      assert.isOk(isM2000Payload)
+    })
+
+    const existingResultRecord = {
+      id: 98,
+      instrumentSerial: '275020383',
+      moduleSerial: '275020383',
+      senderVersion: '1',
+      resultData: {
+        typeOfMessage: 'Production',
+        messageIsComplete: true,
+        assayName: 'Daan nCOVID-19 ORF LDA',
+        collectedBy: null,
+        actionCode: 'Patient Result',
+        reportType: 'Final Result',
+        resultType: 'Final Result',
+        referenceRanges: null,
+        abnormalFlags: ['LDA -QC'],
+        resultText: 'Not detected',
+        resultUnit: 'DC',
+        resultStatus: 'Final Result',
+        orderOperatorId: 'Belete',
+        controlConsumableLotNumber: null,
+        passedQualityControl: true,
+        qualityControlSummary: {
+          negativeControl: {
+            passed: true,
+            abnormalFlags: [],
+            moduleName: 'H6',
+            assayCode: 'Daan nCOVID-19 ORF LDA',
+            assayName: 'Daan nCOVID-19 ORF LDA',
+            endedOn: '2020-04-30T03:49:03.000Z',
+            moduleSerial: '275020383',
+          },
+          positiveControl: {
+            passed: true,
+            reportType: 'Final Result',
+            abnormalFlags: ['LDA'],
+            result: '40.00',
+            moduleName: 'G6',
+            assayCode: 'Daan nCOVID-19 ORF LDA',
+            assayName: 'Daan nCOVID-19 ORF LDA',
+            consumableLot: '2020003',
+            consumableSerial: '10000518',
+            controlConsumableLotNumber: '2020003',
+            endedOn: '2020-04-30T03:49:03.000Z',
+            moduleSerial: '275020383',
+            orderOperatorId: 'Belete',
+            senderOperator: 'Administrator',
+            cycleNumber: 27.52,
+          },
+        },
+      },
+      rawData:
+        'H|\\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200430034904\nP|1\nO|1|130/20|130/20^037^H5|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||||||||||||||||F\nR|1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^F|Not detected|DC||LDA^-QC||F||Belete^Administrator||20200430034903|275020383\nR|2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^I|Negative|||||F||Belete^Administrator||20200430034903|275020383\nR|3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^P|-1.00|cycle number||||F||Belete^Administrator||20200430034903|275020383\nL|1',
+      sampleRunNumber: '037',
+      moduleName: 'H5',
+      externalId: '130/20|275020383|037|H5|20200430034903',
+      consumableLot: '2020003',
+      consumableSerial: '10000518',
+      senderOperator: 'Administrator',
+      endedOn: '2020-04-29T23:49:03.000Z',
+      patientData: '{}',
+      assayId: 5,
+      partnerId: 2,
+      geographyId: 6,
+      siteId: 7,
+      longitude: 8,
+      latitude: 9,
+      resultSourceId: 7,
+      resultTypeId: 6,
+      sampleId: 987,
+      updatedOn: '2019-11-07T22:08:51.123Z',
+      resultCategory1: 9,
+      notes: '',
+      createdOn: '2019-11-07T22:08:51.123Z',
+    }
+
+    function mockOutDefaultAbbottM2000(updateSpy, insertSpy) {
+      const buildKnexSpy = (updateSpy, insertSpy) => table => {
+        const knex = {
+          insert: async (...rest) => {
+            insertSpy(table, ...rest)
+            return Promise.resolve([insertSpy.callCount])
+          },
+        }
+        const where = (...rest) => {
+          const finalCall = {
+            first: async () => {
+              if (
+                table === 'Result' &&
+                _.get(rest, '1') === existingResultRecord.externalId
+              ) {
+                return Promise.resolve({
+                  ...existingResultRecord,
+                  resultData: JSON.stringify(existingResultRecord.resultData),
+                })
+              }
+              if (
+                table === 'Sample as s' &&
+                existingSamples[_.get(rest, '1')]
+              ) {
+                return Promise.resolve(existingSamples[_.get(rest, '1')])
+              }
+              return Promise.resolve(databaseRecords[table])
+            },
+            update: async (...rest) => {
+              updateSpy(table, ...rest)
+              return Promise.resolve()
+            },
+          }
+          finalCall.andWhere = () => finalCall
+          return finalCall
+        }
+        knex.where = where
+        const join = () => knex
+        knex.join = join
+        knex.leftJoin = join
+        return knex
+      }
+      const resolveWith = returnValue => async () =>
+        Promise.resolve(returnValue)
+      return proxyquire('../../src/deviceApiRaw/dataProcessors/abbottM2000', {
+        '../../db': {
+          transact: async transaction =>
+            transaction(buildKnexSpy(updateSpy, insertSpy)),
+        },
+        '../../shared/date': {
+          parseDateOrDefault,
+          getUtcTime: () => utcNow,
+          dateEqual,
+        },
+        '../../shared/dictionary': {
+          allAssayToId: resolveWith(staticDatabaseData.Assay),
+          allSampleTypeToId: resolveWith(staticDatabaseData.SampleType),
+          resultTypeToId: resolveWith(staticDatabaseData.resultTypeId),
+          resultSourceToId: resolveWith(staticDatabaseData.resultSourceId),
+          allResultCategoryToId: resolveWith(staticDatabaseData.ResultCategory),
+          allResultWorkflowStatusToId: resolveWith(
+            staticDatabaseData.ResultWorkflowStatus
+          ),
+        },
+        '../../shared/request': {
+          getRemoteAddress: () => deviceIpAddress,
+        },
+      })
+    }
+
+    it('should be able to parse a RAW ASTM conversation file into results', async () => {
+      const updateSpy = sinon.spy()
+      const insertSpy = sinon.spy()
+      const DefaultAbbottM2000 = mockOutDefaultAbbottM2000(updateSpy, insertSpy)
+      const m2000DataProcessorViralLoad = new DefaultAbbottM2000(
+        {
+          auth: { credentials: { token: 'some device API key' } },
+          payload: covid19DaanNPayload,
+        },
+        { dispatch: () => {} }
+      )
+      await m2000DataProcessorViralLoad.processRequest()
+      assert.equal(
+        m2000DataProcessorViralLoad.response.deviceId,
+        databaseRecords.Device.id
+      )
+      expect(
+        m2000DataProcessorViralLoad.response.deviceLogIds
+      ).to.have.lengthOf(47)
+      const insertCalls = insertSpy.getCalls()
+      const updateCalls = updateSpy.getCalls()
+
+      const updateDeviceCalls = updateCalls.filter(
+        updateCall => updateCall.args[0] === 'Device'
+      )
+      expect(updateDeviceCalls).to.have.lengthOf(1)
+      const actualDeviceUpdates = updateDeviceCalls[0].args[1]
+      actualDeviceUpdates.configurationData = JSON.parse(
+        actualDeviceUpdates.configurationData
+      )
+      expect(actualDeviceUpdates).to.containSubset({
+        configurationData: {
+          comments: [],
+          deviceTypeName: 'm2000',
+          deviceVersion: '8.1.9.0',
+          enquiries: [],
+          interfaceVersion: 'H1P1O1R1C1L1',
+          softwareVersion: '1',
+        },
+        lastPingFromIp: deviceIpAddress,
+        lastPingOn: utcNow,
+        lastSeenOn: utcNow,
+        serial: '275020383',
+        siteId: 5,
+        updatedOn: utcNow,
+      })
+
+      const insertSampleCalls = insertCalls.filter(
+        insertCall => insertCall.args[0] === 'Sample'
+      )
+      expect(insertSampleCalls).to.have.lengthOf(45)
+      const insertResultCalls = insertCalls.filter(
+        insertCall => insertCall.args[0] === 'Result'
+      )
+      const updateResultCalls = updateCalls.filter(
+        updateCall => updateCall.args[0] === 'Result'
+      )
+      expect(insertResultCalls).to.have.lengthOf(45)
+      expect(updateResultCalls).to.have.lengthOf(insertResultCalls.length + 2)
+      const insertedResults = insertResultCalls.map(
+        insertResultCall => insertResultCall.args[1]
+      )
+      const runLevelProperties = insertedResults.map(result => ({
+        ..._.pick(result, [
+          'instrumentSerial',
+          'moduleSerial',
+          'senderVersion',
+          'sampleRunNumber',
+          'partnerId',
+          'geographyId',
+          'siteId',
+          'longitude',
+          'latitude',
+          'resultSourceId',
+        ]),
+        resultData: _.pick(JSON.parse(result.resultData), [
+          'qualityControlSummary',
+        ]),
+      }))
+      const uniqueRunLevelProperties = _.uniqBy(
+        runLevelProperties,
+        JSON.stringify
+      )
+      expect(uniqueRunLevelProperties).to.have.lengthOf(1)
+      expect(uniqueRunLevelProperties).to.containSubset([
+        {
+          instrumentSerial: '275020383',
+          moduleSerial: '275020383',
+          senderVersion: '1',
+          resultData: {
+            qualityControlSummary: {
+              negativeControl: {
+                passed: true,
+                abnormalFlags: [],
+                moduleName: 'H6',
+                assayCode: 'Daan nCOVID-19 ORF LDA',
+                assayName: 'Daan nCOVID-19 ORF LDA',
+                endedOn: convertToTimeZone(new Date(2020, 3, 30, 3, 49, 4), {
+                  timeZone: 'UTC',
+                }).toISOString(),
+                moduleSerial: '275020383',
+              },
+              positiveControl: {
+                passed: true,
+                reportType: 'Final Result',
+                abnormalFlags: ['LDA'],
+                result: '40.00',
+                moduleName: 'G6',
+                assayCode: 'Daan nCOVID-19 ORF LDA',
+                assayName: 'Daan nCOVID-19 ORF LDA',
+                consumableLot: '2020003',
+                consumableSerial: '10000518',
+                controlConsumableLotNumber: '2020003',
+                endedOn: convertToTimeZone(new Date(2020, 3, 30, 3, 49, 3), {
+                  timeZone: 'UTC',
+                }).toISOString(),
+                moduleSerial: '275020383',
+                orderOperatorId: 'Belete',
+                senderOperator: 'Administrator',
+                cycleNumber: 27.52,
+              },
+            },
+          },
+          sampleRunNumber: '037',
+          partnerId: databaseRecords.DeviceApiKey.partnerId,
+          geographyId: databaseRecords.Device.geographyId,
+          siteId: databaseRecords.Site.id,
+          longitude: databaseRecords.Site.longitude,
+          latitude: databaseRecords.Site.latitude,
+          resultSourceId: staticDatabaseData.resultSourceId,
+        },
+      ])
+      expect(
+        _.uniq(insertedResults.map(result => result.externalId))
+      ).to.have.lengthOf(45)
+      const errorResults = insertedResults
+        .filter(
+          result =>
+            result.resultCategory1 === staticDatabaseData.ResultCategory.Error
+        )
+        .map(result => ({
+          ...result,
+          resultData: result.resultData ? JSON.parse(result.resultData) : null,
+          patientData: result.patientData
+            ? JSON.parse(result.patientData)
+            : null,
+          formData: result.formData ? JSON.parse(result.formData) : null,
+        }))
+      expect(errorResults).to.containSubset([
+        {
+          instrumentSerial: '275020383',
+          senderVersion: '1',
+          resultData: {
+            typeOfMessage: 'Production',
+            messageIsComplete: true,
+            assayName: 'Daan nCOVID-19 ORF LDA',
+            collectedBy: null,
+            actionCode: 'Patient Result',
+            reportType: 'Test could not be performed',
+            comments: [
+              {
+                text: '4951 : Internal control is non-reactive.',
+              },
+            ],
+            resultType: 'Final Result',
+            abnormalFlags: [],
+            passedQualityControl: true,
+          },
+          rawData:
+            'H|\\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200430034904\nP|1\nO|1|094/20|094/20^037^D1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||||||||||||||||X\nC|1|I|4951 : Internal control is non-reactive.|I\nL|1',
+          sampleRunNumber: '037',
+          moduleName: 'D1',
+          externalId: '094/20|275020383|037|D1|',
+          moduleSerial: '275020383',
+          patientData: {},
+          partnerId: databaseRecords.DeviceApiKey.partnerId,
+          geographyId: databaseRecords.Device.geographyId,
+          siteId: databaseRecords.Site.id,
+          longitude: databaseRecords.Site.longitude,
+          latitude: databaseRecords.Site.latitude,
+          resultSourceId: staticDatabaseData.resultSourceId,
+          assayId: staticDatabaseData.Assay.abbottM2000DaanNCOVID19,
+          deviceId: databaseRecords.Device.id,
+          resultTypeId: staticDatabaseData.resultTypeId,
+          resultCategory1: staticDatabaseData.ResultCategory.Error,
+          errorCode: '4951',
+          errorNotes: '4951 : Internal control is non-reactive.',
+          notes: '4951 : Internal control is non-reactive.',
+        },
+        {
+          instrumentSerial: '275020383',
+          senderVersion: '1',
+          resultData: {
+            typeOfMessage: 'Production',
+            messageIsComplete: true,
+            assayName: 'Daan nCOVID-19 ORF LDA',
+            collectedBy: null,
+            actionCode: 'Patient Result',
+            reportType: 'Test could not be performed',
+            comments: [
+              {
+                text: '4951 : Internal control is non-reactive.',
+              },
+            ],
+            resultType: 'Final Result',
+            abnormalFlags: [],
+            passedQualityControl: true,
+          },
+          rawData:
+            'H|\\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200430034904\nP|1\nO|1|099/20|099/20^037^A2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||||||||||||||||X\nC|1|I|4951 : Internal control is non-reactive.|I\nL|1',
+          sampleRunNumber: '037',
+          moduleName: 'A2',
+          externalId: '099/20|275020383|037|A2|',
+          moduleSerial: '275020383',
+          patientData: {},
+          partnerId: databaseRecords.DeviceApiKey.partnerId,
+          geographyId: databaseRecords.Device.geographyId,
+          siteId: databaseRecords.Site.id,
+          longitude: databaseRecords.Site.longitude,
+          latitude: databaseRecords.Site.latitude,
+          resultSourceId: staticDatabaseData.resultSourceId,
+          assayId: staticDatabaseData.Assay.abbottM2000DaanNCOVID19,
+          deviceId: databaseRecords.Device.id,
+          resultTypeId: staticDatabaseData.resultTypeId,
+          resultCategory1: staticDatabaseData.ResultCategory.Error,
+          errorCode: '4951',
+          errorNotes: '4951 : Internal control is non-reactive.',
+          notes: '4951 : Internal control is non-reactive.',
+        },
+        {
+          instrumentSerial: '275020383',
+          senderVersion: '1',
+          resultData: {
+            typeOfMessage: 'Production',
+            messageIsComplete: true,
+            assayName: 'Daan nCOVID-19 ORF LDA',
+            collectedBy: null,
+            actionCode: 'Patient Result',
+            reportType: 'Test could not be performed',
+            comments: [
+              {
+                text: '4951 : Internal control is non-reactive.',
+              },
+            ],
+            resultType: 'Final Result',
+            abnormalFlags: [],
+            passedQualityControl: true,
+          },
+          rawData:
+            'H|\\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200430034904\nP|1\nO|1|114/20|114/20^037^H3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||||||||||||||||X\nC|1|I|4951 : Internal control is non-reactive.|I\nL|1',
+          sampleRunNumber: '037',
+          moduleName: 'H3',
+          externalId: '114/20|275020383|037|H3|',
+          moduleSerial: '275020383',
+          patientData: {},
+          partnerId: databaseRecords.DeviceApiKey.partnerId,
+          geographyId: databaseRecords.Device.geographyId,
+          siteId: databaseRecords.Site.id,
+          longitude: databaseRecords.Site.longitude,
+          latitude: databaseRecords.Site.latitude,
+          resultSourceId: staticDatabaseData.resultSourceId,
+          assayId: staticDatabaseData.Assay.abbottM2000DaanNCOVID19,
+          deviceId: databaseRecords.Device.id,
+          resultTypeId: staticDatabaseData.resultTypeId,
+          resultCategory1: staticDatabaseData.ResultCategory.Error,
+          errorCode: '4951',
+          errorNotes: '4951 : Internal control is non-reactive.',
+          notes: '4951 : Internal control is non-reactive.',
+        },
+      ])
+      expect(
+        updateResultCalls
+          .filter(
+            updateResultCall => Object.keys(updateResultCall.args[1]).length > 1
+          )
+          .map(updateResultCall => ({
+            ...updateResultCall.args[1],
+            resultData: updateResultCall.args[1].resultData
+              ? JSON.parse(updateResultCall.args[1].resultData)
+              : null,
+          }))
+      ).to.containSubset([
+        {
+          ..._.omit(existingResultRecord, ['endedOn', 'updatedOn']),
+          resultData: {
+            ...existingResultRecord.resultData,
+            messageSentOn: convertToTimeZone(new Date(2020, 3, 30, 3, 49, 4), {
+              timeZone: 'UTC',
+            }).toISOString(),
+            qualityControlSummary: {
+              positiveControl: _.omit(
+                existingResultRecord.resultData.qualityControlSummary
+                  .positiveControl,
+                ['endedOn']
+              ),
+              negativeControl: _.omit(
+                existingResultRecord.resultData.qualityControlSummary
+                  .negativeControl,
+                ['endedOn']
+              ),
+            },
+          },
+        },
+      ])
+
+      const insertResultWorkflowLogCalls = insertCalls.filter(
+        insertCall => insertCall.args[0] === 'ResultWorkflowLog'
+      )
+      expect(insertResultWorkflowLogCalls).to.have.lengthOf(46)
       const insertDeviceLogCalls = insertCalls.filter(
         insertCall => insertCall.args[0] === 'DeviceLog'
       )
