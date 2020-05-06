@@ -22,6 +22,7 @@ import {
 } from '../../../shared/selectors/searchParams'
 import { formatDate, formatRelative } from '../../../shared/utils/dateFormat'
 import { sanitizeFiltersStringBy } from '../../../filter/utils'
+import Results from '../../../result/historyResults/historyResults'
 import DataTableProgressBar from '../../../components/shared/DataTableProgressBar'
 import ColoredNumber from '../../../components/shared/ColoredNumber'
 import AspectTooltip from '../../../components/shared/AspectTooltip'
@@ -95,7 +96,7 @@ const messages = defineMessages({
       'Number of errors divided by number of results in the last 30 days',
   },
   endedOn: {
-    id: 'pages.DeviceDetailProfile.EndedOn',
+    id: 'pages.DeviceDetailProfile.endedOn',
     defaultMessage: 'Test Date',
   },
   sampleOriginSiteName: {
@@ -118,8 +119,8 @@ const messages = defineMessages({
     id: 'pages.DeviceDetailProfile.resultWorkflowStatus',
     defaultMessage: 'Result Workflow Status',
   },
-  patiendId: {
-    id: 'pages.DeviceDetailProfile.patiendId',
+  patientId: {
+    id: 'pages.DeviceDetailProfile.patientId',
     defaultMessage: 'Patient ID',
   },
   paginatorStatus: {
@@ -247,96 +248,6 @@ const enhance = compose(
         device,
         values,
       })
-    },
-  })
-)
-
-const enhanceResults = compose(
-  requirePermissions({
-    permissions: ['result:admin', 'result:view', 'result:edit'],
-  }),
-  connect(
-    state => ({
-      items: state.result.items,
-      table: state.result.table,
-    }),
-    bindActionCreators.bind(null, {
-      fetchResults,
-      exportResults,
-    })
-  ),
-  withHandlers({
-    onInitialLoad: ({
-      match,
-      location,
-      fetchResults,
-      sortCol,
-      sortDir,
-      pageAt,
-      pageSize,
-    }) => () => {
-      const { sanitized, value: filtersParams } = filtersFromLocation(location)
-      if (!sanitized) {
-        filtersParams.set('deviceId', match.params.deviceId)
-        fetchResults(filtersParams, sortCol, sortDir, pageAt, pageSize)
-      }
-    },
-
-    onExportClick: ({
-      location,
-      exportResults,
-      sortCol,
-      sortDir,
-      pageAt,
-      pageSize,
-    }) => formatType => {
-      const { sanitized, value: filtersParams } = filtersFromLocation(location)
-      if (!sanitized) {
-        exportResults(
-          filtersParams,
-          formatType,
-          sortCol,
-          sortDir,
-          pageAt,
-          pageSize
-        )
-      }
-    },
-
-    onRowClick: ({ history }) => ({
-      currentTarget: {
-        dataset: { resultId },
-      },
-      // TODO: correct path?
-    }) => history.push(`/browse/result/${resultId}`),
-  }),
-  lifecycle({
-    componentWillMount() {
-      const { sanitized, value: searchParams } = searchSanitizer(
-        this.props.location
-      )
-      const {
-        sanitized: filtersSanitized,
-        value: filtersParams,
-      } = filtersSanitizer(searchParams.get('filters') || '')
-      if (sanitized || filtersSanitized) {
-        searchParams.set('filters', filtersParams)
-
-        this.props.history.replace({
-          ...this.props.location,
-          search: searchParams.toString(),
-        })
-      }
-    },
-
-    componentDidMount() {
-      this.props.onInitialLoad()
-    },
-
-    componentWillReceiveProps(nextProps) {
-      if (this.props.location.search !== nextProps.location.search) {
-        this.props.onInitialLoad()
-      }
     },
   })
 )
@@ -575,120 +486,6 @@ const PerformanceReport = enhance(({ performanceReport, culture }) => {
   )
 })
 
-const Results = enhanceResults(
-  ({
-    intl,
-    history,
-    location,
-    sortDir,
-    sortCol,
-    pageAt,
-    pageSize,
-    // injected by recompose
-    items,
-    table,
-    onRowClick,
-    onExportClick,
-  }) => (
-    <section className={cssClasses('Section')}>
-      <Card className={cssClasses('Section__Content')}>
-        <header className={cssClasses('Header')}>
-          <div className={cssClasses('Header__Title')}>Test history</div>
-          <div className={cssClasses('Header__Actions')}>
-            <IconButton onClick={onExportClick}>
-              <MdFileDownload />
-            </IconButton>
-          </div>
-        </header>
-        <div>
-          <DataTableProgressBar disabled={!table.loading} />
-          {items.currentIdList.isEmpty() && (
-            <BrowseEmptyList
-              history={history}
-              location={location}
-              intl={intl}
-            />
-          )}
-          {!items.currentIdList.isEmpty() && (
-            <ResultDataTable
-              selectable={false}
-              className={cssClasses('ResultDataTable')}
-            >
-              <ResultDataTableHead
-                history={history}
-                location={location}
-                sortColumnKey={sortCol}
-                sortColumnDir={sortDir}
-                columns={[
-                  {
-                    key: 'endedOn',
-                    label: intl.formatMessage(messages.endedOn),
-                    sortable: true,
-                  },
-                  {
-                    key: 'sampleOriginSiteName',
-                    label: intl.formatMessage(messages.sampleOriginSiteName),
-                    sortable: true,
-                  },
-                  {
-                    key: 'sampleId',
-                    label: intl.formatMessage(messages.sampleId),
-                    sortable: true,
-                  },
-                  {
-                    key: 'resultText',
-                    label: intl.formatMessage(messages.resultText),
-                    sortable: true,
-                  },
-                  {
-                    key: 'errorCode',
-                    label: intl.formatMessage(messages.errorCode),
-                    sortable: true,
-                  },
-                  {
-                    key: 'resultWorkflowStatus',
-                    label: intl.formatMessage(messages.resultWorkflowStatus),
-                    sortable: true,
-                  },
-                  {
-                    key: 'patientId',
-                    label: intl.formatMessage(messages.patiendId),
-                    sortable: true,
-                  },
-                ]}
-              />
-              <TableBody>
-                {items.currentIdList
-                  .map(id => items.byId.get(id))
-                  .map(result => (
-                    <ResultDataTableRow
-                      key={result.get('id')}
-                      intl={intl}
-                      result={result}
-                      onClick={onRowClick}
-                      data-result-id={result.get('id')}
-                    />
-                  ))}
-              </TableBody>
-            </ResultDataTable>
-          )}
-          {!items.currentIdList.isEmpty() && (
-            <BrowseTablePaginator
-              history={history}
-              location={location}
-              intl={intl}
-              paginatorStatus={messages.paginatorStatus}
-              total={table.total}
-              pageAt={pageAt}
-              pageSize={pageSize}
-            />
-          )}
-        </div>
-      </Card>
-    </section>
-  )
-)
-
 export const DeviceDetailProfile = ({
   intl,
   history,
@@ -718,6 +515,46 @@ export const DeviceDetailProfile = ({
   const errorRateThisMonth = device.get('errorRateThisMonth')
   const calibrationNotes = device.get('calibrationNotes')
   const warrantyNotes = device.get('warrantyNotes')
+  console.log('---------------------intl', messages, intl)
+  const resultColumns = [
+    {
+      key: 'endedOn',
+      label: intl.formatMessage(messages.endedOn),
+      formatter: value => formatDate(value),
+      sortable: true,
+    },
+    {
+      key: 'sampleOriginSiteName',
+      label: intl.formatMessage(messages.sampleOriginSiteName),
+      sortable: true,
+    },
+    {
+      key: 'sampleId',
+      label: intl.formatMessage(messages.sampleId),
+      sortable: true,
+    },
+    {
+      key: 'resultText',
+      label: intl.formatMessage(messages.resultText),
+      sortable: true,
+    },
+    {
+      key: 'errorCode',
+      label: intl.formatMessage(messages.errorCode),
+      sortable: true,
+    },
+    {
+      key: 'resultWorkflowStatus',
+      label: intl.formatMessage(messages.resultWorkflowStatus),
+      sortable: true,
+    },
+    {
+      key: 'patientId',
+      label: intl.formatMessage(messages.patientId),
+      sortable: true,
+    },
+  ]
+
   return (
     <div>
       <Helmet title={deviceName} />
@@ -912,6 +749,7 @@ export const DeviceDetailProfile = ({
         intl={intl}
         pageAt={pageAt}
         pageSize={pageSize}
+        columns={resultColumns}
       />
     </div>
   )
