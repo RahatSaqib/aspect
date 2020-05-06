@@ -184,6 +184,89 @@ L|1`
     },
   }
 
+  function mockOutDefaultAbbottM2000(
+    existingResultRecord,
+    updateSpy,
+    insertSpy
+  ) {
+    const buildKnexSpy = (updateSpy, insertSpy) => table => {
+      const knex = {
+        insert: async (...rest) => {
+          insertSpy(table, ...rest)
+          return Promise.resolve([insertSpy.callCount])
+        },
+      }
+      const where = (...rest) => {
+        const returnData = async asArray => {
+          let returnValue
+          if (
+            table === 'Result' &&
+            _.get(rest, '1') === existingResultRecord.externalId
+          ) {
+            returnValue = {
+              ...JSON.parse(JSON.stringify(existingResultRecord)),
+              resultData: JSON.stringify(existingResultRecord.resultData),
+            }
+          } else if (
+            table === 'Sample as s' &&
+            existingSamples[_.get(rest, '1')]
+          ) {
+            returnValue = existingSamples[_.get(rest, '1')]
+          } else {
+            returnValue = databaseRecords[table]
+          }
+          if (asArray) {
+            if (returnValue) {
+              return Promise.resolve([returnValue])
+            }
+            return Promise.resolve([])
+          }
+          return Promise.resolve(returnValue)
+        }
+        const finalCall = {
+          first: async () => returnData(false),
+          select: async () => returnData(true),
+          update: async (...rest) => {
+            updateSpy(table, ...rest)
+            return Promise.resolve()
+          },
+        }
+        finalCall.andWhere = () => finalCall
+        return finalCall
+      }
+      knex.where = where
+      const join = () => knex
+      knex.join = join
+      knex.leftJoin = join
+      return knex
+    }
+    const resolveWith = returnValue => async () => Promise.resolve(returnValue)
+    return proxyquire('../../src/deviceApiRaw/dataProcessors/abbottM2000', {
+      '../../db': {
+        transact: async transaction =>
+          transaction(buildKnexSpy(updateSpy, insertSpy)),
+      },
+      '../../shared/date': {
+        parseDateOrDefault,
+        getUtcTime: () => utcNow,
+        dateEqual,
+      },
+      '../../shared/dictionary': {
+        allAssayToId: resolveWith(staticDatabaseData.Assay),
+        allSampleTypeToId: resolveWith(staticDatabaseData.SampleType),
+        resultTypeToId: resolveWith(staticDatabaseData.resultTypeId),
+        resultSourceToId: resolveWith(staticDatabaseData.resultSourceId),
+        allResultCategoryToId: resolveWith(staticDatabaseData.ResultCategory),
+        allResultWorkflowStatusToId: resolveWith(
+          staticDatabaseData.ResultWorkflowStatus
+        ),
+      },
+      '../../shared/request': {
+        getRemoteAddress: () => deviceIpAddress,
+      },
+    })
+  }
+
   describe('Python string PKL DBS HIV VL', () => {
     let dbsHivVlPklPayload = ''
 
@@ -281,7 +364,7 @@ L|1`
         },
       }),
       rawData:
-        'H|\\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312\\r\\x0394\\r\\n\nP|1\\r\\x0341\\r\\n\nO|1|SYS123165|SYS123165^vl110^D1|^^^1mLDBSvOP^HIV1.0mlDBS|||||||||||||||||||||F\\r\\x037A\\r\\n\nR|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|Not detected|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695\\r\\x03A4\\r\\n\nR|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^I|Target not detected|||||F||bryan^bryan||20190825165311|275021695\\r\\x0393\\r\\n\nR|3|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|-1.00|cycle number||||F||bryan^bryan||20190825165311|275021695\\r\\x03FF\\r\\n\nL|1\\r\\x033A\\r\\n',
+        'H|\\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312\nP|1\nO|1|SYS123165|SYS123165^vl110^D1|^^^1mLDBSvOP^HIV1.0mlDBS|||20190823101300||||||||||||||||||F\nR|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|Not detected|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695\nR|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^I|Target not detected|||||F||bryan^bryan||20190825165311|275021695\nR|3|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|-1.00|cycle number||||F||bryan^bryan||20190825165311|275021695\nL|1',
       sampleRunNumber: 'vl110',
       moduleName: 'D1',
       externalId: 'SYS123165|275021695|vl110|D1|20190825165311',
@@ -299,7 +382,7 @@ L|1`
       latitude: 9,
       resultSourceId: 7,
       resultTypeId: 6,
-      sampleId: 1,
+      sampleId: existingSamples.SYS123165.id,
       updatedOn: '2019-09-15T08:09:10.123Z',
       resultCategory1: 14,
       errorCode: 'OPEN',
@@ -307,77 +390,14 @@ L|1`
       createdOn: '2019-09-14T08:09:10.123Z',
     }
 
-    function mockOutDefaultAbbottM2000(updateSpy, insertSpy) {
-      const buildKnexSpy = (updateSpy, insertSpy) => table => {
-        const knex = {
-          insert: async (...rest) => {
-            insertSpy(table, ...rest)
-            return Promise.resolve([insertSpy.callCount])
-          },
-        }
-        const where = (...rest) => {
-          const finalCall = {
-            first: async () => {
-              if (
-                table === 'Result' &&
-                _.get(rest, '1') === existingResultRecord.externalId
-              ) {
-                return Promise.resolve(existingResultRecord)
-              }
-              if (
-                table === 'Sample as s' &&
-                existingSamples[_.get(rest, '1')]
-              ) {
-                return Promise.resolve(existingSamples[_.get(rest, '1')])
-              }
-              return Promise.resolve(databaseRecords[table])
-            },
-            update: async (...rest) => {
-              updateSpy(table, ...rest)
-              return Promise.resolve()
-            },
-          }
-          finalCall.andWhere = () => finalCall
-          return finalCall
-        }
-        knex.where = where
-        const join = () => knex
-        knex.join = join
-        knex.leftJoin = join
-        return knex
-      }
-      const resolveWith = returnValue => async () =>
-        Promise.resolve(returnValue)
-      return proxyquire('../../src/deviceApiRaw/dataProcessors/abbottM2000', {
-        '../../db': {
-          transact: async transaction =>
-            transaction(buildKnexSpy(updateSpy, insertSpy)),
-        },
-        '../../shared/date': {
-          parseDateOrDefault,
-          getUtcTime: () => utcNow,
-          dateEqual,
-        },
-        '../../shared/dictionary': {
-          allAssayToId: resolveWith(staticDatabaseData.Assay),
-          allSampleTypeToId: resolveWith(staticDatabaseData.SampleType),
-          resultTypeToId: resolveWith(staticDatabaseData.resultTypeId),
-          resultSourceToId: resolveWith(staticDatabaseData.resultSourceId),
-          allResultCategoryToId: resolveWith(staticDatabaseData.ResultCategory),
-          allResultWorkflowStatusToId: resolveWith(
-            staticDatabaseData.ResultWorkflowStatus
-          ),
-        },
-        '../../shared/request': {
-          getRemoteAddress: () => deviceIpAddress,
-        },
-      })
-    }
-
     it('should be able to parse a PKL file into results', async () => {
       const updateSpy = sinon.spy()
       const insertSpy = sinon.spy()
-      const DefaultAbbottM2000 = mockOutDefaultAbbottM2000(updateSpy, insertSpy)
+      const DefaultAbbottM2000 = mockOutDefaultAbbottM2000(
+        existingResultRecord,
+        updateSpy,
+        insertSpy
+      )
       const m2000DataProcessorViralLoad = new DefaultAbbottM2000(
         {
           auth: { credentials: { token: 'some device API key' } },
@@ -588,18 +608,17 @@ L|1`
             resultData: updateResultCall.args[1].resultData
               ? JSON.parse(updateResultCall.args[1].resultData)
               : null,
-            patientData: updateResultCall.args[1].patientData
-              ? JSON.parse(updateResultCall.args[1].patientData)
-              : null,
-            formData: updateResultCall.args[1].formData
-              ? JSON.parse(updateResultCall.args[1].formData)
-              : null,
           }))
       ).to.containSubset([
         {
-          ...existingResultRecord,
+          ..._.omit(existingResultRecord, ['endedOn', 'updatedOn']),
+          reportableSiteId: databaseRecords.Device.siteId,
+          resultCategory1: staticDatabaseData.ResultCategory.NotDetected,
+          resultCategory2: staticDatabaseData.ResultCategory.NotDetected,
+          rawData:
+            'H|\\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312\nP|1\nO|1|SYS123165|SYS123165^vl110^D1|^^^1mLDBSvOP^HIV1.0mlDBS|||20190823101300||||||||||||||||||F\nR|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|Not detected|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695\nR|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^I|Target not detected|||||F||bryan^bryan||20190825165311|275021695\nR|3|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|-1.00|cycle number||||F||bryan^bryan||20190825165311|275021695\nL|1',
           resultData: {
-            ...existingResultRecord.resultData,
+            ...JSON.parse(existingResultRecord.resultData),
             messageSentOn: convertToTimeZone(
               new Date(2019, 7, 25, 16, 53, 12),
               {
@@ -608,18 +627,18 @@ L|1`
             ).toISOString(),
             qualityControlSummary: {
               highPositiveControl: _.omit(
-                existingResultRecord.resultData.qualityControlSummary
-                  .highPositiveControl,
+                JSON.parse(existingResultRecord.resultData)
+                  .qualityControlSummary.highPositiveControl,
                 ['endedOn']
               ),
               lowPositiveControl: _.omit(
-                existingResultRecord.resultData.qualityControlSummary
-                  .lowPositiveControl,
+                JSON.parse(existingResultRecord.resultData)
+                  .qualityControlSummary.lowPositiveControl,
                 ['endedOn']
               ),
               negativeControl: _.omit(
-                existingResultRecord.resultData.qualityControlSummary
-                  .negativeControl,
+                JSON.parse(existingResultRecord.resultData)
+                  .qualityControlSummary.negativeControl,
                 ['endedOn']
               ),
             },
@@ -759,77 +778,14 @@ L|1`
       createdOn: '2019-09-14T08:09:10.123Z',
     }
 
-    function mockOutDefaultAbbottM2000(updateSpy, insertSpy) {
-      const buildKnexSpy = (updateSpy, insertSpy) => table => {
-        const knex = {
-          insert: async (...rest) => {
-            insertSpy(table, ...rest)
-            return Promise.resolve([insertSpy.callCount])
-          },
-        }
-        const where = (...rest) => {
-          const finalCall = {
-            first: async () => {
-              if (
-                table === 'Result' &&
-                _.get(rest, '1') === existingResultRecord.externalId
-              ) {
-                return Promise.resolve(existingResultRecord)
-              }
-              if (
-                table === 'Sample as s' &&
-                existingSamples[_.get(rest, '1')]
-              ) {
-                return Promise.resolve(existingSamples[_.get(rest, '1')])
-              }
-              return Promise.resolve(databaseRecords[table])
-            },
-            update: async (...rest) => {
-              updateSpy(table, ...rest)
-              return Promise.resolve()
-            },
-          }
-          finalCall.andWhere = () => finalCall
-          return finalCall
-        }
-        knex.where = where
-        const join = () => knex
-        knex.join = join
-        knex.leftJoin = join
-        return knex
-      }
-      const resolveWith = returnValue => async () =>
-        Promise.resolve(returnValue)
-      return proxyquire('../../src/deviceApiRaw/dataProcessors/abbottM2000', {
-        '../../db': {
-          transact: async transaction =>
-            transaction(buildKnexSpy(updateSpy, insertSpy)),
-        },
-        '../../shared/date': {
-          parseDateOrDefault,
-          getUtcTime: () => utcNow,
-          dateEqual,
-        },
-        '../../shared/dictionary': {
-          allAssayToId: resolveWith(staticDatabaseData.Assay),
-          allSampleTypeToId: resolveWith(staticDatabaseData.SampleType),
-          resultTypeToId: resolveWith(staticDatabaseData.resultTypeId),
-          resultSourceToId: resolveWith(staticDatabaseData.resultSourceId),
-          allResultCategoryToId: resolveWith(staticDatabaseData.ResultCategory),
-          allResultWorkflowStatusToId: resolveWith(
-            staticDatabaseData.ResultWorkflowStatus
-          ),
-        },
-        '../../shared/request': {
-          getRemoteAddress: () => deviceIpAddress,
-        },
-      })
-    }
-
     it('should be able to parse a RAW ASTM conversation file into results', async () => {
       const updateSpy = sinon.spy()
       const insertSpy = sinon.spy()
-      const DefaultAbbottM2000 = mockOutDefaultAbbottM2000(updateSpy, insertSpy)
+      const DefaultAbbottM2000 = mockOutDefaultAbbottM2000(
+        existingResultRecord,
+        updateSpy,
+        insertSpy
+      )
       const m2000DataProcessorViralLoad = new DefaultAbbottM2000(
         {
           auth: { credentials: { token: 'some device API key' } },
@@ -1034,18 +990,18 @@ L|1`
             resultData: updateResultCall.args[1].resultData
               ? JSON.parse(updateResultCall.args[1].resultData)
               : null,
-            patientData: updateResultCall.args[1].patientData
-              ? JSON.parse(updateResultCall.args[1].patientData)
-              : null,
-            formData: updateResultCall.args[1].formData
-              ? JSON.parse(updateResultCall.args[1].formData)
-              : null,
           }))
       ).to.containSubset([
         {
-          ...existingResultRecord,
+          ..._.omit(existingResultRecord, ['endedOn', 'updatedOn']),
+          reportableSiteId: databaseRecords.Device.siteId,
+          resultCategory1: staticDatabaseData.ResultCategory.NotDetected,
+          resultCategory2: staticDatabaseData.ResultCategory.NotDetected,
+          sampleId: existingSamples.SYS123165.id,
+          rawData:
+            'H|\\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312\nP|1\nO|1|SYS123165|SYS123165^vl110^D1|^^^1mLDBSvOP^HIV1.0mlDBS|||20190823101300||||||||||||||||||F\nR|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|Not detected|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695\nR|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^I|Target not detected|||||F||bryan^bryan||20190825165311|275021695\nR|3|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|-1.00|cycle number||||F||bryan^bryan||20190825165311|275021695\nL|1',
           resultData: {
-            ...existingResultRecord.resultData,
+            ...JSON.parse(existingResultRecord.resultData),
             messageSentOn: convertToTimeZone(
               new Date(2019, 7, 25, 16, 53, 12),
               {
@@ -1054,18 +1010,18 @@ L|1`
             ).toISOString(),
             qualityControlSummary: {
               highPositiveControl: _.omit(
-                existingResultRecord.resultData.qualityControlSummary
-                  .highPositiveControl,
+                JSON.parse(existingResultRecord.resultData)
+                  .qualityControlSummary.highPositiveControl,
                 ['endedOn']
               ),
               lowPositiveControl: _.omit(
-                existingResultRecord.resultData.qualityControlSummary
-                  .lowPositiveControl,
+                JSON.parse(existingResultRecord.resultData)
+                  .qualityControlSummary.lowPositiveControl,
                 ['endedOn']
               ),
               negativeControl: _.omit(
-                existingResultRecord.resultData.qualityControlSummary
-                  .negativeControl,
+                JSON.parse(existingResultRecord.resultData)
+                  .qualityControlSummary.negativeControl,
                 ['endedOn']
               ),
             },
@@ -1120,7 +1076,7 @@ L|1`
         referenceRanges: null,
         abnormalFlags: [],
         resultText: 'Not detected',
-        resultUnit: 'Copies / mL',
+        resultUnit: 'IU/mL',
         resultStatus: 'Final Result',
         orderOperatorId: 'fse',
         controlConsumableLotNumber: null,
@@ -1134,10 +1090,9 @@ L|1`
             moduleName: 'C1',
             assayCode: 'HBV 0.2ml',
             assayName: 'HBV 0.2ml',
-            consumableLot: '488445',
-            consumableSerial: '11763671',
-            controlConsumableLotNumber: '488990',
-            endedOn: '2019-11-15T22:33:51.000Z',
+            consumableLot: '488761',
+            consumableSerial: '11832001',
+            controlConsumableLotNumber: '488125',
             moduleSerial: '275020369',
             orderOperatorId: 'fse',
             senderOperator: 'Administrator',
@@ -1147,35 +1102,33 @@ L|1`
             passed: true,
             reportType: 'Final Result',
             abnormalFlags: [],
-            result: '832',
+            result: '664',
             moduleName: 'B1',
             assayCode: 'HBV 0.2ml',
             assayName: 'HBV 0.2ml',
-            consumableLot: '488445',
-            consumableSerial: '11763671',
-            controlConsumableLotNumber: '488990',
-            endedOn: '2019-11-15T22:33:51.000Z',
+            consumableLot: '488761',
+            consumableSerial: '11832001',
+            controlConsumableLotNumber: '488125',
             moduleSerial: '275020369',
             orderOperatorId: 'fse',
             senderOperator: 'Administrator',
-            cycleNumber: 25.28,
+            cycleNumber: 33.58,
           },
           highPositiveControl: {
             passed: true,
             reportType: 'Final Result',
             abnormalFlags: [],
-            result: '109603',
+            result: '42689',
             moduleName: 'A1',
             assayCode: 'HBV 0.2ml',
             assayName: 'HBV 0.2ml',
-            consumableLot: '488445',
-            consumableSerial: '11763671',
-            controlConsumableLotNumber: '488990',
-            endedOn: '2019-11-15T22:33:51.000Z',
+            consumableLot: '488761',
+            consumableSerial: '11832001',
+            controlConsumableLotNumber: '488125',
             moduleSerial: '275020369',
             orderOperatorId: 'fse',
             senderOperator: 'Administrator',
-            cycleNumber: 18.18,
+            cycleNumber: 27.15,
           },
         },
       }),
@@ -1204,77 +1157,14 @@ L|1`
       createdOn: '2019-11-07T22:08:51.123Z',
     }
 
-    function mockOutDefaultAbbottM2000(updateSpy, insertSpy) {
-      const buildKnexSpy = (updateSpy, insertSpy) => table => {
-        const knex = {
-          insert: async (...rest) => {
-            insertSpy(table, ...rest)
-            return Promise.resolve([insertSpy.callCount])
-          },
-        }
-        const where = (...rest) => {
-          const finalCall = {
-            first: async () => {
-              if (
-                table === 'Result' &&
-                _.get(rest, '1') === existingResultRecord.externalId
-              ) {
-                return Promise.resolve(existingResultRecord)
-              }
-              if (
-                table === 'Sample as s' &&
-                existingSamples[_.get(rest, '1')]
-              ) {
-                return Promise.resolve(existingSamples[_.get(rest, '1')])
-              }
-              return Promise.resolve(databaseRecords[table])
-            },
-            update: async (...rest) => {
-              updateSpy(table, ...rest)
-              return Promise.resolve()
-            },
-          }
-          finalCall.andWhere = () => finalCall
-          return finalCall
-        }
-        knex.where = where
-        const join = () => knex
-        knex.join = join
-        knex.leftJoin = join
-        return knex
-      }
-      const resolveWith = returnValue => async () =>
-        Promise.resolve(returnValue)
-      return proxyquire('../../src/deviceApiRaw/dataProcessors/abbottM2000', {
-        '../../db': {
-          transact: async transaction =>
-            transaction(buildKnexSpy(updateSpy, insertSpy)),
-        },
-        '../../shared/date': {
-          parseDateOrDefault,
-          getUtcTime: () => utcNow,
-          dateEqual,
-        },
-        '../../shared/dictionary': {
-          allAssayToId: resolveWith(staticDatabaseData.Assay),
-          allSampleTypeToId: resolveWith(staticDatabaseData.SampleType),
-          resultTypeToId: resolveWith(staticDatabaseData.resultTypeId),
-          resultSourceToId: resolveWith(staticDatabaseData.resultSourceId),
-          allResultCategoryToId: resolveWith(staticDatabaseData.ResultCategory),
-          allResultWorkflowStatusToId: resolveWith(
-            staticDatabaseData.ResultWorkflowStatus
-          ),
-        },
-        '../../shared/request': {
-          getRemoteAddress: () => deviceIpAddress,
-        },
-      })
-    }
-
     it('should be able to parse a RAW ASTM conversation file into results', async () => {
       const updateSpy = sinon.spy()
       const insertSpy = sinon.spy()
-      const DefaultAbbottM2000 = mockOutDefaultAbbottM2000(updateSpy, insertSpy)
+      const DefaultAbbottM2000 = mockOutDefaultAbbottM2000(
+        existingResultRecord,
+        updateSpy,
+        insertSpy
+      )
       const m2000DataProcessorViralLoad = new DefaultAbbottM2000(
         {
           auth: { credentials: { token: 'some device API key' } },
@@ -1457,35 +1347,36 @@ L|1`
             resultData: updateResultCall.args[1].resultData
               ? JSON.parse(updateResultCall.args[1].resultData)
               : null,
-            patientData: updateResultCall.args[1].patientData
-              ? JSON.parse(updateResultCall.args[1].patientData)
-              : null,
-            formData: updateResultCall.args[1].formData
-              ? JSON.parse(updateResultCall.args[1].formData)
-              : null,
           }))
       ).to.containSubset([
         {
-          ...existingResultRecord,
+          ..._.omit(existingResultRecord, ['endedOn', 'updatedOn', 'sampleId']),
+          reportableSiteId: databaseRecords.Device.siteId,
+          resultCategory1: staticDatabaseData.ResultCategory.MoreThan150,
+          rawData:
+            'H|\\^&|||m2000^8.1.9.0^275020369^H1P1O1R1C1L1|||||||P|1|20191107180838\nP|1\nO|1|444/19|444/19^050^H1|^^^HBV 0.2ml^HBV 0.2ml|||||||||||||||||||||F\nR|1|^^^HBV 0.2ml^HBV 0.2ml^488761^11832001^^F|2376|IU/mL||||F||fse^Administrator||20191107180837|275020369\nR|2|^^^HBV 0.2ml^HBV 0.2ml^488761^11832001^^P|31.61|cycle number||||F||fse^Administrator||20191107180837|275020369\nL|1',
+          moduleName: 'H1',
+          sampleRunNumber: '050',
           resultData: {
-            ...existingResultRecord.resultData,
+            ...JSON.parse(existingResultRecord.resultData),
             messageSentOn: convertToTimeZone(new Date(2019, 10, 7, 18, 8, 38), {
               timeZone: 'UTC',
             }).toISOString(),
+            resultText: '2376',
             qualityControlSummary: {
               highPositiveControl: _.omit(
-                existingResultRecord.resultData.qualityControlSummary
-                  .highPositiveControl,
+                JSON.parse(existingResultRecord.resultData)
+                  .qualityControlSummary.highPositiveControl,
                 ['endedOn']
               ),
               lowPositiveControl: _.omit(
-                existingResultRecord.resultData.qualityControlSummary
-                  .lowPositiveControl,
+                JSON.parse(existingResultRecord.resultData)
+                  .qualityControlSummary.lowPositiveControl,
                 ['endedOn']
               ),
               negativeControl: _.omit(
-                existingResultRecord.resultData.qualityControlSummary
-                  .negativeControl,
+                JSON.parse(existingResultRecord.resultData)
+                  .qualityControlSummary.negativeControl,
                 ['endedOn']
               ),
             },
@@ -1529,7 +1420,7 @@ L|1`
       instrumentSerial: '275020383',
       moduleSerial: '275020383',
       senderVersion: '1',
-      resultData: {
+      resultData: JSON.stringify({
         typeOfMessage: 'Production',
         messageIsComplete: true,
         assayName: 'Daan nCOVID-19 ORF LDA',
@@ -1573,7 +1464,7 @@ L|1`
             cycleNumber: 27.52,
           },
         },
-      },
+      }),
       rawData:
         'H|\\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200430034904\nP|1\nO|1|130/20|130/20^037^H5|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||||||||||||||||F\nR|1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^F|Not detected|DC||LDA^-QC||F||Belete^Administrator||20200430034903|275020383\nR|2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^I|Negative|||||F||Belete^Administrator||20200430034903|275020383\nR|3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^P|-1.00|cycle number||||F||Belete^Administrator||20200430034903|275020383\nL|1',
       sampleRunNumber: '037',
@@ -1599,80 +1490,14 @@ L|1`
       createdOn: '2019-11-07T22:08:51.123Z',
     }
 
-    function mockOutDefaultAbbottM2000(updateSpy, insertSpy) {
-      const buildKnexSpy = (updateSpy, insertSpy) => table => {
-        const knex = {
-          insert: async (...rest) => {
-            insertSpy(table, ...rest)
-            return Promise.resolve([insertSpy.callCount])
-          },
-        }
-        const where = (...rest) => {
-          const finalCall = {
-            first: async () => {
-              if (
-                table === 'Result' &&
-                _.get(rest, '1') === existingResultRecord.externalId
-              ) {
-                return Promise.resolve({
-                  ...existingResultRecord,
-                  resultData: JSON.stringify(existingResultRecord.resultData),
-                })
-              }
-              if (
-                table === 'Sample as s' &&
-                existingSamples[_.get(rest, '1')]
-              ) {
-                return Promise.resolve(existingSamples[_.get(rest, '1')])
-              }
-              return Promise.resolve(databaseRecords[table])
-            },
-            update: async (...rest) => {
-              updateSpy(table, ...rest)
-              return Promise.resolve()
-            },
-          }
-          finalCall.andWhere = () => finalCall
-          return finalCall
-        }
-        knex.where = where
-        const join = () => knex
-        knex.join = join
-        knex.leftJoin = join
-        return knex
-      }
-      const resolveWith = returnValue => async () =>
-        Promise.resolve(returnValue)
-      return proxyquire('../../src/deviceApiRaw/dataProcessors/abbottM2000', {
-        '../../db': {
-          transact: async transaction =>
-            transaction(buildKnexSpy(updateSpy, insertSpy)),
-        },
-        '../../shared/date': {
-          parseDateOrDefault,
-          getUtcTime: () => utcNow,
-          dateEqual,
-        },
-        '../../shared/dictionary': {
-          allAssayToId: resolveWith(staticDatabaseData.Assay),
-          allSampleTypeToId: resolveWith(staticDatabaseData.SampleType),
-          resultTypeToId: resolveWith(staticDatabaseData.resultTypeId),
-          resultSourceToId: resolveWith(staticDatabaseData.resultSourceId),
-          allResultCategoryToId: resolveWith(staticDatabaseData.ResultCategory),
-          allResultWorkflowStatusToId: resolveWith(
-            staticDatabaseData.ResultWorkflowStatus
-          ),
-        },
-        '../../shared/request': {
-          getRemoteAddress: () => deviceIpAddress,
-        },
-      })
-    }
-
     it('should be able to parse a RAW ASTM conversation file into results', async () => {
       const updateSpy = sinon.spy()
       const insertSpy = sinon.spy()
-      const DefaultAbbottM2000 = mockOutDefaultAbbottM2000(updateSpy, insertSpy)
+      const DefaultAbbottM2000 = mockOutDefaultAbbottM2000(
+        existingResultRecord,
+        updateSpy,
+        insertSpy
+      )
       const m2000DataProcessorViralLoad = new DefaultAbbottM2000(
         {
           auth: { credentials: { token: 'some device API key' } },
@@ -1954,19 +1779,19 @@ L|1`
         {
           ..._.omit(existingResultRecord, ['endedOn', 'updatedOn']),
           resultData: {
-            ...existingResultRecord.resultData,
+            ...JSON.parse(existingResultRecord.resultData),
             messageSentOn: convertToTimeZone(new Date(2020, 3, 30, 3, 49, 4), {
               timeZone: 'UTC',
             }).toISOString(),
             qualityControlSummary: {
               positiveControl: _.omit(
-                existingResultRecord.resultData.qualityControlSummary
-                  .positiveControl,
+                JSON.parse(existingResultRecord.resultData)
+                  .qualityControlSummary.positiveControl,
                 ['endedOn']
               ),
               negativeControl: _.omit(
-                existingResultRecord.resultData.qualityControlSummary
-                  .negativeControl,
+                JSON.parse(existingResultRecord.resultData)
+                  .qualityControlSummary.negativeControl,
                 ['endedOn']
               ),
             },

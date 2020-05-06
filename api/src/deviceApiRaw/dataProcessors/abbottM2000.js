@@ -477,8 +477,8 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
         },
         F: {
           'Not detected': resultCategories.NotDetected,
-          '< 15': resultCategories.LessThan15,
-          Numeric: resultCategories.MoreThan15,
+          '< 15': resultCategories.LessThan150,
+          Numeric: resultCategories.MoreThan150,
         },
       },
       'Daan nCOVID-19 ORF LDA': {
@@ -870,12 +870,29 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
         const finalResult = resultsWithSameId.find(
           result => result.resultData.resultType === 'Final Result'
         )
-        const existingSample =
-          (await knex('Sample as s')
-            .join('SampleType as st', 's.sampleTypeId', 'st.id')
-            .where('s.externalId', finalResult.sample.externalId)
-            .andWhere('st.externalId', finalResult.sample.sampleTypeExternalId)
-            .first('s.*')) || {}
+        let existingSample = {}
+        const existingSamples = await knex('Sample as s')
+          .join('SampleType as st', 's.sampleTypeId', 'st.id')
+          .where('s.externalId', finalResult.sample.externalId)
+          .select(
+            's.id',
+            's.collectedOn',
+            's.originSiteId',
+            'st.externalId as sampleTypeExternalId'
+          )
+        if (!_.isEmpty(existingSamples)) {
+          if (existingSamples.length === 1) {
+            ;[existingSample] = existingSamples
+          } else if (
+            _.some(existingSamples, {
+              sampleTypeExternalId: finalResult.sample.sampleTypeExternalId,
+            })
+          ) {
+            existingSample = _.find(existingSamples, {
+              sampleTypeExternalId: finalResult.sample.sampleTypeExternalId,
+            })
+          }
+        }
         let { id: sampleId } = existingSample
         const { collectedOn, originSiteId } = existingSample
         if (!sampleId) {
@@ -905,8 +922,10 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
           ) &&
             (_.isEmpty(qualityControlSummary.lowPositiveControl) ||
               _.isEmpty(qualityControlSummary.highPositiveControl) ||
+              _.isEmpty(qualityControlSummary.positiveControl) ||
               !isNumeric(qualityControlSummary.lowPositiveControl.result) ||
               !isNumeric(qualityControlSummary.highPositiveControl.result) ||
+              !isNumeric(qualityControlSummary.positiveControl.result) ||
               parseFloat(qualityControlSummary.highPositiveControl.result) >
                 parseFloat(qualityControlSummary.lowPositiveControl.result)))
         const cycleNumberResult = resultsWithSameId.find(
@@ -972,10 +991,11 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
             : null
           const finalResultCategoryId =
             resultCategoryMapping[finalResult.assay.code].F[
-              _.isNaN(finalResult.resultData.resultText)
-                ? finalResult.resultData.resultText
-                : 'Numeric'
-            ]
+              finalResult.resultData.resultText
+            ] ||
+            (isNumeric(finalResult.resultData.resultText)
+              ? resultCategoryMapping[finalResult.assay.code].F.Numeric
+              : undefined)
           if (interpretationResult) {
             result.resultCategory1 = interpretationResultCategoryId
             result.resultCategory2 = finalResultCategoryId
