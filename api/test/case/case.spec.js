@@ -34,7 +34,7 @@ function assertPropsOnList(res) {
   assert.property(res.body.data[0], 'updatedOn')
 }
 
-describe.only('case/service', () => {
+describe('case/service', () => {
   let partnerId = null
   let diseaseId = null
   let accessToken = null
