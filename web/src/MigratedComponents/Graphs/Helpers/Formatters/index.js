@@ -165,6 +165,49 @@ const groupForDivergent = (data, indexBy, keyToConsume, filterBy) => {
   return sortBy(normaliseKeys(grouped), ['inRange'])
 }
 
+const groupForOldTreatmentAPI = (data, keyToConsume, indexBy, filterBy) => {
+  const grouped = data.reduce((acc, curr) => {
+    acc[curr[indexBy]] = {
+      monthTested: curr[indexBy],
+      Confirmed: Number(curr[keyToConsume]).toFixed(1),
+      NotConfirmed: Number(100 - curr[keyToConsume]).toFixed(1),
+    }
+    return acc
+  }, {})
+  return normaliseKeys(grouped)
+}
+
+const groupForPieOldTreatmentAPI = (data, keyToConsume, indexBy, filterBy) => {
+  const groupedConfirmed = []
+  const groupedNotConfirmed = []
+
+  data.reduce((acc, curr) => {
+    if (!acc.id || acc.id !== 'Confirmed') {
+      acc = { id: 'Confirmed', label: 'Confirmed', value: curr[keyToConsume] }
+      groupedConfirmed.push(acc)
+    } else if (acc.id === 'Confirmed') {
+      acc.value += curr[keyToConsume]
+    }
+    return acc
+  }, {})
+
+  data.reduce((acc, curr) => {
+    if (!acc.id || acc.id !== 'NotConfirmed') {
+      acc = {
+        id: 'NotConfirmed',
+        label: 'NotConfirmed',
+        value: curr.total - curr[keyToConsume],
+      }
+      groupedConfirmed.push(acc)
+    } else if (acc.id === 'NotConfirmed') {
+      acc.value += curr.total - curr[keyToConsume]
+    }
+    return acc
+  }, {})
+
+  return [...groupedConfirmed, ...groupedNotConfirmed]
+}
+
 const formatValuesForGraphs = (value, displayMethod, formatNumber) => {
   let formatted
   switch (true) {
@@ -460,7 +503,9 @@ export {
   graphColorMap,
   groupByKey,
   groupForDivergent,
+  groupForOldTreatmentAPI,
   groupForPie,
+  groupForPieOldTreatmentAPI,
   normaliseKeys,
   percentageOrActualForPie,
   validateGraphConfig,
