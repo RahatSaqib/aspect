@@ -7,10 +7,8 @@ import CircularProgress from '@material-ui/core/CircularProgress'
 
 import { fetchClinicalIndicatorsDashboard } from './Redux'
 import {
-  groupByKey,
-  groupForPie,
+  formatDataByGraphType,
   getGraphKeysFromResults,
-  groupForDivergent,
 } from '../Helpers/Formatters'
 
 const cssClasses = classnames.bind(require('./GraphRender.css'))
@@ -56,34 +54,15 @@ const GraphRender = ({ assays, id: parentId, config }) => {
     if (graphState && (!graphData || !graphKeys)) {
       const { data } = graphState
       if (data && data.length) {
-        let grouped
-        switch (type) {
-          case 'bar':
-          case 'calendar':
-          case 'stacked':
-            grouped = groupByKey(
-              data,
-              indexBy,
-              keyToConsume,
-              displayMethod,
-              formatDate,
-              filterBy
-            )
-            break
-
-          case 'divergent':
-            grouped = groupForDivergent(data, indexBy, keyToConsume, filterBy)
-            break
-
-          case 'pie':
-            grouped = groupForPie(data, keyToConsume, indexBy, filterBy)
-            break
-
-          default:
-            grouped = false
-            break
-        }
-
+        const grouped = formatDataByGraphType(
+          data,
+          displayMethod,
+          filterBy,
+          formatDate,
+          indexBy,
+          keyToConsume,
+          type
+        )
         if (grouped) {
           const keysFromGrouped = getGraphKeysFromResults(grouped, indexBy)
           setGraphData(grouped)

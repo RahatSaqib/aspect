@@ -443,8 +443,49 @@ const validateGraphConfig = config => {
   })
 }
 
+const formatDataByGraphType = (
+  data,
+  displayMethod,
+  filterBy,
+  formatDate,
+  indexBy,
+  keyToConsume,
+  type
+) => {
+  let grouped
+  switch (type) {
+    case 'bar':
+    case 'calendar':
+    case 'stacked':
+      grouped = groupByKey(
+        data,
+        indexBy,
+        keyToConsume,
+        displayMethod,
+        formatDate,
+        filterBy
+      )
+      break
+
+    case 'divergent':
+      grouped = groupForDivergent(data, indexBy, keyToConsume, filterBy)
+      break
+
+    case 'pie':
+      grouped = groupForPie(data, keyToConsume, indexBy, filterBy)
+      break
+
+    default:
+      grouped = false
+      break
+  }
+
+  return grouped
+}
+
 export {
   calcPercentageSplitBar,
+  formatDataByGraphType,
   formatValuesForGraphs,
   generateColorForLegend,
   generateColorForValue,
