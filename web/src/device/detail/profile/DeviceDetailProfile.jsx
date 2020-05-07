@@ -9,9 +9,7 @@ import Button from '@material-ui/core/Button'
 import IconButton from '@material-ui/core/IconButton'
 import Tooltip from '@material-ui/core/Tooltip'
 import Card from '@material-ui/core/Card'
-import { MdFileDownload } from 'react-icons/md'
 import Helmet from 'react-helmet'
-import TableBody from '@material-ui/core/TableBody'
 import NotesIcon from '@material-ui/icons/ChatBubbleOutline'
 import { ResponsiveBar } from '@nivo/bar'
 
@@ -37,11 +35,6 @@ import {
 } from '../../DeviceRedux'
 import DeviceDetailBackBar from '../DeviceDetailBackBar'
 import Summary from '../../../globals/components/Summary'
-import {
-  ResultDataTable,
-  ResultDataTableHead,
-  ResultDataTableRow,
-} from './ResultDataTable'
 import requirePermissions from '../../../components/shared/requirePermissions'
 import CalibrationDialog from '../../maintenance/CalibrationDialog'
 import WarrantyDialog from '../../maintenance/WarrantyDialog'
@@ -200,17 +193,22 @@ const enhance = compose(
   connect(
     state => {
       const { activeDialog, performanceReport } = state.device
+      const { items, table } = state.result
       const { culture } = state.user
       return {
         activeDialog,
         performanceReport,
         culture,
+        items,
+        table,
       }
     },
     {
       showDialog,
       hideDialog,
       updateDeviceMaintenance,
+      fetchResults,
+      exportResults,
     }
   ),
   withProps(
@@ -220,6 +218,47 @@ const enhance = compose(
     })
   ),
   withHandlers({
+    onInitialLoad: ({
+      match,
+      location,
+      fetchResults,
+      sortCol,
+      sortDir,
+      pageAt,
+      pageSize,
+    }) => () => {
+      const { sanitized, value: filtersParams } = filtersFromLocation(location)
+      if (!sanitized) {
+        filtersParams.set('deviceId', match.params.deviceId)
+        fetchResults(filtersParams, sortCol, sortDir, pageAt, pageSize)
+      }
+    },
+    onExportClick: ({
+      location,
+      exportResults,
+      sortCol,
+      sortDir,
+      pageAt,
+      pageSize,
+    }) => formatType => {
+      const { sanitized, value: filtersParams } = filtersFromLocation(location)
+      if (!sanitized) {
+        exportResults(
+          filtersParams,
+          formatType,
+          sortCol,
+          sortDir,
+          pageAt,
+          pageSize
+        )
+      }
+    },
+    onRowClick: ({ history }) => ({
+      currentTarget: {
+        dataset: { resultId },
+      },
+      // TODO: correct path?
+    }) => history.push(`/browse/result/${resultId}`),
     onToggleDeviceStatus: ({ device, updateSingleDevice }) => () =>
       updateSingleDevice(device.get('id'), {
         statusToken:
@@ -248,6 +287,35 @@ const enhance = compose(
         device,
         values,
       })
+    },
+  }),
+  lifecycle({
+    componentWillMount() {
+      const { sanitized, value: searchParams } = searchSanitizer(
+        this.props.location
+      )
+      const {
+        sanitized: filtersSanitized,
+        value: filtersParams,
+      } = filtersSanitizer(searchParams.get('filters') || '')
+      if (sanitized || filtersSanitized) {
+        searchParams.set('filters', filtersParams)
+
+        this.props.history.replace({
+          ...this.props.location,
+          search: searchParams.toString(),
+        })
+      }
+    },
+
+    componentDidMount() {
+      this.props.onInitialLoad()
+    },
+
+    componentWillReceiveProps(nextProps) {
+      if (this.props.location.search !== nextProps.location.search) {
+        this.props.onInitialLoad()
+      }
     },
   })
 )
@@ -506,6 +574,10 @@ export const DeviceDetailProfile = ({
   onHideDialog,
   onCalibrationSubmit,
   onWarrantySubmit,
+  table,
+  items,
+  onRowClick,
+  onExportClick,
 }) => {
   const deviceName = device.get('name')
   const dailyCapacity = device.get('dailyCapacity')
@@ -515,7 +587,6 @@ export const DeviceDetailProfile = ({
   const errorRateThisMonth = device.get('errorRateThisMonth')
   const calibrationNotes = device.get('calibrationNotes')
   const warrantyNotes = device.get('warrantyNotes')
-  console.log('---------------------intl', messages, intl)
   const resultColumns = [
     {
       key: 'endedOn',
@@ -555,6 +626,9 @@ export const DeviceDetailProfile = ({
     },
   ]
 
+  const AuthenticatedResults = requirePermissions({
+    permissions: ['result:admin', 'result:view', 'result:edit'],
+  })(Results)
   return (
     <div>
       <Helmet title={deviceName} />
@@ -740,7 +814,7 @@ export const DeviceDetailProfile = ({
         />
       </section>
       <PerformanceReport match={match} location={location} />
-      <Results
+      <AuthenticatedResults
         match={match}
         history={history}
         location={location}
@@ -750,6 +824,11 @@ export const DeviceDetailProfile = ({
         pageAt={pageAt}
         pageSize={pageSize}
         columns={resultColumns}
+        cssClasses={cssClasses}
+        table={table}
+        items={items}
+        onRowClick={onRowClick}
+        onExportClick={onExportClick}
       />
     </div>
   )

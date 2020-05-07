@@ -10,7 +10,6 @@ import Card from '@material-ui/core/Card'
 import { MdFileDownload } from 'react-icons/md'
 import TableBody from '@material-ui/core/TableBody'
 import Table from '@material-ui/core/Table'
-import { fetchResults, exportResults } from '../ResultRedux'
 
 import DataTableHead from '../../components/shared/tableHead'
 import {
@@ -27,8 +26,6 @@ import {
 } from '../../components/shared/tableBody'
 import requirePermissions from '../../components/shared/requirePermissions'
 
-const cssClasses = classnames.bind(require('../list/ResultList.css'))
-
 const messages = defineMessages({
   paginatorStatus: {
     id: 'component.historyResults.paginatorStatus',
@@ -38,128 +35,6 @@ const messages = defineMessages({
     }`,
   },
 })
-const FILTERS_CONFIG = {
-  assayAndResultCategory: true,
-  geography: true,
-  state: true,
-  lga: true,
-  date: true,
-  patientOrResearchId: true,
-  sampleId: true,
-  errorCode: true,
-  siteName: true,
-  sampleOriginSite: true,
-  workflowStatus: true,
-}
-
-const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
-const filtersFromLocation = composeSanitizer(
-  _.flowRight(
-    filtersSanitizer,
-    searchParams => searchParams.get('filters') || ''
-  ),
-  searchSanitizer
-)
-
-const searchSanitizer = makeSearchParamsSanitizer({
-  availableSortCol: [
-    'endedOn',
-    'deviceName',
-    'sampleOriginSiteName',
-    'sampleId',
-    'errorCode',
-    'patientId',
-  ],
-})
-
-const enhanceResults = compose(
-  requirePermissions({
-    permissions: ['result:admin', 'result:view', 'result:edit'],
-  }),
-  connect(
-    state => ({
-      items: state.result.items,
-      table: state.result.table,
-    }),
-    bindActionCreators.bind(null, {
-      fetchResults,
-      exportResults,
-    })
-  ),
-  withHandlers({
-    onInitialLoad: ({
-      match,
-      location,
-      fetchResults,
-      sortCol,
-      sortDir,
-      pageAt,
-      pageSize,
-    }) => () => {
-      const { sanitized, value: filtersParams } = filtersFromLocation(location)
-      if (!sanitized) {
-        filtersParams.set('deviceId', match.params.deviceId)
-        fetchResults(filtersParams, sortCol, sortDir, pageAt, pageSize)
-      }
-    },
-
-    onExportClick: ({
-      location,
-      exportResults,
-      sortCol,
-      sortDir,
-      pageAt,
-      pageSize,
-    }) => formatType => {
-      const { sanitized, value: filtersParams } = filtersFromLocation(location)
-      if (!sanitized) {
-        exportResults(
-          filtersParams,
-          formatType,
-          sortCol,
-          sortDir,
-          pageAt,
-          pageSize
-        )
-      }
-    },
-
-    onRowClick: ({ history }) => ({
-      currentTarget: {
-        dataset: { resultId },
-      },
-    }) => history.push(`/browse/result/${resultId}`),
-  }),
-  lifecycle({
-    componentWillMount() {
-      const { sanitized, value: searchParams } = searchSanitizer(
-        this.props.location
-      )
-      const {
-        sanitized: filtersSanitized,
-        value: filtersParams,
-      } = filtersSanitizer(searchParams.get('filters') || '')
-      if (sanitized || filtersSanitized) {
-        searchParams.set('filters', filtersParams)
-
-        this.props.history.replace({
-          ...this.props.location,
-          search: searchParams.toString(),
-        })
-      }
-    },
-
-    componentDidMount() {
-      this.props.onInitialLoad()
-    },
-
-    componentWillReceiveProps(nextProps) {
-      if (this.props.location.search !== nextProps.location.search) {
-        this.props.onInitialLoad()
-      }
-    },
-  })
-)
 
 export const Results = ({
   intl,
@@ -175,16 +50,20 @@ export const Results = ({
   columns,
   onExportClick,
   onRowClick,
+  cssClasses,
+  loading,
 }) => (
   <section className={cssClasses('Section')}>
     <Card className={cssClasses('Section__Content')}>
       <header className={cssClasses('Header')}>
         <div className={cssClasses('Header__Title')}>Test history</div>
-        <div className={cssClasses('Header__Actions')}>
-          <IconButton onClick={onExportClick}>
-            <MdFileDownload />
-          </IconButton>
-        </div>
+        {onExportClick && (
+          <div className={cssClasses('Header__Actions')}>
+            <IconButton onClick={onExportClick}>
+              <MdFileDownload />
+            </IconButton>
+          </div>
+        )}
       </header>
       <div>
         <DataTableProgressBar disabled={!table.loading} />
@@ -238,4 +117,4 @@ export const Results = ({
   </section>
 )
 
-export default enhanceResults(Results)
+export default Results
