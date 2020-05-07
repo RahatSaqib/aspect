@@ -1,4 +1,4 @@
-import React, { createContext } from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
 import classnames from 'classnames/bind'
 import Grid from '@material-ui/core/Grid'
@@ -7,8 +7,6 @@ import hivGraphs from '../GraphConfigurations/HIV'
 import tbGraphs from '../GraphConfigurations/TB'
 import GraphContainer from './GraphContainer'
 import IntlContext from '../Helpers/Context/i18n'
-
-const cssClasses = classnames.bind(require('./GraphsContainer.css'))
 
 const spacing = {
   half: { innerSize: 12, outerSize: 6 },
@@ -24,7 +22,7 @@ const {
   covidMortalityAndRecoveryByGender,
 } = covidGraphs
 
-const GraphsContainer = ({ intl, history, location, assaysFromState }) => {
+const GraphsContainer = ({ intl, assaysFromState }) => {
   const { full, half } = spacing
   const graphsToRender = [
     {
@@ -76,8 +74,6 @@ const GraphsContainer = ({ intl, history, location, assaysFromState }) => {
 
 GraphsContainer.propTypes = {
   intl: PropTypes.oneOfType([PropTypes.object]).isRequired,
-  history: PropTypes.oneOfType([PropTypes.object]).isRequired,
-  location: PropTypes.oneOfType([PropTypes.object]).isRequired,
   assaysFromState: PropTypes.oneOfType([PropTypes.array]).isRequired,
 }
 
