@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import React from 'react'
 import { shallow } from 'enzyme'
-import { IntlProvider } from 'react-intl'
+import { createIntl } from 'react-intl'
 import Button from '@material-ui/core/Button'
 import messages from './messages'
 
@@ -10,8 +10,7 @@ describe('ResetPasswordEnterPassword module', () => {
     validate,
     ResetPasswordEnterPassword,
   } = require('./ResetPasswordEnterPassword')
-  const intlProvider = new IntlProvider({ locale: 'en' }, {})
-  const { intl } = intlProvider.getChildContext()
+  const intl = createIntl({ locale: 'en' })
   const props = {
     intl,
     values: { newPassword: '' },

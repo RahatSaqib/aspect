@@ -6,7 +6,7 @@ import {
   DataTableRow as TableRow,
   DataTableCell as TableCell,
 } from '../../components/shared/tableBody'
-import { formatDate } from '../../shared/utils/dateFormat'
+import { formatDate, formatRelative } from '../../shared/utils/dateFormat'
 
 const cssClasses = classnames.bind(
   require('../../components/shared/DataTableRow.css')
@@ -84,7 +84,7 @@ const InventoryTableRow = ({ intl, inventoryItem, children, ...restProps }) => (
         rowSpan={inventoryItem.getIn(['rowSpans', 'expiresOn'])}
       >
         {inventoryItem.get('expiresOn')
-          ? intl.formatRelative(inventoryItem.get('expiresOn'))
+          ? formatRelative(intl, inventoryItem.get('expiresOn'))
           : intl.formatMessage(messages.never)}
       </TableCell>
     )}

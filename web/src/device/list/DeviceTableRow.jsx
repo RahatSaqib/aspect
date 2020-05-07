@@ -2,6 +2,7 @@ import _ from 'lodash'
 import classnames from 'classnames/bind'
 import React from 'react'
 import { formatDistanceStrict, parseISO } from 'date-fns'
+import { injectIntl } from 'react-intl'
 
 import {
   DataTableRow as TableRow,
@@ -10,13 +11,14 @@ import {
 import ColoredButton from '../../components/themedReactToolbox/ColoredButton'
 import ColoredNumber from '../../components/shared/ColoredNumber'
 import messages from './messages'
+import { formatRelative } from '../../shared/utils/dateFormat'
 
 const cssClasses = classnames.bind(require('./DeviceTableRow.css'))
 const sharedCssClasses = classnames.bind(
   require('../../components/shared/DataTableRow.css')
 )
 
-const enhance = _.identity
+const enhance = _.identity(injectIntl)
 
 const Rate = ({ intl, it, messageId, threshold }) => (
   <span>
@@ -87,7 +89,7 @@ const DeviceTableRow = ({
         ),
       })}
     </TableCell>
-    <TableCell>{intl.formatRelative(device.get('lastSeen'))}</TableCell>
+    <TableCell>{formatRelative(intl, device.get('lastSeen'))}</TableCell>
     <TableCell numeric>
       {intl.formatNumber(device.get('resultCountLastMonth'))}
     </TableCell>

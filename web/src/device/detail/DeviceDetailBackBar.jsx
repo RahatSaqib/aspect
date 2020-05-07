@@ -1,4 +1,4 @@
-import { defineMessages } from 'react-intl'
+import { defineMessages, injectIntl } from 'react-intl'
 import React from 'react'
 import AspectButton from '../../components/shared/AspectButton'
 import DetailBackBar from '../../globals/components/DetailBackBar'
@@ -81,4 +81,4 @@ const DeviceDetailBackBar = ({
   )
 }
 
-export default DeviceDetailBackBar
+export default injectIntl(DeviceDetailBackBar)

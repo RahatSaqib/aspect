@@ -5,6 +5,7 @@ const {
   assayTypeToId,
   resultSourceToId,
 } = require('../src/shared/dictionary')
+const { seedPartnerAssay, seedPartnerDisease } = require('./utils')
 
 async function seedSenaiteLimsAssays(knex, assayExternalIds) {
   const senaiteLimsResultDataSchema = {
@@ -519,6 +520,9 @@ async function seedSenaiteLimsAssays(knex, assayExternalIds) {
         patientDataSchema: JSON.stringify(patientDataSchema),
       })
   })
+
+  await seedPartnerAssay(knex)
+  await seedPartnerDisease(knex)
 }
 
 module.exports = {

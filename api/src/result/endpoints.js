@@ -7,7 +7,8 @@ const {
   clinicalIndicatorsValidGroups,
   resultAggregationsResponseItem,
   followUpAggregationsValidGroups,
-  validateResultResponse,
+  validateResultListResponse,
+  validateResultDetailResponse,
   resultCreatePayload,
   resultUpdatePayload,
 } = require('./endpointsValidation')
@@ -56,6 +57,33 @@ const routes = [
       description: 'Result List',
       notes: 'Pageable and sortable list of results',
       ...listResultsBaseConfig(),
+      response: {
+        options: {
+          allowUnknown: true,
+        },
+        schema: Joi.object().keys({
+          ok: Joi.bool()
+            .required()
+            .description('False if there was some sort of error'),
+          total: Joi.number()
+            .required()
+            .description(
+              'The total number of results that match the given filters'
+            ),
+          length: Joi.number()
+            .required()
+            .description('The number of results included in this response'),
+          extraColumns: Joi.array()
+            .allow([], null)
+            .optional()
+            .description('Extra columns arrays')
+            .items(Joi.object().optional()),
+          data: Joi.array()
+            .required()
+            .description('The results')
+            .items(Joi.object().keys(validateResultListResponse())),
+        }),
+      },
     },
   },
   {
@@ -216,7 +244,7 @@ const routes = [
           data: Joi.object()
             .required()
             .description('The results')
-            .keys(validateResultResponse()),
+            .keys(validateResultDetailResponse()),
         }),
       },
     },
@@ -272,7 +300,7 @@ const routes = [
           data: Joi.object()
             .required()
             .description('Return current result')
-            .keys(validateResultResponse()),
+            .keys(validateResultDetailResponse()),
         }),
       },
     },
@@ -724,7 +752,7 @@ const routes = [
           data: Joi.object()
             .required()
             .description('The results')
-            .keys(validateResultResponse()),
+            .keys(validateResultDetailResponse()),
         }),
       },
     },
@@ -951,7 +979,7 @@ const routes = [
           data: Joi.object()
             .required()
             .description('The results')
-            .keys(validateResultResponse()),
+            .keys(validateResultDetailResponse()),
         }),
       },
     },
@@ -1013,7 +1041,7 @@ const routes = [
           data: Joi.object()
             .required()
             .description('The results')
-            .keys(validateResultResponse()),
+            .keys(validateResultDetailResponse()),
         }),
       },
     },
@@ -1060,7 +1088,7 @@ const routes = [
           data: Joi.object()
             .required()
             .description('The results')
-            .keys(validateResultResponse()),
+            .keys(validateResultDetailResponse()),
         }),
       },
     },
@@ -1274,7 +1302,7 @@ const routes = [
           data: Joi.object()
             .required()
             .description('Return current result')
-            .keys(validateResultResponse()),
+            .keys(validateResultDetailResponse()),
         }),
       },
     },
@@ -1372,7 +1400,7 @@ const routes = [
           data: Joi.object()
             .required()
             .description('The result that was created')
-            .keys(validateResultResponse()),
+            .keys(validateResultDetailResponse()),
         }),
       },
     },
@@ -1404,7 +1432,7 @@ const routes = [
           data: Joi.object()
             .required()
             .description('The result that was updated')
-            .keys(validateResultResponse()),
+            .keys(validateResultDetailResponse()),
         }),
       },
     },

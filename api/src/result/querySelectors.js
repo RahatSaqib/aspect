@@ -22,6 +22,7 @@ const LIST_FIELDS = [
   'st.name as stateName',
   'si.name as siteName',
   'a.name as assayName',
+  'ca.externalId as caseExternalId',
 ]
 
 // Fields used for reports mtb-detected-rr-detected and results_hiv_not_suppressed
@@ -39,6 +40,7 @@ const REPORT_COMMON_FIELDS = [
   ),
   'r.errorCode',
   knex.raw('JSON_UNQUOTE(JSON_EXTRACT(r.resultData, "$.copies")) as copies'),
+  'ca.externalId as caseExternalId',
 ]
 
 const SELECT_COMMON_FIELDS = [
@@ -110,8 +112,15 @@ const SELECT_COMMON_FIELDS = [
   'ptr.name as transferredBy',
   'r.resultStatusLogId',
   'r.firstViewedOn',
+  'r.caseId',
+  'ca.externalId as caseExternalId',
 ]
-const SELECT_SHOW_FIELDS = [...SELECT_COMMON_FIELDS, 'rf.formSchema']
+const SELECT_SHOW_FIELDS = [
+  ...SELECT_COMMON_FIELDS,
+  'rf.formSchema',
+  knex.raw('IFNULL(pa.canEdit, 0) AS canEdit'),
+  knex.raw('IFNULL(pa.canDelete, 0) AS canDelete'),
+]
 const SORT_FIELDS = [
   'endedOn',
   'deviceName',

@@ -1,0 +1,62 @@
+{
+    "resultText": {
+      "title": "Result Text",
+      "type": "string",
+      "i18nKey": "resultText"
+    },
+    "probes": {
+      "title": "Probes",
+      "type": "object",
+      "i18nKey": "probes",
+      "properties": {
+        "gpCt": {
+          "title": "GP Ct",
+          "type": "number"
+        },
+        "gpEndPt": {
+          "title": "GP Endpt",
+          "type": "number"
+        },
+        "cicCt": {
+          "title": "CIC Ct",
+          "type": "number"
+        },
+        "cicEndPt": {
+          "title": "CIC EndPt",
+          "type": "number"
+        },
+        "sacCt": {
+          "title": "SAC Ct",
+          "type": "number"
+        },
+        "sacEndPt": {
+          "title": "SAC EndPt",
+          "type": "number"
+        },
+        "npCt": {
+          "title": "NP Ct",
+          "type": "number"
+        },
+        "npEndPt": {
+          "title": "NP EndPt",
+          "type": "number"
+        },
+        "qc1Ct": {
+          "title": "QC1 Ct",
+          "type": "number"
+        },
+        "qc1Endpt": {
+          "title": "QC1 EndPt",
+          "type": "number"
+        },
+        "qc2Ct": {
+          "title": "QC2 Ct",
+          "type": "number"
+        },
+        "qc2Endpt": {
+          "title": "Qc2Endpt",
+          "type": "number"
+        }
+      }
+    }
+  }

@@ -8,8 +8,9 @@ const {
   resultCategoryToId,
 } = require('../src/shared/dictionary')
 const AssayBdMgitAstResultDataSchema = require('./fixtures/AssayBdMgitAstResultDataSchema.json')
-const AssayBdMgitGndResultDataSchema = require('./fixtures/AssayBdMgitGnd.json')
+const AssayBdMgitGndResultDataSchema = require('./fixtures/AssayBdMgitGndResultDataSchema.json')
 const MGITPatientDataSchema = require('./fixtures/MGITPatientDataSchema.json')
+const { seedPartnerAssay, seedPartnerDisease } = require('./utils')
 
 async function getMGITResultFromTBPossitive(result, assaysMGIT, devicesMGIT) {
   const randomDateMgit = addDays(result.endedOn, _.random(5))
@@ -37,8 +38,8 @@ async function updateMGITAssays(
   knex,
   deviceTypeBDMGITId,
   patientDataSchema = MGITPatientDataSchema,
-  assayBdMgitAstResultDataSchema = AssayBdMgitAstResultDataSchema,
-  assayBdMgitGndResultDataSchema = AssayBdMgitGndResultDataSchema
+  assayBdMgitGndResultDataSchema = AssayBdMgitGndResultDataSchema,
+  assayBdMgitAstResultDataSchema = AssayBdMgitAstResultDataSchema
 ) {
   const assayBdMgitAst = {
     name: 'BD MGIT AST',
@@ -141,6 +142,9 @@ async function updateMGITAssays(
       assayId: assayBdMgitGndId,
     })
   )
+
+  await seedPartnerAssay(knex)
+  await seedPartnerDisease(knex)
 }
 
 function getNewMgitResultData(isAST) {
@@ -197,9 +201,9 @@ function getNewMgitResultData(isAST) {
 async function updateCultureAssays(
   knex,
   deviceTypeLIMSId,
-  dstResultDataSchema = AssayBdMgitAstResultDataSchema,
+  patientDataSchema = MGITPatientDataSchema,
   cultureResultDataSchema = AssayBdMgitGndResultDataSchema,
-  patientDataSchema = MGITPatientDataSchema
+  dstResultDataSchema = AssayBdMgitAstResultDataSchema
 ) {
   const assayGenericDst = {
     name: 'TB DST',
@@ -265,11 +269,11 @@ async function updateCultureAssays(
     })
   )
 
-  const assayCulture = {
+  const assayGenericCulture = {
     name: 'Culture',
     abbreviation: 'CULTURE',
-    i18nKey: 'assayCulture',
-    externalId: 'assayCulture',
+    i18nKey: 'assayGenericCulture',
+    externalId: 'assayGenericCulture',
     assayTypeId: await assayTypeToId('TB G&D'),
     deviceTypeId: deviceTypeLIMSId,
     resultSourceId: await resultSourceToId('LIMS'),
@@ -280,23 +284,23 @@ async function updateCultureAssays(
     resultDataSchema: JSON.stringify(cultureResultDataSchema),
     patientDataSchema: JSON.stringify(patientDataSchema),
   }
-  let { id: assayCultureId } =
+  let { id: assayGenericCultureId } =
     (await knex('Assay')
-      .where('externalId', 'assayCulture')
+      .where('externalId', 'assayGenericCulture')
       .first('id')) || {}
-  if (!assayCultureId) {
-    assayCultureId = await knex('Assay').insert({
-      ...assayCulture,
-      externalId: 'assayCulture',
+  if (!assayGenericCultureId) {
+    assayGenericCultureId = await knex('Assay').insert({
+      ...assayGenericCulture,
+      externalId: 'assayGenericCulture',
     })
   } else {
     await knex('Assay')
-      .where('id', assayCultureId)
-      .update(assayCulture)
+      .where('id', assayGenericCultureId)
+      .update(assayGenericCulture)
   }
   values.splice(-2, 2)
   const resultCategoryCultureId = await knex('ResultCategoryAssay')
-    .where({ assayId: assayCultureId })
+    .where({ assayId: assayGenericCultureId })
     .select('resultCategoryId')
   const valuesToInsert = _.filter(
     values,
@@ -309,9 +313,12 @@ async function updateCultureAssays(
   await Promise.each(valuesToInsert, elem =>
     knex('ResultCategoryAssay').insert({
       resultCategoryId: elem,
-      assayId: assayCultureId,
+      assayId: assayGenericCultureId,
     })
   )
+
+  await seedPartnerAssay(knex)
+  await seedPartnerDisease(knex)
 }
 
 module.exports = {

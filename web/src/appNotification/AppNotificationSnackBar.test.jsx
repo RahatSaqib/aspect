@@ -1,14 +1,13 @@
 import React from 'react'
 import ReactShallowRenderer from 'react-test-renderer/shallow'
-import { IntlProvider } from 'react-intl'
+import { createIntl } from 'react-intl'
 import Immutable from 'immutable'
 
 import { StyledAppNotificationSnackBar } from './AppNotificationSnackBar'
 
 describe('App Notification SnackBar component', () => {
   const renderer = new ReactShallowRenderer()
-  const intlProvider = new IntlProvider({ locale: 'en' }, {})
-  const { intl } = intlProvider.getChildContext()
+  const intl = createIntl({ locale: 'en' })
 
   const notificationOptions = Immutable.fromJS({
     showAs: 'interrupt',

@@ -6,7 +6,11 @@ const {
   deviceTypeCategoryToId,
   resultCategoryToId,
 } = require('../src/shared/dictionary')
-const { updateAssayResultCategoryTreatmentEmphasize } = require('./utils')
+const {
+  updateAssayResultCategoryTreatmentEmphasize,
+  seedPartnerAssay,
+  seedPartnerDisease,
+} = require('./utils')
 const AssayCovidPatientDataSchema = require('./fixtures/AssayCovidPatientDataSchema.json')
 const AssayCovidResultDataSchema = require('./fixtures/AssayCovidResultDataSchema.json')
 const AssayCovidResultFormSchema = require('./fixtures/AssayCovidResultFormSchema.json')
@@ -245,6 +249,9 @@ async function upsertCovidDeviceTypes(
   )
 
   await updateAssayResultCategoryTreatmentEmphasize(knex)
+  await seedPartnerAssay(knex)
+  await seedPartnerDisease(knex)
+
   return covidDeviceTypes
 }
 

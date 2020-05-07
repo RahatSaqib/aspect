@@ -3,17 +3,14 @@ import _ from 'lodash'
 import { shallow } from 'enzyme'
 import sinon from 'sinon'
 import MenuItem from '@material-ui/core/MenuItem'
-import { IntlProvider } from 'react-intl'
+import { createIntl } from 'react-intl'
 import { DateRangeSelector } from './DateRangeSelector'
 import SelectField from '../../components/shared/SelectField'
 import DateTimeInput from '../../components/shared/DateTimeInput'
 
 describe('DateRangeSelector Component', () => {
-  const intlProvider = new IntlProvider({ locale: 'en' }, {})
-  const { intl } = intlProvider.getChildContext()
-
   const props = {
-    intl,
+    intl: createIntl({ locale: 'en' }),
     clearButtonTooltip: 'Clear',
     onChangeDate: sinon.spy(),
     floatingLabelText: 'Date Range',

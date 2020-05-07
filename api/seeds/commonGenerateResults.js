@@ -29,7 +29,7 @@ const {
   resultWorkflowStatusToId,
   resultSourceToId,
 } = require('../src/shared/dictionary')
-
+const { addCase } = require('../src/case/service')
 const { getRandomTBPatientData } = require('./commonTbresults')
 const wakandaCovidResultFormSchema = require('./development/fixtures/wakandaCovidResultFormSchema.json')
 
@@ -431,7 +431,8 @@ async function addCovidResults(
       : _.find(siteDatas, site => site.id === device.siteId)
 
     const sample = samples[i % samples.length]
-    const uid = _.random(100000, 999999)
+
+    const uid = _.times(6, () => _.toUpper(_.random(36).toString(36))).join('')
     const caseExternalId = `CASE-${uid}-ID`
     const reportableSite = sample.originSiteId
       ? _.find(siteDatas, c => c.id === sample.originSiteId)
@@ -485,10 +486,14 @@ async function addCovidResults(
       })
     }
 
+    const createdOn = addMinutes(randomDate, 120)
+    const updatedOn = addMinutes(randomDate, 180)
+
     if (!positiveResults) {
-      const caseId = await knex('Case').insert({
+      const caseId = await addCase({
         externalId: caseExternalId,
         partnerId,
+        ...auditFields,
       })
 
       resultToInsert = {
@@ -498,10 +503,10 @@ async function addCovidResults(
         formData: JSON.stringify(formData),
         startedOn: resultCapturedInAspect ? null : randomDate,
         endedOn: addMinutes(randomDate, 100),
-        createdOn: addMinutes(randomDate, 120),
-        updatedOn: addMinutes(randomDate, 180),
+        createdOn,
+        updatedOn,
         patientData: JSON.stringify({
-          id: formData.caseId,
+          id: formData.caseId.replace('CASE', 'P'),
           age: formData.age,
           caseId: formData.caseId,
           gender: formData.gender
@@ -519,7 +524,7 @@ async function addCovidResults(
     }
     resultToInsert = _.assign({}, resultToInsert, {
       ...auditFields,
-      externalId: `COVID-${format(new Date(), 'TT')}`,
+      externalId: `COVID-${uid}-ID`,
       geographyId: siteData.geographyId,
       siteId: siteData.id,
       reportableSiteId: reportableSite.id,

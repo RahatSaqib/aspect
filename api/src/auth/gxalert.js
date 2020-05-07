@@ -88,7 +88,7 @@ async function validateUserAtGxAlert(username, password, user) {
   // 'null' means username and/or password did not match in GxAlert
   if (!countryId) {
     throw new GxAlertLoginError(
-      `Unexistent country ${gxUser.country.abbreviation} for user's credentials`,
+      `Non existent country ${gxUser.country.abbreviation} for user's credentials`,
       false
     )
   }
@@ -106,7 +106,7 @@ async function validateUserAtGxAlert(username, password, user) {
   // exit if not exactly 1 partner in this country
   if (!partners || partners.length !== 1) {
     throw new GxAlertLoginError(
-      `Unexistent partner for user's credentials. Please, check that there's any sites for the country ${gxUser.country.abbreviation} and they have geography and partner assigned.`,
+      `Non existent partner for user's credentials. Please, check that there are sites defined for the country ${gxUser.country.abbreviation} and that they are assigned with geography and partner.`,
       false
     )
   }
@@ -118,29 +118,29 @@ async function validateUserAtGxAlert(username, password, user) {
   const allJobFunctions = await query('Get job functions for this partner')
     .from('JobFunction')
     .where('partnerId', partnerId)
-    .select('id', 'name')
+    .select('id', 'name', 'externalId')
 
   let jobFunction
   // items from 'my_aspnet_roles': readonly, write, inventory, service, report
   // items from 'role': deployment, lga, state, national
   if (gxUser.dotNetRoles.includes('admin') || gxUser.role === 'national') {
-    jobFunction = allJobFunctions.find(x => x.externalId === 'Admin')
+    jobFunction = allJobFunctions.find(x => x.externalId === 'admin')
   }
   if (!jobFunction && (gxUser.role === 'state' || gxUser.role === 'lga')) {
     jobFunction =
-      allJobFunctions.find(x => x.externalId === 'Regional Officer') ||
-      allJobFunctions.find(x => x.externalId === 'Manager')
+      allJobFunctions.find(x => x.externalId === 'regionalOfficer') ||
+      allJobFunctions.find(x => x.externalId === 'manager')
   }
   if (!jobFunction) {
     jobFunction =
-      allJobFunctions.find(x => x.externalId === 'Clinician') ||
-      allJobFunctions.find(x => x.externalId === 'Lab User')
+      allJobFunctions.find(x => x.externalId === 'clinician') ||
+      allJobFunctions.find(x => x.externalId === 'labUser')
   }
   const jobFunctionId = jobFunction ? jobFunction.id : null
   // exit if no jobFunction found
   if (!jobFunctionId) {
     throw new GxAlertLoginError(
-      `Unexistent job function for user's credentials. Please, check that there's any partners for the country ${gxUser.country.abbreviation}, and that they have job functions, too.`,
+      `Non existent job function for user's credentials. Please check that there is a partner defined for the country ${gxUser.country.abbreviation}, and that job functions exist for that partner.`,
       false
     )
   }

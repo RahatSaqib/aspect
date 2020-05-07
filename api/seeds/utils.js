@@ -5,12 +5,15 @@ const path = require('path')
 const { addMilliseconds, subDays } = require('date-fns')
 const relativeObjectsSeeds = require('./relativeObjectsSeeds')
 const {
+  allAssayTypeToId,
+  allDiseaseToId,
   allFeatureToId,
   allResultCategoryToId,
 } = require('../src/shared/dictionary')
 
 const tables = [
   'DeviceApiRawStatus',
+  'FormType',
   'Disease',
   'AssayType',
   'FileContentType',
@@ -24,6 +27,7 @@ const tables = [
   'ResultSource',
   'ResultStatus',
   'ResultType',
+  'ResultTreatmentStatus',
   'ResultWorkflowStatus',
   'SampleType',
   'FollowUpType',
@@ -535,7 +539,10 @@ async function seedTable(knex, fixtureItem, overridedSeeds) {
             (await knex(foreignKey.table)
               .where(_.omit(foreignKey, ['table']))
               .first('id')) || {}
-          if (existingDatum[foreignKeyColumnName] !== existingRelatedDatum.id) {
+          if (
+            existingDatum[foreignKeyColumnName] !== existingRelatedDatum.id &&
+            typeof existingRelatedDatum.id !== 'undefined'
+          ) {
             updates[foreignKeyColumnName] = existingRelatedDatum.id
           }
         }
@@ -827,12 +834,16 @@ async function upsertItems(knex, tableName, whereKeys, items) {
   if (itemsToUpdate.length) {
     const queries = []
     itemsToUpdate.forEach(item => {
-      const query = knex(tableName)
-        .where(getWhereItem(item, whereKeys))
-        .update(item)
-      queries.push(query)
+      if (!_.isEmpty(item)) {
+        const query = knex(tableName)
+          .where(getWhereItem(item, whereKeys))
+          .update(item)
+        queries.push(query)
+      }
     })
-    await Promise.all(queries)
+    if (!_.isEmpty(queries)) {
+      await Promise.all(queries)
+    }
   }
 }
 
@@ -851,10 +862,12 @@ async function upsertSingle(knex, tableName, whereClause, item) {
   }
   const q = knex(tableName).where(whereClause)
   const existingItem = await q.first()
-  if (existingItem) {
-    await q.clone().update(item)
-  } else {
-    await knex(tableName).insert(item)
+  if (!_.isEmpty(item)) {
+    if (existingItem) {
+      await q.clone().update(item)
+    } else {
+      await knex(tableName).insert(item)
+    }
   }
   return q.first()
 }
@@ -2155,9 +2168,11 @@ async function updateCategoryAssay(knex) {
         emphasize: false,
       }
     }
-    await knex('ResultCategoryAssay')
-      .where('resultCategoryId', id)
-      .update(json)
+    if (!_.isEmpty(json)) {
+      await knex('ResultCategoryAssay')
+        .where('resultCategoryId', id)
+        .update(json)
+    }
   })
 }
 
@@ -2208,9 +2223,11 @@ async function updateAssayResultCategoryTreatmentEmphasize(knex) {
         emphasize: false,
       }
     }
-    await knex('ResultCategoryAssay')
-      .where('resultCategoryId', id)
-      .update(json)
+    if (!_.isEmpty(json)) {
+      await knex('ResultCategoryAssay')
+        .where('resultCategoryId', id)
+        .update(json)
+    }
   })
 }
 
@@ -2306,7 +2323,7 @@ async function setCapacityForExistingDevices(knex) {
       deviceCapacities,
       dc => dc.partnerId === partnerId && dc.deviceTypeId === deviceTypeId
     )
-    if (deviceCapacityByPartnerId) {
+    if (deviceCapacityByPartnerId && deviceCapacityByPartnerId.id) {
       await knex('Device')
         .where({ partnerId })
         .where({ deviceTypeId })
@@ -2466,11 +2483,13 @@ async function initDataFromFixture(knex, tableName, keyColumn = 'externalId') {
   const itemsToUpdate = itemsNew.filter(x => oldIds.includes(x[keyColumn]))
   const itemsToInsert = itemsNew.filter(x => !oldIds.includes(x[keyColumn]))
   if (itemsToUpdate.length > 0) {
-    // update
-    itemsToUpdate.forEach(async item => {
-      await knex(tableName)
-        .update(_.omit(item, keyColumn))
-        .where(keyColumn, item[keyColumn])
+    await Promise.each(itemsToUpdate, async item => {
+      const updatedRecord = _.omit(item, keyColumn)
+      if (!_.isEmpty(updatedRecord)) {
+        await knex(tableName)
+          .update(updatedRecord)
+          .where(keyColumn, item[keyColumn])
+      }
     })
   }
   // insert only items which not exist in the table
@@ -2611,6 +2630,63 @@ function randomOption(availableOptions, required = false) {
   }
 }
 
+async function seedPartnerAssay(knex) {
+  const { 'COVID-19 Test': assayTypeCovid19Id } = await allAssayTypeToId()
+
+  const partnerIds = await knex('Partner').pluck('id')
+  const assays = await knex('Assay').select('id', 'assayTypeId')
+
+  // for all Partners ...
+  await Promise.each(partnerIds, async partnerId =>
+    Promise.each(assays, async ({ id: assayId, assayTypeId }) => {
+      const isCovid19 = assayTypeId === assayTypeCovid19Id
+      // ... upsert entry to PartnerAssay
+      const partnerAssay = await knex('PartnerAssay')
+        .where({ partnerId, assayId })
+        .first()
+      if (!partnerAssay) {
+        await knex('PartnerAssay').insert({
+          partnerId,
+          assayId,
+
+          canCreate: isCovid19,
+          canDelete: isCovid19,
+          canEdit: isCovid19,
+        })
+      }
+    })
+  )
+}
+
+async function seedPartnerDisease(knex) {
+  const { covid19: diseaseCovid19Id } = await allDiseaseToId()
+
+  const partnerIds = await knex('Partner').pluck('id')
+  const diseaseIds = await knex('Disease').pluck('id')
+
+  // for all Partners ...
+  await Promise.each(partnerIds, async partnerId =>
+    Promise.each(diseaseIds, async diseaseId => {
+      // ... upsert entry to PartnerDisease table
+      const partnerDisease = await knex('PartnerDisease')
+        .where({ partnerId, diseaseId })
+        .first()
+      if (!partnerDisease) {
+        await knex('PartnerDisease').insert({
+          partnerId,
+          diseaseId,
+          // allow auto-assigning Result to Case only for Covid-19 disease
+          canAutoAssignResultByCaseId: diseaseId === diseaseCovid19Id,
+        })
+      }
+    })
+  )
+}
+
+function getUniqueId() {
+  return _.times(6, () => _.toUpper(_.random(36).toString(36))).join('')
+}
+
 module.exports = {
   addReports,
 
@@ -2667,4 +2743,9 @@ module.exports = {
 
   calculateDateForResult,
   randomOption,
+
+  seedPartnerAssay,
+  seedPartnerDisease,
+
+  getUniqueId,
 }

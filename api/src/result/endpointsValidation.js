@@ -133,27 +133,87 @@ const resultCreatePayload = {
   ...resultUpdatePayload,
 }
 
-function validateResultResponse() {
+const baseResultResponse = {
+  id: Joi.number()
+    .required()
+    .description('Unique ID of the result for this instance of Aspect'),
+  deviceName: Joi.string()
+    .allow('')
+    .description('Filter for device name'),
+  sampleId: Joi.string()
+    .allow(null)
+    .description('Sample id'),
+  externalId: Joi.string()
+    .allow(null)
+    .description('Unique ID of the result for this diagnostic device'),
+  startedOn: Joi.date()
+    .allow(null)
+    .description(
+      'When sample processing started. Note that the zone designator is empty because this is the local date/time as reported by the device. This should be shown as is and not converted to the user time zone.'
+    ),
+  endedOn: Joi.date()
+    .allow(null)
+    .description(
+      'When sample processing ended. Note that the zone designator is empty because this is the local date/time as reported by the device. This should be shown as is and not converted to the user time zone.'
+    ),
+  stateName: Joi.string()
+    .allow(null)
+    .description("The device's state name"),
+  resultCategory1Name: Joi.string()
+    .allow(null)
+    .description("The result's category 1 name"),
+  resultCategory2Name: Joi.string()
+    .allow(null)
+    .description("The result's category 2 name"),
+  siteName: Joi.string()
+    .allow(null)
+    .description('The name of the site'),
+  assayId: Joi.number()
+    .integer()
+    .description('The id of the assay'),
+  sampleOriginSiteName: Joi.string()
+    .allow(null)
+    .description('Sample original site name'),
+  patientId: Joi.string()
+    .allow(null)
+    .description('The patient Id'),
+  treatmentStatusInfo: Joi.string()
+    .allow(null, '')
+    .description('treatment status info'),
+  errorCode: Joi.string()
+    .allow(null)
+    .description(
+      'If an error occurred, contains the error code from the device'
+    ),
+  resultWorkflowStatus: Joi.string()
+    .allow(null)
+    .description("The result's Workflow status name"),
+  caseExternalId: Joi.string()
+    .optional()
+    .allow(null, '')
+    .description('The id of the case'),
+}
+
+function validateResultListResponse() {
   return {
-    id: Joi.number()
-      .required()
-      .description('Unique ID of the result for this instance of Aspect'),
-    deviceName: Joi.string()
-      .allow('')
-      .description('Filter for device name'),
-    externalId: Joi.string()
-      .allow(null)
-      .description('Unique ID of the result for this diagnostic device'),
-    startedOn: Joi.date()
-      .allow(null)
-      .description(
-        'When sample processing started. Note that the zone designator is empty because this is the local date/time as reported by the device. This should be shown as is and not converted to the user time zone.'
-      ),
-    endedOn: Joi.date()
-      .allow(null)
-      .description(
-        'When sample processing ended. Note that the zone designator is empty because this is the local date/time as reported by the device. This should be shown as is and not converted to the user time zone.'
-      ),
+    ...baseResultResponse,
+    assayName: Joi.string()
+      .description('The name of the assay performed to this result')
+      .allow('', null),
+    resultText: Joi.string()
+      .description('The Text of the result')
+      .allow('', null),
+    resultTreatmentStatus: Joi.string()
+      .description('The status of the result treatment')
+      .optional()
+      .allow('', null),
+  }
+}
+
+function validateResultDetailResponse() {
+  return {
+    ...baseResultResponse,
+
     createdOn: Joi.date()
       .required()
       .description(
@@ -330,6 +390,10 @@ function validateResultResponse() {
     requiresTreatment: Joi.number()
       .allow(null, '')
       .description('Predicted required treatment'),
+    caseId: Joi.number()
+      .allow(null)
+      .optional()
+      .description('Case ID for the result.'),
     followUps: Joi.array()
       .description('Result Follow Ups')
       .items(
@@ -397,6 +461,16 @@ function validateResultResponse() {
       .positive()
       .description(
         'The id of last entry in ResultStatusLog for current result'
+      ),
+    canEdit: Joi.number()
+      .allow(null)
+      .description(
+        "Is the result's assay configured to allow editing of results?"
+      ),
+    canDelete: Joi.number()
+      .allow(null)
+      .description(
+        "Is the result's assay configured to allow deleting of results?"
       ),
   }
 }
@@ -479,6 +553,12 @@ function listResultsBaseConfig() {
           .description(
             'The id of last entry in ResultStatusLog for current result'
           ),
+        caseId: Joi.string()
+          .allow('')
+          .optional()
+          .description(
+            'Case externalid for filtering only Results related with'
+          ),
       },
     },
   }
@@ -530,7 +610,8 @@ module.exports = {
   clinicalIndicatorsValidGroups,
   resultAggregationsResponseItem,
   followUpAggregationsValidGroups,
-  validateResultResponse,
+  validateResultListResponse,
+  validateResultDetailResponse,
   resultCreatePayload,
   resultUpdatePayload,
 }

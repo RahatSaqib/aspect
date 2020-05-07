@@ -21,6 +21,7 @@ const {
   addConstraints,
   canViewResults,
   getConstraints,
+  addPartnerQueryConstraints,
 } = require('../auth/constraints')
 const { getUser, getUserByUserId } = require('../auth/service')
 const {
@@ -114,6 +115,7 @@ async function getListResults(query, auth, fields = LIST_FIELDS) {
     .clone()
     .count('r.id as count')
     .first()
+
   // get rows
   const getItems = resultQuery
     .clone()
@@ -167,18 +169,6 @@ function getResultTreatmentStatus(response) {
   } else {
     response.treatmentStatusInfo = null
   }
-}
-
-const addPartnerQueryConstraints = (
-  queryBuilder,
-  { partner, country, geography, site }
-) => {
-  if (partner) queryBuilder.where('r.partnerId', partner.id)
-  if (site) queryBuilder.where('r.siteId', partner.id)
-  else if (geography) {
-    if (geography.lgaId) queryBuilder.where('g.lgaId', geography.lgaId)
-    else if (geography.stateId) queryBuilder.where('g.stateId', geography.lgaId)
-  } else if (country) queryBuilder.where('c.id', country.id)
 }
 
 async function exportResults(query, auth) {
@@ -749,8 +739,9 @@ async function getResultByResultId(
     }
     if (data.assayId) {
       data.assay = await knex('Assay as a')
+        .join('DeviceType as dt', 'dt.id', 'a.deviceTypeId')
         .where('a.id', data.assayId)
-        .first()
+        .first('a.*', 'dt.externalId as deviceTypeExternalId')
       if (data.assay.resultDataSchema) {
         data.assay.resultDataSchema = JSON.parse(data.assay.resultDataSchema)
       }
@@ -2132,6 +2123,9 @@ function getBaseQueryForResults() {
     .innerJoin('Device as d', 'r.deviceId', 'd.id')
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .innerJoin('ResultSource as rso', 'r.resultSourceId', 'rso.id')
+    .leftJoin('PartnerAssay as pa', function() {
+      this.on('r.assayId', 'pa.assayId').andOn('r.partnerId', 'pa.partnerId')
+    })
     .leftJoin('Geography as g', 'r.geographyId', 'g.id')
     .leftJoin('Country as c', 'g.countryId', 'c.id')
     .leftJoin('State as st', 'g.stateId', 'st.id')
@@ -2165,6 +2159,7 @@ function getBaseQueryForResults() {
     .leftJoin('Site as sirep', 'r.reportableSiteId', 'sirep.id')
     .leftJoin('ResultStatusLog as rslog', 'r.resultStatusLogId', 'rslog.id')
     .leftJoin('Person as ptr', 'rslog.createdBy', 'ptr.userId')
+    .leftJoin('Case as ca', 'ca.id', 'r.caseId')
 
   return resultQuery
 }
@@ -2210,6 +2205,11 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
             )
             .orWhere('r.researchId', 'like', `%${params.patientOrResearchId}%`)
         )
+      }
+      if (params.caseId) {
+        queryBuilder.whereRaw('UPPER(ca.externalId)=?', [
+          params.caseId.toUpperCase(),
+        ])
       }
     }, query)
     .modify(addPartnerQueryConstraints, dataConstraints)
@@ -2645,7 +2645,8 @@ async function updateOrCreateResult(request, result = {}) {
   if (payload.caseId) {
     result.caseId = await getCaseId(
       { externalId: payload.caseId, partnerId },
-      true
+      true,
+      userId
     )
   } else if (!payload.caseId) {
     result.caseId = null
@@ -2811,4 +2812,5 @@ module.exports = {
   getListResults,
   createResult,
   updateResult,
+  addPartnerQueryConstraints,
 }

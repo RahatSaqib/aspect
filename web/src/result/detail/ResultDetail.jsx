@@ -4,7 +4,7 @@ import classnames from 'classnames/bind'
 import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
 import { compose, setPropTypes } from 'recompose'
-import { defineMessages } from 'react-intl'
+import { defineMessages, injectIntl } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
@@ -52,6 +52,7 @@ import {
 
 import styles from './ResultDetail.css'
 import ResultDetailsBackBar from './ResultDetailsBackBar'
+import AspectButton from '../../components/shared/AspectButton'
 
 const cssClasses = classnames.bind(styles)
 
@@ -127,9 +128,28 @@ const messages = defineMessages({
     id: 'pages.ResultDetail.resultWorkflowLogCreatedOn',
     defaultMessage: 'Created On',
   },
+  editResult: {
+    id: 'pages.ResultDetail.editResult',
+    defaultMessage: 'Edit Result',
+  },
+  someFieldsNotEditable: {
+    id: 'pages.ResultDetail.someFieldsNotEditable',
+    defaultMessage: 'Some fields may not be editable',
+  },
+  resultNotEditablePermissions: {
+    id: 'pages.ResultDetail.resultNotEditablePermissions',
+    defaultMessage:
+      'This result is not editable because you do not have the edit permissions for results',
+  },
+  resultNotEditableConfiguration: {
+    id: 'pages.ResultDetail.resultNotEditableConfiguration',
+    defaultMessage:
+      'This result is not editable because {assayName} results are configured to be read-only',
+  },
 })
 
 const enhance = compose(
+  injectIntl,
   setPropTypes({
     match: PropTypes.shape({
       params: PropTypes.shape({
@@ -321,6 +341,41 @@ export class ResultDetail extends PureComponent {
     })
   }
 
+  renderRightTitle = () => {
+    const {
+      editable,
+      intl: { formatMessage },
+      result,
+      history,
+    } = this.props
+    const canEditResult = editable && result.get('canEdit')
+    const editMessage = canEditResult
+      ? formatMessage(messages.someFieldsNotEditable)
+      : editable
+      ? formatMessage(messages.resultNotEditableConfiguration, {
+          assayName: result.getIn(['assay', 'name']),
+        })
+      : formatMessage(messages.resultNotEditablePermissions)
+    return (
+      <div>
+        <i className={cssClasses('Title__SomeFieldsNotEditable')}>
+          {editMessage}
+        </i>
+        <AspectButton
+          type="button"
+          color="primary"
+          variant="contained"
+          disabled={!canEditResult}
+          onClick={() => {
+            history.push(`/browse/result/${result.get('id')}/edit`)
+          }}
+        >
+          {formatMessage(messages.editResult)}
+        </AspectButton>
+      </div>
+    )
+  }
+
   renderTreatmentStatusSection = () => {
     const {
       result,
@@ -329,6 +384,7 @@ export class ResultDetail extends PureComponent {
       match: {
         params: { resultId },
       },
+      intl,
     } = this.props
     return (
       <ResultTreatmentPanel
@@ -338,6 +394,7 @@ export class ResultDetail extends PureComponent {
         userPermission={userPermission}
         addResultNote={addResultNote}
         resultId={resultId}
+        intl={intl}
       />
     )
   }
@@ -636,6 +693,7 @@ export class ResultDetail extends PureComponent {
           data={result}
           schema={screenSchema}
           className={cssClasses('FieldsContainer')}
+          renderRightTitle={this.renderRightTitle}
           titleSection={this.renderTreatmentStatusSection()}
         >
           {/* Render lower-level sections in assay schema in cards */}

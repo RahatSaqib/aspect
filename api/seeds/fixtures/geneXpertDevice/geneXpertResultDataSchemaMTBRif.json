@@ -1,0 +1,109 @@
+{
+  "resultText": {
+    "title": "Result Text",
+    "type": "string"
+  },
+  "probes": {
+    "title": "Probes",
+    "type": "object",
+    "i18nKey": "Probes",
+    "properties": {
+      "probeA": {
+        "title": "Probe A",
+        "type": "string"
+      },
+      "probeB": {
+        "title": "Probe B",
+        "type": "string"
+      },
+      "probeC": {
+        "title": "Probe C",
+        "type": "string"
+      },
+      "probeD": {
+        "title": "Probe D",
+        "type": "string"
+      },
+      "probeE": {
+        "title": "Probe E",
+        "type": "string"
+      },
+      "probeSpc": {
+        "title": "Probe Spc",
+        "type": "string"
+      },
+      "qc1": {
+        "title": "QC1",
+        "type": "string"
+      },
+      "qc2": {
+        "title": "QC2",
+        "type": "string"
+      },
+      "probeACt": {
+        "title": "Probe A Ct",
+        "type": "number"
+      },
+      "probeBCt": {
+        "title": "Probe B Ct",
+        "type": "number"
+      },
+      "probeCCt": {
+        "title": "Probe C Ct",
+        "type": "number"
+      },
+      "probeDCt": {
+        "title": "Probe D Ct",
+        "type": "number"
+      },
+      "probeECt": {
+        "title": "Probe E Ct",
+        "type": "number"
+      },
+      "probeSpcCt": {
+        "title": "Probe Spc Ct",
+        "type": "number"
+      },
+      "qc1Ct": {
+        "title": "QC1 Ct",
+        "type": "number"
+      },
+      "qc2Ct": {
+        "title": "QC2 Ct",
+        "type": "number"
+      },
+      "probeAEndpt": {
+        "title": "Probe A Endpt",
+        "type": "number"
+      },
+      "probeBEndpt": {
+        "title": "Probe B Endpt",
+        "type": "number"
+      },
+      "probeCEndpt": {
+        "title": "Probe C Endpt",
+        "type": "number"
+      },
+      "probeDEndpt": {
+        "title": "Probe D Endpt",
+        "type": "number"
+      },
+      "probeEEndpt": {
+        "title": "Probe E Endpt",
+        "type": "number"
+      },
+      "probeSpcEndpt": {
+        "title": "Probe Spc Endpt",
+        "type": "number"
+      },
+      "qc1Endpt": {
+        "title": "QC1 Endpt",
+        "type": "number"
+      },
+      "qc2Endpt": {
+        "title": "QC2 Endpt",
+        "type": "number"
+      }
+    }
+  }
+}
