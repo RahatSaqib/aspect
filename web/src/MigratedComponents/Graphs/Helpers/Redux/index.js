@@ -29,7 +29,6 @@ const sanitiseParams = params =>
     'filter',
     'legend',
     'formatDate',
-
     'parentId',
     'id',
     'api',
