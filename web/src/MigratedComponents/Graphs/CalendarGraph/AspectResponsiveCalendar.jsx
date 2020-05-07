@@ -1,8 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import classnames from 'classnames/bind'
+import { useIntl } from 'react-intl'
 import { ResponsiveCalendar } from '@nivo/calendar'
-import IntlContext from '../Helpers/Context/i18n'
 import { GraphLegend } from '../GraphLegend'
 import GraphToolTip from '../GraphToolTip'
 
@@ -28,6 +27,7 @@ const AspectResponsiveCalendar = ({
   tickValuesXShape,
   type,
 }) => {
+  const { formatNumber: intlFormatNumber } = useIntl()
   const legends = displayLegend
     ? [
         {
@@ -57,45 +57,39 @@ const AspectResponsiveCalendar = ({
       ]
     : []
   return (
-    <IntlContext.Consumer>
-      {({ formatNumber: intlFormatNumber }) => {
-        return (
-          <ResponsiveCalendar
-            data={data}
-            keys={keys}
-            indexBy={indexBy}
-            colorBy="index"
-            enableLabel={false}
-            enableGridY={false}
-            padding={0.3}
-            borderWidth={0}
-            borderColor={{ from: 'color', modifiers: [['darker', 1.6]] }}
-            axisTop={null}
-            axisRight={null}
-            labelSkipWidth={12}
-            labelSkipHeight={12}
-            animate
-            motionStiffness={90}
-            motionDamping={15}
-            layers={['grid', 'axes', 'bars', 'markers', GraphLegend]}
-            colors={v => generateColorForValue(v)}
-            margin={generateMargin(tickValuesYShape, displayLegend)}
-            tooltip={v => (
-              <GraphToolTip
-                values={generateToolTip(
-                  v,
-                  culture,
-                  displayMethod,
-                  assaysFromState,
-                  intlFormatNumber
-                )}
-              />
-            )}
-            legends={legends}
-          />
-        )
-      }}
-    </IntlContext.Consumer>
+    <ResponsiveCalendar
+      data={data}
+      keys={keys}
+      indexBy={indexBy}
+      colorBy="index"
+      enableLabel={false}
+      enableGridY={false}
+      padding={0.3}
+      borderWidth={0}
+      borderColor={{ from: 'color', modifiers: [['darker', 1.6]] }}
+      axisTop={null}
+      axisRight={null}
+      labelSkipWidth={12}
+      labelSkipHeight={12}
+      animate
+      motionStiffness={90}
+      motionDamping={15}
+      layers={['grid', 'axes', 'bars', 'markers', GraphLegend]}
+      colors={v => generateColorForValue(v)}
+      margin={generateMargin(tickValuesYShape, displayLegend)}
+      tooltip={v => (
+        <GraphToolTip
+          values={generateToolTip(
+            v,
+            culture,
+            displayMethod,
+            assaysFromState,
+            intlFormatNumber
+          )}
+        />
+      )}
+      legends={legends}
+    />
   )
 }
 

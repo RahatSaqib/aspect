@@ -1,8 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import classnames from 'classnames/bind'
+import { useIntl } from 'react-intl'
 import { ResponsiveBar } from '@nivo/bar'
-import IntlContext from '../Helpers/Context/i18n'
 import { GraphLegend } from '../GraphLegend'
 import GraphToolTip from '../GraphToolTip'
 
@@ -27,6 +26,7 @@ const AspectResponsiveBar = ({
   tickValuesXShape,
   type,
 }) => {
+  const { formatNumber: intlFormatNumber } = useIntl()
   const yTickvalues =
     type === 'divergent'
       ? generateTickValues(data, tickValuesXShape, indexBy, 'X')
@@ -70,61 +70,53 @@ const AspectResponsiveBar = ({
     : []
 
   return (
-    <IntlContext.Consumer>
-      {({ formatNumber: intlFormatNumber }) => {
-        return (
-          <ResponsiveBar
-            data={data}
-            keys={keys}
-            indexBy={indexBy}
-            colorBy="index"
-            enableLabel={false}
-            enableGridY={false}
-            {...divergentExtraConfig}
-            padding={0.3}
-            borderWidth={0}
-            borderColor={{ from: 'color', modifiers: [['darker', 1.6]] }}
-            axisTop={null}
-            axisRight={null}
-            labelSkipWidth={12}
-            labelSkipHeight={12}
-            animate
-            motionStiffness={90}
-            motionDamping={15}
-            layers={['grid', 'axes', 'bars', 'markers', GraphLegend]}
-            colors={v => generateColorForValue(v)}
-            margin={generateMargin(tickValuesYShape, displayLegend)}
-            tooltip={v => (
-              <GraphToolTip
-                values={generateToolTip(
-                  v,
-                  displayMethod,
-                  assaysFromState,
-                  intlFormatNumber
-                )}
-              />
-            )}
-            axisLeft={{
-              tickSize: 5,
-              tickValues: yTickvalues,
-              format: v =>
-                formatValuesForGraphs(v, displayMethod, intlFormatNumber),
-            }}
-            axisBottom={{
-              tickSize: 5,
-              tickPadding: 10,
-              tickRotation: 0,
-              legendPosition: 'middle',
-              legendOffset: 32,
-              tickValues: xTickValues,
-              format: v =>
-                formatValuesForGraphs(v, displayMethod, intlFormatNumber),
-            }}
-            legends={legends}
-          />
-        )
+    <ResponsiveBar
+      data={data}
+      keys={keys}
+      indexBy={indexBy}
+      colorBy="index"
+      enableLabel={false}
+      enableGridY={false}
+      {...divergentExtraConfig}
+      padding={0.3}
+      borderWidth={0}
+      borderColor={{ from: 'color', modifiers: [['darker', 1.6]] }}
+      axisTop={null}
+      axisRight={null}
+      labelSkipWidth={12}
+      labelSkipHeight={12}
+      animate
+      motionStiffness={90}
+      motionDamping={15}
+      layers={['grid', 'axes', 'bars', 'markers', GraphLegend]}
+      colors={v => generateColorForValue(v)}
+      margin={generateMargin(tickValuesYShape, displayLegend)}
+      tooltip={v => (
+        <GraphToolTip
+          values={generateToolTip(
+            v,
+            displayMethod,
+            assaysFromState,
+            intlFormatNumber
+          )}
+        />
+      )}
+      axisLeft={{
+        tickSize: 5,
+        tickValues: yTickvalues,
+        format: v => formatValuesForGraphs(v, displayMethod, intlFormatNumber),
       }}
-    </IntlContext.Consumer>
+      axisBottom={{
+        tickSize: 5,
+        tickPadding: 10,
+        tickRotation: 0,
+        legendPosition: 'middle',
+        legendOffset: 32,
+        tickValues: xTickValues,
+        format: v => formatValuesForGraphs(v, displayMethod, intlFormatNumber),
+      }}
+      legends={legends}
+    />
   )
 }
 

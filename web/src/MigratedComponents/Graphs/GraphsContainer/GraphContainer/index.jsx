@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
+import { useIntl } from 'react-intl'
 import classnames from 'classnames/bind'
 import Grid from '@material-ui/core/Grid'
 import AspectCard from '../../../AspectCard'
 import GraphRender from '../../GraphRender'
-import IntlContext from '../../Helpers/Context/i18n'
 
 import messages from '../messages'
 
@@ -14,6 +14,7 @@ const cssClasses = classnames.bind(require('../GraphsContainer.css'))
 
 const GraphContainer = ({ config, size, assaysFromState }) => {
   const { title } = config
+  const { formatMessage: intlFormatMessage } = useIntl()
   const { assays, graphType, id } = config
   const { innerSize, outerSize } = size
   const [whiteListed, setwhiteListed] = useState(false)
@@ -31,36 +32,30 @@ const GraphContainer = ({ config, size, assaysFromState }) => {
     })
   }, [config, assays, assaysFromState])
 
-  return (
-    <IntlContext.Consumer>
-      {({ formatMessage: intlFormatMessage }) => {
-        return whiteListed && whiteListed.length ? (
-          <Grid item xs={12} lg={outerSize}>
-            <AspectCard
-              title={intlFormatMessage(messages[title])}
-              innerSize={innerSize}
-              justify="center"
-            >
-              <Grid
-                container
-                spacing={8}
-                className={cssClasses('graph__containerGrid')}
-              >
-                {graphType &&
-                  graphType.map(graph => (
-                    <GraphRender
-                      assays={{ whiteListed, assaysFromState }}
-                      config={graph}
-                      id={id}
-                    />
-                  ))}
-              </Grid>
-            </AspectCard>
-          </Grid>
-        ) : null
-      }}
-    </IntlContext.Consumer>
-  )
+  return whiteListed && whiteListed.length ? (
+    <Grid item xs={12} lg={outerSize}>
+      <AspectCard
+        title={intlFormatMessage(messages[title])}
+        innerSize={innerSize}
+        justify="center"
+      >
+        <Grid
+          container
+          spacing={8}
+          className={cssClasses('graph__containerGrid')}
+        >
+          {graphType &&
+            graphType.map(graph => (
+              <GraphRender
+                assays={{ whiteListed, assaysFromState }}
+                config={graph}
+                id={id}
+              />
+            ))}
+        </Grid>
+      </AspectCard>
+    </Grid>
+  ) : null
 }
 
 GraphContainer.protoTypes = {

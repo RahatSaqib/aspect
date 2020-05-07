@@ -1,12 +1,10 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import classnames from 'classnames/bind'
 import Grid from '@material-ui/core/Grid'
 import covidGraphs from '../GraphConfigurations/Covid'
 import hivGraphs from '../GraphConfigurations/HIV'
 import tbGraphs from '../GraphConfigurations/TB'
 import GraphContainer from './GraphContainer'
-import IntlContext from '../Helpers/Context/i18n'
 
 const spacing = {
   half: { innerSize: 12, outerSize: 6 },
@@ -22,7 +20,7 @@ const {
   covidMortalityAndRecoveryByGender,
 } = covidGraphs
 
-const GraphsContainer = ({ intl, assaysFromState }) => {
+const GraphsContainer = ({ assaysFromState }) => {
   const { full, half } = spacing
   const graphsToRender = [
     {
@@ -58,22 +56,19 @@ const GraphsContainer = ({ intl, assaysFromState }) => {
   ]
 
   return (
-    <IntlContext.Provider value={intl}>
-      <Grid container direction="row" spacing={8}>
-        {graphsToRender.map(({ config, size }) => (
-          <GraphContainer
-            assaysFromState={assaysFromState}
-            config={config}
-            size={size}
-          />
-        ))}
-      </Grid>
-    </IntlContext.Provider>
+    <Grid container direction="row" spacing={8}>
+      {graphsToRender.map(({ config, size }) => (
+        <GraphContainer
+          assaysFromState={assaysFromState}
+          config={config}
+          size={size}
+        />
+      ))}
+    </Grid>
   )
 }
 
 GraphsContainer.propTypes = {
-  intl: PropTypes.oneOfType([PropTypes.object]).isRequired,
   assaysFromState: PropTypes.oneOfType([PropTypes.array]).isRequired,
 }
 
