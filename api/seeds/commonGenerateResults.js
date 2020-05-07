@@ -794,8 +794,6 @@ async function addTBResults(
   devicesGeneXpert,
   resultCategories
 ) {
-  console.log('result categories', resultCategories)
-
   if (resultMtbNumber === 0) return []
   const deviceTypes = await knex('DeviceType').select()
 
@@ -928,8 +926,6 @@ async function addTBResults(
       possibleResults,
       r => rnd >= r.minLikelihood && rnd <= r.maxLikelihood
     )
-
-    console.log(result)
 
     const patientNumber = patients.length - 1
     resultData.resultText = result.resultText
