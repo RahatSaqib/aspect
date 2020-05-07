@@ -77,7 +77,7 @@ const FILTERS_CONFIG = [
   { geography: true, requiredPermissions: [] },
   { state: true, requiredPermissions: [] },
   { lga: true, requiredPermissions: [] },
-  { patientOrResearchId: true, requiredPermissions: [] },
+  { patientOrCaseId: true, requiredPermissions: [] },
   { sampleOriginSite: true, requiredPermissions: [] },
 ]
 
@@ -134,6 +134,14 @@ const enhance = compose(
         fetchCases(filtersParams, sortCol, sortDir, pageAt, pageSize)
       }
     },
+    onRowClick: ({ history }) => ({
+      currentTarget: {
+        dataset: { caseId },
+      },
+    }) => {
+      console.log('sos un gil', history)
+      history.push(`/browse/case/${caseId}`)
+    },
   }),
   lifecycle({
     componentWillMount() {
@@ -172,16 +180,6 @@ const enhance = compose(
       }
     },
   })
-)
-
-const messageByI18nKey = _.partial(
-  // Explicit declare messageBy[i18nKey] so that the keys are searchable.
-  (messageBy, i18nKey) => messageBy[i18nKey] || messageBy.default,
-  {
-    resultCategoryCopiesMl: (title, intl) =>
-      intl.formatMessage(messages.resultCategoryCopiesMl),
-    default: _.identity,
-  }
 )
 
 export const CaseList = ({
@@ -268,7 +266,7 @@ export const CaseList = ({
                     intl={intl}
                     _case={_case}
                     onClick={onRowClick}
-                    data-result-id={_case.get('id')}
+                    data-case-id={_case.get('id')}
                   />
                 ))}
             </TableBody>

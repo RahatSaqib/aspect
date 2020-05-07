@@ -20,9 +20,9 @@ const routes = [
       },
       validate: {
         query: {
-          patientOrResearchId: Joi.string()
+          patientOrCaseId: Joi.string()
             .allow('')
-            .description('Filter for patient/research ID'),
+            .description('Filter for patient/case ID'),
           sampleOriginSite: Joi.number().description(
             'Filter for sample origin site ID'
           ),
