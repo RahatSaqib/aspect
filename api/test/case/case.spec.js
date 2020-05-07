@@ -67,9 +67,9 @@ describe('case/service', () => {
       ;[caseToTest] = res.body.data
     })
 
-    it('Should return a list of cases filtered by patientOrResearchId', async () => {
+    it('Should return a list of cases filtered by patientOrCaseId', async () => {
       const res = await server
-        .get(`${path}?patientOrResearchId=${caseToTest.patientId}`)
+        .get(`${path}?patientOrCaseId=${caseToTest.patientId}`)
         .set('Authorization', `Bearer ${accessToken}`)
 
       assert.equal(res.status, 200)
