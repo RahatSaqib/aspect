@@ -2522,7 +2522,8 @@ async function updateResult(request) {
     payload.endedOn = result.data.endedOn
     if (
       payload.resultCategory1 !== result.data.resultCategory1 ||
-      payload.resultCategory2 !== result.data.resultCategory2
+      (payload.resultCategory2 || null) !==
+        (result.data.resultCategory2 || null)
     )
       return Boom.badRequest(
         'You cannot change the result of an assay that was reported by a device.'
