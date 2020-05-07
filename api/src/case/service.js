@@ -3,7 +3,6 @@ const {
   getConstraints,
   addPartnerQueryConstraints,
 } = require('../auth/constraints')
-const { addPartnerQueryConstraints } = require('../result/service')
 const { caseAdded, caseUpdated } = require('./actions')
 const {
   getPartnerPluginName,
