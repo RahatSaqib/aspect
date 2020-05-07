@@ -157,6 +157,7 @@ const enhance = compose(
     },
 
     componentDidMount() {
+      console.log(this.props)
       this.props.onInitialLoad()
     },
 

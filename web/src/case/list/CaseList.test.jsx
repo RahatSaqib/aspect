@@ -2,7 +2,6 @@ import React from 'react'
 import { shallow } from 'enzyme'
 import { Items } from '../../shared/metaReducers/items'
 import { Table } from '../../shared/metaReducers/table'
-import ExportListButton from '../../globals/components/ExportListButton'
 
 describe('Person List module', () => {
   const { CaseList } = require('./CaseList')
