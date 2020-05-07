@@ -131,12 +131,11 @@ describe('case/service', () => {
     it('Should add case and return the id', async () => {
       const objCase = mockCase(`Some externalId ${getExternalId()}`)
 
-      caseId = await addCase(objCase, { messageContext, skipMQ: true })
+      caseId = await addCase(objCase, { messageContext })
       assert.isNotNull(caseId)
 
       // check that MQ handled action with actual values
       const waitForCaseAdded = waitForAction(caseAdded(caseId))
-      messageContext.caseAdded(caseId)
       await waitForCaseAdded
     })
 
@@ -150,7 +149,6 @@ describe('case/service', () => {
       assert.isArray(caseIds)
       assert.isNotEmpty(caseIds)
 
-      caseIds.map(caseId => messageContext.caseUpdated(caseId))
       await Promise.all(
         caseIds.map(caseId => waitForAction(caseUpdated(caseId)))
       )

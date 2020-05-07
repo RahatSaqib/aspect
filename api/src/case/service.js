@@ -2,7 +2,10 @@ const { knex, filterParams, sortPageParams } = require('../db')
 const { getConstraints } = require('../auth/constraints')
 const { addPartnerQueryConstraints } = require('../result/service')
 const { caseAdded, caseUpdated } = require('./actions')
-const config = require('../config')
+const {
+  getPartnerPluginName,
+  getDeviceTypePluginName,
+} = require('../plugin/utils')
 
 function validateCaseIdentifier(_case) {
   let errors = ''
@@ -48,13 +51,13 @@ async function getCaseId(_case, createIfNonExistent, userId) {
 /**
  * Adds a new case to database
  * @param  {object} _case
+ * @param  {object} options
  * @return {int} The created case id
  */
-async function addCase(_case, { messageContext, skipMQ } = {}) {
+async function addCase(_case, { messageContext } = {}) {
   const [caseId] = await knex('Case').insert(_case)
 
-  if (config.scheduler.enabled && messageContext && !skipMQ) {
-    // queue message
+  if (messageContext) {
     if (!messageContext.caseAdded) {
       messageContext = messageContext.bindActionCreators({ caseAdded })
     }
@@ -75,11 +78,7 @@ async function removeCase(_case) {
     .del()
 }
 
-async function updateCase(
-  whereFields,
-  updateFields,
-  { messageContext, skipMQ } = {}
-) {
+async function updateCase(whereFields, updateFields, { messageContext } = {}) {
   await knex('Case')
     .where(whereFields)
     .update(updateFields)
@@ -87,7 +86,7 @@ async function updateCase(
     .where(whereFields)
     .select('id')
     .pluck('id')
-  if (config.scheduler.enabled && messageContext && caseIds.length && !skipMQ) {
+  if (messageContext && caseIds.length) {
     // queue message for each affected Case row
     if (!messageContext.caseUpdated) {
       messageContext = messageContext.bindActionCreators({ caseUpdated })
@@ -181,12 +180,28 @@ async function getCases({ query, auth }) {
   return result
 }
 
-async function onCaseUpdated(/* { caseId }, { messageContext } */) {
-  // placeholder for CASE_UPDATED message queue
+async function onCaseAdded({ caseId }, { messageContext }) {
+  onCaseChanged(caseId, messageContext, true)
 }
 
-async function onCaseAdded(/* { caseId }, { messageContext } */) {
-  // placeholder handler for MQ action CASE_ADDED
+async function onCaseUpdated({ caseId }, { messageContext }) {
+  onCaseChanged(caseId, messageContext, false)
+}
+
+async function onCaseChanged(caseId, messageContext, isAdded) {
+  // get plugin names
+  const { deviceId } = messageContext
+  const partnerPluginName = await getPartnerPluginName({ caseId })
+  const deviceTypePluginName = await getDeviceTypePluginName(deviceId)
+  // exec plugin
+  if (partnerPluginName || deviceTypePluginName) {
+    const { loadPlugin } = require('../plugin/registration')
+    const pluginOnCaseChanged = await loadPlugin(
+      [partnerPluginName, deviceTypePluginName],
+      isAdded ? 'onCaseAdded' : 'onCaseUpdated'
+    )
+    await pluginOnCaseChanged(caseId, messageContext)
+  }
 }
 
 module.exports = {
@@ -195,7 +210,7 @@ module.exports = {
   removeCase,
   getCases,
   updateCase,
-  // MQ consumers (subscription event handlers)
+  // MQ consumers
   onCaseAdded,
   onCaseUpdated,
 }
