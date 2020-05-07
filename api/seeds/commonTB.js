@@ -21,6 +21,7 @@ async function getMGITResultFromTBPossitive(result, assaysMGIT, devicesMGIT) {
   const now = new Date()
   const assay = _.sample(assaysMGIT)
   const assayId = await assayToId('assayBdMgitAst')
+  console.log(result)
   return _.defaults(
     {
       assayId: assay.id,

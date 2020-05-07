@@ -51,6 +51,8 @@ async function seed(knex) {
     .where('r.resultCategory1', await resultCategoryToId('Detected'))
     .select('r.*')
 
+  console.log(tbResults)
+
   await Promise.each(tbResults, async result => {
     if (devicesMGIT.length > 0 && MGITAssays && MGITAssays.length > 0)
       return knex('Result').insert(

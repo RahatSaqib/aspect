@@ -149,6 +149,7 @@ async function generateResults(
     updatedBy: adminId,
   }
   // result categories
+  const resultCategories = await allResultCategoryToId()
   const {
     Detected: resultCategoryDetectedId,
     Positive: resultCategoryPositiveId,
@@ -159,7 +160,7 @@ async function generateResults(
     Invalid: resultCategoryInvalidId,
     NoResult: resultCategoryNoResultId,
     Error: resultCategoryErrorId,
-  } = await allResultCategoryToId()
+  } = resultCategories
 
   const deviceTypes = await knex('DeviceType').select()
   const assays = await knex('Assay').select()
@@ -198,7 +199,7 @@ async function generateResults(
     partnerOneId,
     errorCodes,
     devices,
-    [
+    {
       resultCategoryDetectedId,
       resultCategoryNotDetectedId,
       resultCategoryLessThan1000,
@@ -207,7 +208,7 @@ async function generateResults(
       resultCategoryInvalidId,
       resultCategoryNoResultId,
       resultCategoryErrorId,
-    ]
+    }
   )
   const ebolaAssays = _.filter(assays, elem => elem.externalId === 'GxEbola')
   const ebolaResults = await addEbolaResults(
@@ -793,6 +794,8 @@ async function addTBResults(
   devicesGeneXpert,
   resultCategories
 ) {
+  console.log('result categories', resultCategories)
+
   if (resultMtbNumber === 0) return []
   const deviceTypes = await knex('DeviceType').select()
 
@@ -925,6 +928,9 @@ async function addTBResults(
       possibleResults,
       r => rnd >= r.minLikelihood && rnd <= r.maxLikelihood
     )
+
+    console.log(result)
+
     const patientNumber = patients.length - 1
     resultData.resultText = result.resultText
 
