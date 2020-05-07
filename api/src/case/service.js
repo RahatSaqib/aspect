@@ -1,5 +1,8 @@
 const { knex, filterParams, sortPageParams } = require('../db')
-const { getConstraints } = require('../auth/constraints')
+const {
+  getConstraints,
+  addPartnerQueryConstraints,
+} = require('../auth/constraints')
 const { addPartnerQueryConstraints } = require('../result/service')
 const { caseAdded, caseUpdated } = require('./actions')
 const {

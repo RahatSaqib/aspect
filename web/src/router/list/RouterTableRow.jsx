@@ -6,6 +6,7 @@ import {
   DataTableRow as TableRow,
   DataTableCell as TableCell,
 } from '../../components/shared/tableBody'
+import { formatRelative } from '../../shared/utils/dateFormat'
 
 const cssClasses = classnames.bind(
   require('../../components/shared/DataTableRow.css')
@@ -17,8 +18,8 @@ const RouterTableRow = ({ intl, router, ...restProps }) => (
   <TableRow {...restProps} className={cssClasses(restProps.className)}>
     <TableCell>{router.get('name')}</TableCell>
     <TableCell>{router.get('status')}</TableCell>
-    <TableCell>{intl.formatRelative(router.get('createdOn'))}</TableCell>
-    <TableCell>{intl.formatRelative(router.get('lastSeen'))}</TableCell>
+    <TableCell>{formatRelative(intl, router.get('createdOn'))}</TableCell>
+    <TableCell>{formatRelative(intl, router.get('lastSeen'))}</TableCell>
   </TableRow>
 )
 

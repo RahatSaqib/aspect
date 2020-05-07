@@ -5,7 +5,7 @@ import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import _ from 'lodash'
 import classNames from 'classnames'
-import { defineMessages, intlShape } from 'react-intl'
+import { defineMessages, injectIntl } from 'react-intl'
 import Button from '@material-ui/core/Button'
 import Snackbar from '@material-ui/core/Snackbar'
 import green from '@material-ui/core/colors/green'
@@ -18,6 +18,7 @@ import {
   hideAppNotification,
   Error,
 } from './AppNotificationRedux'
+import PropTypeOf from '../shared/types'
 
 const genericMessages = defineMessages({
   title: {
@@ -30,7 +31,10 @@ const genericMessages = defineMessages({
   },
 })
 
-const enhance = _.flowRight(connect(mapStateToProps, mapDispatchToProps))
+const enhance = _.flowRight(
+  injectIntl,
+  connect(mapStateToProps, mapDispatchToProps)
+)
 
 const styles = {
   info: {
@@ -43,7 +47,7 @@ const styles = {
 
 export class AppNotificationSnackBar extends PureComponent {
   static propTypes = {
-    intl: intlShape.isRequired,
+    intl: PropTypeOf.intl.isRequired,
     appNotification: PropTypes.objectOf(Error),
     classes: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     showMoreDetails: PropTypes.func.isRequired,

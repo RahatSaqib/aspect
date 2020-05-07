@@ -10,7 +10,7 @@ import {
   setPropTypes,
   defaultProps,
 } from 'recompose'
-import { defineMessages } from 'react-intl'
+import { defineMessages, injectIntl } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
@@ -102,6 +102,7 @@ function mergeFilterOptions(searchParams, filterOptions = {}) {
 }
 
 const enhance = compose(
+  injectIntl,
   setPropTypes({
     baseFilterOptions: PropTypes.object,
   }),

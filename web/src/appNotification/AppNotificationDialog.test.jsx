@@ -1,6 +1,6 @@
 import React from 'react'
-import ReactShallowRenderer from 'react-test-renderer/shallow'
-import { IntlProvider } from 'react-intl'
+import { shallow } from 'enzyme'
+import { createIntl } from 'react-intl'
 
 import { AppNotificationDialog } from './AppNotificationDialog'
 import {
@@ -10,19 +10,16 @@ import {
 } from './AppNotificationRedux'
 
 describe('App Notification Dialog component', () => {
-  const renderer = new ReactShallowRenderer()
-  const intlProvider = new IntlProvider({ locale: 'en' }, {})
-  const { intl } = intlProvider.getChildContext()
   const appNotification = new Error()
   const props = {
-    intl,
+    intl: createIntl({ locale: 'en' }),
     appNotification,
     hideAppNotification,
     showMoreDetails,
   }
 
   it('should shallow render correctly', () => {
-    const element = renderer.render(<AppNotificationDialog {...props} />)
+    const element = shallow(<AppNotificationDialog {...props} />)
 
     expect(element).toMatchSnapshot()
   })

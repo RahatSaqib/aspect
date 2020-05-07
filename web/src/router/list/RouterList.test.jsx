@@ -1,6 +1,6 @@
 import React from 'react'
 import { shallow } from 'enzyme'
-import { IntlProvider } from 'react-intl'
+import { createIntl } from 'react-intl'
 
 import { RouterList } from './RouterList'
 import ExportListButton from '../../globals/components/ExportListButton'
@@ -8,10 +8,8 @@ import { Items } from '../../shared/metaReducers/items'
 import { Table } from '../../shared/metaReducers/table'
 
 describe('RouterList', () => {
-  const intlProvider = new IntlProvider({ locale: 'en' }, {})
-  const { intl } = intlProvider.getChildContext()
   const props = {
-    intl,
+    intl: createIntl({ locale: 'en' }),
     history: jest.fn(),
     location: { search: '' },
     table: new Table(),

@@ -1,6 +1,6 @@
 import React from 'react'
 import { shallow } from 'enzyme'
-import { IntlProvider } from 'react-intl'
+import { createIntl } from 'react-intl'
 import Immutable from 'immutable'
 import { InventoryItemsList } from './InventoryItemsList'
 import { Items } from '../../shared/metaReducers/items'
@@ -8,11 +8,8 @@ import { Table } from '../../shared/metaReducers/table'
 import ExportListButton from '../../globals/components/ExportListButton'
 
 describe('InventoryItemList module', () => {
-  const intlProvider = new IntlProvider({ locale: 'en' }, {})
-  const { intl } = intlProvider.getChildContext()
-
   const props = {
-    intl,
+    intl: createIntl({ locale: 'en' }),
     location: {
       search: '',
     },
