@@ -1,4 +1,4 @@
-import { defineMessages } from 'react-intl'
+import { defineMessages, injectIntl } from 'react-intl'
 import React from 'react'
 import { compose, withHandlers } from 'recompose'
 import AspectButton from '../../components/shared/AspectButton'
@@ -20,6 +20,7 @@ const messages = defineMessages({
 })
 
 const enhance = compose(
+  injectIntl,
   withHandlers({
     onBackClick: ({ history }) => () => {
       history.goBack()

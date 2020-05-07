@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types'
 import React, { useState } from 'react'
 import _ from 'lodash'
-import { defineMessages, intlShape } from 'react-intl'
+import { defineMessages } from 'react-intl'
 import { withStyles } from '@material-ui/core/styles'
 import TextField from '@material-ui/core/TextField'
 import Paper from '@material-ui/core/Paper'
@@ -11,6 +11,7 @@ import CheckIcon from '@material-ui/icons/Check'
 import CloseIcon from '@material-ui/icons/Close'
 import classNames from 'classnames'
 import styles from './Shared.css'
+import PropTypeOf from '../../shared/types'
 
 const blue = 'rgb(78, 145, 252)'
 const red = 'rgb(226, 18, 18)'
@@ -247,7 +248,7 @@ StrongPasswordInput.propTypes = {
   meta: PropTypes.object.isRequired, // eslint-disable-line
   textFieldProps: PropTypes.object.isRequired, // eslint-disable-line
   popOverProps: PropTypes.object.isRequired, // eslint-disable-line
-  intl: intlShape.isRequired,
+  intl: PropTypeOf.intl.isRequired,
 }
 
 export default withStyles(muiStyles)(StrongPasswordInput)

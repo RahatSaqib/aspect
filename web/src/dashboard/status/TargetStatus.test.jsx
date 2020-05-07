@@ -1,16 +1,13 @@
 import Immutable from 'immutable'
 import React from 'react'
 import { shallow } from 'enzyme'
-import { IntlProvider } from 'react-intl'
+import { createIntl } from 'react-intl'
 import Card from '@material-ui/core/Card'
 import { TargetStatus } from './TargetStatus'
 
 describe('Target Status component', () => {
-  const intlProvider = new IntlProvider({ locale: 'en' }, {})
-  const { intl } = intlProvider.getChildContext()
-
   const props = {
-    intl,
+    intl: createIntl({ locale: 'en' }),
     isShow: true,
     title: 'Progress Indicators',
     className: 'Section--withStatus',
