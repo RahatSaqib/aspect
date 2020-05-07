@@ -15,7 +15,6 @@ import {
   receiveTableItems,
   Table,
 } from '../shared/metaReducers/table'
-import screenSchema from './CaseScreenSchema.json'
 
 export const types = {
   REQUEST_CASES: 'REQUEST_CASES',
@@ -112,7 +111,6 @@ export const Case = Immutable.Record({
       caseId: '',
     }),
   }),
-  screenSchema: new Immutable.fromJS(screenSchema),
   loading: true,
 })
 
