@@ -8,6 +8,7 @@ import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
 import TableBody from '@material-ui/core/TableBody'
+import Table from '@material-ui/core/Table'
 import {
   makeSortPageSelector,
   makeSearchParamsSanitizer,
@@ -28,12 +29,9 @@ import DataTableCard from '../../components/shared/DataTableCard'
 import DataTableProgressBar from '../../components/shared/DataTableProgressBar'
 import { fetchCases } from '../CaseRedux'
 import requirePermissions from '../../components/shared/requirePermissions'
-import {
-  CaseDataTable,
-  CaseDataTableHead,
-  CaseDataTableRow,
-} from './CaseDataTable'
 import AspectButton from '../../components/shared/AspectButton'
+import DataTableHead from '../../components/shared/tableHead'
+import CaseTableRow from './CaseTableRow'
 
 const cssClasses = classnames.bind(require('./CaseList.css'))
 
@@ -246,11 +244,8 @@ export const CaseList = ({
           <BrowseEmptyList history={history} location={location} intl={intl} />
         )}
         {!items.currentIdList.isEmpty() && (
-          <CaseDataTable
-            selectable={false}
-            className={cssClasses('CaseDataTable')}
-          >
-            <CaseDataTableHead
+          <Table selectable={false} className={cssClasses('CaseDataTable')}>
+            <DataTableHead
               history={history}
               location={location}
               sortColumnKey={sortCol}
@@ -261,7 +256,7 @@ export const CaseList = ({
               {items.currentIdList
                 .map(id => items.byId.get(id))
                 .map(_case => (
-                  <CaseDataTableRow
+                  <CaseTableRow
                     key={_case.get('id')}
                     intl={intl}
                     _case={_case}
@@ -270,7 +265,7 @@ export const CaseList = ({
                   />
                 ))}
             </TableBody>
-          </CaseDataTable>
+          </Table>
         )}
         {!items.currentIdList.isEmpty() && (
           <BrowseTablePaginator
