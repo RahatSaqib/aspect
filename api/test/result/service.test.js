@@ -538,6 +538,9 @@ describe('result/service', () => {
           {
             id: 1,
           },
+          {
+            id: 2,
+          },
         ]),
     }
   }
@@ -562,7 +565,12 @@ describe('result/service', () => {
           siteId: 1,
           deviceId: 1,
           assayId: 1,
+          sampleId: 1,
           partnerId: 1,
+          resultCategory1: 1,
+          resultCategory2: 1,
+          endedOn: new Date(),
+          resultSourceExternalId: 'EnteredByHand',
         },
         extraDetails
       )
@@ -656,6 +664,31 @@ describe('result/service', () => {
       assert.equal(
         response.output.payload.message,
         'This device does not exist or you do not have access.'
+      )
+    })
+
+    it('should return a 400 response when the result was originally reported by a device and user tries to change result categories or start/end dates', async () => {
+      const resultService = resultServiceWithFakes(
+        {
+          getResultByResultId: basicResultForUpdate({
+            resultSourceExternalId: 'DiagnosticDevice',
+          }),
+        },
+        {
+          '../site/service': siteServiceMock(),
+          '../assay/service': assayServiceMock(),
+        }
+      )
+
+      const response = await resultService.updateResult(
+        basicRequest(
+          resultUpdatePayload({ resultCategory1: 2, resultCategory2: 2 })
+        )
+      )
+      // assert.equal(response.output.statusCode, 400)
+      assert.equal(
+        response.output.payload.message,
+        'You cannot change the result of an assay that was reported by a device.'
       )
     })
   })

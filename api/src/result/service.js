@@ -2131,6 +2131,7 @@ function getBaseQueryForResults() {
     .innerJoin('AssayType as at', 'a.assayTypeId', 'at.id')
     .innerJoin('Device as d', 'r.deviceId', 'd.id')
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
+    .innerJoin('ResultSource as rso', 'r.resultSourceId', 'rso.id')
     .leftJoin('Geography as g', 'r.geographyId', 'g.id')
     .leftJoin('Country as c', 'g.countryId', 'c.id')
     .leftJoin('State as st', 'g.stateId', 'st.id')
@@ -2494,6 +2495,7 @@ async function updateResult(request) {
   const {
     params: { resultId },
     auth,
+    payload,
   } = request
 
   const result = await getResultByResultId(auth, resultId, [
@@ -2503,11 +2505,28 @@ async function updateResult(request) {
     'r.deviceId',
     'r.sampleId',
     'r.partnerId',
+    'r.resultCategory1',
+    'r.resultCategory2',
+    'r.endedOn',
+    'rso.externalId as resultSourceExternalId',
   ])
   if (!result.ok) {
     return Boom.notFound(
       'This result does not exist or you do not have access.'
     )
+  }
+
+  if (result.data.resultSourceExternalId !== 'EnteredByHand') {
+    // The end-datetime can't be changed if the assay was not entered by hand and should be disabled in the UI anyway.
+    // To avoid timezone/clock issues when updating a result, override the date to the one we have in the database.
+    payload.endedOn = result.data.endedOn
+    if (
+      payload.resultCategory1 !== result.data.resultCategory1 ||
+      payload.resultCategory2 !== result.data.resultCategory2
+    )
+      return Boom.badRequest(
+        'You cannot change the result of an assay that was reported by a device.'
+      )
   }
 
   return updateOrCreateResult(
