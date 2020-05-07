@@ -1,6 +1,8 @@
 import _ from 'lodash'
 import classnames from 'classnames/bind'
 import React from 'react'
+import { format } from 'date-fns'
+import { formatDate } from '../../shared/utils/dateFormat'
 
 import {
   DataTableRow as TableRow,
@@ -13,6 +15,7 @@ const cssClasses = classnames.bind(
 
 const CaseTableRow = ({ intl, _case, ...restProps }) => (
   <TableRow {...restProps} className={cssClasses(restProps.className)}>
+    <TableCell>{formatDate(_case.get('createdOn'))}</TableCell>
     <TableCell>{_case.get('externalId')}</TableCell>
     <TableCell>{_case.get('attendingClinic')}</TableCell>
     <TableCell>{_case.get('patientId')}</TableCell>

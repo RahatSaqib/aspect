@@ -53,7 +53,7 @@ export function fetchCases(filtersParams, sortCol, sortDir, page, pageSize) {
   return dispatch => {
     const filters = _.fromPairs([...filtersParams.entries()])
     dispatch(requestCases(sortCol, sortDir, page, pageSize, filters))
-    sortCol = sortCol || 'externalId'
+    sortCol = sortCol || 'createdOn'
     return aspectFetch(
       `/case?${stringify({
         sortCol,
@@ -99,7 +99,7 @@ export function fetchCases(filtersParams, sortCol, sortDir, page, pageSize) {
 export const Case = Immutable.Record({
   items: new Items(),
   table: new Table({
-    sortCol: 'externalId',
+    sortCol: 'createdOn',
     sortDir: 'desc',
     pageSize: 10,
     filters: Immutable.fromJS({

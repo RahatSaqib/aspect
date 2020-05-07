@@ -5019,6 +5019,13 @@ msgstr ""
 msgid "Attending Clinic"
 msgstr ""
 
+#. [pages.CaseList.createdOn]
+#. defaultMessage is:
+#. Case date
+#: i18n/src/result/list/CaseList.json
+msgid "Case date"
+msgstr ""
+
 #. [pages.CaseList.outcomeStatus]
 #. defaultMessage is:
 #. Outcome/Status

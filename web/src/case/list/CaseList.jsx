@@ -36,6 +36,10 @@ import CaseTableRow from './CaseTableRow'
 const cssClasses = classnames.bind(require('./CaseList.css'))
 
 const messages = defineMessages({
+  createdOn: {
+    id: 'pages.CaseList.createdOn',
+    defaultMessage: 'Case date',
+  },
   resultsTitle: {
     id: 'pages.CaseList.title',
     defaultMessage: 'Cases',
@@ -79,6 +83,7 @@ const FILTERS_CONFIG = [
 
 const searchSanitizer = makeSearchParamsSanitizer({
   availableSortCol: [
+    'createdOn',
     'externalId',
     'attendingClinic',
     'patientId',
@@ -101,7 +106,7 @@ const RESULT_PAGE_SIZE_BUTTON_KEYS = _.without(PAGE_SIZE_BUTTON_KEYS, ALL_KEY)
 const enhance = compose(
   withProps(
     makeSortPageSelector({
-      sortCol: 'externalId',
+      sortCol: 'createdOn',
       sortDir: 'desc',
     })
   ),
@@ -193,13 +198,14 @@ export const CaseList = ({
   onRowClick,
   reducedFilters,
 }) => {
-  const AddNewButton = requirePermissions({
-    permissions: ['case:edit', 'case:admin'],
-  })(AspectButton)
-
   const columns = [
     {
-      key: 'code',
+      key: 'createdOn',
+      label: intl.formatMessage(messages.createdOn),
+      sortable: true,
+    },
+    {
+      key: 'externalId',
       label: intl.formatMessage(messages.code),
       sortable: true,
     },
