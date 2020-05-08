@@ -196,7 +196,6 @@ const enhance = compose(
         FILTERS_CONFIG,
         this.props.userPermissions
       )
-
       this.setState({
         reducedFilters,
       })
