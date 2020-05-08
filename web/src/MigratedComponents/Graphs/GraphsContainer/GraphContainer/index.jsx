@@ -1,37 +1,37 @@
-import React, { useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
-import { useIntl } from 'react-intl';
-import classnames from 'classnames/bind';
-import Grid from '@material-ui/core/Grid';
-import AspectCard from '../../../AspectCard';
-import GraphRender from '../../GraphRender';
-import CardSelectors from '../../CardSelectors';
+import React, { useEffect, useState } from 'react'
+import PropTypes from 'prop-types'
+import { useIntl } from 'react-intl'
+import classnames from 'classnames/bind'
+import Grid from '@material-ui/core/Grid'
+import AspectCard from '../../../AspectCard'
+import GraphRender from '../../GraphRender'
+import CardSelectors from '../../CardSelectors'
 
-import messages from '../messages';
+import messages from '../messages'
 
-import { validateGraphConfig } from '../../Helpers/Formatters';
+import { validateGraphConfig } from '../../Helpers/Formatters'
 
-const cssClasses = classnames.bind(require('../GraphsContainer.css'));
+const cssClasses = classnames.bind(require('../GraphsContainer.css'))
 
 const GraphContainer = ({ config, size, assaysFromState }) => {
-  const { title, selectorModifiers = false } = config;
-  const { formatMessage: intlFormatMessage } = useIntl();
-  const { assays, graphType, id } = config;
-  const { innerSize, outerSize } = size;
-  const [whiteListed, setwhiteListed] = useState(false);
+  const { title, selectorModifiers = false } = config
+  const { formatMessage: intlFormatMessage } = useIntl()
+  const { assays, graphType, id } = config
+  const { innerSize, outerSize } = size
+  const [whiteListed, setwhiteListed] = useState(false)
 
   useEffect(() => {
-    const allowed = [];
+    const allowed = []
     validateGraphConfig(config).then(() => {
       assays.map(a =>
         assaysFromState.filter(
           ({ externalId, hasResults }) =>
             externalId === a && hasResults && allowed.push(a)
         )
-      );
-      setwhiteListed(allowed);
-    });
-  }, [config, assays, assaysFromState]);
+      )
+      setwhiteListed(allowed)
+    })
+  }, [config, assays, assaysFromState])
 
   return whiteListed && whiteListed.length ? (
     <Grid item xs={12} lg={outerSize}>
@@ -43,7 +43,7 @@ const GraphContainer = ({ config, size, assaysFromState }) => {
             justify="center"
             actionComponent={{
               component: CardSelectors,
-              props: selectorModifiers
+              props: selectorModifiers,
             }}
           >
             <Grid
@@ -64,13 +64,13 @@ const GraphContainer = ({ config, size, assaysFromState }) => {
         </Grid>
       </Grid>
     </Grid>
-  ) : null;
-};
+  ) : null
+}
 
 GraphContainer.protoTypes = {
   config: PropTypes.oneOfType([PropTypes.object]).isRequired,
   size: PropTypes.oneOfType([PropTypes.object]).isRequired,
-  assaysFromState: PropTypes.oneOfType([PropTypes.array]).isRequired
-};
+  assaysFromState: PropTypes.oneOfType([PropTypes.array]).isRequired,
+}
 
-export default GraphContainer;
+export default GraphContainer

@@ -1,52 +1,52 @@
-import React, { useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
-import classnames from 'classnames/bind';
-import { useSelector, useDispatch } from 'react-redux';
-import Helmet from 'react-helmet';
-import { useIntl } from 'react-intl';
-import { showAcknowledgement } from '../../appNotification/AppNotificationRedux';
-import { fetchAssays } from '../../assay/AssayRedux';
-import messages from './messages';
-import SummaryStatus from './SummaryStatus';
-import InventoryStatus from './InventoryStatus';
-import SiteStatus from './SiteStatus';
-import ActionStatus from './ActionStatus';
-import TargetStatus from './TargetStatus';
-import Reports from './Reports';
-import BrowseSiteDropdown from '../../globals/components/BrowseSiteDropdown';
+import React, { useEffect, useState } from 'react'
+import PropTypes from 'prop-types'
+import classnames from 'classnames/bind'
+import { useSelector, useDispatch } from 'react-redux'
+import Helmet from 'react-helmet'
+import { useIntl } from 'react-intl'
+import { showAcknowledgement } from '../../appNotification/AppNotificationRedux'
+import { fetchAssays } from '../../assay/AssayRedux'
+import messages from './messages'
+import SummaryStatus from './SummaryStatus'
+import InventoryStatus from './InventoryStatus'
+import SiteStatus from './SiteStatus'
+import ActionStatus from './ActionStatus'
+import TargetStatus from './TargetStatus'
+import Reports from './Reports'
+import BrowseSiteDropdown from '../../globals/components/BrowseSiteDropdown'
 // import TreatmentStatus from './TreatmentStatus'
-import GraphsContainer from '../../MigratedComponents/Graphs/GraphsContainer';
-import ColorDemo from './ColorDemo/ColorDemo';
+import GraphsContainer from '../../MigratedComponents/Graphs/GraphsContainer'
+import ColorDemo from './ColorDemo/ColorDemo'
 
-const cssClasses = classnames.bind(require('./Status.css'));
+const cssClasses = classnames.bind(require('./Status.css'))
 
 const Status = ({ history, location, colorDemo }) => {
-  const intl = useIntl();
-  const [marginBottom, setMarginBottom] = useState(0);
-  const dispatch = useDispatch();
-  const userName = useSelector(({ user }) => user.jwt.name);
+  const intl = useIntl()
+  const [marginBottom, setMarginBottom] = useState(0)
+  const dispatch = useDispatch()
+  const userName = useSelector(({ user }) => user.jwt.name)
   const countryIsoAlpha2Code = useSelector(({ user }) =>
     user.culture.substring(3, 5)
-  );
+  )
   const assays = useSelector(({ assay }) =>
     assay.items.toJS().filter(a => a.hasResults)
-  );
+  )
 
   useEffect(() => {
-    dispatch(fetchAssays(false));
-  }, [dispatch]);
+    dispatch(fetchAssays(false))
+  }, [dispatch])
 
   useEffect(() => {
-    const { search } = location;
-    const searchParams = new URLSearchParams(search);
+    const { search } = location
+    const searchParams = new URLSearchParams(search)
 
     if (searchParams.has('fl')) {
       showAcknowledgement({
         title: messages.welcome,
-        messageValues: { userName }
-      });
+        messageValues: { userName },
+      })
     }
-  }, [userName, location]);
+  }, [userName, location])
 
   return (
     <div className={cssClasses('Container')} style={{ marginBottom }}>
@@ -113,17 +113,17 @@ const Status = ({ history, location, colorDemo }) => {
         title={intl.formatMessage(messages.reportsTitle)}
       />
     </div>
-  );
-};
+  )
+}
 
 Status.defaultProps = {
-  colorDemo: true
-};
+  colorDemo: true,
+}
 
 Status.propTypes = {
   colorDemo: PropTypes.bool,
   history: PropTypes.oneOfType([PropTypes.object]).isRequired,
-  location: PropTypes.oneOfType([PropTypes.object]).isRequired
-};
+  location: PropTypes.oneOfType([PropTypes.object]).isRequired,
+}
 
-export default Status;
+export default Status
