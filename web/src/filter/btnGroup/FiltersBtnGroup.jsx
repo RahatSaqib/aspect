@@ -28,7 +28,11 @@ const messages = defineMessages({
   },
   patientOrResearchId: {
     id: 'filter.btnGroup.patientOrResearchId',
-    defaultMessage: 'patient/study ID {patientOrResearchId}',
+    defaultMessage: 'patient/case ID {patientOrCaseId}',
+  },
+  patientOrCaseId: {
+    id: 'filter.btnGroup.patientOrCaseId',
+    defaultMessage: 'patient/case ID {patientOrCaseId}',
   },
   sampleId: {
     id: 'filter.btnGroup.sampleId',
@@ -150,6 +154,7 @@ const filtersOrdering = {
   treatmentStatusId: 22,
   // -1: Special orderings
   siteIds: -1,
+  patientOrCaseId: 23,
 }
 
 const makeButton = labelFn => (props, filterKey) => (
@@ -207,6 +212,9 @@ const buttonBy = {
   ),
   patientOrResearchId: makeButton(({ intl }, patientOrResearchId) =>
     intl.formatMessage(messages.patientOrResearchId, { patientOrResearchId })
+  ),
+  patientOrCaseId: makeButton(({ intl }, patientOrCaseId) =>
+    intl.formatMessage(messages.patientOrCaseId, { patientOrCaseId })
   ),
   sampleId: makeButton(({ intl }, sampleId) =>
     intl.formatMessage(messages.sampleId, { sampleId })
