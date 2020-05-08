@@ -63,7 +63,7 @@ describe('tag endpoints', () => {
 
       beforeEach(() => {
         endpoint = setupRoute('PUT', '/tag/{tagType}/{id}', {
-          async updateTag() {
+          async updateTags() {
             return expectedResponse
           },
         })

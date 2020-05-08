@@ -46,6 +46,7 @@ const SELECT_SHOW_FIELDS = [
   's.street2',
   's.longitude',
   's.latitude',
+  's.geographyId',
 ]
 
 async function listSites(request) {
