@@ -1,10 +1,9 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import classnames from 'classnames/bind';
-import { ResponsiveCalendar } from '@nivo/calendar';
-import IntlContext from '../Helpers/Context/i18n';
-import { GraphLegend } from '../GraphLegend';
-import GraphToolTip from '../GraphToolTip';
+import React from 'react'
+import PropTypes from 'prop-types'
+import { useIntl } from 'react-intl'
+import { ResponsiveCalendar } from '@nivo/calendar'
+import { GraphLegend } from '../GraphLegend'
+import GraphToolTip from '../GraphToolTip'
 
 import {
   formatValuesForGraphs,
@@ -13,8 +12,8 @@ import {
   generateTickValues,
   generateToolTip,
   generateLegend,
-  getMaxValueForDivergent
-} from '../Helpers/Formatters';
+  getMaxValueForDivergent,
+} from '../Helpers/Formatters'
 
 const AspectResponsiveCalendar = ({
   assaysFromState,
@@ -26,8 +25,9 @@ const AspectResponsiveCalendar = ({
   keys,
   tickValuesYShape,
   tickValuesXShape,
-  type
+  type,
 }) => {
+  const { formatNumber: intlFormatNumber } = useIntl()
   const legends = displayLegend
     ? [
         {
@@ -49,61 +49,55 @@ const AspectResponsiveCalendar = ({
             {
               on: 'hover',
               style: {
-                itemOpacity: 1
-              }
-            }
-          ]
-        }
+                itemOpacity: 1,
+              },
+            },
+          ],
+        },
       ]
-    : [];
+    : []
   return (
-    <IntlContext.Consumer>
-      {({ formatNumber: intlFormatNumber }) => {
-        return (
-          <ResponsiveCalendar
-            data={data}
-            keys={keys}
-            indexBy={indexBy}
-            colorBy="index"
-            enableLabel={false}
-            enableGridY={false}
-            padding={0.3}
-            borderWidth={0}
-            borderColor={{ from: 'color', modifiers: [['darker', 1.6]] }}
-            axisTop={null}
-            axisRight={null}
-            labelSkipWidth={12}
-            labelSkipHeight={12}
-            animate
-            motionStiffness={90}
-            motionDamping={15}
-            layers={['grid', 'axes', 'bars', 'markers', GraphLegend]}
-            colors={v => generateColorForValue(v)}
-            margin={generateMargin(tickValuesYShape, displayLegend)}
-            tooltip={v => (
-              <GraphToolTip
-                values={generateToolTip(
-                  v,
-                  culture,
-                  displayMethod,
-                  assaysFromState,
-                  intlFormatNumber
-                )}
-              />
-            )}
-            legends={legends}
-          />
-        );
-      }}
-    </IntlContext.Consumer>
-  );
-};
+    <ResponsiveCalendar
+      data={data}
+      keys={keys}
+      indexBy={indexBy}
+      colorBy="index"
+      enableLabel={false}
+      enableGridY={false}
+      padding={0.3}
+      borderWidth={0}
+      borderColor={{ from: 'color', modifiers: [['darker', 1.6]] }}
+      axisTop={null}
+      axisRight={null}
+      labelSkipWidth={12}
+      labelSkipHeight={12}
+      animate
+      motionStiffness={90}
+      motionDamping={15}
+      layers={['grid', 'axes', 'bars', 'markers', GraphLegend]}
+      colors={v => generateColorForValue(v)}
+      margin={generateMargin(tickValuesYShape, displayLegend)}
+      tooltip={v => (
+        <GraphToolTip
+          values={generateToolTip(
+            v,
+            culture,
+            displayMethod,
+            assaysFromState,
+            intlFormatNumber
+          )}
+        />
+      )}
+      legends={legends}
+    />
+  )
+}
 
 AspectResponsiveCalendar.defaultProps = {
   tickValuesYShape: 'all',
   tickValuesXShape: 'all',
-  type: 'bar'
-};
+  type: 'bar',
+}
 
 AspectResponsiveCalendar.propTypes = {
   assaysFromState: PropTypes.oneOfType([PropTypes.array]).isRequired,
@@ -117,10 +111,10 @@ AspectResponsiveCalendar.propTypes = {
     'bookends',
     'clubsandwich',
     'all',
-    'none'
+    'none',
   ]),
   tickValuesXShape: PropTypes.oneOf(['bookends', 'all', 'none']),
-  type: PropTypes.oneOf(['bar', 'stacked', 'divergent', 'barLegacyTreatment'])
-};
+  type: PropTypes.oneOf(['bar', 'stacked', 'divergent', 'barLegacyTreatment']),
+}
 
-export default AspectResponsiveCalendar;
+export default AspectResponsiveCalendar

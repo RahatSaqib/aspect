@@ -1,16 +1,13 @@
 import React from 'react'
 import ReactShallowRenderer from 'react-test-renderer/shallow'
-import { IntlProvider } from 'react-intl'
+import { createIntl } from 'react-intl'
 import { TaskAggre } from './TaskAggre'
 import { Items } from '../../shared/metaReducers/items'
 import { Table } from '../../shared/metaReducers/table'
 
 describe('TaskAggre module', () => {
-  const intlProvider = new IntlProvider({ locale: 'en' }, {})
-  const { intl } = intlProvider.getChildContext()
-
   const props = {
-    intl,
+    intl: createIntl({ locale: 'en' }),
     location: {
       search: '',
     },

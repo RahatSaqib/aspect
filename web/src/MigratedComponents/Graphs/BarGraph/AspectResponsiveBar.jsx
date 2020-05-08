@@ -1,10 +1,9 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import classnames from 'classnames/bind';
-import { ResponsiveBar } from '@nivo/bar';
-import IntlContext from '../Helpers/Context/i18n';
-import { GraphLegend } from '../GraphLegend';
-import GraphToolTip from '../GraphToolTip';
+import React from 'react'
+import PropTypes from 'prop-types'
+import { useIntl } from 'react-intl'
+import { ResponsiveBar } from '@nivo/bar'
+import { GraphLegend } from '../GraphLegend'
+import GraphToolTip from '../GraphToolTip'
 
 import {
   formatValuesForGraphs,
@@ -13,8 +12,8 @@ import {
   generateTickValues,
   generateToolTip,
   generateLegend,
-  getMaxValueForDivergent
-} from '../Helpers/Formatters';
+  getMaxValueForDivergent,
+} from '../Helpers/Formatters'
 
 const AspectResponsiveBar = ({
   assaysFromState,
@@ -25,20 +24,21 @@ const AspectResponsiveBar = ({
   keys,
   tickValuesYShape,
   tickValuesXShape,
-  type
+  type,
 }) => {
+  const { formatNumber: intlFormatNumber } = useIntl()
   const yTickvalues =
     type === 'divergent'
       ? generateTickValues(data, tickValuesXShape, indexBy, 'X')
-      : generateTickValues(data, tickValuesYShape, keys, 'Y', true);
-  const xTickValues = generateTickValues(data, tickValuesXShape, indexBy, 'X');
+      : generateTickValues(data, tickValuesYShape, keys, 'Y', true)
+  const xTickValues = generateTickValues(data, tickValuesXShape, indexBy, 'X')
   const divergentExtraConfig =
     type === 'divergent'
       ? {
           ...getMaxValueForDivergent(data, 'value'),
-          layout: 'horizontal'
+          layout: 'horizontal',
         }
-      : {};
+      : {}
 
   const legends = displayLegend
     ? [
@@ -61,78 +61,70 @@ const AspectResponsiveBar = ({
             {
               on: 'hover',
               style: {
-                itemOpacity: 1
-              }
-            }
-          ]
-        }
+                itemOpacity: 1,
+              },
+            },
+          ],
+        },
       ]
-    : [];
+    : []
 
   return (
-    <IntlContext.Consumer>
-      {({ formatNumber: intlFormatNumber }) => {
-        return (
-          <ResponsiveBar
-            data={data}
-            keys={keys}
-            indexBy={indexBy}
-            colorBy="index"
-            enableLabel={false}
-            enableGridY={false}
-            {...divergentExtraConfig}
-            padding={0.3}
-            borderWidth={0}
-            borderColor={{ from: 'color', modifiers: [['darker', 1.6]] }}
-            axisTop={null}
-            axisRight={null}
-            labelSkipWidth={12}
-            labelSkipHeight={12}
-            animate
-            motionStiffness={90}
-            motionDamping={15}
-            layers={['grid', 'axes', 'bars', 'markers', GraphLegend]}
-            colors={v => generateColorForValue(v)}
-            margin={generateMargin(tickValuesYShape, displayLegend)}
-            tooltip={v => (
-              <GraphToolTip
-                values={generateToolTip(
-                  v,
-                  displayMethod,
-                  assaysFromState,
-                  intlFormatNumber
-                )}
-              />
-            )}
-            axisLeft={{
-              tickSize: 5,
-              tickValues: yTickvalues,
-              format: v =>
-                formatValuesForGraphs(v, displayMethod, intlFormatNumber)
-            }}
-            axisBottom={{
-              tickSize: 5,
-              tickPadding: 10,
-              tickRotation: 0,
-              legendPosition: 'middle',
-              legendOffset: 32,
-              tickValues: xTickValues,
-              format: v =>
-                formatValuesForGraphs(v, displayMethod, intlFormatNumber)
-            }}
-            legends={legends}
-          />
-        );
+    <ResponsiveBar
+      data={data}
+      keys={keys}
+      indexBy={indexBy}
+      colorBy="index"
+      enableLabel={false}
+      enableGridY={false}
+      {...divergentExtraConfig}
+      padding={0.3}
+      borderWidth={0}
+      borderColor={{ from: 'color', modifiers: [['darker', 1.6]] }}
+      axisTop={null}
+      axisRight={null}
+      labelSkipWidth={12}
+      labelSkipHeight={12}
+      animate
+      motionStiffness={90}
+      motionDamping={15}
+      layers={['grid', 'axes', 'bars', 'markers', GraphLegend]}
+      colors={v => generateColorForValue(v)}
+      margin={generateMargin(tickValuesYShape, displayLegend)}
+      tooltip={v => (
+        <GraphToolTip
+          values={generateToolTip(
+            v,
+            displayMethod,
+            assaysFromState,
+            intlFormatNumber
+          )}
+        />
+      )}
+      axisLeft={{
+        tickSize: 5,
+        tickValues: yTickvalues,
+        format: v => formatValuesForGraphs(v, displayMethod, intlFormatNumber),
       }}
-    </IntlContext.Consumer>
-  );
-};
+      axisBottom={{
+        tickSize: 5,
+        tickPadding: 10,
+        tickRotation: 0,
+        legendPosition: 'middle',
+        legendOffset: 32,
+        tickValues: xTickValues,
+        format: v => formatValuesForGraphs(v, displayMethod, intlFormatNumber),
+      }}
+      legends={legends}
+    />
+  )
+}
 
 AspectResponsiveBar.defaultProps = {
   tickValuesYShape: 'all',
   tickValuesXShape: 'all',
-  type: 'bar'
-};
+  type: 'bar',
+}
 
 AspectResponsiveBar.propTypes = {
   assaysFromState: PropTypes.oneOfType([PropTypes.array]).isRequired,
@@ -145,7 +137,7 @@ AspectResponsiveBar.propTypes = {
     'bookends',
     'clubsandwich',
     'all',
-    'none'
+    'none',
   ]),
   tickValuesXShape: PropTypes.oneOf(['bookends', 'all', 'none']),
   type: PropTypes.oneOf([
@@ -153,8 +145,8 @@ AspectResponsiveBar.propTypes = {
     'stack',
     'group',
     'divergent',
-    'barLegacyTreatment'
-  ])
-};
+    'barLegacyTreatment',
+  ]),
+}
 
-export default AspectResponsiveBar;
+export default AspectResponsiveBar

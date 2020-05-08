@@ -3,7 +3,6 @@ const Promise = require('bluebird')
 const sampleSize = require('lodash/sampleSize')
 const sample = require('lodash/sample')
 
-const resultSampleSize = process.env['seeds.resultSampleSize'] || 25
 const resultMultiplier = process.env['seeds.resultMultiplier'] || 100
 
 async function seed(knex) {
@@ -15,6 +14,7 @@ async function seed(knex) {
   )
   const followUps = await knex('FollowUp').select('id', 'externalId')
   /** Grab random sample from current outcomes equaling % of mulitplier */
+  const resultSampleSize = 25
   const resultsSample = sampleSize(
     results,
     (resultSampleSize / 100) * resultMultiplier

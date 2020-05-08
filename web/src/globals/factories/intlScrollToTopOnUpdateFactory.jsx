@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
-import { intlShape } from 'react-intl'
+import { createIntl } from 'react-intl'
 
 export class ScrollToTopOnUpdate extends PureComponent {
   static propTypes = {
@@ -9,7 +9,7 @@ export class ScrollToTopOnUpdate extends PureComponent {
   }
 
   static contextTypes = {
-    intl: intlShape,
+    intl: createIntl({ locale: 'en' }),
   }
 
   componentDidUpdate({ delegate: { location: prevLocation } }) {

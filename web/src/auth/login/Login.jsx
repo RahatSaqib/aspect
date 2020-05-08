@@ -5,7 +5,7 @@ import { compose, withStateHandlers } from 'recompose'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
-import { defineMessages } from 'react-intl'
+import { defineMessages, injectIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
 import Button from '@material-ui/core/Button'
 import LinearProgress from '@material-ui/core/LinearProgress'
@@ -44,6 +44,7 @@ const messages = defineMessages({
 })
 
 const enhance = compose(
+  injectIntl,
   connect(
     state => ({
       loggedOutReason: state.user.loggedOutReason,
