@@ -226,6 +226,14 @@ const messages = defineMessages({
     id: 'filter.popover.enterPatientOrResearchId',
     defaultMessage: 'Enter patient/study ID...',
   },
+  patientOrCaseId: {
+    id: 'filter.popover.patientOrCaseId',
+    defaultMessage: 'Patient/Case ID',
+  },
+  enterPatientOrCaseId: {
+    id: 'filter.popover.enterPatientOrCaseId',
+    defaultMessage: 'Enter patient/case ID...',
+  },
   sampleId: {
     id: 'filter.popover.sampleId',
     defaultMessage: 'Sample ID',
@@ -603,6 +611,21 @@ export const FiltersPanel = ({
                 messages.enterPatientOrResearchId
               )}
               label={intl.formatMessage(messages.patientOrResearchId)}
+              margin="normal"
+            />
+          </div>
+        )}
+        {config.patientOrCaseId && (
+          <div className={cssClasses('Control')}>
+            <FocusBlurTextField
+              name="patientOrCaseId"
+              value={filters.patientOrCaseId || ''}
+              onCommitValue={onTextFieldCommitValue}
+              InputLabelProps={{
+                shrink: true,
+              }}
+              placeholder={intl.formatMessage(messages.enterPatientOrCaseId)}
+              label={intl.formatMessage(messages.patientOrCaseId)}
               margin="normal"
             />
           </div>

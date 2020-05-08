@@ -178,6 +178,9 @@ export const reduceFiltersConfig = (configObject, userPermissions) => {
             case 'patientOrResearchId':
               result.patientOrResearchId = true
               break
+            case 'patientOrCaseId':
+              result.patientOrCaseId = true
+              break
             case 'sampleId':
               result.sampleId = true
               break

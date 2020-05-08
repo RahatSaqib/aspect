@@ -34,6 +34,7 @@ import resultTreatmentStatus from './resultTreatmentStatus/ResultTreatmentStatus
 import report from './report/ReportRedux'
 import reporter from './reporter/ReporterRedux'
 import patient from './patient/PatientRedux'
+import _case from './case/CaseRedux'
 
 const appReducer = combineReducers({
   form: formReducer,
@@ -53,6 +54,7 @@ const appReducer = combineReducers({
   person,
   accountDetails,
   result,
+  case: _case,
   geography,
   assay,
   assayType,
@@ -105,6 +107,7 @@ const App = Immutable.Record({
   resultTreatmentStatus: undefined,
   reporter: undefined,
   patient: undefined,
+  case: undefined,
 })
 
 const initialState = new App()

@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import React from 'react'
 import { mount } from 'enzyme'
-import { IntlProvider } from 'react-intl'
+import { createIntl } from 'react-intl'
 import Immutable from 'immutable'
 import LinearProgress from '@material-ui/core/LinearProgress'
 
@@ -9,11 +9,8 @@ import { Site } from '../SiteRedux'
 import { SiteDetail } from './SiteDetail'
 
 describe('SiteDetail component', () => {
-  const intlProvider = new IntlProvider({ locale: 'en' }, {})
-  const { intl } = intlProvider.getChildContext()
-
   const props = {
-    intl,
+    intl: createIntl({ locale: 'en' }),
     match: {
       params: {
         siteId: '1',

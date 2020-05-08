@@ -31,7 +31,9 @@ const {
   getLastResultId,
   getLastResult,
 } = require('../deviceApi/utils')
+const { getAdminId } = require('../utils/authUtils')
 
+// asdfsadf
 const getClinicianAccessToken = () =>
   server
     .post('/api/auth')
@@ -896,11 +898,7 @@ describe('Result routes', () => {
               .where('name', 'Partner One')
               .first('id')
           ).id
-          adminId = (
-            await knex('User')
-              .where('name', 'admin')
-              .first('id')
-          ).id
+          adminId = await getAdminId()
           otherUserId = (
             await knex('User')
               .where('name', '<>', 'admin')
@@ -945,7 +943,11 @@ describe('Result routes', () => {
             Object.keys(covidDeviceTypeDevices),
             async deviceTypeId => {
               const externalId = getCaseIdByDeviceTypeId(deviceTypeId)
-              const caseId = await getCaseId({ externalId, partnerId }, true)
+              const caseId = await getCaseId(
+                { externalId, partnerId },
+                true,
+                adminId
+              )
               casesInserted.push({ id: caseId, externalId, partnerId })
             }
           )

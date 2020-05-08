@@ -18,10 +18,10 @@ async function up(knex) {
 }
 
 async function down(knex) {
-  await knex.schema.dropTable('Case')
-
-  await knex.schema.alterTable('Result', row => {
-    row.dropForeign('caseId')
-    row.dropColumns('caseId')
+  await knex.schema.alterTable('Result', tbl => {
+    tbl.dropForeign('caseId')
+    tbl.dropColumns('caseId')
   })
+
+  await knex.schema.dropTable('Case')
 }

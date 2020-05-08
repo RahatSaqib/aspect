@@ -1,6 +1,6 @@
 import React from 'react'
 import { shallow } from 'enzyme'
-import { IntlProvider } from 'react-intl'
+import { createIntl } from 'react-intl'
 import Helmet from 'react-helmet'
 
 import DataTableProgressBar from '../../components/shared/DataTableProgressBar'
@@ -11,10 +11,8 @@ import { Items } from '../../shared/metaReducers/items'
 import { Table } from '../../shared/metaReducers/table'
 
 describe('ReporterList', () => {
-  const intlProvider = new IntlProvider({ locale: 'en' }, {})
-  const { intl } = intlProvider.getChildContext()
   const props = {
-    intl,
+    intl: createIntl({ locale: 'en' }),
     history: jest.fn(),
     location: { search: '?filters=assayType%3DTB' },
     table: new Table(),

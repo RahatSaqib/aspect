@@ -5,6 +5,7 @@ import { compose, lifecycle, withState } from 'recompose'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
+import { injectIntl } from 'react-intl'
 import { showAcknowledgement } from '../../appNotification/AppNotificationRedux'
 import { fetchAssays } from '../../assay/AssayRedux'
 import messages from './messages'
@@ -22,6 +23,7 @@ import ColorDemo from './ColorDemo/ColorDemo'
 const cssClasses = classnames.bind(require('./Status.css'))
 
 const enhance = compose(
+  injectIntl,
   connect(
     state => {
       const assayItems = state.assay.items.toJS()

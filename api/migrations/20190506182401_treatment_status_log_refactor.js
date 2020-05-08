@@ -19,18 +19,17 @@ async function up(knex) {
 }
 
 async function down(knex) {
-  // reset column resultTreatmentStatusId (see 20190402123141_addTreatment_status.js)
-  await knex.schema.alterTable('ResultTreatmentStatusLog', t => {
+  await knex.schema.table('ResultTreatmentStatusLog', t => {
     t.dropForeign('resultTreatmentStatusId')
-    t.dropColumn('resultTreatmentStatusId')
   })
+
   await knex.schema.alterTable('ResultTreatmentStatusLog', t => {
     t.integer('resultTreatmentStatusId')
       .unsigned()
       .after('resultId')
       .notNullable()
-      .index()
       .references('id')
       .inTable('ResultTreatmentStatus')
+      .alter()
   })
 }

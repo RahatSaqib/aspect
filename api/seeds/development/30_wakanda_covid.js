@@ -104,12 +104,14 @@ async function seed(knex) {
     modules.inventory.admin,
     modules.task.admin,
     modules.patient.admin,
+    modules.case.admin,
   ])
 
   await upsertJobFeatures(knex, jobFunctionIdAdmin, [
     features.summaryDashboard,
     features.account,
     features.resultDashboard,
+    features.case,
   ])
 
   const { id: jobFunctionIdRegionalOfficer } = await knex('JobFunction')

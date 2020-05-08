@@ -211,6 +211,12 @@ export const navigations = [
     ],
     requiredFeatures: ['deviceApiKey'],
   },
+  {
+    value: '/browse/case',
+    label: 'Cases',
+    requiredPermissions: ['case:view', 'case:admin', 'case:edit'],
+    requiredFeatures: ['case'],
+  },
 ]
 
 export default enhance(BrowseFilters)

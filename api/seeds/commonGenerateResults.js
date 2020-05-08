@@ -29,7 +29,7 @@ const {
   resultWorkflowStatusToId,
   resultSourceToId,
 } = require('../src/shared/dictionary')
-
+const { addCase } = require('../src/case/service')
 const { getRandomTBPatientData } = require('./commonTbresults')
 const wakandaCovidResultFormSchema = require('./development/fixtures/wakandaCovidResultFormSchema.json')
 
@@ -486,10 +486,14 @@ async function addCovidResults(
       })
     }
 
+    const createdOn = addMinutes(randomDate, 120)
+    const updatedOn = addMinutes(randomDate, 180)
+
     if (!positiveResults) {
-      const caseId = await knex('Case').insert({
+      const caseId = await addCase({
         externalId: caseExternalId,
         partnerId,
+        ...auditFields,
       })
 
       resultToInsert = {
@@ -499,8 +503,8 @@ async function addCovidResults(
         formData: JSON.stringify(formData),
         startedOn: resultCapturedInAspect ? null : randomDate,
         endedOn: addMinutes(randomDate, 100),
-        createdOn: addMinutes(randomDate, 120),
-        updatedOn: addMinutes(randomDate, 180),
+        createdOn,
+        updatedOn,
         patientData: JSON.stringify({
           id: formData.caseId.replace('CASE', 'P'),
           age: formData.age,

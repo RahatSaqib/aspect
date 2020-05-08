@@ -6,6 +6,7 @@ import {
   DataTableRow as TableRow,
   DataTableCell as TableCell,
 } from '../../components/shared/tableBody'
+import { formatRelative } from '../../shared/utils/dateFormat'
 
 const cssClasses = classnames.bind(require('./NotificationTableRow.css'))
 
@@ -16,11 +17,12 @@ const NotificationTableRow = ({ intl, notification, ...restProps }) => {
     notification.get(column) === null
       ? 'Not Configured'
       : notification.get(column)
+
   return (
     <TableRow {...restProps} className={cssClasses(restProps.className)}>
       <TableCell>{notification.get('name')}</TableCell>
       <TableCell>
-        {intl.formatRelative(notification.get('lastTriggeredOn'))}
+        {formatRelative(intl, notification.get('lastTriggeredOn'))}
       </TableCell>
       <TableCell>{notification.get('totalTriggers')}</TableCell>
       <TableCell>{counter('alertCount')}</TableCell>
