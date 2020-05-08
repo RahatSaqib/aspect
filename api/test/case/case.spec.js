@@ -8,7 +8,14 @@ const {
 } = require('./utils')
 const { getAdminId } = require('../utils/authUtils')
 const { getAccessToken } = require('../utils/authUtils')
-const { getCaseId, removeCase, addCase } = require('../../src/case/service')
+const {
+  addCase,
+  getCaseId,
+  removeCase,
+  updateCase,
+} = require('../../src/case/service')
+const { createMessageContext, waitForAction } = require('../utils/mqUtils')
+const { caseAdded, caseUpdated } = require('../../src/case/actions')
 
 const server = supertest.agent('http://localhost:8080')
 
@@ -33,7 +40,11 @@ describe('case/service', () => {
   let accessToken = null
   let adminId = null
   const path = '/api/case'
+  let messageContext
 
+  // helpers
+  const getExternalId = () =>
+    `${Date.now()}_${Math.floor(Math.random() * 10000)}`
   const mockCase = externalId => {
     return {
       createdBy: adminId,
@@ -48,6 +59,9 @@ describe('case/service', () => {
     diseaseId = await getFirstDiseaseId(partnerId)
     accessToken = await getAccessToken('admin', 'test07')
     adminId = await getAdminId()
+
+    messageContext = await createMessageContext()
+    messageContext.bindActionCreators({ caseAdded, caseUpdated })
   })
 
   describe('GET', () => {
@@ -112,14 +126,32 @@ describe('case/service', () => {
     })
   })
 
-  describe('add', () => {
+  describe('add / update', () => {
+    let caseId
     it('Should add case and return the id', async () => {
-      const objCase = mockCase(
-        `non existent externalId ${Math.floor(Math.random() * 10000)}`
-      )
+      const objCase = mockCase(`Some externalId ${getExternalId()}`)
 
-      const caseId = await addCase(objCase)
+      caseId = await addCase(objCase, { messageContext })
       assert.isNotNull(caseId)
+
+      // check that MQ handled action with actual values
+      const waitForCaseAdded = waitForAction(caseAdded(caseId))
+      await waitForCaseAdded
+    })
+
+    it('Should update case and handle MQ message', async () => {
+      const caseIds = await updateCase(
+        { id: caseId },
+        { externalId: `Changed externalId ${getExternalId()}` },
+        { messageContext }
+      )
+      assert.isNotNull(caseIds)
+      assert.isArray(caseIds)
+      assert.isNotEmpty(caseIds)
+
+      await Promise.all(
+        caseIds.map(caseId => waitForAction(caseUpdated(caseId)))
+      )
     })
   })
 

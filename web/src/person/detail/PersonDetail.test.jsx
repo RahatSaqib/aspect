@@ -2,7 +2,7 @@ import Immutable from 'immutable'
 import _ from 'lodash'
 import React from 'react'
 import { shallow } from 'enzyme'
-import { IntlProvider } from 'react-intl'
+import { createIntl } from 'react-intl'
 import { PersonDetail } from './PersonDetail'
 
 function makeContext(userPermissions) {
@@ -13,11 +13,8 @@ function makeContext(userPermissions) {
   }
 }
 describe('PersonDetail module', () => {
-  const intlProvider = new IntlProvider({ locale: 'en' }, {})
-  const { intl } = intlProvider.getChildContext()
-
   const props = {
-    intl,
+    intl: createIntl({ locale: 'en' }),
     editable: false,
     user: makeContext(['person:admin']),
     match: {

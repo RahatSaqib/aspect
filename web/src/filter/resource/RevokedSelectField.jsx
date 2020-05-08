@@ -3,9 +3,10 @@ import _ from 'lodash'
 import PropTypes from 'prop-types'
 import React from 'react'
 import MenuItem from '@material-ui/core/MenuItem'
-import { injectIntl, defineMessages, intlShape } from 'react-intl'
+import { injectIntl, defineMessages } from 'react-intl'
 
 import SelectField from '../../components/shared/SelectField'
+import PropTypeOf from '../../shared/types'
 
 const messages = defineMessages({
   optionFalse: {
@@ -40,7 +41,7 @@ const RevokedSelectField = props => {
 
 RevokedSelectField.propTypes = {
   allItemText: PropTypes.string,
-  intl: intlShape.isRequired,
+  intl: PropTypeOf.intl.isRequired,
   onRevokedChange: PropTypes.func.isRequired,
   value: PropTypes.string,
 }

@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import React from 'react'
 import { compose, withProps, withHandlers, lifecycle } from 'recompose'
-import { defineMessages } from 'react-intl'
+import { defineMessages, injectIntl } from 'react-intl'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
 import Grid from '@material-ui/core/Grid'
@@ -53,6 +53,7 @@ const filtersFromLocation = composeSanitizer(
 )
 
 const enhance = compose(
+  injectIntl,
   withProps(({ location }) => {
     const searchParams = new URLSearchParams(location.search)
     const filtersParams = new URLSearchParams(searchParams.get('filters') || '')

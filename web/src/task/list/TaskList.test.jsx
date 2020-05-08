@@ -1,17 +1,14 @@
 import React from 'react'
 import ReactShallowRenderer from 'react-test-renderer/shallow'
-import { IntlProvider } from 'react-intl'
+import { createIntl } from 'react-intl'
 import Immutable from 'immutable'
 import { TaskList } from './TaskList'
 import { Items } from '../../shared/metaReducers/items'
 import { Table } from '../../shared/metaReducers/table'
 
 describe('TaskList module', () => {
-  const intlProvider = new IntlProvider({ locale: 'en' }, {})
-  const { intl } = intlProvider.getChildContext()
-
   const props = {
-    intl,
+    intl: createIntl({ locale: 'en' }),
     location: {
       search: '',
     },
