@@ -1,7 +1,6 @@
 /* eslint-disable no-unused-vars */
 const _ = require('lodash')
 const Promise = require('bluebird')
-const moment = require('moment')
 
 const treatmentStatuses = ['OnTreatment', 'AwaitingTreatment', 'NotPossible']
 const millisInHour = 1000 * 60 * 60
@@ -17,8 +16,7 @@ const {
   format,
   differenceInDays,
 } = require('date-fns')
-
-const { getLinkedResultDate } = require('./utils')
+const { getLinkedResultDate, getDateFields } = require('./utils')
 const { getMGITResultFromTBPossitive } = require('./commonTB')
 const {
   allResultCategoryToId,
@@ -148,8 +146,7 @@ async function generateResults(
     updatedOn: now,
     updatedBy: adminId,
   }
-  // result categories
-  const resultCategories = await allResultCategoryToId()
+  
   const {
     Detected: resultCategoryDetectedId,
     Positive: resultCategoryPositiveId,
@@ -160,7 +157,7 @@ async function generateResults(
     Invalid: resultCategoryInvalidId,
     NoResult: resultCategoryNoResultId,
     Error: resultCategoryErrorId,
-  } = resultCategories
+  } = await allResultCategoryToId()
 
   const deviceTypes = await knex('DeviceType').select()
   const assays = await knex('Assay').select()
@@ -480,11 +477,8 @@ async function addCovidResults(
 
       linkedResult.formData.dateAndTimeOfTest = newStart
       resultToInsert = _.assign({}, _.omit(linkedResult, ['id']), {
-        startedOn: newStart,
         formData: linkedResult.formData,
-        endedOn: addMinutes(newStart, 100),
-        createdOn: addMinutes(newStart, 120),
-        updatedOn: addMinutes(newStart, 180),
+        ...getDateFields(newStart),
       })
     }
 

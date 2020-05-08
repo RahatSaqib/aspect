@@ -1,6 +1,5 @@
 const Promise = require('bluebird')
 const _ = require('lodash')
-const moment = require('moment')
 const { readJson } = require('fs-extra')
 const path = require('path')
 const { addMilliseconds, subDays, addMinutes, format } = require('date-fns')
@@ -2694,25 +2693,55 @@ function getUniqueId() {
  * @return {[date]} A random date next to the previous result's endedOn field
  */
 function getLinkedResultDate(previousResult) {
-  const previousResultDate = Math.max(
+  const previousResultDateMillis = Math.max(
     previousResult.startedOn,
     previousResult.endedOn
   )
 
-  const now = new Date()
-  const nowMillis = format(addMinutes(now, now.getTimezoneOffset()), 'T')
+  const nowUTCMillis = format(addMinutes(new Date(), now.getTimezoneOffset()), 'T')
 
-  if (previousResultDate > nowMillis)
+  if (previousResultDateMillis > nowUTCMillis)
     throw new Error("Previous result's date can't be greater than today")
 
-  const endedOn = moment(previousResultDate)
-  const diff = moment.duration(endedOn.diff(now))
-  const diffInMinutes = diff.asMinutes()
+  const diffMillis = nowUTCMillis - previousResultDateMillis
 
-  const rndMinutes = _.random(1, diffInMinutes)
-  const newStartDate = addMinutes(previousResultDate, rndMinutes)
-
+  const rndMillis = _.random(1, diffMillis)
+  const newStartDate = new Date(previousResultDateMillis + rndMillis)
+  
   return newStartDate
+}
+
+function getDateFields(startedOn) {
+  const necessaryDiffMillis = 120 * 1000
+
+  const now = new Date()
+  const nowMillis = format(addMinutes(now, now.getTimezoneOffset()), 'T')
+  const startedOnMillis = format(addMinutes(startedOn, startedOn.getTimezoneOffset()), 'T')
+  const diffMillis = (nowMillis - startedOnMillis)
+
+  let endedOn, createdOn, updatedOn = null
+
+  if (diffMillis < necessaryDiffMillis)
+  {
+    // Started On date is close to now, so we calculate the gap's millis
+    const gapMillies = diffMillis / 3
+    const addMillisGap = (date) => addMilliseconds(date, gapMillies)
+    endedOn = addMillisGap(startedOn)
+    createdOn = addMillisGap(endedOn)
+    updatedOn = addMillisGap(createdOn)
+  } else {
+    // Started On date isn't close to now, so we can use fixed gaps
+    endedOn = addMinutes(startedOn, 100)
+    createdOn = addMinutes(endedOn, 120)
+    updatedOn = addMinutes(createdOn, 180)
+  }
+
+  return {
+    startedOn,
+    endedOn,
+    createdOn,
+    updatedOn,
+  }
 }
 
 module.exports = {
@@ -2777,4 +2806,5 @@ module.exports = {
 
   getUniqueId,
   getLinkedResultDate,
+  getDateFields,
 }
