@@ -61,8 +61,10 @@ describe('Site routes', () => {
             assert.property(res.body.data, 'zip')
             assert.property(res.body.data, 'street1')
             assert.property(res.body.data, 'street2')
+            assert.property(res.body.data, 'latitude')
             assert.property(res.body.data, 'longitude')
-            siteData = res.body.data
+            assert.property(res.body.data, 'geographyId')
+            siteData = _.omit(res.body.data, 'geographyId')
             done()
           })
       })

@@ -21,6 +21,7 @@ const {
   addConstraints,
   canViewResults,
   getConstraints,
+  addPartnerQueryConstraints,
 } = require('../auth/constraints')
 const { getUser, getUserByUserId } = require('../auth/service')
 const {
@@ -28,11 +29,21 @@ const {
   resultWorkflowStatusToId,
   resultTreatmentStatusToId,
   resultStatusToId,
+  resultSourceToId,
+  resultTypeToId,
+  resultCategoryToId,
 } = require('../shared/dictionary')
 const { oneDirectionalMd5Hash } = require('../shared/encryption')
 const { returnIso8601StringWithoutTimeZoneOffset } = require('../shared/date')
 const { getPathFromFileReferenceId } = require('../file/service')
-const { getSiteByPartnerCountry } = require('../site/service')
+const { getSiteByPartnerCountry, getSite } = require('../site/service')
+const { getDeviceByDeviceId } = require('../device/service')
+const { updateTagsById } = require('../tag/service')
+const { getCaseId } = require('../case/service')
+const {
+  getAllAssaySchemas,
+  getAssayResultCategories,
+} = require('../assay/service')
 const { getRemoteAddress } = require('../shared/request')
 
 async function getListResults(query, auth, fields = LIST_FIELDS) {
@@ -158,18 +169,6 @@ function getResultTreatmentStatus(response) {
   } else {
     response.treatmentStatusInfo = null
   }
-}
-
-const addPartnerQueryConstraints = (
-  queryBuilder,
-  { partner, country, geography, site }
-) => {
-  if (partner) queryBuilder.where('r.partnerId', partner.id)
-  if (site) queryBuilder.where('r.siteId', partner.id)
-  else if (geography) {
-    if (geography.lgaId) queryBuilder.where('g.lgaId', geography.lgaId)
-    else if (geography.stateId) queryBuilder.where('g.stateId', geography.lgaId)
-  } else if (country) queryBuilder.where('c.id', country.id)
 }
 
 async function exportResults(query, auth) {
@@ -510,7 +509,7 @@ async function downloadResultsList(request) {
     )
     const idsToBeRegistered = _.uniq(_.map(results.data, elem => elem.id))
     if (idsToUpdate && idsToUpdate.length > 0)
-      await updateResultStatus(idsToUpdate, user.id)
+      await updateResultWorkflowStatus(idsToUpdate, user.id, 'Delivered')
     if (idsToBeRegistered && idsToBeRegistered.length > 0)
       await addResultDownloadLog(idsToBeRegistered, user.id)
   }
@@ -531,15 +530,19 @@ async function addResultDownloadLog(idsToBeRegistered, userId) {
   })
 }
 
-async function updateResultStatus(idsToUpdate, userId) {
-  const { id: DeliveredId } = await knex('ResultWorkflowStatus')
-    .where('externalId', 'Delivered')
+async function updateResultWorkflowStatus(
+  idsToUpdate,
+  userId,
+  resultWorkflowStatusExternalId
+) {
+  const { id: resultWorkflowStatusId } = await knex('ResultWorkflowStatus')
+    .where('externalId', resultWorkflowStatusExternalId)
     .first('id')
   const now = new Date()
   await Promise.each(idsToUpdate, async resultId => {
     const [resultWorkflowStatusLogId] = await knex('ResultWorkflowLog').insert({
       resultId,
-      resultWorkflowStatusId: DeliveredId,
+      resultWorkflowStatusId,
       changedOn: now,
       createdOn: now,
       createdBy: userId,
@@ -555,7 +558,12 @@ async function updateResultStatus(idsToUpdate, userId) {
 }
 
 async function showResult(request) {
-  const result = await getResultByResultId(request)
+  const {
+    params: { resultId },
+    auth,
+  } = request
+
+  const result = await getResultByResultId(auth, resultId)
   return result.ok ? result : Boom.notFound()
 }
 
@@ -589,6 +597,11 @@ async function showFileReferences(request) {
     params: { resultId },
     auth,
   } = request
+
+  return showFileReferencesById(auth, resultId)
+}
+
+async function showFileReferencesById(auth, resultId) {
   const dataConstraints = await getConstraints(auth.credentials)
   const fileReferences = await knex('ResultFileReference as rf')
     .join('FileReference as f', 'f.id', 'rf.fileReferenceId')
@@ -675,8 +688,11 @@ async function downloadFileAsync({ auth, params }) {
   return getPathFromFileReferenceId(knex, fileReference.id)
 }
 
-async function getResultByResultId(request, fields = SELECT_SHOW_FIELDS) {
-  const { auth, params } = request
+async function getResultByResultId(
+  auth,
+  resultId,
+  fields = SELECT_SHOW_FIELDS
+) {
   const dataConstraints = await getConstraints(auth.credentials)
   const { userName } = await getUser(auth.credentials.name)
 
@@ -696,8 +712,11 @@ async function getResultByResultId(request, fields = SELECT_SHOW_FIELDS) {
     .leftJoin('ResultForm as rf', function() {
       this.on('r.assayId', 'rf.assayId').andOn('r.partnerId', 'rf.partnerId')
     })
-    .where('r.id', +params.resultId)
-    .modify(addConstraints, dataConstraints, { device: 'd', result: 'r' })
+    .where('r.id', resultId)
+    .modify(addConstraints, dataConstraints, {
+      device: 'd',
+      result: 'r',
+    })
     .select(fields)
 
   let data = null
@@ -731,11 +750,11 @@ async function getResultByResultId(request, fields = SELECT_SHOW_FIELDS) {
       }
     }
     // select files attached to this result
-    const { data: files } = await showFileReferences(request)
+    const { data: files } = await showFileReferencesById(auth, resultId)
     data.files = files
 
     const { data: followUps } = await showResultFollowUps(
-      params.resultId,
+      resultId,
       dataConstraints
     )
     data.followUps = followUps
@@ -743,7 +762,7 @@ async function getResultByResultId(request, fields = SELECT_SHOW_FIELDS) {
 
   if (data) {
     getResultTreatmentStatus(data)
-    data.resultNotes = await getResultNotesByResultId(+params.resultId)
+    data.resultNotes = await getResultNotesByResultId(resultId)
     data.resultTreatmentStatusCreatedBy = userName
   }
 
@@ -797,51 +816,82 @@ async function listResultTypes(request) {
 
 async function updateWorkflowStatus(request) {
   const { auth, params, payload } = request
-  const now = new Date()
   const { resultId } = params
   const { id: currentUserId } = await getUser(auth.credentials.name)
+
   // get the result so we can check access and if status changed
-  const result = await getResultByResultId(request)
+  const result = await getResultByResultId(auth, resultId)
   if (!result.ok) {
     return Boom.notFound()
   }
-  let { resultWorkflowStatusId } = payload
-  const { changedOn = now, operator, reason, updatedOn } = payload
+  const { resultWorkflowStatusId } = payload
+  const { changedOn, operator, reason, updatedOn } = payload
 
-  // check if a externalId is provided
-  if (payload.externalId) {
-    resultWorkflowStatusId = await resultWorkflowStatusToId(payload.externalId)
-
-    if (!resultWorkflowStatusId) {
-      return Boom.badRequest('Invalid ResultWorkflowStatus ID')
-    }
+  const resultWorkflowLogEntry = {
+    resultId,
+    resultWorkflowStatusId,
+    createdBy: currentUserId,
+    operator,
+    reason,
+    changedOn: changedOn || new Date(),
   }
 
-  // update the resultWorkflowStatusId.
-  if (resultWorkflowStatusId !== result.data.resultWorkflowStatusId) {
-    const [lastLogId] = await knex('ResultWorkflowLog').insert({
-      resultId,
-      resultWorkflowStatusId,
-      createdBy: currentUserId,
-      operator,
-      reason,
-      changedOn,
-      createdOn: now,
-    })
+  const errorMessage = await updateResultWorkflowStatusByResultId(
+    knex,
+    resultWorkflowLogEntry,
+    payload.externalId,
+    updatedOn,
+    result.data.resultWorkflowStatusId,
+    result.data.resultWorkflowChangedOn
+  )
 
-    if (!updatedOn || result.data.resultWorkflowChangedOn < updatedOn) {
-      await knex('Result')
-        .where('id', resultId)
-        .update({
-          resultWorkflowStatusLogId: lastLogId,
-          updatedBy: currentUserId,
-          updatedOn: now,
-        })
-    }
+  if (errorMessage) {
+    return Boom.badRequest(errorMessage)
   }
 
   const response = await showResult(request)
   return response
+}
+
+async function updateResultWorkflowStatusByResultId(
+  knex,
+  resultWorkflowLogEntry,
+  resultWorkflowStatusExternalId,
+  updatedOn,
+  currentResultWorkflowStatusId,
+  resultWorkflowChangedOn
+) {
+  const now = new Date()
+
+  // check if a externalId is provided
+  if (resultWorkflowStatusExternalId) {
+    resultWorkflowLogEntry.resultWorkflowStatusId = await resultWorkflowStatusToId(
+      resultWorkflowStatusExternalId
+    )
+    if (!resultWorkflowLogEntry.resultWorkflowStatusId) {
+      return 'Invalid ResultWorkflowStatus ID'
+    }
+  }
+
+  // update the resultWorkflowStatusId.
+  if (
+    resultWorkflowLogEntry.resultWorkflowStatusId !==
+    currentResultWorkflowStatusId
+  ) {
+    const [lastLogId] = await knex('ResultWorkflowLog').insert(
+      resultWorkflowLogEntry
+    )
+
+    if (!updatedOn || resultWorkflowChangedOn < updatedOn) {
+      await knex('Result')
+        .where('id', resultWorkflowLogEntry.resultId)
+        .update({
+          resultWorkflowStatusLogId: lastLogId,
+          updatedBy: resultWorkflowLogEntry.createdBy,
+          updatedOn: now,
+        })
+    }
+  }
 }
 
 async function listTreatmentStatusTypes() {
@@ -868,11 +918,15 @@ async function listTreatmentStatusTypes() {
 }
 
 async function updateTreatmentStatusPost(request) {
-  const { auth, payload } = request
+  const {
+    auth,
+    payload,
+    params: { resultId },
+  } = request
   const { id: currentUserId } = await getUser(auth.credentials.name)
 
   // get the result so we can check access and if status changed
-  const result = await getResultByResultId(request)
+  const result = await getResultByResultId(auth, resultId)
   if (!result.ok) {
     Boom.notFound()
   }
@@ -902,7 +956,41 @@ async function updateTreatmentStatus(
   currentUserId,
   result,
   resultTreatmentStatusId,
-  externalId,
+  resultTreatmentStatusExternalId,
+  data,
+  method,
+  changedOn = new Date()
+) {
+  const now = new Date()
+
+  const lastTreatment = await updateTreatmentStatusByResultId(
+    currentUserId,
+    result.data.id,
+    result.data.resultTreatmentStatusId,
+    resultTreatmentStatusExternalId,
+    resultTreatmentStatusId,
+    data,
+    method,
+    changedOn
+  )
+
+  const response = await showResult(request)
+  response.data.treatmentStatus = lastTreatment
+
+  if (!response.data.resultTreatmentStatusCreatedOn) {
+    response.data.resultTreatmentStatusCreatedOn =
+      result.data.endedOn || result.data.startedOn || now
+  }
+
+  return response
+}
+
+async function updateTreatmentStatusByResultId(
+  userId,
+  resultId,
+  currentTreatmentStatusId,
+  resultTreatmentStatusExternalId,
+  resultTreatmentStatusId,
   data,
   method,
   changedOn = new Date()
@@ -911,8 +999,10 @@ async function updateTreatmentStatus(
 
   let treatmentStatusId = null
   // check if a externalId is provided
-  if (externalId) {
-    treatmentStatusId = await resultTreatmentStatusToId(externalId)
+  if (resultTreatmentStatusExternalId) {
+    treatmentStatusId = await resultTreatmentStatusToId(
+      resultTreatmentStatusExternalId
+    )
     if (!treatmentStatusId) {
       return Boom.badRequest('Invalid externalId')
     }
@@ -926,21 +1016,18 @@ async function updateTreatmentStatus(
     }
     treatmentStatusId = resultTreatmentStatusId
   }
-  let lastTreatment = await getLastTreatmentStatusByResult(result.data.id)
-  if (
-    treatmentStatusId !== result.data.resultTreatmentStatusId &&
-    treatmentStatusId
-  ) {
+  let lastTreatment = await getLastTreatmentStatusByResult(resultId)
+  if (treatmentStatusId !== currentTreatmentStatusId && treatmentStatusId) {
     const [treatmentStatusLogId] = await knex(
       'ResultTreatmentStatusLog'
     ).insert({
-      resultId: result.data.id,
+      resultId,
       resultTreatmentStatusId: treatmentStatusId,
       method,
       data,
       createdOn: now,
       changedOn,
-      createdBy: currentUserId,
+      createdBy: userId,
     })
 
     if (
@@ -948,19 +1035,19 @@ async function updateTreatmentStatus(
       (lastTreatment && lastTreatment.changedOn < changedOn)
     ) {
       await knex('Result')
-        .where('id', result.data.id)
+        .where('id', resultId)
         .update({
           treatmentStatusLogId,
-          updatedBy: currentUserId,
+          updatedBy: userId,
           updatedOn: now,
         })
-      lastTreatment = await getLastTreatmentStatusByResult(result.data.id)
+      lastTreatment = await getLastTreatmentStatusByResult(resultId)
     }
   }
 
   if (data) {
     const [{ treatmentStatusLogId }] = await knex('Result')
-      .where('id', result.data.id)
+      .where('id', resultId)
       .select('treatmentStatusLogId')
     await knex('ResultTreatmentStatusLog')
       .where('id', treatmentStatusLogId)
@@ -970,15 +1057,7 @@ async function updateTreatmentStatus(
       })
   }
 
-  const response = await showResult(request)
-  response.data.treatmentStatus = lastTreatment
-
-  if (!response.data.resultTreatmentStatusCreatedOn) {
-    response.data.resultTreatmentStatusCreatedOn =
-      result.data.endedOn || result.data.startedOn || now
-  }
-
-  return response
+  return lastTreatment
 }
 
 // helper func
@@ -1003,7 +1082,7 @@ async function addResultNote(request) {
   const { id: currentUserId } = await getUser(auth.credentials.name)
 
   // get the result so we can check access and if status changed
-  const result = await getResultByResultId(request)
+  const result = await getResultByResultId(auth, resultId)
   if (!result.ok) {
     return Boom.notFound()
   }
@@ -1051,7 +1130,7 @@ async function addResultNote(request) {
     })
   }
 
-  const resultNotes = await getResultNotesByResultId(+params.resultId)
+  const resultNotes = await getResultNotesByResultId(resultId)
 
   return {
     ok: true,
@@ -1065,7 +1144,7 @@ async function deleteResultNote(request) {
   const { resultId, commentId } = params
 
   // get the result so we can check access
-  const result = await getResultByResultId(request)
+  const result = await getResultByResultId(auth, resultId)
   if (!result.ok) {
     return Boom.notFound()
   }
@@ -1084,7 +1163,7 @@ async function deleteResultNote(request) {
     .where('resultId', resultId)
     .del()
 
-  const resultNotes = await getResultNotesByResultId(+params.resultId)
+  const resultNotes = await getResultNotesByResultId(resultId)
 
   return {
     ok: true,
@@ -1094,15 +1173,18 @@ async function deleteResultNote(request) {
 }
 
 async function allResultNotes(request) {
-  const { params } = request
+  const {
+    params: { resultId },
+    auth,
+  } = request
 
   // get the result so we can check access and if status changed
-  const result = await getResultByResultId(request)
+  const result = await getResultByResultId(auth, resultId)
   if (!result.ok) {
     return Boom.notFound()
   }
 
-  const resultNotes = await getResultNotesByResultId(+params.resultId)
+  const resultNotes = await getResultNotesByResultId(resultId)
 
   return {
     ok: true,
@@ -1159,10 +1241,9 @@ async function updateFormData(request) {
     payload,
     plugins: { messageContext },
   } = request
-  const now = new Date()
   const { resultId } = params
 
-  const result = await getResultByResultId(request, [
+  const result = await getResultByResultId(auth, resultId, [
     'r.assayId',
     'r.partnerId',
     'r.formData',
@@ -1170,25 +1251,54 @@ async function updateFormData(request) {
   if (!result.ok) {
     return Boom.notFound()
   }
-  const existingFormData = _.get(result.data, 'formData', {})
 
-  const mergedFormData = _.merge({}, existingFormData, payload)
+  const errorMessage = await updateFormDataByResultId(
+    resultId,
+    result.data.partnerId,
+    result.data.assayId,
+    _.get(result.data, 'formData', {}),
+    payload,
+    auth,
+    messageContext,
+    getRemoteAddress(request),
+    params
+  )
+
+  if (errorMessage) {
+    return Boom.badRequest(errorMessage)
+  }
+
+  const response = await showResult(request)
+  return response
+}
+
+async function updateFormDataByResultId(
+  resultId,
+  partnerId,
+  assayId,
+  existingFormData,
+  newFormData,
+  auth,
+  messageContext,
+  senderIp,
+  params
+) {
+  const now = new Date()
+  const mergedFormData = _.merge({}, existingFormData, newFormData)
   if (!_.isEqual(existingFormData, mergedFormData)) {
     const resultForm = await knex('ResultForm')
       .where({
-        partnerId: result.data.partnerId,
-        assayId: result.data.assayId,
+        partnerId,
+        assayId,
       })
       .first('formSchema')
 
     if (!resultForm || _.isEmpty(resultForm.formSchema)) {
-      return Boom.badRequest(
-        'This result cannot accept form data because no form schema is defined.'
-      )
+      return 'This result cannot accept form data because no form schema is defined.'
     }
     const formSchema = JSON.parse(resultForm.formSchema)
     const unrecognisedFields = _.difference(
-      Object.keys(payload),
+      Object.keys(newFormData),
       Object.keys(formSchema.fields)
     )
     if (!_.isEmpty(unrecognisedFields)) {
@@ -1196,11 +1306,11 @@ async function updateFormData(request) {
         unrecognisedFields.length > 1
           ? `This result cannot accept the following fields in it's form data: [${unrecognisedFields.join()}] because they are not defined in the forms schema.`
           : `This result cannot accept the following field in it's form data: ${unrecognisedFields[0]} because it is not defined in the forms schema.`
-      return Boom.badRequest(undefinedFieldMessage)
+      return undefinedFieldMessage
     }
     const fieldValidationErrors = []
-    _.each(Object.keys(payload), formFieldKey => {
-      const formFieldValue = _.get(payload, formFieldKey)
+    _.each(Object.keys(newFormData), formFieldKey => {
+      const formFieldValue = _.get(newFormData, formFieldKey)
       const formFieldSchema = _.get(formSchema, ['fields', formFieldKey])
       if (!_.isNil(formFieldValue)) {
         const allowMultipleSelection = _.get(
@@ -1237,7 +1347,7 @@ async function updateFormData(request) {
       }
     })
     if (!_.isEmpty(fieldValidationErrors)) {
-      return Boom.badRequest(fieldValidationErrors.join('\n'))
+      return fieldValidationErrors.join('\n')
     }
     messageContext.bindActionCreators({
       resultUpdated,
@@ -1254,30 +1364,24 @@ async function updateFormData(request) {
       await knex('Result')
         .where('id', resultId)
         .update(updatedResult)
-      const aspectDeviceTypeId = await deviceTypeToId('Aspect')
-      if (aspectDeviceTypeId) {
-        const { id: deviceId } =
-          (await knex('Device')
-            .where({
-              partnerId: result.data.partnerId,
-              deviceTypeId: aspectDeviceTypeId,
-            })
-            .first('id')) || {}
-        if (deviceId) {
-          ;[deviceLogId] = await knex('DeviceLog').insert({
-            deviceId,
-            resultId,
-            source: 'Result Edited in Aspect',
-            createdOn: now,
-            senderIp: getRemoteAddress(request),
-            rawMessage: JSON.stringify({
-              auth: { credentials: { name: auth.credentials.name } },
-              params,
-              payload,
-            }),
-          })
-        }
+
+      const deviceId = await getAspectDeviceId(partnerId)
+
+      if (deviceId) {
+        ;[deviceLogId] = await knex('DeviceLog').insert({
+          deviceId,
+          resultId,
+          source: 'Result Edited in Aspect',
+          createdOn: now,
+          senderIp,
+          rawMessage: JSON.stringify({
+            auth: { credentials: { name: auth.credentials.name } },
+            params,
+            payload: newFormData,
+          }),
+        })
       }
+
       messageContext.resultUpdated(resultId, deviceLogId, currentUserId)
     })
     if (deviceLogId) {
@@ -1286,8 +1390,22 @@ async function updateFormData(request) {
         .catch(_.noop)
     }
   }
-  const response = await showResult(request)
-  return response
+}
+
+async function getAspectDeviceId(partnerId) {
+  const aspectDeviceTypeId = await deviceTypeToId('Aspect')
+  if (aspectDeviceTypeId) {
+    const { id: deviceId } =
+      (await knex('Device')
+        .where({
+          partnerId,
+          deviceTypeId: aspectDeviceTypeId,
+        })
+        .first('id')) || {}
+    if (deviceId) {
+      return deviceId
+    }
+  }
 }
 
 async function listWorkflowStatusTypes() {
@@ -1344,7 +1462,7 @@ async function getWorkflowStatusLogByResultId(request) {
       'log.resultWorkflowStatusId',
       'rs.id'
     )
-    .where('log.resultId', +params.resultId)
+    .where('log.resultId', params.resultId)
 
   // get total count for paging
   const getCount = resultQuery
@@ -1644,7 +1762,7 @@ async function setResultFollowUp(request) {
   const { id: currentUserId } = await getUser(auth.credentials.name)
 
   // get the result so we can check access and if status changed
-  const result = await getResultByResultId(request)
+  const result = await getResultByResultId(auth, resultId)
   if (!result.ok) {
     return Boom.notFound()
   }
@@ -1703,7 +1821,7 @@ async function updateResultFollowUp(request) {
   const { id: currentUserId } = await getUser(auth.credentials.name)
 
   // get the result so we can check access and if status changed
-  const result = await getResultByResultId(request)
+  const result = await getResultByResultId(auth, resultId)
   if (!result.ok) {
     return Boom.notFound()
   }
@@ -1750,7 +1868,7 @@ async function deleteResultFollowUp(request) {
   const { id: currentUserId } = await getUser(auth.credentials.name)
 
   // get the result so we can check access
-  const result = await getResultByResultId(request)
+  const result = await getResultByResultId(auth, resultId)
   if (!result.ok) {
     return Boom.notFound()
   }
@@ -1849,7 +1967,7 @@ async function transferResult(request) {
   )
 
   // get the result so we can check access
-  const result = await getResultByResultId(request)
+  const result = await getResultByResultId(auth, resultId)
   if (!result.ok) {
     return Boom.notFound('Result with requested Id is not found')
   }
@@ -1974,9 +2092,10 @@ async function updateTransferNotification(request) {
   const {
     params: { resultId },
     payload: { firstViewedOn },
+    auth,
   } = request
 
-  const result = await getResultByResultId(request)
+  const result = await getResultByResultId(auth, resultId)
 
   if (!result.ok) {
     return Boom.notFound('Result with requested Id is not found')
@@ -1992,7 +2111,7 @@ async function updateTransferNotification(request) {
       firstViewedOn,
     })
 
-  const data = await getResultByResultId(request)
+  const data = await getResultByResultId(auth, resultId)
 
   return data
 }
@@ -2003,6 +2122,7 @@ function getBaseQueryForResults() {
     .innerJoin('AssayType as at', 'a.assayTypeId', 'at.id')
     .innerJoin('Device as d', 'r.deviceId', 'd.id')
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
+    .innerJoin('ResultSource as rso', 'r.resultSourceId', 'rso.id')
     .leftJoin('PartnerAssay as pa', function() {
       this.on('r.assayId', 'pa.assayId').andOn('r.partnerId', 'pa.partnerId')
     })
@@ -2367,6 +2487,295 @@ async function followUpAggregations(request) {
   }
 }
 
+async function createResult(request) {
+  return updateOrCreateResult(request)
+}
+
+async function updateResult(request) {
+  const {
+    params: { resultId },
+    auth,
+    payload,
+  } = request
+
+  const result = await getResultByResultId(auth, resultId, [
+    'r.id',
+    'r.siteId',
+    'r.assayId',
+    'r.deviceId',
+    'r.sampleId',
+    'r.partnerId',
+    'r.resultCategory1',
+    'r.resultCategory2',
+    'r.endedOn',
+    'rso.externalId as resultSourceExternalId',
+  ])
+  if (!result.ok) {
+    return Boom.notFound(
+      'This result does not exist or you do not have access.'
+    )
+  }
+
+  if (result.data.resultSourceExternalId !== 'EnteredByHand') {
+    // The end-datetime can't be changed if the assay was not entered by hand and should be disabled in the UI anyway.
+    // To avoid timezone/clock issues when updating a result, override the date to the one we have in the database.
+    payload.endedOn = result.data.endedOn
+    if (
+      payload.resultCategory1 !== result.data.resultCategory1 ||
+      (payload.resultCategory2 || null) !==
+        (result.data.resultCategory2 || null)
+    )
+      return Boom.badRequest(
+        'You cannot change the result of an assay that was reported by a device.'
+      )
+  }
+
+  return updateOrCreateResult(
+    request,
+    _.pick(result.data, [
+      'id',
+      'siteId',
+      'assayId',
+      'deviceId',
+      'sampleId',
+      'partnerId',
+    ])
+  )
+}
+
+async function updateOrCreateResult(request, result = {}) {
+  const {
+    auth,
+    payload,
+    plugins: { messageContext },
+  } = request
+  const { id: userId, partnerId } = await getUser(auth.credentials.name)
+  const dataConstraints = await getConstraints(auth.credentials)
+  const updating = result.id
+  const now = new Date()
+
+  // check that user has access to site
+  const site = await getSite(payload.siteId || result.siteId, dataConstraints)
+  if (_.isEmpty(site)) {
+    return Boom.notFound('This site does not exist or you do not have access.')
+  }
+
+  // check that user has access to the assay
+  const [assay] = await getAllAssaySchemas(
+    partnerId,
+    userId,
+    payload.assayId || result.assayId
+  )
+  if (_.isEmpty(assay)) {
+    return Boom.notFound('This assay does not exist or you do not have access.')
+  }
+
+  // is the selected category valid for the assay?
+  const validCategories = _.map(await getAssayResultCategories(assay.id), 'id')
+  if (
+    validCategories.indexOf(payload.resultCategory1) === -1 ||
+    (payload.resultCategory2 &&
+      validCategories.indexOf(payload.resultCategory2) === -1)
+  ) {
+    return Boom.badRequest('The selected result is not valid for this assay.')
+  }
+
+  // deviceId is optional. if null and creating a result, it has to be an assay that is for manual entry only
+  let { deviceId } = result
+  if (!updating) {
+    deviceId = await getDeviceIdForResultCreation(
+      payload,
+      partnerId,
+      assay.externalId
+    )
+  }
+  // check that user has access to device
+  const device = await getDeviceByDeviceId({
+    deviceId,
+    credentials: auth.credentials,
+  })
+
+  if (!device) {
+    return Boom.notFound(
+      'This device does not exist or you do not have access.'
+    )
+  }
+
+  if (!device.hasResults) {
+    return Boom.badRequest(
+      'This device does not generate results. Make sure that you have selected the correct device.'
+    )
+  }
+
+  // we can start filling in the result details now
+  if (!updating) {
+    result.assayId = assay.id
+    result.partnerId = partnerId
+    result.siteId = site.id
+    result.geographyId = site.geographyId
+    result.deviceId = device.id
+    result.longitude = site.longitude
+    result.latitude = site.latitude
+    result.resultSourceId = await resultSourceToId('EnteredByHand')
+    result.resultTypeId = await resultTypeToId('Patient')
+    result.createdOn = now
+    result.createdBy = userId
+    result.resultData = '{}'
+  }
+
+  result.resultCategory1 = payload.resultCategory1
+  result.resultCategory2 = payload.resultCategory2
+  result.startedOn = payload.endedOn
+  result.endedOn = payload.endedOn
+  result.updatedOn = now
+  result.updatedBy = userId
+  result.reportableSiteId =
+    payload.sampleOriginSiteId || device.defaultReportableSiteId || site.id
+
+  // create sample-entry or update it
+  result.sampleId = await updateOrCreateSample(
+    result.sampleId,
+    payload.sampleId,
+    payload.sampleTypeId,
+    payload.sampleCollectedOn,
+    payload.sampleOriginSiteId
+  )
+
+  // create case entry or update it
+  if (payload.caseId) {
+    result.caseId = await getCaseId(
+      { externalId: payload.caseId, partnerId },
+      true,
+      userId
+    )
+  } else if (!payload.caseId) {
+    result.caseId = null
+  }
+
+  // looks like all's well. create or update result now so we have a result id for tags, form data, etc.
+  // TODO: Log any changes (see ASP-1371)
+  if (updating) {
+    await knex('Result')
+      .update(result)
+      .where('id', result.id)
+  } else {
+    ;[result.id] = await knex('Result').insert(result)
+  }
+
+  // update or insert tags
+  await updateTagsById(result.id, 'result', payload.tags, auth)
+
+  // update result form data
+  await updateFormDataByResultId(
+    result.id,
+    result.partnerId,
+    result.assayId,
+    result.formData,
+    payload.formData,
+    auth,
+    messageContext,
+    getRemoteAddress(request)
+  )
+
+  // update/insert workflow status
+  const resultWorkflowStatusExternalId =
+    result.resultCategory1 === (await resultCategoryToId('Error'))
+      ? 'Error'
+      : 'Deliverable'
+
+  const resultWorkflowLogEntry = {
+    resultId: result.id,
+    createdBy: userId,
+    operator: null,
+    reason: 'Manual Result Entry',
+    changedOn: now,
+    createdOn: now,
+  }
+  await updateResultWorkflowStatusByResultId(
+    knex,
+    resultWorkflowLogEntry,
+    resultWorkflowStatusExternalId,
+    null,
+    result.resultWorkflowStatusId,
+    result.resultWorkflowChangedOn
+  )
+
+  // insert treatment status (can't be changed manually, so only do on insert)
+  if (!updating) {
+    const resultTreatmentStatusId = await resultTreatmentStatusToId(
+      'AwaitingTreatment'
+    )
+    await updateTreatmentStatusByResultId(
+      userId,
+      result.id,
+      null,
+      null,
+      resultTreatmentStatusId,
+      null,
+      'Manual Result Entry',
+      now
+    )
+  }
+
+  const r = await getResultByResultId(auth, result.id)
+  return r
+}
+
+async function getDeviceIdForResultCreation(
+  payload,
+  partnerId,
+  assayExternalId
+) {
+  if (payload.deviceId) {
+    return payload.deviceId
+  }
+  // TODO: configure this in the db instead of hardcoding
+  const assaysForManualEntry = [
+    'assayGenericCovid19',
+    'GenericRDT',
+    'DaktariHivVL',
+  ]
+  if (assaysForManualEntry.indexOf(assayExternalId) === -1) {
+    throw Boom.badRequest(
+      'You did not select a device and this assay can not be entered manually without a device. Please specify a device.'
+    )
+  }
+  const aspectDeviceId = await getAspectDeviceId(partnerId)
+  if (!aspectDeviceId) {
+    throw Boom.internal(
+      'Could not find Aspect device for assigning this result.'
+    )
+  }
+  return aspectDeviceId
+}
+
+async function updateOrCreateSample(
+  sampleId,
+  externalId,
+  sampleTypeId,
+  collectedOn,
+  originSiteId
+) {
+  let sampleData = {
+    externalId,
+    collectedOn,
+    sampleTypeId,
+    originSiteId,
+  }
+
+  if (sampleId) {
+    // remove undefined (= not part of the POST fields) for updating
+    sampleData = _.omitBy(sampleData, _.isUndefined)
+    if (!_.isEmpty(sampleData)) {
+      await knex('Sample')
+        .update(sampleData)
+        .where({ id: sampleId })
+    }
+    return sampleId
+  }
+  return [await knex('Sample').insert(sampleData)]
+}
+
 module.exports = {
   updateTransferNotification,
   listResults,
@@ -2401,5 +2810,7 @@ module.exports = {
   getQueryForResultsListAndExport,
   queryResultFollowUpLastItems,
   getListResults,
+  createResult,
+  updateResult,
   addPartnerQueryConstraints,
 }

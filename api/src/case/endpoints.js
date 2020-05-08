@@ -3,7 +3,7 @@ const { asyncHandler, validateSortPageParams } = require('../routes')
 const {
   validateAllGeographyFilterParams,
 } = require('../geography/requestValidation')
-const { getCases } = require('./service')
+const { getCases, onCaseAdded, onCaseUpdated } = require('./service')
 
 const routes = [
   {
@@ -93,4 +93,13 @@ const routes = [
   },
 ]
 
-module.exports = { routes }
+const subscriptions = [
+  {
+    actions: {
+      CASE_ADDED: onCaseAdded,
+      CASE_UPDATED: onCaseUpdated,
+    },
+  },
+]
+
+module.exports = { routes, subscriptions }
