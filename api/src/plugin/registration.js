@@ -322,7 +322,7 @@ async function onGxAlertAuthenticated(/* { gxUser, user, personId, partnerId, kn
  * CASE_ADDED action has been published referencing
  * a Case handled by this plugin
  */
-async function onCaseAdded(/* caseId, messageContext */) {
+async function onCaseAdded(/* { caseId }, { messageContext } */) {
   // do nothing by default
 }
 
@@ -330,7 +330,7 @@ async function onCaseAdded(/* caseId, messageContext */) {
  * CASE_UPDATED action has been published referencing
  * a Case handled by this plugin
  */
-async function onCaseUpdated(/* caseId, messageContext */) {
+async function onCaseUpdated(/* { caseId }, { messageContext } */) {
   // do nothing by default
 }
 

@@ -202,7 +202,7 @@ async function onCaseChanged(caseId, messageContext, isAdded) {
       [partnerPluginName, deviceTypePluginName],
       isAdded ? 'onCaseAdded' : 'onCaseUpdated'
     )
-    await pluginOnCaseChanged(caseId, messageContext)
+    await pluginOnCaseChanged({ caseId }, { messageContext })
   }
 }
 
