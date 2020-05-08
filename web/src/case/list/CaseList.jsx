@@ -3,7 +3,7 @@ import _ from 'lodash'
 import Immutable from 'immutable'
 import React from 'react'
 import { compose, withProps, withHandlers, lifecycle } from 'recompose'
-import { defineMessages } from 'react-intl'
+import { defineMessages, injectIntl } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
@@ -104,6 +104,7 @@ const filtersFromLocation = composeSanitizer(
 const RESULT_PAGE_SIZE_BUTTON_KEYS = _.without(PAGE_SIZE_BUTTON_KEYS, ALL_KEY)
 
 const enhance = compose(
+  injectIntl,
   withProps(
     makeSortPageSelector({
       sortCol: 'createdOn',
@@ -139,7 +140,6 @@ const enhance = compose(
         dataset: { caseId },
       },
     }) => {
-      console.log('sos un gil', history)
       history.push(`/browse/case/${caseId}`)
     },
   }),
@@ -170,7 +170,6 @@ const enhance = compose(
     },
 
     componentDidMount() {
-      console.log(this.props)
       this.props.onInitialLoad()
     },
 
