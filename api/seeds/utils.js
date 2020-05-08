@@ -2711,6 +2711,11 @@ function getLinkedResultDate(previousResult) {
   return newStartDate
 }
 
+/**
+ * Gets the randomly generated results fields startedOn, endedOn, createdOn and updatedOn based on the date provided as parameter.
+ * @param  {[object]} startedOn The based on date
+ * @return {[object]} An object containing fields startedOn, endedOn, createdOn and updatedOn.
+ */
 function getDateFields(startedOn) {
   const necessaryDiffMillis = 120 * 1000
 
