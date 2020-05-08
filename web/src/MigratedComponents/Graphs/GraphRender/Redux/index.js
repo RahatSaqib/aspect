@@ -23,6 +23,8 @@ export const RECEIVE_CLINICAL_INDICATORS_DASHBOARD =
 
 export function fetchClinicalIndicatorsDashboard(config) {
   let endpointParams = ''
+  console.log(config)
+
   const { parentId, id, whiteListed, api, title } = removeEmptyParams(config)
   const { endpoint, params, method = 'GET' } = api
   const assayParams = whiteListed
@@ -50,12 +52,7 @@ export function fetchClinicalIndicatorsDashboard(config) {
       method === 'GET'
         ? {}
         : {
-            body: JSON.stringify({
-              siteId: null,
-              endedOn: '2020-04-30',
-              assayTypeId: null,
-              resultCategoryId: null,
-            }),
+            body: JSON.stringify(params),
           }
     return aspectFetch(endpointToCall, {
       method,

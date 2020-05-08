@@ -165,10 +165,21 @@ const groupForDivergent = (data, indexBy, keyToConsume, filterBy) => {
   return sortBy(normaliseKeys(grouped), ['inRange'])
 }
 
-const groupForOldTreatmentAPI = (data, keyToConsume, indexBy, filterBy) => {
-  const grouped = data.reduce((acc, curr) => {
+const groupForOldTreatmentAPI = (
+  data,
+  keyToConsume,
+  indexBy,
+  formatDate,
+  filterBy
+) => {
+  const filtered = filterBy ? filterByMultiple(data, filterBy) : data
+  const grouped = filtered.reduce((acc, curr) => {
+    const dateFormatted = formatDate
+      ? format(negateTimeZoneOffset(curr[indexBy]), formatDate)
+      : curr[indexBy]
+
     acc[curr[indexBy]] = {
-      monthTested: curr[indexBy],
+      monthTested: dateFormatted,
       Confirmed: Number(curr[keyToConsume]).toFixed(1),
       NotConfirmed: Number(100 - curr[keyToConsume]).toFixed(1),
     }
@@ -512,6 +523,25 @@ const formatDataByGraphType = (
 
     case 'divergent':
       grouped = groupForDivergent(data, indexBy, keyToConsume, filterBy)
+      break
+
+    case 'barLegacyTreatment':
+      grouped = groupForOldTreatmentAPI(
+        data,
+        keyToConsume,
+        indexBy,
+        formatDate,
+        filterBy
+      )
+      break
+
+    case 'pieLegacyTreatment':
+      grouped = groupForPieOldTreatmentAPI(
+        data,
+        keyToConsume,
+        indexBy,
+        filterBy
+      )
       break
 
     case 'pie':

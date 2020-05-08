@@ -19,10 +19,15 @@ const treatmentStatusGraphs = {
     ],
     selectorModifiers: [
       {
-        id: 'Viral Load',
-        state: 'dashboard.assayResultCategoryList',
+        selectedValue: 'All Sites',
+        state: 'dashboard.siteList',
         component: AspectDropdown,
       },
+      // {
+      //   selectedValue: 'Viral Load',
+      //   state: 'dashboard.assayResultCategoryList',
+      //   component: AspectDropdown
+      // }
     ],
     graphType: [
       {
@@ -34,7 +39,12 @@ const treatmentStatusGraphs = {
         api: {
           method: 'POST',
           endpoint: 'result/confirmed-treatment-tracking',
-          params: {},
+          params: {
+            siteId: null,
+            endedOn: '2020-04-30',
+            assayTypeId: null,
+            resultCategoryId: null,
+          },
         },
         indexBy: 'monthTested',
         keyToConsume: 'pcConfirmed',
@@ -45,7 +55,7 @@ const treatmentStatusGraphs = {
         formatDate: 'MMM yy',
       },
       {
-        id: 'treatmentStatusAggregate',
+        id: 'treatmentStatusMonthly',
         component: PieGraph,
         type: 'pieLegacyTreatment',
         size: 4,
@@ -53,7 +63,12 @@ const treatmentStatusGraphs = {
         api: {
           method: 'POST',
           endpoint: 'result/confirmed-treatment-tracking',
-          params: {},
+          params: {
+            siteId: null,
+            endedOn: '2020-04-30',
+            assayTypeId: null,
+            resultCategoryId: null,
+          },
         },
         indexBy: 'monthTested',
         keyToConsume: 'cntConfirmed',
