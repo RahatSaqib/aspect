@@ -3,6 +3,11 @@ const {
   getConstraints,
   addPartnerQueryConstraints,
 } = require('../auth/constraints')
+const { caseAdded, caseUpdated } = require('./actions')
+const {
+  getPartnerPluginName,
+  getDeviceTypePluginName,
+} = require('../plugin/utils')
 
 function validateCaseIdentifier(_case) {
   let errors = ''
@@ -48,10 +53,19 @@ async function getCaseId(_case, createIfNonExistent, userId) {
 /**
  * Adds a new case to database
  * @param  {object} _case
+ * @param  {object} options
  * @return {int} The created case id
  */
-async function addCase(_case) {
+async function addCase(_case, { messageContext } = {}) {
   const [caseId] = await knex('Case').insert(_case)
+
+  if (messageContext) {
+    if (!messageContext.caseAdded) {
+      messageContext = messageContext.bindActionCreators({ caseAdded })
+    }
+    messageContext.caseAdded(caseId)
+  }
+
   return caseId
 }
 
@@ -66,10 +80,22 @@ async function removeCase(_case) {
     .del()
 }
 
-async function updateCase(whereFields, updateFields) {
+async function updateCase(whereFields, updateFields, { messageContext } = {}) {
   await knex('Case')
     .where(whereFields)
     .update(updateFields)
+  const caseIds = await knex('Case')
+    .where(whereFields)
+    .select('id')
+    .pluck('id')
+  if (messageContext && caseIds.length) {
+    // queue message for each affected Case row
+    if (!messageContext.caseUpdated) {
+      messageContext = messageContext.bindActionCreators({ caseUpdated })
+    }
+    caseIds.forEach(id => messageContext.caseUpdated(id))
+  }
+  return caseIds
 }
 
 async function getCases({ query, auth }) {
@@ -156,10 +182,37 @@ async function getCases({ query, auth }) {
   return result
 }
 
+async function onCaseAdded({ caseId }, { messageContext }) {
+  onCaseChanged(caseId, messageContext, true)
+}
+
+async function onCaseUpdated({ caseId }, { messageContext }) {
+  onCaseChanged(caseId, messageContext, false)
+}
+
+async function onCaseChanged(caseId, messageContext, isAdded) {
+  // get plugin names
+  const { deviceId } = messageContext
+  const partnerPluginName = await getPartnerPluginName({ caseId })
+  const deviceTypePluginName = await getDeviceTypePluginName(deviceId)
+  // exec plugin
+  if (partnerPluginName || deviceTypePluginName) {
+    const { loadPlugin } = require('../plugin/registration')
+    const pluginOnCaseChanged = await loadPlugin(
+      [partnerPluginName, deviceTypePluginName],
+      isAdded ? 'onCaseAdded' : 'onCaseUpdated'
+    )
+    await pluginOnCaseChanged({ caseId }, { messageContext })
+  }
+}
+
 module.exports = {
   getCaseId,
   addCase,
   removeCase,
   getCases,
   updateCase,
+  // MQ consumers
+  onCaseAdded,
+  onCaseUpdated,
 }
