@@ -35,12 +35,14 @@ import report from './report/ReportRedux'
 import reporter from './reporter/ReporterRedux'
 import patient from './patient/PatientRedux'
 import clinicalIndicators from './MigratedComponents/Graphs/GraphRender/Redux'
+import _case from './case/CaseRedux'
 
 const appReducer = combineReducers({
   accountDetails,
   appNotification,
   assay,
   assayType,
+  case: _case,
   clinicalIndicators,
   consumable,
   dashboard,
@@ -78,6 +80,7 @@ const App = Immutable.Record({
   appNotification: undefined,
   assay: undefined,
   assayType: undefined,
+  case: undefined,
   clinicalIndicators: undefined,
   consumable: undefined,
   dashboard: undefined,
