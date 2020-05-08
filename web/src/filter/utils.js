@@ -205,6 +205,9 @@ export const reduceFiltersConfig = (configObject, userPermissions) => {
             case 'revoked':
               result.revoked = true
               break
+            case 'onlyDisease':
+              result.onlyDisease = true
+              break
             default:
           }
         })

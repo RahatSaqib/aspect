@@ -524,7 +524,7 @@ export const FiltersPanel = ({
           </div>
         )}
 
-        {config.assayAndResultCategory && (
+        {config.assayAndResultCategory && !config.onlyDisease && (
           <div className={cssClasses('Control')}>
             <AssaySelectField
               allItemText={intl.formatMessage(messages.all)}
@@ -539,7 +539,7 @@ export const FiltersPanel = ({
             />
           </div>
         )}
-        {config.assayAndResultCategory && (
+        {config.assayAndResultCategory && !config.onlyDisease && (
           <div className={cssClasses('Control')}>
             <ResultCategorySelectField
               allItemText={intl.formatMessage(messages.all)}

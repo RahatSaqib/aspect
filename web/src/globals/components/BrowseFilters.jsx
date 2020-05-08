@@ -158,6 +158,12 @@ export const navigations = [
     requiredFeatures: ['result'],
   },
   {
+    value: '/browse/case',
+    label: 'Cases',
+    requiredPermissions: ['case:view', 'case:admin', 'case:edit'],
+    requiredFeatures: ['case'],
+  },
+  {
     value: '/browse/person',
     label: 'Contacts',
     requiredPermissions: ['person:view', 'person:admin', 'person:edit'],
@@ -210,12 +216,6 @@ export const navigations = [
       'deviceApiKey:edit',
     ],
     requiredFeatures: ['deviceApiKey'],
-  },
-  {
-    value: '/browse/case',
-    label: 'Cases',
-    requiredPermissions: ['case:view', 'case:admin', 'case:edit'],
-    requiredFeatures: ['case'],
   },
 ]
 

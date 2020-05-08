@@ -490,6 +490,11 @@ function listResultsBaseConfig() {
         assayId: Joi.number()
           .allow('')
           .description('Filter for assay ID'),
+        diseaseId: Joi.number()
+          .integer()
+          .positive()
+          .optional()
+          .description('The disease ID'),
         resultCategoryId: Joi.number()
           .allow('')
           .description('Result-1 Category ID'),

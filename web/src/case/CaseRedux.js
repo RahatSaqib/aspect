@@ -52,6 +52,7 @@ function rejectCases() {
 export function fetchCases(filtersParams, sortCol, sortDir, page, pageSize) {
   return dispatch => {
     const filters = _.fromPairs([...filtersParams.entries()])
+    console.log('filtersParams', filters)
     dispatch(requestCases(sortCol, sortDir, page, pageSize, filters))
     sortCol = sortCol || 'createdOn'
     return aspectFetch(
