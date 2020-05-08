@@ -14,7 +14,7 @@ async function seed(knex) {
   )
   const followUps = await knex('FollowUp').select('id', 'externalId')
   /** Grab random sample from current outcomes equaling % of mulitplier */
-  const resultSampleSize = 25
+  const resultSampleSize = 40
   const resultsSample = sampleSize(
     results,
     (resultSampleSize / 100) * resultMultiplier
