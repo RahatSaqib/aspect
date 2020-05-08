@@ -1,5 +1,5 @@
 const _ = require('lodash')
-const { addMinutes, addDays, format } = require('date-fns')
+const { addMinutes, addMilliseconds, format } = require('date-fns')
 const Promise = require('bluebird')
 const {
   assayTypeToId,
@@ -16,19 +16,57 @@ const {
   getLinkedResultDate,
 } = require('./utils')
 
+function getDateFields(startedOn) {
+  const necessaryDiffMillis = 120 * 1000
+
+  const now = new Date()
+  const nowMillis = format(addMinutes(now, now.getTimezoneOffset()), 'T')
+  const startedOnMillis = format(addMinutes(startedOn, startedOn.getTimezoneOffset()), 'T')
+  const diffMillis = (nowMillis - startedOnMillis)
+
+  let endedOn, createdOn, updatedOn = null
+
+  if (diffMillis < necessaryDiffMillis)
+  {
+    // Started On date is close to now, so we calculate the gap's millis
+    const gapMillies = diffMillis / 3
+    const addGap = (date) => addMilliseconds(date, gapMillies)
+    endedOn = addGap(startedOn)
+    createdOn = addGap(endedOn)
+    updatedOn = addGap(createdOn)
+  } else {
+    // Started On date isn't close to now, so we can use fixed gaps
+    endedOn = addMinutes(startedOn, 100)
+    createdOn = addMinutes(endedOn, 120)
+    updatedOn = addMinutes(createdOn, 180)
+  }
+
+  console.log('dates', {
+    startedOn,
+    endedOn,
+    createdOn,
+    updatedOn,
+  })
+
+  return {
+    startedOn,
+    endedOn,
+    createdOn,
+    updatedOn,
+  }
+}
+
 async function getMGITResultFromTBPossitive(result, assaysMGIT, devicesMGIT) {
   const randomDateMgit = getLinkedResultDate(result)
+  console.log(randomDateMgit)
   const now = new Date()
   const assay = _.sample(assaysMGIT)
   const assayId = await assayToId('assayBdMgitAst')
-  console.log(result)
   return _.defaults(
     {
       assayId: assay.id,
       startedOn: randomDateMgit,
-      endedOn: addMinutes(randomDateMgit, 100),
-      createdOn: addMinutes(randomDateMgit, 120),
-      updatedOn: addMinutes(randomDateMgit, 180),
+      ...getDateFields(randomDateMgit),
       consumableSerial: `${_.random(100)}12`,
       consumableExpirationDate: new Date(+now + 200 * _.random(10)),
       deviceId: _.sample(devicesMGIT).id,
