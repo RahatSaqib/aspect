@@ -228,7 +228,7 @@
     "redux-immutable": "^4.0.0",
     "redux-thunk": "^2.3.0",
     "topojson-client": "^3.1.0",
-    "url-search-params-polyfill": "^7.0.1",
+    "url-search-params-polyfill": "^8.1.0",
     "warning": "^4.0.3",
     "whatwg-fetch": "^3.0.0"
   }
