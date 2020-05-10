@@ -136,6 +136,7 @@ async function getListDevices(query, auth) {
       type: 'dt.name',
       siteExternalId: 's.externalId',
       siteName: 's.name',
+      siteId: 's.id',
     })
     .modify(addConstraints, dataConstraints, {
       assay: 'a',
