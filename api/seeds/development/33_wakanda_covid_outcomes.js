@@ -13,8 +13,12 @@ async function seed(knex) {
     'updatedBy'
   )
   const followUps = await knex('FollowUp').select('id', 'externalId')
-  /** Grab random sample from current outcomes equaling 25% of mulitplier */
-  const resultsSample = sampleSize(results, (25 / 100) * resultMultiplier)
+  /** Grab random sample from current outcomes equaling % of mulitplier */
+  const resultSampleSize = 40
+  const resultsSample = sampleSize(
+    results,
+    (resultSampleSize / 100) * resultMultiplier
+  )
 
   const randomOutcomeResult = ({ externalId }) => {
     let updated = {}
