@@ -1,5 +1,5 @@
 const _ = require('lodash')
-const { issueTypeToId, issueStatusToId } = require('../shared/dictionary')
+const { issueTypeToId, issueStatusToId } = require('./dictionary')
 
 // -----------------------------
 // auditInventoryStockout
