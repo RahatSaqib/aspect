@@ -7,7 +7,7 @@ import { defineMessages, injectIntl } from 'react-intl'
 import { connect } from 'react-redux'
 import Button from '@material-ui/core/Button'
 import Card from '@material-ui/core/Card'
-import Helmet from 'react-helmet'
+import { Helmet } from 'react-helmet'
 import { Unit } from '../../components/pureGrids'
 
 import {

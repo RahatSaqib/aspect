@@ -211,7 +211,7 @@
     "react-display-name": "^0.2.5",
     "react-dom": "^16.13.1",
     "react-google-maps": "^9.4.5",
-    "react-helmet": "^5.2.1",
+    "react-helmet": "^6.0.0",
     "react-icons": "^3.10.0",
     "react-intl": "^4.5.3",
     "react-jss": "^8.6.1",

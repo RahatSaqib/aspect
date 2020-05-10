@@ -1,7 +1,7 @@
 import classnames from 'classnames/bind'
 import { connect } from 'react-redux'
 import React, { useRef, useEffect, useState } from 'react'
-import Helmet from 'react-helmet'
+import { Helmet } from 'react-helmet'
 import _ from 'lodash'
 import { defineMessages, injectIntl } from 'react-intl'
 import Grid from '@material-ui/core/Grid'

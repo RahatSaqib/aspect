@@ -5,7 +5,7 @@ import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { compose, setPropTypes, pure } from 'recompose'
 import { injectIntl, defineMessages } from 'react-intl'
-import Helmet from 'react-helmet'
+import { Helmet } from 'react-helmet'
 
 // Our own imports
 import FallbackUntilDone from '../../components/shared/FallbackUntilDone'
