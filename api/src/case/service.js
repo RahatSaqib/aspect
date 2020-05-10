@@ -206,6 +206,41 @@ async function onCaseChanged(caseId, messageContext, isAdded) {
   }
 }
 
+async function getAutoCompleteCases({ auth, query }) {
+  const dataConstraints = await getConstraints(auth.credentials)
+
+  const casesQuery = knex('Case as ca')
+    .innerJoin('Result as r', 'ca.id', 'r.caseId')
+    .innerJoin('Geography as g', 'r.geographyId', 'g.id')
+    .leftJoin('Country as c', 'g.countryId', 'c.id')
+    .modify(addPartnerQueryConstraints, { ...dataConstraints, caseAlias: 'ca' })
+    .modify((queryBuilder, params) => {
+      if (params.externalId) {
+        queryBuilder.where('ca.externalId', 'like', `%${params.externalId}%`)
+      }
+    }, query)
+    .orderBy('ca.externalId')
+
+  const getCount = casesQuery
+    .clone()
+    .count('r.id as count')
+    .first()
+
+  const getCases = casesQuery.clone().select(['ca.id', 'ca.externalId'])
+
+  // return result when both queries are finished
+  const [{ count: total }, data] = await Promise.all([getCount, getCases])
+
+  const result = {
+    ok: true,
+    total,
+    length: data.length,
+    data,
+  }
+
+  return result
+}
+
 module.exports = {
   getCaseId,
   addCase,
@@ -215,4 +250,5 @@ module.exports = {
   // MQ consumers
   onCaseAdded,
   onCaseUpdated,
+  getAutoCompleteCases,
 }

@@ -3,7 +3,12 @@ const { asyncHandler, validateSortPageParams } = require('../routes')
 const {
   validateAllGeographyFilterParams,
 } = require('../geography/requestValidation')
-const { getCases, onCaseAdded, onCaseUpdated } = require('./service')
+const {
+  getCases,
+  onCaseAdded,
+  onCaseUpdated,
+  getAutoCompleteCases,
+} = require('./service')
 
 const routes = [
   {
@@ -84,6 +89,48 @@ const routes = [
                 ),
                 updatedBy: Joi.string().description(
                   "The username responsible of case's update"
+                ),
+              })
+            ),
+        }),
+      },
+    },
+  },
+  {
+    method: 'GET',
+    path: '/case/auto',
+    handler: asyncHandler(getAutoCompleteCases),
+    config: {
+      description: 'Autocomplete Cases List',
+      notes: 'list of cases',
+      validate: {
+        query: {
+          externalId: Joi.string()
+            .required()
+            .description('Filter for external ID'),
+        },
+      },
+      response: {
+        schema: Joi.object().keys({
+          ok: Joi.bool()
+            .required()
+            .description('False if there was some sort of error'),
+          total: Joi.number()
+            .required()
+            .description(
+              'The total number of cases that match the given filters'
+            ),
+          length: Joi.number()
+            .required()
+            .description('The number of cases included in this response'),
+          data: Joi.array()
+            .required()
+            .description('The cases')
+            .items(
+              Joi.object().keys({
+                id: Joi.number().description('The id of the case'),
+                externalId: Joi.string().description(
+                  'The external id of the case'
                 ),
               })
             ),

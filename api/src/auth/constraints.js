@@ -555,9 +555,11 @@ function canEditInventories(auth) {
 
 const addPartnerQueryConstraints = (
   queryBuilder,
-  { partner, country, geography, site }
+  { partner, country, geography, site, caseAlias }
 ) => {
-  if (partner) queryBuilder.where('r.partnerId', partner.id)
+  if (caseAlias && partner)
+    queryBuilder.where(`${caseAlias}.partnerId`, partner.id)
+  if (partner && !caseAlias) queryBuilder.where('r.partnerId', partner.id)
   if (site) queryBuilder.where('r.siteId', partner.id)
   else if (geography) {
     if (geography.lgaId) queryBuilder.where('g.lgaId', geography.lgaId)
