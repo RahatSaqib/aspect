@@ -84,55 +84,6 @@ exports[`TaskAggre module TaskAggre component should render correctly 1`] = `
           }
         }
       />
-      <pure(withHandlers(withProps(withHandlers(pure(TablePaginator)))))
-        intl={
-          Object {
-            "defaultFormats": Object {},
-            "defaultLocale": "en",
-            "formatDate": [Function],
-            "formatDateToParts": [Function],
-            "formatDisplayName": [Function],
-            "formatList": [Function],
-            "formatMessage": [Function],
-            "formatNumber": [Function],
-            "formatNumberToParts": [Function],
-            "formatPlural": [Function],
-            "formatRelativeTime": [Function],
-            "formatTime": [Function],
-            "formatTimeToParts": [Function],
-            "formats": Object {},
-            "formatters": Object {
-              "getDateTimeFormat": [Function],
-              "getDisplayNames": [Function],
-              "getListFormat": [Function],
-              "getMessageFormat": [Function],
-              "getNumberFormat": [Function],
-              "getPluralRules": [Function],
-              "getRelativeTimeFormat": [Function],
-            },
-            "locale": "en",
-            "messages": Object {},
-            "onError": [Function],
-            "textComponent": Symbol(react.fragment),
-            "timeZone": undefined,
-          }
-        }
-        location={
-          Object {
-            "search": "",
-          }
-        }
-        paginatorStatus={
-          Object {
-            "defaultMessage": "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural,
-      one {# task}
-      other {# tasks}
-    }",
-            "id": "pages.TaskList.paginatorStatus",
-          }
-        }
-        total={0}
-      />
     </DataTableCard>
   </section>
 </div>

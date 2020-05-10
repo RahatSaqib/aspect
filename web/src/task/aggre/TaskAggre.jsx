@@ -259,7 +259,7 @@ export const TaskAggre = ({
               ))}
           </TaskDataTable>
         )}
-        {!items.isEmpty() && (
+        {!items.currentIdList.isEmpty() && (
           <BrowseTablePaginator
             history={history}
             location={location}
