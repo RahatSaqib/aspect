@@ -26,6 +26,10 @@ class FallbackUntilDone extends PureComponent {
 
   state = this.initialState()
 
+  handleResize = _.throttle(() => {
+    this.setState(this.initialState)
+  }, 1000)
+
   componentDidMount() {
     window.addEventListener('resize', this.handleResize)
   }
@@ -52,10 +56,6 @@ class FallbackUntilDone extends PureComponent {
     }
     this.setState(this.updateState)
   }
-
-  handleResize = _.throttle(() => {
-    this.setState(this.initialState)
-  }, 1000)
 
   updateState = (prevState, props) => {
     if (!this.node || prevState.isStable) {
