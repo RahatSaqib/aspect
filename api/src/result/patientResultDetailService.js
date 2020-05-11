@@ -46,7 +46,7 @@ async function getPatientResultsDetails(request) {
         'LOWER(JSON_EXTRACT(r.patientData,"$.id")) = LOWER(JSON_QUOTE(?))',
         [query.patientId]
       )
-      if (query.diseaseId) queryBuilder.whereRaw('dis.id', query.diseaseId)
+      if (query.diseaseId) queryBuilder.where('dis.id', query.diseaseId)
     })
     .modify(addConstraints, dataConstraints, {
       assay: 'a',

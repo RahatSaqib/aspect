@@ -133,7 +133,7 @@ describe('Result routes', () => {
           assert.typeOf(res.body.extraColumns, 'array')
         })
     })
-    it('should return a list of results filtered by  disease', async () => {
+    it('should return a list of results filtered by disease', async () => {
       const { diseaseId } = await knex('Disease')
         .where({ externalId: 'hiv' })
         .first('id as diseaseId')
@@ -158,6 +158,7 @@ describe('Result routes', () => {
           assert.property(res.body.data[0], 'resultTreatmentStatus')
           assert.property(res.body.data[0], 'treatmentStatusInfo')
           assert.property(res.body.data[0], 'patientId')
+          assert.property(res.body.data[0], 'diseaseId')
           assert.property(res.body.data[0], 'caseExternalId')
           assert.property(res.body, 'total')
           assert.typeOf(res.body.extraColumns, 'array')

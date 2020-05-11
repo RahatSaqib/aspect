@@ -114,6 +114,7 @@ const SELECT_COMMON_FIELDS = [
   'r.firstViewedOn',
   'r.caseId',
   'ca.externalId as caseExternalId',
+  'dis.id as diseaseId',
 ]
 const SELECT_SHOW_FIELDS = [
   ...SELECT_COMMON_FIELDS,

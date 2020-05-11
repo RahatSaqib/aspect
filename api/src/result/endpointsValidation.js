@@ -192,6 +192,10 @@ const baseResultResponse = {
     .optional()
     .allow(null, '')
     .description('The id of the case'),
+  diseaseId: Joi.number()
+    .positive()
+    .required()
+    .description('the Id of the disease'),
 }
 
 function validateResultListResponse() {

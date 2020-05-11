@@ -108,11 +108,8 @@ async function getListDevices(query, auth) {
     .leftJoin('Disease as dis', 'at.diseaseId', 'dis.id')
     .where(function() {
       if (query.deviceIds) this.whereIn('d.id', query.deviceIds.split(','))
-      if (query.diseaseId) this.where('dis.id', query.diseaseId)
     })
     .modify(queryBuilder => {
-      if (query.assayId) queryBuilder.where('a.id', query.assayId)
-
       if (query.resultCategoryId)
         queryBuilder
           .innerJoin('ResultCategoryAssay as rca', 'a.id', 'rca.assayId')
@@ -132,6 +129,8 @@ async function getListDevices(query, auth) {
       siteExternalId: 's.externalId',
       siteName: 's.name',
       siteId: 's.id',
+      diseaseId: 'dis.id',
+      assayId: 'a.id',
     })
     .modify(addConstraints, dataConstraints, {
       assay: 'a',
