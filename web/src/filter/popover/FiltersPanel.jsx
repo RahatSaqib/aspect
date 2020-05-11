@@ -88,6 +88,11 @@ const enhance = compose(
         siteName,
       }),
 
+    onSiteIdChange: ({ onChangeFilters }) => siteId =>
+      onChangeFilters({
+        siteId,
+      }),
+
     onWorkflowStatusIdChange: ({ onChangeFilters }) => workflowStatusId =>
       onChangeFilters({
         workflowStatusId,
@@ -176,9 +181,17 @@ const messages = defineMessages({
     id: 'filter.popover.site',
     defaultMessage: 'Site',
   },
+  siteId: {
+    id: 'filter.popover.siteId',
+    defaultMessage: 'Site Id',
+  },
   enterSiteName: {
     id: 'filter.popover.enterSiteName',
     defaultMessage: 'Enter site name...',
+  },
+  enterSiteId: {
+    id: 'filter.popover.enterSiteId',
+    defaultMessage: 'Enter site ID...',
   },
   sampleOriginSite: {
     id: 'filter.popover.sampleOriginSite',
@@ -223,6 +236,14 @@ const messages = defineMessages({
   enterPatientOrResearchId: {
     id: 'filter.popover.enterPatientOrResearchId',
     defaultMessage: 'Enter patient/study ID...',
+  },
+  patientOrCaseId: {
+    id: 'filter.popover.patientOrCaseId',
+    defaultMessage: 'Patient/Case ID',
+  },
+  enterPatientOrCaseId: {
+    id: 'filter.popover.enterPatientOrCaseId',
+    defaultMessage: 'Enter patient/case ID...',
   },
   sampleId: {
     id: 'filter.popover.sampleId',
@@ -373,6 +394,7 @@ export const FiltersPanel = ({
   onPartnerIdChange,
   onTextFieldCommitValue,
   onSiteNameChange,
+  onSiteIdChange,
   onSampleOriginSiteChange,
   onDateChange,
   onWorkflowStatusIdChange,
@@ -580,6 +602,21 @@ export const FiltersPanel = ({
             />
           </div>
         )}
+        {config.patientOrCaseId && (
+          <div className={cssClasses('Control')}>
+            <FocusBlurTextField
+              name="patientOrCaseId"
+              value={filters.patientOrCaseId || ''}
+              onCommitValue={onTextFieldCommitValue}
+              InputLabelProps={{
+                shrink: true,
+              }}
+              placeholder={intl.formatMessage(messages.enterPatientOrCaseId)}
+              label={intl.formatMessage(messages.patientOrCaseId)}
+              margin="normal"
+            />
+          </div>
+        )}
         {config.sampleId && (
           <div className={cssClasses('Control')}>
             <FocusBlurTextField
@@ -759,6 +796,18 @@ export const FiltersPanel = ({
               floatingLabelText={intl.formatMessage(messages.treatmentStatus)}
               style={{ verticalAlign: 'bottom' }}
               autoWidth
+            />
+          </div>
+        )}
+        {config.siteId && (
+          <div className={cssClasses('Control')}>
+            <SiteAutoCompleteField
+              name="siteId"
+              value={filters.siteId || ''}
+              onSiteNameChange={onSiteIdChange}
+              floatingLabelFixed
+              hintText={intl.formatMessage(messages.enterSiteId)}
+              floatingLabelText={intl.formatMessage(messages.siteId)}
             />
           </div>
         )}

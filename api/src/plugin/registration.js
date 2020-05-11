@@ -59,6 +59,8 @@ const plugins = {
     postProcessMergeResult,
     onResultLogged,
     onGxAlertAuthenticated,
+    onCaseAdded,
+    onCaseUpdated,
   },
   commcare: {
     transformInitialPayload: require('./deviceType/CommCareApp/transformInitialPayload'),
@@ -313,6 +315,22 @@ async function onResultLogged(/* { resultId }, { messageContext } */) {
  * and the user has been migrated into Aspect.
  */
 async function onGxAlertAuthenticated(/* { gxUser, user, personId, partnerId, knex } */) {
+  // do nothing by default
+}
+
+/**
+ * CASE_ADDED action has been published referencing
+ * a Case handled by this plugin
+ */
+async function onCaseAdded(/* { caseId }, { messageContext } */) {
+  // do nothing by default
+}
+
+/**
+ * CASE_UPDATED action has been published referencing
+ * a Case handled by this plugin
+ */
+async function onCaseUpdated(/* { caseId }, { messageContext } */) {
   // do nothing by default
 }
 

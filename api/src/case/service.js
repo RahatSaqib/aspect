@@ -3,6 +3,11 @@ const {
   getConstraints,
   addPartnerQueryConstraints,
 } = require('../auth/constraints')
+const { caseAdded, caseUpdated } = require('./actions')
+const {
+  getPartnerPluginName,
+  getDeviceTypePluginName,
+} = require('../plugin/utils')
 
 function validateCaseIdentifier(_case) {
   let errors = ''
@@ -48,10 +53,19 @@ async function getCaseId(_case, createIfNonExistent, userId) {
 /**
  * Adds a new case to database
  * @param  {object} _case
+ * @param  {object} options
  * @return {int} The created case id
  */
-async function addCase(_case) {
+async function addCase(_case, { messageContext } = {}) {
   const [caseId] = await knex('Case').insert(_case)
+
+  if (messageContext) {
+    if (!messageContext.caseAdded) {
+      messageContext = messageContext.bindActionCreators({ caseAdded })
+    }
+    messageContext.caseAdded(caseId)
+  }
+
   return caseId
 }
 
@@ -66,10 +80,22 @@ async function removeCase(_case) {
     .del()
 }
 
-async function updateCase(whereFields, updateFields) {
+async function updateCase(whereFields, updateFields, { messageContext } = {}) {
   await knex('Case')
     .where(whereFields)
     .update(updateFields)
+  const caseIds = await knex('Case')
+    .where(whereFields)
+    .select('id')
+    .pluck('id')
+  if (messageContext && caseIds.length) {
+    // queue message for each affected Case row
+    if (!messageContext.caseUpdated) {
+      messageContext = messageContext.bindActionCreators({ caseUpdated })
+    }
+    caseIds.forEach(id => messageContext.caseUpdated(id))
+  }
+  return caseIds
 }
 
 async function getCases({ query, auth }) {
@@ -106,13 +132,13 @@ async function getCases({ query, auth }) {
       diseaseId: 'd.id',
     })
     .modify((queryBuilder, params) => {
-      if (params.patientOrResearchId) {
+      if (params.patientOrCaseId) {
         queryBuilder.where(builder =>
           builder
             .whereRaw(
-              `LOWER(cs.externalId) like LOWER('%${params.patientOrResearchId}%') || LOWER(JSON_EXTRACT(r.patientData, "$.id")) like LOWER(JSON_QUOTE('%${params.patientOrResearchId}%'))`
+              `LOWER(cs.externalId) like LOWER('%${params.patientOrCaseId}%') || LOWER(JSON_EXTRACT(r.patientData, "$.id")) like LOWER(JSON_QUOTE('%${params.patientOrCaseId}%'))`
             )
-            .orWhereRaw(`r.researchId like '%${params.patientOrResearchId}%'`)
+            .orWhereRaw(`r.researchId like '%${params.patientOrCaseId}%'`)
         )
       }
     }, query)
@@ -156,10 +182,73 @@ async function getCases({ query, auth }) {
   return result
 }
 
+async function onCaseAdded({ caseId }, { messageContext }) {
+  onCaseChanged(caseId, messageContext, true)
+}
+
+async function onCaseUpdated({ caseId }, { messageContext }) {
+  onCaseChanged(caseId, messageContext, false)
+}
+
+async function onCaseChanged(caseId, messageContext, isAdded) {
+  // get plugin names
+  const { deviceId } = messageContext
+  const partnerPluginName = await getPartnerPluginName({ caseId })
+  const deviceTypePluginName = await getDeviceTypePluginName(deviceId)
+  // exec plugin
+  if (partnerPluginName || deviceTypePluginName) {
+    const { loadPlugin } = require('../plugin/registration')
+    const pluginOnCaseChanged = await loadPlugin(
+      [partnerPluginName, deviceTypePluginName],
+      isAdded ? 'onCaseAdded' : 'onCaseUpdated'
+    )
+    await pluginOnCaseChanged({ caseId }, { messageContext })
+  }
+}
+
+async function getAutoCompleteCases({ auth, query }) {
+  const dataConstraints = await getConstraints(auth.credentials)
+
+  const casesQuery = knex('Case as ca')
+    .innerJoin('Result as r', 'ca.id', 'r.caseId')
+    .innerJoin('Geography as g', 'r.geographyId', 'g.id')
+    .leftJoin('Country as c', 'g.countryId', 'c.id')
+    .modify(addPartnerQueryConstraints, { ...dataConstraints, caseAlias: 'ca' })
+    .modify((queryBuilder, params) => {
+      if (params.externalId) {
+        queryBuilder.where('ca.externalId', 'like', `%${params.externalId}%`)
+      }
+    }, query)
+    .orderBy('ca.externalId')
+
+  const getCount = casesQuery
+    .clone()
+    .count('r.id as count')
+    .first()
+
+  const getCases = casesQuery.clone().select(['ca.id', 'ca.externalId'])
+
+  // return result when both queries are finished
+  const [{ count: total }, data] = await Promise.all([getCount, getCases])
+
+  const result = {
+    ok: true,
+    total,
+    length: data.length,
+    data,
+  }
+
+  return result
+}
+
 module.exports = {
   getCaseId,
   addCase,
   removeCase,
   getCases,
   updateCase,
+  // MQ consumers
+  onCaseAdded,
+  onCaseUpdated,
+  getAutoCompleteCases,
 }
