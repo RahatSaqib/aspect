@@ -1,19 +1,19 @@
-import React from 'react'
-import PropTypes from 'prop-types'
-import classnames from 'classnames/bind'
-import Card from '@material-ui/core/Card'
-import Grid from '@material-ui/core/Grid'
+import React from 'react';
+import PropTypes from 'prop-types';
+import classnames from 'classnames/bind';
+import Card from '@material-ui/core/Card';
+import Grid from '@material-ui/core/Grid';
 
-import AspectTitle from '../AspectTitle'
+import AspectTitle from '../AspectTitle';
 
-const cssClasses = classnames.bind(require('./Card.css'))
+const cssClasses = classnames.bind(require('./Card.css'));
 
 const CardHeader = ({ props }) => {
-  const { title, actionComponent } = props
+  const { title, actionComponent, action } = props;
   const {
     component: ActionComponent,
-    props: actionComponentProps,
-  } = actionComponent
+    props: actionComponentProps
+  } = actionComponent;
 
   return title || actionComponent ? (
     <Grid item xs={12}>
@@ -29,13 +29,13 @@ const CardHeader = ({ props }) => {
         ) : null}
         {actionComponent ? (
           <Grid item xs={6} className={cssClasses('card__actionsContainer')}>
-            <ActionComponent props={actionComponentProps} />
+            <ActionComponent props={{ actionComponentProps, action }} />
           </Grid>
         ) : null}
       </Grid>
     </Grid>
-  ) : null
-}
+  ) : null;
+};
 
 const AspectCard = ({
   children,
@@ -43,11 +43,12 @@ const AspectCard = ({
   innerSize,
   title,
   actionComponent,
+  action
 }) => {
   return (
     <Card className={cssClasses('card__container')}>
       <Grid container justify={justify} className={cssClasses('card__grid')}>
-        <CardHeader props={{ title, actionComponent }} />
+        <CardHeader props={{ title, actionComponent, action }} />
         <Grid
           item
           xs={12}
@@ -58,19 +59,19 @@ const AspectCard = ({
         </Grid>
       </Grid>
     </Card>
-  )
-}
+  );
+};
 
 AspectCard.defaultProps = {
   justify: 'center',
-  innerSize: 12,
-}
+  innerSize: 12
+};
 
 AspectCard.protoTypes = {
   children: PropTypes.oneOfType([PropTypes.object]).isRequired,
   justify: PropTypes.string,
   innerSize: PropTypes.instanceOf,
-  title: PropTypes.string.isRequired,
-}
+  title: PropTypes.string.isRequired
+};
 
-export default AspectCard
+export default AspectCard;

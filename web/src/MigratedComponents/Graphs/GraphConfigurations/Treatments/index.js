@@ -22,12 +22,14 @@ const treatmentStatusGraphs = {
         selectedValue: 'All Sites',
         state: 'dashboard.siteList',
         component: AspectDropdown,
+        identifier: 'siteId',
       },
-      // {
-      //   selectedValue: 'Viral Load',
-      //   state: 'dashboard.assayResultCategoryList',
-      //   component: AspectDropdown
-      // }
+      {
+        selectedValue: 'Viral Load',
+        state: 'dashboard.assayResultCategoryList',
+        component: AspectDropdown,
+        identifier: 'assayTypeId',
+      },
     ],
     graphType: [
       {

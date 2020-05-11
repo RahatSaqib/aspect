@@ -1,61 +1,55 @@
-import React, { useState, useEffect } from 'react'
-import PropTypes from 'prop-types'
-import classnames from 'classnames/bind'
-import { useSelector, useDispatch } from 'react-redux'
-import Grid from '@material-ui/core/Grid'
-import CircularProgress from '@material-ui/core/CircularProgress'
+import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
+import classnames from 'classnames/bind';
+import isEqual from 'lodash/isEqual';
+import { shallowEqual, useSelector } from 'react-redux';
+import Grid from '@material-ui/core/Grid';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
-import { fetchClinicalIndicatorsDashboard } from './Redux'
+import usePrevious from '../../../Hooks/CustomHooks';
 import {
   formatDataByGraphType,
-  getGraphKeysFromResults,
-} from '../Helpers/Formatters'
+  getGraphKeysFromResults
+} from '../Helpers/Formatters';
 
-const cssClasses = classnames.bind(require('./GraphRender.css'))
+const cssClasses = classnames.bind(require('./GraphRender.css'));
 
-const GraphRender = ({ assays, id: parentId, config, title }) => {
-  const dispatch = useDispatch()
-  const { whiteListed, assaysFromState } = assays
-  const { id, size, api, type, averages } = config
+const GraphRender = ({
+  assays,
+  id: parentId,
+  config,
+  action: dispatchFromRedux
+}) => {
+  const { whiteListed, assaysFromState } = assays;
+  const { id, size, api, type, averages } = config;
+  // const { action: fetchUsingReduxAction, params: actionParams } = action;
+  // const { action: fetchUsingReduxAction, params: actionParams } = action;
   const {
     component: Component,
     displayMethod,
     formatDate,
     filterBy = false,
     indexBy,
-    keyToConsume,
-  } = config
-  const [graphData, setGraphData] = useState(false)
-  const [graphKeys, setGraphKeys] = useState(false)
+    keyToConsume
+  } = config;
+  const [rawGraphData, setRawGraphData] = useState(false);
+  const [graphData, setGraphData] = useState(false);
+  const [graphKeys, setGraphKeys] = useState(false);
 
   const { culture, graphState } = useSelector(state => {
-    const { user, clinicalIndicators } = state
-    const { culture } = user.toJS()
-    const { [parentId]: parentState = false } = clinicalIndicators.toJS()
-    const { [id]: graphState = false } = parentState
+    const { user, clinicalIndicators } = state;
+    const { culture } = user.toJS();
+    const { [parentId]: parentState = false } = clinicalIndicators.toJS();
+    const { [id]: graphState = false } = parentState;
     return {
       culture,
-      graphState,
-    }
-  })
+      graphState
+    };
+  }, shallowEqual);
 
   useEffect(() => {
-    if (!graphState) {
-      console.log(parentId, id, whiteListed, api, title)
-
-      dispatch(
-        fetchClinicalIndicatorsDashboard({
-          parentId,
-          id,
-          whiteListed,
-          api,
-          title,
-        })
-      )
-    }
-
-    if (graphState && (!graphData || !graphKeys)) {
-      const { data } = graphState
+    if (rawGraphData) {
+      const { data } = graphState;
       if (data && data.length) {
         const grouped = formatDataByGraphType(
           data,
@@ -65,15 +59,31 @@ const GraphRender = ({ assays, id: parentId, config, title }) => {
           indexBy,
           keyToConsume,
           type
-        )
+        );
         if (grouped) {
-          const keysFromGrouped = getGraphKeysFromResults(grouped, indexBy)
-          setGraphData(grouped)
-          setGraphKeys(keysFromGrouped)
+          const keysFromGrouped = getGraphKeysFromResults(grouped, indexBy);
+          setGraphData(grouped);
+          setGraphKeys(keysFromGrouped);
         }
       }
     }
-  }, [graphState])
+  }, [rawGraphData]);
+
+  useEffect(() => {
+    if (graphState && !isEqual(graphState, rawGraphData)) {
+      setRawGraphData(graphState);
+    }
+  }, [graphState]);
+
+  useEffect(() => {
+    dispatchFromRedux({
+      graphState,
+      parentId,
+      id,
+      whiteListed,
+      api
+    });
+  }, []);
 
   return (
     <Grid item xs={12} lg={size}>
@@ -94,14 +104,14 @@ const GraphRender = ({ assays, id: parentId, config, title }) => {
         )}
       </div>
     </Grid>
-  )
-}
+  );
+};
 
 GraphRender.propTypes = {
   assays: PropTypes.oneOfType([PropTypes.array]).isRequired,
   config: PropTypes.oneOfType([PropTypes.object]).isRequired,
   id: PropTypes.string.isRequired,
-  title: PropTypes.string.isRequired,
-}
+  action: PropTypes.oneOfType([PropTypes.object]).isRequired
+};
 
-export default GraphRender
+export default GraphRender;

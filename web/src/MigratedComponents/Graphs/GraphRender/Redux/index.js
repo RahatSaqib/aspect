@@ -25,7 +25,7 @@ export function fetchClinicalIndicatorsDashboard(config) {
   let endpointParams = ''
   console.log(config)
 
-  const { parentId, id, whiteListed, api, title } = removeEmptyParams(config)
+  const { parentId, id, whiteListed, api } = removeEmptyParams(config)
   const { endpoint, params, method = 'GET' } = api
   const assayParams = whiteListed
     .map(a => `assay=${encodeURIComponent(a)}`)
@@ -72,7 +72,7 @@ export function fetchClinicalIndicatorsDashboard(config) {
             title: {
               id:
                 'errorResponseMessages.fetchClinicalIndicatorsDashboard.GET.default.title',
-              defaultMessage: `Error Loading Dashboard ${title}`,
+              defaultMessage: `Error Loading Dashboard ${parentId}`,
             },
           })
         ),
