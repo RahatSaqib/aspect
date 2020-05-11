@@ -70,7 +70,7 @@ const GraphRender = ({ assays, id: parentId, config }) => {
         }
       }
     }
-  }, [graphState])
+  }, [graphState]) // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <Grid item xs={12} lg={size}>
