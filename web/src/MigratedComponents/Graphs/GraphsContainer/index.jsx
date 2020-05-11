@@ -1,0 +1,75 @@
+import React from 'react'
+import PropTypes from 'prop-types'
+import Grid from '@material-ui/core/Grid'
+import covidGraphs from '../GraphConfigurations/Covid'
+import hivGraphs from '../GraphConfigurations/HIV'
+import tbGraphs from '../GraphConfigurations/TB'
+import GraphContainer from './GraphContainer'
+
+const spacing = {
+  half: { innerSize: 12, outerSize: 6 },
+  full: { innerSize: 9, outerSize: 12 },
+}
+
+const { hivResults } = hivGraphs
+const { tbResults } = tbGraphs
+const {
+  covidDailyConfirmed,
+  covidCasesByAgeAndGender,
+  covidMortalityAndRecoveryConfig,
+  covidMortalityAndRecoveryByGender,
+} = covidGraphs
+
+const GraphsContainer = ({ assaysFromState }) => {
+  const { full, half } = spacing
+  const graphsToRender = [
+    {
+      config: hivResults,
+      size: full,
+      group: 'hiv',
+    },
+    {
+      config: tbResults,
+      size: full,
+      group: 'tb',
+    },
+    {
+      config: covidDailyConfirmed,
+      size: full,
+      group: 'covid',
+    },
+    {
+      config: covidMortalityAndRecoveryConfig,
+      size: full,
+      group: 'covid',
+    },
+    {
+      config: covidMortalityAndRecoveryByGender,
+      size: half,
+      group: 'covid',
+    },
+    {
+      config: covidCasesByAgeAndGender,
+      size: half,
+      group: 'covid',
+    },
+  ]
+
+  return (
+    <Grid container direction="row" spacing={8}>
+      {graphsToRender.map(({ config, size }) => (
+        <GraphContainer
+          assaysFromState={assaysFromState}
+          config={config}
+          size={size}
+        />
+      ))}
+    </Grid>
+  )
+}
+
+GraphsContainer.propTypes = {
+  assaysFromState: PropTypes.oneOfType([PropTypes.array]).isRequired,
+}
+
+export default GraphsContainer

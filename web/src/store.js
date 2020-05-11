@@ -1,11 +1,16 @@
 import thunk from 'redux-thunk'
 import { createStore, compose, applyMiddleware } from 'redux'
+import { createLogger } from 'redux-logger'
 
 import rootReducer from './rootReducer'
-
 import { middleware as idleMiddleware } from './idle/IdleRedux'
 
+const showLogger = false
 const middleware = [thunk, idleMiddleware]
+
+if (process.env.ASPECT_TARGET === 'local' && showLogger) {
+  middleware.push(createLogger({ collapsed: true }))
+}
 
 // our redux store with dev tools
 const createStoreWithDevTools = compose(

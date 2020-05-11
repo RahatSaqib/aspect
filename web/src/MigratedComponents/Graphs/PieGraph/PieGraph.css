@@ -1,0 +1,10 @@
+.piegraph__container {
+  width: 100%;
+  background: var(--aspect-color-white-2);
+  border-radius: 6px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 83%;
+}

@@ -54,6 +54,10 @@ const messages = defineMessages({
     id: 'filter.btnGroup.whereSiteNameIncludes',
     defaultMessage: 'where site name includes "{siteName}"',
   },
+  whereSiteIdIncludes: {
+    id: 'filter.btnGroup.whereSiteIdIncludes',
+    defaultMessage: 'where site id includes "{siteId}"',
+  },
   sampleOriginSite: {
     id: 'filter.btnGroup.sampleOriginSite',
     defaultMessage: 'sample origin site is {sampleOriginSiteName}',
@@ -154,6 +158,7 @@ const filtersOrdering = {
   notificationName: 20,
   revoked: 21,
   treatmentStatusId: 22,
+  siteId: 23,
   // -1: Special orderings
   siteIds: -1,
   patientOrCaseId: 23,
@@ -229,6 +234,11 @@ const buttonBy = {
   deviceName: makeButton(({ intl }, deviceName) =>
     intl.formatMessage(messages.whereDeviceNameIncludes, {
       deviceName,
+    })
+  ),
+  siteId: makeButton(({ intl }, siteId) =>
+    intl.formatMessage(messages.whereSiteIdIncludes, {
+      siteId,
     })
   ),
   resultCategoryId: makeButton(
