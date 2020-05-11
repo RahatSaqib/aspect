@@ -16,7 +16,7 @@ const {
   format,
   differenceInDays,
 } = require('date-fns')
-
+const { getLinkedResultDate, getDateFields } = require('./utils')
 const { getMGITResultFromTBPossitive } = require('./commonTB')
 const {
   allResultCategoryToId,
@@ -146,7 +146,7 @@ async function generateResults(
     updatedOn: now,
     updatedBy: adminId,
   }
-  // result categories
+
   const {
     Detected: resultCategoryDetectedId,
     Positive: resultCategoryPositiveId,
@@ -196,7 +196,7 @@ async function generateResults(
     partnerOneId,
     errorCodes,
     devices,
-    [
+    {
       resultCategoryDetectedId,
       resultCategoryNotDetectedId,
       resultCategoryLessThan1000,
@@ -205,7 +205,7 @@ async function generateResults(
       resultCategoryInvalidId,
       resultCategoryNoResultId,
       resultCategoryErrorId,
-    ]
+    }
   )
   const ebolaAssays = _.filter(assays, elem => elem.externalId === 'GxEbola')
   const ebolaResults = await addEbolaResults(
@@ -469,20 +469,16 @@ async function addCovidResults(
         formData.testType = selectedTestType.value
       }
     } else {
-      const rndDays = _.random(10, 20)
       result = _.find(possibleResults, r => r.resultText === 'Negative')
+
       linkedResult = _.sample(positiveResults)
-      const newStart = addDays(
-        Math.max(linkedResult.startedOn, linkedResult.endedOn),
-        rndDays
-      )
+
+      const newStart = getLinkedResultDate(linkedResult)
+
       linkedResult.formData.dateAndTimeOfTest = newStart
       resultToInsert = _.assign({}, _.omit(linkedResult, ['id']), {
-        startedOn: newStart,
         formData: linkedResult.formData,
-        endedOn: addMinutes(newStart, 100),
-        createdOn: addMinutes(newStart, 120),
-        updatedOn: addMinutes(newStart, 180),
+        ...getDateFields(newStart),
       })
     }
 
@@ -924,6 +920,7 @@ async function addTBResults(
       possibleResults,
       r => rnd >= r.minLikelihood && rnd <= r.maxLikelihood
     )
+
     const patientNumber = patients.length - 1
     resultData.resultText = result.resultText
 
@@ -996,7 +993,7 @@ async function addTBResults(
     const [resultId] = await knex('Result').insert(resultElement)
 
     if (
-      result.category1 === resultCategories.resultCategoryDetectedId &&
+      resultElement.category1 === resultCategories.resultCategoryDetectedId &&
       rnd <= 80 &&
       devicesMGIT.length > 0 &&
       assayBdMgit &&

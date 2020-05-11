@@ -2,7 +2,7 @@ const Promise = require('bluebird')
 const _ = require('lodash')
 const { readJson } = require('fs-extra')
 const path = require('path')
-const { addMilliseconds, subDays } = require('date-fns')
+const { addMilliseconds, subDays, addMinutes, format } = require('date-fns')
 const relativeObjectsSeeds = require('./relativeObjectsSeeds')
 const {
   allAssayTypeToId,
@@ -2687,6 +2687,75 @@ function getUniqueId() {
   return _.times(6, () => _.toUpper(_.random(36).toString(36))).join('')
 }
 
+/**
+ * Gets a random date for a result linked to the previous one provided.
+ * @param  {[object]} previousResult The previous result
+ * @return {[date]} A random date next to the previous result's endedOn field
+ */
+function getLinkedResultDate(previousResult) {
+  const previousResultDateMillis = Math.max(
+    previousResult.startedOn,
+    previousResult.endedOn
+  )
+
+  const nowUTCMillis = format(
+    addMinutes(new Date(), now.getTimezoneOffset()),
+    'T'
+  )
+
+  if (previousResultDateMillis > nowUTCMillis)
+    throw new Error("Previous result's date can't be greater than today")
+
+  const diffMillis = nowUTCMillis - previousResultDateMillis
+
+  const rndMillis = _.random(1, diffMillis)
+  const newStartDate = new Date(previousResultDateMillis + rndMillis)
+
+  return newStartDate
+}
+
+/**
+ * Gets the randomly generated results fields startedOn, endedOn, createdOn and updatedOn based on the date provided as parameter.
+ * @param  {[object]} startedOn The based on date
+ * @return {[object]} An object containing fields startedOn, endedOn, createdOn and updatedOn.
+ */
+function getDateFields(startedOn) {
+  const necessaryDiffMillis = 120 * 1000
+
+  const now = new Date()
+  const nowMillis = format(addMinutes(now, now.getTimezoneOffset()), 'T')
+  const startedOnMillis = format(
+    addMinutes(startedOn, startedOn.getTimezoneOffset()),
+    'T'
+  )
+  const diffMillis = nowMillis - startedOnMillis
+
+  let endedOn
+  let createdOn
+  let updatedOn = null
+
+  if (diffMillis < necessaryDiffMillis) {
+    // Started On date is close to now, so we calculate the gap's millis
+    const gapMillies = diffMillis / 3
+    const addMillisGap = date => addMilliseconds(date, gapMillies)
+    endedOn = addMillisGap(startedOn)
+    createdOn = addMillisGap(endedOn)
+    updatedOn = addMillisGap(createdOn)
+  } else {
+    // Started On date isn't close to now, so we can use fixed gaps
+    endedOn = addMinutes(startedOn, 100)
+    createdOn = addMinutes(endedOn, 120)
+    updatedOn = addMinutes(createdOn, 180)
+  }
+
+  return {
+    startedOn,
+    endedOn,
+    createdOn,
+    updatedOn,
+  }
+}
+
 module.exports = {
   addReports,
 
@@ -2748,4 +2817,6 @@ module.exports = {
   seedPartnerDisease,
 
   getUniqueId,
+  getLinkedResultDate,
+  getDateFields,
 }
