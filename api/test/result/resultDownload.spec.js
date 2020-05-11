@@ -85,7 +85,7 @@ describe('Result download routes', () => {
           assert.typeOf(res.body.data[0].followUps, 'array')
           assert.property(res.body.data[0].followUps[0], 'id')
 
-          assert.equal(Object.keys(res.body.data[0]).length, 22)
+          assert.equal(Object.keys(res.body.data[0]).length, 24)
           await waitForApproximately(2, 'seconds')
 
           // check if the download is register in the table.
@@ -182,7 +182,7 @@ describe('Result download routes', () => {
           assert.typeOf(res.body.data[0].followUps, 'array')
           assert.property(res.body.data[0].followUps[0], 'id')
 
-          assert.equal(Object.keys(res.body.data[0]).length, 22)
+          assert.equal(Object.keys(res.body.data[0]).length, 24)
         })
 
       await server
@@ -300,7 +300,9 @@ describe('Result download routes', () => {
 
     it('should return a paged list of results filtered by disease external id', async () => {
       const res = await server
-        .get(`${path}?size=1&diseaseExternalIds=tb,ebola,hiv`)
+        .get(
+          `${path}?size=1&deviceType=DaktariVirology&diseaseExternalIds=tb,ebola,hiv`
+        )
         .set('Authorization', `Bearer ${shared.token}`)
       assert.equal(res.status, 200)
       assert.typeOf(res.body, 'Object')
@@ -396,7 +398,7 @@ describe('Result download routes', () => {
           assert.typeOf(res.body.data[0].followUps, 'array')
           assert.property(res.body.data[0].followUps[0], 'id')
 
-          assert.equal(Object.keys(res.body.data[0]).length, 22)
+          assert.equal(Object.keys(res.body.data[0]).length, 24)
           // check if the download is register in the table.
           const { count: totalResult } = await knex('ResultDownloadLog')
             .where('resultId', res.body.data[0].id)

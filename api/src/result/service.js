@@ -291,7 +291,7 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
       if (params.assayExternalIds) {
         queryBuilder.whereIn('a.externalId', params.assayExternalIds.split(','))
       }
-      if (params.diseaseExternalId)
+      if (params.diseaseExternalIds)
         queryBuilder.whereIn(
           'dis.externalId',
           params.diseaseExternalIds.split(',')
