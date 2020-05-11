@@ -24,6 +24,7 @@ import DeviceDemo from '../../demo/device/DeviceDemo'
 import DeviceList from '../../device/list/DeviceList'
 import DeviceDetail from '../../device/detail/DeviceDetail'
 import DeviceApiKeyList from '../../deviceApiKey/list/DeviceApiKeyList'
+import CaseList from '../../case/list/CaseList'
 import SiteList from '../../site/list/SiteList'
 import SiteDetail from '../../site/detail/SiteDetail'
 import PersonList from '../../person/list/PersonList'
@@ -117,6 +118,7 @@ const renderManage = notImplementedLoggedInFactory('Manage')
 const renderDeviceList = loggedInFactory(DeviceList)
 const renderDeviceDetail = loggedInDetailFactory(DeviceDetail)
 const renderDeviceApiKeyList = loggedInFactory(DeviceApiKeyList)
+const renderCaseList = loggedInFactory(CaseList)
 const renderRouterList = loggedInFactory(RouterList)
 const renderRouterDetail = loggedInFactory(RouterDetail)
 const renderReporterList = loggedInFactory(ReporterList)
@@ -288,6 +290,17 @@ export const routerFactory = () => props => (
           renderRedirectToLicenseOr(props) ||
           renderRedirectToNotFound(props, ['deviceApiKey']) ||
           renderDeviceApiKeyList
+        }
+      />
+
+      <Route
+        exact
+        path="/browse/case"
+        render={
+          renderRedirectToLoginOr(props) ||
+          renderRedirectToLicenseOr(props) ||
+          renderRedirectToNotFound(props, ['case']) ||
+          renderCaseList
         }
       />
 

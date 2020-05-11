@@ -1,0 +1,13 @@
+.card__container {
+  padding: 20px 20px 45px;
+}
+
+.card_grid {
+  flex-grow: 1;
+}
+
+.card__title {
+  margin: 0 0 20px 0;
+}
+.card__body {
+}

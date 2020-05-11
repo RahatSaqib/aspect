@@ -152,6 +152,9 @@ export const reduceFiltersConfig = (configObject, userPermissions) => {
             case 'siteName':
               result.siteName = true
               break
+            case 'siteId':
+              result.siteId = true
+              break
             case 'date':
               result.date = true
               break
@@ -172,6 +175,9 @@ export const reduceFiltersConfig = (configObject, userPermissions) => {
               break
             case 'patientOrResearchId':
               result.patientOrResearchId = true
+              break
+            case 'patientOrCaseId':
+              result.patientOrCaseId = true
               break
             case 'sampleId':
               result.sampleId = true

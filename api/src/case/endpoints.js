@@ -3,7 +3,12 @@ const { asyncHandler, validateSortPageParams } = require('../routes')
 const {
   validateAllGeographyFilterParams,
 } = require('../geography/requestValidation')
-const { getCases } = require('./service')
+const {
+  getCases,
+  onCaseAdded,
+  onCaseUpdated,
+  getAutoCompleteCases,
+} = require('./service')
 
 const routes = [
   {
@@ -20,9 +25,9 @@ const routes = [
       },
       validate: {
         query: {
-          patientOrResearchId: Joi.string()
+          patientOrCaseId: Joi.string()
             .allow('')
-            .description('Filter for patient/research ID'),
+            .description('Filter for patient/case ID'),
           sampleOriginSite: Joi.number().description(
             'Filter for sample origin site ID'
           ),
@@ -91,6 +96,57 @@ const routes = [
       },
     },
   },
+  {
+    method: 'GET',
+    path: '/case/auto',
+    handler: asyncHandler(getAutoCompleteCases),
+    config: {
+      description: 'Autocomplete Cases List',
+      notes: 'list of cases',
+      validate: {
+        query: {
+          externalId: Joi.string()
+            .required()
+            .description('Filter for external ID'),
+        },
+      },
+      response: {
+        schema: Joi.object().keys({
+          ok: Joi.bool()
+            .required()
+            .description('False if there was some sort of error'),
+          total: Joi.number()
+            .required()
+            .description(
+              'The total number of cases that match the given filters'
+            ),
+          length: Joi.number()
+            .required()
+            .description('The number of cases included in this response'),
+          data: Joi.array()
+            .required()
+            .description('The cases')
+            .items(
+              Joi.object().keys({
+                id: Joi.number().description('The id of the case'),
+                externalId: Joi.string().description(
+                  'The external id of the case'
+                ),
+              })
+            ),
+        }),
+      },
+    },
+  },
 ]
 
-module.exports = { routes }
+const subscriptions = [
+  {
+    actions: {
+      CASE_ADDED: onCaseAdded,
+      CASE_UPDATED: onCaseUpdated,
+    },
+  },
+]
+
+module.exports = { routes, subscriptions }

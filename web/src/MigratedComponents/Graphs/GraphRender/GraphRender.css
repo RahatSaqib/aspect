@@ -1,0 +1,10 @@
+.graphrender__container {
+  height: 350px;
+}
+
+.graphrender__spinner {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

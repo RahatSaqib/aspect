@@ -1,10 +1,17 @@
 const Joi = require('@hapi/joi')
+const { asyncHandler, validateSortPageParams } = require('../routes')
 const {
-  asyncHandler,
-  validateSortPageParams,
-  validateFullResultResponse,
-  baseResultResponse,
-} = require('../routes')
+  listResultsBaseConfig,
+  getResponseForComments,
+  getResultAggregationsValidate,
+  clinicalIndicatorsValidGroups,
+  resultAggregationsResponseItem,
+  followUpAggregationsValidGroups,
+  validateResultListResponse,
+  validateResultDetailResponse,
+  resultCreatePayload,
+  resultUpdatePayload,
+} = require('./endpointsValidation')
 const {
   listResults,
   downloadResultsList,
@@ -32,31 +39,12 @@ const {
   updateTransferNotification,
   clinicalIndicatorAggregations,
   followUpAggregations,
+  createResult,
+  updateResult,
 } = require('./service')
 const { getPatientResultsDetails } = require('./patientResultDetailService')
 const { getResultsReport } = require('./serviceReport')
-const {
-  resultAggregationsResponseItem,
-  getResultAggregationsValidate,
-  clinicalIndicatorsValidGroups,
-  followUpAggregationsValidGroups,
-  getResponseForComments,
-  listResultsBaseConfig,
-} = require('./endpointHelpers')
 
-const resultResponse = {
-  ...baseResultResponse,
-  assayName: Joi.string()
-    .description('The name of the assay performed to this result')
-    .allow('', null),
-  resultText: Joi.string()
-    .description('The Text of the result')
-    .allow('', null),
-  resultTreatmentStatus: Joi.string()
-    .description('The status of the result treatment')
-    .optional()
-    .allow('', null),
-}
 // -----------------------------------------------------
 // routes
 // -----------------------------------------------------
@@ -93,7 +81,7 @@ const routes = [
           data: Joi.array()
             .required()
             .description('The results')
-            .items(Joi.object().keys(resultResponse)),
+            .items(Joi.object().keys(validateResultListResponse())),
         }),
       },
     },
@@ -256,7 +244,7 @@ const routes = [
           data: Joi.object()
             .required()
             .description('The results')
-            .keys(validateFullResultResponse()),
+            .keys(validateResultDetailResponse()),
         }),
       },
     },
@@ -312,7 +300,7 @@ const routes = [
           data: Joi.object()
             .required()
             .description('Return current result')
-            .keys(validateFullResultResponse()),
+            .keys(validateResultDetailResponse()),
         }),
       },
     },
@@ -764,7 +752,7 @@ const routes = [
           data: Joi.object()
             .required()
             .description('The results')
-            .keys(validateFullResultResponse()),
+            .keys(validateResultDetailResponse()),
         }),
       },
     },
@@ -991,7 +979,7 @@ const routes = [
           data: Joi.object()
             .required()
             .description('The results')
-            .keys(validateFullResultResponse()),
+            .keys(validateResultDetailResponse()),
         }),
       },
     },
@@ -1053,7 +1041,7 @@ const routes = [
           data: Joi.object()
             .required()
             .description('The results')
-            .keys(validateFullResultResponse()),
+            .keys(validateResultDetailResponse()),
         }),
       },
     },
@@ -1100,7 +1088,7 @@ const routes = [
           data: Joi.object()
             .required()
             .description('The results')
-            .keys(validateFullResultResponse()),
+            .keys(validateResultDetailResponse()),
         }),
       },
     },
@@ -1314,7 +1302,7 @@ const routes = [
           data: Joi.object()
             .required()
             .description('Return current result')
-            .keys(validateFullResultResponse()),
+            .keys(validateResultDetailResponse()),
         }),
       },
     },
@@ -1386,6 +1374,65 @@ const routes = [
                   .description('The followUp that the count is grouped by'),
               })
             ),
+        }),
+      },
+    },
+  },
+  {
+    method: 'POST',
+    path: '/result',
+    handler: asyncHandler(createResult),
+    config: {
+      description: 'Create New Result',
+      notes: 'Details of a result',
+      auth: { scope: ['result:edit', 'result:admin'] },
+      validate: {
+        payload: resultCreatePayload,
+      },
+      response: {
+        options: {
+          allowUnknown: false,
+        },
+        schema: Joi.object().keys({
+          ok: Joi.bool()
+            .required()
+            .description('False if there was some sort of error'),
+          data: Joi.object()
+            .required()
+            .description('The result that was created')
+            .keys(validateResultDetailResponse()),
+        }),
+      },
+    },
+  },
+  {
+    method: 'PUT',
+    path: '/result/{resultId}',
+    handler: asyncHandler(updateResult),
+    config: {
+      description: 'Update Result Details',
+      notes: 'Details of a result',
+      auth: { scope: ['result:edit', 'result:admin'] },
+      validate: {
+        params: {
+          resultId: Joi.number()
+            .description('Result ID')
+            .required(),
+        },
+        payload: resultUpdatePayload,
+      },
+      response: {
+        options: {
+          allowUnknown: false,
+        },
+        schema: Joi.object().keys({
+          ok: Joi.bool()
+            .required()
+            .description('False if there was some sort of error'),
+          data: Joi.object()
+            .required()
+            .description('The result that was updated')
+            .keys(validateResultDetailResponse()),
         }),
       },
     },
