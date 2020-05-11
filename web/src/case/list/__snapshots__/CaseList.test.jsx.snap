@@ -4,9 +4,7 @@ exports[`Person List module CaseList component should shallow render correctly 1
 <div
   className="Container"
 >
-  <HelmetWrapper
-    defer={true}
-    encodeSpecialCharacters={true}
+  <Component
     title="Cases"
   />
   <Connect(lifecycle(Component))
