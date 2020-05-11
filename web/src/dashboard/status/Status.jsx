@@ -117,7 +117,7 @@ const Status = ({ history, location, colorDemo }) => {
 }
 
 Status.defaultProps = {
-  colorDemo: true,
+  colorDemo: false,
 }
 
 Status.propTypes = {
