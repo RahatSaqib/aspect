@@ -1,5 +1,5 @@
 const _ = require('lodash')
-const { addMinutes, addMilliseconds, format } = require('date-fns')
+const { format } = require('date-fns')
 const Promise = require('bluebird')
 const {
   assayTypeToId,
@@ -14,7 +14,7 @@ const {
   seedPartnerAssay,
   seedPartnerDisease,
   getLinkedResultDate,
-  getDateFields
+  getDateFields,
 } = require('./utils')
 
 async function getMGITResultFromTBPossitive(result, assaysMGIT, devicesMGIT) {

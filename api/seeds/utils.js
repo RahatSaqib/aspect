@@ -2698,7 +2698,10 @@ function getLinkedResultDate(previousResult) {
     previousResult.endedOn
   )
 
-  const nowUTCMillis = format(addMinutes(new Date(), now.getTimezoneOffset()), 'T')
+  const nowUTCMillis = format(
+    addMinutes(new Date(), now.getTimezoneOffset()),
+    'T'
+  )
 
   if (previousResultDateMillis > nowUTCMillis)
     throw new Error("Previous result's date can't be greater than today")
@@ -2707,7 +2710,7 @@ function getLinkedResultDate(previousResult) {
 
   const rndMillis = _.random(1, diffMillis)
   const newStartDate = new Date(previousResultDateMillis + rndMillis)
-  
+
   return newStartDate
 }
 
@@ -2721,16 +2724,20 @@ function getDateFields(startedOn) {
 
   const now = new Date()
   const nowMillis = format(addMinutes(now, now.getTimezoneOffset()), 'T')
-  const startedOnMillis = format(addMinutes(startedOn, startedOn.getTimezoneOffset()), 'T')
-  const diffMillis = (nowMillis - startedOnMillis)
+  const startedOnMillis = format(
+    addMinutes(startedOn, startedOn.getTimezoneOffset()),
+    'T'
+  )
+  const diffMillis = nowMillis - startedOnMillis
 
-  let endedOn, createdOn, updatedOn = null
+  let endedOn
+  let createdOn
+  let updatedOn = null
 
-  if (diffMillis < necessaryDiffMillis)
-  {
+  if (diffMillis < necessaryDiffMillis) {
     // Started On date is close to now, so we calculate the gap's millis
     const gapMillies = diffMillis / 3
-    const addMillisGap = (date) => addMilliseconds(date, gapMillies)
+    const addMillisGap = date => addMilliseconds(date, gapMillies)
     endedOn = addMillisGap(startedOn)
     createdOn = addMillisGap(endedOn)
     updatedOn = addMillisGap(createdOn)

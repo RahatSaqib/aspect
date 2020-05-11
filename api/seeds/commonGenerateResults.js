@@ -146,7 +146,7 @@ async function generateResults(
     updatedOn: now,
     updatedBy: adminId,
   }
-  
+
   const {
     Detected: resultCategoryDetectedId,
     Positive: resultCategoryPositiveId,
