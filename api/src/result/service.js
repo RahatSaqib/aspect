@@ -221,6 +221,7 @@ async function exportResults(query, auth) {
 async function listResults(request) {
   const { query, auth } = request
   const result = await getListResults(query, auth)
+  console.log('--------result', result)
   return result
 }
 

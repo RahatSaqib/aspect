@@ -23,6 +23,9 @@ const LIST_FIELDS = [
   'si.name as siteName',
   'a.name as assayName',
   'ca.externalId as caseExternalId',
+  'dis.id as diseaseId',
+  'dis.name as diseaseName',
+  'dis.externalId as diseaseExternalId',
 ]
 
 // Fields used for reports mtb-detected-rr-detected and results_hiv_not_suppressed
@@ -115,6 +118,8 @@ const SELECT_COMMON_FIELDS = [
   'r.caseId',
   'ca.externalId as caseExternalId',
   'dis.id as diseaseId',
+  'dis.name as diseaseName',
+  'dis.externalId as diseaseExternalId',
 ]
 const SELECT_SHOW_FIELDS = [
   ...SELECT_COMMON_FIELDS,

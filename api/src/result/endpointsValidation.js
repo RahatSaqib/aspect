@@ -196,6 +196,12 @@ const baseResultResponse = {
     .positive()
     .required()
     .description('the Id of the disease'),
+  diseaseName: Joi.string()
+    .required()
+    .description('the name of the disease'),
+  diseaseExternalId: Joi.string()
+    .required()
+    .description('the external id of the disease'),
 }
 
 function validateResultListResponse() {
