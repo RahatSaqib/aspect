@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import PropTypes from 'prop-types'
 import React, { useEffect } from 'react'
 import { connect } from 'react-redux'
@@ -5,6 +6,7 @@ import { Switch, Route, Redirect } from 'react-router-dom'
 import Immutable from 'immutable'
 import Helmet from 'react-helmet'
 import classnames from 'classnames/bind'
+import { injectIntl } from 'react-intl'
 
 // Material-UI
 import Paper from '@material-ui/core/Paper'
@@ -165,11 +167,14 @@ SiteDetail.propTypes = {
   updateTags: PropTypes.func.isRequired,
   updateLatLongFromFormAddress: PropTypes.func.isRequired,
 }
-export default connect(mapStateToProps, {
-  fetchSingleSite,
-  updateSingleSiteFromForm,
-  fetchSiteContacts,
-  fetchTags,
-  updateTags,
-  updateLatLongFromFormAddress,
-})(SiteDetail)
+export default _.flowRight(
+  injectIntl,
+  connect(mapStateToProps, {
+    fetchSingleSite,
+    updateSingleSiteFromForm,
+    fetchSiteContacts,
+    fetchTags,
+    updateTags,
+    updateLatLongFromFormAddress,
+  })
+)(SiteDetail)

@@ -1,0 +1,8 @@
+.title__container {
+  padding: 10px;
+}
+.title__label {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--aspect-color-black-2);
+}

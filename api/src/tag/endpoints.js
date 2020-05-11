@@ -1,6 +1,6 @@
 const Joi = require('@hapi/joi')
 const { asyncHandler } = require('../routes')
-const { listTags, listTagsByType, updateTag } = require('./service')
+const { listTags, listTagsByType, updateTags } = require('./service')
 
 const routes = [
   {
@@ -44,7 +44,7 @@ const routes = [
   {
     method: 'PUT',
     path: '/tag/{tagType}/{id}',
-    handler: asyncHandler(updateTag),
+    handler: asyncHandler(updateTags),
     config: {
       description: 'Update Tags for Result/Site/Device/Person',
       notes: "List of Tags ID's and title",

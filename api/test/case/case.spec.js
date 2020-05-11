@@ -6,9 +6,17 @@ const {
   getFirstPartnerId,
   getFirstDiseaseId,
 } = require('./utils')
+const { knex } = require('../../src/db')
 const { getAdminId } = require('../utils/authUtils')
 const { getAccessToken } = require('../utils/authUtils')
-const { getCaseId, removeCase, addCase } = require('../../src/case/service')
+const {
+  addCase,
+  getCaseId,
+  removeCase,
+  updateCase,
+} = require('../../src/case/service')
+const { createMessageContext, waitForAction } = require('../utils/mqUtils')
+const { caseAdded, caseUpdated } = require('../../src/case/actions')
 
 const server = supertest.agent('http://localhost:8080')
 
@@ -33,7 +41,11 @@ describe('case/service', () => {
   let accessToken = null
   let adminId = null
   const path = '/api/case'
+  let messageContext
 
+  // helpers
+  const getExternalId = () =>
+    `${Date.now()}_${Math.floor(Math.random() * 10000)}`
   const mockCase = externalId => {
     return {
       createdBy: adminId,
@@ -48,6 +60,9 @@ describe('case/service', () => {
     diseaseId = await getFirstDiseaseId(partnerId)
     accessToken = await getAccessToken('admin', 'test07')
     adminId = await getAdminId()
+
+    messageContext = await createMessageContext()
+    messageContext.bindActionCreators({ caseAdded, caseUpdated })
   })
 
   describe('GET', () => {
@@ -67,9 +82,9 @@ describe('case/service', () => {
       ;[caseToTest] = res.body.data
     })
 
-    it('Should return a list of cases filtered by patientOrResearchId', async () => {
+    it('Should return a list of cases filtered by patientOrCaseId', async () => {
       const res = await server
-        .get(`${path}?patientOrResearchId=${caseToTest.patientId}`)
+        .get(`${path}?patientOrCaseId=${caseToTest.patientId}`)
         .set('Authorization', `Bearer ${accessToken}`)
 
       assert.equal(res.status, 200)
@@ -110,16 +125,53 @@ describe('case/service', () => {
       assert.isNotNull(res.body.data)
       assert.equal(res.body.data.length, 0)
     })
+
+    it('Should return auto-complete cases ', async () => {
+      const res = await server
+        .get(`${path}/auto?externalId=case-`)
+        .set('Authorization', `Bearer ${accessToken}`)
+
+      const [quantity] = await knex('Case')
+        .where('partnerId', partnerId)
+        .count()
+
+      assert.equal(res.status, 200)
+      assert.typeOf(res.body, 'Object')
+      assert.property(res.body, 'data')
+      assert.typeOf(res.body.data, 'array')
+      assert.isNotNull(res.body.data)
+      assert.equal(res.body.data.length, quantity['count(*)'])
+      assert.property(res.body.data[0], 'id')
+      assert.property(res.body.data[0], 'externalId')
+    })
   })
 
-  describe('add', () => {
+  describe('add / update', () => {
+    let caseId
     it('Should add case and return the id', async () => {
-      const objCase = mockCase(
-        `non existent externalId ${Math.floor(Math.random() * 10000)}`
-      )
+      const objCase = mockCase(`Some externalId ${getExternalId()}`)
 
-      const caseId = await addCase(objCase)
+      caseId = await addCase(objCase, { messageContext })
       assert.isNotNull(caseId)
+
+      // check that MQ handled action with actual values
+      const waitForCaseAdded = waitForAction(caseAdded(caseId))
+      await waitForCaseAdded
+    })
+
+    it('Should update case and handle MQ message', async () => {
+      const caseIds = await updateCase(
+        { id: caseId },
+        { externalId: `Changed externalId ${getExternalId()}` },
+        { messageContext }
+      )
+      assert.isNotNull(caseIds)
+      assert.isArray(caseIds)
+      assert.isNotEmpty(caseIds)
+
+      await Promise.all(
+        caseIds.map(caseId => waitForAction(caseUpdated(caseId)))
+      )
     })
   })
 

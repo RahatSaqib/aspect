@@ -11,6 +11,7 @@ import {
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
+import { injectIntl } from 'react-intl'
 import TableBody from '@material-ui/core/TableBody'
 import {
   makeSortPageSelector,
@@ -64,6 +65,10 @@ const FILTERS_CONFIG = [
     deviceStatus: true,
     requiredPermissions: [],
   },
+  {
+    siteId: true,
+    requiredPermissions: [],
+  },
 ]
 
 const searchSanitizer = makeSearchParamsSanitizer({
@@ -89,6 +94,7 @@ const filtersFromLocation = composeSanitizer(
 )
 
 const enhance = compose(
+  injectIntl,
   withProps(
     makeSortPageSelector({
       sortCol: 'name',

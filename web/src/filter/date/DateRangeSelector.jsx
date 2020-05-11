@@ -18,7 +18,7 @@ import startOfYear from 'date-fns/startOfYear'
 import subtractYears from 'date-fns/subYears'
 import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
-import { injectIntl, defineMessages, intlShape } from 'react-intl'
+import { injectIntl, defineMessages } from 'react-intl'
 
 // Material-UI
 import MenuItem from '@material-ui/core/MenuItem'
@@ -28,6 +28,7 @@ import Divider from '@material-ui/core/Divider'
 import SelectField from '../../components/shared/SelectField'
 import DateTimeInput from '../../components/shared/DateTimeInput'
 import FormGroup from '../../components/themedReactToolbox/FormGroup'
+import PropTypeOf from '../../shared/types'
 
 import styles from './DateRangeSelector.css'
 
@@ -136,7 +137,7 @@ const messages = defineMessages({
 
 export class DateRangeSelector extends PureComponent {
   static propTypes = {
-    intl: intlShape.isRequired,
+    intl: PropTypeOf.intl.isRequired,
     onChangeDate: PropTypes.func.isRequired,
     floatingLabelText: PropTypes.string.isRequired,
     controlClassName: PropTypes.string.isRequired,

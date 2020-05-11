@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import classnames from 'classnames/bind'
-import { defineMessages } from 'react-intl'
+import { defineMessages, injectIntl } from 'react-intl'
 import React from 'react'
 import Immutable from 'immutable'
 import { compose, withStateHandlers, withHandlers, lifecycle } from 'recompose'
@@ -43,6 +43,7 @@ const initializeValuesFrom = device => ({
 })
 
 const enhance = compose(
+  injectIntl,
   connect(
     (state, props) => {
       const deviceTags = state.tag.tags.getIn(

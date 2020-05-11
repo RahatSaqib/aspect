@@ -1,15 +1,12 @@
 import _ from 'lodash'
 import React from 'react'
 import { shallow } from 'enzyme'
-import { IntlProvider } from 'react-intl'
+import { createIntl } from 'react-intl'
 import { License } from './License'
 
 describe('License component', () => {
-  const intlProvider = new IntlProvider({ locale: 'en' }, {})
-  const { intl } = intlProvider.getChildContext()
-
   const props = {
-    intl,
+    intl: createIntl({ locale: 'en' }),
     licenseContent: 'License here!\nYou better accept!',
     onDoNotAcceptClick: _.noop,
     onAcceptClick: _.noop,
