@@ -28,7 +28,11 @@ const messages = defineMessages({
   },
   patientOrResearchId: {
     id: 'filter.btnGroup.patientOrResearchId',
-    defaultMessage: 'patient/study ID {patientOrResearchId}',
+    defaultMessage: 'patient/case ID {patientOrCaseId}',
+  },
+  patientOrCaseId: {
+    id: 'filter.btnGroup.patientOrCaseId',
+    defaultMessage: 'patient/case ID {patientOrCaseId}',
   },
   sampleId: {
     id: 'filter.btnGroup.sampleId',
@@ -49,6 +53,10 @@ const messages = defineMessages({
   whereSiteNameIncludes: {
     id: 'filter.btnGroup.whereSiteNameIncludes',
     defaultMessage: 'where site name includes "{siteName}"',
+  },
+  whereSiteIdIncludes: {
+    id: 'filter.btnGroup.whereSiteIdIncludes',
+    defaultMessage: 'where site id includes "{siteId}"',
   },
   sampleOriginSite: {
     id: 'filter.btnGroup.sampleOriginSite',
@@ -148,8 +156,10 @@ const filtersOrdering = {
   notificationName: 20,
   revoked: 21,
   treatmentStatusId: 22,
+  siteId: 23,
   // -1: Special orderings
   siteIds: -1,
+  patientOrCaseId: 23,
 }
 
 const makeButton = labelFn => (props, filterKey) => (
@@ -208,12 +218,20 @@ const buttonBy = {
   patientOrResearchId: makeButton(({ intl }, patientOrResearchId) =>
     intl.formatMessage(messages.patientOrResearchId, { patientOrResearchId })
   ),
+  patientOrCaseId: makeButton(({ intl }, patientOrCaseId) =>
+    intl.formatMessage(messages.patientOrCaseId, { patientOrCaseId })
+  ),
   sampleId: makeButton(({ intl }, sampleId) =>
     intl.formatMessage(messages.sampleId, { sampleId })
   ),
   deviceName: makeButton(({ intl }, deviceName) =>
     intl.formatMessage(messages.whereDeviceNameIncludes, {
       deviceName,
+    })
+  ),
+  siteId: makeButton(({ intl }, siteId) =>
+    intl.formatMessage(messages.whereSiteIdIncludes, {
+      siteId,
     })
   ),
   resultCategoryId: makeButton(

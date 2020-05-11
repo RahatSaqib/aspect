@@ -6,6 +6,7 @@ const {
   getFirstPartnerId,
   getFirstDiseaseId,
 } = require('./utils')
+const { knex } = require('../../src/db')
 const { getAdminId } = require('../utils/authUtils')
 const { getAccessToken } = require('../utils/authUtils')
 const {
@@ -81,9 +82,9 @@ describe('case/service', () => {
       ;[caseToTest] = res.body.data
     })
 
-    it('Should return a list of cases filtered by patientOrResearchId', async () => {
+    it('Should return a list of cases filtered by patientOrCaseId', async () => {
       const res = await server
-        .get(`${path}?patientOrResearchId=${caseToTest.patientId}`)
+        .get(`${path}?patientOrCaseId=${caseToTest.patientId}`)
         .set('Authorization', `Bearer ${accessToken}`)
 
       assert.equal(res.status, 200)
@@ -123,6 +124,25 @@ describe('case/service', () => {
       assert.typeOf(res.body.data, 'array')
       assert.isNotNull(res.body.data)
       assert.equal(res.body.data.length, 0)
+    })
+
+    it('Should return auto-complete cases ', async () => {
+      const res = await server
+        .get(`${path}/auto?externalId=case-`)
+        .set('Authorization', `Bearer ${accessToken}`)
+
+      const [quantity] = await knex('Case')
+        .where('partnerId', partnerId)
+        .count()
+
+      assert.equal(res.status, 200)
+      assert.typeOf(res.body, 'Object')
+      assert.property(res.body, 'data')
+      assert.typeOf(res.body.data, 'array')
+      assert.isNotNull(res.body.data)
+      assert.equal(res.body.data.length, quantity['count(*)'])
+      assert.property(res.body.data[0], 'id')
+      assert.property(res.body.data[0], 'externalId')
     })
   })
 
