@@ -112,7 +112,7 @@ function receiveWorkflowStatuses(state, items, lastRefreshed) {
   return state.merge({
     loading: false,
     lastRefreshed,
-    items: new Immutable.fromJS(sortedItems),
+    items: Immutable.fromJS(sortedItems),
   })
 }
 

@@ -129,7 +129,7 @@ export function getReportFile(externalId, filtersParams) {
  * ---------------- Reducers -----------------
  */
 export const InitialStateModel = Immutable.Record({
-  items: new Immutable.List([]),
+  items: Immutable.List([]),
   loading: true,
 })
 
