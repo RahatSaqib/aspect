@@ -853,7 +853,7 @@ describe('Result routes', () => {
               .where('name', '<>', 'admin')
               .first('id')
           ).id
-          diseaseId = diseaseToId('covid19')
+          diseaseId = await diseaseToId('covid19')
           const deviceStatusApprovedId = await deviceStatusToId('approved')
           await Promise.each(
             Object.keys(covidDeviceTypeDevices),
