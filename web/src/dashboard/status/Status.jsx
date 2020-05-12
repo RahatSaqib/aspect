@@ -14,7 +14,6 @@ import ActionStatus from './ActionStatus'
 import TargetStatus from './TargetStatus'
 import Reports from './Reports'
 import BrowseSiteDropdown from '../../globals/components/BrowseSiteDropdown'
-// import TreatmentStatus from './TreatmentStatus'
 import GraphsContainer from '../../MigratedComponents/Graphs/GraphsContainer'
 import ColorDemo from './ColorDemo/ColorDemo'
 
@@ -68,13 +67,6 @@ const Status = ({ history, location, colorDemo }) => {
         assaysFromState={assays}
       />
 
-      {/* <TreatmentStatus
-        intl={intl}
-        history={history}
-        location={location}
-        className={cssClasses('Section--withDropdown')}
-        title={intl.formatMessage(messages.treatmentTitle)}
-      /> */}
       {colorDemo && <ColorDemo vars={process.env} />}
       <TargetStatus
         intl={intl}
