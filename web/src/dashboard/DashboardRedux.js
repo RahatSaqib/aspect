@@ -405,66 +405,6 @@ export function fetchActionDashboard(rawFiltersParams, sortCol, sortDir) {
   }
 }
 
-// -------------------------------------------------------------------
-// export function fetchTreatmentDashboard({
-//   siteId,
-//   assayTypeId,
-//   resultCategoryId,
-//   endedOn,
-// } = {}) {
-//   return dispatch => {
-//     const requestedAt = `treatment_${Date.now()}`
-//     dispatch(
-//       requestTreatmentDashboard({
-//         siteId,
-//         assayTypeId,
-//         resultCategoryId,
-//         endedOn,
-//         requestedAt,
-//       })
-//     )
-
-//     return aspectFetch('/result/confirmed-treatment-tracking', {
-//       method: 'POST',
-//       body: JSON.stringify({ siteId, endedOn, assayTypeId, resultCategoryId }),
-//       errorNotifications: {
-//         403: errorInsufficientScope(
-//           defineMessages({
-//             title: {
-//               id:
-//                 'errorResponseMessages.fetchTreatmentDashboard.POST.403.title',
-//               defaultMessage: 'Permissions Conflict',
-//             },
-//           })
-//         ),
-//         default: errorPleaseTryAgainInAFewMinutes(
-//           defineMessages({
-//             title: {
-//               id:
-//                 'errorResponseMessages.fetchTreatmentDashboard.POST.default.title',
-//               defaultMessage: 'Error Loading Dashboard Treatment',
-//             },
-//           })
-//         ),
-//       },
-//     }).then(json => dispatch(receiveTreatmentDashboard(requestedAt, json)))
-//   }
-// }
-// function requestTreatmentDashboard(payload) {
-//   return {
-//     type: REQUEST_TREATMENT_DASHBOARD,
-//     ...payload,
-//   }
-// }
-
-// function receiveTreatmentDashboard(requestedAt, data) {
-//   return {
-//     type: RECEIVE_TREATMENT_DASHBOARD,
-//     requestedAt,
-//     data,
-//   }
-// }
-
 export function fetchInventoryDashboard() {
   return dispatch => {
     const requestedAt = `inventoryItem_${Date.now()}`
@@ -659,24 +599,6 @@ export default function dashboardReducer(state = initialState, action) {
             mutState.mergeDeepIn(['actionSummaryMap', category], list)
           })
       })
-    // case RECEIVE_TREATMENT_DASHBOARD: {
-    //   return state.withMutations(mutState => {
-    //     onRequested(action, mutState, () => {
-    //       const payload = action.data
-    //       payload.data.forEach(item => {
-    //         const date = new Date(`${item.monthTested}-15`)
-    //         const monthName = date.toLocaleString('en-us', { month: 'long' })
-    //         item.period = `${monthName} ${date.getFullYear()}`
-    //         item.cntNotConfirmed =
-    //           item.total > 0 ? item.total - item.cntConfirmed : 0
-    //         // ensure max 1 decimal point for float data types
-    //         const pc = 100 - item.pcConfirmed
-    //         item.pcNotConfirmed = item.total > 0 ? Math.round(10 * pc) / 10 : 0
-    //       })
-    //       mutState.set('treatmentStatus', new Immutable.fromJS(payload))
-    //     })
-    //   })
-    // }
     case RECEIVE_INVENTORY_DASHBOARD:
       return state.withMutations(mutState => {
         const payload = action.data

@@ -2,11 +2,10 @@ import React, { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import classnames from 'classnames/bind'
 import isEqual from 'lodash/isEqual'
-import { shallowEqual, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 import Grid from '@material-ui/core/Grid'
 import CircularProgress from '@material-ui/core/CircularProgress'
 
-import usePrevious from '../../../Hooks/CustomHooks'
 import {
   formatDataByGraphType,
   getGraphKeysFromResults,
@@ -33,16 +32,12 @@ const GraphRender = ({
   const [rawGraphData, setRawGraphData] = useState(false)
   const [graphData, setGraphData] = useState(false)
   const [graphKeys, setGraphKeys] = useState(false)
-  const prevId = usePrevious(id)
 
   const { culture, graphState } = useSelector(state => {
     const { user, clinicalIndicators } = state
     const { culture } = user.toJS()
     const { [parentId]: parentState = false } = clinicalIndicators.toJS()
     const { [id]: graphState = false } = parentState
-    // id === 'resultsByCategory1Monthly' &&
-    //   console.log(id, graphState, parentState);
-
     return {
       culture,
       graphState,
