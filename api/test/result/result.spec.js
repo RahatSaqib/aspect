@@ -15,6 +15,7 @@ const {
   allResultCategoryToId,
   resultSourceToId,
   resultTypeToId,
+  diseaseToId,
 } = require('../../src/shared/dictionary')
 const { getCaseId } = require('../../src/case/service')
 const { knex } = require('../../src/db')
@@ -833,11 +834,13 @@ describe('Result routes', () => {
         let resultSourceEnteredByHandId
         let resultSourceDiagnosticDeviceId
         let resultTypePatientId
+        let diseaseId
         const sampleIdsInserted = []
         const resultIdsInserted = []
         const casesInserted = []
         const getCaseIdByDeviceTypeId = deviceTypeId =>
           `${deviceTypeId} TEST-CASE-ID`
+
         before(async () => {
           partnerId = (
             await knex('Partner')
@@ -850,6 +853,7 @@ describe('Result routes', () => {
               .where('name', '<>', 'admin')
               .first('id')
           ).id
+          diseaseId = diseaseToId('covid19')
           const deviceStatusApprovedId = await deviceStatusToId('approved')
           await Promise.each(
             Object.keys(covidDeviceTypeDevices),
@@ -890,7 +894,7 @@ describe('Result routes', () => {
             async deviceTypeId => {
               const externalId = getCaseIdByDeviceTypeId(deviceTypeId)
               const caseId = await getCaseId(
-                { externalId, partnerId },
+                { externalId, partnerId, diseaseId },
                 true,
                 adminId
               )

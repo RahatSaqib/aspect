@@ -52,6 +52,7 @@ describe('case/service', () => {
       updatedBy: adminId,
       partnerId,
       externalId,
+      diseaseId,
     }
   }
 
@@ -201,6 +202,7 @@ describe('case/service', () => {
       const caseId = await getCaseId({
         externalId: existentCase.externalId,
         partnerId: existentCase.partnerId,
+        diseaseId: existentCase.diseaseId,
       })
       assert.equal(caseId, existentCase.id)
     })

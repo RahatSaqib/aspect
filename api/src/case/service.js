@@ -16,6 +16,8 @@ function validateCaseIdentifier(_case) {
 
   if (!_case.partnerId) errors += 'You must provide the partnerId field /n'
 
+  if (!_case.diseaseId) errors += 'You must provide the diseaseId field /n'
+
   if (errors) throw new Error(errors)
 }
 
@@ -38,6 +40,7 @@ async function getCaseId(_case, createIfNonExistent, userId) {
     .where({
       externalId: _case.externalId,
       partnerId: _case.partnerId,
+      diseaseId: _case.diseaseId,
     })
     .first('id as caseId')) || { caseId: null }
 

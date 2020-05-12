@@ -65,6 +65,7 @@ async function updateCovidResultFromFormData(
         'r.resultCategory1',
         'r.startedOn',
         'r.endedOn',
+        'at.diseaseId',
         'pd.canAutoAssignResultByCaseId'
       )
     if (!result) {
@@ -77,6 +78,7 @@ async function updateCovidResultFromFormData(
       formData,
       formSchema,
       partnerId,
+      diseaseId,
       patientData,
       resultCategory1,
       resultData,
@@ -131,7 +133,7 @@ async function updateCovidResultFromFormData(
     const caseExternalId = formDataObject.caseId
     if (canAutoAssignResultByCaseId && caseExternalId) {
       const caseId = await getCaseId(
-        { partnerId, externalId: caseExternalId },
+        { partnerId, externalId: caseExternalId, diseaseId },
         true,
         userId
       )

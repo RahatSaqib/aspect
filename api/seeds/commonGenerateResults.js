@@ -421,6 +421,15 @@ async function addCovidResults(
     siteDatas,
     site => site.externalId.indexOf('_lab') >= 0
   )
+
+  const assayIdDiseaseIdMap = await knex('Assay as a')
+    .join('AssayType as at', 'a.assayTypeId', 'at.id')
+    .whereIn('a.id', _.uniq([...assays, genericAssay].map(assay => assay.id)))
+    .select('a.id', 'at.diseaseId')
+    .reduce((accumulator, assayDisease) => {
+      accumulator[assayDisease.id] = assayDisease.diseaseId
+      return accumulator
+    }, {})
   await Promise.each(_.range(quantity), async i => {
     const resultCapturedInAspect = i % 7 === 0
 
@@ -489,6 +498,7 @@ async function addCovidResults(
       const caseId = await addCase({
         externalId: caseExternalId,
         partnerId,
+        diseaseId: assayIdDiseaseIdMap[assayId],
         ...auditFields,
       })
 

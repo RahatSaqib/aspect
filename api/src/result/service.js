@@ -2545,7 +2545,7 @@ async function updateOrCreateResult(request, result = {}) {
   // create case entry or update it
   if (payload.caseId) {
     result.caseId = await getCaseId(
-      { externalId: payload.caseId, partnerId },
+      { externalId: payload.caseId, partnerId, diseaseId: assay.diseaseId },
       true,
       userId
     )
