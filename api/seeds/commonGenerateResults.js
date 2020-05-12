@@ -497,7 +497,7 @@ async function addCovidResults(
     if (!positiveResults) {
       let caseId = null
       if (assayIdDiseaseIdMap[assayId]) {
-        await addCase({
+        caseId = await addCase({
           externalId: caseExternalId,
           partnerId,
           diseaseId: assayIdDiseaseIdMap[assayId],

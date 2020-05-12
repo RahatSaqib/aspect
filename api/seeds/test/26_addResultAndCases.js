@@ -18,25 +18,28 @@ async function seed(knex) {
     .where({ name: 'admin' })
     .first('id')
   const cases = []
-  await Promise.each(results.filter(result => !!assayIdDiseaseIdMap[result.assayId]), async result => {
-    if (_.random(100) <= 50) {
-      const caseExternalId = `CASE-${getUniqueId()}-ID`
-      const caseId = await knex('Case').insert({
-        externalId: caseExternalId,
-        partnerId: result.partnerId,
-        diseaseId: assayIdDiseaseIdMap[result.assayId],
-        createdBy: adminId,
-        updatedBy: adminId,
-      })
-      cases.push(caseId)
+  await Promise.each(
+    results.filter(result => !!assayIdDiseaseIdMap[result.assayId]),
+    async result => {
       if (_.random(100) <= 50) {
-        result.caseId = _.sample(cases)
-      } else {
-        result.caseId = caseId
+        const caseExternalId = `CASE-${getUniqueId()}-ID`
+        const caseId = await knex('Case').insert({
+          externalId: caseExternalId,
+          partnerId: result.partnerId,
+          diseaseId: assayIdDiseaseIdMap[result.assayId],
+          createdBy: adminId,
+          updatedBy: adminId,
+        })
+        cases.push(caseId)
+        if (_.random(100) <= 50) {
+          result.caseId = _.sample(cases)
+        } else {
+          result.caseId = caseId
+        }
+        await knex('Result')
+          .update({ id: result.id, caseId: result.caseId })
+          .where({ id: result.id })
       }
-      await knex('Result')
-        .update({ id: result.id, caseId: result.caseId })
-        .where({ id: result.id })
     }
-  })
+  )
 }
