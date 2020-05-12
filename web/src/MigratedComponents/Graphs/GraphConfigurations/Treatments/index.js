@@ -41,12 +41,7 @@ const treatmentStatusGraphs = {
         api: {
           method: 'POST',
           endpoint: 'result/confirmed-treatment-tracking',
-          params: {
-            siteId: null,
-            endedOn: '2020-04-30',
-            assayTypeId: null,
-            resultCategoryId: null,
-          },
+          params: {},
         },
         indexBy: 'monthTested',
         keyToConsume: 'pcConfirmed',
@@ -65,12 +60,12 @@ const treatmentStatusGraphs = {
         api: {
           method: 'POST',
           endpoint: 'result/confirmed-treatment-tracking',
-          params: {
-            siteId: null,
-            endedOn: '2020-04-30',
-            assayTypeId: null,
-            resultCategoryId: null,
-          },
+          params: {},
+
+          // siteId: null,
+          // endedOn: '2020-04-30',
+          // assayTypeId: null,
+          // resultCategoryId: null
         },
         indexBy: 'monthTested',
         keyToConsume: 'cntConfirmed',

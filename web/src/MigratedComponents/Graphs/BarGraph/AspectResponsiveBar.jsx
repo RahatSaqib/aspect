@@ -69,8 +69,6 @@ const AspectResponsiveBar = ({
       ]
     : []
 
-  // console.log(data);
-
   return (
     <ResponsiveBar
       data={data}

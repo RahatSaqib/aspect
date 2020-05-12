@@ -1,11 +1,11 @@
-import React from 'react';
-import Grid from '@material-ui/core/Grid';
-import classnames from 'classnames/bind';
+import React from 'react'
+import Grid from '@material-ui/core/Grid'
+import classnames from 'classnames/bind'
 
-const cssClasses = classnames.bind(require('./CardSelectors.css'));
+const cssClasses = classnames.bind(require('./CardSelectors.css'))
 
 const CardSelectors = ({ props }) => {
-  const { actionComponentProps, action } = props;
+  const { actionComponentProps, action } = props
   return actionComponentProps ? (
     <Grid container className={cssClasses('selectors__container')}>
       {actionComponentProps.map(
@@ -17,11 +17,11 @@ const CardSelectors = ({ props }) => {
               action={action}
               identifier={identifier}
             />
-          );
+          )
         }
       )}
     </Grid>
-  ) : null;
-};
+  ) : null
+}
 
-export default CardSelectors;
+export default CardSelectors

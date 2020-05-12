@@ -1,9 +1,9 @@
-import variables from '../../../../../cfg/variables.js';
+import variables from '../../../../../cfg/variables.js'
 
 const envSource =
   process.env && process.env.initialised
     ? process.env
-    : Object.assign(process.env, variables.customPropertiesVariables);
+    : Object.assign(process.env, variables.customPropertiesVariables)
 
 const {
   '--aspect-color-black': colorBlack,
@@ -15,8 +15,8 @@ const {
   '--aspect-color-scooter-blue-4': colorBlue4,
   '--aspect-color-supernova': colorSuperNova,
   '--aspect-color-supernova-2': colorSuperNova2,
-  '--aspect-color-white-4': colorWhite4
-} = envSource;
+  '--aspect-color-white-4': colorWhite4,
+} = envSource
 
 const graphColorMap = [
   { id: 1, externalId: 'MoreThan1000', color: colorMandy },
@@ -42,7 +42,7 @@ const graphColorMap = [
   { id: 21, externalId: 'Female', color: colorPurple },
   { id: 22, externalId: 'Confirmed', color: colorMantis },
   { id: 23, externalId: 'NotConfirmed', color: colorBlue4 },
-  { id: 99, externalId: 'Cases', color: colorMantis }
-];
+  { id: 99, externalId: 'Cases', color: colorMantis },
+]
 
-export default graphColorMap;
+export default graphColorMap
