@@ -495,12 +495,15 @@ async function addCovidResults(
     const updatedOn = addMinutes(randomDate, 180)
 
     if (!positiveResults) {
-      const caseId = await addCase({
-        externalId: caseExternalId,
-        partnerId,
-        diseaseId: assayIdDiseaseIdMap[assayId],
-        ...auditFields,
-      })
+      let caseId = null
+      if (assayIdDiseaseIdMap[assayId]) {
+        await addCase({
+          externalId: caseExternalId,
+          partnerId,
+          diseaseId: assayIdDiseaseIdMap[assayId],
+          ...auditFields,
+        })
+      }
 
       resultToInsert = {
         assayId,

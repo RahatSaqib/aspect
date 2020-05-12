@@ -4,7 +4,9 @@ const Promise = require('bluebird')
 const { getUniqueId } = require('../utils')
 
 async function seed(knex) {
-  const results = await knex('Result').whereNull('caseId').select()
+  const results = await knex('Result')
+    .whereNull('caseId')
+    .select()
   const assayIdDiseaseIdMap = await knex('Assay as a')
     .join('AssayType as at', 'a.assayTypeId', 'at.id')
     .select('a.id', 'at.diseaseId')
@@ -16,7 +18,7 @@ async function seed(knex) {
     .where({ name: 'admin' })
     .first('id')
   const cases = []
-  await Promise.each(results, async result => {
+  await Promise.each(results.filter(result => !!assayIdDiseaseIdMap[result.assayId]), async result => {
     if (_.random(100) <= 50) {
       const caseExternalId = `CASE-${getUniqueId()}-ID`
       const caseId = await knex('Case').insert({

@@ -17,6 +17,7 @@ async function up(knex) {
     .leftJoin('Result as r', 'c.id', 'r.caseId')
     .leftJoin('Assay as a', 'r.assayId', 'a.id')
     .leftJoin('AssayType as at', 'a.assayTypeId', 'at.id')
+    .whereNotNull('at.diseaseId')
     .groupBy('c.id')
     .select('c.id', knex.raw('MAX(at.diseaseId) AS diseaseId'))
 

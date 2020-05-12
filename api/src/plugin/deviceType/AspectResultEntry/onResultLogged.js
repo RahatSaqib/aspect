@@ -131,7 +131,7 @@ async function updateCovidResultFromFormData(
       deviceLogCountFromDiagnosticDevice === 0
 
     const caseExternalId = formDataObject.caseId
-    if (canAutoAssignResultByCaseId && caseExternalId) {
+    if (canAutoAssignResultByCaseId && caseExternalId && diseaseId) {
       const caseId = await getCaseId(
         { partnerId, externalId: caseExternalId, diseaseId },
         true,
