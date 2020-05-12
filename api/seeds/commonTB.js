@@ -1,5 +1,5 @@
 const _ = require('lodash')
-const { addMinutes, addDays, format } = require('date-fns')
+const { format } = require('date-fns')
 const Promise = require('bluebird')
 const {
   assayTypeToId,
@@ -10,20 +10,22 @@ const {
 const AssayBdMgitAstResultDataSchema = require('./fixtures/AssayBdMgitAstResultDataSchema.json')
 const AssayBdMgitGndResultDataSchema = require('./fixtures/AssayBdMgitGndResultDataSchema.json')
 const MGITPatientDataSchema = require('./fixtures/MGITPatientDataSchema.json')
-const { seedPartnerAssay, seedPartnerDisease } = require('./utils')
+const {
+  seedPartnerAssay,
+  seedPartnerDisease,
+  getLinkedResultDate,
+  getDateFields,
+} = require('./utils')
 
 async function getMGITResultFromTBPossitive(result, assaysMGIT, devicesMGIT) {
-  const randomDateMgit = addDays(result.endedOn, _.random(5))
+  const randomDateMgit = getLinkedResultDate(result)
   const now = new Date()
   const assay = _.sample(assaysMGIT)
   const assayId = await assayToId('assayBdMgitAst')
   return _.defaults(
     {
       assayId: assay.id,
-      startedOn: randomDateMgit,
-      endedOn: addMinutes(randomDateMgit, 100),
-      createdOn: addMinutes(randomDateMgit, 120),
-      updatedOn: addMinutes(randomDateMgit, 180),
+      ...getDateFields(randomDateMgit),
       consumableSerial: `${_.random(100)}12`,
       consumableExpirationDate: new Date(+now + 200 * _.random(10)),
       deviceId: _.sample(devicesMGIT).id,
