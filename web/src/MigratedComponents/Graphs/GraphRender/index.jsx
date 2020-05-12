@@ -1,55 +1,57 @@
-import React, { useState, useEffect } from 'react';
-import PropTypes from 'prop-types';
-import classnames from 'classnames/bind';
-import isEqual from 'lodash/isEqual';
-import { shallowEqual, useSelector } from 'react-redux';
-import Grid from '@material-ui/core/Grid';
-import CircularProgress from '@material-ui/core/CircularProgress';
+import React, { useState, useEffect } from 'react'
+import PropTypes from 'prop-types'
+import classnames from 'classnames/bind'
+import isEqual from 'lodash/isEqual'
+import { shallowEqual, useSelector } from 'react-redux'
+import Grid from '@material-ui/core/Grid'
+import CircularProgress from '@material-ui/core/CircularProgress'
 
-import usePrevious from '../../../Hooks/CustomHooks';
+import usePrevious from '../../../Hooks/CustomHooks'
 import {
   formatDataByGraphType,
-  getGraphKeysFromResults
-} from '../Helpers/Formatters';
+  getGraphKeysFromResults,
+} from '../Helpers/Formatters'
 
-const cssClasses = classnames.bind(require('./GraphRender.css'));
+const cssClasses = classnames.bind(require('./GraphRender.css'))
 
 const GraphRender = ({
   assays,
   id: parentId,
   config,
-  action: dispatchFromRedux
+  action: dispatchFromRedux,
 }) => {
-  const { whiteListed, assaysFromState } = assays;
-  const { id, size, api, type, averages } = config;
-  // const { action: fetchUsingReduxAction, params: actionParams } = action;
-  // const { action: fetchUsingReduxAction, params: actionParams } = action;
+  const { whiteListed, assaysFromState } = assays
+  const { id, size, api, type, averages } = config
   const {
     component: Component,
     displayMethod,
     formatDate,
     filterBy = false,
     indexBy,
-    keyToConsume
-  } = config;
-  const [rawGraphData, setRawGraphData] = useState(false);
-  const [graphData, setGraphData] = useState(false);
-  const [graphKeys, setGraphKeys] = useState(false);
+    keyToConsume,
+  } = config
+  const [rawGraphData, setRawGraphData] = useState(false)
+  const [graphData, setGraphData] = useState(false)
+  const [graphKeys, setGraphKeys] = useState(false)
+  const prevId = usePrevious(id)
 
   const { culture, graphState } = useSelector(state => {
-    const { user, clinicalIndicators } = state;
-    const { culture } = user.toJS();
-    const { [parentId]: parentState = false } = clinicalIndicators.toJS();
-    const { [id]: graphState = false } = parentState;
+    const { user, clinicalIndicators } = state
+    const { culture } = user.toJS()
+    const { [parentId]: parentState = false } = clinicalIndicators.toJS()
+    const { [id]: graphState = false } = parentState
+    // id === 'resultsByCategory1Monthly' &&
+    //   console.log(id, graphState, parentState);
+
     return {
       culture,
-      graphState
-    };
-  }, shallowEqual);
+      graphState,
+    }
+  })
 
   useEffect(() => {
     if (rawGraphData) {
-      const { data } = graphState;
+      const { data } = graphState
       if (data && data.length) {
         const grouped = formatDataByGraphType(
           data,
@@ -59,21 +61,21 @@ const GraphRender = ({
           indexBy,
           keyToConsume,
           type
-        );
+        )
         if (grouped) {
-          const keysFromGrouped = getGraphKeysFromResults(grouped, indexBy);
-          setGraphData(grouped);
-          setGraphKeys(keysFromGrouped);
+          const keysFromGrouped = getGraphKeysFromResults(grouped, indexBy)
+          setGraphData(grouped)
+          setGraphKeys(keysFromGrouped)
         }
       }
     }
-  }, [rawGraphData]);
+  }, [rawGraphData])
 
   useEffect(() => {
     if (graphState && !isEqual(graphState, rawGraphData)) {
-      setRawGraphData(graphState);
+      setRawGraphData(graphState)
     }
-  }, [graphState]);
+  }, [graphState, rawGraphData])
 
   useEffect(() => {
     dispatchFromRedux({
@@ -81,9 +83,9 @@ const GraphRender = ({
       parentId,
       id,
       whiteListed,
-      api
-    });
-  }, []);
+      api,
+    })
+  }, [])
 
   return (
     <Grid item xs={12} lg={size}>
@@ -104,14 +106,14 @@ const GraphRender = ({
         )}
       </div>
     </Grid>
-  );
-};
+  )
+}
 
 GraphRender.propTypes = {
   assays: PropTypes.oneOfType([PropTypes.array]).isRequired,
   config: PropTypes.oneOfType([PropTypes.object]).isRequired,
   id: PropTypes.string.isRequired,
-  action: PropTypes.oneOfType([PropTypes.object]).isRequired
-};
+  action: PropTypes.oneOfType([PropTypes.object]).isRequired,
+}
 
-export default GraphRender;
+export default GraphRender

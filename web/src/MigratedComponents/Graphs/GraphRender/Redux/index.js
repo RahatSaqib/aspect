@@ -23,8 +23,6 @@ export const RECEIVE_CLINICAL_INDICATORS_DASHBOARD =
 
 export function fetchClinicalIndicatorsDashboard(config) {
   let endpointParams = ''
-  console.log(config)
-
   const { parentId, id, whiteListed, api } = removeEmptyParams(config)
   const { endpoint, params, method = 'GET' } = api
   const assayParams = whiteListed
