@@ -78,10 +78,13 @@ function rejectResults() {
 }
 
 export function fetchResults(filtersParams, sortCol, sortDir, page, pageSize) {
+  console.log('filtersParams1', _.fromPairs([...filtersParams.entries()]))
+
   return dispatch => {
     const filters = _.fromPairs([...filtersParams.entries()])
     dispatch(requestResults(sortCol, sortDir, page, pageSize, filters))
     sortCol = sortCol || 'endedOn'
+    console.log('filtersParams4', _.fromPairs([...filtersParams.entries()]))
 
     return aspectFetch(
       `/result?${stringify({

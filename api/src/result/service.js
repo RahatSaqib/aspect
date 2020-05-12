@@ -109,7 +109,6 @@ async function getListResults(query, auth, fields = LIST_FIELDS) {
   const dataConstraints = await getConstraints(auth.credentials)
 
   const resultQuery = getQueryForResultsListAndExport(query, dataConstraints)
-
   // get total count for paging
   const getCount = resultQuery
     .clone()
@@ -222,6 +221,8 @@ async function exportResults(query, auth) {
 async function listResults(request) {
   const { query, auth } = request
   const result = await getListResults(query, auth)
+  console.log('query', result)
+
   return result
 }
 
@@ -2194,6 +2195,7 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
       errorCode: 'r.errorCode',
       workflowStatusId: 'rs.id',
       treatmentStatusId: 'rts.id',
+      caseId: 'caseId',
     })
     .modify((queryBuilder, params) => {
       if (params.patientOrResearchId) {
@@ -2205,11 +2207,6 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
             )
             .orWhere('r.researchId', 'like', `%${params.patientOrResearchId}%`)
         )
-      }
-      if (params.caseId) {
-        queryBuilder.whereRaw('UPPER(ca.externalId)=?', [
-          params.caseId.toUpperCase(),
-        ])
       }
     }, query)
     .modify(addPartnerQueryConstraints, dataConstraints)
