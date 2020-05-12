@@ -33,24 +33,19 @@
   },
   "lint-staged": {
     "./cfg/**/*.js": [
-      "eslint --fix",
-      "git add"
+      "eslint --fix"
     ],
     "./src/**/*.css": [
-      "prettier --write",
-      "git add"
+      "prettier --write"
     ],
     "./src/**/*.js": [
-      "eslint --fix",
-      "git add"
+      "eslint --fix"
     ],
     "./src/**/*.jsx": [
-      "eslint --fix",
-      "git add"
+      "eslint --fix"
     ],
     "./*.js": [
-      "eslint --fix",
-      "git add"
+      "eslint --fix"
     ]
   },
   "jest": {
