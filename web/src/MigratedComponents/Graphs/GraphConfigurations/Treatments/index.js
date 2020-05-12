@@ -61,11 +61,6 @@ const treatmentStatusGraphs = {
           method: 'POST',
           endpoint: 'result/confirmed-treatment-tracking',
           params: {},
-
-          // siteId: null,
-          // endedOn: '2020-04-30',
-          // assayTypeId: null,
-          // resultCategoryId: null
         },
         indexBy: 'monthTested',
         keyToConsume: 'cntConfirmed',
