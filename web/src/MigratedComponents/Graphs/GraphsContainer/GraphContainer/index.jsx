@@ -1,71 +1,76 @@
-import React, { useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
-import { useDispatch } from 'react-redux';
-import { useIntl } from 'react-intl';
-import classnames from 'classnames/bind';
-import Grid from '@material-ui/core/Grid';
-import AspectCard from '../../../AspectCard';
-import GraphRender from '../../GraphRender';
-import CardSelectors from '../../CardSelectors';
+import React, { useEffect, useState } from 'react'
+import PropTypes from 'prop-types'
+import { useDispatch } from 'react-redux'
+import { useIntl } from 'react-intl'
+import classnames from 'classnames/bind'
+import merge from 'lodash/merge'
+import Grid from '@material-ui/core/Grid'
+import AspectCard from '../../../AspectCard'
+import GraphRender from '../../GraphRender'
+import CardSelectors from '../../CardSelectors'
 
-import { fetchClinicalIndicatorsDashboard } from '../../GraphRender/Redux';
-import { validateGraphConfig } from '../../Helpers/Formatters';
-import messages from '../messages';
+import { fetchClinicalIndicatorsDashboard } from '../../GraphRender/Redux'
+import {
+  extractOptionValue,
+  validateGraphConfig,
+} from '../../Helpers/Formatters'
+import messages from '../messages'
 
-const cssClasses = classnames.bind(require('../GraphsContainer.css'));
+const cssClasses = classnames.bind(require('../GraphsContainer.css'))
 
 const GraphContainer = ({ config, size, assaysFromState }) => {
-  const dispatch = useDispatch();
-  const { title, selectorModifiers = false } = config;
-  const { formatMessage: intlFormatMessage } = useIntl();
-  const { assays, graphType, id } = config;
-  const { innerSize, outerSize } = size;
-  const [dispatchParams, setDispatchParams] = useState(false);
-  const [dispatchFromChild, setDispactFromChild] = useState(false);
-  const [dispatchFromSelector, setdispatchFromSelector] = useState(false);
-  const [whiteListed, setwhiteListed] = useState(false);
+  const dispatch = useDispatch()
+  const tempDispatchParams = []
+  const { title, selectorModifiers = false } = config
+  const { formatMessage: intlFormatMessage } = useIntl()
+  const { assays, graphType, id } = config
+  const { innerSize, outerSize } = size
+  const [dispatchParams, setDispatchParams] = useState(false)
+  const [dispatchFromChild, setDispatchFromChild] = useState(false)
+  const [dispatchParamsFromChild, setDispatchParamsFromChild] = useState(false)
+  const [dispatchFromSelector, setdispatchFromSelector] = useState(false)
+  const [whiteListed, setwhiteListed] = useState(false)
 
   useEffect(() => {
-    const allowed = [];
+    const allowed = []
     validateGraphConfig(config).then(() => {
       assays.map(a =>
         assaysFromState.filter(
           ({ externalId, hasResults }) =>
             externalId === a && hasResults && allowed.push(a)
         )
-      );
-      setwhiteListed(allowed);
-    });
-  }, [config, assays, assaysFromState]);
-
-  // useEffect(() => {}, dispatchParams);
+      )
+      setwhiteListed(allowed)
+    })
+  }, [config, assays, assaysFromState])
 
   useEffect(() => {
-    if (dispatchFromSelector) {
-      const { identifier, value } = dispatchFromSelector;
-      const { api } = dispatchFromChild;
-      const { params } = api;
-      // const tempParams =
-      console.log(dispatchFromChild);
-
-      dispatch(
-        fetchClinicalIndicatorsDashboard({
-          ...dispatchFromChild,
-          api: { ...api, params: { ...params, [identifier]: value } }
-        })
-      );
+    if (dispatchFromChild && dispatchFromSelector) {
+      const base = dispatchParams || dispatchFromChild
+      const { api } = base
+      const { params } = api
+      const { identifier, selectedOption } = dispatchFromSelector
+      const optionValue = extractOptionValue(identifier, selectedOption)
+      const mergedAPI = {
+        ...base,
+        api: { ...api, params: { ...merge(params, optionValue) } },
+      }
+      dispatch(fetchClinicalIndicatorsDashboard(mergedAPI))
     }
-  }, [dispatchFromSelector, dispatchFromChild]);
+  }, [dispatchFromSelector])
 
   useEffect(() => {
-    const { graphState } = dispatchFromChild;
-    if (dispatchFromChild && graphState === false) {
-      dispatch(fetchClinicalIndicatorsDashboard({ ...dispatchFromChild }));
+    if (dispatchParamsFromChild) {
+      dispatchParamsFromChild.map(dParams => {
+        const { graphState } = dParams
+        setDispatchFromChild(dParams)
+        if (dParams && graphState === false) {
+          dispatch(fetchClinicalIndicatorsDashboard({ ...dParams }))
+        }
+        return true
+      })
     }
-    if (dispatchFromChild && graphState) {
-      setDispactFromChild(dispatchFromChild);
-    }
-  }, [dispatchFromChild]);
+  }, [dispatchParamsFromChild])
 
   return whiteListed && whiteListed.length ? (
     <Grid item xs={12} lg={outerSize}>
@@ -78,7 +83,7 @@ const GraphContainer = ({ config, size, assaysFromState }) => {
             action={params => setdispatchFromSelector({ ...params })}
             actionComponent={{
               component: CardSelectors,
-              props: selectorModifiers
+              props: selectorModifiers,
             }}
           >
             <Grid
@@ -92,7 +97,10 @@ const GraphContainer = ({ config, size, assaysFromState }) => {
                     assays={{ whiteListed, assaysFromState }}
                     config={graph}
                     id={id}
-                    action={params => setDispactFromChild({ ...params })}
+                    action={params => {
+                      tempDispatchParams.push(params)
+                      setDispatchParamsFromChild(tempDispatchParams)
+                    }}
                   />
                 ))}
             </Grid>
@@ -100,13 +108,13 @@ const GraphContainer = ({ config, size, assaysFromState }) => {
         </Grid>
       </Grid>
     </Grid>
-  ) : null;
-};
+  ) : null
+}
 
 GraphContainer.protoTypes = {
   config: PropTypes.oneOfType([PropTypes.object]).isRequired,
   size: PropTypes.oneOfType([PropTypes.object]).isRequired,
-  assaysFromState: PropTypes.oneOfType([PropTypes.array]).isRequired
-};
+  assaysFromState: PropTypes.oneOfType([PropTypes.array]).isRequired,
+}
 
-export default GraphContainer;
+export default GraphContainer
