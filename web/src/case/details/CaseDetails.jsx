@@ -19,21 +19,13 @@ const messages = defineMessages({
     id: 'pages.CaseDetails.endedOn',
     defaultMessage: 'Test Date',
   },
-  deviceName: {
-    id: 'pages.CaseDetails.deviceName',
-    defaultMessage: 'Device',
-  },
   sampleOriginSiteName: {
     id: 'pages.CaseDetails.sampleOriginSiteName',
-    defaultMessage: 'Sample Collection Site',
+    defaultMessage: 'Attending clinic',
   },
   sampleId: {
     id: 'pages.CaseDetails.sampleId',
     defaultMessage: 'Sample ID',
-  },
-  errorCode: {
-    id: 'pages.CaseDetails.errorCode',
-    defaultMessage: 'Error Code',
   },
   resultText: {
     id: 'pages.CaseDetails.resultText',
@@ -46,10 +38,6 @@ const messages = defineMessages({
   resultTreatmentStatus: {
     id: 'pages.CaseDetails.resultTreatmentStatus',
     defaultMessage: 'Treatment',
-  },
-  assayId: {
-    id: 'pages.CaseDetails.assayId',
-    defaultMessage: 'Assay',
   },
   patiendId: {
     id: 'pages.CaseDetails.patiendId',
@@ -91,38 +79,6 @@ const CaseDetails = ({
     workflowStatus: true,
   }
 
-  const searchSanitizer = makeSearchParamsSanitizer({
-    availableSortCol: [
-      'endedOn',
-      'deviceName',
-      'sampleOriginSiteName',
-      'sampleId',
-      'errorCode',
-      'resultText',
-      'patientId',
-    ],
-  })
-  const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
-  const filtersFromLocation = composeSanitizer(
-    _.flowRight(
-      filtersSanitizer,
-      searchParams => searchParams.get('filters') || ''
-    ),
-    searchSanitizer
-  )
-  const once = useRef(false)
-  useEffect(() => {
-    if (once.current === false) {
-      once.current = true
-      const { sanitized, value: filtersParams } = filtersFromLocation(location)
-      const { sortCol, sortDir, pageAt, pageSize } = props
-      if (!sanitized) {
-        filtersParams.set('caseId', match.params.caseId)
-        props.fetchResults(filtersParams, sortCol, sortDir, pageAt, pageSize)
-      }
-    }
-  }, [])
-
   const resultColumns = [
     {
       key: 'endedOn',
@@ -130,12 +86,7 @@ const CaseDetails = ({
       formatter: value => formatDate(value),
       sortable: true,
     },
-    {
-      key: 'deviceName',
-      label: intl.formatMessage(messages.deviceName),
-      sortable: true,
-      hiddenOn: 'sm',
-    },
+
     {
       key: 'sampleOriginSiteName',
       label: intl.formatMessage(messages.sampleOriginSiteName),
@@ -152,12 +103,7 @@ const CaseDetails = ({
       label: intl.formatMessage(messages.resultText),
       sortable: true,
     },
-    {
-      key: 'errorCode',
-      label: intl.formatMessage(messages.errorCode),
-      sortable: true,
-      hiddenOn: 'md',
-    },
+
     {
       key: 'resultWorkflowStatus',
       label: intl.formatMessage(messages.resultWorkflowStatus),
@@ -171,13 +117,31 @@ const CaseDetails = ({
       tooltip: 'resultTreatmentStatusName',
       hiddenOn: 'sm',
     },
-    {
-      key: 'patientId',
-      label: intl.formatMessage(messages.patiendId),
-      sortable: true,
-      hiddenOn: 'xs',
-    },
   ]
+  const searchSanitizer = makeSearchParamsSanitizer({
+    availableSortCol: _.map(
+      _.filter(resultColumns, elem => elem.sortable),
+      column => column.key
+    ),
+  })
+  const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
+  const filtersFromLocation = composeSanitizer(
+    _.flowRight(
+      filtersSanitizer,
+      searchParams => searchParams.get('filters') || ''
+    ),
+    searchSanitizer
+  )
+  const once = useRef(false)
+  useEffect(() => {
+    const { sanitized, value: filtersParams } = filtersFromLocation(location)
+    const { sortCol, sortDir, pageAt, pageSize } = props
+    if (!sanitized) {
+      filtersParams.set('caseId', match.params.caseId)
+      props.fetchResults(filtersParams, sortCol, sortDir, pageAt, pageSize)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [match.params])
 
   const onRowClick = () => ({
     currentTarget: {
