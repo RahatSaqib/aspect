@@ -11,10 +11,6 @@ import PermIdentity from '@material-ui/icons/PermIdentity'
 import Tooltip from '@material-ui/core/Tooltip'
 
 import DataTableHead from '../../components/shared/tableHead'
-import {
-  makeSearchParamsSanitizer,
-  composeSanitizer,
-} from '../../shared/selectors/searchParams'
 import DataTableProgressBar from '../../components/shared/DataTableProgressBar'
 import BrowseTablePaginator from '../../globals/components/BrowseTablePaginator'
 import BrowseEmptyList from '../../globals/components/BrowseEmptyList'

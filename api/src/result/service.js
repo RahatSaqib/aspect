@@ -2193,7 +2193,7 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
       errorCode: 'r.errorCode',
       workflowStatusId: 'rs.id',
       treatmentStatusId: 'rts.id',
-      caseId: 'caseId',
+      caseId: 'r.caseId',
     })
     .modify((queryBuilder, params) => {
       if (params.patientOrResearchId) {

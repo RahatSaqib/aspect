@@ -20,7 +20,6 @@ import {
 import { formatDate, formatRelative } from '../../../shared/utils/dateFormat'
 import { sanitizeFiltersStringBy } from '../../../filter/utils'
 import Results from '../../../result/historyResults/HistoryResults'
-import DataTableProgressBar from '../../../components/shared/DataTableProgressBar'
 import ColoredNumber from '../../../components/shared/ColoredNumber'
 import AspectTooltip from '../../../components/shared/AspectTooltip'
 import { fetchResults, exportResults } from '../../../result/ResultRedux'
