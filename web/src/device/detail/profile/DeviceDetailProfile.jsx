@@ -19,7 +19,7 @@ import {
 } from '../../../shared/selectors/searchParams'
 import { formatDate, formatRelative } from '../../../shared/utils/dateFormat'
 import { sanitizeFiltersStringBy } from '../../../filter/utils'
-import Results from '../../../result/historyResults/historyResults'
+import Results from '../../../result/historyResults/HistoryResults'
 import DataTableProgressBar from '../../../components/shared/DataTableProgressBar'
 import ColoredNumber from '../../../components/shared/ColoredNumber'
 import AspectTooltip from '../../../components/shared/AspectTooltip'
@@ -143,6 +143,10 @@ const messages = defineMessages({
   buttonChange: {
     id: 'pages.DeviceDetailProfile.buttonChange',
     defaultMessage: 'Change',
+  },
+  testHistory: {
+    id: 'pages.DeviceDetailProfile.testHistory',
+    defaultMessage: 'Test history',
   },
 })
 
@@ -821,11 +825,11 @@ export const DeviceDetailProfile = ({
         pageAt={pageAt}
         pageSize={pageSize}
         columns={resultColumns}
-        cssClasses={cssClasses}
         table={table}
         items={items}
         onRowClick={onRowClick}
         onExportClick={onExportClick}
+        title={intl.formatMessage(messages.testResults)}
       />
     </div>
   )

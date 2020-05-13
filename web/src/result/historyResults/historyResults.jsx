@@ -2,21 +2,19 @@ import _ from 'lodash'
 import classnames from 'classnames/bind'
 import React from 'react'
 import { defineMessages } from 'react-intl'
-import { compose, withHandlers, lifecycle } from 'recompose'
-import { bindActionCreators } from 'redux'
-import { connect } from 'react-redux'
 import IconButton from '@material-ui/core/IconButton'
 import Card from '@material-ui/core/Card'
 import { MdFileDownload } from 'react-icons/md'
 import TableBody from '@material-ui/core/TableBody'
 import Table from '@material-ui/core/Table'
+import PermIdentity from '@material-ui/icons/PermIdentity'
+import Tooltip from '@material-ui/core/Tooltip'
 
 import DataTableHead from '../../components/shared/tableHead'
 import {
   makeSearchParamsSanitizer,
   composeSanitizer,
 } from '../../shared/selectors/searchParams'
-import { sanitizeFiltersStringBy } from '../../filter/utils'
 import DataTableProgressBar from '../../components/shared/DataTableProgressBar'
 import BrowseTablePaginator from '../../globals/components/BrowseTablePaginator'
 import BrowseEmptyList from '../../globals/components/BrowseEmptyList'
@@ -24,7 +22,9 @@ import {
   DataTableRow as TableRow,
   DataTableCell as TableCell,
 } from '../../components/shared/tableBody'
-import requirePermissions from '../../components/shared/requirePermissions'
+
+const cssClasses = classnames.bind(require('./HistoryResults.css'))
+const styles = require('../../components/shared/DataTableRow.css')
 
 const messages = defineMessages({
   paginatorStatus: {
@@ -44,19 +44,18 @@ export const Results = ({
   sortCol,
   pageAt,
   pageSize,
+  title,
   // injected by recompose
   items,
   table,
   columns,
   onExportClick,
   onRowClick,
-  cssClasses,
-  loading,
 }) => (
   <section className={cssClasses('Section')}>
     <Card className={cssClasses('Section__Content')}>
       <header className={cssClasses('Header')}>
-        <div className={cssClasses('Header__Title')}>Test history</div>
+        <div className={cssClasses('Header__Title')}>{`${title}`}</div>
         {onExportClick && (
           <div className={cssClasses('Header__Actions')}>
             <IconButton onClick={onExportClick}>
@@ -90,10 +89,18 @@ export const Results = ({
                   >
                     {columns &&
                       _.map(columns, elem => (
-                        <TableCell>
-                          {elem.formatter
-                            ? elem.formatter(result.get(elem.key))
-                            : result.get(elem.key)}
+                        <TableCell hiddenOn={elem.hiddenOn || 'md'}>
+                          {elem.tooltip && result.get(elem.key) && (
+                            <Tooltip title={result.get(elem.tooltip)}>
+                              <PermIdentity
+                                className={styles[`${result.get(elem.key)}`]}
+                              />
+                            </Tooltip>
+                          )}
+                          {!elem.tooltip &&
+                            (elem.formatter
+                              ? elem.formatter(result.get(elem.key))
+                              : result.get(elem.key))}
                         </TableCell>
                       ))}
                   </TableRow>

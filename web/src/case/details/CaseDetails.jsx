@@ -1,19 +1,12 @@
 import _ from 'lodash'
-import classnames from 'classnames/bind'
-import PropTypes from 'prop-types'
 import React, { useEffect, useRef } from 'react'
-import { compose, setPropTypes } from 'recompose'
 import { defineMessages, injectIntl } from 'react-intl'
-import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import Helmet from 'react-helmet'
 
 // Material-UI
-import { MdChevronLeft, MdChevronRight, MdClose } from 'react-icons/md'
-import Button from '@material-ui/core/Button'
 import { fetchResults, exportResults } from '../../result/ResultRedux'
 import { formatDate } from '../../shared/utils/dateFormat'
-import Results from '../../result/historyResults/historyResults'
+import Results from '../../result/historyResults/HistoryResults'
 import {
   makeSortPageSelector,
   makeSearchParamsSanitizer,
@@ -21,113 +14,54 @@ import {
 } from '../../shared/selectors/searchParams'
 import { sanitizeFiltersStringBy } from '../../filter/utils'
 
-const cssClasses = classnames.bind(require('./CaseDetails.css'))
-
 const messages = defineMessages({
-  deviceType: {
-    id: 'pages.DeviceDetailProfile.deviceType',
-    defaultMessage: 'Device type',
-  },
-  status: {
-    id: 'pages.DeviceDetailProfile.status',
-    defaultMessage: 'Status',
-  },
-  calibration: {
-    id: 'pages.DeviceDetailProfile.calibration',
-    defaultMessage: 'Calibration',
-  },
-  site: {
-    id: 'pages.DeviceDetailProfile.site',
-    defaultMessage: 'Site',
-  },
-  connectivity: {
-    id: 'pages.DeviceDetailProfile.connectivity',
-    defaultMessage: 'Connectivity',
-  },
-  lastSeen: {
-    id: 'pages.DeviceDetailProfile.lastSeenOn',
-    defaultMessage: 'Last seen {lastSeen}',
-  },
-  warranty: {
-    id: 'pages.DeviceDetailProfile.warranty',
-    defaultMessage: 'Warranty',
-  },
-  utilizationRate: {
-    id: 'pages.DeviceDetailProfile.utilizationRate',
-    defaultMessage: 'Utilization Rate',
-  },
-  utilizationRateExplain: {
-    id: 'pages.DeviceDetailProfile.utilizationRateExplain',
-    defaultMessage:
-      'Number of results in the last 30 days divided by the daily capacity of the instrument multiplied by 30 days',
-  },
-  errorRate: {
-    id: 'pages.DeviceDetailProfile.errorRate',
-    defaultMessage: 'Error Rate',
-  },
-  errorRateExplain: {
-    id: 'pages.DeviceDetailProfile.errorRateExplain',
-    defaultMessage:
-      'Number of errors divided by number of results in the last 30 days',
-  },
   endedOn: {
-    id: 'pages.DeviceDetailProfile.endedOn',
+    id: 'pages.CaseDetails.endedOn',
     defaultMessage: 'Test Date',
   },
+  deviceName: {
+    id: 'pages.CaseDetails.deviceName',
+    defaultMessage: 'Device',
+  },
   sampleOriginSiteName: {
-    id: 'pages.DeviceDetailProfile.sampleOriginSiteName',
-    defaultMessage: 'Sample Origin Site',
+    id: 'pages.CaseDetails.sampleOriginSiteName',
+    defaultMessage: 'Sample Collection Site',
   },
   sampleId: {
-    id: 'pages.DeviceDetailProfile.sampleId',
+    id: 'pages.CaseDetails.sampleId',
     defaultMessage: 'Sample ID',
   },
   errorCode: {
-    id: 'pages.DeviceDetailProfile.errorCode',
+    id: 'pages.CaseDetails.errorCode',
     defaultMessage: 'Error Code',
   },
   resultText: {
-    id: 'pages.DeviceDetailProfile.resultText',
+    id: 'pages.CaseDetails.resultText',
     defaultMessage: 'Result Text',
   },
   resultWorkflowStatus: {
-    id: 'pages.DeviceDetailProfile.resultWorkflowStatus',
+    id: 'pages.CaseDetails.resultWorkflowStatus',
     defaultMessage: 'Result Workflow Status',
   },
-  patientId: {
-    id: 'pages.DeviceDetailProfile.patientId',
+  resultTreatmentStatus: {
+    id: 'pages.CaseDetails.resultTreatmentStatus',
+    defaultMessage: 'Treatment',
+  },
+  assayId: {
+    id: 'pages.CaseDetails.assayId',
+    defaultMessage: 'Assay',
+  },
+  patiendId: {
+    id: 'pages.CaseDetails.patiendId',
     defaultMessage: 'Patient ID',
   },
-  paginatorStatus: {
-    id: 'pages.DeviceDetailProfile.paginatorStatus',
-    defaultMessage: `Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural,
-      one {# result}
-      other {# results}
-    }`,
+  resultCategoryCopiesMl: {
+    id: 'pages.CaseDetails.resultCategoryHiv',
+    defaultMessage: 'HIV',
   },
-  noResults: {
-    id: 'pages.DeviceDetailProfile.noResults',
-    defaultMessage: 'No Results',
-  },
-  undefinedValue: {
-    id: 'pages.DeviceDetailProfile.undefinedValue',
-    defaultMessage: 'n/a',
-  },
-  notes: {
-    id: 'pages.DeviceDetailProfile.notes',
-    defaultMessage: 'notes',
-  },
-  buttonAddRecord: {
-    id: 'pages.DeviceDetailProfile.buttonAddRecord',
-    defaultMessage: 'Add Record',
-  },
-  buttonUpdate: {
-    id: 'pages.DeviceDetailProfile.buttonUpdate',
-    defaultMessage: 'Update',
-  },
-  buttonChange: {
-    id: 'pages.DeviceDetailProfile.buttonChange',
-    defaultMessage: 'Change',
+  diagnosticResults: {
+    id: 'pages.diagnosticResults.resultCategoryHiv',
+    defaultMessage: 'Diagnostic Results',
   },
 })
 
@@ -143,7 +77,6 @@ const CaseDetails = ({
   table,
   ...props
 }) => {
-  console.log('props', props)
   const FILTERS_CONFIG = {
     assayAndResultCategory: true,
     geography: true,
@@ -165,6 +98,7 @@ const CaseDetails = ({
       'sampleOriginSiteName',
       'sampleId',
       'errorCode',
+      'resultText',
       'patientId',
     ],
   })
@@ -197,9 +131,16 @@ const CaseDetails = ({
       sortable: true,
     },
     {
+      key: 'deviceName',
+      label: intl.formatMessage(messages.deviceName),
+      sortable: true,
+      hiddenOn: 'sm',
+    },
+    {
       key: 'sampleOriginSiteName',
       label: intl.formatMessage(messages.sampleOriginSiteName),
       sortable: true,
+      hiddenOn: 'sm',
     },
     {
       key: 'sampleId',
@@ -215,35 +156,39 @@ const CaseDetails = ({
       key: 'errorCode',
       label: intl.formatMessage(messages.errorCode),
       sortable: true,
+      hiddenOn: 'md',
     },
     {
       key: 'resultWorkflowStatus',
       label: intl.formatMessage(messages.resultWorkflowStatus),
       sortable: true,
+      hiddenOn: 'sm',
+    },
+    {
+      key: 'treatmentStatusInfo',
+      label: intl.formatMessage(messages.resultTreatmentStatus),
+      sortable: true,
+      tooltip: 'resultTreatmentStatusName',
+      hiddenOn: 'sm',
     },
     {
       key: 'patientId',
-      label: intl.formatMessage(messages.patientId),
+      label: intl.formatMessage(messages.patiendId),
       sortable: true,
+      hiddenOn: 'xs',
     },
   ]
 
-  const onRowClick = ({ history }) => ({
+  const onRowClick = () => ({
     currentTarget: {
       dataset: { resultId },
     },
   }) => history.push(`/browse/result/${resultId}`)
-  const onExportClick = ({
-    location,
-    exportResults,
-    sortCol,
-    sortDir,
-    pageAt,
-    pageSize,
-  }) => formatType => {
+  const onExportClick = () => formatType => {
+    const { sortCol, sortDir, pageAt, pageSize } = props
     const { sanitized, value: filtersParams } = filtersFromLocation(location)
     if (!sanitized) {
-      exportResults(
+      props.exportResults(
         filtersParams,
         formatType,
         sortCol,
@@ -264,21 +209,15 @@ const CaseDetails = ({
       pageAt={props.pageAt}
       pageSize={props.pageSize}
       columns={resultColumns}
-      cssClasses={cssClasses}
       table={table}
       items={items}
-      onRowClick={onRowClick}
-      onExportClick={onExportClick}
+      onRowClick={onRowClick()}
+      onExportClick={onExportClick(props)}
+      title={intl.formatMessage(messages.diagnosticResults)}
     />
   )
 }
 
-const mapStateToProps = (state, ownProps) => {
-  const { caseId } = ownProps.match.params
-  return {
-    caseId,
-  }
-}
 export default _.flowRight(
   injectIntl,
   connect(
