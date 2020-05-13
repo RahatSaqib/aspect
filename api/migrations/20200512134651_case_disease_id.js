@@ -13,6 +13,7 @@ async function up(knex) {
     tblCase.dropUnique(['externalId', 'partnerId'])
     tblCase.unique(['externalId', 'partnerId', 'diseaseId'], 'case_unique')
   })
+
   const caseDiseases = await knex('Case as c')
     .leftJoin('Result as r', 'c.id', 'r.caseId')
     .leftJoin('Assay as a', 'r.assayId', 'a.id')
@@ -31,11 +32,16 @@ async function up(knex) {
         .update({ diseaseId: caseDisease.diseaseId || defaultDiseaseId })
     )
   }
+
   await knex.schema.alterTable('Case', async tblCase => {
     tblCase
       .integer('diseaseId')
       .notNullable()
       .alter()
+  })
+
+  await knex.schema.alterTable('PartnerDisease', async tblPartnerDisease => {
+    tblPartnerDisease.string('caseExternalIdTemplate')
   })
 }
 
@@ -45,5 +51,9 @@ async function down(knex) {
     tblCase.dropForeign('diseaseId')
     tblCase.dropColumn('diseaseId')
     tblCase.unique(['externalId', 'partnerId'])
+  })
+
+  await knex.schema.alterTable('PartnerDisease', async tblPartnerDisease => {
+    tblPartnerDisease.dropColumn('caseExternalIdTemplate')
   })
 }
