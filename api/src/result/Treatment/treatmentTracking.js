@@ -86,14 +86,9 @@ async function confirmedTreatmentTracking(request) {
       knex.raw(`date_format(r.endedOn, '%Y-%m') AS monthTested`) // group by r.endedOn as 'yyyy-MM'
     )
     .groupBy('monthTested')
-  // .toString()
-
-  // console.log(query)
 
   const data = query.map(d => {
     // add percentages
-    // console.log('1', d)
-
     const getPercentage = (total, value) => {
       let pc = 0
       if (total) {
@@ -109,8 +104,6 @@ async function confirmedTreatmentTracking(request) {
 
   let dt = endedOn
   while (dt >= startedOn) {
-    // console.log(data)
-
     const monthTested = dateFormat(dt, 'yyyy-MM')
     if (!data.find(x => x.monthTested === monthTested)) {
       data.push({
