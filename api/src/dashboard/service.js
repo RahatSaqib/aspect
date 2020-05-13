@@ -558,7 +558,7 @@ async function getDeviceList(auth, dataConstraints) {
         "sum((it.externalId like 'Machine%' or it.externalId like 'Module%' or it.externalId like 'Reagent%') and ist.externalId not in ('Inactive', 'OK', 'Resolved')) as cntErrorRate"
       )
     )
-    .then(async items =>
+    .then(items =>
       items.reduce(
         (memo, { id, siteId, totalIssues, cntNoResults, cntErrorRate }) => {
           let device = memo.find(x => x.id === id)

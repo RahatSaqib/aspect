@@ -137,7 +137,7 @@ async function runSeed(seed, knex, fileName, overridedSeeds) {
 }
 
 async function rowsAsObject(knex, table, column = 'name') {
-  return knex(table).then(async items =>
+  return knex(table).then(items =>
     items.reduce((memo, row) => {
       memo[row[column]] = row
       return memo
@@ -149,7 +149,7 @@ async function getDefaultMessageTypes(knex) {
   return knex('MessageType as mt')
     .join('IssueType as it', 'it.defaultMessageTypeId', 'mt.id')
     .select('it.externalId as issueTypeExternalId', 'mt.*')
-    .then(async items =>
+    .then(items =>
       items.reduce((memo, row) => {
         memo[row.issueTypeExternalId] = row
         return memo
@@ -484,7 +484,7 @@ async function seedStockIssues(knex) {
 }
 
 async function getPermissionModules(knex) {
-  return knex('Permission').then(async items =>
+  return knex('Permission').then(items =>
     items.reduce((memo, row) => {
       if (!memo[row.module]) {
         memo[row.module] = {}
@@ -725,7 +725,7 @@ async function seedIssueEventTriggersForPartner(
     .where({ 'nt.partnerId': partnerId })
     .orderBy('it.externalId')
     .distinct('it.externalId as issueType')
-    .then(async items =>
+    .then(items =>
       items.reduce((memo, { issueType }) => {
         if (!issueTypeBlacklist.includes(issueType)) {
           memo[issueType] = true
@@ -2344,7 +2344,7 @@ async function getSeedsRan(knex) {
   return knex('AspectSeed as ap')
     .where({ success: true })
     .select('ap.fileName')
-    .then(async items =>
+    .then(items =>
       items.reduce((memo, row) => {
         if (!memo[row.fileName]) {
           memo[row.fileName] = true
@@ -2769,7 +2769,7 @@ function getDateFields(startedOn) {
 async function getResultForms(knex) {
   return knex('ResultForm')
     .select()
-    .then(async items =>
+    .then(items =>
       items.map(resultForm => ({
         ...resultForm,
         formSchema: JSON.parse(resultForm.formSchema),

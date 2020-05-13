@@ -72,7 +72,7 @@ async function getPermissions(request) {
     .where('ps.id', personId)
     .orderBy(['p.module', 'p.activity'])
     .distinct('p.module', 'p.activity')
-    .then(async items => items.map(p => `${p.module}:${p.activity}`))
+    .then(items => items.map(p => `${p.module}:${p.activity}`))
   //
   return { ok: true, data }
 }
@@ -599,7 +599,7 @@ async function getAssignments({ auth, personId }) {
       'd3.i18nKey as diseasei18nKey3',
       'd3.name as diseaseName3'
     )
-    .then(async items =>
+    .then(items =>
       items.map(item => {
         const { siteId, assayId } = item
         let {

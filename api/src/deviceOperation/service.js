@@ -27,7 +27,7 @@ async function listDeviceOperations(request) {
     .clone()
     .modify(sortPageParams, query, 'do.startedOn')
     .select(SELECT_LIST_FIELDS)
-    .then(async items =>
+    .then(items =>
       items.map(deviceOperation =>
         _.assign(deviceOperation, {
           data: JSON.parse(deviceOperation.data) || {},

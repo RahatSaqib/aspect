@@ -633,7 +633,7 @@ async function showFileReferencesById(auth, resultId) {
       'fct.mimeType',
       'fct.mimeSubtype'
     )
-    .then(async items =>
+    .then(items =>
       items.map(ref => {
         ref.url = `/result/file/${resultId}/${ref.id}/${ref.name}`
         return ref
@@ -1592,7 +1592,7 @@ async function confirmedTreatmentTracking(request) {
       knex.raw(`date_format(r.endedOn, '%Y-%m') AS monthTested`) // group by r.endedOn as 'yyyy-MM'
     )
     .groupBy('monthTested')
-    .then(async items =>
+    .then(items =>
       items.map(d => {
         // add percentages
         const getPercentage = (total, value) => {

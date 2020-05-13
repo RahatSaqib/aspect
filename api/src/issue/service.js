@@ -28,7 +28,7 @@ async function getIssueEventTriggerSubscriptions({ messageContext }) {
         'iet.partnerId',
         'iet.triggerConditions'
       )
-      .then(async items =>
+      .then(items =>
         items.reduce(
           (
             memo,

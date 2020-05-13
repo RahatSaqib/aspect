@@ -157,7 +157,7 @@ function onFactGenerateResultCounts(action, context) {
       .join('DeviceTypeCategory as dtc', 'dt.deviceTypeCategoryId', 'dtc.id')
       .where('dtc.hasResults', 1)
       .select('d.id as deviceId')
-      .then(async items =>
+      .then(items =>
         items.map(({ deviceId }) =>
           messageContext.factGenerateResultCounts(deviceId)
         )

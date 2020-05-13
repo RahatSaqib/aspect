@@ -61,7 +61,7 @@ async function rowsByColumn(table) {
     const columns = ['id', ...additionalColumns]
     const rowsAsObject = await knex(table)
       .select(keyColumn, ...columns)
-      .then(async items =>
+      .then(items =>
         items.reduce((memo, row) => {
           const key = row[keyColumn]
           memo[key] = row

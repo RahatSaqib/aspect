@@ -62,7 +62,7 @@ async function listDeviceApiKeys(request) {
     .modify(sortPageParams, query, 'createdOn')
     .orderBy('dak.id', 'desc') // second sort param to make the query deterministic
     .select(SELECT_LIST_FIELDS)
-    .then(async items =>
+    .then(items =>
       items.map(dak =>
         _.assign({}, dak, {
           token: groupToken(dak.token),

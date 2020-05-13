@@ -2313,7 +2313,7 @@ describe('Device API Raw routes for Senaite LIMS', () => {
         'a.externalId as assayId',
         'rc1.externalId as result1'
       )
-      .then(async items =>
+      .then(items =>
         items.map(result => ({
           ...result,
           resultData: JSON.parse(result.resultData),

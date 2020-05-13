@@ -61,7 +61,7 @@ async function seed(knex) {
       'r.patientData',
       'r.formData'
     )
-    .then(async items =>
+    .then(items =>
       items.map(result => ({
         id: result.id,
         resultCategory1ExternalId: result.resultCategory1ExternalId,
@@ -145,7 +145,7 @@ async function seed(knex) {
     .where('c.abbreviation', countryWakanda.abbreviation)
     .andWhere('externalId', 'like', '%clinic')
     .select()
-    .then(async items =>
+    .then(items =>
       items.reduce((cities, site) => {
         if (cities[site.city]) {
           cities[site.city].push(site)
