@@ -4,7 +4,6 @@ const {
   resultSourceToId,
 } = require('../../../shared/dictionary')
 const { parseDateOrDefault } = require('../../../shared/date')
-const { getCaseId, updateCase } = require('../../../case/service')
 const {
   processUsingDataSourceQuery,
 } = require('../../../stringTemplate/service')
@@ -57,7 +56,6 @@ async function updateCovidResultFromFormData(
           'pd.partnerId'
         )
       })
-      .leftJoin('Case as c', 'r.caseId', 'c.id')
       .leftJoin('Site as sos', 's.sampleOriginSiteId', 'sos.id')
       .leftJoin('ResultCategory as rc1', 'r.resultCategory1', 'rc1.id')
       .leftJoin('ResultCategory as rc2', 'r.resultCategory2', 'rc2.id')
@@ -93,14 +91,10 @@ async function updateCovidResultFromFormData(
         'rc2.externalId as resultCategory2ExternalId',
         'dt.externalId as resultDeviceTypeExternalId',
         'a.resultSourceId',
-        'r.partnerId',
         'rf.formSchema',
         'r.resultCategory1',
         'at.diseaseId',
-        'pd.canAutoAssignResultByCaseId',
-        'pd.caseExternalIdTemplate',
-        'r.caseId as existingCaseId',
-        'c.externalId as existingCaseExternalId'
+        'pd.caseExternalIdTemplate'
       )
 
     if (!result) {
@@ -108,19 +102,15 @@ async function updateCovidResultFromFormData(
     }
     const {
       assayExternalId,
-      canAutoAssignResultByCaseId,
       caseExternalIdTemplate,
       resultStartedOn,
       resultEndedOn,
       resultFormData,
       formSchema,
-      partnerId,
       diseaseId,
       resultPatientData,
       resultCategory1,
       resultData,
-      existingCaseId,
-      existingCaseExternalId,
     } = result
     const covid19AssayExternalIds = await knex('AssayType as at')
       .join('Assay as a', 'at.id', 'a.assayTypeId')
@@ -168,9 +158,8 @@ async function updateCovidResultFromFormData(
     const canOverwriteDiagnosticDataByHand =
       deviceLogCountFromDiagnosticDevice === 0
 
-    const now = new Date()
-    let caseExternalId
     if (diseaseId) {
+      let caseExternalId
       if (caseExternalIdTemplate) {
         ;({ caseExternalId } =
           (await processUsingDataSourceQuery(
@@ -182,51 +171,11 @@ async function updateCovidResultFromFormData(
         caseExternalId = formDataObject.caseId
       }
       if (caseExternalId) {
-        if (canAutoAssignResultByCaseId) {
-          // Get the case that matched the case ID in the payload
-          // If the case doesn't exist and the result is not assigned a case yet, creat the case
-          let caseId = await getCaseId(
-            { partnerId, externalId: caseExternalId, diseaseId },
-            !existingCaseId,
-            userId
-          )
-          // If no case was found or created, use the case already assigned to the result
-          if (!caseId) {
-            caseId = existingCaseId
-          }
-          // Lookup if any other cased have the smae case number
-          const otherCaseId = await getCaseId(
-            { partnerId, externalId: caseExternalId, diseaseId },
-            false,
-            userId
-          )
-          // If the case number has changed...
-          if (
-            caseExternalId !== existingCaseExternalId &&
-            (!otherCaseId || otherCaseId === existingCaseId)
-          ) {
-            // ...to an unknown case number, update the case
-            if (!otherCaseId || otherCaseId === existingCaseId) {
-              await updateCase(
-                { id: existingCaseId },
-                {
-                  externalId: caseExternalId,
-                  updatedBy: userId,
-                  updatedOn: now,
-                }
-              )
-              resultUpdates.caseId = caseId
-            } else {
-              // ...to a known case number, move the result to the known case
-              resultUpdates.caseId = otherCaseId
-            }
-          }
+        if (canOverwriteDiagnosticDataByHand) {
+          patientDataObject.id = caseExternalId
+        } else if (caseExternalId) {
+          patientDataObject.id = patientDataObject.id || caseExternalId
         }
-      }
-      if (canOverwriteDiagnosticDataByHand && caseExternalId) {
-        patientDataObject.id = caseExternalId
-      } else if (caseExternalId) {
-        patientDataObject.id = patientDataObject.id || caseExternalId
       }
     }
 
@@ -315,7 +264,8 @@ async function updateCovidResultFromFormData(
     if (_.isEmpty(resultUpdates)) {
       return
     }
-    resultUpdates.updatedOn = now
+
+    resultUpdates.updatedOn = new Date()
     resultUpdates.updatedBy = userId
     await knex('Result')
       .where('id', resultId)

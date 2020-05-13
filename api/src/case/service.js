@@ -8,6 +8,7 @@ const {
   getPartnerPluginName,
   getDeviceTypePluginName,
 } = require('../plugin/utils')
+const { processUsingDataSourceQuery } = require('../stringTemplate/service')
 
 function validateCaseIdentifier(_case) {
   let errors = ''
@@ -244,6 +245,153 @@ async function getAutoCompleteCases({ auth, query }) {
   return result
 }
 
+function onResultLogged({ resultId }, { messageContext }) {
+  return messageContext.run(async knex => {
+    const result = await knex('Result as r')
+      .join('Assay as a', 'r.assayId', 'a.id')
+      .join('AssayType as at', 'a.assayTypeId', 'at.id')
+      .join('Site as s', 'r.siteId', 's.id')
+      .join('Device as d', 'r.deviceId', 'd.id')
+      .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
+      .join('Sample as s', 'r.sampleId', 's.id')
+      .join('ResultForm as rf', function() {
+        this.on('a.id', 'rf.assayId').andOn('r.partnerId', 'rf.partnerId')
+      })
+      .join('Partner as p', 'r.partnerId', 'p.id')
+      .leftJoin('PartnerDisease as pd', function() {
+        this.on('at.diseaseId', 'pd.diseaseId').andOn(
+          'r.partnerId',
+          'pd.partnerId'
+        )
+      })
+      .leftJoin('Case as c', 'r.caseId', 'c.id')
+      .leftJoin('Site as sos', 's.sampleOriginSiteId', 'sos.id')
+      .leftJoin('ResultCategory as rc1', 'r.resultCategory1', 'rc1.id')
+      .leftJoin('ResultCategoryAssay as rca1', function() {
+        this.on('r.resultCategory1', 'rca1.resultCategoryId').andOn(
+          'r.assayId',
+          'rca1.assayd'
+        )
+      })
+      .leftJoin('ResultCategory as rc2', 'r.resultCategory2', 'rc2.id')
+      .leftJoin('ResultCategoryAssay as rca2', function() {
+        this.on('r.resultCategory2', 'rca2.resultCategoryId').andOn(
+          'r.assayId',
+          'rca2.assayd'
+        )
+      })
+      .where({ 'r.id': resultId })
+      .first(
+        'p.plugin as partnerPlugin',
+        's.externalId as siteExternalId',
+        's.name as siteName',
+        's.shortname as siteShortName',
+        's.externalId as siteExternalId',
+        'd.name as deviceName',
+        'd.externalId as deviceTypeExternalId',
+        'd.lastSeenOn as deviceLastSeenOn',
+        'd.lastPingOn as deviceLastPingOn',
+        'r.resultData',
+        'r.formData as resultFormData',
+        'r.patientData as resultPatientData',
+        'r.startedOn as resultStartedOn',
+        'r.endedOn as resultEndedOn',
+        'r.notes as resultNotes',
+        'r.consumableSerial',
+        'r.createdOn',
+        'r.senderOperator',
+        'r.moduleName as resultModuleName',
+        'r.moduleSerial as resultModuleSerial',
+        'r.errorCode as resultErrorCode',
+        'r.errorNotes as resultErrorNotes',
+        'a.externalId as assayExternalId',
+        's.externalId as sampleExternalId',
+        'sos.externalId as sampleOriginSiteExternalId',
+        's.collectedOn as sampleCollectedOn',
+        'rc1.externalId as resultCategory1ExternalId',
+        'rc2.externalId as resultCategory2ExternalId',
+        'dt.externalId as resultDeviceTypeExternalId',
+        'a.resultSourceId',
+        'r.partnerId',
+        'at.diseaseId',
+        'pd.canAutoAssignResultByCaseId',
+        'pd.caseExternalIdTemplate',
+        'r.caseId as existingCaseId',
+        'c.externalId as existingCaseExternalId',
+        'rca1.reportable as resultCategory1Reportable',
+        'rca2.reportable as resultCategory2Reportable',
+        'r.updatedBy'
+      )
+    if (!result) {
+      return
+    }
+    const {
+      canAutoAssignResultByCaseId,
+      caseExternalIdTemplate,
+      partnerId,
+      diseaseId,
+      existingCaseId,
+      existingCaseExternalId,
+      resultCategory1Reportable,
+      resultCategory2Reportable,
+      updatedBy,
+    } = result
+    if (diseaseId && (resultCategory1Reportable || resultCategory2Reportable)) {
+      let caseExternalId
+      if (caseExternalIdTemplate) {
+        ;({ caseExternalId } =
+          (await processUsingDataSourceQuery(
+            { ...result, caseExternalIdTemplate },
+            ['caseExternalIdTemplate']
+          )) || {})
+      }
+      if (caseExternalId) {
+        if (canAutoAssignResultByCaseId) {
+          // Get the case that matched the case ID in the payload
+          // If the case doesn't exist and the result is not assigned a case yet, creat the case
+          let caseId = await getCaseId(
+            { partnerId, externalId: caseExternalId, diseaseId },
+            !existingCaseId,
+            updatedBy
+          )
+          // If no case was found or created, use the case already assigned to the result
+          if (!caseId) {
+            caseId = existingCaseId
+          }
+          // Lookup if any other cased have the smae case number
+          const otherCaseId = await getCaseId(
+            { partnerId, externalId: caseExternalId, diseaseId },
+            false,
+            updatedBy
+          )
+          // If the case number has changed...
+          if (
+            caseExternalId !== existingCaseExternalId &&
+            (!otherCaseId || otherCaseId === existingCaseId)
+          ) {
+            // ...to an unknown case number, update the case
+            if (!otherCaseId || otherCaseId === existingCaseId) {
+              await updateCase(
+                { id: existingCaseId },
+                {
+                  externalId: caseExternalId,
+                  updatedBy,
+                  updatedOn: new Date(),
+                }
+              )
+            } else {
+              // ...to a known case number, move the result to the known case
+              await knex('Result')
+                .where('id', resultId)
+                .update({ caseId: otherCaseId })
+            }
+          }
+        }
+      }
+    }
+  })
+}
+
 module.exports = {
   getCaseId,
   addCase,
@@ -254,4 +402,5 @@ module.exports = {
   onCaseAdded,
   onCaseUpdated,
   getAutoCompleteCases,
+  onResultLogged,
 }
