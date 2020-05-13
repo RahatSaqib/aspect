@@ -5373,6 +5373,7 @@ async function seed(knex) {
         'sqlForIndicator',
         'link',
         'sortOrder',
+        'externalId',
       ])
       const [widgetId] = await knex('DashboardWidget').insert(widgetData)
       const statWidgetData = _.pick(widget, [

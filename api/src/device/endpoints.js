@@ -43,6 +43,11 @@ function listDevicesBaseRequest() {
         assayId: Joi.number()
           .allow('')
           .description('Assay ID'),
+        diseaseId: Joi.number()
+          .integer()
+          .positive()
+          .optional()
+          .description('The disease ID'),
         resultCategoryId: Joi.number()
           .allow('')
           .description('Result Category ID'),
