@@ -28,26 +28,28 @@ async function getIssueEventTriggerSubscriptions({ messageContext }) {
         'iet.partnerId',
         'iet.triggerConditions'
       )
-      .reduce(
-        (
-          memo,
-          { issueType, issueEventStatus, partnerId, triggerConditions }
-        ) => {
-          const { action } = JSON.parse(triggerConditions)
-          if (action != null) {
-            if (issueEventStatus === 'Triggered') {
-              memo[action] = onIssueEventTrigger(
-                partnerId,
-                issueType,
-                triggerConditions
-              )
-            } else if (issueEventStatus === 'Resolved') {
-              memo[action] = onIssueEventResolve(issueType)
+      .then(async items =>
+        items.reduce(
+          (
+            memo,
+            { issueType, issueEventStatus, partnerId, triggerConditions }
+          ) => {
+            const { action } = JSON.parse(triggerConditions)
+            if (action != null) {
+              if (issueEventStatus === 'Triggered') {
+                memo[action] = onIssueEventTrigger(
+                  partnerId,
+                  issueType,
+                  triggerConditions
+                )
+              } else if (issueEventStatus === 'Resolved') {
+                memo[action] = onIssueEventResolve(issueType)
+              }
             }
-          }
-          return memo
-        },
-        {}
+            return memo
+          },
+          {}
+        )
       )
     return { actions }
   })

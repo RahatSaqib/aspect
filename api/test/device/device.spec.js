@@ -194,13 +194,11 @@ describe('Device routes', () => {
         runTest(async knex => {
           const deviceMaintenanceTypeIds = await knex('DeviceMaintenanceType')
             .whereIn('externalId', ['calibration', 'warranty'])
-            .select('id')
-            .map(x => x.id)
+            .pluck('id')
           deviceMaintenanceIdsToRestore = await knex('DeviceMaintenance')
             .whereIn('deviceMaintenanceTypeId', deviceMaintenanceTypeIds)
             .where({ deviceId, current: 1 })
-            .select('id')
-            .map(x => x.id)
+            .pluck('id')
         })
       )
       afterEach(() =>

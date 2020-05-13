@@ -104,10 +104,12 @@ async function seed(knex) {
     const jobFunctions = await knex('JobFunction')
       .where({ partnerId })
       .select()
-      .reduce((jobFunctionMap, jobFunction) => {
-        jobFunctionMap[jobFunction.name] = jobFunction.id
-        return jobFunctionMap
-      }, {})
+      .then(async items =>
+        items.reduce((jobFunctionMap, jobFunction) => {
+          jobFunctionMap[jobFunction.name] = jobFunction.id
+          return jobFunctionMap
+        }, {})
+      )
     const jobFunctionsClinicianId = jobFunctions[jobFunctionNames.Clinician]
     // --------
     // Job Function Feature - if missing then copy items from jobFunction.name = 'Clinician'
@@ -157,10 +159,12 @@ async function seed(knex) {
     // get all permissions
     const permissions = await knex('Permission')
       .select()
-      .reduce((permMap, perm) => {
-        permMap[`${perm.module}:${perm.activity}`] = perm.id
-        return permMap
-      }, {})
+      .then(async items =>
+        items.reduce((permMap, perm) => {
+          permMap[`${perm.module}:${perm.activity}`] = perm.id
+          return permMap
+        }, {})
+      )
     // --------
     // make sure Job Function ResultViewerYes has permission 'result:view'
     if (jobFunctionName === jobFunctionNames.ResultViewerYes) {

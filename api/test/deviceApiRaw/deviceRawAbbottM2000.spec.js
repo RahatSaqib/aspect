@@ -112,7 +112,7 @@ describe('Device API Raw routes for Abbott M2000', () => {
       })
     const opIds = await knex('DeviceOperation')
       .where('deviceId', deviceId)
-      .map(op => op.id)
+      .pluck('id')
     const issueIds = await knex('Issue')
       .where('deviceId', deviceId)
       .pluck('id')

@@ -28,8 +28,8 @@ const getResultAggregationsValidate = validGroups => ({
   groupBy: Joi.alternatives()
     .allow('', null)
     .try(
-      Joi.array().items(Joi.string().valid(validGroups)),
-      Joi.string().valid(validGroups)
+      Joi.array().items(Joi.string().valid(...validGroups)),
+      Joi.string().valid(...validGroups)
     )
     .description('Array of fields to group by'),
 })

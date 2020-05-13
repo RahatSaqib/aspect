@@ -47,7 +47,7 @@ function onFactGenerateDeviceConnectivity({ deviceId }, { messageContext }) {
     if (deviceId != null) {
       deviceNoFactsQ.where({ 'd.id': deviceId })
     }
-    const noFactDevices = await deviceNoFactsQ.map(d => ({
+    const noFactDevices = (await deviceNoFactsQ).map(d => ({
       deviceId: d.id,
       updatedOn: now,
     }))
@@ -79,7 +79,7 @@ function onFactGenerateDeviceConnectivity({ deviceId }, { messageContext }) {
       // devices on schedule
       devicesQ.where({ 'd.id': deviceId })
     }
-    await devicesQ.map(
+    ;(await devicesQ).map(
       ({
         id,
         maxDaysDeviceOffline,
@@ -157,7 +157,11 @@ function onFactGenerateResultCounts(action, context) {
       .join('DeviceTypeCategory as dtc', 'dt.deviceTypeCategoryId', 'dtc.id')
       .where('dtc.hasResults', 1)
       .select('d.id as deviceId')
-      .map(({ deviceId }) => messageContext.factGenerateResultCounts(deviceId))
+      .then(async items =>
+        items.map(({ deviceId }) =>
+          messageContext.factGenerateResultCounts(deviceId)
+        )
+      )
   })
 }
 

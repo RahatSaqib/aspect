@@ -127,12 +127,19 @@ describe('case/service', () => {
     })
 
     it('Should return auto-complete cases ', async () => {
+      const externalId = 'case-'
       const res = await server
-        .get(`${path}/auto?externalId=case-`)
+        .get(`${path}/auto`)
+        .query({
+          externalId,
+        })
         .set('Authorization', `Bearer ${accessToken}`)
 
-      const [quantity] = await knex('Case')
-        .where('partnerId', partnerId)
+      const [quantity] = await knex('Case as ca')
+        .innerJoin('Result as r', 'ca.id', 'r.caseId')
+        .innerJoin('Geography as g', 'r.geographyId', 'g.id')
+        .where('ca.partnerId', partnerId)
+        .where('ca.externalId', 'like', `%${externalId}%`)
         .count()
 
       assert.equal(res.status, 200)

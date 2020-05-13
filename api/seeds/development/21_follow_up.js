@@ -4,8 +4,6 @@ const { addFollowUps } = require('../utils')
 const followUp = require('../fixtures/FollowUp.json')
 
 async function seed(knex) {
-  const partnerIds = await knex('Partner')
-    .select('id')
-    .map(p => p.id)
+  const partnerIds = await knex('Partner').pluck('id')
   await addFollowUps(knex, partnerIds, followUp)
 }

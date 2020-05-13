@@ -9,9 +9,7 @@ async function seed(knex) {
     .where({ name: 'Philippines' })
     .first('id')
 
-  const followUps = await knex('FollowUp')
-    .select('externalId')
-    .map(p => p.externalId)
+  const followUps = await knex('FollowUp').pluck('externalId')
 
   await Promise.each(followUps, async externalId => {
     await removeFollowUps(knex, [partnerId], externalId)

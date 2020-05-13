@@ -61,11 +61,13 @@ async function rowsByColumn(table) {
     const columns = ['id', ...additionalColumns]
     const rowsAsObject = await knex(table)
       .select(keyColumn, ...columns)
-      .reduce((memo, row) => {
-        const key = row[keyColumn]
-        memo[key] = row
-        return memo
-      }, {})
+      .then(async items =>
+        items.reduce((memo, row) => {
+          const key = row[keyColumn]
+          memo[key] = row
+          return memo
+        }, {})
+      )
 
     // we want { [col1]: { [key1]: row1[col1], [key2]: row2[col1]...
     cache = _.reduce(

@@ -625,10 +625,12 @@ async function showFileReferencesById(auth, resultId) {
       'fct.mimeType',
       'fct.mimeSubtype'
     )
-    .map(ref => {
-      ref.url = `/result/file/${resultId}/${ref.id}/${ref.name}`
-      return ref
-    })
+    .then(async items =>
+      items.map(ref => {
+        ref.url = `/result/file/${resultId}/${ref.id}/${ref.name}`
+        return ref
+      })
+    )
   return { data: fileReferences }
 }
 
@@ -1582,20 +1584,22 @@ async function confirmedTreatmentTracking(request) {
       knex.raw(`date_format(r.endedOn, '%Y-%m') AS monthTested`) // group by r.endedOn as 'yyyy-MM'
     )
     .groupBy('monthTested')
-    .map(d => {
-      // add percentages
-      const getPercentage = (total, value) => {
-        let pc = 0
-        if (total) {
-          pc = (value * 100) / total
-          // max 1 decimal point
-          pc = Math.round(10 * pc) / 10
+    .then(async items =>
+      items.map(d => {
+        // add percentages
+        const getPercentage = (total, value) => {
+          let pc = 0
+          if (total) {
+            pc = (value * 100) / total
+            // max 1 decimal point
+            pc = Math.round(10 * pc) / 10
+          }
+          return pc
         }
-        return pc
-      }
-      d.pcConfirmed = getPercentage(d.total, d.cntConfirmed)
-      return d
-    })
+        d.pcConfirmed = getPercentage(d.total, d.cntConfirmed)
+        return d
+      })
+    )
 
   let dt = endedOn
   while (dt >= startedOn) {

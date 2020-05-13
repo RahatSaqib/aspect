@@ -16,10 +16,12 @@ async function seed(knex) {
   const jobFunctions = await knex('JobFunction')
     .where({ partnerId })
     .select()
-    .reduce((jobFunctionMap, jobFunction) => {
-      jobFunctionMap[jobFunction.name] = jobFunction.id
-      return jobFunctionMap
-    }, {})
+    .then(async items =>
+      items.reduce((jobFunctionMap, jobFunction) => {
+        jobFunctionMap[jobFunction.name] = jobFunction.id
+        return jobFunctionMap
+      }, {})
+    )
 
   const now = new Date()
   const { id: adminId } = await knex('User')

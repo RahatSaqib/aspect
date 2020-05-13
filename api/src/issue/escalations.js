@@ -100,10 +100,12 @@ async function findOpenIssuesToCheckForEscalation(knex, issueId) {
       'iet.escalationConditions as conditions',
       knex.raw('max(triggeredIssueEvent.createdOn) as triggeredOn')
     )
-    .map(issueEscalationTrigger => ({
-      ...issueEscalationTrigger,
-      conditions: JSON.parse(issueEscalationTrigger.conditions),
-    }))
+    .then(async items =>
+      items.map(issueEscalationTrigger => ({
+        ...issueEscalationTrigger,
+        conditions: JSON.parse(issueEscalationTrigger.conditions),
+      }))
+    )
 }
 
 module.exports = {

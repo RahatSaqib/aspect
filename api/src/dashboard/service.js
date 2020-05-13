@@ -558,36 +558,41 @@ async function getDeviceList(auth, dataConstraints) {
         "sum((it.externalId like 'Machine%' or it.externalId like 'Module%' or it.externalId like 'Reagent%') and ist.externalId not in ('Inactive', 'OK', 'Resolved')) as cntErrorRate"
       )
     )
-    .reduce((memo, { id, siteId, totalIssues, cntNoResults, cntErrorRate }) => {
-      let device = memo.find(x => x.id === id)
-      if (!device) {
-        device = {
-          id,
-          siteId,
-          // Fully Operational = Devices that don't have any issues or all are OK/Resolved
-          fullyOperational: true,
-          // Not Reporting = Devices that have issue "Device No Results"
-          offline: false,
-          // High Failure rates = Devices that have any of the Machine/Module/Reagent/Unknown error
-          errorRate: false,
-        }
-        memo.push(device)
-      }
+    .then(async items =>
+      items.reduce(
+        (memo, { id, siteId, totalIssues, cntNoResults, cntErrorRate }) => {
+          let device = memo.find(x => x.id === id)
+          if (!device) {
+            device = {
+              id,
+              siteId,
+              // Fully Operational = Devices that don't have any issues or all are OK/Resolved
+              fullyOperational: true,
+              // Not Reporting = Devices that have issue "Device No Results"
+              offline: false,
+              // High Failure rates = Devices that have any of the Machine/Module/Reagent/Unknown error
+              errorRate: false,
+            }
+            memo.push(device)
+          }
 
-      if (totalIssues) {
-        device.fullyOperational = false
-      }
+          if (totalIssues) {
+            device.fullyOperational = false
+          }
 
-      if (cntNoResults) {
-        device.offline = true
-      }
+          if (cntNoResults) {
+            device.offline = true
+          }
 
-      if (cntErrorRate) {
-        device.errorRate = true
-      }
+          if (cntErrorRate) {
+            device.errorRate = true
+          }
 
-      return memo
-    }, [])
+          return memo
+        },
+        []
+      )
+    )
 
   return deviceList
 }

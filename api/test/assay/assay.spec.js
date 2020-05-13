@@ -169,7 +169,7 @@ describe('Assay routes', () => {
           // get an assay with no result/device to make sure it's returned regardless:
           const assayIdsWithDevice = await knex('Result')
             .distinct('assayId')
-            .map(a => a.assayId)
+            .pluck('assayId')
           const { id: assayIdWithoutDevice } = await knex('Assay')
             .whereNotIn('id', assayIdsWithDevice)
             .first('id')

@@ -1367,10 +1367,12 @@ async function baseGxAlertMigration(
     .where('g.countryId', countryId)
     .select('s.id', 's.shortName')
     .distinct('s.id', 's.shortName')
-    .reduce((siteMap, site) => {
-      siteMap[site.shortName] = site.id
-      return siteMap
-    }, {})
+    .then(async items =>
+      items.reduce((siteMap, site) => {
+        siteMap[site.shortName] = site.id
+        return siteMap
+      }, {})
+    )
   returnValue.siteIds = siteIds
 
   // -----------------------------
@@ -1405,10 +1407,12 @@ async function baseGxAlertMigration(
   const jobFunctions = await knex('JobFunction')
     .where({ partnerId })
     .select()
-    .reduce((jobFunctionMap, jobFunction) => {
-      jobFunctionMap[jobFunction.name] = jobFunction.id
-      return jobFunctionMap
-    }, {})
+    .then(async items =>
+      items.reduce((jobFunctionMap, jobFunction) => {
+        jobFunctionMap[jobFunction.name] = jobFunction.id
+        return jobFunctionMap
+      }, {})
+    )
 
   // -------------------------------------
   // Contacts & User Accounts from GxAlert

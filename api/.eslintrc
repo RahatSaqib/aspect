@@ -1,16 +1,15 @@
 {
   "extends": [
-    "airbnb",
+    "airbnb-base",
     "prettier",
     "prettier/flowtype"
   ],
   "plugins": [
-    "prettier",
-    "jsx-a11y"
+    "prettier"
   ],
   "parser": "babel-eslint",
   "parserOptions": {
-    "ecmaVersion": 2016,
+    "ecmaVersion": 2019,
     "sourceType": "module"
   },
   "env": {
@@ -29,7 +28,6 @@
     "import/no-named-as-default": "off",
     "import/no-unresolved": "off",
     "import/no-named-as-default-member": "off",
-    "jsx-a11y/anchor-has-content": "off",
     "max-classes-per-file": [
       "error",
       3
@@ -53,15 +51,7 @@
     "no-shadow": "off",
     "no-use-before-define": "off",
     "prefer-object-spread": "warn",
-    "prettier/prettier": [
-      "error",
-      {
-        "semi": false,
-        "singleQuote": true,
-        "trailingComma": "es5",
-        "eol": "lf"
-      }
-    ],
+    
     "require-yield": "off",
     "no-confusing-arrow": [
       "error",
