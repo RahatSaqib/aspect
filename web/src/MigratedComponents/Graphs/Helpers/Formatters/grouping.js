@@ -116,7 +116,7 @@ const groupForOldTreatmentAPI = (
       Confirmed: Number(curr[keyToConsume]).toFixed(1),
       NotConfirmed:
         curr[keyToConsume] < 1
-          ? curr[keyToConsume]
+          ? curr.total
           : Number(100 - curr[keyToConsume]).toFixed(1),
     }
     return acc
