@@ -192,6 +192,16 @@ const baseResultResponse = {
     .optional()
     .allow(null, '')
     .description('The id of the case'),
+  diseaseId: Joi.number()
+    .positive()
+    .required()
+    .description('the Id of the disease'),
+  diseaseName: Joi.string()
+    .required()
+    .description('the name of the disease'),
+  diseaseExternalId: Joi.string()
+    .required()
+    .description('the external id of the disease'),
 }
 
 function validateResultListResponse() {
@@ -490,6 +500,11 @@ function listResultsBaseConfig() {
         assayId: Joi.number()
           .allow('')
           .description('Filter for assay ID'),
+        diseaseId: Joi.number()
+          .integer()
+          .positive()
+          .optional()
+          .description('The disease ID'),
         resultCategoryId: Joi.number()
           .allow('')
           .description('Result-1 Category ID'),

@@ -33,7 +33,6 @@ const enhance = compose(
   withHandlers({
     onChangeFilters: ({ history, location }) => nextFilters => {
       const searchParams = new URLSearchParams(location.search)
-
       const filtersParams = mergeToFiltersParams(
         nextFilters,
         new URLSearchParams(searchParams.get('filters') || '')
@@ -41,7 +40,6 @@ const enhance = compose(
 
       searchParams.set('filters', filtersParams)
       searchParams.delete('pageAt')
-
       history.replace({
         ...location,
         search: searchParams.toString(),
@@ -160,6 +158,12 @@ export const navigations = [
     requiredFeatures: ['result'],
   },
   {
+    value: '/browse/case',
+    label: 'Cases',
+    requiredPermissions: ['case:view', 'case:admin', 'case:edit'],
+    requiredFeatures: ['case'],
+  },
+  {
     value: '/browse/person',
     label: 'Contacts',
     requiredPermissions: ['person:view', 'person:admin', 'person:edit'],
@@ -212,12 +216,6 @@ export const navigations = [
       'deviceApiKey:edit',
     ],
     requiredFeatures: ['deviceApiKey'],
-  },
-  {
-    value: '/browse/case',
-    label: 'Cases',
-    requiredPermissions: ['case:view', 'case:admin', 'case:edit'],
-    requiredFeatures: ['case'],
   },
 ]
 

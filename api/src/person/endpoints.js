@@ -58,6 +58,11 @@ function listReporterBaseConfig() {
         assayId: Joi.string()
           .allow('')
           .description('Filter for assay'),
+        diseaseId: Joi.number()
+          .integer()
+          .positive()
+          .optional()
+          .description('The disease ID'),
         treatmentStatusId: Joi.string()
           .allow('')
           .description('Filter for treatment status'),

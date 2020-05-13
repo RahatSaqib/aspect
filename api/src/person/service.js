@@ -405,6 +405,7 @@ async function listRefreshTokens(request) {
       contactNameOrEmail: ['p.name', 'p.email', 'p.email2'],
       deviceName: 'r.clientName',
       revoked: 'r.revoked',
+      diseaseId: 'dis.id',
     })
     .leftJoin('ResultDownloadLog as rdl', function() {
       this.on(function() {
@@ -420,6 +421,8 @@ async function listRefreshTokens(request) {
     .leftJoin('ResultDownloadLog as resd', 'r.userId', 'resd.createdBy')
     .leftJoin('Result as rt', 'rt.id', 'rdl.resultId')
     .leftJoin('Assay as a', 'a.id', 'rt.assayId')
+    .leftJoin('AssayType as at', 'a.assayTypeId', 'at.id')
+    .leftJoin('Disease as dis', 'at.diseaseId', 'dis.id')
     .leftJoin(
       'ResultTreatmentStatusLog as rtsl',
       'rtsl.id',
