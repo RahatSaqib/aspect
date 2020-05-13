@@ -120,6 +120,56 @@ function addDataSourceToQuery(queryBuilder, aliases) {
   return queryBuilder
 }
 
+/**
+ * Processes mustache style templates using a result object for notifications, alerts and other result based string templates
+ * @param  {object} data: the result record with the following known properties (all of which, can be undefined)
+ *  {
+ *    partnerPlugin: string
+ *    siteExternalId: string
+ *    siteName: string
+ *    siteShortName: string
+ *    deviceName: string
+ *    deviceTypeExternalId: string
+ *    deviceLastSeenOn: date/time
+ *    deviceLastPingOn: date/time
+ *    resultData: string (acceptable values are undefined, null, '' or JSON parsable)
+ *    resultFormData: string (acceptable values are undefined, null, '' or JSON parsable)
+ *    resultPatientData: string (acceptable values are undefined, null, '' or JSON parsable)
+ *    resultStartedOn: date/time
+ *    resultEndedOn: date/time
+ *    resultNotes: string
+ *    consumableSerial: string
+ *    createdOn: date/time
+ *    senderOperator: string
+ *    resultModuleName: string
+ *    resultModuleSerial: string
+ *    resultErrorCode: string
+ *    resultErrorNotes: string
+ *    assayExternalId: string
+ *    sampleExternalId: string
+ *    sampleData: string (acceptable values are undefined, null, '' or JSON parsable)
+ *    sampleOriginSiteExternalId: string
+ *    sampleCollectedOn: date/time
+ *    resultCategory1ExternalId: string
+ *    resultCategory2ExternalId: string
+ *    personName: string
+ *    personCell: string
+ *    issueCreatedOn: date/time
+ *    issueDueOn: date/time
+ *    issueData: string (acceptable values are undefined, null, '' or JSON parsable)
+ *    notificationTypeName: string
+ *  }
+ *   The object may also contain unknown properties
+ *   The object must also contain the template strings that will be processed:
+ * @param  {Array} templateFields: the keys in the data object that contain the string templates to be processed
+ *   EG: [ 'emailSubjectTemplate', 'emailBodyTemplate' ]
+ * @param  {object} options: how the template will be processed
+ *  {
+ *    dynamic: true/false (required ti be tru when using numberOfDays handleBars helper or processing a JSON string template)
+ *  }
+ * @return an object containing the processed string templates as specified in templateFields
+ *   EG: { emailSubject: 'The processed subject string', emailBody: 'The processed body string' }
+ */
 async function processUsingDataSourceQuery(data, templateFields, options = {}) {
   const ds = await getBaseDataSource(data)
   return templateFields.reduce((memo, field) => {
@@ -134,6 +184,105 @@ async function processUsingDataSourceQuery(data, templateFields, options = {}) {
   }, {})
 }
 
+/**
+ * Formats a result record into a nested JSON object, with a known schema, so that string templates can be based of of it
+ * @param  {object} data the result record with the following properties:
+ *  {
+ *    partnerPlugin: string
+ *    siteExternalId: string
+ *    siteName: string
+ *    siteShortName: string
+ *    deviceName: string
+ *    deviceTypeExternalId: string
+ *    deviceLastSeenOn: date/time
+ *    deviceLastPingOn: date/time
+ *    resultData: string (acceptable values are undefined, null, '' or JSON parsable)
+ *    resultFormData: string (acceptable values are undefined, null, '' or JSON parsable)
+ *    resultPatientData: string (acceptable values are undefined, null, '' or JSON parsable)
+ *    resultStartedOn: date/time
+ *    resultEndedOn: date/time
+ *    resultNotes: string
+ *    consumableSerial: string
+ *    createdOn: date/time
+ *    senderOperator: string
+ *    resultModuleName: string
+ *    resultModuleSerial: string
+ *    resultErrorCode: string
+ *    resultErrorNotes: string
+ *    assayExternalId: string
+ *    sampleExternalId: string
+ *    sampleData: string (acceptable values are undefined, null, '' or JSON parsable)
+ *    sampleOriginSiteExternalId: string
+ *    sampleCollectedOn: date/time
+ *    resultCategory1ExternalId: string
+ *    resultCategory2ExternalId: string
+ *    personName: string
+ *    personCell: string
+ *    issueCreatedOn: date/time
+ *    issueDueOn: date/time
+ *    issueData: string (acceptable values are undefined, null, '' or JSON parsable)
+ *    notificationTypeName: string
+ *  }
+ * @return a nested JSON object containing the data from the result record
+ *  {
+      site: {
+        id: siteExternalId,
+        name: siteName,
+        shortName: siteShortName,
+      },
+      device: {
+        name: deviceName,
+        deviceType: deviceTypeExternalId,
+        lastSeenOn: deviceLastSeenOn,
+        lastPingOn: deviceLastPingOn,
+      },
+      result: {
+        data: resultData ? JSON.parse(resultData) : {},
+        formData: resultFormData ? JSON.parse(resultFormData) : {},
+        patient: resultPatientData ? JSON.parse(resultPatientData) : {},
+        startedOn: resultStartedOn,
+        endedOn: resultEndedOn,
+        notes: resultNotes,
+        consumableSerial: consumableSerial,
+        createdOn: createdOn,
+        senderOperator: senderOperator,
+        moduleName: resultModuleName,
+        moduleSerial: resultModuleSerial,
+        errorCode: resultErrorCode,
+        errorNotes: resultErrorNotes,
+        assay: {
+          id: assayExternalId,
+        },
+        sample: {
+          id: sampleExternalId,
+          data: sampleData ? JSON.parse(sampleData) : {},
+          originSite: {
+            id: sampleOriginSiteExternalId,
+          },
+          collectedOn: sampleCollectedOn,
+        },
+        category1: {
+          id: resultCategory1ExternalId,
+        },
+        category2: {
+          id: resultCategory2ExternalId,
+        },
+      },
+      person: {
+        name: personName,
+        cell: personCell,
+      },
+      issue: {
+        createdOn: issueCreatedOn,
+        dueOn: issueDueOn,
+        data: issueData ? JSON.parse(issueData) : {},
+      },
+      notification: {
+        type: notificationTypeName,
+      },
+      displayPreferences: { <the displayPreferences in the partner's plugin configuration EG: api\src\plugin\partner\Myanmar\settings.js> }
+    }
+ */
 async function getBaseDataSource(data) {
   const d = data || {}
   const { loadPlugin } = require('../plugin/registration')

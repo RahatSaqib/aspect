@@ -4,7 +4,10 @@ const {
   resultSourceToId,
 } = require('../../../shared/dictionary')
 const { parseDateOrDefault } = require('../../../shared/date')
-const { getCaseId } = require('../../../case/service')
+const { getCaseId, updateCase } = require('../../../case/service')
+const {
+  processUsingDataSourceQuery,
+} = require('../../../stringTemplate/service')
 
 async function onResultLogged(
   { resultId, deviceLogId, userId },
@@ -40,49 +43,84 @@ async function updateCovidResultFromFormData(
     const result = await knex('Result as r')
       .join('Assay as a', 'r.assayId', 'a.id')
       .join('AssayType as at', 'a.assayTypeId', 'at.id')
+      .join('Site as s', 'r.siteId', 's.id')
       .join('Device as d', 'r.deviceId', 'd.id')
       .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
       .join('Sample as s', 'r.sampleId', 's.id')
       .join('ResultForm as rf', function() {
         this.on('a.id', 'rf.assayId').andOn('r.partnerId', 'rf.partnerId')
       })
+      .join('Partner as p', 'r.partnerId', 'p.id')
       .leftJoin('PartnerDisease as pd', function() {
         this.on('at.diseaseId', 'pd.diseaseId').andOn(
           'r.partnerId',
           'pd.partnerId'
         )
       })
+      .leftJoin('Case as c', 'r.caseId', 'c.id')
+      .leftJoin('Site as sos', 's.sampleOriginSiteId', 'sos.id')
+      .leftJoin('ResultCategory as rc1', 'r.resultCategory1', 'rc1.id')
+      .leftJoin('ResultCategory as rc2', 'r.resultCategory2', 'rc2.id')
       .where({ 'r.id': resultId })
       .first(
-        'dt.externalId as resultDeviceTypeExternalId',
-        'a.externalId as assayExternalId',
-        'a.resultSourceId',
-        'r.formData',
-        'r.partnerId',
-        'r.patientData',
+        'p.plugin as partnerPlugin',
+        's.externalId as siteExternalId',
+        's.name as siteName',
+        's.shortname as siteShortName',
+        's.externalId as siteExternalId',
+        'd.name as deviceName',
+        'd.externalId as deviceTypeExternalId',
+        'd.lastSeenOn as deviceLastSeenOn',
+        'd.lastPingOn as deviceLastPingOn',
         'r.resultData',
+        'r.formData as resultFormData',
+        'r.patientData as resultPatientData',
+        'r.startedOn as resultStartedOn',
+        'r.endedOn as resultEndedOn',
+        'r.notes as resultNotes',
+        'r.consumableSerial',
+        'r.createdOn',
+        'r.senderOperator',
+        'r.moduleName as resultModuleName',
+        'r.moduleSerial as resultModuleSerial',
+        'r.errorCode as resultErrorCode',
+        'r.errorNotes as resultErrorNotes',
+        'a.externalId as assayExternalId',
+        's.externalId as sampleExternalId',
+        'sos.externalId as sampleOriginSiteExternalId',
+        's.collectedOn as sampleCollectedOn',
+        'rc1.externalId as resultCategory1ExternalId',
+        'rc2.externalId as resultCategory2ExternalId',
+        'dt.externalId as resultDeviceTypeExternalId',
+        'a.resultSourceId',
+        'r.partnerId',
         'rf.formSchema',
         'r.resultCategory1',
-        'r.startedOn',
-        'r.endedOn',
         'at.diseaseId',
-        'pd.canAutoAssignResultByCaseId'
+        'pd.canAutoAssignResultByCaseId',
+        'pd.caseExternalIdTemplate',
+        'r.caseId as existingCaseId',
+        'c.externalId as existingCaseExternalId'
       )
+
     if (!result) {
       return
     }
     const {
       assayExternalId,
       canAutoAssignResultByCaseId,
-      endedOn,
-      formData,
+      caseExternalIdTemplate,
+      resultStartedOn,
+      resultEndedOn,
+      resultFormData,
       formSchema,
       partnerId,
       diseaseId,
-      patientData,
+      resultPatientData,
       resultCategory1,
       resultData,
-      startedOn,
+      existingCaseId,
+      existingCaseExternalId,
     } = result
     const covid19AssayExternalIds = await knex('AssayType as at')
       .join('Assay as a', 'at.id', 'a.assayTypeId')
@@ -93,17 +131,17 @@ async function updateCovidResultFromFormData(
     }
     const resultUpdates = {}
     let formDataObject
-    if (formData) {
-      formDataObject = JSON.parse(formData)
+    if (resultFormData) {
+      formDataObject = JSON.parse(resultFormData)
     }
     if (_.isEmpty(formDataObject)) {
       return
     }
     let patientDataObject = {}
     let originalPatientDataObject = {}
-    if (patientData) {
-      patientDataObject = JSON.parse(patientData)
-      originalPatientDataObject = JSON.parse(patientData)
+    if (resultPatientData) {
+      patientDataObject = JSON.parse(resultPatientData)
+      originalPatientDataObject = JSON.parse(resultPatientData)
     }
     let resultDataObject = {}
     let originalResultDataObject = {}
@@ -130,19 +168,66 @@ async function updateCovidResultFromFormData(
     const canOverwriteDiagnosticDataByHand =
       deviceLogCountFromDiagnosticDevice === 0
 
-    const caseExternalId = formDataObject.caseId
-    if (canAutoAssignResultByCaseId && caseExternalId && diseaseId) {
-      const caseId = await getCaseId(
-        { partnerId, externalId: caseExternalId, diseaseId },
-        true,
-        userId
-      )
-      resultUpdates.caseId = caseId
-    }
-    if (canOverwriteDiagnosticDataByHand) {
-      patientDataObject.id = caseExternalId
-    } else if (caseExternalId) {
-      patientDataObject.id = patientDataObject.id || caseExternalId
+    const now = new Date()
+    let caseExternalId
+    if (diseaseId) {
+      if (caseExternalIdTemplate) {
+        ;({ caseExternalId } =
+          (await processUsingDataSourceQuery(
+            { ...result, caseExternalIdTemplate },
+            ['caseExternalIdTemplate']
+          )) || {})
+      }
+      if (!caseExternalId) {
+        caseExternalId = formDataObject.caseId
+      }
+      if (caseExternalId) {
+        if (canAutoAssignResultByCaseId) {
+          // Get the case that matched the case ID in the payload
+          // If the case doesn't exist and the result is not assigned a case yet, creat the case
+          let caseId = await getCaseId(
+            { partnerId, externalId: caseExternalId, diseaseId },
+            !existingCaseId,
+            userId
+          )
+          // If no case was found or created, use the case already assigned to the result
+          if (!caseId) {
+            caseId = existingCaseId
+          }
+          // Lookup if any other cased have the smae case number
+          const otherCaseId = await getCaseId(
+            { partnerId, externalId: caseExternalId, diseaseId },
+            false,
+            userId
+          )
+          // If the case number has changed...
+          if (
+            caseExternalId !== existingCaseExternalId &&
+            (!otherCaseId || otherCaseId === existingCaseId)
+          ) {
+            // ...to an unknown case number, update the case
+            if (!otherCaseId || otherCaseId === existingCaseId) {
+              await updateCase(
+                { id: existingCaseId },
+                {
+                  externalId: caseExternalId,
+                  updatedBy: userId,
+                  updatedOn: now,
+                }
+              )
+              resultUpdates.caseId = caseId
+            } else {
+              // ...to a known case number, move the result to the known case
+              resultUpdates.caseId = otherCaseId
+            }
+          }
+        }
+      }
+      if (canOverwriteDiagnosticDataByHand && caseExternalId) {
+        patientDataObject.id = caseExternalId
+      } else if (caseExternalId) {
+        patientDataObject.id = patientDataObject.id || caseExternalId
+      }
     }
 
     const testReasonOptions =
@@ -188,8 +273,8 @@ async function updateCovidResultFromFormData(
       resultDataObject.resultText =
         selectedResultText || resultDataObject.resultText
       if (testDate) {
-        resultUpdates.endedOn = testDate || endedOn
-        resultUpdates.startedOn = testDate || startedOn
+        resultUpdates.endedOn = testDate || resultEndedOn
+        resultUpdates.startedOn = testDate || resultStartedOn
       }
     } else if (selectedResultText) {
       resultDataObject.resultText =
@@ -201,8 +286,8 @@ async function updateCovidResultFromFormData(
         resultDataObject.resultText = selectedResultText
       }
       if (testDate) {
-        resultUpdates.endedOn = endedOn || testDate
-        resultUpdates.startedOn = startedOn || testDate
+        resultUpdates.endedOn = resultEndedOn || testDate
+        resultUpdates.startedOn = resultStartedOn || testDate
       }
     }
     if (assayExternalId === 'assayGenericCovid19') {
@@ -230,7 +315,6 @@ async function updateCovidResultFromFormData(
     if (_.isEmpty(resultUpdates)) {
       return
     }
-    const now = new Date()
     resultUpdates.updatedOn = now
     resultUpdates.updatedBy = userId
     await knex('Result')
