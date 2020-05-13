@@ -2,18 +2,14 @@ const supertest = require('supertest')
 const chai = require('chai')
 const _ = require('lodash')
 const shared = require('../utils/sharedToken')
+const { knex } = require('../../src/db')
 const {
   assertPropertiesOfListItem,
 } = require('../utils/assertPropertiesOfDeviceItem')
-const { knex, run } = require('../../src/db')
 const { getAccessToken, createUser, removeUser } = require('../utils/authUtils')
 
 const server = supertest.agent('http://localhost:8080')
 const { assert } = chai
-
-function runTest(test) {
-  return run(async knex => test(knex))
-}
 
 describe('Device routes', () => {
   const path = '/api/device'
@@ -71,6 +67,37 @@ describe('Device routes', () => {
             true
           )
         })
+    })
+
+    it('should return only devices that have are configured for tb disease', async () => {
+      const res = await server
+        .get(`${path}?page=0&size=100&diseaseId=1`)
+        .set('Authorization', `Bearer ${shared.token}`)
+
+      assert.equal(res.status, 200)
+      assert.typeOf(res.body, 'Object')
+      assert.property(res.body, 'data')
+      assert.typeOf(res.body.data, 'array')
+      assert.isAtLeast(res.body.data.length, 1)
+      assert.property(res.body.data[0], 'id')
+      assert.property(res.body.data[0], 'name')
+      assert.property(res.body.data[0], 'shortName')
+      assert.property(res.body.data[0], 'createdOn')
+      assert.property(res.body.data[0], 'lastPingOn')
+      assert.property(res.body.data[0], 'lastSeen')
+      assert.property(res.body.data[0], 'state')
+      assert.property(res.body.data[0], 'type')
+      assert.property(res.body.data[0], 'category')
+      assert.property(res.body.data[0], 'hasResults')
+      assert.property(res.body.data[0], 'hasConnectivity')
+      assert.property(res.body.data[0], 'status')
+      assert.property(res.body.data[0], 'resultCountLastMonth')
+      assert.property(res.body.data[0], 'resultCountThisMonth')
+      assert.typeOf(res.body.data[0].error, 'Object')
+      assert.typeOf(res.body.data[0].availability, 'Object')
+      assert.property(res.body.data[0], 'deliveredLastMonth')
+      assert.property(res.body.data[0], 'deliveredThisMonth')
+      assert.property(res.body, 'total')
     })
 
     it('should return details of a specific device', async () => {
@@ -190,33 +217,29 @@ describe('Device routes', () => {
       let deviceMaintenanceIdsToRestore
       let deviceMaintenanceIdsToDelete = []
 
-      beforeEach(() =>
-        runTest(async knex => {
-          const deviceMaintenanceTypeIds = await knex('DeviceMaintenanceType')
-            .whereIn('externalId', ['calibration', 'warranty'])
-            .pluck('id')
-          deviceMaintenanceIdsToRestore = await knex('DeviceMaintenance')
-            .whereIn('deviceMaintenanceTypeId', deviceMaintenanceTypeIds)
-            .where({ deviceId, current: 1 })
-            .pluck('id')
-        })
-      )
-      afterEach(() =>
-        runTest(async knex => {
-          // make sure we delete only new items and not existing, accidentally
-          deviceMaintenanceIdsToDelete = deviceMaintenanceIdsToDelete.filter(
-            x => !deviceMaintenanceIdsToRestore.includes(x)
-          )
+      beforeEach(async () => {
+        const deviceMaintenanceTypeIds = await knex('DeviceMaintenanceType')
+          .whereIn('externalId', ['calibration', 'warranty'])
+          .pluck('id')
+        deviceMaintenanceIdsToRestore = await knex('DeviceMaintenance')
+          .whereIn('deviceMaintenanceTypeId', deviceMaintenanceTypeIds)
+          .where({ deviceId, current: 1 })
+          .pluck('id')
+      })
+      afterEach(async () => {
+        // make sure we delete only new items and not existing, accidentally
+        deviceMaintenanceIdsToDelete = deviceMaintenanceIdsToDelete.filter(
+          x => !deviceMaintenanceIdsToRestore.includes(x)
+        )
 
-          await knex('DeviceMaintenance')
-            .whereIn('id', deviceMaintenanceIdsToDelete)
-            .del()
+        await knex('DeviceMaintenance')
+          .whereIn('id', deviceMaintenanceIdsToDelete)
+          .del()
 
-          await knex('DeviceMaintenance')
-            .whereIn('id', deviceMaintenanceIdsToRestore)
-            .update({ current: 1 })
-        })
-      )
+        await knex('DeviceMaintenance')
+          .whereIn('id', deviceMaintenanceIdsToRestore)
+          .update({ current: 1 })
+      })
 
       // actual tests
       checkMaintenance('calibration', 'calibrationDate', 'calibrationNotes')

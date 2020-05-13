@@ -109,7 +109,6 @@ async function getListResults(query, auth, fields = LIST_FIELDS) {
   const dataConstraints = await getConstraints(auth.credentials)
 
   const resultQuery = getQueryForResultsListAndExport(query, dataConstraints)
-
   // get total count for paging
   const getCount = resultQuery
     .clone()
@@ -292,6 +291,12 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
       if (params.assayExternalIds) {
         queryBuilder.whereIn('a.externalId', params.assayExternalIds.split(','))
       }
+      if (params.diseaseExternalIds)
+        queryBuilder.whereIn(
+          'dis.externalId',
+          params.diseaseExternalIds.split(',')
+        )
+
       if (params.resultCategories) {
         queryBuilder.where(builder =>
           builder
@@ -351,6 +356,8 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
       'rc2.externalId as resultCategory2ExternalId',
       'r.patientData',
       'r.resultData',
+      'dis.externalid as diseaseExternalId',
+      'dis.name as diseaseName',
       'sp.externalId as sampleId',
       'so.id as sampleOriginSiteId',
       'so.externalId as sampleOriginSiteExternalId',
@@ -484,8 +491,9 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
     transferredOn: d.transferredOn,
     transferredBy: d.transferredBy,
     reportableSiteId: d.reportableSiteId,
+    diseaseExternalId: d.diseaseExternalId,
+    diseaseName: d.diseaseName,
   }))
-
   const result = {
     ok: true,
     total,
@@ -1631,11 +1639,17 @@ async function listFollowUps(request) {
     .join('FollowUpType as fut', 'fu.followUpTypeId', 'fut.id')
     .join('FollowUpAssay as fua', 'fu.id', 'fua.followUpId')
     .leftJoin('Assay as a', 'fua.assayId', 'a.id')
+    .leftJoin('AssayType as at', 'a.assayTypeId', 'at.id')
+    .leftJoin('Disease as dis', 'at.diseaseId', 'dis.id')
     .leftJoin('ResultCategory as rc1', 'fua.resultCategory1', 'rc1.id')
     .leftJoin('ResultCategory as rc2', 'fua.resultCategory2', 'rc2.id')
-    .where('fua.partnerId', dataConstraints.partner.id)
+    .where(queryBuilder => {
+      queryBuilder.where('fua.partnerId', dataConstraints.partner.id)
+      if (query.diseaseId) queryBuilder.where('dis.id', query.diseaseId)
+    })
     .modify(addConstraints, dataConstraints, {
       assay: 'a',
+      disease: 'dis',
     })
     .orderBy('fu.id', 'a.id', 'rc1.id', 'rc2.id')
     .select(
@@ -2124,6 +2138,7 @@ function getBaseQueryForResults() {
   const resultQuery = knex('Result as r')
     .innerJoin('Assay as a', 'r.assayId', 'a.id')
     .innerJoin('AssayType as at', 'a.assayTypeId', 'at.id')
+    .innerJoin('Disease as dis', 'at.diseaseId', 'dis.id')
     .innerJoin('Device as d', 'r.deviceId', 'd.id')
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .innerJoin('ResultSource as rso', 'r.resultSourceId', 'rso.id')
@@ -2198,6 +2213,7 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
       errorCode: 'r.errorCode',
       workflowStatusId: 'rs.id',
       treatmentStatusId: 'rts.id',
+      diseaseId: 'dis.id',
     })
     .modify((queryBuilder, params) => {
       if (params.patientOrResearchId) {
@@ -2226,6 +2242,7 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
       geography: 'g',
       result: 'r',
       country: 'c',
+      disease: 'dis',
     })
 
   return resultQuery

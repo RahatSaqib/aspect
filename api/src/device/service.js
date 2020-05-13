@@ -104,24 +104,16 @@ async function getListDevices(query, auth) {
     .leftJoin('Geography as g', 's.geographyId', 'g.id')
     .leftJoin('State as st', 'g.stateId', 'st.id')
     .leftJoin('Assay as a', 'dt.id', 'a.deviceTypeId')
+    .leftJoin('AssayType as at', 'a.assayTypeId', 'at.id')
+    .leftJoin('Disease as dis', 'at.diseaseId', 'dis.id')
     .where(function() {
-      if (!query.deviceIds) {
-        return
-      }
-      this.whereIn('d.id', query.deviceIds.split(','))
+      if (query.deviceIds) this.whereIn('d.id', query.deviceIds.split(','))
     })
     .modify(queryBuilder => {
-      if (!query.assayId) {
-        return
-      }
-      queryBuilder.where('a.id', query.assayId)
-
-      if (!query.resultCategoryId) {
-        return
-      }
-      queryBuilder
-        .innerJoin('ResultCategoryAssay as rca', 'a.id', 'rca.assayId')
-        .where('rca.resultCategoryId', query.resultCategoryId)
+      if (query.resultCategoryId)
+        queryBuilder
+          .innerJoin('ResultCategoryAssay as rca', 'a.id', 'rca.assayId')
+          .where('rca.resultCategoryId', query.resultCategoryId)
     })
     .modify(filterParams, query, {
       countryId: 'g.countryId',
@@ -137,6 +129,8 @@ async function getListDevices(query, auth) {
       siteExternalId: 's.externalId',
       siteName: 's.name',
       siteId: 's.id',
+      diseaseId: 'dis.id',
+      assayId: 'a.id',
     })
     .modify(addConstraints, dataConstraints, {
       assay: 'a',
@@ -144,6 +138,7 @@ async function getListDevices(query, auth) {
       deviceType: 'dt',
       geography: 'g',
       site: 's',
+      disease: 'dis',
     })
   // get total count for paging
   const getCount = deviceQuery

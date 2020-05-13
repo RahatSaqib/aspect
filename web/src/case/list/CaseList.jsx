@@ -79,6 +79,11 @@ const FILTERS_CONFIG = [
   { lga: true, requiredPermissions: [] },
   { patientOrCaseId: true, requiredPermissions: [] },
   { sampleOriginSite: true, requiredPermissions: [] },
+  {
+    assayAndResultCategory: true,
+    requiredPermissions: [],
+  },
+  { onlyDisease: true, requiredPermissions: [] },
 ]
 
 const searchSanitizer = makeSearchParamsSanitizer({
@@ -89,6 +94,7 @@ const searchSanitizer = makeSearchParamsSanitizer({
     'patientId',
     'diseaseName',
     'status',
+    'diseaseId',
   ],
 })
 
