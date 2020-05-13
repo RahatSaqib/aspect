@@ -61,7 +61,7 @@ describe('Result routes', () => {
     clinicianAccessToken = await getClinicianAccessToken()
   })
 
-  describe.only('GET', () => {
+  describe('GET', () => {
     shared.checkToken(server, path)
 
     const validateResponse = res => {
