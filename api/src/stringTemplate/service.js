@@ -40,6 +40,7 @@ handlebars.registerHelper(
   'customFieldValueFromLabel',
   customFieldValueFromLabel
 )
+handlebars.registerHelper('coalesce', coalesce)
 
 // See unit tests for examples
 // Can include displayPreferences
@@ -610,6 +611,13 @@ function customFieldValueFromLabel(customFieldData, label) {
   if (!_.isEmpty(customFieldData)) {
     return _.get(_.find(Object.values(customFieldData), { label }), ['value'])
   }
+}
+
+function coalesce(...rest) {
+  // Using dropRight here to ignore the last argument
+  //  passed to this call. Handlebars passes the helper
+  //  object, with it's options, as the last arg
+  return _.dropRight(rest).find(arg => !!arg)
 }
 
 module.exports = {

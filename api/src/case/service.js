@@ -253,7 +253,7 @@ function onResultLogged({ resultId }, { messageContext }) {
       .join('Site as s', 'r.siteId', 's.id')
       .join('Device as d', 'r.deviceId', 'd.id')
       .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
-      .join('Sample as s', 'r.sampleId', 's.id')
+      .join('Sample as sample', 'r.sampleId', 'sample.id')
       .join('ResultForm as rf', function() {
         this.on('a.id', 'rf.assayId').andOn('r.partnerId', 'rf.partnerId')
       })
@@ -265,19 +265,19 @@ function onResultLogged({ resultId }, { messageContext }) {
         )
       })
       .leftJoin('Case as c', 'r.caseId', 'c.id')
-      .leftJoin('Site as sos', 's.sampleOriginSiteId', 'sos.id')
+      .leftJoin('Site as sos', 'sample.originSiteId', 'sos.id')
       .leftJoin('ResultCategory as rc1', 'r.resultCategory1', 'rc1.id')
       .leftJoin('ResultCategoryAssay as rca1', function() {
         this.on('r.resultCategory1', 'rca1.resultCategoryId').andOn(
           'r.assayId',
-          'rca1.assayd'
+          'rca1.assayId'
         )
       })
       .leftJoin('ResultCategory as rc2', 'r.resultCategory2', 'rc2.id')
       .leftJoin('ResultCategoryAssay as rca2', function() {
         this.on('r.resultCategory2', 'rca2.resultCategoryId').andOn(
           'r.assayId',
-          'rca2.assayd'
+          'rca2.assayId'
         )
       })
       .where({ 'r.id': resultId })
@@ -288,7 +288,7 @@ function onResultLogged({ resultId }, { messageContext }) {
         's.shortname as siteShortName',
         's.externalId as siteExternalId',
         'd.name as deviceName',
-        'd.externalId as deviceTypeExternalId',
+        'dt.externalId as deviceTypeExternalId',
         'd.lastSeenOn as deviceLastSeenOn',
         'd.lastPingOn as deviceLastPingOn',
         'r.resultData',
@@ -305,12 +305,11 @@ function onResultLogged({ resultId }, { messageContext }) {
         'r.errorCode as resultErrorCode',
         'r.errorNotes as resultErrorNotes',
         'a.externalId as assayExternalId',
-        's.externalId as sampleExternalId',
+        'sample.externalId as sampleExternalId',
         'sos.externalId as sampleOriginSiteExternalId',
-        's.collectedOn as sampleCollectedOn',
+        'sample.collectedOn as sampleCollectedOn',
         'rc1.externalId as resultCategory1ExternalId',
         'rc2.externalId as resultCategory2ExternalId',
-        'dt.externalId as resultDeviceTypeExternalId',
         'a.resultSourceId',
         'r.partnerId',
         'at.diseaseId',
@@ -336,56 +335,57 @@ function onResultLogged({ resultId }, { messageContext }) {
       resultCategory2Reportable,
       updatedBy,
     } = result
-    if (diseaseId && (resultCategory1Reportable || resultCategory2Reportable)) {
-      let caseExternalId
-      if (caseExternalIdTemplate) {
-        ;({ caseExternalId } =
-          (await processUsingDataSourceQuery(
-            { ...result, caseExternalIdTemplate },
-            ['caseExternalIdTemplate']
-          )) || {})
-      }
+    if (
+      diseaseId &&
+      caseExternalIdTemplate &&
+      canAutoAssignResultByCaseId &&
+      (resultCategory1Reportable || resultCategory2Reportable)
+    ) {
+      const { caseExternalId } =
+        (await processUsingDataSourceQuery(
+          { ...result, caseExternalIdTemplate },
+          ['caseExternalIdTemplate']
+        )) || {}
       if (caseExternalId) {
-        if (canAutoAssignResultByCaseId) {
-          // Get the case that matched the case ID in the payload
-          // If the case doesn't exist and the result is not assigned a case yet, creat the case
-          let caseId = await getCaseId(
-            { partnerId, externalId: caseExternalId, diseaseId },
-            !existingCaseId,
-            updatedBy
-          )
-          // If no case was found or created, use the case already assigned to the result
-          if (!caseId) {
-            caseId = existingCaseId
-          }
-          // Lookup if any other cased have the smae case number
-          const otherCaseId = await getCaseId(
-            { partnerId, externalId: caseExternalId, diseaseId },
-            false,
-            updatedBy
-          )
-          // If the case number has changed...
-          if (
-            caseExternalId !== existingCaseExternalId &&
-            (!otherCaseId || otherCaseId === existingCaseId)
-          ) {
-            // ...to an unknown case number, update the case
-            if (!otherCaseId || otherCaseId === existingCaseId) {
-              await updateCase(
-                { id: existingCaseId },
-                {
-                  externalId: caseExternalId,
-                  updatedBy,
-                  updatedOn: new Date(),
-                }
-              )
-            } else {
-              // ...to a known case number, move the result to the known case
-              await knex('Result')
-                .where('id', resultId)
-                .update({ caseId: otherCaseId })
+        // Get the case that matched the case ID in the payload
+        // If the case doesn't exist and the result is not assigned a case yet, creat the case
+        let caseId = await getCaseId(
+          { partnerId, externalId: caseExternalId, diseaseId },
+          !existingCaseId,
+          updatedBy
+        )
+        // If no case was found or created, use the case already assigned to the result
+        if (!caseId) {
+          caseId = existingCaseId
+        }
+        // Do nothing if the result is already assigned to a case and the case number has not changed
+        if (existingCaseExternalId === caseExternalId) {
+          return
+        }
+        // Lookup if any other cases have the same case number
+        const otherCaseId = await getCaseId(
+          { partnerId, externalId: caseExternalId, diseaseId },
+          false,
+          updatedBy
+        )
+        // If the case number for the result has changed to an unknown case number
+        //   update the case number on the existing case
+        if (!otherCaseId || otherCaseId === caseId) {
+          await updateCase(
+            { id: caseId },
+            {
+              externalId: caseExternalId,
+              updatedBy,
+              updatedOn: new Date(),
             }
-          }
+          )
+        }
+        // If the case ID for the result has changed
+        //   update the case ID on the result
+        if (existingCaseId !== caseId) {
+          await knex('Result')
+            .where('id', resultId)
+            .update({ caseId: otherCaseId })
         }
       }
     }

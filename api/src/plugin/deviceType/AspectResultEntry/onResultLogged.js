@@ -45,7 +45,7 @@ async function updateCovidResultFromFormData(
       .join('Site as s', 'r.siteId', 's.id')
       .join('Device as d', 'r.deviceId', 'd.id')
       .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
-      .join('Sample as s', 'r.sampleId', 's.id')
+      .join('Sample as sample', 'r.sampleId', 'sample.id')
       .join('ResultForm as rf', function() {
         this.on('a.id', 'rf.assayId').andOn('r.partnerId', 'rf.partnerId')
       })
@@ -56,7 +56,7 @@ async function updateCovidResultFromFormData(
           'pd.partnerId'
         )
       })
-      .leftJoin('Site as sos', 's.sampleOriginSiteId', 'sos.id')
+      .leftJoin('Site as sos', 'sample.originSiteId', 'sos.id')
       .leftJoin('ResultCategory as rc1', 'r.resultCategory1', 'rc1.id')
       .leftJoin('ResultCategory as rc2', 'r.resultCategory2', 'rc2.id')
       .where({ 'r.id': resultId })
@@ -67,7 +67,7 @@ async function updateCovidResultFromFormData(
         's.shortname as siteShortName',
         's.externalId as siteExternalId',
         'd.name as deviceName',
-        'd.externalId as deviceTypeExternalId',
+        'dt.externalId as deviceTypeExternalId',
         'd.lastSeenOn as deviceLastSeenOn',
         'd.lastPingOn as deviceLastPingOn',
         'r.resultData',
@@ -84,12 +84,11 @@ async function updateCovidResultFromFormData(
         'r.errorCode as resultErrorCode',
         'r.errorNotes as resultErrorNotes',
         'a.externalId as assayExternalId',
-        's.externalId as sampleExternalId',
+        'sample.externalId as sampleExternalId',
         'sos.externalId as sampleOriginSiteExternalId',
-        's.collectedOn as sampleCollectedOn',
+        'sample.collectedOn as sampleCollectedOn',
         'rc1.externalId as resultCategory1ExternalId',
         'rc2.externalId as resultCategory2ExternalId',
-        'dt.externalId as resultDeviceTypeExternalId',
         'a.resultSourceId',
         'rf.formSchema',
         'r.resultCategory1',

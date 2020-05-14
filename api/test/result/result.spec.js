@@ -17,8 +17,8 @@ const {
   resultTypeToId,
   diseaseToId,
 } = require('../../src/shared/dictionary')
-const { getCaseId } = require('../../src/case/service')
 const { knex } = require('../../src/db')
+const { getCaseId } = require('../../src/case/service')
 const AssayCovidResultFormSchema = require('../../seeds/fixtures/AssayCovidResultFormSchema.json')
 const { getAccessToken, createUser, removeUser } = require('../utils/authUtils')
 
@@ -835,9 +835,9 @@ describe('Result routes', () => {
         let resultSourceDiagnosticDeviceId
         let resultTypePatientId
         let diseaseId
-        const sampleIdsInserted = []
-        const resultIdsInserted = []
-        const casesInserted = []
+        let latestSampleIdBeforeTests
+        let latestResultIdBeforeTests
+        let latestCaseIdBeforeTests
         const getCaseIdByDeviceTypeId = deviceTypeId =>
           `${deviceTypeId} TEST-CASE-ID`
 
@@ -887,40 +887,27 @@ describe('Result routes', () => {
             'DiagnosticDevice'
           )
           resultTypePatientId = await resultTypeToId('Patient')
-
-          // insert Cases for each deviceTypeId
-          await Promise.each(
-            Object.keys(covidDeviceTypeDevices),
-            async deviceTypeId => {
-              const externalId = getCaseIdByDeviceTypeId(deviceTypeId)
-              const caseId = await getCaseId(
-                { externalId, partnerId, diseaseId },
-                true,
-                adminId
-              )
-              casesInserted.push({ id: caseId, externalId, partnerId })
-            }
-          )
+          ;({ id: latestSampleIdBeforeTests } = await knex('Sample')
+            .max('id as id')
+            .first())
+          ;({ id: latestResultIdBeforeTests } = await knex('Result')
+            .max('id as id')
+            .first())
+          ;({ id: latestCaseIdBeforeTests } = await knex('Case')
+            .max('id as id')
+            .first())
         })
 
         after(async () => {
-          if (!_.isEmpty(resultIdsInserted)) {
-            await knex('Result')
-              .whereIn('id', resultIdsInserted)
-              .del()
-          }
-          if (!_.isEmpty(sampleIdsInserted)) {
-            await knex('Sample')
-              .whereIn('id', sampleIdsInserted)
-              .del()
-          }
-          if (!_.isEmpty(casesInserted)) {
-            const caseIds = casesInserted.map(x => x.id)
-            await knex('Case')
-              .whereIn('id', caseIds)
-              .del()
-          }
-          return Promise.resolve()
+          await knex('Result')
+            .where('id', '>', latestResultIdBeforeTests)
+            .del()
+          await knex('Sample')
+            .where('id', '>', latestSampleIdBeforeTests)
+            .del()
+          await knex('Case')
+            .where('id', '>', latestCaseIdBeforeTests)
+            .del()
         })
 
         function calculateDateForResult() {
@@ -949,7 +936,6 @@ describe('Result routes', () => {
             ...sampleDetails,
           }
           sample.id = await knex('Sample').insert(sample)
-          sampleIdsInserted.push(sample.id)
           const [resultId] = await knex('Result').insert({
             externalId: `COVID-${randomNumber}`,
             assayId: covidDeviceTypeAssays[deviceTypeExternalId].id,
@@ -990,7 +976,6 @@ describe('Result routes', () => {
               source: device.name,
             })
           }
-          resultIdsInserted.push(resultId)
           return resultId
         }
 
@@ -1063,9 +1048,11 @@ describe('Result routes', () => {
                   testTypeText
                 )
                 formDataToSend.testType = testType
-                resultAspectExpected.caseId = casesInserted.find(
-                  x => x.externalId === caseId
-                ).id
+                resultAspectExpected.caseId = await getCaseId({
+                  externalId: caseId,
+                  partnerId,
+                  diseaseId,
+                })
               }
               const response = await server
                 .put(`${path}/form-data/${resultId}`)
@@ -1156,9 +1143,11 @@ describe('Result routes', () => {
                   testTypeText
                 )
                 formDataToSend.testType = testType
-                resultAspectExpected.caseId = casesInserted.find(
-                  x => x.externalId === caseId
-                ).id
+                resultAspectExpected.caseId = await getCaseId({
+                  externalId: caseId,
+                  partnerId,
+                  diseaseId,
+                })
               }
               const response = await server
                 .put(`${path}/form-data/${resultId}`)
@@ -1284,9 +1273,11 @@ describe('Result routes', () => {
                   testTypeText
                 )
                 formDataToSend.testType = testType
-                resultAspectExpected.caseId = casesInserted.find(
-                  x => x.externalId === caseId
-                ).id
+                resultAspectExpected.caseId = await getCaseId({
+                  externalId: caseId,
+                  partnerId,
+                  diseaseId,
+                })
               }
               const response = await server
                 .put(`${path}/form-data/${resultId}`)
