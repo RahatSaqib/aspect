@@ -890,7 +890,7 @@ describe('Result routes', () => {
             .join('Assay as a', 'dt.id', 'a.deviceTypeId')
             .join('AssayType as at', 'a.assayTypeId', 'at.id')
             .where('dt.externalId', deviceTypeExternalId)
-            .andWhere('at.dieaseId', diseaseId)
+            .andWhere('at.diseaseId', diseaseId)
             .first('a.externalId as assayExternalId')
           return assayExternalId
         }
