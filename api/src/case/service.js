@@ -254,10 +254,10 @@ function onResultLogged({ resultId }, { messageContext }) {
       .join('Device as d', 'r.deviceId', 'd.id')
       .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
       .join('Sample as sample', 'r.sampleId', 'sample.id')
-      .join('ResultForm as rf', function() {
+      .join('Partner as p', 'r.partnerId', 'p.id')
+      .leftJoin('ResultForm as rf', function() {
         this.on('a.id', 'rf.assayId').andOn('r.partnerId', 'rf.partnerId')
       })
-      .join('Partner as p', 'r.partnerId', 'p.id')
       .leftJoin('PartnerDisease as pd', function() {
         this.on('at.diseaseId', 'pd.diseaseId').andOn(
           'r.partnerId',

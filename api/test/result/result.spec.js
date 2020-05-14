@@ -1,30 +1,19 @@
 const supertest = require('supertest')
 const chai = require('chai')
 const _ = require('lodash')
-const {
-  addMinutes,
-  subDays,
-  parseISO,
-  format: dateFormat,
-} = require('date-fns')
+const { addMinutes, parseISO, format: dateFormat } = require('date-fns')
 const Promise = require('bluebird')
+const { createResult, getResult } = require('./result_utils')
 const shared = require('../utils/sharedToken')
 const {
   deviceStatusToId,
-  sampleTypeToId,
   allResultCategoryToId,
-  resultSourceToId,
-  resultTypeToId,
   diseaseToId,
 } = require('../../src/shared/dictionary')
 const { knex } = require('../../src/db')
 const { getCaseId } = require('../../src/case/service')
 const AssayCovidResultFormSchema = require('../../seeds/fixtures/AssayCovidResultFormSchema.json')
 const { getAccessToken, createUser, removeUser } = require('../utils/authUtils')
-
-const server = supertest.agent('http://localhost:8080')
-const { assert, expect } = chai
-
 const { getCommCarePayload } = require('../deviceApi/commcare/commcare_utils')
 const {
   createTestContext,
@@ -34,7 +23,9 @@ const {
 } = require('../deviceApi/utils')
 const { getAdminId } = require('../utils/authUtils')
 
-// asdfsadf
+const server = supertest.agent('http://localhost:8080')
+const { assert, expect } = chai
+
 const getClinicianAccessToken = () =>
   server
     .post('/api/auth')
@@ -820,20 +811,10 @@ describe('Result routes', () => {
           rocheMagnaPure96: null,
           appliedBiosystemsQuantStudio7Flex: null,
         }
-        const covidDeviceTypeAssays = {
-          CepheidGeneXpert: null,
-          Aspect: null,
-          rocheMagnaPure96: null,
-          appliedBiosystemsQuantStudio7Flex: null,
-        }
         let partnerId
         let adminId
         let otherUserId
-        let sampleTypeNasalSwabId
         let resultCategories
-        let resultSourceEnteredByHandId
-        let resultSourceDiagnosticDeviceId
-        let resultTypePatientId
         let diseaseId
         let latestSampleIdBeforeTests
         let latestResultIdBeforeTests
@@ -869,24 +850,10 @@ describe('Result routes', () => {
                 .andWhere('c.abbreviation', 'US')
                 .andWhere('d.deviceStatusId', deviceStatusApprovedId)
                 .first('d.*')
-              covidDeviceTypeAssays[deviceTypeExternalId] = await knex(
-                'DeviceType as dt'
-              )
-                .join('Assay as a', 'dt.id', 'a.deviceTypeId')
-                .join('AssayType as at', 'a.assayTypeId', 'at.id')
-                .where('dt.externalId', deviceTypeExternalId)
-                .where('at.externalId', 'covid19')
-                .first('a.*')
             }
           )
 
-          sampleTypeNasalSwabId = await sampleTypeToId('NasalSwab')
           resultCategories = await allResultCategoryToId()
-          resultSourceEnteredByHandId = await resultSourceToId('EnteredByHand')
-          resultSourceDiagnosticDeviceId = await resultSourceToId(
-            'DiagnosticDevice'
-          )
-          resultTypePatientId = await resultTypeToId('Patient')
           ;({ id: latestSampleIdBeforeTests } = await knex('Sample')
             .max('id as id')
             .first())
@@ -910,84 +877,22 @@ describe('Result routes', () => {
             .del()
         })
 
-        function calculateDateForResult() {
-          const daysToSubtract = Math.ceil(Math.random() ** 4 * 60)
-          return subDays(new Date(), daysToSubtract)
-        }
-
-        async function createCovid19Result(
-          deviceTypeExternalId,
-          resultDetails = {},
-          sampleDetails = {},
-          createDeviceLogFromInstrument = false
-        ) {
-          const device = covidDeviceTypeDevices[deviceTypeExternalId]
-          const site = await knex('Site')
-            .where('id', device.siteId)
-            .first()
-          const randomDate = calculateDateForResult()
-          const randomNumber = calculateDateForResult().getTime()
-
-          const sample = {
-            externalId: `SMP-CV-${randomNumber}`,
-            collectedOn: calculateDateForResult(),
-            sampleTypeId: sampleTypeNasalSwabId,
-            originSiteId: site.id,
-            ...sampleDetails,
-          }
-          sample.id = await knex('Sample').insert(sample)
-          const [resultId] = await knex('Result').insert({
-            externalId: `COVID-${randomNumber}`,
-            assayId: covidDeviceTypeAssays[deviceTypeExternalId].id,
-            partnerId,
-            geographyId: site.geographyId,
-            siteId: site.id,
-            reportableSiteId: site.id,
-            deviceId: device.id,
-            longitude: site.longitude,
-            latitude: site.latitude,
-            resultSourceId:
-              deviceTypeExternalId === 'Aspect'
-                ? resultSourceEnteredByHandId
-                : resultSourceDiagnosticDeviceId,
-            resultTypeId: resultTypePatientId,
-            sampleId: sample.id,
-            resultCategory1: resultCategories.Unknown,
-            resultCategory2: resultCategories.Unknown,
-            resultData: '{}',
-            formData: '{}',
-            patientData: '{}',
-            startedOn: deviceTypeExternalId === 'Aspect' ? null : randomDate,
-            endedOn: addMinutes(randomDate, 100),
-            createdOn: addMinutes(randomDate, 120),
-            updatedOn: addMinutes(randomDate, 180),
-            createdBy: otherUserId,
-            updatedBy: otherUserId,
-            ...resultDetails,
-          })
-          if (createDeviceLogFromInstrument) {
-            await knex('DeviceLog').insert({
-              createdOn: randomDate,
-              deviceConfigurationUpdated: 0,
-              deviceId: device.id,
-              rawMessage: `Some raw message from ${device.name}`,
-              resultId,
-              senderIp: '127.0.0.1',
-              source: device.name,
-            })
-          }
-          return resultId
-        }
-
-        async function getResult(resultId) {
-          return knex('Result')
-            .where('id', resultId)
-            .first()
-        }
-
         function getOptionValueFromTitle(options, title) {
           // eslint-disable-next-line eqeqeq
           return (options.find(option => option.title == title) || {}).value
+        }
+
+        async function getAssayForDiseaseIdAndDeviceType(
+          diseaseId,
+          deviceTypeExternalId
+        ) {
+          const { assayExternalId } = await knex('DeviceType as dt')
+            .join('Assay as a', 'dt.id', 'a.deviceTypeId')
+            .join('AssayType as at', 'a.assayTypeId', 'at.id')
+            .where('dt.externalId', deviceTypeExternalId)
+            .andWhere('at.dieaseId', diseaseId)
+            .first('a.externalId as assayExternalId')
+          return assayExternalId
         }
 
         it('Should update result details when relevant form fields are saved', async () => {
@@ -1011,10 +916,20 @@ describe('Result routes', () => {
           await Promise.each(
             Object.keys(covidDeviceTypeDevices),
             async deviceTypeId => {
+              const assayExternalId = await getAssayForDiseaseIdAndDeviceType(
+                diseaseId,
+                deviceTypeId
+              )
               const caseId = getCaseIdByDeviceTypeId(deviceTypeId)
               let testTypeText
               let testType
-              const resultId = await createCovid19Result(deviceTypeId)
+              const resultId = await createResult(
+                partnerId,
+                deviceTypeId,
+                'Nasal Swab',
+                assayExternalId,
+                otherUserId
+              )
               const formDataToSend = {
                 caseId,
                 testReason,
@@ -1048,11 +963,15 @@ describe('Result routes', () => {
                   testTypeText
                 )
                 formDataToSend.testType = testType
-                resultAspectExpected.caseId = await getCaseId({
-                  externalId: caseId,
-                  partnerId,
-                  diseaseId,
-                })
+                resultAspectExpected.caseId = await getCaseId(
+                  {
+                    externalId: caseId,
+                    partnerId,
+                    diseaseId,
+                  },
+                  true,
+                  adminId
+                )
               }
               const response = await server
                 .put(`${path}/form-data/${resultId}`)
@@ -1106,10 +1025,20 @@ describe('Result routes', () => {
           await Promise.each(
             Object.keys(covidDeviceTypeDevices),
             async deviceTypeId => {
+              const assayExternalId = await getAssayForDiseaseIdAndDeviceType(
+                diseaseId,
+                deviceTypeId
+              )
               const caseId = getCaseIdByDeviceTypeId(deviceTypeId)
               let testTypeText
               let testType
-              const resultId = await createCovid19Result(deviceTypeId)
+              const resultId = await createResult(
+                partnerId,
+                deviceTypeId,
+                'Nasal Swab',
+                assayExternalId,
+                otherUserId
+              )
               const formDataToSend = {
                 caseId,
                 testReason,
@@ -1231,11 +1160,19 @@ describe('Result routes', () => {
                 startedOn: addMinutes(dateAndTimeOfTest, 123),
                 endedOn: addMinutes(dateAndTimeOfTest, 223),
               }
+              const assayExternalId = await getAssayForDiseaseIdAndDeviceType(
+                diseaseId,
+                deviceTypeId
+              )
               const caseId = getCaseIdByDeviceTypeId(deviceTypeId)
               let testTypeText
               let testType
-              const resultId = await createCovid19Result(
+              const resultId = await createResult(
+                partnerId,
                 deviceTypeId,
+                'Nasal Swab',
+                assayExternalId,
+                otherUserId,
                 resultFromInstrument,
                 {},
                 true
