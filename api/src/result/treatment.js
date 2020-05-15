@@ -2,8 +2,8 @@ const Boom = require('@hapi/boom')
 const dateFormat = require('date-fns/format')
 const sortBy = require('lodash/sortBy')
 const { subMonths, startOfMonth, endOfMonth } = require('date-fns')
-const { knex } = require('../../db')
-const { addConstraints, getConstraints } = require('../../auth/constraints')
+const { knex } = require('../db')
+const { addConstraints, getConstraints } = require('../auth/constraints')
 
 async function confirmedTreatmentTracking(request) {
   const { auth, payload } = request
