@@ -69,7 +69,14 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
     const remoteAddress = getRemoteAddress(request)
     const sanitisedPayload = DefaultAbbottM2000.sanitisePayload(payload)
     const jsonAstmMessages = astmE1394MessagesToJson(sanitisedPayload)
-    const arrayFromPossibleRepeatedValue = (jsonAstmObject, path) => {
+    // ASTM fields can contain multiple values inside of them
+    //   EG: This is an order line: 3O|1|091/20|091/20^037^A1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||||||||||||||||F
+    //       It's fields are separated by a pipe (|) character
+    //       The fifth field is the Universal Test ID field which contains the following values:
+    //         ^^^Assay_code & ^Assay_name
+    //         It can also contain ^Assay protocol & ^Test Qualifier when these values are applicable
+    // This method extracts the array value from specified field in the JSON object representation of the ASTM message
+    const arrayFromPossibleRepeatedASTMValue = (jsonAstmObject, path) => {
       if (_.get(jsonAstmObject, `${path}.items`)) {
         return _.get(jsonAstmObject, `${path}.items`).map(i =>
           _.get(jsonAstmObject, `${path}.${i}`)
@@ -204,7 +211,7 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
                 dosageCategory: _.get(jsonAstmPatient, '35.value'),
                 ...commentsFromJsonAstmRecord(jsonAstmPatient),
               }
-              const patientDiagnoses = arrayFromPossibleRepeatedValue(
+              const patientDiagnoses = arrayFromPossibleRepeatedASTMValue(
                 jsonAstmPatient,
                 '19'
               ).map(diagnosis => ({
@@ -214,7 +221,7 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
               if (!_.isEmpty(patientDiagnoses)) {
                 patientData.diagnoses = patientDiagnoses
               }
-              const patientMedications = arrayFromPossibleRepeatedValue(
+              const patientMedications = arrayFromPossibleRepeatedASTMValue(
                 jsonAstmPatient,
                 '20'
               ).map(medication => ({
@@ -355,7 +362,7 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
                                 I: 'Interpretation of Final Result',
                               }[_.get(jsonAstmResult, '3.9.value')],
                               referenceRanges: _.get(jsonAstmResult, '6.value'),
-                              abnormalFlags: arrayFromPossibleRepeatedValue(
+                              abnormalFlags: arrayFromPossibleRepeatedASTMValue(
                                 jsonAstmResult,
                                 '7'
                               ).map(abnormalFlag => abnormalFlag.value),
