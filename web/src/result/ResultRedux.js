@@ -203,20 +203,20 @@ export function addResultNote(resultId, data) {
 }
 
 // loading a single result with given resultId
-function requestSingleResult(resultId) {
-  return {
-    type: types.REQUEST_SINGLE_RESULT,
-    resultId,
-  }
-}
+// function requestSingleResult(resultId) {
+//   return {
+//     type: types.REQUEST_SINGLE_RESULT,
+//     resultId,
+//   }
+// }
 
 // received a single result
-function receiveSingleResult(item) {
-  return {
-    type: types.RECEIVE_SINGLE_RESULT,
-    item,
-  }
-}
+// function receiveSingleResult(item) {
+//   return {
+//     type: types.RECEIVE_SINGLE_RESULT,
+//     item,
+//   }
+// }
 
 // request device log
 function requestDeviceLogs() {
@@ -233,33 +233,33 @@ function receiveResultLogs(item) {
   }
 }
 // load a single result with given resultId
-export function fetchSingleResult(resultId) {
-  return dispatch => {
-    dispatch(requestSingleResult(resultId))
+// export function fetchSingleResult(resultId) {
+//   return dispatch => {
+//     dispatch(requestSingleResult(resultId))
 
-    return aspectFetch(`/result/${resultId}`, {
-      errorNotifications: {
-        404: errorNotFound(
-          defineMessages({
-            title: {
-              id: 'errorResponseMessages.fetchSingleResult.GET.404.title',
-              defaultMessage: 'Could Not Find Test Result',
-            },
-          })
-        ),
-        default: errorPleaseTryAgainInAFewMinutes(
-          defineMessages({
-            title: {
-              id:
-                'errorResponseMessages.fetchSingleResultDetails.GET.default.title',
-              defaultMessage: 'Error Loading Result Details',
-            },
-          })
-        ),
-      },
-    }).then(json => dispatch(receiveSingleResult(json.data)))
-  }
-}
+//     return aspectFetch(`/result/${resultId}`, {
+//       errorNotifications: {
+//         404: errorNotFound(
+//           defineMessages({
+//             title: {
+//               id: 'errorResponseMessages.fetchSingleResult.GET.404.title',
+//               defaultMessage: 'Could Not Find Test Result',
+//             },
+//           })
+//         ),
+//         default: errorPleaseTryAgainInAFewMinutes(
+//           defineMessages({
+//             title: {
+//               id:
+//                 'errorResponseMessages.fetchSingleResultDetails.GET.default.title',
+//               defaultMessage: 'Error Loading Result Details',
+//             },
+//           })
+//         ),
+//       },
+//     }).then(json => dispatch(receiveSingleResult(json.data)))
+//   }
+// }
 
 // load a single result log with given resultId
 export function fetchResultLog(resultId) {
@@ -616,18 +616,18 @@ export default function resultReducer(state = initialState, action) {
         mutState.set('items', mutState.get('items').clear())
         mutState.set('table', mutState.get('table').clear())
       })
-    case types.RECEIVE_SINGLE_RESULT:
-    case types.RECEIVE_UPDATED_SINGLE_RESULT:
-      return state
-        .withMutations(mutState => {
-          const immutItem = Immutable.fromJS(action.item)
-          mutState.set('items', receiveItem(mutState.items, immutItem))
-        })
-        .merge({
-          loading: false,
-          formDataSaving: false,
-          formDataDirty: false,
-        })
+    // case types.RECEIVE_SINGLE_RESULT:
+    // case types.RECEIVE_UPDATED_SINGLE_RESULT:
+    //   return state
+    //     .withMutations(mutState => {
+    //       const immutItem = Immutable.fromJS(action.item)
+    //       mutState.set('items', receiveItem(mutState.items, immutItem))
+    //     })
+    //     .merge({
+    //       loading: false,
+    //       formDataSaving: false,
+    //       formDataDirty: false,
+    //     })
     case types.SET_RESULT_FORM_DATA_VALUE:
       return state
         .withMutations(mutState => {

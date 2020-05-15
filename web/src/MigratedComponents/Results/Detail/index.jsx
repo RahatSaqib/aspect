@@ -2,9 +2,11 @@ import React, { useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import classnames from 'classnames/bind'
 import { FaNotesMedical } from 'react-icons/fa'
-
+import isEqual from 'lodash/isEqual'
+import CircularProgress from '@material-ui/core/CircularProgress'
 import { fetchSingleResult } from './Redux'
-import usePrev from '../../../Hooks/CustomHooks'
+
+import { mergeFormConfigWithData } from '../../Form/Formik/Helpers'
 
 import AspectForm from '../../Form'
 import Shell from '../Shell'
@@ -14,7 +16,7 @@ import ShellFooter from '../Shell/Footer'
 
 const cssClasses = classnames.bind(require('../Shell/Shell.css'))
 
-const formConfig = {
+const resultsConfig = {
   id: 'Results',
   name: 'Results',
   actions: [
@@ -35,73 +37,41 @@ const formConfig = {
       header: 'Lab',
       items: [
         {
-          id: 'name',
-          label: 'Lab Name',
-        },
-        {
-          id: 'serial',
-          label: 'Lab serial',
-        },
-        {
-          id: 'name',
-          label: 'Lab Name',
-        },
-        {
-          id: 'serial',
-          label: 'Lab serial',
-        },
-        {
-          id: 'name',
-          label: 'Lab Name',
-        },
-        {
-          id: 'serial',
-          label: 'Lab serial',
-        },
-        {
-          id: 'name',
-          label: 'Lab Name',
-        },
-        {
-          id: 'serial',
-          label: 'Lab serial',
-        },
-        {
-          id: 'name',
-          label: 'Lab Name',
-        },
-        {
-          id: 'serial',
-          label: 'Lab serial',
-        },
-        {
-          id: 'name',
-          label: 'Lab Name',
-        },
-        {
-          id: 'serial',
-          label: 'Lab serial',
+          label: 'Site',
+          id: 'siteName',
+          key: 'siteName',
+          input: {
+            type: 'text',
+            component: 'textField',
+          },
         },
       ],
     },
-    {
-      id: 'assay',
-      header: 'Assay',
-      items: [
-        {
-          id: 'type',
-          label: 'Assay Type',
-        },
-      ],
-    },
+    // {
+    //   id: 'assay',
+    //   header: 'Assay',
+    //   items: [
+    //     {
+    //       label: 'Assay Type',
+    //       id: 'assay.name',
+    //       key: 'assay.name',
+    //       input: {
+    //         type: 'text',
+    //         component: 'textField',
+    //       },
+    //       type: 'text',
+    //     },
+    //   ],
+    // },
   ],
 }
 
-const AspectResultDetail = () => {
+const AspectResultDetail = ({ match }) => {
   const dispatch = useDispatch()
   const [singleResult, setSingleResult] = useState(false)
-  const prevSingleResult = usePrev(singleResult)
+  const [formConfig, setFormConfig] = useState(false)
   const { id, name, actions, sections } = formConfig
+  const { params } = match
 
   const data = useSelector(({ currentCase }) => {
     const { item = false } = currentCase.toJS()
@@ -109,19 +79,22 @@ const AspectResultDetail = () => {
   })
 
   useEffect(() => {
-    if (data && !singleResult) {
-      // if ((data && !singleResult) || (prevSingleResult !== singleResult)) {
-      setSingleResult(data)
+    if (singleResult) {
+      setFormConfig(mergeFormConfigWithData(singleResult, resultsConfig))
     }
-  }, [data, singleResult])
+  }, [singleResult])
 
   useEffect(() => {
-    if (!data) {
-      dispatch(fetchSingleResult(13720))
+    if (!data && params) {
+      const { resultId } = params
+      dispatch(fetchSingleResult(resultId))
+    } else if (
+      (data && !singleResult) ||
+      (singleResult && !isEqual(data, singleResult))
+    ) {
+      setSingleResult(data)
     }
-  })
-
-  console.log(prevSingleResult, singleResult, prevSingleResult === singleResult)
+  }, [data])
 
   return (
     <Shell>
@@ -129,7 +102,7 @@ const AspectResultDetail = () => {
         {actions && actions.map(({ type }) => <div>{type}</div>)}
       </ShellHeader>
       <ShellContent>
-        <AspectForm sections={sections} />
+        {formConfig ? <AspectForm config={formConfig} /> : <CircularProgress />}
       </ShellContent>
       <ShellFooter />
     </Shell>
