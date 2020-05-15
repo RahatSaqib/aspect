@@ -11,7 +11,7 @@ const ShellHeader = ({ children, icon: Icon }) => (
       </div>
       <div className={cssClasses('shell__headerText')}>Header Title?</div>
     </div>
-    {children}
+    <div className={cssClasses('shell__headerActions')}>{children}</div>
   </div>
 )
 
