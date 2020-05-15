@@ -4,12 +4,7 @@ const Promise = require('bluebird')
 
 async function up(knex) {
   await knex.schema.alterTable('Case', async tblCase => {
-    tblCase
-      .integer('diseaseId')
-      .unsigned()
-      .index()
-      .references('id')
-      .inTable('Disease')
+    tblCase.integer('diseaseId').unsigned()
     tblCase.dropUnique(['externalId', 'partnerId'])
     tblCase.unique(['externalId', 'partnerId', 'diseaseId'], 'case_unique')
   })
@@ -36,6 +31,10 @@ async function up(knex) {
   await knex.schema.alterTable('Case', async tblCase => {
     tblCase
       .integer('diseaseId')
+      .unsigned()
+      .index()
+      .references('id')
+      .inTable('Disease')
       .notNullable()
       .alter()
   })
@@ -47,8 +46,10 @@ async function up(knex) {
 
 async function down(knex) {
   await knex.schema.alterTable('Case', tblCase => {
-    tblCase.dropUnique(['externalId', 'partnerId', 'diseaseId'], 'case_unique')
     tblCase.dropForeign('diseaseId')
+  })
+  await knex.schema.alterTable('Case', tblCase => {
+    tblCase.dropUnique(['externalId', 'partnerId', 'diseaseId'], 'case_unique')
     tblCase.dropColumn('diseaseId')
     tblCase.unique(['externalId', 'partnerId'])
   })
