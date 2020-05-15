@@ -1,0 +1,24 @@
+import React from 'react'
+import PropTypes from 'prop-types'
+import classnames from 'classnames/bind'
+import Grid from '@material-ui/core/Grid'
+import Card from '@material-ui/core/Card'
+
+const cssClasses = classnames.bind(require('./Shell.css'))
+
+const CasesShell = ({ children }) => {
+  return (
+    <Grid container spacing={24}>
+      <Grid item xs={12}>
+        <Card className={cssClasses('shell__container')}>{children}</Card>
+      </Grid>
+    </Grid>
+  )
+}
+
+// CasesShell.HeaderComponent = {
+//     children: ,
+//     header: ,
+// }
+
+export default CasesShell
