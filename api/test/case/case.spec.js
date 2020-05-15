@@ -485,7 +485,7 @@ describe('case/service', () => {
         assert.equal(caseExternalIdAfter, newCaseExternalId)
       })
 
-      describe("and the result isn't reportable", () => {
+      describe("and the result category assay isn't reportable", () => {
         let resultId
         let assayExternalId
 
