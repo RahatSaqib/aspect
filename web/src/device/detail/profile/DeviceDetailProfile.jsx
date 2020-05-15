@@ -828,7 +828,7 @@ export const DeviceDetailProfile = ({
         items={items}
         onRowClick={onRowClick}
         onExportClick={onExportClick}
-        title={intl.formatMessage(messages.testResults)}
+        title={intl.formatMessage(messages.testHistory)}
       />
     </div>
   )
