@@ -1,0 +1,15 @@
+.form__container {
+  background: red;
+}
+
+.form__sectionHeader {
+  background: lightcoral;
+}
+
+.form__sectionContainer {
+  background: lawngreen;
+}
+
+.form__sectionItemContainer {
+  background: lightskyblue;
+}
