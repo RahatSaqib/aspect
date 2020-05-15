@@ -197,6 +197,7 @@
     "downshift": "^3.4.7",
     "element-resize-detector": "^1.1.15",
     "email-validator": "^2.0.4",
+    "formik": "^2.1.4",
     "global": "^4.4.0",
     "history": "^4.10.1",
     "http-client": "^4.3.1",
@@ -233,6 +234,7 @@
     "topojson-client": "^3.1.0",
     "url-search-params-polyfill": "^7.0.1",
     "warning": "^4.0.3",
-    "whatwg-fetch": "^3.0.0"
+    "whatwg-fetch": "^3.0.0",
+    "yup": "^0.28.5"
   }
 }
