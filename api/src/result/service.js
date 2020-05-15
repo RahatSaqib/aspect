@@ -46,7 +46,7 @@ const {
 } = require('../assay/service')
 const { getRemoteAddress } = require('../shared/request')
 
-const confirmedTreatmentTracking = require('./Treatment/treatmentTracking')
+const confirmedTreatmentTracking = require('./treatment')
 
 async function getListResults(query, auth, fields = LIST_FIELDS) {
   const selectFields = _.clone(fields)
