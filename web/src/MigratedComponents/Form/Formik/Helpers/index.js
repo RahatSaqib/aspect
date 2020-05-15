@@ -1,12 +1,34 @@
 import * as Yup from 'yup'
+import get from 'lodash/get'
+import messages from '../messages'
 
-import messages from '../Forms/messages'
+const mergeFormConfigWithData = (data, config) => {
+  const { sections } = config
+  sections.map(({ id, items }) =>
+    items.map(item => (item.initialValue = get(data, item.key)))
+  )
+  return config
+}
 
-const pickKeys = (data, keys) =>
-  data.reduce((acc, curr) => {
-    acc[curr.id] = curr.initialValue ? curr.initialValue : ''
-    return acc
-  }, {})
+const pickKeys = (data, keys) => {
+  const picked = {}
+  data.map(({ items }) => {
+    return items.map(
+      ({ key, [keys]: keyToPick }) => (picked[key] = keyToPick || '')
+    )
+  })
+
+  return picked
+}
+
+// const pickKeys = (data, keys) => {
+//   console.log(data, keys)
+//   return data.reduce((acc, curr) => {
+//     const { id, initialValue } = curr
+//     acc[id] = initialValue || ''
+//     return acc
+//   }, {})
+// }
 
 const buildErrorMessage = (formik, id) => {
   let errorObject = {}
@@ -29,7 +51,7 @@ const buildErrorMessage = (formik, id) => {
   return errorObject
 }
 
-const createValidationSchema = (fields, { intl }) => {
+const createValidationSchema = (fields, intlFormatMessage) => {
   const yepSchema = fields.reduce((acc, curr) => {
     const { id, validationType, validation = [] } = curr
     if (Yup[validationType]) {
@@ -43,7 +65,7 @@ const createValidationSchema = (fields, { intl }) => {
             validator = validator[type](
               ...[
                 new RegExp(`(${constraint.join('|')})`, 'gi'),
-                intl.formatMessage(messages[messageId], {
+                intlFormatMessage(messages[messageId], {
                   options: constraint.join(', '),
                 }),
               ].filter(p => p)
@@ -77,4 +99,10 @@ const buildLabel = (label, validation) => {
   return `${label} ${isrequired ? '*' : ''}`
 }
 
-export { buildErrorMessage, createValidationSchema, buildLabel, pickKeys }
+export {
+  buildErrorMessage,
+  createValidationSchema,
+  buildLabel,
+  mergeFormConfigWithData,
+  pickKeys,
+}

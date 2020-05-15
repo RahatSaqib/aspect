@@ -1,37 +1,46 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import classnames from 'classnames/bind'
+
 import { useFormik } from 'formik'
 
 import Button from '@material-ui/core/Button'
-import AspectInput from '../Inputs'
+import AspectInput from './Inputs'
 
 import {
   buildErrorMessage,
   createValidationSchema,
   buildLabel,
   pickKeys,
-} from '../Helpers'
+} from './Helpers'
 
-import DisplayFormikState from '../Helpers/debug'
-
-import form from './mockedFormSchema'
+import DisplayFormikState from './Helpers/DisplayFormikState'
 
 const formCssClasses = classnames.bind(require('../Form.css'))
 
-const DynamicSignup = intl => {
-  const { fields, cancel, submit } = form
+const FormBuilder = ({ intl, form }) => {
+  const { fields, cancel, submit, edit } = form
+  const [isReadOnly, setReadOnly] = useState(true)
   const initialValues = pickKeys(fields, ['initialValue'])
   const validationSchema = createValidationSchema(fields, intl)
+
+  //   useEffect(() => {
+
+  //   },[isReadOnly])
 
   const formik = useFormik({
     initialValues,
     validationSchema,
     validateOnMount: false,
-    // onSubmit: this can be a dynamic redux action and database table can be passed along from schema
-    onSubmit: values => console.log(JSON.stringify(values, null, 2)),
+    onSubmit: values => {
+      console.log(JSON.stringify(values, null, 2))
+      setReadOnly(!isReadOnly)
+    },
   })
 
-  console.log(form)
+  const resetForm = () => {
+    formik.resetForm()
+    setReadOnly(!isReadOnly)
+  }
 
   return (
     <div className={formCssClasses('form__container')}>
@@ -39,6 +48,37 @@ const DynamicSignup = intl => {
         onSubmit={formik.handleSubmit}
         className={formCssClasses('form__block')}
       >
+        <div className={formCssClasses('form__action')}>
+          {cancel && !isReadOnly ? (
+            <Button
+              variant="contained"
+              onClick={() => resetForm()}
+              disabled={!formik.dirty && !!isReadOnly}
+            >
+              {cancel.label}
+            </Button>
+          ) : null}
+
+          {isReadOnly ? (
+            <Button
+              variant="contained"
+              color="primary"
+              type="button"
+              onClick={isReadOnly => setReadOnly(!isReadOnly)}
+            >
+              {edit.label}
+            </Button>
+          ) : (
+            <Button
+              variant="contained"
+              color="primary"
+              type="submit"
+              disabled={!(formik.isValid && formik.dirty)}
+            >
+              {submit.label}
+            </Button>
+          )}
+        </div>
         <div className={formCssClasses('form__row')}>
           {fields &&
             fields.map(
@@ -58,31 +98,16 @@ const DynamicSignup = intl => {
                     controlType={controlType}
                     label={buildLabel(label, validation)}
                     className={formCssClasses(...classes)}
+                    InputProps={{
+                      readOnly: isReadOnly,
+                      disabled: isReadOnly,
+                      disableUnderline: isReadOnly,
+                    }}
                     {...buildErrorMessage(formik, id)}
                   />
                 )
               }
             )}
-        </div>
-        <div className={formCssClasses('form__action')}>
-          {cancel ? (
-            <Button
-              variant="contained"
-              onClick={formik.resetForm}
-              disabled={!formik.dirty}
-            >
-              {cancel.label}
-            </Button>
-          ) : null}
-
-          <Button
-            variant="contained"
-            color="primary"
-            type="submit"
-            disabled={!(formik.isValid && formik.dirty)}
-          >
-            {submit.label}
-          </Button>
         </div>
       </form>
       <DisplayFormikState {...formik} />
@@ -90,4 +115,4 @@ const DynamicSignup = intl => {
   )
 }
 
-export default DynamicSignup
+export default FormBuilder
