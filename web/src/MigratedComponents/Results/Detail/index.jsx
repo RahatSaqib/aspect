@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import classnames from 'classnames/bind'
-import Grid from '@material-ui/core/Grid'
-import Card from '@material-ui/core/Card'
 import { FaNotesMedical } from 'react-icons/fa'
 
 import { fetchSingleResult } from './Redux'
 import usePrev from '../../../Hooks/CustomHooks'
 
+import AspectForm from '../../Form'
 import Shell from '../Shell'
 import ShellHeader from '../Shell/Header'
 import ShellContent from '../Shell/Content'
@@ -15,10 +14,94 @@ import ShellFooter from '../Shell/Footer'
 
 const cssClasses = classnames.bind(require('../Shell/Shell.css'))
 
+const formConfig = {
+  id: 'Results',
+  name: 'Results',
+  actions: [
+    {
+      type: 'edit',
+      label: 'Edit Result',
+      action: () => console.log('edit!'),
+    },
+    {
+      type: 'cancel',
+      label: 'Cancel',
+      action: () => console.log('cancel!'),
+    },
+  ],
+  sections: [
+    {
+      id: 'lab',
+      header: 'Lab',
+      items: [
+        {
+          id: 'name',
+          label: 'Lab Name',
+        },
+        {
+          id: 'serial',
+          label: 'Lab serial',
+        },
+        {
+          id: 'name',
+          label: 'Lab Name',
+        },
+        {
+          id: 'serial',
+          label: 'Lab serial',
+        },
+        {
+          id: 'name',
+          label: 'Lab Name',
+        },
+        {
+          id: 'serial',
+          label: 'Lab serial',
+        },
+        {
+          id: 'name',
+          label: 'Lab Name',
+        },
+        {
+          id: 'serial',
+          label: 'Lab serial',
+        },
+        {
+          id: 'name',
+          label: 'Lab Name',
+        },
+        {
+          id: 'serial',
+          label: 'Lab serial',
+        },
+        {
+          id: 'name',
+          label: 'Lab Name',
+        },
+        {
+          id: 'serial',
+          label: 'Lab serial',
+        },
+      ],
+    },
+    {
+      id: 'assay',
+      header: 'Assay',
+      items: [
+        {
+          id: 'type',
+          label: 'Assay Type',
+        },
+      ],
+    },
+  ],
+}
+
 const AspectResultDetail = () => {
   const dispatch = useDispatch()
   const [singleResult, setSingleResult] = useState(false)
   const prevSingleResult = usePrev(singleResult)
+  const { id, name, actions, sections } = formConfig
 
   const data = useSelector(({ currentCase }) => {
     const { item = false } = currentCase.toJS()
@@ -43,9 +126,11 @@ const AspectResultDetail = () => {
   return (
     <Shell>
       <ShellHeader icon={FaNotesMedical} title="New Header Title">
-        <div className={cssClasses('shell__headerActions')}>Actions!</div>
+        {actions && actions.map(({ type }) => <div>{type}</div>)}
       </ShellHeader>
-      <ShellContent>content</ShellContent>
+      <ShellContent>
+        <AspectForm sections={sections} />
+      </ShellContent>
       <ShellFooter />
     </Shell>
   )
