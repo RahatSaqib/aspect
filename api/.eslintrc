@@ -19,6 +19,14 @@
     "mocha": true
   },
   "rules": {
+    "arrow-parens": ["error", "as-needed"],
+    "comma-dangle": ["error", {
+      "arrays": "always-multiline",
+      "objects": "always-multiline",
+      "imports": "always-multiline",
+      "exports": "always-multiline",
+      "functions": "never"
+    }],
     "consistent-return": "off",
     "class-methods-use-this": "off",
     "func-names": "off",
@@ -32,13 +40,25 @@
       "error",
       3
     ],
+    "max-len": [
+      "error", 
+      {
+        "code": 120,
+        "ignoreComments": true,
+        "ignoreRegExpLiterals": true,
+        "ignoreStrings": true,
+        "ignoreTemplateLiterals": true,
+        "ignoreTrailingComments": true,
+        "ignoreUrls": true
+      }
+    ],
     "new-cap": [
       "error",
       {
         "properties": false
       }
     ],
-    "newline-per-chained-call": "off",
+    "newline-per-chained-call": ["error", { "ignoreChainWithDepth": 2 }],
     "no-nested-ternary": "off",
     "no-param-reassign": "off",
     "no-plusplus": [
@@ -66,6 +86,16 @@
         "blankLine": "always",
         "prev": "function",
         "next": "function"
+      }
+    ],
+
+    "semi": ["error", "never"],
+    "space-before-function-paren": [
+      "error", 
+      { 
+        "anonymous": "never",
+        "asyncArrow": "always",
+        "named": "never"
       }
     ]
   }

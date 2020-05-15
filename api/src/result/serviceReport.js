@@ -58,9 +58,7 @@ async function getResultsReport(request, reply) {
     'Results',
     headers,
     'Aspect Results',
-    (
-      elem // if you need to transform your dataset to another format, you should pass the transformation function to avoid iterate twice the datasource.
-    ) =>
+    elem => // if you need to transform your dataset to another format, you should pass the transformation function to avoid iterate twice the datasource.
       flatten({
         ...elem,
         patientData: JSON.parse(elem.patientData),
