@@ -30,7 +30,8 @@ import SiteDetail from '../../site/detail/SiteDetail'
 import PersonList from '../../person/list/PersonList'
 import PersonDetail from '../../person/detail/PersonDetail'
 import ResultList from '../../result/list/ResultList'
-import ResultDetail from '../../result/detail/ResultDetail'
+// import ResultDetail from '../../result/detail/ResultDetail'
+import ResultDetail from '../../MigratedComponents/Results/Detail'
 import NotificationList from '../../notification/list/NotificationList'
 import NotificationDetail from '../../notification/detail/NotificationDetail'
 import ReportIndex from '../../report/page/ReportIndex'
@@ -123,7 +124,7 @@ const renderRouterList = loggedInFactory(RouterList)
 const renderRouterDetail = loggedInFactory(RouterDetail)
 const renderReporterList = loggedInFactory(ReporterList)
 const renderResultList = loggedInFactory(ResultList)
-const renderResultDetail = loggedInDetailFactory(ResultDetail)
+const renderResultDetail = loggedInFactory(ResultDetail)
 const renderSiteList = loggedInFactory(SiteList)
 const renderSiteDetail = loggedInDetailFactory(SiteDetail)
 const renderPersonList = loggedInFactory(PersonList)
