@@ -2095,6 +2095,7 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
       errorCode: 'r.errorCode',
       workflowStatusId: 'rs.id',
       treatmentStatusId: 'rts.id',
+      caseId: 'r.caseId',
       diseaseId: 'dis.id',
     })
     .modify((queryBuilder, params) => {
@@ -2107,11 +2108,6 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
             )
             .orWhere('r.researchId', 'like', `%${params.patientOrResearchId}%`)
         )
-      }
-      if (params.caseId) {
-        queryBuilder.whereRaw('UPPER(ca.externalId)=?', [
-          params.caseId.toUpperCase(),
-        ])
       }
     }, query)
     .modify(addPartnerQueryConstraints, dataConstraints)

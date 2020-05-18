@@ -82,7 +82,6 @@ export function fetchResults(filtersParams, sortCol, sortDir, page, pageSize) {
     const filters = _.fromPairs([...filtersParams.entries()])
     dispatch(requestResults(sortCol, sortDir, page, pageSize, filters))
     sortCol = sortCol || 'endedOn'
-
     return aspectFetch(
       `/result?${stringify({
         sortCol,
