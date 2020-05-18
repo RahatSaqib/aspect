@@ -156,6 +156,7 @@ const RESULT_STRING_TEMPLATE_FIELDS = [
   'd.lastSeenOn as deviceLastSeenOn',
   'd.lastPingOn as deviceLastPingOn',
   'r.resultData',
+  'r.rawData as resultRawData',
   'r.formData as resultFormData',
   'r.patientData as resultPatientData',
   'r.startedOn as resultStartedOn',

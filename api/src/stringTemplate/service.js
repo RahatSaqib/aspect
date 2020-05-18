@@ -134,6 +134,7 @@ function addDataSourceToQuery(queryBuilder, aliases) {
  *    deviceLastSeenOn: date/time
  *    deviceLastPingOn: date/time
  *    resultData: string (acceptable values are undefined, null, '' or JSON parsable)
+ *    resultRawData: string
  *    resultFormData: string (acceptable values are undefined, null, '' or JSON parsable)
  *    resultPatientData: string (acceptable values are undefined, null, '' or JSON parsable)
  *    resultStartedOn: date/time
@@ -198,6 +199,7 @@ async function processUsingDataSourceQuery(data, templateFields, options = {}) {
  *    deviceLastSeenOn: date/time
  *    deviceLastPingOn: date/time
  *    resultData: string (acceptable values are undefined, null, '' or JSON parsable)
+ *    resultRawData: string
  *    resultFormData: string (acceptable values are undefined, null, '' or JSON parsable)
  *    resultPatientData: string (acceptable values are undefined, null, '' or JSON parsable)
  *    resultStartedOn: date/time
@@ -239,6 +241,7 @@ async function processUsingDataSourceQuery(data, templateFields, options = {}) {
       },
       result: {
         data: resultData ? JSON.parse(resultData) : {},
+        rawData: resultRawData,
         formData: resultFormData ? JSON.parse(resultFormData) : {},
         patient: resultPatientData ? JSON.parse(resultPatientData) : {},
         startedOn: resultStartedOn,
@@ -307,6 +310,7 @@ async function getBaseDataSource(data) {
       data: d.resultData ? JSON.parse(d.resultData) : {},
       formData: d.resultFormData ? JSON.parse(d.resultFormData) : {},
       patient: d.resultPatientData ? JSON.parse(d.resultPatientData) : {},
+      rawData: d.resultRawData,
       startedOn: d.resultStartedOn,
       endedOn: d.resultEndedOn,
       notes: d.resultNotes,

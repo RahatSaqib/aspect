@@ -18,6 +18,7 @@ const {
 } = require('../../src/case/service')
 const { createMessageContext, waitForAction } = require('../utils/mqUtils')
 const { caseAdded, caseUpdated } = require('../../src/case/actions')
+const { diseaseToId } = require('../../src/shared/dictionary')
 const { createResult } = require('../result/result_utils')
 
 const server = supertest.agent('http://localhost:8080')
@@ -307,7 +308,7 @@ describe('case/service', () => {
       return lastCaseUpdatedOn
     }
 
-    async function getCaseExternalIdFrmResultId(resultId) {
+    async function getCaseExternalIdFromResultId(resultId) {
       const { caseExternalId } =
         (await knex('Result as r')
           .join('Case as c', 'r.caseId', 'c.id')
@@ -372,7 +373,7 @@ describe('case/service', () => {
         {},
         true
       )
-      const caseExternalIdBefore = await getCaseExternalIdFrmResultId(resultId)
+      const caseExternalIdBefore = await getCaseExternalIdFromResultId(resultId)
       assert.isNotOk(caseExternalIdBefore)
       const casesLastUpdatedOnBefore = await getLastCaseUpdatedOn()
       await onResultLogged({ resultId }, mockMessageContext())
@@ -381,7 +382,7 @@ describe('case/service', () => {
         casesLastUpdatedOnBefore.toISOString(),
         casesLastUpdatedOnAfter.toISOString()
       )
-      const caseExternalIdAfter = await getCaseExternalIdFrmResultId(resultId)
+      const caseExternalIdAfter = await getCaseExternalIdFromResultId(resultId)
       assert.isNotOk(caseExternalIdAfter)
     })
 
@@ -409,7 +410,7 @@ describe('case/service', () => {
           {},
           true
         )
-        const caseExternalIdBefore = await getCaseExternalIdFrmResultId(
+        const caseExternalIdBefore = await getCaseExternalIdFromResultId(
           resultId
         )
         assert.isNotOk(caseExternalIdBefore)
@@ -420,7 +421,9 @@ describe('case/service', () => {
           casesLastUpdatedOnBefore.toISOString(),
           casesLastUpdatedOnAfter.toISOString()
         )
-        const caseExternalIdAfter = await getCaseExternalIdFrmResultId(resultId)
+        const caseExternalIdAfter = await getCaseExternalIdFromResultId(
+          resultId
+        )
         assert.equal(caseExternalIdAfter, caseExternalId)
       })
 
@@ -461,7 +464,7 @@ describe('case/service', () => {
           {},
           true
         )
-        const caseExternalIdBefore = await getCaseExternalIdFrmResultId(
+        const caseExternalIdBefore = await getCaseExternalIdFromResultId(
           resultId
         )
         assert.equal(caseExternalIdBefore, oldCaseExternalId)
@@ -481,7 +484,9 @@ describe('case/service', () => {
             formData: JSON.stringify({ caseId: newCaseExternalId }),
           })
         await onResultLogged({ resultId }, mockMessageContext())
-        const caseExternalIdAfter = await getCaseExternalIdFrmResultId(resultId)
+        const caseExternalIdAfter = await getCaseExternalIdFromResultId(
+          resultId
+        )
         assert.equal(caseExternalIdAfter, newCaseExternalId)
       })
 
@@ -513,7 +518,7 @@ describe('case/service', () => {
             {},
             true
           )
-          const caseExternalIdBefore = await getCaseExternalIdFrmResultId(
+          const caseExternalIdBefore = await getCaseExternalIdFromResultId(
             resultId
           )
           assert.isNotOk(caseExternalIdBefore)
@@ -521,7 +526,7 @@ describe('case/service', () => {
 
         it("should not automatically create a case when the result isn't reportable", async () => {
           await onResultLogged({ resultId }, mockMessageContext())
-          const caseExternalIdAfter = await getCaseExternalIdFrmResultId(
+          const caseExternalIdAfter = await getCaseExternalIdFromResultId(
             resultId
           )
           assert.isNotOk(caseExternalIdAfter)
@@ -558,15 +563,96 @@ describe('case/service', () => {
               formData: JSON.stringify({ caseId: newCaseExternalId }),
               caseId: moveFromCaseId,
             })
-          const caseExternalIdBefore = await getCaseExternalIdFrmResultId(
+          const caseExternalIdBefore = await getCaseExternalIdFromResultId(
             resultId
           )
           assert.equal(caseExternalIdBefore, oldCaseExternalId)
           await onResultLogged({ resultId }, mockMessageContext())
-          const caseExternalIdAfter = await getCaseExternalIdFrmResultId(
+          const caseExternalIdAfter = await getCaseExternalIdFromResultId(
             resultId
           )
           assert.equal(caseExternalIdAfter, oldCaseExternalId)
+        })
+      })
+
+      describe('extracting case ID from the test order sequence ID in the raw ASTM message', () => {
+        let tbDiseaseId
+        let partnerTbCaseAutoAssign
+        let partnerTbCaseIdTemplate
+        const astmResultExtractSequenceNumber =
+          "{{extractValueFromRegexCaptureGroup result.rawData expression='O\\|\\d*\\|(\\w+)\\|' groupNumber=1}}"
+        before(async () => {
+          tbDiseaseId = await diseaseToId('tb')
+          ;({
+            canAutoAssignResultByCaseId: partnerTbCaseAutoAssign,
+            caseExternalIdTemplate: partnerTbCaseIdTemplate,
+          } = await knex('PartnerDisease').where({
+            partnerId,
+            diseaseId: tbDiseaseId,
+          }))
+          await knex('PartnerDisease')
+            .where({ partnerId, diseaseId: tbDiseaseId })
+            .update({
+              canAutoAssignResultByCaseId: 1,
+              caseExternalIdTemplate: astmResultExtractSequenceNumber,
+            })
+        })
+
+        after(async () => {
+          await knex('PartnerDisease')
+            .where({ partnerId, diseaseId: tbDiseaseId })
+            .update({
+              canAutoAssignResultByCaseId: partnerTbCaseAutoAssign || false,
+              caseExternalIdTemplate: partnerTbCaseIdTemplate || null,
+            })
+        })
+
+        it("should be able to determine the result's case ID from a the raw data sent to Aspect", async () => {
+          const {
+            resultCategoryId,
+            deviceTypeExternalId,
+            assayExternalId,
+          } = await knex('PartnerDisease as pd')
+            .join('AssayType as at', 'pd.diseaseId', 'at.diseaseId')
+            .join('Assay as a', 'at.id', 'a.assayTypeId')
+            .join('ResultCategoryAssay as rca', 'a.id', 'rca.assayId')
+            .join('DeviceType as dt', 'a.deviceTypeId', 'a.deviceTypeId')
+            .andWhere('pd.partnerId', partnerId)
+            .andWhere('pd.diseaseId', tbDiseaseId)
+            .andWhere('rca.reportable', 1)
+            .first(
+              'rca.resultCategoryId',
+              'dt.externalId as deviceTypeExternalId',
+              'a.externalId as assayExternalId'
+            )
+          const resultId = await createResult(
+            partnerId,
+            deviceTypeExternalId,
+            'Sputum',
+            assayExternalId,
+            otherUserId,
+            {
+              resultCategory1: resultCategoryId,
+              rawData: `H|\\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312
+P|1
+O|1|SYS123655|SYS123655^vl110^H12|^^^1mLDBSvOP^HIV1.0mlDBS|||||||||||||||||||||F
+R|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|Not detected|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695
+R|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^I|Target not detected|||||F||bryan^bryan||20190825165311|275021695
+R|3|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|-1.00|cycle number||||F||bryan^bryan||20190825165311|275021695
+L|1`,
+            },
+            {},
+            true
+          )
+          const caseExternalIdBefore = await getCaseExternalIdFromResultId(
+            resultId
+          )
+          assert.isNotOk(caseExternalIdBefore)
+          await onResultLogged({ resultId }, mockMessageContext())
+          const caseExternalIdAfter = await getCaseExternalIdFromResultId(
+            resultId
+          )
+          assert.equal(caseExternalIdAfter, 'SYS123655')
         })
       })
     })
