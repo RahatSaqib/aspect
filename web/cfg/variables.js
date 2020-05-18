@@ -103,7 +103,23 @@ exports.customPropertiesVariables = {
   '--aspect-color-supernova': 'var(--saffron, #f0bc2c)',
   '--aspect-color-supernova-2': 'var(--my-sin, #fcb124)',
   '--aspect-color-sushi': 'var(--sushi, #7cb342)',
-  '--aspect-color-white': 'var(--white, #ffffff)',
+
+  // commenting 'var(--white, #ffffff)' for now because after upgrade Chip component
+  // in web/src/components/shared/TagInput.jsx crashes page and shows error in console
+  // ---------------
+  // Error: Material-UI: unsupported `var(--white, #ffffff)` color.
+  // We support the following formats: #nnn, #nnnnnn, rgb(), rgba(), hsl(), hsla().
+  // at decomposeColor (colorManipulator.js?c029:120)
+  // at fade (colorManipulator.js?c029:227)
+  // at styles (Chip.js?e831:253)
+  // at Object.create (getStylesCreator.js?8015:29)
+  // at WithStyles.createSheet (withStyles.js?1e4f:277)
+  // at WithStyles.attach (withStyles.js?1e4f:256)
+  // at new WithStyles(Chip) (withStyles.js?1e4f:138)
+  // ---------------
+  // '--aspect-color-white': 'var(--white, #ffffff)',
+  '--aspect-color-white': '#ffffff',
+
   '--aspect-color-white-2': 'var(--wild-sand, #f6f6f6)',
   '--aspect-color-white-3': 'var(--alto, #e0e0e0)',
   '--aspect-color-white-4': 'var(--gallery, #ececec)',
