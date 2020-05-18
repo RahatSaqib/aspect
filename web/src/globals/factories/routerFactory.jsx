@@ -43,6 +43,7 @@ import ReporterList from '../../reporter/list/ReporterList'
 import NotFound from '../../error/notFound/NotFound'
 import License from '../../auth/license/License'
 import ClinicalHistory from '../../patient/ClinicalHistory'
+import CaseDetails from '../../case/details/CaseDetails'
 
 const notImplementedLoggedInFactory = compose(loggedInFactory, name => () => (
   <div style={{ padding: 10 }}>
@@ -135,6 +136,7 @@ const renderClinicalHistory = loggedInDetailFactory(ClinicalHistory)
 const renderNotFound = signedOutFactory(NotFound)
 const renderLicense = signedOutFactory(License)
 
+const renderCaseDetails = loggedInDetailFactory(CaseDetails)
 export const routerFactory = () => props => (
   <Router history={history}>
     <Switch>
@@ -271,6 +273,15 @@ export const routerFactory = () => props => (
           renderRedirectToLicenseOr(props) ||
           renderRedirectToNotFound(props, ['device']) ||
           renderDeviceDetail
+        }
+      />
+      <Route
+        path="/browse/case/:caseId"
+        render={
+          renderRedirectToLoginOr(props) ||
+          renderRedirectToLicenseOr(props) ||
+          renderRedirectToNotFound(props, ['case']) ||
+          renderCaseDetails
         }
       />
       <Route
