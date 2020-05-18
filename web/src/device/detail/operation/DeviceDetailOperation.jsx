@@ -8,7 +8,7 @@ import { connect } from 'react-redux'
 import IconButton from '@material-ui/core/IconButton'
 import Card from '@material-ui/core/Card'
 import { MdFileDownload } from 'react-icons/md'
-import Helmet from 'react-helmet'
+import { Helmet } from 'react-helmet'
 import TableBody from '@material-ui/core/TableBody'
 
 import {

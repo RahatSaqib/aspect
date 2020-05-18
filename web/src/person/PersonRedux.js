@@ -673,7 +673,7 @@ export const LoginDetails = Immutable.Record({
   confirmNewPassword: null,
   currentPassword: null,
   partnerId: null,
-  jobFunctions: new Immutable.List([]),
+  jobFunctions: Immutable.List([]),
   userLockedOut: null,
   email: null,
 })
@@ -723,14 +723,14 @@ export default function personReducer(state = initialState, action) {
         new ContactTagItems({
           loading: false,
           lastRefreshed: action.lastRefreshed,
-          items: new Immutable.fromJS(action.items),
+          items: Immutable.fromJS(action.items),
         })
       )
     case types.RECEIVE_UPDATE_SITE_CONTACTS:
     case types.RECEIVE_SITE_CONTACTS:
       return state.setIn(
         ['siteContacts', action.siteId],
-        new Immutable.fromJS(action.items)
+        Immutable.fromJS(action.items)
       )
     case types.RECEIVE_SINGLE_PERSON:
     case types.RECEIVE_UPDATED_SINGLE_PERSON:

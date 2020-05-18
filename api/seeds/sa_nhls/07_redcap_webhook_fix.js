@@ -4,18 +4,14 @@ const _ = require('lodash')
 const Promise = require('bluebird')
 
 const config = require('../../src/config')
+const { getResultForms } = require('../utils')
 
 async function seed(knex) {
   const redCAPWebhookTemplate = await knex('WebhookTemplate')
     .where('externalId', 'redCapAlereQHiv12Detect')
     .first()
 
-  const resultForms = await knex('ResultForm')
-    .select()
-    .map(resultForm => ({
-      ...resultForm,
-      formSchema: JSON.parse(resultForm.formSchema),
-    }))
+  const resultForms = await getResultForms(knex)
 
   const sampleTypeValuesNotNumeric = !_.every(resultForms, resultForm =>
     _.every(resultForm.formSchema.fields.sampleType.control.options, option =>

@@ -132,7 +132,7 @@ describe('Device API Raw routes', () => {
         })
       const opIds = await knex('DeviceOperation')
         .where('deviceId', deviceId)
-        .map(op => op.id)
+        .pluck('id')
       const issueIds = await knex('Issue')
         .where('deviceId', deviceId)
         .pluck('id')

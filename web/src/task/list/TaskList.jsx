@@ -13,7 +13,7 @@ import {
 import { defineMessages, injectIntl } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import Helmet from 'react-helmet'
+import { Helmet } from 'react-helmet'
 /* import TableBody from '@material-ui/core/TableBody'
 
 import AspectButton from '../../components/shared/AspectButton' */

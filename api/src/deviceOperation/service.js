@@ -27,12 +27,13 @@ async function listDeviceOperations(request) {
     .clone()
     .modify(sortPageParams, query, 'do.startedOn')
     .select(SELECT_LIST_FIELDS)
-    .map(deviceOperation =>
-      _.assign(deviceOperation, {
-        data: JSON.parse(deviceOperation.data) || {},
-      })
+    .then(items =>
+      items.map(deviceOperation =>
+        _.assign(deviceOperation, {
+          data: JSON.parse(deviceOperation.data) || {},
+        })
+      )
     )
-
   // return result when both queries are finished
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
 

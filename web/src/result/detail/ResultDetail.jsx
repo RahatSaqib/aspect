@@ -7,7 +7,7 @@ import { compose, setPropTypes } from 'recompose'
 import { defineMessages, injectIntl } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import Helmet from 'react-helmet'
+import { Helmet } from 'react-helmet'
 
 // Material-UI
 import { MdChevronLeft, MdChevronRight, MdClose } from 'react-icons/md'

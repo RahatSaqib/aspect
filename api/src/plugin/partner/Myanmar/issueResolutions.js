@@ -485,7 +485,7 @@ async function resolveDataCategoryLow(knex, issue) {
       .innerJoin('Partner as p', 's.partnerId', 'p.id')
       .where('s.id', siteId)
       .first('p.plugin')) || {}
-  const { loadPlugin } = require('../../../plugin/registration')
+  const { loadPlugin } = require('../../registration')
   const { dataCategories = [] } = await loadPlugin([plugin], 'dataCategories')
   const dataCategory = _.find(
     dataCategories,

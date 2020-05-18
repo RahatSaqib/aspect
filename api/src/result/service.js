@@ -635,10 +635,12 @@ async function showFileReferencesById(auth, resultId) {
       'fct.mimeType',
       'fct.mimeSubtype'
     )
-    .map(ref => {
-      ref.url = `/result/file/${resultId}/${ref.id}/${ref.name}`
-      return ref
-    })
+    .then(items =>
+      items.map(ref => {
+        ref.url = `/result/file/${resultId}/${ref.id}/${ref.name}`
+        return ref
+      })
+    )
   return { data: fileReferences }
 }
 

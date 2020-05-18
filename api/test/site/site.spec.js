@@ -237,11 +237,10 @@ describe('Site routes', () => {
 
         it('should return a list of sites names and IDs when using valid token filtered by tags', done => {
           server
-            .get(
-              `${path}/select-list?tags=${encodeURIComponent(
-                JSON.stringify([clinicTag.title, labTag.title])
-              )}`
-            )
+            .get(`${path}/select-list`)
+            .query({
+              tags: [clinicTag.title, labTag.title],
+            })
             .set('Authorization', `Bearer ${shared.token}`)
             .end((err, res) => {
               assert.equal(res.status, 200)

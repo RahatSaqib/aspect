@@ -578,13 +578,15 @@ async function seed(knex) {
         .where({ partnerId, jobFunctionId: jobFunctionIdRegionalOfficer })
     })
     .orderBy('deviceId')
-    .reduce((memo, row) => {
-      if (!memo[row.deviceId]) {
-        memo[row.deviceId] = {}
-      }
-      memo[row.deviceId][row.personId] = row.deviceId
-      return memo
-    }, {})
+    .then(items =>
+      items.reduce((memo, row) => {
+        if (!memo[row.deviceId]) {
+          memo[row.deviceId] = {}
+        }
+        memo[row.deviceId][row.personId] = row.deviceId
+        return memo
+      }, {})
+    )
 
   await Promise.each(devices, async device => {
     await Promise.each(luIssueTypeIds, async issueTypeId => {

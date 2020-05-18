@@ -30,6 +30,6 @@ export const Table = Immutable.Record({
   page: 0,
   pageSize: 10, // Renamed from 'size' since 'size' will conflict with Immutable internal property
   total: 0,
-  groupBy: new Immutable.List(),
-  extraColumns: new Immutable.List(),
+  groupBy: Immutable.List(),
+  extraColumns: Immutable.List(),
 })

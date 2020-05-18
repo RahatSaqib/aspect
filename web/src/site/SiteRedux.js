@@ -409,7 +409,7 @@ export default function siteReducer(state = initialState, action) {
       return state.mergeIn(['selectList'], {
         loading: false,
         lastRefreshed: action.lastRefreshed,
-        items: new Immutable.fromJS(action.items),
+        items: Immutable.fromJS(action.items),
         countryName: action.countryName,
         stateName: action.stateName,
       })

@@ -28,7 +28,7 @@ const messages = defineMessages({
   },
   patientOrResearchId: {
     id: 'filter.btnGroup.patientOrResearchId',
-    defaultMessage: 'patient/case ID {patientOrCaseId}',
+    defaultMessage: 'patient/case ID {patientOrResearchId}',
   },
   patientOrCaseId: {
     id: 'filter.btnGroup.patientOrCaseId',

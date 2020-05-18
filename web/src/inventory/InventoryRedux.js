@@ -430,8 +430,8 @@ const Inventory = Immutable.Record({
     sortDir: 'asc',
     pageSize: 10,
     filters: Immutable.fromJS({ siteName: '', consumableId: null }),
-    extraColumns: new Immutable.List(),
-    groupBy: new Immutable.List(['siteId']),
+    extraColumns: Immutable.List(),
+    groupBy: Immutable.List(['siteId']),
   }),
 })
 
@@ -460,9 +460,7 @@ export default function inventoryItemsReducer(state = initialState, action) {
     case types.TOGGLE_GROUP_BY_SITE:
       return state.setIn(
         ['table', 'groupBy'],
-        action.toggleOn
-          ? new Immutable.List(['siteId'])
-          : new Immutable.List([])
+        action.toggleOn ? Immutable.List(['siteId']) : Immutable.List([])
       )
     case types.SHOW_NEW_INVENTORY_DIALOG:
     case types.SHOW_ADD_INVENTORY_DIALOG:

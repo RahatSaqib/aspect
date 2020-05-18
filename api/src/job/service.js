@@ -72,7 +72,7 @@ async function getPermissions(request) {
     .where('ps.id', personId)
     .orderBy(['p.module', 'p.activity'])
     .distinct('p.module', 'p.activity')
-    .then(async items => items.map(p => `${p.module}:${p.activity}`))
+    .then(items => items.map(p => `${p.module}:${p.activity}`))
   //
   return { ok: true, data }
 }
@@ -599,94 +599,96 @@ async function getAssignments({ auth, personId }) {
       'd3.i18nKey as diseasei18nKey3',
       'd3.name as diseaseName3'
     )
-    .map(item => {
-      const { siteId, assayId } = item
-      let {
-        countryId,
-        countryName,
-        stateId,
-        stateName,
-        lgaId,
-        lgaName,
-        diseaseId,
-        diseasei18nKey,
-        diseaseName,
-        assayTypeId,
-        assayTypei18nKey,
-        assayTypeName,
-        deviceTypeId,
-        deviceTypeName,
-      } = item
+    .then(items =>
+      items.map(item => {
+        const { siteId, assayId } = item
+        let {
+          countryId,
+          countryName,
+          stateId,
+          stateName,
+          lgaId,
+          lgaName,
+          diseaseId,
+          diseasei18nKey,
+          diseaseName,
+          assayTypeId,
+          assayTypei18nKey,
+          assayTypeName,
+          deviceTypeId,
+          deviceTypeName,
+        } = item
 
-      // if siteId is used by JobContext - then get site's geography props
-      if (siteId) {
-        ;[
-          {
-            countryId2: countryId,
-            countryName2: countryName,
-            stateId2: stateId,
-            stateName2: stateName,
-            lgaId2: lgaId,
-            lgaName2: lgaName,
-          },
-        ] = [item]
-      }
-      // if assayTypeId is used by JobContext - then get assay type's disease props
-      if (assayTypeId) {
-        ;[
-          {
-            diseaseId2: diseaseId,
-            diseaseName2: diseaseName,
-            diseasei18nKey2: diseasei18nKey,
-          },
-        ] = [item]
-      }
-      // if assayId is used by JobContext - then get assay's assay & device type props
-      if (assayId) {
-        ;[
-          {
-            assayTypeId2: assayTypeId,
-            assayTypei18nKey2: assayTypei18nKey,
-            assayTypeName2: assayTypeName,
-            deviceTypeId2: deviceTypeId,
-            deviceTypeName2: deviceTypeName,
-            diseaseId3: diseaseId,
-            diseasei18nKey3: diseasei18nKey,
-            diseaseName3: diseaseName,
-          },
-        ] = [item]
-      }
-      return {
-        ..._.pick(item, [
-          'personId',
-          'partnerId',
-          'jobId',
-          'jobFunctionId',
-          'jobFunctionName',
-          'jobContextId',
-          'siteId',
-          'siteName',
-          'geographyId',
-          'assayId',
-          'assayi18nKey',
-          'assayName',
-        ]),
-        countryId,
-        countryName,
-        stateId,
-        stateName,
-        lgaId,
-        lgaName,
-        diseaseId,
-        diseasei18nKey,
-        diseaseName,
-        assayTypeId,
-        assayTypei18nKey,
-        assayTypeName,
-        deviceTypeId,
-        deviceTypeName,
-      }
-    })
+        // if siteId is used by JobContext - then get site's geography props
+        if (siteId) {
+          ;[
+            {
+              countryId2: countryId,
+              countryName2: countryName,
+              stateId2: stateId,
+              stateName2: stateName,
+              lgaId2: lgaId,
+              lgaName2: lgaName,
+            },
+          ] = [item]
+        }
+        // if assayTypeId is used by JobContext - then get assay type's disease props
+        if (assayTypeId) {
+          ;[
+            {
+              diseaseId2: diseaseId,
+              diseaseName2: diseaseName,
+              diseasei18nKey2: diseasei18nKey,
+            },
+          ] = [item]
+        }
+        // if assayId is used by JobContext - then get assay's assay & device type props
+        if (assayId) {
+          ;[
+            {
+              assayTypeId2: assayTypeId,
+              assayTypei18nKey2: assayTypei18nKey,
+              assayTypeName2: assayTypeName,
+              deviceTypeId2: deviceTypeId,
+              deviceTypeName2: deviceTypeName,
+              diseaseId3: diseaseId,
+              diseasei18nKey3: diseasei18nKey,
+              diseaseName3: diseaseName,
+            },
+          ] = [item]
+        }
+        return {
+          ..._.pick(item, [
+            'personId',
+            'partnerId',
+            'jobId',
+            'jobFunctionId',
+            'jobFunctionName',
+            'jobContextId',
+            'siteId',
+            'siteName',
+            'geographyId',
+            'assayId',
+            'assayi18nKey',
+            'assayName',
+          ]),
+          countryId,
+          countryName,
+          stateId,
+          stateName,
+          lgaId,
+          lgaName,
+          diseaseId,
+          diseasei18nKey,
+          diseaseName,
+          assayTypeId,
+          assayTypei18nKey,
+          assayTypeName,
+          deviceTypeId,
+          deviceTypeName,
+        }
+      })
+    )
   return personAssignments
 }
 

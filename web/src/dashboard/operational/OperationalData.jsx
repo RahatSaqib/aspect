@@ -3,7 +3,7 @@ import React from 'react'
 import { compose, lifecycle, withHandlers, withProps } from 'recompose'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import Helmet from 'react-helmet'
+import { Helmet } from 'react-helmet'
 import Card from '@material-ui/core/Card'
 
 import { Unit } from '../../components/pureGrids'

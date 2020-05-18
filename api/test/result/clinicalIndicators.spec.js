@@ -174,6 +174,9 @@ describe('/result/clinical-indicator-aggregations', () => {
       .set('Authorization', `Bearer ${shared.token}`)
       .then(res => {
         assert.equal(res.status, 400)
-        assert.equal(res.body.message.substring(0, 21), 'child "groupBy" fails')
+        assert.equal(
+          res.body.message.substring(0, 24),
+          '"groupBy" must be one of'
+        )
       }))
 })

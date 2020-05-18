@@ -70,8 +70,7 @@ describe('Result create and update routes', () => {
           'id',
           await knex('Result')
             .whereIn('id', resultIds)
-            .select('caseId')
-            .map(r => r.caseId)
+            .pluck('caseId')
         )
         .del()
 

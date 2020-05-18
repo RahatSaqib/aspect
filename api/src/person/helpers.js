@@ -52,7 +52,7 @@ const contactDetailsPayload = {
     .integer()
     .positive()
     .allow('', null),
-  canLogIn: [Joi.boolean(), Joi.number().only(0, 1)],
+  canLogIn: [Joi.boolean(), Joi.number().valid(0, 1)],
 }
 // -------------------------------------------------------------------------------
 const personDetailsResponse = {
@@ -138,7 +138,7 @@ const personDetailsResponse = {
           .allow(null)
           .description('Lga name'),
         userLockedOut: Joi.number()
-          .only(0, 1)
+          .valid(0, 1)
           .allow(null)
           .description('User lockedOut'),
         canLogIn: Joi.number()

@@ -165,6 +165,8 @@ async function listAssays(request) {
       resultDataSchema: JSON.parse(assay.resultDataSchema),
       resultCategories: resultCategoriesByAssayId[assay.id],
       abilities,
+      patientDataSchema:
+        assay.patientDataSchema && JSON.parse(assay.patientDataSchema),
     }
   })
 

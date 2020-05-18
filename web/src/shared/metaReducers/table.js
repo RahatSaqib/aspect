@@ -6,21 +6,25 @@ import _ from 'lodash'
 import Immutable from 'immutable'
 
 export function requestTable(table, action) {
-  return table.merge({
-    loading: true,
-    sortCol: action.sortCol,
-    sortDir: action.sortDir,
-    page: action.page,
-    pageSize: action.size,
-  })
+  return table.merge(
+    Immutable.fromJS({
+      loading: true,
+      sortCol: action.sortCol,
+      sortDir: action.sortDir,
+      page: action.page,
+      pageSize: action.size,
+    })
+  )
 }
 
 export function receiveTableItems(table, total, extraColumns) {
-  return table.merge({
-    loading: false,
-    total,
-    extraColumns,
-  })
+  return table.merge(
+    Immutable.fromJS({
+      loading: false,
+      total,
+      extraColumns,
+    })
+  )
 }
 
 export const Table = Immutable.Record({
@@ -30,8 +34,8 @@ export const Table = Immutable.Record({
   page: 0,
   pageSize: 10, // Renamed from 'size' since 'size' will conflict with Immutable internal property
   total: 0,
-  extraColumns: new Immutable.List(),
-  groupBy: new Immutable.List(),
+  extraColumns: Immutable.List(),
+  groupBy: Immutable.List(),
 })
 
 export const makeTable = _.flowRight(Table, Immutable.fromJS)
