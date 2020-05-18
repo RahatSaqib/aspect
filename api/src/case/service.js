@@ -321,71 +321,70 @@ function onResultLogged({ resultId }, { messageContext }) {
         'rca2.reportable as resultCategory2Reportable',
         'r.updatedBy'
       )
-    if (!result) {
-      return
-    }
-    const {
-      canAutoAssignResultByCaseId,
-      caseExternalIdTemplate,
-      partnerId,
-      diseaseId,
-      existingCaseId,
-      existingCaseExternalId,
-      resultCategory1Reportable,
-      resultCategory2Reportable,
-      updatedBy,
-    } = result
-    if (
-      diseaseId &&
-      caseExternalIdTemplate &&
-      canAutoAssignResultByCaseId &&
-      (resultCategory1Reportable || resultCategory2Reportable)
-    ) {
-      const { caseExternalId } =
-        (await processUsingDataSourceQuery(
-          { ...result, caseExternalIdTemplate },
-          ['caseExternalIdTemplate']
-        )) || {}
-      if (caseExternalId) {
-        // Get the case that matched the case ID in the payload
-        // If the case doesn't exist and the result is not assigned a case yet, creat the case
-        let caseId = await getCaseId(
-          { partnerId, externalId: caseExternalId, diseaseId },
-          !existingCaseId,
-          updatedBy
-        )
-        // If no case was found or created, use the case already assigned to the result
-        if (!caseId) {
-          caseId = existingCaseId
-        }
-        // Do nothing if the result is already assigned to a case and the case number has not changed
-        if (existingCaseExternalId === caseExternalId) {
-          return
-        }
-        // Lookup if any other cases have the same case number
-        const otherCaseId = await getCaseId(
-          { partnerId, externalId: caseExternalId, diseaseId },
-          false,
-          updatedBy
-        )
-        // If the case number for the result has changed to an unknown case number
-        //   update the case number on the existing case
-        if (!otherCaseId || otherCaseId === caseId) {
-          await updateCase(
-            { id: caseId },
-            {
-              externalId: caseExternalId,
-              updatedBy,
-              updatedOn: new Date(),
-            }
+    if (result) {
+      const {
+        canAutoAssignResultByCaseId,
+        caseExternalIdTemplate,
+        partnerId,
+        diseaseId,
+        existingCaseId,
+        existingCaseExternalId,
+        resultCategory1Reportable,
+        resultCategory2Reportable,
+        updatedBy,
+      } = result
+      if (
+        diseaseId &&
+        caseExternalIdTemplate &&
+        canAutoAssignResultByCaseId &&
+        (resultCategory1Reportable || resultCategory2Reportable)
+      ) {
+        const { caseExternalId } =
+          (await processUsingDataSourceQuery(
+            { ...result, caseExternalIdTemplate },
+            ['caseExternalIdTemplate']
+          )) || {}
+        if (caseExternalId) {
+          // Get the case that matched the case ID in the payload
+          // If the case doesn't exist and the result is not assigned a case yet, creat the case
+          let caseId = await getCaseId(
+            { partnerId, externalId: caseExternalId, diseaseId },
+            !existingCaseId,
+            updatedBy
           )
-        }
-        // If the case ID for the result has changed
-        //   update the case ID on the result
-        if (existingCaseId !== caseId) {
-          await knex('Result')
-            .where('id', resultId)
-            .update({ caseId: otherCaseId })
+          // If no case was found or created, use the case already assigned to the result
+          if (!caseId) {
+            caseId = existingCaseId
+          }
+          // Do nothing if the result is already assigned to a case and the case number has not changed
+          if (existingCaseExternalId === caseExternalId) {
+            return
+          }
+          // Lookup if any other cases have the same case number
+          const otherCaseId = await getCaseId(
+            { partnerId, externalId: caseExternalId, diseaseId },
+            false,
+            updatedBy
+          )
+          // If the case number for the result has changed to an unknown case number
+          //   update the case number on the existing case
+          if (!otherCaseId || otherCaseId === caseId) {
+            await updateCase(
+              { id: caseId },
+              {
+                externalId: caseExternalId,
+                updatedBy,
+                updatedOn: new Date(),
+              }
+            )
+          }
+          // If the case ID for the result has changed
+          //   update the case ID on the result
+          if (existingCaseId !== caseId) {
+            await knex('Result')
+              .where('id', resultId)
+              .update({ caseId: otherCaseId })
+          }
         }
       }
     }
