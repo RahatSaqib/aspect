@@ -9,8 +9,6 @@ const {
   getDeviceTypePluginName,
 } = require('../plugin/utils')
 const { processUsingDataSourceQuery } = require('../stringTemplate/service')
-const { getResultForStringTemplateProcessing } = require('../result/service')
-const { RESULT_STRING_TEMPLATE_FIELDS } = require('../result/querySelectors')
 
 function validateCaseIdentifier(_case) {
   let errors = ''
@@ -249,6 +247,14 @@ async function getAutoCompleteCases({ auth, query }) {
 
 function onResultLogged({ resultId }, { messageContext }) {
   return messageContext.run(async knex => {
+    // Linking the result service here to avoid cyclic
+    //   references between this service and case service
+    const {
+      getResultForStringTemplateProcessing,
+    } = require('../result/service')
+    const {
+      RESULT_STRING_TEMPLATE_FIELDS,
+    } = require('../result/querySelectors')
     const result = await getResultForStringTemplateProcessing(
       resultId,
       [

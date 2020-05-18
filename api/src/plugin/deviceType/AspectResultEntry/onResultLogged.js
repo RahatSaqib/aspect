@@ -45,7 +45,7 @@ async function updateCovidResultFromFormData(
     if (deviceLogDeviceTypeExternalId !== 'Aspect') {
       return
     }
-    const result = await await getResultForStringTemplateProcessing(
+    const result = await getResultForStringTemplateProcessing(
       resultId,
       [...RESULT_STRING_TEMPLATE_FIELDS, 'rf.formSchema', 'r.resultCategory1'],
       knex

@@ -2727,6 +2727,7 @@ module.exports = {
   exportResults,
   downloadResultsList,
   showResult,
+  getResultForStringTemplateProcessing,
   listResultTypes,
   updateWorkflowStatus,
   updateTreatmentStatusPost,
@@ -2757,5 +2758,4 @@ module.exports = {
   createResult,
   updateResult,
   addPartnerQueryConstraints,
-  getResultForStringTemplateProcessing,
 }
