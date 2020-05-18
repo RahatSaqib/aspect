@@ -9,6 +9,8 @@ const {
   getDeviceTypePluginName,
 } = require('../plugin/utils')
 const { processUsingDataSourceQuery } = require('../stringTemplate/service')
+const { getResultForStringTemplateProcessing } = require('../result/service')
+const { RESULT_STRING_TEMPLATE_FIELDS } = require('../result/querySelectors')
 
 function validateCaseIdentifier(_case) {
   let errors = ''
@@ -247,80 +249,20 @@ async function getAutoCompleteCases({ auth, query }) {
 
 function onResultLogged({ resultId }, { messageContext }) {
   return messageContext.run(async knex => {
-    const result = await knex('Result as r')
-      .join('Assay as a', 'r.assayId', 'a.id')
-      .join('AssayType as at', 'a.assayTypeId', 'at.id')
-      .join('Site as s', 'r.siteId', 's.id')
-      .join('Device as d', 'r.deviceId', 'd.id')
-      .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
-      .join('Sample as sample', 'r.sampleId', 'sample.id')
-      .join('Partner as p', 'r.partnerId', 'p.id')
-      .leftJoin('ResultForm as rf', function() {
-        this.on('a.id', 'rf.assayId').andOn('r.partnerId', 'rf.partnerId')
-      })
-      .leftJoin('PartnerDisease as pd', function() {
-        this.on('at.diseaseId', 'pd.diseaseId').andOn(
-          'r.partnerId',
-          'pd.partnerId'
-        )
-      })
-      .leftJoin('Case as c', 'r.caseId', 'c.id')
-      .leftJoin('Site as sos', 'sample.originSiteId', 'sos.id')
-      .leftJoin('ResultCategory as rc1', 'r.resultCategory1', 'rc1.id')
-      .leftJoin('ResultCategoryAssay as rca1', function() {
-        this.on('r.resultCategory1', 'rca1.resultCategoryId').andOn(
-          'r.assayId',
-          'rca1.assayId'
-        )
-      })
-      .leftJoin('ResultCategory as rc2', 'r.resultCategory2', 'rc2.id')
-      .leftJoin('ResultCategoryAssay as rca2', function() {
-        this.on('r.resultCategory2', 'rca2.resultCategoryId').andOn(
-          'r.assayId',
-          'rca2.assayId'
-        )
-      })
-      .where({ 'r.id': resultId })
-      .first(
-        'p.plugin as partnerPlugin',
-        's.externalId as siteExternalId',
-        's.name as siteName',
-        's.shortname as siteShortName',
-        's.externalId as siteExternalId',
-        'd.name as deviceName',
-        'dt.externalId as deviceTypeExternalId',
-        'd.lastSeenOn as deviceLastSeenOn',
-        'd.lastPingOn as deviceLastPingOn',
-        'r.resultData',
-        'r.formData as resultFormData',
-        'r.patientData as resultPatientData',
-        'r.startedOn as resultStartedOn',
-        'r.endedOn as resultEndedOn',
-        'r.notes as resultNotes',
-        'r.consumableSerial',
-        'r.createdOn',
-        'r.senderOperator',
-        'r.moduleName as resultModuleName',
-        'r.moduleSerial as resultModuleSerial',
-        'r.errorCode as resultErrorCode',
-        'r.errorNotes as resultErrorNotes',
-        'a.externalId as assayExternalId',
-        'sample.externalId as sampleExternalId',
-        'sos.externalId as sampleOriginSiteExternalId',
-        'sample.collectedOn as sampleCollectedOn',
-        'rc1.externalId as resultCategory1ExternalId',
-        'rc2.externalId as resultCategory2ExternalId',
-        'a.resultSourceId',
+    const result = await getResultForStringTemplateProcessing(
+      resultId,
+      [
+        ...RESULT_STRING_TEMPLATE_FIELDS,
         'r.partnerId',
-        'at.diseaseId',
         'pd.canAutoAssignResultByCaseId',
-        'pd.caseExternalIdTemplate',
         'r.caseId as existingCaseId',
         'c.externalId as existingCaseExternalId',
         'rca1.reportable as resultCategory1Reportable',
         'rca2.reportable as resultCategory2Reportable',
-        'r.updatedBy'
-      )
+        'r.updatedBy',
+      ],
+      knex
+    )
     if (result) {
       const {
         canAutoAssignResultByCaseId,

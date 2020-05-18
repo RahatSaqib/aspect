@@ -9,6 +9,7 @@ const {
   SORT_FIELDS,
   REPORT_COMMON_FIELDS,
   LIST_FIELDS,
+  RESULT_STRING_TEMPLATE_FIELDS,
 } = require('./querySelectors')
 const {
   knex,
@@ -779,6 +780,48 @@ async function getResultByResultId(
   }
 
   return { ok: results.length === 1, data }
+}
+
+async function getResultForStringTemplateProcessing(
+  resultId,
+  fields = RESULT_STRING_TEMPLATE_FIELDS,
+  knex = knex
+) {
+  return knex('Result as r')
+    .join('Assay as a', 'r.assayId', 'a.id')
+    .join('AssayType as at', 'a.assayTypeId', 'at.id')
+    .join('Site as s', 'r.siteId', 's.id')
+    .join('Device as d', 'r.deviceId', 'd.id')
+    .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
+    .join('Sample as sample', 'r.sampleId', 'sample.id')
+    .join('Partner as p', 'r.partnerId', 'p.id')
+    .leftJoin('ResultForm as rf', function() {
+      this.on('a.id', 'rf.assayId').andOn('r.partnerId', 'rf.partnerId')
+    })
+    .leftJoin('PartnerDisease as pd', function() {
+      this.on('at.diseaseId', 'pd.diseaseId').andOn(
+        'r.partnerId',
+        'pd.partnerId'
+      )
+    })
+    .leftJoin('Case as c', 'r.caseId', 'c.id')
+    .leftJoin('Site as sos', 'sample.originSiteId', 'sos.id')
+    .leftJoin('ResultCategory as rc1', 'r.resultCategory1', 'rc1.id')
+    .leftJoin('ResultCategoryAssay as rca1', function() {
+      this.on('r.resultCategory1', 'rca1.resultCategoryId').andOn(
+        'r.assayId',
+        'rca1.assayId'
+      )
+    })
+    .leftJoin('ResultCategory as rc2', 'r.resultCategory2', 'rc2.id')
+    .leftJoin('ResultCategoryAssay as rca2', function() {
+      this.on('r.resultCategory2', 'rca2.resultCategoryId').andOn(
+        'r.assayId',
+        'rca2.assayId'
+      )
+    })
+    .where({ 'r.id': resultId })
+    .first(...fields)
 }
 
 async function getResultNotesByResultId(resultId) {
@@ -2714,4 +2757,5 @@ module.exports = {
   createResult,
   updateResult,
   addPartnerQueryConstraints,
+  getResultForStringTemplateProcessing,
 }
