@@ -73,8 +73,12 @@ async function seedAbbottM2000AndAssays(knex, updateExistingAssays) {
       title: 'Sample Collected By',
       type: 'string',
     },
-    abnormalFlags: {
-      title: 'Abnormal Flags',
+    finalResultAbnormalFlags: {
+      title: 'Final Result Abnormal Flags',
+      type: 'array',
+    },
+    preliminaryResultAbnormalFlags: {
+      title: 'Preliminary Result Abnormal Flags',
       type: 'array',
     },
     orderOperatorId: {
@@ -333,7 +337,7 @@ async function seedAbbottM2000AndAssays(knex, updateExistingAssays) {
             },
             cycleNumber: {
               title: 'Cycle Number',
-              type: 'number',
+              type: 'string',
             },
             moduleName: {
               title: 'Well Position',
@@ -375,8 +379,12 @@ async function seedAbbottM2000AndAssays(knex, updateExistingAssays) {
               title: 'Report Type',
               type: 'string',
             },
-            abnormalFlags: {
-              title: 'Abnormal Flags',
+            finalResultAbnormalFlags: {
+              title: 'Final Result Abnormal Flags',
+              type: 'array',
+            },
+            preliminaryResultAbnormalFlags: {
+              title: 'Preliminary Result Abnormal Flags',
               type: 'array',
             },
           },
@@ -399,7 +407,7 @@ async function seedAbbottM2000AndAssays(knex, updateExistingAssays) {
             },
             cycleNumber: {
               title: 'Cycle Number',
-              type: 'number',
+              type: 'string',
             },
             moduleName: {
               title: 'Well Position',
@@ -441,8 +449,12 @@ async function seedAbbottM2000AndAssays(knex, updateExistingAssays) {
               title: 'Report Type',
               type: 'string',
             },
-            abnormalFlags: {
-              title: 'Abnormal Flags',
+            finalResultAbnormalFlags: {
+              title: 'Final Result Abnormal Flags',
+              type: 'array',
+            },
+            preliminaryResultAbnormalFlags: {
+              title: 'Preliminary Result Abnormal Flags',
               type: 'array',
             },
           },
@@ -465,7 +477,7 @@ async function seedAbbottM2000AndAssays(knex, updateExistingAssays) {
             },
             cycleNumber: {
               title: 'Cycle Number',
-              type: 'number',
+              type: 'string',
             },
             moduleName: {
               title: 'Well Position',
@@ -507,8 +519,12 @@ async function seedAbbottM2000AndAssays(knex, updateExistingAssays) {
               title: 'Report Type',
               type: 'string',
             },
-            abnormalFlags: {
-              title: 'Abnormal Flags',
+            finalResultAbnormalFlags: {
+              title: 'Final Result Abnormal Flags',
+              type: 'array',
+            },
+            preliminaryResultAbnormalFlags: {
+              title: 'Preliminary Result Abnormal Flags',
               type: 'array',
             },
           },
@@ -736,8 +752,12 @@ async function seedAbbottM2000AndAssays(knex, updateExistingAssays) {
               title: 'Report Type',
               type: 'string',
             },
-            abnormalFlags: {
-              title: 'Abnormal Flags',
+            finalResultAbnormalFlags: {
+              title: 'Final Result Abnormal Flags',
+              type: 'array',
+            },
+            preliminaryResultAbnormalFlags: {
+              title: 'Preliminary Result Abnormal Flags',
               type: 'array',
             },
           },
@@ -802,8 +822,12 @@ async function seedAbbottM2000AndAssays(knex, updateExistingAssays) {
               title: 'Report Type',
               type: 'string',
             },
-            abnormalFlags: {
-              title: 'Abnormal Flags',
+            finalResultAbnormalFlags: {
+              title: 'Final Result Abnormal Flags',
+              type: 'array',
+            },
+            preliminaryResultAbnormalFlags: {
+              title: 'Preliminary Result Abnormal Flags',
               type: 'array',
             },
           },
@@ -852,6 +876,250 @@ async function seedAbbottM2000AndAssays(knex, updateExistingAssays) {
     },
   ])
 
+  const covid19QualitativeQCSummary = {
+    qualityControlSummary: {
+      title: 'Quality Control Summary',
+      type: 'object',
+      properties: {
+        'Daan nCOVID-19 ORF LDA': {
+          title: 'Daan nCOVID-19 ORF LDA',
+          type: 'object',
+          properties: {
+            negativeControl: {
+              title: 'Negative Control',
+              type: 'object',
+              properties: {
+                passed: {
+                  title: 'Passed',
+                  type: 'bool',
+                },
+                endedOn: {
+                  title: 'Time Ended',
+                  type: 'time',
+                },
+                moduleName: {
+                  title: 'Well Position',
+                  type: 'string',
+                },
+                moduleSerial: {
+                  title: 'Instrument Serial',
+                  type: 'string',
+                },
+                assayCode: {
+                  title: 'Assay Code',
+                  type: 'string',
+                },
+                assayName: {
+                  title: 'Assay Name',
+                  type: 'string',
+                },
+                reportType: {
+                  title: 'Report Type',
+                  type: 'string',
+                },
+                finalResultAbnormalFlags: {
+                  title: 'Final Result Abnormal Flags',
+                  type: 'array',
+                },
+                preliminaryResultAbnormalFlags: {
+                  title: 'Preliminary Result Abnormal Flags',
+                  type: 'array',
+                },
+              },
+            },
+            positiveControl: {
+              title: 'Positive Control',
+              type: 'object',
+              properties: {
+                passed: {
+                  title: 'Passed',
+                  type: 'bool',
+                },
+                result: {
+                  title: 'Result',
+                  type: 'string',
+                },
+                endedOn: {
+                  title: 'Time Ended',
+                  type: 'time',
+                },
+                cycleNumber: {
+                  title: 'Cycle Number',
+                  type: 'number',
+                },
+                moduleName: {
+                  title: 'Well Position',
+                  type: 'string',
+                },
+                moduleSerial: {
+                  title: 'Instrument Serial',
+                  type: 'string',
+                },
+                assayCode: {
+                  title: 'Assay Code',
+                  type: 'string',
+                },
+                assayName: {
+                  title: 'Assay Name',
+                  type: 'string',
+                },
+                orderOperatorId: {
+                  title: 'Ordered By',
+                  type: 'string',
+                },
+                senderOperator: {
+                  title: 'Sent By',
+                  type: 'string',
+                },
+                consumableLot: {
+                  title: 'Consumable Lot Number',
+                  type: 'string',
+                },
+                consumableSerial: {
+                  title: 'Consumable Serial Number',
+                  type: 'string',
+                },
+                controlConsumableLotNumber: {
+                  title: 'Control Consumable Lot Number',
+                  type: 'string',
+                },
+                reportType: {
+                  title: 'Report Type',
+                  type: 'string',
+                },
+                finalResultAbnormalFlags: {
+                  title: 'Final Result Abnormal Flags',
+                  type: 'array',
+                },
+                preliminaryResultAbnormalFlags: {
+                  title: 'Preliminary Result Abnormal Flags',
+                  type: 'array',
+                },
+              },
+            },
+          },
+        },
+        'Daan Target N gene LDA': {
+          title: 'Daan Target N gene LDA',
+          type: 'object',
+          properties: {
+            negativeControl: {
+              title: 'Negative Control',
+              type: 'object',
+              properties: {
+                passed: {
+                  title: 'Passed',
+                  type: 'bool',
+                },
+                endedOn: {
+                  title: 'Time Ended',
+                  type: 'time',
+                },
+                moduleName: {
+                  title: 'Well Position',
+                  type: 'string',
+                },
+                moduleSerial: {
+                  title: 'Instrument Serial',
+                  type: 'string',
+                },
+                assayCode: {
+                  title: 'Assay Code',
+                  type: 'string',
+                },
+                assayName: {
+                  title: 'Assay Name',
+                  type: 'string',
+                },
+                reportType: {
+                  title: 'Report Type',
+                  type: 'string',
+                },
+                finalResultAbnormalFlags: {
+                  title: 'Final Result Abnormal Flags',
+                  type: 'array',
+                },
+                preliminaryResultAbnormalFlags: {
+                  title: 'Preliminary Result Abnormal Flags',
+                  type: 'array',
+                },
+              },
+            },
+            positiveControl: {
+              title: 'Positive Control',
+              type: 'object',
+              properties: {
+                passed: {
+                  title: 'Passed',
+                  type: 'bool',
+                },
+                result: {
+                  title: 'Result',
+                  type: 'string',
+                },
+                endedOn: {
+                  title: 'Time Ended',
+                  type: 'time',
+                },
+                cycleNumber: {
+                  title: 'Cycle Number',
+                  type: 'number',
+                },
+                moduleName: {
+                  title: 'Well Position',
+                  type: 'string',
+                },
+                moduleSerial: {
+                  title: 'Instrument Serial',
+                  type: 'string',
+                },
+                assayCode: {
+                  title: 'Assay Code',
+                  type: 'string',
+                },
+                assayName: {
+                  title: 'Assay Name',
+                  type: 'string',
+                },
+                orderOperatorId: {
+                  title: 'Ordered By',
+                  type: 'string',
+                },
+                senderOperator: {
+                  title: 'Sent By',
+                  type: 'string',
+                },
+                consumableLot: {
+                  title: 'Consumable Lot Number',
+                  type: 'string',
+                },
+                consumableSerial: {
+                  title: 'Consumable Serial Number',
+                  type: 'string',
+                },
+                controlConsumableLotNumber: {
+                  title: 'Control Consumable Lot Number',
+                  type: 'string',
+                },
+                reportType: {
+                  title: 'Report Type',
+                  type: 'string',
+                },
+                finalResultAbnormalFlags: {
+                  title: 'Final Result Abnormal Flags',
+                  type: 'array',
+                },
+                preliminaryResultAbnormalFlags: {
+                  title: 'Preliminary Result Abnormal Flags',
+                  type: 'array',
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  }
   const abbottM2000DaanNCOVID19Id = await ensureAssay(
     'abbottM2000DaanNCOVID19',
     'Abbott m2000 Daan N COVID-19',
@@ -862,7 +1130,7 @@ async function seedAbbottM2000AndAssays(knex, updateExistingAssays) {
     'm2000 COVID-19 N',
     {
       ...abbottM2000ResultDataSchema,
-      ...vlQualitativeQCSummary,
+      ...covid19QualitativeQCSummary,
     }
   )
   await ensureResultCategories(abbottM2000DaanNCOVID19Id, [
