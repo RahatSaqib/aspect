@@ -1,9 +1,9 @@
 import React from 'react'
 import DetailBackBar from '../../globals/components/DetailBackBar'
 
-const ResultDetailsBackBar = ({ history, location, match, title }) => {
+export const ResultDetailsBackBar = ({ history, location, match, title }) => {
   const onBackClick = () => {
-    history.goBack()
+    history.push('/browse/result')
   }
 
   return (

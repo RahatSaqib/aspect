@@ -22,7 +22,7 @@ const messages = defineMessages({
   },
 })
 
-const DeviceDetailBackBar = ({
+export const DeviceDetailBackBar = ({
   intl,
   history,
   location,
@@ -31,7 +31,7 @@ const DeviceDetailBackBar = ({
   disabled,
 }) => {
   const onBackClick = () => {
-    history.goBack()
+    history.push('/browse/device')
   }
   const onPathClick = path => {
     history.push({
