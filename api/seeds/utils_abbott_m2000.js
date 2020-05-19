@@ -580,6 +580,11 @@ async function seedAbbottM2000AndAssays(knex, updateExistingAssays) {
       i18nKey: 'resultCategoryError',
       externalId: 'Error',
     },
+    {
+      name: 'Invalid',
+      i18nKey: 'resultCategoryInvalid',
+      externalId: 'Invalid',
+    },
   ])
 
   const abbottM2000PlasmaHbvVLId = await ensureAssay(
@@ -625,6 +630,11 @@ async function seedAbbottM2000AndAssays(knex, updateExistingAssays) {
       name: 'Error',
       i18nKey: 'resultCategoryError',
       externalId: 'Error',
+    },
+    {
+      name: 'Invalid',
+      i18nKey: 'resultCategoryInvalid',
+      externalId: 'Invalid',
     },
   ])
 
@@ -681,6 +691,11 @@ async function seedAbbottM2000AndAssays(knex, updateExistingAssays) {
       name: 'Error',
       i18nKey: 'resultCategoryError',
       externalId: 'Error',
+    },
+    {
+      name: 'Invalid',
+      i18nKey: 'resultCategoryInvalid',
+      externalId: 'Invalid',
     },
   ])
 
@@ -830,6 +845,11 @@ async function seedAbbottM2000AndAssays(knex, updateExistingAssays) {
       i18nKey: 'resultCategoryError',
       externalId: 'Error',
     },
+    {
+      name: 'Invalid',
+      i18nKey: 'resultCategoryInvalid',
+      externalId: 'Invalid',
+    },
   ])
 
   const abbottM2000DaanNCOVID19Id = await ensureAssay(
@@ -865,6 +885,11 @@ async function seedAbbottM2000AndAssays(knex, updateExistingAssays) {
       name: 'Error',
       i18nKey: 'resultCategoryError',
       externalId: 'Error',
+    },
+    {
+      name: 'Invalid',
+      i18nKey: 'resultCategoryInvalid',
+      externalId: 'Invalid',
     },
   ])
 
