@@ -22,6 +22,29 @@ const {
   allResultWorkflowStatusToId,
 } = require('../../shared/dictionary')
 
+const mergeDeep = (baseValue, sourceValue) => {
+  if (_.isEmpty(baseValue) && !_.isEmpty(sourceValue)) {
+    return sourceValue
+  }
+  if (!_.isEmpty(baseValue) && _.isEmpty(sourceValue)) {
+    return baseValue
+  }
+  if (_.isArray(baseValue) && _.isArray(sourceValue)) {
+    return _.uniqBy(
+      [...(baseValue || []), ...(sourceValue || [])],
+      JSON.stringify
+    )
+  }
+  if (_.isPlainObject(baseValue) || _.isPlainObject(sourceValue)) {
+    return _.mergeWith(
+      _.cloneDeep(baseValue),
+      _.cloneDeep(sourceValue),
+      mergeDeep
+    )
+  }
+  return sourceValue || baseValue
+}
+
 class DefaultAbbottM2000 extends SynchronousDataProcessor {
   constructor(request, messageContext) {
     super(request, messageContext)
@@ -129,22 +152,6 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
       : parsedValue
   }
 
-  mergeDeep(baseValue, sourceValue) {
-    if (_.isEmpty(baseValue) && !_.isEmpty(sourceValue)) {
-      return sourceValue
-    }
-    if (!_.isEmpty(baseValue) && _.isEmpty(sourceValue)) {
-      return baseValue
-    }
-    if (_.isArray(baseValue) && _.isArray(sourceValue)) {
-      return [...(baseValue || []), ...(sourceValue || [])]
-    }
-    if (_.isPlainObject(baseValue) || _.isPlainObject(sourceValue)) {
-      return
-    }
-    return sourceValue || baseValue
-  }
-
   bothResultsAreNumericAndFirstResultIsHigherThanTheSecond(
     firstResult,
     secondResult
@@ -165,6 +172,12 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
   }
 
   setupAssayMappings(assayIds, resultCategories) {
+    const processViralLoadResultsWithSameId = this.processViralLoadResultsWithSameId.bind(
+      this
+    )
+    const processDaanNCovid19ResultsWithSameId = this.processDaanNCovid19ResultsWithSameId.bind(
+      this
+    )
     return {
       '1mLDBSvOP': {
         id: assayIds.abbottM2000DBSHivVL,
@@ -184,6 +197,7 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
         highPositiveControlSpecimenId: 'HIV_HIPOS',
         lowPositiveControlSpecimenId: 'HIV_LOPOS',
         negativeControlSpecimenId: 'HIV_NEG',
+        processResult: processViralLoadResultsWithSameId,
       },
       HIV1mlDBS: {
         id: assayIds.abbottM2000DBSHivVL,
@@ -203,6 +217,7 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
         highPositiveControlSpecimenId: 'HIV_HIPOS',
         lowPositiveControlSpecimenId: 'HIV_LOPOS',
         negativeControlSpecimenId: 'HIV_NEG',
+        processResult: processViralLoadResultsWithSameId,
       },
       'HIV0.6ml': {
         id: assayIds.abbottM2000PlasmaHivVL,
@@ -222,6 +237,7 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
         highPositiveControlSpecimenId: 'HIV_HIPOS',
         lowPositiveControlSpecimenId: 'HIV_LOPOS',
         negativeControlSpecimenId: 'HIV_NEG',
+        processResult: processViralLoadResultsWithSameId,
       },
       'HIV0.2ml': {
         id: assayIds.abbottM2000PlasmaHivVL,
@@ -241,6 +257,7 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
         highPositiveControlSpecimenId: 'HIV_HIPOS',
         lowPositiveControlSpecimenId: 'HIV_LOPOS',
         negativeControlSpecimenId: 'HIV_NEG',
+        processResult: processViralLoadResultsWithSameId,
       },
       HIVQLDRDBS: {
         id: assayIds.abbottM2000HIVEID,
@@ -254,6 +271,7 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
         isQuantitative: false,
         positiveControlSpecimenId: 'HIV_POS',
         negativeControlSpecimenId: 'HIV_NEG',
+        processResult: processViralLoadResultsWithSameId,
       },
       'HBV 0.2ml': {
         id: assayIds.abbottM2000PlasmaHbvVL,
@@ -273,6 +291,7 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
         highPositiveControlSpecimenId: 'HBV_HIPOS',
         lowPositiveControlSpecimenId: 'HBV_LOPOS',
         negativeControlSpecimenId: 'HBV_NEG',
+        processResult: processViralLoadResultsWithSameId,
       },
       'Daan nCOVID-19 ORF LDA': {
         id: assayIds.abbottM2000DaanNCOVID19,
@@ -286,6 +305,7 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
         isQuantitative: false,
         positiveControlSpecimenId: 'CoV_POS',
         negativeControlSpecimenId: 'CoV_NEG',
+        processResult: processDaanNCovid19ResultsWithSameId,
       },
       'Daan Target N gene LDA': {
         id: assayIds.abbottM2000DaanNCOVID19,
@@ -299,6 +319,7 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
         isQuantitative: false,
         positiveControlSpecimenId: 'CoV_POS',
         negativeControlSpecimenId: 'CoV_NEG',
+        processResult: processDaanNCovid19ResultsWithSameId,
       },
     }
   }
@@ -536,10 +557,10 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
                           _.mergeWith(
                             _.cloneDeep(resultHeader),
                             _.cloneDeep(testOrder),
-                            this.mergeDeep
+                            mergeDeep
                           ),
                           result,
-                          this.mergeDeep
+                          mergeDeep
                         )
                         results = [...results, mergedResultData]
                         return results
@@ -753,6 +774,504 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
     }, {})
   }
 
+  async getOrCreateSample(resultsWithSameId, knex) {
+    const sampleTypeIds = await allSampleTypeToId()
+    let sample = {}
+    if (!_.isEmpty(resultsWithSameId)) {
+      const result = resultsWithSameId[0]
+      const existingSamples = await knex('Sample as s')
+        .join('SampleType as st', 's.sampleTypeId', 'st.id')
+        .where('s.externalId', result.sample.externalId)
+        .select(
+          's.id',
+          's.collectedOn',
+          's.originSiteId',
+          'st.externalId as sampleTypeExternalId'
+        )
+      if (!_.isEmpty(existingSamples)) {
+        if (existingSamples.length === 1) {
+          ;[sample] = existingSamples
+        } else if (
+          _.some(existingSamples, {
+            sampleTypeExternalId: result.sample.sampleTypeExternalId,
+          })
+        ) {
+          sample = _.find(existingSamples, {
+            sampleTypeExternalId: result.sample.sampleTypeExternalId,
+          })
+        }
+      }
+      if (!sample.id) {
+        sample = {
+          externalId: result.sample.externalId,
+          collectedOn: result.sample.collectedOn,
+          sampleTypeId: sampleTypeIds[result.sample.sampleTypeExternalId],
+        }
+        const [sampleId] = await knex('Sample').insert(sample)
+        sample.id = sampleId
+      } else if (
+        result.sample.collectedOn &&
+        !dateEqual(sample.collectedOn, result.sample.collectedOn)
+      ) {
+        await knex('Sample')
+          .where('id', sample.id)
+          .update({ collectedOn: result.sample.collectedOn })
+        sample.collectedOn = result.sample.collectedOn
+      }
+    }
+    return sample
+  }
+
+  convertASTMResultsWithSameIdAndAssayCodeToResult(
+    resultsWithSameId,
+    sample,
+    assayMappings,
+    device,
+    deviceApiKey,
+    site,
+    qualityControlSummaries,
+    utcNow,
+    resultCategories,
+    resultSourceDiagnosticDeviceId,
+    resultTypePatientId
+  ) {
+    if (_.isEmpty(resultsWithSameId)) {
+      return {}
+    }
+    const finalResult = resultsWithSameId.find(
+      result => result.resultData.resultType === 'Final Result'
+    )
+    const qualityControlSummary = _.get(
+      qualityControlSummaries,
+      [finalResult.sampleRunNumber, finalResult.assay.code],
+      {}
+    )
+    const passedQualityControl =
+      !_.isEmpty(qualityControlSummary) &&
+      Object.values(qualityControlSummary).every(control => control.passed)
+    const cycleNumberResult = resultsWithSameId.find(
+      result => result.resultData.resultType === 'Preliminary Result'
+    )
+    const interpretationResult = resultsWithSameId.find(
+      result =>
+        result.resultData.resultType === 'Interpretation of Final Result'
+    )
+    const result = _.mergeWith(
+      _.cloneDeep(
+        _.omit(cycleNumberResult || {}, ['device', 'sample', 'assay'])
+      ),
+      _.cloneDeep(
+        _.omit(interpretationResult || {}, ['device', 'sample', 'assay'])
+      ),
+      _.cloneDeep(_.omit(finalResult, ['device', 'sample', 'assay'])),
+      {
+        assayId: assayMappings[finalResult.assay.code].id,
+        partnerId: deviceApiKey.partnerId,
+        geographyId: device.geographyId,
+        siteId: site.id,
+        deviceId: device.id,
+        longitude: site.longitude,
+        latitude: site.latitude,
+        resultSourceId: resultSourceDiagnosticDeviceId,
+        resultTypeId: resultTypePatientId,
+        sampleId: sample.id,
+        reportableSiteId:
+          sample.originSiteId ||
+          device.defaultReportableSiteId ||
+          device.siteId,
+        resultData: {
+          passedQualityControl,
+          qualityControlSummary,
+        },
+        updatedOn: utcNow,
+      }
+    )
+    if (result.resultData.reportType !== 'Final Result') {
+      result.resultCategory1 = resultCategories.Error
+      result.resultCategory2 = null
+      const testExceptionComments = _.get(
+        result,
+        'resultData.comments',
+        []
+      ).filter(comment => comment.type === 'Exception String')
+      const testExceptionCodes = _.uniq(
+        testExceptionComments.map(comment => comment.text.split(':')[0].trim())
+      )
+      result.errorCode = [...testExceptionCodes].join(',')
+      result.errorNotes = _.uniq(
+        testExceptionComments.map(comment => comment.text)
+      ).join('\n')
+    } else if (!passedQualityControl) {
+      result.resultCategory1 = resultCategories.Invalid
+      result.resultCategory2 = null
+    } else {
+      const resultCategoryMapping = _.get(assayMappings, [
+        finalResult.assay.code,
+        'resultCategories',
+      ])
+      const interpretationResultText = _.get(
+        interpretationResult,
+        'resultData.resultText',
+        ''
+      )
+      const interpretationResultCategoryId = interpretationResult
+        ? _.get(resultCategoryMapping, ['I', interpretationResultText])
+        : null
+      const finalResultText = _.get(finalResult, 'resultData.resultText', '')
+      const finalResultCategoryId =
+        _.get(resultCategoryMapping, ['F', finalResultText]) ||
+        (isNumeric(finalResultText)
+          ? _.get(resultCategoryMapping, `F.Numeric`)
+          : undefined)
+      if (interpretationResult) {
+        result.resultCategory1 = interpretationResultCategoryId
+        result.resultCategory2 = finalResultCategoryId
+      } else {
+        result.resultCategory1 = finalResultCategoryId
+      }
+    }
+    result.notes = _.uniq(
+      (result.resultData.comments || []).map(comment => comment.text)
+    ).join('\n')
+    return result
+  }
+
+  async processViralLoadResultsWithSameId(
+    resultsWithSameId,
+    assayMappings,
+    device,
+    deviceApiKey,
+    site,
+    qualityControlSummaries,
+    utcNow,
+    knex
+  ) {
+    const resultSourceDiagnosticDeviceId = await resultSourceToId(
+      'DiagnosticDevice'
+    )
+    const resultTypePatientId = await resultTypeToId('Patient')
+    const resultCategories = await allResultCategoryToId()
+    const resultWorkflowStatuses = await allResultWorkflowStatusToId()
+    const sample = await this.getOrCreateSample(resultsWithSameId, knex)
+    const result = this.convertASTMResultsWithSameIdAndAssayCodeToResult(
+      resultsWithSameId,
+      sample,
+      assayMappings,
+      device,
+      deviceApiKey,
+      site,
+      qualityControlSummaries,
+      utcNow,
+      resultCategories,
+      resultSourceDiagnosticDeviceId,
+      resultTypePatientId
+    )
+    const existingResult = await knex('Result')
+      .where('externalId', result.externalId)
+      .andWhere('deviceId', device.id)
+      .first()
+    const resultWorkflowStatusId =
+      resultWorkflowStatuses[
+        result.resultCategory1 === resultCategories.Error
+          ? 'Error'
+          : 'Processed'
+      ]
+    if (existingResult) {
+      result.id = existingResult.id
+      existingResult.resultData = JSON.parse(existingResult.resultData || '{}')
+      existingResult.patientData = JSON.parse(
+        existingResult.patientData || '{}'
+      )
+      existingResult.formData = JSON.parse(existingResult.formData || '{}')
+      if (existingResult.notes) {
+        result.notes = _.uniq(
+          `${existingResult.notes}\n${result.notes}`.split('\n')
+        ).join('\n')
+      }
+      const resultWorkflowStatusLog =
+        (await knex('ResultWorkflowLog')
+          .where('id', existingResult.resultWorkflowStatusLogId)
+          .first()) || {}
+      if (
+        [
+          resultWorkflowStatuses.OK,
+          resultWorkflowStatuses.Error,
+          resultWorkflowStatuses.Ordered,
+          resultWorkflowStatuses.InProgress,
+          resultWorkflowStatuses.Processed,
+        ].includes(resultWorkflowStatusLog.resultWorkflowStatusId)
+      ) {
+        const [resultWorkflowStatusLogId] = await knex(
+          'ResultWorkflowLog'
+        ).insert({
+          resultId: existingResult.id,
+          resultWorkflowStatusId,
+          operator: result.senderOperator,
+          reason: `Result update from ${this.name}`,
+          changedOn: utcNow,
+          createdOn: utcNow,
+        })
+        result.resultWorkflowStatusLogId = resultWorkflowStatusLogId
+      }
+      Object.assign(existingResult, result)
+      await knex('Result')
+        .where('id', result.id)
+        .update({
+          ...existingResult,
+          resultData: existingResult.resultData
+            ? JSON.stringify(existingResult.resultData)
+            : null,
+          patientData: existingResult.patientData
+            ? JSON.stringify(existingResult.patientData)
+            : null,
+          formData: existingResult.formData
+            ? JSON.stringify(existingResult.formData)
+            : null,
+        })
+    } else {
+      result.createdOn = utcNow
+      const [resultId] = await knex('Result').insert({
+        ...result,
+        resultData: result.resultData
+          ? JSON.stringify(result.resultData)
+          : null,
+        patientData: result.patientData
+          ? JSON.stringify(result.patientData)
+          : null,
+        formData: result.formData ? JSON.stringify(result.formData) : null,
+      })
+      result.id = resultId
+    }
+    if (!result.resultWorkflowStatusLogId) {
+      const [resultWorkflowStatusLogId] = await knex(
+        'ResultWorkflowLog'
+      ).insert({
+        resultId: result.id,
+        resultWorkflowStatusId,
+        operator: result.senderOperator,
+        reason: `New result from ${this.name}`,
+        changedOn: utcNow,
+        createdOn: utcNow,
+      })
+      await knex('Result')
+        .where('id', result.id)
+        .update({ resultWorkflowStatusLogId })
+    }
+    return result
+  }
+
+  async processDaanNCovid19ResultsWithSameId(
+    resultsWithSameId,
+    assayMappings,
+    device,
+    deviceApiKey,
+    site,
+    qualityControlSummaries,
+    utcNow,
+    knex
+  ) {
+    const resultSourceDiagnosticDeviceId = await resultSourceToId(
+      'DiagnosticDevice'
+    )
+    const resultTypePatientId = await resultTypeToId('Patient')
+    const resultCategories = await allResultCategoryToId()
+    const resultWorkflowStatuses = await allResultWorkflowStatusToId()
+    const sample = await this.getOrCreateSample(resultsWithSameId, knex)
+    const orf1abGeneResults = resultsWithSameId.filter(
+      result => result.assay.code === 'Daan nCOVID-19 ORF LDA'
+    )
+    const orf1abGeneResult = this.convertASTMResultsWithSameIdAndAssayCodeToResult(
+      orf1abGeneResults,
+      sample,
+      assayMappings,
+      device,
+      deviceApiKey,
+      site,
+      qualityControlSummaries,
+      utcNow,
+      resultCategories,
+      resultSourceDiagnosticDeviceId,
+      resultTypePatientId
+    )
+    const nGeneResults = resultsWithSameId.filter(
+      result => result.assay.code === 'Daan Target N gene LDA'
+    )
+    const nGeneResult = this.convertASTMResultsWithSameIdAndAssayCodeToResult(
+      nGeneResults,
+      sample,
+      assayMappings,
+      device,
+      deviceApiKey,
+      site,
+      qualityControlSummaries,
+      utcNow,
+      resultCategories,
+      resultSourceDiagnosticDeviceId,
+      resultTypePatientId
+    )
+    const resultWorkflowStatusId =
+      resultWorkflowStatuses[
+        orf1abGeneResult.resultCategory1 === resultCategories.Error ||
+        nGeneResult.resultCategory1 === resultCategories.Error
+          ? 'Error'
+          : 'Processed'
+      ]
+    const resultDetails = {}
+    if (
+      orf1abGeneResult.resultCategory1 === resultCategories.Error ||
+      nGeneResult.resultCategory1 === resultCategories.Error
+    ) {
+      resultDetails.resultCategory1 = resultCategories.Error
+      resultDetails.resultCategory2 = null
+      resultDetails.errorCodes = _.uniq(
+        [
+          ...(orf1abGeneResult.errorCode || '').split(','),
+          ...(nGeneResult.errorCode || '').split(','),
+        ].filter(code => !!code)
+      ).join(',')
+      resultDetails.errorNotes = _.uniq(
+        [
+          ...(orf1abGeneResult.errorNotes || '').split('\n'),
+          ...(nGeneResult.errorNotes || '').split('\n'),
+        ].filter(note => !!note)
+      ).join('\n')
+    } else if (
+      orf1abGeneResult.resultCategory1 === resultCategories.Invalid ||
+      nGeneResult.resultCategory1 === resultCategories.Invalid
+    ) {
+      resultDetails.resultCategory1 = resultCategories.Invalid
+      resultDetails.resultCategory2 = null
+    } else if (
+      orf1abGeneResult.resultCategory1 !== nGeneResult.resultCategory1
+    ) {
+      resultDetails.resultCategory1 = resultCategories.Indeterminate
+      resultDetails.resultCategory2 = null
+    } else {
+      resultDetails.resultCategory1 = orf1abGeneResult.resultCategory1
+      resultDetails.resultCategory2 =
+        orf1abGeneResult.resultCategory2 || nGeneResult.resultCategory2 || null
+    }
+    const result = {
+      ..._.mergeWith(
+        _.cloneDeep(nGeneResult),
+        _.cloneDeep(orf1abGeneResult),
+        mergeDeep
+      ),
+      externalId:
+        _.get(orf1abGeneResult, 'externalId') ||
+        _.get(nGeneResult, 'externalId'),
+      ...resultDetails,
+    }
+    result.resultData.qualityControlSummary = {
+      'Daan nCOVID-19 ORF LDA': _.get(
+        orf1abGeneResult,
+        'resultData.qualityControlSummary'
+      ),
+      'Daan Target N gene LDA': _.get(
+        nGeneResult,
+        'resultData.qualityControlSummary'
+      ),
+    }
+    if (
+      !_.get(orf1abGeneResult, 'resultData.passedQualityControl') ||
+      !_.get(nGeneResult, 'resultData.passedQualityControl')
+    ) {
+      result.resultData.passedQualityControl = false
+    }
+    result.notes = _.uniq(
+      [
+        ..._.get(orf1abGeneResult, 'notes', '').split('\n'),
+        ..._.get(nGeneResult, 'notes', '').split('\n'),
+      ].filter(note => !!note)
+    ).join('\n')
+    const existingResult = await knex('Result')
+      .where('externalId', result.externalId)
+      .andWhere('deviceId', device.id)
+      .first()
+    if (existingResult) {
+      result.id = existingResult.id
+      existingResult.resultData = JSON.parse(existingResult.resultData || '{}')
+      existingResult.patientData = JSON.parse(
+        existingResult.patientData || '{}'
+      )
+      existingResult.formData = JSON.parse(existingResult.formData || '{}')
+      if (existingResult.notes) {
+        result.notes = _.uniq(
+          `${existingResult.notes}\n${result.notes}`.split('\n')
+        ).join('\n')
+      }
+      const resultWorkflowStatusLog =
+        (await knex('ResultWorkflowLog')
+          .where('id', existingResult.resultWorkflowStatusLogId)
+          .first()) || {}
+      if (
+        [
+          resultWorkflowStatuses.OK,
+          resultWorkflowStatuses.Error,
+          resultWorkflowStatuses.Ordered,
+          resultWorkflowStatuses.InProgress,
+          resultWorkflowStatuses.Processed,
+        ].includes(resultWorkflowStatusLog.resultWorkflowStatusId)
+      ) {
+        const [resultWorkflowStatusLogId] = await knex(
+          'ResultWorkflowLog'
+        ).insert({
+          resultId: existingResult.id,
+          resultWorkflowStatusId,
+          operator: result.senderOperator,
+          reason: `Result update from ${this.name}`,
+          changedOn: utcNow,
+          createdOn: utcNow,
+        })
+        result.resultWorkflowStatusLogId = resultWorkflowStatusLogId
+      }
+      Object.assign(existingResult, result)
+      await knex('Result')
+        .where('id', result.id)
+        .update({
+          ...existingResult,
+          resultData: existingResult.resultData
+            ? JSON.stringify(existingResult.resultData)
+            : null,
+          patientData: existingResult.patientData
+            ? JSON.stringify(existingResult.patientData)
+            : null,
+          formData: existingResult.formData
+            ? JSON.stringify(existingResult.formData)
+            : null,
+        })
+    } else {
+      result.createdOn = utcNow
+      const [resultId] = await knex('Result').insert({
+        ...result,
+        resultData: result.resultData
+          ? JSON.stringify(result.resultData)
+          : null,
+        patientData: result.patientData
+          ? JSON.stringify(result.patientData)
+          : null,
+        formData: result.formData ? JSON.stringify(result.formData) : null,
+      })
+      result.id = resultId
+    }
+    if (!result.resultWorkflowStatusLogId) {
+      const [resultWorkflowStatusLogId] = await knex(
+        'ResultWorkflowLog'
+      ).insert({
+        resultId: result.id,
+        resultWorkflowStatusId,
+        operator: result.senderOperator,
+        reason: `New result from ${this.name}`,
+        changedOn: utcNow,
+        createdOn: utcNow,
+      })
+      await knex('Result')
+        .where('id', result.id)
+        .update({ resultWorkflowStatusLogId })
+    }
+    return result
+  }
+
   async processRequest() {
     const { request } = this
     const { auth, payload } = request
@@ -773,8 +1292,6 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
       utcNow,
       remoteAddress
     )
-    const resultWorkflowStatuses = await allResultWorkflowStatusToId()
-    const sampleTypeIds = await allSampleTypeToId()
     const unknownAssayCodes = parsedResults
       .map(parsedResult => _.get(parsedResult, 'assay.code'))
       .filter(assayCode => !Object.keys(assayMappings).includes(assayCode))
@@ -843,7 +1360,7 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
           ),
         },
       },
-      this.mergeDeep
+      mergeDeep
     )
 
     await transact(async knex => {
@@ -863,11 +1380,10 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
         ...deviceRecord,
         configurationData: JSON.parse(deviceRecord.configurationData),
       }
-      const site = (await knex('Site').where('id', device.siteId).first()) || {}
-      const resultSourceDiagnosticDeviceId = await resultSourceToId(
-        'DiagnosticDevice'
-      )
-      const resultTypePatientId = await resultTypeToId('Patient')
+      const site =
+        (await knex('Site')
+          .where('id', device.siteId)
+          .first()) || {}
       this.response.deviceId = device.id
       this.response.deviceLogIds = []
       if (deviceDetailsInPayload.lastSeenOn >= device.lastSeenOn) {
@@ -877,14 +1393,16 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
             _.omit(deviceDetailsInPayload, ['comments', 'enquiries', 'rawData'])
           ),
           { updatedOn: utcNow },
-          this.mergeDeep
+          mergeDeep
         )
         if (!_.isNil(deviceUpdates.configurationData)) {
           deviceUpdates.configurationData = JSON.stringify(
             deviceUpdates.configurationData
           )
         }
-        await knex('Device').where('id', device.id).update(deviceUpdates)
+        await knex('Device')
+          .where('id', device.id)
+          .update(deviceUpdates)
         const [configDeviceLogId] = await knex('DeviceLog').insert({
           deviceId: device.id,
           source: this.name,
@@ -941,242 +1459,18 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
         const resultsWithSameId = parsedResults.filter(
           parsedResult => parsedResult.externalId === resultExternalId
         )
-        const finalResult = resultsWithSameId.find(
-          result => result.resultData.resultType === 'Final Result'
-        )
-        let existingSample = {}
-        const existingSamples = await knex('Sample as s')
-          .join('SampleType as st', 's.sampleTypeId', 'st.id')
-          .where('s.externalId', finalResult.sample.externalId)
-          .select(
-            's.id',
-            's.collectedOn',
-            's.originSiteId',
-            'st.externalId as sampleTypeExternalId'
-          )
-        if (!_.isEmpty(existingSamples)) {
-          if (existingSamples.length === 1) {
-            ;[existingSample] = existingSamples
-          } else if (
-            _.some(existingSamples, {
-              sampleTypeExternalId: finalResult.sample.sampleTypeExternalId,
-            })
-          ) {
-            existingSample = _.find(existingSamples, {
-              sampleTypeExternalId: finalResult.sample.sampleTypeExternalId,
-            })
-          }
-        }
-        let { id: sampleId } = existingSample
-        const { collectedOn, originSiteId } = existingSample
-        if (!sampleId) {
-          ;[sampleId] = await knex('Sample').insert({
-            externalId: finalResult.sample.externalId,
-            collectedOn: finalResult.sample.collectedOn,
-            sampleTypeId:
-              sampleTypeIds[finalResult.sample.sampleTypeExternalId],
-          })
-        } else if (
-          finalResult.sample.collectedOn &&
-          !dateEqual(collectedOn, finalResult.sample.collectedOn)
-        ) {
-          await knex('Sample')
-            .where('id', sampleId)
-            .update({ collectedOn: finalResult.sample.collectedOn })
-        }
-        const qualityControlSummary = _.get(
+        const assayCode = _.get(resultsWithSameId, '[0]assay.code')
+        const processResult = _.get(assayMappings, [assayCode, 'processResult'])
+        const result = await processResult(
+          resultsWithSameId,
+          assayMappings,
+          device,
+          deviceApiKey,
+          site,
           qualityControlSummaries,
-          [finalResult.sampleRunNumber, finalResult.assay.code],
-          {}
+          utcNow,
+          knex
         )
-        const passedQualityControl =
-          !_.isEmpty(qualityControlSummary) &&
-          Object.values(qualityControlSummary).every(control => control.passed)
-        const cycleNumberResult = resultsWithSameId.find(
-          result => result.resultData.resultType === 'Preliminary Result'
-        )
-        const interpretationResult = resultsWithSameId.find(
-          result =>
-            result.resultData.resultType === 'Interpretation of Final Result'
-        )
-
-        const result = _.mergeWith(
-          _.cloneDeep(
-            _.omit(cycleNumberResult || {}, ['device', 'sample', 'assay'])
-          ),
-          _.cloneDeep(
-            _.omit(interpretationResult || {}, ['device', 'sample', 'assay'])
-          ),
-          _.cloneDeep(_.omit(finalResult, ['device', 'sample', 'assay'])),
-          {
-            assayId: assayMappings[finalResult.assay.code].id,
-            partnerId: deviceApiKey.partnerId,
-            geographyId: device.geographyId,
-            siteId: site.id,
-            deviceId: device.id,
-            longitude: site.longitude,
-            latitude: site.latitude,
-            resultSourceId: resultSourceDiagnosticDeviceId,
-            resultTypeId: resultTypePatientId,
-            sampleId,
-            reportableSiteId:
-              originSiteId || device.defaultReportableSiteId || device.siteId,
-            resultData: {
-              passedQualityControl,
-              qualityControlSummary,
-            },
-            updatedOn: utcNow,
-          }
-        )
-        if (result.resultData.reportType !== 'Final Result') {
-          result.resultCategory1 = resultCategories.Error
-          result.resultCategory2 = null
-          const testExceptionComments = _.get(
-            result,
-            'resultData.comments',
-            []
-          ).filter(comment => comment.type === 'Exception String')
-          const testExceptionCodes = _.uniq(
-            testExceptionComments.map(comment =>
-              comment.text.split(':')[0].trim()
-            )
-          )
-          result.errorCode = [
-            ...result.resultData.abnormalFlags,
-            ...testExceptionCodes,
-          ].join(',')
-          result.errorNotes = _.uniq(
-            testExceptionComments.map(comment => comment.text)
-          ).join('\n')
-        } else if (!passedQualityControl) {
-          result.resultCategory1 = resultCategories.Invalid
-          result.resultCategory2 = null
-        } else {
-          const resultCategoryMapping = _.get(assayMappings, [
-            finalResult.assay.code,
-            'resultCategories',
-          ])
-          const interpretationResultText = _.get(
-            interpretationResult,
-            'resultData.resultText',
-            ''
-          )
-          const interpretationResultCategoryId = interpretationResult
-            ? _.get(resultCategoryMapping, ['I', interpretationResultText])
-            : null
-          const finalResultText = _.get(
-            finalResult,
-            'resultData.resultText',
-            ''
-          )
-          const finalResultCategoryId =
-            _.get(resultCategoryMapping, ['F', finalResultText]) ||
-            (isNumeric(finalResultText)
-              ? _.get(resultCategoryMapping, `F.Numeric`)
-              : undefined)
-          if (interpretationResult) {
-            result.resultCategory1 = interpretationResultCategoryId
-            result.resultCategory2 = finalResultCategoryId
-          } else {
-            result.resultCategory1 = finalResultCategoryId
-          }
-        }
-        result.notes = _.uniq(
-          (result.resultData.comments || []).map(comment => comment.text)
-        ).join('\n')
-        const existingResult = await knex('Result')
-          .where('externalId', result.externalId)
-          .andWhere('deviceId', device.id)
-          .first()
-        const resultWorkflowStatusId =
-          resultWorkflowStatuses[
-            result.resultCategory1 === resultCategories.Error
-              ? 'Error'
-              : 'Processed'
-          ]
-        if (existingResult) {
-          result.id = existingResult.id
-          existingResult.resultData = JSON.parse(
-            existingResult.resultData || '{}'
-          )
-          existingResult.patientData = JSON.parse(
-            existingResult.patientData || '{}'
-          )
-          existingResult.formData = JSON.parse(existingResult.formData || '{}')
-          if (existingResult.notes) {
-            result.notes = _.uniq(
-              `${existingResult.notes}\n${result.notes}`.split('\n')
-            ).join('\n')
-          }
-          const resultWorkflowStatusLog =
-            (await knex('ResultWorkflowLog')
-              .where('id', existingResult.resultWorkflowStatusLogId)
-              .first()) || {}
-          if (
-            [
-              resultWorkflowStatuses.OK,
-              resultWorkflowStatuses.Error,
-              resultWorkflowStatuses.Ordered,
-              resultWorkflowStatuses.InProgress,
-              resultWorkflowStatuses.Processed,
-            ].includes(resultWorkflowStatusLog.resultWorkflowStatusId)
-          ) {
-            const [resultWorkflowStatusLogId] = await knex(
-              'ResultWorkflowLog'
-            ).insert({
-              resultId: existingResult.id,
-              resultWorkflowStatusId,
-              operator: finalResult.senderOperator,
-              reason: `Result update from ${this.name}`,
-              changedOn: utcNow,
-              createdOn: utcNow,
-            })
-            result.resultWorkflowStatusLogId = resultWorkflowStatusLogId
-          }
-          Object.assign(existingResult, result)
-          await knex('Result')
-            .where('id', result.id)
-            .update({
-              ...existingResult,
-              resultData: existingResult.resultData
-                ? JSON.stringify(existingResult.resultData)
-                : null,
-              patientData: existingResult.patientData
-                ? JSON.stringify(existingResult.patientData)
-                : null,
-              formData: existingResult.formData
-                ? JSON.stringify(existingResult.formData)
-                : null,
-            })
-        } else {
-          result.createdOn = utcNow
-          const [resultId] = await knex('Result').insert({
-            ...result,
-            resultData: result.resultData
-              ? JSON.stringify(result.resultData)
-              : null,
-            patientData: result.patientData
-              ? JSON.stringify(result.patientData)
-              : null,
-            formData: result.formData ? JSON.stringify(result.formData) : null,
-          })
-          result.id = resultId
-        }
-        if (!result.resultWorkflowStatusLogId) {
-          const [resultWorkflowStatusLogId] = await knex(
-            'ResultWorkflowLog'
-          ).insert({
-            resultId: result.id,
-            resultWorkflowStatusId,
-            operator: finalResult.senderOperator,
-            reason: `New result from ${this.name}`,
-            changedOn: utcNow,
-            createdOn: utcNow,
-          })
-          await knex('Result')
-            .where('id', result.id)
-            .update({ resultWorkflowStatusLogId })
-        }
         const [resultDeviceLogId] = await knex('DeviceLog').insert({
           deviceId: device.id,
           source: this.name,

@@ -118,6 +118,7 @@ L|1`
       MoreThan40: 15,
       Error: 16,
       Invalid: 17,
+      Indeterminate: 18,
     },
     ResultWorkflowStatus: {
       Processed: 15,
@@ -1443,87 +1444,586 @@ L|1`
       assert.isOk(isM2000Payload)
     })
 
-    describe('When one of the controls fails', () => {
-      const existingResultRecord = {
-        id: 98,
-        instrumentSerial: '275020383',
-        moduleSerial: '275020383',
-        senderVersion: '1',
-        resultData: JSON.stringify({
-          typeOfMessage: 'Production',
-          messageIsComplete: true,
-          assayName: 'Daan nCOVID-19 ORF LDA',
-          collectedBy: null,
-          actionCode: 'Patient Result',
-          reportType: 'Final Result',
-          resultType: 'Final Result',
-          referenceRanges: null,
-          abnormalFlags: ['LDA -QC'],
-          resultText: 'Not detected',
-          resultUnit: 'DC',
-          resultStatus: 'Final Result',
-          orderOperatorId: 'Belete',
-          controlConsumableLotNumber: null,
-          passedQualityControl: false,
-          qualityControlSummary: {
+    const existingResultRecord = {
+      id: 98,
+      instrumentSerial: '275020383',
+      moduleSerial: '275020383',
+      senderVersion: '1',
+      resultData: JSON.stringify({
+        typeOfMessage: 'Production',
+        messageIsComplete: true,
+        assayName: 'Daan nCOVID-19 ORF LDA',
+        collectedBy: null,
+        actionCode: 'Patient Result',
+        reportType: 'Final Result',
+        resultType: 'Final Result',
+        referenceRanges: null,
+        abnormalFlags: ['LDA -QC'],
+        resultText: 'Not detected',
+        resultUnit: 'DC',
+        resultStatus: 'Final Result',
+        orderOperatorId: 'Belete',
+        controlConsumableLotNumber: null,
+        passedQualityControl: false,
+        qualityControlSummary: {
+          'Daan Target N gene LDA': {
             negativeControl: {
-              passed: false,
-              moduleName: 'H6',
-              assayCode: 'Daan nCOVID-19 ORF LDA',
-              assayName: 'Daan nCOVID-19 ORF LDA',
-              endedOn: '2020-04-30T03:49:03.000Z',
-              moduleSerial: '275020383',
-              reportType: 'Test could not be performed',
+              assayCode: 'Daan Target N gene LDA',
+              assayName: 'Daan Target N gene LDA',
+              endedOn: '2020-04-29T23:49:04.000Z',
               errorCode: '4957',
               errorNotes: '4957 : Negative control is reactive.',
               finalResultAbnormalFlags: [],
+              moduleName: 'H6',
+              moduleSerial: '275020383',
+              passed: false,
+              reportType: 'Test could not be performed',
             },
             positiveControl: {
-              passed: true,
-              reportType: 'Final Result',
+              assayCode: 'Daan Target N gene LDA',
+              assayName: 'Daan Target N gene LDA',
+              consumableLot: '2020003',
+              consumableSerial: '10000518',
+              controlConsumableLotNumber: '2020003',
+              cycleNumber: '28.68',
+              endedOn: '2020-04-29T23:49:03.000Z',
               finalResultAbnormalFlags: ['LDA'],
-              preliminaryResultAbnormalFlags: [],
-              result: '40.00',
               moduleName: 'G6',
+              moduleSerial: '275020383',
+              orderOperatorId: 'Belete',
+              passed: true,
+              preliminaryResultAbnormalFlags: [],
+              reportType: 'Final Result',
+              result: '40.00',
+              senderOperator: 'Administrator',
+            },
+          },
+          'Daan nCOVID-19 ORF LDA': {
+            negativeControl: {
+              assayCode: 'Daan nCOVID-19 ORF LDA',
+              assayName: 'Daan nCOVID-19 ORF LDA',
+              endedOn: '2020-04-29T23:49:04.000Z',
+              errorCode: '4957',
+              errorNotes: '4957 : Negative control is reactive.',
+              finalResultAbnormalFlags: [],
+              moduleName: 'H6',
+              moduleSerial: '275020383',
+              passed: false,
+              reportType: 'Test could not be performed',
+            },
+            positiveControl: {
               assayCode: 'Daan nCOVID-19 ORF LDA',
               assayName: 'Daan nCOVID-19 ORF LDA',
               consumableLot: '2020003',
               consumableSerial: '10000518',
               controlConsumableLotNumber: '2020003',
-              endedOn: '2020-04-30T03:49:03.000Z',
+              cycleNumber: '27.52',
+              endedOn: '2020-04-29T23:49:03.000Z',
+              finalResultAbnormalFlags: ['LDA'],
+              moduleName: 'G6',
               moduleSerial: '275020383',
               orderOperatorId: 'Belete',
+              passed: true,
+              preliminaryResultAbnormalFlags: [],
+              reportType: 'Final Result',
+              result: '40.00',
               senderOperator: 'Administrator',
-              cycleNumber: '27.52',
             },
           },
-        }),
-        rawData:
-          'H|\\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200430034904\nP|1\nO|1|130/20|130/20^037^H5|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||||||||||||||||F\nR|1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^F|Not detected|DC||LDA^-QC||F||Belete^Administrator||20200430034903|275020383\nR|2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^I|Negative|||||F||Belete^Administrator||20200430034903|275020383\nR|3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^P|-1.00|cycle number||||F||Belete^Administrator||20200430034903|275020383\nL|1',
-        sampleRunNumber: '037',
-        moduleName: 'H5',
-        externalId: '130/20|275020383|037|H5|20200430034903',
-        consumableLot: '2020003',
-        consumableSerial: '10000518',
-        senderOperator: 'Administrator',
-        endedOn: '2020-04-29T23:49:03.000Z',
-        patientData: '{}',
-        assayId: staticDatabaseData.Assay.abbottM2000DaanNCOVID19,
-        partnerId: 2,
-        geographyId: databaseRecords.Device.geographyId,
-        siteId: databaseRecords.Site.id,
-        longitude: databaseRecords.Site.longitude,
-        latitude: databaseRecords.Site.latitude,
-        resultSourceId: staticDatabaseData.resultSourceId,
-        resultTypeId: staticDatabaseData.resultTypeId,
-        sampleId: existingSamples['130/20'].id,
-        updatedOn: '2019-11-07T22:08:51.123Z',
-        resultCategory1: staticDatabaseData.ResultCategory.Detected,
-        resultCategory2: staticDatabaseData.ResultCategory.MoreThan150,
-        notes: '',
-        createdOn: '2019-11-07T22:08:51.123Z',
-      }
+        },
+      }),
+      rawData:
+        'H|\\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200430034904\nP|1\nO|1|130/20|130/20^037^H5|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||||||||||||||||F\nR|1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^F|Not detected|DC||LDA^-QC||F||Belete^Administrator||20200430034903|275020383\nR|2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^I|Negative|||||F||Belete^Administrator||20200430034903|275020383\nR|3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^P|-1.00|cycle number||||F||Belete^Administrator||20200430034903|275020383\nL|1',
+      sampleRunNumber: '037',
+      moduleName: 'H5',
+      externalId: '130/20|275020383|037|H5|20200430034903',
+      consumableLot: '2020003',
+      consumableSerial: '10000518',
+      senderOperator: 'Administrator',
+      endedOn: '2020-04-29T23:49:03.000Z',
+      patientData: '{}',
+      assayId: staticDatabaseData.Assay.abbottM2000DaanNCOVID19,
+      partnerId: 2,
+      geographyId: databaseRecords.Device.geographyId,
+      siteId: databaseRecords.Site.id,
+      longitude: databaseRecords.Site.longitude,
+      latitude: databaseRecords.Site.latitude,
+      resultSourceId: staticDatabaseData.resultSourceId,
+      resultTypeId: staticDatabaseData.resultTypeId,
+      sampleId: existingSamples['130/20'].id,
+      updatedOn: '2019-11-07T22:08:51.123Z',
+      resultCategory1: staticDatabaseData.ResultCategory.Detected,
+      resultCategory2: staticDatabaseData.ResultCategory.MoreThan150,
+      notes: '',
+      createdOn: '2019-11-07T22:08:51.123Z',
+    }
 
+    it('should be able to parse a RAW ASTM conversation file into results', async () => {
+      const updateSpy = sinon.spy()
+      const insertSpy = sinon.spy()
+      const DefaultAbbottM2000 = mockOutDefaultAbbottM2000(
+        existingResultRecord,
+        updateSpy,
+        insertSpy
+      )
+      const m2000DataProcessorViralLoad = new DefaultAbbottM2000(
+        {
+          auth: { credentials: { token: 'some device API key' } },
+          payload: covid19DaanNPayload,
+        },
+        { dispatch: () => {} }
+      )
+      await m2000DataProcessorViralLoad.processRequest()
+      assert.equal(
+        m2000DataProcessorViralLoad.response.deviceId,
+        databaseRecords.Device.id
+      )
+      expect(
+        m2000DataProcessorViralLoad.response.deviceLogIds
+      ).to.have.lengthOf(95)
+      const insertCalls = insertSpy.getCalls()
+      const updateCalls = updateSpy.getCalls()
+
+      const updateDeviceCalls = updateCalls.filter(
+        updateCall => updateCall.args[0] === 'Device'
+      )
+      expect(updateDeviceCalls).to.have.lengthOf(1)
+      const actualDeviceUpdates = updateDeviceCalls[0].args[1]
+      actualDeviceUpdates.configurationData = JSON.parse(
+        actualDeviceUpdates.configurationData
+      )
+      expect(actualDeviceUpdates).to.containSubset({
+        configurationData: {
+          comments: [],
+          deviceTypeName: 'm2000',
+          deviceVersion: '8.1.9.0',
+          enquiries: [],
+          interfaceVersion: 'H1P1O1R1C1L1',
+          softwareVersion: '1',
+        },
+        lastPingFromIp: deviceIpAddress,
+        lastPingOn: utcNow,
+        lastSeenOn: utcNow,
+        serial: '275020383',
+        siteId: 5,
+        updatedOn: utcNow,
+      })
+
+      const insertSampleCalls = insertCalls.filter(
+        insertCall => insertCall.args[0] === 'Sample'
+      )
+      expect(insertSampleCalls).to.have.lengthOf(94)
+      const insertResultCalls = insertCalls.filter(
+        insertCall => insertCall.args[0] === 'Result'
+      )
+      const updateResultCalls = updateCalls.filter(
+        updateCall => updateCall.args[0] === 'Result'
+      )
+      expect(insertResultCalls).to.have.lengthOf(94)
+      expect(updateResultCalls).to.have.lengthOf(insertResultCalls.length)
+      const insertedResults = insertResultCalls.map(
+        insertResultCall => insertResultCall.args[1]
+      )
+      const runLevelProperties = insertedResults.map(result => ({
+        ..._.pick(result, [
+          'instrumentSerial',
+          'moduleSerial',
+          'senderVersion',
+          'sampleRunNumber',
+          'partnerId',
+          'geographyId',
+          'siteId',
+          'longitude',
+          'latitude',
+          'resultSourceId',
+        ]),
+        resultData: _.pick(JSON.parse(result.resultData), [
+          'qualityControlSummary',
+        ]),
+      }))
+      const uniqueRunLevelProperties = _.uniqBy(
+        runLevelProperties,
+        JSON.stringify
+      )
+      expect(uniqueRunLevelProperties).to.have.lengthOf(1)
+      expect(uniqueRunLevelProperties).to.containSubset([
+        {
+          instrumentSerial: '275020383',
+          moduleSerial: '275020383',
+          senderVersion: '1',
+          resultData: {
+            qualityControlSummary: {
+              'Daan Target N gene LDA': {
+                negativeControl: {
+                  assayCode: 'Daan Target N gene LDA',
+                  assayName: 'Daan Target N gene LDA',
+                  consumableLot: '2020003',
+                  consumableSerial: '10000518',
+                  controlConsumableLotNumber: '20200313',
+                  cycleNumber: '-1.00',
+                  endedOn: convertToTimeZone(new Date(2020, 4, 8, 4, 51, 51), {
+                    timeZone: 'UTC',
+                  }).toISOString(),
+                  finalResultAbnormalFlags: ['LDA'],
+                  moduleName: 'G12',
+                  moduleSerial: '275020383',
+                  orderOperatorId: 'sisayaa',
+                  passed: true,
+                  preliminaryResultAbnormalFlags: [],
+                  reportType: 'Final Result',
+                  result: 'Not detected',
+                  senderOperator: 'Administrator',
+                },
+                positiveControl: {
+                  assayCode: 'Daan Target N gene LDA',
+                  assayName: 'Daan Target N gene LDA',
+                  consumableLot: '2020003',
+                  consumableSerial: '10000518',
+                  controlConsumableLotNumber: '20200313',
+                  cycleNumber: '28.68',
+                  endedOn: convertToTimeZone(new Date(2020, 4, 8, 4, 51, 51), {
+                    timeZone: 'UTC',
+                  }).toISOString(),
+                  finalResultAbnormalFlags: ['LDA'],
+                  moduleName: 'H12',
+                  moduleSerial: '275020383',
+                  orderOperatorId: 'sisayaa',
+                  passed: true,
+                  preliminaryResultAbnormalFlags: [],
+                  reportType: 'Final Result',
+                  result: '40.00',
+                  senderOperator: 'Administrator',
+                },
+              },
+              'Daan nCOVID-19 ORF LDA': {
+                negativeControl: {
+                  assayCode: 'Daan nCOVID-19 ORF LDA',
+                  assayName: 'Daan nCOVID-19 ORF LDA',
+                  consumableLot: '2020003',
+                  consumableSerial: '10000518',
+                  controlConsumableLotNumber: '20200313',
+                  cycleNumber: '-1.00',
+                  endedOn: convertToTimeZone(new Date(2020, 4, 8, 4, 51, 51), {
+                    timeZone: 'UTC',
+                  }).toISOString(),
+                  finalResultAbnormalFlags: ['LDA'],
+                  moduleName: 'G12',
+                  moduleSerial: '275020383',
+                  orderOperatorId: 'sisayaa',
+                  passed: true,
+                  preliminaryResultAbnormalFlags: [],
+                  reportType: 'Final Result',
+                  result: 'Not detected',
+                  senderOperator: 'Administrator',
+                },
+                positiveControl: {
+                  assayCode: 'Daan nCOVID-19 ORF LDA',
+                  assayName: 'Daan nCOVID-19 ORF LDA',
+                  consumableLot: '2020003',
+                  consumableSerial: '10000518',
+                  controlConsumableLotNumber: '20200313',
+                  cycleNumber: '26.59',
+                  endedOn: convertToTimeZone(new Date(2020, 4, 8, 4, 51, 51), {
+                    timeZone: 'UTC',
+                  }).toISOString(),
+                  finalResultAbnormalFlags: ['LDA'],
+                  moduleName: 'H12',
+                  moduleSerial: '275020383',
+                  orderOperatorId: 'sisayaa',
+                  passed: true,
+                  preliminaryResultAbnormalFlags: [],
+                  reportType: 'Final Result',
+                  result: '40.00',
+                  senderOperator: 'Administrator',
+                },
+              },
+            },
+          },
+          sampleRunNumber: '054',
+          partnerId: databaseRecords.DeviceApiKey.partnerId,
+          geographyId: databaseRecords.Device.geographyId,
+          siteId: databaseRecords.Site.id,
+          longitude: databaseRecords.Site.longitude,
+          latitude: databaseRecords.Site.latitude,
+          resultSourceId: staticDatabaseData.resultSourceId,
+        },
+      ])
+      expect(
+        _.uniq(insertedResults.map(result => result.externalId))
+      ).to.have.lengthOf(94)
+      const insertedResultCategories = _.uniqBy(
+        insertedResults.map(result =>
+          _.pick(result, ['resultCategory1', 'resultCategory2'])
+        ),
+        insertedResultCategory => JSON.stringify(insertedResultCategory)
+      )
+      expect(
+        _.sortBy(insertedResultCategories, result => result.resultCategory1)
+      ).to.deep.equal(
+        _.sortBy(
+          [
+            {
+              resultCategory1: staticDatabaseData.ResultCategory.Detected,
+              resultCategory2: null,
+            },
+            {
+              resultCategory1: staticDatabaseData.ResultCategory.NotDetected,
+              resultCategory2: null,
+            },
+            {
+              resultCategory1: staticDatabaseData.ResultCategory.Indeterminate,
+              resultCategory2: null,
+            },
+          ],
+          result => result.resultCategory1
+        )
+      )
+
+      const insertResultWorkflowLogCalls = insertCalls.filter(
+        insertCall => insertCall.args[0] === 'ResultWorkflowLog'
+      )
+      expect(insertResultWorkflowLogCalls).to.have.lengthOf(94)
+      const insertDeviceLogCalls = insertCalls.filter(
+        insertCall => insertCall.args[0] === 'DeviceLog'
+      )
+      expect(insertDeviceLogCalls).to.have.lengthOf(
+        insertResultWorkflowLogCalls.length + 1
+      )
+    })
+
+    const controlResults = `5H|\\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045155
+60
+6P|1
+43
+7O|1|CoV_NEG|CoV_NEG^054^G12|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||Q||||||||||||||F
+7F
+0R|1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^20200313^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+2C
+1R|2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^20200313^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+F2
+2L|1
+3B
+3H|\\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045155
+5E
+4P|1
+41
+5O|1|CoV_NEG|CoV_NEG^054^G12|^^^Daan Target N gene LDA^Daan Target N gene LDA|||||||Q||||||||||||||F
+A3
+6R|1|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^20200313^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+58
+7R|2|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^20200313^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+1E
+0L|1
+39
+1H|\\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045155
+5C
+2P|1
+3F
+3O|1|CoV_POS|CoV_POS^054^H12|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||Q||||||||||||||F
+AC
+4R|1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^20200313^F|40.00|CO||LDA||F||sisayaa^Administrator||20200508045151|275020383
+9A
+5R|2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^20200313^P|26.59|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+0E
+6L|1
+3F
+7H|\\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045155
+62
+0P|1
+3D
+1O|1|CoV_POS|CoV_POS^054^H12|^^^Daan Target N gene LDA^Daan Target N gene LDA|||||||Q||||||||||||||F
+D0
+2R|1|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^20200313^F|40.00|CO||LDA||F||sisayaa^Administrator||20200508045151|275020383
+BE
+3R|2|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^20200313^P|28.68|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+34
+4L|1
+3D`
+
+    describe('When there is no amplification curve or Ct value > 40 in the FAM and VIC channels and there is amplification curve in the Cy5 channel', () => {
+      it('can be judged that there is no 2019 Novel Coronavirus (2019-nCoV) RNA in the sample', async () => {
+        const insertSpy = sinon.spy()
+        const DefaultAbbottM2000 = mockOutDefaultAbbottM2000(
+          existingResultRecord,
+          sinon.spy(),
+          insertSpy
+        )
+        const m2000DataProcessorViralLoad = new DefaultAbbottM2000(
+          {
+            auth: { credentials: { token: 'some device API key' } },
+            payload: `5H|\\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+5F
+6P|1
+43
+7O|1|4755-4758/20|4755-4758/20^054^C2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||||||||||||||||F
+4D
+0R|1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^F|-2.90|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+A1
+1R|2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+EE
+2R|3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^P|42.90|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+69
+3L|1
+3C
+4H|\\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+5E
+5P|1
+42
+6O|1|4755-4758/20|4755-4758/20^054^C2|^^^Daan Target N gene LDA^Daan Target N gene LDA|||||||||||||||||||||F
+72
+7R|1|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+CE
+0R|2|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+13
+1R|3|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+8E
+2L|1
+3B
+${controlResults}`,
+          },
+          {
+            dispatch: () => {},
+          }
+        )
+        await m2000DataProcessorViralLoad.processRequest()
+        const insertedResults = insertSpy
+          .getCalls()
+          .filter(insertCall => insertCall.args[0] === 'Result')
+          .map(insertResultCall => insertResultCall.args[1])
+        const resultDetectedOnlyAfter40Cycles = insertedResults.find(
+          result =>
+            result.externalId === '4755-4758/20|275020383|054|C2|20200508045151'
+        )
+        expect(resultDetectedOnlyAfter40Cycles).to.containSubset({
+          resultCategory1: staticDatabaseData.ResultCategory.NotDetected,
+          resultCategory2: null,
+        })
+      })
+    })
+
+    describe('When there is obvious amplification curve in the FAM and VIC channels and Ct value ≤ 40', () => {
+      it('can be judged that the sample is positive for 2019 Novel Coronavirus (2019-nCoV)', async () => {
+        const insertSpy = sinon.spy()
+        const DefaultAbbottM2000 = mockOutDefaultAbbottM2000(
+          existingResultRecord,
+          sinon.spy(),
+          insertSpy
+        )
+        const m2000DataProcessorViralLoad = new DefaultAbbottM2000(
+          {
+            auth: { credentials: { token: 'some device API key' } },
+            payload: `3H|\\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+5D
+4P|1
+41
+5O|1|4872/20|4872/20^054^D7|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||||||||||||||||F
+47
+6R|1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^F|16.47|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+14
+7R|2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^I|Positive|||||F||sisayaa^Administrator||20200508045151|275020383
+14
+0R|3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^P|23.53|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+76
+1L|1
+3A
+2H|\\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+5C
+3P|1
+40
+4O|1|4872/20|4872/20^054^D7|^^^Daan Target N gene LDA^Daan Target N gene LDA|||||||||||||||||||||F
+6C
+5R|1|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^F|8.96|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+0E
+6R|2|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^I|Positive|||||F||sisayaa^Administrator||20200508045151|275020383
+39
+7R|3|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^P|31.04|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+9E
+0L|1
+39
+${controlResults}`,
+          },
+          {
+            dispatch: () => {},
+          }
+        )
+        await m2000DataProcessorViralLoad.processRequest()
+        const insertedResults = insertSpy
+          .getCalls()
+          .filter(insertCall => insertCall.args[0] === 'Result')
+          .map(insertResultCall => insertResultCall.args[1])
+        const resultDetectedOnlyAfter40Cycles = insertedResults.find(
+          result =>
+            result.externalId === '4872/20|275020383|054|D7|20200508045151'
+        )
+        expect(resultDetectedOnlyAfter40Cycles).to.containSubset({
+          resultCategory1: staticDatabaseData.ResultCategory.Detected,
+          resultCategory2: null,
+        })
+      })
+    })
+
+    describe('When there is a Ct value of ≤ 40 in a single channel of FAM or VIC, and there is no amplification curve in the other channel', () => {
+      it('should be interpreted as inconclusive', async () => {
+        const insertSpy = sinon.spy()
+        const DefaultAbbottM2000 = mockOutDefaultAbbottM2000(
+          existingResultRecord,
+          sinon.spy(),
+          insertSpy
+        )
+        const m2000DataProcessorViralLoad = new DefaultAbbottM2000(
+          {
+            auth: { credentials: { token: 'some device API key' } },
+            payload: `1H|\\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+5B
+2P|1
+3F
+3O|1|4873/20|4873/20^054^E7|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||||||||||||||||F
+48
+4R|1|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^F|8.96|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+A5
+5R|2|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^I|Positive|||||F||sisayaa^Administrator||20200508045151|275020383
+F2
+6R|3|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^P|31.04|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+6D
+7L|1
+40
+0H|\\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+5A
+1P|1
+3E
+2O|1|4873/20|4873/20^054^E7|^^^Daan Target N gene LDA^Daan Target N gene LDA|||||||||||||||||||||F
+6D
+3R|1|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+CA
+4R|2|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+17
+5R|3|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+92
+6L|1
+3F
+${controlResults}`,
+          },
+          {
+            dispatch: () => {},
+          }
+        )
+        await m2000DataProcessorViralLoad.processRequest()
+        const insertedResults = insertSpy
+          .getCalls()
+          .filter(insertCall => insertCall.args[0] === 'Result')
+          .map(insertResultCall => insertResultCall.args[1])
+        const resultDetectedOnlyAfter40Cycles = insertedResults.find(
+          result =>
+            result.externalId === '4873/20|275020383|054|E7|20200508045151'
+        )
+        expect(resultDetectedOnlyAfter40Cycles).to.containSubset({
+          resultCategory1: staticDatabaseData.ResultCategory.Indeterminate,
+          resultCategory2: null,
+        })
+      })
+    })
+
+    describe('When one of the controls fails', () => {
       it('should parse a RAW ASTM conversation file into invalid results', async () => {
         const updateSpy = sinon.spy()
         const insertSpy = sinon.spy()
@@ -1604,6 +2104,7 @@ L|1`
             'resultSourceId',
           ]),
           resultData: _.pick(JSON.parse(result.resultData), [
+            'passedQualityControl',
             'qualityControlSummary',
           ]),
         }))
@@ -1618,40 +2119,71 @@ L|1`
             moduleSerial: '275020383',
             senderVersion: '1',
             resultData: {
+              passedQualityControl: false,
               qualityControlSummary: {
-                negativeControl: {
-                  assayCode: 'Daan nCOVID-19 ORF LDA',
-                  assayName: 'Daan nCOVID-19 ORF LDA',
-                  endedOn: convertToTimeZone(new Date(2020, 3, 30, 3, 49, 4), {
-                    timeZone: 'UTC',
-                  }).toISOString(),
-                  errorCode: '4957',
-                  errorNotes: '4957 : Negative control is reactive.',
-                  finalResultAbnormalFlags: [],
-                  moduleName: 'H6',
-                  moduleSerial: '275020383',
-                  passed: false,
-                  reportType: 'Test could not be performed',
+                'Daan Target N gene LDA': {
+                  negativeControl: {
+                    assayCode: 'Daan Target N gene LDA',
+                    assayName: 'Daan Target N gene LDA',
+                    endedOn: '2020-04-29T23:49:04.000Z',
+                    errorCode: '4957',
+                    errorNotes: '4957 : Negative control is reactive.',
+                    finalResultAbnormalFlags: [],
+                    moduleName: 'H6',
+                    moduleSerial: '275020383',
+                    passed: false,
+                    reportType: 'Test could not be performed',
+                  },
+                  positiveControl: {
+                    assayCode: 'Daan Target N gene LDA',
+                    assayName: 'Daan Target N gene LDA',
+                    consumableLot: '2020003',
+                    consumableSerial: '10000518',
+                    controlConsumableLotNumber: '2020003',
+                    cycleNumber: '28.68',
+                    endedOn: '2020-04-29T23:49:03.000Z',
+                    finalResultAbnormalFlags: ['LDA'],
+                    moduleName: 'G6',
+                    moduleSerial: '275020383',
+                    orderOperatorId: 'Belete',
+                    passed: true,
+                    preliminaryResultAbnormalFlags: [],
+                    reportType: 'Final Result',
+                    result: '40.00',
+                    senderOperator: 'Administrator',
+                  },
                 },
-                positiveControl: {
-                  passed: true,
-                  reportType: 'Final Result',
-                  finalResultAbnormalFlags: ['LDA'],
-                  preliminaryResultAbnormalFlags: [],
-                  result: '40.00',
-                  moduleName: 'G6',
-                  assayCode: 'Daan nCOVID-19 ORF LDA',
-                  assayName: 'Daan nCOVID-19 ORF LDA',
-                  consumableLot: '2020003',
-                  consumableSerial: '10000518',
-                  controlConsumableLotNumber: '2020003',
-                  endedOn: convertToTimeZone(new Date(2020, 3, 30, 3, 49, 3), {
-                    timeZone: 'UTC',
-                  }).toISOString(),
-                  moduleSerial: '275020383',
-                  orderOperatorId: 'Belete',
-                  senderOperator: 'Administrator',
-                  cycleNumber: '27.52',
+                'Daan nCOVID-19 ORF LDA': {
+                  negativeControl: {
+                    assayCode: 'Daan nCOVID-19 ORF LDA',
+                    assayName: 'Daan nCOVID-19 ORF LDA',
+                    endedOn: '2020-04-29T23:49:04.000Z',
+                    errorCode: '4957',
+                    errorNotes: '4957 : Negative control is reactive.',
+                    finalResultAbnormalFlags: [],
+                    moduleName: 'H6',
+                    moduleSerial: '275020383',
+                    passed: false,
+                    reportType: 'Test could not be performed',
+                  },
+                  positiveControl: {
+                    assayCode: 'Daan nCOVID-19 ORF LDA',
+                    assayName: 'Daan nCOVID-19 ORF LDA',
+                    consumableLot: '2020003',
+                    consumableSerial: '10000518',
+                    controlConsumableLotNumber: '2020003',
+                    cycleNumber: '27.52',
+                    endedOn: '2020-04-29T23:49:03.000Z',
+                    finalResultAbnormalFlags: ['LDA'],
+                    moduleName: 'G6',
+                    moduleSerial: '275020383',
+                    orderOperatorId: 'Belete',
+                    passed: true,
+                    preliminaryResultAbnormalFlags: [],
+                    reportType: 'Final Result',
+                    result: '40.00',
+                    senderOperator: 'Administrator',
+                  },
                 },
               },
             },
@@ -1852,16 +2384,34 @@ L|1`
                 }
               ).toISOString(),
               qualityControlSummary: {
-                positiveControl: _.omit(
-                  JSON.parse(existingResultRecord.resultData)
-                    .qualityControlSummary.positiveControl,
-                  ['endedOn']
-                ),
-                negativeControl: _.omit(
-                  JSON.parse(existingResultRecord.resultData)
-                    .qualityControlSummary.negativeControl,
-                  ['endedOn']
-                ),
+                'Daan Target N gene LDA': {
+                  negativeControl: _.omit(
+                    JSON.parse(existingResultRecord.resultData)
+                      .qualityControlSummary['Daan Target N gene LDA']
+                      .negativeControl,
+                    ['endedOn']
+                  ),
+                  positiveControl: _.omit(
+                    JSON.parse(existingResultRecord.resultData)
+                      .qualityControlSummary['Daan Target N gene LDA']
+                      .positiveControl,
+                    ['endedOn']
+                  ),
+                },
+                'Daan nCOVID-19 ORF LDA': {
+                  negativeControl: _.omit(
+                    JSON.parse(existingResultRecord.resultData)
+                      .qualityControlSummary['Daan nCOVID-19 ORF LDA']
+                      .negativeControl,
+                    ['endedOn']
+                  ),
+                  positiveControl: _.omit(
+                    JSON.parse(existingResultRecord.resultData)
+                      .qualityControlSummary['Daan nCOVID-19 ORF LDA']
+                      .positiveControl,
+                    ['endedOn']
+                  ),
+                },
               },
             },
             resultCategory1: staticDatabaseData.ResultCategory.Invalid,
