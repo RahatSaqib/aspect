@@ -307,7 +307,7 @@ aa.`
         assayName: 'HIV1.0mlDBS',
         actionCode: 'Patient Result',
         resultType: 'Final Result',
-        abnormalFlags: ['OPEN'],
+        abnormalFlags: [],
         passedQualityControl: true,
         qualityControlSummary: {
           negativeControl: {
@@ -441,7 +441,7 @@ aa.`
           negativeControl: {
             passed: true,
             reportType: 'Final Result',
-            finalResultAbnormalFlags: ['OPEN'],
+            finalResultAbnormalFlags: [],
             preliminaryResultAbnormalFlags: [],
             result: 'Not detected',
             moduleName: 'C1',
@@ -458,7 +458,7 @@ aa.`
           lowPositiveControl: {
             passed: true,
             reportType: 'Final Result',
-            finalResultAbnormalFlags: ['OPEN'],
+            finalResultAbnormalFlags: [],
             preliminaryResultAbnormalFlags: [],
             result: '832',
             moduleName: 'B1',
@@ -475,7 +475,7 @@ aa.`
           highPositiveControl: {
             passed: true,
             reportType: 'Final Result',
-            finalResultAbnormalFlags: ['OPEN'],
+            finalResultAbnormalFlags: [],
             preliminaryResultAbnormalFlags: [],
             result: '109603',
             moduleName: 'A1',
@@ -569,7 +569,7 @@ aa.`
           negativeControl: {
             passed: true,
             reportType: 'Final Result',
-            finalResultAbnormalFlags: ['OPEN'],
+            finalResultAbnormalFlags: [],
             preliminaryResultAbnormalFlags: [],
             result: 'Not detected',
             moduleName: 'C1',
@@ -586,7 +586,7 @@ aa.`
           lowPositiveControl: {
             passed: true,
             reportType: 'Final Result',
-            finalResultAbnormalFlags: ['OPEN'],
+            finalResultAbnormalFlags: [],
             preliminaryResultAbnormalFlags: [],
             result: '664',
             moduleName: 'B1',
@@ -603,7 +603,7 @@ aa.`
           highPositiveControl: {
             passed: true,
             reportType: 'Final Result',
-            finalResultAbnormalFlags: ['OPEN'],
+            finalResultAbnormalFlags: [],
             preliminaryResultAbnormalFlags: [],
             result: '42689',
             moduleName: 'A1',

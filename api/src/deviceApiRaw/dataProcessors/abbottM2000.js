@@ -944,15 +944,13 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
     site,
     qualityControlSummaries,
     utcNow,
+    resultSourceDiagnosticDeviceId,
+    resultTypePatientId,
+    resultCategories,
+    resultWorkflowStatuses,
+    sample,
     knex
   ) {
-    const resultSourceDiagnosticDeviceId = await resultSourceToId(
-      'DiagnosticDevice'
-    )
-    const resultTypePatientId = await resultTypeToId('Patient')
-    const resultCategories = await allResultCategoryToId()
-    const resultWorkflowStatuses = await allResultWorkflowStatusToId()
-    const sample = await this.getOrCreateSample(resultsWithSameId, knex)
     const result = this.convertASTMResultsWithSameIdAndAssayCodeToResult(
       resultsWithSameId,
       sample,
@@ -966,98 +964,13 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
       resultSourceDiagnosticDeviceId,
       resultTypePatientId
     )
-    const existingResult = await knex('Result')
-      .where('externalId', result.externalId)
-      .andWhere('deviceId', device.id)
-      .first()
     const resultWorkflowStatusId =
       resultWorkflowStatuses[
         result.resultCategory1 === resultCategories.Error
           ? 'Error'
           : 'Processed'
       ]
-    if (existingResult) {
-      result.id = existingResult.id
-      existingResult.resultData = JSON.parse(existingResult.resultData || '{}')
-      existingResult.patientData = JSON.parse(
-        existingResult.patientData || '{}'
-      )
-      existingResult.formData = JSON.parse(existingResult.formData || '{}')
-      if (existingResult.notes) {
-        result.notes = _.uniq(
-          `${existingResult.notes}\n${result.notes}`.split('\n')
-        ).join('\n')
-      }
-      const resultWorkflowStatusLog =
-        (await knex('ResultWorkflowLog')
-          .where('id', existingResult.resultWorkflowStatusLogId)
-          .first()) || {}
-      if (
-        [
-          resultWorkflowStatuses.OK,
-          resultWorkflowStatuses.Error,
-          resultWorkflowStatuses.Ordered,
-          resultWorkflowStatuses.InProgress,
-          resultWorkflowStatuses.Processed,
-        ].includes(resultWorkflowStatusLog.resultWorkflowStatusId)
-      ) {
-        const [resultWorkflowStatusLogId] = await knex(
-          'ResultWorkflowLog'
-        ).insert({
-          resultId: existingResult.id,
-          resultWorkflowStatusId,
-          operator: result.senderOperator,
-          reason: `Result update from ${this.name}`,
-          changedOn: utcNow,
-          createdOn: utcNow,
-        })
-        result.resultWorkflowStatusLogId = resultWorkflowStatusLogId
-      }
-      Object.assign(existingResult, result)
-      await knex('Result')
-        .where('id', result.id)
-        .update({
-          ...existingResult,
-          resultData: existingResult.resultData
-            ? JSON.stringify(existingResult.resultData)
-            : null,
-          patientData: existingResult.patientData
-            ? JSON.stringify(existingResult.patientData)
-            : null,
-          formData: existingResult.formData
-            ? JSON.stringify(existingResult.formData)
-            : null,
-        })
-    } else {
-      result.createdOn = utcNow
-      const [resultId] = await knex('Result').insert({
-        ...result,
-        resultData: result.resultData
-          ? JSON.stringify(result.resultData)
-          : null,
-        patientData: result.patientData
-          ? JSON.stringify(result.patientData)
-          : null,
-        formData: result.formData ? JSON.stringify(result.formData) : null,
-      })
-      result.id = resultId
-    }
-    if (!result.resultWorkflowStatusLogId) {
-      const [resultWorkflowStatusLogId] = await knex(
-        'ResultWorkflowLog'
-      ).insert({
-        resultId: result.id,
-        resultWorkflowStatusId,
-        operator: result.senderOperator,
-        reason: `New result from ${this.name}`,
-        changedOn: utcNow,
-        createdOn: utcNow,
-      })
-      await knex('Result')
-        .where('id', result.id)
-        .update({ resultWorkflowStatusLogId })
-    }
-    return result
+    return this.mergeResultRecord(result, resultWorkflowStatusId, utcNow, knex)
   }
 
   async processDaanNCovid19ResultsWithSameId(
@@ -1068,15 +981,13 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
     site,
     qualityControlSummaries,
     utcNow,
+    resultSourceDiagnosticDeviceId,
+    resultTypePatientId,
+    resultCategories,
+    resultWorkflowStatuses,
+    sample,
     knex
   ) {
-    const resultSourceDiagnosticDeviceId = await resultSourceToId(
-      'DiagnosticDevice'
-    )
-    const resultTypePatientId = await resultTypeToId('Patient')
-    const resultCategories = await allResultCategoryToId()
-    const resultWorkflowStatuses = await allResultWorkflowStatusToId()
-    const sample = await this.getOrCreateSample(resultsWithSameId, knex)
     const orf1abGeneResults = resultsWithSameId.filter(
       result => result.assay.code === 'Daan nCOVID-19 ORF LDA'
     )
@@ -1184,9 +1095,14 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
         ..._.get(nGeneResult, 'notes', '').split('\n'),
       ].filter(note => !!note)
     ).join('\n')
+    return this.mergeResultRecord(result, resultWorkflowStatusId, utcNow, knex)
+  }
+
+  async mergeResultRecord(result, resultWorkflowStatusId, utcNow, knex) {
+    const resultWorkflowStatuses = await allResultWorkflowStatusToId()
     const existingResult = await knex('Result')
       .where('externalId', result.externalId)
-      .andWhere('deviceId', device.id)
+      .andWhere('deviceId', result.deviceId)
       .first()
     if (existingResult) {
       result.id = existingResult.id
@@ -1460,6 +1376,13 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
           parsedResult => parsedResult.externalId === resultExternalId
         )
         const assayCode = _.get(resultsWithSameId, '[0]assay.code')
+        const resultSourceDiagnosticDeviceId = await resultSourceToId(
+          'DiagnosticDevice'
+        )
+        const resultTypePatientId = await resultTypeToId('Patient')
+        const resultCategories = await allResultCategoryToId()
+        const resultWorkflowStatuses = await allResultWorkflowStatusToId()
+        const sample = await this.getOrCreateSample(resultsWithSameId, knex)
         const processResult = _.get(assayMappings, [assayCode, 'processResult'])
         const result = await processResult(
           resultsWithSameId,
@@ -1469,6 +1392,11 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
           site,
           qualityControlSummaries,
           utcNow,
+          resultSourceDiagnosticDeviceId,
+          resultTypePatientId,
+          resultCategories,
+          resultWorkflowStatuses,
+          sample,
           knex
         )
         const [resultDeviceLogId] = await knex('DeviceLog').insert({
