@@ -8,20 +8,59 @@ import AspectTitle from '../AspectTitle'
 
 const cssClasses = classnames.bind(require('./Card.css'))
 
-const AspectCard = ({ children, justify, innerSize, title }) => (
-  <Card className={cssClasses('card__container')}>
-    <Grid container justify={justify} className={cssClasses('card__grid')}>
-      {title ? (
-        <Grid item xs={12} lg={12} className={cssClasses('card__title')}>
-          <AspectTitle title={title} />
-        </Grid>
-      ) : null}
-      <Grid item xs={12} lg={innerSize}>
-        {children}
+const CardHeader = ({ props }) => {
+  const { title, actionComponent, action } = props
+  const {
+    component: ActionComponent,
+    props: actionComponentProps,
+  } = actionComponent
+
+  return title || actionComponent ? (
+    <Grid item xs={12}>
+      <Grid
+        container
+        spacing={24}
+        className={cssClasses('card__headerContainer')}
+      >
+        {title ? (
+          <Grid item xs={6} className={cssClasses('card__title')}>
+            <AspectTitle title={title} />
+          </Grid>
+        ) : null}
+        {actionComponent ? (
+          <Grid item xs={6} className={cssClasses('card__actionsContainer')}>
+            <ActionComponent props={{ actionComponentProps, action }} />
+          </Grid>
+        ) : null}
       </Grid>
     </Grid>
-  </Card>
-)
+  ) : null
+}
+
+const AspectCard = ({
+  children,
+  justify,
+  innerSize,
+  title,
+  actionComponent,
+  action,
+}) => {
+  return (
+    <Card className={cssClasses('card__container')}>
+      <Grid container justify={justify} className={cssClasses('card__grid')}>
+        <CardHeader props={{ title, actionComponent, action }} />
+        <Grid
+          item
+          xs={12}
+          lg={innerSize}
+          className={cssClasses('card__content')}
+        >
+          {children}
+        </Grid>
+      </Grid>
+    </Card>
+  )
+}
 
 AspectCard.defaultProps = {
   justify: 'center',
