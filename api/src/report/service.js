@@ -53,10 +53,12 @@ async function getReportDetails(auth, externalId) {
     .where('reportId', report.id)
     .orderBy('sortOrder', 'asc')
     .select('id', 'moduleName', 'functionName', 'query')
-    .map(sheet => ({
-      ...sheet,
-      query: sheet.query ? JSON.parse(sheet.query) : {},
-    }))
+    .then(items =>
+      items.map(sheet => ({
+        ...sheet,
+        query: sheet.query ? JSON.parse(sheet.query) : {},
+      }))
+    )
 
   return report
 }

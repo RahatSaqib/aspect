@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react'
 import { compose, withProps } from 'recompose'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import Helmet from 'react-helmet'
+import { Helmet } from 'react-helmet'
 import { FormattedMessage, injectIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
 

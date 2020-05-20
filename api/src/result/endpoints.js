@@ -74,7 +74,7 @@ const routes = [
             .required()
             .description('The number of results included in this response'),
           extraColumns: Joi.array()
-            .allow([], null)
+            .allow(null)
             .optional()
             .description('Extra columns arrays')
             .items(Joi.object().optional()),

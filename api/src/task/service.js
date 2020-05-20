@@ -50,7 +50,7 @@ async function listTasksByStatus(request) {
   const { query } = request
   const issueCategoryId = query.categoryId
   const { date, alertTemplateId } = query
-  const sqlDate = new Date(date).toISOString().split('T')[0]
+  const sqlDate = new Date(date).toISOString().split('T')[0] // eslint-disable-line newline-per-chained-call
   const queryKnex = await baseAlertMessagesQuery(request, query, builder => {
     builder
       .where('ic.Id', issueCategoryId)

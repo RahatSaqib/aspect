@@ -61,14 +61,16 @@ async function seed(knex) {
       'r.patientData',
       'r.formData'
     )
-    .map(result => ({
-      id: result.id,
-      resultCategory1ExternalId: result.resultCategory1ExternalId,
-      endedOn: result.endedOn,
-      resultData: JSON.parse(result.resultData),
-      patientData: JSON.parse(result.patientData),
-      formData: JSON.parse(result.formData),
-    }))
+    .then(items =>
+      items.map(result => ({
+        id: result.id,
+        resultCategory1ExternalId: result.resultCategory1ExternalId,
+        endedOn: result.endedOn,
+        resultData: JSON.parse(result.resultData),
+        patientData: JSON.parse(result.patientData),
+        formData: JSON.parse(result.formData),
+      }))
+    )
 
   const randomYesNo = () => {
     return utils.randomOption({
@@ -143,14 +145,16 @@ async function seed(knex) {
     .where('c.abbreviation', countryWakanda.abbreviation)
     .andWhere('externalId', 'like', '%clinic')
     .select()
-    .reduce((cities, site) => {
-      if (cities[site.city]) {
-        cities[site.city].push(site)
-      } else {
-        cities[site.city] = [site]
-      }
-      return cities
-    }, {})
+    .then(items =>
+      items.reduce((cities, site) => {
+        if (cities[site.city]) {
+          cities[site.city].push(site)
+        } else {
+          cities[site.city] = [site]
+        }
+        return cities
+      }, {})
+    )
 
   const aspectGenericResultForm = (await knex('Assay as a')
     .join('ResultForm as rf', 'a.id', 'rf.assayId')

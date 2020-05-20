@@ -137,20 +137,24 @@ async function runSeed(seed, knex, fileName, overridedSeeds) {
 }
 
 async function rowsAsObject(knex, table, column = 'name') {
-  return knex(table).reduce((memo, row) => {
-    memo[row[column]] = row
-    return memo
-  }, {})
+  return knex(table).then(items =>
+    items.reduce((memo, row) => {
+      memo[row[column]] = row
+      return memo
+    }, {})
+  )
 }
 
 async function getDefaultMessageTypes(knex) {
   return knex('MessageType as mt')
     .join('IssueType as it', 'it.defaultMessageTypeId', 'mt.id')
     .select('it.externalId as issueTypeExternalId', 'mt.*')
-    .reduce((memo, row) => {
-      memo[row.issueTypeExternalId] = row
-      return memo
-    }, {})
+    .then(items =>
+      items.reduce((memo, row) => {
+        memo[row.issueTypeExternalId] = row
+        return memo
+      }, {})
+    )
 }
 
 // -------------------------------------------------------
@@ -480,13 +484,15 @@ async function seedStockIssues(knex) {
 }
 
 async function getPermissionModules(knex) {
-  return knex('Permission').reduce((memo, row) => {
-    if (!memo[row.module]) {
-      memo[row.module] = {}
-    }
-    memo[row.module][row.activity] = row.id
-    return memo
-  }, {})
+  return knex('Permission').then(items =>
+    items.reduce((memo, row) => {
+      if (!memo[row.module]) {
+        memo[row.module] = {}
+      }
+      memo[row.module][row.activity] = row.id
+      return memo
+    }, {})
+  )
 }
 
 async function getSeedsFolder(table, overridedSeeds) {
@@ -719,12 +725,14 @@ async function seedIssueEventTriggersForPartner(
     .where({ 'nt.partnerId': partnerId })
     .orderBy('it.externalId')
     .distinct('it.externalId as issueType')
-    .reduce((memo, { issueType }) => {
-      if (!issueTypeBlacklist.includes(issueType)) {
-        memo[issueType] = true
-      }
-      return memo
-    }, {})
+    .then(items =>
+      items.reduce((memo, { issueType }) => {
+        if (!issueTypeBlacklist.includes(issueType)) {
+          memo[issueType] = true
+        }
+        return memo
+      }, {})
+    )
   issueTypeWhitelist.forEach(issueType => {
     issueTypeConfigured[issueType] = true
   })
@@ -2336,12 +2344,14 @@ async function getSeedsRan(knex) {
   return knex('AspectSeed as ap')
     .where({ success: true })
     .select('ap.fileName')
-    .reduce((memo, row) => {
-      if (!memo[row.fileName]) {
-        memo[row.fileName] = true
-      }
-      return memo
-    }, {})
+    .then(items =>
+      items.reduce((memo, row) => {
+        if (!memo[row.fileName]) {
+          memo[row.fileName] = true
+        }
+        return memo
+      }, {})
+    )
 }
 
 async function seedDeviceMaintenanceType(knex) {
@@ -2756,6 +2766,17 @@ function getDateFields(startedOn) {
   }
 }
 
+async function getResultForms(knex) {
+  return knex('ResultForm')
+    .select()
+    .then(items =>
+      items.map(resultForm => ({
+        ...resultForm,
+        formSchema: JSON.parse(resultForm.formSchema),
+      }))
+    )
+}
+
 module.exports = {
   addReports,
 
@@ -2819,4 +2840,6 @@ module.exports = {
   getUniqueId,
   getLinkedResultDate,
   getDateFields,
+
+  getResultForms,
 }

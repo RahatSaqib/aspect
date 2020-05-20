@@ -3,7 +3,7 @@ import React, { PureComponent } from 'react'
 import { compose, setPropTypes } from 'recompose'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import Helmet from 'react-helmet'
+import { Helmet } from 'react-helmet'
 
 // Material-UI
 import LinearProgress from '@material-ui/core/LinearProgress'

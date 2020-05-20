@@ -1,7 +1,7 @@
 import classnames from 'classnames/bind'
 import React from 'react'
 import { compose, pure } from 'recompose'
-import Helmet from 'react-helmet'
+import { Helmet } from 'react-helmet'
 
 import IdleDialog from '../../../idle/components/IdleDialog'
 import AppNotificationSnackBar from '../../../appNotification/AppNotificationSnackBar'

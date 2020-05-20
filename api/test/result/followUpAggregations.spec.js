@@ -49,9 +49,7 @@ describe('Result Follow-Up Aggregations for reports', () => {
       // get actual username from shared token
       const { name } = jwtDecode(shared.token)
 
-      const followUpTypes = (
-        await knex('FollowUpType').select('externalId')
-      ).map(x => x.externalId)
+      const followUpTypes = await knex('FollowUpType').pluck('externalId')
       const fields = []
       followUpTypes.forEach(followUpType => {
         fields.push(
@@ -315,7 +313,10 @@ describe('Result Follow-Up Aggregations for reports', () => {
       .set('Authorization', `Bearer ${shared.token}`)
       .then(res => {
         assert.equal(res.status, 400)
-        assert.equal(res.body.message.substring(0, 21), 'child "groupBy" fails')
+        assert.equal(
+          res.body.message.substring(0, 24),
+          '"groupBy" must be one of'
+        )
       }))
 
   it('should return all outcome results grouped by month and followUp, and filtered by site', async () => {

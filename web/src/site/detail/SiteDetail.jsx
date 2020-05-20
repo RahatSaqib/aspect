@@ -4,7 +4,7 @@ import React, { useEffect } from 'react'
 import { connect } from 'react-redux'
 import { Switch, Route, Redirect } from 'react-router-dom'
 import Immutable from 'immutable'
-import Helmet from 'react-helmet'
+import { Helmet } from 'react-helmet'
 import classnames from 'classnames/bind'
 import { injectIntl } from 'react-intl'
 

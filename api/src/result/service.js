@@ -46,7 +46,7 @@ const {
 } = require('../assay/service')
 const { getRemoteAddress } = require('../shared/request')
 
-const confirmedTreatmentTracking = require('./Treatment/treatmentTracking')
+const confirmedTreatmentTracking = require('./treatment')
 
 async function getListResults(query, auth, fields = LIST_FIELDS) {
   const selectFields = _.clone(fields)
@@ -635,10 +635,12 @@ async function showFileReferencesById(auth, resultId) {
       'fct.mimeType',
       'fct.mimeSubtype'
     )
-    .map(ref => {
-      ref.url = `/result/file/${resultId}/${ref.id}/${ref.name}`
-      return ref
-    })
+    .then(items =>
+      items.map(ref => {
+        ref.url = `/result/file/${resultId}/${ref.id}/${ref.name}`
+        return ref
+      })
+    )
   return { data: fileReferences }
 }
 
@@ -2095,6 +2097,7 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
       errorCode: 'r.errorCode',
       workflowStatusId: 'rs.id',
       treatmentStatusId: 'rts.id',
+      caseId: 'r.caseId',
       diseaseId: 'dis.id',
     })
     .modify((queryBuilder, params) => {
@@ -2107,11 +2110,6 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
             )
             .orWhere('r.researchId', 'like', `%${params.patientOrResearchId}%`)
         )
-      }
-      if (params.caseId) {
-        queryBuilder.whereRaw('UPPER(ca.externalId)=?', [
-          params.caseId.toUpperCase(),
-        ])
       }
     }, query)
     .modify(addPartnerQueryConstraints, dataConstraints)

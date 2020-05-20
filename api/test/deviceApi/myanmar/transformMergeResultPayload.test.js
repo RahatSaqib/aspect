@@ -64,6 +64,10 @@ describe('transformMergeResultPayload for Myanmar', () => {
             return deviceTypeTransformMergeResultPayload
           },
         },
+        '../../../shared/dictionary': {
+          deviceTypeToPlugin: async () => Promise.resolve(null),
+          sampleTypeToId: async () => Promise.resolve(-1),
+        },
       }
     )
   }

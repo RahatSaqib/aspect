@@ -141,7 +141,7 @@ export default function consumableReducer(state = initialState, action) {
       return state.mergeIn(['consumables'], {
         loading: false,
         lastRefreshed: action.lastRefreshed,
-        items: new Immutable.fromJS(action.items),
+        items: Immutable.fromJS(action.items),
       })
     case types.REQUEST_CONSUMABLE_REASONS:
       return state.setIn(['consumableReasons', 'loading'], true)
@@ -149,7 +149,7 @@ export default function consumableReducer(state = initialState, action) {
       return state.mergeIn(['consumableReasons'], {
         loading: false,
         lastRefreshed: action.lastRefreshed,
-        items: new Immutable.fromJS(action.items),
+        items: Immutable.fromJS(action.items),
       })
     default:
       return state

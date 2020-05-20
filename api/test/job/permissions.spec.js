@@ -474,8 +474,7 @@ describe('Permissions', () => {
         runTestWithKnex(async knex => {
           allRefIds = await knex(refTable)
             .orderBy('id')
-            .select('id')
-            .map(x => x.id)
+            .pluck('id')
           // checkpoint of all existing items before test to restore them after
           initialItems = await knex(tableName)
             .where({ jobFunctionId })

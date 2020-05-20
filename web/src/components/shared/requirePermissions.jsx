@@ -98,14 +98,16 @@ export const requirePermissions = ({
       extraPermissions: [],
     }
 
+    static contextType = ReactReduxContext
+
+    unsubscribe = _.noop // eslint-disable-line react/sort-comp
+
     constructor(props, context) {
       super(props)
 
       this.context = context
       this.state = this.createState()
     }
-
-    unsubscribe = _.noop // eslint-disable-line react/sort-comp
 
     componentDidMount() {
       this.unsubscribe = this.context.store.subscribe(this.handleStoreChange)
@@ -122,8 +124,6 @@ export const requirePermissions = ({
       }
       this.setState(this.createState())
     }
-
-    static contextType = ReactReduxContext
 
     createState() {
       const { store } = this.context

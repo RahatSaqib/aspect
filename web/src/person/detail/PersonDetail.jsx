@@ -6,7 +6,7 @@ import { compose, setPropTypes } from 'recompose'
 import { injectIntl } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import Helmet from 'react-helmet'
+import { Helmet } from 'react-helmet'
 
 // Material-UI
 import Paper from '@material-ui/core/Paper'

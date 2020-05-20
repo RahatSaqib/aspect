@@ -222,7 +222,7 @@ function receiveCountriesForLocationSelector(state, countries, lastRefreshed) {
     new LazyLoadItems({
       loading: false,
       lastRefreshed,
-      items: new Immutable.List(
+      items: Immutable.List(
         _.map(
           countries,
           country =>
@@ -233,7 +233,7 @@ function receiveCountriesForLocationSelector(state, countries, lastRefreshed) {
                 loading: false,
                 lastRefreshed: country.states ? lastRefreshed : undefined,
                 items: country.states
-                  ? new Immutable.List(
+                  ? Immutable.List(
                       _.map(
                         country.states,
                         state =>
@@ -246,7 +246,7 @@ function receiveCountriesForLocationSelector(state, countries, lastRefreshed) {
                                 ? lastRefreshed
                                 : undefined,
                               items: state.lgas
-                                ? new Immutable.List(
+                                ? Immutable.List(
                                     _.map(
                                       state.lgas,
                                       lga => new LazyLoadChild(lga)
@@ -312,7 +312,7 @@ function receiveStatesForLocationSelector(
         {
           loading: false,
           lastRefreshed,
-          items: new Immutable.List(
+          items: Immutable.List(
             _.map(
               states,
               state =>
@@ -323,7 +323,7 @@ function receiveStatesForLocationSelector(
                     loading: false,
                     lastRefreshed: state.lgas ? lastRefreshed : undefined,
                     items: state.lgas
-                      ? new Immutable.List(
+                      ? Immutable.List(
                           _.map(state.lgas, lga => new LazyLoadChild(lga))
                         )
                       : EMPTY_LIST,
@@ -404,9 +404,7 @@ function receiveLgasForLocationSelector(
           {
             loading: false,
             lastRefreshed,
-            items: new Immutable.List(
-              _.map(lgas, lga => new LazyLoadChild(lga))
-            ),
+            items: Immutable.List(_.map(lgas, lga => new LazyLoadChild(lga))),
           }
         )
       }

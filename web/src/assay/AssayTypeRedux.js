@@ -82,7 +82,7 @@ export default function assayTypeReducer(state = initialState, action) {
       return state.mergeIn(['assayTypes'], {
         loading: false,
         lastRefreshed: action.lastRefreshed,
-        items: new Immutable.fromJS(action.items),
+        items: Immutable.fromJS(action.items),
       })
     default:
       return state
