@@ -20,10 +20,20 @@ async function getForms(request) {
       externalsId: 'fd.externalId',
       formType: 'ft.externalId',
     })
-    .select()
+    .select('fd.externalId','fd.assayId','fd.diseaseId','ft.externalId as FormTypeId')
 
 
-    return _.map(await formQuery,form=>({[form.externalId]: formDictionary[form.externalId]}))
+    const forms={}
+    // eslint-disable-next-line no-return-assign
+    _.each(await formQuery,form=>{
+      forms[form.externalId]={
+        ...formDictionary[form.externalId],
+        assayId:form.assayId,
+        diseaseId:form.diseaseId,
+        formTypeId: form.formTypeId,
+      }}
+      )
+    return forms
 
 }
 module.exports = {

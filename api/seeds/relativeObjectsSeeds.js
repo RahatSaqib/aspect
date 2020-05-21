@@ -3,6 +3,7 @@ const Promise = require('bluebird')
 const _ = require('lodash')
 const { insertNewResultPushTemplates } = require('./commonPushNotifications')
 const { getBaseIssues } = require('./relatedObjects/issues')
+const { getBaseForms } = require('./relatedObjects/forms')
 // / This module was meant for adding generic stuff to all folder seeds.
 // / The idea is to add functions which the only parameter is the knex object we are using
 // / Every function should control which elements should insert and which ones should overpass.
@@ -117,6 +118,38 @@ async function addIssueTypes(
   return true
 }
 
+async function addForms(knex, _partnerId){
+
+  let partnerId = _partnerId
+  if (!partnerId) {
+    try {
+      // eslint-disable-next-line prefer-const
+      ;({ partnerId } = await knex('User as u')
+        .join('Person as p', 'u.id', 'p.userId')
+        .join('Job as j', 'p.id', 'j.personId')
+        .join('JobFunction as jf', 'j.jobFunctionId', 'jf.id')
+        .where('jf.name', 'admin')
+        .first('p.lastPartnerId as partnerId'))
+      if (!partnerId) {
+        ;({ partnerId } = await knex('Partner as p').first('id as partnerId'))
+      }
+    } catch (e) {
+      return false
+    }
+  }
+  const forms =await getBaseForms()
+  const insertedForms = _.map(
+    await knex('FormDefinition').select('externalId'),
+    elem => elem.externalId
+  )
+  await Promise.each(Object.keys(forms),async form=>{
+    if(insertedForms.indexOf(form)===-1){
+    const [formDefinitionSchemaId]=await knex('FormDefinitionSchema').insert({jsonSchemaFile:forms[form].fileName})
+    await knex('FormDefinition').insert({...forms[form].formDefinition, formDefinitionSchemaId, partnerId})
+  }
+  })
+
+}
 module.exports = {
-  addIssueTypes,
+  addIssueTypes,addForms,
 }
