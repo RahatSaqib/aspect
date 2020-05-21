@@ -24,7 +24,26 @@
       "name": "Clinical Response",
       "i18nKey": "clinicalResponseForm",
       "externalId": "clinicalResponseForm"
+    },
+    {
+      "name": "Case response",
+      "i18nKey": "caseResponseForm",
+      "externalId": "caseResponseForm"
+    },
+    {
+      "name": "Case Creation",
+      "i18nKey": "CaseCreation",
+      "externalId": "CaseCreation"
+    },
+    {
+      "name": "Patient Creation",
+      "i18nKey": "PatientCreation",
+      "externalId": "PatientCreation"
+    },
+    {
+      "name": "TB case form",
+      "i18nKey": "TBCaseForm",
+      "externalId": "TBCaseForm"
     }
-
   ]
 }
