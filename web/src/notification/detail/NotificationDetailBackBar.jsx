@@ -19,7 +19,7 @@ const messages = defineMessages({
   },
 })
 
-export const enhance = compose(
+const enhance = compose(
   injectIntl,
   withHandlers({
     onBackClick: ({ history }) => () => {

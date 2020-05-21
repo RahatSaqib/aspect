@@ -1,6 +1,6 @@
 import React from 'react'
 import { mount } from 'enzyme'
-import { NotificationDetailBackBar, enhance } from './NotificationDetailBackBar'
+import { NotificationDetailBackBar } from './NotificationDetailBackBar'
 import AspectButton from '../../components/shared/AspectButton'
 import { DetailBackBar } from '../../globals/components/DetailBackBar'
 
