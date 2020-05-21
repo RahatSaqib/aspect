@@ -415,13 +415,7 @@ describe('case/service', () => {
           resultId
         )
         assert.isNotOk(caseExternalIdBefore)
-        const casesLastUpdatedOnBefore = await getLastCaseUpdatedOn()
         await onResultLogged({ resultId }, mockMessageContext())
-        const casesLastUpdatedOnAfter = await getLastCaseUpdatedOn()
-        assert.notEqual(
-          casesLastUpdatedOnBefore.toISOString(),
-          casesLastUpdatedOnAfter.toISOString()
-        )
         const caseExternalIdAfter = await getCaseExternalIdFromResultId(
           resultId
         )
