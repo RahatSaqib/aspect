@@ -332,6 +332,11 @@ function onResultLogged({ resultId }, { messageContext }) {
             await knex('Result')
               .where('id', resultId)
               .update({ caseId: otherCaseId })
+            // TODO: If the old case is now empty, should it be purged?
+            //       We need to consider if there is a use case for cases
+            //       that don't have results, what will happen to the
+            //       patient data associated with that case? Do empty cases
+            //       even present a problem?
           }
         }
       }

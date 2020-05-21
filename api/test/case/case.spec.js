@@ -157,6 +157,7 @@ describe('case/service', () => {
     })
   })
 
+  // TODO: Convert all the tests below into unit tests
   describe('add / update', () => {
     let caseId
     it('Should add case and return the id', async () => {
