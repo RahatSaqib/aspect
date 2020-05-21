@@ -2687,6 +2687,10 @@ async function seedPartnerDisease(knex) {
           diseaseId,
           // allow auto-assigning Result to Case only for Covid-19 disease
           canAutoAssignResultByCaseId: diseaseId === diseaseCovid19Id,
+          caseExternalIdTemplate:
+            diseaseId === diseaseCovid19Id
+              ? '{{coalesce result.formData.caseId result.data.caseId result.patientData.caseId}}'
+              : null,
         })
       }
     })
