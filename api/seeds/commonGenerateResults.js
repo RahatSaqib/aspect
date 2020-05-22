@@ -498,9 +498,9 @@ async function addCovidResults(
     const updatedOn = addMinutes(randomDate, 180)
 
     if (!positiveResults) {
-      let caseId = null
+      let patientCaseId = null
       if (assayIdDiseaseIdMap[assayId]) {
-        caseId = await addCase({
+        patientCaseId = await addCase({
           externalId: caseExternalId,
           partnerId,
           diseaseId: assayIdDiseaseIdMap[assayId],
@@ -510,7 +510,7 @@ async function addCovidResults(
 
       resultToInsert = {
         assayId,
-        caseId,
+        patientCaseId,
         partnerId,
         formData: JSON.stringify(formData),
         startedOn: resultCapturedInAspect ? null : randomDate,

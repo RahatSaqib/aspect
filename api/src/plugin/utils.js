@@ -3,8 +3,9 @@ const { knex } = require('../db')
 async function getPartnerPluginName({ partnerId, caseId }) {
   let partnerPluginName = ''
   if (caseId) {
-    ;[partnerPluginName] = await knex('Case as c')
-      .leftJoin('Partner as p', 'c.partnerId', 'p.id')
+    ;[partnerPluginName] = await knex('PatientCase as c')
+      .innerJoin('Result as r', 'c.id', 'r.patientCaseId')
+      .leftJoin('Partner as p', 'r.partnerId', 'p.id')
       .where('c.id', caseId)
       .select('p.plugin')
       .pluck('p.plugin')

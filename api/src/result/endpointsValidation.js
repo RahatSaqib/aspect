@@ -101,7 +101,7 @@ const resultUpdatePayload = {
     .max(500)
     .allow('', null)
     .description('Patient ID'),
-  caseId: Joi.string()
+  patientCaseId: Joi.string()
     .max(500)
     .allow('', null)
     .description('Case ID'),
@@ -400,7 +400,7 @@ function validateResultDetailResponse() {
     requiresTreatment: Joi.number()
       .allow(null, '')
       .description('Predicted required treatment'),
-    caseId: Joi.number()
+    patientCaseId: Joi.number()
       .allow(null)
       .optional()
       .description('Case ID for the result.'),
@@ -568,7 +568,7 @@ function listResultsBaseConfig() {
           .description(
             'The id of last entry in ResultStatusLog for current result'
           ),
-        caseId: Joi.string()
+        patientCaseId: Joi.string()
           .allow('')
           .optional()
           .description(

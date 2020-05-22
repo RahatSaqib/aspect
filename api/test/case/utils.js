@@ -1,7 +1,7 @@
 const { knex } = require('../../src/db')
 
 async function getFirstCase() {
-  return knex('Case').first()
+  return knex('PatientCase').first()
 }
 
 async function getFirstPartnerId() {
