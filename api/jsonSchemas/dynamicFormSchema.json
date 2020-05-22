@@ -42,14 +42,21 @@
                         "type": "string",
                         "title": "Field name",
                         "description": "The name of the field"
-                        
+
+                    },
+                    "title": {
+                      "$id": "#/properties/fields/items/properties/title",
+                      "type": "string",
+                      "title": "Title of the field",
+                      "description": "The title to show when render"
+
                     },
                     "caption": {
                         "$id": "#/properties/fields/items/properties/caption",
                         "type": "string",
                         "title": "capation text",
                         "description": "The caption/help text of the field"
-                        
+
                     },
                     "i18nKey": {
                         "$id": "#/properties/fields/items/properties/i18nKey",
@@ -85,7 +92,7 @@
                         "title": "The Controltype Schema",
                         "description": "An explanation about the purpose of this instance.",
                         "default": "",
-    					"enum": ["textBox", "textArea","comboBox", "radioButton", "checkBox", "list", "autoComplete","datePicker", "filePicker", "camera"]                    
+    					"enum": ["textBox", "textArea","comboBox", "radioButton", "checkBox", "list", "autoComplete","datePicker", "filePicker", "camera"]
                     },
                     "required": {
                         "$id": "#/properties/fields/items/properties/required",

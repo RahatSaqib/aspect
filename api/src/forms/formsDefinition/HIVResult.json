@@ -1,0 +1,56 @@
+{
+  "fields": [
+    {
+      "name": "log",
+      "i18nKey": "logi18nKey",
+      "fieldType": "number",
+      "order": 0,
+      "caption": "log value",
+      "i18nKeyCaption": "logi18nCaptionKey",
+      "controlType": "textBox",
+      "required": true,
+      "encrypted": false,
+      "validation": [
+        {
+          "validationType": "float",
+          "min": 0,
+          "errorMessage": "This value should be higher than 0",
+          "errorMessageI18nKey": "logErrori18nKey"
+        }
+      ]
+    },
+    {
+      "name": "copies",
+      "title":"Copies/ml",
+      "i18nKey": "copiesi18nKey",
+      "fieldType": "number",
+      "order": 1,
+      "caption": "log value",
+      "i18nKeyCaption": "copiesi18nCaptionKey",
+      "controlType": "textBox",
+      "required": true,
+      "encrypted": false,
+      "validation": [
+        {
+          "validationType": "float",
+          "min": 0,
+          "errorMessage": "This value should be higher than 0",
+          "errorMessageI18nKey": "logErrori18nKey"
+        }
+      ]
+    },
+    {
+      "name": "ResultText",
+      "i18nKey": "ResultTexti18nKey",
+      "fieldType": "text",
+      "order": 2,
+      "title": "Result Text",
+      "caption": "Result Text value",
+      "i18nKeyCaption": "ResultTexti18nCaptionKey",
+      "controlType": "textBox",
+      "required": true,
+      "encrypted": false
+    }
+  ],
+  "refForms": []
+}

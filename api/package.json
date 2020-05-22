@@ -25,7 +25,7 @@
     "stop:background": "forever stop src/server.js",
     "stop:background:quiet": "forever stop src/server.js",
     "test": "npm-run-all test:json test:unit test:contract",
-    "test:json": "ajv test -s jsonSchemas/dynamicFormSchema.json -d 'dynamicForms/*.json' --valid",
+    "test:json": "ajv test -s jsonSchemas/dynamicFormSchema.json -d 'src/forms/formsDefinition/*.json' --valid",
     "test:quiet": "npm-run-all test:unit test:contract:quiet",
     "test:contract": "npm-run-all -c start:background mocha:contract stop:background",
     "test:contract:quiet": "npm-run-all -c start:background:quiet mocha:contract stop:background:quiet",

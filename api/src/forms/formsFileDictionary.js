@@ -5,10 +5,11 @@ const _ = require('lodash')
 const dict = []
 
 function formDictionary(){
-  const files = fs.readdirSync('./formsSchema/',{encoding:'utf8'})
+  const files = fs.readdirSync('./formsDefinition/',{encoding:'utf8'})
   _.each(files,fileName=>{
-    const form = require(`./formsSchema/${fileName}`)
-    dict[form.externalId]=form
+    const form = require(`./formsDefinition/${fileName}`)
+    const externalId=fileName.replace('.json','')
+    dict[externalId]=form
   })
 }
 formDictionary()
