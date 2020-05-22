@@ -10,7 +10,7 @@ async function getBaseForms() {
         title: 'TB Result data',
         i18nKeyTitle: 'TBResult18nkey',
         diseaseId: await diseaseToId('tb'),
-        externalId: 'TBResultForm',
+        externalId: 'TBResult',
         formTypeId: await formTypeToId('resultFormWeb'),
       },
     },
@@ -21,7 +21,7 @@ async function getBaseForms() {
         title: 'TB Probes',
         i18nKeyTitle: 'TBProbes18nkey',
         diseaseId: await diseaseToId('tb'),
-        externalId: 'TBProbesForm',
+        externalId: 'TBProbes',
         formTypeId: await formTypeToId('resultFormWeb'),
       },
     },
@@ -32,11 +32,11 @@ async function getBaseForms() {
         title: 'HIV Result data',
         i18nKeyTitle: 'HIVResult18nkey',
         diseaseId: await diseaseToId('tb'),
-        externalId: 'HIVResultForm',
+        externalId: 'HIVResult',
         formTypeId: await formTypeToId('resultFormWeb'),
       },
     },
-    HIVCaseForm: {
+    HIVProbes: {
       fileName: 'HIVProbes.json',
       formDefinition: {
         order: 1,
@@ -44,7 +44,7 @@ async function getBaseForms() {
         i18nKeyTitle: 'HivProbes18nkey',
         diseaseId: await diseaseToId('hiv'),
         formTypeId: await formTypeToId('resultFormWeb'),
-        externalId: 'HIVProbesForm',
+        externalId: 'HIVProbes',
       },
     },
   }
