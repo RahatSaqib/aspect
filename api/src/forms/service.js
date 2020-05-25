@@ -20,7 +20,7 @@ async function getForms(request) {
       externalsId: 'fd.externalId',
       formType: 'ft.externalId',
     })
-    .select('fd.externalId','fd.assayId','fd.diseaseId','ft.externalId as FormTypeId')
+    .select('fd.externalId','fd.assayId','fd.diseaseId','ft.externalId as formTypeId')
 
     const forms={}
     // eslint-disable-next-line no-return-assign
