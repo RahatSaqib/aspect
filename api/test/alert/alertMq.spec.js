@@ -46,9 +46,7 @@ describe('Sending Alert via Message Queue', () => {
       await waitForIdle()
 
       const messageStatusIdSent = await messageStatusToId('Sent')
-      const msg = await knex('AlertMessage')
-        .where('id', messageId)
-        .first()
+      const msg = await knex('AlertMessage').where('id', messageId).first()
       assert.equal(msg.messageStatusId, messageStatusIdSent)
       // make sure generated message does not have unprocessed curly braces {{ }}
       const message = processDynamicMessage(msg.message)

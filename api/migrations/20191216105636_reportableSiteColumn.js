@@ -12,10 +12,7 @@ async function up(knex) {
       .alter()
   })
   await knex.schema.alterTable('Result', result => {
-    result
-      .integer('reportableSiteId')
-      .unsigned()
-      .nullable()
+    result.integer('reportableSiteId').unsigned().nullable()
   })
   await knex('Result')
     .update({

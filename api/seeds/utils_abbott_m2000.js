@@ -254,10 +254,7 @@ async function seedAbbottM2000AndAssays(knex, updateExistingAssays) {
     abbreviation,
     resultDataSchema
   ) => {
-    let { id } =
-      (await knex('Assay')
-        .where({ externalId })
-        .first('id')) || {}
+    let { id } = (await knex('Assay').where({ externalId }).first('id')) || {}
     if (!id) {
       ;[id] = await knex('Assay').insert({
         name,

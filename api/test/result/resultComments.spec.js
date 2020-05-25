@@ -32,9 +32,7 @@ describe('Result Comments', () => {
   let adminAccessToken = ''
   before(() =>
     runTestWithKnex(async knex => {
-      await knex('ResultNote')
-        .where('resultId', resultId)
-        .delete()
+      await knex('ResultNote').where('resultId', resultId).delete()
 
       clinicianAccessToken = await getClinicianAccessToken()
       adminAccessToken = await getAdminAccessToken()

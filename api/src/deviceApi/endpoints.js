@@ -22,12 +22,8 @@ const {
 const errorPayload = Joi.object()
   .allow(null)
   .keys({
-    code: Joi.string()
-      .allow('', null)
-      .description('Error code'),
-    notes: Joi.string()
-      .allow('', null)
-      .description('Description of the error'),
+    code: Joi.string().allow('', null).description('Error code'),
+    notes: Joi.string().allow('', null).description('Description of the error'),
   })
 
 const logPayload = {
@@ -44,12 +40,8 @@ const logResponse = {
 }
 
 const devicePayload = {
-  name: Joi.string()
-    .allow('', null)
-    .description('The device name'),
-  serial: Joi.string()
-    .allow('', null)
-    .description('The device serial number'),
+  name: Joi.string().allow('', null).description('The device name'),
+  serial: Joi.string().allow('', null).description('The device serial number'),
   status: Joi.object()
     .allow(null)
     .keys({
@@ -178,15 +170,11 @@ const resultPayload = {
     group: Joi.string()
       .allow('', null)
       .description('The group, collection, or worksheet of a sample'),
-    runNumber: Joi.string()
-      .allow('', null)
-      .description('Sample run number.'),
+    runNumber: Joi.string().allow('', null).description('Sample run number.'),
     type: Joi.object()
       .allow(null)
       .keys({
-        id: Joi.string()
-          .required()
-          .description('ID of the Sample Type'),
+        id: Joi.string().required().description('ID of the Sample Type'),
       }),
     originSite: Joi.object()
       .allow(null)
@@ -324,46 +312,22 @@ const resultPayload = {
         ),
     }),
   patient: Joi.object().keys({
-    id: Joi.string()
-      .allow('', null)
-      .description('Patient Identifier'),
-    name: Joi.string()
-      .allow('', null)
-      .description('Patient name'),
-    surname: Joi.string()
-      .allow('', null)
-      .description('Patient surname'),
-    gender: Joi.string()
-      .allow('', null)
-      .description('Patient gender (M/F)'),
-    age: Joi.number()
-      .allow(null)
-      .description('Patient age (years)'),
+    id: Joi.string().allow('', null).description('Patient Identifier'),
+    name: Joi.string().allow('', null).description('Patient name'),
+    surname: Joi.string().allow('', null).description('Patient surname'),
+    gender: Joi.string().allow('', null).description('Patient gender (M/F)'),
+    age: Joi.number().allow(null).description('Patient age (years)'),
     dateOfBirth: Joi.date()
       .iso()
       .allow(null)
       .description('Patient date of birth'),
-    address: Joi.string()
-      .allow('', null)
-      .description('Patient address'),
-    street: Joi.string()
-      .allow('', null)
-      .description('Patient street'),
-    city: Joi.string()
-      .allow('', null)
-      .description('Patient city'),
-    state: Joi.string()
-      .allow('', null)
-      .description('Patient state'),
-    zip: Joi.string()
-      .allow('', null)
-      .description('Patient ZIP/Postal code'),
-    phone: Joi.string()
-      .allow('', null)
-      .description('Patient phone number'),
-    hivStatus: Joi.string()
-      .allow('', null)
-      .description("Patient's HIV Status"),
+    address: Joi.string().allow('', null).description('Patient address'),
+    street: Joi.string().allow('', null).description('Patient street'),
+    city: Joi.string().allow('', null).description('Patient city'),
+    state: Joi.string().allow('', null).description('Patient state'),
+    zip: Joi.string().allow('', null).description('Patient ZIP/Postal code'),
+    phone: Joi.string().allow('', null).description('Patient phone number'),
+    hivStatus: Joi.string().allow('', null).description("Patient's HIV Status"),
     microscopyResult: Joi.string()
       .allow('', null)
       .description("Patient's microscopy result"),
@@ -411,9 +375,7 @@ const routes = [
         },
         schema: {
           ...devicePayload,
-          log: Joi.object()
-            .keys(logResponse)
-            .description('Device Log Data'),
+          log: Joi.object().keys(logResponse).description('Device Log Data'),
           configuration: Joi.object()
             .keys(configurationPayload)
             .description('Device Configuration Data'),
@@ -481,9 +443,7 @@ const routes = [
       description: 'Deliver data in custom plugin format',
       validate: {
         params: {
-          pluginName: Joi.string()
-            .description('Name of Plugin')
-            .required(),
+          pluginName: Joi.string().description('Name of Plugin').required(),
         },
       },
     },
@@ -501,9 +461,7 @@ const routes = [
       validate: {
         payload: {
           ...configurationPayload,
-          log: Joi.object()
-            .keys(logPayload)
-            .description('Device Log Data'),
+          log: Joi.object().keys(logPayload).description('Device Log Data'),
         },
         failAction: async (request, h, error) =>
           addDeviceLog(error)(request, h),
@@ -532,9 +490,7 @@ const routes = [
           allowUnknown: true,
         },
         schema: {
-          log: Joi.object()
-            .keys(logResponse)
-            .description('Device Log Data'),
+          log: Joi.object().keys(logResponse).description('Device Log Data'),
           operation: Joi.object()
             .keys(operationPayload)
             .description('Device Operation Data'),
@@ -556,9 +512,7 @@ const routes = [
       validate: {
         payload: {
           ...resultPayload,
-          log: Joi.object()
-            .keys(logPayload)
-            .description('Device Log Data'),
+          log: Joi.object().keys(logPayload).description('Device Log Data'),
         },
         failAction: async (request, h, error) =>
           addDeviceLog(error)(request, h),
@@ -591,9 +545,7 @@ const routes = [
           allowUnknown: true,
         },
         schema: {
-          log: Joi.object()
-            .keys(logResponse)
-            .description('Device Log Data'),
+          log: Joi.object().keys(logResponse).description('Device Log Data'),
           result: Joi.object()
             .keys(resultPayload)
             .description('Device Result Data.'),
@@ -619,9 +571,7 @@ const routes = [
         },
         payload: {
           ...resultPayload,
-          log: Joi.object()
-            .keys(logPayload)
-            .description('Device Log Data'),
+          log: Joi.object().keys(logPayload).description('Device Log Data'),
         },
         failAction: async (request, h, error) =>
           addDeviceLog(error)(request, h),

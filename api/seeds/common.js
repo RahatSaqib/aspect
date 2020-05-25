@@ -72,10 +72,10 @@ async function commonUpserts(
       (await knex('Country as c')
         .leftJoin('Geography as g', 'c.id', 'g.countryId')
         .where('c.abbreviation', country.abbreviation)
-        .andWhere(function() {
+        .andWhere(function () {
           this.whereNull('g.stateId')
         })
-        .andWhere(function() {
+        .andWhere(function () {
           this.whereNull('g.lgaId')
         })
         .first('c.id as countryId', 'g.id as countryGeographyId')) || {}
@@ -238,7 +238,7 @@ async function upsertJobFunction(
 }
 
 async function clonePermissions(knex, fromFeature, toFeature) {
-  await knex.transaction(async function(trx) {
+  await knex.transaction(async function (trx) {
     const { id: featureId } = await knex
       .from('Feature')
       .where({ module: toFeature })
@@ -247,7 +247,7 @@ async function clonePermissions(knex, fromFeature, toFeature) {
     await knex
       .from('JobFunctionFeature')
       .transacting(trx)
-      .insert(function() {
+      .insert(function () {
         this.from('JobFunction as jf')
           .innerJoin('JobFunctionFeature as jff', 'jf.id', 'jff.jobFunctionId')
           .innerJoin('Feature as f', 'jff.featureId', 'f.id')
@@ -258,7 +258,7 @@ async function clonePermissions(knex, fromFeature, toFeature) {
     await knex
       .from('JobFunctionPermission')
       .transacting(trx)
-      .insert(function() {
+      .insert(function () {
         this.from('JobFunction as jf')
           .innerJoin(
             'JobFunctionPermission as jfp',
@@ -266,7 +266,7 @@ async function clonePermissions(knex, fromFeature, toFeature) {
             'jfp.jobFunctionId'
           )
           .innerJoin('Permission as p', 'jfp.permissionId', 'p.id')
-          .innerJoin('Permission as pCase', function() {
+          .innerJoin('Permission as pCase', function () {
             this.on('pCase.module', knex.raw('?', [toFeature])).on(
               'p.activity',
               'pCase.activity'
@@ -392,9 +392,7 @@ async function ensureCountryLevelInformationSystemExists(
 ) {
   const { externalId, name, manufacturer, plugin } = deviceType
   let { id: deviceTypeId } =
-    (await knex('DeviceType')
-      .where('externalId', externalId)
-      .first('id')) || {}
+    (await knex('DeviceType').where('externalId', externalId).first('id')) || {}
   if (!deviceTypeId) {
     const deviceTypeCategoryInformationSystem = await deviceTypeCategoryToId(
       'Information System'
@@ -700,15 +698,12 @@ async function createAssay(
 
 async function upsertAssay(knex, assay) {
   let { id: assayId } =
-    (await knex('Assay')
-      .where({ externalId: assay.externalId })
-      .first('id')) || {}
+    (await knex('Assay').where({ externalId: assay.externalId }).first('id')) ||
+    {}
   if (!assayId) {
     ;[assayId] = await knex('Assay').insert(assay)
   } else {
-    await knex('Assay')
-      .where('id', assayId)
-      .update(assay)
+    await knex('Assay').where('id', assayId).update(assay)
   }
   return assayId
 }
@@ -722,7 +717,7 @@ async function upsertStatesAndLgas(knex, countryId, states) {
           .leftJoin('Geography as g', 's.id', 'g.stateId')
           .where('g.countryId', countryId)
           .andWhere('s.name', state.name)
-          .andWhere(function() {
+          .andWhere(function () {
             this.whereNull('g.lgaId')
           })
           .first('s.id as stateId', 'g.id as stateGeographyId')) || {}
@@ -1015,9 +1010,7 @@ async function baseGxAlertMigration(
   // ---------------------------
   const now = new Date()
   let { id: adminId } =
-    (await knex('User')
-      .where('name', admin.name)
-      .first('id')) || {}
+    (await knex('User').where('name', admin.name).first('id')) || {}
   if (!adminId) {
     ;[adminId] = await knex('User').insert({
       approved: 1,
@@ -1029,9 +1022,7 @@ async function baseGxAlertMigration(
     })
   }
   let { id: partnerId } =
-    (await knex('Partner')
-      .where('name', partner.name)
-      .first('id')) || {}
+    (await knex('Partner').where('name', partner.name).first('id')) || {}
   if (!partnerId) {
     ;[partnerId] = await knex('Partner').insert({
       partnerTypeId: await partnerTypeToId('Operating'),
@@ -1476,7 +1467,7 @@ async function baseGxAlertMigration(
     let personId = null
     const existingPerson = await knex('Person')
       .where({ userId })
-      .orWhere(function() {
+      .orWhere(function () {
         this.where('name', person.personName)
         if (person.personEmailAddress) {
           this.andWhere('email', person.personEmailAddress)

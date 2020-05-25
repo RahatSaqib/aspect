@@ -13,13 +13,11 @@ function onAlertMessageCreated({ alertMessageId }, { messageContext }) {
     const message = await createAlertMessageFromTemplate(knex, alertMessageId)
     const messageStatusId = await messageStatusToId('Sent')
 
-    await knex('AlertMessage')
-      .where({ id: alertMessageId })
-      .update({
-        message,
-        messageStatusId,
-        updatedOn: new Date(),
-      })
+    await knex('AlertMessage').where({ id: alertMessageId }).update({
+      message,
+      messageStatusId,
+      updatedOn: new Date(),
+    })
 
     context.alertMessageSent(alertMessageId)
   })

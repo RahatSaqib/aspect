@@ -68,19 +68,13 @@ describe('Result create and update routes', () => {
       await knex('Case')
         .whereIn(
           'id',
-          await knex('Result')
-            .whereIn('id', resultIds)
-            .pluck('caseId')
+          await knex('Result').whereIn('id', resultIds).pluck('caseId')
         )
         .del()
 
-      await knex('Result')
-        .whereIn('id', resultIds)
-        .del()
+      await knex('Result').whereIn('id', resultIds).del()
 
-      await knex('Sample')
-        .whereIn('id', resultIds)
-        .del()
+      await knex('Sample').whereIn('id', resultIds).del()
     }
     return Promise.resolve()
   })

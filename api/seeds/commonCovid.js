@@ -92,9 +92,7 @@ async function upsertCovidDeviceTypes(
           'plugin',
         ])
       if (deviceType.id) {
-        await knex('DeviceType')
-          .where('id', deviceType.id)
-          .update(deviceType)
+        await knex('DeviceType').where('id', deviceType.id).update(deviceType)
       } else {
         const [deviceTypeId] = await knex('DeviceType').insert(deviceType)
         deviceType.id = deviceTypeId
@@ -137,9 +135,7 @@ async function upsertCovidDeviceTypes(
       if (!assayCovidId) {
         assayCovidId = await knex('Assay').insert(assayCovid19)
       } else {
-        await knex('Assay')
-          .where('id', assayCovidId)
-          .update(assayCovid19)
+        await knex('Assay').where('id', assayCovidId).update(assayCovid19)
       }
       const resultCategoryId = await knex('ResultCategoryAssay')
         .where({ assayId: assayCovidId })

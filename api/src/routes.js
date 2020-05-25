@@ -225,23 +225,14 @@ function validateSortPageParams(...sortColumns) {
       .integer()
       .min(0)
       .description('Page index with 0 as first page'),
-    size: Joi.number()
-      .integer()
-      .positive()
-      .description('Page size'),
+    size: Joi.number().integer().positive().description('Page size'),
   }
 }
 
 function validateDateRangeParams() {
   return {
-    minDate: Joi.date()
-      .iso()
-      .allow(null)
-      .description('From Date'),
-    maxDate: Joi.date()
-      .iso()
-      .allow(null)
-      .description('To Date'),
+    minDate: Joi.date().iso().allow(null).description('From Date'),
+    maxDate: Joi.date().iso().allow(null).description('To Date'),
   }
 }
 

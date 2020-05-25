@@ -39,9 +39,7 @@ const routes = [
                 name: Joi.string()
                   .required()
                   .description('The name of the disease'),
-                i18nKey: Joi.string()
-                  .required()
-                  .description('Translation key'),
+                i18nKey: Joi.string().required().description('Translation key'),
                 externalId: Joi.string()
                   .required()
                   .description('Unique ID of the disease'),

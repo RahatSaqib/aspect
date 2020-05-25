@@ -45,7 +45,7 @@ async function getConstraints(credentials, forModule = null) {
             'j.jobFunctionId',
             'jfp.jobFunctionId'
           )
-          .leftJoin('Permission as pModuleAdmin', function() {
+          .leftJoin('Permission as pModuleAdmin', function () {
             this.on('jfp.permissionId', 'pModuleAdmin.id')
               .andOn('pModuleAdmin.activity', knex.raw("'admin'"))
               .andOn('pModuleAdmin.module', knex.raw(`'${forModule}'`))
@@ -99,7 +99,7 @@ async function getJobConstraints(personId, jobFunctionId, forModule = null) {
             'j.jobFunctionId',
             'jfp.jobFunctionId'
           )
-          .leftJoin('Permission as pModuleAdmin', function() {
+          .leftJoin('Permission as pModuleAdmin', function () {
             this.on('jfp.permissionId', 'pModuleAdmin.id')
               .andOn('pModuleAdmin.activity', knex.raw("'admin'"))
               .andOn('pModuleAdmin.module', knex.raw(`'${forModule}'`))
@@ -224,7 +224,7 @@ function addConstraints(queryBuilder, constraints, aliases) {
   // TODO only join queries if needed within constraints or required by unspecified aliases
   if (resultAlias) {
     if (constraints.partner) {
-      queryBuilder.where(function() {
+      queryBuilder.where(function () {
         this.whereNull(`${resultAlias}.partnerId`).orWhere(
           `${resultAlias}.partnerId`,
           constraints.partner.id
@@ -232,7 +232,7 @@ function addConstraints(queryBuilder, constraints, aliases) {
       })
     }
     if (constraints.assay) {
-      queryBuilder.where(function() {
+      queryBuilder.where(function () {
         this.whereNull(`${resultAlias}.assayId`).orWhere(
           `${resultAlias}.assayId`,
           constraints.assay.id
@@ -248,14 +248,14 @@ function addConstraints(queryBuilder, constraints, aliases) {
       )
     }
     if (partner && constraints.partner) {
-      queryBuilder.where(function() {
+      queryBuilder.where(function () {
         this.whereNull(`${resultAlias}.partnerId`).orWhere({
           [`${resultAlias}.partnerId`]: constraints.partner.id,
         })
       })
     }
     if (constraints.result) {
-      queryBuilder.where(function() {
+      queryBuilder.where(function () {
         this.whereNull(`${resultAlias}.partnerId`).orWhere({
           [`${resultAlias}.partnerId`]: constraints.partner.id,
         })
@@ -283,21 +283,21 @@ function addConstraints(queryBuilder, constraints, aliases) {
       )
     }
     if (constraints.disease) {
-      queryBuilder.where(function() {
+      queryBuilder.where(function () {
         this.whereNull(`${assayType}.diseaseId`).orWhere({
           [`${assayType}.diseaseId`]: constraints.disease.id,
         })
       })
     }
     if (constraints.assayType) {
-      queryBuilder.where(function() {
+      queryBuilder.where(function () {
         this.whereNull(`${assay}.assayTypeId`).orWhere({
           [`${assay}.assayTypeId`]: constraints.assayType.id,
         })
       })
     }
     if (constraints.deviceType) {
-      queryBuilder.where(function() {
+      queryBuilder.where(function () {
         this.whereNull(`${assay}.deviceTypeId`).orWhere({
           [`${assay}.deviceTypeId`]: constraints.deviceType.id,
         })
@@ -334,7 +334,7 @@ function addConstraints(queryBuilder, constraints, aliases) {
     }
     // Partner, country, and constraints are ANDed
     if (partner && constraints.partner) {
-      queryBuilder.where(function() {
+      queryBuilder.where(function () {
         this.whereNull(`${partner}.id`).orWhere({
           [`${partner}.id`]: constraints.partner.id,
         })
@@ -349,21 +349,21 @@ function addConstraints(queryBuilder, constraints, aliases) {
       })
     }
     if (device && constraints.deviceType) {
-      queryBuilder.where(function() {
+      queryBuilder.where(function () {
         this.whereNull(`${device}.deviceTypeId`).orWhere({
           [`${device}.deviceTypeId`]: constraints.deviceType.id,
         })
       })
     }
     if (assay && constraints.assayType) {
-      queryBuilder.where(function() {
+      queryBuilder.where(function () {
         this.whereNull(`${assay}.assayTypeId`).orWhere({
           [`${assay}.assayTypeId`]: constraints.assayType.id,
         })
       })
     }
     if (assay && constraints.deviceType) {
-      queryBuilder.where(function() {
+      queryBuilder.where(function () {
         this.whereNull(`${assay}.deviceTypeId`).orWhere({
           [`${assay}.deviceTypeId`]: constraints.deviceType.id,
         })
@@ -371,7 +371,7 @@ function addConstraints(queryBuilder, constraints, aliases) {
     }
     if (constraints.disease) {
       if (assayType) {
-        queryBuilder.where(function() {
+        queryBuilder.where(function () {
           this.whereNull(`${assayType}.diseaseId`).orWhere({
             [`${assayType}.diseaseId`]: constraints.disease.id,
           })
@@ -383,7 +383,7 @@ function addConstraints(queryBuilder, constraints, aliases) {
           `${assay}.assayTypeId`,
           `${assayType}.id`
         )
-        queryBuilder.where(function() {
+        queryBuilder.where(function () {
           this.whereNull(`${assayType}.diseaseId`).orWhere({
             [`${assayType}.diseaseId`]: constraints.disease.id,
           })
@@ -423,7 +423,7 @@ function addConstraints(queryBuilder, constraints, aliases) {
         )
       }
     }
-    queryBuilder.where(function() {
+    queryBuilder.where(function () {
       for (const constraint of constraints.$or) {
         addConstraintWithJobFunction({
           ...getBaseProps(this, constraint),
@@ -491,7 +491,7 @@ function addConstraintWithJobFunction({
   allowAdminThrough = false,
 }) {
   if (alias && constraint) {
-    queryBuilder.orWhere(function() {
+    queryBuilder.orWhere(function () {
       if (
         jobFunctionAlias &&
         jobFunctionConstraint &&

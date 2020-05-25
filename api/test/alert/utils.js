@@ -70,9 +70,7 @@ class AlertTestContext {
 
       // remove sample message
       if (this.messageId) {
-        await knex('AlertMessage')
-          .where('id', this.messageId)
-          .delete()
+        await knex('AlertMessage').where('id', this.messageId).delete()
       }
 
       await queuePurge()

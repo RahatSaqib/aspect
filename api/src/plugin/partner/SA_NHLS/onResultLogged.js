@@ -57,14 +57,10 @@ async function onResultLogged({ resultId }, { messageContext }) {
       if (!_.isEmpty(resultUpdates)) {
         resultUpdates.updatedOn = now
         resultUpdates.updatedBy = null
-        await knex('Result')
-          .where('id', resultId)
-          .update(resultUpdates)
+        await knex('Result').where('id', resultId).update(resultUpdates)
       }
       if (!_.isEmpty(sampleUpdates)) {
-        await knex('Sample')
-          .where('id', sampleId)
-          .update(sampleUpdates)
+        await knex('Sample').where('id', sampleId).update(sampleUpdates)
       }
     }
   })

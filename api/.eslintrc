@@ -19,14 +19,6 @@
     "mocha": true
   },
   "rules": {
-    "arrow-parens": ["error", "as-needed"],
-    "comma-dangle": ["error", {
-      "arrays": "always-multiline",
-      "objects": "always-multiline",
-      "imports": "always-multiline",
-      "exports": "always-multiline",
-      "functions": "never"
-    }],
     "consistent-return": "off",
     "class-methods-use-this": "off",
     "func-names": "off",
@@ -58,7 +50,7 @@
         "properties": false
       }
     ],
-    "newline-per-chained-call": ["error", { "ignoreChainWithDepth": 2 }],
+    "newline-per-chained-call": "off",
     "no-nested-ternary": "off",
     "no-param-reassign": "off",
     "no-plusplus": [
@@ -71,7 +63,16 @@
     "no-shadow": "off",
     "no-use-before-define": "off",
     "prefer-object-spread": "warn",
-    
+    "prettier/prettier": [
+      "error",
+      {
+        "arrowParens": "avoid",
+        "eol": "lf",
+        "semi": false,
+        "singleQuote": true,
+        "trailingComma": "es5"
+      }
+    ],
     "require-yield": "off",
     "no-confusing-arrow": [
       "error",
@@ -86,16 +87,6 @@
         "blankLine": "always",
         "prev": "function",
         "next": "function"
-      }
-    ],
-
-    "semi": ["error", "never"],
-    "space-before-function-paren": [
-      "error", 
-      { 
-        "anonymous": "never",
-        "asyncArrow": "always",
-        "named": "never"
       }
     ]
   }

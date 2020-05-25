@@ -8,7 +8,7 @@ async function onGxAlertAuthenticated({
 }) {
   if (_.some(tags, tag => tag.indexOf('EID+') > -1)) {
     const eidPositiveTagForPerson = await knex('Tag as t')
-      .leftJoin('PersonTag as pt', function() {
+      .leftJoin('PersonTag as pt', function () {
         this.on('t.id', 'pt.tagId').andOn('pt.personId', knex.raw(personId))
       })
       .where({
@@ -25,7 +25,7 @@ async function onGxAlertAuthenticated({
   }
   if (_.some(tags, tag => tag.indexOf('VL>50') > -1)) {
     const hivVlPositiveTagForPerson = await knex('Tag as t')
-      .leftJoin('PersonTag as pt', function() {
+      .leftJoin('PersonTag as pt', function () {
         this.on('t.id', 'pt.tagId').andOn('pt.personId', knex.raw(personId))
       })
       .where({

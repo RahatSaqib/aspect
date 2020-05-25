@@ -71,9 +71,7 @@ class SmsTestContext {
 
       // remove sample message
       if (this.messageId) {
-        await knex('SmsMessage')
-          .where('id', this.messageId)
-          .delete()
+        await knex('SmsMessage').where('id', this.messageId).delete()
       }
 
       await queuePurge()

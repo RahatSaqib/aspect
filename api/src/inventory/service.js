@@ -389,10 +389,7 @@ async function listInventoryItems(request) {
       INVENTORY_ITEM_DATA_CONSTRAINT_ALIASES
     )
 
-  const getCount = inventoryItemsQuery
-    .clone()
-    .count('ii.id as count')
-    .first()
+  const getCount = inventoryItemsQuery.clone().count('ii.id as count').first()
 
   const getItems = inventoryItemsQuery
     .modify(
@@ -546,7 +543,7 @@ async function getDaysByLocation(request) {
     .leftOuterJoin('State as st', 'g.stateId', 'st.id')
     .leftOuterJoin('Lga as l', 'g.lgaId', 'l.id')
     // dailyRate
-    .leftOuterJoin('FactInventoryConsumptionRate as rate1', function() {
+    .leftOuterJoin('FactInventoryConsumptionRate as rate1', function () {
       this.on('rate1.siteId', 's.id')
         .andOn('rate1.consumableId', 'c.id')
         .andOn('rate1.days', 1)
@@ -587,7 +584,7 @@ async function getDaysByLocation(request) {
       query('Join Consumable with Sites which does not have inventories')
         .from('Consumable as c')
         .join('Site as s')
-        .leftOuterJoin('InventoryItem as ii', function() {
+        .leftOuterJoin('InventoryItem as ii', function () {
           this.on('c.id', 'ii.consumableId').andOn('s.id', 'ii.siteId')
         })
         .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
@@ -1063,9 +1060,7 @@ async function receiveInventory(request) {
       createdBy: currentlyLoggedInUser.id,
     })
 
-    await knex('InventoryItem')
-      .where('id', inventoryItemId)
-      .delete()
+    await knex('InventoryItem').where('id', inventoryItemId).delete()
   })
 
   return {
@@ -1209,7 +1204,7 @@ async function checkOpenedStockIssues({
     .innerJoin('Partner as p', 's.partnerId', 'p.id')
     .where('ii.siteId', siteId)
     .where('ii.consumableId', consumableId)
-    .where(function() {
+    .where(function () {
       this.whereNull('ii.expiresOn') // if is null
         .orWhere('ii.expiresOn', '>', now) // or unexpired
     })
@@ -1396,9 +1391,7 @@ async function updateInventoryItem(knex, inventoryItemId, inventoryItemValues) {
   if (typeof inventoryItemValues.updatedBy !== 'undefined') {
     updateValues.updatedBy = inventoryItemValues.updatedBy
   }
-  await knex('InventoryItem')
-    .where('id', inventoryItemId)
-    .update(updateValues)
+  await knex('InventoryItem').where('id', inventoryItemId).update(updateValues)
 }
 
 async function insertInventoryItem(knex, inventoryItemValues) {

@@ -5,7 +5,7 @@ const knex = require('knex')({
 
 function buildKnexSpy(resolveWith) {
   const knexSpy = Promise.resolve(resolveWith)
-  const returnKnexStub = function() {
+  const returnKnexStub = function () {
     return knexSpy
   }
   for (const property in knex) {
@@ -25,13 +25,13 @@ const knexSpies = {
   default: buildKnexSpy(),
 }
 
-const query = function(queryDescription) {
+const query = function (queryDescription) {
   if (queryDescription && {}.hasOwnProperty.call(knexSpies, queryDescription)) {
     return knexSpies[queryDescription]
   }
   return knexSpies.default
 }
-query.for = function(queryDescription) {
+query.for = function (queryDescription) {
   return {
     resolvesWith(returnData) {
       knexSpies[queryDescription] = buildKnexSpy(returnData)

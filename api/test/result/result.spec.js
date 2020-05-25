@@ -824,15 +824,11 @@ describe('Result routes', () => {
 
         before(async () => {
           partnerId = (
-            await knex('Partner')
-              .where('name', 'Partner One')
-              .first('id')
+            await knex('Partner').where('name', 'Partner One').first('id')
           ).id
           adminId = await getAdminId()
           otherUserId = (
-            await knex('User')
-              .where('name', '<>', 'admin')
-              .first('id')
+            await knex('User').where('name', '<>', 'admin').first('id')
           ).id
           diseaseId = await diseaseToId('covid19')
           const deviceStatusApprovedId = await deviceStatusToId('approved')
@@ -866,15 +862,9 @@ describe('Result routes', () => {
         })
 
         after(async () => {
-          await knex('Result')
-            .where('id', '>', latestResultIdBeforeTests)
-            .del()
-          await knex('Sample')
-            .where('id', '>', latestSampleIdBeforeTests)
-            .del()
-          await knex('Case')
-            .where('id', '>', latestCaseIdBeforeTests)
-            .del()
+          await knex('Result').where('id', '>', latestResultIdBeforeTests).del()
+          await knex('Sample').where('id', '>', latestSampleIdBeforeTests).del()
+          await knex('Case').where('id', '>', latestCaseIdBeforeTests).del()
         })
 
         function getOptionValueFromTitle(options, title) {

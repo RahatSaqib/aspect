@@ -56,18 +56,15 @@ async function updateMGITAssays(
     patientDataSchema: JSON.stringify(patientDataSchema),
   }
   let { id: assayBdMgitAstId } =
-    (await knex('Assay')
-      .where('externalId', 'assayBdMgitAst')
-      .first('id')) || {}
+    (await knex('Assay').where('externalId', 'assayBdMgitAst').first('id')) ||
+    {}
   if (!assayBdMgitAstId) {
     assayBdMgitAstId = await knex('Assay').insert({
       ...assayBdMgitAst,
       externalId: 'assayBdMgitAst',
     })
   } else {
-    await knex('Assay')
-      .where('id', assayBdMgitAstId)
-      .update(assayBdMgitAst)
+    await knex('Assay').where('id', assayBdMgitAstId).update(assayBdMgitAst)
   }
 
   const values = await Promise.all([
@@ -113,18 +110,15 @@ async function updateMGITAssays(
     patientDataSchema: JSON.stringify(patientDataSchema),
   }
   let { id: assayBdMgitGndId } =
-    (await knex('Assay')
-      .where('externalId', 'assayBdMgitGnd')
-      .first('id')) || {}
+    (await knex('Assay').where('externalId', 'assayBdMgitGnd').first('id')) ||
+    {}
   if (!assayBdMgitGndId) {
     assayBdMgitGndId = await knex('Assay').insert({
       ...assayBdMgitGnd,
       externalId: 'assayBdMgitGnd',
     })
   } else {
-    await knex('Assay')
-      .where('id', assayBdMgitGndId)
-      .update(assayBdMgitGnd)
+    await knex('Assay').where('id', assayBdMgitGndId).update(assayBdMgitGnd)
   }
   values.splice(-2, 2)
   const resultCategoryBdMgitGndId = await knex('ResultCategoryAssay')
@@ -223,18 +217,15 @@ async function updateCultureAssays(
     patientDataSchema: JSON.stringify(patientDataSchema),
   }
   let { id: assayGenericDstId } =
-    (await knex('Assay')
-      .where('externalId', 'assayGenericDst')
-      .first('id')) || {}
+    (await knex('Assay').where('externalId', 'assayGenericDst').first('id')) ||
+    {}
   if (!assayGenericDstId) {
     assayGenericDstId = await knex('Assay').insert({
       ...assayGenericDst,
       externalId: 'assayGenericDst',
     })
   } else {
-    await knex('Assay')
-      .where('id', assayGenericDstId)
-      .update(assayGenericDst)
+    await knex('Assay').where('id', assayGenericDstId).update(assayGenericDst)
   }
 
   const values = await Promise.all([
