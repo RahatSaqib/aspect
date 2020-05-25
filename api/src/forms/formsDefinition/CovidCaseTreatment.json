@@ -1,0 +1,125 @@
+{
+  "fields": [
+    {
+      "name": "treatmentType",
+      "fieldType": "text",
+      "title": "Treatment Type",
+      "i18nKey": "treatmentTypei18nKey",
+      "order": 0,
+      "controlType": "checkBox",
+      "required": true,
+      "encrypted": false,
+      "typeOfOptionSource": "fixedList",
+      "items": [
+        {
+          "key": 1,
+          "value": "Self Isolation"
+        },
+        {
+          "key": 2,
+          "value": "Quarentine"
+        },
+        {
+          "key": 3,
+          "value": "Hospitalization"
+        }
+      ]
+    },
+    {
+      "name": "hospitalizationType",
+      "i18nKey": "hospitalizationTypei18nKey",
+      "fieldType": "text",
+      "order": 1,
+      "controlType": "checkBox",
+      "required": true,
+      "typeOfOptionSource": "fixedList",
+      "items": [
+        {
+          "key": "ICU",
+          "value": "ICU"
+        },
+        {
+          "key": "Ventilator",
+          "value": "Put on Ventilator"
+        }
+      ],
+      "condition": [
+        {
+          "conjunction": "AND",
+          "propToCompare": "treatmentType",
+          "valueToCompare": "3",
+          "operator": "===",
+          "conjunctionGroupName": "hospitalizationTypeGroup"
+        }
+      ]
+    },
+    {
+      "name": "medicineGiven",
+      "i18nKey": "medicineGiveni18nKey",
+      "fieldType": "text",
+      "order": 2,
+      "title": "Medicine Given",
+      "controlType": "autoComplete",
+      "required": true,
+      "typeOfOptionSource": "fixedList",
+      "items": [
+        { "key": 0, "value": "Cloroquine Malaria" },
+        { "key": 1, "value": "Umifenovir (Japan Flu)" },
+        { "key": 2, "value": "hydroxychloroquine" },
+        { "key": 3, "value": "Plasma" },
+        { "key": 4, "value": "Other" }
+      ]
+    },
+    {
+      "name": "otherDrug",
+      "i18nKey": "OtherDrugi18nKey",
+      "title": "If none of the above, please explain",
+      "fieldType": "text",
+      "order": 4,
+      "controlType": "textBox",
+      "required": true,
+      "condition": [
+        {
+          "conjunction": "AND",
+          "propToCompare": "medicineGiven",
+          "valueToCompare": "4",
+          "operator": "===",
+          "conjunctionGroupName": "reasonForTestingGroup"
+        }
+      ]
+    },
+    {
+      "name": "outcome",
+      "title": "outcome",
+      "i18nKey": "outcomei18nKey",
+      "fieldType": "text",
+      "order": 3,
+      "controlType": "autoComplete",
+      "required": false,
+      "typeOfOptionSource": "fixedList",
+      "items": [
+        {
+          "value": "Cured",
+          "key": 1
+        },
+        {
+          "value": "Died",
+          "key": 2
+        },
+        {
+          "value": "Recovered",
+          "key": 3
+        },
+        {
+          "value": "Not Recovered",
+          "key": 4
+        },
+        {
+          "value": "Unknown",
+          "key": 5
+        }
+      ]
+    }
+  ],
+  "refForms": []
+}

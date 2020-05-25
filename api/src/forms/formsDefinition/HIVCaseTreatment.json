@@ -1,0 +1,102 @@
+{
+  "fields": [
+    {
+      "name": "treatmentType",
+      "fieldType": "text",
+      "title": "Treatment Type",
+      "i18nKey": "treatmentTypei18nKey",
+      "order": 0,
+      "controlType": "checkBox",
+      "required": true,
+      "encrypted": false,
+      "typeOfOptionSource": "fixedList",
+      "items": [
+        {
+          "key": 1,
+          "value": "Request repeat VL"
+        },
+        {
+          "key": 2,
+          "value": "Initiate advanced adherence counselling"
+        },
+        {
+          "key": 3,
+          "value": "Hospitalization"
+        },
+        {
+          "key": 4,
+          "value": "Initiate advanced adherence counselling"
+        },
+        {
+          "key": 5,
+          "value": "Switch to 2nd or 3rd line regime"
+        },
+        {
+          "key": 6,
+          "value": "Maintain current regime"
+        }
+      ]
+    },
+    {
+      "name": "hospitalizationType",
+      "i18nKey": "hospitalizationTypei18nKey",
+      "fieldType": "text",
+      "order": 1,
+      "controlType": "checkBox",
+      "required": true,
+      "typeOfOptionSource": "fixedList",
+      "items": [
+        {
+          "key": "ICU",
+          "value": "ICU"
+        },
+        {
+          "key": "Ventilator",
+          "value": "Put on Ventilator"
+        }
+      ],
+      "condition": [
+        {
+          "conjunction": "AND",
+          "propToCompare": "treatmentType",
+          "valueToCompare": "3",
+          "operator": "===",
+          "conjunctionGroupName": "hospitalizationTypeGroup"
+        }
+      ]
+    },
+    {
+      "name": "outcome",
+      "title": "outcome",
+      "i18nKey": "outcomei18nKey",
+      "fieldType": "text",
+      "order": 3,
+      "controlType": "autoComplete",
+      "required": false,
+      "typeOfOptionSource": "fixedList",
+      "items": [
+        {
+          "value": "Cured",
+          "key": 1
+        },
+        {
+          "value": "Died",
+          "key": 2
+        },
+        {
+          "value": "Recovered",
+          "key": 3
+        },
+        {
+          "value": "Not Recovered",
+          "key": 4
+        },
+        {
+          "value": "Unknown",
+          "key": 5
+        }
+      ]
+    }
+  ],
+  "refForms": []
+}

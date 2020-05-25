@@ -1,0 +1,116 @@
+{
+  "fields": [
+    {
+      "name": "malignancy",
+      "title": "Malignancy",
+      "i18nKey": "Malignancyi18nkey",
+      "fieldType": "text",
+      "order": 0,
+      "controlType": "radioButton",
+      "typeOfOptionSource": "fixedList",
+      "items": [
+        {
+          "value": "No",
+          "key": "no"
+        },
+        {
+          "value": "Yes",
+          "key": "yes"
+        },
+        {
+          "value": "Unknown",
+          "key": "unknown"
+        }
+      ],
+      "required": false
+    },
+    {
+      "name": "caseTravelled",
+      "title": "Has the case travelled  in the 14 days before prior symptom onset?",
+      "i18nKey": "caseTravelledi18nKey",
+      "order": 1,
+      "controlType": "radioButton",
+      "fieldType": "text",
+      "typeOfOptionSource": "fixedList",
+      "items": [
+        {
+          "value": "No",
+          "key": "no"
+        },
+        {
+          "value": "Yes",
+          "key": "yes"
+        },
+        {
+          "value": "Unknown",
+          "key": "unknown"
+        }
+      ]
+    },
+    {
+      "name": "visitedFacility",
+      "title": "Has the case visited any health care facility in the 14 days before prior symptom onset?",
+      "i18nKey": "Malignancyi18nkey",
+      "fieldType": "text",
+      "order": 2,
+      "controlType": "radioButton",
+      "typeOfOptionSource": "fixedList",
+      "items": [
+        {
+          "value": "No",
+          "key": "no"
+        },
+        {
+          "value": "Yes",
+          "key": "yes"
+        },
+        {
+          "value": "Unknown",
+          "key": "unknown"
+        }
+      ],
+      "required": false
+    },
+    {
+      "name": "visitedConfirmedCase",
+      "title": "Has the case has contact with any confirmed case in the 14 days before prior symptom onset?",
+      "i18nKey": "Malignancyi18nkey",
+      "fieldType": "text",
+      "order": 3,
+      "controlType": "radioButton",
+      "typeOfOptionSource": "fixedList",
+      "items": [
+        {
+          "value": "No",
+          "key": "no"
+        },
+        {
+          "value": "Yes",
+          "key": "yes"
+        },
+        {
+          "value": "Unknown",
+          "key": "unknown"
+        }
+      ],
+      "required": false
+    },
+    {
+      "name": "ifYesContactWithConfirmedCase",
+      "i18nKey": "ifYesContactWithConfirmedCasei18nkey",
+      "controlType": "textArea",
+      "fieldType": "text",
+      "required": true,
+      "order": 4,
+      "condition": [
+        {
+          "conjunction": "AND",
+          "propToCompare": "visitedConfirmedCase",
+          "valueToCompare": "yes",
+          "operator": "===",
+          "conjunctionGroupName": "contactWithConfirmedCaseGroup"
+        }
+      ]
+    }
+  ]
+}
