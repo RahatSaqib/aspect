@@ -144,11 +144,11 @@ describe('Result routes', () => {
     })
 
     it('should return a list of results with case-specific', async () => {
-      const { caseId } = await knex('Result')
-        .join('PatientCase', 'patientCaseId', 'Case.Id')
-        .first('PatientCase.id as caseId')
+      const { patientCaseId } = await knex('Result')
+        .join('PatientCase', 'patientCaseId', 'PatientCase.Id')
+        .first('PatientCase.id as patientCaseId')
       const res = await server
-        .get(`${path}?caseId=${caseId}`)
+        .get(`${path}?patientCaseId=${patientCaseId}`)
         .set('Authorization', `Bearer ${shared.token}`)
       validateResponse(res)
     })
