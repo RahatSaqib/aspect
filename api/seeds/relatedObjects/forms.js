@@ -25,6 +25,28 @@ async function getBaseForms() {
         formTypeId: await formTypeToId('resultFormWeb'),
       },
     },
+    TBCaseHealthCondition: {
+      fileName: 'TBCaseHealthCondition.json',
+      formDefinition: {
+        order: 1,
+        title: 'Health Condition',
+        i18nKeyTitle: 'TBCaseHealthCondition18nkey',
+        diseaseId: await diseaseToId('tb'),
+        formTypeId: await formTypeToId('CaseCreation'),
+        externalId: 'TBCaseHealthCondition',
+      },
+    },
+    TBCaseTreatment: {
+      fileName: 'TBCaseHealthCondition.json',
+      formDefinition: {
+        order: 2,
+        title: 'Treatment',
+        i18nKeyTitle: 'TBTreatment18nkey',
+        diseaseId: await diseaseToId('tb'),
+        formTypeId: await formTypeToId('CaseCreation'),
+        externalId: 'TBCaseTreatment',
+      },
+    },
     HIVResult: {
       fileName: 'HIVResult.json',
       formDefinition: {
@@ -36,6 +58,7 @@ async function getBaseForms() {
         formTypeId: await formTypeToId('resultFormWeb'),
       },
     },
+
     HIVProbes: {
       fileName: 'HIVProbes.json',
       formDefinition: {
@@ -45,6 +68,72 @@ async function getBaseForms() {
         diseaseId: await diseaseToId('hiv'),
         formTypeId: await formTypeToId('resultFormWeb'),
         externalId: 'HIVProbes',
+      },
+    },
+    HIVCaseHealthCondition: {
+      fileName: 'HIVCaseHealthCondition.json',
+      formDefinition: {
+        order: 1,
+        title: 'Health Condition',
+        i18nKeyTitle: 'HIVCaseHealthCondition18nkey',
+        diseaseId: await diseaseToId('hiv'),
+        formTypeId: await formTypeToId('CaseCreation'),
+        externalId: 'HIVCaseHealthCondition',
+      },
+    },
+    HIVTreatment: {
+      fileName: 'HIVTreatment.json',
+      formDefinition: {
+        order: 1,
+        title: 'Treatment',
+        i18nKeyTitle: 'HIVTreatmenti18nkey',
+        diseaseId: await diseaseToId('hiv'),
+        formTypeId: await formTypeToId('CaseCreation'),
+        externalId: 'HIVTreatment',
+      },
+    },
+    CovidResult: {
+      fileName: 'CovidResult.json',
+      formDefinition: {
+        order: 1,
+        title: 'Result',
+        i18nKeyTitle: 'CovidResulti18nKey',
+        diseaseId: await diseaseToId('covid'),
+        formTypeId: await formTypeToId('resultFormWeb'),
+        externalId: 'CovidResult',
+      },
+    },
+    CovidCaseHealthCondition: {
+      fileName: 'CovidCaseHealthCondition.json',
+      formDefinition: {
+        order: 2,
+        title: 'Health Condition',
+        i18nKeyTitle: 'CovidCaseHealthConditioni18nkey',
+        diseaseId: await diseaseToId('covid'),
+        formTypeId: await formTypeToId('CaseCreation'),
+        externalId: 'CovidCaseHealthCondition',
+      },
+    },
+    CovidCaseTreatment: {
+      fileName: 'CovidCaseTreatment.json',
+      formDefinition: {
+        order: 1,
+        title: 'Treatment',
+        i18nKeyTitle: 'CovidCaseTreatmenti18nkey',
+        diseaseId: await diseaseToId('covid'),
+        formTypeId: await formTypeToId('CaseCreation'),
+        externalId: 'CovidCaseTreatment',
+      },
+    },
+    CovidCaseAditionalData: {
+      fileName: 'CovidCaseAditionalData.json',
+      formDefinition: {
+        order: 1,
+        title: 'Aditional Data',
+        i18nKeyTitle: 'CovidCaseAditionalDatai18nkey',
+        diseaseId: await diseaseToId('covid'),
+        formTypeId: await formTypeToId('CaseCreation'),
+        externalId: 'CovidCaseAditionalData',
       },
     },
   }
