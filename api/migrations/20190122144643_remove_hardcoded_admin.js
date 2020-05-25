@@ -84,9 +84,7 @@ async function down(knex) {
           updatedBy: countryAdmin.userId,
         })
     )
-  }
-
-  // set to first admin where still null
+    // set to first admin where still null
   await knex('Person')
     .whereNull('createdBy')
     .update({
@@ -98,6 +96,7 @@ async function down(knex) {
     .update({
       updatedBy: firstCountryAdminUserPerPartner[0].userId,
     })
+  }
 
   await knex.schema.table('Person', person => {
     person
