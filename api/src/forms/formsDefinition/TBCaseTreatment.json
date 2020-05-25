@@ -5,6 +5,8 @@
       "fieldType": "text",
       "title": "Treatment Type",
       "i18nKey": "treatmentTypei18nKey",
+      "caption": "Treatment form for filling with TbCase",
+      "i18nKeyCaption": "treatmentTypeCaptioni18nkey",
       "order": 0,
       "controlType": "checkBox",
       "required": true,

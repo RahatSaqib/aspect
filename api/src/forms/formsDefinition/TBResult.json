@@ -8,9 +8,7 @@
       "title": "microscopy Result",
       "caption": "microscopy Result value",
       "i18nKeyCaption": "microscopyResulti18nCaptionKey",
-      "controlType": "textBox",
-      "required": true,
-      "encrypted": false
+      "controlType": "textBox"
     },
     {
       "name": "ResultText",
@@ -20,9 +18,7 @@
       "title": "Result Text",
       "caption": "Result Text value",
       "i18nKeyCaption": "ResultTexti18nCaptionKey",
-      "controlType": "textBox",
-      "required": true,
-      "encrypted": false
+      "controlType": "textBox"
     }
   ],
   "refForms": []

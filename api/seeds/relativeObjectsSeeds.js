@@ -118,7 +118,18 @@ async function addIssueTypes(
   return true
 }
 
-async function addForms(knex, _partnerId) {
+async function addForms(knex, _partnerId, formsNeeded=['TBResult',
+'TBProbes',
+'TBCaseHealthCondition',
+'TBCaseTreatment',
+'HIVResult',
+'HIVProbes',
+'HIVCaseHealthCondition',
+'HIVTreatment',
+'CovidResult',
+'CovidCaseHealthCondition',
+'CovidCaseTreatment',
+'CovidCaseAditionalData']) {
   let partnerId = _partnerId
   if (!partnerId) {
     try {
@@ -138,11 +149,13 @@ async function addForms(knex, _partnerId) {
   }
   const forms = await getBaseForms()
   const insertedForms = _.map(
-    await knex('FormDefinition').select('externalId'),
+    await knex('FormDefinition').where({partnerId})
+          .select('externalId'),
     elem => elem.externalId
   )
   await Promise.each(Object.keys(forms), async form => {
-    if (insertedForms.indexOf(form) === -1) {
+    if ((insertedForms.indexOf(form) === -1)
+        && (formsNeeded.indexOf(form)>=0))  {
       const [formDefinitionSchemaId] = await knex(
         'FormDefinitionSchema'
       ).insert({ jsonSchemaFile: forms[form].fileName })

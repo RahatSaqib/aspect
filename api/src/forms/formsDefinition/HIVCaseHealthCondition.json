@@ -6,6 +6,8 @@
       "i18nKey": "anySymptomsOrSignsAtTimeOfSpecimenCollectioni18nkey",
       "fieldType": "text",
       "order": 0,
+      "caption": "Any sympton or sign regitered",
+      "i18nKeyCaption": "anySymptomsOrSignsAtTimeOfSpecimenCollectioni18nKey",
       "controlType": "radioButton",
       "typeOfOptionSource": "fixedList",
       "items": [
@@ -91,12 +93,10 @@
           "key": "brestfeeding",
           "value": "Brest Feeding"
         },
-
         {
           "key": "pediatric",
           "value": "Pediatric"
         },
-
         {
           "key": "postPartum",
           "value": "post partum (<6weeks)"
@@ -164,5 +164,6 @@
         }
       ]
     }
-  ]
+  ],
+  "refForms": []
 }

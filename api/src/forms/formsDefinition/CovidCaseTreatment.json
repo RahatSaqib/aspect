@@ -6,6 +6,8 @@
       "title": "Treatment Type",
       "i18nKey": "treatmentTypei18nKey",
       "order": 0,
+      "caption": "Treatment Type received",
+      "i18nKeyCaption": "treatmentTypeCaptioni18nKey",
       "controlType": "checkBox",
       "required": true,
       "encrypted": false,
@@ -63,11 +65,26 @@
       "required": true,
       "typeOfOptionSource": "fixedList",
       "items": [
-        { "key": 0, "value": "Cloroquine Malaria" },
-        { "key": 1, "value": "Umifenovir (Japan Flu)" },
-        { "key": 2, "value": "hydroxychloroquine" },
-        { "key": 3, "value": "Plasma" },
-        { "key": 4, "value": "Other" }
+        {
+          "key": 0,
+          "value": "Cloroquine Malaria"
+        },
+        {
+          "key": 1,
+          "value": "Umifenovir (Japan Flu)"
+        },
+        {
+          "key": 2,
+          "value": "hydroxychloroquine"
+        },
+        {
+          "key": 3,
+          "value": "Plasma"
+        },
+        {
+          "key": 4,
+          "value": "Other"
+        }
       ]
     },
     {
