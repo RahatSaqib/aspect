@@ -195,16 +195,19 @@ async function onCaseChanged(caseId, messageContext, isAdded) {
 }
 
 async function getAutoCompleteCases({ auth, query }) {
-  const { country, geography, site, partner } = await getConstraints(auth.credentials)
-
+  const constraints = await getConstraints(auth.credentials)
 
   const casesQuery = knex('PatientCase as ca')
     .innerJoin('Result as r', 'ca.id', 'r.patientCaseId')
     .innerJoin('Geography as g', 'r.geographyId', 'g.id')
     .leftJoin('Country as c', 'g.countryId', 'c.id')
     .modify(queryBuilder => {
-      addPartnerQueryConstraints(queryBuilder, { country, geography, site, caseAlias: 'ca' })
-      queryBuilder.where('r.partnerId', '=', partner.id)
+      addPartnerQueryConstraints(queryBuilder, { 
+        country: constraints.country,
+        geography: constraints.geography,
+        site: constraints.site,
+        caseAlias: 'ca' })
+      queryBuilder.where('r.partnerId', '=', constraints.partner.id)
     })
     .modify((queryBuilder, params) => {
       if (params.externalId) {
