@@ -4,9 +4,11 @@
       "name": "anySymptomsOrSignsAtTimeOfSpecimenCollection",
       "title": "any Symptoms Or Signs At Time Of SpecimenCollection",
       "i18nKey": "anySymptomsOrSignsAtTimeOfSpecimenCollectioni18nkey",
+      "i18nKeyCaption": "anySymptomsOrSignsAtTimeOfSpecimenCollectionCaptioni18nkey",
       "fieldType": "text",
       "order": 0,
       "controlType": "radioButton",
+      "caption": "Has the patient any of the following symptoms?",
       "typeOfOptionSource": "fixedList",
       "items": [
         {
@@ -154,5 +156,6 @@
         }
       ]
     }
-  ]
+  ],
+  "refForms": []
 }

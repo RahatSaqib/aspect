@@ -10,7 +10,6 @@
       "i18nKeyCaption": "treatmentTypeCaptioni18nKey",
       "controlType": "checkBox",
       "required": true,
-      "encrypted": false,
       "typeOfOptionSource": "fixedList",
       "items": [
         {

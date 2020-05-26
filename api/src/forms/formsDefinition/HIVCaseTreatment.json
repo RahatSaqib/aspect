@@ -5,10 +5,11 @@
       "fieldType": "text",
       "title": "Treatment Type",
       "i18nKey": "treatmentTypei18nKey",
+      "caption": "The treatmet type applied to the patient",
+      "i18nKeyCaption": "treatmentTypeCaptioni18nKey",
       "order": 0,
       "controlType": "checkBox",
       "required": true,
-      "encrypted": false,
       "typeOfOptionSource": "fixedList",
       "items": [
         {

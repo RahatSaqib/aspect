@@ -3,6 +3,8 @@
     {
       "name": "malignancy",
       "title": "Malignancy",
+      "caption": "Has the patient  any malignancy?",
+      "i18nKeyCaption": "malignancyCaptioni18nkey",
       "i18nKey": "Malignancyi18nkey",
       "fieldType": "text",
       "order": 0,
@@ -112,5 +114,6 @@
         }
       ]
     }
-  ]
+  ],
+  "refForms": []
 }
