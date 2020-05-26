@@ -16,10 +16,7 @@ async function getReports(request) {
     .leftOuterJoin('Geography as g', 'r.geographyId', 'g.id')
     .modify(addConstraints, dataConstraints, { geography: 'g' })
 
-  const getCount = reportsQuery
-    .clone()
-    .count('r.id as count')
-    .first()
+  const getCount = reportsQuery.clone().count('r.id as count').first()
 
   const getItems = reportsQuery
     .clone()

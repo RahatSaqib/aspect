@@ -5,10 +5,7 @@ async function up(knex) {
   await knex.schema.dropTableIfExists('DeviceMaintenanceStatus')
 
   await knex.schema.table('FactDeviceFlag', flag => {
-    flag
-      .boolean('maintenance')
-      .notNullable()
-      .defaultTo(0)
+    flag.boolean('maintenance').notNullable().defaultTo(0)
     flag.dateTime('maintenanceDueOn')
   })
 

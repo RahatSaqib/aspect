@@ -35,21 +35,13 @@ const updatedOnFieldTables = [
 async function up(knex) {
   await Promise.each(createdOnFieldTables, element =>
     knex.schema.alterTable(element, table => {
-      table
-        .datetime('createdOn')
-        .notNullable()
-        .defaultTo(knex.fn.now())
-        .alter()
+      table.datetime('createdOn').notNullable().defaultTo(knex.fn.now()).alter()
     })
   )
 
   await Promise.each(updatedOnFieldTables, element =>
     knex.schema.alterTable(element, table => {
-      table
-        .datetime('updatedOn')
-        .notNullable()
-        .defaultTo(knex.fn.now())
-        .alter()
+      table.datetime('updatedOn').notNullable().defaultTo(knex.fn.now()).alter()
     })
   )
 }
@@ -57,19 +49,13 @@ async function up(knex) {
 async function down(knex) {
   await Promise.each(createdOnFieldTables, element =>
     knex.schema.alterTable(element, table => {
-      table
-        .datetime('createdOn')
-        .nullable()
-        .alter()
+      table.datetime('createdOn').nullable().alter()
     })
   )
 
   await Promise.each(updatedOnFieldTables, element =>
     knex.schema.alterTable(element, table => {
-      table
-        .datetime('updatedOn')
-        .nullable()
-        .alter()
+      table.datetime('updatedOn').nullable().alter()
     })
   )
 }

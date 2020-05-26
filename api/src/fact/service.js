@@ -172,7 +172,7 @@ function onDeviceSeen({ deviceId }, { messageContext }) {
     const offlineDevice = await knex('Device as d')
       .leftJoin('FactDeviceFlag as fdf', 'd.id', 'fdf.deviceId')
       .where('d.id', deviceId)
-      .where(function() {
+      .where(function () {
         // If we don't fact yet, seen for first time, consider this online
         this.whereNull('fdf.deviceId')
           // If fact is marked offline and we've seen the device more recently
@@ -458,7 +458,7 @@ function onFactCheckInventoryStock(action, { messageContext }) {
     const sites = await knex('InventoryItem as ii')
       .innerJoin('Site as s', 'ii.siteId', 's.id')
       .innerJoin('Partner as p', 's.partnerId', 'p.id')
-      .where(function() {
+      .where(function () {
         this.whereNull('ii.expiresOn') // if is null
           .orWhere('ii.expiresOn', '>', now) // or unexpired
       })
@@ -556,7 +556,7 @@ async function getConsumptions(knex, siteId, consumableId) {
   // --------------------
   const limitItems = 10
   const lastDaysWithTest = await knex
-    .from(function() {
+    .from(function () {
       this.from('Result as r')
         .innerJoin('Assay as a', 'r.assayId', 'a.id')
         .innerJoin('ConsumableAssay as ca', 'a.id', 'ca.assayId')
@@ -748,12 +748,12 @@ async function getDataCategoryStatus(
     ;[{ count: numValid }] = await itemsBase
       .clone()
       .whereNotNull('r.patientData')
-      .where(function() {
+      .where(function () {
         // process 2 main cases - validValues is an array (all categories except Other) or not (category Other)
         if (validValues && _.isArray(validValues)) {
           // field exists in json
           this.whereRaw(`(r.patientData ->> '$.${categoryToken}') is not null`)
-          this.andWhere(function() {
+          this.andWhere(function () {
             // check if category is one of valid values
             _.each(validValues, value => {
               this.orWhereRaw(`(r.patientData ->> '$.${categoryToken}') = ?`, [

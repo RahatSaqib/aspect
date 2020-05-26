@@ -65,31 +65,31 @@ async function findOpenIssuesToCheckForEscalation(knex, issueId) {
   const resolvedIssueEventStatusId = await issueEventStatusToId('Resolved')
   const triggeredIssueEventStatusId = await issueEventStatusToId('Triggered')
   return knex('Issue as i')
-    .leftJoin('IssueEvent as resolvedIssueEvent', function() {
+    .leftJoin('IssueEvent as resolvedIssueEvent', function () {
       this.on('i.id', 'resolvedIssueEvent.issueId').on(
         'resolvedIssueEvent.issueEventStatusId',
         knex.raw(resolvedIssueEventStatusId)
       )
     })
-    .join('IssueEvent as triggeredIssueEvent', function() {
+    .join('IssueEvent as triggeredIssueEvent', function () {
       this.on('i.id', 'triggeredIssueEvent.issueId').on(
         'triggeredIssueEvent.issueEventStatusId',
         knex.raw(triggeredIssueEventStatusId)
       )
     })
-    .join('IssueEscalationTrigger as iet', function() {
+    .join('IssueEscalationTrigger as iet', function () {
       this.on('i.issueTypeId', 'iet.issueTypeId')
         .on('i.partnerId', 'iet.partnerId')
         .on('i.level', '<', 'iet.escalateToLevel')
     })
     .join('IssueStatus as is', 'i.issueStatusId', 'is.id')
-    .where(function() {
+    .where(function () {
       this.whereNotIn('is.externalId', ['Inactive', 'Resolved'])
       if (issueId) {
         this.andWhere('i.id', issueId)
       }
     })
-    .andWhere(function() {
+    .andWhere(function () {
       this.whereNull('resolvedIssueEvent.id')
     })
     .groupBy('i.id', 'iet.id')

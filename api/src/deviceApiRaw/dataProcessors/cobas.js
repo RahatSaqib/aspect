@@ -21,16 +21,8 @@ class DefaultCOBAS extends SynchronousDataProcessor {
   static checkHeader(line) {
     try {
       return (
-        line
-          .split('\n')[0]
-          .split('|')[9]
-          .toString()
-          .indexOf('cobas') === 0 ||
-        line
-          .split('\n')[0]
-          .split('|')[4]
-          .toString()
-          .indexOf('cobas') === 0
+        line.split('\n')[0].split('|')[9].toString().indexOf('cobas') === 0 ||
+        line.split('\n')[0].split('|')[4].toString().indexOf('cobas') === 0
       )
     } catch (ex) {
       return false

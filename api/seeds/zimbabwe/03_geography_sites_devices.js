@@ -171,9 +171,7 @@ async function seed(knex) {
   await Promise.all(
     _.map(labClinic.labs, async lab => {
       const siteData =
-        (await knex('Site')
-          .where('externalId', lab.externalId)
-          .first()) || {}
+        (await knex('Site').where('externalId', lab.externalId).first()) || {}
       if (_.isEmpty(siteData)) {
         const labGeographyId = _.get(
           countries,

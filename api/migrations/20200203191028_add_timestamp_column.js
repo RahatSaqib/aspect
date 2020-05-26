@@ -4,9 +4,7 @@ async function up(knex) {
   await knex.raw('SET foreign_key_checks = 0')
 
   await knex.schema.alterTable('ResultStatusLog', x => {
-    x.bigInteger('timestamp')
-      .unsigned()
-      .index()
+    x.bigInteger('timestamp').unsigned().index()
   })
 
   await knex.raw('SET foreign_key_checks = 1')

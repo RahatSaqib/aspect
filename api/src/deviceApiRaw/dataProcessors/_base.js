@@ -47,9 +47,7 @@ class DataProcessor {
       credentials: { token },
     } = auth
     const utcNow = getUtcTime()
-    const deviceApiKey = await knex('DeviceApiKey')
-      .where({ token })
-      .first()
+    const deviceApiKey = await knex('DeviceApiKey').where({ token }).first()
     let salt = null
     let rawData = JSON.stringify(
       _.pick(
@@ -252,12 +250,10 @@ class DataProcessor {
 
   async updateDeviceApiRawStatus(status) {
     const deviceApiRawStatusId = await deviceApiRawStatusToId(status)
-    return knex('DeviceApiRaw')
-      .where('id', this.id)
-      .update({
-        deviceApiRawStatusId,
-        updatedOn: getUtcTime(),
-      })
+    return knex('DeviceApiRaw').where('id', this.id).update({
+      deviceApiRawStatusId,
+      updatedOn: getUtcTime(),
+    })
   }
 
   async getResponse() {

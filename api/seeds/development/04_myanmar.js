@@ -828,7 +828,7 @@ async function seed(knex) {
     .join('JobContext as jc', 'jc.siteId', 'd.siteId')
     .join('Job as j', 'jc.jobId', 'j.id')
     .where({ jobFunctionId: jobFunctionIdLabUser })
-    .union(function() {
+    .union(function () {
       this.select('j.personId', 'd.id as deviceId')
         .from('Device as d')
         .leftJoin('Geography as g1', 'd.geographyId', 'g1.id')
@@ -1080,8 +1080,6 @@ function calculateDateForResult(
 }
 
 async function getId(knex, table, externalId) {
-  const { id } = await knex(table)
-    .where({ externalId })
-    .first('id')
+  const { id } = await knex(table).where({ externalId }).first('id')
   return id
 }

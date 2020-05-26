@@ -183,7 +183,7 @@ async function seed(knex) {
   const myanmarConsumableIssues = await knex('IssueCategory as ic')
     .join('IssueType as it', 'ic.id', 'it.issueCategoryId')
     .join('Issue as i', 'it.id', 'i.issueTypeId')
-    .where(function() {
+    .where(function () {
       this.whereNull('i.consumableId')
         .andWhere('i.partnerId', partnerId)
         .andWhere('ic.name', 'Reagent Health')

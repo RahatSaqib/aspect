@@ -394,7 +394,7 @@ function getGeographyAccess(personId, partnerId) {
       'gs.stateId as siteStateId',
       'gs.lgaId as siteLgaId'
     )
-    .then(function(items) {
+    .then(function (items) {
       return items
         ? items.map(item => ({
             countryId: item.countryId || item.siteCountryId,
@@ -722,7 +722,7 @@ async function getApplicableLicense(personId, partnerId) {
     'Get latest applicable license and when user accepted it'
   )
     .from('License as l')
-    .leftOuterJoin('LicensePerson as lp', function() {
+    .leftOuterJoin('LicensePerson as lp', function () {
       this.on('l.id', '=', 'lp.licenseId').andOn('lp.personId', '=', personId)
     })
     .where('l.partnerId', partnerId)

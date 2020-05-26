@@ -27,7 +27,7 @@ async function getConsumableAssays(request) {
     .join('Consumable as c', 'ca.consumableId', 'c.id')
     .join('Unit as u', 'c.unit', 'u.id')
     .join('Assay as a', 'ca.assayId', 'a.id')
-    .leftJoin('PartnerConsumable as pc', function() {
+    .leftJoin('PartnerConsumable as pc', function () {
       this.on('ca.consumableId', 'pc.consumableId').andOn(
         'pc.partnerId',
         knex.raw(dataConstraints.partner.id)
@@ -46,21 +46,21 @@ function selectAssayConsumables(knex, dataConstraints, assayId, consumableId) {
       .join('Consumable as c', 'ca.consumableId', 'c.id')
       .join('Unit as u', 'c.unit', 'u.id')
       .join('Assay as a', 'ca.assayId', 'a.id')
-      .leftJoin('PartnerConsumable as pc', function() {
+      .leftJoin('PartnerConsumable as pc', function () {
         this.on('ca.consumableId', 'pc.consumableId').andOn(
           'pc.partnerId',
           knex.raw(partnerId)
         )
       })
       .modify(addConstraints, dataConstraints, { assay: 'a' })
-      .where(function() {
+      .where(function () {
         this.where('ca.assayId', assayId)
         if (consumableId) {
           this.andWhere('ca.consumableId', consumableId)
         }
       })
       // TODO: Revisit once permissions system allows the use of partnerId only in addConstraints
-      .andWhere(function() {
+      .andWhere(function () {
         this.whereNull('pc.partnerId')
         if (partnerId) {
           this.orWhere('pc.partnerId', partnerId)

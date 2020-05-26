@@ -329,8 +329,9 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
                             assay: {
                               code: _.get(jsonAstmResult, '3.4.value'),
                             },
-                            externalId: `${sampleId}|${moduleSerial}|${carouselId}|${wellPosition}|${resultDateString ||
-                              ''}`,
+                            externalId: `${sampleId}|${moduleSerial}|${carouselId}|${wellPosition}|${
+                              resultDateString || ''
+                            }`,
                             consumableLot: _.get(jsonAstmResult, '3.6.value'),
                             consumableSerial: _.get(
                               jsonAstmResult,
@@ -788,10 +789,7 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
         ...deviceRecord,
         configurationData: JSON.parse(deviceRecord.configurationData),
       }
-      const site =
-        (await knex('Site')
-          .where('id', device.siteId)
-          .first()) || {}
+      const site = (await knex('Site').where('id', device.siteId).first()) || {}
       const resultSourceDiagnosticDeviceId = await resultSourceToId(
         'DiagnosticDevice'
       )
@@ -812,9 +810,7 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
             deviceUpdates.configurationData
           )
         }
-        await knex('Device')
-          .where('id', device.id)
-          .update(deviceUpdates)
+        await knex('Device').where('id', device.id).update(deviceUpdates)
         const [configDeviceLogId] = await knex('DeviceLog').insert({
           deviceId: device.id,
           source: this.name,

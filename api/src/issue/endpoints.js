@@ -22,10 +22,7 @@ const routes = [
       auth: { scope: ['notification:edit'] },
       validate: {
         params: {
-          issueId: Joi.number()
-            .integer()
-            .positive()
-            .description('Issue Id'),
+          issueId: Joi.number().integer().positive().description('Issue Id'),
         },
         payload: {
           issueStatusExternalId: Joi.string().allow('Acknowledged'),

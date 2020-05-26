@@ -51,10 +51,7 @@ async function listDeviceApiKeys(request) {
     })
 
   // get total count for paging
-  const getCount = dakQuery
-    .clone()
-    .count('dak.id as count')
-    .first()
+  const getCount = dakQuery.clone().count('dak.id as count').first()
 
   // get rows
   const getItems = dakQuery

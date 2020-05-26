@@ -44,59 +44,29 @@ async function deleteDeviceAndTestData(knex, apiKeys) {
     .pluck('tagId')
 
   await deleteIssues(knex, { deviceIds, resultIds })
-  await knex('ResultTag')
-    .whereIn('tagId', tagIds)
-    .delete()
-  await knex('Tag')
-    .whereIn('id', tagIds)
-    .delete()
-  await knex('DeviceLog')
-    .whereIn('deviceId', deviceIds)
-    .delete()
-  await knex('DeviceStatusLog')
-    .whereIn('deviceId', deviceIds)
-    .delete()
-  await knex('FactDeviceFlag')
-    .whereIn('deviceId', deviceIds)
-    .delete()
-  await knex('DeviceSiteHistory')
-    .whereIn('deviceId', deviceIds)
-    .delete()
-  await knex('InventoryLog')
-    .whereIn('resultId', resultIds)
-    .delete()
-  await knex('ResultQualityControlLog')
-    .whereIn('resultId', resultIds)
-    .delete()
+  await knex('ResultTag').whereIn('tagId', tagIds).delete()
+  await knex('Tag').whereIn('id', tagIds).delete()
+  await knex('DeviceLog').whereIn('deviceId', deviceIds).delete()
+  await knex('DeviceStatusLog').whereIn('deviceId', deviceIds).delete()
+  await knex('FactDeviceFlag').whereIn('deviceId', deviceIds).delete()
+  await knex('DeviceSiteHistory').whereIn('deviceId', deviceIds).delete()
+  await knex('InventoryLog').whereIn('resultId', resultIds).delete()
+  await knex('ResultQualityControlLog').whereIn('resultId', resultIds).delete()
   await knex('ResultGeneratedResult')
     .whereIn('sourceResultId', resultIds)
     .orWhereIn('generatedResultId', resultIds)
     .delete()
 
-  await knex('ResultWorkflowLog')
-    .whereIn('resultId', resultIds)
-    .delete()
-  await knex('SmsMessage')
-    .whereIn('resultId', resultIds)
-    .delete()
-  await knex('ResultFileReference')
-    .whereIn('resultId', resultIds)
-    .delete()
-  await knex('Result')
-    .whereIn('id', resultIds)
-    .delete()
-  await knex('DeviceOperation')
-    .whereIn('id', opIds)
-    .delete()
+  await knex('ResultWorkflowLog').whereIn('resultId', resultIds).delete()
+  await knex('SmsMessage').whereIn('resultId', resultIds).delete()
+  await knex('ResultFileReference').whereIn('resultId', resultIds).delete()
+  await knex('Result').whereIn('id', resultIds).delete()
+  await knex('DeviceOperation').whereIn('id', opIds).delete()
   await knex('DeviceApiKey')
     .whereIn('deviceId', deviceIds)
     .update({ deviceId: null })
-  await knex('Device')
-    .whereIn('id', deviceIds)
-    .delete()
-  await knex('DeviceApiKey')
-    .whereIn('token', tokens)
-    .delete()
+  await knex('Device').whereIn('id', deviceIds).delete()
+  await knex('DeviceApiKey').whereIn('token', tokens).delete()
 }
 
 async function deleteIssues(knex, { deviceIds, resultIds }) {
@@ -126,28 +96,18 @@ async function deleteIssues(knex, { deviceIds, resultIds }) {
     .whereIn('id', webhookMessageIds)
     .select('fileReferenceId')
 
-  await knex('Notification')
-    .whereIn('id', notificationIds)
-    .delete()
-  await knex('AlertMessage')
-    .whereIn('id', alertMessageIds)
-    .delete()
-  await knex('EmailMessage')
-    .whereIn('id', emailMessageIds)
-    .delete()
-  await knex('SmsMessage')
-    .whereIn('id', smsMessageIds)
-    .delete()
+  await knex('Notification').whereIn('id', notificationIds).delete()
+  await knex('AlertMessage').whereIn('id', alertMessageIds).delete()
+  await knex('EmailMessage').whereIn('id', emailMessageIds).delete()
+  await knex('SmsMessage').whereIn('id', smsMessageIds).delete()
   await webhookMessageQ.orWhereIn('id', webhookMessageIds).delete()
   await knex('ResultFileReference')
     .whereIn('fileReferenceId', fileReferenceIds)
     .delete()
-  await knex('FileReference')
-    .whereIn('id', fileReferenceIds)
-    .delete()
+  await knex('FileReference').whereIn('id', fileReferenceIds).delete()
   await knex('IssueEvent')
     .whereIn('issueId', issueIds)
-    .orWhere(function() {
+    .orWhere(function () {
       if (resultIds != null && resultIds.length > 0) {
         this.whereRaw(
           `JSON_EXTRACT(data, "$.resultId") IN (${resultIds.join(',')})`
@@ -155,9 +115,7 @@ async function deleteIssues(knex, { deviceIds, resultIds }) {
       }
     })
     .delete()
-  await knex('Issue')
-    .whereIn('id', issueIds)
-    .delete()
+  await knex('Issue').whereIn('id', issueIds).delete()
 }
 
 async function getDeviceConfigurationData(knex, deviceId) {
@@ -346,11 +304,9 @@ async function createResult(
     createdOn: subHours(now, 2),
     createdBy: 1,
   })
-  await knex('Result')
-    .where('id', resultId)
-    .update({
-      resultWorkflowStatusLogId: lastLogId,
-    })
+  await knex('Result').where('id', resultId).update({
+    resultWorkflowStatusLogId: lastLogId,
+  })
   return resultId
 }
 
@@ -588,15 +544,9 @@ class DeviceApiTestContext {
       }
 
       if (this.siteIds.length > 0) {
-        await knex('Sample')
-          .whereIn('originSiteId', this.siteIds)
-          .delete()
-        await knex('InventoryItem')
-          .whereIn('siteId', this.siteIds)
-          .delete()
-        await knex('Site')
-          .whereIn('id', this.siteIds)
-          .delete()
+        await knex('Sample').whereIn('originSiteId', this.siteIds).delete()
+        await knex('InventoryItem').whereIn('siteId', this.siteIds).delete()
+        await knex('Site').whereIn('id', this.siteIds).delete()
       }
     })
   }
