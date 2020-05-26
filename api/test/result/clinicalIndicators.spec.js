@@ -45,7 +45,7 @@ describe('/result/clinical-indicator-aggregations', () => {
           .map(o => ({
             resultCategory1: o.resultCategory1Name.replace(' ', ''),
           }))
-          .filter(function(o) {
+          .filter(function (o) {
             return reportableResultCategories.indexOf(o.resultCategory1) > -1
           })
           .groupBy('resultCategory1')
@@ -65,7 +65,7 @@ describe('/result/clinical-indicator-aggregations', () => {
       .set('Authorization', `Bearer ${shared.token}`)
       .then(res => {
         const expectedResponse = _.chain(resultsForUser)
-          .filter(function(o) {
+          .filter(function (o) {
             return (
               // only reportable should be included
               reportableResultCategories.indexOf(
@@ -92,7 +92,7 @@ describe('/result/clinical-indicator-aggregations', () => {
       .set('Authorization', `Bearer ${shared.token}`)
       .then(res => {
         const expectedResponse = _.chain(resultsForUser)
-          .filter(function(o) {
+          .filter(function (o) {
             return (
               reportableResultCategories.indexOf(
                 o.resultCategory1Name.replace(' ', '')
@@ -122,7 +122,7 @@ describe('/result/clinical-indicator-aggregations', () => {
       .set('Authorization', `Bearer ${shared.token}`)
       .then(res => {
         const expectedResponse = _.chain(resultsForUser)
-          .filter(function(o) {
+          .filter(function (o) {
             return (
               reportableResultCategories.indexOf(
                 o.resultCategory1Name.replace(' ', '')
@@ -143,7 +143,7 @@ describe('/result/clinical-indicator-aggregations', () => {
       .set('Authorization', `Bearer ${shared.token}`)
       .then(res => {
         const expectedResponse = _.chain(resultsForUser)
-          .filter(function(o) {
+          .filter(function (o) {
             return (
               // only reportable should be included
               reportableResultCategories.indexOf(

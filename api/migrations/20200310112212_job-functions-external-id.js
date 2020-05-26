@@ -21,10 +21,7 @@ async function up(knex) {
 
   // Set externalId as not nullable
   await knex.schema.alterTable('JobFunction', tblJobFunc => {
-    tblJobFunc
-      .string('externalId')
-      .notNullable()
-      .alter()
+    tblJobFunc.string('externalId').notNullable().alter()
   })
 }
 

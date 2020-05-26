@@ -7,10 +7,7 @@ async function up(knex) {
   await knex('AssayType').update({ externalId: knex.raw('??', ['i18nKey']) })
 
   await knex.schema.alterTable('AssayType', assayType => {
-    assayType
-      .string('externalId')
-      .notNullable()
-      .alter()
+    assayType.string('externalId').notNullable().alter()
   })
 }
 

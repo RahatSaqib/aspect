@@ -254,7 +254,7 @@ describe('Device API Raw Philippines NTRL', () => {
                   whereFunctionNames.forEach(whereCallbackFunctionName => {
                     whereParamsAccumulator[
                       whereCallbackFunctionName
-                    ] = function(...whereCallbackParams) {
+                    ] = function (...whereCallbackParams) {
                       this.push([
                         whereCallbackFunctionName,
                         ...whereCallbackParams,

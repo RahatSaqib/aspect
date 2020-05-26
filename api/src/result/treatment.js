@@ -31,7 +31,7 @@ async function confirmedTreatmentTracking(request) {
 
   const query = await knex('Result as r')
     // consider 100% as all results where requiresTreatment = 1 in the resultCategoryAssay table
-    .innerJoin('ResultCategoryAssay as rca', function() {
+    .innerJoin('ResultCategoryAssay as rca', function () {
       this.on('r.assayId', 'rca.assayId').andOn(
         'r.resultCategory1',
         'rca.resultCategoryId'
@@ -70,7 +70,7 @@ async function confirmedTreatmentTracking(request) {
       sample: 'sp',
     })
     // if 'siteId' specified - filter by siteId
-    .where(function() {
+    .where(function () {
       if (siteId) {
         this.where('s.id', siteId)
       }

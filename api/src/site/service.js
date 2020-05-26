@@ -76,13 +76,13 @@ async function listSites(request) {
       'activeIssues.siteId',
       's.id'
     )
-    .where(function() {
+    .where(function () {
       if (!query.siteIds) {
         return
       }
       this.whereIn('s.id', query.siteIds.split(','))
     })
-    .where(function() {
+    .where(function () {
       if (!query.deviceName) {
         return
       }
@@ -103,10 +103,7 @@ async function listSites(request) {
       externalId: 's.externalId',
     })
     .modify(addConstraints, dataConstraints, { site: 's', geography: 'g' })
-  const getCount = siteQuery
-    .clone()
-    .count('s.id as count')
-    .first()
+  const getCount = siteQuery.clone().count('s.id as count').first()
 
   // get rows
   const getItems = siteQuery

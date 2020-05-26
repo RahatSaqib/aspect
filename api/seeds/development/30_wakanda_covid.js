@@ -439,7 +439,7 @@ async function seed(knex) {
   await normalizeTreatmentStatusDistributionByResults(
     knex,
     await knex('Result as r')
-      .join('ResultCategoryAssay as rca', function() {
+      .join('ResultCategoryAssay as rca', function () {
         this.on('r.assayId', 'rca.assayId').andOn(
           'r.resultCategory1',
           'rca.resultCategoryId'

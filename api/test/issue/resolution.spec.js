@@ -24,9 +24,7 @@ describe('Issue Resolution', () => {
   }
 
   async function getPartner(knex, partnerName) {
-    return knex('Partner')
-      .where('name', partnerName)
-      .first()
+    return knex('Partner').where('name', partnerName).first()
   }
 
   async function getDevice(
@@ -36,7 +34,7 @@ describe('Issue Resolution', () => {
     ensureMySqlBeforeNestedTablesOptions(knex)
     return knex('Device as d')
       .join('Geography as lgaGeography', 'd.geographyId', 'lgaGeography.id')
-      .join('Geography as regionalGeography', function() {
+      .join('Geography as regionalGeography', function () {
         this.on('lgaGeography.stateId', 'regionalGeography.stateId').onNull(
           'regionalGeography.lgaId'
         )
@@ -83,7 +81,7 @@ describe('Issue Resolution', () => {
         if (noResultsSince) {
           const resultsAfter = knex('Result as r')
             .whereRaw('r.deviceId = d.id')
-            .andWhere(function() {
+            .andWhere(function () {
               this.where('r.startedOn', '>', noResultsSince)
               this.orWhere('r.endedOn', '>', noResultsSince)
             })
@@ -100,7 +98,7 @@ describe('Issue Resolution', () => {
     ensureMySqlBeforeNestedTablesOptions(knex)
     return knex('Site as s')
       .join('Geography as lgaGeography', 's.geographyId', 'lgaGeography.id')
-      .join('Geography as regionalGeography', function() {
+      .join('Geography as regionalGeography', function () {
         this.on('lgaGeography.stateId', 'regionalGeography.stateId').onNull(
           'regionalGeography.lgaId'
         )
@@ -144,21 +142,15 @@ describe('Issue Resolution', () => {
   }
 
   async function getDeviceStatus(knex, deviceStatusToken) {
-    return knex('DeviceStatus')
-      .where('token', deviceStatusToken)
-      .first()
+    return knex('DeviceStatus').where('token', deviceStatusToken).first()
   }
 
   async function getIssueType(knex, issueType) {
-    return knex('IssueType')
-      .where('externalId', issueType)
-      .first()
+    return knex('IssueType').where('externalId', issueType).first()
   }
 
   async function getIssueStatus(knex, issueStatus) {
-    return knex('IssueStatus')
-      .where('externalId', issueStatus)
-      .first()
+    return knex('IssueStatus').where('externalId', issueStatus).first()
   }
 
   async function getIssueEventStatus(knex, issueEventStatus) {
@@ -168,9 +160,7 @@ describe('Issue Resolution', () => {
   }
 
   async function getIssue(knex, issueId) {
-    return knex('Issue')
-      .where('id', issueId)
-      .first()
+    return knex('Issue').where('id', issueId).first()
   }
 
   async function createAndTriggerIssue({
@@ -259,27 +249,13 @@ describe('Issue Resolution', () => {
   }
 
   async function deleteDeviceAndTestData(knex, deviceIds) {
-    await knex('FactDeviceFlag')
-      .whereIn('deviceId', deviceIds)
-      .delete()
-    await knex('DeviceStatusLog')
-      .whereIn('deviceId', deviceIds)
-      .delete()
-    await knex('FactDeviceFlag')
-      .whereIn('deviceId', deviceIds)
-      .delete()
-    await knex('DeviceLog')
-      .whereIn('deviceId', deviceIds)
-      .delete()
-    await knex('DeviceSiteHistory')
-      .whereIn('deviceId', deviceIds)
-      .delete()
-    await knex('DeviceOperation')
-      .whereIn('deviceId', deviceIds)
-      .delete()
-    await knex('Device')
-      .whereIn('id', deviceIds)
-      .delete()
+    await knex('FactDeviceFlag').whereIn('deviceId', deviceIds).delete()
+    await knex('DeviceStatusLog').whereIn('deviceId', deviceIds).delete()
+    await knex('FactDeviceFlag').whereIn('deviceId', deviceIds).delete()
+    await knex('DeviceLog').whereIn('deviceId', deviceIds).delete()
+    await knex('DeviceSiteHistory').whereIn('deviceId', deviceIds).delete()
+    await knex('DeviceOperation').whereIn('deviceId', deviceIds).delete()
+    await knex('Device').whereIn('id', deviceIds).delete()
   }
 
   async function cleanUpIssues(knex, issueIds) {
@@ -291,34 +267,24 @@ describe('Issue Resolution', () => {
       alertMessageId => !_.isNull(alertMessageId)
     )
     if (!_.isEmpty(alertMessageIds)) {
-      await knex('AlertMessage')
-        .whereIn('id', alertMessageIds)
-        .del()
+      await knex('AlertMessage').whereIn('id', alertMessageIds).del()
     }
     const emailMessageIds = _.filter(
       _.uniq(_.map(notifications, 'emailMessageId')),
       emailMessageId => !_.isNull(emailMessageId)
     )
     if (!_.isEmpty(emailMessageIds)) {
-      await knex('EmailMessage')
-        .whereIn('id', emailMessageIds)
-        .del()
+      await knex('EmailMessage').whereIn('id', emailMessageIds).del()
     }
     const smsMessageIds = _.filter(
       _.uniq(_.map(notifications, 'smsMessageId')),
       smsMessageId => !_.isNull(smsMessageId)
     )
     if (!_.isEmpty(smsMessageIds)) {
-      await knex('SmsMessage')
-        .whereIn('id', smsMessageIds)
-        .del()
+      await knex('SmsMessage').whereIn('id', smsMessageIds).del()
     }
-    await knex('Notification')
-      .whereIn('issueId', issueIds)
-      .del()
-    return knex('Issue')
-      .whereIn('id', issueIds)
-      .del()
+    await knex('Notification').whereIn('issueId', issueIds).del()
+    return knex('Issue').whereIn('id', issueIds).del()
   }
 
   describe('For Myanmar', () => {
@@ -425,9 +391,7 @@ describe('Issue Resolution', () => {
         run(async knex => {
           await Promise.all(
             _.map(factDeviceFlagsToRemove, deviceId =>
-              knex('FactDeviceFlag')
-                .where('deviceId', deviceId)
-                .del()
+              knex('FactDeviceFlag').where('deviceId', deviceId).del()
             )
           )
 
@@ -676,9 +640,7 @@ describe('Issue Resolution', () => {
             await knex('FactDeviceFlag')
               .where('deviceId', device1.id)
               .update({ offline: 0 })
-            await knex('IssueEvent')
-              .where('id', maintenanceReasonEventId)
-              .del()
+            await knex('IssueEvent').where('id', maintenanceReasonEventId).del()
             return knex('FactDeviceFlag')
               .where('deviceId', device2.id)
               .update({ offline: 0 })
@@ -1027,11 +989,9 @@ describe('Issue Resolution', () => {
             createdOn: now,
           }
         )
-        await knex('Result')
-          .where('id', resultId)
-          .update({
-            resultWorkflowStatusLogId: resultWorkflowStatusId,
-          })
+        await knex('Result').where('id', resultId).update({
+          resultWorkflowStatusLogId: resultWorkflowStatusId,
+        })
         return resultId
       }
 
@@ -1088,9 +1048,7 @@ describe('Issue Resolution', () => {
             }
           }
           now = new Date()
-          admin = await knex('User')
-            .where({ name: 'myanmar_admin' })
-            .first()
+          admin = await knex('User').where({ name: 'myanmar_admin' }).first()
           gxMtbRifAssay = await knex('Assay')
             .where({ externalId: 'GxMtbRif' })
             .first()
@@ -1116,9 +1074,7 @@ describe('Issue Resolution', () => {
         run(async knex => {
           await Promise.all(
             _.map(factDeviceFlagsToRemove, deviceId =>
-              knex('FactDeviceFlag')
-                .where('deviceId', deviceId)
-                .del()
+              knex('FactDeviceFlag').where('deviceId', deviceId).del()
             )
           )
 
@@ -1233,9 +1189,7 @@ describe('Issue Resolution', () => {
         afterEach(() =>
           run(async knex =>
             Promise.each(resultIdsToCleanUp, resultId =>
-              knex('Result')
-                .where('id', resultId)
-                .del()
+              knex('Result').where('id', resultId).del()
             )
           )
         )
@@ -1283,9 +1237,7 @@ describe('Issue Resolution', () => {
         afterEach(() =>
           run(async knex =>
             Promise.each(resultIdsToCleanUp, resultId =>
-              knex('Result')
-                .where('id', resultId)
-                .del()
+              knex('Result').where('id', resultId).del()
             )
           )
         )

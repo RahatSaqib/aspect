@@ -8,10 +8,7 @@ function oneDirectionalMd5Hash(inputString) {
   if (inputString == null || _.isUndefined(inputString)) {
     return inputString
   }
-  return crypto
-    .createHash('md5')
-    .update(inputString)
-    .digest('hex')
+  return crypto.createHash('md5').update(inputString).digest('hex')
 }
 // cipher 'aes-256-cbc-hmac-sha1' is missing in Node 12.x
 // const encryptionAlgorithm = 'aes-256-cbc-hmac-sha1'

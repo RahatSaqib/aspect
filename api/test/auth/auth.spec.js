@@ -102,12 +102,8 @@ describe('Authentication routes', () => {
         await knex('RefreshToken')
           .whereIn('clientId', ['123123123-123123123', '9999-9999'])
           .delete()
-        await knex('Person')
-          .where('name', unlicensedUser)
-          .delete()
-        await knex('User')
-          .where('name', unlicensedUser)
-          .delete()
+        await knex('Person').where('name', unlicensedUser).delete()
+        await knex('User').where('name', unlicensedUser).delete()
       })
     )
 
@@ -206,9 +202,7 @@ describe('Authentication routes', () => {
 
       it('should return a JSON message that contains a valid jwt, access token, and client ID with different expiration for Reporter App', () =>
         runTestWithKnex(async knex => {
-          const rt = await knex('RefreshToken')
-            .where('token', appToken)
-            .first()
+          const rt = await knex('RefreshToken').where('token', appToken).first()
           assert.equal(rt.clientName, appClientName)
           assert.equal(rt.clientType, appClientType)
           assert.closeTo(
@@ -221,9 +215,7 @@ describe('Authentication routes', () => {
 
       it('should return a JSON message that contains a valid jwt, access token, and client ID with different expiration for web', () =>
         runTestWithKnex(async knex => {
-          const rt = await knex('RefreshToken')
-            .where('token', webToken)
-            .first()
+          const rt = await knex('RefreshToken').where('token', webToken).first()
           assert.equal(rt.clientName, webClientName)
           assert.equal(rt.clientType, webClientType)
           assert.closeTo(

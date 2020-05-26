@@ -85,10 +85,7 @@ async function up(knex) {
       .inTable('FollowUp')
       .notNullable()
     followUp.datetime('date')
-    followUp
-      .datetime('createdOn')
-      .notNullable()
-      .defaultTo(knex.fn.now())
+    followUp.datetime('createdOn').notNullable().defaultTo(knex.fn.now())
     followUp
       .integer('createdBy')
       .notNullable()
@@ -96,10 +93,7 @@ async function up(knex) {
       .index()
       .references('id')
       .inTable('User')
-    followUp
-      .datetime('updatedOn')
-      .notNullable()
-      .defaultTo(knex.fn.now())
+    followUp.datetime('updatedOn').notNullable().defaultTo(knex.fn.now())
     followUp
       .integer('updatedBy')
       .notNullable()

@@ -32,9 +32,7 @@ async function seed(knex) {
   })
 
   let { id: deviceTypeBDMGITId } =
-    (await knex('DeviceType')
-      .where('externalId', 'BDMGIT')
-      .first('id')) || {}
+    (await knex('DeviceType').where('externalId', 'BDMGIT').first('id')) || {}
 
   if (!deviceTypeBDMGITId) {
     ;[deviceTypeBDMGITId] = await knex('DeviceType').insert({
@@ -447,15 +445,11 @@ async function seed(knex) {
   }
 
   let { id: assayLpaId } =
-    (await knex('Assay')
-      .where('externalId', 'assayLpa')
-      .first('id')) || {}
+    (await knex('Assay').where('externalId', 'assayLpa').first('id')) || {}
   if (!assayLpaId) {
     assayLpaId = await knex('Assay').insert(assayLpa)
   } else {
-    await knex('Assay')
-      .where('id', assayLpaId)
-      .update(assayLpa)
+    await knex('Assay').where('id', assayLpaId).update(assayLpa)
   }
 
   await knex('ResultCategoryAssay').insert({
@@ -590,15 +584,11 @@ async function seed(knex) {
   }
 
   let { id: assaySmearId } =
-    (await knex('Assay')
-      .where('externalId', 'assaySmear')
-      .first('id')) || {}
+    (await knex('Assay').where('externalId', 'assaySmear').first('id')) || {}
   if (!assaySmearId) {
     assaySmearId = await knex('Assay').insert(assaySmear)
   } else {
-    await knex('Assay')
-      .where('id', assaySmearId)
-      .update(assaySmear)
+    await knex('Assay').where('id', assaySmearId).update(assaySmear)
   }
 
   await knex('ResultCategoryAssay').insert({

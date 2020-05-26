@@ -35,9 +35,7 @@ async function seed(knex) {
     .first('id')
 
   // have to check if states are already set up because they're now part of common inserts:
-  const { stateCount } = await knex('State')
-    .count('id as stateCount')
-    .first()
+  const { stateCount } = await knex('State').count('id as stateCount').first()
 
   if (stateCount === 0) {
     await upsertStatesAndLgas(knex, countryId, geography.countries[0].states)
@@ -209,9 +207,7 @@ async function seed(knex) {
   await insertSites(knex, partnerId, countryId, sites.sites)
 
   // add reporter logins for testing
-  const { id: adminId } = knex('User')
-    .where('name', 'admin')
-    .first('id')
+  const { id: adminId } = knex('User').where('name', 'admin').first('id')
 
   const jobFunctionIdClinician = await upsertJobFunction(
     knex,

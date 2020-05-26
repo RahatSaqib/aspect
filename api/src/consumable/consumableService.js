@@ -18,7 +18,7 @@ async function listConsumableTypes(request) {
 
   const consumableQuery = knex('Consumable as c')
     .leftJoin('Unit as u', 'c.unit', 'u.id')
-    .leftJoin('PartnerConsumable as pc', function() {
+    .leftJoin('PartnerConsumable as pc', function () {
       this.on('c.id', 'pc.consumableId').andOn(
         'pc.partnerId',
         knex.raw(dataConstraints.partner.id)
@@ -28,10 +28,7 @@ async function listConsumableTypes(request) {
     .modify(filterParams, query, { name: 'c.name' })
 
   // get total count for paging
-  const getCount = consumableQuery
-    .clone()
-    .count('c.id as count')
-    .first()
+  const getCount = consumableQuery.clone().count('c.id as count').first()
 
   // get rows
   const getItems = consumableQuery
@@ -56,10 +53,7 @@ async function listConsumableReasons(request) {
   ).modify(filterParams, query, { name: 'cr.name' })
 
   // get total count for paging
-  const getCount = consumableReasonQuery
-    .clone()
-    .count('cr.id as count')
-    .first()
+  const getCount = consumableReasonQuery.clone().count('cr.id as count').first()
 
   // get rows
   const getItems = consumableReasonQuery
