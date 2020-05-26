@@ -76,6 +76,12 @@ describe('result/service', () => {
               return Promise.resolve(returnValue)
             },
           },
+          '../site/service': {
+            getSite: async () => Promise.resolve(null),
+          },
+          '../device/service': {
+            getDeviceByDeviceId: async () => Promise.resolve(null),
+          },
         },
         extraServices
       )

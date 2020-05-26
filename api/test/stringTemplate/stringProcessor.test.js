@@ -665,6 +665,39 @@ describe('stringTemplate', () => {
       })
     })
 
+    describe('coalesce helper', () => {
+      it('should return the first value that is not falsy', async () => {
+        const message = await runProcessUsingDataSourceQuery(
+          `Patient Case Number: {{coalesce result.data.undefinedCaseNumber result.data.caseNumberOne result.data.caseNumberTwo result.data.caseNumberThree result.data.caseNumberFour result.data.caseNumberFive result.data.caseNumberSix}}`,
+          {
+            resultData: JSON.stringify({
+              caseNumberOne: 0,
+              caseNumberTwo: '',
+              caseNumberThree: false,
+              caseNumberFour: 'truth',
+              caseNumberFive: 1,
+              caseNumberSix: true,
+            }),
+          }
+        )
+        assert.equal(message.payload, `Patient Case Number: truth`)
+      })
+
+      it('should return a blank string when none of the supplied values are truthy', async () => {
+        const message = await runProcessUsingDataSourceQuery(
+          `Patient Case Number: {{coalesce result.data.undefinedCaseNumber result.data.caseNumberOne result.data.caseNumberTwo result.data.caseNumberThree}}`,
+          {
+            resultData: JSON.stringify({
+              caseNumberOne: 0,
+              caseNumberTwo: '',
+              caseNumberThree: false,
+            }),
+          }
+        )
+        assert.equal(message.payload, `Patient Case Number: `)
+      })
+    })
+
     describe('use cases for SA NHLS', () => {
       it('should process RedCAP API Payloads', async () => {
         const redCapDateTimeFormat = 'yyyy-MM-dd HH:mm'

@@ -48,21 +48,23 @@ function onAlertMessageUpdateAfterIssueDataChanged(
       .where('nt.issueTypeId', issueTypeId)
       .where('n.issueId', issueId)
       .select('n.alertMessageId')
-      .map(async ({ alertMessageId }) => {
-        // generate actual message
-        const message = await createAlertMessageFromTemplate(
-          knex,
-          alertMessageId
-        )
-        // update
-        await knex('AlertMessage')
-          .where({ id: alertMessageId, messageStatusId }) // update only for Sent message status
-          .whereNot('message', message) // update only if message text changed
-          .update({
-            message,
-            updatedOn: new Date(),
-          })
-      })
+      .then(async items =>
+        items.map(async ({ alertMessageId }) => {
+          // generate actual message
+          const message = await createAlertMessageFromTemplate(
+            knex,
+            alertMessageId
+          )
+          // update
+          await knex('AlertMessage')
+            .where({ id: alertMessageId, messageStatusId }) // update only for Sent message status
+            .whereNot('message', message) // update only if message text changed
+            .update({
+              message,
+              updatedOn: new Date(),
+            })
+        })
+      )
   })
 }
 

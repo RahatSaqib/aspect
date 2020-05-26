@@ -250,10 +250,7 @@ describe('Authentication routes', () => {
           .send({ name: adminUsername })
           .then(res => {
             assert.equal(res.status, 400)
-            assert.equal(
-              res.body.message,
-              'child "password" fails because ["password" is required]'
-            )
+            assert.equal(res.body.message, '"password" is required')
           })
       })
 
@@ -263,10 +260,7 @@ describe('Authentication routes', () => {
           .send({ name: adminUsername, password: adminPassword })
           .then(res => {
             assert.equal(res.status, 400)
-            assert.equal(
-              res.body.message,
-              'child "clientName" fails because ["clientName" is required]'
-            )
+            assert.equal(res.body.message, '"clientName" is required')
           })
       })
 
@@ -443,10 +437,7 @@ describe('Authentication routes', () => {
         .then(res => {
           assert.equal(res.status, 400)
           assert.isString(res.body.message)
-          assert.equal(
-            res.body.message,
-            'child "clientId" fails because ["clientId" is required]'
-          )
+          assert.equal(res.body.message, '"clientId" is required')
         })
     })
 
@@ -459,10 +450,7 @@ describe('Authentication routes', () => {
         .then(res => {
           assert.equal(res.status, 400)
           assert.isString(res.body.message)
-          assert.equal(
-            res.body.message,
-            'child "token" fails because ["token" is required]'
-          )
+          assert.equal(res.body.message, '"token" is required')
         })
     })
 

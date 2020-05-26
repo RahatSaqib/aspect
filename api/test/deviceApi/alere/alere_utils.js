@@ -18,7 +18,7 @@ async function deleteDeviceDataAndRefreshTokens(knex, apiKeys, clientId) {
 
   const opIds = await knex('DeviceOperation')
     .whereIn('deviceId', deviceIds)
-    .map(op => op.id)
+    .pluck('id')
 
   await knex('DeviceStatusLog')
     .whereIn('deviceId', deviceIds)
@@ -104,7 +104,7 @@ async function deleteDeviceSiteDataAndRefreshTokens(
 
   const opIds = await knex('DeviceOperation')
     .whereIn('deviceId', deviceIds)
-    .map(op => op.id)
+    .pluck('id')
 
   const issueIds = await knex('Issue')
     .whereIn('deviceId', deviceIds)

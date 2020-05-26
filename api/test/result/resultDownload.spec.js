@@ -300,9 +300,12 @@ describe('Result download routes', () => {
 
     it('should return a paged list of results filtered by disease external id', async () => {
       const res = await server
-        .get(
-          `${path}?size=1&deviceType=DaktariVirology&diseaseExternalIds=tb,ebola,hiv`
-        )
+        .get(path)
+        .query({
+          size: 1,
+          deviceType: 'DaktariVirology',
+          diseaseExternalIds: 'tb,ebola,hiv',
+        })
         .set('Authorization', `Bearer ${shared.token}`)
       assert.equal(res.status, 200)
       assert.typeOf(res.body, 'Object')

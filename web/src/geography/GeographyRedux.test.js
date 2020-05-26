@@ -689,7 +689,7 @@ describe('geography action creators', () => {
     return countriesState
       .set(
         'items',
-        new Immutable.List(
+        Immutable.List(
           _.map(
             countries,
             country =>
@@ -700,7 +700,7 @@ describe('geography action creators', () => {
                   loading: false,
                   lastRefreshed: country.states ? lastRefreshed : undefined,
                   items: country.states
-                    ? new Immutable.List(
+                    ? Immutable.List(
                         _.map(
                           country.states,
                           state =>
@@ -713,7 +713,7 @@ describe('geography action creators', () => {
                                   ? lastRefreshed
                                   : undefined,
                                 items: state.lgas
-                                  ? new Immutable.List(
+                                  ? Immutable.List(
                                       _.map(
                                         state.lgas,
                                         lga => new LazyLoadChild(lga)

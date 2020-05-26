@@ -40,6 +40,8 @@ const graphColorMap = [
   { id: 19, externalId: 'quarantine', color: colorSuperNova },
   { id: 20, externalId: 'Male', color: colorBlue4 },
   { id: 21, externalId: 'Female', color: colorPurple },
+  { id: 22, externalId: 'Confirmed', color: colorMantis },
+  { id: 23, externalId: 'NotConfirmed', color: colorBlue4 },
   { id: 99, externalId: 'Cases', color: colorMantis },
 ]
 

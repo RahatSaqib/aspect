@@ -54,6 +54,11 @@
       "name": "Isolate",
       "externalId": "Isolate",
       "i18nKey": "sampleTypeIsolate"
+    },
+    {
+      "name": "Nasal Swab",
+      "externalId": "Nasal Swab",
+      "i18nKey": "sampleTypeNasalSwab"
     }
   ]
 }

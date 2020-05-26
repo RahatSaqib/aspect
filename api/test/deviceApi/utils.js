@@ -29,15 +29,15 @@ async function deleteDeviceAndTestData(knex, apiKeys) {
 
   const deviceResultIds = await knex('Result')
     .whereIn('deviceId', deviceIds)
-    .map(result => result.id)
+    .pluck('id')
   const generatedResultIds = await knex('ResultGeneratedResult')
     .whereIn('sourceResultId', deviceResultIds)
-    .map(r => r.generatedResultId)
+    .pluck('generatedResultId')
   const resultIds = deviceResultIds.concat(generatedResultIds)
 
   const opIds = await knex('DeviceOperation')
     .whereIn('deviceId', deviceIds)
-    .map(op => op.id)
+    .pluck('id')
 
   const tagIds = await knex('ResultTag')
     .whereIn('resultId', resultIds)

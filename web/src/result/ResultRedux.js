@@ -82,7 +82,6 @@ export function fetchResults(filtersParams, sortCol, sortDir, page, pageSize) {
     const filters = _.fromPairs([...filtersParams.entries()])
     dispatch(requestResults(sortCol, sortDir, page, pageSize, filters))
     sortCol = sortCol || 'endedOn'
-
     return aspectFetch(
       `/result?${stringify({
         sortCol,
@@ -586,11 +585,11 @@ export const Result = Immutable.Record({
     sortDir: 'desc',
     pageSize: 10,
     filters: Immutable.fromJS({ sampleId: '', sampleGroup: '', assayId: null }),
-    extraColumns: new Immutable.List(),
+    extraColumns: Immutable.List(),
   }),
   workflowLog: new WorkflowLogModel(),
-  deviceLogs: new Immutable.List(),
-  screenSchema: new Immutable.fromJS(screenSchema),
+  deviceLogs: Immutable.List(),
+  screenSchema: Immutable.fromJS(screenSchema),
   loading: true,
   formDataSaving: false,
   formDataDirty: false,
@@ -635,7 +634,10 @@ export default function resultReducer(state = initialState, action) {
           formData[action.formFieldKey] = action.value
           mutState.set(
             'items',
-            mutState.items.mergeDeepIn(['byId', action.resultId], { formData })
+            mutState.items.mergeDeepIn(
+              ['byId', action.resultId],
+              Immutable.fromJS({ formData })
+            )
           )
         })
         .merge({ formDataDirty: true })
@@ -653,7 +655,7 @@ export default function resultReducer(state = initialState, action) {
       })
     case types.RECEIVE_RESULT_LOG:
       return state.merge({
-        deviceLogs: action.item,
+        deviceLogs: Immutable.List(action.item),
         loading: false,
       })
 
@@ -688,17 +690,20 @@ export default function resultReducer(state = initialState, action) {
         } = action.item
         mutState.set(
           'items',
-          mutState.items.mergeDeepIn(['byId', action.resultId], {
-            resultTreatmentStatus,
-            treatmentStatusInfo,
-            resultTreatmentStatusChangedOn,
-            resultTreatmentStatusCreatedOn,
-          })
+          mutState.items.mergeDeepIn(
+            ['byId', action.resultId],
+            Immutable.fromJS({
+              resultTreatmentStatus,
+              treatmentStatusInfo,
+              resultTreatmentStatusChangedOn,
+              resultTreatmentStatusCreatedOn,
+            })
+          )
         )
       })
     case types.RECEIVE_CREATING_RESULT_NOTE:
       return state.withMutations(mutState => {
-        const resultNotes = action.item
+        const resultNotes = Immutable.fromJS(action.item)
         mutState.set(
           'items',
           mutState.items.mergeDeepIn(['byId', action.resultId], {

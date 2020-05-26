@@ -3,7 +3,7 @@ import subDays from 'date-fns/subDays'
 import classnames from 'classnames/bind'
 import React from 'react'
 import { defineMessages, injectIntl } from 'react-intl'
-import Helmet from 'react-helmet'
+import { Helmet } from 'react-helmet'
 import Card from '@material-ui/core/Card'
 import TableBody from '@material-ui/core/TableBody'
 

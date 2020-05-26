@@ -7,7 +7,7 @@ import { compose, setPropTypes } from 'recompose'
 import { defineMessages, injectIntl } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import Helmet from 'react-helmet'
+import { Helmet } from 'react-helmet'
 
 // Material-UI
 import { MdChevronLeft, MdChevronRight, MdClose } from 'react-icons/md'
@@ -20,7 +20,7 @@ import DelayShowingProgressBar from '../../components/shared/DelayShowingProgres
 import JSONSchemaCard from '../../components/shared/JSONSchemaCard'
 import NavTitle from '../../globals/components/NavTitle'
 import {
-  fetchSingleResult,
+  // fetchSingleResult,
   fetchResultLog,
   saveResultFormDataValue,
   setResultFormDataValue,
@@ -184,7 +184,7 @@ const enhance = compose(
     dispatch =>
       bindActionCreators(
         {
-          fetchSingleResult,
+          // fetchSingleResult,
           fetchResultLog,
           saveResultFormDataValue,
           setResultFormDataValue,

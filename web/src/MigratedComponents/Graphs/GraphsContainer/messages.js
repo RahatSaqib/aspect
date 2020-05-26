@@ -50,6 +50,18 @@ export const messages = defineMessages({
       'pages.Status.covidGraphDailyMortalityAndRecoveryByGenderAndGender.graph',
     defaultMessage: 'Age and Gender',
   },
+  treatmentGraphStatusMonthly: {
+    id: 'pages.Status.treatmentGraphStatusMonthly.graph',
+    defaultMessage: 'Confirmed Response',
+  },
+  treatmentStatusTotalTitle: {
+    id: 'pages.Status.treatmentStatusTotalTitle.graph',
+    defaultMessage: 'Total',
+  },
+  treatmentStatusTotalValidTitle: {
+    id: 'pages.Status.treatmentStatusTotalValidTitle.graph',
+    defaultMessage: 'Valid Tests',
+  },
 })
 
 export default messages

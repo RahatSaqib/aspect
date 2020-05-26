@@ -1,7 +1,7 @@
 import React from 'react'
 import { shallow } from 'enzyme'
 import { createIntl } from 'react-intl'
-import Helmet from 'react-helmet'
+import { Helmet } from 'react-helmet'
 
 import DataTableProgressBar from '../../components/shared/DataTableProgressBar'
 import { ReporterList } from './ReporterList'

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import classnames from 'classnames/bind'
 import { useSelector, useDispatch } from 'react-redux'
-import Helmet from 'react-helmet'
+import { Helmet } from 'react-helmet'
 import { useIntl } from 'react-intl'
 import { showAcknowledgement } from '../../appNotification/AppNotificationRedux'
 import { fetchAssays } from '../../assay/AssayRedux'
@@ -14,7 +14,6 @@ import ActionStatus from './ActionStatus'
 import TargetStatus from './TargetStatus'
 import Reports from './Reports'
 import BrowseSiteDropdown from '../../globals/components/BrowseSiteDropdown'
-import TreatmentStatus from './TreatmentStatus'
 import GraphsContainer from '../../MigratedComponents/Graphs/GraphsContainer'
 import ColorDemo from './ColorDemo/ColorDemo'
 
@@ -68,13 +67,6 @@ const Status = ({ history, location, colorDemo }) => {
         assaysFromState={assays}
       />
 
-      <TreatmentStatus
-        intl={intl}
-        history={history}
-        location={location}
-        className={cssClasses('Section--withDropdown')}
-        title={intl.formatMessage(messages.treatmentTitle)}
-      />
       {colorDemo && <ColorDemo vars={process.env} />}
       <TargetStatus
         intl={intl}

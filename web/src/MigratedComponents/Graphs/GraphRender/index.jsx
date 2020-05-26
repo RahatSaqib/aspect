@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import classnames from 'classnames/bind'
-import { useSelector, useDispatch } from 'react-redux'
+import isEqual from 'lodash/isEqual'
+import { useSelector } from 'react-redux'
 import Grid from '@material-ui/core/Grid'
 import CircularProgress from '@material-ui/core/CircularProgress'
 
-import { fetchClinicalIndicatorsDashboard } from './Redux'
 import {
   formatDataByGraphType,
   getGraphKeysFromResults,
@@ -13,8 +13,12 @@ import {
 
 const cssClasses = classnames.bind(require('./GraphRender.css'))
 
-const GraphRender = ({ assays, id: parentId, config }) => {
-  const dispatch = useDispatch()
+const GraphRender = ({
+  assays,
+  id: parentId,
+  config,
+  action: dispatchFromRedux,
+}) => {
   const { whiteListed, assaysFromState } = assays
   const { id, size, api, type, averages } = config
   const {
@@ -25,6 +29,7 @@ const GraphRender = ({ assays, id: parentId, config }) => {
     indexBy,
     keyToConsume,
   } = config
+  const [rawGraphData, setRawGraphData] = useState(false)
   const [graphData, setGraphData] = useState(false)
   const [graphKeys, setGraphKeys] = useState(false)
 
@@ -40,18 +45,7 @@ const GraphRender = ({ assays, id: parentId, config }) => {
   })
 
   useEffect(() => {
-    if (!graphState) {
-      dispatch(
-        fetchClinicalIndicatorsDashboard({
-          parentId,
-          id,
-          whiteListed,
-          api,
-        })
-      )
-    }
-
-    if (graphState && (!graphData || !graphKeys)) {
+    if (rawGraphData) {
       const { data } = graphState
       if (data && data.length) {
         const grouped = formatDataByGraphType(
@@ -70,7 +64,23 @@ const GraphRender = ({ assays, id: parentId, config }) => {
         }
       }
     }
-  }, [graphState])
+  }, [rawGraphData])
+
+  useEffect(() => {
+    if (graphState && !isEqual(graphState, rawGraphData)) {
+      setRawGraphData(graphState)
+    }
+  }, [graphState, rawGraphData])
+
+  useEffect(() => {
+    dispatchFromRedux({
+      graphState,
+      parentId,
+      id,
+      whiteListed,
+      api,
+    })
+  }, [])
 
   return (
     <Grid item xs={12} lg={size}>
@@ -98,6 +108,7 @@ GraphRender.propTypes = {
   assays: PropTypes.oneOfType([PropTypes.array]).isRequired,
   config: PropTypes.oneOfType([PropTypes.object]).isRequired,
   id: PropTypes.string.isRequired,
+  action: PropTypes.oneOfType([PropTypes.object]).isRequired,
 }
 
 export default GraphRender

@@ -8,6 +8,7 @@ const {
   onCaseAdded,
   onCaseUpdated,
   getAutoCompleteCases,
+  onResultLogged,
 } = require('./service')
 
 const routes = [
@@ -145,6 +146,7 @@ const subscriptions = [
     actions: {
       CASE_ADDED: onCaseAdded,
       CASE_UPDATED: onCaseUpdated,
+      RESULT_LOGGED: onResultLogged,
     },
   },
 ]

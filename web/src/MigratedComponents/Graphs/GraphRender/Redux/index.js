@@ -24,7 +24,7 @@ export const RECEIVE_CLINICAL_INDICATORS_DASHBOARD =
 export function fetchClinicalIndicatorsDashboard(config) {
   let endpointParams = ''
   const { parentId, id, whiteListed, api } = removeEmptyParams(config)
-  const { endpoint, params } = api
+  const { endpoint, params, method = 'GET' } = api
   const assayParams = whiteListed
     .map(a => `assay=${encodeURIComponent(a)}`)
     .join('&')
@@ -42,8 +42,19 @@ export function fetchClinicalIndicatorsDashboard(config) {
   return dispatch => {
     const requestedAt = `results_${Date.now()}`
     dispatch(requestClinicalIndicatorsDashboard({ requestedAt }))
-    return aspectFetch(`/${endpoint}?${assayParams}&${endpointParams}`, {
-      method: 'GET',
+    const endpointToCall =
+      method === 'GET'
+        ? `/${endpoint}?${assayParams}&${endpointParams}`
+        : `/${endpoint}`
+    const body =
+      method === 'GET'
+        ? {}
+        : {
+            body: JSON.stringify(params),
+          }
+    return aspectFetch(endpointToCall, {
+      method,
+      ...body,
       errorNotifications: {
         403: errorInsufficientScope(
           defineMessages({
@@ -59,7 +70,7 @@ export function fetchClinicalIndicatorsDashboard(config) {
             title: {
               id:
                 'errorResponseMessages.fetchClinicalIndicatorsDashboard.GET.default.title',
-              defaultMessage: 'Error Loading Dashboard Results By Category',
+              defaultMessage: `Error Loading Dashboard ${parentId}`,
             },
           })
         ),

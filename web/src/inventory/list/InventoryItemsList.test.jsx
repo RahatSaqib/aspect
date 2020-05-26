@@ -18,7 +18,7 @@ describe('InventoryItemList module', () => {
     history: {
       push: () => {},
     },
-    inventoryAdjustment: new Immutable.List(),
+    inventoryAdjustment: Immutable.List(),
     showNewInventoryDialog: () => {},
     showReceiveInventoryDialog: () => {},
     showAddInventoryDialog: () => {},

@@ -13,7 +13,7 @@ const bcryptCompare = promisify(bcrypt.compare)
 const bcryptHash = promisify(bcrypt.hash)
 
 const config = require('../config')
-const { query } = require('../db')
+const { query, knex } = require('../db')
 const { validateUserAtGxAlert } = require('./gxalert')
 const { getRemoteAddress } = require('../shared/request')
 
@@ -206,27 +206,25 @@ function setRefreshToken({
 }) {
   const expires = getTokenExpiry(clientType, now)
   deviceTokenId = clientType === clientTypes.app ? deviceTokenId : null
+  // Create new refresh token for the user -
   // upsert refresh token
-  return query('Create new refresh token for the user').raw(
-    'INSERT INTO RefreshToken set ? ON DUPLICATE KEY UPDATE ?',
-    [
-      {
-        userId,
-        clientId,
-        clientName,
-        token: refreshToken,
-        expires,
-        createdOn: now,
-        clientType,
-        deviceTokenId,
-      },
-      {
-        token: refreshToken,
-        expires,
-        deviceTokenId,
-      },
-    ]
-  )
+  return knex.raw('INSERT INTO RefreshToken set ? ON DUPLICATE KEY UPDATE ?', [
+    {
+      userId,
+      clientId,
+      clientName,
+      token: refreshToken,
+      expires,
+      createdOn: now,
+      clientType,
+      deviceTokenId,
+    },
+    {
+      token: refreshToken,
+      expires,
+      deviceTokenId,
+    },
+  ])
 }
 
 async function refreshToken(request) {

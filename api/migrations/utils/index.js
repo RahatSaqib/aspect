@@ -22,6 +22,11 @@ function addUpdateFields(table) {
     .inTable('User')
 }
 
+function addAuditFields(table) {
+  addCreateFields(table)
+  addUpdateFields(table)
+}
+
 function addCreateFieldsNullable(table) {
   table.dateTime('createdOn')
   table
@@ -66,4 +71,5 @@ module.exports = {
   addCreateFieldsNullable,
   addUpdateFieldsNullable,
   addTimestamps,
+  addAuditFields,
 }

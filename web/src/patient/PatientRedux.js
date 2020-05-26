@@ -8,7 +8,7 @@ import {
 } from '../error/CommonErrorNotifications'
 
 export const PatientResults = Immutable.Record({
-  items: new Immutable.List(),
+  items: Immutable.List(),
 })
 export const types = {
   RECEIVE_PATIENT_RESULTS: 'RECEIVE_PATIENT_RESULTS',

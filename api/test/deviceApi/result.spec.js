@@ -2955,7 +2955,7 @@ describe('Device Result API routes', () => {
             .post(devicePostResultPath)
             .set('Authorization', context.deviceAuth)
             .send({
-              id: new Date().getTime().toString(),
+              id: new Date().getTime().toString(), // eslint-disable-line newline-per-chained-call
               data: { a: 'b' },
               assay: { id: resultDetails.assayExternalId },
               category: [
@@ -3005,7 +3005,7 @@ describe('Device Result API routes', () => {
             .post(devicePostResultPath)
             .set('Authorization', context.deviceAuth)
             .send({
-              id: new Date().getTime().toString(),
+              id: new Date().getTime().toString(), // eslint-disable-line newline-per-chained-call
               data: { a: 'b' },
               assay: { id: resultDetails.assayExternalId },
               category: [

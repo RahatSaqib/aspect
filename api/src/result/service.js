@@ -1,7 +1,7 @@
 const Boom = require('@hapi/boom')
 const _ = require('lodash')
 const dateFormat = require('date-fns/format')
-const { subDays, subMonths, startOfMonth, endOfMonth } = require('date-fns')
+const { subDays } = require('date-fns')
 const Promise = require('bluebird')
 const {
   SELECT_COMMON_FIELDS,
@@ -9,6 +9,7 @@ const {
   SORT_FIELDS,
   REPORT_COMMON_FIELDS,
   LIST_FIELDS,
+  RESULT_STRING_TEMPLATE_FIELDS,
 } = require('./querySelectors')
 const {
   knex,
@@ -45,6 +46,8 @@ const {
   getAssayResultCategories,
 } = require('../assay/service')
 const { getRemoteAddress } = require('../shared/request')
+
+const confirmedTreatmentTracking = require('./treatment')
 
 async function getListResults(query, auth, fields = LIST_FIELDS) {
   const selectFields = _.clone(fields)
@@ -633,10 +636,12 @@ async function showFileReferencesById(auth, resultId) {
       'fct.mimeType',
       'fct.mimeSubtype'
     )
-    .map(ref => {
-      ref.url = `/result/file/${resultId}/${ref.id}/${ref.name}`
-      return ref
-    })
+    .then(items =>
+      items.map(ref => {
+        ref.url = `/result/file/${resultId}/${ref.id}/${ref.name}`
+        return ref
+      })
+    )
   return { data: fileReferences }
 }
 
@@ -775,6 +780,48 @@ async function getResultByResultId(
   }
 
   return { ok: results.length === 1, data }
+}
+
+async function getResultForStringTemplateProcessing(
+  resultId,
+  fields = RESULT_STRING_TEMPLATE_FIELDS,
+  knex = knex
+) {
+  return knex('Result as r')
+    .join('Assay as a', 'r.assayId', 'a.id')
+    .join('AssayType as at', 'a.assayTypeId', 'at.id')
+    .join('Site as s', 'r.siteId', 's.id')
+    .join('Device as d', 'r.deviceId', 'd.id')
+    .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
+    .join('Sample as sample', 'r.sampleId', 'sample.id')
+    .join('Partner as p', 'r.partnerId', 'p.id')
+    .leftJoin('ResultForm as rf', function() {
+      this.on('a.id', 'rf.assayId').andOn('r.partnerId', 'rf.partnerId')
+    })
+    .leftJoin('PartnerDisease as pd', function() {
+      this.on('at.diseaseId', 'pd.diseaseId').andOn(
+        'r.partnerId',
+        'pd.partnerId'
+      )
+    })
+    .leftJoin('Case as c', 'r.caseId', 'c.id')
+    .leftJoin('Site as sos', 'sample.originSiteId', 'sos.id')
+    .leftJoin('ResultCategory as rc1', 'r.resultCategory1', 'rc1.id')
+    .leftJoin('ResultCategoryAssay as rca1', function() {
+      this.on('r.resultCategory1', 'rca1.resultCategoryId').andOn(
+        'r.assayId',
+        'rca1.assayId'
+      )
+    })
+    .leftJoin('ResultCategory as rc2', 'r.resultCategory2', 'rc2.id')
+    .leftJoin('ResultCategoryAssay as rca2', function() {
+      this.on('r.resultCategory2', 'rca2.resultCategoryId').andOn(
+        'r.assayId',
+        'rca2.assayId'
+      )
+    })
+    .where({ 'r.id': resultId })
+    .first(...fields)
 }
 
 async function getResultNotesByResultId(resultId) {
@@ -1511,122 +1558,6 @@ function createUniqueIdForResult(
   return uniqueId
 }
 
-async function confirmedTreatmentTracking(request) {
-  const { auth, payload } = request
-
-  // get data constraints
-  const dataConstraints = await getConstraints(auth.credentials)
-
-  const { siteId, assayTypeId, resultCategoryId } = payload
-
-  const now = new Date()
-  const lastEndedOn = endOfMonth(subMonths(now, 1))
-
-  // normalize and format 'endedOn'
-  let { endedOn } = payload
-  if (!endedOn) {
-    endedOn = subMonths(now, 1)
-  }
-  endedOn = endOfMonth(endedOn)
-  if (endedOn > lastEndedOn) {
-    return Boom.expectationFailed(
-      '"endedOn" can not be greater than previous month'
-    )
-  }
-  const startedOn = startOfMonth(subMonths(endedOn, 5)) // 6 months period
-
-  const data = await knex('Result as r')
-    // consider 100% as all results where requiresTreatment = 1 in the resultCategoryAssay table
-    .innerJoin('ResultCategoryAssay as rca', function() {
-      this.on('r.assayId', 'rca.assayId').andOn(
-        'r.resultCategory1',
-        'rca.resultCategoryId'
-      )
-    })
-    .where('rca.requiresTreatment', 1)
-    .leftOuterJoin(
-      'ResultTreatmentStatusLog as rtsl',
-      'r.treatmentStatusLogId',
-      'rtsl.id'
-    )
-    .leftOuterJoin(
-      'ResultTreatmentStatus as rts',
-      'rtsl.resultTreatmentStatusId',
-      'rts.id'
-    )
-    // filter by access level of current user
-    .leftOuterJoin('Site as s', 'r.siteId', 's.id')
-    .innerJoin('Device as d', 'r.deviceId', 'd.id')
-    .leftOuterJoin('Geography as g', 'r.geographyId', 'g.id')
-    .innerJoin('Sample as sp', 'r.sampleId', 'sp.id')
-    .innerJoin('Assay as a', 'a.id', 'r.assayId')
-    .modify(queryBuilder => {
-      if (assayTypeId && resultCategoryId) {
-        queryBuilder
-          .where('a.assayTypeId', assayTypeId)
-          .where('r.resultCategory1', resultCategoryId)
-      }
-    })
-    .modify(addConstraints, dataConstraints, {
-      assay: 'a',
-      device: 'd',
-      geography: 'g',
-      result: 'r',
-      site: 's',
-      sample: 'sp',
-    })
-    // if 'siteId' specified - filter by siteId
-    .where(function() {
-      if (siteId) {
-        this.where('s.id', siteId)
-      }
-    })
-    // filter by date range, inclusive
-    .where('r.endedOn', '>=', startedOn)
-    .where('r.endedOn', '<=', endedOn)
-    .select(
-      knex.raw('sum(ifnull(rts.externalId, "") != "NotPossible") as total'),
-      knex.raw('sum(rts.externalId = "OnTreatment") as cntConfirmed'),
-      knex.raw(`date_format(r.endedOn, '%Y-%m') AS monthTested`) // group by r.endedOn as 'yyyy-MM'
-    )
-    .groupBy('monthTested')
-    .map(d => {
-      // add percentages
-      const getPercentage = (total, value) => {
-        let pc = 0
-        if (total) {
-          pc = (value * 100) / total
-          // max 1 decimal point
-          pc = Math.round(10 * pc) / 10
-        }
-        return pc
-      }
-      d.pcConfirmed = getPercentage(d.total, d.cntConfirmed)
-      return d
-    })
-
-  let dt = endedOn
-  while (dt >= startedOn) {
-    const monthTested = dateFormat(dt, 'yyyy-MM')
-    if (!data.find(x => x.monthTested === monthTested)) {
-      data.push({
-        monthTested,
-        pcConfirmed: 0,
-        cntConfirmed: 0,
-        total: 0,
-      })
-    }
-    dt = endOfMonth(subMonths(dt, 1))
-  }
-
-  return {
-    siteId,
-    endedOn: dateFormat(endedOn, 'yyyy-MM-dd'),
-    lastOn: dateFormat(lastEndedOn, 'yyyy-MM-dd'),
-    data: _.sortBy(data, [x => x.monthTested]),
-  }
-}
-
 async function listFollowUps(request) {
   const { auth, query } = request
   const dataConstraints = await getConstraints(auth.credentials)
@@ -2209,6 +2140,7 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
       errorCode: 'r.errorCode',
       workflowStatusId: 'rs.id',
       treatmentStatusId: 'rts.id',
+      caseId: 'r.caseId',
       diseaseId: 'dis.id',
     })
     .modify((queryBuilder, params) => {
@@ -2221,11 +2153,6 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
             )
             .orWhere('r.researchId', 'like', `%${params.patientOrResearchId}%`)
         )
-      }
-      if (params.caseId) {
-        queryBuilder.whereRaw('UPPER(ca.externalId)=?', [
-          params.caseId.toUpperCase(),
-        ])
       }
     }, query)
     .modify(addPartnerQueryConstraints, dataConstraints)
@@ -2659,13 +2586,13 @@ async function updateOrCreateResult(request, result = {}) {
   )
 
   // create case entry or update it
-  if (payload.caseId) {
+  if (payload.caseId && assay.diseaseId) {
     result.caseId = await getCaseId(
-      { externalId: payload.caseId, partnerId },
+      { externalId: payload.caseId, partnerId, diseaseId: assay.diseaseId },
       true,
       userId
     )
-  } else if (!payload.caseId) {
+  } else {
     result.caseId = null
   }
 
@@ -2800,6 +2727,7 @@ module.exports = {
   exportResults,
   downloadResultsList,
   showResult,
+  getResultForStringTemplateProcessing,
   listResultTypes,
   updateWorkflowStatus,
   updateTreatmentStatusPost,

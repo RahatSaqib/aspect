@@ -220,13 +220,11 @@ describe('Device routes', () => {
       beforeEach(async () => {
         const deviceMaintenanceTypeIds = await knex('DeviceMaintenanceType')
           .whereIn('externalId', ['calibration', 'warranty'])
-          .select('id')
-          .map(x => x.id)
+          .pluck('id')
         deviceMaintenanceIdsToRestore = await knex('DeviceMaintenance')
           .whereIn('deviceMaintenanceTypeId', deviceMaintenanceTypeIds)
           .where({ deviceId, current: 1 })
-          .select('id')
-          .map(x => x.id)
+          .pluck('id')
       })
       afterEach(async () => {
         // make sure we delete only new items and not existing, accidentally

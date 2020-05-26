@@ -8,7 +8,7 @@ Swagger UI is available for testing the UI manually and viewing route documentat
 
 Node v8.13 ([nvm](https://github.com/creationix/nvm) highly recommended)
 
-Mysql v5.7
+MySql v8.0
 
 Yarn v1.9.4
 
