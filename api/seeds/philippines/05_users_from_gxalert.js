@@ -70,11 +70,11 @@ async function seed(knex) {
     {}
   )
 
-  const siteIds = await knex('Geography as g')
+  const siteIds = (await knex('Geography as g')
     .join('Site as s', 'g.id', 's.geographyId')
     .where('g.countryId', countryId)
     .select('s.id', 's.shortName')
-    .distinct('s.id', 's.shortName')
+    .distinct('s.id', 's.shortName'))
     .reduce((siteMap, site) => {
       siteMap[site.shortName] = site.id
       return siteMap

@@ -14,9 +14,9 @@ async function seed(knex) {
     .where('name', 'South Africa NHLS')
     .first('id')
 
-  const jobFunctions = await knex('JobFunction')
+  const jobFunctions = (await knex('JobFunction')
     .where({ partnerId })
-    .select()
+    .select())
     .reduce((jobFunctionMap, jobFunction) => {
       jobFunctionMap[jobFunction.name] = jobFunction.id
       return jobFunctionMap
