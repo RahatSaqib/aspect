@@ -135,8 +135,8 @@ describe('Result create and update routes', () => {
         .select('title')
 
       assert.deepEqual(
-        resultPayload.tags.split(','),
-        tags.map(t => t.title)
+        resultPayload.tags.split(',').sort(),
+        tags.map(t => t.title).sort()
       )
 
       // check assay was set correctly
