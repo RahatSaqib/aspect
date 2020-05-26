@@ -68,7 +68,15 @@ const graphItemsSchema = {
     type: {
       $id: `${graphItemsSchemaId}/properties/type`,
       type: 'string',
-      enum: ['bar', 'stacked', 'divergent', 'pie', 'calendar'],
+      enum: [
+        'bar',
+        'stacked',
+        'divergent',
+        'pie',
+        'pieLegacyTreatment',
+        'calendar',
+        'barLegacyTreatment',
+      ],
     },
     size: {
       $id: `${graphItemsSchemaId}/properties/size`,

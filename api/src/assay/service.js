@@ -196,6 +196,7 @@ async function getAllAssaySchemas(partnerId, userId, assayId = null) {
   const dataConstraints = await getConstraints({ userId })
   const query = knex('Assay as a')
     .innerJoin('DeviceType as dt', 'a.deviceTypeId', 'dt.id')
+    .innerJoin('AssayType as at', 'a.assayTypeId', 'at.id')
     .innerJoin('Device as d', 'dt.id', 'd.deviceTypeId')
     .modify((queryBuilder, assayId) => {
       if (assayId) queryBuilder.where('a.id', assayId)
@@ -204,12 +205,14 @@ async function getAllAssaySchemas(partnerId, userId, assayId = null) {
       assay: 'a',
       device: 'd',
       deviceType: 'dt',
+      assayType: 'at',
     })
     .where('d.partnerId', partnerId)
     .select(
       'a.id',
       'a.name',
       'a.externalId',
+      'at.diseaseId',
       'a.resultDataSchema',
       'a.patientDataSchema'
     )

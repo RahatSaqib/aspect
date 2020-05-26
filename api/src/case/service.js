@@ -8,6 +8,7 @@ const {
   getPartnerPluginName,
   getDeviceTypePluginName,
 } = require('../plugin/utils')
+const { processUsingDataSourceQuery } = require('../stringTemplate/service')
 
 function validateCaseIdentifier(_case) {
   let errors = ''
@@ -15,6 +16,8 @@ function validateCaseIdentifier(_case) {
   if (!_case.externalId) errors += 'You must provide the externalId field /n'
 
   if (!_case.partnerId) errors += 'You must provide the partnerId field /n'
+
+  if (!_case.diseaseId) errors += 'You must provide the diseaseId field /n'
 
   if (errors) throw new Error(errors)
 }
@@ -38,6 +41,7 @@ async function getCaseId(_case, createIfNonExistent, userId) {
     .where({
       externalId: _case.externalId,
       partnerId: _case.partnerId,
+      diseaseId: _case.diseaseId,
     })
     .first('id as caseId')) || { caseId: null }
 
@@ -241,6 +245,105 @@ async function getAutoCompleteCases({ auth, query }) {
   return result
 }
 
+function onResultLogged({ resultId }, { messageContext }) {
+  return messageContext.run(async knex => {
+    // Linking the result service here to avoid cyclic
+    //   references between this service and case service
+    const {
+      getResultForStringTemplateProcessing,
+    } = require('../result/service')
+    const {
+      RESULT_STRING_TEMPLATE_FIELDS,
+    } = require('../result/querySelectors')
+    const result = await getResultForStringTemplateProcessing(
+      resultId,
+      [
+        ...RESULT_STRING_TEMPLATE_FIELDS,
+        'r.partnerId',
+        'pd.canAutoAssignResultByCaseId',
+        'r.caseId as existingCaseId',
+        'c.externalId as existingCaseExternalId',
+        'rca1.reportable as resultCategory1Reportable',
+        'rca2.reportable as resultCategory2Reportable',
+        'r.updatedBy',
+      ],
+      knex
+    )
+    if (result) {
+      const {
+        canAutoAssignResultByCaseId,
+        caseExternalIdTemplate,
+        partnerId,
+        diseaseId,
+        existingCaseId,
+        existingCaseExternalId,
+        resultCategory1Reportable,
+        resultCategory2Reportable,
+        updatedBy,
+      } = result
+      if (
+        diseaseId &&
+        caseExternalIdTemplate &&
+        canAutoAssignResultByCaseId &&
+        (resultCategory1Reportable || resultCategory2Reportable)
+      ) {
+        const { caseExternalId } =
+          (await processUsingDataSourceQuery(
+            { ...result, caseExternalIdTemplate },
+            ['caseExternalIdTemplate']
+          )) || {}
+        if (caseExternalId) {
+          // Get the case that matched the case ID in the payload
+          // If the case doesn't exist and the result is not assigned a case yet, creat the case
+          let caseId = await getCaseId(
+            { partnerId, externalId: caseExternalId, diseaseId },
+            !existingCaseId,
+            updatedBy
+          )
+          // If no case was found or created, use the case already assigned to the result
+          if (!caseId) {
+            caseId = existingCaseId
+          }
+          // Do nothing if the result is already assigned to a case and the case number has not changed
+          if (existingCaseExternalId === caseExternalId) {
+            return
+          }
+          // Lookup if any other cases have the same case number
+          const otherCaseId = await getCaseId(
+            { partnerId, externalId: caseExternalId, diseaseId },
+            false,
+            updatedBy
+          )
+          // If the case number for the result has changed to an unknown case number
+          //   update the case number on the existing case
+          if (!otherCaseId || otherCaseId === caseId) {
+            await updateCase(
+              { id: caseId },
+              {
+                externalId: caseExternalId,
+                updatedBy,
+                updatedOn: new Date(),
+              }
+            )
+          }
+          // If the case ID for the result has changed
+          //   update the case ID on the result
+          if (existingCaseId !== caseId) {
+            await knex('Result')
+              .where('id', resultId)
+              .update({ caseId: otherCaseId })
+            // TODO: If the old case is now empty, should it be purged?
+            //       We need to consider if there is a use case for cases
+            //       that don't have results, what will happen to the
+            //       patient data associated with that case? Do empty cases
+            //       even present a problem?
+          }
+        }
+      }
+    }
+  })
+}
+
 module.exports = {
   getCaseId,
   addCase,
@@ -251,4 +354,5 @@ module.exports = {
   onCaseAdded,
   onCaseUpdated,
   getAutoCompleteCases,
+  onResultLogged,
 }

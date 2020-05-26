@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import { useIntl } from 'react-intl'
 import { BoxLegendSvg } from '@nivo/legends'
 import classnames from 'classnames/bind'
+import usePrevious from '../../../Hooks/CustomHooks'
 import { getAverageFromData } from '../Helpers/Formatters'
 
 import messages from '../GraphsContainer/messages'
@@ -36,9 +37,10 @@ const PieInnerLegend = ({ averages, data }) => {
   const { formatMessage: intlFormatMessage } = useIntl()
   const { title, key, subTitle, showTotal = false } = averages
   const [average, setAverage] = useState(0)
+  const prevData = usePrevious(data)
 
   useEffect(() => {
-    if (!average && data) {
+    if ((!average && data) || data !== prevData) {
       setAverage(getAverageFromData(data, 'value', key))
     }
   }, [average, averages, data, key])

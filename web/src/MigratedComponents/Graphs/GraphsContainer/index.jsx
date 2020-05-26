@@ -4,6 +4,7 @@ import Grid from '@material-ui/core/Grid'
 import covidGraphs from '../GraphConfigurations/Covid'
 import hivGraphs from '../GraphConfigurations/HIV'
 import tbGraphs from '../GraphConfigurations/TB'
+import treatmentStatusGraphs from '../GraphConfigurations/Treatments'
 import GraphContainer from './GraphContainer'
 
 const spacing = {
@@ -13,6 +14,7 @@ const spacing = {
 
 const { hivResults } = hivGraphs
 const { tbResults } = tbGraphs
+const { treatmentStatus } = treatmentStatusGraphs
 const {
   covidDailyConfirmed,
   covidCasesByAgeAndGender,
@@ -32,6 +34,11 @@ const GraphsContainer = ({ assaysFromState }) => {
       config: tbResults,
       size: full,
       group: 'tb',
+    },
+    {
+      config: treatmentStatus,
+      size: full,
+      group: 'all',
     },
     {
       config: covidDailyConfirmed,
