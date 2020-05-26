@@ -5,16 +5,13 @@ const path = require('path')
 
 const dict = []
 
-function formDictionary(){
-  const directory = path.join(
-    __dirname,
-    'formsDefinition/'
-  )
-  const files = fs.readdirSync(directory,{encoding:'utf8'})
-  _.each(files,fileName=>{
+function formDictionary() {
+  const directory = path.join(__dirname, 'formsDefinition/')
+  const files = fs.readdirSync(directory, { encoding: 'utf8' })
+  _.each(files, fileName => {
     const form = require(`./formsDefinition/${fileName}`)
-    const externalId=fileName.replace('.json','')
-    dict[externalId]=form
+    const externalId = fileName.replace('.json', '')
+    dict[externalId] = form
   })
 }
 formDictionary()

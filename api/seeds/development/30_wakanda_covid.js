@@ -3,7 +3,7 @@ module.exports = require('../utils').seed(seed, __filename)
 const _ = require('lodash')
 const bcrypt = require('bcrypt')
 const Promise = require('bluebird')
-const {addForms}=require('../relativeObjectsSeeds')
+const { addForms } = require('../relativeObjectsSeeds')
 const { resultCategoryToId } = require('../../src/shared/dictionary')
 const {
   commonUpserts,

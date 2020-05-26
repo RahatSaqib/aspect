@@ -1,6 +1,7 @@
 const now = new Date()
 const Promise = require('bluebird')
 const _ = require('lodash')
+const forms = require('./fixtures/forms')
 const { insertNewResultPushTemplates } = require('./commonPushNotifications')
 const { getBaseIssues } = require('./relatedObjects/issues')
 const { getBaseForms } = require('./relatedObjects/forms')
@@ -32,7 +33,7 @@ async function addIssueTypes(
   if (!partnerId && !adminId) {
     try {
       // eslint-disable-next-line prefer-const
-      ({ adminId, partnerId } = await knex('User as u')
+      ;({ adminId, partnerId } = await knex('User as u')
         .join('Person as p', 'u.id', 'p.userId')
         .join('Job as j', 'p.id', 'j.personId')
         .join('JobFunction as jf', 'j.jobFunctionId', 'jf.id')
@@ -40,7 +41,7 @@ async function addIssueTypes(
         .first('u.id as adminId', 'p.lastPartnerId as partnerId'))
       if (!adminId) return false
       if (!partnerId) {
-        ({ partnerId } = await knex('Partner as p').first('id as partnerId'))
+        ;({ partnerId } = await knex('Partner as p').first('id as partnerId'))
       }
     } catch (e) {
       return false
@@ -71,33 +72,33 @@ async function addIssueTypes(
       let webhookTemplateId
 
       if (issues[elem].AlertTemplate) {
-        [alertTemplateId] = await knex('AlertTemplate').insert(
+        ;[alertTemplateId] = await knex('AlertTemplate').insert(
           issues[elem].AlertTemplate
         )
       }
       if (issues[elem].SmsTemplate) {
-        [smsTemplateId] = await knex('SmsTemplate').insert(
+        ;[smsTemplateId] = await knex('SmsTemplate').insert(
           issues[elem].SmsTemplate
         )
       }
       if (issues[elem].EmailTemplate) {
-        [emailTemplateId] = await knex('EmailTemplate').insert(
+        ;[emailTemplateId] = await knex('EmailTemplate').insert(
           issues[elem].EmailTemplate
         )
       }
 
       if (issues[elem].PushNotificationTemplate) {
-        [pushNotificationTemplateId] = await knex(
+        ;[pushNotificationTemplateId] = await knex(
           'PushNotificationTemplate'
         ).insert(issues[elem].PushNotificationTemplate)
       }
       if (issues[elem].WebhookTemplate) {
-        [webhookTemplateId] = await knex('WebhookTemplate').insert(
+        ;[webhookTemplateId] = await knex('WebhookTemplate').insert(
           issues[elem].WebhookTemplate
         )
       }
       if (issues[elem].MessageType) {
-        [messageTypeId] = await knex('MessageType').insert({
+        ;[messageTypeId] = await knex('MessageType').insert({
           ...issues[elem].MessageType,
           alertTemplateId,
           smsTemplateId,
@@ -118,48 +119,45 @@ async function addIssueTypes(
   return true
 }
 
-async function addForms(knex, _partnerId, formsNeeded=['TBResult',
-'TBProbes',
-'TBCaseHealthCondition',
-'TBCaseTreatment',
-'HIVResult',
-'HIVProbes',
-'HIVCaseHealthCondition',
-'HIVCaseTreatment',
-'CovidResult',
-'CovidCaseHealthCondition',
-'CovidCaseTreatment',
-'CovidCaseAditionalData']) {
+async function addForms(knex, _partnerId, formsNeeded = Object.keys(forms)) {
   let partnerId = _partnerId
   if (!partnerId) {
     try {
       // eslint-disable-next-line prefer-const
-      ({ partnerId } = await knex('User as u')
+      ;({ partnerId } = await knex('User as u')
         .join('Person as p', 'u.id', 'p.userId')
         .join('Job as j', 'p.id', 'j.personId')
         .join('JobFunction as jf', 'j.jobFunctionId', 'jf.id')
         .where('jf.name', 'admin')
         .first('p.lastPartnerId as partnerId'))
       if (!partnerId) {
-        ({ partnerId } = await knex('Partner as p').first('id as partnerId'))
+        ;({ partnerId } = await knex('Partner as p').first('id as partnerId'))
       }
     } catch (e) {
       return false
     }
   }
   const forms = await getBaseForms()
-  const insertedForms = _.map(
-    await knex('FormDefinition').where({partnerId})
-          .select('externalId'),
-    elem => elem.externalId
-  )
+  const insertedForms = await knex('FormDefinition')
+    .where({ partnerId })
+    .pluck('externalId')
+
   const existingSchemas = await knex('FormDefinitionSchema').select()
   await Promise.each(Object.keys(forms), async form => {
-    if ((insertedForms.indexOf(form) === -1)
-        && (formsNeeded.indexOf(form)>=0))  {
-      const formDefinitionSchemaId = _.get(_.find(existingSchemas,elem=> elem.jsonSchemaFile===forms[form].fileName),'id') || (await knex(
-        'FormDefinitionSchema'
-      ).insert({ jsonSchemaFile: forms[form].fileName }))[0]
+    if (insertedForms.indexOf(form) === -1 && formsNeeded.indexOf(form) >= 0) {
+      const formDefinitionSchemaId =
+        _.get(
+          _.find(
+            existingSchemas,
+            elem => elem.jsonSchemaFile === forms[form].fileName
+          ),
+          'id'
+        ) ||
+        (
+          await knex('FormDefinitionSchema').insert({
+            jsonSchemaFile: forms[form].fileName,
+          })
+        )[0]
       await knex('FormDefinition').insert({
         ...forms[form].formDefinition,
         formDefinitionSchemaId,

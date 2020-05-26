@@ -80,7 +80,6 @@ function addClientRoutes(server) {
   server.route(
     require('./case/endpoints').routes.map(decorateClientAPI('case'))
   )
-
 }
 
 function addDeviceRoutes(server) {

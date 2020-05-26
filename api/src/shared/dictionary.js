@@ -23,7 +23,7 @@ const cacheConfig = {
     keyColumn: 'name',
   },
   Disease: {},
-  FormType:{},
+  FormType: {},
   Feature: {
     keyColumn: 'module',
   },
