@@ -9,7 +9,7 @@ async function up(knex) {
 
     await knex.schema.renameTable('Case', 'PatientCase')
 
-    await knex.schema.table('PatientCase', tblCase => {
+    await knex.schema.alterTable('PatientCase', tblCase => {
         tblCase
             .integer('patientId')
             .unsigned()
