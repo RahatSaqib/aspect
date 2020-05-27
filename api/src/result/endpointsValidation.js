@@ -101,7 +101,7 @@ const resultUpdatePayload = {
     .max(500)
     .allow('', null)
     .description('Patient ID'),
-  patientCaseId: Joi.string()
+  caseId: Joi.string()
     .max(500)
     .allow('', null)
     .description('Case ID'),
