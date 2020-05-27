@@ -30,9 +30,7 @@ async function setUserPermission(
     .first()
   // Job
   let { id: jobId } =
-    (await knex('Job')
-      .where({ personId, jobFunctionId })
-      .first()) || {}
+    (await knex('Job').where({ personId, jobFunctionId }).first()) || {}
   if (!jobId) {
     ;[jobId] = await knex('Job').insert({
       personId,

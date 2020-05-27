@@ -47,12 +47,8 @@ describe('Notification routes', () => {
   afterEach(() =>
     run(async knex => {
       await Promise.each(ntArr, async ntId => {
-        await knex('Notification')
-          .where('notificationTypeId', ntId)
-          .del()
-        await knex('NotificationType')
-          .where('id', ntId)
-          .del()
+        await knex('Notification').where('notificationTypeId', ntId).del()
+        await knex('NotificationType').where('id', ntId).del()
       })
     })
   )

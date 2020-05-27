@@ -10,9 +10,7 @@ async function seed(knex) {
   )
 
   let { id: deviceTypeBDMGITId } =
-    (await knex('DeviceType')
-      .where('externalId', 'BDMGIT')
-      .first('id')) || {}
+    (await knex('DeviceType').where('externalId', 'BDMGIT').first('id')) || {}
   if (!deviceTypeBDMGITId) {
     deviceTypeBDMGITId = await knex('DeviceType').insert({
       externalId: 'BDMGIT',
@@ -36,9 +34,8 @@ async function seed(knex) {
   }
 
   let { id: deviceTypeSenaiteLimsId } =
-    (await knex('DeviceType')
-      .where('externalId', 'SenaiteLims')
-      .first('id')) || {}
+    (await knex('DeviceType').where('externalId', 'SenaiteLims').first('id')) ||
+    {}
   if (!deviceTypeSenaiteLimsId) {
     deviceTypeSenaiteLimsId = await knex('DeviceType').insert({
       externalId: 'SenaiteLims',

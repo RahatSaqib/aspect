@@ -3,6 +3,7 @@ module.exports = require('../utils').seed(seed, __filename)
 const _ = require('lodash')
 const bcrypt = require('bcrypt')
 const Promise = require('bluebird')
+const { addForms } = require('../relativeObjectsSeeds')
 const { resultCategoryToId } = require('../../src/shared/dictionary')
 const {
   commonUpserts,
@@ -438,7 +439,7 @@ async function seed(knex) {
   await normalizeTreatmentStatusDistributionByResults(
     knex,
     await knex('Result as r')
-      .join('ResultCategoryAssay as rca', function() {
+      .join('ResultCategoryAssay as rca', function () {
         this.on('r.assayId', 'rca.assayId').andOn(
           'r.resultCategory1',
           'rca.resultCategoryId'
@@ -465,6 +466,7 @@ async function seed(knex) {
       'dashboardWidgetTitleTotalDeaths',
     ])
     .select('id as widgetId')
+  await addForms(knex, partnerId)
   await Promise.each(statWidgets, async elem =>
     knex('JobFunctionDashboardWidget').insert([
       { jobFunctionId: jobFunctionIdAdmin, widgetId: elem.widgetId },

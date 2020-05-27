@@ -66,13 +66,9 @@ async function initUserAndJobs(knex, partnerId, siteId) {
       })
       .first()
     // get User
-    const { id: userId } = await knex('User')
-      .where({ name: userName })
-      .first()
+    const { id: userId } = await knex('User').where({ name: userName }).first()
     // get Person
-    const { id: personId } = await knex('Person')
-      .where({ userId })
-      .first()
+    const { id: personId } = await knex('Person').where({ userId }).first()
     // get (insert) Job
     let jobId
     const job = await knex('Job')
@@ -291,30 +287,18 @@ describe('DataCategoryLow Issues Endpoint', () => {
       await waitForIdle(2000)
 
       if (issueEventIds && issueEventIds.length > 0) {
-        await knex('IssueEvent')
-          .whereIn('id', issueEventIds)
-          .delete()
+        await knex('IssueEvent').whereIn('id', issueEventIds).delete()
       }
       issueEventIds = []
 
       await cleanUpIssues(knex, issueIds)
 
-      await knex('Result')
-        .whereIn('id', resultIds)
-        .delete()
+      await knex('Result').whereIn('id', resultIds).delete()
       const sampleIds = samples.map(x => x.id)
-      await knex('Sample')
-        .whereIn('id', sampleIds)
-        .delete()
-      await knex('Device')
-        .where('id', deviceId)
-        .delete()
-      await knex('JobContext')
-        .whereIn('id', jobContextIds)
-        .delete()
-      await knex('Site')
-        .where('id', siteId)
-        .delete()
+      await knex('Sample').whereIn('id', sampleIds).delete()
+      await knex('Device').where('id', deviceId).delete()
+      await knex('JobContext').whereIn('id', jobContextIds).delete()
+      await knex('Site').where('id', siteId).delete()
 
       await queuePurge()
     })

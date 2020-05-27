@@ -167,7 +167,7 @@ const start = async () => {
         console.error('-------------------') // eslint-disable-line no-console
       }
     })
-    server.ext('onPreResponse', function(request, h) {
+    server.ext('onPreResponse', function (request, h) {
       const { response } = request
       // if error, pass it through server.log
       // FYI - response.isServer indicates status code >= 500

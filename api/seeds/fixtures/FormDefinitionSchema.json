@@ -1,0 +1,10 @@
+{
+  "data": [
+    {
+      "jsonSchemaFile": "TBCaseForm.json"
+    },
+    {
+      "jsonSchemaFile": "HIVCaseForm.json"
+    }
+  ]
+}

@@ -83,11 +83,9 @@ async function seed(knex) {
       updatedBy: adminId,
     })
 
-  await knex('Site')
-    .where('externalId', 'kalafong')
-    .update({
-      externalId: 'KPTH',
-      updatedOn: now,
-      updatedBy: adminId,
-    })
+  await knex('Site').where('externalId', 'kalafong').update({
+    externalId: 'KPTH',
+    updatedOn: now,
+    updatedBy: adminId,
+  })
 }

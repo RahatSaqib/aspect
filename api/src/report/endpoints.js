@@ -40,9 +40,7 @@ function requestBaseQuery() {
   return {
     ...validateAllGeographyFilterParams(),
     ...validateDateRangeParams(),
-    siteName: Joi.string()
-      .allow('')
-      .description('Filter for site name'),
+    siteName: Joi.string().allow('').description('Filter for site name'),
   }
 }
 
@@ -74,9 +72,7 @@ const routes = [
             .description('List of reports')
             .items(
               Joi.object().keys({
-                name: Joi.string()
-                  .required()
-                  .description('Report name'),
+                name: Joi.string().required().description('Report name'),
                 description: Joi.string()
                   .required()
                   .description('Report description'),
@@ -147,9 +143,7 @@ const routes = [
       auth: false,
       validate: {
         params: {
-          fileName: Joi.string()
-            .description('File name')
-            .required(),
+          fileName: Joi.string().description('File name').required(),
         },
       },
     },
@@ -168,14 +162,10 @@ const routes = [
       },
       validate: {
         params: {
-          reportName: Joi.string()
-            .description('Report name')
-            .required(),
+          reportName: Joi.string().description('Report name').required(),
         },
         query: {
-          siteId: Joi.string()
-            .allow('')
-            .description('Filter for site ID'),
+          siteId: Joi.string().allow('').description('Filter for site ID'),
           dateFrom: Joi.string().allow(''),
           dateTo: Joi.string().allow(''),
         },

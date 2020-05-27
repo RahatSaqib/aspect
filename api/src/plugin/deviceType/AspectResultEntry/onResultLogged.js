@@ -33,7 +33,7 @@ async function updateCovidResultFromFormData(
       (await knex('DeviceLog as dl')
         .join('Device as d', 'dl.deviceId', 'd.id')
         .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
-        .where(function() {
+        .where(function () {
           if (deviceLogId) {
             this.where('dl.id', deviceLogId)
           } else {
@@ -218,9 +218,7 @@ async function updateCovidResultFromFormData(
 
       resultUpdates.updatedOn = new Date()
       resultUpdates.updatedBy = userId
-      await knex('Result')
-        .where('id', resultId)
-        .update(resultUpdates)
+      await knex('Result').where('id', resultId).update(resultUpdates)
     }
   })
 }

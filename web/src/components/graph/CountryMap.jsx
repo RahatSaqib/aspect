@@ -65,6 +65,13 @@ const enhance = compose(
           }
         })
         .then(_.bind(this.setState, this))
+        .catch(err =>
+          // eslint-disable-next-line no-console
+          console.warn(
+            "Couldn't find topo-file for ",
+            `../../../map/topo/${countryIsoAlpha2Code}.json`
+          )
+        )
     },
   })
 )

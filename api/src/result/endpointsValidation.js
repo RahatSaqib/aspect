@@ -7,9 +7,7 @@ const {
 
 const getResultAggregationsValidate = validGroups => ({
   ...validateDateRangeParams(),
-  assayType: Joi.string()
-    .allow('')
-    .description('Filter for assay type'),
+  assayType: Joi.string().allow('').description('Filter for assay type'),
   assay: Joi.alternatives()
     .try(Joi.array(), Joi.string())
     .description('Filter for assay'),
@@ -19,12 +17,8 @@ const getResultAggregationsValidate = validGroups => ({
   resultCategory2: Joi.string()
     .allow('')
     .description('Filter for result category 2'),
-  siteName: Joi.string()
-    .allow('')
-    .description('Filter for site'),
-  deviceName: Joi.string()
-    .allow('')
-    .description('Filter for device'),
+  siteName: Joi.string().allow('').description('Filter for site'),
+  deviceName: Joi.string().allow('').description('Filter for device'),
   groupBy: Joi.alternatives()
     .allow('', null)
     .try(
@@ -54,9 +48,7 @@ const followUpAggregationsValidGroups = [
 ]
 
 const resultAggregationsResponseItem = {
-  cnt: Joi.number()
-    .required()
-    .description('The count of results in the group'),
+  cnt: Joi.number().required().description('The count of results in the group'),
   resultCategory1: Joi.string()
     .allow(null)
     .description('Result Category 1 that count is grouped by'),
@@ -79,14 +71,8 @@ const resultAggregationsResponseItem = {
 }
 
 const resultUpdatePayload = {
-  endedOn: Joi.date()
-    .iso()
-    .required()
-    .description('When the result was ready'),
-  sampleId: Joi.string()
-    .max(500)
-    .allow('', null)
-    .description('Sample ID'),
+  endedOn: Joi.date().iso().required().description('When the result was ready'),
+  sampleId: Joi.string().max(500).allow('', null).description('Sample ID'),
   sampleTypeId: Joi.number()
     .allow(null)
     .description('Sample type (Plasma, Sputum, etc.)'),
@@ -97,24 +83,15 @@ const resultUpdatePayload = {
   sampleOriginSiteId: Joi.number()
     .allow(null)
     .description('Where the sample was collected'),
-  patientId: Joi.string()
-    .max(500)
-    .allow('', null)
-    .description('Patient ID'),
-  caseId: Joi.string()
-    .max(500)
-    .allow('', null)
-    .description('Case ID'),
+  patientId: Joi.string().max(500).allow('', null).description('Patient ID'),
+  caseId: Joi.string().max(500).allow('', null).description('Case ID'),
   resultCategory1: Joi.number()
     .required()
     .description('The result of the test'),
   resultCategory2: Joi.number()
     .allow(null)
     .description('The result of the test'),
-  tags: Joi.string()
-    .max(500)
-    .allow('')
-    .description('Tags for the result'),
+  tags: Joi.string().max(500).allow('').description('Tags for the result'),
   formData: Joi.object()
     .allow('', null)
     .description('Form data to save along with the result'),
@@ -137,12 +114,8 @@ const baseResultResponse = {
   id: Joi.number()
     .required()
     .description('Unique ID of the result for this instance of Aspect'),
-  deviceName: Joi.string()
-    .allow('')
-    .description('Filter for device name'),
-  sampleId: Joi.string()
-    .allow(null)
-    .description('Sample id'),
+  deviceName: Joi.string().allow('').description('Filter for device name'),
+  sampleId: Joi.string().allow(null).description('Sample id'),
   externalId: Joi.string()
     .allow(null)
     .description('Unique ID of the result for this diagnostic device'),
@@ -156,27 +129,19 @@ const baseResultResponse = {
     .description(
       'When sample processing ended. Note that the zone designator is empty because this is the local date/time as reported by the device. This should be shown as is and not converted to the user time zone.'
     ),
-  stateName: Joi.string()
-    .allow(null)
-    .description("The device's state name"),
+  stateName: Joi.string().allow(null).description("The device's state name"),
   resultCategory1Name: Joi.string()
     .allow(null)
     .description("The result's category 1 name"),
   resultCategory2Name: Joi.string()
     .allow(null)
     .description("The result's category 2 name"),
-  siteName: Joi.string()
-    .allow(null)
-    .description('The name of the site'),
-  assayId: Joi.number()
-    .integer()
-    .description('The id of the assay'),
+  siteName: Joi.string().allow(null).description('The name of the site'),
+  assayId: Joi.number().integer().description('The id of the assay'),
   sampleOriginSiteName: Joi.string()
     .allow(null)
     .description('Sample original site name'),
-  patientId: Joi.string()
-    .allow(null)
-    .description('The patient Id'),
+  patientId: Joi.string().allow(null).description('The patient Id'),
   treatmentStatusInfo: Joi.string()
     .allow(null, '')
     .description('treatment status info'),
@@ -196,9 +161,7 @@ const baseResultResponse = {
     .positive()
     .required()
     .description('the Id of the disease'),
-  diseaseName: Joi.string()
-    .required()
-    .description('the name of the disease'),
+  diseaseName: Joi.string().required().description('the name of the disease'),
   diseaseExternalId: Joi.string()
     .required()
     .description('the external id of the disease'),
@@ -243,12 +206,8 @@ function validateResultDetailResponse() {
       .allow(null, '')
       .description('The device serial number'),
     countryName: Joi.string().description("The device's country name"),
-    stateName: Joi.string()
-      .allow(null)
-      .description("The device's state name"),
-    lgaName: Joi.string()
-      .allow(null)
-      .description("The device's lga name"),
+    stateName: Joi.string().allow(null).description("The device's state name"),
+    lgaName: Joi.string().allow(null).description("The device's lga name"),
     resultWorkflowChangedOn: Joi.date()
       .allow(null)
       .description('The date when status was changed'),
@@ -269,49 +228,28 @@ function validateResultDetailResponse() {
       .description("The result's Workflow status name"),
     resultData: Joi.object().description('The result data'),
     files: Joi.array().description('Result Files'),
-    formData: Joi.object()
-      .allow(null)
-      .description('The form data'),
-    siteId: Joi.number()
-      .integer()
-      .positive()
-      .description('The id of the site'),
+    formData: Joi.object().allow(null).description('The form data'),
+    siteId: Joi.number().integer().positive().description('The id of the site'),
     resultTreatmentStatusCreatedBy: Joi.string()
       .allow(null)
       .description('The name of the user that created the note'),
-    siteName: Joi.string()
-      .allow(null)
-      .description('The name of the site'),
-    assayVersion: Joi.string()
-      .allow(null)
-      .description('The assay Version'),
+    siteName: Joi.string().allow(null).description('The name of the site'),
+    assayVersion: Joi.string().allow(null).description('The assay Version'),
     consumableSerial: Joi.string()
       .allow(null)
       .description('The consumable serial'),
     instrumentalSerial: Joi.string()
       .allow(null)
       .description('The instrumental serial'),
-    consumableLot: Joi.string()
-      .allow(null)
-      .description('The consumable lot'),
+    consumableLot: Joi.string().allow(null).description('The consumable lot'),
     instrumentSerial: Joi.string()
       .allow(null)
       .description('Instrumental serial number'),
-    moduleName: Joi.string()
-      .allow(null)
-      .description('The module name'),
-    moduleSerial: Joi.string()
-      .allow(null)
-      .description('The module serial'),
-    researchId: Joi.string()
-      .allow(null)
-      .description('The research id'),
-    senderVersion: Joi.string()
-      .allow(null)
-      .description('The sender version'),
-    senderOperator: Joi.string()
-      .allow(null)
-      .description('The sender operator'),
+    moduleName: Joi.string().allow(null).description('The module name'),
+    moduleSerial: Joi.string().allow(null).description('The module serial'),
+    researchId: Joi.string().allow(null).description('The research id'),
+    senderVersion: Joi.string().allow(null).description('The sender version'),
+    senderOperator: Joi.string().allow(null).description('The sender operator'),
     consumableExpirationDate: Joi.date()
       .allow(null)
       .description('The consumable expiration date'),
@@ -326,40 +264,24 @@ function validateResultDetailResponse() {
     errorNotes: Joi.string()
       .allow(null)
       .description('Contains any details about the error'),
-    assayId: Joi.number()
-      .integer()
-      .description('The id of the assay'),
+    assayId: Joi.number().integer().description('The id of the assay'),
     sampleOriginSiteId: Joi.number()
       .allow(null)
       .integer()
       .description('the id of the original site'),
-    sampleId: Joi.string()
-      .allow(null)
-      .description('Sample id'),
-    sampleGroup: Joi.string()
-      .allow(null)
-      .description('Sample group'),
+    sampleId: Joi.string().allow(null).description('Sample id'),
+    sampleGroup: Joi.string().allow(null).description('Sample group'),
     sampleCollectedOn: Joi.date()
       .allow(null)
       .description('The date when the sample has been collected'),
     sampleOriginSiteName: Joi.string()
       .allow(null)
       .description('Sample original site name'),
-    sampleTypeName: Joi.string()
-      .allow(null)
-      .description('Sample type name'),
-    patientId: Joi.string()
-      .allow(null)
-      .description('The patient Id'),
-    patientData: Joi.object()
-      .allow(null)
-      .description('The patient data'),
-    formSchema: Joi.object()
-      .allow(null)
-      .description('The form data object'),
-    assay: Joi.object()
-      .allow(null)
-      .description('The assay object'),
+    sampleTypeName: Joi.string().allow(null).description('Sample type name'),
+    patientId: Joi.string().allow(null).description('The patient Id'),
+    patientData: Joi.object().allow(null).description('The patient data'),
+    formSchema: Joi.object().allow(null).description('The form data object'),
+    assay: Joi.object().allow(null).description('The assay object'),
     treatmentStatus: Joi.object()
       .allow(null)
       .description('The treatment status object'),
@@ -408,9 +330,7 @@ function validateResultDetailResponse() {
       .description('Result Follow Ups')
       .items(
         Joi.object().keys({
-          id: Joi.number()
-            .required()
-            .description('Result follow up ID'),
+          id: Joi.number().required().description('Result follow up ID'),
           externalId: Joi.string()
             .allow(null, '')
             .description('External ID of the follow up'),
@@ -494,12 +414,8 @@ function listResultsBaseConfig() {
     },
     validate: {
       query: {
-        deviceId: Joi.number()
-          .allow('')
-          .description('Filter for device ID'),
-        assayId: Joi.number()
-          .allow('')
-          .description('Filter for assay ID'),
+        deviceId: Joi.number().allow('').description('Filter for device ID'),
+        assayId: Joi.number().allow('').description('Filter for assay ID'),
         diseaseId: Joi.number()
           .integer()
           .positive()
@@ -511,21 +427,15 @@ function listResultsBaseConfig() {
         resultCategory2Id: Joi.number()
           .allow('')
           .description('Result-2 Category ID'),
-        errorCode: Joi.string()
-          .allow('')
-          .description('Filter error code'),
+        errorCode: Joi.string().allow('').description('Filter error code'),
         deviceName: Joi.string()
           .allow('')
           .description('Filter for device name'),
-        siteName: Joi.string()
-          .allow('')
-          .description('Filter for site name'),
+        siteName: Joi.string().allow('').description('Filter for site name'),
         patientOrResearchId: Joi.string()
           .allow('')
           .description('Filter for patient/research ID'),
-        sampleId: Joi.string()
-          .allow('')
-          .description('Filter for sample ID'),
+        sampleId: Joi.string().allow('').description('Filter for sample ID'),
         sampleOriginSite: Joi.string()
           .allow('')
           .description('Filter for sample origin site ID'),
@@ -594,12 +504,8 @@ function getResponseForComments() {
         .description('The result comments')
         .items(
           Joi.object().keys({
-            id: Joi.number()
-              .required()
-              .description('Unique ID of the comment'),
-            text: Joi.string()
-              .required()
-              .description('Comment text'),
+            id: Joi.number().required().description('Unique ID of the comment'),
+            text: Joi.string().required().description('Comment text'),
             createdBy: Joi.string().description(
               'User name who created comment'
             ),
@@ -609,9 +515,7 @@ function getResponseForComments() {
             changedOn: Joi.date()
               .required()
               .description('When comment was updated'),
-            noteType: Joi.string()
-              .required()
-              .description('Comment type'),
+            noteType: Joi.string().required().description('Comment type'),
           })
         ),
     }),

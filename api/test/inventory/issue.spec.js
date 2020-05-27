@@ -73,9 +73,7 @@ describe('Inventory Stock Issues Endpoint', () => {
         partner.id
       )
 
-      const device = await knex('Device')
-        .where({ id: deviceId })
-        .first()
+      const device = await knex('Device').where({ id: deviceId }).first()
 
       const resultId = await createTestResult(knex, device)
       resultIds.push(resultId)
@@ -111,15 +109,9 @@ describe('Inventory Stock Issues Endpoint', () => {
         const sampleIds = await knex('Result')
           .whereIn('id', resultIds)
           .pluck('sampleId')
-        await knex('Result')
-          .whereIn('id', resultIds)
-          .delete()
-        await knex('Sample')
-          .whereIn('id', sampleIds)
-          .delete()
-        await knex('Device')
-          .whereIn('id', deviceIds)
-          .delete()
+        await knex('Result').whereIn('id', resultIds).delete()
+        await knex('Sample').whereIn('id', sampleIds).delete()
+        await knex('Device').whereIn('id', deviceIds).delete()
       }
       deleteConsumableTestData(knex, baseProps.consumableId)
     })
@@ -132,9 +124,7 @@ describe('Inventory Stock Issues Endpoint', () => {
 
       // clean IssueEvent if any items added
       if (baseProps.issueEventIds.length > 0) {
-        await knex('IssueEvent')
-          .whereIn('id', baseProps.issueEventIds)
-          .delete()
+        await knex('IssueEvent').whereIn('id', baseProps.issueEventIds).delete()
       }
       await cleanUpIssues(knex, issueIds)
 
@@ -505,27 +495,17 @@ async function deleteConsumableTestData(knex, consumableId) {
   const inventoryItemIds = _.map(inventoryItems, 'id')
   await deleteInventoryTestData(knex, inventoryItemIds)
 
-  await knex('FactInventoryConsumptionRate')
-    .where({ consumableId })
-    .delete()
-  await knex('PartnerConsumable')
-    .where({ consumableId })
-    .delete()
-  await knex('ConsumableAssay')
-    .where({ consumableId })
-    .delete()
-  await knex('Consumable')
-    .where({ id: consumableId })
-    .delete()
+  await knex('FactInventoryConsumptionRate').where({ consumableId }).delete()
+  await knex('PartnerConsumable').where({ consumableId }).delete()
+  await knex('ConsumableAssay').where({ consumableId }).delete()
+  await knex('Consumable').where({ id: consumableId }).delete()
 }
 
 async function deleteInventoryTestData(knex, inventoryItemIds) {
   await knex('InventoryLog')
     .whereIn('inventoryItemId', inventoryItemIds)
     .delete()
-  await knex('InventoryItem')
-    .whereIn('id', inventoryItemIds)
-    .delete()
+  await knex('InventoryItem').whereIn('id', inventoryItemIds).delete()
 }
 
 async function createTestDevice(knex, siteId, geographyId, partnerId) {
@@ -543,9 +523,7 @@ async function createTestDevice(knex, siteId, geographyId, partnerId) {
 
 async function createTestResult(knex, device) {
   const now = new Date()
-  const admin = await knex('User')
-    .where({ name: 'myanmar_admin' })
-    .first()
+  const admin = await knex('User').where({ name: 'myanmar_admin' }).first()
   const gxMtbRifAssay = await knex('Assay')
     .where({ externalId: 'GxMtbRif' })
     .first()

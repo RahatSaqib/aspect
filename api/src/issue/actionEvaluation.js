@@ -78,9 +78,7 @@ async function evaluateArrayOfConditions(knex, action, partnerId, conditions) {
 }
 
 async function evaluatePluginFunction(knex, action, partnerId, functionName) {
-  const partner = await knex('Partner')
-    .where({ id: partnerId })
-    .first('plugin')
+  const partner = await knex('Partner').where({ id: partnerId }).first('plugin')
   if (partner == null) {
     return false
   }

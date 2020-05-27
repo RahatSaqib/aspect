@@ -13,14 +13,8 @@ async function up(knex) {
       .inTable('Partner')
       .onDelete('SET NULL')
     patient.string('externalId').notNullable()
-    patient
-      .boolean('reliable')
-      .notNullable()
-      .default(false)
-    patient
-      .boolean('died')
-      .notNullable()
-      .default(false)
+    patient.boolean('reliable').notNullable().default(false)
+    patient.boolean('died').notNullable().default(false)
     patient.json('data').notNullable()
     addAuditFields(patient)
   })

@@ -274,9 +274,7 @@ async function seed(knex) {
 }
 
 async function getId(knex, table, externalId) {
-  const { id } = await knex(table)
-    .where({ externalId })
-    .first('id')
+  const { id } = await knex(table).where({ externalId }).first('id')
   return id
 }
 

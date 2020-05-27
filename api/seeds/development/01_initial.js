@@ -218,9 +218,8 @@ async function seed(knex) {
   })
 
   let { id: deviceTypeSenaiteLimsId } =
-    (await knex('DeviceType')
-      .where('externalId', 'SenaiteLims')
-      .first('id')) || {}
+    (await knex('DeviceType').where('externalId', 'SenaiteLims').first('id')) ||
+    {}
   if (!deviceTypeSenaiteLimsId) {
     deviceTypeSenaiteLimsId = await knex('DeviceType').insert({
       externalId: 'SenaiteLims',
@@ -231,9 +230,7 @@ async function seed(knex) {
   }
 
   let { id: deviceTypeBDMGITId } =
-    (await knex('DeviceType')
-      .where('externalId', 'BDMGIT')
-      .first('id')) || {}
+    (await knex('DeviceType').where('externalId', 'BDMGIT').first('id')) || {}
   if (!deviceTypeBDMGITId) {
     ;[deviceTypeBDMGITId] = await knex('DeviceType').insert({
       externalId: 'BDMGIT',
@@ -4192,12 +4189,10 @@ async function seed(knex) {
   )
 
   // set admin's email/sms
-  await knex('Person')
-    .where('userId', adminId)
-    .update({
-      email: config.admin.email,
-      cell: config.admin.cell,
-    })
+  await knex('Person').where('userId', adminId).update({
+    email: config.admin.email,
+    cell: config.admin.cell,
+  })
 
   await Promise.each(geography.countries, async country => {
     const countryData = countries[country.abbreviation]
@@ -4326,9 +4321,9 @@ async function seed(knex) {
       await knex('InventoryItem').insert({
         consumableId: consumableGxTbCartridgeId,
         siteId: siteData.id,
-        lotNumber: `${(i + 3) * (i + 1)}${['A', 'B'][i % 2]}-${(siteData.id +
-          i) *
-          consumableGxTbCartridgeId}`,
+        lotNumber: `${(i + 3) * (i + 1)}${['A', 'B'][i % 2]}-${
+          (siteData.id + i) * consumableGxTbCartridgeId
+        }`,
         expiresOn: new Date(
           new Date(
             now.getTime() + _.random(-millisInNormalYear, millisInNormalYear)
@@ -4341,9 +4336,9 @@ async function seed(knex) {
         await knex('InventoryItem').insert({
           consumableId: consumableGxEbolaCartridgeId,
           siteId: siteData.id,
-          lotNumber: `${(i + 7) * (i + 1)}${['Q', 'P'][i % 2]}-${(siteData.id +
-            i) *
-            consumableGxEbolaCartridgeId}`,
+          lotNumber: `${(i + 7) * (i + 1)}${['Q', 'P'][i % 2]}-${
+            (siteData.id + i) * consumableGxEbolaCartridgeId
+          }`,
           expiresOn: new Date(
             new Date(
               now.getTime() + _.random(-millisInNormalYear, millisInNormalYear)
@@ -4357,9 +4352,9 @@ async function seed(knex) {
         await knex('InventoryItem').insert({
           consumableId: consumableGxHiv1VlCartridgeId,
           siteId: siteData.id,
-          lotNumber: `${(i + 11) * (i + 1)}${['A', 'V'][i % 2]}-${(siteData.id +
-            i) *
-            consumableGxHiv1VlCartridgeId}`,
+          lotNumber: `${(i + 11) * (i + 1)}${['A', 'V'][i % 2]}-${
+            (siteData.id + i) * consumableGxHiv1VlCartridgeId
+          }`,
           expiresOn: new Date(
             new Date(
               now.getTime() + _.random(-millisInNormalYear, millisInNormalYear)
@@ -5344,9 +5339,7 @@ async function seed(knex) {
 
   const tagIds = [tagOneId, tagTwoId, tagThreeId]
 
-  const results = await knex('Result')
-    .select('id')
-    .limit(20)
+  const results = await knex('Result').select('id').limit(20)
   await Promise.all(
     _.map(results, async result => {
       await Promise.all(

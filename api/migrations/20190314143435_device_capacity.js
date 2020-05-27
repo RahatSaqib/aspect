@@ -18,10 +18,7 @@ async function up(knex) {
       .inTable('DeviceType')
       .notNullable()
     capacity.string('name').notNullable()
-    capacity
-      .boolean('defaultForDeviceType')
-      .notNullable()
-      .defaultTo(0)
+    capacity.boolean('defaultForDeviceType').notNullable().defaultTo(0)
     capacity.float('dailyCapacity').notNullable()
     capacity.charset('utf8')
   })

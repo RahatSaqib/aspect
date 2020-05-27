@@ -260,7 +260,7 @@ async function lookupIssueContext(
       return knex('InventoryItem as ii')
         .innerJoin('Site as s', 'ii.siteId', 's.id')
         .innerJoin('Consumable as c', 'ii.consumableId', 'c.id')
-        .leftJoin('PartnerConsumable as pc', function() {
+        .leftJoin('PartnerConsumable as pc', function () {
           this.on('pc.consumableId', 'c.id').andOn(
             'pc.partnerId',
             's.partnerId'
@@ -273,9 +273,7 @@ async function lookupIssueContext(
           knex.raw('COALESCE(pc.partnerId, s.partnerId) as partnerId')
         )
     }
-    return knex('Site')
-      .where({ id: siteId })
-      .first('geographyId', 'partnerId')
+    return knex('Site').where({ id: siteId }).first('geographyId', 'partnerId')
   }
   return Promise.resolve({})
 }
@@ -310,9 +308,7 @@ async function mergeActionData(knex, issue, action) {
 
   if (!_.isEmpty(issueUpdates)) {
     issueUpdates.updatedOn = new Date()
-    await knex('Issue')
-      .where({ id: issue.id })
-      .update(issueUpdates)
+    await knex('Issue').where({ id: issue.id }).update(issueUpdates)
   }
   return _.merge({}, issue, issueUpdates)
 }
@@ -378,12 +374,10 @@ async function updateIssueStatus(request) {
         'iss.externalId as issueStatusSeverityExternalId'
       ))
 
-    await knex('Issue')
-      .where({ id: issueId })
-      .update({
-        issueStatusId,
-        updatedOn: now,
-      })
+    await knex('Issue').where({ id: issueId }).update({
+      issueStatusId,
+      updatedOn: now,
+    })
 
     await knex('IssueStatusLog').insert({
       issueId,

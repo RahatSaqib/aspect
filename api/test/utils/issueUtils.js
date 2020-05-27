@@ -12,9 +12,7 @@ function ensureMySqlBeforeNestedTablesOptions(knex) {
 }
 
 async function getPartner(knex, partnerName) {
-  return knex('Partner')
-    .where('name', partnerName)
-    .first()
+  return knex('Partner').where('name', partnerName).first()
 }
 
 async function getSite(
@@ -24,7 +22,7 @@ async function getSite(
   ensureMySqlBeforeNestedTablesOptions(knex)
   return knex('Site as s')
     .join('Geography as lgaGeography', 's.geographyId', 'lgaGeography.id')
-    .join('Geography as regionalGeography', function() {
+    .join('Geography as regionalGeography', function () {
       this.on('lgaGeography.stateId', 'regionalGeography.stateId').onNull(
         'regionalGeography.lgaId'
       )
@@ -59,7 +57,7 @@ async function getSite(
     )
     .leftJoin('InventoryItem as ii', 's.id', 'ii.siteId')
     .where('c.abbreviation', countryAbbreviation)
-    .andWhere(function() {
+    .andWhere(function () {
       this.where('s.partnerId', partnerId)
         .andWhere('labUserJobFunction.name', 'Lab User')
         .andWhere('regionalOfficerJobFunction.name', 'Regional Officer')
@@ -75,27 +73,19 @@ async function getSite(
 }
 
 async function getIssueType(knex, issueType) {
-  return knex('IssueType')
-    .where('externalId', issueType)
-    .first()
+  return knex('IssueType').where('externalId', issueType).first()
 }
 
 async function getIssueStatus(knex, issueStatus) {
-  return knex('IssueStatus')
-    .where('externalId', issueStatus)
-    .first()
+  return knex('IssueStatus').where('externalId', issueStatus).first()
 }
 
 async function getIssueEventStatus(knex, issueEventStatus) {
-  return knex('IssueEventStatus')
-    .where('externalId', issueEventStatus)
-    .first()
+  return knex('IssueEventStatus').where('externalId', issueEventStatus).first()
 }
 
 async function getIssue(knex, issueId) {
-  return knex('Issue')
-    .where('id', issueId)
-    .first()
+  return knex('Issue').where('id', issueId).first()
 }
 
 async function getIssueNotifications(knex, issueId) {
@@ -198,34 +188,24 @@ async function cleanUpIssues(knex, issueIds) {
     alertMessageId => !_.isNull(alertMessageId)
   )
   if (!_.isEmpty(alertMessageIds)) {
-    await knex('AlertMessage')
-      .whereIn('id', alertMessageIds)
-      .del()
+    await knex('AlertMessage').whereIn('id', alertMessageIds).del()
   }
   const emailMessageIds = _.filter(
     _.uniq(_.map(notifications, 'emailMessageId')),
     emailMessageId => !_.isNull(emailMessageId)
   )
   if (!_.isEmpty(emailMessageIds)) {
-    await knex('EmailMessage')
-      .whereIn('id', emailMessageIds)
-      .del()
+    await knex('EmailMessage').whereIn('id', emailMessageIds).del()
   }
   const smsMessageIds = _.filter(
     _.uniq(_.map(notifications, 'smsMessageId')),
     smsMessageId => !_.isNull(smsMessageId)
   )
   if (!_.isEmpty(smsMessageIds)) {
-    await knex('SmsMessage')
-      .whereIn('id', smsMessageIds)
-      .del()
+    await knex('SmsMessage').whereIn('id', smsMessageIds).del()
   }
-  await knex('Notification')
-    .whereIn('issueId', issueIds)
-    .del()
-  return knex('Issue')
-    .whereIn('id', issueIds)
-    .del()
+  await knex('Notification').whereIn('issueId', issueIds).del()
+  return knex('Issue').whereIn('id', issueIds).del()
 }
 
 module.exports = {

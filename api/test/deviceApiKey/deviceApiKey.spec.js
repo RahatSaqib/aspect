@@ -51,9 +51,7 @@ describe('Device routes', () => {
 
   after(() =>
     run(async knex => {
-      await knex('DeviceApiKey')
-        .whereIn('id', deviceApiKeyIds)
-        .delete()
+      await knex('DeviceApiKey').whereIn('id', deviceApiKeyIds).delete()
     })
   )
   describe('GET', () => {

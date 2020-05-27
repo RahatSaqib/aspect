@@ -173,14 +173,14 @@ class DefaultSenaiteLIMS extends SynchronousDataProcessor {
           const originSiteGeography =
             (await knex('Geography as g')
               .where('g.countryId', countryId)
-              .andWhere(function() {
+              .andWhere(function () {
                 if (!stateId) {
                   this.whereNull('g.stateId')
                 } else {
                   this.where('g.stateId', stateId)
                 }
               })
-              .andWhere(function() {
+              .andWhere(function () {
                 if (!lgaId) {
                   this.whereNull('g.lgaId')
                 } else {
@@ -215,9 +215,7 @@ class DefaultSenaiteLIMS extends SynchronousDataProcessor {
             updatedSiteInfo.name = facilityName
             updatedSiteInfo.updatedOn = now
           }
-          await knex('Site')
-            .where('id', originSiteId)
-            .update(updatedSiteInfo)
+          await knex('Site').where('id', originSiteId).update(updatedSiteInfo)
         }
       }
       // Get or Create Sample
@@ -239,7 +237,7 @@ class DefaultSenaiteLIMS extends SynchronousDataProcessor {
       const sample =
         (await knex('Sample as s')
           .join('SampleType as st', 's.sampleTypeId', 'st.id')
-          .where(function() {
+          .where(function () {
             this.where('s.externalId', limsSampleId).andWhere(
               'st.externalId',
               sampleTypeExternalId
@@ -421,7 +419,7 @@ class DefaultSenaiteLIMS extends SynchronousDataProcessor {
           // TODO: Perform duplicate checking on MGIT data processor
           const resultRecord = (await knex('Result')
             .where('sampleId', sampleId)
-            .andWhere(function() {
+            .andWhere(function () {
               if (assayId === assayIds.senaiteUnknown) {
                 this.whereRaw(
                   `resultData->"$.senaiteResult.testTypeId" = '${testResultAnalysis.id}'`

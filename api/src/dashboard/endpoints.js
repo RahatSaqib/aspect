@@ -26,9 +26,7 @@ const routes = [
       auth: { scope: ['site', 'device'] },
       validate: {
         query: {
-          siteId: Joi.number()
-            .allow('')
-            .description('Filter for site ID'),
+          siteId: Joi.number().allow('').description('Filter for site ID'),
         },
       },
     },
@@ -116,9 +114,7 @@ const routes = [
       auth: { scope: ['site', 'device'] },
       validate: {
         query: {
-          siteId: Joi.number()
-            .allow('')
-            .description('Filter for Site ID'),
+          siteId: Joi.number().allow('').description('Filter for Site ID'),
           ...validateSortPageParams(
             'issueStatusSortOrder',
             'siteName',

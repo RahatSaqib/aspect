@@ -36,7 +36,7 @@ async function seed(knex) {
     // ------------------------------------------------------
     const query = knex('Result as r')
       .innerJoin('ResultCategory as rc', 'r.resultCategory1', 'rc.id')
-      .innerJoin('ResultCategoryAssay as rca', function() {
+      .innerJoin('ResultCategoryAssay as rca', function () {
         this.on('r.assayId', 'rca.assayId').andOn(
           'r.resultCategory1',
           'rca.resultCategoryId'
@@ -113,9 +113,7 @@ async function seed(knex) {
           if (result) {
             const { id: resultId } = result
             // remove from ResultTreatmentStatusLog
-            await knex('ResultTreatmentStatusLog')
-              .where({ resultId })
-              .del()
+            await knex('ResultTreatmentStatusLog').where({ resultId }).del()
             // update Result
             await updateResultTable(result)
           }
