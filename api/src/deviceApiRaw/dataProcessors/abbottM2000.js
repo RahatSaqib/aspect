@@ -508,8 +508,9 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
                           assay: {
                             code: _.get(jsonAstmResult, '3.4.value'),
                           },
-                          externalId: `${sampleId}|${moduleSerial}|${carouselId}|${wellPosition}|${resultDateString ||
-                            ''}`,
+                          externalId: `${sampleId}|${moduleSerial}|${carouselId}|${wellPosition}|${
+                            resultDateString || ''
+                          }`,
                           consumableLot: _.get(jsonAstmResult, '3.6.value'),
                           consumableSerial: _.get(jsonAstmResult, '3.7.value'),
                           senderOperator: _.get(
@@ -1034,7 +1035,7 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
     ) {
       resultDetails.resultCategory1 = resultCategories.Error
       resultDetails.resultCategory2 = null
-      resultDetails.errorCodes = _.uniq(
+      resultDetails.errorCode = _.uniq(
         [
           ...(orf1abGeneResult.errorCode || '').split(','),
           ...(nGeneResult.errorCode || '').split(','),
@@ -1296,10 +1297,7 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
         ...deviceRecord,
         configurationData: JSON.parse(deviceRecord.configurationData),
       }
-      const site =
-        (await knex('Site')
-          .where('id', device.siteId)
-          .first()) || {}
+      const site = (await knex('Site').where('id', device.siteId).first()) || {}
       this.response.deviceId = device.id
       this.response.deviceLogIds = []
       if (deviceDetailsInPayload.lastSeenOn >= device.lastSeenOn) {
@@ -1316,9 +1314,7 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
             deviceUpdates.configurationData
           )
         }
-        await knex('Device')
-          .where('id', device.id)
-          .update(deviceUpdates)
+        await knex('Device').where('id', device.id).update(deviceUpdates)
         const [configDeviceLogId] = await knex('DeviceLog').insert({
           deviceId: device.id,
           source: this.name,
