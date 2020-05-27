@@ -1,8 +1,10 @@
 const now = new Date()
 const Promise = require('bluebird')
 const _ = require('lodash')
+const forms = require('./fixtures/forms')
 const { insertNewResultPushTemplates } = require('./commonPushNotifications')
 const { getBaseIssues } = require('./relatedObjects/issues')
+const { getBaseForms } = require('./relatedObjects/forms')
 // / This module was meant for adding generic stuff to all folder seeds.
 // / The idea is to add functions which the only parameter is the knex object we are using
 // / Every function should control which elements should insert and which ones should overpass.
@@ -117,6 +119,54 @@ async function addIssueTypes(
   return true
 }
 
+async function addForms(knex, _partnerId, formsNeeded = Object.keys(forms)) {
+  let partnerId = _partnerId
+  if (!partnerId) {
+    try {
+      // eslint-disable-next-line prefer-const
+      ;({ partnerId } = await knex('User as u')
+        .join('Person as p', 'u.id', 'p.userId')
+        .join('Job as j', 'p.id', 'j.personId')
+        .join('JobFunction as jf', 'j.jobFunctionId', 'jf.id')
+        .where('jf.name', 'admin')
+        .first('p.lastPartnerId as partnerId'))
+      if (!partnerId) {
+        ;({ partnerId } = await knex('Partner as p').first('id as partnerId'))
+      }
+    } catch (e) {
+      return false
+    }
+  }
+  const forms = await getBaseForms()
+  const insertedForms = await knex('FormDefinition')
+    .where({ partnerId })
+    .pluck('externalId')
+
+  const existingSchemas = await knex('FormDefinitionSchema').select()
+  await Promise.each(Object.keys(forms), async form => {
+    if (insertedForms.indexOf(form) === -1 && formsNeeded.indexOf(form) >= 0) {
+      const formDefinitionSchemaId =
+        _.get(
+          _.find(
+            existingSchemas,
+            elem => elem.jsonSchemaFile === forms[form].fileName
+          ),
+          'id'
+        ) ||
+        (
+          await knex('FormDefinitionSchema').insert({
+            jsonSchemaFile: forms[form].fileName,
+          })
+        )[0]
+      await knex('FormDefinition').insert({
+        ...forms[form].formDefinition,
+        formDefinitionSchemaId,
+        partnerId,
+      })
+    }
+  })
+}
 module.exports = {
   addIssueTypes,
+  addForms,
 }
