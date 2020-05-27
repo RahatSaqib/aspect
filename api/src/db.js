@@ -53,7 +53,7 @@ function filterParams(queryBuilder, params, filters) {
       return
     }
     if (_.isArray(columnNameOrArray)) {
-      queryBuilder.where(function() {
+      queryBuilder.where(function () {
         // http://knexjs.org/#Builder-where
         columnNameOrArray.forEach(columnName => {
           if (_.isArray(params[paramName])) {

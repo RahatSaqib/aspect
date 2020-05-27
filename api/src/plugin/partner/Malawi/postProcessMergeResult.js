@@ -45,9 +45,7 @@ async function addResultCategory(context, result) {
   const { id: resultId, assayId, resultData } = result
   const { resultText, copies } = JSON.parse(resultData)
   const assayExternalId = (
-    await knex('Assay as a')
-      .where({ 'a.id': assayId })
-      .first('a.externalId')
+    await knex('Assay as a').where({ 'a.id': assayId }).first('a.externalId')
   ).externalId
 
   // Add EID categories
@@ -81,9 +79,7 @@ async function addResultCategory(context, result) {
 
   if (externalId) {
     const resultCategoryId = (
-      await knex('ResultCategory')
-        .where('externalId', externalId)
-        .first('id')
+      await knex('ResultCategory').where('externalId', externalId).first('id')
     ).id
 
     // Update Result Category
@@ -136,12 +132,10 @@ async function checkResultDeliverable(context, result) {
         createdOn: logEntryNow,
         reason: 'Validated & Complete Patient Data',
       })
-      await knex('Result')
-        .where('id', resultId)
-        .update({
-          resultWorkflowStatusLogId: lastLogId,
-          // auto QC-check Deliverable results RRT-313
-        })
+      await knex('Result').where('id', resultId).update({
+        resultWorkflowStatusLogId: lastLogId,
+        // auto QC-check Deliverable results RRT-313
+      })
       actions.resultUpdated(resultId)
     }
   }

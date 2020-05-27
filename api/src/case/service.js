@@ -79,19 +79,12 @@ async function addCase(_case, { messageContext } = {}) {
  * @return {boolean} True if the action was successful
  */
 async function removeCase(_case) {
-  await knex('Case')
-    .where(_case)
-    .del()
+  await knex('Case').where(_case).del()
 }
 
 async function updateCase(whereFields, updateFields, { messageContext } = {}) {
-  await knex('Case')
-    .where(whereFields)
-    .update(updateFields)
-  const caseIds = await knex('Case')
-    .where(whereFields)
-    .select('id')
-    .pluck('id')
+  await knex('Case').where(whereFields).update(updateFields)
+  const caseIds = await knex('Case').where(whereFields).select('id').pluck('id')
   if (messageContext && caseIds.length) {
     // queue message for each affected Case row
     if (!messageContext.caseUpdated) {
@@ -164,10 +157,7 @@ async function getCases({ query, auth }) {
     )
     .distinct()
 
-  const getCount = casesQuery
-    .clone()
-    .count('r.id as count')
-    .first()
+  const getCount = casesQuery.clone().count('r.id as count').first()
 
   const getItems = casesQuery
     .clone()
@@ -225,10 +215,7 @@ async function getAutoCompleteCases({ auth, query }) {
     }, query)
     .orderBy('ca.externalId')
 
-  const getCount = casesQuery
-    .clone()
-    .count('r.id as count')
-    .first()
+  const getCount = casesQuery.clone().count('r.id as count').first()
 
   const getCases = casesQuery.clone().select(['ca.id', 'ca.externalId'])
 

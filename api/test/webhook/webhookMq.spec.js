@@ -67,9 +67,7 @@ describe('Sending Webhook Message via Message Queue', () => {
   }
 
   before(async () => {
-    ;({ id: adminId } = await knex('User')
-      .where({ name: 'admin' })
-      .first('id'))
+    ;({ id: adminId } = await knex('User').where({ name: 'admin' }).first('id'))
     ;({ token: deviceApiKey } = await knex('DeviceApiKey')
       .where({ revoked: false })
       .first('token'))
@@ -97,9 +95,7 @@ describe('Sending Webhook Message via Message Queue', () => {
 
     // remove sample message
     if (!_.isEmpty(webhookMessageIds)) {
-      await knex('WebhookMessage')
-        .whereIn('id', webhookMessageIds)
-        .delete()
+      await knex('WebhookMessage').whereIn('id', webhookMessageIds).delete()
     }
     webhookMessageIds.splice(0, webhookMessageIds.length)
     await queuePurge()
@@ -107,9 +103,7 @@ describe('Sending Webhook Message via Message Queue', () => {
 
   after(async () => {
     if (!_.isEmpty(webhookTemplateIds)) {
-      await knex('WebhookTemplate')
-        .whereIn('id', webhookTemplateIds)
-        .delete()
+      await knex('WebhookTemplate').whereIn('id', webhookTemplateIds).delete()
     }
   })
 
@@ -149,9 +143,7 @@ describe('Sending Webhook Message via Message Queue', () => {
     await waitForCreated
     await waitForIdle()
 
-    const msg = await knex('WebhookMessage')
-      .where('id', messageId)
-      .first()
+    const msg = await knex('WebhookMessage').where('id', messageId).first()
     assert.equal(msg.messageStatusId, errorMessageStatusId)
     assert.equal(
       msg.response,

@@ -31,9 +31,7 @@ describe('Permissions', () => {
           .first('id'),
       ]
       ;[{ id: jobFunctionId }] = [
-        await knex('JobFunction')
-          .where({ partnerId: partner1 })
-          .first(),
+        await knex('JobFunction').where({ partnerId: partner1 }).first(),
       ]
       ;[{ id: siteId, name: siteName, geographyId }] = [
         await knex('Site as s')
@@ -43,18 +41,14 @@ describe('Permissions', () => {
           .first('s.id', 's.name', 's.geographyId'),
       ]
       // if Job doesn't exist then entry added during the test will be removed in after()
-      const job = await knex('Job')
-        .where({ personId, jobFunctionId })
-        .first()
+      const job = await knex('Job').where({ personId, jobFunctionId }).first()
       cleanJob = !job
     })
   )
   after(() =>
     runTestWithKnex(async knex => {
       if (cleanJob) {
-        await knex('Job')
-          .where('id', jobId)
-          .del()
+        await knex('Job').where('id', jobId).del()
       }
     })
   )
@@ -104,7 +98,7 @@ describe('Permissions', () => {
         await Promise.each(jobContextsOld, async jc => {
           const jcOld = await knex('JobContext')
             .where({ jobId })
-            .where(function() {
+            .where(function () {
               if (jc.geographyId) {
                 this.where({ geographyId: jc.geographyId })
               } else if (jc.siteId) {
@@ -472,9 +466,7 @@ describe('Permissions', () => {
       //
       before(() =>
         runTestWithKnex(async knex => {
-          allRefIds = await knex(refTable)
-            .orderBy('id')
-            .pluck('id')
+          allRefIds = await knex(refTable).orderBy('id').pluck('id')
           // checkpoint of all existing items before test to restore them after
           initialItems = await knex(tableName)
             .where({ jobFunctionId })
@@ -485,9 +477,7 @@ describe('Permissions', () => {
       after(() =>
         runTestWithKnex(async knex => {
           // restore to checkpoint
-          await knex(tableName)
-            .where({ jobFunctionId })
-            .del()
+          await knex(tableName).where({ jobFunctionId }).del()
           await knex(tableName).insert(initialItems)
         })
       )
@@ -563,9 +553,7 @@ describe('Permissions', () => {
         ]
 
         const jobProps = { personId, jobFunctionId: jobFunctionClinicianId }
-        const job = await knex('Job')
-          .where(jobProps)
-          .first()
+        const job = await knex('Job').where(jobProps).first()
         if (!job) {
           // if such Job is missing - keep it's properties to remove it in after()
           toCleanUp.jobProps = jobProps
@@ -588,20 +576,14 @@ describe('Permissions', () => {
       runTestWithKnex(async knex => {
         // if Job existed but JobContext didn't exist before this test
         if (toCleanUp.jobContextProps) {
-          await knex('JobContext')
-            .where(toCleanUp.jobContextProps)
-            .del()
+          await knex('JobContext').where(toCleanUp.jobContextProps).del()
         }
         // if Job didn't exist before this test, we got jobContextId after assigning person
         if (toCleanUp.jobContextIds.length) {
-          await knex('JobContext')
-            .whereIn('id', toCleanUp.jobContextIds)
-            .del()
+          await knex('JobContext').whereIn('id', toCleanUp.jobContextIds).del()
         }
         if (toCleanUp.jobProps) {
-          await knex('Job')
-            .where(toCleanUp.jobProps)
-            .del()
+          await knex('Job').where(toCleanUp.jobProps).del()
         }
       })
     )

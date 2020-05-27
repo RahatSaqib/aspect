@@ -65,13 +65,9 @@ async function createResult(
       shortName: deviceTypeExternalId,
       ...auditFields,
     })
-    device = await knex('Device')
-      .where('id', deviceId)
-      .first()
+    device = await knex('Device').where('id', deviceId).first()
   }
-  const site = await knex('Site')
-    .where('id', device.siteId)
-    .first()
+  const site = await knex('Site').where('id', device.siteId).first()
   const randomDate = calculateDateForResult()
   const randomNumber = calculateDateForResult().getTime()
 
@@ -83,9 +79,7 @@ async function createResult(
     originSiteId: site.id,
     ...sampleDetails,
   }
-  const assay = await knex('Assay')
-    .where('externalId', assayExternalId)
-    .first()
+  const assay = await knex('Assay').where('externalId', assayExternalId).first()
   sample.id = await knex('Sample').insert(sample)
   const resultSourceEnteredByHandId = await resultSourceToId('EnteredByHand')
   const resultSourceDiagnosticDeviceId = await resultSourceToId(
@@ -137,9 +131,7 @@ async function createResult(
 }
 
 async function getResult(resultId) {
-  return knex('Result')
-    .where('id', resultId)
-    .first()
+  return knex('Result').where('id', resultId).first()
 }
 
 module.exports = {

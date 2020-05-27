@@ -71,13 +71,13 @@ describe('Result Follow-Up Aggregations for reports', () => {
         .leftJoin('ResultCategory as rc2', 'rc2.id', 'r.resultCategory2')
         .leftJoin('Geography as g', 's.geographyId', 'g.id')
         .leftJoin('State as st', 'st.id', 'g.stateId')
-        .innerJoin('ResultCategoryAssay as rca', function() {
+        .innerJoin('ResultCategoryAssay as rca', function () {
           this.on('r.assayId', 'rca.assayId').andOn(
             'r.resultCategory1',
             'rca.resultCategoryId'
           )
         })
-        .leftJoin('ResultCategoryAssay as rсa2', function() {
+        .leftJoin('ResultCategoryAssay as rсa2', function () {
           this.on('r.assayId', 'rсa2.assayId').andOn(
             'r.resultCategory2',
             'rсa2.resultCategoryId'

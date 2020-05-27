@@ -34,15 +34,13 @@ async function prepareEmailMessageForSending(context, knex, emailMessageId) {
   const pendingMessageStatusId = await messageStatusToId('Pending')
 
   // store generated email message into the same record and set messageStatusId
-  await knex('EmailMessage')
-    .where({ id: emailMessageId })
-    .update({
-      subject,
-      body,
-      htmlBody,
-      messageStatusId: pendingMessageStatusId,
-      updatedOn: new Date(),
-    })
+  await knex('EmailMessage').where({ id: emailMessageId }).update({
+    subject,
+    body,
+    htmlBody,
+    messageStatusId: pendingMessageStatusId,
+    updatedOn: new Date(),
+  })
 
   // dispatch EMAIL_MESSAGE_READY_FOR_SENDING to MQ
   context.emailMessageReadyForSending(emailMessageId)

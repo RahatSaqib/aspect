@@ -29,10 +29,7 @@ const routes = [
       notes: "List of Tags ID's and title",
       validate: {
         params: {
-          id: Joi.number()
-            .integer()
-            .description('Id')
-            .required(),
+          id: Joi.number().integer().description('Id').required(),
           tagType: Joi.string()
             .valid('result', 'site', 'device', 'person')
             .description('Tag Type')
@@ -50,20 +47,14 @@ const routes = [
       notes: "List of Tags ID's and title",
       validate: {
         params: {
-          id: Joi.number()
-            .integer()
-            .description('Id')
-            .required(),
+          id: Joi.number().integer().description('Id').required(),
           tagType: Joi.string()
             .valid('result', 'site', 'device', 'person')
             .description('Tag Type')
             .required(),
         },
         payload: {
-          tags: Joi.string()
-            .max(500)
-            .allow('')
-            .required(),
+          tags: Joi.string().max(500).allow('').required(),
         },
       },
     },

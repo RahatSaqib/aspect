@@ -238,9 +238,8 @@ async function mergeResult(
     }
     if (originSiteGeographyId) {
       const originSiteGeography =
-        (await knex('Geography')
-          .where('id', originSiteGeographyId)
-          .first()) || {}
+        (await knex('Geography').where('id', originSiteGeographyId).first()) ||
+        {}
       if (originSiteGeography.countryId && !siteGeography.countryId) {
         siteGeography.countryId = originSiteGeography.countryId
       }
@@ -263,14 +262,14 @@ async function mergeResult(
       siteGeography =
         (await knex('Geography')
           .where('countryId', siteGeography.countryId)
-          .andWhere(function() {
+          .andWhere(function () {
             if (siteGeography.stateId) {
               this.where('stateId', siteGeography.stateId)
             } else {
               this.whereNull('stateId')
             }
           })
-          .andWhere(function() {
+          .andWhere(function () {
             if (siteGeography.lgaId) {
               this.where('lgaId', siteGeography.lgaId)
             } else {
@@ -526,9 +525,7 @@ async function mergeResult(
   let resultId
   if (existingResult) {
     resultId = existingResult.id
-    await knex('Result')
-      .where({ id: resultId })
-      .update(result)
+    await knex('Result').where({ id: resultId }).update(result)
   } else {
     ;[resultId] = await knex('Result').insert(processedResult)
   }
@@ -540,12 +537,10 @@ async function mergeResult(
     changedOn: now,
     createdBy: 1,
   })
-  await knex('Result')
-    .where({ id: resultId })
-    .update({
-      resultWorkflowStatusLogId: lastLogId,
-      updatedOn: now,
-    })
+  await knex('Result').where({ id: resultId }).update({
+    resultWorkflowStatusLogId: lastLogId,
+    updatedOn: now,
+  })
   processedResult.resultWorkflowStatusLogId = lastLogId
   processedResult.resultWorkflowStatusId = resultWorkflowStatusId
   processedResult.id = resultId

@@ -20,11 +20,7 @@ async function up(knex) {
   }
 
   await knex.schema.alterTable('DashboardWidget', tblDashboardWidget => {
-    tblDashboardWidget
-      .string('externalId')
-      .notNullable()
-      .unique()
-      .alter()
+    tblDashboardWidget.string('externalId').notNullable().unique().alter()
   })
 }
 

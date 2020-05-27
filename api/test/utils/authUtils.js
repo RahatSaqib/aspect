@@ -38,9 +38,7 @@ async function createUser(
     },
   ]
 ) {
-  const partner = await knex('Partner')
-    .where('name', partnerName)
-    .first()
+  const partner = await knex('Partner').where('name', partnerName).first()
   if (!partner) {
     throw new Error(`partnerName ${partnerName} not found in the database`)
   }
@@ -57,9 +55,7 @@ async function createUser(
     .whereNull('stateId')
     .whereNull('lgaId')
     .first()
-  const user = await knex('User')
-    .where('name', username)
-    .first()
+  const user = await knex('User').where('name', username).first()
   let userId
   if (user) {
     userId = user.id
@@ -86,25 +82,21 @@ async function createUser(
     })
   }
 
-  const person = await knex('Person')
-    .where({ userId })
-    .first()
+  const person = await knex('Person').where({ userId }).first()
   let personId
   if (person) {
     personId = person.id
-    await knex('Person')
-      .where('id', personId)
-      .update({
-        userId,
-        name: username,
-        lastPartnerId: partner.id,
-        lastCountryId: country.id,
-        timezone: country.timezone,
-        culture: country.culture,
-        createdOn: new Date(),
-        updatedOn: new Date(),
-        geographyId: geography.id,
-      })
+    await knex('Person').where('id', personId).update({
+      userId,
+      name: username,
+      lastPartnerId: partner.id,
+      lastCountryId: country.id,
+      timezone: country.timezone,
+      culture: country.culture,
+      createdOn: new Date(),
+      updatedOn: new Date(),
+      geographyId: geography.id,
+    })
   } else {
     ;[personId] = await knex('Person').insert({
       userId,
@@ -174,9 +166,7 @@ async function createUser(
     const jobFunctionJobs = jobs.filter(
       job => job.jobFunctionExternalId === jobFunctionExternalId
     )
-    await knex('JobContext')
-      .where({ jobId })
-      .del()
+    await knex('JobContext').where({ jobId }).del()
     await Promise.each(jobFunctionJobs, async jobFunctionJob => {
       let jobGeography = {}
       const job = {
@@ -195,14 +185,14 @@ async function createUser(
           .leftJoin('State as s', 'g.stateId', 's.id')
           .leftJoin('Lga as l', 'g.lgaId', 'l.id')
           .where('countryId', country.id)
-          .andWhere(function() {
+          .andWhere(function () {
             if (job.stateName) {
               this.where('s.name', job.stateName)
             } else {
               this.whereNull('g.stateId')
             }
           })
-          .andWhere(function() {
+          .andWhere(function () {
             if (job.lgaName) {
               this.where('l.name', job.lgaName)
             } else {
@@ -212,9 +202,8 @@ async function createUser(
           .first('g.*')
       }
       const site =
-        (await knex('Site')
-          .where('externalId', job.siteExternalId)
-          .first()) || {}
+        (await knex('Site').where('externalId', job.siteExternalId).first()) ||
+        {}
       const deviceType =
         (await knex('DeviceType')
           .where('externalId', job.deviceTypeExternalId)
@@ -257,30 +246,16 @@ async function removeUser(userId) {
     .whereIn('personId', personIds)
     .select('id')
     .pluck('id')
-  await knex('JobContext')
-    .whereIn('jobId', jobIds)
-    .del()
-  await knex('Job')
-    .whereIn('id', jobIds)
-    .del()
-  await knex('LicensePerson')
-    .whereIn('personId', personIds)
-    .del()
-  await knex('Person')
-    .where({ userId })
-    .del()
-  await knex('RefreshToken')
-    .where({ userId })
-    .del()
-  await knex('User')
-    .where({ id: userId })
-    .del()
+  await knex('JobContext').whereIn('jobId', jobIds).del()
+  await knex('Job').whereIn('id', jobIds).del()
+  await knex('LicensePerson').whereIn('personId', personIds).del()
+  await knex('Person').where({ userId }).del()
+  await knex('RefreshToken').where({ userId }).del()
+  await knex('User').where({ id: userId }).del()
 }
 
 async function getAdminId() {
-  const { id: adminId } = await knex('User')
-    .where({ name: 'admin' })
-    .first()
+  const { id: adminId } = await knex('User').where({ name: 'admin' }).first()
   return adminId
 }
 

@@ -676,13 +676,10 @@ describe('Device Result API routes', () => {
           hoursStart: expectedSampleOriginSite.hoursStart,
           hoursEnd: expectedSampleOriginSite.hoursEnd,
         }
-        await server
-          .post(devicePath)
-          .set('Authorization', deviceAuth)
-          .send({
-            name: 'Device Name',
-            result: resultPayload,
-          })
+        await server.post(devicePath).set('Authorization', deviceAuth).send({
+          name: 'Device Name',
+          result: resultPayload,
+        })
         assert.equal(postNewResultResponse.status, 200)
         assert.typeOf(postNewResultResponse.body, 'Object')
 
@@ -999,9 +996,7 @@ describe('Device Result API routes', () => {
         let lastResultId = await getLastResultId(knex, deviceId)
         assert.equal(lastResultId, resultIds[0])
 
-        result1 = await knex('Result as r')
-          .where({ id: resultIds[0] })
-          .first()
+        result1 = await knex('Result as r').where({ id: resultIds[0] }).first()
         assert.equal(result1.externalId, resultExternalIds[0])
         assert.deepEqual(JSON.parse(result1.resultData), { a: 'b', c: 'd' })
         assert.isNotOk(result1.errorCode)
@@ -1131,9 +1126,7 @@ describe('Device Result API routes', () => {
         lastResultId = await getLastResultId(knex, deviceId)
         assert.equal(lastResultId, resultIds[1])
 
-        result2 = await knex('Result as r')
-          .where({ id: resultIds[1] })
-          .first()
+        result2 = await knex('Result as r').where({ id: resultIds[1] }).first()
         assert.equal(initialCount + 2, await countResults())
         assert.equal(result2.externalId, resultExternalIds[1])
         expect(JSON.parse(result2.resultData)).to.containSubset({
@@ -1359,15 +1352,11 @@ describe('Device Result API routes', () => {
 
       afterEach(async () => {
         run(async knex => {
-          await knex('InventoryLog')
-            .whereIn('resultId', resultIds)
-            .delete()
+          await knex('InventoryLog').whereIn('resultId', resultIds).delete()
           await knex('ResultWorkflowLog')
             .whereIn('resultId', resultIds)
             .delete()
-          await knex('Result')
-            .whereIn('id', resultIds)
-            .delete()
+          await knex('Result').whereIn('id', resultIds).delete()
         })
       })
 
@@ -1764,9 +1753,7 @@ describe('Device Result API routes', () => {
               data: { a: 'b' },
               assay: { id: assayExternalId },
               sample: {
-                id: Math.random()
-                  .toString(36)
-                  .slice(2),
+                id: Math.random().toString(36).slice(2),
               },
               instrument: { serial: '02384702' },
               consumable: {
@@ -1826,9 +1813,7 @@ describe('Device Result API routes', () => {
               data: { a: 'b' },
               assay: { id: assayExternalId },
               sample: {
-                id: Math.random()
-                  .toString(36)
-                  .slice(2),
+                id: Math.random().toString(36).slice(2),
               },
               instrument: { serial: '02384702' },
               consumable: {
@@ -1890,9 +1875,7 @@ describe('Device Result API routes', () => {
               data: { a: 'b' },
               assay: { id: assayExternalId },
               sample: {
-                id: Math.random()
-                  .toString(36)
-                  .slice(2),
+                id: Math.random().toString(36).slice(2),
               },
               instrument: { serial: '02384702' },
               consumable: {

@@ -636,9 +636,7 @@ describe('Device API routes for GxConnect Devices', () => {
     it('should update the last seen and last ping time', () =>
       runTest(async knex => {
         const { basicDevicePayload, deviceAuth, device } = context
-        const deviceBefore = await knex('Device')
-          .where('id', device.id)
-          .first()
+        const deviceBefore = await knex('Device').where('id', device.id).first()
 
         const waitForDeviceSeen = waitForAction(deviceSeen(deviceBefore.id))
         await waitForApproximately(1, 'second')
@@ -654,9 +652,7 @@ describe('Device API routes for GxConnect Devices', () => {
         await waitForDeviceSeen
         await waitForIdle()
 
-        const deviceAfter = await knex('Device')
-          .where('id', device.id)
-          .first()
+        const deviceAfter = await knex('Device').where('id', device.id).first()
         deviceAfter.id.should.equal(deviceBefore.id)
         new Date(deviceAfter.lastSeenOn).should.be.above(
           deviceBefore.lastSeenOn
@@ -673,9 +669,7 @@ describe('Device API routes for GxConnect Devices', () => {
           .where('deviceId', device.id)
           .update({ offline: 1 })
 
-        const deviceBefore = await knex('Device')
-          .where('id', device.id)
-          .first()
+        const deviceBefore = await knex('Device').where('id', device.id).first()
 
         const waitForDeviceSeen = waitForAction(deviceSeen(deviceBefore.id))
         await waitForApproximately(1, 'second')
@@ -1113,9 +1107,7 @@ describe('Device API routes for GxConnect Devices', () => {
         lastResultId = await getLastResultId(knex, device.id)
         assert.equal(lastResultId, resultIds[1])
 
-        result2 = await knex('Result as r')
-          .where({ id: resultIds[1] })
-          .first()
+        result2 = await knex('Result as r').where({ id: resultIds[1] }).first()
         assert.equal(initialCount + 2, await countResults())
         expect(JSON.parse(result2.resultData)).to.containSubset({
           a: 'b',
@@ -1321,9 +1313,7 @@ describe('Device API routes for GxConnect Devices', () => {
       const assayName = 'New Assay Type'
       after(() =>
         run(async knex =>
-          knex('Assay')
-            .where({ externalId: assayName })
-            .delete()
+          knex('Assay').where({ externalId: assayName }).delete()
         )
       )
 
@@ -1822,7 +1812,7 @@ describe('Device API routes for GxConnect Devices', () => {
             const deviceLocationDetails = await knex('DeviceApiKey as dak')
               .join('Device as d', 'dak.DeviceId', 'd.id')
               .join('Site as s', 'd.siteId', 's.id')
-              .innerJoin('Geography as g', function() {
+              .innerJoin('Geography as g', function () {
                 this.on('d.geographyId', 'g.id').orOn('s.geographyId', 'g.id')
               })
               .join('Country as c', 'g.countryId', 'c.id')
@@ -1895,7 +1885,7 @@ describe('Device API routes for GxConnect Devices', () => {
             const deviceLocationDetails = await knex('DeviceApiKey as dak')
               .join('Device as d', 'dak.DeviceId', 'd.id')
               .join('Site as s', 'd.siteId', 's.id')
-              .innerJoin('Geography as g', function() {
+              .innerJoin('Geography as g', function () {
                 this.on('d.geographyId', 'g.id').orOn('s.geographyId', 'g.id')
               })
               .join('Country as c', 'g.countryId', 'c.id')

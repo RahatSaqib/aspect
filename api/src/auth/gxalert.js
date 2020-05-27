@@ -181,9 +181,7 @@ async function validateUserAtGxAlert(username, password, user) {
       userId = user.id
 
       // update user with password hash
-      await knex('User')
-        .update(baseUserData)
-        .where({ id: userId })
+      await knex('User').update(baseUserData).where({ id: userId })
     }
 
     // create/update Person in our db
@@ -200,10 +198,7 @@ async function validateUserAtGxAlert(username, password, user) {
     // insert Job if not exists
     if (jobFunctionId) {
       const d = { personId, jobFunctionId }
-      let { id: jobId } =
-        (await knex('Job')
-          .where(d)
-          .first('id')) || {}
+      let { id: jobId } = (await knex('Job').where(d).first('id')) || {}
       if (!jobId) {
         ;[jobId] = await knex('Job').insert(d)
       }
@@ -326,7 +321,7 @@ async function setJobContext(knex, jobId, gxUser) {
         let { siteId } =
           (await knex('Device')
             .where({ geographyId }) // Geography will never be undefined
-            .where(function() {
+            .where(function () {
               this.where({ shortName }).orWhere('name', shortName)
             })
             .first()) || {}
@@ -335,7 +330,7 @@ async function setJobContext(knex, jobId, gxUser) {
           const site =
             (await knex('Site')
               .where({ geographyId })
-              .where(function() {
+              .where(function () {
                 this.where({ shortName }).orWhere('name', shortName) // Shortname shouldn't be undefined, too
               })
               .first()) || {}
@@ -373,10 +368,7 @@ async function updateCreatePerson(
 ) {
   const now = new Date()
   let { id: personId } =
-    (await knex
-      .from('Person')
-      .where({ userId })
-      .first('id')) || {}
+    (await knex.from('Person').where({ userId }).first('id')) || {}
 
   const options = {
     countryAbbreviation: gxUser.country.abbreviation,
@@ -411,9 +403,7 @@ async function updateCreatePerson(
       ...basePersonData,
     })
   } else {
-    await knex('Person')
-      .where({ id: personId })
-      .update(basePersonData)
+    await knex('Person').where({ id: personId }).update(basePersonData)
   }
 
   return personId
@@ -445,10 +435,7 @@ async function getCreateGeographyIdByGxGeo(
   // check if geography for country exists
   let d = { countryId, stateId: null, lgaId: null }
   let { id: geographyId } =
-    (await knex
-      .from('Geography')
-      .where(d)
-      .first('id')) || {}
+    (await knex.from('Geography').where(d).first('id')) || {}
   // create if not exist
   if (!geographyId) {
     // we do not need to get geographyId here - will do it after processing state and lga
@@ -461,7 +448,7 @@ async function getCreateGeographyIdByGxGeo(
     // get state which has Geography - inner join
     const state = await knex('State as s')
       .innerJoin('Geography as g', 's.id', 'g.stateId')
-      .where(function() {
+      .where(function () {
         this.where('s.name', stateName).orWhere(
           's.abbreviation',
           stateAbbreviation

@@ -1095,10 +1095,9 @@ describe('stringTemplate', () => {
               `%22poc_viral_load%22%3A%22${encodeURIComponent(
                 dataSource.expectedPocVl
               )}%22%2C%20` +
-              `%22ct_value%22%3A%22${_.get(resultData, [
-                'probes',
-                'probeCCT',
-              ]) || '0'}%22%2C%20` +
+              `%22ct_value%22%3A%22${
+                _.get(resultData, ['probes', 'probeCCT']) || '0'
+              }%22%2C%20` +
               `%22result_instrument%22%3A%22${encodeURIComponent(
                 formatDateOrDefault(
                   convertToTimeZone(formData.timeInstrumentResulted, {
@@ -1920,12 +1919,14 @@ describe('stringTemplate', () => {
                 resultSample.originSite.id || 'NULL'
               )}` +
               `/LABORATORY/${encodeURIComponent(site.id || 'NULL')}` +
-              `/DATE_REQUESTED/${formatDateOrDefault(
-                parseDateOrDefault(resultPatientData.mrfDateRequested, {
-                  defaultDate: null,
-                }),
-                philippinesITISDateTimeFormat
-              ) || 'NULL'}` +
+              `/DATE_REQUESTED/${
+                formatDateOrDefault(
+                  parseDateOrDefault(resultPatientData.mrfDateRequested, {
+                    defaultDate: null,
+                  }),
+                  philippinesITISDateTimeFormat
+                ) || 'NULL'
+              }` +
               `/REQUESTING_PHYSICIAN/${encodeURIComponent(
                 resultPatientData.requestingPhysician || 'NULL'
               )}` +
@@ -1954,8 +1955,9 @@ describe('stringTemplate', () => {
                 resultPatientData.address || 'NULL'
               )}` +
               `/GEO_LOCATION/NULL` +
-              `/SEX/${{ Male: 'M', Female: 'F' }[resultPatientData.sex] ||
-                'NULL'}` +
+              `/SEX/${
+                { Male: 'M', Female: 'F' }[resultPatientData.sex] || 'NULL'
+              }` +
               `/MOBILE_NUMBER/${encodeURIComponent(
                 (
                   (resultData.customFieldData || []).find(
@@ -2079,60 +2081,77 @@ describe('stringTemplate', () => {
                       resultPatientData.treatmentSchedule
                     ] || 'NULL'
               }` +
-              `/REGISTRATION_GROUP/${{
-                NEW: '938610',
-                RELAPSE: '938611',
-                'TX AFTER LOST TO FF-UP': '938613',
-                'TX AFTER FAILURE': '938614',
-                'PREVIOUS TX OUTCOME UNKNOWN': '938615',
-                OTHER: '938616',
-              }[resultPatientData.registrationGroup] || 'NULL'}` +
-              `/SPECIMEN_TYPE/${{ Sputum: '0', Isolates: '1', Others: '1' }[
-                resultSample.data.type
-              ] || 'NULL'}` +
-              `/REPEAT_COLLECTION/${{ Yes: '1', No: '0' }[
-                resultSample.data.repeatCollection
-              ] || 'NULL'}` +
-              `/PRESUMPTIVE_DSDR_TB/${{
-                'Presumptive DS-TB': '0',
-                'Presumptive DR-TB': '1',
-              }[resultPatientData.presumptiveDsOrDr] || 'NULL'}` +
-              `/SPECIMEN_COLLECTION_DATE/${formatDateOrDefault(
-                parseDateOrDefault(resultSample.collectedOn, {
-                  defaultDate: null,
-                }),
-                philippinesITISDateTimeFormat
-              ) || 'NULL'}` +
-              `/VISUAL_APPEARANCE/${{
-                'Muco-purulent': '938638',
-                'Blood-stained': '938639',
-                Salivary: '938640',
-                Mucosalivary: '938672',
-                Purulent: '938891',
-              }[resultSample.data.appearance] || 'NULL'}` +
-              `/RESULT_MTB/${{
-                NotDetected: '0',
-                Detected: '1',
-                'Trace Detected': '1',
-                Indeterminate: '2',
-                Invalid: '2',
-                Error: '2',
-                NoResult: '2',
-              }[dataSource.resultCategory1ExternalId] || 'NULL'}` +
-              `/RESULT_RIF/${{
-                NotDetected: '0',
-                Detected: '1',
-                Invalid: '4',
-                Error: '4',
-                NoResult: '6',
-                Indeterminate: '7',
-              }[dataSource.resultCategory2ExternalId] || 'NULL'}` +
-              `/RELEASE_DATE/${formatDateOrDefault(
-                parseDateOrDefault(resultData.dateReleased, {
-                  defaultDate: null,
-                }),
-                philippinesITISDateTimeFormat
-              ) || 'NULL'}` +
+              `/REGISTRATION_GROUP/${
+                {
+                  NEW: '938610',
+                  RELAPSE: '938611',
+                  'TX AFTER LOST TO FF-UP': '938613',
+                  'TX AFTER FAILURE': '938614',
+                  'PREVIOUS TX OUTCOME UNKNOWN': '938615',
+                  OTHER: '938616',
+                }[resultPatientData.registrationGroup] || 'NULL'
+              }` +
+              `/SPECIMEN_TYPE/${
+                { Sputum: '0', Isolates: '1', Others: '1' }[
+                  resultSample.data.type
+                ] || 'NULL'
+              }` +
+              `/REPEAT_COLLECTION/${
+                { Yes: '1', No: '0' }[resultSample.data.repeatCollection] ||
+                'NULL'
+              }` +
+              `/PRESUMPTIVE_DSDR_TB/${
+                {
+                  'Presumptive DS-TB': '0',
+                  'Presumptive DR-TB': '1',
+                }[resultPatientData.presumptiveDsOrDr] || 'NULL'
+              }` +
+              `/SPECIMEN_COLLECTION_DATE/${
+                formatDateOrDefault(
+                  parseDateOrDefault(resultSample.collectedOn, {
+                    defaultDate: null,
+                  }),
+                  philippinesITISDateTimeFormat
+                ) || 'NULL'
+              }` +
+              `/VISUAL_APPEARANCE/${
+                {
+                  'Muco-purulent': '938638',
+                  'Blood-stained': '938639',
+                  Salivary: '938640',
+                  Mucosalivary: '938672',
+                  Purulent: '938891',
+                }[resultSample.data.appearance] || 'NULL'
+              }` +
+              `/RESULT_MTB/${
+                {
+                  NotDetected: '0',
+                  Detected: '1',
+                  'Trace Detected': '1',
+                  Indeterminate: '2',
+                  Invalid: '2',
+                  Error: '2',
+                  NoResult: '2',
+                }[dataSource.resultCategory1ExternalId] || 'NULL'
+              }` +
+              `/RESULT_RIF/${
+                {
+                  NotDetected: '0',
+                  Detected: '1',
+                  Invalid: '4',
+                  Error: '4',
+                  NoResult: '6',
+                  Indeterminate: '7',
+                }[dataSource.resultCategory2ExternalId] || 'NULL'
+              }` +
+              `/RELEASE_DATE/${
+                formatDateOrDefault(
+                  parseDateOrDefault(resultData.dateReleased, {
+                    defaultDate: null,
+                  }),
+                  philippinesITISDateTimeFormat
+                ) || 'NULL'
+              }` +
               `/PERFORMED_BY/${encodeURIComponent(
                 resultData.examiner || 'NULL'
               )}`

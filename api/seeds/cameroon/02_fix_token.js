@@ -7,9 +7,7 @@ const {
 } = require('../../src/shared/dictionary')
 
 async function seed(knex) {
-  await knex('Country')
-    .where('abbreviation', 'CR')
-    .update('abbreviation', 'CM')
+  await knex('Country').where('abbreviation', 'CR').update('abbreviation', 'CM')
 
   await knex('DeviceApiKey')
     .where('token', 'Zs4uow3jV0md6cmET0zUY')

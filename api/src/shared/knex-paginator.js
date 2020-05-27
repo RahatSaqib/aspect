@@ -1,7 +1,7 @@
 const KnexQueryBuilder = require('knex/lib/query/builder')
 
-module.exports = function(knex) {
-  KnexQueryBuilder.prototype.paginate = function(
+module.exports = function (knex) {
+  KnexQueryBuilder.prototype.paginate = function (
     perPage = 10,
     page = 1,
     isLengthAware = false
@@ -34,12 +34,7 @@ module.exports = function(knex) {
 
     // If the paginator is aware of its length, count the resulting rows
     if (isLengthAware) {
-      if (
-        this.clone()
-          .toSQL()
-          .sql.toLowerCase()
-          .indexOf('group by') !== -1
-      ) {
+      if (this.clone().toSQL().sql.toLowerCase().indexOf('group by') !== -1) {
         promises.push(
           knex.raw(
             `select count(*) as total from (${this.clone()
@@ -51,11 +46,7 @@ module.exports = function(knex) {
         )
       } else {
         promises.push(
-          this.clone()
-            .clearSelect()
-            .clearOrder()
-            .count('* as total')
-            .first()
+          this.clone().clearSelect().clearOrder().count('* as total').first()
         )
       }
     } else {

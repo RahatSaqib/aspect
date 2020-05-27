@@ -1,0 +1,245 @@
+{
+  "fields": [
+    {
+      "name": "GPCT",
+      "i18nKey": "GPCTi18nKey",
+      "fieldType": "number",
+      "order": 0,
+      "title": "GP CT",
+      "caption": "GP CT value",
+      "i18nKeyCaption": "GPCTi18nCaptionKey",
+      "controlType": "textBox",
+      "required": true,
+      "encrypted": false,
+      "validation": [
+        {
+          "validationType": "float",
+          "min": 0,
+          "errorMessage": "This value should be higher than 0",
+          "errorMessageI18nKey": "GPCTErrori18nKey"
+        }
+      ]
+    },
+    {
+      "name": "NPCT",
+      "i18nKey": "NPCTi18nKey",
+      "fieldType": "number",
+      "order": 1,
+      "title": "NP CT",
+      "caption": "NP CT value",
+      "i18nKeyCaption": "NPCTi18nCaptionKey",
+      "controlType": "textBox",
+      "required": true,
+      "encrypted": false,
+      "validation": [
+        {
+          "validationType": "float",
+          "min": 0,
+          "errorMessage": "This value should be higher than 0",
+          "errorMessageI18nKey": "NPCTErrori18nKey"
+        }
+      ]
+    },
+    {
+      "name": "CICCT",
+      "i18nKey": "CICCTi18nKey",
+      "fieldType": "number",
+      "order": 2,
+      "title": "CIC CT",
+      "caption": "CIC CT value",
+      "i18nKeyCaption": "CICCTi18nCaptionKey",
+      "controlType": "textBox",
+      "required": true,
+      "encrypted": false,
+      "validation": [
+        {
+          "validationType": "float",
+          "min": 0,
+          "errorMessage": "This value should be higher than 0",
+          "errorMessageI18nKey": "CICCTErrori18nKey"
+        }
+      ]
+    },
+    {
+      "name": "QC1CT",
+      "i18nKey": "QC1CTi18nKey",
+      "fieldType": "number",
+      "order": 3,
+      "title": "QC1 CT",
+      "caption": "QC1 CT value",
+      "i18nKeyCaption": "i18nCaptionKey",
+      "controlType": "textBox",
+      "required": true,
+      "encrypted": false,
+      "validation": [
+        {
+          "validationType": "float",
+          "min": 0,
+          "errorMessage": "This value should be higher than 0",
+          "errorMessageI18nKey": "QC1CTErrori18nKey"
+        }
+      ]
+    },
+    {
+      "name": "QC2CT",
+      "i18nKey": "QC2CTi18nKey",
+      "fieldType": "number",
+      "order": 4,
+      "title": "QC2 CT",
+      "caption": "QC2 CT value",
+      "i18nKeyCaption": "i18nCaptionKey",
+      "controlType": "textBox",
+      "required": true,
+      "encrypted": false,
+      "validation": [
+        {
+          "validationType": "float",
+          "min": 0,
+          "errorMessage": "This value should be higher than 0",
+          "errorMessageI18nKey": "QC2CTErrori18nKey"
+        }
+      ]
+    },
+    {
+      "name": "SACCT",
+      "i18nKey": "SACCTi18nKey",
+      "fieldType": "number",
+      "order": 5,
+      "title": "SAC CT",
+      "caption": "SAC CT value",
+      "i18nKeyCaption": "SACCTi18nCaptionKey",
+      "controlType": "textBox",
+      "required": true,
+      "encrypted": false,
+      "validation": [
+        {
+          "validationType": "float",
+          "min": 0,
+          "errorMessage": "This value should be higher than 0",
+          "errorMessageI18nKey": "SACCTErrori18nKey"
+        }
+      ]
+    },
+    {
+      "name": "GPEndpt",
+      "i18nKey": "GPEndpti18nKey",
+      "fieldType": "number",
+      "order": 18,
+      "title": "GP Endpt",
+      "caption": "GP endpt value",
+      "i18nKeyCaption": "GPEndpti18nCaptionKey",
+      "controlType": "textBox",
+      "required": true,
+      "encrypted": false,
+      "validation": [
+        {
+          "validationType": "float",
+          "min": 0,
+          "errorMessage": "This value should be higher than 0",
+          "errorMessageI18nKey": "GPEndptErrori18nKey"
+        }
+      ]
+    },
+    {
+      "name": "NPEndpt",
+      "i18nKey": "NPEndpti18nKey",
+      "fieldType": "number",
+      "order": 19,
+      "title": "NP Endpt",
+      "caption": "NP Endpt value",
+      "i18nKeyCaption": "NPEndpti18nCaptionKey",
+      "controlType": "textBox",
+      "required": true,
+      "encrypted": false,
+      "validation": [
+        {
+          "validationType": "float",
+          "min": 0,
+          "errorMessage": "This value should be higher than 0",
+          "errorMessageI18nKey": "NPEndptErrori18nKey"
+        }
+      ]
+    },
+    {
+      "name": "CICendpt",
+      "i18nKey": "CICendpti18nKey",
+      "fieldType": "number",
+      "order": 20,
+      "title": "CIC Endpt",
+      "caption": "CIC Endpt value",
+      "i18nKeyCaption": "CICendpti18nCaptionKey",
+      "controlType": "textBox",
+      "required": true,
+      "encrypted": false,
+      "validation": [
+        {
+          "validationType": "float",
+          "min": 0,
+          "errorMessage": "This value should be higher than 0",
+          "errorMessageI18nKey": "CICendptErrori18nKey"
+        }
+      ]
+    },
+    {
+      "name": "QC1Endpt",
+      "i18nKey": "QC1Endpti18nKey",
+      "fieldType": "number",
+      "order": 21,
+      "title": "QC1 endpt",
+      "caption": "QC1 endpt value",
+      "i18nKeyCaption": "QC1Endpti18nCaptionKey",
+      "controlType": "textBox",
+      "required": true,
+      "encrypted": false,
+      "validation": [
+        {
+          "validationType": "float",
+          "min": 0,
+          "errorMessage": "This value should be higher than 0",
+          "errorMessageI18nKey": "QC1EndptErrori18nKey"
+        }
+      ]
+    },
+    {
+      "name": "QC2Endpt",
+      "i18nKey": "QC2Endpti18nKey",
+      "fieldType": "number",
+      "order": 22,
+      "title": "QC2Endpt CT",
+      "caption": "QC2Endpt value",
+      "i18nKeyCaption": "QC2Endpti18nCaptionKey",
+      "controlType": "textBox",
+      "required": true,
+      "encrypted": false,
+      "validation": [
+        {
+          "validationType": "float",
+          "min": 0,
+          "errorMessage": "This value should be higher than 0",
+          "errorMessageI18nKey": "QC2EndptErrori18nKey"
+        }
+      ]
+    },
+    {
+      "name": "SACendpt",
+      "i18nKey": "SACendpti18nKey",
+      "fieldType": "number",
+      "order": 23,
+      "title": "SAC Endpt",
+      "caption": "SAC Endpt value",
+      "i18nKeyCaption": "SACendpti18nCaptionKey",
+      "controlType": "textBox",
+      "required": true,
+      "encrypted": false,
+      "validation": [
+        {
+          "validationType": "float",
+          "min": 0,
+          "errorMessage": "This value should be higher than 0",
+          "errorMessageI18nKey": "SACendptErrori18nKey"
+        }
+      ]
+    }
+  ],
+  "refForms": []
+}

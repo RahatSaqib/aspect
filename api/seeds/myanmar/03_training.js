@@ -251,12 +251,10 @@ async function seed(knex) {
   })
 
   // adjust RR rate to be a percentage
-  await knex('DashboardWidget')
-    .where({ title: 'RR Rate' })
-    .update({
-      sqlForIndicator:
-        "SELECT ifnull(concat(round(sum(CASE WHEN f.resultCategory2=1 AND f.resultCategory1 = 1 THEN f.resultCount ELSE 0 END)/sum(CASE WHEN f.resultCategory1 = 1 THEN f.resultCount ELSE 0 END) * 100, 0), '%'), '0%') AS cnt FROM FactResultsDeviceByCategory1And2 AS f INNER JOIN Device AS d ON d.id = f.deviceId INNER JOIN Site AS s ON s.id = d.siteId INNER JOIN Partner AS p ON s.partnerId = p.id LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id WHERE f.assayId IN (1,2) AND f.days = 30",
-    })
+  await knex('DashboardWidget').where({ title: 'RR Rate' }).update({
+    sqlForIndicator:
+      "SELECT ifnull(concat(round(sum(CASE WHEN f.resultCategory2=1 AND f.resultCategory1 = 1 THEN f.resultCount ELSE 0 END)/sum(CASE WHEN f.resultCategory1 = 1 THEN f.resultCount ELSE 0 END) * 100, 0), '%'), '0%') AS cnt FROM FactResultsDeviceByCategory1And2 AS f INNER JOIN Device AS d ON d.id = f.deviceId INNER JOIN Site AS s ON s.id = d.siteId INNER JOIN Partner AS p ON s.partnerId = p.id LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id WHERE f.assayId IN (1,2) AND f.days = 30",
+  })
 
   // Change TI subtitle
   await knex('DashboardWidgetStat')
@@ -268,20 +266,16 @@ async function seed(knex) {
     })
 
   // Change TI calculation
-  await knex('DashboardWidget')
-    .where({ title: 'TI Rate' })
-    .update({
-      sqlForIndicator:
-        "SELECT ifnull(concat(round(sum(CASE WHEN f.resultCategory2=4 AND f.resultCategory1 = 1 THEN f.resultCount ELSE 0 END)/sum(CASE WHEN f.resultCategory1 = 1 THEN f.resultCount ELSE 0 END) * 100, 0), '%'), '0%') AS cnt FROM FactResultsDeviceByCategory1And2 AS f INNER JOIN Device AS d ON d.id = f.deviceId INNER JOIN Site AS s ON s.id = d.siteId INNER JOIN Partner AS p ON s.partnerId = p.id LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id WHERE f.assayId IN (1,2) AND f.days = 30",
-    })
+  await knex('DashboardWidget').where({ title: 'TI Rate' }).update({
+    sqlForIndicator:
+      "SELECT ifnull(concat(round(sum(CASE WHEN f.resultCategory2=4 AND f.resultCategory1 = 1 THEN f.resultCount ELSE 0 END)/sum(CASE WHEN f.resultCategory1 = 1 THEN f.resultCount ELSE 0 END) * 100, 0), '%'), '0%') AS cnt FROM FactResultsDeviceByCategory1And2 AS f INNER JOIN Device AS d ON d.id = f.deviceId INNER JOIN Site AS s ON s.id = d.siteId INNER JOIN Partner AS p ON s.partnerId = p.id LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id WHERE f.assayId IN (1,2) AND f.days = 30",
+  })
 
   // change Smear+ to include anything ending in "Positive"
-  await knex('DashboardWidget')
-    .where({ title: 'Smear+' })
-    .update({
-      sqlForIndicator:
-        "select ifnull(count(r.id), 0) as cnt from Result as r inner join Device as d on d.id = r.deviceId inner join Site as s on s.id = d.siteId inner join Partner p on s.partnerId = p.id left outer join Geography as g on s.geographyId = g.id inner join Assay as a on a.id = r.assayId where ifnull(JSON_EXTRACT(patientData, \"$.microscopyResult\"), '') LIKE '%Positive\"' and r.assayId in (1,2)",
-    })
+  await knex('DashboardWidget').where({ title: 'Smear+' }).update({
+    sqlForIndicator:
+      "select ifnull(count(r.id), 0) as cnt from Result as r inner join Device as d on d.id = r.deviceId inner join Site as s on s.id = d.siteId inner join Partner p on s.partnerId = p.id left outer join Geography as g on s.geographyId = g.id inner join Assay as a on a.id = r.assayId where ifnull(JSON_EXTRACT(patientData, \"$.microscopyResult\"), '') LIKE '%Positive\"' and r.assayId in (1,2)",
+  })
 
   // update Targets for the states with real values
   await Promise.all(

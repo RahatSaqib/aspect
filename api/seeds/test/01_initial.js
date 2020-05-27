@@ -1486,12 +1486,10 @@ async function seed(knex) {
   })
 
   // set admin's email/sms
-  await knex('Person')
-    .where('userId', adminId)
-    .update({
-      email: config.admin.email,
-      cell: config.admin.cell,
-    })
+  await knex('Person').where('userId', adminId).update({
+    email: config.admin.email,
+    cell: config.admin.cell,
+  })
 
   // create clinician user
   const [clinicianId] = await knex('User').insert({
@@ -1593,8 +1591,9 @@ async function seed(knex) {
     await knex('InventoryItem').insert({
       consumableId: consumableGxTbCartridgeId,
       siteId: siteData.id,
-      lotNumber: `${(i + 3) * (i + 1)}${['A', 'B'][i % 2]}-${(siteData.id + i) *
-        consumableGxTbCartridgeId}`,
+      lotNumber: `${(i + 3) * (i + 1)}${['A', 'B'][i % 2]}-${
+        (siteData.id + i) * consumableGxTbCartridgeId
+      }`,
       expiresOn: new Date(
         new Date(
           now.getTime() + _.random(-millisInNormalYear, millisInNormalYear)

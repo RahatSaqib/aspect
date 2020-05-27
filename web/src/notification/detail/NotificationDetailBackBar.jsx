@@ -23,7 +23,7 @@ const enhance = compose(
   injectIntl,
   withHandlers({
     onBackClick: ({ history }) => () => {
-      history.goBack()
+      history.push('/browse/notification')
     },
     onPathClick: ({ history, match }) => path => {
       history.push({
@@ -33,7 +33,7 @@ const enhance = compose(
   })
 )
 
-const NotificationDetailBackBar = ({
+export const NotificationDetailBackBar = ({
   intl,
   history,
   location,
@@ -42,6 +42,7 @@ const NotificationDetailBackBar = ({
   // --- injected by recompose ---
   onBackClick,
   onPathClick,
+  disabled = true,
 }) => (
   <DetailBackBar
     history={history}
@@ -58,7 +59,7 @@ const NotificationDetailBackBar = ({
       {
         label: intl.formatMessage(messages.edit),
         path: `/browse/notification/:notificationId/edit`,
-        disabled: true,
+        disabled,
       },
       {
         label: intl.formatMessage(messages.history),

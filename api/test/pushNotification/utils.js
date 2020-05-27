@@ -131,9 +131,7 @@ class PushNotificationTestContext {
 
       // remove notification
       if (this.notificationId) {
-        await knex('Notification')
-          .where('id', this.notificationId)
-          .delete()
+        await knex('Notification').where('id', this.notificationId).delete()
       }
 
       // remove message
@@ -145,9 +143,7 @@ class PushNotificationTestContext {
 
       // remove issue
       if (this.issueId) {
-        await knex('Issue')
-          .where('id', this.issueId)
-          .delete()
+        await knex('Issue').where('id', this.issueId).delete()
       }
 
       await queuePurge()
