@@ -568,7 +568,7 @@ function listResultsBaseConfig() {
           .description(
             'The id of last entry in ResultStatusLog for current result'
           ),
-        patientCaseId: Joi.string()
+        caseId: Joi.string()
           .allow('')
           .optional()
           .description(
