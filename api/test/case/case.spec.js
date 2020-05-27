@@ -544,8 +544,6 @@ describe('case/service', () => {
           const newCaseExternalId = `NEW-CASE-${new Date().getTime()}`
           await knex('PatientCase').insert({
             externalId: newCaseExternalId,
-            createdOn: new Date(),
-            updatedOn: new Date(),
             createdBy: otherUserId,
             updatedBy: otherUserId,
             partnerId,
