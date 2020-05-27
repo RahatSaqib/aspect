@@ -1,0 +1,11 @@
+{
+  "recursive": true,
+  "package": "../package.json",
+  "reporter":"mocha-multi",
+  "extension": ["js"],
+  "timeout": 60000,
+  "ui": "bdd",
+  "exit":true,
+  "reporter-options":["spec=-","mocha-bamboo-reporter=-"],
+  "watch-files": ["test/utils/contractTestSetup.js", "test/**/*.spec.js"]
+}
