@@ -55,6 +55,7 @@ describe('case/service', () => {
       updatedBy: adminId,
       externalId,
       diseaseId,
+      partnerId,
     }
   }
 
@@ -203,6 +204,7 @@ describe('case/service', () => {
       const existentCase = await getFirstCase()
       const caseId = await getCaseId({
         externalId: existentCase.externalId,
+        partnerId: existentCase.partnerId,
         diseaseId: existentCase.diseaseId,
       })
       assert.equal(caseId, existentCase.id)
@@ -439,6 +441,7 @@ describe('case/service', () => {
           updatedOn: new Date(),
           createdBy: otherUserId,
           updatedBy: otherUserId,
+          partnerId,
           diseaseId,
         })
         const resultId = await createResult(
@@ -466,6 +469,7 @@ describe('case/service', () => {
           updatedOn: new Date(),
           createdBy: otherUserId,
           updatedBy: otherUserId,
+          partnerId,
           diseaseId,
         })
         await knex('Result')
@@ -534,6 +538,7 @@ describe('case/service', () => {
             updatedOn: new Date(),
             createdBy: otherUserId,
             updatedBy: otherUserId,
+            partnerId,
             diseaseId,
           })
           const newCaseExternalId = `NEW-CASE-${new Date().getTime()}`
@@ -543,6 +548,7 @@ describe('case/service', () => {
             updatedOn: new Date(),
             createdBy: otherUserId,
             updatedBy: otherUserId,
+            partnerId,
             diseaseId,
           })
           await knex('Result')

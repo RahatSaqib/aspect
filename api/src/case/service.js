@@ -10,14 +10,26 @@ const {
 } = require('../plugin/utils')
 const { processUsingDataSourceQuery } = require('../stringTemplate/service')
 
+function validateCaseIdentifier(_case) {
+  let errors = ''
+
+  if (!_case.externalId) errors += 'You must provide the externalId field /n'
+
+  if (!_case.partnerId) errors += 'You must provide the partnerId field /n'
+
+  if (errors) throw new Error(errors)
+}
+
 /**
- * Gets the case id related to the external id provided
+ * Gets the case id related to the external id and partner provided
  * @param  {object} _case The case filter
  * @param  {boolean} createIfNonExistent If true, if the case doesn't exist, it will create a new case before returning the caseId
  * @param  {int} userId (only necessary if createIfNonExistent is true) The userId that creates the case
  * @return {int} The case id
  */
 async function getCaseId(_case, createIfNonExistent, userId) {
+  validateCaseIdentifier(_case)
+
   if (createIfNonExistent && !userId)
     throw new Error(
       "For creating the case if it doesn't exist, you should provide a userId"
@@ -26,6 +38,8 @@ async function getCaseId(_case, createIfNonExistent, userId) {
   let { caseId } = (await knex('PatientCase')
     .where({
       externalId: _case.externalId,
+      partnerId: _case.partnerId,
+      diseaseId: _case.diseaseId,
     })
     .first('id as caseId')) || { caseId: null }
 
@@ -201,14 +215,7 @@ async function getAutoCompleteCases({ auth, query }) {
     .innerJoin('Result as r', 'ca.id', 'r.patientCaseId')
     .innerJoin('Geography as g', 'r.geographyId', 'g.id')
     .leftJoin('Country as c', 'g.countryId', 'c.id')
-    .modify(queryBuilder => {
-      addPartnerQueryConstraints(queryBuilder, { 
-        country: constraints.country,
-        geography: constraints.geography,
-        site: constraints.site,
-        caseAlias: 'ca' })
-      queryBuilder.where('r.partnerId', '=', constraints.partner.id)
-    })
+    .modify(addPartnerQueryConstraints, { constraints, caseAlias: 'ca' })
     .modify((queryBuilder, params) => {
       if (params.externalId) {
         queryBuilder.where('ca.externalId', 'like', `%${params.externalId}%`)
@@ -270,6 +277,7 @@ function onResultLogged({ resultId }, { messageContext }) {
         resultCategory1Reportable,
         resultCategory2Reportable,
         updatedBy,
+        partnerId,
       } = result
       if (
         diseaseId &&
@@ -288,6 +296,8 @@ function onResultLogged({ resultId }, { messageContext }) {
           let caseId = await getCaseId(
             {
               externalId: caseExternalId,
+              partnerId,
+              diseaseId,
             },
             !existingCaseId,
             updatedBy
@@ -304,6 +314,8 @@ function onResultLogged({ resultId }, { messageContext }) {
           const otherCaseId = await getCaseId(
             {
               externalId: caseExternalId,
+              diseaseId,
+              partnerId,
             },
             false,
             updatedBy

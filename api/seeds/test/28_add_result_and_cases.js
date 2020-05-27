@@ -39,6 +39,7 @@ async function seed(knex) {
         const caseId = await addCase({
           externalId: caseExternalId,
           diseaseId: assayIdDiseaseIdMap[result.assayId],
+          partnerId: result.partnerId,
           createdBy: adminId,
           updatedBy: adminId,
         })
