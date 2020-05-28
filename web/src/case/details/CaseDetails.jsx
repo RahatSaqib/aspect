@@ -137,7 +137,7 @@ const CaseDetails = ({
     const { sanitized, value: filtersParams } = filtersFromLocation(location)
     const { sortCol, sortDir, pageAt, pageSize } = props
     if (!sanitized) {
-      filtersParams.set('patientCaseId', match.params.caseId)
+      filtersParams.set('caseId', match.params.caseId)
       props.fetchResults(filtersParams, sortCol, sortDir, pageAt, pageSize)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
