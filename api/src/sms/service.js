@@ -34,14 +34,12 @@ async function prepareSmsMessageForSending(context, knex, smsMessageId) {
   const messageStatusId = await messageStatusToId('Pending')
 
   // store generated sms message into the same record and set messageStatusId
-  await knex('SmsMessage')
-    .where({ id: smsMessageId })
-    .update({
-      message,
-      phoneNumber,
-      messageStatusId,
-      updatedOn: new Date(),
-    })
+  await knex('SmsMessage').where({ id: smsMessageId }).update({
+    message,
+    phoneNumber,
+    messageStatusId,
+    updatedOn: new Date(),
+  })
 
   // dispatch SMS_MESSAGE_READY_FOR_SENDING to MQ
   context.smsMessageReadyForSending(smsMessageId)
@@ -88,12 +86,10 @@ async function doSendSmsMessage(context, knex, smsMessageId) {
   })
 
   // store status in db
-  await knex('SmsMessage')
-    .where({ id: smsMessageId })
-    .update({
-      messageStatusId,
-      updatedOn: new Date(),
-    })
+  await knex('SmsMessage').where({ id: smsMessageId }).update({
+    messageStatusId,
+    updatedOn: new Date(),
+  })
 
   // dispatch SMS_MESSAGE_SENT to MQ
   context.smsMessageSent(smsMessageId)

@@ -56,9 +56,7 @@ describe('Sending Email via Message Queue', () => {
 
       const messageStatusIdSent = await messageStatusToId('Sent')
       const messageStatusIdError = await messageStatusToId('Error')
-      const msg = await knex('EmailMessage')
-        .where('id', messageId)
-        .first()
+      const msg = await knex('EmailMessage').where('id', messageId).first()
       // check status id
       if (msg.messageStatusId !== messageStatusIdSent) {
         // if we run out of credits on SendGrid,

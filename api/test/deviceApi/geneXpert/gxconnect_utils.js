@@ -18,7 +18,7 @@ async function deleteDeviceSiteDataAndRefreshTokens(knex, apiKeys, clientId) {
     .innerJoin('Device as d', 'dak.deviceId', 'd.id')
     .whereIn('dak.token', tokens)
     .pluck('d.siteId')
-    .union(function() {
+    .union(function () {
       this.from('DeviceApiKey as dak')
         .whereNotNull('dak.siteId')
         .whereIn('dak.token', tokens)
@@ -27,10 +27,8 @@ async function deleteDeviceSiteDataAndRefreshTokens(knex, apiKeys, clientId) {
   const deviceIds = await knex('DeviceApiKey as dak')
     .whereIn('dak.token', tokens)
     .pluck('dak.deviceId')
-    .union(function() {
-      this.from('Device')
-        .whereIn('siteId', siteIds)
-        .pluck('id as deviceId')
+    .union(function () {
+      this.from('Device').whereIn('siteId', siteIds).pluck('id as deviceId')
     })
 
   const inventoryItemIds = await knex('InventoryItem as ii')
@@ -42,9 +40,7 @@ async function deleteDeviceSiteDataAndRefreshTokens(knex, apiKeys, clientId) {
     .whereIn('inventoryItemId', inventoryItemIds)
     .delete()
 
-  await knex('InventoryItem')
-    .whereIn('id', inventoryItemIds)
-    .delete()
+  await knex('InventoryItem').whereIn('id', inventoryItemIds).delete()
 
   await knex('DeviceApiKey')
     .whereIn('token', tokens)
@@ -55,7 +51,7 @@ async function deleteDeviceSiteDataAndRefreshTokens(knex, apiKeys, clientId) {
   const resultIds = await knex('Result')
     .whereIn('deviceId', deviceIds)
     .pluck('id')
-    .union(function() {
+    .union(function () {
       this.from('ResultGeneratedResult as rgr')
         .innerJoin('Result as r', 'rgr.sourceResultId', 'r.id')
         .whereIn('r.deviceId', deviceIds)
@@ -66,26 +62,18 @@ async function deleteDeviceSiteDataAndRefreshTokens(knex, apiKeys, clientId) {
     .whereIn('deviceId', deviceIds)
     .pluck('id')
 
-  await knex('DeviceStatusLog')
-    .whereIn('deviceId', deviceIds)
-    .delete()
+  await knex('DeviceStatusLog').whereIn('deviceId', deviceIds).delete()
 
   await knex('DeviceLog')
     .whereIn('deviceId', deviceIds)
     .orWhereIn('resultId', resultIds)
     .delete()
 
-  await knex('DeviceSiteHistory')
-    .whereIn('deviceId', deviceIds)
-    .delete()
+  await knex('DeviceSiteHistory').whereIn('deviceId', deviceIds).delete()
 
-  await knex('FactResultsDevice')
-    .whereIn('deviceId', deviceIds)
-    .delete()
+  await knex('FactResultsDevice').whereIn('deviceId', deviceIds).delete()
 
-  await knex('FactResultsDeviceByAssay')
-    .whereIn('deviceId', deviceIds)
-    .delete()
+  await knex('FactResultsDeviceByAssay').whereIn('deviceId', deviceIds).delete()
 
   await knex('FactResultsDeviceByCategory1')
     .whereIn('deviceId', deviceIds)
@@ -95,13 +83,9 @@ async function deleteDeviceSiteDataAndRefreshTokens(knex, apiKeys, clientId) {
     .whereIn('deviceId', deviceIds)
     .delete()
 
-  await knex('FactDeviceFlag')
-    .whereIn('deviceId', deviceIds)
-    .delete()
+  await knex('FactDeviceFlag').whereIn('deviceId', deviceIds).delete()
 
-  await knex('DeviceSiteHistory')
-    .whereIn('deviceId', deviceIds)
-    .delete()
+  await knex('DeviceSiteHistory').whereIn('deviceId', deviceIds).delete()
 
   const issueIds = await knex('Issue')
     .whereIn('deviceId', deviceIds)
@@ -109,7 +93,7 @@ async function deleteDeviceSiteDataAndRefreshTokens(knex, apiKeys, clientId) {
 
   await knex('IssueEvent')
     .whereIn('issueId', issueIds)
-    .orWhere(function() {
+    .orWhere(function () {
       if (resultIds != null && resultIds.length > 0) {
         this.whereRaw(
           `JSON_EXTRACT(data, "$.resultId") IN (${resultIds.join(',')})`
@@ -118,17 +102,11 @@ async function deleteDeviceSiteDataAndRefreshTokens(knex, apiKeys, clientId) {
     })
     .delete()
 
-  await knex('InventoryLog')
-    .whereIn('resultId', resultIds)
-    .delete()
+  await knex('InventoryLog').whereIn('resultId', resultIds).delete()
 
-  await knex('ResultQualityControlLog')
-    .whereIn('resultId', resultIds)
-    .delete()
+  await knex('ResultQualityControlLog').whereIn('resultId', resultIds).delete()
 
-  await knex('ResultWorkflowLog')
-    .whereIn('resultId', resultIds)
-    .delete()
+  await knex('ResultWorkflowLog').whereIn('resultId', resultIds).delete()
 
   await knex('ResultGeneratedResult')
     .whereIn('sourceResultId', resultIds)
@@ -138,30 +116,20 @@ async function deleteDeviceSiteDataAndRefreshTokens(knex, apiKeys, clientId) {
 
   await knex('Tag').delete()
 
-  await knex('Result')
-    .whereIn('id', resultIds)
-    .delete()
+  await knex('Result').whereIn('id', resultIds).delete()
 
-  await knex('DeviceOperation')
-    .whereIn('id', opIds)
-    .delete()
+  await knex('DeviceOperation').whereIn('id', opIds).delete()
 
   await knex('Device')
     .whereIn('siteId', siteIds)
     .orWhereIn('deviceId', deviceIds)
     .delete()
 
-  await knex('Sample')
-    .whereIn('originSiteId', siteIds)
-    .delete()
+  await knex('Sample').whereIn('originSiteId', siteIds).delete()
 
-  await knex('Site')
-    .whereIn('id', siteIds)
-    .delete()
+  await knex('Site').whereIn('id', siteIds).delete()
 
-  await knex('RefreshToken')
-    .where({ clientId })
-    .delete()
+  await knex('RefreshToken').where({ clientId }).delete()
 }
 
 function createGxConnectTestContext(

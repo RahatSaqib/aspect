@@ -26,9 +26,7 @@ async function seed(knex) {
     .where({ name: 'Cameroon' })
     .first('id')
 
-  await knex('Partner')
-    .where('id', partnerId)
-    .update({ plugin: 'cameroon' })
+  await knex('Partner').where('id', partnerId).update({ plugin: 'cameroon' })
 
   const auditFields = {
     createdOn: now,

@@ -1266,11 +1266,9 @@ async function setTreatmentStatusToResults(
         })
       : [null]
 
-    await knex('Result')
-      .where('id', result.id)
-      .update({
-        treatmentStatusLogId,
-      })
+    await knex('Result').where('id', result.id).update({
+      treatmentStatusLogId,
+    })
 
     // add a follow up treatment if on treatment
     if (

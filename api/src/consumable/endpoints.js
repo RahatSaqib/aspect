@@ -60,10 +60,7 @@ const routes = [
       auth: { scope: ['assay'] },
       validate: {
         params: {
-          consumableId: Joi.number()
-            .integer()
-            .positive()
-            .required(),
+          consumableId: Joi.number().integer().positive().required(),
         },
       },
     },
@@ -78,10 +75,7 @@ const routes = [
       auth: { scope: ['assay'] },
       validate: {
         params: {
-          assayId: Joi.number()
-            .integer()
-            .positive()
-            .required(),
+          assayId: Joi.number().integer().positive().required(),
         },
       },
     },
@@ -96,14 +90,8 @@ const routes = [
       auth: { scope: ['assay'] },
       validate: {
         payload: {
-          assayId: Joi.number()
-            .integer()
-            .positive()
-            .required(),
-          consumableId: Joi.number()
-            .integer()
-            .positive()
-            .required(),
+          assayId: Joi.number().integer().positive().required(),
+          consumableId: Joi.number().integer().positive().required(),
           quantity: Joi.number()
             .positive()
             .precision(2)
@@ -125,14 +113,8 @@ const routes = [
       auth: { scope: ['assay'] },
       validate: {
         params: {
-          assayId: Joi.number()
-            .integer()
-            .positive()
-            .required(),
-          consumableId: Joi.number()
-            .integer()
-            .positive()
-            .required(),
+          assayId: Joi.number().integer().positive().required(),
+          consumableId: Joi.number().integer().positive().required(),
         },
         payload: {
           quantity: Joi.number()
@@ -156,14 +138,8 @@ const routes = [
       auth: { scope: ['assay'] },
       validate: {
         params: {
-          assayId: Joi.number()
-            .integer()
-            .positive()
-            .required(),
-          consumableId: Joi.number()
-            .integer()
-            .positive()
-            .required(),
+          assayId: Joi.number().integer().positive().required(),
+          consumableId: Joi.number().integer().positive().required(),
         },
       },
     },

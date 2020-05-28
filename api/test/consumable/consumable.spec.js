@@ -515,10 +515,6 @@ async function createTestConsumable(knex) {
 }
 
 async function cleanUpTestConsumable(knex, consumableId) {
-  await knex('PartnerConsumable')
-    .where({ consumableId })
-    .delete()
-  await knex('Consumable')
-    .where({ id: consumableId })
-    .delete()
+  await knex('PartnerConsumable').where({ consumableId }).delete()
+  await knex('Consumable').where({ id: consumableId }).delete()
 }

@@ -6,8 +6,8 @@ const { addCase } = require('../../src/case/service')
 
 async function seed(knex) {
   const results = await knex('Result as r')
-    .join('ResultCategoryAssay as rca', function() {
-      this.on('r.assayId', 'rca.assayId').andOn(function() {
+    .join('ResultCategoryAssay as rca', function () {
+      this.on('r.assayId', 'rca.assayId').andOn(function () {
         this.on('r.resultCategory1', 'rca.resultCategoryId').orOn(
           'r.resultCategory2',
           'rca.resultCategoryId'

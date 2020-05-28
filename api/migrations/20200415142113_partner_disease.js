@@ -12,9 +12,7 @@ async function up(knex) {
       .index()
       .references('id')
       .inTable('Disease')
-    x.boolean('canAutoAssignResultByCaseId')
-      .notNullable()
-      .defaultTo(0)
+    x.boolean('canAutoAssignResultByCaseId').notNullable().defaultTo(0)
 
     x.unique(['partnerId', 'diseaseId'], 'unique_partner_disease')
   })

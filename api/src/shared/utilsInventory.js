@@ -47,7 +47,7 @@ async function totalDaysUnexpiredInventoryItemsLast({
 }) {
   // get all un-expired inventory items for provided site/consumable
   const items = await knex('InventoryItem')
-    .where(function() {
+    .where(function () {
       this.whereNull('expiresOn') // if is null
         .orWhere('expiresOn', '>', new Date()) // or unexpired
     })

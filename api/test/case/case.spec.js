@@ -260,37 +260,23 @@ describe('case/service', () => {
         .first())
 
       partnerId = (
-        await knex('Partner')
-          .where('name', 'Partner One')
-          .first('id')
+        await knex('Partner').where('name', 'Partner One').first('id')
       ).id
       adminId = await getAdminId()
       otherUserId = (
-        await knex('User')
-          .where('name', '<>', 'admin')
-          .first('id')
+        await knex('User').where('name', '<>', 'admin').first('id')
       ).id
     })
 
     after(async () => {
-      await knex('Result')
-        .where('id', '>', latestResultIdBeforeTests)
-        .del()
-      await knex('Sample')
-        .where('id', '>', latestSampleIdBeforeTests)
-        .del()
-      await knex('PatientCase')
-        .where('id', '>', latestCaseIdBeforeTests)
-        .del()
+      await knex('Result').where('id', '>', latestResultIdBeforeTests).del()
+      await knex('Sample').where('id', '>', latestSampleIdBeforeTests).del()
+      await knex('PatientCase').where('id', '>', latestCaseIdBeforeTests).del()
       await knex('DeviceLog')
         .where('deviceId', '>', latestDeviceIdBeforeTests)
         .del()
-      await knex('Device')
-        .where('id', '>', latestDeviceIdBeforeTests)
-        .del()
-      await knex('Site')
-        .where('id', '>', latestSiteIdBeforeTests)
-        .del()
+      await knex('Device').where('id', '>', latestDeviceIdBeforeTests).del()
+      await knex('Site').where('id', '>', latestSiteIdBeforeTests).del()
     })
 
     function mockMessageContext() {
@@ -330,7 +316,7 @@ describe('case/service', () => {
         .join('Assay as a', 'at.id', 'a.assayTypeId')
         .join('ResultCategoryAssay as rca', 'a.id', 'rca.assayId')
         .join('DeviceType as dt', 'a.deviceTypeId', 'a.deviceTypeId')
-        .where(function() {
+        .where(function () {
           if (caseIdTemplateLike) {
             this.where('pd.caseExternalIdTemplate', 'LIKE', caseIdTemplateLike)
           } else {

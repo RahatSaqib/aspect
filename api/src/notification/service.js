@@ -76,7 +76,7 @@ async function onIssueEscalated({ issueId }, { messageContext: context }) {
     // Find escalation policy for the issue
     const policies = await knex('NotificationType as nt')
       .join('MessageType as mt', 'nt.messageTypeId', 'mt.id')
-      .join('Issue as i', function() {
+      .join('Issue as i', function () {
         // If issue is escalated past configured level, send again
         // on escalation to maximum configured level
         this.on('i.issueTypeId', 'nt.issueTypeId')

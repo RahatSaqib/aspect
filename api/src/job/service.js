@@ -105,9 +105,7 @@ async function manageJob(request, mode) {
     return valResult
   }
 
-  const job = await knex('Job')
-    .where({ personId, jobFunctionId })
-    .first()
+  const job = await knex('Job').where({ personId, jobFunctionId }).first()
 
   if (mode === MODE_INSERT) {
     // create job if missing
@@ -121,13 +119,9 @@ async function manageJob(request, mode) {
     if (job) {
       await transact(async knex => {
         // remove all FK's entries
-        await knex('JobContext')
-          .where({ jobId: job.id })
-          .del()
+        await knex('JobContext').where({ jobId: job.id }).del()
         // remove Job
-        await knex('Job')
-          .where({ id: job.id })
-          .del()
+        await knex('Job').where({ id: job.id }).del()
       })
     }
   }
@@ -166,18 +160,14 @@ const validateAndNormalizeJobContextData = async request => {
   }
   // existing siteId
   if (siteId) {
-    const item = await knex('Site')
-      .where({ id: siteId })
-      .first()
+    const item = await knex('Site').where({ id: siteId }).first()
     if (!item) {
       return Boom.badData(`Missing site with specified siteId=${siteId}`)
     }
   }
   // existing geographyId
   if (geographyId) {
-    const item = await knex('Geography')
-      .where({ id: geographyId })
-      .first()
+    const item = await knex('Geography').where({ id: geographyId }).first()
     if (!item) {
       return Boom.badData(
         `Missing geography with specified geographyId=${geographyId}`
@@ -211,9 +201,7 @@ const validateAndNormalizeJobContextData = async request => {
       x => x.personId === personId && x.jobFunctionId === jobFunctionId
     )
   } else {
-    const item = await knex('Job')
-      .where({ id: jobId })
-      .first()
+    const item = await knex('Job').where({ id: jobId }).first()
     if (!item) {
       return Boom.badData(`Missing job with specified jobId=${jobId}`)
     }
@@ -231,7 +219,7 @@ async function manageJobContext(request, mode) {
 
   const q = knex('JobContext')
     .where({ jobId })
-    .where(function() {
+    .where(function () {
       if (geographyId) {
         this.where({ geographyId })
       } else if (siteId) {
@@ -308,7 +296,7 @@ async function manageJobFunctionBaseItems(request, tableName, mode, err) {
     if (all || !_.isEmpty(items)) {
       await knex(tableName)
         .where({ jobFunctionId })
-        .where(function() {
+        .where(function () {
           if (!all) {
             this.whereIn(fieldName, items)
           }
@@ -417,9 +405,7 @@ async function assignPersonTo(request) {
   }
   let jobId
   const jobProps = { personId, jobFunctionId }
-  const job = await knex('Job')
-    .where(jobProps)
-    .first()
+  const job = await knex('Job').where(jobProps).first()
   if (!job) {
     ;[jobId] = await knex('Job').insert(jobProps)
   } else {
@@ -444,9 +430,7 @@ async function assignPersonTo(request) {
     // geographyId
     // ----------------
     const geographyProps = { countryId, stateId, lgaId }
-    const geography = await knex('Geography')
-      .where(geographyProps)
-      .first('id')
+    const geography = await knex('Geography').where(geographyProps).first('id')
     if (!geography) {
       ;[geographyId] = await knex('Geography').insert(geographyProps)
     } else {
@@ -461,14 +445,14 @@ async function assignPersonTo(request) {
     const { id: jobContextId } =
       (await knex('JobContext')
         .where({ jobId })
-        .andWhere(function() {
+        .andWhere(function () {
           if (siteId) {
             this.where({ siteId })
           } else if (geographyId) {
             this.where({ geographyId })
           }
         })
-        .andWhere(function() {
+        .andWhere(function () {
           if (assayId) {
             this.where({ assayId })
           }
@@ -753,9 +737,7 @@ async function removePersonAssignment(request) {
   }
 
   // remove JobContext
-  await knex('JobContext')
-    .where('id', jobContextId)
-    .del()
+  await knex('JobContext').where('id', jobContextId).del()
 
   // remove also Job entry if no other JobContexts use it
   const { count } = await knex('JobContext')
@@ -763,9 +745,7 @@ async function removePersonAssignment(request) {
     .count('id as count')
     .first()
   if (count === 0) {
-    await knex('Job')
-      .where('id', jobContext.jobId)
-      .del()
+    await knex('Job').where('id', jobContext.jobId).del()
   }
   // ----------------
   // return list of remaining person assignments

@@ -185,22 +185,12 @@ describe('Site routes', () => {
       })
 
       after(async () => {
-        await Promise.each(siteTags, st =>
-          knex('SiteTag')
-            .where(st)
-            .del()
-        )
+        await Promise.each(siteTags, st => knex('SiteTag').where(st).del())
 
-        await Promise.each(tags, tag =>
-          knex('Tag')
-            .where({ id: tag.id })
-            .del()
-        )
+        await Promise.each(tags, tag => knex('Tag').where({ id: tag.id }).del())
 
         await Promise.each(sites, site =>
-          knex('Site')
-            .where({ id: site.id })
-            .del()
+          knex('Site').where({ id: site.id }).del()
         )
       })
 

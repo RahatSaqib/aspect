@@ -55,9 +55,7 @@ async function getListResults(query, auth, fields = LIST_FIELDS) {
 
   const assayColumns = []
   if (query.assayId) {
-    const assay = await knex('Assay as a')
-      .where('a.id', query.assayId)
-      .first()
+    const assay = await knex('Assay as a').where('a.id', query.assayId).first()
 
     if (assay.resultCategory1Label) {
       selectFields.push('rc1.name as resultCategory1Name')
@@ -113,10 +111,7 @@ async function getListResults(query, auth, fields = LIST_FIELDS) {
 
   const resultQuery = getQueryForResultsListAndExport(query, dataConstraints)
   // get total count for paging
-  const getCount = resultQuery
-    .clone()
-    .count('r.id as count')
-    .first()
+  const getCount = resultQuery.clone().count('r.id as count').first()
 
   // get rows
   const getItems = resultQuery
@@ -179,9 +174,7 @@ async function exportResults(query, auth) {
 
   const assayColumns = []
   if (query.assayId) {
-    const assay = await knex('Assay as a')
-      .where('a.id', query.assayId)
-      .first()
+    const assay = await knex('Assay as a').where('a.id', query.assayId).first()
 
     if (assay.resultCategory1Label) {
       selectFields.push('rc1.name as resultCategory1Name')
@@ -232,13 +225,13 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
   const dataConstraints = await getConstraints(auth.credentials)
 
   const resultQuery = getBaseQueryForResults()
-    .leftJoin('ResultCategoryAssay as rca', function() {
+    .leftJoin('ResultCategoryAssay as rca', function () {
       this.on('r.assayId', 'rca.assayId').andOn(
         'r.resultCategory1',
         'rca.resultCategoryId'
       )
     })
-    .leftJoin('ResultCategoryAssay as rca2', function() {
+    .leftJoin('ResultCategoryAssay as rca2', function () {
       this.on('r.assayId', 'rca2.assayId').andOn(
         'r.resultCategory2',
         'rca2.resultCategoryId'
@@ -337,10 +330,7 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
       country: 'c',
     })
   // get total count for paging
-  const getCount = resultQuery
-    .clone()
-    .count('r.id as count')
-    .first()
+  const getCount = resultQuery.clone().count('r.id as count').first()
 
   // get rows
   const getItems = resultQuery
@@ -710,19 +700,19 @@ async function getResultByResultId(
   const { userName } = await getUser(auth.credentials.name)
 
   const results = await getBaseQueryForResults()
-    .leftJoin('ResultCategoryAssay as rca', function() {
+    .leftJoin('ResultCategoryAssay as rca', function () {
       this.on('r.assayId', 'rca.assayId').andOn(
         'r.resultCategory1',
         'rca.resultCategoryId'
       )
     })
-    .leftJoin('ResultCategoryAssay as rca2', function() {
+    .leftJoin('ResultCategoryAssay as rca2', function () {
       this.on('r.assayId', 'rca2.assayId').andOn(
         'r.resultCategory2',
         'rca2.resultCategoryId'
       )
     })
-    .leftJoin('ResultForm as rf', function() {
+    .leftJoin('ResultForm as rf', function () {
       this.on('r.assayId', 'rf.assayId').andOn('r.partnerId', 'rf.partnerId')
     })
     .where('r.id', resultId)
@@ -795,10 +785,10 @@ async function getResultForStringTemplateProcessing(
     .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .join('Sample as sample', 'r.sampleId', 'sample.id')
     .join('Partner as p', 'r.partnerId', 'p.id')
-    .leftJoin('ResultForm as rf', function() {
+    .leftJoin('ResultForm as rf', function () {
       this.on('a.id', 'rf.assayId').andOn('r.partnerId', 'rf.partnerId')
     })
-    .leftJoin('PartnerDisease as pd', function() {
+    .leftJoin('PartnerDisease as pd', function () {
       this.on('at.diseaseId', 'pd.diseaseId').andOn(
         'r.partnerId',
         'pd.partnerId'
@@ -807,14 +797,14 @@ async function getResultForStringTemplateProcessing(
     .leftJoin('PatientCase as c', 'r.patientCaseId', 'c.id')
     .leftJoin('Site as sos', 'sample.originSiteId', 'sos.id')
     .leftJoin('ResultCategory as rc1', 'r.resultCategory1', 'rc1.id')
-    .leftJoin('ResultCategoryAssay as rca1', function() {
+    .leftJoin('ResultCategoryAssay as rca1', function () {
       this.on('r.resultCategory1', 'rca1.resultCategoryId').andOn(
         'r.assayId',
         'rca1.assayId'
       )
     })
     .leftJoin('ResultCategory as rc2', 'r.resultCategory2', 'rc2.id')
-    .leftJoin('ResultCategoryAssay as rca2', function() {
+    .leftJoin('ResultCategoryAssay as rca2', function () {
       this.on('r.resultCategory2', 'rca2.resultCategoryId').andOn(
         'r.assayId',
         'rca2.assayId'
@@ -850,10 +840,7 @@ async function listResultTypes(request) {
   })
 
   // get total count for paging
-  const getCount = resultTypeQuery
-    .clone()
-    .count('rt.id as count')
-    .first()
+  const getCount = resultTypeQuery.clone().count('rt.id as count').first()
 
   // get rows
   const getItems = resultTypeQuery
@@ -938,13 +925,11 @@ async function updateResultWorkflowStatusByResultId(
     )
 
     if (!updatedOn || resultWorkflowChangedOn < updatedOn) {
-      await knex('Result')
-        .where('id', resultWorkflowLogEntry.resultId)
-        .update({
-          resultWorkflowStatusLogId: lastLogId,
-          updatedBy: resultWorkflowLogEntry.createdBy,
-          updatedOn: now,
-        })
+      await knex('Result').where('id', resultWorkflowLogEntry.resultId).update({
+        resultWorkflowStatusLogId: lastLogId,
+        updatedBy: resultWorkflowLogEntry.createdBy,
+        updatedOn: now,
+      })
     }
   }
 }
@@ -953,16 +938,10 @@ async function listTreatmentStatusTypes() {
   const resultQuery = knex('ResultTreatmentStatus as rsl')
 
   // get total count for paging
-  const getCount = resultQuery
-    .clone()
-    .count('rsl.id as count')
-    .first()
+  const getCount = resultQuery.clone().count('rsl.id as count').first()
 
   // get rows
-  const getItems = resultQuery
-    .clone()
-    .orderBy('id', 'asc')
-    .select('id', 'name')
+  const getItems = resultQuery.clone().orderBy('id', 'asc').select('id', 'name')
 
   // return result when both queries are finished
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
@@ -1089,13 +1068,11 @@ async function updateTreatmentStatusByResultId(
       !lastTreatment ||
       (lastTreatment && lastTreatment.changedOn < changedOn)
     ) {
-      await knex('Result')
-        .where('id', resultId)
-        .update({
-          treatmentStatusLogId,
-          updatedBy: userId,
-          updatedOn: now,
-        })
+      await knex('Result').where('id', resultId).update({
+        treatmentStatusLogId,
+        updatedBy: userId,
+        updatedOn: now,
+      })
       lastTreatment = await getLastTreatmentStatusByResult(resultId)
     }
   }
@@ -1166,13 +1143,11 @@ async function addResultNote(request) {
       return Boom.forbidden('This user can not edit comment')
     }
 
-    await knex('ResultNote')
-      .where({ id: commentId, resultId })
-      .update({
-        text: note,
-        changedOn,
-        updatedBy: currentUserId,
-      })
+    await knex('ResultNote').where({ id: commentId, resultId }).update({
+      text: note,
+      changedOn,
+      updatedBy: currentUserId,
+    })
   } else {
     await knex('ResultNote').insert({
       resultNoteTypeId,
@@ -1416,9 +1391,7 @@ async function updateFormDataByResultId(
         updatedOn: now,
       }
 
-      await knex('Result')
-        .where('id', resultId)
-        .update(updatedResult)
+      await knex('Result').where('id', resultId).update(updatedResult)
 
       const deviceId = await getAspectDeviceId(partnerId)
 
@@ -1467,16 +1440,10 @@ async function listWorkflowStatusTypes() {
   const resultQuery = knex('ResultWorkflowStatus as rs')
 
   // get total count for paging
-  const getCount = resultQuery
-    .clone()
-    .count('rs.id as count')
-    .first()
+  const getCount = resultQuery.clone().count('rs.id as count').first()
 
   // get rows
-  const getItems = resultQuery
-    .clone()
-    .orderBy('id', 'asc')
-    .select('id', 'name')
+  const getItems = resultQuery.clone().orderBy('id', 'asc').select('id', 'name')
 
   // return result when both queries are finished
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
@@ -1520,10 +1487,7 @@ async function getWorkflowStatusLogByResultId(request) {
     .where('log.resultId', params.resultId)
 
   // get total count for paging
-  const getCount = resultQuery
-    .clone()
-    .count('log.id as count')
-    .first()
+  const getCount = resultQuery.clone().count('log.id as count').first()
 
   // get rows
   const getItems = resultQuery
@@ -1607,19 +1571,19 @@ async function listFollowUps(request) {
   }
 
   if (query.assayId) {
-    queryBuilder.where(function() {
+    queryBuilder.where(function () {
       this.where('fua.assayId', query.assayId).orWhereNull('fua.assayId')
     })
   }
 
   if (query.resultCategory1) {
-    queryBuilder.where(function() {
+    queryBuilder.where(function () {
       this.where('fua.resultCategory1', query.resultCategory1)
     })
   }
 
   if (query.resultCategory2) {
-    queryBuilder.where(function() {
+    queryBuilder.where(function () {
       this.where('fua.resultCategory2', query.resultCategory2)
     })
   }
@@ -1779,7 +1743,7 @@ async function updateResultFollowUp(request) {
 
   const affectedRows = await knex('ResultFollowUp')
     .where('id', id || '-1')
-    .orWhere(function() {
+    .orWhere(function () {
       this.where('resultId', resultId).where('externalId', externalId || '-1')
     })
     .update({
@@ -1820,7 +1784,7 @@ async function deleteResultFollowUp(request) {
 
   await knex('ResultFollowUp')
     .where('id', id || '-1')
-    .orWhere(function() {
+    .orWhere(function () {
       this.where('resultId', resultId).where('externalId', externalId || '-1')
     })
     .del()
@@ -1972,9 +1936,7 @@ async function transferResult(request) {
 
     // remove ResultFollowUp because we want the user at the clinic that now has access
     // to the result to confirm the treatment status.
-    await knex('ResultFollowUp')
-      .where({ resultId })
-      .del()
+    await knex('ResultFollowUp').where({ resultId }).del()
     // add entry to ResultTreatmentStatusLog as "Awaiting Treatment" with details about reason
     const externalId = 'AwaitingTreatment'
     const resultTreatmentStatusId = await resultTreatmentStatusToId(externalId)
@@ -1996,16 +1958,14 @@ async function transferResult(request) {
     // ------------
 
     // update
-    await knex('Result')
-      .where('id', resultId)
-      .update({
-        reportableSiteId: siteId,
-        resultStatusLogId,
-        treatmentStatusLogId,
-        firstViewedOn: null,
-        updatedBy: currentUserId,
-        updatedOn: now,
-      })
+    await knex('Result').where('id', resultId).update({
+      reportableSiteId: siteId,
+      resultStatusLogId,
+      treatmentStatusLogId,
+      firstViewedOn: null,
+      updatedBy: currentUserId,
+      updatedOn: now,
+    })
 
     result.data.reportableSiteId = siteId
     result.data.reportableSiteName = site.name
@@ -2050,11 +2010,9 @@ async function updateTransferNotification(request) {
     return Boom.badRequest('Result has already been viewed')
   }
 
-  await knex('Result as r')
-    .where('r.id', resultId)
-    .update({
-      firstViewedOn,
-    })
+  await knex('Result as r').where('r.id', resultId).update({
+    firstViewedOn,
+  })
 
   const data = await getResultByResultId(auth, resultId)
 
@@ -2069,7 +2027,7 @@ function getBaseQueryForResults() {
     .innerJoin('Device as d', 'r.deviceId', 'd.id')
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .innerJoin('ResultSource as rso', 'r.resultSourceId', 'rso.id')
-    .leftJoin('PartnerAssay as pa', function() {
+    .leftJoin('PartnerAssay as pa', function () {
       this.on('r.assayId', 'pa.assayId').andOn('r.partnerId', 'pa.partnerId')
     })
     .leftJoin('Geography as g', 'r.geographyId', 'g.id')
@@ -2112,13 +2070,13 @@ function getBaseQueryForResults() {
 
 function getQueryForResultsListAndExport(query, dataConstraints) {
   const resultQuery = getBaseQueryForResults()
-    .leftJoin('ResultCategoryAssay as rca', function() {
+    .leftJoin('ResultCategoryAssay as rca', function () {
       this.on('r.assayId', 'rca.assayId').andOn(
         'r.resultCategory1',
         'rca.resultCategoryId'
       )
     })
-    .leftJoin('ResultCategoryAssay as rca2', function() {
+    .leftJoin('ResultCategoryAssay as rca2', function () {
       this.on('r.assayId', 'rca2.assayId').andOn(
         'r.resultCategory2',
         'rca2.resultCategoryId'
@@ -2202,7 +2160,7 @@ async function clinicalIndicatorAggregations(request) {
     .leftOuterJoin('ResultCategory as rc2', 'rc2.id', 'r.resultCategory2')
     .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
     .leftOuterJoin('State as st', 'st.id', 'g.stateId')
-    .innerJoin('ResultCategoryAssay as rca', function() {
+    .innerJoin('ResultCategoryAssay as rca', function () {
       this.on('r.assayId', 'rca.assayId').andOn(
         'r.resultCategory1',
         'rca.resultCategoryId'
@@ -2330,13 +2288,13 @@ async function followUpAggregations(request) {
     .leftJoin('ResultCategory as rc2', 'rc2.id', 'r.resultCategory2')
     .leftJoin('Geography as g', 's.geographyId', 'g.id')
     .leftJoin('State as st', 'st.id', 'g.stateId')
-    .innerJoin('ResultCategoryAssay as rca', function() {
+    .innerJoin('ResultCategoryAssay as rca', function () {
       this.on('r.assayId', 'rca.assayId').andOn(
         'r.resultCategory1',
         'rca.resultCategoryId'
       )
     })
-    .leftJoin('ResultCategoryAssay as rсa2', function() {
+    .leftJoin('ResultCategoryAssay as rсa2', function () {
       this.on('r.assayId', 'rсa2.assayId').andOn(
         'r.resultCategory2',
         'rсa2.resultCategoryId'
@@ -2603,9 +2561,7 @@ async function updateOrCreateResult(request, result = {}) {
   // looks like all's well. create or update result now so we have a result id for tags, form data, etc.
   // TODO: Log any changes (see ASP-1371)
   if (updating) {
-    await knex('Result')
-      .update(result)
-      .where('id', result.id)
+    await knex('Result').update(result).where('id', result.id)
   } else {
     ;[result.id] = await knex('Result').insert(result)
   }
@@ -2715,9 +2671,7 @@ async function updateOrCreateSample(
     // remove undefined (= not part of the POST fields) for updating
     sampleData = _.omitBy(sampleData, _.isUndefined)
     if (!_.isEmpty(sampleData)) {
-      await knex('Sample')
-        .update(sampleData)
-        .where({ id: sampleId })
+      await knex('Sample').update(sampleData).where({ id: sampleId })
     }
     return sampleId
   }

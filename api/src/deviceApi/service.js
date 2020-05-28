@@ -221,9 +221,7 @@ async function updateDeviceTimestamps(
   }
 
   if (!_.isEmpty(deviceUpdates)) {
-    await knex('Device')
-      .where({ id: device.id })
-      .update(deviceUpdates)
+    await knex('Device').where({ id: device.id }).update(deviceUpdates)
   }
 }
 
@@ -421,12 +419,10 @@ async function updateSiteWithContext(context) {
     const status = device.siteId == null ? 'approved' : 'assigned'
     const deviceStatusId = await deviceStatusToId(status)
 
-    await knex('Device')
-      .where({ id: device.id })
-      .update({
-        siteId: site.id,
-        deviceStatusId,
-      })
+    await knex('Device').where({ id: device.id }).update({
+      siteId: site.id,
+      deviceStatusId,
+    })
 
     await knex('DeviceStatusLog').insert({
       deviceId: device.id,
@@ -437,11 +433,9 @@ async function updateSiteWithContext(context) {
     })
 
     // Update DeviceApiKey site with the new siteId
-    await knex('DeviceApiKey')
-      .where({ deviceId: device.id })
-      .update({
-        siteId: site.id,
-      })
+    await knex('DeviceApiKey').where({ deviceId: device.id }).update({
+      siteId: site.id,
+    })
 
     await knex('DeviceSiteHistory').insert({
       deviceId: device.id,

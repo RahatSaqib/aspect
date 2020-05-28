@@ -58,8 +58,9 @@ function logAction(action, dispatcher = null) {
 function logConsole({ logKey, severity, data, userName, createdOn }) {
   const dataKeys = logConsoleDataKeys[logKey] || []
   const message = dataKeys.map(key => data[key] || '').join(' ')
-  const logMessage = `${logKey} ${severity} ${message} ${userName ||
-    ''} [${createdOn}]`
+  const logMessage = `${logKey} ${severity} ${message} ${
+    userName || ''
+  } [${createdOn}]`
   console.log(logMessage) // eslint-disable-line no-console
 }
 

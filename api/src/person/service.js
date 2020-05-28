@@ -136,9 +136,7 @@ async function unAssignContact(request) {
   if (!jcRecord) {
     return Boom.notFound()
   }
-  await knex('JobContext')
-    .where(contact)
-    .del()
+  await knex('JobContext').where(contact).del()
 
   return { ok: true, data: await siteContacts(siteId) }
 }
@@ -320,9 +318,7 @@ async function createPerson(request) {
   })
 
   // if user with specified 'name' exists - return Boom
-  const person = await knex('Person')
-    .where({ name })
-    .first()
+  const person = await knex('Person').where({ name }).first()
   if (person) {
     return Boom.conflict('Person with requested name already exists')
   }
@@ -388,10 +384,7 @@ async function listRefreshTokens(request) {
     .where({ clientType: clientTypes.app })
     .modify(addConstraints, dataConstraints, { partner: 'prt', geography: 'g' })
 
-  const getCount = tokenQuery
-    .clone()
-    .count('r.clientId as count')
-    .first()
+  const getCount = tokenQuery.clone().count('r.clientId as count').first()
 
   const getItems = tokenQuery
     .clone()
@@ -407,8 +400,8 @@ async function listRefreshTokens(request) {
       revoked: 'r.revoked',
       diseaseId: 'dis.id',
     })
-    .leftJoin('ResultDownloadLog as rdl', function() {
-      this.on(function() {
+    .leftJoin('ResultDownloadLog as rdl', function () {
+      this.on(function () {
         this.on('rdl.createdBy', 'r.userId')
         if (query.minDate) {
           this.andOn('rdl.createdOn', '>=', knex.raw('?', [query.minDate]))
@@ -443,7 +436,7 @@ async function listRefreshTokens(request) {
       'rws.id',
       'rwl.resultWorkflowStatusId'
     )
-    .leftJoin('ResultCategoryAssay as rca', function() {
+    .leftJoin('ResultCategoryAssay as rca', function () {
       this.on('rca.resultCategoryId', 'rt.resultCategory1').andOn(
         'rca.assayId',
         'rt.assayId'

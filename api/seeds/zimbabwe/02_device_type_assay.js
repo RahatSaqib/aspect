@@ -15,9 +15,8 @@ async function seed(knex) {
   )
 
   const { id: deviceTypeSenaiteLimsId } =
-    (await knex('DeviceType')
-      .where('externalId', 'SenaiteLims')
-      .first('id')) || {}
+    (await knex('DeviceType').where('externalId', 'SenaiteLims').first('id')) ||
+    {}
   // skip seed if already run.
   const existingDeviceType = await knex('DeviceType')
     .where({
@@ -36,9 +35,7 @@ async function seed(knex) {
   }
 
   let { id: deviceTypeBDMGITId } =
-    (await knex('DeviceType')
-      .where('externalId', 'BDMGIT')
-      .first('id')) || {}
+    (await knex('DeviceType').where('externalId', 'BDMGIT').first('id')) || {}
   if (!deviceTypeBDMGITId) {
     ;[deviceTypeBDMGITId] = await knex('DeviceType').insert({
       externalId: 'BDMGIT',
@@ -408,18 +405,15 @@ async function seed(knex) {
     patientDataSchema,
   }
   let { id: assayBdMgitAstId } =
-    (await knex('Assay')
-      .where('externalId', 'assayBdMgitAst')
-      .first('id')) || {}
+    (await knex('Assay').where('externalId', 'assayBdMgitAst').first('id')) ||
+    {}
   if (!assayBdMgitAstId) {
     assayBdMgitAstId = await knex('Assay').insert({
       ...assayBdMgitAst,
       externalId: 'assayBdMgitAst',
     })
   } else {
-    await knex('Assay')
-      .where('id', assayBdMgitAstId)
-      .update(assayBdMgitAst)
+    await knex('Assay').where('id', assayBdMgitAstId).update(assayBdMgitAst)
   }
 
   // assign categories to BD MGIT AST assay
@@ -591,18 +585,15 @@ async function seed(knex) {
     patientDataSchema,
   }
   let { id: assayBdMgitGndId } =
-    (await knex('Assay')
-      .where('externalId', 'assayBdMgitGnd')
-      .first('id')) || {}
+    (await knex('Assay').where('externalId', 'assayBdMgitGnd').first('id')) ||
+    {}
   if (!assayBdMgitGndId) {
     assayBdMgitGndId = await knex('Assay').insert({
       ...assayBdMgitGnd,
       externalId: 'assayBdMgitGnd',
     })
   } else {
-    await knex('Assay')
-      .where('id', assayBdMgitGndId)
-      .update(assayBdMgitGnd)
+    await knex('Assay').where('id', assayBdMgitGndId).update(assayBdMgitGnd)
   }
   // assign categories to BD MGIT GND assay
   await knex('ResultCategoryAssay').insert({

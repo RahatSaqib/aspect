@@ -96,9 +96,7 @@ const routes = [
       auth: { scope: ['result:view', 'result:edit'] },
       validate: {
         params: {
-          resultId: Joi.string()
-            .description('Result ID')
-            .required(),
+          resultId: Joi.string().description('Result ID').required(),
         },
       },
     },
@@ -113,9 +111,7 @@ const routes = [
       auth: { scope: ['result:view', 'result:edit'] },
       validate: {
         params: {
-          resultId: Joi.string()
-            .description('Result ID')
-            .required(),
+          resultId: Joi.string().description('Result ID').required(),
         },
       },
     },
@@ -130,9 +126,7 @@ const routes = [
       auth: { scope: ['result:view', 'result:edit'] },
       validate: {
         params: {
-          resultId: Joi.string()
-            .description('Result ID')
-            .required(),
+          resultId: Joi.string().description('Result ID').required(),
         },
       },
     },
@@ -147,15 +141,11 @@ const routes = [
       auth: { scope: ['result:view', 'result:edit'] },
       validate: {
         params: {
-          resultId: Joi.string()
-            .description('File Reference ID')
-            .required(),
+          resultId: Joi.string().description('File Reference ID').required(),
           fileReferenceId: Joi.string()
             .description('File Reference ID')
             .required(),
-          fileName: Joi.string()
-            .description('FileName')
-            .required(),
+          fileName: Joi.string().description('FileName').required(),
         },
       },
     },
@@ -170,9 +160,7 @@ const routes = [
       auth: { scope: ['result:view', 'result:edit'] },
       validate: {
         params: {
-          resultId: Joi.string()
-            .description('File Reference ID')
-            .required(),
+          resultId: Joi.string().description('File Reference ID').required(),
         },
       },
     },
@@ -205,15 +193,10 @@ const routes = [
       auth: { scope: ['result:edit'] },
       validate: {
         params: {
-          resultId: Joi.number()
-            .integer()
-            .positive()
-            .description('Result Id'),
+          resultId: Joi.number().integer().positive().description('Result Id'),
         },
         payload: {
-          resultWorkflowStatusId: Joi.number()
-            .integer()
-            .allow(null),
+          resultWorkflowStatusId: Joi.number().integer().allow(null),
           updatedOn: Joi.date()
             .iso()
             .allow(null)
@@ -259,10 +242,7 @@ const routes = [
       auth: { scope: ['result:edit'] },
       validate: {
         params: {
-          resultId: Joi.number()
-            .integer()
-            .positive()
-            .description('Result Id'),
+          resultId: Joi.number().integer().positive().description('Result Id'),
         },
         payload: Joi.object(),
       },
@@ -278,15 +258,10 @@ const routes = [
       auth: { scope: ['result:edit'] },
       validate: {
         params: {
-          resultId: Joi.number()
-            .integer()
-            .positive()
-            .description('Result Id'),
+          resultId: Joi.number().integer().positive().description('Result Id'),
         },
         payload: {
-          firstViewedOn: Joi.date()
-            .required()
-            .description('first viewed date'),
+          firstViewedOn: Joi.date().required().description('first viewed date'),
         },
       },
       response: {
@@ -405,9 +380,7 @@ const routes = [
       validate: {
         query: validateSortPageParams(),
         params: {
-          resultId: Joi.string()
-            .description('Result ID')
-            .required(),
+          resultId: Joi.string().description('Result ID').required(),
         },
       },
     },
@@ -731,10 +704,7 @@ const routes = [
       auth: { scope: ['treatmentStatus:edit', 'treatmentStatus:admin'] },
       validate: {
         params: {
-          resultId: Joi.number()
-            .integer()
-            .positive()
-            .description('Result Id'),
+          resultId: Joi.number().integer().positive().description('Result Id'),
         },
         payload: {
           resultTreatmentStatusId: Joi.number()
@@ -787,19 +757,10 @@ const routes = [
       },
       validate: {
         payload: {
-          siteId: Joi.number()
-            .integer()
-            .allow(null),
-          assayTypeId: Joi.number()
-            .integer()
-            .allow(null),
-          resultCategoryId: Joi.number()
-            .integer()
-            .allow(null),
-          endedOn: Joi.date()
-            .iso()
-            .allow(null)
-            .description('Ending date'),
+          siteId: Joi.number().integer().allow(null),
+          assayTypeId: Joi.number().integer().allow(null),
+          resultCategoryId: Joi.number().integer().allow(null),
+          endedOn: Joi.date().iso().allow(null).description('Ending date'),
         },
       },
     },
@@ -866,9 +827,7 @@ const routes = [
                 externalId: Joi.string()
                   .required()
                   .description('Unique ID of the follow up'),
-                i18nKey: Joi.string()
-                  .required()
-                  .description('Translation key'),
+                i18nKey: Joi.string().required().description('Translation key'),
                 type: Joi.object()
                   .description('Type of follow up')
                   .keys({
@@ -1118,9 +1077,7 @@ const routes = [
       auth: { scope: ['patient:view', 'patient:edit'] },
       validate: {
         query: {
-          patientId: Joi.string()
-            .required()
-            .description('patient Id'),
+          patientId: Joi.string().required().description('patient Id'),
         },
       },
       response: {
@@ -1148,9 +1105,7 @@ const routes = [
                   .description(
                     'The name of the place where the sample was taken'
                   ),
-                sampleId: Joi.string()
-                  .required()
-                  .description('The sample id'),
+                sampleId: Joi.string().required().description('The sample id'),
                 resultEndedOn: Joi.date()
                   .iso()
                   .required()
@@ -1158,9 +1113,7 @@ const routes = [
                 assayAbbreviation: Joi.string()
                   .required()
                   .description('The assay abbreviation name'),
-                assayId: Joi.string()
-                  .required()
-                  .description('The assay id'),
+                assayId: Joi.string().required().description('The assay id'),
                 diseaseId: Joi.number()
                   .integer()
                   .positive()
@@ -1436,9 +1389,7 @@ const routes = [
       auth: { scope: ['result:edit', 'result:admin'] },
       validate: {
         params: {
-          resultId: Joi.number()
-            .description('Result ID')
-            .required(),
+          resultId: Joi.number().description('Result ID').required(),
         },
         payload: resultUpdatePayload,
       },
