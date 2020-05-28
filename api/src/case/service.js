@@ -82,7 +82,10 @@ async function removeCase(_case) {
 
 async function updateCase(whereFields, updateFields, { messageContext } = {}) {
   await knex('PatientCase').where(whereFields).update(updateFields)
-  const caseIds = await knex('PatientCase').where(whereFields).select('id').pluck('id')
+  const caseIds = await knex('PatientCase')
+    .where(whereFields)
+    .select('id')
+    .pluck('id')
   if (messageContext && caseIds.length) {
     // queue message for each affected Case row
     if (!messageContext.caseUpdated) {

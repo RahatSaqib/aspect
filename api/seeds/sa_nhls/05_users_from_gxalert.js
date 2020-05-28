@@ -14,13 +14,12 @@ async function seed(knex) {
     .where('name', 'South Africa NHLS')
     .first('id')
 
-  const jobFunctions = (await knex('JobFunction')
-    .where({ partnerId })
-    .select())
-    .reduce((jobFunctionMap, jobFunction) => {
-      jobFunctionMap[jobFunction.name] = jobFunction.id
-      return jobFunctionMap
-    }, {})
+  const jobFunctions = (
+    await knex('JobFunction').where({ partnerId }).select()
+  ).reduce((jobFunctionMap, jobFunction) => {
+    jobFunctionMap[jobFunction.name] = jobFunction.id
+    return jobFunctionMap
+  }, {})
 
   const now = new Date()
   const { id: adminId } = await knex('User')

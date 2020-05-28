@@ -863,7 +863,9 @@ describe.only('Result routes', () => {
         after(async () => {
           await knex('Result').where('id', '>', latestResultIdBeforeTests).del()
           await knex('Sample').where('id', '>', latestSampleIdBeforeTests).del()
-          await knex('PatientCase').where('id', '>', latestCaseIdBeforeTests).del()
+          await knex('PatientCase')
+            .where('id', '>', latestCaseIdBeforeTests)
+            .del()
         })
 
         function getOptionValueFromTitle(options, title) {
