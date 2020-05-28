@@ -97,7 +97,7 @@ describe('Result create and update routes', () => {
         sampleTypeId: 1,
         sampleCollectedOn: now,
         sampleOriginSiteId: 1,
-        patientCaseId: 'A-CASE-ID',
+        caseId: 'A-CASE-ID',
         resultCategory1: await resultCategoryToId('Detected'),
         resultCategory2: await resultCategoryToId('Detected'),
         tags: 'tag 1,tag 2',
@@ -126,12 +126,12 @@ describe('Result create and update routes', () => {
 
       // check that case created and assigned
       firstResultCase = await knex('PatientCase')
-        .where({ externalId: resultPayload.patientCaseId })
+        .where({ externalId: resultPayload.caseId })
         .first()
       const { patientCaseId: resultCaseId } = await knex('Result')
         .where({ id: resultId })
         .first('patientCaseId')
-      assert.equal(firstResultCase.externalId, resultPayload.patientCaseId)
+      assert.equal(firstResultCase.externalId, resultPayload.caseId)
       assert.equal(resultCaseId, firstResultCase.id)
 
       // check tags
@@ -171,7 +171,7 @@ describe('Result create and update routes', () => {
         sampleTypeId: 1,
         sampleCollectedOn: now,
         sampleOriginSiteId: 1,
-        patientCaseId: 'A-CASE-ID',
+        caseId: 'A-CASE-ID',
         resultCategory1: await resultCategoryToId('Error'),
       }
 
@@ -206,7 +206,7 @@ describe('Result create and update routes', () => {
         sampleTypeId: 1,
         sampleCollectedOn: now,
         sampleOriginSiteId: 1,
-        patientCaseId: 'A-CASE-ID',
+        caseId: 'A-CASE-ID',
         resultCategory1: await resultCategoryToId('Detected'),
         resultCategory2: await resultCategoryToId('NotDetected'),
       }
@@ -235,7 +235,7 @@ describe('Result create and update routes', () => {
         sampleTypeId: 1,
         sampleCollectedOn: now,
         sampleOriginSiteId: 1,
-        patientCaseId: 'A-CASE-ID',
+        caseId: 'A-CASE-ID',
         resultCategory1: await resultCategoryToId('Error'),
       }
 
@@ -267,7 +267,7 @@ describe('Result create and update routes', () => {
         sampleTypeId: 1,
         sampleCollectedOn: now,
         sampleOriginSiteId: 1,
-        patientCaseId: 'A-NEW-CASE-ID',
+        caseId: 'A-NEW-CASE-ID',
         resultCategory1: await resultCategoryToId('Detected'),
         resultCategory2: await resultCategoryToId('NotDetected'),
       }
@@ -301,7 +301,7 @@ describe('Result create and update routes', () => {
         sampleTypeId: 1,
         sampleCollectedOn: now,
         sampleOriginSiteId: 1,
-        patientCaseId: 'ANOTHER-CASE-ID',
+        caseId: 'ANOTHER-CASE-ID',
         resultCategory1: await resultCategoryToId('NotDetected'),
         resultCategory2: await resultCategoryToId('NotDetected'),
         tags: 'tag 3',
@@ -330,12 +330,12 @@ describe('Result create and update routes', () => {
 
       // check that case created and assigned
       firstResultCase = await knex('PatientCase')
-        .where({ externalId: resultPayload.patientCaseId })
+        .where({ externalId: resultPayload.caseId })
         .first()
       const { patientCaseId: resultCaseId } = await knex('Result')
         .where({ id: resultId })
         .first('patientCaseId')
-      assert.equal(firstResultCase.externalId, resultPayload.patientCaseId)
+      assert.equal(firstResultCase.externalId, resultPayload.caseId)
       assert.equal(resultCaseId, firstResultCase.id)
 
       // check tags
@@ -372,7 +372,7 @@ describe('Result create and update routes', () => {
         sampleTypeId: 2,
         sampleCollectedOn: now,
         sampleOriginSiteId: 2,
-        patientCaseId: 'A-CASE-ID',
+        caseId: 'A-CASE-ID',
         resultCategory1: await resultCategoryToId('Error'),
       }
 
@@ -405,7 +405,7 @@ describe('Result create and update routes', () => {
         sampleTypeId: 1,
         sampleCollectedOn: now,
         sampleOriginSiteId: 1,
-        patientCaseId: 'A-BRAND-NEW-CASE-ID',
+        caseId: 'A-BRAND-NEW-CASE-ID',
         resultCategory1: await resultCategoryToId('Detected'),
         resultCategory2: await resultCategoryToId('NotDetected'),
       }
@@ -421,12 +421,12 @@ describe('Result create and update routes', () => {
 
       // check that assigned to new case
       const newCase = await knex('PatientCase')
-        .where({ externalId: resultPayload.patientCaseId })
+        .where({ externalId: resultPayload.caseId })
         .first()
       const { patientCaseId: resultCaseId } = await knex('Result')
         .where({ id: resultId })
         .first('patientCaseId')
-      assert.equal(newCase.externalId, resultPayload.patientCaseId)
+      assert.equal(newCase.externalId, resultPayload.caseId)
       assert.equal(resultCaseId, newCase.id)
 
       // remember for deletion

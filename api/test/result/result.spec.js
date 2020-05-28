@@ -35,7 +35,7 @@ const getClinicianAccessToken = () =>
     })
     .then(res => res.body.access)
 
-describe('Result routes', () => {
+describe.only('Result routes', () => {
   const path = '/api/result'
   let resultId = 1
   let assayId = 1
@@ -143,11 +143,11 @@ describe('Result routes', () => {
     })
 
     it('should return a list of results with case-specific', async () => {
-      const { patientCaseId } = await knex('Result')
+      const { caseId } = await knex('Result')
         .join('PatientCase', 'patientCaseId', 'PatientCase.Id')
-        .first('PatientCase.id as patientCaseId')
+        .first('PatientCase.externalId as caseId')
       const res = await server
-        .get(`${path}?patientCaseId=${patientCaseId}`)
+        .get(`${path}?caseId=${caseId}`)
         .set('Authorization', `Bearer ${shared.token}`)
       validateResponse(res)
     })
