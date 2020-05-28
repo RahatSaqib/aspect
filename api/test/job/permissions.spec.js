@@ -422,13 +422,12 @@ describe('Permissions', () => {
   })
 
   // -----------------------------------------------
-  // testing 3 similar tables - JobFunctionDashboardWidget, JobFunctionFeature, JobFunctionPermission
+  // testing 3 similar tables - JobFunctionDashboardWidget, JobFunctionPermission
   // -----------------------------------------------
   describe(
     'JobFunction <--> Dashboard Widgets',
     assertBaseItems('JobFunctionDashboardWidget')
   )
-  describe('JobFunction <-> Features', assertBaseItems('JobFunctionFeature'))
   describe(
     'JobFunction <-> Permissions',
     assertBaseItems('JobFunctionPermission')
@@ -443,11 +442,6 @@ describe('Permissions', () => {
         fieldName = 'widgetId' // foreign-key field name in specified tableName
         refTable = 'DashboardWidget' // ref table pointed by FK 'fieldName'
         itemsPropName = 'widgets' // in request payload
-        break
-      case 'JobFunctionFeature':
-        fieldName = 'featureId'
-        refTable = 'Feature'
-        itemsPropName = 'features'
         break
       case 'JobFunctionPermission':
         fieldName = 'permissionId'

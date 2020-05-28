@@ -1,6 +1,6 @@
 module.exports = require('../utils').seed(seed, __filename)
 
-const { upsertJobFunctionPermission, upsertJobFeatures } = require('../common')
+const { upsertJobFunctionPermission } = require('../common')
 const { getPermissionModules } = require('../utils')
 
 async function seed(knex) {
@@ -11,18 +11,15 @@ async function seed(knex) {
     { module: 'patient', activity: 'view' },
     { module: 'patient', activity: 'edit' },
   ])
-
-  const [featureid] = await knex('Feature').insert({ module: 'patient' })
   const { id: jobFunctionIdAdmin } = await knex('JobFunction')
     .where('name', 'Admin')
     .first('id')
 
   const modules = await getPermissionModules(knex)
-  // features
+  // permissions
   await upsertJobFunctionPermission(knex, jobFunctionIdAdmin, [
     modules.patient.admin,
     modules.patient.view,
     modules.patient.edit,
   ])
-  await upsertJobFeatures(knex, jobFunctionIdAdmin, [featureid])
 }

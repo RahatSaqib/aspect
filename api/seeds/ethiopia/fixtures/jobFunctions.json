@@ -1,10 +1,6 @@
 [
   {
     "name": "Admin",
-    "features": [
-      "account",
-      "summaryDashboard"
-    ],
     "permissions": [
       {
         "module": "assay",
@@ -38,10 +34,6 @@
   },
   {
     "name": "Regional Officer",
-    "features": [
-      "account",
-      "summaryDashboard"
-    ],
     "permissions": [
       {
         "module": "assay",
@@ -75,10 +67,6 @@
   },
   {
     "name": "Lab User",
-    "features": [
-      "account",
-      "summaryDashboard"
-    ],
     "permissions": [
       {
         "module": "assay",
@@ -108,15 +96,6 @@
   },
   {
       "name": "Remote Health Worker",
-      "features": [
-          "account",
-          "device",
-          "result",
-          "person",
-          "reporter",
-          "site",
-          "summaryDashboard"
-      ],
       "permissions": [
           {
               "module": "assay",

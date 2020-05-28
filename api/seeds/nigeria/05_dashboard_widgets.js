@@ -3,7 +3,6 @@ const Promise = require('bluebird')
 const _ = require('lodash')
 
 const dashboardWidget = require('./fixtures/dashboardWidget.json')
-const { getFeatureByModule } = require('../utils')
 
 async function seed(knex) {
   const { id: partnerId } = await knex('Partner')
@@ -49,11 +48,6 @@ async function seed(knex) {
     .select('id', 'name')
 
   const jobFunctionsSetups = jobFunctions.map(async jf => {
-    const { id: featureId } = await getFeatureByModule(knex, 'summaryDashboard')
-    await knex('JobFunctionFeature').insert({
-      jobFunctionId: jf.id,
-      featureId,
-    })
     await knex('JobFunctionDashboardWidget').insert([
       { jobFunctionId: jf.id, widgetId: widgetIds.sites },
       { jobFunctionId: jf.id, widgetId: widgetIds.devices },

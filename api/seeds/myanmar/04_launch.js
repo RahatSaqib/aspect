@@ -2,7 +2,6 @@ module.exports = require('../utils').seed(seed, __filename)
 
 const { rowsAsObject } = require('../utils')
 const {
-  featureToId,
   issueCategoryToId,
   messageSeverityToId,
 } = require('../../src/shared/dictionary')
@@ -150,14 +149,5 @@ async function seed(knex) {
     i18nKey: 'issueTypeDeviceMaintenance',
     issueCategoryId: await issueCategoryToId('DeviceHealth'),
     defaultMessageTypeId: deviceMaintenanceMessageTypeId,
-  })
-
-  const { id: jobFunctionIdLabUser } = await knex('JobFunction')
-    .where({ name: 'Lab User', partnerId })
-    .first('id')
-
-  await knex('JobFunctionFeature').insert({
-    jobFunctionId: jobFunctionIdLabUser,
-    featureId: await featureToId('siteFilterDashboard'),
   })
 }

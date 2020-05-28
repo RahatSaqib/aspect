@@ -8,7 +8,6 @@ const { resultCategoryToId } = require('../../src/shared/dictionary')
 const {
   commonUpserts,
   upsertJobFunctionPermission,
-  upsertJobFeatures,
   upsertJobFunction,
 } = require('../common')
 const { upsertCovidDeviceTypes } = require('../commonCovid')
@@ -18,7 +17,6 @@ const {
 } = require('../commonGenerateResults')
 const config = require('../../src/config')
 const {
-  allFeatureToId,
   partnerTypeToId,
   deviceStatusToId,
 } = require('../../src/shared/dictionary')
@@ -90,7 +88,6 @@ async function seed(knex) {
   )
 
   // Give permission to dashboard, browse, sites, results, devices, reporters
-  const features = await allFeatureToId()
   const modules = await utils.getPermissionModules(knex)
 
   const { id: jobFunctionIdAdmin } = await knex('JobFunction')
@@ -108,13 +105,6 @@ async function seed(knex) {
     modules.case.admin,
   ])
 
-  await upsertJobFeatures(knex, jobFunctionIdAdmin, [
-    features.summaryDashboard,
-    features.account,
-    features.resultDashboard,
-    features.case,
-  ])
-
   const { id: jobFunctionIdRegionalOfficer } = await knex('JobFunction')
     .where('name', 'Regional Officer')
     .where({ partnerId })
@@ -130,12 +120,6 @@ async function seed(knex) {
     modules.patient.admin,
   ])
 
-  await upsertJobFeatures(knex, jobFunctionIdRegionalOfficer, [
-    features.summaryDashboard,
-    features.account,
-    features.resultDashboard,
-  ])
-
   const { id: jobFunctionIdLabUser } = await knex('JobFunction')
     .where('name', 'Lab User')
     .where({ partnerId })
@@ -149,12 +133,6 @@ async function seed(knex) {
     modules.inventory.edit,
     modules.task.edit,
     modules.patient.edit,
-  ])
-
-  await upsertJobFeatures(knex, jobFunctionIdLabUser, [
-    features.summaryDashboard,
-    features.account,
-    features.resultDashboard,
   ])
 
   const covidDeviceTypes = (
@@ -339,16 +317,6 @@ async function seed(knex) {
     modules.task.view,
     modules.treatmentStatus.edit,
     modules.site.view,
-  ])
-
-  // permissions
-  await upsertJobFeatures(knex, jobFunctionIdClinician, [
-    features.device,
-    features.result,
-    features.site,
-    features.summaryDashboard,
-    features.account,
-    features.resultDashboard,
   ])
 
   // Create User

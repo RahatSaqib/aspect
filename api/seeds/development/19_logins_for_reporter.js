@@ -110,21 +110,7 @@ async function seed(knex) {
       )
     const jobFunctionsClinicianId = jobFunctions[jobFunctionNames.Clinician]
     // --------
-    // Job Function Feature - if missing then copy items from jobFunction.name = 'Clinician'
-    const jobFunctionFeatures = await knex('JobFunctionFeature as jff')
-      .innerJoin('JobFunction as jf', 'jff.jobFunctionId', 'jf.id')
-      .where('jf.partnerId', partnerId)
-      .select('jff.*')
-    if (!jobFunctionFeatures.find(x => x.jobFunctionId === jobFunctionId)) {
-      const items = jobFunctionFeatures
-        .filter(x => x.jobFunctionId === jobFunctionsClinicianId)
-        .map(({ featureId }) => ({
-          jobFunctionId,
-          featureId,
-        }))
-      await knex('JobFunctionFeature').insert(items)
-    }
-    // --------
+
     const { id: widgetResultsId } = await knex('DashboardWidget')
       .where('title', 'Results')
       .first('id')

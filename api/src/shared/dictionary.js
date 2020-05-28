@@ -24,9 +24,6 @@ const cacheConfig = {
   },
   Disease: {},
   FormType: {},
-  Feature: {
-    keyColumn: 'module',
-  },
   FileContentType: {},
   IssueCategory: {},
   IssueEventStatus: {},

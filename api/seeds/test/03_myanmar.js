@@ -15,7 +15,6 @@ const {
 } = require('../utils')
 const { addIssueTypes } = require('../relativeObjectsSeeds')
 const {
-  allFeatureToId,
   deviceStatusToId,
   deviceTypeToId,
   partnerTypeToId,
@@ -138,72 +137,6 @@ async function seed(knex) {
     auditFields,
     issueTypeWhitelist: ['DeviceMaintenance', 'ModuleReplaced'],
   }
-
-  const featureModules = await allFeatureToId()
-  await knex('JobFunctionFeature').insert([
-    // Admin Permissions
-    { jobFunctionId: jobFunctionIdAdmin, featureId: featureModules.site },
-    { jobFunctionId: jobFunctionIdAdmin, featureId: featureModules.device },
-    { jobFunctionId: jobFunctionIdAdmin, featureId: featureModules.result },
-    {
-      jobFunctionId: jobFunctionIdAdmin,
-      featureId: featureModules.summaryDashboard,
-    },
-    {
-      jobFunctionId: jobFunctionIdAdmin,
-      featureId: featureModules.targetDashboard,
-    },
-    {
-      jobFunctionId: jobFunctionIdAdmin,
-      featureId: featureModules.actionDashboard,
-    },
-    {
-      jobFunctionId: jobFunctionIdAdmin,
-      featureId: featureModules.reportDashboard,
-    },
-    {
-      jobFunctionId: jobFunctionIdAdmin,
-      featureId: featureModules.siteFilterDashboard,
-    },
-    // Regional Officer Permissions
-    {
-      jobFunctionId: jobFunctionIdRegionalOfficer,
-      featureId: featureModules.summaryDashboard,
-    },
-    {
-      jobFunctionId: jobFunctionIdRegionalOfficer,
-      featureId: featureModules.targetDashboard,
-    },
-    {
-      jobFunctionId: jobFunctionIdRegionalOfficer,
-      featureId: featureModules.actionDashboard,
-    },
-    {
-      jobFunctionId: jobFunctionIdRegionalOfficer,
-      featureId: featureModules.reportDashboard,
-    },
-    {
-      jobFunctionId: jobFunctionIdRegionalOfficer,
-      featureId: featureModules.siteFilterDashboard,
-    },
-    // Lab User Permissions
-    {
-      jobFunctionId: jobFunctionIdLabUser,
-      featureId: featureModules.summaryDashboard,
-    },
-    {
-      jobFunctionId: jobFunctionIdLabUser,
-      featureId: featureModules.actionDashboard,
-    },
-    {
-      jobFunctionId: jobFunctionIdLabUser,
-      featureId: featureModules.reportDashboard,
-    },
-    {
-      jobFunctionId: jobFunctionIdLabUser,
-      featureId: featureModules.siteFilterDashboard,
-    },
-  ])
 
   await knex('JobFunctionPermission').insert([
     // Admin Permissions
