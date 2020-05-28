@@ -1,0 +1,51 @@
+module.exports = require('../src/db').migration(up, down)
+
+async function up(knex) {
+  await knex.schema.createTable('PatientCaseTreatmentStatus', tbl => {
+    tbl.increments('id').primary()
+    tbl.string('name').notNullable()
+    tbl.string('externalId').notNullable().unique()
+    tbl.string('i18nKey').notNullable()
+  })
+  await knex.schema.createTable('PatientCaseTreatmentStatusLog', tbl => {
+    tbl.increments('id').primary()
+    tbl
+      .integer('patientCaseId')
+      .unsigned()
+      .index()
+      .references('id')
+      .inTable('PatientCase')
+    tbl
+      .integer('patientCaseTreatmentStatusId')
+      .unsigned()
+      .nullable()
+      .index()
+      .references('id')
+      .inTable('PatientCaseTreatmentStatus')
+      .onDelete('SET NULL')
+    tbl.string('data').nullable()
+    tbl.string('method').nullable()
+    tbl.datetime('updatedOn').defaultTo(knex.fn.now())
+    tbl.datetime('createdOn').defaultTo(knex.fn.now())
+    tbl.integer('createdBy').unsigned().index().references('id').inTable('User')
+    tbl.integer('updatedBy').unsigned().index().references('id').inTable('User')
+  })
+
+  await knex.schema.alterTable('PatientCase', result => {
+    result
+      .integer('patientCaseTreatmentStatusLogId')
+      .unsigned()
+      .references('id')
+      .inTable('PatientCaseTreatmentStatusLog')
+      .onDelete('SET NULL')
+  })
+}
+
+async function down(knex) {
+  await knex.schema.alterTable('PatientCase', tbl => {
+    tbl.dropForeign('patientCaseTreatmentStatusLogId')
+    tbl.dropColumn('patientCaseTreatmentStatusLogId')
+  })
+  await knex.schema.dropTable('PatientCaseTreatmentStatus')
+  await knex.schema.dropTable('PatientCaseTreatmentStatusLog')
+}
