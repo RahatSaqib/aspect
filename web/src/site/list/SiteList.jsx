@@ -291,13 +291,13 @@ export const SiteList = ({
                 sortable: true,
               },
               {
-                key: 'siteId',
-                label: intl.formatMessage(messages.externalId),
+                key: 'lga',
+                label: intl.formatMessage(messages.lga),
                 sortable: true,
               },
               {
-                key: 'lga',
-                label: intl.formatMessage(messages.lga),
+                key: 'siteId',
+                label: intl.formatMessage(messages.externalId),
                 sortable: true,
               },
               {
