@@ -44,9 +44,9 @@ const messages = defineMessages({
     id: 'pages.CaseList.title',
     defaultMessage: 'Cases',
   },
-  code: {
-    id: 'pages.CasesList.code',
-    defaultMessage: 'Code',
+  caseId: {
+    id: 'pages.CasesList.caseId',
+    defaultMessage: 'Case ID',
   },
   sampleCollectionSite: {
     id: 'pages.CasesList.sampleCollectionSite',
@@ -209,7 +209,7 @@ export const CaseList = ({
     },
     {
       key: 'externalId',
-      label: intl.formatMessage(messages.code),
+      label: intl.formatMessage(messages.caseId),
       sortable: true,
     },
     {
