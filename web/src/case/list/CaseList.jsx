@@ -48,9 +48,9 @@ const messages = defineMessages({
     id: 'pages.CasesList.code',
     defaultMessage: 'Code',
   },
-  attendingClinic: {
-    id: 'pages.CasesList.attendingClinic',
-    defaultMessage: 'Attending Clinic',
+  sampleCollectionSite: {
+    id: 'pages.CasesList.sampleCollectionSite',
+    defaultMessage: 'Sample Collection Site',
   },
   status: {
     id: 'pages.CasesList.status',
@@ -90,7 +90,7 @@ const searchSanitizer = makeSearchParamsSanitizer({
   availableSortCol: [
     'createdOn',
     'externalId',
-    'attendingClinic',
+    'sampleCollectionSite',
     'patientId',
     'diseaseName',
     'status',
@@ -213,8 +213,8 @@ export const CaseList = ({
       sortable: true,
     },
     {
-      key: 'attendingClinic',
-      label: intl.formatMessage(messages.attendingClinic),
+      key: 'sampleCollectionSite',
+      label: intl.formatMessage(messages.sampleCollectionSite),
       sortable: true,
       hiddenOn: 'sm',
     },
