@@ -342,7 +342,7 @@ const messages = defineMessages({
   },
   deviceStatus: {
     id: 'filter.popover.deviceStatus',
-    defaultMessage: 'Device Status',
+    defaultMessage: 'Status',
   },
   selectDeviceStatus: {
     id: 'filter.popover.selectDeviceStatus',

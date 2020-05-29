@@ -65,10 +65,6 @@ const FILTERS_CONFIG = [
     deviceStatus: true,
     requiredPermissions: [],
   },
-  {
-    siteId: true,
-    requiredPermissions: [],
-  },
 ]
 
 const searchSanitizer = makeSearchParamsSanitizer({
