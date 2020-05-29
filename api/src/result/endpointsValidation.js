@@ -322,7 +322,7 @@ function validateResultDetailResponse() {
     requiresTreatment: Joi.number()
       .allow(null, '')
       .description('Predicted required treatment'),
-    caseId: Joi.number()
+    patientCaseId: Joi.number()
       .allow(null)
       .optional()
       .description('Case ID for the result.'),

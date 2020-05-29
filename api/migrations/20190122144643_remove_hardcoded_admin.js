@@ -80,16 +80,15 @@ async function down(knex) {
         updatedBy: countryAdmin.userId,
       })
     )
+    // set to first admin where still null
+    await knex('Person').whereNull('createdBy').update({
+      createdBy: firstCountryAdminUserPerPartner[0].userId,
+    })
+
+    await knex('Person').whereNull('updatedBy').update({
+      updatedBy: firstCountryAdminUserPerPartner[0].userId,
+    })
   }
-
-  // set to first admin where still null
-  await knex('Person').whereNull('createdBy').update({
-    createdBy: firstCountryAdminUserPerPartner[0].userId,
-  })
-
-  await knex('Person').whereNull('updatedBy').update({
-    updatedBy: firstCountryAdminUserPerPartner[0].userId,
-  })
 
   await knex.schema.table('Person', person => {
     person

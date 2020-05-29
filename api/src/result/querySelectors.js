@@ -115,7 +115,7 @@ const SELECT_COMMON_FIELDS = [
   'ptr.name as transferredBy',
   'r.resultStatusLogId',
   'r.firstViewedOn',
-  'r.caseId',
+  'r.patientCaseId',
   'ca.externalId as caseExternalId',
   'dis.id as diseaseId',
   'dis.name as diseaseName',
