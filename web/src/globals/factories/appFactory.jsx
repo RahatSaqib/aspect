@@ -74,7 +74,6 @@ const mapStateToProps = state => {
     // For render()
     isLoggedOut,
     loggedOutReason,
-    features: state.user.features,
     permissions: state.user.jwt.permissions,
   }
 }

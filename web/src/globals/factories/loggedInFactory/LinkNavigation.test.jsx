@@ -11,25 +11,23 @@ describe('LinkNavigation component', () => {
   it('should shallow render without crash', () => {
     const props = {
       intl,
-      userPermissions: Immutable.Set(['browse:view']),
-      userFeatures: Immutable.Set(['summaryDashboard']),
+      userPermissions: Immutable.Set(['browse:view','dashboard:summary']),
     }
     shallow(<LinkNavigation {...props} />)
   })
 
-  it('should see browse link when having feature and permission', () => {
+  it('should see browse link when having permission', () => {
     const props = {
       intl,
       userPermissions: Immutable.Set(),
-      userFeatures: Immutable.Set(),
     }
     const wrapper = shallow(<LinkNavigation {...props} />)
 
     expect(wrapper.find(Link)).toHaveLength(0)
 
     wrapper.setProps({
-      userPermissions: Immutable.Set(['browse:view', 'device:view']),
-      userFeatures: Immutable.Set(['summaryDashboard']),
+      userPermissions: Immutable.Set(['browse:view', 'device:view','dashboard:summary']),
+
     })
     expect(wrapper.find(Link)).toHaveLength(1)
     expect(
@@ -37,7 +35,7 @@ describe('LinkNavigation component', () => {
     ).toBe(false)
 
     wrapper.setProps({
-      userFeatures: Immutable.Set(['summaryDashboard', 'device']),
+      userPermissions: Immutable.Set(['dashboard:summary', 'device:view']),
     })
     expect(wrapper.find(Link)).toHaveLength(2)
     expect(
@@ -48,8 +46,7 @@ describe('LinkNavigation component', () => {
   it('should change the direction of Nav with different `type` prop', () => {
     const props = {
       intl,
-      userPermissions: Immutable.Set(['browse:view']),
-      userFeatures: Immutable.Set(['summaryDashboard']),
+      userPermissions: Immutable.Set(['browse:view','dashboard:summary']),
     }
     const wrapper = shallow(<LinkNavigation {...props} />)
     expect(wrapper.prop('className')).toEqual('Navigation')

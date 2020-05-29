@@ -60,6 +60,7 @@ const enhance = compose(
   pure,
   requirePermissions({
     features: ['actionDashboard'],
+    permissions: ['actionDashboard:view'],
   }),
   withProps(
     makeSortPageSelector({

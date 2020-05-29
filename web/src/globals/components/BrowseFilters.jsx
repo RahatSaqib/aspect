@@ -81,7 +81,6 @@ const enhance = compose(
       listExport: state.filter.listExport,
       exportFormatTypes,
       userPermissions: state.user.jwt.permissions,
-      userFeatures: state.user.features,
     }),
     bindActionCreators.bind(null, {
       askExportConfirmation,
@@ -94,7 +93,6 @@ const enhance = compose(
       const reducedNav = reduceNavLinks(
         navigations,
         this.props.userPermissions,
-        this.props.userFeatures
       )
       this.setState({
         reducedSource: reducedNav,
@@ -149,31 +147,26 @@ export const navigations = [
     value: '/browse/device',
     label: 'Devices',
     requiredPermissions: ['device:view', 'device:admin', 'device:edit'],
-    requiredFeatures: ['device'],
   },
   {
     value: '/browse/result',
     label: 'Results',
     requiredPermissions: ['result:view', 'result:admin', 'result:edit'],
-    requiredFeatures: ['result'],
   },
   {
     value: '/browse/case',
     label: 'Cases',
     requiredPermissions: ['case:view', 'case:admin', 'case:edit'],
-    requiredFeatures: ['case'],
   },
   {
     value: '/browse/person',
     label: 'Contacts',
     requiredPermissions: ['person:view', 'person:admin', 'person:edit'],
-    requiredFeatures: ['person'],
   },
   {
     value: '/browse/site',
     label: 'Sites',
     requiredPermissions: ['site:view', 'site:admin', 'site:edit'],
-    requiredFeatures: ['site'],
   },
   {
     value: '/browse/inventory',
@@ -183,19 +176,16 @@ export const navigations = [
       'inventory:admin',
       'inventory:edit',
     ],
-    requiredFeatures: ['inventory'],
   },
   {
     value: '/browse/router',
     label: 'Routers',
     requiredPermissions: ['device:view', 'device:admin', 'device:edit'],
-    requiredFeatures: ['router'],
   },
   {
     value: '/browse/reporter',
     label: 'Reporters',
     requiredPermissions: ['device:view', 'device:admin', 'device:edit'],
-    requiredFeatures: ['reporter'],
   },
   {
     value: '/browse/notification',
@@ -205,7 +195,6 @@ export const navigations = [
       'notification:admin',
       'notification:edit',
     ],
-    requiredFeatures: ['notification'],
   },
   {
     value: '/browse/deviceApiKey',
@@ -215,7 +204,6 @@ export const navigations = [
       'deviceApiKey:admin',
       'deviceApiKey:edit',
     ],
-    requiredFeatures: ['deviceApiKey'],
   },
 ]
 

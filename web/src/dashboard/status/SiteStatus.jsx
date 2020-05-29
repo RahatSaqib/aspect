@@ -64,8 +64,9 @@ const enhance = compose(
       'device:admin',
       'device:view',
       'device:edit',
+      'dashboard:site',
+      'dashboard:device'
     ],
-    features: ['siteDashboard', 'deviceDashboard'],
   }),
   connect(
     state => ({

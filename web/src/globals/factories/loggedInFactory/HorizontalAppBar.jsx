@@ -25,8 +25,7 @@ const enhance = compose(
     navigateCurrentAccountDetails: ({ history }) => () =>
       history.push('/account-details/current'),
   }),
-  connect(
-    state => ({ userFeatures: state.user.features }),
+  connect(null,
     bindActionCreators.bind(null, {
       closeDrawer,
       userRequestedLogout,

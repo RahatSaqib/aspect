@@ -17,7 +17,6 @@ import Title from './Title'
 import Icon from '../../components/shared/icon/Icon'
 import {
   requirePermissions,
-  isEnabledFeature,
 } from '../../components/shared/requirePermissions'
 
 const cssClasses = classnames.bind(require('./Status.css'))
@@ -25,9 +24,8 @@ const cssClasses = classnames.bind(require('./Status.css'))
 const enhance = compose(
   pure,
   requirePermissions({
-    features: ['reportDashboard'],
+    permissions: ['dashboard:report'],
   }),
-  connect(state => ({ userFeatures: state.user.features })),
   withProps(({ location }) => {
     const searchParams = new URLSearchParams(location.search)
     const filtersParams = new URLSearchParams(searchParams.get('filters') || '')
@@ -70,7 +68,6 @@ export const Reports = ({
   endOfLastYear,
   // --- injected by recompose ---
   showHigherLevel,
-  userFeatures,
   token,
 }) =>
   (showHigherLevel && isEnabledFeature(userFeatures, ['targetDashboard']) && (

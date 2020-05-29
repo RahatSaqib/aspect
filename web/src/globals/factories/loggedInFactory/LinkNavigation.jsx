@@ -24,7 +24,6 @@ const enhance = compose(
   pure,
   connect(state => ({
     userPermissions: state.user.jwt.permissions,
-    userFeatures: state.user.features,
   }))
 )
 export const LinkNavigation = ({
@@ -33,7 +32,6 @@ export const LinkNavigation = ({
 
   type,
   userPermissions,
-  userFeatures,
   onClick,
   children,
 }) => {
@@ -42,59 +40,40 @@ export const LinkNavigation = ({
       {
         href: '/dashboard',
         label: 'Home',
-        requiredPermissions: [],
-        requiredFeatures: ['summaryDashboard'],
+        requiredPermissions: ['dashboard:summary'],
       },
       {
         href: '/task-list',
         label: 'Task List',
         requiredPermissions: ['task:admin', 'task:view', 'task:edit'],
-        requiredFeatures: ['task'],
       },
       {
         href: '/operational-data',
         label: 'Operational  Data',
-        requiredPermissions: [],
-        requiredFeatures: ['operationalData'],
+        requiredPermissions: ['operationalData:view'],
       },
       {
         href: '/clinical-indicators',
         label: 'Clinical Indicators',
-        requiredPermissions: [],
-        requiredFeatures: ['clinicalIndicators'],
+        requiredPermissions: ['clinicalIndicators:view'],
       },
       {
         href: '/browse',
         label: 'Browse',
         requiredPermissions: ['browse:view'],
-        requiredFeatures: [
-          'device',
-          'result',
-          'person',
-          'site',
-          'inventory',
-          'router',
-          'reporter',
-          'notification',
-          'report',
-          'deviceApiKey',
-        ],
       },
       {
         href: '/reports',
         label: 'Reports',
         requiredPermissions: ['report:view', 'report:edit', 'report:admin'],
-        requiredFeatures: ['reports'],
       },
       {
         href: '/manage',
         label: 'Manage',
-        requiredPermissions: [],
-        requiredFeatures: ['manage'],
+        requiredPermissions: ['manage:view'],
       },
     ],
     userPermissions,
-    userFeatures
   )
   return (
     <nav
