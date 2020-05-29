@@ -15,8 +15,7 @@
         "select ifnull(concat(round(ifnull(sum(case when r.resultCategory1 not in (5,6,7) then 1 else 0 end), 0)/ifnull(count(r.id), 1)*100),'%'), '0%') as cnt from Result as r inner join Device as d on d.id = r.deviceId inner join Site as s on s.id = d.siteId inner join Partner p on s.partnerId = p.id left outer join Geography as g on s.geographyId = g.id where YEAR(r.endedOn) = YEAR(CURRENT_DATE) and MONTH(r.endedOn) = MONTH(CURRENT_DATE)",
       "extraLabel": "Successful",
       "extraLabelI18nKey": "dashboardWidgetExtraLabelTests",
-      "sortOrder": 4,
-      "externalId": "dashboardWidgetTests"
+      "sortOrder": 4
     },
     {
       "icon": "data",
@@ -33,8 +32,7 @@
       "statUnitI18nKey": "dashboardWidgetUnitMTBPositiveRate",
       "statStatus": "MTB+",
       "statStatusI18nKey": "dashboardWidgetStatusMTBPositiveRate",
-      "sortOrder": 5,
-      "externalId": "dashboardWidgetMTBPositiveRate"
+      "sortOrder": 5
     },
     {
       "icon": "data",
@@ -51,8 +49,7 @@
       "statUnitI18nKey": "dashboardWidgetUnitRRRate",
       "statStatus": "Rif Resistant",
       "statStatusI18nKey": "dashboardWidgetStatusRRRate",
-      "sortOrder": 6,
-      "externalId": "dashboardWidgetRRRate"
+      "sortOrder": 6
     },
     {
       "icon": "data",
@@ -69,8 +66,7 @@
       "statUnitI18nKey": "dashboardWidgetUnitTIRate",
       "statStatus": "Trace Indet.",
       "statStatusI18nKey": "dashboardWidgetStatusTIRate",
-      "sortOrder": 7,
-      "externalId": "dashboardWidgetTIRate"
+      "sortOrder": 7
     }
   ],
   "target": [
@@ -84,8 +80,7 @@
       "sqlForDataCollection":
         "select '100%' as cnt",
       "targetToken": "Total",
-      "sortOrder": 0,
-      "externalId": "dashboardWidgetTotal"
+      "sortOrder": 0
     },
     {
       "title": "MDR-TB",
@@ -97,8 +92,7 @@
       "sqlForDataCollection":
       "select '100%' as cnt",
       "targetToken": "MDR",
-      "sortOrder": 1,
-      "externalId": "dashboardWidgetMDRTB"
+      "sortOrder": 1
     },
     {
       "title": "HIV+",
@@ -109,8 +103,7 @@
       "thresholdPercentageDataCollection": 50,
       "sqlForDataCollection": "select concat(round(sum(case when replace(ifnull(JSON_EXTRACT(patientData, \"$.hivStatus\"), ''), '\"', '') != '' then 1 else 0 end)/count(r.id)*100,2),'%') as cnt from Result as r inner join Device as d on d.id = r.deviceId inner join Site as s on s.id = d.siteId inner join Partner as p on s.partnerId = p.id left outer join Geography as g on s.geographyId = g.id where r.assayId in (1,2)",
       "targetToken": "HIV",
-      "sortOrder": 2,
-      "externalId": "dashboardWidgetHIV"
+      "sortOrder": 2
     },
     {
       "title": "Smear+",
@@ -121,8 +114,7 @@
       "thresholdPercentageDataCollection": 50,
       "sqlForDataCollection": "select concat(round(sum(case when replace(ifnull(JSON_EXTRACT(patientData, \"$.microscopyResult\"), ''), '\"', '') != '' then 1 else 0 end)/count(r.id)*100,2),'%') as cnt from Result as r inner join Device as d on d.id = r.deviceId inner join Site as s on s.id = d.siteId inner join Partner as p on s.partnerId = p.id left outer join Geography as g on s.geographyId = g.id where r.assayId in (1,2)",
       "targetToken": "Smear",
-      "sortOrder": 3,
-      "externalId": "dashboardWidgetSmear"
+      "sortOrder": 3
     },
     {
       "title": "Children",
@@ -133,8 +125,7 @@
       "thresholdPercentageDataCollection": 50,
       "sqlForDataCollection": "select concat(round(sum(case when replace(ifnull(JSON_EXTRACT(patientData, \"$.age\"), ''), '\"', '') != '' then 1 else 0 end)/count(r.id)*100,2),'%') as cnt from Result as r inner join Device as d on d.id = r.deviceId inner join Site as s on s.id = d.siteId inner join Partner as p on s.partnerId = p.id left outer join Geography as g on s.geographyId = g.id where r.assayId in (1,2)",
       "targetToken": "Children",
-      "sortOrder": 16,
-      "externalId": "dashboardWidgetChildren"
+      "sortOrder": 16
     }
   ]
 }
