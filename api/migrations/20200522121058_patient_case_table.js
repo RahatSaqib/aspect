@@ -36,7 +36,20 @@ async function up(knex) {
   })
 
   await knex.schema.table('Result', tblResult => {
+    tblResult.dropForeign('caseId')
     tblResult.renameColumn('caseId', 'patientCaseId')
+  })
+
+  await knex.schema.alterTable('Result', tblResult => {
+    tblResult
+      .integer('patientCaseId')
+      .unsigned()
+      .index()
+      .references('id')
+      .inTable('PatientCase')
+      .onDelete('SET NULL')
+      .after('deviceId')
+      .alter()
   })
 }
 
@@ -57,7 +70,6 @@ async function down(knex) {
   await knex.schema.renameTable('PatientCase', 'Case')
 
   await knex.schema.table('Result', tblResult => {
-    tblResult.dropForeign('caseId')
     tblResult.renameColumn('patientCaseId', 'caseId')
   })
 
@@ -68,18 +80,6 @@ async function down(knex) {
       .references('id')
       .inTable('Disease')
       .notNullable()
-      .alter()
-  })
-
-  await knex.schema.alterTable('Result', tblResult => {
-    tblResult
-      .integer('patientCaseId')
-      .unsigned()
-      .index()
-      .references('id')
-      .inTable('PatientCase')
-      .onDelete('SET NULL')
-      .after('deviceId')
       .alter()
   })
 }
