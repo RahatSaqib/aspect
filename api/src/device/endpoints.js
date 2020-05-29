@@ -13,7 +13,7 @@ const {
   updateDeviceMaintenance,
   getDevicePerformance,
 } = require('./service')
-const { getDevicesReport } = require('./serviceReports')
+const { exportDevices } = require('./serviceReports')
 const {
   validateAllGeographyFilterParams,
 } = require('../geography/requestValidation')
@@ -431,7 +431,7 @@ const routes = [
   {
     method: 'GET',
     path: '/device/export',
-    handler: getDevicesReport,
+    handler: exportDevices,
     config: {
       description: 'Export Device List into Excel or CSV',
       notes: 'Filtered and sorted list of devices',

@@ -1,60 +1,22 @@
-const _ = require('lodash')
-const path = require('path')
 const { format } = require('date-fns')
 const { listPeople } = require('./service')
-const {
-  generateReport,
-  downloadReportFile,
-} = require('../excelreports/excelManager')
+const { exportData } = require('../shared/excel')
 
-const tags = {
-  tagDBP: 'DBP',
-  tagEID: 'EDI+',
-  tagEIDCHBAH: 'EID+CHBAH',
-  tagEIDCMJAH: 'EID+CMJAH',
-  tagEIDKPTH: 'EID+KPTH',
-  tagEIDRMMCH: 'EID+RMMCH',
-  tagHIVVL: 'HIV-VL>50',
-  tagSCO: 'SCO',
-  tagSTP: 'STP',
-  tagVLCHBAH: 'VL>50CHBAH',
-  tagVLCMJAH: 'VL>50CMJAH',
-  tagVLKPTH: 'VL>50KPTH',
-  tagVLRMMCH: 'VL>50RMMCH',
-}
-async function getContactReport(request, reply) {
-  // get whole dataset - based on current query params (sorting, filtering) and auth constraints
-  const devices = await listPeople(request)
-  const { query } = request
-  const reportFile = path.join(
-    __dirname,
-    '../excelreports/reportTemplates/Contacts.xlsx'
-  )
-  const report = generateReport(
-    query.format, // xlsx or csv
-    reportFile, // the path to the exceltemplate
-    '<Headers>', // This is an invented tag to look for, in the report template, for selecting the first cell we want to work with.
-    // Also we can find a text for a header instead of create a place holder.
-    _.map(
-      devices.data,
-      elem => ({
-        tags: _.map(elem.tags, current => tags[current.key])
-          .join(',')
-          .replace('[')
-          .replace(']'),
-        ...elem,
-      })
-      // this is the data source to create the reportvalues.
-      // It should be an Array of JSON objects, where each must be plained (Without nested properties)
-    ),
+async function exportContacts(request, reply) {
+  const { data } = await listPeople(request)
+  const sheetData = {
+    dataRows: data,
+    // TODO: use i18n string, because `exportData()` uses locale file templates with all labels translated
+    defaultNoDataMessage: 'No data',
+  }
+  const replacements = [
     {
-      date: format(new Date(), 'yyyy-MM-dd'),
-    }, // the json object to replace values in the header.
-    2 // If the function locate the row number for the placeholder,
-    // how many rows after appears the placeholders for the values (default 0)
-  )
-  return downloadReportFile(report, reply, request.format)
+      placeholder: '<date>',
+      value: format(new Date(), 'yyyy-MM-dd'),
+    },
+  ]
+  return exportData(request, reply, sheetData, 'contacts', { replacements })
 }
 module.exports = {
-  getContactReport,
+  exportContacts,
 }
