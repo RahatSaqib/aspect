@@ -78,7 +78,7 @@ const FILTERS_CONFIG = [
   { state: true, requiredPermissions: [] },
   { lga: true, requiredPermissions: [] },
   { patientOrCaseId: true, requiredPermissions: [] },
-  { sampleOriginSite: true, requiredPermissions: [] },
+  { sampleCollectionSite: true, requiredPermissions: [] },
   {
     assayAndResultCategory: true,
     requiredPermissions: [],

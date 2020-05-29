@@ -19,8 +19,8 @@ const messages = defineMessages({
     id: 'pages.CaseDetails.endedOn',
     defaultMessage: 'Test Date',
   },
-  sampleOriginSiteName: {
-    id: 'pages.CaseDetails.sampleOriginSiteName',
+  sampleCollectionSiteName: {
+    id: 'pages.CaseDetails.sampleCollectionSiteName',
     defaultMessage: 'Attending clinic',
   },
   sampleId: {
@@ -75,7 +75,7 @@ const CaseDetails = ({
     sampleId: true,
     errorCode: true,
     siteName: true,
-    sampleOriginSite: true,
+    sampleCollectionSite: true,
     workflowStatus: true,
   }
 
@@ -88,8 +88,8 @@ const CaseDetails = ({
     },
 
     {
-      key: 'sampleOriginSiteName',
-      label: intl.formatMessage(messages.sampleOriginSiteName),
+      key: 'sampleCollectionSiteName',
+      label: intl.formatMessage(messages.sampleCollectionSiteName),
       sortable: true,
       hiddenOn: 'sm',
     },

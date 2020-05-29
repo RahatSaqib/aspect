@@ -80,9 +80,9 @@ const enhance = compose(
         partnerId,
       }),
 
-    onSampleOriginSiteChange: ({ onChangeFilters }) => sampleOriginSite =>
+    onSampleCollectionSiteChange: ({ onChangeFilters }) => sampleCollectionSite =>
       onChangeFilters({
-        sampleOriginSite,
+        sampleCollectionSite,
       }),
 
     onSiteNameChange: ({ onChangeFilters }) => siteName =>
@@ -195,13 +195,13 @@ const messages = defineMessages({
     id: 'filter.popover.enterSiteId',
     defaultMessage: 'Enter site ID...',
   },
-  sampleOriginSite: {
-    id: 'filter.popover.sampleOriginSite',
-    defaultMessage: 'Sample origin site',
+  sampleCollectionSite: {
+    id: 'filter.popover.sampleCollectionSite',
+    defaultMessage: 'Sample collection site',
   },
-  enterSampleOriginSite: {
-    id: 'filter.popover.enterSampleOriginSite',
-    defaultMessage: 'Enter sample origin site name...',
+  enterSampleCollectionSite: {
+    id: 'filter.popover.enterSampleCollectionSite',
+    defaultMessage: 'Enter sample collection site name...',
   },
   date: {
     id: 'filter.popover.date',
@@ -233,11 +233,11 @@ const messages = defineMessages({
   },
   patientOrResearchId: {
     id: 'filter.popover.patientOrResearchId',
-    defaultMessage: 'Patient/Study ID',
+    defaultMessage: 'Patient ID',
   },
   enterPatientOrResearchId: {
     id: 'filter.popover.enterPatientOrResearchId',
-    defaultMessage: 'Enter patient/study ID...',
+    defaultMessage: 'Enter patient ID...',
   },
   patientOrCaseId: {
     id: 'filter.popover.patientOrCaseId',
@@ -405,7 +405,7 @@ export const FiltersPanel = ({
   onTextFieldCommitValue,
   onSiteNameChange,
   onSiteIdChange,
-  onSampleOriginSiteChange,
+  onSampleCollectionSiteChange,
   onDateChange,
   onWorkflowStatusIdChange,
   onTreatmentStatusIdChange,
@@ -686,15 +686,15 @@ export const FiltersPanel = ({
             />
           </div>
         )}
-        {config.sampleOriginSite && (
+        {config.sampleCollectionSite && (
           <div className={cssClasses('Control')}>
             <SiteAutoCompleteField
-              name="sampleOriginSite"
-              value={filters.sampleOriginSite || ''}
-              onSiteIdChange={onSampleOriginSiteChange}
+              name="sampleCollectionSite"
+              value={filters.sampleCollectionSite || ''}
+              onSiteIdChange={onSampleCollectionSiteChange}
               floatingLabelFixed
-              hintText={intl.formatMessage(messages.enterSampleOriginSite)}
-              floatingLabelText={intl.formatMessage(messages.sampleOriginSite)}
+              hintText={intl.formatMessage(messages.enterSampleCollectionSite)}
+              floatingLabelText={intl.formatMessage(messages.sampleCollectionSite)}
             />
           </div>
         )}

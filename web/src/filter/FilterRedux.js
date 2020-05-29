@@ -70,7 +70,7 @@ const ListConfig = Immutable.Record({
   sampleGroup: false,
   deviceName: false,
   siteName: false,
-  sampleOriginSite: false,
+  sampleCollectionSite: false,
   contactNameOrEmail: false,
   consumable: false,
   workflowStatus: false,
