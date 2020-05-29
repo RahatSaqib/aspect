@@ -73,11 +73,11 @@ const messages = defineMessages({
   },
   resultWorkflowStatus: {
     id: 'pages.ResultList.resultWorkflowStatus',
-    defaultMessage: 'Result Workflow Status',
+    defaultMessage: 'Workflow Status',
   },
   resultTreatmentStatus: {
     id: 'pages.ResultList.resultTreatmentStatus',
-    defaultMessage: 'Treatment',
+    defaultMessage: 'Treatment Status',
   },
   assayId: {
     id: 'pages.ResultList.assayId',
