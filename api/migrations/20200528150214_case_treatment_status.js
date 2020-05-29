@@ -16,7 +16,7 @@ async function up(knex) {
       .references('id')
       .inTable('PatientCase')
     tbl
-      .integer('patientCaseTreatmentStatusId')
+      .integer('treatmentStatusId')
       .unsigned()
       .nullable()
       .index()
@@ -33,7 +33,7 @@ async function up(knex) {
 
   await knex.schema.alterTable('PatientCase', result => {
     result
-      .integer('patientCaseTreatmentStatusLogId')
+      .integer('treatmentStatusLogId')
       .unsigned()
       .references('id')
       .inTable('PatientCaseTreatmentStatusLog')
@@ -43,8 +43,8 @@ async function up(knex) {
 
 async function down(knex) {
   await knex.schema.alterTable('PatientCase', tbl => {
-    tbl.dropForeign('patientCaseTreatmentStatusLogId')
-    tbl.dropColumn('patientCaseTreatmentStatusLogId')
+    tbl.dropForeign('treatmentStatusLogId')
+    tbl.dropColumn('treatmentStatusLogId')
   })
   await knex.schema.dropTable('PatientCaseTreatmentStatus')
   await knex.schema.dropTable('PatientCaseTreatmentStatusLog')
