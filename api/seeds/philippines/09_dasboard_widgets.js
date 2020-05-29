@@ -20,6 +20,7 @@ async function seed(knex) {
         'subTitle',
         'subTitleI18nKey',
         'sqlForIndicator',
+        'externalId',
         'link',
         'sortOrder',
       ])

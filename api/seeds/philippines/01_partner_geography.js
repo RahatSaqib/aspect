@@ -1,7 +1,4 @@
-module.exports = require('../utils').seed(seed, __filename, {
-  seedsFolder: 'philippines',
-  staticDataFiles: ['AssayType'],
-})
+module.exports = require('../utils').seed(seed, __filename)
 
 const bcrypt = require('bcrypt')
 const config = require('../../src/config')
