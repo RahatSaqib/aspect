@@ -38,7 +38,7 @@ const cssClasses = classnames.bind(require('./CaseList.css'))
 const messages = defineMessages({
   createdOn: {
     id: 'pages.CaseList.createdOn',
-    defaultMessage: 'Case date',
+    defaultMessage: 'Date',
   },
   resultsTitle: {
     id: 'pages.CaseList.title',
