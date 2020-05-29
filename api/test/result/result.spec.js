@@ -11,7 +11,6 @@ const {
   diseaseToId,
 } = require('../../src/shared/dictionary')
 const { knex } = require('../../src/db')
-const { getCaseId } = require('../../src/case/service')
 const AssayCovidResultFormSchema = require('../../seeds/fixtures/AssayCovidResultFormSchema.json')
 const { getAccessToken, createUser, removeUser } = require('../utils/authUtils')
 const { getCommCarePayload } = require('../deviceApi/commcare/commcare_utils')
@@ -36,7 +35,7 @@ const getClinicianAccessToken = () =>
     })
     .then(res => res.body.access)
 
-describe('Result routes', () => {
+describe.only('Result routes', () => {
   const path = '/api/result'
   let resultId = 1
   let assayId = 1
@@ -145,8 +144,8 @@ describe('Result routes', () => {
 
     it('should return a list of results with case-specific', async () => {
       const { caseId } = await knex('Result')
-        .join('Case', 'caseId', 'Case.Id')
-        .first('Case.id as caseId')
+        .join('PatientCase', 'patientCaseId', 'PatientCase.Id')
+        .first('PatientCase.externalId as caseId')
       const res = await server
         .get(`${path}?caseId=${caseId}`)
         .set('Authorization', `Bearer ${shared.token}`)
@@ -856,7 +855,7 @@ describe('Result routes', () => {
           ;({ id: latestResultIdBeforeTests } = await knex('Result')
             .max('id as id')
             .first())
-          ;({ id: latestCaseIdBeforeTests } = await knex('Case')
+          ;({ id: latestCaseIdBeforeTests } = await knex('PatientCase')
             .max('id as id')
             .first())
         })
@@ -864,7 +863,9 @@ describe('Result routes', () => {
         after(async () => {
           await knex('Result').where('id', '>', latestResultIdBeforeTests).del()
           await knex('Sample').where('id', '>', latestSampleIdBeforeTests).del()
-          await knex('Case').where('id', '>', latestCaseIdBeforeTests).del()
+          await knex('PatientCase')
+            .where('id', '>', latestCaseIdBeforeTests)
+            .del()
         })
 
         function getOptionValueFromTitle(options, title) {
@@ -953,16 +954,8 @@ describe('Result routes', () => {
                   testTypeText
                 )
                 formDataToSend.testType = testType
-                resultAspectExpected.caseId = await getCaseId(
-                  {
-                    externalId: caseId,
-                    partnerId,
-                    diseaseId,
-                  },
-                  true,
-                  adminId
-                )
               }
+
               const response = await server
                 .put(`${path}/form-data/${resultId}`)
                 .send(formDataToSend)
@@ -972,7 +965,8 @@ describe('Result routes', () => {
               result.patientData = JSON.parse(result.patientData)
               result.resultData = JSON.parse(result.resultData)
               result.formData = JSON.parse(result.formData)
-              expect(result).to.containSubset({
+
+              const expectedResult = {
                 patientData: {
                   id: caseId,
                   age,
@@ -989,7 +983,8 @@ describe('Result routes', () => {
                 resultCategory1: resultCategories[resultText],
                 updatedBy: adminId,
                 ...resultAspectExpected,
-              })
+              }
+              expect(result).to.containSubset(expectedResult)
             }
           )
         })
@@ -1062,11 +1057,6 @@ describe('Result routes', () => {
                   testTypeText
                 )
                 formDataToSend.testType = testType
-                resultAspectExpected.caseId = await getCaseId({
-                  externalId: caseId,
-                  partnerId,
-                  diseaseId,
-                })
               }
               const response = await server
                 .put(`${path}/form-data/${resultId}`)
@@ -1200,11 +1190,6 @@ describe('Result routes', () => {
                   testTypeText
                 )
                 formDataToSend.testType = testType
-                resultAspectExpected.caseId = await getCaseId({
-                  externalId: caseId,
-                  partnerId,
-                  diseaseId,
-                })
               }
               const response = await server
                 .put(`${path}/form-data/${resultId}`)
