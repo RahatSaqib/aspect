@@ -185,6 +185,30 @@ async function seed(knex) {
       permissionId: modules.inventory.admin,
     },
     { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.task.admin },
+    {
+      jobFunctionId: jobFunctionIdAdmin,
+      permissionId: modules.dashboard.summary,
+    },
+    {
+      jobFunctionId: jobFunctionIdAdmin,
+      permissionId: modules.dashboard.target,
+    },
+    {
+      jobFunctionId: jobFunctionIdAdmin,
+      permissionId: modules.dashboard.action,
+    },
+    {
+      jobFunctionId: jobFunctionIdAdmin,
+      permissionId: modules.dashboard.report,
+    },
+    {
+      jobFunctionId: jobFunctionIdAdmin,
+      permissionId: modules.dashboard.siteFilter,
+    },
+    {
+      jobFunctionId: jobFunctionIdAdmin,
+      permissionId: modules.dashboard.actionInventoryLevelUpdate,
+    },
     // Regional Officer Permissions
     {
       jobFunctionId: jobFunctionIdRegionalOfficer,
@@ -210,6 +234,30 @@ async function seed(knex) {
       jobFunctionId: jobFunctionIdRegionalOfficer,
       permissionId: modules.task.admin,
     },
+    {
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      permissionId: modules.dashboard.summary,
+    },
+    {
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      permissionId: modules.dashboard.target,
+    },
+    {
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      permissionId: modules.dashboard.action,
+    },
+    {
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      permissionId: modules.dashboard.report,
+    },
+    {
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      permissionId: modules.dashboard.site,
+    },
+    {
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      permissionId: modules.dashboard.actionInventoryLevelUpdate,
+    },
     // Lab User Permissions
     {
       jobFunctionId: jobFunctionIdLabUser,
@@ -231,6 +279,26 @@ async function seed(knex) {
     {
       jobFunctionId: jobFunctionIdLabUser,
       permissionId: modules.task.admin,
+    },
+    {
+      jobFunctionId: jobFunctionIdLabUser,
+      permissionId: modules.dashboard.summary,
+    },
+    {
+      jobFunctionId: jobFunctionIdLabUser,
+      permissionId: modules.dashboard.action,
+    },
+    {
+      jobFunctionId: jobFunctionIdLabUser,
+      permissionId: modules.dashboard.actionInventoryLevelUpdate,
+    },
+    {
+      jobFunctionId: jobFunctionIdLabUser,
+      permissionId: modules.dashboard.report,
+    },
+    {
+      jobFunctionId: jobFunctionIdLabUser,
+      permissionId: modules.dashboard.siteFilter,
     },
   ])
 

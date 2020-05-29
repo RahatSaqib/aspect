@@ -302,19 +302,19 @@ async function getJobFunctions(id, name, partnerId) {
     .pluck('jf.name')
 }
 
-async function hasFeature(userId, partnerId, module) {
-  const userFeature = await query('Get features for user and partner')
-    .from('Feature as f')
-    .innerJoin('JobFunctionFeature as jff', 'f.id', 'jff.featureId')
-    .innerJoin('JobFunction as jf', 'jff.jobFunctionId', 'jf.id')
+async function hasPermissions(userId, partnerId, modules) {
+  const userFeature = await query('Get permissions for user and partner')
+    .from('Permission as p')
+    .innerJoin('JobFunctionPermission as jfp', 'p.id', 'jfp.permissionId')
+    .innerJoin('JobFunction as jf', 'jfp.permissionId', 'jf.id')
     .innerJoin('Job as j', 'j.jobFunctionId', 'jf.id')
     .innerJoin('Person as ps', 'j.personId', 'ps.id')
+    .whereIn(knex.raw("concat(p.module,':',p.activity)"), modules)
     .where({
-      'f.module': module,
       'ps.userId': userId,
       'jf.partnerId': partnerId,
     })
-    .first('f.module')
+    .first('p.module')
   return !_.isEmpty(userFeature)
 }
 
@@ -795,11 +795,11 @@ module.exports = {
   updateUsernameAndPasswordForPerson,
   createResetPasswordToken,
   updatePasswordWithResetPasswordToken,
-  hasFeature,
   getLicense,
   acceptLicense,
   revokeUsersToken,
   lockedOutUser,
+  hasPermissions,
   clientTypes,
   getUserJobFunctions,
 }

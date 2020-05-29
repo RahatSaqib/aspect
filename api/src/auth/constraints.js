@@ -47,8 +47,14 @@ async function getConstraints(credentials, forModule = null) {
           )
           .leftJoin('Permission as pModuleAdmin', function () {
             this.on('jfp.permissionId', 'pModuleAdmin.id')
-              .andOn('pModuleAdmin.activity', knex.raw("'admin'"))
-              .andOn('pModuleAdmin.module', knex.raw(`'${forModule}'`))
+              .andOn(
+                'pModuleAdmin.activity',
+                knex.raw(`"${forModule.split(':')[1]}"`)
+              )
+              .andOn(
+                'pModuleAdmin.module',
+                knex.raw(`"${forModule.split(':')[0]}"`)
+              )
           })
       }
       queryBuilder.where({

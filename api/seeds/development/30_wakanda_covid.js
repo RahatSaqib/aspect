@@ -103,6 +103,8 @@ async function seed(knex) {
     modules.task.admin,
     modules.patient.admin,
     modules.case.admin,
+    modules.dashboard.summary,
+    modules.dashboard.result,
   ])
 
   const { id: jobFunctionIdRegionalOfficer } = await knex('JobFunction')
@@ -118,6 +120,8 @@ async function seed(knex) {
     modules.inventory.admin,
     modules.task.admin,
     modules.patient.admin,
+    modules.dashboard.summary,
+    modules.dashboard.result,
   ])
 
   const { id: jobFunctionIdLabUser } = await knex('JobFunction')
@@ -133,6 +137,8 @@ async function seed(knex) {
     modules.inventory.edit,
     modules.task.edit,
     modules.patient.edit,
+    modules.dashboard.summary,
+    modules.dashboard.result,
   ])
 
   const covidDeviceTypes = (
@@ -317,6 +323,8 @@ async function seed(knex) {
     modules.task.view,
     modules.treatmentStatus.edit,
     modules.site.view,
+    modules.dashboard.summary,
+    modules.dashboard.result,
   ])
 
   // Create User

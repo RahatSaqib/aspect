@@ -4,7 +4,7 @@ const parseISO = require('date-fns/parseISO')
 const subDays = require('date-fns/subDays')
 const isAfter = require('date-fns/isAfter')
 const differenceInDays = require('date-fns/differenceInDays')
-
+const { getPermissionModules } = require('../../seeds/utils')
 const { knex, filterParams, filterDateRangeParams } = require('../db')
 const {
   getConstraints,
@@ -15,7 +15,7 @@ const {
   canViewInventories,
   canEditInventories,
 } = require('../auth/constraints')
-const { getUser, hasFeature } = require('../auth/service')
+const { getUser, hasPermissions } = require('../auth/service')
 const { processDynamicMessage } = require('../stringTemplate/service')
 
 const i18nKeys = {
@@ -1240,7 +1240,7 @@ async function actionDashboard(request) {
   const user = await getUser(auth.credentials.name)
   const dataConstraints = await getConstraints(
     auth.credentials,
-    'actionDashboard'
+    'dashboard:action'
   )
   const alertMessages = await knex('AlertMessage as am')
     .join('MessageStatus as ms', 'am.messageStatusId', 'ms.id')
@@ -1326,11 +1326,12 @@ async function actionDashboard(request) {
       return highestLevelMessage
     }
   )
+  const modules = await getPermissionModules(knex)
 
-  const shouldAddStockLevelUpdateActions = await hasFeature(
+  const shouldAddStockLevelUpdateActions = await hasPermissions(
     user.id,
     user.partnerId,
-    'actionDashboardInventoryLevelUpdate'
+    [modules.dashboard.actionInventoryLevelUpdate]
   )
   if (shouldAddStockLevelUpdateActions) {
     await addStockLevelUpdateActions(

@@ -14,7 +14,7 @@ const server = supertest.agent('http://localhost:8080')
 
 const { assert, expect } = chai
 
-describe('Dashboard routes', () => {
+describe.only('Dashboard routes', () => {
   const path = '/api/dashboard/summary'
 
   describe('GET', () => {
@@ -388,7 +388,7 @@ describe('Dashboard routes', () => {
       }
 
       describe('for Admin', () => {
-        it("should return the highest level notification for all labs under admin's jurisdiction", async () =>
+        it("should return the highest level notification for all labs under admin's jurisdiction", () =>
           runTestWithKnex(async knex =>
             checkThatUserActionsMatchActionDashboardResponse({
               username: 'myanmar_admin',
