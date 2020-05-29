@@ -5,9 +5,9 @@ export const messages = defineMessages({
     id: 'pages.DeviceList.devicesTitle',
     defaultMessage: 'Devices',
   },
-  deviceName: {
-    id: 'pages.DeviceList.deviceName',
-    defaultMessage: 'Device Name',
+  device: {
+    id: 'pages.DeviceList.device',
+    defaultMessage: 'Device',
   },
   state: {
     id: 'pages.DeviceList.state',
