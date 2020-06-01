@@ -65,7 +65,7 @@ describe('Result create and update routes', () => {
         .whereIn('resultId', resultIds)
         .del()
 
-      await knex('Case')
+      await knex('PatientCase')
         .whereIn(
           'id',
           await knex('Result').whereIn('id', resultIds).pluck('caseId')
@@ -119,12 +119,12 @@ describe('Result create and update routes', () => {
       })
 
       // check that case created and assigned
-      firstResultCase = await knex('Case')
+      firstResultCase = await knex('PatientCase')
         .where({ externalId: resultPayload.caseId })
         .first()
-      const { caseId: resultCaseId } = await knex('Result')
+      const { patientCaseId: resultCaseId } = await knex('Result')
         .where({ id: resultId })
-        .first('caseId')
+        .first('patientCaseId')
       assert.equal(firstResultCase.externalId, resultPayload.caseId)
       assert.equal(resultCaseId, firstResultCase.id)
 
@@ -243,9 +243,9 @@ describe('Result create and update routes', () => {
       resultId = res.body.data.id
 
       // check that assigned to same case
-      const { caseId: resultCaseId } = await knex('Result')
+      const { patientCaseId: resultCaseId } = await knex('Result')
         .where({ id: resultId })
-        .first('caseId')
+        .first('patientCaseId')
       assert.equal(firstResultCase.id, resultCaseId)
 
       // remember for deletion
@@ -276,9 +276,9 @@ describe('Result create and update routes', () => {
       resultId = res.body.data.id
 
       // check that assigned to new case
-      const { caseId: resultCaseId } = await knex('Result')
+      const { patientCaseId: resultCaseId } = await knex('Result')
         .where({ id: resultId })
-        .first('caseId')
+        .first('patientCaseId')
       assert.notEqual(firstResultCase.id, resultCaseId)
 
       // remember for deletion
@@ -323,12 +323,12 @@ describe('Result create and update routes', () => {
       })
 
       // check that case created and assigned
-      firstResultCase = await knex('Case')
+      firstResultCase = await knex('PatientCase')
         .where({ externalId: resultPayload.caseId })
         .first()
-      const { caseId: resultCaseId } = await knex('Result')
+      const { patientCaseId: resultCaseId } = await knex('Result')
         .where({ id: resultId })
-        .first('caseId')
+        .first('patientCaseId')
       assert.equal(firstResultCase.externalId, resultPayload.caseId)
       assert.equal(resultCaseId, firstResultCase.id)
 
@@ -414,12 +414,12 @@ describe('Result create and update routes', () => {
       resultId = res.body.data.id
 
       // check that assigned to new case
-      const newCase = await knex('Case')
+      const newCase = await knex('PatientCase')
         .where({ externalId: resultPayload.caseId })
         .first()
-      const { caseId: resultCaseId } = await knex('Result')
+      const { patientCaseId: resultCaseId } = await knex('Result')
         .where({ id: resultId })
-        .first('caseId')
+        .first('patientCaseId')
       assert.equal(newCase.externalId, resultPayload.caseId)
       assert.equal(resultCaseId, newCase.id)
 

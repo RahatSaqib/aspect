@@ -282,6 +282,7 @@ async function seed(knex) {
       const widgetData = _.pick(widget, [
         'title',
         'titleI18nKey',
+        'externalId',
         'subTitle',
         'subTitleI18nKey',
         'sqlForIndicator',
@@ -316,6 +317,7 @@ async function seed(knex) {
       const widgetData = _.pick(widget, [
         'title',
         'titleI18nKey',
+        'externalId',
         'subTitle',
         'subTitleI18nKey',
         'sqlForIndicator',
