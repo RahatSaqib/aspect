@@ -302,20 +302,8 @@ async function getJobFunctions(id, name, partnerId) {
     .pluck('jf.name')
 }
 
-async function hasPermissions(userId, partnerId, modules) {
-  const userFeature = await query('Get permissions for user and partner')
-    .from('Permission as p')
-    .innerJoin('JobFunctionPermission as jfp', 'p.id', 'jfp.permissionId')
-    .innerJoin('JobFunction as jf', 'jfp.permissionId', 'jf.id')
-    .innerJoin('Job as j', 'j.jobFunctionId', 'jf.id')
-    .innerJoin('Person as ps', 'j.personId', 'ps.id')
-    .whereIn(knex.raw("concat(p.module,':',p.activity)"), modules)
-    .where({
-      'ps.userId': userId,
-      'jf.partnerId': partnerId,
-    })
-    .first('p.module')
-  return !_.isEmpty(userFeature)
+async function hasPermissions(auth, modules) {
+  return _.intersection(auth.credentials.permissions, modules).length > 0
 }
 
 // generate a new jwt for the given user data

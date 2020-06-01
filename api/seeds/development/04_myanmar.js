@@ -182,6 +182,10 @@ async function seed(knex) {
     { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.issue.admin },
     {
       jobFunctionId: jobFunctionIdAdmin,
+      permissionId: modules.dashboard.actionInventoryLevelUpdate,
+    },
+    {
+      jobFunctionId: jobFunctionIdAdmin,
       permissionId: modules.inventory.admin,
     },
     { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.task.admin },
@@ -195,19 +199,11 @@ async function seed(knex) {
     },
     {
       jobFunctionId: jobFunctionIdAdmin,
-      permissionId: modules.dashboard.action,
-    },
-    {
-      jobFunctionId: jobFunctionIdAdmin,
       permissionId: modules.dashboard.report,
     },
     {
       jobFunctionId: jobFunctionIdAdmin,
       permissionId: modules.dashboard.siteFilter,
-    },
-    {
-      jobFunctionId: jobFunctionIdAdmin,
-      permissionId: modules.dashboard.actionInventoryLevelUpdate,
     },
     // Regional Officer Permissions
     {
@@ -242,10 +238,7 @@ async function seed(knex) {
       jobFunctionId: jobFunctionIdRegionalOfficer,
       permissionId: modules.dashboard.target,
     },
-    {
-      jobFunctionId: jobFunctionIdRegionalOfficer,
-      permissionId: modules.dashboard.action,
-    },
+
     {
       jobFunctionId: jobFunctionIdRegionalOfficer,
       permissionId: modules.dashboard.report,
@@ -283,10 +276,6 @@ async function seed(knex) {
     {
       jobFunctionId: jobFunctionIdLabUser,
       permissionId: modules.dashboard.summary,
-    },
-    {
-      jobFunctionId: jobFunctionIdLabUser,
-      permissionId: modules.dashboard.action,
     },
     {
       jobFunctionId: jobFunctionIdLabUser,

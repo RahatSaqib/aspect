@@ -4,7 +4,6 @@ const parseISO = require('date-fns/parseISO')
 const subDays = require('date-fns/subDays')
 const isAfter = require('date-fns/isAfter')
 const differenceInDays = require('date-fns/differenceInDays')
-const { getPermissionModules } = require('../../seeds/utils')
 const { knex, filterParams, filterDateRangeParams } = require('../db')
 const {
   getConstraints,
@@ -1240,9 +1239,9 @@ async function actionDashboard(request) {
   const user = await getUser(auth.credentials.name)
   const dataConstraints = await getConstraints(
     auth.credentials,
-    'dashboard:action'
+    'actionDashboard'
   )
-  const alertMessages = await knex('AlertMessage as am')
+  const alertMessages = knex('AlertMessage as am')
     .join('MessageStatus as ms', 'am.messageStatusId', 'ms.id')
     .join('Notification as n', 'am.id', 'n.alertMessageId')
     .join('NotificationType as nt', 'n.notificationTypeId', 'nt.id')
@@ -1307,9 +1306,8 @@ async function actionDashboard(request) {
       knex.raw('max(isl.changedOn) as statusDate'),
       'i.consumableId'
     )
-
   const alertMessagesByIssue = _.map(
-    _.values(_.groupBy(alertMessages, 'issueId')),
+    _.values(_.groupBy(await alertMessages, 'issueId')),
     issueMessages => {
       const highestLevelMessage = _.head(
         _.orderBy(issueMessages, 'notificationTypeLevel', 'desc')
@@ -1326,13 +1324,10 @@ async function actionDashboard(request) {
       return highestLevelMessage
     }
   )
-  const modules = await getPermissionModules(knex)
+  const shouldAddStockLevelUpdateActions = await hasPermissions(auth, [
+    'dashboard:actionInventoryLevelUpdate',
+  ])
 
-  const shouldAddStockLevelUpdateActions = await hasPermissions(
-    user.id,
-    user.partnerId,
-    [modules.dashboard.actionInventoryLevelUpdate]
-  )
   if (shouldAddStockLevelUpdateActions) {
     await addStockLevelUpdateActions(
       auth,
@@ -1395,6 +1390,7 @@ async function addStockLevelUpdateActions(
         knex.raw('max(ii.updatedOn) as updatedOn'),
         knex.raw('sum(coalesce(ii.quantityOnHand, 0)) as totalInStock')
       )
+    console.log('inventoryItems', inventoryItems.length)
 
     // set consumable id, totalIn Stock on StockInHand issues
     const inventoryItemsBySite = _.groupBy(inventoryItems, 'siteId')
@@ -1430,7 +1426,7 @@ async function addStockLevelUpdateActions(
         }
       }
     })
-
+    console.log('inventoryItemsBySite', inventoryItemsBySite.length)
     // Add consumables by site that aren't in issues
     _.forEach(
       inventoryItemsBySite,
@@ -1464,6 +1460,7 @@ async function addStockLevelUpdateActions(
         })
       }
     )
+    console.log('inventoryItemsBySitea after', inventoryItemsBySite.length)
   }
 }
 

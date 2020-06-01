@@ -14,7 +14,7 @@ const server = supertest.agent('http://localhost:8080')
 
 const { assert, expect } = chai
 
-describe.only('Dashboard routes', () => {
+describe('Dashboard routes', () => {
   const path = '/api/dashboard/summary'
 
   describe('GET', () => {
