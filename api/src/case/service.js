@@ -316,7 +316,7 @@ function onResultLogged({ resultId }, { messageContext }) {
               diseaseId,
               reliable: isReliableCaseId,
             },
-            !existingCaseId,
+            !existingCaseId && isReliableCaseId,
             updatedBy,
             { messageContext }
           )

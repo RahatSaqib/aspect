@@ -19,6 +19,7 @@ const {
 } = require('../../src/case/service')
 const { createMessageContext, waitForAction } = require('../utils/mqUtils')
 const { caseAdded, caseUpdated } = require('../../src/case/actions')
+const { assayToId } = require('../../src/shared/dictionary')
 const { createResult } = require('../result/result_utils')
 
 const server = supertest.agent('http://localhost:8080')
@@ -607,6 +608,83 @@ describe('case/service', () => {
           await onResultLogged({ resultId }, mockMessageContext())
           const caseAfter = await getCaseFromResultId(resultId)
           assert.equal(caseAfter.externalId, oldCaseExternalId)
+        })
+      })
+
+      describe('extracting case ID from the test order sequence ID in the raw ASTM message', () => {
+        let abbottM2000PlasmaHivVlId
+        let partnerAbbottM2000PlasmaHivVLCaseIdTemplate
+        const astmResultExtractSequenceNumber =
+          "{{extractValueFromRegexCaptureGroup result.rawData expression='O\\|\\d*\\|(\\w+)\\|' groupNumber=1}}"
+        before(async () => {
+          abbottM2000PlasmaHivVlId = await assayToId('abbottM2000PlasmaHivVL')
+          ;({
+            reliableCaseExternalIdTemplate: partnerAbbottM2000PlasmaHivVLCaseIdTemplate,
+          } = await knex('PartnerAssay')
+            .where({
+              partnerId,
+              assayId: abbottM2000PlasmaHivVlId,
+            })
+            .first('reliableCaseExternalIdTemplate'))
+          await knex('PartnerAssay')
+            .where({ partnerId, assayId: abbottM2000PlasmaHivVlId })
+            .update({
+              reliableCaseExternalIdTemplate: astmResultExtractSequenceNumber,
+            })
+        })
+
+        after(async () => {
+          await knex('PartnerAssay')
+            .where({ partnerId, assayId: abbottM2000PlasmaHivVlId })
+            .update({
+              reliableCaseExternalIdTemplate:
+                partnerAbbottM2000PlasmaHivVLCaseIdTemplate || null,
+            })
+        })
+
+        it("should be able to determine the result's case ID from a the raw data sent to Aspect", async () => {
+          const {
+            resultCategoryId,
+            deviceTypeExternalId,
+            assayExternalId,
+          } = await knex('Assay as a')
+            .join('ResultCategoryAssay as rca', 'a.id', 'rca.assayId')
+            .join('DeviceType as dt', 'a.deviceTypeId', 'a.deviceTypeId')
+            .andWhere('a.id', abbottM2000PlasmaHivVlId)
+            .andWhere('rca.reportable', 1)
+            .first(
+              'rca.resultCategoryId',
+              'dt.externalId as deviceTypeExternalId',
+              'a.externalId as assayExternalId'
+            )
+          const resultId = await createResult(
+            partnerId,
+            deviceTypeExternalId,
+            'Sputum',
+            assayExternalId,
+            otherUserId,
+            {
+              resultCategory1: resultCategoryId,
+              rawData: `H|\\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312
+P|1
+O|1|SYS123655|SYS123655^vl110^H12|^^^1mLDBSvOP^HIV1.0mlDBS|||||||||||||||||||||F
+R|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|Not detected|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695
+R|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^I|Target not detected|||||F||bryan^bryan||20190825165311|275021695
+R|3|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|-1.00|cycle number||||F||bryan^bryan||20190825165311|275021695
+L|1`,
+            },
+            {},
+            true
+          )
+          const caseExternalIdBefore = await getCaseExternalIdFromResultId(
+            resultId
+          )
+          assert.isNotOk(caseExternalIdBefore)
+          await onResultLogged({ resultId }, mockMessageContext())
+          const caseExternalIdAfter = await getCaseExternalIdFromResultId(
+            resultId
+          )
+          assert.equal(caseExternalIdAfter, 'SYS123655')
         })
       })
     })
