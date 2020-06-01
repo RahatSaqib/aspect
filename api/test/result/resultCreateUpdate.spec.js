@@ -68,7 +68,7 @@ describe('Result create and update routes', () => {
       await knex('PatientCase')
         .whereIn(
           'id',
-          await knex('Result').whereIn('id', resultIds).pluck('caseId')
+          await knex('Result').whereIn('id', resultIds).pluck('patientCaseId')
         )
         .del()
 
