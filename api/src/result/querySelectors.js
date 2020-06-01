@@ -177,7 +177,10 @@ const RESULT_STRING_TEMPLATE_FIELDS = [
   'rc2.externalId as resultCategory2ExternalId',
   'a.resultSourceId',
   'at.diseaseId',
-  'pd.caseExternalIdTemplate',
+  'pa.reliableCaseExternalIdTemplate',
+  'pa.unreliableCaseExternalIdTemplate',
+  'pa.reliablePatientExternalIdTemplate',
+  'pa.unreliablePatientExternalIdTemplate',
 ]
 
 module.exports = {

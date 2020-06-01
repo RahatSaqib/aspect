@@ -115,7 +115,7 @@ async function updateCovidResultFromFormData(
           ;({ caseExternalId } =
             (await processUsingDataSourceQuery(
               { ...result, caseExternalIdTemplate },
-              ['caseExternalIdTemplate']
+              ['reliableCaseExternalIdTemplate']
             )) || {})
         }
         if (!caseExternalId) {

@@ -248,7 +248,6 @@ function onResultLogged({ resultId }, { messageContext }) {
       [
         ...RESULT_STRING_TEMPLATE_FIELDS,
         'r.partnerId',
-        'pd.canAutoAssignResultByCaseId',
         'r.patientCaseId as existingCaseId',
         'c.externalId as existingCaseExternalId',
         'rca1.reportable as resultCategory1Reportable',
@@ -259,8 +258,8 @@ function onResultLogged({ resultId }, { messageContext }) {
     )
     if (result) {
       const {
-        canAutoAssignResultByCaseId,
-        caseExternalIdTemplate,
+        reliableCaseExternalIdTemplate,
+        unreliableCaseExternalIdTemplate,
         diseaseId,
         existingCaseId,
         existingCaseExternalId,
@@ -271,15 +270,22 @@ function onResultLogged({ resultId }, { messageContext }) {
       } = result
       if (
         diseaseId &&
-        caseExternalIdTemplate &&
-        canAutoAssignResultByCaseId &&
+        reliableCaseExternalIdTemplate &&
         (resultCategory1Reportable || resultCategory2Reportable)
       ) {
-        const { caseExternalId } =
+        let { caseExternalId } =
           (await processUsingDataSourceQuery(
-            { ...result, caseExternalIdTemplate },
-            ['caseExternalIdTemplate']
+            { ...result, reliableCaseExternalIdTemplate },
+            ['reliableCaseExternalIdTemplate']
           )) || {}
+        const isReliableCaseId = !!caseExternalId
+        if (!caseExternalId) {
+          ;({ caseExternalId } =
+            (await processUsingDataSourceQuery(
+              { ...result, unreliableCaseExternalIdTemplate },
+              ['unreliableCaseExternalIdTemplate']
+            )) || {})
+        }
         if (caseExternalId) {
           // Get the case that matched the case ID in the payload
           // If the case doesn't exist and the result is not assigned a case yet, creat the case
@@ -289,7 +295,7 @@ function onResultLogged({ resultId }, { messageContext }) {
               partnerId,
               diseaseId,
             },
-            !existingCaseId,
+            !existingCaseId && isReliableCaseId,
             updatedBy
           )
           // If no case was found or created, use the case already assigned to the result

@@ -18,7 +18,7 @@ const {
 } = require('../../src/case/service')
 const { createMessageContext, waitForAction } = require('../utils/mqUtils')
 const { caseAdded, caseUpdated } = require('../../src/case/actions')
-const { diseaseToId } = require('../../src/shared/dictionary')
+const { assayToId } = require('../../src/shared/dictionary')
 const { createResult } = require('../result/result_utils')
 
 const server = supertest.agent('http://localhost:8080')
@@ -311,19 +311,22 @@ describe('case/service', () => {
         resultCategoryId,
         deviceTypeExternalId,
         assayExternalId,
-      } = await knex('PartnerDisease as pd')
-        .join('AssayType as at', 'pd.diseaseId', 'at.diseaseId')
-        .join('Assay as a', 'at.id', 'a.assayTypeId')
+      } = await knex('PartnerAssay as pa')
+        .join('Assay as a', 'pa.assayId', 'a.id')
         .join('ResultCategoryAssay as rca', 'a.id', 'rca.assayId')
-        .join('DeviceType as dt', 'a.deviceTypeId', 'a.deviceTypeId')
-        .where(function () {
+        .join('DeviceType as dt', 'a.deviceTypeId', 'dt.id')
+        .where('pa.partnerId', partnerId)
+        .andWhere(function () {
           if (caseIdTemplateLike) {
-            this.where('pd.caseExternalIdTemplate', 'LIKE', caseIdTemplateLike)
+            this.where(
+              'pa.reliableCaseExternalIdTemplate',
+              'LIKE',
+              caseIdTemplateLike
+            )
           } else {
-            this.whereNull('pd.caseExternalIdTemplate')
+            this.whereNull('pa.reliableCaseExternalIdTemplate')
           }
         })
-        .andWhere('pd.partnerId', partnerId)
         .andWhere('rca.reportable', reportable)
         .first(
           'rca.resultCategoryId',
@@ -554,34 +557,33 @@ describe('case/service', () => {
       })
 
       describe('extracting case ID from the test order sequence ID in the raw ASTM message', () => {
-        let tbDiseaseId
-        let partnerTbCaseAutoAssign
-        let partnerTbCaseIdTemplate
+        let abbottM2000PlasmaHivVlId
+        let partnerAbbottM2000PlasmaHivVLCaseIdTemplate
         const astmResultExtractSequenceNumber =
           "{{extractValueFromRegexCaptureGroup result.rawData expression='O\\|\\d*\\|(\\w+)\\|' groupNumber=1}}"
         before(async () => {
-          tbDiseaseId = await diseaseToId('tb')
+          abbottM2000PlasmaHivVlId = await assayToId('abbottM2000PlasmaHivVL')
           ;({
-            canAutoAssignResultByCaseId: partnerTbCaseAutoAssign,
-            caseExternalIdTemplate: partnerTbCaseIdTemplate,
-          } = await knex('PartnerDisease').where({
-            partnerId,
-            diseaseId: tbDiseaseId,
-          }))
-          await knex('PartnerDisease')
-            .where({ partnerId, diseaseId: tbDiseaseId })
+            reliableCaseExternalIdTemplate: partnerAbbottM2000PlasmaHivVLCaseIdTemplate,
+          } = await knex('PartnerAssay')
+            .where({
+              partnerId,
+              assayId: abbottM2000PlasmaHivVlId,
+            })
+            .first('reliableCaseExternalIdTemplate'))
+          await knex('PartnerAssay')
+            .where({ partnerId, assayId: abbottM2000PlasmaHivVlId })
             .update({
-              canAutoAssignResultByCaseId: 1,
-              caseExternalIdTemplate: astmResultExtractSequenceNumber,
+              reliableCaseExternalIdTemplate: astmResultExtractSequenceNumber,
             })
         })
 
         after(async () => {
-          await knex('PartnerDisease')
-            .where({ partnerId, diseaseId: tbDiseaseId })
+          await knex('PartnerAssay')
+            .where({ partnerId, assayId: abbottM2000PlasmaHivVlId })
             .update({
-              canAutoAssignResultByCaseId: partnerTbCaseAutoAssign || false,
-              caseExternalIdTemplate: partnerTbCaseIdTemplate || null,
+              reliableCaseExternalIdTemplate:
+                partnerAbbottM2000PlasmaHivVLCaseIdTemplate || null,
             })
         })
 
@@ -590,13 +592,10 @@ describe('case/service', () => {
             resultCategoryId,
             deviceTypeExternalId,
             assayExternalId,
-          } = await knex('PartnerDisease as pd')
-            .join('AssayType as at', 'pd.diseaseId', 'at.diseaseId')
-            .join('Assay as a', 'at.id', 'a.assayTypeId')
+          } = await knex('Assay as a')
             .join('ResultCategoryAssay as rca', 'a.id', 'rca.assayId')
             .join('DeviceType as dt', 'a.deviceTypeId', 'a.deviceTypeId')
-            .andWhere('pd.partnerId', partnerId)
-            .andWhere('pd.diseaseId', tbDiseaseId)
+            .andWhere('a.id', abbottM2000PlasmaHivVlId)
             .andWhere('rca.reportable', 1)
             .first(
               'rca.resultCategoryId',

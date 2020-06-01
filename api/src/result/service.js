@@ -794,6 +794,9 @@ async function getResultForStringTemplateProcessing(
         'pd.partnerId'
       )
     })
+    .leftJoin('PartnerAssay as pa', function () {
+      this.on('r.assayId', 'pa.assayId').andOn('r.partnerId', 'pa.partnerId')
+    })
     .leftJoin('PatientCase as c', 'r.patientCaseId', 'c.id')
     .leftJoin('Site as sos', 'sample.originSiteId', 'sos.id')
     .leftJoin('ResultCategory as rc1', 'r.resultCategory1', 'rc1.id')
