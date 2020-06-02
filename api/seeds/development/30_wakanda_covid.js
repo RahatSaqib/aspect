@@ -106,6 +106,17 @@ async function seed(knex) {
     modules.dashboard.summary,
     modules.dashboard.result,
     modules.account.admin,
+
+    modules.treatmentStatus.admin,
+    modules.dashboard.actionInventoryLevelUpdate,
+    modules.dashboard.report,
+    modules.dashboard.siteFilter,
+    modules.dashboard.action,
+    modules.dashboard.target,
+    modules.dashboard.device,
+    modules.dashboard.inventory,
+    modules.dashboard.site,
+    modules.router.admin,
   ])
 
   const { id: jobFunctionIdRegionalOfficer } = await knex('JobFunction')
