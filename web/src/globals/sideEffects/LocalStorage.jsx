@@ -30,6 +30,7 @@ export const getAspectAccess = () => localStorage.getItem(AS_ACCESS)
 
 const INITIAL_DISPLAY_PREFERENCES = Immutable.Map(DEFAULT_DISPLAY_PREFERENCES)
 const INITIAL_COUNTRY_SETTINGS = Immutable.Map(DEFAULT_COUNTRY_SETTINGS)
+
 let displayPreferences = INITIAL_DISPLAY_PREFERENCES
 let countrySettings = INITIAL_COUNTRY_SETTINGS
 export const getAspectDisplayPreferences = () => displayPreferences
@@ -40,6 +41,7 @@ export const getAspectHydrateData = () => {
     (acc, { storageKey, propsKey, load = _.identity }) => {
       const value = localStorage.getItem(storageKey)
       if (_.isString(value)) {
+        console.log(value)
         acc.data[propsKey] = load(value)
       } else {
         acc.result = false
@@ -86,6 +88,10 @@ const storageMappings = [
     storageKey: AS_COUNTRY_SETTINGS,
     propsKey: 'countrySettings',
     load: it => Immutable.Map(JSON.parse(it)),
+    update: it => {
+      countrySettings = INITIAL_COUNTRY_SETTINGS.merge(it)
+      return JSON.stringify(countrySettings.toJS())
+    },
   },
 ]
 

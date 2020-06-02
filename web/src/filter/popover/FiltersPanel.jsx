@@ -295,7 +295,7 @@ const messages = defineMessages({
   },
   selectPlaceholder: {
     id: 'filter.popover.selectPlaceholder',
-    defaultMessage: 'Select [ENTITY]...',
+    defaultMessage: 'Select {entity}...',
   },
   country: {
     id: 'filter.popover.country',
@@ -352,11 +352,11 @@ const messages = defineMessages({
   },
   externalId: {
     id: 'filter.popover.externalId',
-    defaultMessage: 'Facility Code',
+    defaultMessage: 'Site ID',
   },
   enterExternalId: {
     id: 'filter.popover.enterExternalId',
-    defaultMessage: 'Enter facility code...',
+    defaultMessage: 'Enter site ID...',
   },
   notificationName: {
     id: 'filter.popover.notificationName',
@@ -496,7 +496,7 @@ export const FiltersPanel = ({
               countryId={filters.countryId}
               stateId={filters.stateId}
               floatingLabelFixed
-              hintText={intl.formatMessage(messages.selectPlaceholder).replace('[ENTITY]', countryLabels.stateLabel)}
+              hintText={intl.formatMessage(messages.selectPlaceholder, { entity: countryLabels.stateLabel })}
               floatingLabelText={countryLabels.stateLabel}
               style={{ verticalAlign: 'bottom' }}
             />
@@ -511,7 +511,7 @@ export const FiltersPanel = ({
               stateId={filters.stateId}
               lgaId={filters.lgaId}
               floatingLabelFixed
-              hintText={intl.formatMessage(messages.selectPlaceholder).replace('[ENTITY]', countryLabels.lgaLabel)}
+              hintText={intl.formatMessage(messages.selectPlaceholder, { entity: countryLabels.lgaLabel })}
               floatingLabelText={countryLabels.lgaLabel}
               style={{ verticalAlign: 'bottom' }}
             />
