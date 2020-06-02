@@ -4,6 +4,7 @@
       "icon": "data",
       "title": "Tests",
       "titleI18nKey": "dashboardWidgetTitleTests",
+      "externalId": "dashboardWidgetTitleTests",
       "subTitle": "This Month",
       "subTitleI18nKey": "dashboardWidgetSubTitleTests",
       "sqlForIndicator":
@@ -20,6 +21,7 @@
       "icon": "data",
       "title": "MTB+ Rate",
       "titleI18nKey": "dashboardWidgetTitleMTBPositiveRate",
+      "externalId": "dashboardWidgetTitleMTBPositiveRate",
       "subTitle": "Last 30 Days",
       "subTitleI18nKey": "dashboardWidgetSubTitleMTBPositiveRate",
       "sqlForIndicator":
@@ -36,6 +38,7 @@
       "icon": "data",
       "title": "RR Rate",
       "titleI18nKey": "dashboardWidgetTitleRRRate",
+      "externalId": "dashboardWidgetTitleRRRate",
       "subTitle": "Last 30 Days",
       "subTitleI18nKey": "dashboardWidgetSubTitleRRRate",
       "sqlForIndicator":
@@ -52,6 +55,7 @@
       "icon": "data",
       "title": "TI Rate",
       "titleI18nKey": "dashboardWidgetTitleTIRate",
+      "externalId": "dashboardWidgetTitleTIRate",
       "subTitle": "Last 30 Days",
       "subTitleI18nKey": "dashboardWidgetSubTitleTIRate",
       "sqlForIndicator":
@@ -69,6 +73,7 @@
     {
       "title": "Total Tests",
       "titleI18nKey": "dashboardWidgetTitleTotal",
+      "externalId": "dashboardWidgetTitleTotal",
       "sqlForIndicator":
         "select ifnull(count(r.id), 0) as cnt from Result as r inner join Device as d on d.id = r.deviceId inner join Site as s on s.id = d.siteId inner join Partner p on s.partnerId = p.id left outer join Geography as g on s.geographyId = g.id inner join Assay as a on a.id = r.assayId ",
       "thresholdPercentageDataCollection": 50,
@@ -80,6 +85,7 @@
     {
       "title": "MDR-TB",
       "titleI18nKey": "dashboardWidgetTitleMDRTB",
+      "externalId": "dashboardWidgetTitleMDRTB",
       "sqlForIndicator":
       "select ifnull(count(r.id), 0) as cnt from Result as r inner join Device as d on d.id = r.deviceId inner join Site as s on s.id = d.siteId inner join Partner p on s.partnerId = p.id left outer join Geography as g on s.geographyId = g.id inner join Assay as a on a.id = r.assayId where r.resultCategory1 = 1 and r.resultCategory2 = 1 and r.assayId in (1,2)",
       "thresholdPercentageDataCollection": 50,
@@ -91,6 +97,7 @@
     {
       "title": "HIV+",
       "titleI18nKey": "dashboardWidgetTitleHIV",
+      "externalId": "dashboardWidgetTitleHIV",
       "sqlForIndicator": "select ifnull(count(r.id), 0) as cnt from Result as r inner join Device as d on d.id = r.deviceId inner join Site as s on s.id = d.siteId inner join Partner p on s.partnerId = p.id left outer join Geography as g on s.geographyId = g.id inner join Assay as a on a.id = r.assayId where ifnull(JSON_EXTRACT(patientData, \"$.hivStatus\"), '') = '\"HIV Positive\"' and r.assayId in (1,2)",
       "lowerThanthresholdPercentageDataCollection": 0,
       "thresholdPercentageDataCollection": 50,
@@ -101,6 +108,7 @@
     {
       "title": "Smear+",
       "titleI18nKey": "dashboardWidgetTitleSmear",
+      "externalId": "dashboardWidgetTitleSmear",
       "sqlForIndicator": "select ifnull(count(r.id), 0) as cnt from Result as r inner join Device as d on d.id = r.deviceId inner join Site as s on s.id = d.siteId inner join Partner p on s.partnerId = p.id left outer join Geography as g on s.geographyId = g.id inner join Assay as a on a.id = r.assayId where ifnull(JSON_EXTRACT(patientData, \"$.microscopyResult\"), '') = '\"Smear Positive\"' and r.assayId in (1,2)",
       "lowerThanthresholdPercentageDataCollection": 0,
       "thresholdPercentageDataCollection": 50,
@@ -111,6 +119,7 @@
     {
       "title": "Children",
       "titleI18nKey": "dashboardWidgetTitleChildren",
+      "externalId": "dashboardWidgetTitleChildren",
       "sqlForIndicator": "select ifnull(count(r.id), 0) as cnt from Result as r inner join Device as d on d.id = r.deviceId inner join Site as s on s.id = d.siteId inner join Partner p on s.partnerId = p.id left outer join Geography as g on s.geographyId = g.id inner join Assay as a on a.id = r.assayId where cast(ifnull(JSON_EXTRACT(patientData, \"$.age\"), 100) as UNSIGNED) < 18 and r.assayId in (1,2)",
       "lowerThanthresholdPercentageDataCollection": 0,
       "thresholdPercentageDataCollection": 50,

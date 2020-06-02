@@ -794,7 +794,7 @@ async function getResultForStringTemplateProcessing(
         'pd.partnerId'
       )
     })
-    .leftJoin('Case as c', 'r.caseId', 'c.id')
+    .leftJoin('PatientCase as c', 'r.patientCaseId', 'c.id')
     .leftJoin('Site as sos', 'sample.originSiteId', 'sos.id')
     .leftJoin('ResultCategory as rc1', 'r.resultCategory1', 'rc1.id')
     .leftJoin('ResultCategoryAssay as rca1', function () {
@@ -2063,7 +2063,7 @@ function getBaseQueryForResults() {
     .leftJoin('Site as sirep', 'r.reportableSiteId', 'sirep.id')
     .leftJoin('ResultStatusLog as rslog', 'r.resultStatusLogId', 'rslog.id')
     .leftJoin('Person as ptr', 'rslog.createdBy', 'ptr.userId')
-    .leftJoin('Case as ca', 'ca.id', 'r.caseId')
+    .leftJoin('PatientCase as ca', 'ca.id', 'r.patientCaseId')
 
   return resultQuery
 }
@@ -2098,7 +2098,7 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
       errorCode: 'r.errorCode',
       workflowStatusId: 'rs.id',
       treatmentStatusId: 'rts.id',
-      caseId: 'r.caseId',
+      patientCaseId: 'r.patientCaseId',
       diseaseId: 'dis.id',
     })
     .modify((queryBuilder, params) => {
@@ -2545,13 +2545,17 @@ async function updateOrCreateResult(request, result = {}) {
 
   // create case entry or update it
   if (payload.caseId && assay.diseaseId) {
-    result.caseId = await getCaseId(
-      { externalId: payload.caseId, partnerId, diseaseId: assay.diseaseId },
+    result.patientCaseId = await getCaseId(
+      {
+        externalId: payload.caseId,
+        diseaseId: assay.diseaseId,
+        partnerId,
+      },
       true,
       userId
     )
   } else {
-    result.caseId = null
+    result.patientCaseId = null
   }
 
   // looks like all's well. create or update result now so we have a result id for tags, form data, etc.

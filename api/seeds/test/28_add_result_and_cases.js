@@ -14,7 +14,7 @@ async function seed(knex) {
         )
       })
     })
-    .whereNull('r.caseId')
+    .whereNull('r.patientCaseId')
     .andWhere('rca.reportable', 1)
     .select('r.id', 'r.partnerId', 'r.assayId')
   const assayDiseases = await knex('Assay as a')
@@ -38,19 +38,19 @@ async function seed(knex) {
         const caseExternalId = `CASE-${getUniqueId()}-ID`
         const caseId = await addCase({
           externalId: caseExternalId,
-          partnerId: result.partnerId,
           diseaseId: assayIdDiseaseIdMap[result.assayId],
+          partnerId: result.partnerId,
           createdBy: adminId,
           updatedBy: adminId,
         })
         cases.push(caseId)
         if (_.random(100) <= 50) {
-          result.caseId = _.sample(cases)
+          result.patientCaseId = _.sample(cases)
         } else {
-          result.caseId = caseId
+          result.patientCaseId = caseId
         }
         await knex('Result')
-          .update({ caseId: result.caseId })
+          .update({ patientCaseId: result.patientCaseId })
           .where({ id: result.id })
       }
     }
