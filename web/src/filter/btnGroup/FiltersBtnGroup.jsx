@@ -28,11 +28,11 @@ const messages = defineMessages({
   },
   patientOrResearchId: {
     id: 'filter.btnGroup.patientOrResearchId',
-    defaultMessage: 'patient/case ID {patientOrResearchId}',
+    defaultMessage: 'patient ID includes {patientOrResearchId}',
   },
   patientOrCaseId: {
     id: 'filter.btnGroup.patientOrCaseId',
-    defaultMessage: 'patient/case ID {patientOrCaseId}',
+    defaultMessage: 'patient/case ID includes {patientOrCaseId}',
   },
   sampleId: {
     id: 'filter.btnGroup.sampleId',
@@ -44,7 +44,7 @@ const messages = defineMessages({
   },
   whereDeviceNameIncludes: {
     id: 'filter.btnGroup.whereDeviceNameIncludes',
-    defaultMessage: 'where device name includes "{deviceName}"',
+    defaultMessage: 'device name includes "{deviceName}"',
   },
   withResultCategory: {
     id: 'filter.btnGroup.withResultCategory',
@@ -52,11 +52,11 @@ const messages = defineMessages({
   },
   whereSiteNameIncludes: {
     id: 'filter.btnGroup.whereSiteNameIncludes',
-    defaultMessage: 'where site name includes "{siteName}"',
+    defaultMessage: 'site name includes "{siteName}"',
   },
   whereSiteIdIncludes: {
     id: 'filter.btnGroup.whereSiteIdIncludes',
-    defaultMessage: 'where site id includes "{siteId}"',
+    defaultMessage: 'site ID includes "{siteId}"',
   },
   sampleCollectionSite: {
     id: 'filter.btnGroup.sampleCollectionSite',
@@ -64,44 +64,44 @@ const messages = defineMessages({
   },
   whoseNameOrEmailIncludes: {
     id: 'filter.btnGroup.whoseNameOrEmailIncludes',
-    defaultMessage: 'whose name/email includes "{contactNameOrEmail}"',
+    defaultMessage: 'name/email includes "{contactNameOrEmail}"',
   },
   withWorkflowStatus: {
     id: 'filter.btnGroup.withWorkflowStatus',
-    defaultMessage: 'with workflow status is {workflowStatusName}',
+    defaultMessage: 'workflow status is {workflowStatusName}',
   },
   withTreatmentStatus: {
     id: 'filter.btnGroup.withTreatmentStatus',
-    defaultMessage: 'with treatment status is {treatmentStatusName}',
+    defaultMessage: 'treatment status is {treatmentStatusName}',
   },
   withDeviceStatus: {
     id: 'filter.btnGroup.withDeviceStatus',
-    defaultMessage: 'with device status is {deviceStatusName}',
+    defaultMessage: 'status is {deviceStatusName}',
   },
   withDeviceType: {
     id: 'filter.btnGroup.withDeviceType',
-    defaultMessage: 'with device type is {deviceTypeName}',
+    defaultMessage: 'type is {deviceTypeName}',
   },
   whereExternalIdIncludes: {
     id: 'filter.btnGroup.whereExternalIdIncludes',
-    defaultMessage: 'where externalId includes "{externalId}"',
+    defaultMessage: 'ID includes "{externalId}"',
   },
   whereDeviceIdIsIn: {
     id: 'filter.btnGroup.whereDeviceIdIsIn',
-    defaultMessage: 'where deviceId is in ({joinedIds})',
+    defaultMessage: 'deviceId is in ({joinedIds})',
   },
   whereSiteIdIsIn: {
     id: 'filter.btnGroup.whereSiteIdIsIn',
-    defaultMessage: 'where siteId is in ({joinedIds})',
+    defaultMessage: 'site ID is in ({joinedIds})',
   },
   whereNotificationNameIncludes: {
     id: 'filter.btnGroup.whereNotificationNameIncludes',
-    defaultMessage: 'where notification name includes "{notificationName}"',
+    defaultMessage: 'notification name includes "{notificationName}"',
   },
 
   withRevoked: {
     id: 'filter.btnGroup.withRevoked',
-    defaultMessage: 'where revoked is "{revokedStatus}"',
+    defaultMessage: 'revoked is "{revokedStatus}"',
   },
 })
 const revokedOptions = [

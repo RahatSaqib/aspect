@@ -41,7 +41,6 @@ export const getAspectHydrateData = () => {
     (acc, { storageKey, propsKey, load = _.identity }) => {
       const value = localStorage.getItem(storageKey)
       if (_.isString(value)) {
-        console.log(value)
         acc.data[propsKey] = load(value)
       } else {
         acc.result = false
