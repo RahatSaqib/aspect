@@ -1,7 +1,7 @@
 const _ = require('lodash')
 const { format } = require('date-fns')
 const { listDevices } = require('./service')
-const { exportData } = require('../shared/excel')
+const { exportData, getBaseReplacements } = require('../shared/excel')
 const { issueCategoryIntlToShortname } = require('../shared/dictionary')
 
 async function exportDevices(request, reply) {
@@ -33,13 +33,10 @@ async function exportDevices(request, reply) {
     // TODO: use i18n string, because `exportData()` uses locale file templates with all labels translated
     defaultNoDataMessage: 'No data',
   }
-  const replacements = [
-    {
-      placeholder: '<date>',
-      value: format(new Date(), 'yyyy-MM-dd'),
-    },
-  ]
-  return exportData(request, reply, sheetData, scope, { replacements })
+
+  return exportData(request, reply, sheetData, scope, {
+    replacements: getBaseReplacements(),
+  })
 }
 module.exports = {
   exportDevices,
