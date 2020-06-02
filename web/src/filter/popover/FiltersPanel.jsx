@@ -1,3 +1,4 @@
+import { connect } from 'react-redux'
 import classnames from 'classnames/bind'
 import { compose, withState, withHandlers } from 'recompose'
 import React, { Fragment } from 'react'
@@ -29,6 +30,11 @@ import RevokedSelectField from '../resource/RevokedSelectField'
 const cssClasses = classnames.bind(require('./FiltersPanel.css'))
 
 const enhance = compose(
+  connect(
+    state => ({
+      countryLabels: state.user.countrySettings.get('countryLabels'),
+    }),
+  ),
   withState('isShown', 'setIsShown', false),
   withHandlers({
     onToggleShown: ({ setIsShown }) => () => setIsShown(isShown => !isShown),
@@ -287,21 +293,9 @@ const messages = defineMessages({
     id: 'filter.popover.selectDisease',
     defaultMessage: 'Select Disease...',
   },
-  lga: {
-    id: 'filter.popover.lga',
-    defaultMessage: 'Area',
-  },
-  selectLga: {
-    id: 'filter.popover.selectLga',
-    defaultMessage: 'Select area...',
-  },
-  state: {
-    id: 'filter.popover.state',
-    defaultMessage: 'State',
-  },
-  selectState: {
-    id: 'filter.popover.selectState',
-    defaultMessage: 'Select state...',
+  selectPlaceholder: {
+    id: 'filter.popover.selectPlaceholder',
+    defaultMessage: 'Select [ENTITY]...',
   },
   country: {
     id: 'filter.popover.country',
@@ -412,6 +406,7 @@ export const FiltersPanel = ({
   onDeviceStatusIdChange,
   onDeviceTypeIdChange,
   onRevokedChange,
+  countryLabels,
 }) => (
   <div className={cssClasses('Container', className)}>
     <AspectButton
@@ -501,8 +496,8 @@ export const FiltersPanel = ({
               countryId={filters.countryId}
               stateId={filters.stateId}
               floatingLabelFixed
-              hintText={intl.formatMessage(messages.selectState)}
-              floatingLabelText={intl.formatMessage(messages.state)}
+              hintText={intl.formatMessage(messages.selectPlaceholder).replace('[ENTITY]', countryLabels.stateLabel)}
+              floatingLabelText={countryLabels.stateLabel}
               style={{ verticalAlign: 'bottom' }}
             />
           </div>
@@ -516,8 +511,8 @@ export const FiltersPanel = ({
               stateId={filters.stateId}
               lgaId={filters.lgaId}
               floatingLabelFixed
-              hintText={intl.formatMessage(messages.selectLga)}
-              floatingLabelText={intl.formatMessage(messages.lga)}
+              hintText={intl.formatMessage(messages.selectPlaceholder).replace('[ENTITY]', countryLabels.lgaLabel)}
+              floatingLabelText={countryLabels.lgaLabel}
               style={{ verticalAlign: 'bottom' }}
             />
           </div>

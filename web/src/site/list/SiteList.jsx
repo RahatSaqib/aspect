@@ -42,14 +42,6 @@ export const messages = defineMessages({
     id: 'pages.SiteList.siteName',
     defaultMessage: 'Name',
   },
-  state: {
-    id: 'pages.SiteList.state',
-    defaultMessage: 'State',
-  },
-  lga: {
-    id: 'pages.SiteList.lga',
-    defaultMessage: 'County',
-  },
   totalDevices: {
     id: 'pages.SiteList.totalDevices',
     defaultMessage: 'Number of Devices',
@@ -130,11 +122,14 @@ const enhance = compose(
     }
   ),
   connect(
-    state => ({
-      items: state.site.items,
-      table: state.site.table,
-      userPermissions: state.user.jwt.permissions,
-    }),
+    state => () => {
+      return ({
+        items: state.site.items,
+        table: state.site.table,
+        userPermissions: state.user.jwt.permissions,
+        countryLabels: state.user.countrySettings.get('countryLabels'),
+      })
+    },
     bindActionCreators.bind(null, {
       fetchSites,
       exportSites,
@@ -215,6 +210,7 @@ const enhance = compose(
         FILTERS_CONFIG,
         this.props.userPermissions
       )
+      console.log(this.props)
       this.setState({
         reducedFilters,
       })
@@ -238,6 +234,7 @@ export const SiteList = ({
   location,
   table,
   items,
+  countryLabels,
   // --- injected by recompose ---
   onExcelClick,
   sortCol,
@@ -287,12 +284,12 @@ export const SiteList = ({
               },
               {
                 key: 'state',
-                label: intl.formatMessage(messages.state),
+                label: countryLabels.stateLabel,
                 sortable: true,
               },
               {
                 key: 'lga',
-                label: intl.formatMessage(messages.lga),
+                label: countryLabels.lgaLabel,
                 sortable: true,
               },
               {

@@ -51,6 +51,10 @@ const routes = [
           culture: Joi.string().required(),
           timezone: Joi.string().required(),
           displayPreferences: Joi.object(),
+          countrySettings: Joi.object().keys({
+            stateLabel: Joi.string(),
+            lgaLabel: Joi.string(),
+          }),
           deviceTokenId: Joi.string().allow(null),
         },
       },

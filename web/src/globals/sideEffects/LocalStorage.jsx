@@ -11,6 +11,14 @@ const AS_CLIENT_ID = 'asClientId'
 const AS_CULTURE = 'asCulture'
 const AS_TIMEZONE = 'asTimezoneId'
 const AS_DISPLAY_PREFERENCES = 'asDisplayPreferences'
+const AS_COUNTRY_SETTINGS = 'asCountrySettings'
+
+const DEFAULT_COUNTRY_SETTINGS = {
+  countryLabels: {
+    stateLabel: 'State',
+    lgaLabel: 'County',
+  }
+}
 
 const DEFAULT_DISPLAY_PREFERENCES = {
   dateFormat: 'yyyy-MM-dd',
@@ -21,8 +29,11 @@ const DEFAULT_DISPLAY_PREFERENCES = {
 export const getAspectAccess = () => localStorage.getItem(AS_ACCESS)
 
 const INITIAL_DISPLAY_PREFERENCES = Immutable.Map(DEFAULT_DISPLAY_PREFERENCES)
+const INITIAL_COUNTRY_SETTINGS = Immutable.Map(DEFAULT_COUNTRY_SETTINGS)
 let displayPreferences = INITIAL_DISPLAY_PREFERENCES
+let countrySettings = INITIAL_COUNTRY_SETTINGS
 export const getAspectDisplayPreferences = () => displayPreferences
+export const getAspectCountrySettings = () => countrySettings
 
 export const getAspectHydrateData = () => {
   const { result, data } = storageMappings.reduce(
@@ -70,6 +81,11 @@ const storageMappings = [
       displayPreferences = INITIAL_DISPLAY_PREFERENCES.merge(it)
       return JSON.stringify(displayPreferences.toJS())
     },
+  },
+  {
+    storageKey: AS_COUNTRY_SETTINGS,
+    propsKey: 'countrySettings',
+    load: it => Immutable.Map(JSON.parse(it)),
   },
 ]
 

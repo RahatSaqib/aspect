@@ -78,8 +78,8 @@ function loginRequest(requestedAt) {
 
 function loginSuccess(requestedAt, data) {
   return {
-    type: types.LOGIN_SUCCESS,
     requestedAt,
+    type: types.LOGIN_SUCCESS,
     data,
   }
 }
@@ -199,21 +199,22 @@ export function loginStart({ user, password }) {
         ),
       },
     })
-      .then(json =>
-        dispatch(
-          loginSuccess(requestedAt, {
-            access: json.access,
-            refresh: json.refresh,
-            clientId: json.clientId,
-            countryId: json.countryId,
-            culture: json.culture,
-            timezoneId: json.timezone,
-            displayPreferences: Immutable.Map(json.displayPreferences),
-          })
-        )
-      )
-      .then(() => dispatch(fetchFeatures()))
-      .catch(err => dispatch(loginFailure(err)))
+    .then(json => {
+      dispatch(
+        loginSuccess(requestedAt, {
+          access: json.access,
+          refresh: json.refresh,
+          clientId: json.clientId,
+          countryId: json.countryId,
+          culture: json.culture,
+          timezoneId: json.timezone,
+          displayPreferences: Immutable.Map(json.displayPreferences),
+          countrySettings: Immutable.Map(json.countrySettings)
+        })
+      )}
+    )
+    .then(() => dispatch(fetchFeatures()))
+    .catch(err => dispatch(loginFailure(err)))
   }
 }
 
@@ -453,6 +454,7 @@ export function acceptLicenseStart(licenseId) {
             culture: json.culture,
             timezoneId: json.timezone,
             displayPreferences: Immutable.Map(json.displayPreferences),
+            countrySettings: Immutable.Map(json.countrySettings),
             countryId: json.countryId,
           })
         )
@@ -482,6 +484,7 @@ const User = Immutable.Record({
   culture: 'en-US',
   timezoneId: 'Eastern Standard Time',
   displayPreferences: Immutable.Map(),
+  countrySettings: Immutable.Map(),
   drawerOpen: false,
   loggedOutReason: '',
   features: Immutable.Set(),

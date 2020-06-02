@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import { connect } from 'react-redux'
 import React from 'react'
 import { compose, lifecycle, withHandlers, pure } from 'recompose'
 import Button from '@material-ui/core/Button'
@@ -43,6 +44,11 @@ const validate = ({ jobFunctionId }, { intl }) => {
   return errors
 }
 const enhance = compose(
+  connect(
+    state => ({
+      countryLabels: state.user.countrySettings.get('countryLabels'),
+    }),
+  ),
   pure,
   lifecycle({
     componentWillMount() {
@@ -114,6 +120,8 @@ export const JobAssignmentForm = ({
   assignments,
   loadedAssignments,
   onDeleteAssignment,
+  // --- injected by recompose ---
+  countryLabels
 }) => {
   const { formatMessage } = intl
   const baseProps = {
@@ -166,7 +174,7 @@ export const JobAssignmentForm = ({
               onStateIdChange={onStateIdChange}
               countryId={values.countryId}
               stateId={values.stateId}
-              floatingLabelText={formatMessage(messages.state)}
+              floatingLabelText={countryLabels.stateLabel}
             />
             <LgaSelectField
               {...baseProps}
@@ -174,7 +182,7 @@ export const JobAssignmentForm = ({
               countryId={values.countryId}
               stateId={values.stateId}
               lgaId={values.lgaId}
-              floatingLabelText={formatMessage(messages.lga)}
+              floatingLabelText={countryLabels.lgaLabel}
             />
             <SiteSelectField
               {...baseProps}

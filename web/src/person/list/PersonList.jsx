@@ -121,6 +121,7 @@ const enhance = compose(
       items: state.person.items,
       table: state.person.table,
       userPermissions: state.user.jwt.permissions,
+      countryLabels: state.user.countrySettings.get('countryLabels'),
     }),
     bindActionCreators.bind(null, {
       fetchPersons,
@@ -228,6 +229,7 @@ export const PersonList = ({
   onRowClick,
   reducedFilters,
   showNewContactPage,
+  countryLabels,
 }) => {
   const AddNewButton = requirePermissions({
     permissions: ['person:edit', 'person:admin'],
@@ -287,12 +289,12 @@ export const PersonList = ({
                 },
                 {
                   key: 'state',
-                  label: intl.formatMessage(messages.state),
+                  label: countryLabels.stateLabel,
                   sortable: true,
                 },
                 {
                   key: 'lga',
-                  label: intl.formatMessage(messages.lga),
+                  label: countryLabels.lgaLabel,
                   sortable: true,
                 },
                 {

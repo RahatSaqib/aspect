@@ -130,7 +130,10 @@ export class LocationSelector extends PureComponent {
       lgaIdFieldName,
       selectedCountryId,
       selectedStateId,
+      countrySettings,
     } = this.props
+
+    console.log(countrySettings)
 
     const countriesLoading = loading || countries.loading
     const countriesDisabled = countriesLoading || countries.items.isEmpty()

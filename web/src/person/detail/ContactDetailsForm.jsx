@@ -125,11 +125,14 @@ const enhance = compose(
         }))
         .toJS()
 
+      const countryLabels = state.user.countrySettings.get('countryLabels')
+
       return {
         personTags,
         isNew,
         partnerList,
         countries,
+        countryLabels,
       }
     },
     {
@@ -282,6 +285,7 @@ export const ContactDetailsForm = ({
   contactDetails,
   personTags,
   onPersonTagsChange,
+  countryLabels,
   isNew,
 }) => (
   <form onSubmit={handleSubmit} className={cssClasses('Form')}>
@@ -422,7 +426,7 @@ export const ContactDetailsForm = ({
             countryId={values.countryId}
             stateId={values.stateId}
             floatingLabelFixed
-            floatingLabelText={intl.formatMessage(messages.state)}
+            floatingLabelText={countryLabels.stateLabel}
           />
           <LgaSelectField
             className={cssClasses('GeographyDropdown')}
@@ -432,7 +436,7 @@ export const ContactDetailsForm = ({
             stateId={values.stateId}
             lgaId={values.lgaId}
             floatingLabelFixed
-            floatingLabelText={intl.formatMessage(messages.lga)}
+            floatingLabelText={countryLabels.lgaLabel}
           />
         </div>
         <TextField

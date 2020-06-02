@@ -181,6 +181,7 @@ async function authenticate(request) {
 
   const accessToken = await getAccessToken(user, clientType)
   const displayPreferences = await getDisplayPreferences(user)
+  const countrySettings = await getCountrySettings(user)
 
   return {
     access: accessToken,
@@ -192,7 +193,26 @@ async function authenticate(request) {
     displayPreferences,
     countryId: user.countryId,
     deviceTokenId,
+    countrySettings,
   }
+}
+
+async function getCountrySettings({ countryId }) {
+  const { stateLabel, lgaLabel } = await query('Get country labels for user')
+    .from('Country')
+    .where({
+      id: countryId,
+    })
+    .first('stateLabel', 'lgaLabel')
+
+  const settings = {
+    countryLabels: {
+      stateLabel: stateLabel || 'State',
+      lgaLabel: lgaLabel || 'LGA',
+    },
+  }
+  console.log(settings)
+  return settings
 }
 
 function setRefreshToken({
