@@ -270,7 +270,7 @@ function onResultLogged({ resultId }, { messageContext }) {
       } = result
       if (
         diseaseId &&
-        reliableCaseExternalIdTemplate &&
+        (reliableCaseExternalIdTemplate || unreliableCaseExternalIdTemplate) &&
         (resultCategory1Reportable || resultCategory2Reportable)
       ) {
         let { reliableCaseExternalId: caseExternalId } =
@@ -294,8 +294,9 @@ function onResultLogged({ resultId }, { messageContext }) {
               externalId: caseExternalId,
               partnerId,
               diseaseId,
+              reliable: isReliableCaseId,
             },
-            !existingCaseId && isReliableCaseId,
+            !existingCaseId,
             updatedBy
           )
           // If no case was found or created, use the case already assigned to the result
@@ -318,7 +319,7 @@ function onResultLogged({ resultId }, { messageContext }) {
           )
           // If the case number for the result has changed to an unknown case number
           //   update the case number on the existing case
-          if (!otherCaseId || otherCaseId === caseId) {
+          if (isReliableCaseId && (!otherCaseId || otherCaseId === caseId)) {
             await updateCase(
               { id: caseId },
               {
@@ -330,7 +331,10 @@ function onResultLogged({ resultId }, { messageContext }) {
           }
           // If the case ID for the result has changed
           //   update the case ID on the result
-          if (existingCaseId !== caseId) {
+          if (
+            (isReliableCaseId && existingCaseId !== caseId) ||
+            (!isReliableCaseId && !existingCaseId && otherCaseId)
+          ) {
             await knex('Result')
               .where('id', resultId)
               .update({ patientCaseId: otherCaseId })

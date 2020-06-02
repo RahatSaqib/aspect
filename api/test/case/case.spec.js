@@ -18,7 +18,6 @@ const {
 } = require('../../src/case/service')
 const { createMessageContext, waitForAction } = require('../utils/mqUtils')
 const { caseAdded, caseUpdated } = require('../../src/case/actions')
-const { assayToId } = require('../../src/shared/dictionary')
 const { createResult } = require('../result/result_utils')
 
 const server = supertest.agent('http://localhost:8080')
@@ -294,18 +293,17 @@ describe('case/service', () => {
       return lastCaseUpdatedOn
     }
 
-    async function getCaseExternalIdFromResultId(resultId) {
-      const { caseExternalId } =
-        (await knex('Result as r')
-          .join('PatientCase as c', 'r.patientCaseId', 'c.id')
-          .where('r.id', resultId)
-          .first('c.externalId as caseExternalId')) || {}
-      return caseExternalId
+    async function getCaseFromResultId(resultId) {
+      return knex('Result as r')
+        .join('PatientCase as c', 'r.patientCaseId', 'c.id')
+        .where('r.id', resultId)
+        .first('c.*')
     }
 
     async function getResultCategoryDeviceTypeAndAssay(
       reportable = 1,
-      caseIdTemplateLike
+      reliableCaseIdTemplateLike,
+      unreliableCaseIdTemplateLike
     ) {
       const {
         resultCategoryId,
@@ -317,14 +315,31 @@ describe('case/service', () => {
         .join('DeviceType as dt', 'a.deviceTypeId', 'dt.id')
         .where('pa.partnerId', partnerId)
         .andWhere(function () {
-          if (caseIdTemplateLike) {
+          if (reliableCaseIdTemplateLike) {
             this.where(
               'pa.reliableCaseExternalIdTemplate',
               'LIKE',
-              caseIdTemplateLike
+              reliableCaseIdTemplateLike
+            )
+            if (unreliableCaseIdTemplateLike) {
+              this.andWhere(
+                'pa.unreliableCaseExternalIdTemplate',
+                'LIKE',
+                unreliableCaseIdTemplateLike
+              )
+            }
+          } else if (!unreliableCaseIdTemplateLike) {
+            this.whereNull('pa.reliableCaseExternalIdTemplate').andWhere(
+              function () {
+                this.whereNull('pa.reliableCaseExternalIdTemplate')
+              }
             )
           } else {
-            this.whereNull('pa.reliableCaseExternalIdTemplate')
+            this.where(
+              'pa.unreliableCaseExternalIdTemplate',
+              'LIKE',
+              unreliableCaseIdTemplateLike
+            )
           }
         })
         .andWhere('rca.reportable', reportable)
@@ -340,7 +355,7 @@ describe('case/service', () => {
       }
     }
 
-    it('Should not automatically create or update a case when no case ID template is specified for the disease', async () => {
+    it('Should not automatically create or update a case when no case ID template is specified for the assay', async () => {
       const {
         resultCategoryId,
         deviceTypeExternalId,
@@ -362,8 +377,8 @@ describe('case/service', () => {
         {},
         true
       )
-      const caseExternalIdBefore = await getCaseExternalIdFromResultId(resultId)
-      assert.isNotOk(caseExternalIdBefore)
+      const caseBefore = await getCaseFromResultId(resultId)
+      assert.isNotOk(caseBefore)
       const casesLastUpdatedOnBefore = await getLastCaseUpdatedOn()
       await onResultLogged({ resultId }, mockMessageContext())
       const casesLastUpdatedOnAfter = await getLastCaseUpdatedOn()
@@ -371,11 +386,11 @@ describe('case/service', () => {
         casesLastUpdatedOnBefore.toISOString(),
         casesLastUpdatedOnAfter.toISOString()
       )
-      const caseExternalIdAfter = await getCaseExternalIdFromResultId(resultId)
-      assert.isNotOk(caseExternalIdAfter)
+      const caseAfter = await getCaseFromResultId(resultId)
+      assert.isNotOk(caseAfter)
     })
 
-    describe('when case ID template is specified', () => {
+    describe('when a reliable case ID template is specified', () => {
       it("should automatically create a case when the case doesn't exist", async () => {
         const {
           resultCategoryId,
@@ -399,15 +414,11 @@ describe('case/service', () => {
           {},
           true
         )
-        const caseExternalIdBefore = await getCaseExternalIdFromResultId(
-          resultId
-        )
-        assert.isNotOk(caseExternalIdBefore)
+        const caseBefore = await getCaseFromResultId(resultId)
+        assert.isNotOk(caseBefore)
         await onResultLogged({ resultId }, mockMessageContext())
-        const caseExternalIdAfter = await getCaseExternalIdFromResultId(
-          resultId
-        )
-        assert.equal(caseExternalIdAfter, caseExternalId)
+        const caseAfter = await getCaseFromResultId(resultId)
+        assert.equal(caseAfter.externalId, caseExternalId)
       })
 
       it('should automatically move the result to another case', async () => {
@@ -436,7 +447,7 @@ describe('case/service', () => {
         const resultId = await createResult(
           partnerId,
           deviceTypeExternalId,
-          'Sputum',
+          'Plasma',
           assayExternalId,
           otherUserId,
           {
@@ -447,10 +458,8 @@ describe('case/service', () => {
           {},
           true
         )
-        const caseExternalIdBefore = await getCaseExternalIdFromResultId(
-          resultId
-        )
-        assert.equal(caseExternalIdBefore, oldCaseExternalId)
+        const caseBefore = await getCaseFromResultId(resultId)
+        assert.equal(caseBefore.externalId, oldCaseExternalId)
         const newCaseExternalId = `NEW-CASE-${new Date().getTime()}`
         await knex('PatientCase').insert({
           externalId: newCaseExternalId,
@@ -467,10 +476,59 @@ describe('case/service', () => {
             formData: JSON.stringify({ caseId: newCaseExternalId }),
           })
         await onResultLogged({ resultId }, mockMessageContext())
-        const caseExternalIdAfter = await getCaseExternalIdFromResultId(
-          resultId
+        const caseAfter = await getCaseFromResultId(resultId)
+        assert.equal(caseAfter.externalId, newCaseExternalId)
+      })
+
+      it('should automatically update the case number', async () => {
+        const {
+          resultCategoryId,
+          deviceTypeExternalId,
+          assayExternalId,
+        } = await getResultCategoryDeviceTypeAndAssay(
+          1,
+          '%result.formData.caseId%'
         )
-        assert.equal(caseExternalIdAfter, newCaseExternalId)
+        const { diseaseId } = await knex('Assay as a')
+          .join('AssayType as at', 'a.assayTypeId', 'at.id')
+          .where('a.externalId', assayExternalId)
+          .first('at.diseaseId')
+        const oldCaseExternalId = `OLD-CASE-${new Date().getTime()}`
+        const [caseId] = await knex('PatientCase').insert({
+          externalId: oldCaseExternalId,
+          createdOn: new Date(),
+          updatedOn: new Date(),
+          createdBy: otherUserId,
+          updatedBy: otherUserId,
+          partnerId,
+          diseaseId,
+        })
+        const resultId = await createResult(
+          partnerId,
+          deviceTypeExternalId,
+          'Plasma',
+          assayExternalId,
+          otherUserId,
+          {
+            formData: JSON.stringify({ caseId: oldCaseExternalId }),
+            resultCategory1: resultCategoryId,
+            patientCaseId: caseId,
+          },
+          {},
+          true
+        )
+        const caseBefore = await getCaseFromResultId(resultId)
+        assert.equal(caseBefore.externalId, oldCaseExternalId)
+        const newCaseExternalId = `NEW-CASE-${new Date().getTime()}`
+        await knex('Result')
+          .where('id', resultId)
+          .update({
+            formData: JSON.stringify({ caseId: newCaseExternalId }),
+          })
+        await onResultLogged({ resultId }, mockMessageContext())
+        const caseAfter = await getCaseFromResultId(resultId)
+        assert.equal(caseAfter.externalId, newCaseExternalId)
+        assert.equal(caseAfter.id, caseId)
       })
 
       describe("and the result category assay isn't reportable", () => {
@@ -491,7 +549,7 @@ describe('case/service', () => {
           resultId = await createResult(
             partnerId,
             deviceTypeExternalId,
-            'Sputum',
+            'Plasma',
             assayExternalId,
             otherUserId,
             {
@@ -501,21 +559,17 @@ describe('case/service', () => {
             {},
             true
           )
-          const caseExternalIdBefore = await getCaseExternalIdFromResultId(
-            resultId
-          )
-          assert.isNotOk(caseExternalIdBefore)
+          const caseBefore = await getCaseFromResultId(resultId)
+          assert.isNotOk(caseBefore)
         })
 
-        it("should not automatically create a case when the result isn't reportable", async () => {
+        it('should NOT automatically create a case', async () => {
           await onResultLogged({ resultId }, mockMessageContext())
-          const caseExternalIdAfter = await getCaseExternalIdFromResultId(
-            resultId
-          )
-          assert.isNotOk(caseExternalIdAfter)
+          const caseAfter = await getCaseFromResultId(resultId)
+          assert.isNotOk(caseAfter)
         })
 
-        it("should not automatically move the result to another case when the result isn't reportable", async () => {
+        it('should NOT automatically move the result to another case', async () => {
           const { diseaseId } = await knex('Assay as a')
             .join('AssayType as at', 'a.assayTypeId', 'at.id')
             .where('a.externalId', assayExternalId)
@@ -544,93 +598,186 @@ describe('case/service', () => {
               formData: JSON.stringify({ caseId: newCaseExternalId }),
               patientCaseId: moveFromCaseId,
             })
-          const caseExternalIdBefore = await getCaseExternalIdFromResultId(
-            resultId
-          )
-          assert.equal(caseExternalIdBefore, oldCaseExternalId)
+          const caseBefore = await getCaseFromResultId(resultId)
+          assert.equal(caseBefore.externalId, oldCaseExternalId)
           await onResultLogged({ resultId }, mockMessageContext())
-          const caseExternalIdAfter = await getCaseExternalIdFromResultId(
-            resultId
-          )
-          assert.equal(caseExternalIdAfter, oldCaseExternalId)
+          const caseAfter = await getCaseFromResultId(resultId)
+          assert.equal(caseAfter.externalId, oldCaseExternalId)
         })
       })
+    })
 
-      describe('extracting case ID from the test order sequence ID in the raw ASTM message', () => {
-        let abbottM2000PlasmaHivVlId
-        let partnerAbbottM2000PlasmaHivVLCaseIdTemplate
-        const astmResultExtractSequenceNumber =
-          "{{extractValueFromRegexCaptureGroup result.rawData expression='O\\|\\d*\\|(\\w+)\\|' groupNumber=1}}"
-        before(async () => {
-          abbottM2000PlasmaHivVlId = await assayToId('abbottM2000PlasmaHivVL')
-          ;({
-            reliableCaseExternalIdTemplate: partnerAbbottM2000PlasmaHivVLCaseIdTemplate,
-          } = await knex('PartnerAssay')
-            .where({
-              partnerId,
-              assayId: abbottM2000PlasmaHivVlId,
-            })
-            .first('reliableCaseExternalIdTemplate'))
-          await knex('PartnerAssay')
-            .where({ partnerId, assayId: abbottM2000PlasmaHivVlId })
-            .update({
-              reliableCaseExternalIdTemplate: astmResultExtractSequenceNumber,
-            })
-        })
-
-        after(async () => {
-          await knex('PartnerAssay')
-            .where({ partnerId, assayId: abbottM2000PlasmaHivVlId })
-            .update({
-              reliableCaseExternalIdTemplate:
-                partnerAbbottM2000PlasmaHivVLCaseIdTemplate || null,
-            })
-        })
-
-        it("should be able to determine the result's case ID from a the raw data sent to Aspect", async () => {
-          const {
-            resultCategoryId,
-            deviceTypeExternalId,
-            assayExternalId,
-          } = await knex('Assay as a')
-            .join('ResultCategoryAssay as rca', 'a.id', 'rca.assayId')
-            .join('DeviceType as dt', 'a.deviceTypeId', 'a.deviceTypeId')
-            .andWhere('a.id', abbottM2000PlasmaHivVlId)
-            .andWhere('rca.reportable', 1)
-            .first(
-              'rca.resultCategoryId',
-              'dt.externalId as deviceTypeExternalId',
-              'a.externalId as assayExternalId'
-            )
-          const resultId = await createResult(
-            partnerId,
-            deviceTypeExternalId,
-            'Sputum',
-            assayExternalId,
-            otherUserId,
-            {
-              resultCategory1: resultCategoryId,
-              rawData: `H|\\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312
+    describe('when an unreliable case ID template is specified', () => {
+      it("should automatically create a case when the case doesn't exist", async () => {
+        const {
+          resultCategoryId,
+          deviceTypeExternalId,
+          assayExternalId,
+        } = await getResultCategoryDeviceTypeAndAssay(
+          1,
+          '',
+          "%extractValueFromRegexCaptureGroup result.rawData expression='O%"
+        )
+        const caseExternalId = `CASE-${new Date().getTime()}`
+        const resultId = await createResult(
+          partnerId,
+          deviceTypeExternalId,
+          'Plasma',
+          assayExternalId,
+          otherUserId,
+          {
+            resultCategory1: resultCategoryId,
+            rawData: `H|\\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312
 P|1
-O|1|SYS123655|SYS123655^vl110^H12|^^^1mLDBSvOP^HIV1.0mlDBS|||||||||||||||||||||F
+O|1|${caseExternalId}|SYS123655^vl110^H12|^^^1mLDBSvOP^HIV1.0mlDBS|||||||||||||||||||||F
 R|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|Not detected|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695
 R|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^I|Target not detected|||||F||bryan^bryan||20190825165311|275021695
 R|3|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|-1.00|cycle number||||F||bryan^bryan||20190825165311|275021695
 L|1`,
-            },
-            {},
-            true
-          )
-          const caseExternalIdBefore = await getCaseExternalIdFromResultId(
-            resultId
-          )
-          assert.isNotOk(caseExternalIdBefore)
-          await onResultLogged({ resultId }, mockMessageContext())
-          const caseExternalIdAfter = await getCaseExternalIdFromResultId(
-            resultId
-          )
-          assert.equal(caseExternalIdAfter, 'SYS123655')
+          },
+          {},
+          true
+        )
+        const caseBefore = await getCaseFromResultId(resultId)
+        assert.isNotOk(caseBefore)
+        await onResultLogged({ resultId }, mockMessageContext())
+        const caseAfter = await getCaseFromResultId(resultId)
+        assert.equal(caseAfter.externalId, caseExternalId)
+      })
+
+      it('should NOT automatically move the result to another case', async () => {
+        const {
+          resultCategoryId,
+          deviceTypeExternalId,
+          assayExternalId,
+        } = await getResultCategoryDeviceTypeAndAssay(
+          1,
+          '',
+          "%extractValueFromRegexCaptureGroup result.rawData expression='O%"
+        )
+        const { diseaseId } = await knex('Assay as a')
+          .join('AssayType as at', 'a.assayTypeId', 'at.id')
+          .where('a.externalId', assayExternalId)
+          .first('at.diseaseId')
+        const oldCaseExternalId = `OLD-CASE-${new Date().getTime()}`
+        const [moveFromCaseId] = await knex('PatientCase').insert({
+          externalId: oldCaseExternalId,
+          createdOn: new Date(),
+          updatedOn: new Date(),
+          createdBy: otherUserId,
+          updatedBy: otherUserId,
+          partnerId,
+          diseaseId,
         })
+        const resultId = await createResult(
+          partnerId,
+          deviceTypeExternalId,
+          'Plasma',
+          assayExternalId,
+          otherUserId,
+          {
+            resultCategory1: resultCategoryId,
+            patientCaseId: moveFromCaseId,
+            rawData: `H|\\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312
+P|1
+O|1|${oldCaseExternalId}|SYS123655^vl110^H12|^^^1mLDBSvOP^HIV1.0mlDBS|||||||||||||||||||||F
+R|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|Not detected|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695
+R|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^I|Target not detected|||||F||bryan^bryan||20190825165311|275021695
+R|3|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|-1.00|cycle number||||F||bryan^bryan||20190825165311|275021695
+L|1`,
+          },
+          {},
+          true
+        )
+        const caseBefore = await getCaseFromResultId(resultId)
+        assert.equal(caseBefore.externalId, oldCaseExternalId)
+        const newCaseExternalId = `NEW-CASE-${new Date().getTime()}`
+        await knex('PatientCase').insert({
+          externalId: newCaseExternalId,
+          createdOn: new Date(),
+          updatedOn: new Date(),
+          createdBy: otherUserId,
+          updatedBy: otherUserId,
+          partnerId,
+          diseaseId,
+        })
+        await knex('Result')
+          .where('id', resultId)
+          .update({
+            rawData: `H|\\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312
+P|1
+O|1|${newCaseExternalId}|SYS123655^vl110^H12|^^^1mLDBSvOP^HIV1.0mlDBS|||||||||||||||||||||F
+R|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|Not detected|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695
+R|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^I|Target not detected|||||F||bryan^bryan||20190825165311|275021695
+R|3|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|-1.00|cycle number||||F||bryan^bryan||20190825165311|275021695
+L|1`,
+          })
+        await onResultLogged({ resultId }, mockMessageContext())
+        const caseAfter = await getCaseFromResultId(resultId)
+        assert.equal(caseAfter.externalId, oldCaseExternalId)
+      })
+
+      it('should NOT update an existing case number', async () => {
+        const {
+          resultCategoryId,
+          deviceTypeExternalId,
+          assayExternalId,
+        } = await getResultCategoryDeviceTypeAndAssay(
+          1,
+          '',
+          "%extractValueFromRegexCaptureGroup result.rawData expression='O%"
+        )
+        const { diseaseId } = await knex('Assay as a')
+          .join('AssayType as at', 'a.assayTypeId', 'at.id')
+          .where('a.externalId', assayExternalId)
+          .first('at.diseaseId')
+        const oldCaseExternalId = `OLD-CASE-${new Date().getTime()}`
+        const [moveFromCaseId] = await knex('PatientCase').insert({
+          externalId: oldCaseExternalId,
+          createdOn: new Date(),
+          updatedOn: new Date(),
+          createdBy: otherUserId,
+          updatedBy: otherUserId,
+          partnerId,
+          diseaseId,
+        })
+        const resultId = await createResult(
+          partnerId,
+          deviceTypeExternalId,
+          'Plasma',
+          assayExternalId,
+          otherUserId,
+          {
+            resultCategory1: resultCategoryId,
+            patientCaseId: moveFromCaseId,
+            rawData: `H|\\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312
+P|1
+O|1|${oldCaseExternalId}|SYS123655^vl110^H12|^^^1mLDBSvOP^HIV1.0mlDBS|||||||||||||||||||||F
+R|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|Not detected|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695
+R|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^I|Target not detected|||||F||bryan^bryan||20190825165311|275021695
+R|3|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|-1.00|cycle number||||F||bryan^bryan||20190825165311|275021695
+L|1`,
+          },
+          {},
+          true
+        )
+        const caseBefore = await getCaseFromResultId(resultId)
+        assert.equal(caseBefore.externalId, oldCaseExternalId)
+        const newCaseExternalId = `NEW-CASE-${new Date().getTime()}`
+        await knex('Result')
+          .where('id', resultId)
+          .update({
+            rawData: `H|\\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312
+P|1
+O|1|${newCaseExternalId}|SYS123655^vl110^H12|^^^1mLDBSvOP^HIV1.0mlDBS|||||||||||||||||||||F
+R|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|Not detected|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695
+R|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^I|Target not detected|||||F||bryan^bryan||20190825165311|275021695
+R|3|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|-1.00|cycle number||||F||bryan^bryan||20190825165311|275021695
+L|1`,
+          })
+        await onResultLogged({ resultId }, mockMessageContext())
+        const caseAfter = await getCaseFromResultId(resultId)
+        assert.equal(caseAfter.externalId, oldCaseExternalId)
       })
     })
   })
