@@ -160,6 +160,10 @@ async function renderExcelTemplate({
 
   // process all sheets
   _.each(worksheets, async (worksheet, sheetIndex) => {
+    if (extension === 'csv' && sheetIndex > 0) {
+      return
+    }
+
     // replace placeholders, i.e. <Dates>, <States>, etc in the header
     _.each(replacements, ({ placeholder, value }) => {
       replaceSubstringInCell(worksheet, placeholder, value)
@@ -237,6 +241,21 @@ async function renderExcelTemplate({
 
       // remove pattern row and insert rows from patternRowNumber
       worksheet.spliceRows(patternRowNumber, 1, ...rows)
+
+      if (extension === 'csv') {
+        // get all header values from last item of array allHeaderRows
+        const headerRow = allHeaderRows[allHeaderRows.length - 1]
+        const headerValues = []
+        headerRow.eachCell(cell => {
+          headerValues.push(cell.value)
+        })
+
+        // put headers in 1st row
+        worksheet.getRow(1).values = headerValues
+
+        // remove all rows between 1st row and table body (remove table headers too)
+        worksheet.spliceRows(2, patternRowNumber - 1 - 1)
+      }
     }
   })
 
