@@ -616,7 +616,7 @@ describe('case/service', () => {
         } = await getResultCategoryDeviceTypeAndAssay(
           1,
           '',
-          "%extractValueFromRegexCaptureGroup result.rawData expression='O%"
+          "%extractValueFromRegexCaptureGroup result.rawData expression='^O%"
         )
         const caseExternalId = `CASE-${new Date().getTime()}`
         const resultId = await createResult(
@@ -653,7 +653,7 @@ L|1`,
         } = await getResultCategoryDeviceTypeAndAssay(
           1,
           '',
-          "%extractValueFromRegexCaptureGroup result.rawData expression='O%"
+          "%extractValueFromRegexCaptureGroup result.rawData expression='^O%"
         )
         const { diseaseId } = await knex('Assay as a')
           .join('AssayType as at', 'a.assayTypeId', 'at.id')
@@ -725,7 +725,7 @@ L|1`,
         } = await getResultCategoryDeviceTypeAndAssay(
           1,
           '',
-          "%extractValueFromRegexCaptureGroup result.rawData expression='O%"
+          "%extractValueFromRegexCaptureGroup result.rawData expression='^O%"
         )
         const { diseaseId } = await knex('Assay as a')
           .join('AssayType as at', 'a.assayTypeId', 'at.id')

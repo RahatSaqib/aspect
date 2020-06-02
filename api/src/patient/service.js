@@ -208,7 +208,7 @@ function onResultLogged({ resultId }, { messageContext }) {
         sampleId,
         existingCaseId,
         existingPatientId,
-        existingCaseExternalId,
+        existingPatientExternalId,
         patientData,
         updatedBy,
         partnerId,
@@ -248,7 +248,7 @@ function onResultLogged({ resultId }, { messageContext }) {
             patientId = existingPatientId
           }
           // Do nothing if the result's sample & case is already assigned to a patient and the patient ID has not changed
-          if (existingCaseExternalId === patientExternalId) {
+          if (existingPatientExternalId === patientExternalId) {
             return
           }
           // Lookup if any other patients have the same patient ID

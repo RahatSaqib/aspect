@@ -416,6 +416,7 @@ describe('patient/service', () => {
       describe("and the result category assay isn't reportable", () => {
         let resultId
         let assayExternalId
+        let patientExternalId
 
         before(async () => {
           const resultCategoryDeviceTypeAndAssay = await getResultCategoryDeviceTypeAndAssay(
@@ -427,7 +428,7 @@ describe('patient/service', () => {
             deviceTypeExternalId,
           } = resultCategoryDeviceTypeAndAssay
           ;({ assayExternalId } = resultCategoryDeviceTypeAndAssay)
-          const patientExternalId = `PATIENT-${new Date().getTime()}`
+          patientExternalId = `PATIENT-${new Date().getTime()}`
           resultId = await createResult(
             partnerId,
             deviceTypeExternalId,
@@ -445,13 +446,13 @@ describe('patient/service', () => {
           assert.isNotOk(patientBefore.externalId)
         })
 
-        it('should NOT automatically create a patient', async () => {
+        it('should automatically create a patient', async () => {
           await onResultLogged({ resultId }, mockMessageContext())
           const patientAfter = await getPatientFromResultId(resultId)
-          assert.isNotOk(patientAfter.externalId)
+          assert.equal(patientAfter.externalId, patientExternalId)
         })
 
-        it('should NOT automatically move the sample & case to another patient', async () => {
+        it('should automatically move the sample & case to another patient', async () => {
           const oldPatientExternalId = `OLD-PATIENT-${new Date().getTime()}`
           const [moveFromPatientId] = await knex('Patient').insert({
             externalId: oldPatientExternalId,
@@ -487,7 +488,7 @@ describe('patient/service', () => {
           assert.equal(patientBefore.externalId, oldPatientExternalId)
           await onResultLogged({ resultId }, mockMessageContext())
           const patientAfter = await getPatientFromResultId(resultId)
-          assert.equal(patientAfter.externalId, oldPatientExternalId)
+          assert.equal(patientAfter.externalId, newPatientExternalId)
         })
       })
     })
@@ -501,7 +502,7 @@ describe('patient/service', () => {
         } = await getResultCategoryDeviceTypeAndAssay(
           1,
           '',
-          "%extractValueFromRegexCaptureGroup result.rawData expression='P%"
+          "%extractValueFromRegexCaptureGroup result.rawData expression='^P%"
         )
         const patientExternalId = `PATIENT-${new Date().getTime()}`
         const resultId = await createResult(
@@ -538,7 +539,7 @@ L|1`,
         } = await getResultCategoryDeviceTypeAndAssay(
           1,
           '',
-          "%extractValueFromRegexCaptureGroup result.rawData expression='P%"
+          "%extractValueFromRegexCaptureGroup result.rawData expression='^P%"
         )
         const oldPatientExternalId = `OLD-PATIENT-${new Date().getTime()}`
         const [moveFromPatientId] = await knex('Patient').insert({
@@ -581,6 +582,7 @@ L|1`,
           createdBy: otherUserId,
           updatedBy: otherUserId,
           partnerId,
+          data: '{}',
         })
         await knex('Result')
           .where('id', resultId)
@@ -606,7 +608,7 @@ L|1`,
         } = await getResultCategoryDeviceTypeAndAssay(
           1,
           '',
-          "%extractValueFromRegexCaptureGroup result.rawData expression='P%"
+          "%extractValueFromRegexCaptureGroup result.rawData expression='^P%"
         )
         const oldPatientExternalId = `OLD-PATIENT-${new Date().getTime()}`
         const [moveFromPatientId] = await knex('Patient').insert({

@@ -22,8 +22,8 @@ async function seed(knex) {
     .pluck('id')
   await knex('PartnerAssay').whereIn('assayId', abbottM2000AssayIds).update({
     unreliableCaseExternalIdTemplate:
-      "{{extractValueFromRegexCaptureGroup result.rawData expression='O\\|\\d*\\|([^\\|;]+)\\|' groupNumber=1}}",
+      "{{extractValueFromRegexCaptureGroup result.rawData expression='^O\\|\\d*\\|([^\\|;]+)\\|' groupNumber=1}}",
     unreliablePatientExternalIdTemplate:
-      "{{extractValueFromRegexCaptureGroup result.rawData expression='P\\|\\d*\\|([^\\|;]+)\\|' groupNumber=1}}",
+      "{{extractValueFromRegexCaptureGroup result.rawData expression='^P\\|\\d*\\|([^\\|;]+)\\|' groupNumber=1}}",
   })
 }
