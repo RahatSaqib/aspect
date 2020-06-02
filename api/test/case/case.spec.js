@@ -350,7 +350,7 @@ describe('case/service', () => {
       const resultId = await createResult(
         partnerId,
         deviceTypeExternalId,
-        'Sputum',
+        'Plasma',
         assayExternalId,
         otherUserId,
         {
@@ -389,7 +389,7 @@ describe('case/service', () => {
         const resultId = await createResult(
           partnerId,
           deviceTypeExternalId,
-          'Sputum',
+          'Plasma',
           assayExternalId,
           otherUserId,
           {

@@ -273,14 +273,14 @@ function onResultLogged({ resultId }, { messageContext }) {
         reliableCaseExternalIdTemplate &&
         (resultCategory1Reportable || resultCategory2Reportable)
       ) {
-        let { caseExternalId } =
+        let { reliableCaseExternalId: caseExternalId } =
           (await processUsingDataSourceQuery(
             { ...result, reliableCaseExternalIdTemplate },
             ['reliableCaseExternalIdTemplate']
           )) || {}
         const isReliableCaseId = !!caseExternalId
         if (!caseExternalId) {
-          ;({ caseExternalId } =
+          ;({ unreliableCaseExternalId: caseExternalId } =
             (await processUsingDataSourceQuery(
               { ...result, unreliableCaseExternalIdTemplate },
               ['unreliableCaseExternalIdTemplate']
