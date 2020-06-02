@@ -9,6 +9,22 @@
       ]
     },
     {
+      "name": "router",
+      "activities": [
+        "view",
+        "edit",
+        "admin"
+      ]
+    },
+    {
+      "name": "account",
+      "activities": [
+        "view",
+        "edit",
+        "admin"
+      ]
+    },
+    {
       "name": "demo",
       "activities": [
         "admin"
