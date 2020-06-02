@@ -1,5 +1,4 @@
 const Boom = require('@hapi/boom')
-const { format } = require('date-fns')
 const Promise = require('bluebird')
 const { knex } = require('../db')
 
@@ -7,6 +6,7 @@ const { getUser } = require('../auth/service')
 const { getReportDetails, listReports } = require('./service')
 const {
   exportData,
+  getBaseReplacements,
   renderExcelTemplate,
   respondFile,
 } = require('../shared/excel')
@@ -180,13 +180,9 @@ async function exportReports(request, reply) {
     // TODO: use i18n string, because `exportData()` uses locale file templates with all labels translated
     defaultNoDataMessage: 'No data',
   }
-  const replacements = [
-    {
-      placeholder: '<date>',
-      value: format(new Date(), 'yyyy-MM-dd'),
-    },
-  ]
-  return exportData(request, reply, sheetData, 'reports', { replacements })
+  return exportData(request, reply, sheetData, 'reports', {
+    replacements: getBaseReplacements(),
+  })
 }
 module.exports = {
   createReport,
