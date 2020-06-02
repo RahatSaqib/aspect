@@ -248,11 +248,9 @@ async function renderExcelTemplate({
 
 // ----------------------------------------------------------------------------------------------
 async function exportData(request, reply, sheetData, scope, options) {
-  // const { replacements, columns } = options
-  const {
-    auth,
-    query: { format: extension },
-  } = request
+  const { auth } = request
+  const extension = request.query.format || 'xlsx'
+
   const { culture } = await getUser(auth.credentials.name)
   const dataBuffer = await renderExcelTemplate({
     culture,
