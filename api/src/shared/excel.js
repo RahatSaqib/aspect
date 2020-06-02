@@ -1,4 +1,5 @@
 const _ = require('lodash')
+const { format } = require('date-fns')
 const excel = require('exceljs') // see https://www.npmjs.com/package/exceljs
 const { getContentType } = require('./io')
 const { getUser } = require('../auth/service')
@@ -107,12 +108,40 @@ async function readTemplateFile(
 }
 
 // ----------------------------------------------------------------------------------------------
+function getBaseReplacements() {
+  const replacements = [
+    {
+      placeholder: '<date>',
+      value: format(new Date(), 'yyyy-MM-dd'),
+    },
+  ]
+  return replacements
+}
+
+// ----------------------------------------------------------------------------------------------
+function getCellStyle(cell) {
+  if (cell.master) {
+    return cell.master.style
+  }
+  return cell.style
+}
+
+// ----------------------------------------------------------------------------------------------
+function setCellStyle(cell, style) {
+  _.forEach(style, (styleValue, styleName) => {
+    cell[styleName] = styleValue
+  })
+}
+
+// ----------------------------------------------------------------------------------------------
 async function renderExcelTemplate({
   culture,
+  columns = [], // dynamic columns to generate at run-time and append at the end of predefined header columns
   data, // i.e. data[0] is array of items for 1st sheet, data[1] for 2nd sheet, etc
-  extension,
+  extension, // xlsx
   replacements = [],
   templateFolderPath,
+  dataSelector,
 }) {
   const lang = culture.split('-')[0].toLowerCase()
 
@@ -137,11 +166,11 @@ async function renderExcelTemplate({
     })
 
     // position cell where data table begins
-    const cells = getCellsByValue(worksheet, '<Table>')
+    const tableTokenCells = getCellsByValue(worksheet, '<Table>')
 
-    if (cells.length > 0) {
+    if (tableTokenCells.length > 0) {
       // empty cells
-      cells.forEach(cell => {
+      tableTokenCells.forEach(cell => {
         cell.value = ''
       })
 
@@ -149,13 +178,13 @@ async function renderExcelTemplate({
       if (!dataRows) return
 
       // use 1st cell only (actually, should not be more than one)
-      const cellTableToken = cells[0]
+      const cellTableToken = tableTokenCells[0]
 
-      // get table Header row(s) - for future conditional formatting
-      const headerRows = getHeaderRows(worksheet, cellTableToken)
-      //
-      const patternRowNumber = cellTableToken.row + 1 + headerRows.length
+      const allHeaderRows = getHeaderRows(worksheet, cellTableToken)
+      const headerRow = allHeaderRows[0]
+      const patternRowNumber = cellTableToken.row + 1 + allHeaderRows.length
       const patternRow = worksheet.getRow(patternRowNumber)
+
       // field names for data table - order of array elements should match columns order in template file
       const fieldNames = []
       patternRow.eachCell(cell => {
@@ -168,11 +197,16 @@ async function renderExcelTemplate({
         }
       })
 
+      // append dynamic columns if specified
+      if (columns.length > 0) {
+        addColumnsToHeader(worksheet, columns, headerRow, allHeaderRows.length)
+      }
+
       // fill in array 'rows'
       let rows = []
       if (dataRows.length > 0) {
         rows = dataRows.map((dataRow, rowIndex) => {
-          return fieldNames.map(fieldName => {
+          const valuesInPredefinedColumns = fieldNames.map(fieldName => {
             if (fieldName === '#') {
               return rowIndex + 1
             }
@@ -183,6 +217,14 @@ async function renderExcelTemplate({
             }
             return value
           })
+          let valuesInDynamicColumns = []
+          if (columns.length > 0 && dataSelector) {
+            const normalizedValues = dataSelector(dataRow)
+            valuesInDynamicColumns = columns.map(
+              column => normalizedValues[column.key]
+            )
+          }
+          return [...valuesInPredefinedColumns, ...valuesInDynamicColumns]
         })
       } else {
         rows = [
@@ -206,7 +248,7 @@ async function renderExcelTemplate({
 
 // ----------------------------------------------------------------------------------------------
 async function exportData(request, reply, sheetData, scope, options) {
-  const { replacements = [] } = options
+  // const { replacements, columns } = options
   const {
     auth,
     query: { format: extension },
@@ -217,14 +259,98 @@ async function exportData(request, reply, sheetData, scope, options) {
     templateFolderPath: `export/${scope}`,
     data: [sheetData],
     extension,
-    replacements,
+    ...options,
   })
   return respondFile({ dataBuffer, extension, fileName: scope, reply })
 }
 
 // ----------------------------------------------------------------------------------------------
+function addColumnsToHeader(worksheet, columns, headerRow, totalHeaderRows) {
+  const lastPredefinedCellNumber = headerRow.cellCount
+  const lastPredefinedCellStyle = getCellStyle(
+    headerRow.getCell(lastPredefinedCellNumber)
+  )
+
+  // keep styles of all predefined cells in 1st header rows
+  const cellStyles = []
+  const headerRowCells = []
+  headerRow.eachCell((cell, cellNumber) => {
+    headerRowCells.push({
+      cell,
+      cellNumber,
+      totalMerged: 1,
+    })
+
+    let { value } = cell
+    if (cellNumber > 1) {
+      const isMerged = cell !== cell.master
+      if (isMerged) {
+        const masterCell = headerRowCells.find(c => c.cell === cell.master)
+        if (masterCell) {
+          masterCell.totalMerged += 1
+        }
+      }
+      value = isMerged ? undefined : value
+    }
+    cellStyles.push({ ...cell.style, value })
+  })
+
+  // get existing values
+  const headerRowValues = []
+  headerRow.eachCell(cell => headerRowValues.push(cell.value))
+
+  // update row
+  headerRow.values = [
+    ...headerRowValues,
+    ...columns.map(column => column.header),
+  ]
+  headerRow.commit()
+
+  // loop all cells and merge cells (if needed) and set styles
+  headerRow.eachCell((cell, cellNumber) => {
+    const cellStyle =
+      cellNumber <= lastPredefinedCellNumber
+        ? cellStyles[cellNumber - 1]
+        : lastPredefinedCellStyle
+
+    if (cellNumber <= lastPredefinedCellNumber) {
+      const refCell = headerRowCells.find(c => c.cellNumber === cellNumber)
+      const { totalMerged } = refCell
+      if (totalMerged > 1) {
+        // merge by start row, start column, end row, end column (equivalent to K10:M12)
+        worksheet.unMergeCells(
+          cell.row,
+          cellNumber,
+          cell.row,
+          cellNumber + totalMerged - 1
+        )
+        worksheet.mergeCells(
+          cell.row,
+          cellNumber,
+          cell.row,
+          cellNumber + totalMerged - 1
+        )
+      }
+    } else if (totalHeaderRows > 1) {
+      // merge by start row, start column, end row, end column (equivalent to K10:M12)
+      worksheet.mergeCells(
+        cell.row,
+        cellNumber,
+        cell.row + totalHeaderRows - 1,
+        cellNumber
+      )
+    }
+
+    if (cell === cell.master) {
+      setCellStyle(cell, cellStyle)
+    }
+  })
+}
+
+// ----------------------------------------------------------------------------------------------
 module.exports = {
   exportData,
+  getBaseReplacements,
   getCellsBySubstring,
   getCellsByValue,
   readExcelFile,
