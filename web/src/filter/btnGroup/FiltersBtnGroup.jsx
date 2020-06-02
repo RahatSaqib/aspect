@@ -271,7 +271,7 @@ const buttonBy = {
     intl.formatMessage(messages.sampleOriginSite, {
       sampleOriginSiteName: siteItemsById
         .find(
-          it => it.get('id') === sampleOriginSiteId,
+          it => it.get('name') === sampleOriginSiteId,
           EMPTY_CONTEXT,
           EMPTY_MAP
         )
