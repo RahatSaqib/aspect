@@ -65,7 +65,7 @@ const enhance = compose(
       'device:view',
       'device:edit',
       'dashboard:site',
-      'dashboard:device'
+      'dashboard:device',
     ],
   }),
   connect(

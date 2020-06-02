@@ -343,7 +343,6 @@ export function resetPasswordEnterPassword(resetPasswordToken, newPassword) {
   }
 }
 
-
 function requestLicense() {
   return {
     type: types.REQUEST_LICENSE,

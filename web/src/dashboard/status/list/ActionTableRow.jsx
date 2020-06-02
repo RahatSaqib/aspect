@@ -15,16 +15,19 @@ const cssClasses = classnames.bind(require('./ActionTableRow.css'))
 const enhance = _.identity
 
 const ActionLinkButton = requirePermissions({
-  permissions: ['browse:view','device:view',
-  'result:view',
-  'person:view',
-  'site:view',
-  'inventory:view',
-  'router:view',
-  'reporter:view',
-  'notification:view',
-  'report:view',
-  'deviceApiKey:view'],
+  permissions: [
+    'browse:view',
+    'device:view',
+    'result:view',
+    'person:view',
+    'site:view',
+    'inventory:view',
+    'router:view',
+    'reporter:view',
+    'notification:view',
+    'report:view',
+    'deviceApiKey:view',
+  ],
 })(AspectButton)
 
 const ActionTableRow = ({

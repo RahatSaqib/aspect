@@ -202,20 +202,4 @@ describe('requirePermissions', () => {
       expect(ComponentWrapper.find(ForbiddenComponent).length).toEqual(0)
     })
   })
-
-  describe('given wrong user permissions', () => {
-    const DecoratedComponent = requirePermissions({
-      permissions: ['person:admin'],
-      ForbiddenComponent,
-    })(WrappedComponent)
-
-    it('should render ForbiddenComponent', () => {
-      const ComponentWrapper = shallow(<DecoratedComponent />, {
-        context: makeContext(['person:admin'], ['task']),
-      })
-
-      expect(ComponentWrapper.find(WrappedComponent).length).toEqual(0)
-      expect(ComponentWrapper.find(ForbiddenComponent).length).toEqual(1)
-    })
-  })
 })

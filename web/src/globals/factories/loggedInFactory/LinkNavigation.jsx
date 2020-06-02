@@ -50,17 +50,20 @@ export const LinkNavigation = ({
       {
         href: '/operational-data',
         label: 'Operational  Data',
-        requiredPermissions: ['operationalData:view'],
+        requiredPermissions: ['operationalData:view', 'operationalData:admin'],
       },
       {
         href: '/clinical-indicators',
         label: 'Clinical Indicators',
-        requiredPermissions: ['clinicalIndicators:view'],
+        requiredPermissions: [
+          'clinicalIndicators:admin',
+          'clinicalIndicators:view',
+        ],
       },
       {
         href: '/browse',
         label: 'Browse',
-        requiredPermissions: ['browse:view'],
+        requiredPermissions: ['browse:view', 'browse:admin'],
       },
       {
         href: '/reports',
@@ -70,10 +73,10 @@ export const LinkNavigation = ({
       {
         href: '/manage',
         label: 'Manage',
-        requiredPermissions: ['manage:view'],
+        requiredPermissions: ['manage:view', 'manage:admin'],
       },
     ],
-    userPermissions,
+    userPermissions
   )
   return (
     <nav

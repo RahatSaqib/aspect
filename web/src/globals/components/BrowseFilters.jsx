@@ -90,10 +90,7 @@ const enhance = compose(
   ),
   lifecycle({
     componentWillMount() {
-      const reducedNav = reduceNavLinks(
-        navigations,
-        this.props.userPermissions,
-      )
+      const reducedNav = reduceNavLinks(navigations, this.props.userPermissions)
       this.setState({
         reducedSource: reducedNav,
       })
