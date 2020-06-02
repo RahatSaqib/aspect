@@ -11,7 +11,7 @@ async function exportDevices(request, reply) {
 
   const issueCategories = await issueCategoryIntlToShortname()
   // calculated and normalized props
-  const dataRows =
+  const dataRows =  
     scope === 'devices'
       ? data.map(item => ({
           ...item,
