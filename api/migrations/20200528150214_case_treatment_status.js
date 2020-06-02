@@ -1,3 +1,4 @@
+const { addAuditFields } = require('./utils')
 module.exports = require('../src/db').migration(up, down)
 
 async function up(knex) {
@@ -25,10 +26,7 @@ async function up(knex) {
       .onDelete('SET NULL')
     tbl.string('data').nullable()
     tbl.string('method').nullable()
-    tbl.datetime('updatedOn').defaultTo(knex.fn.now())
-    tbl.datetime('createdOn').defaultTo(knex.fn.now())
-    tbl.integer('createdBy').unsigned().index().references('id').inTable('User')
-    tbl.integer('updatedBy').unsigned().index().references('id').inTable('User')
+    addAuditFields(tbl)
   })
 
   await knex.schema.alterTable('PatientCase', result => {
@@ -46,6 +44,6 @@ async function down(knex) {
     tbl.dropForeign('treatmentStatusLogId')
     tbl.dropColumn('treatmentStatusLogId')
   })
-  await knex.schema.dropTable('PatientCaseTreatmentStatus')
   await knex.schema.dropTable('PatientCaseTreatmentStatusLog')
+  await knex.schema.dropTable('PatientCaseTreatmentStatus')
 }
