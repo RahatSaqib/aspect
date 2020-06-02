@@ -324,6 +324,7 @@ function onResultLogged({ resultId }, { messageContext }) {
               { id: caseId },
               {
                 externalId: caseExternalId,
+                reliable: isReliableCaseId,
                 updatedBy,
                 updatedOn: new Date(),
               }
