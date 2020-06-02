@@ -211,7 +211,6 @@ async function getCountrySettings({ countryId }) {
       lgaLabel: lgaLabel || 'LGA',
     },
   }
-  console.log(settings)
   return settings
 }
 
@@ -843,4 +842,5 @@ module.exports = {
   lockedOutUser,
   clientTypes,
   getUserJobFunctions,
+  getCountrySettings,
 }

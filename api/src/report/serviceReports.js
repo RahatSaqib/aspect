@@ -5,7 +5,7 @@ const { format } = require('date-fns')
 const Promise = require('bluebird')
 const { knex } = require('../db')
 
-const { getUser } = require('../auth/service')
+const { getUser, getCountrySettings } = require('../auth/service')
 const { getReportDetails, listReports } = require('./service')
 const {
   generateReport,
@@ -87,6 +87,7 @@ async function getSheetData(request, sheet) {
 
 // ----------------------------------------------------------------------------------------------
 async function readTemplateFile(externalId, lang, langDefault) {
+  console.log(`templates/${externalId}/${lang}.xlsx`)
   return readExcelFile(`templates/${externalId}/${lang}.xlsx`).catch(error => {
     if (langDefault && lang !== langDefault) {
       return readExcelFile(`templates/${externalId}/${langDefault}.xlsx`)
@@ -149,6 +150,7 @@ async function getLgaNamesString({ countryId, stateId, lgaId }) {
 // ----------------------------------------------------------------------------------------------
 function replaceSubstringInCell(worksheet, token, value) {
   getCellsBySubstring(worksheet, token).forEach(cell => {
+    console.log(cell.value)
     cell.value = _.replace(cell.value, token, value)
   })
 }
@@ -159,12 +161,13 @@ async function createReport(request, reply) {
   const { externalId } = params
   const { sheets, fileName } = await getReportDetails(auth, externalId)
   // language
-  const { culture } = await getUser(auth.credentials.name)
-  const lang = culture.split('-')[0].toLowerCase()
+  const user = await getUser(auth.credentials.name)
+  const lang = user.culture.split('-')[0].toLowerCase()
 
   // read file into workbook
   const workbook = await readTemplateFile(externalId, lang, LANG_DEFAULT)
 
+  const { countryLabels } = await getCountrySettings(user)
   const dateRangeString = getDateRangeString(query)
   const statesString = await getStateNames(query)
   const lgasString = await getLgaNamesString(query)
@@ -187,12 +190,16 @@ async function createReport(request, reply) {
       return
     }
 
+    console.log(countryLabels)
+
     // get sheet
     const worksheet = worksheets[sheetIndex]
     // replace few placeholders in sheet header
     replaceSubstringInCell(worksheet, '<Dates>', dateRangeString)
     replaceSubstringInCell(worksheet, '<States>', statesString)
     replaceSubstringInCell(worksheet, '<Lgas>', lgasString)
+    replaceSubstringInCell(worksheet, '<State_Label>', countryLabels.stateLabel)
+    replaceSubstringInCell(worksheet, '<Lga_Label>', countryLabels.lgaLabel)
 
     // position cell where data table begins
     const cells = getCellsByValue(worksheet, '<Table>')
