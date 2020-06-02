@@ -1390,7 +1390,6 @@ async function addStockLevelUpdateActions(
         knex.raw('max(ii.updatedOn) as updatedOn'),
         knex.raw('sum(coalesce(ii.quantityOnHand, 0)) as totalInStock')
       )
-    console.log('inventoryItems', inventoryItems.length)
 
     // set consumable id, totalIn Stock on StockInHand issues
     const inventoryItemsBySite = _.groupBy(inventoryItems, 'siteId')
@@ -1426,7 +1425,6 @@ async function addStockLevelUpdateActions(
         }
       }
     })
-    console.log('inventoryItemsBySite', inventoryItemsBySite.length)
     // Add consumables by site that aren't in issues
     _.forEach(
       inventoryItemsBySite,
@@ -1460,7 +1458,6 @@ async function addStockLevelUpdateActions(
         })
       }
     )
-    console.log('inventoryItemsBySitea after', inventoryItemsBySite.length)
   }
 }
 

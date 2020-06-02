@@ -29,6 +29,15 @@
       {
         "module": "browse",
         "activity": "view"
+      },
+      {
+        "module": "account",
+        "activity": "admin"
+      },
+      {
+        "module":"dashboard",
+        "activity":"summary"
+
       }
     ]
   },
@@ -62,6 +71,15 @@
       {
         "module": "browse",
         "activity": "view"
+      },
+      {
+        "module": "account",
+        "activity": "admin"
+      },
+      {
+        "module":"dashboard",
+        "activity":"summary"
+
       }
     ]
   },
@@ -91,6 +109,15 @@
       {
         "module": "browse",
         "activity": "view"
+      },
+      {
+        "module": "account",
+        "activity": "edit"
+      },
+      {
+        "module":"dashboard",
+        "activity":"summary"
+
       }
     ]
   },
@@ -124,6 +151,19 @@
           {
               "module": "browse",
               "activity": "view"
+          },
+          {
+            "module":"dashboard",
+            "activity":"summary"
+
+          },
+          {
+            "module": "account",
+            "activity": "view"
+          },
+          {
+            "module": "reporter",
+            "activity": "view"
           }
       ]
   }
