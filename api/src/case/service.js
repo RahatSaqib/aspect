@@ -316,9 +316,14 @@ function onResultLogged({ resultId }, { messageContext }) {
               diseaseId,
               reliable: isReliableCaseId,
             },
+<<<<<<< HEAD
             !existingCaseId && isReliableCaseId,
             updatedBy,
             { messageContext }
+=======
+            !existingCaseId,
+            updatedBy
+>>>>>>> Use reliable and unreliable case ID templates
           )
           // If no case was found or created, use the case already assigned to the result
           if (!caseId) {
