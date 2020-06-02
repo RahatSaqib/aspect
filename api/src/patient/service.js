@@ -205,7 +205,6 @@ function onResultLogged({ resultId }, { messageContext }) {
         existingCaseId,
         existingPatientId,
         existingPatientExternalId,
-        existingCaseExternalId,
         patientData,
         updatedBy,
         partnerId,
