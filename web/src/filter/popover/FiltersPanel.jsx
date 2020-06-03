@@ -33,7 +33,7 @@ const enhance = compose(
   connect(
     state => ({
       countryLabels: state.user.countrySettings.get('countryLabels'),
-    }),
+    })
   ),
   withState('isShown', 'setIsShown', false),
   withHandlers({

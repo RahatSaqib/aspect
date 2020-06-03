@@ -446,18 +446,18 @@ export function acceptLicenseStart(licenseId) {
       },
     })
       .then(json =>
-        dispatch(
-          acceptLicenseSuccess(requestedAt, {
-            access: json.access,
-            refresh: json.refresh,
-            clientId: json.clientId,
-            culture: json.culture,
-            timezoneId: json.timezone,
-            displayPreferences: Immutable.Map(json.displayPreferences),
-            countrySettings: Immutable.Map(json.countrySettings),
-            countryId: json.countryId,
-          })
-        )
+          dispatch(
+            acceptLicenseSuccess(requestedAt, {
+              access: json.access,
+              refresh: json.refresh,
+              clientId: json.clientId,
+              culture: json.culture,
+              timezoneId: json.timezone,
+              displayPreferences: Immutable.Map(json.displayPreferences),
+              countrySettings: Immutable.Map(json.countrySettings),
+              countryId: json.countryId,
+            })
+          )
       )
       .then(() => dispatch(fetchFeatures()))
       .catch(err => dispatch(acceptLicenseFailure(err)))

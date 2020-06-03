@@ -299,6 +299,8 @@ async function refreshToken(request) {
       deviceTokenId,
     })
 
+  const countrySettings = await getCountrySettings(data)
+
   const accessToken = await getAccessToken(data)
   return {
     access: accessToken,
@@ -307,6 +309,7 @@ async function refreshToken(request) {
     clientType,
     countryId: data.countryId,
     deviceTokenId,
+    countrySettings,
   }
 }
 
