@@ -12,6 +12,7 @@ const {
 const { isNumeric } = require('../../shared/string')
 const { astmE1394MessagesToJson } = require('../../shared/astm')
 const { deviceSeen } = require('../../device/actions')
+const { resultLogged } = require('../../result/actions')
 const { SynchronousDataProcessor } = require('./_base')
 const {
   allAssayToId,
@@ -1403,6 +1404,7 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
           rawMessage: result.rawData,
           resultId: result.id,
         })
+        this.messageContext.dispatch(resultLogged(result.id, resultDeviceLogId))
         this.response.deviceLogIds = [
           ...this.response.deviceLogIds,
           resultDeviceLogId,

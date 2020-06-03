@@ -1,3 +1,4 @@
+const Promise = require('bluebird')
 const { knex, filterParams, sortPageParams } = require('../db')
 const {
   getConstraints,
@@ -41,7 +42,7 @@ async function getCaseId(_case, createIfNonExistent, userId, messageContext) {
   if (!caseId && createIfNonExistent) {
     _case.createdBy = userId
     _case.updatedBy = userId
-    caseId = await addCase(_case)
+    caseId = await addCase(_case, messageContext)
   }
 
   return caseId
@@ -60,7 +61,7 @@ async function addCase(_case, { messageContext } = {}) {
     if (!messageContext.caseAdded) {
       messageContext = messageContext.bindActionCreators({ caseAdded })
     }
-    messageContext.caseAdded(caseId)
+    await messageContext.caseAdded(caseId)
   }
 
   return caseId
@@ -86,7 +87,7 @@ async function updateCase(whereFields, updateFields, { messageContext } = {}) {
     if (!messageContext.caseUpdated) {
       messageContext = messageContext.bindActionCreators({ caseUpdated })
     }
-    caseIds.forEach(id => messageContext.caseUpdated(id))
+    await Promise.each(caseIds, async id => messageContext.caseUpdated(id))
   }
   return caseIds
 }
@@ -173,11 +174,11 @@ async function getCases({ query, auth }) {
 }
 
 async function onCaseAdded({ caseId }, { messageContext }) {
-  onCaseChanged(caseId, messageContext, true)
+  return onCaseChanged(caseId, messageContext, true)
 }
 
 async function onCaseUpdated({ caseId }, { messageContext }) {
-  onCaseChanged(caseId, messageContext, false)
+  return onCaseChanged(caseId, messageContext, false)
 }
 
 async function onCaseChanged(caseId, messageContext, isAdded) {
@@ -185,6 +186,30 @@ async function onCaseChanged(caseId, messageContext, isAdded) {
   const { deviceId } = messageContext
   const partnerPluginName = await getPartnerPluginName({ caseId })
   const deviceTypePluginName = await getDeviceTypePluginName(deviceId)
+  await messageContext.run(async knex => {
+    const { patientId: existingPatientIdForCase } = await knex('PatientCase')
+      .where('id', caseId)
+      .first('patientId')
+    const { patientId: patientIdFromLatestResult } =
+      (await knex('Result as r')
+        .join('Sample as s', 'r.sampleId', 's.id')
+        .orderBy('r.updatedOn', 'DESC')
+        .where('r.patientCaseId', caseId)
+        .andWhere(function () {
+          this.whereNotNull('s.patientId')
+        })
+        .first('s.patientId')) || {}
+    if (
+      patientIdFromLatestResult &&
+      patientIdFromLatestResult !== existingPatientIdForCase
+    ) {
+      await updateCase(
+        { id: caseId },
+        { patientId: patientIdFromLatestResult },
+        { messageContext }
+      )
+    }
+  })
   // exec plugin
   if (partnerPluginName || deviceTypePluginName) {
     const { loadPlugin } = require('../plugin/registration')
@@ -292,7 +317,8 @@ function onResultLogged({ resultId }, { messageContext }) {
               reliable: isReliableCaseId,
             },
             !existingCaseId,
-            updatedBy
+            updatedBy,
+            { messageContext }
           )
           // If no case was found or created, use the case already assigned to the result
           if (!caseId) {
@@ -310,7 +336,8 @@ function onResultLogged({ resultId }, { messageContext }) {
               partnerId,
             },
             false,
-            updatedBy
+            updatedBy,
+            { messageContext }
           )
           // If the case number for the result has changed to an unknown case number
           //   update the case number on the existing case
@@ -322,7 +349,8 @@ function onResultLogged({ resultId }, { messageContext }) {
                 reliable: isReliableCaseId,
                 updatedBy,
                 updatedOn: new Date(),
-              }
+              },
+              { messageContext }
             )
           }
           // If the case ID for the result has changed
