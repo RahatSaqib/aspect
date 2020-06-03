@@ -72,7 +72,7 @@ export const Reports = ({
 }) => {
   const HigherLevelReport = requirePermissions({
     permissions: ['dashboard:target'],
-  })(
+  })(() => (
     <Card className={className}>
       <div className={cssClasses('TitleContainer')}>
         <Title
@@ -162,7 +162,7 @@ export const Reports = ({
         </Button>
       </div>
     </Card>
-  )
+  ))
   return (
     (showHigherLevel && <HigherLevelReport />) || (
       <Card className={className}>

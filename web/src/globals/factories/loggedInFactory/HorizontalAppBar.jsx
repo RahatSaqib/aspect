@@ -13,7 +13,7 @@ import { FaUser } from 'react-icons/fa'
 import ConfluenceIcon from './ConfluenceIcon'
 import LinkNavigation from './LinkNavigation'
 import { closeDrawer, userRequestedLogout } from '../../../auth/AuthRedux'
-import { requirePermissions } from '../../../components/shared/requirePermissions'
+import requirePermissions from '../../../components/shared/requirePermissions'
 import IconMenu from '../../../components/shared/IconMenu'
 
 const cssClasses = classnames.bind(require('./index.css'))
@@ -45,9 +45,9 @@ const HorizontalAppBar = ({
 }) => {
   const Account = requirePermissions({
     permissions: ['account:view', 'account:admin'],
-  })(
+  })(() => (
     <MenuItem onClick={navigateCurrentAccountDetails}>Account Details</MenuItem>
-  )
+  ))
   return (
     <AppBar className={cssClasses('AppBar__appBar', 'AppBar__appBar--sm')}>
       <Toolbar>
