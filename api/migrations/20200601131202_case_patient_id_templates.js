@@ -45,6 +45,16 @@ async function up(knex) {
     tblPartnerDisease.dropColumn('caseExternalIdTemplate')
     tblPartnerDisease.dropColumn('canAutoAssignResultByCaseId')
   })
+
+  await knex.schema.alterTable('PatientCase', async tblPatientCase => {
+    tblPatientCase.integer('createdBy').unsigned().nullable().alter()
+    tblPatientCase.integer('updatedBy').unsigned().nullable().alter()
+  })
+
+  await knex.schema.alterTable('Patient', async tblPatientCase => {
+    tblPatientCase.integer('createdBy').unsigned().nullable().alter()
+    tblPatientCase.integer('updatedBy').unsigned().nullable().alter()
+  })
 }
 
 async function down(knex) {
@@ -124,5 +134,15 @@ async function down(knex) {
     tblPartnerAssay.dropColumn('unreliableCaseExternalIdTemplate')
     tblPartnerAssay.dropColumn('reliablePatientExternalIdTemplate')
     tblPartnerAssay.dropColumn('unreliablePatientExternalIdTemplate')
+  })
+
+  await knex.schema.alterTable('PatientCase', async tblPatientCase => {
+    tblPatientCase.integer('createdBy').unsigned().notNullable().alter()
+    tblPatientCase.integer('updatedBy').unsigned().notNullable().alter()
+  })
+
+  await knex.schema.alterTable('Patient', async tblPatientCase => {
+    tblPatientCase.integer('createdBy').unsigned().notNullable().alter()
+    tblPatientCase.integer('updatedBy').unsigned().notNullable().alter()
   })
 }

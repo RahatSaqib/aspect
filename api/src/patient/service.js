@@ -28,11 +28,6 @@ function validatePatientIdentifier(patient) {
 async function getPatientId(patient, createIfNonExistent, userId) {
   validatePatientIdentifier(patient)
 
-  if (createIfNonExistent && !userId)
-    throw new Error(
-      "For creating the patient if it doesn't exist, you should provide a userId"
-    )
-
   let { patientId } = (await knex('Patient')
     .where({
       externalId: patient.externalId,

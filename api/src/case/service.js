@@ -27,13 +27,8 @@ function validateCaseIdentifier(_case) {
  * @param  {int} userId (only necessary if createIfNonExistent is true) The userId that creates the case
  * @return {int} The case id
  */
-async function getCaseId(_case, createIfNonExistent, userId) {
+async function getCaseId(_case, createIfNonExistent, userId, messageContext) {
   validateCaseIdentifier(_case)
-
-  if (createIfNonExistent && !userId)
-    throw new Error(
-      "For creating the case if it doesn't exist, you should provide a userId"
-    )
 
   let { caseId } = (await knex('PatientCase')
     .where({
