@@ -169,7 +169,12 @@ async function createReport(request, reply) {
     ],
   })
 
-  return respondFile({ dataBuffer, extension: 'xlsx', fileName, reply })
+  return respondFile({
+    dataBuffer,
+    extension: 'xlsx',
+    fileNamePrefix: fileName,
+    reply,
+  })
 }
 
 // ----------------------------------------------------------------------------------------------

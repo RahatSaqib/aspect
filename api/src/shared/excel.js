@@ -78,9 +78,9 @@ async function respondFile({
   reply,
   dataBuffer,
   extension = 'xlsx',
-  fileName = 'report',
+  fileNamePrefix = 'report',
 }) {
-  const reportFileName = `${fileName}_${new Date().toISOString()}.${extension}`
+  const reportFileName = `${fileNamePrefix}_${new Date().toISOString()}.${extension}`
   return reply
     .response(dataBuffer)
     .encoding('binary')
@@ -278,7 +278,7 @@ async function exportData(request, reply, sheetData, scope, options) {
     extension,
     ...options,
   })
-  return respondFile({ dataBuffer, extension, fileName: scope, reply })
+  return respondFile({ dataBuffer, extension, fileNamePrefix: scope, reply })
 }
 
 // ----------------------------------------------------------------------------------------------
