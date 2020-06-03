@@ -1,6 +1,7 @@
 const supertest = require('supertest')
 const _ = require('lodash')
 const { assert } = require('chai')
+const Promise = require('bluebird')
 const {
   getFirstCase,
   getFirstPartnerId,
@@ -282,6 +283,9 @@ describe('case/service', () => {
       return {
         messageContext: {
           run: async callback => callback(knex),
+          bindActionCreators: () => {},
+          caseAdded: async () => Promise.resolve(),
+          caseUpdated: async () => Promise.resolve(),
         },
       }
     }
