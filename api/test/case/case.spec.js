@@ -53,9 +53,9 @@ describe('case/service', () => {
     return {
       createdBy: adminId,
       updatedBy: adminId,
-      partnerId,
       externalId,
       diseaseId,
+      partnerId,
     }
   }
 
@@ -139,10 +139,9 @@ describe('case/service', () => {
         })
         .set('Authorization', `Bearer ${accessToken}`)
 
-      const [quantity] = await knex('Case as ca')
-        .innerJoin('Result as r', 'ca.id', 'r.caseId')
+      const [quantity] = await knex('PatientCase as ca')
+        .innerJoin('Result as r', 'ca.id', 'r.patientCaseId')
         .innerJoin('Geography as g', 'r.geographyId', 'g.id')
-        .where('ca.partnerId', partnerId)
         .where('ca.externalId', 'like', `%${externalId}%`)
         .count()
 
@@ -250,7 +249,7 @@ describe('case/service', () => {
       ;({ id: latestResultIdBeforeTests } = await knex('Result')
         .max('id as id')
         .first())
-      ;({ id: latestCaseIdBeforeTests } = await knex('Case')
+      ;({ id: latestCaseIdBeforeTests } = await knex('PatientCase')
         .max('id as id')
         .first())
       ;({ id: latestDeviceIdBeforeTests } = await knex('Device')
@@ -272,7 +271,7 @@ describe('case/service', () => {
     after(async () => {
       await knex('Result').where('id', '>', latestResultIdBeforeTests).del()
       await knex('Sample').where('id', '>', latestSampleIdBeforeTests).del()
-      await knex('Case').where('id', '>', latestCaseIdBeforeTests).del()
+      await knex('PatientCase').where('id', '>', latestCaseIdBeforeTests).del()
       await knex('DeviceLog')
         .where('deviceId', '>', latestDeviceIdBeforeTests)
         .del()
@@ -289,7 +288,7 @@ describe('case/service', () => {
     }
 
     async function getLastCaseUpdatedOn() {
-      const { lastCaseUpdatedOn } = await knex('Case')
+      const { lastCaseUpdatedOn } = await knex('PatientCase')
         .max('updatedOn as lastCaseUpdatedOn')
         .first()
       return lastCaseUpdatedOn
@@ -298,7 +297,7 @@ describe('case/service', () => {
     async function getCaseExternalIdFromResultId(resultId) {
       const { caseExternalId } =
         (await knex('Result as r')
-          .join('Case as c', 'r.caseId', 'c.id')
+          .join('PatientCase as c', 'r.patientCaseId', 'c.id')
           .where('r.id', resultId)
           .first('c.externalId as caseExternalId')) || {}
       return caseExternalId
@@ -422,13 +421,13 @@ describe('case/service', () => {
           .where('a.externalId', assayExternalId)
           .first('at.diseaseId')
         const oldCaseExternalId = `OLD-CASE-${new Date().getTime()}`
-        const [moveFromCaseId] = await knex('Case').insert({
+        const [moveFromCaseId] = await knex('PatientCase').insert({
           externalId: oldCaseExternalId,
-          partnerId,
           createdOn: new Date(),
           updatedOn: new Date(),
           createdBy: otherUserId,
           updatedBy: otherUserId,
+          partnerId,
           diseaseId,
         })
         const resultId = await createResult(
@@ -440,7 +439,7 @@ describe('case/service', () => {
           {
             formData: JSON.stringify({ caseId: oldCaseExternalId }),
             resultCategory1: resultCategoryId,
-            caseId: moveFromCaseId,
+            patientCaseId: moveFromCaseId,
           },
           {},
           true
@@ -450,13 +449,13 @@ describe('case/service', () => {
         )
         assert.equal(caseExternalIdBefore, oldCaseExternalId)
         const newCaseExternalId = `NEW-CASE-${new Date().getTime()}`
-        await knex('Case').insert({
+        await knex('PatientCase').insert({
           externalId: newCaseExternalId,
-          partnerId,
           createdOn: new Date(),
           updatedOn: new Date(),
           createdBy: otherUserId,
           updatedBy: otherUserId,
+          partnerId,
           diseaseId,
         })
         await knex('Result')
@@ -519,30 +518,28 @@ describe('case/service', () => {
             .where('a.externalId', assayExternalId)
             .first('at.diseaseId')
           const oldCaseExternalId = `OLD-CASE-${new Date().getTime()}`
-          const [moveFromCaseId] = await knex('Case').insert({
+          const [moveFromCaseId] = await knex('PatientCase').insert({
             externalId: oldCaseExternalId,
-            partnerId,
             createdOn: new Date(),
             updatedOn: new Date(),
             createdBy: otherUserId,
             updatedBy: otherUserId,
+            partnerId,
             diseaseId,
           })
           const newCaseExternalId = `NEW-CASE-${new Date().getTime()}`
-          await knex('Case').insert({
+          await knex('PatientCase').insert({
             externalId: newCaseExternalId,
-            partnerId,
-            createdOn: new Date(),
-            updatedOn: new Date(),
             createdBy: otherUserId,
             updatedBy: otherUserId,
+            partnerId,
             diseaseId,
           })
           await knex('Result')
             .where('id', resultId)
             .update({
               formData: JSON.stringify({ caseId: newCaseExternalId }),
-              caseId: moveFromCaseId,
+              patientCaseId: moveFromCaseId,
             })
           const caseExternalIdBefore = await getCaseExternalIdFromResultId(
             resultId
