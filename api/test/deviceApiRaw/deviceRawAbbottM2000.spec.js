@@ -8,6 +8,7 @@ const { getUtcTime } = require('../../src/shared/date')
 const { randomToken } = require('../../src/deviceApi/apiKey')
 const { readTextFile } = require('../../src/shared/io')
 const { waitAsyncComplete } = require('../utils/generatorFunctionUtils')
+const { waitForIdle } = require('../utils/mqUtils')
 
 const server = supertest.agent('http://localhost:8080')
 const { assert, expect } = chai
@@ -524,6 +525,7 @@ aa.`
         },
       })
     })
+    await waitForIdle()
     patientCase = await knex('PatientCase')
       .where('externalId', '36008/19')
       .first()
