@@ -525,7 +525,7 @@ aa.`
         },
       })
     })
-    await waitForIdle()
+    await waitForIdle(2000)
     patientCase = await knex('PatientCase')
       .where('externalId', '36008/19')
       .first()
