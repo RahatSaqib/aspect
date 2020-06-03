@@ -271,7 +271,7 @@ const buttonBy = {
     intl.formatMessage(messages.sampleCollectionSite, {
       sampleCollectionSiteName: siteItemsById
         .find(
-          it => it.get('id') === sampleCollectionSiteId,
+          it => it.get('name') === sampleCollectionSiteId,
           EMPTY_CONTEXT,
           EMPTY_MAP
         )
