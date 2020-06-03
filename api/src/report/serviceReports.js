@@ -87,7 +87,6 @@ async function getSheetData(request, sheet) {
 
 // ----------------------------------------------------------------------------------------------
 async function readTemplateFile(externalId, lang, langDefault) {
-  console.log(`templates/${externalId}/${lang}.xlsx`)
   return readExcelFile(`templates/${externalId}/${lang}.xlsx`).catch(error => {
     if (langDefault && lang !== langDefault) {
       return readExcelFile(`templates/${externalId}/${langDefault}.xlsx`)
@@ -189,8 +188,6 @@ async function createReport(request, reply) {
       boomError = dataRows
       return
     }
-
-    console.log(countryLabels)
 
     // get sheet
     const worksheet = worksheets[sheetIndex]

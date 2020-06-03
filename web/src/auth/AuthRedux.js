@@ -199,7 +199,7 @@ export function loginStart({ user, password }) {
         ),
       },
     })
-    .then(json => {
+    .then(json =>
       dispatch(
         loginSuccess(requestedAt, {
           access: json.access,
@@ -211,7 +211,7 @@ export function loginStart({ user, password }) {
           displayPreferences: Immutable.Map(json.displayPreferences),
           countrySettings: Immutable.Map(json.countrySettings)
         })
-      )}
+      )
     )
     .then(() => dispatch(fetchFeatures()))
     .catch(err => dispatch(loginFailure(err)))
