@@ -29,8 +29,8 @@ const routes = [
           patientOrCaseId: Joi.string()
             .allow('')
             .description('Filter for patient/case ID'),
-          sampleOriginSite: Joi.number().description(
-            'Filter for sample origin site ID'
+          sampleOriginSite: Joi.string().description(
+            'Filter for sample origin site site name'
           ),
           diseaseId: Joi.number()
             .allow('')

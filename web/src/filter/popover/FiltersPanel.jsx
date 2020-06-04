@@ -691,7 +691,7 @@ export const FiltersPanel = ({
             <SiteAutoCompleteField
               name="sampleOriginSite"
               value={filters.sampleOriginSite || ''}
-              onSiteIdChange={onSampleOriginSiteChange}
+              onSiteNameChange={onSampleOriginSiteChange}
               floatingLabelFixed
               hintText={intl.formatMessage(messages.enterSampleOriginSite)}
               floatingLabelText={intl.formatMessage(messages.sampleOriginSite)}
