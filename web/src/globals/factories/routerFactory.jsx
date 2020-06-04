@@ -216,7 +216,11 @@ export const routerFactory = () => props => (
         render={
           renderRedirectToLoginOr(props) ||
           renderRedirectToLicenseOr(props) ||
-          renderRedirectToNotFound(props, ['account:view', 'account:edit']) ||
+          renderRedirectToNotFound(props, [
+            'account:view',
+            'account:edit',
+            'account:admin',
+          ]) ||
           renderAccountDetails
         }
       />
@@ -248,7 +252,7 @@ export const routerFactory = () => props => (
         render={
           renderRedirectToLoginOr(props) ||
           renderRedirectToLicenseOr(props) ||
-          renderRedirectToNotFound(props, ['reports:view', 'reports:admin']) ||
+          renderRedirectToNotFound(props, ['report:view', 'report:admin']) ||
           renderReports
         }
       />

@@ -97,26 +97,20 @@ async function seed(knex) {
 
   await upsertJobFunctionPermission(knex, jobFunctionIdAdmin, [
     modules.demo.admin,
+    modules.assay.admin,
     modules.deviceApiKey.admin,
-    modules.issue.admin,
-    modules.inventory.admin,
-    modules.task.admin,
     modules.patient.admin,
     modules.case.admin,
+    modules.site.admin,
+    modules.person.admin,
+    modules.result.admin,
+    modules.case.admin,
     modules.dashboard.summary,
-    modules.dashboard.result,
     modules.account.admin,
-
+    modules.device.admin,
     modules.treatmentStatus.admin,
-    modules.dashboard.actionInventoryLevelUpdate,
-    modules.dashboard.report,
-    modules.dashboard.siteFilter,
-    modules.dashboard.action,
-    modules.dashboard.target,
-    modules.dashboard.device,
-    modules.dashboard.inventory,
-    modules.dashboard.site,
     modules.router.admin,
+    modules.reporter.admin,
   ])
 
   const { id: jobFunctionIdRegionalOfficer } = await knex('JobFunction')

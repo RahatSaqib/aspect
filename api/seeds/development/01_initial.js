@@ -5195,9 +5195,6 @@ async function seed(knex) {
     modules.browse.view,
     modules.reporter.admin,
     modules.treatmentStatus.admin,
-    modules.dashboard.actionInventoryLevelUpdate,
-    modules.dashboard.report,
-    modules.dashboard.siteFilter,
     modules.dashboard.action,
     modules.dashboard.target,
     modules.dashboard.result,
@@ -5208,6 +5205,7 @@ async function seed(knex) {
     modules.case.admin,
     modules.account.admin,
     modules.router.admin,
+    modules.manage.view,
   ])
   await upsertJobFunctionPermission(knex, jobFunctionIdManager, [
     modules.treatmentStatus.admin,
