@@ -149,7 +149,6 @@ async function getLgaNamesString({ countryId, stateId, lgaId }) {
 // ----------------------------------------------------------------------------------------------
 function replaceSubstringInCell(worksheet, token, value) {
   getCellsBySubstring(worksheet, token).forEach(cell => {
-    console.log(cell.value)
     cell.value = _.replace(cell.value, token, value)
   })
 }
