@@ -14,7 +14,7 @@ const {
   listSitesForSelectList,
 } = require('./service')
 
-const { getSitesReport } = require('./serviceReports')
+const { exportSites } = require('./serviceReports')
 
 function listSitesBaseConfig() {
   return {
@@ -61,7 +61,7 @@ const routes = [
   {
     method: 'GET',
     path: '/site/export',
-    handler: getSitesReport,
+    handler: exportSites,
     config: {
       description: 'Export Site List into Excel or CSV',
       notes: 'Filtered and sorted list of sites',

@@ -168,7 +168,7 @@ function getResultTreatmentStatus(response) {
   }
 }
 
-async function exportResults(query, auth) {
+async function getResultsForExport(query, auth) {
   const selectFields = _.clone(SELECT_COMMON_FIELDS)
   const sortableFields = _.clone(SORT_FIELDS)
 
@@ -2682,7 +2682,7 @@ module.exports = {
   updateTransferNotification,
   listResults,
   getResultsForReport,
-  exportResults,
+  getResultsForExport,
   downloadResultsList,
   showResult,
   getResultForStringTemplateProcessing,
