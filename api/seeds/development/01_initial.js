@@ -5195,7 +5195,6 @@ async function seed(knex) {
     modules.browse.view,
     modules.reporter.admin,
     modules.treatmentStatus.admin,
-    modules.dashboard.action,
     modules.dashboard.target,
     modules.dashboard.result,
     modules.dashboard.device,

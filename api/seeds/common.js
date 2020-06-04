@@ -115,14 +115,20 @@ async function commonUpserts(
     })
   }
   const jobFunctionIdAdmin = await upsertJobFunction(knex, 'Admin', partnerId, [
-    modules.browse.view,
-    modules.result.admin,
-    modules.assay.admin,
-    modules.device.admin,
-    modules.treatmentStatus.admin,
+    modules.demo.admin,
+    modules.issue.admin,
+    modules.patient.admin,
+    modules.case.admin,
     modules.site.admin,
-    modules.person.admin,
+    modules.result.admin,
+    modules.dashboard.summary,
+    modules.dashboard.result,
+    modules.account.admin,
+    modules.device.admin,
     modules.reporter.admin,
+    modules.assay.edit,
+    modules.browse.view,
+    modules.person.view,
   ])
   let { id: jobIdAdmin } =
     (await knex('Job')
@@ -152,12 +158,16 @@ async function commonUpserts(
   }
   await upsertJobFunction(knex, 'Regional Officer', partnerId, [
     modules.browse.view,
-    modules.result.edit,
     modules.assay.view,
+    modules.result.edit,
     modules.device.view,
     modules.treatmentStatus.view,
     modules.site.view,
     modules.person.view,
+    modules.case.edit,
+    modules.assay.edit,
+    modules.dashboard.summary,
+    modules.dashboard.result,
   ])
   await upsertJobFunction(knex, 'Lab User', partnerId, [
     modules.browse.view,
@@ -166,6 +176,11 @@ async function commonUpserts(
     modules.device.view,
     modules.site.view,
     modules.treatmentStatus.view,
+    modules.account.view,
+    modules.dashboard.summary,
+    modules.dashboard.result,
+    modules.patient.edit,
+    modules.case.edit,
   ])
   if (deviceApiToken) {
     await upsertGxAlertDevice(
