@@ -1,36 +1,26 @@
-const path = require('path')
 const { format } = require('date-fns')
-const _ = require('lodash')
 const { listRefreshTokens } = require('./service')
-const {
-  generateReport,
-  downloadReportFile,
-} = require('../excelreports/excelManager')
+const { exportData } = require('../shared/excel')
 
-async function getReport(request, reply) {
-  const reports = await listRefreshTokens(request)
-  const { query } = request
-  const reportFile = path.join(
-    __dirname,
-    '../excelreports/reportTemplates/Reporters.xlsx'
-  )
-  const report = generateReport(
-    query.format,
-    reportFile,
-    '<Headers>',
-    _.map(reports.data, elem => {
-      return {
-        ...elem,
-        totalOnTreatment: `${elem.totalOnTreatment}/${elem.requiresFollowUp}`,
-      }
-    }),
+async function exportReporters(request, reply) {
+  const { data } = await listRefreshTokens(request)
+  const sheetData = {
+    dataRows: data.map(item => ({
+      ...item,
+      // replace array of `siteIssues` with csv-string of IssueCategory shortNames
+      totalOnTreatment: `${item.totalOnTreatment}/${item.requiresFollowUp}`,
+    })),
+    // TODO: use i18n string, because `exportData()` uses locale file templates with all labels translated
+    defaultNoDataMessage: 'No data',
+  }
+  const replacements = [
     {
-      date: format(new Date(), 'yyyy-MM-dd'),
+      placeholder: '<date>',
+      value: format(new Date(), 'yyyy-MM-dd'),
     },
-    2
-  )
-  return downloadReportFile(report, reply, request.format)
+  ]
+  return exportData(request, reply, sheetData, 'reporters', { replacements })
 }
 module.exports = {
-  getReport,
+  exportReporters,
 }

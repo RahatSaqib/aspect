@@ -18,7 +18,7 @@ const {
   getDaysByLocation,
 } = require('./service')
 
-const { getSuppliesReport } = require('./serviceReports')
+const { exportSupplies } = require('./serviceReports')
 
 const inventoryFilters = {
   consumableId: Joi.number().integer().positive().allow('', null),
@@ -114,7 +114,7 @@ const routes = [
   {
     method: 'GET',
     path: '/inventory/export',
-    handler: getSuppliesReport,
+    handler: exportSupplies,
     config: {
       description: 'Export Supplies List into Excel or CSV',
       notes: 'Filtered and sorted list of supplies',
