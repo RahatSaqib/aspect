@@ -13,8 +13,8 @@ async function up(knex) {
   const caseExternalIdTemplates = await knex('PartnerDisease as pd')
     .join('AssayType as at', 'pd.diseaseId', 'at.diseaseId')
     .join('Assay as a', 'a.assayTypeId', 'at.id')
-    .join('PartnerAssay as pa', function () {
-      this.on('a.id', 'pa.assayId').andOn('pd.partnerId', 'pa.partnerId')
+    .join('PartnerAssay as pa', qb => {
+      qb.on('a.id', 'pa.assayId').andOn('pd.partnerId', 'pa.partnerId')
     })
     .whereNotNull('pd.caseExternalIdTemplate')
     .select(
@@ -69,8 +69,8 @@ async function down(knex) {
   const reliableCaseExternalIdTemplates = await knex('PartnerAssay as pa')
     .join('Assay as a', 'pa.assayId', 'a.id')
     .join('AssayType as at', 'a.assayTypeId', 'at.id')
-    .join('PartnerDisease as pd', function () {
-      this.on('at.diseaseId', 'pd.diseaseId').andOn(
+    .join('PartnerDisease as pd', qb => {
+      qb.on('at.diseaseId', 'pd.diseaseId').andOn(
         'pa.partnerId',
         'pd.partnerId'
       )
@@ -97,15 +97,15 @@ async function down(knex) {
   const unreliableCaseExternalIdTemplates = await knex('PartnerAssay as pa')
     .join('Assay as a', 'pa.assayId', 'a.id')
     .join('AssayType as at', 'a.assayTypeId', 'at.id')
-    .join('PartnerDisease as pd', function () {
-      this.on('at.diseaseId', 'pd.diseaseId').andOn(
+    .join('PartnerDisease as pd', qb => {
+      qb.on('at.diseaseId', 'pd.diseaseId').andOn(
         'pa.partnerId',
         'pd.partnerId'
       )
     })
     .whereNotNull('pa.unreliableCaseExternalIdTemplate')
-    .andWhere(function () {
-      this.whereNull('pd.caseExternalIdTemplate')
+    .andWhere(qb => {
+      qb.whereNull('pd.caseExternalIdTemplate')
     })
     .groupBy(['pd.partnerId', 'pd.diseaseId'])
     .select(
