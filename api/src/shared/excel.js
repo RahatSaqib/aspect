@@ -95,6 +95,8 @@ async function readTemplateFile(
   lang,
   langDefault = LANG_DEFAULT
 ) {
+  // TODO: think how to differ files for the same language but different partners
+  // TODO: see Jira task - https://ops.systemone.id/browse/ASP-1451
   let filePath = `templates/${templateFolderPath}/${lang}.xlsx`
   // check if file exists, fallback to default language, throw error if no file found
   let exists = fs.existsSync(filePath)
@@ -220,6 +222,8 @@ async function renderExcelTemplate({
             }
             let value = fieldName && dataRow[fieldName]
             value = _.isNil(value) ? '' : value
+            // TODO: think on a better generic way to handle such replacements in dataset
+            // TODO: see Jira task for this - https://ops.systemone.id/browse/ASP-1450
             if (fieldName === 'patientAge' && value === 'null') {
               value = ''
             }
