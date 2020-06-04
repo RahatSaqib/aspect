@@ -43,7 +43,7 @@ const {
   updateResult,
 } = require('./service')
 const { getPatientResultsDetails } = require('./patientResultDetailService')
-const { getResultsReport } = require('./serviceReport')
+const { exportResults } = require('./serviceReport')
 
 // -----------------------------------------------------
 // routes
@@ -388,7 +388,7 @@ const routes = [
   {
     method: 'GET',
     path: '/result/export',
-    handler: getResultsReport,
+    handler: exportResults,
     config: {
       description: 'Export Result List into Excel or CSV',
       notes: 'Filtered and sorted list of devices',
