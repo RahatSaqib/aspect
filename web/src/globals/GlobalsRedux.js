@@ -91,7 +91,7 @@ function safeDownloadFile(blob, fileName) {
 }
 
 function downloadFile(blob, reportName, reportFormat) {
-  const fileName = `report_${reportName}${format(
+  const fileName = `${reportName}_${format(
     new Date(),
     'yyyy_MM_dd_HH_mm_ss'
   )}.${reportFormat}`
