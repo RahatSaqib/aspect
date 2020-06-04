@@ -44,7 +44,7 @@ const HorizontalAppBar = ({
   userRequestedLogout,
 }) => {
   const Account = requirePermissions({
-    permissions: ['account:view', 'account:admin'],
+    permissions: ['account:view', 'account:admin', 'account:edit'],
   })(() => (
     <MenuItem onClick={navigateCurrentAccountDetails}>Account Details</MenuItem>
   ))

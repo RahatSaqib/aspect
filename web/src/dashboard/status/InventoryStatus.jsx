@@ -52,12 +52,7 @@ function getFillColor({ id, activeSiteIds, issueSiteIds }) {
 const enhance = compose(
   pure,
   requirePermissions({
-    permissions: [
-      'inventory:admin',
-      'inventory:view',
-      'inventory:edit',
-      'dashboard:inventory',
-    ],
+    permissions: ['dashboard:inventory'],
   }),
   connect(
     state => ({

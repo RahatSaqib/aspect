@@ -24,7 +24,6 @@ const enhance = compose(
   requirePermissions({
     permissions: ['dashboard:report'],
   }),
-  connect(state => ({ userPermissions: state.user.jwt.permissions })),
   withProps(({ location }) => {
     const searchParams = new URLSearchParams(location.search)
     const filtersParams = new URLSearchParams(searchParams.get('filters') || '')
@@ -67,7 +66,6 @@ export const Reports = ({
   endOfLastYear,
   // --- injected by recompose ---
   showHigherLevel,
-  userPermissions,
   token,
 }) => {
   const HigherLevelReport = requirePermissions({

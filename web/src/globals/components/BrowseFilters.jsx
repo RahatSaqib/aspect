@@ -177,12 +177,12 @@ export const navigations = [
   {
     value: '/browse/router',
     label: 'Routers',
-    requiredPermissions: ['device:view', 'device:admin', 'device:edit'],
+    requiredPermissions: ['router:view', 'router:admin', 'router:edit'],
   },
   {
     value: '/browse/reporter',
     label: 'Reporters',
-    requiredPermissions: ['device:view', 'device:admin', 'device:edit'],
+    requiredPermissions: ['reporter:view', 'reporter:admin', 'reporter:edit'],
   },
   {
     value: '/browse/notification',
