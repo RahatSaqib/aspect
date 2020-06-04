@@ -126,145 +126,66 @@ async function seed(knex) {
     timezone: myanmarCountry.timezone,
     ...auditFields,
   })
-
-  const jobFunctionIdAdmin = await upsertJobFunction(knex, 'Admin', partnerId)
+  const modules = await getPermissionModules(knex)
+  const jobFunctionIdAdmin = await upsertJobFunction(knex, 'Admin', partnerId, [
+    modules.demo.admin,
+    modules.issue.admin,
+    modules.site.admin,
+    modules.result.admin,
+    modules.dashboard.result,
+    modules.device.admin,
+    modules.reporter.admin,
+    modules.assay.edit,
+    modules.deviceApiKey.admin,
+    modules.dashboard.summary,
+    modules.inventory.admin,
+    modules.person.admin,
+    modules.dashboard.action,
+    modules.dashboard.report,
+    modules.dashboard.siteFilter,
+    modules.dashboard.actionInventoryLevelUpdate,
+    modules.dashboard.target,
+  ])
 
   const jobFunctionIdRegionalOfficer = await upsertJobFunction(
     knex,
     'Regional Officer',
-    partnerId
+    partnerId,
+    [
+      modules.device.admin,
+      modules.result.admin,
+      modules.site.admin,
+      modules.assay.view,
+      modules.issue.admin,
+      modules.actionDashboard.admin,
+      modules.inventory.admin,
+      modules.dashboard.summary,
+      modules.dashboard.action,
+      modules.dashboard.report,
+      modules.dashboard.siteFilter,
+      modules.dashboard.actionInventoryLevelUpdate,
+      modules.dashboard.target,
+    ]
   )
 
   const jobFunctionIdLabUser = await upsertJobFunction(
     knex,
     'Lab User',
-    partnerId
+    partnerId,
+    [
+      modules.task.admin,
+      modules.result.admin,
+      modules.site.admin,
+      modules.assay.view,
+      modules.issue.admin,
+      modules.inventory.admin,
+      modules.device.admin,
+      modules.dashboard.summary,
+      modules.dashboard.action,
+      modules.dashboard.report,
+      modules.dashboard.actionInventoryLevelUpdate,
+    ]
   )
-
-  const modules = await getPermissionModules(knex)
-  await knex('JobFunctionPermission').insert([
-    // Admin Permissions
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.demo.admin },
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.device.admin },
-    {
-      jobFunctionId: jobFunctionIdAdmin,
-      permissionId: modules.deviceApiKey.admin,
-    },
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.person.admin },
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.result.admin },
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.site.admin },
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.assay.admin },
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.issue.admin },
-    {
-      jobFunctionId: jobFunctionIdAdmin,
-      permissionId: modules.dashboard.actionInventoryLevelUpdate,
-    },
-    {
-      jobFunctionId: jobFunctionIdAdmin,
-      permissionId: modules.inventory.admin,
-    },
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.task.admin },
-    {
-      jobFunctionId: jobFunctionIdAdmin,
-      permissionId: modules.dashboard.summary,
-    },
-    {
-      jobFunctionId: jobFunctionIdAdmin,
-      permissionId: modules.dashboard.target,
-    },
-    {
-      jobFunctionId: jobFunctionIdAdmin,
-      permissionId: modules.dashboard.report,
-    },
-    {
-      jobFunctionId: jobFunctionIdAdmin,
-      permissionId: modules.dashboard.siteFilter,
-    },
-    // Regional Officer Permissions
-    {
-      jobFunctionId: jobFunctionIdRegionalOfficer,
-      permissionId: modules.device.admin,
-    },
-    {
-      jobFunctionId: jobFunctionIdRegionalOfficer,
-      permissionId: modules.result.admin,
-    },
-    {
-      jobFunctionId: jobFunctionIdRegionalOfficer,
-      permissionId: modules.site.admin,
-    },
-    {
-      jobFunctionId: jobFunctionIdRegionalOfficer,
-      permissionId: modules.issue.admin,
-    },
-    {
-      jobFunctionId: jobFunctionIdRegionalOfficer,
-      permissionId: modules.inventory.admin,
-    },
-    {
-      jobFunctionId: jobFunctionIdRegionalOfficer,
-      permissionId: modules.task.admin,
-    },
-    {
-      jobFunctionId: jobFunctionIdRegionalOfficer,
-      permissionId: modules.dashboard.summary,
-    },
-    {
-      jobFunctionId: jobFunctionIdRegionalOfficer,
-      permissionId: modules.dashboard.target,
-    },
-
-    {
-      jobFunctionId: jobFunctionIdRegionalOfficer,
-      permissionId: modules.dashboard.report,
-    },
-    {
-      jobFunctionId: jobFunctionIdRegionalOfficer,
-      permissionId: modules.dashboard.site,
-    },
-    {
-      jobFunctionId: jobFunctionIdRegionalOfficer,
-      permissionId: modules.dashboard.actionInventoryLevelUpdate,
-    },
-    // Lab User Permissions
-    {
-      jobFunctionId: jobFunctionIdLabUser,
-      permissionId: modules.device.admin,
-    },
-    {
-      jobFunctionId: jobFunctionIdLabUser,
-      permissionId: modules.result.admin,
-    },
-    {
-      jobFunctionId: jobFunctionIdLabUser,
-      permissionId: modules.site.admin,
-    },
-    { jobFunctionId: jobFunctionIdLabUser, permissionId: modules.issue.admin },
-    {
-      jobFunctionId: jobFunctionIdLabUser,
-      permissionId: modules.inventory.admin,
-    },
-    {
-      jobFunctionId: jobFunctionIdLabUser,
-      permissionId: modules.task.admin,
-    },
-    {
-      jobFunctionId: jobFunctionIdLabUser,
-      permissionId: modules.dashboard.summary,
-    },
-    {
-      jobFunctionId: jobFunctionIdLabUser,
-      permissionId: modules.dashboard.actionInventoryLevelUpdate,
-    },
-    {
-      jobFunctionId: jobFunctionIdLabUser,
-      permissionId: modules.dashboard.report,
-    },
-    {
-      jobFunctionId: jobFunctionIdLabUser,
-      permissionId: modules.dashboard.siteFilter,
-    },
-  ])
 
   // Admin Job
   const [jobIdAdmin] = await knex('Job').insert({
