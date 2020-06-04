@@ -792,6 +792,7 @@ function getResultCategories(payload) {
           .toLowerCase()
           .replace(/mtb/, '')
           .replace(/ebola gp/, '')
+          .replace(/sars-cov-2/, '')
           .trim()
         const result1CategoryMapping = {
           'not detected': 'NotDetected',
@@ -835,6 +836,10 @@ function getResultCategories(payload) {
           erro: 'Error',
           ошибка: 'Error',
           erreur: 'Error',
+          negative: 'Negative',
+          positive: 'Positive',
+          'presumptive positive': 'Indeterminate',
+          'presumptive pos': 'Indeterminate',
           'null null': 'Success',
         }
         if (assayId === 'GxMtbRifUltra') {

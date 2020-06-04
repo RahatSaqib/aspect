@@ -115,3 +115,14 @@ _.each(cacheConfig, (config, table) => {
     exports[lookupDictionary] = keyToObject(table, column)
   })
 })
+
+exports.issueCategoryIntlToShortname = async function () {
+  return knex('IssueCategory')
+    .select('i18nKey', 'shortName')
+    .then(items =>
+      items.reduce((memo, { i18nKey, shortName }) => {
+        memo[i18nKey] = shortName
+        return memo
+      }, {})
+    )
+}

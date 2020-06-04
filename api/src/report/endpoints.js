@@ -5,7 +5,7 @@ const {
   validateSortPageParams,
 } = require('../routes')
 const { getReports, listReports, proxyGxReport } = require('./service')
-const { createReport, getReport } = require('./serviceReports')
+const { createReport, exportReports } = require('./serviceReports')
 const {
   validateAllGeographyFilterParams,
 } = require('../geography/requestValidation')
@@ -122,7 +122,7 @@ const routes = [
   {
     method: 'GET',
     path: '/report/export',
-    handler: getReport,
+    handler: exportReports,
     config: {
       description: 'Export Report List into Excel or CSV',
       notes: 'Filtered and sorted list of Report',

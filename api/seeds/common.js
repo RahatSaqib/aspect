@@ -412,13 +412,19 @@ async function upsertGeneXpertDeviceTypeAndAssays(
   // Add device types
   const { Lab: deviceTypeCategoryLab } = await allDeviceTypeCategoryToId()
 
-  const [deviceTypeGeneXpertId] = await knex('DeviceType').insert({
-    externalId: 'CepheidGeneXpert',
-    name: 'GeneXpert',
-    manufacturer: 'Cepheid',
-    plugin: 'gxconnect',
-    deviceTypeCategoryId: deviceTypeCategoryLab,
-  })
+  let { id: deviceTypeGeneXpertId } =
+    (await knex('DeviceType')
+      .where('externalId', 'CepheidGeneXpert')
+      .first()) || {}
+  if (!deviceTypeGeneXpertId) {
+    ;[deviceTypeGeneXpertId] = await knex('DeviceType').insert({
+      externalId: 'CepheidGeneXpert',
+      name: 'GeneXpert',
+      manufacturer: 'Cepheid',
+      plugin: 'gxconnect',
+      deviceTypeCategoryId: deviceTypeCategoryLab,
+    })
+  }
 
   // Add assays
   const {
