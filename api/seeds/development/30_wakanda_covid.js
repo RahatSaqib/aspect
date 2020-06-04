@@ -97,20 +97,19 @@ async function seed(knex) {
 
   await upsertJobFunctionPermission(knex, jobFunctionIdAdmin, [
     modules.demo.admin,
-    modules.assay.admin,
-    modules.deviceApiKey.admin,
+    modules.issue.admin,
     modules.patient.admin,
     modules.case.admin,
     modules.site.admin,
-    modules.person.admin,
     modules.result.admin,
-    modules.case.admin,
     modules.dashboard.summary,
+    modules.dashboard.result,
     modules.account.admin,
     modules.device.admin,
-    modules.treatmentStatus.admin,
-    modules.router.admin,
     modules.reporter.admin,
+    modules.assay.edit,
+    modules.browse.view,
+    modules.person.view,
   ])
 
   const { id: jobFunctionIdRegionalOfficer } = await knex('JobFunction')
@@ -119,16 +118,18 @@ async function seed(knex) {
     .first('id')
 
   await upsertJobFunctionPermission(knex, jobFunctionIdRegionalOfficer, [
-    modules.device.admin,
-    modules.result.admin,
-    modules.site.admin,
-    modules.issue.admin,
-    modules.inventory.admin,
-    modules.task.admin,
+    modules.demo.admin,
     modules.patient.admin,
+    modules.case.admin,
+    modules.site.admin,
+    modules.result.admin,
     modules.dashboard.summary,
     modules.dashboard.result,
     modules.account.admin,
+    modules.device.admin,
+    modules.assay.edit,
+    modules.browse.view,
+    modules.person.view,
   ])
 
   const { id: jobFunctionIdLabUser } = await knex('JobFunction')
@@ -137,16 +138,17 @@ async function seed(knex) {
     .first('id')
 
   await upsertJobFunctionPermission(knex, jobFunctionIdLabUser, [
-    modules.device.edit,
-    modules.result.edit,
-    modules.site.edit,
-    modules.issue.edit,
-    modules.inventory.edit,
-    modules.task.edit,
     modules.patient.edit,
+    modules.case.edit,
+    modules.site.edit,
+    modules.result.edit,
     modules.dashboard.summary,
     modules.dashboard.result,
     modules.account.edit,
+    modules.device.edit,
+    modules.assay.edit,
+    modules.browse.view,
+    modules.person.view,
   ])
 
   const covidDeviceTypes = (
@@ -324,16 +326,19 @@ async function seed(knex) {
   )
 
   await upsertJobFunctionPermission(knex, jobFunctionIdClinician, [
-    modules.browse.view,
-    modules.result.edit,
+    modules.demo.admin,
     modules.assay.edit,
-    modules.device.view,
-    modules.task.view,
-    modules.treatmentStatus.edit,
-    modules.site.view,
+    modules.patient.edit,
+    modules.case.edit,
+    modules.site.edit,
+    modules.result.edit,
     modules.dashboard.summary,
     modules.dashboard.result,
     modules.account.edit,
+    modules.assay.edit,
+    modules.device.view,
+    modules.browse.view,
+    modules.person.view,
   ])
 
   // Create User
