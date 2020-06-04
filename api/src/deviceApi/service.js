@@ -783,6 +783,9 @@ async function onResultUpdated(
   { resultId, deviceLogId, userId },
   { messageContext }
 ) {
+  if (!resultId) {
+    throw new Error('Must specify resultId in Action')
+  }
   const context = messageContext.bindActionCreators({ resultLogged })
   if (deviceLogId) {
     // we've already created device logs originating here, so ignore

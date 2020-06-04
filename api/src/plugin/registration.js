@@ -61,6 +61,8 @@ const plugins = {
     onGxAlertAuthenticated,
     onCaseAdded,
     onCaseUpdated,
+    onPatientAdded,
+    onPatientUpdated,
   },
   commcare: {
     transformInitialPayload: require('./deviceType/CommCareApp/transformInitialPayload'),
@@ -331,6 +333,22 @@ async function onCaseAdded(/* { caseId }, { messageContext } */) {
  * a Case handled by this plugin
  */
 async function onCaseUpdated(/* { caseId }, { messageContext } */) {
+  // do nothing by default
+}
+
+/**
+ * PATIENT_ADDED action has been published referencing
+ * a Patient handled by this plugin
+ */
+async function onPatientAdded(/* { patientId }, { messageContext } */) {
+  // do nothing by default
+}
+
+/**
+ * PATIENT_UPDATED action has been published referencing
+ * a Patient handled by this plugin
+ */
+async function onPatientUpdated(/* { patientId }, { messageContext } */) {
   // do nothing by default
 }
 

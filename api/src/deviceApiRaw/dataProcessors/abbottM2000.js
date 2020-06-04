@@ -1404,7 +1404,11 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
           rawMessage: result.rawData,
           resultId: result.id,
         })
-        this.messageContext.dispatch(resultLogged(result.id, resultDeviceLogId))
+        if (result.id) {
+          this.messageContext.dispatch(
+            resultLogged(result.id, resultDeviceLogId)
+          )
+        }
         this.response.deviceLogIds = [
           ...this.response.deviceLogIds,
           resultDeviceLogId,
