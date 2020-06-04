@@ -1,4 +1,5 @@
 const _ = require('lodash')
+const fs = require('fs')
 const { format } = require('date-fns')
 const excel = require('exceljs') // see https://www.npmjs.com/package/exceljs
 const { getContentType } = require('./io')
@@ -94,17 +95,20 @@ async function readTemplateFile(
   lang,
   langDefault = LANG_DEFAULT
 ) {
-  return readExcelFile(`templates/${templateFolderPath}/${lang}.xlsx`).catch(
-    error => {
-      if (lang !== langDefault) {
-        return readExcelFile(
-          `templates/${templateFolderPath}/${langDefault}.xlsx`
-        )
-      }
-      // if no file found - alarm
-      throw error
-    }
-  )
+  let filePath = `templates/${templateFolderPath}/${lang}.xlsx`
+  // check if file exists, fallback to default language, throw error if no file found
+  let exists = fs.existsSync(filePath)
+  if (!exists && lang !== langDefault) {
+    filePath = `templates/${templateFolderPath}/${langDefault}.xlsx`
+    exists = fs.existsSync(filePath)
+  }
+  // throw exception if no file found
+  if (!exists) {
+    throw new Error(`File ${filePath} is missing`)
+  }
+
+  // return promise with file content
+  return readExcelFile(filePath)
 }
 
 // ----------------------------------------------------------------------------------------------
