@@ -119,6 +119,7 @@ async function updatePatient(
   //       the data update out of this function and defer it to a
   //       plugin that handles PATIENT_ADDED & PATIENT_UPDATED
   //       messages
+  //       https://ops.systemone.id/browse/ASP-1452
   const patientsToUpdate = patientRecordsToUpdate.map(patient => ({
     ...patient,
     ...updateFields,

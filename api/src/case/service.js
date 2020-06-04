@@ -367,6 +367,7 @@ function onResultLogged({ resultId }, { messageContext }) {
             //       that don't have results, what will happen to the
             //       patient data associated with that case? Do empty cases
             //       even present a problem?
+            //       https://ops.systemone.id/browse/ASP-1453
           }
         }
       }
