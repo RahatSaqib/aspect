@@ -117,7 +117,7 @@ async function commonUpserts(
   const jobFunctionIdAdmin = await upsertJobFunction(knex, 'Admin', partnerId, [
     modules.demo.admin,
     modules.issue.admin,
-    modules.patient.admin,
+    modules.assay.admin,
     modules.case.admin,
     modules.site.admin,
     modules.result.admin,
@@ -179,7 +179,6 @@ async function commonUpserts(
     modules.account.view,
     modules.dashboard.summary,
     modules.dashboard.result,
-    modules.patient.edit,
     modules.case.edit,
   ])
   if (deviceApiToken) {
@@ -221,6 +220,12 @@ async function upsertJobFunction(
 }
 
 async function clonePermissions(knex, fromFeature, toFeature) {
+  const jobFunctionWithExistingPermission = await knex(
+    'JobFunctionPermission as jf'
+  )
+    .join('Permission as p', 'p.id', 'jf.permissionId')
+    .where('p.module', toFeature)
+    .pluck('jf.jobFunctionId')
   await knex.transaction(async function (trx) {
     await knex
       .from('JobFunctionPermission')
@@ -239,6 +244,7 @@ async function clonePermissions(knex, fromFeature, toFeature) {
               'pCase.activity'
             )
           })
+          .whereNotIn('jf.id', jobFunctionWithExistingPermission)
           .where('p.module', knex.raw('?', [fromFeature]))
           .select('jf.id as jobFunctionId', 'pCase.id as permissionId')
       })
