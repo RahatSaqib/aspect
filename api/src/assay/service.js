@@ -205,7 +205,7 @@ async function getAllAssaySchemas(partnerId, userId, assayId = null) {
       assayType: 'at',
     })
     .where('d.partnerId', partnerId)
-    .select(
+    .distinct(
       'a.id',
       'a.name',
       'a.externalId',

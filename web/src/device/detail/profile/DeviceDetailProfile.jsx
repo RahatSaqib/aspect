@@ -236,22 +236,26 @@ const enhance = compose(
       }
     },
     onExportClick: ({
+      match,
       location,
       exportResults,
       sortCol,
       sortDir,
       pageAt,
       pageSize,
-    }) => formatType => {
+    }) => () => {
       const { sanitized, value: filtersParams } = filtersFromLocation(location)
       if (!sanitized) {
+        filtersParams.set('deviceId', match.params.deviceId)
         exportResults(
           filtersParams,
-          formatType,
+          'xlsx',
           sortCol,
           sortDir,
           pageAt,
-          pageSize
+          pageSize,
+          'xlsx',
+          'deviceResults'
         )
       }
     },
