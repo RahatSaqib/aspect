@@ -67,16 +67,17 @@ async function up(knex) {
     )
     const permissionsToInsert = []
     await _.each(missingFeaturesPerJob, async elem => {
-      console.log(
-        `dashboard:${elem.replace('Dashboard', '')}`,
-        permissionToId(`dashboard:${elem.replace('Dashboard', '')}`)
-      )
       if (_.includes(elem.toLowerCase(), 'dashboard')) {
+        console.log(
+          elem,
+          `dashboard:${elem.replace('Dashboard', '')}`,
+          permissionToId(`dashboard:${elem.replace('Dashboard', '')}`)
+        )
         permissionsToInsert.push({
           JobFunctionId: func.id,
           permissionId: permissionToId(
             `dashboard:${elem.replace('Dashboard', '')}`
-          ),
+          ).id,
         })
       } else {
         permissionsToInsert.push({
@@ -106,6 +107,7 @@ async function up(knex) {
       )
     )
   })
+
   await knex.raw('SET foreign_key_checks = 0')
   await knex.schema.dropTableIfExists('Feature')
   await knex.schema.dropTableIfExists('JobFunctionFeature')
