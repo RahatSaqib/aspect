@@ -30,9 +30,7 @@ async function up(knex) {
       })
     } else
       await knex('Permission').insert([
-        { module: featureKey, activity: 'admin' },
         { module: featureKey, activity: 'view' },
-        { module: featureKey, activity: 'edit' },
       ])
   })
   permissions = await knex('Permission as p').select(
@@ -69,12 +67,16 @@ async function up(knex) {
     )
     const permissionsToInsert = []
     await _.each(missingFeaturesPerJob, async elem => {
+      console.log(
+        `dashboard:${elem.replace('Dashboard', '')}`,
+        permissionToId(`dashboard:${elem.replace('Dashboard', '')}`)
+      )
       if (_.includes(elem.toLowerCase(), 'dashboard')) {
         permissionsToInsert.push({
           JobFunctionId: func.id,
           permissionId: permissionToId(
             `dashboard:${elem.replace('Dashboard', '')}`
-          ).id,
+          ),
         })
       } else {
         permissionsToInsert.push({
