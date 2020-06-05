@@ -10,7 +10,7 @@ const {
 const {
   validateAllGeographyFilterParams,
 } = require('../geography/requestValidation')
-const { getDeviceAPIKeysReport } = require('./serviceReports')
+const { exportDeviceApiKeys } = require('./serviceReports')
 
 function listDeviceApiKeysBaseConfig() {
   return {
@@ -73,7 +73,7 @@ const routes = [
   {
     method: 'GET',
     path: '/deviceApiKey/export',
-    handler: getDeviceAPIKeysReport,
+    handler: exportDeviceApiKeys,
     config: {
       description: 'Export DeviceApiKey List into Excel or CSV',
       notes: 'Filtered and sorted list of deviceApiKeys',

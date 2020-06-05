@@ -1,7 +1,7 @@
 const Joi = require('@hapi/joi')
 const { asyncHandler, validateSortPageParams } = require('../routes')
 const { listNotifications, onIssueEscalated } = require('./service')
-const { generateNotificationsReport } = require('./serviceReports')
+const { exportNotifications } = require('./serviceReports')
 
 function listNotificationsBaseConfig() {
   return {
@@ -41,7 +41,7 @@ const routes = [
   {
     method: 'GET',
     path: '/notification/export',
-    handler: generateNotificationsReport,
+    handler: exportNotifications,
     config: {
       description: 'Export Notifications List into Excel or CSV',
       notes: 'Filtered and sorted list of Notifications',

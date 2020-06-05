@@ -80,6 +80,12 @@
       "abbreviation":"TB"
     },
     {
+      "name": "Microscopy",
+      "i18nKey": "microscopy",
+      "externalId": "microscopy",
+      "abbreviation":"TB"
+    },
+    {
       "name": "Unknown",
       "i18nKey": "assayTypeUnknown",
       "externalId": "assayTypeUnknown",
@@ -184,6 +190,13 @@
     },
     {
       "externalId": "assayTypeTbGnd",
+      "diseaseId": {
+        "table": "Disease",
+        "externalId": "tb"
+      }
+    },
+    {
+      "externalId": "microscopy",
       "diseaseId": {
         "table": "Disease",
         "externalId": "tb"
