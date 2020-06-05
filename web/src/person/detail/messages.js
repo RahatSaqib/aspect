@@ -1,8 +1,10 @@
 // Imports from packages
 import { defineMessages } from 'react-intl'
+import { getCommonDefinitions } from '../../shared/utils/customMessages'
 
 // Define all messages for /site/detail page
 export default defineMessages({
+  ...getCommonDefinitions('PersonDetail'),
   title: {
     id: 'pages.PersonDetail.title',
     defaultMessage: 'Person Detail',
@@ -94,14 +96,6 @@ export default defineMessages({
   country: {
     id: 'pages.PersonDetails.country',
     defaultMessage: 'Country',
-  },
-  state: {
-    id: 'pages.PersonDetails.state',
-    defaultMessage: 'State',
-  },
-  lga: {
-    id: 'pages.PersonDetails.lga',
-    defaultMessage: 'Area',
   },
   zip: {
     id: 'pages.ContactDetails.zip',

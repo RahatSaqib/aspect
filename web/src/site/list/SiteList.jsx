@@ -8,7 +8,7 @@ import { connect } from 'react-redux'
 import { Helmet } from 'react-helmet'
 import TableBody from '@material-ui/core/TableBody'
 
-import { getCustomMessage } from '../../shared/utils/customMessages'
+import { getCustomMessage, getCommonDefinitions } from '../../shared/utils/customMessages'
 import {
   makeSortPageSelector,
   makeSearchParamsSanitizer,
@@ -35,6 +35,7 @@ import ExportListButton from '../../globals/components/ExportListButton'
 const cssClasses = classnames.bind(require('./SiteList.css'))
 
 export const messages = defineMessages({
+  ...getCommonDefinitions('SiteList'),
   sitesTitle: {
     id: 'pages.SiteList.title',
     defaultMessage: 'Sites',
@@ -54,14 +55,6 @@ export const messages = defineMessages({
   siteIssues: {
     id: 'pages.SiteList.siteIssues',
     defaultMessage: 'Issues',
-  },
-  state: {
-    id: 'pages.SiteList.state',
-    defaultMessage: 'State',
-  },
-  lga: {
-    id: 'pages.SiteList.lga',
-    defaultMessage: 'County',
   },
   issueCategoryDeviceHealth: {
     id: 'pages.SiteList.issueCategoryDeviceHealth',

@@ -1,6 +1,8 @@
 import { defineMessages } from 'react-intl'
+import { getCommonDefinitions } from '../../shared/utils/customMessages'
 
 export const messages = defineMessages({
+  ...getCommonDefinitions('DeviceLlist'),
   devicesTitle: {
     id: 'pages.DeviceList.devicesTitle',
     defaultMessage: 'Devices',
@@ -8,10 +10,6 @@ export const messages = defineMessages({
   device: {
     id: 'pages.DeviceList.device',
     defaultMessage: 'Device',
-  },
-  state: {
-    id: 'pages.DeviceList.state',
-    defaultMessage: 'State',
   },
   status: {
     id: 'pages.DeviceList.status',

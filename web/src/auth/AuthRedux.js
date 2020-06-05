@@ -77,7 +77,6 @@ function loginRequest(requestedAt) {
 }
 
 function loginSuccess(requestedAt, data) {
-  console.log(data)
   return {
     requestedAt,
     type: types.LOGIN_SUCCESS,
@@ -200,9 +199,8 @@ export function loginStart({ user, password }) {
         ),
       },
     })
-    .then(json => {
-      console.log('json', json)
-      return dispatch(
+    .then(json => 
+      dispatch(
         loginSuccess(requestedAt, {
           access: json.access,
           refresh: json.refresh,
@@ -214,7 +212,6 @@ export function loginStart({ user, password }) {
           displayPreferences: Immutable.Map(json.displayPreferences),
         })
       )
-    }
     )
     .then(() => dispatch(fetchFeatures()))
     .catch(err => dispatch(loginFailure(err)))

@@ -8,7 +8,7 @@ import Modal from '@material-ui/core/Modal'
 import Card from '@material-ui/core/Card'
 import { connect } from 'react-redux'
 
-import { getCustomMessage } from '../../shared/utils/customMessages'
+import { getCustomMessage, getCommonDefinitions } from '../../shared/utils/customMessages'
 import FallbackUntilDone from '../../components/shared/FallbackUntilDone'
 import FocusBlurTextField from '../../components/shared/FocusBlurTextField'
 import CountrySelectField from '../geography/CountrySelectField'
@@ -162,6 +162,7 @@ const clickExport = (
 }
 
 const messages = defineMessages({
+  ...getCommonDefinitions('popover'),
   moreFilters: {
     id: 'filter.popover.moreFilters',
     defaultMessage: 'More filters',
@@ -294,37 +295,13 @@ const messages = defineMessages({
     id: 'filter.popover.selectDisease',
     defaultMessage: 'Select Disease...',
   },
-  selectPlaceholder: {
-    id: 'filter.popover.selectPlaceholder',
-    defaultMessage: 'Select {entity}...',
-  },
   country: {
     id: 'filter.popover.country',
     defaultMessage: 'Country',
   },
-  state: {
-    id: 'filter.popover.stateLabel',
-    defaultMessage: 'State',
-  },
-  state_US: {
-    id: 'filter.popover.stateLabel',
-    defaultMessage: 'Estado',
-  },
-  lga: {
-    id: 'filter.popover.lgaLabel',
-    defaultMessage: 'LGA',
-  },
   selectCountry: {
     id: 'filter.popover.selectCountry',
     defaultMessage: 'Select country...',
-  },
-  selectState: {
-    id: 'filter.popover.selectState',
-    defaultMessage: 'Select state...',
-  },
-  selectLga: {
-    id: 'filter.popover.selectLga',
-    defaultMessage: 'Select LGA...',
   },
   setFilters: {
     id: 'filter.popover.setFilters',
