@@ -89,7 +89,6 @@ function getTokenExpiry(clientType, currentTime) {
 async function authenticate(request) {
   const { payload } = request
   let user = await getUser(payload.name)
-  console.log(user)
   if (!user) {
     try {
       // no user with such username in Aspect yet - check it in GxAlert
