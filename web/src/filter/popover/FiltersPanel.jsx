@@ -1,4 +1,3 @@
-import { connect } from 'react-redux'
 import classnames from 'classnames/bind'
 import { compose, withState, withHandlers } from 'recompose'
 import React, { Fragment } from 'react'
@@ -7,7 +6,9 @@ import { defineMessages } from 'react-intl'
 import { MdKeyboardArrowDown } from 'react-icons/md'
 import Modal from '@material-ui/core/Modal'
 import Card from '@material-ui/core/Card'
+import { connect } from 'react-redux'
 
+import { getCustomMessage } from '../../shared/utils/customMessages'
 import FallbackUntilDone from '../../components/shared/FallbackUntilDone'
 import FocusBlurTextField from '../../components/shared/FocusBlurTextField'
 import CountrySelectField from '../geography/CountrySelectField'
@@ -32,7 +33,7 @@ const cssClasses = classnames.bind(require('./FiltersPanel.css'))
 const enhance = compose(
   connect(
     state => ({
-      countryLabels: state.user.countrySettings.get('countryLabels'),
+      user: state.user,
     })
   ),
   withState('isShown', 'setIsShown', false),
@@ -301,9 +302,29 @@ const messages = defineMessages({
     id: 'filter.popover.country',
     defaultMessage: 'Country',
   },
+  state: {
+    id: 'filter.popover.stateLabel',
+    defaultMessage: 'State',
+  },
+  state_US: {
+    id: 'filter.popover.stateLabel',
+    defaultMessage: 'Estado',
+  },
+  lga: {
+    id: 'filter.popover.lgaLabel',
+    defaultMessage: 'LGA',
+  },
   selectCountry: {
     id: 'filter.popover.selectCountry',
     defaultMessage: 'Select country...',
+  },
+  selectState: {
+    id: 'filter.popover.selectState',
+    defaultMessage: 'Select state...',
+  },
+  selectLga: {
+    id: 'filter.popover.selectLga',
+    defaultMessage: 'Select LGA...',
   },
   setFilters: {
     id: 'filter.popover.setFilters',
@@ -406,7 +427,7 @@ export const FiltersPanel = ({
   onDeviceStatusIdChange,
   onDeviceTypeIdChange,
   onRevokedChange,
-  countryLabels,
+  user,
 }) => (
   <div className={cssClasses('Container', className)}>
     <AspectButton
@@ -496,8 +517,8 @@ export const FiltersPanel = ({
               countryId={filters.countryId}
               stateId={filters.stateId}
               floatingLabelFixed
-              hintText={intl.formatMessage(messages.selectPlaceholder, { entity: countryLabels.stateLabel })}
-              floatingLabelText={countryLabels.stateLabel}
+              hintText={getCustomMessage(intl, messages, 'selectPlaceholder', user, { entity: 'state' })}
+              floatingLabelText={getCustomMessage(intl, messages, 'state', user)}
               style={{ verticalAlign: 'bottom' }}
             />
           </div>
@@ -511,8 +532,8 @@ export const FiltersPanel = ({
               stateId={filters.stateId}
               lgaId={filters.lgaId}
               floatingLabelFixed
-              hintText={intl.formatMessage(messages.selectPlaceholder, { entity: countryLabels.lgaLabel })}
-              floatingLabelText={countryLabels.lgaLabel}
+              hintText={getCustomMessage(intl, messages, 'selectPlaceholder', user, { entity: 'lga' })}
+              floatingLabelText={getCustomMessage(intl, messages, 'lga', user)}
               style={{ verticalAlign: 'bottom' }}
             />
           </div>

@@ -41,12 +41,14 @@ const userProps = [
   'p.lastCountryId as countryId',
   'p.userId',
   'p.id as personId',
+  'c.abbreviation as countryAbbreviation',
 ]
 
 function getUser(username) {
   return query('Get basic user details')
     .from('User as u')
     .innerJoin('Person as p', 'u.id', 'p.userId')
+    .innerJoin('Country as c', 'c.id', 'p.lastCountryId')
     .where({ 'u.name': username })
     .first(userProps)
 }
@@ -85,7 +87,7 @@ function getTokenExpiry(clientType, currentTime) {
 async function authenticate(request) {
   const { payload } = request
   let user = await getUser(payload.name)
-
+  console.log(user)
   if (!user) {
     try {
       // no user with such username in Aspect yet - check it in GxAlert
@@ -168,6 +170,7 @@ async function authenticate(request) {
     now,
     refreshToken,
     userId: user.id,
+    countryAbbreviation: user.countryAbbreviation,
   })
 
   await query('Update failed password attempts to 0')
@@ -181,7 +184,6 @@ async function authenticate(request) {
 
   const accessToken = await getAccessToken(user, clientType)
   const displayPreferences = await getDisplayPreferences(user)
-  const countrySettings = await getCountrySettings(user)
 
   return {
     access: accessToken,
@@ -192,26 +194,9 @@ async function authenticate(request) {
     timezone: user.timezone || 'Eastern Standard Time',
     displayPreferences,
     countryId: user.countryId,
+    countryAbbreviation: user.countryAbbreviation,
     deviceTokenId,
-    countrySettings,
   }
-}
-
-async function getCountrySettings({ countryId }) {
-  const { stateLabel, lgaLabel } = await query('Get country labels for user')
-    .from('Country')
-    .where({
-      id: countryId,
-    })
-    .first('stateLabel', 'lgaLabel')
-
-  const settings = {
-    countryLabels: {
-      stateLabel: stateLabel || 'State',
-      lgaLabel: lgaLabel || 'LGA',
-    },
-  }
-  return settings
 }
 
 function setRefreshToken({
@@ -299,8 +284,6 @@ async function refreshToken(request) {
       deviceTokenId,
     })
 
-  const countrySettings = await getCountrySettings(data)
-
   const accessToken = await getAccessToken(data)
   return {
     access: accessToken,
@@ -309,7 +292,6 @@ async function refreshToken(request) {
     clientType,
     countryId: data.countryId,
     deviceTokenId,
-    countrySettings,
   }
 }
 
@@ -845,5 +827,4 @@ module.exports = {
   lockedOutUser,
   clientTypes,
   getUserJobFunctions,
-  getCountrySettings,
 }

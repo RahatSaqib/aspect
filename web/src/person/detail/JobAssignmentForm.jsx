@@ -1,5 +1,5 @@
-import _ from 'lodash'
 import { connect } from 'react-redux'
+import _ from 'lodash'
 import React from 'react'
 import { compose, lifecycle, withHandlers, pure } from 'recompose'
 import Button from '@material-ui/core/Button'
@@ -10,6 +10,7 @@ import recomposeForm from '../../components/recomposeForm'
 import { Unit } from '../../components/pureGrids'
 
 import messages from './messages'
+import { getCustomMessage } from '../../shared/utils/customMessages'
 import CountrySelectField from '../../filter/geography/CountrySelectField'
 import StateSelectField from '../../filter/geography/StateSelectField'
 import LgaSelectField from '../../filter/geography/LgaSelectField'
@@ -46,8 +47,8 @@ const validate = ({ jobFunctionId }, { intl }) => {
 const enhance = compose(
   connect(
     state => ({
-      countryLabels: state.user.countrySettings.get('countryLabels'),
-    }),
+      user: state.user,
+    })
   ),
   pure,
   lifecycle({
@@ -120,8 +121,7 @@ export const JobAssignmentForm = ({
   assignments,
   loadedAssignments,
   onDeleteAssignment,
-  // --- injected by recompose ---
-  countryLabels
+  user,
 }) => {
   const { formatMessage } = intl
   const baseProps = {
@@ -174,7 +174,7 @@ export const JobAssignmentForm = ({
               onStateIdChange={onStateIdChange}
               countryId={values.countryId}
               stateId={values.stateId}
-              floatingLabelText={countryLabels.stateLabel}
+              floatingLabelText={getCustomMessage(intl, messages, 'state', user)}
             />
             <LgaSelectField
               {...baseProps}
@@ -182,7 +182,7 @@ export const JobAssignmentForm = ({
               countryId={values.countryId}
               stateId={values.stateId}
               lgaId={values.lgaId}
-              floatingLabelText={countryLabels.lgaLabel}
+              floatingLabelText={getCustomMessage(intl, messages, 'lga', user)}
             />
             <SiteSelectField
               {...baseProps}

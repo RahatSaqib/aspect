@@ -5,7 +5,7 @@ const { format } = require('date-fns')
 const Promise = require('bluebird')
 const { knex } = require('../db')
 
-const { getUser, getCountrySettings } = require('../auth/service')
+const { getUser } = require('../auth/service')
 const { getReportDetails, listReports } = require('./service')
 const {
   generateReport,
@@ -165,7 +165,6 @@ async function createReport(request, reply) {
   // read file into workbook
   const workbook = await readTemplateFile(externalId, lang, LANG_DEFAULT)
 
-  const { countryLabels } = await getCountrySettings(user)
   const dateRangeString = getDateRangeString(query)
   const statesString = await getStateNames(query)
   const lgasString = await getLgaNamesString(query)
@@ -194,8 +193,6 @@ async function createReport(request, reply) {
     replaceSubstringInCell(worksheet, '<Dates>', dateRangeString)
     replaceSubstringInCell(worksheet, '<States>', statesString)
     replaceSubstringInCell(worksheet, '<Lgas>', lgasString)
-    replaceSubstringInCell(worksheet, '<State_Label>', countryLabels.stateLabel)
-    replaceSubstringInCell(worksheet, '<Lga_Label>', countryLabels.lgaLabel)
 
     // position cell where data table begins
     const cells = getCellsByValue(worksheet, '<Table>')

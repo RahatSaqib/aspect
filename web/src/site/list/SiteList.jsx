@@ -8,6 +8,7 @@ import { connect } from 'react-redux'
 import { Helmet } from 'react-helmet'
 import TableBody from '@material-ui/core/TableBody'
 
+import { getCustomMessage } from '../../shared/utils/customMessages'
 import {
   makeSortPageSelector,
   makeSearchParamsSanitizer,
@@ -53,6 +54,14 @@ export const messages = defineMessages({
   siteIssues: {
     id: 'pages.SiteList.siteIssues',
     defaultMessage: 'Issues',
+  },
+  state: {
+    id: 'pages.SiteList.state',
+    defaultMessage: 'State',
+  },
+  lga: {
+    id: 'pages.SiteList.lga',
+    defaultMessage: 'County',
   },
   issueCategoryDeviceHealth: {
     id: 'pages.SiteList.issueCategoryDeviceHealth',
@@ -127,7 +136,7 @@ const enhance = compose(
         items: state.site.items,
         table: state.site.table,
         userPermissions: state.user.jwt.permissions,
-        countryLabels: state.user.countrySettings.get('countryLabels'),
+        user: state.user,
       })
     },
     bindActionCreators.bind(null, {
@@ -233,7 +242,6 @@ export const SiteList = ({
   location,
   table,
   items,
-  countryLabels,
   // --- injected by recompose ---
   onExcelClick,
   sortCol,
@@ -243,6 +251,7 @@ export const SiteList = ({
   onRowClick,
   onAlertClick,
   reducedFilters,
+  user,
 }) => (
   <div className={cssClasses('Container')}>
     <Helmet title={intl.formatMessage(messages.sitesTitle)} />
@@ -283,12 +292,12 @@ export const SiteList = ({
               },
               {
                 key: 'state',
-                label: countryLabels.stateLabel,
+                label: getCustomMessage(intl, messages, 'state', user),
                 sortable: true,
               },
               {
                 key: 'lga',
-                label: countryLabels.lgaLabel,
+                label: getCustomMessage(intl, messages, 'lga', user),
                 sortable: true,
               },
               {

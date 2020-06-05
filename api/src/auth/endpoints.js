@@ -47,16 +47,11 @@ const routes = [
           refresh: Joi.string().required(),
           clientId: Joi.string().required(),
           countryId: Joi.number(),
+          countryAbbreviation: Joi.string(),
           clientType: Joi.string().required(),
           culture: Joi.string().required(),
           timezone: Joi.string().required(),
           displayPreferences: Joi.object(),
-          countrySettings: Joi.object().keys({
-            countryLabels: Joi.object().keys({
-              stateLabel: Joi.string(),
-              lgaLabel: Joi.string(),
-            }),
-          }),
           deviceTokenId: Joi.string().allow(null),
         },
       },

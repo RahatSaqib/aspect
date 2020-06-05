@@ -11,6 +11,7 @@ import IconButton from '@material-ui/core/IconButton'
 import Tooltip from '@material-ui/core/Tooltip'
 import AddIcon from '@material-ui/icons/Add'
 
+import { getCustomMessage } from '../../shared/utils/customMessages'
 import {
   makeSortPageSelector,
   makeSearchParamsSanitizer,
@@ -121,7 +122,7 @@ const enhance = compose(
       items: state.person.items,
       table: state.person.table,
       userPermissions: state.user.jwt.permissions,
-      countryLabels: state.user.countrySettings.get('countryLabels'),
+      user: state.user,
     }),
     bindActionCreators.bind(null, {
       fetchPersons,
@@ -229,7 +230,7 @@ export const PersonList = ({
   onRowClick,
   reducedFilters,
   showNewContactPage,
-  countryLabels,
+  user,
 }) => {
   const AddNewButton = requirePermissions({
     permissions: ['person:edit', 'person:admin'],
@@ -289,12 +290,12 @@ export const PersonList = ({
                 },
                 {
                   key: 'state',
-                  label: countryLabels.stateLabel,
+                  label: getCustomMessage(intl, messages, 'state', user),
                   sortable: true,
                 },
                 {
                   key: 'lga',
-                  label: countryLabels.lgaLabel,
+                  label: getCustomMessage(intl, messages, 'lga', user),
                   sortable: true,
                 },
                 {

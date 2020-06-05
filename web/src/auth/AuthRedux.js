@@ -77,6 +77,7 @@ function loginRequest(requestedAt) {
 }
 
 function loginSuccess(requestedAt, data) {
+  console.log(data)
   return {
     requestedAt,
     type: types.LOGIN_SUCCESS,
@@ -199,19 +200,21 @@ export function loginStart({ user, password }) {
         ),
       },
     })
-    .then(json =>
-      dispatch(
+    .then(json => {
+      console.log('json', json)
+      return dispatch(
         loginSuccess(requestedAt, {
           access: json.access,
           refresh: json.refresh,
           clientId: json.clientId,
           countryId: json.countryId,
           culture: json.culture,
+          countryAbbreviation: json.countryAbbreviation,
           timezoneId: json.timezone,
           displayPreferences: Immutable.Map(json.displayPreferences),
-          countrySettings: Immutable.Map(json.countrySettings)
         })
       )
+    }
     )
     .then(() => dispatch(fetchFeatures()))
     .catch(err => dispatch(loginFailure(err)))
@@ -452,9 +455,9 @@ export function acceptLicenseStart(licenseId) {
               refresh: json.refresh,
               clientId: json.clientId,
               culture: json.culture,
+              countryAbbreviation: json.countryAbbreviation,
               timezoneId: json.timezone,
               displayPreferences: Immutable.Map(json.displayPreferences),
-              countrySettings: Immutable.Map(json.countrySettings),
               countryId: json.countryId,
             })
           )
@@ -484,7 +487,7 @@ const User = Immutable.Record({
   culture: 'en-US',
   timezoneId: 'Eastern Standard Time',
   displayPreferences: Immutable.Map(),
-  countrySettings: Immutable.Map(),
+  countryAbbreviation: null,
   drawerOpen: false,
   loggedOutReason: '',
   features: Immutable.Set(),
