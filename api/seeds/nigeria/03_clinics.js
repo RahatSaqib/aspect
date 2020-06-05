@@ -174,7 +174,7 @@ async function seed(knex) {
     partnerId
   )
 
-  const [modules] = await getPermissionModules(knex)
+  const modules = await getPermissionModules(knex)
 
   // permissions
   await upsertJobFunctionPermission(knex, jobFunctionIdClinician, [
