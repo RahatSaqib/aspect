@@ -33,6 +33,8 @@ async function up(knex) {
         { module: featureKey, activity: 'view' },
       ])
   })
+
+  // refresh permissions
   permissions = await knex('Permission as p').select(
     'p.module',
     'p.activity',
@@ -59,52 +61,34 @@ async function up(knex) {
       .select('p.module', 'jf.permissionId', 'jf.jobFunctionId')
     const missingFeaturesPerJob = _.differenceWith(
       _.map(jobFeature, elem => elem.module),
-      _.map(jobPermission, elem => elem.module),
+      jobPermission,
       (value, other) =>
         `${value}` === `${other.module}` ||
         `dashboard:${value.replace('Dashboard', '')}` ===
           `${other.module}:${other.activity}`
     )
+
     const permissionsToInsert = []
     await _.each(missingFeaturesPerJob, async elem => {
-      if (_.includes(elem.toLowerCase(), 'dashboard')) {
-        console.log(
-          elem,
-          `dashboard:${elem.replace('Dashboard', '')}`,
-          permissionToId(`dashboard:${elem.replace('Dashboard', '')}`)
-        )
-        permissionsToInsert.push({
-          JobFunctionId: func.id,
-          permissionId: permissionToId(
-            `dashboard:${elem.replace('Dashboard', '')}`
-          ).id,
-        })
-      } else {
-        permissionsToInsert.push({
-          JobFunctionId: func.id,
-          permissionId: permissionToId(`${elem}:admin`).id,
-        })
-        permissionsToInsert.push({
-          JobFunctionId: func.id,
-          permissionId: await permissionToId(`${elem}:edit`).id,
-        })
-        permissionsToInsert.push({
-          JobFunctionId: func.id,
-          permissionId: await permissionToId(`${elem}:view`).id,
-        })
+      const permission =
+        (await permissionToId(`dashboard:${elem.replace('Dashboard', '')}`)) ||
+        (await permissionToId(`${elem}:view`))
+      if (permission) {
+        if (_.includes(elem.toLowerCase(), 'dashboard')) {
+          permissionsToInsert.push({
+            JobFunctionId: func.id,
+            permissionId: permission.id,
+          })
+        } else {
+          permissionsToInsert.push({
+            JobFunctionId: func.id,
+            permissionId: permission.id,
+          })
+        }
       }
     })
     await knex('JobFunctionPermission').insert(
-      _.differenceWith(
-        permissionsToInsert,
-        _.map(jobPermission, elem => ({
-          JobFunctionId: func.id,
-          permissionId: elem.permissionId,
-        })),
-        (one, other) =>
-          one.jobFunctionId === other.jobFunctionId &&
-          one.permissionId === other.permissionId
-      )
+      _.uniqBy(permissionsToInsert, 'permissionId')
     )
   })
 
@@ -115,6 +99,8 @@ async function up(knex) {
 }
 
 async function down(knex) {
+  // for the revert the change if we want to keep change of the data we had
+  // in the features and jobfunctionfeatures table we need to rename them instead of just drop it.
   await knex.schema.createTable('Feature', feature => {
     feature.increments('id')
     feature.string('module').notNullable()
