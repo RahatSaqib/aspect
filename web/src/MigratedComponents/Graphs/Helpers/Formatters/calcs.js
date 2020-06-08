@@ -73,7 +73,7 @@ const getAverageFromData = (data, value, which, culture) => {
           }
         } else {
           // eslint-disable-next-line no-console
-          console.error(
+          console.warn(
             `There are no results to match your config for item: ${curr}`
           )
         }
