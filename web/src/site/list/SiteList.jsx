@@ -35,7 +35,7 @@ import ExportListButton from '../../globals/components/ExportListButton'
 const cssClasses = classnames.bind(require('./SiteList.css'))
 
 export const messages = defineMessages({
-  ...getCommonDefinitions('SiteList'),
+  ...getCommonDefinitions(),
   sitesTitle: {
     id: 'pages.SiteList.title',
     defaultMessage: 'Sites',

@@ -162,7 +162,7 @@ const clickExport = (
 }
 
 const messages = defineMessages({
-  ...getCommonDefinitions('popover'),
+  ...getCommonDefinitions(),
   moreFilters: {
     id: 'filter.popover.moreFilters',
     defaultMessage: 'More filters',

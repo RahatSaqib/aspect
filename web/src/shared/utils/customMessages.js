@@ -2,55 +2,55 @@ import Immutable from 'immutable'
 
 export const getCommonDefinitions = (componentName) => ({
   selectPlaceholder: {
-    id: `pages.${componentName}.selectPlaceholder`,
+    id: `pages.common.selectPlaceholder`,
     defaultMessage: 'Select {entity}...',
   },
   state: {
-    id: `pages.${componentName}.state`,
+    id: `pages.common.state`,
     defaultMessage: 'State',
   },
   state_MW: {
-    id: `pages.${componentName}.state_MW`,
+    id: `pages.common.state_MW`,
     defaultMessage: 'District',
   },
   state_ZANHLS: {
-    id: `pages.${componentName}.state_ZANHLS`,
+    id: `pages.common.state_ZANHLS`,
     defaultMessage: 'Province',
   },
   state_MM: {
-    id: `pages.${componentName}.state_MM`,
+    id: `pages.common.state_MM`,
     defaultMessage: 'State/Region',
   },
   state_ZW: {
-    id: `pages.${componentName}.state_ZW`,
+    id: `pages.common.state_ZW`,
     defaultMessage: 'Province',
   },
   state_CM: {
-    id: `pages.${componentName}.state_CM`,
+    id: `pages.common.state_CM`,
     defaultMessage: 'Region',
   },
   lga: {
-    id: `pages.${componentName}.lga`,
+    id: `pages.common.lga`,
     defaultMessage: 'LGA',
   },
   lga_ZANHLS: {
-    id: `pages.${componentName}.lga_ZANHLS`,
+    id: `pages.common.lga_ZANHLS`,
     defaultMessage: 'District',
   },
   lga_US: {
-    id: `pages.${componentName}.lga_US`,
+    id: `pages.common.lga_US`,
     defaultMessage: 'County',
   },
   lga_MM: {
-    id: `pages.${componentName}.lga_MM`,
+    id: `pages.common.lga_MM`,
     defaultMessage: 'District',
   },
   lga_ZW: {
-    id: `pages.${componentName}.lga_ZW`,
+    id: `pages.common.lga_ZW`,
     defaultMessage: 'District',
   },
   lga_CM: {
-    id: `pages.${componentName}.lga_CM`,
+    id: `pages.common.lga_CM`,
     defaultMessage: 'Division',
   }
 })

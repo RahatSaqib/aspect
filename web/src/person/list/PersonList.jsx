@@ -42,7 +42,7 @@ import ExportListButton from '../../globals/components/ExportListButton'
 const cssClasses = classnames.bind(require('./PersonList.css'))
 
 const messages = defineMessages({
-  ...getCommonDefinitions('PersonList'),
+  ...getCommonDefinitions(),
   contactsTitle: {
     id: 'pages.PersonList.title',
     defaultMessage: 'Contacts',

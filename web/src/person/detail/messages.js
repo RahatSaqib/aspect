@@ -4,7 +4,7 @@ import { getCommonDefinitions } from '../../shared/utils/customMessages'
 
 // Define all messages for /site/detail page
 export default defineMessages({
-  ...getCommonDefinitions('PersonDetail'),
+  ...getCommonDefinitions(),
   title: {
     id: 'pages.PersonDetail.title',
     defaultMessage: 'Person Detail',
