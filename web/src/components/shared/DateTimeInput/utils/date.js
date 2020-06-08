@@ -42,6 +42,10 @@ export const accessOptions = {
   getMinutes,
 }
 
+export function getDateObject(value) {
+  return _.isString(value) ? parseISO(value) : value
+}
+
 export function isValidDateRange(minDate, maxDate) {
   if (
     !isValid(maxDate) ||

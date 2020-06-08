@@ -18,6 +18,7 @@ import {
   receiveTableItems,
   Table,
 } from '../shared/metaReducers/table'
+import { getDateObject } from '../components/shared/DateTimeInput/utils/date'
 
 export const types = {
   REQUEST_DEVICES: 'REQUEST_DEVICES',
@@ -464,6 +465,13 @@ export default function deviceReducer(state = initialState, action) {
     case types.RECEIVE_UPDATED_SINGLE_DEVICE:
       return state.withMutations(mutState => {
         mutState.delete('requestedAt')
+        const { calibrationDate, warrantyDueDate } = action.item
+        if (calibrationDate) {
+          action.item.calibrationDate = getDateObject(calibrationDate)
+        }
+        if (warrantyDueDate) {
+          action.item.warrantyDueDate = getDateObject(warrantyDueDate)
+        }
         const immutItem = Immutable.fromJS(action.item)
         mutState.set('items', receiveItem(mutState.items, immutItem))
       })

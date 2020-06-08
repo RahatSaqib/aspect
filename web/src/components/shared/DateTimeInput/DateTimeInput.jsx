@@ -36,6 +36,7 @@ import {
   getDateList,
   getHourList,
   getMinuteList,
+  getDateObject,
 } from './utils/date'
 
 const OPTION_HEIGHT = 24
@@ -561,8 +562,8 @@ const DateTimeInput = props => {
   const FieldProps = originFieldProps || getDefaultFieldsProps(intl)
   const TextFieldsProps = _fp.merge(getDefaultFieldsProps(intl), FieldProps)
   const formatMessage = _fp.prop(['formatMessage'], intl)
-  const minDate = toDate(parseISO(min))
-  const maxDate = toDate(parseISO(max))
+  const minDate = getDateObject(min)
+  const maxDate = getDateObject(max)
   const orderList = getOrderList(displayFormat)
   const isControlled = useCallback(() => !(value === undefined), [value])
   const initialValue = isControlled()

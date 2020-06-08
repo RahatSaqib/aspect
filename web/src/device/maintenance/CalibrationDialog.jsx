@@ -1,5 +1,5 @@
+import React, { useState, useEffect } from 'react'
 import _ from 'lodash'
-import { compose, withProps, lifecycle, pure } from 'recompose'
 import { defineMessages } from 'react-intl'
 
 import recomposeForm from '../../components/recomposeForm'
@@ -31,32 +31,36 @@ export function validate({ contextDate }, { intl }) {
 
 const DEFAULT_VALUES = _.pick(SHARED_DEFAULT_VALUES, ['contextDate', 'notes'])
 
-const enhance = compose(
-  pure,
-  withDateFormatProps,
-  lifecycle({
-    componentWillMount() {
-      const { device } = this.props
-      this.setState({
-        onChange: values => this.setState({ values }),
-        values: {
-          ...DEFAULT_VALUES,
-          contextDate: device.get('calibrationDate'),
-          notes: device.get('calibrationNotes'),
-        },
-      })
-    },
-  }),
-  withProps(({ intl }) => ({
+const calibrationDialog = WrappedComponent => props => {
+  const [values, setValues] = useState({})
+  const { device, intl } = props
+  const getValues = device => ({
+    ...DEFAULT_VALUES,
+    contextDate: device.get('calibrationDate') || null,
+    notes: device.get('calibrationNotes'),
+  })
+
+  useEffect(() => setValues(getValues(device)), [device])
+
+  const allProps = {
+    ...props,
     labels: {
       dialogTitle: intl.formatMessage(messages.dialogTitle),
       contextDate: intl.formatMessage(messages.calibrationDate),
     },
-  })),
+    onChange: values => setValues(values),
+    values,
+  }
+
+  return <WrappedComponent {...allProps} />
+}
+
+export default _.flowRight(
+  React.memo,
+  withDateFormatProps,
+  calibrationDialog,
   recomposeForm({
     fields: [sharedFields.contextDate, sharedFields.notes],
     validate,
   })
-)
-
-export default enhance(BaseDialog)
+)(BaseDialog)
