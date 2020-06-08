@@ -34,13 +34,16 @@ const DEFAULT_VALUES = _.pick(SHARED_DEFAULT_VALUES, ['contextDate', 'notes'])
 const calibrationDialog = WrappedComponent => props => {
   const [values, setValues] = useState({})
   const { device, intl } = props
-  const getValues = device => ({
-    ...DEFAULT_VALUES,
-    contextDate: device.get('calibrationDate') || null,
-    notes: device.get('calibrationNotes'),
-  })
 
-  useEffect(() => setValues(getValues(device)), [device])
+  useEffect(
+    () =>
+      setValues({
+        ...DEFAULT_VALUES,
+        contextDate: device.get('calibrationDate') || null,
+        notes: device.get('calibrationNotes'),
+      }),
+    [device]
+  )
 
   const allProps = {
     ...props,

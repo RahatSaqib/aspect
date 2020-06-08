@@ -34,13 +34,16 @@ const DEFAULT_VALUES = _.pick(SHARED_DEFAULT_VALUES, ['contextDate', 'notes'])
 const warrantyDialog = WrappedComponent => props => {
   const [values, setValues] = useState({})
   const { device, intl } = props
-  const getValues = device => ({
-    ...DEFAULT_VALUES,
-    contextDate: device.get('warrantyDueDate') || null,
-    notes: device.get('warrantyNotes'),
-  })
 
-  useEffect(() => setValues(getValues(device)), [device])
+  useEffect(
+    () =>
+      setValues({
+        ...DEFAULT_VALUES,
+        contextDate: device.get('warrantyDueDate') || null,
+        notes: device.get('warrantyNotes'),
+      }),
+    [device]
+  )
 
   const allProps = {
     ...props,
