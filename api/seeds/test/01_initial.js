@@ -1430,7 +1430,7 @@ async function seed(knex) {
             partnerId: partnerOneId,
             geographyId,
             externalId: `${state.name}_${lga.name}`,
-            name: `${lga.name} ${country.lgaLabel} ${state.name}`,
+            name: `${lga.name} County ${state.name}`,
             shortName: `${lga.name}, ${stateKey}`,
             city: `${lga.name} City`,
             street1: `${lgaData.id} Main Street`,

@@ -4089,7 +4089,7 @@ async function seed(knex) {
                         ? `${city} ${
                             labStrings[_.random(0, labStrings.length - 1)]
                           }`
-                        : `${lga.name} ${country.lgaLabel} Lab ${siteNumber}`,
+                        : `${lga.name} County Lab ${siteNumber}`,
                       shortName:
                         city || `${lga.name}, ${stateKey} ${siteNumber}`,
                       city: city || `${lga.name} City`,
