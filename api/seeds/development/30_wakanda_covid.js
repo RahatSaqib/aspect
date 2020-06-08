@@ -327,7 +327,6 @@ async function seed(knex) {
 
   await upsertJobFunctionPermission(knex, jobFunctionIdClinician, [
     modules.demo.admin,
-    modules.assay.edit,
     modules.patient.edit,
     modules.case.edit,
     modules.site.edit,
