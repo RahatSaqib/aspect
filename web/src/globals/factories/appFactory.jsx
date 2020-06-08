@@ -70,7 +70,7 @@ const mapStateToProps = state => {
     countryId: state.user.countryId,
     displayPreferences: state.user.displayPreferences,
     drawerOpen: state.user.drawerOpen,
-    drawerOpen: state.user.countryAbbreviation,
+    countryAbbreviation: state.user.countryAbbreviation,
     hasToAcceptLicenseId: state.user.jwt.hasToAcceptLicenseId,
     // For render()
     isLoggedOut,
