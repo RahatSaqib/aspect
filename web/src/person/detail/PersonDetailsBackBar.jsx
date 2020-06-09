@@ -14,7 +14,7 @@ const PersonDetailBackBar = ({
   disabled,
 }) => {
   const onBackClick = () => {
-    history.push('/browse/person')
+    history.goBack()
   }
   const onPathClick = path => {
     history.push({

@@ -3,7 +3,7 @@ import DetailBackBar from '../../globals/components/DetailBackBar'
 
 export const ResultDetailsBackBar = ({ history, location, match, title }) => {
   const onBackClick = () => {
-    history.push('/browse/result')
+    history.goBack()
   }
 
   return (
