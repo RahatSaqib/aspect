@@ -353,15 +353,15 @@ async function seed(knex) {
 
   const modules = await getPermissionModules(knex)
 
-  await Promise.each(myanmarJobFunctions, async myanmarJobFunction => {
-    await knex('JobFunctionPermission').insert({
+  await Promise.each(myanmarJobFunctions, async myanmarJobFunction =>
+    knex('JobFunctionPermission').insert({
       jobFunctionId: myanmarJobFunction.id,
       permissionId:
         myanmarJobFunction.name === 'Admin'
           ? modules.actionDashboard.admin
           : modules.actionDashboard.edit,
     })
-  })
+  )
 
   await updateUnknownErrorOnModuleMessage(knex)
 

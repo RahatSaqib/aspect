@@ -128,7 +128,7 @@ async function commonUpserts(
     modules.reporter.admin,
     modules.assay.edit,
     modules.browse.view,
-    modules.person.view,
+    modules.person.admin,
   ])
   let { id: jobIdAdmin } =
     (await knex('Job')
@@ -165,7 +165,7 @@ async function commonUpserts(
     modules.site.view,
     modules.person.view,
     modules.case.edit,
-    modules.assay.edit,
+    modules.assay.view,
     modules.dashboard.summary,
     modules.dashboard.result,
   ])
@@ -219,12 +219,12 @@ async function upsertJobFunction(
   return jobFunctionId
 }
 
-async function clonePermissions(knex, fromFeature, toFeature) {
+async function clonePermissions(knex, fromModule, toModule) {
   const jobFunctionWithExistingPermission = await knex(
     'JobFunctionPermission as jf'
   )
     .join('Permission as p', 'p.id', 'jf.permissionId')
-    .where('p.module', toFeature)
+    .where('p.module', toModule)
     .pluck('jf.jobFunctionId')
   await knex.transaction(async function (trx) {
     await knex
@@ -239,13 +239,13 @@ async function clonePermissions(knex, fromFeature, toFeature) {
           )
           .innerJoin('Permission as p', 'jfp.permissionId', 'p.id')
           .innerJoin('Permission as pCase', function () {
-            this.on('pCase.module', knex.raw('?', [toFeature])).on(
+            this.on('pCase.module', knex.raw('?', [toModule])).on(
               'p.activity',
               'pCase.activity'
             )
           })
           .whereNotIn('jf.id', jobFunctionWithExistingPermission)
-          .where('p.module', knex.raw('?', [fromFeature]))
+          .where('p.module', knex.raw('?', [fromModule]))
           .select('jf.id as jobFunctionId', 'pCase.id as permissionId')
       })
   })
