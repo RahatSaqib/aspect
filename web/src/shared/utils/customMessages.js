@@ -1,6 +1,6 @@
 import Immutable from 'immutable'
 
-export const getCommonDefinitions = () => ({
+export const commonDefinitions = {
   selectPlaceholder: {
     id: `pages.common.selectPlaceholder`,
     defaultMessage: 'Select {entity}...',
@@ -52,16 +52,16 @@ export const getCommonDefinitions = () => ({
   lga_CM: {
     id: `pages.common.lga_CM`,
     defaultMessage: 'Division',
-  }
-})
+  },
+}
 
 export function getCustomMessage(intl, messages, key, user, params) {
   const { countryAbbreviation } = user
 
-  let message = messages[`${key}_${countryAbbreviation}`] //default Key can be 'state' or 'lga', in this case
+  let message = messages[`${key}_${countryAbbreviation}`] // default Key can be 'state' or 'lga', in this case
 
   if (!message) {
-    message = messages[`${key}`] //if there's not a specific country for the provided key, we will try to get the default message
+    message = messages[`${key}`] // if there's not a specific country for the provided key, we will try to get the default message
   }
 
   if (!message) {
@@ -71,7 +71,7 @@ export function getCustomMessage(intl, messages, key, user, params) {
 
   if (params) {
     const [...keys] = Immutable.fromJS(params).keys()
-    keys.map(key => {
+    keys.forEach(key => {
       params[key] = getCustomMessage(intl, messages, params[key], user)
     })
   }

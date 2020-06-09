@@ -8,7 +8,10 @@ import Modal from '@material-ui/core/Modal'
 import Card from '@material-ui/core/Card'
 import { connect } from 'react-redux'
 
-import { getCustomMessage, getCommonDefinitions } from '../../shared/utils/customMessages'
+import {
+  getCustomMessage,
+  commonDefinitions,
+} from '../../shared/utils/customMessages'
 import FallbackUntilDone from '../../components/shared/FallbackUntilDone'
 import FocusBlurTextField from '../../components/shared/FocusBlurTextField'
 import CountrySelectField from '../geography/CountrySelectField'
@@ -31,11 +34,9 @@ import RevokedSelectField from '../resource/RevokedSelectField'
 const cssClasses = classnames.bind(require('./FiltersPanel.css'))
 
 const enhance = compose(
-  connect(
-    state => ({
-      user: state.user,
-    })
-  ),
+  connect(state => ({
+    user: state.user,
+  })),
   withState('isShown', 'setIsShown', false),
   withHandlers({
     onToggleShown: ({ setIsShown }) => () => setIsShown(isShown => !isShown),
@@ -87,7 +88,9 @@ const enhance = compose(
         partnerId,
       }),
 
-    onSampleCollectionSiteChange: ({ onChangeFilters }) => sampleCollectionSite =>
+    onSampleCollectionSiteChange: ({
+      onChangeFilters,
+    }) => sampleCollectionSite =>
       onChangeFilters({
         sampleCollectionSite,
       }),
@@ -162,7 +165,7 @@ const clickExport = (
 }
 
 const messages = defineMessages({
-  ...getCommonDefinitions(),
+  ...commonDefinitions,
   moreFilters: {
     id: 'filter.popover.moreFilters',
     defaultMessage: 'More filters',
@@ -494,8 +497,19 @@ export const FiltersPanel = ({
               countryId={filters.countryId}
               stateId={filters.stateId}
               floatingLabelFixed
-              hintText={getCustomMessage(intl, messages, 'selectPlaceholder', user, { entity: 'state' })}
-              floatingLabelText={getCustomMessage(intl, messages, 'state', user)}
+              hintText={getCustomMessage(
+                intl,
+                messages,
+                'selectPlaceholder',
+                user,
+                { entity: 'state' }
+              )}
+              floatingLabelText={getCustomMessage(
+                intl,
+                messages,
+                'state',
+                user
+              )}
               style={{ verticalAlign: 'bottom' }}
             />
           </div>
@@ -509,7 +523,13 @@ export const FiltersPanel = ({
               stateId={filters.stateId}
               lgaId={filters.lgaId}
               floatingLabelFixed
-              hintText={getCustomMessage(intl, messages, 'selectPlaceholder', user, { entity: 'lga' })}
+              hintText={getCustomMessage(
+                intl,
+                messages,
+                'selectPlaceholder',
+                user,
+                { entity: 'lga' }
+              )}
               floatingLabelText={getCustomMessage(intl, messages, 'lga', user)}
               style={{ verticalAlign: 'bottom' }}
             />
@@ -687,7 +707,9 @@ export const FiltersPanel = ({
               onSiteNameChange={onSampleCollectionSiteChange}
               floatingLabelFixed
               hintText={intl.formatMessage(messages.enterSampleCollectionSite)}
-              floatingLabelText={intl.formatMessage(messages.sampleCollectionSite)}
+              floatingLabelText={intl.formatMessage(
+                messages.sampleCollectionSite
+              )}
             />
           </div>
         )}

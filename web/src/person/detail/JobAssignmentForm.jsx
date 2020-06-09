@@ -45,11 +45,9 @@ const validate = ({ jobFunctionId }, { intl }) => {
   return errors
 }
 const enhance = compose(
-  connect(
-    state => ({
-      user: state.user,
-    })
-  ),
+  connect(state => ({
+    user: state.user,
+  })),
   pure,
   lifecycle({
     componentWillMount() {
@@ -174,7 +172,12 @@ export const JobAssignmentForm = ({
               onStateIdChange={onStateIdChange}
               countryId={values.countryId}
               stateId={values.stateId}
-              floatingLabelText={getCustomMessage(intl, messages, 'state', user)}
+              floatingLabelText={getCustomMessage(
+                intl,
+                messages,
+                'state',
+                user
+              )}
             />
             <LgaSelectField
               {...baseProps}

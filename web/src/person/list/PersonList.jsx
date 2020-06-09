@@ -11,7 +11,10 @@ import IconButton from '@material-ui/core/IconButton'
 import Tooltip from '@material-ui/core/Tooltip'
 import AddIcon from '@material-ui/icons/Add'
 
-import { getCustomMessage, getCommonDefinitions } from '../../shared/utils/customMessages'
+import {
+  getCustomMessage,
+  commonDefinitions,
+} from '../../shared/utils/customMessages'
 import {
   makeSortPageSelector,
   makeSearchParamsSanitizer,
@@ -42,7 +45,7 @@ import ExportListButton from '../../globals/components/ExportListButton'
 const cssClasses = classnames.bind(require('./PersonList.css'))
 
 const messages = defineMessages({
-  ...getCommonDefinitions(),
+  ...commonDefinitions,
   contactsTitle: {
     id: 'pages.PersonList.title',
     defaultMessage: 'Contacts',

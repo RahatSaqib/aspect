@@ -199,22 +199,22 @@ export function loginStart({ user, password }) {
         ),
       },
     })
-    .then(json => 
-      dispatch(
-        loginSuccess(requestedAt, {
-          access: json.access,
-          refresh: json.refresh,
-          clientId: json.clientId,
-          countryId: json.countryId,
-          culture: json.culture,
-          countryAbbreviation: json.countryAbbreviation,
-          timezoneId: json.timezone,
-          displayPreferences: Immutable.Map(json.displayPreferences),
-        })
+      .then(json =>
+        dispatch(
+          loginSuccess(requestedAt, {
+            access: json.access,
+            refresh: json.refresh,
+            clientId: json.clientId,
+            countryId: json.countryId,
+            culture: json.culture,
+            countryAbbreviation: json.countryAbbreviation,
+            timezoneId: json.timezone,
+            displayPreferences: Immutable.Map(json.displayPreferences),
+          })
+        )
       )
-    )
-    .then(() => dispatch(fetchFeatures()))
-    .catch(err => dispatch(loginFailure(err)))
+      .then(() => dispatch(fetchFeatures()))
+      .catch(err => dispatch(loginFailure(err)))
   }
 }
 
@@ -446,18 +446,18 @@ export function acceptLicenseStart(licenseId) {
       },
     })
       .then(json =>
-          dispatch(
-            acceptLicenseSuccess(requestedAt, {
-              access: json.access,
-              refresh: json.refresh,
-              clientId: json.clientId,
-              culture: json.culture,
-              countryAbbreviation: json.countryAbbreviation,
-              timezoneId: json.timezone,
-              displayPreferences: Immutable.Map(json.displayPreferences),
-              countryId: json.countryId,
-            })
-          )
+        dispatch(
+          acceptLicenseSuccess(requestedAt, {
+            access: json.access,
+            refresh: json.refresh,
+            clientId: json.clientId,
+            culture: json.culture,
+            countryAbbreviation: json.countryAbbreviation,
+            timezoneId: json.timezone,
+            displayPreferences: Immutable.Map(json.displayPreferences),
+            countryId: json.countryId,
+          })
+        )
       )
       .then(() => dispatch(fetchFeatures()))
       .catch(err => dispatch(acceptLicenseFailure(err)))

@@ -1,10 +1,10 @@
 // Imports from packages
 import { defineMessages } from 'react-intl'
-import { getCommonDefinitions } from '../../shared/utils/customMessages'
+import { commonDefinitions } from '../../shared/utils/customMessages'
 
 // Define all messages for /site/detail page
 export default defineMessages({
-  ...getCommonDefinitions(),
+  ...commonDefinitions,
   title: {
     id: 'pages.PersonDetail.title',
     defaultMessage: 'Person Detail',
