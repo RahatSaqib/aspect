@@ -1,6 +1,6 @@
 import Immutable from 'immutable'
 
-export const getCommonDefinitions = (componentName) => ({
+export const getCommonDefinitions = () => ({
   selectPlaceholder: {
     id: `pages.common.selectPlaceholder`,
     defaultMessage: 'Select {entity}...',
