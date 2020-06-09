@@ -280,20 +280,18 @@ const enhance = compose(
     },
     onHideDialog: ({ hideDialog }) => () => hideDialog(),
 
-    onCalibrationSubmit: ({ device, updateDeviceMaintenance }) => values => {
+    onCalibrationSubmit: ({ device, updateDeviceMaintenance }) => values =>
       updateDeviceMaintenance({
         externalId: 'calibration',
         device,
         values,
-      })
-    },
-    onWarrantySubmit: ({ device, updateDeviceMaintenance }) => values => {
+      }),
+    onWarrantySubmit: ({ device, updateDeviceMaintenance }) => values =>
       updateDeviceMaintenance({
         externalId: 'warranty',
         device,
         values,
-      })
-    },
+      }),
   }),
   lifecycle({
     componentWillMount() {
