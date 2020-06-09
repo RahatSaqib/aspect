@@ -42,6 +42,18 @@ export const accessOptions = {
   getMinutes,
 }
 
+export function getDateObject(value, defaultValue) {
+  if (_.isString(value)) return parseISO(value)
+  if (_.isDate(value)) return value
+  if (defaultValue && !_.isDate(defaultValue)) {
+    // eslint-disable-next-line no-console
+    console.error(
+      'getDateObject accepts only Date object for defaultValue if provided'
+    )
+  }
+  return defaultValue
+}
+
 export function isValidDateRange(minDate, maxDate) {
   if (
     !isValid(maxDate) ||
