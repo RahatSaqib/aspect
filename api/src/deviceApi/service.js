@@ -815,7 +815,7 @@ async function onResultUpdated(
 }
 
 async function onResultLogged(action, context) {
-  return context.messageContext.transact(async knex => {
+  return context.messageContext.run(async knex => {
     const { partnerPluginName, deviceTypePluginName } =
       (await knex('Result as r')
         .leftJoin('Partner as p', 'r.partnerId', 'p.id')

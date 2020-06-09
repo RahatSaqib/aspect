@@ -226,7 +226,7 @@ function onResultLogged({ resultId }, { messageContext }) {
     factGenerateResultCounts,
     deviceHasNewResults,
   })
-  return context.transact(async knex => {
+  return context.run(async knex => {
     const { deviceId, assayId, resultCategory1, resultCategory2, noResults } =
       (await knex('Result as r')
         .leftJoin('FactDeviceFlag as fdf', 'fdf.deviceId', 'r.deviceId')
@@ -300,17 +300,23 @@ function onFactGenerateResultCountsForDevice(
         .select('r.deviceId')
         .first()
 
-      await knex.raw(
-        knex('FactResultsDevice')
-          .insert({
-            deviceId,
-            days,
-            resultCount: countByDevice.resultCount,
-            calculatedOn: now,
-          })
-          .toString()
-          .replace(/^insert/i, 'replace')
-      )
+      const factResultsDevice = await knex('FactResultsDevice')
+        .where({ deviceId })
+        .first()
+      if (factResultsDevice) {
+        await knex('FactResultsDevice').where({ deviceId }).update({
+          days,
+          resultCount: countByDevice.resultCount,
+          calculatedOn: now,
+        })
+      } else {
+        await knex('FactResultsDevice').insert({
+          deviceId,
+          days,
+          resultCount: countByDevice.resultCount,
+          calculatedOn: now,
+        })
+      }
 
       // ...grouped by assay
       const countsByAssay = await query
@@ -345,19 +351,35 @@ function onFactGenerateResultCountsForDevice(
         .select('r.assayId', 'r.resultCategory1')
 
       for (const count of countsByCategory) {
-        await knex.raw(
-          knex('FactResultsDeviceByCategory1')
-            .insert({
+        const factResultsDeviceByCategory1 = await knex(
+          'FactResultsDeviceByCategory1'
+        )
+          .where({
+            deviceId,
+            assayId: count.assayId,
+            resultCategory1: count.resultCategory1,
+            days,
+          })
+          .first()
+        if (factResultsDeviceByCategory1) {
+          await knex('FactResultsDeviceByCategory1')
+            .where({
               deviceId,
               assayId: count.assayId,
               resultCategory1: count.resultCategory1,
               days,
-              resultCount: count.resultCount,
-              calculatedOn: now,
             })
-            .toString()
-            .replace(/^insert/i, 'replace')
-        )
+            .update({ resultCount: count.resultCount, calculatedOn: now })
+        } else {
+          await knex('FactResultsDeviceByCategory1').insert({
+            deviceId,
+            assayId: count.assayId,
+            resultCategory1: count.resultCategory1,
+            days,
+            resultCount: count.resultCount,
+            calculatedOn: now,
+          })
+        }
       }
 
       // ...grouped by assay, resultCategory 1 & 2
