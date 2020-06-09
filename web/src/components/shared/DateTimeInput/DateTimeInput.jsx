@@ -418,7 +418,10 @@ export const DateTimeSelect = props => {
   const initialSelectedItem = currentOption || null
 
   const handleSelect = selectedItem => {
-    handleChange(selectedItem)
+    // selectedItem is 'undefined' when user pressed Esc
+    if (selectedItem) {
+      handleChange(selectedItem)
+    }
   }
 
   if (!methodRef.current) {
