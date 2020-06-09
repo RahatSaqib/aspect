@@ -23,7 +23,7 @@ const enhance = compose(
   injectIntl,
   withHandlers({
     onBackClick: ({ history }) => () => {
-      history.push('/browse/notification')
+      history.goBack()
     },
     onPathClick: ({ history, match }) => path => {
       history.push({
