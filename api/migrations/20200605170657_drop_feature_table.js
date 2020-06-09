@@ -73,19 +73,11 @@ async function up(knex) {
       const permission =
         (await permissionToId(`dashboard:${elem.replace('Dashboard', '')}`)) ||
         (await permissionToId(`${elem}:view`))
-      if (permission) {
-        if (_.includes(elem.toLowerCase(), 'dashboard')) {
-          permissionsToInsert.push({
-            JobFunctionId: func.id,
-            permissionId: permission.id,
-          })
-        } else {
-          permissionsToInsert.push({
-            JobFunctionId: func.id,
-            permissionId: permission.id,
-          })
-        }
-      }
+      if (permission)
+        permissionsToInsert.push({
+          JobFunctionId: func.id,
+          permissionId: permission.id,
+        })
     })
     await knex('JobFunctionPermission').insert(
       _.uniqBy(permissionsToInsert, 'permissionId')
