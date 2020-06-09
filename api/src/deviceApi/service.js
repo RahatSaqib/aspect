@@ -1,6 +1,6 @@
 const Boom = require('@hapi/boom')
 const _ = require('lodash')
-const { knex, transact, run } = require('../db')
+const { knex, transact } = require('../db')
 const { getRemoteAddress } = require('../shared/request')
 const { asyncHandler } = require('../routes')
 const { deviceStatusToId, deviceTypeToPlugin } = require('../shared/dictionary')
@@ -815,18 +815,17 @@ async function onResultUpdated(
 }
 
 async function onResultLogged(action, context) {
-  return run(async knex => {
-    const { partnerPluginName, deviceTypePluginName } = await knex(
-      'Result as r'
-    )
-      .leftJoin('Partner as p', 'r.partnerId', 'p.id')
-      .leftJoin('Device as d', 'r.deviceId', 'd.id')
-      .leftJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
-      .where({ 'r.id': action.resultId })
-      .first(
-        'p.plugin as partnerPluginName',
-        'dt.plugin as deviceTypePluginName'
-      )
+  return context.messageContext.transact(async knex => {
+    const { partnerPluginName, deviceTypePluginName } =
+      (await knex('Result as r')
+        .leftJoin('Partner as p', 'r.partnerId', 'p.id')
+        .leftJoin('Device as d', 'r.deviceId', 'd.id')
+        .leftJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
+        .where({ 'r.id': action.resultId })
+        .first(
+          'p.plugin as partnerPluginName',
+          'dt.plugin as deviceTypePluginName'
+        )) || {}
     const pluginOnResultLogged = await loadPlugin(
       [partnerPluginName, deviceTypePluginName],
       'onResultLogged'
