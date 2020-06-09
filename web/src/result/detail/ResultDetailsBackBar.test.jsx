@@ -9,6 +9,7 @@ describe('ResultDetailsBackBar component', () => {
     formatMessage: message => message.defaultMessage,
     history: {
       push: jest.fn(),
+      goBack: jest.fn(),
     },
     location: {},
     match: {
@@ -28,14 +29,14 @@ describe('ResultDetailsBackBar component', () => {
     it('should click back arrow and navigate back to result list', () => {
       const wrapper = mount(<ResultDetailsBackBar {...props} />)
       const {
-        history: { push },
+        history: { goBack },
       } = props
       wrapper
         .find(ResultDetailsBackBar)
         .find(DetailBackBar)
         .find('button')
         .simulate('click')
-      expect(push).toHaveBeenCalledWith('/browse/result')
+      expect(goBack).toHaveBeenCalled()
     })
   })
 })
