@@ -31,7 +31,7 @@ export const DeviceDetailBackBar = ({
   disabled,
 }) => {
   const onBackClick = () => {
-    history.push('/browse/device')
+    history.goBack()
   }
   const onPathClick = path => {
     history.push({
