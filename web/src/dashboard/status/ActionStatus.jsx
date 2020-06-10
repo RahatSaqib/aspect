@@ -59,7 +59,11 @@ export const filtersFromLocation = composeSanitizer(
 const enhance = compose(
   pure,
   requirePermissions({
-    permissions: ['actionDashboard:admin', 'actionDashboard:view'],
+    permissions: [
+      'actionDashboard:admin',
+      'actionDashboard:view',
+      'actionDashboard:edit',
+    ],
   }),
   withProps(
     makeSortPageSelector({

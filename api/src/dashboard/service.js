@@ -1241,7 +1241,7 @@ async function actionDashboard(request) {
     auth.credentials,
     'actionDashboard'
   )
-  const alertMessages = knex('AlertMessage as am')
+  const alertMessages = await knex('AlertMessage as am')
     .join('MessageStatus as ms', 'am.messageStatusId', 'ms.id')
     .join('Notification as n', 'am.id', 'n.alertMessageId')
     .join('NotificationType as nt', 'n.notificationTypeId', 'nt.id')
@@ -1307,7 +1307,7 @@ async function actionDashboard(request) {
       'i.consumableId'
     )
   const alertMessagesByIssue = _.map(
-    _.values(_.groupBy(await alertMessages, 'issueId')),
+    _.values(_.groupBy(alertMessages, 'issueId')),
     issueMessages => {
       const highestLevelMessage = _.head(
         _.orderBy(issueMessages, 'notificationTypeLevel', 'desc')

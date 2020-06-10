@@ -129,7 +129,6 @@ async function seed(knex) {
   const modules = await getPermissionModules(knex)
   const jobFunctionIdAdmin = await upsertJobFunction(knex, 'Admin', partnerId, [
     modules.demo.admin,
-    modules.issue.admin,
     modules.site.admin,
     modules.result.admin,
     modules.dashboard.result,
@@ -173,7 +172,6 @@ async function seed(knex) {
     'Lab User',
     partnerId,
     [
-      modules.task.admin,
       modules.result.admin,
       modules.site.admin,
       modules.assay.view,
