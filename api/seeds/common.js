@@ -126,7 +126,6 @@ async function commonUpserts(
     modules.account.admin,
     modules.device.admin,
     modules.reporter.admin,
-    modules.assay.edit,
     modules.browse.view,
     modules.person.admin,
   ])
@@ -165,7 +164,6 @@ async function commonUpserts(
     modules.site.view,
     modules.person.view,
     modules.case.edit,
-    modules.assay.view,
     modules.dashboard.summary,
     modules.dashboard.result,
   ])
