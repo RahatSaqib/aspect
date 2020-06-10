@@ -50,6 +50,8 @@ async function listDeviceApiKeys(request) {
       site: 's',
     })
 
+  console.log(dakQuery.toString())
+
   // get total count for paging
   const getCount = dakQuery.clone().count('dak.id as count').first()
 
