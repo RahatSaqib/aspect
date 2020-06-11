@@ -5210,7 +5210,7 @@ async function seed(knex) {
     modules.treatmentStatus.admin,
     modules.site.edit,
     modules.device.edit,
-    modules.assay.edit,
+    modules.assay.view,
     modules.inventory.edit,
     modules.reporter.edit,
     modules.dashboard.report,
@@ -5226,6 +5226,7 @@ async function seed(knex) {
     modules.account.admin,
     modules.router.admin,
     modules.person.edit,
+    modules.clinicalIndicators.view,
   ])
   await upsertJobFunctionPermission(knex, jobFunctionIdPartnerTwo, [
     modules.treatmentStatus.admin,
@@ -5244,6 +5245,8 @@ async function seed(knex) {
     modules.person.view,
     modules.account.admin,
     modules.router.admin,
+    modules.assay.view,
+    modules.inventory.view,
   ])
   await upsertJobFunctionPermission(knex, jobFunctionIdClinician, [
     modules.site.view,
