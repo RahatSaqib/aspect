@@ -96,6 +96,7 @@ async function seed(knex) {
     { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.assay.admin },
     { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.device.admin },
     { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.site.admin },
+    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.person.admin },
   ])
 
   const [jobIdAdmin] = await knex('Job').insert([
@@ -133,6 +134,10 @@ async function seed(knex) {
       jobFunctionId: jobFunctionIdRegionalOfficer,
       permissionId: modules.site.view,
     },
+    {
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      permissionId: modules.person.view,
+    },
   ])
 
   const jobFunctionIdLabUser = await upsertJobFunction(
@@ -147,5 +152,6 @@ async function seed(knex) {
     { jobFunctionId: jobFunctionIdLabUser, permissionId: modules.assay.view },
     { jobFunctionId: jobFunctionIdLabUser, permissionId: modules.device.view },
     { jobFunctionId: jobFunctionIdLabUser, permissionId: modules.site.view },
+    { jobFunctionId: jobFunctionIdLabUser, permissionId: modules.person.view },
   ])
 }

@@ -91,6 +91,10 @@
         "activity": "view"
       },
       {
+        "module": "person",
+        "activity": "view"
+      },
+      {
         "module": "device",
         "activity": "view"
       },

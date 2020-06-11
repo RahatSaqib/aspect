@@ -178,6 +178,7 @@ async function commonUpserts(
     modules.dashboard.summary,
     modules.dashboard.result,
     modules.case.edit,
+    modules.person.view,
   ])
   if (deviceApiToken) {
     await upsertGxAlertDevice(

@@ -239,7 +239,7 @@ async function listSitesForSelectList(request) {
     .distinct()
 
   const sites = await sitesQuery
-  console.log(sites)
+
   const countryState = await knex('Country as c')
     .innerJoin('Geography as g', 'g.countryId', 'c.id')
     .leftJoin('State as s', 's.id', 'g.stateId')

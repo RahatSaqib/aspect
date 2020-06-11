@@ -5225,6 +5225,7 @@ async function seed(knex) {
     modules.case.admin,
     modules.account.admin,
     modules.router.admin,
+    modules.person.edit,
   ])
   await upsertJobFunctionPermission(knex, jobFunctionIdPartnerTwo, [
     modules.treatmentStatus.admin,
@@ -5240,6 +5241,7 @@ async function seed(knex) {
     modules.dashboard.site,
     modules.dashboard.summary,
     modules.case.admin,
+    modules.person.view,
     modules.account.admin,
     modules.router.admin,
   ])
@@ -5263,6 +5265,7 @@ async function seed(knex) {
     modules.case.edit,
     modules.account.edit,
     modules.router.edit,
+    modules.person.view,
   ])
 
   // crate jobs for users
