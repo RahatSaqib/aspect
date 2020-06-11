@@ -11,6 +11,7 @@ describe('DeviceDetailBackBar component', () => {
     },
     history: {
       push: jest.fn(),
+      goBack: jest.fn(),
     },
     location: {},
     match: {
@@ -48,7 +49,7 @@ describe('DeviceDetailBackBar component', () => {
     it('should click back arrow and navigate back to result list', () => {
       const wrapper = mount(<DeviceDetailBackBar {...props} />)
       const {
-        history: { push },
+        history: { goBack },
       } = props
       wrapper
         .find(DeviceDetailBackBar)
@@ -57,7 +58,7 @@ describe('DeviceDetailBackBar component', () => {
         .at(0)
         .simulate('click')
 
-      expect(push).toHaveBeenCalledWith('/browse/device')
+      expect(goBack).toHaveBeenCalled()
     })
   })
 })

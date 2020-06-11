@@ -60,7 +60,7 @@ const hivGraphs = {
         averages: {
           showTotal: false,
           title: 'clinicalIndicatorsPieLegend',
-          key: ['NotDetected', 'LessThan1000'],
+          key: ['LessThan1000', 'NotDetected'],
           subTitle: 'clinicalIndicatorsPieSubLegend',
         },
       },
