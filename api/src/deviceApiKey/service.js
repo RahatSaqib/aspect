@@ -244,7 +244,7 @@ async function assignDeviceApiKeys(request) {
       throw new Error('When deviceId is set, only one key can be assigned')
 
     // Revoke the other keys assigned to it
-    await knex('DeviceApiKey as dak')
+    await knex('DeviceApiKey')
       .where({
         geographyId,
         siteId: payload.siteId,
