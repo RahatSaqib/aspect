@@ -50,8 +50,6 @@ async function listDeviceApiKeys(request) {
       site: 's',
     })
 
-  console.log(dakQuery.toString())
-
   // get total count for paging
   const getCount = dakQuery.clone().count('dak.id as count').first()
 
@@ -239,6 +237,24 @@ async function assignDeviceApiKeys(request) {
 
   const now = new Date()
   const currentlyLoggedInUser = await getUser(auth.credentials.name)
+
+  if (payload.deviceId) {
+    // If deviceId is set, we need to ensure that only one key is assigned to the device
+    if (payload.deviceApiKeyIds.length > 1)
+      throw new Error('When deviceId is set, only one key can be assigned')
+
+    // Revoke the other keys assigned to it
+    await knex('DeviceApiKey as dak')
+      .where({
+        geographyId,
+        siteId: payload.siteId,
+        partnerId: payload.partnerId,
+        deviceId: payload.deviceId,
+      })
+      .update({
+        revoked: true,
+      })
+  }
 
   await knex('DeviceApiKey as dak')
     .whereIn('dak.id', payload.deviceApiKeyIds)
