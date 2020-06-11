@@ -267,17 +267,16 @@ const buttonBy = {
       siteName,
     })
   ),
-  sampleOriginSite: makeButton(
-    ({ intl, siteItemsById }, sampleOriginSiteId) =>
-      intl.formatMessage(messages.sampleOriginSite, {
-        sampleOriginSiteName: siteItemsById
-          .find(
-            it => it.get('name') === sampleOriginSiteId,
-            EMPTY_CONTEXT,
-            EMPTY_MAP
-          )
-          .get('name'),
-      })
+  sampleOriginSite: makeButton(({ intl, siteItemsById }, sampleOriginSiteId) =>
+    intl.formatMessage(messages.sampleOriginSite, {
+      sampleOriginSiteName: siteItemsById
+        .find(
+          it => it.get('name') === sampleOriginSiteId,
+          EMPTY_CONTEXT,
+          EMPTY_MAP
+        )
+        .get('name'),
+    })
   ),
   contactNameOrEmail: makeButton(({ intl }, contactNameOrEmail) =>
     intl.formatMessage(messages.whoseNameOrEmailIncludes, {

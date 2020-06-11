@@ -88,9 +88,7 @@ const enhance = compose(
         partnerId,
       }),
 
-    onSampleOriginSiteChange: ({
-      onChangeFilters,
-    }) => sampleOriginSite =>
+    onSampleOriginSiteChange: ({ onChangeFilters }) => sampleOriginSite =>
       onChangeFilters({
         sampleOriginSite,
       }),
@@ -707,9 +705,7 @@ export const FiltersPanel = ({
               onSiteNameChange={onSampleOriginSiteChange}
               floatingLabelFixed
               hintText={intl.formatMessage(messages.enterSampleOriginSite)}
-              floatingLabelText={intl.formatMessage(
-                messages.sampleOriginSite
-              )}
+              floatingLabelText={intl.formatMessage(messages.sampleOriginSite)}
             />
           </div>
         )}
