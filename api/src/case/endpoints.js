@@ -61,8 +61,8 @@ const routes = [
                 externalId: Joi.string().description(
                   'The external id of the case'
                 ),
-                sampleCollectionSite: Joi.string().description(
-                  "The sample's collection site of the case's last result"
+                sampleOriginSite: Joi.string().description(
+                  "The sample's origin site of the case's last result"
                 ),
                 status: Joi.string().description(
                   'The outcome status of the case'

@@ -143,7 +143,7 @@ async function getCases({ query, auth }) {
     .select(
       'cs.id',
       'cs.externalId',
-      'sos.name as sampleCollectionSite',
+      'sos.name as sampleOriginSite',
       'd.name as diseaseName',
       'd.id as diseaseId',
       'd.externalId as diseaseExternalId',
