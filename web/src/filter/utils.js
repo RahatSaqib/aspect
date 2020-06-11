@@ -58,7 +58,7 @@ const sanitizerByConfigKey = {
   errorCode: defaultSanitizer,
   deviceName: defaultSanitizer,
   siteName: defaultSanitizer,
-  sampleCollectionSite: defaultSanitizer,
+  sampleOriginSite: defaultSanitizer,
   contactNameOrEmail: defaultSanitizer,
   notificationName: defaultSanitizer,
   externalId: defaultSanitizer,
@@ -190,8 +190,8 @@ export const reduceFiltersConfig = (configObject, userPermissions) => {
             case 'errorCode':
               result.errorCode = true
               break
-            case 'sampleCollectionSite':
-              result.sampleCollectionSite = true
+            case 'sampleOriginSite':
+              result.sampleOriginSite = true
               break
             case 'workflowStatus':
               result.workflowStatus = true

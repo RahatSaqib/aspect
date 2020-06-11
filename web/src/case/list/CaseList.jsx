@@ -48,8 +48,8 @@ const messages = defineMessages({
     id: 'pages.CasesList.caseId',
     defaultMessage: 'Case ID',
   },
-  sampleCollectionSite: {
-    id: 'pages.CasesList.sampleCollectionSite',
+  sampleOriginSite: {
+    id: 'pages.CasesList.sampleOriginSite',
     defaultMessage: 'Sample Collection Site',
   },
   status: {
@@ -78,7 +78,7 @@ const FILTERS_CONFIG = [
   { state: true, requiredPermissions: [] },
   { lga: true, requiredPermissions: [] },
   { patientOrCaseId: true, requiredPermissions: [] },
-  { sampleCollectionSite: true, requiredPermissions: [] },
+  { sampleOriginSite: true, requiredPermissions: [] },
   {
     assayAndResultCategory: true,
     requiredPermissions: [],
@@ -90,7 +90,7 @@ const searchSanitizer = makeSearchParamsSanitizer({
   availableSortCol: [
     'createdOn',
     'externalId',
-    'sampleCollectionSite',
+    'sampleOriginSite',
     'patientId',
     'diseaseName',
     'status',
@@ -213,8 +213,8 @@ export const CaseList = ({
       sortable: true,
     },
     {
-      key: 'sampleCollectionSite',
-      label: intl.formatMessage(messages.sampleCollectionSite),
+      key: 'sampleOriginSite',
+      label: intl.formatMessage(messages.sampleOriginSite),
       sortable: true,
       hiddenOn: 'sm',
     },

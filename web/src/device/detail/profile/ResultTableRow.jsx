@@ -16,7 +16,7 @@ const enhance = _.identity
 const ResultTableRow = ({ intl, result, ...restProps }) => (
   <TableRow {...restProps} className={cssClasses(restProps.className)}>
     <TableCell>{formatDate(result.get('endedOn'))}</TableCell>
-    <TableCell>{result.get('sampleCollectionSiteName')}</TableCell>
+    <TableCell>{result.get('sampleOriginSiteName')}</TableCell>
     <TableCell>{result.get('sampleId')}</TableCell>
     <TableCell>{result.get('resultText')}</TableCell>
     <TableCell>{result.get('errorCode')}</TableCell>

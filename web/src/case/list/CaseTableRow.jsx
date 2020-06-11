@@ -17,7 +17,7 @@ const CaseTableRow = ({ intl, _case, ...restProps }) => (
   <TableRow {...restProps} className={cssClasses(restProps.className)}>
     <TableCell>{formatDate(_case.get('createdOn'))}</TableCell>
     <TableCell>{_case.get('externalId')}</TableCell>
-    <TableCell>{_case.get('sampleCollectionSite')}</TableCell>
+    <TableCell>{_case.get('sampleOriginSite')}</TableCell>
     <TableCell>{_case.get('patientId')}</TableCell>
     <TableCell>{_case.get('diseaseName')}</TableCell>
     <TableCell>{_case.get('status')}</TableCell>

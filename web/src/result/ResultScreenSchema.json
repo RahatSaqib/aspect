@@ -227,12 +227,12 @@
             "order": 2,
             "title": "Sample Collection Date"
           },
-          "sampleCollectionSiteName": {
+          "sampleOriginSiteName": {
             "type": "string",
             "row": 1,
             "order": 0,
             "title": "Sample Collection Site",
-            "link": "/browse/site/<%= sampleCollectionSiteId %>"
+            "link": "/browse/site/<%= sampleOriginSiteId %>"
           },
           "sampleCollectedBy": {
             "type": "time",

@@ -90,8 +90,8 @@ const messages = defineMessages({
     id: 'pages.DeviceDetailProfile.endedOn',
     defaultMessage: 'Test Date',
   },
-  sampleCollectionSiteName: {
-    id: 'pages.DeviceDetailProfile.sampleCollectionSiteName',
+  sampleOriginSiteName: {
+    id: 'pages.DeviceDetailProfile.sampleOriginSiteName',
     defaultMessage: 'Sample Collection Site',
   },
   sampleId: {
@@ -161,7 +161,7 @@ const FILTERS_CONFIG = {
   sampleId: true,
   errorCode: true,
   siteName: true,
-  sampleCollectionSite: true,
+  sampleOriginSite: true,
   workflowStatus: true,
 }
 
@@ -169,7 +169,7 @@ const searchSanitizer = makeSearchParamsSanitizer({
   availableSortCol: [
     'endedOn',
     'deviceName',
-    'sampleCollectionSiteName',
+    'sampleOriginSiteName',
     'sampleId',
     'errorCode',
     'patientId',
@@ -601,8 +601,8 @@ export const DeviceDetailProfile = ({
       sortable: true,
     },
     {
-      key: 'sampleCollectionSiteName',
-      label: intl.formatMessage(messages.sampleCollectionSiteName),
+      key: 'sampleOriginSiteName',
+      label: intl.formatMessage(messages.sampleOriginSiteName),
       sortable: true,
     },
     {

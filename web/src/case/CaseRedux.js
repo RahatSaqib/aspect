@@ -107,7 +107,7 @@ export const Case = Immutable.Record({
       stateId: null,
       lgaId: null,
       diseaseId: null,
-      sampleCollectionSiteId: null,
+      sampleOriginSiteId: null,
       caseId: '',
     }),
   }),

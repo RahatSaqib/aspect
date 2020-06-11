@@ -55,8 +55,8 @@ const messages = defineMessages({
     id: 'pages.ResultList.deviceName',
     defaultMessage: 'Device',
   },
-  sampleCollectionSiteName: {
-    id: 'pages.ResultList.sampleCollectionSiteName',
+  sampleOriginSiteName: {
+    id: 'pages.ResultList.sampleOriginSiteName',
     defaultMessage: 'Sample Collection Site',
   },
   sampleId: {
@@ -116,7 +116,7 @@ const FILTERS_CONFIG = [
     siteName: true,
     requiredPermissions: ['site:view', 'site:admin', 'site:edit'],
   },
-  { sampleCollectionSite: true, requiredPermissions: [] },
+  { sampleOriginSite: true, requiredPermissions: [] },
   { workflowStatus: true, requiredPermissions: [] },
   { treatmentStatus: true, requiredPermissions: [] },
 ]
@@ -125,7 +125,7 @@ const searchSanitizer = makeSearchParamsSanitizer({
   availableSortCol: [
     'endedOn',
     'deviceName',
-    'sampleCollectionSiteName',
+    'sampleOriginSiteName',
     'sampleId',
     'errorCode',
     'patientId',
@@ -339,8 +339,8 @@ export const ResultList = ({
                   hiddenOn: 'sm',
                 },
                 {
-                  key: 'sampleCollectionSiteName',
-                  label: intl.formatMessage(messages.sampleCollectionSiteName),
+                  key: 'sampleOriginSiteName',
+                  label: intl.formatMessage(messages.sampleOriginSiteName),
                   sortable: true,
                   hiddenOn: 'sm',
                 },

@@ -160,7 +160,7 @@ export class StyleguideMain extends PureComponent {
               sampleGroup: true,
               deviceName: true,
               siteName: true,
-              sampleCollectionSite: true,
+              sampleOriginSite: true,
               contactNameOrEmail: true,
               consumable: true,
               workflowStatus: true,

@@ -58,9 +58,9 @@ const messages = defineMessages({
     id: 'filter.btnGroup.whereSiteIdIncludes',
     defaultMessage: 'site ID includes "{siteId}"',
   },
-  sampleCollectionSite: {
-    id: 'filter.btnGroup.sampleCollectionSite',
-    defaultMessage: 'sample collection site is {sampleCollectionSiteName}',
+  sampleOriginSite: {
+    id: 'filter.btnGroup.sampleOriginSite',
+    defaultMessage: 'sample collection site is {sampleOriginSiteName}',
   },
   whoseNameOrEmailIncludes: {
     id: 'filter.btnGroup.whoseNameOrEmailIncludes',
@@ -149,7 +149,7 @@ const filtersOrdering = {
   deviceName: 11,
   resultCategoryId: 5,
   siteName: 12,
-  sampleCollectionSite: 13,
+  sampleOriginSite: 13,
   contactNameOrEmail: 14,
   consumableId: 7,
   workflowStatusId: 16,
@@ -267,12 +267,12 @@ const buttonBy = {
       siteName,
     })
   ),
-  sampleCollectionSite: makeButton(
-    ({ intl, siteItemsById }, sampleCollectionSiteId) =>
-      intl.formatMessage(messages.sampleCollectionSite, {
-        sampleCollectionSiteName: siteItemsById
+  sampleOriginSite: makeButton(
+    ({ intl, siteItemsById }, sampleOriginSiteId) =>
+      intl.formatMessage(messages.sampleOriginSite, {
+        sampleOriginSiteName: siteItemsById
           .find(
-            it => it.get('name') === sampleCollectionSiteId,
+            it => it.get('name') === sampleOriginSiteId,
             EMPTY_CONTEXT,
             EMPTY_MAP
           )

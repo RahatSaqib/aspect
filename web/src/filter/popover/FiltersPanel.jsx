@@ -88,11 +88,11 @@ const enhance = compose(
         partnerId,
       }),
 
-    onSampleCollectionSiteChange: ({
+    onSampleOriginSiteChange: ({
       onChangeFilters,
-    }) => sampleCollectionSite =>
+    }) => sampleOriginSite =>
       onChangeFilters({
-        sampleCollectionSite,
+        sampleOriginSite,
       }),
 
     onSiteNameChange: ({ onChangeFilters }) => siteName =>
@@ -206,13 +206,13 @@ const messages = defineMessages({
     id: 'filter.popover.enterSiteId',
     defaultMessage: 'Enter site ID...',
   },
-  sampleCollectionSite: {
-    id: 'filter.popover.sampleCollectionSite',
+  sampleOriginSite: {
+    id: 'filter.popover.sampleOriginSite',
     defaultMessage: 'Sample collection site',
   },
-  enterSampleCollectionSite: {
-    id: 'filter.popover.enterSampleCollectionSite',
-    defaultMessage: 'Enter sample collection site name...',
+  enterSampleOriginSite: {
+    id: 'filter.popover.enterSampleOriginSite',
+    defaultMessage: 'Enter sample origin site name...',
   },
   date: {
     id: 'filter.popover.date',
@@ -400,7 +400,7 @@ export const FiltersPanel = ({
   onTextFieldCommitValue,
   onSiteNameChange,
   onSiteIdChange,
-  onSampleCollectionSiteChange,
+  onSampleOriginSiteChange,
   onDateChange,
   onWorkflowStatusIdChange,
   onTreatmentStatusIdChange,
@@ -699,16 +699,16 @@ export const FiltersPanel = ({
             />
           </div>
         )}
-        {config.sampleCollectionSite && (
+        {config.sampleOriginSite && (
           <div className={cssClasses('Control')}>
             <SiteAutoCompleteField
-              name="sampleCollectionSite"
-              value={filters.sampleCollectionSite || ''}
-              onSiteNameChange={onSampleCollectionSiteChange}
+              name="sampleOriginSite"
+              value={filters.sampleOriginSite || ''}
+              onSiteNameChange={onSampleOriginSiteChange}
               floatingLabelFixed
-              hintText={intl.formatMessage(messages.enterSampleCollectionSite)}
+              hintText={intl.formatMessage(messages.enterSampleOriginSite)}
               floatingLabelText={intl.formatMessage(
-                messages.sampleCollectionSite
+                messages.sampleOriginSite
               )}
             />
           </div>
