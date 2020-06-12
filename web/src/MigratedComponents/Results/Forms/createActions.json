@@ -1,0 +1,13 @@
+{
+    "actions": {
+        "default": "save",
+        "helpers": "",
+        "items": [
+            {
+                "id": "save",
+                "text": "Create Result",
+                "action": "saveCreate"
+            }
+        ]
+    }
+}

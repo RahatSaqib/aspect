@@ -1,0 +1,189 @@
+{
+    "title": "Result Details",
+    "icon": "document",
+    "sections": [
+        {
+            "id": "Lab",
+            "label": "Lab",
+            "rows": [
+                {
+                    "id": 0,
+                    "items": [
+                        {
+                            "id": "siteName",
+                            "controlType": "textField",
+                            "type": "readOnly",
+                            "label": "Deployment Full Name"
+                        },
+                        {
+                            "id": "deviceSerial",
+                            "controlType": "textField",
+                            "type": "readOnly",
+                            "label": "Device Serial"
+                        }
+                    ]
+                },
+                {
+                    "id": 1,
+                    "items": [
+                        {
+                            "id": "countryName",
+                            "controlType": "textField",
+                            "type": "readOnly",
+                            "label": "Country"
+                        },
+                        {
+                            "id": "stateName",
+                            "controlType": "textField",
+                            "type": "readOnly",
+                            "label": "State"
+                        },
+                        {
+                            "id": "lgaName",
+                            "controlType": "textField",
+                            "type": "readOnly",
+                            "label": "City"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "Assay",
+            "label": "Assay",
+            "rows": [
+                {
+                    "id": 0,
+                    "items": [
+                        {
+                            "id": "deviceName",
+                            "controlType": "textField",
+                            "type": "string",
+                            "label": "Assay Type"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "Start Date",
+            "label": "Start Date",
+            "rows": [
+                {
+                    "id": 0,
+                    "items": [
+                        {
+                            "id": "startedOn",
+                            "controlType": "textField",
+                            "type": "string",
+                            "label": "Start Date"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "Sample",
+            "label": "Sample",
+            "rows": [
+                {
+                    "id": 0,
+                    "items": [
+                        {
+                            "id": "sampleId",
+                            "controlType": "textField",
+                            "type": "readOnly",
+                            "label": "Sample ID"
+                        },
+                        {
+                            "id": "sampleTypeName",
+                            "controlType": "textField",
+                            "type": "readOnly",
+                            "label": "Sample Type"
+                        },
+                        {
+                            "id": "sampleCollectedOn",
+                            "controlType": "textField",
+                            "type": "readOnly",
+                            "label": "Sample Collection Date"
+                        }
+                    ]
+                },
+                {
+                    "id": 1,
+                    "items": [
+                        {
+                            "id": "sampleOriginSiteName",
+                            "controlType": "textField",
+                            "type": "readOnly",
+                            "label": "Sample Collection Site"
+                        },
+                        {
+                            "id": "senderOperator",
+                            "controlType": "textField",
+                            "type": "readOnly",
+                            "label": "Collected By"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "Patient",
+            "label": "Patient",
+            "rows": [
+                {
+                    "id": 0,
+                    "items": [
+                        {
+                            "id": "patientId",
+                            "controlType": "textField",
+                            "type": "string",
+                            "label": "Patient ID"
+                        },
+                        {
+                            "id": "externalId",
+                            "controlType": "textField",
+                            "type": "string",
+                            "label": "Case ID"
+                        }
+                    ]
+                },
+                {
+                    "id": 1,
+                    "items": [
+                        {
+                            "id": "deviceSerial",
+                            "controlType": "textField",
+                            "type": "readOnly",
+                            "label": "Device Serial"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "Result",
+            "label": "Result",
+            "rows": [
+                {
+                    "id": 0,
+                    "items": [
+                        {
+                            "id": "resultCategory1Name",
+                            "controlType": "textField",
+                            "type": "string",
+                            "label": "COVID 19"
+                        },
+                        {
+                            "id": "errorCode",
+                            "controlType": "textField",
+                            "type": "string",
+                            "label": "Error Code"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
