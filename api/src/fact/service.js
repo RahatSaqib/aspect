@@ -256,7 +256,7 @@ function onFactGenerateResultCountsForDevice(
   { messageContext }
 ) {
   const { assayId, resultCategory1, resultCategory2 } = options
-  return messageContext.transact(async knex => {
+  return messageContext.run(async knex => {
     const now = new Date()
 
     // query for selecting data for the device
@@ -327,18 +327,25 @@ function onFactGenerateResultCountsForDevice(
         .select('r.assayId')
 
       for (const count of countsByAssay) {
-        await knex.raw(
-          knex('FactResultsDeviceByAssay')
-            .insert({
-              deviceId,
-              assayId: count.assayId,
-              days,
+        const factResultsDeviceByAssay = await knex('FactResultsDeviceByAssay')
+          .where({ deviceId, assayId: count.assayId, days })
+          .first()
+        if (factResultsDeviceByAssay) {
+          await knex('FactResultsDeviceByAssay')
+            .where({ deviceId, assayId: count.assayId, days })
+            .update({
               resultCount: count.resultCount,
               calculatedOn: now,
             })
-            .toString()
-            .replace(/^insert/i, 'replace')
-        )
+        } else {
+          await knex('FactResultsDeviceByAssay').insert({
+            deviceId,
+            assayId: count.assayId,
+            days,
+            resultCount: count.resultCount,
+            calculatedOn: now,
+          })
+        }
       }
 
       // ...grouped by assay, resultCategory
@@ -393,20 +400,41 @@ function onFactGenerateResultCountsForDevice(
         .select('r.assayId', 'r.resultCategory1', 'r.resultCategory2')
 
       for (const count of countsByCategories) {
-        await knex.raw(
-          knex('FactResultsDeviceByCategory1And2')
-            .insert({
+        const factResultsDeviceByCategory1And2 = await knex(
+          'FactResultsDeviceByCategory1And2'
+        )
+          .where({
+            deviceId,
+            assayId: count.assayId,
+            resultCategory1: count.resultCategory1,
+            resultCategory2: count.resultCategory2,
+            days,
+          })
+          .first()
+        if (factResultsDeviceByCategory1And2) {
+          await knex('FactResultsDeviceByCategory1And2')
+            .where({
               deviceId,
               assayId: count.assayId,
               resultCategory1: count.resultCategory1,
               resultCategory2: count.resultCategory2,
               days,
+            })
+            .update({
               resultCount: count.resultCount,
               calculatedOn: now,
             })
-            .toString()
-            .replace(/^insert/i, 'replace')
-        )
+        } else {
+          await knex('FactResultsDeviceByCategory1And2').insert({
+            deviceId,
+            assayId: count.assayId,
+            resultCategory1: count.resultCategory1,
+            resultCategory2: count.resultCategory2,
+            days,
+            resultCount: count.resultCount,
+            calculatedOn: now,
+          })
+        }
       }
       /* eslint-enable no-await-in-loop */
     }
@@ -548,20 +576,31 @@ async function refreshConsumptionRates(knex, siteId, consumableId) {
   const totals = await getConsumptions(knex, siteId, consumableId)
   await Promise.all(
     _.map(totals, async x => {
-      await knex.raw(
-        knex('FactInventoryConsumptionRate')
-          .insert({
-            siteId,
-            consumableId,
-            days: x.days,
+      const factInventoryConsumptionRate = await knex(
+        'FactInventoryConsumptionRate'
+      )
+        .where({ siteId, consumableId, days: x.days })
+        .first()
+      if (factInventoryConsumptionRate) {
+        await knex('FactResultsDevice')
+          .where({ siteId, consumableId, days: x.days })
+          .update({
             // in GxAlert we stored totals in field 'rate', so same here.
             // to get actual rate - do rate/days
             rate: x.total,
             updatedOn,
           })
-          .toString()
-          .replace(/^insert/i, 'replace')
-      )
+      } else {
+        await knex('FactInventoryConsumptionRate').insert({
+          siteId,
+          consumableId,
+          days: x.days,
+          // in GxAlert we stored totals in field 'rate', so same here.
+          // to get actual rate - do rate/days
+          rate: x.total,
+          updatedOn,
+        })
+      }
     })
   )
   return totals

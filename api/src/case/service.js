@@ -253,7 +253,7 @@ async function getAutoCompleteCases({ auth, query }) {
   return result
 }
 
-function onResultLogged({ resultId }, { messageContext }) {
+async function onResultLogged({ resultId }, { messageContext }) {
   return messageContext.run(async knex => {
     // Linking the result service here to avoid cyclic
     //   references between this service and case service
@@ -316,7 +316,7 @@ function onResultLogged({ resultId }, { messageContext }) {
               diseaseId,
               reliable: isReliableCaseId,
             },
-            !existingCaseId && isReliableCaseId,
+            !existingCaseId,
             updatedBy,
             { messageContext }
           )
