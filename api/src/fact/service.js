@@ -582,7 +582,7 @@ async function refreshConsumptionRates(knex, siteId, consumableId) {
         .where({ siteId, consumableId, days: x.days })
         .first()
       if (factInventoryConsumptionRate) {
-        await knex('FactResultsDevice')
+        await knex('FactInventoryConsumptionRate')
           .where({ siteId, consumableId, days: x.days })
           .update({
             // in GxAlert we stored totals in field 'rate', so same here.

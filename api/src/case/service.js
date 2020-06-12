@@ -270,6 +270,7 @@ async function onResultLogged({ resultId }, { messageContext }) {
         'r.partnerId',
         'r.patientCaseId as existingCaseId',
         'c.externalId as existingCaseExternalId',
+        'sample.patientId as existingPatientId',
         'rca1.reportable as resultCategory1Reportable',
         'rca2.reportable as resultCategory2Reportable',
         'r.updatedBy',
@@ -283,6 +284,7 @@ async function onResultLogged({ resultId }, { messageContext }) {
         diseaseId,
         existingCaseId,
         existingCaseExternalId,
+        existingPatientId,
         resultCategory1Reportable,
         resultCategory2Reportable,
         updatedBy,
@@ -362,12 +364,18 @@ async function onResultLogged({ resultId }, { messageContext }) {
             await knex('Result')
               .where('id', resultId)
               .update({ patientCaseId: otherCaseId })
+            caseId = otherCaseId
             // TODO: If the old case is now empty, should it be purged?
             //       We need to consider if there is a use case for cases
             //       that don't have results, what will happen to the
             //       patient data associated with that case? Do empty cases
             //       even present a problem?
             //       https://ops.systemone.id/browse/ASP-1453
+          }
+          if (caseId && existingPatientId) {
+            await knex('PatientCase')
+              .where('id', caseId)
+              .update({ patientId: existingPatientId })
           }
         }
       }
