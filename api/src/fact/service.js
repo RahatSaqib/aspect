@@ -301,11 +301,10 @@ function onFactGenerateResultCountsForDevice(
         .first()
 
       const factResultsDevice = await knex('FactResultsDevice')
-        .where({ deviceId })
+        .where({ deviceId, days })
         .first()
       if (factResultsDevice) {
-        await knex('FactResultsDevice').where({ deviceId }).update({
-          days,
+        await knex('FactResultsDevice').where({ deviceId, days }).update({
           resultCount: countByDevice.resultCount,
           calculatedOn: now,
         })
