@@ -6,8 +6,6 @@
       "a3" : "PHL",
       "culture" : "en-PH",
       "countryCode" : "63",
-      "stateLabel" : "Region",
-      "lgaLabel" : "Province/HUC",
       "timezone" : "Taipei Standard Time",
       "portNumber" : 3017,
       "exportColumns" : "DeploymentDescription|TestEndedOn|AssayName|AssayVersion|User|Result1|Result2|ReagentLotID|ExpirationDate|CartridgeSerial|ModuleSerial|SoftwareVersion|ErrorCode|ErrorCategory|ErrorDescription|SampleId|Notes|ProbeA|ProbeB|ProbeC|ProbeD|ProbeE|ProbeSpc|Qc1|Qc2|ProbeACt|ProbeBCt|ProbeCCt|ProbeDCt|ProbeECt|ProbeSpcCt|Qc1Ct|Qc2Ct|ProbeAEndpt|ProbeBEndpt|ProbeCEndpt|ProbeDEndpt|ProbeEEndpt|ProbeSpcEndpt|Qc1Endpt|Qc2Endpt",

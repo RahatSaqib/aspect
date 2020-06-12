@@ -14,6 +14,7 @@ describe('ContactDetailsForm module', () => {
     showNotesField: false,
     // --- injected by recompose ---
     values: {},
+    user: {},
     meta: {
       name: {},
       title: {},

@@ -92,7 +92,7 @@ const messages = defineMessages({
   },
   sampleOriginSiteName: {
     id: 'pages.DeviceDetailProfile.sampleOriginSiteName',
-    defaultMessage: 'Sample Origin Site',
+    defaultMessage: 'Sample Collection Site',
   },
   sampleId: {
     id: 'pages.DeviceDetailProfile.sampleId',

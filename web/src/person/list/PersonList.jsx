@@ -12,6 +12,10 @@ import Tooltip from '@material-ui/core/Tooltip'
 import AddIcon from '@material-ui/icons/Add'
 
 import {
+  getCustomMessage,
+  commonDefinitions,
+} from '../../shared/utils/customMessages'
+import {
   makeSortPageSelector,
   makeSearchParamsSanitizer,
   composeSanitizer,
@@ -41,6 +45,7 @@ import ExportListButton from '../../globals/components/ExportListButton'
 const cssClasses = classnames.bind(require('./PersonList.css'))
 
 const messages = defineMessages({
+  ...commonDefinitions,
   contactsTitle: {
     id: 'pages.PersonList.title',
     defaultMessage: 'Contacts',
@@ -52,14 +57,6 @@ const messages = defineMessages({
   level: {
     id: 'pages.PersonList.level',
     defaultMessage: 'Job',
-  },
-  state: {
-    id: 'pages.PersonList.state',
-    defaultMessage: 'State',
-  },
-  lga: {
-    id: 'pages.PersonList.lga',
-    defaultMessage: 'County',
   },
   paginatorStatus: {
     id: 'pages.PersonList.paginatorStatus',
@@ -121,6 +118,7 @@ const enhance = compose(
       items: state.person.items,
       table: state.person.table,
       userPermissions: state.user.jwt.permissions,
+      user: state.user,
     }),
     bindActionCreators.bind(null, {
       fetchPersons,
@@ -228,6 +226,7 @@ export const PersonList = ({
   onRowClick,
   reducedFilters,
   showNewContactPage,
+  user,
 }) => {
   const AddNewButton = requirePermissions({
     permissions: ['person:edit', 'person:admin'],
@@ -287,12 +286,12 @@ export const PersonList = ({
                 },
                 {
                   key: 'state',
-                  label: intl.formatMessage(messages.state),
+                  label: getCustomMessage(intl, messages, 'state', user),
                   sortable: true,
                 },
                 {
                   key: 'lga',
-                  label: intl.formatMessage(messages.lga),
+                  label: getCustomMessage(intl, messages, 'lga', user),
                   sortable: true,
                 },
                 {
