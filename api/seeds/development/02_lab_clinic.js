@@ -18,10 +18,7 @@ const patients = require('./fixtures/patients.json')
 const config = require('../../src/config')
 const { randomToken } = require('../../src/deviceApi/apiKey')
 const labClinic = require('./fixtures/labClinic.json')
-const {
-  getPermissionModules,
-  assignAllFeaturesToJobFunctionIds,
-} = require('../utils')
+const { getPermissionModules } = require('../utils')
 const {
   allResultCategoryToId,
   allResultWorkflowStatusToId,
@@ -276,11 +273,6 @@ async function seed(knex) {
     'Lab Admin',
     partnerId
   )
-
-  await assignAllFeaturesToJobFunctionIds(knex, [
-    jobFunctionIdLabAdmin,
-    jobFunctionIdAdmin,
-  ])
 
   await knex('JobFunctionPermission').insert([
     {

@@ -296,19 +296,6 @@ async function refreshToken(request) {
   }
 }
 
-async function getFeatures(id, name, partnerId) {
-  const modules = await query('Get features for user and partner')
-    .from('Feature as f')
-    .innerJoin('JobFunctionFeature as jff', 'f.id', 'jff.featureId')
-    .innerJoin('JobFunction as jf', 'jff.jobFunctionId', 'jf.id')
-    .innerJoin('Job as j', 'j.jobFunctionId', 'jf.id')
-    .innerJoin('Person as ps', 'j.personId', 'ps.id')
-    .where({ 'ps.userId': id, 'jf.partnerId': partnerId })
-    .orderBy(['f.module'])
-    .distinct('f.module')
-  return modules
-}
-
 async function getJobFunctions(id, name, partnerId) {
   return query('Get job functions for user and partner')
     .from('Person as p')
@@ -320,20 +307,8 @@ async function getJobFunctions(id, name, partnerId) {
     .pluck('jf.name')
 }
 
-async function hasFeature(userId, partnerId, module) {
-  const userFeature = await query('Get features for user and partner')
-    .from('Feature as f')
-    .innerJoin('JobFunctionFeature as jff', 'f.id', 'jff.featureId')
-    .innerJoin('JobFunction as jf', 'jff.jobFunctionId', 'jf.id')
-    .innerJoin('Job as j', 'j.jobFunctionId', 'jf.id')
-    .innerJoin('Person as ps', 'j.personId', 'ps.id')
-    .where({
-      'f.module': module,
-      'ps.userId': userId,
-      'jf.partnerId': partnerId,
-    })
-    .first('f.module')
-  return !_.isEmpty(userFeature)
+async function hasPermissions(auth, modules) {
+  return _.intersection(auth.credentials.permissions, modules).length > 0
 }
 
 // generate a new jwt for the given user data
@@ -715,13 +690,6 @@ async function updateUsernameAndPasswordForPerson(request) {
   }
 }
 
-async function getUserFeatures(request) {
-  const { auth } = request
-  const { id, name, partnerId } = await getUser(auth.credentials.name)
-  const featureModules = await getFeatures(id, name, partnerId)
-  return { ok: true, data: featureModules }
-}
-
 async function getApplicableLicense(personId, partnerId) {
   const latestLicense = await query(
     'Get latest applicable license and when user accepted it'
@@ -820,12 +788,11 @@ module.exports = {
   updateUsernameAndPasswordForPerson,
   createResetPasswordToken,
   updatePasswordWithResetPasswordToken,
-  getUserFeatures,
-  hasFeature,
   getLicense,
   acceptLicense,
   revokeUsersToken,
   lockedOutUser,
+  hasPermissions,
   clientTypes,
   getUserJobFunctions,
 }

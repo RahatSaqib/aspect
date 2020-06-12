@@ -4,7 +4,6 @@ const parseISO = require('date-fns/parseISO')
 const subDays = require('date-fns/subDays')
 const isAfter = require('date-fns/isAfter')
 const differenceInDays = require('date-fns/differenceInDays')
-
 const { knex, filterParams, filterDateRangeParams } = require('../db')
 const {
   getConstraints,
@@ -15,7 +14,7 @@ const {
   canViewInventories,
   canEditInventories,
 } = require('../auth/constraints')
-const { getUser, hasFeature } = require('../auth/service')
+const { getUser, hasPermissions } = require('../auth/service')
 const { processDynamicMessage } = require('../stringTemplate/service')
 
 const i18nKeys = {
@@ -1307,7 +1306,6 @@ async function actionDashboard(request) {
       knex.raw('max(isl.changedOn) as statusDate'),
       'i.consumableId'
     )
-
   const alertMessagesByIssue = _.map(
     _.values(_.groupBy(alertMessages, 'issueId')),
     issueMessages => {
@@ -1326,12 +1324,10 @@ async function actionDashboard(request) {
       return highestLevelMessage
     }
   )
+  const shouldAddStockLevelUpdateActions = await hasPermissions(auth, [
+    'dashboard:actionInventoryLevelUpdate',
+  ])
 
-  const shouldAddStockLevelUpdateActions = await hasFeature(
-    user.id,
-    user.partnerId,
-    'actionDashboardInventoryLevelUpdate'
-  )
   if (shouldAddStockLevelUpdateActions) {
     await addStockLevelUpdateActions(
       auth,
@@ -1429,7 +1425,6 @@ async function addStockLevelUpdateActions(
         }
       }
     })
-
     // Add consumables by site that aren't in issues
     _.forEach(
       inventoryItemsBySite,

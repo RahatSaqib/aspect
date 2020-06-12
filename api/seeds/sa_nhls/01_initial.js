@@ -8,7 +8,6 @@ const geography = require('./fixtures/geography.json')
 const { upsertJobFunction } = require('../common')
 const {
   deviceTypeCategoryToId,
-  allFeatureToId,
   assayTypeToId,
   partnerTypeToId,
   resultSourceToId,
@@ -63,9 +62,8 @@ async function seed(knex) {
   })
 
   // Reuse previously seeded "static" data
-  const [modules, features, approvedDeviceStatusId] = await Promise.all([
+  const [modules, approvedDeviceStatusId] = await Promise.all([
     getPermissionModules(knex),
-    allFeatureToId(),
     deviceStatusToId('approved'),
   ])
 
@@ -193,11 +191,6 @@ async function seed(knex) {
     { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.device.admin },
     { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.site.admin },
   ])
-  await knex('JobFunctionFeature').insert([
-    { jobFunctionId: jobFunctionIdAdmin, featureId: features.device },
-    { jobFunctionId: jobFunctionIdAdmin, featureId: features.result },
-    { jobFunctionId: jobFunctionIdAdmin, featureId: features.site },
-  ])
 
   const [jobIdAdmin] = await knex('Job').insert([
     { personId: adminPersonId, jobFunctionId: jobFunctionIdAdmin },
@@ -231,11 +224,6 @@ async function seed(knex) {
       permissionId: modules.site.view,
     },
   ])
-  await knex('JobFunctionFeature').insert([
-    { jobFunctionId: jobFunctionIdRegionalOfficer, featureId: features.device },
-    { jobFunctionId: jobFunctionIdRegionalOfficer, featureId: features.result },
-    { jobFunctionId: jobFunctionIdRegionalOfficer, featureId: features.site },
-  ])
 
   const jobFunctionIdLabUser = await upsertJobFunction(
     knex,
@@ -248,11 +236,6 @@ async function seed(knex) {
     { jobFunctionId: jobFunctionIdLabUser, permissionId: modules.result.admin },
     { jobFunctionId: jobFunctionIdLabUser, permissionId: modules.device.view },
     { jobFunctionId: jobFunctionIdLabUser, permissionId: modules.site.view },
-  ])
-  await knex('JobFunctionFeature').insert([
-    { jobFunctionId: jobFunctionIdLabUser, featureId: features.device },
-    { jobFunctionId: jobFunctionIdLabUser, featureId: features.result },
-    { jobFunctionId: jobFunctionIdLabUser, featureId: features.site },
   ])
 
   const patientDataSchema = JSON.stringify({

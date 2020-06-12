@@ -95,7 +95,7 @@ function recaculateDateRanges(now = new Date()) {
 const enhance = compose(
   pure,
   requirePermissions({
-    features: ['targetDashboard'],
+    permissions: ['dashboard:target'],
   }),
   connect(
     state => ({

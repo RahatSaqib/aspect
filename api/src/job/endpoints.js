@@ -9,8 +9,6 @@ const {
   unassignJobContext,
   assignJobFunctionDashboardWidgets,
   unassignJobFunctionDashboardWidgets,
-  assignJobFunctionFeatures,
-  unassignJobFunctionFeatures,
   assignJobFunctionPermissions,
   unassignJobFunctionPermissions,
   assignPersonTo,
@@ -157,23 +155,6 @@ const jobFunctionDashboardWidgetResponse = {
       .items(
         Joi.object().keys({
           widgetId: Joi.number().required().description('widgetId'),
-          jobFunctionId: Joi.number().required().description('jobFunctionId'),
-        })
-      ),
-  }),
-}
-const jobFunctionFeatureResponse = {
-  options: {
-    allowUnknown: false,
-  },
-  schema: Joi.object().keys({
-    ok,
-    data: Joi.array()
-      .required()
-      .description('All features for specified job function')
-      .items(
-        Joi.object().keys({
-          featureId: Joi.number().required().description('featureId'),
           jobFunctionId: Joi.number().required().description('jobFunctionId'),
         })
       ),
@@ -363,44 +344,7 @@ const routes = [
       response: jobFunctionDashboardWidgetResponse,
     },
   },
-  // ------------
-  // Job Function Feature
-  // ------------
-  {
-    method: 'POST',
-    path: '/job-function/assign-features',
-    handler: asyncHandler(assignJobFunctionFeatures),
-    config: {
-      description: 'Assign features to specified JobFunction',
-      notes: 'Assign features to specified JobFunction',
-      auth: { scope: ['person:admin'] },
-      validate: {
-        payload: {
-          jobFunctionId: Joi.number().required(),
-          features: Joi.array().items(Joi.number()).required(),
-        },
-      },
-      response: jobFunctionFeatureResponse,
-    },
-  },
-  {
-    method: 'POST',
-    path: '/job-function/unassign-features',
-    handler: asyncHandler(unassignJobFunctionFeatures),
-    config: {
-      description: 'Unassign features from specified JobFunction',
-      notes: 'Unassign features from specified JobFunction',
-      auth: { scope: ['person:admin'] },
-      validate: {
-        payload: {
-          jobFunctionId: Joi.number().required(),
-          features: Joi.array().items(Joi.number()).allow(null),
-          all: Joi.boolean().allow(null),
-        },
-      },
-      response: jobFunctionFeatureResponse,
-    },
-  },
+
   // ------------
   // Job Function Permissions
   // ------------

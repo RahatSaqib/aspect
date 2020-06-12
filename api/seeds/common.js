@@ -19,7 +19,6 @@ const geneXpertResultDataSchemaEbola = require('./fixtures/geneXpertDevice/geneX
 const geneXpertResultDataSchemaSarsCoV2 = require('./fixtures/geneXpertDevice/geneXpertResultDataSchemaSarsCoV2.json')
 const resultTreatmentStatuses = require('./fixtures/ResultTreatmentStatus.json')
 const {
-  allFeatureToId,
   deviceStatusToId,
   deviceTypeToId,
   allDeviceTypeCategoryToId,
@@ -47,10 +46,7 @@ async function commonUpserts(
   }
 
   // Reuse previously seeded "static" data
-  const [modules, features] = await Promise.all([
-    utils.getPermissionModules(knex),
-    allFeatureToId(),
-  ])
+  const modules = await utils.getPermissionModules(knex)
   const countries = {}
   await Promise.each(geography.countries, async country => {
     const countryData = _.pick(country, [
@@ -116,28 +112,21 @@ async function commonUpserts(
       ...auditFields,
     })
   }
-  const jobFunctionIdAdmin = await upsertJobFunction(
-    knex,
-    'Admin',
-    partnerId,
-    [
-      modules.browse.view,
-      modules.result.admin,
-      modules.assay.admin,
-      modules.device.admin,
-      modules.treatmentStatus.admin,
-      modules.site.admin,
-      modules.person.admin,
-      modules.reporter.admin,
-    ],
-    [
-      features.device,
-      features.result,
-      features.site,
-      features.person,
-      features.reporter,
-    ]
-  )
+  const jobFunctionIdAdmin = await upsertJobFunction(knex, 'Admin', partnerId, [
+    modules.demo.admin,
+    modules.issue.admin,
+    modules.assay.admin,
+    modules.case.admin,
+    modules.site.admin,
+    modules.result.admin,
+    modules.dashboard.summary,
+    modules.dashboard.result,
+    modules.account.admin,
+    modules.device.admin,
+    modules.reporter.admin,
+    modules.browse.view,
+    modules.person.admin,
+  ])
   let { id: jobIdAdmin } =
     (await knex('Job')
       .where({
@@ -164,35 +153,31 @@ async function commonUpserts(
       geographyId,
     })
   }
-  await upsertJobFunction(
-    knex,
-    'Regional Officer',
-    partnerId,
-    [
-      modules.browse.view,
-      modules.result.edit,
-      modules.assay.view,
-      modules.device.view,
-      modules.treatmentStatus.view,
-      modules.site.view,
-      modules.person.view,
-    ],
-    [features.device, features.result, features.site, features.person]
-  )
-  await upsertJobFunction(
-    knex,
-    'Lab User',
-    partnerId,
-    [
-      modules.browse.view,
-      modules.result.edit,
-      modules.assay.view,
-      modules.device.view,
-      modules.site.view,
-      modules.treatmentStatus.view,
-    ],
-    [features.device, features.result, features.site]
-  )
+  await upsertJobFunction(knex, 'Regional Officer', partnerId, [
+    modules.browse.view,
+    modules.assay.view,
+    modules.result.edit,
+    modules.device.view,
+    modules.treatmentStatus.view,
+    modules.site.view,
+    modules.person.view,
+    modules.case.edit,
+    modules.dashboard.summary,
+    modules.dashboard.result,
+  ])
+  await upsertJobFunction(knex, 'Lab User', partnerId, [
+    modules.browse.view,
+    modules.result.edit,
+    modules.assay.view,
+    modules.device.view,
+    modules.site.view,
+    modules.treatmentStatus.view,
+    modules.account.view,
+    modules.dashboard.summary,
+    modules.dashboard.result,
+    modules.case.edit,
+    modules.person.view,
+  ])
   if (deviceApiToken) {
     await upsertGxAlertDevice(
       knex,
@@ -210,12 +195,9 @@ async function upsertJobFunction(
   knex,
   jobFunctionName,
   partnerId,
-  permissions,
-  features
+  permissions
 ) {
   if (!permissions) permissions = []
-  if (!features) features = []
-
   let { id: jobFunctionId } =
     (await knex('JobFunction')
       .where({
@@ -231,28 +213,17 @@ async function upsertJobFunction(
     })
   }
   await upsertJobFunctionPermission(knex, jobFunctionId, permissions)
-  await upsertJobFeatures(knex, jobFunctionId, features)
   return jobFunctionId
 }
 
-async function clonePermissions(knex, fromFeature, toFeature) {
+async function clonePermissions(knex, fromModule, toModule) {
+  const jobFunctionWithExistingPermission = await knex(
+    'JobFunctionPermission as jf'
+  )
+    .join('Permission as p', 'p.id', 'jf.permissionId')
+    .where('p.module', toModule)
+    .pluck('jf.jobFunctionId')
   await knex.transaction(async function (trx) {
-    const { id: featureId } = await knex
-      .from('Feature')
-      .where({ module: toFeature })
-      .first()
-
-    await knex
-      .from('JobFunctionFeature')
-      .transacting(trx)
-      .insert(function () {
-        this.from('JobFunction as jf')
-          .innerJoin('JobFunctionFeature as jff', 'jf.id', 'jff.jobFunctionId')
-          .innerJoin('Feature as f', 'jff.featureId', 'f.id')
-          .where('f.module', knex.raw('?', [fromFeature]))
-          .select('jf.id as jobFunctionId', knex.raw('?', [featureId]))
-      })
-
     await knex
       .from('JobFunctionPermission')
       .transacting(trx)
@@ -265,12 +236,13 @@ async function clonePermissions(knex, fromFeature, toFeature) {
           )
           .innerJoin('Permission as p', 'jfp.permissionId', 'p.id')
           .innerJoin('Permission as pCase', function () {
-            this.on('pCase.module', knex.raw('?', [toFeature])).on(
+            this.on('pCase.module', knex.raw('?', [toModule])).on(
               'p.activity',
               'pCase.activity'
             )
           })
-          .where('p.module', knex.raw('?', [fromFeature]))
+          .whereNotIn('jf.id', jobFunctionWithExistingPermission)
+          .where('p.module', knex.raw('?', [fromModule]))
           .select('jf.id as jobFunctionId', 'pCase.id as permissionId')
       })
   })
@@ -294,22 +266,6 @@ async function upsertJobFunctionPermission(
     })
   )
   return knex('JobFunctionPermission').insert(JobFunctionPermission)
-}
-
-async function upsertJobFeatures(knex, jobFunctionId, jobFeatures) {
-  const existingJobFunctionFeatures = await knex('JobFunctionFeature')
-    .where({ jobFunctionId })
-    .pluck('featureId')
-  const JobFunctionFeature = _.map(
-    jobFeatures.filter(
-      featureId => !existingJobFunctionFeatures.includes(featureId)
-    ),
-    featureId => ({
-      jobFunctionId,
-      featureId,
-    })
-  )
-  return knex('JobFunctionFeature').insert(JobFunctionFeature)
 }
 
 async function upsertGxAlertDevice(
@@ -1371,13 +1327,9 @@ async function baseGxAlertMigration(
   // -----------------------------
   // Job Functions and Permissions
   // -----------------------------
-  const { getFeatureByModule, getPermissonByModuleAndActivity } = utils
+  const { getPermissonByModuleAndActivity } = utils
   await Promise.each(jobFunctionsFixture, async jf => {
-    const jobFunction = _.omit(jf, ['features', 'permissions'])
-    const featureIds = await Promise.map(jf.features || [], async feature => {
-      const { id: featureId } = await getFeatureByModule(knex, feature)
-      return featureId
-    })
+    const jobFunction = _.omit(jf, ['permissions'])
     const permissionIds = await Promise.map(
       jf.permissions || [],
       async permission => {
@@ -1389,13 +1341,7 @@ async function baseGxAlertMigration(
         return permissionId
       }
     )
-    await upsertJobFunction(
-      knex,
-      jobFunction.name,
-      partnerId,
-      permissionIds,
-      featureIds
-    )
+    await upsertJobFunction(knex, jobFunction.name, partnerId, permissionIds)
   })
   const jobFunctions = await knex('JobFunction')
     .where({ partnerId })
@@ -1800,7 +1746,6 @@ module.exports = {
   upsertGxAlertDevice,
   ensureAspectDeviceExists,
   upsertJobFunctionPermission,
-  upsertJobFeatures,
   upsertGeneXpertDeviceTypeAndAssays,
   upsertStatesAndLgas,
   upsertAssayResultCategories,

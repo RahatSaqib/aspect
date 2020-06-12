@@ -110,7 +110,7 @@ describe('requirePermissions', () => {
   const ForbiddenComponent = () => {}
   const WrappedComponent = () => {}
 
-  function makeContext(userPermissions, userFeatures) {
+  function makeContext(userPermissions) {
     return {
       store: {
         subscribe() {},
@@ -121,7 +121,6 @@ describe('requirePermissions', () => {
               jwt: {
                 permissions: Immutable.Set(userPermissions),
               },
-              features: Immutable.Set(userFeatures),
             },
           }
         },
@@ -179,10 +178,9 @@ describe('requirePermissions', () => {
     })
   })
 
-  describe('given right user features', () => {
+  describe('given right user', () => {
     const DecoratedComponent = requirePermissions({
       permissions: ['person:admin'],
-      features: ['person'],
       ForbiddenComponent,
     })(WrappedComponent)
 
@@ -202,23 +200,6 @@ describe('requirePermissions', () => {
 
       expect(ComponentWrapper.find(WrappedComponent).length).toEqual(1)
       expect(ComponentWrapper.find(ForbiddenComponent).length).toEqual(0)
-    })
-  })
-
-  describe('given wrong user features', () => {
-    const DecoratedComponent = requirePermissions({
-      permissions: ['person:admin'],
-      features: ['person'],
-      ForbiddenComponent,
-    })(WrappedComponent)
-
-    it('should render ForbiddenComponent', () => {
-      const ComponentWrapper = shallow(<DecoratedComponent />, {
-        context: makeContext(['person:admin'], ['task']),
-      })
-
-      expect(ComponentWrapper.find(WrappedComponent).length).toEqual(0)
-      expect(ComponentWrapper.find(ForbiddenComponent).length).toEqual(1)
     })
   })
 })

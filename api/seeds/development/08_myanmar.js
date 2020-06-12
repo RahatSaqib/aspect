@@ -347,31 +347,21 @@ async function seed(knex) {
       .update({ messageTypeId: newMessageTypeId })
   })
 
-  const { id: actionDashboardInventoryLevelUpdateFeatureId } = await knex(
-    'Feature as f'
-  )
-    .where('f.module', 'actionDashboardInventoryLevelUpdate')
-    .first()
-
   const myanmarJobFunctions = await knex('JobFunction as jf')
     .where('jf.partnerId', partnerId)
     .select()
 
   const modules = await getPermissionModules(knex)
 
-  await Promise.each(myanmarJobFunctions, async myanmarJobFunction => {
-    await knex('JobFunctionFeature').insert({
-      jobFunctionId: myanmarJobFunction.id,
-      featureId: actionDashboardInventoryLevelUpdateFeatureId,
-    })
-    await knex('JobFunctionPermission').insert({
+  await Promise.each(myanmarJobFunctions, async myanmarJobFunction =>
+    knex('JobFunctionPermission').insert({
       jobFunctionId: myanmarJobFunction.id,
       permissionId:
         myanmarJobFunction.name === 'Admin'
           ? modules.actionDashboard.admin
           : modules.actionDashboard.edit,
     })
-  })
+  )
 
   await updateUnknownErrorOnModuleMessage(knex)
 
