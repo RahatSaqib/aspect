@@ -157,7 +157,7 @@ function deviceApiHandler(handler, defaultHandlerOptions = {}) {
     }
 
     let response = {}
-    await context.messageContext.transact(async knex => {
+    await context.messageContext.run(async knex => {
       context.knex = knex
       context.deviceLogId = deviceLogId
 
@@ -791,7 +791,7 @@ async function onResultUpdated(
     // we've already created device logs originating here, so ignore
     return context.resultLogged(resultId, deviceLogId, userId)
   }
-  return context.transact(async knex => {
+  return context.run(async knex => {
     // TODO dispatch from client API using plugin so
     // senderIp, createdOn, source, etc are available
     // Everything else, we should add a device log entry so that

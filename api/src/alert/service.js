@@ -27,7 +27,7 @@ function onAlertMessageUpdateAfterIssueDataChanged(
   { issueId },
   { messageContext }
 ) {
-  return messageContext.transact(async knex => {
+  return messageContext.run(async knex => {
     const { issueTypeId } = await knex('Issue')
       .where('id', issueId)
       .first('issueTypeId')

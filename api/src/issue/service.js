@@ -58,7 +58,7 @@ async function getIssueEventTriggerSubscriptions({ messageContext }) {
 function onIssueEventTrigger(partnerId, issueType, triggerConditions) {
   return async (action, { messageContext: context }) => {
     context.bindActionCreators({ issueCreated, issueTriggered })
-    return context.transact(async knex => {
+    return context.run(async knex => {
       const shouldTriggerEvent = await actionConditionsMet(
         knex,
         action,
@@ -119,7 +119,7 @@ function onIssueEventTrigger(partnerId, issueType, triggerConditions) {
 function onIssueEventResolve(issueType) {
   return async (action, { messageContext: context }) => {
     context.bindActionCreators({ issueResolved })
-    context.transact(async knex => {
+    context.run(async knex => {
       const now = new Date()
       const issue = await findOpenIssue(knex, issueType, action)
       const hasTrigger =
@@ -346,7 +346,7 @@ async function updateIssueStatus(request) {
   }
 
   messageContext.bindActionCreators({ issueAcknowledged })
-  await messageContext.transact(async knex => {
+  await messageContext.run(async knex => {
     // only allow acknowledge if issue active and current user
     // is a assigned a notification that can acknowledge
     const notification = await knex('Notification as n')

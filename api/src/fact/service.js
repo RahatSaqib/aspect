@@ -273,8 +273,15 @@ function onFactGenerateResultCountsForDevice(
       }
     })
 
-    for (const days of daysToCalculate) {
-      /* eslint-disable no-await-in-loop */
+    // calculate by device - make sure it still exists
+    const device = await knex('Device')
+      .where({ id: deviceId })
+      .first('deviceId')
+    if (!device) {
+      return
+    }
+
+    await Promise.each(daysToCalculate, async days => {
       const endedOn = startOfDay(subDays(now, days))
 
       // query for selecting data for the device
@@ -285,14 +292,6 @@ function onFactGenerateResultCountsForDevice(
           endedOn,
         }
       )
-
-      // calculate by device - make sure it still exists
-      const device = await knex('Device')
-        .where({ id: deviceId })
-        .first('deviceId')
-      if (!device) {
-        return
-      }
 
       const countByDevice = await query
         .clone()
@@ -325,7 +324,7 @@ function onFactGenerateResultCountsForDevice(
         .count('r.id as resultCount')
         .select('r.assayId')
 
-      for (const count of countsByAssay) {
+      await Promise.each(countsByAssay, async count => {
         const factResultsDeviceByAssay = await knex('FactResultsDeviceByAssay')
           .where({ deviceId, assayId: count.assayId, days })
           .first()
@@ -345,7 +344,7 @@ function onFactGenerateResultCountsForDevice(
             calculatedOn: now,
           })
         }
-      }
+      })
 
       // ...grouped by assay, resultCategory
       const countsByCategory = await query
@@ -356,7 +355,7 @@ function onFactGenerateResultCountsForDevice(
         .count('r.id as resultCount')
         .select('r.assayId', 'r.resultCategory1')
 
-      for (const count of countsByCategory) {
+      await Promise.each(countsByCategory, async count => {
         const factResultsDeviceByCategory1 = await knex(
           'FactResultsDeviceByCategory1'
         )
@@ -386,7 +385,7 @@ function onFactGenerateResultCountsForDevice(
             calculatedOn: now,
           })
         }
-      }
+      })
 
       // ...grouped by assay, resultCategory 1 & 2
       const countsByCategories = await query
@@ -398,7 +397,7 @@ function onFactGenerateResultCountsForDevice(
         .count('r.id as resultCount')
         .select('r.assayId', 'r.resultCategory1', 'r.resultCategory2')
 
-      for (const count of countsByCategories) {
+      await Promise.each(countsByCategories, async count => {
         const factResultsDeviceByCategory1And2 = await knex(
           'FactResultsDeviceByCategory1And2'
         )
@@ -434,9 +433,8 @@ function onFactGenerateResultCountsForDevice(
             calculatedOn: now,
           })
         }
-      }
-      /* eslint-enable no-await-in-loop */
-    }
+      })
+    })
 
     // delete orphan data (=not updated in the loop)
     await knex('FactResultsDevice')
@@ -573,7 +571,7 @@ function onFactCalculateInventoryConsumptionRates(action, { messageContext }) {
 async function refreshConsumptionRates(knex, siteId, consumableId) {
   const updatedOn = new Date()
   const totals = await getConsumptions(knex, siteId, consumableId)
-  await Promise.all(
+  await Promise.each(
     _.map(totals, async x => {
       const factInventoryConsumptionRate = await knex(
         'FactInventoryConsumptionRate'

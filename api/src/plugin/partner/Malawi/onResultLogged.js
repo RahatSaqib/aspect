@@ -32,7 +32,7 @@ const MERGEABLE_REPORTABLE_IDS = [
 
 async function onResultLogged({ resultId }, { messageContext }) {
   const context = messageContext.bindActionCreators({ resultUpdated })
-  return context.transact(async knex => {
+  return context.run(async knex => {
     const now = new Date()
     await mergeResults({
       knex,

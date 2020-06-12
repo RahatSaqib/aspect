@@ -10,7 +10,7 @@ const {
 function onResolveIssues() {
   return async (action, { messageContext: context }) => {
     context.bindActionCreators({ issueResolved })
-    context.transact(async knex => {
+    context.run(async knex => {
       const openIssuesToCheck = await findOpenIssuesToCheckForResolution(
         knex,
         action.issueId

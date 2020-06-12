@@ -71,7 +71,7 @@ async function listNotifications(request) {
 }
 
 async function onIssueEscalated({ issueId }, { messageContext: context }) {
-  await context.transact(async knex => {
+  await context.run(async knex => {
     const now = new Date()
     // Find escalation policy for the issue
     const policies = await knex('NotificationType as nt')

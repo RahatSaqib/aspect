@@ -23,7 +23,7 @@ function onPushNotificationMessageCreated(
     pushNotificationMessageReadyForSending,
   })
 
-  return context.transact(async knex => {
+  return context.run(async knex => {
     // after push notification message entry created - process it's template and merge it with data
     await preparePushNotificationMessageForSending(
       context,
@@ -73,7 +73,7 @@ function onPushNotificationMessageReadyForSending(
     pushNotificationMessageSent,
   })
 
-  return context.transact(async knex => {
+  return context.run(async knex => {
     await doSendPushNotificationMessage(
       context,
       knex,

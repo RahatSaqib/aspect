@@ -28,7 +28,7 @@ async function updateCovidResultFromFormData(
   { resultId, deviceLogId, userId },
   { messageContext }
 ) {
-  return messageContext.transact(async knex => {
+  return messageContext.run(async knex => {
     const { externalId: deviceLogDeviceTypeExternalId } =
       (await knex('DeviceLog as dl')
         .join('Device as d', 'dl.deviceId', 'd.id')

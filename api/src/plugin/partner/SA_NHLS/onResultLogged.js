@@ -5,7 +5,7 @@ const { parseDateOrDefault } = require('../../../shared/date')
 // check for error codes when a result is logged
 async function onResultLogged({ resultId }, { messageContext }) {
   const context = messageContext.bindActionCreators({ resultUpdated })
-  return context.transact(async knex => {
+  return context.run(async knex => {
     const now = new Date()
     const result = await knex('Result as r')
       .join('Sample as s', 'r.sampleId', 's.id')
