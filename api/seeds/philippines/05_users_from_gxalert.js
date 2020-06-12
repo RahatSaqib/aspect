@@ -70,15 +70,16 @@ async function seed(knex) {
     {}
   )
 
-  const siteIds = await knex('Geography as g')
-    .join('Site as s', 'g.id', 's.geographyId')
-    .where('g.countryId', countryId)
-    .select('s.id', 's.shortName')
-    .distinct('s.id', 's.shortName')
-    .reduce((siteMap, site) => {
-      siteMap[site.shortName] = site.id
-      return siteMap
-    }, {})
+  const siteIds = (
+    await knex('Geography as g')
+      .join('Site as s', 'g.id', 's.geographyId')
+      .where('g.countryId', countryId)
+      .select('s.id', 's.shortName')
+      .distinct('s.id', 's.shortName')
+  ).reduce((siteMap, site) => {
+    siteMap[site.shortName] = site.id
+    return siteMap
+  }, {})
 
   await Promise.each(contacts, async person => {
     let userId = null
@@ -155,22 +156,20 @@ async function seed(knex) {
         existingPerson.hideSampleId !== person.hideSampleId ||
         existingPerson.hideNotes !== person.hideNotes
       ) {
-        await knex('Person')
-          .where('id', existingPerson.id)
-          .update({
-            name: person.personName,
-            timezone: person.timezone,
-            title: person.title,
-            geographyId,
-            email: person.personEmailAddress,
-            cell: person.personCell,
-            phone: person.personPhone,
-            hidePatientId: person.hidePatientId,
-            hideSampleId: person.hideSampleId,
-            hideNotes: person.hideNotes,
-            updatedOn: now,
-            updatedBy: adminId,
-          })
+        await knex('Person').where('id', existingPerson.id).update({
+          name: person.personName,
+          timezone: person.timezone,
+          title: person.title,
+          geographyId,
+          email: person.personEmailAddress,
+          cell: person.personCell,
+          phone: person.personPhone,
+          hidePatientId: person.hidePatientId,
+          hideSampleId: person.hideSampleId,
+          hideNotes: person.hideNotes,
+          updatedOn: now,
+          updatedBy: adminId,
+        })
       }
       personId = existingPerson.id
     } else {

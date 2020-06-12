@@ -104,7 +104,7 @@ describe('Device API Raw routes for Abbott M2000', () => {
     const resultIds = await knex('Result')
       .where('deviceId', deviceId)
       .pluck('id')
-      .union(function() {
+      .union(function () {
         this.from('ResultGeneratedResult as rgr')
           .innerJoin('Result as r', 'rgr.sourceResultId', 'r.id')
           .where('r.deviceId', deviceId)
@@ -113,78 +113,46 @@ describe('Device API Raw routes for Abbott M2000', () => {
     const opIds = await knex('DeviceOperation')
       .where('deviceId', deviceId)
       .pluck('id')
-    const issueIds = await knex('Issue')
-      .where('deviceId', deviceId)
-      .pluck('id')
-    await knex('DeviceStatusLog')
-      .where('deviceId', deviceId)
-      .delete()
+    const issueIds = await knex('Issue').where('deviceId', deviceId).pluck('id')
+    await knex('DeviceStatusLog').where('deviceId', deviceId).delete()
     await knex('DeviceLog')
       .where('deviceId', deviceId)
       .orWhereIn('resultId', resultIds)
       .delete()
-    await knex('DeviceOperation')
-      .whereIn('id', opIds)
-      .delete()
-    await knex('FactDeviceFlag')
-      .where('deviceId', deviceId)
-      .delete()
-    await knex('DeviceSiteHistory')
-      .where('deviceId', deviceId)
-      .delete()
-    await knex('FactResultsDevice')
-      .where('deviceId', deviceId)
-      .delete()
-    await knex('FactResultsDeviceByAssay')
-      .where('deviceId', deviceId)
-      .delete()
+    await knex('DeviceOperation').whereIn('id', opIds).delete()
+    await knex('FactDeviceFlag').where('deviceId', deviceId).delete()
+    await knex('DeviceSiteHistory').where('deviceId', deviceId).delete()
+    await knex('FactResultsDevice').where('deviceId', deviceId).delete()
+    await knex('FactResultsDeviceByAssay').where('deviceId', deviceId).delete()
     await knex('FactResultsDeviceByCategory1')
       .where('deviceId', deviceId)
       .delete()
     await knex('FactResultsDeviceByCategory1And2')
       .where('deviceId', deviceId)
       .delete()
-    await knex('InventoryLog')
-      .whereIn('resultId', resultIds)
-      .delete()
+    await knex('InventoryLog').whereIn('resultId', resultIds).delete()
     await knex('ResultQualityControlLog')
       .whereIn('resultId', resultIds)
       .delete()
-    await knex('ResultWorkflowLog')
-      .whereIn('resultId', resultIds)
-      .delete()
+    await knex('ResultWorkflowLog').whereIn('resultId', resultIds).delete()
     await knex('ResultGeneratedResult')
       .whereIn('sourceResultId', resultIds)
       .orWhereIn('generatedResultId', resultIds)
       .delete()
-    await knex('ResultTag')
-      .whereIn('resultId', resultIds)
-      .delete()
-    await knex('Result')
-      .whereIn('id', resultIds)
-      .delete()
+    await knex('ResultTag').whereIn('resultId', resultIds).delete()
+    await knex('Result').whereIn('id', resultIds).delete()
     const sampleIds = await knex('Result')
       .whereIn('id', resultIds)
       .pluck('sampleId')
-    await knex('Sample')
-      .whereIn('id', sampleIds)
-      .delete()
-    await knex('Sample')
-      .where('originSiteId', siteId)
-      .delete()
-    await knex('DeviceApiRaw')
-      .where({ deviceApiKeyId })
-      .delete()
+    await knex('Sample').whereIn('id', sampleIds).delete()
+    await knex('Sample').where('originSiteId', siteId).delete()
+    await knex('DeviceApiRaw').where({ deviceApiKeyId }).delete()
     await knex('DeviceApiKey')
       .where('token', validApiKeyToken)
       .orWhere('deviceId', deviceId)
       .delete()
-    await knex('Device')
-      .where('id', deviceId)
-      .delete()
-    await knex('Site')
-      .where('id', siteId)
-      .delete()
+    await knex('Device').where('id', deviceId).delete()
+    await knex('Site').where('id', siteId).delete()
     const inventoryItemIds = await knex('InventoryItem as ii')
       .where('ii.siteId', siteId)
       .distinct('ii.id')
@@ -192,12 +160,10 @@ describe('Device API Raw routes for Abbott M2000', () => {
     await knex('InventoryLog')
       .whereIn('inventoryItemId', inventoryItemIds)
       .delete()
-    await knex('InventoryItem')
-      .whereIn('id', inventoryItemIds)
-      .delete()
+    await knex('InventoryItem').whereIn('id', inventoryItemIds).delete()
     await knex('IssueEvent')
       .whereIn('issueId', issueIds)
-      .orWhere(function() {
+      .orWhere(function () {
         if (resultIds != null && resultIds.length > 0) {
           this.whereRaw(
             `JSON_EXTRACT(data, "$.resultId") IN (${resultIds.join(',')})`
@@ -300,9 +266,7 @@ aa.`
     expect(resultIds).to.have.lengthOf(93)
 
     // inspect that the results that were created have the expected values:
-    const results = await knex('Result')
-      .whereIn('id', resultIds)
-      .select()
+    const results = await knex('Result').whereIn('id', resultIds).select()
 
     const site = await knex('Site')
       .where({
@@ -349,7 +313,8 @@ aa.`
           negativeControl: {
             passed: true,
             reportType: 'Final Result',
-            abnormalFlags: ['OPEN'],
+            finalResultAbnormalFlags: ['OPEN'],
+            preliminaryResultAbnormalFlags: [],
             result: 'Not detected',
             moduleName: 'A1',
             assayCode: '1mLDBSvOP',
@@ -360,12 +325,13 @@ aa.`
             moduleSerial: '275021695',
             orderOperatorId: 'bryan',
             senderOperator: 'bryan',
-            cycleNumber: -1,
+            cycleNumber: '-1.00',
           },
           lowPositiveControl: {
             passed: true,
             reportType: 'Final Result',
-            abnormalFlags: ['OPEN'],
+            finalResultAbnormalFlags: ['OPEN'],
+            preliminaryResultAbnormalFlags: [],
             result: '80332',
             moduleName: 'B1',
             assayCode: '1mLDBSvOP',
@@ -376,12 +342,13 @@ aa.`
             moduleSerial: '275021695',
             orderOperatorId: 'bryan',
             senderOperator: 'bryan',
-            cycleNumber: 22.09,
+            cycleNumber: '22.09',
           },
           highPositiveControl: {
             passed: true,
             reportType: 'Final Result',
-            abnormalFlags: ['OPEN'],
+            finalResultAbnormalFlags: ['OPEN'],
+            preliminaryResultAbnormalFlags: [],
             result: '8427744',
             moduleName: 'C1',
             assayCode: '1mLDBSvOP',
@@ -392,7 +359,7 @@ aa.`
             moduleSerial: '275021695',
             orderOperatorId: 'bryan',
             senderOperator: 'bryan',
-            cycleNumber: 15.49,
+            cycleNumber: '15.49',
           },
         },
       })
@@ -427,9 +394,7 @@ aa.`
     expect(resultIds).to.have.lengthOf(93)
 
     // inspect that the results that were created have the expected values:
-    const results = await knex('Result')
-      .whereIn('id', resultIds)
-      .select()
+    const results = await knex('Result').whereIn('id', resultIds).select()
 
     const site = await knex('Site')
       .where({
@@ -476,7 +441,8 @@ aa.`
           negativeControl: {
             passed: true,
             reportType: 'Final Result',
-            abnormalFlags: [],
+            finalResultAbnormalFlags: [],
+            preliminaryResultAbnormalFlags: [],
             result: 'Not detected',
             moduleName: 'C1',
             assayCode: 'HIV0.2ml',
@@ -487,12 +453,13 @@ aa.`
             moduleSerial: '275020369',
             orderOperatorId: 'fse',
             senderOperator: 'Administrator',
-            cycleNumber: -1,
+            cycleNumber: '-1.00',
           },
           lowPositiveControl: {
             passed: true,
             reportType: 'Final Result',
-            abnormalFlags: [],
+            finalResultAbnormalFlags: [],
+            preliminaryResultAbnormalFlags: [],
             result: '832',
             moduleName: 'B1',
             assayCode: 'HIV0.2ml',
@@ -503,12 +470,13 @@ aa.`
             moduleSerial: '275020369',
             orderOperatorId: 'fse',
             senderOperator: 'Administrator',
-            cycleNumber: 25.28,
+            cycleNumber: '25.28',
           },
           highPositiveControl: {
             passed: true,
             reportType: 'Final Result',
-            abnormalFlags: [],
+            finalResultAbnormalFlags: [],
+            preliminaryResultAbnormalFlags: [],
             result: '109603',
             moduleName: 'A1',
             assayCode: 'HIV0.2ml',
@@ -519,7 +487,7 @@ aa.`
             moduleSerial: '275020369',
             orderOperatorId: 'fse',
             senderOperator: 'Administrator',
-            cycleNumber: 18.18,
+            cycleNumber: '18.18',
           },
         },
       })
@@ -554,9 +522,7 @@ aa.`
     expect(resultIds).to.have.lengthOf(45)
 
     // inspect that the results that were created have the expected values:
-    const results = await knex('Result')
-      .whereIn('id', resultIds)
-      .select()
+    const results = await knex('Result').whereIn('id', resultIds).select()
 
     const site = await knex('Site')
       .where({
@@ -603,7 +569,8 @@ aa.`
           negativeControl: {
             passed: true,
             reportType: 'Final Result',
-            abnormalFlags: [],
+            finalResultAbnormalFlags: [],
+            preliminaryResultAbnormalFlags: [],
             result: 'Not detected',
             moduleName: 'C1',
             assayCode: 'HBV 0.2ml',
@@ -614,12 +581,13 @@ aa.`
             moduleSerial: '275020369',
             orderOperatorId: 'fse',
             senderOperator: 'Administrator',
-            cycleNumber: -1,
+            cycleNumber: '-1.00',
           },
           lowPositiveControl: {
             passed: true,
             reportType: 'Final Result',
-            abnormalFlags: [],
+            finalResultAbnormalFlags: [],
+            preliminaryResultAbnormalFlags: [],
             result: '664',
             moduleName: 'B1',
             assayCode: 'HBV 0.2ml',
@@ -630,12 +598,13 @@ aa.`
             moduleSerial: '275020369',
             orderOperatorId: 'fse',
             senderOperator: 'Administrator',
-            cycleNumber: 33.58,
+            cycleNumber: '33.58',
           },
           highPositiveControl: {
             passed: true,
             reportType: 'Final Result',
-            abnormalFlags: [],
+            finalResultAbnormalFlags: [],
+            preliminaryResultAbnormalFlags: [],
             result: '42689',
             moduleName: 'A1',
             assayCode: 'HBV 0.2ml',
@@ -646,7 +615,7 @@ aa.`
             moduleSerial: '275020369',
             orderOperatorId: 'fse',
             senderOperator: 'Administrator',
-            cycleNumber: 27.15,
+            cycleNumber: '27.15',
           },
         },
       })

@@ -116,9 +116,7 @@ describe('Person routes', () => {
       run(async knex => {
         // remove testing person
         if (testingPersonId) {
-          await knex('Person')
-            .where({ id: testingPersonId })
-            .del()
+          await knex('Person').where({ id: testingPersonId }).del()
         }
       })
     )

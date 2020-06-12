@@ -4,6 +4,7 @@
         "icon": "place",
         "title": "Sites",
         "titleI18nKey": "sitesTitle",
+        "externalId": "sitesTitle",
         "subTitle": null,
         "subTitleI18nKey": null,
         "sqlForIndicator":
@@ -15,6 +16,7 @@
         "icon": "computer",
         "title": "Devices",
         "titleI18nKey": "devicesTitle",
+        "externalId": "devicesTitle",
         "subTitle": null,
         "subTitleI18nKey": null,
         "sqlForIndicator":
@@ -26,6 +28,7 @@
         "icon": "assignment",
         "title": "Results",
         "titleI18nKey": "resultsTitle",
+        "externalId": "resultsTitle",
         "subTitle": "Last 30 Days",
         "subTitleI18nKey": "subResultsTitle",
         "sqlForIndicator":
@@ -37,6 +40,7 @@
         "icon": "perm-identity",
         "title": "Contacts",
         "titleI18nKey": "personTitle",
+        "externalId": "personTitle",
         "subTitle": null,
         "subTitleI18nKey": null,
         "sqlForIndicator": "select count(u.id) as cnt from User as u",
@@ -45,4 +49,3 @@
       }
     ]
   }
-  

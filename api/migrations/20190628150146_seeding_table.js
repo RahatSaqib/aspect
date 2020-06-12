@@ -4,10 +4,7 @@ async function up(knex) {
   await knex.schema.createTable('AspectSeed', seeds => {
     seeds.increments('id').primary()
     seeds.string('fileName').notNullable()
-    seeds
-      .datetime('runOn')
-      .notNullable()
-      .defaultTo(knex.fn.now())
+    seeds.datetime('runOn').notNullable().defaultTo(knex.fn.now())
     seeds.boolean('success').notNullable()
     seeds.text('errorMessage').nullable()
   })

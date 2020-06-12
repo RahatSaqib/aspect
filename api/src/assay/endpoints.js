@@ -17,9 +17,7 @@ const routes = [
       auth: { scope: ['assay'] },
       validate: {
         query: {
-          name: Joi.string()
-            .allow('')
-            .description('Filter for assay name'),
+          name: Joi.string().allow('').description('Filter for assay name'),
           ...validateSortPageParams('name', 'assayTypeName'),
         },
       },
@@ -28,9 +26,7 @@ const routes = [
           allowUnknown: true,
         },
         schema: Joi.object().keys({
-          ok: Joi.bool()
-            .required()
-            .description('False if error occured'),
+          ok: Joi.bool().required().description('False if error occured'),
           total: Joi.number()
             .required()
             .description(
@@ -44,9 +40,7 @@ const routes = [
             .description('Return assays items')
             .items(
               Joi.object().keys({
-                id: Joi.number()
-                  .description('The assay Id')
-                  .required(),
+                id: Joi.number().description('The assay Id').required(),
                 externalId: Joi.string().description(
                   'The external id of the assay'
                 ),

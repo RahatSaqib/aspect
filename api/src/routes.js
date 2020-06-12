@@ -75,6 +75,9 @@ function addClientRoutes(server) {
     require('./disease/endpoints').routes.map(decorateClientAPI('device'))
   )
   server.route(
+    require('./forms/endpoints').routes.map(decorateClientAPI('case'))
+  )
+  server.route(
     require('./case/endpoints').routes.map(decorateClientAPI('case'))
   )
 }
@@ -225,23 +228,14 @@ function validateSortPageParams(...sortColumns) {
       .integer()
       .min(0)
       .description('Page index with 0 as first page'),
-    size: Joi.number()
-      .integer()
-      .positive()
-      .description('Page size'),
+    size: Joi.number().integer().positive().description('Page size'),
   }
 }
 
 function validateDateRangeParams() {
   return {
-    minDate: Joi.date()
-      .iso()
-      .allow(null)
-      .description('From Date'),
-    maxDate: Joi.date()
-      .iso()
-      .allow(null)
-      .description('To Date'),
+    minDate: Joi.date().iso().allow(null).description('From Date'),
+    maxDate: Joi.date().iso().allow(null).description('To Date'),
   }
 }
 

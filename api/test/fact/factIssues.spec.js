@@ -66,9 +66,7 @@ describe('Fact based issues', () => {
         .innerJoin('User as u', 'p.userId', 'u.id')
         .where('u.name', USER_LU)
         .first('jc.siteId')
-      const site = await knex('Site')
-        .where({ id: siteId })
-        .first('name')
+      const site = await knex('Site').where({ id: siteId }).first('name')
       siteName = site.name
     })
   )
@@ -141,20 +139,16 @@ describe('Fact based issues', () => {
       const numberOfDaysNoResults = numberOfDays(deviceNoResultsDate)
       assert.equal(numberOfDaysOffline, `${maxDaysDeviceOffline + 1} days`)
       assert.equal(numberOfDaysNoResults, `${maxDaysDeviceNoResults + 1} days`)
-      await knex('Device as d')
-        .where('d.id', newDevice.id)
-        .update({
-          createdOn: deviceNoResultsDate,
-          lastPingOn: deviceOfflineDate,
-        })
+      await knex('Device as d').where('d.id', newDevice.id).update({
+        createdOn: deviceNoResultsDate,
+        lastPingOn: deviceOfflineDate,
+      })
 
       const waitForOffline = waitForAction(deviceOffline(newDevice.id))
       await messageContext.factGenerateDeviceConnectivity(newDevice.id)
       await waitForOffline
       await waitForIdle()
-      ;[factDevice] = await knex('FactDeviceFlag')
-        .where({ deviceId })
-        .select()
+      ;[factDevice] = await knex('FactDeviceFlag').where({ deviceId }).select()
       expect(factDevice).to.containSubset({
         offline: 1,
         noResults: 0,
@@ -165,7 +159,7 @@ describe('Fact based issues', () => {
       let issues = await knex('Issue as i')
         .join('IssueType as it', 'i.issueTypeId', 'it.id')
         .join('IssueStatus as is', 'i.issueStatusId', 'is.id')
-        .join('IssueStatusLog as isl', function() {
+        .join('IssueStatusLog as isl', function () {
           // ensures we have a log with the same status as the issue
           // and we are expecting only one, so issues should not duplicate
           this.on('isl.issueId', 'i.id').andOn('isl.issueStatusId', 'is.id')
@@ -238,7 +232,7 @@ describe('Fact based issues', () => {
       issues = await knex('Issue as i')
         .join('IssueType as it', 'i.issueTypeId', 'it.id')
         .join('IssueStatus as is', 'i.issueStatusId', 'is.id')
-        .join('IssueStatusLog as isl', function() {
+        .join('IssueStatusLog as isl', function () {
           this.on('isl.issueId', 'i.id').andOn('isl.issueStatusId', 'is.id')
         })
         .where({ 'i.deviceId': deviceId })
@@ -271,9 +265,7 @@ describe('Fact based issues', () => {
         })
       await Promise.all([waitForOnline, waitForResolve, waitForNoResults])
       await waitForIdle()
-      ;[factDevice] = await knex('FactDeviceFlag')
-        .where({ deviceId })
-        .select()
+      ;[factDevice] = await knex('FactDeviceFlag').where({ deviceId }).select()
       expect(factDevice).to.containSubset({
         offline: 0,
         noResults: 1,
@@ -359,9 +351,7 @@ describe('Fact based issues', () => {
           assert.typeOf(res.body, 'Object')
         })
       await waitForIdle()
-      ;[factDevice] = await knex('FactDeviceFlag')
-        .where({ deviceId })
-        .select()
+      ;[factDevice] = await knex('FactDeviceFlag').where({ deviceId }).select()
       expect(factDevice).to.containSubset({
         offline: 0,
         noResults: 0,
@@ -401,9 +391,7 @@ describe('Fact based issues', () => {
         data: { a: 1, hi: 'world' },
       })
       await waitForIdle()
-      ;[factDevice] = await knex('FactDeviceFlag')
-        .where({ deviceId })
-        .select()
+      ;[factDevice] = await knex('FactDeviceFlag').where({ deviceId }).select()
       expect(factDevice).to.containSubset({
         offline: 0,
         noResults: 0,
@@ -449,9 +437,7 @@ describe('Fact based issues', () => {
         data: { b: 2, hi: 'universe' },
       })
       await waitForIdle()
-      ;[factDevice] = await knex('FactDeviceFlag')
-        .where({ deviceId })
-        .select()
+      ;[factDevice] = await knex('FactDeviceFlag').where({ deviceId }).select()
       expect(factDevice).to.containSubset({
         offline: 0,
         noResults: 0,
@@ -600,12 +586,10 @@ describe('Fact based issues', () => {
       const deviceOfflineDate = subDays(now, maxDaysDeviceOffline - 2)
       const deviceNoResultsDate = subDays(now, maxDaysDeviceNoResults - 2)
       const maintenanceDueOn = addDays(now, 30 + 2)
-      await knex('Device as d')
-        .where('d.id', newDevice.id)
-        .update({
-          createdOn: deviceNoResultsDate,
-          lastPingOn: deviceOfflineDate,
-        })
+      await knex('Device as d').where('d.id', newDevice.id).update({
+        createdOn: deviceNoResultsDate,
+        lastPingOn: deviceOfflineDate,
+      })
 
       messageContext.factGenerateDeviceConnectivity(newDevice.id)
       await waitForIdle()
@@ -618,7 +602,7 @@ describe('Fact based issues', () => {
       let issues = await knex('Issue as i')
         .join('IssueType as it', 'i.issueTypeId', 'it.id')
         .join('IssueStatus as is', 'i.issueStatusId', 'is.id')
-        .join('IssueStatusLog as isl', function() {
+        .join('IssueStatusLog as isl', function () {
           // ensures we have a log with the same status as the issue
           // and we are expecting only one, so issues should not duplicate
           this.on('isl.issueId', 'i.id').andOn('isl.issueStatusId', 'is.id')
@@ -821,7 +805,7 @@ describe('Fact based issues', () => {
       let issues = await knex('Issue as i')
         .join('IssueType as it', 'i.issueTypeId', 'it.id')
         .join('IssueStatus as is', 'i.issueStatusId', 'is.id')
-        .join('IssueStatusLog as isl', function() {
+        .join('IssueStatusLog as isl', function () {
           // ensures we have a log with the same status as the issue
           // and we are expecting only one, so issues should not duplicate
           this.on('isl.issueId', 'i.id').andOn('isl.issueStatusId', 'is.id')
@@ -958,12 +942,10 @@ describe('Fact based issues', () => {
       const deviceOfflineDate = subDays(now, maxDaysDeviceOffline - 2)
       const deviceNoResultsDate = subDays(now, maxDaysDeviceNoResults - 2)
       const maintenanceDueOn = subDays(now, 2)
-      await knex('Device as d')
-        .where('d.id', newDevice.id)
-        .update({
-          createdOn: deviceNoResultsDate,
-          lastPingOn: deviceOfflineDate,
-        })
+      await knex('Device as d').where('d.id', newDevice.id).update({
+        createdOn: deviceNoResultsDate,
+        lastPingOn: deviceOfflineDate,
+      })
 
       messageContext.factGenerateDeviceConnectivity(newDevice.id)
       await waitForIdle()
@@ -976,7 +958,7 @@ describe('Fact based issues', () => {
       let issues = await knex('Issue as i')
         .join('IssueType as it', 'i.issueTypeId', 'it.id')
         .join('IssueStatus as is', 'i.issueStatusId', 'is.id')
-        .join('IssueStatusLog as isl', function() {
+        .join('IssueStatusLog as isl', function () {
           // ensures we have a log with the same status as the issue
           // and we are expecting only one, so issues should not duplicate
           this.on('isl.issueId', 'i.id').andOn('isl.issueStatusId', 'is.id')
@@ -1123,15 +1105,9 @@ describe('Fact based issues', () => {
         await knex('ResultTreatmentStatusLog')
           .where('resultId', resultId)
           .delete()
-        await knex('Result')
-          .where('id', resultId)
-          .delete()
-        await knex('Sample')
-          .where('id', sampleId)
-          .delete()
-        await knex('Issue')
-          .where('id', issueId)
-          .delete()
+        await knex('Result').where('id', resultId).delete()
+        await knex('Sample').where('id', sampleId).delete()
+        await knex('Issue').where('id', issueId).delete()
       })
     )
 
@@ -1226,9 +1202,7 @@ describe('Fact based issues', () => {
         await waitForIdle()
 
         // issue should now be resolved
-        const issue = await knex('Issue')
-          .where('id', issueId)
-          .first()
+        const issue = await knex('Issue').where('id', issueId).first()
 
         assert.equal(issue.issueStatusId, issueStatusResolved)
       }))

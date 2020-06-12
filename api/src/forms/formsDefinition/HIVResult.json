@@ -1,0 +1,141 @@
+{
+  "fields": [
+    {
+      "name": "log",
+      "i18nKey": "logi18nKey",
+      "fieldType": "number",
+      "order": 0,
+      "caption": "log value",
+      "i18nKeyCaption": "logi18nCaptionKey",
+      "controlType": "textBox",
+      "required": true,
+      "encrypted": false,
+      "validation": [
+        {
+          "validationType": "float",
+          "min": 0,
+          "errorMessage": "This value should be higher than 0",
+          "errorMessageI18nKey": "logErrori18nKey"
+        }
+      ]
+    },
+    {
+      "name": "copies",
+      "title": "Copies/ml",
+      "i18nKey": "copiesi18nKey",
+      "fieldType": "number",
+      "order": 1,
+      "caption": "log value",
+      "i18nKeyCaption": "copiesi18nCaptionKey",
+      "controlType": "textBox",
+      "required": true,
+      "encrypted": false,
+      "validation": [
+        {
+          "validationType": "float",
+          "min": 0,
+          "errorMessage": "This value should be higher than 0",
+          "errorMessageI18nKey": "logErrori18nKey"
+        }
+      ]
+    },
+    {
+      "name": "ResultText",
+      "i18nKey": "ResultTexti18nKey",
+      "fieldType": "text",
+      "order": 2,
+      "title": "Result Text",
+      "caption": "Result Text value",
+      "i18nKeyCaption": "ResultTexti18nCaptionKey",
+      "controlType": "textBox",
+      "required": true,
+      "encrypted": false
+    },
+    {
+      "name": "imageResult",
+      "title": "images",
+      "i18nKey": "imageResulti18nKey",
+      "fieldType": "text",
+      "order": 3,
+      "caption": "Images linked to this result",
+      "i18nKeyCaption": "filePickeri18nCaptionKey",
+      "controlType": "filePicker",
+      "required": false
+    },
+    {
+      "name": "hospitalNumber",
+      "i18nKey": "hospitalNumberi18nKey",
+      "title": "Hospital Number",
+      "fieldType": "text",
+      "order": 4,
+      "caption": "Hospital result number value",
+      "i18nKeyCaption": "hospitalNumberi18nCaptionKey",
+      "controlType": "textBox",
+      "required": false,
+      "validation": [
+        {
+          "validationType": "string",
+          "minLength": 3,
+          "errorMessage": "This should have at least 3 characters",
+          "errorMessageI18nKey": "logErrori18nKey"
+        }
+      ]
+    },
+    {
+      "name": "ward",
+      "i18nKey": "wardNumberi18nKey",
+      "fieldType": "text",
+      "order": 5,
+      "caption": "ward number value",
+      "i18nKeyCaption": "wardi18nCaptionKey",
+      "controlType": "textBox",
+      "required": false,
+      "validation": [
+        {
+          "validationType": "string",
+          "minLength": 3,
+          "errorMessage": "This should have at least 3 characters",
+          "errorMessageI18nKey": "logErrori18nKey"
+        }
+      ]
+    },
+    {
+      "name": "timeSampleTaken",
+      "title": "Time sample taken",
+      "i18nKey": "timeSampleTakeni18nKey",
+      "fieldType": "text",
+      "order": 6,
+      "caption": "time Sample Taken value",
+      "i18nKeyCaption": "timeSampleTakeni18nCaptionKey",
+      "controlType": "datePicker",
+      "required": false
+    },
+    {
+      "name": "sampleType",
+      "i18nKey": "sampleTypei18nKey",
+      "fieldType": "text",
+      "title": "Sample type",
+      "order": 7,
+      "caption": "ward number value",
+      "i18nKeyCaption": "wardi18nCaptionKey",
+      "controlType": "autoComplete",
+      "required": true,
+      "typeOfOptionSource": "fixedList",
+      "items": [
+        {
+          "key": 0,
+          "value": "Study"
+        },
+        {
+          "key": 1,
+          "value": "EQA"
+        },
+        {
+          "key": 2,
+          "value": "Misc."
+        }
+      ]
+    }
+  ],
+  "refForms": []
+}

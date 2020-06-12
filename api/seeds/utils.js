@@ -624,9 +624,7 @@ async function addFollowUps(knex, partnerIds, { data }) {
   for (const { type, name, externalId, i18nKey, assays } of data) {
     const { id: followUpTypeId } = _.find(typesDb, { externalId: type })
     const followUp = { followUpTypeId, name, externalId, i18nKey }
-    const existingFollowUp = await knex('FollowUp')
-      .where(followUp)
-      .first('id')
+    const existingFollowUp = await knex('FollowUp').where(followUp).first('id')
     let followUpId = null
     if (existingFollowUp == null) {
       followUpId = await knex('FollowUp').insert(followUp)
@@ -820,7 +818,7 @@ async function upsertItems(knex, tableName, whereKeys, items) {
   // ---------------------
   // get from db items with specified whereKeys
   const existingItems = await knex(tableName)
-    .where(function() {
+    .where(function () {
       items.forEach(item => {
         this.orWhere(getWhereItem(item, whereKeys))
       })
@@ -2369,9 +2367,7 @@ async function seedDeviceMaintenanceType(knex) {
 
 async function insertSites(knex, partnerId, countryId, sites) {
   const now = new Date()
-  const { id: adminId } = await knex('User')
-    .where('name', 'admin')
-    .first('id')
+  const { id: adminId } = await knex('User').where('name', 'admin').first('id')
 
   // insert sites from a JSON file. Safe to run multiple times. Will only add sites that don't exist yet (based on externalId)
   await Promise.each(sites, async site => {
@@ -2416,9 +2412,7 @@ async function insertSites(knex, partnerId, countryId, sites) {
     await Promise.each(site.tags, async tag => {
       const tagDetails = { partnerId, title: tag }
       let tagId = null
-      const existingTag = await knex('Tag')
-        .where(tagDetails)
-        .first('id')
+      const existingTag = await knex('Tag').where(tagDetails).first('id')
       if (existingTag) {
         tagId = existingTag.id
       } else {
@@ -2439,21 +2433,15 @@ async function insertSites(knex, partnerId, countryId, sites) {
 }
 
 async function getFeatureByModule(knex, module) {
-  return knex('Feature')
-    .where({ module })
-    .first()
+  return knex('Feature').where({ module }).first()
 }
 
 async function getPermissonByModuleAndActivity(knex, module, activity) {
-  return knex('Permission')
-    .where({ module, activity })
-    .first()
+  return knex('Permission').where({ module, activity }).first()
 }
 
 async function getPartnerByName(knex, name) {
-  const partner = await knex('Partner')
-    .where({ name })
-    .first()
+  const partner = await knex('Partner').where({ name }).first()
   return partner
 }
 

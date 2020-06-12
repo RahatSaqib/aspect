@@ -19,9 +19,9 @@ const {
   assignContact,
   unAssignContact,
 } = require('./service')
-const { getContactReport } = require('./serviceReports')
+const { exportContacts } = require('./serviceReports')
 const { contactDetailsPayload, personDetailsResponse } = require('./helpers')
-const { getReport } = require('./reporterServiceReports')
+const { exportReporters } = require('./reporterServiceReports')
 
 function listContactBaseConfig() {
   return {
@@ -31,9 +31,7 @@ function listContactBaseConfig() {
         contactNameOrEmail: Joi.string()
           .allow('')
           .description('Filter for person name/email'),
-        siteId: Joi.number()
-          .allow('')
-          .description('Site ID'),
+        siteId: Joi.number().allow('').description('Site ID'),
         format: Joi.string()
           .allow('')
           .description('File format for exporting data'),
@@ -55,9 +53,7 @@ function listReporterBaseConfig() {
         deviceName: Joi.string()
           .allow('')
           .description('Filter for device name'),
-        assayId: Joi.string()
-          .allow('')
-          .description('Filter for assay'),
+        assayId: Joi.string().allow('').description('Filter for assay'),
         diseaseId: Joi.number()
           .integer()
           .positive()
@@ -104,7 +100,7 @@ const routes = [
   {
     method: 'GET',
     path: '/person/export',
-    handler: getContactReport,
+    handler: exportContacts,
     config: {
       description: 'Export Contact List into Excel or CSV',
       notes: 'Filtered and sorted list of Contacts',
@@ -203,7 +199,7 @@ const routes = [
   {
     method: 'GET',
     path: '/reporter/export',
-    handler: getReport,
+    handler: exportReporters,
     config: {
       description: 'Export Reporter List into Excel or CSV',
       ...listReporterBaseConfig(),
@@ -260,15 +256,10 @@ const routes = [
       auth: { scope: ['site:view', 'site:edit'] },
       validate: {
         params: {
-          siteId: Joi.string()
-            .description('Site ID')
-            .required(),
+          siteId: Joi.string().description('Site ID').required(),
         },
         payload: {
-          id: Joi.number()
-            .integer()
-            .positive()
-            .required(),
+          id: Joi.number().integer().positive().required(),
         },
       },
     },
@@ -282,15 +273,10 @@ const routes = [
       auth: { scope: ['site:view', 'site:edit'] },
       validate: {
         params: {
-          siteId: Joi.string()
-            .description('Site ID')
-            .required(),
+          siteId: Joi.string().description('Site ID').required(),
         },
         payload: {
-          id: Joi.number()
-            .integer()
-            .positive()
-            .required(),
+          id: Joi.number().integer().positive().required(),
         },
       },
     },
@@ -305,9 +291,7 @@ const routes = [
       auth: { scope: ['person:view', 'person:edit', 'person:admin'] },
       validate: {
         params: {
-          personId: Joi.string()
-            .description('Person ID')
-            .required(),
+          personId: Joi.string().description('Person ID').required(),
         },
       },
       response: personDetailsResponse,
@@ -323,9 +307,7 @@ const routes = [
       auth: { scope: ['person:edit', 'person:admin'] },
       validate: {
         params: {
-          personId: Joi.string()
-            .description('Person ID')
-            .required(),
+          personId: Joi.string().description('Person ID').required(),
         },
         payload: contactDetailsPayload,
       },
@@ -356,17 +338,11 @@ const routes = [
       auth: { scope: ['person:edit', 'person:admin'] },
       validate: {
         params: {
-          personId: Joi.string()
-            .description('Person ID')
-            .required(),
+          personId: Joi.string().description('Person ID').required(),
         },
         payload: {
-          timezone: Joi.string()
-            .max(255)
-            .allow('', null),
-          culture: Joi.string()
-            .max(45)
-            .allow('', null),
+          timezone: Joi.string().max(255).allow('', null),
+          culture: Joi.string().max(45).allow('', null),
         },
       },
     },

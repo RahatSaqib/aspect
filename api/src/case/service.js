@@ -17,8 +17,6 @@ function validateCaseIdentifier(_case) {
 
   if (!_case.partnerId) errors += 'You must provide the partnerId field /n'
 
-  if (!_case.diseaseId) errors += 'You must provide the diseaseId field /n'
-
   if (errors) throw new Error(errors)
 }
 
@@ -37,7 +35,7 @@ async function getCaseId(_case, createIfNonExistent, userId) {
       "For creating the case if it doesn't exist, you should provide a userId"
     )
 
-  let { caseId } = (await knex('Case')
+  let { caseId } = (await knex('PatientCase')
     .where({
       externalId: _case.externalId,
       partnerId: _case.partnerId,
@@ -61,7 +59,7 @@ async function getCaseId(_case, createIfNonExistent, userId) {
  * @return {int} The created case id
  */
 async function addCase(_case, { messageContext } = {}) {
-  const [caseId] = await knex('Case').insert(_case)
+  const [caseId] = await knex('PatientCase').insert(_case)
 
   if (messageContext) {
     if (!messageContext.caseAdded) {
@@ -79,16 +77,12 @@ async function addCase(_case, { messageContext } = {}) {
  * @return {boolean} True if the action was successful
  */
 async function removeCase(_case) {
-  await knex('Case')
-    .where(_case)
-    .del()
+  await knex('PatientCase').where(_case).del()
 }
 
 async function updateCase(whereFields, updateFields, { messageContext } = {}) {
-  await knex('Case')
-    .where(whereFields)
-    .update(updateFields)
-  const caseIds = await knex('Case')
+  await knex('PatientCase').where(whereFields).update(updateFields)
+  const caseIds = await knex('PatientCase')
     .where(whereFields)
     .select('id')
     .pluck('id')
@@ -106,8 +100,8 @@ async function getCases({ query, auth }) {
   const dataConstraints = await getConstraints(auth.credentials)
 
   // Querying the last result for each case that has a sample origin site
-  const lastResults = knex('Case as cs')
-    .innerJoin('Result as r', 'cs.id', 'r.caseId')
+  const lastResults = knex('PatientCase as cs')
+    .innerJoin('Result as r', 'cs.id', 'r.patientCaseId')
     .innerJoin('Sample as s', 'r.sampleId', 's.id')
     .innerJoin('Site as sos', 's.originSiteId', 'sos.id')
     .groupBy('cs.id')
@@ -115,7 +109,7 @@ async function getCases({ query, auth }) {
     .as('lr')
 
   // Main query only works with each last result per case
-  const casesQuery = knex('Case as cs')
+  const casesQuery = knex('PatientCase as cs')
     .innerJoin(lastResults, 'cs.id', 'lr.caseId')
     .innerJoin('Result as r', 'lr.lastResultId', 'r.id')
     .innerJoin('Geography as g', 'r.geographyId', 'g.id')
@@ -132,7 +126,7 @@ async function getCases({ query, auth }) {
       countryId: 'g.countryId',
       stateId: 'g.stateId',
       lgaId: 'g.lgaId',
-      sampleOriginSite: 'sos.id',
+      sampleOriginSite: 'sos.name',
       diseaseId: 'd.id',
     })
     .modify((queryBuilder, params) => {
@@ -164,10 +158,7 @@ async function getCases({ query, auth }) {
     )
     .distinct()
 
-  const getCount = casesQuery
-    .clone()
-    .count('r.id as count')
-    .first()
+  const getCount = casesQuery.clone().count('r.id as count').first()
 
   const getItems = casesQuery
     .clone()
@@ -211,13 +202,13 @@ async function onCaseChanged(caseId, messageContext, isAdded) {
 }
 
 async function getAutoCompleteCases({ auth, query }) {
-  const dataConstraints = await getConstraints(auth.credentials)
+  const constraints = await getConstraints(auth.credentials)
 
-  const casesQuery = knex('Case as ca')
-    .innerJoin('Result as r', 'ca.id', 'r.caseId')
+  const casesQuery = knex('PatientCase as ca')
+    .innerJoin('Result as r', 'ca.id', 'r.patientCaseId')
     .innerJoin('Geography as g', 'r.geographyId', 'g.id')
     .leftJoin('Country as c', 'g.countryId', 'c.id')
-    .modify(addPartnerQueryConstraints, { ...dataConstraints, caseAlias: 'ca' })
+    .modify(addPartnerQueryConstraints, { constraints, caseAlias: 'ca' })
     .modify((queryBuilder, params) => {
       if (params.externalId) {
         queryBuilder.where('ca.externalId', 'like', `%${params.externalId}%`)
@@ -225,10 +216,7 @@ async function getAutoCompleteCases({ auth, query }) {
     }, query)
     .orderBy('ca.externalId')
 
-  const getCount = casesQuery
-    .clone()
-    .count('r.id as count')
-    .first()
+  const getCount = casesQuery.clone().count('r.id as count').first()
 
   const getCases = casesQuery.clone().select(['ca.id', 'ca.externalId'])
 
@@ -261,7 +249,7 @@ function onResultLogged({ resultId }, { messageContext }) {
         ...RESULT_STRING_TEMPLATE_FIELDS,
         'r.partnerId',
         'pd.canAutoAssignResultByCaseId',
-        'r.caseId as existingCaseId',
+        'r.patientCaseId as existingCaseId',
         'c.externalId as existingCaseExternalId',
         'rca1.reportable as resultCategory1Reportable',
         'rca2.reportable as resultCategory2Reportable',
@@ -273,13 +261,13 @@ function onResultLogged({ resultId }, { messageContext }) {
       const {
         canAutoAssignResultByCaseId,
         caseExternalIdTemplate,
-        partnerId,
         diseaseId,
         existingCaseId,
         existingCaseExternalId,
         resultCategory1Reportable,
         resultCategory2Reportable,
         updatedBy,
+        partnerId,
       } = result
       if (
         diseaseId &&
@@ -296,7 +284,11 @@ function onResultLogged({ resultId }, { messageContext }) {
           // Get the case that matched the case ID in the payload
           // If the case doesn't exist and the result is not assigned a case yet, creat the case
           let caseId = await getCaseId(
-            { partnerId, externalId: caseExternalId, diseaseId },
+            {
+              externalId: caseExternalId,
+              partnerId,
+              diseaseId,
+            },
             !existingCaseId,
             updatedBy
           )
@@ -310,7 +302,11 @@ function onResultLogged({ resultId }, { messageContext }) {
           }
           // Lookup if any other cases have the same case number
           const otherCaseId = await getCaseId(
-            { partnerId, externalId: caseExternalId, diseaseId },
+            {
+              externalId: caseExternalId,
+              diseaseId,
+              partnerId,
+            },
             false,
             updatedBy
           )
@@ -331,7 +327,7 @@ function onResultLogged({ resultId }, { messageContext }) {
           if (existingCaseId !== caseId) {
             await knex('Result')
               .where('id', resultId)
-              .update({ caseId: otherCaseId })
+              .update({ patientCaseId: otherCaseId })
             // TODO: If the old case is now empty, should it be purged?
             //       We need to consider if there is a use case for cases
             //       that don't have results, what will happen to the

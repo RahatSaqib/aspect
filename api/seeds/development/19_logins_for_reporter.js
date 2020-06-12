@@ -54,9 +54,7 @@ async function seed(knex) {
   // ---------------------
   // make sure user exists - create if missing
   await Promise.each(userNames, async name => {
-    const user = await knex('User')
-      .where({ name })
-      .first()
+    const user = await knex('User').where({ name }).first()
     if (!user) {
       // create User
       const [userId] = await knex('User').insert({
@@ -202,9 +200,7 @@ async function seed(knex) {
 // add job function permission if missing
 async function addPermission(knex, jobFunctionId, permissionId) {
   const props = { jobFunctionId, permissionId }
-  const perm = await knex('JobFunctionPermission')
-    .where(props)
-    .first()
+  const perm = await knex('JobFunctionPermission').where(props).first()
   if (!perm) {
     await knex('JobFunctionPermission').insert(props)
   }
@@ -213,9 +209,7 @@ async function addPermission(knex, jobFunctionId, permissionId) {
 // delete job function permission if exists
 async function delPermission(knex, jobFunctionId, permissionId) {
   const props = { jobFunctionId, permissionId }
-  const perm = await knex('JobFunctionPermission')
-    .where(props)
-    .first()
+  const perm = await knex('JobFunctionPermission').where(props).first()
   if (perm) {
     await knex('JobFunctionPermission').del(props)
   }

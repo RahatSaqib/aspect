@@ -33,16 +33,13 @@ async function preProcessAddDeviceData(context) {
     alereDevice.geographyId !== site.geographyId ||
     alereDevice.putInService !== firstTestDate
   ) {
-    await knex
-      .from('Device')
-      .where({ id: alereDevice.id })
-      .update({
-        siteId: site.id,
-        geographyId: site.geographyId,
-        putInService: firstTestDate,
-        updatedOn: now,
-        updatedBy: null,
-      })
+    await knex.from('Device').where({ id: alereDevice.id }).update({
+      siteId: site.id,
+      geographyId: site.geographyId,
+      putInService: firstTestDate,
+      updatedOn: now,
+      updatedBy: null,
+    })
   }
 }
 
@@ -102,7 +99,7 @@ async function findDevices(
     .leftJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .leftJoin('DeviceTypeCategory as dtc', 'dtc.id', 'dt.deviceTypeCategoryId')
     .leftJoin('Partner as p', 'd.partnerId', 'p.id')
-    .where(function() {
+    .where(function () {
       if (deviceId) {
         this.where('d.id', deviceId)
       } else {
@@ -156,7 +153,7 @@ async function getOrCreateSite(
       .where({
         's.partnerId': partnerId,
       })
-      .andWhere(function() {
+      .andWhere(function () {
         this.where({ 's.name': serial })
           .orWhere({ 's.shortName': serial })
           .orWhere({ 's.externalId': serial })
@@ -183,10 +180,7 @@ async function getOrCreateSite(
       newSite.externalId = newSite.externalId.substr(0, 255)
     }
     const [siteId] = await knex.insert(newSite).into('Site')
-    matchingSites = await knex
-      .from('Site as s')
-      .where('s.id', siteId)
-      .select()
+    matchingSites = await knex.from('Site as s').where('s.id', siteId).select()
   }
   let matchingSite = null
   if (matchingSites.length === 1) {

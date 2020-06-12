@@ -28,17 +28,11 @@ async function removeChildrenDashboardTarget(knex) {
     .where('widgetId', childrenWidgetId)
     .delete()
 
-  await knex('DashboardWidgetTarget')
-    .where('targetToken', 'Children')
-    .delete()
+  await knex('DashboardWidgetTarget').where('targetToken', 'Children').delete()
 
-  await knex('DashboardWidget')
-    .where('id', childrenWidgetId)
-    .delete()
+  await knex('DashboardWidget').where('id', childrenWidgetId).delete()
 
-  await knex('Target')
-    .where('targetToken', 'Children')
-    .delete()
+  await knex('Target').where('targetToken', 'Children').delete()
 }
 
 async function turnOffEmailSms(knex) {

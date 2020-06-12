@@ -403,7 +403,7 @@ async function getConsumablesList(auth, dataConstraints) {
     .innerJoin('DeviceType as dt', 'a.deviceTypeId', 'dt.id')
     .innerJoin('Device as d', 'dt.id', 'd.deviceTypeId')
     .innerJoin('Site as s', 'd.siteId', 's.id')
-    .leftOuterJoin('Issue as i', function() {
+    .leftOuterJoin('Issue as i', function () {
       this.on('s.id', 'i.siteId').andOn('c.id', 'i.consumableId')
     })
     .leftOuterJoin('IssueType as it', 'i.issueTypeId', 'it.id')
@@ -1253,7 +1253,7 @@ async function actionDashboard(request) {
     .join('IssueStatus as is', 'i.issueStatusId', 'is.id')
     .join('IssueStatusSeverity as iss', 'is.issueStatusSeverityId', 'iss.id')
     .join('Site as s', 'am.siteId', 's.id')
-    .leftJoin('Device as d', function() {
+    .leftJoin('Device as d', function () {
       this.on('am.deviceId', '=', 'd.id').onNotIn('it.externalId', [
         'StockLevelUpdate',
         'InventoryStockout',
@@ -1261,7 +1261,7 @@ async function actionDashboard(request) {
       ])
     })
     .leftJoin('AlertTemplate as at', 'am.alertTemplateId', 'at.id')
-    .leftJoin('IssueStatusLog as isl', function() {
+    .leftJoin('IssueStatusLog as isl', function () {
       this.on('i.id', 'isl.issueId').andOn('is.id', 'isl.issueStatusId')
     })
     .whereNotIn('is.externalId', ['Inactive', 'Resolved'])
@@ -1272,7 +1272,7 @@ async function actionDashboard(request) {
       jobFunction: 'jf',
       allowAdminThrough: true,
     })
-    .andWhere(function() {
+    .andWhere(function () {
       if (query.siteId) {
         this.where('hideWhenSiteFilterIsSelected', false).andWhere({
           'am.siteId': query.siteId,
@@ -1373,7 +1373,7 @@ async function addStockLevelUpdateActions(
       .join('ConsumableAssay as ca', 'ca.assayId', assayId)
       .join('Consumable as c', 'c.id', 'ca.consumableId')
       .join('PartnerConsumable as pc', 'ca.consumableId', 'pc.consumableId')
-      .leftJoin('InventoryItem as ii', function() {
+      .leftJoin('InventoryItem as ii', function () {
         this.on('ii.siteId', 's.id').andOn('ii.consumableId', 'c.id')
       })
       .modify(queryBuilder => {

@@ -22,7 +22,7 @@ const messages = defineMessages({
   },
 })
 
-const DeviceDetailBackBar = ({
+export const DeviceDetailBackBar = ({
   intl,
   history,
   location,

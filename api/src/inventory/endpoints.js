@@ -18,58 +18,33 @@ const {
   getDaysByLocation,
 } = require('./service')
 
-const { getSuppliesReport } = require('./serviceReports')
+const { exportSupplies } = require('./serviceReports')
 
 const inventoryFilters = {
-  consumableId: Joi.number()
-    .integer()
-    .positive()
-    .allow('', null),
+  consumableId: Joi.number().integer().positive().allow('', null),
   siteName: Joi.string().allow('', null),
 }
 
 const addRemoveInventoryCommonParams = {
-  inventoryItemId: Joi.number()
-    .integer()
-    .positive()
-    .allow('', null),
+  inventoryItemId: Joi.number().integer().positive().allow('', null),
 }
 
 const transferReceiveInventoryCommonParams = {
-  inventoryItemId: Joi.number()
-    .integer()
-    .positive()
-    .required(),
+  inventoryItemId: Joi.number().integer().positive().required(),
 }
 
 const adjustInventoryCommonPayloadFields = {
-  consumableId: Joi.number()
-    .positive()
-    .required(),
-  lotNumber: Joi.string()
-    .max(255)
-    .allow('', null),
-  expiresOn: Joi.date()
-    .iso()
-    .allow(null),
-  quantity: Joi.number()
-    .positive()
-    .required(),
-  notes: Joi.string()
-    .max(2000)
-    .allow('', null),
+  consumableId: Joi.number().positive().required(),
+  lotNumber: Joi.string().max(255).allow('', null),
+  expiresOn: Joi.date().iso().allow(null),
+  quantity: Joi.number().positive().required(),
+  notes: Joi.string().max(2000).allow('', null),
 }
 
 const removeInventoryCommonPayloadFields = {
   ...adjustInventoryCommonPayloadFields,
-  fromSiteId: Joi.number()
-    .integer()
-    .positive()
-    .required(),
-  reasonId: Joi.number()
-    .integer()
-    .positive()
-    .required(),
+  fromSiteId: Joi.number().integer().positive().required(),
+  reasonId: Joi.number().integer().positive().required(),
 }
 
 function listSuppliesBaseConfig() {
@@ -139,7 +114,7 @@ const routes = [
   {
     method: 'GET',
     path: '/inventory/export',
-    handler: getSuppliesReport,
+    handler: exportSupplies,
     config: {
       description: 'Export Supplies List into Excel or CSV',
       notes: 'Filtered and sorted list of supplies',
@@ -157,13 +132,8 @@ const routes = [
       validate: {
         payload: {
           ...adjustInventoryCommonPayloadFields,
-          toSiteId: Joi.number()
-            .integer()
-            .positive()
-            .required(),
-          dateAdjusted: Joi.date()
-            .iso()
-            .required(),
+          toSiteId: Joi.number().integer().positive().required(),
+          dateAdjusted: Joi.date().iso().required(),
         },
       },
     },
@@ -182,9 +152,7 @@ const routes = [
           allowUnknown: false,
         },
         schema: Joi.object().keys({
-          ok: Joi.bool()
-            .required()
-            .description('False on any non-fatal error'),
+          ok: Joi.bool().required().description('False on any non-fatal error'),
           total: Joi.number()
             .required()
             .description('The total number of items aggregated by consumable'),
@@ -237,13 +205,8 @@ const routes = [
         params: addRemoveInventoryCommonParams,
         payload: {
           ...adjustInventoryCommonPayloadFields,
-          toSiteId: Joi.number()
-            .integer()
-            .positive()
-            .required(),
-          dateAdjusted: Joi.date()
-            .iso()
-            .required(),
+          toSiteId: Joi.number().integer().positive().required(),
+          dateAdjusted: Joi.date().iso().required(),
         },
       },
     },
@@ -261,18 +224,12 @@ const routes = [
         payload: Joi.alternatives().try(
           Joi.object().keys({
             ...removeInventoryCommonPayloadFields,
-            dateAdjusted: Joi.date()
-              .iso()
-              .required(),
+            dateAdjusted: Joi.date().iso().required(),
           }),
           {
             ...removeInventoryCommonPayloadFields,
-            dateAdjustedFrom: Joi.date()
-              .iso()
-              .required(),
-            dateAdjustedTo: Joi.date()
-              .iso()
-              .required(),
+            dateAdjustedFrom: Joi.date().iso().required(),
+            dateAdjustedTo: Joi.date().iso().required(),
           }
         ),
       },
@@ -290,17 +247,9 @@ const routes = [
         params: transferReceiveInventoryCommonParams,
         payload: {
           ...adjustInventoryCommonPayloadFields,
-          fromSiteId: Joi.number()
-            .integer()
-            .positive()
-            .required(),
-          toSiteId: Joi.number()
-            .integer()
-            .positive()
-            .required(),
-          dateAdjusted: Joi.date()
-            .iso()
-            .required(),
+          fromSiteId: Joi.number().integer().positive().required(),
+          toSiteId: Joi.number().integer().positive().required(),
+          dateAdjusted: Joi.date().iso().required(),
         },
       },
     },
@@ -317,17 +266,9 @@ const routes = [
         params: transferReceiveInventoryCommonParams,
         payload: {
           ...adjustInventoryCommonPayloadFields,
-          fromSiteId: Joi.number()
-            .integer()
-            .positive()
-            .required(),
-          toSiteId: Joi.number()
-            .integer()
-            .positive()
-            .required(),
-          dateAdjusted: Joi.date()
-            .iso()
-            .required(),
+          fromSiteId: Joi.number().integer().positive().required(),
+          toSiteId: Joi.number().integer().positive().required(),
+          dateAdjusted: Joi.date().iso().required(),
         },
       },
     },
@@ -342,19 +283,11 @@ const routes = [
       auth: { scope: ['inventory:edit'] },
       validate: {
         params: {
-          siteId: Joi.number()
-            .integer()
-            .positive()
-            .required(),
-          consumableId: Joi.number()
-            .integer()
-            .positive()
-            .required(),
+          siteId: Joi.number().integer().positive().required(),
+          consumableId: Joi.number().integer().positive().required(),
         },
         payload: {
-          quantity: Joi.number()
-            .min(0)
-            .required(),
+          quantity: Joi.number().min(0).required(),
         },
       },
     },

@@ -10,19 +10,15 @@ const {
 const {
   validateAllGeographyFilterParams,
 } = require('../geography/requestValidation')
-const { getDeviceAPIKeysReport } = require('./serviceReports')
+const { exportDeviceApiKeys } = require('./serviceReports')
 
 function listDeviceApiKeysBaseConfig() {
   return {
     auth: { scope: ['deviceApiKey:view', 'deviceApiKey:edit'] },
     validate: {
       query: {
-        partnerId: Joi.number()
-          .allow('')
-          .description('Filter for partner ID'),
-        siteName: Joi.string()
-          .allow('')
-          .description('Filter for site name'),
+        partnerId: Joi.number().allow('').description('Filter for partner ID'),
+        siteName: Joi.string().allow('').description('Filter for site name'),
         deviceName: Joi.string()
           .allow('')
           .description('Filter for device name'),
@@ -69,9 +65,7 @@ const routes = [
           allowUnknown: false,
         },
         schema: Joi.object().keys({
-          token: Joi.string()
-            .required()
-            .description('The device token id'),
+          token: Joi.string().required().description('The device token id'),
         }),
       },
     },
@@ -79,7 +73,7 @@ const routes = [
   {
     method: 'GET',
     path: '/deviceApiKey/export',
-    handler: getDeviceAPIKeysReport,
+    handler: exportDeviceApiKeys,
     config: {
       description: 'Export DeviceApiKey List into Excel or CSV',
       notes: 'Filtered and sorted list of deviceApiKeys',
@@ -99,15 +93,9 @@ const routes = [
           count: Joi.number()
             .description('Number of deviceApiKeys should be generated')
             .required(),
-          countryId: Joi.number()
-            .allow('')
-            .description('Country ID'),
-          partnerId: Joi.number()
-            .allow('')
-            .description('Partner ID'),
-          siteId: Joi.number()
-            .allow('')
-            .description('Site ID'),
+          countryId: Joi.number().allow('').description('Country ID'),
+          partnerId: Joi.number().allow('').description('Partner ID'),
+          siteId: Joi.number().allow('').description('Site ID'),
         },
       },
     },
@@ -125,18 +113,10 @@ const routes = [
           deviceApiKeyIds: Joi.array()
             .items(Joi.number())
             .description('DeviceApiKey IDs'),
-          deviceId: Joi.number()
-            .allow('')
-            .description('Device ID'),
-          countryId: Joi.number()
-            .allow('')
-            .description('Country ID'),
-          partnerId: Joi.number()
-            .allow('')
-            .description('Partner ID'),
-          siteId: Joi.number()
-            .allow('')
-            .description('Site ID'),
+          deviceId: Joi.number().allow('').description('Device ID'),
+          countryId: Joi.number().allow('').description('Country ID'),
+          partnerId: Joi.number().allow('').description('Partner ID'),
+          siteId: Joi.number().allow('').description('Site ID'),
         },
       },
     },

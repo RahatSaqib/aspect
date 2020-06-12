@@ -36,11 +36,9 @@ async function seed(knex) {
         createdOn: subMinutes(now, 90),
       })
 
-      await knex('Result')
-        .where('id', resultId.id)
-        .update({
-          treatmentStatusLogId,
-        })
+      await knex('Result').where('id', resultId.id).update({
+        treatmentStatusLogId,
+      })
     })
   }
 }

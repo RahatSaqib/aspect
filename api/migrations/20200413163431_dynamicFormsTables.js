@@ -36,10 +36,7 @@ async function up(knex) {
       .references('id')
       .inTable('Disease')
 
-    row
-      .integer('order')
-      .notNullable()
-      .default(0)
+    row.integer('order').notNullable().default(0)
     row
       .integer('assayId')
       .unsigned()

@@ -1,45 +1,26 @@
 const _ = require('lodash')
-const path = require('path')
-const { format } = require('date-fns')
 const { listSites } = require('./service')
-const {
-  generateReport,
-  downloadReportFile,
-} = require('../excelreports/excelManager')
+const { exportData, getBaseReplacements } = require('../shared/excel')
+const { issueCategoryIntlToShortname } = require('../shared/dictionary')
 
-async function getSitesReport(request, reply) {
-  // get whole dataset - based on current query params (sorting, filtering) and auth constraints
-  const devices = await listSites(request)
-  const { query } = request
-  const reportFile = path.join(
-    __dirname,
-    '../excelreports/reportTemplates/Sites.xlsx'
-  )
-  const report = generateReport(
-    query.format, // xlsx or csv
-    reportFile, // the path to the exceltemplate
-    '<Headers>', // This is an invented tag to look for, in the report template, for selecting the first cell we want to work with.
-    // Also we can find a text for a header instead of create a place holder.
-    _.map(
-      devices.data,
-      elem => {
-        if (elem.siteIssues) {
-          elem.siteIssues = elem.siteIssues.join(',')
-          return elem
-        }
-        return elem
-      }
-      // this is the data source to create the reportvalues.
-      // It should be an Array of JSON objects, where each must be plained (Without nested properties)
-    ),
-    {
-      date: format(new Date(), 'yyyy-MM-dd'),
-    }, // the json object to replace values in the header.
-    2 // If the function locate the row number for the placeholder,
-    // how many rows after appears the placeholders for the values (default 0)
-  )
-  return downloadReportFile(report, reply, request.format)
+async function exportSites(request, reply) {
+  const { data } = await listSites(request)
+  const issueCategories = await issueCategoryIntlToShortname()
+  const sheetData = {
+    dataRows: data.map(item => ({
+      ...item,
+      // replace array of `siteIssues` with csv-string of IssueCategory shortNames
+      siteIssues: _.map(item.siteIssues, key => issueCategories[key]).join(
+        ', '
+      ),
+    })),
+    // TODO: use i18n string, because `exportData()` uses locale file templates with all labels translated
+    defaultNoDataMessage: 'No data',
+  }
+  return exportData(request, reply, sheetData, 'sites', {
+    replacements: getBaseReplacements(),
+  })
 }
 module.exports = {
-  getSitesReport,
+  exportSites,
 }

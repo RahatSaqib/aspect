@@ -1,0 +1,112 @@
+{
+  "fields": [
+    {
+      "name": "treatmentType",
+      "fieldType": "text",
+      "title": "Treatment Type",
+      "i18nKey": "treatmentTypei18nKey",
+      "caption": "Treatment form for filling with TbCase",
+      "i18nKeyCaption": "treatmentTypeCaptioni18nkey",
+      "order": 0,
+      "controlType": "checkBox",
+      "required": true,
+      "encrypted": false,
+      "typeOfOptionSource": "fixedList",
+      "items": [
+        {
+          "key": 1,
+          "value": "DSTB - 2RHZE"
+        },
+        {
+          "key": 2,
+          "value": "DSTB - 4RH"
+        },
+        {
+          "key": 3,
+          "value": "Hospitalization"
+        },
+        {
+          "key": 4,
+          "value": "DRTB - Bedaquiline Based shorter regimen"
+        },
+        {
+          "key": 5,
+          "value": "DRTB - Injection Based shorter regimen"
+        },
+        {
+          "key": 6,
+          "value": "DRTB - Long Oral MDT-TB regimen and Pre XDR-TB"
+        },
+        {
+          "key": 7,
+          "value": "DRTB - Pre XDR-TB (RES FQ) regimen/XDR-TB"
+        },
+        {
+          "key": 8,
+          "value": "DRTB - Beyond XDR-TB (Individualized)"
+        }
+      ]
+    },
+    {
+      "name": "hospitalizationType",
+      "i18nKey": "hospitalizationTypei18nKey",
+      "fieldType": "text",
+      "order": 1,
+      "controlType": "checkBox",
+      "required": true,
+      "typeOfOptionSource": "fixedList",
+      "items": [
+        {
+          "key": "ICU",
+          "value": "ICU"
+        },
+        {
+          "key": "Ventilator",
+          "value": "Put on Ventilator"
+        }
+      ],
+      "condition": [
+        {
+          "conjunction": "AND",
+          "propToCompare": "treatmentType",
+          "valueToCompare": "3",
+          "operator": "===",
+          "conjunctionGroupName": "hospitalizationTypeGroup"
+        }
+      ]
+    },
+    {
+      "name": "outcome",
+      "title": "outcome",
+      "i18nKey": "outcomei18nKey",
+      "fieldType": "text",
+      "order": 3,
+      "controlType": "autoComplete",
+      "required": false,
+      "typeOfOptionSource": "fixedList",
+      "items": [
+        {
+          "value": "Cured",
+          "key": 1
+        },
+        {
+          "value": "Died",
+          "key": 2
+        },
+        {
+          "value": "Recovered",
+          "key": 3
+        },
+        {
+          "value": "Not Recovered",
+          "key": 4
+        },
+        {
+          "value": "Unknown",
+          "key": 5
+        }
+      ]
+    }
+  ],
+  "refForms": []
+}

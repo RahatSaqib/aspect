@@ -71,9 +71,7 @@ class EmailTestContext {
 
       // remove sample message
       if (this.messageId) {
-        await knex('EmailMessage')
-          .where('id', this.messageId)
-          .delete()
+        await knex('EmailMessage').where('id', this.messageId).delete()
       }
 
       await queuePurge()

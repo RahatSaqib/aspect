@@ -61,10 +61,7 @@ async function preProcessAddDeviceData({ knex, device, payload, now }) {
       now
     )
   }
-  await knex
-    .from('Device')
-    .where({ id: device.id })
-    .update(deviceDetails)
+  await knex.from('Device').where({ id: device.id }).update(deviceDetails)
 }
 
 /*
@@ -301,7 +298,7 @@ async function postProcessUpdateDeviceConfiguration({
     if (state || !_.isUndefined(latitude) || !_.isUndefined(latitude)) {
       const currentDeviceGeography = await knex('Device as d')
         .leftJoin('Site as s', 'd.siteId', 's.id')
-        .innerJoin('Geography as g', function() {
+        .innerJoin('Geography as g', function () {
           this.on('d.geographyId', 'g.id').orOn('s.geographyId', 'g.id')
         })
         .leftJoin('State as st', 'g.stateId', 'st.id')
@@ -417,7 +414,7 @@ async function findDevices(availableDeviceDetails, knex) {
   const deviceQuery = knex
     .from('Device as d')
     .leftJoin('Site as s', 's.id', 'd.siteId')
-    .innerJoin('Geography as g', function() {
+    .innerJoin('Geography as g', function () {
       this.on('d.geographyId', 'g.id').orOn('s.geographyId', 'g.id')
     })
     .innerJoin('Country as c', 'g.countryId', 'c.id')
@@ -426,10 +423,7 @@ async function findDevices(availableDeviceDetails, knex) {
     .leftJoin('DeviceTypeCategory as dtc', 'dtc.id', 'dt.deviceTypeCategoryId')
     .leftJoin('Partner as p', 'd.partnerId', 'p.id')
   if (deviceId) {
-    return deviceQuery
-      .clone()
-      .where('d.id', deviceId)
-      .select(fields)
+    return deviceQuery.clone().where('d.id', deviceId).select(fields)
   }
   let matchingDevices = []
   if (partnerId) {
@@ -657,7 +651,7 @@ async function getOrCreateSite(
       if (!countryCode && device) {
         ;[countryCode] = await knex('Device as d')
           .leftJoin('Site as s', 's.id', 'd.siteId')
-          .innerJoin('Geography as g', function() {
+          .innerJoin('Geography as g', function () {
             this.on('d.geographyId', 'g.id').orOn('s.geographyId', 'g.id')
           })
           .innerJoin('Country as c', 'g.countryId', 'c.id')
@@ -674,10 +668,7 @@ async function getOrCreateSite(
   }
   if (deviceName && countryCode) {
     if (device.siteId && !fromGxAlert) {
-      sites = await knex
-        .from('Site as s')
-        .where('s.id', device.siteId)
-        .select()
+      sites = await knex.from('Site as s').where('s.id', device.siteId).select()
     }
     const payloadSiteId = _.get(payload, 'site.id')
     if (_.isEmpty(sites) && payloadSiteId) {
@@ -705,7 +696,7 @@ async function getOrCreateSite(
           's.partnerId': device.partnerId,
           'c.abbreviation': countryCode,
         })
-        .andWhere(function() {
+        .andWhere(function () {
           if (deviceName) {
             this.where({ 's.name': deviceName })
               .orWhere({ 's.shortName': deviceName })
@@ -768,10 +759,7 @@ async function getOrCreateSite(
           newSite.externalId = newSite.externalId.substr(0, 255)
         }
         const [newSiteId] = await knex.insert(newSite).into('Site')
-        sites = await knex
-          .from('Site as s')
-          .where('s.id', newSiteId)
-          .select()
+        sites = await knex.from('Site as s').where('s.id', newSiteId).select()
       }
     }
   } else {
@@ -804,6 +792,7 @@ function getResultCategories(payload) {
           .toLowerCase()
           .replace(/mtb/, '')
           .replace(/ebola gp/, '')
+          .replace(/sars-cov-2/, '')
           .trim()
         const result1CategoryMapping = {
           'not detected': 'NotDetected',
@@ -847,6 +836,10 @@ function getResultCategories(payload) {
           erro: 'Error',
           ошибка: 'Error',
           erreur: 'Error',
+          negative: 'Negative',
+          positive: 'Positive',
+          'presumptive positive': 'Indeterminate',
+          'presumptive pos': 'Indeterminate',
           'null null': 'Success',
         }
         if (assayId === 'GxMtbRifUltra') {

@@ -116,10 +116,7 @@ async function listAssays(request) {
     .modify(filterParams, query, { name: 'a.name' })
 
   // get total count for paging
-  const getCount = assayQuery
-    .clone()
-    .count('a.id as count')
-    .first()
+  const getCount = assayQuery.clone().count('a.id as count').first()
 
   // get rows
   const getItems = assayQuery
@@ -208,7 +205,7 @@ async function getAllAssaySchemas(partnerId, userId, assayId = null) {
       assayType: 'at',
     })
     .where('d.partnerId', partnerId)
-    .select(
+    .distinct(
       'a.id',
       'a.name',
       'a.externalId',

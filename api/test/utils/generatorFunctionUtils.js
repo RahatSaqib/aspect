@@ -8,7 +8,7 @@ function runTest(generator, args = []) {
   }
 }
 
-const runTestWithKnex = function(test) {
+const runTestWithKnex = function (test) {
   return run(async knex => test(knex))
 }
 

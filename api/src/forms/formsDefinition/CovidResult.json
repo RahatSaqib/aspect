@@ -1,0 +1,125 @@
+{
+  "fields": [
+    {
+      "name": "testResult",
+      "fieldType": "text",
+      "i18nKey": "testResulti18nKey",
+      "order": 0,
+      "caption": "log value",
+      "i18nKeyCaption": "Test Result",
+      "controlType": "autoComplete",
+      "required": true,
+      "encrypted": false,
+      "resultDbColumn": "ResultCategory1",
+      "typeOfOptionSource": "aspectUrl",
+      "optionSource": "/assay",
+      "customUrlMappingFields": {
+        "key": "data.resultCategories.id",
+        "value": "data.resultCategories.name"
+      }
+    },
+    {
+      "name": "testType",
+      "title": "Test Type",
+      "i18nKey": "testTypei18nKey",
+      "fieldType": "number",
+      "order": 1,
+      "i18nKeyCaption": "testTypei18nCaptionKey",
+      "controlType": "autoComplete",
+      "required": true,
+      "typeOfOptionSource": "fixedList",
+      "items": [
+        {
+          "key": "pcr",
+          "value": "PCR/molecular",
+          "i18nText": "pcr"
+        },
+        {
+          "title": "Immunoassay",
+          "i18nText": "immunoassay",
+          "value": "immunoassay"
+        },
+        {
+          "title": "Rapid diagnostic test",
+          "i18nText": "rapidDiagnosticTest",
+          "value": "rapidDiagnosticTest"
+        },
+        {
+          "title": "Digital X-Ray",
+          "i18nText": "digitalXRay",
+          "value": "digitalXRay"
+        }
+      ]
+    },
+    {
+      "name": "reasonForTesting",
+      "title": "Why tested for COVID-19",
+      "i18nKey": "reasonForTestingi18nKey",
+      "fieldType": "text",
+      "order": 3,
+      "controlType": "autoComplete",
+      "required": false,
+      "typeOfOptionSource": "fixedList",
+      "items": [
+        {
+          "value": "Contact of a case",
+          "key": "1"
+        },
+        {
+          "value": "Ill Seeking Healthcare due to suspicion of COVID-19",
+          "key": "2"
+        },
+        {
+          "value": "Detected at point of entry",
+          "key": "3"
+        },
+        {
+          "value": "Repatriation",
+          "key": "4"
+        },
+        {
+          "value": "Routine respiratory disease surveillance systems (e.g influenza)",
+          "key": "5"
+        },
+        {
+          "value": "Unknown",
+          "key": "6"
+        }
+      ]
+    },
+    {
+      "name": "testReasonOther",
+      "i18nKey": "testReasonOtheri18nKey",
+      "title": "If none of the above, please explain",
+      "fieldType": "text",
+      "order": 4,
+      "controlType": "textArea",
+      "required": true,
+      "condition": [
+        {
+          "conjunction": "AND",
+          "propToCompare": "reasonForTesting",
+          "valueToCompare": "6",
+          "operator": "===",
+          "conjunctionGroupName": "reasonForTestingGroup"
+        }
+      ]
+    },
+    {
+      "name": "CaseId",
+      "i18nKey": "CaseIdi18nKey",
+      "fieldType": "text",
+      "order": 5,
+      "controlType": "autoComplete",
+      "required": false,
+      "resultDbColumn": "caseId",
+      "typeOfOptionSource": "aspectUrl",
+      "optionSource": "/case/auto",
+      "customUrlMappingFields": {
+        "key": "data.id",
+        "value": "data.externalId"
+      }
+    }
+  ],
+  "refForms": []
+}

@@ -1,45 +1,24 @@
-const _ = require('lodash')
-const path = require('path')
 const { format } = require('date-fns')
 const { listInventoryItems } = require('./service')
-const {
-  generateReport,
-  downloadReportFile,
-} = require('../excelreports/excelManager')
+const { exportData, getBaseReplacements } = require('../shared/excel')
 
-async function getSuppliesReport(request, reply) {
-  // get whole dataset - based on current query params (sorting, filtering) and auth constraints
-  const supplies = await listInventoryItems(request)
-  const { query } = request
-  const reportFile = path.join(
-    __dirname,
-    '../excelreports/reportTemplates/Supplies.xlsx'
-  )
+async function exportSupplies(request, reply) {
+  const { data } = await listInventoryItems(request)
+  const sheetData = {
+    dataRows: data.map(item => ({
+      ...item,
+      expires: item.canExpire,
+      expiresOn: format(new Date(item.expiresOn), 'yyyy-MM-dd'),
+    })),
+    // TODO: use i18n string, because `exportData()` uses locale file templates with all labels translated
+    defaultNoDataMessage: 'No data',
+  }
 
-  const report = generateReport(
-    query.format, // xlsx or csv
-    reportFile, // the path to the exceltemplate
-    '<Headers>', // This is an invented tag to look for, in the report template, for selecting the first cell we want to work with.
-    // Also we can find a text for a header instead of create a place holder.
-    _.map(
-      supplies.data,
-      elem =>
-        Object.assign(elem, {
-          expires: elem.canExpire,
-          expiresOn: format(new Date(elem.expiresOn), 'yyyy-MM-dd'),
-        })
-      // this is the data source to create the reportvalues.
-      // It should be an Array of JSON objects, where each must be plained (Without nested properties)
-    ),
-    // supplies.data,
-    {
-      date: format(new Date(), 'yyyy-MM-dd'),
-    }, // the json object to replace values in the header.
-    2 // If the function locate the row number for the placeholder,
-    // how many rows after appears the placeholders for the values (default 0)
-  )
-  return downloadReportFile(report, reply, request.format)
+  return exportData(request, reply, sheetData, 'supplies', {
+    replacements: getBaseReplacements(),
+  })
 }
+
 module.exports = {
-  getSuppliesReport,
+  exportSupplies,
 }

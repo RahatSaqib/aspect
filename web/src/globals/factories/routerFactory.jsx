@@ -137,6 +137,22 @@ const renderClinicalHistory = loggedInDetailFactory(ClinicalHistory)
 const renderNotFound = signedOutFactory(NotFound)
 const renderLicense = signedOutFactory(License)
 
+const bumpBackToDashboard = () => {
+  return (
+    <Redirect
+      to={{
+        pathname: '/dashboard',
+      }}
+    />
+  )
+}
+
+const isLoggedInAndOnLogin = ({ isLoggedOut }, { location }) => {
+  const { pathname } = location
+  const pathsToCheck = ['/login']
+  return !isLoggedOut && pathsToCheck.includes(pathname)
+}
+
 const renderCaseDetails = loggedInDetailFactory(CaseDetails)
 export const routerFactory = () => props => (
   <Router history={history}>
@@ -151,7 +167,15 @@ export const routerFactory = () => props => (
         }
       />
 
-      <Route path="/login" render={renderLoadableLogin} />
+      <Route
+        path="/login"
+        render={
+          isLoggedInAndOnLogin(props, history)
+            ? () => bumpBackToDashboard()
+            : renderLoadableLogin
+        }
+      />
+
       <Route path="/reset-password" render={renderResetPassword} />
 
       <Route

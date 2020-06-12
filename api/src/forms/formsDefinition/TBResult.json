@@ -1,0 +1,25 @@
+{
+  "fields": [
+    {
+      "name": "microscopyResult",
+      "i18nKey": "microscopyResulti18nKey",
+      "fieldType": "text",
+      "order": 1,
+      "title": "microscopy Result",
+      "caption": "microscopy Result value",
+      "i18nKeyCaption": "microscopyResulti18nCaptionKey",
+      "controlType": "textBox"
+    },
+    {
+      "name": "ResultText",
+      "i18nKey": "ResultTexti18nKey",
+      "fieldType": "text",
+      "order": 2,
+      "title": "Result Text",
+      "caption": "Result Text value",
+      "i18nKeyCaption": "ResultTexti18nCaptionKey",
+      "controlType": "textBox"
+    }
+  ],
+  "refForms": []
+}

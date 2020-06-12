@@ -49,9 +49,7 @@ class NotificationTestContext {
     return run(async knex => {
       await waitForIdle()
       if (this.ntId) {
-        await knex('NotificationType as nt')
-          .where('id', this.ntId)
-          .delete()
+        await knex('NotificationType as nt').where('id', this.ntId).delete()
       }
       await queuePurge()
     })
