@@ -1,23 +1,40 @@
 .form__container {
-  background: red;
+  padding-top: 50px;
 }
 
 .form__sectionHeader {
   display: flex;
   align-self: flex-start;
   justify-content: flex-end;
-  padding: 0 10px;
+  padding: 0 30px 0;
   font-size: 16px;
   font-weight: 700;
+  
 }
 
 .form__sectionContainer {
-  background: lawngreen;
   margin: 0 0 10px;
 }
 
+.form__sectionItemsContainer {
+  padding-bottom: 50px;
+}
+
 .form__sectionItemContainer {
-  background: lightskyblue;
+  width: 100%;
+  padding: 0 15px;
+}
+
+.form__sectionItemInput > label {
+  color: var('--aspect-color-chill-blue-1')
+}
+
+.form__sectionItemInput--enabled > div > input {
+  color: var('--aspect-color-grey-1');
+}
+
+.form__sectionItemInput--disabled > div > input {
+  color: var('--aspect-color-grey-1');
 }
 
 /* Pasted in */
@@ -35,13 +52,13 @@
   width: 100%;
 }
 
-.form__input > label {
+/* .form__input > label {
   color: #10737e;
 }
 
 .form__input > div > input {
   color: #333333 !important;
-}
+} */
 
 .form__input--half {
   flex-basis: 49%;
@@ -62,3 +79,36 @@
 .form__action > button {
   margin: 0 0 0 8px;
 }
+
+.form__parent {
+  width: 100%;
+}
+
+.form__button{
+  margin-left: 10px;
+  visibility: visible;
+  opacity: 1;
+  transition: visibility 0s linear 0s, opacity 300ms;
+}
+
+.form__button--disabled {
+  visibility: hidden;
+  opacity: 0;
+  transition: visibility 0s linear 300ms, opacity 300ms;
+  width: 0;
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+}
+
+/* .form__button--edit {
+background-color: green;
+}
+
+.form__button--cancel {
+background-color: white;
+}
+
+.form__button--save {
+background-color: red;
+} */

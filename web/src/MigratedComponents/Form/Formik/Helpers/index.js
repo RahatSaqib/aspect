@@ -1,34 +1,31 @@
 import * as Yup from 'yup'
 import get from 'lodash/get'
+import isEmpty from 'lodash/isEmpty'
 import messages from '../messages'
 
 const mergeFormConfigWithData = (data, config) => {
   const { sections } = config
-  sections.map(({ id, items }) =>
-    items.map(item => (item.initialValue = get(data, item.key)))
-  )
+  if (!isEmpty(data)) {
+    sections.map(({ rows }) =>
+      rows.map(({ items }) =>
+        items.map(item => (item.initialValue = get(data, item.id)))
+      )
+    )
+  }
   return config
 }
 
 const pickKeys = (data, keys) => {
   const picked = {}
-  data.map(({ items }) => {
-    return items.map(
-      ({ key, [keys]: keyToPick }) => (picked[key] = keyToPick || '')
+  if (data && data.length) {
+    data.map(({ rows }) =>
+      rows.map(({ items }) =>
+        items.map(({ id, [keys]: keyToPick }) => (picked[id] = keyToPick || ''))
+      )
     )
-  })
-
+  }
   return picked
 }
-
-// const pickKeys = (data, keys) => {
-//   console.log(data, keys)
-//   return data.reduce((acc, curr) => {
-//     const { id, initialValue } = curr
-//     acc[id] = initialValue || ''
-//     return acc
-//   }, {})
-// }
 
 const buildErrorMessage = (formik, id) => {
   let errorObject = {}
