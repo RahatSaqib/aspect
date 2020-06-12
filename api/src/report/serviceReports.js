@@ -109,7 +109,6 @@ async function getLgaNamesString({ countryId, stateId, lgaId }) {
   return items.map(x => x.name).join(', ')
 }
 
-// ----------------------------------------------------------------------------------------------
 async function getAllSheetsData(request, sheets) {
   let boomError
   const data = []

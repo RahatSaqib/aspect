@@ -41,12 +41,14 @@ const userProps = [
   'p.lastCountryId as countryId',
   'p.userId',
   'p.id as personId',
+  'c.abbreviation as countryAbbreviation',
 ]
 
 function getUser(username) {
   return query('Get basic user details')
     .from('User as u')
     .innerJoin('Person as p', 'u.id', 'p.userId')
+    .leftJoin('Country as c', 'c.id', 'p.lastCountryId')
     .where({ 'u.name': username })
     .first(userProps)
 }
@@ -55,6 +57,7 @@ function getUserByPersonId(personId) {
   return query('Get user details for person')
     .from('Person as p')
     .innerJoin('User as u', 'p.userId', 'u.id')
+    .leftJoin('Country as c', 'c.id', 'p.lastCountryId')
     .where({ 'p.id': personId })
     .first(userProps)
 }
@@ -63,6 +66,7 @@ function getUserByUserId(userId) {
   return query('Get user details for user')
     .from('User as u')
     .innerJoin('Person as p', 'u.id', 'p.userId')
+    .leftJoin('Country as c', 'c.id', 'p.lastCountryId')
     .where({ 'u.id': userId })
     .first(userProps)
 }
@@ -85,7 +89,6 @@ function getTokenExpiry(clientType, currentTime) {
 async function authenticate(request) {
   const { payload } = request
   let user = await getUser(payload.name)
-
   if (!user) {
     try {
       // no user with such username in Aspect yet - check it in GxAlert
@@ -168,6 +171,7 @@ async function authenticate(request) {
     now,
     refreshToken,
     userId: user.id,
+    countryAbbreviation: user.countryAbbreviation,
   })
 
   await query('Update failed password attempts to 0')
@@ -191,6 +195,7 @@ async function authenticate(request) {
     timezone: user.timezone || 'Eastern Standard Time',
     displayPreferences,
     countryId: user.countryId,
+    countryAbbreviation: user.countryAbbreviation,
     deviceTokenId,
   }
 }

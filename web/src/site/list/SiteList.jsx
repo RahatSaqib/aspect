@@ -9,6 +9,10 @@ import { Helmet } from 'react-helmet'
 import TableBody from '@material-ui/core/TableBody'
 
 import {
+  getCustomMessage,
+  commonDefinitions,
+} from '../../shared/utils/customMessages'
+import {
   makeSortPageSelector,
   makeSearchParamsSanitizer,
   composeSanitizer,
@@ -34,6 +38,7 @@ import ExportListButton from '../../globals/components/ExportListButton'
 const cssClasses = classnames.bind(require('./SiteList.css'))
 
 export const messages = defineMessages({
+  ...commonDefinitions,
   sitesTitle: {
     id: 'pages.SiteList.title',
     defaultMessage: 'Sites',
@@ -41,14 +46,6 @@ export const messages = defineMessages({
   siteName: {
     id: 'pages.SiteList.siteName',
     defaultMessage: 'Name',
-  },
-  state: {
-    id: 'pages.SiteList.state',
-    defaultMessage: 'State',
-  },
-  lga: {
-    id: 'pages.SiteList.lga',
-    defaultMessage: 'County',
   },
   totalDevices: {
     id: 'pages.SiteList.totalDevices',
@@ -130,11 +127,14 @@ const enhance = compose(
     }
   ),
   connect(
-    state => ({
-      items: state.site.items,
-      table: state.site.table,
-      userPermissions: state.user.jwt.permissions,
-    }),
+    state => () => {
+      return {
+        items: state.site.items,
+        table: state.site.table,
+        userPermissions: state.user.jwt.permissions,
+        user: state.user,
+      }
+    },
     bindActionCreators.bind(null, {
       fetchSites,
       exportSites,
@@ -247,6 +247,7 @@ export const SiteList = ({
   onRowClick,
   onAlertClick,
   reducedFilters,
+  user,
 }) => (
   <div className={cssClasses('Container')}>
     <Helmet title={intl.formatMessage(messages.sitesTitle)} />
@@ -287,17 +288,17 @@ export const SiteList = ({
               },
               {
                 key: 'state',
-                label: intl.formatMessage(messages.state),
+                label: getCustomMessage(intl, messages, 'state', user),
+                sortable: true,
+              },
+              {
+                key: 'lga',
+                label: getCustomMessage(intl, messages, 'lga', user),
                 sortable: true,
               },
               {
                 key: 'siteId',
                 label: intl.formatMessage(messages.externalId),
-                sortable: true,
-              },
-              {
-                key: 'lga',
-                label: intl.formatMessage(messages.lga),
                 sortable: true,
               },
               {

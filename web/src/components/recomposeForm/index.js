@@ -88,13 +88,21 @@ const createFieldListHandlers = _fp.reduce(
         this.handleSubmitting()
         try {
           const result = this.props.onSubmit(this.props.values)
-          if (!isPromise(result)) {
+
+          if (!result) {
+            this.handleSubmitSucceed()
             return
           }
-          result.then(this.handleSubmitSucceed, this.handleSubmitFailed)
+
+          if (isPromise(result)) {
+            result.then(this.handleSubmitSucceed, this.handleSubmitFailed) 
+          } else if (result instanceof Function) {
+            result()
+            this.handleSubmitSucceed()
+          }
         } catch (err) {
           this.handleSubmitFailed()
-        }
+        } 
       },
     },
   }

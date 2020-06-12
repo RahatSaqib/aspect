@@ -68,8 +68,6 @@ async function seed(knex) {
     'a3',
     'culture',
     'countryCode',
-    'stateLabel',
-    'lgaLabel',
     'timezone',
     'portNumber',
     'exportColumns',
