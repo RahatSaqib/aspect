@@ -40,3 +40,6 @@ e2e/**/reports/
 
 #Local developer helper scripts
 **/--devutil--*
+
+# Excel temp files
+**/~$*.xlsx

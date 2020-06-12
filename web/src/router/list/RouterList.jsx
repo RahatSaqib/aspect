@@ -38,9 +38,9 @@ const messages = defineMessages({
     id: 'pages.RouterList.routersTitle',
     defaultMessage: 'Routers',
   },
-  routerName: {
-    id: 'pages.RouterList.routerName',
-    defaultMessage: 'Router Name',
+  router: {
+    id: 'pages.RouterList.router',
+    defaultMessage: 'Router',
   },
   status: {
     id: 'pages.RouterList.status',
@@ -251,7 +251,7 @@ export const RouterList = ({
             columns={[
               {
                 key: 'name',
-                label: intl.formatMessage(messages.routerName),
+                label: intl.formatMessage(messages.router),
                 sortable: true,
               },
               {

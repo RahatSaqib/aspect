@@ -38,19 +38,19 @@ const cssClasses = classnames.bind(require('./CaseList.css'))
 const messages = defineMessages({
   createdOn: {
     id: 'pages.CaseList.createdOn',
-    defaultMessage: 'Case date',
+    defaultMessage: 'Date',
   },
   resultsTitle: {
     id: 'pages.CaseList.title',
     defaultMessage: 'Cases',
   },
-  code: {
-    id: 'pages.CasesList.code',
-    defaultMessage: 'Code',
+  caseId: {
+    id: 'pages.CasesList.caseId',
+    defaultMessage: 'Case ID',
   },
-  attendingClinic: {
-    id: 'pages.CasesList.attendingClinic',
-    defaultMessage: 'Attending Clinic',
+  sampleOriginSite: {
+    id: 'pages.CasesList.sampleOriginSite',
+    defaultMessage: 'Sample Collection Site',
   },
   status: {
     id: 'pages.CasesList.status',
@@ -90,7 +90,7 @@ const searchSanitizer = makeSearchParamsSanitizer({
   availableSortCol: [
     'createdOn',
     'externalId',
-    'attendingClinic',
+    'sampleOriginSite',
     'patientId',
     'diseaseName',
     'status',
@@ -209,12 +209,12 @@ export const CaseList = ({
     },
     {
       key: 'externalId',
-      label: intl.formatMessage(messages.code),
+      label: intl.formatMessage(messages.caseId),
       sortable: true,
     },
     {
-      key: 'attendingClinic',
-      label: intl.formatMessage(messages.attendingClinic),
+      key: 'sampleOriginSite',
+      label: intl.formatMessage(messages.sampleOriginSite),
       sortable: true,
       hiddenOn: 'sm',
     },
