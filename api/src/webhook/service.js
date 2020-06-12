@@ -24,7 +24,7 @@ const { createStreamFromFileReference } = require('../file/service')
 function onWebhookMessageCreated({ webhookMessageId }, { messageContext }) {
   const context = messageContext.bindActionCreators({ webhookMessagePending })
 
-  return context.run(async knex => {
+  return context.transact(async knex => {
     const {
       payload,
       url,

@@ -1388,7 +1388,7 @@ async function updateFormDataByResultId(
     })
     const { id: currentUserId } = await getUser(auth.credentials.name)
     let deviceLogId
-    await messageContext.run(async knex => {
+    await messageContext.transact(async knex => {
       const updatedResult = {
         formData: JSON.stringify(mergedFormData),
         updatedBy: currentUserId,

@@ -17,7 +17,7 @@ function onSmsMessageCreated({ smsMessageId }, { messageContext }) {
     smsMessageReadyForSending,
   })
 
-  return context.run(async knex => {
+  return context.transact(async knex => {
     // after sms message entry created - process it's template and merge it with data
     await prepareSmsMessageForSending(context, knex, smsMessageId)
   })
@@ -53,7 +53,7 @@ function onSmsMessageReadyForSending({ smsMessageId }, { messageContext }) {
     smsMessageSent,
   })
 
-  return context.run(async knex => {
+  return context.transact(async knex => {
     await doSendSmsMessage(context, knex, smsMessageId)
   })
 }

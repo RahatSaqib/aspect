@@ -9,7 +9,7 @@ const { getConstraints, addConstraints } = require('../auth/constraints')
 function onAlertMessageCreated({ alertMessageId }, { messageContext }) {
   const context = messageContext.bindActionCreators({ alertMessageSent })
 
-  return context.run(async knex => {
+  return context.transact(async knex => {
     const message = await createAlertMessageFromTemplate(knex, alertMessageId)
     const messageStatusId = await messageStatusToId('Sent')
 
@@ -27,7 +27,7 @@ function onAlertMessageUpdateAfterIssueDataChanged(
   { issueId },
   { messageContext }
 ) {
-  return messageContext.run(async knex => {
+  return messageContext.transact(async knex => {
     const { issueTypeId } = await knex('Issue')
       .where('id', issueId)
       .first('issueTypeId')

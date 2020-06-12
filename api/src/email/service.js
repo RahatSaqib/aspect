@@ -17,7 +17,7 @@ function onEmailMessageCreated({ emailMessageId }, { messageContext }) {
     emailMessageReadyForSending,
   })
 
-  return context.run(async knex => {
+  return context.transact(async knex => {
     // after email message entry created - process it's template and merge it with data
     await prepareEmailMessageForSending(context, knex, emailMessageId)
   })
@@ -54,7 +54,7 @@ function onEmailMessageReadyForSending({ emailMessageId }, { messageContext }) {
     emailMessageSent,
   })
 
-  return context.run(async knex => {
+  return context.transact(async knex => {
     await doSendEmailMessage(context, knex, emailMessageId)
   })
 }

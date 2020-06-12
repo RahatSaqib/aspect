@@ -29,7 +29,7 @@ function onEscalateIssues() {
       issueEscalated,
       alertMessageUpdateAfterIssueDataChanged,
     })
-    context.run(async knex => {
+    context.transact(async knex => {
       const openIssuesToCheck = await findOpenIssuesToCheckForEscalation(
         knex,
         action.issueId
