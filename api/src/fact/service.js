@@ -573,37 +573,35 @@ function onFactCalculateInventoryConsumptionRates(action, { messageContext }) {
 // recalculates rates for provided siteId and consumableId
 async function refreshConsumptionRates(knex, siteId, consumableId) {
   const updatedOn = new Date()
-  const totals = await getConsumptions(knex, siteId, consumableId)
-  await Promise.each(
-    _.map(totals, async x => {
-      const factInventoryConsumptionRate = await knex(
-        'FactInventoryConsumptionRate'
-      )
-        .where({ siteId, consumableId, days: x.days })
-        .first()
-      if (factInventoryConsumptionRate) {
-        await knex('FactInventoryConsumptionRate')
-          .where({ siteId, consumableId, days: x.days })
-          .update({
-            // in GxAlert we stored totals in field 'rate', so same here.
-            // to get actual rate - do rate/days
-            rate: x.total,
-            updatedOn,
-          })
-      } else {
-        await knex('FactInventoryConsumptionRate').insert({
-          siteId,
-          consumableId,
-          days: x.days,
+  const consumptionTotals = await getConsumptions(knex, siteId, consumableId)
+  await Promise.each(consumptionTotals, async consumptionTotal => {
+    const factInventoryConsumptionRate = await knex(
+      'FactInventoryConsumptionRate'
+    )
+      .where({ siteId, consumableId, days: consumptionTotal.days })
+      .first()
+    if (factInventoryConsumptionRate) {
+      await knex('FactInventoryConsumptionRate')
+        .where({ siteId, consumableId, days: consumptionTotal.days })
+        .update({
           // in GxAlert we stored totals in field 'rate', so same here.
           // to get actual rate - do rate/days
-          rate: x.total,
+          rate: consumptionTotal.total,
           updatedOn,
         })
-      }
-    })
-  )
-  return totals
+    } else {
+      await knex('FactInventoryConsumptionRate').insert({
+        siteId,
+        consumableId,
+        days: consumptionTotal.days,
+        // in GxAlert we stored totals in field 'rate', so same here.
+        // to get actual rate - do rate/days
+        rate: consumptionTotal.total,
+        updatedOn,
+      })
+    }
+  })
+  return consumptionTotals
 }
 
 async function getConsumptions(knex, siteId, consumableId) {
