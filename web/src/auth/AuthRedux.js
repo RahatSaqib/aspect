@@ -36,9 +36,6 @@ export const types = {
   RESET_PASSWORD_ENTER_PASSWORD_SUCCESS:
     'RESET_PASSWORD_ENTER_PASSWORD_SUCCESS',
 
-  REQUEST_FEATURES: 'REQUEST_FEATURES',
-  RECEIVE_FEATURES: 'RECEIVE_FEATURES',
-
   REQUEST_LICENSE: 'REQUEST_LICENSE',
   RECEIVE_LICENSE: 'RECEIVE_LICENSE',
 
@@ -213,7 +210,6 @@ export function loginStart({ user, password }) {
           })
         )
       )
-      .then(() => dispatch(fetchFeatures()))
       .catch(err => dispatch(loginFailure(err)))
   }
 }
@@ -274,7 +270,6 @@ export function refreshStart() {
           })
         )
       )
-      .then(() => dispatch(fetchFeatures()))
       .catch(() => {
         dispatch(refreshFailure())
       })
@@ -346,29 +341,6 @@ export function resetPasswordEnterPassword(resetPasswordToken, newPassword) {
       .catch(err => {
         throw new SubmissionError({ _error: err.message })
       })
-  }
-}
-
-function requestFeatures() {
-  return {
-    type: types.REQUEST_FEATURES,
-  }
-}
-
-function receiveFeatures(data) {
-  return {
-    type: types.RECEIVE_FEATURES,
-    data,
-  }
-}
-
-export function fetchFeatures() {
-  return dispatch => {
-    dispatch(requestFeatures())
-
-    return aspectFetch('/auth/features').then(json =>
-      dispatch(receiveFeatures(json.data))
-    )
   }
 }
 
@@ -459,7 +431,6 @@ export function acceptLicenseStart(licenseId) {
           })
         )
       )
-      .then(() => dispatch(fetchFeatures()))
       .catch(err => dispatch(acceptLicenseFailure(err)))
   }
 }
@@ -487,7 +458,6 @@ const User = Immutable.Record({
   countryAbbreviation: null,
   drawerOpen: false,
   loggedOutReason: '',
-  features: Immutable.Set(),
   licenseContent: undefined,
   countryId: undefined,
 })
@@ -552,11 +522,6 @@ export default function authReducer(state = initialState, action) {
 
     case types.RESET_PASSWORD_ENTER_PASSWORD_SUCCESS:
       return state
-    case types.RECEIVE_FEATURES:
-      return state.set(
-        'features',
-        Immutable.Set(action.data.map(x => x.module))
-      )
     case types.RECEIVE_LICENSE:
       return state.set('licenseContent', action.data.content)
     default:

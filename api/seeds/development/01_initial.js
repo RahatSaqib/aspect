@@ -11,10 +11,7 @@ const {
 } = require('date-fns')
 
 const config = require('../../src/config')
-const {
-  getPermissionModules,
-  assignAllFeaturesToJobFunctionIds,
-} = require('../utils')
+const { getPermissionModules } = require('../utils')
 const { seedAbbottM2000AndAssays } = require('../utils_abbott_m2000')
 const {
   allAssayTypeToId,
@@ -5178,28 +5175,6 @@ async function seed(knex) {
     partnerTwoId
   )
 
-  let featureBlacklist = ['clinicalIndicators', 'operationalData']
-
-  // assign features to JobFeatures
-  await assignAllFeaturesToJobFunctionIds(
-    knex,
-    [jobFunctionIdAdmin, jobFunctionIdManager, jobFunctionIdPartnerTwo],
-    featureBlacklist
-  )
-
-  featureBlacklist = [
-    'clinicalIndicators',
-    'operationalData',
-    'manage',
-    'reporter',
-  ]
-
-  await assignAllFeaturesToJobFunctionIds(
-    knex,
-    [jobFunctionIdClinician],
-    featureBlacklist
-  )
-
   // assign permissions to job functions
   const modules = await getPermissionModules(knex)
   await upsertJobFunctionPermission(knex, jobFunctionIdAdmin, [
@@ -5208,7 +5183,6 @@ async function seed(knex) {
     modules.device.admin,
     modules.person.admin,
     modules.result.admin,
-    modules.case.admin,
     modules.site.admin,
     modules.assay.admin,
     modules.inventory.admin,
@@ -5219,19 +5193,58 @@ async function seed(knex) {
     modules.browse.view,
     modules.reporter.admin,
     modules.treatmentStatus.admin,
+    modules.dashboard.target,
+    modules.dashboard.result,
+    modules.dashboard.device,
+    modules.dashboard.inventory,
+    modules.dashboard.site,
+    modules.dashboard.summary,
+    modules.case.admin,
+    modules.account.admin,
+    modules.router.admin,
+    modules.manage.view,
   ])
   await upsertJobFunctionPermission(knex, jobFunctionIdManager, [
     modules.treatmentStatus.admin,
     modules.site.edit,
     modules.device.edit,
-    modules.assay.edit,
+    modules.assay.view,
     modules.inventory.edit,
     modules.reporter.edit,
+    modules.dashboard.report,
+    modules.dashboard.siteFilter,
+    modules.dashboard.action,
+    modules.dashboard.target,
+    modules.dashboard.result,
+    modules.dashboard.device,
+    modules.dashboard.inventory,
+    modules.dashboard.site,
+    modules.dashboard.summary,
+    modules.case.admin,
+    modules.account.admin,
+    modules.router.admin,
+    modules.person.edit,
+    modules.clinicalIndicators.view,
   ])
   await upsertJobFunctionPermission(knex, jobFunctionIdPartnerTwo, [
     modules.treatmentStatus.admin,
     modules.site.edit,
     modules.device.edit,
+    modules.dashboard.report,
+    modules.dashboard.siteFilter,
+    modules.dashboard.action,
+    modules.dashboard.target,
+    modules.dashboard.result,
+    modules.dashboard.device,
+    modules.dashboard.inventory,
+    modules.dashboard.site,
+    modules.dashboard.summary,
+    modules.case.admin,
+    modules.person.view,
+    modules.account.admin,
+    modules.router.admin,
+    modules.assay.view,
+    modules.inventory.view,
   ])
   await upsertJobFunctionPermission(knex, jobFunctionIdClinician, [
     modules.site.view,
@@ -5239,9 +5252,21 @@ async function seed(knex) {
     modules.assay.view,
     modules.inventory.view,
     modules.result.edit,
-    modules.case.edit,
     modules.browse.view,
     modules.treatmentStatus.edit,
+    modules.dashboard.report,
+    modules.dashboard.siteFilter,
+    modules.dashboard.action,
+    modules.dashboard.target,
+    modules.dashboard.result,
+    modules.dashboard.device,
+    modules.dashboard.inventory,
+    modules.dashboard.site,
+    modules.dashboard.summary,
+    modules.case.edit,
+    modules.account.edit,
+    modules.router.edit,
+    modules.person.view,
   ])
 
   // crate jobs for users

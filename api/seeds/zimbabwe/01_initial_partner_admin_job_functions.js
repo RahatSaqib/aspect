@@ -6,10 +6,7 @@ const bcrypt = require('bcrypt')
 const config = require('../../src/config')
 const { getPermissionModules } = require('../utils')
 const geography = require('./fixtures/geography.json')
-const {
-  allFeatureToId,
-  partnerTypeToId,
-} = require('../../src/shared/dictionary')
+const { partnerTypeToId } = require('../../src/shared/dictionary')
 const { upsertJobFunction } = require('../common')
 
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
@@ -41,10 +38,7 @@ async function seed(knex) {
   }
 
   // Reuse previously seeded "static" data
-  const [modules, features] = await Promise.all([
-    getPermissionModules(knex),
-    allFeatureToId(),
-  ])
+  const modules = await getPermissionModules(knex)
 
   const [partnerId] = await knex('Partner').insert({
     name: 'Zimbabwe',
@@ -100,11 +94,7 @@ async function seed(knex) {
     { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.assay.admin },
     { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.device.admin },
     { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.site.admin },
-  ])
-  await knex('JobFunctionFeature').insert([
-    { jobFunctionId: jobFunctionIdAdmin, featureId: features.device },
-    { jobFunctionId: jobFunctionIdAdmin, featureId: features.result },
-    { jobFunctionId: jobFunctionIdAdmin, featureId: features.site },
+    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.person.admin },
   ])
 
   const [jobIdAdmin] = await knex('Job').insert([
@@ -142,11 +132,10 @@ async function seed(knex) {
       jobFunctionId: jobFunctionIdRegionalOfficer,
       permissionId: modules.site.view,
     },
-  ])
-  await knex('JobFunctionFeature').insert([
-    { jobFunctionId: jobFunctionIdRegionalOfficer, featureId: features.device },
-    { jobFunctionId: jobFunctionIdRegionalOfficer, featureId: features.result },
-    { jobFunctionId: jobFunctionIdRegionalOfficer, featureId: features.site },
+    {
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      permissionId: modules.person.view,
+    },
   ])
 
   const jobFunctionIdLabUser = await upsertJobFunction(
@@ -161,10 +150,6 @@ async function seed(knex) {
     { jobFunctionId: jobFunctionIdLabUser, permissionId: modules.assay.view },
     { jobFunctionId: jobFunctionIdLabUser, permissionId: modules.device.view },
     { jobFunctionId: jobFunctionIdLabUser, permissionId: modules.site.view },
-  ])
-  await knex('JobFunctionFeature').insert([
-    { jobFunctionId: jobFunctionIdLabUser, featureId: features.device },
-    { jobFunctionId: jobFunctionIdLabUser, featureId: features.result },
-    { jobFunctionId: jobFunctionIdLabUser, featureId: features.site },
+    { jobFunctionId: jobFunctionIdLabUser, permissionId: modules.person.view },
   ])
 }

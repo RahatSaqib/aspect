@@ -11,7 +11,6 @@ const {
   createResetPasswordToken,
   updatePasswordWithResetPasswordToken,
   clientTypes,
-  getUserFeatures,
   getLicense,
   acceptLicense,
   getUserJobFunctions,
@@ -174,15 +173,6 @@ const routes = [
           userLockedOut: Joi.boolean().allow(null),
         },
       },
-    },
-  },
-  {
-    method: 'GET',
-    path: '/auth/features',
-    handler: asyncHandler(getUserFeatures),
-    config: {
-      description: 'Get UI features of the logged in user',
-      notes: 'Returns a list of feature object',
     },
   },
   {

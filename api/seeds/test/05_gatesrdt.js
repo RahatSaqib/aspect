@@ -11,7 +11,6 @@ const {
 } = require('../utils')
 
 const {
-  allFeatureToId,
   assayTypeToId,
   partnerTypeToId,
   resultSourceToId,
@@ -47,10 +46,9 @@ async function seed(knex) {
   }
 
   // Reuse previously seeded "static" data
-  const [deviceTypes, modules, features, issueTypes] = await Promise.all([
+  const [deviceTypes, modules, issueTypes] = await Promise.all([
     rowsAsObject(knex, 'DeviceType', 'externalId'),
     getPermissionModules(knex),
-    allFeatureToId(),
     rowsAsObject(knex, 'IssueType', 'externalId'),
   ])
 
@@ -120,7 +118,7 @@ async function seed(knex) {
     .whereNull('lgaId')
     .first()
 
-  // Assign all features and admin permissions to Admin user
+  // Assign all permissions and admin permissions to Admin user
   const [adminPersonId] = await knex('Person').insert({
     userId: adminId,
     name: 'Gates RDT Admin',
@@ -152,12 +150,6 @@ async function seed(knex) {
       jobFunctionId: jobFunctionIdAdmin,
       permissionId: modules.deviceApiKey.admin,
     },
-  ])
-  await knex('JobFunctionFeature').insert([
-    { jobFunctionId: jobFunctionIdAdmin, featureId: features.device },
-    { jobFunctionId: jobFunctionIdAdmin, featureId: features.result },
-    { jobFunctionId: jobFunctionIdAdmin, featureId: features.site },
-    { jobFunctionId: jobFunctionIdAdmin, featureId: features.deviceApiKey },
   ])
 
   const [jobIdAdmin] = await knex('Job').insert([

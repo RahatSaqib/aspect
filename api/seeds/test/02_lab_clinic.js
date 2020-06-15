@@ -6,10 +6,7 @@ const _ = require('lodash')
 const { subMonths } = require('date-fns')
 const { upsertJobFunction } = require('../common')
 const config = require('../../src/config')
-const {
-  getPermissionModules,
-  assignAllFeaturesToJobFunctionIds,
-} = require('../utils')
+const { getPermissionModules } = require('../utils')
 const {
   allResultCategoryToId,
   assayTypeToId,
@@ -233,11 +230,6 @@ async function seed(knex) {
     'Lab Admin',
     partnerId
   )
-
-  await assignAllFeaturesToJobFunctionIds(knex, [
-    jobFunctionIdLabAdmin,
-    jobFunctionIdAdmin,
-  ])
 
   await knex('JobFunctionPermission').insert([
     {
