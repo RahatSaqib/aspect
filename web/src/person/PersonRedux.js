@@ -770,19 +770,17 @@ export default function personReducer(state = initialState, action) {
     case types.REQUEST_ASSIGNMENTS:
     case types.REQUEST_DELETE_ASSIGNMENT:
       return state.withMutations(mutState => {
-        const person = state.items.byId
-          .get(action.personId)
-          .set('loadedAssignments', false)
-        mutState.set('items', receiveItem(mutState.items, person))
+        mutState.mergeIn(['items', 'byId', action.personId], {
+          loadedAssignments: false,
+        })
       })
     case types.RECEIVE_ASSIGNMENTS:
     case types.RECEIVE_DELETE_ASSIGNMENT:
       return state.withMutations(mutState => {
-        const person = state.items.byId
-          .get(action.personId)
-          .set('loadedAssignments', true)
-          .set('assignments', action.items)
-        mutState.set('items', receiveItem(mutState.items, person))
+        mutState.mergeIn(['items', 'byId', action.personId], {
+          loadedAssignments: true,
+          assignments: action.items,
+        })
       })
     default:
       return state
