@@ -6,8 +6,6 @@ const { addMilliseconds, subDays, addMinutes, format } = require('date-fns')
 const relativeObjectsSeeds = require('./relativeObjectsSeeds')
 const {
   allAssayTypeToId,
-  allFeatureToId,
-  allDiseaseToId,
   allResultCategoryToId,
 } = require('../src/shared/dictionary')
 
