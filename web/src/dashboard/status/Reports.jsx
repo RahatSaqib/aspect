@@ -15,19 +15,15 @@ import { getAspectAccess } from '../../globals/sideEffects/LocalStorage'
 
 import Title from './Title'
 import Icon from '../../components/shared/icon/Icon'
-import {
-  requirePermissions,
-  isEnabledFeature,
-} from '../../components/shared/requirePermissions'
+import { requirePermissions } from '../../components/shared/requirePermissions'
 
 const cssClasses = classnames.bind(require('./Status.css'))
 
 const enhance = compose(
   pure,
   requirePermissions({
-    features: ['reportDashboard'],
+    permissions: ['dashboard:report'],
   }),
-  connect(state => ({ userFeatures: state.user.features })),
   withProps(({ location }) => {
     const searchParams = new URLSearchParams(location.search)
     const filtersParams = new URLSearchParams(searchParams.get('filters') || '')
@@ -70,10 +66,11 @@ export const Reports = ({
   endOfLastYear,
   // --- injected by recompose ---
   showHigherLevel,
-  userFeatures,
   token,
-}) =>
-  (showHigherLevel && isEnabledFeature(userFeatures, ['targetDashboard']) && (
+}) => {
+  const HigherLevelReport = requirePermissions({
+    permissions: ['dashboard:target'],
+  })(() => (
     <Card className={className}>
       <div className={cssClasses('TitleContainer')}>
         <Title
@@ -163,43 +160,47 @@ export const Reports = ({
         </Button>
       </div>
     </Card>
-  )) || (
-    <Card className={className}>
-      <div className={cssClasses('TitleContainer')}>
-        <Title
-          title={title}
-          icon={
-            <Icon
-              className={cssClasses('Title__Icon')}
-              type={require('../../components/shared/icon/assets/reports.svg')}
-            />
-          }
-        />
-      </div>
-      <div className={cssClasses('ReportsContainer')}>
-        <Button
-          className={cssClasses('ReportsContainer__Button')}
-          inverse
-          href={`${config.aspectApi}/report/gx/LogsExportExcel.xlsx?dateFrom=${last30Days}&siteId=${siteId}&token=${token}`}
-        >
-          Inventory Report
-        </Button>
-        <Button
-          className={cssClasses('ReportsContainer__Button')}
-          inverse
-          href={`${config.aspectApi}/report/gx/QuarterlyReportExcel.xlsx?dateFrom=${beginningOfLastYear}&dateTo=${endOfLastYear}&siteId=${siteId}&token=${token}`}
-        >
-          {`Quarterly Report ${new Date().getFullYear() - 1}`}
-        </Button>
-        <Button
-          className={cssClasses('ReportsContainer__Button')}
-          inverse
-          href={`${config.aspectApi}/report/gx/QuarterlyReportExcel.xlsx?dateFrom=${beginningOfThisYear}&dateTo=${endOfThisYear}&siteId=${siteId}&token=${token}`}
-        >
-          {`Quarterly Report ${new Date().getFullYear()}`}
-        </Button>
-      </div>
-    </Card>
+  ))
+  return (
+    (showHigherLevel && <HigherLevelReport />) || (
+      <Card className={className}>
+        <div className={cssClasses('TitleContainer')}>
+          <Title
+            title={title}
+            icon={
+              <Icon
+                className={cssClasses('Title__Icon')}
+                type={require('../../components/shared/icon/assets/reports.svg')}
+              />
+            }
+          />
+        </div>
+        <div className={cssClasses('ReportsContainer')}>
+          <Button
+            className={cssClasses('ReportsContainer__Button')}
+            inverse
+            href={`${config.aspectApi}/report/gx/LogsExportExcel.xlsx?dateFrom=${last30Days}&siteId=${siteId}&token=${token}`}
+          >
+            Inventory Report
+          </Button>
+          <Button
+            className={cssClasses('ReportsContainer__Button')}
+            inverse
+            href={`${config.aspectApi}/report/gx/QuarterlyReportExcel.xlsx?dateFrom=${beginningOfLastYear}&dateTo=${endOfLastYear}&siteId=${siteId}&token=${token}`}
+          >
+            {`Quarterly Report ${new Date().getFullYear() - 1}`}
+          </Button>
+          <Button
+            className={cssClasses('ReportsContainer__Button')}
+            inverse
+            href={`${config.aspectApi}/report/gx/QuarterlyReportExcel.xlsx?dateFrom=${beginningOfThisYear}&dateTo=${endOfThisYear}&siteId=${siteId}&token=${token}`}
+          >
+            {`Quarterly Report ${new Date().getFullYear()}`}
+          </Button>
+        </div>
+      </Card>
+    )
   )
+}
 
 export default enhance(Reports)

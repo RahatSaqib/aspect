@@ -8,7 +8,6 @@ const { resultCategoryToId } = require('../../src/shared/dictionary')
 const {
   commonUpserts,
   upsertJobFunctionPermission,
-  upsertJobFeatures,
   upsertJobFunction,
 } = require('../common')
 const { upsertCovidDeviceTypes } = require('../commonCovid')
@@ -18,7 +17,6 @@ const {
 } = require('../commonGenerateResults')
 const config = require('../../src/config')
 const {
-  allFeatureToId,
   partnerTypeToId,
   deviceStatusToId,
 } = require('../../src/shared/dictionary')
@@ -70,8 +68,6 @@ async function seed(knex) {
     'a3',
     'culture',
     'countryCode',
-    'stateLabel',
-    'lgaLabel',
     'timezone',
     'portNumber',
     'exportColumns',
@@ -90,7 +86,6 @@ async function seed(knex) {
   )
 
   // Give permission to dashboard, browse, sites, results, devices, reporters
-  const features = await allFeatureToId()
   const modules = await utils.getPermissionModules(knex)
 
   const { id: jobFunctionIdAdmin } = await knex('JobFunction')
@@ -100,19 +95,19 @@ async function seed(knex) {
 
   await upsertJobFunctionPermission(knex, jobFunctionIdAdmin, [
     modules.demo.admin,
-    modules.deviceApiKey.admin,
     modules.issue.admin,
-    modules.inventory.admin,
-    modules.task.admin,
     modules.patient.admin,
     modules.case.admin,
-  ])
-
-  await upsertJobFeatures(knex, jobFunctionIdAdmin, [
-    features.summaryDashboard,
-    features.account,
-    features.resultDashboard,
-    features.case,
+    modules.site.admin,
+    modules.result.admin,
+    modules.dashboard.summary,
+    modules.dashboard.result,
+    modules.account.admin,
+    modules.device.admin,
+    modules.reporter.admin,
+    modules.assay.edit,
+    modules.browse.view,
+    modules.person.view,
   ])
 
   const { id: jobFunctionIdRegionalOfficer } = await knex('JobFunction')
@@ -121,19 +116,18 @@ async function seed(knex) {
     .first('id')
 
   await upsertJobFunctionPermission(knex, jobFunctionIdRegionalOfficer, [
-    modules.device.admin,
-    modules.result.admin,
-    modules.site.admin,
-    modules.issue.admin,
-    modules.inventory.admin,
-    modules.task.admin,
+    modules.demo.admin,
     modules.patient.admin,
-  ])
-
-  await upsertJobFeatures(knex, jobFunctionIdRegionalOfficer, [
-    features.summaryDashboard,
-    features.account,
-    features.resultDashboard,
+    modules.case.admin,
+    modules.site.admin,
+    modules.result.admin,
+    modules.dashboard.summary,
+    modules.dashboard.result,
+    modules.account.admin,
+    modules.device.admin,
+    modules.assay.edit,
+    modules.browse.view,
+    modules.person.view,
   ])
 
   const { id: jobFunctionIdLabUser } = await knex('JobFunction')
@@ -142,19 +136,17 @@ async function seed(knex) {
     .first('id')
 
   await upsertJobFunctionPermission(knex, jobFunctionIdLabUser, [
-    modules.device.edit,
-    modules.result.edit,
-    modules.site.edit,
-    modules.issue.edit,
-    modules.inventory.edit,
-    modules.task.edit,
     modules.patient.edit,
-  ])
-
-  await upsertJobFeatures(knex, jobFunctionIdLabUser, [
-    features.summaryDashboard,
-    features.account,
-    features.resultDashboard,
+    modules.case.edit,
+    modules.site.edit,
+    modules.result.edit,
+    modules.dashboard.summary,
+    modules.dashboard.result,
+    modules.account.edit,
+    modules.device.edit,
+    modules.assay.edit,
+    modules.browse.view,
+    modules.person.view,
   ])
 
   const covidDeviceTypes = (
@@ -332,23 +324,18 @@ async function seed(knex) {
   )
 
   await upsertJobFunctionPermission(knex, jobFunctionIdClinician, [
-    modules.browse.view,
+    modules.demo.admin,
+    modules.patient.edit,
+    modules.case.edit,
+    modules.site.edit,
     modules.result.edit,
+    modules.dashboard.summary,
+    modules.dashboard.result,
+    modules.account.edit,
     modules.assay.edit,
     modules.device.view,
-    modules.task.view,
-    modules.treatmentStatus.edit,
-    modules.site.view,
-  ])
-
-  // permissions
-  await upsertJobFeatures(knex, jobFunctionIdClinician, [
-    features.device,
-    features.result,
-    features.site,
-    features.summaryDashboard,
-    features.account,
-    features.resultDashboard,
+    modules.browse.view,
+    modules.person.view,
   ])
 
   // Create User

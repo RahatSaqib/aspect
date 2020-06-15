@@ -256,7 +256,7 @@ async function manageJobContext(request, mode) {
 }
 
 // ----------------------------------------------------------------------------------------
-// helper function for JobFunctionDashboardWidget, JobFunctionFeature, JobFunctionPermission
+// helper function for JobFunctionDashboardWidget, JobFunctionPermission
 // ----------------------------------------------------------------------------------------
 async function manageJobFunctionBaseItems(request, tableName, mode, err) {
   const { auth, payload } = request
@@ -275,10 +275,6 @@ async function manageJobFunctionBaseItems(request, tableName, mode, err) {
     case 'JobFunctionDashboardWidget':
       fieldName = 'widgetId' // foreign key to table DashboardWidget
       itemsPropName = 'widgets' // in request payload
-      break
-    case 'JobFunctionFeature':
-      fieldName = 'featureId'
-      itemsPropName = 'features' // in request payload
       break
     case 'JobFunctionPermission':
       fieldName = 'permissionId'
@@ -350,25 +346,6 @@ async function unassignJobFunctionDashboardWidgets(request) {
     'JobFunctionDashboardWidget',
     MODE_DELETE,
     'Only Admin with same partnerId as JobFunction may unassign user from widget'
-  )
-}
-
-// ----------------------------------------------------------------------------------------
-async function assignJobFunctionFeatures(request) {
-  return manageJobFunctionBaseItems(
-    request,
-    'JobFunctionFeature',
-    MODE_INSERT,
-    'Only Admin with same partnerId as JobFunction can assign user to features'
-  )
-}
-
-async function unassignJobFunctionFeatures(request) {
-  return manageJobFunctionBaseItems(
-    request,
-    'JobFunctionFeature',
-    MODE_DELETE,
-    'Only Admin with same partnerId as JobFunction can remove user from features'
   )
 }
 
@@ -765,8 +742,7 @@ module.exports = {
   unassignJobContext,
   assignJobFunctionDashboardWidgets,
   unassignJobFunctionDashboardWidgets,
-  assignJobFunctionFeatures,
-  unassignJobFunctionFeatures,
+
   assignJobFunctionPermissions,
   unassignJobFunctionPermissions,
   assignPersonTo,

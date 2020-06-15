@@ -6,8 +6,6 @@
       "a3": "MMR",
       "culture": "en",
       "countryCode": "95",
-      "stateLabel": "State/Region",
-      "lgaLabel": "District",
       "timezone": "Myanmar Standard Time",
       "portNumber": 2952,
       "exportColumns": "DeploymentDescription|TestEndedOn|AssayName|AssayVersion|User|Result1|Result2|ReagentLotID|ExpirationDate|CartridgeSerial|ModuleSerial|SoftwareVersion|ErrorCode|ErrorCategory|ErrorDescription|SampleId|PatientId|PatientAge|PatientGender|PatientCity|Hiv|PreviouslyTreated|MicroscopyResult|Notes|TestReason|Tag",

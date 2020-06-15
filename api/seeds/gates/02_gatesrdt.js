@@ -6,7 +6,6 @@ const config = require('../../src/config')
 const { randomToken } = require('../../src/deviceApi/apiKey')
 const { getPermissionModules } = require('../utils')
 const {
-  allFeatureToId,
   assayTypeToId,
   deviceTypeToId,
   fileContentTypeToId,
@@ -91,7 +90,7 @@ async function seed(knex) {
     .whereNull('lgaId')
     .first()
 
-  // Assign all features and admin permissions to Admin user
+  // Assign all permissions and admin permissions to Admin user
   const [adminPersonId] = await knex('Person').insert({
     userId: adminId,
     name: 'Gates RDT Admin',
@@ -105,10 +104,7 @@ async function seed(knex) {
 
   const jobFunctionIdAdmin = await upsertJobFunction(knex, 'Admin', partnerId)
 
-  const [modules, features] = await Promise.all([
-    getPermissionModules(knex),
-    allFeatureToId(),
-  ])
+  const modules = await getPermissionModules(knex)
 
   await knex('JobFunctionPermission').insert([
     { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.browse.view },
@@ -119,12 +115,6 @@ async function seed(knex) {
       jobFunctionId: jobFunctionIdAdmin,
       permissionId: modules.deviceApiKey.admin,
     },
-  ])
-  await knex('JobFunctionFeature').insert([
-    { jobFunctionId: jobFunctionIdAdmin, featureId: features.device },
-    { jobFunctionId: jobFunctionIdAdmin, featureId: features.result },
-    { jobFunctionId: jobFunctionIdAdmin, featureId: features.site },
-    { jobFunctionId: jobFunctionIdAdmin, featureId: features.deviceApiKey },
   ])
 
   const [jobIdAdmin] = await knex('Job').insert([

@@ -21,7 +21,7 @@ const messages = defineMessages({
   },
   sampleOriginSiteName: {
     id: 'pages.CaseDetails.sampleOriginSiteName',
-    defaultMessage: 'Attending clinic',
+    defaultMessage: 'Sample Collection Site',
   },
   sampleId: {
     id: 'pages.CaseDetails.sampleId',

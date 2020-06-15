@@ -23,7 +23,7 @@ const routes = [
     config: {
       description: 'Summary Dashboard',
       notes: 'The top level summary dashboard',
-      auth: { scope: ['site', 'device'] },
+      auth: { scope: ['site', 'device', 'dashboard'] },
       validate: {
         query: {
           siteId: Joi.number().allow('').description('Filter for site ID'),
@@ -38,7 +38,7 @@ const routes = [
     config: {
       description: 'Target Dashboard',
       notes: 'The top level target dashboard',
-      auth: { scope: ['site', 'device'] },
+      auth: { scope: ['site', 'device', 'dashboard'] },
       validate: {
         query: Object.assign(validateDateRangeParams()),
       },
@@ -51,7 +51,7 @@ const routes = [
     config: {
       description: 'Result Dashboard',
       notes: 'The top level result dashboard',
-      auth: { scope: ['site', 'result'] },
+      auth: { scope: ['site', 'result', 'dashboard'] },
     },
   },
   {
@@ -61,7 +61,7 @@ const routes = [
     config: {
       description: 'Consumable Dashboard',
       notes: 'The top level consumable dashboard',
-      auth: { scope: ['site', 'consumable'] },
+      auth: { scope: ['site', 'consumable', 'dashboard'] },
     },
   },
   {
@@ -71,7 +71,7 @@ const routes = [
     config: {
       description: 'Device Dashboard',
       notes: 'The top level device dashboard',
-      auth: { scope: ['site', 'device'] },
+      auth: { scope: ['site', 'device', 'dashboard'] },
     },
   },
   {
@@ -81,7 +81,7 @@ const routes = [
     config: {
       description: 'Site Dashboard',
       notes: 'The top level site dashboard',
-      auth: { scope: ['site', 'device'] },
+      auth: { scope: ['site', 'device', 'dashboard'] },
     },
   },
   {
@@ -91,7 +91,7 @@ const routes = [
     config: {
       description: 'Operational Data Dashboard',
       notes: 'The top level operational data',
-      auth: { scope: ['site', 'device'] },
+      auth: { scope: ['site', 'device', 'dashboard'] },
       validate: {
         query: {
           assayType: Joi.string()
@@ -111,7 +111,7 @@ const routes = [
     config: {
       description: 'Action Data Dashboard',
       notes: 'List of action category with actions',
-      auth: { scope: ['site', 'device'] },
+      auth: { scope: ['site', 'device', 'dashboard'] },
       validate: {
         query: {
           siteId: Joi.number().allow('').description('Filter for Site ID'),

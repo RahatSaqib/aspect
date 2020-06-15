@@ -718,7 +718,7 @@ export default function personReducer(state = initialState, action) {
     case types.REQUEST_AVAILABLE_PERSONS:
       return requestAvailableContacts(state)
     case types.RECEIVE_AVAILABLE_PERSONS:
-      return state.mergeDeepIn(
+      return state.setIn(
         ['availableContacts', 'person'],
         new ContactTagItems({
           loading: false,

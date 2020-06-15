@@ -92,7 +92,7 @@ const messages = defineMessages({
   },
   sampleOriginSiteName: {
     id: 'pages.DeviceDetailProfile.sampleOriginSiteName',
-    defaultMessage: 'Sample Origin Site',
+    defaultMessage: 'Sample Collection Site',
   },
   sampleId: {
     id: 'pages.DeviceDetailProfile.sampleId',
@@ -280,20 +280,18 @@ const enhance = compose(
     },
     onHideDialog: ({ hideDialog }) => () => hideDialog(),
 
-    onCalibrationSubmit: ({ device, updateDeviceMaintenance }) => values => {
+    onCalibrationSubmit: ({ device, updateDeviceMaintenance }) => values =>
       updateDeviceMaintenance({
         externalId: 'calibration',
         device,
         values,
-      })
-    },
-    onWarrantySubmit: ({ device, updateDeviceMaintenance }) => values => {
+      }),
+    onWarrantySubmit: ({ device, updateDeviceMaintenance }) => values =>
       updateDeviceMaintenance({
         externalId: 'warranty',
         device,
         values,
-      })
-    },
+      }),
   }),
   lifecycle({
     componentWillMount() {

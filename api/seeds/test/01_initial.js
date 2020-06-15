@@ -6,10 +6,7 @@ const Promise = require('bluebird')
 const { addMilliseconds, addMinutes, subMinutes, subDays } = require('date-fns')
 const { upsertJobFunction, upsertJobFunctionPermission } = require('../common')
 const config = require('../../src/config')
-const {
-  getPermissionModules,
-  assignAllFeaturesToJobFunctionIds,
-} = require('../utils')
+const { getPermissionModules } = require('../utils')
 const { seedAbbottM2000AndAssays } = require('../utils_abbott_m2000')
 const {
   allAssayTypeToId,
@@ -1381,8 +1378,6 @@ async function seed(knex) {
       'a3',
       'culture',
       'countryCode',
-      'stateLabel',
-      'lgaLabel',
       'timezone',
       'portNumber',
       'exportColumns',
@@ -1432,7 +1427,7 @@ async function seed(knex) {
             partnerId: partnerOneId,
             geographyId,
             externalId: `${state.name}_${lga.name}`,
-            name: `${lga.name} ${country.lgaLabel} ${state.name}`,
+            name: `${lga.name} County ${state.name}`,
             shortName: `${lga.name}, ${stateKey}`,
             city: `${lga.name} City`,
             street1: `${lgaData.id} Main Street`,
@@ -1754,28 +1749,6 @@ async function seed(knex) {
     knex,
     'Lab Manager',
     partnerTwoId
-  )
-
-  let featureBlacklist = ['clinicalIndicators', 'operationalData']
-
-  // assign features to JobFeatures
-  await assignAllFeaturesToJobFunctionIds(
-    knex,
-    [jobFunctionIdAdmin, jobFunctionIdManager, jobFunctionIdPartnerTwo],
-    featureBlacklist
-  )
-
-  featureBlacklist = [
-    'clinicalIndicators',
-    'operationalData',
-    'manage',
-    'reporter',
-  ]
-
-  await assignAllFeaturesToJobFunctionIds(
-    knex,
-    [jobFunctionIdClinician],
-    featureBlacklist
   )
 
   // assign permissions to job functions

@@ -21,7 +21,7 @@ const messages = defineMessages({
 
 const enhance = compose(
   requirePermissions({
-    features: ['siteFilterDashboard'],
+    permissions: ['dashboard:siteFilter'],
   }),
   connect(
     state => ({
