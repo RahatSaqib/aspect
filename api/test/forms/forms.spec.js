@@ -2,7 +2,7 @@ const chai = require('chai')
 const supertest = require('supertest')
 const _ = require('lodash')
 const shared = require('../utils/sharedToken')
-const { diseaseToId } = require('../../src/shared/dictionary')
+const { knex } = require('../../src/db')
 
 const server = supertest.agent('http://localhost:8080')
 const { assert } = chai
@@ -19,6 +19,13 @@ describe('Forms routes', () => {
     'controlType',
   ]
   shared.checkToken(server, path)
+
+  async function getDiseaseId(externalId) {
+    const { id: diseaseId } =
+      (await knex('Disease').where({ externalId }).first('id')) || {}
+    return diseaseId
+  }
+
   describe('GET', () => {
     function checkResponseCommonForms(elem, fieldsToTest = COMMON_FIELDS) {
       assert.isTrue(!_.isNil(elem))
@@ -33,7 +40,7 @@ describe('Forms routes', () => {
     }
     describe('Result Web Forms', () => {
       it('should return a form by TB disease and formtype result web form', async () => {
-        const diseaseId = await diseaseToId('tb')
+        const diseaseId = await getDiseaseId('tb')
 
         const res = await server
           .get(`${path}?diseaseId=${diseaseId}&formType=resultFormWeb`)
@@ -48,7 +55,7 @@ describe('Forms routes', () => {
         checkResponseCommonForms(TBProbes)
       })
       it('should return a form by hiv disease and formtype result web form', async () => {
-        const diseaseId = await diseaseToId('hiv')
+        const diseaseId = await getDiseaseId('hiv')
 
         const res = await server
           .get(`${path}?diseaseId=${diseaseId}&formType=resultFormWeb`)
@@ -73,7 +80,7 @@ describe('Forms routes', () => {
       })
 
       it('should return a form by covid disease and formtype result web form', async () => {
-        const diseaseId = await diseaseToId('covid19')
+        const diseaseId = await getDiseaseId('covid19')
         const res = await server
           .get(`${path}?diseaseId=${diseaseId}&formType=resultFormWeb`)
           .set('Authorization', `Bearer ${shared.token}`)
@@ -98,7 +105,7 @@ describe('Forms routes', () => {
     })
     describe('Case creation Web Forms', () => {
       it('should return a form by TB disease', async () => {
-        const diseaseId = await diseaseToId('tb')
+        const diseaseId = await getDiseaseId('tb')
 
         const res = await server
           .get(`${path}?diseaseId=${diseaseId}&formType=CaseCreation`)
@@ -130,7 +137,7 @@ describe('Forms routes', () => {
         )
       })
       it('should return a form by hiv disease and formtype', async () => {
-        const diseaseId = await diseaseToId('hiv')
+        const diseaseId = await getDiseaseId('hiv')
 
         const res = await server
           .get(`${path}?diseaseId=${diseaseId}&formType=CaseCreation`)
@@ -161,7 +168,7 @@ describe('Forms routes', () => {
       })
 
       it('should return a form by covid disease and formtype', async () => {
-        const diseaseId = await diseaseToId('covid19')
+        const diseaseId = await getDiseaseId('covid19')
         const res = await server
           .get(`${path}?diseaseId=${diseaseId}&formType=CaseCreation`)
           .set('Authorization', `Bearer ${shared.token}`)
