@@ -201,7 +201,6 @@ const start = async () => {
       // if user has to accept license, deny all requests except to the license api:
       if (
         decoded.hasToAcceptLicenseId &&
-        request.url.pathname.indexOf('/api/auth/features') === -1 &&
         request.url.pathname.indexOf('/api/auth/license') === -1
       ) {
         errorMessage =

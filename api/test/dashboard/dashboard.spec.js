@@ -388,7 +388,7 @@ describe('Dashboard routes', () => {
       }
 
       describe('for Admin', () => {
-        it("should return the highest level notification for all labs under admin's jurisdiction", async () =>
+        it("should return the highest level notification for all labs under admin's jurisdiction", () =>
           runTestWithKnex(async knex =>
             checkThatUserActionsMatchActionDashboardResponse({
               username: 'myanmar_admin',
@@ -416,7 +416,7 @@ describe('Dashboard routes', () => {
             })
           ))
 
-        it('should return the highest level notification for the selected lab', async () =>
+        it('should return the highest level notification for the selected lab', () =>
           runTestWithKnex(async knex => {
             const sites = await getSitesUnderUser('myanmar_admin', 'test07')
 
@@ -453,7 +453,7 @@ describe('Dashboard routes', () => {
       })
 
       describe('for Regional Officer', () => {
-        it("should return the highest level notification for all labs under regional officer's jurisdiction", async () =>
+        it("should return the highest level notification for all labs under regional officer's jurisdiction", () =>
           runTestWithKnex(async knex =>
             Promise.each(
               ['myanmar_ro1', 'myanmar_ro2', 'myanmar_ro3'],
@@ -466,7 +466,7 @@ describe('Dashboard routes', () => {
             )
           ))
 
-        it('should return the highest level notification for the selected lab', async () =>
+        it('should return the highest level notification for the selected lab', () =>
           runTestWithKnex(async knex =>
             Promise.each(
               ['myanmar_ro1', 'myanmar_ro2', 'myanmar_ro3'],
@@ -490,7 +490,7 @@ describe('Dashboard routes', () => {
       })
 
       describe('for Lab User', () => {
-        it('should return the lab user level alerts for the lab', async () =>
+        it('should return the lab user level alerts for the lab', () =>
           runTestWithKnex(async knex =>
             Promise.each(
               ['myanmar_lab1', 'myanmar_lab2', 'myanmar_lab3'],

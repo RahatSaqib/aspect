@@ -26,7 +26,7 @@ const server = supertest.agent('http://localhost:8080')
 function assertPropsOnList(res) {
   assert.property(res.body.data[0], 'id')
   assert.property(res.body.data[0], 'externalId')
-  assert.property(res.body.data[0], 'attendingClinic')
+  assert.property(res.body.data[0], 'sampleOriginSite')
   assert.property(res.body.data[0], 'diseaseName')
   assert.property(res.body.data[0], 'diseaseId')
   assert.property(res.body.data[0], 'diseaseExternalId')

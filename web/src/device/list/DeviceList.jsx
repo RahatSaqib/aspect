@@ -65,10 +65,6 @@ const FILTERS_CONFIG = [
     deviceStatus: true,
     requiredPermissions: [],
   },
-  {
-    siteId: true,
-    requiredPermissions: [],
-  },
 ]
 
 const searchSanitizer = makeSearchParamsSanitizer({
@@ -289,7 +285,7 @@ export const DeviceList = ({
             columns={[
               {
                 key: 'name',
-                label: intl.formatMessage(messages.devicesTitle),
+                label: intl.formatMessage(messages.device),
                 sortable: true,
               },
               {

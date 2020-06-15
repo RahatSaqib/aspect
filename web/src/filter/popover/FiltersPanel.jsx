@@ -6,7 +6,12 @@ import { defineMessages } from 'react-intl'
 import { MdKeyboardArrowDown } from 'react-icons/md'
 import Modal from '@material-ui/core/Modal'
 import Card from '@material-ui/core/Card'
+import { connect } from 'react-redux'
 
+import {
+  getCustomMessage,
+  commonDefinitions,
+} from '../../shared/utils/customMessages'
 import FallbackUntilDone from '../../components/shared/FallbackUntilDone'
 import FocusBlurTextField from '../../components/shared/FocusBlurTextField'
 import CountrySelectField from '../geography/CountrySelectField'
@@ -29,6 +34,9 @@ import RevokedSelectField from '../resource/RevokedSelectField'
 const cssClasses = classnames.bind(require('./FiltersPanel.css'))
 
 const enhance = compose(
+  connect(state => ({
+    user: state.user,
+  })),
   withState('isShown', 'setIsShown', false),
   withHandlers({
     onToggleShown: ({ setIsShown }) => () => setIsShown(isShown => !isShown),
@@ -155,6 +163,7 @@ const clickExport = (
 }
 
 const messages = defineMessages({
+  ...commonDefinitions,
   moreFilters: {
     id: 'filter.popover.moreFilters',
     defaultMessage: 'More filters',
@@ -197,7 +206,7 @@ const messages = defineMessages({
   },
   sampleOriginSite: {
     id: 'filter.popover.sampleOriginSite',
-    defaultMessage: 'Sample origin site',
+    defaultMessage: 'Sample collection site',
   },
   enterSampleOriginSite: {
     id: 'filter.popover.enterSampleOriginSite',
@@ -233,11 +242,11 @@ const messages = defineMessages({
   },
   patientOrResearchId: {
     id: 'filter.popover.patientOrResearchId',
-    defaultMessage: 'Patient/Study ID',
+    defaultMessage: 'Patient ID',
   },
   enterPatientOrResearchId: {
     id: 'filter.popover.enterPatientOrResearchId',
-    defaultMessage: 'Enter patient/study ID...',
+    defaultMessage: 'Enter patient ID...',
   },
   patientOrCaseId: {
     id: 'filter.popover.patientOrCaseId',
@@ -287,22 +296,6 @@ const messages = defineMessages({
     id: 'filter.popover.selectDisease',
     defaultMessage: 'Select Disease...',
   },
-  lga: {
-    id: 'filter.popover.lga',
-    defaultMessage: 'Area',
-  },
-  selectLga: {
-    id: 'filter.popover.selectLga',
-    defaultMessage: 'Select area...',
-  },
-  state: {
-    id: 'filter.popover.state',
-    defaultMessage: 'State',
-  },
-  selectState: {
-    id: 'filter.popover.selectState',
-    defaultMessage: 'Select state...',
-  },
   country: {
     id: 'filter.popover.country',
     defaultMessage: 'Country',
@@ -342,7 +335,7 @@ const messages = defineMessages({
   },
   deviceStatus: {
     id: 'filter.popover.deviceStatus',
-    defaultMessage: 'Device Status',
+    defaultMessage: 'Status',
   },
   selectDeviceStatus: {
     id: 'filter.popover.selectDeviceStatus',
@@ -358,11 +351,11 @@ const messages = defineMessages({
   },
   externalId: {
     id: 'filter.popover.externalId',
-    defaultMessage: 'Facility Code',
+    defaultMessage: 'Site ID',
   },
   enterExternalId: {
     id: 'filter.popover.enterExternalId',
-    defaultMessage: 'Enter facility code...',
+    defaultMessage: 'Enter site ID...',
   },
   notificationName: {
     id: 'filter.popover.notificationName',
@@ -412,6 +405,7 @@ export const FiltersPanel = ({
   onDeviceStatusIdChange,
   onDeviceTypeIdChange,
   onRevokedChange,
+  user,
 }) => (
   <div className={cssClasses('Container', className)}>
     <AspectButton
@@ -501,8 +495,19 @@ export const FiltersPanel = ({
               countryId={filters.countryId}
               stateId={filters.stateId}
               floatingLabelFixed
-              hintText={intl.formatMessage(messages.selectState)}
-              floatingLabelText={intl.formatMessage(messages.state)}
+              hintText={getCustomMessage(
+                intl,
+                messages,
+                'selectPlaceholder',
+                user,
+                { entity: 'state' }
+              )}
+              floatingLabelText={getCustomMessage(
+                intl,
+                messages,
+                'state',
+                user
+              )}
               style={{ verticalAlign: 'bottom' }}
             />
           </div>
@@ -516,8 +521,14 @@ export const FiltersPanel = ({
               stateId={filters.stateId}
               lgaId={filters.lgaId}
               floatingLabelFixed
-              hintText={intl.formatMessage(messages.selectLga)}
-              floatingLabelText={intl.formatMessage(messages.lga)}
+              hintText={getCustomMessage(
+                intl,
+                messages,
+                'selectPlaceholder',
+                user,
+                { entity: 'lga' }
+              )}
+              floatingLabelText={getCustomMessage(intl, messages, 'lga', user)}
               style={{ verticalAlign: 'bottom' }}
             />
           </div>
