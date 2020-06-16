@@ -18,35 +18,60 @@ const AspectResultDetail = ({ match }) => {
   const { params } = match
   const { resultId } = params
   const dispatch = useDispatch()
+  const [done, setDone] = useState(false)
   const [formConfig, setFormConfig] = useState(false)
+  // const { formSchema, formData } = useSelector(
+  //   ({ resultsForm, resultsDetail }) => ({
+  //     ...resultsForm.toJS(),
+  //     ...resultsDetail.toJS(),
+  //   }),
+  //   shallowEqual
+  // )
   const { formSchema } = useSelector(
-    ({ resultsForm }) => ({
-      ...resultsForm.toJS(),
-    }),
+    ({ resultsForm }) => ({ ...resultsForm.toJS() }),
+    shallowEqual
+  )
+  const { formData } = useSelector(
+    ({ resultsDetail }) => ({ ...resultsDetail.toJS() }),
     shallowEqual
   )
   const prevResultId = usePrevious(resultId)
   const prevFormSchema = usePrevious(formSchema)
+  const prevFormData = usePrevious(formData)
 
   useEffect(() => {
-    if (resultId || !isEqual(resultId, prevResultId)) {
-      if (!formSchema || !isEqual(formSchema, prevFormSchema)) {
-        dispatch(fetchResultsForm())
+    if (
+      (!formSchema && resultId) ||
+      (!formSchema && resultId !== prevResultId)
+    ) {
+      console.log('formSchema', formSchema)
+      dispatch(fetchResultsForm(resultId))
+    }
+  })
+
+  useEffect(() => {
+    if (resultId !== 'add') {
+      if (formSchema && !done) {
+        console.log('fetch data')
+        setDone(true)
+        dispatch(fetchResultsDetail(resultId))
       }
     }
-  }, [resultId])
+  }, [resultId, formSchema])
 
-  console.log(formSchema)
+  // dispatch(fetchResultsForm())
+  // dispatch(fetchResultsDetail(resultId))
 
-  return (
+  // console.log(resultId, formData, formSchema)
+
+  return formSchema ? (
     <Fragment>
-      {formSchema ? (
-        <Create formSchema={formSchema} />
-      ) : (
-        <Update formSchema={formSchema} />
-      )}
+      {resultId === 'add' ? <Create formSchema={formSchema} /> : null}
+      {resultId !== 'add' && formSchema && formData ? (
+        <Update formSchema={formSchema} formData={formData} />
+      ) : null}
     </Fragment>
-  )
+  ) : null
 }
 
 export default AspectResultDetail

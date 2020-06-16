@@ -25,59 +25,10 @@ const AspectResultDetail = ({ formSchema }) => {
   const prevFormSchema = usePrevious(formSchema)
 
   useEffect(() => {
-    if (formSchema && !isEqual(formSchema, prevFormSchema)) {
+    if (formSchema || formSchema !== prevFormSchema) {
       setFormConfig(mergeFormConfigWithData({}, formSchema))
     }
   }, [formSchema])
-
-  // useEffect(() => {
-  //   // if (!isEqual(params, prevParams) && !isEqual(formConfig, prevFormConfig)) {
-  //   console.log(resultId === 'add')
-  //   console.log(params, prevParams, !isEqual(params, prevParams))
-  //   console.log(
-  //     formSchema,
-  //     prevFormSchema,
-  //     !isEqual(formSchema, prevFormSchema)
-  //   )
-
-  //   if (resultId === 'add' && !isEqual(params, prevParams)) {
-  //     dispatch(fetchResultsForm())
-  //     // dispatch(fetchResultsDetail(resultId))
-  //   }
-
-  //   if (resultId !== 'add' && !isEqual(params, prevParams)) {
-  //     dispatch(fetchResultsForm())
-  //     dispatch(fetchResultsForm(resultId))
-  //   }
-  //   // if(resultId && !isEqual(params, prevParams) && !isEqual(formConfig, prevFormConfig))
-  //   // }
-  //   // }
-  // }, [params, formConfig])
-
-  // useEffect(() => {
-  //   // if (resultId === 'add' && !isEqual(formSchema, prevFormSchema)) {
-  //   //   setFormConfig(mergeFormConfigWithData({}, formSchema));
-  //   // }
-  //   console.log(formConfig, !formConfig)
-
-  //   console.log(
-  //     formConfig,
-  //     prevFormConfig,
-  //     !isEqual(formConfig, prevFormConfig)
-  //   )
-
-  //   if (!formConfig || !isEqual(formConfig, prevFormConfig)) {
-  //     if (resultId === 'add' && formSchema) {
-  //       setFormConfig(mergeFormConfigWithData({}, formSchema))
-  //     }
-
-  //     if (resultId !== 'add' && formSchema && formData) {
-  //       setFormConfig(mergeFormConfigWithData(formData, formSchema))
-  //     }
-  //   }
-  // }, [formConfig, formSchema, formData])
-
-  console.log(formConfig)
 
   return (
     <Shell>
