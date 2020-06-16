@@ -1,6 +1,17 @@
 {
-    "title": "Result Details",
+    "title": "Add Result",
     "icon": "document",
+    "actions": {
+        "default": "save",
+        "helpers": "",
+        "items": [
+            {
+                "id": "save",
+                "text": "Create Result",
+                "action": "saveCreate"
+            }
+        ]
+    },
     "sections": [
         {
             "id": "Lab",
@@ -74,7 +85,7 @@
                     "items": [
                         {
                             "id": "startedOn",
-                            "controlType": "textField",
+                            "controlType": "datePicker",
                             "type": "string",
                             "label": "Start Date"
                         }
