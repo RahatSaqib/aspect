@@ -21,6 +21,7 @@ const DEFAULT_DISPLAY_PREFERENCES = {
 export const getAspectAccess = () => localStorage.getItem(AS_ACCESS)
 
 const INITIAL_DISPLAY_PREFERENCES = Immutable.Map(DEFAULT_DISPLAY_PREFERENCES)
+
 let displayPreferences = INITIAL_DISPLAY_PREFERENCES
 export const getAspectDisplayPreferences = () => displayPreferences
 

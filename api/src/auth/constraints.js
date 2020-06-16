@@ -397,7 +397,11 @@ function addConstraints(queryBuilder, constraints, aliases) {
       `${device}.deviceStatusId`,
       `deviceStatus.id`
     )
-    queryBuilder.where({ [`deviceStatus.token`]: 'approved' })
+    queryBuilder.where(function () {
+      this.where({ [`deviceStatus.token`]: 'approved' }).orWhere(
+        knex.raw('isnull(`deviceStatus`.`token`)')
+      )
+    })
   }
   if (person && constraints.person && !allowAdminThrough) {
     queryBuilder.where({ [`${person}.id`]: constraints.person.id })

@@ -3,7 +3,6 @@ import {
   getPermissions,
   groupByPermissionTypes,
   isPermittedUser,
-  isEnabledFeature,
 } from '../components/shared/requirePermissions'
 import { navigations } from '../globals/components/BrowseFilters'
 
@@ -92,7 +91,7 @@ const sanitizeBrowseLink = userPermissions => {
   return source.length >= 1 ? source[0] : false
 }
 
-export const reduceNavLinks = (linkArray, userPermissions, userFeatures) => {
+export const reduceNavLinks = (linkArray, userPermissions) => {
   const reducedNav = _.reduce(
     linkArray,
     (result, source) => {
@@ -102,14 +101,13 @@ export const reduceNavLinks = (linkArray, userPermissions, userFeatures) => {
       ])(source.requiredPermissions, [], [])
 
       const isPermitted = isPermittedUser(userPermissions, permissionsByTypes)
-      const isEnabled = isEnabledFeature(userFeatures, source.requiredFeatures)
 
-      if (isEnabled && isPermitted && source.value)
+      if (isPermitted && source.value)
         result.push({
           value: source.value,
           label: source.label,
         })
-      else if (isEnabled && isPermitted && source.href) {
+      else if (isPermitted && source.href) {
         if (source.href === '/browse') {
           const filteredSource = sanitizeBrowseLink(userPermissions)
           if (filteredSource) {

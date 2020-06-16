@@ -7,7 +7,6 @@ const relativeObjectsSeeds = require('./relativeObjectsSeeds')
 const {
   allAssayTypeToId,
   allDiseaseToId,
-  allFeatureToId,
   allResultCategoryToId,
 } = require('../src/shared/dictionary')
 
@@ -38,7 +37,6 @@ const tables = [
   ['PartnerType', 'name'],
   ['DeviceTypeCategory', 'name'],
   ['Unit', 'name'],
-  ['Feature', 'module'],
   ['Permission', seedStaticDataPermission],
 ]
 
@@ -757,35 +755,6 @@ async function seedIssueEventTriggersForPartner(
         }
       }
     }
-  )
-}
-
-async function assignAllFeaturesToJobFunctionIds(
-  knex,
-  jobFunctionIds,
-  featureBlacklist = []
-) {
-  const defaultFeatureBlacklist = [
-    // These are currently hardcoded to Myanmar, so skip by default
-    'targetDashboard',
-    'actionDashboard',
-    'reportDashboard',
-    'siteFilterDashboard',
-  ]
-  const features = _.filter(
-    await allFeatureToId(),
-    (val, key) =>
-      !_.includes([...defaultFeatureBlacklist, ...featureBlacklist], key)
-  )
-  await Promise.all(
-    _.map(features, async featureId => {
-      await knex('JobFunctionFeature').insert(
-        _.map(jobFunctionIds, jobFunctionId => ({
-          featureId,
-          jobFunctionId,
-        }))
-      )
-    })
   )
 }
 
@@ -2432,10 +2401,6 @@ async function insertSites(knex, partnerId, countryId, sites) {
   })
 }
 
-async function getFeatureByModule(knex, module) {
-  return knex('Feature').where({ module }).first()
-}
-
 async function getPermissonByModuleAndActivity(knex, module, activity) {
   return knex('Permission').where({ module, activity }).first()
 }
@@ -2781,13 +2746,11 @@ module.exports = {
   seedStockIssuesUpdate,
   getPermissionModules,
   seedIssueEventTriggersForPartner,
-  assignAllFeaturesToJobFunctionIds,
   upsertItems,
   upsertSingle,
   seedIssues,
   getGeographyId,
   getPartnerByName,
-  getFeatureByModule,
   getPermissonByModuleAndActivity,
 
   seedNotificationTypes,

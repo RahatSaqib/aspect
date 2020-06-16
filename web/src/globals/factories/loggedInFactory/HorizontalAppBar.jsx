@@ -13,7 +13,7 @@ import { FaUser } from 'react-icons/fa'
 import ConfluenceIcon from './ConfluenceIcon'
 import LinkNavigation from './LinkNavigation'
 import { closeDrawer, userRequestedLogout } from '../../../auth/AuthRedux'
-import { isEnabledFeature } from '../../../components/shared/requirePermissions'
+import requirePermissions from '../../../components/shared/requirePermissions'
 import IconMenu from '../../../components/shared/IconMenu'
 
 const cssClasses = classnames.bind(require('./index.css'))
@@ -26,7 +26,7 @@ const enhance = compose(
       history.push('/account-details/current'),
   }),
   connect(
-    state => ({ userFeatures: state.user.features }),
+    null,
     bindActionCreators.bind(null, {
       closeDrawer,
       userRequestedLogout,
@@ -42,34 +42,36 @@ const HorizontalAppBar = ({
   closeDrawer,
   navigateCurrentAccountDetails,
   userRequestedLogout,
-  userFeatures,
-}) => (
-  <AppBar className={cssClasses('AppBar__appBar', 'AppBar__appBar--sm')}>
-    <Toolbar>
-      <IconButton
-        className={cssClasses('AppBar__leftIcon')}
-        aria-label="Logo"
-        onClick={navigateRoot}
-      >
-        <ConfluenceIcon />
-      </IconButton>
+}) => {
+  const Account = requirePermissions({
+    permissions: ['account:view', 'account:admin', 'account:edit'],
+  })(() => (
+    <MenuItem onClick={navigateCurrentAccountDetails}>Account Details</MenuItem>
+  ))
+  return (
+    <AppBar className={cssClasses('AppBar__appBar', 'AppBar__appBar--sm')}>
+      <Toolbar>
+        <IconButton
+          className={cssClasses('AppBar__leftIcon')}
+          aria-label="Logo"
+          onClick={navigateRoot}
+        >
+          <ConfluenceIcon />
+        </IconButton>
 
-      <LinkNavigation
-        history={history}
-        location={location}
-        type="horizontal"
-        onClick={closeDrawer}
-      />
-      <IconMenu icon={<FaUser className={cssClasses('IconMenu__icon')} />}>
-        {isEnabledFeature(userFeatures, ['account']) && (
-          <MenuItem onClick={navigateCurrentAccountDetails}>
-            Account Details
-          </MenuItem>
-        )}
-        <MenuItem onClick={userRequestedLogout}>Sign out</MenuItem>
-      </IconMenu>
-    </Toolbar>
-  </AppBar>
-)
+        <LinkNavigation
+          history={history}
+          location={location}
+          type="horizontal"
+          onClick={closeDrawer}
+        />
+        <IconMenu icon={<FaUser className={cssClasses('IconMenu__icon')} />}>
+          <Account />
+          <MenuItem onClick={userRequestedLogout}>Sign out</MenuItem>
+        </IconMenu>
+      </Toolbar>
+    </AppBar>
+  )
+}
 
 export default enhance(HorizontalAppBar)

@@ -8,6 +8,7 @@ import Button from '@material-ui/core/Button'
 import TextField from '@material-ui/core/TextField'
 import MenuItem from '@material-ui/core/MenuItem'
 
+import { getCustomMessage } from '../../shared/utils/customMessages'
 import recomposeForm from '../../components/recomposeForm'
 import ConnectedTagInput from '../../tag/ConnectedTagInput'
 import { fetchTags, updateTags } from '../../tag/TagRedux'
@@ -130,6 +131,7 @@ const enhance = compose(
         isNew,
         partnerList,
         countries,
+        user: state.user,
       }
     },
     {
@@ -283,6 +285,7 @@ export const ContactDetailsForm = ({
   personTags,
   onPersonTagsChange,
   isNew,
+  user,
 }) => (
   <form onSubmit={handleSubmit} className={cssClasses('Form')}>
     <div className={cssClasses('Form__Content')}>
@@ -422,7 +425,7 @@ export const ContactDetailsForm = ({
             countryId={values.countryId}
             stateId={values.stateId}
             floatingLabelFixed
-            floatingLabelText={intl.formatMessage(messages.state)}
+            floatingLabelText={getCustomMessage(intl, messages, 'state', user)}
           />
           <LgaSelectField
             className={cssClasses('GeographyDropdown')}
@@ -432,7 +435,7 @@ export const ContactDetailsForm = ({
             stateId={values.stateId}
             lgaId={values.lgaId}
             floatingLabelFixed
-            floatingLabelText={intl.formatMessage(messages.lga)}
+            floatingLabelText={getCustomMessage(intl, messages, 'lga', user)}
           />
         </div>
         <TextField

@@ -25,7 +25,7 @@ const { exportReporters } = require('./reporterServiceReports')
 
 function listContactBaseConfig() {
   return {
-    auth: { scope: ['person:view', 'person:edit'] },
+    auth: { scope: ['person:view', 'person:edit', 'person:admin'] },
     validate: {
       query: {
         contactNameOrEmail: Joi.string()

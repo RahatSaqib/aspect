@@ -180,6 +180,7 @@ describe('Authentication routes', () => {
               assert.property(res.body, 'culture')
               assert.property(res.body, 'displayPreferences')
               assert.property(res.body, 'timezone')
+              assert.property(res.body, 'countryAbbreviation')
               const jwtdecoded = jwtDecode(res.body.access)
               assert.property(jwtdecoded, 'hasToAcceptLicenseId')
               assert.isNull(jwtdecoded.hasToAcceptLicenseId)
