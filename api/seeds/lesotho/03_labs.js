@@ -2,6 +2,8 @@ module.exports = require('../utils').seed(seed, __filename)
 
 const bcrypt = require('bcrypt')
 const geography = require('./fixtures/geography.json')
+const { allDiseaseToId } = require('../../src/shared/dictionary')
+
 const {
   ensureResultTreatmentStatuses,
   upsertStatesAndLgas,
@@ -124,13 +126,18 @@ async function seed(knex) {
     updatedBy: adminId,
     updatedOn: now,
   })
-
+  const diseases = await allDiseaseToId()
   // job function for user
-  await knex('Job').insert({
+  const [joibIdMaseru] = await knex('Job').insert({
     personId: personIdMaseru,
     jobFunctionId: jobFunctionIdLab,
   })
 
+  // context for user
+  await knex('JobContext').insert({
+    jobId: joibIdMaseru,
+    diseaseId: diseases.hiv,
+  })
   // Create User
   const [userIdTeyateyaneng] = await knex('User').insert({
     name: 'teyateyaneng_lab',
@@ -162,8 +169,13 @@ async function seed(knex) {
   })
 
   // job function for user
-  await knex('Job').insert({
+  const [jobIdLab2] = await knex('Job').insert({
     personId: personIdTeyateyaneng,
     jobFunctionId: jobFunctionIdLab,
+  })
+  // context for user
+  await knex('JobContext').insert({
+    jobId: jobIdLab2,
+    diseaseId: diseases.tb,
   })
 }
