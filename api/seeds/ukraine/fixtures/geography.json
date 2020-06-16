@@ -1,0 +1,4850 @@
+{
+  "countries": [
+    {
+      "abbreviation": "UA",
+      "name": "Ukraine",
+      "a3": "UKR",
+      "culture": "uk-UA",
+      "countryCode": "380",
+      "timezone": "Eastern European Time",
+      "portNumber": null,
+      "exportColumns": "DeploymentDescription|TestEndedOn|AssayName|AssayVersion|User|Result1|Result2|HIV|DRSuspect|PatientAge|PatientGender|PatientLGA|ReagentLotID|ExpirationDate|CartridgeSerial|ModuleSerial|SoftwareVersion|ErrorCode|ErrorCategory|ErrorDescription|SampleId|Notes|ProbeA",
+      "inventoryDaysThreshold": 21,
+      "monthStartsOnDay": 1,
+      "states": [
+        {
+          "name": "Autonomous Republic of Crimea",
+          "lgas": [
+            {
+              "name": "Abrikosovka"
+            },
+            {
+              "name": "Abrikosovo"
+            },
+            {
+              "name": "Aeroflotskiy"
+            },
+            {
+              "name": "Agrarnoye"
+            },
+            {
+              "name": "Akimovka"
+            },
+            {
+              "name": "Aleksandrovka"
+            },
+            {
+              "name": "Alekseyevka"
+            },
+            {
+              "name": "Alupka"
+            },
+            {
+              "name": "Alushta"
+            },
+            {
+              "name": "Amurskoye"
+            },
+            {
+              "name": "Armyansk"
+            },
+            {
+              "name": "Aromatnoye"
+            },
+            {
+              "name": "Azovskoye"
+            },
+            {
+              "name": "Baherove"
+            },
+            {
+              "name": "Bakhchysarai"
+            },
+            {
+              "name": "Bakhchysarai Raion"
+            },
+            {
+              "name": "Batal’noye"
+            },
+            {
+              "name": "Belinskoye"
+            },
+            {
+              "name": "Beloglinka"
+            },
+            {
+              "name": "Belogorskiy rayon"
+            },
+            {
+              "name": "Beregovoye"
+            },
+            {
+              "name": "Berezovka"
+            },
+            {
+              "name": "Bilohirsk"
+            },
+            {
+              "name": "Blizhneye"
+            },
+            {
+              "name": "Bogatoye"
+            },
+            {
+              "name": "Botanicheskoye"
+            },
+            {
+              "name": "Bratskoye"
+            },
+            {
+              "name": "Chapayevka"
+            },
+            {
+              "name": "Chaykino"
+            },
+            {
+              "name": "Chelyadinovo"
+            },
+            {
+              "name": "Chernomorskiy rayon"
+            },
+            {
+              "name": "Chernomorskoye"
+            },
+            {
+              "name": "Chernopolye"
+            },
+            {
+              "name": "Chernovo"
+            },
+            {
+              "name": "Chernozemnoye"
+            },
+            {
+              "name": "Chernyshevo"
+            },
+            {
+              "name": "Chervonoye"
+            },
+            {
+              "name": "Chisten’koye"
+            },
+            {
+              "name": "Chistopolye"
+            },
+            {
+              "name": "Chkalovo"
+            },
+            {
+              "name": "Dachnoye"
+            },
+            {
+              "name": "Dalekoye"
+            },
+            {
+              "name": "Dmitrovka"
+            },
+            {
+              "name": "Dneprovka"
+            },
+            {
+              "name": "Dobroye"
+            },
+            {
+              "name": "Dobrushino"
+            },
+            {
+              "name": "Dolinnoye"
+            },
+            {
+              "name": "Donskoye"
+            },
+            {
+              "name": "Drofino"
+            },
+            {
+              "name": "Dubki"
+            },
+            {
+              "name": "Dzhankoy"
+            },
+            {
+              "name": "Dzhankoyskiy rayon"
+            },
+            {
+              "name": "Feodosiya"
+            },
+            {
+              "name": "Filatovka"
+            },
+            {
+              "name": "Fontany"
+            },
+            {
+              "name": "Foros"
+            },
+            {
+              "name": "Frunze"
+            },
+            {
+              "name": "Gaspra"
+            },
+            {
+              "name": "Geroyskoye"
+            },
+            {
+              "name": "Glazovka"
+            },
+            {
+              "name": "Golubinka"
+            },
+            {
+              "name": "Gornostayevka"
+            },
+            {
+              "name": "Gorodskoy okrug Alushta"
+            },
+            {
+              "name": "Gorodskoy okrug Armyansk"
+            },
+            {
+              "name": "Gorodskoy okrug Dzhankoy"
+            },
+            {
+              "name": "Gorodskoy okrug Feodosiya"
+            },
+            {
+              "name": "Gorodskoy okrug Krasnoperekopsk"
+            },
+            {
+              "name": "Gorodskoy okrug Saki"
+            },
+            {
+              "name": "Gorodskoy okrug Simferopol"
+            },
+            {
+              "name": "Gorodskoy okrug Sudak"
+            },
+            {
+              "name": "Gorodskoy okrug Yalta"
+            },
+            {
+              "name": "Gorodskoy okrug Yevpatoriya"
+            },
+            {
+              "name": "Gresovskiy"
+            },
+            {
+              "name": "Grishino"
+            },
+            {
+              "name": "Grushevka"
+            },
+            {
+              "name": "Gurzuf"
+            },
+            {
+              "name": "Hvardiiske"
+            },
+            {
+              "name": "Ilychyovo"
+            },
+            {
+              "name": "Ilyichevo"
+            },
+            {
+              "name": "Ilyinka"
+            },
+            {
+              "name": "Ishun’"
+            },
+            {
+              "name": "Ivanovka"
+            },
+            {
+              "name": "Izobil’noye"
+            },
+            {
+              "name": "Izumrudnoye"
+            },
+            {
+              "name": "Izyumovka"
+            },
+            {
+              "name": "Kalinino"
+            },
+            {
+              "name": "Kalinovka"
+            },
+            {
+              "name": "Kamenolomnya"
+            },
+            {
+              "name": "Kashtanovoye"
+            },
+            {
+              "name": "Kashtany"
+            },
+            {
+              "name": "Kerch"
+            },
+            {
+              "name": "Kerchens'ka Mis'ka Rada"
+            },
+            {
+              "name": "Kholmovka"
+            },
+            {
+              "name": "Kirovo"
+            },
+            {
+              "name": "Kirovske Raion"
+            },
+            {
+              "name": "Kirovskoye"
+            },
+            {
+              "name": "Klepinino"
+            },
+            {
+              "name": "Koktebel"
+            },
+            {
+              "name": "Kol’chugino"
+            },
+            {
+              "name": "Kol’tsovo"
+            },
+            {
+              "name": "Kolodeznoye"
+            },
+            {
+              "name": "Koloski"
+            },
+            {
+              "name": "Komsomol’skoye"
+            },
+            {
+              "name": "Kondratyevo"
+            },
+            {
+              "name": "Konstantinovka"
+            },
+            {
+              "name": "Koreiz"
+            },
+            {
+              "name": "Kormovoye"
+            },
+            {
+              "name": "Kostochkovka"
+            },
+            {
+              "name": "Kotel’nikovo"
+            },
+            {
+              "name": "Kovyl’noye"
+            },
+            {
+              "name": "Krasna Zor'ka"
+            },
+            {
+              "name": "Krasnaya Polyana"
+            },
+            {
+              "name": "Krasnoarmeyskoye"
+            },
+            {
+              "name": "Krasnoflotskoye"
+            },
+            {
+              "name": "Krasnogorka"
+            },
+            {
+              "name": "Krasnogvardeyskoye"
+            },
+            {
+              "name": "Krasnohvardiiske Raion"
+            },
+            {
+              "name": "Krasnokamenka"
+            },
+            {
+              "name": "Krasnolesye"
+            },
+            {
+              "name": "Krasnoperekops’k"
+            },
+            {
+              "name": "Krasnoperekopsk Raion"
+            },
+            {
+              "name": "Krasnoyarskoye"
+            },
+            {
+              "name": "Krasnoye"
+            },
+            {
+              "name": "Krasnoznamenka"
+            },
+            {
+              "name": "Krasnyi Mak"
+            },
+            {
+              "name": "Krayneye"
+            },
+            {
+              "name": "Krest’yanovka"
+            },
+            {
+              "name": "Krinichnoye"
+            },
+            {
+              "name": "Krymka"
+            },
+            {
+              "name": "Krymskaya Roza"
+            },
+            {
+              "name": "Krymskoye"
+            },
+            {
+              "name": "Kuibyshevo"
+            },
+            {
+              "name": "Kukushkino"
+            },
+            {
+              "name": "Kurskoye"
+            },
+            {
+              "name": "L’govskoye"
+            },
+            {
+              "name": "Lekarstvennoye"
+            },
+            {
+              "name": "Lenine Raion"
+            },
+            {
+              "name": "Lenino"
+            },
+            {
+              "name": "Leninskoye"
+            },
+            {
+              "name": "Lesnovka"
+            },
+            {
+              "name": "Levadki"
+            },
+            {
+              "name": "Listvennoye"
+            },
+            {
+              "name": "Litvinenkovo"
+            },
+            {
+              "name": "Livadia"
+            },
+            {
+              "name": "Lobanovo"
+            },
+            {
+              "name": "Lozovoye"
+            },
+            {
+              "name": "Luchistoye"
+            },
+            {
+              "name": "Luganskoye"
+            },
+            {
+              "name": "Lugovoye"
+            },
+            {
+              "name": "Magazinka"
+            },
+            {
+              "name": "Malen’koye"
+            },
+            {
+              "name": "Malorechenskoye"
+            },
+            {
+              "name": "Maly Mayak"
+            },
+            {
+              "name": "Mar’yanovka"
+            },
+            {
+              "name": "Marfovka"
+            },
+            {
+              "name": "Maryevka"
+            },
+            {
+              "name": "Maslovo"
+            },
+            {
+              "name": "Massandra"
+            },
+            {
+              "name": "Mayskoye"
+            },
+            {
+              "name": "Mazanka"
+            },
+            {
+              "name": "Medvedevka"
+            },
+            {
+              "name": "Medvedevo"
+            },
+            {
+              "name": "Mel’nichnoye"
+            },
+            {
+              "name": "Mezhvodnoye"
+            },
+            {
+              "name": "Michurinskoye"
+            },
+            {
+              "name": "Mikhaylovka"
+            },
+            {
+              "name": "Mirnovka"
+            },
+            {
+              "name": "Mirnoye"
+            },
+            {
+              "name": "Mirny"
+            },
+            {
+              "name": "Mitrofanovka"
+            },
+            {
+              "name": "Mityayevo"
+            },
+            {
+              "name": "Molochnoye"
+            },
+            {
+              "name": "Molodyozhnoye"
+            },
+            {
+              "name": "Morskoye"
+            },
+            {
+              "name": "Muromskoye"
+            },
+            {
+              "name": "Muskatnoye"
+            },
+            {
+              "name": "Mysovoe"
+            },
+            {
+              "name": "Nasypnoe"
+            },
+            {
+              "name": "Naydenovka"
+            },
+            {
+              "name": "Nekrasovka"
+            },
+            {
+              "name": "Nekrasovo"
+            },
+            {
+              "name": "Nikita"
+            },
+            {
+              "name": "Nikolayevka"
+            },
+            {
+              "name": "Nizhnegorskiy"
+            },
+            {
+              "name": "Nizhnegorskiy rayon"
+            },
+            {
+              "name": "Novoandreyevka"
+            },
+            {
+              "name": "Novoestoniya"
+            },
+            {
+              "name": "Novofedorovka"
+            },
+            {
+              "name": "Novogrigoryevka"
+            },
+            {
+              "name": "Novoivanovka"
+            },
+            {
+              "name": "Novokrymskoye"
+            },
+            {
+              "name": "Novonikolayevka"
+            },
+            {
+              "name": "Novoozyornoye"
+            },
+            {
+              "name": "Novopavlovka"
+            },
+            {
+              "name": "Novopokrovka"
+            },
+            {
+              "name": "Novosel’skoye"
+            },
+            {
+              "name": "Novoselovskoye"
+            },
+            {
+              "name": "Novostepnoye"
+            },
+            {
+              "name": "Novosyolovka"
+            },
+            {
+              "name": "Novozhilovka"
+            },
+            {
+              "name": "Novy Svet"
+            },
+            {
+              "name": "Okhotnikovo"
+            },
+            {
+              "name": "Okhotskoye"
+            },
+            {
+              "name": "Oktyabr'skoye"
+            },
+            {
+              "name": "Oktyabr’skoye"
+            },
+            {
+              "name": "Okunevka"
+            },
+            {
+              "name": "Olenevka"
+            },
+            {
+              "name": "Ordzhonikidze"
+            },
+            {
+              "name": "Orekhovo"
+            },
+            {
+              "name": "Orlovskoye"
+            },
+            {
+              "name": "Ostanino"
+            },
+            {
+              "name": "Ostrovskoye"
+            },
+            {
+              "name": "Pakharevka"
+            },
+            {
+              "name": "Partenit"
+            },
+            {
+              "name": "Partizanskoye"
+            },
+            {
+              "name": "Partizany"
+            },
+            {
+              "name": "Pereval'noye"
+            },
+            {
+              "name": "Perovo"
+            },
+            {
+              "name": "Pervomayskiy rayon"
+            },
+            {
+              "name": "Pervomayskoye"
+            },
+            {
+              "name": "Peschanoye"
+            },
+            {
+              "name": "Petrovka"
+            },
+            {
+              "name": "Pionerskoye"
+            },
+            {
+              "name": "Plodovoye"
+            },
+            {
+              "name": "Pobednoye"
+            },
+            {
+              "name": "Pochetnoye"
+            },
+            {
+              "name": "Poltavka"
+            },
+            {
+              "name": "Poshtove"
+            },
+            {
+              "name": "Pozharskoye"
+            },
+            {
+              "name": "Pravda"
+            },
+            {
+              "name": "Primorskiy"
+            },
+            {
+              "name": "Priozyornoye"
+            },
+            {
+              "name": "Privetnoye"
+            },
+            {
+              "name": "Prostornoye"
+            },
+            {
+              "name": "Prudovoye"
+            },
+            {
+              "name": "Prudy"
+            },
+            {
+              "name": "Pshenichnoye"
+            },
+            {
+              "name": "Pushkino"
+            },
+            {
+              "name": "Pyatikhatka"
+            },
+            {
+              "name": "Razdol’nenskiy rayon"
+            },
+            {
+              "name": "Razdol’noye"
+            },
+            {
+              "name": "Rodnikovo"
+            },
+            {
+              "name": "Romashkino"
+            },
+            {
+              "name": "Roshchino"
+            },
+            {
+              "name": "Roskoshnoye"
+            },
+            {
+              "name": "Rovnoye"
+            },
+            {
+              "name": "Ruch’i"
+            },
+            {
+              "name": "Rusakovka"
+            },
+            {
+              "name": "Rybach'e"
+            },
+            {
+              "name": "Sadovoye"
+            },
+            {
+              "name": "Saki"
+            },
+            {
+              "name": "Sakskiy rayon"
+            },
+            {
+              "name": "Sary-Bash"
+            },
+            {
+              "name": "Semisotka"
+            },
+            {
+              "name": "Senokosnoye"
+            },
+            {
+              "name": "Serebryanka"
+            },
+            {
+              "name": "Shchebetovka"
+            },
+            {
+              "name": "Shchyolkino"
+            },
+            {
+              "name": "Shelkovichnoye"
+            },
+            {
+              "name": "Shirokoye"
+            },
+            {
+              "name": "Shkol’noye"
+            },
+            {
+              "name": "Shtormovoye"
+            },
+            {
+              "name": "Simeiz"
+            },
+            {
+              "name": "Simferopol"
+            },
+            {
+              "name": "Simferopol Raion"
+            },
+            {
+              "name": "Sinitsyno"
+            },
+            {
+              "name": "Sizovka"
+            },
+            {
+              "name": "Skalistoye"
+            },
+            {
+              "name": "Skvortsovo"
+            },
+            {
+              "name": "Slavnoye"
+            },
+            {
+              "name": "Slavyanskoye"
+            },
+            {
+              "name": "Sofiivka"
+            },
+            {
+              "name": "Sokolinoye"
+            },
+            {
+              "name": "Solnechnaya Dolina"
+            },
+            {
+              "name": "Solnechnogorskoye"
+            },
+            {
+              "name": "Solnechnoye"
+            },
+            {
+              "name": "Sovetskiy"
+            },
+            {
+              "name": "Sovietskyi Raion"
+            },
+            {
+              "name": "Sovkhoznoye"
+            },
+            {
+              "name": "Stakhanovka"
+            },
+            {
+              "name": "Stal’noye"
+            },
+            {
+              "name": "Stary Krym"
+            },
+            {
+              "name": "Stepnoye"
+            },
+            {
+              "name": "Stolbovoye"
+            },
+            {
+              "name": "Strogonovka"
+            },
+            {
+              "name": "Sudak"
+            },
+            {
+              "name": "Susanino"
+            },
+            {
+              "name": "Suvorovo"
+            },
+            {
+              "name": "Suvorovskoye"
+            },
+            {
+              "name": "Svetloye"
+            },
+            {
+              "name": "Tabachnoye"
+            },
+            {
+              "name": "Tankovoye"
+            },
+            {
+              "name": "Tenistoye"
+            },
+            {
+              "name": "Teplovka"
+            },
+            {
+              "name": "Tokarevo"
+            },
+            {
+              "name": "Trudovoye"
+            },
+            {
+              "name": "Tselinnoye"
+            },
+            {
+              "name": "Tsvetochnoye"
+            },
+            {
+              "name": "Turgenevka"
+            },
+            {
+              "name": "Uglovoye"
+            },
+            {
+              "name": "Ukrainka"
+            },
+            {
+              "name": "Ukromnoye"
+            },
+            {
+              "name": "Urozhaynoye"
+            },
+            {
+              "name": "Uvarovka"
+            },
+            {
+              "name": "Uvarovo"
+            },
+            {
+              "name": "Uyutnoye"
+            },
+            {
+              "name": "Vasilyevka"
+            },
+            {
+              "name": "Veresayevo"
+            },
+            {
+              "name": "Verkhorechye"
+            },
+            {
+              "name": "Vesele"
+            },
+            {
+              "name": "Veselovka"
+            },
+            {
+              "name": "Vilino"
+            },
+            {
+              "name": "Vinnitskoye"
+            },
+            {
+              "name": "Vinogradnoye"
+            },
+            {
+              "name": "Vinogradovo"
+            },
+            {
+              "name": "Vishennoye"
+            },
+            {
+              "name": "Vishnyovka"
+            },
+            {
+              "name": "Vladimirovka"
+            },
+            {
+              "name": "Vladislavovka"
+            },
+            {
+              "name": "Voinka"
+            },
+            {
+              "name": "Vol’noye"
+            },
+            {
+              "name": "Vorobyovo"
+            },
+            {
+              "name": "Voskhod"
+            },
+            {
+              "name": "Voykovo"
+            },
+            {
+              "name": "Yalta"
+            },
+            {
+              "name": "Yantarnoye"
+            },
+            {
+              "name": "Yarkoye"
+            },
+            {
+              "name": "Yarkoye Pole"
+            },
+            {
+              "name": "Yasnopolyanskoye"
+            },
+            {
+              "name": "Yemelyanovka"
+            },
+            {
+              "name": "Yermakovo"
+            },
+            {
+              "name": "Yevpatoriya"
+            },
+            {
+              "name": "Zalesye"
+            },
+            {
+              "name": "Zaozyornoye"
+            },
+            {
+              "name": "Zarechnoye"
+            },
+            {
+              "name": "Zavet-Leninskiy"
+            },
+            {
+              "name": "Zavetnoye"
+            },
+            {
+              "name": "Zelenogorskoye"
+            },
+            {
+              "name": "Zelyonoye"
+            },
+            {
+              "name": "Zemlyanichnoye"
+            },
+            {
+              "name": "Zernovoye"
+            },
+            {
+              "name": "Zheleznodorozhnoye"
+            },
+            {
+              "name": "Zhelyabovka"
+            },
+            {
+              "name": "Zhemchuzhina"
+            },
+            {
+              "name": "Zhuravki"
+            },
+            {
+              "name": "Zhuravli"
+            },
+            {
+              "name": "Zhuravlyovka"
+            },
+            {
+              "name": "Zimino"
+            },
+            {
+              "name": "Zolotoye Pole"
+            },
+            {
+              "name": "Zorkino"
+            },
+            {
+              "name": "Zuya"
+            },
+            {
+              "name": "Zybiny"
+            }
+          ]
+        },
+        {
+          "name": "Cherkasy Oblast",
+          "lgas": [
+            {
+              "name": "Babanka"
+            },
+            {
+              "name": "Buky"
+            },
+            {
+              "name": "Cherkasy"
+            },
+            {
+              "name": "Chervona Sloboda"
+            },
+            {
+              "name": "Chornobay"
+            },
+            {
+              "name": "Chyhyryn"
+            },
+            {
+              "name": "Drabiv"
+            },
+            {
+              "name": "Horodyshche"
+            },
+            {
+              "name": "Kamianka"
+            },
+            {
+              "name": "Kaniv"
+            },
+            {
+              "name": "Khrystynivka"
+            },
+            {
+              "name": "Korsun-Shevchenkivskyi"
+            },
+            {
+              "name": "Lebedyn"
+            },
+            {
+              "name": "Lysianka"
+            },
+            {
+              "name": "Mankivka"
+            },
+            {
+              "name": "Mliiv"
+            },
+            {
+              "name": "Monastyryshche"
+            },
+            {
+              "name": "Moshny"
+            },
+            {
+              "name": "Nove-Misto"
+            },
+            {
+              "name": "Ruska Poliana"
+            },
+            {
+              "name": "Shpola"
+            },
+            {
+              "name": "Smila"
+            },
+            {
+              "name": "Stebliv"
+            },
+            {
+              "name": "Talne"
+            },
+            {
+              "name": "Tsibulev"
+            },
+            {
+              "name": "Tsvitkove"
+            },
+            {
+              "name": "Uman"
+            },
+            {
+              "name": "Vatutine"
+            },
+            {
+              "name": "Verkhniachka"
+            },
+            {
+              "name": "Yerky"
+            },
+            {
+              "name": "Yurkivka"
+            },
+            {
+              "name": "Zhashkiv"
+            },
+            {
+              "name": "Zolotonosha"
+            },
+            {
+              "name": "Zvenihorodka"
+            }
+          ]
+        },
+        {
+          "name": "Chernihiv Oblast",
+          "lgas": [
+            {
+              "name": "Avdiyivka"
+            },
+            {
+              "name": "Bakhmach"
+            },
+            {
+              "name": "Baturyn"
+            },
+            {
+              "name": "Berezna"
+            },
+            {
+              "name": "Bobrovytsya"
+            },
+            {
+              "name": "Borzna"
+            },
+            {
+              "name": "Chernihiv"
+            },
+            {
+              "name": "Chernihiv Raion"
+            },
+            {
+              "name": "Chernihivs’ka Mis’krada"
+            },
+            {
+              "name": "Desna"
+            },
+            {
+              "name": "Dihtyari"
+            },
+            {
+              "name": "Dobryanka"
+            },
+            {
+              "name": "Horodnya"
+            },
+            {
+              "name": "Ichnya"
+            },
+            {
+              "name": "Kholmy"
+            },
+            {
+              "name": "Kobyzhcha"
+            },
+            {
+              "name": "Korop"
+            },
+            {
+              "name": "Koryukivka"
+            },
+            {
+              "name": "Kozelets’"
+            },
+            {
+              "name": "Kruty"
+            },
+            {
+              "name": "Kulykivka"
+            },
+            {
+              "name": "Ladan"
+            },
+            {
+              "name": "Lisovi Sorochyntsi"
+            },
+            {
+              "name": "Lyubech"
+            },
+            {
+              "name": "Mena"
+            },
+            {
+              "name": "Mens’kyy Rayon"
+            },
+            {
+              "name": "Nizhyn"
+            },
+            {
+              "name": "Nosivka"
+            },
+            {
+              "name": "Novhorod-Sivers’kyy"
+            },
+            {
+              "name": "Olyshivka"
+            },
+            {
+              "name": "Oster"
+            },
+            {
+              "name": "Pryluky"
+            },
+            {
+              "name": "Ripky"
+            },
+            {
+              "name": "Sedniv"
+            },
+            {
+              "name": "Semenivka"
+            },
+            {
+              "name": "Shchors"
+            },
+            {
+              "name": "Snovs'kyy Rayon"
+            },
+            {
+              "name": "Sosnytsya"
+            },
+            {
+              "name": "Sribne"
+            },
+            {
+              "name": "Varva"
+            },
+            {
+              "name": "Zhuravka"
+            }
+          ]
+        },
+        {
+          "name": "Chernivtsi Oblast",
+          "lgas": [
+            {
+              "name": "Banyliv"
+            },
+            {
+              "name": "Berehomet"
+            },
+            {
+              "name": "Boyany"
+            },
+            {
+              "name": "Chernivtsi"
+            },
+            {
+              "name": "Chernivtsi Municipality"
+            },
+            {
+              "name": "Chudey"
+            },
+            {
+              "name": "Davydivka"
+            },
+            {
+              "name": "Hlyboka"
+            },
+            {
+              "name": "Ispas"
+            },
+            {
+              "name": "Kadubivtsi"
+            },
+            {
+              "name": "Khotyn"
+            },
+            {
+              "name": "Klishkivtsi"
+            },
+            {
+              "name": "Kostryzhivka"
+            },
+            {
+              "name": "Luzhany"
+            },
+            {
+              "name": "Marshintsy"
+            },
+            {
+              "name": "Molodiya"
+            },
+            {
+              "name": "Myhove"
+            },
+            {
+              "name": "Novodnistrovs’k"
+            },
+            {
+              "name": "Novoselytsya"
+            },
+            {
+              "name": "Nyzhni Petrivtsi"
+            },
+            {
+              "name": "Putyla Raion"
+            },
+            {
+              "name": "Ropcha"
+            },
+            {
+              "name": "Shypyntsi"
+            },
+            {
+              "name": "Sokyryany"
+            },
+            {
+              "name": "Vashkivtsi"
+            },
+            {
+              "name": "Verenchanka"
+            },
+            {
+              "name": "Voloka"
+            },
+            {
+              "name": "Vyzhnytsya"
+            },
+            {
+              "name": "Yizhivtsi"
+            },
+            {
+              "name": "Zastavna"
+            }
+          ]
+        },
+        {
+          "name": "Dnipropetrovsk Oblast",
+          "lgas": [
+            {
+              "name": "Apostolove"
+            },
+            {
+              "name": "Auly"
+            },
+            {
+              "name": "Aviatorske"
+            },
+            {
+              "name": "Chervonohryhorivka"
+            },
+            {
+              "name": "Chortomlyk"
+            },
+            {
+              "name": "Dnipro"
+            },
+            {
+              "name": "Dnipro Raion"
+            },
+            {
+              "name": "Dniprovs’ka Mis’ka Rada"
+            },
+            {
+              "name": "Hubynykha"
+            },
+            {
+              "name": "Hupalivka"
+            },
+            {
+              "name": "Kamianske"
+            },
+            {
+              "name": "Kaydaki"
+            },
+            {
+              "name": "Krynychky"
+            },
+            {
+              "name": "Kryvoriz’ka Mis’krada"
+            },
+            {
+              "name": "Kryvyi Rih"
+            },
+            {
+              "name": "Lykhivka"
+            },
+            {
+              "name": "Mahdalynivka"
+            },
+            {
+              "name": "Mahdalynivs’kyy Rayon"
+            },
+            {
+              "name": "Marhanets’"
+            },
+            {
+              "name": "Melioratyvne"
+            },
+            {
+              "name": "Mezhova"
+            },
+            {
+              "name": "Nikopol"
+            },
+            {
+              "name": "Novomoskovs’k"
+            },
+            {
+              "name": "Novomoskovsk Raion"
+            },
+            {
+              "name": "Novomykolayivka"
+            },
+            {
+              "name": "Novopokrovka"
+            },
+            {
+              "name": "Ordzhonikidze"
+            },
+            {
+              "name": "Partyzans’ke"
+            },
+            {
+              "name": "Pavlohrad"
+            },
+            {
+              "name": "Petropavlivka"
+            },
+            {
+              "name": "Petrykivka"
+            },
+            {
+              "name": "Petrykivs’kyy Rayon"
+            },
+            {
+              "name": "Piatykhatky"
+            },
+            {
+              "name": "Pidhorodne"
+            },
+            {
+              "name": "Sholokhove"
+            },
+            {
+              "name": "Shyroke"
+            },
+            {
+              "name": "Shyroke Raion"
+            },
+            {
+              "name": "Sofiyivka"
+            },
+            {
+              "name": "Solone"
+            },
+            {
+              "name": "Solone Raion"
+            },
+            {
+              "name": "Spas’ke"
+            },
+            {
+              "name": "Surs’ko-Mykhaylivka"
+            },
+            {
+              "name": "Synel’nykove"
+            },
+            {
+              "name": "Tomakivka"
+            },
+            {
+              "name": "Tsarychanka"
+            },
+            {
+              "name": "Tsarychans’kyy Rayon"
+            },
+            {
+              "name": "Verkhn’odniprovs’k"
+            },
+            {
+              "name": "Vil’ne"
+            },
+            {
+              "name": "Vyshchetarasivka"
+            },
+            {
+              "name": "Vyshneve"
+            },
+            {
+              "name": "Yur”yivs’kyy Rayon"
+            },
+            {
+              "name": "Zhovti Vody"
+            }
+          ]
+        },
+        {
+          "name": "Donetsk Oblast",
+          "lgas": [
+            {
+              "name": "Amvrosiivka Raion"
+            },
+            {
+              "name": "Amvrosiyivka"
+            },
+            {
+              "name": "Avdiyivka"
+            },
+            {
+              "name": "Bakhmut"
+            },
+            {
+              "name": "Bakhmut Raion"
+            },
+            {
+              "name": "Bezimenne"
+            },
+            {
+              "name": "Bilyts’ke"
+            },
+            {
+              "name": "Blahodatne"
+            },
+            {
+              "name": "Boykivske"
+            },
+            {
+              "name": "Boykivske Raion"
+            },
+            {
+              "name": "Chasiv Yar"
+            },
+            {
+              "name": "Chystyakove"
+            },
+            {
+              "name": "Debal’tseve"
+            },
+            {
+              "name": "Dmytrivka"
+            },
+            {
+              "name": "Dobropillia Raion"
+            },
+            {
+              "name": "Dobropillya"
+            },
+            {
+              "name": "Dokuchayevs’k"
+            },
+            {
+              "name": "Donetsk"
+            },
+            {
+              "name": "Druzhkivka"
+            },
+            {
+              "name": "Horlivka"
+            },
+            {
+              "name": "Ilovays’k"
+            },
+            {
+              "name": "Khartsyz’k"
+            },
+            {
+              "name": "Kostiantynivka Raion"
+            },
+            {
+              "name": "Kostyantynivka"
+            },
+            {
+              "name": "Kramators’k"
+            },
+            {
+              "name": "Krasnotorka"
+            },
+            {
+              "name": "Krinichnaya"
+            },
+            {
+              "name": "Kurakhovo"
+            },
+            {
+              "name": "Kuteynykove"
+            },
+            {
+              "name": "Luhans’ke"
+            },
+            {
+              "name": "Lyman"
+            },
+            {
+              "name": "Lyman Raion"
+            },
+            {
+              "name": "Makiyivka"
+            },
+            {
+              "name": "Makiyivs’ka Mis’krada"
+            },
+            {
+              "name": "Manhush"
+            },
+            {
+              "name": "Mar'yinka"
+            },
+            {
+              "name": "Mariupol"
+            },
+            {
+              "name": "Melekyne"
+            },
+            {
+              "name": "Mospyne"
+            },
+            {
+              "name": "Myrnohrad"
+            },
+            {
+              "name": "Nikolske Raion"
+            },
+            {
+              "name": "Novoazovs'k"
+            },
+            {
+              "name": "Novodonets’ke"
+            },
+            {
+              "name": "Novyy Svit"
+            },
+            {
+              "name": "Nyzhnya Krynka"
+            },
+            {
+              "name": "P'yatypill'ya"
+            },
+            {
+              "name": "Pokrovsk"
+            },
+            {
+              "name": "Pokrovsk Raion"
+            },
+            {
+              "name": "Rodyns’ke"
+            },
+            {
+              "name": "Rozsypne"
+            },
+            {
+              "name": "Sartana"
+            },
+            {
+              "name": "Selydivs’ka Mis’krada"
+            },
+            {
+              "name": "Selydove"
+            },
+            {
+              "name": "Serebryanka"
+            },
+            {
+              "name": "Shakhtars’k"
+            },
+            {
+              "name": "Shcherbynivka"
+            },
+            {
+              "name": "Shyroke"
+            },
+            {
+              "name": "Sivers’k"
+            },
+            {
+              "name": "Sloviansk"
+            },
+            {
+              "name": "Sloviansk Raion"
+            },
+            {
+              "name": "Snizhne"
+            },
+            {
+              "name": "Soledar"
+            },
+            {
+              "name": "Starobesheve"
+            },
+            {
+              "name": "Staryy Krym"
+            },
+            {
+              "name": "Stizhkivs’ke"
+            },
+            {
+              "name": "Svetlodarsk"
+            },
+            {
+              "name": "Svyatogorsk"
+            },
+            {
+              "name": "Syedove"
+            },
+            {
+              "name": "Temriuk"
+            },
+            {
+              "name": "Toretsk"
+            },
+            {
+              "name": "Urzuf"
+            },
+            {
+              "name": "Volnovakha"
+            },
+            {
+              "name": "Vuhlehirs’k"
+            },
+            {
+              "name": "Yalta"
+            },
+            {
+              "name": "Yasynuvata"
+            },
+            {
+              "name": "Yasynuvata Raion"
+            },
+            {
+              "name": "Yenakiyeve"
+            },
+            {
+              "name": "Zuhres"
+            }
+          ]
+        },
+        {
+          "name": "Ivano-Frankivsk Oblast",
+          "lgas": [
+            {
+              "name": "Bili Oslavy"
+            },
+            {
+              "name": "Bilshivtsi"
+            },
+            {
+              "name": "Bohorodchans’kyy Rayon"
+            },
+            {
+              "name": "Bohorodchany"
+            },
+            {
+              "name": "Bolekhiv"
+            },
+            {
+              "name": "Bolekhivs’ka Mis’krada"
+            },
+            {
+              "name": "Borshchevskiy Rayon"
+            },
+            {
+              "name": "Broshniv-Osada"
+            },
+            {
+              "name": "Burshtyn"
+            },
+            {
+              "name": "Burshtyns’ka Mis’krada"
+            },
+            {
+              "name": "Bystrytsya"
+            },
+            {
+              "name": "Bytkiv"
+            },
+            {
+              "name": "Chernelytsya"
+            },
+            {
+              "name": "Cherniyiv"
+            },
+            {
+              "name": "Chernyatyn"
+            },
+            {
+              "name": "Chornoliztsi"
+            },
+            {
+              "name": "Delyatyn"
+            },
+            {
+              "name": "Dolyna"
+            },
+            {
+              "name": "Dolyns’kyy Rayon"
+            },
+            {
+              "name": "Halych"
+            },
+            {
+              "name": "Halyts’kyy Rayon"
+            },
+            {
+              "name": "Horodenka"
+            },
+            {
+              "name": "Horodenkivs’kyy Rayon"
+            },
+            {
+              "name": "Hvizd"
+            },
+            {
+              "name": "Ivano-Frankivs’ka Mis’krada"
+            },
+            {
+              "name": "Ivano-Frankivsk"
+            },
+            {
+              "name": "Kalus’kyy Rayon"
+            },
+            {
+              "name": "Kalush"
+            },
+            {
+              "name": "Khymchyn"
+            },
+            {
+              "name": "Kolomyia"
+            },
+            {
+              "name": "Kolomyys’kyy Rayon"
+            },
+            {
+              "name": "Kosiv"
+            },
+            {
+              "name": "Kosivs’kyy Rayon"
+            },
+            {
+              "name": "Kosmach"
+            },
+            {
+              "name": "Krasna"
+            },
+            {
+              "name": "Kuty"
+            },
+            {
+              "name": "Lanchyn"
+            },
+            {
+              "name": "Manyava"
+            },
+            {
+              "name": "Markova"
+            },
+            {
+              "name": "Nadvirna"
+            },
+            {
+              "name": "Nadvirnyans’kyy Rayon"
+            },
+            {
+              "name": "Nebyliv"
+            },
+            {
+              "name": "Novytsya"
+            },
+            {
+              "name": "Obertyn"
+            },
+            {
+              "name": "Otyniya"
+            },
+            {
+              "name": "Pasichna"
+            },
+            {
+              "name": "Pechenizhyn"
+            },
+            {
+              "name": "Petranka"
+            },
+            {
+              "name": "Pniv"
+            },
+            {
+              "name": "Porohy"
+            },
+            {
+              "name": "Radcha"
+            },
+            {
+              "name": "Rechka"
+            },
+            {
+              "name": "Rohatyn"
+            },
+            {
+              "name": "Rohatyns’kyy Rayon"
+            },
+            {
+              "name": "Rozhniativ"
+            },
+            {
+              "name": "Rozhniv"
+            },
+            {
+              "name": "Rozhnyativs’kyy Rayon"
+            },
+            {
+              "name": "Sadzhavka"
+            },
+            {
+              "name": "Sheshory"
+            },
+            {
+              "name": "Sniatyn"
+            },
+            {
+              "name": "Snyatyns’kyy Rayon"
+            },
+            {
+              "name": "Solotvyn"
+            },
+            {
+              "name": "Spas"
+            },
+            {
+              "name": "Stari Bohorodchany"
+            },
+            {
+              "name": "Stari Kuty"
+            },
+            {
+              "name": "Stetseva"
+            },
+            {
+              "name": "Svarychiv"
+            },
+            {
+              "name": "Tatariv"
+            },
+            {
+              "name": "Tlumach"
+            },
+            {
+              "name": "Tlumats’kyy Rayon"
+            },
+            {
+              "name": "Tysmenychany"
+            },
+            {
+              "name": "Tysmenyts’kyy Rayon"
+            },
+            {
+              "name": "Tysmenytsya"
+            },
+            {
+              "name": "Uhryniv"
+            },
+            {
+              "name": "Velykyy Klyuchiv"
+            },
+            {
+              "name": "Verkhniy Yasenov"
+            },
+            {
+              "name": "Verkhovyna"
+            },
+            {
+              "name": "Vorokhta"
+            },
+            {
+              "name": "Yabluniv"
+            },
+            {
+              "name": "Yablunytsya"
+            },
+            {
+              "name": "Yamnytsya"
+            },
+            {
+              "name": "Yaremchans’ks Mis’krada"
+            },
+            {
+              "name": "Yaremche"
+            },
+            {
+              "name": "Zabolotiv"
+            },
+            {
+              "name": "Zahvizdya"
+            },
+            {
+              "name": "Zarichchya"
+            }
+          ]
+        },
+        {
+          "name": "Kharkiv Oblast",
+          "lgas": [
+            {
+              "name": "Balakliya"
+            },
+            {
+              "name": "Barvinkove"
+            },
+            {
+              "name": "Berezivka"
+            },
+            {
+              "name": "Bezlyudivka"
+            },
+            {
+              "name": "Blyznyuky"
+            },
+            {
+              "name": "Bohodukhiv"
+            },
+            {
+              "name": "Borova"
+            },
+            {
+              "name": "Budy"
+            },
+            {
+              "name": "Chapayeve"
+            },
+            {
+              "name": "Chervonyy Oskil"
+            },
+            {
+              "name": "Chuhuyiv"
+            },
+            {
+              "name": "Derhachi"
+            },
+            {
+              "name": "Dvorichna"
+            },
+            {
+              "name": "Eskhar"
+            },
+            {
+              "name": "Huty"
+            },
+            {
+              "name": "Izyum"
+            },
+            {
+              "name": "Kehychivka"
+            },
+            {
+              "name": "Kharkiv"
+            },
+            {
+              "name": "Khorosheve"
+            },
+            {
+              "name": "Kivsharivka"
+            },
+            {
+              "name": "Kochetok"
+            },
+            {
+              "name": "Kolomak"
+            },
+            {
+              "name": "Korotych"
+            },
+            {
+              "name": "Krasnohrad"
+            },
+            {
+              "name": "Krasnokuts’k"
+            },
+            {
+              "name": "Krasnopavlivka"
+            },
+            {
+              "name": "Kulynychi"
+            },
+            {
+              "name": "Kupjansk"
+            },
+            {
+              "name": "Lozova"
+            },
+            {
+              "name": "Lyman"
+            },
+            {
+              "name": "Lyubotyn"
+            },
+            {
+              "name": "Mala Danylivka"
+            },
+            {
+              "name": "Malynivka"
+            },
+            {
+              "name": "Manchenky"
+            },
+            {
+              "name": "Merefa"
+            },
+            {
+              "name": "Nova Vodolaha"
+            },
+            {
+              "name": "Novopokrovka"
+            },
+            {
+              "name": "Panyutyne"
+            },
+            {
+              "name": "Peresichna"
+            },
+            {
+              "name": "Pervomaiskyi Raion"
+            },
+            {
+              "name": "Pervomays’kyy"
+            },
+            {
+              "name": "Petrivs’ke"
+            },
+            {
+              "name": "Pivdenne"
+            },
+            {
+              "name": "Pokotylivka"
+            },
+            {
+              "name": "Prudyanka"
+            },
+            {
+              "name": "Prykolotne"
+            },
+            {
+              "name": "Sakhnovshchyna"
+            },
+            {
+              "name": "Savyntsi"
+            },
+            {
+              "name": "Shevchenkove"
+            },
+            {
+              "name": "Slatyne"
+            },
+            {
+              "name": "Slobozhans’ke"
+            },
+            {
+              "name": "Solonytsivka"
+            },
+            {
+              "name": "Staryy Merchyk"
+            },
+            {
+              "name": "Staryy Saltiv"
+            },
+            {
+              "name": "Studenok"
+            },
+            {
+              "name": "Utkivka"
+            },
+            {
+              "name": "Valky"
+            },
+            {
+              "name": "Vasyshcheve"
+            },
+            {
+              "name": "Velykyy Burluk"
+            },
+            {
+              "name": "Verbivka"
+            },
+            {
+              "name": "Vovchans’k"
+            },
+            {
+              "name": "Vvedenka"
+            },
+            {
+              "name": "Vysokyy"
+            },
+            {
+              "name": "Zachepylivka"
+            },
+            {
+              "name": "Zmiyiv"
+            },
+            {
+              "name": "Zolochiv"
+            }
+          ]
+        },
+        {
+          "name": "Kherson Oblast",
+          "lgas": [
+            {
+              "name": "Askaniya-Nova"
+            },
+            {
+              "name": "Bekhtery"
+            },
+            {
+              "name": "Beryslav"
+            },
+            {
+              "name": "Bilozerka"
+            },
+            {
+              "name": "Brylivka"
+            },
+            {
+              "name": "Chaplynka"
+            },
+            {
+              "name": "Chornobayivka"
+            },
+            {
+              "name": "Chornyanka"
+            },
+            {
+              "name": "Chulakivka"
+            },
+            {
+              "name": "Dnipryany"
+            },
+            {
+              "name": "Dudchany"
+            },
+            {
+              "name": "Heniches’k"
+            },
+            {
+              "name": "Heniches’kyy Rayon"
+            },
+            {
+              "name": "Hola Prystan’"
+            },
+            {
+              "name": "Hornostayivka"
+            },
+            {
+              "name": "Ivanivka"
+            },
+            {
+              "name": "Kakhovka"
+            },
+            {
+              "name": "Kalanchak"
+            },
+            {
+              "name": "Kayiry"
+            },
+            {
+              "name": "Kherson"
+            },
+            {
+              "name": "Komyshany"
+            },
+            {
+              "name": "Kozachi Laheri"
+            },
+            {
+              "name": "Krasne"
+            },
+            {
+              "name": "Lazurne"
+            },
+            {
+              "name": "Lyubymivka"
+            },
+            {
+              "name": "Malokakhovka"
+            },
+            {
+              "name": "Nova Kakhovka"
+            },
+            {
+              "name": "Nova Mayachka"
+            },
+            {
+              "name": "Novofedorivka"
+            },
+            {
+              "name": "Novooleksiyivka"
+            },
+            {
+              "name": "Novovorontsovka"
+            },
+            {
+              "name": "Nyzhni Sirohozy"
+            },
+            {
+              "name": "Partyzany"
+            },
+            {
+              "name": "Radens’k"
+            },
+            {
+              "name": "Skadovs’k"
+            },
+            {
+              "name": "Stanislav"
+            },
+            {
+              "name": "Tsyurupyns’k"
+            },
+            {
+              "name": "Velyka Lepetykha"
+            },
+            {
+              "name": "Velyka Oleksandrivka"
+            },
+            {
+              "name": "Velyki Kopani"
+            },
+            {
+              "name": "Verkhniy Rohachyk"
+            },
+            {
+              "name": "Vynohradove"
+            },
+            {
+              "name": "Vysokopillya"
+            },
+            {
+              "name": "Zaliznyy Port"
+            }
+          ]
+        },
+        {
+          "name": "Khmelnytsky Oblast",
+          "lgas": [
+            {
+              "name": "Antoniny"
+            },
+            {
+              "name": "Bazaliya"
+            },
+            {
+              "name": "Derazhnya"
+            },
+            {
+              "name": "Derazhnyans’kyy Rayon"
+            },
+            {
+              "name": "Dunaivtsi"
+            },
+            {
+              "name": "Horodok"
+            },
+            {
+              "name": "Izyaslav"
+            },
+            {
+              "name": "Kamianets-Podilskyi"
+            },
+            {
+              "name": "Khmel’nyts’kyy Rayon"
+            },
+            {
+              "name": "Khmelnytskyi"
+            },
+            {
+              "name": "Krasyliv"
+            },
+            {
+              "name": "Letychiv"
+            },
+            {
+              "name": "Makiv"
+            },
+            {
+              "name": "Medzhybizh"
+            },
+            {
+              "name": "Narkevychi"
+            },
+            {
+              "name": "Netishyn"
+            },
+            {
+              "name": "Nova Ushytsya"
+            },
+            {
+              "name": "Novoselytsya"
+            },
+            {
+              "name": "Polonne"
+            },
+            {
+              "name": "Poninka"
+            },
+            {
+              "name": "Shepetivka"
+            },
+            {
+              "name": "Slavuta"
+            },
+            {
+              "name": "Smotrych"
+            },
+            {
+              "name": "Smyga"
+            },
+            {
+              "name": "Stara Syniava"
+            },
+            {
+              "name": "Starokostiantyniv"
+            },
+            {
+              "name": "Yarmolyntsi"
+            },
+            {
+              "name": "Zakupne"
+            },
+            {
+              "name": "Zhvanets"
+            }
+          ]
+        },
+        {
+          "name": "Kiev",
+          "lgas": [
+            {
+              "name": "Darnytsia Raion"
+            },
+            {
+              "name": "Desnyans’kyy Rayon"
+            },
+            {
+              "name": "Dnipro Raion"
+            },
+            {
+              "name": "Holosiiv Raion"
+            },
+            {
+              "name": "Kotsyubyns’ke"
+            },
+            {
+              "name": "Kyiv"
+            },
+            {
+              "name": "Pechersk Raion"
+            },
+            {
+              "name": "Podil’s’kyy Rayon"
+            },
+            {
+              "name": "Prolisky"
+            },
+            {
+              "name": "Shevchenkivs’kyy Rayon"
+            },
+            {
+              "name": "Solomianka Rayon"
+            },
+            {
+              "name": "Svyatoshyns’kyy Rayon"
+            }
+          ]
+        },
+        {
+          "name": "Kirovohrad Oblast",
+          "lgas": [
+            {
+              "name": "Adzhamka"
+            },
+            {
+              "name": "Blahovishchenske Raion"
+            },
+            {
+              "name": "Bobrynets"
+            },
+            {
+              "name": "Dmytrivka"
+            },
+            {
+              "name": "Dobrovelychkivka"
+            },
+            {
+              "name": "Dobrovelychkivs’kyy Rayon"
+            },
+            {
+              "name": "Dolyns'ka"
+            },
+            {
+              "name": "Dolyns’kyy Rayon"
+            },
+            {
+              "name": "Hayvoron"
+            },
+            {
+              "name": "Kapitanivka"
+            },
+            {
+              "name": "Kirovohrads’ka Mis’krada"
+            },
+            {
+              "name": "Kompaniyivka"
+            },
+            {
+              "name": "Kropyvnytskyi"
+            },
+            {
+              "name": "Lozuvatka"
+            },
+            {
+              "name": "Lypnyazhka"
+            },
+            {
+              "name": "Mala Vyska"
+            },
+            {
+              "name": "Malovyskivs’kyy Rayon"
+            },
+            {
+              "name": "Molodizhne"
+            },
+            {
+              "name": "Nova Praha"
+            },
+            {
+              "name": "Novhorodka"
+            },
+            {
+              "name": "Novoarkhanhel’s’k"
+            },
+            {
+              "name": "Novomyrhorod"
+            },
+            {
+              "name": "Novoukrayinka"
+            },
+            {
+              "name": "Novyy Starodub"
+            },
+            {
+              "name": "Oleksandrivka"
+            },
+            {
+              "name": "Oleksandriya"
+            },
+            {
+              "name": "Oleksandriys’ke"
+            },
+            {
+              "name": "Onufriyivka"
+            },
+            {
+              "name": "Pantayivka"
+            },
+            {
+              "name": "Pavlysh"
+            },
+            {
+              "name": "Perehonivka"
+            },
+            {
+              "name": "Petrove"
+            },
+            {
+              "name": "Pobugskoye"
+            },
+            {
+              "name": "Pomichna"
+            },
+            {
+              "name": "Pryyutivka"
+            },
+            {
+              "name": "Rivne"
+            },
+            {
+              "name": "Subottsi"
+            },
+            {
+              "name": "Svitlovods’k"
+            },
+            {
+              "name": "Tyshkivka"
+            },
+            {
+              "name": "Ustynivka"
+            },
+            {
+              "name": "Yelyzavethradka"
+            },
+            {
+              "name": "Zavallya"
+            },
+            {
+              "name": "Zlynka"
+            },
+            {
+              "name": "Znomenka"
+            }
+          ]
+        },
+        {
+          "name": "Kyiv Oblast",
+          "lgas": [
+            {
+              "name": "Baryshivka"
+            },
+            {
+              "name": "Baryshivs’kyy Rayon"
+            },
+            {
+              "name": "Bila Tserkva"
+            },
+            {
+              "name": "Bila Tserkva Raion"
+            },
+            {
+              "name": "Bohuslav"
+            },
+            {
+              "name": "Borispol’skiy Rayon"
+            },
+            {
+              "name": "Borodianka"
+            },
+            {
+              "name": "Borodyans’kyy Rayon"
+            },
+            {
+              "name": "Borova"
+            },
+            {
+              "name": "Boryspil’"
+            },
+            {
+              "name": "Boyarka"
+            },
+            {
+              "name": "Brovary"
+            },
+            {
+              "name": "Brovary Raion"
+            },
+            {
+              "name": "Bucha"
+            },
+            {
+              "name": "Chabany"
+            },
+            {
+              "name": "Chernyakhivka"
+            },
+            {
+              "name": "Dymer"
+            },
+            {
+              "name": "Fastiv"
+            },
+            {
+              "name": "Fastiv Raion"
+            },
+            {
+              "name": "Hlevakha"
+            },
+            {
+              "name": "Hnidyn"
+            },
+            {
+              "name": "Horenka"
+            },
+            {
+              "name": "Hostomel"
+            },
+            {
+              "name": "Irpin"
+            },
+            {
+              "name": "Irpins’ka Mis’krada"
+            },
+            {
+              "name": "Ivankiv"
+            },
+            {
+              "name": "Ivankiv Raion"
+            },
+            {
+              "name": "Kaharlyk"
+            },
+            {
+              "name": "Kaharlyk Raion"
+            },
+            {
+              "name": "Kalynove"
+            },
+            {
+              "name": "Karapyshi"
+            },
+            {
+              "name": "Katyuzhanka"
+            },
+            {
+              "name": "Khotiv"
+            },
+            {
+              "name": "Kirove"
+            },
+            {
+              "name": "Klavdiyevo-Tarasove"
+            },
+            {
+              "name": "Knyazhichi"
+            },
+            {
+              "name": "Kodra"
+            },
+            {
+              "name": "Korniyivka"
+            },
+            {
+              "name": "Kozhanka"
+            },
+            {
+              "name": "Krasyatychi"
+            },
+            {
+              "name": "Kriukivschina"
+            },
+            {
+              "name": "Kryva Hora"
+            },
+            {
+              "name": "Kyyevo-Svyatoshyns’kyy Rayon"
+            },
+            {
+              "name": "Liutizh"
+            },
+            {
+              "name": "Makariv"
+            },
+            {
+              "name": "Makariv Raion"
+            },
+            {
+              "name": "Mirovka"
+            },
+            {
+              "name": "Motovylivka"
+            },
+            {
+              "name": "Myronivka"
+            },
+            {
+              "name": "Novi Petrivtsi"
+            },
+            {
+              "name": "Obukhiv"
+            },
+            {
+              "name": "Obukhiv Raion"
+            },
+            {
+              "name": "Obukhivs’ka Mis’krada"
+            },
+            {
+              "name": "Pereiaslav-Khmelnytskyi"
+            },
+            {
+              "name": "Pereiaslav-Khmelnytskyi Raion"
+            },
+            {
+              "name": "Piskivka"
+            },
+            {
+              "name": "Pohreby"
+            },
+            {
+              "name": "Pukhivka"
+            },
+            {
+              "name": "Rokytne"
+            },
+            {
+              "name": "Rokytne Raion"
+            },
+            {
+              "name": "Roskoshnyy"
+            },
+            {
+              "name": "Rzhyshchiv"
+            },
+            {
+              "name": "Semypolky"
+            },
+            {
+              "name": "Skvyra"
+            },
+            {
+              "name": "Skvyrs’kyy Rayon"
+            },
+            {
+              "name": "Slavutych"
+            },
+            {
+              "name": "Sofiyivska Borschagivka"
+            },
+            {
+              "name": "Stavyshche"
+            },
+            {
+              "name": "Stayki"
+            },
+            {
+              "name": "Tarashcha"
+            },
+            {
+              "name": "Tetiiv"
+            },
+            {
+              "name": "Trebukhiv"
+            },
+            {
+              "name": "Trypillia"
+            },
+            {
+              "name": "Tsybli"
+            },
+            {
+              "name": "Ukrainka"
+            },
+            {
+              "name": "Uzyn"
+            },
+            {
+              "name": "Vasylkiv"
+            },
+            {
+              "name": "Vasylkiv Raion"
+            },
+            {
+              "name": "Velyka Dymerka"
+            },
+            {
+              "name": "Volodarka"
+            },
+            {
+              "name": "Voronkov"
+            },
+            {
+              "name": "Vorzel’"
+            },
+            {
+              "name": "Vyshgorodskiy Rayon"
+            },
+            {
+              "name": "Vyshhorod"
+            },
+            {
+              "name": "Vyshneve"
+            },
+            {
+              "name": "Yahotyn"
+            },
+            {
+              "name": "Yahotyns’kyy Rayon"
+            },
+            {
+              "name": "Z·hurivs’kyy Rayon"
+            },
+            {
+              "name": "Zgurovka"
+            }
+          ]
+        },
+        {
+          "name": "Luhansk Oblast",
+          "lgas": [
+            {
+              "name": "Alchevs’k"
+            },
+            {
+              "name": "Alchevs’ka Mis’krada"
+            },
+            {
+              "name": "Antratsyt"
+            },
+            {
+              "name": "Antratsytivs’kyy Rayon"
+            },
+            {
+              "name": "Artemivs’k"
+            },
+            {
+              "name": "Bayrachky"
+            },
+            {
+              "name": "Bile"
+            },
+            {
+              "name": "Bilohorivka"
+            },
+            {
+              "name": "Bilokurakyne"
+            },
+            {
+              "name": "Bilovods'k"
+            },
+            {
+              "name": "Biryukove"
+            },
+            {
+              "name": "Bryanka"
+            },
+            {
+              "name": "Buran"
+            },
+            {
+              "name": "Chervonopartyzans’k"
+            },
+            {
+              "name": "Chornukhyne"
+            },
+            {
+              "name": "Dovzhanskyy Rayon"
+            },
+            {
+              "name": "Hirs’ke"
+            },
+            {
+              "name": "Kadiyivka"
+            },
+            {
+              "name": "Kirovs’k"
+            },
+            {
+              "name": "Kirovs’ka Mis’krada"
+            },
+            {
+              "name": "Klenovyy"
+            },
+            {
+              "name": "Krasnyy Kut"
+            },
+            {
+              "name": "Krasnyy Luch"
+            },
+            {
+              "name": "Kreminna"
+            },
+            {
+              "name": "Kripens’kyy"
+            },
+            {
+              "name": "Lenina"
+            },
+            {
+              "name": "Lozno-Oleksandrivka"
+            },
+            {
+              "name": "Luhans’ka Mis’krada"
+            },
+            {
+              "name": "Luhansk"
+            },
+            {
+              "name": "Lutuhyne"
+            },
+            {
+              "name": "Lutuhyns’kyy Rayon"
+            },
+            {
+              "name": "Lysychans’k"
+            },
+            {
+              "name": "Makariv Yar"
+            },
+            {
+              "name": "Markivka"
+            },
+            {
+              "name": "Millerovo"
+            },
+            {
+              "name": "Milove"
+            },
+            {
+              "name": "Miusyns’k"
+            },
+            {
+              "name": "Molodohvardiys’k"
+            },
+            {
+              "name": "Novopskov"
+            },
+            {
+              "name": "Nyzhnya Duvanka"
+            },
+            {
+              "name": "Pavlivka"
+            },
+            {
+              "name": "Pereval’s’k"
+            },
+            {
+              "name": "Pervomays’k"
+            },
+            {
+              "name": "Popasna"
+            },
+            {
+              "name": "Pryvillya"
+            },
+            {
+              "name": "Roven’ky"
+            },
+            {
+              "name": "Rozkishne"
+            },
+            {
+              "name": "Rubizhans’ka Mis’krada"
+            },
+            {
+              "name": "Rubizhne"
+            },
+            {
+              "name": "Shchastya"
+            },
+            {
+              "name": "Simeykyne"
+            },
+            {
+              "name": "Slov`yanoserbsk"
+            },
+            {
+              "name": "Sorokyne"
+            },
+            {
+              "name": "Sorokyns'kyi Rayon"
+            },
+            {
+              "name": "Stanytsya Luhans’ka"
+            },
+            {
+              "name": "Starobil’s’k"
+            },
+            {
+              "name": "Svatove"
+            },
+            {
+              "name": "Sverdlovs’k"
+            },
+            {
+              "name": "Sverdlovs’ka Mis’krada"
+            },
+            {
+              "name": "Syevyerodonets’k"
+            },
+            {
+              "name": "Teple"
+            },
+            {
+              "name": "Toshkivka"
+            },
+            {
+              "name": "Tr’okhizbenka"
+            },
+            {
+              "name": "Uralo-Kavkaz"
+            },
+            {
+              "name": "Uspenka"
+            },
+            {
+              "name": "Zalesnoye"
+            },
+            {
+              "name": "Zoryns’k"
+            },
+            {
+              "name": "Zymohiria"
+            }
+          ]
+        },
+        {
+          "name": "Lviv Oblast",
+          "lgas": [
+            {
+              "name": "Belz"
+            },
+            {
+              "name": "Bibrka"
+            },
+            {
+              "name": "Boryslav"
+            },
+            {
+              "name": "Brody"
+            },
+            {
+              "name": "Bryukhovychi"
+            },
+            {
+              "name": "Chervonohrad"
+            },
+            {
+              "name": "Demnya"
+            },
+            {
+              "name": "Dobromyl’"
+            },
+            {
+              "name": "Drohobych"
+            },
+            {
+              "name": "Dublyany"
+            },
+            {
+              "name": "Duliby"
+            },
+            {
+              "name": "Dzvinogrud"
+            },
+            {
+              "name": "Hlyns'k"
+            },
+            {
+              "name": "Horodok"
+            },
+            {
+              "name": "Ivano-Frankove"
+            },
+            {
+              "name": "Khodoriv"
+            },
+            {
+              "name": "Khyriv"
+            },
+            {
+              "name": "Komarno"
+            },
+            {
+              "name": "Krasne"
+            },
+            {
+              "name": "Kulykiv"
+            },
+            {
+              "name": "Lopatyn"
+            },
+            {
+              "name": "Lviv"
+            },
+            {
+              "name": "Medenychi"
+            },
+            {
+              "name": "Morshyn"
+            },
+            {
+              "name": "Mostys'ka"
+            },
+            {
+              "name": "Murovane"
+            },
+            {
+              "name": "Mykolaiv"
+            },
+            {
+              "name": "Navaria"
+            },
+            {
+              "name": "Novoyavorivs'k"
+            },
+            {
+              "name": "Novyi Yarychiv"
+            },
+            {
+              "name": "Obroshyne"
+            },
+            {
+              "name": "Olesko"
+            },
+            {
+              "name": "Peremyshlyany"
+            },
+            {
+              "name": "Pidbuzh"
+            },
+            {
+              "name": "Pidhirtsi"
+            },
+            {
+              "name": "Pidkamin’"
+            },
+            {
+              "name": "Pnikut"
+            },
+            {
+              "name": "Pomoriany"
+            },
+            {
+              "name": "Potelych"
+            },
+            {
+              "name": "Pustomyty"
+            },
+            {
+              "name": "Ralivka"
+            },
+            {
+              "name": "Rava-Rus’ka"
+            },
+            {
+              "name": "Richky"
+            },
+            {
+              "name": "Rodatychi"
+            },
+            {
+              "name": "Rozdil"
+            },
+            {
+              "name": "Rozvadiv"
+            },
+            {
+              "name": "Rudky"
+            },
+            {
+              "name": "Rudne"
+            },
+            {
+              "name": "Rykhtychi"
+            },
+            {
+              "name": "Sambir"
+            },
+            {
+              "name": "Shchyrets"
+            },
+            {
+              "name": "Shklo"
+            },
+            {
+              "name": "Silets’"
+            },
+            {
+              "name": "Skelivka"
+            },
+            {
+              "name": "Skhidnytsya"
+            },
+            {
+              "name": "Skole"
+            },
+            {
+              "name": "Slavske"
+            },
+            {
+              "name": "Sokal’"
+            },
+            {
+              "name": "Solonka"
+            },
+            {
+              "name": "Staroye Selo"
+            },
+            {
+              "name": "Starychi"
+            },
+            {
+              "name": "Staryy Dobrotvir"
+            },
+            {
+              "name": "Staryy Sambir"
+            },
+            {
+              "name": "Stebnyk"
+            },
+            {
+              "name": "Stryi"
+            },
+            {
+              "name": "Sudova Vyshnya"
+            },
+            {
+              "name": "Sukhovolya"
+            },
+            {
+              "name": "Truskavets’"
+            },
+            {
+              "name": "Tukhlia"
+            },
+            {
+              "name": "Turka"
+            },
+            {
+              "name": "Uhniv"
+            },
+            {
+              "name": "Ulychne"
+            },
+            {
+              "name": "Verblyany"
+            },
+            {
+              "name": "Verchnia Rozhanka"
+            },
+            {
+              "name": "Verkhnie Synevydne"
+            },
+            {
+              "name": "Verkhnyaya Belka"
+            },
+            {
+              "name": "Voyutychi"
+            },
+            {
+              "name": "Yavoriv"
+            },
+            {
+              "name": "Zhovkva"
+            },
+            {
+              "name": "Zhydachiv"
+            },
+            {
+              "name": "Zolochiv"
+            }
+          ]
+        },
+        {
+          "name": "Mykolaiv Oblast",
+          "lgas": [
+            {
+              "name": "Arbuzynka"
+            },
+            {
+              "name": "Bashtanka"
+            },
+            {
+              "name": "Berezanka"
+            },
+            {
+              "name": "Bereznehuvate"
+            },
+            {
+              "name": "Domanivka"
+            },
+            {
+              "name": "Kazanka"
+            },
+            {
+              "name": "Kobleve"
+            },
+            {
+              "name": "Kostyantynivka"
+            },
+            {
+              "name": "Kryve Ozero"
+            },
+            {
+              "name": "Lysa Hora"
+            },
+            {
+              "name": "Myhiya"
+            },
+            {
+              "name": "Mykolayiv"
+            },
+            {
+              "name": "Nova Odesa"
+            },
+            {
+              "name": "Novyy Buh"
+            },
+            {
+              "name": "Ochakiv"
+            },
+            {
+              "name": "Ol'shanskoye"
+            },
+            {
+              "name": "Oleksandrivka"
+            },
+            {
+              "name": "Parutyne"
+            },
+            {
+              "name": "Pervomays’k"
+            },
+            {
+              "name": "Pidhorodna"
+            },
+            {
+              "name": "Rybakivka"
+            },
+            {
+              "name": "Shevchenkove"
+            },
+            {
+              "name": "Snihurivka"
+            },
+            {
+              "name": "Veselynove"
+            },
+            {
+              "name": "Voznesensk"
+            },
+            {
+              "name": "Vradiyivka"
+            },
+            {
+              "name": "Yuzhnoukrains'k"
+            }
+          ]
+        },
+        {
+          "name": "Odessa Oblast",
+          "lgas": [
+            {
+              "name": "Artsyz"
+            },
+            {
+              "name": "Balta"
+            },
+            {
+              "name": "Balts’kyy Rayon"
+            },
+            {
+              "name": "Berezivka"
+            },
+            {
+              "name": "Berezyne"
+            },
+            {
+              "name": "Bilhorod-Dnistrovskyi"
+            },
+            {
+              "name": "Bilyayivka"
+            },
+            {
+              "name": "Bolhrad"
+            },
+            {
+              "name": "Borodino"
+            },
+            {
+              "name": "Broska"
+            },
+            {
+              "name": "Chornomors’k"
+            },
+            {
+              "name": "Dmytrivka"
+            },
+            {
+              "name": "Fontanka"
+            },
+            {
+              "name": "Horodnye"
+            },
+            {
+              "name": "Ivanivka"
+            },
+            {
+              "name": "Izmayil"
+            },
+            {
+              "name": "Kalcheva"
+            },
+            {
+              "name": "Kamyshevka Vtoraya"
+            },
+            {
+              "name": "Karolino-Buhaz"
+            },
+            {
+              "name": "Kiliya"
+            },
+            {
+              "name": "Kodyma"
+            },
+            {
+              "name": "Kodyms’kyy Rayon"
+            },
+            {
+              "name": "Krasnosilka"
+            },
+            {
+              "name": "Kremidivka"
+            },
+            {
+              "name": "Kryzhanivka"
+            },
+            {
+              "name": "Kuchurhan"
+            },
+            {
+              "name": "Kulevcha"
+            },
+            {
+              "name": "Kurisove"
+            },
+            {
+              "name": "Lymanske"
+            },
+            {
+              "name": "Lyubashivka"
+            },
+            {
+              "name": "Mayaky"
+            },
+            {
+              "name": "Mykolayivka"
+            },
+            {
+              "name": "Mykolayivs’kyy Rayon"
+            },
+            {
+              "name": "Novi Troyany"
+            },
+            {
+              "name": "Odessa"
+            },
+            {
+              "name": "Okny"
+            },
+            {
+              "name": "Oleksandrivka"
+            },
+            {
+              "name": "Ovidiopol"
+            },
+            {
+              "name": "Ozerne"
+            },
+            {
+              "name": "Peschana"
+            },
+            {
+              "name": "Plakhtiyivka"
+            },
+            {
+              "name": "Podil’s’k"
+            },
+            {
+              "name": "Podilsk Raion"
+            },
+            {
+              "name": "Reni"
+            },
+            {
+              "name": "Rozdil’na"
+            },
+            {
+              "name": "Salhany"
+            },
+            {
+              "name": "Sarata"
+            },
+            {
+              "name": "Savran"
+            },
+            {
+              "name": "Serhiyivka"
+            },
+            {
+              "name": "Serpneve"
+            },
+            {
+              "name": "Shabo"
+            },
+            {
+              "name": "Shevchenkove"
+            },
+            {
+              "name": "Shyryayeve"
+            },
+            {
+              "name": "Slobidka"
+            },
+            {
+              "name": "Starokozache"
+            },
+            {
+              "name": "Stepanivka"
+            },
+            {
+              "name": "Stepove"
+            },
+            {
+              "name": "Tarutyne"
+            },
+            {
+              "name": "Tatarbunary"
+            },
+            {
+              "name": "Tayirove"
+            },
+            {
+              "name": "Teplodar"
+            },
+            {
+              "name": "Usatove"
+            },
+            {
+              "name": "Velyka Mykhaylivka"
+            },
+            {
+              "name": "Velykoploske"
+            },
+            {
+              "name": "Vylkove"
+            },
+            {
+              "name": "Vynohradivka"
+            },
+            {
+              "name": "Yuzhne"
+            },
+            {
+              "name": "Zagnitkiv"
+            },
+            {
+              "name": "Zakharivka"
+            },
+            {
+              "name": "Zaliznychne"
+            },
+            {
+              "name": "Zatoka"
+            },
+            {
+              "name": "Zatyshshya"
+            },
+            {
+              "name": "Zorya"
+            }
+          ]
+        },
+        {
+          "name": "Rivne Oblast",
+          "lgas": [
+            {
+              "name": "Demydivs’kyy Rayon"
+            },
+            {
+              "name": "Dubno"
+            },
+            {
+              "name": "Dubrovytsya"
+            },
+            {
+              "name": "Horodyshche"
+            },
+            {
+              "name": "Hoshcha"
+            },
+            {
+              "name": "Klevan"
+            },
+            {
+              "name": "Kolodenka"
+            },
+            {
+              "name": "Koloniya Zastav’ye"
+            },
+            {
+              "name": "Korets"
+            },
+            {
+              "name": "Kostopil’"
+            },
+            {
+              "name": "Mizoch"
+            },
+            {
+              "name": "Mlyniv"
+            },
+            {
+              "name": "Mlynivs’kyy Rayon"
+            },
+            {
+              "name": "Orzhiv"
+            },
+            {
+              "name": "Ostroh"
+            },
+            {
+              "name": "Ostroz’ka Mis’krada"
+            },
+            {
+              "name": "Radyvyliv"
+            },
+            {
+              "name": "Rivne"
+            },
+            {
+              "name": "Rivnens’ka Mis’krada"
+            },
+            {
+              "name": "Rokytne"
+            },
+            {
+              "name": "Sarny"
+            },
+            {
+              "name": "Tarakaniv"
+            },
+            {
+              "name": "Tynne"
+            },
+            {
+              "name": "Varash"
+            },
+            {
+              "name": "Velyki Mezhyrichi"
+            },
+            {
+              "name": "Volodymyrets’"
+            },
+            {
+              "name": "Zarichne"
+            },
+            {
+              "name": "Zdolbuniv"
+            },
+            {
+              "name": "Zdovbytsya"
+            }
+          ]
+        },
+        {
+          "name": "Sumy Oblast",
+          "lgas": [
+            {
+              "name": "Bilopillya"
+            },
+            {
+              "name": "Boromlya"
+            },
+            {
+              "name": "Buryn’"
+            },
+            {
+              "name": "Druzhba"
+            },
+            {
+              "name": "Hlukhiv"
+            },
+            {
+              "name": "Konotop"
+            },
+            {
+              "name": "Krasnopillya"
+            },
+            {
+              "name": "Krolevets’"
+            },
+            {
+              "name": "Kyrykivka"
+            },
+            {
+              "name": "Lebedyn"
+            },
+            {
+              "name": "Lypova Dolyna"
+            },
+            {
+              "name": "Mezenivka"
+            },
+            {
+              "name": "Nedryhayliv"
+            },
+            {
+              "name": "Nyzy"
+            },
+            {
+              "name": "Okhtyrka"
+            },
+            {
+              "name": "Putyvl’"
+            },
+            {
+              "name": "Romens’ka Mis’krada"
+            },
+            {
+              "name": "Romny"
+            },
+            {
+              "name": "Seredyna-Buda"
+            },
+            {
+              "name": "Shalyhyne"
+            },
+            {
+              "name": "Shostka"
+            },
+            {
+              "name": "Sloboda"
+            },
+            {
+              "name": "Sumy"
+            },
+            {
+              "name": "Terny"
+            },
+            {
+              "name": "Trostyanets’"
+            },
+            {
+              "name": "Velyka Pysarivka"
+            },
+            {
+              "name": "Verkhnya Syrovatka"
+            },
+            {
+              "name": "Vorozhba"
+            },
+            {
+              "name": "Yampil’"
+            },
+            {
+              "name": "Yesman’"
+            }
+          ]
+        },
+        {
+          "name": "Ternopil Oblast",
+          "lgas": [
+            {
+              "name": "Belaya"
+            },
+            {
+              "name": "Borshchiv"
+            },
+            {
+              "name": "Buchach"
+            },
+            {
+              "name": "Chortkiv"
+            },
+            {
+              "name": "Druzhba"
+            },
+            {
+              "name": "Hrymayliv"
+            },
+            {
+              "name": "Husiatyn"
+            },
+            {
+              "name": "Khorostkiv"
+            },
+            {
+              "name": "Kopychyntsi"
+            },
+            {
+              "name": "Kozova"
+            },
+            {
+              "name": "Kremenets"
+            },
+            {
+              "name": "Lanivtsi"
+            },
+            {
+              "name": "Mikulintsy"
+            },
+            {
+              "name": "Nyrkiv"
+            },
+            {
+              "name": "Ozerna"
+            },
+            {
+              "name": "Petrikov"
+            },
+            {
+              "name": "Pidhaytsi"
+            },
+            {
+              "name": "Pidvolochysk"
+            },
+            {
+              "name": "Pochaiv"
+            },
+            {
+              "name": "Skala-Podil’s’ka"
+            },
+            {
+              "name": "Skalat"
+            },
+            {
+              "name": "Terebovlya"
+            },
+            {
+              "name": "Ternopil"
+            },
+            {
+              "name": "Tovste"
+            },
+            {
+              "name": "Velikiye Borki"
+            },
+            {
+              "name": "Yahil’nytsya"
+            },
+            {
+              "name": "Zalishchyky"
+            },
+            {
+              "name": "Zaliztsi"
+            },
+            {
+              "name": "Zbarazh"
+            },
+            {
+              "name": "Zboriv"
+            },
+            {
+              "name": "Zolotyy Potik"
+            },
+            {
+              "name": "Бережани"
+            }
+          ]
+        },
+        {
+          "name": "Vinnytsia Oblast",
+          "lgas": [
+            {
+              "name": "Bar"
+            },
+            {
+              "name": "Barskiy Rayon"
+            },
+            {
+              "name": "Bershad"
+            },
+            {
+              "name": "Brailiv"
+            },
+            {
+              "name": "Bratslav"
+            },
+            {
+              "name": "Chechelnyk"
+            },
+            {
+              "name": "Chernivets’kyy Rayon"
+            },
+            {
+              "name": "Chernivtsi"
+            },
+            {
+              "name": "Dashiv"
+            },
+            {
+              "name": "Haisyn"
+            },
+            {
+              "name": "Illintsi"
+            },
+            {
+              "name": "Kalynivka"
+            },
+            {
+              "name": "Khmilnyk"
+            },
+            {
+              "name": "Klembivka"
+            },
+            {
+              "name": "Kopayhorod"
+            },
+            {
+              "name": "Kozyatyn"
+            },
+            {
+              "name": "Kryzhopil’"
+            },
+            {
+              "name": "Ladyzhyn"
+            },
+            {
+              "name": "Lityn"
+            },
+            {
+              "name": "Lityns’kyy Rayon"
+            },
+            {
+              "name": "Lypovets’kyy Rayon"
+            },
+            {
+              "name": "Mohyliv-Podilskyi"
+            },
+            {
+              "name": "Murafa"
+            },
+            {
+              "name": "Murovani Kurylivtsi"
+            },
+            {
+              "name": "Nemyriv"
+            },
+            {
+              "name": "Nova Pryluka"
+            },
+            {
+              "name": "Obodivka"
+            },
+            {
+              "name": "Orativ"
+            },
+            {
+              "name": "Pavlivka"
+            },
+            {
+              "name": "Pohrebyshche"
+            },
+            {
+              "name": "Pohrebyshchens’kyy Rayon"
+            },
+            {
+              "name": "Serebriya"
+            },
+            {
+              "name": "Sharhorod"
+            },
+            {
+              "name": "Sobolivka"
+            },
+            {
+              "name": "Sutysky"
+            },
+            {
+              "name": "Teplyk"
+            },
+            {
+              "name": "Tomashpil’"
+            },
+            {
+              "name": "Torkanivka"
+            },
+            {
+              "name": "Tsybulevka"
+            },
+            {
+              "name": "Tulchyn"
+            },
+            {
+              "name": "Turbiv"
+            },
+            {
+              "name": "Tyvriv"
+            },
+            {
+              "name": "Ulaniv"
+            },
+            {
+              "name": "Vapnyarka"
+            },
+            {
+              "name": "Vendychany"
+            },
+            {
+              "name": "Vinnitskiy Rayon"
+            },
+            {
+              "name": "Vinnytsia"
+            },
+            {
+              "name": "Viytivka"
+            },
+            {
+              "name": "Voronovytsya"
+            },
+            {
+              "name": "Yampil’"
+            },
+            {
+              "name": "Zhmerynka"
+            }
+          ]
+        },
+        {
+          "name": "Volyn Oblast",
+          "lgas": [
+            {
+              "name": "Berestechko"
+            },
+            {
+              "name": "Blahodatne"
+            },
+            {
+              "name": "Hołoby"
+            },
+            {
+              "name": "Horokhiv"
+            },
+            {
+              "name": "Kamin-Kashyrskyi"
+            },
+            {
+              "name": "Kivertsi"
+            },
+            {
+              "name": "Kovel"
+            },
+            {
+              "name": "Kovel’s’ka Mis’krada"
+            },
+            {
+              "name": "Liuboml"
+            },
+            {
+              "name": "Lokachi"
+            },
+            {
+              "name": "Lukiv"
+            },
+            {
+              "name": "Lutsk"
+            },
+            {
+              "name": "Lyubeshivs’kyy Rayon"
+            },
+            {
+              "name": "Lyuboml’s’kyy Rayon"
+            },
+            {
+              "name": "Manevychi"
+            },
+            {
+              "name": "Manevyts’kyy Rayon"
+            },
+            {
+              "name": "Novovolyns’k"
+            },
+            {
+              "name": "Nuyno"
+            },
+            {
+              "name": "Olyka"
+            },
+            {
+              "name": "Pishcha"
+            },
+            {
+              "name": "Rakiv Lis"
+            },
+            {
+              "name": "Ratne"
+            },
+            {
+              "name": "Ratnivs’kyy Rayon"
+            },
+            {
+              "name": "Rozhyshche"
+            },
+            {
+              "name": "Shats’k"
+            },
+            {
+              "name": "Shats’kyy Rayon"
+            },
+            {
+              "name": "Stara Vyzhivka"
+            },
+            {
+              "name": "Svityaz’"
+            },
+            {
+              "name": "Volodymyr-Volynskyi"
+            }
+          ]
+        },
+        {
+          "name": "Zakarpattia Oblast",
+          "lgas": [
+            {
+              "name": "Batiovo"
+            },
+            {
+              "name": "Berehivs’ka Mis’krada"
+            },
+            {
+              "name": "Berehove"
+            },
+            {
+              "name": "Berehove Raion"
+            },
+            {
+              "name": "Bereznyky"
+            },
+            {
+              "name": "Berezovo"
+            },
+            {
+              "name": "Bilky"
+            },
+            {
+              "name": "Bobovo"
+            },
+            {
+              "name": "Bohdan"
+            },
+            {
+              "name": "Bushtyno"
+            },
+            {
+              "name": "Chop"
+            },
+            {
+              "name": "Chynadiyovo"
+            },
+            {
+              "name": "Dovhe"
+            },
+            {
+              "name": "Drahovo"
+            },
+            {
+              "name": "Dubove"
+            },
+            {
+              "name": "Horinchovo"
+            },
+            {
+              "name": "Irshava"
+            },
+            {
+              "name": "Irshava Raion"
+            },
+            {
+              "name": "Iza"
+            },
+            {
+              "name": "Kalyny"
+            },
+            {
+              "name": "Kamianytsia"
+            },
+            {
+              "name": "Khust"
+            },
+            {
+              "name": "Khust Raion"
+            },
+            {
+              "name": "Khusts’ka Mis’krada"
+            },
+            {
+              "name": "Kolochava"
+            },
+            {
+              "name": "Kopashnovo"
+            },
+            {
+              "name": "Korolevo"
+            },
+            {
+              "name": "Koson’"
+            },
+            {
+              "name": "Kryva"
+            },
+            {
+              "name": "Kushnytsya"
+            },
+            {
+              "name": "Kvasy"
+            },
+            {
+              "name": "Lazeshchyna"
+            },
+            {
+              "name": "Lazi"
+            },
+            {
+              "name": "Lopukhiv"
+            },
+            {
+              "name": "Lypcha"
+            },
+            {
+              "name": "Lysychovo"
+            },
+            {
+              "name": "Mizhhirya"
+            },
+            {
+              "name": "Mizhhirya Raion"
+            },
+            {
+              "name": "Mukacheve"
+            },
+            {
+              "name": "Mukachevo Raion"
+            },
+            {
+              "name": "Muzhiyevo"
+            },
+            {
+              "name": "Mynay"
+            },
+            {
+              "name": "Nelipyno"
+            },
+            {
+              "name": "Neresnytsya"
+            },
+            {
+              "name": "Nevyts’ke"
+            },
+            {
+              "name": "Nove Davydkovo"
+            },
+            {
+              "name": "Nyzhnye Selyshche"
+            },
+            {
+              "name": "Oleshnyk"
+            },
+            {
+              "name": "Onokivtsi"
+            },
+            {
+              "name": "Perechyn"
+            },
+            {
+              "name": "Perechyn Raion"
+            },
+            {
+              "name": "Pidvynohradiv"
+            },
+            {
+              "name": "Poroshkovo"
+            },
+            {
+              "name": "Pylypets"
+            },
+            {
+              "name": "Rakhiv"
+            },
+            {
+              "name": "Rakhiv Raion"
+            },
+            {
+              "name": "Rakoshyno"
+            },
+            {
+              "name": "Rokosovo"
+            },
+            {
+              "name": "Serednye"
+            },
+            {
+              "name": "Serednye Vodyane"
+            },
+            {
+              "name": "Solotvyno"
+            },
+            {
+              "name": "Storozhnytsya"
+            },
+            {
+              "name": "Strabychovo"
+            },
+            {
+              "name": "Svaliava Raion"
+            },
+            {
+              "name": "Svalyava"
+            },
+            {
+              "name": "Synevyr"
+            },
+            {
+              "name": "Synevyrska Poliana"
+            },
+            {
+              "name": "Tiachiv Raion"
+            },
+            {
+              "name": "Tyachiv"
+            },
+            {
+              "name": "Uzhgorod"
+            },
+            {
+              "name": "Uzhhorod Raion"
+            },
+            {
+              "name": "Vary"
+            },
+            {
+              "name": "Velyki Berehy"
+            },
+            {
+              "name": "Velykyi Bereznyi"
+            },
+            {
+              "name": "Velykyi Bereznyi Raion"
+            },
+            {
+              "name": "Volovets"
+            },
+            {
+              "name": "Volovets Raion"
+            },
+            {
+              "name": "Vylok"
+            },
+            {
+              "name": "Vynohradiv"
+            },
+            {
+              "name": "Vynohradiv Raion"
+            },
+            {
+              "name": "Vyshkovo"
+            },
+            {
+              "name": "Yasinya"
+            }
+          ]
+        },
+        {
+          "name": "Zaporizhzhya Oblast",
+          "lgas": [
+            {
+              "name": "Balky"
+            },
+            {
+              "name": "Berdiansk Raion"
+            },
+            {
+              "name": "Berdyans’ka Mis’krada"
+            },
+            {
+              "name": "Berdyansk"
+            },
+            {
+              "name": "Chapayevka"
+            },
+            {
+              "name": "Chernihivka Raion"
+            },
+            {
+              "name": "Dniprorudne"
+            },
+            {
+              "name": "Dniprovka"
+            },
+            {
+              "name": "Energodar"
+            },
+            {
+              "name": "Hulyaypole"
+            },
+            {
+              "name": "Kirove"
+            },
+            {
+              "name": "Komysh-Zorya"
+            },
+            {
+              "name": "Komyshuvakha"
+            },
+            {
+              "name": "Kostyantynivka"
+            },
+            {
+              "name": "Kushuhum"
+            },
+            {
+              "name": "Kuybysheve"
+            },
+            {
+              "name": "Kyrylivka"
+            },
+            {
+              "name": "Mala Bilozerka"
+            },
+            {
+              "name": "Mala Tokmachka"
+            },
+            {
+              "name": "Malokaterynivka"
+            },
+            {
+              "name": "Matviyivka"
+            },
+            {
+              "name": "Melitopol"
+            },
+            {
+              "name": "Melitopol’s’kyy Rayon"
+            },
+            {
+              "name": "Mykhaylivka"
+            },
+            {
+              "name": "Mykhaylivs’kyy Rayon"
+            },
+            {
+              "name": "Novobohdanivka"
+            },
+            {
+              "name": "Novomykolayivka"
+            },
+            {
+              "name": "Novovasylivka"
+            },
+            {
+              "name": "Orikhiv"
+            },
+            {
+              "name": "Osypenko"
+            },
+            {
+              "name": "Polohy"
+            },
+            {
+              "name": "Preobrazhenka"
+            },
+            {
+              "name": "Pryazovske Raion"
+            },
+            {
+              "name": "Prymors’k"
+            },
+            {
+              "name": "Prymorsk Raion"
+            },
+            {
+              "name": "Pryshyb"
+            },
+            {
+              "name": "Rozivka"
+            },
+            {
+              "name": "Rozivs’kyy Rayon"
+            },
+            {
+              "name": "Ternuvate"
+            },
+            {
+              "name": "Terpinnya"
+            },
+            {
+              "name": "Tokmak"
+            },
+            {
+              "name": "Tokmak Raion"
+            },
+            {
+              "name": "Tymoshivka"
+            },
+            {
+              "name": "Vasylivka"
+            },
+            {
+              "name": "Velyka Bilozerka"
+            },
+            {
+              "name": "Velykobilozers’kyy Rayon"
+            },
+            {
+              "name": "Vesele"
+            },
+            {
+              "name": "Vilniansk Raion"
+            },
+            {
+              "name": "Vodyane"
+            },
+            {
+              "name": "Voznesenka"
+            },
+            {
+              "name": "Yakymivka"
+            },
+            {
+              "name": "Yakymivka Raion"
+            },
+            {
+              "name": "Zaliznychne"
+            },
+            {
+              "name": "Zaporiz’ka Mis’krada"
+            },
+            {
+              "name": "Zaporizhia"
+            }
+          ]
+        },
+        {
+          "name": "Zhytomyr Oblast",
+          "lgas": [
+            {
+              "name": "Andrushivka"
+            },
+            {
+              "name": "Andrushivs’kyy Rayon"
+            },
+            {
+              "name": "Baranivka"
+            },
+            {
+              "name": "Berdychiv"
+            },
+            {
+              "name": "Berdychivskyy Rayon"
+            },
+            {
+              "name": "Bila Krynytsya"
+            },
+            {
+              "name": "Brusyliv"
+            },
+            {
+              "name": "Brusylivs’kyy Rayon"
+            },
+            {
+              "name": "Bykivka"
+            },
+            {
+              "name": "Cherniakhiv"
+            },
+            {
+              "name": "Chernyakhivskyy Rayon"
+            },
+            {
+              "name": "Chervone"
+            },
+            {
+              "name": "Chopovychi"
+            },
+            {
+              "name": "Chornorudka"
+            },
+            {
+              "name": "Chudniv"
+            },
+            {
+              "name": "Chudniv Raion"
+            },
+            {
+              "name": "Denyshi"
+            },
+            {
+              "name": "Dovbysh"
+            },
+            {
+              "name": "Holovyne"
+            },
+            {
+              "name": "Horodnytsya"
+            },
+            {
+              "name": "Horodok"
+            },
+            {
+              "name": "Hryshkivtsi"
+            },
+            {
+              "name": "Khoroshiv Raion"
+            },
+            {
+              "name": "Kornyn"
+            },
+            {
+              "name": "Korosten’"
+            },
+            {
+              "name": "Korostyshiv"
+            },
+            {
+              "name": "Korostyshiv Raion"
+            },
+            {
+              "name": "Liubar"
+            },
+            {
+              "name": "Luhyny"
+            },
+            {
+              "name": "Luhyny Raion"
+            },
+            {
+              "name": "Malyn"
+            },
+            {
+              "name": "Malyn Raion"
+            },
+            {
+              "name": "Narodychi"
+            },
+            {
+              "name": "Narodychi Raion"
+            },
+            {
+              "name": "Nova Borova"
+            },
+            {
+              "name": "Novi Bilokorovychi"
+            },
+            {
+              "name": "Novohrad-Volynskyi"
+            },
+            {
+              "name": "Olevs’k"
+            },
+            {
+              "name": "Ovruch"
+            },
+            {
+              "name": "Ovruch Raion"
+            },
+            {
+              "name": "Ozerne"
+            },
+            {
+              "name": "Pershotravneve"
+            },
+            {
+              "name": "Polyanka"
+            },
+            {
+              "name": "Popilnia"
+            },
+            {
+              "name": "Popilnia Raion"
+            },
+            {
+              "name": "Pulyny Raion"
+            },
+            {
+              "name": "Radomyshl"
+            },
+            {
+              "name": "Radomyshl Raion"
+            },
+            {
+              "name": "Romaniv"
+            },
+            {
+              "name": "Ruzhyn"
+            },
+            {
+              "name": "Stavyshche"
+            },
+            {
+              "name": "Topory"
+            },
+            {
+              "name": "Yemil’chyne"
+            },
+            {
+              "name": "Zhytomyr"
+            },
+            {
+              "name": "Zhytomyr Raion"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
