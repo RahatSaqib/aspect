@@ -1,12 +1,10 @@
 module.exports = require('../utils').seed(seed, __filename)
 
 const bcrypt = require('bcrypt')
-const geography = require('./fixtures/geography.json')
 const { allDiseaseToId } = require('../../src/shared/dictionary')
 
 const {
   ensureResultTreatmentStatuses,
-  upsertStatesAndLgas,
   upsertAssayResultCategories,
 } = require('../common')
 const {
@@ -29,12 +27,6 @@ async function seed(knex) {
     .where({ name: 'Lesotho' })
     .first('id')
 
-  // have to check if states are already set up because they're now part of common inserts:
-  const { stateCount } = await knex('State').count('id as stateCount').first()
-
-  if (stateCount === 0) {
-    await upsertStatesAndLgas(knex, countryId, geography.countries[0].states)
-  }
   await insertSites(knex, partnerId, countryId, sites.sites)
 
   const { id: jobFunctionIdLab } = await knex('JobFunction')
