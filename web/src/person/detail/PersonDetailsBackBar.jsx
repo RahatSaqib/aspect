@@ -44,7 +44,14 @@ const PersonDetailBackBar = ({
           disabled,
         },
       ].map(({ label, path, disabled = false }) => {
-        if ((!canUserLoggedIn && label === 'Login') || isNew) {
+        if (
+          (!canUserLoggedIn &&
+            [
+              formatMessage(messages.systemAccessControl),
+              formatMessage(messages.jobAssignment),
+            ].includes(label)) ||
+          isNew
+        ) {
           return null
         }
 
