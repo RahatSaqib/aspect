@@ -42,7 +42,8 @@ const FormItem = ({ id, label, type, controlType }) => {
         InputLabelProps={{
           shrink: true,
         }}
-        autoFocus
+        formik={formik}
+        // autoFocus
         // {...buildErrorMessage(formik, id)}
       />
     </Grid>

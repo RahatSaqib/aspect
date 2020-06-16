@@ -1,16 +1,18 @@
 import React, { Fragment, useEffect, useState } from 'react'
+
 import { useFormik } from 'formik'
 import omitBy from 'lodash/omitBy'
 import pick from 'lodash/pick'
 import keys from 'lodash/keys'
 
 import { pickKeys } from '../Helpers/index'
+import DisplayFormikState from '../Helpers/debug'
 
 const FormikContext = React.createContext()
 
 const FormikProvider = ({ config, children }) => {
   // console.log(config)
-
+  const debug = true
   const { actions } = config
   const [toggleEdit, setToggleEdit] = useState(actions.default === 'save')
   const initialValues = pickKeys(config.sections, ['initialValue'])
@@ -21,6 +23,8 @@ const FormikProvider = ({ config, children }) => {
     // validationSchema: createValidationSchema(items, intlFormatMessage),
     validateOnMount: false,
     onSubmit: values =>
+      // console.log(values),
+
       console.log(
         JSON.stringify(
           pick(values, keys(omitBy(fieldTypes, i => i === 'readOnly'))),
@@ -33,6 +37,7 @@ const FormikProvider = ({ config, children }) => {
   return (
     <FormikContext.Provider value={{ formik, toggleEdit, setToggleEdit }}>
       {children}
+      <DisplayFormikState {...formik} />
     </FormikContext.Provider>
   )
 }
