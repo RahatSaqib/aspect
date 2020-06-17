@@ -834,7 +834,12 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
         if (!sample.originSiteId && deviceSiteId) {
           sample.originSiteId = deviceSiteId
         }
-        await knex('Sample').where('id', sample.id).update(sample)
+        await knex('Sample')
+          .where('id', sample.id)
+          .update({
+            ..._.omit(sample, ['sampleTypeExternalId']),
+            sampleTypeId: sampleTypeIds[sample.sampleTypeExternalId],
+          })
       }
     }
     return sample
