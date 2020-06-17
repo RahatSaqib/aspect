@@ -1,0 +1,158 @@
+[
+  {
+    "name": "Admin",
+    "permissions": [
+      {
+        "module": "assay",
+        "activity": "admin"
+      },
+      {
+        "module": "patient",
+        "activity": "admin"
+      },
+      {
+        "module": "case",
+        "activity": "admin"
+      },
+      {
+        "module": "device",
+        "activity": "admin"
+      },
+      {
+        "module": "person",
+        "activity": "admin"
+      },
+      {
+        "module": "result",
+        "activity": "admin"
+      },
+      {
+        "module": "treatmentStatus",
+        "activity": "admin"
+      },
+      {
+        "module": "site",
+        "activity": "admin"
+      },
+      {
+        "module": "browse",
+        "activity": "view"
+      },
+      {
+        "module": "account",
+        "activity": "admin"
+      },
+      {
+        "module":"dashboard",
+        "activity":"summary"
+
+      }
+    ]
+  },
+  {
+    "name": "Clinician",
+    "permissions": [
+      {
+        "module": "assay",
+        "activity": "edit"
+      },
+      {
+        "module": "patient",
+        "activity": "edit"
+      },
+      {
+        "module": "case",
+        "activity": "edit"
+      },
+      {
+        "module": "device",
+        "activity": "view"
+      },
+      {
+        "module": "person",
+        "activity": "view"
+      },
+      {
+        "module": "result",
+        "activity": "edit"
+      },
+      {
+        "module": "demo",
+        "activity": "admin"
+      },
+      {
+        "module": "site",
+        "activity": "edit"
+      },
+      {
+        "module": "browse",
+        "activity": "view"
+      },
+      {
+        "module": "account",
+        "activity": "edit"
+      },
+      {
+        "module":"dashboard",
+        "activity":"summary"
+
+      },
+      {
+        "module":"dashboard",
+        "activity":"result"
+
+      }
+    ]
+  },
+  {
+    "name": "Lab User",
+    "permissions": [
+      {
+        "module": "assay",
+        "activity": "view"
+      },
+      {
+        "module": "patient",
+        "activity": "view"
+      },
+      {
+        "module": "case",
+        "activity": "view"
+      },
+      {
+        "module": "person",
+        "activity": "view"
+      },
+      {
+        "module": "device",
+        "activity": "view"
+      },
+      {
+        "module": "result",
+        "activity": "edit"
+      },
+      {
+        "module": "treatmentStatus",
+        "activity": "edit"
+      },
+      {
+        "module": "site",
+        "activity": "view"
+      },
+      {
+        "module": "browse",
+        "activity": "view"
+      },
+      {
+        "module": "account",
+        "activity": "edit"
+      },
+      {
+        "module":"dashboard",
+        "activity":"summary"
+
+      }
+    ]
+  }
+ 
+]
