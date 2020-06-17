@@ -95,14 +95,14 @@ const createFieldListHandlers = _fp.reduce(
           }
 
           if (isPromise(result)) {
-            result.then(this.handleSubmitSucceed, this.handleSubmitFailed) 
+            result.then(this.handleSubmitSucceed, this.handleSubmitFailed)
           } else if (result instanceof Function) {
             result()
             this.handleSubmitSucceed()
           }
         } catch (err) {
           this.handleSubmitFailed()
-        } 
+        }
       },
     },
   }
