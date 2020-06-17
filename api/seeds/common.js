@@ -178,6 +178,29 @@ async function commonUpserts(
     modules.case.edit,
     modules.person.view,
   ])
+  await upsertJobFunction(knex, 'Clinician', partnerId, [
+    modules.site.view,
+    modules.device.view,
+    modules.assay.view,
+    modules.inventory.view,
+    modules.result.edit,
+    modules.browse.view,
+    modules.treatmentStatus.edit,
+    modules.dashboard.report,
+    modules.dashboard.siteFilter,
+    modules.dashboard.action,
+    modules.dashboard.target,
+    modules.dashboard.result,
+    modules.dashboard.device,
+    modules.dashboard.inventory,
+    modules.dashboard.site,
+    modules.dashboard.summary,
+    modules.case.edit,
+    modules.account.edit,
+    modules.router.edit,
+    modules.person.view,
+  ])
+
   if (deviceApiToken) {
     await upsertGxAlertDevice(
       knex,
