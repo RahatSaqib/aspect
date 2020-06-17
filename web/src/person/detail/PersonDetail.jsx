@@ -149,7 +149,9 @@ export class PersonDetail extends PureComponent {
 
   handleEmailBlur = value => {
     const { person } = this.props
-    this.props.emailValueBlur(value, person.get('id'))
+    if (person.get('id')) {
+      this.props.emailValueBlur(value, person.get('id'))
+    }
   }
 
   handleFetchPartnersAndJobFunctions = ({
