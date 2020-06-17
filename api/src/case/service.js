@@ -1,3 +1,4 @@
+const Promise = require('bluebird')
 const { knex, filterParams, sortPageParams } = require('../db')
 const {
   getConstraints,
@@ -27,13 +28,8 @@ function validateCaseIdentifier(_case) {
  * @param  {int} userId (only necessary if createIfNonExistent is true) The userId that creates the case
  * @return {int} The case id
  */
-async function getCaseId(_case, createIfNonExistent, userId) {
+async function getCaseId(_case, createIfNonExistent, userId, messageContext) {
   validateCaseIdentifier(_case)
-
-  if (createIfNonExistent && !userId)
-    throw new Error(
-      "For creating the case if it doesn't exist, you should provide a userId"
-    )
 
   let { caseId } = (await knex('PatientCase')
     .where({
@@ -46,7 +42,7 @@ async function getCaseId(_case, createIfNonExistent, userId) {
   if (!caseId && createIfNonExistent) {
     _case.createdBy = userId
     _case.updatedBy = userId
-    caseId = await addCase(_case)
+    caseId = await addCase(_case, messageContext)
   }
 
   return caseId
@@ -65,7 +61,7 @@ async function addCase(_case, { messageContext } = {}) {
     if (!messageContext.caseAdded) {
       messageContext = messageContext.bindActionCreators({ caseAdded })
     }
-    messageContext.caseAdded(caseId)
+    await messageContext.caseAdded(caseId)
   }
 
   return caseId
@@ -91,7 +87,7 @@ async function updateCase(whereFields, updateFields, { messageContext } = {}) {
     if (!messageContext.caseUpdated) {
       messageContext = messageContext.bindActionCreators({ caseUpdated })
     }
-    caseIds.forEach(id => messageContext.caseUpdated(id))
+    await Promise.each(caseIds, async id => messageContext.caseUpdated(id))
   }
   return caseIds
 }
@@ -178,11 +174,11 @@ async function getCases({ query, auth }) {
 }
 
 async function onCaseAdded({ caseId }, { messageContext }) {
-  onCaseChanged(caseId, messageContext, true)
+  return onCaseChanged(caseId, messageContext, true)
 }
 
 async function onCaseUpdated({ caseId }, { messageContext }) {
-  onCaseChanged(caseId, messageContext, false)
+  return onCaseChanged(caseId, messageContext, false)
 }
 
 async function onCaseChanged(caseId, messageContext, isAdded) {
@@ -190,6 +186,30 @@ async function onCaseChanged(caseId, messageContext, isAdded) {
   const { deviceId } = messageContext
   const partnerPluginName = await getPartnerPluginName({ caseId })
   const deviceTypePluginName = await getDeviceTypePluginName(deviceId)
+  await messageContext.run(async knex => {
+    const { patientId: existingPatientIdForCase } = await knex('PatientCase')
+      .where('id', caseId)
+      .first('patientId')
+    const { patientId: patientIdFromLatestResult } =
+      (await knex('Result as r')
+        .join('Sample as s', 'r.sampleId', 's.id')
+        .orderBy('r.updatedOn', 'DESC')
+        .where('r.patientCaseId', caseId)
+        .andWhere(function () {
+          this.whereNotNull('s.patientId')
+        })
+        .first('s.patientId')) || {}
+    if (
+      patientIdFromLatestResult &&
+      patientIdFromLatestResult !== existingPatientIdForCase
+    ) {
+      await updateCase(
+        { id: caseId },
+        { patientId: patientIdFromLatestResult },
+        { messageContext }
+      )
+    }
+  })
   // exec plugin
   if (partnerPluginName || deviceTypePluginName) {
     const { loadPlugin } = require('../plugin/registration')
@@ -233,7 +253,7 @@ async function getAutoCompleteCases({ auth, query }) {
   return result
 }
 
-function onResultLogged({ resultId }, { messageContext }) {
+async function onResultLogged({ resultId }, { messageContext }) {
   return messageContext.run(async knex => {
     // Linking the result service here to avoid cyclic
     //   references between this service and case service
@@ -248,9 +268,9 @@ function onResultLogged({ resultId }, { messageContext }) {
       [
         ...RESULT_STRING_TEMPLATE_FIELDS,
         'r.partnerId',
-        'pd.canAutoAssignResultByCaseId',
         'r.patientCaseId as existingCaseId',
         'c.externalId as existingCaseExternalId',
+        'sample.patientId as existingPatientId',
         'rca1.reportable as resultCategory1Reportable',
         'rca2.reportable as resultCategory2Reportable',
         'r.updatedBy',
@@ -259,11 +279,12 @@ function onResultLogged({ resultId }, { messageContext }) {
     )
     if (result) {
       const {
-        canAutoAssignResultByCaseId,
-        caseExternalIdTemplate,
+        reliableCaseExternalIdTemplate,
+        unreliableCaseExternalIdTemplate,
         diseaseId,
         existingCaseId,
         existingCaseExternalId,
+        existingPatientId,
         resultCategory1Reportable,
         resultCategory2Reportable,
         updatedBy,
@@ -271,15 +292,22 @@ function onResultLogged({ resultId }, { messageContext }) {
       } = result
       if (
         diseaseId &&
-        caseExternalIdTemplate &&
-        canAutoAssignResultByCaseId &&
+        (reliableCaseExternalIdTemplate || unreliableCaseExternalIdTemplate) &&
         (resultCategory1Reportable || resultCategory2Reportable)
       ) {
-        const { caseExternalId } =
+        let { reliableCaseExternalId: caseExternalId } =
           (await processUsingDataSourceQuery(
-            { ...result, caseExternalIdTemplate },
-            ['caseExternalIdTemplate']
+            { ...result, reliableCaseExternalIdTemplate },
+            ['reliableCaseExternalIdTemplate']
           )) || {}
+        const isReliableCaseId = !!caseExternalId
+        if (!caseExternalId) {
+          ;({ unreliableCaseExternalId: caseExternalId } =
+            (await processUsingDataSourceQuery(
+              { ...result, unreliableCaseExternalIdTemplate },
+              ['unreliableCaseExternalIdTemplate']
+            )) || {})
+        }
         if (caseExternalId) {
           // Get the case that matched the case ID in the payload
           // If the case doesn't exist and the result is not assigned a case yet, creat the case
@@ -288,9 +316,11 @@ function onResultLogged({ resultId }, { messageContext }) {
               externalId: caseExternalId,
               partnerId,
               diseaseId,
+              reliable: isReliableCaseId,
             },
             !existingCaseId,
-            updatedBy
+            updatedBy,
+            { messageContext }
           )
           // If no case was found or created, use the case already assigned to the result
           if (!caseId) {
@@ -308,31 +338,44 @@ function onResultLogged({ resultId }, { messageContext }) {
               partnerId,
             },
             false,
-            updatedBy
+            updatedBy,
+            { messageContext }
           )
           // If the case number for the result has changed to an unknown case number
           //   update the case number on the existing case
-          if (!otherCaseId || otherCaseId === caseId) {
+          if (isReliableCaseId && (!otherCaseId || otherCaseId === caseId)) {
             await updateCase(
               { id: caseId },
               {
                 externalId: caseExternalId,
+                reliable: isReliableCaseId,
                 updatedBy,
                 updatedOn: new Date(),
-              }
+              },
+              { messageContext }
             )
           }
           // If the case ID for the result has changed
           //   update the case ID on the result
-          if (existingCaseId !== caseId) {
+          if (
+            (isReliableCaseId && existingCaseId !== caseId) ||
+            (!isReliableCaseId && !existingCaseId && otherCaseId)
+          ) {
             await knex('Result')
               .where('id', resultId)
               .update({ patientCaseId: otherCaseId })
+            caseId = otherCaseId
             // TODO: If the old case is now empty, should it be purged?
             //       We need to consider if there is a use case for cases
             //       that don't have results, what will happen to the
             //       patient data associated with that case? Do empty cases
             //       even present a problem?
+            //       https://ops.systemone.id/browse/ASP-1453
+          }
+          if (caseId && existingPatientId) {
+            await knex('PatientCase')
+              .where('id', caseId)
+              .update({ patientId: existingPatientId })
           }
         }
       }
