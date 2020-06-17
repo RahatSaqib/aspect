@@ -832,7 +832,7 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
           sample.collectedOn = result.sample.collectedOn
         }
         if (!sample.originSiteId && deviceSiteId) {
-          sample.originSiteId = result.sample.collectedOn
+          sample.originSiteId = deviceSiteId
         }
         await knex('Sample').where('id', sample.id).update(sample)
       }

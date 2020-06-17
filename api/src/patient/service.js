@@ -294,6 +294,7 @@ function onResultLogged({ resultId }, { messageContext }) {
             //       We need to consider if there is a use case for patient records
             //       that don't have any samples or cases in the database
             //       Do empty orphaned patient records even present a problem?
+            //       https://ops.systemone.id/browse/ASP-1453
           }
         }
       }
