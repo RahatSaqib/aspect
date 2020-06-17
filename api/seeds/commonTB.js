@@ -16,6 +16,7 @@ const {
   getLinkedResultDate,
   getDateFields,
 } = require('./utils')
+const { deviceTypeCategoryToId } = require('../src/shared/dictionary')
 
 async function getMGITResultFromTBPossitive(result, assaysMGIT, devicesMGIT) {
   const randomDateMgit = getLinkedResultDate(result)
@@ -36,13 +37,20 @@ async function getMGITResultFromTBPossitive(result, assaysMGIT, devicesMGIT) {
   )
 }
 
-async function updateMGITAssays(
+async function upsertMGITDeviceTypeAndAssays(
   knex,
-  deviceTypeBDMGITId,
   patientDataSchema = MGITPatientDataSchema,
   assayBdMgitGndResultDataSchema = AssayBdMgitGndResultDataSchema,
   assayBdMgitAstResultDataSchema = AssayBdMgitAstResultDataSchema
 ) {
+  const labDeviceTypeCategoryId = await deviceTypeCategoryToId('Lab')
+  const deviceTypeBDMGITId = await knex('DeviceType').insert({
+    externalId: 'BDMGIT',
+    name: 'BD MGIT',
+    manufacturer: 'Becton Dickinson',
+    deviceTypeCategoryId: labDeviceTypeCategoryId,
+  })
+
   const assayBdMgitAst = {
     name: 'BD MGIT AST',
     abbreviation: 'MGIT AST',
@@ -194,7 +202,7 @@ function getNewMgitResultData(isAST) {
   }
 }
 
-async function updateCultureAssays(
+async function upsertCultureAssays(
   knex,
   deviceTypeLIMSId,
   patientDataSchema = MGITPatientDataSchema,
@@ -315,7 +323,7 @@ async function updateCultureAssays(
 }
 
 module.exports = {
-  updateMGITAssays,
+  upsertMGITDeviceTypeAndAssays,
   getMGITResultFromTBPossitive,
-  updateCultureAssays,
+  upsertCultureAssays,
 }
