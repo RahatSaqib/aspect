@@ -8,6 +8,7 @@ const { getUtcTime } = require('../../src/shared/date')
 const { randomToken } = require('../../src/deviceApi/apiKey')
 const { readTextFile } = require('../../src/shared/io')
 const { waitAsyncComplete } = require('../utils/generatorFunctionUtils')
+const { waitForIdle } = require('../utils/mqUtils')
 
 const server = supertest.agent('http://localhost:8080')
 const { assert, expect } = chai
@@ -20,10 +21,16 @@ const {
 } = require('../../src/shared/dictionary')
 
 describe('Device API Raw routes for Abbott M2000', () => {
+  let latestResultIdBeforeTests
+  let latestCaseIdBeforeTests
+  let latestPatientIdBeforeTests
+  let latestSampleIdBeforeTests
+
   const deviceApiRawPath = '/device/raw'
   const validApiKeyToken = randomToken()
   let abbottM2000DeviceId
   let abbottM2000SiteId
+
   before(async () => {
     const now = getUtcTime()
     const { id: userId } = await knex('User').first('id')
@@ -91,6 +98,18 @@ describe('Device API Raw routes for Abbott M2000', () => {
       updatedOn: now,
       updatedBy: userId,
     })
+    ;({ id: latestSampleIdBeforeTests } = await knex('Sample')
+      .max('id as id')
+      .first())
+    ;({ id: latestResultIdBeforeTests } = await knex('Result')
+      .max('id as id')
+      .first())
+    ;({ id: latestCaseIdBeforeTests } = await knex('PatientCase')
+      .max('id as id')
+      .first())
+    ;({ id: latestPatientIdBeforeTests } = await knex('Patient')
+      .max('id as id')
+      .first())
   })
 
   after(async () => {
@@ -171,6 +190,15 @@ describe('Device API Raw routes for Abbott M2000', () => {
         }
       })
       .delete()
+
+    await knex('Result').where('id', '>', latestResultIdBeforeTests).del()
+    await knex('Sample').where('id', '>', latestSampleIdBeforeTests).del()
+    await knex('PatientCase').where('id', '>', latestCaseIdBeforeTests).del()
+    if (latestPatientIdBeforeTests) {
+      await knex('Patient').where('id', '>', latestPatientIdBeforeTests).del()
+    } else {
+      await knex('Patient').del()
+    }
   })
 
   it('should throw an error on unknown assay', async () => {
@@ -371,7 +399,12 @@ aa.`
       path.join(__dirname, 'abbottM2000PlasmaHivVlRaw.pkl'),
       'utf8'
     )
-
+    let patientCase = await knex('PatientCase')
+      .where('externalId', '36008/19')
+      .first()
+    assert.isNotOk(patientCase)
+    let patient = await knex('Patient').where('externalId', '36008/19').first()
+    assert.isNotOk(patient)
     const response = await server
       .post(deviceApiRawPath)
       .set('Authorization', `Bearer ${validApiKeyToken}`)
@@ -491,6 +524,15 @@ aa.`
           },
         },
       })
+    })
+    await waitForIdle(2000)
+    patientCase = await knex('PatientCase')
+      .where('externalId', '36008/19')
+      .first()
+    patient = await knex('Patient').where('externalId', '36008/19').first()
+    expect(patientCase).to.containSubset({
+      reliable: 0,
+      patientId: patient.id,
     })
   })
 
