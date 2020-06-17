@@ -112,10 +112,10 @@ async function updateCovidResultFromFormData(
       if (diseaseId) {
         let caseExternalId
         if (caseExternalIdTemplate) {
-          ;({ caseExternalId } =
+          ;({ reliableCaseExternalId: caseExternalId } =
             (await processUsingDataSourceQuery(
               { ...result, caseExternalIdTemplate },
-              ['caseExternalIdTemplate']
+              ['reliableCaseExternalIdTemplate']
             )) || {})
         }
         if (!caseExternalId) {
