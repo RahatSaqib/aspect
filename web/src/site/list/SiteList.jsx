@@ -127,7 +127,7 @@ const enhance = compose(
     }
   ),
   connect(
-    state => () => {
+    state => {
       return {
         items: state.site.items,
         table: state.site.table,
