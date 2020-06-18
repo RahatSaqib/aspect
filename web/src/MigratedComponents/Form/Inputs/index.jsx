@@ -14,7 +14,7 @@ const Inputs = {
 }
 
 const AspectInput = props => {
-  const Component = Inputs[props.controlType]
+  const Component = Inputs[props.controlType.component]
   return Component ? <Component {...props} /> : null
 }
 
