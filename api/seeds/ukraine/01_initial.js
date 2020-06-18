@@ -10,11 +10,12 @@ const {
 const { upsertMGITDeviceTypeAndAssays } = require('../commonTB')
 
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
+const adminPassword = 'F0Rbq3WtDP'
+const lowerLevelUserPassword = 'TOVpMx3nHP'
+const now = new Date()
 
 async function seed(knex) {
   const deviceApiToken = 'qqsmc85rzlaoh9aygzh2'
-  const adminPassword = 'F0Rbq3WtDP'
-  const now = new Date()
 
   const [partnerId] = await knex('Partner').insert({
     name: 'Ukraine',
@@ -24,6 +25,7 @@ async function seed(knex) {
     maxDaysDeviceNoResults: 14,
     serverUrl: 'https://ukraine.aspect.id',
   })
+
   const [adminId] = await knex('User').insert({
     name: 'admin',
     password: bcrypt.hashSync(adminPassword, saltRounds),
@@ -33,8 +35,18 @@ async function seed(knex) {
     createdOn: now,
   })
 
-  // Common upsers
-  await commonUpserts(knex, partnerId, adminId, geography, 'UA', deviceApiToken)
+  // Common upserts
+  await commonUpserts(
+    knex,
+    partnerId,
+    adminId,
+    geography,
+    'UA',
+    deviceApiToken,
+    {
+      password: lowerLevelUserPassword,
+    }
+  )
 
   // GeneXpert
   await upsertGeneXpertDeviceTypeAndAssays(knex, [
