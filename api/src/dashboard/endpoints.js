@@ -91,7 +91,7 @@ const routes = [
     config: {
       description: 'Operational Data Dashboard',
       notes: 'The top level operational data',
-      auth: { scope: ['site', 'device', 'dashboard'] },
+      auth: { scope: ['site', 'device', 'dashboard', 'operationalData'] },
       validate: {
         query: {
           assayType: Joi.string()

@@ -5,6 +5,7 @@ import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { Helmet } from 'react-helmet'
 import Card from '@material-ui/core/Card'
+import { injectIntl } from 'react-intl'
 
 import { Unit } from '../../components/pureGrids'
 import ColumnGraph from '../../components/graph/ColumnGraph'
@@ -23,6 +24,7 @@ const {
 } = process.env
 
 const enhance = compose(
+  injectIntl,
   connect(
     state => ({
       loading: !!state.getIn(['dashboard', 'requestedAt']),

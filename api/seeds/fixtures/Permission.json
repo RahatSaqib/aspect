@@ -187,7 +187,9 @@
     {
       "name": "operationalData",
       "activities": [
-        "view"
+        "view",
+        "edit",
+        "admin"
       ]
     }
 
