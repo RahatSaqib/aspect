@@ -1,0 +1,30 @@
+module.exports = require('../utils').seed(seed, __filename)
+
+const { seedJobFunctionsOperationalData } = require('../utils')
+
+async function seed(knex) {
+  const now = new Date()
+  const { id: adminId } = await knex('User')
+    .where({ name: 'admin' })
+    .first('id')
+  const auditFields = {
+    createdOn: now,
+    createdBy: adminId,
+    updatedOn: now,
+    updatedBy: adminId,
+  }
+  const { id: countryId, culture, timezone } = await knex('Country')
+    .where('abbreviation', 'ZW')
+    .first()
+  const { id: partnerId } = await knex('Partner')
+    .where('name', 'Zimbabwe')
+    .first('id')
+
+  await seedJobFunctionsOperationalData(knex, {
+    auditFields,
+    countryId,
+    culture,
+    partnerId,
+    timezone,
+  })
+}

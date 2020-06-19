@@ -1,5 +1,6 @@
 const Promise = require('bluebird')
 const _ = require('lodash')
+const bcrypt = require('bcrypt')
 const { readJson } = require('fs-extra')
 const path = require('path')
 const { addMilliseconds, subDays, addMinutes, format } = require('date-fns')
@@ -8,6 +9,9 @@ const {
   allAssayTypeToId,
   allResultCategoryToId,
 } = require('../src/shared/dictionary')
+const config = require('../src/config')
+
+const saltRounds = parseInt(config.passwordSaltRounds, 10)
 
 const tables = [
   'DeviceApiRawStatus',
@@ -2725,6 +2729,133 @@ async function getResultForms(knex) {
     )
 }
 
+async function seedJobFunctionsOperationalData(
+  knex,
+  { auditFields, countryId, culture, geographyId, partnerId, timezone }
+) {
+  const modules = await getPermissionModules(knex)
+  const now = new Date()
+  const userIds = {}
+  const personIds = {}
+  if (!geographyId) {
+    const geography = await knex('Geography')
+      .where('countryId', countryId)
+      .whereNull('stateId')
+      .whereNull('lgaId')
+      .first('id')
+    geographyId = geography.id
+  }
+  // -------------------------------------------
+  // Users, Persons
+  await Promise.all(
+    _.map(
+      [
+        'cepheid', // for jobFunction 'Device Maker'
+        'ntp', // for jobFunction 'Device Maker'
+        'maintenance', // for jobFunction 'Technician'
+      ],
+      async name => {
+        const { id: userId } = await upsertSingle(
+          knex,
+          'User', // tableName
+          'name', // whereKeys
+          {
+            name: name.toLowerCase(),
+            password: bcrypt.hashSync('test07', saltRounds),
+            legacyPassword: 0,
+            approved: 1,
+            createdOn: now,
+            lockedOut: 0,
+            failedPasswordAttempts: 0,
+          }
+        )
+
+        userIds[name.toLowerCase()] = userId
+
+        const lastPartnerId = partnerId
+        const lastCountryId = countryId
+
+        const { id: personId } = await upsertSingle(
+          knex,
+          'Person', // tableName
+          'userId', // whereKeys
+          {
+            userId,
+            name,
+            lastPartnerId,
+            lastCountryId,
+            timezone,
+            culture,
+            geographyId,
+            ...auditFields,
+          }
+        )
+        personIds[name.toLowerCase()] = personId
+      }
+    )
+  )
+  // -------------------------------------------
+  // Job Functions
+  const { upsertJobFunction } = require('./common')
+  const jobFunctionIdDeviceMaker = await upsertJobFunction(
+    knex,
+    'Device Maker',
+    partnerId,
+    [modules.operationalData.admin]
+  )
+  const jobFunctionIdTechnician = await upsertJobFunction(
+    knex,
+    'Technician',
+    partnerId,
+    [modules.operationalData.view]
+  )
+  // -------------------------------------------
+  // Jobs
+  const initJob = async (personId, jobFunctionId) => {
+    const { id } = await upsertSingle(
+      knex,
+      'Job',
+      ['personId', 'jobFunctionId'],
+      { personId, jobFunctionId }
+    )
+    return id
+  }
+  const jobIdCepheid = await initJob(
+    personIds.cepheid,
+    jobFunctionIdDeviceMaker
+  )
+  const jobIdNtp = await initJob(personIds.ntp, jobFunctionIdDeviceMaker)
+  const jobIdMaintenance = await initJob(
+    personIds.maintenance,
+    jobFunctionIdTechnician
+  )
+
+  // -------------------------------------------
+  // Constrain jobs by context
+  await upsertItems(
+    knex,
+    'JobContext',
+    ['jobId', 'geographyId'],
+    [
+      { jobId: jobIdCepheid, geographyId },
+      { jobId: jobIdNtp, geographyId },
+      { jobId: jobIdMaintenance, geographyId },
+    ]
+  )
+
+  return {
+    userIds,
+    personIds,
+
+    jobFunctionIdDeviceMaker,
+    jobFunctionIdTechnician,
+
+    jobIdCepheid,
+    jobIdNtp,
+    jobIdMaintenance,
+  }
+}
+
 module.exports = {
   addReports,
 
@@ -2788,4 +2919,6 @@ module.exports = {
   getDateFields,
 
   getResultForms,
+
+  seedJobFunctionsOperationalData,
 }

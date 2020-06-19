@@ -35,7 +35,7 @@ const dashboardWidget = require('./fixtures/dashboardWidget.json')
 const { errorCodes } = require('./fixtures/errorCodes.js')
 const { updateMGITAssays, updateCultureAssays } = require('../commonTB')
 const { getRandomTBPatientData } = require('../commonTbresults')
-const { upsertJobFunction, upsertJobFunctionPermission } = require('../common')
+const { upsertJobFunction } = require('../common')
 
 const millisInHour = 1000 * 60 * 60
 const millisInMinute = 1000 * 60
@@ -4131,8 +4131,6 @@ async function seed(knex) {
         'Ned',
         'Sam',
         'Steve',
-        'ADeviceMaker',
-        'ATechnician',
       ],
       async name => {
         let userId
@@ -5272,20 +5270,6 @@ async function seed(knex) {
     ]
   )
 
-  const jobFunctionIdDeviceMaker = await upsertJobFunction(
-    knex,
-    'Device Maker',
-    partnerOneId,
-    [modules.operationalData.admin]
-  )
-
-  const jobFunctionIdTechnician = await upsertJobFunction(
-    knex,
-    'Technician',
-    partnerOneId,
-    [modules.operationalData.view]
-  )
-
   // crate jobs for users
   const jobIdAdmin = await knex('Job').insert({
     personId: personIds.admin,
@@ -5318,14 +5302,6 @@ async function seed(knex) {
     personId: personIds.fred,
     jobFunctionId: jobFunctionIdClinician,
   })
-  const jobIdDeviceMaker = await knex('Job').insert({
-    personId: personIds.adevicemaker,
-    jobFunctionId: jobFunctionIdDeviceMaker,
-  })
-  const jobIdTechnician = await knex('Job').insert({
-    personId: personIds.atechnician,
-    jobFunctionId: jobFunctionIdTechnician,
-  })
 
   // Constrain jobs by context
   await knex('JobContext').insert([
@@ -5346,8 +5322,6 @@ async function seed(knex) {
       jobId: jobIdFred,
       geographyId: countries.US.states.MA.lgas.Suffolk.geographyId,
     },
-    { jobId: jobIdDeviceMaker, geographyId: countries.US.geographyId },
-    { jobId: jobIdTechnician, geographyId: countries.US.geographyId },
   ])
 
   // Fill device flags with random data
