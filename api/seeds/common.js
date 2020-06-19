@@ -36,7 +36,7 @@ const {
  * @param {*} geography The geography definitions
  * @param {*} countryAbbreviation The country's two letters code
  * @param {*} deviceApiToken The API token for GxAlert device
- * @param {*} usersInsertConfig If it's not null, function will insert one user for each existing job function. This configuration object includes the props: password (string) | excludedJobFunctions (array of external ids).
+ * @param {*} usersInsertConfig If it's not null, function will insert one user for each existing job function. This configuration object includes the props: password (string) | excludedJobFunctions (array of external ids). Ex.: { password: "12345", excludedJobFunctions: [ "admin" ] }
  */
 async function commonUpserts(
   knex,
