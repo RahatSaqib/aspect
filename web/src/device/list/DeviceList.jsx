@@ -75,8 +75,8 @@ const searchSanitizer = makeSearchParamsSanitizer({
     'errorRate',
     'createdOn',
     'lastSeen',
-    'lastMonth',
-    'thisMonth',
+    'resultCountLastMonth',
+    'resultCountThisMonth',
   ],
 })
 
@@ -318,12 +318,12 @@ export const DeviceList = ({
                 label: intl.formatMessage(messages.lastSeen),
               },
               {
-                key: 'lastMonth',
+                key: 'resultCountLastMonth',
                 sortable: true,
                 label: intl.formatMessage(messages.lastMonth),
               },
               {
-                key: 'thisMonth',
+                key: 'resultCountThisMonth',
                 sortable: true,
                 label: intl.formatMessage(messages.thisMonth),
               },
