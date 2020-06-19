@@ -84,19 +84,19 @@ const AspectSelectDropdown = props => {
         .catch(err => console.error(err))
         .finally(() => setCalledRedux(true))
     }
-    console.log(reduxData, calledRedux, whiteListed)
+    // console.log(reduxData, calledRedux, whiteListed)
 
-    if (reduxData && calledRedux && !whiteListed) {
-      reduxData.filter(obj => {
-        console.log(obj)
-        return false
-      })
-      setWhiteListed([])
-    }
+    // if (reduxData && calledRedux && !whiteListed) {
+    //   reduxData.filter(obj => {
+    //     console.log(obj)
+    //     return false
+    //   })
+    //   setWhiteListed([])
+    // }
   }, [reduxData])
 
   console.log(reduxData)
-  console.log(whiteListed)
+  // console.log(whiteListed)
 
   return (
     <Select

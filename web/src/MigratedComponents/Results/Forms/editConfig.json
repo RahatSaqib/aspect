@@ -24,6 +24,33 @@
     },
     "sections": [
         {
+            "id": "Result",
+            "label": "Result",
+            "rows": [
+                {
+                    "id": 0,
+                    "items": [
+                        {
+                            "id": "resultCategory1Name",
+                            "controlType": {
+                                "component": "textField"
+                            },
+                            "type": "string",
+                            "label": "COVID 19"
+                        },
+                        {
+                            "id": "errorCode",
+                            "controlType": {
+                                "component":"textField"
+                            },
+                            "type": "string",
+                            "label": "Error Code"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
             "id": "Assay",
             "label": "Assay",
             "rows": [
@@ -47,5 +74,6 @@
                 }
             ]
         }
+        
     ]
 }
