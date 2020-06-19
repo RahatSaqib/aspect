@@ -7,6 +7,8 @@ const {
   resultSourceToId,
   unitToId,
 } = require('../../src/shared/dictionary')
+const AssayBdMgitAstResultDataSchema = require('../fixtures/AssayBdMgitAstResultDataSchema.json')
+const AssayBdMgitGndResultDataSchema = require('../fixtures/AssayBdMgitGndResultDataSchema.json')
 
 async function seed(knex) {
   const labDeviceTypeCategoryId = await deviceTypeCategoryToId('Lab')
@@ -14,44 +16,8 @@ async function seed(knex) {
     'Information System'
   )
 
-  // MGIT
-  await upsertMGITDeviceTypeAndAssays(knex)
-
-  // Senaite
-  const { id: deviceTypeSenaiteLimsId } =
-    (await knex('DeviceType').where('externalId', 'SenaiteLims').first('id')) ||
-    {}
-  const existingDeviceType = await knex('DeviceType')
-    .where({
-      externalId: 'SenaiteLims',
-    })
-    .first('id')
-  if (existingDeviceType) return
-
-  if (!deviceTypeSenaiteLimsId) {
-    await knex('DeviceType').insert({
-      externalId: 'SenaiteLims',
-      name: 'Senaite LIMS',
-      manufacturer: 'Senaite',
-      deviceTypeCategoryId: informationSystemDeviceTypeCategoryId,
-    })
-  }
-
-  // Hain GenoScan
-  let { id: deviceTypeHainGenoScanId } =
-    (await knex('DeviceType')
-      .where('externalId', 'HainGenoScan')
-      .first('id')) || {}
-  if (!deviceTypeHainGenoScanId) {
-    ;[deviceTypeHainGenoScanId] = await knex('DeviceType').insert({
-      externalId: 'HainGenoScan',
-      name: 'Hain GenoScan',
-      manufacturer: 'Hain Lifescience',
-      deviceTypeCategoryId: labDeviceTypeCategoryId,
-    })
-  }
-
-  const patientDataSchema = JSON.stringify({
+  // Defining patientDataSchema
+  const patientDataSchema = {
     name: {
       title: 'Name of patient',
       type: 'string',
@@ -122,7 +88,152 @@ async function seed(knex) {
       type: 'string',
       order: 12,
     },
-  })
+  }
+
+  // MGIT
+  const assayBdMgitAstResultDataSchema = {
+    ...AssayBdMgitAstResultDataSchema,
+    dateLjGrowth: {
+      list: false,
+      order: 18,
+      type: 'date',
+      title: 'Date LJ Growth',
+    },
+    ljGrowthClCount: {
+      list: false,
+      order: 19,
+      type: 'number',
+      title: 'CL Count',
+    },
+    ljGrowthZn: {
+      list: false,
+      order: 20,
+      type: 'number',
+      title: 'LJ Growth ZN',
+    },
+    mgitTurbidity: {
+      list: false,
+      order: 21,
+      type: 'string',
+      title: 'Turbidity',
+    },
+    ba: {
+      list: false,
+      order: 22,
+      type: 'string',
+      title: 'B/A',
+    },
+    actionTaken: {
+      list: false,
+      order: 23,
+      type: 'string',
+      title: 'Action Taken',
+    },
+    doneBy: {
+      list: false,
+      order: 24,
+      type: 'string',
+      title: 'Done By',
+    },
+  }
+  const assayBdMgitGndResultDataSchema = {
+    ...AssayBdMgitGndResultDataSchema,
+    dateInoculated: {
+      list: false,
+      order: 12,
+      type: 'date',
+      title: 'Date Inoculated',
+    },
+    dateFlaggedScanned: {
+      list: false,
+      order: 13,
+      type: 'date',
+      title: 'Date Flagged Positive/Scanned Out',
+    },
+    dateLjGrowth: {
+      list: false,
+      order: 14,
+      type: 'date',
+      title: 'Date LJ Growth',
+    },
+    ljGrowthClCount: {
+      list: false,
+      order: 15,
+      type: 'number',
+      title: 'CL Count',
+    },
+    ljGrowthZn: {
+      list: false,
+      order: 16,
+      type: 'number',
+      title: 'LJ Growth ZN',
+    },
+    mgitTurbidity: {
+      list: false,
+      order: 17,
+      type: 'string',
+      title: 'Turbidity',
+    },
+    ba: {
+      list: false,
+      order: 18,
+      type: 'string',
+      title: 'B/A',
+    },
+    actionTaken: {
+      list: false,
+      order: 19,
+      type: 'string',
+      title: 'Action Taken',
+    },
+    doneBy: {
+      list: false,
+      order: 20,
+      type: 'string',
+      title: 'Done By',
+    },
+  }
+  await upsertMGITDeviceTypeAndAssays(
+    knex,
+    patientDataSchema,
+    assayBdMgitGndResultDataSchema,
+    assayBdMgitAstResultDataSchema
+  )
+
+  // Senaite
+  const { id: deviceTypeSenaiteLimsId } =
+    (await knex('DeviceType').where('externalId', 'SenaiteLims').first('id')) ||
+    {}
+  const existingDeviceType = await knex('DeviceType')
+    .where({
+      externalId: 'SenaiteLims',
+    })
+    .first('id')
+  if (existingDeviceType) return
+
+  if (!deviceTypeSenaiteLimsId) {
+    await knex('DeviceType').insert({
+      externalId: 'SenaiteLims',
+      name: 'Senaite LIMS',
+      manufacturer: 'Senaite',
+      deviceTypeCategoryId: informationSystemDeviceTypeCategoryId,
+    })
+  }
+
+  // Hain GenoScan
+  let { id: deviceTypeHainGenoScanId } =
+    (await knex('DeviceType')
+      .where('externalId', 'HainGenoScan')
+      .first('id')) || {}
+  if (!deviceTypeHainGenoScanId) {
+    ;[deviceTypeHainGenoScanId] = await knex('DeviceType').insert({
+      externalId: 'HainGenoScan',
+      name: 'Hain GenoScan',
+      manufacturer: 'Hain Lifescience',
+      deviceTypeCategoryId: labDeviceTypeCategoryId,
+    })
+  }
+
   // TODO: ZIMBABWE Determine the standard set of consumables used in MGIT and GenoScan tests
   const piece = await unitToId('Piece')
 
@@ -564,7 +675,7 @@ async function seed(knex) {
         title: 'Relative Intensity of Band 10',
       },
     }),
-    patientDataSchema,
+    patientDataSchema: JSON.stringify(patientDataSchema),
   }
   let { id: assayGenoTypeMTBCV1Id } =
     (await knex('Assay')
@@ -1461,7 +1572,7 @@ async function seed(knex) {
         title: 'Relative Intensity of Band 27',
       },
     }),
-    patientDataSchema,
+    patientDataSchema: JSON.stringify(patientDataSchema),
   }
   let { id: assayGenoTypeMTBDRplusV2Id } =
     (await knex('Assay')
@@ -2226,7 +2337,7 @@ async function seed(knex) {
         title: 'Relative Intensity of Band 22',
       },
     }),
-    patientDataSchema,
+    patientDataSchema: JSON.stringify(patientDataSchema),
   }
   let { id: assayGenoTypeMTBDRslV1Id } =
     (await knex('Assay')
@@ -3112,7 +3223,7 @@ async function seed(knex) {
         title: 'Relative Intensity of Band 27',
       },
     }),
-    patientDataSchema,
+    patientDataSchema: JSON.stringify(patientDataSchema),
   }
   let { id: assayGenoTypeMTBDRslV2Id } =
     (await knex('Assay')
