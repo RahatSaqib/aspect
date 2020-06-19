@@ -12,6 +12,7 @@ const {
 const { isNumeric } = require('../../shared/string')
 const { astmE1394MessagesToJson } = require('../../shared/astm')
 const { deviceSeen } = require('../../device/actions')
+const { resultLogged } = require('../../result/actions')
 const { SynchronousDataProcessor } = require('./_base')
 const {
   allAssayToId,
@@ -775,13 +776,13 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
     }, {})
   }
 
-  async getOrCreateSample(resultsWithSameId, knex) {
+  async getOrCreateSample(resultsWithSameId, deviceSiteId, knex) {
     const sampleTypeIds = await allSampleTypeToId()
     let sample = {}
     if (!_.isEmpty(resultsWithSameId)) {
       const result = resultsWithSameId[0]
       const existingSamples = await knex('Sample as s')
-        .join('SampleType as st', 's.sampleTypeId', 'st.id')
+        .leftJoin('SampleType as st', 's.sampleTypeId', 'st.id')
         .where('s.externalId', result.sample.externalId)
         .select(
           's.id',
@@ -792,14 +793,26 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
       if (!_.isEmpty(existingSamples)) {
         if (existingSamples.length === 1) {
           ;[sample] = existingSamples
-        } else if (
-          _.some(existingSamples, {
+        }
+        if (_.isEmpty(sample)) {
+          const existingSamplesOfTypeFromDeviceSiteId = _.filter(
+            existingSamples,
+            {
+              sampleTypeExternalId: result.sample.sampleTypeExternalId,
+              originSiteId: deviceSiteId,
+            }
+          )
+          if (existingSamplesOfTypeFromDeviceSiteId.length === 1) {
+            ;[sample] = existingSamplesOfTypeFromDeviceSiteId
+          }
+        }
+        if (_.isEmpty(sample)) {
+          const existingSamplesOfType = _.filter(existingSamples, {
             sampleTypeExternalId: result.sample.sampleTypeExternalId,
           })
-        ) {
-          sample = _.find(existingSamples, {
-            sampleTypeExternalId: result.sample.sampleTypeExternalId,
-          })
+          if (existingSamplesOfType.length === 1) {
+            ;[sample] = existingSamplesOfType
+          }
         }
       }
       if (!sample.id) {
@@ -807,17 +820,26 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
           externalId: result.sample.externalId,
           collectedOn: result.sample.collectedOn,
           sampleTypeId: sampleTypeIds[result.sample.sampleTypeExternalId],
+          originSiteId: deviceSiteId,
         }
         const [sampleId] = await knex('Sample').insert(sample)
         sample.id = sampleId
-      } else if (
-        result.sample.collectedOn &&
-        !dateEqual(sample.collectedOn, result.sample.collectedOn)
-      ) {
+      } else {
+        if (
+          result.sample.collectedOn &&
+          !dateEqual(sample.collectedOn, result.sample.collectedOn)
+        ) {
+          sample.collectedOn = result.sample.collectedOn
+        }
+        if (!sample.originSiteId && deviceSiteId) {
+          sample.originSiteId = deviceSiteId
+        }
         await knex('Sample')
           .where('id', sample.id)
-          .update({ collectedOn: result.sample.collectedOn })
-        sample.collectedOn = result.sample.collectedOn
+          .update({
+            ..._.omit(sample, ['sampleTypeExternalId']),
+            sampleTypeId: sampleTypeIds[sample.sampleTypeExternalId],
+          })
       }
     }
     return sample
@@ -1378,7 +1400,11 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
         const resultTypePatientId = await resultTypeToId('Patient')
         const resultCategories = await allResultCategoryToId()
         const resultWorkflowStatuses = await allResultWorkflowStatusToId()
-        const sample = await this.getOrCreateSample(resultsWithSameId, knex)
+        const sample = await this.getOrCreateSample(
+          resultsWithSameId,
+          device.siteId,
+          knex
+        )
         const processResult = _.get(assayMappings, [assayCode, 'processResult'])
         const result = await processResult(
           resultsWithSameId,
@@ -1403,6 +1429,11 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
           rawMessage: result.rawData,
           resultId: result.id,
         })
+        if (result.id) {
+          this.messageContext.dispatch(
+            resultLogged(result.id, resultDeviceLogId)
+          )
+        }
         this.response.deviceLogIds = [
           ...this.response.deviceLogIds,
           resultDeviceLogId,

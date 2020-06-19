@@ -709,12 +709,10 @@ export default function personReducer(state = initialState, action) {
         mutState.set('table', mutState.get('table').clear())
       })
     case types.CAN_LOG_IN_PERSON:
-      return state.withMutations(mutState => {
-        const currentState = state.items.byId
-          .get(action.personId)
-          .set('canLogIn', action.canLogIn)
-        mutState.set('items', receiveItem(mutState.items, currentState))
-      })
+      return state.setIn(
+        ['items', 'byId', action.personId, 'canLogIn'],
+        action.canLogIn
+      )
     case types.REQUEST_AVAILABLE_PERSONS:
       return requestAvailableContacts(state)
     case types.RECEIVE_AVAILABLE_PERSONS:
@@ -740,49 +738,36 @@ export default function personReducer(state = initialState, action) {
         mutState.set('items', receiveItem(mutState.items, immutItem))
       })
     case types.PREFILL_EMAIL:
-      return state.withMutations(mutState => {
-        const currentState = state.items.byId
-          .get(action.personId)
-          .set('email', action.email)
-        mutState.set('items', receiveItem(mutState.items, currentState))
-      })
+      return state.setIn(
+        ['items', 'byId', action.personId, 'email'],
+        action.email
+      )
     case types.RECEIVE_UPDATED_SINGLE_PERSON_LOGIN_DETAILS:
-      return state.withMutations(mutState => {
-        const person = state.items.byId
-          .get(action.personId)
-          .set('loaded', true)
-          .set('username', action.username)
-          .set('userLockedOut', action.userLockedOut)
-          .set('userId', action.userId)
-
-        mutState.set('items', receiveItem(mutState.items, person))
+      return state.mergeIn(['items', 'byId', action.personId], {
+        loaded: true,
+        username: action.username,
+        userLockedOut: action.userLockedOut,
+        userId: action.userId,
       })
     case types.REQUEST_UPDATING_SINGLE_PERSON:
-      return state.withMutations(mutState => {
-        const person = state.items.byId
-          .get(action.personId)
-          .set('loaded', false)
-        mutState.set('items', receiveItem(mutState.items, person))
-      })
+      return state.setIn(['items', 'byId', action.personId, 'loaded'], false)
     case types.REQUEST_CREATING_SINGLE_PERSON:
       return state.setIn(['personNew', 'loaded'], false)
 
     case types.REQUEST_ASSIGNMENTS:
     case types.REQUEST_DELETE_ASSIGNMENT:
       return state.withMutations(mutState => {
-        const person = state.items.byId
-          .get(action.personId)
-          .set('loadedAssignments', false)
-        mutState.set('items', receiveItem(mutState.items, person))
+        mutState.mergeIn(['items', 'byId', action.personId], {
+          loadedAssignments: false,
+        })
       })
     case types.RECEIVE_ASSIGNMENTS:
     case types.RECEIVE_DELETE_ASSIGNMENT:
       return state.withMutations(mutState => {
-        const person = state.items.byId
-          .get(action.personId)
-          .set('loadedAssignments', true)
-          .set('assignments', action.items)
-        mutState.set('items', receiveItem(mutState.items, person))
+        mutState.mergeIn(['items', 'byId', action.personId], {
+          loadedAssignments: true,
+          assignments: action.items,
+        })
       })
     default:
       return state

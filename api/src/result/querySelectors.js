@@ -170,6 +170,7 @@ const RESULT_STRING_TEMPLATE_FIELDS = [
   'r.errorCode as resultErrorCode',
   'r.errorNotes as resultErrorNotes',
   'a.externalId as assayExternalId',
+  'sample.id as sampleId',
   'sample.externalId as sampleExternalId',
   'sos.externalId as sampleOriginSiteExternalId',
   'sample.collectedOn as sampleCollectedOn',
@@ -177,7 +178,10 @@ const RESULT_STRING_TEMPLATE_FIELDS = [
   'rc2.externalId as resultCategory2ExternalId',
   'a.resultSourceId',
   'at.diseaseId',
-  'pd.caseExternalIdTemplate',
+  'pa.reliableCaseExternalIdTemplate',
+  'pa.unreliableCaseExternalIdTemplate',
+  'pa.reliablePatientExternalIdTemplate',
+  'pa.unreliablePatientExternalIdTemplate',
 ]
 
 module.exports = {
