@@ -225,7 +225,7 @@ async function commonUpserts(
   await ensureResultTreatmentStatuses(knex)
 
   if (usersInsertConfig)
-    await upsertUsers(
+    await upsertDemoUsersPerJobFunction(
       knex,
       partnerId,
       countryId,
@@ -237,7 +237,7 @@ async function commonUpserts(
     )
 }
 
-async function upsertUsers(
+async function upsertDemoUsersPerJobFunction(
   knex,
   partnerId,
   countryId,
@@ -268,10 +268,11 @@ async function upsertUsers(
     ...auditFields,
   }
 
-  const jobFunctions = await knex('JobFunction').whereNotIn('externalId', [
-    ...excludedJobFunctions,
-    'admin',
-  ])
+  const jobFunctions = await knex('JobFunction')
+    .whereNotIn('externalId', [...excludedJobFunctions, 'admin'])
+    .andWhere({
+      partnerId,
+    })
 
   const insertUsers = jobFunctions.map(async jf => {
     const { id: jobFunctionId, name: jobFunctionName } = jf
