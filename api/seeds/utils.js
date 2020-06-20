@@ -2729,7 +2729,7 @@ async function getResultForms(knex) {
     )
 }
 
-async function seedJobFunctionsOperationalData(
+async function seedJobFunctionsAndUsersForOperationalData(
   knex,
   { auditFields, countryId, culture, geographyId, partnerId, timezone }
 ) {
@@ -2751,8 +2751,8 @@ async function seedJobFunctionsOperationalData(
     _.map(
       [
         'cepheid', // for jobFunction 'Device Maker'
-        'ntp', // for jobFunction 'Device Maker'
-        'maintenance', // for jobFunction 'Technician'
+        'ntp', // for jobFunction 'NTP'
+        'technician', // for jobFunction 'Technician'
       ],
       async name => {
         const { id: userId } = await upsertSingle(
@@ -2803,6 +2803,9 @@ async function seedJobFunctionsOperationalData(
     partnerId,
     [modules.operationalData.admin]
   )
+  const jobFunctionIdNtp = await upsertJobFunction(knex, 'NTP', partnerId, [
+    modules.operationalData.admin,
+  ])
   const jobFunctionIdTechnician = await upsertJobFunction(
     knex,
     'Technician',
@@ -2824,9 +2827,9 @@ async function seedJobFunctionsOperationalData(
     personIds.cepheid,
     jobFunctionIdDeviceMaker
   )
-  const jobIdNtp = await initJob(personIds.ntp, jobFunctionIdDeviceMaker)
-  const jobIdMaintenance = await initJob(
-    personIds.maintenance,
+  const jobIdNtp = await initJob(personIds.ntp, jobFunctionIdNtp)
+  const jobIdTechnician = await initJob(
+    personIds.technician,
     jobFunctionIdTechnician
   )
 
@@ -2839,7 +2842,7 @@ async function seedJobFunctionsOperationalData(
     [
       { jobId: jobIdCepheid, geographyId },
       { jobId: jobIdNtp, geographyId },
-      { jobId: jobIdMaintenance, geographyId },
+      { jobId: jobIdTechnician, geographyId },
     ]
   )
 
@@ -2848,11 +2851,12 @@ async function seedJobFunctionsOperationalData(
     personIds,
 
     jobFunctionIdDeviceMaker,
+    jobFunctionIdNtp,
     jobFunctionIdTechnician,
 
     jobIdCepheid,
     jobIdNtp,
-    jobIdMaintenance,
+    jobIdTechnician,
   }
 }
 
@@ -2920,5 +2924,5 @@ module.exports = {
 
   getResultForms,
 
-  seedJobFunctionsOperationalData,
+  seedJobFunctionsAndUsersForOperationalData,
 }

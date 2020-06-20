@@ -108,6 +108,9 @@ const hasAnyPermissions = (permissions, requiredPermission) => {
       // i.e. 'task' means any  of 'task:*'
       (permission.includes(':') &&
         requiredPermission.includes(permission.split(':')[0]))
+    // don't get confused with above2 lines - 'permission' is a string, 'requiredPermission' is an array, so
+    // - includes() for string is true if substring found
+    // - includes() for array is true when item found
   )
 }
 
@@ -246,10 +249,7 @@ export const routerFactory = () => props => (
         render={
           renderRedirectToLoginOr(props) ||
           renderRedirectToLicenseOr(props) ||
-          renderRedirectToNotFound(props, [
-            'operationalData:view',
-            'operationalData:admin',
-          ]) ||
+          renderRedirectToNotFound(props, ['operationalData']) ||
           renderOperationalData
         }
       />

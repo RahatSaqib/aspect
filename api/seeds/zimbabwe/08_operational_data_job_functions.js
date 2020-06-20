@@ -1,6 +1,6 @@
 module.exports = require('../utils').seed(seed, __filename)
 
-const { seedJobFunctionsOperationalData } = require('../utils')
+const { seedJobFunctionsAndUsersForOperationalData } = require('../utils')
 
 async function seed(knex) {
   const now = new Date()
@@ -20,7 +20,7 @@ async function seed(knex) {
     .where('name', 'Zimbabwe')
     .first('id')
 
-  await seedJobFunctionsOperationalData(knex, {
+  await seedJobFunctionsAndUsersForOperationalData(knex, {
     auditFields,
     countryId,
     culture,
