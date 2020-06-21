@@ -5182,7 +5182,6 @@ async function seed(knex) {
       modules.account.admin,
       modules.router.admin,
       modules.manage.view,
-      modules.operationalData.admin,
     ]
   )
 
@@ -5211,7 +5210,6 @@ async function seed(knex) {
       modules.router.admin,
       modules.person.edit,
       modules.clinicalIndicators.view,
-      modules.operationalData.view,
     ]
   )
 
@@ -5266,7 +5264,6 @@ async function seed(knex) {
       modules.router.admin,
       modules.assay.view,
       modules.inventory.view,
-      modules.operationalData.view,
     ]
   )
 

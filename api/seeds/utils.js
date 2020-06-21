@@ -2731,7 +2731,15 @@ async function getResultForms(knex) {
 
 async function seedJobFunctionsAndUsersForOperationalData(
   knex,
-  { auditFields, countryId, culture, geographyId, partnerId, timezone }
+  {
+    auditFields,
+    countryId,
+    culture,
+    geographyId,
+    partnerId,
+    passwords = {},
+    timezone,
+  }
 ) {
   const modules = await getPermissionModules(knex)
   const now = new Date()
@@ -2761,7 +2769,7 @@ async function seedJobFunctionsAndUsersForOperationalData(
           'name', // whereKeys
           {
             name: name.toLowerCase(),
-            password: bcrypt.hashSync('test07', saltRounds),
+            password: bcrypt.hashSync(passwords[name] || 'test07', saltRounds),
             legacyPassword: 0,
             approved: 1,
             createdOn: now,
