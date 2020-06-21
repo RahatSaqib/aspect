@@ -1,14 +1,12 @@
 import classnames from 'classnames/bind'
-import React from 'react'
-import { compose, lifecycle, withHandlers, withProps } from 'recompose'
-import { bindActionCreators } from 'redux'
-import { connect } from 'react-redux'
+import React, { useCallback, useEffect, useState } from 'react'
+import _ from 'lodash'
+import { connect, useDispatch } from 'react-redux'
 import { Helmet } from 'react-helmet'
 import Card from '@material-ui/core/Card'
 import { injectIntl } from 'react-intl'
 
 import { Unit } from '../../components/pureGrids'
-import ColumnGraph from '../../components/graph/ColumnGraph'
 import { DelayShowingProgressCircular } from '../../components/shared/DelayShowingProgressBar'
 import AspectButton from '../../components/shared/AspectButton'
 import Title from '../status/Title'
@@ -17,92 +15,92 @@ import AbnormalBarChart from './AbnormalBarChart'
 
 const cssClasses = classnames.bind(require('./OperationalData.css'))
 
-const {
-  '--aspect-color-mandy-3': colorMandy3,
-  '--aspect-color-mantis': colorMantis,
-  '--aspect-color-supernova-2': colorSupernova2,
-} = process.env
+const getSearchFilterParams = locationSearch => {
+  const searchParams = new URLSearchParams(locationSearch)
+  const filtersParams = new URLSearchParams(searchParams.get('filters') || '')
+  return {
+    searchParams,
+    filtersParams,
+  }
+}
+const getPropsFromQueryString = locationSearch => {
+  const { filtersParams } = getSearchFilterParams(locationSearch)
+  return {
+    locationSearch,
+    assayType: filtersParams.get('assayType') || 'all',
+    dateRange: filtersParams.get('dateRange') || '30',
+  }
+}
 
-const enhance = compose(
-  injectIntl,
-  connect(
-    state => ({
-      loading: !!state.getIn(['dashboard', 'requestedAt']),
-      operational: state.getIn(['dashboard', 'operational']),
-    }),
-    bindActionCreators.bind(null, {
-      fetchOperationalStatus,
-    })
-  ),
-  withHandlers({
-    onInitialLoad: ({ location, fetchOperationalStatus }) => () => {
-      const searchParams = new URLSearchParams(location.search)
-      const filtersParams = new URLSearchParams(
-        searchParams.get('filters') || ''
+// HOC for adding few props from queryString filters
+const injectFilterParams = WrappedComponent => props => {
+  const { fetchOperationalStatus, history, location } = props
+  const dispatch = useDispatch()
+  const [state, setState] = useState(getPropsFromQueryString(location.search))
+  const loadData = useCallback(() => {
+    const { filtersParams } = getSearchFilterParams(location.search)
+    // TODO - uncomment below line when endpoints are ready
+    // dispatch(fetchOperationalStatus(filtersParams))
+  }, [location])
+
+  // load data on first render
+  useEffect(() => loadData(), [loadData])
+  // reload data if filter changed in the location
+  useEffect(() => {
+    if (state.locationSearch !== location.search) {
+      setState(getPropsFromQueryString(location.search))
+      loadData()
+    }
+  }, [loadData, location, state.locationSearch])
+
+  const historyReplace = useCallback(
+    (name, value) => {
+      const { filtersParams, searchParams } = getSearchFilterParams(
+        location.search
       )
-
-      fetchOperationalStatus(filtersParams)
+      filtersParams.set(name, value)
+      searchParams.set('filters', filtersParams)
+      history.replace({
+        ...location,
+        search: searchParams.toString(),
+      })
     },
+    [history, location]
+  )
 
-    onAssayTypeClick: ({ history, location }) => ({
+  const onAssayTypeClick = useCallback(
+    ({
       currentTarget: {
         dataset: { assayType },
       },
-    }) => {
-      const searchParams = new URLSearchParams(location.search)
-      const filtersParams = new URLSearchParams(
-        searchParams.get('filters') || ''
-      )
-      filtersParams.set('assayType', assayType)
-      searchParams.set('filters', filtersParams)
+    }) => historyReplace('assayType', assayType),
+    [historyReplace]
+  )
 
-      history.replace({
-        ...location,
-        search: searchParams.toString(),
-      })
-    },
-
-    onDateRangeClick: ({ history, location }) => ({
+  const onDateRangeClick = useCallback(
+    ({
       currentTarget: {
         dataset: { dateRange },
       },
-    }) => {
-      const searchParams = new URLSearchParams(location.search)
-      const filtersParams = new URLSearchParams(
-        searchParams.get('filters') || ''
-      )
-      filtersParams.set('dateRange', dateRange)
-      searchParams.set('filters', filtersParams)
+    }) => historyReplace('dateRange', dateRange),
+    [historyReplace]
+  )
 
-      history.replace({
-        ...location,
-        search: searchParams.toString(),
-      })
-    },
+  const onDataReportClick = useCallback(() => history.push('/browse/report'), [
+    history,
+  ])
 
-    onDataReportClick: ({ history }) => () => history.push('/browse/report'),
-  }),
-  lifecycle({
-    componentDidMount() {
-      this.props.onInitialLoad()
-    },
+  const allProps = {
+    ...props,
+    assayType: state.assayType,
+    dateRange: state.dateRange,
+    onAssayTypeClick,
+    onDateRangeClick,
+    onDataReportClick,
+  }
 
-    componentWillReceiveProps(nextProps) {
-      if (this.props.location.search !== nextProps.location.search) {
-        this.props.onInitialLoad()
-      }
-    },
-  }),
-  withProps(({ location }) => {
-    const searchParams = new URLSearchParams(location.search)
-    const filtersParams = new URLSearchParams(searchParams.get('filters') || '')
-
-    return {
-      assayType: filtersParams.get('assayType') || 'all',
-      dateRange: filtersParams.get('dateRange') || '30',
-    }
-  })
-)
+  return <WrappedComponent {...allProps} />
+}
 
 const SectionAbnormalCollection = ({
   intl,
@@ -145,7 +143,6 @@ const SectionAbnormalCollection = ({
 
 export const OperationalData = ({
   intl,
-  // --- injected by recompose ---
   loading,
   operational,
   assayType,
@@ -223,68 +220,7 @@ export const OperationalData = ({
         </AspectButton>
       </div>
     </div>
-    <div className={cssClasses({ 'Content--loading': loading })}>
-      <SectionAbnormalCollection
-        intl={intl}
-        title="Consumables"
-        colorClassName={cssClasses('Title__Color--inventory')}
-        collection={operational.get('inventory', [])}
-        onDataReportClick={onDataReportClick}
-      />
-      <SectionAbnormalCollection
-        intl={intl}
-        title="Devices"
-        colorClassName={cssClasses('Title__Color--device')}
-        collection={operational.get('device', [])}
-        onDataReportClick={onDataReportClick}
-      />
-      <div className={cssClasses('Section')}>
-        <Card className={cssClasses('Section__Content')}>
-          <div className={cssClasses('TitleContainer')}>
-            <Title
-              className={cssClasses('TitleContainer__Title')}
-              colorClassName={cssClasses('Title__Color--site')}
-              title="Sites"
-            />
-            <AspectButton
-              className={cssClasses('Button')}
-              variant="contained"
-              onClick={onDataReportClick}
-            >
-              Data and reports
-            </AspectButton>
-          </div>
-          <div>
-            {operational.get('site', []).map(c => (
-              <Unit
-                sm="1-2"
-                lg="1-4"
-                className={cssClasses('Graph')}
-                key={c.get('key')}
-              >
-                <div className={cssClasses('Graph__Title')}>
-                  {c.get('title')}
-                </div>
-                <ColumnGraph
-                  data={c.get('data').toJS()}
-                  color={[colorMandy3, colorSupernova2, colorMantis]}
-                  spacing={0.4}
-                  hideAxes
-                  rightLabel
-                  hideLabel={false}
-                />
-              </Unit>
-            ))}
-          </div>
-        </Card>
-      </div>
-      <SectionAbnormalCollection
-        intl={intl}
-        title="Staff"
-        collection={operational.get('staff', [])}
-        onDataReportClick={onDataReportClick}
-      />
-    </div>
+    <div className={cssClasses({ 'Content--loading': loading })} />
     <DelayShowingProgressCircular
       disabled={!loading}
       variant="indeterminate"
@@ -293,4 +229,16 @@ export const OperationalData = ({
   </div>
 )
 
-export default enhance(OperationalData)
+export default _.flowRight(
+  injectIntl,
+  connect(
+    state => ({
+      loading: !!state.getIn(['dashboard', 'requestedAt']),
+      operational: state.getIn(['dashboard', 'operational']),
+    }),
+    {
+      fetchOperationalStatus,
+    }
+  ),
+  injectFilterParams
+)(OperationalData)
