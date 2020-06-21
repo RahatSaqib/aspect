@@ -1,24 +1,16 @@
 module.exports = require('../utils').seed(seed, __filename)
 
 const { deviceTypeCategoryToId } = require('../../src/shared/dictionary')
-const { updateMGITAssays, updateCultureAssays } = require('../commonTB')
+const {
+  upsertMGITDeviceTypeAndAssays,
+  upsertCultureAssays,
+} = require('../commonTB')
 
 async function seed(knex) {
   const labDeviceTypeCategoryId = await deviceTypeCategoryToId('Lab')
   const informationSystemDeviceTypeCategoryId = await deviceTypeCategoryToId(
     'Information System'
   )
-
-  let { id: deviceTypeBDMGITId } =
-    (await knex('DeviceType').where('externalId', 'BDMGIT').first('id')) || {}
-  if (!deviceTypeBDMGITId) {
-    deviceTypeBDMGITId = await knex('DeviceType').insert({
-      externalId: 'BDMGIT',
-      name: 'BD MGIT',
-      manufacturer: 'Becton Dickinson',
-      deviceTypeCategoryId: labDeviceTypeCategoryId,
-    })
-  }
 
   const { id: deviceTypeHainGenoScanId } =
     (await knex('DeviceType')
@@ -45,6 +37,6 @@ async function seed(knex) {
     })
   }
 
-  await updateMGITAssays(knex, deviceTypeBDMGITId)
-  await updateCultureAssays(knex, deviceTypeSenaiteLimsId)
+  await upsertMGITDeviceTypeAndAssays(knex)
+  await upsertCultureAssays(knex, deviceTypeSenaiteLimsId)
 }

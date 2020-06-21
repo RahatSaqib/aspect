@@ -33,7 +33,10 @@ const patients = require('./fixtures/patients.json')
 const patientDataSchema = require('../fixtures/MGITPatientDataSchema')
 const dashboardWidget = require('./fixtures/dashboardWidget.json')
 const { errorCodes } = require('./fixtures/errorCodes.js')
-const { updateMGITAssays, updateCultureAssays } = require('../commonTB')
+const {
+  upsertMGITDeviceTypeAndAssays,
+  upsertCultureAssays,
+} = require('../commonTB')
 const { getRandomTBPatientData } = require('../commonTbresults')
 const { upsertJobFunction } = require('../common')
 
@@ -226,17 +229,6 @@ async function seed(knex) {
     })
   }
 
-  let { id: deviceTypeBDMGITId } =
-    (await knex('DeviceType').where('externalId', 'BDMGIT').first('id')) || {}
-  if (!deviceTypeBDMGITId) {
-    ;[deviceTypeBDMGITId] = await knex('DeviceType').insert({
-      externalId: 'BDMGIT',
-      name: 'BD MGIT',
-      manufacturer: 'Becton Dickinson',
-      deviceTypeCategoryId: deviceTypeCategoryLab,
-    })
-  }
-
   let { id: deviceTypeHainGenoScanId } =
     (await knex('DeviceType')
       .where('externalId', 'HainGenoScan')
@@ -249,8 +241,8 @@ async function seed(knex) {
       deviceTypeCategoryId: deviceTypeCategoryLab,
     })
   }
-  await updateMGITAssays(knex, deviceTypeBDMGITId)
-  await updateCultureAssays(knex, deviceTypeSenaiteLimsId)
+  await upsertMGITDeviceTypeAndAssays(knex)
+  await upsertCultureAssays(knex, deviceTypeSenaiteLimsId)
   // Units
   const piece = await unitToId('Piece')
 

@@ -9,10 +9,12 @@ const {
 const AssayBdMgitAstResultDataSchema = require('../fixtures/AssayBdMgitAstResultDataSchema.json')
 const AssayBdMgitGndResultDataSchema = require('../fixtures/AssayBdMgitGndResultDataSchema.json')
 const { updateAssayResultCategoryTreatmentEmphasize } = require('../utils')
-const { updateMGITAssays, updateCultureAssays } = require('../commonTB')
+const {
+  upsertMGITDeviceTypeAndAssays,
+  upsertCultureAssays,
+} = require('../commonTB')
 
 async function seed(knex) {
-  const labDeviceTypeCategoryId = await deviceTypeCategoryToId('Lab')
   const informationSystemDeviceTypeCategoryId = await deviceTypeCategoryToId(
     'Information System'
   )
@@ -30,18 +32,6 @@ async function seed(knex) {
     manufacturer: 'NTRL',
     deviceTypeCategoryId: informationSystemDeviceTypeCategoryId,
   })
-
-  let { id: deviceTypeBDMGITId } =
-    (await knex('DeviceType').where('externalId', 'BDMGIT').first('id')) || {}
-
-  if (!deviceTypeBDMGITId) {
-    ;[deviceTypeBDMGITId] = await knex('DeviceType').insert({
-      externalId: 'BDMGIT',
-      name: 'BD MGIT',
-      manufacturer: 'Becton Dickinson',
-      deviceTypeCategoryId: labDeviceTypeCategoryId,
-    })
-  }
 
   const patientDataSchema = require('./fixtures/dataSchemas/patientDataSchema.json')
 
@@ -338,14 +328,13 @@ async function seed(knex) {
   ntrlDatabaseMGITDstResultDataSchema.resultSignOff.order =
     maxOrderFromBdMgitAstResultDataSchema + 2
 
-  await updateMGITAssays(
+  await upsertMGITDeviceTypeAndAssays(
     knex,
-    deviceTypeBDMGITId,
     patientDataSchema,
     ntrlDatabaseMGITCultureResultDataSchema,
     ntrlDatabaseMGITDstResultDataSchema
   )
-  await updateCultureAssays(
+  await upsertCultureAssays(
     knex,
     deviceTypeNTRLDatabaseId,
     patientDataSchema,

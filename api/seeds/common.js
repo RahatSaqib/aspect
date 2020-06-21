@@ -28,13 +28,24 @@ const {
   resultCategoryToId,
 } = require('../src/shared/dictionary')
 
+/**
+ *
+ * @param {*} knex Knex object
+ * @param {*} partnerId The ID of the partner that will get the upsers applied
+ * @param {*} adminId The ID of the admin user
+ * @param {*} geography The geography definitions
+ * @param {*} countryAbbreviation The country's two letters code
+ * @param {*} deviceApiToken The API token for GxAlert device
+ * @param {*} usersInsertConfig If it's not null, function will insert one user for each existing job function. This configuration object includes the props: password (string) | excludedJobFunctions (array of external ids). Ex.: { password: "12345", excludedJobFunctions: [ "admin" ] }
+ */
 async function commonUpserts(
   knex,
   partnerId,
   adminId,
   geography,
   countryAbbreviation,
-  deviceApiToken = null
+  deviceApiToken = null,
+  usersInsertConfig = null
 ) {
   const now = new Date()
   utils.hasSeededStaticData = true
@@ -178,6 +189,29 @@ async function commonUpserts(
     modules.case.edit,
     modules.person.view,
   ])
+  await upsertJobFunction(knex, 'Clinician', partnerId, [
+    modules.site.view,
+    modules.device.view,
+    modules.assay.view,
+    modules.inventory.view,
+    modules.result.edit,
+    modules.browse.view,
+    modules.treatmentStatus.edit,
+    modules.dashboard.report,
+    modules.dashboard.siteFilter,
+    modules.dashboard.action,
+    modules.dashboard.target,
+    modules.dashboard.result,
+    modules.dashboard.device,
+    modules.dashboard.inventory,
+    modules.dashboard.site,
+    modules.dashboard.summary,
+    modules.case.edit,
+    modules.account.edit,
+    modules.router.edit,
+    modules.person.view,
+  ])
+
   if (deviceApiToken) {
     await upsertGxAlertDevice(
       knex,
@@ -189,6 +223,79 @@ async function commonUpserts(
   }
   await ensureAspectDeviceExists(knex, countryId, partnerId, auditFields)
   await ensureResultTreatmentStatuses(knex)
+
+  if (usersInsertConfig)
+    await upsertDemoUsersPerJobFunction(
+      knex,
+      partnerId,
+      countryId,
+      geographyId,
+      culture,
+      timezone,
+      auditFields,
+      usersInsertConfig
+    )
+}
+
+async function upsertDemoUsersPerJobFunction(
+  knex,
+  partnerId,
+  countryId,
+  geographyId,
+  culture,
+  timezone,
+  auditFields,
+  { password, excludedJobFunctions }
+) {
+  if (!password)
+    throw new Error('You must provide a password for upserting users')
+
+  if (!excludedJobFunctions) excludedJobFunctions = []
+
+  const commonUserFields = {
+    password: bcrypt.hashSync(password, saltRounds),
+    approved: 1,
+    lockedOut: 0,
+    failedPasswordAttempts: 0,
+    createdOn: auditFields.createdOn,
+  }
+  const commonPersonFields = {
+    lastPartnerId: partnerId,
+    lastCountryId: countryId,
+    geographyId,
+    culture,
+    timezone,
+    ...auditFields,
+  }
+
+  const jobFunctions = await knex('JobFunction')
+    .whereNotIn('externalId', [...excludedJobFunctions, 'admin'])
+    .andWhere({
+      partnerId,
+    })
+
+  const insertUsers = jobFunctions.map(async jf => {
+    const { id: jobFunctionId, name: jobFunctionName } = jf
+    const userName = jobFunctionName.toLowerCase().replace(' ', '-')
+    const [userId] = await knex('User').insert({
+      name: userName,
+      ...commonUserFields,
+    })
+    const [personId] = await knex('Person').insert({
+      name: userName,
+      userId,
+      ...commonPersonFields,
+    })
+    const [jobId] = await knex('Job').insert({
+      personId,
+      jobFunctionId,
+    })
+    await knex('JobContext').insert({
+      jobId,
+      geographyId,
+    })
+  })
+  await Promise.all(insertUsers)
 }
 
 async function upsertJobFunction(
