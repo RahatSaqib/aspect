@@ -102,12 +102,8 @@ describe('Authentication routes', () => {
         await knex('RefreshToken')
           .whereIn('clientId', ['123123123-123123123', '9999-9999'])
           .delete()
-        await knex('Person')
-          .where('name', unlicensedUser)
-          .delete()
-        await knex('User')
-          .where('name', unlicensedUser)
-          .delete()
+        await knex('Person').where('name', unlicensedUser).delete()
+        await knex('User').where('name', unlicensedUser).delete()
       })
     )
 
@@ -184,6 +180,7 @@ describe('Authentication routes', () => {
               assert.property(res.body, 'culture')
               assert.property(res.body, 'displayPreferences')
               assert.property(res.body, 'timezone')
+              assert.property(res.body, 'countryAbbreviation')
               const jwtdecoded = jwtDecode(res.body.access)
               assert.property(jwtdecoded, 'hasToAcceptLicenseId')
               assert.isNull(jwtdecoded.hasToAcceptLicenseId)
@@ -206,9 +203,7 @@ describe('Authentication routes', () => {
 
       it('should return a JSON message that contains a valid jwt, access token, and client ID with different expiration for Reporter App', () =>
         runTestWithKnex(async knex => {
-          const rt = await knex('RefreshToken')
-            .where('token', appToken)
-            .first()
+          const rt = await knex('RefreshToken').where('token', appToken).first()
           assert.equal(rt.clientName, appClientName)
           assert.equal(rt.clientType, appClientType)
           assert.closeTo(
@@ -221,9 +216,7 @@ describe('Authentication routes', () => {
 
       it('should return a JSON message that contains a valid jwt, access token, and client ID with different expiration for web', () =>
         runTestWithKnex(async knex => {
-          const rt = await knex('RefreshToken')
-            .where('token', webToken)
-            .first()
+          const rt = await knex('RefreshToken').where('token', webToken).first()
           assert.equal(rt.clientName, webClientName)
           assert.equal(rt.clientType, webClientType)
           assert.closeTo(
@@ -250,10 +243,7 @@ describe('Authentication routes', () => {
           .send({ name: adminUsername })
           .then(res => {
             assert.equal(res.status, 400)
-            assert.equal(
-              res.body.message,
-              'child "password" fails because ["password" is required]'
-            )
+            assert.equal(res.body.message, '"password" is required')
           })
       })
 
@@ -263,10 +253,7 @@ describe('Authentication routes', () => {
           .send({ name: adminUsername, password: adminPassword })
           .then(res => {
             assert.equal(res.status, 400)
-            assert.equal(
-              res.body.message,
-              'child "clientName" fails because ["clientName" is required]'
-            )
+            assert.equal(res.body.message, '"clientName" is required')
           })
       })
 
@@ -443,10 +430,7 @@ describe('Authentication routes', () => {
         .then(res => {
           assert.equal(res.status, 400)
           assert.isString(res.body.message)
-          assert.equal(
-            res.body.message,
-            'child "clientId" fails because ["clientId" is required]'
-          )
+          assert.equal(res.body.message, '"clientId" is required')
         })
     })
 
@@ -459,10 +443,7 @@ describe('Authentication routes', () => {
         .then(res => {
           assert.equal(res.status, 400)
           assert.isString(res.body.message)
-          assert.equal(
-            res.body.message,
-            'child "token" fails because ["token" is required]'
-          )
+          assert.equal(res.body.message, '"token" is required')
         })
     })
 

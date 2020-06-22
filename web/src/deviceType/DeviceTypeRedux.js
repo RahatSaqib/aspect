@@ -81,7 +81,7 @@ export default function deviceTypeReducer(state = initialState, action) {
       return state.mergeIn(['selectList'], {
         loading: false,
         lastRefreshed: action.lastRefreshed,
-        items: new Immutable.fromJS(action.items),
+        items: Immutable.fromJS(action.items),
       })
     default:
       return state

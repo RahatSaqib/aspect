@@ -20,6 +20,8 @@ function addSubscriptions(queue) {
     'pushNotification',
     require('./pushNotification/endpoints').subscriptions
   )
+  queue.subscribe('case', require('./case/endpoints').subscriptions)
+  queue.subscribe('patient', require('./patient/endpoints').subscriptions)
 }
 
 module.exports = { addSubscriptions }

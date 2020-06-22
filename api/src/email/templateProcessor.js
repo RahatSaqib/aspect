@@ -1,4 +1,4 @@
-const { EmailTemplate } = require('email-templates')
+const Email = require('email-templates')
 const path = require('path')
 const { promisify } = require('util')
 const _ = require('lodash')
@@ -18,17 +18,19 @@ async function process(templateName, tokenValues, locale) {
   }
 
   const localeTemplateDir = path.join(templateDir, locale)
-  const emailTemplate = new EmailTemplate(localeTemplateDir)
 
-  return new Promise((resolve, reject) => {
-    emailTemplate.render(tokenValues, (err, result) => {
-      if (err) {
-        reject(err)
-      } else {
-        resolve(result)
-      }
-    })
+  const emailTemplate = new Email({
+    views: {
+      root: localeTemplateDir,
+      options: {
+        extension: 'handlebars',
+      },
+    },
   })
+
+  const result = await emailTemplate.renderAll(localeTemplateDir, tokenValues)
+
+  return result
 }
 
 async function generateAttachment(

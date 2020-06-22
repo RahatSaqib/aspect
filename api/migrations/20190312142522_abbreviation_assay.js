@@ -8,6 +8,7 @@ async function up(knex) {
     table.string('abbreviation').nullable()
   })
 }
+
 async function down(knex) {
   await knex.schema.alterTable('AssayType', table => {
     table.dropColumn('abbreviation')

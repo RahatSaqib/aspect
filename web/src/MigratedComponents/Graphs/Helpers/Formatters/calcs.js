@@ -1,0 +1,129 @@
+import filter from 'lodash/filter'
+import forOwn from 'lodash/forOwn'
+import omit from 'lodash/omit'
+import max from 'lodash/max'
+import pick from 'lodash/pick'
+import round from 'lodash/round'
+import sum from 'lodash/sum'
+import values from 'lodash/values'
+
+import { filterColour } from './index'
+
+const calcPercentageForGraphs = (value, total, precision = 4) =>
+  ((value / total) * 100).toFixed(precision)
+
+const getMaxValueForDivergent = data => {
+  const keyValues = []
+  data.map(d =>
+    values(d).map(v => Number.isInteger(v) && keyValues.push(Math.abs(v)))
+  )
+  const maxVal = max(keyValues) % 2 === 0 ? max(keyValues) : max(keyValues) + 1
+  return { minValue: -maxVal, maxValue: maxVal }
+}
+
+const roundIfNumber = value =>
+  typeof value === 'number' && value > 0 ? Math.round(value) : value
+
+const calcPercentageSplitBar = (data, keyToOmit, displayMethod) => {
+  return displayMethod === 'actual'
+    ? data
+    : data.map(d => {
+        const dSum = sum(values(omit(d, keyToOmit)))
+        forOwn(d, (value, key) => {
+          if (key !== keyToOmit) {
+            d[key] = calcPercentageForGraphs(value, dSum)
+          }
+        })
+        return d
+      })
+}
+
+const percentageOrActualForPie = (data, displayMethod) => {
+  let newData = []
+  if (displayMethod === 'percentage') {
+    const total = data.reduce((acc, curr) => acc + curr.value, 0)
+    data.map((d, i) =>
+      newData.push({
+        ...d,
+        value: total < 1 ? total : calcPercentageForGraphs(d.value, total),
+      })
+    )
+  } else {
+    newData = data
+  }
+  return newData
+}
+
+const getAverageFromData = (data, value, which, culture) => {
+  if (data.length && which) {
+    let totalForFilter = []
+    const total = []
+    data.map(d => total.push(sum(values(pick(d, value)).map(Number))))
+    if (Array.isArray(which)) {
+      const rangeTotal = which.reduce((acc, curr) => {
+        const item = filter(data, ['label', curr])[0]
+        if (item) {
+          if (acc && acc.id) {
+            acc[value] += parseFloat(item[value])
+          } else {
+            acc = {
+              ...item,
+              [value]: parseFloat(item[value]),
+            }
+          }
+        } else {
+          // eslint-disable-next-line no-console
+          console.warn(
+            `There are no results to match your config for item: ${curr}`
+          )
+        }
+        return acc
+      }, {})
+
+      if (
+        Object.keys(rangeTotal).length !== 0 &&
+        rangeTotal.constructor === Object
+      ) {
+        totalForFilter.push(rangeTotal)
+      }
+    } else {
+      totalForFilter = filter(data, ['label', which]) || [{ [value]: 0 }]
+    }
+
+    if (totalForFilter && totalForFilter.length) {
+      const sumData = data.reduce(
+        (acc, curr) => acc + parseFloat(curr.value),
+        0
+      )
+      const avg =
+        sumData < 1
+          ? sumData
+          : calcPercentageForGraphs(
+              parseFloat(totalForFilter[0][value]),
+              round(sumData),
+              1
+            )
+
+      const avgObj = {
+        avg: parseFloat(avg),
+        color: filterColour(totalForFilter[0].id),
+        totals: new Intl.NumberFormat(culture, {
+          notation: 'standard',
+        }).format(Number(sum(total))),
+      }
+      return avgObj
+    }
+    // eslint-disable-next-line no-console
+    console.error('There are no data that match your config')
+  }
+  return {}
+}
+
+export {
+  calcPercentageForGraphs,
+  getMaxValueForDivergent,
+  roundIfNumber,
+  calcPercentageSplitBar,
+  percentageOrActualForPie,
+  getAverageFromData,
+}

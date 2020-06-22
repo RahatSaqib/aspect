@@ -13,7 +13,7 @@ const {
   updateDeviceMaintenance,
   getDevicePerformance,
 } = require('./service')
-const { getDevicesReport } = require('./serviceReports')
+const { exportDevices } = require('./serviceReports')
 const {
   validateAllGeographyFilterParams,
 } = require('../geography/requestValidation')
@@ -21,6 +21,7 @@ const {
 function listDevicesBaseConfig() {
   return { ...listDevicesBaseRequest(), ...listDevicesBaseResponse() }
 }
+
 function listDevicesBaseRequest() {
   return {
     auth: { scope: ['device:view', 'device:edit'] },
@@ -36,12 +37,13 @@ function listDevicesBaseRequest() {
           .min(0)
           .max(1)
           .description('Filter for getting devices that can have connectivity'),
-        deviceIds: Joi.string()
-          .allow('')
-          .description('Filter for device ids'),
-        assayId: Joi.number()
-          .allow('')
-          .description('Assay ID'),
+        deviceIds: Joi.string().allow('').description('Filter for device ids'),
+        assayId: Joi.number().allow('').description('Assay ID'),
+        diseaseId: Joi.number()
+          .integer()
+          .positive()
+          .optional()
+          .description('The disease ID'),
         resultCategoryId: Joi.number()
           .allow('')
           .description('Result Category ID'),
@@ -56,12 +58,9 @@ function listDevicesBaseRequest() {
           .description('Filter for device type ID'),
         category: Joi.string().description('Filter for device type category'),
         type: Joi.string().description('Filter for device type'),
-        name: Joi.string()
-          .allow('')
-          .description('Filter for device name'),
-        siteName: Joi.string()
-          .allow('')
-          .description('Filter for site name'),
+        name: Joi.string().allow('').description('Filter for device name'),
+        siteName: Joi.string().allow('').description('Filter for site name'),
+        siteId: Joi.number().allow(null).description('Filter for site Id'),
         siteExternalId: Joi.string()
           .allow('')
           .description('Filter for facility code'),
@@ -79,8 +78,8 @@ function listDevicesBaseRequest() {
           'errorRate',
           'createdOn',
           'lastSeen',
-          'lastMonth',
-          'thisMonth',
+          'resultCountLastMonth',
+          'resultCountThisMonth',
           'deliveredLastMonth',
           'deliveredThisMonth',
           'acknowledgedRatio',
@@ -114,9 +113,7 @@ function listDevicesBaseResponse() {
           .description('The devices')
           .items(
             Joi.object().keys({
-              id: Joi.number()
-                .required()
-                .description('The ID of the device'),
+              id: Joi.number().required().description('The ID of the device'),
               name: Joi.string()
                 .required()
                 .description('The name of the device'),
@@ -214,9 +211,7 @@ function listDevicesBaseResponse() {
                   total: Joi.number()
                     .required()
                     .description('The total number of results'),
-                  rate: Joi.number()
-                    .required()
-                    .description('The error rate'),
+                  rate: Joi.number().required().description('The error rate'),
                 }),
             })
           ),
@@ -229,12 +224,8 @@ const deviceDetailsResponseFields = Joi.object()
   .required()
   .description('Device details fields')
   .keys({
-    id: Joi.number()
-      .required()
-      .description('The ID of the device'),
-    name: Joi.string()
-      .required()
-      .description('The name of the device'),
+    id: Joi.number().required().description('The ID of the device'),
+    name: Joi.string().required().description('The name of the device'),
     shortName: Joi.string()
       .allow('', null)
       .description('The short name of the device'),
@@ -263,12 +254,8 @@ const deviceDetailsResponseFields = Joi.object()
       .description('The host ID of the device'),
     deviceType: Joi.object()
       .keys({
-        id: Joi.number()
-          .required()
-          .description('ID of the device type'),
-        name: Joi.string()
-          .required()
-          .description('Name of the device type'),
+        id: Joi.number().required().description('ID of the device type'),
+        name: Joi.string().required().description('Name of the device type'),
         externalId: Joi.string()
           .required()
           .description('External ID of the device type'),
@@ -300,9 +287,7 @@ const deviceDetailsResponseFields = Joi.object()
     statusToken: Joi.string()
       .required()
       .description('The external ID of the status'),
-    category: Joi.string()
-      .required()
-      .description('The device category'),
+    category: Joi.string().required().description('The device category'),
     hasResults: Joi.number()
       .required()
       .min(0)
@@ -390,9 +375,7 @@ const routes = [
       auth: { scope: ['device:view', 'device:edit'] },
       validate: {
         params: {
-          deviceId: Joi.string()
-            .description('Device id')
-            .required(),
+          deviceId: Joi.string().description('Device id').required(),
         },
         query: {
           dateRange: Joi.number()
@@ -423,9 +406,7 @@ const routes = [
       auth: { scope: ['device:edit'] },
       validate: {
         params: {
-          deviceId: Joi.string()
-            .description('Device id')
-            .required(),
+          deviceId: Joi.string().description('Device id').required(),
         },
         payload: {
           siteId: Joi.number(),
@@ -450,7 +431,7 @@ const routes = [
   {
     method: 'GET',
     path: '/device/export',
-    handler: getDevicesReport,
+    handler: exportDevices,
     config: {
       description: 'Export Device List into Excel or CSV',
       notes: 'Filtered and sorted list of devices',
@@ -466,15 +447,9 @@ const routes = [
       notes: "List of device ID's and names",
       validate: {
         query: {
-          countryId: Joi.number()
-            .allow('')
-            .description('Country ID'),
-          partnerId: Joi.number()
-            .allow('')
-            .description('Partner ID'),
-          siteId: Joi.number()
-            .allow('')
-            .description('Site ID'),
+          countryId: Joi.number().allow('').description('Country ID'),
+          partnerId: Joi.number().allow('').description('Partner ID'),
+          siteId: Joi.number().allow('').description('Site ID'),
         },
       },
     },
@@ -489,9 +464,7 @@ const routes = [
       auth: { scope: ['device:edit'] },
       validate: {
         params: {
-          deviceId: Joi.string()
-            .description('Device id')
-            .required(),
+          deviceId: Joi.string().description('Device id').required(),
         },
         payload: {
           externalId: Joi.string(),

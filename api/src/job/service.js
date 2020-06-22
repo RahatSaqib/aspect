@@ -49,6 +49,7 @@ async function getJobFunctionsForSelectList(request) {
     data: partners,
   }
 }
+
 // ----------------------------------------------------------------------------------------
 // permissions for specified 'person' for this 'partner'
 async function getPermissions(request) {
@@ -71,7 +72,7 @@ async function getPermissions(request) {
     .where('ps.id', personId)
     .orderBy(['p.module', 'p.activity'])
     .distinct('p.module', 'p.activity')
-    .then(async items => items.map(p => `${p.module}:${p.activity}`))
+    .then(items => items.map(p => `${p.module}:${p.activity}`))
   //
   return { ok: true, data }
 }
@@ -104,9 +105,7 @@ async function manageJob(request, mode) {
     return valResult
   }
 
-  const job = await knex('Job')
-    .where({ personId, jobFunctionId })
-    .first()
+  const job = await knex('Job').where({ personId, jobFunctionId }).first()
 
   if (mode === MODE_INSERT) {
     // create job if missing
@@ -120,13 +119,9 @@ async function manageJob(request, mode) {
     if (job) {
       await transact(async knex => {
         // remove all FK's entries
-        await knex('JobContext')
-          .where({ jobId: job.id })
-          .del()
+        await knex('JobContext').where({ jobId: job.id }).del()
         // remove Job
-        await knex('Job')
-          .where({ id: job.id })
-          .del()
+        await knex('Job').where({ id: job.id }).del()
       })
     }
   }
@@ -165,18 +160,14 @@ const validateAndNormalizeJobContextData = async request => {
   }
   // existing siteId
   if (siteId) {
-    const item = await knex('Site')
-      .where({ id: siteId })
-      .first()
+    const item = await knex('Site').where({ id: siteId }).first()
     if (!item) {
       return Boom.badData(`Missing site with specified siteId=${siteId}`)
     }
   }
   // existing geographyId
   if (geographyId) {
-    const item = await knex('Geography')
-      .where({ id: geographyId })
-      .first()
+    const item = await knex('Geography').where({ id: geographyId }).first()
     if (!item) {
       return Boom.badData(
         `Missing geography with specified geographyId=${geographyId}`
@@ -210,9 +201,7 @@ const validateAndNormalizeJobContextData = async request => {
       x => x.personId === personId && x.jobFunctionId === jobFunctionId
     )
   } else {
-    const item = await knex('Job')
-      .where({ id: jobId })
-      .first()
+    const item = await knex('Job').where({ id: jobId }).first()
     if (!item) {
       return Boom.badData(`Missing job with specified jobId=${jobId}`)
     }
@@ -230,7 +219,7 @@ async function manageJobContext(request, mode) {
 
   const q = knex('JobContext')
     .where({ jobId })
-    .where(function() {
+    .where(function () {
       if (geographyId) {
         this.where({ geographyId })
       } else if (siteId) {
@@ -265,8 +254,9 @@ async function manageJobContext(request, mode) {
     )
   return { ok: true, data: jobContexts }
 }
+
 // ----------------------------------------------------------------------------------------
-// helper function for JobFunctionDashboardWidget, JobFunctionFeature, JobFunctionPermission
+// helper function for JobFunctionDashboardWidget, JobFunctionPermission
 // ----------------------------------------------------------------------------------------
 async function manageJobFunctionBaseItems(request, tableName, mode, err) {
   const { auth, payload } = request
@@ -286,10 +276,6 @@ async function manageJobFunctionBaseItems(request, tableName, mode, err) {
       fieldName = 'widgetId' // foreign key to table DashboardWidget
       itemsPropName = 'widgets' // in request payload
       break
-    case 'JobFunctionFeature':
-      fieldName = 'featureId'
-      itemsPropName = 'features' // in request payload
-      break
     case 'JobFunctionPermission':
       fieldName = 'permissionId'
       itemsPropName = 'permissions' // in request payload
@@ -306,7 +292,7 @@ async function manageJobFunctionBaseItems(request, tableName, mode, err) {
     if (all || !_.isEmpty(items)) {
       await knex(tableName)
         .where({ jobFunctionId })
-        .where(function() {
+        .where(function () {
           if (!all) {
             this.whereIn(fieldName, items)
           }
@@ -343,6 +329,7 @@ async function manageJobFunctionBaseItems(request, tableName, mode, err) {
     .select('jobFunctionId', fieldName)
   return { ok: true, data }
 }
+
 // ----------------------------------------------------------------------------------------
 async function assignJobFunctionDashboardWidgets(request) {
   return manageJobFunctionBaseItems(
@@ -352,6 +339,7 @@ async function assignJobFunctionDashboardWidgets(request) {
     'Only Admin with same partnerId as JobFunction may assign user to widget'
   )
 }
+
 async function unassignJobFunctionDashboardWidgets(request) {
   return manageJobFunctionBaseItems(
     request,
@@ -360,23 +348,7 @@ async function unassignJobFunctionDashboardWidgets(request) {
     'Only Admin with same partnerId as JobFunction may unassign user from widget'
   )
 }
-// ----------------------------------------------------------------------------------------
-async function assignJobFunctionFeatures(request) {
-  return manageJobFunctionBaseItems(
-    request,
-    'JobFunctionFeature',
-    MODE_INSERT,
-    'Only Admin with same partnerId as JobFunction can assign user to features'
-  )
-}
-async function unassignJobFunctionFeatures(request) {
-  return manageJobFunctionBaseItems(
-    request,
-    'JobFunctionFeature',
-    MODE_DELETE,
-    'Only Admin with same partnerId as JobFunction can remove user from features'
-  )
-}
+
 // ----------------------------------------------------------------------------------------
 async function assignJobFunctionPermissions(request) {
   return manageJobFunctionBaseItems(
@@ -386,6 +358,7 @@ async function assignJobFunctionPermissions(request) {
     'Only Admin with same partnerId as JobFunction may assign permissions to JobFunction'
   )
 }
+
 async function unassignJobFunctionPermissions(request) {
   return manageJobFunctionBaseItems(
     request,
@@ -394,6 +367,7 @@ async function unassignJobFunctionPermissions(request) {
     'Only Admin with same partnerId as JobFunction may unassign permissions from JobFunction'
   )
 }
+
 // ----------------------------------------------------------------------------------------
 async function assignPersonTo(request) {
   const { payload } = request
@@ -408,9 +382,7 @@ async function assignPersonTo(request) {
   }
   let jobId
   const jobProps = { personId, jobFunctionId }
-  const job = await knex('Job')
-    .where(jobProps)
-    .first()
+  const job = await knex('Job').where(jobProps).first()
   if (!job) {
     ;[jobId] = await knex('Job').insert(jobProps)
   } else {
@@ -419,16 +391,23 @@ async function assignPersonTo(request) {
   // ----------------
   // siteId or geographyId
   // ----------------
-  const { countryId, stateId = null, lgaId = null, siteId = null } = payload
+  const {
+    countryId,
+    stateId = null,
+    lgaId = null,
+    siteId = null,
+    diseaseId = null,
+    deviceTypeId = null,
+    assayTypeId = null,
+    assayId = null,
+  } = payload
   let geographyId
-  if (!siteId) {
+  if (!siteId && (countryId || stateId || lgaId)) {
     // ----------------
     // geographyId
     // ----------------
     const geographyProps = { countryId, stateId, lgaId }
-    const geography = await knex('Geography')
-      .where(geographyProps)
-      .first('id')
+    const geography = await knex('Geography').where(geographyProps).first('id')
     if (!geography) {
       ;[geographyId] = await knex('Geography').insert(geographyProps)
     } else {
@@ -439,18 +418,43 @@ async function assignPersonTo(request) {
   // JobContext
   // ----------------
   // create JobContext entry if missing
-  const jobContext = await knex('JobContext')
-    .where({ jobId })
-    .where(function() {
-      if (siteId) {
-        this.where({ siteId })
-      } else if (geographyId) {
-        this.where({ geographyId })
-      }
-    })
-    .first()
-  if (!jobContext) {
-    await knex('JobContext').insert({ jobId, geographyId, siteId })
+  if (siteId || geographyId) {
+    const { id: jobContextId } =
+      (await knex('JobContext')
+        .where({ jobId })
+        .andWhere(function () {
+          if (siteId) {
+            this.where({ siteId })
+          } else if (geographyId) {
+            this.where({ geographyId })
+          }
+        })
+        .andWhere(function () {
+          if (assayId) {
+            this.where({ assayId })
+          }
+          if (deviceTypeId) {
+            this.where({ deviceTypeId })
+          }
+          if (assayTypeId) {
+            this.where({ assayTypeId })
+          }
+          if (diseaseId) {
+            this.where({ diseaseId })
+          }
+        })
+        .first('id')) || {}
+    if (!jobContextId) {
+      await knex('JobContext').insert({
+        jobId,
+        geographyId,
+        siteId,
+        diseaseId,
+        deviceTypeId,
+        assayTypeId,
+        assayId,
+      })
+    }
   }
   // ----------------
   // return list of person assignments for showing in right side of Person Job Assignment tab
@@ -458,6 +462,7 @@ async function assignPersonTo(request) {
   const personAssignments = await getAssignments({ auth, personId })
   return { ok: true, data: personAssignments }
 }
+
 // ----------------------------------------------------------------------------------------
 async function getPersonAssignments(request) {
   const {
@@ -467,6 +472,7 @@ async function getPersonAssignments(request) {
   const personAssignments = await getAssignments({ auth, personId })
   return { ok: true, data: personAssignments }
 }
+
 // ----------------------------------------------------------------------------------------
 async function getAssignments({ auth, personId }) {
   const dataConstraints = await getConstraints(auth.credentials)
@@ -487,6 +493,18 @@ async function getAssignments({ auth, personId }) {
     .leftOuterJoin('Country as c2', 'g2.countryId', 'c2.id')
     .leftOuterJoin('State as st2', 'g2.stateId', 'st2.id')
     .leftOuterJoin('Lga as l2', 'g2.lgaId', 'l2.id')
+    // JobContext with diseaseId
+    .leftOuterJoin('Disease as d', 'jc.diseaseId', 'd.id')
+    // JobContext with assayTypeId
+    .leftOuterJoin('AssayType as at', 'jc.assayTypeId', 'at.id')
+    .leftOuterJoin('Disease as d2', 'at.diseaseId', 'd2.id')
+    // JobContext with deviceTypeId
+    .leftOuterJoin('DeviceType as dt', 'jc.deviceTypeId', 'dt.id')
+    // JobContext with assayId
+    .leftOuterJoin('Assay as a', 'jc.assayId', 'a.id')
+    .leftOuterJoin('AssayType as at2', 'a.assayTypeId', 'at2.id')
+    .leftOuterJoin('DeviceType as dt2', 'a.deviceTypeId', 'dt2.id')
+    .leftOuterJoin('Disease as d3', 'at2.diseaseId', 'd3.id')
     //
     .where('j.personId', personId)
     .orderBy(['jf.name', 's.name', 'c.name', 'st.name', 'l.name'])
@@ -514,47 +532,127 @@ async function getAssignments({ auth, personId }) {
       'st2.id as stateId2',
       'st2.name as stateName2',
       'l2.id as lgaId2',
-      'l2.name as lgaName2'
+      'l2.name as lgaName2',
+      // JobContext with diseaseId
+      'd.id as diseaseId',
+      'd.i18nKey as diseasei18nKey',
+      'd.name as diseaseName',
+      // JobContext with assayTypeId
+      'at.id as assayTypeId',
+      'at.i18nKey as assayTypei18nKey',
+      'at.name as assayTypeName',
+      'd2.id as diseaseId2',
+      'd2.i18nKey as diseasei18nKey2',
+      'd2.name as diseaseName2',
+      // JobContext with deviceTypeId
+      'dt.id as deviceTypeId',
+      'dt.name as deviceTypeName',
+      // JobContext with assayId
+      'a.id as assayId',
+      'a.i18nKey as assayi18nKey',
+      'a.name as assayName',
+      'at2.id as assayTypeId2',
+      'at2.i18nKey as assayTypei18nKey2',
+      'at2.name as assayTypeName2',
+      'dt2.id as deviceTypeId2',
+      'dt2.name as deviceTypeName2',
+      'd3.id as diseaseId3',
+      'd3.i18nKey as diseasei18nKey3',
+      'd3.name as diseaseName3'
     )
-    .map(item => {
-      const { siteId } = item
-      let { countryId, countryName, stateId, stateName, lgaId, lgaName } = item
+    .then(items =>
+      items.map(item => {
+        const { siteId, assayId } = item
+        let {
+          countryId,
+          countryName,
+          stateId,
+          stateName,
+          lgaId,
+          lgaName,
+          diseaseId,
+          diseasei18nKey,
+          diseaseName,
+          assayTypeId,
+          assayTypei18nKey,
+          assayTypeName,
+          deviceTypeId,
+          deviceTypeName,
+        } = item
 
-      // if siteId is used by JobContext - then get site's geography props
-      if (siteId) {
-        ;[
-          {
-            countryId2: countryId,
-            countryName2: countryName,
-            stateId2: stateId,
-            stateName2: stateName,
-            lgaId2: lgaId,
-            lgaName2: lgaName,
-          },
-        ] = [item]
-      }
-      return {
-        ..._.pick(item, [
-          'personId',
-          'partnerId',
-          'jobId',
-          'jobFunctionId',
-          'jobFunctionName',
-          'jobContextId',
-          'siteId',
-          'siteName',
-          'geographyId',
-        ]),
-        countryId,
-        countryName,
-        stateId,
-        stateName,
-        lgaId,
-        lgaName,
-      }
-    })
+        // if siteId is used by JobContext - then get site's geography props
+        if (siteId) {
+          ;[
+            {
+              countryId2: countryId,
+              countryName2: countryName,
+              stateId2: stateId,
+              stateName2: stateName,
+              lgaId2: lgaId,
+              lgaName2: lgaName,
+            },
+          ] = [item]
+        }
+        // if assayTypeId is used by JobContext - then get assay type's disease props
+        if (assayTypeId) {
+          ;[
+            {
+              diseaseId2: diseaseId,
+              diseaseName2: diseaseName,
+              diseasei18nKey2: diseasei18nKey,
+            },
+          ] = [item]
+        }
+        // if assayId is used by JobContext - then get assay's assay & device type props
+        if (assayId) {
+          ;[
+            {
+              assayTypeId2: assayTypeId,
+              assayTypei18nKey2: assayTypei18nKey,
+              assayTypeName2: assayTypeName,
+              deviceTypeId2: deviceTypeId,
+              deviceTypeName2: deviceTypeName,
+              diseaseId3: diseaseId,
+              diseasei18nKey3: diseasei18nKey,
+              diseaseName3: diseaseName,
+            },
+          ] = [item]
+        }
+        return {
+          ..._.pick(item, [
+            'personId',
+            'partnerId',
+            'jobId',
+            'jobFunctionId',
+            'jobFunctionName',
+            'jobContextId',
+            'siteId',
+            'siteName',
+            'geographyId',
+            'assayId',
+            'assayi18nKey',
+            'assayName',
+          ]),
+          countryId,
+          countryName,
+          stateId,
+          stateName,
+          lgaId,
+          lgaName,
+          diseaseId,
+          diseasei18nKey,
+          diseaseName,
+          assayTypeId,
+          assayTypei18nKey,
+          assayTypeName,
+          deviceTypeId,
+          deviceTypeName,
+        }
+      })
+    )
   return personAssignments
 }
+
 // ----------------------------------------------------------------------------------------
 async function validateJobData({ personId, jobFunctionId, auth }) {
   const { partnerId, countryId } = await getUser(auth.credentials.name)
@@ -584,6 +682,7 @@ async function validateJobData({ personId, jobFunctionId, auth }) {
 
   return true
 }
+
 // ----------------------------------------------------------------------------------------
 async function removePersonAssignment(request) {
   const {
@@ -615,9 +714,7 @@ async function removePersonAssignment(request) {
   }
 
   // remove JobContext
-  await knex('JobContext')
-    .where('id', jobContextId)
-    .del()
+  await knex('JobContext').where('id', jobContextId).del()
 
   // remove also Job entry if no other JobContexts use it
   const { count } = await knex('JobContext')
@@ -625,9 +722,7 @@ async function removePersonAssignment(request) {
     .count('id as count')
     .first()
   if (count === 0) {
-    await knex('Job')
-      .where('id', jobContext.jobId)
-      .del()
+    await knex('Job').where('id', jobContext.jobId).del()
   }
   // ----------------
   // return list of remaining person assignments
@@ -647,8 +742,7 @@ module.exports = {
   unassignJobContext,
   assignJobFunctionDashboardWidgets,
   unassignJobFunctionDashboardWidgets,
-  assignJobFunctionFeatures,
-  unassignJobFunctionFeatures,
+
   assignJobFunctionPermissions,
   unassignJobFunctionPermissions,
   assignPersonTo,

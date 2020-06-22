@@ -10,7 +10,8 @@ import {
 } from 'recompose'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import Helmet from 'react-helmet'
+import { Helmet } from 'react-helmet'
+import { injectIntl } from 'react-intl'
 import TableBody from '@material-ui/core/TableBody'
 import {
   makeSortPageSelector,
@@ -74,8 +75,8 @@ const searchSanitizer = makeSearchParamsSanitizer({
     'errorRate',
     'createdOn',
     'lastSeen',
-    'lastMonth',
-    'thisMonth',
+    'resultCountLastMonth',
+    'resultCountThisMonth',
   ],
 })
 
@@ -89,6 +90,7 @@ const filtersFromLocation = composeSanitizer(
 )
 
 const enhance = compose(
+  injectIntl,
   withProps(
     makeSortPageSelector({
       sortCol: 'name',
@@ -283,7 +285,7 @@ export const DeviceList = ({
             columns={[
               {
                 key: 'name',
-                label: intl.formatMessage(messages.devicesTitle),
+                label: intl.formatMessage(messages.device),
                 sortable: true,
               },
               {
@@ -316,12 +318,12 @@ export const DeviceList = ({
                 label: intl.formatMessage(messages.lastSeen),
               },
               {
-                key: 'lastMonth',
+                key: 'resultCountLastMonth',
                 sortable: true,
                 label: intl.formatMessage(messages.lastMonth),
               },
               {
-                key: 'thisMonth',
+                key: 'resultCountThisMonth',
                 sortable: true,
                 label: intl.formatMessage(messages.thisMonth),
               },

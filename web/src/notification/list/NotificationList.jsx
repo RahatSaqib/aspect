@@ -3,9 +3,9 @@ import classnames from 'classnames/bind'
 import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import Immutable from 'immutable'
-import { defineMessages } from 'react-intl'
+import { defineMessages, injectIntl } from 'react-intl'
 import { connect } from 'react-redux'
-import Helmet from 'react-helmet'
+import { Helmet } from 'react-helmet'
 import TableBody from '@material-ui/core/TableBody'
 
 import {
@@ -296,7 +296,10 @@ NotificationList.propTypes = {
   pageSize: PropTypes.number.isRequired,
 }
 
-export default connect(mapStateToProps, {
-  fetchNotifications,
-  exportNotifications,
-})(NotificationList)
+export default _.flowRight(
+  injectIntl,
+  connect(mapStateToProps, {
+    fetchNotifications,
+    exportNotifications,
+  })
+)(NotificationList)

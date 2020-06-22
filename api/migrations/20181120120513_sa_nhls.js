@@ -5,10 +5,7 @@ const _ = require('lodash')
 
 async function up(knex) {
   await knex.schema.table('SmsTemplate', smsTemplate => {
-    smsTemplate
-      .text('message')
-      .notNullable()
-      .alter()
+    smsTemplate.text('message').notNullable().alter()
   })
 
   await knex.schema.table('NotificationType', notificationType => {
@@ -30,14 +27,8 @@ async function up(knex) {
   })
 
   await knex.schema.createTable('NotificationTypeTag', notificationTypeTag => {
-    notificationTypeTag
-      .integer('notificationTypeId')
-      .unsigned()
-      .index()
-    notificationTypeTag
-      .integer('tagId')
-      .unsigned()
-      .index()
+    notificationTypeTag.integer('notificationTypeId').unsigned().index()
+    notificationTypeTag.integer('tagId').unsigned().index()
     notificationTypeTag.primary(['notificationTypeId', 'tagId'])
     notificationTypeTag
       .foreign('notificationTypeId')
@@ -75,17 +66,12 @@ async function down(knex) {
 
   await Promise.all(
     _.map(longRows, async row => {
-      await knex('SmsTemplate')
-        .where(row)
-        .del()
+      await knex('SmsTemplate').where(row).del()
     })
   )
 
   await knex.schema.table('SmsTemplate', smsTemplate => {
-    smsTemplate
-      .string('message', 1000)
-      .notNullable()
-      .alter()
+    smsTemplate.string('message', 1000).notNullable().alter()
   })
 
   const adminJobFunctionPerPartner = await knex('JobFunction')
@@ -117,9 +103,7 @@ async function down(knex) {
 
   await knex.schema.dropTableIfExists('NotificationTypeTag')
 
-  await knex('Notification')
-    .whereNull('personId')
-    .delete()
+  await knex('Notification').whereNull('personId').delete()
   await knex.schema.table('Notification', notificationType => {
     notificationType.dropForeign(['personId'])
   })

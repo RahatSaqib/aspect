@@ -1,4 +1,4 @@
-import { defineMessages } from 'react-intl'
+import { defineMessages, injectIntl } from 'react-intl'
 import React from 'react'
 import { compose, withHandlers } from 'recompose'
 import AspectButton from '../../components/shared/AspectButton'
@@ -20,6 +20,7 @@ const messages = defineMessages({
 })
 
 const enhance = compose(
+  injectIntl,
   withHandlers({
     onBackClick: ({ history }) => () => {
       history.goBack()
@@ -32,7 +33,7 @@ const enhance = compose(
   })
 )
 
-const NotificationDetailBackBar = ({
+export const NotificationDetailBackBar = ({
   intl,
   history,
   location,
@@ -41,6 +42,7 @@ const NotificationDetailBackBar = ({
   // --- injected by recompose ---
   onBackClick,
   onPathClick,
+  disabled = true,
 }) => (
   <DetailBackBar
     history={history}
@@ -57,7 +59,7 @@ const NotificationDetailBackBar = ({
       {
         label: intl.formatMessage(messages.edit),
         path: `/browse/notification/:notificationId/edit`,
-        disabled: true,
+        disabled,
       },
       {
         label: intl.formatMessage(messages.history),

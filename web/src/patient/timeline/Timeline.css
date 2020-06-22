@@ -1,4 +1,4 @@
-@import "../../globals/variables.css";
+@import '../../globals/variables.css';
 
 *,
 *::before,
@@ -22,7 +22,7 @@
 
 h1 {
   font-size: 1.8rem;
-  color: #3e8f98;
+  color: var(--aspect-color-chill-blue-2);
 }
 
 /* --------------------TIMELINE––––––––––––––––––––––– */
@@ -36,7 +36,7 @@ h1 {
 }
 
 .timeline ul li::after {
-  content: "";
+  content: '';
   position: absolute;
   left: 50%;
   bottom: 0;
@@ -52,11 +52,11 @@ h1 {
   bottom: 0;
   width: 400px;
   padding: 15px;
-  background: #ffffff;
+  background: var(--aspect-color-white);
 }
 
 .timeline ul li div::before {
-  content: "";
+  content: '';
   position: absolute;
   bottom: 7px;
   width: 0;
@@ -71,7 +71,7 @@ h1 {
 .timeline ul li:nth-child(odd) div::before {
   left: -15px;
   border-width: 8px 16px 8px 0;
-  border-color: transparent #f45b69 transparent transparent;
+  border-color: transparent var(--aspect-color-mandy-2) transparent transparent;
 }
 
 /*.timeline ul li:nth-child(even) div {
@@ -81,7 +81,7 @@ h1 {
   left: -439px;
   box-sizing: border-box;
   font-family: Lato, sans-serif;
-  display: "inline-block";
+  display: 'inline-block';
   font-size: 1rem;
   white-space: nowrap;
   word-break: break-all;
@@ -89,14 +89,14 @@ h1 {
 .timeline ul li:nth-child(even) div::before {
   right: -15px;
   border-width: 8px 0 8px 16px;
-  border-color: transparent transparent transparent #f45b69;
+  border-color: transparent transparent transparent var(--aspect-color-mandy-2);
 }
 
 .timecell {
   border-right: 2px rgb(158, 158, 158) solid;
   padding: 10px;
   line-height: 1.5rem;
-  color: #6d6f7d;
+  color: var(--aspect-color-grey-3);
   width: 20%;
 }
 

@@ -3,7 +3,6 @@ import {
   getPermissions,
   groupByPermissionTypes,
   isPermittedUser,
-  isEnabledFeature,
 } from '../components/shared/requirePermissions'
 import { navigations } from '../globals/components/BrowseFilters'
 
@@ -11,8 +10,8 @@ export function nonEmptyFilterValue(x) {
   return !_.isNull(x) && !_.isUndefined(x) && x !== ''
 }
 
-export const mergeToFiltersParams = (filters, filtersParams) =>
-  _.reduce(
+export const mergeToFiltersParams = (filters, filtersParams) => {
+  return _.reduce(
     filters,
     (filtersParams, v, k) => {
       if (nonEmptyFilterValue(v)) {
@@ -24,6 +23,7 @@ export const mergeToFiltersParams = (filters, filtersParams) =>
     },
     filtersParams
   )
+}
 
 const defaultSanitizer = (a, k) => {
   const { value } = a
@@ -42,7 +42,11 @@ const makeArraySanitizer = keys => a => keys.reduce(defaultSanitizer, a)
 const makeKeySanitizer = k => a => defaultSanitizer(a, k)
 
 const sanitizerByConfigKey = {
-  assayAndResultCategory: makeArraySanitizer(['assayId', 'resultCategoryId']),
+  assayAndResultCategory: makeArraySanitizer([
+    'assayId',
+    'resultCategoryId',
+    'diseaseId',
+  ]),
   geography: makeArraySanitizer(['countryId', 'stateId', 'lgaId']),
   state: _.identity,
   lga: _.identity,
@@ -87,7 +91,7 @@ const sanitizeBrowseLink = userPermissions => {
   return source.length >= 1 ? source[0] : false
 }
 
-export const reduceNavLinks = (linkArray, userPermissions, userFeatures) => {
+export const reduceNavLinks = (linkArray, userPermissions) => {
   const reducedNav = _.reduce(
     linkArray,
     (result, source) => {
@@ -97,14 +101,13 @@ export const reduceNavLinks = (linkArray, userPermissions, userFeatures) => {
       ])(source.requiredPermissions, [], [])
 
       const isPermitted = isPermittedUser(userPermissions, permissionsByTypes)
-      const isEnabled = isEnabledFeature(userFeatures, source.requiredFeatures)
 
-      if (isEnabled && isPermitted && source.value)
+      if (isPermitted && source.value)
         result.push({
           value: source.value,
           label: source.label,
         })
-      else if (isEnabled && isPermitted && source.href) {
+      else if (isPermitted && source.href) {
         if (source.href === '/browse') {
           const filteredSource = sanitizeBrowseLink(userPermissions)
           if (filteredSource) {
@@ -152,6 +155,9 @@ export const reduceFiltersConfig = (configObject, userPermissions) => {
             case 'siteName':
               result.siteName = true
               break
+            case 'siteId':
+              result.siteId = true
+              break
             case 'date':
               result.date = true
               break
@@ -172,6 +178,9 @@ export const reduceFiltersConfig = (configObject, userPermissions) => {
               break
             case 'patientOrResearchId':
               result.patientOrResearchId = true
+              break
+            case 'patientOrCaseId':
+              result.patientOrCaseId = true
               break
             case 'sampleId':
               result.sampleId = true
@@ -196,6 +205,9 @@ export const reduceFiltersConfig = (configObject, userPermissions) => {
               break
             case 'revoked':
               result.revoked = true
+              break
+            case 'onlyDisease':
+              result.onlyDisease = true
               break
             default:
           }

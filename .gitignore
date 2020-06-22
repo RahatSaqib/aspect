@@ -4,7 +4,8 @@ node_modules/
 
 # IDE Generated Files
 .idea/
-.vscode/
+.vscode/*
+!.vscode/settings.json
 
 # Runtime data
 pids
@@ -27,7 +28,7 @@ mocha.json
 !.elasticbeanstalk/*.global.yml
 
 # packages/e2e
-**/reports/
+e2e/**/reports/
 **/screenshots/
 
 # packages/web
@@ -39,3 +40,6 @@ mocha.json
 
 #Local developer helper scripts
 **/--devutil--*
+
+# Excel temp files
+**/~$*.xlsx

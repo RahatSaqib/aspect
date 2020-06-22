@@ -3,7 +3,7 @@
 }
 
 .Dropdown__Icon {
-  color: #e0e0e0;
+  color: var(--aspect-color-white-3);
   font-size: 24px;
 }
 

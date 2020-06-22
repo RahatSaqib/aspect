@@ -96,12 +96,8 @@ class TaskContextTest {
         await knex('Notification')
           .whereIn('alertMessageId', this.messageIds)
           .delete()
-        await knex('AlertMessage')
-          .whereIn('id', this.messageIds)
-          .delete()
-        await knex('Issue')
-          .whereIn('id', this.issueIds)
-          .delete()
+        await knex('AlertMessage').whereIn('id', this.messageIds).delete()
+        await knex('Issue').whereIn('id', this.issueIds).delete()
       }
 
       this.messageIds = []

@@ -1,12 +1,13 @@
 const Boom = require('@hapi/boom')
 const _ = require('lodash')
-const { knex, transact, run } = require('../db')
+const { knex, transact } = require('../db')
 const { getRemoteAddress } = require('../shared/request')
 const { asyncHandler } = require('../routes')
 const { deviceStatusToId, deviceTypeToPlugin } = require('../shared/dictionary')
 const {
   resultUpdated,
   resultLogged,
+  resultLoggedProcessed,
   types: { RESULT_UPDATED },
 } = require('../result/actions')
 
@@ -220,9 +221,7 @@ async function updateDeviceTimestamps(
   }
 
   if (!_.isEmpty(deviceUpdates)) {
-    await knex('Device')
-      .where({ id: device.id })
-      .update(deviceUpdates)
+    await knex('Device').where({ id: device.id }).update(deviceUpdates)
   }
 }
 
@@ -420,12 +419,10 @@ async function updateSiteWithContext(context) {
     const status = device.siteId == null ? 'approved' : 'assigned'
     const deviceStatusId = await deviceStatusToId(status)
 
-    await knex('Device')
-      .where({ id: device.id })
-      .update({
-        siteId: site.id,
-        deviceStatusId,
-      })
+    await knex('Device').where({ id: device.id }).update({
+      siteId: site.id,
+      deviceStatusId,
+    })
 
     await knex('DeviceStatusLog').insert({
       deviceId: device.id,
@@ -436,11 +433,9 @@ async function updateSiteWithContext(context) {
     })
 
     // Update DeviceApiKey site with the new siteId
-    await knex('DeviceApiKey')
-      .where({ deviceId: device.id })
-      .update({
-        siteId: site.id,
-      })
+    await knex('DeviceApiKey').where({ deviceId: device.id }).update({
+      siteId: site.id,
+    })
 
     await knex('DeviceSiteHistory').insert({
       deviceId: device.id,
@@ -784,11 +779,17 @@ function addDeviceLogResultConstraints(queryBuilder) {
     .where('rws.externalId', '<>', 'Purged')
 }
 
-async function onResultUpdated({ resultId, deviceLogId }, { messageContext }) {
+async function onResultUpdated(
+  { resultId, deviceLogId, userId },
+  { messageContext }
+) {
+  if (!resultId) {
+    throw new Error('Must specify resultId in Action')
+  }
   const context = messageContext.bindActionCreators({ resultLogged })
   if (deviceLogId) {
     // we've already created device logs originating here, so ignore
-    return context.resultLogged(resultId, deviceLogId)
+    return context.resultLogged(resultId, deviceLogId, userId)
   }
   return context.transact(async knex => {
     // TODO dispatch from client API using plugin so
@@ -809,28 +810,34 @@ async function onResultUpdated({ resultId, deviceLogId }, { messageContext }) {
           rawMessage: '',
         })
       )
-    context.resultLogged(resultId, deviceLogId)
+    context.resultLogged(resultId, deviceLogId, userId)
   })
 }
 
 async function onResultLogged(action, context) {
-  return run(async knex => {
-    const { partnerPluginName, deviceTypePluginName } = await knex(
-      'Result as r'
-    )
-      .leftJoin('Partner as p', 'r.partnerId', 'p.id')
-      .leftJoin('Device as d', 'r.deviceId', 'd.id')
-      .leftJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
-      .where({ 'r.id': action.resultId })
-      .first(
-        'p.plugin as partnerPluginName',
-        'dt.plugin as deviceTypePluginName'
-      )
-    const onResultLogged = await loadPlugin(
+  return context.messageContext.run(async knex => {
+    const { partnerPluginName, deviceTypePluginName } =
+      (await knex('Result as r')
+        .leftJoin('Partner as p', 'r.partnerId', 'p.id')
+        .leftJoin('Device as d', 'r.deviceId', 'd.id')
+        .leftJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
+        .where({ 'r.id': action.resultId })
+        .first(
+          'p.plugin as partnerPluginName',
+          'dt.plugin as deviceTypePluginName'
+        )) || {}
+    const pluginOnResultLogged = await loadPlugin(
       [partnerPluginName, deviceTypePluginName],
       'onResultLogged'
     )
-    return onResultLogged(action, context)
+    await pluginOnResultLogged(action, context)
+    context.messageContext.queue.dispatch(
+      resultLoggedProcessed(action.resultId, action.deviceLogId),
+      undefined,
+      {
+        expiration: 60000,
+      }
+    )
   })
 }
 
@@ -910,6 +917,7 @@ async function getNotificationsByCountry(knex) {
     .groupBy('c.abbreviation', 'c.a3', 'c.name', 'Date')
     .orderBy('Date', 'asc')
 }
+
 async function getCountriesHealthStats(knex) {
   return knex('Device as d')
     .join('Geography as g', 'd.geographyId', 'g.id')

@@ -11,7 +11,8 @@ const AccountDetailsBackBar = ({
   title,
 }) => {
   const onBackClick = () => {
-    history.push('/dashboard')
+    // go to home page - routerFactory will redirect to either /dashboard, /operational-data or /browse
+    history.push('/')
   }
   const onPathClick = path => {
     history.push({

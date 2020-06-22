@@ -1,0 +1,2680 @@
+1H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+5B
+2P|1
+3F
+3O|1|4715-4718/20|4715-4718/20^054^A1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||||||||||||||||F
+36
+4R|1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+A5
+5R|2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+F2
+6R|3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+6D
+7L|1
+40
+0H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+5A
+1P|1
+3E
+2O|1|4715-4718/20|4715-4718/20^054^A1|^^^Daan Target N gene LDA^Daan Target N gene LDA|||||||||||||||||||||F
+5B
+3R|1|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+CA
+4R|2|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+17
+5R|3|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+92
+6L|1
+3F
+7H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+61
+0P|1
+3D
+1O|1|4719-4722/20|4719-4722/20^054^B1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||||||||||||||||F
+33
+2R|1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+A3
+3R|2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+F0
+4R|3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+6B
+5L|1
+3E
+6H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+60
+7P|1
+44
+0O|1|4719-4722/20|4719-4722/20^054^B1|^^^Daan Target N gene LDA^Daan Target N gene LDA|||||||||||||||||||||F
+58
+1R|1|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+C8
+2R|2|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+15
+3R|3|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+90
+4L|1
+3D
+5H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+5F
+6P|1
+43
+7O|1|4723-4726/20|4723-4726/20^054^C1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||||||||||||||||F
+38
+0R|1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+A1
+1R|2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+EE
+2R|3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+69
+3L|1
+3C
+4H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+5E
+5P|1
+42
+6O|1|4723-4726/20|4723-4726/20^054^C1|^^^Daan Target N gene LDA^Daan Target N gene LDA|||||||||||||||||||||F
+5D
+7R|1|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+CE
+0R|2|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+13
+1R|3|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+8E
+2L|1
+3B
+3H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+5D
+4P|1
+41
+5O|1|4727-4730/20|4727-4730/20^054^D1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||||||||||||||||F
+35
+6R|1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+A7
+7R|2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+F4
+0R|3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+67
+1L|1
+3A
+2H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+5C
+3P|1
+40
+4O|1|4727-4730/20|4727-4730/20^054^D1|^^^Daan Target N gene LDA^Daan Target N gene LDA|||||||||||||||||||||F
+5A
+5R|1|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+CC
+6R|2|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+19
+7R|3|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+94
+0L|1
+39
+1H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+5B
+2P|1
+3F
+3O|1|4731-4734/20|4731-4734/20^054^E1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||||||||||||||||F
+32
+4R|1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+A5
+5R|2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+F2
+6R|3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+6D
+7L|1
+40
+0H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+5A
+1P|1
+3E
+2O|1|4731-4734/20|4731-4734/20^054^E1|^^^Daan Target N gene LDA^Daan Target N gene LDA|||||||||||||||||||||F
+57
+3R|1|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+CA
+4R|2|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+17
+5R|3|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+92
+6L|1
+3F
+7H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+61
+0P|1
+3D
+1O|1|4735-4738/20|4735-4738/20^054^F1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||||||||||||||||F
+41
+2R|1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+A3
+3R|2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+F0
+4R|3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+6B
+5L|1
+3E
+6H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+60
+7P|1
+44
+0O|1|4735-4738/20|4735-4738/20^054^F1|^^^Daan Target N gene LDA^Daan Target N gene LDA|||||||||||||||||||||F
+66
+1R|1|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+C8
+2R|2|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+15
+3R|3|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+90
+4L|1
+3D
+5H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+5F
+6P|1
+43
+7O|1|4739-4742/20|4739-4742/20^054^G1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||||||||||||||||F
+46
+0R|1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+A1
+1R|2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+EE
+2R|3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+69
+3L|1
+3C
+4H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+5E
+5P|1
+42
+6O|1|4739-4742/20|4739-4742/20^054^G1|^^^Daan Target N gene LDA^Daan Target N gene LDA|||||||||||||||||||||F
+6B
+7R|1|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+CE
+0R|2|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+13
+1R|3|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+8E
+2L|1
+3B
+3H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+5D
+4P|1
+41
+5O|1|4743-4746/20|4743-4746/20^054^H1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||||||||||||||||F
+43
+6R|1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+A7
+7R|2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+F4
+0R|3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+67
+1L|1
+3A
+2H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+5C
+3P|1
+40
+4O|1|4743-4746/20|4743-4746/20^054^H1|^^^Daan Target N gene LDA^Daan Target N gene LDA|||||||||||||||||||||F
+68
+5R|1|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+CC
+6R|2|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+19
+7R|3|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+94
+0L|1
+39
+1H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+5B
+2P|1
+3F
+3O|1|4747-4750/20|4747-4750/20^054^A2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||||||||||||||||F
+39
+4R|1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+A5
+5R|2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+F2
+6R|3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+6D
+7L|1
+40
+0H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+5A
+1P|1
+3E
+2O|1|4747-4750/20|4747-4750/20^054^A2|^^^Daan Target N gene LDA^Daan Target N gene LDA|||||||||||||||||||||F
+5E
+3R|1|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+CA
+4R|2|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+17
+5R|3|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+92
+6L|1
+3F
+7H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+61
+0P|1
+3D
+1O|1|4751-4754/20|4751-4754/20^054^B2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||||||||||||||||F
+36
+2R|1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+A3
+3R|2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+F0
+4R|3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+6B
+5L|1
+3E
+6H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+60
+7P|1
+44
+0O|1|4751-4754/20|4751-4754/20^054^B2|^^^Daan Target N gene LDA^Daan Target N gene LDA|||||||||||||||||||||F
+5B
+1R|1|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+C8
+2R|2|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+15
+3R|3|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+90
+4L|1
+3D
+5H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+5F
+6P|1
+43
+7O|1|4755-4758/20|4755-4758/20^054^C2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||||||||||||||||F
+4D
+0R|1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^F|-2.90|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+A1
+1R|2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+EE
+2R|3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^P|42.90|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+69
+3L|1
+3C
+4H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+5E
+5P|1
+42
+6O|1|4755-4758/20|4755-4758/20^054^C2|^^^Daan Target N gene LDA^Daan Target N gene LDA|||||||||||||||||||||F
+72
+7R|1|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+CE
+0R|2|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+13
+1R|3|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+8E
+2L|1
+3B
+3H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+5D
+4P|1
+41
+5O|1|4759-4762/20|4759-4762/20^054^D2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||||||||||||||||F
+4A
+6R|1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+A7
+7R|2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+F4
+0R|3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+67
+1L|1
+3A
+2H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+5C
+3P|1
+40
+4O|1|4759-4762/20|4759-4762/20^054^D2|^^^Daan Target N gene LDA^Daan Target N gene LDA|||||||||||||||||||||F
+6F
+5R|1|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+CC
+6R|2|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+19
+7R|3|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+94
+0L|1
+39
+1H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+5B
+2P|1
+3F
+3O|1|4763-4766/20|4763-4766/20^054^E2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||||||||||||||||F
+47
+4R|1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+A5
+5R|2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+F2
+6R|3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+6D
+7L|1
+40
+0H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+5A
+1P|1
+3E
+2O|1|4763-4766/20|4763-4766/20^054^E2|^^^Daan Target N gene LDA^Daan Target N gene LDA|||||||||||||||||||||F
+6C
+3R|1|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+CA
+4R|2|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+17
+5R|3|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+92
+6L|1
+3F
+7H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+61
+0P|1
+3D
+1O|1|4767-4770/20|4767-4770/20^054^F2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||||||||||||||||F
+44
+2R|1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+A3
+3R|2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+F0
+4R|3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+6B
+5L|1
+3E
+6H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+60
+7P|1
+44
+0O|1|4767-4770/20|4767-4770/20^054^F2|^^^Daan Target N gene LDA^Daan Target N gene LDA|||||||||||||||||||||F
+69
+1R|1|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+C8
+2R|2|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+15
+3R|3|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+90
+4L|1
+3D
+5H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+5F
+6P|1
+43
+7O|1|4771-4774/20|4771-4774/20^054^G2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||||||||||||||||F
+49
+0R|1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+A1
+1R|2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+EE
+2R|3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+69
+3L|1
+3C
+4H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+5E
+5P|1
+42
+6O|1|4771-4774/20|4771-4774/20^054^G2|^^^Daan Target N gene LDA^Daan Target N gene LDA|||||||||||||||||||||F
+6E
+7R|1|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+CE
+0R|2|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+13
+1R|3|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+8E
+2L|1
+3B
+3H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+5D
+4P|1
+41
+5O|1|4775-4776, 4905-4906|4775-4776, 4905-4906^054^H2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||||||||||||||||F
+6E
+6R|1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+A7
+7R|2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+F4
+0R|3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+67
+1L|1
+3A
+2H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+5C
+3P|1
+40
+4O|1|4775-4776, 4905-4906|4775-4776, 4905-4906^054^H2|^^^Daan Target N gene LDA^Daan Target N gene LDA|||||||||||||||||||||F
+93
+5R|1|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+CC
+6R|2|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+19
+7R|3|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+94
+0L|1
+39
+1H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+5B
+2P|1
+3F
+3O|1|4907-4910/20|4907-4910/20^054^A3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||||||||||||||||F
+32
+4R|1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+A5
+5R|2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+F2
+6R|3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+6D
+7L|1
+40
+0H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+5A
+1P|1
+3E
+2O|1|4907-4910/20|4907-4910/20^054^A3|^^^Daan Target N gene LDA^Daan Target N gene LDA|||||||||||||||||||||F
+57
+3R|1|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+CA
+4R|2|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+17
+5R|3|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+92
+6L|1
+3F
+7H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+61
+0P|1
+3D
+1O|1|4911-4914/20|4911-4914/20^054^B3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||||||||||||||||F
+2F
+2R|1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+A3
+3R|2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+F0
+4R|3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+6B
+5L|1
+3E
+6H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+60
+7P|1
+44
+0O|1|4911-4914/20|4911-4914/20^054^B3|^^^Daan Target N gene LDA^Daan Target N gene LDA|||||||||||||||||||||F
+54
+1R|1|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+C8
+2R|2|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+15
+3R|3|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+90
+4L|1
+3D
+5H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+5F
+6P|1
+43
+7O|1|4915-4918/20|4915-4918/20^054^C3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||||||||||||||||F
+46
+0R|1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+A1
+1R|2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+EE
+2R|3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+69
+3L|1
+3C
+4H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+5E
+5P|1
+42
+6O|1|4915-4918/20|4915-4918/20^054^C3|^^^Daan Target N gene LDA^Daan Target N gene LDA|||||||||||||||||||||F
+6B
+7R|1|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+CE
+0R|2|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+13
+1R|3|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+8E
+2L|1
+3B
+3H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+5D
+4P|1
+41
+5O|1|4919-4922/20|4919-4922/20^054^D3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||||||||||||||||F
+43
+6R|1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+A7
+7R|2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+F4
+0R|3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+67
+1L|1
+3A
+2H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+5C
+3P|1
+40
+4O|1|4919-4922/20|4919-4922/20^054^D3|^^^Daan Target N gene LDA^Daan Target N gene LDA|||||||||||||||||||||F
+68
+5R|1|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+CC
+6R|2|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+19
+7R|3|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+94
+0L|1
+39
+1H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+5B
+2P|1
+3F
+3O|1|4923-4926/20|4923-4926/20^054^E3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||||||||||||||||F
+40
+4R|1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+A5
+5R|2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+F2
+6R|3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+6D
+7L|1
+40
+0H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+5A
+1P|1
+3E
+2O|1|4923-4926/20|4923-4926/20^054^E3|^^^Daan Target N gene LDA^Daan Target N gene LDA|||||||||||||||||||||F
+65
+3R|1|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+CA
+4R|2|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+17
+5R|3|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+92
+6L|1
+3F
+7H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+61
+0P|1
+3D
+1O|1|4927-4930/20|4927-4930/20^054^F3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||||||||||||||||F
+3D
+2R|1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+A3
+3R|2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+F0
+4R|3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+6B
+5L|1
+3E
+6H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+60
+7P|1
+44
+0O|1|4927-4930/20|4927-4930/20^054^F3|^^^Daan Target N gene LDA^Daan Target N gene LDA|||||||||||||||||||||F
+62
+1R|1|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+C8
+2R|2|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+15
+3R|3|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+90
+4L|1
+3D
+5H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+5F
+6P|1
+43
+7O|1|4931-4934/20|4931-4934/20^054^G3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||||||||||||||||F
+42
+0R|1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+A1
+1R|2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+EE
+2R|3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+69
+3L|1
+3C
+4H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+5E
+5P|1
+42
+6O|1|4931-4934/20|4931-4934/20^054^G3|^^^Daan Target N gene LDA^Daan Target N gene LDA|||||||||||||||||||||F
+67
+7R|1|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+CE
+0R|2|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+13
+1R|3|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+8E
+2L|1
+3B
+3H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+5D
+4P|1
+41
+5O|1|4935-4936, 5044-5045|4935-4936, 5044-5045^054^H3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||||||||||||||||F
+53
+6R|1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+A7
+7R|2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+F4
+0R|3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+67
+1L|1
+3A
+2H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+5C
+3P|1
+40
+4O|1|4935-4936, 5044-5045|4935-4936, 5044-5045^054^H3|^^^Daan Target N gene LDA^Daan Target N gene LDA|||||||||||||||||||||F
+78
+5R|1|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+CC
+6R|2|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+19
+7R|3|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+94
+0L|1
+39
+1H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+5B
+2P|1
+3F
+3O|1|4777-4780/20|4777-4780/20^054^A4|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||||||||||||||||F
+47
+4R|1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+A5
+5R|2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+F2
+6R|3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+6D
+7L|1
+40
+0H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+5A
+1P|1
+3E
+2O|1|4777-4780/20|4777-4780/20^054^A4|^^^Daan Target N gene LDA^Daan Target N gene LDA|||||||||||||||||||||F
+6C
+3R|1|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+CA
+4R|2|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+17
+5R|3|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+92
+6L|1
+3F
+7H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+61
+0P|1
+3D
+1O|1|4781-4784/20|4781-4784/20^054^B4|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||||||||||||||||F
+44
+2R|1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+A3
+3R|2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+F0
+4R|3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+6B
+5L|1
+3E
+6H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+60
+7P|1
+44
+0O|1|4781-4784/20|4781-4784/20^054^B4|^^^Daan Target N gene LDA^Daan Target N gene LDA|||||||||||||||||||||F
+69
+1R|1|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+C8
+2R|2|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+15
+3R|3|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+90
+4L|1
+3D
+5H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+5F
+6P|1
+43
+7O|1|4785-4788/20|4785-4788/20^054^C4|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||||||||||||||||F
+5B
+0R|1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+A1
+1R|2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+EE
+2R|3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+69
+3L|1
+3C
+4H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+5E
+5P|1
+42
+6O|1|4785-4788/20|4785-4788/20^054^C4|^^^Daan Target N gene LDA^Daan Target N gene LDA|||||||||||||||||||||F
+80
+7R|1|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+CE
+0R|2|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+13
+1R|3|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+8E
+2L|1
+3B
+3H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+5D
+4P|1
+41
+5O|1|4789-4792/20|4789-4792/20^054^D4|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||||||||||||||||F
+58
+6R|1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+A7
+7R|2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+F4
+0R|3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+67
+1L|1
+3A
+2H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+5C
+3P|1
+40
+4O|1|4789-4792/20|4789-4792/20^054^D4|^^^Daan Target N gene LDA^Daan Target N gene LDA|||||||||||||||||||||F
+7D
+5R|1|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+CC
+6R|2|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+19
+7R|3|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+94
+0L|1
+39
+1H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+5B
+2P|1
+3F
+3O|1|4793-4796/20|4793-4796/20^054^E4|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||||||||||||||||F
+55
+4R|1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+A5
+5R|2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+F2
+6R|3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+6D
+7L|1
+40
+0H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+5A
+1P|1
+3E
+2O|1|4793-4796/20|4793-4796/20^054^E4|^^^Daan Target N gene LDA^Daan Target N gene LDA|||||||||||||||||||||F
+7A
+3R|1|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+CA
+4R|2|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+17
+5R|3|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+92
+6L|1
+3F
+7H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+61
+0P|1
+3D
+1O|1|4797-4800/20|4797-4800/20^054^F4|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||||||||||||||||F
+40
+2R|1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+A3
+3R|2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+F0
+4R|3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+6B
+5L|1
+3E
+6H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+60
+7P|1
+44
+0O|1|4797-4800/20|4797-4800/20^054^F4|^^^Daan Target N gene LDA^Daan Target N gene LDA|||||||||||||||||||||F
+65
+1R|1|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+C8
+2R|2|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+15
+3R|3|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+90
+4L|1
+3D
+5H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+5F
+6P|1
+43
+7O|1|4801-4804/20|4801-4804/20^054^G4|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||||||||||||||||F
+33
+0R|1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+A1
+1R|2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+EE
+2R|3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+69
+3L|1
+3C
+4H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+5E
+5P|1
+42
+6O|1|4801-4804/20|4801-4804/20^054^G4|^^^Daan Target N gene LDA^Daan Target N gene LDA|||||||||||||||||||||F
+58
+7R|1|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+CE
+0R|2|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+13
+1R|3|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+8E
+2L|1
+3B
+3H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+5D
+4P|1
+41
+5O|1|4805-4808/20|4805-4808/20^054^H4|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||||||||||||||||F
+42
+6R|1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+A7
+7R|2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+F4
+0R|3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+67
+1L|1
+3A
+2H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+5C
+3P|1
+40
+4O|1|4805-4808/20|4805-4808/20^054^H4|^^^Daan Target N gene LDA^Daan Target N gene LDA|||||||||||||||||||||F
+67
+5R|1|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+CC
+6R|2|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+19
+7R|3|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+94
+0L|1
+39
+1H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+5B
+2P|1
+3F
+3O|1|4809-4812/20|4809-4812/20^054^A5|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||||||||||||||||F
+38
+4R|1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+A5
+5R|2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+F2
+6R|3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+6D
+7L|1
+40
+0H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+5A
+1P|1
+3E
+2O|1|4809-4812/20|4809-4812/20^054^A5|^^^Daan Target N gene LDA^Daan Target N gene LDA|||||||||||||||||||||F
+5D
+3R|1|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+CA
+4R|2|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+17
+5R|3|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+92
+6L|1
+3F
+7H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+61
+0P|1
+3D
+1O|1|4813-4816/20|4813-4816/20^054^B5|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||||||||||||||||F
+35
+2R|1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+A3
+3R|2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+F0
+4R|3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+6B
+5L|1
+3E
+6H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+60
+7P|1
+44
+0O|1|4813-4816/20|4813-4816/20^054^B5|^^^Daan Target N gene LDA^Daan Target N gene LDA|||||||||||||||||||||F
+5A
+1R|1|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+C8
+2R|2|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+15
+3R|3|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+90
+4L|1
+3D
+5H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+5F
+6P|1
+43
+7O|1|4817-4820/20|4817-4820/20^054^C5|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||||||||||||||||F
+3A
+0R|1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+A1
+1R|2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+EE
+2R|3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+69
+3L|1
+3C
+4H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+5E
+5P|1
+42
+6O|1|4817-4820/20|4817-4820/20^054^C5|^^^Daan Target N gene LDA^Daan Target N gene LDA|||||||||||||||||||||F
+5F
+7R|1|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+CE
+0R|2|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+13
+1R|3|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+8E
+2L|1
+3B
+3H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+5D
+4P|1
+41
+5O|1|4821-4824/20|4821-4824/20^054^D5|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||||||||||||||||F
+37
+6R|1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+A7
+7R|2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+F4
+0R|3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+67
+1L|1
+3A
+2H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+5C
+3P|1
+40
+4O|1|4821-4824/20|4821-4824/20^054^D5|^^^Daan Target N gene LDA^Daan Target N gene LDA|||||||||||||||||||||F
+5C
+5R|1|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+CC
+6R|2|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+19
+7R|3|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+94
+0L|1
+39
+1H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+5B
+2P|1
+3F
+3O|1|4825-4828/20|4825-4828/20^054^E5|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||||||||||||||||F
+46
+4R|1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+A5
+5R|2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+F2
+6R|3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+6D
+7L|1
+40
+0H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+5A
+1P|1
+3E
+2O|1|4825-4828/20|4825-4828/20^054^E5|^^^Daan Target N gene LDA^Daan Target N gene LDA|||||||||||||||||||||F
+6B
+3R|1|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+CA
+4R|2|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+17
+5R|3|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+92
+6L|1
+3F
+7H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+61
+0P|1
+3D
+1O|1|4829-4832/20|4829-4832/20^054^F5|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||||||||||||||||F
+43
+2R|1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+A3
+3R|2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+F0
+4R|3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+6B
+5L|1
+3E
+6H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+60
+7P|1
+44
+0O|1|4829-4832/20|4829-4832/20^054^F5|^^^Daan Target N gene LDA^Daan Target N gene LDA|||||||||||||||||||||F
+68
+1R|1|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+C8
+2R|2|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+15
+3R|3|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+90
+4L|1
+3D
+5H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+5F
+6P|1
+43
+7O|1|4833-4836/20|4833-4836/20^054^G5|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||||||||||||||||F
+48
+0R|1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+A1
+1R|2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+EE
+2R|3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+69
+3L|1
+3C
+4H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+5E
+5P|1
+42
+6O|1|4833-4836/20|4833-4836/20^054^G5|^^^Daan Target N gene LDA^Daan Target N gene LDA|||||||||||||||||||||F
+6D
+7R|1|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+CE
+0R|2|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+13
+1R|3|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+8E
+2L|1
+3B
+3H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+5D
+4P|1
+41
+5O|1|4837-4840/20|4837-4840/20^054^H5|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||||||||||||||||F
+45
+6R|1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+A7
+7R|2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+F4
+0R|3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+67
+1L|1
+3A
+2H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+5C
+3P|1
+40
+4O|1|4837-4840/20|4837-4840/20^054^H5|^^^Daan Target N gene LDA^Daan Target N gene LDA|||||||||||||||||||||F
+6A
+5R|1|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+CC
+6R|2|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+19
+7R|3|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+94
+0L|1
+39
+1H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+5B
+2P|1
+3F
+3O|1|4841-4844/20|4841-4844/20^054^A6|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||||||||||||||||F
+3B
+4R|1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+A5
+5R|2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+F2
+6R|3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+6D
+7L|1
+40
+0H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+5A
+1P|1
+3E
+2O|1|4841-4844/20|4841-4844/20^054^A6|^^^Daan Target N gene LDA^Daan Target N gene LDA|||||||||||||||||||||F
+60
+3R|1|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+CA
+4R|2|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+17
+5R|3|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+92
+6L|1
+3F
+7H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+61
+0P|1
+3D
+1O|1|4845-4848/20|4845-4848/20^054^B6|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||||||||||||||||F
+4A
+2R|1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+A3
+3R|2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+F0
+4R|3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+6B
+5L|1
+3E
+6H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+60
+7P|1
+44
+0O|1|4845-4848/20|4845-4848/20^054^B6|^^^Daan Target N gene LDA^Daan Target N gene LDA|||||||||||||||||||||F
+6F
+1R|1|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+C8
+2R|2|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+15
+3R|3|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+90
+4L|1
+3D
+5H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+5F
+6P|1
+43
+7O|1|4849-4852/20|4849-4852/20^054^C6|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||||||||||||||||F
+4F
+0R|1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+A1
+1R|2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+EE
+2R|3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+69
+3L|1
+3C
+4H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+5E
+5P|1
+42
+6O|1|4849-4852/20|4849-4852/20^054^C6|^^^Daan Target N gene LDA^Daan Target N gene LDA|||||||||||||||||||||F
+74
+7R|1|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+CE
+0R|2|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+13
+1R|3|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+8E
+2L|1
+3B
+3H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+5D
+4P|1
+41
+5O|1|4853-4856/20|4853-4856/20^054^D6|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||||||||||||||||F
+4C
+6R|1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+A7
+7R|2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+F4
+0R|3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+67
+1L|1
+3A
+2H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+5C
+3P|1
+40
+4O|1|4853-4856/20|4853-4856/20^054^D6|^^^Daan Target N gene LDA^Daan Target N gene LDA|||||||||||||||||||||F
+71
+5R|1|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+CC
+6R|2|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+19
+7R|3|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+94
+0L|1
+39
+1H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+5B
+2P|1
+3F
+3O|1|4857-4860/20|4857-4860/20^054^E6|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||||||||||||||||F
+49
+4R|1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+A5
+5R|2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+F2
+6R|3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+6D
+7L|1
+40
+0H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+5A
+1P|1
+3E
+2O|1|4857-4860/20|4857-4860/20^054^E6|^^^Daan Target N gene LDA^Daan Target N gene LDA|||||||||||||||||||||F
+6E
+3R|1|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+CA
+4R|2|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+17
+5R|3|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+92
+6L|1
+3F
+7H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+61
+0P|1
+3D
+1O|1|4861-4864/20|4861-4864/20^054^F6|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||||||||||||||||F
+46
+2R|1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+A3
+3R|2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+F0
+4R|3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+6B
+5L|1
+3E
+6H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+60
+7P|1
+44
+0O|1|4861-4864/20|4861-4864/20^054^F6|^^^Daan Target N gene LDA^Daan Target N gene LDA|||||||||||||||||||||F
+6B
+1R|1|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+C8
+2R|2|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+15
+3R|3|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+90
+4L|1
+3D
+5H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+5F
+6P|1
+43
+7O|1|4865-4868/20|4865-4868/20^054^G6|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||||||||||||||||F
+5D
+0R|1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+A1
+1R|2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+EE
+2R|3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+69
+3L|1
+3C
+4H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+5E
+5P|1
+42
+6O|1|4865-4868/20|4865-4868/20^054^G6|^^^Daan Target N gene LDA^Daan Target N gene LDA|||||||||||||||||||||F
+82
+7R|1|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+CE
+0R|2|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+13
+1R|3|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+8E
+2L|1
+3B
+3H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+5D
+4P|1
+41
+5O|1|4973-4976/20|4973-4976/20^054^H6|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||||||||||||||||F
+5C
+6R|1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+A7
+7R|2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+F4
+0R|3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+67
+1L|1
+3A
+2H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+5C
+3P|1
+40
+4O|1|4973-4976/20|4973-4976/20^054^H6|^^^Daan Target N gene LDA^Daan Target N gene LDA|||||||||||||||||||||F
+81
+5R|1|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+CC
+6R|2|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+19
+7R|3|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+94
+0L|1
+39
+1H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+5B
+2P|1
+3F
+3O|1|4869/20|4869/20^054^A7|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||||||||||||||||F
+4E
+4R|1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+A5
+5R|2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+F2
+6R|3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+6D
+7L|1
+40
+0H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+5A
+1P|1
+3E
+2O|1|4869/20|4869/20^054^A7|^^^Daan Target N gene LDA^Daan Target N gene LDA|||||||||||||||||||||F
+73
+3R|1|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+CA
+4R|2|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+17
+5R|3|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+92
+6L|1
+3F
+7H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+61
+0P|1
+3D
+1O|1|4870/20|4870/20^054^B7|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||||||||||||||||F
+3D
+2R|1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+A3
+3R|2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+F0
+4R|3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+6B
+5L|1
+3E
+6H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+60
+7P|1
+44
+0O|1|4870/20|4870/20^054^B7|^^^Daan Target N gene LDA^Daan Target N gene LDA|||||||||||||||||||||F
+62
+1R|1|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+C8
+2R|2|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+15
+3R|3|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+90
+4L|1
+3D
+5H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+5F
+6P|1
+43
+7O|1|4871/20|4871/20^054^C7|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||||||||||||||||F
+46
+0R|1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+A1
+1R|2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+EE
+2R|3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+69
+3L|1
+3C
+4H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+5E
+5P|1
+42
+6O|1|4871/20|4871/20^054^C7|^^^Daan Target N gene LDA^Daan Target N gene LDA|||||||||||||||||||||F
+6B
+7R|1|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+CE
+0R|2|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+13
+1R|3|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+8E
+2L|1
+3B
+3H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+5D
+4P|1
+41
+5O|1|4872/20|4872/20^054^D7|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||||||||||||||||F
+47
+6R|1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^F|16.47|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+14
+7R|2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^I|Positive|||||F||sisayaa^Administrator||20200508045151|275020383
+14
+0R|3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^P|23.53|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+76
+1L|1
+3A
+2H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+5C
+3P|1
+40
+4O|1|4872/20|4872/20^054^D7|^^^Daan Target N gene LDA^Daan Target N gene LDA|||||||||||||||||||||F
+6C
+5R|1|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^F|8.96|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+0E
+6R|2|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^I|Positive|||||F||sisayaa^Administrator||20200508045151|275020383
+39
+7R|3|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^P|31.04|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+9E
+0L|1
+39
+1H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+5B
+2P|1
+3F
+3O|1|4873/20|4873/20^054^E7|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||||||||||||||||F
+48
+4R|1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^F|8.96|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+A5
+5R|2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^I|Positive|||||F||sisayaa^Administrator||20200508045151|275020383
+F2
+6R|3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^P|31.04|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+6D
+7L|1
+40
+0H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+5A
+1P|1
+3E
+2O|1|4873/20|4873/20^054^E7|^^^Daan Target N gene LDA^Daan Target N gene LDA|||||||||||||||||||||F
+6D
+3R|1|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+CA
+4R|2|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+17
+5R|3|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+92
+6L|1
+3F
+7H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+61
+0P|1
+3D
+1O|1|4874/20|4874/20^054^F7|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||||||||||||||||F
+49
+2R|1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+A3
+3R|2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+F0
+4R|3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+6B
+5L|1
+3E
+6H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+60
+7P|1
+44
+0O|1|4874/20|4874/20^054^F7|^^^Daan Target N gene LDA^Daan Target N gene LDA|||||||||||||||||||||F
+6E
+1R|1|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+C8
+2R|2|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+15
+3R|3|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+90
+4L|1
+3D
+5H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+5F
+6P|1
+43
+7O|1|4875/20|4875/20^054^G7|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||||||||||||||||F
+52
+0R|1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+A1
+1R|2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+EE
+2R|3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+69
+3L|1
+3C
+4H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+5E
+5P|1
+42
+6O|1|4875/20|4875/20^054^G7|^^^Daan Target N gene LDA^Daan Target N gene LDA|||||||||||||||||||||F
+77
+7R|1|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+CE
+0R|2|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+13
+1R|3|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+8E
+2L|1
+3B
+3H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+5D
+4P|1
+41
+5O|1|4876/20|4876/20^054^H7|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||||||||||||||||F
+53
+6R|1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+A7
+7R|2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+F4
+0R|3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+67
+1L|1
+3A
+2H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+5C
+3P|1
+40
+4O|1|4876/20|4876/20^054^H7|^^^Daan Target N gene LDA^Daan Target N gene LDA|||||||||||||||||||||F
+78
+5R|1|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+CC
+6R|2|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+19
+7R|3|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+94
+0L|1
+39
+1H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+5B
+2P|1
+3F
+3O|1|4877/20|4877/20^054^A8|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||||||||||||||||F
+4D
+4R|1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+A5
+5R|2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+F2
+6R|3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+6D
+7L|1
+40
+0H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+5A
+1P|1
+3E
+2O|1|4877/20|4877/20^054^A8|^^^Daan Target N gene LDA^Daan Target N gene LDA|||||||||||||||||||||F
+72
+3R|1|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+CA
+4R|2|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+17
+5R|3|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+92
+6L|1
+3F
+7H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+61
+0P|1
+3D
+1O|1|4878/20|4878/20^054^B8|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||||||||||||||||F
+4E
+2R|1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+A3
+3R|2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+F0
+4R|3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+6B
+5L|1
+3E
+6H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+60
+7P|1
+44
+0O|1|4878/20|4878/20^054^B8|^^^Daan Target N gene LDA^Daan Target N gene LDA|||||||||||||||||||||F
+73
+1R|1|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+C8
+2R|2|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+15
+3R|3|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+90
+4L|1
+3D
+5H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+5F
+6P|1
+43
+7O|1|4879/20|4879/20^054^C8|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||||||||||||||||F
+57
+0R|1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+A1
+1R|2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+EE
+2R|3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+69
+3L|1
+3C
+4H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+5E
+5P|1
+42
+6O|1|4879/20|4879/20^054^C8|^^^Daan Target N gene LDA^Daan Target N gene LDA|||||||||||||||||||||F
+7C
+7R|1|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+CE
+0R|2|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+13
+1R|3|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+8E
+2L|1
+3B
+3H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+5D
+4P|1
+41
+5O|1|4880/20|4880/20^054^D8|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||||||||||||||||F
+46
+6R|1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+A7
+7R|2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+F4
+0R|3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+67
+1L|1
+3A
+2H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+5C
+3P|1
+40
+4O|1|4880/20|4880/20^054^D8|^^^Daan Target N gene LDA^Daan Target N gene LDA|||||||||||||||||||||F
+6B
+5R|1|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+CC
+6R|2|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+19
+7R|3|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+94
+0L|1
+39
+1H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+5B
+2P|1
+3F
+3O|1|4881/20|4881/20^054^E8|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||||||||||||||||F
+47
+4R|1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+A5
+5R|2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+F2
+6R|3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+6D
+7L|1
+40
+0H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+5A
+1P|1
+3E
+2O|1|4881/20|4881/20^054^E8|^^^Daan Target N gene LDA^Daan Target N gene LDA|||||||||||||||||||||F
+6C
+3R|1|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+CA
+4R|2|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+17
+5R|3|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+92
+6L|1
+3F
+7H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+61
+0P|1
+3D
+1O|1|4882/20|4882/20^054^F8|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||||||||||||||||F
+48
+2R|1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+A3
+3R|2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+F0
+4R|3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+6B
+5L|1
+3E
+6H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+60
+7P|1
+44
+0O|1|4882/20|4882/20^054^F8|^^^Daan Target N gene LDA^Daan Target N gene LDA|||||||||||||||||||||F
+6D
+1R|1|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+C8
+2R|2|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+15
+3R|3|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+90
+4L|1
+3D
+5H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+5F
+6P|1
+43
+7O|1|4883/20|4883/20^054^G8|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||||||||||||||||F
+51
+0R|1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+A1
+1R|2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+EE
+2R|3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+69
+3L|1
+3C
+4H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+5E
+5P|1
+42
+6O|1|4883/20|4883/20^054^G8|^^^Daan Target N gene LDA^Daan Target N gene LDA|||||||||||||||||||||F
+76
+7R|1|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+CE
+0R|2|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+13
+1R|3|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+8E
+2L|1
+3B
+3H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+5D
+4P|1
+41
+5O|1|4884/20|4884/20^054^H8|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||||||||||||||||F
+52
+6R|1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+A7
+7R|2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+F4
+0R|3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+67
+1L|1
+3A
+2H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+5C
+3P|1
+40
+4O|1|4884/20|4884/20^054^H8|^^^Daan Target N gene LDA^Daan Target N gene LDA|||||||||||||||||||||F
+77
+5R|1|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+CC
+6R|2|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+19
+7R|3|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+94
+0L|1
+39
+1H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+5B
+2P|1
+3F
+3O|1|4885/20|4885/20^054^A9|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||||||||||||||||F
+4C
+4R|1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+A5
+5R|2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+F2
+6R|3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+6D
+7L|1
+40
+0H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+5A
+1P|1
+3E
+2O|1|4885/20|4885/20^054^A9|^^^Daan Target N gene LDA^Daan Target N gene LDA|||||||||||||||||||||F
+71
+3R|1|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+CA
+4R|2|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+17
+5R|3|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+92
+6L|1
+3F
+7H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+61
+0P|1
+3D
+1O|1|4886/20|4886/20^054^B9|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||||||||||||||||F
+4D
+2R|1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+A3
+3R|2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+F0
+4R|3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+6B
+5L|1
+3E
+6H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+60
+7P|1
+44
+0O|1|4886/20|4886/20^054^B9|^^^Daan Target N gene LDA^Daan Target N gene LDA|||||||||||||||||||||F
+72
+1R|1|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+C8
+2R|2|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+15
+3R|3|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+90
+4L|1
+3D
+5H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+5F
+6P|1
+43
+7O|1|4887/20|4887/20^054^C9|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||||||||||||||||F
+56
+0R|1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+A1
+1R|2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+EE
+2R|3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+69
+3L|1
+3C
+4H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045154
+5E
+5P|1
+42
+6O|1|4887/20|4887/20^054^C9|^^^Daan Target N gene LDA^Daan Target N gene LDA|||||||||||||||||||||F
+7B
+7R|1|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+CE
+0R|2|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+13
+1R|3|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+8E
+2L|1
+3B
+3H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045155
+5E
+4P|1
+41
+5O|1|4888/20|4888/20^054^D9|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||||||||||||||||F
+57
+6R|1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+A7
+7R|2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+F4
+0R|3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+67
+1L|1
+3A
+2H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045155
+5D
+3P|1
+40
+4O|1|4888/20|4888/20^054^D9|^^^Daan Target N gene LDA^Daan Target N gene LDA|||||||||||||||||||||F
+7C
+5R|1|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+CC
+6R|2|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+19
+7R|3|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+94
+0L|1
+39
+1H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045155
+5C
+2P|1
+3F
+3O|1|4889/20|4889/20^054^E9|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||||||||||||||||F
+58
+4R|1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+A5
+5R|2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+F2
+6R|3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+6D
+7L|1
+40
+0H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045155
+5B
+1P|1
+3E
+2O|1|4889/20|4889/20^054^E9|^^^Daan Target N gene LDA^Daan Target N gene LDA|||||||||||||||||||||F
+7D
+3R|1|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+CA
+4R|2|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+17
+5R|3|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+92
+6L|1
+3F
+7H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045155
+62
+0P|1
+3D
+1O|1|4890/20|4890/20^054^F9|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||||||||||||||||F
+47
+2R|1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+A3
+3R|2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+F0
+4R|3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+6B
+5L|1
+3E
+6H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045155
+61
+7P|1
+44
+0O|1|4890/20|4890/20^054^F9|^^^Daan Target N gene LDA^Daan Target N gene LDA|||||||||||||||||||||F
+6C
+1R|1|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+C8
+2R|2|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+15
+3R|3|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+90
+4L|1
+3D
+5H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045155
+60
+6P|1
+43
+7O|1|4891/20|4891/20^054^G9|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||||||||||||||||F
+50
+0R|1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+A1
+1R|2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+EE
+2R|3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+69
+3L|1
+3C
+4H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045155
+5F
+5P|1
+42
+6O|1|4891/20|4891/20^054^G9|^^^Daan Target N gene LDA^Daan Target N gene LDA|||||||||||||||||||||F
+75
+7R|1|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+CE
+0R|2|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+13
+1R|3|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+8E
+2L|1
+3B
+3H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045155
+5E
+4P|1
+41
+5O|1|4892/20|4892/20^054^H9|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||||||||||||||||F
+51
+6R|1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+A7
+7R|2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+F4
+0R|3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+67
+1L|1
+3A
+2H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045155
+5D
+3P|1
+40
+4O|1|4892/20|4892/20^054^H9|^^^Daan Target N gene LDA^Daan Target N gene LDA|||||||||||||||||||||F
+76
+5R|1|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+CC
+6R|2|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+19
+7R|3|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+94
+0L|1
+39
+1H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045155
+5C
+2P|1
+3F
+3O|1|4893/20|4893/20^054^A10|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||||||||||||||||F
+72
+4R|1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+A5
+5R|2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+F2
+6R|3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+6D
+7L|1
+40
+0H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045155
+5B
+1P|1
+3E
+2O|1|4893/20|4893/20^054^A10|^^^Daan Target N gene LDA^Daan Target N gene LDA|||||||||||||||||||||F
+97
+3R|1|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+CA
+4R|2|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+17
+5R|3|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+92
+6L|1
+3F
+7H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045155
+62
+0P|1
+3D
+1O|1|4894/20|4894/20^054^B10|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||||||||||||||||F
+73
+2R|1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+A3
+3R|2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+F0
+4R|3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+6B
+5L|1
+3E
+6H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045155
+61
+7P|1
+44
+0O|1|4894/20|4894/20^054^B10|^^^Daan Target N gene LDA^Daan Target N gene LDA|||||||||||||||||||||F
+98
+1R|1|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+C8
+2R|2|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+15
+3R|3|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+90
+4L|1
+3D
+5H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045155
+60
+6P|1
+43
+7O|1|4895/20|4895/20^054^C10|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||||||||||||||||F
+7C
+0R|1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+A1
+1R|2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+EE
+2R|3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+69
+3L|1
+3C
+4H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045155
+5F
+5P|1
+42
+6O|1|4895/20|4895/20^054^C10|^^^Daan Target N gene LDA^Daan Target N gene LDA|||||||||||||||||||||F
+A1
+7R|1|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+CE
+0R|2|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+13
+1R|3|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+8E
+2L|1
+3B
+3H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045155
+5E
+4P|1
+41
+5O|1|4896/20|4896/20^054^D10|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||||||||||||||||F
+7D
+6R|1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+A7
+7R|2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+F4
+0R|3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+67
+1L|1
+3A
+2H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045155
+5D
+3P|1
+40
+4O|1|4896/20|4896/20^054^D10|^^^Daan Target N gene LDA^Daan Target N gene LDA|||||||||||||||||||||F
+A2
+5R|1|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+CC
+6R|2|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+19
+7R|3|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+94
+0L|1
+39
+1H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045155
+5C
+2P|1
+3F
+3O|1|4897/20|4897/20^054^E10|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||||||||||||||||F
+7E
+4R|1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+A5
+5R|2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+F2
+6R|3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+6D
+7L|1
+40
+0H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045155
+5B
+1P|1
+3E
+2O|1|4897/20|4897/20^054^E10|^^^Daan Target N gene LDA^Daan Target N gene LDA|||||||||||||||||||||F
+A3
+3R|1|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+CA
+4R|2|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+17
+5R|3|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+92
+6L|1
+3F
+7H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045155
+62
+0P|1
+3D
+1O|1|4898/20|4898/20^054^F10|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||||||||||||||||F
+7F
+2R|1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+A3
+3R|2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+F0
+4R|3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+6B
+5L|1
+3E
+6H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045155
+61
+7P|1
+44
+0O|1|4898/20|4898/20^054^F10|^^^Daan Target N gene LDA^Daan Target N gene LDA|||||||||||||||||||||F
+A4
+1R|1|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+C8
+2R|2|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+15
+3R|3|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+90
+4L|1
+3D
+5H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045155
+60
+6P|1
+43
+7O|1|4899/20|4899/20^054^G10|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||||||||||||||||F
+88
+0R|1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+A1
+1R|2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+EE
+2R|3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+69
+3L|1
+3C
+4H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045155
+5F
+5P|1
+42
+6O|1|4899/20|4899/20^054^G10|^^^Daan Target N gene LDA^Daan Target N gene LDA|||||||||||||||||||||F
+AD
+7R|1|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+CE
+0R|2|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+13
+1R|3|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+8E
+2L|1
+3B
+3H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045155
+5E
+4P|1
+41
+5O|1|4900/20|4900/20^054^H10|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||||||||||||||||F
+65
+6R|1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+A7
+7R|2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+F4
+0R|3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+67
+1L|1
+3A
+2H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045155
+5D
+3P|1
+40
+4O|1|4900/20|4900/20^054^H10|^^^Daan Target N gene LDA^Daan Target N gene LDA|||||||||||||||||||||F
+8A
+5R|1|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+CC
+6R|2|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+19
+7R|3|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+94
+0L|1
+39
+1H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045155
+5C
+2P|1
+3F
+3O|1|4901/20|4901/20^054^A11|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||||||||||||||||F
+5F
+4R|1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+A5
+5R|2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+F2
+6R|3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+6D
+7L|1
+40
+0H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045155
+5B
+1P|1
+3E
+2O|1|4901/20|4901/20^054^A11|^^^Daan Target N gene LDA^Daan Target N gene LDA|||||||||||||||||||||F
+84
+3R|1|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+CA
+4R|2|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+17
+5R|3|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+92
+6L|1
+3F
+7H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045155
+62
+0P|1
+3D
+1O|1|4902/20|4902/20^054^B11|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||||||||||||||||F
+60
+2R|1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+A3
+3R|2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+F0
+4R|3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+6B
+5L|1
+3E
+6H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045155
+61
+7P|1
+44
+0O|1|4902/20|4902/20^054^B11|^^^Daan Target N gene LDA^Daan Target N gene LDA|||||||||||||||||||||F
+85
+1R|1|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+C8
+2R|2|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+15
+3R|3|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+90
+4L|1
+3D
+5H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045155
+60
+6P|1
+43
+7O|1|4903/20|4903/20^054^C11|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||||||||||||||||F
+69
+0R|1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+A1
+1R|2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+EE
+2R|3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+69
+3L|1
+3C
+4H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045155
+5F
+5P|1
+42
+6O|1|4903/20|4903/20^054^C11|^^^Daan Target N gene LDA^Daan Target N gene LDA|||||||||||||||||||||F
+8E
+7R|1|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+CE
+0R|2|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+13
+1R|3|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+8E
+2L|1
+3B
+3H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045155
+5E
+4P|1
+41
+5O|1|4904/20|4904/20^054^D11|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||||||||||||||||F
+6A
+6R|1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+A7
+7R|2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+F4
+0R|3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+67
+1L|1
+3A
+2H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045155
+5D
+3P|1
+40
+4O|1|4904/20|4904/20^054^D11|^^^Daan Target N gene LDA^Daan Target N gene LDA|||||||||||||||||||||F
+8F
+5R|1|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+CC
+6R|2|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+19
+7R|3|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+94
+0L|1
+39
+1H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045155
+5C
+2P|1
+3F
+3O|1|4709/20|4709/20^054^E11|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||||||||||||||||F
+6F
+4R|1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+A5
+5R|2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+F2
+6R|3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+6D
+7L|1
+40
+0H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045155
+5B
+1P|1
+3E
+2O|1|4709/20|4709/20^054^E11|^^^Daan Target N gene LDA^Daan Target N gene LDA|||||||||||||||||||||F
+94
+3R|1|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+CA
+4R|2|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+17
+5R|3|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+92
+6L|1
+3F
+7H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045155
+62
+0P|1
+3D
+1O|1|4710/20|4710/20^054^F11|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||||||||||||||||F
+5E
+2R|1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+A3
+3R|2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+F0
+4R|3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+6B
+5L|1
+3E
+6H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045155
+61
+7P|1
+44
+0O|1|4710/20|4710/20^054^F11|^^^Daan Target N gene LDA^Daan Target N gene LDA|||||||||||||||||||||F
+83
+1R|1|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+C8
+2R|2|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+15
+3R|3|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+90
+4L|1
+3D
+5H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045155
+60
+6P|1
+43
+7O|1|4711/20|4711/20^054^G11|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||||||||||||||||F
+67
+0R|1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+A1
+1R|2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+EE
+2R|3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+69
+3L|1
+3C
+4H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045155
+5F
+5P|1
+42
+6O|1|4711/20|4711/20^054^G11|^^^Daan Target N gene LDA^Daan Target N gene LDA|||||||||||||||||||||F
+8C
+7R|1|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+CE
+0R|2|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+13
+1R|3|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+8E
+2L|1
+3B
+3H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045155
+5E
+4P|1
+41
+5O|1|4712/20|4712/20^054^H11|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||||||||||||||||F
+68
+6R|1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+A7
+7R|2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+F4
+0R|3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+67
+1L|1
+3A
+2H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045155
+5D
+3P|1
+40
+4O|1|4712/20|4712/20^054^H11|^^^Daan Target N gene LDA^Daan Target N gene LDA|||||||||||||||||||||F
+8D
+5R|1|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+CC
+6R|2|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+19
+7R|3|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+94
+0L|1
+39
+1H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045155
+5C
+2P|1
+3F
+3O|1|4713/20|4713/20^054^A12|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||||||||||||||||F
+62
+4R|1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+A5
+5R|2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+F2
+6R|3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+6D
+7L|1
+40
+0H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045155
+5B
+1P|1
+3E
+2O|1|4713/20|4713/20^054^A12|^^^Daan Target N gene LDA^Daan Target N gene LDA|||||||||||||||||||||F
+87
+3R|1|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+CA
+4R|2|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+17
+5R|3|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+92
+6L|1
+3F
+7H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045155
+62
+0P|1
+3D
+1O|1|4714/20|4714/20^054^B12|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||||||||||||||||F
+63
+2R|1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+A3
+3R|2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+F0
+4R|3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+6B
+5L|1
+3E
+6H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045155
+61
+7P|1
+44
+0O|1|4714/20|4714/20^054^B12|^^^Daan Target N gene LDA^Daan Target N gene LDA|||||||||||||||||||||F
+88
+1R|1|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+C8
+2R|2|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+15
+3R|3|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+90
+4L|1
+3D
+5H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045155
+60
+6P|1
+43
+7O|1|4581/20|4581/20^054^C12|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||||||||||||||||F
+6E
+0R|1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+A1
+1R|2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+EE
+2R|3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+69
+3L|1
+3C
+4H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045155
+5F
+5P|1
+42
+6O|1|4581/20|4581/20^054^C12|^^^Daan Target N gene LDA^Daan Target N gene LDA|||||||||||||||||||||F
+93
+7R|1|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+CE
+0R|2|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+13
+1R|3|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+8E
+2L|1
+3B
+3H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045155
+5E
+4P|1
+41
+5O|1|4582/20|4582/20^054^D12|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||||||||||||||||F
+6F
+6R|1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+A7
+7R|2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+F4
+0R|3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+67
+1L|1
+3A
+2H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045155
+5D
+3P|1
+40
+4O|1|4582/20|4582/20^054^D12|^^^Daan Target N gene LDA^Daan Target N gene LDA|||||||||||||||||||||F
+94
+5R|1|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+CC
+6R|2|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+19
+7R|3|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+94
+0L|1
+39
+1H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045155
+5C
+2P|1
+3F
+3O|1|4583/20|4583/20^054^E12|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||||||||||||||||F
+70
+4R|1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+A5
+5R|2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+F2
+6R|3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+6D
+7L|1
+40
+0H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045155
+5B
+1P|1
+3E
+2O|1|4583/20|4583/20^054^E12|^^^Daan Target N gene LDA^Daan Target N gene LDA|||||||||||||||||||||F
+95
+3R|1|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+CA
+4R|2|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+17
+5R|3|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+92
+6L|1
+3F
+7H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045155
+62
+0P|1
+3D
+1O|1|4584/20|4584/20^054^F12|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||||||||||||||||F
+71
+2R|1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+A3
+3R|2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+F0
+4R|3|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+6B
+5L|1
+3E
+6H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045155
+61
+7P|1
+44
+0O|1|4584/20|4584/20^054^F12|^^^Daan Target N gene LDA^Daan Target N gene LDA|||||||||||||||||||||F
+96
+1R|1|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+C8
+2R|2|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^I|Negative|||||F||sisayaa^Administrator||20200508045151|275020383
+15
+3R|3|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+90
+4L|1
+3D
+5H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045155
+60
+6P|1
+43
+7O|1|CoV_NEG|CoV_NEG^054^G12|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||Q||||||||||||||F
+7F
+0R|1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^20200313^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+2C
+1R|2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^20200313^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+F2
+2L|1
+3B
+3H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045155
+5E
+4P|1
+41
+5O|1|CoV_NEG|CoV_NEG^054^G12|^^^Daan Target N gene LDA^Daan Target N gene LDA|||||||Q||||||||||||||F
+A3
+6R|1|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^20200313^F|Not detected|DC||LDA||F||sisayaa^Administrator||20200508045151|275020383
+58
+7R|2|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^20200313^P|-1.00|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+1E
+0L|1
+39
+1H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045155
+5C
+2P|1
+3F
+3O|1|CoV_POS|CoV_POS^054^H12|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA|||||||Q||||||||||||||F
+AC
+4R|1|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^20200313^F|40.00|CO||LDA||F||sisayaa^Administrator||20200508045151|275020383
+9A
+5R|2|^^^Daan nCOVID-19 ORF LDA^Daan nCOVID-19 ORF LDA^2020003^10000518^20200313^P|26.59|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+0E
+6L|1
+3F
+7H|\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045155
+62
+0P|1
+3D
+1O|1|CoV_POS|CoV_POS^054^H12|^^^Daan Target N gene LDA^Daan Target N gene LDA|||||||Q||||||||||||||F
+D0
+2R|1|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^20200313^F|40.00|CO||LDA||F||sisayaa^Administrator||20200508045151|275020383
+BE
+3R|2|^^^Daan Target N gene LDA^Daan Target N gene LDA^2020003^10000518^20200313^P|28.68|cycle number||||F||sisayaa^Administrator||20200508045151|275020383
+34
+4L|1
+3D

@@ -70,34 +70,25 @@ async function down(knex) {
   })
 
   if (!_.isEmpty(firstCountryAdminUserPerPartner)) {
-    await knex('Person')
-      .whereNull('lastPartnerId')
-      .update({
-        createdBy: firstCountryAdminUserPerPartner[0].userId,
-        updatedBy: firstCountryAdminUserPerPartner[0].userId,
-      })
+    await knex('Person').whereNull('lastPartnerId').update({
+      createdBy: firstCountryAdminUserPerPartner[0].userId,
+      updatedBy: firstCountryAdminUserPerPartner[0].userId,
+    })
     await Promise.each(firstCountryAdminUserPerPartner, async countryAdmin =>
-      knex('Person')
-        .where('lastPartnerId', countryAdmin.partnerId)
-        .update({
-          createdBy: countryAdmin.userId,
-          updatedBy: countryAdmin.userId,
-        })
+      knex('Person').where('lastPartnerId', countryAdmin.partnerId).update({
+        createdBy: countryAdmin.userId,
+        updatedBy: countryAdmin.userId,
+      })
     )
-  }
-
-  // set to first admin where still null
-  await knex('Person')
-    .whereNull('createdBy')
-    .update({
+    // set to first admin where still null
+    await knex('Person').whereNull('createdBy').update({
       createdBy: firstCountryAdminUserPerPartner[0].userId,
     })
 
-  await knex('Person')
-    .whereNull('updatedBy')
-    .update({
+    await knex('Person').whereNull('updatedBy').update({
       updatedBy: firstCountryAdminUserPerPartner[0].userId,
     })
+  }
 
   await knex.schema.table('Person', person => {
     person

@@ -5,6 +5,7 @@ async function up(knex) {
     t.unique('userId')
   })
 }
+
 async function down(knex) {
   await knex.schema.alterTable('Person', t => {
     t.dropUnique('userId')

@@ -51,26 +51,31 @@ exports[`TaskAggre module TaskAggre component should render correctly 1`] = `
             "defaultFormats": Object {},
             "defaultLocale": "en",
             "formatDate": [Function],
-            "formatHTMLMessage": [Function],
+            "formatDateToParts": [Function],
+            "formatDisplayName": [Function],
+            "formatList": [Function],
             "formatMessage": [Function],
             "formatNumber": [Function],
+            "formatNumberToParts": [Function],
             "formatPlural": [Function],
-            "formatRelative": [Function],
+            "formatRelativeTime": [Function],
             "formatTime": [Function],
+            "formatTimeToParts": [Function],
             "formats": Object {},
             "formatters": Object {
               "getDateTimeFormat": [Function],
+              "getDisplayNames": [Function],
+              "getListFormat": [Function],
               "getMessageFormat": [Function],
               "getNumberFormat": [Function],
-              "getPluralFormat": [Function],
-              "getRelativeFormat": [Function],
+              "getPluralRules": [Function],
+              "getRelativeTimeFormat": [Function],
             },
             "locale": "en",
             "messages": Object {},
-            "now": [Function],
             "onError": [Function],
-            "textComponent": "span",
-            "timeZone": null,
+            "textComponent": Symbol(react.fragment),
+            "timeZone": undefined,
           }
         }
         location={
@@ -78,50 +83,6 @@ exports[`TaskAggre module TaskAggre component should render correctly 1`] = `
             "search": "",
           }
         }
-      />
-      <pure(withHandlers(withProps(withHandlers(pure(TablePaginator)))))
-        intl={
-          Object {
-            "defaultFormats": Object {},
-            "defaultLocale": "en",
-            "formatDate": [Function],
-            "formatHTMLMessage": [Function],
-            "formatMessage": [Function],
-            "formatNumber": [Function],
-            "formatPlural": [Function],
-            "formatRelative": [Function],
-            "formatTime": [Function],
-            "formats": Object {},
-            "formatters": Object {
-              "getDateTimeFormat": [Function],
-              "getMessageFormat": [Function],
-              "getNumberFormat": [Function],
-              "getPluralFormat": [Function],
-              "getRelativeFormat": [Function],
-            },
-            "locale": "en",
-            "messages": Object {},
-            "now": [Function],
-            "onError": [Function],
-            "textComponent": "span",
-            "timeZone": null,
-          }
-        }
-        location={
-          Object {
-            "search": "",
-          }
-        }
-        paginatorStatus={
-          Object {
-            "defaultMessage": "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural,
-      one {# task}
-      other {# tasks}
-    }",
-            "id": "pages.TaskList.paginatorStatus",
-          }
-        }
-        total={0}
       />
     </DataTableCard>
   </section>

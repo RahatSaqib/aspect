@@ -3,17 +3,17 @@ import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
 import { Switch, Route, Redirect } from 'react-router-dom'
 import { compose, setPropTypes } from 'recompose'
-import { intlShape } from 'react-intl'
+import { injectIntl } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import Helmet from 'react-helmet'
+import { Helmet } from 'react-helmet'
 
 // Material-UI
 import Paper from '@material-ui/core/Paper'
 import LinearProgress from '@material-ui/core/LinearProgress'
 import ContactDetailsForm from './ContactDetailsForm'
 import LoginDetailsForm from './LoginDetailsForm'
-import JobAssignemntForm from './JobAssignmentForm'
+import JobAssignmentForm from './JobAssignmentForm'
 import PersonDetailBackBar from './PersonDetailsBackBar'
 
 import NavTitle from '../../globals/components/NavTitle'
@@ -35,11 +35,13 @@ import {
 } from '../PersonRedux'
 import { fetchPartnersAndJobFunctionsForSelectList } from '../../job/JobRedux'
 import { showAcknowledgement } from '../../appNotification/AppNotificationRedux'
+import PropTypeOf from '../../shared/types'
 
 import messages from './messages'
 import styles from './PersonDetail.css'
 
 const enhance = compose(
+  injectIntl,
   setPropTypes({
     match: PropTypes.shape({
       params: PropTypes.shape({
@@ -99,7 +101,7 @@ const enhance = compose(
       )
   ),
   setPropTypes({
-    intl: intlShape.isRequired,
+    intl: PropTypeOf.intl.isRequired,
     editable: PropTypes.bool.isRequired,
     user: PropTypes.object.isRequired,
     person: PropTypes.object.isRequired,
@@ -147,7 +149,9 @@ export class PersonDetail extends PureComponent {
 
   handleEmailBlur = value => {
     const { person } = this.props
-    this.props.emailValueBlur(value, person.get('id'))
+    if (person.get('id')) {
+      this.props.emailValueBlur(value, person.get('id'))
+    }
   }
 
   handleFetchPartnersAndJobFunctions = ({
@@ -217,9 +221,13 @@ export class PersonDetail extends PureComponent {
         'stateId',
         'lgaId',
         'siteId',
+        'diseaseId',
+        'deviceTypeId',
+        'assayTypeId',
+        'assayId',
       ]),
     }
-    addPersonAssignment(data)
+    return addPersonAssignment(data)
   }
 
   deleteAssignment = jobContextId => {
@@ -349,7 +357,7 @@ export class PersonDetail extends PureComponent {
                 />
 
                 <Paper className={styles.ContactDetailsForm}>
-                  <JobAssignemntForm
+                  <JobAssignmentForm
                     intl={intl}
                     loading={loading}
                     contactDetails={contactDetails}

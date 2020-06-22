@@ -48,6 +48,7 @@ function getUser(username, knex) {
       'p.id as personId'
     )
 }
+
 // --------------------------------------------------------------------------------------------
 // validateUserAtGxAlert
 // --------------------------------------------------------------------------------------------
@@ -87,7 +88,7 @@ async function validateUserAtGxAlert(username, password, user) {
   // 'null' means username and/or password did not match in GxAlert
   if (!countryId) {
     throw new GxAlertLoginError(
-      `Unexistent country ${gxUser.country.abbreviation} for user's credentials`,
+      `Non existent country ${gxUser.country.abbreviation} for user's credentials`,
       false
     )
   }
@@ -105,7 +106,7 @@ async function validateUserAtGxAlert(username, password, user) {
   // exit if not exactly 1 partner in this country
   if (!partners || partners.length !== 1) {
     throw new GxAlertLoginError(
-      `Unexistent partner for user's credentials. Please, check that there's any sites for the country ${gxUser.country.abbreviation} and they have geography and partner assigned.`,
+      `Non existent partner for user's credentials. Please, check that there are sites defined for the country ${gxUser.country.abbreviation} and that they are assigned with geography and partner.`,
       false
     )
   }
@@ -117,29 +118,29 @@ async function validateUserAtGxAlert(username, password, user) {
   const allJobFunctions = await query('Get job functions for this partner')
     .from('JobFunction')
     .where('partnerId', partnerId)
-    .select('id', 'name')
+    .select('id', 'name', 'externalId')
 
   let jobFunction
   // items from 'my_aspnet_roles': readonly, write, inventory, service, report
   // items from 'role': deployment, lga, state, national
   if (gxUser.dotNetRoles.includes('admin') || gxUser.role === 'national') {
-    jobFunction = allJobFunctions.find(x => x.externalId === 'Admin')
+    jobFunction = allJobFunctions.find(x => x.externalId === 'admin')
   }
   if (!jobFunction && (gxUser.role === 'state' || gxUser.role === 'lga')) {
     jobFunction =
-      allJobFunctions.find(x => x.externalId === 'Regional Officer') ||
-      allJobFunctions.find(x => x.externalId === 'Manager')
+      allJobFunctions.find(x => x.externalId === 'regionalOfficer') ||
+      allJobFunctions.find(x => x.externalId === 'manager')
   }
   if (!jobFunction) {
     jobFunction =
-      allJobFunctions.find(x => x.externalId === 'Clinician') ||
-      allJobFunctions.find(x => x.externalId === 'Lab User')
+      allJobFunctions.find(x => x.externalId === 'clinician') ||
+      allJobFunctions.find(x => x.externalId === 'labUser')
   }
   const jobFunctionId = jobFunction ? jobFunction.id : null
   // exit if no jobFunction found
   if (!jobFunctionId) {
     throw new GxAlertLoginError(
-      `Unexistent job function for user's credentials. Please, check that there's any partners for the country ${gxUser.country.abbreviation}, and that they have job functions, too.`,
+      `Non existent job function for user's credentials. Please check that there is a partner defined for the country ${gxUser.country.abbreviation}, and that job functions exist for that partner.`,
       false
     )
   }
@@ -180,9 +181,7 @@ async function validateUserAtGxAlert(username, password, user) {
       userId = user.id
 
       // update user with password hash
-      await knex('User')
-        .update(baseUserData)
-        .where({ id: userId })
+      await knex('User').update(baseUserData).where({ id: userId })
     }
 
     // create/update Person in our db
@@ -199,10 +198,7 @@ async function validateUserAtGxAlert(username, password, user) {
     // insert Job if not exists
     if (jobFunctionId) {
       const d = { personId, jobFunctionId }
-      let { id: jobId } =
-        (await knex('Job')
-          .where(d)
-          .first('id')) || {}
+      let { id: jobId } = (await knex('Job').where(d).first('id')) || {}
       if (!jobId) {
         ;[jobId] = await knex('Job').insert(d)
       }
@@ -325,7 +321,7 @@ async function setJobContext(knex, jobId, gxUser) {
         let { siteId } =
           (await knex('Device')
             .where({ geographyId }) // Geography will never be undefined
-            .where(function() {
+            .where(function () {
               this.where({ shortName }).orWhere('name', shortName)
             })
             .first()) || {}
@@ -334,7 +330,7 @@ async function setJobContext(knex, jobId, gxUser) {
           const site =
             (await knex('Site')
               .where({ geographyId })
-              .where(function() {
+              .where(function () {
                 this.where({ shortName }).orWhere('name', shortName) // Shortname shouldn't be undefined, too
               })
               .first()) || {}
@@ -372,10 +368,7 @@ async function updateCreatePerson(
 ) {
   const now = new Date()
   let { id: personId } =
-    (await knex
-      .from('Person')
-      .where({ userId })
-      .first('id')) || {}
+    (await knex.from('Person').where({ userId }).first('id')) || {}
 
   const options = {
     countryAbbreviation: gxUser.country.abbreviation,
@@ -410,9 +403,7 @@ async function updateCreatePerson(
       ...basePersonData,
     })
   } else {
-    await knex('Person')
-      .where({ id: personId })
-      .update(basePersonData)
+    await knex('Person').where({ id: personId }).update(basePersonData)
   }
 
   return personId
@@ -444,10 +435,7 @@ async function getCreateGeographyIdByGxGeo(
   // check if geography for country exists
   let d = { countryId, stateId: null, lgaId: null }
   let { id: geographyId } =
-    (await knex
-      .from('Geography')
-      .where(d)
-      .first('id')) || {}
+    (await knex.from('Geography').where(d).first('id')) || {}
   // create if not exist
   if (!geographyId) {
     // we do not need to get geographyId here - will do it after processing state and lga
@@ -460,7 +448,7 @@ async function getCreateGeographyIdByGxGeo(
     // get state which has Geography - inner join
     const state = await knex('State as s')
       .innerJoin('Geography as g', 's.id', 'g.stateId')
-      .where(function() {
+      .where(function () {
         this.where('s.name', stateName).orWhere(
           's.abbreviation',
           stateAbbreviation

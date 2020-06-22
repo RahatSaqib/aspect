@@ -1,0 +1,169 @@
+{
+  "fields": [
+    {
+      "name": "anySymptomsOrSignsAtTimeOfSpecimenCollection",
+      "title": "any Symptoms Or Signs At Time Of SpecimenCollection",
+      "i18nKey": "anySymptomsOrSignsAtTimeOfSpecimenCollectioni18nkey",
+      "fieldType": "text",
+      "order": 0,
+      "caption": "Any sympton or sign regitered",
+      "i18nKeyCaption": "anySymptomsOrSignsAtTimeOfSpecimenCollectioni18nKey",
+      "controlType": "radioButton",
+      "typeOfOptionSource": "fixedList",
+      "items": [
+        {
+          "value": "No (i.e., asymptomatic)",
+          "key": "no"
+        },
+        {
+          "value": "Yes",
+          "key": "yes"
+        },
+        {
+          "value": "Unknown",
+          "key": "unknown"
+        }
+      ],
+      "required": false
+    },
+    {
+      "name": "dateOfOnsetOfSymptoms",
+      "i18nKey": "ifYesDateOfOnsetOfSymptoms",
+      "controlType": "datePicker",
+      "fieldType": "text",
+      "required": true,
+      "order": 1,
+      "condition": [
+        {
+          "conjunction": "AND",
+          "propToCompare": "anySymptomsOrSignsAtTimeOfSpecimenCollection",
+          "valueToCompare": "unknown",
+          "operator": "!==",
+          "conjunctionGroupName": "anySymptomsOrSignsAtTimeOfSpecimenCollectionGroup"
+        }
+      ]
+    },
+    {
+      "name": "underlyingConditionsAndComorbidity",
+      "title": "any Underlaying condition?",
+      "i18nKey": "underlyingConditionsAndComorbidityi18nkey",
+      "fieldType": "text",
+      "order": 0,
+      "controlType": "radioButton",
+      "typeOfOptionSource": "fixedList",
+      "items": [
+        {
+          "value": "No",
+          "key": "no"
+        },
+        {
+          "value": "Yes",
+          "key": "yes"
+        },
+        {
+          "value": "Unknown",
+          "key": "unknown"
+        }
+      ],
+      "required": true
+    },
+    {
+      "name": "ifOthersUnderlayingConditions",
+      "i18nKey": "ifOthersUnderlayingConditionsi18nkey",
+      "controlType": "checkBox",
+      "fieldType": "text",
+      "required": true,
+      "order": 3,
+      "condition": [
+        {
+          "conjunction": "AND",
+          "propToCompare": "underlyingConditionsAndComorbidity",
+          "valueToCompare": "yes",
+          "operator": "===",
+          "conjunctionGroupName": "underlyingConditionsAndComorbidityGroup"
+        }
+      ],
+      "typeOfOptionSource": "fixedList",
+      "items": [
+        {
+          "key": "pregnancy",
+          "value": "pregnancy"
+        },
+        {
+          "key": "brestfeeding",
+          "value": "Brest Feeding"
+        },
+        {
+          "key": "pediatric",
+          "value": "Pediatric"
+        },
+        {
+          "key": "postPartum",
+          "value": "post partum (<6weeks)"
+        },
+        {
+          "key": "cardiovascular",
+          "value": "cardiovascular disease"
+        },
+        {
+          "key": "hyperTension",
+          "value": "hypertension"
+        },
+        {
+          "key": "Inmunodeficiency",
+          "value": "Inmunodeficiency"
+        },
+        {
+          "key": "hiv",
+          "value": "HIV"
+        },
+        {
+          "key": "Diabetes",
+          "value": "Diabetes"
+        },
+        {
+          "key": "renal",
+          "value": "Renal disease"
+        },
+        {
+          "key": "liver",
+          "value": "Liver disease"
+        },
+        {
+          "key": "lung",
+          "value": "chronic lung disease"
+        },
+        {
+          "key": "neurological",
+          "value": "Neurological or neuromuscular disease"
+        },
+        {
+          "key": "malignancy",
+          "value": "Malignancy"
+        },
+        {
+          "key": "other",
+          "value": "Other(s)"
+        }
+      ]
+    },
+    {
+      "name": "ifOthersUnderlayingConditionsExplain",
+      "i18nKey": "ifOthersUnderlayingConditionsExplaini18nkey",
+      "controlType": "textArea",
+      "fieldType": "text",
+      "required": true,
+      "order": 4,
+      "condition": [
+        {
+          "conjunction": "AND",
+          "propToCompare": "ifOthersUnderlayingConditions",
+          "valueToCompare": "other",
+          "operator": "===",
+          "conjunctionGroupName": "otherunderlyingConditionsAndComorbidityGroup"
+        }
+      ]
+    }
+  ],
+  "refForms": []
+}

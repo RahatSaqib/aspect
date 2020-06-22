@@ -5,6 +5,7 @@ async function up(knex) {
     result.date('firstViewedOn').nullable()
   })
 }
+
 async function down(knex) {
   await knex.schema.alterTable('Result', result => {
     result.dropColumns('firstViewedOn')

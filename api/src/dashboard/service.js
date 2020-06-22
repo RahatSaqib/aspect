@@ -4,8 +4,6 @@ const parseISO = require('date-fns/parseISO')
 const subDays = require('date-fns/subDays')
 const isAfter = require('date-fns/isAfter')
 const differenceInDays = require('date-fns/differenceInDays')
-const Boom = require('@hapi/boom')
-
 const { knex, filterParams, filterDateRangeParams } = require('../db')
 const {
   getConstraints,
@@ -16,7 +14,7 @@ const {
   canViewInventories,
   canEditInventories,
 } = require('../auth/constraints')
-const { getUser, hasFeature } = require('../auth/service')
+const { getUser, hasPermissions } = require('../auth/service')
 const { processDynamicMessage } = require('../stringTemplate/service')
 
 const i18nKeys = {
@@ -252,6 +250,7 @@ async function resultDashboard(request) {
               device: 'd',
               site: 's',
               geography: 'g',
+              assay: 'a',
             })
             .groupBy('rc.externalId', 'a.assayTypeId', 'd.siteId')
             .select(
@@ -264,6 +263,10 @@ async function resultDashboard(request) {
             .innerJoin('Assay as a', 'at.id', 'a.assayTypeId')
             .leftJoin('ResultCategoryAssay as rca', 'a.id', 'rca.assayId')
             .innerJoin('ResultCategory as rc', 'rca.resultCategoryId', 'rc.id')
+            .modify(addConstraints, dataConstraints, {
+              assayType: 'at',
+              assay: 'a',
+            })
             .groupBy('at.id')
             .select(
               'at.id',
@@ -399,7 +402,7 @@ async function getConsumablesList(auth, dataConstraints) {
     .innerJoin('DeviceType as dt', 'a.deviceTypeId', 'dt.id')
     .innerJoin('Device as d', 'dt.id', 'd.deviceTypeId')
     .innerJoin('Site as s', 'd.siteId', 's.id')
-    .leftOuterJoin('Issue as i', function() {
+    .leftOuterJoin('Issue as i', function () {
       this.on('s.id', 'i.siteId').andOn('c.id', 'i.consumableId')
     })
     .leftOuterJoin('IssueType as it', 'i.issueTypeId', 'it.id')
@@ -407,6 +410,7 @@ async function getConsumablesList(auth, dataConstraints) {
     .modify(addConstraints, dataConstraints, {
       site: 's',
       device: 'd',
+      assay: 'a',
     })
     .groupBy('c.id', 's.id')
     .select(
@@ -536,6 +540,7 @@ async function getDeviceList(auth, dataConstraints) {
       site: 's',
       geography: 'g',
       device: 'd',
+      deviceType: 'dt',
     })
     .groupBy('d.id')
     .select(
@@ -552,36 +557,41 @@ async function getDeviceList(auth, dataConstraints) {
         "sum((it.externalId like 'Machine%' or it.externalId like 'Module%' or it.externalId like 'Reagent%') and ist.externalId not in ('Inactive', 'OK', 'Resolved')) as cntErrorRate"
       )
     )
-    .reduce((memo, { id, siteId, totalIssues, cntNoResults, cntErrorRate }) => {
-      let device = memo.find(x => x.id === id)
-      if (!device) {
-        device = {
-          id,
-          siteId,
-          // Fully Operational = Devices that don't have any issues or all are OK/Resolved
-          fullyOperational: true,
-          // Not Reporting = Devices that have issue "Device No Results"
-          offline: false,
-          // High Failure rates = Devices that have any of the Machine/Module/Reagent/Unknown error
-          errorRate: false,
-        }
-        memo.push(device)
-      }
+    .then(items =>
+      items.reduce(
+        (memo, { id, siteId, totalIssues, cntNoResults, cntErrorRate }) => {
+          let device = memo.find(x => x.id === id)
+          if (!device) {
+            device = {
+              id,
+              siteId,
+              // Fully Operational = Devices that don't have any issues or all are OK/Resolved
+              fullyOperational: true,
+              // Not Reporting = Devices that have issue "Device No Results"
+              offline: false,
+              // High Failure rates = Devices that have any of the Machine/Module/Reagent/Unknown error
+              errorRate: false,
+            }
+            memo.push(device)
+          }
 
-      if (totalIssues) {
-        device.fullyOperational = false
-      }
+          if (totalIssues) {
+            device.fullyOperational = false
+          }
 
-      if (cntNoResults) {
-        device.offline = true
-      }
+          if (cntNoResults) {
+            device.offline = true
+          }
 
-      if (cntErrorRate) {
-        device.errorRate = true
-      }
+          if (cntErrorRate) {
+            device.errorRate = true
+          }
 
-      return memo
-    }, [])
+          return memo
+        },
+        []
+      )
+    )
 
   return deviceList
 }
@@ -664,7 +674,9 @@ async function siteDashboard(request) {
   const dataConstraints = await getConstraints(auth.credentials)
 
   const siteList = await getSiteList(auth, dataConstraints)
-  const assayResultCategoryList = await getAssayResultCategoryList()
+  const assayResultCategoryList = await getAssayResultCategoryList(
+    dataConstraints
+  )
   const deviceList = await getDeviceList(auth, dataConstraints)
   const inventoryItemList = await getInventoryItemList(auth, dataConstraints)
 
@@ -1240,7 +1252,7 @@ async function actionDashboard(request) {
     .join('IssueStatus as is', 'i.issueStatusId', 'is.id')
     .join('IssueStatusSeverity as iss', 'is.issueStatusSeverityId', 'iss.id')
     .join('Site as s', 'am.siteId', 's.id')
-    .leftJoin('Device as d', function() {
+    .leftJoin('Device as d', function () {
       this.on('am.deviceId', '=', 'd.id').onNotIn('it.externalId', [
         'StockLevelUpdate',
         'InventoryStockout',
@@ -1248,7 +1260,7 @@ async function actionDashboard(request) {
       ])
     })
     .leftJoin('AlertTemplate as at', 'am.alertTemplateId', 'at.id')
-    .leftJoin('IssueStatusLog as isl', function() {
+    .leftJoin('IssueStatusLog as isl', function () {
       this.on('i.id', 'isl.issueId').andOn('is.id', 'isl.issueStatusId')
     })
     .whereNotIn('is.externalId', ['Inactive', 'Resolved'])
@@ -1259,7 +1271,7 @@ async function actionDashboard(request) {
       jobFunction: 'jf',
       allowAdminThrough: true,
     })
-    .andWhere(function() {
+    .andWhere(function () {
       if (query.siteId) {
         this.where('hideWhenSiteFilterIsSelected', false).andWhere({
           'am.siteId': query.siteId,
@@ -1294,7 +1306,6 @@ async function actionDashboard(request) {
       knex.raw('max(isl.changedOn) as statusDate'),
       'i.consumableId'
     )
-
   const alertMessagesByIssue = _.map(
     _.values(_.groupBy(alertMessages, 'issueId')),
     issueMessages => {
@@ -1313,12 +1324,10 @@ async function actionDashboard(request) {
       return highestLevelMessage
     }
   )
+  const shouldAddStockLevelUpdateActions = await hasPermissions(auth, [
+    'dashboard:actionInventoryLevelUpdate',
+  ])
 
-  const shouldAddStockLevelUpdateActions = await hasFeature(
-    user.id,
-    user.partnerId,
-    'actionDashboardInventoryLevelUpdate'
-  )
   if (shouldAddStockLevelUpdateActions) {
     await addStockLevelUpdateActions(
       auth,
@@ -1360,7 +1369,7 @@ async function addStockLevelUpdateActions(
       .join('ConsumableAssay as ca', 'ca.assayId', assayId)
       .join('Consumable as c', 'c.id', 'ca.consumableId')
       .join('PartnerConsumable as pc', 'ca.consumableId', 'pc.consumableId')
-      .leftJoin('InventoryItem as ii', function() {
+      .leftJoin('InventoryItem as ii', function () {
         this.on('ii.siteId', 's.id').andOn('ii.consumableId', 'c.id')
       })
       .modify(queryBuilder => {
@@ -1416,7 +1425,6 @@ async function addStockLevelUpdateActions(
         }
       }
     })
-
     // Add consumables by site that aren't in issues
     _.forEach(
       inventoryItemsBySite,
@@ -1453,11 +1461,15 @@ async function addStockLevelUpdateActions(
   }
 }
 
-async function getAssayResultCategoryList() {
+async function getAssayResultCategoryList(dataConstraints) {
   const assayResultCategory = await knex('ResultCategoryAssay as rca')
     .innerJoin('Assay as a', 'a.id', 'rca.assayId')
     .innerJoin('AssayType as at', 'at.id', 'a.assayTypeId')
     .innerJoin('ResultCategory as rc', 'rca.resultCategoryId', 'rc.id')
+    .modify(addConstraints, dataConstraints, {
+      assay: 'a',
+      assayType: 'at',
+    })
     .where('rca.requiresTreatment', 1)
     .groupBy('at.id', 'at.name', 'rc.name')
     .orderBy('at.name', 'rc.name')
@@ -1469,100 +1481,6 @@ async function getAssayResultCategoryList() {
   return assayResultCategory
 }
 
-async function clinicalIndicatorsDashboard(request) {
-  const { auth, query } = request
-
-  if (!canViewResults(auth)) {
-    throw Boom.unauthorized('You do not have access to results')
-  }
-
-  // get data constraints
-  const dataConstraints = await getConstraints(auth.credentials)
-
-  const resultQuery = knex('Result as r')
-    .innerJoin('Device as d', 'd.id', 'r.deviceId')
-    .innerJoin('Site as s', 's.id', 'r.siteId')
-    .innerJoin('Assay as a', 'a.id', 'r.assayId')
-    .innerJoin('AssayType as at', 'at.id', 'a.assayTypeId')
-    .innerJoin('ResultCategory as rc1', 'rc1.id', 'r.resultCategory1')
-    .leftOuterJoin('ResultCategory as rc2', 'rc2.id', 'r.resultCategory2')
-    .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
-    .leftOuterJoin('State as st', 'st.id', 'g.stateId')
-    .innerJoin('ResultCategoryAssay as rca', function() {
-      this.on('r.assayId', 'rca.assayId').andOn(
-        'r.resultCategory1',
-        'rca.resultCategoryId'
-      )
-    })
-    .modify(addConstraints, dataConstraints, {
-      device: 'd',
-      site: 's',
-      geography: 'g',
-    })
-    .modify(filterParams, query, {
-      countryId: 'g.countryId',
-      partnerId: 'g.partnerId',
-      siteName: 's.name',
-      deviceName: 'd.name',
-    })
-    .modify(qb => {
-      if (query.minDate) {
-        qb.where('r.endedOn', '>=', query.minDate)
-      }
-      if (query.maxDate) {
-        qb.where('r.endedOn', '<=', query.maxDate)
-      }
-      if (query.assay) {
-        qb.where('a.externalId', '=', query.assay)
-      }
-      if (query.assayType) {
-        qb.where('at.externalId', '=', query.assayType)
-      }
-      if (query.resultCategory1) {
-        qb.where('rc1.externalId', '=', query.resultCategory1)
-      }
-      if (query.resultCategory2) {
-        qb.where('rc2.externalId', '=', query.resultCategory2)
-      }
-    })
-    .where('rca.reportable', true)
-    .orderBy('r.endedOn')
-    .count('r.id as cnt')
-
-  // if no group is specified, use result category
-  if (!query.groupBy) {
-    query.groupBy = ['resultCategory1']
-  } else if (!Array.isArray(query.groupBy)) {
-    query.groupBy = [query.groupBy]
-  }
-
-  // handle possible groups:
-  const paramToDb = {
-    resultCategory1: 'rc1.externalId as resultCategory1',
-    resultCategory2: 'rc2.externalId as resultCategory2',
-    week: knex.raw('DATE_FORMAT(r.endedOn, "%x-%v") as week'),
-    month: knex.raw('DATE_FORMAT(r.endedOn, "%Y-%m") as month'),
-    year: knex.raw('DATE_FORMAT(r.endedOn, "%Y") as year'),
-    day: knex.raw('DATE_FORMAT(r.endedOn, "%Y-%m-%d") as day'),
-    gender: knex.raw(
-      'replace(r.patientData ->> "$.gender", "null", null) as gender'
-    ),
-    age: knex.raw('replace(r.patientData ->> "$.age", "null", null) as age'),
-    state: 'st.name as state',
-  }
-
-  query.groupBy.forEach(g => {
-    resultQuery.modify(qb => {
-      qb.select(paramToDb[g])
-      qb.groupBy(g)
-      qb.orderBy(g)
-    })
-  })
-  return {
-    data: await resultQuery,
-  }
-}
-
 module.exports = {
   summaryDashboard,
   targetDashboard,
@@ -1572,5 +1490,4 @@ module.exports = {
   siteDashboard,
   operationalDashboard,
   actionDashboard,
-  clinicalIndicatorsDashboard,
 }

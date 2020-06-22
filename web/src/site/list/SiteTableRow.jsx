@@ -18,8 +18,8 @@ const SiteTableRow = ({ intl, site, onAlertClick, ...restProps }) => (
   <TableRow {...restProps} className={cssClasses(restProps.className)}>
     <TableCell>{site.get('name')}</TableCell>
     <TableCell>{site.get('state')}</TableCell>
-    <TableCell>{site.get('externalId')}</TableCell>
     <TableCell>{site.get('lga')}</TableCell>
+    <TableCell>{site.get('externalId')}</TableCell>
     <TableCell>{site.get('totalDevices')}</TableCell>
     <TableCell>
       {site.get('siteIssues') &&

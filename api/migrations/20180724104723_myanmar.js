@@ -27,10 +27,7 @@ async function up(knex) {
       .references('id')
       .inTable('Consumable')
       .notNullable()
-    partnerConsumable
-      .boolean('autoInclude')
-      .notNullable()
-      .defaultTo(0)
+    partnerConsumable.boolean('autoInclude').notNullable().defaultTo(0)
     partnerConsumable
       .boolean('allowStockUpdateFromActionDashboard')
       .notNullable()
@@ -76,10 +73,7 @@ async function down(knex) {
       .index()
       .references('id')
       .inTable('Partner')
-    consumable
-      .boolean('autoInclude')
-      .notNullable()
-      .defaultTo(0)
+    consumable.boolean('autoInclude').notNullable().defaultTo(0)
   })
 
   const partnerConsumables = await knex('PartnerConsumable as pc').select(
@@ -89,12 +83,10 @@ async function down(knex) {
   )
 
   await Promise.each(partnerConsumables, partnerConsumable =>
-    knex('Consumable')
-      .where('id', partnerConsumable.consumableId)
-      .update({
-        partnerId: partnerConsumable.partnerId,
-        autoInclude: partnerConsumable.autoInclude,
-      })
+    knex('Consumable').where('id', partnerConsumable.consumableId).update({
+      partnerId: partnerConsumable.partnerId,
+      autoInclude: partnerConsumable.autoInclude,
+    })
   )
 
   await knex.schema.dropTableIfExists('PartnerConsumable')

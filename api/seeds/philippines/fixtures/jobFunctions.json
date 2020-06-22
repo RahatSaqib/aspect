@@ -1,28 +1,6 @@
 [
   {
-    "name": "Admin",
-    "features": [
-      "account",
-      "summaryDashboard"
-    ]
-  },
-  {
-    "name": "Regional Officer",
-    "features": [
-      "account",
-      "summaryDashboard"
-    ]
-  },
-  {
       "name": "Lab Manager",
-      "features": [
-          "account",
-          "device",
-          "result",
-          "person",
-          "site",
-          "summaryDashboard"
-      ],
       "permissions": [
           {
               "module": "assay",
@@ -51,60 +29,60 @@
           {
               "module": "browse",
               "activity": "view"
+          },
+          {
+            "module":"account",
+            "activity":"view"
+          },
+          {
+            "module":"dashboard",
+            "activity":"summary"
           }
       ]
   },
   {
-      "name": "Lab Services Manager",
-      "features": [
-          "account",
-          "device",
-          "result",
-          "person",
-          "site",
-          "summaryDashboard"
-      ],
-      "permissions": [
-          {
-              "module": "assay",
-              "activity": "view"
-          },
-          {
-              "module": "device",
-              "activity": "edit"
-          },
-          {
-              "module": "person",
-              "activity": "view"
-          },
-          {
-              "module": "result",
-              "activity": "edit"
-          },
-          {
-              "module": "treatmentStatus",
-              "activity": "edit"
-          },
-          {
-              "module": "site",
-              "activity": "edit"
-          },
-          {
-              "module": "browse",
-              "activity": "view"
-          }
-      ]
+    "name": "Lab Supervisor",
+    "permissions": [
+      {
+        "module": "assay",
+        "activity": "view"
+      },
+      {
+        "module": "device",
+        "activity": "view"
+      },
+      {
+        "module": "person",
+        "activity": "view"
+      },
+      {
+        "module": "result",
+        "activity": "edit"
+      },
+      {
+        "module": "treatmentStatus",
+        "activity": "edit"
+      },
+      {
+        "module": "site",
+        "activity": "view"
+      },
+      {
+        "module": "browse",
+        "activity": "view"
+      },
+      {
+        "module":"account",
+        "activity":"edit"
+      },
+      {
+        "module":"dashboard",
+        "activity":"summary"
+      }
+    ]
   },
   {
-      "name": "Lab Worker/Med Tech",
-      "features": [
-          "account",
-          "device",
-          "result",
-          "person",
-          "site",
-          "summaryDashboard"
-      ],
+      "name": "Med Tech",
       "permissions": [
           {
               "module": "assay",
@@ -133,27 +111,73 @@
           {
               "module": "browse",
               "activity": "view"
+          },
+          {
+            "module":"account",
+            "activity":"view"
+          },
+          {
+            "module":"dashboard",
+            "activity":"summary"
           }
       ]
   },
   {
     "name": "Lab User",
-    "features": [
-      "account",
-      "summaryDashboard"
+    "permissions":[
+      {
+        "module":"account",
+        "activity":"view"
+      }
+    ]
+  },
+  {
+    "name": "Data Viewer",
+    "permissions": [
+        {
+          "module": "assay",
+          "activity": "view"
+        },
+        {
+          "module": "device",
+          "activity": "view"
+        },
+        {
+          "module": "person",
+          "activity": "view"
+        },
+        {
+          "module": "result",
+          "activity": "view"
+        },
+        {
+          "module": "treatmentStatus",
+          "activity": "view"
+        },
+        {
+          "module": "site",
+          "activity": "view"
+        },
+        {
+          "module": "browse",
+          "activity": "view"
+        },
+        {
+          "module":"account",
+          "activity":"view"
+        },
+        {
+          "module":"reporter",
+          "activity":"view"
+        },
+        {
+          "module":"dashboard",
+          "activity":"summary"
+        }
     ]
   },
   {
       "name": "Remote Health Worker",
-      "features": [
-          "account",
-          "device",
-          "result",
-          "person",
-          "reporter",
-          "site",
-          "summaryDashboard"
-      ],
       "permissions": [
           {
               "module": "assay",
@@ -182,6 +206,18 @@
           {
               "module": "browse",
               "activity": "view"
+          },
+          {
+            "module":"account",
+            "activity":"view"
+          },
+          {
+            "module":"reporter",
+            "activity":"view"
+          },
+          {
+            "module":"dashboard",
+            "activity":"summary"
           }
       ]
   }

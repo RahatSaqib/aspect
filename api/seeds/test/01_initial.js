@@ -4,12 +4,9 @@ const _ = require('lodash')
 const bcrypt = require('bcrypt')
 const Promise = require('bluebird')
 const { addMilliseconds, addMinutes, subMinutes, subDays } = require('date-fns')
-const { upsertJobFunction } = require('../common')
+const { upsertJobFunction, upsertJobFunctionPermission } = require('../common')
 const config = require('../../src/config')
-const {
-  getPermissionModules,
-  assignAllFeaturesToJobFunctionIds,
-} = require('../utils')
+const { getPermissionModules } = require('../utils')
 const { seedAbbottM2000AndAssays } = require('../utils_abbott_m2000')
 const {
   allAssayTypeToId,
@@ -1381,8 +1378,6 @@ async function seed(knex) {
       'a3',
       'culture',
       'countryCode',
-      'stateLabel',
-      'lgaLabel',
       'timezone',
       'portNumber',
       'exportColumns',
@@ -1432,7 +1427,7 @@ async function seed(knex) {
             partnerId: partnerOneId,
             geographyId,
             externalId: `${state.name}_${lga.name}`,
-            name: `${lga.name} ${country.lgaLabel} ${state.name}`,
+            name: `${lga.name} County ${state.name}`,
             shortName: `${lga.name}, ${stateKey}`,
             city: `${lga.name} City`,
             street1: `${lgaData.id} Main Street`,
@@ -1486,12 +1481,10 @@ async function seed(knex) {
   })
 
   // set admin's email/sms
-  await knex('Person')
-    .where('userId', adminId)
-    .update({
-      email: config.admin.email,
-      cell: config.admin.cell,
-    })
+  await knex('Person').where('userId', adminId).update({
+    email: config.admin.email,
+    cell: config.admin.cell,
+  })
 
   // create clinician user
   const [clinicianId] = await knex('User').insert({
@@ -1593,8 +1586,9 @@ async function seed(knex) {
     await knex('InventoryItem').insert({
       consumableId: consumableGxTbCartridgeId,
       siteId: siteData.id,
-      lotNumber: `${(i + 3) * (i + 1)}${['A', 'B'][i % 2]}-${(siteData.id + i) *
-        consumableGxTbCartridgeId}`,
+      lotNumber: `${(i + 3) * (i + 1)}${['A', 'B'][i % 2]}-${
+        (siteData.id + i) * consumableGxTbCartridgeId
+      }`,
       expiresOn: new Date(
         new Date(
           now.getTime() + _.random(-millisInNormalYear, millisInNormalYear)
@@ -1757,149 +1751,48 @@ async function seed(knex) {
     partnerTwoId
   )
 
-  let featureBlacklist = ['clinicalIndicators', 'operationalData']
-
-  // assign features to JobFeatures
-  await assignAllFeaturesToJobFunctionIds(
-    knex,
-    [jobFunctionIdAdmin, jobFunctionIdManager, jobFunctionIdPartnerTwo],
-    featureBlacklist
-  )
-
-  featureBlacklist = [
-    'clinicalIndicators',
-    'operationalData',
-    'manage',
-    'reporter',
-  ]
-
-  await assignAllFeaturesToJobFunctionIds(
-    knex,
-    [jobFunctionIdClinician],
-    featureBlacklist
-  )
-
   // assign permissions to job functions
   const modules = await getPermissionModules(knex)
-  await knex('JobFunctionPermission').insert([
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.demo.admin },
-    {
-      jobFunctionId: jobFunctionIdAdmin,
-      permissionId: modules.deviceApiKey.admin,
-    },
-    {
-      jobFunctionId: jobFunctionIdAdmin,
-      permissionId: modules.device.admin,
-    },
-    {
-      jobFunctionId: jobFunctionIdAdmin,
-      permissionId: modules.person.admin,
-    },
-    {
-      jobFunctionId: jobFunctionIdAdmin,
-      permissionId: modules.treatmentStatus.admin,
-    },
-    {
-      jobFunctionId: jobFunctionIdManager,
-      permissionId: modules.treatmentStatus.admin,
-    },
-    {
-      jobFunctionId: jobFunctionIdPartnerTwo,
-      permissionId: modules.treatmentStatus.admin,
-    },
-    {
-      jobFunctionId: jobFunctionIdAdmin,
-      permissionId: modules.result.admin,
-    },
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.site.admin },
-    {
-      jobFunctionId: jobFunctionIdAdmin,
-      permissionId: modules.assay.admin,
-    },
-    {
-      jobFunctionId: jobFunctionIdAdmin,
-      permissionId: modules.inventory.admin,
-    },
-    {
-      jobFunctionId: jobFunctionIdAdmin,
-      permissionId: modules.notification.admin,
-    },
-    {
-      jobFunctionId: jobFunctionIdAdmin,
-      permissionId: modules.issue.admin,
-    },
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.task.admin },
-    {
-      jobFunctionId: jobFunctionIdAdmin,
-      permissionId: modules.report.admin,
-    },
-    {
-      jobFunctionId: jobFunctionIdAdmin,
-      permissionId: modules.browse.view,
-    },
-    {
-      jobFunctionId: jobFunctionIdAdmin,
-      permissionId: modules.reporter.admin,
-    },
-
-    {
-      jobFunctionId: jobFunctionIdManager,
-      permissionId: modules.site.edit,
-    },
-    {
-      jobFunctionId: jobFunctionIdManager,
-      permissionId: modules.device.edit,
-    },
-    {
-      jobFunctionId: jobFunctionIdManager,
-      permissionId: modules.assay.edit,
-    },
-    {
-      jobFunctionId: jobFunctionIdManager,
-      permissionId: modules.inventory.edit,
-    },
-    {
-      jobFunctionId: jobFunctionIdManager,
-      permissionId: modules.reporter.edit,
-    },
-
-    {
-      jobFunctionId: jobFunctionIdPartnerTwo,
-      permissionId: modules.site.edit,
-    },
-    {
-      jobFunctionId: jobFunctionIdPartnerTwo,
-      permissionId: modules.device.edit,
-    },
-
-    {
-      jobFunctionId: jobFunctionIdClinician,
-      permissionId: modules.site.view,
-    },
-    {
-      jobFunctionId: jobFunctionIdClinician,
-      permissionId: modules.device.view,
-    },
-    {
-      jobFunctionId: jobFunctionIdClinician,
-      permissionId: modules.assay.view,
-    },
-    {
-      jobFunctionId: jobFunctionIdClinician,
-      permissionId: modules.inventory.view,
-    },
-    {
-      jobFunctionId: jobFunctionIdClinician,
-      permissionId: modules.result.edit,
-    },
-    {
-      jobFunctionId: jobFunctionIdClinician,
-      permissionId: modules.browse.view,
-    },
-    {
-      jobFunctionId: jobFunctionIdClinician,
-      permissionId: modules.treatmentStatus.edit,
-    },
+  await upsertJobFunctionPermission(knex, jobFunctionIdAdmin, [
+    modules.demo.admin,
+    modules.deviceApiKey.admin,
+    modules.device.admin,
+    modules.person.admin,
+    modules.treatmentStatus.admin,
+    modules.result.admin,
+    modules.case.admin,
+    modules.site.admin,
+    modules.assay.admin,
+    modules.inventory.admin,
+    modules.notification.admin,
+    modules.issue.admin,
+    modules.task.admin,
+    modules.report.admin,
+    modules.browse.view,
+    modules.reporter.admin,
+  ])
+  await upsertJobFunctionPermission(knex, jobFunctionIdManager, [
+    modules.treatmentStatus.admin,
+    modules.site.edit,
+    modules.device.edit,
+    modules.assay.edit,
+    modules.inventory.edit,
+    modules.reporter.edit,
+  ])
+  await upsertJobFunctionPermission(knex, jobFunctionIdPartnerTwo, [
+    modules.treatmentStatus.admin,
+    modules.site.edit,
+    modules.device.edit,
+  ])
+  await upsertJobFunctionPermission(knex, jobFunctionIdClinician, [
+    modules.site.view,
+    modules.device.view,
+    modules.assay.view,
+    modules.inventory.view,
+    modules.result.edit,
+    modules.case.edit,
+    modules.browse.view,
+    modules.treatmentStatus.edit,
   ])
 
   // crate jobs for users
@@ -1933,6 +1826,7 @@ async function seed(knex) {
       'sqlForIndicator',
       'link',
       'sortOrder',
+      'externalId',
     ])
     const [widgetId] = await knex('DashboardWidget').insert(widgetData)
     const statWidgetData = _.pick(widget, [

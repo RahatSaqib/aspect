@@ -3,11 +3,11 @@ import classnames from 'classnames/bind'
 import React from 'react'
 import { compose, withHandlers, lifecycle } from 'recompose'
 import { bindActionCreators } from 'redux'
-import { defineMessages } from 'react-intl'
+import { defineMessages, injectIntl } from 'react-intl'
 import { connect } from 'react-redux'
 import Button from '@material-ui/core/Button'
 import Card from '@material-ui/core/Card'
-import Helmet from 'react-helmet'
+import { Helmet } from 'react-helmet'
 import { Unit } from '../../components/pureGrids'
 
 import {
@@ -34,6 +34,7 @@ const messages = defineMessages({
 })
 
 const enhance = compose(
+  injectIntl,
   connect(
     state => ({
       hasToAcceptLicenseId: state.user.jwt.hasToAcceptLicenseId,

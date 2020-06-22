@@ -27,13 +27,13 @@ async function getTags(auth, tagType) {
   const tableName = tagTableName(tagType)
 
   const refQuery = knex(tableName).distinct('tagId')
-  const data = await knex('Tag as t')
+  const tags = await knex('Tag as t')
     .join('Partner as p', 't.partnerId', 'p.id')
     .whereIn('t.id', refQuery)
     .modify(addConstraints, dataConstraints, { partner: 'p' })
     .select(SELECT_LIST_FIELDS)
 
-  return data
+  return tags
 }
 
 async function listTagsByType(request) {
@@ -79,7 +79,7 @@ function includesIgnoreCase(collection, value) {
   return _.some(collection, item => item.toLowerCase() === value.toLowerCase())
 }
 
-async function updateTag(request) {
+async function updateTags(request) {
   const {
     auth,
     params: { id, tagType },
@@ -92,6 +92,15 @@ async function updateTag(request) {
     )
   }
 
+  await updateTagsById(id, tagType, tags, auth)
+
+  return {
+    ok: true,
+    data: await getTagsById(auth, id, tagType),
+  }
+}
+
+async function updateTagsById(id, tagType, tags, auth) {
   const tableName = tagTableName(tagType)
   const idName = `${tagType}Id`
   const dataConstraints = await getConstraints(auth.credentials)
@@ -138,11 +147,6 @@ async function updateTag(request) {
         .delete()
     })
   )
-
-  return {
-    ok: true,
-    data: await getTagsById(auth, id, tagType),
-  }
 }
 
 function tagTableName(tagType) {
@@ -152,5 +156,6 @@ function tagTableName(tagType) {
 module.exports = {
   listTags,
   listTagsByType,
-  updateTag,
+  updateTags,
+  updateTagsById,
 }

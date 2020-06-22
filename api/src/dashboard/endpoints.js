@@ -13,20 +13,7 @@ const {
   siteDashboard,
   operationalDashboard,
   actionDashboard,
-  clinicalIndicatorsDashboard,
 } = require('./service')
-
-const clinicalIndicatorsValidGroups = [
-  'resultCategory1',
-  'resultCategory2',
-  'week',
-  'month',
-  'year',
-  'gender',
-  'age',
-  'state',
-  'day',
-]
 
 const routes = [
   {
@@ -36,12 +23,10 @@ const routes = [
     config: {
       description: 'Summary Dashboard',
       notes: 'The top level summary dashboard',
-      auth: { scope: ['site', 'device'] },
+      auth: { scope: ['site', 'device', 'dashboard'] },
       validate: {
         query: {
-          siteId: Joi.number()
-            .allow('')
-            .description('Filter for site ID'),
+          siteId: Joi.number().allow('').description('Filter for site ID'),
         },
       },
     },
@@ -53,7 +38,7 @@ const routes = [
     config: {
       description: 'Target Dashboard',
       notes: 'The top level target dashboard',
-      auth: { scope: ['site', 'device'] },
+      auth: { scope: ['site', 'device', 'dashboard'] },
       validate: {
         query: Object.assign(validateDateRangeParams()),
       },
@@ -66,7 +51,7 @@ const routes = [
     config: {
       description: 'Result Dashboard',
       notes: 'The top level result dashboard',
-      auth: { scope: ['site', 'result'] },
+      auth: { scope: ['site', 'result', 'dashboard'] },
     },
   },
   {
@@ -76,7 +61,7 @@ const routes = [
     config: {
       description: 'Consumable Dashboard',
       notes: 'The top level consumable dashboard',
-      auth: { scope: ['site', 'consumable'] },
+      auth: { scope: ['site', 'consumable', 'dashboard'] },
     },
   },
   {
@@ -86,7 +71,7 @@ const routes = [
     config: {
       description: 'Device Dashboard',
       notes: 'The top level device dashboard',
-      auth: { scope: ['site', 'device'] },
+      auth: { scope: ['site', 'device', 'dashboard'] },
     },
   },
   {
@@ -96,7 +81,7 @@ const routes = [
     config: {
       description: 'Site Dashboard',
       notes: 'The top level site dashboard',
-      auth: { scope: ['site', 'device'] },
+      auth: { scope: ['site', 'device', 'dashboard'] },
     },
   },
   {
@@ -106,7 +91,7 @@ const routes = [
     config: {
       description: 'Operational Data Dashboard',
       notes: 'The top level operational data',
-      auth: { scope: ['site', 'device'] },
+      auth: { scope: ['site', 'device', 'dashboard'] },
       validate: {
         query: {
           assayType: Joi.string()
@@ -126,59 +111,16 @@ const routes = [
     config: {
       description: 'Action Data Dashboard',
       notes: 'List of action category with actions',
-      auth: { scope: ['site', 'device'] },
+      auth: { scope: ['site', 'device', 'dashboard'] },
       validate: {
         query: {
-          siteId: Joi.number()
-            .allow('')
-            .description('Filter for Site ID'),
+          siteId: Joi.number().allow('').description('Filter for Site ID'),
           ...validateSortPageParams(
             'issueStatusSortOrder',
             'siteName',
             'deviceName',
             'message'
           ),
-        },
-      },
-    },
-  },
-  {
-    method: 'GET',
-    path: '/dashboard/clinical-indicators',
-    handler: asyncHandler(clinicalIndicatorsDashboard),
-    config: {
-      description: 'Clinical Indicators Dashboard',
-      notes: 'Data for most of the graphs on the clinical indicators page',
-      auth: { scope: ['site', 'result'] },
-      validate: {
-        query: {
-          ...validateDateRangeParams(),
-          assayType: Joi.string()
-            .allow('')
-            .description('Filter for assay type'),
-          assay: Joi.string()
-            .allow('')
-            .description('Filter for assay'),
-          resultCategory1: Joi.string()
-            .allow('')
-            .description('Filter for result category 1'),
-          resultCategory2: Joi.string()
-            .allow('')
-            .description('Filter for result category 2'),
-          siteName: Joi.string()
-            .allow('')
-            .description('Filter for site'),
-          deviceName: Joi.string()
-            .allow('')
-            .description('Filter for device'),
-          groupBy: Joi.alternatives()
-            .try(
-              Joi.array().items(
-                Joi.string().valid(clinicalIndicatorsValidGroups)
-              ),
-              Joi.string().valid(clinicalIndicatorsValidGroups)
-            )
-            .description('Array of fields to group by'),
         },
       },
     },

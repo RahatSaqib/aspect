@@ -19,26 +19,31 @@ exports[`Result List component should shallow render correctly when filter for a
         "defaultFormats": Object {},
         "defaultLocale": "en",
         "formatDate": [Function],
-        "formatHTMLMessage": [Function],
+        "formatDateToParts": [Function],
+        "formatDisplayName": [Function],
+        "formatList": [Function],
         "formatMessage": [Function],
         "formatNumber": [Function],
+        "formatNumberToParts": [Function],
         "formatPlural": [Function],
-        "formatRelative": [Function],
+        "formatRelativeTime": [Function],
         "formatTime": [Function],
+        "formatTimeToParts": [Function],
         "formats": Object {},
         "formatters": Object {
           "getDateTimeFormat": [Function],
+          "getDisplayNames": [Function],
+          "getListFormat": [Function],
           "getMessageFormat": [Function],
           "getNumberFormat": [Function],
-          "getPluralFormat": [Function],
-          "getRelativeFormat": [Function],
+          "getPluralRules": [Function],
+          "getRelativeTimeFormat": [Function],
         },
         "locale": "en",
         "messages": Object {},
-        "now": [Function],
         "onError": [Function],
-        "textComponent": "span",
-        "timeZone": null,
+        "textComponent": Symbol(react.fragment),
+        "timeZone": undefined,
       }
     }
     location={
@@ -46,7 +51,18 @@ exports[`Result List component should shallow render correctly when filter for a
         "search": "?filters=assayId%3D9",
       }
     }
-  />
+  >
+    <requirePermissions(AspectButton)
+      browseButton={true}
+      color="primary"
+      extraPermissions={Array []}
+      overriddenPermissions={Array []}
+      type="button"
+      variant="contained"
+    >
+      New Result
+    </requirePermissions(AspectButton)>
+  </pure(withProps(withHandlers(Connect(lifecycle(BrowseFilters)))))>
   <DataTableCard
     key="DataTableCard--table-undefined"
   >
@@ -63,26 +79,31 @@ exports[`Result List component should shallow render correctly when filter for a
           "defaultFormats": Object {},
           "defaultLocale": "en",
           "formatDate": [Function],
-          "formatHTMLMessage": [Function],
+          "formatDateToParts": [Function],
+          "formatDisplayName": [Function],
+          "formatList": [Function],
           "formatMessage": [Function],
           "formatNumber": [Function],
+          "formatNumberToParts": [Function],
           "formatPlural": [Function],
-          "formatRelative": [Function],
+          "formatRelativeTime": [Function],
           "formatTime": [Function],
+          "formatTimeToParts": [Function],
           "formats": Object {},
           "formatters": Object {
             "getDateTimeFormat": [Function],
+            "getDisplayNames": [Function],
+            "getListFormat": [Function],
             "getMessageFormat": [Function],
             "getNumberFormat": [Function],
-            "getPluralFormat": [Function],
-            "getRelativeFormat": [Function],
+            "getPluralRules": [Function],
+            "getRelativeTimeFormat": [Function],
           },
           "locale": "en",
           "messages": Object {},
-          "now": [Function],
           "onError": [Function],
-          "textComponent": "span",
-          "timeZone": null,
+          "textComponent": Symbol(react.fragment),
+          "timeZone": undefined,
         }
       }
       location={
@@ -114,26 +135,31 @@ exports[`Result List component should shallow render correctly when filter for a
         "defaultFormats": Object {},
         "defaultLocale": "en",
         "formatDate": [Function],
-        "formatHTMLMessage": [Function],
+        "formatDateToParts": [Function],
+        "formatDisplayName": [Function],
+        "formatList": [Function],
         "formatMessage": [Function],
         "formatNumber": [Function],
+        "formatNumberToParts": [Function],
         "formatPlural": [Function],
-        "formatRelative": [Function],
+        "formatRelativeTime": [Function],
         "formatTime": [Function],
+        "formatTimeToParts": [Function],
         "formats": Object {},
         "formatters": Object {
           "getDateTimeFormat": [Function],
+          "getDisplayNames": [Function],
+          "getListFormat": [Function],
           "getMessageFormat": [Function],
           "getNumberFormat": [Function],
-          "getPluralFormat": [Function],
-          "getRelativeFormat": [Function],
+          "getPluralRules": [Function],
+          "getRelativeTimeFormat": [Function],
         },
         "locale": "en",
         "messages": Object {},
-        "now": [Function],
         "onError": [Function],
-        "textComponent": "span",
-        "timeZone": null,
+        "textComponent": Symbol(react.fragment),
+        "timeZone": undefined,
       }
     }
     location={
@@ -141,7 +167,18 @@ exports[`Result List component should shallow render correctly when filter for a
         "search": "?filters=assayType%3DTB",
       }
     }
-  />
+  >
+    <requirePermissions(AspectButton)
+      browseButton={true}
+      color="primary"
+      extraPermissions={Array []}
+      overriddenPermissions={Array []}
+      type="button"
+      variant="contained"
+    >
+      New Result
+    </requirePermissions(AspectButton)>
+  </pure(withProps(withHandlers(Connect(lifecycle(BrowseFilters)))))>
   <DataTableCard
     key="DataTableCard--table-undefined"
   >
@@ -158,26 +195,31 @@ exports[`Result List component should shallow render correctly when filter for a
           "defaultFormats": Object {},
           "defaultLocale": "en",
           "formatDate": [Function],
-          "formatHTMLMessage": [Function],
+          "formatDateToParts": [Function],
+          "formatDisplayName": [Function],
+          "formatList": [Function],
           "formatMessage": [Function],
           "formatNumber": [Function],
+          "formatNumberToParts": [Function],
           "formatPlural": [Function],
-          "formatRelative": [Function],
+          "formatRelativeTime": [Function],
           "formatTime": [Function],
+          "formatTimeToParts": [Function],
           "formats": Object {},
           "formatters": Object {
             "getDateTimeFormat": [Function],
+            "getDisplayNames": [Function],
+            "getListFormat": [Function],
             "getMessageFormat": [Function],
             "getNumberFormat": [Function],
-            "getPluralFormat": [Function],
-            "getRelativeFormat": [Function],
+            "getPluralRules": [Function],
+            "getRelativeTimeFormat": [Function],
           },
           "locale": "en",
           "messages": Object {},
-          "now": [Function],
           "onError": [Function],
-          "textComponent": "span",
-          "timeZone": null,
+          "textComponent": Symbol(react.fragment),
+          "timeZone": undefined,
         }
       }
       location={

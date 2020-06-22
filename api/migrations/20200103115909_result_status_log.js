@@ -25,11 +25,7 @@ async function up(knex) {
       .references('id')
       .inTable('ResultStatus')
     x.dateTime('createdOn').notNullable()
-    x.integer('createdBy')
-      .unsigned()
-      .index()
-      .references('id')
-      .inTable('User')
+    x.integer('createdBy').unsigned().index().references('id').inTable('User')
     x.specificType('data', 'JSON')
     x.charset('utf8')
   })
@@ -49,6 +45,7 @@ async function down(knex) {
   await knex.raw('SET foreign_key_checks = 0')
 
   await knex.schema.alterTable('Result', x => {
+    x.dropForeign('resultStatusLogId')
     x.dropColumns('resultStatusLogId')
   })
   await knex.schema.dropTableIfExists('ResultStatus')

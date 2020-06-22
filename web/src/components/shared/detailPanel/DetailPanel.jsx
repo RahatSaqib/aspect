@@ -133,6 +133,7 @@ export const DetailGroup = compose(
           .getIn(['detail', 'rows'], EMPTY_MAP)
           .filter(it => it.get('row') > 0)
           .filter(it => conditionsMet(it, rawData))
+          .delete('id')
           .sortBy(value => value.get('order'))
           .groupBy(x => x.get('row'))
           .valueSeq()
@@ -164,6 +165,7 @@ export const DetailPanel = ({
   intl,
   data,
   schema,
+  renderRightTitle,
   titleSection,
   ...restProps
 }) => (
@@ -172,6 +174,7 @@ export const DetailPanel = ({
       title={schema.get('title')}
       icon={<MdAssignment className={cssClasses('Title__Icon')} />}
       className={cssClasses('Title')}
+      renderRight={renderRightTitle}
     />
 
     {titleSection}

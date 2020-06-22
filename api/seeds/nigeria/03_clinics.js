@@ -4,10 +4,10 @@ const bcrypt = require('bcrypt')
 const geography = require('./fixtures/geography.json')
 const sites = require('./fixtures/sites.json')
 const {
+  ensureResultTreatmentStatuses,
   upsertStatesAndLgas,
   upsertAssayResultCategories,
   upsertJobFunctionPermission,
-  upsertJobFeatures,
   upsertJobFunction,
 } = require('../common')
 const {
@@ -15,10 +15,6 @@ const {
   insertSites,
   getPermissionModules,
 } = require('../utils')
-const { allFeatureToId } = require('../../src/shared/dictionary')
-
-const treatmentStatus = require('../fixtures/treatmentStatus.json')
-
 const config = require('../../src/config')
 
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
@@ -26,7 +22,7 @@ const saltRounds = parseInt(config.passwordSaltRounds, 10)
 async function seed(knex) {
   const now = new Date()
 
-  await knex('ResultTreatmentStatus').insert(treatmentStatus)
+  await ensureResultTreatmentStatuses(knex)
 
   const { id: countryId } = await knex('Country')
     .where('name', 'Nigeria')
@@ -37,9 +33,7 @@ async function seed(knex) {
     .first('id')
 
   // have to check if states are already set up because they're now part of common inserts:
-  const { stateCount } = await knex('State')
-    .count('id as stateCount')
-    .first()
+  const { stateCount } = await knex('State').count('id as stateCount').first()
 
   if (stateCount === 0) {
     await upsertStatesAndLgas(knex, countryId, geography.countries[0].states)
@@ -87,45 +81,6 @@ async function seed(knex) {
       {
         jobFunctionId: jobFunctionIdAdmin,
         permissionId: permissionReporterAdminId,
-      },
-    ])
-  }
-
-  // reporters
-  const { id: featurePersonId } = await knex('Feature')
-    .where('module', 'person')
-    .first('id')
-
-  const { featurePersonCount } = await knex('JobFunctionFeature')
-    .where('jobFunctionId', jobFunctionIdAdmin)
-    .where('featureId', featurePersonId)
-    .count('featureId as featurePersonCount')
-    .first()
-
-  if (!featurePersonCount) {
-    await knex('JobFunctionFeature').insert([
-      {
-        jobFunctionId: jobFunctionIdAdmin,
-        featureId: featurePersonId,
-      },
-    ])
-  }
-
-  const { id: featureReporterId } = await knex('Feature')
-    .where('module', 'reporter')
-    .first('id')
-
-  const { featureReporterCount } = await knex('JobFunctionFeature')
-    .where('jobFunctionId', jobFunctionIdAdmin)
-    .where('featureId', featureReporterId)
-    .count('featureId as featureReporterCount')
-    .first()
-
-  if (!featureReporterCount) {
-    await knex('JobFunctionFeature').insert([
-      {
-        jobFunctionId: jobFunctionIdAdmin,
-        featureId: featureReporterId,
       },
     ])
   }
@@ -211,9 +166,7 @@ async function seed(knex) {
   await insertSites(knex, partnerId, countryId, sites.sites)
 
   // add reporter logins for testing
-  const { id: adminId } = knex('User')
-    .where('name', 'admin')
-    .first('id')
+  const { id: adminId } = knex('User').where('name', 'admin').first('id')
 
   const jobFunctionIdClinician = await upsertJobFunction(
     knex,
@@ -221,12 +174,9 @@ async function seed(knex) {
     partnerId
   )
 
-  const [modules, features] = await Promise.all([
-    getPermissionModules(knex),
-    allFeatureToId(),
-  ])
+  const modules = await getPermissionModules(knex)
 
-  // features
+  // permissions
   await upsertJobFunctionPermission(knex, jobFunctionIdClinician, [
     modules.browse.view,
     modules.result.edit,
@@ -236,14 +186,6 @@ async function seed(knex) {
     modules.treatmentStatus.edit,
     modules.site.view,
   ])
-
-  // permissions
-  await upsertJobFeatures(knex, jobFunctionIdClinician, [
-    features.device,
-    features.result,
-    features.site,
-  ])
-
   // Clinician in Maitama
   // Create User
   const [userIdMaitama] = await knex('User').insert({

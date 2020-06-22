@@ -1,28 +1,25 @@
 import Immutable from 'immutable'
 import React from 'react'
 import { shallow } from 'enzyme'
-import { IntlProvider } from 'react-intl'
+import { createIntl } from 'react-intl'
 import { LinkNavigation } from './LinkNavigation'
 import Link from '../../../components/shared/Link'
 
 describe('LinkNavigation component', () => {
-  const intlProvider = new IntlProvider({ locale: 'en' }, {})
-  const { intl } = intlProvider.getChildContext()
+  const intl = createIntl({ locale: 'en' })
 
   it('should shallow render without crash', () => {
     const props = {
       intl,
-      userPermissions: Immutable.Set(['browse:view']),
-      userFeatures: Immutable.Set(['summaryDashboard']),
+      userPermissions: Immutable.Set(['browse:view', 'dashboard:summary']),
     }
     shallow(<LinkNavigation {...props} />)
   })
 
-  it('should see browse link when having feature and permission', () => {
+  it('should see browse link when having permission', () => {
     const props = {
       intl,
       userPermissions: Immutable.Set(),
-      userFeatures: Immutable.Set(),
     }
     const wrapper = shallow(<LinkNavigation {...props} />)
 
@@ -30,27 +27,32 @@ describe('LinkNavigation component', () => {
 
     wrapper.setProps({
       userPermissions: Immutable.Set(['browse:view', 'device:view']),
-      userFeatures: Immutable.Set(['summaryDashboard']),
     })
     expect(wrapper.find(Link)).toHaveLength(1)
+
+    expect(
+      wrapper.find(Link).someWhere(L => /^\/dashboard/.test(L.prop('href')))
+    ).toBe(false)
     expect(
       wrapper.find(Link).someWhere(L => /^\/browse/.test(L.prop('href')))
-    ).toBe(false)
-
+    ).toBe(true)
     wrapper.setProps({
-      userFeatures: Immutable.Set(['summaryDashboard', 'device']),
+      userPermissions: Immutable.Set([
+        'dashboard:summary',
+        'device:view',
+        'browse:view',
+      ]),
     })
     expect(wrapper.find(Link)).toHaveLength(2)
     expect(
-      wrapper.find(Link).someWhere(L => /^\/browse/.test(L.prop('href')))
+      wrapper.find(Link).someWhere(L => /^\/dashboard/.test(L.prop('href')))
     ).toBe(true)
   })
 
   it('should change the direction of Nav with different `type` prop', () => {
     const props = {
       intl,
-      userPermissions: Immutable.Set(['browse:view']),
-      userFeatures: Immutable.Set(['summaryDashboard']),
+      userPermissions: Immutable.Set(['browse:view', 'dashboard:summary']),
     }
     const wrapper = shallow(<LinkNavigation {...props} />)
     expect(wrapper.prop('className')).toEqual('Navigation')

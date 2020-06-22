@@ -84,7 +84,7 @@ async function consumeInventoryForResult(
   const now = new Date()
   const assayConsumables = await selectAssayConsumables(
     knex,
-    partnerId,
+    { partner: { id: partnerId } },
     assayId
   )
 
@@ -389,10 +389,7 @@ async function listInventoryItems(request) {
       INVENTORY_ITEM_DATA_CONSTRAINT_ALIASES
     )
 
-  const getCount = inventoryItemsQuery
-    .clone()
-    .count('ii.id as count')
-    .first()
+  const getCount = inventoryItemsQuery.clone().count('ii.id as count').first()
 
   const getItems = inventoryItemsQuery
     .modify(
@@ -546,7 +543,7 @@ async function getDaysByLocation(request) {
     .leftOuterJoin('State as st', 'g.stateId', 'st.id')
     .leftOuterJoin('Lga as l', 'g.lgaId', 'l.id')
     // dailyRate
-    .leftOuterJoin('FactInventoryConsumptionRate as rate1', function() {
+    .leftOuterJoin('FactInventoryConsumptionRate as rate1', function () {
       this.on('rate1.siteId', 's.id')
         .andOn('rate1.consumableId', 'c.id')
         .andOn('rate1.days', 1)
@@ -568,7 +565,7 @@ async function getDaysByLocation(request) {
       ),
       // expiresInDays - when inventory expires, in days
       knex.raw(`
-        CASE 
+        CASE
         WHEN ii.quantityOnHand IS NULL THEN NULL
         ELSE CAST(GREATEST(DATEDIFF(ii.expiresOn, NOW()), 0) AS SIGNED INTEGER)
         END AS expiresInDays
@@ -577,9 +574,9 @@ async function getDaysByLocation(request) {
       knex.raw('CAST(rate1.rate AS DECIMAL(10, 6)) AS dailyRate'),
       // lastsInDays - how long the 'quantityOnHand' lasts, in days
       knex.raw(`
-        CASE 
-        WHEN IFNULL(ii.quantityOnHand,0) > 0 and IFNULL(rate1.rate, 0) > 0 THEN CAST(ii.quantityOnHand / rate1.rate AS SIGNED) 
-        ELSE NULL 
+        CASE
+        WHEN IFNULL(ii.quantityOnHand,0) > 0 and IFNULL(rate1.rate, 0) > 0 THEN CAST(ii.quantityOnHand / rate1.rate AS SIGNED)
+        ELSE NULL
         END AS lastsInDays
       `)
     )
@@ -587,7 +584,7 @@ async function getDaysByLocation(request) {
       query('Join Consumable with Sites which does not have inventories')
         .from('Consumable as c')
         .join('Site as s')
-        .leftOuterJoin('InventoryItem as ii', function() {
+        .leftOuterJoin('InventoryItem as ii', function () {
           this.on('c.id', 'ii.consumableId').andOn('s.id', 'ii.siteId')
         })
         .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
@@ -619,7 +616,7 @@ async function getDaysByLocation(request) {
     .select(
       't1.*',
       knex.raw(`
-      CASE 
+      CASE
         WHEN quantityOnHand IS NULL THEN NULL
         WHEN quantityOnHand <= 0 THEN 0
         WHEN expiresInDays > lastsInDays OR expirationDate IS NULL OR dailyRate IS NULL
@@ -1063,9 +1060,7 @@ async function receiveInventory(request) {
       createdBy: currentlyLoggedInUser.id,
     })
 
-    await knex('InventoryItem')
-      .where('id', inventoryItemId)
-      .delete()
+    await knex('InventoryItem').where('id', inventoryItemId).delete()
   })
 
   return {
@@ -1209,7 +1204,7 @@ async function checkOpenedStockIssues({
     .innerJoin('Partner as p', 's.partnerId', 'p.id')
     .where('ii.siteId', siteId)
     .where('ii.consumableId', consumableId)
-    .where(function() {
+    .where(function () {
       this.whereNull('ii.expiresOn') // if is null
         .orWhere('ii.expiresOn', '>', now) // or unexpired
     })
@@ -1396,9 +1391,7 @@ async function updateInventoryItem(knex, inventoryItemId, inventoryItemValues) {
   if (typeof inventoryItemValues.updatedBy !== 'undefined') {
     updateValues.updatedBy = inventoryItemValues.updatedBy
   }
-  await knex('InventoryItem')
-    .where('id', inventoryItemId)
-    .update(updateValues)
+  await knex('InventoryItem').where('id', inventoryItemId).update(updateValues)
 }
 
 async function insertInventoryItem(knex, inventoryItemValues) {

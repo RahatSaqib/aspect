@@ -61,8 +61,10 @@ describe('Site routes', () => {
             assert.property(res.body.data, 'zip')
             assert.property(res.body.data, 'street1')
             assert.property(res.body.data, 'street2')
+            assert.property(res.body.data, 'latitude')
             assert.property(res.body.data, 'longitude')
-            siteData = res.body.data
+            assert.property(res.body.data, 'geographyId')
+            siteData = _.omit(res.body.data, 'geographyId')
             done()
           })
       })
@@ -71,7 +73,7 @@ describe('Site routes', () => {
     describe('POST', () => {})
 
     describe('PUT', () => {
-      it('Should update site given a siteId', done => {
+      it('Should update site given a siteId', async () => {
         const originalStreet2 = siteData.street2
         const newStreet2 = '15 New Street'
         const newSiteData = _.omit(siteData, [
@@ -84,58 +86,51 @@ describe('Site routes', () => {
           'devices',
           'contacts',
         ])
-        server
+        const updateSiteResponse = await server
           .put(`${path}/${siteId}`)
           .send({ ...newSiteData, street2: newStreet2 })
           .set('Authorization', `Bearer${shared.token}`)
-          .end((err, res) => {
-            assert.equal(res.status, 200)
-            assert.typeOf(res.body, 'Object')
-            assert.property(res.body, 'data')
-            assert.typeOf(res.body.data, 'Object')
-            const siteFieldNames = [
-              'id',
-              'name',
-              'shortName',
-              'state',
-              'lga',
-              'country',
-              'createdOn',
-              'totalDevices',
-              'countryId',
-              'stateId',
-              'lgaId',
-              'timezone',
-              'city',
-              'zip',
-              'street1',
-              'street2',
-              'longitude',
-            ]
-            _.each(siteFieldNames, fieldName => {
-              assert.property(res.body.data, fieldName)
-            })
-            // check the updated property
-            assert.equal(res.body.data.street2, newStreet2)
+        assert.equal(updateSiteResponse.status, 200)
+        assert.typeOf(updateSiteResponse.body, 'Object')
+        assert.property(updateSiteResponse.body, 'data')
+        assert.typeOf(updateSiteResponse.body.data, 'Object')
+        const siteFieldNames = [
+          'id',
+          'name',
+          'shortName',
+          'state',
+          'lga',
+          'country',
+          'createdOn',
+          'totalDevices',
+          'countryId',
+          'stateId',
+          'lgaId',
+          'timezone',
+          'city',
+          'zip',
+          'street1',
+          'street2',
+          'longitude',
+        ]
+        _.each(siteFieldNames, fieldName => {
+          assert.property(updateSiteResponse.body.data, fieldName)
+        })
+        // check the updated property
+        assert.equal(updateSiteResponse.body.data.street2, newStreet2)
 
-            // make sure the data has persisted
-            server
-              .get(`/api/site/${siteId}`)
-              .set('Authorization', `Bearer${shared.token}`)
-              .end((err, res) => {
-                assert.equal(res.body.data.street2, newStreet2)
+        // make sure the data has persisted
+        const getSiteResponse = await server
+          .get(`/api/site/${siteId}`)
+          .set('Authorization', `Bearer${shared.token}`)
+        assert.equal(getSiteResponse.body.data.street2, newStreet2)
 
-                // Clean Up: Update street2 with the original street address
-                server
-                  .put(`${path}/${siteId}`)
-                  .send({ ...newSiteData, street2: originalStreet2 })
-                  .set('Authorization', `Bearer${shared.token}`)
-                  .end((err, res) => {
-                    assert.equal(res.body.data.street2, originalStreet2)
-                    done()
-                  })
-              })
-          })
+        // Clean Up: Update street2 with the original street address
+        const updateSiteResponse2 = await server
+          .put(`${path}/${siteId}`)
+          .send({ ...newSiteData, street2: originalStreet2 })
+          .set('Authorization', `Bearer${shared.token}`)
+        assert.equal(updateSiteResponse2.body.data.street2, originalStreet2)
       })
     })
 
@@ -190,22 +185,12 @@ describe('Site routes', () => {
       })
 
       after(async () => {
-        await Promise.each(siteTags, st =>
-          knex('SiteTag')
-            .where(st)
-            .del()
-        )
+        await Promise.each(siteTags, st => knex('SiteTag').where(st).del())
 
-        await Promise.each(tags, tag =>
-          knex('Tag')
-            .where({ id: tag.id })
-            .del()
-        )
+        await Promise.each(tags, tag => knex('Tag').where({ id: tag.id }).del())
 
         await Promise.each(sites, site =>
-          knex('Site')
-            .where({ id: site.id })
-            .del()
+          knex('Site').where({ id: site.id }).del()
         )
       })
 
@@ -242,11 +227,10 @@ describe('Site routes', () => {
 
         it('should return a list of sites names and IDs when using valid token filtered by tags', done => {
           server
-            .get(
-              `${path}/select-list?tags=${encodeURIComponent(
-                JSON.stringify([clinicTag.title, labTag.title])
-              )}`
-            )
+            .get(`${path}/select-list`)
+            .query({
+              tags: [clinicTag.title, labTag.title],
+            })
             .set('Authorization', `Bearer ${shared.token}`)
             .end((err, res) => {
               assert.equal(res.status, 200)

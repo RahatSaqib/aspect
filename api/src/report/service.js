@@ -16,10 +16,7 @@ async function getReports(request) {
     .leftOuterJoin('Geography as g', 'r.geographyId', 'g.id')
     .modify(addConstraints, dataConstraints, { geography: 'g' })
 
-  const getCount = reportsQuery
-    .clone()
-    .count('r.id as count')
-    .first()
+  const getCount = reportsQuery.clone().count('r.id as count').first()
 
   const getItems = reportsQuery
     .clone()
@@ -53,10 +50,12 @@ async function getReportDetails(auth, externalId) {
     .where('reportId', report.id)
     .orderBy('sortOrder', 'asc')
     .select('id', 'moduleName', 'functionName', 'query')
-    .map(sheet => ({
-      ...sheet,
-      query: sheet.query ? JSON.parse(sheet.query) : {},
-    }))
+    .then(items =>
+      items.map(sheet => ({
+        ...sheet,
+        query: sheet.query ? JSON.parse(sheet.query) : {},
+      }))
+    )
 
   return report
 }

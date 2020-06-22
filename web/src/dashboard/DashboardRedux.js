@@ -1,6 +1,7 @@
 /* eslint-disable linebreak-style */
 import { stringify } from 'querystring'
-import _ from 'lodash'
+import fromPairs from 'lodash/fromPairs'
+import omit from 'lodash/omit'
 import { defineMessages } from 'react-intl'
 import Immutable from 'immutable'
 
@@ -69,7 +70,7 @@ export function fetchStatDashboard(rawFiltersParams) {
     filtersParams.set('siteId', rawFiltersParams.get('siteId'))
   }
   return dispatch => {
-    const filters = _.fromPairs([...filtersParams.entries()])
+    const filters = fromPairs([...filtersParams.entries()])
     const requestedAt = `summary_${Date.now()}`
     dispatch(requestStatDashboard(requestedAt))
 
@@ -120,7 +121,7 @@ export function fetchTargetDashboard(rawFiltersParams) {
     filtersParams.set('maxDate', rawFiltersParams.get('maxDate'))
   }
   return dispatch => {
-    const filters = _.fromPairs([...filtersParams.entries()])
+    const filters = fromPairs([...filtersParams.entries()])
     const requestedAt = `target_${Date.now()}`
     dispatch(requestTargetDashboard(requestedAt))
 
@@ -315,7 +316,7 @@ function receiveOperationalStatus(requestedAt, data) {
 
 export function fetchOperationalStatus(filtersParams) {
   return dispatch => {
-    const filters = _.fromPairs([...filtersParams.entries()])
+    const filters = fromPairs([...filtersParams.entries()])
     const requestedAt = `operational_${Date.now()}`
     dispatch(requestOperationalStatus(requestedAt))
 
@@ -369,7 +370,7 @@ export function fetchActionDashboard(rawFiltersParams, sortCol, sortDir) {
     filtersParams.set('siteId', rawFiltersParams.get('siteId'))
   }
   return dispatch => {
-    const filters = _.fromPairs([...filtersParams.entries()])
+    const filters = fromPairs([...filtersParams.entries()])
     const requestedAt = `action_${Date.now()}`
     dispatch(requestActionDashboard(requestedAt))
 
@@ -401,65 +402,6 @@ export function fetchActionDashboard(rawFiltersParams, sortCol, sortDir) {
         },
       }
     ).then(json => dispatch(receiveActionDashboard(requestedAt, json.data)))
-  }
-}
-
-// -------------------------------------------------------------------
-export function fetchTreatmentDashboard({
-  siteId,
-  assayTypeId,
-  resultCategoryId,
-  endedOn,
-} = {}) {
-  return dispatch => {
-    const requestedAt = `treatment_${Date.now()}`
-    dispatch(
-      requestTreatmentDashboard({
-        siteId,
-        assayTypeId,
-        resultCategoryId,
-        endedOn,
-        requestedAt,
-      })
-    )
-
-    return aspectFetch('/result/confirmed-treatment-tracking', {
-      method: 'POST',
-      body: JSON.stringify({ siteId, endedOn, assayTypeId, resultCategoryId }),
-      errorNotifications: {
-        403: errorInsufficientScope(
-          defineMessages({
-            title: {
-              id:
-                'errorResponseMessages.fetchTreatmentDashboard.POST.403.title',
-              defaultMessage: 'Permissions Conflict',
-            },
-          })
-        ),
-        default: errorPleaseTryAgainInAFewMinutes(
-          defineMessages({
-            title: {
-              id:
-                'errorResponseMessages.fetchTreatmentDashboard.POST.default.title',
-              defaultMessage: 'Error Loading Dashboard Treatment',
-            },
-          })
-        ),
-      },
-    }).then(json => dispatch(receiveTreatmentDashboard(requestedAt, json)))
-  }
-}
-function requestTreatmentDashboard(payload) {
-  return {
-    type: REQUEST_TREATMENT_DASHBOARD,
-    ...payload,
-  }
-}
-function receiveTreatmentDashboard(requestedAt, data) {
-  return {
-    type: RECEIVE_TREATMENT_DASHBOARD,
-    requestedAt,
-    data,
   }
 }
 
@@ -505,7 +447,7 @@ function receiveInventoryDashboard(requestedAt, data) {
 /*
  * ---------------- Reducers -----------------
  */
-const Summary = Immutable.Record({
+const summary = Immutable.Record({
   requestedAtSet: Immutable.Set(),
   summary: Immutable.List(),
   targetSummaryList: Immutable.List(),
@@ -521,11 +463,11 @@ const Summary = Immutable.Record({
   operational: Immutable.Map(),
   actionSummaryMap: Immutable.Map(),
   treatmentStatus: Immutable.Map(),
+  clinicalIndicators: Immutable.Map(),
   inventoryItems: Immutable.List(),
 })
 
-const initialState = new Summary()
-
+const initialState = summary()
 const onRequested = (action, mutState, cb) => {
   if (mutState.hasIn(['requestedAtSet', action.requestedAt])) {
     mutState.set(
@@ -554,66 +496,81 @@ export default function dashboardReducer(state = initialState, action) {
     case RECEIVE_STAT_DASHBOARD:
       return state.withMutations(mutState => {
         onRequested(action, mutState, () => {
-          mutState.set('summary', new Immutable.fromJS(action.data))
+          mutState.set('summary', Immutable.fromJS(action.data))
         })
       })
     case RECEIVE_TARGET_DASHBOARD:
       return state.withMutations(mutState => {
         onRequested(action, mutState, () => {
-          mutState.set('targetSummaryList', new Immutable.fromJS(action.data))
+          mutState.set('targetSummaryList', Immutable.fromJS(action.data))
         })
       })
     case RECEIVE_RESULT_DASHBOARD:
       return state.withMutations(mutState => {
         onRequested(action, mutState, () => {
-          mutState.mergeDeepIn(['resultSiteList'], action.data.siteList)
+          mutState.mergeDeepIn(
+            ['resultSiteList'],
+            Immutable.fromJS(action.data.siteList)
+          )
           mutState.mergeDeepIn(
             ['resultSummaryList'],
-            action.data.resultSummaryList
+            Immutable.fromJS(action.data.resultSummaryList)
           )
         })
       })
     case RECEIVE_DEVICE_DASHBOARD:
       return state.withMutations(mutState => {
         onRequested(action, mutState, () => {
-          mutState.mergeDeepIn(['deviceList'], action.data.deviceList)
+          mutState.mergeDeepIn(
+            ['deviceList'],
+            Immutable.fromJS(action.data.deviceList)
+          )
           mutState.mergeDeepIn(
             ['deviceSummaryMap'],
-            action.data.deviceSummaryMap
+            Immutable.fromJS(action.data.deviceSummaryMap)
           )
         })
       })
     case RECEIVE_SITE_DASHBOARD:
       return state.withMutations(mutState => {
         onRequested(action, mutState, () => {
-          mutState.mergeDeepIn(['siteList'], action.data.siteList)
+          mutState.mergeDeepIn(
+            ['siteList'],
+            Immutable.fromJS(action.data.siteList)
+          )
           mutState.mergeDeepIn(
             ['assayResultCategoryList'],
-            action.data.assayResultCategoryList
+            Immutable.fromJS(action.data.assayResultCategoryList)
           )
-          mutState.mergeDeepIn(['siteSummaryMap'], action.data.siteSummaryMap)
+          mutState.mergeDeepIn(
+            ['siteSummaryMap'],
+            Immutable.fromJS(action.data.siteSummaryMap)
+          )
         })
       })
     case RECEIVE_INVENTORY_ITEM_DASHBOARD:
       return state.withMutations(mutState => {
         onRequested(action, mutState, () => {
-          mutState.mergeDeepIn(['inventoryItemSiteList'], action.data.siteList)
+          mutState.mergeDeepIn(
+            ['inventoryItemSiteList'],
+            Immutable.fromJS(action.data.siteList)
+          )
           mutState.mergeDeepIn(
             ['inventoryConsumableSummaryList'],
-            action.data.inventoryConsumableSummaryList
+            Immutable.fromJS(action.data.inventoryConsumableSummaryList)
           )
         })
       })
     case RECEIVE_OPERATIONAL_STATUS:
       return state.withMutations(mutState => {
         onRequested(action, mutState, () => {
-          mutState.mergeDeepIn(['operational'], action.data)
+          mutState.mergeDeepIn(['operational'], Immutable.fromJS(action.data))
         })
       })
     case RECEIVE_ACTION_STATUS:
       return state.withMutations(mutState => {
         onRequested(action, mutState, () => {
-          mutState.set('actionSummaryMap', new Immutable.fromJS(action.data))
+          mutState.set('actionSummaryMap', Immutable.fromJS(action.data))
         })
       })
     case inventoryTypes.RECEIVE_UPDATED_SINGLE_INVENTORY_ITEM:
@@ -656,29 +613,11 @@ export default function dashboardReducer(state = initialState, action) {
             mutState.mergeDeepIn(['actionSummaryMap', category], list)
           })
       })
-    case RECEIVE_TREATMENT_DASHBOARD: {
-      return state.withMutations(mutState => {
-        onRequested(action, mutState, () => {
-          const payload = action.data
-          payload.data.forEach(item => {
-            const date = new Date(`${item.monthTested}-15`)
-            const monthName = date.toLocaleString('en-us', { month: 'long' })
-            item.period = `${monthName} ${date.getFullYear()}`
-            item.cntNotConfirmed =
-              item.total > 0 ? item.total - item.cntConfirmed : 0
-            // ensure max 1 decimal point for float data types
-            const pc = 100 - item.pcConfirmed
-            item.pcNotConfirmed = item.total > 0 ? Math.round(10 * pc) / 10 : 0
-          })
-          mutState.set('treatmentStatus', new Immutable.fromJS(payload))
-        })
-      })
-    }
     case RECEIVE_INVENTORY_DASHBOARD:
       return state.withMutations(mutState => {
         const payload = action.data
 
-        mutState.set('inventoryItems', new Immutable.fromJS(payload.data))
+        mutState.set('inventoryItems', Immutable.fromJS(payload.data))
       })
     default:
       return state

@@ -46,6 +46,7 @@ const SELECT_SHOW_FIELDS = [
   's.street2',
   's.longitude',
   's.latitude',
+  's.geographyId',
 ]
 
 async function listSites(request) {
@@ -75,13 +76,13 @@ async function listSites(request) {
       'activeIssues.siteId',
       's.id'
     )
-    .where(function() {
+    .where(function () {
       if (!query.siteIds) {
         return
       }
       this.whereIn('s.id', query.siteIds.split(','))
     })
-    .where(function() {
+    .where(function () {
       if (!query.deviceName) {
         return
       }
@@ -102,10 +103,7 @@ async function listSites(request) {
       externalId: 's.externalId',
     })
     .modify(addConstraints, dataConstraints, { site: 's', geography: 'g' })
-  const getCount = siteQuery
-    .clone()
-    .count('s.id as count')
-    .first()
+  const getCount = siteQuery.clone().count('s.id as count').first()
 
   // get rows
   const getItems = siteQuery
@@ -143,7 +141,7 @@ async function showSite(request) {
   item.devices = await knex('Device as d')
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .innerJoin('DeviceTypeCategory as dtc', 'dt.deviceTypeCategoryId', 'dtc.id')
-    .modify(addConstraints, dataConstraints, { device: 'd' })
+    .modify(addConstraints, dataConstraints, { device: 'd', deviceType: 'dt' })
     .where('siteId', params.siteId)
     .distinct('dt.id', 'dt.name', 'dtc.id as category')
     .select()
@@ -157,9 +155,7 @@ async function updateSite(request) {
   const { params, payload } = request
 
   // TODO: check permission
-
   const changedSiteFields = await transformGeographyFromUpdates(payload)
-
   // update item
   const updatedCount = await knex('Site')
     .where('id', params.siteId)
@@ -173,7 +169,6 @@ async function updateSite(request) {
           'street2',
           'geographyId',
           'city',
-          'state',
           'zip',
           'latitude',
           'longitude',
@@ -248,7 +243,7 @@ async function listSitesForSelectList(request) {
   const countryState = await knex('Country as c')
     .innerJoin('Geography as g', 'g.countryId', 'c.id')
     .leftJoin('State as s', 's.id', 'g.stateId')
-    .modify(addConstraints, dataConstraints, { geography: 'g' })
+    .modify(addConstraints, dataConstraints, { geography: 'g', country: 'c' })
     .orderBy(['c.name', 's.name'], 'asc')
     .select('c.name as countryName', 's.name as stateName')
     .first()
@@ -276,7 +271,11 @@ function getSiteByPartnerCountry(siteId, { partnerId, countryId }) {
     .leftOuterJoin('Country as ct', 'g.countryId', 'ct.id')
     .leftOuterJoin('Lga as l', 'g.lgaId', 'l.id')
     .where('s.id', siteId)
-    .modify(addConstraints, dataConstraints, { site: 's', geography: 'g' })
+    .modify(addConstraints, dataConstraints, {
+      site: 's',
+      geography: 'g',
+      country: 'ct',
+    })
     .first(SELECT_SHOW_FIELDS)
 }
 

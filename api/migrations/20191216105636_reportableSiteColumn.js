@@ -12,10 +12,7 @@ async function up(knex) {
       .alter()
   })
   await knex.schema.alterTable('Result', result => {
-    result
-      .integer('reportableSiteId')
-      .unsigned()
-      .nullable()
+    result.integer('reportableSiteId').unsigned().nullable()
   })
   await knex('Result')
     .update({
@@ -35,16 +32,22 @@ async function up(knex) {
       .alter()
   })
 }
+
 async function down(knex) {
-  await knex.schema.alterTable('Result', result => {
+  await knex.schema.table('Result', result => {
+    result.dropForeign('reportableSiteId')
     result.dropColumns('reportableSiteId')
   })
-  await knex.schema.createTable('Device', x => {
-    x.integer('siteId')
+  await knex.schema.table('Device', device => {
+    device.dropForeign('siteId')
+  })
+  await knex.schema.alterTable('Device', device => {
+    device
+      .integer('siteId')
+      .notNullable()
       .unsigned()
       .references('id')
       .inTable('Site')
-      .notNullable()
       .onDelete('CASCADE')
       .alter()
   })

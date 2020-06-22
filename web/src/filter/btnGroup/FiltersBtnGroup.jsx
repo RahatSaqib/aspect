@@ -28,7 +28,11 @@ const messages = defineMessages({
   },
   patientOrResearchId: {
     id: 'filter.btnGroup.patientOrResearchId',
-    defaultMessage: 'patient/study ID {patientOrResearchId}',
+    defaultMessage: 'patient ID includes {patientOrResearchId}',
+  },
+  patientOrCaseId: {
+    id: 'filter.btnGroup.patientOrCaseId',
+    defaultMessage: 'patient/case ID includes {patientOrCaseId}',
   },
   sampleId: {
     id: 'filter.btnGroup.sampleId',
@@ -40,7 +44,7 @@ const messages = defineMessages({
   },
   whereDeviceNameIncludes: {
     id: 'filter.btnGroup.whereDeviceNameIncludes',
-    defaultMessage: 'where device name includes "{deviceName}"',
+    defaultMessage: 'device name includes "{deviceName}"',
   },
   withResultCategory: {
     id: 'filter.btnGroup.withResultCategory',
@@ -48,52 +52,56 @@ const messages = defineMessages({
   },
   whereSiteNameIncludes: {
     id: 'filter.btnGroup.whereSiteNameIncludes',
-    defaultMessage: 'where site name includes "{siteName}"',
+    defaultMessage: 'site name includes "{siteName}"',
+  },
+  whereSiteIdIncludes: {
+    id: 'filter.btnGroup.whereSiteIdIncludes',
+    defaultMessage: 'site ID includes "{siteId}"',
   },
   sampleOriginSite: {
     id: 'filter.btnGroup.sampleOriginSite',
-    defaultMessage: 'sample origin site is {sampleOriginSiteName}',
+    defaultMessage: 'sample collection site is {sampleOriginSiteName}',
   },
   whoseNameOrEmailIncludes: {
     id: 'filter.btnGroup.whoseNameOrEmailIncludes',
-    defaultMessage: 'whose name/email includes "{contactNameOrEmail}"',
+    defaultMessage: 'name/email includes "{contactNameOrEmail}"',
   },
   withWorkflowStatus: {
     id: 'filter.btnGroup.withWorkflowStatus',
-    defaultMessage: 'with workflow status is {workflowStatusName}',
+    defaultMessage: 'workflow status is {workflowStatusName}',
   },
   withTreatmentStatus: {
     id: 'filter.btnGroup.withTreatmentStatus',
-    defaultMessage: 'with treatment status is {treatmentStatusName}',
+    defaultMessage: 'treatment status is {treatmentStatusName}',
   },
   withDeviceStatus: {
     id: 'filter.btnGroup.withDeviceStatus',
-    defaultMessage: 'with device status is {deviceStatusName}',
+    defaultMessage: 'status is {deviceStatusName}',
   },
   withDeviceType: {
     id: 'filter.btnGroup.withDeviceType',
-    defaultMessage: 'with device type is {deviceTypeName}',
+    defaultMessage: 'type is {deviceTypeName}',
   },
   whereExternalIdIncludes: {
     id: 'filter.btnGroup.whereExternalIdIncludes',
-    defaultMessage: 'where externalId includes "{externalId}"',
+    defaultMessage: 'ID includes "{externalId}"',
   },
   whereDeviceIdIsIn: {
     id: 'filter.btnGroup.whereDeviceIdIsIn',
-    defaultMessage: 'where deviceId is in ({joinedIds})',
+    defaultMessage: 'deviceId is in ({joinedIds})',
   },
   whereSiteIdIsIn: {
     id: 'filter.btnGroup.whereSiteIdIsIn',
-    defaultMessage: 'where siteId is in ({joinedIds})',
+    defaultMessage: 'site ID is in ({joinedIds})',
   },
   whereNotificationNameIncludes: {
     id: 'filter.btnGroup.whereNotificationNameIncludes',
-    defaultMessage: 'where notification name includes "{notificationName}"',
+    defaultMessage: 'notification name includes "{notificationName}"',
   },
 
   withRevoked: {
     id: 'filter.btnGroup.withRevoked',
-    defaultMessage: 'where revoked is "{revokedStatus}"',
+    defaultMessage: 'revoked is "{revokedStatus}"',
   },
 })
 const revokedOptions = [
@@ -119,6 +127,7 @@ const enhance = compose(
       treatmentStatusItems: state.resultTreatmentStatus.items,
       deviceStatusItems: state.deviceStatus.items,
       deviceTypeItems: state.deviceType.selectList.items,
+      diseaseItems: state.disease.diseases.items,
     }),
     null
   )
@@ -127,6 +136,7 @@ const enhance = compose(
 const filtersOrdering = {
   // Manually keep this in sync with the components ordering in FiltersPanel
   assayId: 4,
+  diseaseId: 3,
   countryId: 1,
   stateId: 2,
   lgaId: 3,
@@ -148,8 +158,10 @@ const filtersOrdering = {
   notificationName: 20,
   revoked: 21,
   treatmentStatusId: 22,
+  siteId: 23,
   // -1: Special orderings
   siteIds: -1,
+  patientOrCaseId: 23,
 }
 
 const makeButton = labelFn => (props, filterKey) => (
@@ -169,6 +181,11 @@ const buttonBy = {
   assayId: makeButton(({ assayItems }, assayId) =>
     assayItems
       .find(it => it.get('id') === assayId, EMPTY_CONTEXT, EMPTY_MAP)
+      .get('name')
+  ),
+  diseaseId: makeButton(({ diseaseItems }, diseaseId) =>
+    diseaseItems
+      .find(it => it.get('id') === diseaseId, EMPTY_CONTEXT, EMPTY_MAP)
       .get('name')
   ),
   countryId: makeButton(({ countryItems }, countryId) =>
@@ -208,12 +225,20 @@ const buttonBy = {
   patientOrResearchId: makeButton(({ intl }, patientOrResearchId) =>
     intl.formatMessage(messages.patientOrResearchId, { patientOrResearchId })
   ),
+  patientOrCaseId: makeButton(({ intl }, patientOrCaseId) =>
+    intl.formatMessage(messages.patientOrCaseId, { patientOrCaseId })
+  ),
   sampleId: makeButton(({ intl }, sampleId) =>
     intl.formatMessage(messages.sampleId, { sampleId })
   ),
   deviceName: makeButton(({ intl }, deviceName) =>
     intl.formatMessage(messages.whereDeviceNameIncludes, {
       deviceName,
+    })
+  ),
+  siteId: makeButton(({ intl }, siteId) =>
+    intl.formatMessage(messages.whereSiteIdIncludes, {
+      siteId,
     })
   ),
   resultCategoryId: makeButton(
@@ -246,7 +271,7 @@ const buttonBy = {
     intl.formatMessage(messages.sampleOriginSite, {
       sampleOriginSiteName: siteItemsById
         .find(
-          it => it.get('id') === sampleOriginSiteId,
+          it => it.get('name') === sampleOriginSiteId,
           EMPTY_CONTEXT,
           EMPTY_MAP
         )

@@ -1,0 +1,369 @@
+{
+  "fields": [
+    {
+      "name": "QC1",
+      "i18nKey": "QC1i18nKey",
+      "fieldType": "text",
+      "order": 0,
+      "caption": "QC1 value",
+      "i18nKeyCaption": "i18nCaptionKey",
+      "controlType": "textBox"
+    },
+    {
+      "name": "QC2",
+      "i18nKey": "QC2i18nKey",
+      "fieldType": "text",
+      "order": 1,
+      "caption": "QC2 value",
+      "i18nKeyCaption": "i18nCaptionKey",
+      "controlType": "textBox"
+    },
+    {
+      "name": "QC1CT",
+      "i18nKey": "QC1CTi18nKey",
+      "fieldType": "number",
+      "order": 2,
+      "title": "QC1 CT",
+      "caption": "QC1 CT value",
+      "i18nKeyCaption": "i18nCaptionKey",
+      "controlType": "textBox",
+      "validation": [
+        {
+          "validationType": "float",
+          "min": 0,
+          "errorMessage": "This value should be higher than 0",
+          "errorMessageI18nKey": "QC1CTErrori18nKey"
+        }
+      ]
+    },
+    {
+      "name": "QC2CT",
+      "i18nKey": "QC2CTi18nKey",
+      "fieldType": "number",
+      "order": 3,
+      "title": "QC2 CT",
+      "caption": "QC2 CT value",
+      "i18nKeyCaption": "i18nCaptionKey",
+      "controlType": "textBox",
+      "validation": [
+        {
+          "validationType": "float",
+          "min": 0,
+          "errorMessage": "This value should be higher than 0",
+          "errorMessageI18nKey": "QC2CTErrori18nKey"
+        }
+      ]
+    },
+    {
+      "name": "ProbeA",
+      "i18nKey": "ProbeAi18nKey",
+      "fieldType": "text",
+      "order": 5,
+      "title": "Probe A",
+      "caption": "Probe A",
+      "i18nKeyCaption": "i18nCaptionKey",
+      "controlType": "textBox"
+    },
+    {
+      "name": "ProbeB",
+      "i18nKey": "ProbeBi18nKey",
+      "fieldType": "text",
+      "order": 6,
+      "title": "Probe B",
+      "caption": "Probe B value",
+      "i18nKeyCaption": "i18nCaptionKey",
+      "controlType": "textBox"
+    },
+    {
+      "name": "ProbeC",
+      "i18nKey": "ProbeCi18nKey",
+      "fieldType": "text",
+      "order": 7,
+      "title": "Probe C",
+      "caption": "Probe C value",
+      "i18nKeyCaption": "i18nCaptionKey",
+      "controlType": "textBox"
+    },
+    {
+      "name": "ProbeD",
+      "i18nKey": "ProbeDi18nKey",
+      "fieldType": "text",
+      "order": 8,
+      "title": "Probe D",
+      "caption": "Probe D value",
+      "i18nKeyCaption": "i18nCaptionKey",
+      "controlType": "textBox"
+    },
+    {
+      "name": "ProbeE",
+      "i18nKey": "ProbeEi18nKey",
+      "fieldType": "text",
+      "order": 9,
+      "title": "Probe E",
+      "caption": "Probe E value",
+      "i18nKeyCaption": "i18nCaptionKey",
+      "controlType": "textBox"
+    },
+    {
+      "name": "ProbeACT",
+      "i18nKey": "ProbeACTi18nKey",
+      "fieldType": "number",
+      "order": 10,
+      "title": "Probe A CT",
+      "caption": "Probe A CT value",
+      "i18nKeyCaption": "ProbeACTi18nCaptionKey",
+      "controlType": "textBox",
+      "validation": [
+        {
+          "validationType": "float",
+          "min": 0,
+          "errorMessage": "This value should be higher than 0",
+          "errorMessageI18nKey": "ProbeACTErrori18nKey"
+        }
+      ]
+    },
+    {
+      "name": "ProbeBCT",
+      "i18nKey": "ProbeBCTi18nKey",
+      "fieldType": "number",
+      "order": 11,
+      "title": "Probe B CT",
+      "caption": "Probe B CT value",
+      "i18nKeyCaption": "ProbeBCTi18nCaptionKey",
+      "controlType": "textBox",
+      "validation": [
+        {
+          "validationType": "float",
+          "min": 0,
+          "errorMessage": "This value should be higher than 0",
+          "errorMessageI18nKey": "ProbeBCTErrori18nKey"
+        }
+      ]
+    },
+    {
+      "name": "ProbeCCT",
+      "i18nKey": "ProbeCCTi18nKey",
+      "fieldType": "number",
+      "order": 12,
+      "title": "Probe C CT",
+      "caption": "Probe C CT value",
+      "i18nKeyCaption": "ProbeCCTi18nCaptionKey",
+      "controlType": "textBox",
+      "validation": [
+        {
+          "validationType": "float",
+          "min": 0,
+          "errorMessage": "This value should be higher than 0",
+          "errorMessageI18nKey": "ProbeCCTErrori18nKey"
+        }
+      ]
+    },
+    {
+      "name": "ProbeDCT",
+      "i18nKey": "ProbeDCTi18nKey",
+      "fieldType": "number",
+      "order": 13,
+      "title": "Probe D CT",
+      "caption": "Probe D CT value",
+      "i18nKeyCaption": "ProbeDCTi18nCaptionKey",
+      "controlType": "textBox",
+      "validation": [
+        {
+          "validationType": "float",
+          "min": 0,
+          "errorMessage": "This value should be higher than 0",
+          "errorMessageI18nKey": "ProbeDCTErrori18nKey"
+        }
+      ]
+    },
+    {
+      "name": "ProbeECT",
+      "i18nKey": "ProbeECTi18nKey",
+      "fieldType": "number",
+      "order": 14,
+      "title": "Probe E CT",
+      "caption": "Probe E CT value",
+      "i18nKeyCaption": "ProbeECTi18nCaptionKey",
+      "controlType": "textBox",
+      "validation": [
+        {
+          "validationType": "float",
+          "min": 0,
+          "errorMessage": "This value should be higher than 0",
+          "errorMessageI18nKey": "ProbeECTErrori18nKey"
+        }
+      ]
+    },
+    {
+      "name": "ProbeSpc",
+      "i18nKey": "ProbeSpci18nKey",
+      "fieldType": "text",
+      "order": 15,
+      "title": "Probe Spc",
+      "caption": "Probe Spc value",
+      "i18nKeyCaption": "ProbeSpci18nCaptionKey",
+      "controlType": "textBox"
+    },
+    {
+      "name": "QC1Endpt",
+      "i18nKey": "QC1Endpti18nKey",
+      "fieldType": "number",
+      "order": 16,
+      "title": "QC1 endpt",
+      "caption": "QC1 endpt value",
+      "i18nKeyCaption": "QC1Endpti18nCaptionKey",
+      "controlType": "textBox",
+      "validation": [
+        {
+          "validationType": "float",
+          "min": 0,
+          "errorMessage": "This value should be higher than 0",
+          "errorMessageI18nKey": "QC1EndptErrori18nKey"
+        }
+      ]
+    },
+    {
+      "name": "QC2Endpt",
+      "i18nKey": "QC2Endpti18nKey",
+      "fieldType": "number",
+      "order": 17,
+      "title": "QC2Endpt CT",
+      "controlType": "textBox",
+      "validation": [
+        {
+          "validationType": "float",
+          "min": 0,
+          "errorMessage": "This value should be higher than 0",
+          "errorMessageI18nKey": "QC2EndptErrori18nKey"
+        }
+      ]
+    },
+    {
+      "name": "probeSpcCt",
+      "i18nKey": "probeSpcCti18nKey",
+      "fieldType": "number",
+      "order": 18,
+      "title": "Probe Spc CT",
+      "caption": "Probe Spc Ct",
+      "i18nKeyCaption": "probeSpcCti18nCaptionKey",
+      "controlType": "textBox",
+      "validation": [
+        {
+          "validationType": "float",
+          "min": 0,
+          "errorMessage": "This value should be higher than 0",
+          "errorMessageI18nKey": "probeSpcCtErrori18nKey"
+        }
+      ]
+    },
+    {
+      "name": "probeAEndpt",
+      "i18nKey": "probeAEndpti18nKey",
+      "fieldType": "number",
+      "order": 19,
+      "title": "Probe A Endpt",
+      "caption": "Probe A endpt value",
+      "i18nKeyCaption": "probeAEndpti18nCaptionKey",
+      "controlType": "textBox",
+      "validation": [
+        {
+          "validationType": "float",
+          "min": 0,
+          "errorMessage": "This value should be higher than 0",
+          "errorMessageI18nKey": "probeAEndptErrori18nKey"
+        }
+      ]
+    },
+    {
+      "name": "probeBEndpt",
+      "i18nKey": "probeBEndpti18nKey",
+      "fieldType": "number",
+      "order": 20,
+      "title": "Probe B Endpt",
+      "caption": "Probe B Endpt value",
+      "i18nKeyCaption": "probeBEndpti18nCaptionKey",
+      "controlType": "textBox",
+      "validation": [
+        {
+          "validationType": "float",
+          "min": 0,
+          "errorMessage": "This value should be higher than 0",
+          "errorMessageI18nKey": "probeBEndptErrori18nKey"
+        }
+      ]
+    },
+    {
+      "name": "probeCendpt",
+      "i18nKey": "probeCendpti18nKey",
+      "fieldType": "number",
+      "order": 21,
+      "title": "Probe C Endpt",
+      "caption": "Probe C Endpt value",
+      "i18nKeyCaption": "probeCendpti18nCaptionKey",
+      "controlType": "textBox",
+      "validation": [
+        {
+          "validationType": "float",
+          "min": 0,
+          "errorMessage": "This value should be higher than 0",
+          "errorMessageI18nKey": "probeCendptErrori18nKey"
+        }
+      ]
+    },
+    {
+      "name": "probeDendpt",
+      "i18nKey": "probeDendpti18nKey",
+      "fieldType": "number",
+      "order": 22,
+      "title": "Probe D Endpt",
+      "caption": "Probe D Endpt value",
+      "i18nKeyCaption": "probeDendpti18nCaptionKey",
+      "controlType": "textBox",
+      "validation": [
+        {
+          "validationType": "float",
+          "min": 0,
+          "errorMessage": "This value should be higher than 0",
+          "errorMessageI18nKey": "probeDendptErrori18nKey"
+        }
+      ]
+    },
+    {
+      "name": "probeEendpt",
+      "i18nKey": "probeEendpti18nKey",
+      "fieldType": "number",
+      "order": 23,
+      "title": "Probe E Endpt",
+      "caption": "Probe E Endpt value",
+      "i18nKeyCaption": "probeEendpti18nCaptionKey",
+      "controlType": "textBox",
+      "validation": [
+        {
+          "validationType": "float",
+          "min": 0,
+          "errorMessage": "This value should be higher than 0",
+          "errorMessageI18nKey": "probeEendptErrori18nKey"
+        }
+      ]
+    },
+    {
+      "name": "probeSpcendpt",
+      "i18nKey": "probeSpcendpti18nKey",
+      "fieldType": "number",
+      "order": 24,
+      "title": "Probe Spc Endpt",
+      "caption": "Probe Spc Endpt value",
+      "i18nKeyCaption": "probeSpcendpti18nCaptionKey",
+      "controlType": "textBox",
+      "validation": [
+        {
+          "validationType": "float",
+          "min": 0,
+          "errorMessage": "This value should be higher than 0",
+          "errorMessageI18nKey": "probeSpcendptErrori18nKey"
+        }
+      ]
+    }
+  ],
+  "refForms": []
+}

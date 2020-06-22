@@ -6,6 +6,9 @@ const tableCache = {}
 // TODO ASP-757 Standardize static data key on externalId
 const cacheConfig = {
   Assay: {},
+  Feature: {
+    keyColumn: 'module',
+  },
   AssayType: {
     keyColumn: 'name',
   },
@@ -22,9 +25,8 @@ const cacheConfig = {
   DeviceTypeCategory: {
     keyColumn: 'name',
   },
-  Feature: {
-    keyColumn: 'module',
-  },
+  Disease: {},
+  FormType: {},
   FileContentType: {},
   IssueCategory: {},
   IssueEventStatus: {},
@@ -60,11 +62,13 @@ async function rowsByColumn(table) {
     const columns = ['id', ...additionalColumns]
     const rowsAsObject = await knex(table)
       .select(keyColumn, ...columns)
-      .reduce((memo, row) => {
-        const key = row[keyColumn]
-        memo[key] = row
-        return memo
-      }, {})
+      .then(items =>
+        items.reduce((memo, row) => {
+          const key = row[keyColumn]
+          memo[key] = row
+          return memo
+        }, {})
+      )
 
     // we want { [col1]: { [key1]: row1[col1], [key2]: row2[col1]...
     cache = _.reduce(
@@ -111,3 +115,14 @@ _.each(cacheConfig, (config, table) => {
     exports[lookupDictionary] = keyToObject(table, column)
   })
 })
+
+exports.issueCategoryIntlToShortname = async function () {
+  return knex('IssueCategory')
+    .select('i18nKey', 'shortName')
+    .then(items =>
+      items.reduce((memo, { i18nKey, shortName }) => {
+        memo[i18nKey] = shortName
+        return memo
+      }, {})
+    )
+}

@@ -12,7 +12,6 @@ const { allResultCategoryToId } = require('../../src/shared/dictionary')
 
 async function seed(knex) {
   const { Detected: resultCategoryDetectedId } = await allResultCategoryToId()
-
   const MGITAssays = await knex('Assay')
     .whereIn('externalid', ['assayBdMgitAst', 'assayBdMgitGnd'])
     .select('id')

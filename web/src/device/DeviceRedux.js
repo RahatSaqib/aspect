@@ -18,6 +18,7 @@ import {
   receiveTableItems,
   Table,
 } from '../shared/metaReducers/table'
+import { getDateObject } from '../components/shared/DateTimeInput/utils/date'
 
 export const types = {
   REQUEST_DEVICES: 'REQUEST_DEVICES',
@@ -313,7 +314,7 @@ export function exportDevices(
         },
       }
     ).then(async elem => {
-      const file = await elem
+      const file = await elem.blob
       dispatch(receivedExportResponse(file, fileFormat, reportName))
     })
   }
@@ -408,6 +409,7 @@ function requestPerformanceReport(deviceId) {
     deviceId,
   }
 }
+
 function receivePerformanceReport(data) {
   return {
     type: types.RECEIVE_DEVICES_FOR_PERFORMANCE_REPORT,
@@ -463,6 +465,13 @@ export default function deviceReducer(state = initialState, action) {
     case types.RECEIVE_UPDATED_SINGLE_DEVICE:
       return state.withMutations(mutState => {
         mutState.delete('requestedAt')
+        const { calibrationDate, warrantyDueDate } = action.item
+        if (calibrationDate) {
+          action.item.calibrationDate = getDateObject(calibrationDate)
+        }
+        if (warrantyDueDate) {
+          action.item.warrantyDueDate = getDateObject(warrantyDueDate)
+        }
         const immutItem = Immutable.fromJS(action.item)
         mutState.set('items', receiveItem(mutState.items, immutItem))
       })
@@ -472,7 +481,7 @@ export default function deviceReducer(state = initialState, action) {
       return state.mergeIn(['selectList'], {
         loading: false,
         lastRefreshed: action.lastRefreshed,
-        items: new Immutable.fromJS(action.items),
+        items: Immutable.fromJS(action.items),
       })
     case types.DEVICE_MAINTENANCE_FORM_SHOW:
       return state.mergeIn(['activeDialog'], {
@@ -483,7 +492,7 @@ export default function deviceReducer(state = initialState, action) {
       return state.setIn(['activeDialog', 'name'], undefined)
     case types.RECEIVE_DEVICES_FOR_PERFORMANCE_REPORT:
       return state.withMutations(mutState => {
-        mutState.set('performanceReport', new Immutable.fromJS(action.data))
+        mutState.set('performanceReport', Immutable.fromJS(action.data))
       })
     default:
       return state

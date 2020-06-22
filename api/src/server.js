@@ -3,9 +3,10 @@
 // =======================
 const _ = require('lodash')
 const Hapi = require('@hapi/hapi')
+const Joi = require('@hapi/joi')
 
 const config = require('./config')
-const { version } = require('./../package.json')
+const { version } = require('../package.json')
 const {
   addClientRoutes,
   addDeviceRoutes,
@@ -43,6 +44,7 @@ const server = new Hapi.server({
     },
   },
 })
+server.validator(Joi)
 
 const {
   swagger: { enabled: swaggerEnabled },
@@ -62,8 +64,8 @@ const ravenPlugins = raven
 // Load Swagger documentation if configured
 const swaggerPlugins = swaggerEnabled
   ? [
-      require('inert'), // eslint-disable-line import/order
-      require('vision'), // eslint-disable-line import/order
+      require('@hapi/inert'), // eslint-disable-line import/order
+      require('@hapi/vision'), // eslint-disable-line import/order
       {
         plugin: require('hapi-swagger'),
         options: {
@@ -130,7 +132,7 @@ const messageQueuePlugin = {
 
 const plugins = [
   ...ravenPlugins,
-  require('inert'), // eslint-disable-line import/order
+  require('@hapi/inert'), // eslint-disable-line import/order
   ...swaggerPlugins,
   // JWT for authentication in client API
   require('hapi-auth-jwt2'), // eslint-disable-line import/order
@@ -165,7 +167,7 @@ const start = async () => {
         console.error('-------------------') // eslint-disable-line no-console
       }
     })
-    server.ext('onPreResponse', function(request, h) {
+    server.ext('onPreResponse', function (request, h) {
       const { response } = request
       // if error, pass it through server.log
       // FYI - response.isServer indicates status code >= 500
@@ -199,7 +201,6 @@ const start = async () => {
       // if user has to accept license, deny all requests except to the license api:
       if (
         decoded.hasToAcceptLicenseId &&
-        request.url.pathname.indexOf('/api/auth/features') === -1 &&
         request.url.pathname.indexOf('/api/auth/license') === -1
       ) {
         errorMessage =

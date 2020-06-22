@@ -80,6 +80,12 @@
       "abbreviation":"TB"
     },
     {
+      "name": "Microscopy",
+      "i18nKey": "microscopy",
+      "externalId": "microscopy",
+      "abbreviation":"TB"
+    },
+    {
       "name": "Unknown",
       "i18nKey": "assayTypeUnknown",
       "externalId": "assayTypeUnknown",
@@ -102,6 +108,113 @@
       "i18nKey": "covid19",
       "externalId": "covid19",
       "abbreviation":"CV"
+    }
+  ],
+  "relationships": [
+    {
+      "externalId": "assayTypeMtbRif",
+      "diseaseId": {
+        "table": "Disease",
+        "externalId": "tb"
+      }
+    },
+    {
+      "externalId": "assayTypeEbola",
+      "diseaseId": {
+        "table": "Disease",
+        "externalId": "ebola"
+      }
+    },
+    {
+      "externalId": "assayTypeHivVl",
+      "diseaseId": {
+        "table": "Disease",
+        "externalId": "hiv"
+      }
+    },
+    {
+      "externalId": "assayTypeHbvVl",
+      "diseaseId": {
+        "table": "Disease",
+        "externalId": "hbv"
+      }
+    },
+    {
+      "externalId": "assayTypeHivQual",
+      "diseaseId": {
+        "table": "Disease",
+        "externalId": "hiv"
+      }
+    },
+    {
+      "externalId": "assayTypeCD4",
+      "diseaseId": {
+        "table": "Disease",
+        "externalId": "hiv"
+      }
+    },
+    {
+      "externalId": "assayTypeEid",
+      "diseaseId": {
+        "table": "Disease",
+        "externalId": "hiv"
+      }
+    },
+    {
+      "externalId": "assayTypeHcv",
+      "diseaseId": {
+        "table": "Disease",
+        "externalId": "hcv"
+      }
+    },
+    {
+      "externalId": "assayTypeZika",
+      "diseaseId": {
+        "table": "Disease",
+        "externalId": "zika"
+      }
+    },
+    {
+      "externalId": "assayTypeDengue",
+      "diseaseId": {
+        "table": "Disease",
+        "externalId": "dengue"
+      }
+    },
+    {
+      "externalId": "assayTypeTbAst",
+      "diseaseId": {
+        "table": "Disease",
+        "externalId": "tb"
+      }
+    },
+    {
+      "externalId": "assayTypeTbGnd",
+      "diseaseId": {
+        "table": "Disease",
+        "externalId": "tb"
+      }
+    },
+    {
+      "externalId": "microscopy",
+      "diseaseId": {
+        "table": "Disease",
+        "externalId": "tb"
+      }
+    },
+    {
+      "externalId": "genoTypeTestStrip",
+      "diseaseId": {
+        "table": "Disease",
+        "externalId": "tb"
+      }
+    },
+    {
+      "externalId": "covid19",
+      "diseaseId": {
+        "table": "Disease",
+        "externalId": "covid19"
+      }
     }
   ]
 }

@@ -2,11 +2,11 @@ import _ from 'lodash'
 import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
 import { compose, setPropTypes } from 'recompose'
-import { defineMessages } from 'react-intl'
+import { defineMessages, injectIntl } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
-import Helmet from 'react-helmet'
+import { Helmet } from 'react-helmet'
 
 // Material-UI
 
@@ -114,6 +114,7 @@ const messages = defineMessages({
 })
 
 const enhance = compose(
+  injectIntl,
   setPropTypes({
     match: PropTypes.shape({
       params: PropTypes.shape({

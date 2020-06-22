@@ -81,7 +81,7 @@ async function countrySelectList(request) {
     )
       .from('Country as c')
       .innerJoin('Geography as g', 'g.countryId', 'c.id')
-      .leftJoin('State as s', function() {
+      .leftJoin('State as s', function () {
         this.on('s.id', 'g.stateId').on({ 'g.countryId': knex.raw(countryId) })
       })
       .modify(addConstraintsLocal, dataConstraints, { geography: 'g' })
@@ -117,10 +117,10 @@ async function countrySelectList(request) {
     )
       .from('Country as c')
       .innerJoin('Geography as g', 'g.countryId', 'c.id')
-      .leftJoin('State as s', function() {
+      .leftJoin('State as s', function () {
         this.on('s.id', 'g.stateId').on({ 'g.countryId': knex.raw(countryId) })
       })
-      .leftJoin('Lga as l', function() {
+      .leftJoin('Lga as l', function () {
         this.on('l.id', 'g.lgaId').on({ 'g.stateId': knex.raw(stateId) })
       })
       .modify(addConstraintsLocal, dataConstraints, { geography: 'g' })
@@ -191,7 +191,7 @@ async function stateSelectList(request) {
       .from('State as s')
       .innerJoin('Geography as g', 'g.stateId', 's.id')
       .where('g.countryId', countryId)
-      .leftJoin('Lga as l', function() {
+      .leftJoin('Lga as l', function () {
         this.on('l.id', 'g.lgaId').on({ 'g.stateId': knex.raw(stateId) })
       })
       .orderBy(['s.name', 'l.name'], 'asc')
@@ -238,9 +238,7 @@ async function transformGeographyFromUpdates(updates) {
   const transformedFields = _.omit(updates, geoFieldNames)
 
   if (!_.isEmpty(geoFields)) {
-    const geography = await knex('Geography')
-      .where(geoFields)
-      .first('id')
+    const geography = await knex('Geography').where(geoFields).first('id')
     transformedFields.geographyId = geography ? geography.id : null
   }
   return transformedFields

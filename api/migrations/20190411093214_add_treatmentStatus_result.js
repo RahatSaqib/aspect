@@ -11,6 +11,7 @@ async function up(knex) {
       .onDelete('SET NULL')
   })
 }
+
 async function down(knex) {
   await knex.schema.alterTable('Result', resultTreatmentStatus => {
     resultTreatmentStatus.dropForeign('treatmentStatusLogId')

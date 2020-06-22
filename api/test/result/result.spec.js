@@ -1,14 +1,18 @@
 const supertest = require('supertest')
 const chai = require('chai')
 const _ = require('lodash')
-const dateFormat = require('date-fns/format')
-const { addMinutes, parseISO } = require('date-fns')
+const { addMinutes, parseISO, format: dateFormat } = require('date-fns')
+const Promise = require('bluebird')
+const { createResult, getResult } = require('./result_utils')
 const shared = require('../utils/sharedToken')
-const { runTestWithKnex } = require('../utils/generatorFunctionUtils')
-
-const server = supertest.agent('http://localhost:8080')
-const { assert } = chai
-
+const {
+  deviceStatusToId,
+  allResultCategoryToId,
+  diseaseToId,
+} = require('../../src/shared/dictionary')
+const { knex } = require('../../src/db')
+const AssayCovidResultFormSchema = require('../../seeds/fixtures/AssayCovidResultFormSchema.json')
+const { getAccessToken, createUser, removeUser } = require('../utils/authUtils')
 const { getCommCarePayload } = require('../deviceApi/commcare/commcare_utils')
 const {
   createTestContext,
@@ -16,6 +20,10 @@ const {
   getLastResultId,
   getLastResult,
 } = require('../deviceApi/utils')
+const { getAdminId } = require('../utils/authUtils')
+
+const server = supertest.agent('http://localhost:8080')
+const { assert, expect } = chai
 
 const getClinicianAccessToken = () =>
   server
@@ -47,78 +55,101 @@ describe('Result routes', () => {
   describe('GET', () => {
     shared.checkToken(server, path)
 
-    it('should return a list of results', () =>
-      runTestWithKnex(async knex => {
-        initialResultWorkflowStatusName = await server
-          .get(path)
-          .set('Authorization', `Bearer ${shared.token}`)
-          .then(res => {
-            assert.equal(res.status, 200)
-            assert.typeOf(res.body, 'Object')
-            assert.property(res.body, 'data')
-            assert.typeOf(res.body.data, 'array')
-            assert.isAtLeast(res.body.data.length, 3)
-            assert.property(res.body.data[0], 'id')
-            assert.property(res.body.data[0], 'endedOn')
-            assert.property(res.body.data[0], 'deviceName')
-            assert.property(res.body.data[0], 'sampleOriginSiteName')
-            assert.property(res.body.data[0], 'countryName')
-            assert.property(res.body.data[0], 'stateName')
-            assert.property(res.body.data[0], 'lgaName')
-            assert.property(res.body.data[0], 'sampleId')
-            assert.property(res.body.data[0], 'errorCode')
-            assert.property(res.body.data[0], 'sampleOriginSiteName')
-            assert.property(res.body.data[0], 'resultText')
-            assert.property(res.body.data[0], 'resultWorkflowStatus')
-            assert.property(res.body.data[0], 'patientId')
-            assert.property(res.body.data[0], 'assayName')
-            assert.property(res.body, 'total')
-            ;[
-              {
-                id: resultId,
-                assayId,
-                resultWorkflowStatus: initialResultWorkflowStatus,
-              },
-            ] = res.body.data
-            return res.body.data[0].resultWorkflowStatus
-          })
-
-        initialResultWorkflowStatus = (
-          await knex
-            .from('ResultWorkflowStatus')
-            .where({ name: initialResultWorkflowStatusName })
-            .first('externalId')
-        ).externalId
-      }))
-
-    it('should return a list of results with assay-specific fields if TB assay is requested', async () => {
-      await server
-        .get(`${path}?assayId=${assayId}`)
+    const validateResponse = res => {
+      assert.equal(res.status, 200)
+      assert.typeOf(res.body, 'Object')
+      assert.property(res.body, 'data')
+      assert.typeOf(res.body.data, 'array')
+      assert.isAtLeast(res.body.data.length, 1)
+      assert.property(res.body.data[0], 'id')
+      assert.property(res.body.data[0], 'externalId')
+      assert.property(res.body.data[0], 'endedOn')
+      assert.property(res.body.data[0], 'deviceName')
+      assert.property(res.body.data[0], 'sampleOriginSiteName')
+      assert.property(res.body.data[0], 'sampleId')
+      assert.property(res.body.data[0], 'resultText')
+      assert.property(res.body.data[0], 'errorCode')
+      assert.property(res.body.data[0], 'resultWorkflowStatus')
+      assert.property(res.body.data[0], 'resultTreatmentStatus')
+      assert.property(res.body.data[0], 'treatmentStatusInfo')
+      assert.property(res.body.data[0], 'patientId')
+      assert.property(res.body.data[0], 'diseaseId')
+      assert.property(res.body.data[0], 'diseaseName')
+      assert.property(res.body.data[0], 'diseaseExternalId')
+      assert.property(res.body.data[0], 'caseExternalId')
+      assert.property(res.body, 'total')
+      assert.typeOf(res.body.extraColumns, 'array')
+    }
+    it('should return a list of results', async () => {
+      initialResultWorkflowStatusName = await server
+        .get(path)
         .set('Authorization', `Bearer ${shared.token}`)
         .then(res => {
           assert.equal(res.status, 200)
           assert.typeOf(res.body, 'Object')
           assert.property(res.body, 'data')
           assert.typeOf(res.body.data, 'array')
-          assert.isAtLeast(res.body.data.length, 5)
+          assert.isAtLeast(res.body.data.length, 3)
           assert.property(res.body.data[0], 'id')
+          assert.property(res.body.data[0], 'externalId')
           assert.property(res.body.data[0], 'endedOn')
           assert.property(res.body.data[0], 'deviceName')
-          assert.property(res.body.data[0], 'countryName')
-          assert.property(res.body.data[0], 'stateName')
-          assert.property(res.body.data[0], 'lgaName')
-          assert.property(res.body.data[0], 'sampleId')
-          assert.property(res.body.data[0], 'errorCode')
           assert.property(res.body.data[0], 'sampleOriginSiteName')
-          assert.property(res.body.data[0], 'patientId')
-          assert.property(res.body.data[0], 'assayName')
-          assert.property(res.body.data[0], 'resultCategory1Name')
-          assert.property(res.body.data[0], 'resultCategory2Name')
+          assert.property(res.body.data[0], 'sampleId')
           assert.property(res.body.data[0], 'resultText')
+          assert.property(res.body.data[0], 'errorCode')
           assert.property(res.body.data[0], 'resultWorkflowStatus')
+          assert.property(res.body.data[0], 'resultTreatmentStatus')
+          assert.property(res.body.data[0], 'treatmentStatusInfo')
+          assert.property(res.body.data[0], 'patientId')
+          assert.property(res.body.data[0], 'assayId')
+          assert.property(res.body.data[0], 'caseExternalId')
           assert.property(res.body, 'total')
-          assert.typeOf(res.body.extraColumns, 'array')
+          ;[
+            {
+              id: resultId,
+              resultWorkflowStatus: initialResultWorkflowStatus,
+              assayId,
+            },
+          ] = res.body.data
+          return res.body.data[0].resultWorkflowStatus
         })
+
+      initialResultWorkflowStatus = (
+        await knex
+          .from('ResultWorkflowStatus')
+          .where({ name: initialResultWorkflowStatusName })
+          .first('externalId')
+      ).externalId
+    })
+
+    it('should return a list of results with assay-specific fields if TB assay is requested', async () => {
+      const res = await server
+        .get(`${path}?assayId=${assayId}`)
+        .set('Authorization', `Bearer ${shared.token}`)
+
+      validateResponse(res)
+    })
+    it('should return a list of results filtered by disease', async () => {
+      const { diseaseId } = await knex('Disease')
+        .where({ externalId: 'hiv' })
+        .first('id as diseaseId')
+      const res = await server
+        .get(`${path}?diseaseId=${diseaseId}`)
+        .set('Authorization', `Bearer ${shared.token}`)
+
+      validateResponse(res)
+      _.each(res.body.data, elem => assert.equal(elem.diseaseId, diseaseId))
+    })
+
+    it('should return a list of results with case-specific', async () => {
+      const { caseId } = await knex('Result')
+        .join('PatientCase', 'patientCaseId', 'PatientCase.Id')
+        .first('PatientCase.externalId as caseId')
+      const res = await server
+        .get(`${path}?caseId=${caseId}`)
+        .set('Authorization', `Bearer ${shared.token}`)
+      validateResponse(res)
     })
 
     it('should return a single result', async () => {
@@ -164,6 +195,7 @@ describe('Result routes', () => {
           assert.property(res.body.data, 'updatedOn')
           assert.property(res.body.data, 'assayId')
           assert.property(res.body.data, 'assay')
+          assert.property(res.body.data, 'caseExternalId')
           assert.typeOf(res.body.data.assay, 'Object')
           assert.property(res.body.data.assay, 'id')
           assert.property(res.body.data.assay, 'name')
@@ -181,38 +213,15 @@ describe('Result routes', () => {
     })
 
     it('should return a list of results that the clinician has access to via sample origin site', async () => {
-      await server
+      const res = await server
         .get(`${path}?assayId=${assayId}`)
         .set('Authorization', `Bearer ${clinicianAccessToken}`)
-        .then(res => {
-          assert.equal(res.status, 200)
-          assert.typeOf(res.body, 'Object')
-          assert.property(res.body, 'data')
-          assert.typeOf(res.body.data, 'array')
-          assert.isAtLeast(res.body.data.length, 3)
-          assert.property(res.body.data[0], 'id')
-          assert.property(res.body.data[0], 'endedOn')
-          assert.property(res.body.data[0], 'deviceName')
-          assert.property(res.body.data[0], 'countryName')
-          assert.property(res.body.data[0], 'stateName')
-          assert.property(res.body.data[0], 'lgaName')
-          assert.property(res.body.data[0], 'sampleId')
-          assert.property(res.body.data[0], 'errorCode')
-          assert.property(res.body.data[0], 'sampleOriginSiteName')
-          assert.property(res.body.data[0], 'patientId')
-          assert.property(res.body.data[0], 'assayName')
-          assert.property(res.body.data[0], 'resultCategory1Name')
-          assert.property(res.body.data[0], 'resultCategory2Name')
-          assert.property(res.body.data[0], 'resultText')
-          assert.property(res.body.data[0], 'resultWorkflowStatus')
-          assert.property(res.body, 'total')
-          assert.typeOf(res.body.extraColumns, 'array')
+      validateResponse(res)
 
-          const originSites = _.uniqBy(res.body.data, 'sampleOriginSiteName')
-          assert.equal(originSites.length, 1)
-          assert.equal(originSites[0].sampleOriginSiteName, 'Dayton Ohio')
-          ;[{ id: resultId }] = res.body.data
-        })
+      const originSites = _.uniqBy(res.body.data, 'sampleOriginSiteName')
+      assert.equal(originSites.length, 1)
+      assert.equal(originSites[0].sampleOriginSiteName, 'Dayton Ohio')
+      ;[{ id: resultId }] = res.body.data
     })
 
     it('should return a single result that the clinician has access to via sample origin site', async () => {
@@ -258,6 +267,7 @@ describe('Result routes', () => {
           assert.property(res.body.data, 'updatedOn')
           assert.property(res.body.data, 'assayId')
           assert.property(res.body.data, 'assay')
+          assert.property(res.body.data, 'caseExternalId')
           assert.typeOf(res.body.data.assay, 'Object')
           assert.property(res.body.data.assay, 'id')
           assert.property(res.body.data.assay, 'name')
@@ -273,16 +283,97 @@ describe('Result routes', () => {
           assert.property(res.body.data, 'files')
         })
     })
+
+    const assayBdMgitGndAssayExternalId = 'assayBdMgitGnd'
+    const bdmgitGndClinicianUsername = 'mgit_gnd_clinician'
+    const bdmgitGndClinicianPassword = 'mgit-gnd-clinician-pass'
+    let bdmgitGndClinicianUserId
+    let bdmgitGndClinicianAuthAccessToken
+
+    const assayDaktariHivVlExternalId = 'DaktariHivVL'
+    const daktariHivVlClinicianUsername = 'dak_vl_clinician'
+    const daktariHivVlClinicianPassword = 'vl-vl-clinician-pass'
+    let daktariHivVlClinicianUserId
+    let daktariHivVlClinicianAuthAccessToken
+    before(async () => {
+      bdmgitGndClinicianUserId = await createUser(
+        'Partner One',
+        'US',
+        bdmgitGndClinicianUsername,
+        bdmgitGndClinicianPassword,
+        [
+          {
+            jobFunctionExternalId: 'clinician',
+            assayExternalId: assayBdMgitGndAssayExternalId,
+          },
+        ]
+      )
+      bdmgitGndClinicianAuthAccessToken = await getAccessToken(
+        bdmgitGndClinicianUsername,
+        bdmgitGndClinicianPassword
+      )
+
+      daktariHivVlClinicianUserId = await createUser(
+        'Partner One',
+        'US',
+        daktariHivVlClinicianUsername,
+        daktariHivVlClinicianPassword,
+        [
+          {
+            jobFunctionExternalId: 'clinician',
+            assayExternalId: assayDaktariHivVlExternalId,
+          },
+        ]
+      )
+      daktariHivVlClinicianAuthAccessToken = await getAccessToken(
+        daktariHivVlClinicianUsername,
+        daktariHivVlClinicianPassword
+      )
+    })
+
+    after(async () => {
+      removeUser(bdmgitGndClinicianUserId)
+      removeUser(daktariHivVlClinicianUserId)
+    })
+
+    it("should constrain results returned based on the user's job context", async () => {
+      const mgitUserResultsResponse = await server
+        .get(path)
+        .set('Authorization', `Bearer ${bdmgitGndClinicianAuthAccessToken}`)
+      assert.equal(mgitUserResultsResponse.status, 200)
+      assert.typeOf(mgitUserResultsResponse.body, 'Object')
+      assert.property(mgitUserResultsResponse.body, 'data')
+      assert.typeOf(mgitUserResultsResponse.body.data, 'array')
+      assert.equal(mgitUserResultsResponse.body.data.length, 0)
+      assert.property(mgitUserResultsResponse.body, 'total')
+      assert.typeOf(mgitUserResultsResponse.body.extraColumns, 'array')
+
+      const daktariHivVlUserResultsResponse = await server
+        .get(path)
+        .set('Authorization', `Bearer ${daktariHivVlClinicianAuthAccessToken}`)
+      assert.equal(daktariHivVlUserResultsResponse.status, 200)
+      assert.typeOf(daktariHivVlUserResultsResponse.body, 'Object')
+      assert.property(daktariHivVlUserResultsResponse.body, 'data')
+      assert.typeOf(daktariHivVlUserResultsResponse.body.data, 'array')
+      assert.isAtLeast(daktariHivVlUserResultsResponse.body.data.length, 5)
+      const { name: daktariHivVlAssayName } = await knex('Assay')
+        .where('externalId', assayDaktariHivVlExternalId)
+        .first()
+      daktariHivVlUserResultsResponse.body.data.forEach(result => {
+        assert.equal(result.assayName, daktariHivVlAssayName)
+      })
+      assert.property(daktariHivVlUserResultsResponse.body, 'total')
+      assert.typeOf(daktariHivVlUserResultsResponse.body.extraColumns, 'array')
+    })
   })
 
   describe('PUT', () => {
-    after(() =>
-      runTestWithKnex(async knex => {
-        await knex('ResultTreatmentStatusLog')
-          .where('resultId', resultId)
-          .delete()
-      })
-    )
+    after(async () => {
+      await knex('ResultTreatmentStatusLog')
+        .where('resultId', resultId)
+        .delete()
+    })
+
     it('Should update result status given a resultId', async () => {
       const updateWithExternalId = {
         resultWorkflowStatusId: null,
@@ -491,37 +582,36 @@ describe('Result routes', () => {
       })
     }
 
-    it('Should update result treatment status given a resultId - with externalId', async () =>
-      runTestWithKnex(async knex => {
-        const changedOn = new Date()
-        const updateWithExternalId = {
-          externalId: 'AwaitingTreatment',
-          data: 'should be treated',
-          method: 'sms',
-          changedOn,
-        }
-        const { testResultId } = await knex('ResultTreatmentStatus as s')
-          .join(
-            'ResultTreatmentStatusLog as l',
-            's.id',
-            'l.resultTreatmentStatusId'
-          )
-          .where('s.externalId', '<>', 'AwaitingTreatment')
-          .first('l.resultId as testResultId')
+    it('Should update result treatment status given a resultId - with externalId', async () => {
+      const changedOn = new Date()
+      const updateWithExternalId = {
+        externalId: 'AwaitingTreatment',
+        data: 'should be treated',
+        method: 'sms',
+        changedOn,
+      }
+      const { testResultId } = await knex('ResultTreatmentStatus as s')
+        .join(
+          'ResultTreatmentStatusLog as l',
+          's.id',
+          'l.resultTreatmentStatusId'
+        )
+        .where('s.externalId', '<>', 'AwaitingTreatment')
+        .first('l.resultId as testResultId')
 
-        // update with external ID
-        return server
-          .put(`${path}/treatment-status/${testResultId}`)
-          .send(updateWithExternalId)
-          .set('Authorization', `Bearer${shared.token}`)
-          .then(res => {
-            baseTreatmentStatusAssertion(res)
+      // update with external ID
+      return server
+        .put(`${path}/treatment-status/${testResultId}`)
+        .send(updateWithExternalId)
+        .set('Authorization', `Bearer${shared.token}`)
+        .then(res => {
+          baseTreatmentStatusAssertion(res)
 
-            const { treatmentStatus } = res.body.data
-            // check the updated fieldName
-            assert.equal(treatmentStatus.externalId, 'AwaitingTreatment')
-          })
-      }))
+          const { treatmentStatus } = res.body.data
+          // check the updated fieldName
+          assert.equal(treatmentStatus.externalId, 'AwaitingTreatment')
+        })
+    })
 
     it('Should update result treatment status given a resultId - with resultTreatmentStatusId', async () => {
       const changedOn = addMinutes(new Date(), 1)
@@ -567,50 +657,50 @@ describe('Result routes', () => {
     })
 
     describe('Form data', () => {
-      const context = createTestContext(server, {
-        user: 'gates_rdt',
-        password: 'gates2018',
-        type: 'CommCareApp',
-        partner: 'GatesRDT',
-        site: 'commcare',
-      })
-      const { runTest } = context
-      let resultId
-      let result
-      let apiKey
-
-      beforeEach(async () => {
-        const commcarePluginPath = '/device/plugin/commcare'
-        await context.createSites(['commcare'])
-        await context.createDeviceApiKey()
-
-        return runTest(async knex => {
-          apiKey = context.apiKey // eslint-disable-line prefer-destructuring
-          await server
-            .post(commcarePluginPath)
-            .auth('commcare_test', apiKey.token)
-            .send(
-              getCommCarePayload({
-                resultText: 'negative',
-                age: 28,
-                gender: 'male',
-              })
-            )
-            .then(res => {
-              assert.equal(res.status, 200)
-              assert.typeOf(res.body, 'Object')
-            })
-          const device = await getDeviceFromApiKey(knex, apiKey)
-          resultId = await getLastResultId(knex, device.id)
-          result = await getLastResult(knex, device.id)
-          assert.isNull(result.formData)
+      describe('Basic functionality', () => {
+        const context = createTestContext(server, {
+          user: 'gates_rdt',
+          password: 'gates2018',
+          type: 'CommCareApp',
+          partner: 'GatesRDT',
+          site: 'commcare',
         })
-      })
+        const { runTest } = context
+        let resultId
+        let result
+        let apiKey
 
-      afterEach(context.afterEach)
+        beforeEach(async () => {
+          const commcarePluginPath = '/device/plugin/commcare'
+          await context.createSites(['commcare'])
+          await context.createDeviceApiKey()
 
-      it('Should save values to the formData field in the result', () =>
-        runTestWithKnex(async knex => {
+          return runTest(async knex => {
+            apiKey = context.apiKey // eslint-disable-line prefer-destructuring
+            await server
+              .post(commcarePluginPath)
+              .auth('commcare_test', apiKey.token)
+              .send(
+                getCommCarePayload({
+                  resultText: 'negative',
+                  age: 28,
+                  gender: 'male',
+                })
+              )
+              .then(res => {
+                assert.equal(res.status, 200)
+                assert.typeOf(res.body, 'Object')
+              })
+            const device = await getDeviceFromApiKey(knex, apiKey)
+            resultId = await getLastResultId(knex, device.id)
+            result = await getLastResult(knex, device.id)
+            assert.isNull(result.formData)
+          })
+        })
+
+        afterEach(context.afterEach)
+
+        it('Should save values to the formData field in the result', async () => {
           let response = await server
             .put(`${path}/form-data/${resultId}`)
             .send({
@@ -680,10 +770,9 @@ describe('Result routes', () => {
             response.body.data.formData,
             JSON.parse(resultFromDatabase.formData)
           )
-        }))
+        })
 
-      it("Should NOT save values to the formData field in the result when field sent is not in the assay's form schema", () =>
-        runTestWithKnex(async knex => {
+        it("Should NOT save values to the formData field in the result when field sent is not in the assay's form schema", async () => {
           const response = await server
             .put(`${path}/form-data/${resultId}`)
             .send({
@@ -696,10 +785,9 @@ describe('Result routes', () => {
             .where('id', resultId)
             .first('formData')
           assert.isNull(resultFromDatabase.formData)
-        }))
+        })
 
-      it("Should NOT save values to the formData field in the result when value is not in the selector field's options list", () =>
-        runTestWithKnex(async knex => {
+        it("Should NOT save values to the formData field in the result when value is not in the selector field's options list", async () => {
           const response = await server
             .put(`${path}/form-data/${resultId}`)
             .send({
@@ -711,7 +799,468 @@ describe('Result routes', () => {
             .where('id', resultId)
             .first('formData')
           assert.isNull(resultFromDatabase.formData)
-        }))
+        })
+      })
+
+      describe('COVID-19 Result Updates', () => {
+        shared.checkToken(server, path)
+        const covidDeviceTypeDevices = {
+          CepheidGeneXpert: null,
+          Aspect: null,
+          rocheMagnaPure96: null,
+          appliedBiosystemsQuantStudio7Flex: null,
+        }
+        let partnerId
+        let adminId
+        let otherUserId
+        let resultCategories
+        let diseaseId
+        let latestSampleIdBeforeTests
+        let latestResultIdBeforeTests
+        let latestCaseIdBeforeTests
+        const getCaseIdByDeviceTypeId = deviceTypeId =>
+          `${deviceTypeId} TEST-CASE-ID`
+
+        before(async () => {
+          partnerId = (
+            await knex('Partner').where('name', 'Partner One').first('id')
+          ).id
+          adminId = await getAdminId()
+          otherUserId = (
+            await knex('User').where('name', '<>', 'admin').first('id')
+          ).id
+          diseaseId = await diseaseToId('covid19')
+          const deviceStatusApprovedId = await deviceStatusToId('approved')
+          await Promise.each(
+            Object.keys(covidDeviceTypeDevices),
+            async deviceTypeExternalId => {
+              covidDeviceTypeDevices[deviceTypeExternalId] = await knex(
+                'DeviceType as dt'
+              )
+                .join('Device as d', 'dt.id', 'd.deviceTypeId')
+                .join('Site as s', 'd.siteId', 's.id')
+                .join('Geography as g', 's.geographyId', 'g.id')
+                .join('Country as c', 'g.countryId', 'c.id')
+                .where('dt.externalId', deviceTypeExternalId)
+                .andWhere('c.abbreviation', 'US')
+                .andWhere('d.deviceStatusId', deviceStatusApprovedId)
+                .first('d.*')
+            }
+          )
+
+          resultCategories = await allResultCategoryToId()
+          ;({ id: latestSampleIdBeforeTests } = await knex('Sample')
+            .max('id as id')
+            .first())
+          ;({ id: latestResultIdBeforeTests } = await knex('Result')
+            .max('id as id')
+            .first())
+          ;({ id: latestCaseIdBeforeTests } = await knex('PatientCase')
+            .max('id as id')
+            .first())
+        })
+
+        after(async () => {
+          await knex('Result').where('id', '>', latestResultIdBeforeTests).del()
+          await knex('Sample').where('id', '>', latestSampleIdBeforeTests).del()
+          await knex('PatientCase')
+            .where('id', '>', latestCaseIdBeforeTests)
+            .del()
+        })
+
+        function getOptionValueFromTitle(options, title) {
+          // eslint-disable-next-line eqeqeq
+          return (options.find(option => option.title == title) || {}).value
+        }
+
+        async function getAssayForDiseaseIdAndDeviceType(
+          diseaseId,
+          deviceTypeExternalId
+        ) {
+          const { assayExternalId } = await knex('DeviceType as dt')
+            .join('Assay as a', 'dt.id', 'a.deviceTypeId')
+            .join('AssayType as at', 'a.assayTypeId', 'at.id')
+            .where('dt.externalId', deviceTypeExternalId)
+            .andWhere('at.diseaseId', diseaseId)
+            .first('a.externalId as assayExternalId')
+          return assayExternalId
+        }
+
+        it('Should update result details when relevant form fields are saved', async () => {
+          const dateAndTimeOfTest = new Date(2020, 1, 2)
+          const testReasonText = 'Detected at point of entry'
+          const testReason = getOptionValueFromTitle(
+            AssayCovidResultFormSchema.fields.testReason.control.options,
+            testReasonText
+          )
+          const age = 4
+          const genderText = 'Female'
+          const gender = getOptionValueFromTitle(
+            AssayCovidResultFormSchema.fields.gender.control.options,
+            genderText
+          )
+          const resultText = 'Positive'
+          const testResult = getOptionValueFromTitle(
+            AssayCovidResultFormSchema.fields.testResult.control.options,
+            resultText
+          )
+          await Promise.each(
+            Object.keys(covidDeviceTypeDevices),
+            async deviceTypeId => {
+              const assayExternalId = await getAssayForDiseaseIdAndDeviceType(
+                diseaseId,
+                deviceTypeId
+              )
+              const caseId = getCaseIdByDeviceTypeId(deviceTypeId)
+              let testTypeText
+              let testType
+              const resultId = await createResult(
+                partnerId,
+                deviceTypeId,
+                'Nasal Swab',
+                assayExternalId,
+                otherUserId
+              )
+              const formDataToSend = {
+                caseId,
+                testReason,
+                age,
+                gender,
+                testResult,
+                dateAndTimeOfTest,
+              }
+              const resultAspectExpected = {}
+              if (deviceTypeId === 'Aspect') {
+                testTypeText = 'Digital X-Ray'
+                testType = getOptionValueFromTitle(
+                  [
+                    {
+                      title: 'PCR/molecular',
+                      value: 'pcr',
+                    },
+                    {
+                      title: 'Immunoassay',
+                      value: 'immunoassay',
+                    },
+                    {
+                      title: 'Rapid diagnostic test',
+                      value: 'rapidDiagnosticTest',
+                    },
+                    {
+                      title: 'Digital X-Ray',
+                      value: 'digitalXRay',
+                    },
+                  ],
+                  testTypeText
+                )
+                formDataToSend.testType = testType
+              }
+
+              const response = await server
+                .put(`${path}/form-data/${resultId}`)
+                .send(formDataToSend)
+                .set('Authorization', shared.token)
+              expect(response.body.data.id).to.equal(resultId)
+              const result = await getResult(resultId)
+              result.patientData = JSON.parse(result.patientData)
+              result.resultData = JSON.parse(result.resultData)
+              result.formData = JSON.parse(result.formData)
+
+              const expectedResult = {
+                patientData: {
+                  id: caseId,
+                  age,
+                  gender: genderText,
+                  testReason: testReasonText,
+                },
+                resultData: { resultText, typeOfTest: testTypeText },
+                formData: {
+                  ...formDataToSend,
+                  dateAndTimeOfTest: formDataToSend.dateAndTimeOfTest.toISOString(),
+                },
+                startedOn: dateAndTimeOfTest,
+                endedOn: dateAndTimeOfTest,
+                resultCategory1: resultCategories[resultText],
+                updatedBy: adminId,
+                ...resultAspectExpected,
+              }
+              expect(result).to.containSubset(expectedResult)
+            }
+          )
+        })
+
+        it('Should create a device log from Aspect when saving each result', async () => {
+          const dateAndTimeOfTest = new Date(2020, 3, 22)
+          const testReasonText = 'Unknown'
+          const testReason = getOptionValueFromTitle(
+            AssayCovidResultFormSchema.fields.testReason.control.options,
+            testReasonText
+          )
+          const age = 27
+          const genderText = 'Male'
+          const gender = getOptionValueFromTitle(
+            AssayCovidResultFormSchema.fields.gender.control.options,
+            genderText
+          )
+          const resultText = 'Negative'
+          const testResult = getOptionValueFromTitle(
+            AssayCovidResultFormSchema.fields.testResult.control.options,
+            resultText
+          )
+          await Promise.each(
+            Object.keys(covidDeviceTypeDevices),
+            async deviceTypeId => {
+              const assayExternalId = await getAssayForDiseaseIdAndDeviceType(
+                diseaseId,
+                deviceTypeId
+              )
+              const caseId = getCaseIdByDeviceTypeId(deviceTypeId)
+              let testTypeText
+              let testType
+              const resultId = await createResult(
+                partnerId,
+                deviceTypeId,
+                'Nasal Swab',
+                assayExternalId,
+                otherUserId
+              )
+              const formDataToSend = {
+                caseId,
+                testReason,
+                age,
+                gender,
+                testResult,
+                dateAndTimeOfTest,
+              }
+              const resultAspectExpected = {}
+              if (deviceTypeId === 'Aspect') {
+                testTypeText = 'Digital X-Ray'
+                testType = getOptionValueFromTitle(
+                  [
+                    {
+                      title: 'PCR/molecular',
+                      value: 'pcr',
+                    },
+                    {
+                      title: 'Immunoassay',
+                      value: 'immunoassay',
+                    },
+                    {
+                      title: 'Rapid diagnostic test',
+                      value: 'rapidDiagnosticTest',
+                    },
+                    {
+                      title: 'Digital X-Ray',
+                      value: 'digitalXRay',
+                    },
+                  ],
+                  testTypeText
+                )
+                formDataToSend.testType = testType
+              }
+              const response = await server
+                .put(`${path}/form-data/${resultId}`)
+                .send(formDataToSend)
+                .set('Authorization', shared.token)
+              expect(response.body.data.id).to.equal(resultId)
+              const result = await getResult(resultId)
+              result.patientData = JSON.parse(result.patientData)
+              result.resultData = JSON.parse(result.resultData)
+              result.formData = JSON.parse(result.formData)
+              expect(result).to.containSubset({
+                patientData: {
+                  id: caseId,
+                  age,
+                  gender: genderText,
+                  testReason: testReasonText,
+                },
+                resultData: { resultText, typeOfTest: testTypeText },
+                formData: {
+                  ...formDataToSend,
+                  dateAndTimeOfTest: formDataToSend.dateAndTimeOfTest.toISOString(),
+                },
+                startedOn: dateAndTimeOfTest,
+                endedOn: dateAndTimeOfTest,
+                resultCategory1: resultCategories[resultText],
+                updatedBy: adminId,
+                ...resultAspectExpected,
+              })
+              const deviceLogsForResult = await knex('DeviceLog')
+                .where({ resultId })
+                .select()
+              expect(deviceLogsForResult).to.have.lengthOf(1)
+              expect(deviceLogsForResult).to.containSubset([
+                {
+                  deviceId: covidDeviceTypeDevices.Aspect.id,
+                  source: 'Result Edited in Aspect',
+                  rawMessage: JSON.stringify({
+                    auth: { credentials: { name: 'admin' } },
+                    params: { resultId },
+                    payload: formDataToSend,
+                  }),
+                },
+              ])
+            }
+          )
+        })
+
+        it('Should NOT overwrite diagnostic data if the result has already come from an instrument', async () => {
+          const dateAndTimeOfTest = new Date(2020, 3, 14)
+          const testReasonText =
+            'Ill Seeking Healthcare due to suspicion of COVID-19'
+          const testReason = getOptionValueFromTitle(
+            AssayCovidResultFormSchema.fields.testReason.control.options,
+            testReasonText
+          )
+          const age = 78
+          const genderText = 'Male'
+          const gender = getOptionValueFromTitle(
+            AssayCovidResultFormSchema.fields.gender.control.options,
+            genderText
+          )
+          const resultText = 'Negative'
+          const testResult = getOptionValueFromTitle(
+            AssayCovidResultFormSchema.fields.testResult.control.options,
+            resultText
+          )
+          await Promise.each(
+            Object.keys(covidDeviceTypeDevices),
+            async deviceTypeId => {
+              const patientDataFromInstrument = {
+                id: `PATIENT-ID-FROM-${deviceTypeId}`,
+                caseId: 'CASE-ID-FROM-INSTRUMENT',
+              }
+              const resultDataFromInstrument = {
+                resultText: `Positive`,
+              }
+              const resultFromInstrument = {
+                patientData: JSON.stringify(patientDataFromInstrument),
+                resultData: JSON.stringify(resultDataFromInstrument),
+                resultCategory1: resultCategories.Positive,
+                startedOn: addMinutes(dateAndTimeOfTest, 123),
+                endedOn: addMinutes(dateAndTimeOfTest, 223),
+              }
+              const assayExternalId = await getAssayForDiseaseIdAndDeviceType(
+                diseaseId,
+                deviceTypeId
+              )
+              const caseId = getCaseIdByDeviceTypeId(deviceTypeId)
+              let testTypeText
+              let testType
+              const resultId = await createResult(
+                partnerId,
+                deviceTypeId,
+                'Nasal Swab',
+                assayExternalId,
+                otherUserId,
+                resultFromInstrument,
+                {},
+                true
+              )
+              const formDataToSend = {
+                caseId,
+                testReason,
+                age,
+                gender,
+                testResult,
+                dateAndTimeOfTest,
+              }
+              const resultAspectExpected = {}
+              if (deviceTypeId === 'Aspect') {
+                testTypeText = 'Digital X-Ray'
+                testType = getOptionValueFromTitle(
+                  [
+                    {
+                      title: 'PCR/molecular',
+                      value: 'pcr',
+                    },
+                    {
+                      title: 'Immunoassay',
+                      value: 'immunoassay',
+                    },
+                    {
+                      title: 'Rapid diagnostic test',
+                      value: 'rapidDiagnosticTest',
+                    },
+                    {
+                      title: 'Digital X-Ray',
+                      value: 'digitalXRay',
+                    },
+                  ],
+                  testTypeText
+                )
+                formDataToSend.testType = testType
+              }
+              const response = await server
+                .put(`${path}/form-data/${resultId}`)
+                .send(formDataToSend)
+                .set('Authorization', shared.token)
+              expect(response.body.data.id).to.equal(resultId)
+              const result = await getResult(resultId)
+              result.patientData = JSON.parse(result.patientData)
+              result.resultData = JSON.parse(result.resultData)
+              result.formData = JSON.parse(result.formData)
+              if (deviceTypeId !== 'Aspect') {
+                expect(result).to.containSubset({
+                  patientData: {
+                    id: patientDataFromInstrument.id,
+                    age,
+                    gender: genderText,
+                    testReason: testReasonText,
+                  },
+                  resultData: {
+                    resultText: resultDataFromInstrument.resultText,
+                    typeOfTest: testTypeText,
+                  },
+                  formData: {
+                    ...formDataToSend,
+                    dateAndTimeOfTest: formDataToSend.dateAndTimeOfTest.toISOString(),
+                  },
+                  startedOn: resultFromInstrument.startedOn,
+                  endedOn: resultFromInstrument.endedOn,
+                  resultCategory1: resultFromInstrument.resultCategory1,
+                  updatedBy: adminId,
+                  ...resultAspectExpected,
+                })
+              } else {
+                expect(result).to.containSubset({
+                  patientData: {
+                    id: caseId,
+                    age,
+                    gender: genderText,
+                    testReason: testReasonText,
+                  },
+                  resultData: { resultText, typeOfTest: testTypeText },
+                  formData: {
+                    ...formDataToSend,
+                    dateAndTimeOfTest: formDataToSend.dateAndTimeOfTest.toISOString(),
+                  },
+                  startedOn: dateAndTimeOfTest,
+                  endedOn: dateAndTimeOfTest,
+                  resultCategory1: resultCategories[resultText],
+                  updatedBy: adminId,
+                  ...resultAspectExpected,
+                })
+              }
+              const deviceLogsForResult = await knex('DeviceLog')
+                .where({ resultId })
+                .select()
+              expect(deviceLogsForResult).to.have.lengthOf(2)
+              expect(deviceLogsForResult).to.containSubset([
+                {
+                  deviceId: covidDeviceTypeDevices.Aspect.id,
+                  source: 'Result Edited in Aspect',
+                  rawMessage: JSON.stringify({
+                    auth: { credentials: { name: 'admin' } },
+                    params: { resultId },
+                    payload: formDataToSend,
+                  }),
+                },
+              ])
+            }
+          )
+        })
+      })
     })
   })
 })

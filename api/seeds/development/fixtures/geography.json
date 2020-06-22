@@ -1,175 +1,11 @@
 {
   "countries": [
     {
-      "abbreviation": "CM",
-      "name": "Cameroon",
-      "a3": "CMR",
-      "culture": "fr-CM",
-      "countryCode": "237",
-      "stateLabel": "Region",
-      "lgaLabel": "Division",
-      "timezone": "West Africa Standard Time",
-      "portNumber": 3015,
-      "exportColumns": "DeploymentDescription|TestEndedOn|AssayName|AssayVersion|User|Result1|Result2|HIV|DRSuspect|PatientAge|PatientGender|PatientLGA|ReagentLotID|ExpirationDate|CartridgeSerial|ModuleSerial|SoftwareVersion|ErrorCode|ErrorCategory|ErrorDescription|SampleId|Notes|ProbeA",
-      "inventoryDaysThreshold": 21,
-      "monthStartsOnDay": 1,
-      "states": [
-        {
-          "name": "Adamaoua",
-          "lgas": [
-            {
-              "name": "Vina"
-            },
-            {
-              "name": "Mbéré"
-            },
-            {
-              "name": "Mayo-Banyo"
-            },
-            {
-              "name": "Faro-et-Déo"
-            },
-            {
-              "name": "Djérem"
-            }
-          ]
-        },
-        {
-          "name": "Centre",
-          "lgas": [
-            {
-              "name": "Haute-Sanaga"
-            },
-            {
-              "name": "Lekié"
-            },
-            {
-              "name": "Mbam-et-Inoubou"
-            },
-            {
-              "name": "Mbam-et-Kim"
-            },
-            {
-              "name": "Méfou-et-Afamba"
-            },
-            {
-              "name": "Méfou-et-Akono"
-            },
-            {
-              "name": "Mfoundi"
-            },
-            {
-              "name": "Nyong-et-Kéllé"
-            },
-            {
-              "name": "Nyong-et-Mfoumou"
-            },
-            {
-              "name": "Nyong-et-So'o"
-            }
-          ]
-        },
-        {
-          "name": "Est",
-          "lgas": [
-            {
-              "name": "Boumba-et-Ngoko"
-            },
-            {
-              "name": "Haut-Nyong"
-            },
-            {
-              "name": "Kadey"
-            },
-            {
-              "name": "Lom-et-Djérem"
-            }
-          ]
-        },
-        {
-          "name": "Extreme-Nord",
-          "lgas": [
-            {
-              "name": "Diamaré"
-            },
-            {
-              "name": "Logone-et-Chari"
-            },
-            {
-              "name": "Mayo-Danay"
-            },
-            {
-              "name": "Mayo-Kani"
-            },
-            {
-              "name": "Mayo-Sava"
-            },
-            {
-              "name": "Mayo-Tsanaga"
-            }
-          ]
-        },
-        {
-          "name": "Littoral",
-          "lgas": [
-            {
-              "name": "Moungo"
-            },
-            {
-              "name": "Nkam"
-            },
-            {
-              "name": "Sanaga-Maritime"
-            },
-            {
-              "name": "Wouri"
-            }
-          ]
-        },
-        {
-          "name": "Nord",
-          "lgas": [
-            {
-              "name": "Bénoué"
-            },
-            {
-              "name": "Faro"
-            },
-            {
-              "name": "Mayo-Louti"
-            },
-            {
-              "name": "Mayo-Rey"
-            }
-          ]
-        },
-        {
-          "name": "Nord-Ouest",
-          "lgas": [
-            {
-              "name": "Mezam"
-            }
-          ]
-        },
-        {
-          "name": "Ouest"
-        },
-        {
-          "name": "Sud"
-        },
-        {
-          "name": "Sud-Ouest"
-        }
-      ]
-    },
-    {
       "abbreviation": "MW",
       "name": "Malawi",
       "a3": "MWI",
       "culture": "ny-MW",
       "countryCode": "265",
-      "stateLabel": "District",
-      "lgaLabel": "LGA",
       "timezone": "Central Africa Time",
       "portNumber": 2952,
       "exportColumns": "DeploymentDescription|TestEndedOn|AssayName|AssayVersion|User|Result1|Result2|HIV|DRSuspect|PatientAge|PatientGender|PatientLGA|ReagentLotID|ExpirationDate|CartridgeSerial|ModuleSerial|SoftwareVersion|ErrorCode|ErrorCategory|ErrorDescription|SampleId|Notes|ProbeA",
@@ -268,8 +104,6 @@
       "a3": "NGA",
       "culture": "ig-NG",
       "countryCode": "234",
-      "stateLabel": "State",
-      "lgaLabel": "LGA",
       "timezone": "W. Central Africa Standard Time",
       "portNumber": 2951,
       "exportColumns": "DeploymentDescription|TestEndedOn|AssayName|AssayVersion|User|Result1|Result2|HIV|DRSuspect|PatientAge|PatientGender|PatientLGA|ReagentLotID|ExpirationDate|CartridgeSerial|ModuleSerial|SoftwareVersion|ErrorCode|ErrorCategory|ErrorDescription|SampleId|Notes|ProbeA",
@@ -309,8 +143,6 @@
       "a3": "ZAF",
       "culture": "en",
       "countryCode": "27",
-      "stateLabel": "Province",
-      "lgaLabel": "District",
       "timezone": "South Africa Standard Time",
       "portNumber": 3035,
       "exportColumns": "DeploymentDescription|TestEndedOn|AssayName|AssayVersion|User|Result1|Result2|ResultText|PatientId|ReagentLotID|ExpirationDate|CartridgeSerial|ModuleSerial|SoftwareVersion|ErrorCode|ErrorCategory|ErrorDescription|SampleId|Notes|ProbeDCt|ProbeCCt|ProbeECt|ProbeBCt|Qc1Ct|Qc2Ct",
@@ -347,8 +179,6 @@
       "a3": "USA",
       "culture": "en-US",
       "countryCode": "1",
-      "stateLabel": "State",
-      "lgaLabel": "County",
       "timezone": "Eastern Standard Time",
       "portNumber": 3000,
       "exportColumns": "DeploymentDescription|TestEndedOn|AssayName|AssayVersion|User|Result1|Result2|ReagentLotID|ExpirationDate|CartridgeSerial|ModuleSerial|SoftwareVersion|ErrorCode|ErrorCategory|ErrorDescription|SampleId|Notes",
@@ -885,8 +715,6 @@
       "a3": "MMR",
       "culture": "en",
       "countryCode": "95",
-      "stateLabel": "State/Region",
-      "lgaLabel": "District",
       "timezone": "Myanmar Standard Time",
       "portNumber": 2952,
       "exportColumns": "DeploymentDescription|TestEndedOn|AssayName|AssayVersion|User|Result1|Result2|ReagentLotID|ExpirationDate|CartridgeSerial|ModuleSerial|SoftwareVersion|ErrorCode|ErrorCategory|ErrorDescription|SampleId|PatientId|PatientAge|PatientGender|PatientCity|Hiv|PreviouslyTreated|MicroscopyResult|Notes|TestReason|Tag",
@@ -1345,8 +1173,6 @@
       "a3": "ZWE",
       "culture": "en",
       "countryCode": "263",
-      "stateLabel": "Province",
-      "lgaLabel": "District",
       "timezone": "South Africa Standard Time",
       "portNumber": 3029,
       "exportColumns": "DeploymentDescription|TestEndedOn|AssayName|AssayVersion|User|Result1|Result2|ResultText|PatientId|ReagentLotID|ExpirationDate|CartridgeSerial|ModuleSerial|SoftwareVersion|ErrorCode|ErrorCategory|ErrorDescription|SampleId|Notes|ProbeDCt|ProbeCCt|ProbeECt|ProbeBCt|Qc1Ct|Qc2Ct",
@@ -1400,10 +1226,8 @@
       "abbreviation": "CM",
       "name": "Cameroon",
       "a3": "CMR",
-      "culture": "FR",
+      "culture": "fr-CM",
       "countryCode": "237",
-      "stateLabel": "Region",
-      "lgaLabel": "Division",
       "timezone": "W. Central Africa Standard Time",
       "portNumber": 3029,
       "exportColumns": "DeploymentDescription|TestEndedOn|AssayName|AssayVersion|User|Result1|Result2|ResultText|PatientId|ReagentLotID|ExpirationDate|CartridgeSerial|ModuleSerial|SoftwareVersion|ErrorCode|ErrorCategory|ErrorDescription|SampleId|Notes|ProbeDCt|ProbeCCt|ProbeECt|ProbeBCt|Qc1Ct|Qc2Ct",
@@ -1642,8 +1466,6 @@
       "a3": "WKA",
       "culture": "en-US",
       "countryCode": "999",
-      "stateLabel": "Province",
-      "lgaLabel": "District",
       "timezone": "South Africa Standard Time",
       "portNumber": 9999,
       "exportColumns": "DeploymentDescription|TestEndedOn|AssayName|AssayVersion|User|Result1|Result2|HIV|DRSuspect|PatientAge|PatientGender|PatientLGA|ReagentLotID|ExpirationDate|CartridgeSerial|ModuleSerial|SoftwareVersion|ErrorCode|ErrorCategory|ErrorDescription|SampleId|Notes|ProbeA",

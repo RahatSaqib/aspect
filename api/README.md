@@ -8,7 +8,7 @@ Swagger UI is available for testing the UI manually and viewing route documentat
 
 Node v8.13 ([nvm](https://github.com/creationix/nvm) highly recommended)
 
-Mysql v5.7
+MySql v8.0
 
 Yarn v1.9.4
 
@@ -141,7 +141,7 @@ nodemon src/server
 
 `GET '/'`: Will return hello! (for testing)
 
-`POST '/api/auth'`: Send name, password, client_id, and client_name in x-www-form-urlencoded format and if credentials are OK returns a JWT.
+`POST '/api/auth'`: Send name, password, clientId, and clientName in x-www-form-urlencoded format and if credentials are OK returns a JWT.
 
 `POST '/api/auth/refresh'`: Post a refresh token in the "x-access-token" header, and this endpoint will return a refreshed JWT.
 

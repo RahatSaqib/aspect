@@ -1,17 +1,14 @@
 import _ from 'lodash'
 import React from 'react'
 import { shallow } from 'enzyme'
-import { IntlProvider } from 'react-intl'
+import { createIntl } from 'react-intl'
 import LinearProgress from '@material-ui/core/LinearProgress'
 import Button from '@material-ui/core/Button'
 import { Login } from './Login'
 
 describe('Login component', () => {
-  const intlProvider = new IntlProvider({ locale: 'en' }, {})
-  const { intl } = intlProvider.getChildContext()
-
   const props = {
-    intl,
+    intl: createIntl({ locale: 'en' }),
     onUserChange: _.noop,
     onPasswordChange: _.noop,
     handleSubmit: _.noop,

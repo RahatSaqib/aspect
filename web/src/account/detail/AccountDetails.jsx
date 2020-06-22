@@ -2,10 +2,11 @@ import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
 import { compose, setPropTypes } from 'recompose'
 import { bindActionCreators } from 'redux'
-import Helmet from 'react-helmet'
+import { Helmet } from 'react-helmet'
 import { connect } from 'react-redux'
 import { Switch, Route } from 'react-router-dom'
 import LinearProgress from '@material-ui/core/LinearProgress'
+import { injectIntl } from 'react-intl'
 import Paper from '@material-ui/core/Paper'
 
 import NavTitle from '../../globals/components/NavTitle'
@@ -29,6 +30,7 @@ import {
 import AccountDetailsBackBar from './AccountDetailsBackBar'
 
 const enhance = compose(
+  injectIntl,
   setPropTypes({
     location: PropTypes.object.isRequired, // eslint-disable-line
     history: PropTypes.object.isRequired, // eslint-disable-line

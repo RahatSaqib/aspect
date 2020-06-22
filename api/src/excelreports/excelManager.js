@@ -1,5 +1,6 @@
 const Excel = require('exceljs')
 const _ = require('lodash')
+const { getContentType } = require('../shared/io')
 
 function findContentInExcelRow(
   row,
@@ -25,6 +26,7 @@ function findContentInExcelRow(
   }
   return null
 }
+
 function findContentInExcelSheet(
   worksheet,
   placeHolderTag,
@@ -65,6 +67,7 @@ function replaceContentInExcelSheet(
   )
   if (cell != null) cell.value = stringToReplace
 }
+
 function setColumnsKeysAndBindData(
   worksheet,
   placeHolderTag,
@@ -140,6 +143,7 @@ function setColumnsKeysByPlaceHolder(worksheet, placeHolderTag, rowsNext = 0) {
     return cell.rowNumber + rowsNext
   }
 }
+
 // This functions manage everything about the report template.
 // the parameters are:
 // The format (csv or xlsx)
@@ -182,6 +186,7 @@ async function generateReport(
 
   return generateReportFile(workbook, format)
 }
+
 async function generateWorkbookByDataSource(
   format,
   data,
@@ -239,33 +244,28 @@ async function generateWorkbookByDataSource(
 
   return generateReportFile(workbook, format)
 }
+
 async function generateReportFile(workbook, format) {
   if (format && format.toLowerCase() !== 'csv')
     return workbook.xlsx.writeBuffer()
   return workbook.csv.writeBuffer()
 }
+
 async function downloadReportFile(
   reportFunction,
   reply,
-  format,
+  format = 'xlsx',
   fileName = 'report_'
 ) {
-  return reportFunction
-    .then(resp =>
-      reply
-        .response(resp)
-        .encoding('binary')
-        .type('application/octet-stream')
-        .header(
-          'content-disposition',
-          `attachment; filename=${fileName}_${new Date().toISOString()}.${format};`
-        )
-    )
+  const ext = format || 'xlsx'
+  const reportFileName = `${fileName}_${new Date().toISOString()}.${ext}`
 
-    .catch(err => {
-      console.error('Error ', err) // eslint-disable-line no-console
-      throw err
-    })
+  // resolve promise by returning any value and respond binary stream with generated Excel file
+  return reply
+    .response(await reportFunction)
+    .encoding('binary')
+    .type(getContentType(ext))
+    .header('content-disposition', `attachment; filename=${reportFileName};`)
 }
 
 module.exports = {

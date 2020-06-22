@@ -5,6 +5,7 @@ async function up(knex) {
     emailMessage.text('sendResponse', 'mediumtext')
   })
 }
+
 async function down(knex) {
   await knex.schema.alterTable('EmailMessage', emailMessage => {
     emailMessage.dropColumn('sendResponse')

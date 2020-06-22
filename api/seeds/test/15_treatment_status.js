@@ -5,7 +5,8 @@ const { resultTreatmentStatusToId } = require('../../src/shared/dictionary')
 
 module.exports = require('../utils').seed(seed, __filename)
 
-const treatmentStatus = require('../fixtures/treatmentStatus.json')
+const treatmentStatus = require('../fixtures/ResultTreatmentStatus.json')
+const { ensureResultTreatmentStatuses } = require('../common')
 
 const now = new Date()
 
@@ -16,7 +17,7 @@ async function seed(knex) {
     '* as countTreatmentStatus'
   )
   if (treatmentStatus.length > countTreatmentStatus) {
-    await knex('ResultTreatmentStatus').insert(treatmentStatus)
+    await ensureResultTreatmentStatuses(knex, treatmentStatus)
 
     const results = await knex('Result').select('id')
 
@@ -35,11 +36,9 @@ async function seed(knex) {
         createdOn: subMinutes(now, 90),
       })
 
-      await knex('Result')
-        .where('id', resultId.id)
-        .update({
-          treatmentStatusLogId,
-        })
+      await knex('Result').where('id', resultId.id).update({
+        treatmentStatusLogId,
+      })
     })
   }
 }

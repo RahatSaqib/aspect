@@ -24,8 +24,13 @@ const TemperatureGauge = ({
   const tubeHeight =
     height - tubeY - tubeRadius - margin.bottom + tubeBorderWidth
 
-  const tubeBorderColor = '#91949d'
-  const tubeFillColor = '#fff'
+  const {
+    '--aspect-color-grey-4': colorGrey4,
+    '--aspect-color-white': colorWhite,
+  } = process.env
+
+  const tubeBorderColor = colorGrey4
+  const tubeFillColor = colorWhite
 
   const axisScale = scaleLinear({
     rangeRound: [tubeHeight, 0],

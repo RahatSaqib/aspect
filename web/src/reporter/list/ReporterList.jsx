@@ -2,10 +2,10 @@ import _ from 'lodash'
 import classnames from 'classnames/bind'
 import React from 'react'
 import { compose, withProps, withHandlers, lifecycle } from 'recompose'
-import { defineMessages } from 'react-intl'
+import { defineMessages, injectIntl } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import Helmet from 'react-helmet'
+import { Helmet } from 'react-helmet'
 import TableBody from '@material-ui/core/TableBody'
 
 import {
@@ -133,6 +133,7 @@ const filtersFromLocation = composeSanitizer(
 )
 
 const enhance = compose(
+  injectIntl,
   withProps(
     makeSortPageSelector({
       sortCol: 'user',

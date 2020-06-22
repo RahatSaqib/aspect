@@ -1,9 +1,9 @@
 import classnames from 'classnames/bind'
 import { connect } from 'react-redux'
 import React, { useRef, useEffect, useState } from 'react'
-import Helmet from 'react-helmet'
+import { Helmet } from 'react-helmet'
 import _ from 'lodash'
-import { defineMessages } from 'react-intl'
+import { defineMessages, injectIntl } from 'react-intl'
 import Grid from '@material-ui/core/Grid'
 import Paper from '@material-ui/core/Paper'
 import ReadOnlyField from '../components/shared/ReadOnlyField'
@@ -167,6 +167,7 @@ const mapStateToProps = (state, ownProps) => {
   }
 }
 
-export default connect(mapStateToProps, { fetchResultsByPatient })(
-  ClinicalHistory
-)
+export default _.flowRight(
+  injectIntl,
+  connect(mapStateToProps, { fetchResultsByPatient })
+)(ClinicalHistory)

@@ -9,8 +9,6 @@ const {
   unassignJobContext,
   assignJobFunctionDashboardWidgets,
   unassignJobFunctionDashboardWidgets,
-  assignJobFunctionFeatures,
-  unassignJobFunctionFeatures,
   assignJobFunctionPermissions,
   unassignJobFunctionPermissions,
   assignPersonTo,
@@ -21,15 +19,13 @@ const {
 // ---------------------------------------------------------------------------------------------
 // helpers
 // ---------------------------------------------------------------------------------------------
-const ok = Joi.boolean()
-  .required()
-  .description(
-    `
+const ok = Joi.boolean().required().description(
+  `
     True means workflow ran well, False - some non-breakable error happened.
     If both cases - see more details in other props (i.e. "data").
     FYI - breakable error is when return Boom.
     `
-  )
+)
 
 const jobResponse = {
   options: {
@@ -42,12 +38,8 @@ const jobResponse = {
       .description('All jobs for specified person')
       .items(
         Joi.object().keys({
-          id: Joi.number()
-            .required()
-            .description('Job.id'),
-          personId: Joi.number()
-            .required()
-            .description('Job.personId'),
+          id: Joi.number().required().description('Job.id'),
+          personId: Joi.number().required().description('Job.personId'),
           jobFunctionId: Joi.number()
             .required()
             .description('Job.jobFunctionId'),
@@ -66,21 +58,22 @@ const jobContextResponse = {
       .description('All job contexts for specified person')
       .items(
         Joi.object().keys({
-          jobId: Joi.number()
-            .required()
-            .description('JobContext.jobId'),
-          personId: Joi.number()
-            .required()
-            .description('Job.personId'),
+          jobId: Joi.number().required().description('JobContext.jobId'),
+          personId: Joi.number().required().description('Job.personId'),
           jobFunctionId: Joi.number()
             .required()
             .description('Job.jobFunctionId'),
           geographyId: Joi.number()
             .allow(null)
             .description('JobContext.geographyId'),
-          siteId: Joi.number()
+          siteId: Joi.number().allow(null).description('JobContext.siteId'),
+          deviceTypeId: Joi.number()
             .allow(null)
-            .description('JobContext.siteId'),
+            .description('JobContext.deviceTypeId'),
+          assayTypeId: Joi.number()
+            .allow(null)
+            .description('JobContext.assayTypeId'),
+          assayId: Joi.number().allow(null).description('JobContext.assayId'),
         })
       ),
   }),
@@ -99,54 +92,53 @@ const personAssignmentsResponse = {
           // ----------
           // required
           // ----------
-          personId: Joi.number()
-            .required()
-            .description('Job.personId'),
+          personId: Joi.number().required().description('Job.personId'),
           partnerId: Joi.number()
             .required()
             .description('JobFunction.personId'),
-          jobContextId: Joi.number()
-            .required()
-            .description('JobContext.id'),
-          jobId: Joi.number()
-            .required()
-            .description('JobContext.jobId'),
+          jobContextId: Joi.number().required().description('JobContext.id'),
+          jobId: Joi.number().required().description('JobContext.jobId'),
           jobFunctionId: Joi.number()
             .required()
             .description('Job.jobFunctionId'),
           jobFunctionName: Joi.string()
             .required()
             .description('JobFunction.name'),
-          countryId: Joi.number()
-            .required()
-            .description('Country.id'),
-          countryName: Joi.string()
-            .required()
-            .description('Country.name'),
+          countryId: Joi.number().required().description('Country.id'),
+          countryName: Joi.string().required().description('Country.name'),
           // ----------
           // optional
           // ----------
-          siteId: Joi.number()
-            .allow(null)
-            .description('JobContext.siteId'),
-          siteName: Joi.string()
-            .allow(null, '')
-            .description('Site.name'),
+          siteId: Joi.number().allow(null).description('JobContext.siteId'),
+          siteName: Joi.string().allow(null, '').description('Site.name'),
           geographyId: Joi.number()
             .allow(null)
             .description('JobContext.geographyId'),
-          stateId: Joi.number()
-            .allow(null)
-            .description('State.id'),
-          stateName: Joi.string()
+          stateId: Joi.number().allow(null).description('State.id'),
+          stateName: Joi.string().allow(null, '').description('State.name'),
+          lgaId: Joi.number().allow(null).description('Lga.id'),
+          lgaName: Joi.string().allow(null, '').description('Lga.name'),
+          deviceTypeId: Joi.number().allow(null).description('DeviceType.id'),
+          deviceTypeName: Joi.string()
             .allow(null, '')
-            .description('State.name'),
-          lgaId: Joi.number()
-            .allow(null)
-            .description('Lga.id'),
-          lgaName: Joi.string()
+            .description('DeviceType.name'),
+          diseaseId: Joi.number().allow(null).description('Disease.id'),
+          diseasei18nKey: Joi.string()
             .allow(null, '')
-            .description('Lga.name'),
+            .description('Disease.i18nKey'),
+          diseaseName: Joi.string().allow(null, '').description('Disease.name'),
+          assayTypeId: Joi.number().allow(null).description('AssayType.id'),
+          assayTypei18nKey: Joi.string()
+            .allow(null, '')
+            .description('AssayType.i18nKey'),
+          assayTypeName: Joi.string()
+            .allow(null, '')
+            .description('AssayType.name'),
+          assayId: Joi.number().allow(null).description('Assay.id'),
+          assayi18nKey: Joi.string()
+            .allow(null, '')
+            .description('Assay.i18nKey'),
+          assayName: Joi.string().allow(null, '').description('Assay.name'),
         })
       ),
   }),
@@ -162,33 +154,8 @@ const jobFunctionDashboardWidgetResponse = {
       .description('All accessible widgets for specified job function')
       .items(
         Joi.object().keys({
-          widgetId: Joi.number()
-            .required()
-            .description('widgetId'),
-          jobFunctionId: Joi.number()
-            .required()
-            .description('jobFunctionId'),
-        })
-      ),
-  }),
-}
-const jobFunctionFeatureResponse = {
-  options: {
-    allowUnknown: false,
-  },
-  schema: Joi.object().keys({
-    ok,
-    data: Joi.array()
-      .required()
-      .description('All features for specified job function')
-      .items(
-        Joi.object().keys({
-          featureId: Joi.number()
-            .required()
-            .description('featureId'),
-          jobFunctionId: Joi.number()
-            .required()
-            .description('jobFunctionId'),
+          widgetId: Joi.number().required().description('widgetId'),
+          jobFunctionId: Joi.number().required().description('jobFunctionId'),
         })
       ),
   }),
@@ -204,12 +171,8 @@ const jobFunctionPermissionsResponse = {
       .description('All permissions for specified job function')
       .items(
         Joi.object().keys({
-          permissionId: Joi.number()
-            .required()
-            .description('permissionId'),
-          jobFunctionId: Joi.number()
-            .required()
-            .description('jobFunctionId'),
+          permissionId: Joi.number().required().description('permissionId'),
+          jobFunctionId: Joi.number().required().description('jobFunctionId'),
         })
       ),
   }),
@@ -310,6 +273,9 @@ const routes = [
           jobFunctionId: Joi.number(),
           geographyId: Joi.number(),
           siteId: Joi.number(),
+          deviceTypeId: Joi.number(),
+          assayTypeId: Joi.number(),
+          assayId: Joi.number(),
           removeJob: Joi.boolean(),
         },
       },
@@ -331,6 +297,9 @@ const routes = [
           jobFunctionId: Joi.number(),
           geographyId: Joi.number(),
           siteId: Joi.number(),
+          deviceTypeId: Joi.number(),
+          assayTypeId: Joi.number(),
+          assayId: Joi.number(),
           removeJob: Joi.boolean(),
         },
       },
@@ -351,9 +320,7 @@ const routes = [
       validate: {
         payload: {
           jobFunctionId: Joi.number().required(),
-          widgets: Joi.array()
-            .items(Joi.number())
-            .required(),
+          widgets: Joi.array().items(Joi.number()).required(),
         },
       },
       response: jobFunctionDashboardWidgetResponse,
@@ -370,57 +337,14 @@ const routes = [
       validate: {
         payload: {
           jobFunctionId: Joi.number().required(),
-          widgets: Joi.array()
-            .items(Joi.number())
-            .allow(null),
+          widgets: Joi.array().items(Joi.number()).allow(null),
           all: Joi.boolean().allow(null),
         },
       },
       response: jobFunctionDashboardWidgetResponse,
     },
   },
-  // ------------
-  // Job Function Feature
-  // ------------
-  {
-    method: 'POST',
-    path: '/job-function/assign-features',
-    handler: asyncHandler(assignJobFunctionFeatures),
-    config: {
-      description: 'Assign features to specified JobFunction',
-      notes: 'Assign features to specified JobFunction',
-      auth: { scope: ['person:admin'] },
-      validate: {
-        payload: {
-          jobFunctionId: Joi.number().required(),
-          features: Joi.array()
-            .items(Joi.number())
-            .required(),
-        },
-      },
-      response: jobFunctionFeatureResponse,
-    },
-  },
-  {
-    method: 'POST',
-    path: '/job-function/unassign-features',
-    handler: asyncHandler(unassignJobFunctionFeatures),
-    config: {
-      description: 'Unassign features from specified JobFunction',
-      notes: 'Unassign features from specified JobFunction',
-      auth: { scope: ['person:admin'] },
-      validate: {
-        payload: {
-          jobFunctionId: Joi.number().required(),
-          features: Joi.array()
-            .items(Joi.number())
-            .allow(null),
-          all: Joi.boolean().allow(null),
-        },
-      },
-      response: jobFunctionFeatureResponse,
-    },
-  },
+
   // ------------
   // Job Function Permissions
   // ------------
@@ -435,9 +359,7 @@ const routes = [
       validate: {
         payload: {
           jobFunctionId: Joi.number().required(),
-          permissions: Joi.array()
-            .items(Joi.number())
-            .required(),
+          permissions: Joi.array().items(Joi.number()).required(),
         },
       },
       response: jobFunctionPermissionsResponse,
@@ -454,9 +376,7 @@ const routes = [
       validate: {
         payload: {
           jobFunctionId: Joi.number().required(),
-          permissions: Joi.array()
-            .items(Joi.number())
-            .allow(null),
+          permissions: Joi.array().items(Joi.number()).allow(null),
           all: Joi.boolean().allow(null),
         },
       },
@@ -476,9 +396,7 @@ const routes = [
       auth: { scope: ['person:admin'] },
       validate: {
         params: {
-          personId: Joi.string()
-            .description('Person ID')
-            .required(),
+          personId: Joi.string().description('Person ID').required(),
         },
       },
       response: personAssignmentsResponse,
@@ -489,7 +407,7 @@ const routes = [
   // ------------
   {
     method: 'POST',
-    path: '/job-function/assign-person-to-job-and-site',
+    path: '/job-function/assign-person-to-job-and-context',
     handler: asyncHandler(assignPersonTo),
     config: {
       description:
@@ -507,6 +425,11 @@ const routes = [
           lgaId: Joi.number().allow(null),
           // site
           siteId: Joi.number().allow(null),
+          // device/assay type
+          diseaseId: Joi.number().allow(null),
+          deviceTypeId: Joi.number().allow(null),
+          assayTypeId: Joi.number().allow(null),
+          assayId: Joi.number().allow(null),
         },
       },
       response: personAssignmentsResponse,
@@ -525,14 +448,8 @@ const routes = [
       auth: { scope: ['person:admin'] },
       validate: {
         params: {
-          personId: Joi.number()
-            .integer()
-            .positive()
-            .required(),
-          jobContextId: Joi.number()
-            .integer()
-            .positive()
-            .required(),
+          personId: Joi.number().integer().positive().required(),
+          jobContextId: Joi.number().integer().positive().required(),
         },
       },
       response: personAssignmentsResponse,

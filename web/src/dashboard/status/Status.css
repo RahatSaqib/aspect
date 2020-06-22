@@ -398,7 +398,7 @@
 .ActionDataTable--empty {
   text-align: center;
   font-size: var(--aspect-font-size-md);
-  border-top: 2px solid #e6e6e6;
+  border-top: 2px solid var(--aspect-color-grey-9);
 }
 
 .ReportsContainer {
@@ -410,7 +410,7 @@
 .ReportsContainer__Button {
   margin: 0 20px;
   background-color: var(--aspect-color-grey-5);
-  color: #fff;
+  color: var(--aspect-color-white);
   white-space: normal;
   height: auto;
   width: 250px;
@@ -469,7 +469,7 @@
 .Treatment--graph-tooltip-help-icon svg {
   margin-top: -10px;
   cursor: pointer;
-  color: #34717c;
+  color: var(--aspect-color-chill-blue-1);
 }
 .Treatment--graph-tooltip-color {
   width: 15px;
@@ -492,3 +492,28 @@
   justify-content: flex-end;
   padding-right: 20px;
 }
+
+/* Results by Category Start */
+.results--container {
+  display: flex;
+  justify-content: center;
+  align-content: center;
+}
+
+.results--graphContainer {
+  width: 900px;
+  display: flex;
+  justify-content: space-between;
+  align-content: center;
+}
+
+.resultsContainer--aggregate {
+  width: 200px;
+  height: 200px;
+}
+
+.resultsContainer--byMonth {
+  width: 100%;
+  height: 200px;
+}
+/* Results by Category End */

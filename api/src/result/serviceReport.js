@@ -1,8 +1,9 @@
 const flatten = require('flat')
 const _ = require('lodash')
-const { exportResults } = require('./service')
+const { getResultsForExport } = require('./service')
 const { knex } = require('../db')
 const { getUser } = require('../auth/service')
+const { exportData, getBaseReplacements } = require('../shared/excel')
 
 const {
   generateWorkbookByDataSource,
@@ -11,50 +12,31 @@ const {
 const { getAllAssaySchemas } = require('../assay/service')
 
 const headers = [
-  { key: 'startedOn', header: 'Test Start Date' },
-  { key: 'endedOn', header: 'Test End Date' },
-  { key: 'deviceName', header: 'Device' },
-  { key: 'deviceSerial', header: 'Device Serial #' },
-  { key: 'countryName', header: 'Country' },
+  { key: 'endedOn', header: 'Test Date' },
   { key: 'stateName', header: 'State' },
   { key: 'lgaName', header: 'LGA' },
+  { key: 'siteName', header: 'Site' },
+  { key: 'deviceName', header: 'Device' },
+  { key: 'patientId', header: 'Patient Id' },
+  { key: 'caseExternalId', header: 'Case ID' },
+  { key: 'sampleId', header: 'Sample Id' },
+  { key: 'sampleCollectedOn', header: 'Sample Collected Date' },
+  { key: 'sampleOriginSiteName', header: 'Sample Collection Site' },
   { key: 'resultCategory1Name', header: 'Result category 1' },
   { key: 'resultCategory2Name', header: 'Result category 2' },
   { key: 'resultWorkflowStatus', header: 'Result Status' },
-  { key: 'resultWorkflowChangedOn', header: 'Result Status date' },
-  { key: 'resultTreatmentStatus', header: 'Result Treatment Status' },
-  { key: 'siteName', header: 'Site' },
-  { key: 'assayVersion', header: 'Assay Version' },
+  { key: 'resultWorkflowChangedOn', header: 'Result Status Changed On' },
   { key: 'consumableSerial', header: 'Consumable Serial' },
   { key: 'consumableLot', header: 'Consumable Lot' },
   { key: 'consumableExpirationDate', header: 'Consumable Expiration Date' },
   { key: 'instrumentSerial', header: 'Instrument Serial' },
   { key: 'moduleName', header: 'Module' },
   { key: 'moduleSerial', header: 'Module Serial' },
-  { key: 'researchId', header: 'Research Id' },
-  { key: 'senderVersion', header: 'Sender Version' },
+  { key: 'researchId', header: 'Research ID' },
   { key: 'senderOperator', header: 'Operator' },
-  { key: 'notes', header: 'Notes' },
   { key: 'errorCode', header: 'Error Code' },
   { key: 'errorNotes', header: 'Error notes' },
-  { key: 'createdOn', header: 'Error date' },
-  { key: 'sampleId', header: 'Sample Id' },
-  { key: 'sampleGroup', header: 'Sample Group' },
-  { key: 'sampleCollectedOn', header: 'sample collected Date' },
-  { key: 'sampleOriginSiteName', header: 'Sample origin site' },
-  { key: 'sampleTypeName', header: 'Sample type' },
-  { key: 'patientId', header: 'Patient Id' },
-  { key: 'requiresTreatment', header: 'Requires Treatment' },
-  { key: 'resultWorkflowLogReason', header: 'Result Reason' },
-  { key: 'resultWorkflowLogOperator', header: 'Result Log Operator' },
-  { key: 'resultWorkflowLogCreatedOn', header: 'Result Log date' },
-  { key: 'resultTreatmentMethod', header: 'Result Treatment Method' },
-  { key: 'resultTreatmentData', header: 'Result Treatment Data' },
-  {
-    key: 'resultTreatmentStatusChangedOn',
-    header: 'Result Treatment status date',
-  },
-  { key: 'treatmentStatusInfo', header: 'Treatment status info' },
+  { key: 'notes', header: 'Notes' },
 ]
 async function getResultsReport(request, reply) {
   const { query, auth } = request
@@ -66,10 +48,10 @@ async function getResultsReport(request, reply) {
   query.page = 0
   // do not export more than 1.000.000 records
   query.size = 10e6
-  const results = await exportResults(query, auth)
+  const results = await getResultsForExport(query, auth)
 
   // / this is for generate the headers and key for each row.
-  await getAssaySchema(query, user.partnerId, headers)
+  await getAssaySchema(query, user.partnerId, user.id, headers)
   await getResultFormData(user.partnerId, headers)
   const report = generateWorkbookByDataSource(
     query.format, // xlsx or csv
@@ -89,8 +71,9 @@ async function getResultsReport(request, reply) {
   )
   return downloadReportFile(report, reply, request.format)
 }
-async function getAssaySchema(query, partnerId, headers) {
-  const assaySchema = await getAllAssaySchemas(partnerId, query.assayId)
+
+async function getAssaySchema(query, partnerId, userId, headers) {
+  const assaySchema = await getAllAssaySchemas(partnerId, userId, query.assayId)
   let resultSchema = {}
   let patientSchema = {}
   assaySchema.forEach(element => {
@@ -114,6 +97,7 @@ async function getAssaySchema(query, partnerId, headers) {
       })
   })
 }
+
 async function getResultFormData(partnerId, headers) {
   const formSchema = await knex('ResultForm')
     .where('partnerId', partnerId)
@@ -141,6 +125,126 @@ const filterExcluded = collection =>
     elem => elem && (_.isNil(elem.excludeReport) || !elem.excludeReport)
   )
 
+// ----------------------------------------------------------------------------------------------
+async function exportResults(request, reply) {
+  const { query, auth } = request
+
+  const user = await getUser(auth.credentials.name)
+  // get whole dataset - based on current query params (sorting, filtering) and auth constraints
+  // ---------------
+  // change query page/size values to get whole dataset (not only currently paged items)
+  query.page = 0
+  // do not export more than 1.000.000 records
+  query.size = 10e6
+  const { data } = await getResultsForExport(query, auth)
+
+  const { partnerId, id: userId } = user
+  const props = { query, partnerId, userId }
+  const columnsFromAssaySchema = await getColumnsFromAssaySchema(props)
+  const columnsFromResultForms = await getColumnsFromResultForms(props)
+  const columns = [
+    // TODO: move below items to Excel template for better formatting and translations
+    { key: 'caseExternalId', header: 'Case ID' },
+    { key: 'sampleId', header: 'Sample Id' },
+    { key: 'sampleCollectedOn', header: 'Sample Collected Date' },
+    { key: 'sampleOriginSiteName', header: 'Sample Collection Site' },
+    { key: 'resultCategory1Name', header: 'Result category 1' },
+    { key: 'resultCategory2Name', header: 'Result category 2' },
+    { key: 'resultWorkflowStatus', header: 'Result Status' },
+    { key: 'resultWorkflowChangedOn', header: 'Result Status Changed On' },
+    { key: 'consumableSerial', header: 'Consumable Serial' },
+    { key: 'consumableLot', header: 'Consumable Lot' },
+    { key: 'consumableExpirationDate', header: 'Consumable Expiration Date' },
+    { key: 'instrumentSerial', header: 'Instrument Serial' },
+    { key: 'moduleName', header: 'Module' },
+    { key: 'moduleSerial', header: 'Module Serial' },
+    { key: 'researchId', header: 'Research ID' },
+    { key: 'senderOperator', header: 'Operator' },
+    { key: 'errorCode', header: 'Error Code' },
+    { key: 'errorNotes', header: 'Error notes' },
+    { key: 'notes', header: 'Notes' },
+    // dynamic columns from different schema json fields
+    ...columnsFromAssaySchema,
+    ...columnsFromResultForms,
+  ]
+
+  const sheetData = {
+    dataRows: data,
+    // TODO: use i18n string, because `exportData()` uses locale file templates with all labels translated
+    defaultNoDataMessage: 'No data',
+  }
+
+  return exportData(request, reply, sheetData, 'results', {
+    replacements: getBaseReplacements(),
+    columns,
+    dataSelector: (
+      dataRow // if you need to transform your dataset to another format, you should pass the transformation function to avoid iterate twice the datasource.
+    ) =>
+      flatten({
+        ...dataRow,
+        patientData: JSON.parse(dataRow.patientData),
+        resultData: JSON.parse(dataRow.resultData),
+        formData: JSON.parse(dataRow.formData),
+      }),
+  })
+}
+
+async function getColumnsFromAssaySchema({ query, partnerId, userId }) {
+  const columns = []
+  const assaySchema = await getAllAssaySchemas(partnerId, userId, query.assayId)
+  let resultData = {}
+  let patientData = {}
+
+  assaySchema.forEach(element => {
+    if (element.patientDataSchema) {
+      patientData = _.merge(patientData, JSON.parse(element.patientDataSchema))
+    }
+    if (element.resultDataSchema) {
+      resultData = _.merge(resultData, JSON.parse(element.resultDataSchema))
+    }
+  })
+
+  const flattenObjects = {
+    ...flatten({ resultData }),
+    ...flatten({ patientData }),
+  }
+
+  _.forEach(flattenObjects, (value, key) => {
+    if (key.toLowerCase().indexOf('title') >= 0) {
+      columns.push({
+        header: value,
+        key: key.replace('.title', '').replace('.properties', ''),
+      })
+    }
+  })
+
+  return columns
+}
+
+async function getColumnsFromResultForms({ partnerId }) {
+  const columns = []
+  const forms = await knex('ResultForm')
+    .where('partnerId', partnerId)
+    .pluck('formSchema')
+
+  _.forEach(forms, formSchema => {
+    _.forEach(JSON.parse(formSchema).fields, (value, key) => {
+      if (
+        value &&
+        (_.isNil(value.excludeReport) || !value.excludeReport) &&
+        value.name
+      ) {
+        columns.push({
+          header: value.name,
+          key: key.replace('.title', '').replace('.properties', ''),
+        })
+      }
+    })
+  })
+  return columns
+}
+
 module.exports = {
+  exportResults,
   getResultsReport,
 }

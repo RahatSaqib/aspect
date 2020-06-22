@@ -29,8 +29,9 @@ function getExportDirectory() {
   const dt = new Date()
 
   // pattern for random directory is /temp/yyyy-MM-dd/HH/uuid, using time-based UUID (v1)
-  const relPath = `/temp/${dt.getUTCFullYear()}-${dt.getUTCMonth() +
-    1}-${dt.getUTCDate()}/${dt.getUTCHours()}/${uuid.v1()}`
+  const relPath = `/temp/${dt.getUTCFullYear()}-${
+    dt.getUTCMonth() + 1
+  }-${dt.getUTCDate()}/${dt.getUTCHours()}/${uuid.v1()}`
 
   // export directory is in 'dist/temp' folder of the web site
   const dirFull = `./../web/dist/${relPath}`
@@ -160,6 +161,7 @@ async function generateCsvFile(outputFileName, items, columnNames, fieldNames) {
   const ok = await writeCsvFile(`${dir.full}/${outputFileName}`, workbook)
   return { ok, url: `${dir.url}/${outputFileName}`, message }
 }
+
 // ----------------------------------------------------------------------------------------------
 function getContentType(fileExt) {
   if (fileExt[0] === '.') {

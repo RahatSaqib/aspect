@@ -8,15 +8,10 @@ const followUp = require('../fixtures/FollowUp.json')
 async function seed(knex) {
   const now = new Date()
 
-  const partnerIds = await knex('Partner')
-    .select('id')
-    .map(p => p.id)
-
+  const partnerIds = await knex('Partner').pluck('id')
   await addFollowUps(knex, partnerIds, followUp)
 
-  const { id: userId } = await knex('User')
-    .where('name', 'admin')
-    .first('id')
+  const { id: userId } = await knex('User').where('name', 'admin').first('id')
 
   const results = await knex('Result').select('id')
 

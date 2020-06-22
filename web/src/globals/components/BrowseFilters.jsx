@@ -33,7 +33,6 @@ const enhance = compose(
   withHandlers({
     onChangeFilters: ({ history, location }) => nextFilters => {
       const searchParams = new URLSearchParams(location.search)
-
       const filtersParams = mergeToFiltersParams(
         nextFilters,
         new URLSearchParams(searchParams.get('filters') || '')
@@ -41,7 +40,6 @@ const enhance = compose(
 
       searchParams.set('filters', filtersParams)
       searchParams.delete('pageAt')
-
       history.replace({
         ...location,
         search: searchParams.toString(),
@@ -83,7 +81,6 @@ const enhance = compose(
       listExport: state.filter.listExport,
       exportFormatTypes,
       userPermissions: state.user.jwt.permissions,
-      userFeatures: state.user.features,
     }),
     bindActionCreators.bind(null, {
       askExportConfirmation,
@@ -93,11 +90,7 @@ const enhance = compose(
   ),
   lifecycle({
     componentWillMount() {
-      const reducedNav = reduceNavLinks(
-        navigations,
-        this.props.userPermissions,
-        this.props.userFeatures
-      )
+      const reducedNav = reduceNavLinks(navigations, this.props.userPermissions)
       this.setState({
         reducedSource: reducedNav,
       })
@@ -106,6 +99,7 @@ const enhance = compose(
 )
 
 export const BrowseFilters = ({
+  children,
   history,
   location,
   intl,
@@ -115,56 +109,60 @@ export const BrowseFilters = ({
   dateFormat,
   showBrowseDropdown = true,
   ...restProps
-}) => (
-  <div className={cssClasses('Container')}>
-    <FiltersBtnGroup
-      intl={intl}
-      filters={restProps.filters}
-      onRemoveFilterItem={onRemoveFilterItem}
-      className={cssClasses('FiltersBtnGroup')}
-    >
-      {showBrowseDropdown && (
-        <BrowseNavDropdown
-          history={history}
-          location={location}
-          source={reducedSource}
-        />
-      )}
-    </FiltersBtnGroup>
-    <FiltersPanel
-      intl={intl}
-      className={cssClasses('FiltersPanel')}
-      dateFormat={dateFormat}
-      {...restProps}
-    />
-    <Report />
-  </div>
-)
+}) => {
+  return (
+    <div className={cssClasses('Container')}>
+      <FiltersBtnGroup
+        intl={intl}
+        filters={restProps.filters}
+        onRemoveFilterItem={onRemoveFilterItem}
+        className={cssClasses('FiltersBtnGroup')}
+      >
+        {showBrowseDropdown && (
+          <BrowseNavDropdown
+            history={history}
+            location={location}
+            source={reducedSource}
+          />
+        )}
+      </FiltersBtnGroup>
+      {children}
+
+      <FiltersPanel
+        intl={intl}
+        className={cssClasses('FiltersPanel')}
+        dateFormat={dateFormat}
+        {...restProps}
+      />
+    </div>
+  )
+}
 
 export const navigations = [
   {
     value: '/browse/device',
     label: 'Devices',
     requiredPermissions: ['device:view', 'device:admin', 'device:edit'],
-    requiredFeatures: ['device'],
   },
   {
     value: '/browse/result',
     label: 'Results',
     requiredPermissions: ['result:view', 'result:admin', 'result:edit'],
-    requiredFeatures: ['result'],
+  },
+  {
+    value: '/browse/case',
+    label: 'Cases',
+    requiredPermissions: ['case:view', 'case:admin', 'case:edit'],
   },
   {
     value: '/browse/person',
     label: 'Contacts',
     requiredPermissions: ['person:view', 'person:admin', 'person:edit'],
-    requiredFeatures: ['person'],
   },
   {
     value: '/browse/site',
     label: 'Sites',
     requiredPermissions: ['site:view', 'site:admin', 'site:edit'],
-    requiredFeatures: ['site'],
   },
   {
     value: '/browse/inventory',
@@ -174,19 +172,16 @@ export const navigations = [
       'inventory:admin',
       'inventory:edit',
     ],
-    requiredFeatures: ['inventory'],
   },
   {
     value: '/browse/router',
     label: 'Routers',
-    requiredPermissions: ['device:view', 'device:admin', 'device:edit'],
-    requiredFeatures: ['router'],
+    requiredPermissions: ['router:view', 'router:admin', 'router:edit'],
   },
   {
     value: '/browse/reporter',
     label: 'Reporters',
-    requiredPermissions: ['device:view', 'device:admin', 'device:edit'],
-    requiredFeatures: ['reporter'],
+    requiredPermissions: ['reporter:view', 'reporter:admin', 'reporter:edit'],
   },
   {
     value: '/browse/notification',
@@ -196,17 +191,15 @@ export const navigations = [
       'notification:admin',
       'notification:edit',
     ],
-    requiredFeatures: ['notification'],
   },
   {
     value: '/browse/deviceApiKey',
-    label: 'Device API Keys',
+    label: 'Device Api Key',
     requiredPermissions: [
       'deviceApiKey:view',
       'deviceApiKey:admin',
       'deviceApiKey:edit',
     ],
-    requiredFeatures: ['deviceApiKey'],
   },
 ]
 

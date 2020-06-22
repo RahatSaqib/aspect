@@ -59,6 +59,10 @@ const plugins = {
     postProcessMergeResult,
     onResultLogged,
     onGxAlertAuthenticated,
+    onCaseAdded,
+    onCaseUpdated,
+    onPatientAdded,
+    onPatientUpdated,
   },
   commcare: {
     transformInitialPayload: require('./deviceType/CommCareApp/transformInitialPayload'),
@@ -77,6 +81,7 @@ const plugins = {
     postProcessAddDeviceOperation: require('./deviceType/CepheidGeneXpert/postProcessAddDeviceOperation'),
     transformMergeResultPayload: require('./deviceType/CepheidGeneXpert/transformMergeResultPayload'),
     preProcessMergeResult: require('./deviceType/CepheidGeneXpert/preProcessMergeResult'),
+    onResultLogged: require('./deviceType/AspectResultEntry/onResultLogged.js'),
   },
   gxalert: {
     getDeviceSeenOn: require('./deviceType/GxAlert/getDeviceSeenOn'),
@@ -88,6 +93,7 @@ const plugins = {
     transformMergeResultPayload: require('./deviceType/GxAlert/transformMergeResultPayload'),
     preProcessMergeResult: require('./deviceType/GxAlert/preProcessMergeResult'),
     postProcessMergeResult: require('./deviceType/GxAlert/postProcessMergeResult'),
+    onResultLogged: require('./deviceType/AspectResultEntry/onResultLogged.js'),
   },
   myanmar: {
     settings: require('./partner/Myanmar/settings'),
@@ -119,6 +125,9 @@ const plugins = {
   cameroon: {
     issueTriggers: require('./partner/Cameroon/issueTriggers'),
     issueResolutions: require('./partner/Cameroon/issueResolutionConditions'),
+  },
+  aspectresultentry: {
+    onResultLogged: require('./deviceType/AspectResultEntry/onResultLogged.js'),
   },
 }
 
@@ -308,6 +317,38 @@ async function onResultLogged(/* { resultId }, { messageContext } */) {
  * and the user has been migrated into Aspect.
  */
 async function onGxAlertAuthenticated(/* { gxUser, user, personId, partnerId, knex } */) {
+  // do nothing by default
+}
+
+/**
+ * CASE_ADDED action has been published referencing
+ * a Case handled by this plugin
+ */
+async function onCaseAdded(/* { caseId }, { messageContext } */) {
+  // do nothing by default
+}
+
+/**
+ * CASE_UPDATED action has been published referencing
+ * a Case handled by this plugin
+ */
+async function onCaseUpdated(/* { caseId }, { messageContext } */) {
+  // do nothing by default
+}
+
+/**
+ * PATIENT_ADDED action has been published referencing
+ * a Patient handled by this plugin
+ */
+async function onPatientAdded(/* { patientId }, { messageContext } */) {
+  // do nothing by default
+}
+
+/**
+ * PATIENT_UPDATED action has been published referencing
+ * a Patient handled by this plugin
+ */
+async function onPatientUpdated(/* { patientId }, { messageContext } */) {
   // do nothing by default
 }
 

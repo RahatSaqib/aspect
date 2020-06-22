@@ -6,7 +6,12 @@ import { defineMessages } from 'react-intl'
 import { MdKeyboardArrowDown } from 'react-icons/md'
 import Modal from '@material-ui/core/Modal'
 import Card from '@material-ui/core/Card'
+import { connect } from 'react-redux'
 
+import {
+  getCustomMessage,
+  commonDefinitions,
+} from '../../shared/utils/customMessages'
 import FallbackUntilDone from '../../components/shared/FallbackUntilDone'
 import FocusBlurTextField from '../../components/shared/FocusBlurTextField'
 import CountrySelectField from '../geography/CountrySelectField'
@@ -14,6 +19,7 @@ import StateSelectField from '../geography/StateSelectField'
 import LgaSelectField from '../geography/LgaSelectField'
 import PartnerSelectField from '../partner/PartnerSelectField'
 import AssaySelectField from '../resource/AssaySelectField'
+import DiseaseSelectField from '../resource/DiseaseSelectField'
 import ResultCategorySelectField from '../resource/ResultCategorySelectField'
 import ConsumableSelectField from '../resource/ConsumableSelectField'
 import SiteAutoCompleteField from '../resource/SiteAutoCompleteField'
@@ -28,13 +34,17 @@ import RevokedSelectField from '../resource/RevokedSelectField'
 const cssClasses = classnames.bind(require('./FiltersPanel.css'))
 
 const enhance = compose(
+  connect(state => ({
+    user: state.user,
+  })),
   withState('isShown', 'setIsShown', false),
   withHandlers({
     onToggleShown: ({ setIsShown }) => () => setIsShown(isShown => !isShown),
 
     onAssayChange: ({ onChangeFilters }) => assayId =>
       onChangeFilters({ assayId }),
-
+    onDiseaseChange: ({ onChangeFilters }) => diseaseId =>
+      onChangeFilters({ diseaseId }),
     onDateChange: ({ onChangeFilters }) => dateValues =>
       onChangeFilters(dateValues),
 
@@ -86,6 +96,11 @@ const enhance = compose(
     onSiteNameChange: ({ onChangeFilters }) => siteName =>
       onChangeFilters({
         siteName,
+      }),
+
+    onSiteIdChange: ({ onChangeFilters }) => siteId =>
+      onChangeFilters({
+        siteId,
       }),
 
     onWorkflowStatusIdChange: ({ onChangeFilters }) => workflowStatusId =>
@@ -148,6 +163,7 @@ const clickExport = (
 }
 
 const messages = defineMessages({
+  ...commonDefinitions,
   moreFilters: {
     id: 'filter.popover.moreFilters',
     defaultMessage: 'More filters',
@@ -176,13 +192,21 @@ const messages = defineMessages({
     id: 'filter.popover.site',
     defaultMessage: 'Site',
   },
+  siteId: {
+    id: 'filter.popover.siteId',
+    defaultMessage: 'Site Id',
+  },
   enterSiteName: {
     id: 'filter.popover.enterSiteName',
     defaultMessage: 'Enter site name...',
   },
+  enterSiteId: {
+    id: 'filter.popover.enterSiteId',
+    defaultMessage: 'Enter site ID...',
+  },
   sampleOriginSite: {
     id: 'filter.popover.sampleOriginSite',
-    defaultMessage: 'Sample origin site',
+    defaultMessage: 'Sample collection site',
   },
   enterSampleOriginSite: {
     id: 'filter.popover.enterSampleOriginSite',
@@ -218,11 +242,19 @@ const messages = defineMessages({
   },
   patientOrResearchId: {
     id: 'filter.popover.patientOrResearchId',
-    defaultMessage: 'Patient/Study ID',
+    defaultMessage: 'Patient ID',
   },
   enterPatientOrResearchId: {
     id: 'filter.popover.enterPatientOrResearchId',
-    defaultMessage: 'Enter patient/study ID...',
+    defaultMessage: 'Enter patient ID...',
+  },
+  patientOrCaseId: {
+    id: 'filter.popover.patientOrCaseId',
+    defaultMessage: 'Patient/Case ID',
+  },
+  enterPatientOrCaseId: {
+    id: 'filter.popover.enterPatientOrCaseId',
+    defaultMessage: 'Enter patient/case ID...',
   },
   sampleId: {
     id: 'filter.popover.sampleId',
@@ -256,21 +288,13 @@ const messages = defineMessages({
     id: 'filter.popover.selectAssay',
     defaultMessage: 'Select assay...',
   },
-  lga: {
-    id: 'filter.popover.lga',
-    defaultMessage: 'Area',
+  disease: {
+    id: 'filter.popover.disease',
+    defaultMessage: 'Disease',
   },
-  selectLga: {
-    id: 'filter.popover.selectLga',
-    defaultMessage: 'Select area...',
-  },
-  state: {
-    id: 'filter.popover.state',
-    defaultMessage: 'State',
-  },
-  selectState: {
-    id: 'filter.popover.selectState',
-    defaultMessage: 'Select state...',
+  selectDisease: {
+    id: 'filter.popover.selectDisease',
+    defaultMessage: 'Select Disease...',
   },
   country: {
     id: 'filter.popover.country',
@@ -311,7 +335,7 @@ const messages = defineMessages({
   },
   deviceStatus: {
     id: 'filter.popover.deviceStatus',
-    defaultMessage: 'Device Status',
+    defaultMessage: 'Status',
   },
   selectDeviceStatus: {
     id: 'filter.popover.selectDeviceStatus',
@@ -327,11 +351,11 @@ const messages = defineMessages({
   },
   externalId: {
     id: 'filter.popover.externalId',
-    defaultMessage: 'Facility Code',
+    defaultMessage: 'Site ID',
   },
   enterExternalId: {
     id: 'filter.popover.enterExternalId',
-    defaultMessage: 'Enter facility code...',
+    defaultMessage: 'Enter site ID...',
   },
   notificationName: {
     id: 'filter.popover.notificationName',
@@ -356,7 +380,6 @@ export const FiltersPanel = ({
   className,
   disabled,
   contentClassName,
-
   filters,
   config,
   dateFilterLabel,
@@ -368,11 +391,13 @@ export const FiltersPanel = ({
   onStateIdChange,
   onLgaIdChange,
   onAssayChange,
+  onDiseaseChange,
   onResultCategoryChange,
   onConsumableIdChange,
   onPartnerIdChange,
   onTextFieldCommitValue,
   onSiteNameChange,
+  onSiteIdChange,
   onSampleOriginSiteChange,
   onDateChange,
   onWorkflowStatusIdChange,
@@ -380,6 +405,7 @@ export const FiltersPanel = ({
   onDeviceStatusIdChange,
   onDeviceTypeIdChange,
   onRevokedChange,
+  user,
 }) => (
   <div className={cssClasses('Container', className)}>
     <AspectButton
@@ -469,8 +495,19 @@ export const FiltersPanel = ({
               countryId={filters.countryId}
               stateId={filters.stateId}
               floatingLabelFixed
-              hintText={intl.formatMessage(messages.selectState)}
-              floatingLabelText={intl.formatMessage(messages.state)}
+              hintText={getCustomMessage(
+                intl,
+                messages,
+                'selectPlaceholder',
+                user,
+                { entity: 'state' }
+              )}
+              floatingLabelText={getCustomMessage(
+                intl,
+                messages,
+                'state',
+                user
+              )}
               style={{ verticalAlign: 'bottom' }}
             />
           </div>
@@ -484,26 +521,50 @@ export const FiltersPanel = ({
               stateId={filters.stateId}
               lgaId={filters.lgaId}
               floatingLabelFixed
-              hintText={intl.formatMessage(messages.selectLga)}
-              floatingLabelText={intl.formatMessage(messages.lga)}
+              hintText={getCustomMessage(
+                intl,
+                messages,
+                'selectPlaceholder',
+                user,
+                { entity: 'lga' }
+              )}
+              floatingLabelText={getCustomMessage(intl, messages, 'lga', user)}
               style={{ verticalAlign: 'bottom' }}
             />
           </div>
         )}
         {config.assayAndResultCategory && (
           <div className={cssClasses('Control')}>
-            <AssaySelectField
+            <DiseaseSelectField
               allItemText={intl.formatMessage(messages.all)}
-              value={filters.assayId}
-              onAssayChange={onAssayChange}
+              value={filters.diseaseId}
+              onDiseaseIdChange={onDiseaseChange}
+              onlyWithResults
               floatingLabelFixed
-              hintText={intl.formatMessage(messages.selectAssay)}
-              floatingLabelText={intl.formatMessage(messages.assay)}
+              hintText={intl.formatMessage(messages.selectDisease)}
+              floatingLabelText={intl.formatMessage(messages.disease)}
+              intl={intl}
               style={{ verticalAlign: 'bottom' }}
             />
           </div>
         )}
-        {config.assayAndResultCategory && (
+
+        {config.assayAndResultCategory && !config.onlyDisease && (
+          <div className={cssClasses('Control')}>
+            <AssaySelectField
+              allItemText={intl.formatMessage(messages.all)}
+              value={filters.assayId}
+              onAssayChange={onAssayChange}
+              diseaseId={filters.diseaseId}
+              floatingLabelFixed
+              hintText={intl.formatMessage(messages.selectAssay)}
+              floatingLabelText={intl.formatMessage(messages.assay)}
+              intl={intl}
+              style={{ verticalAlign: 'bottom' }}
+            />
+          </div>
+        )}
+        {config.assayAndResultCategory && !config.onlyDisease && (
           <div className={cssClasses('Control')}>
             <ResultCategorySelectField
               allItemText={intl.formatMessage(messages.all)}
@@ -579,6 +640,21 @@ export const FiltersPanel = ({
             />
           </div>
         )}
+        {config.patientOrCaseId && (
+          <div className={cssClasses('Control')}>
+            <FocusBlurTextField
+              name="patientOrCaseId"
+              value={filters.patientOrCaseId || ''}
+              onCommitValue={onTextFieldCommitValue}
+              InputLabelProps={{
+                shrink: true,
+              }}
+              placeholder={intl.formatMessage(messages.enterPatientOrCaseId)}
+              label={intl.formatMessage(messages.patientOrCaseId)}
+              margin="normal"
+            />
+          </div>
+        )}
         {config.sampleId && (
           <div className={cssClasses('Control')}>
             <FocusBlurTextField
@@ -626,7 +702,7 @@ export const FiltersPanel = ({
             <SiteAutoCompleteField
               name="sampleOriginSite"
               value={filters.sampleOriginSite || ''}
-              onSiteIdChange={onSampleOriginSiteChange}
+              onSiteNameChange={onSampleOriginSiteChange}
               floatingLabelFixed
               hintText={intl.formatMessage(messages.enterSampleOriginSite)}
               floatingLabelText={intl.formatMessage(messages.sampleOriginSite)}
@@ -758,6 +834,18 @@ export const FiltersPanel = ({
               floatingLabelText={intl.formatMessage(messages.treatmentStatus)}
               style={{ verticalAlign: 'bottom' }}
               autoWidth
+            />
+          </div>
+        )}
+        {config.siteId && (
+          <div className={cssClasses('Control')}>
+            <SiteAutoCompleteField
+              name="siteId"
+              value={filters.siteId || ''}
+              onSiteNameChange={onSiteIdChange}
+              floatingLabelFixed
+              hintText={intl.formatMessage(messages.enterSiteId)}
+              floatingLabelText={intl.formatMessage(messages.siteId)}
             />
           </div>
         )}

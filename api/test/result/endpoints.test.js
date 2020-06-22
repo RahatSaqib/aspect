@@ -224,6 +224,56 @@ describe('result endpoints', () => {
           .execute()
       })
     })
+
+    describe('/result/clinical-indicator-aggregations', () => {
+      let endpoint
+      const expectedResponse = { value: 'Expected result' }
+
+      beforeEach(() => {
+        endpoint = setupRoute(
+          'GET',
+          '/result/clinical-indicator-aggregations',
+          {
+            async clinicalIndicatorAggregations() {
+              return expectedResponse
+            },
+          }
+        )
+      })
+
+      it('Should respond with the data returned from the service', done => {
+        endpointUtils
+          .callHandlerOn(endpoint)
+          .handleResponseWith(response => {
+            assert.deepEqual(response, expectedResponse)
+          })
+          .thenCall(done)
+          .execute()
+      })
+    })
+
+    describe('/result/follow-up-aggregations', () => {
+      let endpoint
+      const expectedResponse = { value: 'Expected result' }
+
+      beforeEach(() => {
+        endpoint = setupRoute('GET', '/result/follow-up-aggregations', {
+          async followUpAggregations() {
+            return expectedResponse
+          },
+        })
+      })
+
+      it('Should respond with the data returned from the service', done => {
+        endpointUtils
+          .callHandlerOn(endpoint)
+          .handleResponseWith(response => {
+            assert.deepEqual(response, expectedResponse)
+          })
+          .thenCall(done)
+          .execute()
+      })
+    })
   })
 
   describe('PUT', () => {
@@ -292,16 +342,14 @@ describe('result endpoints', () => {
           .execute()
       })
     })
-  })
 
-  describe('POST', () => {
-    describe('/result/follow-up/{resultId}', () => {
+    describe('/result/{resultId}', () => {
       let endpoint
       const expectedResponse = { value: 'Expected result' }
 
       beforeEach(() => {
-        endpoint = setupRoute('POST', '/result/follow-up/{resultId}', {
-          async setResultFollowUp() {
+        endpoint = setupRoute('PUT', '/result/{resultId}', {
+          async updateResult() {
             return expectedResponse
           },
         })
@@ -341,7 +389,29 @@ describe('result endpoints', () => {
       })
     })
   })
+
   describe('POST', () => {
+    describe('/result/follow-up/{resultId}', () => {
+      let endpoint
+      const expectedResponse = { value: 'Expected result' }
+
+      beforeEach(() => {
+        endpoint = setupRoute('POST', '/result/follow-up/{resultId}', {
+          async setResultFollowUp() {
+            return expectedResponse
+          },
+        })
+      })
+      it('Should respond with the data returned from the service', done => {
+        endpointUtils
+          .callHandlerOn(endpoint)
+          .handleResponseWith(response => {
+            assert.deepEqual(response, expectedResponse)
+          })
+          .thenCall(done)
+          .execute()
+      })
+    })
     describe('/result/result-note/{resultId}', () => {
       let endpoint
       const expectedResponse = { value: 'Expected result' }
@@ -349,6 +419,27 @@ describe('result endpoints', () => {
       beforeEach(() => {
         endpoint = setupRoute('POST', '/result/result-note/{resultId}', {
           async addResultNote() {
+            return expectedResponse
+          },
+        })
+      })
+      it('Should respond with the data returned from the service', done => {
+        endpointUtils
+          .callHandlerOn(endpoint)
+          .handleResponseWith(response => {
+            assert.deepEqual(response, expectedResponse)
+          })
+          .thenCall(done)
+          .execute()
+      })
+    })
+    describe('/result', () => {
+      let endpoint
+      const expectedResponse = { value: 'Expected result' }
+
+      beforeEach(() => {
+        endpoint = setupRoute('POST', '/result', {
+          async createResult() {
             return expectedResponse
           },
         })

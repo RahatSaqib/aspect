@@ -4,14 +4,10 @@ const _ = require('lodash')
 const Promise = require('bluebird')
 
 const config = require('../../src/config')
+const { getResultForms } = require('../utils')
 
 async function seed(knex) {
-  const resultForms = await knex('ResultForm')
-    .select()
-    .map(resultForm => ({
-      ...resultForm,
-      formSchema: JSON.parse(resultForm.formSchema),
-    }))
+  const resultForms = await getResultForms(knex)
   const saNhlsPartner = await knex('Partner')
     .where('name', 'South Africa NHLS')
     .first('id')

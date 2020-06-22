@@ -22,7 +22,13 @@ class BarGraph extends Component {
     }
 
     // Set default colors in an array
-    const c = ['#3cc0cd', '#7d97bc', '#9874b2', '#f36283']
+    const {
+      '--aspect-color-mountain': colorMountain,
+      '--aspect-color-brink': colorBrink,
+      '--ship-cove': colorShipCove,
+      '--aspect-color-cyan': colorCyan,
+    } = process.env
+    const c = [colorCyan, colorShipCove, colorMountain, colorBrink]
 
     // Adjusts margin if labels are hidden
     let lMargin = 40

@@ -1,10 +1,17 @@
 const Joi = require('@hapi/joi')
+const { asyncHandler, validateSortPageParams } = require('../routes')
 const {
-  asyncHandler,
-  validateDateRangeParams,
-  validateSortPageParams,
-  validateResultResponse,
-} = require('../routes')
+  listResultsBaseConfig,
+  getResponseForComments,
+  getResultAggregationsValidate,
+  clinicalIndicatorsValidGroups,
+  resultAggregationsResponseItem,
+  followUpAggregationsValidGroups,
+  validateResultListResponse,
+  validateResultDetailResponse,
+  resultCreatePayload,
+  resultUpdatePayload,
+} = require('./endpointsValidation')
 const {
   listResults,
   downloadResultsList,
@@ -30,136 +37,13 @@ const {
   deleteResultNote,
   transferResult,
   updateTransferNotification,
+  clinicalIndicatorAggregations,
+  followUpAggregations,
+  createResult,
+  updateResult,
 } = require('./service')
 const { getPatientResultsDetails } = require('./patientResultDetailService')
-const { getResultsReport } = require('./serviceReport')
-const {
-  validateAllGeographyFilterParams,
-} = require('../geography/requestValidation')
-// -----------------------------------------------------
-// helper functions
-// -----------------------------------------------------
-function listResultsBaseConfig() {
-  return {
-    auth: { scope: ['result:view', 'result:edit'] },
-    timeout: {
-      server: 360000,
-      socket: false,
-    },
-    validate: {
-      query: {
-        deviceId: Joi.number()
-          .allow('')
-          .description('Filter for device ID'),
-        assayId: Joi.number()
-          .allow('')
-          .description('Filter for assay ID'),
-        resultCategoryId: Joi.number()
-          .allow('')
-          .description('Result-1 Category ID'),
-        resultCategory2Id: Joi.number()
-          .allow('')
-          .description('Result-2 Category ID'),
-        errorCode: Joi.string()
-          .allow('')
-          .description('Filter error code'),
-        deviceName: Joi.string()
-          .allow('')
-          .description('Filter for device name'),
-        siteName: Joi.string()
-          .allow('')
-          .description('Filter for site name'),
-        patientOrResearchId: Joi.string()
-          .allow('')
-          .description('Filter for patient/research ID'),
-        sampleId: Joi.string()
-          .allow('')
-          .description('Filter for sample ID'),
-        sampleOriginSite: Joi.string()
-          .allow('')
-          .description('Filter for sample origin site ID'),
-        workflowStatusId: Joi.number()
-          .allow('')
-          .description('Filter for Result Workflow Status ID'),
-        treatmentStatusId: Joi.number()
-          .allow('')
-          .description('Filter for Result Treatment Status ID'),
-        jsonFields: Joi.array()
-          .max(10)
-          .items(Joi.string().max(50))
-          .single()
-          .description(
-            'Specify which fields to select from the resultDataJSON'
-          ),
-        // query param 'format' is applicable only for handler 'exportDevices'
-        format: Joi.string()
-          .allow('')
-          .description('File format for exporting data'),
-        ...validateAllGeographyFilterParams(),
-        ...validateDateRangeParams(),
-        ...validateSortPageParams(),
-        // transfer result
-        reportableSiteName: Joi.string()
-          .allow('', null)
-          .description(
-            'The name of reportable site, differ from siteName when transferred'
-          ),
-        transferredOn: Joi.date()
-          .allow(null)
-          .description('When result was transferred to another clinic'),
-        transferredBy: Joi.string()
-          .allow(null)
-          .description('Who transferred result to another clinic'),
-        resultStatusLogId: Joi.number()
-          .allow(null)
-          .integer()
-          .positive()
-          .description(
-            'The id of last entry in ResultStatusLog for current result'
-          ),
-      },
-    },
-  }
-}
-// -----------------------------------------------------
-function getResponseForComments() {
-  return {
-    options: {
-      allowUnknown: false,
-    },
-    schema: Joi.object().keys({
-      ok: Joi.bool()
-        .required()
-        .description('False if there was some sort of error'),
-      length: Joi.number().required(),
-      data: Joi.array()
-        .required()
-        .description('The result comments')
-        .items(
-          Joi.object().keys({
-            id: Joi.number()
-              .required()
-              .description('Unique ID of the comment'),
-            text: Joi.string()
-              .required()
-              .description('Comment text'),
-            createdBy: Joi.string().description(
-              'User name who created comment'
-            ),
-            createdOn: Joi.date()
-              .required()
-              .description('When comment was created'),
-            changedOn: Joi.date()
-              .required()
-              .description('When comment was updated'),
-            noteType: Joi.string()
-              .required()
-              .description('Comment type'),
-          })
-        ),
-    }),
-  }
-}
+const { exportResults } = require('./serviceReport')
 
 // -----------------------------------------------------
 // routes
@@ -173,6 +57,33 @@ const routes = [
       description: 'Result List',
       notes: 'Pageable and sortable list of results',
       ...listResultsBaseConfig(),
+      response: {
+        options: {
+          allowUnknown: true,
+        },
+        schema: Joi.object().keys({
+          ok: Joi.bool()
+            .required()
+            .description('False if there was some sort of error'),
+          total: Joi.number()
+            .required()
+            .description(
+              'The total number of results that match the given filters'
+            ),
+          length: Joi.number()
+            .required()
+            .description('The number of results included in this response'),
+          extraColumns: Joi.array()
+            .allow(null)
+            .optional()
+            .description('Extra columns arrays')
+            .items(Joi.object().optional()),
+          data: Joi.array()
+            .required()
+            .description('The results')
+            .items(Joi.object().keys(validateResultListResponse())),
+        }),
+      },
     },
   },
   {
@@ -185,9 +96,7 @@ const routes = [
       auth: { scope: ['result:view', 'result:edit'] },
       validate: {
         params: {
-          resultId: Joi.string()
-            .description('Result ID')
-            .required(),
+          resultId: Joi.string().description('Result ID').required(),
         },
       },
     },
@@ -202,9 +111,7 @@ const routes = [
       auth: { scope: ['result:view', 'result:edit'] },
       validate: {
         params: {
-          resultId: Joi.string()
-            .description('Result ID')
-            .required(),
+          resultId: Joi.string().description('Result ID').required(),
         },
       },
     },
@@ -219,9 +126,7 @@ const routes = [
       auth: { scope: ['result:view', 'result:edit'] },
       validate: {
         params: {
-          resultId: Joi.string()
-            .description('Result ID')
-            .required(),
+          resultId: Joi.string().description('Result ID').required(),
         },
       },
     },
@@ -236,15 +141,11 @@ const routes = [
       auth: { scope: ['result:view', 'result:edit'] },
       validate: {
         params: {
-          resultId: Joi.string()
-            .description('File Reference ID')
-            .required(),
+          resultId: Joi.string().description('File Reference ID').required(),
           fileReferenceId: Joi.string()
             .description('File Reference ID')
             .required(),
-          fileName: Joi.string()
-            .description('FileName')
-            .required(),
+          fileName: Joi.string().description('FileName').required(),
         },
       },
     },
@@ -259,9 +160,7 @@ const routes = [
       auth: { scope: ['result:view', 'result:edit'] },
       validate: {
         params: {
-          resultId: Joi.string()
-            .description('File Reference ID')
-            .required(),
+          resultId: Joi.string().description('File Reference ID').required(),
         },
       },
     },
@@ -294,15 +193,10 @@ const routes = [
       auth: { scope: ['result:edit'] },
       validate: {
         params: {
-          resultId: Joi.number()
-            .integer()
-            .positive()
-            .description('Result Id'),
+          resultId: Joi.number().integer().positive().description('Result Id'),
         },
         payload: {
-          resultWorkflowStatusId: Joi.number()
-            .integer()
-            .allow(null),
+          resultWorkflowStatusId: Joi.number().integer().allow(null),
           updatedOn: Joi.date()
             .iso()
             .allow(null)
@@ -333,7 +227,7 @@ const routes = [
           data: Joi.object()
             .required()
             .description('The results')
-            .keys(validateResultResponse()),
+            .keys(validateResultDetailResponse()),
         }),
       },
     },
@@ -348,10 +242,7 @@ const routes = [
       auth: { scope: ['result:edit'] },
       validate: {
         params: {
-          resultId: Joi.number()
-            .integer()
-            .positive()
-            .description('Result Id'),
+          resultId: Joi.number().integer().positive().description('Result Id'),
         },
         payload: Joi.object(),
       },
@@ -367,15 +258,10 @@ const routes = [
       auth: { scope: ['result:edit'] },
       validate: {
         params: {
-          resultId: Joi.number()
-            .integer()
-            .positive()
-            .description('Result Id'),
+          resultId: Joi.number().integer().positive().description('Result Id'),
         },
         payload: {
-          firstViewedOn: Joi.date()
-            .required()
-            .description('first viewed date'),
+          firstViewedOn: Joi.date().required().description('first viewed date'),
         },
       },
       response: {
@@ -389,7 +275,7 @@ const routes = [
           data: Joi.object()
             .required()
             .description('Return current result')
-            .keys(validateResultResponse()),
+            .keys(validateResultDetailResponse()),
         }),
       },
     },
@@ -494,9 +380,7 @@ const routes = [
       validate: {
         query: validateSortPageParams(),
         params: {
-          resultId: Joi.string()
-            .description('Result ID')
-            .required(),
+          resultId: Joi.string().description('Result ID').required(),
         },
       },
     },
@@ -504,7 +388,7 @@ const routes = [
   {
     method: 'GET',
     path: '/result/export',
-    handler: getResultsReport,
+    handler: exportResults,
     config: {
       description: 'Export Result List into Excel or CSV',
       notes: 'Filtered and sorted list of devices',
@@ -526,6 +410,10 @@ const routes = [
             .iso()
             .allow(null)
             .description('Updated From Date'),
+          diseaseExternalIds: Joi.string()
+            .allow(null)
+            .optional()
+            .description('A csv of the diseases external ID'),
           maxUpdatedOn: Joi.date()
             .iso()
             .allow(null)
@@ -603,6 +491,13 @@ const routes = [
                 assayExternalId: Joi.string()
                   .required()
                   .description('Unique ID of the Assay'),
+                diseaseName: Joi.string()
+                  .allow('', null)
+                  .description('Disease name'),
+                diseaseExternalId: Joi.string()
+                  .allow('', null)
+                  .required()
+                  .description('Unique ID of the disease'),
                 siteName: Joi.string()
                   .required()
                   .description(
@@ -809,10 +704,7 @@ const routes = [
       auth: { scope: ['treatmentStatus:edit', 'treatmentStatus:admin'] },
       validate: {
         params: {
-          resultId: Joi.number()
-            .integer()
-            .positive()
-            .description('Result Id'),
+          resultId: Joi.number().integer().positive().description('Result Id'),
         },
         payload: {
           resultTreatmentStatusId: Joi.number()
@@ -841,7 +733,7 @@ const routes = [
           data: Joi.object()
             .required()
             .description('The results')
-            .keys(validateResultResponse()),
+            .keys(validateResultDetailResponse()),
         }),
       },
     },
@@ -865,19 +757,10 @@ const routes = [
       },
       validate: {
         payload: {
-          siteId: Joi.number()
-            .integer()
-            .allow(null),
-          assayTypeId: Joi.number()
-            .integer()
-            .allow(null),
-          resultCategoryId: Joi.number()
-            .integer()
-            .allow(null),
-          endedOn: Joi.date()
-            .iso()
-            .allow(null)
-            .description('Ending date'),
+          siteId: Joi.number().integer().allow(null),
+          assayTypeId: Joi.number().integer().allow(null),
+          resultCategoryId: Joi.number().integer().allow(null),
+          endedOn: Joi.date().iso().allow(null).description('Ending date'),
         },
       },
     },
@@ -900,6 +783,11 @@ const routes = [
             .integer()
             .allow(null)
             .description('ID of the assay'),
+          diseaseId: Joi.number()
+            .integer()
+            .positive()
+            .optional()
+            .description('The disease ID'),
           resultCategory1: Joi.number()
             .integer()
             .allow(null)
@@ -939,9 +827,7 @@ const routes = [
                 externalId: Joi.string()
                   .required()
                   .description('Unique ID of the follow up'),
-                i18nKey: Joi.string()
-                  .required()
-                  .description('Translation key'),
+                i18nKey: Joi.string().required().description('Translation key'),
                 type: Joi.object()
                   .description('Type of follow up')
                   .keys({
@@ -1068,7 +954,7 @@ const routes = [
           data: Joi.object()
             .required()
             .description('The results')
-            .keys(validateResultResponse()),
+            .keys(validateResultDetailResponse()),
         }),
       },
     },
@@ -1130,7 +1016,7 @@ const routes = [
           data: Joi.object()
             .required()
             .description('The results')
-            .keys(validateResultResponse()),
+            .keys(validateResultDetailResponse()),
         }),
       },
     },
@@ -1177,7 +1063,7 @@ const routes = [
           data: Joi.object()
             .required()
             .description('The results')
-            .keys(validateResultResponse()),
+            .keys(validateResultDetailResponse()),
         }),
       },
     },
@@ -1191,9 +1077,7 @@ const routes = [
       auth: { scope: ['patient:view', 'patient:edit'] },
       validate: {
         query: {
-          patientId: Joi.string()
-            .required()
-            .description('patient Id'),
+          patientId: Joi.string().required().description('patient Id'),
         },
       },
       response: {
@@ -1221,9 +1105,7 @@ const routes = [
                   .description(
                     'The name of the place where the sample was taken'
                   ),
-                sampleId: Joi.string()
-                  .required()
-                  .description('The sample id'),
+                sampleId: Joi.string().required().description('The sample id'),
                 resultEndedOn: Joi.date()
                   .iso()
                   .required()
@@ -1231,9 +1113,12 @@ const routes = [
                 assayAbbreviation: Joi.string()
                   .required()
                   .description('The assay abbreviation name'),
-                assayId: Joi.string()
-                  .required()
-                  .description('The assay id'),
+                assayId: Joi.string().required().description('The assay id'),
+                diseaseId: Joi.number()
+                  .integer()
+                  .positive()
+                  .optional()
+                  .description('The disease ID'),
                 resultData: Joi.object()
                   .required()
                   .description('The result data'),
@@ -1391,7 +1276,135 @@ const routes = [
           data: Joi.object()
             .required()
             .description('Return current result')
-            .keys(validateResultResponse()),
+            .keys(validateResultDetailResponse()),
+        }),
+      },
+    },
+  },
+  {
+    method: 'GET',
+    path: '/result/clinical-indicator-aggregations',
+    handler: asyncHandler(clinicalIndicatorAggregations),
+    config: {
+      description: 'Clinical Indicators Dashboard',
+      notes: 'Data for most of the graphs on the clinical indicators page',
+      auth: { scope: ['site', 'result'] },
+      validate: {
+        query: {
+          ...getResultAggregationsValidate(clinicalIndicatorsValidGroups),
+        },
+      },
+      response: {
+        options: {
+          allowUnknown: false,
+        },
+        schema: Joi.object().keys({
+          data: Joi.array()
+            .required()
+            .description('List of counts of grouped/filtered results')
+            .items(
+              Joi.object().keys({
+                ...resultAggregationsResponseItem,
+              })
+            ),
+        }),
+      },
+    },
+  },
+  {
+    method: 'GET',
+    path: '/result/follow-up-aggregations',
+    handler: asyncHandler(followUpAggregations),
+    config: {
+      description: 'Follow-up aggregations for report',
+      notes: 'Data for graphs showing different follow-up aggregations',
+      auth: { scope: ['site', 'result'] },
+      validate: {
+        query: {
+          ...getResultAggregationsValidate(followUpAggregationsValidGroups),
+          followUpType: Joi.string()
+            .required()
+            .description(
+              'Filter by result followUpType (FollowUpType.externalId)'
+            ),
+          followUp: Joi.string()
+            .allow('', null)
+            .description('Filter by result followUp (FollowUp.externalId)'),
+        },
+      },
+      response: {
+        options: {
+          allowUnknown: false,
+        },
+        schema: Joi.object().keys({
+          data: Joi.array()
+            .required()
+            .description('List of reports')
+            .items(
+              Joi.object().keys({
+                ...resultAggregationsResponseItem,
+                followUp: Joi.string()
+                  .allow(null)
+                  .description('The followUp that the count is grouped by'),
+              })
+            ),
+        }),
+      },
+    },
+  },
+  {
+    method: 'POST',
+    path: '/result',
+    handler: asyncHandler(createResult),
+    config: {
+      description: 'Create New Result',
+      notes: 'Details of a result',
+      auth: { scope: ['result:edit', 'result:admin'] },
+      validate: {
+        payload: resultCreatePayload,
+      },
+      response: {
+        options: {
+          allowUnknown: false,
+        },
+        schema: Joi.object().keys({
+          ok: Joi.bool()
+            .required()
+            .description('False if there was some sort of error'),
+          data: Joi.object()
+            .required()
+            .description('The result that was created')
+            .keys(validateResultDetailResponse()),
+        }),
+      },
+    },
+  },
+  {
+    method: 'PUT',
+    path: '/result/{resultId}',
+    handler: asyncHandler(updateResult),
+    config: {
+      description: 'Update Result Details',
+      notes: 'Details of a result',
+      auth: { scope: ['result:edit', 'result:admin'] },
+      validate: {
+        params: {
+          resultId: Joi.number().description('Result ID').required(),
+        },
+        payload: resultUpdatePayload,
+      },
+      response: {
+        options: {
+          allowUnknown: false,
+        },
+        schema: Joi.object().keys({
+          ok: Joi.bool()
+            .required()
+            .description('False if there was some sort of error'),
+          data: Joi.object()
+            .required()
+            .description('The result that was updated')
+            .keys(validateResultDetailResponse()),
         }),
       },
     },

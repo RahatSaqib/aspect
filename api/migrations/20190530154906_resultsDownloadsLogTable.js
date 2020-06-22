@@ -3,14 +3,8 @@ module.exports = require('../src/db').migration(up, down)
 async function up(knex) {
   await knex.schema.createTable('ResultDownloadLog', table => {
     table.increments('id')
-    table
-      .string('method')
-      .notNullable()
-      .defaultTo('app')
-    table
-      .timestamp('createdOn')
-      .notNullable()
-      .defaultTo(knex.fn.now())
+    table.string('method').notNullable().defaultTo('app')
+    table.timestamp('createdOn').notNullable().defaultTo(knex.fn.now())
     table
       .integer('createdBy')
       .unsigned()
@@ -25,6 +19,7 @@ async function up(knex) {
       .inTable('Result')
   })
 }
+
 async function down(knex) {
   await knex.schema.dropTable('ResultDownloadLog')
 }

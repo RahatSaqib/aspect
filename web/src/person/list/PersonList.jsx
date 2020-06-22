@@ -2,20 +2,26 @@ import _ from 'lodash'
 import classnames from 'classnames/bind'
 import React from 'react'
 import { compose, withProps, withHandlers, lifecycle } from 'recompose'
-import { defineMessages } from 'react-intl'
+import { defineMessages, injectIntl } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import Helmet from 'react-helmet'
+import { Helmet } from 'react-helmet'
 import TableBody from '@material-ui/core/TableBody'
 import IconButton from '@material-ui/core/IconButton'
 import Tooltip from '@material-ui/core/Tooltip'
 import AddIcon from '@material-ui/icons/Add'
 
 import {
+  getCustomMessage,
+  commonDefinitions,
+} from '../../shared/utils/customMessages'
+import {
   makeSortPageSelector,
   makeSearchParamsSanitizer,
   composeSanitizer,
 } from '../../shared/selectors/searchParams'
+import requirePermissions from '../../components/shared/requirePermissions'
+import AspectButton from '../../components/shared/AspectButton'
 import {
   sanitizeFiltersStringBy,
   reduceFiltersConfig,
@@ -39,6 +45,7 @@ import ExportListButton from '../../globals/components/ExportListButton'
 const cssClasses = classnames.bind(require('./PersonList.css'))
 
 const messages = defineMessages({
+  ...commonDefinitions,
   contactsTitle: {
     id: 'pages.PersonList.title',
     defaultMessage: 'Contacts',
@@ -50,14 +57,6 @@ const messages = defineMessages({
   level: {
     id: 'pages.PersonList.level',
     defaultMessage: 'Job',
-  },
-  state: {
-    id: 'pages.PersonList.state',
-    defaultMessage: 'State',
-  },
-  lga: {
-    id: 'pages.PersonList.lga',
-    defaultMessage: 'County',
   },
   paginatorStatus: {
     id: 'pages.PersonList.paginatorStatus',
@@ -72,7 +71,7 @@ const messages = defineMessages({
   },
   addContact: {
     id: 'pages.PersonList.addContact',
-    defaultMessage: 'Add Contact',
+    defaultMessage: 'New Contact',
   },
 })
 
@@ -99,6 +98,7 @@ const filtersFromLocation = composeSanitizer(
 )
 
 const enhance = compose(
+  injectIntl,
   withProps(
     makeSortPageSelector({
       sortCol: 'name',
@@ -118,6 +118,7 @@ const enhance = compose(
       items: state.person.items,
       table: state.person.table,
       userPermissions: state.user.jwt.permissions,
+      user: state.user,
     }),
     bindActionCreators.bind(null, {
       fetchPersons,
@@ -184,7 +185,6 @@ const enhance = compose(
       } = filtersSanitizer(searchParams.get('filters') || '')
       if (sanitized || filtersSanitized) {
         searchParams.set('filters', filtersParams)
-
         this.props.history.replace({
           ...this.props.location,
           search: searchParams.toString(),
@@ -226,108 +226,110 @@ export const PersonList = ({
   onRowClick,
   reducedFilters,
   showNewContactPage,
-}) => (
-  <div className={cssClasses('Container')}>
-    <Helmet title={intl.formatMessage(messages.contactsTitle)} />
-    <NavTitle title={intl.formatMessage(messages.contactsTitle)} />
-    <BrowseFilters
-      history={history}
-      location={location}
-      intl={intl}
-      config={reducedFilters}
-    />
-    <DataTableCard className={cssClasses('DataTableCard--action')}>
-      <div />
-      <Tooltip
-        title={intl.formatMessage(messages.addContact)}
-        placement="bottom"
+  user,
+}) => {
+  const AddNewButton = requirePermissions({
+    permissions: ['person:edit', 'person:admin'],
+  })(AspectButton)
+  return (
+    <div className={cssClasses('Container')}>
+      <Helmet title={intl.formatMessage(messages.contactsTitle)} />
+      <NavTitle title={intl.formatMessage(messages.contactsTitle)} />
+      <BrowseFilters
+        history={history}
+        location={location}
+        intl={intl}
+        config={reducedFilters}
       >
-        <IconButton
-          aria-label={intl.formatMessage(messages.addContact)}
+        <AddNewButton
+          type="button"
+          color="primary"
+          variant="contained"
+          browseButton
           onClick={showNewContactPage}
         >
-          <AddIcon fontSize="large" />
-        </IconButton>
-      </Tooltip>
-    </DataTableCard>
-    <DataTableCard key={`DataTableCard--table-${location.key}`}>
-      <DataTableProgressBar disabled={!table.loading} />
-      {items.currentIdList.isEmpty() && (
-        <BrowseEmptyList history={history} location={location} intl={intl} />
-      )}
-      <ExportListButton
-        onExcelClick={onExcelClick}
-        onCsvClick={onExcelClick}
-        visible={!items.currentIdList.isEmpty()}
-        reportName="Contacts"
-      />
+          {intl.formatMessage(messages.addContact)}
+        </AddNewButton>
+      </BrowseFilters>
+      <DataTableCard key={`DataTableCard--table-${location.key}`}>
+        <DataTableProgressBar disabled={!table.loading} />
+        {items.currentIdList.isEmpty() && (
+          <BrowseEmptyList history={history} location={location} intl={intl} />
+        )}
+        <ExportListButton
+          onExcelClick={onExcelClick}
+          onCsvClick={onExcelClick}
+          visible={!items.currentIdList.isEmpty()}
+          reportName="Contacts"
+        />
 
-      {!items.currentIdList.isEmpty() && (
-        <PersonDataTable
-          selectable={false}
-          className={cssClasses('PersonDataTable')}
-        >
-          <PersonDataTableHead
+        {!items.currentIdList.isEmpty() && (
+          <PersonDataTable
+            selectable={false}
+            className={cssClasses('PersonDataTable')}
+          >
+            <PersonDataTableHead
+              history={history}
+              location={location}
+              sortColumnKey={sortCol}
+              sortColumnDir={sortDir}
+              columns={[
+                {
+                  key: 'name',
+                  label: intl.formatMessage(messages.personName),
+                  sortable: true,
+                },
+                {
+                  key: 'level',
+                  label: intl.formatMessage(messages.level),
+                  sortable: true,
+                },
+                {
+                  key: 'state',
+                  label: getCustomMessage(intl, messages, 'state', user),
+                  sortable: true,
+                },
+                {
+                  key: 'lga',
+                  label: getCustomMessage(intl, messages, 'lga', user),
+                  sortable: true,
+                },
+                {
+                  key: 'tags',
+                  label: intl.formatMessage(messages.tags),
+                  sortable: true,
+                },
+              ]}
+            />
+            <TableBody>
+              {items.currentIdList
+                .map(id => items.byId.get(id))
+                .map(person => (
+                  <PersonDataTableRow
+                    key={person.get('id')}
+                    intl={intl}
+                    person={person}
+                    onClick={onRowClick}
+                    data-person-id={person.get('id')}
+                  />
+                ))}
+            </TableBody>
+          </PersonDataTable>
+        )}
+        {!items.currentIdList.isEmpty() && (
+          <BrowseTablePaginator
             history={history}
             location={location}
-            sortColumnKey={sortCol}
-            sortColumnDir={sortDir}
-            columns={[
-              {
-                key: 'name',
-                label: intl.formatMessage(messages.personName),
-                sortable: true,
-              },
-              {
-                key: 'level',
-                label: intl.formatMessage(messages.level),
-                sortable: true,
-              },
-              {
-                key: 'state',
-                label: intl.formatMessage(messages.state),
-                sortable: true,
-              },
-              {
-                key: 'lga',
-                label: intl.formatMessage(messages.lga),
-                sortable: true,
-              },
-              {
-                key: 'tags',
-                label: intl.formatMessage(messages.tags),
-                sortable: true,
-              },
-            ]}
+            intl={intl}
+            paginatorStatus={messages.paginatorStatus}
+            total={table.total}
+            pageAt={pageAt}
+            pageSize={pageSize}
           />
-          <TableBody>
-            {items.currentIdList
-              .map(id => items.byId.get(id))
-              .map(person => (
-                <PersonDataTableRow
-                  key={person.get('id')}
-                  intl={intl}
-                  person={person}
-                  onClick={onRowClick}
-                  data-person-id={person.get('id')}
-                />
-              ))}
-          </TableBody>
-        </PersonDataTable>
-      )}
-      {!items.currentIdList.isEmpty() && (
-        <BrowseTablePaginator
-          history={history}
-          location={location}
-          intl={intl}
-          paginatorStatus={messages.paginatorStatus}
-          total={table.total}
-          pageAt={pageAt}
-          pageSize={pageSize}
-        />
-      )}
-    </DataTableCard>
-  </div>
-)
+        )}
+      </DataTableCard>
+    </div>
+  )
+}
 
 export default enhance(PersonList)

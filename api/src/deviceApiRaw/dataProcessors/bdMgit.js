@@ -102,7 +102,7 @@ class DefaultBDMGIT extends SynchronousDataProcessor {
       const assayIds =
         mgitResultTypeCode === 'AST_MGIT'
           ? [allAssayIds.assayBdMgitAst, allAssayIds.assayGenericDst]
-          : [allAssayIds.assayBdMgitGnd, allAssayIds.assayCulture]
+          : [allAssayIds.assayBdMgitGnd, allAssayIds.assayGenericCulture]
 
       // Use test status to determine workflow status and result category 1:
       const mgitTestStatus = getAstmField(astm, 'R,4,1,1')
@@ -156,9 +156,7 @@ class DefaultBDMGIT extends SynchronousDataProcessor {
           's.latitude'
         )
 
-      const device = await knex('Device')
-        .where('id', deviceId)
-        .first()
+      const device = await knex('Device').where('id', deviceId).first()
 
       // add/update sample
       const sampleFields = {
@@ -172,9 +170,7 @@ class DefaultBDMGIT extends SynchronousDataProcessor {
       if (existingSample) {
         sampleId = existingSample.id
         // update sample
-        await knex('Sample')
-          .where('id', existingSample.id)
-          .update(sampleFields)
+        await knex('Sample').where('id', existingSample.id).update(sampleFields)
       } else {
         // insert sample
         sampleId = await knex('Sample').insert(sampleFields)
@@ -184,10 +180,10 @@ class DefaultBDMGIT extends SynchronousDataProcessor {
       // The test start date/time, with the sequence number, uniquely identifies a test and its result.
       const externalId = `${mgitStartedOn}_${mgitConsumableSequenceNumber}`
       const result = await knex('Result')
-        .where(function() {
+        .where(function () {
           this.where('deviceId', deviceId).andWhere('externalId', externalId)
         })
-        .orWhere(function() {
+        .orWhere(function () {
           this.where('sampleId', sampleId)
             .whereIn('assayId', assayIds)
             .andWhere('siteId', site.id)
@@ -278,9 +274,7 @@ class DefaultBDMGIT extends SynchronousDataProcessor {
       let resultId = null
       if (result) {
         // update result
-        await knex('Result')
-          .where('id', result.id)
-          .update(resultFields)
+        await knex('Result').where('id', result.id).update(resultFields)
 
         resultId = result.id
       } else {
@@ -319,9 +313,7 @@ class DefaultBDMGIT extends SynchronousDataProcessor {
           .update('resultWorkflowStatusLogId', logId)
       }
 
-      await knex('DeviceLog')
-        .where('id', deviceLogId)
-        .update({ resultId })
+      await knex('DeviceLog').where('id', deviceLogId).update({ resultId })
     })
   }
 

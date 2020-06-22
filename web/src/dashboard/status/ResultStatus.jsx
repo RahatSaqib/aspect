@@ -24,8 +24,7 @@ const cssClasses = classnames.bind(require('./Status.css'))
 const enhance = compose(
   pure,
   requirePermissions({
-    permissions: ['result:admin', 'result:view', 'result:edit'],
-    features: ['resultDashboard'],
+    permissions: ['dashboard:result'],
   }),
   connect(
     state => ({
@@ -60,9 +59,14 @@ const enhance = compose(
       )
       .range([3, 7])
 
+    const {
+      '--aspect-color-scooter-blue-1': colorScooterBlue1,
+      '--aspect-color-scooter-blue-4': colorScooterBlue4,
+    } = process.env
+
     return {
       fill: ({ properties: { postal } }) =>
-        siteStateAbbrs.has(postal) ? '#00c4e0' : '#a4e6f2',
+        siteStateAbbrs.has(postal) ? colorScooterBlue1 : colorScooterBlue4,
       points: siteList
         .map(it => ({
           id: it.get('name'),

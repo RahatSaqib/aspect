@@ -4,7 +4,7 @@ import React, { PureComponent } from 'react'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import _ from 'lodash'
-import { defineMessages, intlShape, FormattedMessage } from 'react-intl'
+import { defineMessages, FormattedMessage, injectIntl } from 'react-intl'
 
 // Material-UI
 import Button from '@material-ui/core/Button'
@@ -19,6 +19,7 @@ import red from '@material-ui/core/colors/red'
 import AspectDialog from '../components/shared/AspectDialog'
 import { hideAppNotification, Error } from './AppNotificationRedux'
 import styles from './AppNotificationDialog.css'
+import PropTypeOf from '../shared/types'
 
 const genericMessages = defineMessages({
   title: {
@@ -40,11 +41,14 @@ const genericMessages = defineMessages({
   },
 })
 
-const enhance = _.flowRight(connect(mapStateToProps, mapDispatchToProps))
+const enhance = _.flowRight(
+  injectIntl,
+  connect(mapStateToProps, mapDispatchToProps)
+)
 
 export class AppNotificationDialog extends PureComponent {
   static propTypes = {
-    intl: intlShape.isRequired,
+    intl: PropTypeOf.intl.isRequired,
     appNotification: PropTypes.objectOf(Error),
     hideAppNotification: PropTypes.func.isRequired,
   }

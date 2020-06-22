@@ -1,15 +1,23 @@
 const Promise = require('bluebird')
 const _ = require('lodash')
+const bcrypt = require('bcrypt')
 const { readJson } = require('fs-extra')
 const path = require('path')
+const { addMilliseconds, subDays, addMinutes, format } = require('date-fns')
 const relativeObjectsSeeds = require('./relativeObjectsSeeds')
 const {
-  allFeatureToId,
+  allAssayTypeToId,
   allResultCategoryToId,
 } = require('../src/shared/dictionary')
+const config = require('../src/config')
+
+const saltRounds = parseInt(config.passwordSaltRounds, 10)
 
 const tables = [
   'DeviceApiRawStatus',
+  'FormType',
+  'Disease',
+  'AssayType',
   'FileContentType',
   'IssueCategory',
   'IssueEventStatus',
@@ -21,18 +29,17 @@ const tables = [
   'ResultSource',
   'ResultStatus',
   'ResultType',
+  'ResultTreatmentStatus',
   'ResultWorkflowStatus',
   'SampleType',
   'FollowUpType',
   'ResultNoteType',
   // TODO ASP-757 Standardize static data key on externalId
-  ['AssayType', 'name'],
   ['ConsumableReason', 'name'],
   ['DeviceStatus', 'token'],
   ['PartnerType', 'name'],
   ['DeviceTypeCategory', 'name'],
   ['Unit', 'name'],
-  ['Feature', 'module'],
   ['Permission', seedStaticDataPermission],
 ]
 
@@ -79,7 +86,7 @@ const foreignKeys = {
   ],
 }
 
-// Helper for seeed files. Ru
+// Helper for seed files. Ru
 let hasSeededStaticData = false
 let commonInserts = false
 
@@ -131,20 +138,24 @@ async function runSeed(seed, knex, fileName, overridedSeeds) {
 }
 
 async function rowsAsObject(knex, table, column = 'name') {
-  return knex(table).reduce((memo, row) => {
-    memo[row[column]] = row
-    return memo
-  }, {})
+  return knex(table).then(items =>
+    items.reduce((memo, row) => {
+      memo[row[column]] = row
+      return memo
+    }, {})
+  )
 }
 
 async function getDefaultMessageTypes(knex) {
   return knex('MessageType as mt')
     .join('IssueType as it', 'it.defaultMessageTypeId', 'mt.id')
     .select('it.externalId as issueTypeExternalId', 'mt.*')
-    .reduce((memo, row) => {
-      memo[row.issueTypeExternalId] = row
-      return memo
-    }, {})
+    .then(items =>
+      items.reduce((memo, row) => {
+        memo[row.issueTypeExternalId] = row
+        return memo
+      }, {})
+    )
 }
 
 // -------------------------------------------------------
@@ -474,13 +485,15 @@ async function seedStockIssues(knex) {
 }
 
 async function getPermissionModules(knex) {
-  return knex('Permission').reduce((memo, row) => {
-    if (!memo[row.module]) {
-      memo[row.module] = {}
-    }
-    memo[row.module][row.activity] = row.id
-    return memo
-  }, {})
+  return knex('Permission').then(items =>
+    items.reduce((memo, row) => {
+      if (!memo[row.module]) {
+        memo[row.module] = {}
+      }
+      memo[row.module][row.activity] = row.id
+      return memo
+    }, {})
+  )
 }
 
 async function getSeedsFolder(table, overridedSeeds) {
@@ -512,16 +525,41 @@ async function seedTable(knex, fixtureItem, overridedSeeds) {
   if (_.isFunction(keyColumn)) {
     await keyColumn(knex, fixture)
   } else {
-    for (const datum of fixture.data) {
-      // eslint-disable-next-line no-await-in-loop
+    await Promise.each(fixture.data || [], async datum => {
       const existingDatum = await knex(table)
         .where(keyColumn, datum[keyColumn])
         .first('id')
       if (existingDatum == null) {
-        // eslint-disable-next-line no-await-in-loop
         await knex(table).insert(datum)
       }
-    }
+    })
+    await Promise.each(fixture.relationships || [], async relationship => {
+      const updates = {}
+      const existingDatum = await knex(table)
+        .where(_.pick(relationship, [keyColumn]))
+        .first()
+      await Promise.each(
+        Object.keys(_.omit(relationship, [keyColumn])),
+        async foreignKeyColumnName => {
+          const foreignKey = relationship[foreignKeyColumnName]
+          const existingRelatedDatum =
+            (await knex(foreignKey.table)
+              .where(_.omit(foreignKey, ['table']))
+              .first('id')) || {}
+          if (
+            existingDatum[foreignKeyColumnName] !== existingRelatedDatum.id &&
+            typeof existingRelatedDatum.id !== 'undefined'
+          ) {
+            updates[foreignKeyColumnName] = existingRelatedDatum.id
+          }
+        }
+      )
+      if (!_.isEmpty(updates)) {
+        await knex(table)
+          .where(_.pick(relationship, [keyColumn]))
+          .update(updates)
+      }
+    })
   }
 }
 
@@ -587,9 +625,7 @@ async function addFollowUps(knex, partnerIds, { data }) {
   for (const { type, name, externalId, i18nKey, assays } of data) {
     const { id: followUpTypeId } = _.find(typesDb, { externalId: type })
     const followUp = { followUpTypeId, name, externalId, i18nKey }
-    const existingFollowUp = await knex('FollowUp')
-      .where(followUp)
-      .first('id')
+    const existingFollowUp = await knex('FollowUp').where(followUp).first('id')
     let followUpId = null
     if (existingFollowUp == null) {
       followUpId = await knex('FollowUp').insert(followUp)
@@ -688,12 +724,14 @@ async function seedIssueEventTriggersForPartner(
     .where({ 'nt.partnerId': partnerId })
     .orderBy('it.externalId')
     .distinct('it.externalId as issueType')
-    .reduce((memo, { issueType }) => {
-      if (!issueTypeBlacklist.includes(issueType)) {
-        memo[issueType] = true
-      }
-      return memo
-    }, {})
+    .then(items =>
+      items.reduce((memo, { issueType }) => {
+        if (!issueTypeBlacklist.includes(issueType)) {
+          memo[issueType] = true
+        }
+        return memo
+      }, {})
+    )
   issueTypeWhitelist.forEach(issueType => {
     issueTypeConfigured[issueType] = true
   })
@@ -720,35 +758,6 @@ async function seedIssueEventTriggersForPartner(
         }
       }
     }
-  )
-}
-
-async function assignAllFeaturesToJobFunctionIds(
-  knex,
-  jobFunctionIds,
-  featureBlacklist = []
-) {
-  const defaultFeatureBlacklist = [
-    // These are currently hardcoded to Myanmar, so skip by default
-    'targetDashboard',
-    'actionDashboard',
-    'reportDashboard',
-    'siteFilterDashboard',
-  ]
-  const features = _.filter(
-    await allFeatureToId(),
-    (val, key) =>
-      !_.includes([...defaultFeatureBlacklist, ...featureBlacklist], key)
-  )
-  await Promise.all(
-    _.map(features, async featureId => {
-      await knex('JobFunctionFeature').insert(
-        _.map(jobFunctionIds, jobFunctionId => ({
-          featureId,
-          jobFunctionId,
-        }))
-      )
-    })
   )
 }
 
@@ -781,7 +790,7 @@ async function upsertItems(knex, tableName, whereKeys, items) {
   // ---------------------
   // get from db items with specified whereKeys
   const existingItems = await knex(tableName)
-    .where(function() {
+    .where(function () {
       items.forEach(item => {
         this.orWhere(getWhereItem(item, whereKeys))
       })
@@ -803,14 +812,19 @@ async function upsertItems(knex, tableName, whereKeys, items) {
   if (itemsToUpdate.length) {
     const queries = []
     itemsToUpdate.forEach(item => {
-      const query = knex(tableName)
-        .where(getWhereItem(item, whereKeys))
-        .update(item)
-      queries.push(query)
+      if (!_.isEmpty(item)) {
+        const query = knex(tableName)
+          .where(getWhereItem(item, whereKeys))
+          .update(item)
+        queries.push(query)
+      }
     })
-    await Promise.all(queries)
+    if (!_.isEmpty(queries)) {
+      await Promise.all(queries)
+    }
   }
 }
+
 // ***********************************************************************
 async function upsertSingle(knex, tableName, whereClause, item) {
   if (typeof whereClause === 'string') {
@@ -826,13 +840,16 @@ async function upsertSingle(knex, tableName, whereClause, item) {
   }
   const q = knex(tableName).where(whereClause)
   const existingItem = await q.first()
-  if (existingItem) {
-    await q.clone().update(item)
-  } else {
-    await knex(tableName).insert(item)
+  if (!_.isEmpty(item)) {
+    if (existingItem) {
+      await q.clone().update(item)
+    } else {
+      await knex(tableName).insert(item)
+    }
   }
   return q.first()
 }
+
 // ***********************************************************************
 async function upsertNotificationTypes(knex, items) {
   await upsertItems(
@@ -842,6 +859,7 @@ async function upsertNotificationTypes(knex, items) {
     items
   )
 }
+
 // ***********************************************************************
 async function seedNotificationTypes(
   knex,
@@ -1346,6 +1364,7 @@ async function seedNotificationTypes(
     },
   ])
 }
+
 // ***********************************************************************
 async function upsertIssueEscalationTrigger(knex, items) {
   await upsertItems(
@@ -1355,6 +1374,7 @@ async function upsertIssueEscalationTrigger(knex, items) {
     items
   )
 }
+
 // ***********************************************************************
 async function seedIssueEscalationTrigger(
   knex,
@@ -1500,6 +1520,7 @@ async function seedIssueEscalationTrigger(
     },
   ])
 }
+
 // ***********************************************************************
 async function upsertIssueResolutionTrigger(knex, items) {
   await upsertItems(
@@ -1509,6 +1530,7 @@ async function upsertIssueResolutionTrigger(knex, items) {
     items
   )
 }
+
 // ***********************************************************************
 async function seedIssueResolutionTrigger(
   knex,
@@ -1660,6 +1682,7 @@ async function seedIssueResolutionTrigger(
     },
   ])
 }
+
 // ***********************************************************************
 async function seedUnknownErrorsIssue(knex, { partnerId, auditFields }) {
   const auditDates = _.pick(auditFields, ['createdOn', 'updatedOn'])
@@ -1967,6 +1990,7 @@ async function seedUnknownErrorsIssue(knex, { partnerId, auditFields }) {
     },
   ])
 }
+
 // ***********************************************************************
 async function updateUnknownErrorOnModuleMessage(knex) {
   await knex('AlertTemplate')
@@ -2001,6 +2025,7 @@ async function updateUnknownErrorOnModuleMessage(knex) {
         '{{device.name}}: Possible failure on module <em>{{issue.data.moduleName}}</em> - unknown error - contact engineer',
     })
 }
+
 // ***********************************************************************
 async function seedIssues(
   knex,
@@ -2024,12 +2049,14 @@ async function seedIssues(
   await seedIssueEscalationTrigger(knex, { partnerId, pluginName, auditFields })
   await seedIssueResolutionTrigger(knex, { partnerId, pluginName, auditFields })
 }
+
 // ***********************************************************************
 async function addUniqueKey(knex, tableName) {
   await knex.schema.alterTable(tableName, table => {
     table.unique(uniqueKeys[tableName], `${tableName}_unique`)
   })
 }
+
 async function dropUniqueKey(knex, tableName) {
   await Promise.all(
     _.map(foreignKeys[tableName], async ({ column }) => {
@@ -2119,9 +2146,11 @@ async function updateCategoryAssay(knex) {
         emphasize: false,
       }
     }
-    await knex('ResultCategoryAssay')
-      .where('resultCategoryId', id)
-      .update(json)
+    if (!_.isEmpty(json)) {
+      await knex('ResultCategoryAssay')
+        .where('resultCategoryId', id)
+        .update(json)
+    }
   })
 }
 
@@ -2172,9 +2201,11 @@ async function updateAssayResultCategoryTreatmentEmphasize(knex) {
         emphasize: false,
       }
     }
-    await knex('ResultCategoryAssay')
-      .where('resultCategoryId', id)
-      .update(json)
+    if (!_.isEmpty(json)) {
+      await knex('ResultCategoryAssay')
+        .where('resultCategoryId', id)
+        .update(json)
+    }
   })
 }
 
@@ -2270,7 +2301,7 @@ async function setCapacityForExistingDevices(knex) {
       deviceCapacities,
       dc => dc.partnerId === partnerId && dc.deviceTypeId === deviceTypeId
     )
-    if (deviceCapacityByPartnerId) {
+    if (deviceCapacityByPartnerId && deviceCapacityByPartnerId.id) {
       await knex('Device')
         .where({ partnerId })
         .where({ deviceTypeId })
@@ -2278,16 +2309,19 @@ async function setCapacityForExistingDevices(knex) {
     }
   })
 }
+
 async function getSeedsRan(knex) {
   return knex('AspectSeed as ap')
     .where({ success: true })
     .select('ap.fileName')
-    .reduce((memo, row) => {
-      if (!memo[row.fileName]) {
-        memo[row.fileName] = true
-      }
-      return memo
-    }, {})
+    .then(items =>
+      items.reduce((memo, row) => {
+        if (!memo[row.fileName]) {
+          memo[row.fileName] = true
+        }
+        return memo
+      }, {})
+    )
 }
 
 async function seedDeviceMaintenanceType(knex) {
@@ -2305,9 +2339,7 @@ async function seedDeviceMaintenanceType(knex) {
 
 async function insertSites(knex, partnerId, countryId, sites) {
   const now = new Date()
-  const { id: adminId } = await knex('User')
-    .where('name', 'admin')
-    .first('id')
+  const { id: adminId } = await knex('User').where('name', 'admin').first('id')
 
   // insert sites from a JSON file. Safe to run multiple times. Will only add sites that don't exist yet (based on externalId)
   await Promise.each(sites, async site => {
@@ -2352,9 +2384,7 @@ async function insertSites(knex, partnerId, countryId, sites) {
     await Promise.each(site.tags, async tag => {
       const tagDetails = { partnerId, title: tag }
       let tagId = null
-      const existingTag = await knex('Tag')
-        .where(tagDetails)
-        .first('id')
+      const existingTag = await knex('Tag').where(tagDetails).first('id')
       if (existingTag) {
         tagId = existingTag.id
       } else {
@@ -2374,22 +2404,12 @@ async function insertSites(knex, partnerId, countryId, sites) {
   })
 }
 
-async function getFeatureByModule(knex, module) {
-  return knex('Feature')
-    .where({ module })
-    .first()
-}
-
 async function getPermissonByModuleAndActivity(knex, module, activity) {
-  return knex('Permission')
-    .where({ module, activity })
-    .first()
+  return knex('Permission').where({ module, activity }).first()
 }
 
 async function getPartnerByName(knex, name) {
-  const partner = await knex('Partner')
-    .where({ name })
-    .first()
+  const partner = await knex('Partner').where({ name }).first()
   return partner
 }
 
@@ -2429,11 +2449,13 @@ async function initDataFromFixture(knex, tableName, keyColumn = 'externalId') {
   const itemsToUpdate = itemsNew.filter(x => oldIds.includes(x[keyColumn]))
   const itemsToInsert = itemsNew.filter(x => !oldIds.includes(x[keyColumn]))
   if (itemsToUpdate.length > 0) {
-    // update
-    itemsToUpdate.forEach(async item => {
-      await knex(tableName)
-        .update(_.omit(item, keyColumn))
-        .where(keyColumn, item[keyColumn])
+    await Promise.each(itemsToUpdate, async item => {
+      const updatedRecord = _.omit(item, keyColumn)
+      if (!_.isEmpty(updatedRecord)) {
+        await knex(tableName)
+          .update(updatedRecord)
+          .where(keyColumn, item[keyColumn])
+      }
     })
   }
   // insert only items which not exist in the table
@@ -2513,6 +2535,340 @@ async function addReports(knex, countryReports = []) {
   })
 }
 
+const resultTimeFrameInDays = 60
+const now = new Date()
+
+function calculateDateForResult(
+  currentResult,
+  totalResults,
+  randomMillisToAdd
+) {
+  // unlike TB and HIV, we want to generate an exponential curve here
+  const daysToSubtract = Math.ceil(Math.random() ** 4 * resultTimeFrameInDays)
+
+  return addMilliseconds(
+    subDays(now, daysToSubtract),
+    _.random(randomMillisToAdd)
+  )
+}
+
+function randomOption(availableOptions, required = false) {
+  if (_.isEmpty(availableOptions)) {
+    return
+  }
+  if (_.isArray(availableOptions)) {
+    if (availableOptions.length === 1 && required) {
+      return availableOptions[0]
+    }
+    availableOptions = availableOptions.reduce(
+      (optionsWithProbability, option) => {
+        optionsWithProbability[option] =
+          100 /
+          (required ? availableOptions.length : availableOptions.length + 1)
+        return optionsWithProbability
+      }
+    )
+  }
+  let maxPercent = _.sum(Object.values(availableOptions))
+  if (maxPercent < 100 && !required) {
+    maxPercent = 100
+  }
+  let lastOptionMaxPercentile = 0
+  const options = Object.keys(availableOptions)
+  options.forEach(option => {
+    const optionProbability = availableOptions[option]
+    availableOptions[option] = [lastOptionMaxPercentile, optionProbability]
+    lastOptionMaxPercentile = optionProbability
+  })
+  const randomPercentile = _.random(0.0001, maxPercent)
+  for (let i = 0; i < options.length; i++) {
+    const option = options[i]
+    const optionPercentileRange = availableOptions[option]
+    if (
+      randomPercentile > optionPercentileRange[0] &&
+      randomPercentile <= optionPercentileRange[1]
+    ) {
+      return option
+    }
+  }
+  if (required) {
+    return options[options.length - 1]
+  }
+}
+
+async function seedPartnerAssay(knex) {
+  const { 'COVID-19 Test': assayTypeCovid19Id } = await allAssayTypeToId()
+
+  const partnerIds = await knex('Partner').pluck('id')
+  const assays = await knex('Assay').select('id', 'assayTypeId')
+
+  // for all Partners ...
+  await Promise.each(partnerIds, async partnerId =>
+    Promise.each(assays, async ({ id: assayId, assayTypeId }) => {
+      const isCovid19 = assayTypeId === assayTypeCovid19Id
+      // ... upsert entry to PartnerAssay
+      const partnerAssay = await knex('PartnerAssay')
+        .where({ partnerId, assayId })
+        .first()
+      if (!partnerAssay) {
+        await knex('PartnerAssay').insert({
+          partnerId,
+          assayId,
+
+          canCreate: isCovid19,
+          canDelete: isCovid19,
+          canEdit: isCovid19,
+        })
+      }
+    })
+  )
+}
+
+async function seedPartnerDisease(knex) {
+  const partnerIds = await knex('Partner').pluck('id')
+  const diseaseIds = await knex('Disease').pluck('id')
+
+  // for all Partners ...
+  await Promise.each(partnerIds, async partnerId =>
+    Promise.each(diseaseIds, async diseaseId => {
+      // ... upsert entry to PartnerDisease table
+      const partnerDisease = await knex('PartnerDisease')
+        .where({ partnerId, diseaseId })
+        .first()
+      if (!partnerDisease) {
+        await knex('PartnerDisease').insert({
+          partnerId,
+          diseaseId,
+        })
+      }
+    })
+  )
+}
+
+function getUniqueId() {
+  return _.times(6, () => _.toUpper(_.random(36).toString(36))).join('')
+}
+
+/**
+ * Gets a random date for a result linked to the previous one provided.
+ * @param  {[object]} previousResult The previous result
+ * @return {[date]} A random date next to the previous result's endedOn field
+ */
+function getLinkedResultDate(previousResult) {
+  const previousResultDateMillis = Math.max(
+    previousResult.startedOn,
+    previousResult.endedOn
+  )
+
+  const nowUTCMillis = format(
+    addMinutes(new Date(), now.getTimezoneOffset()),
+    'T'
+  )
+
+  if (previousResultDateMillis > nowUTCMillis)
+    throw new Error("Previous result's date can't be greater than today")
+
+  const diffMillis = nowUTCMillis - previousResultDateMillis
+
+  const rndMillis = _.random(1, diffMillis)
+  const newStartDate = new Date(previousResultDateMillis + rndMillis)
+
+  return newStartDate
+}
+
+/**
+ * Gets the randomly generated results fields startedOn, endedOn, createdOn and updatedOn based on the date provided as parameter.
+ * @param  {[object]} startedOn The based on date
+ * @return {[object]} An object containing fields startedOn, endedOn, createdOn and updatedOn.
+ */
+function getDateFields(startedOn) {
+  const necessaryDiffMillis = 120 * 1000
+
+  const now = new Date()
+  const nowMillis = format(addMinutes(now, now.getTimezoneOffset()), 'T')
+  const startedOnMillis = format(
+    addMinutes(startedOn, startedOn.getTimezoneOffset()),
+    'T'
+  )
+  const diffMillis = nowMillis - startedOnMillis
+
+  let endedOn
+  let createdOn
+  let updatedOn = null
+
+  if (diffMillis < necessaryDiffMillis) {
+    // Started On date is close to now, so we calculate the gap's millis
+    const gapMillies = diffMillis / 3
+    const addMillisGap = date => addMilliseconds(date, gapMillies)
+    endedOn = addMillisGap(startedOn)
+    createdOn = addMillisGap(endedOn)
+    updatedOn = addMillisGap(createdOn)
+  } else {
+    // Started On date isn't close to now, so we can use fixed gaps
+    endedOn = addMinutes(startedOn, 100)
+    createdOn = addMinutes(endedOn, 120)
+    updatedOn = addMinutes(createdOn, 180)
+  }
+
+  return {
+    startedOn,
+    endedOn,
+    createdOn,
+    updatedOn,
+  }
+}
+
+async function getResultForms(knex) {
+  return knex('ResultForm')
+    .select()
+    .then(items =>
+      items.map(resultForm => ({
+        ...resultForm,
+        formSchema: JSON.parse(resultForm.formSchema),
+      }))
+    )
+}
+
+async function seedJobFunctionsAndUsersForOperationalData(
+  knex,
+  {
+    auditFields,
+    countryId,
+    culture,
+    geographyId,
+    partnerId,
+    passwords = {},
+    timezone,
+  }
+) {
+  const modules = await getPermissionModules(knex)
+  const now = new Date()
+  const userIds = {}
+  const personIds = {}
+  if (!geographyId) {
+    const geography = await knex('Geography')
+      .where('countryId', countryId)
+      .whereNull('stateId')
+      .whereNull('lgaId')
+      .first('id')
+    geographyId = geography.id
+  }
+  // -------------------------------------------
+  // Users, Persons
+  await Promise.all(
+    _.map(
+      [
+        'cepheid', // for jobFunction 'Device Maker'
+        'ntp', // for jobFunction 'NTP'
+        'technician', // for jobFunction 'Technician'
+      ],
+      async name => {
+        const { id: userId } = await upsertSingle(
+          knex,
+          'User', // tableName
+          'name', // whereKeys
+          {
+            name: name.toLowerCase(),
+            password: bcrypt.hashSync(passwords[name] || 'test07', saltRounds),
+            legacyPassword: 0,
+            approved: 1,
+            createdOn: now,
+            lockedOut: 0,
+            failedPasswordAttempts: 0,
+          }
+        )
+
+        userIds[name.toLowerCase()] = userId
+
+        const lastPartnerId = partnerId
+        const lastCountryId = countryId
+
+        const { id: personId } = await upsertSingle(
+          knex,
+          'Person', // tableName
+          'userId', // whereKeys
+          {
+            userId,
+            name,
+            lastPartnerId,
+            lastCountryId,
+            timezone,
+            culture,
+            geographyId,
+            ...auditFields,
+          }
+        )
+        personIds[name.toLowerCase()] = personId
+      }
+    )
+  )
+  // -------------------------------------------
+  // Job Functions
+  const { upsertJobFunction } = require('./common')
+  const jobFunctionIdDeviceMaker = await upsertJobFunction(
+    knex,
+    'Device Maker',
+    partnerId,
+    [modules.account.edit, modules.operationalData.admin]
+  )
+  const jobFunctionIdNtp = await upsertJobFunction(knex, 'NTP', partnerId, [
+    modules.account.edit,
+    modules.operationalData.admin,
+  ])
+  const jobFunctionIdTechnician = await upsertJobFunction(
+    knex,
+    'Technician',
+    partnerId,
+    [modules.account.edit, modules.operationalData.view]
+  )
+  // -------------------------------------------
+  // Jobs
+  const initJob = async (personId, jobFunctionId) => {
+    const { id } = await upsertSingle(
+      knex,
+      'Job',
+      ['personId', 'jobFunctionId'],
+      { personId, jobFunctionId }
+    )
+    return id
+  }
+  const jobIdCepheid = await initJob(
+    personIds.cepheid,
+    jobFunctionIdDeviceMaker
+  )
+  const jobIdNtp = await initJob(personIds.ntp, jobFunctionIdNtp)
+  const jobIdTechnician = await initJob(
+    personIds.technician,
+    jobFunctionIdTechnician
+  )
+
+  // -------------------------------------------
+  // Constrain jobs by context
+  await upsertItems(
+    knex,
+    'JobContext',
+    ['jobId', 'geographyId'],
+    [
+      { jobId: jobIdCepheid, geographyId },
+      { jobId: jobIdNtp, geographyId },
+      { jobId: jobIdTechnician, geographyId },
+    ]
+  )
+
+  return {
+    userIds,
+    personIds,
+
+    jobFunctionIdDeviceMaker,
+    jobFunctionIdNtp,
+    jobFunctionIdTechnician,
+
+    jobIdCepheid,
+    jobIdNtp,
+    jobIdTechnician,
+  }
+}
+
 module.exports = {
   addReports,
 
@@ -2525,13 +2881,11 @@ module.exports = {
   seedStockIssuesUpdate,
   getPermissionModules,
   seedIssueEventTriggersForPartner,
-  assignAllFeaturesToJobFunctionIds,
   upsertItems,
   upsertSingle,
   seedIssues,
   getGeographyId,
   getPartnerByName,
-  getFeatureByModule,
   getPermissonByModuleAndActivity,
 
   seedNotificationTypes,
@@ -2566,4 +2920,18 @@ module.exports = {
 
   initDataFromFixture,
   updateReportableInResultCategoryAssay,
+
+  calculateDateForResult,
+  randomOption,
+
+  seedPartnerAssay,
+  seedPartnerDisease,
+
+  getUniqueId,
+  getLinkedResultDate,
+  getDateFields,
+
+  getResultForms,
+
+  seedJobFunctionsAndUsersForOperationalData,
 }

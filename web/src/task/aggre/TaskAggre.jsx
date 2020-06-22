@@ -1,11 +1,11 @@
 import classnames from 'classnames/bind'
 import React from 'react'
 import { compose, withProps, withHandlers, lifecycle } from 'recompose'
-import { defineMessages } from 'react-intl'
+import { defineMessages, injectIntl } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
-import Helmet from 'react-helmet'
+import { Helmet } from 'react-helmet'
 import { FaArrowUp } from 'react-icons/fa'
 import queryString from 'query-string'
 import { makeSortPageSelector } from '../../shared/selectors/searchParams'
@@ -56,6 +56,7 @@ const messages = defineMessages({
 })
 
 const enhance = compose(
+  injectIntl,
   withProps(
     makeSortPageSelector({
       sortCol: 'time',
@@ -258,7 +259,7 @@ export const TaskAggre = ({
               ))}
           </TaskDataTable>
         )}
-        {!items.isEmpty() && (
+        {!items.currentIdList.isEmpty() && (
           <BrowseTablePaginator
             history={history}
             location={location}

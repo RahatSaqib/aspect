@@ -1,0 +1,208 @@
+{
+  "sites": [
+    {
+      "city": "Teyateyaneng",
+      "externalId": "Teyateyaneng",
+      "lgaName": "Teyateyaneng",
+      "name": "Teyateyaneng",
+      "shortname": "Teyateyaneng",
+      "stateName": "Berea",
+      "latitude": "-29.14719000",
+      "longitude": "27.74895000",
+      "street1": "",
+      "street2": "",
+      "timeZoneId": "South Africa Standard Time",
+      "zip": "",
+      "tags": [
+        "Lab"
+      ]
+    },
+    {
+      "city": "Butha-Buthe",
+      "externalId": "Butha-Buthe",
+      "lgaName": "Butha-Buthe",
+      "name": "Butha-Buthe",
+      "shortname": "Butha-Buthe",
+      "stateName": "Butha-Buthe",
+      "latitude": "-28.76659000",
+      "longitude": "28.24937000",
+      "street1": "",
+      "street2": "",
+      "timeZoneId": "South Africa Standard Time",
+      "zip": "",
+      "tags": [
+        "Lab"
+      ]
+    },
+    {
+      "city": "Leribe",
+      "externalId": "Leribe",
+      "lgaName": "Hlotse",
+      "name": "Leribe",
+      "shortname": "Leribe",
+      "stateName": "Leribe",
+      "latitude": "-28.87185000",
+      "longitude": "28.04501000",
+      "street1": "",
+      "street2": "",
+      "timeZoneId": "South Africa Standard Time",
+      "zip": "",
+      "tags": [
+        "Lab"
+      ]
+    },
+    {
+      "city": "Maputsoe",
+      "externalId": "Maputsoe",
+      "lgaName": "Hlotse",
+      "name": "Maputsoe",
+      "shortname": "Maputsoe",
+      "stateName": "Leribe",
+      "latitude": "-28.88660000",
+      "longitude": "27.89915000",
+      "street1": "",
+      "street2": "",
+      "timeZoneId": "South Africa Standard Time",
+      "zip": "",
+      "tags": [
+        "Lab"
+      ]
+    },
+    {
+      "city": "Mafeteng",
+      "externalId": "Mafeteng",
+      "lgaName": "Mafeteng",
+      "name": "Mafeteng",
+      "shortname": "Mafeteng",
+      "stateName": "Mafeteng",
+      "latitude": "-29.82299000",
+      "longitude": "27.23744000",
+      "street1": "",
+      "street2": "",
+      "timeZoneId": "South Africa Standard Time",
+      "zip": "",
+      "tags": [
+        "Lab"
+      ]
+    },
+    {
+      "city": "Maseru",
+      "externalId": "Maseru",
+      "lgaName": "Maseru",
+      "name": "Maseru",
+      "shortname": "Maseru",
+      "stateName": "Maseru",
+      "latitude": "-29.31667000",
+      "longitude": "27.48333000",
+      "street1": "",
+      "street2": "",
+      "timeZoneId": "South Africa Standard Time",
+      "zip": "",
+      "tags": [
+        "Lab"
+      ]
+    },
+    {
+      "city": "Nako",
+      "externalId": "Nako",
+      "lgaName": "Maseru",
+      "name": "Nako",
+      "shortname": "Nako",
+      "stateName": "Maseru",
+      "latitude": "-29.61667000",
+      "longitude": "27.76667000",
+      "street1": "",
+      "street2": "",
+      "timeZoneId": "South Africa Standard Time",
+      "zip": "",
+      "tags": [
+        "Lab"
+      ]
+    },
+    {
+      "city": "Mohale's Hoek",
+      "externalId": "Mohale's Hoek",
+      "lgaName": "Mohale's Hoek",
+      "name": "Mohale's Hoek",
+      "shortname": "Mohale's Hoek",
+      "stateName": "Mohale's Hoek",
+      "latitude": "-30.15137000",
+      "longitude": "27.47691000",
+      "street1": "",
+      "street2": "",
+      "timeZoneId": "South Africa Standard Time",
+      "zip": "",
+      "tags": [
+        "Lab"
+      ]
+    },
+    {
+      "city": "Mokhotlong",
+      "externalId": "Mokhotlong",
+      "lgaName": "Mokhotlong",
+      "name": "Mokhotlong",
+      "shortname": "Mokhotlong",
+      "stateName": "Mokhotlong",
+      "latitude": "-29.28939000",
+      "longitude": "29.06751000",
+      "street1": "",
+      "street2": "",
+      "timeZoneId": "South Africa Standard Time",
+      "zip": "",
+      "tags": [
+        "Lab"
+      ]
+    },
+    {
+      "city": "Qacha's Nek",
+      "externalId": "Qacha's Nek",
+      "lgaName": "Qacha's Nek",
+      "name": "Qacha's Nek",
+      "shortname": "Qacha's Nek",
+      "stateName": "Qacha's Nek",
+      "latitude": "-30.11537000",
+      "longitude": "28.68936000",
+      "street1": "",
+      "street2": "",
+      "timeZoneId": "South Africa Standard Time",
+      "zip": "",
+      "tags": [
+        "Lab"
+      ]
+    },
+    {
+      "city": "Quthing",
+      "externalId": "Quthing",
+      "lgaName": "Quthing",
+      "name": "Quthing",
+      "shortname": "Quthing",
+      "stateName": "Quthing",
+      "latitude": "-30.40001000",
+      "longitude": "27.70027000",
+      "street1": "",
+      "street2": "",
+      "timeZoneId": "South Africa Standard Time",
+      "zip": "",
+      "tags": [
+        "Lab"
+      ]
+    },
+    {
+      "city": "Thaba-Tseka",
+      "externalId": "Thaba-Tseka",
+      "lgaName": "Thaba-Tseka",
+      "name": "Thaba-Tseka",
+      "shortname": "Thaba-Tseka",
+      "stateName": "Thaba-Tseka",
+      "latitude": "-29.52204000",
+      "longitude": "28.60840000",
+      "street1": "",
+      "street2": "",
+      "timeZoneId": "South Africa Standard Time",
+      "zip": "",
+      "tags": [
+        "Lab"
+      ]
+    }
+  ]
+}

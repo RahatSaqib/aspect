@@ -2,57 +2,41 @@ module.exports = require('../utils').seed(seed, __filename)
 
 const _ = require('lodash')
 const bcrypt = require('bcrypt')
-const { addMilliseconds, addMinutes, subDays } = require('date-fns')
 const Promise = require('bluebird')
-
+const { addForms } = require('../relativeObjectsSeeds')
+const { resultCategoryToId } = require('../../src/shared/dictionary')
 const {
   commonUpserts,
   upsertJobFunctionPermission,
-  upsertJobFeatures,
+  upsertJobFunction,
 } = require('../common')
-const { upsertCovidAssay } = require('../commonCovid')
+const { upsertCovidDeviceTypes } = require('../commonCovid')
 const {
   normalizeTreatmentStatusDistributionByResults,
+  addCovidResults,
 } = require('../commonGenerateResults')
 const config = require('../../src/config')
 const {
-  allFeatureToId,
   partnerTypeToId,
   deviceStatusToId,
-  allSampleTypeToId,
-  allResultCategoryToId,
-  resultSourceToId,
-  resultTypeToId,
-  resultWorkflowStatusToId,
 } = require('../../src/shared/dictionary')
 const utils = require('../utils')
 
 const geography = require('./fixtures/geography.json')
 const followUp = require('../fixtures/FollowUp.json')
+const wakandaCovidResultFormSchema = require('./fixtures/wakandaCovidResultFormSchema.json')
 
-const millisInMinute = 1000 * 60
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
-const resultTimeFrameInDays = 60
 const resultMultiplier = process.env['seeds.resultMultiplier'] || 100
 const resultNumber = resultMultiplier * 10
 const now = new Date()
 
-function calculateDateForResult(
-  currentResult,
-  totalResults,
-  randomMillisToAdd
-) {
-  // unlike TB and HIV, we want to generate an exponential curve here
-  const daysToSubtract = Math.ceil(Math.random() ** 4 * resultTimeFrameInDays)
-
-  return addMilliseconds(
-    subDays(now, daysToSubtract),
-    _.random(randomMillisToAdd)
-  )
-}
-
 async function seed(knex) {
   utils.hasSeededStaticData = true
+  const resultCategoryPositiveId = await resultCategoryToId('Positive')
+  const { id: countryId } = await knex('Country')
+    .where('name', 'Wakanda')
+    .first('id')
 
   // Create admin user and audit fields
   const [adminId] = await knex('User').insert({
@@ -84,8 +68,6 @@ async function seed(knex) {
     'a3',
     'culture',
     'countryCode',
-    'stateLabel',
-    'lgaLabel',
     'timezone',
     'portNumber',
     'exportColumns',
@@ -104,7 +86,6 @@ async function seed(knex) {
   )
 
   // Give permission to dashboard, browse, sites, results, devices, reporters
-  const features = await allFeatureToId()
   const modules = await utils.getPermissionModules(knex)
 
   const { id: jobFunctionIdAdmin } = await knex('JobFunction')
@@ -114,17 +95,19 @@ async function seed(knex) {
 
   await upsertJobFunctionPermission(knex, jobFunctionIdAdmin, [
     modules.demo.admin,
-    modules.deviceApiKey.admin,
     modules.issue.admin,
-    modules.inventory.admin,
-    modules.task.admin,
     modules.patient.admin,
-  ])
-
-  await upsertJobFeatures(knex, jobFunctionIdAdmin, [
-    features.summaryDashboard,
-    features.account,
-    features.resultDashboard,
+    modules.case.admin,
+    modules.site.admin,
+    modules.result.admin,
+    modules.dashboard.summary,
+    modules.dashboard.result,
+    modules.account.admin,
+    modules.device.admin,
+    modules.reporter.admin,
+    modules.assay.edit,
+    modules.browse.view,
+    modules.person.view,
   ])
 
   const { id: jobFunctionIdRegionalOfficer } = await knex('JobFunction')
@@ -133,19 +116,18 @@ async function seed(knex) {
     .first('id')
 
   await upsertJobFunctionPermission(knex, jobFunctionIdRegionalOfficer, [
-    modules.device.admin,
-    modules.result.admin,
-    modules.site.admin,
-    modules.issue.admin,
-    modules.inventory.admin,
-    modules.task.admin,
+    modules.demo.admin,
     modules.patient.admin,
-  ])
-
-  await upsertJobFeatures(knex, jobFunctionIdRegionalOfficer, [
-    features.summaryDashboard,
-    features.account,
-    features.resultDashboard,
+    modules.case.admin,
+    modules.site.admin,
+    modules.result.admin,
+    modules.dashboard.summary,
+    modules.dashboard.result,
+    modules.account.admin,
+    modules.device.admin,
+    modules.assay.edit,
+    modules.browse.view,
+    modules.person.view,
   ])
 
   const { id: jobFunctionIdLabUser } = await knex('JobFunction')
@@ -154,22 +136,33 @@ async function seed(knex) {
     .first('id')
 
   await upsertJobFunctionPermission(knex, jobFunctionIdLabUser, [
-    modules.device.edit,
-    modules.result.edit,
-    modules.site.edit,
-    modules.issue.edit,
-    modules.inventory.edit,
-    modules.task.edit,
     modules.patient.edit,
+    modules.case.edit,
+    modules.site.edit,
+    modules.result.edit,
+    modules.dashboard.summary,
+    modules.dashboard.result,
+    modules.account.edit,
+    modules.device.edit,
+    modules.assay.edit,
+    modules.browse.view,
+    modules.person.view,
   ])
 
-  await upsertJobFeatures(knex, jobFunctionIdLabUser, [
-    features.summaryDashboard,
-    features.account,
-    features.resultDashboard,
-  ])
-
-  await upsertCovidAssay(knex)
+  const covidDeviceTypes = (
+    await upsertCovidDeviceTypes(knex, partnerId, wakandaCovidResultFormSchema)
+  ).filter(deviceType => deviceType.externalId !== 'Aspect')
+  const deviceTypeAssays = {}
+  await Promise.each(
+    covidDeviceTypes.map(deviceType => deviceType.id),
+    async deviceTypeId => {
+      deviceTypeAssays[deviceTypeId] = await knex('Assay as a')
+        .join('AssayType as at', 'a.assayTypeId', 'at.id')
+        .where('a.deviceTypeId', deviceTypeId)
+        .andWhere('at.externalId', 'covid19')
+        .first('a.*')
+    }
+  )
 
   const auditFields = {
     createdOn: now,
@@ -183,9 +176,6 @@ async function seed(knex) {
   countryData.clinics = []
   countryData.devices = []
 
-  const { id: deviceTypeAspectResultEntryId } = await knex('DeviceType')
-    .where('externalId', 'AspectResultEntry')
-    .first('id')
   const deviceStatusApprovedId = await deviceStatusToId('approved')
 
   await Promise.all(
@@ -220,11 +210,18 @@ async function seed(knex) {
             countryData.labs.push(labData)
 
             // add device to the lab
+            const deviceType =
+              covidDeviceTypes[
+                state.lgas.indexOf(lga) % covidDeviceTypes.length
+              ]
             const device = {
               ...auditFields,
-              name: `${labData.name} Aspect`,
-              shortName: `${labData.externalId}_aspect`,
-              deviceTypeId: deviceTypeAspectResultEntryId,
+              name: `${labData.name} ${deviceType.name}`.substr(0, 255),
+              shortName: `${labData.externalId}_${deviceType.externalId}`.substr(
+                0,
+                45
+              ),
+              deviceTypeId: deviceType.id,
               deviceStatusId: deviceStatusApprovedId,
               partnerId: labData.partnerId,
               geographyId: labData.geographyId,
@@ -284,251 +281,162 @@ async function seed(knex) {
     })
   )
 
-  // add result form
-  const { id: assayId } = await knex('Assay')
-    .where('externalId', 'assayAspectResultEntryCovid19')
-    .first('id')
-  const formSchema = {
-    fields: {
-      testReason: {
-        i18nLabel: 'testReasonCovid19',
-        control: {
-          type: 'DropDown',
-          options: [
-            {
-              title: 'Contact of a case',
-              i18nText: 'contactOfACase',
-              value: '1',
-            },
-            {
-              title: 'Ill Seeking Healthcare due to suspicion of COVID-19',
-              i18nText: 'illSeekingHealthcare',
-              value: '2',
-            },
-            {
-              title: 'Detected at point of entry',
-              i18nText: 'detectedAtPointOfEntry',
-              value: '3',
-            },
-            {
-              title: 'Repatriation',
-              i18nText: 'repatriation',
-              value: '4',
-            },
-            {
-              title:
-                'Routine respiratory disease surveillance systems (e.g influenza)',
-              i18nText: 'routineRespiratorySurveillance',
-              value: '5',
-            },
-            {
-              title: 'Unknown',
-              i18nText: 'unknown',
-              value: '6',
-            },
-          ],
-        },
-        order: 1,
-      },
-      caseId: {
-        i18nLabel: 'caseId',
-        control: {
-          type: 'TextBox',
-        },
-        order: 2,
-      },
-      age: {
-        i18nLabel: 'age',
-        control: {
-          type: 'TextBox',
-        },
-        order: 3,
-      },
-      gender: {
-        i18nLabel: 'gender',
-        control: {
-          type: 'DropDown',
-          options: [
-            {
-              title: 'Male',
-              i18nText: 'male',
-              value: '1',
-            },
-            {
-              title: 'Female',
-              i18nText: 'female',
-              value: '2',
-            },
-          ],
-        },
-        order: 4,
-      },
-    },
-    sendChangesOn: 'change',
-  }
-
-  await knex('ResultForm').insert({
+  const siteDatas = [...countryData.labs, ...countryData.clinics]
+  const covidResults = await addCovidResults(
+    knex,
+    resultNumber,
+    await knex('Assay as a')
+      .join('AssayType as at', 'a.assayTypeId', 'at.id')
+      .where('at.externalId', 'covid19')
+      .select('a.*'),
+    auditFields,
+    siteDatas,
     partnerId,
-    assayId,
-    formSchema: JSON.stringify(formSchema),
+    countryData.devices
+  )
+  const covidAssays = await knex('Assay as a')
+    .join('AssayType as at', 'a.assayTypeId', 'at.id')
+    .where('at.externalId', 'covid19')
+    .select('a.*')
+  const covidPositiveResults = _.filter(
+    covidResults,
+    result => result.resultCategory1 === resultCategoryPositiveId
+  )
+  await addCovidResults(
+    knex,
+    resultNumber,
+    covidAssays,
+    auditFields,
+    siteDatas,
+    partnerId,
+    countryData.devices,
+    covidPositiveResults
+  )
+
+  const clinicList = countryData.clinics
+  const firstClinic = clinicList[0]
+  const secondClinic = clinicList[1]
+
+  const jobFunctionIdClinician = await upsertJobFunction(
+    knex,
+    'Clinician',
+    partnerId
+  )
+
+  await upsertJobFunctionPermission(knex, jobFunctionIdClinician, [
+    modules.demo.admin,
+    modules.patient.edit,
+    modules.case.edit,
+    modules.site.edit,
+    modules.result.edit,
+    modules.dashboard.summary,
+    modules.dashboard.result,
+    modules.account.edit,
+    modules.assay.edit,
+    modules.device.view,
+    modules.browse.view,
+    modules.person.view,
+  ])
+
+  // Create User
+  const [userIdFirstClinic] = await knex('User').insert({
+    name: 'covid_clinic_1',
+    password: bcrypt.hashSync('covid', saltRounds),
+    approved: 1,
+    createdOn: now,
+    lockedOut: 0,
+    failedPasswordAttempts: 0,
   })
 
-  // seed dummy results
-  const { NasalSwab: sampleTypeNasalSwab } = await allSampleTypeToId()
-  const {
-    Positive: resultCategoryPositiveId,
-    Negative: resultCategoryNegativeId,
-    Inconclusive: resultCategoryInconclusiveId,
-    Unknown: resultCategoryUnknownId,
-  } = await allResultCategoryToId()
-  const resultSourceEnteredByHandId = await resultSourceToId('EnteredByHand')
-  const resultTypePatientId = await resultTypeToId('Patient')
-  const resultWorkflowStatusProcessedId = await resultWorkflowStatusToId(
-    'Processed'
-  )
-  const resultWorkflowStatusValidatedId = await resultWorkflowStatusToId(
-    'Validated'
-  )
-  const resultWorkflowStatusDeliverableId = await resultWorkflowStatusToId(
-    'Deliverable'
-  )
+  const { id: siteIdFirstClinic } = await knex('Site')
+    .where('externalId', firstClinic.externalId)
+    .first('id')
 
-  // seed samples
-  const samples = []
-  await Promise.each(_.range(resultNumber), async i => {
-    const siteData = countryData.clinics[i % countryData.clinics.length]
-    const sample = {
-      externalId: `SMP-CV-${i}`,
-      collectedOn: calculateDateForResult(i, resultNumber, millisInMinute),
-      sampleTypeId: sampleTypeNasalSwab,
-      originSiteId: siteData.id,
-    }
-
-    sample.id = await knex('Sample').insert(sample)
-
-    samples.push(sample)
+  // create Person
+  const [personIdFirstClinic] = await knex('Person').insert({
+    userId: userIdFirstClinic,
+    geographyId: firstClinic.geographyId,
+    name: firstClinic.name,
+    lastPartnerId: partnerId,
+    lastCountryId: countryId,
+    timezone: countryData.timezone,
+    culture: 'en',
+    canLogin: true,
+    createdBy: adminId,
+    createdOn: now,
+    updatedBy: adminId,
+    updatedOn: now,
   })
 
-  const possibleResults = [
-    {
-      category1: resultCategoryPositiveId,
-      category2: null,
-      minLikelihood: 0,
-      maxLikelihood: 30,
-      resultText: 'Positive',
-    },
-    {
-      category1: resultCategoryNegativeId,
-      category2: null,
-      minLikelihood: 31,
-      maxLikelihood: 90,
-      resultText: 'Negative',
-    },
-    {
-      category1: resultCategoryInconclusiveId,
-      category2: null,
-      minLikelihood: 91,
-      maxLikelihood: 96,
-      resultText: 'Inconclusive',
-    },
-    {
-      category1: resultCategoryUnknownId,
-      category2: null,
-      minLikelihood: 97,
-      maxLikelihood: 100,
-      resultText: 'Unknown',
-    },
-  ]
+  // job function for user
+  const [jobIdFirstClinic] = await knex('Job').insert({
+    personId: personIdFirstClinic,
+    jobFunctionId: jobFunctionIdClinician,
+  })
 
-  await Promise.each(_.range(resultNumber), async i => {
-    const device = countryData.devices[i % countryData.devices.length]
-    const siteData = countryData.labs.find(site => site.id === device.siteId)
-    const sample = samples[i % samples.length]
-    const randomDate = calculateDateForResult(i, resultNumber, 6000)
-    const reportableSite = sample.originSiteId
-      ? _.find(countryData.clinics, c => c.id === sample.originSiteId)
-      : siteData
+  // context for user
+  await knex('JobContext').insert({
+    jobId: jobIdFirstClinic,
+    siteId: siteIdFirstClinic,
+  })
 
-    const rnd = _.random(0, 100)
-    const result = _.find(
-      possibleResults,
-      r => rnd >= r.minLikelihood && rnd <= r.maxLikelihood
-    )
+  // Create User
+  const [userIdSecondClinic] = await knex('User').insert({
+    name: 'covid_clinic_2',
+    password: bcrypt.hashSync('covid', saltRounds),
+    approved: 1,
+    createdOn: now,
+    lockedOut: 0,
+    failedPasswordAttempts: 0,
+  })
 
-    const formData = {
-      age: rnd,
-      caseId: `COVID-${_.random(1000, 9999)}-ID`,
-      gender: _.random(1, 2),
-      testReason: _.random(1, 6),
-    }
+  const { id: siteIdSecondClinic } = await knex('Site')
+    .where('externalId', secondClinic.externalId)
+    .first('id')
 
-    const resultId = await knex('Result').insert({
-      ...auditFields,
-      externalId: `COVID-${i}`,
-      assayId,
-      partnerId,
-      geographyId: siteData.geographyId,
-      siteId: siteData.id,
-      reportableSiteId: reportableSite.id,
-      deviceId: device.id,
-      longitude: reportableSite.longitude,
-      latitude: reportableSite.latitude,
-      resultSourceId: resultSourceEnteredByHandId,
-      resultTypeId: resultTypePatientId,
-      sampleId: sample.id,
-      resultCategory1: result.category1,
-      resultCategory2: result.category2,
-      resultData: JSON.stringify({ resultText: result.resultText }),
-      formData: JSON.stringify(formData),
-      patientData: JSON.stringify({
-        age: formData.age,
-        caseId: formData.caseId,
-        gender:
-          formSchema.fields.gender.control.options[formData.gender - 1].title,
-        testReason:
-          formSchema.fields.testReason.control.options[formData.testReason - 1]
-            .title,
-      }),
-      startedOn: randomDate,
-      endedOn: addMinutes(randomDate, 100),
-      createdOn: addMinutes(randomDate, 120),
-      updatedOn: addMinutes(randomDate, 180),
-    })
+  // create Person
+  const [personIdSecondClinic] = await knex('Person').insert({
+    userId: userIdSecondClinic,
+    geographyId: secondClinic.geographyId,
+    name: secondClinic.name,
+    lastPartnerId: partnerId,
+    lastCountryId: countryId,
+    timezone: countryData.timezone,
+    culture: 'en',
+    canLogin: true,
+    createdBy: adminId,
+    createdOn: now,
+    updatedBy: adminId,
+    updatedOn: now,
+  })
 
-    const rndWorkflow = _.random(0, 100)
-    const resultWorkflowStatusId =
-      rndWorkflow < 20
-        ? resultWorkflowStatusProcessedId
-        : rndWorkflow < 30
-        ? resultWorkflowStatusValidatedId
-        : resultWorkflowStatusDeliverableId
+  // job function for user
+  const [jobIdSecondClinic] = await knex('Job').insert({
+    personId: personIdSecondClinic,
+    jobFunctionId: jobFunctionIdClinician,
+  })
 
-    const [lastLogId] = await knex('ResultWorkflowLog').insert({
-      resultId,
-      resultWorkflowStatusId,
-      operator: 'John',
-      changedOn: addMinutes(randomDate, 120),
-      createdOn: addMinutes(randomDate, 120),
-      createdBy: adminId,
-    })
-
-    await knex('Result')
-      .where('id', resultId)
-      .update({ resultWorkflowStatusLogId: lastLogId })
+  // context for user
+  await knex('JobContext').insert({
+    jobId: jobIdSecondClinic,
+    siteId: siteIdSecondClinic,
   })
 
   // assign treatment status
   await normalizeTreatmentStatusDistributionByResults(
     knex,
     await knex('Result as r')
-      .join('ResultCategoryAssay as rca', function() {
+      .join('ResultCategoryAssay as rca', function () {
         this.on('r.assayId', 'rca.assayId').andOn(
           'r.resultCategory1',
           'rca.resultCategoryId'
         )
       })
-      .where('r.assayId', assayId)
-      .where('rca.requiresTreatment', true)
+      .whereIn(
+        'r.assayId',
+        Object.values(deviceTypeAssays).map(assay => assay.id)
+      )
+      .andWhere('rca.requiresTreatment', true)
       .select('r.id', 'r.createdOn', 'r.assayId', 'r.createdBy'),
     85,
     90
@@ -545,9 +453,11 @@ async function seed(knex) {
       'dashboardWidgetTitleTotalDeaths',
     ])
     .select('id as widgetId')
+  await addForms(knex, partnerId)
   await Promise.each(statWidgets, async elem =>
     knex('JobFunctionDashboardWidget').insert([
       { jobFunctionId: jobFunctionIdAdmin, widgetId: elem.widgetId },
+      { jobFunctionId: jobFunctionIdClinician, widgetId: elem.widgetId },
     ])
   )
 }

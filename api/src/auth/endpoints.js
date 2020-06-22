@@ -11,7 +11,6 @@ const {
   createResetPasswordToken,
   updatePasswordWithResetPasswordToken,
   clientTypes,
-  getUserFeatures,
   getLicense,
   acceptLicense,
   getUserJobFunctions,
@@ -47,6 +46,7 @@ const routes = [
           refresh: Joi.string().required(),
           clientId: Joi.string().required(),
           countryId: Joi.number(),
+          countryAbbreviation: Joi.string(),
           clientType: Joi.string().required(),
           culture: Joi.string().required(),
           timezone: Joi.string().required(),
@@ -106,15 +106,9 @@ const routes = [
       notes: 'Returns an array of the fields that were updated',
       validate: {
         payload: {
-          currentPassword: Joi.string()
-            .max(100)
-            .required(),
-          newUsername: Joi.string()
-            .max(255)
-            .allow('', null),
-          newPassword: Joi.string()
-            .max(100)
-            .allow('', null),
+          currentPassword: Joi.string().max(100).required(),
+          newUsername: Joi.string().max(255).allow('', null),
+          newPassword: Joi.string().max(100).allow('', null),
           clientName: Joi.string().required(),
           clientType: Joi.string()
             .lowercase()
@@ -135,9 +129,7 @@ const routes = [
         'Generate a new reset password token and send it to the user via email',
       validate: {
         params: {
-          email: Joi.string()
-            .description('Email address')
-            .required(),
+          email: Joi.string().description('Email address').required(),
         },
       },
     },
@@ -157,9 +149,7 @@ const routes = [
             .required(),
         },
         payload: {
-          newPassword: Joi.string()
-            .max(100)
-            .required(),
+          newPassword: Joi.string().max(100).required(),
           clientName: Joi.string().required(),
           clientId: Joi.string(),
         },
@@ -175,29 +165,14 @@ const routes = [
       notes: 'Returns an array of the fields that were updated',
       validate: {
         params: {
-          personId: Joi.string()
-            .description('Person ID')
-            .required(),
+          personId: Joi.string().description('Person ID').required(),
         },
         payload: {
-          newUsername: Joi.string()
-            .max(255)
-            .allow('', null),
-          newPassword: Joi.string()
-            .max(100)
-            .allow('', null),
+          newUsername: Joi.string().max(255).allow('', null),
+          newPassword: Joi.string().max(100).allow('', null),
           userLockedOut: Joi.boolean().allow(null),
         },
       },
-    },
-  },
-  {
-    method: 'GET',
-    path: '/auth/features',
-    handler: asyncHandler(getUserFeatures),
-    config: {
-      description: 'Get UI features of the logged in user',
-      notes: 'Returns a list of feature object',
     },
   },
   {

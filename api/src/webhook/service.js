@@ -18,6 +18,7 @@ const {
   addDataSourceToQuery,
   processUsingDataSourceQuery,
 } = require('../stringTemplate/service')
+const { getConstraints, addConstraints } = require('../auth/constraints')
 const { createStreamFromFileReference } = require('../file/service')
 
 function onWebhookMessageCreated({ webhookMessageId }, { messageContext }) {
@@ -194,10 +195,29 @@ function finalizeWebhookMessage(webhookMessageId, messageContext) {
 }
 
 async function createWebhookMessageFromTemplate(knex, webhookMessageId) {
+  const { personId } = await knex('WebhookMessage')
+    .where('id', webhookMessageId)
+    .first('personId')
+  const dataConstraints = await getConstraints({ personId })
   const data = await knex('WebhookMessage as m')
     .innerJoin('WebhookTemplate as tmpl', 'm.webhookTemplateId', 'tmpl.id')
     .leftJoin('Notification as n', 'n.webhookMessageId', 'm.id')
     .modify(addDataSourceToQuery, { message: 'm', notification: 'n' })
+    .modify(addConstraints, dataConstraints, {
+      assay: 'a',
+      partner: 'pr',
+      device: 'd',
+      deviceType: 'dt',
+      person: 'p',
+      /*
+      result: 'r',
+      ^^^ Leaving this commented out to  highlight the fact that adding these
+          constraints will break the RO notifications configured for Myanmar
+      */
+      sample: 'sample',
+      site: 's',
+      showUnapprovedDevices: true,
+    })
     .where({ 'm.id': webhookMessageId })
     .first(
       'tmpl.payload as payloadTemplate',

@@ -82,7 +82,7 @@ describe('Device API Raw routes for Senaite LIMS', () => {
       .leftJoin('Sample as s', 'r.sampleId', 's.id')
       .where('r.deviceId', deviceId)
       .select('r.id', 'r.sampleId', 's.originSiteId')
-      .union(function() {
+      .union(function () {
         this.from('ResultGeneratedResult as rgr')
           .innerJoin('Result as r', 'rgr.sourceResultId', 'r.id')
           .innerJoin('Result as gr', 'rgr.generatedResultId', 'gr.id')
@@ -110,41 +110,25 @@ describe('Device API Raw routes for Senaite LIMS', () => {
     )
     const opIds = await knex('DeviceOperation')
       .where('deviceId', deviceId)
-      .map(op => op.id)
-    const issueIds = await knex('Issue')
-      .where('deviceId', deviceId)
       .pluck('id')
-    await knex('DeviceStatusLog')
-      .where('deviceId', deviceId)
-      .delete()
+    const issueIds = await knex('Issue').where('deviceId', deviceId).pluck('id')
+    await knex('DeviceStatusLog').where('deviceId', deviceId).delete()
     await knex('DeviceLog')
       .where('deviceId', deviceId)
       .orWhereIn('resultId', resultIds)
       .delete()
-    await knex('DeviceOperation')
-      .whereIn('id', opIds)
-      .delete()
-    await knex('FactDeviceFlag')
-      .where('deviceId', deviceId)
-      .delete()
-    await knex('DeviceSiteHistory')
-      .where('deviceId', deviceId)
-      .delete()
-    await knex('FactResultsDevice')
-      .where('deviceId', deviceId)
-      .delete()
-    await knex('FactResultsDeviceByAssay')
-      .where('deviceId', deviceId)
-      .delete()
+    await knex('DeviceOperation').whereIn('id', opIds).delete()
+    await knex('FactDeviceFlag').where('deviceId', deviceId).delete()
+    await knex('DeviceSiteHistory').where('deviceId', deviceId).delete()
+    await knex('FactResultsDevice').where('deviceId', deviceId).delete()
+    await knex('FactResultsDeviceByAssay').where('deviceId', deviceId).delete()
     await knex('FactResultsDeviceByCategory1')
       .where('deviceId', deviceId)
       .delete()
     await knex('FactResultsDeviceByCategory1And2')
       .where('deviceId', deviceId)
       .delete()
-    await knex('DeviceApiRaw')
-      .where({ deviceApiKeyId })
-      .delete()
+    await knex('DeviceApiRaw').where({ deviceApiKeyId }).delete()
     await knex('DeviceApiKey')
       .where('token', validApiKeyToken)
       .orWhere('deviceId', deviceId)
@@ -156,12 +140,10 @@ describe('Device API Raw routes for Senaite LIMS', () => {
     await knex('InventoryLog')
       .whereIn('inventoryItemId', inventoryItemIds)
       .delete()
-    await knex('InventoryItem')
-      .whereIn('id', inventoryItemIds)
-      .delete()
+    await knex('InventoryItem').whereIn('id', inventoryItemIds).delete()
     await knex('IssueEvent')
       .whereIn('issueId', issueIds)
-      .orWhere(function() {
+      .orWhere(function () {
         if (resultIds != null && resultIds.length > 0) {
           this.whereRaw(
             `JSON_EXTRACT(data, "$.resultId") IN (${resultIds.join(',')})`
@@ -169,31 +151,19 @@ describe('Device API Raw routes for Senaite LIMS', () => {
         }
       })
       .delete()
-    await knex('InventoryLog')
-      .whereIn('resultId', resultIds)
-      .delete()
+    await knex('InventoryLog').whereIn('resultId', resultIds).delete()
     await knex('ResultQualityControlLog')
       .whereIn('resultId', resultIds)
       .delete()
-    await knex('ResultWorkflowLog')
-      .whereIn('resultId', resultIds)
-      .delete()
+    await knex('ResultWorkflowLog').whereIn('resultId', resultIds).delete()
     await knex('ResultGeneratedResult')
       .whereIn('sourceResultId', resultIds)
       .orWhereIn('generatedResultId', resultIds)
       .delete()
-    await knex('ResultTag')
-      .whereIn('resultId', resultIds)
-      .delete()
-    await knex('Result')
-      .whereIn('id', resultIds)
-      .delete()
-    await knex('Device')
-      .where('id', deviceId)
-      .delete()
-    await knex('Sample')
-      .whereIn('id', sampleIds)
-      .delete()
+    await knex('ResultTag').whereIn('resultId', resultIds).delete()
+    await knex('Result').whereIn('id', resultIds).delete()
+    await knex('Device').where('id', deviceId).delete()
+    await knex('Sample').whereIn('id', sampleIds).delete()
     await knex('Site')
       .whereIn('id', originSiteIds)
       .orWhere('id', siteId)
@@ -2279,9 +2249,7 @@ describe('Device API Raw routes for Senaite LIMS', () => {
     const sampleIdsAfter = await knex('Sample')
       .where('externalId', payload.SampleID)
       .pluck('id')
-    expect(sampleIdsAfter)
-      .to.be.an('array')
-      .that.has.lengthOf(1)
+    expect(sampleIdsAfter).to.be.an('array').that.has.lengthOf(1)
     const results = await knex('Result as r')
       .join('Assay as a', 'r.assayId', 'a.id')
       .join('Sample as s', 'r.sampleId', 's.id')
@@ -2313,12 +2281,14 @@ describe('Device API Raw routes for Senaite LIMS', () => {
         'a.externalId as assayId',
         'rc1.externalId as result1'
       )
-      .map(result => ({
-        ...result,
-        resultData: JSON.parse(result.resultData),
-        patientData: JSON.parse(result.patientData),
-        sampleCollectedOn: JSON.stringify(result.sampleCollectedOn),
-      }))
+      .then(items =>
+        items.map(result => ({
+          ...result,
+          resultData: JSON.parse(result.resultData),
+          patientData: JSON.parse(result.patientData),
+          sampleCollectedOn: JSON.stringify(result.sampleCollectedOn),
+        }))
+      )
     const sampleTypeMapping = {
       'Blood plasma': 'Plasma',
       'Dried Blood Spot': 'DBS',

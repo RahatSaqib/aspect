@@ -45,9 +45,7 @@ const routes = [
                     'Returns the max alert message Id, it is only needed for the datatable'
                   ),
                 alertTemplateId: Joi.number().required(),
-                site: Joi.string()
-                  .required()
-                  .description('The site name'),
+                site: Joi.string().required().description('The site name'),
                 issueStatus: Joi.string()
                   .required()
                   .description('The name of the issue status'),
@@ -60,18 +58,14 @@ const routes = [
                 issueCategoryId: Joi.number()
                   .required()
                   .description('The id of the issue category'),
-                time: Joi.date()
-                  .required()
-                  .description('Date for the alert'),
+                time: Joi.date().required().description('Date for the alert'),
                 message: Joi.string()
                   .allow(null)
                   .description('Message of the alert'),
                 issueCount: Joi.number()
                   .optional()
                   .description('The amount of issues related to this alert'),
-                title: Joi.string()
-                  .required()
-                  .description("The alert's title"),
+                title: Joi.string().required().description("The alert's title"),
               })
             )
             .single(true)
@@ -103,12 +97,8 @@ const routes = [
           alertType: Joi.string()
             .allow('')
             .description('Filter for alert type'),
-          topic: Joi.string()
-            .allow('')
-            .description('Filter for topic'),
-          date: Joi.date()
-            .iso()
-            .description('Filter for the alert date'),
+          topic: Joi.string().allow('').description('Filter for topic'),
+          date: Joi.date().iso().description('Filter for the alert date'),
           categoryId: Joi.number().description('Filter for the issue category'),
           alertTemplateId: Joi.number().description(
             'Filter for the alert template'
@@ -136,9 +126,7 @@ const routes = [
                 id: Joi.number()
                   .required()
                   .description('The id of the alert message'),
-                site: Joi.string()
-                  .required()
-                  .description('The site name'),
+                site: Joi.string().required().description('The site name'),
                 siteId: Joi.number().description('The site Id'),
                 deviceId: Joi.number().description('The device Id'),
                 device: Joi.string().description('The device name'),
@@ -154,18 +142,14 @@ const routes = [
                 issueCategoryId: Joi.number()
                   .required()
                   .description('The id of the issue category'),
-                time: Joi.date()
-                  .required()
-                  .description('Date for the alert'),
+                time: Joi.date().required().description('Date for the alert'),
                 message: Joi.string()
                   .allow(null)
                   .description('Message of the alert'),
                 issueCount: Joi.number()
                   .optional()
                   .description('The amount of issues related with this alert'),
-                title: Joi.string()
-                  .required()
-                  .description("The alert's title"),
+                title: Joi.string().required().description("The alert's title"),
               })
             )
             .single(true)
@@ -194,9 +178,7 @@ const routes = [
       auth: { scope: ['task:view', 'task:edit'] },
       validate: {
         params: {
-          taskId: Joi.number()
-            .required()
-            .description('id number of the alert'),
+          taskId: Joi.number().required().description('id number of the alert'),
         },
       },
       response: {
@@ -210,9 +192,7 @@ const routes = [
               id: Joi.number()
                 .required()
                 .description('The id of the alert message'),
-              site: Joi.string()
-                .required()
-                .description('The site name'),
+              site: Joi.string().required().description('The site name'),
               siteId: Joi.number().description('The site Id'),
               deviceId: Joi.number().description('The device Id'),
               device: Joi.string().description('The device name'),
@@ -228,18 +208,14 @@ const routes = [
               issueCategoryId: Joi.number()
                 .required()
                 .description('The id of the issue category'),
-              time: Joi.date()
-                .required()
-                .description('Date for the alert'),
+              time: Joi.date().required().description('Date for the alert'),
               message: Joi.string()
                 .allow(null)
                 .description('Message of the alert'),
               personName: Joi.string().description(
                 'The name of the site contact'
               ),
-              title: Joi.string()
-                .required()
-                .description("The alert's title"),
+              title: Joi.string().required().description("The alert's title"),
               jobPersons: Joi.array().items(
                 Joi.object().keys({
                   personName: Joi.string()

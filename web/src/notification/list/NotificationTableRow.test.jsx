@@ -1,15 +1,12 @@
 import Immutable from 'immutable'
 import React from 'react'
 import { shallow } from 'enzyme'
-import { IntlProvider } from 'react-intl'
+import { createIntl } from 'react-intl'
 import NotificationTableRow from './NotificationTableRow'
 
 describe('NotificationTableRow module', () => {
-  const intlProvider = new IntlProvider({ locale: 'en' }, {})
-  const { intl } = intlProvider.getChildContext()
-
   const props = {
-    intl,
+    intl: createIntl({ locale: 'en' }),
     notification: Immutable.fromJS({
       alertType: 'mine',
       alertName: 'Failed search devices',

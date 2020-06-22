@@ -18,7 +18,7 @@ body {
 }
 
 a {
-  color: #4687f4;
+  color: var(--aspect-color-blue-1);
   text-decoration: none;
 }
 

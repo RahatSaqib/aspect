@@ -90,39 +90,30 @@ async function getListDevices(query, auth) {
     .innerJoin('DeviceStatus as ds', 'd.deviceStatusId', 'ds.id')
     .innerJoin('DeviceTypeCategory as dc', 'dt.deviceTypeCategoryId', 'dc.id')
     .innerJoin('Site as s', 'd.siteId', 's.id')
-    .leftJoin('FactResultsDevice as frd30', function() {
+    .leftJoin('FactResultsDevice as frd30', function () {
       this.on('d.id', 'frd30.deviceId').andOn('frd30.days', 30)
     })
-    .leftJoin('FactResultsDevice as frd60', function() {
+    .leftJoin('FactResultsDevice as frd60', function () {
       this.on('d.id', 'frd60.deviceId').andOn('frd60.days', 60)
     })
-    .leftJoin('FactResultsDeviceByCategory1 as frd30Errors', function() {
+    .leftJoin('FactResultsDeviceByCategory1 as frd30Errors', function () {
       this.on('d.id', 'frd30Errors.deviceId')
         .andOn('frd30Errors.days', 30)
         .andOn('frd30Errors.resultCategory1', resultCategoryErrorId)
     })
     .leftJoin('Geography as g', 's.geographyId', 'g.id')
     .leftJoin('State as st', 'g.stateId', 'st.id')
-    .where(function() {
-      if (!query.deviceIds) {
-        return
-      }
-      this.whereIn('d.id', query.deviceIds.split(','))
+    .leftJoin('Assay as a', 'dt.id', 'a.deviceTypeId')
+    .leftJoin('AssayType as at', 'a.assayTypeId', 'at.id')
+    .leftJoin('Disease as dis', 'at.diseaseId', 'dis.id')
+    .where(function () {
+      if (query.deviceIds) this.whereIn('d.id', query.deviceIds.split(','))
     })
     .modify(queryBuilder => {
-      if (!query.assayId) {
-        return
-      }
-      queryBuilder
-        .innerJoin('Assay as a', 'dt.id', 'a.deviceTypeId')
-        .where('a.id', query.assayId)
-
-      if (!query.resultCategoryId) {
-        return
-      }
-      queryBuilder
-        .innerJoin('ResultCategoryAssay as rca', 'a.id', 'rca.assayId')
-        .where('rca.resultCategoryId', query.resultCategoryId)
+      if (query.resultCategoryId)
+        queryBuilder
+          .innerJoin('ResultCategoryAssay as rca', 'a.id', 'rca.assayId')
+          .where('rca.resultCategoryId', query.resultCategoryId)
     })
     .modify(filterParams, query, {
       countryId: 'g.countryId',
@@ -137,16 +128,20 @@ async function getListDevices(query, auth) {
       type: 'dt.name',
       siteExternalId: 's.externalId',
       siteName: 's.name',
+      siteId: 's.id',
+      diseaseId: 'dis.id',
+      assayId: 'a.id',
     })
     .modify(addConstraints, dataConstraints, {
+      assay: 'a',
       device: 'd',
-      showUnapprovedDevices: false,
+      deviceType: 'dt',
+      geography: 'g',
+      site: 's',
+      disease: 'dis',
     })
   // get total count for paging
-  const getCount = deviceQuery
-    .clone()
-    .count('d.id as count')
-    .first()
+  const getCount = deviceQuery.clone().countDistinct('d.id as count').first()
 
   const last30Day = subDays(new Date(), 30)
   const last60Day = subDays(last30Day, 30)
@@ -172,6 +167,10 @@ async function getListDevices(query, auth) {
           'rl.resultWorkflowStatusId',
           'rw.id'
         )
+        .modify(addConstraints, dataConstraints, {
+          result: 'r',
+          sample: 's',
+        })
         .whereRaw('s.originSiteId = d.siteId')
         .whereBetween('rl.changedOn', [last60Day, last30Day])
         .where('rw.externalId', '=', 'Delivered')
@@ -185,6 +184,10 @@ async function getListDevices(query, auth) {
           'rl.resultWorkflowStatusId',
           'rw.id'
         )
+        .modify(addConstraints, dataConstraints, {
+          result: 'r',
+          sample: 's',
+        })
         .whereRaw('s.originSiteId = d.siteId')
         .where('rl.changedOn', '>=', last30Day)
         .where('rw.externalId', '=', 'Delivered')
@@ -201,6 +204,7 @@ async function getListDevices(query, auth) {
         .select(knex.raw(`GROUP_CONCAT(DISTINCT ic.i18nKey)`))
         .as('issueCategories'),
     ])
+    .distinct()
 
   // return result when both queries are finished
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
@@ -265,30 +269,30 @@ async function getDeviceByDeviceId({
     .innerJoin('DeviceTypeCategory as dc', 'dt.deviceTypeCategoryId', 'dc.id')
     .innerJoin('Site as s', 'd.siteId', 's.id')
     .leftJoin('DeviceCapacity as dp', 'd.deviceCapacityId', 'dp.id')
-    .leftJoin('FactResultsDevice as frd30', function() {
+    .leftJoin('FactResultsDevice as frd30', function () {
       this.on('d.id', 'frd30.deviceId').andOn('frd30.days', 30)
     })
-    .leftJoin('FactResultsDevice as frd60', function() {
+    .leftJoin('FactResultsDevice as frd60', function () {
       this.on('d.id', 'frd60.deviceId').andOn('frd60.days', 60)
     })
-    .leftJoin('FactResultsDeviceByCategory1 as frd30Errors', function() {
+    .leftJoin('FactResultsDeviceByCategory1 as frd30Errors', function () {
       this.on('d.id', 'frd30Errors.deviceId')
         .andOn('frd30Errors.days', 30)
         .andOn('frd30Errors.resultCategory1', resultCategoryErrorId)
     })
-    .leftJoin('FactResultsDeviceByCategory1 as frd60Errors', function() {
+    .leftJoin('FactResultsDeviceByCategory1 as frd60Errors', function () {
       this.on('d.id', 'frd60Errors.deviceId')
         .andOn('frd60Errors.days', 60)
         .andOn('frd60Errors.resultCategory1', resultCategoryErrorId)
     })
     // device calibration
-    .leftOuterJoin('DeviceMaintenance as dmC', function() {
+    .leftOuterJoin('DeviceMaintenance as dmC', function () {
       this.on('d.id', 'dmC.deviceId')
         .andOn('dmC.current', 1)
         .andOn('dmC.deviceMaintenanceTypeId', maintenanceCalibrationId)
     })
     // device warranty
-    .leftOuterJoin('DeviceMaintenance as dmW', function() {
+    .leftOuterJoin('DeviceMaintenance as dmW', function () {
       this.on('d.id', 'dmW.deviceId')
         .andOn('dmW.current', 1)
         .andOn('dmW.deviceMaintenanceTypeId', maintenanceWarrantyId)
@@ -296,6 +300,8 @@ async function getDeviceByDeviceId({
     .where('d.id', +deviceId)
     .modify(addConstraints, dataConstraints, {
       device: 'd',
+      deviceType: 'dt',
+      site: 's',
       showUnapprovedDevices: true,
     })
     .first(fields)
@@ -404,16 +410,10 @@ async function listStatusTypes() {
   const resultQuery = knex('DeviceStatus as ds')
 
   // get total count for paging
-  const getCount = resultQuery
-    .clone()
-    .count('ds.id as count')
-    .first()
+  const getCount = resultQuery.clone().count('ds.id as count').first()
 
   // get rows
-  const getItems = resultQuery
-    .clone()
-    .orderBy('id', 'asc')
-    .select('id', 'name')
+  const getItems = resultQuery.clone().orderBy('id', 'asc').select('id', 'name')
 
   // return result when both queries are finished
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
@@ -431,7 +431,7 @@ async function listDevicesForSelectList(request) {
 
   const devices = await knex('Device as d')
     .leftOuterJoin('Geography as g', 'd.geographyId', 'g.id')
-    .modify(addConstraints, dataConstraints, { device: 'd' })
+    .modify(addConstraints, dataConstraints, { device: 'd', geography: 'g' })
     .modify(filterParams, query, {
       countryId: 'g.countryId',
       partnerId: 'd.partnerId',
@@ -444,9 +444,7 @@ async function listDevicesForSelectList(request) {
 }
 
 async function getDevice(deviceId) {
-  const device = await knex('Device as d')
-    .where('d.id', deviceId)
-    .first()
+  const device = await knex('Device as d').where('d.id', deviceId).first()
   return device
 }
 
@@ -486,24 +484,20 @@ async function updateDeviceMaintenance(request) {
   let deviceMaintenanceId
   if (item && item.contextDate.toDateString() === contextDate.toDateString()) {
     // update existing record if dates are the same
-    await knex('DeviceMaintenance')
-      .where({ id: item.id })
-      .update({
-        contextDate,
-        notes,
-        updatedOn: new Date(),
-        updatedBy: currentlyLoggedInUser.id,
-      })
+    await knex('DeviceMaintenance').where({ id: item.id }).update({
+      contextDate,
+      notes,
+      updatedOn: new Date(),
+      updatedBy: currentlyLoggedInUser.id,
+    })
     deviceMaintenanceId = item.id
   } else {
     // reset 'current' for current maintenance type and device
-    await knex('DeviceMaintenance')
-      .update({ current: 0 })
-      .where({
-        deviceId,
-        deviceMaintenanceTypeId,
-        current: 1,
-      })
+    await knex('DeviceMaintenance').update({ current: 0 }).where({
+      deviceId,
+      deviceMaintenanceTypeId,
+      current: 1,
+    })
     // insert new record with last maintenance status
     ;[deviceMaintenanceId] = await knex('DeviceMaintenance').insert({
       deviceId,
@@ -555,6 +549,7 @@ async function getDevicePerformance(request) {
   const [deviceCountry] = await knex('Device as d')
     .leftOuterJoin('Geography as g', 'd.geographyId', 'g.id')
     .leftOuterJoin('Country as c', 'g.countryId', 'c.id')
+    .modify(addConstraints, dataConstraints, { geography: 'g' })
     .where('d.id', deviceId)
 
   const [{ countryTotalResult, countryTotalErrorCount }] = await knex(
@@ -564,6 +559,7 @@ async function getDevicePerformance(request) {
     .leftJoin('ResultCategory as rc2', 'rc2.id', 'r.resultCategory2')
     .leftOuterJoin('Geography as g', 'r.geographyId', 'g.id')
     .leftOuterJoin('Country as c', 'g.countryId', 'c.id')
+    .modify(addConstraints, dataConstraints, { result: 'r', geography: 'g' })
     .where('r.endedOn', '>=', startedOn)
     .where('r.endedOn', '<=', endedOn)
     .where('c.id', deviceCountry.countryId)
@@ -635,7 +631,7 @@ function getDeviceBaseQuery(query, dataConstraints) {
     .leftJoin('Geography as g', 's.geographyId', 'g.id')
     .leftJoin('State as st', 'g.stateId', 'st.id')
     .leftJoin('Lga as lg', 'g.stateId', 'lg.id')
-    .where(function() {
+    .where(function () {
       if (!query.deviceIds) {
         return
       }
@@ -678,8 +674,11 @@ function getDeviceBaseQuery(query, dataConstraints) {
       siteName: 's.name',
     })
     .modify(addConstraints, dataConstraints, {
+      assay: 'a',
       device: 'd',
-      showUnapprovedDevices: false,
+      deviceType: 'dt',
+      geography: 'g',
+      site: 's',
     })
   return deviceQuery
 }
@@ -693,13 +692,14 @@ async function getDevicesForReport(auth, query) {
   const deviceQuery = getDeviceBaseQuery(query, dataConstraints)
 
   // get total count for paging
-  const getCount = deviceQuery
-    .clone()
-    .count('d.id as count')
-    .first()
+  const getCount = deviceQuery.clone().count('d.id as count').first()
 
   const queryResults = knex('Result as r')
     .innerJoin('Sample as s', 'r.sampleId', 's.id')
+    .modify(addConstraints, dataConstraints, {
+      result: 'r',
+      sample: 's',
+    })
     .whereRaw('s.originSiteId = d.siteId')
     .modify(filterDateRangeParams, query, 'r.endedOn')
 
@@ -710,10 +710,7 @@ async function getDevicesForReport(auth, query) {
     .select([
       ...SELECT_LIST_FIELDS,
       'd.serial',
-      queryResults
-        .clone()
-        .countDistinct('r.id')
-        .as('totalResults'),
+      queryResults.clone().countDistinct('r.id').as('totalResults'),
       queryResults
         .clone()
         .where('r.resultCategory1', resultCategoryIds.Error)
@@ -757,13 +754,14 @@ async function getDevicesForRifResistanceReport(auth, query) {
   const deviceQuery = getDeviceBaseQuery(query, dataConstraints)
 
   // get total count for paging
-  const getCount = deviceQuery
-    .clone()
-    .count('d.id as count')
-    .first()
+  const getCount = deviceQuery.clone().count('d.id as count').first()
 
   const queryResults = knex('Result as r')
     .innerJoin('Sample as s', 'r.sampleId', 's.id')
+    .modify(addConstraints, dataConstraints, {
+      result: 'r',
+      sample: 's',
+    })
     .whereRaw('s.originSiteId = d.siteId')
     .modify(filterDateRangeParams, query, 'r.endedOn')
 
@@ -775,10 +773,7 @@ async function getDevicesForRifResistanceReport(auth, query) {
       'st.name as state',
       'd.name',
       'lg.name as county',
-      queryResults
-        .clone()
-        .countDistinct('r.id')
-        .as('totalResults'),
+      queryResults.clone().countDistinct('r.id').as('totalResults'),
       queryResults
         .clone()
         .where('r.resultCategory1', resultCategoryIds.Detected)
@@ -817,4 +812,5 @@ module.exports = {
   getDevicePerformance,
   getDevicesForReport,
   getDevicesForRifResistanceReport,
+  getDeviceByDeviceId,
 }

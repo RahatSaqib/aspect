@@ -1,12 +1,11 @@
 import Immutable from 'immutable'
 import React from 'react'
-import { IntlProvider } from 'react-intl'
+import { createIntl } from 'react-intl'
 import { shallow } from 'enzyme'
 import DetailPanel, { DetailGroup } from './DetailPanel'
 
 describe('DetailPanel module', () => {
-  const intlProvider = new IntlProvider({ locale: 'en' }, {})
-  const { intl } = intlProvider.getChildContext()
+  const intl = createIntl({ locale: 'en' })
 
   describe('DetailGroup component', () => {
     it('should render correctly', () => {
@@ -29,7 +28,7 @@ describe('DetailPanel module', () => {
 })
 
 const screenSchema = Immutable.fromJS({
-  title: 'Test Result',
+  title: 'Result Details',
   icon: 'document',
   groups: {
     patientData: {

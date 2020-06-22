@@ -183,7 +183,7 @@ async function seed(knex) {
   const myanmarConsumableIssues = await knex('IssueCategory as ic')
     .join('IssueType as it', 'ic.id', 'it.issueCategoryId')
     .join('Issue as i', 'it.id', 'i.issueTypeId')
-    .where(function() {
+    .where(function () {
       this.whereNull('i.consumableId')
         .andWhere('i.partnerId', partnerId)
         .andWhere('ic.name', 'Reagent Health')
@@ -347,31 +347,21 @@ async function seed(knex) {
       .update({ messageTypeId: newMessageTypeId })
   })
 
-  const { id: actionDashboardInventoryLevelUpdateFeatureId } = await knex(
-    'Feature as f'
-  )
-    .where('f.module', 'actionDashboardInventoryLevelUpdate')
-    .first()
-
   const myanmarJobFunctions = await knex('JobFunction as jf')
     .where('jf.partnerId', partnerId)
     .select()
 
   const modules = await getPermissionModules(knex)
 
-  await Promise.each(myanmarJobFunctions, async myanmarJobFunction => {
-    await knex('JobFunctionFeature').insert({
-      jobFunctionId: myanmarJobFunction.id,
-      featureId: actionDashboardInventoryLevelUpdateFeatureId,
-    })
-    await knex('JobFunctionPermission').insert({
+  await Promise.each(myanmarJobFunctions, async myanmarJobFunction =>
+    knex('JobFunctionPermission').insert({
       jobFunctionId: myanmarJobFunction.id,
       permissionId:
         myanmarJobFunction.name === 'Admin'
           ? modules.actionDashboard.admin
           : modules.actionDashboard.edit,
     })
-  })
+  )
 
   await updateUnknownErrorOnModuleMessage(knex)
 

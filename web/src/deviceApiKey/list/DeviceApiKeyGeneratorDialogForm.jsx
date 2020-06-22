@@ -2,16 +2,10 @@
 import _fp from 'lodash/fp'
 import PropTypes from 'prop-types'
 import React from 'react'
-import {
-  compose,
-  withStateHandlers,
-  pure,
-  setPropTypes,
-  lifecycle,
-} from 'recompose'
+import { compose, pure, setPropTypes, lifecycle } from 'recompose'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import { defineMessages, intlShape } from 'react-intl'
+import { defineMessages, injectIntl } from 'react-intl'
 
 // Material-UI
 import Button from '@material-ui/core/Button'
@@ -29,6 +23,7 @@ import {
   LazyLoadItems,
 } from '../../geography/GeographyRedux'
 import { fetchPartnersAndJobFunctionsForSelectList } from '../../job/JobRedux'
+import PropTypeOf from '../../shared/types'
 
 const messages = defineMessages({
   cancel: {
@@ -80,6 +75,7 @@ const getInitialValues = (partnerList, countries) => ({
 })
 
 const enhance = compose(
+  injectIntl,
   pure,
   connect(
     (state, props) => {
@@ -120,7 +116,7 @@ const enhance = compose(
     onCancel: PropTypes.func,
     isDialogOpen: PropTypes.bool.isRequired,
     values: PropTypes.object.isRequired,
-    intl: intlShape.isRequired,
+    intl: PropTypeOf.intl.isRequired,
     countries: PropTypes.objectOf(LazyLoadItems).isRequired,
     fetchCountriesForLocationSelector: PropTypes.func.isRequired,
   }),

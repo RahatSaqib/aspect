@@ -13,7 +13,7 @@ const bcryptCompare = promisify(bcrypt.compare)
 const bcryptHash = promisify(bcrypt.hash)
 
 const config = require('../config')
-const { query } = require('../db')
+const { query, knex } = require('../db')
 const { validateUserAtGxAlert } = require('./gxalert')
 const { getRemoteAddress } = require('../shared/request')
 
@@ -41,12 +41,14 @@ const userProps = [
   'p.lastCountryId as countryId',
   'p.userId',
   'p.id as personId',
+  'c.abbreviation as countryAbbreviation',
 ]
 
 function getUser(username) {
   return query('Get basic user details')
     .from('User as u')
     .innerJoin('Person as p', 'u.id', 'p.userId')
+    .leftJoin('Country as c', 'c.id', 'p.lastCountryId')
     .where({ 'u.name': username })
     .first(userProps)
 }
@@ -55,6 +57,7 @@ function getUserByPersonId(personId) {
   return query('Get user details for person')
     .from('Person as p')
     .innerJoin('User as u', 'p.userId', 'u.id')
+    .leftJoin('Country as c', 'c.id', 'p.lastCountryId')
     .where({ 'p.id': personId })
     .first(userProps)
 }
@@ -63,6 +66,7 @@ function getUserByUserId(userId) {
   return query('Get user details for user')
     .from('User as u')
     .innerJoin('Person as p', 'u.id', 'p.userId')
+    .leftJoin('Country as c', 'c.id', 'p.lastCountryId')
     .where({ 'u.id': userId })
     .first(userProps)
 }
@@ -85,7 +89,6 @@ function getTokenExpiry(clientType, currentTime) {
 async function authenticate(request) {
   const { payload } = request
   let user = await getUser(payload.name)
-
   if (!user) {
     try {
       // no user with such username in Aspect yet - check it in GxAlert
@@ -168,6 +171,7 @@ async function authenticate(request) {
     now,
     refreshToken,
     userId: user.id,
+    countryAbbreviation: user.countryAbbreviation,
   })
 
   await query('Update failed password attempts to 0')
@@ -191,6 +195,7 @@ async function authenticate(request) {
     timezone: user.timezone || 'Eastern Standard Time',
     displayPreferences,
     countryId: user.countryId,
+    countryAbbreviation: user.countryAbbreviation,
     deviceTokenId,
   }
 }
@@ -206,27 +211,25 @@ function setRefreshToken({
 }) {
   const expires = getTokenExpiry(clientType, now)
   deviceTokenId = clientType === clientTypes.app ? deviceTokenId : null
+  // Create new refresh token for the user -
   // upsert refresh token
-  return query('Create new refresh token for the user').raw(
-    'INSERT INTO RefreshToken set ? ON DUPLICATE KEY UPDATE ?',
-    [
-      {
-        userId,
-        clientId,
-        clientName,
-        token: refreshToken,
-        expires,
-        createdOn: now,
-        clientType,
-        deviceTokenId,
-      },
-      {
-        token: refreshToken,
-        expires,
-        deviceTokenId,
-      },
-    ]
-  )
+  return knex.raw('INSERT INTO RefreshToken set ? ON DUPLICATE KEY UPDATE ?', [
+    {
+      userId,
+      clientId,
+      clientName,
+      token: refreshToken,
+      expires,
+      createdOn: now,
+      clientType,
+      deviceTokenId,
+    },
+    {
+      token: refreshToken,
+      expires,
+      deviceTokenId,
+    },
+  ])
 }
 
 async function refreshToken(request) {
@@ -293,19 +296,6 @@ async function refreshToken(request) {
   }
 }
 
-async function getFeatures(id, name, partnerId) {
-  const modules = await query('Get features for user and partner')
-    .from('Feature as f')
-    .innerJoin('JobFunctionFeature as jff', 'f.id', 'jff.featureId')
-    .innerJoin('JobFunction as jf', 'jff.jobFunctionId', 'jf.id')
-    .innerJoin('Job as j', 'j.jobFunctionId', 'jf.id')
-    .innerJoin('Person as ps', 'j.personId', 'ps.id')
-    .where({ 'ps.userId': id, 'jf.partnerId': partnerId })
-    .orderBy(['f.module'])
-    .distinct('f.module')
-  return modules
-}
-
 async function getJobFunctions(id, name, partnerId) {
   return query('Get job functions for user and partner')
     .from('Person as p')
@@ -317,21 +307,10 @@ async function getJobFunctions(id, name, partnerId) {
     .pluck('jf.name')
 }
 
-async function hasFeature(userId, partnerId, module) {
-  const userFeature = await query('Get features for user and partner')
-    .from('Feature as f')
-    .innerJoin('JobFunctionFeature as jff', 'f.id', 'jff.featureId')
-    .innerJoin('JobFunction as jf', 'jff.jobFunctionId', 'jf.id')
-    .innerJoin('Job as j', 'j.jobFunctionId', 'jf.id')
-    .innerJoin('Person as ps', 'j.personId', 'ps.id')
-    .where({
-      'f.module': module,
-      'ps.userId': userId,
-      'jf.partnerId': partnerId,
-    })
-    .first('f.module')
-  return !_.isEmpty(userFeature)
+async function hasPermissions(auth, modules) {
+  return _.intersection(auth.credentials.permissions, modules).length > 0
 }
+
 // generate a new jwt for the given user data
 async function getAccessToken(
   { id, name, partnerId, personId },
@@ -395,7 +374,7 @@ function getGeographyAccess(personId, partnerId) {
       'gs.stateId as siteStateId',
       'gs.lgaId as siteLgaId'
     )
-    .then(function(items) {
+    .then(function (items) {
       return items
         ? items.map(item => ({
             countryId: item.countryId || item.siteCountryId,
@@ -711,19 +690,12 @@ async function updateUsernameAndPasswordForPerson(request) {
   }
 }
 
-async function getUserFeatures(request) {
-  const { auth } = request
-  const { id, name, partnerId } = await getUser(auth.credentials.name)
-  const featureModules = await getFeatures(id, name, partnerId)
-  return { ok: true, data: featureModules }
-}
-
 async function getApplicableLicense(personId, partnerId) {
   const latestLicense = await query(
     'Get latest applicable license and when user accepted it'
   )
     .from('License as l')
-    .leftOuterJoin('LicensePerson as lp', function() {
+    .leftOuterJoin('LicensePerson as lp', function () {
       this.on('l.id', '=', 'lp.licenseId').andOn('lp.personId', '=', personId)
     })
     .where('l.partnerId', partnerId)
@@ -775,6 +747,7 @@ async function acceptLicense(request) {
   // need to return a new JWT, now without hasToAcceptLicenseId
   return refreshToken(request)
 }
+
 // / Revoke/Grantt access to specific user
 async function revokeUsersToken(userId, revoke) {
   await query(
@@ -786,6 +759,7 @@ async function revokeUsersToken(userId, revoke) {
       revoked: revoke,
     })
 }
+
 // Lockedout and grant access to login to specific user.
 async function lockedOutUser(userId, lockedOut) {
   await query('change Lockout state for the specific user ')
@@ -806,6 +780,7 @@ async function getUserJobFunctions(request) {
 module.exports = {
   getUser,
   getUserByUserId,
+  getUserByPersonId,
   authenticate,
   checkAuthentication,
   refreshToken,
@@ -813,12 +788,11 @@ module.exports = {
   updateUsernameAndPasswordForPerson,
   createResetPasswordToken,
   updatePasswordWithResetPasswordToken,
-  getUserFeatures,
-  hasFeature,
   getLicense,
   acceptLicense,
   revokeUsersToken,
   lockedOutUser,
+  hasPermissions,
   clientTypes,
   getUserJobFunctions,
 }

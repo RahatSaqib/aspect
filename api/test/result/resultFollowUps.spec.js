@@ -36,6 +36,29 @@ describe('Result Follow Up', () => {
           assert.typeOf(res.body.data[0].assays, 'array')
         })
     })
+    it('should return a list of possible result follow ups filtered by disease', async () => {
+      const res = await server
+        .get(`${path}?diseaseId=3`)
+        .set('Authorization', `Bearer ${shared.token}`)
+
+      assert.equal(res.status, 200)
+      assert.typeOf(res.body, 'Object')
+      assert.property(res.body, 'data')
+      assert.typeOf(res.body.data, 'array')
+      assert.property(res.body, 'total')
+      assert.isAtLeast(res.body.data.length, 5)
+      assert.property(res.body.data[0], 'id')
+      assert.property(res.body.data[0], 'name')
+      assert.property(res.body.data[0], 'externalId')
+      assert.property(res.body.data[0], 'i18nKey')
+      assert.property(res.body.data[0], 'type')
+      assert.property(res.body.data[0].type, 'id')
+      assert.property(res.body.data[0].type, 'name')
+      assert.property(res.body.data[0].type, 'externalId')
+      assert.property(res.body.data[0].type, 'i18nKey')
+      assert.property(res.body.data[0], 'assays')
+      assert.typeOf(res.body.data[0].assays, 'array')
+    })
   })
 
   describe('POST', () => {

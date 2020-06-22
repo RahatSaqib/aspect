@@ -11,9 +11,7 @@ async function up(knex) {
 
 async function down(knex) {
   await knex.schema.alterTable('Result', t => {
-    t.boolean('qcCheck')
-      .notNullable()
-      .defaultTo(0)
+    t.boolean('qcCheck').notNullable().defaultTo(0)
   })
   await knex.schema.alterTable('DeviceLog', t => {
     t.string('checkpoint').index()

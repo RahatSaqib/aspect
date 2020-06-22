@@ -54,9 +54,7 @@ async function seed(knex) {
   // ---------------------
   // make sure user exists - create if missing
   await Promise.each(userNames, async name => {
-    const user = await knex('User')
-      .where({ name })
-      .first()
+    const user = await knex('User').where({ name }).first()
     if (!user) {
       // create User
       const [userId] = await knex('User').insert({
@@ -104,27 +102,15 @@ async function seed(knex) {
     const jobFunctions = await knex('JobFunction')
       .where({ partnerId })
       .select()
-      .reduce((jobFunctionMap, jobFunction) => {
-        jobFunctionMap[jobFunction.name] = jobFunction.id
-        return jobFunctionMap
-      }, {})
+      .then(items =>
+        items.reduce((jobFunctionMap, jobFunction) => {
+          jobFunctionMap[jobFunction.name] = jobFunction.id
+          return jobFunctionMap
+        }, {})
+      )
     const jobFunctionsClinicianId = jobFunctions[jobFunctionNames.Clinician]
     // --------
-    // Job Function Feature - if missing then copy items from jobFunction.name = 'Clinician'
-    const jobFunctionFeatures = await knex('JobFunctionFeature as jff')
-      .innerJoin('JobFunction as jf', 'jff.jobFunctionId', 'jf.id')
-      .where('jf.partnerId', partnerId)
-      .select('jff.*')
-    if (!jobFunctionFeatures.find(x => x.jobFunctionId === jobFunctionId)) {
-      const items = jobFunctionFeatures
-        .filter(x => x.jobFunctionId === jobFunctionsClinicianId)
-        .map(({ featureId }) => ({
-          jobFunctionId,
-          featureId,
-        }))
-      await knex('JobFunctionFeature').insert(items)
-    }
-    // --------
+
     const { id: widgetResultsId } = await knex('DashboardWidget')
       .where('title', 'Results')
       .first('id')
@@ -157,10 +143,12 @@ async function seed(knex) {
     // get all permissions
     const permissions = await knex('Permission')
       .select()
-      .reduce((permMap, perm) => {
-        permMap[`${perm.module}:${perm.activity}`] = perm.id
-        return permMap
-      }, {})
+      .then(items =>
+        items.reduce((permMap, perm) => {
+          permMap[`${perm.module}:${perm.activity}`] = perm.id
+          return permMap
+        }, {})
+      )
     // --------
     // make sure Job Function ResultViewerYes has permission 'result:view'
     if (jobFunctionName === jobFunctionNames.ResultViewerYes) {
@@ -198,19 +186,16 @@ async function seed(knex) {
 // add job function permission if missing
 async function addPermission(knex, jobFunctionId, permissionId) {
   const props = { jobFunctionId, permissionId }
-  const perm = await knex('JobFunctionPermission')
-    .where(props)
-    .first()
+  const perm = await knex('JobFunctionPermission').where(props).first()
   if (!perm) {
     await knex('JobFunctionPermission').insert(props)
   }
 }
+
 // delete job function permission if exists
 async function delPermission(knex, jobFunctionId, permissionId) {
   const props = { jobFunctionId, permissionId }
-  const perm = await knex('JobFunctionPermission')
-    .where(props)
-    .first()
+  const perm = await knex('JobFunctionPermission').where(props).first()
   if (perm) {
     await knex('JobFunctionPermission').del(props)
   }

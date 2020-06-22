@@ -36,12 +36,16 @@ async function seed(knex) {
     .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .where('dt.externalId', 'BDMGIT')
     .select('d.*')
+
   const tbResults = await knex('Result as r')
     .join('Assay as a', 'r.assayId', 'a.id')
     .join('AssayType as at', 'a.assayTypeId', 'at.id')
     .whereIn(
       'r.id',
-      _.map(results, elem => elem.id)
+      _.map(
+        _.filter(results, elem => elem),
+        elem => elem.id
+      )
     )
     .where('at.externalId', 'assayTypeMtbRif')
     .where('r.resultCategory1', await resultCategoryToId('Detected'))

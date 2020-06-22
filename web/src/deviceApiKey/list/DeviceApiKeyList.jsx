@@ -9,10 +9,10 @@ import {
   withHandlers,
   lifecycle,
 } from 'recompose'
-import { defineMessages } from 'react-intl'
+import { defineMessages, injectIntl } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import Helmet from 'react-helmet'
+import { Helmet } from 'react-helmet'
 import TableBody from '@material-ui/core/TableBody'
 import Button from '@material-ui/core/Button'
 
@@ -47,6 +47,7 @@ import {
   DeviceApiKeyDataTableRow,
 } from './DeviceApiKeyDataTable'
 import ExportListButton from '../../globals/components/ExportListButton'
+import AspectButton from '../../components/shared/AspectButton'
 
 const cssClasses = classnames.bind(require('./DeviceApiKeyList.css'))
 
@@ -146,6 +147,7 @@ const filtersFromLocation = composeSanitizer(
 )
 
 const enhance = compose(
+  injectIntl,
   withProps(
     makeSortPageSelector({
       sortCol: 'createdOn',
@@ -422,17 +424,28 @@ export const DeviceApiKeyList = ({
       intl={intl}
       config={reducedFilters}
       onClickExport={onExportClick}
-    />
-    <div>
-      <Button onClick={onOpenGeneratorDialog}>
+    >
+      <AspectButton
+        onClick={onOpenGeneratorDialog}
+        type="button"
+        color="primary"
+        variant="contained"
+        browseButton
+      >
         {intl.formatMessage(messages.generate)}
-      </Button>
-      <Button
+      </AspectButton>
+      <AspectButton
+        type="button"
+        color="primary"
+        variant="contained"
         onClick={onOpenAssignerDialog}
         disabled={_.isEmpty(assignerValues.deviceApiKeyIds)}
+        browseButton
       >
         {intl.formatMessage(messages.assign)}
-      </Button>
+      </AspectButton>
+    </BrowseFilters>
+    <div>
       <DeviceApiKeyGeneratorDialogForm
         isDialogOpen={isGeneratorDialogOpen}
         onChange={onGeneratorFormChange}

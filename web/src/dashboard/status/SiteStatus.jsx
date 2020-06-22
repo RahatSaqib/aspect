@@ -28,6 +28,12 @@ const cssClasses = classnames.bind(require('./Status.css'))
 
 const EMPTY_LIST = Immutable.List()
 
+const {
+  '--aspect-color-mandy': colorMandy,
+  '--aspect-color-supernova': colorSupernova,
+  '--aspect-color-mantis': colorMantis,
+} = process.env
+
 const getIssueIdsFromSummaryMap = (key, summaryMap) =>
   _fp.pipe(
     _fp.values,
@@ -38,28 +44,20 @@ const getIssueIdsFromSummaryMap = (key, summaryMap) =>
 
 function getFillColor({ id, activeSiteIds, issueSiteIds }) {
   if (_.includes(activeSiteIds, id)) {
-    return process.env['--aspect-color-mandy']
+    return colorMandy
   }
 
   if (_.includes(issueSiteIds, id)) {
-    return process.env['--aspect-color-supernova']
+    return colorSupernova
   }
 
-  return process.env['--aspect-color-mantis']
+  return colorMantis
 }
 
 const enhance = compose(
   pure,
   requirePermissions({
-    permissions: [
-      'site:admin',
-      'site:view',
-      'site:edit',
-      'device:admin',
-      'device:view',
-      'device:edit',
-    ],
-    features: ['siteDashboard', 'deviceDashboard'],
+    permissions: ['dashboard:site', 'dashboard:device'],
   }),
   connect(
     state => ({
@@ -126,9 +124,14 @@ const enhance = compose(
       issueSiteIdsFromSiteSummaryMap.concat(issueSiteIdsFromDeviceSummaryMap)
     )
 
+    const {
+      '--aspect-color-scooter-blue-1': colorScooterBlue1,
+      '--aspect-color-scooter-blue-4': colorScooterBlue4,
+    } = process.env
+
     return {
       fill: ({ properties: { postal } }) =>
-        siteStateAbbrs.has(postal) ? '#00c4e0' : '#a4e6f2',
+        siteStateAbbrs.has(postal) ? colorScooterBlue1 : colorScooterBlue4,
       points: siteList
         .map(it => ({
           id: it.get('name'),

@@ -3,11 +3,11 @@ import _ from 'lodash'
 import classnames from 'classnames/bind'
 import React from 'react'
 import { compose, withHandlers, lifecycle, setPropTypes } from 'recompose'
-import { defineMessages } from 'react-intl'
+import { defineMessages, injectIntl } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
-import Helmet from 'react-helmet'
+import { Helmet } from 'react-helmet'
 import Card from '@material-ui/core/Card'
 import { FaArrowUp } from 'react-icons/fa'
 import { fetchTask } from '../TaskRedux'
@@ -16,6 +16,7 @@ import { fetchTask } from '../TaskRedux'
 import DetailBackBar from '../../globals/components/DetailBackBar'
 import { Unit } from '../../components/pureGrids'
 import AlertType from '../../components/shared/AlertType'
+import { formatRelative } from '../../shared/utils/dateFormat'
 
 const cssClasses = classnames.bind(require('./TaskDetail.css'))
 
@@ -27,6 +28,7 @@ const messages = defineMessages({
 })
 
 const enhance = compose(
+  injectIntl,
   setPropTypes({
     match: PropTypes.shape({
       params: PropTypes.shape({
@@ -120,7 +122,7 @@ export const TaskDetail = ({
               </span>
             </Unit>
             <Unit lg="1-5" />
-            <Unit lg="1-5">{intl.formatRelative(task.get('time'))}</Unit>
+            <Unit lg="1-5">{formatRelative(intl, task.get('time'))}</Unit>
             <Unit lg="1-5">
               {/* <Link to="/" className={cssClasses('Summary__Item__Link')}>
                 <FaBellZ className={cssClasses('Summary__Item__Link__FaBellZ')} />

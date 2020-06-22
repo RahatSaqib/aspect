@@ -1,13 +1,13 @@
 import _ from 'lodash'
 import classnames from 'classnames/bind'
-import { defineMessages } from 'react-intl'
+import { defineMessages, injectIntl } from 'react-intl'
 import React from 'react'
 import Immutable from 'immutable'
 import { compose, withStateHandlers, withHandlers, lifecycle } from 'recompose'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Card from '@material-ui/core/Card'
-import Helmet from 'react-helmet'
+import { Helmet } from 'react-helmet'
 import DeviceDetailBackBar from '../DeviceDetailBackBar'
 import recomposeForm from '../../../components/recomposeForm'
 import FormGroup from '../../../components/themedReactToolbox/FormGroup'
@@ -43,6 +43,7 @@ const initializeValuesFrom = device => ({
 })
 
 const enhance = compose(
+  injectIntl,
   connect(
     (state, props) => {
       const deviceTags = state.tag.tags.getIn(

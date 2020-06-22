@@ -14,22 +14,18 @@ const {
   listSitesForSelectList,
 } = require('./service')
 
-const { getSitesReport } = require('./serviceReports')
+const { exportSites } = require('./serviceReports')
 
 function listSitesBaseConfig() {
   return {
     auth: { scope: ['site:view', 'site:edit'] },
     validate: {
       query: {
-        siteIds: Joi.string()
-          .allow('')
-          .description('Filter for site ids'),
+        siteIds: Joi.string().allow('').description('Filter for site ids'),
         deviceName: Joi.string()
           .allow('')
           .description('Filter for device name'),
-        siteName: Joi.string()
-          .allow('')
-          .description('Filter for site name'),
+        siteName: Joi.string().allow('').description('Filter for site name'),
         externalId: Joi.string()
           .allow('')
           .description('Filter for facility code'),
@@ -65,7 +61,7 @@ const routes = [
   {
     method: 'GET',
     path: '/site/export',
-    handler: getSitesReport,
+    handler: exportSites,
     config: {
       description: 'Export Site List into Excel or CSV',
       notes: 'Filtered and sorted list of sites',
@@ -82,9 +78,7 @@ const routes = [
       auth: { scope: ['site:view', 'site:edit'] },
       validate: {
         params: {
-          siteId: Joi.string()
-            .description('Site id')
-            .required(),
+          siteId: Joi.string().description('Site id').required(),
         },
       },
     },
@@ -110,24 +104,13 @@ const routes = [
           shortName: Joi.string().required(),
           externalId: Joi.string().allow('', null),
           timezone: Joi.string().allow('', null),
-          countryId: Joi.number()
-            .integer()
-            .positive()
-            .allow('', null),
-          stateId: Joi.number()
-            .integer()
-            .positive()
-            .allow('', null),
-          lgaId: Joi.number()
-            .integer()
-            .positive()
-            .allow('', null),
+          countryId: Joi.number().integer().positive().allow('', null),
+          stateId: Joi.number().integer().positive().allow('', null),
+          lgaId: Joi.number().integer().positive().allow('', null),
           street1: Joi.string().allow('', null),
           street2: Joi.string().allow('', null),
           city: Joi.string().allow('', null),
-          zip: Joi.string()
-            .max(45)
-            .allow('', null),
+          zip: Joi.string().max(45).allow('', null),
           longitude: Joi.number().allow('', null),
           latitude: Joi.number().allow('', null),
         },
@@ -172,9 +155,7 @@ const routes = [
                 id: Joi.number()
                   .required()
                   .description('Unique ID of the site'),
-                name: Joi.string()
-                  .required()
-                  .description('Name of the site'),
+                name: Joi.string().required().description('Name of the site'),
                 shortName: Joi.string()
                   .required()
                   .allow(null)

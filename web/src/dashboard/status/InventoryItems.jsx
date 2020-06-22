@@ -107,46 +107,52 @@ const InventoryItemBarChart = ({ data, history }) => (
 )
 
 function selectChartLabel(label) {
+  const {
+    '--aspect-color-supernova': colorSupernova,
+    '--aspect-color-shakespeare': colorShakespeare,
+    '--aspect-color-mandy': colorMandy,
+  } = process.env
+
   switch (label) {
     case 'notRecorded':
       return {
         label: 'Not Recorded',
-        color: process.env['--aspect-color-supernova'],
+        color: colorSupernova,
       }
     case 'upTo90':
       return {
         label: '1-3 Month',
-        color: process.env['--aspect-color-shakespeare'],
+        color: colorShakespeare,
       }
     case 'outOfStock':
       return {
         label: 'Out of Stock',
-        color: process.env['--aspect-color-mandy'],
+        color: colorMandy,
       }
     case 'moreThan180':
       return {
         label: '> 6 Months',
-        color: process.env['--aspect-color-shakespeare'],
+        color: colorShakespeare,
       }
     case 'upTo180':
       return {
         label: '4-6 Months',
-        color: process.env['--aspect-color-shakespeare'],
+        color: colorShakespeare,
       }
     case 'upTo30':
       return {
         label: '15-30 days',
-        color: process.env['--aspect-color-shakespeare'],
+        color: colorShakespeare,
       }
     case 'upTo14':
       return {
         label: '1-14 days',
-        color: process.env['--aspect-color-shakespeare'],
+        color: colorShakespeare,
       }
     case 'noConsumption':
       return {
         label: 'No Consumption',
-        color: process.env['--aspect-color-supernova'],
+        color: colorSupernova,
       }
     default:
       return {

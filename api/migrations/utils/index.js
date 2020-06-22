@@ -22,25 +22,20 @@ function addUpdateFields(table) {
     .inTable('User')
 }
 
+function addAuditFields(table) {
+  addCreateFields(table)
+  addUpdateFields(table)
+}
+
 function addCreateFieldsNullable(table) {
   table.dateTime('createdOn')
-  table
-    .integer('createdBy')
-    .unsigned()
-    .index()
-    .references('id')
-    .inTable('User')
+  table.integer('createdBy').unsigned().index().references('id').inTable('User')
 }
 
 // Adds updatedOn, updatedBy
 function addUpdateFieldsNullable(table) {
   table.dateTime('updatedOn')
-  table
-    .integer('updatedBy')
-    .unsigned()
-    .index()
-    .references('id')
-    .inTable('User')
+  table.integer('updatedBy').unsigned().index().references('id').inTable('User')
 }
 
 function addTimestamps(
@@ -66,4 +61,5 @@ module.exports = {
   addCreateFieldsNullable,
   addUpdateFieldsNullable,
   addTimestamps,
+  addAuditFields,
 }

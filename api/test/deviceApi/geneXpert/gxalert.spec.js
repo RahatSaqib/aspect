@@ -2410,10 +2410,10 @@ describe('Device API routes for GxAlert Device', () => {
             const { countryGeographyId } = await knex('Geography as g')
               .join('Country as c', 'g.countryId', 'c.id')
               .where('c.abbreviation', country)
-              .andWhere(function() {
+              .andWhere(function () {
                 this.whereNull('g.stateId')
               })
-              .andWhere(function() {
+              .andWhere(function () {
                 this.whereNull('g.lgaId')
               })
               .first('g.id as countryGeographyId')
@@ -2472,7 +2472,7 @@ describe('Device API routes for GxAlert Device', () => {
               .join('Country as c', 'g.countryId', 'c.id')
               .join('State as s', 'g.stateId', 's.id')
               .where('c.abbreviation', country)
-              .andWhere(function() {
+              .andWhere(function () {
                 this.whereNull('g.lgaId')
               })
               .first(
@@ -2519,7 +2519,7 @@ describe('Device API routes for GxAlert Device', () => {
               .join('State as s', 'g.stateId', 's.id')
               .where('c.abbreviation', country)
               .andWhere('g.stateId', '<>', stateId)
-              .andWhere(function() {
+              .andWhere(function () {
                 this.whereNull('g.lgaId')
               })
               .first(
@@ -2796,9 +2796,7 @@ describe('Device API routes for GxAlert Device', () => {
         )
         await waitForFactGenerateDeviceConnectivity
 
-        await knex('FactDeviceFlag')
-          .where({ deviceId })
-          .update({ offline: 1 })
+        await knex('FactDeviceFlag').where({ deviceId }).update({ offline: 1 })
         let deviceFacts = await knex('FactDeviceFlag')
           .where({ deviceId })
           .first()
@@ -2825,9 +2823,7 @@ describe('Device API routes for GxAlert Device', () => {
         await waitForDeviceSeen
         await waitForIdle()
 
-        deviceFacts = await knex('FactDeviceFlag')
-          .where({ deviceId })
-          .first()
+        deviceFacts = await knex('FactDeviceFlag').where({ deviceId }).first()
         assert.notOk(deviceFacts.offline)
       }))
   })
@@ -3254,9 +3250,7 @@ describe('Device API routes for GxAlert Device', () => {
         lastResultId = deviceApiResponse.body.result.id
         assert.equal(lastResultId, resultIds[1])
 
-        result2 = await knex('Result as r')
-          .where({ id: resultIds[1] })
-          .first()
+        result2 = await knex('Result as r').where({ id: resultIds[1] }).first()
         assert.equal(initialCount + 2, await countResults())
         expect(JSON.parse(result2.resultData)).to.containSubset({
           a: 'b',
@@ -3532,9 +3526,7 @@ describe('Device API routes for GxAlert Device', () => {
       const assayName = 'New Assay Type'
       after(() =>
         run(async knex =>
-          knex('Assay')
-            .where({ externalId: assayName })
-            .delete()
+          knex('Assay').where({ externalId: assayName }).delete()
         )
       )
 
@@ -4046,12 +4038,8 @@ describe('Device API routes for GxAlert Device', () => {
             const { id: geographyId } = await knex('Geography as g')
               .join('Country as c')
               .where('c.abbreviation', geneXpertDevice.countryAbbreviation)
-              .andWhere(function() {
-                this.whereNotNull('g.stateId')
-              })
-              .andWhere(function() {
-                this.whereNotNull('g.lgaId')
-              })
+              .whereNotNull('g.stateId')
+              .whereNotNull('g.lgaId')
               .first('g.id')
             await knex('Site')
               .where({ id: geneXpertDevice.siteId })
@@ -4104,20 +4092,14 @@ describe('Device API routes for GxAlert Device', () => {
             const { id: geographyId } = await knex('Geography as g')
               .join('Country as c')
               .where('c.abbreviation', geneXpertDevice.countryAbbreviation)
-              .andWhere(function() {
-                this.whereNotNull('g.stateId')
-              })
-              .andWhere(function() {
-                this.whereNotNull('g.lgaId')
-              })
+              .whereNotNull('g.stateId')
+              .whereNotNull('g.lgaId')
               .first('g.id')
-            await knex('Site')
-              .where({ id: geneXpertDevice.siteId })
-              .update({
-                latitude: siteLatitude,
-                longitude: siteLongitude,
-                geographyId,
-              })
+            await knex('Site').where({ id: geneXpertDevice.siteId }).update({
+              latitude: siteLatitude,
+              longitude: siteLongitude,
+              geographyId,
+            })
             const gpsCoordsInResultId = 'UNIQUE-ID-WITH-GPS-COORDS'
             const resultLatitude = Math.random() * 360
             const resultLongitude = Math.random() * 360

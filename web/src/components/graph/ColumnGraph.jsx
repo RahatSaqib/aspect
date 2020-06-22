@@ -22,7 +22,13 @@ class ColumnGraph extends Component {
     }
 
     // Default colors for graph
-    const c = ['#3cc0cd', '#7d97bc', '#9874b2', '#f36283']
+    const {
+      '--aspect-color-mountain': colorMountain,
+      '--aspect-color-brink': colorBrink,
+      '--ship-cove': colorShipCove,
+      '--aspect-color-cyan': colorCyan,
+    } = process.env
+    const c = [colorCyan, colorShipCove, colorMountain, colorBrink]
 
     // Figure out label size
     const labelLength = d => d.name.length

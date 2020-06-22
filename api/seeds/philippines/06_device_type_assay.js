@@ -7,12 +7,14 @@ const {
   resultCategoryToId,
 } = require('../../src/shared/dictionary')
 const AssayBdMgitAstResultDataSchema = require('../fixtures/AssayBdMgitAstResultDataSchema.json')
-const AssayBdMgitGndResultDataSchema = require('../fixtures/AssayBdMgitGnd.json')
+const AssayBdMgitGndResultDataSchema = require('../fixtures/AssayBdMgitGndResultDataSchema.json')
 const { updateAssayResultCategoryTreatmentEmphasize } = require('../utils')
-const { updateMGITAssays, updateCultureAssays } = require('../commonTB')
+const {
+  upsertMGITDeviceTypeAndAssays,
+  upsertCultureAssays,
+} = require('../commonTB')
 
 async function seed(knex) {
-  const labDeviceTypeCategoryId = await deviceTypeCategoryToId('Lab')
   const informationSystemDeviceTypeCategoryId = await deviceTypeCategoryToId(
     'Information System'
   )
@@ -31,23 +33,35 @@ async function seed(knex) {
     deviceTypeCategoryId: informationSystemDeviceTypeCategoryId,
   })
 
-  let { id: deviceTypeBDMGITId } =
-    (await knex('DeviceType')
-      .where('externalId', 'BDMGIT')
-      .first('id')) || {}
-
-  if (!deviceTypeBDMGITId) {
-    ;[deviceTypeBDMGITId] = await knex('DeviceType').insert({
-      externalId: 'BDMGIT',
-      name: 'BD MGIT',
-      manufacturer: 'Becton Dickinson',
-      deviceTypeCategoryId: labDeviceTypeCategoryId,
-    })
-  }
-
   const patientDataSchema = require('./fixtures/dataSchemas/patientDataSchema.json')
 
-  const ntrlDatabaseCultureResultDataSchema = {
+  const resultSignOffResultDataSchema = {
+    resultSignOff: {
+      list: false,
+      order: 1,
+      type: 'object',
+      title: 'Result Sign Off',
+      properties: {
+        laboratoryTechnician: {
+          title: 'Med Tech',
+          type: 'string',
+          order: 0,
+        },
+        laboratorySupervisor: {
+          title: 'Lab Supervisor',
+          type: 'string',
+          order: 1,
+        },
+        laboratoryManager: {
+          title: 'Lab Manager',
+          type: 'string',
+          order: 2,
+        },
+      },
+    },
+  }
+
+  const ntrlDatabaseGenericCultureResultDataSchema = {
     encodedResult: {
       list: false,
       order: 0,
@@ -151,9 +165,10 @@ async function seed(knex) {
         },
       },
     },
+    ...JSON.parse(JSON.stringify(resultSignOffResultDataSchema)),
   }
 
-  const ntrlDatabaseDstResultDataSchema = {
+  const ntrlDatabaseGenericDstResultDataSchema = {
     encodedResult: {
       list: false,
       order: 0,
@@ -282,27 +297,49 @@ async function seed(knex) {
         },
       },
     },
+    ...JSON.parse(JSON.stringify(resultSignOffResultDataSchema)),
   }
 
-  await updateMGITAssays(
-    knex,
-    deviceTypeBDMGITId,
-    patientDataSchema,
-    {
-      ...ntrlDatabaseDstResultDataSchema,
-      ...AssayBdMgitAstResultDataSchema,
-    },
-    {
-      ...ntrlDatabaseCultureResultDataSchema,
-      ...AssayBdMgitGndResultDataSchema,
-    }
+  const ntrlDatabaseMGITCultureResultDataSchema = {
+    ...AssayBdMgitGndResultDataSchema,
+    ...JSON.parse(JSON.stringify(ntrlDatabaseGenericCultureResultDataSchema)),
+  }
+  const maxOrderFromBdMgitGndResultDataSchema = Math.max(
+    ...Object.values(AssayBdMgitGndResultDataSchema)
+      .filter(mgitDataValue => typeof mgitDataValue.order !== 'undefined')
+      .map(mgitDataValue => mgitDataValue.order)
   )
-  await updateCultureAssays(
+  ntrlDatabaseMGITCultureResultDataSchema.encodedResult.order =
+    maxOrderFromBdMgitGndResultDataSchema + 1
+  ntrlDatabaseMGITCultureResultDataSchema.resultSignOff.order =
+    maxOrderFromBdMgitGndResultDataSchema + 2
+
+  const ntrlDatabaseMGITDstResultDataSchema = {
+    ...AssayBdMgitAstResultDataSchema,
+    ...JSON.parse(JSON.stringify(ntrlDatabaseGenericDstResultDataSchema)),
+  }
+  const maxOrderFromBdMgitAstResultDataSchema = Math.max(
+    ...Object.values(AssayBdMgitAstResultDataSchema)
+      .filter(mgitDataValue => typeof mgitDataValue.order !== 'undefined')
+      .map(mgitDataValue => mgitDataValue.order)
+  )
+  ntrlDatabaseMGITDstResultDataSchema.encodedResult.order =
+    maxOrderFromBdMgitAstResultDataSchema + 1
+  ntrlDatabaseMGITDstResultDataSchema.resultSignOff.order =
+    maxOrderFromBdMgitAstResultDataSchema + 2
+
+  await upsertMGITDeviceTypeAndAssays(
+    knex,
+    patientDataSchema,
+    ntrlDatabaseMGITCultureResultDataSchema,
+    ntrlDatabaseMGITDstResultDataSchema
+  )
+  await upsertCultureAssays(
     knex,
     deviceTypeNTRLDatabaseId,
-    ntrlDatabaseDstResultDataSchema,
-    ntrlDatabaseCultureResultDataSchema,
-    patientDataSchema
+    patientDataSchema,
+    ntrlDatabaseGenericCultureResultDataSchema,
+    ntrlDatabaseGenericDstResultDataSchema
   )
 
   const assayLpa = {
@@ -391,20 +428,17 @@ async function seed(knex) {
           },
         },
       },
+      ...resultSignOffResultDataSchema,
     }),
     patientDataSchema: JSON.stringify(patientDataSchema),
   }
 
   let { id: assayLpaId } =
-    (await knex('Assay')
-      .where('externalId', 'assayLpa')
-      .first('id')) || {}
+    (await knex('Assay').where('externalId', 'assayLpa').first('id')) || {}
   if (!assayLpaId) {
     assayLpaId = await knex('Assay').insert(assayLpa)
   } else {
-    await knex('Assay')
-      .where('id', assayLpaId)
-      .update(assayLpa)
+    await knex('Assay').where('id', assayLpaId).update(assayLpa)
   }
 
   await knex('ResultCategoryAssay').insert({
@@ -533,20 +567,17 @@ async function seed(knex) {
           },
         },
       },
+      ...resultSignOffResultDataSchema,
     }),
     patientDataSchema: JSON.stringify(patientDataSchema),
   }
 
   let { id: assaySmearId } =
-    (await knex('Assay')
-      .where('externalId', 'assaySmear')
-      .first('id')) || {}
+    (await knex('Assay').where('externalId', 'assaySmear').first('id')) || {}
   if (!assaySmearId) {
     assaySmearId = await knex('Assay').insert(assaySmear)
   } else {
-    await knex('Assay')
-      .where('id', assaySmearId)
-      .update(assaySmear)
+    await knex('Assay').where('id', assaySmearId).update(assaySmear)
   }
 
   await knex('ResultCategoryAssay').insert({

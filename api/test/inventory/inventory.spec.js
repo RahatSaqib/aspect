@@ -249,7 +249,7 @@ describe('Inventory Routes', () => {
       run(async knex => {
         await knex('InventoryLog')
           .where({ inventoryItemId: inventoryItem.id })
-          .orWhere(function() {
+          .orWhere(function () {
             if (transitItem != null) {
               this.where({ inventoryItemId: transitItem.id })
             }
@@ -257,7 +257,7 @@ describe('Inventory Routes', () => {
           .delete()
         await knex('InventoryItem')
           .where({ id: inventoryItem.id })
-          .orWhere(function() {
+          .orWhere(function () {
             if (transitItem != null) {
               this.where({ id: transitItem.id })
             }
@@ -446,9 +446,7 @@ describe('Inventory Routes', () => {
             await knex('InventoryLog')
               .where({ inventoryItemId: receivedItem.id })
               .delete()
-            await knex('InventoryItem')
-              .where({ id: receivedItem.id })
-              .delete()
+            await knex('InventoryItem').where({ id: receivedItem.id }).delete()
           })
         )
 

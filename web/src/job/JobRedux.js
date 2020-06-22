@@ -97,14 +97,14 @@ function receivePartnersAndJobFunctionsForSelectList(state, partners) {
     partnersAndJobFunctionsForSelectList: {
       loading: false,
       lastRefreshed: new Date(),
-      partners: new Immutable.List(
+      partners: Immutable.List(
         _.map(
           partners,
           partner =>
             new Partner({
               id: partner.id,
               name: partner.name,
-              jobFunctions: new Immutable.List(
+              jobFunctions: Immutable.List(
                 _.map(
                   partner.jobFunctions,
                   jobFunction =>

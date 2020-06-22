@@ -31,7 +31,7 @@ async function listPeople(request) {
       contactNameOrEmail: ['p.name', 'p.email', 'p.email2'],
       siteId: 'jc.siteId',
     })
-    .modify(addConstraints, dataConstraints, { geography: 'g' })
+    .modify(addConstraints, dataConstraints, { geography: 'g', site: 's' })
 
   // get total count for paging
   const getCount = personQuery
@@ -102,14 +102,20 @@ async function assignContact(request) {
     })
   }
 
-  const newContact = { jobId, siteId }
+  const newJobContext = { jobId, siteId }
 
-  try {
-    const response = await knex('JobContext').insert(newContact)
-    if (response) return { ok: true, data: await siteContacts(siteId) }
-  } catch (e) {
+  const existingJobContext = await knex('JobContext')
+    .where(newJobContext)
+    .whereNull('assayTypeId')
+    .whereNull('assayId')
+    .whereNull('deviceTypeId')
+    .whereNull('diseaseId')
+    .first()
+  if (existingJobContext) {
     return Boom.conflict('Contact is already assigned to site')
   }
+  const response = await knex('JobContext').insert(newJobContext)
+  if (response) return { ok: true, data: await siteContacts(siteId) }
 }
 
 async function unAssignContact(request) {
@@ -122,13 +128,15 @@ async function unAssignContact(request) {
   const contact = { jobId: personDetails.jobId, siteId }
   const jcRecord = await knex('JobContext')
     .where(contact)
+    .whereNull('assayTypeId')
+    .whereNull('assayId')
+    .whereNull('deviceTypeId')
+    .whereNull('diseaseId')
     .first()
   if (!jcRecord) {
     return Boom.notFound()
   }
-  await knex('JobContext')
-    .where(contact)
-    .del()
+  await knex('JobContext').where(contact).del()
 
   return { ok: true, data: await siteContacts(siteId) }
 }
@@ -137,7 +145,7 @@ function getSite(siteId, dataConstraints) {
   return query('Get site to add contact to')
     .from('Site as s')
     .leftJoin('Geography as g', 's.geographyId', 'g.id')
-    .modify(addConstraints, dataConstraints, { geography: 'g' })
+    .modify(addConstraints, dataConstraints, { geography: 'g', site: 's' })
     .where('s.id', '=', siteId)
 }
 
@@ -310,9 +318,7 @@ async function createPerson(request) {
   })
 
   // if user with specified 'name' exists - return Boom
-  const person = await knex('Person')
-    .where({ name })
-    .first()
+  const person = await knex('Person').where({ name }).first()
   if (person) {
     return Boom.conflict('Person with requested name already exists')
   }
@@ -376,12 +382,9 @@ async function listRefreshTokens(request) {
     .innerJoin('Partner as prt', 'p.lastPartnerId', 'prt.id')
     .leftJoin('Geography as g', 'p.geographyId', 'g.id')
     .where({ clientType: clientTypes.app })
-    .modify(addConstraints, dataConstraints, { partner: 'prt' })
+    .modify(addConstraints, dataConstraints, { partner: 'prt', geography: 'g' })
 
-  const getCount = tokenQuery
-    .clone()
-    .count('r.clientId as count')
-    .first()
+  const getCount = tokenQuery.clone().count('r.clientId as count').first()
 
   const getItems = tokenQuery
     .clone()
@@ -395,9 +398,10 @@ async function listRefreshTokens(request) {
       contactNameOrEmail: ['p.name', 'p.email', 'p.email2'],
       deviceName: 'r.clientName',
       revoked: 'r.revoked',
+      diseaseId: 'dis.id',
     })
-    .leftJoin('ResultDownloadLog as rdl', function() {
-      this.on(function() {
+    .leftJoin('ResultDownloadLog as rdl', function () {
+      this.on(function () {
         this.on('rdl.createdBy', 'r.userId')
         if (query.minDate) {
           this.andOn('rdl.createdOn', '>=', knex.raw('?', [query.minDate]))
@@ -410,6 +414,8 @@ async function listRefreshTokens(request) {
     .leftJoin('ResultDownloadLog as resd', 'r.userId', 'resd.createdBy')
     .leftJoin('Result as rt', 'rt.id', 'rdl.resultId')
     .leftJoin('Assay as a', 'a.id', 'rt.assayId')
+    .leftJoin('AssayType as at', 'a.assayTypeId', 'at.id')
+    .leftJoin('Disease as dis', 'at.diseaseId', 'dis.id')
     .leftJoin(
       'ResultTreatmentStatusLog as rtsl',
       'rtsl.id',
@@ -430,7 +436,7 @@ async function listRefreshTokens(request) {
       'rws.id',
       'rwl.resultWorkflowStatusId'
     )
-    .leftJoin('ResultCategoryAssay as rca', function() {
+    .leftJoin('ResultCategoryAssay as rca', function () {
       this.on('rca.resultCategoryId', 'rt.resultCategory1').andOn(
         'rca.assayId',
         'rt.assayId'
