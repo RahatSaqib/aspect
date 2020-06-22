@@ -25,7 +25,7 @@ const enhance = compose(
     permissions: ['dashboard:report'],
   }),
   withProps(({ location }) => {
-    const searchParams = new URLSearchParams(location.search)
+    const searchParams = new URLSearchParams(location && location.search)
     const filtersParams = new URLSearchParams(searchParams.get('filters') || '')
     const now = new Date()
     const last7Days = formatDate(subtractDays(now, 7), 'yyyy-MM-dd')

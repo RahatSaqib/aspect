@@ -502,6 +502,7 @@ export const routerFactory = () => props => (
           renderRedirectToNotFound(props, [
             'inventory:edit',
             'inventory:admin',
+            'inventory:view',
           ]) ||
           renderInventoryItemsList
         }
