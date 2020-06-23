@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import classnames from 'classnames/bind'
 
 const cssClasses = classnames.bind(require('./Shell.css'))
@@ -6,13 +7,31 @@ const cssClasses = classnames.bind(require('./Shell.css'))
 const ShellHeader = ({ children, icon: Icon, title }) => (
   <div className={cssClasses('shell__header')}>
     <div className={cssClasses('shell__headerTitle')}>
-      <div className={cssClasses('shell__headerIcon')}>
-        <Icon />
-      </div>
-      <div className={cssClasses('shell__headerText')}>{title}</div>
+      {Icon ? (
+        <div className={cssClasses('shell__headerIcon')}>
+          <Icon />
+        </div>
+      ) : null}
+      {title ? (
+        <div className={cssClasses('shell__headerText')}>{title}</div>
+      ) : null}
     </div>
-    <div className={cssClasses('shell__headerActions')}>{children}</div>
+    {children ? (
+      <div className={cssClasses('shell__headerActions')}>{children}</div>
+    ) : null}
   </div>
 )
+
+ShellHeader.defaultProps = {
+  children: false,
+  title: false,
+  icon: false,
+}
+
+ShellHeader.propTypes = {
+  children: PropTypes.oneOfType([PropTypes.object, PropTypes.bool]),
+  title: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
+  icon: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
+}
 
 export default ShellHeader

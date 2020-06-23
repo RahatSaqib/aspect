@@ -16,9 +16,8 @@ const CasesShell = ({ children }) => {
   )
 }
 
-// CasesShell.HeaderComponent = {
-//     children: ,
-//     header: ,
-// }
+CasesShell.propTypes = {
+  children: PropTypes.oneOfType([PropTypes.object]).isRequired,
+}
 
 export default CasesShell
