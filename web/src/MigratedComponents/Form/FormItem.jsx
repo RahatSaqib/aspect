@@ -4,9 +4,7 @@ import classnames from 'classnames/bind'
 import Grid from '@material-ui/core/Grid'
 
 import { useFormikState } from './Formik/Context'
-
 import { buildLabel } from './Formik/Helpers'
-
 import AspectInput from './Inputs'
 
 const cssClasses = classnames.bind(require('./Form.css'))

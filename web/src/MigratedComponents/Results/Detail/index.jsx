@@ -1,5 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { Fragment, useEffect, useState } from 'react'
+import PropTypes from 'prop-types'
 import { useSelector, useDispatch, shallowEqual } from 'react-redux'
 
 import usePrevious from '../../../Hooks/CustomHooks'
@@ -50,6 +51,10 @@ const AspectResultDetail = ({ match }) => {
       ) : null}
     </Fragment>
   ) : null
+}
+
+AspectResultDetail.propTypes = {
+  match: PropTypes.oneOfType([PropTypes.object]).isRequired,
 }
 
 export default AspectResultDetail
