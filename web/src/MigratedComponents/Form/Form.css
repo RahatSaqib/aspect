@@ -52,14 +52,6 @@
   width: 100%;
 }
 
-/* .form__input > label {
-  color: #10737e;
-}
-
-.form__input > div > input {
-  color: #333333 !important;
-} */
-
 .form__input--half {
   flex-basis: 49%;
   display: flex;
@@ -100,15 +92,3 @@
   margin: 0;
   min-width: 0;
 }
-
-/* .form__button--edit {
-background-color: green;
-}
-
-.form__button--cancel {
-background-color: white;
-}
-
-.form__button--save {
-background-color: red;
-} */
