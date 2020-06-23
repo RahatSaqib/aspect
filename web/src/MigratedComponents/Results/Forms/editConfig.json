@@ -58,17 +58,17 @@
                     "id": 0,
                     "items": [
                         {
-                            "id": "deviceName",
+                            "id": "siteName",
                             "controlType": {
                                 "component": "selectDropDown",
-                                "stateId": "assay.items",
-                                "reduxFile": "assay/AssayRedux",
-                                "reduxFunction": "fetchAssays",
+                                "stateId": "site.items",
+                                "reduxFile": "site/SiteRedux",
+                                "reduxFunction": "fetchSitesForSelectList",
                                 "inputLabel": "name",
                                 "inputValue": "assayTypeId"
                             },
                             "type": "string",
-                            "label": "Assay Type"
+                            "label": "Site Name"
                         }
                     ]
                 }

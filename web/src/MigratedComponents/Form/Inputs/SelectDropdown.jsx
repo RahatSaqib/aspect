@@ -78,11 +78,11 @@ const AspectSelectDropdown = props => {
   useEffect(() => {
     if (!reduxData || reduxData.length < 1 || !calledRedux) {
       console.log(reduxFile)
-
-      import(`../../../${reduxFile}`)
-        .then(Module => dispatch(Module[reduxFunction](false)))
-        .catch(err => console.error(err))
-        .finally(() => setCalledRedux(true))
+      setCalledRedux(true)
+      // import(`../../../${reduxFile}`)
+      //   .then(Module => dispatch(Module[reduxFunction](false)))
+      //   .catch(err => console.error(err))
+      // .finally(() => setCalledRedux(true))
     }
     // console.log(reduxData, calledRedux, whiteListed)
 
@@ -117,3 +117,17 @@ const AspectSelectDropdown = props => {
 }
 
 export default AspectSelectDropdown
+
+// {
+//     "id": "deviceName",
+//     "controlType": {
+//         "component": "selectDropDown",
+//         "stateId": "assay.items",
+//         "reduxFile": "assay/AssayRedux",
+//         "reduxFunction": "fetchAssays",
+//         "inputLabel": "name",
+//         "inputValue": "assayTypeId"
+//     },
+//     "type": "string",
+//     "label": "Assay Type"
+// }
