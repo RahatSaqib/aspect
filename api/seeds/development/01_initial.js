@@ -33,9 +33,12 @@ const patients = require('./fixtures/patients.json')
 const patientDataSchema = require('../fixtures/MGITPatientDataSchema')
 const dashboardWidget = require('./fixtures/dashboardWidget.json')
 const { errorCodes } = require('./fixtures/errorCodes.js')
-const { updateMGITAssays, updateCultureAssays } = require('../commonTB')
+const {
+  upsertMGITDeviceTypeAndAssays,
+  upsertCultureAssays,
+} = require('../commonTB')
 const { getRandomTBPatientData } = require('../commonTbresults')
-const { upsertJobFunction, upsertJobFunctionPermission } = require('../common')
+const { upsertJobFunction } = require('../common')
 
 const millisInHour = 1000 * 60 * 60
 const millisInMinute = 1000 * 60
@@ -226,17 +229,6 @@ async function seed(knex) {
     })
   }
 
-  let { id: deviceTypeBDMGITId } =
-    (await knex('DeviceType').where('externalId', 'BDMGIT').first('id')) || {}
-  if (!deviceTypeBDMGITId) {
-    ;[deviceTypeBDMGITId] = await knex('DeviceType').insert({
-      externalId: 'BDMGIT',
-      name: 'BD MGIT',
-      manufacturer: 'Becton Dickinson',
-      deviceTypeCategoryId: deviceTypeCategoryLab,
-    })
-  }
-
   let { id: deviceTypeHainGenoScanId } =
     (await knex('DeviceType')
       .where('externalId', 'HainGenoScan')
@@ -249,8 +241,8 @@ async function seed(knex) {
       deviceTypeCategoryId: deviceTypeCategoryLab,
     })
   }
-  await updateMGITAssays(knex, deviceTypeBDMGITId)
-  await updateCultureAssays(knex, deviceTypeSenaiteLimsId)
+  await upsertMGITDeviceTypeAndAssays(knex)
+  await upsertCultureAssays(knex, deviceTypeSenaiteLimsId)
   // Units
   const piece = await unitToId('Piece')
 
@@ -5150,124 +5142,122 @@ async function seed(knex) {
     })
   }) // end of 'await Promise.each(geography.countries'
 
-  // Job Functions
+  // Job Functions with permissions
+  const modules = await getPermissionModules(knex)
   const jobFunctionIdAdmin = await upsertJobFunction(
     knex,
     'Admin',
-    partnerOneId
+    partnerOneId,
+    [
+      modules.demo.admin,
+      modules.deviceApiKey.admin,
+      modules.device.admin,
+      modules.person.admin,
+      modules.result.admin,
+      modules.site.admin,
+      modules.assay.admin,
+      modules.inventory.admin,
+      modules.notification.admin,
+      modules.issue.admin,
+      modules.task.admin,
+      modules.report.admin,
+      modules.browse.view,
+      modules.reporter.admin,
+      modules.treatmentStatus.admin,
+      modules.dashboard.target,
+      modules.dashboard.result,
+      modules.dashboard.device,
+      modules.dashboard.inventory,
+      modules.dashboard.site,
+      modules.dashboard.summary,
+      modules.case.admin,
+      modules.account.admin,
+      modules.router.admin,
+      modules.manage.view,
+    ]
   )
 
   const jobFunctionIdManager = await upsertJobFunction(
     knex,
     'Manager',
-    partnerOneId
+    partnerOneId,
+    [
+      modules.treatmentStatus.admin,
+      modules.site.edit,
+      modules.device.edit,
+      modules.assay.view,
+      modules.inventory.edit,
+      modules.reporter.edit,
+      modules.dashboard.report,
+      modules.dashboard.siteFilter,
+      modules.dashboard.action,
+      modules.dashboard.target,
+      modules.dashboard.result,
+      modules.dashboard.device,
+      modules.dashboard.inventory,
+      modules.dashboard.site,
+      modules.dashboard.summary,
+      modules.case.admin,
+      modules.account.admin,
+      modules.router.admin,
+      modules.person.edit,
+      modules.clinicalIndicators.view,
+    ]
   )
 
   const jobFunctionIdClinician = await upsertJobFunction(
     knex,
     'Clinician',
-    partnerOneId
+    partnerOneId,
+    [
+      modules.site.view,
+      modules.device.view,
+      modules.assay.view,
+      modules.inventory.view,
+      modules.result.edit,
+      modules.browse.view,
+      modules.treatmentStatus.edit,
+      modules.dashboard.report,
+      modules.dashboard.siteFilter,
+      modules.dashboard.action,
+      modules.dashboard.target,
+      modules.dashboard.result,
+      modules.dashboard.device,
+      modules.dashboard.inventory,
+      modules.dashboard.site,
+      modules.dashboard.summary,
+      modules.case.edit,
+      modules.account.edit,
+      modules.router.edit,
+      modules.person.view,
+    ]
   )
 
   const jobFunctionIdPartnerTwo = await upsertJobFunction(
     knex,
     'Lab Manager',
-    partnerTwoId
+    partnerTwoId,
+    [
+      modules.treatmentStatus.admin,
+      modules.site.edit,
+      modules.device.edit,
+      modules.dashboard.report,
+      modules.dashboard.siteFilter,
+      modules.dashboard.action,
+      modules.dashboard.target,
+      modules.dashboard.result,
+      modules.dashboard.device,
+      modules.dashboard.inventory,
+      modules.dashboard.site,
+      modules.dashboard.summary,
+      modules.case.admin,
+      modules.person.view,
+      modules.account.admin,
+      modules.router.admin,
+      modules.assay.view,
+      modules.inventory.view,
+    ]
   )
-
-  // assign permissions to job functions
-  const modules = await getPermissionModules(knex)
-  await upsertJobFunctionPermission(knex, jobFunctionIdAdmin, [
-    modules.demo.admin,
-    modules.deviceApiKey.admin,
-    modules.device.admin,
-    modules.person.admin,
-    modules.result.admin,
-    modules.site.admin,
-    modules.assay.admin,
-    modules.inventory.admin,
-    modules.notification.admin,
-    modules.issue.admin,
-    modules.task.admin,
-    modules.report.admin,
-    modules.browse.view,
-    modules.reporter.admin,
-    modules.treatmentStatus.admin,
-    modules.dashboard.target,
-    modules.dashboard.result,
-    modules.dashboard.device,
-    modules.dashboard.inventory,
-    modules.dashboard.site,
-    modules.dashboard.summary,
-    modules.case.admin,
-    modules.account.admin,
-    modules.router.admin,
-    modules.manage.view,
-  ])
-  await upsertJobFunctionPermission(knex, jobFunctionIdManager, [
-    modules.treatmentStatus.admin,
-    modules.site.edit,
-    modules.device.edit,
-    modules.assay.view,
-    modules.inventory.edit,
-    modules.reporter.edit,
-    modules.dashboard.report,
-    modules.dashboard.siteFilter,
-    modules.dashboard.action,
-    modules.dashboard.target,
-    modules.dashboard.result,
-    modules.dashboard.device,
-    modules.dashboard.inventory,
-    modules.dashboard.site,
-    modules.dashboard.summary,
-    modules.case.admin,
-    modules.account.admin,
-    modules.router.admin,
-    modules.person.edit,
-    modules.clinicalIndicators.view,
-  ])
-  await upsertJobFunctionPermission(knex, jobFunctionIdPartnerTwo, [
-    modules.treatmentStatus.admin,
-    modules.site.edit,
-    modules.device.edit,
-    modules.dashboard.report,
-    modules.dashboard.siteFilter,
-    modules.dashboard.action,
-    modules.dashboard.target,
-    modules.dashboard.result,
-    modules.dashboard.device,
-    modules.dashboard.inventory,
-    modules.dashboard.site,
-    modules.dashboard.summary,
-    modules.case.admin,
-    modules.person.view,
-    modules.account.admin,
-    modules.router.admin,
-    modules.assay.view,
-    modules.inventory.view,
-  ])
-  await upsertJobFunctionPermission(knex, jobFunctionIdClinician, [
-    modules.site.view,
-    modules.device.view,
-    modules.assay.view,
-    modules.inventory.view,
-    modules.result.edit,
-    modules.browse.view,
-    modules.treatmentStatus.edit,
-    modules.dashboard.report,
-    modules.dashboard.siteFilter,
-    modules.dashboard.action,
-    modules.dashboard.target,
-    modules.dashboard.result,
-    modules.dashboard.device,
-    modules.dashboard.inventory,
-    modules.dashboard.site,
-    modules.dashboard.summary,
-    modules.case.edit,
-    modules.account.edit,
-    modules.router.edit,
-    modules.person.view,
-  ])
 
   // crate jobs for users
   const jobIdAdmin = await knex('Job').insert({

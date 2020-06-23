@@ -79,19 +79,41 @@ const renderRedirectToLicenseOr = props =>
   props.hasToAcceptLicenseId &&
   makeRenderRedirectToLicense(props.hasToAcceptLicenseId)
 
-const renderRedirectToDashboard = ({ permissions }) => ({ location }) => (
-  <Redirect
-    to={{
-      pathname: hasAnyPermissions(permissions, ['dashboard:summary'])
-        ? '/dashboard'
-        : '/browse',
-      state: { referrer: location },
-    }}
-  />
-)
+const renderRedirectToDashboard = ({ permissions }) => ({ location }) => {
+  let pathname = ''
+  if (hasAnyPermissions(permissions, ['dashboard'])) {
+    pathname = '/dashboard'
+  } else if (hasAnyPermissions(permissions, ['operationalData'])) {
+    pathname = '/operational-data'
+  } else {
+    pathname = '/browse'
+  }
 
-const hasAnyPermissions = (permissions, requiredPermission) =>
-  permissions.intersect(requiredPermission).size !== 0
+  return (
+    <Redirect
+      to={{
+        pathname,
+        state: { referrer: location },
+      }}
+    />
+  )
+}
+
+const hasAnyPermissions = (permissions, requiredPermission) => {
+  // true if List `permissions` contains any of item from plain array `requiredPermission`
+  return !!permissions.find(
+    permission =>
+      requiredPermission.includes(permission) ||
+      // if permission has exact access level (Scope:Level) then get it's Scope and see if it is in requiredPermission
+      // MEMO - if any level is enough to access resource, then use short-cut for UI permission,
+      // i.e. 'task' means any  of 'task:*'
+      (permission.includes(':') &&
+        requiredPermission.includes(permission.split(':')[0]))
+    // don't get confused with above2 lines - 'permission' is a string, 'requiredPermission' is an array, so
+    // - includes() for string is true if substring found
+    // - includes() for array is true when item found
+  )
+}
 
 const renderRedirectToNotFound = (props, requiredPermission) => {
   if (!hasAnyPermissions(props.permissions, requiredPermission))
@@ -139,11 +161,11 @@ const renderClinicalHistory = loggedInDetailFactory(ClinicalHistory)
 const renderNotFound = signedOutFactory(NotFound)
 const renderLicense = signedOutFactory(License)
 
-const bumpBackToDashboard = () => {
+const renderRedirectToHomePage = () => {
   return (
     <Redirect
       to={{
-        pathname: '/dashboard',
+        pathname: '/',
       }}
     />
   )
@@ -173,7 +195,7 @@ export const routerFactory = () => props => (
         path="/login"
         render={
           isLoggedInAndOnLogin(props, history)
-            ? () => bumpBackToDashboard()
+            ? () => renderRedirectToHomePage()
             : renderLoadableLogin
         }
       />
@@ -228,10 +250,7 @@ export const routerFactory = () => props => (
         render={
           renderRedirectToLoginOr(props) ||
           renderRedirectToLicenseOr(props) ||
-          renderRedirectToNotFound(props, [
-            'operationalData:view',
-            'operationalData:admin',
-          ]) ||
+          renderRedirectToNotFound(props, ['operationalData']) ||
           renderOperationalData
         }
       />
@@ -484,6 +503,7 @@ export const routerFactory = () => props => (
           renderRedirectToNotFound(props, [
             'inventory:edit',
             'inventory:admin',
+            'inventory:view',
           ]) ||
           renderInventoryItemsList
         }
