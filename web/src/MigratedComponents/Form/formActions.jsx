@@ -17,7 +17,6 @@ const FormActionButton = ({ formik, action, localAction, displayConfig }) => {
         'form__button--enabled': displayConfig[action.id],
         'form__button--disabled': !displayConfig[action.id],
       })}
-      // disabled={!formik.dirty && !!toggleVariable}
     >
       {action.text}
     </Button>

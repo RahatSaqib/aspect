@@ -5,11 +5,7 @@ import Grid from '@material-ui/core/Grid'
 
 import { useFormikState } from './Formik/Context'
 
-import {
-  buildErrorMessage,
-  createValidationSchema,
-  buildLabel,
-} from './Formik/Helpers'
+import { buildLabel } from './Formik/Helpers'
 
 import AspectInput from './Inputs'
 
@@ -18,7 +14,6 @@ const cssClasses = classnames.bind(require('./Form.css'))
 const FormItem = ({ id, label, type, controlType }) => {
   const { formik, toggleEdit } = useFormikState()
   const { getFieldProps } = formik
-  // console.log(id, type)
 
   return (
     <Grid item xs={4} className={cssClasses('form__sectionItemContainer')}>
@@ -43,13 +38,16 @@ const FormItem = ({ id, label, type, controlType }) => {
           shrink: true,
         }}
         formik={formik}
-        // autoFocus
-        // {...buildErrorMessage(formik, id)}
       />
     </Grid>
   )
 }
 
-// FormItem.propTypes = {}
+FormItem.propTypes = {
+  id: PropTypes.string.isRequired,
+  label: PropTypes.string.isRequired,
+  type: PropTypes.string.isRequired,
+  controlType: PropTypes.string.isRequired,
+}
 
 export default FormItem
