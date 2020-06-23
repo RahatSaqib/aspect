@@ -1,13 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useCallback, useEffect, useState } from 'react'
-import { useSelector, useDispatch, shallowEqual } from 'react-redux'
+import React, { useEffect, useState } from 'react'
+import PropTypes from 'prop-types'
+import { useSelector } from 'react-redux'
 import { FaNotesMedical } from 'react-icons/fa'
 import CircularProgress from '@material-ui/core/CircularProgress'
-import isEqual from 'lodash/isEqual'
 
-import usePrevious from '../../../Hooks/CustomHooks'
-import { fetchResultsDetail } from './Redux/resultsDetail'
-import { fetchResultsForm } from './Redux/resultsForm'
 import { FormikProvider } from '../../Form/Formik/Context'
 import { mergeFormConfigWithData } from '../../Form/Formik/Helpers'
 
@@ -18,19 +15,13 @@ import ShellHeader from '../Shell/Header'
 import ShellContent from '../Shell/Content'
 import ShellFooter from '../Shell/Footer'
 
-const AspectResultDetail = ({ formSchema, resultId }) => {
-  const dispatch = useDispatch()
+const AspectResultDetail = ({ formSchema }) => {
   const [formConfig, setFormConfig] = useState(false)
   const [patienId, setPatientId] = useState()
   const { formData } = useSelector(({ resultsDetail }) => ({
     ...resultsDetail.toJS(),
   }))
 
-  const prevFormConfig = usePrevious(formConfig)
-  const prevFormData = usePrevious(formData)
-
-  // console.log(formSchema, formData)
-  // console.log(formSchema, resultId, formConfig, formData)
   useEffect(() => {
     if (formSchema && formData) {
       setPatientId(formData.patientId)
@@ -58,6 +49,10 @@ const AspectResultDetail = ({ formSchema, resultId }) => {
       )}
     </Shell>
   )
+}
+
+AspectResultDetail.propTypes = {
+  formSchema: PropTypes.oneOfType([PropTypes.object]).isRequired,
 }
 
 export default AspectResultDetail
