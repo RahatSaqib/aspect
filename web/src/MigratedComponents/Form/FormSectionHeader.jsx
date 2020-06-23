@@ -11,6 +11,8 @@ const FormSectionHeader = ({ header }) => (
   </Grid>
 )
 
-// FormSectionHeader.propTypes = {}
+FormSectionHeader.propTypes = {
+  header: PropTypes.string.isRequired,
+}
 
 export default FormSectionHeader

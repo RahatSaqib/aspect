@@ -20,6 +20,8 @@ const FormSection = ({ rows }) => {
   )
 }
 
-// FormSection.propTypes = {}
+FormSection.propTypes = {
+  rows: PropTypes.oneOfType([PropTypes.array]).isRequired,
+}
 
 export default FormSection
