@@ -21,6 +21,7 @@ const FormikProvider = ({ config, children }) => {
     initialValues,
     validateOnMount: false,
     onSubmit: values =>
+      // eslint-disable-next-line no-console
       console.log(
         JSON.stringify(
           pick(values, keys(omitBy(fieldTypes, i => i === 'readOnly'))),
