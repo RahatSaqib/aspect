@@ -1,7 +1,6 @@
 import Immutable from 'immutable'
 import { defineMessages } from 'react-intl'
 
-import createActions from '../../Forms/createConfig.json'
 import editActions from '../../Forms/editConfig.json'
 import generateActions from '../../../Redux/generateActions'
 
@@ -10,7 +9,7 @@ const GET_RESULT_FORM = generateActions('GET', 'RESULT_FORM')
 
 export function fetchResultsForm(resultId) {
   return dispatch => {
-    const screenSchema = resultId === 'add' ? createActions : editActions
+    const screenSchema = resultId === 'add' ? null : editActions
     dispatch(receiveResultsForm(screenSchema))
   }
 }
