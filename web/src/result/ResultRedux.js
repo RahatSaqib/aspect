@@ -571,18 +571,6 @@ export default function resultReducer(state = initialState, action) {
         mutState.set('items', mutState.get('items').clear())
         mutState.set('table', mutState.get('table').clear())
       })
-    // case types.RECEIVE_SINGLE_RESULT:
-    // case types.RECEIVE_UPDATED_SINGLE_RESULT:
-    //   return state
-    //     .withMutations(mutState => {
-    //       const immutItem = Immutable.fromJS(action.item)
-    //       mutState.set('items', receiveItem(mutState.items, immutItem))
-    //     })
-    //     .merge({
-    //       loading: false,
-    //       formDataSaving: false,
-    //       formDataDirty: false,
-    //     })
     case types.SET_RESULT_FORM_DATA_VALUE:
       return state
         .withMutations(mutState => {
