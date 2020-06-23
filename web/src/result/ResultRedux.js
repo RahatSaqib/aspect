@@ -201,22 +201,6 @@ export function addResultNote(resultId, data) {
   }
 }
 
-// loading a single result with given resultId
-// function requestSingleResult(resultId) {
-//   return {
-//     type: types.REQUEST_SINGLE_RESULT,
-//     resultId,
-//   }
-// }
-
-// received a single result
-// function receiveSingleResult(item) {
-//   return {
-//     type: types.RECEIVE_SINGLE_RESULT,
-//     item,
-//   }
-// }
-
 // request device log
 function requestDeviceLogs() {
   return {
@@ -231,34 +215,6 @@ function receiveResultLogs(item) {
     item,
   }
 }
-// load a single result with given resultId
-// export function fetchSingleResult(resultId) {
-//   return dispatch => {
-//     dispatch(requestSingleResult(resultId))
-
-//     return aspectFetch(`/result/${resultId}`, {
-//       errorNotifications: {
-//         404: errorNotFound(
-//           defineMessages({
-//             title: {
-//               id: 'errorResponseMessages.fetchSingleResult.GET.404.title',
-//               defaultMessage: 'Could Not Find Test Result',
-//             },
-//           })
-//         ),
-//         default: errorPleaseTryAgainInAFewMinutes(
-//           defineMessages({
-//             title: {
-//               id:
-//                 'errorResponseMessages.fetchSingleResultDetails.GET.default.title',
-//               defaultMessage: 'Error Loading Result Details',
-//             },
-//           })
-//         ),
-//       },
-//     }).then(json => dispatch(receiveSingleResult(json.data)))
-//   }
-// }
 
 // load a single result log with given resultId
 export function fetchResultLog(resultId) {
