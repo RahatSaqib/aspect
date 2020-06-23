@@ -11,8 +11,7 @@ import DisplayFormikState from '../Helpers/debug'
 const FormikContext = React.createContext()
 
 const FormikProvider = ({ config, children }) => {
-  // console.log(config)
-  const debug = true
+  const debug = false
   const { actions } = config
   const [toggleEdit, setToggleEdit] = useState(actions.default === 'save')
   const initialValues = pickKeys(config.sections, ['initialValue'])
@@ -20,11 +19,8 @@ const FormikProvider = ({ config, children }) => {
 
   const formik = useFormik({
     initialValues,
-    // validationSchema: createValidationSchema(items, intlFormatMessage),
     validateOnMount: false,
     onSubmit: values =>
-      // console.log(values),
-
       console.log(
         JSON.stringify(
           pick(values, keys(omitBy(fieldTypes, i => i === 'readOnly'))),
@@ -37,7 +33,7 @@ const FormikProvider = ({ config, children }) => {
   return (
     <FormikContext.Provider value={{ formik, toggleEdit, setToggleEdit }}>
       {children}
-      <DisplayFormikState {...formik} />
+      {debug && <DisplayFormikState {...formik} />}
     </FormikContext.Provider>
   )
 }
