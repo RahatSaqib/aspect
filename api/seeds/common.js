@@ -871,7 +871,7 @@ SELECT CONCAT(
   '","portNumber":', Country.PortNumber,
   ',"exportColumns":"', Country.ExportColumns,
   '","inventoryDaysThreshold":', Country.InventoryDaysThreshold,
-  ',"monthStartsOnDay":', IFNULL(Country.MonthStartsOnDay, ''),
+  ',"monthStartsOnDay":', IFNULL(Country.MonthStartsOnDay, '1'),
   ',"states":[') AS countryJSON
 FROM Country
 WHERE Country.Name IS NOT NULL
