@@ -32,6 +32,8 @@ const AspectForm = ({ config }) => {
   )
 }
 
-// AspectForm.propTypes = {}
+AspectForm.propTypes = {
+  config: PropTypes.oneOfType([PropTypes.object]).isRequired,
+}
 
 export default AspectForm
