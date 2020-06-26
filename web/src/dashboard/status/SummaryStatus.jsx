@@ -113,14 +113,14 @@ export const SummaryStatus = ({
   // --- injected by recompose ---
   summary,
   defaultMessages,
-  dashboard,
+  dashboard = 'home',
 }) => (
   <div className={className}>
     {_.map(
       summary
         .filter(
-          // show widget if props.dashboard is not set, or if array widget.dashboard contains props.dashboard
-          widget => !dashboard || widget.get('dashboard').includes(dashboard)
+          // show widget if array widget.dashboard contains props.dashboard
+          widget => widget.get('dashboard').includes(dashboard)
         )
         .toJS(),
       widget => (
