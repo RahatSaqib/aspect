@@ -7,14 +7,11 @@ async function up(knex) {
     tblWidget.string('descriptionI18nKey')
   })
 
-  const widgets = await knex('DashboardWidget')
-  const updateDescriptionFields = widgets.map(widget =>
-    knex('DashboardWidget')
-      .where(widget)
-      .update({
-        description: '',
-        descriptionI18nKey: widget.titleI18nKey.replace('Title', 'Description'),
-      })
+  const updateDescriptionFields = await knex('DashboardWidget').map(widget =>
+    knex('DashboardWidget').where(widget).update({
+      description: '',
+      descriptionI18nKey: '',
+    })
   )
   await Promise.all(updateDescriptionFields)
 
