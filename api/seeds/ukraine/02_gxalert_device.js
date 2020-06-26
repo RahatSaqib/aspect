@@ -1,0 +1,46 @@
+module.exports = require('../utils').seed(seed, __filename)
+
+const _ = require('lodash')
+
+const jobFunctions = require('./fixtures/jobFunctions.json')
+const contactsFromGxAlert = require('./fixtures/contactsFromGxAlert.json')
+const customFieldsFromGxAlert = require('./fixtures/customFieldsFromGxAlert.json')
+const geographyFromGxAlert = require('./fixtures/geography.json')
+const sitesFromGxAlert = require('./fixtures/sitesFromGxAlert.json')
+const labClinic = require('./fixtures/labClinic.json')
+
+const { baseGxAlertMigration, seedLabClinicFixture } = require('../common')
+
+async function seed(knex) {
+  const migrationSeededData = await baseGxAlertMigration(
+    {
+      admin: {
+        name: 'ukraine',
+      },
+      partner: {
+        name: 'Ukraine',
+        serverUrl: 'https://ukraine.aspect.id',
+      },
+      geographyFromGxAlert,
+      gxAlertDevice: {
+        deviceApiKeyToken: 'qqsmc85rzlaoh9aygzh2',
+      },
+      sitesFromGxAlert,
+      jobFunctions,
+      contactsFromGxAlert,
+      customFieldsFromGxAlert,
+    },
+    knex
+  )
+
+  await seedLabClinicFixture(
+    labClinic,
+    _.pick(migrationSeededData, [
+      'adminId',
+      'partnerId',
+      'countryId',
+      'statesByName',
+    ]),
+    knex
+  )
+}
