@@ -134,13 +134,12 @@ export const SummaryStatus = ({
               />
               <span className={cssClasses('Summary__Card__Title--main')}>
                 {formatMessage('title', widget, intl, defaultMessages)}
+
+                <span className={cssClasses('Summary__Card__Title--sub')}>
+                  {formatMessage('subTitle', widget, intl, defaultMessages)}
+                </span>
               </span>
-              <span className={cssClasses('Summary__Card__Title--sub')}>
-                {formatMessage('subTitle', widget, intl, defaultMessages)}
-              </span>
-              <AspectTooltip className={cssClasses('Summary__Card__Tooltip')} showHelpIcon title={formatMessage('description', widget, intl, defaultMessages)}>
-                
-              </AspectTooltip>
+              <AspectTooltip className={cssClasses('Summary__Card__Tooltip')} showHelpIcon title={formatMessage('description', widget, intl, defaultMessages)} />
             </div>
             <div className={cssClasses('Summary__Card__Content')}>
               <div className={cssClasses('Summary__Card__Item')}>

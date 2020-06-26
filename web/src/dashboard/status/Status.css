@@ -59,6 +59,7 @@
 }
 
 .Summary__Card__Title--sub {
+  font-weight: normal;
   white-space: nowrap;
   overflow: hidden;
   color: var(--aspect-color-grey-4);
