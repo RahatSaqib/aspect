@@ -15,7 +15,9 @@
       "extraLabel": "Successful",
       "extraLabelI18nKey": "dashboardWidgetExtraLabelTests",
       "sortOrder": 4,
-      "externalId": "dashboardWidgetTitleTests"
+      "externalId": "dashboardWidgetTitleTests",
+      "description": "The number of tests reported the current month",
+      "descriptionI18nKey": "testsDescription"
     },
     {
       "icon": "data",
@@ -32,7 +34,9 @@
       "statStatus": "MTB+",
       "statStatusI18nKey": "dashboardWidgetStatusMTBPositiveRate",
       "sortOrder": 5,
-      "externalId": "dashboardWidgetTitleMTBPositiveRate"
+      "externalId": "dashboardWidgetTitleMTBPositiveRate",
+      "description": "The MTB+ Rate for the last 30 days",
+      "descriptionI18nKey": "dashboardWidgetDescriptionMTBPositiveRate"
     },
     {
       "icon": "data",
@@ -49,7 +53,9 @@
       "statStatus": "Rif Resistant",
       "statStatusI18nKey": "dashboardWidgetStatusRRRate",
       "sortOrder": 6,
-      "externalId": "dashboardWidgetTitleRRRate"
+      "externalId": "dashboardWidgetTitleRRRate",
+      "description": "The RR Rate for the last 30 days",
+      "descriptionI18nKey": "dashboardWidgetDescriptionRRRate"
     },
     {
       "icon": "data",
@@ -66,7 +72,9 @@
       "statStatus": "Indeterminate",
       "statStatusI18nKey": "dashboardWidgetStatusTIRate",
       "sortOrder": 7,
-      "externalId": "dashboardWidgetTitleTIRate"
+      "externalId": "dashboardWidgetTitleTIRate",
+      "description": "The TI Rate for the last 30 days",
+      "descriptionI18nKey": "dashboardWidgetDescriptionTIRate"
     }
   ],
   "target": [
@@ -80,7 +88,9 @@
         "select '100%' as cnt",
       "targetToken": "Total",
       "sortOrder": 0,
-      "externalId": "dashboardWidgetTitleTotal"
+      "externalId": "dashboardWidgetTitleTotal",
+      "description": "The total reported tests",
+      "descriptionI18nKey": "dashboardWidgetDescriptionTotal"
     },
     {
       "title": "MDR-TB",
@@ -92,7 +102,9 @@
       "select concat(round(sum(case when ifnull(patientData ->> '$.previouslyTreated', '') != '' then 1 else 0 end)/count(r.id)*100,0),'%') as cnt from Result as r inner join Device as d on d.id = r.deviceId inner join Site as s on s.id = d.siteId inner join Partner as p on s.partnerId = p.id left outer join Geography as g on s.geographyId = g.id where r.assayId in (1,2)",
       "targetToken": "MDR",
       "sortOrder": 1,
-      "externalId": "dashboardWidgetTitleMDRTB"
+      "externalId": "dashboardWidgetTitleMDRTB",
+      "description": "The total reported MDR-TB tests",
+      "descriptionI18nKey": "dashboardWidgetDescriptionMDRTB"
     },
     {
       "title": "HIV+",
@@ -103,7 +115,9 @@
       "sqlForDataCollection": "select concat(round(sum(case when ifnull(patientData ->> '$.hivStatus', '') != '' then 1 else 0 end)/count(r.id)*100,0),'%') as cnt from Result as r inner join Device as d on d.id = r.deviceId inner join Site as s on s.id = d.siteId inner join Partner as p on s.partnerId = p.id left outer join Geography as g on s.geographyId = g.id where r.assayId in (1,2)",
       "targetToken": "HIV",
       "sortOrder": 2,
-      "externalId": "dashboardWidgetTitleHIV"
+      "externalId": "dashboardWidgetTitleHIV",
+      "description": "The total reported HIV+ tests",
+      "descriptionI18nKey": "dashboardWidgetDescriptionHIV+"
     },
     {
       "title": "Smear+",
@@ -114,7 +128,9 @@
       "sqlForDataCollection": "select concat(round(sum(case when ifnull(patientData ->> '$.microscopyResult', '') != '' then 1 else 0 end)/count(r.id)*100,0),'%') as cnt from Result as r inner join Device as d on d.id = r.deviceId inner join Site as s on s.id = d.siteId inner join Partner as p on s.partnerId = p.id left outer join Geography as g on s.geographyId = g.id where r.assayId in (1,2)",
       "targetToken": "Smear",
       "sortOrder": 3,
-      "externalId": "dashboardWidgetTitleSmear"
+      "externalId": "dashboardWidgetTitleSmear",
+      "description": "The total reported Smear+ tests",
+      "descriptionI18nKey": "dashboardWidgetDescriptionSmear"
     }
   ]
 }

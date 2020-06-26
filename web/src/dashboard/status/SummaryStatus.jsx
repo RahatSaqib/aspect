@@ -11,6 +11,8 @@ import Icon from '../../components/shared/icon/Icon'
 import { fetchStatDashboard } from '../DashboardRedux'
 import requirePermissions from '../../components/shared/requirePermissions'
 import messages from './messages'
+import AspectTooltip from '../../components/shared/AspectTooltip'
+
 
 const cssClasses = classnames.bind(require('./Status.css'))
 
@@ -136,6 +138,9 @@ export const SummaryStatus = ({
               <span className={cssClasses('Summary__Card__Title--sub')}>
                 {formatMessage('subTitle', widget, intl, defaultMessages)}
               </span>
+              <AspectTooltip className={cssClasses('Summary__Card__Tooltip')} showHelpIcon title={formatMessage('description', widget, intl, defaultMessages)}>
+                
+              </AspectTooltip>
             </div>
             <div className={cssClasses('Summary__Card__Content')}>
               <div className={cssClasses('Summary__Card__Item')}>

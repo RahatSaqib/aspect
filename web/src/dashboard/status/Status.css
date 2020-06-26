@@ -43,6 +43,7 @@
   text-transform: capitalize;
   display: inline-flex;
   align-items: center;
+  width: 100%;
 }
 
 .Summary__Card__Title__Icon {
@@ -54,6 +55,7 @@
   white-space: nowrap;
   overflow: hidden;
   padding-right: 2px;
+  width: 90%;
 }
 
 .Summary__Card__Title--sub {

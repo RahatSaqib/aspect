@@ -36,6 +36,8 @@ describe('Dashboard routes', () => {
           assert.property(res.body.data[0], 'titleI18nKey')
           assert.property(res.body.data[0], 'subTitle')
           assert.property(res.body.data[0], 'subTitleI18nKey')
+          assert.property(res.body.data[0], 'description')
+          assert.property(res.body.data[0], 'descriptionI18nKey')
           assert.property(res.body.data[0], 'link')
           assert.property(res.body.data[0], 'count')
           done()
