@@ -496,7 +496,16 @@ export default function dashboardReducer(state = initialState, action) {
     case RECEIVE_STAT_DASHBOARD:
       return state.withMutations(mutState => {
         onRequested(action, mutState, () => {
-          mutState.set('summary', Immutable.fromJS(action.data))
+          mutState.set(
+            'summary',
+            Immutable.fromJS(
+              action.data.map(({ dashboard, ...rest }) => ({
+                ...rest,
+                // convert CSV string into array of strings
+                dashboard: dashboard.split(',').map(v => v.trim()),
+              }))
+            )
+          )
         })
       })
     case RECEIVE_TARGET_DASHBOARD:

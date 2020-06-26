@@ -38,6 +38,15 @@ describe('Dashboard routes', () => {
           assert.property(res.body.data[0], 'subTitleI18nKey')
           assert.property(res.body.data[0], 'link')
           assert.property(res.body.data[0], 'count')
+          assert.property(res.body.data[0], 'dashboard')
+
+          // widget Devices contains `operational` in field `dashboard`
+          const { dashboard } =
+            res.body.data.find(
+              ({ externalId }) => externalId === 'devicesTitle'
+            ) || {}
+          assert.equal(dashboard.includes('operational'), true)
+
           done()
         })
     })
