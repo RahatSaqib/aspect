@@ -254,7 +254,7 @@
         "shortName": "м.Бахмут ОКПТД ",
         "macAddress": "MAC180373336DF5",
         "hostId": "ВСП КЗ ОЗ \"ОКПТД\" м.БАХМУТ",
-        "serial": "Cepheid5YSWDQ1",
+        "serial": "Cepheid-5YSWDQ1",
         "gxAlertDeviceId": "2742"
       }
     ]
@@ -1054,7 +1054,7 @@
         "shortName": "КУ ЛОР ",
         "macAddress": "MAC98E7F468CF3D",
         "hostId": "КУ ЛОР \"Львівський регіональний фтизіопульмонологічний клінічний лікувально-діагностичний центр\"(pas)",
-        "serial": "Cepheid-642629R",
+        "serial": "Cepheid-642629S",
         "gxAlertDeviceId": "2263"
       }
     ]

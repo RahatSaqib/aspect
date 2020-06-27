@@ -197,14 +197,7 @@ async function commonUpserts(
     modules.result.edit,
     modules.browse.view,
     modules.treatmentStatus.edit,
-    modules.dashboard.report,
-    modules.dashboard.siteFilter,
-    modules.dashboard.action,
-    modules.dashboard.target,
     modules.dashboard.result,
-    modules.dashboard.device,
-    modules.dashboard.inventory,
-    modules.dashboard.site,
     modules.dashboard.summary,
     modules.case.edit,
     modules.account.edit,
@@ -1848,6 +1841,62 @@ async function ensureResultTreatmentStatuses(
   })
 }
 
+async function seedDashboardWidgets(partnerId, dashboardWidget, knex) {
+  await Promise.all(
+    _.map(dashboardWidget.stat, async widget => {
+      const widgetData = _.pick(widget, [
+        'title',
+        'titleI18nKey',
+        'subTitle',
+        'subTitleI18nKey',
+        'sqlForIndicator',
+        'link',
+        'sortOrder',
+        'externalId',
+      ])
+      const [widgetId] = await knex('DashboardWidget').insert(widgetData)
+      const statWidgetData = _.pick(widget, [
+        'icon',
+        'sqlForStatUnit',
+        'statUnit',
+        'statUnitI18nKey',
+        'statStatus',
+        'statStatusI18nKey',
+        'sqlForExtra',
+        'extraUnit',
+        'extraUnitI18nKey',
+        'extraLabel',
+        'extraLabelI18nKey',
+      ])
+      await knex('DashboardWidgetStat').insert({
+        dashboardWidgetId: widgetId,
+        ...statWidgetData,
+      })
+
+      // add to jobfunctions here
+      const jobFunctionsDb = await knex('JobFunction')
+        .where({ partnerId })
+        .where(function () {
+          if (
+            widget.jobFunctions &&
+            widget.jobFunctions !== 'all' &&
+            widget.jobFunctions[0] !== 'all'
+          ) {
+            this.whereIn('externalId', widget.jobFunctions)
+          }
+        })
+        .select('id', 'name')
+
+      jobFunctionsDb.map(async jf => {
+        await knex('JobFunctionDashboardWidget').insert({
+          jobFunctionId: jf.id,
+          widgetId,
+        })
+      })
+    })
+  )
+}
+
 module.exports = {
   commonUpserts,
   upsertGxAlertDevice,
@@ -1861,4 +1910,5 @@ module.exports = {
   baseGxAlertMigration,
   seedLabClinicFixture,
   ensureResultTreatmentStatuses,
+  seedDashboardWidgets,
 }

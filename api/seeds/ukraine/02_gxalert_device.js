@@ -8,8 +8,13 @@ const customFieldsFromGxAlert = require('./fixtures/customFieldsFromGxAlert.json
 const geographyFromGxAlert = require('./fixtures/geography.json')
 const sitesFromGxAlert = require('./fixtures/sitesFromGxAlert.json')
 const labClinic = require('./fixtures/labClinic.json')
+const dashboardWidget = require('./fixtures/dashboardWidget.json')
 
-const { baseGxAlertMigration, seedLabClinicFixture } = require('../common')
+const {
+  baseGxAlertMigration,
+  seedLabClinicFixture,
+  seedDashboardWidgets,
+} = require('../common')
 
 async function seed(knex) {
   const migrationSeededData = await baseGxAlertMigration(
@@ -43,4 +48,10 @@ async function seed(knex) {
     ]),
     knex
   )
+
+  const { id: partnerId } = await knex('Partner')
+    .where({ name: 'Ukraine' })
+    .first('id')
+
+  await seedDashboardWidgets(partnerId, dashboardWidget, knex)
 }
