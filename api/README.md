@@ -266,6 +266,8 @@ It mostly operates on JSON files in the country's fixtures-folder. The files con
 - labClinic.json - This is ONLY for setting devices that use an Aspect API key such as the MGIT or m2000. It does not contain GeneXpert devices
 - sitesFromGxAlert.json - This is the file that contains the GeneXpert devices in GxAlert and the sites that they are located at.
 
+This should be deployed to the Aspect server for the country before data forwarding is set up in GxAlert.
+
 ## Deploying
 
 We're serving the API through AWS beanstalk. Install the eb cli tools and commit changes, then:
