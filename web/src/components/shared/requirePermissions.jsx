@@ -144,6 +144,7 @@ export function getMatchedUserPermissions(
 // check if the user is allowed to the resource protected by the permission group
 export function isPermittedUser(
   userPermissions,
+  // see func groupByPermissionTypes() above for meaning of below 3 arrays
   { required = [], forbidden = [], optional = [] }
 ) {
   // treat resource access is allowed when no permissions requested
