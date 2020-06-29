@@ -1,16 +1,14 @@
 [
   {
-    "personName": "Ukraine Admin",
-    "personTitle": null,
+    "personName": "Admin",
     "jobFunctions": ["Admin"],
-    "personEmailAddress": null,
     "username": "ukraine",
     "timezone": "E. Europe Standard Time",
     "hidePatientId": false,
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": "[]"
+    "geographies": []
   },
   {
     "personName": "Aleksey Bogdanov",
@@ -23,7 +21,19 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": "[]"
+    "geographies": []
+  },
+  {
+    "personName": "Barlayan Viktoria",
+    "personTitle": "Lab Contact",
+    "jobFunctions": ["Lab User"],
+    "personEmailAddress": "obltubkh@ukr.net",
+    "timezone": "FLE Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": []
   },
   {
     "personName": "Bogdan Zorii",
@@ -36,7 +46,7 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": "[]"
+    "geographies": []
   },
   {
     "personName": "Elena Viktorovna",
@@ -49,7 +59,19 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": "[]"
+    "geographies": []
+  },
+  {
+    "personName": "Golub Oksana",
+    "personTitle": "Lab Contact",
+    "jobFunctions": ["Lab User"],
+    "personEmailAddress": "kievsnid@gmail.com",
+    "timezone": "FLE Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": []
   },
   {
     "personName": "Kasyanova Victoria",
@@ -62,11 +84,19 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": [
-      {
-        "stateName": "Cherkasy Oblast"
-      }
-    ]
+    "geographies": [{ "stateName": "Cherkasy Oblast" }]
+  },
+  {
+    "personName": "KDL TOPD",
+    "personTitle": "Lab Contact",
+    "jobFunctions": ["Lab User"],
+    "personEmailAddress": "toktd@ukr.net",
+    "timezone": "FLE Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": []
   },
   {
     "personName": "Kononenko Natalla",
@@ -79,11 +109,22 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": "[]"
+    "geographies": []
+  },
+  {
+    "personName": "Lazarchuk Oleksandr",
+    "personTitle": "Installer",
+    "jobFunctions": ["Lab User"],
+    "personEmailAddress": "oleksandr@lazarchuk.com",
+    "timezone": "FLE Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": []
   },
   {
     "personName": "Liudmyla Kovalchuk",
-    "personTitle": null,
     "jobFunctions": ["Admin"],
     "personEmailAddress": "l.kovalchuk@phc.org.ua",
     "username": "l.kovalchuk@phc.org.ua",
@@ -92,7 +133,19 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": "[]"
+    "geographies": []
+  },
+  {
+    "personName": "Mostenchuk Olga",
+    "personTitle": "Lab Contact",
+    "jobFunctions": ["Lab User"],
+    "personEmailAddress": "bakviddil@gmail.com",
+    "timezone": "FLE Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": []
   },
   {
     "personName": "Nikolaevskaya Olena",
@@ -105,15 +158,10 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": [
-      {
-        "stateName": "Odessa Oblast"
-      }
-    ]
+    "geographies": [{ "stateName": "Odessa Oblast" }]
   },
   {
     "personName": "Nina Zherebko",
-    "personTitle": null,
     "jobFunctions": ["Admin"],
     "personEmailAddress": "nzherebko@path.org",
     "username": "nzherebko@path.org",
@@ -122,7 +170,43 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": "[]"
+    "geographies": []
+  },
+  {
+    "personName": "oleksandr",
+    "personTitle": "Installer",
+    "jobFunctions": ["Lab User"],
+    "personEmailAddress": "samson8600@gmail.com",
+    "timezone": "FLE Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": []
+  },
+  {
+    "personName": "Sergey Dmitrievich",
+    "personTitle": "Installer",
+    "jobFunctions": ["Lab User"],
+    "personEmailAddress": "spreadsheetsvneski@gmail.com",
+    "timezone": "FLE Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": []
+  },
+  {
+    "personName": "Serhii Samchenko",
+    "personTitle": "Installer",
+    "jobFunctions": ["Lab User"],
+    "personEmailAddress": "omk.ooptd@gmail.com",
+    "timezone": "FLE Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": []
   },
   {
     "personName": "svetlana",
@@ -135,11 +219,7 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": [
-      {
-        "stateName": "Chernivtsi Oblast"
-      }
-    ]
+    "geographies": [{ "stateName": "Chernivtsi Oblast" }]
   },
   {
     "personName": "Valentyna",
@@ -152,24 +232,79 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": [
-      {
-        "stateName": "Khmelnytskyi Oblast"
-      }
-    ]
+    "geographies": [{ "stateName": "Khmelnytskyi Oblast" }]
   },
   {
-    "personName": "Volodymyr Skrypov",
+    "personName": "Євген",
     "personTitle": "Installer",
-    "jobFunctions": ["Admin"],
-    "personEmailAddress": "ukraine.asp@gmail.com",
-    "username": "Ukraine_asp",
+    "jobFunctions": ["Lab User"],
+    "personEmailAddress": "copyman2112@gmail.com",
+    "timezone": "FLE Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": []
+  },
+  {
+    "personName": "Іван",
+    "personTitle": "Lab Contact",
+    "jobFunctions": ["Lab User"],
+    "personEmailAddress": "noptd.laboratoria@ukr.net",
     "timezone": "FLE Standard Time",
     "hidePatientId": true,
     "hideSampleId": true,
     "hideNotes": true,
     "getPasswordFromGxAlert": true,
-    "geographies": "[]"
+    "geographies": []
+  },
+  {
+    "personName": "Александр Карловский",
+    "personTitle": "Lab Contact",
+    "jobFunctions": ["Lab User"],
+    "personEmailAddress": "flurozepam@gmail.com",
+    "timezone": "FLE Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": []
+  },
+  {
+    "personName": "Аскерова Раїса Вікторівна",
+    "personTitle": "медична сестра кабінету лікаря поліклінічного відділення (секретар ЦЛКК)",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "otd.buk@gmail.com",
+    "timezone": "FLE Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [{ "stateName": "Chernivtsi Oblast" }]
+  },
+  {
+    "personName": "Ася Черноіванова",
+    "personTitle": "Lab Contact",
+    "jobFunctions": ["Lab User"],
+    "personEmailAddress": "chrnvnv@ukr.net",
+    "timezone": "FLE Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": []
+  },
+  {
+    "personName": "Бікун Вікторія Іванівна",
+    "personTitle": "медична - сестра  (секретар ЦЛКК)",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "Dpvktb@ukr.net",
+    "timezone": "FLE Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [{ "stateName": "Kherson Oblast" }]
   },
   {
     "personName": "Барбова Анна Іванівна",
@@ -182,7 +317,7 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": "[]"
+    "geographies": []
   },
   {
     "personName": "Безсмертна Неоніла Іванівна",
@@ -195,7 +330,112 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": "[]"
+    "geographies": []
+  },
+  {
+    "personName": "Бенедюк Наталія Федорівна",
+    "personTitle": "статистик медичний (секретар ЦЛКК)",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "mio_tbc@ukr.net",
+    "timezone": "FLE Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [{ "stateName": "Zhytomyr Oblast" }]
+  },
+  {
+    "personName": "Березюк Ірина Вікторівна",
+    "jobFunctions": ["Lab User"],
+    "timezone": "FLE Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": []
+  },
+  {
+    "personName": "Боровков Станіслав Володимирович",
+    "personTitle": "Installer",
+    "jobFunctions": ["Lab User"],
+    "personEmailAddress": "s.borovkov@phc.org.ua",
+    "timezone": "FLE Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": []
+  },
+  {
+    "personName": "Бортнюк Мая Іванівна",
+    "personTitle": "зав. Лаб",
+    "jobFunctions": ["Lab User"],
+    "timezone": "FLE Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": []
+  },
+  {
+    "personName": "Буренко Ірина Володимирівна",
+    "personTitle": "Lab Contact",
+    "jobFunctions": ["Lab User"],
+    "personEmailAddress": "burenko.ira77@gmail.com",
+    "timezone": "FLE Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": []
+  },
+  {
+    "personName": "Бутенко Валентина Олександрівна",
+    "personTitle": "Lab Contact",
+    "jobFunctions": ["Lab User"],
+    "personEmailAddress": "hotline@btmo.com.ua",
+    "timezone": "FLE Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": []
+  },
+  {
+    "personName": "Вікторія Бут",
+    "personTitle": "Lab Contact",
+    "jobFunctions": ["Lab User"],
+    "personEmailAddress": "vik.but2011@ukr.net",
+    "timezone": "FLE Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": []
+  },
+  {
+    "personName": "Віталій Мостовий",
+    "personTitle": "Installer",
+    "jobFunctions": ["Lab User"],
+    "personEmailAddress": "mio.sumy@gmail.com",
+    "timezone": "FLE Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [{ "stateName": "Sumy Oblast" }]
+  },
+  {
+    "personName": "Валерій Петров",
+    "personTitle": "Installer",
+    "jobFunctions": ["Lab User"],
+    "personEmailAddress": "valera_pva@ukr.net",
+    "timezone": "FLE Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": []
   },
   {
     "personName": "Васянович Наталія Борисівна",
@@ -208,11 +448,32 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": [
-      {
-        "stateName": "Zhytomyr Oblast"
-      }
-    ]
+    "geographies": [{ "stateName": "Zhytomyr Oblast" }]
+  },
+  {
+    "personName": "Владимир Скрипов",
+    "personTitle": "Installer",
+    "jobFunctions": ["Admin"],
+    "personEmailAddress": "ukraine.asp@gmail.com",
+    "username": "Ukraine_asp",
+    "timezone": "FLE Standard Time",
+    "hidePatientId": true,
+    "hideSampleId": true,
+    "hideNotes": true,
+    "getPasswordFromGxAlert": true,
+    "geographies": []
+  },
+  {
+    "personName": "Власов Сергій Сергійович",
+    "personTitle": "Installer",
+    "jobFunctions": ["Lab User"],
+    "personEmailAddress": "vinobltub@ukr.net",
+    "timezone": "FLE Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": []
   },
   {
     "personName": "Воробченко Татьяна",
@@ -225,7 +486,19 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": "[]"
+    "geographies": []
+  },
+  {
+    "personName": "Галина Петрівна Франків",
+    "personTitle": "Lab Contact",
+    "jobFunctions": ["Lab User"],
+    "personEmailAddress": "g.frankiv.lv@gmail.com",
+    "timezone": "FLE Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": []
   },
   {
     "personName": "Гончаренко Алла Петрівна",
@@ -238,15 +511,10 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": [
-      {
-        "stateName": "Kharkiv Oblast"
-      }
-    ]
+    "geographies": [{ "stateName": "Kharkiv Oblast" }]
   },
   {
     "personName": "Гончаренко Наталія Борисівна",
-    "personTitle": null,
     "jobFunctions": ["Regional Officer"],
     "personEmailAddress": "laboratoria.3@gmail.com",
     "username": "laboratoria.3@gmail.com",
@@ -255,11 +523,19 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": [
-      {
-        "stateName": "City of Kiev"
-      }
-    ]
+    "geographies": [{ "stateName": "City of Kiev" }]
+  },
+  {
+    "personName": "Гуйко Татьяна Михайловна",
+    "personTitle": "Lab Contact",
+    "jobFunctions": ["Lab User"],
+    "personEmailAddress": "guykokdl@gmail.com",
+    "timezone": "FLE Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": []
   },
   {
     "personName": "Гулак Іванна Олександрівна",
@@ -272,11 +548,53 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": [
-      {
-        "stateName": "Dnipropetrovsk Oblast"
-      }
-    ]
+    "geographies": [{ "stateName": "Dnipropetrovsk Oblast" }]
+  },
+  {
+    "personName": "Гутнік Валентина Вікторівна",
+    "personTitle": "секретар Центральної лікарської консультативної комісії (ЦЛКК)",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "stattubkram@ukr.net",
+    "timezone": "FLE Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [{ "lgaName": "Краматорськ" }]
+  },
+  {
+    "personName": "Дідур Наталія Олександрівна",
+    "jobFunctions": ["Lab User"],
+    "timezone": "FLE Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": []
+  },
+  {
+    "personName": "Дахно Тетяна Юріївна",
+    "personTitle": "Lab Contact",
+    "jobFunctions": ["Lab User"],
+    "personEmailAddress": "zl_crl@ukr.net",
+    "timezone": "FLE Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": []
+  },
+  {
+    "personName": "Дузенко Алла Євгеніївна",
+    "personTitle": "Lab Contact",
+    "jobFunctions": ["Lab User"],
+    "personEmailAddress": "alladuzenko4@gmail.com",
+    "timezone": "FLE Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": []
   },
   {
     "personName": "Зінченко Галина Валеріївна",
@@ -289,11 +607,110 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": [
-      {
-        "stateName": "Kherson Oblast"
-      }
-    ]
+    "geographies": [{ "stateName": "Kherson Oblast" }]
+  },
+  {
+    "personName": "Загоровська Оксана",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "Lrtbd_lab@ukr.net",
+    "timezone": "FLE Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [{ "stateName": "Luhansk Oblast" }]
+  },
+  {
+    "personName": "Загоровська Оксана",
+    "personTitle": "Lab Contact",
+    "jobFunctions": ["Lab User"],
+    "personEmailAddress": "listyb@mai.ru",
+    "timezone": "FLE Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": []
+  },
+  {
+    "personName": "ильина людмила николаевна",
+    "personTitle": "Lab Contact",
+    "jobFunctions": ["Lab User"],
+    "timezone": "FLE Standard Time",
+    "hidePatientId": true,
+    "hideSampleId": true,
+    "hideNotes": true,
+    "getPasswordFromGxAlert": true,
+    "geographies": []
+  },
+  {
+    "personName": "Каледіна Світлана Іванівна",
+    "personTitle": "Lab Contact",
+    "jobFunctions": ["Lab User"],
+    "personEmailAddress": "vvcrl@ukr.net",
+    "timezone": "FLE Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": []
+  },
+  {
+    "personName": "Кармаліта Тетяна Сергіївна",
+    "personTitle": "Lab Contact",
+    "jobFunctions": ["Lab User"],
+    "timezone": "FLE Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": []
+  },
+  {
+    "personName": "Клевак Світлана Леонідівна",
+    "personTitle": "Lab Contact",
+    "jobFunctions": ["Lab User"],
+    "personEmailAddress": "svetaKlivak@gmail.com",
+    "timezone": "FLE Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": []
+  },
+  {
+    "personName": "Ковальчук Марина Володимирівна",
+    "personTitle": "Lab Contact",
+    "jobFunctions": ["Lab User"],
+    "personEmailAddress": "mmgk04092010@gmail.com",
+    "timezone": "FLE Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": []
+  },
+  {
+    "personName": "Ковтунович Лиана",
+    "jobFunctions": ["Regional Officer"],
+    "timezone": "FLE Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [{ "stateName": "Odessa Oblast" }]
+  },
+  {
+    "personName": "Козьма Юлія Василівна",
+    "personTitle": "Lab Contact",
+    "jobFunctions": ["Lab User"],
+    "personEmailAddress": "pcml_56@ukr.net",
+    "timezone": "FLE Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": []
   },
   {
     "personName": "Кондратюк Наталія Володимирівна",
@@ -306,11 +723,7 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": [
-      {
-        "stateName": "Volyn Oblast"
-      }
-    ]
+    "geographies": [{ "stateName": "Volyn Oblast" }]
   },
   {
     "personName": "Кравець Іванна Ігорівна",
@@ -323,11 +736,19 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": [
-      {
-        "stateName": "Lviv Oblast"
-      }
-    ]
+    "geographies": [{ "stateName": "Lviv Oblast" }]
+  },
+  {
+    "personName": "Круценко Оксана Ігорівна",
+    "personTitle": "Lab Contact",
+    "jobFunctions": ["Lab User"],
+    "personEmailAddress": "crl@nu.kr-admin.gov.ua",
+    "timezone": "FLE Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": []
   },
   {
     "personName": "Кутявина Вераника Олеговна",
@@ -340,7 +761,7 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": "[]"
+    "geographies": []
   },
   {
     "personName": "Кухарук Оксана Іванівна",
@@ -353,11 +774,10 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": "[]"
+    "geographies": []
   },
   {
     "personName": "Лазорик Любов Іванівна",
-    "personTitle": null,
     "jobFunctions": ["Regional Officer"],
     "personEmailAddress": "lazoryk.liubov@ukr.net",
     "username": "lazoryk.liubov@ukr.net",
@@ -366,11 +786,123 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": [
-      {
-        "stateName": "Zakarpattia Oblast"
-      }
-    ]
+    "geographies": [{ "stateName": "Zakarpattia Oblast" }]
+  },
+  {
+    "personName": "Лазорик Любов Іванівна",
+    "personTitle": "Lab Contact",
+    "jobFunctions": ["Lab User"],
+    "personEmailAddress": "lazoryk.liubov@ukr.net",
+    "timezone": "FLE Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": []
+  },
+  {
+    "personName": "Лариса Лукіянчук",
+    "personTitle": "Lab Contact",
+    "jobFunctions": ["Lab User"],
+    "personEmailAddress": "llukiyanchuk23@gmail.com",
+    "timezone": "FLE Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": []
+  },
+  {
+    "personName": "Леонтьєва Ольга Володимирівна",
+    "personTitle": "Lab Contact",
+    "jobFunctions": ["Lab User"],
+    "personEmailAddress": "kdlcmlnk@ukr.net",
+    "timezone": "FLE Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": []
+  },
+  {
+    "personName": "Людмила",
+    "personTitle": "Lab Contact",
+    "jobFunctions": ["Lab User"],
+    "timezone": "FLE Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": []
+  },
+  {
+    "personName": "Людмила Павлівна Здоровець",
+    "personTitle": "Lab Contact",
+    "jobFunctions": ["Lab User"],
+    "personEmailAddress": "ludmilazdor@ukr.net",
+    "timezone": "FLE Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": []
+  },
+  {
+    "personName": "Міщенко Ірина Сергіївна",
+    "personTitle": "Лікар-лаборант",
+    "jobFunctions": ["Lab User"],
+    "timezone": "FLE Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": []
+  },
+  {
+    "personName": "Майкут Ольга Альфонсівна",
+    "personTitle": "Завідувач лабораторії",
+    "jobFunctions": ["Lab User"],
+    "personEmailAddress": "maykut_olga@ukr.net",
+    "timezone": "FLE Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": []
+  },
+  {
+    "personName": "Макарова Антоніна Вікторівна",
+    "jobFunctions": ["Lab User"],
+    "timezone": "FLE Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": []
+  },
+  {
+    "personName": "Марія Панасюк",
+    "personTitle": "Lab Contact",
+    "jobFunctions": ["Lab User"],
+    "personEmailAddress": "mari17pq@gmail.com",
+    "timezone": "FLE Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": []
+  },
+  {
+    "personName": "марина",
+    "personTitle": "Lab Contact",
+    "jobFunctions": ["Lab User"],
+    "personEmailAddress": "markot1@ukr.net",
+    "timezone": "FLE Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": []
   },
   {
     "personName": "Марина Кулик",
@@ -383,11 +915,53 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": [
-      {
-        "stateName": "Zaporizhia Oblast"
-      }
-    ]
+    "geographies": [{ "stateName": "Zaporizhia Oblast" }]
+  },
+  {
+    "personName": "Мария Новохатская",
+    "personTitle": "Lab Contact",
+    "jobFunctions": ["Lab User"],
+    "personEmailAddress": "novohatskay@gmail.com",
+    "timezone": "FLE Standard Time",
+    "hidePatientId": true,
+    "hideSampleId": true,
+    "hideNotes": true,
+    "getPasswordFromGxAlert": true,
+    "geographies": []
+  },
+  {
+    "personName": "Мария Смакула",
+    "personTitle": "Lab Contact",
+    "jobFunctions": ["Lab User"],
+    "personEmailAddress": "",
+    "timezone": "FLE Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": []
+  },
+  {
+    "personName": "Маслова Людмила Валентинівна",
+    "jobFunctions": ["Lab User"],
+    "timezone": "FLE Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": []
+  },
+  {
+    "personName": "Матій Маріанна Іллівна",
+    "personTitle": "Lab Contact",
+    "jobFunctions": ["Lab User"],
+    "personEmailAddress": "ump.poliklinika@gmail.com",
+    "timezone": "FLE Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": []
   },
   {
     "personName": "Миронченко Світлана",
@@ -400,11 +974,45 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": "[]"
+    "geographies": []
+  },
+  {
+    "personName": "Михайлюк Ліна Степанівна",
+    "personTitle": "Lab Contact",
+    "jobFunctions": ["Lab User"],
+    "personEmailAddress": "v.oz@mukachevo-rada.gov.ua",
+    "timezone": "FLE Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": []
+  },
+  {
+    "personName": "Молдавець Оксана",
+    "personTitle": "Lab Contact",
+    "jobFunctions": ["Lab User"],
+    "timezone": "FLE Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": []
+  },
+  {
+    "personName": "Наталія",
+    "personTitle": "Lab Contact",
+    "jobFunctions": ["Lab User"],
+    "personEmailAddress": "volbaclab50@gmail.com",
+    "timezone": "FLE Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": []
   },
   {
     "personName": "Наталія Алієва",
-    "personTitle": null,
     "jobFunctions": ["Regional Officer"],
     "personEmailAddress": "likar.alieva@ukr.net",
     "username": "likar.alieva@ukr.net",
@@ -413,11 +1021,7 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": [
-      {
-        "stateName": "Poltava Oblast"
-      }
-    ]
+    "geographies": [{ "stateName": "Poltava Oblast" }]
   },
   {
     "personName": "Наталія Кампос-Родрігес",
@@ -430,11 +1034,33 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": "[]"
+    "geographies": []
+  },
+  {
+    "personName": "Наталья Ясюк",
+    "personTitle": "Lab Contact",
+    "jobFunctions": ["Lab User"],
+    "timezone": "FLE Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": []
+  },
+  {
+    "personName": "Никонюк Людмила Миколаївна",
+    "personTitle": "медична сестра, секретар ЦЛКК",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "185m.bilukk@gmail.com",
+    "timezone": "FLE Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [{ "stateName": "Khmelnytskyi Oblast" }]
   },
   {
     "personName": "Нуждіна Свеілана Федорівна",
-    "personTitle": null,
     "jobFunctions": ["Lab User"],
     "personEmailAddress": "nujdinasvetlana@gmail.com",
     "username": "nujdinasvetlana@gmail.com",
@@ -443,7 +1069,19 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": "[]"
+    "geographies": []
+  },
+  {
+    "personName": "Окропілошвілі Ельвіра Елдарієвна",
+    "personTitle": "Завідуючий диспансерним відділенням (адміністратор реєстру, ЦЛКК)",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "zapsvkk@ukr.net",
+    "timezone": "FLE Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [{ "stateName": "Zaporizhia Oblast" }]
   },
   {
     "personName": "Оксана Трилис",
@@ -456,7 +1094,54 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": "[]"
+    "geographies": []
+  },
+  {
+    "personName": "Олена Черненко",
+    "personTitle": "Lab Contact",
+    "jobFunctions": ["Lab User"],
+    "personEmailAddress": "konotopcrldavidova@ukr.net",
+    "timezone": "FLE Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": []
+  },
+  {
+    "personName": "Ольга Володимирівна Лобода",
+    "personTitle": "Lab Contact",
+    "jobFunctions": ["Lab User"],
+    "personEmailAddress": "lapigaolga15@gmail.com",
+    "timezone": "FLE Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": []
+  },
+  {
+    "personName": "Ольга Медведева",
+    "personTitle": "Lab Contact",
+    "jobFunctions": ["Lab User"],
+    "timezone": "FLE Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": []
+  },
+  {
+    "personName": "Ольга прокоф'єва",
+    "personTitle": "Lab Contact",
+    "jobFunctions": ["Lab User"],
+    "personEmailAddress": "lab.ifcenter@gmail.com",
+    "timezone": "FLE Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": []
   },
   {
     "personName": "Орловська Катерина Петрівна",
@@ -469,11 +1154,45 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": "[]"
+    "geographies": []
+  },
+  {
+    "personName": "Пальоха Людмила Володимирівна",
+    "jobFunctions": ["Lab User"],
+    "personEmailAddress": "luydik57@gmail.com",
+    "timezone": "FLE Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": []
+  },
+  {
+    "personName": "Пасько Татяна Валеріївна",
+    "personTitle": "Начальник відділу МіО (ЦЛКК)",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "koptdomk@ukr.net",
+    "timezone": "FLE Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": []
+  },
+  {
+    "personName": "Петренко Тетяна Вікторівна",
+    "personTitle": "Lab Contact",
+    "jobFunctions": ["Lab User"],
+    "personEmailAddress": "6-amkl@ukr.net",
+    "timezone": "FLE Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": []
   },
   {
     "personName": "Плескачев Юрий Владимирович",
-    "personTitle": null,
     "jobFunctions": ["Regional Officer"],
     "personEmailAddress": "ples2005@ukr.net",
     "username": "ples2005@ukr.net",
@@ -482,11 +1201,19 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": [
-      {
-        "stateName": "Mykolaiv Oblast"
-      }
-    ]
+    "geographies": [{ "stateName": "Mykolaiv Oblast" }]
+  },
+  {
+    "personName": "Потапенко Анна",
+    "personTitle": "Lab Contact",
+    "jobFunctions": ["Lab User"],
+    "personEmailAddress": "potapenko.anna@gmail.com",
+    "timezone": "FLE Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": []
   },
   {
     "personName": "Проць Леся Ромівна",
@@ -499,11 +1226,124 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": [
-      {
-        "stateName": "Ternopil Oblast"
-      }
-    ]
+    "geographies": [{ "stateName": "Ternopil Oblast" }]
+  },
+  {
+    "personName": "Сібаєва Олена Юріївна",
+    "personTitle": "Lab Contact",
+    "jobFunctions": ["Lab User"],
+    "personEmailAddress": "mel.kdl@i.ua",
+    "timezone": "FLE Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": []
+  },
+  {
+    "personName": "Світлана Михайлівна Алекса",
+    "personTitle": "Lab Contact",
+    "jobFunctions": ["Lab User"],
+    "personEmailAddress": "aleksasvetlana7@gmail.com",
+    "timezone": "FLE Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": []
+  },
+  {
+    "personName": "Селіванова Ю.Б.",
+    "personTitle": "Installer",
+    "jobFunctions": ["Lab User"],
+    "personEmailAddress": "lrfpkldc@gmail.com",
+    "timezone": "FLE Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": []
+  },
+  {
+    "personName": "Семененко Віталіна Євгенівна",
+    "personTitle": "Lab Contact",
+    "jobFunctions": ["Lab User"],
+    "personEmailAddress": "Svitalina73@gmail.com",
+    "timezone": "FLE Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": []
+  },
+  {
+    "personName": "Средняя Юлия",
+    "personTitle": "Installer",
+    "jobFunctions": ["Lab User"],
+    "personEmailAddress": "medialnaya1987@gmail.com",
+    "timezone": "FLE Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": []
+  },
+  {
+    "personName": "Степова Надія",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "koptd2004@ukr.net",
+    "timezone": "E. Europe Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [{ "stateName": "Kiev Oblast" }]
+  },
+  {
+    "personName": "Стратиненко Наталя",
+    "personTitle": "Лаборант",
+    "jobFunctions": ["Lab User"],
+    "timezone": "FLE Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": []
+  },
+  {
+    "personName": "Сухарєва Ірина В`ячеславівна",
+    "personTitle": "Lab Contact",
+    "jobFunctions": ["Lab User"],
+    "personEmailAddress": "sm_policlinica@ukr.net",
+    "timezone": "FLE Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": []
+  },
+  {
+    "personName": "Таскаєва Юлія Олександрівна",
+    "personTitle": "Lab Contact",
+    "jobFunctions": ["Lab User"],
+    "personEmailAddress": "Yuliaklyuy26@gmail.com",
+    "timezone": "FLE Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": []
+  },
+  {
+    "personName": "Татьяна Александровна Горецкая",
+    "personTitle": "Lab Contact",
+    "jobFunctions": ["Lab User"],
+    "timezone": "FLE Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": []
   },
   {
     "personName": "Татьяна Духлий",
@@ -516,11 +1356,55 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": [
-      {
-        "stateName": "Kiev Oblast"
-      }
-    ]
+    "geographies": [{ "stateName": "Kiev Oblast" }]
+  },
+  {
+    "personName": "Татьяна Корман",
+    "personTitle": "Lab Contact",
+    "jobFunctions": ["Lab User"],
+    "personEmailAddress": "korman1011@gmail.com",
+    "timezone": "FLE Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": []
+  },
+  {
+    "personName": "Тупичак Руслана Миколаївна",
+    "personTitle": "завідувач відділення (секретар ЦЛКК)",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "rusia_tupychak@ukr.net",
+    "timezone": "FLE Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [{ "stateName": "Lviv Oblast" }]
+  },
+  {
+    "personName": "Філіпчук Ольга Петрівна",
+    "personTitle": "Lab Contact",
+    "jobFunctions": ["Lab User"],
+    "personEmailAddress": "mcrl_mv@ukr.net",
+    "timezone": "FLE Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": []
+  },
+  {
+    "personName": "Федорчук Вікторія Вікторівна",
+    "personTitle": "Lab Contact",
+    "jobFunctions": ["Lab User"],
+    "personEmailAddress": "sekretdgb@i.ua",
+    "timezone": "FLE Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": []
   },
   {
     "personName": "Фесюк П.П.",
@@ -533,7 +1417,67 @@
     "hideSampleId": true,
     "hideNotes": true,
     "getPasswordFromGxAlert": true,
-    "geographies": "[]"
+    "geographies": []
+  },
+  {
+    "personName": "Фетько Світлана Іванінвна",
+    "personTitle": "Lab Contact",
+    "jobFunctions": ["Lab User"],
+    "personEmailAddress": "sifetko@gmail.com",
+    "timezone": "FLE Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": []
+  },
+  {
+    "personName": "Филипович Маргарита Петровна",
+    "personTitle": "Lab Contact",
+    "jobFunctions": ["Lab User"],
+    "personEmailAddress": "21mfilipovich@gmail.com",
+    "timezone": "FLE Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": []
+  },
+  {
+    "personName": "Фонарева Мария",
+    "personTitle": "Lab Contact",
+    "jobFunctions": ["Lab User"],
+    "personEmailAddress": "bacviddil.ftiziatr@gmail.com",
+    "timezone": "FLE Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [{ "stateName": "Dnipropetrovsk Oblast" }]
+  },
+  {
+    "personName": "Фролова Тетяна Євгенівна",
+    "personTitle": "Lab Contact",
+    "jobFunctions": ["Lab User"],
+    "personEmailAddress": "crl_pologyzp@ukr.net",
+    "timezone": "FLE Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": []
+  },
+  {
+    "personName": "Царук Марія",
+    "personTitle": "Installer",
+    "jobFunctions": ["Lab User"],
+    "personEmailAddress": "tsaruk.masha@icloud.com",
+    "timezone": "FLE Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": []
   },
   {
     "personName": "Царук Марія Володимирівна",
@@ -546,7 +1490,43 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": "[]"
+    "geographies": []
+  },
+  {
+    "personName": "Чернявская Юлия",
+    "personTitle": "Installer",
+    "jobFunctions": ["Lab User"],
+    "personEmailAddress": "sumer-ua@mail.ru",
+    "timezone": "FLE Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": []
+  },
+  {
+    "personName": "Шако Ірина Миколаївна",
+    "personTitle": "Lab Contact",
+    "jobFunctions": ["Lab User"],
+    "personEmailAddress": "crlolexandriya@ukr.net",
+    "timezone": "FLE Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": []
+  },
+  {
+    "personName": "Шмігірілова Лілія Володимирівна",
+    "personTitle": "Лікар-фтизіатр (секретар ЦЛКК)",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "l.shmigirilova@ukr.net",
+    "timezone": "FLE Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [{ "stateName": "City of Kiev" }]
   },
   {
     "personName": "Юлія Варфоломєєва",
@@ -559,7 +1539,7 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": "[]"
+    "geographies": []
   },
   {
     "personName": "Яковенко Ірина Олександрівна",
@@ -572,10 +1552,6 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": [
-      {
-        "stateName": "Donetsk Oblast"
-      }
-    ]
+    "geographies": [{ "stateName": "Donetsk Oblast" }]
   }
 ]
