@@ -7,7 +7,8 @@ async function up(knex) {
     tblWidget.string('descriptionI18nKey')
   })
 
-  const updateDescriptionFields = await knex('DashboardWidget').map(widget =>
+  const widgets = await knex('DashboardWidget')
+  const updateDescriptionFields = widgets.map(widget =>
     knex('DashboardWidget').where(widget).update({
       description: '',
       descriptionI18nKey: '',
