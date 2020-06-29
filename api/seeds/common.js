@@ -1515,7 +1515,7 @@ async function baseGxAlertMigration(
       : { id: countryGeography.id }
     let personId = null
     const existingPerson = await knex('Person')
-      .where({ userId })
+      .where('userId', userId || -1)
       .orWhere(function () {
         this.where('name', person.personName)
         if (person.personEmailAddress) {
