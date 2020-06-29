@@ -33,6 +33,26 @@ describe('requirePermissions', () => {
 
         expect(isPermitted).toBe(true)
       })
+
+      it('should be valid for admin user when requesting weaker level', () => {
+        const isPermitted = isPermittedUser(Immutable.Set(['person:admin']), {
+          required: ['person:edit'],
+          forbidden: [],
+          optional: [],
+        })
+
+        expect(isPermitted).toBe(true)
+      })
+
+      it('should be valid for admin user when requesting any level', () => {
+        const isPermitted = isPermittedUser(Immutable.Set(['person:admin']), {
+          required: ['person'],
+          forbidden: [],
+          optional: [],
+        })
+
+        expect(isPermitted).toBe(true)
+      })
     })
 
     describe('only forbidden', () => {
@@ -40,6 +60,26 @@ describe('requirePermissions', () => {
         const isPermitted = isPermittedUser(Immutable.Set(['person:admin']), {
           required: [],
           forbidden: ['person:admin'],
+          optional: [],
+        })
+
+        expect(isPermitted).toBe(false)
+      })
+
+      it('should be invalid for admin user when denying even weaker level', () => {
+        const isPermitted = isPermittedUser(Immutable.Set(['person:admin']), {
+          required: [],
+          forbidden: ['person:view'],
+          optional: [],
+        })
+
+        expect(isPermitted).toBe(false)
+      })
+
+      it('should be invalid for admin user when denying any level', () => {
+        const isPermitted = isPermittedUser(Immutable.Set(['person:admin']), {
+          required: [],
+          forbidden: ['person'],
           optional: [],
         })
 
@@ -53,6 +93,24 @@ describe('requirePermissions', () => {
           required: [],
           forbidden: [],
           optional: ['person:admin', 'site:admin'],
+        })
+
+        expect(isPermitted).toBe(true)
+      })
+      it('should be valid for admin user when requesting any level', () => {
+        const isPermitted = isPermittedUser(Immutable.Set(['person:admin']), {
+          required: [],
+          forbidden: [],
+          optional: ['person', 'site:admin'],
+        })
+
+        expect(isPermitted).toBe(true)
+      })
+      it('should be valid for admin user when requesting weaker level', () => {
+        const isPermitted = isPermittedUser(Immutable.Set(['person:admin']), {
+          required: [],
+          forbidden: [],
+          optional: ['person:edit', 'site:admin'],
         })
 
         expect(isPermitted).toBe(true)
