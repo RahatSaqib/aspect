@@ -12,14 +12,19 @@ async function seed(knex) {
 
   await mapJobFunctionPermissions(
     knex,
-    [
-      modules.device.admin,
-      modules.device.edit,
-      modules.device.view,
-      modules.site.admin,
-      modules.site.edit,
-      modules.site.view,
-    ],
-    [modules.task.admin, modules.task.edit, modules.task.view]
+    [modules.device.admin, modules.site.admin],
+    [modules.task.admin]
+  )
+
+  await mapJobFunctionPermissions(
+    knex,
+    [modules.device.edit, modules.site.edit],
+    [modules.task.edit]
+  )
+
+  await mapJobFunctionPermissions(
+    knex,
+    [modules.device.view, modules.site.view],
+    [modules.task.view]
   )
 }
