@@ -2869,6 +2869,38 @@ async function seedJobFunctionsAndUsersForOperationalData(
   }
 }
 
+/**
+ * Adds a new JobFunctionPermission row for each permission id at the permissionsTo parameter that will be associated to the job functions that have assigned one of the permissions of the permissionsFrom one
+ * @param {object} knex Knex instance
+ * @param {array} permissionsFrom An array of permissions ids
+ * @return {array} permissionsTo An array of permissions ids that will be associated to the
+ */
+async function mapJobFunctionPermissions(knex, permissionsFrom, permissionsTo) {
+  const jobFunctionsIds = await knex('JobFunctionPermission')
+    .whereIn('permissionId', permissionsFrom)
+    .distinct('jobFunctionId')
+  let insertJobs = []
+  for (let index = 0; index < jobFunctionsIds.length; index++) {
+    const { jobFunctionId } = jobFunctionsIds[index]
+    insertJobs = [
+      ...insertJobs,
+      ...permissionsTo.map(permissionId =>
+        knex('JobFunctionPermission')
+          .where({ jobFunctionId, permissionId })
+          .then(rows => {
+            if (rows.length === 0)
+              return knex('JobFunctionPermission').insert({
+                permissionId,
+                jobFunctionId,
+              })
+          })
+      ),
+    ]
+  }
+
+  if (insertJobs.length > 0) await Promise.all(insertJobs)
+}
+
 module.exports = {
   addReports,
 
@@ -2934,4 +2966,6 @@ module.exports = {
   getResultForms,
 
   seedJobFunctionsAndUsersForOperationalData,
+
+  mapJobFunctionPermissions,
 }

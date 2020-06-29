@@ -45,7 +45,7 @@ export const LinkNavigation = ({
       {
         href: '/task-list',
         label: 'Task List',
-        requiredPermissions: ['task:admin', 'task:view', 'task:edit'],
+        requiredPermissions: ['taskMenu:view'],
       },
       {
         href: '/operational-data',
