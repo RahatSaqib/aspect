@@ -257,7 +257,7 @@ siege --concurrent=25 --content-type="application/json" 'http://localhost:8080/a
 
 We have a function called `baseGxAlertMigration` that sets up all the different bits and pieces we need for migrating a country from GxAlert to Aspect.
 
-It mostly operates on JSON files in the country's fixtures-folder. The files contain data exported from GxAlert:
+It mostly operates on JSON files in the country's fixtures-folder. The files contain data exported from GxAlert using the "migrage_from_gxalert.sql" file in /api/seeds/scripts:
 
 - contactsFromGxAlert.json - Contains all Contacts that were set up in GxAlert. It also contains their level of access and what geographies they have access to. It does NOT include passwords. Aspect will migrate the password from GxAlert automatically when the user first signs in.
 - customFieldsFromGxAlert.json - The custom fields for GxConnect that are configured in GxAlert. This is currently only used for setting up the resultDataSchema for the GeneXpert assays.
