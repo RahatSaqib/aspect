@@ -9,10 +9,21 @@ const { processDynamicMessage } = require('../../src/stringTemplate/service')
 const shared = require('../utils/sharedToken')
 const { runTestWithKnex } = require('../utils/generatorFunctionUtils')
 const { getAccessToken } = require('../utils/authUtils')
+const dashboardWidget = require('../../seeds/test/fixtures/dashboardWidget.json')
+const dashboardWidgetMyanmar = require('../../seeds/test/fixtures/myanmarDashboardWidget.json')
 
 const server = supertest.agent('http://localhost:8080')
 
 const { assert, expect } = chai
+
+function getAllWidgets() {
+  const widgets = [
+    ...dashboardWidget.stat,
+    ...dashboardWidgetMyanmar.stat,
+    ...dashboardWidgetMyanmar.target,
+  ]
+  return widgets
+}
 
 describe('Dashboard routes', () => {
   const path = '/api/dashboard/summary'
@@ -40,10 +51,13 @@ describe('Dashboard routes', () => {
           assert.property(res.body.data[0], 'count')
           assert.property(res.body.data[0], 'dashboard')
 
-          // widget Devices contains `operational` in field `dashboard`
+          // check widget on OperationalData dashboard - fixture must have at least one widget for this dashboard
+          const externalIds = getAllWidgets()
+            .filter(({ dashboard }) => dashboard.includes('operational'))
+            .map(({ externalId }) => externalId)
           const { dashboard } =
-            res.body.data.find(
-              ({ externalId }) => externalId === 'devicesTitle'
+            res.body.data.find(({ externalId }) =>
+              externalIds.includes(externalId)
             ) || {}
           assert.equal(dashboard.includes('operational'), true)
 
