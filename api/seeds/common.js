@@ -18,6 +18,7 @@ const geneXpertResultDataSchemaHcv = require('./fixtures/geneXpertDevice/geneXpe
 const geneXpertResultDataSchemaEbola = require('./fixtures/geneXpertDevice/geneXpertResultDataSchemaEbola.json')
 const geneXpertResultDataSchemaSarsCoV2 = require('./fixtures/geneXpertDevice/geneXpertResultDataSchemaSarsCoV2.json')
 const resultTreatmentStatuses = require('./fixtures/ResultTreatmentStatus.json')
+const dashboardWidgetCommonJson = require('./fixtures/DashboardWidget.json')
 const {
   deviceStatusToId,
   deviceTypeToId,
@@ -1841,9 +1842,16 @@ async function ensureResultTreatmentStatuses(
   })
 }
 
-async function seedDashboardWidgets(partnerId, dashboardWidget, knex) {
+async function upsertDashboardWidgets(
+  knex,
+  partnerId,
+  dashboardWidgetJson = dashboardWidgetCommonJson
+) {
+  if (!dashboardWidgetJson) return Promise.resolve()
+
   await Promise.all(
-    _.map(dashboardWidget.stat, async widget => {
+    _.map(dashboardWidgetJson.stat, async widget => {
+      // insert or update the widget itself
       const widgetData = _.pick(widget, [
         'title',
         'titleI18nKey',
@@ -1854,7 +1862,19 @@ async function seedDashboardWidgets(partnerId, dashboardWidget, knex) {
         'sortOrder',
         'externalId',
       ])
-      const [widgetId] = await knex('DashboardWidget').insert(widgetData)
+
+      let { id: widgetId } =
+        (await knex('DashboardWidget')
+          .where('externalId', widgetData.externalId)
+          .first('id')) || {}
+
+      if (!widgetId) {
+        ;[widgetId] = await knex('DashboardWidget').insert(widgetData)
+      } else {
+        await knex('DashboardWidget').update(widgetData).where('id', widgetId)
+      }
+
+      // insert or update the stat for the widget
       const statWidgetData = _.pick(widget, [
         'icon',
         'sqlForStatUnit',
@@ -1868,12 +1888,24 @@ async function seedDashboardWidgets(partnerId, dashboardWidget, knex) {
         'extraLabel',
         'extraLabelI18nKey',
       ])
-      await knex('DashboardWidgetStat').insert({
-        dashboardWidgetId: widgetId,
-        ...statWidgetData,
-      })
 
-      // add to jobfunctions here
+      const { id: widgetStatId } =
+        (await knex('DashboardWidgetStat')
+          .where('dashboardWidgetId', widgetId)
+          .first('id')) || {}
+
+      if (!widgetStatId) {
+        await knex('DashboardWidgetStat').insert({
+          dashboardWidgetId: widgetId,
+          ...statWidgetData,
+        })
+      } else {
+        await knex('DashboardWidgetStat')
+          .update(statWidgetData)
+          .where('id', widgetStatId)
+      }
+
+      // add widget to configured job functions here
       const jobFunctionsDb = await knex('JobFunction')
         .where({ partnerId })
         .where(function () {
@@ -1888,10 +1920,18 @@ async function seedDashboardWidgets(partnerId, dashboardWidget, knex) {
         .select('id', 'name')
 
       jobFunctionsDb.map(async jf => {
-        await knex('JobFunctionDashboardWidget').insert({
-          jobFunctionId: jf.id,
-          widgetId,
-        })
+        const { jobFunctionId } =
+          (await knex('JobFunctionDashboardWidget')
+            .where('jobFunctionId', jf.id)
+            .where({ widgetId })
+            .first('jobFunctionId')) || {}
+
+        if (!jobFunctionId) {
+          await knex('JobFunctionDashboardWidget').insert({
+            jobFunctionId: jf.id,
+            widgetId,
+          })
+        }
       })
     })
   )
@@ -1910,5 +1950,5 @@ module.exports = {
   baseGxAlertMigration,
   seedLabClinicFixture,
   ensureResultTreatmentStatuses,
-  seedDashboardWidgets,
+  upsertDashboardWidgets,
 }
