@@ -1,8 +1,12 @@
-import _ from 'lodash'
 import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
 import getDisplayName from 'react-display-name'
 import { ReactReduxContext } from 'react-redux'
+import constant from 'lodash/constant'
+import flowRight from 'lodash/flowRight'
+import isArray from 'lodash/isArray'
+import isEmpty from 'lodash/isEmpty'
+import noop from 'lodash/noop'
 
 export const MATCH_TYPE = {
   // exact match of the item in userPermissions (i.e. 'result:edit') and item in requestedPermissions (i.e. 'result:edit')
@@ -33,7 +37,7 @@ export function getPermissions(
   overriddenPermissions,
   extraPermissions
 ) {
-  const basePermissions = _.isEmpty(overriddenPermissions)
+  const basePermissions = isEmpty(overriddenPermissions)
     ? permissionsInConfig
     : overriddenPermissions
   const permissions = basePermissions.concat(extraPermissions)
@@ -112,7 +116,7 @@ export function getMatchedUserPermissions(
       }
       // see if user's Level is greater than requested Level
       const nestedLevels = NESTED_ACCESS_LEVELS_FOR[level]
-      if (nestedLevels && _.isArray(nestedLevels) && nestedLevels.length > 0) {
+      if (nestedLevels && isArray(nestedLevels) && nestedLevels.length > 0) {
         // assemble fully defined permissions from nested levels
         const nestedPermissions = nestedLevels.map(
           nestedLevel => `${scope}:${nestedLevel}`
@@ -174,7 +178,7 @@ export function isPermittedUser(
 // props (overriddenPermissions, extraPermissions) as well.
 export const requirePermissions = ({
   permissions: permissionsInConfig = [],
-  ForbiddenComponent = _.constant(false),
+  ForbiddenComponent = constant(false),
 }) => WrappedComponent =>
   class RequirePermissions extends PureComponent {
     static displayName = `requirePermissions(${getDisplayName(
@@ -201,7 +205,7 @@ export const requirePermissions = ({
 
     static contextType = ReactReduxContext
 
-    unsubscribe = _.noop // eslint-disable-line react/sort-comp
+    unsubscribe = noop // eslint-disable-line react/sort-comp
 
     constructor(props, context) {
       super(props)
@@ -216,11 +220,11 @@ export const requirePermissions = ({
 
     componentWillUnmount() {
       this.unsubscribe()
-      this.unsubscribe = _.noop
+      this.unsubscribe = noop
     }
 
     handleStoreChange = () => {
-      if (this.unsubscribe === _.noop) {
+      if (this.unsubscribe === noop) {
         return
       }
       this.setState(this.createState())
@@ -240,7 +244,7 @@ export const requirePermissions = ({
         ...restProps
       } = this.props
       const { userPermissions } = this.state
-      const permissionsByTypes = _.flowRight([
+      const permissionsByTypes = flowRight([
         groupByPermissionTypes,
         getPermissions,
       ])(permissionsInConfig, overriddenPermissions, extraPermissions)
