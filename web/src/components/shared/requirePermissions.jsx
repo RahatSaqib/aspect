@@ -156,23 +156,17 @@ export function isPermittedUser(
     return true
   }
 
-  const isAllRequired =
-    required.length === 0 ||
+  const cntMatches = requestedPerms =>
+    getMatchedUserPermissions(userPermissions, requestedPerms).length
+
+  return (
     // ALL items in `required` must be found in userPermissions
-    getMatchedUserPermissions(userPermissions, required).length ===
-      required.length
-
-  const isNoForbidden =
-    forbidden.length === 0 ||
+    (required.length === 0 || cntMatches(required) === required.length) &&
     // NO ONE item in `forbidden` must be found in userPermissions
-    getMatchedUserPermissions(userPermissions, forbidden).length === 0
-
-  const hasSomeOptional =
-    optional.length === 0 ||
+    (forbidden.length === 0 || cntMatches(forbidden) === 0) &&
     // at least one item from `optional` must be found in userPermissions
-    getMatchedUserPermissions(userPermissions, optional).length > 0
-
-  return isAllRequired && isNoForbidden && hasSomeOptional
+    (optional.length === 0 || cntMatches(optional) > 0)
+  )
 }
 
 // An HOC that can protect underlying resource with pre-config permissions list.
