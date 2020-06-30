@@ -11,7 +11,7 @@
       "link": "/browse/site",
       "sortOrder": 0,
       "externalId": "sitesTitle",
-      "dashboard": "home"
+      "dashboards": ["home"]
     },
     {
       "icon": "computer",
@@ -24,7 +24,7 @@
       "link": "/browse/device",
       "sortOrder": 1,
       "externalId": "devicesTitle",
-      "dashboard": "home, operational"
+      "dashboards": ["home", "operational"]
     },
     {
       "icon": "assignment",
@@ -37,7 +37,7 @@
       "link": "/browse/result",
       "sortOrder": 2,
       "externalId": "resultsTitle",
-      "dashboard": "home"
+      "dashboards": ["home"]
     },
     {
       "icon": "perm-identity",
@@ -49,7 +49,7 @@
       "link": "/browse/person",
       "sortOrder": 3,
       "externalId": "personTitle",
-      "dashboard": "home"
+      "dashboards": ["home"]
     },
     {
       "icon": "virus",
@@ -66,7 +66,7 @@
       "link":"/browse/result",
       "sortOrder": 4,
       "externalId": "dashboardWidgetTitleConfirmedCases",
-      "dashboard": "home"
+      "dashboards": ["home"]
     },
     {
       "icon": "assignment",
@@ -83,7 +83,7 @@
       "link": "/browse/result",
       "sortOrder": 5,
       "externalId": "dashboardWidgetTitleTotalActiveCases",
-      "dashboard": "home"
+      "dashboards": ["home"]
     },
     {
       "icon": "user-check",
@@ -100,7 +100,7 @@
       "link": "/browse/result",
       "sortOrder": 6,
       "externalId": "dashboardWidgetTitleTotalRecoveredCases",
-      "dashboard": "home"
+      "dashboards": ["home"]
     },
     {
       "icon": "userslash",
@@ -117,7 +117,7 @@
       "link": "/browse/result",
       "sortOrder": 7,
       "externalId": "dashboardWidgetTitleTotalDeaths",
-      "dashboard": "home"
+      "dashboards": ["home"]
     }
   ]
 }

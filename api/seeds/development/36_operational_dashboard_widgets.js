@@ -11,15 +11,11 @@ async function seed(knex) {
     ...dashboardWidgetMyanmar.target,
   ]
   await Promise.all(
-    _.map(widgets, ({ dashboard = 'home', externalId }) =>
+    _.map(widgets, ({ dashboards = ['home'], externalId }) =>
       knex('DashboardWidget')
         .where({ externalId })
         .update({
-          // assemble CSV string without spaces near commas
-          dashboard: dashboard
-            .split(',')
-            .map(v => v.trim())
-            .join(','),
+          dashboardsJson: JSON.stringify(dashboards),
         })
     )
   )

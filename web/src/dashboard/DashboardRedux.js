@@ -64,10 +64,13 @@ function receiveStatDashboard(requestedAt, data) {
   }
 }
 
-export function fetchStatDashboard(rawFiltersParams) {
+export function fetchStatDashboard(rawFiltersParams, { dashboard }) {
   const filtersParams = new URLSearchParams()
   if (rawFiltersParams.has('siteId')) {
     filtersParams.set('siteId', rawFiltersParams.get('siteId'))
+  }
+  if (dashboard) {
+    filtersParams.set('dashboard', dashboard)
   }
   return dispatch => {
     const filters = fromPairs([...filtersParams.entries()])
@@ -501,8 +504,6 @@ export default function dashboardReducer(state = initialState, action) {
             Immutable.fromJS(
               action.data.map(({ dashboard, ...rest }) => ({
                 ...rest,
-                // convert CSV string into array of strings
-                dashboard: dashboard.split(',').map(v => v.trim()),
               }))
             )
           )

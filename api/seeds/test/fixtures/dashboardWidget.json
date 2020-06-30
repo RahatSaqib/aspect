@@ -23,7 +23,7 @@
       "link": "/browse/device",
       "sortOrder": 1,
       "externalId": "devicesTitle",
-      "dashboard": "home, operational"
+      "dashboards": ["home", "operational"]
     },
     {
       "icon": "assignment",
