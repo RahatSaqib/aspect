@@ -1,15 +1,17 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { useIntl } from 'react-intl'
 import classnames from 'classnames/bind'
 import merge from 'lodash/merge'
-import intersection from 'lodash/intersection'
 import Grid from '@material-ui/core/Grid'
+
+import requirePermissions from '../../../../components/shared/requirePermissions'
+
 import AspectCard from '../../../AspectCard'
 import GraphRender from '../../GraphRender'
 import CardSelectors from '../../CardSelectors'
-
 import { fetchClinicalIndicatorsDashboard } from '../../GraphRender/Redux'
 import {
   extractOptionValue,
@@ -25,9 +27,8 @@ const GraphContainer = ({ config, size, assaysFromState }) => {
   const { title, selectorModifiers = false } = config
   const { formatMessage: intlFormatMessage } = useIntl()
   const { assays, graphType, id } = config
-  const { permissions } = useSelector(state => state.user.toJS().jwt)
   const { innerSize, outerSize } = size
-  const [dispatchParams, setDispatchParams] = useState(false)
+  const [dispatchParams] = useState(false)
   const [dispatchFromChild, setDispatchFromChild] = useState(false)
   const [dispatchParamsFromChild, setDispatchParamsFromChild] = useState(false)
   const [dispatchFromSelector, setdispatchFromSelector] = useState(false)
@@ -35,23 +36,16 @@ const GraphContainer = ({ config, size, assaysFromState }) => {
 
   useEffect(() => {
     const allowed = []
-
-    const allowedPermissions = ['result:admin', 'result:view', 'result:edit']
-
-    const checkPermissions = intersection(allowedPermissions, permissions)
-
-    if (checkPermissions.length > 0) {
-      validateGraphConfig(config).then(() => {
-        assays.map(a =>
-          assaysFromState.filter(
-            ({ externalId, hasResults }) =>
-              externalId === a && hasResults && allowed.push(a)
-          )
+    validateGraphConfig(config).then(() => {
+      assays.map(a =>
+        assaysFromState.filter(
+          ({ externalId, hasResults }) =>
+            externalId === a && hasResults && allowed.push(a)
         )
-        setwhiteListed(allowed)
-      })
-    }
-  }, [config, assays, assaysFromState, permissions])
+      )
+      setwhiteListed(allowed)
+    })
+  }, [config, assays, assaysFromState])
 
   useEffect(() => {
     if (dispatchFromChild && dispatchFromSelector) {
@@ -126,4 +120,6 @@ GraphContainer.protoTypes = {
   assaysFromState: PropTypes.oneOfType([PropTypes.array]).isRequired,
 }
 
-export default GraphContainer
+export default requirePermissions({
+  permissions: ['result:admin', 'result:view', 'result:edit'],
+})(GraphContainer)
