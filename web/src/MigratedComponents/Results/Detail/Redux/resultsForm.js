@@ -25,7 +25,7 @@ export default function resultsForm(state = initialState, action) {
   const { type, formSchema, error } = action
   switch (type) {
     case GET_RESULT_FORM.SUCCESS:
-      return new Immutable.fromJS({
+      return Immutable.fromJS({
         formSchema,
         loading: false,
       })

@@ -65,14 +65,14 @@ export default function resultsDetail(state = initialState, action) {
   const { type, item, error } = action
   switch (type) {
     case GET_RESULT.REQUEST:
-      return new Immutable.fromJS({ loading: true })
+      return Immutable.fromJS({ loading: true })
     case GET_RESULT.SUCCESS:
-      return new Immutable.fromJS({
+      return Immutable.fromJS({
         formData: item || false,
         loading: false,
       })
     case GET_RESULT.FAILURE:
-      return new Immutable.fromJS({ error, loading: false })
+      return Immutable.fromJS({ error, loading: false })
     default:
       return state
   }
