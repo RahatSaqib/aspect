@@ -121,5 +121,5 @@ GraphContainer.protoTypes = {
 }
 
 export default requirePermissions({
-  permissions: ['result:admin', 'result:view', 'result:edit'],
+  permissions: ['result:view'],
 })(GraphContainer)
