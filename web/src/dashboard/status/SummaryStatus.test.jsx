@@ -3,7 +3,6 @@ import React from 'react'
 import { shallow } from 'enzyme'
 import { createIntl } from 'react-intl'
 import { SummaryStatus } from './SummaryStatus'
-import { Unit } from '../../components/pureGrids'
 
 describe('Summary Status component', () => {
   const props = {
@@ -31,7 +30,6 @@ describe('Summary Status component', () => {
         target: null,
         unit: null,
         extra: '61.43%',
-        dashboard: ['home'],
       },
       {
         id: 14,
@@ -55,7 +53,6 @@ describe('Summary Status component', () => {
         target: null,
         unit: 596,
         extra: null,
-        dashboard: ['home', 'operational'],
       },
       {
         id: 15,
@@ -79,7 +76,6 @@ describe('Summary Status component', () => {
         target: null,
         unit: 407,
         extra: null,
-        dashboard: ['home'],
       },
       {
         id: 16,
@@ -103,7 +99,6 @@ describe('Summary Status component', () => {
         target: null,
         unit: 596,
         extra: null,
-        dashboard: ['home'],
       },
     ]),
     defaultMessages: [],
@@ -111,19 +106,5 @@ describe('Summary Status component', () => {
 
   it('should shallow render correctly', () => {
     shallow(<SummaryStatus {...props} />)
-  })
-
-  it('should shallow render correctly only one widget for Operational Data dashboard', () => {
-    const wrapper = shallow(
-      <SummaryStatus {...props} dashboard="operational" />
-    )
-
-    // get widgets with `dashboard` containing `operational`
-    const items = props.summary.filter(widget =>
-      widget.get('dashboard').includes('operational')
-    )
-    // check that actually rendered UI items is equal number of widgets
-    expect(items.size).toEqual(1)
-    expect(wrapper.find(Unit).length).toEqual(items.size)
   })
 })
