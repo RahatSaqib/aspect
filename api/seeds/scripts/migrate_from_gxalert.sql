@@ -53,7 +53,7 @@ COALESCE(
       DISTINCT CONCAT('{ "name": "', deployment.Description, '", "shortName": "', deployment.ShortName, '", "macAddress": "', device.ComputerId, '", "hostId": "', device.HostId, '", "serial": "', device.Serial, '", "gxAlertDeviceId": ', CAST(device.DeviceId AS CHAR), ' },')
     ), ']'
   ), ''),
-'},') AS JSONObject -- , deployment.*,device.*, location.*
+'},') AS JSONObject
 FROM deployment
 JOIN location ON location.id = deployment.LocationId
 LEFT JOIN state ON state.stateId = deployment.StateId
@@ -97,7 +97,6 @@ LEFT JOIN state as personlgastate_state ON personlgastate_state.StateId = person
 LEFT JOIN personstate ON personstate.PersonId = person.PersonId
 LEFT JOIN state as personstate_state ON personstate_state.StateId = personstate.StateId
 GROUP BY person.PersonId;
-
 
 -- Query Custom Fields in GxAlert
 -- This is for the customFieldsFromGxAlert.json fixture
