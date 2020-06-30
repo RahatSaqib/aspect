@@ -499,14 +499,7 @@ export default function dashboardReducer(state = initialState, action) {
     case RECEIVE_STAT_DASHBOARD:
       return state.withMutations(mutState => {
         onRequested(action, mutState, () => {
-          mutState.set(
-            'summary',
-            Immutable.fromJS(
-              action.data.map(({ dashboard, ...rest }) => ({
-                ...rest,
-              }))
-            )
-          )
+          mutState.set('summary', Immutable.fromJS(action.data))
         })
       })
     case RECEIVE_TARGET_DASHBOARD:
