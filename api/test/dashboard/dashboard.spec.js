@@ -73,7 +73,7 @@ describe('Dashboard routes', () => {
 
           // check widget on OperationalData dashboard - fixture must have at least one widget for this dashboard
           const externalIds = getAllWidgets()
-            .filter(({ dashboards }) => dashboards.includes('operational'))
+            .filter(({ dashboards = [] }) => dashboards.includes('operational'))
             .map(({ externalId }) => externalId)
           assert.equal(externalIds.includes(res.body.data[0].externalId), true)
 
