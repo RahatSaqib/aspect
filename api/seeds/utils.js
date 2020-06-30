@@ -2869,6 +2869,30 @@ async function seedJobFunctionsAndUsersForOperationalData(
   }
 }
 
+async function seedDashboardsJsonInDashboardWidget(knex, widgets) {
+  // fill in default value - this is needed because `.defaultsTo()` can not be applied for JSON field
+  await knex('DashboardWidget').update({
+    dashboardsJson: JSON.stringify(['home']),
+  })
+
+  // set this new field as not nullable
+  await knex.schema.alterTable('DashboardWidget', tbl => {
+    tbl.specificType('dashboardsJson', 'JSON').notNullable().alter()
+  })
+
+  await Promise.all(
+    _.map(
+      widgets.filter(({ dashboards }) => _.isArray(dashboards)),
+      ({ dashboards, externalId }) =>
+        knex('DashboardWidget')
+          .where({ externalId })
+          .update({
+            dashboardsJson: JSON.stringify(dashboards),
+          })
+    )
+  )
+}
+
 module.exports = {
   addReports,
 
@@ -2934,4 +2958,5 @@ module.exports = {
   getResultForms,
 
   seedJobFunctionsAndUsersForOperationalData,
+  seedDashboardsJsonInDashboardWidget,
 }
