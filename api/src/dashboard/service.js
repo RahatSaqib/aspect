@@ -59,9 +59,7 @@ async function getDashboardWidget({ id, partnerId }, options) {
       'ps.userId': id,
       'jf.partnerId': partnerId,
     })
-    .whereRaw(
-      `JSON_CONTAINS(w.dashboardsJson -> '$[*]', JSON_ARRAY("${dashboard}"))`
-    )
+    .whereRaw(`JSON_CONTAINS(dashboardsJson , '["${dashboard}"]')`)
     .select(['w.*', 'sw.*'])
     .orderBy(['w.sortOrder'])
   return _.omit(widgets, ['dashboardsJson'])
