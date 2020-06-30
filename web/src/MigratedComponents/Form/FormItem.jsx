@@ -14,7 +14,13 @@ const FormItem = ({ id, label, type, controlType }) => {
   const { getFieldProps } = formik
 
   return (
-    <Grid item xs={4} className={cssClasses('form__sectionItemContainer')}>
+    <Grid
+      item
+      xs={12}
+      md={6}
+      lg={4}
+      className={cssClasses('form__sectionItemContainer')}
+    >
       <AspectInput
         {...getFieldProps(id)}
         id={id}
