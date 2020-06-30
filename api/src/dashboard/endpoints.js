@@ -115,7 +115,10 @@ const routes = [
         'Gets the number of devices grouped by activity category, by day, in the given date range',
       auth: { scope: ['site', 'device', 'dashboard'] },
       validate: {
-        query: Object.assign(validateDateRangeParams()),
+        query: {
+          minDate: Joi.date().iso().required().description('From Date'),
+          maxDate: Joi.date().iso().required().description('To Date'),
+        },
       },
       response: {
         options: {
@@ -143,6 +146,9 @@ const routes = [
                 ),
                 total: Joi.number().description(
                   'The total number of devices in the system as of that day'
+                ),
+                isWeekendOrHoliday: Joi.bool().description(
+                  'Indicates whether the day is a weekend day or a holiday.'
                 ),
               })
             ),

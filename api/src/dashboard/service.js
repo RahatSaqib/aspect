@@ -3,6 +3,7 @@ const addDays = require('date-fns/addDays')
 const parseISO = require('date-fns/parseISO')
 const subDays = require('date-fns/subDays')
 const isAfter = require('date-fns/isAfter')
+const isWeekend = require('date-fns/isWeekend')
 const differenceInDays = require('date-fns/differenceInDays')
 const { knex, filterParams, filterDateRangeParams } = require('../db')
 const {
@@ -1097,6 +1098,7 @@ async function operationalDataActivityOverTime(request) {
     day.total = devices.length
     day.active = devicesActive ? devicesActive.deviceCount : 0
     day.inactive = day.total - day.active
+    day.isWeekendOrHoliday = isWeekend(day.date)
   })
 
   return {
