@@ -1,7 +1,9 @@
 import React, { useState } from 'react'
-import DatePicker from 'react-datepicker'
+import DatePicker, { registerLocale, setDefaultLocale } from 'react-datepicker'
 import { useSelector, shallowEqual } from 'react-redux'
 import TextField from '@material-ui/core/TextField'
+import enUS from 'date-fns/locale/en-US'
+
 import 'react-datepicker/dist/react-datepicker-cssmodules.min.css'
 
 const AspectDatePicker = props => {
@@ -11,6 +13,7 @@ const AspectDatePicker = props => {
   const { displayPreferences, culture } = useSelector(({ user }) => ({
     ...user.toJS(),
   }))
+  registerLocale(culture, enUS)
 
   const updateStartDate = date => {
     formik.setFieldValue(id, date)
