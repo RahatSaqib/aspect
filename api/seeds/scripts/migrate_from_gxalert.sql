@@ -1,54 +1,112 @@
--- sites and devices
-select 	concat('{"externalId": "', description, '",') as externalId,
-concat('"longitude": ', ifnull(longitude, 'null'), ',') as longitude,
-concat('"latitude": ', ifnull(latitude, 'null'), ',') as latitude,
-concat('"stateName": "', ifnull(s.name, ''), '",') as stateName,
-concat('"lgaName": "', ifnull(l.name, ''), '",') as lgaName,
-concat('"name": "', description, '",') as name,
-concat('"shortName": "', shortName, '",') as shortName,
-concat('"timeZoneId": "', timeZoneId, '",') as timeZoneId,
-concat('"devices": [{"name": "',  d.description, '", "shortName": "', d.shortName, '", "macAddress": "', dev.ComputerId, '", "hostId": "', d.HostId, '", "serial": "', dev.Serial, '", "gxAlertDeviceId": "', dev.DeviceId, '"}]},')
-from deployment d
-inner join device dev on d.DeploymentId = dev.CurrentDeploymentId
-left outer join state s on d.StateId = s.StateId
-left outer join lga l on d.LgaId = l.LgaId
-where d.CountryId = @CountryId
-and d.Description not like '%SystemOne%'
-and d.Description not like '%Stefan%'
-and d.Description not like '%Bryan%'
-order by d.Description;
+-- This file contains queries for generating fixture files that are used for migrating clients from GxAlert to Aspect
+-- See the README file for more details on how to use these
+-- Be sure to limit these by countryId if you're migrating data for a country that is using our cloud server
 
--- custom fields
-select * from customfieldlimittotesttype;
-select concat('{"title": "', Label, '",') as title,
-concat('"type": "', `Type`, '",') as `type`,
-concat('"order": ', DisplayOrder, ',') as `order`,
-concat('"dbColumn": "', DbColumn, '",') as dbColumn,
-concat('"testType": null },') as title
-from customfield
-where CountryId = @CountryId
-order by DisplayOrder;
+-- Query Country With States & LGAs in GxAlert
+-- This is for the geography.json fixture
+SELECT CONCAT(
+  '{"abbreviation":"', country.Abbreviation,
+  '","name":"', country.Name,
+  '","a3":"', country.A3,
+  '","culture":"', country.Culture,
+  '","countryCode":"', Country.CountryCode,
+  '","timezone":"', Country.TimeZoneId,
+  '","portNumber":', Country.PortNumber,
+  ',"exportColumns":"', Country.ExportColumns,
+  '","inventoryDaysThreshold":', Country.InventoryDaysThreshold,
+  ',"monthStartsOnDay":', Country.MonthStartsOnDay,
+  ',"states":[') AS countryJSON
+FROM Country
+WHERE Country.Name IS NOT NULL
+AND Country.A3 IS NOT NULL
+UNION
+SELECT CONCAT(
+    '{"name":"', State.Name, '",',
+    IFNULL(CONCAT('"abbreviation":"', State.Abbreviation, '",'), ''),
+    '"lgas":[', IFNULL((SELECT GROUP_CONCAT(CONCAT('{"name":"', Lga.Name, '"}')) FROM Lga WHERE Lga.Name IS NOT NULL AND Lga.StateId = State.StateId), ''), ']',
+    '},') AS countryJSON
+FROM Country
+JOIN State ON State.CountryId = Country.CountryId
+WHERE Country.Name IS NOT NULL
+AND Country.A3 IS NOT NULL
+UNION
+SELECT ']}' AS countryJSON;
 
--- contacts
-select	concat('{"personName": "', p.Name, '",') as personName,
-		concat('"personTitle": "', Title, '",') as personTitle,
-        concat('"jobFunctions": ', case when r.Token = 'deployment' then '["Lab User"]' else case when r.Token = 'state' or r.Token = 'lga' then '["Regional Officer"]' else'["Admin"]' end end, ',' ) as jobFunctions,
-        concat('"personEmailAddress": "', Email, '",') as personEmailAddress,
-        concat('"username": "', u.name, '",') as username,
-        concat('"timezone": "', TimeZoneId, '",') as timezone,
-        concat('"hidePatientId": ', case when hidePatientId then 'true' else 'false' end, ',') as hidePatientId,
-        concat('"hideSampleId": ', case when hideSampleId then 'true' else 'false' end, ',') as hideSampleId,
-        concat('"hideNotes": ', case when hideNotes then 'true' else 'false' end, ',') as hideNotes,
-        concat('"getPasswordFromGxAlert":', 'true', ',') as getPasswordFromGxAlert,
-        concat('"geographies":', CONCAT('[', IFNULL(GROUP_CONCAT('{ "stateName": "', s.name, '"},'), ''), IFNULL(GROUP_CONCAT('{ "lgaName": "', l.name, '"},'), ''), ']')) as geographies,
-        '},' as closingCurly
-from person p
-inner join role r on p.RoleId = r.RoleId
-left outer join my_aspnet_users u on p.UserId = u.id
-left outer join personstate ps on p.PersonId = ps.PersonId
-left outer join state s on ps.StateId = s.StateId
-left outer join personlga pl on p.PersonId = pl.PersonId
-left outer join lga l on pl.LgaId = l.LgaId
-where p.CountryId = @CountryId
-group by p.name, p.Title, r.Token, p.Email, u.name, p.TimeZoneId, hidePatientId, hideSampleId, hideNotes
-order by p.Name;
+-- Query Sites in GxAlert
+-- This is for the sitesFromGxAlert.json fixture
+SET SQL_SAFE_UPDATES = 0;
+UPDATE location SET externalId = name WHERE externalId IS NULL;
+SET SQL_SAFE_UPDATES = 1;
+
+SELECT CONCAT('{ ',
+'"externalId": "', location.externalId, '",',
+COALESCE(CONCAT('"latitude": ', CAST(deployment.Latitude AS CHAR), ','), ''),
+COALESCE(CONCAT('"longitude": ', CAST(deployment.Longitude AS CHAR), ','), ''),
+COALESCE(CONCAT('"stateName": "', state.Name, '",'), ''),
+COALESCE(CONCAT('"lgaName": "', lga.Name, '",'), ''),
+'"name": "', deployment.Description, '",',
+COALESCE(CONCAT('"shortname": "', deployment.ShortName, '",'), ''),
+'"timeZoneId": "', deployment.TimeZoneId, '"',
+COALESCE(
+  CONCAT(
+    ', "devices": [', GROUP_CONCAT(
+      DISTINCT CONCAT('{ "name": "', deployment.Description, '", "shortName": "', deployment.ShortName, '", "macAddress": "', device.ComputerId, '", "hostId": "', device.HostId, '", "serial": "', device.Serial, '", "gxAlertDeviceId": ', CAST(device.DeviceId AS CHAR), ' },')
+    ), ']'
+  ), ''),
+'},') AS JSONObject -- , deployment.*,device.*, location.*
+FROM deployment
+JOIN location ON location.id = deployment.LocationId
+LEFT JOIN state ON state.stateId = deployment.StateId
+LEFT JOIN lga ON lga.LgaId = deployment.LgaId
+LEFT JOIN device ON device.CurrentDeploymentId = deployment.DeploymentId
+WHERE deployment.Approved = 1 AND deployment.HideOnDashboard = 0
+GROUP BY deployment.DeploymentId;
+
+-- Query Contacts in GxAlert
+-- This is for the contactsFromGxAlert.json fixture
+SELECT CONCAT(
+'{ "personName": "',  person.Name,
+COALESCE(CONCAT('", "personTitle": "', person.Title), ''),
+'", "jobFunctions": [ "', CASE WHEN role.Name = 'National Level' THEN 'Admin' WHEN role.Name IN ('State Level', 'LGA Level') THEN 'Regional Officer' WHEN role.Name = 'Lab Level' THEN 'Lab User' ELSE '' END,
+'" ], ', COALESCE(CONCAT('"personEmailAddress": "', person.Email, '", '), ''),
+COALESCE(CONCAT('"personPhone": "', person.Phone, '", '), ''),
+COALESCE(CONCAT('"personCell": "', person.Cell, '", '), ''),
+COALESCE(CONCAT('"username": "', my_aspnet_users.name, '", '), ''),
+COALESCE(CONCAT('"timezone": "', person.TimeZoneId, '", '), ''),
+'"hidePatientId": ', COALESCE(CASE WHEN person.HidePatientId = 1 THEN 'true' END, 'false'),
+', "hideSampleId": ', COALESCE(CASE WHEN person.HideSampleId = 1 THEN 'true' END, 'false'),
+', "hideNotes": ', COALESCE(CASE WHEN person.HideNotes = 1 THEN 'true' END, 'false'),
+', "getPasswordFromGxAlert": true',
+COALESCE(CONCAT(', "geographies": [ ', CASE WHEN role.Name = 'National Level' THEN '{}'
+                                          WHEN role.Name = 'State Level' THEN GROUP_CONCAT(DISTINCT CONCAT('{ "stateName": "', personstate_state.Name, '" }'))
+                                          WHEN role.Name = 'LGA Level' THEN GROUP_CONCAT(DISTINCT CONCAT('{ "stateName": "', personlgastate_state.Name, '", "lgaName": "', personlga_lga.Name, '" }'))
+                                     END, ' ]'), ''),
+COALESCE(CONCAT(', "sites": [ ', CASE WHEN role.Name = 'Lab Level' THEN GROUP_CONCAT(DISTINCT CONCAT('{ "shortName": "', persondeployment_deployment.ShortName, '" }')) END, ' ], '), ''),
+'}') AS jsonObject
+FROM person
+LEFT JOIN my_aspnet_users ON my_aspnet_users.id = person.UserId
+LEFT JOIN state ON state.StateId = person.StateId
+LEFT JOIN lga ON lga.LgaId = person.LgaId
+LEFT JOIN deployment ON deployment.DeploymentId = person.DeploymentId
+LEFT JOIN role ON role.RoleId = person.RoleId
+LEFT JOIN persondeployment ON persondeployment.PersonId = person.PersonId
+LEFT JOIN deployment as persondeployment_deployment ON persondeployment_deployment.DeploymentId = persondeployment.DeploymentId
+LEFT JOIN personlga ON personlga.PersonId = person.PersonId
+LEFT JOIN lga as personlga_lga ON personlga_lga.LgaId = personlga.LgaId
+LEFT JOIN state as personlgastate_state ON personlgastate_state.StateId = personlga_lga.StateId
+LEFT JOIN personstate ON personstate.PersonId = person.PersonId
+LEFT JOIN state as personstate_state ON personstate_state.StateId = personstate.StateId
+GROUP BY person.PersonId;
+
+
+-- Query Custom Fields in GxAlert
+-- This is for the customFieldsFromGxAlert.json fixture
+SELECT CONCAT('{"title":"', CustomField.Label,
+'","type":"', CustomField.Type,
+'","order":', CustomField.DisplayOrder,
+',"dbColumn":', IFNULL(CONCAT('"', CustomField.DbColumn, '"'), 'null'),
+',"testType":', IFNULL(CONCAT('"', TestType.Name, '"'), 'null'),
+'},')
+FROM CustomField
+LEFT JOIN CustomFieldLimitToTestType ON CustomFieldLimitToTestType.CustomFieldId = CustomField.CustomFieldId
+LEFT JOIN TestType ON TestType.TestTypeId = CustomFieldLimitToTestType.TestTypeId;
