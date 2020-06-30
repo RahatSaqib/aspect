@@ -281,7 +281,7 @@ export const ResultList = ({
   reducedFilters,
 }) => {
   const AddNewButton = requirePermissions({
-    permissions: ['result:edit', 'result:admin'],
+    permissions: ['result:edit'],
   })(AspectButton)
   return (
     <div className={cssClasses('Container')}>

@@ -1,8 +1,34 @@
-import _ from 'lodash'
 import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
 import getDisplayName from 'react-display-name'
 import { ReactReduxContext } from 'react-redux'
+import constant from 'lodash/constant'
+import flowRight from 'lodash/flowRight'
+import isArray from 'lodash/isArray'
+import isEmpty from 'lodash/isEmpty'
+import noop from 'lodash/noop'
+
+export const MATCH_TYPE = {
+  // exact match of the item in userPermissions (i.e. 'result:edit') and item in requestedPermissions (i.e. 'result:edit')
+  EXACT: 'EXACT',
+  // match of 'scope' part of user permission (i.e. 'result' from 'result:view') with item in requestedPermissions (i.e. 'result')
+  SCOPE: 'SCOPE',
+  // senior permission from userPermissions (i.e. 'result:edit') is greater than requested junior permission from requestedPermissions (i.e. 'result:view')
+  NESTED: 'NESTED',
+}
+
+// Superiority of permission access levels
+export const NESTED_ACCESS_LEVELS_FOR = {
+  // propName is a permission access level
+  // array in propValue lists all access levels which are nested in propName
+  // another words - propName is greater than any access level in propValue
+  admin: ['view', 'create', 'update', 'delete', 'edit'],
+  edit: ['view', 'create', 'update', 'delete'],
+  create: ['view'],
+  update: ['view'],
+  delete: ['view'],
+  view: [], // this is a minimal access level, so no any weaker
+}
 
 // Get a permissions list from the combination of permissionsInConfig (from HOC)
 // and overriddenPermissions, extraPermissions that are passed in by props
@@ -11,7 +37,7 @@ export function getPermissions(
   overriddenPermissions,
   extraPermissions
 ) {
-  const basePermissions = _.isEmpty(overriddenPermissions)
+  const basePermissions = isEmpty(overriddenPermissions)
     ? permissionsInConfig
     : overriddenPermissions
   const permissions = basePermissions.concat(extraPermissions)
@@ -41,21 +67,110 @@ export function groupByPermissionTypes(permissions) {
     optional: optionalPermissions,
   }
 }
+/**
+ * Returns array of JSON objects with userPermissions found in array of requestedPermissions
+ *
+ * @param {Immutable.List(string)} userPermissions: from state.user.jwt.permissions
+ * @param {Array(string)} requestedPermissions: array of requested permissions
+ * @return an Array of JSON items
+ *   {
+ *     permission - string, this is an item from userPermissions
+ *     matchType  - string, one of MATCH_TYPE values
+ *     matchValue - string or array of strings
+ *   }
+ */
+export function getMatchedUserPermissions(
+  userPermissions,
+  requestedPermissions
+) {
+  return userPermissions.reduce((acc, permission) => {
+    // exact match of permission!
+    if (requestedPermissions.includes(permission)) {
+      return [
+        ...acc,
+        {
+          permission,
+          matchType: MATCH_TYPE.EXACT,
+          matchValue: permission,
+        },
+      ]
+    }
+    // when permission is defined in-full with pattern 'Scope:Level' (i.e. 'result:view'),
+    // then get it's parts and see if requestedPermissions asks for only Scope
+    // or if user's Level is greater than requested one
+    if (permission.includes(':')) {
+      const [scope, level] = permission.split(':')
+
+      // exact match of the scope!
+      if (requestedPermissions.includes(scope)) {
+        // only Scope is requested, meaning any Level is okay -
+        // i.e. requestedPermissions = [..., 'task', ...] means that any 'task:*' in userPermissions is good
+        return [
+          ...acc,
+          {
+            permission,
+            matchType: MATCH_TYPE.SCOPE,
+            matchValue: scope,
+          },
+        ]
+      }
+      // see if user's Level is greater than requested Level
+      const nestedLevels = NESTED_ACCESS_LEVELS_FOR[level]
+      if (nestedLevels && isArray(nestedLevels) && nestedLevels.length > 0) {
+        // assemble fully defined permissions from nested levels
+        const nestedPermissions = nestedLevels.map(
+          nestedLevel => `${scope}:${nestedLevel}`
+        )
+
+        // check if requestedPermissions contains nested permissions
+        const matchedNestedPermissions = nestedPermissions.filter(
+          nestedPermission => requestedPermissions.includes(nestedPermission)
+        )
+        if (matchedNestedPermissions.length > 0) {
+          return [
+            ...acc,
+            {
+              permission,
+              matchType: MATCH_TYPE.NESTED,
+              // IMPORTANT - notice that in case of nested matching we store the array of all found
+              // matches in matchValue, not a single string value
+              matchValue: matchedNestedPermissions,
+            },
+          ]
+        }
+      }
+    }
+    return acc
+  }, [])
+}
+
 // Given a user's permissions list, and a permission group (return type of groupByPermissionTypes),
 // check if the user is allowed to the resource protected by the permission group
 export function isPermittedUser(
   userPermissions,
-  { required, forbidden, optional }
+  // see func groupByPermissionTypes() above for meaning of below 3 arrays
+  { required = [], forbidden = [], optional = [] }
 ) {
-  const isAllRequired =
-    userPermissions.intersect(required).size === required.length
+  // treat resource access is allowed when no permissions requested
+  if (
+    required.length === 0 &&
+    forbidden.length === 0 &&
+    optional.length === 0
+  ) {
+    return true
+  }
 
-  const isNoForbidden = userPermissions.intersect(forbidden).size === 0
+  const cntMatches = requestedPerms =>
+    getMatchedUserPermissions(userPermissions, requestedPerms).length
 
-  const hasSomeOptional =
-    _.isEmpty(optional) || userPermissions.intersect(optional).size > 0
-
-  return isAllRequired && isNoForbidden && hasSomeOptional
+  return (
+    // ALL items in `required` must be found in userPermissions
+    (required.length === 0 || cntMatches(required) === required.length) &&
+    // NO ONE item in `forbidden` must be found in userPermissions
+    (forbidden.length === 0 || cntMatches(forbidden) === 0) &&
+    // at least one item from `optional` must be found in userPermissions
+    (optional.length === 0 || cntMatches(optional) > 0)
+  )
 }
 
 // An HOC that can protect underlying resource with pre-config permissions list.
@@ -63,7 +178,7 @@ export function isPermittedUser(
 // props (overriddenPermissions, extraPermissions) as well.
 export const requirePermissions = ({
   permissions: permissionsInConfig = [],
-  ForbiddenComponent = _.constant(false),
+  ForbiddenComponent = constant(false),
 }) => WrappedComponent =>
   class RequirePermissions extends PureComponent {
     static displayName = `requirePermissions(${getDisplayName(
@@ -90,7 +205,7 @@ export const requirePermissions = ({
 
     static contextType = ReactReduxContext
 
-    unsubscribe = _.noop // eslint-disable-line react/sort-comp
+    unsubscribe = noop // eslint-disable-line react/sort-comp
 
     constructor(props, context) {
       super(props)
@@ -105,11 +220,11 @@ export const requirePermissions = ({
 
     componentWillUnmount() {
       this.unsubscribe()
-      this.unsubscribe = _.noop
+      this.unsubscribe = noop
     }
 
     handleStoreChange = () => {
-      if (this.unsubscribe === _.noop) {
+      if (this.unsubscribe === noop) {
         return
       }
       this.setState(this.createState())
@@ -129,7 +244,7 @@ export const requirePermissions = ({
         ...restProps
       } = this.props
       const { userPermissions } = this.state
-      const permissionsByTypes = _.flowRight([
+      const permissionsByTypes = flowRight([
         groupByPermissionTypes,
         getPermissions,
       ])(permissionsInConfig, overriddenPermissions, extraPermissions)
