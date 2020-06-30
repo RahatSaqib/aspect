@@ -117,7 +117,7 @@
       "sortOrder": 2,
       "externalId": "dashboardWidgetTitleHIV",
       "description": "The total reported HIV+ tests",
-      "descriptionI18nKey": "dashboardWidgetDescriptionHIV+"
+      "descriptionI18nKey": "dashboardWidgetDescriptionHIVPositive"
     },
     {
       "title": "Smear+",

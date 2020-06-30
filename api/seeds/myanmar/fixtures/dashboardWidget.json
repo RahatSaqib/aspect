@@ -117,7 +117,7 @@
       "targetToken": "HIV",
       "sortOrder": 2,
       "description": "The total reported HIV+ tests",
-      "descriptionI18nKey": "dashboardWidgetDescriptionHIV+"
+      "descriptionI18nKey": "dashboardWidgetDescriptionHIVPositive"
     },
     {
       "title": "Smear+",
