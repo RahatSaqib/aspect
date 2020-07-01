@@ -141,7 +141,7 @@ const baseResultResponse = {
   sampleOriginSiteName: Joi.string()
     .allow(null)
     .description('Sample original site name'),
-  patientId: Joi.string().allow(null).description('The patient Id'),
+  patientId: Joi.string().allow(null, '').description('The patient Id'),
   treatmentStatusInfo: Joi.string()
     .allow(null, '')
     .description('treatment status info'),
