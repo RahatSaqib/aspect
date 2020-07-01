@@ -62,7 +62,7 @@ async function getDashboardWidget({ id, partnerId }, options) {
     .whereRaw(`JSON_CONTAINS(dashboardsJson , '["${dashboard}"]')`)
     .select(['w.*', 'sw.*'])
     .orderBy(['w.sortOrder'])
-  return _.omit(widgets, ['dashboardsJson'])
+  return widgets
 }
 
 function getTableAlias(sql) {
