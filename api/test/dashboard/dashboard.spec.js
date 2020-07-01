@@ -9,10 +9,33 @@ const { processDynamicMessage } = require('../../src/stringTemplate/service')
 const shared = require('../utils/sharedToken')
 const { runTestWithKnex } = require('../utils/generatorFunctionUtils')
 const { getAccessToken } = require('../utils/authUtils')
+const dashboardWidget = require('../../seeds/test/fixtures/dashboardWidget.json')
+const dashboardWidgetMyanmar = require('../../seeds/test/fixtures/myanmarDashboardWidget.json')
 
 const server = supertest.agent('http://localhost:8080')
 
 const { assert, expect } = chai
+
+function getAllWidgets() {
+  const widgets = [
+    ...dashboardWidget.stat,
+    ...dashboardWidgetMyanmar.stat,
+    ...dashboardWidgetMyanmar.target,
+  ]
+  return widgets
+}
+
+function assertWidgetItemProps(item) {
+  assert.property(item, 'id')
+  assert.property(item, 'icon')
+  assert.property(item, 'title')
+  assert.property(item, 'titleI18nKey')
+  assert.property(item, 'subTitle')
+  assert.property(item, 'subTitleI18nKey')
+  assert.property(item, 'link')
+  assert.property(item, 'count')
+  assert.property(item, 'externalId')
+}
 
 describe('Dashboard routes', () => {
   const path = '/api/dashboard/summary'
@@ -30,14 +53,30 @@ describe('Dashboard routes', () => {
           assert.property(res.body, 'data')
           assert.typeOf(res.body.data, 'array')
           assert.isAtLeast(res.body.data.length, 4)
-          assert.property(res.body.data[0], 'id')
-          assert.property(res.body.data[0], 'icon')
-          assert.property(res.body.data[0], 'title')
-          assert.property(res.body.data[0], 'titleI18nKey')
-          assert.property(res.body.data[0], 'subTitle')
-          assert.property(res.body.data[0], 'subTitleI18nKey')
-          assert.property(res.body.data[0], 'link')
-          assert.property(res.body.data[0], 'count')
+          assertWidgetItemProps(res.body.data[0])
+
+          done()
+        })
+    })
+
+    it('should return a list of stat dashboard widget objects for Operational Data dashboard', done => {
+      server
+        .get(`${path}?dashboard=operational`)
+        .set('Authorization', `Bearer ${shared.token}`)
+        .end((err, res) => {
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+          assert.property(res.body, 'data')
+          assert.typeOf(res.body.data, 'array')
+          assert.isAtLeast(res.body.data.length, 1)
+          assertWidgetItemProps(res.body.data[0])
+
+          // check widget on OperationalData dashboard - fixture must have at least one widget for this dashboard
+          const externalIds = getAllWidgets()
+            .filter(({ dashboards = [] }) => dashboards.includes('operational'))
+            .map(({ externalId }) => externalId)
+          assert.equal(externalIds.includes(res.body.data[0].externalId), true)
+
           done()
         })
     })
