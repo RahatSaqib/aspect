@@ -3,6 +3,7 @@ const addDays = require('date-fns/addDays')
 const parseISO = require('date-fns/parseISO')
 const subDays = require('date-fns/subDays')
 const isAfter = require('date-fns/isAfter')
+const isWeekend = require('date-fns/isWeekend')
 const differenceInDays = require('date-fns/differenceInDays')
 const { knex, filterParams, filterDateRangeParams } = require('../db')
 const {
@@ -16,6 +17,7 @@ const {
 } = require('../auth/constraints')
 const { getUser, hasPermissions } = require('../auth/service')
 const { processDynamicMessage } = require('../stringTemplate/service')
+const { getArrayOfDaysInRange } = require('../shared/date')
 
 const i18nKeys = {
   // Dashboard
@@ -791,449 +793,6 @@ async function siteDashboard(request) {
   return result
 }
 
-const OPERATIONAL_TAKE_LIMIT = 20
-
-const OPERATIONAL_INVENTORY_MIN_DAYS = 21
-const OPERATIONAL_INVENTORY_MIN_EXPIRING = 0.15
-
-async function inventoryItemOperational(request) {
-  const { auth } = request
-
-  // get data constraints
-  const dataConstraints = await getConstraints(auth.credentials)
-
-  const inventoryItemList = await getInventoryItemList(auth, dataConstraints)
-
-  const stockOutsInventoryItemList = _.sortBy(
-    _.reduce(
-      _.groupBy(inventoryItemList, 'siteId'),
-      (acc, list, siteId) => {
-        if (!_.isEmpty(list)) {
-          const minRemainingDays = _.minBy(list, 'remainingDays').remainingDays
-
-          acc.push({
-            id: siteId,
-            value: minRemainingDays,
-            abnormal: minRemainingDays < OPERATIONAL_INVENTORY_MIN_DAYS,
-          })
-        }
-        return acc
-      },
-      []
-    ),
-    'value'
-  )
-  const stockOutsAbnormalList = _.filter(stockOutsInventoryItemList, 'abnormal')
-  const expiringInventoryItemList = _.sortBy(
-    _.reduce(
-      _.groupBy(inventoryItemList, 'siteId'),
-      (acc, list, siteId) => {
-        if (!_.isEmpty(list)) {
-          const { totalQuantityOnHand, totalExpiring } = _.reduce(
-            list,
-            (total, it) => {
-              total.totalQuantityOnHand += it.quantityOnHand
-              if (it.expiring) {
-                total.totalExpiring += it.quantityOnHand
-              }
-              return total
-            },
-            { totalQuantityOnHand: 0, totalExpiring: 0 }
-          )
-          const value = totalExpiring / totalQuantityOnHand
-
-          acc.push({
-            id: siteId,
-            value,
-            abnormal: value > OPERATIONAL_INVENTORY_MIN_EXPIRING,
-          })
-        }
-        return acc
-      },
-      []
-    ),
-    'value'
-  )
-  const expiringAbnormalList = _.filter(expiringInventoryItemList, 'abnormal')
-
-  return [
-    {
-      key: 'stock-outs',
-      titleI18nKey: i18nKeys.stockOutsTitle,
-      someAbnormal: stockOutsAbnormalList.length > 0,
-      messageI18nKey: i18nKeys.siteWithProblems,
-      messageData: {
-        count: stockOutsAbnormalList.length,
-      },
-      data: _.take(stockOutsInventoryItemList, OPERATIONAL_TAKE_LIMIT),
-      averageValue:
-        _.sumBy(stockOutsInventoryItemList, 'value') /
-        stockOutsInventoryItemList.length,
-    },
-    {
-      key: 'expiring',
-      titleI18nKey: i18nKeys.expiringTitle,
-      someAbnormal: expiringAbnormalList.length > 0,
-      messageI18nKey: i18nKeys.siteWithProblems,
-      messageData: {
-        count: expiringAbnormalList.length,
-      },
-      data: _.take(expiringInventoryItemList, OPERATIONAL_TAKE_LIMIT),
-      averageValue:
-        _.sumBy(expiringInventoryItemList, 'value') /
-        expiringInventoryItemList.length,
-    },
-  ]
-}
-
-async function deviceOperational(request) {
-  const { auth } = request
-  const now = new Date()
-  const OPERATIONAL_DEVICE_TAKE_LIMIT = 10
-
-  // get data constraints
-  const dataConstraints = await getConstraints(auth.credentials)
-
-  const deviceList = await getDeviceList(auth, dataConstraints)
-
-  const MOCK_PARTNER_OFFLINE_THRESHOLD_DAYS = 7
-  const MOCK_DEVICE_HIGH_ERROR_RATE_THRESHOLD = 0.05
-  const MOCK_DEVICE_CALIBRATION_THRESHOLD_DAYS = 60
-
-  const offlineDeviceList = _.sortBy(
-    deviceList.map(it => ({
-      id: it.id,
-      value: differenceInDays(now, it.lastSeenOn),
-      abnormal:
-        differenceInDays(now, it.lastSeenOn) >
-        MOCK_PARTNER_OFFLINE_THRESHOLD_DAYS,
-    })),
-    it => -1 * it.value
-  )
-  const offlineDeviceAbnormalList = _.filter(offlineDeviceList, 'abnormal')
-
-  const highErrorRateDeviceList = _.sortBy(
-    deviceList.map(it => {
-      const value = _.random(0, 1, true)
-
-      return {
-        id: it.id,
-        value,
-        abnormal: value > MOCK_DEVICE_HIGH_ERROR_RATE_THRESHOLD,
-      }
-    }),
-    it => -1 * it.value
-  )
-  const highErrorRateDeviceAbnormalList = _.filter(
-    highErrorRateDeviceList,
-    'abnormal'
-  )
-
-  const calibrationDeviceList = _.sortBy(
-    deviceList.map(it => {
-      const calibrationOn = addDays(parseISO(now), _.random(55, 120))
-      const value = differenceInDays(calibrationOn, now)
-
-      return {
-        id: it.id,
-        value,
-        abnormal: value < MOCK_DEVICE_CALIBRATION_THRESHOLD_DAYS,
-      }
-    }),
-    it => -1 * it.value
-  )
-  const calibrationAbnormalList = _.filter(calibrationDeviceList, 'abnormal')
-
-  return [
-    {
-      key: 'days-unavailable',
-      titleI18nKey: i18nKeys.daysUnavailable,
-      someAbnormal: offlineDeviceAbnormalList.length > 0,
-      messageI18nKey: i18nKeys.deviceWithProblems,
-      messageData: {
-        count: offlineDeviceAbnormalList.length,
-      },
-      data: _.take(offlineDeviceList, OPERATIONAL_DEVICE_TAKE_LIMIT),
-    },
-    {
-      key: 'test-failures',
-      titleI18nKey: i18nKeys.testFailures,
-      titleTooltip: '10% (20/200) 10/27/2017',
-      someAbnormal: highErrorRateDeviceAbnormalList.length > 0,
-      messageI18nKey: i18nKeys.deviceWithProblems,
-      messageData: {
-        count: highErrorRateDeviceAbnormalList.length,
-      },
-      data: _.take(highErrorRateDeviceList, OPERATIONAL_DEVICE_TAKE_LIMIT),
-      averageValue:
-        _.sumBy(highErrorRateDeviceList, 'value') /
-        highErrorRateDeviceList.length,
-    },
-    {
-      key: 'calibration-compliance',
-      titleI18nKey: i18nKeys.calibrationCompliance,
-      someAbnormal: calibrationAbnormalList.length > 0,
-      messageI18nKey:
-        calibrationAbnormalList.length > 0
-          ? i18nKeys.deviceWithProblems
-          : i18nKeys.deviceCalibrationsUpToDate,
-      messageData: {
-        count: calibrationAbnormalList.length,
-      },
-      data: _.take(calibrationAbnormalList, OPERATIONAL_DEVICE_TAKE_LIMIT),
-    },
-  ]
-}
-
-async function operationalDashboard(request) {
-  const { query } = request
-
-  const result = {
-    ok: true,
-    data: {
-      device: [
-        {
-          key: 'modules-unavailable',
-          title: 'modules unavailable',
-          someAbnormal: true,
-          message: '6 site with problems',
-          data: [
-            { id: 1, value: 2, abnormal: false },
-            { id: 2, value: 3, abnormal: false },
-            { id: 3, value: 2, abnormal: false },
-            { id: 4, value: 1, abnormal: false },
-            { id: 5, value: 2.5, abnormal: false },
-            { id: 6, value: 1.5, abnormal: false },
-            { id: 7, value: 1, abnormal: false },
-            { id: 8, value: 0.8, abnormal: false },
-            { id: 9, value: 3, abnormal: false },
-            { id: 10, value: 2, abnormal: false },
-            { id: 11, value: 4, abnormal: false },
-            { id: 12, value: 2, abnormal: true },
-            { id: 13, value: 2.2, abnormal: true },
-            { id: 14, value: 5, abnormal: true },
-            { id: 15, value: 4, abnormal: true },
-            { id: 16, value: 3, abnormal: true },
-            { id: 17, value: 2, abnormal: true },
-          ],
-        },
-        {
-          key: 'maintenance-compliance',
-          title: 'maintenance compliance',
-          someAbnormal: false,
-          message: '0 site with problems',
-          data: [
-            { id: 1, value: 2, abnormal: false },
-            { id: 2, value: 3, abnormal: false },
-            { id: 3, value: 2, abnormal: false },
-            { id: 4, value: 1, abnormal: false },
-            { id: 5, value: 2.5, abnormal: false },
-            { id: 6, value: 1.5, abnormal: false },
-            { id: 7, value: 1, abnormal: false },
-            { id: 8, value: 0.8, abnormal: false },
-            { id: 9, value: 3, abnormal: false },
-            { id: 10, value: 2, abnormal: false },
-            { id: 11, value: 4, abnormal: false },
-            { id: 12, value: 2, abnormal: false },
-            { id: 13, value: 2.2, abnormal: false },
-            { id: 14, value: 5, abnormal: false },
-            { id: 15, value: 4, abnormal: false },
-            { id: 16, value: 3, abnormal: false },
-            { id: 17, value: 2, abnormal: false },
-          ],
-        },
-        {
-          key: 'data-connectivity',
-          title: 'data connectivity',
-          someAbnormal: true,
-          message: '6 site with problems',
-          data: [
-            { id: 1, value: 5, abnormal: true },
-            { id: 2, value: 7, abnormal: true },
-            { id: 3, value: 8, abnormal: true },
-            { id: 4, value: 9, abnormal: true },
-            { id: 5, value: 6, abnormal: true },
-            { id: 6, value: 6.5, abnormal: true },
-            { id: 7, value: 2, abnormal: false },
-            { id: 8, value: 7, abnormal: false },
-            { id: 9, value: 5, abnormal: false },
-            { id: 10, value: 6, abnormal: false },
-            { id: 11, value: 2, abnormal: false },
-            { id: 12, value: 2.2, abnormal: false },
-            { id: 13, value: 3, abnormal: false },
-            { id: 14, value: 5, abnormal: false },
-            { id: 15, value: 2, abnormal: false },
-            { id: 16, value: 4, abnormal: false },
-            { id: 17, value: 6, abnormal: false },
-            { id: 18, value: 5, abnormal: false },
-          ],
-        },
-        {
-          key: 'utilisation',
-          title: 'utilisation',
-          someAbnormal: false,
-          message: '0 site with problems',
-          data: [
-            { id: 1, value: 7, abnormal: false },
-            { id: 2, value: 10, abnormal: false },
-            { id: 3, value: 7, abnormal: false },
-            { id: 4, value: 3, abnormal: false },
-            { id: 5, value: 8, abnormal: false },
-            { id: 6, value: 6, abnormal: false },
-            { id: 7, value: 4, abnormal: false },
-            { id: 8, value: 3, abnormal: false },
-            { id: 9, value: 9, abnormal: false },
-            { id: 10, value: 7, abnormal: false },
-            { id: 11, value: 11, abnormal: false },
-            { id: 12, value: 2, abnormal: false },
-            { id: 13, value: 7, abnormal: false },
-            { id: 14, value: 8, abnormal: false },
-            { id: 15, value: 14, abnormal: false },
-            { id: 16, value: 12, abnormal: false },
-            { id: 17, value: 10, abnormal: false },
-            { id: 18, value: 7, abnormal: false },
-          ],
-        },
-        {
-          key: 'time-to-alert-resolution',
-          title: 'time to alert resolution',
-          someAbnormal: true,
-          message: '1 site with problems',
-          data: [
-            { id: 1, value: 7, abnormal: false },
-            { id: 2, value: 9, abnormal: false },
-            { id: 3, value: 10, abnormal: false },
-            { id: 4, value: 11, abnormal: true },
-            { id: 5, value: 8, abnormal: false },
-            { id: 6, value: 7.5, abnormal: false },
-            { id: 7, value: 2, abnormal: false },
-            { id: 8, value: 9.5, abnormal: false },
-            { id: 9, value: 5, abnormal: false },
-            { id: 10, value: 8, abnormal: false },
-            { id: 11, value: 2, abnormal: false },
-            { id: 12, value: 3, abnormal: false },
-            { id: 13, value: 5, abnormal: false },
-            { id: 14, value: 8, abnormal: false },
-            { id: 15, value: 2, abnormal: false },
-            { id: 16, value: 6, abnormal: false },
-            { id: 17, value: 10, abnormal: false },
-            { id: 18, value: 7, abnormal: false },
-          ],
-        },
-      ],
-      site: [
-        {
-          key: 'high-performing',
-          title: 'high performing',
-          data: [
-            { id: 12, name: 'Site name 12', data: [3, 4, 8] },
-            { id: 74, name: 'Site name 74', data: [1, 4, 7] },
-            { id: 26, name: 'Site name 26', data: [2, 5, 9] },
-            { id: 37, name: 'Site name 37', data: [4, 3, 10] },
-            { id: 69, name: 'Site name 69', data: [3, 4, 6] },
-            { id: 73, name: 'Site name 73', data: [1, 4, 10] },
-            { id: 52, name: 'Site name 52', data: [2, 5, 9] },
-            { id: 34, name: 'Site name 34', data: [4, 3, 8] },
-          ],
-        },
-        {
-          key: 'improving',
-          title: 'improving',
-          data: [
-            { id: 25, name: 'Site name 25', data: [3, 4, 8] },
-            { id: 34, name: 'Site name 34', data: [1, 4, 7] },
-            { id: 93, name: 'Site name 93', data: [2, 5, 9] },
-            { id: 27, name: 'Site name 27', data: [4, 3, 10] },
-          ],
-        },
-        {
-          key: 'worsening',
-          title: 'worsening',
-          data: [
-            { id: 54, name: 'Site name 54', data: [4, 3, 8] },
-            { id: 122, name: 'Site name 122', data: [3, 4, 8] },
-            { id: 87, name: 'Site name 87', data: [1, 4, 7] },
-            { id: 26, name: 'Site name 26', data: [2, 5, 9] },
-            { id: 73, name: 'Site name 73', data: [4, 3, 10] },
-          ],
-        },
-        {
-          key: 'low-performing',
-          title: 'low performing',
-          data: [
-            { id: 34, name: 'Site name 34', data: [4, 3, 8] },
-            { id: 23, name: 'Site name 23', data: [3, 4, 8] },
-            { id: 65, name: 'Site name 65', data: [1, 4, 7] },
-            { id: 3, name: 'Site name 3', data: [2, 5, 9] },
-            { id: 5, name: 'Site name 5', data: [4, 3, 10] },
-            { id: 16, name: 'Site name 16', data: [3, 4, 6] },
-            { id: 84, name: 'Site name 84', data: [1, 4, 10] },
-          ],
-        },
-      ],
-      staff: [
-        {
-          key: 'staff-with-high-error-rates',
-          title: 'staff with high error rates',
-          someAbnormal: true,
-          message: '8 site with problems',
-          data: [
-            { id: 1, value: 7, abnormal: false },
-            { id: 2, value: 10, abnormal: true },
-            { id: 3, value: 7, abnormal: false },
-            { id: 4, value: 3, abnormal: false },
-            { id: 5, value: 8, abnormal: false },
-            { id: 6, value: 6, abnormal: false },
-            { id: 7, value: 4, abnormal: false },
-            { id: 8, value: 3, abnormal: false },
-            { id: 9, value: 9, abnormal: true },
-            { id: 10, value: 7, abnormal: false },
-            { id: 11, value: 11, abnormal: true },
-            { id: 12, value: 2, abnormal: false },
-            { id: 13, value: 7, abnormal: true },
-            { id: 14, value: 8, abnormal: true },
-            { id: 15, value: 14, abnormal: true },
-            { id: 16, value: 12, abnormal: true },
-            { id: 17, value: 10, abnormal: true },
-            { id: 18, value: 7, abnormal: false },
-          ],
-          averageValue: 8.5,
-        },
-      ],
-    },
-  }
-
-  const multiplier =
-    _.sum(
-      require('crypto')
-        .createHash('md5')
-        .update(JSON.stringify(query))
-        .digest('base64')
-        .split()
-        .map(s => s.charCodeAt(0))
-    ) % 29
-
-  if (multiplier > 1) {
-    _.forEach(result.data, v =>
-      _.forEach(v, o =>
-        _.forEach(o.data, it => {
-          if (it.value) {
-            it.value = (it.value * multiplier) % 17
-          }
-        })
-      )
-    )
-  }
-
-  return {
-    ok: true,
-    data: Object.assign(result.data, {
-      inventory: await inventoryItemOperational(request),
-      device: [...(await deviceOperational(request)), ...result.data.device],
-    }),
-  }
-}
-
 async function actionDashboard(request) {
   const { auth, query } = request
   const user = await getUser(auth.credentials.name)
@@ -1481,6 +1040,73 @@ async function getAssayResultCategoryList(dataConstraints) {
   return assayResultCategory
 }
 
+async function operationalDataActivityOverTime(request) {
+  const { auth, query } = request
+  const dataConstraints = await getConstraints(auth.credentials)
+
+  // build up array of days in date range. makes querying easier:
+  const days = getArrayOfDaysInRange(query.minDate, query.maxDate, {
+    active: 0,
+    inactive: 0,
+    total: 0,
+  })
+
+  // now, get all device IDs that user has access to (much better performance in following queries)
+  const deviceIds = (
+    await knex('Device as d')
+      .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
+      .join('DeviceTypeCategory as dtc', 'dt.deviceTypeCategoryId', 'dtc.id')
+      .join('Site as s', 'd.siteId', 's.id')
+      .whereIn('dtc.name', ['Lab', 'Integrated', 'Information System'])
+      .modify(addConstraints, dataConstraints, {
+        site: 's',
+        device: 'd',
+      })
+      .select('d.id')
+  ).map(d => d.id)
+
+  // First, get all devices along with when they conducted their first test
+  // This is so we don't include devices in the activity stats before they were first active
+  const devicesByFirstResult = await knex('Result')
+    .whereIn('deviceId', deviceIds)
+    .groupBy('deviceId')
+    .select(knex.raw('date(min(endedOn)) as minEndedOn'))
+
+  // Get number of devices active (=conducting tests) by day
+  const devicesActiveByDay = await knex('Result')
+    .whereIn('deviceId', deviceIds)
+    .groupBy('endedOnDate')
+    .select(knex.raw('date(endedOn) as endedOnDate'))
+    .countDistinct('deviceId as deviceCount')
+    .modify(qb => {
+      if (query.maxDate) {
+        qb.where('endedOn', '<=', query.maxDate)
+      }
+      if (query.minDate) {
+        qb.where('endedOn', '>=', query.minDate)
+      }
+    })
+  // now we can update the total devices that were in the system per day:
+  days.forEach(day => {
+    const devices = devicesByFirstResult.filter(c => c.minEndedOn <= day.date)
+    const devicesActive = devicesActiveByDay.find(
+      c =>
+        c.endedOnDate.getDate() === day.date.getDate() &&
+        c.endedOnDate.getMonth() === day.date.getMonth() &&
+        c.endedOnDate.getFullYear() === day.date.getFullYear()
+    )
+    day.total = devices.length
+    day.active = devicesActive ? devicesActive.deviceCount : 0
+    day.inactive = day.total - day.active
+    day.isWeekendOrHoliday = isWeekend(day.date)
+  })
+
+  return {
+    ok: true,
+    data: days,
+  }
+}
+
 module.exports = {
   summaryDashboard,
   targetDashboard,
@@ -1488,6 +1114,6 @@ module.exports = {
   inventoryItemDashboard,
   deviceDashboard,
   siteDashboard,
-  operationalDashboard,
   actionDashboard,
+  operationalDataActivityOverTime,
 }

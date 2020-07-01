@@ -11,8 +11,8 @@ const {
   inventoryItemDashboard,
   deviceDashboard,
   siteDashboard,
-  operationalDashboard,
   actionDashboard,
+  operationalDataActivityOverTime,
 } = require('./service')
 
 const routes = [
@@ -86,26 +86,6 @@ const routes = [
   },
   {
     method: 'GET',
-    path: '/dashboard/operational',
-    handler: asyncHandler(operationalDashboard),
-    config: {
-      description: 'Operational Data Dashboard',
-      notes: 'The top level operational data',
-      auth: { scope: ['site', 'device', 'dashboard'] },
-      validate: {
-        query: {
-          assayType: Joi.string()
-            .allow('')
-            .description('Filter for assay type'),
-          dateRange: Joi.number()
-            .allow('')
-            .description('Filter for date range'),
-        },
-      },
-    },
-  },
-  {
-    method: 'GET',
     path: '/dashboard/action',
     handler: asyncHandler(actionDashboard),
     config: {
@@ -122,6 +102,57 @@ const routes = [
             'message'
           ),
         },
+      },
+    },
+  },
+  {
+    method: 'GET',
+    path: '/dashboard/operational-data/activity-over-time',
+    handler: asyncHandler(operationalDataActivityOverTime),
+    config: {
+      description: 'Device Activity Rate Over Time',
+      notes:
+        'Gets the number of devices grouped by activity category, by day, in the given date range',
+      auth: { scope: ['site', 'device', 'dashboard'] },
+      validate: {
+        query: {
+          minDate: Joi.date().iso().required().description('From Date'),
+          maxDate: Joi.date().iso().required().description('To Date'),
+        },
+      },
+      response: {
+        options: {
+          allowUnknown: false,
+        },
+        schema: Joi.object().keys({
+          ok: Joi.bool()
+            .required()
+            .description('False if there was some sort of error'),
+          data: Joi.array()
+            .required()
+            .description(
+              'List of days in the given date range along with activity category counts'
+            )
+            .items(
+              Joi.object().keys({
+                date: Joi.date().description(
+                  'Day that the aggregations were calculated for'
+                ),
+                active: Joi.number().description(
+                  'The number of devices that were active that day'
+                ),
+                inactive: Joi.number().description(
+                  'The number of devices that were inactive that day'
+                ),
+                total: Joi.number().description(
+                  'The total number of devices in the system as of that day'
+                ),
+                isWeekendOrHoliday: Joi.bool().description(
+                  'Indicates whether the day is a weekend day or a holiday.'
+                ),
+              })
+            ),
+        }),
       },
     },
   },
