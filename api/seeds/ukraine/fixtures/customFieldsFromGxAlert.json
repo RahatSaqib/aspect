@@ -1,0 +1,16 @@
+[
+  {
+    "title": "Біологічний матеріал",
+    "type": "string",
+    "order": 0,
+    "dbColumn": null,
+    "testType": null
+  },
+  {
+    "title": "Мета тесту",
+    "type": "string",
+    "order": 10,
+    "dbColumn": null,
+    "testType": null
+  }
+]
