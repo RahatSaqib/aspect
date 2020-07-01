@@ -312,6 +312,7 @@ export const ResultList = ({
       </BrowseFilters>
       <DataTableCard key={`DataTableCard--table-${location.key}`}>
         <DataTableProgressBar disabled={!table.loading} />
+
         <ExportListButton
           onExcelClick={onExportClick}
           onCsvClick={onExportClick}
