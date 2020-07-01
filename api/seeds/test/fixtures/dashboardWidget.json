@@ -26,7 +26,8 @@
       "sortOrder": 1,
       "externalId": "devicesTitle",
       "description": "The number of devices which type's category allows results",
-      "descriptionI18nKey": "devicesDescription"
+      "descriptionI18nKey": "devicesDescription",
+      "dashboards": ["home", "operational"]
     },
     {
       "icon": "assignment",
