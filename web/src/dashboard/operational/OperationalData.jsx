@@ -5,14 +5,29 @@ import { connect } from 'react-redux'
 import { Helmet } from 'react-helmet'
 import { injectIntl } from 'react-intl'
 
+import GraphsContainer from '../../MigratedComponents/Graphs/GraphsContainer'
+
 const cssClasses = classnames.bind(require('./OperationalData.css'))
 
-export const OperationalData = ({ intl, loading }) => (
-  <div className={cssClasses('Container')}>
-    <Helmet title="Operational Data" />
-    <div className={cssClasses({ 'Content--loading': loading })} />
-  </div>
-)
+export const OperationalData = ({ intl, history, location, loading }) => {
+  return (
+    <div className={cssClasses('Container')}>
+      <Helmet title="Operational Data" />
+      {loading ? (
+        <div className={cssClasses({ 'Content--loading': loading })} />
+      ) : (
+        <div>
+          <GraphsContainer
+            intl={intl}
+            history={history}
+            location={location}
+            assaysFromState={[]}
+          />
+        </div>
+      )}
+    </div>
+  )
+}
 
 export default _.flowRight(
   injectIntl,

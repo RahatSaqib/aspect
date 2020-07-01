@@ -21,13 +21,13 @@ export const REQUEST_CLINICAL_INDICATORS_DASHBOARD =
 export const RECEIVE_CLINICAL_INDICATORS_DASHBOARD =
   'RECEIVE_CLINICAL_INDICATORS_DASHBOARD'
 
-export function fetchClinicalIndicatorsDashboard(config) {
+export function fetchClinicalIndicatorsDashboard(config, noAssays = false) {
   let endpointParams = ''
   const { parentId, id, whiteListed, api } = removeEmptyParams(config)
   const { endpoint, params, method = 'GET' } = api
-  const assayParams = whiteListed
-    .map(a => `assay=${encodeURIComponent(a)}`)
-    .join('&')
+  const assayParams = !noAssays
+    ? whiteListed.map(a => `assay=${encodeURIComponent(a)}`).join('&')
+    : ''
 
   for (const [key, value] of Object.entries(sanitiseParams(params))) {
     if (Array.isArray(value)) {

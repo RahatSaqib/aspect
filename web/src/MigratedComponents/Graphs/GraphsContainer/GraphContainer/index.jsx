@@ -5,6 +5,7 @@ import { useDispatch } from 'react-redux'
 import { useIntl } from 'react-intl'
 import classnames from 'classnames/bind'
 import merge from 'lodash/merge'
+import intersection from 'lodash/intersection'
 import Grid from '@material-ui/core/Grid'
 
 import requirePermissions from '../../../../components/shared/requirePermissions'
@@ -21,8 +22,9 @@ import messages from '../messages'
 
 const cssClasses = classnames.bind(require('../GraphsContainer.css'))
 
-const GraphContainer = ({ config, size, assaysFromState }) => {
+const GraphContainer = ({ config, size, assaysFromState, group }) => {
   const dispatch = useDispatch()
+  const allowedGroupsWithoutAssays = ['zimbabwe'].includes(group)
   const tempDispatchParams = []
   const { title, selectorModifiers = false } = config
   const { formatMessage: intlFormatMessage } = useIntl()
@@ -37,12 +39,14 @@ const GraphContainer = ({ config, size, assaysFromState }) => {
   useEffect(() => {
     const allowed = []
     validateGraphConfig(config).then(() => {
-      assays.map(a =>
-        assaysFromState.filter(
-          ({ externalId, hasResults }) =>
-            externalId === a && hasResults && allowed.push(a)
+      if (assays && assays.length > 0) {
+        assays.map(a =>
+          assaysFromState.filter(
+            ({ externalId, hasResults }) =>
+              externalId === a && hasResults && allowed.push(a)
+          )
         )
-      )
+      }
       setwhiteListed(allowed)
     })
   }, [config, assays, assaysFromState])
@@ -58,7 +62,9 @@ const GraphContainer = ({ config, size, assaysFromState }) => {
         ...base,
         api: { ...api, params: { ...merge(params, optionValue) } },
       }
-      dispatch(fetchClinicalIndicatorsDashboard(mergedAPI))
+      dispatch(
+        fetchClinicalIndicatorsDashboard(mergedAPI, allowedGroupsWithoutAssays)
+      )
     }
   }, [dispatchFromSelector])
 
@@ -68,19 +74,27 @@ const GraphContainer = ({ config, size, assaysFromState }) => {
         const { graphState } = dParams
         setDispatchFromChild(dParams)
         if (dParams && graphState === false) {
-          dispatch(fetchClinicalIndicatorsDashboard({ ...dParams }))
+          dispatch(
+            fetchClinicalIndicatorsDashboard(
+              { ...dParams },
+              allowedGroupsWithoutAssays
+            )
+          )
         }
         return true
       })
     }
   }, [dispatchParamsFromChild])
 
-  return whiteListed && whiteListed.length ? (
+  console.log(config.title, allowedGroupsWithoutAssays)
+
+  return (whiteListed && whiteListed.length) || allowedGroupsWithoutAssays ? (
     <Grid item xs={12} lg={outerSize}>
       <Grid container spacing={24}>
         <Grid item xs={12}>
           <AspectCard
-            title={intlFormatMessage(messages[title])}
+            // title={intlFormatMessage(messages[title])}
+            title="tiutle"
             innerSize={innerSize}
             justify="center"
             action={params => setdispatchFromSelector({ ...params })}
