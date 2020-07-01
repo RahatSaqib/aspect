@@ -144,6 +144,7 @@ const SORT_FIELDS = [
   'resultCategory1Name',
   'resultCategory2Name',
   'patientId',
+  'assayName',
 ]
 
 const RESULT_STRING_TEMPLATE_FIELDS = [

@@ -136,6 +136,7 @@ const searchSanitizer = makeSearchParamsSanitizer({
     'resultText',
     'resultWorkflowStatus',
     'treatmentStatusInfo',
+    'assayName',
     /* --- table.extraColumns BEGIN --- */
     'resultCategory1Name',
     'resultCategory2Name',
@@ -356,7 +357,7 @@ export const ResultList = ({
                 {
                   key: 'assayName',
                   label: intl.formatMessage(messages.assayName),
-                  sortable: false,
+                  sortable: true,
                 },
                 {
                   key: 'resultText',
