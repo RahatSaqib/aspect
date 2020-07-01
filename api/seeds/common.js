@@ -18,6 +18,7 @@ const geneXpertResultDataSchemaHcv = require('./fixtures/geneXpertDevice/geneXpe
 const geneXpertResultDataSchemaEbola = require('./fixtures/geneXpertDevice/geneXpertResultDataSchemaEbola.json')
 const geneXpertResultDataSchemaSarsCoV2 = require('./fixtures/geneXpertDevice/geneXpertResultDataSchemaSarsCoV2.json')
 const resultTreatmentStatuses = require('./fixtures/ResultTreatmentStatus.json')
+const dashboardWidgetCommonJson = require('./fixtures/DashboardWidget.json')
 const {
   deviceStatusToId,
   deviceTypeToId,
@@ -197,14 +198,7 @@ async function commonUpserts(
     modules.result.edit,
     modules.browse.view,
     modules.treatmentStatus.edit,
-    modules.dashboard.report,
-    modules.dashboard.siteFilter,
-    modules.dashboard.action,
-    modules.dashboard.target,
     modules.dashboard.result,
-    modules.dashboard.device,
-    modules.dashboard.inventory,
-    modules.dashboard.site,
     modules.dashboard.summary,
     modules.case.edit,
     modules.account.edit,
@@ -866,110 +860,13 @@ const defaultGxAlertMigrationVariables = {
   },
   geographyFromGxAlert: {
     countries: null, // required
-    /* -- Query Country With States & LGAs in GxAlert
-SELECT CONCAT(
-  '{"abbreviation":"', country.Abbreviation,
-  '","name":"', country.Name,
-  '","a3":"', country.A3,
-  '","culture":"', country.Culture,
-  '","countryCode":"', Country.CountryCode,
-  '","timezone":"', Country.TimeZoneId,
-  '","portNumber":', Country.PortNumber,
-  ',"exportColumns":"', Country.ExportColumns,
-  '","inventoryDaysThreshold":', Country.InventoryDaysThreshold,
-  ',"monthStartsOnDay":', Country.MonthStartsOnDay,
-  ',"states":[') AS countryJSON
-FROM Country
-WHERE Country.Name IS NOT NULL
-AND Country.A3 IS NOT NULL
-UNION
-SELECT CONCAT(
-    '{"name":"', State.Name, '",',
-    IFNULL(CONCAT('"abbreviation":"', State.Abbreviation, '",'), ''),
-    '"lgas":[', IFNULL((SELECT GROUP_CONCAT(CONCAT('{"name":"', Lga.Name, '"}')) FROM Lga WHERE Lga.Name IS NOT NULL AND Lga.StateId = State.StateId), ''), ']',
-    '},') AS countryJSON
-FROM Country
-JOIN State ON State.CountryId = Country.CountryId
-WHERE Country.Name IS NOT NULL
-AND Country.A3 IS NOT NULL
-UNION
-SELECT ']}' AS countryJSON;
-*/
   },
   gxAlertDevice: {
     deviceApiKeyToken: null, // required
   },
   sitesFromGxAlert: [],
-  /* -- Query Sites in GxAlert
-  TODO: These queries belong is a more comprehensive document that explains how to migrate a customer from GxAlert to Aspect
-        https://ops.systemone.id/browse/ASP-1373
-SET SQL_SAFE_UPDATES = 0;
-UPDATE location SET externalId = name WHERE externalId IS NULL;
-SET SQL_SAFE_UPDATES = 1;
-
-SELECT CONCAT('{ ',
-'"externalId": "', location.externalId, '",',
-COALESCE(CONCAT('"latitude": ', CAST(deployment.Latitude AS CHAR), ','), ''),
-COALESCE(CONCAT('"longitude": ', CAST(deployment.Longitude AS CHAR), ','), ''),
-COALESCE(CONCAT('"stateName": "', state.Name, '",'), ''),
-COALESCE(CONCAT('"lgaName": "', lga.Name, '",'), ''),
-'"name": "', deployment.Description, '",',
-COALESCE(CONCAT('"shortname": "', deployment.ShortName, '",'), ''),
-'"timeZoneId": "', deployment.TimeZoneId, '"',
-COALESCE(
-  CONCAT(
-    ', "devices": [', GROUP_CONCAT(
-      DISTINCT CONCAT('{ "name": "', deployment.Description, '", "shortName": "', deployment.ShortName, '", "macAddress": "', device.ComputerId, '", "hostId": "', device.HostId, '", "serial": "', device.Serial, '", "gxAlertDeviceId": ', CAST(device.DeviceId AS CHAR), ' },')
-    ), ']'
-  ), ''),
-'},') AS JSONObject -- , deployment.*,device.*, location.*
-FROM deployment
-JOIN location ON location.id = deployment.LocationId
-LEFT JOIN state ON state.stateId = deployment.StateId
-LEFT JOIN lga ON lga.LgaId = deployment.LgaId
-LEFT JOIN device ON device.CurrentDeploymentId = deployment.DeploymentId
-WHERE deployment.Approved = 1 AND deployment.HideOnDashboard = 0
-GROUP BY deployment.DeploymentId
-*/
   jobFunctions: [],
   contactsFromGxAlert: [],
-  /* -- Query Contacts in GxAlert
-  TODO: These queries belong is a more comprehensive document that explains how to migrate a customer from GxAlert to Aspect
-        https://ops.systemone.id/browse/ASP-1373
-SELECT CONCAT(
-'{ "personName": "',  person.Name,
-COALESCE(CONCAT('", "personTitle": "', person.Title), ''),
-'", "jobFunctions": [ "', CASE WHEN role.Name = 'National Level' THEN 'Admin' WHEN role.Name IN ('State Level', 'LGA Level') THEN 'Regional Officer' WHEN role.Name = 'Lab Level' THEN 'Lab User' ELSE '' END,
-'" ], ', COALESCE(CONCAT('"personEmailAddress": "', person.Email, '", '), ''),
-COALESCE(CONCAT('"personPhone": "', person.Phone, '", '), ''),
-COALESCE(CONCAT('"personCell": "', person.Cell, '", '), ''),
-COALESCE(CONCAT('"username": "', my_aspnet_users.name, '", '), ''),
-COALESCE(CONCAT('"timezone": "', person.TimeZoneId, '", '), ''),
-'"hidePatientId": ', COALESCE(CASE WHEN person.HidePatientId = 1 THEN 'true' END, 'false'),
-', "hideSampleId": ', COALESCE(CASE WHEN person.HideSampleId = 1 THEN 'true' END, 'false'),
-', "hideNotes": ', COALESCE(CASE WHEN person.HideNotes = 1 THEN 'true' END, 'false'),
-', "getPasswordFromGxAlert": true',
-COALESCE(CONCAT(', "geographies": [ ', CASE WHEN role.Name = 'National Level' THEN '{}'
-                                          WHEN role.Name = 'State Level' THEN GROUP_CONCAT(DISTINCT CONCAT('{ "stateName": "', personstate_state.Name, '" }'))
-                                          WHEN role.Name = 'LGA Level' THEN GROUP_CONCAT(DISTINCT CONCAT('{ "stateName": "', personlgastate_state.Name, '", "lgaName": "', personlga_lga.Name, '" }'))
-                                     END, ' ]'), ''),
-COALESCE(CONCAT(', "sites": [ ', CASE WHEN role.Name = 'Lab Level' THEN GROUP_CONCAT(DISTINCT CONCAT('{ "shortName": "', persondeployment_deployment.ShortName, '" }')) END, ' ], '), ''),
-'}') AS jsonObject
-FROM person
-LEFT JOIN my_aspnet_users ON my_aspnet_users.id = person.UserId
-LEFT JOIN state ON state.StateId = person.StateId
-LEFT JOIN lga ON lga.LgaId = person.LgaId
-LEFT JOIN deployment ON deployment.DeploymentId = person.DeploymentId
-LEFT JOIN role ON role.RoleId = person.RoleId
-LEFT JOIN persondeployment ON persondeployment.PersonId = person.PersonId
-LEFT JOIN deployment as persondeployment_deployment ON persondeployment_deployment.DeploymentId = persondeployment.DeploymentId
-LEFT JOIN personlga ON personlga.PersonId = person.PersonId
-LEFT JOIN lga as personlga_lga ON personlga_lga.LgaId = personlga.LgaId
-LEFT JOIN state as personlgastate_state ON personlgastate_state.StateId = personlga_lga.StateId
-LEFT JOIN personstate ON personstate.PersonId = person.PersonId
-LEFT JOIN state as personstate_state ON personstate_state.StateId = personstate.StateId
-GROUP BY person.PersonId
-*/
   geneXpertAssayExternalIds: [
     'GxMtbRif',
     'GxMtbRifUltra',
@@ -981,19 +878,6 @@ GROUP BY person.PersonId
     'assayGXCovid19',
   ],
   customFieldsFromGxAlert: [],
-  /* -- Query Custom Fields in GxAlert
-  TODO: These queries belong is a more comprehensive document that explains how to migrate a customer from GxAlert to Aspect
-        https://ops.systemone.id/browse/ASP-1373
-SELECT CONCAT('{"title":"', CustomField.Label,
-'","type":"', CustomField.Type,
-'","order":', CustomField.DisplayOrder,
-',"dbColumn":', IFNULL(CONCAT('"', CustomField.DbColumn, '"'), 'null'),
-',"testType":', IFNULL(CONCAT('"', TestType.Name, '"'), 'null'),
-'},')
-FROM CustomField
-LEFT JOIN CustomFieldLimitToTestType ON CustomFieldLimitToTestType.CustomFieldId = CustomField.CustomFieldId
-LEFT JOIN TestType ON TestType.TestTypeId = CustomFieldLimitToTestType.TestTypeId
-*/
 }
 
 async function baseGxAlertMigration(
@@ -1521,7 +1405,7 @@ async function baseGxAlertMigration(
       : { id: countryGeography.id }
     let personId = null
     const existingPerson = await knex('Person')
-      .where({ userId })
+      .where('userId', userId || -1)
       .orWhere(function () {
         this.where('name', person.personName)
         if (person.personEmailAddress) {
@@ -1848,6 +1732,101 @@ async function ensureResultTreatmentStatuses(
   })
 }
 
+async function upsertDashboardWidgets(
+  knex,
+  partnerId,
+  dashboardWidgetJson = dashboardWidgetCommonJson
+) {
+  if (!dashboardWidgetJson) return Promise.resolve()
+
+  await Promise.all(
+    _.map(dashboardWidgetJson.stat, async widget => {
+      // insert or update the widget itself
+      const widgetData = _.pick(widget, [
+        'title',
+        'titleI18nKey',
+        'subTitle',
+        'subTitleI18nKey',
+        'sqlForIndicator',
+        'link',
+        'sortOrder',
+        'externalId',
+      ])
+
+      let { id: widgetId } =
+        (await knex('DashboardWidget')
+          .where('externalId', widgetData.externalId)
+          .first('id')) || {}
+
+      if (!widgetId) {
+        ;[widgetId] = await knex('DashboardWidget').insert(widgetData)
+      } else {
+        await knex('DashboardWidget').update(widgetData).where('id', widgetId)
+      }
+
+      // insert or update the stat for the widget
+      const statWidgetData = _.pick(widget, [
+        'icon',
+        'sqlForStatUnit',
+        'statUnit',
+        'statUnitI18nKey',
+        'statStatus',
+        'statStatusI18nKey',
+        'sqlForExtra',
+        'extraUnit',
+        'extraUnitI18nKey',
+        'extraLabel',
+        'extraLabelI18nKey',
+      ])
+
+      const { id: widgetStatId } =
+        (await knex('DashboardWidgetStat')
+          .where('dashboardWidgetId', widgetId)
+          .first('id')) || {}
+
+      if (!widgetStatId) {
+        await knex('DashboardWidgetStat').insert({
+          dashboardWidgetId: widgetId,
+          ...statWidgetData,
+        })
+      } else {
+        await knex('DashboardWidgetStat')
+          .update(statWidgetData)
+          .where('id', widgetStatId)
+      }
+
+      // add widget to configured job functions here
+      const jobFunctionsDb = await knex('JobFunction')
+        .where({ partnerId })
+        .where(function () {
+          if (
+            widget.jobFunctions &&
+            widget.jobFunctions !== 'all' &&
+            widget.jobFunctions[0] !== 'all'
+          ) {
+            this.whereIn('externalId', widget.jobFunctions)
+          }
+        })
+        .select('id', 'name')
+
+      jobFunctionsDb.map(async jf => {
+        const { jobFunctionId } =
+          (await knex('JobFunctionDashboardWidget')
+            .where('jobFunctionId', jf.id)
+            .where({ widgetId })
+            .first('jobFunctionId')) || {}
+
+        if (!jobFunctionId) {
+          await knex('JobFunctionDashboardWidget').insert({
+            jobFunctionId: jf.id,
+            widgetId,
+          })
+        }
+      })
+    })
+  )
+}
+
 module.exports = {
   commonUpserts,
   upsertGxAlertDevice,
@@ -1861,4 +1840,5 @@ module.exports = {
   baseGxAlertMigration,
   seedLabClinicFixture,
   ensureResultTreatmentStatuses,
+  upsertDashboardWidgets,
 }

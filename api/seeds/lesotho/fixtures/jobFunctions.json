@@ -7,14 +7,6 @@
         "activity": "admin"
       },
       {
-        "module": "patient",
-        "activity": "admin"
-      },
-      {
-        "module": "case",
-        "activity": "admin"
-      },
-      {
         "module": "device",
         "activity": "admin"
       },
@@ -43,26 +35,33 @@
         "activity": "admin"
       },
       {
-        "module":"dashboard",
-        "activity":"summary"
-
+        "module": "dashboard",
+        "activity": "summary"
+      },
+      {
+        "module": "dashboard",
+        "activity": "result"
+      },
+      {
+        "module": "issue",
+        "activity": "admin"
+      },
+      {
+        "module": "browse",
+        "activity": "view"
+      },
+      {
+        "module": "reporter",
+        "activity": "admin"
       }
     ]
   },
   {
-    "name": "Clinician",
+    "name": "Regional Officer",
     "permissions": [
       {
         "module": "assay",
-        "activity": "edit"
-      },
-      {
-        "module": "patient",
-        "activity": "edit"
-      },
-      {
-        "module": "case",
-        "activity": "edit"
+        "activity": "view"
       },
       {
         "module": "device",
@@ -77,12 +76,12 @@
         "activity": "edit"
       },
       {
-        "module": "demo",
-        "activity": "admin"
+        "module": "treatmentStatus",
+        "activity": "edit"
       },
       {
         "module": "site",
-        "activity": "edit"
+        "activity": "view"
       },
       {
         "module": "browse",
@@ -90,17 +89,15 @@
       },
       {
         "module": "account",
-        "activity": "edit"
+        "activity": "admin"
       },
       {
-        "module":"dashboard",
-        "activity":"summary"
-
+        "module": "dashboard",
+        "activity": "summary"
       },
       {
-        "module":"dashboard",
-        "activity":"result"
-
+        "module": "dashboard",
+        "activity": "result"
       }
     ]
   },
@@ -112,11 +109,48 @@
         "activity": "view"
       },
       {
-        "module": "patient",
+        "module": "person",
         "activity": "view"
       },
       {
-        "module": "case",
+        "module": "device",
+        "activity": "view"
+      },
+      {
+        "module": "result",
+        "activity": "edit"
+      },
+      {
+        "module": "treatmentStatus",
+        "activity": "edit"
+      },
+      {
+        "module": "site",
+        "activity": "view"
+      },
+      {
+        "module": "browse",
+        "activity": "view"
+      },
+      {
+        "module": "account",
+        "activity": "edit"
+      },
+      {
+        "module": "dashboard",
+        "activity": "summary"
+      },
+      {
+        "module": "dashboard",
+        "activity": "result"
+      }
+    ]
+  },
+  {
+    "name": "Clinician",
+    "permissions": [
+      {
+        "module": "assay",
         "activity": "view"
       },
       {
@@ -148,11 +182,13 @@
         "activity": "edit"
       },
       {
-        "module":"dashboard",
-        "activity":"summary"
-
+        "module": "dashboard",
+        "activity": "summary"
+      },
+      {
+        "module": "dashboard",
+        "activity": "result"
       }
     ]
   }
- 
 ]
