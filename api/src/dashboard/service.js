@@ -47,7 +47,8 @@ const i18nKeys = {
   deviceCalibrationsUpToDate: 'deviceCalibrationsUpToDate',
 }
 
-async function getDashboardWidget({ id, partnerId }, layout) {
+async function getDashboardWidget({ id, partnerId }, options) {
+  const { layout, dashboard = 'home' } = options
   const tableName =
     layout === 'target' ? 'DashboardWidgetTarget' : 'DashboardWidgetStat'
   const widgets = knex('DashboardWidget as w')
@@ -59,6 +60,12 @@ async function getDashboardWidget({ id, partnerId }, layout) {
     .where({
       'ps.userId': id,
       'jf.partnerId': partnerId,
+    })
+    .where(function () {
+      this.whereRaw(`JSON_CONTAINS(w.dashboardsJson , '["${dashboard}"]')`)
+      if (dashboard === 'home') {
+        this.orWhereNull('w.dashboardsJson')
+      }
     })
     .select(['w.*', 'sw.*'])
     .orderBy(['w.sortOrder'])
@@ -127,7 +134,8 @@ async function summaryDashboard(request) {
   const dataConstraints = await getConstraints(auth.credentials)
 
   const user = await getUser(auth.credentials.name)
-  const widgets = await getDashboardWidget(user, 'stat')
+  const { dashboard } = query
+  const widgets = await getDashboardWidget(user, { layout: 'stat', dashboard })
   const data = await Promise.all(
     widgets.map(async widget => {
       const count = await queryCount(
@@ -165,7 +173,7 @@ async function targetDashboard(request) {
   const dataConstraints = await getConstraints(auth.credentials)
 
   const user = await getUser(auth.credentials.name)
-  const widgets = await getDashboardWidget(user, 'target')
+  const widgets = await getDashboardWidget(user, { layout: 'target' })
 
   let targetDivide = 1
 

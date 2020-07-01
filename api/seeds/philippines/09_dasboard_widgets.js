@@ -22,6 +22,8 @@ async function seed(knex) {
         'sqlForIndicator',
         'link',
         'sortOrder',
+        'description',
+        'descriptionI18nKey',
       ])
       const [widgetId] = await knex('DashboardWidget').insert(widgetData)
       const statWidgetData = _.pick(widget, [
