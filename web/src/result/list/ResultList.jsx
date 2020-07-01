@@ -63,6 +63,10 @@ const messages = defineMessages({
     id: 'pages.ResultList.sampleId',
     defaultMessage: 'Sample ID',
   },
+  assayName: {
+    id: 'pages.ResultList.assayName',
+    defaultMessage: 'Assay',
+  },
   errorCode: {
     id: 'pages.ResultList.errorCode',
     defaultMessage: 'Error Code',
@@ -348,6 +352,11 @@ export const ResultList = ({
                   key: 'sampleId',
                   label: intl.formatMessage(messages.sampleId),
                   sortable: true,
+                },
+                {
+                  key: 'assayName',
+                  label: intl.formatMessage(messages.assayName),
+                  sortable: false,
                 },
                 {
                   key: 'resultText',
