@@ -59,7 +59,12 @@ async function getDashboardWidget({ id, partnerId }, options) {
       'ps.userId': id,
       'jf.partnerId': partnerId,
     })
-    .whereRaw(`JSON_CONTAINS(dashboardsJson , '["${dashboard}"]')`)
+    .where(function () {
+      this.whereRaw(`JSON_CONTAINS(w.dashboardsJson , '["${dashboard}"]')`)
+      if (dashboard === 'home') {
+        this.orWhereNull('w.dashboardsJson')
+      }
+    })
     .select(['w.*', 'sw.*'])
     .orderBy(['w.sortOrder'])
   return widgets

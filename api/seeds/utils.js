@@ -2870,14 +2870,10 @@ async function seedJobFunctionsAndUsersForOperationalData(
 }
 
 async function seedDashboardsJsonInDashboardWidget(knex, widgets) {
-  // fill in default value - this is needed because `.defaultsTo()` can not be applied for JSON field
+  // fill in default value for all records - this is needed because `.defaultsTo()` can not be applied for JSON field
+  // but not critical if field dashboardsJson remains null - we handle setting default value of ['home'] in both API and WEB
   await knex('DashboardWidget').update({
     dashboardsJson: JSON.stringify(['home']),
-  })
-
-  // set this new field as not nullable
-  await knex.schema.alterTable('DashboardWidget', tbl => {
-    tbl.specificType('dashboardsJson', 'JSON').notNullable().alter()
   })
 
   await Promise.all(
