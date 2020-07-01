@@ -1046,9 +1046,9 @@ async function operationalDataActivityOverTime(request) {
 
   // build up array of days in date range. makes querying easier:
   const days = getArrayOfDaysInRange(query.minDate, query.maxDate, {
-    active: 0,
-    inactive: 0,
-    total: 0,
+    devicesActive: 0,
+    devicesInactive: 0,
+    devicesTotal: 0,
   })
 
   // now, get all device IDs that user has access to (much better performance in following queries)
@@ -1080,7 +1080,7 @@ async function operationalDataActivityOverTime(request) {
     .countDistinct('deviceId as deviceCount')
     .modify(qb => {
       if (query.maxDate) {
-        qb.where('endedOn', '<=', query.maxDate)
+        qb.where('endedOn', '<', addDays(query.maxDate, 1))
       }
       if (query.minDate) {
         qb.where('endedOn', '>=', query.minDate)
@@ -1095,9 +1095,9 @@ async function operationalDataActivityOverTime(request) {
         c.endedOnDate.getMonth() === day.date.getMonth() &&
         c.endedOnDate.getFullYear() === day.date.getFullYear()
     )
-    day.total = devices.length
-    day.active = devicesActive ? devicesActive.deviceCount : 0
-    day.inactive = day.total - day.active
+    day.devicesTotal = devices.length
+    day.devicesActive = devicesActive ? devicesActive.deviceCount : 0
+    day.devicesInactive = day.devicesTotal - day.devicesActive
     day.isWeekendOrHoliday = isWeekend(day.date)
   })
 
