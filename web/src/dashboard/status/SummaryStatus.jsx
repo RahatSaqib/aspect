@@ -122,7 +122,7 @@ export const SummaryStatus = ({
       return (
         <Unit key={widget.id} sm="1-2" lg="1-4">
           <Link
-            to={widget.link || ''}
+            to={widget.link || '#'}
             className={cssClasses('Summary', {
               'Summary_Link--disabled': !widget.link,
             })}

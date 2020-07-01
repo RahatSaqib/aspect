@@ -30,7 +30,7 @@
 }
 
 .Summary_Link--disabled {
-  pointer-events: none;
+  cursor: default;
 }
 
 .Summary__Card {
