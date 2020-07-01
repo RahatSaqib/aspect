@@ -27,6 +27,12 @@ const routes = [
       validate: {
         query: {
           siteId: Joi.number().allow('').description('Filter for site ID'),
+          dashboard: Joi.string()
+            .allow('', null)
+            .valid('home', 'operational')
+            .description(
+              'Dashboard token where requested data to be displayed'
+            ),
         },
       },
     },

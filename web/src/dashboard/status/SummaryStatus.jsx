@@ -56,12 +56,12 @@ const enhance = compose(
     })
   ),
   withHandlers({
-    onInitialLoad: ({ location, fetchStatDashboard }) => () => {
+    onInitialLoad: ({ location, fetchStatDashboard, dashboard }) => () => {
       const searchParams = new URLSearchParams(location.search)
       const filtersParams = new URLSearchParams(
         searchParams.get('filters') || ''
       )
-      fetchStatDashboard(filtersParams)
+      fetchStatDashboard(filtersParams, { dashboard })
     },
   }),
   lifecycle({
@@ -124,6 +124,7 @@ export const SummaryStatus = ({
           className={cssClasses('Summary', {
             'Summary_Link--disabled': !widget.link,
           })}
+          testId="SummaryStatus--Summary_Link"
         >
           <Card className={cssClasses('Summary__Card')}>
             <div className={cssClasses('Summary__Card__Title')}>
