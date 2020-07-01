@@ -524,7 +524,10 @@ export default function dashboardReducer(state = initialState, action) {
         onRequested(action, mutState, () => {
           const immutList = Immutable.fromJS(
             action.data.map(item => {
-              item.dashboardsJson = JSON.parse(item.dashboardsJson || '[]')
+              item.dashboardsJson = JSON.parse(
+                // defaults to '["home"]' if field is null
+                item.dashboardsJson || '["home"]'
+              )
               return item
             })
           )
