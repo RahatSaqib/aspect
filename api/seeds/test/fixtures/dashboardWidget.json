@@ -10,7 +10,9 @@
         "select count(s.id) as cnt from Site as s left outer join Geography as g on s.geographyId = g.id left outer join State as st on g.stateId = st.id left outer join Lga as l on g.lgaId = l.id",
       "link": "/browse/site",
       "sortOrder": 0,
-      "externalId": "sitesTitle"
+      "externalId": "sitesTitle",
+      "description": "The number of sites",
+      "descriptionI18nKey": "sitesDescription"
     },
     {
       "icon": "computer",
@@ -23,6 +25,8 @@
       "link": "/browse/device",
       "sortOrder": 1,
       "externalId": "devicesTitle",
+      "description": "The number of devices which type's category allows results",
+      "descriptionI18nKey": "devicesDescription",
       "dashboards": ["home", "operational"]
     },
     {
@@ -35,7 +39,9 @@
         "select ifnull(sum(f.resultCount), 0) as cnt from FactResultsDevice as f inner join Device as d on d.id = f.deviceId inner join Site as s on s.id = d.siteId inner join Partner as p on p.id = s.partnerId left outer join Geography as g on s.geographyId = g.id where f.days = 30",
       "link": "/browse/result",
       "sortOrder": 2,
-      "externalId": "resultsTitle"
+      "externalId": "resultsTitle",
+      "description": "The number of results for the last 30 days",
+      "descriptionI18nKey": "resultsDescription"
     },
     {
       "icon": "perm-identity",
@@ -46,7 +52,9 @@
       "sqlForIndicator": "select count(u.id) as cnt from User as u",
       "link": "/browse/person",
       "sortOrder": 3,
-      "externalId": "personTitle"
+      "externalId": "personTitle",
+      "description": "The number of users",
+      "descriptionI18nKey": "personDescription"
     }   
   ]
 }

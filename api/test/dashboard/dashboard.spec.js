@@ -35,6 +35,8 @@ function assertWidgetItemProps(item) {
   assert.property(item, 'link')
   assert.property(item, 'count')
   assert.property(item, 'externalId')
+  assert.property(item, 'description')
+  assert.property(item, 'descriptionI18nKey')
 }
 
 describe('Dashboard routes', () => {
