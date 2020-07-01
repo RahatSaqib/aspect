@@ -1,15 +1,11 @@
 module.exports = require('../utils').seed(seed, __filename)
-const Promise = require('bluebird')
 const dashboardWidget = require('./fixtures/dashboardWidget.json')
+const { upsertDashboardWidgets } = require('../common')
 
 async function seed(knex) {
-  const updateDashboardWidgets = dashboardWidget.stat.map(
-    ({ externalId, description, descriptionI18nKey }) =>
-      knex('DashboardWidget').where({ externalId }).update({
-        description,
-        descriptionI18nKey,
-      })
-  )
+  const { id: partnerId } = await knex('Partner')
+    .where({ name: 'Philippines' })
+    .first()
 
-  await Promise.all(updateDashboardWidgets)
+  await upsertDashboardWidgets(knex, partnerId, dashboardWidget)
 }
