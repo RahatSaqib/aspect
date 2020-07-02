@@ -2878,7 +2878,7 @@ async function seedJobFunctionsAndUsersForOperationalData(
 async function mapJobFunctionPermissions(
   knex,
   currentPermission,
-  newAddedPermission
+  additionalPermissions
 ) {
   const jobFunctionsIds = await knex('JobFunctionPermission')
     .whereIn('permissionId', currentPermission)
@@ -2888,16 +2888,15 @@ async function mapJobFunctionPermissions(
     const { jobFunctionId } = jobFunctionsIds[index]
     insertJobs = [
       ...insertJobs,
-      ...newAddedPermission.map(permissionId =>
+      ...additionalPermissions.map(permissionId =>
         knex('JobFunctionPermission')
-          .where({ jobFunctionId, permissionId })
-          .then(rows => {
-            if (rows.length === 0)
-              return knex('JobFunctionPermission').insert({
-                permissionId,
-                jobFunctionId,
-              })
-          })
+          .whereNot({ jobFunctionId, permissionId })
+          .then(() =>
+            knex('JobFunctionPermission').insert({
+              permissionId,
+              jobFunctionId,
+            })
+          )
       ),
     ]
   }
