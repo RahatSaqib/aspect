@@ -23,7 +23,7 @@ const routes = [
     config: {
       description: 'Summary Dashboard',
       notes: 'The top level summary dashboard',
-      auth: { scope: ['site', 'device', 'dashboard'] },
+      auth: { scope: ['site', 'device', 'dashboard', 'operationalData'] },
       validate: {
         query: {
           siteId: Joi.number().allow('').description('Filter for site ID'),
