@@ -2877,11 +2877,11 @@ async function seedJobFunctionsAndUsersForOperationalData(
  */
 async function mapJobFunctionPermissions(
   knex,
-  currentPermission,
+  currentPermissions,
   additionalPermissions
 ) {
   const jobFunctionsIds = await knex('JobFunctionPermission')
-    .whereIn('permissionId', currentPermission)
+    .whereIn('permissionId', currentPermissions)
     .distinct('jobFunctionId')
   let insertJobs = []
   for (let index = 0; index < jobFunctionsIds.length; index++) {
