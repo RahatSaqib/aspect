@@ -52,7 +52,7 @@ const widgetMessageTypeList = [
 
 const enhance = compose(
   requirePermissions({
-    permissions: ['dashboard:summary'],
+    permissions: ['dashboard:summary', 'operationalData:view'],
   }),
   connect(
     state => ({

@@ -465,7 +465,7 @@ export default function dashboardReducer(state = initialState, action) {
           (dashboardIdList || Immutable.List())
             .map(id => state.allSummaryItems.byId.get(id))
             .filter(widget =>
-              widget.get('dashboardsJson').includes(action.dashboard)
+              widget.get('dashboards').includes(action.dashboard)
             )
         )
       })
@@ -474,9 +474,9 @@ export default function dashboardReducer(state = initialState, action) {
         onRequested(action, mutState, () => {
           const immutList = Immutable.fromJS(
             action.data.map(item => {
-              item.dashboardsJson = JSON.parse(
+              item.dashboards = JSON.parse(
                 // defaults to '["home"]' if field is null
-                item.dashboardsJson || '["home"]'
+                item.dashboards || '["home"]'
               )
               return item
             })
