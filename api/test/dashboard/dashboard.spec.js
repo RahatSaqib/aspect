@@ -2,6 +2,7 @@ const supertest = require('supertest')
 const chai = require('chai')
 const _ = require('lodash')
 const Promise = require('bluebird')
+const subDays = require('date-fns/subDays')
 
 const { getUser } = require('../../src/auth/service')
 const { getConstraints, addConstraints } = require('../../src/auth/constraints')
@@ -543,6 +544,36 @@ describe('Dashboard routes', () => {
                 })
             )
           ))
+      })
+    })
+
+    describe('/dashboard/operational-data', () => {
+      const operationalDashboardPath = '/api/dashboard/operational-data'
+
+      describe('activity-over-time', () => {
+        const now = new Date()
+        const path = `${operationalDashboardPath}/activity-over-time?minDate=${subDays(
+          now,
+          30
+        ).toISOString()}&maxDate=${now.toISOString()}`
+        it('should return a list of stat dashboard widget objects', done => {
+          server
+            .get(path)
+            .set('Authorization', `Bearer ${shared.token}`)
+            .end((err, res) => {
+              assert.equal(res.status, 200)
+              assert.typeOf(res.body, 'Object')
+              assert.property(res.body, 'data')
+              assert.typeOf(res.body.data, 'array')
+              assert.isAtLeast(res.body.data.length, 30)
+              assert.property(res.body.data[0], 'date')
+              assert.property(res.body.data[0], 'devicesActive')
+              assert.property(res.body.data[0], 'devicesInactive')
+              assert.property(res.body.data[0], 'devicesTotal')
+              assert.property(res.body.data[0], 'isWeekendOrHoliday')
+              done()
+            })
+        })
       })
     })
   })

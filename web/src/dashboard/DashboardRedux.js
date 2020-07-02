@@ -306,56 +306,6 @@ export function fetchSiteDashboard() {
   }
 }
 
-function requestOperationalStatus(requestedAt) {
-  return {
-    type: REQUEST_OPERATIONAL_STATUS,
-    requestedAt,
-  }
-}
-
-function receiveOperationalStatus(requestedAt, data) {
-  return {
-    type: RECEIVE_OPERATIONAL_STATUS,
-    requestedAt,
-    data,
-  }
-}
-
-export function fetchOperationalStatus(filtersParams) {
-  return dispatch => {
-    const filters = fromPairs([...filtersParams.entries()])
-    const requestedAt = `operational_${Date.now()}`
-    dispatch(requestOperationalStatus(requestedAt))
-
-    return aspectFetch(
-      `/dashboard/operational?${stringify({
-        ...filters,
-      })}`,
-      {
-        errorNotifications: {
-          403: errorInsufficientScope(
-            defineMessages({
-              title: {
-                id: 'errorResponseMessages.fetchPersons.GET.403.title',
-                defaultMessage: 'Insufficient Permissions',
-              },
-            })
-          ),
-          default: errorPleaseTryAgainInAFewMinutes(
-            defineMessages({
-              title: {
-                id:
-                  'errorResponseMessages.receiveOperationalStatus.GET.default.title',
-                defaultMessage: 'Error Loading Operational Data',
-              },
-            })
-          ),
-        },
-      }
-    ).then(json => dispatch(receiveOperationalStatus(requestedAt, json.data)))
-  }
-}
-
 function requestActionDashboard(requestedAt) {
   return {
     type: REQUEST_ACTION_STATUS,
@@ -515,7 +465,7 @@ export default function dashboardReducer(state = initialState, action) {
           (dashboardIdList || Immutable.List())
             .map(id => state.allSummaryItems.byId.get(id))
             .filter(widget =>
-              widget.get('dashboardsJson').includes(action.dashboard)
+              widget.get('dashboards').includes(action.dashboard)
             )
         )
       })
@@ -524,9 +474,9 @@ export default function dashboardReducer(state = initialState, action) {
         onRequested(action, mutState, () => {
           const immutList = Immutable.fromJS(
             action.data.map(item => {
-              item.dashboardsJson = JSON.parse(
+              item.dashboards = JSON.parse(
                 // defaults to '["home"]' if field is null
-                item.dashboardsJson || '["home"]'
+                item.dashboards || '["home"]'
               )
               return item
             })
