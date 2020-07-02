@@ -163,6 +163,7 @@ async function exportResults(request, reply) {
     { key: 'errorCode', header: 'Error Code' },
     { key: 'errorNotes', header: 'Error notes' },
     { key: 'notes', header: 'Notes' },
+    { key: 'assayName', header: 'Assay' },
     // dynamic columns from different schema json fields
     ...columnsFromAssaySchema,
     ...columnsFromResultForms,

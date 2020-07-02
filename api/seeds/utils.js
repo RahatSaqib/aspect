@@ -2905,6 +2905,28 @@ async function mapJobFunctionPermissions(
   if (insertJobs.length > 0) await Promise.all(insertJobs)
 }
 
+async function seedDashboardsJsonInDashboardWidget(knex, widgets) {
+  // fill in default value for all records - this is needed because `.defaultsTo()` can not be applied for JSON field
+  // but not critical if field dashboardsJson remains null - we handle setting default value of ['home'] in both API and WEB
+  await knex('DashboardWidget')
+    .whereNull('dashboardsJson')
+    .update({
+      dashboardsJson: JSON.stringify(['home']),
+    })
+
+  await Promise.all(
+    _.map(
+      widgets.filter(({ dashboards }) => _.isArray(dashboards)),
+      ({ dashboards, externalId }) =>
+        knex('DashboardWidget')
+          .where({ externalId })
+          .update({
+            dashboardsJson: JSON.stringify(dashboards),
+          })
+    )
+  )
+}
+
 module.exports = {
   addReports,
 
@@ -2970,6 +2992,6 @@ module.exports = {
   getResultForms,
 
   seedJobFunctionsAndUsersForOperationalData,
-
   mapJobFunctionPermissions,
+  seedDashboardsJsonInDashboardWidget,
 }
