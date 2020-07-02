@@ -1,0 +1,86 @@
+[
+  {
+    "title": "Gender",
+    "type": "int",
+    "order": 60,
+    "dbColumn": "PatientGender",
+    "testType": null
+  },
+  {
+    "title": "HIV Status",
+    "type": "int",
+    "order": 100,
+    "dbColumn": "HivStatus",
+    "testType": null
+  },
+  {
+    "title": "Referring Facility",
+    "type": "string",
+    "order": 10,
+    "dbColumn": "HealthFacility",
+    "testType": null
+  },
+  {
+    "title": "Patient Name",
+    "type": "string",
+    "order": 30,
+    "dbColumn": "PatientName",
+    "testType": null
+  },
+  {
+    "title": "Patient ID",
+    "type": "string",
+    "order": 40,
+    "dbColumn": "PatientId",
+    "testType": null
+  },
+  {
+    "title": "Patient Phone",
+    "type": "string",
+    "order": 70,
+    "dbColumn": "PatientPhone",
+    "testType": null
+  },
+  {
+    "title": "Patient Address",
+    "type": "string",
+    "order": 80,
+    "dbColumn": "PatientStreet",
+    "testType": null
+  },
+  {
+    "title": "Repeat Test",
+    "type": "int",
+    "order": 110,
+    "dbColumn": "RepeatTest",
+    "testType": null
+  },
+  {
+    "title": "Date Specimen Collected",
+    "type": "string",
+    "order": 20,
+    "dbColumn": null,
+    "testType": null
+  },
+  {
+    "title": "DOB",
+    "type": "string",
+    "order": 50,
+    "dbColumn": null,
+    "testType": null
+  },
+  {
+    "title": "TB Risk Group",
+    "type": "int",
+    "order": 90,
+    "dbColumn": null,
+    "testType": null
+  },
+  {
+    "title": "Type of Specimen",
+    "type": "string",
+    "order": 105,
+    "dbColumn": null,
+    "testType": null
+  }
+]
