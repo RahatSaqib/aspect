@@ -154,10 +154,121 @@ const groupForPieOldTreatmentAPI = (data, keyToConsume, indexBy, filterBy) => {
   return [...groupedConfirmed, ...groupedNotConfirmed]
 }
 
+const groupForDeviceStatusAPI = data => {
+  return [
+    {
+      date: '2020-05-31T21:00:00.000Z',
+      devicesActive: 3,
+      devicesInactive: 0,
+      devicesTotal: 0,
+      isWeekendOrHoliday: false,
+    },
+    {
+      date: '2020-06-01T21:00:00.000Z',
+      devicesActive: 6,
+      devicesInactive: 0,
+      devicesTotal: 0,
+      isWeekendOrHoliday: false,
+    },
+    {
+      date: '2020-06-02T21:00:00.000Z',
+      devicesActive: 0,
+      devicesInactive: 0,
+      devicesTotal: 0,
+      isWeekendOrHoliday: false,
+    },
+    {
+      date: '2020-06-03T21:00:00.000Z',
+      devicesActive: 2,
+      devicesInactive: 0,
+      devicesTotal: 0,
+      isWeekendOrHoliday: false,
+    },
+    {
+      date: '2020-06-04T21:00:00.000Z',
+      devicesActive: 6,
+      devicesInactive: 0,
+      devicesTotal: 0,
+      isWeekendOrHoliday: false,
+    },
+    {
+      date: '2020-06-05T21:00:00.000Z',
+      devicesActive: 9,
+      devicesInactive: 0,
+      devicesTotal: 0,
+      isWeekendOrHoliday: true,
+    },
+    {
+      date: '2020-06-06T21:00:00.000Z',
+      devicesActive: 8,
+      devicesInactive: 0,
+      devicesTotal: 0,
+      isWeekendOrHoliday: true,
+    },
+    {
+      date: '2020-06-07T21:00:00.000Z',
+      devicesActive: 7,
+      devicesInactive: 0,
+      devicesTotal: 0,
+      isWeekendOrHoliday: false,
+    },
+    {
+      date: '2020-06-08T21:00:00.000Z',
+      devicesActive: 6,
+      devicesInactive: 0,
+      devicesTotal: 0,
+      isWeekendOrHoliday: false,
+    },
+    {
+      date: '2020-06-09T21:00:00.000Z',
+      devicesActive: 0,
+      devicesInactive: 0,
+      devicesTotal: 0,
+      isWeekendOrHoliday: false,
+    },
+    {
+      date: '2020-06-10T21:00:00.000Z',
+      devicesActive: 8,
+      devicesInactive: 0,
+      devicesTotal: 0,
+      isWeekendOrHoliday: false,
+    },
+    {
+      date: '2020-06-11T21:00:00.000Z',
+      devicesActive: 0,
+      devicesInactive: 0,
+      devicesTotal: 0,
+      isWeekendOrHoliday: false,
+    },
+    {
+      date: '2020-06-12T21:00:00.000Z',
+      devicesActive: 0,
+      devicesInactive: 0,
+      devicesTotal: 0,
+      isWeekendOrHoliday: true,
+    },
+    {
+      date: '2020-06-13T21:00:00.000Z',
+      devicesActive: 0,
+      devicesInactive: 0,
+      devicesTotal: 0,
+      isWeekendOrHoliday: true,
+    },
+    {
+      date: '2020-06-14T21:00:00.000Z',
+      devicesActive: 2,
+      devicesInactive: 0,
+      devicesTotal: 0,
+      isWeekendOrHoliday: false,
+    },
+  ]
+}
+
 export {
   groupByKey,
   groupForPie,
   groupForDivergent,
   groupForOldTreatmentAPI,
   groupForPieOldTreatmentAPI,
+  groupForDeviceStatusAPI,
 }

@@ -29,6 +29,7 @@ import {
   groupForDivergent,
   groupForOldTreatmentAPI,
   groupForPieOldTreatmentAPI,
+  groupForDeviceStatusAPI,
 } from './grouping'
 
 import validateGraphConfig from './validate'
@@ -242,6 +243,16 @@ const formatDataByGraphType = (
 
     case 'barLegacyTreatment':
       grouped = groupForOldTreatmentAPI(
+        data,
+        keyToConsume,
+        indexBy,
+        formatDate,
+        filterBy
+      )
+      break
+
+    case 'stackedDeviceTreatment':
+      grouped = groupForDeviceStatusAPI(
         data,
         keyToConsume,
         indexBy,
