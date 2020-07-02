@@ -176,7 +176,7 @@ const isLoggedInAndOnLogin = ({ isLoggedOut }, { location }) => {
   return !isLoggedOut && pathsToCheck.includes(pathname)
 }
 
-const renderCaseDetails = loggedInDetailFactory(CaseDetails)
+const renderCaseDetails = loggedInFactory(CaseDetails)
 export const routerFactory = () => props => (
   <Router history={history}>
     <Switch>
