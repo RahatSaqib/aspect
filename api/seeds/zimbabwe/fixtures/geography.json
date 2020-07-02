@@ -1,59 +1,216 @@
 {
-  "countries": [
-    {
-      "abbreviation": "ZW",
-      "name": "Zimbabwe",
-      "a3": "ZWE",
-      "culture": "en",
-      "countryCode": "263",
-      "timezone": "South Africa Standard Time",
-      "portNumber": 3029,
-      "exportColumns": "DeploymentDescription|TestEndedOn|AssayName|AssayVersion|User|Result1|Result2|ResultText|PatientId|ReagentLotID|ExpirationDate|CartridgeSerial|ModuleSerial|SoftwareVersion|ErrorCode|ErrorCategory|ErrorDescription|SampleId|Notes|ProbeDCt|ProbeCCt|ProbeECt|ProbeBCt|Qc1Ct|Qc2Ct",
-      "inventoryDaysThreshold": 21,
-      "monthStartsOnDay": 1,
-      "states": [
-        {
-          "name": "Bulawayo"
-        },
-        {
-          "name": "Harare",
-          "lgas": [
-            {
-              "name": "Chitungwiza"
-            },
-            {
-              "name": "Epworth"
-            },
-            {
-              "name": "Harare"
-            }
-          ]
-        },
-        {
-          "name": "Manicaland"
-        },
-        {
-          "name": "Mashonaland Central"
-        },
-        {
-          "name": "Mashonaland East"
-        },
-        {
-          "name": "Mashonaland West"
-        },
-        {
+  "countries": [{
+    "abbreviation": "ZW",
+    "name": "Zimbabwe",
+    "a3": "ZWE",
+    "culture": "en-US",
+    "countryCode": "263",
+    "timezone": "South Africa Standard Time",
+    "portNumber": 3029,
+    "exportColumns": "DeploymentDescription|TestEndedOn|AssayName|AssayVersion|User|Result1|Result2|ReagentLotID|ExpirationDate|CartridgeSerial|ModuleSerial|SoftwareVersion|ErrorCode|ErrorCategory|ErrorDescription|SampleId|Notes",
+    "inventoryDaysThreshold": 21,
+    "monthStartsOnDay": 1,
+    "states": [{
+      "name": "Bulawayo",
+      "abbreviation": "BYO",
+      "lgas": [{
+        "name": "Nkulumane"
+      }, {
+        "name": "Emakhandeni"
+      }, {
+        "name": "Northern Suburbs"
+      }]
+    },
+      {
+        "name": "Harare",
+        "abbreviation": "HRE",
+        "lgas": [{
+          "name": "Eastern"
+        }, {
+          "name": "Southern"
+        }, {
+          "name": "Northern"
+        }, {
+          "name": "South West"
+        }, {
+          "name": "West South West"
+        }, {
+          "name": "Central"
+        }, {
+          "name": "North-West"
+        }]
+      },
+      {
+        "name": "Manicaland",
+        "abbreviation": "MNL",
+        "lgas": [{
+          "name": "Buhera"
+        }, {
+          "name": "Chipinge"
+        }, {
+          "name": "Chimanimani"
+        }, {
+          "name": "Mutasa"
+        }, {
+          "name": "Makoni"
+        }, {
+          "name": "Mutare"
+        }, {
+          "name": "Nyanga"
+        }]
+      },
+      {
+        "name": "Mashonaland Central",
+        "abbreviation": "MSC",
+        "lgas": [{
+          "name": "Guruve"
+        }, {
+          "name": "Mbire"
+        }, {
+          "name": "Mazowe"
+        }, {
+          "name": "Bindura"
+        }, {
+          "name": "Mt Darwin"
+        }, {
+          "name": "Rushinga"
+        }, {
+          "name": "Centenary"
+        }, {
+          "name": "Shamva"
+        }]
+      },
+      {
+        "name": "Mashonaland East",
+        "abbreviation": "MSE",
+        "lgas": [{
+          "name": "Murewa"
+        }, {
+          "name": "Marondera"
+        }, {
+          "name": "Mudzi"
+        }, {
+          "name": "Uzumba-Maramba-Pfungwe"
+        }, {
+          "name": "Goromonzi"
+        }, {
+          "name": "Chikomba"
+        }, {
+          "name": "Seke"
+        }, {
+          "name": "Mutoko"
+        }, {
+          "name": "Hwedza"
+        }]
+      },
+      {
+        "name": "Mashonaland West",
+        "abbreviation": "MSW",
+        "lgas": [{
+          "name": "Zvimba"
+        }, {
+          "name": "Sanyati"
+        }, {
+          "name": "Mhondoro-Ngezi"
+        }, {
+          "name": "Chegutu"
+        }, {
+          "name": "Makonde"
+        }, {
+          "name": "Hurungwe"
+        }, {
+          "name": "Kariba"
+        }]
+      },
+      {
+        "name": "Masvingo",
+        "abbreviation": "MVG",
+        "lgas": [{
+          "name": "Gutu"
+        }, {
+          "name": "Bikita"
+        }, {
+          "name": "Chivi"
+        }, {
+          "name": "Zaka"
+        }, {
           "name": "Masvingo"
-        },
-        {
-          "name": "Matabeleland North"
-        },
-        {
-          "name": "Matabeleland South"
-        },
-        {
-          "name": "Midlands"
-        }
-      ]
-    }
-  ]
+        }, {
+          "name": "Mwenezi"
+        }, {
+          "name": "Chiredzi"
+        }]
+      },
+      {
+        "name": "Matabeleland North",
+        "abbreviation": "MBN",
+        "lgas": [{
+          "name": "Tsholotsho"
+        }, {
+          "name": "Hwange"
+        }, {
+          "name": "Binga"
+        }, {
+          "name": "Lupane"
+        }, {
+          "name": "Umguza"
+        }, {
+          "name": "Nkayi"
+        }, {
+          "name": "Bubi"
+        }]
+      },
+      {
+        "name": "Matabeleland South",
+        "abbreviation": "MBS",
+        "lgas": [{
+          "name": "Umzingwane"
+        }, {
+          "name": "Matobo"
+        }, {
+          "name": "Beitbridge"
+        }, {
+          "name": "Mangwe"
+        }, {
+          "name": "Bulilima"
+        }, {
+          "name": "Insiza"
+        }, {
+          "name": "Gwanda"
+        }]
+      },
+      {
+        "name": "Midlands",
+        "abbreviation": "MID",
+        "lgas": [{
+          "name": "Gweru"
+        }, {
+          "name": "Gokwe North"
+        }, {
+          "name": "Gokwe South"
+        }, {
+          "name": "Kwekwe"
+        }, {
+          "name": "Zvishavane"
+        }, {
+          "name": "Shurugwi"
+        }, {
+          "name": "Mberengwa"
+        }, {
+          "name": "Chirumhanzu"
+        }]
+      },
+      {
+        "name": "Chitungwiza",
+        "abbreviation": "CZA",
+        "lgas": [{
+          "name": "Zengeza"
+        }, {
+          "name": "Seke"
+        }, {
+          "name": "St Mary's"
+        }]
+      }
+    ]
+  }]
 }
