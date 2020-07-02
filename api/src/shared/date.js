@@ -1,5 +1,13 @@
 const _ = require('lodash')
-const dateFns = require('date-fns')
+const {
+  addDays,
+  format,
+  parse,
+  parseISO,
+  isValid,
+  toDate,
+  isEqual,
+} = require('date-fns')
 
 function getDateOrDefault(object, propertyPath, defaultValue) {
   const date = _.get(object, propertyPath)
@@ -18,15 +26,15 @@ function parseDateOrDefault(
   if (date instanceof Date) {
     parsedDate = date
   } else if (options && options.formatString) {
-    parsedDate = dateFns.parse(
+    parsedDate = parse(
       date,
       options.formatString,
       options.backupDate || getUtcTime()
     )
   } else {
-    parsedDate = dateFns.toDate(dateFns.parseISO(date))
+    parsedDate = toDate(parseISO(date))
   }
-  return dateFns.isValid(parsedDate) ? parsedDate : defaultValue
+  return isValid(parsedDate) ? parsedDate : defaultValue
 }
 
 function formatDateOrDefault(date, dateFormat, defaultValue = null) {
@@ -36,10 +44,10 @@ function formatDateOrDefault(date, dateFormat, defaultValue = null) {
   }
 
   if (dateFormat != null) {
-    return dateFns.format(date, dateFormat)
+    return format(date, dateFormat)
   }
 
-  return dateFns.format(date, 'yyyy-MM-dd')
+  return format(date, 'yyyy-MM-dd')
 }
 
 function returnIso8601StringWithoutTimeZoneOffset(date) {
@@ -64,9 +72,31 @@ function dateEqual(date1, date2) {
   if ((!date1 && date2) || (date1 && !date2)) {
     return false
   }
-  const typeSafeDate1 = date1 instanceof Date ? date1 : dateFns.parseISO(date1)
-  const typeSafeDate2 = date2 instanceof Date ? date2 : dateFns.parseISO(date2)
-  return dateFns.isEqual(typeSafeDate1, typeSafeDate2)
+  const typeSafeDate1 = date1 instanceof Date ? date1 : parseISO(date1)
+  const typeSafeDate2 = date2 instanceof Date ? date2 : parseISO(date2)
+  return isEqual(typeSafeDate1, typeSafeDate2)
+}
+
+// Returns an array of dates formatted as "yyyy-MM-dd" in the given range
+// If initialProperties is passed in, returns an array of objects with "date" containing
+// the day's date and initial properties set to the passed in object
+function getArrayOfDaysInRange(minDate, maxDate, initialProperties = null) {
+  const dates = []
+  let typeSafeMinDate = getUtcTime(
+    minDate instanceof Date ? minDate : parseISO(minDate)
+  )
+  const typeSafeMaxDate = getUtcTime(
+    maxDate instanceof Date ? maxDate : parseISO(maxDate)
+  )
+  while (typeSafeMinDate <= typeSafeMaxDate) {
+    dates.push(
+      initialProperties
+        ? { date: typeSafeMinDate, ...initialProperties }
+        : typeSafeMinDate
+    )
+    typeSafeMinDate = addDays(typeSafeMinDate, 1)
+  }
+  return dates
 }
 
 module.exports = {
@@ -76,4 +106,5 @@ module.exports = {
   returnIso8601StringWithoutTimeZoneOffset,
   getUtcTime,
   dateEqual,
+  getArrayOfDaysInRange,
 }

@@ -58,6 +58,7 @@ const Status = ({ history, location, colorDemo }) => {
         history={history}
         location={location}
         className={cssClasses('Section--summary')}
+        dashboard="home"
       />
 
       <GraphsContainer

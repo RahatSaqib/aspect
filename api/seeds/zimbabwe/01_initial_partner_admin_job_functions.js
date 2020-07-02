@@ -46,7 +46,7 @@ async function seed(knex) {
     deviceLogHistoryDays: 365,
     maxDaysDeviceOffline: 7,
     maxDaysDeviceNoResults: 14,
-    serverUrl: 'https://zimbabwe.aspect.id',
+    serverUrl: 'https://zimbabwe.aspect.id:2843',
   })
 
   const countries = {}

@@ -33,6 +33,7 @@ const ResultTableRow = ({ intl, extraColumns, result, ...restProps }) => (
     <TableCell>{result.get('deviceName')}</TableCell>
     <TableCell hiddenOn="sm">{result.get('sampleOriginSiteName')}</TableCell>
     <TableCell>{result.get('sampleId')}</TableCell>
+    <TableCell>{result.get('assayName')}</TableCell>
     <TableCell>{result.get('resultText')}</TableCell>
     <TableCell hiddenOn="md">{result.get('errorCode')}</TableCell>
     <TableCell hiddenOn="sm">{result.get('resultWorkflowStatus')}</TableCell>

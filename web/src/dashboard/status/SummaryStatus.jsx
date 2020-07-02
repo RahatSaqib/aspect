@@ -11,8 +11,17 @@ import Icon from '../../components/shared/icon/Icon'
 import { fetchStatDashboard } from '../DashboardRedux'
 import requirePermissions from '../../components/shared/requirePermissions'
 import messages from './messages'
+import AspectTooltip from '../../components/shared/AspectTooltip'
 
 const cssClasses = classnames.bind(require('./Status.css'))
+
+/**
+ * TODO: https://ops.systemone.id/browse/ASP-1521
+ * Correct filters to page navigation
+ *
+ * TODO: https://ops.systemone.id/browse/ASP-1522
+ * Refactor lifecycles and code-reuse
+ */
 
 const widgetMessageTypeList = [
   {
@@ -43,7 +52,7 @@ const widgetMessageTypeList = [
 
 const enhance = compose(
   requirePermissions({
-    permissions: ['dashboard:summary'],
+    permissions: ['dashboard:summary', 'operationalData:view'],
   }),
   connect(
     state => ({
@@ -54,12 +63,12 @@ const enhance = compose(
     })
   ),
   withHandlers({
-    onInitialLoad: ({ location, fetchStatDashboard }) => () => {
+    onInitialLoad: ({ location, fetchStatDashboard, dashboard }) => () => {
       const searchParams = new URLSearchParams(location.search)
       const filtersParams = new URLSearchParams(
         searchParams.get('filters') || ''
       )
-      fetchStatDashboard(filtersParams)
+      fetchStatDashboard(filtersParams, { dashboard })
     },
   }),
   lifecycle({
@@ -115,70 +124,102 @@ export const SummaryStatus = ({
   defaultMessages,
 }) => (
   <div className={className}>
-    {_.map(summary.toJS(), widget => (
-      <Unit key={widget.id} sm="1-2" lg="1-4">
-        <Link
-          to={widget.link || ''}
-          className={cssClasses('Summary', {
-            'Summary_Link--disabled': !widget.link,
-          })}
-        >
-          <Card className={cssClasses('Summary__Card')}>
-            <div className={cssClasses('Summary__Card__Title')}>
-              <Icon
-                className={cssClasses('Summary__Card__Title__Icon')}
-                // eslint-disable-next-line import/no-dynamic-require
-                type={require(`../../components/shared/icon/assets/${widget.icon}.svg`)}
-              />
-              <span className={cssClasses('Summary__Card__Title--main')}>
-                {formatMessage('title', widget, intl, defaultMessages)}
-              </span>
-              <span className={cssClasses('Summary__Card__Title--sub')}>
-                {formatMessage('subTitle', widget, intl, defaultMessages)}
-              </span>
-            </div>
-            <div className={cssClasses('Summary__Card__Content')}>
-              <div className={cssClasses('Summary__Card__Item')}>
-                <div className={cssClasses('Summary__Card__Item__Count')}>
-                  {widget.count}
-                </div>
-                <div className={cssClasses('Summary__Card__Item__Messages')}>
-                  <div
-                    className={cssClasses(
-                      'Summary__Card__Item__Messages--main'
-                    )}
-                  >
-                    {formatMessage('statUnit', widget, intl, defaultMessages)}
+    {_.map(summary.toJS(), widget => {
+      const description = formatMessage(
+        'description',
+        widget,
+        intl,
+        defaultMessages
+      )
+      return (
+        <Unit key={widget.id} sm="1-2" lg="1-4">
+          <Link
+            to={widget.link || '#'}
+            className={cssClasses('Summary', {
+              'Summary_Link--disabled': !widget.link,
+            })}
+            testId="SummaryStatus--Summary_Link"
+          >
+            <Card className={cssClasses('Summary__Card')}>
+              <div className={cssClasses('Summary__Card__Title')}>
+                <Icon
+                  className={cssClasses('Summary__Card__Title__Icon')}
+                  // eslint-disable-next-line import/no-dynamic-require
+                  type={require(`../../components/shared/icon/assets/${widget.icon}.svg`)}
+                />
+                <span className={cssClasses('Summary__Card__Title--main')}>
+                  {formatMessage('title', widget, intl, defaultMessages)}
+
+                  <span className={cssClasses('Summary__Card__Title--sub')}>
+                    {formatMessage('subTitle', widget, intl, defaultMessages)}
+                  </span>
+                </span>
+                {description ? (
+                  <AspectTooltip showHelpIcon title={description} />
+                ) : null}
+              </div>
+              <div className={cssClasses('Summary__Card__Content')}>
+                <div className={cssClasses('Summary__Card__Item')}>
+                  <div className={cssClasses('Summary__Card__Item__Count')}>
+                    {widget.count}
                   </div>
-                  <div
-                    className={cssClasses('Summary__Card__Item__Messages--sub')}
-                  >
-                    {formatMessage('statStatus', widget, intl, defaultMessages)}
+                  <div className={cssClasses('Summary__Card__Item__Messages')}>
+                    <div
+                      className={cssClasses(
+                        'Summary__Card__Item__Messages--main'
+                      )}
+                    >
+                      {formatMessage('statUnit', widget, intl, defaultMessages)}
+                    </div>
+                    <div
+                      className={cssClasses(
+                        'Summary__Card__Item__Messages--sub'
+                      )}
+                    >
+                      {formatMessage(
+                        'statStatus',
+                        widget,
+                        intl,
+                        defaultMessages
+                      )}
+                    </div>
+                  </div>
+                </div>
+                <div className={cssClasses('Summary__Card__Item--right')}>
+                  <div className={cssClasses('Summary__Card__Item__Messages')}>
+                    <div
+                      className={cssClasses(
+                        'Summary__Card__Item__Messages--main'
+                      )}
+                    >
+                      {widget.extra}
+                      {formatMessage(
+                        'extraUnit',
+                        widget,
+                        intl,
+                        defaultMessages
+                      )}
+                    </div>
+                    <div
+                      className={cssClasses(
+                        'Summary__Card__Item__Messages--sub'
+                      )}
+                    >
+                      {formatMessage(
+                        'extraLabel',
+                        widget,
+                        intl,
+                        defaultMessages
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
-              <div className={cssClasses('Summary__Card__Item--right')}>
-                <div className={cssClasses('Summary__Card__Item__Messages')}>
-                  <div
-                    className={cssClasses(
-                      'Summary__Card__Item__Messages--main'
-                    )}
-                  >
-                    {widget.extra}
-                    {formatMessage('extraUnit', widget, intl, defaultMessages)}
-                  </div>
-                  <div
-                    className={cssClasses('Summary__Card__Item__Messages--sub')}
-                  >
-                    {formatMessage('extraLabel', widget, intl, defaultMessages)}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </Card>
-        </Link>
-      </Unit>
-    ))}
+            </Card>
+          </Link>
+        </Unit>
+      )
+    })}
   </div>
 )
 
