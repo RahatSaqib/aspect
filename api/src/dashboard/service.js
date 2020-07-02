@@ -62,9 +62,9 @@ async function getDashboardWidget({ id, partnerId }, options) {
       'jf.partnerId': partnerId,
     })
     .where(function () {
-      this.whereRaw(`JSON_CONTAINS(w.dashboardsJson , '["${dashboard}"]')`)
+      this.whereRaw(`JSON_CONTAINS(w.dashboards , '["${dashboard}"]')`)
       if (dashboard === 'home') {
-        this.orWhereNull('w.dashboardsJson')
+        this.orWhereNull('w.dashboards')
       }
     })
     .select(['w.*', 'sw.*'])
