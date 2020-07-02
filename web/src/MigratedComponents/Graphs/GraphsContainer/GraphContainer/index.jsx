@@ -86,8 +86,6 @@ const GraphContainer = ({ config, size, assaysFromState, group }) => {
     }
   }, [dispatchParamsFromChild])
 
-  console.log(config.title, allowedGroupsWithoutAssays)
-
   return (whiteListed && whiteListed.length) || allowedGroupsWithoutAssays ? (
     <Grid item xs={12} lg={outerSize}>
       <Grid container spacing={24}>
