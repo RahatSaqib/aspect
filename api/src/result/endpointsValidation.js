@@ -235,6 +235,7 @@ function validateResultDetailResponse() {
       .description('The name of the user that created the note'),
     siteName: Joi.string().allow(null).description('The name of the site'),
     assayVersion: Joi.string().allow(null).description('The assay Version'),
+    assayName: Joi.string().allow(null).description('The assay name'),
     consumableSerial: Joi.string()
       .allow(null)
       .description('The consumable serial'),

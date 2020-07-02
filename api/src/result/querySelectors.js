@@ -82,6 +82,7 @@ const SELECT_COMMON_FIELDS = [
   'r.notes',
   'r.errorCode',
   'r.errorNotes',
+  'a.name as assayName',
   'r.createdOn',
   'r.updatedOn',
   'r.assayId',
@@ -143,6 +144,7 @@ const SORT_FIELDS = [
   'resultCategory1Name',
   'resultCategory2Name',
   'patientId',
+  'assayName',
 ]
 
 const RESULT_STRING_TEMPLATE_FIELDS = [

@@ -63,6 +63,10 @@ const messages = defineMessages({
     id: 'pages.ResultList.sampleId',
     defaultMessage: 'Sample ID',
   },
+  assayName: {
+    id: 'pages.ResultList.assayName',
+    defaultMessage: 'Assay',
+  },
   errorCode: {
     id: 'pages.ResultList.errorCode',
     defaultMessage: 'Error Code',
@@ -132,6 +136,7 @@ const searchSanitizer = makeSearchParamsSanitizer({
     'resultText',
     'resultWorkflowStatus',
     'treatmentStatusInfo',
+    'assayName',
     /* --- table.extraColumns BEGIN --- */
     'resultCategory1Name',
     'resultCategory2Name',
@@ -307,6 +312,7 @@ export const ResultList = ({
       </BrowseFilters>
       <DataTableCard key={`DataTableCard--table-${location.key}`}>
         <DataTableProgressBar disabled={!table.loading} />
+
         <ExportListButton
           onExcelClick={onExportClick}
           onCsvClick={onExportClick}
@@ -347,6 +353,11 @@ export const ResultList = ({
                 {
                   key: 'sampleId',
                   label: intl.formatMessage(messages.sampleId),
+                  sortable: true,
+                },
+                {
+                  key: 'assayName',
+                  label: intl.formatMessage(messages.assayName),
                   sortable: true,
                 },
                 {
