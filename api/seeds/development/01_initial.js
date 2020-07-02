@@ -5189,7 +5189,6 @@ async function seed(knex) {
       modules.inventory.edit,
       modules.reporter.edit,
       modules.dashboard.report,
-      modules.dashboard.siteFilter,
       modules.dashboard.action,
       modules.dashboard.target,
       modules.dashboard.result,
@@ -5218,7 +5217,6 @@ async function seed(knex) {
       modules.browse.view,
       modules.treatmentStatus.edit,
       modules.dashboard.report,
-      modules.dashboard.siteFilter,
       modules.dashboard.action,
       modules.dashboard.target,
       modules.dashboard.result,
@@ -5242,7 +5240,6 @@ async function seed(knex) {
       modules.site.edit,
       modules.device.edit,
       modules.dashboard.report,
-      modules.dashboard.siteFilter,
       modules.dashboard.action,
       modules.dashboard.target,
       modules.dashboard.result,
@@ -5382,8 +5379,11 @@ async function seed(knex) {
         'externalId',
         'description',
         'descriptionI18nKey',
+        'dashboards',
       ])
+      widgetData.dashboards = JSON.stringify(widgetData.dashboards || ['home'])
       const [widgetId] = await knex('DashboardWidget').insert(widgetData)
+
       const statWidgetData = _.pick(widget, [
         'icon',
         'sqlForStatUnit',
@@ -5397,6 +5397,7 @@ async function seed(knex) {
         'extraLabel',
         'extraLabelI18nKey',
       ])
+
       await knex('DashboardWidgetStat').insert({
         dashboardWidgetId: widgetId,
         ...statWidgetData,
