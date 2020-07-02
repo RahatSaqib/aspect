@@ -1819,7 +1819,9 @@ async function upsertDashboardWidgets(
         'externalId',
         'description',
         'descriptionI18nKey',
+        'dashboards',
       ])
+      widgetData.dashboards = JSON.stringify(widgetData.dashboards || ['home'])
 
       let { id: widgetId } =
         (await knex('DashboardWidget')
