@@ -7,8 +7,10 @@ const {
   factCalculateInventoryConsumptionRates,
   factDataCategoryLowCheck,
   factNewResultsAvailableCheck,
+  factExternalSourceCheck,
 } = require('./fact/actions')
 const { escalateIssues, resolveIssues } = require('./issue/actions')
+const config = require('./config')
 
 function startScheduler(queue) {
   // run hourly tasks on startup and cron every hour
@@ -19,6 +21,7 @@ function startScheduler(queue) {
     factDataCategoryLowCheck,
     factCalculateInventoryConsumptionRates,
     factNewResultsAvailableCheck,
+    factExternalSourceCheck,
     escalateIssues,
     resolveIssues,
   })
@@ -39,15 +42,31 @@ function startScheduler(queue) {
   cron.schedule('30 7,22,37,52 * * * *', dispatcher.resolveIssues) // run every 15 minutes starting at 7m and 30s
 
   cron.schedule('0 7 * * *', dispatcher.factNewResultsAvailableCheck) // daily at 7am
+
+  if (_.get(config, 'uptimerobot.api.key')) {
+    const dispatchCheckUptimeRobot = () => {
+      dispatchActionToQueue(
+        queue,
+        'aspect_scheduler_factExternalSourceCheck_uptimeRobot',
+        factExternalSourceCheck({ sourceName: 'uptimeRobot' })
+      )
+    }
+    //    cron.schedule('30 7,19 * * *', dispatchCheckUptimeRobot) // twice a day at 7:30am & 7:30pm
+    cron.schedule('55 13,19 * * *', dispatchCheckUptimeRobot) // twice a day at 7:30am & 7:30pm
+  }
 }
 
 function createActionDispatcher(queue, actionCreators) {
   const dispatcher = {}
   _.each(actionCreators, (creator, name) => {
     dispatcher[name] = () =>
-      queue.createMessageContext(`aspect_scheduler_${name}`).dispatch(creator())
+      dispatchActionToQueue(queue, `aspect_scheduler_${name}`, creator())
   })
   return dispatcher
+}
+
+function dispatchActionToQueue(queue, queueId, action) {
+  return queue.createMessageContext(queueId).dispatch(action)
 }
 
 module.exports = {
