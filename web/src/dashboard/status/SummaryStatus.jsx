@@ -13,8 +13,15 @@ import requirePermissions from '../../components/shared/requirePermissions'
 import messages from './messages'
 import AspectTooltip from '../../components/shared/AspectTooltip'
 
-
 const cssClasses = classnames.bind(require('./Status.css'))
+
+/**
+ * TODO: https://ops.systemone.id/browse/ASP-1521
+ * Correct filters to page navigation
+ *
+ * TODO: https://ops.systemone.id/browse/ASP-1522
+ * Refactor lifecycles and code-reuse
+ */
 
 const widgetMessageTypeList = [
   {
@@ -118,7 +125,12 @@ export const SummaryStatus = ({
 }) => (
   <div className={className}>
     {_.map(summary.toJS(), widget => {
-      const description = formatMessage('description', widget, intl, defaultMessages)
+      const description = formatMessage(
+        'description',
+        widget,
+        intl,
+        defaultMessages
+      )
       return (
         <Unit key={widget.id} sm="1-2" lg="1-4">
           <Link
@@ -137,12 +149,14 @@ export const SummaryStatus = ({
                 />
                 <span className={cssClasses('Summary__Card__Title--main')}>
                   {formatMessage('title', widget, intl, defaultMessages)}
-  
+
                   <span className={cssClasses('Summary__Card__Title--sub')}>
                     {formatMessage('subTitle', widget, intl, defaultMessages)}
                   </span>
                 </span>
-                { description ? <AspectTooltip showHelpIcon title={description} /> : null }
+                {description ? (
+                  <AspectTooltip showHelpIcon title={description} />
+                ) : null}
               </div>
               <div className={cssClasses('Summary__Card__Content')}>
                 <div className={cssClasses('Summary__Card__Item')}>
@@ -158,9 +172,16 @@ export const SummaryStatus = ({
                       {formatMessage('statUnit', widget, intl, defaultMessages)}
                     </div>
                     <div
-                      className={cssClasses('Summary__Card__Item__Messages--sub')}
+                      className={cssClasses(
+                        'Summary__Card__Item__Messages--sub'
+                      )}
                     >
-                      {formatMessage('statStatus', widget, intl, defaultMessages)}
+                      {formatMessage(
+                        'statStatus',
+                        widget,
+                        intl,
+                        defaultMessages
+                      )}
                     </div>
                   </div>
                 </div>
@@ -172,12 +193,24 @@ export const SummaryStatus = ({
                       )}
                     >
                       {widget.extra}
-                      {formatMessage('extraUnit', widget, intl, defaultMessages)}
+                      {formatMessage(
+                        'extraUnit',
+                        widget,
+                        intl,
+                        defaultMessages
+                      )}
                     </div>
                     <div
-                      className={cssClasses('Summary__Card__Item__Messages--sub')}
+                      className={cssClasses(
+                        'Summary__Card__Item__Messages--sub'
+                      )}
                     >
-                      {formatMessage('extraLabel', widget, intl, defaultMessages)}
+                      {formatMessage(
+                        'extraLabel',
+                        widget,
+                        intl,
+                        defaultMessages
+                      )}
                     </div>
                   </div>
                 </div>
