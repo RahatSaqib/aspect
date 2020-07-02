@@ -52,6 +52,8 @@ export function fetchClinicalIndicatorsDashboard(config, noAssays = false) {
         : {
             body: JSON.stringify(params),
           }
+    console.log(endpointToCall)
+
     return aspectFetch(endpointToCall, {
       method,
       ...body,
