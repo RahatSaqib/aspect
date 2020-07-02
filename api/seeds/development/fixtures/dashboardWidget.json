@@ -10,7 +10,10 @@
         "select count(s.id) as cnt from Site as s left outer join Geography as g on s.geographyId = g.id left outer join State as st on g.stateId = st.id left outer join Lga as l on g.lgaId = l.id",
       "link": "/browse/site",
       "sortOrder": 0,
-      "externalId": "sitesTitle"
+      "externalId": "sitesTitle",
+      "description": "The number of sites",
+      "descriptionI18nKey": "sitesDescription",
+      "dashboards": ["home"]
     },
     {
       "icon": "computer",
@@ -22,7 +25,10 @@
         "select count(d.id) as cnt from Device as d inner join Site as s on s.id = d.siteId inner join DeviceType as dt on dt.id = d.deviceTypeId inner join DeviceTypeCategory as dc on dc.id = dt.deviceTypeCategoryId left outer join Geography as g on s.geographyId = g.id where dc.hasResults = 1",
       "link": "/browse/device",
       "sortOrder": 1,
-      "externalId": "devicesTitle"
+      "externalId": "devicesTitle",
+      "description": "The number of devices which type's category allows results",
+      "descriptionI18nKey": "devicesDescription",
+      "dashboards": ["home", "operational"]
     },
     {
       "icon": "assignment",
@@ -34,7 +40,10 @@
         "select ifnull(sum(f.resultCount), 0) as cnt from FactResultsDevice as f inner join Device as d on d.id = f.deviceId inner join Site as s on s.id = d.siteId inner join Partner as p on p.id = s.partnerId left outer join Geography as g on s.geographyId = g.id where f.days = 30",
       "link": "/browse/result",
       "sortOrder": 2,
-      "externalId": "resultsTitle"
+      "externalId": "resultsTitle",
+      "description": "The number of results for the last 30 days",
+      "descriptionI18nKey": "resultsDescription",
+      "dashboards": ["home"]
     },
     {
       "icon": "perm-identity",
@@ -45,7 +54,10 @@
       "sqlForIndicator": "select count(u.id) as cnt from User as u",
       "link": "/browse/person",
       "sortOrder": 3,
-      "externalId": "personTitle"
+      "externalId": "personTitle",
+      "description": "The number of users",
+      "descriptionI18nKey": "personDescription",
+      "dashboards": ["home"]
     },
     {
       "icon": "virus",
@@ -61,7 +73,10 @@
       "statUnitI18nKey": "dashboardWidgetUnitConfirmedCases",
       "link":"/browse/result",
       "sortOrder": 4,
-      "externalId": "dashboardWidgetTitleConfirmedCases"
+      "externalId": "dashboardWidgetTitleConfirmedCases",
+      "description": "The number of positive results reported the last 7 days",
+      "descriptionI18nKey": "confirmedCasesDescription",
+      "dashboards": ["home"]
     },
     {
       "icon": "assignment",
@@ -77,7 +92,10 @@
       "statUnitI18nKey": "dashboardWidgetUnitActiveCases",
       "link": "/browse/result",
       "sortOrder": 5,
-      "externalId": "dashboardWidgetTitleTotalActiveCases"
+      "externalId": "dashboardWidgetTitleTotalActiveCases",
+      "description": "The number results reported positive that haven't an outcome",
+      "descriptionI18nKey": "totalActiveCasesDescription",
+      "dashboards": ["home"]
     },
     {
       "icon": "user-check",
@@ -93,7 +111,10 @@
       "statUnitI18nKey": "dashboardWidgetUnitRecoveredCases",
       "link": "/browse/result",
       "sortOrder": 6,
-      "externalId": "dashboardWidgetTitleTotalRecoveredCases"
+      "externalId": "dashboardWidgetTitleTotalRecoveredCases",
+      "description": "The number of cases recovered",
+      "descriptionI18nKey": "totalActiveCasesDescription",
+      "dashboards": ["home"]
     },
     {
       "icon": "userslash",
@@ -109,7 +130,10 @@
       "statUnitI18nKey": "dashboardWidgetUnitDeathUnitCases",
       "link": "/browse/result",
       "sortOrder": 7,
-      "externalId": "dashboardWidgetTitleTotalDeaths"
+      "externalId": "dashboardWidgetTitleTotalDeaths",
+      "description": "The number of cases ended in death",
+      "descriptionI18nKey": "dashboardWidgetDescriptionTotalDeaths",
+      "dashboards": ["home"]
     }
   ]
 }

@@ -860,6 +860,35 @@ const defaultGxAlertMigrationVariables = {
   },
   geographyFromGxAlert: {
     countries: null, // required
+    /* -- Query Country With States & LGAs in GxAlert
+SELECT CONCAT(
+  '{"abbreviation":"', country.Abbreviation,
+  '","name":"', country.Name,
+  '","a3":"', country.A3,
+  '","culture":"', country.Culture,
+  '","countryCode":"', Country.CountryCode,
+  '","timezone":"', Country.TimeZoneId,
+  '","portNumber":', Country.PortNumber,
+  ',"exportColumns":"', Country.ExportColumns,
+  '","inventoryDaysThreshold":', Country.InventoryDaysThreshold,
+  ',"monthStartsOnDay":', IFNULL(Country.MonthStartsOnDay, '1'),
+  ',"states":[') AS countryJSON
+FROM Country
+WHERE Country.Name IS NOT NULL
+AND Country.A3 IS NOT NULL
+UNION
+SELECT CONCAT(
+    '{"name":"', State.Name, '",',
+    IFNULL(CONCAT('"abbreviation":"', State.Abbreviation, '",'), ''),
+    '"lgas":[', IFNULL((SELECT GROUP_CONCAT(CONCAT('{"name":"', Lga.Name, '"}')) FROM Lga WHERE Lga.Name IS NOT NULL AND Lga.StateId = State.StateId), ''), ']',
+    '},') AS countryJSON
+FROM Country
+JOIN State ON State.CountryId = Country.CountryId
+WHERE Country.Name IS NOT NULL
+AND Country.A3 IS NOT NULL
+UNION
+SELECT ']}' AS countryJSON;
+*/
   },
   gxAlertDevice: {
     deviceApiKeyToken: null, // required
@@ -867,6 +896,43 @@ const defaultGxAlertMigrationVariables = {
   sitesFromGxAlert: [],
   jobFunctions: [],
   contactsFromGxAlert: [],
+  /* -- Query Contacts in GxAlert
+  TODO: These queries belong is a more comprehensive document that explains how to migrate a customer from GxAlert to Aspect
+        https://ops.systemone.id/browse/ASP-1373
+SELECT CONCAT(
+'{ "personName": "',  person.Name,
+COALESCE(CONCAT('", "personTitle": "', person.Title), ''),
+'", "jobFunctions": [ "', CASE WHEN role.Name = 'National Level' THEN 'Admin' WHEN role.Name IN ('State Level', 'LGA Level') THEN 'Regional Officer' WHEN role.Name = 'Lab Level' THEN 'Lab User' ELSE '' END,
+'" ], ', COALESCE(CONCAT('"personEmailAddress": "', person.Email, '", '), ''),
+COALESCE(CONCAT('"personPhone": "', person.Phone, '", '), ''),
+COALESCE(CONCAT('"personCell": "', person.Cell, '", '), ''),
+COALESCE(CONCAT('"username": "', my_aspnet_users.name, '", '), ''),
+COALESCE(CONCAT('"timezone": "', person.TimeZoneId, '", '), ''),
+'"hidePatientId": ', COALESCE(CASE WHEN person.HidePatientId = 1 THEN 'true' END, 'false'),
+', "hideSampleId": ', COALESCE(CASE WHEN person.HideSampleId = 1 THEN 'true' END, 'false'),
+', "hideNotes": ', COALESCE(CASE WHEN person.HideNotes = 1 THEN 'true' END, 'false'),
+', "getPasswordFromGxAlert": true',
+COALESCE(CONCAT(', "geographies": [ ', CASE WHEN role.Name = 'National Level' THEN '{}'
+                                          WHEN role.Name = 'State Level' THEN GROUP_CONCAT(DISTINCT CONCAT('{ "stateName": "', personstate_state.Name, '" }'))
+                                          WHEN role.Name = 'LGA Level' THEN GROUP_CONCAT(DISTINCT CONCAT('{ "stateName": "', personlgastate_state.Name, '", "lgaName": "', personlga_lga.Name, '" }'))
+                                     END, ' ]'), ''),
+COALESCE(CONCAT(', "sites": [ ', CASE WHEN role.Name = 'Lab Level' THEN GROUP_CONCAT(DISTINCT CONCAT('{ "shortName": "', persondeployment_deployment.ShortName, '" }')) END, ' ], '), ''),
+'},') AS jsonObject
+FROM person
+LEFT JOIN my_aspnet_users ON my_aspnet_users.id = person.UserId
+LEFT JOIN state ON state.StateId = person.StateId
+LEFT JOIN lga ON lga.LgaId = person.LgaId
+LEFT JOIN deployment ON deployment.DeploymentId = person.DeploymentId
+LEFT JOIN role ON role.RoleId = person.RoleId
+LEFT JOIN persondeployment ON persondeployment.PersonId = person.PersonId
+LEFT JOIN deployment as persondeployment_deployment ON persondeployment_deployment.DeploymentId = persondeployment.DeploymentId
+LEFT JOIN personlga ON personlga.PersonId = person.PersonId
+LEFT JOIN lga as personlga_lga ON personlga_lga.LgaId = personlga.LgaId
+LEFT JOIN state as personlgastate_state ON personlgastate_state.StateId = personlga_lga.StateId
+LEFT JOIN personstate ON personstate.PersonId = person.PersonId
+LEFT JOIN state as personstate_state ON personstate_state.StateId = personstate.StateId
+GROUP BY person.PersonId
+*/
   geneXpertAssayExternalIds: [
     'GxMtbRif',
     'GxMtbRifUltra',
@@ -1234,9 +1300,9 @@ async function baseGxAlertMigration(
               'timezone',
               'configurationData'
             )
-          const deviceTypeId = await deviceTypeToId(
-            device.deviceType || 'CepheidGeneXpert'
-          )
+          const { id: deviceTypeId } = await knex('DeviceType')
+            .where('externalId', device.deviceType || 'CepheidGeneXpert')
+            .first('id')
           if (!existingDevice) {
             await knex('Device').insert({
               partnerId,
@@ -1751,6 +1817,8 @@ async function upsertDashboardWidgets(
         'link',
         'sortOrder',
         'externalId',
+        'description',
+        'descriptionI18nKey',
       ])
 
       let { id: widgetId } =
