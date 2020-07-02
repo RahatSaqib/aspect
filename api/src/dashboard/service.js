@@ -47,7 +47,8 @@ const i18nKeys = {
   deviceCalibrationsUpToDate: 'deviceCalibrationsUpToDate',
 }
 
-async function getDashboardWidget({ id, partnerId }, layout) {
+async function getDashboardWidget({ id, partnerId }, options) {
+  const { layout, dashboard = 'home' } = options
   const tableName =
     layout === 'target' ? 'DashboardWidgetTarget' : 'DashboardWidgetStat'
   const widgets = knex('DashboardWidget as w')
@@ -59,6 +60,12 @@ async function getDashboardWidget({ id, partnerId }, layout) {
     .where({
       'ps.userId': id,
       'jf.partnerId': partnerId,
+    })
+    .where(function () {
+      this.whereRaw(`JSON_CONTAINS(w.dashboardsJson , '["${dashboard}"]')`)
+      if (dashboard === 'home') {
+        this.orWhereNull('w.dashboardsJson')
+      }
     })
     .select(['w.*', 'sw.*'])
     .orderBy(['w.sortOrder'])
@@ -127,7 +134,8 @@ async function summaryDashboard(request) {
   const dataConstraints = await getConstraints(auth.credentials)
 
   const user = await getUser(auth.credentials.name)
-  const widgets = await getDashboardWidget(user, 'stat')
+  const { dashboard } = query
+  const widgets = await getDashboardWidget(user, { layout: 'stat', dashboard })
   const data = await Promise.all(
     widgets.map(async widget => {
       const count = await queryCount(
@@ -165,7 +173,7 @@ async function targetDashboard(request) {
   const dataConstraints = await getConstraints(auth.credentials)
 
   const user = await getUser(auth.credentials.name)
-  const widgets = await getDashboardWidget(user, 'target')
+  const widgets = await getDashboardWidget(user, { layout: 'target' })
 
   let targetDivide = 1
 
@@ -1046,9 +1054,9 @@ async function operationalDataActivityOverTime(request) {
 
   // build up array of days in date range. makes querying easier:
   const days = getArrayOfDaysInRange(query.minDate, query.maxDate, {
-    active: 0,
-    inactive: 0,
-    total: 0,
+    devicesActive: 0,
+    devicesInactive: 0,
+    devicesTotal: 0,
   })
 
   // now, get all device IDs that user has access to (much better performance in following queries)
@@ -1080,7 +1088,7 @@ async function operationalDataActivityOverTime(request) {
     .countDistinct('deviceId as deviceCount')
     .modify(qb => {
       if (query.maxDate) {
-        qb.where('endedOn', '<=', query.maxDate)
+        qb.where('endedOn', '<', addDays(query.maxDate, 1))
       }
       if (query.minDate) {
         qb.where('endedOn', '>=', query.minDate)
@@ -1095,9 +1103,9 @@ async function operationalDataActivityOverTime(request) {
         c.endedOnDate.getMonth() === day.date.getMonth() &&
         c.endedOnDate.getFullYear() === day.date.getFullYear()
     )
-    day.total = devices.length
-    day.active = devicesActive ? devicesActive.deviceCount : 0
-    day.inactive = day.total - day.active
+    day.devicesTotal = devices.length
+    day.devicesActive = devicesActive ? devicesActive.deviceCount : 0
+    day.devicesInactive = day.devicesTotal - day.devicesActive
     day.isWeekendOrHoliday = isWeekend(day.date)
   })
 

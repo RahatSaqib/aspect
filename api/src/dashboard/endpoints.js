@@ -27,6 +27,12 @@ const routes = [
       validate: {
         query: {
           siteId: Joi.number().allow('').description('Filter for site ID'),
+          dashboard: Joi.string()
+            .allow('', null)
+            .valid('home', 'operational')
+            .description(
+              'Dashboard token where requested data to be displayed'
+            ),
         },
       },
     },
@@ -138,13 +144,13 @@ const routes = [
                 date: Joi.date().description(
                   'Day that the aggregations were calculated for'
                 ),
-                active: Joi.number().description(
+                devicesActive: Joi.number().description(
                   'The number of devices that were active that day'
                 ),
-                inactive: Joi.number().description(
+                devicesInactive: Joi.number().description(
                   'The number of devices that were inactive that day'
                 ),
-                total: Joi.number().description(
+                devicesTotal: Joi.number().description(
                   'The total number of devices in the system as of that day'
                 ),
                 isWeekendOrHoliday: Joi.bool().description(

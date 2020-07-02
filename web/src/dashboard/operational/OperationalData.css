@@ -1,1 +1,9 @@
 @import '../../globals/variables.css';
+
+.Container {
+  padding: 0 10px;
+}
+
+.Section--summary {
+  margin: 10px 0;
+}

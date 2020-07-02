@@ -1751,6 +1751,8 @@ async function upsertDashboardWidgets(
         'link',
         'sortOrder',
         'externalId',
+        'description',
+        'descriptionI18nKey',
       ])
 
       let { id: widgetId } =
