@@ -1,6 +1,6 @@
+import React, { Fragment } from 'react'
 import classnames from 'classnames/bind'
-import React from 'react'
-import _ from 'lodash'
+import flowRight from 'lodash/flowRight'
 import { connect } from 'react-redux'
 import { Helmet } from 'react-helmet'
 import { injectIntl } from 'react-intl'
@@ -17,7 +17,7 @@ export const OperationalData = ({ intl, history, location, loading }) => {
       {loading ? (
         <div className={cssClasses({ 'Content--loading': loading })} />
       ) : (
-        <div>
+        <Fragment>
           <SummaryStatus
             intl={intl}
             history={history}
@@ -31,21 +31,13 @@ export const OperationalData = ({ intl, history, location, loading }) => {
             location={location}
             assaysFromState={[]}
           />
-        </div>
+        </Fragment>
       )}
     </div>
   )
 }
 
-// export const OperationalData = ({ history, location, intl, loading }) => (
-//   <div className={cssClasses('Container')}>
-//     <Helmet title="Operational Data" />
-
-//     <div className={cssClasses({ 'Content--loading': loading })} />
-//   </div>
-// )
-
-export default _.flowRight(
+export default flowRight(
   injectIntl,
   connect(state => ({
     loading: !!state.getIn(['dashboard', 'requestedAt']),
