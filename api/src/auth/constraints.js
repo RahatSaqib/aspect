@@ -574,8 +574,8 @@ const addPartnerQueryConstraints = (
 module.exports = {
   getConstraints,
   getJobConstraints,
-  addConstraints,
   canView,
+  addConstraints,
   canViewSites,
   canViewDevices,
   canViewResults,

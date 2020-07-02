@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import { useDispatch } from 'react-redux'
@@ -5,10 +6,12 @@ import { useIntl } from 'react-intl'
 import classnames from 'classnames/bind'
 import merge from 'lodash/merge'
 import Grid from '@material-ui/core/Grid'
+
+import requirePermissions from '../../../../components/shared/requirePermissions'
+
 import AspectCard from '../../../AspectCard'
 import GraphRender from '../../GraphRender'
 import CardSelectors from '../../CardSelectors'
-
 import { fetchClinicalIndicatorsDashboard } from '../../GraphRender/Redux'
 import {
   extractOptionValue,
@@ -25,7 +28,7 @@ const GraphContainer = ({ config, size, assaysFromState }) => {
   const { formatMessage: intlFormatMessage } = useIntl()
   const { assays, graphType, id } = config
   const { innerSize, outerSize } = size
-  const [dispatchParams, setDispatchParams] = useState(false)
+  const [dispatchParams] = useState(false)
   const [dispatchFromChild, setDispatchFromChild] = useState(false)
   const [dispatchParamsFromChild, setDispatchParamsFromChild] = useState(false)
   const [dispatchFromSelector, setdispatchFromSelector] = useState(false)
@@ -117,4 +120,6 @@ GraphContainer.protoTypes = {
   assaysFromState: PropTypes.oneOfType([PropTypes.array]).isRequired,
 }
 
-export default GraphContainer
+export default requirePermissions({
+  permissions: ['result:view'],
+})(GraphContainer)

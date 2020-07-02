@@ -10,6 +10,7 @@ import {
   errorPleaseTryAgainInAFewMinutes,
   errorInsufficientScope,
 } from '../error/CommonErrorNotifications'
+import { receiveList, Items } from '../shared/metaReducers/items'
 
 import { types as inventoryTypes } from '../inventory/InventoryRedux'
 import { types as issueTypes } from '../issue/IssueRedux'
@@ -49,30 +50,34 @@ export const REQUEST_INVENTORY_DASHBOARD = 'REQUEST_INVENTORY_DASHBOARD'
 /*
  * ---------------- Action Creators -----------------
  */
-function requestStatDashboard(requestedAt) {
+function requestStatDashboard(requestedAt, dashboard) {
   return {
     type: REQUEST_STAT_DASHBOARD,
     requestedAt,
+    dashboard,
   }
 }
 
-function receiveStatDashboard(requestedAt, data) {
+function receiveStatDashboard(requestedAt, dashboard, data) {
   return {
     type: RECEIVE_STAT_DASHBOARD,
     requestedAt,
+    dashboard,
     data,
   }
 }
 
-export function fetchStatDashboard(rawFiltersParams) {
+export function fetchStatDashboard(rawFiltersParams, { dashboard = 'home' }) {
   const filtersParams = new URLSearchParams()
   if (rawFiltersParams.has('siteId')) {
     filtersParams.set('siteId', rawFiltersParams.get('siteId'))
   }
+  filtersParams.set('dashboard', dashboard)
+
   return dispatch => {
     const filters = fromPairs([...filtersParams.entries()])
     const requestedAt = `summary_${Date.now()}`
-    dispatch(requestStatDashboard(requestedAt))
+    dispatch(requestStatDashboard(requestedAt, dashboard))
 
     return aspectFetch(`/dashboard/summary?${stringify(filters)}`, {
       errorNotifications: {
@@ -93,7 +98,9 @@ export function fetchStatDashboard(rawFiltersParams) {
           })
         ),
       },
-    }).then(json => dispatch(receiveStatDashboard(requestedAt, json.data)))
+    }).then(json =>
+      dispatch(receiveStatDashboard(requestedAt, dashboard, json.data))
+    )
   }
 }
 
@@ -299,56 +306,6 @@ export function fetchSiteDashboard() {
   }
 }
 
-function requestOperationalStatus(requestedAt) {
-  return {
-    type: REQUEST_OPERATIONAL_STATUS,
-    requestedAt,
-  }
-}
-
-function receiveOperationalStatus(requestedAt, data) {
-  return {
-    type: RECEIVE_OPERATIONAL_STATUS,
-    requestedAt,
-    data,
-  }
-}
-
-export function fetchOperationalStatus(filtersParams) {
-  return dispatch => {
-    const filters = fromPairs([...filtersParams.entries()])
-    const requestedAt = `operational_${Date.now()}`
-    dispatch(requestOperationalStatus(requestedAt))
-
-    return aspectFetch(
-      `/dashboard/operational?${stringify({
-        ...filters,
-      })}`,
-      {
-        errorNotifications: {
-          403: errorInsufficientScope(
-            defineMessages({
-              title: {
-                id: 'errorResponseMessages.fetchPersons.GET.403.title',
-                defaultMessage: 'Insufficient Permissions',
-              },
-            })
-          ),
-          default: errorPleaseTryAgainInAFewMinutes(
-            defineMessages({
-              title: {
-                id:
-                  'errorResponseMessages.receiveOperationalStatus.GET.default.title',
-                defaultMessage: 'Error Loading Operational Data',
-              },
-            })
-          ),
-        },
-      }
-    ).then(json => dispatch(receiveOperationalStatus(requestedAt, json.data)))
-  }
-}
-
 function requestActionDashboard(requestedAt) {
   return {
     type: REQUEST_ACTION_STATUS,
@@ -449,6 +406,8 @@ function receiveInventoryDashboard(requestedAt, data) {
  */
 const summary = Immutable.Record({
   requestedAtSet: Immutable.Set(),
+  dashboards: Immutable.Map(),
+  allSummaryItems: new Items(),
   summary: Immutable.List(),
   targetSummaryList: Immutable.List(),
   resultSiteList: Immutable.List(),
@@ -480,7 +439,6 @@ const onRequested = (action, mutState, cb) => {
 
 export default function dashboardReducer(state = initialState, action) {
   switch (action.type) {
-    case REQUEST_STAT_DASHBOARD:
     case REQUEST_TARGET_DASHBOARD:
     case REQUEST_RESULT_DASHBOARD:
     case REQUEST_INVENTORY_ITEM_DASHBOARD:
@@ -493,10 +451,45 @@ export default function dashboardReducer(state = initialState, action) {
         'requestedAtSet',
         state.requestedAtSet.add(action.requestedAt)
       )
+    case REQUEST_STAT_DASHBOARD:
+      return state.withMutations(mutState => {
+        mutState.set(
+          'requestedAtSet',
+          state.requestedAtSet.add(action.requestedAt)
+        )
+
+        // get previously stored dashboard widgets
+        const dashboardIdList = state.getIn(['dashboards', action.dashboard])
+        mutState.set(
+          'summary',
+          (dashboardIdList || Immutable.List())
+            .map(id => state.allSummaryItems.byId.get(id))
+            .filter(widget =>
+              widget.get('dashboardsJson').includes(action.dashboard)
+            )
+        )
+      })
     case RECEIVE_STAT_DASHBOARD:
       return state.withMutations(mutState => {
         onRequested(action, mutState, () => {
-          mutState.set('summary', Immutable.fromJS(action.data))
+          const immutList = Immutable.fromJS(
+            action.data.map(item => {
+              item.dashboardsJson = JSON.parse(
+                // defaults to '["home"]' if field is null
+                item.dashboardsJson || '["home"]'
+              )
+              return item
+            })
+          )
+          mutState.set(
+            'allSummaryItems',
+            receiveList(mutState.allSummaryItems, immutList)
+          )
+          mutState.set('summary', immutList)
+          mutState.setIn(
+            ['dashboards', action.dashboard],
+            mutState.allSummaryItems.currentIdList
+          )
         })
       })
     case RECEIVE_TARGET_DASHBOARD:
