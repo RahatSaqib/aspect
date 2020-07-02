@@ -146,6 +146,7 @@ AspectResponsiveBar.propTypes = {
     'group',
     'divergent',
     'barLegacyTreatment',
+    'stackedDeviceTreatment',
   ]),
 }
 

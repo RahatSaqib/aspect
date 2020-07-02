@@ -11,19 +11,22 @@ const deviceStatusGraphs = {
       {
         id: 'deviceStatusMonthly',
         component: BarGraph,
-        type: 'barLegacyTreatment',
-        size: 8,
+        type: 'stackedDeviceTreatment',
+        size: 12,
         componentClasses: ['BARCLASS'],
         api: {
-          method: 'POST',
-          endpoint: 'result/confirmed-treatment-tracking',
-          params: {},
+          method: 'GET',
+          endpoint: 'dashboard/operational-data/activity-over-time',
+          params: {
+            minDate: '2020-06-01',
+            maxDate: '2020-06-15',
+          },
         },
-        indexBy: 'monthTested',
-        keyToConsume: 'pcConfirmed',
+        indexBy: 'date',
+        keyToConsume: 'devicesActive',
         tickValuesYShape: 'none',
         tickValuesXShape: 'all',
-        displayMethod: 'percentage', // todo: actual
+        displayMethod: 'actual', // todo: actual
         displayLegend: true,
         formatDate: 'MMM yy',
       },

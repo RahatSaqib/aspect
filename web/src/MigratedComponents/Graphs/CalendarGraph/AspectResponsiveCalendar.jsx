@@ -114,7 +114,13 @@ AspectResponsiveCalendar.propTypes = {
     'none',
   ]),
   tickValuesXShape: PropTypes.oneOf(['bookends', 'all', 'none']),
-  type: PropTypes.oneOf(['bar', 'stacked', 'divergent', 'barLegacyTreatment']),
+  type: PropTypes.oneOf([
+    'bar',
+    'stacked',
+    'divergent',
+    'barLegacyTreatment',
+    'stackedDeviceTreatment',
+  ]),
 }
 
 export default AspectResponsiveCalendar
