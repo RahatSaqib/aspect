@@ -192,6 +192,7 @@
     "downshift": "^3.4.7",
     "element-resize-detector": "^1.2.1",
     "email-validator": "^2.0.4",
+    "formik": "^2.1.4",
     "global": "^4.4.0",
     "history": "^4.10.1",
     "http-client": "^4.3.1",
@@ -206,6 +207,7 @@
     "prop-types": "^15.7.2",
     "raven-js": "^3.27.2",
     "react": "^16.13.1",
+    "react-datepicker": "^3.0.0",
     "react-display-name": "^0.2.5",
     "react-dom": "^16.13.1",
     "react-google-maps": "^9.4.5",
@@ -229,6 +231,7 @@
     "topojson-client": "^3.1.0",
     "url-search-params-polyfill": "^8.1.0",
     "warning": "^4.0.3",
-    "whatwg-fetch": "^3.0.0"
+    "whatwg-fetch": "^3.0.0",
+    "yup": "^0.28.5"
   }
 }
