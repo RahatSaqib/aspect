@@ -2869,6 +2869,65 @@ async function seedJobFunctionsAndUsersForOperationalData(
   }
 }
 
+/**
+ * Adds a new JobFunctionPermission row for each permission id at the permissionsTo parameter that will be associated to the job functions that have assigned one of the permissions of the permissionsFrom one
+ * @param {object} knex Knex instance
+ * @param {array} currentPermissions An array of permissions ids
+ * @param {array} additionalPermissions An array of permissions ids that will be associated to the
+ */
+async function mapJobFunctionPermissions(
+  knex,
+  currentPermissions,
+  additionalPermissions
+) {
+  const jobFunctionsIds = await knex('JobFunctionPermission')
+    .whereIn('permissionId', currentPermissions)
+    .distinct('jobFunctionId')
+  let insertJobs = []
+  for (let index = 0; index < jobFunctionsIds.length; index++) {
+    const { jobFunctionId } = jobFunctionsIds[index]
+    insertJobs = [
+      ...insertJobs,
+      ...additionalPermissions.map(permissionId =>
+        knex('JobFunctionPermission')
+          .where({ jobFunctionId, permissionId })
+          .then(rows => {
+            if (rows.length === 0) {
+              return knex('JobFunctionPermission').insert({
+                permissionId,
+                jobFunctionId,
+              })
+            }
+          })
+      ),
+    ]
+  }
+
+  if (insertJobs.length > 0) await Promise.all(insertJobs)
+}
+
+async function seedDashboardsJsonInDashboardWidget(knex, widgets) {
+  // fill in default value for all records - this is needed because `.defaultsTo()` can not be applied for JSON field
+  // but not critical if field dashboardsJson remains null - we handle setting default value of ['home'] in both API and WEB
+  await knex('DashboardWidget')
+    .whereNull('dashboardsJson')
+    .update({
+      dashboardsJson: JSON.stringify(['home']),
+    })
+
+  await Promise.all(
+    _.map(
+      widgets.filter(({ dashboards }) => _.isArray(dashboards)),
+      ({ dashboards, externalId }) =>
+        knex('DashboardWidget')
+          .where({ externalId })
+          .update({
+            dashboardsJson: JSON.stringify(dashboards),
+          })
+    )
+  )
+}
+
 module.exports = {
   addReports,
 
@@ -2934,4 +2993,6 @@ module.exports = {
   getResultForms,
 
   seedJobFunctionsAndUsersForOperationalData,
+  mapJobFunctionPermissions,
+  seedDashboardsJsonInDashboardWidget,
 }
