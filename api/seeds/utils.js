@@ -2872,8 +2872,8 @@ async function seedJobFunctionsAndUsersForOperationalData(
 /**
  * Adds a new JobFunctionPermission row for each permission id at the permissionsTo parameter that will be associated to the job functions that have assigned one of the permissions of the permissionsFrom one
  * @param {object} knex Knex instance
- * @param {array} permissionsFrom An array of permissions ids
- * @param {array} permissionsTo An array of permissions ids that will be associated to the
+ * @param {array} currentPermissions An array of permissions ids
+ * @param {array} additionalPermissions An array of permissions ids that will be associated to the
  */
 async function mapJobFunctionPermissions(
   knex,
@@ -2890,13 +2890,15 @@ async function mapJobFunctionPermissions(
       ...insertJobs,
       ...additionalPermissions.map(permissionId =>
         knex('JobFunctionPermission')
-          .whereNot({ jobFunctionId, permissionId })
-          .then(() =>
-            knex('JobFunctionPermission').insert({
-              permissionId,
-              jobFunctionId,
-            })
-          )
+          .where({ jobFunctionId, permissionId })
+          .then(rows => {
+            if (rows.length === 0) {
+              return knex('JobFunctionPermission').insert({
+                permissionId,
+                jobFunctionId,
+              })
+            }
+          })
       ),
     ]
   }
