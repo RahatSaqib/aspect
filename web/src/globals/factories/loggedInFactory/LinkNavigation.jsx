@@ -49,7 +49,7 @@ export const LinkNavigation = ({
       },
       {
         href: '/operational-data',
-        label: 'Operational  Data',
+        label: 'Operational Data',
         requiredPermissions: ['operationalData:view'],
       },
       {

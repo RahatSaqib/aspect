@@ -80,9 +80,9 @@ const renderRedirectToLicenseOr = props =>
 
 const renderRedirectToDashboard = ({ permissions }) => ({ location }) => {
   let pathname = ''
-  if (hasAnyPermissions(permissions, ['dashboard'])) {
+  if (isPermittedUser(permissions, ['dashboard'])) {
     pathname = '/dashboard'
-  } else if (hasAnyPermissions(permissions, ['operationalData'])) {
+  } else if (isPermittedUser(permissions, ['operationalData'])) {
     pathname = '/operational-data'
   } else {
     pathname = '/browse'
@@ -98,24 +98,8 @@ const renderRedirectToDashboard = ({ permissions }) => ({ location }) => {
   )
 }
 
-const hasAnyPermissions = (permissions, requiredPermission) => {
-  // true if List `permissions` contains any of item from plain array `requiredPermission`
-  return !!permissions.find(
-    permission =>
-      requiredPermission.includes(permission) ||
-      // if permission has exact access level (Scope:Level) then get it's Scope and see if it is in requiredPermission
-      // MEMO - if any level is enough to access resource, then use short-cut for UI permission,
-      // i.e. 'task' means any  of 'task:*'
-      (permission.includes(':') &&
-        requiredPermission.includes(permission.split(':')[0]))
-    // don't get confused with above2 lines - 'permission' is a string, 'requiredPermission' is an array, so
-    // - includes() for string is true if substring found
-    // - includes() for array is true when item found
-  )
-}
-
 const renderRedirectToNotFound = (props, requiredPermission) => {
-  if (!hasAnyPermissions(props.permissions, requiredPermission))
+  if (!isPermittedUser(props.permissions, requiredPermission))
     return renderNotFound
 }
 

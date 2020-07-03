@@ -142,54 +142,52 @@ export const navigations = [
   {
     value: '/browse/device',
     label: 'Devices',
-    requiredPermissions: ['device:view'],
+    requiredPermissions: ['device'],
   },
   {
     value: '/browse/result',
     label: 'Results',
-    requiredPermissions: ['result:view'],
+    requiredPermissions: ['result'],
   },
   {
     value: '/browse/case',
     label: 'Cases',
-    requiredPermissions: ['case:view'],
+    requiredPermissions: ['case'],
   },
   {
     value: '/browse/person',
     label: 'Contacts',
-    requiredPermissions: ['person:view'],
+    requiredPermissions: ['person'],
   },
   {
     value: '/browse/site',
     label: 'Sites',
-    requiredPermissions: ['site:view'],
+    requiredPermissions: ['site'],
   },
   {
     value: '/browse/inventory',
     label: 'Supplies',
-    requiredPermissions: [
-      'inventory:view'
-    ],
+    requiredPermissions: ['inventory'],
   },
   {
     value: '/browse/router',
     label: 'Routers',
-    requiredPermissions: ['router:view'],
+    requiredPermissions: ['router'],
   },
   {
     value: '/browse/reporter',
     label: 'Reporters',
-    requiredPermissions: ['reporter:view'],
+    requiredPermissions: ['reporter'],
   },
   {
     value: '/browse/notification',
     label: 'Notifications',
-    requiredPermissions: ['notification:view'],
+    requiredPermissions: ['notification'],
   },
   {
     value: '/browse/deviceApiKey',
     label: 'Device Api Key',
-    requiredPermissions: ['deviceApiKey:view'],
+    requiredPermissions: ['deviceApiKey'],
   },
 ]
 

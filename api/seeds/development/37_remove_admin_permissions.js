@@ -3,17 +3,17 @@ const { getPermissionModules, mapJobFunctionPermissions } = require('../utils')
 
 async function seed(knex) {
   const modules = await getPermissionModules(knex)
-  const modulesNames = Object.keys(modules).filter(
-    name => modules[name].admin && !modules[name].edit
-  )
+  const modulesNames = Object.keys(modules).filter(name => modules[name].admin)
 
-  const insertEditPermissions = modulesNames.map(async moduleName => {
-    const [permissionId] = await knex('Permission').insert({
-      module: moduleName,
-      activity: 'edit',
+  const insertEditPermissions = modulesNames
+    .filter(name => !modules[name].edit)
+    .map(async moduleName => {
+      const [permissionId] = await knex('Permission').insert({
+        module: moduleName,
+        activity: 'edit',
+      })
+      modules[moduleName].edit = permissionId
     })
-    modules[moduleName].edit = permissionId
-  })
   await Promise.all(insertEditPermissions)
 
   const insertJobFunctionEditPermissions = modulesNames.map(moduleName =>
