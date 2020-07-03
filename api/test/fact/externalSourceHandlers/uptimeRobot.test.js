@@ -45,7 +45,7 @@ describe('Uptime Robot External Source Fact Handler', () => {
   function mockContext(
     updateSpy,
     insertSpy,
-    aspectDevice,
+    aspectDeviceIds,
     aspectDeviceUptimeRobotFact
   ) {
     const buildKnexSpy = () => table => {
@@ -59,7 +59,7 @@ describe('Uptime Robot External Source Fact Handler', () => {
         const returnData = async () => {
           let returnValue
           if (table === 'Device') {
-            returnValue = aspectDevice
+            returnValue = aspectDeviceIds
           } else if (table === 'FactDeviceExternalSource') {
             returnValue = aspectDeviceUptimeRobotFact
           }
@@ -67,18 +67,21 @@ describe('Uptime Robot External Source Fact Handler', () => {
         }
         const finalCall = {
           first: async () => returnData(),
+          pluck: async () => returnData(),
           update: async (...rest) => {
             updateSpy(table, ...rest)
             return Promise.resolve()
           },
         }
         finalCall.andWhere = () => finalCall
+        finalCall.select = () => finalCall
         return finalCall
       }
       knex.where = where
       const join = () => knex
       knex.join = join
       knex.leftJoin = join
+      knex.select = where
       return knex
     }
     return {
@@ -134,14 +137,14 @@ describe('Uptime Robot External Source Fact Handler', () => {
         },
       ],
     }
-    const aspectDevice = { id: 2 }
+    const aspectDeviceIds = [2]
     const aspectDeviceUptimeRobotFact = { deviceId: 2 }
 
     async function runUptimeRobitExternalFactHandler(
       updateSpy,
       insertSpy,
       createFetchSpy,
-      explicitAspectDevice = aspectDevice,
+      explicitAspectDeviceIds = aspectDeviceIds,
       explicitAspectDeviceUptimeRobotFact = aspectDeviceUptimeRobotFact
     ) {
       const uptimeRobotExternalFactHandler = mockOutUptimeRobotExternalFactHandler(
@@ -153,7 +156,7 @@ describe('Uptime Robot External Source Fact Handler', () => {
         mockContext(
           updateSpy,
           insertSpy,
-          explicitAspectDevice,
+          explicitAspectDeviceIds,
           explicitAspectDeviceUptimeRobotFact
         )
       )
@@ -198,7 +201,7 @@ describe('Uptime Robot External Source Fact Handler', () => {
           updateSpy,
           insertSpy,
           createFetchSpy,
-          aspectDevice,
+          aspectDeviceIds,
           null
         )
         assert.isOk(createFetchSpy.calledOnce)
@@ -209,7 +212,7 @@ describe('Uptime Robot External Source Fact Handler', () => {
           'FactDeviceExternalSource'
         )
         const insertedObject = insertSpy.getCalls()[0].args[1]
-        assert.equal(insertedObject.deviceId, aspectDevice.id)
+        assert.equal(insertedObject.deviceId, aspectDeviceIds[0])
         assert.equal(insertedObject.sourceName, 'uptimeRobot')
         assert.equal(insertedObject.data, JSON.stringify(uptimeRobotResponse))
       })

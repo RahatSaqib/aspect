@@ -8,6 +8,8 @@ const {
   body,
 } = require('http-client')
 const { subMonths, startOfMonth } = require('date-fns')
+const _ = require('lodash')
+const Promise = require('bluebird')
 
 const config = require('../../config')
 const { deviceTypeToId } = require('../../shared/dictionary')
@@ -29,11 +31,11 @@ function timeSeconds(dateTime) {
 
 module.exports = async function ({ messageContext }) {
   return messageContext.run(async knex => {
-    const { id: aspectDeviceId } =
-      (await knex('Device')
-        .where('deviceTypeId', await deviceTypeToId('Aspect'))
-        .first('id')) || {}
-    if (aspectDeviceId) {
+    const aspectDeviceIds = await knex('Device')
+      .where('deviceTypeId', await deviceTypeToId('Aspect'))
+      .select('id')
+      .pluck('id')
+    if (!_.isEmpty(aspectDeviceIds)) {
       const now = new Date()
       const startCurrentMonth = utcDate(startOfMonth(now))
       const startOfLastMonth = utcDate(startOfMonth(subMonths(now, 1)))
@@ -53,7 +55,6 @@ module.exports = async function ({ messageContext }) {
           )}_${timeSeconds(now)}`
         )
       )
-
       try {
         const resp = await uptimeRobotFetch('/v2/getMonitors')
         if (resp.status !== 200) {
@@ -61,26 +62,31 @@ module.exports = async function ({ messageContext }) {
             `${resp.status} ${resp.statusText} ${JSON.stringify(resp)}`
           )
         }
-        const factDeviceExternalSource = await knex('FactDeviceExternalSource')
-          .where('deviceId', aspectDeviceId)
-          .andWhere('sourceName', 'uptimeRobot')
-          .first()
-        if (factDeviceExternalSource) {
-          await knex('FactDeviceExternalSource')
+        const uptimeRobotResponseJson = JSON.stringify(await resp.json())
+        await Promise.each(aspectDeviceIds, async aspectDeviceId => {
+          const factDeviceExternalSource = await knex(
+            'FactDeviceExternalSource'
+          )
             .where('deviceId', aspectDeviceId)
             .andWhere('sourceName', 'uptimeRobot')
-            .update({
-              data: JSON.stringify(await resp.json()),
+            .first()
+          if (factDeviceExternalSource) {
+            await knex('FactDeviceExternalSource')
+              .where('deviceId', aspectDeviceId)
+              .andWhere('sourceName', 'uptimeRobot')
+              .update({
+                data: uptimeRobotResponseJson,
+                updatedOn: getUtcTime(),
+              })
+          } else {
+            await knex('FactDeviceExternalSource').insert({
+              deviceId: aspectDeviceId,
+              sourceName: 'uptimeRobot',
+              data: uptimeRobotResponseJson,
               updatedOn: getUtcTime(),
             })
-        } else {
-          await knex('FactDeviceExternalSource').insert({
-            deviceId: aspectDeviceId,
-            sourceName: 'uptimeRobot',
-            data: JSON.stringify(await resp.json()),
-            updatedOn: getUtcTime(),
-          })
-        }
+          }
+        })
       } catch (err) {
         // eslint-disable-next-line no-console
         console.error('uptimeRobot Error', err)
