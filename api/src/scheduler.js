@@ -52,6 +52,7 @@ function startScheduler(queue) {
       )
     }
     cron.schedule('30 7,19 * * *', dispatchCheckUptimeRobot) // twice a day at 7:30am & 7:30pm
+    dispatchCheckUptimeRobot()
   }
 }
 
