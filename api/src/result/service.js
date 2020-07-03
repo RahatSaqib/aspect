@@ -1107,7 +1107,7 @@ async function isAuthorOrAdminOfResultComment(
     .where('id', commentId)
     .where('resultId', resultId)
     .first()
-  const isResultAdmin = credentials.permissions.includes(`result:admin`)
+  const isResultAdmin = credentials.permissions.includes(`result:edit`)
   return createdBy === user.id || isResultAdmin
 }
 

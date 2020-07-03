@@ -1,6 +1,6 @@
 export default function isEditable(user, module) {
   const notEditable = user.jwt.permissions
-    .intersect([`${module}:admin`, `${module}:edit`])
+    .intersect([`${module}:edit`])
     .isEmpty()
 
   return !notEditable

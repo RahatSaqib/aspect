@@ -142,64 +142,54 @@ export const navigations = [
   {
     value: '/browse/device',
     label: 'Devices',
-    requiredPermissions: ['device:view', 'device:admin', 'device:edit'],
+    requiredPermissions: ['device:view'],
   },
   {
     value: '/browse/result',
     label: 'Results',
-    requiredPermissions: ['result:view', 'result:admin', 'result:edit'],
+    requiredPermissions: ['result:view'],
   },
   {
     value: '/browse/case',
     label: 'Cases',
-    requiredPermissions: ['case:view', 'case:admin', 'case:edit'],
+    requiredPermissions: ['case:view'],
   },
   {
     value: '/browse/person',
     label: 'Contacts',
-    requiredPermissions: ['person:view', 'person:admin', 'person:edit'],
+    requiredPermissions: ['person:view'],
   },
   {
     value: '/browse/site',
     label: 'Sites',
-    requiredPermissions: ['site:view', 'site:admin', 'site:edit'],
+    requiredPermissions: ['site:view'],
   },
   {
     value: '/browse/inventory',
     label: 'Supplies',
     requiredPermissions: [
-      'inventory:view',
-      'inventory:admin',
-      'inventory:edit',
+      'inventory:view'
     ],
   },
   {
     value: '/browse/router',
     label: 'Routers',
-    requiredPermissions: ['router:view', 'router:admin', 'router:edit'],
+    requiredPermissions: ['router:view'],
   },
   {
     value: '/browse/reporter',
     label: 'Reporters',
-    requiredPermissions: ['reporter:view', 'reporter:admin', 'reporter:edit'],
+    requiredPermissions: ['reporter:view'],
   },
   {
     value: '/browse/notification',
     label: 'Notifications',
-    requiredPermissions: [
-      'notification:view',
-      'notification:admin',
-      'notification:edit',
-    ],
+    requiredPermissions: ['notification:view'],
   },
   {
     value: '/browse/deviceApiKey',
     label: 'Device Api Key',
-    requiredPermissions: [
-      'deviceApiKey:view',
-      'deviceApiKey:admin',
-      'deviceApiKey:edit',
-    ],
+    requiredPermissions: ['deviceApiKey:view'],
   },
 ]
 

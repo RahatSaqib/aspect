@@ -45,35 +45,32 @@ export const LinkNavigation = ({
       {
         href: '/task-list',
         label: 'Task List',
-        requiredPermissions: ['task:admin', 'task:view', 'task:edit'],
+        requiredPermissions: ['task:view'],
       },
       {
         href: '/operational-data',
         label: 'Operational  Data',
-        requiredPermissions: ['operationalData:view', 'operationalData:admin'],
+        requiredPermissions: ['operationalData:view'],
       },
       {
         href: '/clinical-indicators',
         label: 'Clinical Indicators',
-        requiredPermissions: [
-          'clinicalIndicators:admin',
-          'clinicalIndicators:view',
-        ],
+        requiredPermissions: ['clinicalIndicators:view'],
       },
       {
         href: '/browse',
         label: 'Browse',
-        requiredPermissions: ['browse:view', 'browse:admin'],
+        requiredPermissions: ['browse:view'],
       },
       {
         href: '/reports',
         label: 'Reports',
-        requiredPermissions: ['report:view', 'report:edit', 'report:admin'],
+        requiredPermissions: ['report:view'],
       },
       {
         href: '/manage',
         label: 'Manage',
-        requiredPermissions: ['manage:view', 'manage:admin'],
+        requiredPermissions: ['manage:view'],
       },
     ],
     userPermissions
