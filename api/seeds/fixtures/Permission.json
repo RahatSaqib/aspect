@@ -111,6 +111,12 @@
       ]
     },
     {
+      "name": "taskMenu",
+      "activities": [
+        "view"
+      ]
+    },
+    {
       "name": "report",
       "activities": [
         "view",
