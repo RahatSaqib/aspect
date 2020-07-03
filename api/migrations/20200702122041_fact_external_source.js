@@ -10,11 +10,14 @@ async function up(knex) {
         .references('id')
         .inTable('Device')
         .notNullable()
-        .primary()
         .onDelete('CASCADE')
       factDeviceExternalSource.string('sourceName', 50).notNullable()
       factDeviceExternalSource.text('data')
       factDeviceExternalSource.dateTime('updatedOn').notNullable()
+      factDeviceExternalSource.unique(
+        ['deviceId', 'sourceName'],
+        'factdeviceexternalsource_unique'
+      )
     }
   )
 }
