@@ -51,8 +51,7 @@ function startScheduler(queue) {
         factExternalSourceCheck({ sourceName: 'uptimeRobot' })
       )
     }
-    //    cron.schedule('30 7,19 * * *', dispatchCheckUptimeRobot) // twice a day at 7:30am & 7:30pm
-    cron.schedule('55 13,19 * * *', dispatchCheckUptimeRobot) // twice a day at 7:30am & 7:30pm
+    cron.schedule('30 7,19 * * *', dispatchCheckUptimeRobot) // twice a day at 7:30am & 7:30pm
   }
 }
 
