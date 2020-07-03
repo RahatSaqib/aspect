@@ -15,6 +15,14 @@ import AspectTooltip from '../../components/shared/AspectTooltip'
 
 const cssClasses = classnames.bind(require('./Status.css'))
 
+/**
+ * TODO: https://ops.systemone.id/browse/ASP-1521
+ * Correct filters to page navigation
+ *
+ * TODO: https://ops.systemone.id/browse/ASP-1522
+ * Refactor lifecycles and code-reuse
+ */
+
 const widgetMessageTypeList = [
   {
     value: 'title',
@@ -44,7 +52,7 @@ const widgetMessageTypeList = [
 
 const enhance = compose(
   requirePermissions({
-    permissions: ['dashboard:summary'],
+    permissions: ['dashboard:summary', 'operationalData:view'],
   }),
   connect(
     state => ({
