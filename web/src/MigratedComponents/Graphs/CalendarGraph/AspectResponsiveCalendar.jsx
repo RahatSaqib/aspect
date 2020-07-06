@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { useIntl } from 'react-intl'
 import { ResponsiveCalendar } from '@nivo/calendar'
 import { GraphLegend } from '../GraphLegend'
-import GraphToolTip from '../GraphToolTip'
+import { GraphToolTip } from '../GraphToolTip'
 
 import {
   formatValuesForGraphs,

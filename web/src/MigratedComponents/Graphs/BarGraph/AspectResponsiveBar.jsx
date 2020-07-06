@@ -1,9 +1,11 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { useIntl } from 'react-intl'
+import difference from 'lodash/difference'
+import sumBy from 'lodash/sumBy'
 import { ResponsiveBar } from '@nivo/bar'
 import { GraphLegend } from '../GraphLegend'
-import GraphToolTip from '../GraphToolTip'
+import { GraphToolTip, EmptyTooltip } from '../GraphToolTip'
 
 import {
   formatValuesForGraphs,
@@ -26,6 +28,7 @@ const AspectResponsiveBar = ({
   tickValuesXShape,
   type,
 }) => {
+  const legendsNotToRender = ['isWeekendOrHoliday']
   const { formatNumber: intlFormatNumber } = useIntl()
   const yTickvalues =
     type === 'divergent'
@@ -44,7 +47,11 @@ const AspectResponsiveBar = ({
     ? [
         {
           dataFrom: 'keys',
-          data: keys && keys.map(k => generateLegend(k, assaysFromState)),
+          data:
+            keys &&
+            difference(keys, legendsNotToRender).map(k =>
+              generateLegend(k, assaysFromState, type)
+            ),
           anchor: 'bottom-right',
           direction: 'row',
           justify: false,
@@ -53,10 +60,13 @@ const AspectResponsiveBar = ({
           itemsSpacing: 2,
           itemWidth: 120,
           itemHeight: 20,
-          itemDirection: 'right-to-left',
+          itemDirection:
+            type === 'stackedDeviceTreatment'
+              ? 'left-to-right'
+              : 'right-to-left',
           itemOpacity: 0.85,
           symbolSize: 20,
-          symbolShape: 'circle',
+          symbolShape: type === 'stackedDeviceTreatment' ? 'square' : 'circle',
           effects: [
             {
               on: 'hover',
@@ -69,6 +79,28 @@ const AspectResponsiveBar = ({
       ]
     : []
 
+  const calcOverallRate = (keyToCalc, totalTotal, gData) => {
+    const totalKey = sumBy(gData, d => Number(d[keyToCalc]))
+    const total = sumBy(gData, d => Number(d[totalTotal]))
+    const percentage = (totalKey / total) * 100
+    console.log(totalKey, '--', total, percentage)
+    return percentage
+  }
+
+  const markers = () => {
+    if (type === 'stackedDeviceTreatment') {
+      return [
+        {
+          axis: 'y',
+          value: calcOverallRate('devicesActiveRaw', 'devicesTotal', data),
+          lineStyle: { stroke: 'rgba(0, 0, 0, .35)', strokeWidth: 2 },
+          legendOrientation: 'vertical',
+          label: v => console.log(v),
+        },
+      ]
+    }
+  }
+
   return (
     <ResponsiveBar
       data={data}
@@ -76,9 +108,9 @@ const AspectResponsiveBar = ({
       indexBy={indexBy}
       colorBy="index"
       enableLabel={false}
-      enableGridY={false}
+      enableGridY={type === 'stackedDeviceTreatment'}
       {...divergentExtraConfig}
-      padding={0.3}
+      padding={type === 'stackedDeviceTreatment' ? 0.03 : 0.3}
       borderWidth={0}
       borderColor={{ from: 'color', modifiers: [['darker', 1.6]] }}
       axisTop={null}
@@ -88,19 +120,23 @@ const AspectResponsiveBar = ({
       animate
       motionStiffness={90}
       motionDamping={15}
-      layers={['grid', 'axes', 'bars', 'markers', GraphLegend]}
+      layers={['axes', 'bars', 'grid', 'markers', GraphLegend]}
       colors={v => generateColorForValue(v)}
       margin={generateMargin(tickValuesYShape, displayLegend)}
-      tooltip={v => (
-        <GraphToolTip
-          values={generateToolTip(
-            v,
-            displayMethod,
-            assaysFromState,
-            intlFormatNumber
-          )}
-        />
-      )}
+      tooltip={v =>
+        v && legendsNotToRender.includes(v.id) ? (
+          <EmptyTooltip />
+        ) : (
+          <GraphToolTip
+            values={generateToolTip(
+              v,
+              displayMethod,
+              assaysFromState,
+              intlFormatNumber
+            )}
+          />
+        )
+      }
       axisLeft={{
         tickSize: 5,
         tickValues: yTickvalues,
@@ -116,6 +152,17 @@ const AspectResponsiveBar = ({
         format: v => formatValuesForGraphs(v, displayMethod, intlFormatNumber),
       }}
       legends={legends}
+      theme={
+        type === 'stackedDeviceTreatment' && {
+          grid: {
+            line: {
+              stroke: 'white',
+              strokeWidth: 2,
+            },
+          },
+        }
+      }
+      markers={markers()}
     />
   )
 }

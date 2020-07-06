@@ -24,11 +24,11 @@ const deviceStatusGraphs = {
         },
         indexBy: 'date',
         keyToConsume: 'devicesActive',
-        tickValuesYShape: 'none',
+        tickValuesYShape: 'clubsandwich',
         tickValuesXShape: 'all',
-        displayMethod: 'actual', // todo: actual
+        displayMethod: 'percentage', // todo: actual
         displayLegend: true,
-        formatDate: 'MMM yy',
+        formatDate: 'dd MMM',
       },
     ],
   },
