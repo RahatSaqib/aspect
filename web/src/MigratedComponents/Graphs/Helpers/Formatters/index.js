@@ -166,7 +166,8 @@ const filterColour = value =>
   )[0].color
 
 const generateColorForValue = ({ id: valueId }) => filterColour(valueId)
-const generateColorForLegend = value => filterColour(value)
+const generateColorForLegend = (value, type) =>
+  value !== 'isWeekendOrHoliday' ? filterColour(value) : false
 
 const generateMargin = (tickValuesYShape, legend) => {
   const shouldMargin = tickValuesYShape !== 'none'
@@ -192,8 +193,9 @@ const generateToolTip = (
   return { color, displayId, indexValue, displayValue }
 }
 
-const translateLabel = (string, assaysFromState) => {
+const translateLabel = (string, assaysFromState, type = false) => {
   const dictionary = []
+  const removeString = 'devices'
   assaysFromState.map(({ resultCategories }) =>
     resultCategories.map(({ externalId, name }) =>
       dictionary.push({ externalId, name })
@@ -203,13 +205,15 @@ const translateLabel = (string, assaysFromState) => {
   const newString = assayResults.filter(
     ({ externalId }) => externalId === string
   )
-  return newString.length ? newString[0].name : makeProperCase(string)
+  return newString.length
+    ? newString[0].name
+    : makeProperCase(string.replace(removeString, ''))
 }
 
-const generateLegend = (string, assaysFromState) => {
+const generateLegend = (string, assaysFromState, type = false) => {
   return {
-    label: translateLabel(string, assaysFromState),
-    color: generateColorForLegend(string),
+    label: translateLabel(string, assaysFromState, type),
+    color: generateColorForLegend(string, type),
   }
 }
 
