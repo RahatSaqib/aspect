@@ -83,8 +83,6 @@ const GraphRender = ({
     })
   }, [])
 
-  console.log(graphData)
-
   return (
     <Grid item xs={12} lg={size}>
       <div className={cssClasses('graphrender__container')}>

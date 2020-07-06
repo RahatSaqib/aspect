@@ -26,4 +26,10 @@ GraphToolTip.propTypes = {
   values: PropTypes.oneOfType([PropTypes.object]).isRequired,
 }
 
-export default GraphToolTip
+const EmptyTooltip = () => (
+  <div className={cssClasses('tooltip__container')}>
+    <div className={cssClasses('tooltip__text')}>No results</div>
+  </div>
+)
+
+export { GraphToolTip, EmptyTooltip }
