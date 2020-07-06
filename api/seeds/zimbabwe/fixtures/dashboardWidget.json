@@ -59,6 +59,20 @@
       "description": "The number of users",
       "descriptionI18nKey": "personDescription",
       "dashboards": ["home"]
+    },
+    {
+      "jobFunctions": ["all"],
+      "icon": "link",
+      "title": "Server Uptime",
+      "titleI18nKey": "serverUptimeTitle",
+      "subTitle": null,
+      "subTitleI18nKey": null,
+      "sqlForIndicator": "SELECT IFNULL(CONCAT(CAST(CAST(SUBSTR(uptime_last_2_months, POSITION('-' IN uptime_last_2_months) + 1) AS UNSIGNED) AS CHAR), '%'), '?') AS cnt FROM (SELECT JSON_UNQUOTE(JSON_EXTRACT(FactDeviceExternalSource.data, '$.monitors[0].custom_uptime_ranges')) AS uptime_last_2_months FROM DeviceType LEFT JOIN Device ON DeviceType.id = Device.deviceTypeId LEFT JOIN FactDeviceExternalSource ON Device.id = FactDeviceExternalSource.deviceId AND FactDeviceExternalSource.sourceName = 'uptimeRobot' WHERE DeviceType.externalId = 'Aspect' LIMIT 1) AS aspect_uptime",
+      "sortOrder": 4,
+      "externalId": "serverUptimeTitle",
+      "description": "The amount of time that Uptime Robot has been able to connect to Aspect this month",
+      "descriptionI18nKey": "serverUptimeDescription",
+      "dashboards": ["operational"]
     }
   ]
 }
