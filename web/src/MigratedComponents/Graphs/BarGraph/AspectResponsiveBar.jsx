@@ -94,8 +94,11 @@ const AspectResponsiveBar = ({
           axis: 'y',
           value: calcOverallRate('devicesActiveRaw', 'devicesTotal', data),
           lineStyle: { stroke: 'rgba(0, 0, 0, .35)', strokeWidth: 2 },
-          legendOrientation: 'vertical',
-          label: v => console.log(v),
+          legendOrientation: 'horisontal',
+          legend: () => <div>The Label</div>,
+          textStyle: {
+            fill: 'red',
+          },
         },
       ]
     }
