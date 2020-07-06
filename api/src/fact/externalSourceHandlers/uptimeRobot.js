@@ -46,9 +46,10 @@ module.exports = async function ({ messageContext }) {
         accept('application/json'),
         header('Content-Type', 'application/x-www-form-urlencoded'),
         body(
-          `api_key=${
-            config.uptimerobot.api.key
-          }&format=json&custom_uptime_ranges=${timeSeconds(
+          `api_key=${_.get(
+            config,
+            'uptimerobot.api.key'
+          )}&format=json&custom_uptime_ranges=${timeSeconds(
             startOfLastMonth
           )}_${timeSeconds(startCurrentMonth)}-${timeSeconds(
             startCurrentMonth
