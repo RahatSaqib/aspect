@@ -166,16 +166,16 @@ const filterColour = value =>
   )[0].color
 
 const generateColorForValue = ({ id: valueId }) => filterColour(valueId)
-const generateColorForLegend = (value, type) =>
-  value !== 'isWeekendOrHoliday' ? filterColour(value) : false
+const generateColorForLegend = value => filterColour(value)
 
-const generateMargin = (tickValuesYShape, legend) => {
+const generateMargin = (tickValuesYShape, legend, type = false) => {
   const shouldMargin = tickValuesYShape !== 'none'
+  const bleedForLegends = type === 'stackedDeviceTreatment' ? 30 : 0
   const margin = {
     top: 5,
-    right: shouldMargin ? 20 : 0,
-    bottom: legend ? 60 : 0,
-    left: shouldMargin ? 40 : 0,
+    right: shouldMargin ? 20 + bleedForLegends : 0 + bleedForLegends,
+    bottom: legend ? 60 + bleedForLegends : 0 + bleedForLegends,
+    left: shouldMargin ? 40 + bleedForLegends : 0 + bleedForLegends,
   }
 
   return margin
