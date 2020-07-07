@@ -16,6 +16,7 @@ const types = {
   FACT_DATA_CATEGORY_IS_LOW_OTHER: 'FACT_DATA_CATEGORY_IS_LOW_OTHER',
   FACT_NEW_RESULTS_AVAILABLE_CHECK: 'FACT_NEW_RESULTS_AVAILABLE_CHECK',
   FACT_NEW_RESULTS_AVAILABLE: 'FACT_NEW_RESULTS_AVAILABLE',
+  FACT_CHECK_EXTERNAL_FACT_SOURCE: 'FACT_CHECK_EXTERNAL_FACT_SOURCE',
 }
 
 /**
@@ -151,6 +152,18 @@ function factNewResultsAvailable({ siteId, numberOfResults }) {
   }
 }
 
+/**
+ * Creates an action to notify that it is time to check uptime robot stats for Aspect
+ *
+ * sourceName is required.
+ */
+function factExternalSourceCheck({ sourceName }) {
+  return {
+    type: types.FACT_CHECK_EXTERNAL_FACT_SOURCE,
+    sourceName,
+  }
+}
+
 module.exports = {
   types,
   factGenerateDeviceConnectivity,
@@ -161,4 +174,5 @@ module.exports = {
   factDataCategoryLow,
   factNewResultsAvailableCheck,
   factNewResultsAvailable,
+  factExternalSourceCheck,
 }
