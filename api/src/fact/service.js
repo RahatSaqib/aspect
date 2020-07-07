@@ -884,6 +884,17 @@ function onFactNewResultsAvailableCheck(action, { messageContext }) {
   })
 }
 
+// ----------------------------------------------
+// This function is triggered by scheduler, and checks external sources to update fact tables
+// ----------------------------------------------
+function onFactExternalSourceCheck({ sourceName }, context) {
+  // eslint-disable-next-line import/no-dynamic-require
+  const externalSourceHandler = require(`./externalSourceHandlers/${sourceName}`)
+  if (externalSourceHandler) {
+    return externalSourceHandler(context)
+  }
+}
+
 module.exports = {
   daysToCalculate,
   onFactGenerateDeviceConnectivity,
@@ -898,4 +909,5 @@ module.exports = {
   getDataCategoryStatus,
   MIN_RESULTS_TO_TRIGGER_DATA_CATEGORY_LOW,
   onFactNewResultsAvailableCheck,
+  onFactExternalSourceCheck,
 }
