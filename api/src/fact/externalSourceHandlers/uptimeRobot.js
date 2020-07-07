@@ -29,17 +29,24 @@ function timeSeconds(dateTime) {
   return `${dateTime.getTime()}`.substr(0, 10)
 }
 
-module.exports = async function ({ messageContext }) {
+async function checkUptimeRobot({ messageContext }) {
   return messageContext.run(async knex => {
+    const aspectDeviceTypeId = await deviceTypeToId('Aspect')
+
     const aspectDeviceIds = await knex('Device')
-      .where('deviceTypeId', await deviceTypeToId('Aspect'))
+      .where('deviceTypeId', aspectDeviceTypeId)
       .select('id')
       .pluck('id')
+
     if (!_.isEmpty(aspectDeviceIds)) {
       const now = new Date()
       const startCurrentMonth = utcDate(startOfMonth(now))
       const startOfLastMonth = utcDate(startOfMonth(subMonths(now, 1)))
-
+      const lastMonthAndThisMonthRange = `${timeSeconds(
+        startOfLastMonth
+      )}_${timeSeconds(startCurrentMonth)}-${timeSeconds(
+        startCurrentMonth
+      )}_${timeSeconds(now)}`
       const uptimeRobotFetch = createFetch(
         method('POST'),
         base('https://api.uptimerobot.com'),
@@ -49,11 +56,7 @@ module.exports = async function ({ messageContext }) {
           `api_key=${_.get(
             config,
             'uptimerobot.api.key'
-          )}&format=json&custom_uptime_ranges=${timeSeconds(
-            startOfLastMonth
-          )}_${timeSeconds(startCurrentMonth)}-${timeSeconds(
-            startCurrentMonth
-          )}_${timeSeconds(now)}`
+          )}&format=json&custom_uptime_ranges=${lastMonthAndThisMonthRange}`
         )
       )
       try {
@@ -95,3 +98,5 @@ module.exports = async function ({ messageContext }) {
     }
   })
 }
+
+module.exports = checkUptimeRobot
