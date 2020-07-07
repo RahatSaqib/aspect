@@ -430,7 +430,7 @@ describe('Dashboard routes', () => {
       }
 
       describe('for Admin', () => {
-        it("should return the highest level notification for all labs under admin's jurisdiction", () =>
+        it.only("should return the highest level notification for all labs under admin's jurisdiction", () =>
           runTestWithKnex(async knex =>
             checkThatUserActionsMatchActionDashboardResponse({
               username: 'myanmar_admin',
