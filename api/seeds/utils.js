@@ -2945,14 +2945,17 @@ async function removeAndReplaceActivity(
   )
 
   const insertEditPermissions = modulesNames
-    .filter(name => !modules[name].edit)
+    .filter(name => !modules[name][activityToReplaceFor])
     .map(async moduleName => {
+      // Inserts the new permission
       const [permissionId] = await knex('Permission').insert({
         module: moduleName,
         activity: activityToReplaceFor,
       })
-      modules[moduleName].edit = permissionId
+      // Assigns the new permission id to the modules map
+      modules[moduleName][activityToReplaceFor] = permissionId
     })
+  // Inserts all the new permissions
   await Promise.all(insertEditPermissions)
 
   const insertJobFunctionEditPermissions = modulesNames.map(moduleName =>
