@@ -2943,29 +2943,36 @@ async function removeAndReplaceActivity(
   const modulesNames = Object.keys(modules)
 
   await Promise.each(modulesNames, async moduleName => {
-    if (modules[moduleName][activityToRemove]) {
+    const activityToRemoveId = modules[moduleName][activityToRemove]
+
+    if (activityToRemoveId) {
+      let activityToReplaceForId = modules[moduleName][activityToReplaceFor]
+
       // If module has activityToRemove, reassignation should be done
-      if (!modules[moduleName][activityToReplaceFor]) {
+      if (!activityToReplaceForId) {
         // If module doesn't have the activityToReplaceFor
         // Inserts the new permission
         const [permissionId] = await knex('Permission').insert({
           module: moduleName,
           activity: activityToReplaceFor,
         })
-        // Assigns the new permission id to the modules map
-        modules[moduleName][activityToReplaceFor] = permissionId
+
+        activityToReplaceForId = permissionId
       }
 
       // Assigns the activityToReplaceFor to all the job functions that use the activityToRemove
       await mapJobFunctionPermissions(
         knex,
-        [modules[moduleName][activityToRemove]],
-        [modules[moduleName][activityToReplaceFor]]
+        [activityToRemoveId],
+        [activityToReplaceForId]
       )
+
+      await knex('JobFunctionPermission')
+        .where({ permissionId: activityToRemoveId })
+        .delete()
+      await knex('Permission').where({ id: activityToRemoveId }).delete()
     }
   })
-
-  await knex('Permission').where({ activity: activityToRemove }).delete()
 }
 
 module.exports = {
