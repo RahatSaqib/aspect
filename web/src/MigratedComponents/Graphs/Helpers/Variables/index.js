@@ -51,7 +51,7 @@ const graphColorMap = [
   { id: 23, externalId: 'NotConfirmed', color: colorBlue4 },
   { id: 24, externalId: 'devicesActive', color: conifer },
   { id: 25, externalId: 'devicesInactive', color: selectiveYellow },
-  { id: 26, externalId: 'isWeekendOrHoliday', color: geyser },
+  { id: 26, externalId: 'weekendOrHoliday', color: geyser },
   { id: 27, externalId: 'devicesNeedsRepair', color: thunderbird },
   { id: 28, externalId: 'devicesUnknown', color: tundora },
   { id: 29, externalId: 'devicesStockOut', color: anakiwa },
