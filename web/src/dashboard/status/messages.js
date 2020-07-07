@@ -299,6 +299,24 @@ export const messages = defineMessages({
     id: 'pages.Status.assayResultCategoryAll',
     defaultMessage: 'All Results',
   },
+  // widget "Tests per Day"
+  dashboardWidgetTestsPerDayTitle: {
+    id: 'pages.Status.dashboardWidgetTestsPerDayTitle',
+    defaultMessage: 'Tests Per Day',
+  },
+  dashboardWidgetTestsPerDayDescription: {
+    id: 'pages.Status.dashboardWidgetTestsPerDayDescription',
+    defaultMessage: 'Average number of tests per day reported the current month'
+  },
+  // widget "Valid Results"
+  dashboardWidgetValidResultsPc: {
+    id: 'pages.Status.dashboardWidgetValidResultsPc',
+    defaultMessage: 'Valid Results',
+  },
+  dashboardWidgetValidResultsPcDescription: {
+    id: 'pages.Status.dashboardWidgetValidResultsPcDescription',
+    defaultMessage: 'Percentage of valid results reported the current month',
+  },
 })
 
 export default messages
