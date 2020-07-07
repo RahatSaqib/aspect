@@ -306,7 +306,8 @@ export const messages = defineMessages({
   },
   dashboardWidgetTestsPerDayDescription: {
     id: 'pages.Status.dashboardWidgetTestsPerDayDescription',
-    defaultMessage: 'Average number of tests per day reported the current month'
+    defaultMessage:
+      'Average number of tests per day reported the current month',
   },
   // widget "Valid Results"
   dashboardWidgetValidResultsPc: {

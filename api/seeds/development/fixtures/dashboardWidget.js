@@ -144,7 +144,12 @@ module.exports = {
             MONTH(r.endedOn) = MONTH(NOW())
           GROUP BY DATE(r.endedOn)
         ) as t1`,
-      sqlForStatUnit: `SELECT (avgCurrentMonth - avgLastMonth) as cnt
+      sqlForStatUnit: `SELECT 
+          CASE 
+            WHEN avgCurrentMonth >= avgLastMonth 
+            THEN concat('+', (avgCurrentMonth - avgLastMonth))
+            ELSE concat('-', (avgCurrentMonth - avgLastMonth))
+          END as cnt
         FROM (
         SELECT 
           (
