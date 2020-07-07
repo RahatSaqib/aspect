@@ -91,8 +91,7 @@ const GraphContainer = ({ config, size, assaysFromState, group }) => {
       <Grid container spacing={24}>
         <Grid item xs={12}>
           <AspectCard
-            // title={intlFormatMessage(messages[title])}
-            title="tiutle"
+            title={intlFormatMessage(messages[title])}
             innerSize={innerSize}
             justify="center"
             action={params => setdispatchFromSelector({ ...params })}

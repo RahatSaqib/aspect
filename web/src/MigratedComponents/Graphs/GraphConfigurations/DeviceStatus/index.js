@@ -4,7 +4,7 @@ import { getTimePeriod } from '../../Helpers/Formatters'
 const deviceStatusGraphs = {
   deviceStatus: {
     id: 'deviceStatus',
-    title: 'deviceStatusGraphMonthly',
+    title: 'deviceStatusTitle',
     assays: [],
     selectorModifiers: [],
     graphType: [

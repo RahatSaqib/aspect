@@ -28,7 +28,7 @@ GraphToolTip.propTypes = {
 
 const EmptyTooltip = () => (
   <div className={cssClasses('tooltip__container')}>
-    <div className={cssClasses('tooltip__text')}>No results</div>
+    <div className={cssClasses('tooltip__text')}>Weekend or Holiday</div>
   </div>
 )
 
