@@ -28,7 +28,7 @@ const AspectResponsiveBar = ({
   tickValuesXShape,
   type,
 }) => {
-  const legendsNotToRender = ['isWeekendOrHoliday']
+  const legendsNotToRender = ['weekendOrHoliday']
   const { formatNumber: intlFormatNumber } = useIntl()
   const yTickvalues =
     type === 'divergent'
@@ -47,11 +47,7 @@ const AspectResponsiveBar = ({
     ? [
         {
           dataFrom: 'keys',
-          data:
-            keys &&
-            difference(keys, legendsNotToRender).map(k =>
-              generateLegend(k, assaysFromState, type)
-            ),
+          data: keys.map(k => generateLegend(k, assaysFromState, type)),
           anchor: 'bottom-right',
           direction: 'row',
           justify: false,
@@ -83,25 +79,7 @@ const AspectResponsiveBar = ({
     const totalKey = sumBy(gData, d => Number(d[keyToCalc]))
     const total = sumBy(gData, d => Number(d[totalTotal]))
     const percentage = (totalKey / total) * 100
-    console.log(totalKey, '--', total, percentage)
     return percentage
-  }
-
-  const markers = () => {
-    if (type === 'stackedDeviceTreatment') {
-      return [
-        {
-          axis: 'y',
-          value: calcOverallRate('devicesActiveRaw', 'devicesTotal', data),
-          lineStyle: { stroke: 'rgba(0, 0, 0, .35)', strokeWidth: 2 },
-          legendOrientation: 'horisontal',
-          legend: () => <div>The Label</div>,
-          textStyle: {
-            fill: 'red',
-          },
-        },
-      ]
-    }
   }
 
   return (
@@ -125,7 +103,7 @@ const AspectResponsiveBar = ({
       motionDamping={15}
       layers={['axes', 'bars', 'grid', 'markers', GraphLegend]}
       colors={v => generateColorForValue(v)}
-      margin={generateMargin(tickValuesYShape, displayLegend)}
+      margin={generateMargin(tickValuesYShape, displayLegend, type)}
       tooltip={v =>
         v && legendsNotToRender.includes(v.id) ? (
           <EmptyTooltip />
@@ -144,6 +122,12 @@ const AspectResponsiveBar = ({
         tickSize: 5,
         tickValues: yTickvalues,
         format: v => formatValuesForGraphs(v, displayMethod, intlFormatNumber),
+        legendPosition: 'middle',
+        legendOffset: -60,
+        legend:
+          type === 'stackedDeviceTreatment'
+            ? 'Percent of Monthly Status'
+            : false,
       }}
       axisBottom={{
         tickSize: 5,
@@ -165,7 +149,27 @@ const AspectResponsiveBar = ({
           },
         }
       }
-      markers={markers()}
+      markers={
+        type === 'stackedDeviceTreatment' && [
+          {
+            axis: 'y',
+            value: calcOverallRate('devicesActiveRaw', 'devicesTotal', data),
+            lineStyle: { stroke: 'rgba(32, 161, 179, 1)', strokeWidth: 3 },
+            legendOrientation: 'horisontal',
+            legend: `${calcOverallRate(
+              'devicesActiveRaw',
+              'devicesTotal',
+              data
+            ).toFixed(2)}%`,
+            legendOffsetX: -3,
+            legendOffsetY: 0,
+            textStyle: {
+              fill: 'rgba(32, 161, 179, 1)',
+              fontWeight: 'bold',
+            },
+          },
+        ]
+      }
     />
   )
 }
