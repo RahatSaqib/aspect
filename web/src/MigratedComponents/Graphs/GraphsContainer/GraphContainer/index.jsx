@@ -5,7 +5,6 @@ import { useDispatch } from 'react-redux'
 import { useIntl } from 'react-intl'
 import classnames from 'classnames/bind'
 import merge from 'lodash/merge'
-import intersection from 'lodash/intersection'
 import Grid from '@material-ui/core/Grid'
 
 import requirePermissions from '../../../../components/shared/requirePermissions'
