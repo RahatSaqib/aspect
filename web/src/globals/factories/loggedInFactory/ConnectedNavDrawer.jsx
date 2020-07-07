@@ -5,7 +5,8 @@ import { connect } from 'react-redux'
 import Drawer from '@material-ui/core/Drawer'
 import { FaUser } from 'react-icons/fa'
 
-import LinkNavigation, { makeThemedLink } from './LinkNavigation'
+import LinkNavigation from './LinkNavigation'
+import ThemedLink from './ThemedLink'
 import { toggleDrawer, closeDrawer } from '../../../auth/AuthRedux'
 
 const enhance = compose(
@@ -23,7 +24,6 @@ const enhance = compose(
 const ConnectedNavDrawer = ({
   history,
   location,
-
   drawerOpen,
   toggleDrawer,
   closeDrawer,
@@ -35,13 +35,13 @@ const ConnectedNavDrawer = ({
       type="vertical"
       onClick={closeDrawer}
     >
-      {makeThemedLink({
+      {/* {ThemedLink({
         history,
         location,
         href: '/account-details/current',
         label: '',
-        icon: <FaUser />,
-      })}
+        icon: <FaUser />
+      })} */}
     </LinkNavigation>
   </Drawer>
 )
