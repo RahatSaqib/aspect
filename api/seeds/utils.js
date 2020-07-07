@@ -2940,32 +2940,30 @@ async function removeAndReplaceActivity(
   activityToReplaceFor
 ) {
   const modules = await getPermissionModules(knex)
-  const modulesNames = Object.keys(modules).filter(
-    name => modules[name][activityToRemove]
-  )
+  const modulesNames = Object.keys(modules)
 
-  const insertEditPermissions = modulesNames
-    .filter(name => !modules[name][activityToReplaceFor])
-    .map(async moduleName => {
-      // Inserts the new permission
-      const [permissionId] = await knex('Permission').insert({
-        module: moduleName,
-        activity: activityToReplaceFor,
-      })
-      // Assigns the new permission id to the modules map
-      modules[moduleName][activityToReplaceFor] = permissionId
-    })
-  // Inserts all the new permissions
-  await Promise.all(insertEditPermissions)
+  await Promise.each(modulesNames, async moduleName => {
+    if (modules[moduleName][activityToRemove]) {
+      // If module has activityToRemove, reassignation should be done
+      if (!modules[moduleName][activityToReplaceFor]) {
+        // If module doesn't have the activityToReplaceFor
+        // Inserts the new permission
+        const [permissionId] = await knex('Permission').insert({
+          module: moduleName,
+          activity: activityToReplaceFor,
+        })
+        // Assigns the new permission id to the modules map
+        modules[moduleName][activityToReplaceFor] = permissionId
+      }
 
-  const insertJobFunctionEditPermissions = modulesNames.map(moduleName =>
-    mapJobFunctionPermissions(
-      knex,
-      [modules[moduleName][activityToRemove]],
-      [modules[moduleName][activityToReplaceFor]]
-    )
-  )
-  await Promise.all(insertJobFunctionEditPermissions)
+      // Assigns the activityToReplaceFor to all the job functions that use the activityToRemove
+      await mapJobFunctionPermissions(
+        knex,
+        [modules[moduleName][activityToRemove]],
+        [modules[moduleName][activityToReplaceFor]]
+      )
+    }
+  })
 
   await knex('Permission').where({ activity: activityToRemove }).delete()
 }
