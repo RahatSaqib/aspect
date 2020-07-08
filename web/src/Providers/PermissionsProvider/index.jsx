@@ -1,5 +1,6 @@
-import React, { Fragment, useEffect, useState } from 'react'
-import { useSelector, useDispatch } from 'react-redux'
+import React, { Fragment, memo } from 'react'
+import PropTypes from 'prop-types'
+import { useSelector } from 'react-redux'
 import flowRight from 'lodash/flowRight'
 
 import {
@@ -23,4 +24,16 @@ const PermissionsProvider = ({
   return isPermitted ? <Fragment>{children}</Fragment> : null
 }
 
-export default PermissionsProvider
+PermissionsProvider.defaultProps = {
+  override: [],
+  extra: [],
+}
+
+PermissionsProvider.propTypes = {
+  permissions: PropTypes.oneOfType([PropTypes.array]).isRequired,
+  override: PropTypes.oneOfType([PropTypes.array]),
+  extra: PropTypes.oneOfType([PropTypes.array]),
+  children: PropTypes.oneOfType([PropTypes.object]).isRequired,
+}
+
+export default memo(PermissionsProvider)
