@@ -818,6 +818,7 @@ async function actionDashboard(request) {
     auth.credentials,
     'actionDashboard'
   )
+
   const alertMessages = await knex('AlertMessage as am')
     .join('MessageStatus as ms', 'am.messageStatusId', 'ms.id')
     .join('Notification as n', 'am.id', 'n.alertMessageId')
@@ -883,6 +884,7 @@ async function actionDashboard(request) {
       knex.raw('max(isl.changedOn) as statusDate'),
       'i.consumableId'
     )
+
   const alertMessagesByIssue = _.map(
     _.values(_.groupBy(alertMessages, 'issueId')),
     issueMessages => {

@@ -47,7 +47,7 @@ async function getConstraints(credentials, forModule = null) {
           )
           .leftJoin('Permission as pModuleAdmin', function () {
             this.on('jfp.permissionId', 'pModuleAdmin.id')
-              .andOn('pModuleAdmin.activity', knex.raw("'admin'"))
+              .andOn('pModuleAdmin.activity', knex.raw("'edit'"))
               .andOn('pModuleAdmin.module', knex.raw(`'${forModule}'`))
           })
       }
@@ -101,7 +101,7 @@ async function getJobConstraints(personId, jobFunctionId, forModule = null) {
           )
           .leftJoin('Permission as pModuleAdmin', function () {
             this.on('jfp.permissionId', 'pModuleAdmin.id')
-              .andOn('pModuleAdmin.activity', knex.raw("'admin'"))
+              .andOn('pModuleAdmin.activity', knex.raw("'edit'"))
               .andOn('pModuleAdmin.module', knex.raw(`'${forModule}'`))
           })
       }
