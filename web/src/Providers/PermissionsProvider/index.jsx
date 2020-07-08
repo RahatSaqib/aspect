@@ -11,8 +11,8 @@ import {
 
 const PermissionsProvider = ({
   permissions: permissionsInConfig,
-  override: overriddenPermissions = [],
-  extra: extraPermissions = [],
+  override: overriddenPermissions,
+  extra: extraPermissions,
   children,
 }) => {
   const { permissions } = useSelector(({ user }) => user.toJS().jwt)
