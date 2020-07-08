@@ -117,9 +117,9 @@ const GraphContainer = ({ config, size, assaysFromState }) => {
 }
 
 GraphContainer.protoTypes = {
+  assaysFromState: PropTypes.oneOfType([PropTypes.array]).isRequired,
   config: PropTypes.oneOfType([PropTypes.object]).isRequired,
   size: PropTypes.oneOfType([PropTypes.object]).isRequired,
-  assaysFromState: PropTypes.oneOfType([PropTypes.array]).isRequired,
 }
 
 export default GraphContainer
