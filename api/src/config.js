@@ -121,6 +121,15 @@ function configureOptional(config) {
       systemKey: philippinesITISSystemKey,
     }
   }
+
+  const uptimeRobotApiKey = process.env['uptimerobot.api.key']
+  if (uptimeRobotApiKey) {
+    config.uptimerobot = {
+      api: {
+        key: uptimeRobotApiKey,
+      },
+    }
+  }
 }
 
 function getBooleanOrDefault(key, defaultValue) {
