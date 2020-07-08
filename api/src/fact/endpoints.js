@@ -8,6 +8,7 @@ const {
   onResultLogged,
   checkDataCategoriesForLowStatus,
   onFactNewResultsAvailableCheck,
+  onFactExternalSourceCheck,
 } = require('./service')
 
 const subscriptions = [
@@ -27,6 +28,7 @@ const subscriptions = [
       RESULT_LOGGED: onResultLogged,
       FACT_DATA_CATEGORY_LOW_CHECK: checkDataCategoriesForLowStatus,
       FACT_NEW_RESULTS_AVAILABLE_CHECK: onFactNewResultsAvailableCheck,
+      FACT_CHECK_EXTERNAL_FACT_SOURCE: onFactExternalSourceCheck,
     },
   },
 ]

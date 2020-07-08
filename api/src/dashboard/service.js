@@ -88,35 +88,43 @@ function getTableAlias(sql) {
   return tableAlias
 }
 
-function getSqlBuilder(sql) {
-  const sqlRegExp = new RegExp(
+function tryConvertSqlStringToKnexQueryBuilder(sql) {
+  const sqlSelectFromTableNameRegExp = new RegExp(
     /\bselect\s+(.*?)\s?(?:\s+from\s+(.*?)\s*((?:(?:LEFT|RIGHT)?\s+(?:INNER|OUTER)?\s+join)\s+(?:.*?))?\s*(?:(?:\s+where)\s+(.*?))?\s*(?:(?:\s+having)\s(.*?))?)?$/gi
   )
-  let match
+  const sqlSelectFromTableNameMatch = sqlSelectFromTableNameRegExp.exec(sql)
   let sqlBuilder
-  // eslint-disable-next-line no-cond-assign
-  if ((match = sqlRegExp.exec(sql)) !== null) {
-    if (match.length === 6) {
-      sqlBuilder = knex.select(knex.raw(match[1])).from(match[2])
-      if (match[3]) {
-        sqlBuilder.joinRaw(match[3])
+  if (
+    sqlSelectFromTableNameMatch &&
+    /^[a-zA-Z0-9_\-\s`]*$/.test(sqlSelectFromTableNameMatch[2]) // Does the FROM source look like a table name? Eg: Device or Device as d or `Device` as d
+  ) {
+    if (sqlSelectFromTableNameMatch.length === 6) {
+      sqlBuilder = knex
+        .select(knex.raw(sqlSelectFromTableNameMatch[1]))
+        .from(sqlSelectFromTableNameMatch[2])
+      if (sqlSelectFromTableNameMatch[3]) {
+        sqlBuilder.joinRaw(sqlSelectFromTableNameMatch[3])
       }
-      if (match[4]) {
-        sqlBuilder.whereRaw(match[4])
+      if (sqlSelectFromTableNameMatch[4]) {
+        sqlBuilder.whereRaw(sqlSelectFromTableNameMatch[4])
       }
-      if (match[5]) {
-        sqlBuilder.havingRaw(match[5])
+      if (sqlSelectFromTableNameMatch[5]) {
+        sqlBuilder.havingRaw(sqlSelectFromTableNameMatch[5])
       }
     }
   }
   return sqlBuilder
 }
 
-function queryCount(sql, dataConstraints, query) {
-  const sqlTableAlias = getTableAlias(sql)
-  const sqlBuilder = getSqlBuilder(sql)
-
+async function queryValue(sql, dataConstraints, query) {
+  if (sql) {
+    // get rid of all new-line symbols, if any exist
+    sql = sql.replace(/\n/g, ' ')
+  }
+  let firstResult
+  const sqlBuilder = tryConvertSqlStringToKnexQueryBuilder(sql)
   if (sqlBuilder) {
+    const sqlTableAlias = getTableAlias(sql)
     sqlBuilder.modify(addConstraints, dataConstraints, sqlTableAlias).first()
     if (sqlTableAlias.result) {
       sqlBuilder.modify(filterDateRangeParams, query, 'r.endedOn')
@@ -124,8 +132,14 @@ function queryCount(sql, dataConstraints, query) {
     if (sqlTableAlias.site) {
       sqlBuilder.modify(filterParams, query, { siteId: 's.id' })
     }
+    firstResult = sqlBuilder
+  } else if (sql) {
+    firstResult = await knex.raw(sql)
   }
-  return sqlBuilder
+  while (_.isArray(firstResult)) {
+    ;[firstResult] = firstResult
+  }
+  return firstResult
 }
 
 async function summaryDashboard(request) {
@@ -138,17 +152,17 @@ async function summaryDashboard(request) {
   const widgets = await getDashboardWidget(user, { layout: 'stat', dashboard })
   const data = await Promise.all(
     widgets.map(async widget => {
-      const count = await queryCount(
+      const count = await queryValue(
         widget.sqlForIndicator,
         dataConstraints,
         query
       )
-      const unit = await queryCount(
+      const unit = await queryValue(
         widget.sqlForStatUnit,
         dataConstraints,
         query
       )
-      const extra = await queryCount(widget.sqlForExtra, dataConstraints, query)
+      const extra = await queryValue(widget.sqlForExtra, dataConstraints, query)
       return _.assign(
         _.omit(widget, [
           'sqlForIndicator',
@@ -187,7 +201,7 @@ async function targetDashboard(request) {
 
   const data = await Promise.all(
     widgets.map(async widget => {
-      const count = await queryCount(
+      const count = await queryValue(
         widget.sqlForIndicator,
         dataConstraints,
         query
@@ -202,7 +216,7 @@ async function targetDashboard(request) {
         .sum('t.targetValue as cnt')
         .first()
 
-      const dataCollection = await queryCount(
+      const dataCollection = await queryValue(
         widget.sqlForDataCollection,
         dataConstraints,
         query
