@@ -19,10 +19,7 @@ import {
   filterByMultiple,
 } from './index'
 import { calcPercentageForGraphs } from './calcs'
-
 import { negateTimeZoneOffset } from './datetime'
-
-import mockedDeviceStatus from './mockedDeviceStatus'
 
 const groupByKey = (
   data,
@@ -165,9 +162,7 @@ const groupForDeviceStatusAPI = (
   filterBy,
   displayMethod = 'percentage'
 ) => {
-  const filtered = filterBy
-    ? filterByMultiple(mockedDeviceStatus, filterBy)
-    : mockedDeviceStatus
+  const filtered = filterBy ? filterByMultiple(data, filterBy) : data
   const grouped = filtered.reduce((acc, curr) => {
     const {
       isWeekendOrHoliday,
