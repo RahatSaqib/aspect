@@ -1,7 +1,7 @@
 module.exports = require('../utils').seed(seed, __filename)
 
 const Promise = require('bluebird')
-const dashboardWidget = require('./fixtures/dashboardWidget.json')
+const dashboardWidget = require('./fixtures/dashboardWidget')
 const { getPermissionModules } = require('../utils')
 const {
   upsertDashboardWidgets,

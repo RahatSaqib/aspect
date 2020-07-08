@@ -7,7 +7,7 @@ import classnames from 'classnames/bind'
 import merge from 'lodash/merge'
 import Grid from '@material-ui/core/Grid'
 
-import requirePermissions from '../../../../components/shared/requirePermissions'
+import PermissionsProvider from '../../../../Providers/PermissionsProvider'
 
 import AspectCard from '../../../AspectCard'
 import GraphRender from '../../GraphRender'
@@ -76,50 +76,50 @@ const GraphContainer = ({ config, size, assaysFromState }) => {
   }, [dispatchParamsFromChild])
 
   return whiteListed && whiteListed.length ? (
-    <Grid item xs={12} lg={outerSize}>
-      <Grid container spacing={24}>
-        <Grid item xs={12}>
-          <AspectCard
-            title={intlFormatMessage(messages[title])}
-            innerSize={innerSize}
-            justify="center"
-            action={params => setdispatchFromSelector({ ...params })}
-            actionComponent={{
-              component: CardSelectors,
-              props: selectorModifiers,
-            }}
-          >
-            <Grid
-              container
-              spacing={8}
-              className={cssClasses('graph__containerGrid')}
+    <PermissionsProvider permissions={['result:view']}>
+      <Grid item xs={12} lg={outerSize}>
+        <Grid container spacing={24}>
+          <Grid item xs={12}>
+            <AspectCard
+              title={intlFormatMessage(messages[title])}
+              innerSize={innerSize}
+              justify="center"
+              action={params => setdispatchFromSelector({ ...params })}
+              actionComponent={{
+                component: CardSelectors,
+                props: selectorModifiers,
+              }}
             >
-              {graphType &&
-                graphType.map(graph => (
-                  <GraphRender
-                    assays={{ whiteListed, assaysFromState }}
-                    config={graph}
-                    id={id}
-                    action={params => {
-                      tempDispatchParams.push(params)
-                      setDispatchParamsFromChild(tempDispatchParams)
-                    }}
-                  />
-                ))}
-            </Grid>
-          </AspectCard>
+              <Grid
+                container
+                spacing={8}
+                className={cssClasses('graph__containerGrid')}
+              >
+                {graphType &&
+                  graphType.map(graph => (
+                    <GraphRender
+                      assays={{ whiteListed, assaysFromState }}
+                      config={graph}
+                      id={id}
+                      action={params => {
+                        tempDispatchParams.push(params)
+                        setDispatchParamsFromChild(tempDispatchParams)
+                      }}
+                    />
+                  ))}
+              </Grid>
+            </AspectCard>
+          </Grid>
         </Grid>
       </Grid>
-    </Grid>
+    </PermissionsProvider>
   ) : null
 }
 
 GraphContainer.protoTypes = {
+  assaysFromState: PropTypes.oneOfType([PropTypes.array]).isRequired,
   config: PropTypes.oneOfType([PropTypes.object]).isRequired,
   size: PropTypes.oneOfType([PropTypes.object]).isRequired,
-  assaysFromState: PropTypes.oneOfType([PropTypes.array]).isRequired,
 }
 
-export default requirePermissions({
-  permissions: ['result:view'],
-})(GraphContainer)
+export default GraphContainer

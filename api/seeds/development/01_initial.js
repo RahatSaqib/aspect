@@ -31,7 +31,7 @@ const { randomToken } = require('../../src/deviceApi/apiKey')
 const geography = require('./fixtures/geography.json')
 const patients = require('./fixtures/patients.json')
 const patientDataSchema = require('../fixtures/MGITPatientDataSchema')
-const dashboardWidget = require('./fixtures/dashboardWidget.json')
+const dashboardWidget = require('./fixtures/dashboardWidget')
 const { errorCodes } = require('./fixtures/errorCodes.js')
 const {
   upsertMGITDeviceTypeAndAssays,
@@ -5412,6 +5412,14 @@ async function seed(knex) {
     { jobFunctionId: jobFunctionIdAdmin, widgetId: widgetIds.resultsTitle },
     { jobFunctionId: jobFunctionIdAdmin, widgetId: widgetIds.personTitle },
     { jobFunctionId: jobFunctionIdAdmin, widgetId: widgetIds.utilizationRate },
+    {
+      jobFunctionId: jobFunctionIdAdmin,
+      widgetId: widgetIds.dashboardWidgetTestsPerDayTitle,
+    },
+    {
+      jobFunctionId: jobFunctionIdAdmin,
+      widgetId: widgetIds.dashboardWidgetValidResultsPc,
+    },
 
     { jobFunctionId: jobFunctionIdManager, widgetId: widgetIds.sitesTitle },
     { jobFunctionId: jobFunctionIdManager, widgetId: widgetIds.devicesTitle },
