@@ -4,6 +4,7 @@ import {
   calcPercentageSplitBar,
   groupByKey,
   groupForPie,
+  groupForDeviceStatusAPI,
   groupForDivergent,
   generateTickValues,
   normaliseKeys,
@@ -15,6 +16,8 @@ import {
   divergentDataFromAPIIn,
   divergentDataFromAPIOut,
   groupByKeyGrouped,
+  mockedDeviceStatus,
+  mockedDeviceStatusOut,
   pieDataActualFromAPIIn,
   pieDataActualFromAPIOut,
   tickDataForBarDisplayMethodPercentageIn,
@@ -74,6 +77,26 @@ describe('Graph Helpers', () => {
           filterBy
         )
         expect(grouped).to.eql(divergentDataFromAPIOut)
+      })
+    })
+
+    describe('Barchart (stackedDevices): groupForDeviceStatus', () => {
+      it('should group data by key correctly - for device status bar', () => {
+        const keyToConsume = 'devicesActive'
+        const indexBy = 'date'
+        const formatDate = 'dd MMM'
+        const filterBy = false
+        const displayMethod = 'percentage'
+
+        const grouped = groupForDeviceStatusAPI(
+          mockedDeviceStatus,
+          keyToConsume,
+          indexBy,
+          formatDate,
+          filterBy,
+          displayMethod
+        )
+        expect(grouped).to.eql(mockedDeviceStatusOut)
       })
     })
   })

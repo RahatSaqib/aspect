@@ -333,6 +333,7 @@ export {
   getTimePeriod,
   graphColorMap,
   groupByKey,
+  groupForDeviceStatusAPI,
   groupForDivergent,
   groupForOldTreatmentAPI,
   groupForPie,
