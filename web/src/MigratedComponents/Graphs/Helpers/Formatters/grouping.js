@@ -171,7 +171,7 @@ const groupForDeviceStatusAPI = (
       devicesInactive,
     } = curr
     const dateFormatted = formatDate
-      ? format(new Date(curr[indexBy]), formatDate)
+      ? format(negateTimeZoneOffset(curr[indexBy]), formatDate)
       : curr[indexBy]
 
     const shouldBeZero = isWeekendOrHoliday || devicesTotal === 0
