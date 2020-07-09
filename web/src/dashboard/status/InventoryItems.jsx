@@ -175,7 +175,7 @@ function rearrangeInventoryKey(inventoryItem) {
   }
 }
 
-export const inventoryItems = ({
+export const InventoryItems = ({
   className,
   source,
   isSingleItem,
@@ -201,7 +201,7 @@ export const inventoryItems = ({
   })
 
   return (
-    <Card className={(className, cssClasses('Inventory_Container'))}>
+    <Card className={`${className} ${cssClasses('Inventory_Container')}`}>
       <div
         className={cssClasses('TitleContainer', 'Treatment--TitleContainer')}
       >
@@ -243,4 +243,4 @@ export const inventoryItems = ({
   )
 }
 
-export default enhance(inventoryItems)
+export default enhance(InventoryItems)
