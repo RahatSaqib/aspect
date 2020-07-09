@@ -1,11 +1,8 @@
-import React, { useState, useEffect } from 'react'
-import { useSelector } from 'react-redux'
+import React from 'react'
+import PropTypes from 'prop-types'
 import classnames from 'classnames/bind'
 
 import ThemedLink from './ThemedLink'
-
-import { reduceNavLinks } from '../../../filter/utils'
-import requirePermissions from '../../../components/shared/requirePermissions'
 
 const cssClasses = classnames.bind(require('./index.css'))
 
@@ -23,7 +20,11 @@ const rawLinks = [
   {
     href: '/operational-data',
     label: 'Operational  Data',
-    requiredPermissions: ['operationalData:view', 'operationalData:admin'],
+    requiredPermissions: [
+      'operationalData:view',
+      'operationalData:admin',
+      'operationalData:summary',
+    ],
   },
   {
     href: '/clinical-indicators',
@@ -50,64 +51,42 @@ const rawLinks = [
   },
 ]
 
-// const enhance = compose(
-//   pure,
-//   connect(state => ({
-//     userPermissions: state.user.jwt.permissions,
-//   }))
-// )
 export const LinkNavigation = ({
   history,
   location,
   type,
   onClick,
   children,
-}) => {
-  // const [permissions] = useState(false)
-  // const [userNav, setUserNav] = useState(false)
-  // const { permissions } = useSelector(({ user }) => {
-  //   // console.log(user.toJS().jwt)
-  //   return user.jwt
-  // })
-  // console.log(permissions)
+}) => (
+  <nav
+    type={type}
+    className={cssClasses('Navigation', {
+      'Navigation--vertical': type === 'vertical',
+      'Navigation--horizontal': type === 'horizontal',
+    })}
+  >
+    {rawLinks.map(link => (
+      <ThemedLink
+        {...link}
+        history={history}
+        location={location}
+        onClick={onClick}
+      />
+    ))}
+    {children}
+  </nav>
+)
 
-  // useEffect(() => {
-  //   if (permissions) {
-  //     setUserNav(reduceNavLinks(rawLinks, permissions))
-  //   }
-  // }, [permissions])
+LinkNavigation.defaultProps = {
+  children: null,
+}
 
-  // console.log(userNav)
-
-  //
-  return (
-    <nav
-      type={type}
-      className={cssClasses('Navigation', {
-        'Navigation--vertical': type === 'vertical',
-        'Navigation--horizontal': type === 'horizontal',
-      })}
-    >
-      {rawLinks.map(link => (
-        <ThemedLink
-          {...link}
-          history={history}
-          location={location}
-          onClick={onClick}
-        />
-      ))}
-      {/* {userNav &&
-        userNav.map(props =>
-          makeThemedLink({
-            ...props,
-            history,
-            location,
-            onClick,
-          })
-        )} */}
-      {children}
-    </nav>
-  )
+LinkNavigation.propTypes = {
+  history: PropTypes.oneOfType([PropTypes.object]).isRequired,
+  location: PropTypes.oneOfType([PropTypes.object]).isRequired,
+  type: PropTypes.string.isRequired,
+  onClick: PropTypes.func.isRequired,
+  children: PropTypes.oneOfType([PropTypes.object]),
 }
 
 export default LinkNavigation
