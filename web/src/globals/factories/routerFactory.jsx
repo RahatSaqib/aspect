@@ -7,8 +7,9 @@ import history from '../../history'
 import signedOutFactory from './signedOutFactory'
 import loggedInFactory from './loggedInFactory'
 import loggedInDetailFactory from './loggedInFactory/detailFactory'
-import { reduceNavLinks, isPermittedUser } from '../../filter/utils'
+import { reduceNavLinks } from '../../filter/utils'
 import { navigations } from '../components/BrowseFilters'
+import { isPermittedUser } from '../../components/shared/requirePermissions'
 
 // "Pages"
 import LoadableLogin from '../../auth/login/LoadableLogin'
