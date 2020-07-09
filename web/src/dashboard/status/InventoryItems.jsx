@@ -175,7 +175,7 @@ function rearrangeInventoryKey(inventoryItem) {
   }
 }
 
-export const inventoryItemStock = ({
+export const InventoryItems = ({
   className,
   source,
   isSingleItem,
@@ -243,4 +243,4 @@ export const inventoryItemStock = ({
   )
 }
 
-export default enhance(inventoryItemStock)
+export default enhance(InventoryItems)
