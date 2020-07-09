@@ -67,6 +67,7 @@ export const LinkNavigation = ({
   >
     {rawLinks.map(link => (
       <ThemedLink
+        key={link.label}
         {...link}
         history={history}
         location={location}
