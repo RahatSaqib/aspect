@@ -1063,8 +1063,8 @@ async function getAssayResultCategoryList(dataConstraints) {
 }
 
 async function operationalDataActivityOverTime(request) {
-  // set to false when data is ready
-  const isMocked = true
+  // mocked for zimbabwe seeds
+  const isMocked = process.env['seeds.directory'] === './seeds/zimbabwe'
   const { auth, query } = request
   const dataConstraints = await getConstraints(auth.credentials)
 
