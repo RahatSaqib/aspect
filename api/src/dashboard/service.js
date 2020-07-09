@@ -117,6 +117,10 @@ function tryConvertSqlStringToKnexQueryBuilder(sql) {
 }
 
 async function queryValue(sql, dataConstraints, query) {
+  if (sql) {
+    // get rid of all new-line symbols, if any exist
+    sql = sql.replace(/\n/g, ' ')
+  }
   let firstResult
   const sqlBuilder = tryConvertSqlStringToKnexQueryBuilder(sql)
   if (sqlBuilder) {

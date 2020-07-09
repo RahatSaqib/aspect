@@ -7,6 +7,7 @@ import { injectIntl } from 'react-intl'
 
 import SummaryStatus from '../status/SummaryStatus'
 import GraphsContainer from '../../MigratedComponents/Graphs/GraphsContainer'
+import InventoryItems from '../status/InventoryItems'
 
 const cssClasses = classnames.bind(require('./OperationalData.css'))
 
@@ -30,6 +31,12 @@ export const OperationalData = ({ intl, history, location, loading }) => {
             history={history}
             location={location}
             assaysFromState={[]}
+          />
+          <InventoryItems
+            intl={intl}
+            history={history}
+            location={location}
+            className={cssClasses('Section--stock')}
           />
         </Fragment>
       )}

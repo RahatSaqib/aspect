@@ -1,5 +1,4 @@
 module.exports = require('../src/db').migration(up, down)
-const { updateCase } = require('../src/case/service')
 
 async function up(knex) {
   await knex.schema.table('Case', async tblCase => {
@@ -14,8 +13,8 @@ async function up(knex) {
   const adminUser = await knex('User').where({ name: 'admin' }).first('id')
   if (adminUser) {
     const { id: adminId } = adminUser
-    await updateCase({ createdBy: null }, { createdBy: adminId })
-    await updateCase({ updatedBy: null }, { updatedBy: adminId })
+    await knex('Case').where({ createdBy: null }).update({ createdBy: adminId })
+    await knex('Case').where({ updatedBy: null }).update({ updatedBy: adminId })
   }
 
   await knex.schema.alterTable('Case', async tblCase => {
