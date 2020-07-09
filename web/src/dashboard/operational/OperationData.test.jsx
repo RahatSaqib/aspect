@@ -3,6 +3,7 @@ import React from 'react'
 import { shallow } from 'enzyme'
 
 import { OperationalData } from './OperationalData'
+import inventoryItems from '../status/InventoryItems'
 
 describe('OperationData Component', () => {
   const operational = Immutable.fromJS({
@@ -28,5 +29,10 @@ describe('OperationData Component', () => {
 
   it('should shallow render without crash', () => {
     shallow(<OperationalData {...props} />)
+  })
+
+  it('should shallow render inventory item without crash', () => {
+    const wrapper = shallow(<OperationalData {...props} />)
+    expect(wrapper.find(inventoryItems)).toHaveLength(1)
   })
 })
