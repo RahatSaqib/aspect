@@ -6,7 +6,7 @@ import { Helmet } from 'react-helmet'
 import { injectIntl } from 'react-intl'
 
 import SummaryStatus from '../status/SummaryStatus'
-import InventoryStock from '../status/inventoryItems'
+import InventoryItems from '../status/InventoryItems'
 
 const cssClasses = classnames.bind(require('./OperationalData.css'))
 
@@ -21,7 +21,7 @@ export const OperationalData = ({ history, location, intl, loading }) => (
       className={cssClasses('Section--summary')}
       dashboard="operational"
     />
-    <InventoryStock
+    <InventoryItems
       intl={intl}
       history={history}
       location={location}
