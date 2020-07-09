@@ -16,22 +16,30 @@ const themes = {
 }
 
 const ThemedLink = props => {
-  const { href, label, requiredPermissions } = props
+  const { href, label, requiredPermissions, icon } = props
   return (
     <PermissionsProvider permissions={requiredPermissions}>
-      <Link {...props} key={href} theme={themes.Link} title={label} />
+      <Link
+        {...props}
+        key={href}
+        theme={themes.Link}
+        title={label}
+        icon={icon}
+      />
     </PermissionsProvider>
   )
 }
 
 ThemedLink.defaultProps = {
   requiredPermissions: [],
+  icon: false,
 }
 
 ThemedLink.propTypes = {
   href: PropTypes.string.isRequired,
   label: PropTypes.string.isRequired,
   requiredPermissions: PropTypes.oneOfType([PropTypes.array]),
+  icon: PropTypes.oneOfType([PropTypes.bool, PropTypes.func]),
 }
 
 export default ThemedLink
