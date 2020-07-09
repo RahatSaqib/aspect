@@ -3,7 +3,6 @@ import { compose } from 'recompose'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Drawer from '@material-ui/core/Drawer'
-import { FaUser } from 'react-icons/fa'
 
 import LinkNavigation from './LinkNavigation'
 import ThemedLink from './ThemedLink'
@@ -35,13 +34,12 @@ const ConnectedNavDrawer = ({
       type="vertical"
       onClick={closeDrawer}
     >
-      {/* {ThemedLink({
-        history,
-        location,
-        href: '/account-details/current',
-        label: '',
-        icon: <FaUser />
-      })} */}
+      <ThemedLink
+        href="/account-details/current"
+        label="Account"
+        history={history}
+        location={location}
+      />
     </LinkNavigation>
   </Drawer>
 )
