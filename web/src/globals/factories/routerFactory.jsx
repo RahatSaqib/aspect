@@ -7,7 +7,7 @@ import history from '../../history'
 import signedOutFactory from './signedOutFactory'
 import loggedInFactory from './loggedInFactory'
 import loggedInDetailFactory from './loggedInFactory/detailFactory'
-import { reduceNavLinks } from '../../filter/utils'
+import { reduceNavLinks, isPermittedUser } from '../../filter/utils'
 import { navigations } from '../components/BrowseFilters'
 
 // "Pages"
