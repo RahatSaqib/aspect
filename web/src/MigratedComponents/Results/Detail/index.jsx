@@ -43,6 +43,8 @@ const AspectResultDetail = ({ match }) => {
     }
   }, [resultId, formSchema])
 
+  console.log(formSchema)
+
   return formSchema ? (
     <Fragment>
       {resultId === 'add' ? <Create formSchema={formSchema} /> : null}

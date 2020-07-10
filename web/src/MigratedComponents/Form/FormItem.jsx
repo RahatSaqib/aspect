@@ -12,7 +12,7 @@ const cssClasses = classnames.bind(require('./Form.css'))
 const FormItem = ({ id, label, type, controlType }) => {
   const { formik, toggleEdit } = useFormikState()
   const { getFieldProps } = formik
-
+  console.log(getFieldProps(id))
   return (
     <Grid
       item
