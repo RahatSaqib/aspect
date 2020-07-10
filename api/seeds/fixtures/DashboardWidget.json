@@ -37,7 +37,7 @@
       "titleI18nKey": "resultsTitle",
       "subTitle": "Last 30 Days",
       "subTitleI18nKey": "subResultsTitle",
-      "sqlForIndicator": "SELECT IFNULL(SUM(f.resultCount), 0) AS cnt FROM FactResultsDeviceByAssay AS f INNER JOIN Device AS d ON d.id = f.deviceId INNER JOIN Site AS s ON s.id = d.siteId INNER JOIN Partner AS p ON p.id = s.partnerId INNER JOIN Assay AS a ON f.assayId = a.id LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id WHERE f.days = 30",
+      "sqlForIndicator": "select ifnull(sum(f.resultCount), 0) as cnt from FactResultsDevice as f inner join Device as d on d.id = f.deviceId inner join Site as s on s.id = d.siteId inner join Partner as p on p.id = s.partnerId left outer join Geography as g on s.geographyId = g.id where f.days = 30",
       "link": "/browse/result",
       "sortOrder": 2,
       "externalId": "resultsTitle",
