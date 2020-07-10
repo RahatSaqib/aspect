@@ -193,10 +193,12 @@ const generateToolTip = (
 
 const translateLabel = (string, assaysFromState) => {
   const dictionary = []
-  assaysFromState.map(({ resultCategories }) =>
-    resultCategories.map(({ externalId, name }) =>
-      dictionary.push({ externalId, name })
-    )
+  assaysFromState.map(
+    ({ resultCategories }) =>
+      Array.isArray(resultCategories) &&
+      resultCategories.map(({ externalId, name }) =>
+        dictionary.push({ externalId, name })
+      )
   )
   const assayResults = uniqBy(dictionary, 'externalId')
   const newString = assayResults.filter(
