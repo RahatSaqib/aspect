@@ -76,7 +76,7 @@ const graphItemsSchema = {
         'pieLegacyTreatment',
         'calendar',
         'barLegacyTreatment',
-        'stackedDeviceTreatment',
+        'stackedDeviceActivity',
       ],
     },
     size: {

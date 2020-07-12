@@ -14,7 +14,7 @@ import valuesIn from 'lodash/valuesIn'
 import uniq from 'lodash/uniq'
 import uniqBy from 'lodash/uniqBy'
 
-import { getDayFromToday, getTimePeriod } from './datetime'
+import { getDayFromToday, getTimePeriod, getPreviousPeriod } from './datetime'
 import {
   getMaxValueForDivergent,
   roundIfNumber,
@@ -170,7 +170,7 @@ const generateColorForLegend = value => filterColour(value)
 
 const generateMargin = (tickValuesYShape, legend, type = false) => {
   const shouldMargin = tickValuesYShape !== 'none'
-  const bleedForLegends = type === 'stackedDeviceTreatment' ? 30 : 0
+  const bleedForLegends = type === 'stackedDeviceActivity' ? 30 : 0
   const margin = {
     top: 5,
     right: shouldMargin ? 20 + bleedForLegends : 0 + bleedForLegends,
@@ -257,7 +257,7 @@ const formatDataByGraphType = (
       )
       break
 
-    case 'stackedDeviceTreatment':
+    case 'stackedDeviceActivity':
       grouped = groupForDeviceStatusAPI(
         data,
         keyToConsume,
@@ -332,6 +332,7 @@ export {
   getDayFromToday,
   getGraphKeysFromResults,
   getMaxValueForDivergent,
+  getPreviousPeriod,
   getTimePeriod,
   graphColorMap,
   groupByKey,

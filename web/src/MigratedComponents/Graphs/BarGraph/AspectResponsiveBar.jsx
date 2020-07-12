@@ -1,8 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { useIntl } from 'react-intl'
-import difference from 'lodash/difference'
-import sumBy from 'lodash/sumBy'
 import { ResponsiveBar } from '@nivo/bar'
 import { GraphLegend } from '../GraphLegend'
 import { GraphToolTip, EmptyTooltip } from '../GraphToolTip'
@@ -16,6 +14,8 @@ import {
   generateLegend,
   getMaxValueForDivergent,
 } from '../Helpers/Formatters'
+
+import { calcOverallRate } from '../Helpers/Formatters/calcs'
 
 const AspectResponsiveBar = ({
   assaysFromState,
@@ -57,12 +57,12 @@ const AspectResponsiveBar = ({
           itemWidth: 120,
           itemHeight: 20,
           itemDirection:
-            type === 'stackedDeviceTreatment'
+            type === 'stackedDeviceActivity'
               ? 'left-to-right'
               : 'right-to-left',
           itemOpacity: 0.85,
           symbolSize: 20,
-          symbolShape: type === 'stackedDeviceTreatment' ? 'square' : 'circle',
+          symbolShape: type === 'stackedDeviceActivity' ? 'square' : 'circle',
           effects: [
             {
               on: 'hover',
@@ -74,13 +74,7 @@ const AspectResponsiveBar = ({
         },
       ]
     : []
-
-  const calcOverallRate = (keyToCalc, totalTotal, gData) => {
-    const totalKey = sumBy(gData, d => Number(d[keyToCalc]))
-    const total = sumBy(gData, d => Number(d[totalTotal]))
-    const percentage = (totalKey / total) * 100
-    return percentage
-  }
+  console.log(data)
 
   return (
     <ResponsiveBar
@@ -89,9 +83,9 @@ const AspectResponsiveBar = ({
       indexBy={indexBy}
       colorBy="index"
       enableLabel={false}
-      enableGridY={type === 'stackedDeviceTreatment'}
+      enableGridY={type === 'stackedDeviceActivity'}
       {...divergentExtraConfig}
-      padding={type === 'stackedDeviceTreatment' ? 0.03 : 0.3}
+      padding={type === 'stackedDeviceActivity' ? 0.03 : 0.3}
       borderWidth={0}
       borderColor={{ from: 'color', modifiers: [['darker', 1.6]] }}
       axisTop={null}
@@ -125,7 +119,7 @@ const AspectResponsiveBar = ({
         legendPosition: 'middle',
         legendOffset: -60,
         legend:
-          type === 'stackedDeviceTreatment'
+          type === 'stackedDeviceActivity'
             ? 'Percent of Monthly Status'
             : false,
       }}
@@ -140,7 +134,7 @@ const AspectResponsiveBar = ({
       }}
       legends={legends}
       theme={
-        type === 'stackedDeviceTreatment' && {
+        type === 'stackedDeviceActivity' && {
           grid: {
             line: {
               stroke: 'white',
@@ -150,7 +144,7 @@ const AspectResponsiveBar = ({
         }
       }
       markers={
-        type === 'stackedDeviceTreatment' && [
+        type === 'stackedDeviceActivity' && [
           {
             axis: 'y',
             value: calcOverallRate('devicesActiveRaw', 'devicesTotal', data),
@@ -200,7 +194,7 @@ AspectResponsiveBar.propTypes = {
     'group',
     'divergent',
     'barLegacyTreatment',
-    'stackedDeviceTreatment',
+    'stackedDeviceActivity',
   ]),
 }
 

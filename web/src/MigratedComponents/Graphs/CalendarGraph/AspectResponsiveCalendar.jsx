@@ -119,7 +119,7 @@ AspectResponsiveCalendar.propTypes = {
     'stacked',
     'divergent',
     'barLegacyTreatment',
-    'stackedDeviceTreatment',
+    'stackedDeviceActivity',
   ]),
 }
 
