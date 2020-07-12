@@ -84,7 +84,7 @@ describe('Graph Helpers', () => {
       it('should group data by key correctly - for device status bar', () => {
         const keyToConsume = 'devicesActive'
         const indexBy = 'date'
-        const formatDate = 'dd MMM'
+        const formatDate = 'd'
         const filterBy = false
         const displayMethod = 'percentage'
 

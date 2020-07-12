@@ -1,5 +1,8 @@
 import BarGraph from '../../BarGraph'
-import { getTimePeriod } from '../../Helpers/Formatters'
+import { getPreviousPeriod } from '../../Helpers/Formatters'
+
+const minDate = getPreviousPeriod('months', 'yyyy-MM-dd').start
+const maxDate = getPreviousPeriod('months', 'yyyy-MM-dd').end
 
 const deviceStatusGraphs = {
   deviceStatus: {
@@ -11,24 +14,24 @@ const deviceStatusGraphs = {
       {
         id: 'deviceStatusMonthly',
         component: BarGraph,
-        type: 'stackedDeviceTreatment',
+        type: 'stackedDeviceActivity',
         size: 12,
         componentClasses: ['BARCLASS'],
         api: {
           method: 'GET',
           endpoint: 'dashboard/operational-data/activity-over-time',
           params: {
-            minDate: '2020-06-01',
-            maxDate: '2020-06-15',
+            minDate,
+            maxDate,
           },
         },
         indexBy: 'date',
         keyToConsume: 'devicesActive',
         tickValuesYShape: 'clubsandwich',
         tickValuesXShape: 'all',
-        displayMethod: 'percentage', // todo: actual
+        displayMethod: 'percentage',
         displayLegend: true,
-        formatDate: 'dd MMM',
+        formatDate: 'd',
       },
     ],
   },

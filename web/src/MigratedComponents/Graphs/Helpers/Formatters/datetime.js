@@ -2,6 +2,7 @@ import addDays from 'date-fns/addDays'
 import addMinutes from 'date-fns/addMinutes'
 import format from 'date-fns/format'
 import startOfMonth from 'date-fns/startOfMonth'
+import endOfMonth from 'date-fns/endOfMonth'
 import subMinutes from 'date-fns/subMinutes'
 import subDays from 'date-fns/subDays'
 import subMonths from 'date-fns/subMonths'
@@ -39,4 +40,22 @@ const getTimePeriod = (cnt, period, dateFormat) => {
   return format(timePeriod, dateFormat)
 }
 
-export { getDayFromToday, negateTimeZoneOffset, getTimePeriod }
+const getPreviousPeriod = (period = 'month', dateFormat) => {
+  // currently only works for month
+  const previousPeriodStart = format(
+    negateTimeZoneOffset(getTimePeriod(1, period, dateFormat)),
+    dateFormat
+  )
+  const previousPeriodEnd = format(
+    endOfMonth(new Date(previousPeriodStart)),
+    dateFormat
+  )
+  return { start: previousPeriodStart, end: previousPeriodEnd }
+}
+
+export {
+  getDayFromToday,
+  negateTimeZoneOffset,
+  getTimePeriod,
+  getPreviousPeriod,
+}
