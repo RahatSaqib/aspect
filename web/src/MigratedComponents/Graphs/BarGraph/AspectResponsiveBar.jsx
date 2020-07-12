@@ -129,7 +129,10 @@ const AspectResponsiveBar = ({
         legendPosition: 'middle',
         legendOffset: 32,
         tickValues: xTickValues,
-        format: v => formatValuesForGraphs(v, displayMethod, intlFormatNumber),
+        format: v =>
+          type === 'stackedDeviceActivity'
+            ? v
+            : formatValuesForGraphs(v, displayMethod, intlFormatNumber),
       }}
       legends={legends}
       theme={

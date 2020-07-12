@@ -65,7 +65,7 @@ const GraphsContainer = ({ assaysFromState }) => {
     {
       config: deviceStatus,
       size: full,
-      group: 'zimbabwe',
+      group: 'assaysNotNeeded',
     },
   ]
 

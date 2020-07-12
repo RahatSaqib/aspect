@@ -23,7 +23,7 @@ const cssClasses = classnames.bind(require('../GraphsContainer.css'))
 
 const GraphContainer = ({ config, size, assaysFromState, group }) => {
   const dispatch = useDispatch()
-  const allowedGroupsWithoutAssays = ['zimbabwe'].includes(group)
+  const allowedGroupsWithoutAssays = ['assaysNotNeeded'].includes(group)
   const tempDispatchParams = []
   const { title, selectorModifiers = false } = config
   const { formatMessage: intlFormatMessage } = useIntl()
