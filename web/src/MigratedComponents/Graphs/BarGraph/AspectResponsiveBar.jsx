@@ -74,7 +74,6 @@ const AspectResponsiveBar = ({
         },
       ]
     : []
-  console.log(data)
 
   return (
     <ResponsiveBar
@@ -100,7 +99,7 @@ const AspectResponsiveBar = ({
       margin={generateMargin(tickValuesYShape, displayLegend, type)}
       tooltip={v =>
         v && legendsNotToRender.includes(v.id) ? (
-          <EmptyTooltip />
+          <EmptyTooltip title={v.id} />
         ) : (
           <GraphToolTip
             values={generateToolTip(
