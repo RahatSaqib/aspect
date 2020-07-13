@@ -228,7 +228,7 @@ const routes = [
     config: {
       description: 'Assign person to job function',
       notes: 'Assign person to job function',
-      auth: { scope: ['person:admin'] },
+      auth: { scope: ['person:edit'] },
       validate: {
         payload: {
           personId: Joi.number().required(),
@@ -245,7 +245,7 @@ const routes = [
     config: {
       description: 'Un-assign person from job function',
       notes: 'Un-assign person from job function',
-      auth: { scope: ['person:admin'] },
+      auth: { scope: ['person:edit'] },
       validate: {
         payload: {
           personId: Joi.number().required(),
@@ -265,7 +265,7 @@ const routes = [
     config: {
       description: 'Assign specified person to Job Context',
       notes: 'Assign specified person to Job Context',
-      auth: { scope: ['person:admin'] },
+      auth: { scope: ['person:edit'] },
       validate: {
         payload: {
           jobId: Joi.number(),
@@ -289,7 +289,7 @@ const routes = [
     config: {
       description: 'Un-assign specified person from Job Context',
       notes: 'Un-assign specified person from Job Context',
-      auth: { scope: ['person:admin'] },
+      auth: { scope: ['person:edit'] },
       validate: {
         payload: {
           jobId: Joi.number(),
@@ -316,7 +316,7 @@ const routes = [
     config: {
       description: 'Assign user to access dashboard widget',
       notes: 'Assign user to access dashboard widget',
-      auth: { scope: ['person:admin'] },
+      auth: { scope: ['person:edit'] },
       validate: {
         payload: {
           jobFunctionId: Joi.number().required(),
@@ -333,7 +333,7 @@ const routes = [
     config: {
       description: 'Un-assign user from dashboard widget',
       notes: 'Un-assign user from dashboard widget',
-      auth: { scope: ['person:admin'] },
+      auth: { scope: ['person:edit'] },
       validate: {
         payload: {
           jobFunctionId: Joi.number().required(),
@@ -355,7 +355,7 @@ const routes = [
     config: {
       description: 'Assign permissions to specified JobFunction',
       notes: 'Assign permissions to specified JobFunction',
-      auth: { scope: ['person:admin'] },
+      auth: { scope: ['person:edit'] },
       validate: {
         payload: {
           jobFunctionId: Joi.number().required(),
@@ -372,7 +372,7 @@ const routes = [
     config: {
       description: 'Unassign permissions for specified JobFunction',
       notes: 'Unassign permissions for specified JobFunction',
-      auth: { scope: ['person:admin'] },
+      auth: { scope: ['person:edit'] },
       validate: {
         payload: {
           jobFunctionId: Joi.number().required(),
@@ -393,7 +393,7 @@ const routes = [
     config: {
       description: 'Get all person assignments',
       notes: 'List of JobFunctions/Site/Geography/etc person is assigned to',
-      auth: { scope: ['person:admin'] },
+      auth: { scope: ['person:edit'] },
       validate: {
         params: {
           personId: Joi.string().description('Person ID').required(),
@@ -413,7 +413,7 @@ const routes = [
       description:
         'Assign specified person to Job Context with most granular input params',
       notes: 'Assign specified person to Job Context',
-      auth: { scope: ['person:admin'] },
+      auth: { scope: ['person:edit'] },
       validate: {
         payload: {
           personId: Joi.number().required(),
@@ -445,7 +445,7 @@ const routes = [
     config: {
       description: 'Remove specified person assignment',
       notes: 'Remove specified person assignment',
-      auth: { scope: ['person:admin'] },
+      auth: { scope: ['person:edit'] },
       validate: {
         params: {
           personId: Joi.number().integer().positive().required(),

@@ -43,14 +43,14 @@ const cssClasses = classnames.bind(require('./DeviceList.css'))
 const FILTERS_CONFIG = [
   {
     assayAndResultCategory: true,
-    requiredPermissions: ['assay:view', 'assay:admin', 'assay:edit'],
+    requiredPermissions: ['assay:view'],
   },
   { geography: true, requiredPermissions: [] },
   { state: true, requiredPermissions: [] },
   { lga: true, requiredPermissions: [] },
   {
     siteName: true,
-    requiredPermissions: ['site:view', 'site:admin', 'site:edit'],
+    requiredPermissions: ['site:view'],
   },
   { date: true, requiredPermissions: [] },
   {
