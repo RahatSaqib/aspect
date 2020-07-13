@@ -141,7 +141,7 @@ const FILTERS_CONFIG = [
   { lga: true, requiredPermissions: [] },
   {
     siteName: true,
-    requiredPermissions: ['site:view', 'site:admin', 'site:edit'],
+    requiredPermissions: ['site:view'],
   },
   { date: true, requiredPermissions: [] },
 ]
@@ -376,7 +376,7 @@ export const InventoryItemsList = ({
   reducedFilters,
 }) => {
   const AddNewButton = requirePermissions({
-    permissions: ['inventory:edit', 'inventory:admin'],
+    permissions: ['inventory:edit'],
   })(AspectButton)
   return (
     <div className={cssClasses('Container')}>

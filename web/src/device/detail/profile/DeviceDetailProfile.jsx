@@ -631,7 +631,7 @@ export const DeviceDetailProfile = ({
   ]
 
   const AuthenticatedResults = requirePermissions({
-    permissions: ['result:admin', 'result:view', 'result:edit'],
+    permissions: ['result:view'],
   })(Results)
   return (
     <div>

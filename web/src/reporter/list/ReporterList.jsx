@@ -105,7 +105,7 @@ const FILTERS_CONFIG = [
   { treatmentStatus: true, requiredPermissions: [] },
   {
     assayAndResultCategory: true,
-    requiredPermissions: ['assay:view', 'assay:admin', 'assay:edit'],
+    requiredPermissions: ['assay:view'],
   },
 ]
 

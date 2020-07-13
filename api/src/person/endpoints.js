@@ -25,7 +25,7 @@ const { exportReporters } = require('./reporterServiceReports')
 
 function listContactBaseConfig() {
   return {
-    auth: { scope: ['person:view', 'person:edit', 'person:admin'] },
+    auth: { scope: ['person:view'] },
     validate: {
       query: {
         contactNameOrEmail: Joi.string()
@@ -288,7 +288,7 @@ const routes = [
     config: {
       description: 'Person Detail',
       notes: 'Details of a person',
-      auth: { scope: ['person:view', 'person:edit', 'person:admin'] },
+      auth: { scope: ['person:view'] },
       validate: {
         params: {
           personId: Joi.string().description('Person ID').required(),
@@ -304,7 +304,7 @@ const routes = [
     config: {
       description: 'Update Person Details',
       notes: 'Details of a person',
-      auth: { scope: ['person:edit', 'person:admin'] },
+      auth: { scope: ['person:edit'] },
       validate: {
         params: {
           personId: Joi.string().description('Person ID').required(),
@@ -321,7 +321,7 @@ const routes = [
     config: {
       description: 'Create New Person',
       notes: 'Details of a person',
-      auth: { scope: ['person:edit', 'person:admin'] },
+      auth: { scope: ['person:edit'] },
       validate: {
         payload: contactDetailsPayload,
       },
@@ -335,7 +335,7 @@ const routes = [
     config: {
       description: "Update Person's User Preferences",
       notes: 'Timezone and Language',
-      auth: { scope: ['person:edit', 'person:admin'] },
+      auth: { scope: ['person:edit'] },
       validate: {
         params: {
           personId: Joi.string().description('Person ID').required(),

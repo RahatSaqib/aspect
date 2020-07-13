@@ -37,7 +37,7 @@ const FILTERS_CONFIG = [
   { lga: true, requiredPermissions: [] },
   {
     siteName: true,
-    requiredPermissions: ['site:view', 'site:admin', 'site:edit'],
+    requiredPermissions: ['site:view'],
   },
   { date: true, requiredPermissions: [] },
 ]
