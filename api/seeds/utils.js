@@ -2906,6 +2906,75 @@ async function mapJobFunctionPermissions(
   if (insertJobs.length > 0) await Promise.all(insertJobs)
 }
 
+async function seedDashboardsJsonInDashboardWidget(knex, widgets) {
+  // fill in default value for all records - this is needed because `.defaultsTo()` can not be applied for JSON field
+  // but not critical if field dashboards remains null - we handle setting default value of ['home'] in both API and WEB
+  await knex('DashboardWidget')
+    .whereNull('dashboards')
+    .update({
+      dashboards: JSON.stringify(['home']),
+    })
+
+  await Promise.all(
+    _.map(
+      widgets.filter(({ dashboards }) => _.isArray(dashboards)),
+      ({ dashboards, externalId }) =>
+        knex('DashboardWidget')
+          .where({ externalId })
+          .update({
+            dashboards: JSON.stringify(dashboards),
+          })
+    )
+  )
+}
+
+/**
+ * Removes a permission activity and replaces it for another one
+ * @param  {[object]} knex The knex instance
+ * @param  {[string]} ativityToRemove The activity that want to remove. Ex.: 'admin'
+ * @param  {[string]} activityToReplaceFor The activity that want to replace the one that'll be removed. Ex.: 'edit'
+ */
+async function removeAndReplaceActivity(
+  knex,
+  activityToRemove,
+  activityToReplaceFor
+) {
+  const modules = await getPermissionModules(knex)
+  const modulesNames = Object.keys(modules)
+
+  await Promise.each(modulesNames, async moduleName => {
+    const activityToRemoveId = modules[moduleName][activityToRemove]
+
+    if (activityToRemoveId) {
+      let activityToReplaceForId = modules[moduleName][activityToReplaceFor]
+
+      // If module has activityToRemove, reassignation should be done
+      if (!activityToReplaceForId) {
+        // If module doesn't have the activityToReplaceFor
+        // Inserts the new permission
+        const [permissionId] = await knex('Permission').insert({
+          module: moduleName,
+          activity: activityToReplaceFor,
+        })
+
+        activityToReplaceForId = permissionId
+      }
+
+      // Assigns the activityToReplaceFor to all the job functions that use the activityToRemove
+      await mapJobFunctionPermissions(
+        knex,
+        [activityToRemoveId],
+        [activityToReplaceForId]
+      )
+
+      await knex('JobFunctionPermission')
+        .where({ permissionId: activityToRemoveId })
+        .delete()
+      await knex('Permission').where({ id: activityToRemoveId }).delete()
+    }
+  })
+}
+
 module.exports = {
   addReports,
 
@@ -2972,4 +3041,6 @@ module.exports = {
 
   seedJobFunctionsAndUsersForOperationalData,
   mapJobFunctionPermissions,
+  seedDashboardsJsonInDashboardWidget,
+  removeAndReplaceActivity,
 }

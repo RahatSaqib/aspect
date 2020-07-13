@@ -701,7 +701,7 @@ const routes = [
     config: {
       description: 'Update Result Treatment Status',
       notes: 'Update the treatment status of a result',
-      auth: { scope: ['treatmentStatus:edit', 'treatmentStatus:admin'] },
+      auth: { scope: ['treatmentStatus:edit'] },
       validate: {
         params: {
           resultId: Joi.number().integer().positive().description('Result Id'),
@@ -747,13 +747,7 @@ const routes = [
       notes:
         'Set of percentages of Confirmed and Unaccountable percentage for few months',
       auth: {
-        scope: [
-          'treatmentStatus:view',
-          'treatmentStatus:edit',
-          'treatmentStatus:admin',
-          'result:view',
-          'result:edit',
-        ],
+        scope: ['treatmentStatus:view', 'result:view'],
       },
       validate: {
         payload: {
@@ -909,7 +903,7 @@ const routes = [
     config: {
       description: 'Add a result follow up',
       notes: 'Adds a treatment/outcome follow up for a result',
-      auth: { scope: ['treatmentStatus:edit', 'treatmentStatus:admin'] },
+      auth: { scope: ['treatmentStatus:edit'] },
       validate: {
         params: {
           resultId: Joi.number()
@@ -966,7 +960,7 @@ const routes = [
     config: {
       description: 'Set the date of a follow up',
       notes: 'Updates the date of a follow up for a result',
-      auth: { scope: ['treatmentStatus:edit', 'treatmentStatus:admin'] },
+      auth: { scope: ['treatmentStatus:edit'] },
       validate: {
         params: {
           resultId: Joi.number()
@@ -1028,7 +1022,7 @@ const routes = [
     config: {
       description: 'Remove a follow up from a result',
       notes: 'Removes a follow up from a result',
-      auth: { scope: ['treatmentStatus:edit', 'treatmentStatus:admin'] },
+      auth: { scope: ['treatmentStatus:edit'] },
       validate: {
         params: {
           resultId: Joi.number()
@@ -1245,7 +1239,7 @@ const routes = [
     config: {
       description: 'Transfer result to another clinic',
       notes: 'Transfer result to a clinic from POST param',
-      auth: { scope: ['result:edit', 'result:admin'] },
+      auth: { scope: ['result:edit'] },
       validate: {
         params: {
           resultId: Joi.number()
@@ -1359,7 +1353,7 @@ const routes = [
     config: {
       description: 'Create New Result',
       notes: 'Details of a result',
-      auth: { scope: ['result:edit', 'result:admin'] },
+      auth: { scope: ['result:edit'] },
       validate: {
         payload: resultCreatePayload,
       },
@@ -1386,7 +1380,7 @@ const routes = [
     config: {
       description: 'Update Result Details',
       notes: 'Details of a result',
-      auth: { scope: ['result:edit', 'result:admin'] },
+      auth: { scope: ['result:edit'] },
       validate: {
         params: {
           resultId: Joi.number().description('Result ID').required(),

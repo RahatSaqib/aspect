@@ -38,7 +38,7 @@ describe('auth endpoints', () => {
 
   const mockAuthObj = {
     credentials: {
-      permissions: ['site:admin', 'device:admin', 'result:admin'],
+      permissions: ['site:edit', 'device:edit', 'result:edit'],
     },
   }
 

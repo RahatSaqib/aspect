@@ -9,6 +9,7 @@ import loggedInFactory from './loggedInFactory'
 import loggedInDetailFactory from './loggedInFactory/detailFactory'
 import { reduceNavLinks } from '../../filter/utils'
 import { navigations } from '../components/BrowseFilters'
+import { isPermittedUser } from '../../components/shared/requirePermissions'
 
 // "Pages"
 import LoadableLogin from '../../auth/login/LoadableLogin'
@@ -79,9 +80,9 @@ const renderRedirectToLicenseOr = props =>
 
 const renderRedirectToDashboard = ({ permissions }) => ({ location }) => {
   let pathname = ''
-  if (hasAnyPermissions(permissions, ['dashboard'])) {
+  if (isPermittedUser(permissions, ['dashboard'])) {
     pathname = '/dashboard'
-  } else if (hasAnyPermissions(permissions, ['operationalData'])) {
+  } else if (isPermittedUser(permissions, ['operationalData'])) {
     pathname = '/operational-data'
   } else {
     pathname = '/browse'
@@ -97,24 +98,8 @@ const renderRedirectToDashboard = ({ permissions }) => ({ location }) => {
   )
 }
 
-const hasAnyPermissions = (permissions, requiredPermission) => {
-  // true if List `permissions` contains any of item from plain array `requiredPermission`
-  return !!permissions.find(
-    permission =>
-      requiredPermission.includes(permission) ||
-      // if permission has exact access level (Scope:Level) then get it's Scope and see if it is in requiredPermission
-      // MEMO - if any level is enough to access resource, then use short-cut for UI permission,
-      // i.e. 'task' means any  of 'task:*'
-      (permission.includes(':') &&
-        requiredPermission.includes(permission.split(':')[0]))
-    // don't get confused with above2 lines - 'permission' is a string, 'requiredPermission' is an array, so
-    // - includes() for string is true if substring found
-    // - includes() for array is true when item found
-  )
-}
-
 const renderRedirectToNotFound = (props, requiredPermission) => {
-  if (!hasAnyPermissions(props.permissions, requiredPermission))
+  if (!isPermittedUser(props.permissions, requiredPermission))
     return renderNotFound
 }
 
@@ -220,7 +205,7 @@ export const routerFactory = () => props => (
         render={
           renderRedirectToLoginOr(props) ||
           renderRedirectToLicenseOr(props) ||
-          renderRedirectToNotFound(props, ['task:view', 'task:admin']) ||
+          renderRedirectToNotFound(props, ['task:view']) ||
           renderTaskList
         }
       />
@@ -230,7 +215,7 @@ export const routerFactory = () => props => (
         render={
           renderRedirectToLoginOr(props) ||
           renderRedirectToLicenseOr(props) ||
-          renderRedirectToNotFound(props, ['task:view', 'task:admin']) ||
+          renderRedirectToNotFound(props, ['task:view']) ||
           renderTaskAggre
         }
       />
@@ -239,7 +224,7 @@ export const routerFactory = () => props => (
         render={
           renderRedirectToLoginOr(props) ||
           renderRedirectToLicenseOr(props) ||
-          renderRedirectToNotFound(props, ['task:view', 'task:admin']) ||
+          renderRedirectToNotFound(props, ['task:view']) ||
           renderTaskDetail
         }
       />
@@ -258,11 +243,7 @@ export const routerFactory = () => props => (
         render={
           renderRedirectToLoginOr(props) ||
           renderRedirectToLicenseOr(props) ||
-          renderRedirectToNotFound(props, [
-            'account:view',
-            'account:edit',
-            'account:admin',
-          ]) ||
+          renderRedirectToNotFound(props, ['account:view']) ||
           renderAccountDetails
         }
       />
@@ -282,10 +263,7 @@ export const routerFactory = () => props => (
         render={
           renderRedirectToLoginOr(props) ||
           renderRedirectToLicenseOr(props) ||
-          renderRedirectToNotFound(props, [
-            'clinicalIndicators:view',
-            'clinicalIndicators:admin',
-          ]) ||
+          renderRedirectToNotFound(props, ['clinicalIndicators:view']) ||
           renderClinicalIndicators
         }
       />
@@ -294,7 +272,7 @@ export const routerFactory = () => props => (
         render={
           renderRedirectToLoginOr(props) ||
           renderRedirectToLicenseOr(props) ||
-          renderRedirectToNotFound(props, ['report:view', 'report:admin']) ||
+          renderRedirectToNotFound(props, ['report:view']) ||
           renderReports
         }
       />
@@ -303,7 +281,7 @@ export const routerFactory = () => props => (
         render={
           renderRedirectToLoginOr(props) ||
           renderRedirectToLicenseOr(props) ||
-          renderRedirectToNotFound(props, ['manage:view', 'manage:admin']) ||
+          renderRedirectToNotFound(props, ['manage:view']) ||
           renderManage
         }
       />
@@ -316,11 +294,7 @@ export const routerFactory = () => props => (
         render={
           renderRedirectToLoginOr(props) ||
           renderRedirectToLicenseOr(props) ||
-          renderRedirectToNotFound(props, [
-            'device:view',
-            'device:admin',
-            'device:edit',
-          ]) ||
+          renderRedirectToNotFound(props, ['device:view']) ||
           renderDeviceList
         }
       />
@@ -329,7 +303,7 @@ export const routerFactory = () => props => (
         render={
           renderRedirectToLoginOr(props) ||
           renderRedirectToLicenseOr(props) ||
-          renderRedirectToNotFound(props, ['device:view', 'device:admin']) ||
+          renderRedirectToNotFound(props, ['device:view']) ||
           renderDeviceDetail
         }
       />
@@ -338,7 +312,7 @@ export const routerFactory = () => props => (
         render={
           renderRedirectToLoginOr(props) ||
           renderRedirectToLicenseOr(props) ||
-          renderRedirectToNotFound(props, ['case:admin', 'case:edit']) ||
+          renderRedirectToNotFound(props, ['case:edit']) ||
           renderCaseDetails
         }
       />
@@ -347,7 +321,7 @@ export const routerFactory = () => props => (
         render={
           renderRedirectToLoginOr(props) ||
           renderRedirectToLicenseOr(props) ||
-          renderRedirectToNotFound(props, ['patient:admin', 'patient:edit']) ||
+          renderRedirectToNotFound(props, ['patient:edit']) ||
           renderClinicalHistory
         }
       />
@@ -357,11 +331,7 @@ export const routerFactory = () => props => (
         render={
           renderRedirectToLoginOr(props) ||
           renderRedirectToLicenseOr(props) ||
-          renderRedirectToNotFound(props, [
-            'deviceApiKey:admin',
-            'deviceApiKey:edit',
-            'deviceApiKey:view',
-          ]) ||
+          renderRedirectToNotFound(props, ['deviceApiKey:view']) ||
           renderDeviceApiKeyList
         }
       />
@@ -372,11 +342,7 @@ export const routerFactory = () => props => (
         render={
           renderRedirectToLoginOr(props) ||
           renderRedirectToLicenseOr(props) ||
-          renderRedirectToNotFound(props, [
-            'case:admin',
-            'case:edit',
-            'case:view',
-          ]) ||
+          renderRedirectToNotFound(props, ['case:view']) ||
           renderCaseList
         }
       />
@@ -387,11 +353,7 @@ export const routerFactory = () => props => (
         render={
           renderRedirectToLoginOr(props) ||
           renderRedirectToLicenseOr(props) ||
-          renderRedirectToNotFound(props, [
-            'router:admin',
-            'router:edit',
-            'router:view',
-          ]) ||
+          renderRedirectToNotFound(props, ['router:view']) ||
           renderRouterList
         }
       />
@@ -400,7 +362,7 @@ export const routerFactory = () => props => (
         render={
           renderRedirectToLoginOr(props) ||
           renderRedirectToLicenseOr(props) ||
-          renderRedirectToNotFound(props, ['router:admin', 'router:view']) ||
+          renderRedirectToNotFound(props, ['router:view']) ||
           renderRouterDetail
         }
       />
@@ -411,11 +373,7 @@ export const routerFactory = () => props => (
         render={
           renderRedirectToLoginOr(props) ||
           renderRedirectToLicenseOr(props) ||
-          renderRedirectToNotFound(props, [
-            'reporter:admin',
-            'reporter:edit',
-            'reporter:view',
-          ]) ||
+          renderRedirectToNotFound(props, ['reporter:view']) ||
           renderReporterList
         }
       />
@@ -426,11 +384,7 @@ export const routerFactory = () => props => (
         render={
           renderRedirectToLoginOr(props) ||
           renderRedirectToLicenseOr(props) ||
-          renderRedirectToNotFound(props, [
-            'result:admin',
-            'result:view',
-            'result:edit',
-          ]) ||
+          renderRedirectToNotFound(props, ['result:view']) ||
           renderResultList
         }
       />
@@ -439,7 +393,7 @@ export const routerFactory = () => props => (
         render={
           renderRedirectToLoginOr(props) ||
           renderRedirectToLicenseOr(props) ||
-          renderRedirectToNotFound(props, ['result:admin', 'result:edit']) ||
+          renderRedirectToNotFound(props, ['result:edit']) ||
           renderResultDetail
         }
       />
@@ -450,11 +404,7 @@ export const routerFactory = () => props => (
         render={
           renderRedirectToLoginOr(props) ||
           renderRedirectToLicenseOr(props) ||
-          renderRedirectToNotFound(props, [
-            'site:admin',
-            'site:edit',
-            'site:view',
-          ]) ||
+          renderRedirectToNotFound(props, ['site:view']) ||
           renderSiteList
         }
       />
@@ -463,7 +413,7 @@ export const routerFactory = () => props => (
         render={
           renderRedirectToLoginOr(props) ||
           renderRedirectToLicenseOr(props) ||
-          renderRedirectToNotFound(props, ['site:admin', 'site:view']) ||
+          renderRedirectToNotFound(props, ['site:view']) ||
           renderSiteDetail
         }
       />
@@ -474,11 +424,7 @@ export const routerFactory = () => props => (
         render={
           renderRedirectToLoginOr(props) ||
           renderRedirectToLicenseOr(props) ||
-          renderRedirectToNotFound(props, [
-            'person:admin',
-            'person:edit',
-            'person:view',
-          ]) ||
+          renderRedirectToNotFound(props, ['person:view']) ||
           renderPersonList
         }
       />
@@ -487,7 +433,7 @@ export const routerFactory = () => props => (
         render={
           renderRedirectToLoginOr(props) ||
           renderRedirectToLicenseOr(props) ||
-          renderRedirectToNotFound(props, ['person:edit', 'person:admin']) ||
+          renderRedirectToNotFound(props, ['person:edit']) ||
           renderPersonDetail
         }
       />
@@ -498,11 +444,7 @@ export const routerFactory = () => props => (
         render={
           renderRedirectToLoginOr(props) ||
           renderRedirectToLicenseOr(props) ||
-          renderRedirectToNotFound(props, [
-            'inventory:edit',
-            'inventory:admin',
-            'inventory:view',
-          ]) ||
+          renderRedirectToNotFound(props, ['inventory:view']) ||
           renderInventoryItemsList
         }
       />
@@ -513,11 +455,7 @@ export const routerFactory = () => props => (
         render={
           renderRedirectToLoginOr(props) ||
           renderRedirectToLicenseOr(props) ||
-          renderRedirectToNotFound(props, [
-            'notification:admin',
-            'notification:view',
-            'notification:edit',
-          ]) ||
+          renderRedirectToNotFound(props, ['notification:view']) ||
           renderNotificationList
         }
       />
@@ -527,10 +465,7 @@ export const routerFactory = () => props => (
         render={
           renderRedirectToLoginOr(props) ||
           renderRedirectToLicenseOr(props) ||
-          renderRedirectToNotFound(props, [
-            'notification:edit',
-            'notification:admin',
-          ]) ||
+          renderRedirectToNotFound(props, ['notification:edit']) ||
           renderNotificationDetail
         }
       />
@@ -541,11 +476,7 @@ export const routerFactory = () => props => (
         render={
           renderRedirectToLoginOr(props) ||
           renderRedirectToLicenseOr(props) ||
-          renderRedirectToNotFound(props, [
-            'report:view',
-            'report:edit',
-            'report:admin',
-          ])
+          renderRedirectToNotFound(props, ['report:view'])
         }
       />
 
