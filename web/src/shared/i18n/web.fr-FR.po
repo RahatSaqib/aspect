@@ -451,7 +451,7 @@ msgid "Device Name"
 msgstr "Nom de l'appareil"
 
 #: i18n/src/filter/popover/FiltersPanel.json
-msgid "Device Status"
+msgid "Device Approval"
 msgstr "Statut du périphérique"
 
 #: i18n/src/filter/popover/FiltersPanel.json
@@ -1686,7 +1686,7 @@ msgid "Select state..."
 msgstr "Sélectionnez l'état..."
 
 #: i18n/src/filter/popover/FiltersPanel.json
-msgid "Select status..."
+msgid "Select approval status..."
 msgstr "Sélectionnez le statut ..."
 
 #: i18n/src/filter/popover/FiltersPanel.json

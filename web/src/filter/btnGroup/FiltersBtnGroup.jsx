@@ -76,7 +76,7 @@ const messages = defineMessages({
   },
   withDeviceApproval: {
     id: 'filter.btnGroup.withDeviceApproval',
-    defaultMessage: 'status is {deviceApprovalName}',
+    defaultMessage: 'approval status is {deviceApprovalName}',
   },
   withDeviceType: {
     id: 'filter.btnGroup.withDeviceType',

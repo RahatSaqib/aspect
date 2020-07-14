@@ -52,7 +52,7 @@ function listDevicesBaseRequest() {
           .description('Filter for device name'),
         deviceApprovalId: Joi.number()
           .allow('')
-          .description('Filter for device status ID'),
+          .description('Filter for device approval ID'),
         deviceTypeId: Joi.number()
           .allow('')
           .description('Filter for device type ID'),
@@ -74,7 +74,7 @@ function listDevicesBaseRequest() {
           // TODO: Add 'availabilityRate' Sort Page Param
           'name',
           'state',
-          'status',
+          'approval',
           'errorRate',
           'createdOn',
           'lastSeen',
@@ -142,9 +142,9 @@ function listDevicesBaseResponse() {
                 .description(
                   'The name of the site where the device is located'
                 ),
-              status: Joi.string()
+              approval: Joi.string()
                 .required()
-                .description('The current status of the device'),
+                .description('The current approval status of the device'),
               category: Joi.string()
                 .required()
                 .description('The device category'),
@@ -271,7 +271,7 @@ const deviceDetailsResponseFields = Joi.object()
       .description('Details on the device type of the device'),
     deviceApprovalId: Joi.number()
       .required()
-      .description('The device status ID of the device'),
+      .description('The device approval status ID of the device'),
     configurationData: Joi.object()
       .allow('', null)
       .description('Configuration data for the device'),
@@ -281,12 +281,12 @@ const deviceDetailsResponseFields = Joi.object()
     serial: Joi.string()
       .allow('', null)
       .description('The serial number of the device'),
-    status: Joi.string()
+    approval: Joi.string()
       .required()
-      .description('The current status of the device'),
-    statusToken: Joi.string()
+      .description('The current approval status of the device'),
+    approvalToken: Joi.string()
       .required()
-      .description('The external ID of the status'),
+      .description('The external ID of the approval'),
     category: Joi.string().required().description('The device category'),
     hasResults: Joi.number()
       .required()
@@ -410,7 +410,7 @@ const routes = [
         },
         payload: {
           siteId: Joi.number(),
-          statusToken: Joi.string(),
+          approvalToken: Joi.string(),
           configurationData: Joi.object().description(
             'Device configuration data.  The valid keys are dependent on Device Type.'
           ),
@@ -420,11 +420,11 @@ const routes = [
   },
   {
     method: 'GET',
-    path: '/device/status-types',
+    path: '/device/approval-types',
     handler: asyncHandler(listStatusTypes),
     config: {
-      description: 'Device Status List',
-      notes: 'Dictionary set of Device Status options',
+      description: 'Device Approval List',
+      notes: 'Dictionary set of Device Approval options',
       auth: { scope: ['device:view', 'device:edit'] },
     },
   },

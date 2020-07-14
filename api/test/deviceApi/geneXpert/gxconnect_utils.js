@@ -181,7 +181,7 @@ class GxConnectApiTestContext {
     this.basicDevicePayload = {
       name: deviceName,
       serial: null,
-      status: null,
+      approval: null,
       type: {
         id: 'CepheidGeneXpert',
       },

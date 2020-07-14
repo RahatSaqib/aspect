@@ -51,7 +51,7 @@ export function fetchDeviceApprovals(forceRefresh) {
     }
 
     dispatch(createDeviceApprovals())
-    return aspectFetch('/device/status-types', {
+    return aspectFetch('/device/approval-types', {
       errorNotifications: {
         400: filterFieldsRejectedError(
           defineMessages({

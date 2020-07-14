@@ -1736,7 +1736,7 @@ describe('Device API routes for GxAlert Device', () => {
             payload: {
               name: 'Xpert Lab',
               serial: 'DESKTOP-028CNRT',
-              status: null,
+              approval: null,
               type: { id: 'CepheidGeneXpert' },
               site: null,
               log: null,
@@ -1796,7 +1796,7 @@ describe('Device API routes for GxAlert Device', () => {
             payload: {
               name: 'Xpert Lab',
               serial: 'DESKTOP-028CNRT',
-              status: null,
+              approval: null,
               type: { id: 'CepheidGeneXpert' },
               site: null,
               log: null,
@@ -1874,7 +1874,7 @@ describe('Device API routes for GxAlert Device', () => {
             payload: {
               name: deviceName,
               serial: deviceSerial,
-              status: null,
+              approval: null,
               type: { id: 'CepheidGeneXpert' },
               site: null,
               log: null,
@@ -2351,7 +2351,7 @@ describe('Device API routes for GxAlert Device', () => {
             payload: {
               name: deviceName,
               serial: deviceSerial,
-              status: null,
+              approval: null,
               type: { id: 'CepheidGeneXpert' },
               site: null,
               log: null,
@@ -2809,7 +2809,7 @@ describe('Device API routes for GxAlert Device', () => {
           payload: {
             name: deviceName,
             serial: null,
-            status: null,
+            approval: null,
             type: { id: 'CepheidGeneXpert' },
             site: null,
             log: null,

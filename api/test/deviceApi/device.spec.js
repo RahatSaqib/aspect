@@ -241,7 +241,7 @@ describe('Device API routes', () => {
       await newDeviceContext.createDeviceApiKey()
     })
     afterEach(newDeviceContext.afterEach)
-    it('should create Device with statusId and add log to DeviceApprovalLog table', () =>
+    it('should create Device with approvalId and add log to DeviceApprovalLog table', () =>
       runTest(async knex => {
         const { apiKey, deviceAuth } = newDeviceContext
         assert.isOk(apiKey)

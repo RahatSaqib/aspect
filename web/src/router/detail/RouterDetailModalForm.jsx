@@ -34,7 +34,7 @@ const enhance = compose(
       'shortName',
       'notes',
       {
-        fieldName: 'statusToken',
+        fieldName: 'approvalToken',
         valueFromChangeEvent(e, isInputChecked) {
           return isInputChecked ? tokens.APPROVED : tokens.ASSIGNED
         },

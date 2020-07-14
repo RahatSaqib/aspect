@@ -129,7 +129,7 @@ async function createNewDevice(
     partnerId,
     siteId,
     geographyId,
-    status,
+    approval,
     shortName,
     macAddress,
     hostId,
@@ -177,7 +177,7 @@ async function createNewDevice(
   if (!shortName && name) {
     shortName = name
   }
-  const deviceApprovalId = await deviceApprovalToId(status)
+  const deviceApprovalId = await deviceApprovalToId(approval)
   if (shortName && shortName.length > 45) {
     shortName = shortName.substr(0, 45)
   }

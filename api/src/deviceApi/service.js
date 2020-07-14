@@ -289,7 +289,7 @@ async function getDeviceDataWithContext(context) {
   const includeSite = includeAll
 
   // only include device data if approved
-  const deviceApproved = device.status === 'approved'
+  const deviceApproved = device.approval === 'approved'
   const includeConfig = deviceApproved && includeAll
   const includeOp =
     deviceApproved &&
@@ -298,7 +298,7 @@ async function getDeviceDataWithContext(context) {
   const response = { requestedOn: now.toISOString() }
   if (includeDevice) {
     response.name = device.name
-    response.status = { id: device.status }
+    response.approval = { id: device.approval }
   }
 
   if (includeSite) {
@@ -419,8 +419,8 @@ async function updateSiteWithContext(context) {
   const site = sites[0]
 
   if (device.siteId !== site.id) {
-    const status = device.siteId == null ? 'approved' : 'assigned'
-    const deviceApprovalId = await deviceApprovalToId(status)
+    const approval = device.siteId == null ? 'approved' : 'assigned'
+    const deviceApprovalId = await deviceApprovalToId(approval)
 
     await knex('Device').where({ id: device.id }).update({
       siteId: site.id,
@@ -708,7 +708,7 @@ function createNewDeviceFromRequest(request, now) {
       partnerId: apiKey.partnerId,
       siteId: apiKey.siteId,
       geographyId: apiKey.geographyId,
-      status: apiKey.siteId ? 'approved' : 'provisioned',
+      approval: apiKey.siteId ? 'approved' : 'provisioned',
     })
 
     // Assign new device to API Key

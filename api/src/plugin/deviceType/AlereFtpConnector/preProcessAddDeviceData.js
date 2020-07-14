@@ -72,7 +72,7 @@ async function getOrCreateDevice(knex, payload, alereFtpConnectorDevice, now) {
       partnerId,
       siteId: site.id,
       geographyId: site.geographyId,
-      status: 'assigned',
+      approval: 'assigned',
       culture: alereFtpConnectorDevice.culture,
       timezone: alereFtpConnectorDevice.timezone,
     })

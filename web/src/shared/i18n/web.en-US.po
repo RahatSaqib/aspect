@@ -3350,7 +3350,7 @@ msgstr ""
 #. Select status...
 #. [filter.popover.selectDeviceApproval]
 #. defaultMessage is:
-#. Select status...
+#. Select approval status...
 #: i18n/src/filter/popover/FiltersPanel.json
 msgid "Select approval status..."
 msgstr ""
@@ -3670,27 +3670,27 @@ msgstr ""
 #. [pages.Status.actionStatus]
 #. defaultMessage is:
 #. Status
-#. [pages.DeviceDetailProfile.status]
+#. [pages.DeviceDetailProfile.approval]
 #. defaultMessage is:
-#. Status
-#. [pages.DeviceList.status]
+#. Approval
+#. [pages.DeviceList.approval]
 #. defaultMessage is:
-#. Status
+#. Approval Status
 #. [pages.ReporterDetail.fieldStatus]
 #. defaultMessage is:
 #. Status
-#. [pages.ReporterList.status]
+#. [pages.ReporterList.approval]
 #. defaultMessage is:
-#. Status
+#. Approval Status
 #. [pages.ResultWorkflowStatusLog.logStatus]
 #. defaultMessage is:
 #. Status
 #. [pages.RouterDetail.fieldStatus]
 #. defaultMessage is:
 #. Status
-#. [pages.RouterList.status]
+#. [pages.RouterList.approval]
 #. defaultMessage is:
-#. Status
+#. Approval Status
 #: i18n/src/dashboard/status/messages.json
 #: i18n/src/device/detail/profile/DeviceDetailProfile.json
 #: i18n/src/device/list/messages.json

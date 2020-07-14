@@ -381,12 +381,12 @@ async function updateDevice(request) {
   )
 
   let { deviceApprovalId } = device
-  // check if a statusToken is provided
+  // check if a approvalToken is provided
   if (
-    _.has(payload, 'statusToken') &&
-    device.statusToken !== payload.statusToken
+    _.has(payload, 'approvalToken') &&
+    device.approvalToken !== payload.approvalToken
   ) {
-    deviceApprovalId = await deviceApprovalToId(payload.statusToken)
+    deviceApprovalId = await deviceApprovalToId(payload.approvalToken)
   }
 
   // update item

@@ -267,7 +267,7 @@ const enhance = compose(
     }) => history.push(`/browse/result/${resultId}`),
     onToggleDeviceApproval: ({ device, updateSingleDevice }) => () =>
       updateSingleDevice(device.get('id'), {
-        statusToken:
+        approvalToken:
           device.get('approvalToken') !== tokens.APPROVED
             ? tokens.APPROVED
             : tokens.ASSIGNED,

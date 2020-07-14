@@ -177,7 +177,7 @@ class GxAlertApiTestContext {
     this.basicDevicePayload = {
       name: this.gxAlertDeviceName,
       serial: null,
-      status: null,
+      approval: null,
       type: {
         id: 'CepheidGeneXpert',
       },

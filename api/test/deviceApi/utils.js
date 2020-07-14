@@ -212,7 +212,7 @@ async function createSite(knex, { partner, user, site }) {
 
 async function createDevice(
   knex,
-  { siteId, type = 'DaktariVirology', status = 'approved', baseConfig = {} },
+  { siteId, type = 'DaktariVirology', approval = 'approved', baseConfig = {} },
   insertLog = false
 ) {
   const now = new Date()
@@ -235,7 +235,7 @@ async function createDevice(
     siteId,
     deviceTypeId,
     deviceCapacityId: deviceCapacity ? deviceCapacity.id : null,
-    deviceApprovalId: await deviceApprovalToId(status),
+    deviceApprovalId: await deviceApprovalToId(approval),
     configurationData: JSON.stringify(baseConfig),
     name: 'Test Device',
     shortName: 'Test Device',
@@ -323,7 +323,7 @@ class DeviceApiTestContext {
       partner,
       type,
       site,
-      status = 'approved',
+      approval = 'approved',
       baseConfig = {},
     }
   ) {
@@ -333,7 +333,7 @@ class DeviceApiTestContext {
     this.partner = partner
     this.type = type
     this.site = site
-    this.status = status
+    this.approval = approval
     this.baseConfig = baseConfig
     this.now = new Date()
 
@@ -382,7 +382,7 @@ class DeviceApiTestContext {
         {
           siteId,
           type: this.type,
-          status: this.status,
+          approval: this.approval,
           baseConfig: this.baseConfig,
         },
         true
@@ -441,7 +441,7 @@ class DeviceApiTestContext {
       const deviceId = await createDevice(knex, {
         siteId,
         type: this.type,
-        status: this.status,
+        approval: this.approval,
         baseConfig: this.baseConfig,
       })
       this.deviceId = deviceId

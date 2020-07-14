@@ -70,7 +70,7 @@ const FILTERS_CONFIG = [
 const searchSanitizer = makeSearchParamsSanitizer({
   availableSortCol: [
     'name',
-    'status',
+    'approval',
     'availabilityRate',
     'errorRate',
     'createdOn',
@@ -289,8 +289,8 @@ export const DeviceList = ({
                 sortable: true,
               },
               {
-                key: 'status',
-                label: intl.formatMessage(messages.status),
+                key: 'approval',
+                label: intl.formatMessage(messages.approval),
                 sortable: true,
               },
               {
