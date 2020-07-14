@@ -60,9 +60,7 @@ const enhance = compose(
   pure,
   requirePermissions({
     permissions: [
-      'actionDashboard:admin',
       'actionDashboard:view',
-      'actionDashboard:edit',
     ],
   }),
   withProps(

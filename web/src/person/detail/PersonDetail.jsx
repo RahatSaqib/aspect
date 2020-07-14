@@ -255,7 +255,7 @@ export class PersonDetail extends PureComponent {
     const contactDetails = new ContactDetails(person)
     const loginDetails = new LoginDetails(person)
     const userPreferences = new UserPreferences(person)
-    const userIsAdmin = user.jwt.permissions.includes('person:admin')
+    const userIsAdmin = user.jwt.permissions.includes('person:edit')
     const loading = !isNew && (!person || person.get('loaded') !== true)
     const canLogIn = person && !!person.get('canLogIn')
     const shouldPrefill = !isNew && person && person.get('userId') == null
