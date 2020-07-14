@@ -50,7 +50,7 @@ function listDevicesBaseRequest() {
         deviceName: Joi.string()
           .allow('')
           .description('Filter for device name'),
-        deviceStatusId: Joi.number()
+        deviceApprovalId: Joi.number()
           .allow('')
           .description('Filter for device status ID'),
         deviceTypeId: Joi.number()
@@ -269,7 +269,7 @@ const deviceDetailsResponseFields = Joi.object()
           .description('Operation data schema associated with the device type'),
       })
       .description('Details on the device type of the device'),
-    deviceStatusId: Joi.number()
+    deviceApprovalId: Joi.number()
       .required()
       .description('The device status ID of the device'),
     configurationData: Joi.object()

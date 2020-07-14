@@ -123,7 +123,7 @@ describe('Device routes', () => {
           assert.property(res.body.data, 'siteId')
           assert.property(res.body.data, 'siteName')
           assert.property(res.body.data, 'hostId')
-          assert.property(res.body.data, 'deviceStatusId')
+          assert.property(res.body.data, 'deviceApprovalId')
           assert.property(res.body.data, 'configurationData')
           assert.property(res.body.data, 'notes')
           assert.property(res.body.data, 'serial')

@@ -3,7 +3,10 @@ const _ = require('lodash')
 const { knex, transact } = require('../db')
 const { getRemoteAddress } = require('../shared/request')
 const { asyncHandler } = require('../routes')
-const { deviceStatusToId, deviceTypeToPlugin } = require('../shared/dictionary')
+const {
+  deviceApprovalToId,
+  deviceTypeToPlugin,
+} = require('../shared/dictionary')
 const {
   resultUpdated,
   resultLogged,
@@ -417,16 +420,16 @@ async function updateSiteWithContext(context) {
 
   if (device.siteId !== site.id) {
     const status = device.siteId == null ? 'approved' : 'assigned'
-    const deviceStatusId = await deviceStatusToId(status)
+    const deviceApprovalId = await deviceApprovalToId(status)
 
     await knex('Device').where({ id: device.id }).update({
       siteId: site.id,
-      deviceStatusId,
+      deviceApprovalId,
     })
 
-    await knex('DeviceStatusLog').insert({
+    await knex('DeviceApprovalLog').insert({
       deviceId: device.id,
-      deviceStatusId,
+      deviceApprovalId,
       changedOn: now,
       createdOn: now,
       createdBy: null,
@@ -527,7 +530,7 @@ async function createDeviceApiContext(
 
   const existingDeviceAndData = await knex('DeviceApiKey as dak')
     .innerJoin('Device as d', 'dak.deviceId', 'd.id')
-    .innerJoin('DeviceStatus as ds', 'd.deviceStatusId', 'ds.id')
+    .innerJoin('DeviceApproval as da', 'd.deviceApprovalId', 'da.id')
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .innerJoin('DeviceTypeCategory as dtc', 'dtc.id', 'dt.deviceTypeCategoryId')
     .leftJoin('Geography as g', 'd.geographyId', 'g.id')
@@ -549,7 +552,7 @@ async function createDeviceApiContext(
       'd.configurationData',
       'd.lastSeenOn',
       'd.putInService',
-      'ds.token as status',
+      'da.token as approval',
       'dt.externalId as deviceType',
       'dt.plugin as deviceTypePluginName',
       'p.plugin as partnerPluginName',

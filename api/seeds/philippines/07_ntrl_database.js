@@ -1,7 +1,7 @@
 module.exports = require('../utils').seed(seed, __filename)
 
 const { getPartnerByName } = require('../utils')
-const { deviceStatusToId } = require('../../src/shared/dictionary')
+const { deviceApprovalToId } = require('../../src/shared/dictionary')
 
 async function seed(knex) {
   const { id: partnerId } = await getPartnerByName(knex, 'Philippines')
@@ -45,7 +45,7 @@ async function seed(knex) {
     serial: 'NTRL-DB-SERVER',
     hostId: 'NTRL-DB-SERVER',
     macAddress: '1c:69:7a:01:eb:9c,50:76:af:9f:e1:56',
-    deviceStatusId: await deviceStatusToId('approved'),
+    deviceApprovalId: await deviceApprovalToId('approved'),
     partnerId,
     geographyId: ntrlSite.geographyId,
     siteId: ntrlSite.id,

@@ -14,7 +14,7 @@ import TextField from '@material-ui/core/TextField'
 import recomposeForm, { errorProps } from '../../components/recomposeForm'
 import JSONSchemaCard from '../../components/shared/JSONSchemaCard'
 import SiteAutoCompleteField from '../../filter/resource/SiteAutoCompleteField'
-import { tokens } from '../../deviceStatus/DeviceStatusRedux'
+import { tokens } from '../../deviceApproval/DeviceApprovalRedux'
 import AspectDialog from '../../components/shared/AspectDialog'
 
 const cssClasses = classnames.bind(require('./RouterDetailModalForm.css'))

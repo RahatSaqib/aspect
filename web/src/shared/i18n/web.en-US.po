@@ -940,11 +940,11 @@ msgstr ""
 msgid "Device Name"
 msgstr ""
 
-#. [filter.popover.deviceStatus]
+#. [filter.popover.deviceApproval]
 #. defaultMessage is:
-#. Device Status
+#. Device Approval
 #: i18n/src/filter/popover/FiltersPanel.json
-msgid "Device Status"
+msgid "Device Approval"
 msgstr ""
 
 #. [filter.popover.deviceType]
@@ -1939,11 +1939,11 @@ msgstr ""
 msgid "Loading Contacts Failed"
 msgstr ""
 
-#. [errorResponseMessages.fetchDeviceStatuses.GET.default.title]
+#. [errorResponseMessages.fetchDeviceApprovals.GET.default.title]
 #. defaultMessage is:
-#. Loading Device Statuses Failed
-#: i18n/src/deviceStatus/DeviceStatusRedux.json
-msgid "Loading Device Statuses Failed"
+#. Loading Device Approvals Failed
+#: i18n/src/deviceApproval/DeviceApprovalRedux.json
+msgid "Loading Device Approvals Failed"
 msgstr ""
 
 #. [errorResponseMessages.fetchDeviceApiKeys.GET.default.title]
@@ -3153,11 +3153,11 @@ msgstr ""
 msgid "Searching Contacts Failed"
 msgstr ""
 
-#. [errorResponseMessages.fetchDeviceStatuses.GET.400.title]
+#. [errorResponseMessages.fetchDeviceApprovals.GET.400.title]
 #. defaultMessage is:
-#. Searching Device Statuses Failed
-#: i18n/src/deviceStatus/DeviceStatusRedux.json
-msgid "Searching Device Statuses Failed"
+#. Searching Device Approvals Failed
+#: i18n/src/deviceApproval/DeviceApprovalRedux.json
+msgid "Searching Device Approvals Failed"
 msgstr ""
 
 #. [errorResponseMessages.fetchDeviceApiKeys.GET.400.title]
@@ -3348,11 +3348,11 @@ msgstr ""
 #. [filter.popover.selectWorkflowStatus]
 #. defaultMessage is:
 #. Select status...
-#. [filter.popover.selectDeviceStatus]
+#. [filter.popover.selectDeviceApproval]
 #. defaultMessage is:
 #. Select status...
 #: i18n/src/filter/popover/FiltersPanel.json
-msgid "Select status..."
+msgid "Select approval status..."
 msgstr ""
 
 #. [filter.popover.selectDeviceType]
@@ -4889,11 +4889,11 @@ msgstr ""
 msgid "with device issues"
 msgstr ""
 
-#. [filter.btnGroup.withDeviceStatus]
+#. [filter.btnGroup.withDeviceApproval]
 #. defaultMessage is:
-#. with device status is {deviceStatusName}
+#. with device approval is {deviceApprovalName}
 #: i18n/src/filter/btnGroup/FiltersBtnGroup.json
-msgid "with device status is {deviceStatusName}"
+msgid "with device approval is {deviceApprovalName}"
 msgstr ""
 
 #. [filter.btnGroup.withDeviceType]

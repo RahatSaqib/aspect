@@ -13,10 +13,10 @@ const cacheConfig = {
     keyColumn: 'name',
   },
   DeviceApiRawStatus: {},
-  DeviceMaintenanceType: {},
-  DeviceStatus: {
+  DeviceApproval: {
     keyColumn: 'token',
   },
+  DeviceMaintenanceType: {},
   DeviceType: {
     additionalColumns: ['plugin'],
   },
@@ -104,7 +104,7 @@ function keyToValue(table, column) {
 
 _.each(cacheConfig, (config, table) => {
   const { additionalColumns = [] } = config
-  // assayTypeToId, deviceStatusToId, etc. for each configured table
+  // assayTypeToId, deviceApprovalToId, etc. for each configured table
   // deviceTypeToPlugin etc. for each configured additional column
   const name = _.lowerFirst(table)
   const columns = ['id', ...additionalColumns]

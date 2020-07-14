@@ -15,81 +15,81 @@ export const tokens = {
 }
 
 export const types = {
-  REQUEST_DEVICE_STATUSES: 'REQUEST_DEVICE_STATUSES',
-  RECEIVE_DEVICE_STATUSES: 'RECEIVE_DEVICE_STATUSES',
+  REQUEST_DEVICE_APPROVALS: 'REQUEST_DEVICE_APPROVALS',
+  RECEIVE_DEVICE_APPROVALS: 'RECEIVE_DEVICE_APPROVALS',
 }
 //
 /*
  * ---------------- Action Creators -----------------
  */
-function createDeviceStatuses() {
-  return { type: types.REQUEST_DEVICE_STATUSES }
+function createDeviceApprovals() {
+  return { type: types.REQUEST_DEVICE_APPROVALS }
 }
 
-function createReceiveDeviceStatuses(items) {
+function createReceiveDeviceApprovals(items) {
   return {
-    type: types.RECEIVE_DEVICE_STATUSES,
+    type: types.RECEIVE_DEVICE_APPROVALS,
     items,
     lastRefreshed: new Date(),
   }
 }
 
-export function fetchDeviceStatuses(forceRefresh) {
+export function fetchDeviceApprovals(forceRefresh) {
   return (dispatch, getState) => {
-    const { deviceStatus } = getState()
+    const { deviceApproval } = getState()
 
-    if (deviceStatus.loading) {
+    if (deviceApproval.loading) {
       return
     }
     const shouldFetch =
       forceRefresh ||
-      !deviceStatus.lastRefreshed ||
+      !deviceApproval.lastRefreshed ||
       // check every 60 mins in case new option added in db
-      differenceInMinutes(new Date(), deviceStatus.lastRefreshed) > 60
+      differenceInMinutes(new Date(), deviceApproval.lastRefreshed) > 60
     if (!shouldFetch) {
       return
     }
 
-    dispatch(createDeviceStatuses())
+    dispatch(createDeviceApprovals())
     return aspectFetch('/device/status-types', {
       errorNotifications: {
         400: filterFieldsRejectedError(
           defineMessages({
             title: {
-              id: 'errorResponseMessages.fetchDeviceStatuses.GET.400.title',
-              defaultMessage: 'Searching Device Statuses Failed',
+              id: 'errorResponseMessages.fetchDeviceApprovals.GET.400.title',
+              defaultMessage: 'Searching Device Approvals Failed',
             },
           })
         ),
         default: errorPleaseTryAgainInAFewMinutes(
           defineMessages({
             title: {
-              id: 'errorResponseMessages.fetchDeviceStatuses.GET.default.title',
-              defaultMessage: 'Loading Device Statuses Failed',
+              id: 'errorResponseMessages.fetchDeviceApprovals.GET.default.title',
+              defaultMessage: 'Loading Device Approval Statuses Failed',
             },
           })
         ),
       },
-    }).then(json => dispatch(createReceiveDeviceStatuses(json.data)))
+    }).then(json => dispatch(createReceiveDeviceApprovals(json.data)))
   }
 }
 
 /*
  * ---------------- Reducers -----------------
  */
-const DeviceStatus = Immutable.Record({
+const DeviceApproval = Immutable.Record({
   loading: false,
   items: Immutable.List([]),
   lastRefreshed: undefined,
 })
 
-const initialState = new DeviceStatus()
+const initialState = new DeviceApproval()
 
-function requestDeviceStatuses(state) {
+function requestDeviceApprovals(state) {
   return state.set('loading', true)
 }
 
-function receiveDeviceStatuses(state, items, lastRefreshed) {
+function receiveDeviceApprovals(state, items, lastRefreshed) {
   return state.merge({
     loading: false,
     lastRefreshed,
@@ -99,10 +99,10 @@ function receiveDeviceStatuses(state, items, lastRefreshed) {
 
 export default function workflowStatusReducer(state = initialState, action) {
   switch (action.type) {
-    case types.REQUEST_DEVICE_STATUSES:
-      return requestDeviceStatuses(state)
-    case types.RECEIVE_DEVICE_STATUSES:
-      return receiveDeviceStatuses(state, action.items, action.lastRefreshed)
+    case types.REQUEST_DEVICE_APPROVALS:
+      return requestDeviceApprovals(state)
+    case types.RECEIVE_DEVICE_APPROVALS:
+      return receiveDeviceApprovals(state, action.items, action.lastRefreshed)
     default:
       return state
   }

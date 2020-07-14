@@ -24,7 +24,7 @@ async function deleteGxAlertDeviceDataAndRefreshTokens(
     .whereIn('deviceId', deviceIds)
     .pluck('id')
 
-  await knex('DeviceStatusLog').whereIn('deviceId', deviceIds).delete()
+  await knex('DeviceApprovalLog').whereIn('deviceId', deviceIds).delete()
   await knex('DeviceLog').whereIn('deviceId', deviceIds).delete()
 
   await knex('DeviceOperation').whereIn('id', opIds).delete()
@@ -95,7 +95,7 @@ async function deleteGeneXpertDeviceSiteDataAndRefreshTokens(
     .whereIn('deviceId', deviceIds)
     .pluck('id')
 
-  await knex('DeviceStatusLog').whereIn('deviceId', deviceIds).delete()
+  await knex('DeviceApprovalLog').whereIn('deviceId', deviceIds).delete()
 
   await knex('DeviceLog')
     .whereIn('deviceId', deviceIds)
@@ -224,8 +224,8 @@ class GxAlertApiTestContext {
         .andWhere('g.stateId', null)
         .andWhere('g.lgaId', null)
         .first('g.*')
-      const approvedDeviceStatus = await knex
-        .from('DeviceStatus')
+      const approvedDeviceApproval = await knex
+        .from('DeviceApproval')
         .where('token', 'approved')
         .first()
 
@@ -241,7 +241,7 @@ class GxAlertApiTestContext {
         geographyId: geography.id,
         deviceTypeId: gxAlertDeviceType.id,
         deviceCapacityId: deviceCapacity ? deviceCapacity.id : null,
-        deviceStatusId: approvedDeviceStatus.id,
+        deviceApprovalId: approvedDeviceApproval.id,
         name: this.basicDevicePayload.name,
         shortName: this.basicDevicePayload.name,
         configurationData: '{}',
@@ -491,7 +491,7 @@ class GxAlertApiTestContext {
           'c.abbreviation as countryAbbreviation',
           's.id as siteId',
           'd.deviceTypeId',
-          'd.deviceStatusId',
+          'd.deviceApprovalId',
           'd.name',
           'd.shortName',
           'd.macAddress',

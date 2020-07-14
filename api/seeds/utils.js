@@ -37,7 +37,7 @@ const tables = [
   'ResultNoteType',
   // TODO ASP-757 Standardize static data key on externalId
   ['ConsumableReason', 'name'],
-  ['DeviceStatus', 'token'],
+  ['DeviceApproval', 'token'],
   ['PartnerType', 'name'],
   ['DeviceTypeCategory', 'name'],
   ['Unit', 'name'],

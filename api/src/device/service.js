@@ -19,7 +19,7 @@ const { getConstraints, addConstraints } = require('../auth/constraints')
 const { getUser } = require('../auth/service')
 const {
   allResultCategoryToId,
-  deviceStatusToId,
+  deviceApprovalToId,
   resultCategoryToId,
   deviceMaintenanceTypeToId,
 } = require('../shared/dictionary')
@@ -34,7 +34,7 @@ const SELECT_LIST_FIELDS = [
   'st.name as state',
   'dt.name as type',
   's.name as siteName',
-  'ds.name as status',
+  'da.name as approval',
   'dc.name as category',
   'dc.hasResults',
   'dc.hasConnectivity',
@@ -47,8 +47,8 @@ const SELECT_SHOW_FIELDS = [
   'd.createdOn',
   'd.lastPingOn',
   'd.lastSeenOn as lastSeen',
-  'ds.name as status',
-  'ds.token as statusToken',
+  'da.name as approval',
+  'da.token as approvalToken',
   'dc.name as category',
   'dc.hasResults',
   'dc.hasConnectivity',
@@ -56,7 +56,7 @@ const SELECT_SHOW_FIELDS = [
   's.name as siteName',
   'd.hostId',
   'd.deviceTypeId',
-  'd.deviceStatusId',
+  'd.deviceApprovalId',
   'd.configurationData',
   'd.notes',
   'd.serial',
@@ -87,7 +87,7 @@ async function getListDevices(query, auth) {
 
   const deviceQuery = knex('Device as d')
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
-    .innerJoin('DeviceStatus as ds', 'd.deviceStatusId', 'ds.id')
+    .innerJoin('DeviceApproval as da', 'd.deviceApprovalId', 'da.id')
     .innerJoin('DeviceTypeCategory as dc', 'dt.deviceTypeCategoryId', 'dc.id')
     .innerJoin('Site as s', 'd.siteId', 's.id')
     .leftJoin('FactResultsDevice as frd30', function () {
@@ -120,7 +120,7 @@ async function getListDevices(query, auth) {
       stateId: 'g.stateId',
       lgaId: 'g.lgaId',
       deviceName: 'd.name',
-      deviceStatusId: 'd.deviceStatusId',
+      deviceApprovalId: 'd.deviceApprovalId',
       deviceTypeId: 'd.deviceTypeId',
       hasConnectivity: 'dc.hasConnectivity',
       hasResults: 'dc.hasResults',
@@ -265,7 +265,7 @@ async function getDeviceByDeviceId({
 
   const device = await knex('Device as d')
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
-    .innerJoin('DeviceStatus as ds', 'd.deviceStatusId', 'ds.id')
+    .innerJoin('DeviceApproval as da', 'd.deviceApprovalId', 'da.id')
     .innerJoin('DeviceTypeCategory as dc', 'dt.deviceTypeCategoryId', 'dc.id')
     .innerJoin('Site as s', 'd.siteId', 's.id')
     .leftJoin('DeviceCapacity as dp', 'd.deviceCapacityId', 'dp.id')
@@ -380,13 +380,13 @@ async function updateDevice(request) {
     payload.configurationData
   )
 
-  let { deviceStatusId } = device
+  let { deviceApprovalId } = device
   // check if a statusToken is provided
   if (
     _.has(payload, 'statusToken') &&
     device.statusToken !== payload.statusToken
   ) {
-    deviceStatusId = await deviceStatusToId(payload.statusToken)
+    deviceApprovalId = await deviceApprovalToId(payload.statusToken)
   }
 
   // update item
@@ -394,7 +394,7 @@ async function updateDevice(request) {
     .where('id', params.deviceId)
     .update({
       siteId: payload.siteId || device.siteId,
-      deviceStatusId,
+      deviceApprovalId,
       configurationData: JSON.stringify(configurationData),
     })
 
@@ -406,11 +406,11 @@ async function updateDevice(request) {
   return result
 }
 
-async function listStatusTypes() {
-  const resultQuery = knex('DeviceStatus as ds')
+async function listApprovalTypes() {
+  const resultQuery = knex('DeviceApproval as da')
 
   // get total count for paging
-  const getCount = resultQuery.clone().count('ds.id as count').first()
+  const getCount = resultQuery.clone().count('da.id as count').first()
 
   // get rows
   const getItems = resultQuery.clone().orderBy('id', 'asc').select('id', 'name')
@@ -625,7 +625,7 @@ async function getDevicePerformance(request) {
 function getDeviceBaseQuery(query, dataConstraints) {
   const deviceQuery = knex('Device as d')
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
-    .innerJoin('DeviceStatus as ds', 'd.deviceStatusId', 'ds.id')
+    .innerJoin('DeviceApproval as da', 'd.deviceApprovalId', 'da.id')
     .innerJoin('DeviceTypeCategory as dc', 'dt.deviceTypeCategoryId', 'dc.id')
     .innerJoin('Site as s', 'd.siteId', 's.id')
     .leftJoin('Geography as g', 's.geographyId', 'g.id')
@@ -664,7 +664,7 @@ function getDeviceBaseQuery(query, dataConstraints) {
       stateId: 'g.stateId',
       lgaId: 'g.lgaId',
       deviceName: 'd.name',
-      deviceStatusId: 'd.deviceStatusId',
+      deviceApprovalId: 'd.deviceApprovalId',
       deviceTypeId: 'd.deviceTypeId',
       hasConnectivity: 'dc.hasConnectivity',
       hasResults: 'dc.hasResults',
@@ -805,7 +805,7 @@ module.exports = {
   listDevices,
   showDevice,
   updateDevice,
-  listStatusTypes,
+  listStatusTypes: listApprovalTypes,
   listDevicesForSelectList,
   getDevice,
   updateDeviceMaintenance,

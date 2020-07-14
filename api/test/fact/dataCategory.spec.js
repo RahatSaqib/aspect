@@ -23,7 +23,7 @@ const { loadPlugin } = require('../../src/plugin/registration')
 const {
   allResultCategoryToId,
   deviceTypeToId,
-  deviceStatusToId,
+  deviceApprovalToId,
   resultSourceToId,
   resultTypeToId,
   sampleTypeToId,
@@ -167,7 +167,7 @@ describe('DataCategoryLow Issues Endpoint', () => {
         geographyId,
         siteId, // new site id
         deviceTypeId: await deviceTypeToId('CepheidGeneXpert'),
-        deviceStatusId: await deviceStatusToId('approved'),
+        deviceApprovalId: await deviceApprovalToId('approved'),
         name: 'Test Device',
         shortName: 'Test Device',
         lastSeenOn: now,

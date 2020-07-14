@@ -8,7 +8,7 @@ const { getResult } = require('../../src/deviceApi/result')
 const { queuePurge } = require('../utils/mqUtils')
 const {
   deviceTypeToId,
-  deviceStatusToId,
+  deviceApprovalToId,
   resultCategoryToId,
   resultSourceToId,
   resultTypeToId,
@@ -47,7 +47,7 @@ async function deleteDeviceAndTestData(knex, apiKeys) {
   await knex('ResultTag').whereIn('tagId', tagIds).delete()
   await knex('Tag').whereIn('id', tagIds).delete()
   await knex('DeviceLog').whereIn('deviceId', deviceIds).delete()
-  await knex('DeviceStatusLog').whereIn('deviceId', deviceIds).delete()
+  await knex('DeviceApprovalLog').whereIn('deviceId', deviceIds).delete()
   await knex('FactDeviceFlag').whereIn('deviceId', deviceIds).delete()
   await knex('DeviceSiteHistory').whereIn('deviceId', deviceIds).delete()
   await knex('InventoryLog').whereIn('resultId', resultIds).delete()
@@ -235,7 +235,7 @@ async function createDevice(
     siteId,
     deviceTypeId,
     deviceCapacityId: deviceCapacity ? deviceCapacity.id : null,
-    deviceStatusId: await deviceStatusToId(status),
+    deviceApprovalId: await deviceApprovalToId(status),
     configurationData: JSON.stringify(baseConfig),
     name: 'Test Device',
     shortName: 'Test Device',
@@ -617,7 +617,7 @@ async function getDevicesWithIdLargerThan(deviceId, knex) {
       'geographyId',
       'siteId',
       'deviceTypeId',
-      'deviceStatusId',
+      'deviceApprovalId',
       'name',
       'shortName',
       'macAddress',

@@ -71,7 +71,7 @@ const FILTERS_CONFIG = [
     deviceName: true,
     requiredPermissions: [],
   },
-  { deviceStatus: true, requiredPermissions: [] },
+  { deviceApproval: true, requiredPermissions: [] },
 ]
 
 const searchSanitizer = makeSearchParamsSanitizer({
