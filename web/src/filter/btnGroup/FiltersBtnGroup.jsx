@@ -312,12 +312,17 @@ const buttonBy = {
           .get('name'),
       })
   ),
-  deviceApprovalId: makeButton(({ intl, deviceApprovalItems }, deviceApprovalId) =>
-    intl.formatMessage(messages.withDeviceApproval, {
-      deviceApprovalName: deviceApprovalItems
-        .find(it => it.get('id') === deviceApprovalId, EMPTY_CONTEXT, EMPTY_MAP)
-        .get('name'),
-    })
+  deviceApprovalId: makeButton(
+    ({ intl, deviceApprovalItems }, deviceApprovalId) =>
+      intl.formatMessage(messages.withDeviceApproval, {
+        deviceApprovalName: deviceApprovalItems
+          .find(
+            it => it.get('id') === deviceApprovalId,
+            EMPTY_CONTEXT,
+            EMPTY_MAP
+          )
+          .get('name'),
+      })
   ),
   deviceTypeId: makeButton(({ intl, deviceTypeItems }, deviceTypeId) =>
     intl.formatMessage(messages.withDeviceType, {
