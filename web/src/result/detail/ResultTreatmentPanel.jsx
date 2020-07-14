@@ -56,11 +56,7 @@ const enhance = compose(
   withState('isActive', 'setIsActive', false),
   withState('note', 'setNote', ''),
   requirePermission({
-    permissions: [
-      'treatmentStatus:admin',
-      'treatmentStatus:view',
-      'treatmentStatus:edit',
-    ],
+    permissions: ['treatmentStatus:view'],
   }),
   withHandlers({
     onToggleShown: ({ setIsShown }) => () => setIsShown(isShown => !isShown),
@@ -167,9 +163,6 @@ const ResultTreatmentPanel = ({
                         onChange={restProps.onTreatmentChange}
                         id={treatmentCheckbox.id}
                         disabled={
-                          !restProps.userPermission.includes(
-                            'treatmentStatus:admin'
-                          ) &&
                           !restProps.userPermission.includes(
                             'treatmentStatus:edit'
                           )

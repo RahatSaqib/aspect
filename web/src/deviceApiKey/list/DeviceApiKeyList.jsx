@@ -119,7 +119,7 @@ const FILTERS_CONFIG = [
   { deviceName: true, requiredPermissions: [] },
   {
     siteName: true,
-    requiredPermissions: ['site:view', 'site:admin', 'site:edit'],
+    requiredPermissions: ['site:view'],
   },
 ]
 const DEFAULT_GENERATOR_VALUES = { count: 1 }
