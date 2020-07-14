@@ -186,7 +186,7 @@ export const InventoryItems = ({
   history,
   ...restProps
 }) => {
-  const itemSelected = value || inventoryItems[4]
+  const itemSelected = value || (inventoryItems && inventoryItems[0]) || null
   const filteredItem = _.omit(itemSelected, ['consumableId', 'consumableName'])
   const inventoryChartLabel = rearrangeInventoryKey(filteredItem)
   const data = []
@@ -222,7 +222,11 @@ export const InventoryItems = ({
                 source={source}
                 {...restProps}
                 style={{ width: 320 }}
-                value={selectInventoryItem || inventoryItems[4].consumableId}
+                value={
+                  selectInventoryItem ||
+                  (inventoryItems && inventoryItems[0].consumableId) ||
+                  null
+                }
               />
             ))}
         </div>
