@@ -17,9 +17,7 @@ const baseAssert = (res, issueType) => {
 }
 
 describe('Issue Trigger', () => {
-  // describe('issue type NewResultsAvailable', () => {
   const path = '/api/issue/trigger'
-  // let messageContext
   const now = new Date()
 
   // get 1st available device for current user
@@ -61,7 +59,7 @@ describe('Issue Trigger', () => {
       oldIssueEventIds = await knex('IssueEvent').pluck('id')
     })
     afterEach(async () => {
-      // // make sure we delete only new items and not existing, accidentally
+      // delete only new items
       await knex('IssueEvent').whereNotIn('id', oldIssueEventIds).del()
     })
 
