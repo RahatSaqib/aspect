@@ -42,6 +42,7 @@ const tables = [
   ['DeviceTypeCategory', 'name'],
   ['Unit', 'name'],
   ['Permission', seedStaticDataPermission],
+  'DeviceMaintenanceStatus',
 ]
 
 const uniqueKeys = {
