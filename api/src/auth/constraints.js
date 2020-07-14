@@ -9,7 +9,7 @@ function alias(table) {
   return `${ALIAS_PREFIX}_${table}`
 }
 
-async function getConstraints(credentials, forModule = null) {
+async function getConstraints(credentials) {
   const user = credentials.name
     ? await getUser(credentials.name)
     : credentials.userId
@@ -37,24 +37,9 @@ async function getConstraints(credentials, forModule = null) {
     .innerJoin('Job as j', 'jc.jobId', 'j.id')
     .innerJoin('JobFunction as jf', 'j.jobFunctionId', 'jf.id')
     .innerJoin('Person as ps', 'j.personId', 'ps.id')
-    .modify(queryBuilder => {
-      if (forModule) {
-        queryBuilder
-          .leftJoin(
-            'JobFunctionPermission as jfp',
-            'j.jobFunctionId',
-            'jfp.jobFunctionId'
-          )
-          .leftJoin('Permission as pModuleAdmin', function () {
-            this.on('jfp.permissionId', 'pModuleAdmin.id')
-              .andOn('pModuleAdmin.activity', knex.raw("'admin'"))
-              .andOn('pModuleAdmin.module', knex.raw(`'${forModule}'`))
-          })
-      }
-      queryBuilder.where({
-        'ps.userId': user.id,
-        'jf.partnerId': user.partnerId,
-      })
+    .where({
+      'ps.userId': user.id,
+      'jf.partnerId': user.partnerId,
     })
     .distinct(
       'g.countryId',
@@ -66,11 +51,7 @@ async function getConstraints(credentials, forModule = null) {
       'jc.assayId',
       'jc.deviceTypeId',
       'j.jobFunctionId',
-      forModule
-        ? knex.raw(
-            'CASE WHEN pModuleAdmin.id IS NULL THEN 0 ELSE 1 END AS isAdmin'
-          )
-        : knex.raw('0 AS isAdmin')
+      knex.raw('0 AS isAdmin')
     )
 
   const filterConstraints = jobContexts.map(getJobContextConstraint)
@@ -81,7 +62,7 @@ async function getConstraints(credentials, forModule = null) {
   return constraints
 }
 
-async function getJobConstraints(personId, jobFunctionId, forModule = null) {
+async function getJobConstraints(personId, jobFunctionId) {
   const jobContexts = await knex('JobContext as jc')
     .leftJoin('Site as s', 'jc.siteId', 's.id')
     .leftJoin('Geography as g', 'jc.geographyId', 'g.id')
@@ -91,24 +72,9 @@ async function getJobConstraints(personId, jobFunctionId, forModule = null) {
     .leftJoin('DeviceType as dt', 'jc.deviceTypeId', 'dt.id')
     .innerJoin('Job as j', 'jc.jobId', 'j.id')
     .innerJoin('JobFunction as jf', 'j.jobFunctionId', 'jf.id')
-    .modify(queryBuilder => {
-      if (forModule) {
-        queryBuilder
-          .leftJoin(
-            'JobFunctionPermission as jfp',
-            'j.jobFunctionId',
-            'jfp.jobFunctionId'
-          )
-          .leftJoin('Permission as pModuleAdmin', function () {
-            this.on('jfp.permissionId', 'pModuleAdmin.id')
-              .andOn('pModuleAdmin.activity', knex.raw("'admin'"))
-              .andOn('pModuleAdmin.module', knex.raw(`'${forModule}'`))
-          })
-      }
-      queryBuilder.where({
-        'j.personId': personId,
-        'jf.id': jobFunctionId,
-      })
+    .where({
+      'j.personId': personId,
+      'jf.id': jobFunctionId,
     })
     .distinct(
       'jf.partnerId',
@@ -121,11 +87,7 @@ async function getJobConstraints(personId, jobFunctionId, forModule = null) {
       'a.id as assayId',
       'dt.id as deviceTypeId',
       'j.jobFunctionId',
-      forModule
-        ? knex.raw(
-            'CASE WHEN pModuleAdmin.id IS NULL THEN 0 ELSE 1 END AS isAdmin'
-          )
-        : knex.raw('0 AS isAdmin')
+      knex.raw('0 AS isAdmin')
     )
 
   if (jobContexts.length === 0) {
