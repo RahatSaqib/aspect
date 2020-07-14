@@ -805,7 +805,7 @@ module.exports = {
   listDevices,
   showDevice,
   updateDevice,
-  listStatusTypes: listApprovalTypes,
+  listApprovalTypes,
   listDevicesForSelectList,
   getDevice,
   updateDeviceMaintenance,

@@ -8,7 +8,7 @@ const {
   listDevices,
   showDevice,
   updateDevice,
-  listStatusTypes,
+  listApprovalTypes,
   listDevicesForSelectList,
   updateDeviceMaintenance,
   getDevicePerformance,
@@ -421,7 +421,7 @@ const routes = [
   {
     method: 'GET',
     path: '/device/approval-types',
-    handler: asyncHandler(listStatusTypes),
+    handler: asyncHandler(listApprovalTypes),
     config: {
       description: 'Device Approval List',
       notes: 'Dictionary set of Device Approval options',

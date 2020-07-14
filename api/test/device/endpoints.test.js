@@ -83,7 +83,7 @@ describe('auth endpoints', () => {
 
       beforeEach(() => {
         endpoint = setupRoute('GET', '/device/approval-types', {
-          async listStatusTypes() {
+          async listApprovalTypes() {
             return expectedResponse
           },
         })
