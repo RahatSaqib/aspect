@@ -401,18 +401,8 @@ async function updateIssueStatus(request) {
   }
 }
 
-/**
- *
- * Triggers requested issue (registered in the system) by running corresponding action
- */
-async function triggerIssue(request) {
-  const {
-    payload: { data = {}, issueType },
-    plugins: { messageContext },
-  } = request
-
-  // bind all actions defined for subscriptions in api/src/subscriptions.js
-  messageContext.bindActionCreators({
+function getAllActions() {
+  return {
     ..._.omit(require('../alert/actions'), ['types']),
     ..._.omit(require('../case/actions'), ['types']),
     ..._.omit(require('../device/actions'), ['types']),
@@ -426,6 +416,24 @@ async function triggerIssue(request) {
     ..._.omit(require('../pushNotification/actions'), ['types']),
     ..._.omit(require('../sms/actions'), ['types']),
     ..._.omit(require('../webhook/actions'), ['types']),
+  }
+}
+
+/**
+ *
+ * Triggers requested issue (registered in the system) by running corresponding action
+ *
+ * see 'api/test/issue/trigger.spec.js' for pattern how to make api calls
+ */
+async function triggerIssue(request) {
+  const {
+    payload: { data = {}, issueType },
+    plugins: { messageContext },
+  } = request
+
+  // bind all actions defined for subscriptions in api/src/subscriptions.js
+  messageContext.bindActionCreators({
+    ...getAllActions(),
   })
 
   let triggered = false
@@ -586,6 +594,7 @@ async function triggerIssue(request) {
 }
 
 module.exports = {
+  getAllActions,
   getIssueEventTriggerSubscriptions,
   triggerIssue,
   updateIssueStatus,
