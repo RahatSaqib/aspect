@@ -336,7 +336,7 @@ const deviceDetailsResponseFields = Joi.object()
       .description('Whether the device status is manually set'),
     approvalToken: Joi.string()
       .required()
-      .description('The external ID of the approval'),
+      .description('The external ID of the status'),
     category: Joi.string().required().description('The device category'),
     hasResults: Joi.number()
       .required()
