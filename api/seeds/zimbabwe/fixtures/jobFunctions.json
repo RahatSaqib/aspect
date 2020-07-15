@@ -37,7 +37,10 @@
       {
         "module":"dashboard",
         "activity":"summary"
-
+      },
+      {
+        "module":"inventory",
+        "activity":"edit"
       }
     ]
   },
@@ -80,6 +83,10 @@
         "module":"dashboard",
         "activity":"summary"
 
+      },
+      {
+        "module":"inventory",
+        "activity":"edit"
       }
     ]
   },
@@ -121,7 +128,10 @@
       {
         "module":"dashboard",
         "activity":"summary"
-
+      },
+      {
+        "module":"inventory",
+        "activity":"edit"
       }
     ]
   }
