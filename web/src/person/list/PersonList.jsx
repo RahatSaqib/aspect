@@ -229,7 +229,7 @@ export const PersonList = ({
   user,
 }) => {
   const AddNewButton = requirePermissions({
-    permissions: ['person:edit', 'person:admin'],
+    permissions: ['person:edit'],
   })(AspectButton)
   return (
     <div className={cssClasses('Container')}>

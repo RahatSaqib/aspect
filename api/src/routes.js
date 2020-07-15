@@ -104,10 +104,11 @@ function decorateClientAPI(module) {
   const strategies = ['clientApi']
 
   if (module) {
-    // If module specified, must have one of admin or `{module}:admin`
+    // If module specified, must have one of admin or `{module}:edit`
     // in addition to any other listed in scope of routes.
-    scope.push('admin', `${module}:admin`)
+    scope.push('edit', `${module}:edit`)
   }
+
   return decorateAPI({ scope, strategies })
 }
 
