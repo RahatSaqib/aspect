@@ -30,17 +30,17 @@ const rawLinks = [
   {
     href: '/browse',
     label: 'Browse',
-    requiredPermissions: ['browse:view', 'browse:admin'],
+    requiredPermissions: ['browse'],
   },
   {
     href: '/reports',
     label: 'Reports',
-    requiredPermissions: ['report:view', 'report:edit', 'report:admin'],
+    requiredPermissions: ['report'],
   },
   {
     href: '/manage',
     label: 'Manage',
-    requiredPermissions: ['manage:view', 'manage:admin'],
+    requiredPermissions: ['manage'],
   },
 ]
 
