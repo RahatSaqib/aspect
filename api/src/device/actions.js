@@ -7,6 +7,7 @@ const types = {
   DEVICE_HAS_NEW_RESULTS: 'DEVICE_HAS_NEW_RESULTS',
   DEVICE_MAINTENANCE: 'DEVICE_MAINTENANCE',
   DEVICE_MAINTENANCE_RESOLVED: 'DEVICE_MAINTENANCE_RESOLVED',
+  DEVICE_MAINTENANCE_STATUS_LOGGED: 'DEVICE_MAINTENANCE_STATUS_LOGGED',
 }
 
 // ----------- Action Creators -------------------
@@ -138,6 +139,24 @@ function deviceHasNewResults(deviceId) {
   }
 }
 
+/**
+ * Creates an action to notify the device has seen new
+ * results after notifying deviceNoResults
+ *
+ * deviceId is required.
+ */
+function deviceMaintenanceStatusLogged(deviceMaintenanceStatusLogId) {
+  if (!deviceMaintenanceStatusLogId) {
+    throw new Error(
+      'Must specify deviceMaintenanceStatusLogId for deviceMaintenanceStatusLogged'
+    )
+  }
+  return {
+    type: types.DEVICE_MAINTENANCE_STATUS_LOGGED,
+    deviceMaintenanceStatusLogId,
+  }
+}
+
 module.exports = {
   types,
   deviceSeen,
@@ -147,4 +166,5 @@ module.exports = {
   deviceOnline,
   deviceNoResults,
   deviceHasNewResults,
+  deviceMaintenanceStatusLogged,
 }

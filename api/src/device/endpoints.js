@@ -12,6 +12,8 @@ const {
   listDevicesForSelectList,
   updateDeviceMaintenance,
   getDevicePerformance,
+  manuallySetDeviceMaintenanceStatus,
+  onDeviceMaintenanceStatusLogged,
 } = require('./service')
 const { exportDevices } = require('./serviceReports')
 const {
@@ -460,7 +462,7 @@ const routes = [
     handler: asyncHandler(updateDeviceMaintenance),
     config: {
       description: 'Set Device Maintenance',
-      notes: 'Insert maintenance status of a device',
+      notes: 'Insert maintenance of a device',
       auth: { scope: ['device:edit'] },
       validate: {
         params: {
@@ -492,6 +494,53 @@ const routes = [
       },
     },
   },
+  {
+    method: 'POST',
+    path: '/device/maintenance-status/{deviceId}',
+    handler: asyncHandler(manuallySetDeviceMaintenanceStatus),
+    config: {
+      description: 'Set Device Maintenance',
+      notes: 'Update maintenance status of a device',
+      auth: { scope: ['device:edit'] },
+      validate: {
+        params: {
+          deviceId: Joi.string().description('Device ID').required(),
+        },
+        payload: {
+          externalId: Joi.string().description(
+            'The external ID of the maintenance status EG. active, reportedActive, inactiveOutOfInventory...'
+          ),
+          day: Joi.date()
+            .iso()
+            .description(
+              'Specified date for the maintenance status so that it can be updated as an historical snapshot'
+            ),
+        },
+      },
+      response: {
+        options: {
+          allowUnknown: false,
+        },
+        schema: Joi.object().keys({
+          ok: Joi.bool()
+            .required()
+            .description('False if there was some sort of error'),
+          data: deviceDetailsResponseFields,
+          deviceMaintenanceStatusLogId: Joi.number()
+            .required()
+            .description('DeviceMaintenanceStatusLog.id that was created'),
+        }),
+      },
+    },
+  },
 ]
 
-module.exports = { routes }
+const subscriptions = [
+  {
+    actions: {
+      DEVICE_MAINTENANCE_STATUS_LOGGED: onDeviceMaintenanceStatusLogged,
+    },
+  },
+]
+
+module.exports = { routes, subscriptions }

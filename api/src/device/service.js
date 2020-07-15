@@ -7,8 +7,11 @@ const {
   format,
   endOfMonth,
   getDaysInMonth,
+  startOfToday,
+  startOfDay,
 } = require('date-fns')
 
+const { deviceMaintenanceStatusLogged } = require('./actions')
 const {
   knex,
   filterParams,
@@ -801,6 +804,104 @@ async function getDevicesForRifResistanceReport(auth, query) {
   return result
 }
 
+async function setDeviceMaintenanceStatus(
+  deviceId,
+  userId,
+  deviceMaintenanceStatusId,
+  day,
+  data,
+  messageContext
+) {
+  // TODO: Ensure that this can be saved. for instance, don't allow reported active to be saved when the device is already active
+  const [deviceMaintenanceStatusLogId] = await knex(
+    'DeviceMaintenanceStatusLog'
+  ).insert({
+    deviceId,
+    deviceMaintenanceStatusId,
+    day,
+    data: _.isString(data) ? data : JSON.stringify(data),
+    createdOn: new Date(),
+    createdBy: userId,
+  })
+  const context = messageContext.bindActionCreators({
+    deviceMaintenanceStatusLogged,
+  })
+  context.deviceMaintenanceStatusLogged(deviceMaintenanceStatusLogId)
+  return deviceMaintenanceStatusLogId
+}
+
+async function manuallySetDeviceMaintenanceStatus(request) {
+  const {
+    auth: { credentials },
+    params,
+    payload,
+    plugins: { messageContext },
+  } = request
+  const dataConstraints = await getConstraints(credentials)
+
+  const device = await knex('Device as d')
+    .where('d.id', +params.deviceId)
+    .modify(addConstraints, dataConstraints, { device: 'd' })
+    .first('d.id')
+
+  if (!device) {
+    return Boom.notFound()
+  }
+  const { id: deviceId } = device
+
+  const { externalId, day = startOfToday() } = payload
+  const { id: deviceMaintenanceStatusId } = await knex(
+    'DeviceMaintenanceStatus'
+  )
+    .where({ externalId, manuallySet: true })
+    .first('id')
+
+  if (!deviceMaintenanceStatusId) {
+    return Boom.badRequest(
+      `${externalId} is not a known maintenance status that can be manually set`
+    )
+  }
+  const currentlyLoggedInUser = await getUser(credentials.name)
+  const deviceMaintenanceStatusLogId = setDeviceMaintenanceStatus(
+    deviceId,
+    currentlyLoggedInUser,
+    deviceMaintenanceStatusId,
+    startOfDay(day),
+    payload,
+    messageContext
+  )
+  return { ok: true, deviceMaintenanceStatusLogId }
+}
+
+async function onDeviceMaintenanceStatusLogged(
+  { deviceMaintenanceStatusLogId },
+  { messageContext }
+) {
+  return messageContext.run(async knex => {
+    const {
+      deviceMaintenanceStatusId,
+      deviceId,
+      currentDeviceMaintenanceStatusId,
+    } =
+      (await knex('DeviceMaintenanceStatusLog as dmsl')
+        .join('Device as d', 'dmsl.deviceId', 'd.id')
+        .orderBy('dmsl.day', 'desc')
+        .orderBy('dmsl.createdOn', 'desc')
+        // TODO: THIS IS WRONG! It should always just lookup the latest
+        .where('id', deviceMaintenanceStatusLogId)
+        .first(
+          'dmsl.deviceMaintenanceStatusId',
+          'd.id as deviceId',
+          'd.deviceMaintenanceStatusId as currentDeviceMaintenanceStatusId'
+        )) || {}
+    if (currentDeviceMaintenanceStatusId !== deviceMaintenanceStatusId) {
+      await knex('Device')
+        .where('id', deviceId)
+        .update({ deviceMaintenanceStatusId, updatedOn: new Date() })
+    }
+  })
+}
+
 module.exports = {
   listDevices,
   showDevice,
@@ -813,4 +914,6 @@ module.exports = {
   getDevicesForReport,
   getDevicesForRifResistanceReport,
   getDeviceByDeviceId,
+  manuallySetDeviceMaintenanceStatus,
+  onDeviceMaintenanceStatusLogged,
 }
