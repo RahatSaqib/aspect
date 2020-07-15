@@ -20,19 +20,12 @@ const rawLinks = [
   {
     href: '/operational-data',
     label: 'Operational  Data',
-    requiredPermissions: [
-      'operationalData:view',
-      'operationalData:admin',
-      'operationalData:summary',
-    ],
+    requiredPermissions: ['operationalData'],
   },
   {
     href: '/clinical-indicators',
     label: 'Clinical Indicators',
-    requiredPermissions: [
-      'clinicalIndicators:admin',
-      'clinicalIndicators:view',
-    ],
+    requiredPermissions: ['clinicalIndicators'],
   },
   {
     href: '/browse',
