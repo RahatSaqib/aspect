@@ -26,7 +26,7 @@
       "i18nKey": "inactiveNoResultsReported",
       "externalId": "inactiveNoResultsReported",
       "active": false,
-      "manuallySet": true
+      "manuallySet": false
     },
     {
       "name": "Out of Inventory",
@@ -46,6 +46,13 @@
       "name": "Connectivity",
       "i18nKey": "inactiveConnectivity",
       "externalId": "inactiveConnectivity",
+      "active": false,
+      "manuallySet": true
+    },
+    {
+      "name": "Decommissioned",
+      "i18nKey": "inactiveDecommissioned",
+      "externalId": "inactiveDecommissioned",
       "active": false,
       "manuallySet": true
     }

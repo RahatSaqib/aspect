@@ -14,6 +14,10 @@ const {
   getDevicePerformance,
   manuallySetDeviceMaintenanceStatus,
   onDeviceMaintenanceStatusLogged,
+  onResultLogged,
+  onDeviceUpdateMaintenanceStatus,
+  onDeviceUpdateMaintenanceStatusNoResults,
+  onDeviceMaintenanceResolved,
 } = require('./service')
 const { exportDevices } = require('./serviceReports')
 const {
@@ -539,6 +543,10 @@ const subscriptions = [
   {
     actions: {
       DEVICE_MAINTENANCE_STATUS_LOGGED: onDeviceMaintenanceStatusLogged,
+      RESULT_LOGGED: onResultLogged,
+      DEVICE_MAINTENANCE: onDeviceUpdateMaintenanceStatus,
+      DEVICE_NO_RESULTS: onDeviceUpdateMaintenanceStatusNoResults,
+      DEVICE_MAINTENANCE_RESOLVED: onDeviceMaintenanceResolved,
     },
   },
 ]

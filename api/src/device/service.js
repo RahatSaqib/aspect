@@ -1,6 +1,8 @@
 const _ = require('lodash')
 const Boom = require('@hapi/boom')
+const Promise = require('bluebird')
 const {
+  addDays,
   subDays,
   subMonths,
   startOfMonth,
@@ -858,7 +860,7 @@ async function manuallySetDeviceMaintenanceStatus(request) {
     return Boom.notFound()
   }
   const currentlyLoggedInUser = await getUser(credentials.name)
-  const deviceMaintenanceStatusLogId = setDeviceMaintenanceStatus(
+  const deviceMaintenanceStatusLogId = await setDeviceMaintenanceStatus(
     deviceId,
     currentlyLoggedInUser,
     deviceMaintenanceStatus.id,
@@ -909,7 +911,7 @@ async function automaticallySetDeviceMaintenanceStatus(
       `${deviceMaintenanceStatusExternalId} is not a known maintenance status that can be manually set`
     )
   }
-  const deviceMaintenanceStatusLogId = setDeviceMaintenanceStatus(
+  await setDeviceMaintenanceStatus(
     deviceId,
     null,
     deviceMaintenanceStatusId,
@@ -917,7 +919,6 @@ async function automaticallySetDeviceMaintenanceStatus(
     data,
     messageContext
   )
-  return { ok: true, deviceMaintenanceStatusLogId }
 }
 
 async function onDeviceMaintenanceStatusLogged(
@@ -950,6 +951,85 @@ async function onDeviceMaintenanceStatusLogged(
   })
 }
 
+async function onResultLogged(action, { messageContext }) {
+  const { resultId } = action
+  return messageContext.run(async knex => {
+    const { deviceId, startedOn, endedOn } = await knex('Result')
+      .where('id', resultId)
+      .first('deviceId', 'startedOn', 'endedOn')
+    if (deviceId && (endedOn || startedOn)) {
+      await automaticallySetDeviceMaintenanceStatus(
+        deviceId,
+        endedOn || startedOn,
+        'active',
+        action,
+        messageContext
+      )
+    }
+  })
+}
+
+async function onDeviceMaintenanceResolved(action, { messageContext }) {
+  const { deviceId } = action
+  if (deviceId) {
+    return automaticallySetDeviceMaintenanceStatus(
+      deviceId,
+      startOfToday(),
+      'reportedActive',
+      action,
+      messageContext
+    )
+  }
+  return Promise.resolve()
+}
+
+async function onDeviceUpdateMaintenanceStatusNoResults(
+  action,
+  { messageContext }
+) {
+  const { deviceId, options = {} } = action
+  if (deviceId) {
+    const daysSinceLastResult = []
+    let day = options.lastResultOn || new Date()
+    while (startOfDay(day) < new Date()) {
+      daysSinceLastResult.push(startOfDay(day))
+      day = addDays(day, 1)
+    }
+    await Promise.each(daysSinceLastResult, async day =>
+      automaticallySetDeviceMaintenanceStatus(
+        deviceId,
+        day,
+        'inactiveNoResultsReported',
+        action,
+        messageContext
+      )
+    )
+  }
+  return Promise.resolve()
+}
+
+async function onDeviceUpdateMaintenanceStatus(action, { messageContext }) {
+  const { deviceId, options = {} } = action
+  if (deviceId) {
+    const maintenanceReasonFromSource = _.get(options, 'data.reason', 'other')
+    const aspectMainteanceReason =
+      {
+        stock: 'inactiveOutOfInventory',
+        connectivity: 'inactiveConnectivity',
+        repair: 'inactiveDownForRepair',
+        decommissioned: 'inactiveDecommissioned',
+      }[maintenanceReasonFromSource] || 'inactiveUnknown'
+    return automaticallySetDeviceMaintenanceStatus(
+      deviceId,
+      startOfToday(),
+      aspectMainteanceReason,
+      action,
+      messageContext
+    )
+  }
+  return Promise.resolve()
+}
+
 module.exports = {
   listDevices,
   showDevice,
@@ -964,5 +1044,8 @@ module.exports = {
   getDeviceByDeviceId,
   manuallySetDeviceMaintenanceStatus,
   onDeviceMaintenanceStatusLogged,
-  automaticallySetDeviceMaintenanceStatus,
+  onResultLogged,
+  onDeviceMaintenanceResolved,
+  onDeviceUpdateMaintenanceStatusNoResults,
+  onDeviceUpdateMaintenanceStatus,
 }
