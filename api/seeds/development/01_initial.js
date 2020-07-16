@@ -5280,8 +5280,25 @@ async function seed(knex) {
     personId: personIds.frank,
     jobFunctionId: jobFunctionIdManager,
   })
+
+  const jobIdEd = await knex('Job').insert({
+    personId: personIds.ed,
+    jobFunctionId: jobFunctionIdManager,
+  })
+  const jobIdJim = await knex('Job').insert({
+    personId: personIds.jim,
+    jobFunctionId: jobFunctionIdPartnerTwo,
+  })
   const jobIdNed = await knex('Job').insert({
     personId: personIds.ned,
+    jobFunctionId: jobFunctionIdClinician,
+  })
+  const jobIdJon = await knex('Job').insert({
+    personId: personIds.jon,
+    jobFunctionId: jobFunctionIdClinician,
+  })
+  const jobIdSteve = await knex('Job').insert({
+    personId: personIds.steve,
     jobFunctionId: jobFunctionIdClinician,
   })
   const jobIdFred = await knex('Job').insert({
@@ -5294,6 +5311,10 @@ async function seed(knex) {
     { jobId: jobIdAdmin, geographyId: countries.US.geographyId },
     { jobId: jobIdJason, geographyId: countries.US.geographyId },
     { jobId: jobIdSam, geographyId: countries.NG.geographyId },
+    { jobId: jobIdEd, geographyId: countries.US.geographyId },
+    { jobId: jobIdJim, geographyId: countries.US.geographyId },
+    { jobId: jobIdJon, geographyId: countries.US.geographyId },
+    { jobId: jobIdSteve, geographyId: countries.US.geographyId },
     { jobId: jobIdBob, geographyId: countries.US.states.OH.geographyId },
     { jobId: jobIdFrank, geographyId: countries.US.states.NE.geographyId },
     {
@@ -5402,28 +5423,53 @@ async function seed(knex) {
         dashboardWidgetId: widgetId,
         ...statWidgetData,
       })
-      widgetIds[_.toLower(widget.title)] = widgetId
+      widgetIds[widget.externalId] = widgetId
     })
   )
 
   await knex('JobFunctionDashboardWidget').insert([
-    { jobFunctionId: jobFunctionIdAdmin, widgetId: widgetIds.sites },
-    { jobFunctionId: jobFunctionIdAdmin, widgetId: widgetIds.devices },
-    { jobFunctionId: jobFunctionIdAdmin, widgetId: widgetIds.results },
-    { jobFunctionId: jobFunctionIdAdmin, widgetId: widgetIds.contacts },
-    { jobFunctionId: jobFunctionIdAdmin, widgetId: widgetIds.testsperday },
-    { jobFunctionId: jobFunctionIdAdmin, widgetId: widgetIds.validresultspc },
+    { jobFunctionId: jobFunctionIdAdmin, widgetId: widgetIds.sitesTitle },
+    { jobFunctionId: jobFunctionIdAdmin, widgetId: widgetIds.devicesTitle },
+    { jobFunctionId: jobFunctionIdAdmin, widgetId: widgetIds.resultsTitle },
+    { jobFunctionId: jobFunctionIdAdmin, widgetId: widgetIds.personTitle },
+    { jobFunctionId: jobFunctionIdAdmin, widgetId: widgetIds.utilizationRate },
+    {
+      jobFunctionId: jobFunctionIdAdmin,
+      widgetId: widgetIds.dashboardWidgetTestsPerDayTitle,
+    },
+    {
+      jobFunctionId: jobFunctionIdAdmin,
+      widgetId: widgetIds.dashboardWidgetValidResultsPc,
+    },
 
-    { jobFunctionId: jobFunctionIdManager, widgetId: widgetIds.sites },
-    { jobFunctionId: jobFunctionIdManager, widgetId: widgetIds.devices },
-    { jobFunctionId: jobFunctionIdManager, widgetId: widgetIds.contacts },
+    { jobFunctionId: jobFunctionIdManager, widgetId: widgetIds.sitesTitle },
+    { jobFunctionId: jobFunctionIdManager, widgetId: widgetIds.devicesTitle },
+    { jobFunctionId: jobFunctionIdManager, widgetId: widgetIds.personTitle },
+    {
+      jobFunctionId: jobFunctionIdManager,
+      widgetId: widgetIds.utilizationRate,
+    },
 
-    { jobFunctionId: jobFunctionIdPartnerTwo, widgetId: widgetIds.sites },
-    { jobFunctionId: jobFunctionIdPartnerTwo, widgetId: widgetIds.devices },
-    { jobFunctionId: jobFunctionIdPartnerTwo, widgetId: widgetIds.contacts },
+    { jobFunctionId: jobFunctionIdPartnerTwo, widgetId: widgetIds.sitesTitle },
+    {
+      jobFunctionId: jobFunctionIdPartnerTwo,
+      widgetId: widgetIds.devicesTitle,
+    },
+    {
+      jobFunctionId: jobFunctionIdPartnerTwo,
+      widgetId: widgetIds.personTitle,
+    },
+    {
+      jobFunctionId: jobFunctionIdPartnerTwo,
+      widgetId: widgetIds.utilizationRate,
+    },
 
-    { jobFunctionId: jobFunctionIdClinician, widgetId: widgetIds.sites },
-    { jobFunctionId: jobFunctionIdClinician, widgetId: widgetIds.devices },
+    { jobFunctionId: jobFunctionIdClinician, widgetId: widgetIds.sitesTitle },
+    { jobFunctionId: jobFunctionIdClinician, widgetId: widgetIds.devicesTitle },
+    {
+      jobFunctionId: jobFunctionIdClinician,
+      widgetId: widgetIds.utilizationRate,
+    },
   ])
 
   const geneXpertHiv1VlFormSchema = JSON.stringify({

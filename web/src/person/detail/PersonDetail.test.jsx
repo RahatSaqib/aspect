@@ -16,7 +16,7 @@ describe('PersonDetail module', () => {
   const props = {
     intl: createIntl({ locale: 'en' }),
     editable: false,
-    user: makeContext(['person:admin']),
+    user: makeContext(['person:edit']),
     match: {
       params: {
         reporterId: '1',

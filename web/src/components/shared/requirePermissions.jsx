@@ -22,7 +22,6 @@ export const NESTED_ACCESS_LEVELS_FOR = {
   // propName is a permission access level
   // array in propValue lists all access levels which are nested in propName
   // another words - propName is greater than any access level in propValue
-  admin: ['view', 'create', 'update', 'delete', 'edit'],
   edit: ['view', 'create', 'update', 'delete'],
   create: ['view'],
   update: ['view'],
@@ -117,6 +116,7 @@ export function getMatchedUserPermissions(
       // see if user's Level is greater than requested Level
       const nestedLevels = NESTED_ACCESS_LEVELS_FOR[level]
       if (nestedLevels && isArray(nestedLevels) && nestedLevels.length > 0) {
+
         // assemble fully defined permissions from nested levels
         const nestedPermissions = nestedLevels.map(
           nestedLevel => `${scope}:${nestedLevel}`

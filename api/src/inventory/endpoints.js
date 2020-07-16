@@ -49,7 +49,7 @@ const removeInventoryCommonPayloadFields = {
 
 function listSuppliesBaseConfig() {
   return {
-    auth: { scope: ['inventory:view', 'inventory:edit', 'inventory:admin'] },
+    auth: { scope: ['inventory:view', 'operationalData:view'] },
     validate: {
       query: {
         format: Joi.string()
