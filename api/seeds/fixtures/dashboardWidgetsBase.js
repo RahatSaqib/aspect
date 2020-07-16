@@ -189,7 +189,7 @@ module.exports = {
       dashboards: ['operational'],
     },
     {
-      icon: 'clipboardcheck',
+      icon: 'fa-reg-calendar-check',
       title: 'Days active',
       titleI18nKey: 'deviceDaysActiveTitle',
       subTitle: null,
