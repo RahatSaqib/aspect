@@ -438,6 +438,7 @@ async function triggerIssue(request) {
 
   let triggered = false
 
+  // eslint-disable-next-line default-case
   switch (issueType.toLowerCase()) {
     case 'DeviceOffline'.toLowerCase(): {
       const { deviceId, lastSeenOn, lastPingOn } = data
@@ -578,9 +579,6 @@ async function triggerIssue(request) {
     }
     case 'ResultDataEntered'.toLowerCase(): {
       break
-    }
-    default: {
-      //
     }
   }
 
