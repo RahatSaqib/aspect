@@ -189,64 +189,55 @@ module.exports = {
       dashboards: ['operational'],
     },
     {
-      icon: 'link',
+      icon: 'fa-box-open',
       title: 'Stockouts',
-      titleI18nKey: 'utilizationRateTitle',
+      titleI18nKey: 'StockoutsTitle',
       subTitle: null,
       subTitleI18nKey: null,
       sqlForIndicator: `SELECT
-          CONCAT(
-            ROUND(
-              IFNULL(
-                SUM(resultCount)
-                /
-                SUM(dailyCapacity * DATEDIFF(NOW(), DATE_FORMAT(NOW(), '%Y-%m-01'))) * 100
-              ,0)
-            ,0)
-          ,'%') AS cnt
-          FROM (
-            SELECT r.deviceId, COUNT(r.id) AS resultCount, dc.dailyCapacity
-              FROM Result AS r
-              INNER JOIN Device AS d ON d.id= r.deviceId
-              INNER JOIN DeviceCapacity dc ON d.deviceCapacityId = dc.id
-              INNER JOIN Site AS s ON s.id = d.siteId
-              LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
-            WHERE DATE_FORMAT(NOW(), '%Y-%m-01') <= DATE(r.endedOn)
-            GROUP BY r.deviceId, dc.dailyCapacity
-          ) AS innerQuery`,
+      CONCAT(
+        ROUND(
+          IFNULL(
+            COUNT(DISTINCT i.siteId)
+          ,0)
+          /
+          COUNT(DISTINCT s.id) * 100
+        )
+      ,'%') AS cnt
+      FROM Site AS s
+        INNER JOIN Device AS d ON s.id = d.siteId
+        LEFT OUTER JOIN Issue AS i ON s.id = i.siteId
+                                        AND i.createdOn BETWEEN DATE_FORMAT(NOW(), '%Y-%m-01')
+                                        AND NOW()
+        LEFT OUTER JOIN IssueType AS it ON i.issueTypeId = it.id AND it.externalId = 'InventoryStockout'
+        LEFT OUTER JOIN IssueStatus AS ist ON i.issueStatusId = ist.id
+                                              AND ist.externalId NOT IN ('Inactive', 'OK', 'Resolved')`,
       sqlForStatUnit: `SELECT
-          CONCAT(
-            ROUND(
-              IFNULL(
-                SUM(resultCount) /
-                SUM(
-                  dailyCapacity * DATEDIFF (LAST_DAY(NOW() - INTERVAL 1 MONTH),
-                  DATE_FORMAT(NOW() - INTERVAL 1 MONTH, '%Y-%m-01')
-                  )
-                ) * 100
-              ,0)
+        CONCAT(
+          ROUND(
+            IFNULL(
+              COUNT(DISTINCT i.siteId)
             ,0)
-          ,'%') AS cnt
-          FROM (
-            SELECT r.deviceId, COUNT(r.id) AS resultCount, dc.dailyCapacity
-            FROM Result AS r
-              INNER JOIN Device AS d ON d.id= r.deviceId
-              INNER JOIN DeviceCapacity dc ON d.deviceCapacityId = dc.id
-              INNER JOIN Site AS s ON s.id = d.siteId
-              LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
-            WHERE DATE(r.endedOn)
-                  BETWEEN DATE_FORMAT(NOW() - INTERVAL 1 MONTH, '%Y-%m-01')
-                  AND LAST_DAY(NOW()-INTERVAL 1 MONTH)
-            GROUP BY r.deviceId, dc.dailyCapacity
-          ) AS innerQuery`,
+            /
+            COUNT(DISTINCT s.id) * 100
+          )
+        ,'%') AS cnt
+        FROM Site AS s
+          INNER JOIN Device AS d ON s.id = d.siteId
+          LEFT OUTER JOIN Issue AS i ON s.id = i.siteId
+                                        AND i.createdOn BETWEEN DATE_FORMAT(NOW() - interval 1 month, '%Y-%m-01')
+                                        AND LAST_DAY(NOW()-INTERVAL 1 MONTH)
+          LEFT OUTER JOIN IssueType AS it ON i.issueTypeId = it.id AND it.externalId = 'InventoryStockout'
+          LEFT OUTER JOIN IssueStatus AS ist ON i.issueStatusId = ist.id
+                                                AND ist.externalId NOT IN ('Inactive', 'OK', 'Resolved')`,
       statUnit: '{unit} last month',
-      statUnitI18nKey: 'dashboardWidgetUtilizationRate',
-      link: '/browse/device',
+      statUnitI18nKey: 'dashboardWidgetStockouts',
+      link: '/browse/inventory',
       sortOrder: 12,
-      externalId: 'utilizationRate',
+      externalId: 'stockouts',
       description:
-        'The utilization rate is calculated by counting all tests conducted in the month and dividing that number by the total capacity of all devices',
-      descriptionI18nKey: 'utilizationRateDescription',
+        'The stockout is calculated by counting all sites devices with issues of stockout during the month and dividing all active sites',
+      descriptionI18nKey: 'stockoutsDescription',
       dashboards: ['operational'],
     },
   ],

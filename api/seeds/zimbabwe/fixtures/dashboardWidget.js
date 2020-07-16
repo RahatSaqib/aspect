@@ -119,5 +119,9 @@ module.exports = {
       ),
       sortOrder: 7,
     },
+    {
+      ...dashboardWidgetsBase.stat.find(x => x.externalId === 'stockouts'),
+      sortOrder: 8,
+    },
   ],
 }
