@@ -455,6 +455,17 @@ async function getBaseIssues(auditFields) {
       MessageType: {
         messageSeverityId: messageSeverities.Alert,
       },
+      AlertTemplate: {
+        message: `{{device.name}}: Module {{issue.data.moduleName}} has been replaced.`,
+      },
+      SmsTemplate: {
+        message: `{{device.name}}: Module {{issue.data.moduleName}} has been replaced.`,
+      },
+      EmailTemplate: {
+        subject: 'Module has been replaced',
+        body: `{{device.name}}: Module {{issue.data.moduleName}} has been replaced.`,
+        htmlBody: `{{device.name}}: Module <em>{{issue.data.moduleName}}</em> has been replaced.`,
+      },
     },
     InventoryStockExpiring: {
       issueType: {

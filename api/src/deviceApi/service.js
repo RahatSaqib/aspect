@@ -8,6 +8,7 @@ const {
   resultUpdated,
   resultLogged,
   resultLoggedProcessed,
+  resultModuleReplaced,
   types: { RESULT_UPDATED },
 } = require('../result/actions')
 
@@ -492,7 +493,33 @@ async function mergeResultWithContext(context) {
     result,
     previousResult
   )
+
+  checkIfModuleReplaced(context, result, previousResult)
+
   return postProcessResult
+}
+
+async function checkIfModuleReplaced(context, result, previousResult) {
+  const currentModuleSerial = _.get(result, 'moduleSerial', null)
+  const previousModuleSerial = _.get(previousResult, 'moduleSerial', null)
+  const currentModuleName = _.get(result, 'moduleName', null)
+  const previousModuleName = _.get(previousResult, 'moduleName', null)
+
+  // if module has same name as before but different serials - assume module has been replaced
+  if (
+    previousModuleName &&
+    previousModuleSerial &&
+    currentModuleName === previousModuleName &&
+    currentModuleSerial !== previousModuleSerial
+  ) {
+    context.messageContext.dispatch(
+      resultModuleReplaced(result.id, {
+        moduleName: currentModuleName,
+        replacedModuleSerial: previousModuleSerial,
+        newModuleSerial: currentModuleSerial,
+      })
+    )
+  }
 }
 
 async function createDeviceApiContext(
