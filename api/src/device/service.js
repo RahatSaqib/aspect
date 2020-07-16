@@ -1314,6 +1314,7 @@ module.exports = {
   getDeviceByDeviceId,
   manuallySetDeviceMaintenanceStatus,
   onDeviceMaintenanceStatusLogged,
+  automaticallySetDeviceMaintenanceStatus,
   onResultLogged,
   onDeviceMaintenanceResolved,
   onDeviceUpdateMaintenanceStatusNoResults,
