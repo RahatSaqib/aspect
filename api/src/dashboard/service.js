@@ -126,6 +126,7 @@ async function queryValue(sql, dataConstraints, query) {
   if (sqlBuilder) {
     const sqlTableAlias = getTableAlias(sql)
     sqlBuilder.modify(addConstraints, dataConstraints, sqlTableAlias).first()
+
     if (sqlTableAlias.result) {
       sqlBuilder.modify(filterDateRangeParams, query, 'r.endedOn')
     }

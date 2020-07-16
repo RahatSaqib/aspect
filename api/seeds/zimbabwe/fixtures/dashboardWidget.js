@@ -119,5 +119,9 @@ module.exports = {
       ),
       sortOrder: 7,
     },
+    {
+      ...dashboardWidgetsBase.stat.find(x => x.externalId === 'activeDevices'),
+      sortOrder: 7,
+    },
   ],
 }
