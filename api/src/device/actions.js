@@ -140,10 +140,10 @@ function deviceHasNewResults(deviceId) {
 }
 
 /**
- * Creates an action to notify the device has seen new
- * results after notifying deviceNoResults
+ * Creates an action to notify the device has a
+ * maintenance status update
  *
- * deviceId is required.
+ * deviceMaintenanceStatusLogId is required.
  */
 function deviceMaintenanceStatusLogged(deviceMaintenanceStatusLogId) {
   if (!deviceMaintenanceStatusLogId) {

@@ -12,7 +12,7 @@
       "i18nKey": "reportedActive",
       "externalId": "reportedActive",
       "active": true,
-      "manuallySet": false
+      "manuallySet": true
     },
     {
       "name": "Unknown",

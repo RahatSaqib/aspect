@@ -1,5 +1,6 @@
 function addSubscriptions(queue) {
   queue.subscribe('logger', require('./logger/endpoints').subscriptions)
+  queue.subscribe('device', require('./device/endpoints').subscriptions)
   queue.subscribe('deviceApi', require('./deviceApi/endpoints').subscriptions)
   queue.subscribe(
     'deviceApiRaw',

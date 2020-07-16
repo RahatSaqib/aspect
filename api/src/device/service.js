@@ -808,17 +808,16 @@ async function setDeviceMaintenanceStatus(
   deviceId,
   userId,
   deviceMaintenanceStatusId,
-  day,
+  dayDate,
   data,
   messageContext
 ) {
-  // TODO: Ensure that this can be saved. for instance, don't allow reported active to be saved when the device is already active
   const [deviceMaintenanceStatusLogId] = await knex(
     'DeviceMaintenanceStatusLog'
   ).insert({
     deviceId,
     deviceMaintenanceStatusId,
-    day,
+    day: dayDate,
     data: _.isString(data) ? data : JSON.stringify(data),
     createdOn: new Date(),
     createdBy: userId,
@@ -837,37 +836,85 @@ async function manuallySetDeviceMaintenanceStatus(request) {
     payload,
     plugins: { messageContext },
   } = request
+  const { externalId, day = startOfToday() } = payload
+  const deviceMaintenanceStatus = await knex('DeviceMaintenanceStatus')
+    .where({ externalId })
+    .first()
+  if (!deviceMaintenanceStatus) {
+    return Boom.badRequest(`${externalId} is not a known maintenance status`)
+  }
+  if (!deviceMaintenanceStatus.manuallySet) {
+    return Boom.badRequest(
+      `Devices cannot be manually set to ${deviceMaintenanceStatus.name}`
+    )
+  }
   const dataConstraints = await getConstraints(credentials)
-
-  const device = await knex('Device as d')
+  const { id: deviceId } = await knex('Device as d')
     .where('d.id', +params.deviceId)
     .modify(addConstraints, dataConstraints, { device: 'd' })
     .first('d.id')
 
-  if (!device) {
+  if (!deviceId) {
     return Boom.notFound()
-  }
-  const { id: deviceId } = device
-
-  const { externalId, day = startOfToday() } = payload
-  const { id: deviceMaintenanceStatusId } = await knex(
-    'DeviceMaintenanceStatus'
-  )
-    .where({ externalId, manuallySet: true })
-    .first('id')
-
-  if (!deviceMaintenanceStatusId) {
-    return Boom.badRequest(
-      `${externalId} is not a known maintenance status that can be manually set`
-    )
   }
   const currentlyLoggedInUser = await getUser(credentials.name)
   const deviceMaintenanceStatusLogId = setDeviceMaintenanceStatus(
     deviceId,
     currentlyLoggedInUser,
-    deviceMaintenanceStatusId,
+    deviceMaintenanceStatus.id,
     startOfDay(day),
     payload,
+    messageContext
+  )
+  return { ok: true, deviceMaintenanceStatusLogId }
+}
+
+async function automaticallySetDeviceMaintenanceStatus(
+  deviceId,
+  day,
+  deviceMaintenanceStatusExternalId,
+  data,
+  messageContext
+) {
+  const dayDate = startOfDay(day)
+  const latestDeviceMaintenanceStatusForDay =
+    (await knex('DeviceMaintenanceStatusLog as dmsl')
+      .join(
+        'DeviceMaintenanceStatus as dms',
+        'dmsl.deviceMaintenanceStatusId',
+        'dms.deviceMaintenanceStatusId'
+      )
+      .where('dmsl.deviceId', deviceId)
+      .andWhere('dmsl.day', dayDate)
+      .orderBy('dmsl.createdOn', 'desc')
+      .first('dms.*')) || {}
+  if (
+    latestDeviceMaintenanceStatusForDay.externalId ===
+      deviceMaintenanceStatusExternalId ||
+    (!latestDeviceMaintenanceStatusForDay.manuallySet &&
+      latestDeviceMaintenanceStatusForDay.active)
+  ) {
+    // If, in the day, the device was already in an automatically
+    //   set active status it can't be automatically overwritten
+    return
+  }
+  const { id: deviceMaintenanceStatusId } = await knex(
+    'DeviceMaintenanceStatus'
+  )
+    .where({ externalId: deviceMaintenanceStatusExternalId })
+    .first('id')
+
+  if (!deviceMaintenanceStatusId) {
+    return Boom.badRequest(
+      `${deviceMaintenanceStatusExternalId} is not a known maintenance status that can be manually set`
+    )
+  }
+  const deviceMaintenanceStatusLogId = setDeviceMaintenanceStatus(
+    deviceId,
+    null,
+    deviceMaintenanceStatusId,
+    dayDate,
+    data,
     messageContext
   )
   return { ok: true, deviceMaintenanceStatusLogId }
@@ -878,26 +925,27 @@ async function onDeviceMaintenanceStatusLogged(
   { messageContext }
 ) {
   return messageContext.run(async knex => {
+    const { deviceId } = await knex('DeviceMaintenanceStatusLog')
+      .where('id', deviceMaintenanceStatusLogId)
+      .first('deviceId')
     const {
-      deviceMaintenanceStatusId,
-      deviceId,
+      latestDeviceMaintenanceStatusId,
       currentDeviceMaintenanceStatusId,
     } =
       (await knex('DeviceMaintenanceStatusLog as dmsl')
         .join('Device as d', 'dmsl.deviceId', 'd.id')
+        .where('dmsl.deviceId', deviceId)
         .orderBy('dmsl.day', 'desc')
         .orderBy('dmsl.createdOn', 'desc')
-        // TODO: THIS IS WRONG! It should always just lookup the latest
-        .where('id', deviceMaintenanceStatusLogId)
         .first(
-          'dmsl.deviceMaintenanceStatusId',
-          'd.id as deviceId',
+          'dmsl.deviceMaintenanceStatusId as latestDeviceMaintenanceStatusId',
           'd.deviceMaintenanceStatusId as currentDeviceMaintenanceStatusId'
         )) || {}
-    if (currentDeviceMaintenanceStatusId !== deviceMaintenanceStatusId) {
-      await knex('Device')
-        .where('id', deviceId)
-        .update({ deviceMaintenanceStatusId, updatedOn: new Date() })
+    if (currentDeviceMaintenanceStatusId !== latestDeviceMaintenanceStatusId) {
+      await knex('Device').where('id', deviceId).update({
+        deviceMaintenanceStatusId: latestDeviceMaintenanceStatusId,
+        updatedOn: new Date(),
+      })
     }
   })
 }
@@ -916,4 +964,5 @@ module.exports = {
   getDeviceByDeviceId,
   manuallySetDeviceMaintenanceStatus,
   onDeviceMaintenanceStatusLogged,
+  automaticallySetDeviceMaintenanceStatus,
 }
