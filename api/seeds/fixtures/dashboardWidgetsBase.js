@@ -205,7 +205,6 @@ module.exports = {
           SELECT r.deviceId, COUNT(DISTINCT DATE(r.endedOn)) AS dayCount
             FROM Result AS r
             INNER JOIN Device AS d ON d.id= r.deviceId
-            INNER JOIN DeviceCapacity dc ON d.deviceCapacityId = dc.id
             INNER JOIN Site AS s ON s.id = d.siteId
             LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
           WHERE DATE_FORMAT(NOW(), '%Y-%m-01') <= DATE(r.endedOn)
@@ -222,7 +221,6 @@ module.exports = {
           SELECT r.deviceId, COUNT(DISTINCT DATE(r.endedOn)) AS dayCount
             FROM Result AS r
             INNER JOIN Device AS d ON d.id= r.deviceId
-            INNER JOIN DeviceCapacity dc ON d.deviceCapacityId = dc.id
             INNER JOIN Site AS s ON s.id = d.siteId
             LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
             WHERE DATE(r.endedOn) BETWEEN DATE_FORMAT(NOW() - INTERVAL 1 MONTH, '%Y-%m-01')
