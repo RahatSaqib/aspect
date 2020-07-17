@@ -19,6 +19,7 @@ logs
 
 # packages/*
 **/coverage/
+web/jest.json
 mocha.json
 
 # packages/api
