@@ -19,8 +19,8 @@ logs
 
 # packages/*
 **/coverage/
-mocha.json
 web/jest.json
+mocha.json
 
 # packages/api
 ## Elastic Beanstalk Files
