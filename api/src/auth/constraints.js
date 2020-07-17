@@ -194,8 +194,6 @@ function addConstraints(queryBuilder, constraints, aliases) {
       })
     }
 
-    console.log(queryBuilder.toString())
-
     if (constraints.assay) {
       queryBuilder.where(function () {
         this.whereNull(`${resultAlias}.assayId`).orWhere(
