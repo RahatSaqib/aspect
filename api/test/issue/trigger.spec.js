@@ -18,7 +18,7 @@ const baseAssert = (res, issueType) => {
   assert.equal(data.triggered, true)
 }
 
-describe.only('Issue Trigger', () => {
+describe('Issue Trigger', () => {
   const path = '/api/issue/trigger'
   const now = new Date()
 
