@@ -199,7 +199,7 @@ module.exports = {
       CONCAT(ROUND(AVG(AvailabilityPercentage)), '%') AS cnt
   FROM
       (SELECT 
-          COUNT(DISTINCT DATE(r.endedOn)) * 100 / ABS(DATEDIFF(NOW(), GREATEST(DATE_FORMAT(NOW(), '%Y-%m-01'),d.createdOn))) AS AvailabilityPercentage
+          COUNT(DISTINCT DATE(r.endedOn)) * 100 / DATEDIFF(NOW(), GREATEST(DATE_FORMAT(NOW(), '%Y-%m-01'),d.createdOn)) AS AvailabilityPercentage
       FROM
           Device AS d
       LEFT JOIN Result AS r ON d.id = r.deviceId
@@ -217,7 +217,7 @@ module.exports = {
               COUNT(DISTINCT CASE
                   WHEN r.endedOn < DATE_FORMAT(NOW(), '%Y-%m-01') THEN DATE(r.endedOn)
                   ELSE NULL
-              END) * 100 / ABS(DATEDIFF(NOW(), GREATEST(DATE_FORMAT(DATE_ADD(CURRENT_DATE, INTERVAL - 1 MONTH), '%Y-%m-01'),d.createdOn))) AS LastMonthAvailabilityPercentage,
+              END) * 100 / DATEDIFF(NOW(), GREATEST(DATE_FORMAT(DATE_ADD(CURRENT_DATE, INTERVAL - 1 MONTH), '%Y-%m-01'),d.createdOn)) AS LastMonthAvailabilityPercentage,
               COUNT(DISTINCT CASE
                   WHEN r.endedOn >= DATE_FORMAT(NOW(), '%Y-%m-01') THEN DATE(r.endedOn)
                   ELSE NULL
