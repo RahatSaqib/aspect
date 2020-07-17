@@ -47,7 +47,7 @@ const getPreviousPeriod = (period = 'month', dateFormat) => {
     dateFormat
   )
   const previousPeriodEnd = format(
-    endOfMonth(new Date(previousPeriodStart)),
+    endOfMonth(negateTimeZoneOffset(previousPeriodStart)),
     dateFormat
   )
   return { start: previousPeriodStart, end: previousPeriodEnd }

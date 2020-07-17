@@ -119,7 +119,7 @@ const AspectResponsiveBar = ({
         legendOffset: -60,
         legend:
           type === 'stackedDeviceActivity'
-            ? 'Percent of Monthly Status'
+            ? 'Percent of Monthly Status: June'
             : false,
       }}
       axisBottom={{
