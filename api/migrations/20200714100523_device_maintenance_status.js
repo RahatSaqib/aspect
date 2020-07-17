@@ -61,8 +61,8 @@ async function up(knex) {
         .inTable('DeviceMaintenanceStatus')
         .notNullable()
       maintenanceStatusLog.specificType('data', 'JSON').notNullable()
-      maintenanceStatusLog.dateTime('day').notNullable()
-      maintenanceStatusLog.dateTime('createdOn').notNullable()
+      maintenanceStatusLog.dateTime('day').index().notNullable()
+      maintenanceStatusLog.dateTime('createdOn').index().notNullable()
       maintenanceStatusLog
         .integer('createdBy')
         .unsigned()

@@ -56,6 +56,9 @@ function listDevicesBaseRequest() {
         deviceName: Joi.string()
           .allow('')
           .description('Filter for device name'),
+        deviceMaintenanceStatusId: Joi.array()
+          .allow(null)
+          .description('Filter for device maintenance status'),
         deviceApprovalId: Joi.number()
           .allow('')
           .description('Filter for device approval ID'),
@@ -533,6 +536,112 @@ const routes = [
           deviceMaintenanceStatusLogId: Joi.number()
             .required()
             .description('DeviceMaintenanceStatusLog.id that was created'),
+        }),
+      },
+    },
+  },
+  {
+    method: 'GET',
+    path: '/device',
+    handler: asyncHandler(listDevices),
+    config: {
+      description: 'Device List',
+      notes: 'Pageable and sortable list of devices',
+      ...listDevicesBaseRequest(),
+      response: {
+        options: {
+          allowUnknown: false,
+        },
+        schema: Joi.object().keys({
+          ok: Joi.bool()
+            .required()
+            .description('False if there was some sort of error'),
+          total: Joi.number()
+            .required()
+            .description(
+              'The total number of devices that match the given filters'
+            ),
+          length: Joi.number()
+            .required()
+            .description('The number of devices included in this response'),
+          data: Joi.array()
+            .required()
+            .description('The devices')
+            .items(
+              Joi.object().keys({
+                id: Joi.number().required().description('The ID of the device'),
+                name: Joi.string()
+                  .required()
+                  .description('The name of the device'),
+                shortName: Joi.string()
+                  .allow('', null)
+                  .description('The short name of the device'),
+                createdOn: Joi.date()
+                  .required()
+                  .description('When the device was added to the database'),
+                lastPingOn: Joi.date()
+                  .allow(null)
+                  .description('When the device last pinged'),
+                lastSeen: Joi.date()
+                  .allow(null)
+                  .description(
+                    'When the device was last seen. Unlike the ping, this date is also updated whenever the device sends a results, not just on an explicit ping.'
+                  ),
+                state: Joi.string()
+                  .allow('', null)
+                  .description('The state where the device is located'),
+                type: Joi.string()
+                  .allow('', null)
+                  .description('The type of the device'),
+                siteName: Joi.string()
+                  .allow('', null)
+                  .description(
+                    'The name of the site where the device is located'
+                  ),
+                approval: Joi.string()
+                  .required()
+                  .description('The current approval status of the device'),
+                category: Joi.string()
+                  .required()
+                  .description('The device category'),
+                hasResults: Joi.number()
+                  .required()
+                  .min(0)
+                  .max(1)
+                  .description(
+                    'Does the device have/produce results (i.e. a medical device)?'
+                  ),
+                hasConnectivity: Joi.number()
+                  .required()
+                  .min(0)
+                  .max(1)
+                  .description(
+                    'Does the device have connectivity built-in (i.e. a device with an included router)?'
+                  ),
+                resultCount: Joi.number()
+                  .allow(null)
+                  .description('Number of results delivered from the device'),
+                days: Joi.array()
+                  .required()
+                  .description('The device status on each day')
+                  .items(
+                    Joi.object().keys({
+                      date: Joi.date()
+                        .required()
+                        .description(
+                          'The day that the device was in this maintenance status'
+                        ),
+                      externalId: Joi.string()
+                        .allow('', null)
+                        .description('The id of the maintenance status'),
+                      isWeekend: Joi.boolean()
+                        .required()
+                        .description('Whether the day is a weekend or not'),
+                      data: Joi.object().allow(null),
+                    })
+                  ),
+              })
+            ),
         }),
       },
     },

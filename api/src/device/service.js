@@ -4,13 +4,14 @@ const Promise = require('bluebird')
 const {
   addDays,
   subDays,
-  subMonths,
-  startOfMonth,
-  format,
-  endOfMonth,
-  getDaysInMonth,
   startOfToday,
   startOfDay,
+  subMonths,
+  startOfMonth,
+  endOfMonth,
+  getDaysInMonth,
+  format,
+  isWeekend,
 } = require('date-fns')
 
 const { deviceMaintenanceStatusLogged } = require('./actions')
@@ -111,8 +112,16 @@ async function getListDevices(query, auth) {
     .leftJoin('Assay as a', 'dt.id', 'a.deviceTypeId')
     .leftJoin('AssayType as at', 'a.assayTypeId', 'at.id')
     .leftJoin('Disease as dis', 'at.diseaseId', 'dis.id')
-    .where(function () {
-      if (query.deviceIds) this.whereIn('d.id', query.deviceIds.split(','))
+    .where(queryBuilder => {
+      if (query.deviceIds) {
+        queryBuilder.whereIn('d.id', query.deviceIds.split(','))
+      }
+      if (
+        query.deviceMaintenanceStatusId &&
+        !_.isEmpty(query.deviceMaintenanceStatusId)
+      ) {
+        queryBuilder.whereIn('d.id', query.deviceMaintenanceStatusId)
+      }
     })
     .modify(queryBuilder => {
       if (query.resultCategoryId)
@@ -1030,6 +1039,125 @@ async function onDeviceUpdateMaintenanceStatus(action, { messageContext }) {
   return Promise.resolve()
 }
 
+async function deviceMaintenanceStatusHistory(request) {
+  const { query, auth } = request
+  const { minDate, maxDate = new Date() } = query
+  const dataConstraints = await getConstraints(auth.credentials)
+  const devices = await knex('Device as d')
+    .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
+    .innerJoin('DeviceApproval as da', 'd.deviceApprovalId', 'da.id')
+    .innerJoin('DeviceTypeCategory as dc', 'dt.deviceTypeCategoryId', 'dc.id')
+    .innerJoin('Site as s', 'd.siteId', 's.id')
+    .leftJoin('Geography as g', 's.geographyId', 'g.id')
+    .leftJoin('State as st', 'g.stateId', 'st.id')
+    .leftJoin('Assay as a', 'dt.id', 'a.deviceTypeId')
+    .leftJoin('AssayType as at', 'a.assayTypeId', 'at.id')
+    .leftJoin('Disease as dis', 'at.diseaseId', 'dis.id')
+    .where(queryBuilder => {
+      if (query.deviceIds) {
+        queryBuilder.whereIn('d.id', query.deviceIds.split(','))
+      }
+    })
+    .andWhere('dc.hasResults', true)
+    .modify(filterParams, query, {
+      countryId: 'g.countryId',
+      stateId: 'g.stateId',
+      lgaId: 'g.lgaId',
+      deviceName: 'd.name',
+      deviceApprovalId: 'd.deviceApprovalId',
+      deviceTypeId: 'd.deviceTypeId',
+      hasConnectivity: 'dc.hasConnectivity',
+      hasResults: 'dc.hasResults',
+      category: 'dc.name',
+      type: 'dt.name',
+      siteExternalId: 's.externalId',
+      siteName: 's.name',
+      siteId: 's.id',
+      diseaseId: 'dis.id',
+      assayId: 'a.id',
+    })
+    .modify(addConstraints, dataConstraints, {
+      assay: 'a',
+      device: 'd',
+      deviceType: 'dt',
+      geography: 'g',
+      site: 's',
+      disease: 'dis',
+    })
+    .select([
+      ...SELECT_LIST_FIELDS,
+      knex('Result as r')
+        .innerJoin('Sample as s', 'r.sampleId', 's.id')
+        .modify(addConstraints, dataConstraints, {
+          result: 'r',
+          sample: 's',
+        })
+        .whereRaw('r.deviceId = d.id')
+        .modify(queryBuilder => {
+          if (minDate) {
+            queryBuilder
+              .whereBetween('r.startedOn', [minDate, maxDate])
+              .orWhere(queryBuilder => {
+                queryBuilder.whereBetween('r.endedOn', [minDate, maxDate])
+              })
+          }
+        })
+        .countDistinct('r.id')
+        .as('resultCount'),
+    ])
+    .distinct()
+  const days = []
+  let day = minDate || startOfMonth(new Date())
+  while (day <= maxDate || startOfToday()) {
+    days.push(day)
+    day = addDays(day, 1)
+  }
+  const latestDeviceMaintenanceStatusLogsPerDay = await knex.raw(
+    `SELECT DeviceMaintenanceStatusLog.deviceId,
+  DeviceMaintenanceStatusLog.day,
+  DeviceMaintenanceStatusLog.data,
+  DeviceMaintenanceStatus.externalId
+FROM (SELECT DeviceMaintenanceStatusLog.deviceId, DeviceMaintenanceStatusLog.day, MAX(DeviceMaintenanceStatusLog.createdOn) AS createdOn
+      FROM DeviceMaintenanceStatusLog
+      WHERE DeviceMaintenanceStatusLog.deviceId IN (${_.map(devices, 'id').join(
+        ','
+      )})
+      AND DeviceMaintenanceStatusLog.day BETWEEN ? AND ?
+      GROUP BY DeviceMaintenanceStatusLog.deviceId, DeviceMaintenanceStatusLog.day) AS LatestDeviceLatestMaintenanceLogsPerDay
+JOIN DeviceMaintenanceStatusLog ON DeviceMaintenanceStatusLog.deviceId = LatestDeviceLatestMaintenanceLogsPerDay.deviceId
+                                AND DeviceMaintenanceStatusLog.day = LatestDeviceLatestMaintenanceLogsPerDay.day
+                                AND DeviceMaintenanceStatusLog.createdOn = LatestDeviceLatestMaintenanceLogsPerDay.createdOn
+JOIN DeviceMaintenanceStatus ON DeviceMaintenanceStatus.id = DeviceMaintenanceStatusLog.deviceMaintenanceStatusId
+ORDER BY DeviceMaintenanceStatusLog.deviceId, DeviceMaintenanceStatusLog.day ASC;`,
+    [days[0], days[days.length - 1]]
+  )
+  const result = {
+    ok: true,
+    total: devices.length,
+    length: devices.length,
+    data: devices.map(device => ({
+      ...device,
+      days: days.map(day => {
+        const deviceMaintenanceStatusLog =
+          latestDeviceMaintenanceStatusLogsPerDay.find(
+            log => log.deviceId === device.id && log.day === day
+          ) || {}
+        return {
+          date: day,
+          externalId:
+            deviceMaintenanceStatusLog.externalId || 'inactiveUnknown',
+          isWeekend: isWeekend(day),
+          data: deviceMaintenanceStatusLog.data
+            ? JSON.parse(deviceMaintenanceStatusLog.data)
+            : {},
+        }
+      }),
+    })),
+  }
+
+  return result
+}
+
 module.exports = {
   listDevices,
   showDevice,
@@ -1048,4 +1176,5 @@ module.exports = {
   onDeviceMaintenanceResolved,
   onDeviceUpdateMaintenanceStatusNoResults,
   onDeviceUpdateMaintenanceStatus,
+  deviceMaintenanceStatusHistory,
 }
