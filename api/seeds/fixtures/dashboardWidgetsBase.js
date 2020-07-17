@@ -118,7 +118,7 @@ module.exports = {
           AND
           MONTH(r.endedOn) = MONTH(DATE_SUB(NOW(), INTERVAL 1 MONTH))
       `,
-      statUnit: '{unit} in previous month',
+      statUnit: '{unit} in last month',
       statUnitI18nKey: 'dashboardWidgetValidResultsPcUnit',
       link: '/browse/result',
       sortOrder: 11,
@@ -178,7 +178,7 @@ module.exports = {
                   AND LAST_DAY(NOW()-INTERVAL 1 MONTH)
             GROUP BY r.deviceId, dc.dailyCapacity
           ) AS innerQuery`,
-      statUnit: '{unit} in previous month',
+      statUnit: '{unit} in last month',
       statUnitI18nKey: 'dashboardWidgetUtilizationRate',
       link: '/browse/device',
       sortOrder: 12,
