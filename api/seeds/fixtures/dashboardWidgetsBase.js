@@ -240,5 +240,56 @@ module.exports = {
       descriptionI18nKey: 'stockoutsDescription',
       dashboards: ['operational'],
     },
+    {
+      icon: 'fa-reg-calendar-check',
+      title: 'Days active',
+      titleI18nKey: 'deviceDaysActiveTitle',
+      subTitle: null,
+      subTitleI18nKey: null,
+      sqlForIndicator: `SELECT
+          ROUND(
+            IFNULL(
+              AVG(dayCount)
+            ,0)
+          ,0)
+        AS cnt
+        FROM (
+          SELECT r.deviceId, COUNT(DISTINCT DATE(r.endedOn)) AS dayCount
+            FROM Result AS r
+            INNER JOIN Device AS d ON d.id= r.deviceId
+            INNER JOIN Site AS s ON s.id = d.siteId
+            LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
+          WHERE DATE_FORMAT(NOW(), '%Y-%m-01') <= DATE(r.endedOn)
+          GROUP BY r.deviceId
+        ) AS innerQuery`,
+      sqlForStatUnit: `SELECT
+          ROUND(
+            IFNULL(
+              AVG(dayCount)
+            ,0)
+          ,0)
+        AS cnt
+        FROM (
+          SELECT r.deviceId, COUNT(DISTINCT DATE(r.endedOn)) AS dayCount
+            FROM Result AS r
+            INNER JOIN Device AS d ON d.id= r.deviceId
+            INNER JOIN Site AS s ON s.id = d.siteId
+            LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
+            WHERE DATE(r.endedOn) BETWEEN DATE_FORMAT(NOW() - INTERVAL 1 MONTH, '%Y-%m-01')
+                  AND LAST_DAY(NOW()-INTERVAL 1 MONTH)
+          GROUP BY r.deviceId
+        ) AS innerQuery`,
+      statUnit: '{unit} last month',
+      statUnitI18nKey: 'dashboardWidgetDeviceDaysActiveTitle',
+      link: '/browse/device',
+      sortOrder: 12,
+      externalId: 'deviceDaysActive',
+      description:
+        'Average number of days each device has been active (Month-to-date)',
+      descriptionI18nKey: 'deviceDaysActiveDescription',
+      dashboards: ['operational'],
+
+
+    },
   ],
 }

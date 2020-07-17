@@ -123,5 +123,12 @@ module.exports = {
       ...dashboardWidgetsBase.stat.find(x => x.externalId === 'stockouts'),
       sortOrder: 8,
     },
+    {
+      ...dashboardWidgetsBase.stat.find(
+        x => x.externalId === 'deviceDaysActive'
+      ),
+      sortOrder: 9,
+
+    },
   ],
 }
