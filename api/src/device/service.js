@@ -437,6 +437,23 @@ async function listApprovalTypes() {
   return result
 }
 
+async function listMaintenanceStatuses() {
+  const resultQuery = knex('DeviceMaintenanceStatus as dms')
+
+  // get total count for paging
+  const getCount = resultQuery.clone().count('dms.id as count').first()
+
+  // get rows
+  const getItems = resultQuery.clone().orderBy('id', 'asc').select()
+
+  // return result when both queries are finished
+  const [{ count: total }, data] = await Promise.all([getCount, getItems])
+
+  const result = { ok: true, total, length: data.length, data }
+
+  return result
+}
+
 async function listDevicesForSelectList(request) {
   const { query, auth } = request
 
@@ -1166,6 +1183,7 @@ module.exports = {
   showDevice,
   updateDevice,
   listApprovalTypes,
+  listMaintenanceStatuses,
   listDevicesForSelectList,
   getDevice,
   updateDeviceMaintenance,

@@ -9,6 +9,7 @@ const {
   showDevice,
   updateDevice,
   listApprovalTypes,
+  listMaintenanceStatuses,
   listDevicesForSelectList,
   updateDeviceMaintenance,
   getDevicePerformance,
@@ -31,7 +32,7 @@ function listDevicesBaseConfig() {
 
 function listDevicesBaseRequest() {
   return {
-    auth: { scope: ['device:view', 'device:edit'] },
+    auth: { scope: ['device:view', 'device:edit', 'operationalData:view'] },
     validate: {
       query: {
         hasResults: Joi.number()
@@ -436,6 +437,16 @@ const routes = [
       description: 'Device Approval List',
       notes: 'Dictionary set of Device Approval options',
       auth: { scope: ['device:view', 'device:edit'] },
+    },
+  },
+  {
+    method: 'GET',
+    path: '/device/maintenance-statuses',
+    handler: asyncHandler(listMaintenanceStatuses),
+    config: {
+      description: 'Device Maintenance Status List',
+      notes: 'Set of Device Maintenance Status options',
+      auth: { scope: ['device:view', 'device:edit', 'operationalData:view'] },
     },
   },
   {

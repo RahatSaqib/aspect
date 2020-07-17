@@ -9,7 +9,7 @@ const {
 const { getAccessToken, createUser, removeUser } = require('../utils/authUtils')
 
 const server = supertest.agent('http://localhost:8080')
-const { assert } = chai
+const { assert, expect } = chai
 
 describe('Device routes', () => {
   const path = '/api/device'
@@ -235,6 +235,79 @@ describe('Device routes', () => {
         assert.property(devicesReponse.body.data[0].days[0], 'externalId')
         assert.property(devicesReponse.body.data[0].days[0], 'isWeekend')
         assert.property(devicesReponse.body.data[0].days[0], 'data')
+      })
+    })
+
+    describe('/maintenance-statuses', () => {
+      const maintenanceStatusesPath = `${path}/maintenance-statuses`
+      it('should return a list of different maintenance statuses that a device can be in', async () => {
+        const devicesReponse = await server
+          .get(maintenanceStatusesPath)
+          .set('Authorization', `Bearer ${shared.token}`)
+        assert.isOk(devicesReponse.body.ok)
+        assert.equal(devicesReponse.body.length, devicesReponse.body.total)
+        assert.equal(
+          devicesReponse.body.length,
+          devicesReponse.body.data.length
+        )
+        expect(devicesReponse.body.data).to.containSubset([
+          {
+            name: 'Active',
+            i18nKey: 'active',
+            externalId: 'active',
+            active: 1,
+            manuallySet: 0,
+          },
+          {
+            name: 'Reported Active',
+            i18nKey: 'reportedActive',
+            externalId: 'reportedActive',
+            active: 1,
+            manuallySet: 1,
+          },
+          {
+            name: 'Unknown',
+            i18nKey: 'inactiveUnknown',
+            externalId: 'inactiveUnknown',
+            active: 0,
+            manuallySet: 1,
+          },
+          {
+            name: 'No Results Reported',
+            i18nKey: 'inactiveNoResultsReported',
+            externalId: 'inactiveNoResultsReported',
+            active: 0,
+            manuallySet: 0,
+          },
+          {
+            name: 'Out of Inventory',
+            i18nKey: 'inactiveOutOfInventory',
+            externalId: 'inactiveOutOfInventory',
+            active: 0,
+            manuallySet: 1,
+          },
+          {
+            name: 'Down for Repair',
+            i18nKey: 'inactiveDownForRepair',
+            externalId: 'inactiveDownForRepair',
+            active: 0,
+            manuallySet: 1,
+          },
+          {
+            name: 'Connectivity',
+            i18nKey: 'inactiveConnectivity',
+            externalId: 'inactiveConnectivity',
+            active: 0,
+            manuallySet: 1,
+          },
+          {
+            name: 'Decommissioned',
+            i18nKey: 'inactiveDecommissioned',
+            externalId: 'inactiveDecommissioned',
+            active: 0,
+            manuallySet: 1,
+          },
+        ])
       })
     })
   })
