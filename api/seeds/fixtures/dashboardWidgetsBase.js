@@ -209,7 +209,7 @@ module.exports = {
       LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
       GROUP BY d.id) AS q;`,
       sqlForStatUnit: `SELECT 
-      CONCAT(CASE WHEN (AVG(CurrentMonthAvailabilityPercentage) - AVG(LastMonthAvailabilityPercentage)) >= 0 THEN '+' ELSE '-' END,
+      CONCAT(CASE WHEN (AVG(CurrentMonthAvailabilityPercentage) - AVG(LastMonthAvailabilityPercentage)) >= 0 THEN '+' ELSE '' END,
       ROUND(AVG(CurrentMonthAvailabilityPercentage) - AVG(LastMonthAvailabilityPercentage)), '%') AS cnt
   FROM
       (SELECT 
