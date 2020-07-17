@@ -11,7 +11,6 @@ const {
   resultMachinePowerError,
   resultModuleUnknownError,
   resultMachineUnknownError,
-  resultModuleReplaced,
 } = require('../../../result/actions')
 const {
   selectAssayConsumables,
@@ -19,7 +18,7 @@ const {
 const { inventoryReagentHealth } = require('../../../inventory/actions')
 const { resultCategoryToId } = require('../../../shared/dictionary')
 
-const { getReplacedModuleSerials } = require('./utils')
+const { getReplacedModuleSerials } = require('../../utils')
 
 const {
   MODULE_TEMPERATURE_ERROR_CODES,
@@ -60,7 +59,6 @@ async function onResultLogged({ resultId }, { messageContext }) {
     inventoryReagentHealth,
     resultModuleUnknownError,
     resultMachineUnknownError,
-    resultModuleReplaced,
   })
   await context.run(async knex => {
     const [result] = await knex('Result as r').where('r.id', resultId)
@@ -71,34 +69,6 @@ async function onResultLogged({ resultId }, { messageContext }) {
     let invalidReagentErrorCount = 0
     // get all modules that were replaced so we can ignore them in the queries below:
     const replacedModuleSerials = await getReplacedModuleSerials(knex, deviceId)
-    // check if a module was just now replaced and trigger replacement-issue if it was
-    if (
-      result.moduleName &&
-      result.moduleSerial &&
-      result.createdOn.getTime() === result.updatedOn.getTime()
-    ) {
-      // get the most recent result from the same module as the current result:
-      const previousResultOnModule = await knex('Result')
-        .where('deviceId', result.deviceId)
-        .where('moduleName', result.moduleName)
-        .whereNotNull('moduleSerial')
-        .whereNot('id', resultId)
-        .whereRaw('endedOn < ?', [result.endedOn])
-        .orderBy('endedOn', 'desc')
-        .first('moduleSerial')
-      if (
-        previousResultOnModule &&
-        previousResultOnModule.moduleSerial !== result.moduleSerial &&
-        !replacedModuleSerials.includes(previousResultOnModule.moduleSerial)
-      ) {
-        context.resultModuleReplaced(resultId, {
-          moduleName: result.moduleName,
-          replacedModuleSerial: previousResultOnModule.moduleSerial,
-          newModuleSerial: result.moduleSerial,
-        })
-        replacedModuleSerials.push(previousResultOnModule.moduleSerial)
-      }
-    }
 
     // prepare query for device results
     const deviceErrorQuery = knex('Result as r')
