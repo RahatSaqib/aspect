@@ -268,6 +268,28 @@ It mostly operates on JSON files in the country's fixtures-folder. The files con
 
 This should be deployed to the Aspect server for the country before data forwarding is set up in GxAlert.
 
+### Testing Issues
+
+You can manually trigger issues using the endpoint /issue/trigger.
+See the `triggerIssue` function in issue/service.js for which issue types are supported.
+You can also see here what data an issue type expects.
+You can use curl or Postman to issue a POST to this endpoint and trigger an issue and any associated notifications.
+For example, to trigger a "Device No Results" issue post to http://localhost:8080/api/issue/trigger with this body:
+
+```json
+{
+    "issueType": "DeviceNoResults",
+    "data": {
+        "deviceId": 18,
+        "lastResultOn": "2020-07-01"
+    }
+}
+```
+
+This will only work if there is an IssueType with the externalId "DeviceNoResults".
+It will also only trigger an issue if IssueEventTrigger contains an entry for that issue type and the partner you're logged in as.
+If you would like to test notifications, make sure you have them set up in the "NotificationType" table (and associated Message tables).
+
 ## Deploying
 
 We're serving the API through AWS beanstalk. Install the eb cli tools and commit changes, then:
