@@ -1,99 +1,86 @@
-import classnames from 'classnames/bind'
 import React from 'react'
-import { connect } from 'react-redux'
-import { compose, pure } from 'recompose'
+import PropTypes from 'prop-types'
+import classnames from 'classnames/bind'
 
-import Link from '../../../components/shared/Link'
-import { reduceNavLinks } from '../../../filter/utils'
+import ThemedLink from './ThemedLink'
 
 const cssClasses = classnames.bind(require('./index.css'))
 
-const themes = {
-  Link: {
-    link: cssClasses('Link__link'),
-    active: cssClasses('Link__active'),
-    icon: cssClasses('Link__icon'),
+const rawLinks = [
+  {
+    href: '/dashboard',
+    label: 'Home',
+    requiredPermissions: ['dashboard:summary'],
   },
-}
+  {
+    href: '/task-list',
+    label: 'Task List',
+    requiredPermissions: ['taskMenu'],
+  },
+  {
+    href: '/operational-data',
+    label: 'Operational  Data',
+    requiredPermissions: ['operationalData'],
+  },
+  {
+    href: '/clinical-indicators',
+    label: 'Clinical Indicators',
+    requiredPermissions: ['clinicalIndicators'],
+  },
+  {
+    href: '/browse',
+    label: 'Browse',
+    requiredPermissions: ['browse'],
+  },
+  {
+    href: '/reports',
+    label: 'Reports',
+    requiredPermissions: ['report'],
+  },
+  {
+    href: '/manage',
+    label: 'Manage',
+    requiredPermissions: ['manage'],
+  },
+]
 
-export const makeThemedLink = props => (
-  <Link {...props} key={props.href} theme={themes.Link} title={props.label} />
-)
-
-const enhance = compose(
-  pure,
-  connect(state => ({
-    userPermissions: state.user.jwt.permissions,
-  }))
-)
 export const LinkNavigation = ({
   history,
   location,
-
   type,
-  userPermissions,
   onClick,
   children,
-}) => {
-  const reduceNav = reduceNavLinks(
-    [
-      {
-        href: '/dashboard',
-        label: 'Home',
-        requiredPermissions: ['dashboard:summary'],
-      },
-      {
-        href: '/task-list',
-        label: 'Task List',
-        requiredPermissions: ['taskMenu'],
-      },
-      {
-        href: '/operational-data',
-        label: 'Operational Data',
-        requiredPermissions: ['operationalData:view'],
-      },
-      {
-        href: '/clinical-indicators',
-        label: 'Clinical Indicators',
-        requiredPermissions: ['clinicalIndicators:view'],
-      },
-      {
-        href: '/browse',
-        label: 'Browse',
-        requiredPermissions: ['browse:view'],
-      },
-      {
-        href: '/reports',
-        label: 'Reports',
-        requiredPermissions: ['report:view'],
-      },
-      {
-        href: '/manage',
-        label: 'Manage',
-        requiredPermissions: ['manage:view'],
-      },
-    ],
-    userPermissions
-  )
-  return (
-    <nav
-      type={type}
-      className={cssClasses('Navigation', {
-        'Navigation--vertical': type === 'vertical',
-        'Navigation--horizontal': type === 'horizontal',
-      })}
-    >
-      {reduceNav.map(props =>
-        makeThemedLink({
-          ...props,
-          history,
-          location,
-          onClick,
-        })
-      )}
-      {children}
-    </nav>
-  )
+}) => (
+  <nav
+    type={type}
+    className={cssClasses('Navigation', {
+      'Navigation--vertical': type === 'vertical',
+      'Navigation--horizontal': type === 'horizontal',
+    })}
+  >
+    {rawLinks.map(link => (
+      <ThemedLink
+        key={link.label}
+        {...link}
+        history={history}
+        location={location}
+        onClick={onClick}
+      />
+    ))}
+    {children}
+  </nav>
+)
+
+LinkNavigation.defaultProps = {
+  children: null,
 }
 
-export default enhance(LinkNavigation)
+LinkNavigation.propTypes = {
+  history: PropTypes.oneOfType([PropTypes.object]).isRequired,
+  location: PropTypes.oneOfType([PropTypes.object]).isRequired,
+  type: PropTypes.string.isRequired,
+  onClick: PropTypes.func.isRequired,
+  children: PropTypes.oneOfType([PropTypes.object]),
+}
+
+export default LinkNavigation
