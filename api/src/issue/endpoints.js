@@ -1,8 +1,9 @@
 const Joi = require('@hapi/joi')
 const { asyncHandler } = require('../routes')
 const {
-  updateIssueStatus,
   getIssueEventTriggerSubscriptions,
+  triggerIssue,
+  updateIssueStatus,
 } = require('./service')
 const {
   onIssueCreated,
@@ -26,6 +27,28 @@ const routes = [
         },
         payload: {
           issueStatusExternalId: Joi.string().allow('Acknowledged'),
+        },
+      },
+    },
+  },
+  {
+    method: 'POST',
+    path: '/issue/trigger',
+    handler: asyncHandler(triggerIssue),
+    config: {
+      description: 'Trigger Issue',
+      notes: 'Enqueue issue in MQ through executing corresponding action',
+      auth: { scope: ['notification:edit', 'issue:edit'] },
+      validate: {
+        payload: {
+          issueType: Joi.string()
+            .required()
+            .description(
+              'Issue Type as of value of `externalId` from table IssueType'
+            ),
+          data: Joi.object()
+            .allow(null)
+            .description('The json object with data for corresponding action'),
         },
       },
     },

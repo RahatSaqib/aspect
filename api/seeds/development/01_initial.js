@@ -5280,8 +5280,25 @@ async function seed(knex) {
     personId: personIds.frank,
     jobFunctionId: jobFunctionIdManager,
   })
+
+  const jobIdEd = await knex('Job').insert({
+    personId: personIds.ed,
+    jobFunctionId: jobFunctionIdManager,
+  })
+  const jobIdJim = await knex('Job').insert({
+    personId: personIds.jim,
+    jobFunctionId: jobFunctionIdPartnerTwo,
+  })
   const jobIdNed = await knex('Job').insert({
     personId: personIds.ned,
+    jobFunctionId: jobFunctionIdClinician,
+  })
+  const jobIdJon = await knex('Job').insert({
+    personId: personIds.jon,
+    jobFunctionId: jobFunctionIdClinician,
+  })
+  const jobIdSteve = await knex('Job').insert({
+    personId: personIds.steve,
     jobFunctionId: jobFunctionIdClinician,
   })
   const jobIdFred = await knex('Job').insert({
@@ -5294,6 +5311,10 @@ async function seed(knex) {
     { jobId: jobIdAdmin, geographyId: countries.US.geographyId },
     { jobId: jobIdJason, geographyId: countries.US.geographyId },
     { jobId: jobIdSam, geographyId: countries.NG.geographyId },
+    { jobId: jobIdEd, geographyId: countries.US.geographyId },
+    { jobId: jobIdJim, geographyId: countries.US.geographyId },
+    { jobId: jobIdJon, geographyId: countries.US.geographyId },
+    { jobId: jobIdSteve, geographyId: countries.US.geographyId },
     { jobId: jobIdBob, geographyId: countries.US.states.OH.geographyId },
     { jobId: jobIdFrank, geographyId: countries.US.states.NE.geographyId },
     {
@@ -5413,6 +5434,7 @@ async function seed(knex) {
     { jobFunctionId: jobFunctionIdAdmin, widgetId: widgetIds.personTitle },
     { jobFunctionId: jobFunctionIdAdmin, widgetId: widgetIds.utilizationRate },
     { jobFunctionId: jobFunctionIdAdmin, widgetId: widgetIds.activeDevices },
+    { jobFunctionId: jobFunctionIdAdmin, widgetId: widgetIds.deviceDaysActive },
     {
       jobFunctionId: jobFunctionIdAdmin,
       widgetId: widgetIds.dashboardWidgetTestsPerDayTitle,
