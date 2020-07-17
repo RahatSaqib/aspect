@@ -18,6 +18,7 @@ const {
   onDeviceUpdateMaintenanceStatus,
   onDeviceUpdateMaintenanceStatusNoResults,
   onDeviceMaintenanceResolved,
+  deviceMaintenanceStatusHistory,
 } = require('./service')
 const { exportDevices } = require('./serviceReports')
 const {
@@ -542,11 +543,12 @@ const routes = [
   },
   {
     method: 'GET',
-    path: '/device',
-    handler: asyncHandler(listDevices),
+    path: '/device/maintenance-status',
+    handler: asyncHandler(deviceMaintenanceStatusHistory),
     config: {
-      description: 'Device List',
-      notes: 'Pageable and sortable list of devices',
+      description: 'Device list with maintenance status history for each day',
+      notes:
+        'Used as a data source for the device status calendar on the operational dashboard',
       ...listDevicesBaseRequest(),
       response: {
         options: {

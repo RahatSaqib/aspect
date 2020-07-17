@@ -893,7 +893,7 @@ async function automaticallySetDeviceMaintenanceStatus(
       .join(
         'DeviceMaintenanceStatus as dms',
         'dmsl.deviceMaintenanceStatusId',
-        'dms.deviceMaintenanceStatusId'
+        'dms.id'
       )
       .where('dmsl.deviceId', deviceId)
       .andWhere('dmsl.day', dayDate)
@@ -1108,14 +1108,15 @@ async function deviceMaintenanceStatusHistory(request) {
     .distinct()
   const days = []
   let day = minDate || startOfMonth(new Date())
-  while (day <= maxDate || startOfToday()) {
+  while (day <= (maxDate || startOfToday())) {
     days.push(day)
     day = addDays(day, 1)
   }
-  const latestDeviceMaintenanceStatusLogsPerDay = await knex.raw(
-    `SELECT DeviceMaintenanceStatusLog.deviceId,
+  const latestDeviceMaintenanceStatusLogsPerDay = (
+    await knex.raw(
+      `SELECT DeviceMaintenanceStatusLog.deviceId,
   DeviceMaintenanceStatusLog.day,
-  DeviceMaintenanceStatusLog.data,
+  JSON_UNQUOTE(DeviceMaintenanceStatusLog.data) AS data,
   DeviceMaintenanceStatus.externalId
 FROM (SELECT DeviceMaintenanceStatusLog.deviceId, DeviceMaintenanceStatusLog.day, MAX(DeviceMaintenanceStatusLog.createdOn) AS createdOn
       FROM DeviceMaintenanceStatusLog
@@ -1129,8 +1130,9 @@ JOIN DeviceMaintenanceStatusLog ON DeviceMaintenanceStatusLog.deviceId = LatestD
                                 AND DeviceMaintenanceStatusLog.createdOn = LatestDeviceLatestMaintenanceLogsPerDay.createdOn
 JOIN DeviceMaintenanceStatus ON DeviceMaintenanceStatus.id = DeviceMaintenanceStatusLog.deviceMaintenanceStatusId
 ORDER BY DeviceMaintenanceStatusLog.deviceId, DeviceMaintenanceStatusLog.day ASC;`,
-    [days[0], days[days.length - 1]]
-  )
+      [days[0], days[days.length - 1]]
+    )
+  )[0]
   const result = {
     ok: true,
     total: devices.length,
@@ -1140,7 +1142,9 @@ ORDER BY DeviceMaintenanceStatusLog.deviceId, DeviceMaintenanceStatusLog.day ASC
       days: days.map(day => {
         const deviceMaintenanceStatusLog =
           latestDeviceMaintenanceStatusLogsPerDay.find(
-            log => log.deviceId === device.id && log.day === day
+            log =>
+              log.deviceId === device.id &&
+              log.day.toISOString() === day.toISOString()
           ) || {}
         return {
           date: day,
@@ -1154,7 +1158,6 @@ ORDER BY DeviceMaintenanceStatusLog.deviceId, DeviceMaintenanceStatusLog.day ASC
       }),
     })),
   }
-
   return result
 }
 

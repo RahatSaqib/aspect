@@ -18,6 +18,33 @@ describe('Device routes', () => {
   describe('GET', () => {
     shared.checkToken(server, path)
 
+    const daktariVirologyDeviceTypeExternalId = 'DaktariVirology'
+    const daktariManagerUsername = 'daktari_manager'
+    const daktariManagerPassword = 'daktari-manager-pass'
+    let daktariManagerUserId
+    let daktariManagerAuthAccessToken
+
+    before(async () => {
+      daktariManagerUserId = await createUser(
+        'Partner One',
+        'US',
+        daktariManagerUsername,
+        daktariManagerPassword,
+        [
+          {
+            jobFunctionExternalId: 'manager',
+            deviceTypeExternalId: daktariVirologyDeviceTypeExternalId,
+          },
+        ]
+      )
+      daktariManagerAuthAccessToken = await getAccessToken(
+        daktariManagerUsername,
+        daktariManagerPassword
+      )
+    })
+
+    after(async () => removeUser(daktariManagerUserId))
+
     it('should return a list of devices when using valid token "approved"', async () => {
       await server
         .get(path)
@@ -137,6 +164,7 @@ describe('Device routes', () => {
           assert.property(res.body.data, 'errorRateThisMonth')
         })
     })
+
     it('should return details of a filter device from a site', async () => {
       await server
         .get(
@@ -172,32 +200,6 @@ describe('Device routes', () => {
         })
     })
 
-    const daktariVirologyDeviceTypeExternalId = 'DaktariVirology'
-    const daktariManagerUsername = 'daktari_manager'
-    const daktariManagerPassword = 'daktari-manager-pass'
-    let daktariManagerUserId
-    let daktariManagerAuthAccessToken
-    before(async () => {
-      daktariManagerUserId = await createUser(
-        'Partner One',
-        'US',
-        daktariManagerUsername,
-        daktariManagerPassword,
-        [
-          {
-            jobFunctionExternalId: 'manager',
-            deviceTypeExternalId: daktariVirologyDeviceTypeExternalId,
-          },
-        ]
-      )
-      daktariManagerAuthAccessToken = await getAccessToken(
-        daktariManagerUsername,
-        daktariManagerPassword
-      )
-    })
-
-    after(async () => removeUser(daktariManagerUserId))
-
     it("should constrain devices returned based on the user's job context", async () => {
       const devicesReponse = await server
         .get(path)
@@ -208,6 +210,31 @@ describe('Device routes', () => {
         .first('name')
       devicesReponse.body.data.forEach(device => {
         assert.equal(device.type, daktariVirologyDeviceTypeName)
+      })
+    })
+
+    describe('/maintenance-status', () => {
+      const maintenanceStatusPath = `${path}/maintenance-status`
+      it('should return a list of devices with a snapshot of each device maintenance status during the month', async () => {
+        const devicesReponse = await server
+          .get(maintenanceStatusPath)
+          .set('Authorization', `Bearer ${shared.token}`)
+        assert.isOk(devicesReponse.body.ok)
+        assert.equal(devicesReponse.body.length, devicesReponse.body.total)
+        assert.equal(
+          devicesReponse.body.length,
+          devicesReponse.body.data.length
+        )
+        assert.property(devicesReponse.body.data[0], 'id')
+        assert.property(devicesReponse.body.data[0], 'name')
+        assert.property(devicesReponse.body.data[0], 'shortName')
+        assert.property(devicesReponse.body.data[0], 'resultCount')
+        assert.property(devicesReponse.body.data[0], 'days')
+        assert.isAbove(devicesReponse.body.data[0].days.length, 0)
+        assert.property(devicesReponse.body.data[0].days[0], 'date')
+        assert.property(devicesReponse.body.data[0].days[0], 'externalId')
+        assert.property(devicesReponse.body.data[0].days[0], 'isWeekend')
+        assert.property(devicesReponse.body.data[0].days[0], 'data')
       })
     })
   })
