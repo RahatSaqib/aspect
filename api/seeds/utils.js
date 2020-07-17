@@ -302,10 +302,19 @@ async function seedStockIssues(knex) {
     getDefaultMessageTypes(knex),
   ])
 
-  const {
-    jobFunctionIdRegionalOfficer,
-    jobFunctionIdLabUser,
-  } = await getBaseJobFunctions(knex, { partnerId })
+  const { id: jobFunctionIdRegionalOfficer } = await knex('JobFunction')
+    .where({
+      name: 'Regional Officer',
+      partnerId,
+    })
+    .first()
+
+  const { id: jobFunctionIdLabUser } = await knex('JobFunction')
+    .where({
+      name: 'Lab User',
+      partnerId,
+    })
+    .first()
 
   // -------------------------------------------
   // Notifications
@@ -1683,10 +1692,19 @@ async function seedUnknownErrorsIssue(knex, { partnerId, auditFields }) {
     rowsAsObject(knex, 'MessageSeverity'),
   ])
 
-  const {
-    jobFunctionIdRegionalOfficer,
-    jobFunctionIdLabUser,
-  } = await getBaseJobFunctions(knex, { partnerId })
+  const { id: jobFunctionIdRegionalOfficer } = await knex('JobFunction')
+    .where({
+      name: 'Regional Officer',
+      partnerId,
+    })
+    .first()
+
+  const { id: jobFunctionIdLabUser } = await knex('JobFunction')
+    .where({
+      name: 'Lab User',
+      partnerId,
+    })
+    .first()
 
   // ------------------------------------------
   // Module UnknownErrors issue templates
@@ -2959,32 +2977,7 @@ async function removeAndReplaceActivity(
 }
 
 // ***********************************************************************
-async function getBaseJobFunctions(
-  knex,
-  { partnerId, nameRO = 'Regional Officer', nameLU = 'Lab User' }
-) {
-  const { id: jobFunctionIdRegionalOfficer } = await knex('JobFunction')
-    .where({
-      name: nameRO,
-      partnerId,
-    })
-    .first()
-
-  const { id: jobFunctionIdLabUser } = await knex('JobFunction')
-    .where({
-      name: nameLU,
-      partnerId,
-    })
-    .first()
-
-  return {
-    jobFunctionIdRegionalOfficer,
-    jobFunctionIdLabUser,
-  }
-}
-
-// ***********************************************************************
-async function seedIssueTypeModuleReplaced(knex, { partnerName, userName }) {
+async function seedIssueTypeModuleReplaced(knex, { userName }) {
   const { id: adminId } = await knex('User')
     .where({ name: userName })
     .first('id')
@@ -2997,10 +2990,6 @@ async function seedIssueTypeModuleReplaced(knex, { partnerName, userName }) {
     updatedBy: adminId,
   }
 
-  const { id: partnerId } = await knex('Partner')
-    .where({ name: partnerName })
-    .first()
-
   // get previously defined data for ModuleReplaced issue type
   const {
     ModuleReplaced: {
@@ -3012,32 +3001,16 @@ async function seedIssueTypeModuleReplaced(knex, { partnerName, userName }) {
     },
   } = await getBaseIssues(auditFields)
 
-  const auditDates = _.pick(auditFields, ['createdOn', 'updatedOn'])
-  const [issueEventStatuses] = await Promise.all([
-    rowsAsObject(knex, 'IssueEventStatus', 'externalId'),
-  ])
-
-  const {
-    jobFunctionIdRegionalOfficer,
-    jobFunctionIdLabUser,
-  } = await getBaseJobFunctions(knex, { partnerId })
-
   // ------------------------------------------
   // 'Module Replaced' issue templates
   // ------------------------------------------
   const { id: moduleAlertTemplateId } = await upsertSingle(
     knex,
     'AlertTemplate',
-    [
-      'message',
-      // 'hideWhenSiteFilterIsSelected',
-      // 'hideWhenSiteFilterIsNotSelected',
-    ],
+    ['message'],
     {
       ...AlertTemplate,
       ...auditFields,
-      hideWhenSiteFilterIsSelected: 0,
-      hideWhenSiteFilterIsNotSelected: 0,
     }
   )
   const { id: moduleSmsTemplateId } = await upsertSingle(
@@ -3072,107 +3045,10 @@ async function seedIssueTypeModuleReplaced(knex, { partnerName, userName }) {
   // ------------------------------------------
   // IssueType
   // ------------------------------------------
-  const { id: issueTypeId } = await upsertSingle(
-    knex,
-    'IssueType',
-    uniqueKeys.IssueType,
-    {
-      ...issueType,
-      defaultMessageTypeId: moduleMessageTypeId,
-    }
-  )
-
-  // ------------------------------------------
-  // Issue Event Trigger
-  // ------------------------------------------
-  const triggerData = {
-    partnerId,
-    issueTypeId,
-    issueEventStatusId: issueEventStatuses.Triggered.id,
-  }
-  await upsertSingle(knex, 'IssueEventTrigger', triggerData, {
-    ...triggerData,
-    createdOn: now,
-    updatedOn: now,
-    // defined in api/seeds/fixtures/IssueEventTrigger.json
-    triggerConditions: JSON.stringify({
-      action: 'RESULT_MODULE_REPLACED',
-    }),
+  await upsertSingle(knex, 'IssueType', uniqueKeys.IssueType, {
+    ...issueType,
+    defaultMessageTypeId: moduleMessageTypeId,
   })
-
-  // ------------------------------------------
-  // Notification Types
-  // ------------------------------------------
-  const notificationTypeBase = {
-    partnerId,
-    issueTypeId,
-    messageTypeId: moduleMessageTypeId,
-    ...auditFields,
-  }
-  await upsertNotificationTypes(knex, [
-    {
-      ...notificationTypeBase,
-      name: 'LU Module Replaced',
-      jobFunctionId: jobFunctionIdLabUser,
-      level: 1,
-      canAcknowledge: 1,
-    },
-    {
-      ...notificationTypeBase,
-      name: 'LU Escalated Module Replaced',
-      jobFunctionId: jobFunctionIdLabUser,
-      level: 2,
-      canAcknowledge: 0,
-    },
-    {
-      ...notificationTypeBase,
-      name: 'RO Escalated Module Replaced',
-      jobFunctionId: jobFunctionIdRegionalOfficer,
-      level: 3,
-      canAcknowledge: 0,
-    },
-    // RO View
-    {
-      ...notificationTypeBase,
-      name: 'LU Module Replaced - RO View',
-      jobFunctionId: jobFunctionIdRegionalOfficer,
-      level: 1,
-      canAcknowledge: 0,
-    },
-    {
-      ...notificationTypeBase,
-      name: 'LU Escalated Module Replaced - RO View',
-      jobFunctionId: jobFunctionIdRegionalOfficer,
-      level: 2,
-      canAcknowledge: 0,
-    },
-  ])
-
-  // ------------------------------------------
-  // Issue Escalation Triggers
-  // ------------------------------------------
-  await upsertIssueEscalationTrigger(knex, [
-    {
-      issueTypeId,
-      partnerId,
-      escalateToLevel: 2,
-      escalationConditions: JSON.stringify({
-        evaluationMethod: 'issue-age',
-        evaluationParameter: { days: 30 },
-      }),
-      ...auditDates,
-    },
-    {
-      issueTypeId,
-      partnerId,
-      escalateToLevel: 3,
-      escalationConditions: JSON.stringify({
-        evaluationMethod: 'issue-age',
-        evaluationParameter: { days: 60 },
-      }),
-      ...auditDates,
-    },
-  ])
 }
 
 module.exports = {

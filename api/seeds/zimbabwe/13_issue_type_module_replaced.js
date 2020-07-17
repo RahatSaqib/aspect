@@ -4,7 +4,6 @@ const { seedIssueTypeModuleReplaced } = require('../utils')
 
 async function seed(knex) {
   await seedIssueTypeModuleReplaced(knex, {
-    partnerName: 'Zimbabwe',
     userName: 'admin',
   })
 }
