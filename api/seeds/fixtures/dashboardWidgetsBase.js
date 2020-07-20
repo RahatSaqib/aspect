@@ -118,7 +118,7 @@ module.exports = {
           AND
           MONTH(r.endedOn) = MONTH(DATE_SUB(NOW(), INTERVAL 1 MONTH))
       `,
-      statUnit: '{unit} in previous month',
+      statUnit: '{unit} in last month',
       statUnitI18nKey: 'dashboardWidgetValidResultsPcUnit',
       link: '/browse/result',
       sortOrder: 11,
@@ -178,7 +178,7 @@ module.exports = {
                   AND LAST_DAY(NOW()-INTERVAL 1 MONTH)
             GROUP BY r.deviceId, dc.dailyCapacity
           ) AS innerQuery`,
-      statUnit: '{unit} last month',
+      statUnit: '{unit} in last month',
       statUnitI18nKey: 'dashboardWidgetUtilizationRate',
       link: '/browse/device',
       sortOrder: 12,
@@ -186,6 +186,57 @@ module.exports = {
       description:
         'The utilization rate is calculated by counting all tests conducted in the month and dividing that number by the total capacity of all devices',
       descriptionI18nKey: 'utilizationRateDescription',
+      dashboards: ['operational'],
+    },
+    {
+      jobFunctions: ['all'],
+      icon: 'fa-reg-calendar-check',
+      title: 'Active',
+      titleI18nKey: 'activeDevicesTitle',
+      subTitle: null,
+      subTitleI18nKey: null,
+      sqlForIndicator: `SELECT 
+      CONCAT(ROUND(AVG(AvailabilityPercentage)), '%') AS cnt
+  FROM
+      (SELECT 
+          COUNT(DISTINCT DATE(r.endedOn)) * 100 / DATEDIFF(NOW(), GREATEST(DATE_FORMAT(NOW(), '%Y-%m-01'),d.createdOn)) AS AvailabilityPercentage
+      FROM
+          Device AS d
+      LEFT JOIN Result AS r ON d.id = r.deviceId
+          AND r.endedOn >= DATE_FORMAT(CURRENT_DATE, '%Y-%m-01')
+      INNER JOIN Site AS s ON s.id = d.siteId
+      INNER JOIN Partner AS p ON s.partnerId = p.id
+      LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
+      GROUP BY d.id) AS q;`,
+      sqlForStatUnit: `SELECT 
+      CONCAT(CASE WHEN (AVG(CurrentMonthAvailabilityPercentage) - AVG(LastMonthAvailabilityPercentage)) >= 0 THEN '+' ELSE '' END,
+      ROUND(AVG(CurrentMonthAvailabilityPercentage) - AVG(LastMonthAvailabilityPercentage)), '%') AS cnt
+  FROM
+      (SELECT 
+          d.id,
+              COUNT(DISTINCT CASE
+                  WHEN r.endedOn < DATE_FORMAT(NOW(), '%Y-%m-01') THEN DATE(r.endedOn)
+                  ELSE NULL
+              END) * 100 / DATEDIFF(NOW(), GREATEST(DATE_FORMAT(DATE_ADD(CURRENT_DATE, INTERVAL - 1 MONTH), '%Y-%m-01'),d.createdOn)) AS LastMonthAvailabilityPercentage,
+              COUNT(DISTINCT CASE
+                  WHEN r.endedOn >= DATE_FORMAT(NOW(), '%Y-%m-01') THEN DATE(r.endedOn)
+                  ELSE NULL
+              END) * 100 / DATE_ADD(CURRENT_DATE, INTERVAL - 1 MONTH) AS CurrentMonthAvailabilityPercentage
+      FROM
+          Device AS d
+      LEFT JOIN Result AS r ON d.id = r.deviceId
+          AND r.endedOn >= DATE_FORMAT(DATE_ADD(CURRENT_DATE, INTERVAL - 1 MONTH), '%Y-%m-01')
+      INNER JOIN Site AS s ON s.id = d.siteId
+      INNER JOIN Partner AS p ON s.partnerId = p.id
+      LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
+      GROUP BY d.id , d.createdOn) AS q;`,
+      statUnit: '{unit} from last month',
+      statUnitI18nKey: 'dashboardWidgetActiveDevices',
+      link: '/browse/device',
+      sortOrder: 12,
+      externalId: 'activeDevices',
+      description: `The daily percentage of devices that sent results`,
+      descriptionI18nKey: 'activeDevicesDescription',
       dashboards: ['operational'],
     },
     {
