@@ -50,7 +50,11 @@ async function shouldTriggerModuleReplaced(knex, messageContext, result) {
   // get all modules that were replaced so we can ignore them in the queries below:
   const replacedModuleSerials = await getReplacedModuleSerials(knex, deviceId)
   // check if a module was just now replaced and trigger replacement-issue if it was
-  if (result.moduleName && result.moduleSerial) {
+  if (
+    result.moduleName &&
+    result.moduleSerial &&
+    result.createdOn.getTime() === result.updatedOn.getTime()
+  ) {
     // get the most recent result from the same module as the current result:
     const previousResultOnModule = await knex('Result')
       .where('deviceId', result.deviceId)
