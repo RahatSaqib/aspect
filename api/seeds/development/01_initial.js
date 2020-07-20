@@ -5434,6 +5434,7 @@ async function seed(knex) {
     { jobFunctionId: jobFunctionIdAdmin, widgetId: widgetIds.personTitle },
     { jobFunctionId: jobFunctionIdAdmin, widgetId: widgetIds.utilizationRate },
     { jobFunctionId: jobFunctionIdAdmin, widgetId: widgetIds.activeDevices },
+    { jobFunctionId: jobFunctionIdAdmin, widgetId: widgetIds.stockouts },
     { jobFunctionId: jobFunctionIdAdmin, widgetId: widgetIds.deviceDaysActive },
     {
       jobFunctionId: jobFunctionIdAdmin,

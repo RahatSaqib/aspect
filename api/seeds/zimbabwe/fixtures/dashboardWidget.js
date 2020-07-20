@@ -121,13 +121,17 @@ module.exports = {
     },
     {
       ...dashboardWidgetsBase.stat.find(x => x.externalId === 'activeDevices'),
-      sortOrder: 7,
+      sortOrder: 8,
+    },
+    {
+       ...dashboardWidgetsBase.stat.find(x => x.externalId === 'stockouts'),
+      sortOrder: 9,
     },
     {
       ...dashboardWidgetsBase.stat.find(
         x => x.externalId === 'deviceDaysActive'
       ),
-      sortOrder: 8,
+      sortOrder: 10,
     },
   ],
 }
