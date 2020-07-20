@@ -12,6 +12,8 @@ import {
   getGraphKeysFromResults,
 } from '../Helpers/Formatters'
 
+import EmptyGraph from '../EmptyData'
+
 const cssClasses = classnames.bind(require('./GraphRender.css'))
 
 const GraphRender = ({
@@ -86,7 +88,7 @@ const GraphRender = ({
   return (
     <Grid item xs={12} lg={size}>
       <div className={cssClasses('graphrender__container')}>
-        {graphData && graphKeys ? (
+        {graphData && graphKeys && (
           <Component
             data={graphData}
             keys={graphKeys}
@@ -95,11 +97,14 @@ const GraphRender = ({
             averages={averages}
             assaysFromState={assaysFromState}
           />
-        ) : (
-          <div className={cssClasses('graphrender__spinner')}>
-            <CircularProgress />
-          </div>
         )}
+        <div className={cssClasses('graphrender__spinner')}>
+          {graphState && graphState.length < 1 && !graphData && !graphKeys ? (
+            <EmptyGraph type={type} />
+          ) : (
+            <CircularProgress />
+          )}
+        </div>
       </div>
     </Grid>
   )
