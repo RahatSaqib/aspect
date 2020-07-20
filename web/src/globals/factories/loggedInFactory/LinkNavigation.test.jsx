@@ -16,39 +16,6 @@ describe('LinkNavigation component', () => {
     shallow(<LinkNavigation {...props} />)
   })
 
-  it('should see browse link when having permission', () => {
-    const props = {
-      intl,
-      userPermissions: Immutable.Set(),
-    }
-    const wrapper = shallow(<LinkNavigation {...props} />)
-
-    expect(wrapper.find(Link)).toHaveLength(0)
-
-    wrapper.setProps({
-      userPermissions: Immutable.Set(['browse:view', 'device:view']),
-    })
-    expect(wrapper.find(Link)).toHaveLength(1)
-
-    expect(
-      wrapper.find(Link).someWhere(L => /^\/dashboard/.test(L.prop('href')))
-    ).toBe(false)
-    expect(
-      wrapper.find(Link).someWhere(L => /^\/browse/.test(L.prop('href')))
-    ).toBe(true)
-    wrapper.setProps({
-      userPermissions: Immutable.Set([
-        'dashboard:summary',
-        'device:view',
-        'browse:view',
-      ]),
-    })
-    expect(wrapper.find(Link)).toHaveLength(2)
-    expect(
-      wrapper.find(Link).someWhere(L => /^\/dashboard/.test(L.prop('href')))
-    ).toBe(true)
-  })
-
   it('should change the direction of Nav with different `type` prop', () => {
     const props = {
       intl,

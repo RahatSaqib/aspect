@@ -5,6 +5,7 @@ import covidGraphs from '../GraphConfigurations/Covid'
 import hivGraphs from '../GraphConfigurations/HIV'
 import tbGraphs from '../GraphConfigurations/TB'
 import treatmentStatusGraphs from '../GraphConfigurations/Treatments'
+import deviceStatusGraphs from '../GraphConfigurations/DeviceStatus'
 import GraphContainer from './GraphContainer'
 
 const spacing = {
@@ -15,6 +16,7 @@ const spacing = {
 const { hivResults } = hivGraphs
 const { tbResults } = tbGraphs
 const { treatmentStatus } = treatmentStatusGraphs
+const { deviceStatus } = deviceStatusGraphs
 const {
   covidDailyConfirmed,
   covidCasesByAgeAndGender,
@@ -60,15 +62,21 @@ const GraphsContainer = ({ assaysFromState }) => {
       size: half,
       group: 'covid',
     },
+    {
+      config: deviceStatus,
+      size: full,
+      group: 'assaysNotNeeded',
+    },
   ]
 
   return (
     <Grid container direction="row" spacing={8}>
-      {graphsToRender.map(({ config, size }) => (
+      {graphsToRender.map(({ config, size, group }) => (
         <GraphContainer
           assaysFromState={assaysFromState}
           config={config}
           size={size}
+          group={group}
         />
       ))}
     </Grid>

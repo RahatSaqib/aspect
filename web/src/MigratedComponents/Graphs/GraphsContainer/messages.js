@@ -62,6 +62,10 @@ export const messages = defineMessages({
     id: 'pages.Status.treatmentStatusTotalValidTitle.graph',
     defaultMessage: 'Valid Tests',
   },
+  deviceStatusTitle: {
+    id: 'pages.Status.deviceStatusTitle.graph',
+    defaultMessage: 'Overall Activity Rate',
+  },
 })
 
 export default messages

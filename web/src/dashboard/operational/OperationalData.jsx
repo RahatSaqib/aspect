@@ -1,37 +1,50 @@
+import React, { Fragment } from 'react'
 import classnames from 'classnames/bind'
-import React from 'react'
-import _ from 'lodash'
+import flowRight from 'lodash/flowRight'
 import { connect } from 'react-redux'
 import { Helmet } from 'react-helmet'
 import { injectIntl } from 'react-intl'
 
 import SummaryStatus from '../status/SummaryStatus'
+import GraphsContainer from '../../MigratedComponents/Graphs/GraphsContainer'
 import InventoryItems from '../status/InventoryItems'
 
 const cssClasses = classnames.bind(require('./OperationalData.css'))
 
-export const OperationalData = ({ history, location, intl, loading }) => (
-  <div className={cssClasses('Container')}>
-    <Helmet title="Operational Data" />
+export const OperationalData = ({ intl, history, location, loading }) => {
+  return (
+    <div className={cssClasses('Container')}>
+      <Helmet title="Operational Data" />
+      {loading ? (
+        <div className={cssClasses({ 'Content--loading': loading })} />
+      ) : (
+        <Fragment>
+          <SummaryStatus
+            intl={intl}
+            history={history}
+            location={location}
+            className={cssClasses('Section--summary')}
+            dashboard="operational"
+          />
+          <GraphsContainer
+            intl={intl}
+            history={history}
+            location={location}
+            assaysFromState={[]}
+          />
+          <InventoryItems
+            intl={intl}
+            history={history}
+            location={location}
+            className={cssClasses('Section--stock')}
+          />
+        </Fragment>
+      )}
+    </div>
+  )
+}
 
-    <SummaryStatus
-      intl={intl}
-      history={history}
-      location={location}
-      className={cssClasses('Section--summary')}
-      dashboard="operational"
-    />
-    <InventoryItems
-      intl={intl}
-      history={history}
-      location={location}
-      className={cssClasses('Section--stock')}
-    />
-    <div className={cssClasses({ 'Content--loading': loading })} />
-  </div>
-)
-
-export default _.flowRight(
+export default flowRight(
   injectIntl,
   connect(state => ({
     loading: !!state.getIn(['dashboard', 'requestedAt']),
