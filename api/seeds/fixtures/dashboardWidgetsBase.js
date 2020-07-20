@@ -288,8 +288,6 @@ module.exports = {
         'Average number of days each device has been active (Month-to-date)',
       descriptionI18nKey: 'deviceDaysActiveDescription',
       dashboards: ['operational'],
-
-
     },
   ],
 }
