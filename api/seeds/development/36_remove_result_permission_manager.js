@@ -16,7 +16,7 @@ async function seed(knex) {
         })
         .first()
 
-      if (permission.id) {
+      if (permission && permission.id) {
         return true
       }
     }
