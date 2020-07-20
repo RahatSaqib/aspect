@@ -11,7 +11,7 @@ import {
   percentageOrActualForPie,
 } from '../Helpers/Formatters'
 
-import GraphToolTip from '../GraphToolTip'
+import { GraphToolTip } from '../GraphToolTip'
 
 const cssClasses = classnames.bind(require('./PieGraph.css'))
 
