@@ -231,7 +231,7 @@ export const InventoryItems = ({
                 style={{ width: 320 }}
                 value={
                   selectInventoryItem ||
-                  (inventoryItems &&
+                  (inventoryItems && inventoryItems.length &&
                     inventoryItems[selectIndex].consumableId) ||
                   null
                 }
