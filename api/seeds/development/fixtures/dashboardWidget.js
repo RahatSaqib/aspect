@@ -157,6 +157,10 @@ module.exports = {
         x => x.externalId === 'deviceDaysActive'
       ),
       sortOrder: 13,
-    }
+    },
+    {
+      ...dashboardWidgetsBase.stat.find(x => x.externalId === 'errorRate'),
+      sortOrder: 14,
+    },
   ],
 }
