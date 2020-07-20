@@ -154,5 +154,9 @@ module.exports = {
       ),
       sortOrder: 12,
     },
+    {
+      ...dashboardWidgetsBase.stat.find(x => x.externalId === 'errorRate'),
+      sortOrder: 13,
+    },
   ],
 }
