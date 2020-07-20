@@ -18,7 +18,7 @@ import {
   normaliseKeys,
   filterByMultiple,
 } from './index'
-
+import { calcPercentageForGraphs } from './calcs'
 import { negateTimeZoneOffset } from './datetime'
 
 const groupByKey = (
@@ -154,10 +154,51 @@ const groupForPieOldTreatmentAPI = (data, keyToConsume, indexBy, filterBy) => {
   return [...groupedConfirmed, ...groupedNotConfirmed]
 }
 
+const groupForDeviceStatusAPI = (
+  data,
+  keyToConsume,
+  indexBy,
+  formatDate,
+  filterBy,
+  displayMethod = 'percentage'
+) => {
+  const filtered = filterBy ? filterByMultiple(data, filterBy) : data
+  const grouped = filtered.reduce((acc, curr) => {
+    const {
+      isWeekendOrHoliday,
+      devicesActive,
+      devicesTotal,
+      devicesInactive,
+    } = curr
+    const dateFormatted = formatDate
+      ? format(negateTimeZoneOffset(curr[indexBy]), formatDate)
+      : curr[indexBy]
+
+    const shouldBeZero = isWeekendOrHoliday || devicesTotal === 0
+
+    acc[curr[indexBy]] = {
+      date: dateFormatted,
+      devicesTotal,
+      devicesActiveRaw: devicesActive,
+      devicesActive: shouldBeZero
+        ? 0
+        : calcPercentageForGraphs(devicesActive, devicesTotal),
+      devicesInactive: shouldBeZero
+        ? 0
+        : calcPercentageForGraphs(devicesInactive, devicesTotal),
+      weekendOrHoliday: isWeekendOrHoliday ? 100 : 0,
+    }
+    return acc
+  }, {})
+
+  return normaliseKeys(grouped)
+}
+
 export {
   groupByKey,
   groupForPie,
   groupForDivergent,
   groupForOldTreatmentAPI,
   groupForPieOldTreatmentAPI,
+  groupForDeviceStatusAPI,
 }
