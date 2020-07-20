@@ -26,3 +26,10 @@
   font-weight: 900;
   margin-left: auto;
 }
+
+.tooltip__empty {
+  display: none;
+  height: 0;
+  width: 0;
+  background-color: transparent;
+}

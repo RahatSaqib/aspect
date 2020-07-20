@@ -1,6 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import classnames from 'classnames/bind'
+import startCase from 'lodash/startCase'
 
 const cssClasses = classnames.bind(require('./GraphTooltip.css'))
 
@@ -26,4 +27,10 @@ GraphToolTip.propTypes = {
   values: PropTypes.oneOfType([PropTypes.object]).isRequired,
 }
 
-export default GraphToolTip
+const EmptyTooltip = ({ title }) => (
+  <div className={cssClasses('tooltip__container')}>
+    <div className={cssClasses('tooltip__text')}>{startCase(title)}</div>
+  </div>
+)
+
+export { GraphToolTip, EmptyTooltip }
