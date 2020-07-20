@@ -38,7 +38,7 @@ async function getReplacedModuleSerials(knex, deviceId) {
   return replacedModuleSerials
 }
 
-async function mayTriggerModuleReplaced(knex, context, result) {
+async function shouldTriggerModuleReplaced(knex, context, result) {
   const { deviceId } = result
 
   if (!context.resultModuleReplaced) {
@@ -83,5 +83,5 @@ module.exports = {
   getPartnerPluginName,
   getDeviceTypePluginName,
   getReplacedModuleSerials,
-  mayTriggerModuleReplaced,
+  shouldTriggerModuleReplaced,
 }
