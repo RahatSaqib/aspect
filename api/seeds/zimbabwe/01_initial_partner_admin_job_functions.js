@@ -95,10 +95,6 @@ async function seed(knex) {
     { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.device.admin },
     { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.site.admin },
     { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.person.admin },
-    {
-      jobFunctionId: jobFunctionIdAdmin,
-      permissionId: modules.inventory.admin,
-    },
   ])
 
   const [jobIdAdmin] = await knex('Job').insert([
