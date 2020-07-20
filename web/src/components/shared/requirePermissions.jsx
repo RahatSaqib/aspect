@@ -116,7 +116,6 @@ export function getMatchedUserPermissions(
       // see if user's Level is greater than requested Level
       const nestedLevels = NESTED_ACCESS_LEVELS_FOR[level]
       if (nestedLevels && isArray(nestedLevels) && nestedLevels.length > 0) {
-
         // assemble fully defined permissions from nested levels
         const nestedPermissions = nestedLevels.map(
           nestedLevel => `${scope}:${nestedLevel}`

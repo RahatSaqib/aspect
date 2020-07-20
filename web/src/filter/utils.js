@@ -83,8 +83,8 @@ export const sanitizeFiltersStringBy = config => filtersString =>
   )
 
 const sanitizeBrowseLink = userPermissions => {
-  let permissions = []
-  
+  const permissions = []
+
   userPermissions.toJS().forEach(permission => {
     permissions.push(permission)
     if (permission.includes(':')) {
