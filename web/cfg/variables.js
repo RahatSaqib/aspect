@@ -11,14 +11,18 @@ const set = require('lodash/set')
 exports.customPropertiesVariables = {
   // Colors 2019
   '--alto': '#e0e0e0',
+
   '--atlantis': '#73d449',
   '--black': '#000000',
   '--blizzard-blue': '#a4e6f2',
+
   '--carnation': '#f45b69',
   '--cornflower-blue': '#4687f4',
+  '--eastern-blue': '#21A0B0',
   '--french-gray': '#b7b7be',
   '--froly': '#f36283',
   '--feijoa': '#aed581',
+
   '--iron': '#dadbdf',
   '--mako': '#444853',
   '--manatee': '#91949d',
@@ -45,6 +49,7 @@ exports.customPropertiesVariables = {
   '--sushi': '#7cb342',
   '--tradewind': '#67abb4',
   '--tuna': '#363844',
+
   '--venice-blue': '#084482',
   '--white-lilac': '#eef1f8',
   '--white-lilac-2': '#f6f7fb',
@@ -52,16 +57,22 @@ exports.customPropertiesVariables = {
   '--wild-sand': '#f6f6f6',
 
   // Colors 2020
+  '--anakiwa': '#73EBFF',
   '--azure-radiance': '#0091ff',
   '--chathams-blue': '#18527d',
+  '--conifer': '#99D25E',
   '--gallery': '#ececec',
+  '--geyser': '#CCDBE1',
   '--guardsman-red': '#d60000',
   '--humming-bird': '#d4f3f9',
   '--iron-2': '#e6e7e9',
   '--lavender': '#d38ae7',
   '--malibu': '#7fc4fa',
   '--saffron': '#f0bc2c',
+  '--selective-yellow-2': '#F7B600',
   '--steel-blue': '#5290c1',
+  '--thunderbird': '#DB2F17',
+  '--tundora': '#454545',
   '--your-pink': '#ffc9c4',
   '--malachite': '#00ca1c',
 
@@ -74,6 +85,7 @@ exports.customPropertiesVariables = {
   '--aspect-color-chill-blue-1': 'var(--ming, #34717c)',
   '--aspect-color-chill-blue-2': 'var(--paradiso, #3e8f98)',
   '--aspect-color-chill-blue-3': 'var(--tradewind, #67abb4)',
+  '--aspect-color-conifer': 'var(--conifer, #99D25E)',
   '--aspect-color-feijoa': 'var(--feijoa, #aed581)',
   '--aspect-color-grey-1': 'var(--tuna, #363844)',
   '--aspect-color-grey-2': 'var(--mako, #444853)',

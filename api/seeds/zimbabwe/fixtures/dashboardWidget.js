@@ -120,14 +120,26 @@ module.exports = {
       sortOrder: 7,
     },
     {
-      ...dashboardWidgetsBase.stat.find(
-        x => x.externalId === 'deviceDaysActive'
-      ),
+      ...dashboardWidgetsBase.stat.find(x => x.externalId === 'activeDevices'),
       sortOrder: 8,
     },
     {
-      ...dashboardWidgetsBase.stat.find(x => x.externalId === 'activeDevices'),
+      ...dashboardWidgetsBase.stat.find(x => x.externalId === 'stockouts'),
       sortOrder: 9,
+    },
+    {
+      ...dashboardWidgetsBase.stat.find(
+        x => x.externalId === 'deviceDaysActive'
+      ),
+      sortOrder: 10,
+    },
+    {
+      ...dashboardWidgetsBase.stat.find(x => x.externalId === 'errorRate'),
+      sortOrder: 11,
+    },
+    {
+      ...dashboardWidgetsBase.stat.find(x => x.externalId === 'activeDevices'),
+      sortOrder: 12,
     },
   ],
 }

@@ -5,6 +5,7 @@ import max from 'lodash/max'
 import pick from 'lodash/pick'
 import round from 'lodash/round'
 import sum from 'lodash/sum'
+import sumBy from 'lodash/sumBy'
 import values from 'lodash/values'
 
 import { filterColour } from './index'
@@ -119,7 +120,15 @@ const getAverageFromData = (data, value, which, culture) => {
   return {}
 }
 
+const calcOverallRate = (keyToCalc, totalTotal, gData) => {
+  const totalKey = sumBy(gData, d => Number(d[keyToCalc]))
+  const total = sumBy(gData, d => Number(d[totalTotal]))
+  const percentage = total > 0 ? (totalKey / total) * 100 : total
+  return percentage
+}
+
 export {
+  calcOverallRate,
   calcPercentageForGraphs,
   getMaxValueForDivergent,
   roundIfNumber,

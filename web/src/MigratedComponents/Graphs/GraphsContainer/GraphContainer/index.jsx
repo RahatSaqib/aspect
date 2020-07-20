@@ -21,8 +21,9 @@ import messages from '../messages'
 
 const cssClasses = classnames.bind(require('../GraphsContainer.css'))
 
-const GraphContainer = ({ config, size, assaysFromState }) => {
+const GraphContainer = ({ config, size, assaysFromState, group }) => {
   const dispatch = useDispatch()
+  const allowedGroupsWithoutAssays = ['assaysNotNeeded'].includes(group)
   const tempDispatchParams = []
   const { title, selectorModifiers = false } = config
   const { formatMessage: intlFormatMessage } = useIntl()
@@ -37,12 +38,14 @@ const GraphContainer = ({ config, size, assaysFromState }) => {
   useEffect(() => {
     const allowed = []
     validateGraphConfig(config).then(() => {
-      assays.map(a =>
-        assaysFromState.filter(
-          ({ externalId, hasResults }) =>
-            externalId === a && hasResults && allowed.push(a)
+      if (assays && assays.length > 0) {
+        assays.map(a =>
+          assaysFromState.filter(
+            ({ externalId, hasResults }) =>
+              externalId === a && hasResults && allowed.push(a)
+          )
         )
-      )
+      }
       setwhiteListed(allowed)
     })
   }, [config, assays, assaysFromState])
@@ -58,7 +61,9 @@ const GraphContainer = ({ config, size, assaysFromState }) => {
         ...base,
         api: { ...api, params: { ...merge(params, optionValue) } },
       }
-      dispatch(fetchClinicalIndicatorsDashboard(mergedAPI))
+      dispatch(
+        fetchClinicalIndicatorsDashboard(mergedAPI, allowedGroupsWithoutAssays)
+      )
     }
   }, [dispatchFromSelector])
 
@@ -68,14 +73,19 @@ const GraphContainer = ({ config, size, assaysFromState }) => {
         const { graphState } = dParams
         setDispatchFromChild(dParams)
         if (dParams && graphState === false) {
-          dispatch(fetchClinicalIndicatorsDashboard({ ...dParams }))
+          dispatch(
+            fetchClinicalIndicatorsDashboard(
+              { ...dParams },
+              allowedGroupsWithoutAssays
+            )
+          )
         }
         return true
       })
     }
   }, [dispatchParamsFromChild])
 
-  return whiteListed && whiteListed.length ? (
+  return (whiteListed && whiteListed.length) || allowedGroupsWithoutAssays ? (
     <PermissionsProvider permissions={['result:view']}>
       <Grid item xs={12} lg={outerSize}>
         <Grid container spacing={24}>
