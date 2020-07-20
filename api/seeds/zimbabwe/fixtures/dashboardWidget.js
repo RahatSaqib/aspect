@@ -128,7 +128,6 @@ module.exports = {
         x => x.externalId === 'deviceDaysActive'
       ),
       sortOrder: 9,
-
     },
   ],
 }
