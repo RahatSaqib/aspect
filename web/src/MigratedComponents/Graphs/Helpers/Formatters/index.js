@@ -58,7 +58,7 @@ const findArrayIndexByStringPartial = (array, key, string) => {
     array,
     i => i[key].toLowerCase() === formattedSearchString
   )
-  return index < 0 ? 0 : index
+  return index !== -1 ? index : 0
 }
 
 const formatValuesForGraphs = (value, displayMethod, formatNumber) => {
