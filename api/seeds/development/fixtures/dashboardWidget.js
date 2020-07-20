@@ -144,5 +144,19 @@ module.exports = {
       ),
       sortOrder: 10,
     },
+    {
+      ...dashboardWidgetsBase.stat.find(x => x.externalId === 'stockouts'),
+      sortOrder: 11,
+    },
+    {
+      ...dashboardWidgetsBase.stat.find(
+        x => x.externalId === 'deviceDaysActive'
+      ),
+      sortOrder: 12,
+    },
+    {
+      ...dashboardWidgetsBase.stat.find(x => x.externalId === 'errorRate'),
+      sortOrder: 13,
+    },
   ],
 }
