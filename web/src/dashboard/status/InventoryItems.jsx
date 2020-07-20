@@ -17,6 +17,7 @@ import { ResponsiveBar } from '@nivo/bar'
 import { fetchInventoryDashboard } from '../DashboardRedux'
 import { Unit } from '../../components/pureGrids'
 import StyledDropdown from '../../components/shared/StyledDropdown'
+import { findArrayIndexByStringPartial } from '../../MigratedComponents/Graphs/Helpers/Formatters'
 
 const cssClasses = classnames.bind(require('./Status.css'))
 
@@ -186,7 +187,13 @@ export const InventoryItems = ({
   history,
   ...restProps
 }) => {
-  const itemSelected = value || (inventoryItems && inventoryItems[0]) || null
+  const selectIndex = findArrayIndexByStringPartial(
+    inventoryItems,
+    'consumableName',
+    'GeneXpert MTB/Rif'
+  )
+  const itemSelected =
+    value || (inventoryItems && inventoryItems[selectIndex]) || null
   const filteredItem = _.omit(itemSelected, ['consumableId', 'consumableName'])
   const inventoryChartLabel = rearrangeInventoryKey(filteredItem)
   const data = []
@@ -224,7 +231,8 @@ export const InventoryItems = ({
                 style={{ width: 320 }}
                 value={
                   selectInventoryItem ||
-                  (inventoryItems && inventoryItems[0].consumableId) ||
+                  (inventoryItems &&
+                    inventoryItems[selectIndex].consumableId) ||
                   null
                 }
               />

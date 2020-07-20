@@ -1,4 +1,5 @@
 import first from 'lodash/first'
+import findIndex from 'lodash/findIndex'
 import forOwn from 'lodash/forOwn'
 import includes from 'lodash/includes'
 import keys from 'lodash/keys'
@@ -49,6 +50,15 @@ const filterByMultiple = (data, filterBy) => {
   return data.filter(d =>
     keys(filterBy).every(f => includes(filterBy[f].values, d[f]))
   )
+}
+
+const findArrayIndexByStringPartial = (array, key, string) => {
+  const formattedSearchString = string.toLowerCase()
+  const index = findIndex(
+    array,
+    i => i[key].toLowerCase() === formattedSearchString
+  )
+  return index < 0 ? 0 : index
 }
 
 const formatValuesForGraphs = (value, displayMethod, formatNumber) => {
@@ -322,6 +332,7 @@ export {
   formatValuesForGraphs,
   filterColour,
   filterByMultiple,
+  findArrayIndexByStringPartial,
   generateColorForLegend,
   generateColorForValue,
   generateLegend,
