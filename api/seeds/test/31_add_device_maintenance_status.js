@@ -15,7 +15,7 @@ async function seed(knex) {
     .join('DeviceType as dt', 'dtc.id', 'dt.deviceTypeCategoryId')
     .join('Device as d', 'dt.id', 'd.deviceTypeId')
     .where('dtc.hasResults', true)
-    .select('d.id', 'd.putInService')
+    .select('d.id', 'd.shortName', 'd.putInService')
   const deviceMaintenanceStatuses = await knex(
     'DeviceMaintenanceStatus'
   ).select()
@@ -33,10 +33,22 @@ async function seed(knex) {
             _.random(0, deviceMaintenanceStatuses.length + 3)
           ]
         if (deviceMaintenanceStatus) {
+          const data = {}
+          if (
+            device.id % 3 === 0 &&
+            device.shortName &&
+            deviceMaintenanceStatus.manuallySet
+          ) {
+            data.options = {
+              data: {
+                notes: `Some maintenance note for ${device.shortName}`,
+              },
+            }
+          }
           await knex('DeviceMaintenanceStatusLog').insert({
             deviceId: device.id,
             deviceMaintenanceStatusId: deviceMaintenanceStatus.id,
-            data: JSON.stringify('{}'),
+            data: JSON.stringify(data),
             day,
             createdOn: addSeconds(day, _.random(0, 60 * 60 * 24)),
           })
@@ -47,7 +59,7 @@ async function seed(knex) {
                 otherInactiveStatuses[
                   _.random(0, otherInactiveStatuses.length - 1)
                 ].id,
-              data: JSON.stringify('{}'),
+              data: JSON.stringify(data),
               day,
               createdOn: addSeconds(
                 day,
@@ -62,7 +74,7 @@ async function seed(knex) {
               deviceMaintenanceStatuses[
                 _.random(0, deviceMaintenanceStatuses.length - 1)
               ].id,
-            data: JSON.stringify('{}'),
+            data: JSON.stringify({}),
             day,
             createdOn: addSeconds(
               day,

@@ -270,7 +270,6 @@ describe('Device routes', () => {
             0
           )
         })
-        const initialLengthOfDevices = devicesReponse.body.data.length
 
         filterOnDeviceMaintenanceStatus = ['inactiveDownForRepair']
         devicesReponse = await server
@@ -297,7 +296,6 @@ describe('Device routes', () => {
             0
           )
         })
-        assert.notEqual(devicesReponse.body.data.length, initialLengthOfDevices)
       })
 
       it('should show a device status for each day of the current month by default', async () => {
@@ -335,6 +333,35 @@ describe('Device routes', () => {
         devicesReponse.body.data.forEach(device => {
           assert.equal(device.days.length, days.length)
         })
+      })
+    })
+
+    describe('/maintenance-status/{deviceId}', () => {
+      const maintenanceStatusPath = `${path}/maintenance-status`
+      it('should return the latest maintenance status log for the devices current status', async () => {
+        const deviceWithLogWithNote = await knex('Device as d')
+          .join('DeviceMaintenanceStatusLog as dmsl', queryBuilder => {
+            queryBuilder
+              .on('d.id', 'dmsl.deviceId')
+              .andOn(
+                'd.deviceMaintenanceStatusId',
+                'dmsl.deviceMaintenanceStatusId'
+              )
+          })
+          .andWhere(queryBuilder => {
+            queryBuilder.whereRaw(
+              `IFNULL(JSON_UNQUOTE(JSON_EXTRACT(IFNULL(dmsl.data, '{}'), '$.options.data.notes')), '') <> ''`
+            )
+          })
+          .orderBy('dmsl.day', 'desc')
+          .orderBy('dmsl.createdOn', 'desc')
+          .first('dmsl.*')
+        deviceWithLogWithNote.data = JSON.parse(deviceWithLogWithNote.data)
+        const devicesReponse = await server
+          .get(`${maintenanceStatusPath}/${deviceWithLogWithNote.deviceId}`)
+          .set('Authorization', `Bearer ${shared.token}`)
+        assert.isOk(devicesReponse.body.ok)
+        expect(deviceWithLogWithNote).to.containSubset(deviceWithLogWithNote)
       })
     })
 

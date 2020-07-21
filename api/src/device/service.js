@@ -41,6 +41,9 @@ const SELECT_LIST_FIELDS = [
   'dt.name as type',
   's.name as siteName',
   'da.name as approval',
+  'dms.externalId as maintenanceStatus',
+  'dms.active as maintenanceStatusActive',
+  'dms.manuallySet as maintenanceStatusManuallySet',
   'dc.name as category',
   'dc.hasResults',
   'dc.hasConnectivity',
@@ -54,6 +57,9 @@ const SELECT_SHOW_FIELDS = [
   'd.lastPingOn',
   'd.lastSeenOn as lastSeen',
   'da.name as approval',
+  'dms.externalId as maintenanceStatus',
+  'dms.active as maintenanceStatusActive',
+  'dms.manuallySet as maintenanceStatusManuallySet',
   'da.token as approvalToken',
   'dc.name as category',
   'dc.hasResults',
@@ -112,6 +118,11 @@ async function getListDevices(query, auth) {
     .leftJoin('Assay as a', 'dt.id', 'a.deviceTypeId')
     .leftJoin('AssayType as at', 'a.assayTypeId', 'at.id')
     .leftJoin('Disease as dis', 'at.diseaseId', 'dis.id')
+    .leftJoin(
+      'DeviceMaintenanceStatus as dms',
+      'd.deviceMaintenanceStatusId',
+      'dms.id'
+    )
     .where(queryBuilder => {
       if (query.deviceIds) {
         queryBuilder.whereIn('d.id', query.deviceIds.split(','))
@@ -120,7 +131,10 @@ async function getListDevices(query, auth) {
         query.deviceMaintenanceStatusId &&
         !_.isEmpty(query.deviceMaintenanceStatusId)
       ) {
-        queryBuilder.whereIn('d.id', query.deviceMaintenanceStatusId)
+        queryBuilder.whereIn(
+          'd.deviceMaintenanceStatusId',
+          query.deviceMaintenanceStatusId
+        )
       }
     })
     .modify(queryBuilder => {
@@ -311,6 +325,11 @@ async function getDeviceByDeviceId({
         .andOn('dmW.current', 1)
         .andOn('dmW.deviceMaintenanceTypeId', maintenanceWarrantyId)
     })
+    .leftJoin(
+      'DeviceMaintenanceStatus as dms',
+      'd.deviceMaintenanceStatusId',
+      'dms.id'
+    )
     .where('d.id', +deviceId)
     .modify(addConstraints, dataConstraints, {
       device: 'd',
@@ -1097,6 +1116,11 @@ async function deviceMaintenanceStatusHistory(request) {
     .leftJoin('Assay as a', 'dt.id', 'a.deviceTypeId')
     .leftJoin('AssayType as at', 'a.assayTypeId', 'at.id')
     .leftJoin('Disease as dis', 'at.diseaseId', 'dis.id')
+    .leftJoin(
+      'DeviceMaintenanceStatus as dms',
+      'd.deviceMaintenanceStatusId',
+      'dms.id'
+    )
     .where(queryBuilder => {
       if (!_.isEmpty(filterByDeviceIds)) {
         queryBuilder.whereIn('d.id', filterByDeviceIds)
@@ -1154,7 +1178,7 @@ async function deviceMaintenanceStatusHistory(request) {
     await knex.raw(
       `SELECT DeviceMaintenanceStatusLog.deviceId,
   DeviceMaintenanceStatusLog.day,
-  JSON_UNQUOTE(DeviceMaintenanceStatusLog.data) AS data,
+  DeviceMaintenanceStatusLog.data,
   DeviceMaintenanceStatus.externalId
 FROM (SELECT DeviceMaintenanceStatusLog.deviceId, DeviceMaintenanceStatusLog.day, MAX(DeviceMaintenanceStatusLog.createdOn) AS createdOn
       FROM DeviceMaintenanceStatusLog
@@ -1199,6 +1223,37 @@ ORDER BY DeviceMaintenanceStatusLog.deviceId, DeviceMaintenanceStatusLog.day ASC
   return result
 }
 
+async function deviceMaintenanceStatus(request) {
+  const { auth, params } = request
+  const { deviceId } = params
+  const dataConstraints = await getConstraints(auth.credentials)
+
+  const currentDeviceMaintenanceStatusLog =
+    (await knex('Device as d')
+      .leftJoin('DeviceMaintenanceStatusLog as dmsl', queryBuilder => {
+        queryBuilder
+          .on('d.id', 'dmsl.deviceId')
+          .andOn(
+            'd.deviceMaintenanceStatusId',
+            'dmsl.deviceMaintenanceStatusId'
+          )
+      })
+      .modify(addConstraints, dataConstraints, { device: 'd' })
+      .where('d.id', deviceId)
+      .orderBy('dmsl.day', 'desc')
+      .orderBy('dmsl.createdOn', 'desc')
+      .first('dmsl.*')) || {}
+  if (currentDeviceMaintenanceStatusLog.data) {
+    currentDeviceMaintenanceStatusLog.data = JSON.parse(
+      currentDeviceMaintenanceStatusLog.data
+    )
+  }
+  return {
+    ok: true,
+    data: currentDeviceMaintenanceStatusLog,
+  }
+}
+
 module.exports = {
   listDevices,
   showDevice,
@@ -1219,4 +1274,5 @@ module.exports = {
   onDeviceUpdateMaintenanceStatusNoResults,
   onDeviceUpdateMaintenanceStatus,
   deviceMaintenanceStatusHistory,
+  deviceMaintenanceStatus,
 }

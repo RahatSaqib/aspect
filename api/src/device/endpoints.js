@@ -20,6 +20,7 @@ const {
   onDeviceUpdateMaintenanceStatusNoResults,
   onDeviceMaintenanceResolved,
   deviceMaintenanceStatusHistory,
+  deviceMaintenanceStatus,
 } = require('./service')
 const { exportDevices } = require('./serviceReports')
 const {
@@ -158,6 +159,15 @@ function listDevicesBaseResponse() {
               approval: Joi.string()
                 .required()
                 .description('The current approval status of the device'),
+              maintenanceStatus: Joi.string()
+                .allow('', null)
+                .description('The current maintenance status of the device'),
+              maintenanceStatusActive: Joi.number()
+                .allow(null)
+                .description('Whether the device is active or not'),
+              maintenanceStatusManuallySet: Joi.number()
+                .allow(null)
+                .description('Whether the device status was manually set'),
               category: Joi.string()
                 .required()
                 .description('The device category'),
@@ -297,6 +307,15 @@ const deviceDetailsResponseFields = Joi.object()
     approval: Joi.string()
       .required()
       .description('The current approval status of the device'),
+    maintenanceStatus: Joi.string()
+      .allow('', null)
+      .description('The current maintenance status of the device'),
+    maintenanceStatusActive: Joi.number()
+      .allow(null)
+      .description('Whether the device is active or not'),
+    maintenanceStatusManuallySet: Joi.number()
+      .allow(null)
+      .description('Whether the device status was manually set'),
     approvalToken: Joi.string()
       .required()
       .description('The external ID of the approval'),
@@ -516,6 +535,21 @@ const routes = [
     },
   },
   {
+    method: 'GET',
+    path: '/device/maintenance-status/{deviceId}',
+    handler: asyncHandler(deviceMaintenanceStatus),
+    config: {
+      description: 'Device Maintenance Status Information for a Device',
+      notes: 'Gets the Device Maintenance Status Log Information',
+      auth: { scope: ['device:view', 'device:edit', 'operationalData:view'] },
+      validate: {
+        params: {
+          deviceId: Joi.string().description('Device id').required(),
+        },
+      },
+    },
+  },
+  {
     method: 'POST',
     path: '/device/maintenance-status/{deviceId}',
     handler: asyncHandler(manuallySetDeviceMaintenanceStatus),
@@ -616,6 +650,15 @@ const routes = [
                 approval: Joi.string()
                   .required()
                   .description('The current approval status of the device'),
+                maintenanceStatus: Joi.string()
+                  .allow('', null)
+                  .description('The current maintenance status of the device'),
+                maintenanceStatusActive: Joi.number()
+                  .allow(null)
+                  .description('Whether the device is active or not'),
+                maintenanceStatusManuallySet: Joi.number()
+                  .allow(null)
+                  .description('Whether the device status was manually set'),
                 category: Joi.string()
                   .required()
                   .description('The device category'),
