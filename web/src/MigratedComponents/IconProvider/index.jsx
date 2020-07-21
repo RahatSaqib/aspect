@@ -4,7 +4,7 @@ import CircularProgress from '@material-ui/core/CircularProgress'
 
 const cssClasses = classnames.bind(require('./Icons.css'))
 
-function IconProvider({ icon: IconName, iconClass }) {
+function IconProvider({ icon: IconName, className }) {
   const IconComponent = lazy(() =>
     import('react-icons/md').then(module => {
       return { default: module[IconName] || module.MdDashboard }
@@ -12,7 +12,7 @@ function IconProvider({ icon: IconName, iconClass }) {
   )
   return (
     <Suspense fallback={<CircularProgress />}>
-      <div className={cssClasses([iconClass])}>
+      <div className={cssClasses([className])}>
         <IconComponent />
       </div>
     </Suspense>

@@ -148,7 +148,7 @@ export const SummaryStatus = ({
               <div className={cssClasses('Summary__Card__Title')}>
                 <IconProvider
                   icon={widget.icon}
-                  iconClass="summaryCard__icon"
+                  className="summaryCard__icon"
                 />
                 <span className={cssClasses('Summary__Card__Title--main')}>
                   {formatMessage('title', widget, intl, defaultMessages)}
