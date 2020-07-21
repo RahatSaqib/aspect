@@ -25,7 +25,7 @@ module.exports = {
   stat: [
     {
       jobFunctions: ['all'],
-      icon: 'link',
+      icon: 'MdLink',
       title: 'TestsPerDay',
       titleI18nKey: 'dashboardWidgetTestsPerDayTitle',
       subTitle: null,
@@ -101,7 +101,7 @@ module.exports = {
     },
     {
       jobFunctions: ['all'],
-      icon: 'link',
+      icon: 'MdLink',
       title: 'ValidResultsPc',
       titleI18nKey: 'dashboardWidgetValidResultsPc',
       subTitle: null,
@@ -128,7 +128,7 @@ module.exports = {
       dashboards: ['operational'],
     },
     {
-      icon: 'link',
+      icon: 'MdLink',
       title: 'Utilization Rate',
       titleI18nKey: 'utilizationRateTitle',
       subTitle: null,
@@ -189,7 +189,7 @@ module.exports = {
       dashboards: ['operational'],
     },
     {
-      icon: 'fa-reg-calendar-check',
+      icon: 'MdEventAvailable',
       title: 'Days active',
       titleI18nKey: 'deviceDaysActiveTitle',
       subTitle: null,
