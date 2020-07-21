@@ -25,7 +25,7 @@ module.exports = {
   stat: [
     {
       jobFunctions: ['all'],
-      icon: 'MdLink',
+      icon: 'FaLink',
       title: 'TestsPerDay',
       titleI18nKey: 'dashboardWidgetTestsPerDayTitle',
       subTitle: null,
