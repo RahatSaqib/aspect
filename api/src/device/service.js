@@ -1060,6 +1060,33 @@ async function deviceMaintenanceStatusHistory(request) {
   const { query, auth } = request
   const { minDate, maxDate = new Date() } = query
   const dataConstraints = await getConstraints(auth.credentials)
+
+  const days = []
+  let day = minDate || startOfMonth(new Date())
+  while (day <= (maxDate || startOfToday())) {
+    days.push(day)
+    day = addDays(day, 1)
+  }
+  let filterByDeviceIds = query.deviceIds ? query.deviceIds.split(',') : []
+  if (
+    query.deviceMaintenanceStatusId &&
+    !_.isEmpty(query.deviceMaintenanceStatusId)
+  ) {
+    filterByDeviceIds = await knex('DeviceMaintenanceStatusLog as dmsl')
+      .whereIn(
+        'dmsl.deviceMaintenanceStatusId',
+        query.deviceMaintenanceStatusId
+      )
+      .andWhere(queryBuilder => {
+        queryBuilder.whereBetween('dmsl.day', [days[0], days[days.length - 1]])
+        if (!_.isEmpty(filterByDeviceIds)) {
+          queryBuilder.whereIn('dmsl.deviceId', filterByDeviceIds)
+        }
+      })
+      .distinct('dmsl.deviceId')
+      .pluck('dmsl.deviceId')
+  }
+
   const devices = await knex('Device as d')
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .innerJoin('DeviceApproval as da', 'd.deviceApprovalId', 'da.id')
@@ -1071,8 +1098,8 @@ async function deviceMaintenanceStatusHistory(request) {
     .leftJoin('AssayType as at', 'a.assayTypeId', 'at.id')
     .leftJoin('Disease as dis', 'at.diseaseId', 'dis.id')
     .where(queryBuilder => {
-      if (query.deviceIds) {
-        queryBuilder.whereIn('d.id', query.deviceIds.split(','))
+      if (!_.isEmpty(filterByDeviceIds)) {
+        queryBuilder.whereIn('d.id', filterByDeviceIds)
       }
     })
     .andWhere('dc.hasResults', true)
@@ -1123,12 +1150,6 @@ async function deviceMaintenanceStatusHistory(request) {
         .as('resultCount'),
     ])
     .distinct()
-  const days = []
-  let day = minDate || startOfMonth(new Date())
-  while (day <= (maxDate || startOfToday())) {
-    days.push(day)
-    day = addDays(day, 1)
-  }
   const latestDeviceMaintenanceStatusLogsPerDay = (
     await knex.raw(
       `SELECT DeviceMaintenanceStatusLog.deviceId,

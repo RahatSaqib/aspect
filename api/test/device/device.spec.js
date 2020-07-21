@@ -1,7 +1,13 @@
 const supertest = require('supertest')
 const chai = require('chai')
 const _ = require('lodash')
+const { addDays, startOfToday, startOfMonth } = require('date-fns')
+
 const shared = require('../utils/sharedToken')
+const {
+  allDeviceMaintenanceStatusToId,
+} = require('../../src/shared/dictionary')
+const { formatDateOrDefault } = require('../../src/shared/date')
 const { knex } = require('../../src/db')
 const {
   assertPropertiesOfListItem,
@@ -235,6 +241,100 @@ describe('Device routes', () => {
         assert.property(devicesReponse.body.data[0].days[0], 'externalId')
         assert.property(devicesReponse.body.data[0].days[0], 'isWeekend')
         assert.property(devicesReponse.body.data[0].days[0], 'data')
+      })
+
+      it('should filter based on device maintenance status', async () => {
+        const deviceMaintenanceStatuses = await allDeviceMaintenanceStatusToId()
+        let filterOnDeviceMaintenanceStatus = ['active', 'inactiveConnectivity']
+        let devicesReponse = await server
+          .get(
+            `${maintenanceStatusPath}?${filterOnDeviceMaintenanceStatus
+              .map(
+                status =>
+                  `deviceMaintenanceStatusId=${deviceMaintenanceStatuses[status]}`
+              )
+              .join('&')}`
+          )
+          .set('Authorization', `Bearer ${shared.token}`)
+        assert.isOk(devicesReponse.body.ok)
+        assert.isAbove(devicesReponse.body.length, 0)
+        assert.equal(
+          devicesReponse.body.length,
+          devicesReponse.body.data.length
+        )
+        devicesReponse.body.data.forEach(device => {
+          assert.isAbove(
+            device.days.filter(day =>
+              filterOnDeviceMaintenanceStatus.includes(day.externalId)
+            ).length,
+            0
+          )
+        })
+        const initialLengthOfDevices = devicesReponse.body.data.length
+
+        filterOnDeviceMaintenanceStatus = ['inactiveDownForRepair']
+        devicesReponse = await server
+          .get(
+            `${maintenanceStatusPath}?${filterOnDeviceMaintenanceStatus
+              .map(
+                status =>
+                  `deviceMaintenanceStatusId=${deviceMaintenanceStatuses[status]}`
+              )
+              .join('&')}`
+          )
+          .set('Authorization', `Bearer ${shared.token}`)
+        assert.isOk(devicesReponse.body.ok)
+        assert.isAbove(devicesReponse.body.length, 0)
+        assert.equal(
+          devicesReponse.body.length,
+          devicesReponse.body.data.length
+        )
+        devicesReponse.body.data.forEach(device => {
+          assert.isAbove(
+            device.days.filter(day =>
+              filterOnDeviceMaintenanceStatus.includes(day.externalId)
+            ).length,
+            0
+          )
+        })
+        assert.notEqual(devicesReponse.body.data.length, initialLengthOfDevices)
+      })
+
+      it('should show a device status for each day of the current month by default', async () => {
+        const devicesReponse = await server
+          .get(maintenanceStatusPath)
+          .set('Authorization', `Bearer ${shared.token}`)
+        const days = []
+        let day = startOfMonth(new Date())
+        while (day <= startOfToday()) {
+          days.push(day)
+          day = addDays(day, 1)
+        }
+        devicesReponse.body.data.forEach(device => {
+          assert.equal(device.days.length, days.length)
+        })
+      })
+
+      it('should show a device status for each day in between the date filters', async () => {
+        const fromDate = new Date(2020, 3, 5)
+        const toDate = new Date(2020, 4, 13)
+        const devicesReponse = await server
+          .get(
+            `${maintenanceStatusPath}?minDate=${formatDateOrDefault(
+              fromDate,
+              'yyyy-MM-dd'
+            )}&maxDate=${formatDateOrDefault(toDate, 'yyyy-MM-dd')}`
+          )
+          .set('Authorization', `Bearer ${shared.token}`)
+        const days = []
+        let day = fromDate
+        while (day <= toDate) {
+          days.push(day)
+          day = addDays(day, 1)
+        }
+        devicesReponse.body.data.forEach(device => {
+          assert.equal(device.days.length, days.length)
+        })
       })
     })
 

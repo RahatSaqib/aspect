@@ -16,6 +16,7 @@ const cacheConfig = {
   DeviceApproval: {
     keyColumn: 'token',
   },
+  DeviceMaintenanceStatus: {},
   DeviceMaintenanceType: {},
   DeviceType: {
     additionalColumns: ['plugin'],
