@@ -3,7 +3,7 @@ const dashboardWidgetsBase = require('../../fixtures/dashboardWidgetsBase')
 module.exports = {
   stat: [
     {
-      icon: 'place',
+      icon: 'MdPlace',
       title: 'Sites',
       titleI18nKey: 'sitesTitle',
       externalId: 'sitesTitle',
@@ -18,7 +18,7 @@ module.exports = {
       dashboards: ['home'],
     },
     {
-      icon: 'computer',
+      icon: 'MdComputer',
       title: 'Devices',
       titleI18nKey: 'devicesTitle',
       externalId: 'devicesTitle',
@@ -33,7 +33,7 @@ module.exports = {
       dashboards: ['home'],
     },
     {
-      icon: 'assignment',
+      icon: 'MdAssignment',
       title: 'Results',
       titleI18nKey: 'resultsTitle',
       externalId: 'resultsTitle',
@@ -48,7 +48,7 @@ module.exports = {
       dashboards: ['home'],
     },
     {
-      icon: 'perm-identity',
+      icon: 'MdPermIdentity',
       title: 'Contacts',
       titleI18nKey: 'personTitle',
       externalId: 'personTitle',
