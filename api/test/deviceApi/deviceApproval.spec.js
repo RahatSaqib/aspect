@@ -12,7 +12,7 @@ const context = createTestContext(server, {
   user: 'admin',
   type: 'DaktariVirology',
   partner: 'Partner One',
-  status: 'assigned',
+  approval: 'assigned',
 })
 
 describe('Device API approval tests', () => {
