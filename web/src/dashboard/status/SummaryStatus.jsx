@@ -6,12 +6,13 @@ import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
 import Card from '@material-ui/core/Card'
+import { MdAndroid } from 'react-icons/md'
 import { Unit } from '../../components/pureGrids'
-import Icon from '../../components/shared/icon/Icon'
 import { fetchStatDashboard } from '../DashboardRedux'
 import requirePermissions from '../../components/shared/requirePermissions'
 import messages from './messages'
 import AspectTooltip from '../../components/shared/AspectTooltip'
+import IconProvider from '../../MigratedComponents/IconProvider'
 
 const cssClasses = classnames.bind(require('./Status.css'))
 
@@ -142,10 +143,9 @@ export const SummaryStatus = ({
           >
             <Card className={cssClasses('Summary__Card')}>
               <div className={cssClasses('Summary__Card__Title')}>
-                <Icon
-                  className={cssClasses('Summary__Card__Title__Icon')}
-                  // eslint-disable-next-line import/no-dynamic-require
-                  type={require(`../../components/shared/icon/assets/${widget.icon}.svg`)}
+                <IconProvider
+                  icon={widget.icon}
+                  iconClass="summaryCard__icon"
                 />
                 <span className={cssClasses('Summary__Card__Title--main')}>
                   {formatMessage('title', widget, intl, defaultMessages)}
