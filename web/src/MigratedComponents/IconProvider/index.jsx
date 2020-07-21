@@ -7,7 +7,7 @@ const cssClasses = classnames.bind(require('./Icons.css'))
 function IconProvider({ icon: IconName, iconClass }) {
   const IconComponent = lazy(() =>
     import('react-icons/md').then(module => {
-      return { default: module[IconName] }
+      return { default: module[IconName] || module.MdDashboard }
     })
   )
   return (
