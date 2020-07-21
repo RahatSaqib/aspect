@@ -36,6 +36,7 @@ import Summary from '../../../globals/components/Summary'
 import requirePermissions from '../../../components/shared/requirePermissions'
 import CalibrationDialog from '../../maintenance/CalibrationDialog'
 import WarrantyDialog from '../../maintenance/WarrantyDialog'
+import MaintenanceStatusDialog from '../../maintenance/MaintenanceStatusDialog'
 
 const cssClasses = classnames.bind(require('../DeviceDetail.css'))
 
@@ -806,6 +807,13 @@ export const DeviceDetailProfile = ({
           intl={intl}
           device={device}
           isDialogActive={activeDialog.get('name') === 'calibration'}
+          onCancel={onHideDialog}
+          onSubmit={onCalibrationSubmit}
+        />
+        <MaintenanceStatusDialog
+          intl={intl}
+          device={device}
+          isDialogActive={activeDialog.get('name') === 'maintenance'}
           onCancel={onHideDialog}
           onSubmit={onCalibrationSubmit}
         />
