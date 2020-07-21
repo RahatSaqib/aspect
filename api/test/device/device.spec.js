@@ -348,7 +348,7 @@ describe('Device routes', () => {
                 'dmsl.deviceMaintenanceStatusId'
               )
           })
-          .andWhere(queryBuilder => {
+          .where(queryBuilder => {
             queryBuilder.whereRaw(
               `IFNULL(JSON_UNQUOTE(JSON_EXTRACT(IFNULL(dmsl.data, '{}'), '$.options.data.notes')), '') <> ''`
             )
@@ -558,6 +558,58 @@ describe('Device routes', () => {
             })
         })
       }
+    })
+
+    describe('/maintenance-status/{deviceId}', () => {
+      const maintenanceStatusPath = `${path}/maintenance-status`
+      it('should save the maintenance status of the device', async () => {
+        const editableDeviceMaintenanceStatusIds = await knex(
+          'DeviceMaintenanceStatus'
+        )
+          .where('manuallySet', true)
+          .andWhere('externalId', '<>', 'inactiveDownForRepair')
+          .select('id')
+          .pluck('id')
+
+        const devicesWithEditableStatus = await server
+          .get(
+            `${path}?${editableDeviceMaintenanceStatusIds
+              .map(statusId => `deviceMaintenanceStatusId=${statusId}`)
+              .join('&')}`
+          )
+          .set('Authorization', `Bearer ${shared.token}`)
+
+        const deviceWithEditableStatus = devicesWithEditableStatus.body.data[0]
+        const payload = {
+          externalId: 'inactiveDownForRepair',
+          options: {
+            data: {
+              notes:
+                "Service engineer visited yesterday and couldn't finish by 3:30 PM",
+            },
+          },
+        }
+        const updateMaintenanceStatusResponse = await server
+          .post(`${maintenanceStatusPath}/${deviceWithEditableStatus.id}`)
+          .set('Authorization', `Bearer ${shared.token}`)
+          .send(payload)
+        assert.isOk(updateMaintenanceStatusResponse.body.ok)
+        assert.isOk(
+          updateMaintenanceStatusResponse.body.deviceMaintenanceStatusLogId
+        )
+        const deviceMaitnenanceStatusLog = await knex(
+          'DeviceMaintenanceStatusLog'
+        )
+          .where(
+            'id',
+            updateMaintenanceStatusResponse.body.deviceMaintenanceStatusLogId
+          )
+          .first()
+        deviceMaitnenanceStatusLog.data = JSON.parse(
+          deviceMaitnenanceStatusLog.data
+        )
+        expect(deviceMaitnenanceStatusLog.data).to.containSubset(payload)
+      })
     })
   })
 })

@@ -907,7 +907,7 @@ async function manuallySetDeviceMaintenanceStatus(request) {
   const currentlyLoggedInUser = await getUser(credentials.name)
   const deviceMaintenanceStatusLogId = await setDeviceMaintenanceStatus(
     deviceId,
-    currentlyLoggedInUser,
+    currentlyLoggedInUser.id,
     deviceMaintenanceStatus.id,
     startOfDay(day),
     payload,

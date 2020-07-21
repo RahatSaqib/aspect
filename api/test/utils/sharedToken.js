@@ -3,14 +3,12 @@ const chai = require('chai')
 const { assert } = chai
 
 module.exports = {
-  // this can be reused in tests for all routes that require authentication
   checkToken(server, path) {
     it('should return 401 and error message when trying to get without access token', done => {
       server.get(path).end((err, res) => {
         assert.equal(res.status, 401)
         assert.isString(res.body.message)
         assert.notEqual(res.body.message, '')
-        // assert.equal(res.body.message, 'No token provided')
         done()
       })
     })
@@ -23,7 +21,6 @@ module.exports = {
           assert.equal(res.status, 401)
           assert.isString(res.body.message)
           assert.notEqual(res.body.message, '')
-          // assert.equal(res.body.message, 'Failed to authenticate token')
           done()
         })
     })
@@ -39,7 +36,6 @@ module.exports = {
           assert.equal(res.status, 401)
           assert.isString(res.body.message)
           assert.notEqual(res.body.message, '')
-          // assert.equal(res.body.message, 'Failed to authenticate token')
           done()
         })
     })

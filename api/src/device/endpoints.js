@@ -570,6 +570,11 @@ const routes = [
             .description(
               'Specified date for the maintenance status so that it can be updated as an historical snapshot'
             ),
+          options: Joi.object()
+            .allow(null)
+            .description(
+              'The additional JSON data to append in the maintenance status log. Data values such as extra dates and notes can be included in this object'
+            ),
         },
       },
       response: {
@@ -580,7 +585,6 @@ const routes = [
           ok: Joi.bool()
             .required()
             .description('False if there was some sort of error'),
-          data: deviceDetailsResponseFields,
           deviceMaintenanceStatusLogId: Joi.number()
             .required()
             .description('DeviceMaintenanceStatusLog.id that was created'),
