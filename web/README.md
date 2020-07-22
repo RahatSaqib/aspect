@@ -77,7 +77,6 @@ aws s3 cp dist s3://aspect-web-dev --recursive
 ```
 
 ## Updating Dependencies
-
 To check which dependencies have newer versions available:
 
 ```bash

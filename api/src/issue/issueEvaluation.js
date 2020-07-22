@@ -212,16 +212,37 @@ async function triggeredEventOlderThan(knex, issue, issueAge) {
   return Promise.resolve(issueTriggeredOnPlusAge < new Date())
 }
 
-async function checkResultCategory(knex, issue, category) {
-  if (category.index !== 1 && category.index !== 2) {
-    // currently only support two categories in data model
+async function checkResultCategory(knex, issue, evaluationParameter) {
+  // currently only support result category one and two in the data model
+  const allowedParameters = ['assays', 'resultCategory1', 'resultCategory2']
+  if (Object.keys(_.omit(evaluationParameter, allowedParameters)).length > 0) {
     return false
   }
   const result = await knex('Result as r')
-    .join('ResultCategory as rc', 'rc.id', `r.resultCategory${category.index}`)
+    .join('Assay as a', 'r.assayId', 'a.id')
+    .join('ResultCategory as rc1', 'rc1.id', 'r.resultCategory1')
+    .join('ResultCategory as rc2', 'rc2.id', 'r.resultCategory2')
     .join('Issue as i', 'i.resultId', 'r.id')
-    .where({ 'i.id': issue.id, 'rc.externalId': category.externalId })
+    .where({ 'i.id': issue.id })
+    .modify(queryBuilder => {
+      if (evaluationParameter.assays) {
+        queryBuilder.whereIn('a.externalId', evaluationParameter.assays)
+      }
+      if (evaluationParameter.resultCategory1) {
+        queryBuilder.whereIn(
+          'rc1.externalId',
+          evaluationParameter.resultCategory1
+        )
+      }
+      if (evaluationParameter.resultCategory2) {
+        queryBuilder.whereIn(
+          'rc2.externalId',
+          evaluationParameter.resultCategory2
+        )
+      }
+    })
     .first('r.id')
+
   return result != null
 }
 
