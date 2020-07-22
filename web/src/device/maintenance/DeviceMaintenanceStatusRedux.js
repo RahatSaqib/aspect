@@ -19,7 +19,7 @@ function createDeviceMaintenanceStatus() {
   return { type: types.REQUEST_DEVICE_MAINTENCE_STATUS }
 }
 
-function createReceiveDeviceApprovals(items) {
+function createReceiveMaintenanceStatus(items) {
   return {
     type: types.RECEIVE_DEVICE_MAINTENCE_STATUS,
     items,
@@ -44,7 +44,7 @@ export function fetchDeviceMaintenanceStatus(forceRefresh) {
     }
 
     dispatch(createDeviceMaintenanceStatus())
-    return aspectFetch('/device/approval-types', {
+    return aspectFetch('/device/maintenance-statuses', {
       errorNotifications: {
         400: filterFieldsRejectedError(
           defineMessages({
@@ -64,7 +64,7 @@ export function fetchDeviceMaintenanceStatus(forceRefresh) {
           })
         ),
       },
-    }).then(json => dispatch(createReceiveDeviceApprovals(json.data)))
+    }).then(json => dispatch(createReceiveMaintenanceStatus(json.data)))
   }
 }
 
@@ -93,9 +93,9 @@ function receiveMaintenanceStatus(state, items, lastRefreshed) {
 
 export default function workflowStatusReducer(state = initialState, action) {
   switch (action.type) {
-    case types.REQUEST_DEVICE_APPROVALS:
+    case types.REQUEST_DEVICE_MAINTENCE_STATUS:
       return requestDeviceMaintenanceStatus(state)
-    case types.RECEIVE_DEVICE_APPROVALS:
+    case types.RECEIVE_DEVICE_MAINTENCE_STATUS:
       return receiveMaintenanceStatus(state, action.items, action.lastRefreshed)
     default:
       return state

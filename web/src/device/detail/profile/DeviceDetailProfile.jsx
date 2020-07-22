@@ -36,7 +36,7 @@ import Summary from '../../../globals/components/Summary'
 import requirePermissions from '../../../components/shared/requirePermissions'
 import CalibrationDialog from '../../maintenance/CalibrationDialog'
 import WarrantyDialog from '../../maintenance/WarrantyDialog'
-import MaintenanceStatusDialog from '../../maintenance/MaintenanceStatusDialog'
+import DeviceMaintenanceStatusDialog from '../../maintenance/DeviceMaintenanceStatusDialog'
 
 const cssClasses = classnames.bind(require('../DeviceDetail.css'))
 
@@ -121,6 +121,10 @@ const messages = defineMessages({
       one {# result}
       other {# results}
     }`,
+  },
+  maintenance: {
+    id: 'pages.DeviceDetailProfile.maintenance',
+    defaultMessage: 'Maintenance Status',
   },
   noResults: {
     id: 'pages.DeviceDetailProfile.noResults',
@@ -276,6 +280,9 @@ const enhance = compose(
     onShowCalibrationDialog: ({ showDialog, device }) => () => {
       showDialog('calibration', device)
     },
+    onShowMaintenanceDialog: ({ showDialog, device }) => () => {
+      showDialog('maintenance', device)
+    },
     onShowWarrantyDialog: ({ showDialog, device }) => () => {
       showDialog('warranty', device)
     },
@@ -284,6 +291,12 @@ const enhance = compose(
     onCalibrationSubmit: ({ device, updateDeviceMaintenance }) => values =>
       updateDeviceMaintenance({
         externalId: 'calibration',
+        device,
+        values,
+      }),
+    onMaintenanceSubmit: ({ device, updateDeviceMaintenance }) => values =>
+      updateDeviceMaintenance({
+        externalId: 'maintenance',
         device,
         values,
       }),
@@ -574,9 +587,11 @@ export const DeviceDetailProfile = ({
   pageAt,
   pageSize,
   activeDialog,
+  onShowMaintenanceDialog,
   onShowCalibrationDialog,
   onShowWarrantyDialog,
   onHideDialog,
+  onMaintenanceSubmit,
   onCalibrationSubmit,
   onWarrantySubmit,
   table,
@@ -801,6 +816,23 @@ export const DeviceDetailProfile = ({
                 )
               }
             />
+            {/* Maintenance Status Summary */}
+            <Summary
+              title={intl.formatMessage(messages.maintenance)}
+              description={
+                device.get('maintenanceStatus') ||
+                intl.formatMessage(messages.undefinedValue)
+              }
+              action={
+                <Button
+                  variant="contained"
+                  onClick={onShowMaintenanceDialog}
+                  disabled={disabled}
+                >
+                  {intl.formatMessage(messages.buttonChange)}
+                </Button>
+              }
+            />
           </div>
         </Card>
         <CalibrationDialog
@@ -810,12 +842,12 @@ export const DeviceDetailProfile = ({
           onCancel={onHideDialog}
           onSubmit={onCalibrationSubmit}
         />
-        <MaintenanceStatusDialog
+        <DeviceMaintenanceStatusDialog
           intl={intl}
           device={device}
           isDialogActive={activeDialog.get('name') === 'maintenance'}
           onCancel={onHideDialog}
-          onSubmit={onCalibrationSubmit}
+          onSubmit={onMaintenanceSubmit}
         />
         <WarrantyDialog
           intl={intl}

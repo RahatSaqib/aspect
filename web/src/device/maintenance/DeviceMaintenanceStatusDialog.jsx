@@ -2,11 +2,10 @@ import React, { useState, useEffect } from 'react'
 import _ from 'lodash'
 import { defineMessages } from 'react-intl'
 
-import MaintenanceStatusSelectField from 'src/filter/resource/MaintenanceStatusSelectField'
 import classnames from 'classnames/bind'
 import Button from '@material-ui/core/Button'
 import TextField from '@material-ui/core/TextField'
-import InputLabel from '@material-ui/core/InputLabel'
+import DeviceMaintenanceStatusSelectField from '../../filter/resource/DeviceMaintenanceStatusSelectField'
 import recomposeForm from '../../components/recomposeForm'
 
 import AspectDialog from '../../components/shared/AspectDialog'
@@ -16,15 +15,15 @@ const cssClasses = classnames.bind(require('./BaseDialog.css'))
 const messages = defineMessages({
   dialogTitle: {
     id: 'pages.MaintenanceStatusDialog.dialogTitle',
-    defaultMessage: 'Device Calibration',
+    defaultMessage: 'Device Maintenance',
   },
-  calibrationDate: {
-    id: 'pages.MaintenanceStatusDialog.calibrationDate',
-    defaultMessage: 'Calibration Date',
+  cancel: {
+    id: 'pages.MaintenanceStatusDialog.cancel',
+    defaultMessage: 'Cancel',
   },
-  calibrationDateIsRequired: {
-    id: 'pages.MaintenanceStatusDialog.calibrationDateIsRequired',
-    defaultMessage: 'Calibration Date is required',
+  submit: {
+    id: 'pages.MaintenanceStatusDialog.submit',
+    defaultMessage: 'Submit',
   },
   notes: {
     id: 'pages.MaintenanceStatusDialog.notes',
@@ -32,7 +31,7 @@ const messages = defineMessages({
   },
   maintenanceStatus: {
     id: 'pages.MaintenanceStatusDialog.maintenanceStatus',
-    defaultMessage: 'Maintenance status,',
+    defaultMessage: 'Maintenance status',
   },
 })
 
@@ -44,7 +43,7 @@ export function validate({ contextDate }, { intl }) {
   return errors
 }
 
-const maintenanceStatusDialog = WrappedComponent => props => {
+const deviceMaintenanceStatusDialog = WrappedComponent => props => {
   const [values, setValues] = useState({})
   const { device, intl } = props
 
@@ -74,12 +73,11 @@ const FormDialog = ({
   isDialogActive,
   onCancel,
   // --- injected by recompose ---
-  dateFormat,
   labels,
   form,
   values,
   meta,
-  onMaintenanceStatusChange,
+  onMaintenanceStatusIdChange,
   onNotesChange,
   handleSubmit,
 }) => (
@@ -106,22 +104,18 @@ const FormDialog = ({
     <form className={cssClasses('Form')}>
       <div className={cssClasses('Form__Content')}>
         <section>
-          {_.has(values, 'contextDate') && (
-            <div>
-              <MaintenanceStatusSelectField
-                value={values.maintenanceStatusId}
-                onDeviceApprovalChange={onMaintenanceStatusChange}
-                floating
-                LabelFixed
-                hintText={intl.formatMessage(messages.maintenanceStatus)}
-                floatingLabelText={intl.formatMessage(
-                  messages.maintenanceStatus
-                )}
-                style={{ verticalAlign: 'bottom' }}
-                autoWidth
-              />
-            </div>
-          )}
+          <div>
+            <DeviceMaintenanceStatusSelectField
+              value={values.maintenanceStatusId}
+              onMaintenanceStatusIdChange={onMaintenanceStatusIdChange}
+              floatingLabelText={intl.formatMessage(messages.maintenanceStatus)}
+              fullWidth
+              helperText={
+                meta.maintenanceStatusId.touched &&
+                meta.maintenanceStatusId.error
+              }
+            />
+          </div>
         </section>
         <section>
           <TextField
@@ -150,12 +144,12 @@ const FormDialog = ({
 
 export default _.flowRight(
   React.memo,
-  maintenanceStatusDialog,
+  deviceMaintenanceStatusDialog,
   recomposeForm({
     fields: [
       {
         fieldName: 'maintenanceStatusId',
-        valueFromChangeEvent: it => it.target.value,
+        valueFromChangeEvent: it => it,
       },
       {
         fieldName: 'notes',
