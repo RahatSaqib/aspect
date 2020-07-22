@@ -22,6 +22,7 @@ import FlagIcon from '../../components/shared/flagIcon/FlagIcon'
 import { timezones, languages } from '../../filter/hardcoded'
 import messages from './messages'
 import AspectCheckbox from '../../components/shared/AspectCheckbox'
+import PermissionsProvider from '../../Providers/PermissionsProvider'
 
 const cssClasses = classnames.bind(require('./PersonDetail.css'))
 
@@ -257,7 +258,6 @@ const enhance = compose(
 export const ContactDetailsForm = ({
   intl,
   loading,
-  userIsAdmin,
   showNotesField,
   onEmailBlur,
   canModify = true,
@@ -456,7 +456,7 @@ export const ContactDetailsForm = ({
           inputProps={{ maxLength: 45 }}
         />
       </section>
-      {userIsAdmin && (
+      <PermissionsProvider permissions={['person:edit']}>
         <section>
           <h1>{intl.formatMessage(messages.partner)}</h1>
           <PartnerSelectField
@@ -479,7 +479,7 @@ export const ContactDetailsForm = ({
             aria-haspopup
           />
         </section>
-      )}
+      </PermissionsProvider>
       <section>
         <TextField
           select
