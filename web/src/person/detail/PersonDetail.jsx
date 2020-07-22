@@ -36,6 +36,7 @@ import {
 import { fetchPartnersAndJobFunctionsForSelectList } from '../../job/JobRedux'
 import { showAcknowledgement } from '../../appNotification/AppNotificationRedux'
 import PropTypeOf from '../../shared/types'
+import PermissionsProvider from '../../Providers/PermissionsProvider'
 
 import messages from './messages'
 import styles from './PersonDetail.css'
@@ -255,7 +256,6 @@ export class PersonDetail extends PureComponent {
     const contactDetails = new ContactDetails(person)
     const loginDetails = new LoginDetails(person)
     const userPreferences = new UserPreferences(person)
-    const userIsAdmin = user.jwt.permissions.includes('person:edit')
     const loading = !isNew && (!person || person.get('loaded') !== true)
     const canLogIn = person && !!person.get('canLogIn')
     const shouldPrefill = !isNew && person && person.get('userId') == null
@@ -276,31 +276,33 @@ export class PersonDetail extends PureComponent {
                 <div>
                   {!isNew && !person && <LinearProgress />}
                   {loading && <LinearProgress />}
-
-                  <PersonDetailBackBar
-                    formatMessage={formatMessage}
-                    history={history}
-                    location={location}
-                    match={match}
-                    {...props}
-                    isNew={isNew}
-                    title={isNew ? 'Add Contact' : person && person.get('name')}
-                    canUserLoggedIn={!isNew && userIsAdmin && canLogIn}
-                  />
-                  <Paper className={styles.ContactDetailsForm}>
-                    <ContactDetailsForm
-                      intl={intl}
-                      loading={loading}
-                      onEmailBlur={this.handleEmailBlur}
-                      contactDetails={contactDetails}
-                      showNotesField
-                      userIsAdmin
-                      isUserChange={this.handlePersonCanLogIn}
-                      onSubmit={this.saveContactDetails}
-                      userPreferences={userPreferences}
-                      saveUserPreferences={this.saveUserPreferences}
+                  <PermissionsProvider permissions={['person:edit']}>
+                    <PersonDetailBackBar
+                      formatMessage={formatMessage}
+                      history={history}
+                      location={location}
+                      match={match}
+                      {...props}
+                      isNew={isNew}
+                      title={
+                        isNew ? 'Add Contact' : person && person.get('name')
+                      }
+                      canUserLoggedIn={!isNew && canLogIn}
                     />
-                  </Paper>
+                    <Paper className={styles.ContactDetailsForm}>
+                      <ContactDetailsForm
+                        intl={intl}
+                        loading={loading}
+                        onEmailBlur={this.handleEmailBlur}
+                        contactDetails={contactDetails}
+                        showNotesField
+                        isUserChange={this.handlePersonCanLogIn}
+                        onSubmit={this.saveContactDetails}
+                        userPreferences={userPreferences}
+                        saveUserPreferences={this.saveUserPreferences}
+                      />
+                    </Paper>
+                  </PermissionsProvider>
                 </div>
               ) : (
                 <Redirect to={match.url} />
@@ -314,16 +316,18 @@ export class PersonDetail extends PureComponent {
               <div>
                 {loading && <LinearProgress />}
 
-                <PersonDetailBackBar
-                  formatMessage={formatMessage}
-                  history={history}
-                  location={location}
-                  match={match}
-                  {...props}
-                  isNew={isNew}
-                  title={person && person.get('name')}
-                  canUserLoggedIn={!isNew && userIsAdmin && canLogIn}
-                />
+                <PermissionsProvider permissions={['person:edit']}>
+                  <PersonDetailBackBar
+                    formatMessage={formatMessage}
+                    history={history}
+                    location={location}
+                    match={match}
+                    {...props}
+                    isNew={isNew}
+                    title={person && person.get('name')}
+                    canUserLoggedIn={!isNew && canLogIn}
+                  />
+                </PermissionsProvider>
 
                 <Paper className={styles.ContactDetailsForm}>
                   <LoginDetailsForm
@@ -345,16 +349,18 @@ export class PersonDetail extends PureComponent {
               <div>
                 {loading && <LinearProgress />}
 
-                <PersonDetailBackBar
-                  formatMessage={formatMessage}
-                  history={history}
-                  location={location}
-                  match={match}
-                  {...props}
-                  isNew={isNew}
-                  title={person && person.get('name')}
-                  canUserLoggedIn={!isNew && userIsAdmin && canLogIn}
-                />
+                <PermissionsProvider permissions={['person:edit']}>
+                  <PersonDetailBackBar
+                    formatMessage={formatMessage}
+                    history={history}
+                    location={location}
+                    match={match}
+                    {...props}
+                    isNew={isNew}
+                    title={person && person.get('name')}
+                    canUserLoggedIn={!isNew && canLogIn}
+                  />
+                </PermissionsProvider>
 
                 <Paper className={styles.ContactDetailsForm}>
                   <JobAssignmentForm
