@@ -219,6 +219,38 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable a
         variant="standard"
       />
     </section>
+    <Memo(PermissionsProvider)
+      permissions={
+        Array [
+          "person:edit",
+        ]
+      }
+    >
+      <section>
+        <h1>
+          Partner
+        </h1>
+        <pure(Connect(lifecycle(mapProps(PartnerSelectField))))
+          aria-haspopup={true}
+          autoWidth={true}
+          className="PartnerDropDown"
+          disabled={true}
+          emptyId="-1"
+          emptyText=""
+          errorStyle={
+            Object {
+              "float": "left",
+              "textOverflow": "visible",
+              "whiteSpace": "nowrap",
+            }
+          }
+          floatingLabelText="Partner"
+          name="lastPartnerId"
+          onChangePartner={[Function]}
+          tabIndex="0"
+        />
+      </section>
+    </Memo(PermissionsProvider)>
     <section>
       <TextField
         InputLabelProps={
@@ -1136,6 +1168,38 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
         variant="standard"
       />
     </section>
+    <Memo(PermissionsProvider)
+      permissions={
+        Array [
+          "person:edit",
+        ]
+      }
+    >
+      <section>
+        <h1>
+          Partner
+        </h1>
+        <pure(Connect(lifecycle(mapProps(PartnerSelectField))))
+          aria-haspopup={true}
+          autoWidth={true}
+          className="PartnerDropDown"
+          disabled={false}
+          emptyId="-1"
+          emptyText=""
+          errorStyle={
+            Object {
+              "float": "left",
+              "textOverflow": "visible",
+              "whiteSpace": "nowrap",
+            }
+          }
+          floatingLabelText="Partner"
+          name="lastPartnerId"
+          onChangePartner={[Function]}
+          tabIndex="0"
+        />
+      </section>
+    </Memo(PermissionsProvider)>
     <section>
       <TextField
         InputLabelProps={
@@ -2053,6 +2117,38 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
         variant="standard"
       />
     </section>
+    <Memo(PermissionsProvider)
+      permissions={
+        Array [
+          "person:edit",
+        ]
+      }
+    >
+      <section>
+        <h1>
+          Partner
+        </h1>
+        <pure(Connect(lifecycle(mapProps(PartnerSelectField))))
+          aria-haspopup={true}
+          autoWidth={true}
+          className="PartnerDropDown"
+          disabled={false}
+          emptyId="-1"
+          emptyText=""
+          errorStyle={
+            Object {
+              "float": "left",
+              "textOverflow": "visible",
+              "whiteSpace": "nowrap",
+            }
+          }
+          floatingLabelText="Partner"
+          name="lastPartnerId"
+          onChangePartner={[Function]}
+          tabIndex="0"
+        />
+      </section>
+    </Memo(PermissionsProvider)>
     <section>
       <TextField
         InputLabelProps={
@@ -2970,6 +3066,38 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
         variant="standard"
       />
     </section>
+    <Memo(PermissionsProvider)
+      permissions={
+        Array [
+          "person:edit",
+        ]
+      }
+    >
+      <section>
+        <h1>
+          Partner
+        </h1>
+        <pure(Connect(lifecycle(mapProps(PartnerSelectField))))
+          aria-haspopup={true}
+          autoWidth={true}
+          className="PartnerDropDown"
+          disabled={false}
+          emptyId="-1"
+          emptyText=""
+          errorStyle={
+            Object {
+              "float": "left",
+              "textOverflow": "visible",
+              "whiteSpace": "nowrap",
+            }
+          }
+          floatingLabelText="Partner"
+          name="lastPartnerId"
+          onChangePartner={[Function]}
+          tabIndex="0"
+        />
+      </section>
+    </Memo(PermissionsProvider)>
     <section>
       <TextField
         InputLabelProps={
@@ -3887,6 +4015,38 @@ exports[`ContactDetailsForm module ContactDetailsForm component should enable th
         variant="standard"
       />
     </section>
+    <Memo(PermissionsProvider)
+      permissions={
+        Array [
+          "person:edit",
+        ]
+      }
+    >
+      <section>
+        <h1>
+          Partner
+        </h1>
+        <pure(Connect(lifecycle(mapProps(PartnerSelectField))))
+          aria-haspopup={true}
+          autoWidth={true}
+          className="PartnerDropDown"
+          disabled={false}
+          emptyId="-1"
+          emptyText=""
+          errorStyle={
+            Object {
+              "float": "left",
+              "textOverflow": "visible",
+              "whiteSpace": "nowrap",
+            }
+          }
+          floatingLabelText="Partner"
+          name="lastPartnerId"
+          onChangePartner={[Function]}
+          tabIndex="0"
+        />
+      </section>
+    </Memo(PermissionsProvider)>
     <section>
       <TextField
         InputLabelProps={
@@ -4804,6 +4964,38 @@ exports[`ContactDetailsForm module ContactDetailsForm component should render co
         variant="standard"
       />
     </section>
+    <Memo(PermissionsProvider)
+      permissions={
+        Array [
+          "person:edit",
+        ]
+      }
+    >
+      <section>
+        <h1>
+          Partner
+        </h1>
+        <pure(Connect(lifecycle(mapProps(PartnerSelectField))))
+          aria-haspopup={true}
+          autoWidth={true}
+          className="PartnerDropDown"
+          disabled={false}
+          emptyId="-1"
+          emptyText=""
+          errorStyle={
+            Object {
+              "float": "left",
+              "textOverflow": "visible",
+              "whiteSpace": "nowrap",
+            }
+          }
+          floatingLabelText="Partner"
+          name="lastPartnerId"
+          onChangePartner={[Function]}
+          tabIndex="0"
+        />
+      </section>
+    </Memo(PermissionsProvider)>
     <section>
       <TextField
         InputLabelProps={
@@ -5705,6 +5897,38 @@ exports[`ContactDetailsForm module ContactDetailsForm component should show form
         variant="standard"
       />
     </section>
+    <Memo(PermissionsProvider)
+      permissions={
+        Array [
+          "person:edit",
+        ]
+      }
+    >
+      <section>
+        <h1>
+          Partner
+        </h1>
+        <pure(Connect(lifecycle(mapProps(PartnerSelectField))))
+          aria-haspopup={true}
+          autoWidth={true}
+          className="PartnerDropDown"
+          disabled={false}
+          emptyId="-1"
+          emptyText=""
+          errorStyle={
+            Object {
+              "float": "left",
+              "textOverflow": "visible",
+              "whiteSpace": "nowrap",
+            }
+          }
+          floatingLabelText="Partner"
+          name="lastPartnerId"
+          onChangePartner={[Function]}
+          tabIndex="0"
+        />
+      </section>
+    </Memo(PermissionsProvider)>
     <section>
       <TextField
         InputLabelProps={
