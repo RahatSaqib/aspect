@@ -21,7 +21,7 @@ async function seed(knex) {
 
   const issueTypeExternalId = 'ResultReceived'
 
-  // seed the issue type itseld
+  // seed the issue type itself
   await addIssueTypes(knex, partnerId, adminId, [issueTypeExternalId])
 
   // seed issue event trigger
