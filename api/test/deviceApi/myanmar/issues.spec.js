@@ -245,14 +245,17 @@ describe('Myanmar Issue endpoints', () => {
 
       /* -------
         submit result with changed moduleSerial and __SAME__ 
-        values for instrumentSerial, startedOn, startedOn and sampleId
+        values for instrumentSerial, startedOn, endedOn and sampleId
         as in one of 5 above results. Otherwise a new entry in 'result' table will be created.
         Keep in mind that we have to use same values for these 4 fields 
         because API calls func
-          createUniqueIdForResult(instrumentSerial, startedOn, startedOn, sampleId)
+          createUniqueIdForResult(instrumentSerial, startedOn, endedOn, sampleId)
         to get unique result externalId.
         For details what fields are used for uniqueness of result - see
         plugins 'preProcessMergeResult' or global search for 'createUniqueIdForResult'
+
+        Notice that changing only moduleSerial is needed for issue type ModuleTemperatureError,
+        not for ModuleReplaced.
       ------- */
       const errorTestResultId = `UNIQUE-ID-WITH-TEMP-ERROR-X`
       // new value for module serial

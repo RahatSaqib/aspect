@@ -72,7 +72,7 @@ async function onResultLogged({ resultId }, { messageContext }) {
     // get all modules that were replaced so we can ignore them in the queries below:
     const replacedModuleSerials = await getReplacedModuleSerials(knex, deviceId)
 
-    await shouldTriggerModuleReplaced(knex, messageContext, result)
+    await shouldTriggerModuleReplaced(knex, messageContext, resultId)
 
     // prepare query for device results
     const deviceErrorQuery = knex('Result as r')
