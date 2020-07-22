@@ -29,7 +29,9 @@ function IconProvider({ icon, className }) {
   return (
     <Suspense fallback={<CircularProgress />}>
       <div className={cssClasses([className])}>
-        <ErrorBoundary>
+        <ErrorBoundary
+          fallbackComponent={() => <IconProvider icon="FaQuestionCircle" />}
+        >
           <IconComponent />
         </ErrorBoundary>
       </div>
