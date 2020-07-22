@@ -1065,8 +1065,6 @@ async function getAssayResultCategoryList(dataConstraints) {
 }
 
 async function operationalDataActivityOverTime(request) {
-  // mocked for zimbabwe seeds
-  const isMocked = process.env['seeds.directory'] === './seeds/zimbabwe/'
   const { auth, query } = request
   const dataConstraints = await getConstraints(auth.credentials)
 
@@ -1114,8 +1112,6 @@ async function operationalDataActivityOverTime(request) {
     })
   // now we can update the total devices that were in the system per day:
   days.forEach(day => {
-    const mockedTotalDevices = _.random(12, 58)
-    const mockedActiveDevice = _.round(_.random(0, mockedTotalDevices))
     const devices = devicesByFirstResult.filter(c => c.minEndedOn <= day.date)
     const devicesActive = devicesActiveByDay.find(
       c =>
@@ -1123,15 +1119,9 @@ async function operationalDataActivityOverTime(request) {
         c.endedOnDate.getMonth() === day.date.getMonth() &&
         c.endedOnDate.getFullYear() === day.date.getFullYear()
     )
-    day.devicesTotal = !isMocked ? devices.length : mockedTotalDevices
-    day.devicesActive = devicesActive
-      ? devicesActive.deviceCount
-      : !isMocked
-      ? 0
-      : mockedActiveDevice
-    day.devicesInactive = !isMocked
-      ? day.devicesTotal - day.devicesActive
-      : mockedTotalDevices - mockedActiveDevice
+    day.devicesTotal = devices.length
+    day.devicesActive = devicesActive ? devicesActive.deviceCount : 0
+    day.devicesInactive = day.devicesTotal - day.devicesActive
     day.isWeekendOrHoliday = isWeekend(day.date)
   })
 
