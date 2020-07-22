@@ -43,6 +43,7 @@ const GraphRender = ({
     const { [id]: graphState = false } = parentState
     return {
       culture,
+      // graphState: { data: [] },
       graphState,
     }
   })
@@ -85,6 +86,12 @@ const GraphRender = ({
     })
   }, [])
 
+  const EmptyOrLoading = () => {
+    const { data } = graphState
+    const isEmpty = data && data.length < 1 && !graphData && !graphKeys
+    return isEmpty ? <EmptyGraph type={type} /> : <CircularProgress />
+  }
+
   return (
     <Grid item xs={12} lg={size}>
       <div className={cssClasses('graphrender__container')}>
@@ -99,11 +106,7 @@ const GraphRender = ({
           />
         )}
         <div className={cssClasses('graphrender__spinner')}>
-          {graphState && graphState.length < 1 && !graphData && !graphKeys ? (
-            <EmptyGraph type={type} />
-          ) : (
-            <CircularProgress />
-          )}
+          <EmptyOrLoading />
         </div>
       </div>
     </Grid>
