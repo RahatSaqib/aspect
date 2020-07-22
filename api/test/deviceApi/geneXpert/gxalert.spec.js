@@ -29,9 +29,12 @@ const {
 const { run } = require('../../../src/db')
 const {
   allDeviceMaintenanceStatusToId,
+  deviceApprovalToId,
 } = require('../../../src/shared/dictionary')
+const { formatDateOrDefault } = require('../../../src/shared/date')
 const { waitForApproximately } = require('../../utils/generatorFunctionUtils')
 const { waitForIdle, waitForAction } = require('../../utils/mqUtils')
+const shared = require('../../utils/sharedToken')
 const {
   deviceSeen,
   deviceMaintenance,
@@ -43,6 +46,7 @@ const server = supertest.agent('http://localhost:8080')
 const { assert, expect } = chai
 
 describe('Device API routes for GxAlert Device', () => {
+  shared.checkToken(server, '/api/device')
   function createContext() {
     return createGxAlertTestContext(server)
   }
@@ -3532,66 +3536,168 @@ describe('Device API routes for GxAlert Device', () => {
         )
       }))
 
-    it('should change the maintenance status of an inactive device to active', () =>
-      runTest(async knex => {
-        useGxAlertDeviceId(gxAlertDeviceId)
-        await postToDeviceApi({
-          authHeader: deviceAuth,
-          payload: _.merge({}, basicDevicePayload, {
-            name: deviceName,
-            configuration: {},
-          }),
-        })
-        let geneXpertDevice = await getCurrentGeneXpertDevice()
-        const deviceMaintenanceStatuses = await allDeviceMaintenanceStatusToId()
-        const startedOn = setMilliseconds(new Date(), 0)
-        const endedOn = addHours(startedOn, 2)
-        await knex('DeviceMaintenanceStatusLog').insert({
-          deviceId: geneXpertDevice.id,
-          deviceMaintenanceStatusId: deviceMaintenanceStatuses.inactiveUnknown,
-          day: startOfDay(endedOn),
-          data: '{}',
-          createdOn: new Date(),
-        })
-        await knex('Device').where('deviceId', geneXpertDevice.id).update({
-          deviceMaintenanceStatusId: deviceMaintenanceStatuses.inactiveUnknown,
-        })
-        const resultId = 'A_RESULT_FROM_INACTIVE_DEVICE'
-        await postToDeviceApi({
-          authHeader: deviceAuth,
-          payload: _.merge(
-            {},
-            basicDevicePayload,
-            { name: deviceName },
-            basicResultPayload,
+    describe(`result's effect on device maintenance status`, () => {
+      it('should change the maintenance status of an inactive device to active', () =>
+        runTest(async knex => {
+          useGxAlertDeviceId(gxAlertDeviceId)
+          await postToDeviceApi({
+            authHeader: deviceAuth,
+            payload: _.merge({}, basicDevicePayload, {
+              name: deviceName,
+              configuration: {},
+            }),
+          })
+          let geneXpertDevice = await getCurrentGeneXpertDevice()
+          const deviceMaintenanceStatuses = await allDeviceMaintenanceStatusToId()
+          const startedOn = setMilliseconds(new Date(), 0)
+          const endedOn = addHours(startedOn, 2)
+          await knex('DeviceMaintenanceStatusLog').insert({
+            deviceId: geneXpertDevice.id,
+            deviceMaintenanceStatusId:
+              deviceMaintenanceStatuses.inactiveUnknown,
+            day: startOfDay(endedOn),
+            data: '{}',
+            createdOn: new Date(),
+          })
+          await knex('Device').where('id', geneXpertDevice.id).update({
+            deviceMaintenanceStatusId:
+              deviceMaintenanceStatuses.inactiveUnknown,
+          })
+          const resultId = 'A_RESULT_FROM_INACTIVE_DEVICE'
+          await postToDeviceApi({
+            authHeader: deviceAuth,
+            payload: _.merge(
+              {},
+              basicDevicePayload,
+              { name: deviceName },
+              basicResultPayload,
+              {
+                result: {
+                  id: resultId,
+                  startedOn,
+                  endedOn,
+                },
+              }
+            ),
+          })
+          await waitForAction({ type: types.DEVICE_MAINTENANCE_STATUS_LOGGED })
+          await waitForIdle()
+          geneXpertDevice = await getCurrentGeneXpertDevice()
+          assert.equal(geneXpertDevice.deviceMaintenanceStatus, 'active')
+          const latestMaintenanceStatusLog = await knex(
+            'DeviceMaintenanceStatusLog'
+          )
+            .where('deviceId', geneXpertDevice.id)
+            .orderBy('createdOn', 'desc')
+            .orderBy('id', 'desc')
+            .first()
+          expect(latestMaintenanceStatusLog).to.containSubset({
+            day: startOfDay(endedOn),
+            deviceMaintenanceStatusId: deviceMaintenanceStatuses.active,
+          })
+          assert.equal(
+            latestMaintenanceStatusLog.day.toISOString(),
+            startOfDay(endedOn).toISOString()
+          )
+        }))
+
+      it('should change the maintenance status of an inactive device to active for the day that the test was done', () =>
+        runTest(async knex => {
+          useGxAlertDeviceId(gxAlertDeviceId)
+          await postToDeviceApi({
+            authHeader: deviceAuth,
+            payload: _.merge({}, basicDevicePayload, {
+              name: deviceName,
+              configuration: {},
+            }),
+          })
+          let geneXpertDevice = await getCurrentGeneXpertDevice()
+          const deviceMaintenanceStatuses = await allDeviceMaintenanceStatusToId()
+          const approvedId = await deviceApprovalToId('approved')
+          const startedOn = setMilliseconds(subDays(new Date(), 5), 0)
+          const endedOn = addHours(startedOn, 2)
+          await knex('DeviceMaintenanceStatusLog').insert([
             {
-              result: {
-                id: resultId,
-                startedOn,
-                endedOn,
-              },
-            }
-          ),
-        })
-        await waitForAction({ type: types.DEVICE_MAINTENANCE_STATUS_LOGGED })
-        await waitForIdle()
-        geneXpertDevice = await getCurrentGeneXpertDevice()
-        assert.equal(geneXpertDevice.deviceMaintenanceStatus, 'active')
-        const latestMaintenanceStatusLog = await knex(
-          'DeviceMaintenanceStatusLog'
-        )
-          .where('deviceId', geneXpertDevice.id)
-          .orderBy('createdOn', 'desc')
-          .first()
-        expect(latestMaintenanceStatusLog).to.containSubset({
-          day: startOfDay(endedOn),
-          deviceMaintenanceStatusId: deviceMaintenanceStatuses.active,
-        })
-        assert.equal(
-          latestMaintenanceStatusLog.day.toISOString(),
-          startOfDay(endedOn).toISOString()
-        )
-      }))
+              deviceId: geneXpertDevice.id,
+              deviceMaintenanceStatusId:
+                deviceMaintenanceStatuses.inactiveUnknown,
+              day: startOfDay(endedOn),
+              data: '{}',
+              createdOn: new Date(),
+            },
+            {
+              deviceId: geneXpertDevice.id,
+              deviceMaintenanceStatusId:
+                deviceMaintenanceStatuses.inactiveUnknown,
+              day: startOfDay(new Date()),
+              data: '{}',
+              createdOn: new Date(),
+            },
+          ])
+          await knex('Device').where('id', geneXpertDevice.id).update({
+            deviceMaintenanceStatusId:
+              deviceMaintenanceStatuses.inactiveUnknown,
+            deviceApprovalId: approvedId,
+          })
+          let devicesResponse = await server
+            .get('/api/device/maintenance-status')
+            .set('Authorization', `Bearer ${shared.token}`)
+            .query({
+              deviceIds: geneXpertDevice.id,
+              minDate: formatDateOrDefault(subDays(startedOn, 1), 'yyyy-MM-dd'),
+            })
+          assert.equal(devicesResponse.body.data.length, 1)
+          devicesResponse.body.data.forEach(device => {
+            device.days.forEach(day => {
+              assert.equal(day.externalId, 'inactiveUnknown')
+            })
+          })
+          const resultId = 'ANOTHER_RESULT_FROM_INACTIVE_DEVICE'
+          await postToDeviceApi({
+            authHeader: deviceAuth,
+            payload: _.merge(
+              {},
+              basicDevicePayload,
+              { name: deviceName },
+              basicResultPayload,
+              {
+                result: {
+                  id: resultId,
+                  startedOn,
+                  endedOn,
+                },
+              }
+            ),
+          })
+          await waitForAction({ type: types.DEVICE_MAINTENANCE_STATUS_LOGGED })
+          await waitForIdle()
+          geneXpertDevice = await getCurrentGeneXpertDevice()
+          assert.equal(
+            geneXpertDevice.deviceMaintenanceStatus,
+            'inactiveUnknown'
+          )
+          devicesResponse = await server
+            .get('/api/device/maintenance-status')
+            .set('Authorization', `Bearer ${shared.token}`)
+            .query({
+              deviceIds: geneXpertDevice.id,
+              minDate: formatDateOrDefault(subDays(startedOn, 1), 'yyyy-MM-dd'),
+            })
+          assert.equal(devicesResponse.body.data.length, 1)
+          devicesResponse.body.data.forEach(device => {
+            device.days.forEach(day => {
+              if (
+                day.date < startOfDay(addDays(endedOn, 1)) &&
+                day.date >= startOfDay(endedOn)
+              ) {
+                assert.equal(day.externalId, 'active')
+              } else {
+                assert.equal(day.externalId, 'inactiveUnknown')
+              }
+            })
+          })
+        }))
+    })
 
     describe('when the assay in the result payload is unknown to Aspect', () => {
       const assayName = 'New Assay Type'

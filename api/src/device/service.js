@@ -1088,25 +1088,31 @@ async function deviceMaintenanceStatusHistory(request) {
     days.push(day)
     day = addDays(day, 1)
   }
-  let filterByDeviceIds = query.deviceIds ? query.deviceIds.split(',') : []
-  if (
-    query.deviceMaintenanceStatusId &&
-    !_.isEmpty(query.deviceMaintenanceStatusId)
-  ) {
-    filterByDeviceIds = await knex('DeviceMaintenanceStatusLog as dmsl')
-      .whereIn(
-        'dmsl.deviceMaintenanceStatusId',
-        query.deviceMaintenanceStatusId
-      )
-      .andWhere(queryBuilder => {
-        queryBuilder.whereBetween('dmsl.day', [days[0], days[days.length - 1]])
-        if (!_.isEmpty(filterByDeviceIds)) {
-          queryBuilder.whereIn('dmsl.deviceId', filterByDeviceIds)
-        }
-      })
-      .distinct('dmsl.deviceId')
-      .pluck('dmsl.deviceId')
-  }
+  const queryDeviceIds = query.deviceIds ? query.deviceIds.split(',') : []
+  const filterByDeviceIds = await knex('Device as d')
+    .leftJoin('DeviceMaintenanceStatusLog as dmsl', queryBuilder => {
+      queryBuilder
+        .on(
+          knex.raw('dmsl.day BETWEEN ? AND ?', [days[0], days[days.length - 1]])
+        )
+        .andOn('d.id', 'dmsl.deviceId')
+    })
+    .modify(queryBuilder => {
+      if (
+        query.deviceMaintenanceStatusId &&
+        !_.isEmpty(query.deviceMaintenanceStatusId)
+      ) {
+        queryBuilder.whereIn(
+          'dmsl.deviceMaintenanceStatusId',
+          query.deviceMaintenanceStatusId
+        )
+      }
+      if (!_.isEmpty(queryDeviceIds)) {
+        queryBuilder.whereIn('d.id', queryDeviceIds)
+      }
+    })
+    .distinct('d.id')
+    .pluck('d.id')
 
   const devices = await knex('Device as d')
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
@@ -1123,12 +1129,12 @@ async function deviceMaintenanceStatusHistory(request) {
       'd.deviceMaintenanceStatusId',
       'dms.id'
     )
-    .where(queryBuilder => {
+    .where('dc.hasResults', true)
+    .modify(queryBuilder => {
       if (!_.isEmpty(filterByDeviceIds)) {
         queryBuilder.whereIn('d.id', filterByDeviceIds)
       }
     })
-    .andWhere('dc.hasResults', true)
     .modify(filterParams, query, {
       countryId: 'g.countryId',
       stateId: 'g.stateId',
@@ -1176,9 +1182,11 @@ async function deviceMaintenanceStatusHistory(request) {
         .as('resultCount'),
     ])
     .distinct()
-  const latestDeviceMaintenanceStatusLogsPerDay = (
-    await knex.raw(
-      `SELECT DeviceMaintenanceStatusLog.deviceId,
+  const latestDeviceMaintenanceStatusLogsPerDay = _.isEmpty(devices)
+    ? []
+    : (
+        await knex.raw(
+          `SELECT DeviceMaintenanceStatusLog.deviceId,
   DeviceMaintenanceStatusLog.day,
   DeviceMaintenanceStatusLog.data,
   DeviceMaintenanceStatus.externalId
@@ -1194,9 +1202,9 @@ JOIN DeviceMaintenanceStatusLog ON DeviceMaintenanceStatusLog.deviceId = LatestD
                                 AND DeviceMaintenanceStatusLog.createdOn = LatestDeviceLatestMaintenanceLogsPerDay.createdOn
 JOIN DeviceMaintenanceStatus ON DeviceMaintenanceStatus.id = DeviceMaintenanceStatusLog.deviceMaintenanceStatusId
 ORDER BY DeviceMaintenanceStatusLog.deviceId, DeviceMaintenanceStatusLog.day ASC;`,
-      [days[0], days[days.length - 1]]
-    )
-  )[0]
+          [days[0], days[days.length - 1]]
+        )
+      )[0]
   const result = {
     ok: true,
     total: devices.length,
