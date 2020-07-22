@@ -761,6 +761,57 @@ async function seedIssueEventTriggersForPartner(
   )
 }
 
+// Ensures all escalation triggers for the given partner.
+// This will only seed for escalation triggers that do
+// not already exist for given partner issue type, and level so
+// it can be called multiple times, and can be called after seeding custom triggers
+async function seedIssueEscalationTriggersForPartner(
+  knex,
+  partnerId,
+  identifiers = []
+) {
+  const now = new Date()
+
+  // get escalation triggers limited by the identifiers
+  const { data } = await readJson(
+    './seeds/fixtures/IssueEscalationTrigger.json'
+  )
+
+  const [issueTypes] = await Promise.all([
+    rowsAsObject(knex, 'IssueType', 'externalId'),
+  ])
+
+  await Promise.each(
+    data,
+    async ({
+      identifier,
+      issueType,
+      escalateToLevel,
+      escalationConditions,
+    }) => {
+      // only try to insert/update if the issue type exists
+      if (identifiers.indexOf(identifier) >= 0 && issueTypes[issueType]) {
+        const triggerData = {
+          partnerId,
+          issueTypeId: issueTypes[issueType].id,
+          escalateToLevel,
+        }
+        const existingTrigger = await knex('IssueEscalationTrigger')
+          .where(triggerData)
+          .first('id')
+        if (existingTrigger == null) {
+          await knex('IssueEscalationTrigger').insert({
+            ...triggerData,
+            escalationConditions: JSON.stringify(escalationConditions),
+            createdOn: now,
+            updatedOn: now,
+          })
+        }
+      }
+    }
+  )
+}
+
 // ***********************************************************************
 // 'whereKeys' is a string with single field name or array with field names
 async function upsertItems(knex, tableName, whereKeys, items) {
@@ -3043,4 +3094,5 @@ module.exports = {
   mapJobFunctionPermissions,
   seedDashboardsJsonInDashboardWidget,
   removeAndReplaceActivity,
+  seedIssueEscalationTriggersForPartner,
 }
