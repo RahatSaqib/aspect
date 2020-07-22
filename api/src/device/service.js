@@ -934,6 +934,7 @@ async function automaticallySetDeviceMaintenanceStatus(
       .where('dmsl.deviceId', deviceId)
       .andWhere('dmsl.day', dayDate)
       .orderBy('dmsl.createdOn', 'desc')
+      .orderBy('dmsl.id', 'desc')
       .first('dms.*')) || {}
   if (
     latestDeviceMaintenanceStatusForDay.externalId ===
@@ -983,6 +984,7 @@ async function onDeviceMaintenanceStatusLogged(
         .where('dmsl.deviceId', deviceId)
         .orderBy('dmsl.day', 'desc')
         .orderBy('dmsl.createdOn', 'desc')
+        .orderBy('dmsl.id', 'desc')
         .first(
           'dmsl.deviceMaintenanceStatusId as latestDeviceMaintenanceStatusId',
           'd.deviceMaintenanceStatusId as currentDeviceMaintenanceStatusId'
@@ -1242,6 +1244,7 @@ async function deviceMaintenanceStatus(request) {
       .where('d.id', deviceId)
       .orderBy('dmsl.day', 'desc')
       .orderBy('dmsl.createdOn', 'desc')
+      .orderBy('dmsl.id', 'desc')
       .first('dmsl.*')) || {}
   if (currentDeviceMaintenanceStatusLog.data) {
     currentDeviceMaintenanceStatusLog.data = JSON.parse(

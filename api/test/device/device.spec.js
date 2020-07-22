@@ -355,6 +355,7 @@ describe('Device routes', () => {
           })
           .orderBy('dmsl.day', 'desc')
           .orderBy('dmsl.createdOn', 'desc')
+          .orderBy('dmsl.id', 'desc')
           .first('dmsl.*')
         deviceWithLogWithNote.data = JSON.parse(deviceWithLogWithNote.data)
         const devicesReponse = await server

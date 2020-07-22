@@ -1,16 +1,19 @@
 const _ = require('lodash')
 const supertest = require('supertest')
 const chai = require('chai')
-const addYears = require('date-fns/addYears')
-const subDays = require('date-fns/subDays')
-const addDays = require('date-fns/addDays')
-const addHours = require('date-fns/addHours')
-const subHours = require('date-fns/subHours')
-const addMinutes = require('date-fns/addMinutes')
-const subMinutes = require('date-fns/subMinutes')
-const addSeconds = require('date-fns/addSeconds')
-const setMilliseconds = require('date-fns/setMilliseconds')
-const dateFormat = require('date-fns/format')
+const {
+  setMilliseconds,
+  addSeconds,
+  addMinutes,
+  subMinutes,
+  addHours,
+  subHours,
+  addDays,
+  subDays,
+  startOfDay,
+  addYears,
+  format: dateFormat,
+} = require('date-fns')
 const Promise = require('bluebird')
 const { createGxAlertTestContext } = require('./gxalert_utils')
 const {
@@ -24,9 +27,16 @@ const {
   basicResultPayload,
 } = require('./geneXpertConstants')
 const { run } = require('../../../src/db')
+const {
+  allDeviceMaintenanceStatusToId,
+} = require('../../../src/shared/dictionary')
 const { waitForApproximately } = require('../../utils/generatorFunctionUtils')
 const { waitForIdle, waitForAction } = require('../../utils/mqUtils')
-const { deviceSeen, deviceMaintenance } = require('../../../src/device/actions')
+const {
+  deviceSeen,
+  deviceMaintenance,
+  types,
+} = require('../../../src/device/actions')
 const { factGenerateDeviceConnectivity } = require('../../../src/fact/actions')
 
 const server = supertest.agent('http://localhost:8080')
@@ -3519,6 +3529,67 @@ describe('Device API routes for GxAlert Device', () => {
         assert.equal(
           JSON.parse(response.body.result.resultData).geneXpertTestId,
           resultId
+        )
+      }))
+
+    it('should change the maintenance status of an inactive device to active', () =>
+      runTest(async knex => {
+        useGxAlertDeviceId(gxAlertDeviceId)
+        await postToDeviceApi({
+          authHeader: deviceAuth,
+          payload: _.merge({}, basicDevicePayload, {
+            name: deviceName,
+            configuration: {},
+          }),
+        })
+        let geneXpertDevice = await getCurrentGeneXpertDevice()
+        const deviceMaintenanceStatuses = await allDeviceMaintenanceStatusToId()
+        const startedOn = setMilliseconds(new Date(), 0)
+        const endedOn = addHours(startedOn, 2)
+        await knex('DeviceMaintenanceStatusLog').insert({
+          deviceId: geneXpertDevice.id,
+          deviceMaintenanceStatusId: deviceMaintenanceStatuses.inactiveUnknown,
+          day: startOfDay(endedOn),
+          data: '{}',
+          createdOn: new Date(),
+        })
+        await knex('Device').where('deviceId', geneXpertDevice.id).update({
+          deviceMaintenanceStatusId: deviceMaintenanceStatuses.inactiveUnknown,
+        })
+        const resultId = 'A_RESULT_FROM_INACTIVE_DEVICE'
+        await postToDeviceApi({
+          authHeader: deviceAuth,
+          payload: _.merge(
+            {},
+            basicDevicePayload,
+            { name: deviceName },
+            basicResultPayload,
+            {
+              result: {
+                id: resultId,
+                startedOn,
+                endedOn,
+              },
+            }
+          ),
+        })
+        await waitForAction({ type: types.DEVICE_MAINTENANCE_STATUS_LOGGED })
+        await waitForIdle()
+        geneXpertDevice = await getCurrentGeneXpertDevice()
+        assert.equal(geneXpertDevice.deviceMaintenanceStatus, 'active')
+        const latestMaintenanceStatusLog = await knex(
+          'DeviceMaintenanceStatusLog'
+        )
+          .where('deviceId', geneXpertDevice.id)
+          .orderBy('createdOn', 'desc')
+          .first()
+        expect(latestMaintenanceStatusLog).to.containSubset({
+          day: startOfDay(endedOn),
+          deviceMaintenanceStatusId: deviceMaintenanceStatuses.active,
+        })
+        assert.equal(
+          latestMaintenanceStatusLog.day.toISOString(),
+          startOfDay(endedOn).toISOString()
         )
       }))
 

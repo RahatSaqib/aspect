@@ -93,6 +93,7 @@ async function seed(knex) {
         .where('dmsl.deviceId', device.id)
         .orderBy('dmsl.day', 'desc')
         .orderBy('dmsl.createdOn', 'desc')
+        .orderBy('dmsl.id', 'desc')
         .first('dmsl.deviceMaintenanceStatusId')) || {}
     if (latestDeviceMaintenanceStatusLog.deviceMaintenanceStatusId) {
       await knex('Device')

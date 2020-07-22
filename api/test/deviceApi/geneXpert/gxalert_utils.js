@@ -479,6 +479,11 @@ class GxAlertApiTestContext {
           this.on('d.geographyId', 'g.id').orOn('s.geographyId', 'g.id')
         })
         .leftJoin('Country as c', 'g.countryId', 'c.id')
+        .leftJoin(
+          'DeviceMaintenanceStatus as dms',
+          'd.deviceMaintenanceStatusId',
+          'dms.id'
+        )
         .whereRaw(
           `JSON_EXTRACT(d.configurationData, "$.gxAlertDeviceId") = ${_.last(
             this.gxAlertDeviceIds
@@ -501,7 +506,8 @@ class GxAlertApiTestContext {
           'd.timezone',
           'd.configurationData',
           'd.lastSeenOn',
-          'd.lastPingOn'
+          'd.lastPingOn',
+          'dms.externalId as deviceMaintenanceStatus'
         )
       if (_.isEmpty(device)) {
         return device
