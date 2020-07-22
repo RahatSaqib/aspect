@@ -5437,6 +5437,7 @@ async function seed(knex) {
     { jobFunctionId: jobFunctionIdAdmin, widgetId: widgetIds.stockouts },
     { jobFunctionId: jobFunctionIdAdmin, widgetId: widgetIds.deviceDaysActive },
     { jobFunctionId: jobFunctionIdAdmin, widgetId: widgetIds.errorRate },
+    { jobFunctionId: jobFunctionIdAdmin, widgetId: widgetIds.stockNotRecorded },
     {
       jobFunctionId: jobFunctionIdAdmin,
       widgetId: widgetIds.dashboardWidgetTestsPerDayTitle,
@@ -5462,6 +5463,10 @@ async function seed(knex) {
       jobFunctionId: jobFunctionIdManager,
       widgetId: widgetIds.errorRate,
     },
+    {
+      jobFunctionId: jobFunctionIdManager,
+      widgetId: widgetIds.stockNotRecorded,
+    },
     { jobFunctionId: jobFunctionIdPartnerTwo, widgetId: widgetIds.sitesTitle },
     {
       jobFunctionId: jobFunctionIdPartnerTwo,
@@ -5484,6 +5489,10 @@ async function seed(knex) {
       jobFunctionId: jobFunctionIdPartnerTwo,
       widgetId: widgetIds.errorRate,
     },
+    {
+      jobFunctionId: jobFunctionIdPartnerTwo,
+      widgetId: widgetIds.stockNotRecorded,
+    },
     { jobFunctionId: jobFunctionIdClinician, widgetId: widgetIds.sitesTitle },
     { jobFunctionId: jobFunctionIdClinician, widgetId: widgetIds.devicesTitle },
     {
@@ -5497,6 +5506,10 @@ async function seed(knex) {
     {
       jobFunctionId: jobFunctionIdClinician,
       widgetId: widgetIds.errorRate,
+    },
+    {
+      jobFunctionId: jobFunctionIdClinician,
+      widgetId: widgetIds.stockNotRecorded,
     },
   ])
 

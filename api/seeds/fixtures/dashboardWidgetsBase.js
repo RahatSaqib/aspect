@@ -400,5 +400,57 @@ module.exports = {
       descriptionI18nKey: 'errorRateDescription',
       dashboards: ['operational'],
     },
+    {
+      icon: 'FaBoxes',
+      title: 'Stock not recorded',
+      titleI18nKey: 'stockNotRecordedTitle',
+      subTitle: null,
+      subTitleI18nKey: null,
+      sqlForIndicator: `SELECT 
+          CONCAT(
+            ROUND(
+              IFNULL(
+                SUM(CASE WHEN quantityOnHand IS NULL THEN 1 ELSE 0 END)
+                / COUNT(siteId) * 100
+              ,0)
+            ,0)
+          ,'%') AS cnt
+          FROM (
+            SELECT s.id AS siteId, sum(i.quantityOnHand) AS quantityOnHand
+            FROM Site AS s 
+            INNER JOIN Device AS d ON d.siteId = s.id
+            LEFT OUTER JOIN InventoryItem AS i ON i.siteId = s.id
+                                              AND i.createdOn BETWEEN DATE_FORMAT(NOW(), '%Y-%m-01')
+                                              AND LAST_DAY(NOW())
+            GROUP BY s.id
+          ) AS innerQuery`,
+      sqlForStatUnit: `SELECT 
+      CONCAT(
+        ROUND(
+          IFNULL(
+            SUM(CASE WHEN quantityOnHand IS NULL THEN 1 ELSE 0 END)
+            / COUNT(siteId) * 100
+          ,0)
+        ,0)
+      ,'%') AS cnt
+      FROM (
+        SELECT s.id AS siteId, sum(i.quantityOnHand) AS quantityOnHand
+        FROM Site AS s 
+        INNER JOIN Device AS d ON d.siteId = s.id
+        LEFT OUTER JOIN InventoryItem AS i ON i.siteId = s.id
+                                        AND i.createdOn BETWEEN DATE_FORMAT(NOW() - interval 1 month, '%Y-%m-01')
+                                        AND LAST_DAY(NOW()-INTERVAL 1 MONTH)
+            GROUP BY s.id
+          ) AS innerQuery`,
+      statUnit: '{unit} last month',
+      statUnitI18nKey: 'dashboardWidgetStockNotRecorded',
+      link: '/browse/inventory',
+      sortOrder: 14,
+      externalId: 'stockNotRecorded',
+      description:
+        'The stock not recorded is calculated by counting all sites with connected devices which are in the inventory items table and dividing that number by the total sites which has connected devices',
+      descriptionI18nKey: 'stockNotRecordedDescription',
+      dashboards: ['operational'],
+    },
   ],
 }
