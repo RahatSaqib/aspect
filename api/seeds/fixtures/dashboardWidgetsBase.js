@@ -25,7 +25,7 @@ module.exports = {
   stat: [
     {
       jobFunctions: ['all'],
-      icon: 'link',
+      icon: 'FaLink',
       title: 'TestsPerDay',
       titleI18nKey: 'dashboardWidgetTestsPerDayTitle',
       subTitle: null,
@@ -101,7 +101,7 @@ module.exports = {
     },
     {
       jobFunctions: ['all'],
-      icon: 'link',
+      icon: 'MdLink',
       title: 'ValidResultsPc',
       titleI18nKey: 'dashboardWidgetValidResultsPc',
       subTitle: null,
@@ -128,7 +128,7 @@ module.exports = {
       dashboards: ['operational'],
     },
     {
-      icon: 'link',
+      icon: 'MdLink',
       title: 'Utilization Rate',
       titleI18nKey: 'utilizationRateTitle',
       subTitle: null,
@@ -190,7 +190,7 @@ module.exports = {
     },
     {
       jobFunctions: ['all'],
-      icon: 'fa-reg-calendar-check',
+      icon: 'MdEventAvailable',
       title: 'Active',
       titleI18nKey: 'activeDevicesTitle',
       subTitle: null,
@@ -240,7 +240,7 @@ module.exports = {
       dashboards: ['operational'],
     },
     {
-      icon: 'fa-box-open',
+      icon: 'MdInsertChart',
       title: 'Stockouts',
       titleI18nKey: 'StockoutsTitle',
       subTitle: null,
@@ -292,7 +292,7 @@ module.exports = {
       dashboards: ['operational'],
     },
     {
-      icon: 'fa-reg-calendar-check',
+      icon: 'MdEventAvailable',
       title: 'Days active',
       titleI18nKey: 'deviceDaysActiveTitle',
       subTitle: null,
@@ -341,7 +341,7 @@ module.exports = {
       dashboards: ['operational'],
     },
     {
-      icon: 'exclamation-triangle',
+      icon: 'MdWarning',
       title: 'Error Rate',
       titleI18nKey: 'errorRateTitle',
       subTitle: null,

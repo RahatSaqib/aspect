@@ -1,17 +1,21 @@
-import classnames from 'classnames/bind'
 import React from 'react'
-import _ from 'lodash'
+import classnames from 'classnames/bind'
+import flowRight from 'lodash/flowRight'
+import reduce from 'lodash/reduce'
+import set from 'lodash/set'
+import filter from 'lodash/filter'
+import map from 'lodash/map'
 import { compose, lifecycle, withHandlers, withProps } from 'recompose'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
 import Card from '@material-ui/core/Card'
 import { Unit } from '../../components/pureGrids'
-import Icon from '../../components/shared/icon/Icon'
 import { fetchStatDashboard } from '../DashboardRedux'
 import requirePermissions from '../../components/shared/requirePermissions'
 import messages from './messages'
 import AspectTooltip from '../../components/shared/AspectTooltip'
+import IconProvider from '../../MigratedComponents/IconProvider'
 
 const cssClasses = classnames.bind(require('./Status.css'))
 
@@ -85,19 +89,19 @@ const enhance = compose(
   withProps(({ summary }) => {
     const defaultMessages = summary.reduce(
       (acc, widget) =>
-        _.flowRight(
+        flowRight(
           x =>
-            _.reduce(
+            reduce(
               x,
               (acc, { value, i18nKey }) =>
-                _.set(acc, widget.get(i18nKey), {
+                set(acc, widget.get(i18nKey), {
                   key: widget.get(i18nKey),
                   id: `pages.status.${widget.get(i18nKey)}`,
                   defaultMessage: widget.get(value),
                 }),
               acc
             ),
-          x => _.filter(x, ({ value }) => !!widget.get(value))
+          x => filter(x, ({ value }) => !!widget.get(value))
         )(widgetMessageTypeList),
       []
     )
@@ -124,7 +128,7 @@ export const SummaryStatus = ({
   defaultMessages,
 }) => (
   <div className={className}>
-    {_.map(summary.toJS(), widget => {
+    {map(summary.toJS(), widget => {
       const description = formatMessage(
         'description',
         widget,
@@ -142,10 +146,9 @@ export const SummaryStatus = ({
           >
             <Card className={cssClasses('Summary__Card')}>
               <div className={cssClasses('Summary__Card__Title')}>
-                <Icon
-                  className={cssClasses('Summary__Card__Title__Icon')}
-                  // eslint-disable-next-line import/no-dynamic-require
-                  type={require(`../../components/shared/icon/assets/${widget.icon}.svg`)}
+                <IconProvider
+                  icon={widget.icon}
+                  className="summaryCard__icon"
                 />
                 <span className={cssClasses('Summary__Card__Title--main')}>
                   {formatMessage('title', widget, intl, defaultMessages)}
