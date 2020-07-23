@@ -61,10 +61,11 @@ const deviceMaintenanceStatusDialog = WrappedComponent => props => {
     labels: {
       dialogTitle: intl.formatMessage(messages.dialogTitle),
     },
-    onChange: values => setValues(values),
+    onChange: values => {
+      setValues(values)
+    },
     values,
   }
-
   return <WrappedComponent {...allProps} />
 }
 

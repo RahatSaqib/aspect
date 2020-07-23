@@ -200,11 +200,15 @@ const enhance = compose(
   connect(
     state => {
       const { activeDialog, performanceReport } = state.device
+      const {
+        deviceMaintenanceStatus: { items: maintenanceStatus },
+      } = state
       const { items, table } = state.result
       const { culture } = state.user
       return {
         activeDialog,
         performanceReport,
+        maintenanceStatus,
         culture,
         items,
         table,
@@ -294,12 +298,14 @@ const enhance = compose(
         device,
         values,
       }),
-    onMaintenanceSubmit: ({ device, updateDeviceMaintenance }) => values =>
+    onMaintenanceSubmit: ({ device, updateDeviceMaintenance }) => values => {
+      console.log('values', values)
       updateDeviceMaintenance({
         externalId: 'maintenance',
         device,
         values,
-      }),
+      })
+    },
     onWarrantySubmit: ({ device, updateDeviceMaintenance }) => values =>
       updateDeviceMaintenance({
         externalId: 'warranty',
@@ -578,6 +584,7 @@ export const DeviceDetailProfile = ({
   location,
   match,
   device,
+  maintenanceStatus,
   disabled,
   displayPreferences,
   // --- injected by recompose ---
@@ -649,6 +656,7 @@ export const DeviceDetailProfile = ({
   const AuthenticatedResults = requirePermissions({
     permissions: ['result:view'],
   })(Results)
+  console.log('deviceMaintenanceStatus', maintenanceStatus.toJS())
   return (
     <div>
       <Helmet title={deviceName} />

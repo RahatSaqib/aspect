@@ -52,7 +52,7 @@ export class DeviceMaintenanceStatusSelectField extends PureComponent {
         <MenuItem value={null}>{this.props.allItemText}</MenuItem>
 
         {maintenanceStatusItems.map(a => (
-          <MenuItem key={a.get('id')} value={a.get('id')}>
+          <MenuItem key={a.get('externalId')} value={a.get('id')}>
             {a.get('name')}
           </MenuItem>
         ))}
