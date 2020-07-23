@@ -2267,6 +2267,63 @@ describe('Device API routes for GxAlert Device', () => {
             )
           }))
       })
+
+      describe(`maintenance data effect on device maintenance status`, () => {
+        it('should change the maintenance status of an active device to inactive', () =>
+          runTest(async knex => {
+            useGxAlertDeviceId(gxAlertDeviceId)
+            await postToDeviceApi(standardDevicePayload)
+            let geneXpertDevice = await getCurrentGeneXpertDevice()
+            const deviceMaintenanceStatuses = await allDeviceMaintenanceStatusToId()
+            await knex('DeviceMaintenanceStatusLog').insert({
+              deviceId: geneXpertDevice.id,
+              deviceMaintenanceStatusId:
+                deviceMaintenanceStatuses.reportedActive,
+              day: startOfDay(new Date()),
+              data: '{}',
+              createdOn: new Date(),
+            })
+            await knex('Device').where('id', geneXpertDevice.id).update({
+              deviceMaintenanceStatusId:
+                deviceMaintenanceStatuses.reportedActive,
+            })
+            await postToDeviceApi(
+              _.merge(standardDevicePayload, {
+                payload: {
+                  configuration: {
+                    data: {
+                      inactive: true,
+                      inactiveMaintenanceReason: 'stock',
+                      inactiveMaintenanceNote:
+                        'More cartridges coming next week',
+                    },
+                  },
+                },
+              })
+            )
+            await waitForAction({
+              type: types.DEVICE_MAINTENANCE_STATUS_LOGGED,
+            })
+            await waitForIdle()
+            geneXpertDevice = await getCurrentGeneXpertDevice()
+            assert.equal(
+              geneXpertDevice.deviceMaintenanceStatus,
+              'inactiveOutOfInventory'
+            )
+            const latestMaintenanceStatusLog = await knex(
+              'DeviceMaintenanceStatusLog'
+            )
+              .where('deviceId', geneXpertDevice.id)
+              .orderBy('createdOn', 'desc')
+              .orderBy('id', 'desc')
+              .first()
+            expect(latestMaintenanceStatusLog).to.containSubset({
+              day: startOfDay(new Date()),
+              deviceMaintenanceStatusId:
+                deviceMaintenanceStatuses.inactiveOutOfInventory,
+            })
+          }))
+      })
     })
 
     describe('when lastPingOn is included in the configuration data payload', () => {

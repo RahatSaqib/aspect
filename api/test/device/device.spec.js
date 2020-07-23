@@ -339,6 +339,26 @@ describe('Device routes', () => {
     describe('/maintenance-status/{deviceId}', () => {
       const maintenanceStatusPath = `${path}/maintenance-status`
       it('should return the latest maintenance status log for the devices current status', async () => {
+        const deviceMaintenanceStatuses = await allDeviceMaintenanceStatusToId()
+        const { id: deviceId } = await knex('DeviceTypeCategory as dtc')
+          .join('DeviceType as dt', 'dtc.id', 'dt.deviceTypeCategoryId')
+          .join('Device as d', 'dt.id', 'd.deviceTypeId')
+          .where('dtc.hasResults', true)
+          .first('d.id')
+        await knex('DeviceMaintenanceStatusLog').insert({
+          deviceId,
+          deviceMaintenanceStatusId:
+            deviceMaintenanceStatuses.inactiveOutOfInventory,
+          day: startOfToday(),
+          data: JSON.stringify({
+            options: { data: { notes: 'More cartridges expected next month' } },
+          }),
+          createdOn: new Date(),
+        })
+        await knex('Device').where('id', deviceId).update({
+          deviceMaintenanceStatusId:
+            deviceMaintenanceStatuses.inactiveOutOfInventory,
+        })
         const deviceWithLogWithNote = await knex('Device as d')
           .join('DeviceMaintenanceStatusLog as dmsl', queryBuilder => {
             queryBuilder

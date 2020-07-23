@@ -1059,7 +1059,7 @@ async function onDeviceUpdateMaintenanceStatus(action, { messageContext }) {
   const { deviceId, options = {} } = action
   if (deviceId) {
     const maintenanceReasonFromSource = _.get(options, 'data.reason', 'other')
-    const aspectMainteanceReason =
+    const aspectMaintenanceReason =
       {
         stock: 'inactiveOutOfInventory',
         connectivity: 'inactiveConnectivity',
@@ -1069,7 +1069,7 @@ async function onDeviceUpdateMaintenanceStatus(action, { messageContext }) {
     return automaticallySetDeviceMaintenanceStatus(
       deviceId,
       startOfToday(),
-      aspectMainteanceReason,
+      aspectMaintenanceReason,
       action,
       messageContext
     )
