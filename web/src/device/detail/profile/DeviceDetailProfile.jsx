@@ -298,12 +298,19 @@ const enhance = compose(
         device,
         values,
       }),
-    onMaintenanceSubmit: ({ device, updateDeviceMaintenance }) => values => {
-      console.log('values', values)
-      updateDeviceMaintenance({
-        externalId: 'maintenance',
+    onMaintenanceSubmit: ({
+      device,
+      maintenanceStatus,
+      updateDeviceMaintenance,
+    }) => values => {
+      const externalId = maintenanceStatus
+        .find(x => x.get('id') === values.maintenanceStatusId)
+        .get('externalId')
+      console.log('values', externalId)
+      return updateDeviceMaintenance({
+        externalId,
         device,
-        values,
+        notes: values.notes,
       })
     },
     onWarrantySubmit: ({ device, updateDeviceMaintenance }) => values =>
@@ -656,7 +663,6 @@ export const DeviceDetailProfile = ({
   const AuthenticatedResults = requirePermissions({
     permissions: ['result:view'],
   })(Results)
-  console.log('deviceMaintenanceStatus', maintenanceStatus.toJS())
   return (
     <div>
       <Helmet title={deviceName} />
