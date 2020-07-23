@@ -46,10 +46,6 @@
   width: 100%;
 }
 
-.Summary__Card__Title__Icon {
-  margin-right: 3px;
-}
-
 .Summary__Card__Title--main {
   font-weight: var(--lato-font-weight-bold);
   white-space: nowrap;

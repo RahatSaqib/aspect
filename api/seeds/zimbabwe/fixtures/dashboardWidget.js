@@ -4,7 +4,7 @@ module.exports = {
   stat: [
     {
       jobFunctions: ['all'],
-      icon: 'place',
+      icon: 'MdPlace',
       title: 'Sites',
       titleI18nKey: 'sitesTitle',
       subTitle: null,
@@ -19,7 +19,7 @@ module.exports = {
     },
     {
       jobFunctions: ['all'],
-      icon: 'computer',
+      icon: 'MdComputer',
       title: 'Devices',
       titleI18nKey: 'devicesTitle',
       subTitle: null,
@@ -34,7 +34,7 @@ module.exports = {
     },
     {
       jobFunctions: ['all'],
-      icon: 'assignment',
+      icon: 'MdAssignment',
       title: 'Results',
       titleI18nKey: 'resultsTitle',
       subTitle: 'Last 30 Days',
@@ -49,7 +49,7 @@ module.exports = {
     },
     {
       jobFunctions: ['all'],
-      icon: 'perm-identity',
+      icon: 'MdPermIdentity',
       title: 'Contacts',
       titleI18nKey: 'personTitle',
       subTitle: null,
@@ -66,7 +66,7 @@ module.exports = {
       externalId: 'serverUptimeTitle',
       jobFunctions: ['all'],
       sortOrder: 4,
-      icon: 'link',
+      icon: 'MdLink',
       title: 'Server Uptime',
       titleI18nKey: 'serverUptimeTitle',
       sqlForIndicator: `SELECT IFNULL(CONCAT(CAST(CAST(SUBSTR(uptime_last_2_months, POSITION('-' IN uptime_last_2_months) + 1) AS UNSIGNED) AS CHAR), '%'), '?') AS cnt FROM (SELECT JSON_UNQUOTE(JSON_EXTRACT(FactDeviceExternalSource.data, '$.monitors[0].custom_uptime_ranges')) AS uptime_last_2_months FROM DeviceType LEFT JOIN Device ON DeviceType.id = Device.deviceTypeId LEFT JOIN FactDeviceExternalSource ON Device.id = FactDeviceExternalSource.deviceId AND FactDeviceExternalSource.sourceName = 'uptimeRobot' WHERE DeviceType.externalId = 'Aspect' LIMIT 1) AS aspect_uptime`,
@@ -81,7 +81,7 @@ module.exports = {
       dashboards: ['operational'],
     },
     {
-      icon: 'data',
+      icon: 'FaDatabase',
       jobFunctions: ['all'],
       title: "GeneXpert's Positive Results Notified",
       titleI18nKey: 'gxPositiveResultsNotifiedTitle',
@@ -172,18 +172,22 @@ module.exports = {
       sortOrder: 7,
     },
     {
-      ...dashboardWidgetsBase.stat.find(x => x.externalId === 'stockouts'),
+      ...dashboardWidgetsBase.stat.find(x => x.externalId === 'activeDevices'),
       sortOrder: 8,
+    },
+    {
+      ...dashboardWidgetsBase.stat.find(x => x.externalId === 'stockouts'),
+      sortOrder: 9,
     },
     {
       ...dashboardWidgetsBase.stat.find(
         x => x.externalId === 'deviceDaysActive'
       ),
-      sortOrder: 9,
+      sortOrder: 10,
     },
     {
       ...dashboardWidgetsBase.stat.find(x => x.externalId === 'errorRate'),
-      sortOrder: 10,
+      sortOrder: 11,
     },
   ],
 }

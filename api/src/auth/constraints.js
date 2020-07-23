@@ -193,6 +193,7 @@ function addConstraints(queryBuilder, constraints, aliases) {
         )
       })
     }
+
     if (constraints.assay) {
       queryBuilder.where(function () {
         this.whereNull(`${resultAlias}.assayId`).orWhere(

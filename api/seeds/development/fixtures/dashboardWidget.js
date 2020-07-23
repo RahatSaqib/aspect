@@ -3,7 +3,7 @@ const dashboardWidgetsBase = require('../../fixtures/dashboardWidgetsBase')
 module.exports = {
   stat: [
     {
-      icon: 'place',
+      icon: 'MdPlace',
       title: 'Sites',
       titleI18nKey: 'sitesTitle',
       subTitle: null,
@@ -17,7 +17,7 @@ module.exports = {
       dashboards: ['home'],
     },
     {
-      icon: 'computer',
+      icon: 'MdDesktopWindows',
       title: 'Devices',
       titleI18nKey: 'devicesTitle',
       subTitle: null,
@@ -31,7 +31,7 @@ module.exports = {
       dashboards: ['home', 'operational'],
     },
     {
-      icon: 'assignment',
+      icon: 'MdAssignment',
       title: 'Results',
       titleI18nKey: 'resultsTitle',
       subTitle: 'Last 30 Days',
@@ -45,7 +45,7 @@ module.exports = {
       dashboards: ['home'],
     },
     {
-      icon: 'perm-identity',
+      icon: 'MdPermIdentity',
       title: 'Contacts',
       titleI18nKey: 'personTitle',
       subTitle: null,
@@ -59,7 +59,7 @@ module.exports = {
       dashboards: ['home'],
     },
     {
-      icon: 'virus',
+      icon: 'MdAddAlert',
       title: 'Confirmed cases',
       titleI18nKey: 'dashboardWidgetTitleConfirmedCases',
       subTitle: null,
@@ -76,7 +76,7 @@ module.exports = {
       dashboards: ['home'],
     },
     {
-      icon: 'assignment',
+      icon: 'MdAssignment',
       title: 'Active cases',
       titleI18nKey: 'dashboardWidgetTitleTotalActiveCases',
       subTitle: null,
@@ -93,7 +93,7 @@ module.exports = {
       dashboards: ['home'],
     },
     {
-      icon: 'user-check',
+      icon: 'MdVerifiedUser',
       title: 'Recovered cases',
       titleI18nKey: 'dashboardWidgetTitleTotalRecoveredCases',
       subTitle: null,
@@ -110,7 +110,7 @@ module.exports = {
       dashboards: ['home'],
     },
     {
-      icon: 'userslash',
+      icon: 'MdEventBusy',
       title: 'Deaths',
       titleI18nKey: 'dashboardWidgetTitleTotalDeaths',
       subTitle: null,
@@ -145,18 +145,22 @@ module.exports = {
       sortOrder: 10,
     },
     {
-      ...dashboardWidgetsBase.stat.find(x => x.externalId === 'stockouts'),
+      ...dashboardWidgetsBase.stat.find(x => x.externalId === 'activeDevices'),
       sortOrder: 11,
+    },
+    {
+      ...dashboardWidgetsBase.stat.find(x => x.externalId === 'stockouts'),
+      sortOrder: 12,
     },
     {
       ...dashboardWidgetsBase.stat.find(
         x => x.externalId === 'deviceDaysActive'
       ),
-      sortOrder: 12,
+      sortOrder: 13,
     },
     {
       ...dashboardWidgetsBase.stat.find(x => x.externalId === 'errorRate'),
-      sortOrder: 13,
+      sortOrder: 14,
     },
   ],
 }
