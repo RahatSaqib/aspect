@@ -242,7 +242,10 @@ async function seed(knex) {
       escalateToLevel: 2,
       escalationConditions: JSON.stringify({
         evaluationMethod: 'result-category',
-        evaluationParameter: { index: 2, externalId: 'NotDetected' },
+        evaluationParameter: {
+          assays: ['CommCareGatesRDT'],
+          resultCategory2: ['NotDetected'],
+        },
       }),
       createdOn: now,
       updatedOn: now,
@@ -253,7 +256,11 @@ async function seed(knex) {
       escalateToLevel: 3,
       escalationConditions: JSON.stringify({
         evaluationMethod: 'result-category',
-        evaluationParameter: { index: 2, externalId: 'Detected' },
+        evaluationParameter: {
+          assays: ['CommCareGatesRDT'],
+          resultCategory1: ['NotDetected'],
+          resultCategory2: ['Detected'],
+        },
       }),
       createdOn: now,
       updatedOn: now,

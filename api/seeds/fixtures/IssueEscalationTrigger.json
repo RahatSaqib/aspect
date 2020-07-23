@@ -1,0 +1,30 @@
+{
+  "data": [
+    {
+      "identifier": "ResultCategory1DetectedResultCategory2NotDetected",
+      "issueType": "ResultReceived",
+      "escalateToLevel": 2,
+      "escalationConditions": {
+        "evaluationMethod": "result-category",
+        "evaluationParameter": {
+          "assays": ["GxMtbRif", "GxMtbRifUltra"],
+          "resultCategory1": ["Detected"],
+          "resultCategory2": ["NotDetected", "Indeterminate"]
+        }
+      }
+    },
+    {
+      "identifier": "ResultCategory1DetectedResultCategory2Detected",
+      "issueType": "ResultReceived",
+      "escalateToLevel": 3,
+      "escalationConditions": {
+        "evaluationMethod": "result-category",
+        "evaluationParameter": {
+          "assays": ["GxMtbRif", "GxMtbRifUltra"],
+          "resultCategory1": ["Detected"],
+          "resultCategory2": ["Detected"]
+        }
+      }
+    }
+  ]
+}
