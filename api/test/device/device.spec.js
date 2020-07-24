@@ -373,9 +373,7 @@ describe('Device routes', () => {
               `IFNULL(JSON_UNQUOTE(JSON_EXTRACT(IFNULL(dmsl.data, '{}'), '$.options.data.notes')), '') <> ''`
             )
           })
-          .orderBy('dmsl.day', 'desc')
-          .orderBy('dmsl.createdOn', 'desc')
-          .orderBy('dmsl.id', 'desc')
+          .orderBy(['dmsl.day', 'dmsl.createdOn', 'dmsl.id'], 'desc')
           .first('dmsl.*')
         deviceWithLogWithNote.data = JSON.parse(deviceWithLogWithNote.data)
         const devicesReponse = await server
