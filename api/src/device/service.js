@@ -937,7 +937,7 @@ async function automaticallySetDeviceMaintenanceStatus(
       )
       .where('dmsl.deviceId', deviceId)
       .andWhere('dmsl.day', dayDate)
-      .orderBy(['dmsl.createdOn', 'dmsl.id'], 'desc')
+      .orderByRaw('dmsl.createdOn desc, dmsl.id desc')
       .first('dms.*')) || {}
   if (
     latestDeviceMaintenanceStatusForDay.externalId ===
@@ -985,7 +985,7 @@ async function onDeviceMaintenanceStatusLogged(
       (await knex('DeviceMaintenanceStatusLog as dmsl')
         .join('Device as d', 'dmsl.deviceId', 'd.id')
         .where('dmsl.deviceId', deviceId)
-        .orderBy(['dmsl.day', 'dmsl.createdOn', 'dmsl.id'], 'desc')
+        .orderByRaw('dmsl.day desc, dmsl.createdOn desc, dmsl.id desc')
         .first(
           'dmsl.deviceMaintenanceStatusId as latestDeviceMaintenanceStatusId',
           'd.deviceMaintenanceStatusId as currentDeviceMaintenanceStatusId'
@@ -1216,7 +1216,7 @@ async function deviceMaintenanceStatusHistory(request) {
           'dmsl.deviceMaintenanceStatusId',
           'dms.id'
         )
-        .orderBy(['dmsl.deviceId', 'dmsl.day'], 'asc')
+        .orderBy(['dmsl.deviceId', 'dmsl.day'])
         .select('dmsl.deviceId', 'dmsl.day', 'dmsl.data', 'dms.externalId')
   const result = {
     ok: true,
@@ -1263,7 +1263,7 @@ async function deviceMaintenanceStatus(request) {
       })
       .modify(addConstraints, dataConstraints, { device: 'd' })
       .where('d.id', deviceId)
-      .orderBy(['dmsl.day', 'dmsl.createdOn', 'dmsl.id'], 'desc')
+      .orderByRaw('dmsl.day desc, dmsl.createdOn desc, dmsl.id desc')
       .first('dmsl.*')) || {}
   if (currentDeviceMaintenanceStatusLog.data) {
     currentDeviceMaintenanceStatusLog.data = JSON.parse(

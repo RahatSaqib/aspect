@@ -2314,6 +2314,7 @@ describe('Device API routes for GxAlert Device', () => {
               'DeviceMaintenanceStatusLog'
             )
               .where('deviceId', geneXpertDevice.id)
+              .orderByRaw('createdOn desc, id desc')
               .orderBy(['createdOn', 'id'], 'desc')
               .first()
             expect(latestMaintenanceStatusLog).to.containSubset({
@@ -3644,7 +3645,7 @@ describe('Device API routes for GxAlert Device', () => {
             'DeviceMaintenanceStatusLog'
           )
             .where('deviceId', geneXpertDevice.id)
-            .orderBy(['createdOn', 'id'], 'desc')
+            .orderByRaw('createdOn desc, id desc')
             .first()
           expect(latestMaintenanceStatusLog).to.containSubset({
             day: startOfDay(endedOn),

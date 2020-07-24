@@ -91,7 +91,7 @@ async function seed(knex) {
     const latestDeviceMaintenanceStatusLog =
       (await knex('DeviceMaintenanceStatusLog as dmsl')
         .where('dmsl.deviceId', device.id)
-        .orderBy(['dmsl.day', 'dmsl.createdOn', 'dmsl.id'], 'desc')
+        .orderByRaw('dmsl.day desc, dmsl.createdOn desc, dmsl.id desc')
         .first('dmsl.deviceMaintenanceStatusId')) || {}
     if (latestDeviceMaintenanceStatusLog.deviceMaintenanceStatusId) {
       await knex('Device')
