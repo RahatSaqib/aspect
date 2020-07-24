@@ -1185,27 +1185,39 @@ async function deviceMaintenanceStatusHistory(request) {
     .distinct()
   const latestDeviceMaintenanceStatusLogsPerDay = _.isEmpty(devices)
     ? []
-    : (
-        await knex.raw(
-          `SELECT DeviceMaintenanceStatusLog.deviceId,
-  DeviceMaintenanceStatusLog.day,
-  DeviceMaintenanceStatusLog.data,
-  DeviceMaintenanceStatus.externalId
-FROM (SELECT DeviceMaintenanceStatusLog.deviceId, DeviceMaintenanceStatusLog.day, MAX(DeviceMaintenanceStatusLog.createdOn) AS createdOn
-      FROM DeviceMaintenanceStatusLog
-      WHERE DeviceMaintenanceStatusLog.deviceId IN (${_.map(devices, 'id').join(
-        ','
-      )})
-      AND DeviceMaintenanceStatusLog.day BETWEEN ? AND ?
-      GROUP BY DeviceMaintenanceStatusLog.deviceId, DeviceMaintenanceStatusLog.day) AS LatestDeviceLatestMaintenanceLogsPerDay
-JOIN DeviceMaintenanceStatusLog ON DeviceMaintenanceStatusLog.deviceId = LatestDeviceLatestMaintenanceLogsPerDay.deviceId
-                                AND DeviceMaintenanceStatusLog.day = LatestDeviceLatestMaintenanceLogsPerDay.day
-                                AND DeviceMaintenanceStatusLog.createdOn = LatestDeviceLatestMaintenanceLogsPerDay.createdOn
-JOIN DeviceMaintenanceStatus ON DeviceMaintenanceStatus.id = DeviceMaintenanceStatusLog.deviceMaintenanceStatusId
-ORDER BY DeviceMaintenanceStatusLog.deviceId, DeviceMaintenanceStatusLog.day ASC;`,
-          [days[0], days[days.length - 1]]
+    : await knex
+        .from(qb => {
+          // Getting the most recently created maintenance status log
+          //   for each day in a sub query and calling it mrlpd
+          //   (Most Recent Log Per Day)
+          qb.from('DeviceMaintenanceStatusLog as inner_dmsl')
+            .whereIn('inner_dmsl.deviceId', _.map(devices, 'id'))
+            .andWhere(qb => {
+              qb.whereBetween('inner_dmsl.day', [
+                days[0],
+                days[days.length - 1],
+              ])
+            })
+            .groupBy('inner_dmsl.deviceId', 'inner_dmsl.day')
+            .select(
+              'inner_dmsl.deviceId',
+              'inner_dmsl.day',
+              knex.raw('MAX(inner_dmsl.createdOn) AS createdOn')
+            )
+            .as('mrlpd')
+        })
+        .join('DeviceMaintenanceStatusLog as dmsl', qb => {
+          qb.on('mrlpd.deviceId', 'dmsl.deviceId')
+            .andOn('mrlpd.day', 'dmsl.day')
+            .andOn('mrlpd.createdOn', 'dmsl.createdOn')
+        })
+        .join(
+          'DeviceMaintenanceStatus as dms',
+          'dmsl.deviceMaintenanceStatusId',
+          'dms.id'
         )
-      )[0]
+        .orderBy(['dmsl.deviceId', 'dmsl.day'], 'asc')
+        .select('dmsl.deviceId', 'dmsl.day', 'dmsl.data', 'dms.externalId')
   const result = {
     ok: true,
     total: devices.length,
