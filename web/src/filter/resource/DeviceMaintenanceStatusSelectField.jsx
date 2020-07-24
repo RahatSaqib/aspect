@@ -20,15 +20,12 @@ export class DeviceMaintenanceStatusSelectField extends PureComponent {
         name: PropTypes.string,
       })
     ).isRequired,
-    allItemText: PropTypes.string,
-
-    onMaintenanceStatusIdChange: PropTypes.func.isRequired,
+    onMaintenanceStatusChange: PropTypes.func.isRequired,
     value: PropTypes.string,
   }
 
   static defaultProps = {
     value: '',
-    allItemText: 'N/A',
   }
 
   componentDidMount() {
@@ -36,7 +33,7 @@ export class DeviceMaintenanceStatusSelectField extends PureComponent {
   }
 
   handleChange = ({ target: { value } }) => {
-    this.props.onMaintenanceStatusIdChange(value)
+    this.props.onMaintenanceStatusChange(value)
   }
 
   render() {
@@ -44,18 +41,18 @@ export class DeviceMaintenanceStatusSelectField extends PureComponent {
     const restProps = _.omit(this.props, [
       'fetchDeviceTypes',
       'deviceTypeItems',
-      'onMaintenanceStatusIdChange',
+      'onMaintenanceStatusChange',
       'value',
     ])
     return (
       <SelectField {...restProps} value={value} onChange={this.handleChange}>
-        <MenuItem value={null}>{this.props.allItemText}</MenuItem>
-
-        {maintenanceStatusItems.map(a => (
-          <MenuItem key={a.get('externalId')} value={a.get('id')}>
-            {a.get('name')}
-          </MenuItem>
-        ))}
+        {maintenanceStatusItems
+          .filter(a => a.get('manuallySet'))
+          .map(a => (
+            <MenuItem key={a.get('externalId')} value={a.get('externalId')}>
+              {a.get('name')}
+            </MenuItem>
+          ))}
       </SelectField>
     )
   }

@@ -337,6 +337,52 @@ export function hideDialog() {
   }
 }
 
+export function updateDeviceMaintenanceStatus({
+  externalId,
+  device,
+  data,
+  requestedAt = new Date(),
+}) {
+  const deviceId = device.get('id')
+  const i18nErrorTitleDescriptor = externalId =>
+    defineMessages({
+      title: {
+        id:
+          'errorResponseMessages.updateDeviceMaintenance.maintenance.POST.default.title',
+        defaultMessage: 'Setting Device Maintenance have Failed',
+      },
+    })
+
+  return dispatch =>
+    aspectFetch(`/device/maintenance-status/${deviceId}`, {
+      method: 'POST',
+      body: JSON.stringify({
+        externalId,
+        options: { data: { data } },
+      }),
+      errorNotifications: {
+        default: errorPleaseTryAgainInAFewMinutes({
+          ...i18nErrorTitleDescriptor(externalId),
+          onClose: () => dispatch(showDialog('maintenance', device)),
+        }),
+      },
+    })
+      .then(json => {
+        dispatch(
+          receiveUpdatedSingleDevice(requestedAt, {
+            ...json.data,
+            maintenanceStatus: externalId,
+            id: deviceId,
+          })
+        )
+        dispatch(hideDialog())
+      })
+      .catch(err => {
+        dispatch(hideDialog())
+        throw err
+      })
+}
+
 export function updateDeviceMaintenance({
   externalId,
   device,
@@ -359,14 +405,6 @@ export function updateDeviceMaintenance({
           id:
             'errorResponseMessages.updateDeviceMaintenance.warranty.POST.default.title',
           defaultMessage: 'Setting Device Warranty Due Date Failed',
-        },
-      })
-    if (externalId === 'maintenance')
-      return defineMessages({
-        title: {
-          id:
-            'errorResponseMessages.updateDeviceMaintenance.maintenance.POST.default.title',
-          defaultMessage: 'Setting Device Maintenance have Failed',
         },
       })
   }

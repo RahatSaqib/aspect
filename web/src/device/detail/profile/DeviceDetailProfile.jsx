@@ -8,7 +8,6 @@ import Button from '@material-ui/core/Button'
 import IconButton from '@material-ui/core/IconButton'
 import Tooltip from '@material-ui/core/Tooltip'
 import Card from '@material-ui/core/Card'
-import { MdFileDownload } from 'react-icons/md'
 import { Helmet } from 'react-helmet'
 import TableBody from '@material-ui/core/TableBody'
 import NotesIcon from '@material-ui/icons/ChatBubbleOutline'
@@ -30,6 +29,7 @@ import {
   showDialog,
   hideDialog,
   updateDeviceMaintenance,
+  updateDeviceMaintenanceStatus,
 } from '../../DeviceRedux'
 import DeviceDetailBackBar from '../DeviceDetailBackBar'
 import Summary from '../../../globals/components/Summary'
@@ -154,6 +154,39 @@ const messages = defineMessages({
     id: 'pages.DeviceDetailProfile.testHistory',
     defaultMessage: 'Test history',
   },
+
+  active: {
+    id: 'pages.DeviceDetailProfile.active',
+    defaultMessage: 'Active',
+  },
+  inactiveConnectivity: {
+    id: 'pages.DeviceDetailProfile.inactiveConnectivity',
+    defaultMessage: 'Connectivity',
+  },
+  inactiveDecommissioned: {
+    id: 'pages.DeviceDetailProfile.inactiveDecommissioned',
+    defaultMessage: 'Decommissioned',
+  },
+  inactiveDownForRepair: {
+    id: 'pages.DeviceDetailProfile.inactiveDownForRepair',
+    defaultMessage: 'Down For Repair',
+  },
+  inactiveNoResultsReported: {
+    id: 'pages.DeviceDetailProfile.inactiveNoResultsReported',
+    defaultMessage: 'No Results Reported',
+  },
+  inactiveOutOfInventory: {
+    id: 'pages.DeviceDetailProfile.inactiveOutOfInventory',
+    defaultMessage: 'Out Of Inventory',
+  },
+  inactiveUnknown: {
+    id: 'pages.DeviceDetailProfile.inactiveUnknown',
+    defaultMessage: 'Unknown',
+  },
+  reportedActive: {
+    id: 'pages.DeviceDetailProfile.reportedActive',
+    defaultMessage: 'Active',
+  },
 })
 
 const FILTERS_CONFIG = {
@@ -217,6 +250,7 @@ const enhance = compose(
     {
       showDialog,
       hideDialog,
+      updateDeviceMaintenanceStatus,
       updateDeviceMaintenance,
       fetchResults,
       exportResults,
@@ -301,16 +335,12 @@ const enhance = compose(
     onMaintenanceSubmit: ({
       device,
       maintenanceStatus,
-      updateDeviceMaintenance,
+      updateDeviceMaintenanceStatus,
     }) => values => {
-      const externalId = maintenanceStatus
-        .find(x => x.get('id') === values.maintenanceStatusId)
-        .get('externalId')
-      console.log('values', externalId)
-      return updateDeviceMaintenance({
-        externalId,
+      return updateDeviceMaintenanceStatus({
+        externalId: values.maintenanceStatus,
         device,
-        notes: values.notes,
+        data: { notes: values.notes },
       })
     },
     onWarrantySubmit: ({ device, updateDeviceMaintenance }) => values =>
@@ -591,7 +621,6 @@ export const DeviceDetailProfile = ({
   location,
   match,
   device,
-  maintenanceStatus,
   disabled,
   displayPreferences,
   // --- injected by recompose ---
@@ -663,6 +692,10 @@ export const DeviceDetailProfile = ({
   const AuthenticatedResults = requirePermissions({
     permissions: ['result:view'],
   })(Results)
+  const maintenanceStatusText = device.get('maintenanceStatus')
+    ? intl.formatMessage(messages[device.get('maintenanceStatus')])
+    : intl.formatMessage(messages.undefinedValue)
+
   return (
     <div>
       <Helmet title={deviceName} />
@@ -833,10 +866,7 @@ export const DeviceDetailProfile = ({
             {/* Maintenance Status Summary */}
             <Summary
               title={intl.formatMessage(messages.maintenance)}
-              description={
-                device.get('maintenanceStatus') ||
-                intl.formatMessage(messages.undefinedValue)
-              }
+              description={maintenanceStatusText}
               action={
                 <Button
                   variant="contained"

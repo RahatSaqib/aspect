@@ -33,13 +33,19 @@ const messages = defineMessages({
     id: 'pages.MaintenanceStatusDialog.maintenanceStatus',
     defaultMessage: 'Maintenance status',
   },
+  maintenanceStatusIsRequired: {
+    id: 'pages.MaintenanceStatusDialog.maintenanceStatusIsRequired',
+    defaultMessage: 'Maintenance status is required',
+  },
 })
 
-export function validate({ contextDate }, { intl }) {
+export function validate({ maintenanceStatus }, { intl }) {
   const errors = {}
-  /* if (!contextDate) {
-    errors.contextDate = intl.formatMessage(messages.calibrationDateIsRequired)
-  } */
+  if (!maintenanceStatus) {
+    errors.contextDate = intl.formatMessage(
+      messages.maintenanceStatusIsRequired
+    )
+  }
   return errors
 }
 
@@ -50,7 +56,7 @@ const deviceMaintenanceStatusDialog = WrappedComponent => props => {
   useEffect(
     () =>
       setValues({
-        maintenanceStatusId: device.get('maintenanceStatusId') || null,
+        maintenanceStatus: device.get('maintenanceStatus') || null,
         notes: device.get('calibrationNotes') || null,
       }),
     [device]
@@ -78,7 +84,7 @@ const FormDialog = ({
   form,
   values,
   meta,
-  onMaintenanceStatusIdChange,
+  onMaintenanceStatusChange,
   onNotesChange,
   handleSubmit,
 }) => (
@@ -107,13 +113,12 @@ const FormDialog = ({
         <section>
           <div>
             <DeviceMaintenanceStatusSelectField
-              value={values.maintenanceStatusId}
-              onMaintenanceStatusIdChange={onMaintenanceStatusIdChange}
+              value={values.maintenanceStatus}
+              onMaintenanceStatusChange={onMaintenanceStatusChange}
               floatingLabelText={intl.formatMessage(messages.maintenanceStatus)}
               fullWidth
               helperText={
-                meta.maintenanceStatusId.touched &&
-                meta.maintenanceStatusId.error
+                meta.maintenanceStatus.touched && meta.maintenanceStatus.error
               }
             />
           </div>
@@ -149,7 +154,7 @@ export default _.flowRight(
   recomposeForm({
     fields: [
       {
-        fieldName: 'maintenanceStatusId',
+        fieldName: 'maintenanceStatus',
         valueFromChangeEvent: it => it,
       },
       {
