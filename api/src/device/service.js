@@ -1043,7 +1043,7 @@ async function onDeviceUpdateMaintenanceStatusNoResults(
       daysSinceLastResult.push(startOfDay(day))
       day = addDays(day, 1)
     }
-    await Promise.each(daysSinceLastResult, async day =>
+    await Promise.each(daysSinceLastResult, day =>
       automaticallySetDeviceMaintenanceStatus(
         deviceId,
         day,
