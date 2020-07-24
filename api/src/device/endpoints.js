@@ -571,16 +571,16 @@ const routes = [
             .required()
             .description('False if there was some sort of error'),
           data: Joi.object()
-            .allow(null)
+            .allow(null, {})
             .keys({
               id: Joi.number()
-                .required()
+                .allow(null)
                 .description('The ID of the maintenance log'),
               deviceId: Joi.number()
                 .allow(null)
                 .description('The ID of the device'),
               deviceMaintenanceStatusId: Joi.number()
-                .required()
+                .allow(null)
                 .description('The ID of the maintenance status'),
               data: Joi.object()
                 .allow(null)
@@ -588,10 +588,10 @@ const routes = [
                   'Additional contextual data logged with the maintenance status update'
                 ),
               day: Joi.date()
-                .required()
+                .allow(null)
                 .description('The day of the maintenance status update'),
               createdOn: Joi.date()
-                .required()
+                .allow(null)
                 .description(
                   'The date & time that the maintenance status was updated'
                 ),
