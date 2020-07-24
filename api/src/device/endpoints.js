@@ -162,12 +162,17 @@ function listDevicesBaseResponse() {
               maintenanceStatus: Joi.string()
                 .allow('', null)
                 .description('The current maintenance status of the device'),
+              maintenanceStatusName: Joi.number()
+                .allow(null)
+                .description(
+                  'The default name of the current maintenance status of the device'
+                ),
               maintenanceStatusActive: Joi.number()
                 .allow(null)
                 .description('Whether the device is active or not'),
               maintenanceStatusManuallySet: Joi.number()
                 .allow(null)
-                .description('Whether the device status was manually set'),
+                .description('Whether the device status is manually set'),
               category: Joi.string()
                 .required()
                 .description('The device category'),
@@ -310,12 +315,17 @@ const deviceDetailsResponseFields = Joi.object()
     maintenanceStatus: Joi.string()
       .allow('', null)
       .description('The current maintenance status of the device'),
+    maintenanceStatusName: Joi.number()
+      .allow(null)
+      .description(
+        'The default name of the current maintenance status of the device'
+      ),
     maintenanceStatusActive: Joi.number()
       .allow(null)
       .description('Whether the device is active or not'),
     maintenanceStatusManuallySet: Joi.number()
       .allow(null)
-      .description('Whether the device status was manually set'),
+      .description('Whether the device status is manually set'),
     approvalToken: Joi.string()
       .required()
       .description('The external ID of the approval'),
@@ -656,10 +666,13 @@ const routes = [
                   .description('The current approval status of the device'),
                 maintenanceStatus: Joi.string()
                   .allow('', null)
-                  .description('The current maintenance status of the device'),
+                  .description('The maintenance status of the device'),
+                maintenanceStatusName: Joi.number()
+                  .allow(null)
+                  .description('The default name of the maintenance status'),
                 maintenanceStatusActive: Joi.number()
                   .allow(null)
-                  .description('Whether the device is active or not'),
+                  .description('Whether the device was active or not'),
                 maintenanceStatusManuallySet: Joi.number()
                   .allow(null)
                   .description('Whether the device status was manually set'),
