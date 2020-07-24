@@ -719,18 +719,19 @@ export const DeviceDetailProfile = ({
               ])}`}
             />
             <Summary
-              title={intl.formatMessage(messages.approval)}
-              description={device.get('approval')}
+              title={intl.formatMessage(messages.maintenance)}
+              description={maintenanceStatusText}
               action={
                 <Button
                   variant="contained"
-                  onClick={onToggleDeviceApproval}
+                  onClick={onShowMaintenanceDialog}
                   disabled={disabled}
                 >
                   {intl.formatMessage(messages.buttonChange)}
                 </Button>
               }
             />
+
             <Summary
               title={intl.formatMessage(messages.calibration)}
               description={
@@ -863,14 +864,14 @@ export const DeviceDetailProfile = ({
                 )
               }
             />
-            {/* Maintenance Status Summary */}
+            {/* Approval Status Summary */}
             <Summary
-              title={intl.formatMessage(messages.maintenance)}
-              description={maintenanceStatusText}
+              title={intl.formatMessage(messages.approval)}
+              description={device.get('approval')}
               action={
                 <Button
                   variant="contained"
-                  onClick={onShowMaintenanceDialog}
+                  onClick={onToggleDeviceApproval}
                   disabled={disabled}
                 >
                   {intl.formatMessage(messages.buttonChange)}
