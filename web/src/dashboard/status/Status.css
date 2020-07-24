@@ -58,7 +58,7 @@
   overflow-y: auto;
   margin: 0 5px;
   background-color: #F6FCFE;
-  max-height: 340px;
+  max-height: 540px;
 }
 .Summary_Group_Wrapper:nth-of-type(2n+1) .Summary_Group_Widgets{
   background-color: #EDF8FD;
