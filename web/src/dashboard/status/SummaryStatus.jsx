@@ -5,6 +5,7 @@ import reduce from 'lodash/reduce'
 import set from 'lodash/set'
 import filter from 'lodash/filter'
 import map from 'lodash/map'
+import Immutable from 'immutable'
 import { compose, lifecycle, withHandlers, withProps } from 'recompose'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
@@ -26,6 +27,15 @@ const cssClasses = classnames.bind(require('./Status.css'))
  * TODO: https://ops.systemone.id/browse/ASP-1522
  * Refactor lifecycles and code-reuse
  */
+
+// Order of widget groups - values must correspond to WIDGET_GROUP_KEYS in 'api/seeds/fixtures/dashboardWidgetsBase.js'
+// which in their turn correspond keys in 'web/src/dashboard/status/messages.js'
+const availableGroupI18nKeys = [
+  'summaryWidgetGroupConnectivity',
+  'summaryWidgetGroupInventory',
+  'summaryWidgetGroupDevices',
+  'summaryWidgetGroupService',
+]
 
 const widgetMessageTypeList = [
   {
@@ -61,6 +71,7 @@ const enhance = compose(
   connect(
     state => ({
       summary: state.dashboard.summary,
+      allSummaryItems: state.dashboard.allSummaryItems,
     }),
     bindActionCreators.bind(null, {
       fetchStatDashboard,
@@ -86,8 +97,11 @@ const enhance = compose(
       }
     },
   }),
-  withProps(({ summary }) => {
-    const defaultMessages = summary.reduce(
+  withProps(({ summary, allSummaryItems }) => {
+    const allWidgets = summary
+      .get('currentIdList')
+      .map(id => allSummaryItems.getIn(['byId', id]))
+    const defaultMessages = allWidgets.reduce(
       (acc, widget) =>
         flowRight(
           x =>
@@ -105,9 +119,26 @@ const enhance = compose(
         )(widgetMessageTypeList),
       []
     )
+    const getItemsInGroup = groupI18nKey => {
+      const itemIds =
+        summary.getIn(['widgetGroups', groupI18nKey]) || Immutable.List()
+      return itemIds.map(id => allSummaryItems.getIn(['byId', id])).toJS()
+    }
+    const widgetGroups = availableGroupI18nKeys
+      .map(groupI18nKey => ({
+        groupI18nKey,
+        items: getItemsInGroup(groupI18nKey),
+      }))
+      .filter(({ items }) => items.length > 0)
+
+    // TODO: calculate width of each group to widen it's size if only few
+    // groups visible and some groups have many items
 
     return {
       defaultMessages,
+      allWidgets: allWidgets.toJS(),
+      widgetGroups,
+      nonGroupedWidgets: getItemsInGroup(' '),
     }
   })
 )
@@ -120,109 +151,129 @@ const formatMessage = (key, widget, intl, defaultMessages) => {
     : widget[key]
 }
 
+export const Widget = ({ intl, defaultMessages, widget }) => {
+  const description = formatMessage(
+    'description',
+    widget,
+    intl,
+    defaultMessages
+  )
+  return (
+    <Link
+      to={widget.link || '#'}
+      className={cssClasses('Summary', {
+        'Summary_Link--disabled': !widget.link,
+      })}
+      testId="SummaryStatus--Summary_Link"
+    >
+      <Card className={cssClasses('Summary__Card')}>
+        <div className={cssClasses('Summary__Card__Title')}>
+          <IconProvider icon={widget.icon} className="summaryCard__icon" />
+          <span className={cssClasses('Summary__Card__Title--main')}>
+            {formatMessage('title', widget, intl, defaultMessages)}
+
+            <span className={cssClasses('Summary__Card__Title--sub')}>
+              {formatMessage('subTitle', widget, intl, defaultMessages)}
+            </span>
+          </span>
+          {description ? (
+            <AspectTooltip showHelpIcon title={description} />
+          ) : null}
+        </div>
+        <div className={cssClasses('Summary__Card__Content')}>
+          <div className={cssClasses('Summary__Card__Item')}>
+            <div className={cssClasses('Summary__Card__Item__Count')}>
+              {widget.count}
+            </div>
+            <div className={cssClasses('Summary__Card__Item__Messages')}>
+              <div
+                className={cssClasses('Summary__Card__Item__Messages--main')}
+              >
+                {formatMessage('statUnit', widget, intl, defaultMessages)}
+              </div>
+              <div className={cssClasses('Summary__Card__Item__Messages--sub')}>
+                {formatMessage('statStatus', widget, intl, defaultMessages)}
+              </div>
+            </div>
+          </div>
+          <div className={cssClasses('Summary__Card__Item--right')}>
+            <div className={cssClasses('Summary__Card__Item__Messages')}>
+              <div
+                className={cssClasses('Summary__Card__Item__Messages--main')}
+              >
+                {widget.extra}
+                {formatMessage('extraUnit', widget, intl, defaultMessages)}
+              </div>
+              <div className={cssClasses('Summary__Card__Item__Messages--sub')}>
+                {formatMessage('extraLabel', widget, intl, defaultMessages)}
+              </div>
+            </div>
+          </div>
+        </div>
+      </Card>
+    </Link>
+  )
+}
+
 export const SummaryStatus = ({
   intl,
   className,
   // --- injected by recompose ---
-  summary,
   defaultMessages,
+  widgetGroups,
+  nonGroupedWidgets,
 }) => (
   <div className={className}>
-    {map(summary.toJS(), widget => {
+    {/*
+    ----------------
+    --- 1. first show non-grouped widgets
+    ----------------
+    */}
+    {map(nonGroupedWidgets, widget => {
       const description = formatMessage(
         'description',
         widget,
         intl,
         defaultMessages
       )
+      const widgetProps = { intl, defaultMessages, widget }
       return (
         <Unit key={widget.id} sm="1-2" lg="1-4">
-          <Link
-            to={widget.link || '#'}
-            className={cssClasses('Summary', {
-              'Summary_Link--disabled': !widget.link,
-            })}
-            testId="SummaryStatus--Summary_Link"
-          >
-            <Card className={cssClasses('Summary__Card')}>
-              <div className={cssClasses('Summary__Card__Title')}>
-                <IconProvider
-                  icon={widget.icon}
-                  className="summaryCard__icon"
-                />
-                <span className={cssClasses('Summary__Card__Title--main')}>
-                  {formatMessage('title', widget, intl, defaultMessages)}
-
-                  <span className={cssClasses('Summary__Card__Title--sub')}>
-                    {formatMessage('subTitle', widget, intl, defaultMessages)}
-                  </span>
-                </span>
-                {description ? (
-                  <AspectTooltip showHelpIcon title={description} />
-                ) : null}
-              </div>
-              <div className={cssClasses('Summary__Card__Content')}>
-                <div className={cssClasses('Summary__Card__Item')}>
-                  <div className={cssClasses('Summary__Card__Item__Count')}>
-                    {widget.count}
-                  </div>
-                  <div className={cssClasses('Summary__Card__Item__Messages')}>
-                    <div
-                      className={cssClasses(
-                        'Summary__Card__Item__Messages--main'
-                      )}
-                    >
-                      {formatMessage('statUnit', widget, intl, defaultMessages)}
-                    </div>
-                    <div
-                      className={cssClasses(
-                        'Summary__Card__Item__Messages--sub'
-                      )}
-                    >
-                      {formatMessage(
-                        'statStatus',
-                        widget,
-                        intl,
-                        defaultMessages
-                      )}
-                    </div>
-                  </div>
-                </div>
-                <div className={cssClasses('Summary__Card__Item--right')}>
-                  <div className={cssClasses('Summary__Card__Item__Messages')}>
-                    <div
-                      className={cssClasses(
-                        'Summary__Card__Item__Messages--main'
-                      )}
-                    >
-                      {widget.extra}
-                      {formatMessage(
-                        'extraUnit',
-                        widget,
-                        intl,
-                        defaultMessages
-                      )}
-                    </div>
-                    <div
-                      className={cssClasses(
-                        'Summary__Card__Item__Messages--sub'
-                      )}
-                    >
-                      {formatMessage(
-                        'extraLabel',
-                        widget,
-                        intl,
-                        defaultMessages
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </Card>
-          </Link>
+          <Widget {...widgetProps} />
         </Unit>
       )
     })}
+    {/*
+    ----------------
+    --- 2. then show widgets in groups
+    ----------------
+    */}
+    {widgetGroups.length > 0 && (
+      <Card className={cssClasses('Summary_Card_Groups')}>
+        {widgetGroups.map(group => {
+          return (
+            <Unit
+              key={group.groupI18nKey}
+              sm="1-2"
+              lg="1-4"
+              className={cssClasses('Summary_Group_Wrapper')}
+            >
+              <div className={cssClasses('Summary_Group')}>
+                <div className={cssClasses('Summary_Group_Title')}>
+                  {formatMessage('group', group, intl, defaultMessages)}
+                  {` (${group.items.length})`}
+                </div>
+                <div className={cssClasses('Summary_Group_Widgets')}>
+                  {group.items.map(widget => (
+                    <Widget {...{ intl, defaultMessages, widget }} />
+                  ))}
+                </div>
+              </div>
+            </Unit>
+          )
+        })}
+      </Card>
+    )}
   </div>
 )
 

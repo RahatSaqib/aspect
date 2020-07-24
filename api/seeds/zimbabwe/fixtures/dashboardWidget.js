@@ -1,5 +1,7 @@
 const dashboardWidgetsBase = require('../../fixtures/dashboardWidgetsBase')
 
+const { WIDGET_GROUP_KEYS } = dashboardWidgetsBase
+
 module.exports = {
   stat: [
     {
@@ -15,7 +17,9 @@ module.exports = {
       externalId: 'sitesTitle',
       description: 'The number of sites',
       descriptionI18nKey: 'sitesDescription',
-      dashboards: ['home'],
+      dashboards: {
+        home: {},
+      },
     },
     {
       jobFunctions: ['all'],
@@ -30,7 +34,12 @@ module.exports = {
       externalId: 'devicesTitle',
       description: 'The number of lab devices',
       descriptionI18nKey: 'devicesDescription',
-      dashboards: ['home', 'operational'],
+      dashboards: {
+        home: {},
+        operational: {
+          groupI18nKey: WIDGET_GROUP_KEYS.DEVICES,
+        },
+      },
     },
     {
       jobFunctions: ['all'],
@@ -45,7 +54,9 @@ module.exports = {
       externalId: 'resultsTitle',
       description: 'The number of results in the last 30 days',
       descriptionI18nKey: 'resultsDescription',
-      dashboards: ['home'],
+      dashboards: {
+        home: {},
+      },
     },
     {
       jobFunctions: ['all'],
@@ -60,7 +71,9 @@ module.exports = {
       externalId: 'personTitle',
       description: 'The number of users',
       descriptionI18nKey: 'personDescription',
-      dashboards: ['home'],
+      dashboards: {
+        home: {},
+      },
     },
     {
       externalId: 'serverUptimeTitle',
@@ -78,7 +91,11 @@ module.exports = {
       extraLabelI18nKey: 'dashboardWidgetExtraLabelServerUptime',
       description: `The amount of time that Uptime Robot has been able to connect to Aspect this month`,
       descriptionI18nKey: 'serverUptimeDescription',
-      dashboards: ['operational'],
+      dashboards: {
+        operational: {
+          groupI18nKey: WIDGET_GROUP_KEYS.DEVICES,
+        },
+      },
     },
     {
       icon: 'FaDatabase',
@@ -98,8 +115,10 @@ module.exports = {
       description:
         "The percentage of GeneXpert's TB and HIV results that were notified",
       descriptionI18nKey: 'gxPositiveResultsNotifiedDescription',
-      dashboards: ['home'],
       link: '/browse/result',
+      dashboards: {
+        home: {},
+      },
     },
     {
       ...dashboardWidgetsBase.stat.find(
