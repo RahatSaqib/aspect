@@ -565,6 +565,44 @@ const routes = [
           deviceId: Joi.string().description('Device id').required(),
         },
       },
+      response: {
+        schema: Joi.object().keys({
+          ok: Joi.bool()
+            .required()
+            .description('False if there was some sort of error'),
+          data: Joi.object()
+            .allow(null)
+            .keys({
+              id: Joi.number()
+                .required()
+                .description('The ID of the maintenance log'),
+              deviceId: Joi.number()
+                .allow(null)
+                .description('The ID of the device'),
+              deviceMaintenanceStatusId: Joi.number()
+                .required()
+                .description('The ID of the maintenance status'),
+              data: Joi.object()
+                .allow(null)
+                .description(
+                  'Additional contextual data logged with the maintenance status update'
+                ),
+              day: Joi.date()
+                .required()
+                .description('The day of the maintenance status update'),
+              createdOn: Joi.date()
+                .required()
+                .description(
+                  'The date & time that the maintenance status was updated'
+                ),
+              createdBy: Joi.number()
+                .allow(null)
+                .description(
+                  'The ID of the user who updated the maintenance status'
+                ),
+            }),
+        }),
+      },
     },
   },
   {
