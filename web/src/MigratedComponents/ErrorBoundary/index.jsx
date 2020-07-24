@@ -1,9 +1,20 @@
-import React from 'react'
+import React, { Fragment } from 'react'
+import PropTypes from 'prop-types'
+import IconProvider from '../IconProvider'
+
+const ErrorIcon = () => (
+  <IconProvider icon="FaExclamationCircle" className="errorBoundary__error" />
+)
 
 class ErrorBoundary extends React.Component {
   constructor(props) {
     super(props)
-    this.state = { hasError: false, error: false }
+    this.props = props
+    this.state = {
+      hasError: false,
+      FallBackComponent: this.props.fallbackComponent,
+      isDevelopment: process.env.NODE_ENV !== 'production',
+    }
   }
 
   static getDerivedStateFromError(error) {
@@ -11,18 +22,35 @@ class ErrorBoundary extends React.Component {
   }
 
   componentDidCatch(error, errorInfo) {
-    // eslint-disable-next-line no-console
-    console.error(error)
+    if (this.state.isDevelopment) {
+      // eslint-disable-next-line no-console
+      console.error(error, errorInfo.componentStack)
+    }
   }
 
   render() {
-    const { hasError, error } = this.state
+    const { children } = this.props
+    const { hasError, isDevelopment, FallBackComponent } = this.state
     if (hasError) {
-      return null
+      return (
+        <Fragment>
+          {isDevelopment && !FallBackComponent && <ErrorIcon />}
+          {FallBackComponent && <FallBackComponent />}
+          {null}
+        </Fragment>
+      )
     }
 
-    return this.props.children
+    return children
   }
+}
+ErrorBoundary.defaultProps = {
+  fallbackComponent: false,
+}
+
+ErrorBoundary.propTypes = {
+  children: PropTypes.oneOfType([PropTypes.object]).isRequired,
+  fallbackComponent: PropTypes.oneOfType([PropTypes.bool, PropTypes.func]),
 }
 
 export default ErrorBoundary
