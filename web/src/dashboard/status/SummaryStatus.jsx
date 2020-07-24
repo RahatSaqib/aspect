@@ -220,7 +220,7 @@ export const SummaryStatus = ({
   className,
   // --- injected by recompose ---
   defaultMessages,
-  widgetGroups,
+  widgetGroups = [],
   nonGroupedWidgets,
 }) => (
   <div className={className}>

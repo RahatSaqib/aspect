@@ -7,8 +7,8 @@ import { SummaryStatus } from './SummaryStatus'
 describe('Summary Status component', () => {
   const props = {
     intl: createIntl({ locale: 'en' }),
-    summary: Immutable.fromJS([
-      {
+    allSummaryItems: Immutable.fromJS({
+      '13': {
         id: 13,
         icon: 'assignment',
         title: 'Tests',
@@ -30,8 +30,13 @@ describe('Summary Status component', () => {
         target: null,
         unit: null,
         extra: '61.43%',
+        dashboards: {
+          operational: {
+            groupI18nKey: 'summaryWidgetGroupInventory',
+          },
+        },
       },
-      {
+      '14': {
         id: 14,
         icon: 'assignment',
         title: 'MTB+ Rate',
@@ -53,8 +58,13 @@ describe('Summary Status component', () => {
         target: null,
         unit: 596,
         extra: null,
+        dashboards: {
+          operational: {
+            groupI18nKey: 'summaryWidgetGroupInventory',
+          },
+        },
       },
-      {
+      '15': {
         id: 15,
         icon: 'assignment',
         title: 'RR Rate',
@@ -76,8 +86,13 @@ describe('Summary Status component', () => {
         target: null,
         unit: 407,
         extra: null,
+        dashboards: {
+          operational: {
+            groupI18nKey: 'summaryWidgetGroupDevices',
+          },
+        },
       },
-      {
+      '16': {
         id: 16,
         icon: 'assignment',
         title: 'TI Rate',
@@ -99,8 +114,20 @@ describe('Summary Status component', () => {
         target: null,
         unit: 596,
         extra: null,
+        dashboards: {
+          operational: {
+            groupI18nKey: 'summaryWidgetGroupDevices',
+          },
+        },
       },
-    ]),
+    }),
+    summary: Immutable.fromJS({
+      currentIdList: ['13', '14', '15', '16'],
+      widgetGroups: {
+        summaryWidgetGroupInventory: ['13', '14'],
+        summaryWidgetGroupDevices: ['15', '16'],
+      },
+    }),
     defaultMessages: [],
   }
 
