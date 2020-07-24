@@ -162,8 +162,13 @@ function listDevicesBaseResponse() {
               maintenanceStatus: Joi.string()
                 .allow('', null)
                 .description('The current maintenance status of the device'),
-              maintenanceStatusName: Joi.number()
-                .allow(null)
+              maintenanceStatusI18nKey: Joi.string()
+                .allow('', null)
+                .description(
+                  'The i18n key for the name of the maintenance status'
+                ),
+              maintenanceStatusName: Joi.string()
+                .allow('', null)
                 .description(
                   'The default name of the current maintenance status of the device'
                 ),
@@ -315,8 +320,11 @@ const deviceDetailsResponseFields = Joi.object()
     maintenanceStatus: Joi.string()
       .allow('', null)
       .description('The current maintenance status of the device'),
-    maintenanceStatusName: Joi.number()
-      .allow(null)
+    maintenanceStatusI18nKey: Joi.string()
+      .allow('', null)
+      .description('The i18n key for the name of the maintenance status'),
+    maintenanceStatusName: Joi.string()
+      .allow('', null)
       .description(
         'The default name of the current maintenance status of the device'
       ),
@@ -667,8 +675,13 @@ const routes = [
                 maintenanceStatus: Joi.string()
                   .allow('', null)
                   .description('The maintenance status of the device'),
-                maintenanceStatusName: Joi.number()
-                  .allow(null)
+                maintenanceStatusI18nKey: Joi.string()
+                  .allow('', null)
+                  .description(
+                    'The i18n key for the name of the maintenance status'
+                  ),
+                maintenanceStatusName: Joi.string()
+                  .allow('', null)
                   .description('The default name of the maintenance status'),
                 maintenanceStatusActive: Joi.number()
                   .allow(null)
