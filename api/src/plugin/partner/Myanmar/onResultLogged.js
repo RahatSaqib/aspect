@@ -11,15 +11,16 @@ const {
   resultMachinePowerError,
   resultModuleUnknownError,
   resultMachineUnknownError,
-  resultModuleReplaced,
 } = require('../../../result/actions')
 const {
   selectAssayConsumables,
 } = require('../../../consumable/assayConsumableService')
 const { inventoryReagentHealth } = require('../../../inventory/actions')
 const { resultCategoryToId } = require('../../../shared/dictionary')
-
-const { getReplacedModuleSerials } = require('./utils')
+const {
+  getReplacedModuleSerials,
+  shouldTriggerModuleReplaced,
+} = require('../../utils')
 
 const {
   MODULE_TEMPERATURE_ERROR_CODES,
@@ -49,7 +50,7 @@ const {
 
 // check for error codes when a result is logged
 async function onResultLogged({ resultId }, { messageContext }) {
-  const context = messageContext.bindActionCreators({
+  messageContext = messageContext.bindActionCreators({
     resultModuleTemperatureError,
     resultModulePowerError,
     resultModuleFailureError,
@@ -60,9 +61,8 @@ async function onResultLogged({ resultId }, { messageContext }) {
     inventoryReagentHealth,
     resultModuleUnknownError,
     resultMachineUnknownError,
-    resultModuleReplaced,
   })
-  await context.run(async knex => {
+  await messageContext.run(async knex => {
     const [result] = await knex('Result as r').where('r.id', resultId)
     const { deviceId, siteId } = result
     const last30day = subDays(new Date(), 30)
@@ -71,34 +71,8 @@ async function onResultLogged({ resultId }, { messageContext }) {
     let invalidReagentErrorCount = 0
     // get all modules that were replaced so we can ignore them in the queries below:
     const replacedModuleSerials = await getReplacedModuleSerials(knex, deviceId)
-    // check if a module was just now replaced and trigger replacement-issue if it was
-    if (
-      result.moduleName &&
-      result.moduleSerial &&
-      result.createdOn.getTime() === result.updatedOn.getTime()
-    ) {
-      // get the most recent result from the same module as the current result:
-      const previousResultOnModule = await knex('Result')
-        .where('deviceId', result.deviceId)
-        .where('moduleName', result.moduleName)
-        .whereNotNull('moduleSerial')
-        .whereNot('id', resultId)
-        .whereRaw('endedOn < ?', [result.endedOn])
-        .orderBy('endedOn', 'desc')
-        .first('moduleSerial')
-      if (
-        previousResultOnModule &&
-        previousResultOnModule.moduleSerial !== result.moduleSerial &&
-        !replacedModuleSerials.includes(previousResultOnModule.moduleSerial)
-      ) {
-        context.resultModuleReplaced(resultId, {
-          moduleName: result.moduleName,
-          replacedModuleSerial: previousResultOnModule.moduleSerial,
-          newModuleSerial: result.moduleSerial,
-        })
-        replacedModuleSerials.push(previousResultOnModule.moduleSerial)
-      }
-    }
+
+    await shouldTriggerModuleReplaced(knex, messageContext, resultId)
 
     // prepare query for device results
     const deviceErrorQuery = knex('Result as r')
@@ -129,7 +103,7 @@ async function onResultLogged({ resultId }, { messageContext }) {
             if (module.errorCount > moduleTemperatureMaxErrors) {
               moduleTemperatureSerials.push(module.moduleSerial)
               moduleErrorSerials.push(module.moduleSerial)
-              context.resultModuleTemperatureError(deviceId, module)
+              messageContext.resultModuleTemperatureError(deviceId, module)
             }
           })
         )
@@ -143,7 +117,7 @@ async function onResultLogged({ resultId }, { messageContext }) {
           .count('r.id as errorCount')
         if (errorCount > machineTemperatureMaxErrors) {
           machineIssueTriggured = true
-          context.resultMachineTemperatureError(deviceId)
+          messageContext.resultMachineTemperatureError(deviceId)
         }
       } else if (MODULE_POWER_ERROR_CODES.includes(result.errorCode)) {
         const modules = await deviceErrorQuery
@@ -163,7 +137,7 @@ async function onResultLogged({ resultId }, { messageContext }) {
           _.map(modules, module => {
             if (module.errorCount > modulePowerMaxErrors) {
               moduleErrorSerials.push(module.moduleSerial)
-              context.resultModulePowerError(deviceId, module)
+              messageContext.resultModulePowerError(deviceId, module)
             }
           })
         )
@@ -185,7 +159,7 @@ async function onResultLogged({ resultId }, { messageContext }) {
           _.map(modules, module => {
             if (module.errorCount > moduleFailureMaxErrors) {
               moduleErrorSerials.push(module.moduleSerial)
-              context.resultModuleFailureError(deviceId, module)
+              messageContext.resultModuleFailureError(deviceId, module)
             }
           })
         )
@@ -231,7 +205,7 @@ async function onResultLogged({ resultId }, { messageContext }) {
           allModulesTotalErrors >= minErrorsForLUGenericMachineIssue
         ) {
           // Trigger machine procedural issue
-          context.resultMachineProceduralError(deviceId)
+          messageContext.resultMachineProceduralError(deviceId)
         } else {
           // Check for module procedural issue
           _.map(modules, async module => {
@@ -247,7 +221,7 @@ async function onResultLogged({ resultId }, { messageContext }) {
               // LU Generic Module: Minimum of 6 errors
               module.errorCount >= minErrorsForLUGenericModuleIssue
             ) {
-              context.resultModuleProceduralError(deviceId, module)
+              messageContext.resultModuleProceduralError(deviceId, module)
             }
           })
         }
@@ -343,7 +317,7 @@ async function onResultLogged({ resultId }, { messageContext }) {
           allModulesTotalErrors >= machineMaxUnknownErrors
         ) {
           // Trigger machine UnknownError issue
-          context.resultMachineUnknownError(deviceId)
+          messageContext.resultMachineUnknownError(deviceId)
         } else {
           // Check for module issue
           _.map(modules, async module => {
@@ -355,7 +329,7 @@ async function onResultLogged({ resultId }, { messageContext }) {
               // LU Module Unknown Error: Minimum of 6 errors
               module.errorCount >= moduleMaxUnknownErrors
             ) {
-              context.resultModuleUnknownError(deviceId, module)
+              messageContext.resultModuleUnknownError(deviceId, module)
             }
           })
         }
@@ -390,7 +364,7 @@ async function onResultLogged({ resultId }, { messageContext }) {
           noResultCount >= machinePowerMinNoResults) ||
         noResultCount + powerErrorCount > machinePowerMinErrorsNoResult
       ) {
-        context.resultMachinePowerError(deviceId)
+        messageContext.resultMachinePowerError(deviceId)
       }
     }
 
@@ -435,7 +409,7 @@ async function onResultLogged({ resultId }, { messageContext }) {
             result.deviceId,
             result.partnerId,
             result.assayId,
-            context.inventoryReagentHealth
+            messageContext.inventoryReagentHealth
           )
         }
       })
@@ -451,7 +425,7 @@ async function onResultLogged({ resultId }, { messageContext }) {
         result.deviceId,
         result.partnerId,
         result.assayId,
-        context.inventoryReagentHealth
+        messageContext.inventoryReagentHealth
       )
     }
   })

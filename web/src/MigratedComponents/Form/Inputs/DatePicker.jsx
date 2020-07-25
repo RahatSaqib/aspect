@@ -38,6 +38,7 @@ const AspectDatePicker = props => {
 
 AspectDatePicker.defaultProps = {
   showTimeSelect: new Date(),
+  placeholder: '',
 }
 
 AspectDatePicker.propTypes = {
@@ -46,6 +47,7 @@ AspectDatePicker.propTypes = {
   InputProps: PropTypes.oneOfType([PropTypes.object]).isRequired,
   formik: PropTypes.oneOfType([PropTypes.object]).isRequired,
   showTimeSelect: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
+  placeholder: PropTypes.string,
 }
 
 const AspectDateTimePicker = props => {
