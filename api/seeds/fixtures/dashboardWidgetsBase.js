@@ -452,5 +452,36 @@ module.exports = {
       descriptionI18nKey: 'stockNotRecordedDescription',
       dashboards: ['operational'],
     },
+    {
+      icon: 'FaCloudUploadAlt',
+      title: 'Time to Upload',
+      titleI18nKey: 'avgTimeToUploadTitle',
+      subTitle: null,
+      subTitleI18nKey: null,
+      sqlForIndicator: `
+        SELECT ROUND(AVG(TIMEDIFF(r.endedOn, CONVERT_TZ(r.createdOn,COALESCE(d.timezone ,'+00:00'),"+00:00")))) 
+        FROM Result AS r 
+        INNER JOIN Site AS s ON r.siteId = s.id
+        INNER JOIN Device AS d ON r.deviceId = d.id
+        WHERE HOUR(TIMEDIFF(r.endedOn, CONVERT_TZ(r.createdOn,COALESCE(d.timezone ,'+00:00'),"+00:00"))) >=2
+        AND r.endedOn BETWEEN DATE_FORMAT(NOW(), '%Y-%m-01') AND NOW();
+      `,
+      sqlForStatUnit: `
+        SELECT ROUND(AVG(TIMEDIFF(r.endedOn, CONVERT_TZ(r.createdOn,COALESCE(d.timezone ,'+00:00'),"+00:00")))) 
+        FROM Result AS r 
+        INNER JOIN Site AS s ON r.siteId = s.id
+        INNER JOIN Device AS d ON r.deviceId = d.id
+        WHERE HOUR(TIMEDIFF(r.endedOn, CONVERT_TZ(r.createdOn,COALESCE(d.timezone ,'+00:00'),"+00:00"))) >=2
+        AND r.endedOn BETWEEN DATE_FORMAT(NOW()- interval 1 month, '%Y-%m-01') AND last_day(NOW()- interval 1 month);`,
+      statUnit: '{unit} last month',
+      statUnitI18nKey: 'avgTimeToUploadStat',
+      link: '/browse/result',
+      sortOrder: 15,
+      externalId: 'avgTimeToUpload',
+      description:
+        'Measure the average time between endedOn to createdOn in the current month/last month.',
+      descriptionI18nKey: 'avgTimeToUploadDescription',
+      dashboards: ['operational'],
+    },
   ],
 }
