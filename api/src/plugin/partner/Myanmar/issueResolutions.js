@@ -35,10 +35,8 @@ const { totalWastedInventoryItems } = require('../../../fact/service')
 
 const { isStockEmpty } = require('../../../shared/utilsInventory')
 
-const {
-  getEscalateOrResolveStatusForIssueStockout,
-  getReplacedModuleSerials,
-} = require('./utils')
+const { getEscalateOrResolveStatusForIssueStockout } = require('./utils')
+const { getReplacedModuleSerials } = require('../../utils')
 
 const { issueStatusToId, issueTypeToId } = require('../../../shared/dictionary')
 

@@ -14,6 +14,8 @@ const {
   RESULT_STRING_TEMPLATE_FIELDS,
 } = require('../../../result/querySelectors')
 
+const { shouldTriggerModuleReplaced } = require('../../utils')
+
 async function onResultLogged(
   { resultId, deviceLogId, userId },
   { messageContext }
@@ -29,6 +31,9 @@ async function updateCovidResultFromFormData(
   { messageContext }
 ) {
   return messageContext.transact(async knex => {
+    // check if a module was replaced and trigger replacement-issue if it was
+    await shouldTriggerModuleReplaced(knex, messageContext, resultId)
+
     const { externalId: deviceLogDeviceTypeExternalId } =
       (await knex('DeviceLog as dl')
         .join('Device as d', 'dl.deviceId', 'd.id')
