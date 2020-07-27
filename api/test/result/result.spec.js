@@ -529,8 +529,8 @@ describe('Result routes', () => {
         .set('Authorization', `Bearer${shared.token}`)
         .then(res => {
           assert.equal(
-            res.body.data.resultWorkflowStatus,
-            initialResultWorkflowStatusName
+            res.body.data.resultWorkflowStatusExternalId,
+            initialResultWorkflowStatus
           )
         })
     })
