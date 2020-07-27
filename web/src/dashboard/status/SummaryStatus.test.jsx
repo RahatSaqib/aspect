@@ -10,7 +10,7 @@ describe('Summary Status component', () => {
     allSummaryItems: Immutable.fromJS({
       '13': {
         id: 13,
-        icon: 'assignment',
+        icon: 'MdAssignment',
         title: 'Tests',
         titleI18nKey: 'dashboardWidgetTitleTests',
         subTitle: 'This Month',
@@ -38,7 +38,7 @@ describe('Summary Status component', () => {
       },
       '14': {
         id: 14,
-        icon: 'assignment',
+        icon: 'MdAssignment',
         title: 'MTB+ Rate',
         titleI18nKey: 'dashboardWidgetTitleMTBPositiveRate',
         subTitle: 'Last 30 Days',
@@ -66,7 +66,7 @@ describe('Summary Status component', () => {
       },
       '15': {
         id: 15,
-        icon: 'assignment',
+        icon: 'MdAssignment',
         title: 'RR Rate',
         titleI18nKey: 'dashboardWidgetTitleRRRate',
         subTitle: 'Last 30 Days',
@@ -94,7 +94,7 @@ describe('Summary Status component', () => {
       },
       '16': {
         id: 16,
-        icon: 'assignment',
+        icon: 'MdAssignment',
         title: 'TI Rate',
         titleI18nKey: 'dashboardWidgetTitleTIRate',
         subTitle: 'Last 30 Days',

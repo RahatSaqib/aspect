@@ -1,7 +1,7 @@
 module.exports = {
   stat: [
     {
-      icon: 'data',
+      icon: 'MdInsertChart',
       title: 'Tests',
       titleI18nKey: 'dashboardWidgetTitleTests',
       externalId: 'dashboardWidgetTitleTests',
@@ -21,7 +21,7 @@ module.exports = {
       },
     },
     {
-      icon: 'data',
+      icon: 'MdInsertChart',
       title: 'MTB+ Rate',
       titleI18nKey: 'dashboardWidgetTitleMTBPositiveRate',
       externalId: 'dashboardWidgetTitleMTBPositiveRate',
@@ -41,7 +41,7 @@ module.exports = {
       },
     },
     {
-      icon: 'data',
+      icon: 'MdInsertChart',
       title: 'RR Rate',
       titleI18nKey: 'dashboardWidgetTitleRRRate',
       externalId: 'dashboardWidgetTitleRRRate',
@@ -61,7 +61,7 @@ module.exports = {
       },
     },
     {
-      icon: 'data',
+      icon: 'MdInsertChart',
       title: 'TI Rate',
       titleI18nKey: 'dashboardWidgetTitleTIRate',
       externalId: 'dashboardWidgetTitleTIRate',

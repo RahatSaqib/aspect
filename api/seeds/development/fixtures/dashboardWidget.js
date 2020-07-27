@@ -35,7 +35,7 @@ module.exports = {
       dashboards: {
         home: {},
         operational: {
-          groupI18nKey: WIDGET_GROUP_KEYS.DEVICES,
+          groupI18nKey: WIDGET_GROUP_KEYS.CONNECTIVITY,
         },
       },
     },

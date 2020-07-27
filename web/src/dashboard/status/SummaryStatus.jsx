@@ -261,7 +261,6 @@ export const SummaryStatus = ({
               <div className={cssClasses('Summary_Group')}>
                 <div className={cssClasses('Summary_Group_Title')}>
                   {formatMessage('group', group, intl, defaultMessages)}
-                  {` (${group.items.length})`}
                 </div>
                 <div className={cssClasses('Summary_Group_Widgets')}>
                   {group.items.map(widget => (

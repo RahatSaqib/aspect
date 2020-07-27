@@ -6,7 +6,7 @@ module.exports = {
   stat: [
     {
       jobFunctions: ['all'],
-      icon: 'place',
+      icon: 'MdPlace',
       title: 'Sites',
       titleI18nKey: 'sitesTitle',
       subTitle: null,
@@ -23,7 +23,7 @@ module.exports = {
     },
     {
       jobFunctions: ['all'],
-      icon: 'computer',
+      icon: 'MdComputer',
       title: 'Devices',
       titleI18nKey: 'devicesTitle',
       subTitle: null,
@@ -43,7 +43,7 @@ module.exports = {
     },
     {
       jobFunctions: ['all'],
-      icon: 'assignment',
+      icon: 'MdAssignment',
       title: 'Results',
       titleI18nKey: 'resultsTitle',
       subTitle: 'Last 30 Days',
@@ -60,7 +60,7 @@ module.exports = {
     },
     {
       jobFunctions: ['all'],
-      icon: 'perm-identity',
+      icon: 'MdPermIdentity',
       title: 'Contacts',
       titleI18nKey: 'personTitle',
       subTitle: null,

@@ -5,7 +5,7 @@ const { WIDGET_GROUP_KEYS } = dashboardWidgetsBase
 module.exports = {
   stat: [
     {
-      icon: 'place',
+      icon: 'MdPlace',
       title: 'Sites',
       titleI18nKey: 'sitesTitle',
       subTitle: null,
@@ -21,7 +21,7 @@ module.exports = {
       },
     },
     {
-      icon: 'computer',
+      icon: 'MdComputer',
       title: 'Devices',
       titleI18nKey: 'devicesTitle',
       subTitle: null,
@@ -40,7 +40,7 @@ module.exports = {
       },
     },
     {
-      icon: 'assignment',
+      icon: 'MdAssignment',
       title: 'Results',
       titleI18nKey: 'resultsTitle',
       subTitle: 'Last 30 Days',
@@ -56,7 +56,7 @@ module.exports = {
       },
     },
     {
-      icon: 'perm-identity',
+      icon: 'MdPermIdentity',
       title: 'Contacts',
       titleI18nKey: 'personTitle',
       subTitle: null,

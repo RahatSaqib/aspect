@@ -1,7 +1,7 @@
 module.exports = {
   stat: [
     {
-      icon: 'place',
+      icon: 'MdPlace',
       title: 'Sites',
       titleI18nKey: 'sitesTitle',
       externalId: 'sitesTitle',
@@ -17,7 +17,7 @@ module.exports = {
       },
     },
     {
-      icon: 'computer',
+      icon: 'MdComputer',
       title: 'Devices',
       titleI18nKey: 'devicesTitle',
       externalId: 'devicesTitle',
@@ -33,7 +33,7 @@ module.exports = {
       },
     },
     {
-      icon: 'assignment',
+      icon: 'MdAssignment',
       title: 'Results',
       titleI18nKey: 'resultsTitle',
       externalId: 'resultsTitle',
@@ -49,7 +49,7 @@ module.exports = {
       },
     },
     {
-      icon: 'perm-identity',
+      icon: 'MdPermIdentity',
       title: 'Contacts',
       titleI18nKey: 'personTitle',
       externalId: 'personTitle',
