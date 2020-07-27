@@ -54,58 +54,23 @@ module.exports = {
             dt.externalId = 'CepheidGeneXpert'
           GROUP BY DATE(r.endedOn)
         ) as t1`,
-      sqlForStatUnit: `SELECT
-          CASE
-            WHEN avgCurrentMonth IS NULL OR avgLastMonth IS NULL THEN '?'
-            ELSE
-              CASE
-                WHEN avgCurrentMonth >= avgLastMonth
-                THEN concat('+', (avgCurrentMonth - avgLastMonth))
-                ELSE concat('-', (avgCurrentMonth - avgLastMonth))
-              END
-            END as cnt
-        FROM (
-        SELECT
-          (
-            SELECT CEILING(avg(cnt))
-            FROM (
-              SELECT COUNT(r.id) as cnt
-              FROM Result as r
-                INNER JOIN Device as d on d.id = r.deviceId
-                INNER JOIN DeviceType as dt on dt.id = d.deviceTypeId
-                INNER JOIN Site as s on s.id = d.siteId
-                INNER JOIN Partner p on s.partnerId = p.id
-                LEFT OUTER JOIN Geography as g on s.geographyId = g.id
-              WHERE
-                YEAR(r.endedOn) = YEAR(NOW())
-                AND
-                MONTH(r.endedOn) = MONTH(NOW())
-                AND
-                dt.externalId = 'CepheidGeneXpert'
-              GROUP BY DATE(r.endedOn)
-            ) as t1
-          ) as avgCurrentMonth,
-          (
-            SELECT CEILING(avg(cnt))
-            FROM (
-              SELECT COUNT(r.id) as cnt
-              FROM Result as r
-                INNER JOIN Device as d on d.id = r.deviceId
-                INNER JOIN DeviceType as dt on dt.id = d.deviceTypeId
-                INNER JOIN Site as s on s.id = d.siteId
-                INNER JOIN Partner p on s.partnerId = p.id
-                LEFT OUTER JOIN Geography as g on s.geographyId = g.id
-              WHERE
-                YEAR(r.endedOn) = YEAR(DATE_SUB(NOW(), INTERVAL 1 MONTH))
-                AND
-                MONTH(r.endedOn) = MONTH(DATE_SUB(NOW(), INTERVAL 1 MONTH))
-                AND
-                dt.externalId = 'CepheidGeneXpert'
-              GROUP BY DATE(r.endedOn)
-            ) as t2
-          ) as avgLastMonth
-        ) as t
-      `,
+      sqlForStatUnit: `SELECT IFNULL(CAST(CEILING(avg(cnt)) AS CHAR), '?') as cnt
+      FROM (
+        SELECT COUNT(r.id) as cnt
+        FROM Result as r
+          INNER JOIN Device as d on d.id = r.deviceId
+          INNER JOIN DeviceType as dt on dt.id = d.deviceTypeId
+          INNER JOIN Site as s on s.id = d.siteId
+          INNER JOIN Partner p on s.partnerId = p.id
+          LEFT OUTER JOIN Geography as g on s.geographyId = g.id
+        WHERE
+          YEAR(r.endedOn) = YEAR(DATE_SUB(NOW(), INTERVAL 1 MONTH))
+          AND
+          MONTH(r.endedOn) = MONTH(DATE_SUB(NOW(), INTERVAL 1 MONTH))
+          AND
+          dt.externalId = 'CepheidGeneXpert'
+        GROUP BY DATE(r.endedOn)
+      ) as t1`,
       statUnit: '{unit} last month',
       statUnitI18nKey: 'dashboardWidgetTestsPerDayUnit',
       link: '/browse/result',
@@ -206,7 +171,7 @@ module.exports = {
               LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
             WHERE DATE(r.endedOn)
                   BETWEEN DATE_FORMAT(NOW() - INTERVAL 1 MONTH, '%Y-%m-01')
-                  AND LAST_DAY(NOW()-INTERVAL 1 MONTH)
+                  AND LAST_DAY(NOW() - INTERVAL 1 MONTH)
                   AND dt.externalId = 'CepheidGeneXpert'
             GROUP BY r.deviceId, dc.dailyCapacity
           ) AS innerQuery`,
@@ -247,33 +212,26 @@ module.exports = {
       WHERE dt.externalId = 'CepheidGeneXpert'
       GROUP BY d.id) AS q;`,
       sqlForStatUnit: `SELECT
-      CONCAT(CASE WHEN (AVG(CurrentMonthAvailabilityPercentage) - AVG(LastMonthAvailabilityPercentage)) >= 0 THEN '+' ELSE '' END,
-      ROUND(AVG(CurrentMonthAvailabilityPercentage) - AVG(LastMonthAvailabilityPercentage)), '%') AS cnt
+      CONCAT(ROUND(AVG(AvailabilityPercentage)), '%') AS cnt
   FROM
       (SELECT
-          d.id,
-              COUNT(DISTINCT CASE
-                  WHEN r.endedOn < DATE_FORMAT(NOW(), '%Y-%m-01') THEN DATE(r.endedOn)
-                  ELSE NULL
-              END) * 100 / DATEDIFF(NOW(), GREATEST(DATE_FORMAT(DATE_ADD(CURRENT_DATE, INTERVAL - 1 MONTH), '%Y-%m-01'),d.createdOn)) AS LastMonthAvailabilityPercentage,
-              COUNT(DISTINCT CASE
-                  WHEN r.endedOn >= DATE_FORMAT(NOW(), '%Y-%m-01') THEN DATE(r.endedOn)
-                  ELSE NULL
-              END) * 100 / DATE_ADD(CURRENT_DATE, INTERVAL - 1 MONTH) AS CurrentMonthAvailabilityPercentage
+          COUNT(DISTINCT DATE(r.endedOn)) * 100 / DATEDIFF(NOW(), GREATEST(DATE_FORMAT(DATE_SUB(CURRENT_DATE, INTERVAL 1 MONTH), '%Y-%m-01'),d.createdOn)) AS AvailabilityPercentage
       FROM
           Device AS d
       INNER JOIN DeviceType as dt on dt.id = d.deviceTypeId
       LEFT JOIN Result AS r ON d.id = r.deviceId
-          AND r.endedOn >= DATE_FORMAT(DATE_ADD(CURRENT_DATE, INTERVAL - 1 MONTH), '%Y-%m-01')
+          AND YEAR(r.endedOn) = YEAR(DATE_SUB(CURRENT_DATE, INTERVAL 1 MONTH))
+          AND MONTH(r.endedOn) = MONTH(DATE_SUB(CURRENT_DATE, INTERVAL 1 MONTH))
+
       INNER JOIN Site AS s ON s.id = d.siteId
       INNER JOIN Partner AS p ON s.partnerId = p.id
       LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
       WHERE dt.externalId = 'CepheidGeneXpert'
-      GROUP BY d.id , d.createdOn) AS q;`,
+      GROUP BY d.id) AS q;`,
       statUnit: '{unit} last month',
       statUnitI18nKey: 'dashboardWidgetActiveDevices',
       link: '/operational-data#deviceStatus',
-      sortOrder: 12,
+      sortOrder: 1,
       externalId: 'activeDevices',
       description: `The daily percentage of devices that sent results`,
       descriptionI18nKey: 'activeDevicesDescription',
@@ -320,15 +278,15 @@ module.exports = {
         FROM Site AS s
           INNER JOIN Device AS d ON s.id = d.siteId
           LEFT OUTER JOIN Issue AS i ON s.id = i.siteId
-                                        AND i.createdOn BETWEEN DATE_FORMAT(NOW() - interval 1 month, '%Y-%m-01')
-                                        AND LAST_DAY(NOW()-INTERVAL 1 MONTH)
+                                        AND i.createdOn BETWEEN DATE_FORMAT(NOW() - INTERVAL 1 month, '%Y-%m-01')
+                                        AND LAST_DAY(NOW() - INTERVAL 1 MONTH)
           LEFT OUTER JOIN IssueType AS it ON i.issueTypeId = it.id AND it.externalId = 'InventoryStockout'
           LEFT OUTER JOIN IssueStatus AS ist ON i.issueStatusId = ist.id
                                                 AND ist.externalId NOT IN ('Inactive', 'OK', 'Resolved')`,
       statUnit: '{unit} last month',
       statUnitI18nKey: 'dashboardWidgetStockouts',
       link: '/operational-data#inventoryStatus',
-      sortOrder: 12,
+      sortOrder: 9,
       externalId: 'stockouts',
       description:
         'The stockout percentage is calculated by counting all sites with stockout issues during the month and dividing by all active sites',
@@ -378,14 +336,14 @@ module.exports = {
             INNER JOIN Site AS s ON s.id = d.siteId
             LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
             WHERE DATE(r.endedOn) BETWEEN DATE_FORMAT(NOW() - INTERVAL 1 MONTH, '%Y-%m-01')
-                  AND LAST_DAY(NOW()-INTERVAL 1 MONTH)
+                  AND LAST_DAY(NOW() - INTERVAL 1 MONTH)
                   AND dt.externalId = 'CepheidGeneXpert'
           GROUP BY r.deviceId
         ) AS innerQuery`,
       statUnit: '{unit} last month',
       statUnitI18nKey: 'dashboardWidgetDeviceDaysActiveTitle',
       link: '/operational-data#deviceStatus',
-      sortOrder: 12,
+      sortOrder: 2,
       externalId: 'deviceDaysActive',
       description:
         'Average number of days each device has been active (Month-to-date)',
@@ -446,7 +404,7 @@ module.exports = {
               LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
             WHERE DATE(r.endedOn)
                   BETWEEN DATE_FORMAT(NOW() - INTERVAL 1 MONTH, '%Y-%m-01')
-                  AND LAST_DAY(NOW()-INTERVAL 1 MONTH)
+                  AND LAST_DAY(NOW() - INTERVAL 1 MONTH)
                   AND dt.externalId = 'CepheidGeneXpert'
             GROUP BY r.deviceId, dc.dailyCapacity
           ) AS innerQuery`,
@@ -503,7 +461,7 @@ module.exports = {
         FROM Site AS s
         INNER JOIN Device AS d ON d.siteId = s.id
         LEFT OUTER JOIN InventoryItem AS i ON i.siteId = s.id
-                                        AND i.createdOn BETWEEN DATE_FORMAT(NOW() - interval 1 month, '%Y-%m-01')
+                                        AND i.createdOn BETWEEN DATE_FORMAT(NOW() - INTERVAL 1 month, '%Y-%m-01')
                                         AND LAST_DAY(NOW() - INTERVAL 1 MONTH)
         LEFT OUTER JOIN Consumable AS c ON i.consumableId = c.id
         GROUP BY s.id
@@ -511,7 +469,7 @@ module.exports = {
       statUnit: '{unit} last month',
       statUnitI18nKey: 'dashboardWidgetStockNotRecorded',
       link: '/operational-data#inventoryStatus',
-      sortOrder: 14,
+      sortOrder: 12,
       externalId: 'stockNotRecorded',
       description:
         'The stock not recorded is calculated by counting all sites with connected devices which are in the inventory items table and dividing that number by the total sites which has connected devices',
