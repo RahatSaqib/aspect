@@ -382,6 +382,54 @@ describe('Device routes', () => {
         assert.isOk(devicesReponse.body.ok)
         expect(deviceWithLogWithNote).to.containSubset(deviceWithLogWithNote)
       })
+
+      it('should provide shallow access to data.options.data.notes', async () => {
+        const deviceMaintenanceStatuses = await allDeviceMaintenanceStatusToId()
+        const { id: deviceId } = await knex('DeviceTypeCategory as dtc')
+          .join('DeviceType as dt', 'dtc.id', 'dt.deviceTypeCategoryId')
+          .join('Device as d', 'dt.id', 'd.deviceTypeId')
+          .where('dtc.hasResults', true)
+          .first('d.id')
+        const logData = {
+          options: { data: { notes: 'More cartridges expected next month' } },
+        }
+        await knex('DeviceMaintenanceStatusLog').insert({
+          deviceId,
+          deviceMaintenanceStatusId:
+            deviceMaintenanceStatuses.inactiveOutOfInventory,
+          day: startOfToday(),
+          data: JSON.stringify(logData),
+          createdOn: new Date(),
+        })
+        await knex('Device').where('id', deviceId).update({
+          deviceMaintenanceStatusId:
+            deviceMaintenanceStatuses.inactiveOutOfInventory,
+        })
+        const deviceWithLogWithNote = await knex('Device as d')
+          .join('DeviceMaintenanceStatusLog as dmsl', queryBuilder => {
+            queryBuilder
+              .on('d.id', 'dmsl.deviceId')
+              .andOn(
+                'd.deviceMaintenanceStatusId',
+                'dmsl.deviceMaintenanceStatusId'
+              )
+          })
+          .where(queryBuilder => {
+            queryBuilder.whereRaw(
+              `IFNULL(JSON_UNQUOTE(JSON_EXTRACT(IFNULL(dmsl.data, '{}'), '$.options.data.notes')), '') <> ''`
+            )
+          })
+          .orderByRaw('dmsl.day desc, dmsl.createdOn desc, dmsl.id desc')
+          .first('dmsl.*')
+        deviceWithLogWithNote.data = JSON.parse(deviceWithLogWithNote.data)
+        const devicesReponse = await server
+          .get(`${maintenanceStatusPath}/${deviceWithLogWithNote.deviceId}`)
+          .set('Authorization', `Bearer ${shared.token}`)
+        assert.isOk(devicesReponse.body.ok)
+        expect(deviceWithLogWithNote).to.containSubset({
+          notes: logData.options.data.notes,
+        })
+      })
     })
 
     describe('/maintenance-statuses', () => {
@@ -628,6 +676,56 @@ describe('Device routes', () => {
           deviceMaitnenanceStatusLog.data
         )
         expect(deviceMaitnenanceStatusLog.data).to.containSubset(payload)
+      })
+
+      it('should provide shallow access to write to data.options.data.notes', async () => {
+        const editableDeviceMaintenanceStatusIds = await knex(
+          'DeviceMaintenanceStatus'
+        )
+          .where('manuallySet', true)
+          .andWhere('externalId', '<>', 'inactiveDownForRepair')
+          .select('id')
+          .pluck('id')
+
+        const devicesWithEditableStatus = await server
+          .get(
+            `${path}?${editableDeviceMaintenanceStatusIds
+              .map(statusId => `deviceMaintenanceStatusId=${statusId}`)
+              .join('&')}`
+          )
+          .set('Authorization', `Bearer ${shared.token}`)
+
+        const deviceWithEditableStatus = devicesWithEditableStatus.body.data[0]
+        const payload = {
+          externalId: 'inactiveDownForRepair',
+          notes: 'Service engineer never pitched up',
+        }
+        const updateMaintenanceStatusResponse = await server
+          .post(`${maintenanceStatusPath}/${deviceWithEditableStatus.id}`)
+          .set('Authorization', `Bearer ${shared.token}`)
+          .send(payload)
+        assert.isOk(updateMaintenanceStatusResponse.body.ok)
+        assert.isOk(
+          updateMaintenanceStatusResponse.body.deviceMaintenanceStatusLogId
+        )
+        const deviceMaitnenanceStatusLog = await knex(
+          'DeviceMaintenanceStatusLog'
+        )
+          .where(
+            'id',
+            updateMaintenanceStatusResponse.body.deviceMaintenanceStatusLogId
+          )
+          .first()
+        deviceMaitnenanceStatusLog.data = JSON.parse(
+          deviceMaitnenanceStatusLog.data
+        )
+        expect(deviceMaitnenanceStatusLog.data).to.containSubset({
+          options: {
+            data: {
+              notes: payload.notes,
+            },
+          },
+        })
       })
     })
   })
