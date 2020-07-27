@@ -100,7 +100,7 @@ module.exports = {
       externalId: 'serverUptimeTitle',
       jobFunctions: ['all'],
       sortOrder: 3,
-      icon: 'MdLink',
+      icon: 'MdNetworkCheck',
       title: 'Server Uptime',
       titleI18nKey: 'serverUptimeTitle',
       sqlForIndicator: `SELECT IFNULL(CONCAT(CAST(CAST(SUBSTR(uptime_last_2_months, POSITION('-' IN uptime_last_2_months) + 1) AS UNSIGNED) AS CHAR), '%'), '?') AS cnt FROM (SELECT JSON_UNQUOTE(JSON_EXTRACT(FactDeviceExternalSource.data, '$.monitors[0].custom_uptime_ranges')) AS uptime_last_2_months FROM DeviceType LEFT JOIN Device ON DeviceType.id = Device.deviceTypeId LEFT JOIN FactDeviceExternalSource ON Device.id = FactDeviceExternalSource.deviceId AND FactDeviceExternalSource.sourceName = 'uptimeRobot' WHERE DeviceType.externalId = 'Aspect' LIMIT 1) AS aspect_uptime`,
@@ -116,7 +116,7 @@ module.exports = {
       },
     },
     {
-      icon: 'FaDatabase',
+      icon: 'MdNotificationsNone',
       jobFunctions: ['all'],
       title: 'Positive Results Notified',
       titleI18nKey: 'gxPositiveResultsNotifiedTitle',

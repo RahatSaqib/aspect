@@ -32,7 +32,7 @@ module.exports = {
   stat: [
     {
       jobFunctions: ['all'],
-      icon: 'FaLink',
+      icon: 'MdDateRange',
       title: 'TestsPerDay',
       titleI18nKey: 'dashboardWidgetTestsPerDayTitle',
       subTitle: null,
@@ -121,7 +121,7 @@ module.exports = {
     },
     {
       jobFunctions: ['all'],
-      icon: 'MdLink',
+      icon: 'MdCheck',
       title: 'ValidResultsPc',
       titleI18nKey: 'dashboardWidgetValidResultsPc',
       subTitle: null,
@@ -156,7 +156,7 @@ module.exports = {
       },
     },
     {
-      icon: 'MdLink',
+      icon: 'MdInsertChart',
       title: 'Utilization Rate',
       titleI18nKey: 'utilizationRateTitle',
       subTitle: null,
@@ -226,7 +226,7 @@ module.exports = {
     },
     {
       jobFunctions: ['all'],
-      icon: 'MdEventAvailable',
+      icon: 'MdCheck',
       title: 'Active',
       titleI18nKey: 'activeDevicesTitle',
       subTitle: null,
@@ -284,7 +284,7 @@ module.exports = {
       },
     },
     {
-      icon: 'MdInsertChart',
+      icon: 'MdInbox',
       title: 'Stockouts',
       titleI18nKey: 'StockoutsTitle',
       subTitle: null,
@@ -465,7 +465,7 @@ module.exports = {
       },
     },
     {
-      icon: 'FaBoxes',
+      icon: 'MdInbox',
       title: 'Stock not recorded',
       titleI18nKey: 'stockNotRecordedTitle',
       subTitle: null,
