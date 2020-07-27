@@ -106,7 +106,7 @@ module.exports = {
           ) as avgLastMonth
         ) as t
       `,
-      statUnit: '{unit} from last month',
+      statUnit: '{unit} last month',
       statUnitI18nKey: 'dashboardWidgetTestsPerDayUnit',
       link: '/browse/result',
       sortOrder: 1,
@@ -142,7 +142,7 @@ module.exports = {
           AND
           dt.externalId = 'CepheidGeneXpert'
       `,
-      statUnit: '{unit} in last month',
+      statUnit: '{unit} last month',
       statUnitI18nKey: 'dashboardWidgetValidResultsPcUnit',
       link: '/browse/result',
       sortOrder: 2,
@@ -210,7 +210,7 @@ module.exports = {
                   AND dt.externalId = 'CepheidGeneXpert'
             GROUP BY r.deviceId, dc.dailyCapacity
           ) AS innerQuery`,
-      statUnit: '{unit} in last month',
+      statUnit: '{unit} last month',
       statUnitI18nKey: 'dashboardWidgetUtilizationRate',
       link: '/browse/device',
       sortOrder: 0,
@@ -270,7 +270,7 @@ module.exports = {
       LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
       WHERE dt.externalId = 'CepheidGeneXpert'
       GROUP BY d.id , d.createdOn) AS q;`,
-      statUnit: '{unit} from last month',
+      statUnit: '{unit} last month',
       statUnitI18nKey: 'dashboardWidgetActiveDevices',
       link: '/browse/device',
       sortOrder: 12,

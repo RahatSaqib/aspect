@@ -104,12 +104,9 @@ module.exports = {
       title: 'Server Uptime',
       titleI18nKey: 'serverUptimeTitle',
       sqlForIndicator: `SELECT IFNULL(CONCAT(CAST(CAST(SUBSTR(uptime_last_2_months, POSITION('-' IN uptime_last_2_months) + 1) AS UNSIGNED) AS CHAR), '%'), '?') AS cnt FROM (SELECT JSON_UNQUOTE(JSON_EXTRACT(FactDeviceExternalSource.data, '$.monitors[0].custom_uptime_ranges')) AS uptime_last_2_months FROM DeviceType LEFT JOIN Device ON DeviceType.id = Device.deviceTypeId LEFT JOIN FactDeviceExternalSource ON Device.id = FactDeviceExternalSource.deviceId AND FactDeviceExternalSource.sourceName = 'uptimeRobot' WHERE DeviceType.externalId = 'Aspect' LIMIT 1) AS aspect_uptime`,
-      sqlForStatUnit: `SELECT CONCAT(CAST((100 - CAST(SUBSTR(uptime_last_2_months, POSITION('-' IN uptime_last_2_months) + 1) AS UNSIGNED)) AS CHAR), '%') AS cnt FROM (SELECT JSON_UNQUOTE(JSON_EXTRACT(FactDeviceExternalSource.data, '$.monitors[0].custom_uptime_ranges')) AS uptime_last_2_months FROM DeviceType JOIN Device ON DeviceType.id = Device.deviceTypeId LEFT JOIN FactDeviceExternalSource ON Device.id = FactDeviceExternalSource.deviceId AND FactDeviceExternalSource.sourceName = 'uptimeRobot' WHERE DeviceType.externalId = 'Aspect' LIMIT 1) AS aspect_uptime`,
-      statUnit: '{unit} below 100%',
+      sqlForStatUnit: `SELECT IFNULL(CONCAT(CAST(CAST(SUBSTR(uptime_last_2_months, 1, POSITION('-' IN uptime_last_2_months) - 1) AS UNSIGNED) AS CHAR), '%'), '?') AS cnt FROM (SELECT JSON_UNQUOTE(JSON_EXTRACT(FactDeviceExternalSource.data, '$.monitors[0].custom_uptime_ranges')) AS uptime_last_2_months FROM DeviceType JOIN Device ON DeviceType.id = Device.deviceTypeId LEFT JOIN FactDeviceExternalSource ON Device.id = FactDeviceExternalSource.deviceId AND FactDeviceExternalSource.sourceName = 'uptimeRobot' WHERE DeviceType.externalId = 'Aspect' LIMIT 1) AS aspect_uptime`,
+      statUnit: '{unit} last month',
       statUnitI18nKey: 'dashboardWidgetUnitServerUptime',
-      sqlForExtra: `SELECT CONCAT(CAST(ROUND(SUBSTR(uptime_last_2_months, POSITION('-' IN uptime_last_2_months) + 1) - SUBSTR(uptime_last_2_months, 1, POSITION('-' IN uptime_last_2_months) - 1)) AS CHAR), '%') AS cnt FROM (SELECT JSON_UNQUOTE(JSON_EXTRACT(FactDeviceExternalSource.data, '$.monitors[0].custom_uptime_ranges')) AS uptime_last_2_months FROM DeviceType JOIN Device ON DeviceType.id = Device.deviceTypeId LEFT JOIN FactDeviceExternalSource ON Device.id = FactDeviceExternalSource.deviceId AND FactDeviceExternalSource.sourceName = 'uptimeRobot' WHERE DeviceType.externalId = 'Aspect' LIMIT 1) AS aspect_uptime`,
-      extraLabel: 'from last month',
-      extraLabelI18nKey: 'dashboardWidgetExtraLabelServerUptime',
       description: `The amount of time that Uptime Robot has been able to connect to Aspect this month`,
       descriptionI18nKey: 'serverUptimeDescription',
       dashboards: {
@@ -124,8 +121,6 @@ module.exports = {
       title: 'Positive Results Notified',
       titleI18nKey: 'gxPositiveResultsNotifiedTitle',
       externalId: 'gxPositiveResultsNotified',
-      subTitle: 'This Month',
-      subTitleI18nKey: 'gxPositiveResultsNotifiedSubTitle',
       sqlForIndicator: `
         SELECT
             CONCAT(IFNULL(ROUND(SUM(HasNotifications) * 100 / COUNT(*),
@@ -154,7 +149,7 @@ module.exports = {
                     AND MONTH(r.endedOn) = MONTH(CURRENT_DATE)
             GROUP BY r.id) AS q
         `,
-      sqlForExtra: `
+      sqlForStatUnit: `
         SELECT
             CONCAT(IFNULL(ROUND(SUM(HasNotifications) * 100 / COUNT(*),
                                     0),
@@ -182,8 +177,8 @@ module.exports = {
                     AND MONTH(r.endedOn) = MONTH(DATE_ADD(CURRENT_DATE, INTERVAL - 1 MONTH))
             GROUP BY r.id) AS q
         `,
-      extraLabel: 'Previous Month',
-      extraLabelI18nKey: 'gxPositiveResultsNotifiedPreviousMonth',
+      statUnit: '{unit} last month',
+      statUnitI18nKey: 'gxPositiveResultsNotifiedPreviousMonth',
       sortOrder: 4,
       description:
         "The percentage of GeneXpert's TB and HIV results that were notified",
