@@ -189,5 +189,9 @@ module.exports = {
       ),
       sortOrder: 15,
     },
+    {
+      ...dashboardWidgetsBase.stat.find(x => x.externalId === 'moduleSwaps'),
+      sortOrder: 16,
+    },
   ],
 }

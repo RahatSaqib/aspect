@@ -490,5 +490,59 @@ module.exports = {
         },
       },
     },
+    {
+      jobFunctions: ['all'],
+      icon: 'MdSwapVert',
+      title: 'Module swaps',
+      titleI18nKey: 'moduleSwapsTitle',
+      subTitle: null,
+      subTitleI18nKey: null,
+      sqlForIndicator: `SELECT 
+      COUNT(*) AS cnt
+        FROM
+            issue AS i
+                INNER JOIN
+            issuetype it ON i.issueTypeId = it.id
+                INNER JOIN
+            Device AS d ON d.id = i.deviceId
+                INNER JOIN
+            Site AS s ON s.id = d.siteId
+                INNER JOIN
+            Partner AS p ON s.partnerId = p.id
+                LEFT OUTER JOIN
+            Geography AS g ON s.geographyId = g.id
+        WHERE
+            it.externalId = 'ModuleReplaced'
+            AND i.createdOn >= DATE_FORMAT(CURRENT_DATE, '%Y-%m-01')`,
+      sqlForStatUnit: `SELECT 
+      COUNT(*) AS cnt
+        FROM
+            issue AS i
+                INNER JOIN
+            issuetype it ON i.issueTypeId = it.id
+                INNER JOIN
+            Device AS d ON d.id = i.deviceId
+                INNER JOIN
+            Site AS s ON s.id = d.siteId
+                INNER JOIN
+            Partner AS p ON s.partnerId = p.id
+                LEFT OUTER JOIN
+            Geography AS g ON s.geographyId = g.id
+        WHERE
+            it.externalId = 'ModuleReplaced'
+            AND i.createdOn BETWEEN DATE_FORMAT(NOW() - interval 1 month, '%Y-%m-01') AND LAST_DAY(CURRENT_DATE-INTERVAL 1 MONTH)`,
+      statUnit: '{unit} last month',
+      statUnitI18nKey: 'dashboardWidgetModuleSwaps',
+      link: '/browse/device',
+      sortOrder: 15,
+      externalId: 'moduleSwaps',
+      description: 'The number of module swaps made at the current month',
+      descriptionI18nKey: 'moduleSwapsDescription',
+      dashboards: {
+        operational: {
+          groupI18nKey: WIDGET_GROUP_KEYS.SERVICE,
+        },
+      },
+    },
   ],
 }
