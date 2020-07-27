@@ -36,9 +36,6 @@ module.exports = {
       descriptionI18nKey: 'devicesDescription',
       dashboards: {
         home: {},
-        operational: {
-          groupI18nKey: WIDGET_GROUP_KEYS.CONNECTIVITY,
-        },
       },
     },
     {
@@ -73,6 +70,30 @@ module.exports = {
       descriptionI18nKey: 'personDescription',
       dashboards: {
         home: {},
+      },
+    },
+    {
+      jobFunctions: ['all'],
+      icon: 'MdComputer',
+      title: 'Devices',
+      titleI18nKey: 'devicesTitle',
+      subTitle: null,
+      subTitleI18nKey: null,
+      sqlForIndicator: `select count(d.id) as cnt from Device as d inner join Site as s on s.id = d.siteId inner join DeviceType as dt on dt.id = d.deviceTypeId inner join DeviceTypeCategory as dc on dc.id = dt.deviceTypeCategoryId left outer join Geography as g on s.geographyId = g.id where dc.hasResults = 1 and dt.externalId = 'CepheidGeneXpert'`,
+      sqlForStatUnit: `select count(d.id) as cnt from Device as d inner join Site as s on s.id = d.siteId inner join DeviceType as dt on dt.id = d.deviceTypeId inner join DeviceTypeCategory as dc on dc.id = dt.deviceTypeCategoryId left outer join Geography as g on s.geographyId = g.id where dc.hasResults = 1 and dt.externalId = 'CepheidGeneXpert'
+          AND YEAR(d.createdOn) <= YEAR(DATE_SUB(CURRENT_DATE, INTERVAL 1 MONTH))
+          AND MONTH(d.createdOn) <= MONTH(DATE_SUB(CURRENT_DATE, INTERVAL 1 MONTH))`,
+      statUnit: '{unit} last month',
+      statUnitI18nKey: 'dashboardWidgetUnitDevicesCountGeneXpert',
+      link: '/browse/device',
+      sortOrder: 0,
+      externalId: 'devicesCountGeneXpert',
+      description: 'The number of approved GeneXpert devices',
+      descriptionI18nKey: 'devicesDescription',
+      dashboards: {
+        operational: {
+          groupI18nKey: WIDGET_GROUP_KEYS.CONNECTIVITY,
+        },
       },
     },
     {
