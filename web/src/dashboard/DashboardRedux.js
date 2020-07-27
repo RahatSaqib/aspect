@@ -1,6 +1,7 @@
 /* eslint-disable linebreak-style */
 import { stringify } from 'querystring'
 import fromPairs from 'lodash/fromPairs'
+import forEach from 'lodash/forEach'
 import omit from 'lodash/omit'
 import { defineMessages } from 'react-intl'
 import Immutable from 'immutable'
@@ -404,11 +405,14 @@ function receiveInventoryDashboard(requestedAt, data) {
 /*
  * ---------------- Reducers -----------------
  */
-const summary = Immutable.Record({
+const initialData = Immutable.Record({
   requestedAtSet: Immutable.Set(),
-  dashboards: Immutable.Map(),
+  dashboardsCache: Immutable.Map(),
   allSummaryItems: new Items(),
-  summary: Immutable.List(),
+  summary: Immutable.fromJS({
+    currentIdList: [],
+    widgetGroups: {},
+  }),
   targetSummaryList: Immutable.List(),
   resultSiteList: Immutable.List(),
   resultSummaryList: Immutable.List(),
@@ -426,7 +430,7 @@ const summary = Immutable.Record({
   inventoryItems: Immutable.List(),
 })
 
-const initialState = summary()
+const initialState = initialData()
 const onRequested = (action, mutState, cb) => {
   if (mutState.hasIn(['requestedAtSet', action.requestedAt])) {
     mutState.set(
@@ -459,36 +463,55 @@ export default function dashboardReducer(state = initialState, action) {
         )
 
         // get previously stored dashboard widgets
-        const dashboardIdList = state.getIn(['dashboards', action.dashboard])
-        mutState.set(
-          'summary',
-          (dashboardIdList || Immutable.List())
-            .map(id => state.allSummaryItems.byId.get(id))
-            .filter(widget =>
-              widget.get('dashboards').includes(action.dashboard)
-            )
-        )
+        const dashboardItem =
+          state.getIn(['dashboardsCache', action.dashboard]) ||
+          Immutable.fromJS({ widgetGroups: {}, currentIdList: [] })
+
+        mutState.set('summary', dashboardItem)
       })
     case RECEIVE_STAT_DASHBOARD:
       return state.withMutations(mutState => {
         onRequested(action, mutState, () => {
-          const immutList = Immutable.fromJS(
-            action.data.map(item => {
-              item.dashboards = JSON.parse(
-                // defaults to '["home"]' if field is null
-                item.dashboards || '["home"]'
-              )
-              return item
+          const widgetGroups = {}
+          const addWidgetToGroup = (groupName, widgetId) => {
+            widgetGroups[groupName] = widgetGroups[groupName] || []
+            widgetGroups[groupName].push(widgetId)
+          }
+          const widgets = action.data.map(item => {
+            // see base pattern of `dashboards` in `api/seeds/fixtures/dashboardWidgetsBase.js`
+            item.dashboards = JSON.parse(item.dashboards || { home: {} })
+            //
+            forEach(item.dashboards, (dashboardProps, dashboardName) => {
+              // process only items for current dashboard (i.e action.dashboard)
+              if (dashboardName === action.dashboard) {
+                const { groupI18nKey } = dashboardProps
+                if (!groupI18nKey) {
+                  // add item as 'non-grouped'
+                  addWidgetToGroup(' ', item.id)
+                } else {
+                  addWidgetToGroup(groupI18nKey, item.id)
+                }
+              }
             })
-          )
+            return item
+          })
+          const immutList = Immutable.fromJS(widgets)
           mutState.set(
             'allSummaryItems',
             receiveList(mutState.allSummaryItems, immutList)
           )
-          mutState.set('summary', immutList)
+
           mutState.setIn(
-            ['dashboards', action.dashboard],
+            ['dashboardsCache', action.dashboard, 'currentIdList'],
             mutState.allSummaryItems.currentIdList
+          )
+          mutState.setIn(
+            ['dashboardsCache', action.dashboard, 'widgetGroups'],
+            Immutable.fromJS(widgetGroups)
+          )
+          mutState.set(
+            'summary',
+            mutState.getIn(['dashboardsCache', action.dashboard])
           )
         })
       })

@@ -3,7 +3,7 @@ module.exports = require('../utils').seed(seed, __filename)
 const _ = require('lodash')
 const Promise = require('bluebird')
 
-const dashboardWidget = require('./fixtures/dashboardWidget.js')
+const dashboardWidget = require('./fixtures/dashboardWidget')
 
 async function seed(knex) {
   const { id: partnerId } = await knex('Partner')
