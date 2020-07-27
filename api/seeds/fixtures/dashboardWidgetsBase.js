@@ -272,7 +272,7 @@ module.exports = {
       GROUP BY d.id , d.createdOn) AS q;`,
       statUnit: '{unit} last month',
       statUnitI18nKey: 'dashboardWidgetActiveDevices',
-      link: '/browse/device',
+      link: '/operational-data#deviceStatus',
       sortOrder: 12,
       externalId: 'activeDevices',
       description: `The daily percentage of devices that sent results`,
@@ -327,7 +327,7 @@ module.exports = {
                                                 AND ist.externalId NOT IN ('Inactive', 'OK', 'Resolved')`,
       statUnit: '{unit} last month',
       statUnitI18nKey: 'dashboardWidgetStockouts',
-      link: '/browse/inventory',
+      link: '/operational-data#inventoryStatus',
       sortOrder: 12,
       externalId: 'stockouts',
       description:
@@ -384,7 +384,7 @@ module.exports = {
         ) AS innerQuery`,
       statUnit: '{unit} last month',
       statUnitI18nKey: 'dashboardWidgetDeviceDaysActiveTitle',
-      link: '/browse/device',
+      link: '/operational-data#deviceStatus',
       sortOrder: 12,
       externalId: 'deviceDaysActive',
       description:
@@ -510,7 +510,7 @@ module.exports = {
           ) AS innerQuery`,
       statUnit: '{unit} last month',
       statUnitI18nKey: 'dashboardWidgetStockNotRecorded',
-      link: '/browse/inventory',
+      link: '/operational-data#inventoryStatus',
       sortOrder: 14,
       externalId: 'stockNotRecorded',
       description:

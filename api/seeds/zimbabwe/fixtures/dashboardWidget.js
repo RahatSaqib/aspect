@@ -109,6 +109,7 @@ module.exports = {
       statUnitI18nKey: 'dashboardWidgetUnitServerUptime',
       description: `The amount of time that Uptime Robot has been able to connect to Aspect this month`,
       descriptionI18nKey: 'serverUptimeDescription',
+      link: 'https://stats.uptimerobot.com/R6WjlCrRW4',
       dashboards: {
         operational: {
           groupI18nKey: WIDGET_GROUP_KEYS.CONNECTIVITY,
