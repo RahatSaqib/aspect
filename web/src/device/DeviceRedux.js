@@ -450,7 +450,17 @@ export default function deviceReducer(state = initialState, action) {
       return state.withMutations(mutState => {
         mutState.delete('requestedAt')
         const immutList = Immutable.fromJS(action.items)
-        mutState.set('items', receiveList(mutState.items, immutList))
+
+        const nextById = mutState.items.byId.withMutations(mutById => {
+          immutList.forEach(item => mutById.setIn([item.get('id')], item))
+        })
+
+        const nextCurrentIdList = immutList.map(item => item.get('id'))
+        const newItem = mutState.items
+          .set('byId', nextById)
+          .set('currentIdList', nextCurrentIdList)
+
+        mutState.set('items', newItem)
         mutState.set('table', receiveTableItems(mutState.table, action.total))
       })
     case types.REJECTED_DEVICES:
