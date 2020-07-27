@@ -587,6 +587,11 @@ const routes = [
                 .description(
                   'Additional contextual data logged with the maintenance status update'
                 ),
+              notes: Joi.string()
+                .allow('', null)
+                .description(
+                  'Shallow access to the value inside DeviceMaintenanceStatusLog -> data.options.data.notes'
+                ),
               day: Joi.date()
                 .allow(null)
                 .description('The day of the maintenance status update'),
@@ -630,6 +635,11 @@ const routes = [
             .allow(null)
             .description(
               'The additional JSON data to append in the maintenance status log. Data values such as extra dates and notes can be included in this object'
+            ),
+          notes: Joi.string()
+            .allow('', null)
+            .description(
+              'Shallow access to the value inside DeviceMaintenanceStatusLog -> data.options.data.notes'
             ),
         },
       },
@@ -764,6 +774,11 @@ const routes = [
                         .required()
                         .description('Whether the day is a weekend or not'),
                       data: Joi.object().allow(null),
+                      notes: Joi.string()
+                        .allow('', null)
+                        .description(
+                          'Shallow access to the value inside data => $.options.data.notes'
+                        ),
                     })
                   ),
               })

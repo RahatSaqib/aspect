@@ -887,7 +887,7 @@ async function manuallySetDeviceMaintenanceStatus(request) {
     payload,
     plugins: { messageContext },
   } = request
-  const { externalId, day = startOfToday() } = payload
+  const { externalId, day = startOfToday(), notes } = payload
   const deviceMaintenanceStatus = await knex('DeviceMaintenanceStatus')
     .where({ externalId })
     .first()
@@ -909,6 +909,9 @@ async function manuallySetDeviceMaintenanceStatus(request) {
     return Boom.notFound()
   }
   const currentlyLoggedInUser = await getUser(credentials.name)
+  if (notes) {
+    _.set(payload, 'options.data.notes', notes)
+  }
   const deviceMaintenanceStatusLogId = await setDeviceMaintenanceStatus(
     deviceId,
     currentlyLoggedInUser.id,
@@ -1231,15 +1234,21 @@ async function deviceMaintenanceStatusHistory(request) {
               log.deviceId === device.id &&
               log.day.toISOString() === day.toISOString()
           ) || {}
-        return {
+        const dayStatus = {
           date: day,
           externalId:
             deviceMaintenanceStatusLog.externalId || 'inactiveUnknown',
           isWeekend: isWeekend(day),
-          data: deviceMaintenanceStatusLog.data
-            ? JSON.parse(deviceMaintenanceStatusLog.data)
-            : {},
+          data: {},
         }
+        if (deviceMaintenanceStatusLog.data) {
+          dayStatus.data = JSON.parse(deviceMaintenanceStatusLog.data)
+          dayStatus.notes = _.get(
+            deviceMaintenanceStatusLog,
+            'data.options.data.notes'
+          )
+        }
+        return dayStatus
       }),
     })),
   }
@@ -1268,6 +1277,11 @@ async function deviceMaintenanceStatus(request) {
   if (currentDeviceMaintenanceStatusLog.data) {
     currentDeviceMaintenanceStatusLog.data = JSON.parse(
       currentDeviceMaintenanceStatusLog.data
+    )
+    currentDeviceMaintenanceStatusLog.notes = _.get(
+      currentDeviceMaintenanceStatusLog,
+      'data.options.data.notes',
+      null
     )
   }
   return {
