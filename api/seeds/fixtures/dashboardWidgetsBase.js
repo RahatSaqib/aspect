@@ -37,40 +37,32 @@ module.exports = {
       titleI18nKey: 'dashboardWidgetTestsPerDayTitle',
       subTitle: null,
       subTitleI18nKey: null,
-      sqlForIndicator: `SELECT IFNULL(CAST(CEILING(avg(cnt)) AS CHAR), '?') as cnt
-        FROM (
-          SELECT COUNT(r.id) as cnt
-          FROM Result as r
-            INNER JOIN Device as d on d.id = r.deviceId
-            INNER JOIN DeviceType as dt on dt.id = d.deviceTypeId
-            INNER JOIN Site as s on s.id = d.siteId
-            INNER JOIN Partner p on s.partnerId = p.id
-            LEFT OUTER JOIN Geography as g on s.geographyId = g.id
-          WHERE
-            YEAR(r.endedOn) = YEAR(NOW())
-            AND
-            MONTH(r.endedOn) = MONTH(NOW())
-            AND
-            dt.externalId = 'CepheidGeneXpert'
-          GROUP BY DATE(r.endedOn)
-        ) as t1`,
-      sqlForStatUnit: `SELECT IFNULL(CAST(CEILING(avg(cnt)) AS CHAR), '?') as cnt
-      FROM (
-        SELECT COUNT(r.id) as cnt
-        FROM Result as r
-          INNER JOIN Device as d on d.id = r.deviceId
-          INNER JOIN DeviceType as dt on dt.id = d.deviceTypeId
-          INNER JOIN Site as s on s.id = d.siteId
-          INNER JOIN Partner p on s.partnerId = p.id
-          LEFT OUTER JOIN Geography as g on s.geographyId = g.id
-        WHERE
-          YEAR(r.endedOn) = YEAR(DATE_SUB(NOW(), INTERVAL 1 MONTH))
-          AND
-          MONTH(r.endedOn) = MONTH(DATE_SUB(NOW(), INTERVAL 1 MONTH))
-          AND
-          dt.externalId = 'CepheidGeneXpert'
-        GROUP BY DATE(r.endedOn)
-      ) as t1`,
+      sqlForIndicator: `SELECT ROUND(COUNT(r.id)/day(now())) as cnt
+      FROM Result as r
+        INNER JOIN Device as d on d.id = r.deviceId
+        INNER JOIN DeviceType as dt on dt.id = d.deviceTypeId
+        INNER JOIN Site as s on s.id = d.siteId
+        INNER JOIN Partner p on s.partnerId = p.id
+        LEFT OUTER JOIN Geography as g on s.geographyId = g.id
+      WHERE
+        YEAR(r.endedOn) = YEAR(NOW())
+        AND
+        MONTH(r.endedOn) = MONTH(NOW())
+        AND
+        dt.externalId = 'CepheidGeneXpert'`,
+      sqlForStatUnit: `SELECT ROUND(COUNT(r.id)/DAY(LAST_DAY(DATE_SUB(NOW(), INTERVAL 1 MONTH)))) as cnt
+      FROM Result as r
+        INNER JOIN Device as d on d.id = r.deviceId
+        INNER JOIN DeviceType as dt on dt.id = d.deviceTypeId
+        INNER JOIN Site as s on s.id = d.siteId
+        INNER JOIN Partner p on s.partnerId = p.id
+        LEFT OUTER JOIN Geography as g on s.geographyId = g.id
+      WHERE
+        YEAR(r.endedOn) = YEAR(DATE_SUB(NOW(), INTERVAL 1 MONTH))
+        AND
+        MONTH(r.endedOn) = MONTH(DATE_SUB(NOW(), INTERVAL 1 MONTH))
+        AND
+        dt.externalId = 'CepheidGeneXpert'`,
       statUnit: '{unit} last month',
       statUnitI18nKey: 'dashboardWidgetTestsPerDayUnit',
       link: '/browse/result',
