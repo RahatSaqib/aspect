@@ -195,10 +195,10 @@ module.exports = {
       titleI18nKey: 'activeDevicesTitle',
       subTitle: null,
       subTitleI18nKey: null,
-      sqlForIndicator: `SELECT 
+      sqlForIndicator: `SELECT
       CONCAT(ROUND(AVG(AvailabilityPercentage)), '%') AS cnt
   FROM
-      (SELECT 
+      (SELECT
           COUNT(DISTINCT DATE(r.endedOn)) * 100 / DATEDIFF(NOW(), GREATEST(DATE_FORMAT(NOW(), '%Y-%m-01'),d.createdOn)) AS AvailabilityPercentage
       FROM
           Device AS d
@@ -208,11 +208,11 @@ module.exports = {
       INNER JOIN Partner AS p ON s.partnerId = p.id
       LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
       GROUP BY d.id) AS q;`,
-      sqlForStatUnit: `SELECT 
+      sqlForStatUnit: `SELECT
       CONCAT(CASE WHEN (AVG(CurrentMonthAvailabilityPercentage) - AVG(LastMonthAvailabilityPercentage)) >= 0 THEN '+' ELSE '' END,
       ROUND(AVG(CurrentMonthAvailabilityPercentage) - AVG(LastMonthAvailabilityPercentage)), '%') AS cnt
   FROM
-      (SELECT 
+      (SELECT
           d.id,
               COUNT(DISTINCT CASE
                   WHEN r.endedOn < DATE_FORMAT(NOW(), '%Y-%m-01') THEN DATE(r.endedOn)
@@ -346,7 +346,7 @@ module.exports = {
       titleI18nKey: 'errorRateTitle',
       subTitle: null,
       subTitleI18nKey: null,
-      sqlForIndicator: `SELECT 
+      sqlForIndicator: `SELECT
           CONCAT(
             ROUND(
               IFNULL(
@@ -357,17 +357,17 @@ module.exports = {
             ,0)
           ,'%') AS cnt
           FROM (
-            SELECT r.deviceId, SUM(rc.name = 'Error') as errorCount, COUNT(r.id) AS resultCount, dc.dailyCapacity 
-              FROM Result AS r 
-              INNER JOIN ResultCategory AS rc ON rc.id= r.resultCategory1 
-              INNER JOIN Device AS d ON d.id= r.deviceId 
-              INNER JOIN DeviceCapacity dc ON d.deviceCapacityId = dc.id 
-              INNER JOIN Site AS s ON s.id = d.siteId 
-              LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id 
-            WHERE DATE_FORMAT(NOW(), '%Y-%m-01') <= DATE(r.endedOn) 
+            SELECT r.deviceId, SUM(rc.name = 'Error') as errorCount, COUNT(r.id) AS resultCount, dc.dailyCapacity
+              FROM Result AS r
+              INNER JOIN ResultCategory AS rc ON rc.id= r.resultCategory1
+              INNER JOIN Device AS d ON d.id= r.deviceId
+              INNER JOIN DeviceCapacity dc ON d.deviceCapacityId = dc.id
+              INNER JOIN Site AS s ON s.id = d.siteId
+              LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
+            WHERE DATE_FORMAT(NOW(), '%Y-%m-01') <= DATE(r.endedOn)
             GROUP BY r.deviceId
           ) AS innerQuery`,
-      sqlForStatUnit: `SELECT 
+      sqlForStatUnit: `SELECT
           CONCAT(
             ROUND(
               IFNULL(
@@ -378,16 +378,16 @@ module.exports = {
             ,0)
           ,'%') AS cnt
           FROM (
-            SELECT r.deviceId, SUM(rc.name = 'Error') as errorCount, COUNT(r.id) AS resultCount, dc.dailyCapacity 
-              FROM Result AS r 
-              INNER JOIN ResultCategory AS rc ON rc.id= r.resultCategory1 
-              INNER JOIN Device AS d ON d.id= r.deviceId 
-              INNER JOIN DeviceCapacity dc ON d.deviceCapacityId = dc.id 
-              INNER JOIN Site AS s ON s.id = d.siteId 
-              LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id 
-            WHERE DATE(r.endedOn) 
-                  BETWEEN DATE_FORMAT(NOW() - INTERVAL 1 MONTH, '%Y-%m-01') 
-                  AND LAST_DAY(NOW()-INTERVAL 1 MONTH) 
+            SELECT r.deviceId, SUM(rc.name = 'Error') as errorCount, COUNT(r.id) AS resultCount, dc.dailyCapacity
+              FROM Result AS r
+              INNER JOIN ResultCategory AS rc ON rc.id= r.resultCategory1
+              INNER JOIN Device AS d ON d.id= r.deviceId
+              INNER JOIN DeviceCapacity dc ON d.deviceCapacityId = dc.id
+              INNER JOIN Site AS s ON s.id = d.siteId
+              LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
+            WHERE DATE(r.endedOn)
+                  BETWEEN DATE_FORMAT(NOW() - INTERVAL 1 MONTH, '%Y-%m-01')
+                  AND LAST_DAY(NOW()-INTERVAL 1 MONTH)
             GROUP BY r.deviceId, dc.dailyCapacity
           ) AS innerQuery`,
       statUnit: '{unit} last month',
@@ -406,7 +406,7 @@ module.exports = {
       titleI18nKey: 'stockNotRecordedTitle',
       subTitle: null,
       subTitleI18nKey: null,
-      sqlForIndicator: `SELECT 
+      sqlForIndicator: `SELECT
           CONCAT(
             ROUND(
               IFNULL(
@@ -417,14 +417,14 @@ module.exports = {
           ,'%') AS cnt
           FROM (
             SELECT s.id AS siteId, sum(i.quantityOnHand) AS quantityOnHand
-            FROM Site AS s 
+            FROM Site AS s
             INNER JOIN Device AS d ON d.siteId = s.id
             LEFT OUTER JOIN InventoryItem AS i ON i.siteId = s.id
                                               AND i.createdOn BETWEEN DATE_FORMAT(NOW(), '%Y-%m-01')
                                               AND LAST_DAY(NOW())
             GROUP BY s.id
           ) AS innerQuery`,
-      sqlForStatUnit: `SELECT 
+      sqlForStatUnit: `SELECT
       CONCAT(
         ROUND(
           IFNULL(
@@ -435,7 +435,7 @@ module.exports = {
       ,'%') AS cnt
       FROM (
         SELECT s.id AS siteId, sum(i.quantityOnHand) AS quantityOnHand
-        FROM Site AS s 
+        FROM Site AS s
         INNER JOIN Device AS d ON d.siteId = s.id
         LEFT OUTER JOIN InventoryItem AS i ON i.siteId = s.id
                                         AND i.createdOn BETWEEN DATE_FORMAT(NOW() - interval 1 month, '%Y-%m-01')
@@ -459,27 +459,69 @@ module.exports = {
       subTitle: null,
       subTitleI18nKey: null,
       sqlForIndicator: `
-        SELECT ROUND(AVG(TIMEDIFF(r.endedOn, CONVERT_TZ(r.createdOn,COALESCE(d.timezone ,'+00:00'),"+00:00")))) 
-        FROM Result AS r 
-        INNER JOIN Site AS s ON r.siteId = s.id
-        INNER JOIN Device AS d ON r.deviceId = d.id
-        WHERE HOUR(TIMEDIFF(r.endedOn, CONVERT_TZ(r.createdOn,COALESCE(d.timezone ,'+00:00'),"+00:00"))) >=2
-        AND r.endedOn BETWEEN DATE_FORMAT(NOW(), '%Y-%m-01') AND NOW();
+    SELECT ROUND(
+        AVG(
+          TIMESTAMPDIFF(
+            MINUTE,
+            CONVERT_TZ(r.endedOn,
+            COALESCE(devicetz.timezone,sitetz.timezone,countrytz.timezone),'UTC'
+            ),
+            r.createdOn
+          )
+        )
+      )
+    FROM Result AS r
+    INNER JOIN Site AS s ON r.siteId = s.id
+    INNER JOIN Geography AS g ON s.geographyId = g.stateId
+    INNER JOIN Country AS c ON g.countryId = c.id
+    INNER JOIN TimeZone AS countrytz ON c.timezone = countrytz.id
+    LEFT OUTER JOIN TimeZone AS sitetz ON s.timezoneId= sitetz.id
+    INNER JOIN Device AS d ON r.deviceId = d.id
+    LEFT OUTER JOIN TimeZone AS devicetz ON d.timezone= devicetz.id
+    WHERE 	TIMESTAMPDIFF(
+        HOUR,
+        CONVERT_TZ(r.endedOn,
+        COALESCE(devicetz.timezone,sitetz.timezone,countrytz.timezone),'UTC'
+        ),
+        r.createdOn
+        )>=2
+           AND r.endedOn BETWEEN DATE_FORMAT(NOW(), '%Y-%m-01') AND NOW();
       `,
       sqlForStatUnit: `
-        SELECT ROUND(AVG(TIMEDIFF(r.endedOn, CONVERT_TZ(r.createdOn,COALESCE(d.timezone ,'+00:00'),"+00:00")))) 
-        FROM Result AS r 
-        INNER JOIN Site AS s ON r.siteId = s.id
-        INNER JOIN Device AS d ON r.deviceId = d.id
-        WHERE HOUR(TIMEDIFF(r.endedOn, CONVERT_TZ(r.createdOn,COALESCE(d.timezone ,'+00:00'),"+00:00"))) >=2
-        AND r.endedOn BETWEEN DATE_FORMAT(NOW()- interval 1 month, '%Y-%m-01') AND last_day(NOW()- interval 1 month);`,
+    SELECT ROUND(
+        AVG(
+          TIMESTAMPDIFF(
+            MINUTE,
+            CONVERT_TZ(r.endedOn,
+            COALESCE(devicetz.timezone,sitetz.timezone,countrytz.timezone),'UTC'
+            ),
+            r.createdOn
+          )
+        )
+      )
+    FROM Result AS r
+    INNER JOIN Site AS s ON r.siteId = s.id
+    INNER JOIN Geography AS g ON s.geographyId = g.stateId
+    INNER JOIN Country AS c ON g.countryId = c.id
+    INNER JOIN TimeZone AS countrytz ON c.timezone = countrytz.id
+    LEFT OUTER JOIN TimeZone AS sitetz ON s.timezoneId= sitetz.id
+    INNER JOIN Device AS d ON r.deviceId = d.id
+    LEFT OUTER JOIN TimeZone AS devicetz ON d.timezone= devicetz.id
+    WHERE 	TIMESTAMPDIFF(
+        HOUR,
+        CONVERT_TZ(r.endedOn,
+        COALESCE(devicetz.timezone,sitetz.timezone,countrytz.timezone),'UTC'
+        ),
+        r.createdOn
+        )>=2
+        AND r.endedOn BETWEEN DATE_FORMAT(NOW() - interval 1 month, '%Y-%m-01') AND last_day(NOW()- interval 1 month);`,
       statUnit: '{unit} last month',
       statUnitI18nKey: 'avgTimeToUploadStat',
       link: '/browse/result',
       sortOrder: 15,
       externalId: 'avgTimeToUpload',
       description:
-        'Measure the average time between endedOn to createdOn in the current month/last month.',
+        'Measure the average time between the time where the test is performed in the device and when the result is created in aspect in the current month/last month.',
       descriptionI18nKey: 'avgTimeToUploadDescription',
       dashboards: ['operational'],
     },

@@ -1,7 +1,9 @@
+/* eslint-disable no-console */
 const now = new Date()
 const Promise = require('bluebird')
 const _ = require('lodash')
 const forms = require('./fixtures/forms')
+const TZ = require('./fixtures/TimeZones')
 const { insertNewResultPushTemplates } = require('./commonPushNotifications')
 const { getBaseIssues } = require('./relatedObjects/issues')
 const { getBaseForms } = require('./relatedObjects/forms')
@@ -134,6 +136,7 @@ async function addForms(knex, _partnerId, formsNeeded = Object.keys(forms)) {
         ;({ partnerId } = await knex('Partner as p').first('id as partnerId'))
       }
     } catch (e) {
+      console.log('Error inserting forms', e)
       return false
     }
   }
@@ -165,8 +168,24 @@ async function addForms(knex, _partnerId, formsNeeded = Object.keys(forms)) {
       })
     }
   })
+  return true
 }
+
+async function addTimeZones(knex) {
+  const [{ qty }] = await knex('TimeZone as t').count('t.id as qty')
+  if (qty === 0) {
+    try {
+      await knex('TimeZone').insert(TZ)
+    } catch (e) {
+      console.log('error inserting TimeZones', e)
+      return false
+    }
+  }
+  return true
+}
+
 module.exports = {
+  addTimeZones,
   addIssueTypes,
   addForms,
 }
