@@ -100,7 +100,7 @@ module.exports = {
     {
       icon: 'FaDatabase',
       jobFunctions: ['all'],
-      title: "GeneXpert's Positive Results Notified",
+      title: 'Positive Results Notified',
       titleI18nKey: 'gxPositiveResultsNotifiedTitle',
       externalId: 'gxPositiveResultsNotified',
       subTitle: 'This Month',

@@ -309,7 +309,7 @@ module.exports = {
       sortOrder: 12,
       externalId: 'stockouts',
       description:
-        'The stockout is calculated by counting all sites devices with issues of stockout during the month and dividing all active sites',
+        'The stockout percentage is calculated by counting all sites with stockout issues during the month and dividing by all active sites',
       descriptionI18nKey: 'stockoutsDescription',
       dashboards: {
         operational: {
