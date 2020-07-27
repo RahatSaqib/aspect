@@ -74,7 +74,7 @@ const createValidationSchema = (fields, intlFormatMessage) => {
             validator = validator[type](
               ...[
                 constraint,
-                intl.formatMessage(messages[messageId], { total: constraint }),
+                intlFormatMessage(messages[messageId], { total: constraint }),
               ].filter(p => p)
             )
             break
