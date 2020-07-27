@@ -15,12 +15,7 @@ import valuesIn from 'lodash/valuesIn'
 import uniq from 'lodash/uniq'
 import uniqBy from 'lodash/uniqBy'
 
-import {
-  format,
-  getDayFromToday,
-  getTimePeriod,
-  getPreviousPeriod,
-} from './datetime'
+import { getDayFromToday, getTimePeriod, getPreviousPeriod } from './datetime'
 import {
   getMaxValueForDivergent,
   roundIfNumber,
