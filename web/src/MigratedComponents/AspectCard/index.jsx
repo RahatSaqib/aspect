@@ -44,9 +44,10 @@ const AspectCard = ({
   title,
   actionComponent,
   action,
+  name,
 }) => {
   return (
-    <Card className={cssClasses('card__container')}>
+    <Card className={cssClasses('card__container')} name={name}>
       <Grid container justify={justify} className={cssClasses('card__grid')}>
         <CardHeader props={{ title, actionComponent, action }} />
         <Grid
@@ -65,6 +66,7 @@ const AspectCard = ({
 AspectCard.defaultProps = {
   justify: 'center',
   innerSize: 12,
+  name: null,
 }
 
 AspectCard.protoTypes = {
@@ -72,6 +74,7 @@ AspectCard.protoTypes = {
   justify: PropTypes.string,
   innerSize: PropTypes.instanceOf,
   title: PropTypes.string.isRequired,
+  name: PropTypes.string,
 }
 
 export default AspectCard
