@@ -106,7 +106,8 @@ const AspectResponsiveBar = ({
               v,
               displayMethod,
               assaysFromState,
-              intlFormatNumber
+              intlFormatNumber,
+              type
             )}
           />
         )
@@ -131,7 +132,7 @@ const AspectResponsiveBar = ({
         tickValues: xTickValues,
         format: v =>
           type === 'stackedDeviceActivity'
-            ? v
+            ? v.replace(/\D/g, '')
             : formatValuesForGraphs(v, displayMethod, intlFormatNumber),
       }}
       legends={legends}

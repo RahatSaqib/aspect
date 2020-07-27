@@ -195,11 +195,21 @@ const generateToolTip = (
   item,
   displayMethod,
   assaysFromState,
-  formatNumber
+  formatNumber,
+  type
 ) => {
-  const { color, id, indexValue, value } = item
+  const { color, id, indexValue, value, data } = item
+  let displayValue = ''
   const displayId = translateLabel(id, assaysFromState)
-  const displayValue = formatValuesForGraphs(value, displayMethod, formatNumber)
+  if (type === 'stackedDeviceActivity') {
+    const { devicesTotal } = data
+    const valuePercentage = parseFloat(`${value}%`) / 100
+    const displayCount = devicesTotal * valuePercentage
+    const displayTitle = `device${displayCount === 1 ? '' : 's'}`
+    displayValue = `${displayCount} ${displayTitle}`
+  } else {
+    displayValue = formatValuesForGraphs(value, displayMethod, formatNumber)
+  }
   return { color, displayId, indexValue, displayValue }
 }
 
