@@ -15,7 +15,12 @@ import valuesIn from 'lodash/valuesIn'
 import uniq from 'lodash/uniq'
 import uniqBy from 'lodash/uniqBy'
 
-import { getDayFromToday, getTimePeriod, getPreviousPeriod } from './datetime'
+import {
+  format,
+  getDayFromToday,
+  getTimePeriod,
+  getPreviousPeriod,
+} from './datetime'
 import {
   getMaxValueForDivergent,
   roundIfNumber,
@@ -195,11 +200,21 @@ const generateToolTip = (
   item,
   displayMethod,
   assaysFromState,
-  formatNumber
+  formatNumber,
+  type
 ) => {
-  const { color, id, indexValue, value } = item
+  const { color, id, indexValue, value, data } = item
+  let displayValue = ''
   const displayId = translateLabel(id, assaysFromState)
-  const displayValue = formatValuesForGraphs(value, displayMethod, formatNumber)
+  if (type === 'stackedDeviceActivity') {
+    const { devicesTotal } = data
+    const valuePercentage = parseFloat(`${value}%`) / 100
+    const displayCount = devicesTotal * valuePercentage
+    const displayTitle = `device${displayCount === 1 ? '' : 's'}`
+    displayValue = `${displayCount} ${displayTitle}`
+  } else {
+    displayValue = formatValuesForGraphs(value, displayMethod, formatNumber)
+  }
   return { color, displayId, indexValue, displayValue }
 }
 

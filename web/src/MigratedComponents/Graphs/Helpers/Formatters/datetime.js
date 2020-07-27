@@ -54,8 +54,9 @@ const getPreviousPeriod = (period = 'month', dateFormat) => {
 }
 
 export {
+  format,
   getDayFromToday,
-  negateTimeZoneOffset,
   getTimePeriod,
   getPreviousPeriod,
+  negateTimeZoneOffset,
 }
