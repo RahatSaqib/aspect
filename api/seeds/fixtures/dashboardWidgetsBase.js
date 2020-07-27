@@ -20,8 +20,14 @@ FROM Result as r
   LEFT OUTER JOIN Geography as g on s.geographyId = g.id
   LEFT OUTER JOIN ResultCategory rc on r.resultCategory1 = rc.id
 `
-
+const WIDGET_GROUP_KEYS = {
+  CONNECTIVITY: 'summaryWidgetGroupConnectivity',
+  INVENTORY: 'summaryWidgetGroupInventory',
+  DEVICES: 'summaryWidgetGroupDevices',
+  SERVICE: 'summaryWidgetGroupService',
+}
 module.exports = {
+  WIDGET_GROUP_KEYS,
   stat: [
     {
       jobFunctions: ['all'],
@@ -93,11 +99,15 @@ module.exports = {
       statUnit: '{unit} from last month',
       statUnitI18nKey: 'dashboardWidgetTestsPerDayUnit',
       link: '/browse/result',
-      sortOrder: 10,
+      sortOrder: 1,
       externalId: 'dashboardWidgetTestsPerDayTitle',
       description: 'Average number of tests per day reported the current month',
       descriptionI18nKey: 'dashboardWidgetTestsPerDayDescription',
-      dashboards: ['operational'],
+      dashboards: {
+        operational: {
+          groupI18nKey: WIDGET_GROUP_KEYS.DEVICES,
+        },
+      },
     },
     {
       jobFunctions: ['all'],
@@ -121,11 +131,15 @@ module.exports = {
       statUnit: '{unit} in last month',
       statUnitI18nKey: 'dashboardWidgetValidResultsPcUnit',
       link: '/browse/result',
-      sortOrder: 11,
+      sortOrder: 2,
       externalId: 'dashboardWidgetValidResultsPc',
       description: 'Percentage of valid results reported the current month',
       descriptionI18nKey: 'dashboardWidgetValidResultsPcDescription',
-      dashboards: ['operational'],
+      dashboards: {
+        operational: {
+          groupI18nKey: WIDGET_GROUP_KEYS.DEVICES,
+        },
+      },
     },
     {
       icon: 'MdLink',
@@ -181,12 +195,16 @@ module.exports = {
       statUnit: '{unit} in last month',
       statUnitI18nKey: 'dashboardWidgetUtilizationRate',
       link: '/browse/device',
-      sortOrder: 12,
+      sortOrder: 0,
       externalId: 'utilizationRate',
       description:
         'The utilization rate is calculated by counting all tests conducted in the month and dividing that number by the total capacity of all devices',
       descriptionI18nKey: 'utilizationRateDescription',
-      dashboards: ['operational'],
+      dashboards: {
+        operational: {
+          groupI18nKey: WIDGET_GROUP_KEYS.DEVICES,
+        },
+      },
     },
     {
       jobFunctions: ['all'],
@@ -237,7 +255,11 @@ module.exports = {
       externalId: 'activeDevices',
       description: `The daily percentage of devices that sent results`,
       descriptionI18nKey: 'activeDevicesDescription',
-      dashboards: ['operational'],
+      dashboards: {
+        operational: {
+          groupI18nKey: WIDGET_GROUP_KEYS.CONNECTIVITY,
+        },
+      },
     },
     {
       icon: 'MdInsertChart',
@@ -289,7 +311,11 @@ module.exports = {
       description:
         'The stockout is calculated by counting all sites devices with issues of stockout during the month and dividing all active sites',
       descriptionI18nKey: 'stockoutsDescription',
-      dashboards: ['operational'],
+      dashboards: {
+        operational: {
+          groupI18nKey: WIDGET_GROUP_KEYS.INVENTORY,
+        },
+      },
     },
     {
       icon: 'MdEventAvailable',
@@ -338,7 +364,11 @@ module.exports = {
       description:
         'Average number of days each device has been active (Month-to-date)',
       descriptionI18nKey: 'deviceDaysActiveDescription',
-      dashboards: ['operational'],
+      dashboards: {
+        operational: {
+          groupI18nKey: WIDGET_GROUP_KEYS.CONNECTIVITY,
+        },
+      },
     },
     {
       icon: 'MdWarning',
@@ -393,12 +423,16 @@ module.exports = {
       statUnit: '{unit} last month',
       statUnitI18nKey: 'dashboardWidgetErrorRate',
       link: '/browse/result',
-      sortOrder: 13,
+      sortOrder: 3,
       externalId: 'errorRate',
       description:
         'The error rate is calculated by counting all errors in the tests conducted in the month and dividing that number by the total tests carried out of all devices',
       descriptionI18nKey: 'errorRateDescription',
-      dashboards: ['operational'],
+      dashboards: {
+        operational: {
+          groupI18nKey: WIDGET_GROUP_KEYS.DEVICES,
+        },
+      },
     },
     {
       icon: 'FaBoxes',
@@ -450,7 +484,11 @@ module.exports = {
       description:
         'The stock not recorded is calculated by counting all sites with connected devices which are in the inventory items table and dividing that number by the total sites which has connected devices',
       descriptionI18nKey: 'stockNotRecordedDescription',
-      dashboards: ['operational'],
+      dashboards: {
+        operational: {
+          groupI18nKey: WIDGET_GROUP_KEYS.INVENTORY,
+        },
+      },
     },
     {
       icon: 'FaCloudUploadAlt',
