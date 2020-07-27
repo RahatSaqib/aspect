@@ -147,9 +147,9 @@ module.exports = {
             LEFT JOIN IssueType it ON i.issueTypeId = it.id
             LEFT JOIN Notification n ON i.id = n.issueId
             WHERE
-                rc.externalid IN ('Detected' , 'Trace Detected', 'Positive', 'MoreThan1000')
+                rc.externalid IN ('Detected' , 'Trace Detected')
                     AND it.externalId = 'ResultReceived'
-                    AND a.externalId IN ('GxMtbRif' , 'GxMtbRifUltra', 'GxHiv1Vl', 'GxHiv1Qual')
+                    AND a.externalId IN ('GxMtbRif' , 'GxMtbRifUltra')
                     AND YEAR(r.endedOn) = YEAR(CURRENT_DATE)
                     AND MONTH(r.endedOn) = MONTH(CURRENT_DATE)
             GROUP BY r.id) AS q
@@ -175,9 +175,9 @@ module.exports = {
             LEFT JOIN IssueType it ON i.issueTypeId = it.id
             LEFT JOIN Notification n ON i.id = n.issueId
             WHERE
-                rc.externalid IN ('Detected' , 'Trace Detected', 'Positive', 'MoreThan1000')
+                rc.externalid IN ('Detected' , 'Trace Detected')
                     AND it.externalId = 'ResultReceived'
-                    AND a.externalId IN ('GxMtbRif' , 'GxMtbRifUltra', 'GxHiv1Vl', 'GxHiv1Qual')
+                    AND a.externalId IN ('GxMtbRif' , 'GxMtbRifUltra')
                     AND YEAR(r.endedOn) = YEAR(DATE_ADD(CURRENT_DATE, INTERVAL - 1 MONTH))
                     AND MONTH(r.endedOn) = MONTH(DATE_ADD(CURRENT_DATE, INTERVAL - 1 MONTH))
             GROUP BY r.id) AS q
