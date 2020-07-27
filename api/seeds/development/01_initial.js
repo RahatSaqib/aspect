@@ -5402,7 +5402,9 @@ async function seed(knex) {
         'descriptionI18nKey',
         'dashboards',
       ])
-      widgetData.dashboards = JSON.stringify(widgetData.dashboards || ['home'])
+      widgetData.dashboards = JSON.stringify(
+        widgetData.dashboards || { home: {} }
+      )
       const [widgetId] = await knex('DashboardWidget').insert(widgetData)
 
       const statWidgetData = _.pick(widget, [
