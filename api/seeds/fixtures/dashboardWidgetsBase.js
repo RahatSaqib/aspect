@@ -500,9 +500,9 @@ module.exports = {
       sqlForIndicator: `SELECT 
       COUNT(*) AS cnt
         FROM
-            issue AS i
+            Issue AS i
                 INNER JOIN
-            issuetype it ON i.issueTypeId = it.id
+            IssueType it ON i.issueTypeId = it.id
                 INNER JOIN
             Device AS d ON d.id = i.deviceId
                 INNER JOIN
@@ -517,9 +517,9 @@ module.exports = {
       sqlForStatUnit: `SELECT 
       COUNT(*) AS cnt
         FROM
-            issue AS i
+            Issue AS i
                 INNER JOIN
-            issuetype it ON i.issueTypeId = it.id
+            IssueType it ON i.issueTypeId = it.id
                 INNER JOIN
             Device AS d ON d.id = i.deviceId
                 INNER JOIN
