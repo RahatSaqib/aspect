@@ -1,9 +1,8 @@
-/* eslint-disable no-console */
 const now = new Date()
 const Promise = require('bluebird')
 const _ = require('lodash')
 const forms = require('./fixtures/forms')
-const TZ = require('./fixtures/TimeZones')
+const timeZones = require('./fixtures/TimeZones')
 const { insertNewResultPushTemplates } = require('./commonPushNotifications')
 const { getBaseIssues } = require('./relatedObjects/issues')
 const { getBaseForms } = require('./relatedObjects/forms')
@@ -136,6 +135,7 @@ async function addForms(knex, _partnerId, formsNeeded = Object.keys(forms)) {
         ;({ partnerId } = await knex('Partner as p').first('id as partnerId'))
       }
     } catch (e) {
+      // eslint-disable-next-line no-console
       console.log('Error inserting forms', e)
       return false
     }
@@ -175,8 +175,9 @@ async function addTimeZones(knex) {
   const [{ qty }] = await knex('TimeZone as t').count('t.id as qty')
   if (qty === 0) {
     try {
-      await knex('TimeZone').insert(TZ)
+      await knex('TimeZone').insert(timeZones)
     } catch (e) {
+      // eslint-disable-next-line no-console
       console.log('error inserting TimeZones', e)
       return false
     }
