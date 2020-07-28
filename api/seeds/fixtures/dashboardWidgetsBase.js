@@ -160,10 +160,13 @@ module.exports = {
       FROM (
         SELECT d.id AS deviceId, COUNT(r.id) AS resultCount, dc.dailyCapacity
           FROM Device AS d
+          INNER JOIN DeviceType as dt on dt.id = d.deviceTypeId
           INNER JOIN DeviceCapacity dc ON d.deviceCapacityId = dc.id
           INNER JOIN Site AS s ON s.id = d.siteId
           LEFT OUTER JOIN Result AS r ON d.id= r.deviceId AND DATE_FORMAT(NOW(), '%Y-%m-01') <= DATE(r.endedOn)
           LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
+        WHERE
+          dt.externalId = 'CepheidGeneXpert'
         GROUP BY d.id, dc.dailyCapacity
       ) AS innerQuery`,
       sqlForStatUnit: `SELECT
@@ -182,6 +185,7 @@ module.exports = {
       FROM (
         SELECT d.id AS deviceId, COUNT(r.id) AS resultCount, dc.dailyCapacity
           FROM Device AS d
+          INNER JOIN DeviceType as dt on dt.id = d.deviceTypeId
           INNER JOIN DeviceCapacity dc ON d.deviceCapacityId = dc.id
           INNER JOIN Site AS s ON s.id = d.siteId
           LEFT OUTER JOIN Result AS r ON d.id= r.deviceId 
@@ -189,7 +193,8 @@ module.exports = {
       BETWEEN DATE_FORMAT(NOW() - INTERVAL 1 MONTH, '%Y-%m-01')
       AND LAST_DAY(NOW()-INTERVAL 1 MONTH)
           LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
-        
+      WHERE
+          dt.externalId = 'CepheidGeneXpert'
         GROUP BY d.id, dc.dailyCapacity
       ) AS innerQuery`,
       statUnit: '{unit} in last month',
