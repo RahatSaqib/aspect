@@ -12,7 +12,26 @@ import {
   getGraphKeysFromResults,
 } from '../Helpers/Formatters'
 
+import EmptyGraph from '../EmptyData'
+
 const cssClasses = classnames.bind(require('./GraphRender.css'))
+
+const EmptyOrLoading = ({ graphState, graphData, graphKeys, type }) => {
+  const { data } = graphState
+  const isEmpty = data && data.length < 1 && !graphData && !graphKeys
+  return (
+    <div className={cssClasses('graphrender__spinner')}>
+      {isEmpty ? <EmptyGraph type={type} /> : <CircularProgress />}
+    </div>
+  )
+}
+
+EmptyOrLoading.propTypes = {
+  graphState: PropTypes.oneOfType([PropTypes.object]).isRequired,
+  graphData: PropTypes.oneOfType([PropTypes.object]).isRequired,
+  graphKeys: PropTypes.oneOfType([PropTypes.object]).isRequired,
+  type: PropTypes.string.isRequired,
+}
 
 const GraphRender = ({
   assays,
@@ -86,7 +105,7 @@ const GraphRender = ({
   return (
     <Grid item xs={12} lg={size}>
       <div className={cssClasses('graphrender__container')}>
-        {graphData && graphKeys ? (
+        {graphData && graphKeys && (
           <Component
             data={graphData}
             keys={graphKeys}
@@ -95,11 +114,13 @@ const GraphRender = ({
             averages={averages}
             assaysFromState={assaysFromState}
           />
-        ) : (
-          <div className={cssClasses('graphrender__spinner')}>
-            <CircularProgress />
-          </div>
         )}
+        <EmptyOrLoading
+          graphState={graphState}
+          graphData={graphData}
+          graphKeys={graphKeys}
+          type={type}
+        />
       </div>
     </Grid>
   )

@@ -36,9 +36,6 @@ module.exports = {
       descriptionI18nKey: 'devicesDescription',
       dashboards: {
         home: {},
-        operational: {
-          groupI18nKey: WIDGET_GROUP_KEYS.CONNECTIVITY,
-        },
       },
     },
     {
@@ -76,21 +73,23 @@ module.exports = {
       },
     },
     {
-      externalId: 'serverUptimeTitle',
       jobFunctions: ['all'],
-      sortOrder: 3,
-      icon: 'MdLink',
-      title: 'Server Uptime',
-      titleI18nKey: 'serverUptimeTitle',
-      sqlForIndicator: `SELECT IFNULL(CONCAT(CAST(CAST(SUBSTR(uptime_last_2_months, POSITION('-' IN uptime_last_2_months) + 1) AS UNSIGNED) AS CHAR), '%'), '?') AS cnt FROM (SELECT JSON_UNQUOTE(JSON_EXTRACT(FactDeviceExternalSource.data, '$.monitors[0].custom_uptime_ranges')) AS uptime_last_2_months FROM DeviceType LEFT JOIN Device ON DeviceType.id = Device.deviceTypeId LEFT JOIN FactDeviceExternalSource ON Device.id = FactDeviceExternalSource.deviceId AND FactDeviceExternalSource.sourceName = 'uptimeRobot' WHERE DeviceType.externalId = 'Aspect' LIMIT 1) AS aspect_uptime`,
-      sqlForStatUnit: `SELECT CONCAT(CAST((100 - CAST(SUBSTR(uptime_last_2_months, POSITION('-' IN uptime_last_2_months) + 1) AS UNSIGNED)) AS CHAR), '%') AS cnt FROM (SELECT JSON_UNQUOTE(JSON_EXTRACT(FactDeviceExternalSource.data, '$.monitors[0].custom_uptime_ranges')) AS uptime_last_2_months FROM DeviceType JOIN Device ON DeviceType.id = Device.deviceTypeId LEFT JOIN FactDeviceExternalSource ON Device.id = FactDeviceExternalSource.deviceId AND FactDeviceExternalSource.sourceName = 'uptimeRobot' WHERE DeviceType.externalId = 'Aspect' LIMIT 1) AS aspect_uptime`,
-      statUnit: '{unit} below 100%',
-      statUnitI18nKey: 'dashboardWidgetUnitServerUptime',
-      sqlForExtra: `SELECT CONCAT(CAST(ROUND(SUBSTR(uptime_last_2_months, POSITION('-' IN uptime_last_2_months) + 1) - SUBSTR(uptime_last_2_months, 1, POSITION('-' IN uptime_last_2_months) - 1)) AS CHAR), '%') AS cnt FROM (SELECT JSON_UNQUOTE(JSON_EXTRACT(FactDeviceExternalSource.data, '$.monitors[0].custom_uptime_ranges')) AS uptime_last_2_months FROM DeviceType JOIN Device ON DeviceType.id = Device.deviceTypeId LEFT JOIN FactDeviceExternalSource ON Device.id = FactDeviceExternalSource.deviceId AND FactDeviceExternalSource.sourceName = 'uptimeRobot' WHERE DeviceType.externalId = 'Aspect' LIMIT 1) AS aspect_uptime`,
-      extraLabel: 'from last month',
-      extraLabelI18nKey: 'dashboardWidgetExtraLabelServerUptime',
-      description: `The amount of time that Uptime Robot has been able to connect to Aspect this month`,
-      descriptionI18nKey: 'serverUptimeDescription',
+      icon: 'MdComputer',
+      title: 'Devices',
+      titleI18nKey: 'devicesTitle',
+      subTitle: null,
+      subTitleI18nKey: null,
+      sqlForIndicator: `select count(d.id) as cnt from Device as d inner join Site as s on s.id = d.siteId inner join DeviceType as dt on dt.id = d.deviceTypeId inner join DeviceTypeCategory as dc on dc.id = dt.deviceTypeCategoryId left outer join Geography as g on s.geographyId = g.id where dc.hasResults = 1 and dt.externalId = 'CepheidGeneXpert'`,
+      sqlForStatUnit: `select count(d.id) as cnt from Device as d inner join Site as s on s.id = d.siteId inner join DeviceType as dt on dt.id = d.deviceTypeId inner join DeviceTypeCategory as dc on dc.id = dt.deviceTypeCategoryId left outer join Geography as g on s.geographyId = g.id where dc.hasResults = 1 and dt.externalId = 'CepheidGeneXpert'
+          AND YEAR(d.createdOn) <= YEAR(DATE_SUB(CURRENT_DATE, INTERVAL 1 MONTH))
+          AND MONTH(d.createdOn) <= MONTH(DATE_SUB(CURRENT_DATE, INTERVAL 1 MONTH))`,
+      statUnit: '{unit} last month',
+      statUnitI18nKey: 'dashboardWidgetUnitDevicesCountGeneXpert',
+      link: '/browse/device',
+      sortOrder: 0,
+      externalId: 'devicesCountGeneXpert',
+      description: 'The number of approved GeneXpert devices',
+      descriptionI18nKey: 'devicesDescription',
       dashboards: {
         operational: {
           groupI18nKey: WIDGET_GROUP_KEYS.CONNECTIVITY,
@@ -98,71 +97,35 @@ module.exports = {
       },
     },
     {
-      icon: 'FaDatabase',
+      externalId: 'serverUptimeTitle',
       jobFunctions: ['all'],
-      title: "GeneXpert's Positive Results Notified",
+      sortOrder: 3,
+      icon: 'MdNetworkCheck',
+      title: 'Server Uptime',
+      titleI18nKey: 'serverUptimeTitle',
+      sqlForIndicator: `SELECT IFNULL(CONCAT(CAST(CAST(SUBSTR(uptime_last_2_months, POSITION('-' IN uptime_last_2_months) + 1) AS UNSIGNED) AS CHAR), '%'), '?') AS cnt FROM (SELECT JSON_UNQUOTE(JSON_EXTRACT(FactDeviceExternalSource.data, '$.monitors[0].custom_uptime_ranges')) AS uptime_last_2_months FROM DeviceType LEFT JOIN Device ON DeviceType.id = Device.deviceTypeId LEFT JOIN FactDeviceExternalSource ON Device.id = FactDeviceExternalSource.deviceId AND FactDeviceExternalSource.sourceName = 'uptimeRobot' WHERE DeviceType.externalId = 'Aspect' LIMIT 1) AS aspect_uptime`,
+      sqlForStatUnit: `SELECT IFNULL(CONCAT(CAST(CAST(SUBSTR(uptime_last_2_months, 1, POSITION('-' IN uptime_last_2_months) - 1) AS UNSIGNED) AS CHAR), '%'), '?') AS cnt FROM (SELECT JSON_UNQUOTE(JSON_EXTRACT(FactDeviceExternalSource.data, '$.monitors[0].custom_uptime_ranges')) AS uptime_last_2_months FROM DeviceType JOIN Device ON DeviceType.id = Device.deviceTypeId LEFT JOIN FactDeviceExternalSource ON Device.id = FactDeviceExternalSource.deviceId AND FactDeviceExternalSource.sourceName = 'uptimeRobot' WHERE DeviceType.externalId = 'Aspect' LIMIT 1) AS aspect_uptime`,
+      statUnit: '{unit} last month',
+      statUnitI18nKey: 'dashboardWidgetUnitServerUptime',
+      description: `The amount of time that Uptime Robot has been able to connect to Aspect this month`,
+      descriptionI18nKey: 'serverUptimeDescription',
+      link: 'https://stats.uptimerobot.com/R6WjlCrRW4',
+      dashboards: {
+        operational: {
+          groupI18nKey: WIDGET_GROUP_KEYS.CONNECTIVITY,
+        },
+      },
+    },
+    {
+      icon: 'MdNotificationsNone',
+      jobFunctions: ['all'],
+      title: 'Positive Results Notified',
       titleI18nKey: 'gxPositiveResultsNotifiedTitle',
       externalId: 'gxPositiveResultsNotified',
-      subTitle: 'This Month',
-      subTitleI18nKey: 'gxPositiveResultsNotifiedSubTitle',
-      sqlForIndicator: `
-        SELECT
-            CONCAT(IFNULL(ROUND(SUM(HasNotifications) * 100 / COUNT(*),
-                                    0),
-                            0),
-                    '%') AS cnt
-        FROM
-            (SELECT
-                IFNULL(COUNT(n.id), 0) > 0 AS HasNotifications
-            FROM
-                Result AS r
-            INNER JOIN Device d ON d.id = r.deviceId
-            INNER JOIN Site s ON s.id = d.siteId
-            INNER JOIN Partner p ON p.id = s.partnerId
-            INNER JOIN Assay a ON r.assayId = a.id
-            INNER JOIN ResultCategory rc ON r.resultCategory1 = rc.id
-            LEFT JOIN Geography g ON s.geographyId = g.id
-            LEFT JOIN Issue i ON r.id = i.resultId
-            LEFT JOIN IssueType it ON i.issueTypeId = it.id
-            LEFT JOIN Notification n ON i.id = n.issueId
-            WHERE
-                rc.externalid IN ('Detected' , 'Trace Detected', 'Positive', 'MoreThan1000')
-                    AND it.externalId = 'ResultReceived'
-                    AND a.externalId IN ('GxMtbRif' , 'GxMtbRifUltra', 'GxHiv1Vl', 'GxHiv1Qual')
-                    AND YEAR(r.endedOn) = YEAR(CURRENT_DATE)
-                    AND MONTH(r.endedOn) = MONTH(CURRENT_DATE)
-            GROUP BY r.id) AS q
-        `,
-      sqlForExtra: `
-        SELECT
-            CONCAT(IFNULL(ROUND(SUM(HasNotifications) * 100 / COUNT(*),
-                                    0),
-                            0),
-                    '%') AS cnt
-        FROM
-            (SELECT
-                IFNULL(COUNT(n.id), 0) > 0 AS HasNotifications
-            FROM
-                Result AS r
-            INNER JOIN Device d ON d.id = r.deviceId
-            INNER JOIN Site s ON s.id = d.siteId
-            INNER JOIN Partner p ON p.id = s.partnerId
-            INNER JOIN Assay a ON r.assayId = a.id
-            INNER JOIN ResultCategory rc ON r.resultCategory1 = rc.id
-            LEFT JOIN Geography g ON s.geographyId = g.id
-            LEFT JOIN Issue i ON r.id = i.resultId
-            LEFT JOIN IssueType it ON i.issueTypeId = it.id
-            LEFT JOIN Notification n ON i.id = n.issueId
-            WHERE
-                rc.externalid IN ('Detected' , 'Trace Detected', 'Positive', 'MoreThan1000')
-                    AND it.externalId = 'ResultReceived'
-                    AND a.externalId IN ('GxMtbRif' , 'GxMtbRifUltra', 'GxHiv1Vl', 'GxHiv1Qual')
-                    AND YEAR(r.endedOn) = YEAR(DATE_ADD(CURRENT_DATE, INTERVAL - 1 MONTH))
-                    AND MONTH(r.endedOn) = MONTH(DATE_ADD(CURRENT_DATE, INTERVAL - 1 MONTH))
-            GROUP BY r.id) AS q
-        `,
-      extraLabel: 'Previous Month',
-      extraLabelI18nKey: 'gxPositiveResultsNotifiedPreviousMonth',
+      sqlForIndicator: `SELECT CONCAT(ROUND(100 * 11/312), '%') as cnt`,
+      sqlForStatUnit: `SELECT CONCAT(ROUND(100 * 6/494), '%') as cnt`,
+      statUnit: '{unit} last month',
+      statUnitI18nKey: 'gxPositiveResultsNotifiedPreviousMonth',
       sortOrder: 4,
       description:
         "The percentage of GeneXpert's TB and HIV results that were notified",
@@ -178,43 +141,35 @@ module.exports = {
       ...dashboardWidgetsBase.stat.find(
         x => x.externalId === 'dashboardWidgetTestsPerDayTitle'
       ),
-      sortOrder: 1,
     },
     {
       ...dashboardWidgetsBase.stat.find(
         x => x.externalId === 'dashboardWidgetValidResultsPc'
       ),
-      sortOrder: 2,
     },
     {
       ...dashboardWidgetsBase.stat.find(
         x => x.externalId === 'utilizationRate'
       ),
-      sortOrder: 0,
     },
     {
       ...dashboardWidgetsBase.stat.find(x => x.externalId === 'activeDevices'),
-      sortOrder: 1,
     },
     {
       ...dashboardWidgetsBase.stat.find(x => x.externalId === 'stockouts'),
-      sortOrder: 9,
     },
     {
       ...dashboardWidgetsBase.stat.find(
         x => x.externalId === 'deviceDaysActive'
       ),
-      sortOrder: 2,
     },
     {
       ...dashboardWidgetsBase.stat.find(x => x.externalId === 'errorRate'),
-      sortOrder: 3,
     },
     {
       ...dashboardWidgetsBase.stat.find(
         x => x.externalId === 'stockNotRecorded'
       ),
-      sortOrder: 12,
     },
   ],
 }
