@@ -183,10 +183,11 @@ function finalizeWebhookMessage(webhookMessageId, messageContext) {
     escalateIssues,
   })
   return context.run(async knex => {
-    const { issueId } = await knex('WebhookMessage as m')
-      .join('Notification as n', 'm.id', 'n.webHookMessageId')
-      .where('m.id', webhookMessageId)
-      .first('n.issueId')
+    const { issueId } =
+      (await knex('WebhookMessage as m')
+        .join('Notification as n', 'm.id', 'n.webHookMessageId')
+        .where('m.id', webhookMessageId)
+        .first('n.issueId')) || {}
     if (issueId) {
       context.resolveIssues(issueId)
       context.escalateIssues(issueId)

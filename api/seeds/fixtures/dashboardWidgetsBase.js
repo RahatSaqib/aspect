@@ -20,8 +20,14 @@ FROM Result as r
   LEFT OUTER JOIN Geography as g on s.geographyId = g.id
   LEFT OUTER JOIN ResultCategory rc on r.resultCategory1 = rc.id
 `
-
+const WIDGET_GROUP_KEYS = {
+  CONNECTIVITY: 'summaryWidgetGroupConnectivity',
+  INVENTORY: 'summaryWidgetGroupInventory',
+  DEVICES: 'summaryWidgetGroupDevices',
+  SERVICE: 'summaryWidgetGroupService',
+}
 module.exports = {
+  WIDGET_GROUP_KEYS,
   stat: [
     {
       jobFunctions: ['all'],
@@ -93,11 +99,15 @@ module.exports = {
       statUnit: '{unit} from last month',
       statUnitI18nKey: 'dashboardWidgetTestsPerDayUnit',
       link: '/browse/result',
-      sortOrder: 10,
+      sortOrder: 1,
       externalId: 'dashboardWidgetTestsPerDayTitle',
       description: 'Average number of tests per day reported the current month',
       descriptionI18nKey: 'dashboardWidgetTestsPerDayDescription',
-      dashboards: ['operational'],
+      dashboards: {
+        operational: {
+          groupI18nKey: WIDGET_GROUP_KEYS.DEVICES,
+        },
+      },
     },
     {
       jobFunctions: ['all'],
@@ -121,11 +131,15 @@ module.exports = {
       statUnit: '{unit} in last month',
       statUnitI18nKey: 'dashboardWidgetValidResultsPcUnit',
       link: '/browse/result',
-      sortOrder: 11,
+      sortOrder: 2,
       externalId: 'dashboardWidgetValidResultsPc',
       description: 'Percentage of valid results reported the current month',
       descriptionI18nKey: 'dashboardWidgetValidResultsPcDescription',
-      dashboards: ['operational'],
+      dashboards: {
+        operational: {
+          groupI18nKey: WIDGET_GROUP_KEYS.DEVICES,
+        },
+      },
     },
     {
       icon: 'MdLink',
@@ -181,12 +195,16 @@ module.exports = {
       statUnit: '{unit} in last month',
       statUnitI18nKey: 'dashboardWidgetUtilizationRate',
       link: '/browse/device',
-      sortOrder: 12,
+      sortOrder: 0,
       externalId: 'utilizationRate',
       description:
         'The utilization rate is calculated by counting all tests conducted in the month and dividing that number by the total capacity of all devices',
       descriptionI18nKey: 'utilizationRateDescription',
-      dashboards: ['operational'],
+      dashboards: {
+        operational: {
+          groupI18nKey: WIDGET_GROUP_KEYS.DEVICES,
+        },
+      },
     },
     {
       jobFunctions: ['all'],
@@ -195,10 +213,10 @@ module.exports = {
       titleI18nKey: 'activeDevicesTitle',
       subTitle: null,
       subTitleI18nKey: null,
-      sqlForIndicator: `SELECT 
+      sqlForIndicator: `SELECT
       CONCAT(ROUND(AVG(AvailabilityPercentage)), '%') AS cnt
   FROM
-      (SELECT 
+      (SELECT
           COUNT(DISTINCT DATE(r.endedOn)) * 100 / DATEDIFF(NOW(), GREATEST(DATE_FORMAT(NOW(), '%Y-%m-01'),d.createdOn)) AS AvailabilityPercentage
       FROM
           Device AS d
@@ -208,11 +226,11 @@ module.exports = {
       INNER JOIN Partner AS p ON s.partnerId = p.id
       LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
       GROUP BY d.id) AS q;`,
-      sqlForStatUnit: `SELECT 
+      sqlForStatUnit: `SELECT
       CONCAT(CASE WHEN (AVG(CurrentMonthAvailabilityPercentage) - AVG(LastMonthAvailabilityPercentage)) >= 0 THEN '+' ELSE '' END,
       ROUND(AVG(CurrentMonthAvailabilityPercentage) - AVG(LastMonthAvailabilityPercentage)), '%') AS cnt
   FROM
-      (SELECT 
+      (SELECT
           d.id,
               COUNT(DISTINCT CASE
                   WHEN r.endedOn < DATE_FORMAT(NOW(), '%Y-%m-01') THEN DATE(r.endedOn)
@@ -237,7 +255,11 @@ module.exports = {
       externalId: 'activeDevices',
       description: `The daily percentage of devices that sent results`,
       descriptionI18nKey: 'activeDevicesDescription',
-      dashboards: ['operational'],
+      dashboards: {
+        operational: {
+          groupI18nKey: WIDGET_GROUP_KEYS.CONNECTIVITY,
+        },
+      },
     },
     {
       icon: 'MdInsertChart',
@@ -249,38 +271,65 @@ module.exports = {
       CONCAT(
         ROUND(
           IFNULL(
-            COUNT(DISTINCT i.siteId)
-          ,0)
-          /
-          COUNT(DISTINCT s.id) * 100
-        )
-      ,'%') AS cnt
+            COUNT(
+              DISTINCT
+                innerquery.siteId
+            ),
+            0
+          ) / COUNT(DISTINCT s.id) * 100
+        ),
+        '%'
+      ) AS cnt
       FROM Site AS s
-        INNER JOIN Device AS d ON s.id = d.siteId
-        LEFT OUTER JOIN Issue AS i ON s.id = i.siteId
-                                        AND i.createdOn BETWEEN DATE_FORMAT(NOW(), '%Y-%m-01')
-                                        AND NOW()
-        LEFT OUTER JOIN IssueType AS it ON i.issueTypeId = it.id AND it.externalId = 'InventoryStockout'
-        LEFT OUTER JOIN IssueStatus AS ist ON i.issueStatusId = ist.id
-                                              AND ist.externalId NOT IN ('Inactive', 'OK', 'Resolved')`,
+        INNER JOIN Device AS d
+          ON s.id = d.siteId
+        INNER JOIN Partner AS p
+                ON s.partnerId = p.id
+        INNER JOIN Geography AS g
+                ON s.geographyId = g.id
+        LEFT OUTER JOIN (
+          SELECT i.siteId
+          FROM Issue AS i
+          INNER JOIN IssueType AS it
+            ON i.issueTypeId = it.id   AND i.createdOn BETWEEN  DATE_FORMAT(NOW(), '%Y-%m-01')
+            AND NOW()
+            AND it.externalId = 'InventoryStockout'
+          INNER JOIN IssueStatus AS ist
+            ON i.issueStatusId = ist.id AND ist.externalId NOT IN ('Inactive', 'OK', 'Resolved')
+              ) AS innerQuery
+        ON s.id = innerQuery.siteId
+        `,
       sqlForStatUnit: `SELECT
-        CONCAT(
-          ROUND(
-            IFNULL(
-              COUNT(DISTINCT i.siteId)
-            ,0)
-            /
-            COUNT(DISTINCT s.id) * 100
-          )
-        ,'%') AS cnt
-        FROM Site AS s
-          INNER JOIN Device AS d ON s.id = d.siteId
-          LEFT OUTER JOIN Issue AS i ON s.id = i.siteId
-                                        AND i.createdOn BETWEEN DATE_FORMAT(NOW() - interval 1 month, '%Y-%m-01')
-                                        AND LAST_DAY(NOW()-INTERVAL 1 MONTH)
-          LEFT OUTER JOIN IssueType AS it ON i.issueTypeId = it.id AND it.externalId = 'InventoryStockout'
-          LEFT OUTER JOIN IssueStatus AS ist ON i.issueStatusId = ist.id
-                                                AND ist.externalId NOT IN ('Inactive', 'OK', 'Resolved')`,
+      CONCAT(
+        ROUND(
+          IFNULL(
+            COUNT(
+              DISTINCT
+                innerquery.siteId
+            ),
+            0
+          ) / COUNT(DISTINCT s.id) * 100
+        ),
+        '%'
+      ) AS cnt
+      FROM Site AS s
+        INNER JOIN Device AS d
+          ON s.id = d.siteId
+        INNER JOIN Partner AS p
+                ON s.partnerId = p.id
+        INNER JOIN Geography AS g
+                ON s.geographyId = g.id
+        LEFT OUTER JOIN (
+          SELECT i.siteId
+          FROM Issue AS i
+          INNER JOIN IssueType AS it
+            ON i.issueTypeId = it.id   AND i.createdOn BETWEEN  DATE_FORMAT(NOW() - INTERVAL 1 MONTH, '%Y-%m-01')
+            AND LAST_DAY(NOW()- INTERVAL 1 MONTH)
+            AND it.externalId = 'InventoryStockout'
+          INNER JOIN IssueStatus AS ist
+            ON i.issueStatusId = ist.id AND ist.externalId NOT IN ('Inactive', 'OK', 'Resolved')
+              ) AS innerQuery
+        ON s.id = innerQuery.siteId`,
       statUnit: '{unit} last month',
       statUnitI18nKey: 'dashboardWidgetStockouts',
       link: '/browse/inventory',
@@ -289,7 +338,11 @@ module.exports = {
       description:
         'The stockout is calculated by counting all sites devices with issues of stockout during the month and dividing all active sites',
       descriptionI18nKey: 'stockoutsDescription',
-      dashboards: ['operational'],
+      dashboards: {
+        operational: {
+          groupI18nKey: WIDGET_GROUP_KEYS.INVENTORY,
+        },
+      },
     },
     {
       icon: 'MdEventAvailable',
@@ -338,7 +391,11 @@ module.exports = {
       description:
         'Average number of days each device has been active (Month-to-date)',
       descriptionI18nKey: 'deviceDaysActiveDescription',
-      dashboards: ['operational'],
+      dashboards: {
+        operational: {
+          groupI18nKey: WIDGET_GROUP_KEYS.CONNECTIVITY,
+        },
+      },
     },
     {
       icon: 'MdWarning',
@@ -346,7 +403,7 @@ module.exports = {
       titleI18nKey: 'errorRateTitle',
       subTitle: null,
       subTitleI18nKey: null,
-      sqlForIndicator: `SELECT 
+      sqlForIndicator: `SELECT
           CONCAT(
             ROUND(
               IFNULL(
@@ -357,17 +414,17 @@ module.exports = {
             ,0)
           ,'%') AS cnt
           FROM (
-            SELECT r.deviceId, SUM(rc.name = 'Error') as errorCount, COUNT(r.id) AS resultCount, dc.dailyCapacity 
-              FROM Result AS r 
-              INNER JOIN ResultCategory AS rc ON rc.id= r.resultCategory1 
-              INNER JOIN Device AS d ON d.id= r.deviceId 
-              INNER JOIN DeviceCapacity dc ON d.deviceCapacityId = dc.id 
-              INNER JOIN Site AS s ON s.id = d.siteId 
-              LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id 
-            WHERE DATE_FORMAT(NOW(), '%Y-%m-01') <= DATE(r.endedOn) 
+            SELECT r.deviceId, SUM(rc.name = 'Error') as errorCount, COUNT(r.id) AS resultCount, dc.dailyCapacity
+              FROM Result AS r
+              INNER JOIN ResultCategory AS rc ON rc.id= r.resultCategory1
+              INNER JOIN Device AS d ON d.id= r.deviceId
+              INNER JOIN DeviceCapacity dc ON d.deviceCapacityId = dc.id
+              INNER JOIN Site AS s ON s.id = d.siteId
+              LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
+            WHERE DATE_FORMAT(NOW(), '%Y-%m-01') <= DATE(r.endedOn)
             GROUP BY r.deviceId
           ) AS innerQuery`,
-      sqlForStatUnit: `SELECT 
+      sqlForStatUnit: `SELECT
           CONCAT(
             ROUND(
               IFNULL(
@@ -378,27 +435,87 @@ module.exports = {
             ,0)
           ,'%') AS cnt
           FROM (
-            SELECT r.deviceId, SUM(rc.name = 'Error') as errorCount, COUNT(r.id) AS resultCount, dc.dailyCapacity 
-              FROM Result AS r 
-              INNER JOIN ResultCategory AS rc ON rc.id= r.resultCategory1 
-              INNER JOIN Device AS d ON d.id= r.deviceId 
-              INNER JOIN DeviceCapacity dc ON d.deviceCapacityId = dc.id 
-              INNER JOIN Site AS s ON s.id = d.siteId 
-              LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id 
-            WHERE DATE(r.endedOn) 
-                  BETWEEN DATE_FORMAT(NOW() - INTERVAL 1 MONTH, '%Y-%m-01') 
-                  AND LAST_DAY(NOW()-INTERVAL 1 MONTH) 
+            SELECT r.deviceId, SUM(rc.name = 'Error') as errorCount, COUNT(r.id) AS resultCount, dc.dailyCapacity
+              FROM Result AS r
+              INNER JOIN ResultCategory AS rc ON rc.id= r.resultCategory1
+              INNER JOIN Device AS d ON d.id= r.deviceId
+              INNER JOIN DeviceCapacity dc ON d.deviceCapacityId = dc.id
+              INNER JOIN Site AS s ON s.id = d.siteId
+              LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
+            WHERE DATE(r.endedOn)
+                  BETWEEN DATE_FORMAT(NOW() - INTERVAL 1 MONTH, '%Y-%m-01')
+                  AND LAST_DAY(NOW()-INTERVAL 1 MONTH)
             GROUP BY r.deviceId, dc.dailyCapacity
           ) AS innerQuery`,
       statUnit: '{unit} last month',
       statUnitI18nKey: 'dashboardWidgetErrorRate',
       link: '/browse/result',
-      sortOrder: 13,
+      sortOrder: 3,
       externalId: 'errorRate',
       description:
         'The error rate is calculated by counting all errors in the tests conducted in the month and dividing that number by the total tests carried out of all devices',
       descriptionI18nKey: 'errorRateDescription',
-      dashboards: ['operational'],
+      dashboards: {
+        operational: {
+          groupI18nKey: WIDGET_GROUP_KEYS.DEVICES,
+        },
+      },
+    },
+    {
+      icon: 'FaBoxes',
+      title: 'Stock not recorded',
+      titleI18nKey: 'stockNotRecordedTitle',
+      subTitle: null,
+      subTitleI18nKey: null,
+      sqlForIndicator: `SELECT
+          CONCAT(
+            ROUND(
+              IFNULL(
+                SUM(CASE WHEN quantityOnHand IS NULL THEN 1 ELSE 0 END)
+                / COUNT(siteId) * 100
+              ,0)
+            ,0)
+          ,'%') AS cnt
+          FROM (
+            SELECT s.id AS siteId, sum(i.quantityOnHand) AS quantityOnHand
+            FROM Site AS s
+            INNER JOIN Device AS d ON d.siteId = s.id
+            LEFT OUTER JOIN InventoryItem AS i ON i.siteId = s.id
+                                              AND i.createdOn BETWEEN DATE_FORMAT(NOW(), '%Y-%m-01')
+                                              AND LAST_DAY(NOW())
+            GROUP BY s.id
+          ) AS innerQuery`,
+      sqlForStatUnit: `SELECT
+      CONCAT(
+        ROUND(
+          IFNULL(
+            SUM(CASE WHEN quantityOnHand IS NULL THEN 1 ELSE 0 END)
+            / COUNT(siteId) * 100
+          ,0)
+        ,0)
+      ,'%') AS cnt
+      FROM (
+        SELECT s.id AS siteId, sum(i.quantityOnHand) AS quantityOnHand
+        FROM Site AS s
+        INNER JOIN Device AS d ON d.siteId = s.id
+        LEFT OUTER JOIN InventoryItem AS i ON i.siteId = s.id
+                                        AND i.createdOn BETWEEN DATE_FORMAT(NOW() - interval 1 month, '%Y-%m-01')
+                                        AND LAST_DAY(NOW()-INTERVAL 1 MONTH)
+            GROUP BY s.id
+          ) AS innerQuery`,
+      statUnit: '{unit} last month',
+      statUnitI18nKey: 'dashboardWidgetStockNotRecorded',
+      link: '/browse/inventory',
+      sortOrder: 14,
+      externalId: 'stockNotRecorded',
+      description:
+        'The stock not recorded is calculated by counting all sites with connected devices which are in the inventory items table and dividing that number by the total sites which has connected devices',
+      descriptionI18nKey: 'stockNotRecordedDescription',
+      dashboards: {
+        operational: {
+          groupI18nKey: WIDGET_GROUP_KEYS.INVENTORY,
+        },
+      },
     },
   ],
 }

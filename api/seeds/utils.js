@@ -5,6 +5,7 @@ const { readJson } = require('fs-extra')
 const path = require('path')
 const { addMilliseconds, subDays, addMinutes, format } = require('date-fns')
 const relativeObjectsSeeds = require('./relativeObjectsSeeds')
+const { getBaseIssues } = require('./relatedObjects/issues')
 const {
   allAssayTypeToId,
   allResultCategoryToId,
@@ -2959,16 +2960,16 @@ async function mapJobFunctionPermissions(
 
 async function seedDashboardsJsonInDashboardWidget(knex, widgets) {
   // fill in default value for all records - this is needed because `.defaultsTo()` can not be applied for JSON field
-  // but not critical if field dashboards remains null - we handle setting default value of ['home'] in both API and WEB
+  // but not critical if field dashboards remains null - we handle setting default value of { home: {} } in both API and WEB
   await knex('DashboardWidget')
     .whereNull('dashboards')
     .update({
-      dashboards: JSON.stringify(['home']),
+      dashboards: JSON.stringify({ home: {} }),
     })
 
   await Promise.all(
     _.map(
-      widgets.filter(({ dashboards }) => _.isArray(dashboards)),
+      widgets.filter(({ dashboards }) => _.isPlainObject(dashboards)),
       ({ dashboards, externalId }) =>
         knex('DashboardWidget')
           .where({ externalId })
@@ -3023,6 +3024,81 @@ async function removeAndReplaceActivity(
         .delete()
       await knex('Permission').where({ id: activityToRemoveId }).delete()
     }
+  })
+}
+
+// ***********************************************************************
+async function seedIssueTypeModuleReplaced(knex, { userName }) {
+  const { id: adminId } = await knex('User')
+    .where({ name: userName })
+    .first('id')
+
+  const now = new Date()
+  const auditFields = {
+    createdOn: now,
+    createdBy: adminId,
+    updatedOn: now,
+    updatedBy: adminId,
+  }
+
+  // get previously defined data for ModuleReplaced issue type
+  const {
+    ModuleReplaced: {
+      issueType,
+      MessageType,
+      AlertTemplate,
+      EmailTemplate,
+      SmsTemplate,
+    },
+  } = await getBaseIssues(auditFields)
+
+  // ------------------------------------------
+  // 'Module Replaced' issue templates
+  // ------------------------------------------
+  const { id: moduleAlertTemplateId } = await upsertSingle(
+    knex,
+    'AlertTemplate',
+    ['message'],
+    {
+      ...AlertTemplate,
+      ...auditFields,
+    }
+  )
+  const { id: moduleSmsTemplateId } = await upsertSingle(
+    knex,
+    'SmsTemplate',
+    ['message'],
+    {
+      ...SmsTemplate,
+      ...auditFields,
+    }
+  )
+  const { id: moduleEmailTemplateId } = await upsertSingle(
+    knex,
+    'EmailTemplate',
+    ['subject', 'body'],
+    {
+      ...EmailTemplate,
+      ...auditFields,
+    }
+  )
+
+  // ------------------------------------------
+  // MessageType
+  // ------------------------------------------
+  const { id: moduleMessageTypeId } = await upsertSingle(knex, 'MessageType', {
+    ...MessageType,
+    alertTemplateId: moduleAlertTemplateId,
+    smsTemplateId: moduleSmsTemplateId,
+    emailTemplateId: moduleEmailTemplateId,
+  })
+
+  // ------------------------------------------
+  // IssueType
+  // ------------------------------------------
+  await upsertSingle(knex, 'IssueType', uniqueKeys.IssueType, {
+    ...issueType,
+    defaultMessageTypeId: moduleMessageTypeId,
   })
 }
 
@@ -3094,5 +3170,7 @@ module.exports = {
   mapJobFunctionPermissions,
   seedDashboardsJsonInDashboardWidget,
   removeAndReplaceActivity,
+
+  seedIssueTypeModuleReplaced,
   seedIssueEscalationTriggersForPartner,
 }

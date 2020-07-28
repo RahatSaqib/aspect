@@ -1,5 +1,7 @@
 const dashboardWidgetsBase = require('../../fixtures/dashboardWidgetsBase')
 
+const { WIDGET_GROUP_KEYS } = dashboardWidgetsBase
+
 module.exports = {
   stat: [
     {
@@ -14,7 +16,9 @@ module.exports = {
       externalId: 'sitesTitle',
       description: 'The number of sites',
       descriptionI18nKey: 'sitesDescription',
-      dashboards: ['home'],
+      dashboards: {
+        home: {},
+      },
     },
     {
       icon: 'MdDesktopWindows',
@@ -28,7 +32,12 @@ module.exports = {
       externalId: 'devicesTitle',
       description: 'The number of lab devices',
       descriptionI18nKey: 'devicesDescription',
-      dashboards: ['home', 'operational'],
+      dashboards: {
+        home: {},
+        operational: {
+          groupI18nKey: WIDGET_GROUP_KEYS.CONNECTIVITY,
+        },
+      },
     },
     {
       icon: 'MdAssignment',
@@ -42,7 +51,9 @@ module.exports = {
       externalId: 'resultsTitle',
       description: 'The number of results in the last 30 days',
       descriptionI18nKey: 'resultsDescription',
-      dashboards: ['home'],
+      dashboards: {
+        home: {},
+      },
     },
     {
       icon: 'MdPermIdentity',
@@ -56,7 +67,9 @@ module.exports = {
       externalId: 'personTitle',
       description: 'The number of users',
       descriptionI18nKey: 'personDescription',
-      dashboards: ['home'],
+      dashboards: {
+        home: {},
+      },
     },
     {
       icon: 'MdAddAlert',
@@ -73,7 +86,9 @@ module.exports = {
       externalId: 'dashboardWidgetTitleConfirmedCases',
       description: 'The number of positive results',
       descriptionI18nKey: 'confirmedCasesDescription',
-      dashboards: ['home'],
+      dashboards: {
+        home: {},
+      },
     },
     {
       icon: 'MdAssignment',
@@ -90,7 +105,9 @@ module.exports = {
       externalId: 'dashboardWidgetTitleTotalActiveCases',
       description: 'The number of positive results that are still active',
       descriptionI18nKey: 'totalActiveCasesDescription',
-      dashboards: ['home'],
+      dashboards: {
+        home: {},
+      },
     },
     {
       icon: 'MdVerifiedUser',
@@ -107,7 +124,9 @@ module.exports = {
       externalId: 'dashboardWidgetTitleTotalRecoveredCases',
       description: `The number of results that belong to a patient that recovered`,
       descriptionI18nKey: 'totalActiveCasesDescription',
-      dashboards: ['home'],
+      dashboards: {
+        home: {},
+      },
     },
     {
       icon: 'MdEventBusy',
@@ -124,7 +143,9 @@ module.exports = {
       externalId: 'dashboardWidgetTitleTotalDeaths',
       description: 'The number of results that belong to a patient that died',
       descriptionI18nKey: 'dashboardWidgetDescriptionTotalDeaths',
-      dashboards: ['home'],
+      dashboards: {
+        home: {},
+      },
     },
     {
       ...dashboardWidgetsBase.stat.find(
@@ -161,6 +182,12 @@ module.exports = {
     {
       ...dashboardWidgetsBase.stat.find(x => x.externalId === 'errorRate'),
       sortOrder: 14,
+    },
+    {
+      ...dashboardWidgetsBase.stat.find(
+        x => x.externalId === 'stockNotRecorded'
+      ),
+      sortOrder: 15,
     },
   ],
 }

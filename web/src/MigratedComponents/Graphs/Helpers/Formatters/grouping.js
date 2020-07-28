@@ -174,7 +174,7 @@ const groupForDeviceStatusAPI = (
       ? format(negateTimeZoneOffset(curr[indexBy]), formatDate)
       : curr[indexBy]
 
-    const shouldBeZero = isWeekendOrHoliday || devicesTotal === 0
+    const shouldBeZero = devicesTotal === 0
 
     acc[curr[indexBy]] = {
       date: dateFormatted,
@@ -183,14 +183,18 @@ const groupForDeviceStatusAPI = (
       devicesActive: shouldBeZero
         ? 0
         : calcPercentageForGraphs(devicesActive, devicesTotal),
-      devicesInactive: shouldBeZero
-        ? 0
-        : calcPercentageForGraphs(devicesInactive, devicesTotal),
-      weekendOrHoliday: isWeekendOrHoliday ? 100 : 0,
+      devicesInactive:
+        shouldBeZero || isWeekendOrHoliday
+          ? 0
+          : calcPercentageForGraphs(devicesInactive, devicesTotal),
+      weekendOrHoliday: isWeekendOrHoliday
+        ? shouldBeZero
+          ? 0
+          : calcPercentageForGraphs(devicesInactive, devicesTotal)
+        : 0,
     }
     return acc
   }, {})
-
   return normaliseKeys(grouped)
 }
 

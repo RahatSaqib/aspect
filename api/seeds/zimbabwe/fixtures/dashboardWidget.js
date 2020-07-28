@@ -1,5 +1,7 @@
 const dashboardWidgetsBase = require('../../fixtures/dashboardWidgetsBase')
 
+const { WIDGET_GROUP_KEYS } = dashboardWidgetsBase
+
 module.exports = {
   stat: [
     {
@@ -15,7 +17,9 @@ module.exports = {
       externalId: 'sitesTitle',
       description: 'The number of sites',
       descriptionI18nKey: 'sitesDescription',
-      dashboards: ['home'],
+      dashboards: {
+        home: {},
+      },
     },
     {
       jobFunctions: ['all'],
@@ -26,11 +30,16 @@ module.exports = {
       subTitleI18nKey: null,
       sqlForIndicator: `select count(d.id) as cnt from Device as d inner join Site as s on s.id = d.siteId inner join DeviceType as dt on dt.id = d.deviceTypeId inner join DeviceTypeCategory as dc on dc.id = dt.deviceTypeCategoryId left outer join Geography as g on s.geographyId = g.id where dc.hasResults = 1`,
       link: '/browse/device',
-      sortOrder: 1,
+      sortOrder: 0,
       externalId: 'devicesTitle',
       description: 'The number of lab devices',
       descriptionI18nKey: 'devicesDescription',
-      dashboards: ['home', 'operational'],
+      dashboards: {
+        home: {},
+        operational: {
+          groupI18nKey: WIDGET_GROUP_KEYS.CONNECTIVITY,
+        },
+      },
     },
     {
       jobFunctions: ['all'],
@@ -45,7 +54,9 @@ module.exports = {
       externalId: 'resultsTitle',
       description: 'The number of results in the last 30 days',
       descriptionI18nKey: 'resultsDescription',
-      dashboards: ['home'],
+      dashboards: {
+        home: {},
+      },
     },
     {
       jobFunctions: ['all'],
@@ -60,12 +71,14 @@ module.exports = {
       externalId: 'personTitle',
       description: 'The number of users',
       descriptionI18nKey: 'personDescription',
-      dashboards: ['home'],
+      dashboards: {
+        home: {},
+      },
     },
     {
       externalId: 'serverUptimeTitle',
       jobFunctions: ['all'],
-      sortOrder: 4,
+      sortOrder: 3,
       icon: 'MdLink',
       title: 'Server Uptime',
       titleI18nKey: 'serverUptimeTitle',
@@ -78,7 +91,11 @@ module.exports = {
       extraLabelI18nKey: 'dashboardWidgetExtraLabelServerUptime',
       description: `The amount of time that Uptime Robot has been able to connect to Aspect this month`,
       descriptionI18nKey: 'serverUptimeDescription',
-      dashboards: ['operational'],
+      dashboards: {
+        operational: {
+          groupI18nKey: WIDGET_GROUP_KEYS.CONNECTIVITY,
+        },
+      },
     },
     {
       icon: 'FaDatabase',
@@ -88,40 +105,96 @@ module.exports = {
       externalId: 'gxPositiveResultsNotified',
       subTitle: 'This Month',
       subTitleI18nKey: 'gxPositiveResultsNotifiedSubTitle',
-      sqlForIndicator:
-        "SELECT CONCAT( IFNULL( ROUND(SUM(HasNotifications) * 100 / COUNT(*), 0) , 0) , '%') AS cnt FROM( SELECT IFNULL(COUNT(n.id), 0) > 0 AS HasNotifications FROM Result AS r INNER JOIN Device d ON d.id = r.deviceId INNER JOIN Site s ON s.id = d.siteId INNER JOIN Partner p ON p.id = s.partnerId INNER JOIN Assay a ON r.assayId = a.id INNER JOIN ResultCategory rc ON r.resultCategory1 = rc.id LEFT JOIN Geography g ON s.geographyId = g.id LEFT JOIN Issue i ON r.id = i.resultId LEFT JOIN IssueType it ON i.issueTypeId = it.id LEFT JOIN Notification n ON i.id = n.issueId WHERE rc.externalid IN ('Detected', 'Trace Detected', 'Positive', 'MoreThan1000') AND it.externalId = 'ResultReceived' AND a.externalId IN ('GxMtbRif', 'GxMtbRifUltra', 'GxHiv1Vl', 'GxHiv1Qual') AND YEAR(r.endedOn) = YEAR(CURRENT_DATE) AND MONTH(r.endedOn) = MONTH(CURRENT_DATE) GROUP BY r.id) AS q;",
-      sqlForExtra:
-        "SELECT CONCAT( IFNULL( ROUND(SUM(HasNotifications) * 100 / COUNT(*), 0) , 0) , '%') AS cnt FROM( SELECT IFNULL(COUNT(n.id), 0) > 0 AS HasNotifications FROM Result AS r INNER JOIN Device d ON d.id = r.deviceId INNER JOIN Site s ON s.id = d.siteId INNER JOIN Partner p ON p.id = s.partnerId INNER JOIN Assay a ON r.assayId = a.id INNER JOIN ResultCategory rc ON r.resultCategory1 = rc.id LEFT JOIN Geography g ON s.geographyId = g.id LEFT JOIN Issue i ON r.id = i.resultId LEFT JOIN IssueType it ON i.issueTypeId = it.id LEFT JOIN Notification n ON i.id = n.issueId WHERE rc.externalid IN ('Detected', 'Trace Detected', 'Positive', 'MoreThan1000') AND it.externalId = 'ResultReceived' AND a.externalId IN ('GxMtbRif', 'GxMtbRifUltra', 'GxHiv1Vl', 'GxHiv1Qual') AND YEAR(r.endedOn) = YEAR(DATE_ADD(CURRENT_DATE, INTERVAL -1 MONTH)) AND MONTH(r.endedOn) = MONTH(DATE_ADD(CURRENT_DATE, INTERVAL -1 MONTH)) GROUP BY r.id) AS q;",
+      sqlForIndicator: `
+        SELECT
+            CONCAT(IFNULL(ROUND(SUM(HasNotifications) * 100 / COUNT(*),
+                                    0),
+                            0),
+                    '%') AS cnt
+        FROM
+            (SELECT
+                IFNULL(COUNT(n.id), 0) > 0 AS HasNotifications
+            FROM
+                Result AS r
+            INNER JOIN Device d ON d.id = r.deviceId
+            INNER JOIN Site s ON s.id = d.siteId
+            INNER JOIN Partner p ON p.id = s.partnerId
+            INNER JOIN Assay a ON r.assayId = a.id
+            INNER JOIN ResultCategory rc ON r.resultCategory1 = rc.id
+            LEFT JOIN Geography g ON s.geographyId = g.id
+            LEFT JOIN Issue i ON r.id = i.resultId
+            LEFT JOIN IssueType it ON i.issueTypeId = it.id
+            LEFT JOIN Notification n ON i.id = n.issueId
+            WHERE
+                rc.externalid IN ('Detected' , 'Trace Detected', 'Positive', 'MoreThan1000')
+                    AND it.externalId = 'ResultReceived'
+                    AND a.externalId IN ('GxMtbRif' , 'GxMtbRifUltra', 'GxHiv1Vl', 'GxHiv1Qual')
+                    AND YEAR(r.endedOn) = YEAR(CURRENT_DATE)
+                    AND MONTH(r.endedOn) = MONTH(CURRENT_DATE)
+            GROUP BY r.id) AS q
+        `,
+      sqlForExtra: `
+        SELECT
+            CONCAT(IFNULL(ROUND(SUM(HasNotifications) * 100 / COUNT(*),
+                                    0),
+                            0),
+                    '%') AS cnt
+        FROM
+            (SELECT
+                IFNULL(COUNT(n.id), 0) > 0 AS HasNotifications
+            FROM
+                Result AS r
+            INNER JOIN Device d ON d.id = r.deviceId
+            INNER JOIN Site s ON s.id = d.siteId
+            INNER JOIN Partner p ON p.id = s.partnerId
+            INNER JOIN Assay a ON r.assayId = a.id
+            INNER JOIN ResultCategory rc ON r.resultCategory1 = rc.id
+            LEFT JOIN Geography g ON s.geographyId = g.id
+            LEFT JOIN Issue i ON r.id = i.resultId
+            LEFT JOIN IssueType it ON i.issueTypeId = it.id
+            LEFT JOIN Notification n ON i.id = n.issueId
+            WHERE
+                rc.externalid IN ('Detected' , 'Trace Detected', 'Positive', 'MoreThan1000')
+                    AND it.externalId = 'ResultReceived'
+                    AND a.externalId IN ('GxMtbRif' , 'GxMtbRifUltra', 'GxHiv1Vl', 'GxHiv1Qual')
+                    AND YEAR(r.endedOn) = YEAR(DATE_ADD(CURRENT_DATE, INTERVAL - 1 MONTH))
+                    AND MONTH(r.endedOn) = MONTH(DATE_ADD(CURRENT_DATE, INTERVAL - 1 MONTH))
+            GROUP BY r.id) AS q
+        `,
       extraLabel: 'Previous Month',
       extraLabelI18nKey: 'gxPositiveResultsNotifiedPreviousMonth',
-      sortOrder: 5,
+      sortOrder: 4,
       description:
         "The percentage of GeneXpert's TB and HIV results that were notified",
       descriptionI18nKey: 'gxPositiveResultsNotifiedDescription',
-      dashboards: ['home'],
       link: '/browse/result',
+      dashboards: {
+        operational: {
+          groupI18nKey: WIDGET_GROUP_KEYS.CONNECTIVITY,
+        },
+      },
     },
     {
       ...dashboardWidgetsBase.stat.find(
         x => x.externalId === 'dashboardWidgetTestsPerDayTitle'
       ),
-      sortOrder: 5,
+      sortOrder: 1,
     },
     {
       ...dashboardWidgetsBase.stat.find(
         x => x.externalId === 'dashboardWidgetValidResultsPc'
       ),
-      sortOrder: 6,
+      sortOrder: 2,
     },
     {
       ...dashboardWidgetsBase.stat.find(
         x => x.externalId === 'utilizationRate'
       ),
-      sortOrder: 7,
+      sortOrder: 0,
     },
     {
       ...dashboardWidgetsBase.stat.find(x => x.externalId === 'activeDevices'),
-      sortOrder: 8,
+      sortOrder: 1,
     },
     {
       ...dashboardWidgetsBase.stat.find(x => x.externalId === 'stockouts'),
@@ -131,11 +204,17 @@ module.exports = {
       ...dashboardWidgetsBase.stat.find(
         x => x.externalId === 'deviceDaysActive'
       ),
-      sortOrder: 10,
+      sortOrder: 2,
     },
     {
       ...dashboardWidgetsBase.stat.find(x => x.externalId === 'errorRate'),
-      sortOrder: 11,
+      sortOrder: 3,
+    },
+    {
+      ...dashboardWidgetsBase.stat.find(
+        x => x.externalId === 'stockNotRecorded'
+      ),
+      sortOrder: 12,
     },
   ],
 }

@@ -5,7 +5,7 @@ const _ = require('lodash')
 const Promise = require('bluebird')
 const config = require('../../src/config')
 const myanmarSites = require('./fixtures/myanmarSites.json')
-const dashboardWidget = require('./fixtures/myanmarDashboardWidget.json')
+const dashboardWidget = require('./fixtures/myanmarDashboardWidget')
 const { upsertJobFunction } = require('../common')
 const {
   rowsAsObject,
@@ -434,7 +434,9 @@ async function seed(knex) {
       'descriptionI18nKey',
       'dashboards',
     ])
-    widgetData.dashboards = JSON.stringify(widgetData.dashboards || ['home'])
+    widgetData.dashboards = JSON.stringify(
+      widgetData.dashboards || { home: {} }
+    )
 
     const [widgetId] = await knex('DashboardWidget').insert(widgetData)
     const statWidgetData = _.pick(widget, [
@@ -472,7 +474,9 @@ async function seed(knex) {
       'descriptionI18nKey',
       'dashboards',
     ])
-    widgetData.dashboards = JSON.stringify(widgetData.dashboards || ['home'])
+    widgetData.dashboards = JSON.stringify(
+      widgetData.dashboards || { home: {} }
+    )
 
     const [widgetId] = await knex('DashboardWidget').insert(widgetData)
     const statWidgetData = _.pick(widget, [

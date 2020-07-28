@@ -23,7 +23,7 @@ const {
 const { randomToken } = require('../../src/deviceApi/apiKey')
 const geography = require('./fixtures/geography.json')
 const patients = require('./fixtures/patients.json')
-const dashboardWidget = require('./fixtures/dashboardWidget.json')
+const dashboardWidget = require('./fixtures/dashboardWidget')
 const { errorCodes } = require('./fixtures/errorCodes.js')
 
 const millisInHour = 1000 * 60 * 60
@@ -1831,7 +1831,9 @@ async function seed(knex) {
       'descriptionI18nKey',
       'dashboards',
     ])
-    widgetData.dashboards = JSON.stringify(widgetData.dashboards || ['home'])
+    widgetData.dashboards = JSON.stringify(
+      widgetData.dashboards || { home: {} }
+    )
 
     const [widgetId] = await knex('DashboardWidget').insert(widgetData)
     const statWidgetData = _.pick(widget, [
