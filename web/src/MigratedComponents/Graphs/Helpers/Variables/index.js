@@ -6,6 +6,7 @@ const envSource =
     : Object.assign(process.env, variables.customPropertiesVariables)
 
 const {
+  '--alto-2': alto2,
   '--anakiwa': anakiwa,
   '--aspect-color-black': colorBlack,
   '--aspect-color-mandy': colorMandy,
@@ -19,8 +20,8 @@ const {
   '--conifer': conifer,
   '--eastern-blue': easternBlue,
   '--geyser': geyser,
+  '--wild-sand': wildSand,
   '--purple-mountains-majesty': colorPurple,
-  '--selective-yellow': selectiveYellow,
   '--tundora': tundora,
   '--thunderbird': thunderbird,
 } = envSource
@@ -50,8 +51,8 @@ const graphColorMap = [
   { id: 22, externalId: 'Confirmed', color: colorMantis },
   { id: 23, externalId: 'NotConfirmed', color: colorBlue4 },
   { id: 24, externalId: 'devicesActive', color: conifer },
-  { id: 25, externalId: 'devicesInactive', color: selectiveYellow },
-  { id: 26, externalId: 'weekendOrHoliday', color: geyser },
+  { id: 25, externalId: 'devicesInactive', color: alto2 },
+  { id: 26, externalId: 'weekendOrHoliday', color: wildSand },
   { id: 27, externalId: 'devicesNeedsRepair', color: thunderbird },
   { id: 28, externalId: 'devicesUnknown', color: tundora },
   { id: 29, externalId: 'devicesStockOut', color: anakiwa },
