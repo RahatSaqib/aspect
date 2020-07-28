@@ -1,7 +1,12 @@
 const supertest = require('supertest')
 const chai = require('chai')
 const _ = require('lodash')
-const { addDays, startOfToday, startOfMonth } = require('date-fns')
+const {
+  addDays,
+  startOfToday,
+  startOfMonth,
+  setMilliseconds,
+} = require('date-fns')
 
 const shared = require('../utils/sharedToken')
 const {
@@ -340,12 +345,24 @@ describe('Device routes', () => {
       const maintenanceStatusPath = `${path}/maintenance-status`
       it('should return the latest maintenance status log for the devices current status', async () => {
         const deviceMaintenanceStatuses = await allDeviceMaintenanceStatusToId()
-        const { id: deviceId } = await knex('DeviceTypeCategory as dtc')
-          .join('DeviceType as dt', 'dtc.id', 'dt.deviceTypeCategoryId')
-          .join('Device as d', 'dt.id', 'd.deviceTypeId')
-          .where('dtc.hasResults', true)
-          .first('d.id')
-        await knex('DeviceMaintenanceStatusLog').insert({
+        const filterOnDeviceMaintenanceStatus = [
+          'inactiveUnknown',
+          'inactiveNoResultsReported',
+          'inactiveDownForRepair',
+          'inactiveConnectivity',
+        ]
+        let devicesReponse = await server
+          .get(
+            `${maintenanceStatusPath}?${filterOnDeviceMaintenanceStatus
+              .map(
+                status =>
+                  `deviceMaintenanceStatusId=${deviceMaintenanceStatuses[status]}`
+              )
+              .join('&')}`
+          )
+          .set('Authorization', `Bearer ${shared.token}`)
+        const { id: deviceId } = devicesReponse.body.data[0]
+        const newDeviceMaintenanceStatusLog = {
           deviceId,
           deviceMaintenanceStatusId:
             deviceMaintenanceStatuses.inactiveOutOfInventory,
@@ -353,54 +370,11 @@ describe('Device routes', () => {
           data: JSON.stringify({
             options: { data: { notes: 'More cartridges expected next month' } },
           }),
-          createdOn: new Date(),
-        })
-        await knex('Device').where('id', deviceId).update({
-          deviceMaintenanceStatusId:
-            deviceMaintenanceStatuses.inactiveOutOfInventory,
-        })
-        const deviceWithLogWithNote = await knex('Device as d')
-          .join('DeviceMaintenanceStatusLog as dmsl', queryBuilder => {
-            queryBuilder
-              .on('d.id', 'dmsl.deviceId')
-              .andOn(
-                'd.deviceMaintenanceStatusId',
-                'dmsl.deviceMaintenanceStatusId'
-              )
-          })
-          .where(queryBuilder => {
-            queryBuilder.whereRaw(
-              `IFNULL(JSON_UNQUOTE(JSON_EXTRACT(IFNULL(dmsl.data, '{}'), '$.options.data.notes')), '') <> ''`
-            )
-          })
-          .orderByRaw('dmsl.day desc, dmsl.createdOn desc, dmsl.id desc')
-          .first('dmsl.*')
-        deviceWithLogWithNote.data = JSON.parse(deviceWithLogWithNote.data)
-        const devicesReponse = await server
-          .get(`${maintenanceStatusPath}/${deviceWithLogWithNote.deviceId}`)
-          .set('Authorization', `Bearer ${shared.token}`)
-        assert.isOk(devicesReponse.body.ok)
-        expect(deviceWithLogWithNote).to.containSubset(deviceWithLogWithNote)
-      })
-
-      it('should provide shallow access to data.options.data.notes', async () => {
-        const deviceMaintenanceStatuses = await allDeviceMaintenanceStatusToId()
-        const { id: deviceId } = await knex('DeviceTypeCategory as dtc')
-          .join('DeviceType as dt', 'dtc.id', 'dt.deviceTypeCategoryId')
-          .join('Device as d', 'dt.id', 'd.deviceTypeId')
-          .where('dtc.hasResults', true)
-          .first('d.id')
-        const logData = {
-          options: { data: { notes: 'More cartridges expected next month' } },
+          createdOn: setMilliseconds(new Date(), 0),
         }
-        await knex('DeviceMaintenanceStatusLog').insert({
-          deviceId,
-          deviceMaintenanceStatusId:
-            deviceMaintenanceStatuses.inactiveOutOfInventory,
-          day: startOfToday(),
-          data: JSON.stringify(logData),
-          createdOn: new Date(),
-        })
+        await knex('DeviceMaintenanceStatusLog').insert(
+          newDeviceMaintenanceStatusLog
+        )
         await knex('Device').where('id', deviceId).update({
           deviceMaintenanceStatusId:
             deviceMaintenanceStatuses.inactiveOutOfInventory,
@@ -422,12 +396,17 @@ describe('Device routes', () => {
           .orderByRaw('dmsl.day desc, dmsl.createdOn desc, dmsl.id desc')
           .first('dmsl.*')
         deviceWithLogWithNote.data = JSON.parse(deviceWithLogWithNote.data)
-        const devicesReponse = await server
+        devicesReponse = await server
           .get(`${maintenanceStatusPath}/${deviceWithLogWithNote.deviceId}`)
           .set('Authorization', `Bearer ${shared.token}`)
         assert.isOk(devicesReponse.body.ok)
-        expect(devicesReponse).to.containSubset({
-          body: { data: { notes: logData.options.data.notes } },
+        expect(devicesReponse.body.data).to.containSubset({
+          ...newDeviceMaintenanceStatusLog,
+          day: newDeviceMaintenanceStatusLog.day.toISOString(),
+          createdOn: newDeviceMaintenanceStatusLog.createdOn.toISOString(),
+          data: JSON.parse(newDeviceMaintenanceStatusLog.data),
+          notes: JSON.parse(newDeviceMaintenanceStatusLog.data).options.data
+            .notes,
         })
       })
     })
