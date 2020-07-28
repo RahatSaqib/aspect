@@ -179,7 +179,7 @@ const isLoggedInAndOnLogin = ({ isLoggedOut }, { location }) => {
 
 const renderCaseDetails = loggedInFactory(CaseDetails)
 
-const AppRoutes = props => {
+const AppRoutes = ({ props }) => {
   useHashAndScroll()
   return (
     <Switch>
