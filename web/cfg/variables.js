@@ -11,6 +11,7 @@ const set = require('lodash/set')
 exports.customPropertiesVariables = {
   // Colors 2019
   '--alto': '#e0e0e0',
+  '--alto-2': '#d8d8d8',
 
   '--atlantis': '#73d449',
   '--black': '#000000',
@@ -54,13 +55,13 @@ exports.customPropertiesVariables = {
   '--white-lilac': '#eef1f8',
   '--white-lilac-2': '#f6f7fb',
   '--white': '#ffffff',
-  '--wild-sand': '#f6f6f6',
+  '--wild-sand': '#f0f0f0',
 
   // Colors 2020
   '--anakiwa': '#73EBFF',
   '--azure-radiance': '#0091ff',
   '--chathams-blue': '#18527d',
-  '--conifer': '#99D25E',
+  '--conifer': '#99D25D',
   '--gallery': '#ececec',
   '--geyser': '#CCDBE1',
   '--guardsman-red': '#d60000',

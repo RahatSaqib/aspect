@@ -243,38 +243,65 @@ module.exports = {
       CONCAT(
         ROUND(
           IFNULL(
-            COUNT(DISTINCT i.siteId)
-          ,0)
-          /
-          COUNT(DISTINCT s.id) * 100
-        )
-      ,'%') AS cnt
+            COUNT(
+              DISTINCT
+                innerQuery.siteId
+            ),
+            0
+          ) / COUNT(DISTINCT s.id) * 100
+        ),
+        '%'
+      ) AS cnt
       FROM Site AS s
-        INNER JOIN Device AS d ON s.id = d.siteId
-        LEFT OUTER JOIN Issue AS i ON s.id = i.siteId
-                                        AND i.createdOn BETWEEN DATE_FORMAT(NOW(), '%Y-%m-01')
-                                        AND NOW()
-        LEFT OUTER JOIN IssueType AS it ON i.issueTypeId = it.id AND it.externalId = 'InventoryStockout'
-        LEFT OUTER JOIN IssueStatus AS ist ON i.issueStatusId = ist.id
-                                              AND ist.externalId NOT IN ('Inactive', 'OK', 'Resolved')`,
+        INNER JOIN Device AS d
+          ON s.id = d.siteId
+        INNER JOIN Partner AS p
+                ON s.partnerId = p.id
+        INNER JOIN Geography AS g
+                ON s.geographyId = g.id
+        LEFT OUTER JOIN (
+          SELECT i.siteId
+          FROM Issue AS i
+          INNER JOIN IssueType AS it
+            ON i.issueTypeId = it.id   AND i.createdOn BETWEEN  DATE_FORMAT(NOW(), '%Y-%m-01')
+            AND NOW()
+            AND it.externalId = 'InventoryStockout'
+          INNER JOIN IssueStatus AS ist
+            ON i.issueStatusId = ist.id AND ist.externalId NOT IN ('Inactive', 'OK', 'Resolved')
+              ) AS innerQuery
+        ON s.id = innerQuery.siteId
+        `,
       sqlForStatUnit: `SELECT
-        CONCAT(
-          ROUND(
-            IFNULL(
-              COUNT(DISTINCT i.siteId)
-            ,0)
-            /
-            COUNT(DISTINCT s.id) * 100
-          )
-        ,'%') AS cnt
-        FROM Site AS s
-          INNER JOIN Device AS d ON s.id = d.siteId
-          LEFT OUTER JOIN Issue AS i ON s.id = i.siteId
-                                        AND i.createdOn BETWEEN DATE_FORMAT(NOW() - INTERVAL 1 month, '%Y-%m-01')
-                                        AND LAST_DAY(NOW() - INTERVAL 1 MONTH)
-          LEFT OUTER JOIN IssueType AS it ON i.issueTypeId = it.id AND it.externalId = 'InventoryStockout'
-          LEFT OUTER JOIN IssueStatus AS ist ON i.issueStatusId = ist.id
-                                                AND ist.externalId NOT IN ('Inactive', 'OK', 'Resolved')`,
+      CONCAT(
+        ROUND(
+          IFNULL(
+            COUNT(
+              DISTINCT
+                innerQuery.siteId
+            ),
+            0
+          ) / COUNT(DISTINCT s.id) * 100
+        ),
+        '%'
+      ) AS cnt
+      FROM Site AS s
+        INNER JOIN Device AS d
+          ON s.id = d.siteId
+        INNER JOIN Partner AS p
+                ON s.partnerId = p.id
+        INNER JOIN Geography AS g
+                ON s.geographyId = g.id
+        LEFT OUTER JOIN (
+          SELECT i.siteId
+          FROM Issue AS i
+          INNER JOIN IssueType AS it
+            ON i.issueTypeId = it.id   AND i.createdOn BETWEEN  DATE_FORMAT(NOW() - INTERVAL 1 MONTH, '%Y-%m-01')
+            AND LAST_DAY(NOW()- INTERVAL 1 MONTH)
+            AND it.externalId = 'InventoryStockout'
+          INNER JOIN IssueStatus AS ist
+            ON i.issueStatusId = ist.id AND ist.externalId NOT IN ('Inactive', 'OK', 'Resolved')
+              ) AS innerQuery
+        ON s.id = innerQuery.siteId`,
       statUnit: '{unit} last month',
       statUnitI18nKey: 'dashboardWidgetStockouts',
       link: '/operational-data#inventoryStatus',
