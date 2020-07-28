@@ -492,7 +492,7 @@ module.exports = {
     },
     {
       icon: 'FaCloudUploadAlt',
-      title: 'Time to Upload',
+      title: 'Average Delay to Upload',
       titleI18nKey: 'avgTimeToUploadTitle',
       subTitle: null,
       subTitleI18nKey: null,
@@ -566,7 +566,7 @@ module.exports = {
       sortOrder: 15,
       externalId: 'avgTimeToUpload',
       description:
-        'Measure the average time between the time where the test is performed in the device and when the result is created in aspect in the current month/last month.',
+        'The average delay of uploading results. Only considering results where the delay was greater than two hours.',
       descriptionI18nKey: 'avgTimeToUploadDescription',
       dashboards: {
         operational: {
